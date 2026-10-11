@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#7cc8f0">
-    <title>Meuh 2.0</title>
+    <title>Meuh 2.0.1</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
     <style>
 @property --sky-top {
     syntax: '<color>';
@@ -36,7 +36,7 @@
     --red: #c8453a;
     --water: #4fb3f6;
     --xp: #5aa9e6;
-    --display: 'Fredoka', 'Nunito', system-ui, sans-serif;
+    --display: 'Nunito', system-ui, sans-serif;
 }
 
 * {
@@ -444,7 +444,7 @@ button {
     padding: 4px 0 3px;
     cursor: pointer;
     font-family: var(--display);
-    font-weight: 600;
+    font-weight: 800;
     font-size: 0.6rem;
     background: rgba(245, 222, 179, 0.78);
     border: 2.5px solid var(--ink);
@@ -519,22 +519,22 @@ button {
 }
 .view-title {
     font-family: var(--display);
-    font-weight: 700;
-    font-size: 1.35rem;
-    color: #fff;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--ink);
     margin: 0;
-    text-shadow:
-        0 2px 0 var(--ink),
-        0 -1px 0 var(--ink),
-        1px 0 0 var(--ink),
-        -1px 0 0 var(--ink),
-        2px 2px 0 var(--ink);
+    padding: 2px 14px;
+    background: rgba(251, 236, 201, 0.92);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
 }
 .hint {
     font-size: 0.8rem;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    color: var(--ink);
     margin: -4px 0 10px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: rgba(251, 236, 201, 0.85);
 }
 .row-actions {
     display: flex;
@@ -945,15 +945,17 @@ button {
 }
 .section-title {
     font-family: var(--display);
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin: 16px 2px 8px;
-    color: #fff;
-    text-shadow:
-        0 2px 0 var(--ink),
-        0 -1px 0 var(--ink),
-        1px 0 0 var(--ink),
-        -1px 0 0 var(--ink);
+    font-weight: 800;
+    font-size: 1rem;
+    margin: 16px auto 8px;
+    width: fit-content;
+    max-width: 100%;
+    padding: 3px 14px;
+    text-align: center;
+    color: var(--ink);
+    background: rgba(251, 236, 201, 0.92);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
 }
 .section-title:first-child {
     margin-top: 0;
@@ -3613,12 +3615,13 @@ svg.chart .bar:hover path {
 }
 .todo-calm {
     font-size: 0.8rem;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-    padding: 4px 0;
+    color: var(--ink);
+    padding: 4px 10px;
+    border-radius: 10px;
+    background: rgba(251, 236, 201, 0.85);
 }
 .inline-switch {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     margin: 0 0 8px;
@@ -3629,8 +3632,10 @@ svg.chart .bar:hover path {
     font: inherit;
     font-size: 0.82rem;
     text-align: left;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    color: var(--ink);
+    padding: 5px 12px 5px 6px;
+    border-radius: 999px;
+    background: rgba(251, 236, 201, 0.85);
 }
 .switch.small {
     width: 40px;
@@ -6223,6 +6228,31 @@ body.wide #toolbar {
     width: 28px;
     height: 28px;
     flex-shrink: 0;
+}
+
+/* ---- lisibilité sur téléphone : police plus simple, tailles plus calmes */
+.card-title,
+.view-title,
+.modal-box h2 {
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+@media (max-width: 480px) {
+    .view-title {
+        font-size: 1.15rem;
+    }
+    .card-title {
+        font-size: 0.92rem;
+    }
+    .modal-box h2 {
+        font-size: 1.3rem;
+    }
+    .btn {
+        font-size: 0.86rem;
+    }
+    .tab {
+        font-size: 0.64rem;
+    }
 }
 
     </style>
@@ -10809,7 +10839,7 @@ const EVENTS = {
     hiver: { name: 'Marché de Noël', icon: ['ui', 's_winter'], effect: 'Les trains de marchandises paient 30 % de plus pendant la fête.' },
 };
 
-const GAME_VERSION = '2.0';
+const GAME_VERSION = '2.0.1';
 
 const BACKUP_KEY = SAVE_KEY + '_secours';
 
@@ -12440,7 +12470,7 @@ function isToolValid(t) {
         t === 'shovel' ||
         t === 'feed' ||
         (t === 'fert' && state.level >= 4) ||
-        (state.seeds[t] !== undefined && state.level >= DB.Items[t].reqLvl)
+        (state.seeds[t] !== undefined && (state.level >= DB.Items[t].reqLvl || state.seeds[t] > 0))
     );
 }
 
@@ -13603,7 +13633,8 @@ function doPlotAction(i, action) {
 
 function plantSeed(plot, id) {
     const d = DB.Items[id];
-    if (state.level < d.reqLvl) return false;
+    // des graines reçues en cadeau se plantent même avant le niveau de la culture
+    if (state.level < d.reqLvl && !(state.seeds[id] > 0)) return false;
     if (state.seeds[id] > 0) {
         state.seeds[id]--;
     } else if (d.type === 'crop' && !d.exotic && state.money >= d.cost) {
