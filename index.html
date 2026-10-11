@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#7cc8f0">
-    <title>Meuh 2.0.1</title>
+    <title>Meuh 2.0.2</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -292,6 +292,7 @@ button {
     min-width: 0;
 }
 .lvl-badge {
+    cursor: pointer;
     position: relative;
     width: 50px;
     height: 50px;
@@ -6255,6 +6256,66 @@ body.wide #toolbar {
     }
 }
 
+/* ---- les niveaux : ce que chaque niveau débloque */
+.lv-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.lv-nav .btn {
+    width: 44px;
+    font-size: 1.3rem;
+    padding: 4px 0;
+    justify-content: center;
+}
+.lv-head {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.lv-head b {
+    font-size: 1.2rem;
+}
+.lv-head small {
+    font-size: 0.78rem;
+    opacity: 0.75;
+}
+.lv-strip {
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
+    padding: 4px 2px 8px;
+    margin-bottom: 6px;
+    scrollbar-width: none;
+}
+.lv-chip {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+    background: #fff;
+    font: inherit;
+    font-size: 0.78rem;
+    color: var(--ink);
+    cursor: pointer;
+}
+.lv-chip.done {
+    background: #e8f6d8;
+}
+.lv-chip.now {
+    background: var(--gold);
+}
+.lv-chip.on {
+    box-shadow: 0 0 0 3px var(--ink);
+}
+#lv-list .paper.got {
+    opacity: 0.7;
+}
+
     </style>
 </head>
 <body>
@@ -6289,7 +6350,7 @@ body.wide #toolbar {
     <!-- HUD -->
     <header id="hud">
         <div class="lvl">
-            <div class="lvl-badge" id="lvl-badge"><i data-spr="ui:star" class="spr-slot"></i><span id="ui-level">1</span></div>
+            <div class="lvl-badge" id="lvl-badge" role="button" tabindex="0" aria-label="Voir les niveaux" onclick="openLevels()"><i data-spr="ui:star" class="spr-slot"></i><span id="ui-level">1</span></div>
             <div class="xpbar"><div id="ui-xp-bar"></div><span id="ui-xp-text">0 / 100</span></div>
         </div>
         <div class="hud-right">
@@ -6719,6 +6780,20 @@ body.wide #toolbar {
             <h2 id="tip-title"></h2>
             <p id="tip-text"></p>
             <button class="btn gold wide" onclick="closeModal('tip-modal')">Compris !</button>
+        </div>
+    </div>
+
+    <div id="levels-modal" class="modal">
+        <div class="modal-box board levels sheet">
+            <h2>Les niveaux</h2>
+            <div class="lv-nav">
+                <button class="btn small" id="lv-prev" onclick="stepLevels(-1)" aria-label="Niveau précédent">‹</button>
+                <div class="lv-head"><b id="lv-title">Niveau 2</b><small id="lv-status"></small></div>
+                <button class="btn small" id="lv-next" onclick="stepLevels(1)" aria-label="Niveau suivant">›</button>
+            </div>
+            <div class="lv-strip" id="lv-strip"></div>
+            <div class="modal-list" id="lv-list"></div>
+            <button class="btn green wide" onclick="closeModal('levels-modal')">Fermer</button>
         </div>
     </div>
 
@@ -10839,7 +10914,7 @@ const EVENTS = {
     hiver: { name: 'Marché de Noël', icon: ['ui', 's_winter'], effect: 'Les trains de marchandises paient 30 % de plus pendant la fête.' },
 };
 
-const GAME_VERSION = '2.0.1';
+const GAME_VERSION = '2.0.2';
 
 const BACKUP_KEY = SAVE_KEY + '_secours';
 
@@ -16845,6 +16920,58 @@ function respecSkills(btn) {
     renderSkills();
     updateHeader();
     saveState();
+}
+
+// ---------------- Les niveaux : ce que chaque niveau débloque, passé et à venir ----------------
+// expérience qu'il reste à gagner pour atteindre le niveau L
+function xpToLevel(L) {
+    let need = -state.xp;
+    for (let l = state.level; l < L; l++) need += getXpReq(l);
+    return Math.max(0, need);
+}
+
+function openLevels() {
+    ui.lvView = Math.min(MAX_LEVEL, state.level + 1);
+    renderLevels();
+    openModal('levels-modal');
+    sfx('click');
+}
+
+function stepLevels(d) {
+    ui.lvView = Math.max(1, Math.min(MAX_LEVEL, ui.lvView + d));
+    sfx('click');
+    renderLevels();
+}
+
+function pickLevel(l) {
+    ui.lvView = l;
+    sfx('click');
+    renderLevels();
+}
+
+function renderLevels() {
+    const L = ui.lvView;
+    $('lv-title').textContent = `Niveau ${L}`;
+    $('lv-status').textContent =
+        L < state.level
+            ? 'Déjà débloqué'
+            : L === state.level
+              ? 'Votre niveau actuel'
+              : `Encore ${fmt(xpToLevel(L))} points d'expérience${L === state.level + 1 ? '' : ` (${L - state.level} niveaux)`}`;
+    $('lv-prev').disabled = L <= 1;
+    $('lv-next').disabled = L >= MAX_LEVEL;
+    $('lv-strip').innerHTML = Array.from({ length: MAX_LEVEL }, (_, k) => k + 1)
+        .map(
+            l =>
+                `<button class="lv-chip ${l < state.level ? 'done' : l === state.level ? 'now' : ''} ${l === L ? 'on' : ''}" onclick="pickLevel(${l})">${l}</button>`,
+        )
+        .join('');
+    const items = L === 1 ? [{ html: SPR.seed('wheat'), name: 'Graines de blé, le champ et le magasin' }] : unlocksAt(L);
+    $('lv-list').innerHTML = items
+        .map(u => `<div class="paper ${L <= state.level ? 'got' : ''}"><i class="ico">${u.html}</i><div>${u.name}</div></div>`)
+        .join('');
+    const on = $('lv-strip').querySelector('.on');
+    if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 
 // =====================================================================
