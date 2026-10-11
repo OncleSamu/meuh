@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#7cc8f0">
-    <title>Meuh 2.0.2</title>
+    <title>Meuh 2.2</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -6316,6 +6316,241 @@ body.wide #toolbar {
     opacity: 0.7;
 }
 
+/* ================= Meuh 2.1 : guide, objectif, onglets, lisibilité ================= */
+.help-q {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--ink);
+}
+@media (max-width: 380px) {
+    #btn-music {
+        display: none;
+    }
+}
+.guide-search {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px 14px;
+    border: 2.5px solid var(--ink);
+    border-radius: 12px;
+    font: inherit;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: #fff;
+    user-select: text;
+    -webkit-user-select: text;
+}
+.guide-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 58vh;
+    overflow-y: auto;
+    padding: 2px;
+    margin-bottom: 10px;
+}
+.guide-label {
+    font-weight: 800;
+    font-size: 0.8rem;
+    margin: 6px 4px 0;
+    opacity: 0.75;
+}
+.guide-page,
+.guide-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    text-align: left;
+    font: inherit;
+    color: var(--ink);
+}
+.guide-page {
+    cursor: pointer;
+}
+.guide-page.locked {
+    opacity: 0.55;
+    cursor: default;
+}
+.guide-page .card-main,
+.guide-item .card-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+.guide-page small {
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+.guide-page > .ico,
+.guide-item > .ico {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+}
+.guide-item .want {
+    color: #8e3f1e;
+    font-weight: 800;
+}
+.goal-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 6px 12px 6px 8px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: #fff6cf;
+    box-shadow: 0 3px 0 rgba(58, 38, 24, 0.4);
+    font: inherit;
+    font-size: 0.82rem;
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+}
+.goal-line[hidden] {
+    display: none;
+}
+.goal-line .ico {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+}
+.goal-line span {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.tab.locked {
+    opacity: 0.45;
+    filter: grayscale(0.8);
+}
+html.huge-text {
+    font-size: 125%;
+}
+.set-val {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 0.85rem;
+}
+body.contrast .card-sub,
+body.contrast small,
+body.contrast .hint {
+    opacity: 1 !important;
+    color: var(--ink);
+}
+body.contrast .paper,
+body.contrast .board {
+    border-color: #000;
+}
+
+/* ================= Meuh 2.2 : surprises ================= */
+.rare-card,
+.contract-card {
+    padding: 12px;
+    margin-bottom: 12px;
+}
+.rare-card {
+    background: #fff6cf;
+}
+.critic-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    margin-top: 8px;
+}
+.critic-row > .ico {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+}
+.critic-row .card-main {
+    flex: 1;
+    min-width: 0;
+}
+.star-animal {
+    filter: drop-shadow(0 0 4px #ffd23f);
+}
+.critter.star .critter-body {
+    filter: drop-shadow(0 0 5px #ffd23f);
+}
+.vstory {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 2px dashed rgba(58, 38, 24, 0.45);
+    background: rgba(255, 246, 207, 0.7);
+}
+.vstory.done {
+    border-style: solid;
+    background: #e8f6d8;
+}
+.vstory b {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.82rem;
+}
+.vstory b .ico {
+    width: 18px;
+    height: 18px;
+}
+.vstory-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+.vstory-need {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: 800;
+    font-size: 0.8rem;
+}
+.vstory-need.ok {
+    color: var(--leaf-d);
+}
+.vstory-need .pgo {
+    width: 28px;
+    height: 28px;
+}
+.vstory-row .btn {
+    margin-left: auto;
+}
+#weather .flutter {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cg stroke='%233a2618' stroke-width='1'%3E%3Cellipse cx='30' cy='40' rx='6' ry='5' fill='%23f5a623'/%3E%3Cellipse cx='40' cy='40' rx='6' ry='5' fill='%23f5a623'/%3E%3Cellipse cx='140' cy='120' rx='6' ry='5' fill='%23e8364b'/%3E%3Cellipse cx='150' cy='120' rx='6' ry='5' fill='%23e8364b'/%3E%3Cellipse cx='80' cy='170' rx='5' ry='4' fill='%239a6fd0'/%3E%3Cellipse cx='89' cy='170' rx='5' ry='4' fill='%239a6fd0'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    animation: flutter 9s linear infinite;
+}
+@keyframes flutter {
+    to {
+        background-position: 200px -200px;
+    }
+}
+body.butterflies #weather .flutter {
+    opacity: 0.9;
+}
+body.calm #weather .flutter {
+    animation: none;
+}
+
     </style>
 </head>
 <body>
@@ -6344,7 +6579,7 @@ body.wide #toolbar {
         </svg>
     </div>
     <div id="night"></div>
-    <div id="weather" aria-hidden="true"><div class="rain r1"></div><div class="rain r2"></div><div class="snow s1"></div><div class="snow s2"></div><div class="heat"></div><div class="rainbow"></div><div class="leaves"></div><div class="petals"></div></div>
+    <div id="weather" aria-hidden="true"><div class="rain r1"></div><div class="rain r2"></div><div class="snow s1"></div><div class="snow s2"></div><div class="heat"></div><div class="rainbow"></div><div class="leaves"></div><div class="petals"></div><div class="flutter"></div></div>
     <div id="flash" aria-hidden="true"></div>
 
     <!-- HUD -->
@@ -6357,6 +6592,7 @@ body.wide #toolbar {
             <div class="pill" id="coin-pill"><i class="ico" data-spr="ui:coin"></i><span id="ui-money">100</span></div>
             <button class="pill barn-pill" id="barn-pill" aria-label="Grange" onclick="openBarn()"><i class="ico" data-spr="ui:barn"></i><span id="ui-barn">0/50</span></button>
             <button class="icon-btn" id="btn-music" aria-label="Musique" onclick="toggleSetting('music')"><i data-spr="ui:music" class="spr-slot"></i></button>
+            <button class="icon-btn" id="btn-help" aria-label="Guide du fermier" onclick="openGuide()"><span class="help-q">?</span></button>
             <button class="icon-btn" id="btn-settings" aria-label="Réglages" onclick="openSettings()"><i data-spr="ui:gear" class="spr-slot"></i></button>
         </div>
     </header>
@@ -6382,6 +6618,7 @@ body.wide #toolbar {
                     <button class="btn green small" id="btn-harvest-all" onclick="actionHarvestAll(this)"><i class="ico" data-spr="ui:basket"></i>Récolter</button>
                 </div>
             </div>
+            <button class="goal-line" id="goal-line" hidden onclick="goGoal()"></button>
             <div class="todo" id="todo" aria-label="À faire"></div>
             <button class="event-banner" id="event-banner" hidden onclick="switchView('quests')"></button>
             <button class="farmyard board" id="farmyard" onclick="openHouse()" aria-label="Maison de la ferme"></button>
@@ -6427,7 +6664,9 @@ body.wide #toolbar {
                 <div id="balloon-container"></div>
             </div>
             <div id="qpane-village" hidden>
+                <div id="rare-container"></div>
                 <div id="story-container"></div>
+                <div id="contract-container"></div>
                 <div id="neighbors-container"></div>
                 <div id="merchant-container"></div>
                 <div id="contest-container"></div>
@@ -6586,7 +6825,8 @@ body.wide #toolbar {
                     <button class="set-row" onclick="toggleSetting('autoReplant')"><span>Replanter après la récolte</span><span class="switch" id="sw-replant" role="switch"></span></button>
                     <button class="set-row" onclick="toggleRemind()"><span>Rappels (train en gare, cultures prêtes…) quand le jeu est en arrière-plan</span><span class="switch" id="sw-remind" role="switch"></span></button>
                     <button class="set-row" onclick="toggleSetting('calm')"><span>Animations réduites</span><span class="switch" id="sw-calm" role="switch"></span></button>
-                    <button class="set-row" onclick="toggleSetting('bigText')"><span>Texte plus grand</span><span class="switch" id="sw-bigtext" role="switch"></span></button>
+                    <button class="set-row" onclick="cycleTextSize()"><span>Taille du texte</span><b class="set-val" id="ts-value">Normale</b></button>
+                    <button class="set-row" onclick="toggleSetting('contrast')"><span>Contraste renforcé</span><span class="switch" id="sw-contrast" role="switch"></span></button>
                     <p class="card-sub" id="keys-row">Au clavier : 1 à 8 pour les onglets, A pour arroser, R pour récolter ou ramasser, N pour nourrir, V pour tout vendre, Échap pour fermer.</p>
                 </div>
                 <div class="set-group">
@@ -6780,6 +7020,15 @@ body.wide #toolbar {
             <h2 id="tip-title"></h2>
             <p id="tip-text"></p>
             <button class="btn gold wide" onclick="closeModal('tip-modal')">Compris !</button>
+        </div>
+    </div>
+
+    <div id="guide-modal" class="modal">
+        <div class="modal-box board guide sheet">
+            <h2>Guide du fermier</h2>
+            <input type="search" class="guide-search" id="guide-search" placeholder="Chercher un produit ou un sujet…" oninput="searchGuide(this.value)" autocomplete="off">
+            <div class="guide-body" id="guide-body"></div>
+            <button class="btn green wide" onclick="closeModal('guide-modal')">Fermer</button>
         </div>
     </div>
 
@@ -10445,6 +10694,150 @@ const SPR = (() => {
             FC(40, 29, 1.6, '#fff'),
     });
 
+    // ================= Meuh 2.2 : nouveaux animaux, produits, événements =================
+    Object.assign(animals, {
+        peacock: () =>
+            SHADOW(40, 73, 22, 3.5) +
+            [-60, -35, -10, 15, 40]
+                .map(
+                    a =>
+                        `<g transform="rotate(${a} 30 50)">${E(30, 22, 7, 22, '#2f9e8f', 0, 1.8) + C(30, 10, 4.5, '#3f6fb5', 1.4) + FC(30, 10, 2, '#ffd23f')}</g>`,
+                )
+                .join('') +
+            leg('M40 58 L39 70', '#8f8574') +
+            leg('M48 58 L49 70', '#8f8574') +
+            E(44, 50, 12, 10, '#3f6fb5') +
+            P('M50 44 C52 34 54 24 58 20 C62 18 66 22 64 26 C60 30 58 36 56 46Z', '#3f6fb5') +
+            P('M64 24 L71 25 L64 28Z', '#f5a623', 1.6) +
+            eye(61, 22) +
+            L('M60 18 L58 12 M62 18 L62 11 M64 19 L66 13', 1.4) +
+            FC(58, 12, 1.6, '#2f9e8f') +
+            FC(62, 11, 1.6, '#2f9e8f') +
+            FC(66, 13, 1.6, '#2f9e8f') +
+            HL(40, 45, 5, 2.5, -20, 0.5),
+        alpaca: () =>
+            SHADOW(38, 73, 22, 3.5) +
+            leg('M26 56 L26 71', '#f3e2c4') +
+            leg('M34 58 L34 72', '#f3e2c4') +
+            leg('M46 58 L46 72', '#f3e2c4') +
+            leg('M53 56 L53 71', '#f3e2c4') +
+            [20, 28, 36, 44, 52, 58].map((x, k) => C(x, 44 + (k % 2) * 3, 9, '#f7ecd8')).join('') +
+            E(38, 48, 22, 12, '#f7ecd8') +
+            P('M52 44 L54 18 Q56 10 64 12 Q70 14 68 22 L62 26 L60 46Z', '#f7ecd8') +
+            [56, 61, 66].map(x => C(x, 12, 4, '#f7ecd8')).join('') +
+            P('M58 8 L57 2 L61 6Z', '#f7ecd8', 1.6) +
+            P('M65 8 L67 2 L68 8Z', '#f7ecd8', 1.6) +
+            eye(63, 18) +
+            E(68, 23, 3.5, 2.5, '#e8c38c', 0, 1.6) +
+            FC(69, 22.5, 0.9, O),
+        buffalo: () =>
+            SHADOW(38, 74, 27, 3.5) +
+            leg('M18 52 L18 71', '#4a4f57') +
+            leg('M28 54 L28 72', '#4a4f57') +
+            leg('M46 54 L46 72', '#4a4f57') +
+            leg('M56 52 L56 71', '#4a4f57') +
+            L('M8 38 Q3 48 6 56', 2.5) +
+            R(8, 28, 54, 30, 15, '#5e6670') +
+            HL(22, 34, 8, 3, -10, 0.35) +
+            P('M50 22 Q36 14 40 26 Q44 22 52 26Z', '#d8d0c2', 1.8) +
+            P('M78 22 Q92 14 88 26 Q84 22 76 26Z', '#d8d0c2', 1.8) +
+            E(64, 32, 13, 13, '#5e6670') +
+            E(64, 41, 10, 6.5, '#8f8574') +
+            FE(60, 41, 1.6, 1.2, O) +
+            FE(68, 41, 1.6, 1.2, O) +
+            eye(58, 29) +
+            eye(70, 29),
+        donkey: () =>
+            SHADOW(38, 73, 24, 3.5) +
+            leg('M20 52 L20 71', '#a7adb4') +
+            leg('M28 54 L28 72', '#a7adb4') +
+            leg('M46 54 L46 72', '#a7adb4') +
+            leg('M54 52 L54 71', '#a7adb4') +
+            L('M10 36 Q4 44 6 54', 2.5) +
+            FE(6, 55, 2.5, 3.5, '#3a2618') +
+            R(10, 30, 50, 26, 13, '#a7adb4') +
+            E(34, 50, 14, 5, '#e9eef2', 0, 0) +
+            P('M50 36 L56 16 Q60 8 68 12 L74 24 Q76 30 70 32 L62 30 L60 40Z', '#a7adb4') +
+            E(56, 6, 3.5, 10, '#a7adb4', -15) +
+            E(65, 6, 3.5, 10, '#a7adb4', 15) +
+            FE(56, 7, 1.5, 6, '#f6a5b5', 0.8, -15) +
+            FE(65, 7, 1.5, 6, '#f6a5b5', 0.8, 15) +
+            L('M54 18 Q50 26 52 34', 3, '#5e5548') +
+            E(71, 27, 5, 4, '#e9eef2', 0, 1.6) +
+            eye(64, 18),
+    });
+    Object.assign(items, {
+        peacockFeather: () =>
+            SHADOW(32, 58, 12, 2.5) +
+            L('M18 58 Q30 40 44 10', 2, '#8b5a2b') +
+            E(40, 20, 9, 15, '#2f9e8f', 25, 2) +
+            E(41, 19, 5, 8, '#3f6fb5', 25, 1.4) +
+            C(41.5, 18.5, 3, '#ffd23f', 1.2) +
+            L('M30 38 L22 34 M33 32 L26 27 M28 44 L20 42', 1.4, '#2f9e8f'),
+        alpacaWool: () => yarn('#f7ecd8'),
+        buffaloMilk: () => bottle('#ffffff', null, '#e4f5ff', '#5e6670'),
+        donkeyMilk: () => bottle('#fbf5ea', null, '#e4f5ff', '#a7adb4'),
+        alpacaYarn: () => yarn('#e8c38c') + C(18, 20, 6, '#f7ecd8', 1.6),
+        alpacaScarf: () =>
+            SHADOW(32, 58, 22, 3) +
+            P('M12 14 Q32 26 52 14 L54 24 Q32 36 10 24Z', '#4b5bb8') +
+            P('M40 26 L50 56 L40 58 L32 30Z', '#4b5bb8') +
+            L('M14 20 Q32 30 52 19 M38 34 L46 54', 1.4, '#f7ecd8') +
+            L('M40 58 L40 62 M44 57 L45 62 M48 56 L49 61', 1.6, '#4b5bb8'),
+        featherFan: () =>
+            SHADOW(32, 58, 22, 3) +
+            [-50, -25, 0, 25, 50]
+                .map(
+                    a =>
+                        `<g transform="rotate(${a} 32 52)">${E(32, 26, 7, 20, '#2f9e8f', 0, 1.6) + C(32, 14, 4, '#3f6fb5', 1.2) + FC(32, 14, 1.8, '#ffd23f')}</g>`,
+                )
+                .join('') +
+            C(32, 52, 5, '#a8693a'),
+        mozzarella: () => plateB() + C(26, 40, 10, '#ffffff') + C(40, 42, 9, '#ffffff') + HL(23, 36, 3, 2, -30, 0.5) + leaf(44, 34, 9, -40, G, 0.45),
+        caprese: () =>
+            plateB() +
+            [
+                [18, 44, '#e2412f'],
+                [28, 40, '#ffffff'],
+                [38, 44, '#e2412f'],
+                [46, 40, '#ffffff'],
+            ]
+                .map(([x, y, c]) => E(x, y, 6, 5, c, 0, 1.6))
+                .join('') +
+            leaf(30, 36, 7, -60, G, 0.5) +
+            leaf(42, 37, 7, -120, G, 0.5),
+        donkeySoap: () => soap('#fbf5ea', 'donkeyMilk'),
+        donkeyCream: () => jar('#fbf5ea', '#9a6fd0', 'donkeyMilk'),
+    });
+    Object.assign(ui, {
+        fair: () =>
+            SHADOW(32, 58, 26, 3) +
+            P('M6 56 L6 26 L32 10 L58 26 L58 56Z', '#e8364b') +
+            P('M6 26 L32 10 L58 26 L52 30 L32 18 L12 30Z', '#ffd23f', 2) +
+            R(22, 34, 20, 22, 2, '#f7f3ea') +
+            L('M14 30 L14 56 M50 30 L50 56', 2, '#ffd23f'),
+        critic: () =>
+            SHADOW(32, 59, 18, 3) +
+            P('M10 66 C10 52 20 46 32 46 C44 46 54 52 54 66Z', '#3a2618') +
+            P('M28 46 L32 54 L36 46Z', '#ffffff', 1.6) +
+            C(32, 30, 13, '#f6cfa6') +
+            C(27, 30, 3.5, 'none', 1.6) +
+            C(37, 30, 3.5, 'none', 1.6) +
+            L('M30.5 30 L33.5 30', 1.6) +
+            L('M26 37 Q32 35 38 37', 1.8) +
+            P('M20 22 Q32 10 44 22 L44 18 Q32 2 20 18Z', '#3a2618') +
+            L('M46 40 L52 18 M50 18 L54 18', 2, '#8a8f98'),
+        butterfly: () =>
+            E(22, 24, 12, 14, '#f5a623', -20, 2) +
+            E(42, 24, 12, 14, '#f5a623', 20, 2) +
+            E(24, 44, 9, 10, '#e8364b', 20, 2) +
+            E(40, 44, 9, 10, '#e8364b', -20, 2) +
+            FC(22, 22, 3, '#fff', 0.7) +
+            FC(42, 22, 3, '#fff', 0.7) +
+            R(30, 18, 4, 34, 2, '#3a2618', 1) +
+            L('M31 18 Q26 8 22 8 M33 18 Q38 8 42 8', 1.6),
+    });
+
     // API publique
     return {
         farmhouse(l, roof) {
@@ -10914,7 +11307,7 @@ const EVENTS = {
     hiver: { name: 'Marché de Noël', icon: ['ui', 's_winter'], effect: 'Les trains de marchandises paient 30 % de plus pendant la fête.' },
 };
 
-const GAME_VERSION = '2.0.2';
+const GAME_VERSION = '2.2';
 
 const BACKUP_KEY = SAVE_KEY + '_secours';
 
@@ -12312,6 +12705,371 @@ const TIPS_5 = {
 };
 
 // =====================================================================
+//  Meuh 2.1 et 2.2 : nouveaux animaux et recettes, événements rares,
+//  contrats de saison, histoires des villageois, guide du fermier.
+// =====================================================================
+
+// ---------------- Quatre nouveaux animaux ----------------
+Object.assign(DB.Items, {
+    peacockFeather: { id: 'peacockFeather', name: 'Plume de paon', type: 'product', sell: 700 },
+    alpacaWool: { id: 'alpacaWool', name: "Laine d'alpaga", type: 'product', sell: 520 },
+    buffaloMilk: { id: 'buffaloMilk', name: 'Lait de bufflonne', type: 'product', sell: 380 },
+    donkeyMilk: { id: 'donkeyMilk', name: "Lait d'ânesse", type: 'product', sell: 480 },
+});
+Object.assign(DB.Animals, {
+    peacock: { id: 'peacock', name: 'Paon', prodId: 'peacockFeather', cost: 9000, time: 1800, reqLvl: 20, xp: Math.round(320 * BALANCE.animalXp) },
+    alpaca: { id: 'alpaca', name: 'Alpaga', prodId: 'alpacaWool', cost: 12000, time: 1500, reqLvl: 24, xp: Math.round(300 * BALANCE.animalXp) },
+    buffalo: { id: 'buffalo', name: 'Bufflonne', prodId: 'buffaloMilk', cost: 20000, time: 1200, reqLvl: 30, xp: Math.round(280 * BALANCE.animalXp) },
+    donkey: { id: 'donkey', name: 'Ânesse', prodId: 'donkeyMilk', cost: 25000, time: 1500, reqLvl: 33, xp: Math.round(330 * BALANCE.animalXp) },
+});
+Object.assign(GROW, { peacock: 1000, alpaca: 1200, buffalo: 1500, donkey: 1500 });
+Object.assign(NAMES, {
+    peacock: ['Narcisse', 'Saphir', 'Paonne', 'Majesté', 'Éventail', 'Topaze'],
+    alpaca: ['Pompon', 'Lama-Lama', 'Frisette', 'Inca', 'Doudou', 'Machu'],
+    buffalo: ['Bella', 'Mozza', 'Napoli', 'Rosina', 'Bufala', 'Sofia'],
+    donkey: ['Cadichon', 'Grisette', 'Hi-Han', 'Pâquerette', 'Bourrique', 'Anatole'],
+});
+// le paon fait le beau : du charme pour le concours
+const PEACOCK_CHARM = 15;
+
+const SURPRISE_RECIPES = {
+    alpacaYarn: ['loom', "Pelote d'alpaga", { alpacaWool: 2 }, 240],
+    alpacaScarf: ['tailor', 'Écharpe en alpaga', { alpacaYarn: 2, blueDye: 1 }, 420],
+    featherFan: ['tailor', 'Éventail de plumes', { peacockFeather: 3, cloth: 1 }, 360],
+    mozzarella: ['dairy', 'Mozzarella', { buffaloMilk: 2 }, 300],
+    caprese: ['kitchen', 'Salade caprese', { mozzarella: 1, tomato: 3, oliveOil: 1 }, 240],
+    donkeySoap: ['soapworks', "Savon au lait d'ânesse", { donkeyMilk: 1, oliveOil: 1, lavender: 1 }, 300],
+    donkeyCream: ['soapworks', "Crème au lait d'ânesse", { donkeyMilk: 2, wax: 1 }, 360],
+};
+
+(function setupSurprises() {
+    const avail = id => {
+        if (RECIPES[id]) return RECIPES[id].lvl;
+        const a = Object.values(DB.Animals).find(x => x.prodId === id);
+        if (a) return a.reqLvl;
+        return DB.Items[id].reqLvl || 1;
+    };
+    for (const [id, [machine, name, ing, time]] of Object.entries(SURPRISE_RECIPES)) {
+        DB.Items[id] = { id, name, type: 'artisan' };
+        const lvl = Math.max(DB.Machines[machine].reqLvl, ...Object.keys(ing).map(avail));
+        const value = Object.entries(ing).reduce((a, [k, n]) => a + ingValue(k) * n, 0);
+        DB.Items[id].sell = Math.round((value * 1.25 + time * 0.3 + 5) / 5) * 5;
+        RECIPES[id] = { id, machine, ing, time, lvl, base: lvl };
+        RECIPES[id].xp = Math.max(1, Math.round(Math.max(5, Math.round(time / 10 + DB.Items[id].sell / 30)) * BALANCE.craftXp));
+    }
+    VILLAGERS.rose.likes.push('featherFan');
+    VILLAGERS.gaston.likes.push('mozzarella', 'caprese');
+    VILLAGERS.ines.likes.push('alpacaScarf');
+    VILLAGERS.odette.likes.push('donkeySoap');
+})();
+
+// ---------------- Événements rares ----------------
+const RARE_EVENT_LVL = 10;
+const RARE_EVENT_GAP = [90 * 60 * 1000, 180 * 60 * 1000]; // entre deux événements, en temps de jeu
+const RARE_EVENTS = {
+    fair: {
+        name: 'Foire aux bestiaux',
+        icon: 'fair',
+        time: 30 * 60 * 1000,
+        weight: 1,
+        text: 'Des éleveurs de tout le canton sont au village : deux animaux d’exception à vendre, qui produisent 50 % plus vite.',
+    },
+    critic: {
+        name: 'Un critique gastronomique',
+        icon: 'critic',
+        time: 20 * 60 * 1000,
+        weight: 2,
+        text: 'Le célèbre critique Auguste Fourchette veut goûter un de vos plats. Plus vous maîtrisez la recette, meilleure sera sa note.',
+    },
+    butterflies: {
+        name: 'Nuée de papillons',
+        icon: 'butterfly',
+        time: 10 * 60 * 1000,
+        weight: 2,
+        text: 'Des papillons butinent le champ : les récoltes dorées sont trois fois plus fréquentes.',
+    },
+};
+const STAR_ANIMAL_SPEED = 1.5;
+
+// ---------------- Contrats de saison ----------------
+const CONTRACT_LVL = 12;
+
+// ---------------- Histoires des villageois (à 5 cœurs) ----------------
+const STORIES = {
+    odette: {
+        title: 'Le carnet de Mamie',
+        steps: [
+            ['J’ai retrouvé le carnet de recettes de ma mère ! Il commence par les confitures d’antan.', { jam: 4 }],
+            ['Page suivante : les tartes du dimanche. Tu m’aides à les refaire ?', { pie: 5 }],
+            ['Et pour finir, un grand goûter pour tout le village, comme autrefois.', { cookies: 8, juice: 8 }],
+        ],
+        end: 'Le goûter était parfait. Ce carnet est à toi maintenant : tu en es digne.',
+    },
+    gaston: {
+        title: 'Le concours de cuisine',
+        steps: [
+            ['Je me suis inscrit au concours régional ! Il me faut d’abord une sauce irréprochable.', { sauce: 6 }],
+            ['Le jury goûtera aussi des omelettes. Des œufs frais, cuits à la perfection !', { omelette: 6 }],
+            ['La finale : mon gratin, avec du bon pain pour saucer.', { gratin: 3, bread: 10 }],
+        ],
+        end: 'Premier prix ! La médaille est dans ma cuisine, mais la moitié est à toi.',
+    },
+    lucie: {
+        title: 'Le spectacle de l’école',
+        steps: [
+            ['On prépare un spectacle ! Il nous faut du tissu pour les costumes.', { cloth: 6 }],
+            ['La maîtresse veut un goûter pour les répétitions. Du pain de maïs, s’il te plaît !', { cornbread: 6 }],
+            ['Le jour J, on décore la salle avec des fraises et de la confiture pour l’entracte !', { strawberry: 20, jam: 4 }],
+        ],
+        end: 'Tout le monde a applaudi ! Je t’ai gardé une place au premier rang pour la prochaine fois.',
+    },
+    paul: {
+        title: 'La vitrine de l’épicerie',
+        steps: [
+            ['Je refais ma vitrine. Il me faut de la belle farine en sacs.', { flour: 15 }],
+            ['Des baguettes dorées, bien alignées, ça attire l’œil.', { baguette: 10 }],
+            ['Pour finir, le coin des produits fins : du miel et du fromage.', { honey: 6, cheese: 4 }],
+        ],
+        end: 'Les clients s’arrêtent tous devant la vitrine. Merci, associé !',
+    },
+    rose: {
+        title: 'Le mariage de la fleuriste',
+        steps: [
+            ['Je me marie au printemps ! Il me faut de la lavande pour les bouquets.', { lavender: 15 }],
+            ['Des petits savons parfumés pour les invités, ce serait si joli.', { lavenderSoap: 4 }],
+            ['Et la nappe du banquet, avec des fraises pour le dessert.', { cottonFabric: 4, strawberry: 15 }],
+        ],
+        end: 'Quelle fête ! Tu étais le témoin rêvé, même sans le savoir.',
+    },
+    marcel: {
+        title: 'La pêche du siècle',
+        steps: [
+            ['On raconte qu’une truite géante vit dans l’étang. Commençons par en attraper quelques-unes.', { trout: 6 }],
+            ['Fumons-les pour l’appât. Les grosses ne résistent pas à l’odeur.', { smokedTrout: 4 }],
+            ['Ce soir, on la sort ! Une soupe chaude et du pain pour tenir la nuit.', { fishSoup: 3, bread: 6 }],
+        ],
+        end: 'On l’a vue ! Bon, elle s’est échappée… Mais quelle nuit, hein ?',
+    },
+    jules: {
+        title: 'Le grand prix du haras',
+        steps: [
+            ['Mes chevaux courent le grand prix ! D’abord, des fers neufs pour chacun.', { horseshoe: 6 }],
+            ['Il leur faut des forces : des pommes, beaucoup de pommes.', { apple: 30 }],
+            ['Le jour de la course, crinières tressées et carottes pour la victoire.', { horsehair: 12, carrot: 40 }],
+        ],
+        end: 'Victoire ! La coupe trône au haras, avec ton nom gravé dessous.',
+    },
+    ines: {
+        title: 'L’exposition d’Inès',
+        steps: [
+            ['On m’invite à exposer en ville ! Je commence par une série de bols.', { clayBowl: 10 }],
+            ['Il me faut quelques vases pour le centre de la salle.', { vase: 4 }],
+            ['La pièce maîtresse : des vases peints, en bleu profond.', { paintedVase: 2, blueDye: 4 }],
+        ],
+        end: 'Tout est vendu le premier soir ! Le plus beau vase t’attend chez toi.',
+    },
+};
+
+// ---------------- Guide du fermier (2.1) ----------------
+// lvl : niveau à partir duquel la page est utile ; view : l'onglet où ça se passe
+const GUIDE = [
+    {
+        id: 'field',
+        icon: ['item', 'wheat'],
+        name: 'Le champ',
+        lvl: 1,
+        view: 'farm',
+        text: 'Labourez, plantez, arrosez, récoltez. Glissez le doigt pour enchaîner plusieurs parcelles. Achetez de nouvelles parcelles avec le cadenas.',
+    },
+    {
+        id: 'seasons',
+        icon: ['ui', 's_spring'],
+        name: 'Saisons et météo',
+        lvl: 1,
+        view: 'farm',
+        text: 'Une culture de saison pousse 30 % plus vite. La pluie arrose pour vous, la canicule assèche, l’orage peut brûler une culture sans paratonnerre, l’arc-en-ciel donne des récoltes dorées. Touchez l’horloge pour l’almanach.',
+    },
+    {
+        id: 'soil',
+        icon: ['ui', 'soilWet'],
+        name: 'Les sols',
+        lvl: 4,
+        view: 'farm',
+        text: 'Chaque parcelle a un sol (humide, sec, ombragé). Une culture dans le sol qu’elle aime pousse plus vite et donne plus souvent des récoltes de qualité.',
+    },
+    {
+        id: 'animals',
+        icon: ['animal', 'chicken'],
+        name: 'Les animaux',
+        lvl: 2,
+        view: 'animals',
+        text: 'Nourrissez-les avec la nourriture du moulin, ramassez leurs produits. Un câlin par jour les rend plus productifs. La mangeoire automatique les nourrit seule.',
+    },
+    {
+        id: 'workshop',
+        icon: ['machine', 'bakery'],
+        name: 'L’atelier',
+        lvl: 3,
+        view: 'machines',
+        text: 'Chaque machine enchaîne plusieurs lots. Le bouton Boucle relance la dernière recette tant qu’il y a les ingrédients.',
+    },
+    {
+        id: 'barn',
+        icon: ['ui', 'barn'],
+        name: 'La grange',
+        lvl: 1,
+        view: 'farm',
+        text: 'Elle range vos produits. Pleine, elle bloque les récoltes : vendez, livrez ou agrandissez-la avec planches, clous et peinture. Touchez le compteur en haut.',
+    },
+    {
+        id: 'orders',
+        icon: ['ui', 'scroll'],
+        name: 'Les commandes',
+        lvl: 1,
+        view: 'quests',
+        text: 'La meilleure source de pièces et d’expérience. Touchez un produit manquant pour aller le produire. Épinglez une commande pour la garder sous les yeux.',
+    },
+    {
+        id: 'stall',
+        icon: ['ui', 'stall'],
+        name: 'L’étal et le grossiste',
+        lvl: 1,
+        view: 'market',
+        text: 'L’étal vend au prix que vous fixez, mais les clients prennent leur temps. Le grossiste achète tout de suite, moins cher.',
+    },
+    {
+        id: 'village',
+        icon: ['ui', 'village'],
+        name: 'Le village et le hameau',
+        lvl: 2,
+        view: 'quests',
+        text: 'Six chapitres de chantiers à rénover avec vos produits. Chaque bâtiment donne un bonus pour toujours : le train, la montgolfière, le marchand, le commis…',
+    },
+    {
+        id: 'friends',
+        icon: ['ui', 'heart'],
+        name: 'Les villageois',
+        lvl: 2,
+        view: 'quests',
+        text: 'Livrez leurs commandes et offrez-leur ce qu’ils aiment (un cadeau par jour). L’amitié débloque des recettes ; à 5 cœurs, chacun vous confie son histoire.',
+    },
+    {
+        id: 'train',
+        icon: ['ui', 'trainIcon'],
+        name: 'Train et montgolfière',
+        lvl: 3,
+        view: 'quests',
+        text: 'De grosses livraisons bien payées, qui reviennent régulièrement. Chaque cheval fait revenir le train plus tôt.',
+    },
+    {
+        id: 'neighbors',
+        icon: ['villager', 'hortense'],
+        name: 'Les fermes voisines',
+        lvl: 6,
+        view: 'quests',
+        text: 'Vos rivales du concours demandent parfois de l’aide. Leur amitié rapporte matériaux rares et cadeaux.',
+    },
+    {
+        id: 'contest',
+        icon: ['ui', 'podium'],
+        name: 'Concours et ligues',
+        lvl: 4,
+        view: 'quests',
+        text: 'Chaque semaine, tout ce que vous faites rapporte des points. Trois paliers à réclamer ; le premier monte de ligue (bronze, argent, or, diamant).',
+    },
+    {
+        id: 'contract',
+        icon: ['ui', 'calendar'],
+        name: 'Contrats de saison',
+        lvl: CONTRACT_LVL,
+        view: 'quests',
+        text: 'Un client demande une grosse quantité d’un produit avant la fin de la saison. Livrez petit à petit : la récompense vaut le coup, avec des matériaux rares en prime.',
+    },
+    {
+        id: 'rare',
+        icon: ['ui', 'fair'],
+        name: 'Événements rares',
+        lvl: RARE_EVENT_LVL,
+        view: 'quests',
+        text: 'De temps en temps : foire aux bestiaux (animaux d’exception), critique gastronomique (une note de 1 à 5 étoiles), nuée de papillons (récoltes dorées).',
+    },
+    {
+        id: 'incidents',
+        icon: ['ui', 'pest'],
+        name: 'Les imprévus',
+        lvl: 3,
+        view: 'farm',
+        text: 'Corbeau, pucerons, animal malade, acheteur pressé : réagissez vite. Un épouvantail et un nichoir éloignent les corbeaux.',
+    },
+    {
+        id: 'nature',
+        icon: ['item', 'wood'],
+        name: 'Forêt, mine et étang',
+        lvl: 3,
+        view: 'nature',
+        text: 'Bois et pierre pour construire, pierres précieuses pour la joaillerie, poissons pour la cuisine. Améliorez la hache et la pioche avec des outils.',
+    },
+    {
+        id: 'skills',
+        icon: ['ui', 'skillbook'],
+        name: 'Les compétences',
+        lvl: 2,
+        view: 'upgrades',
+        text: 'Un point par niveau, à placer dans l’agriculture, l’élevage ou le commerce. Vous pouvez les redistribuer contre des pièces.',
+    },
+    {
+        id: 'mastery',
+        icon: ['ui', 'medalG'],
+        name: 'La maîtrise',
+        lvl: MASTERY_LVL,
+        view: 'upgrades',
+        text: 'Produire beaucoup d’un même produit lui donne des étoiles (bronze, argent, or) : +5 % de prix par étoile, et l’or le rend 15 % plus rapide.',
+    },
+    {
+        id: 'house',
+        icon: ['ui', 'house'],
+        name: 'La maison et le commis',
+        lvl: 5,
+        view: 'farm',
+        text: 'Touchez la maison au-dessus du champ pour l’agrandir (5 niveaux de bonus) et la personnaliser. Théo, le commis, arrive avec le pont du hameau.',
+    },
+    {
+        id: 'book',
+        icon: ['ui', 'book'],
+        name: 'Le Livre de la ferme',
+        lvl: 1,
+        view: 'upgrades',
+        text: 'Collection, maîtrise, exploits, légende et album photo. Touchez l’étoile de niveau pour voir ce que chaque niveau débloque.',
+    },
+    {
+        id: 'legend',
+        icon: ['ui', 'goldCow'],
+        name: 'Fin de partie',
+        lvl: 30,
+        view: 'upgrades',
+        text: 'Au niveau 40, l’expérience donne des étoiles de renommée. Le grand but : devenir une Ferme légendaire. Vendre la ferme donne des rubans pour la suivante.',
+    },
+];
+
+const TIPS_6 = {
+    rareEvent: {
+        icon: ['ui', 'fair'],
+        title: 'Un événement rare !',
+        text: 'De temps en temps, quelque chose d’exceptionnel se passe au village ou à la ferme. Ça ne dure pas : regardez le volet Village.',
+    },
+    story: {
+        icon: ['ui', 'scroll'],
+        title: 'Une histoire commence',
+        text: 'À 5 cœurs, un villageois vous confie son histoire en trois étapes. Retrouvez-la sous sa fiche, dans le volet Village.',
+    },
+    contract: {
+        icon: ['ui', 'calendar'],
+        title: 'Un contrat de saison',
+        text: 'Un client veut une grosse quantité d’un produit avant la fin de la saison. Apportez-le petit à petit depuis le volet Village.',
+    },
+};
+
+// =====================================================================
 //  État de la partie : création, chargement, migrations et sauvegarde.
 // =====================================================================
 
@@ -12361,6 +13119,8 @@ function newState() {
             reserve: true,
             calm: false,
             remind: false,
+            textSize: 0,
+            contrast: false,
             bigText: false,
             lastView: 'farm',
         },
@@ -12447,6 +13207,9 @@ function newState() {
         legend: false,
         style: { fence: 'wood', path: 'grass', roof: 'auto', barn: '#c8453a', owned: {} },
         album: [],
+        rare: { type: null, until: 0, next: 0, offers: [], dish: null, served: false },
+        contract: null,
+        stories: {},
         crow: null,
         daily: { last: '', streak: 0 },
     };
@@ -12531,6 +13294,7 @@ function normalizeState() {
     // le commis arrive avec le pont du hameau
     if (projectDone('bridge') && !state.farmhand.lvl) state.farmhand.lvl = 1;
     if (state.level > MAX_LEVEL) state.level = MAX_LEVEL;
+    if (state.settings.bigText && !state.settings.textSize) state.settings.textSize = 1;
 }
 
 function fillGrid() {
@@ -14870,7 +15634,7 @@ function autoFeed(a) {
     state.inventory.feed -= n;
 }
 
-const animalMult = a => (1 + rank('fed') * 0.08) * (1 + ((a && a.love) || 0) * 0.04);
+const animalMult = a => (1 + rank('fed') * 0.08) * (1 + ((a && a.love) || 0) * 0.04) * starAnimalMult(a);
 
 const animalTime = a => DB.Animals[a.type].time / (speedMult() * animalMult(a) * masterySpeed(DB.Animals[a.type].prodId));
 
@@ -14926,10 +15690,11 @@ function babyBody(a) {
 function decorateCritter(a, i) {
     const el = ui.animalEls[i];
     if (!el) return;
-    const key = `${isAdult(a)}|${a.name}|${a.love}`;
+    const key = `${isAdult(a)}|${a.name}|${a.love}|${a.star ? 1 : 0}`;
     if (el._deco === key) return;
     el._deco = key;
     el.classList.toggle('baby', !isAdult(a));
+    el.classList.toggle('star', !!a.star);
     el.querySelector('.critter-body').innerHTML = isAdult(a) ? SPR.animal(a.type) : babyBody(a);
     let tag = el.querySelector('.critter-name');
     if (!tag) {
@@ -14937,7 +15702,7 @@ function decorateCritter(a, i) {
         tag.className = 'critter-name';
         el.appendChild(tag);
     }
-    tag.innerHTML = `${a.love ? `<i class="ico">${SPR.ui('heart')}</i>` : ''}${a.name}`;
+    tag.innerHTML = `${a.star ? `<i class="ico">${SPR.ui('star')}</i>` : ''}${a.love ? `<i class="ico">${SPR.ui('heart')}</i>` : ''}${a.name}`;
 }
 
 function openAnimalCard(i) {
@@ -15457,6 +16222,7 @@ function addFriendship(vid, pts, srcEl) {
         if (r.seeds) state.seeds[r.seeds[0]] += r.seeds[1];
         if (r.feed) state.inventory.feed += r.feed;
         ui.friendQueue.push({ vid, h: v.hearts, r });
+        if (v.hearts === 5 && STORIES[vid] && ui.started) tip('story');
         if (v.hearts === 5) addPhoto('villager', vid, `${VILLAGERS[vid].name}, amis pour la vie`, 'Cinq cœurs');
     }
     if (ui.friendQueue.length && !document.querySelector('.modal.active')) setTimeout(showNextFriend, 600);
@@ -15505,6 +16271,7 @@ function renderVillage() {
                 ${h < 5 ? `<div class="qbar pink"><div style="width:${pct}%"></div></div>` : ''}
                 <div class="likes"><span class="card-sub">Aime :</span>${v.likes.map(id => `<i class="ico ${state.inventory[id] > 0 ? '' : 'dim'}" title="${DB.Items[id].name}">${SPR.item(id)}</i>`).join('')}</div>
                 <div class="card-sub">${nextRewardText(v.id)}</div>
+                ${storyHtml(v.id)}
                 ${open ? `<div class="gift-row">${giftable.length ? giftable.map(id => `<button class="btn small" onclick="giveGift('${v.id}','${id}',this)">${ico('item', id)}${state.inventory[id]}</button>`).join('') : '<span class="card-sub">Vous n\'avez rien qu\'il ou elle aime en stock.</span>'}</div>` : ''}
             </div>
             <div class="card-actions"><button class="btn small ${gifted ? '' : 'gold'}" onclick="toggleGift('${v.id}')" ${gifted ? 'disabled' : ''}>${gifted ? 'Offert' : open ? 'Fermer' : 'Offrir'}</button></div>
@@ -16652,6 +17419,9 @@ function unlocksAt(lvl) {
     if (lvl === NATURE.mine.lvl) list.push({ html: SPR.item('stone'), name: 'La mine : cassez des rochers (onglet Nature)' });
     if (lvl === NATURE.pond.lvl) list.push({ html: SPR.ui('rod'), name: "L'étang : allez pêcher (onglet Nature)" });
     if (lvl === GH.lvl) list.push({ html: SPR.ui('greenhouse'), name: 'Serre (à construire dans la ferme)' });
+    if (lvl === CONTRACT_LVL)
+        list.push({ html: SPR.ui('calendar'), name: 'Contrats de saison : une grosse livraison par saison, avec un ruban (volet Village)' });
+    if (lvl === RARE_EVENT_LVL) list.push({ html: SPR.ui('fair'), name: 'Événements rares : foire aux bestiaux, critique gastronomique, nuée de papillons' });
     if (lvl === STYLE_LVL) list.push({ html: SPR.item('brush'), name: 'Personnalisation : clôture, allées, toit et grange (touchez la maison)' });
     if (lvl === MASTERY_LVL)
         list.push({ html: SPR.ui('medalB'), name: 'Maîtrise des produits : produisez beaucoup pour gagner des étoiles (Livre de la ferme)' });
@@ -17048,6 +17818,7 @@ function doPrestige() {
         legend: state.legend,
         style: state.style,
         album: state.album,
+        stories: state.stories,
         contest: state.contest,
         lastContest: state.lastContest,
         day: state.day,
@@ -17347,7 +18118,11 @@ function renderSettings() {
     set('sw-replant-farm', state.settings.autoReplant);
     set('sw-calm', state.settings.calm);
     set('sw-remind', remindOn());
-    set('sw-bigtext', state.settings.bigText);
+    set('sw-contrast', !!state.settings.contrast);
+    const ts = $('ts-value');
+    if (ts) ts.textContent = TEXT_SIZES[state.settings.textSize || 0];
+    document.body.classList.toggle('contrast', !!state.settings.contrast);
+    document.documentElement.classList.toggle('huge-text', (state.settings.textSize || 0) === 2);
     document.body.classList.toggle('calm', !!state.settings.calm);
     document.documentElement.classList.toggle('big-text', !!state.settings.bigText);
     $('keys-row').hidden = !(window.matchMedia && matchMedia('(hover: hover)').matches);
@@ -17977,6 +18752,26 @@ function todoList() {
 
     const sold = state.stall.slots.filter(s => s && s.sold).length;
     add('market', SPR.ui('stall'), `${sold} vente${sold > 1 ? 's' : ''} à encaisser`, sold);
+    if (state.rare.type && rareActive(state.rare.type) && state.rare.type !== 'butterflies')
+        list.push({
+            view: 'quests',
+            pane: 'village',
+            icon: SPR.ui(RARE_EVENTS[state.rare.type].icon),
+            text: RARE_EVENTS[state.rare.type].name,
+            n: 1,
+            urgent: true,
+        });
+    if (rareActive('butterflies')) list.unshift({ view: 'farm', icon: SPR.ui('butterfly'), text: 'Papillons : récoltes dorées !', n: 0 });
+    if (contractReady()) list.push({ view: 'quests', pane: 'village', icon: SPR.ui('calendar'), text: 'Contrat de saison prêt', n: 1 });
+    const stories = storiesReady();
+    if (stories)
+        list.push({
+            view: 'quests',
+            pane: 'village',
+            icon: SPR.ui('scroll'),
+            text: `${stories} histoire${stories > 1 ? 's' : ''} à faire avancer`,
+            n: stories,
+        });
     const neigh = neighborsReady();
     if (neigh) list.push({ view: 'quests', pane: 'village', icon: SPR.ui('heart'), text: `${neigh} voisin${neigh > 1 ? 's' : ''} à aider`, n: neigh });
 
@@ -18816,7 +19611,9 @@ function renderQuestsView() {
         renderBalloon();
         renderQuests();
     } else {
+        renderRare();
         renderStory();
+        renderContract();
         renderNeighbors();
         renderMerchant();
         renderContest();
@@ -19453,7 +20250,9 @@ const contestEndsIn = () => (state.contest ? Math.max(0, state.contest.end - Dat
 const contestFrac = (c, at = Date.now()) => Math.max(0, Math.min(c.end, at) - c.start) / WEEK_MS;
 
 const charmScore = () =>
-    state.grid.reduce((a, p) => a + (p.deco && DECOS[p.deco] ? DECOS[p.deco].charm || 0 : 0), 0) * (projectDone('florist') ? 2 : 1) + styleCharm();
+    state.grid.reduce((a, p) => a + (p.deco && DECOS[p.deco] ? DECOS[p.deco].charm || 0 : 0), 0) * (projectDone('florist') ? 2 : 1) +
+    styleCharm() +
+    peacockCharm();
 
 function contestSnapshot() {
     const o = {};
@@ -19724,7 +20523,7 @@ const TIPS = {
     },
 };
 
-Object.assign(TIPS, TIPS_4, TIPS_5);
+Object.assign(TIPS, TIPS_4, TIPS_5, TIPS_6);
 
 function tip(id) {
     if (!TIPS[id] || state.tips[id] || !state.tutorial.done) return;
@@ -20863,7 +21662,7 @@ function stormTick() {
 }
 
 // arc-en-ciel : plus de récoltes dorées et de qualité or
-const rainbowGolden = () => (state.weather === 'rainbow' ? 3 : 1);
+const rainbowGolden = () => (state.weather === 'rainbow' ? 3 : 1) * butterflyGolden();
 const rainbowGold = () => (state.weather === 'rainbow' ? 2 : 1);
 
 // ---------------- Personnalisation ----------------
@@ -21105,6 +21904,536 @@ function remindTick() {
 }
 
 // =====================================================================
+//  Meuh 2.2 : événements rares, contrats de saison, histoires des villageois,
+//  animaux d'exception et charme du paon.
+// =====================================================================
+
+const rnd = ([a, b]) => a + Math.random() * (b - a);
+const starAnimalMult = a => (a && a.star ? STAR_ANIMAL_SPEED : 1);
+const peacockCharm = () => state.animals.filter(a => a.type === 'peacock' && isAdult(a)).length * PEACOCK_CHARM;
+
+// ---------------- Événements rares ----------------
+const rareActive = type => !!(state.rare && state.rare.type === type && Date.now() < state.rare.until);
+const rareLeft = () => Math.max(0, ((state.rare && state.rare.until) || 0) - Date.now()) / 1000;
+// la nuée de papillons s'ajoute à l'arc-en-ciel
+const butterflyGolden = () => (rareActive('butterflies') ? 3 : 1);
+
+function rareTick() {
+    if (state.level < RARE_EVENT_LVL || !ui.started || document.hidden || !state.tutorial.done) return false;
+    const r = state.rare,
+        now = Date.now();
+    if (r.type) {
+        if (now < r.until) return false;
+        endRare();
+        return true;
+    }
+    if (!r.next) {
+        r.next = now + rnd(RARE_EVENT_GAP);
+        return false;
+    }
+    if (now < r.next) return false;
+    return startRare();
+}
+
+function pickRareType() {
+    const list = Object.entries(RARE_EVENTS).filter(([id]) => id !== 'fair' || !challengeOn('noAnimals'));
+    let x = Math.random() * list.reduce((a, [, e]) => a + e.weight, 0);
+    for (const [id, e] of list) {
+        x -= e.weight;
+        if (x <= 0) return id;
+    }
+    return list[0][0];
+}
+
+// plats que le critique peut demander : des recettes que vous savez déjà faire
+function criticDishes() {
+    const food = ['kitchen', 'bakery', 'confectionery', 'icecream', 'dairy', 'pastaworks', 'teahouse', 'press'];
+    return Object.values(RECIPES).filter(
+        r => food.includes(r.machine) && !r.fete && recipeUnlocked(r.id) && state.machines.some(m => m.type === r.machine) && DB.Items[r.id].sell,
+    );
+}
+
+function startRare(force) {
+    const type = force || pickRareType(),
+        r = state.rare,
+        now = Date.now();
+    const E = RARE_EVENTS[type];
+    Object.assign(r, { type, until: now + E.time, offers: [], dish: null, served: false });
+    if (type === 'fair') {
+        // parmi les animaux les plus précieux déjà disponibles
+        const pool = Object.values(DB.Animals)
+            .filter(a => state.level >= a.reqLvl)
+            .sort((a, b) => b.cost - a.cost)
+            .slice(0, 5);
+        r.offers = pool
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 2)
+            .map(a => ({ id: a.id, price: Math.round((a.cost * 5) / 50) * 50, sold: false }));
+    }
+    if (type === 'critic') {
+        const list = criticDishes();
+        if (!list.length) {
+            r.type = null;
+            r.next = now + 10 * 60 * 1000;
+            return false;
+        }
+        r.dish = pickRand(list).id;
+    }
+    state.stats.rareEvents = (state.stats.rareEvents || 0) + 1;
+    if (ui.started) {
+        toast(`${E.name} !`, ico('ui', E.icon));
+        sfx('level');
+        tip('rareEvent');
+    }
+    applyRareVisuals();
+    return true;
+}
+
+function endRare() {
+    const r = state.rare;
+    if (r.type === 'critic' && !r.served && ui.started) toast('Le critique est reparti sans goûter…', ico('ui', 'critic'));
+    Object.assign(r, { type: null, until: 0, offers: [], dish: null, served: false, next: Date.now() + rnd(RARE_EVENT_GAP) });
+    applyRareVisuals();
+}
+
+function applyRareVisuals() {
+    document.body.classList.toggle('butterflies', rareActive('butterflies'));
+}
+
+function buyStarAnimal(k, btn) {
+    const r = state.rare,
+        o = r.offers && r.offers[k];
+    if (!rareActive('fair') || !o || o.sold) return;
+    if (challengeOn('noAnimals')) return;
+    if (state.money < o.price) {
+        toast("Pas assez d'argent", ico('ui', 'coin'));
+        sfx('error');
+        return;
+    }
+    spend(o.price);
+    o.sold = true;
+    const a = newAnimal(o.id);
+    a.star = true;
+    state.animals.push(a);
+    ui.animalSig = [];
+    const c = centerOf(btn);
+    burst(c.x, c.y, 'sparkle', 16);
+    sfx('buy');
+    toast(`${a.name}, ${DB.Animals[o.id].name.toLowerCase()} d'exception, rejoint le pâturage`, ico('animal', o.id));
+    renderRare();
+    updateHeader();
+    saveState();
+}
+
+function serveCritic(btn) {
+    const r = state.rare,
+        id = r.dish;
+    if (!rareActive('critic') || r.served || !id || state.inventory[id] < 1) return;
+    state.inventory[id]--;
+    clampQuality(id);
+    r.served = true;
+    const stars = Math.min(5, 2 + masteryStars(id) + (Math.random() < 0.45 ? 1 : 0));
+    const coins = round5(DB.Items[id].sell * stars * 4),
+        xp = 80 * stars;
+    earn(coins, btn);
+    const c = centerOf(btn);
+    addXp(xp, c.x, c.y + 20);
+    burst(c.x, c.y, 'sparkle', 8 + stars * 4);
+    if (stars === 5) {
+        state.prestige.rubans++;
+        addPhoto('ui', 'critic', 'Cinq étoiles du critique', DB.Items[id].name);
+    }
+    state.stats.criticStars = Math.max(state.stats.criticStars || 0, stars);
+    document.querySelector('#level-modal .big-star').innerHTML = SPR.ui('critic');
+    $('lvl-num').textContent = '';
+    $('lvl-title').textContent = `${'★'.repeat(stars)}${'☆'.repeat(5 - stars)}`;
+    $('lvl-sub').textContent =
+        stars === 5
+            ? `« ${DB.Items[id].name} : un chef-d'œuvre. Je reviendrai. »`
+            : stars >= 4
+              ? `« ${DB.Items[id].name} : excellent, presque parfait. »`
+              : `« ${DB.Items[id].name} : honnête. La maîtrise viendra. »`;
+    $('lvl-unlocks').innerHTML =
+        `<div class="paper"><i class="ico">${SPR.ui('coin')}</i><div>${fmt(coins)} pièces</div></div>` +
+        (stars === 5 ? `<div class="paper"><i class="ico">${SPR.ui('ribbon')}</i><div>1 ruban de concours</div></div>` : '') +
+        (stars < 5
+            ? `<div class="paper"><i class="ico">${SPR.ui('medalG')}</i><div>Astuce : plus vous maîtrisez un plat, meilleure est la note.</div></div>`
+            : '');
+    openModal('level-modal');
+    sfx('level');
+    confetti();
+    r.until = Date.now() + 1500;
+    renderRare();
+    updateHeader();
+    saveState();
+}
+
+function renderRare() {
+    const box = $('rare-container');
+    if (!box) return;
+    const r = state.rare;
+    if (!r || !r.type || !rareActive(r.type)) {
+        box.innerHTML = '';
+        return;
+    }
+    const E = RARE_EVENTS[r.type];
+    let body = '';
+    if (r.type === 'fair')
+        body = `<div class="offers">${r.offers
+            .map(
+                (
+                    o,
+                    k,
+                ) => `<div class="offer paper ${o.sold ? 'sold' : ''}"><i class="ico star-animal">${SPR.animal(o.id)}</i><div class="o-name">${DB.Animals[o.id].name} d'exception</div>
+                ${o.sold ? '<div class="card-sub">Vendu</div>' : `<button class="btn small ${state.money >= o.price ? 'green' : ''}" onclick="buyStarAnimal(${k}, this)" ${state.money >= o.price ? '' : 'disabled'}>${fmt(o.price)}${COIN()}</button>`}</div>`,
+            )
+            .join('')}</div>`;
+    if (r.type === 'critic') {
+        const have = state.inventory[r.dish] || 0;
+        body = `<div class="critic-row paper"><i class="ico">${SPR.item(r.dish)}</i><div class="card-main"><div class="card-title">${DB.Items[r.dish].name}</div>
+            <div class="card-sub">${have ? `En stock : ${have}` : `Produit à l'atelier · ${DB.Machines[RECIPES[r.dish].machine].name}`} · votre maîtrise ${masteryStarsHtml(r.dish)}</div></div>
+            ${r.served ? '<span class="card-sub">Servi</span>' : have ? `<button class="btn small gold" onclick="serveCritic(this)">Servir</button>` : `<button class="btn small" onclick="goProduce('${r.dish}')">Produire</button>`}</div>`;
+    }
+    box.innerHTML = `<div class="board rare-card">
+        <div class="event-head">${ico('ui', E.icon, 'ico ev-ico')}<div class="card-main"><div class="card-title">${E.name}</div><div class="card-sub">${E.text}</div></div>
+        <div class="timer-pill">${ico('ui', 'clock')}<span id="rare-timer">${formatDuration(rareLeft())}</span></div></div>${body}</div>`;
+}
+
+function updateRareTimer() {
+    const el = $('rare-timer');
+    if (el) el.textContent = formatDuration(rareLeft());
+}
+
+// ---------------- Contrats de saison ----------------
+const seasonKey = () => Math.floor((state.day - 1) / DAYS_PER_SEASON);
+const seasonDaysLeft = () => DAYS_PER_SEASON - dayInSeason() + 1;
+
+function ensureContract() {
+    if (state.level < CONTRACT_LVL) return;
+    const key = seasonKey(),
+        c = state.contract;
+    if (c && c.key === key) return;
+    const pool = questPool().filter(i => i.sell >= 20 && !(RECIPES[i.id] && RECIPES[i.id].fete));
+    if (!pool.length) return;
+    const it = pickRand(pool);
+    const qty = Math.max(10, Math.min(200, Math.round((1000 + state.level * 300) / it.sell / 5) * 5));
+    const coins = round5(it.sell * qty * 2.2);
+    state.contract = { key, item: it.id, qty, given: 0, done: false, coins, xp: Math.round(coins * 0.08) };
+    if (ui.started && c) toast(`Nouveau contrat de saison : ${qty} × ${it.name.toLowerCase()}`, ico('ui', 'calendar'));
+    if (ui.started) tip('contract');
+}
+
+function giveContract(btn) {
+    const c = state.contract;
+    if (!c || c.done) return;
+    const n = Math.min(state.inventory[c.item] || 0, c.qty - c.given);
+    if (n <= 0) {
+        toast(`Il vous faut des ${DB.Items[c.item].name.toLowerCase()}`, ico('item', c.item));
+        sfx('error');
+        return;
+    }
+    state.inventory[c.item] -= n;
+    clampQuality(c.item);
+    c.given += n;
+    const p = centerOf(btn);
+    floatText(p.x, p.y - 20, `+${n}${ico('item', c.item)}`);
+    sfx('load');
+    if (c.given >= c.qty) {
+        c.done = true;
+        earn(c.coins, btn);
+        addXp(c.xp, p.x, p.y + 20);
+        RARE.forEach(id => (state.inventory[id] += 2));
+        state.stats.contractsDone = (state.stats.contractsDone || 0) + 1;
+        burst(p.x, p.y, 'sparkle', 20);
+        confetti();
+        toast('Contrat de saison rempli : 2 planches, 2 clous et 2 pots de peinture en prime', ico('item', 'paint'));
+    }
+    renderContract();
+    updateHeader();
+    saveState();
+}
+
+function renderContract() {
+    const box = $('contract-container');
+    if (!box) return;
+    ensureContract();
+    const c = state.contract;
+    if (state.level < CONTRACT_LVL || !c) {
+        box.innerHTML = '';
+        return;
+    }
+    const it = DB.Items[c.item],
+        have = state.inventory[c.item] || 0;
+    box.innerHTML = `<div class="board contract-card">
+        <div class="event-head">${ico('ui', 'calendar', 'ico ev-ico')}<div class="card-main"><div class="card-title">Contrat de saison</div>
+            <div class="card-sub">${c.done ? 'Contrat rempli. Un nouveau client viendra à la prochaine saison.' : `Un grossiste veut ${c.qty} ${it.name.toLowerCase()} avant la fin ${season().id === 'printemps' ? 'du printemps' : season().id === 'ete' ? "de l'été" : season().id === 'automne' ? "de l'automne" : "de l'hiver"}.`}</div></div>
+            <div class="timer-pill">${ico('ui', 'calendar')}<span>${seasonDaysLeft()} j</span></div></div>
+        ${
+            c.done
+                ? ''
+                : `<div class="pline"><button class="ico pgo" onclick="goProduce('${c.item}')" title="Produire">${SPR.item(c.item)}</button>
+            <div class="card-main"><div class="pname">${it.name} <small>${c.given} / ${c.qty}</small></div><div class="qbar"><div style="width:${(c.given / c.qty) * 100}%"></div></div></div>
+            <button class="btn small ${have ? 'green' : ''}" onclick="giveContract(this)" ${have ? '' : 'disabled'}>${have ? `+${Math.min(have, c.qty - c.given)}` : '0 en stock'}</button></div>
+            <div class="card-sub reward-line">${ico('ui', 'star')} ${fmt(c.coins)} pièces, ${fmt(c.xp)} d'expérience, et 2 de chaque matériau rare</div>`
+        }</div>`;
+}
+
+const contractReady = () => {
+    const c = state.contract;
+    return !!(c && !c.done && state.level >= CONTRACT_LVL && (state.inventory[c.item] || 0) >= c.qty - c.given);
+};
+
+// ---------------- Histoires des villageois ----------------
+const storyState = vid => state.stories[vid] || (state.stories[vid] = { step: 0, given: {} });
+const storyOpen = vid => !!STORIES[vid] && heartsOf(vid) >= 5 && villagerHere(vid) && storyState(vid).step < STORIES[vid].steps.length;
+const storyNeed = vid => STORIES[vid].steps[storyState(vid).step][1];
+const storyLeft = (vid, item) => Math.max(0, storyNeed(vid)[item] - (storyState(vid).given[item] || 0));
+const storyReady = vid => storyOpen(vid) && Object.keys(storyNeed(vid)).every(k => (state.inventory[k] || 0) >= storyLeft(vid, k));
+const storiesReady = () => Object.keys(STORIES).filter(storyReady).length;
+
+function giveStory(vid, btn) {
+    if (!storyOpen(vid)) return;
+    const st = storyState(vid),
+        need = storyNeed(vid);
+    let any = false;
+    for (const item of Object.keys(need)) {
+        const n = Math.min(state.inventory[item] || 0, storyLeft(vid, item));
+        if (n > 0) {
+            state.inventory[item] -= n;
+            clampQuality(item);
+            st.given[item] = (st.given[item] || 0) + n;
+            any = true;
+        }
+    }
+    if (!any) {
+        toast('Rien à apporter pour le moment', ico('villager', vid));
+        sfx('error');
+        return;
+    }
+    const p = centerOf(btn);
+    sfx('load');
+    if (Object.keys(need).every(k => storyLeft(vid, k) === 0)) {
+        const value = Object.entries(need).reduce((a, [k, n]) => a + (DB.Items[k].sell || 50) * n, 0);
+        const coins = round5(value * 2.5);
+        earn(coins, btn);
+        addXp(Math.round(value * 0.3), p.x, p.y + 20);
+        st.step++;
+        st.given = {};
+        burst(p.x, p.y, 'sparkle', 16);
+        const S = STORIES[vid];
+        if (st.step >= S.steps.length) {
+            state.prestige.rubans++;
+            state.stats.stories = (state.stats.stories || 0) + 1;
+            addPhoto('villager', vid, S.title, `L'histoire de ${VILLAGERS[vid].name}`);
+            $('friend-avatar').innerHTML = SPR.villager(vid);
+            $('friend-title').textContent = S.title;
+            $('friend-hearts').innerHTML = heartsRow(5);
+            $('friend-rewards').innerHTML =
+                `<div class="paper"><i class="ico">${SPR.villager(vid)}</i><div>« ${S.end} »</div></div>` +
+                `<div class="paper"><i class="ico">${SPR.ui('coin')}</i><div>${fmt(coins)} pièces</div></div>` +
+                `<div class="paper"><i class="ico">${SPR.ui('ribbon')}</i><div>1 ruban de concours</div></div>`;
+            openModal('friend-modal');
+            sfx('level');
+            confetti();
+        } else toast(`${VILLAGERS[vid].name} : étape ${st.step} sur 3 réussie (+${fmt(coins)} pièces)`, ico('villager', vid));
+    }
+    renderVillage();
+    updateHeader();
+    saveState();
+}
+
+function storyHtml(vid) {
+    if (!STORIES[vid] || heartsOf(vid) < 5) return '';
+    const S = STORIES[vid],
+        st = storyState(vid);
+    if (st.step >= S.steps.length)
+        return `<div class="vstory done"><b>${ico('ui', 'check')}${S.title}</b><span class="card-sub">Histoire terminée</span></div>`;
+    const [text, need] = S.steps[st.step];
+    const lines = Object.entries(need)
+        .map(([item, n]) => {
+            const g = st.given[item] || 0;
+            return `<span class="vstory-need ${g >= n ? 'ok' : ''}"><button class="ico pgo" onclick="goProduce('${item}')" title="Produire">${SPR.item(item)}</button>${Math.min(g + (state.inventory[item] || 0), n)}/${n}</span>`;
+        })
+        .join('');
+    return `<div class="vstory"><b>${ico('ui', 'scroll')}${S.title} · étape ${st.step + 1} sur 3</b>
+        <span class="card-sub">« ${text} »</span>
+        <div class="vstory-row">${lines}<button class="btn small ${storyReady(vid) ? 'gold' : ''}" onclick="giveStory('${vid}', this)">Apporter</button></div></div>`;
+}
+
+// =====================================================================
+//  Meuh 2.1 : guide du fermier (avec recherche), objectif du moment,
+//  onglets qui s'ouvrent au fil des niveaux, taille du texte et contraste.
+// =====================================================================
+
+// ---------------- Guide du fermier ----------------
+function openGuide() {
+    ui.guideQuery = '';
+    $('guide-search').value = '';
+    renderGuide();
+    openModal('guide-modal');
+    sfx('click');
+}
+
+const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+function searchGuide(v) {
+    ui.guideQuery = v;
+    renderGuide();
+}
+
+// d'où vient un produit, en une ligne
+function itemSource(id) {
+    const it = DB.Items[id];
+    if (it.type === 'crop') return it.exotic ? 'Graines chez le marchand ambulant' : `Champ, graines au niveau ${it.reqLvl}`;
+    if (it.type === 'tree') return `Arbre fruitier au magasin, niveau ${it.reqLvl}`;
+    if (it.type === 'fish') return "Pêche à l'étang";
+    if (RECIPES[id]) {
+        const r = RECIPES[id];
+        const how = Object.entries(r.ing)
+            .map(([k, n]) => `${n} ${DB.Items[k].name.toLowerCase()}`)
+            .join(', ');
+        const lock = r.fete
+            ? ` (pendant ${EVENTS[r.fete].name})`
+            : r.teacher
+              ? ` (recette de ${VILLAGERS[r.teacher].name}, ${r.hearts} cœur${r.hearts > 1 ? 's' : ''})`
+              : ` (niveau ${r.lvl})`;
+        return `${DB.Machines[r.machine].name}${lock} : ${how}`;
+    }
+    const a = Object.values(DB.Animals).find(x => x.prodId === id);
+    if (a) return `${a.name}, niveau ${a.reqLvl}`;
+    if (id === 'honey') return 'Ruche posée dans le champ, ou ruche d’élevage';
+    if (id === 'wood' || id === 'stone') return id === 'wood' ? 'Forêt (onglet Nature)' : 'Mine (onglet Nature)';
+    if (RARE.includes(id)) return 'Trouvé en récoltant, à l’atelier, dans les livraisons, chez le marchand';
+    if (['fossil', 'amethyst', 'nugget'].includes(id)) return 'Caché dans les rochers de la mine';
+    return '';
+}
+
+// qui en veut en ce moment
+function itemDemand(id) {
+    const who = [];
+    state.quests.forEach(q => isOpen(q) && q.items.some(x => x.id === id) && who.push(`commande de ${VILLAGERS[q.vid].name}`));
+    if (state.truck.status === 'here' && state.truck.slots.some(s => s.id === id && !s.loaded)) who.push('le train');
+    if (state.balloon.status === 'here' && state.balloon.items.some(x => x.id === id)) who.push('la montgolfière');
+    Object.values(PROJECTS).forEach(p => projectOpen(p.id) && p.need[id] && projectLeft(p.id, id) && who.push(p.name.toLowerCase()));
+    if (state.contract && !state.contract.done && state.contract.item === id) who.push('le contrat de saison');
+    Object.keys(STORIES).forEach(v => storyOpen(v) && storyNeed(v)[id] && who.push(`l'histoire de ${VILLAGERS[v].name}`));
+    if (rareActive('critic') && state.rare.dish === id) who.push('le critique gastronomique');
+    return who;
+}
+
+function itemCard(id) {
+    const it = DB.Items[id],
+        n = it.type === 'crop' || it.type === 'tree' ? state.inventory[id] || 0 : state.inventory[id] || 0;
+    const demand = itemDemand(id);
+    return `<div class="paper guide-item"><i class="ico">${SPR.item(id)}</i><div class="card-main">
+        <div class="card-title">${it.name}${masteryCount(id) ? masteryStarsHtml(id) : ''}</div>
+        <div class="card-sub">En stock : <b>${fmt(n)}</b>${it.sell ? ` · vaut ${fmt(Math.round(it.sell * masteryMult(id)))} pièces` : ''}</div>
+        ${itemSource(id) ? `<div class="card-sub">${itemSource(id)}</div>` : ''}
+        ${demand.length ? `<div class="card-sub want">Demandé par : ${demand.join(', ')}</div>` : ''}
+        </div><button class="btn small" onclick="closeModal('guide-modal'); goProduce('${id}')">Produire</button></div>`;
+}
+
+function renderGuide() {
+    const q = norm(ui.guideQuery || '').trim();
+    let html = '';
+    if (q.length >= 2) {
+        const items = Object.keys(DB.Items)
+            .filter(id => norm(DB.Items[id].name).includes(q) && DB.Items[id].type !== 'material')
+            .slice(0, 8);
+        const pages = GUIDE.filter(g => norm(g.name + ' ' + g.text).includes(q));
+        html =
+            (items.length ? `<div class="guide-label">Produits</div>${items.map(itemCard).join('')}` : '') +
+            (pages.length ? `<div class="guide-label">Guide</div>${pages.map(guidePage).join('')}` : '') +
+            (!items.length && !pages.length ? '<p class="card-sub center">Rien trouvé. Essayez « fromage », « grange » ou « concours ».</p>' : '');
+    } else
+        html = `<p class="card-sub center">Cherchez un produit pour savoir où le faire et qui le demande, ou touchez une page.</p>${GUIDE.map(guidePage).join('')}`;
+    $('guide-body').innerHTML = html;
+}
+
+function guidePage(g) {
+    const locked = state.level < g.lvl;
+    return `<button class="paper guide-page ${locked ? 'locked' : ''}" onclick="${locked ? '' : `closeModal('guide-modal'); switchView('${g.view}')`}">
+        <i class="ico">${sprite(g.icon[0], g.icon[1])}</i><span class="card-main"><span class="card-title">${g.name}${locked ? ` <small>niveau ${g.lvl}</small>` : ''}</span><span class="card-sub">${g.text}</span></span></button>`;
+}
+
+// ---------------- Objectif du moment ----------------
+function nextGoal() {
+    if (!state.tutorial.done) return null;
+    const ready = Object.values(PROJECTS).find(p => projectOpen(p.id) && projectComplete(p.id));
+    if (ready) return { icon: SPR.ui('village'), text: `Terminez la rénovation : ${ready.name.toLowerCase()}`, go: 'village' };
+    const open = Object.values(PROJECTS).find(p => projectOpen(p.id));
+    if (open) {
+        const tot = Object.values(open.need).reduce((a, b) => a + b, 0),
+            got = Object.keys(open.need).reduce((a, k) => a + (open.need[k] - projectLeft(open.id, k)), 0);
+        return {
+            icon: SPR.building(open.id, 0),
+            text: `Prochain but : rénover ${open.name.toLowerCase()} (${Math.floor((got / tot) * 100)} %)`,
+            go: 'village',
+        };
+    }
+    const c = currentChapter();
+    if (c && state.level < c.lvl) return { icon: SPR.ui('village'), text: `Chapitre ${c.n} au niveau ${c.lvl} : « ${c.name} »`, go: 'levels' };
+    if (houseCanUp()) return { icon: SPR.ui('house'), text: 'Agrandissez la maison de la ferme', go: 'house' };
+    if (!state.legend) {
+        const n = LEGEND_GOALS.filter(g => g.ok()).length;
+        return { icon: SPR.ui('goldCow'), text: `Ferme légendaire : ${n} exploit${n > 1 ? 's' : ''} sur 5`, go: 'legend' };
+    }
+    return null;
+}
+
+function renderGoal() {
+    const el = $('goal-line');
+    if (!el) return;
+    const g = nextGoal();
+    const sig = g ? g.text : '';
+    if (ui.goalSig === sig) return;
+    ui.goalSig = sig;
+    el.hidden = !g;
+    if (g) el.innerHTML = `<i class="ico">${g.icon}</i><span>${g.text}</span><b>›</b>`;
+}
+
+function goGoal() {
+    const g = nextGoal();
+    if (!g) return;
+    sfx('click');
+    if (g.go === 'village') {
+        ui.qtab = 'village';
+        if (ui.view === 'quests') renderQuestsView();
+        else switchView('quests');
+    } else if (g.go === 'house') openHouse();
+    else if (g.go === 'levels') openLevels();
+    else if (g.go === 'legend') {
+        switchView('upgrades');
+        ui.bookSec = 'legend';
+        openBook();
+    }
+}
+
+// ---------------- Onglets qui s'ouvrent au fil des niveaux ----------------
+const TAB_LVL = () => ({ animals: DB.Animals.chicken.reqLvl, machines: DB.Machines.mill.reqLvl, nature: NATURE.forest.lvl });
+const tabLocked = v => state.level < (TAB_LVL()[v] || 1);
+
+function renderTabLocks() {
+    const sig = Object.keys(TAB_LVL())
+        .map(v => (tabLocked(v) ? 1 : 0))
+        .join('');
+    if (ui.tabLockSig === sig) return;
+    ui.tabLockSig = sig;
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('locked', tabLocked(t.dataset.view)));
+}
+
+// ---------------- Taille du texte et contraste ----------------
+const TEXT_SIZES = ['Normale', 'Grande', 'Très grande'];
+function cycleTextSize() {
+    state.settings.textSize = ((state.settings.textSize || 0) + 1) % 3;
+    state.settings.bigText = state.settings.textSize > 0;
+    sfx('click');
+    renderSettings();
+    setTimeout(updateEnvironment, 50);
+    saveState();
+}
+
+// =====================================================================
 //  Boucle principale : chaque sous-système avance d'une seconde.
 //  Un sous-système qui plante est isolé et n'arrête pas les autres.
 // =====================================================================
@@ -21219,6 +22548,8 @@ function tickDeliveries() {
     if (merchantTick() && q) renderMerchant();
     if (stallTick() && ui.view === 'market') renderStall();
     if (neighborTick() && q) renderNeighbors();
+    if (rareTick() && q) renderRare();
+    if (state.level >= CONTRACT_LVL && (!state.contract || state.contract.key !== seasonKey()) && q) renderContract();
     if (contestTick() && q) renderContest();
     if (syncStory() && q) renderStory();
     if (q) {
@@ -21226,6 +22557,7 @@ function tickDeliveries() {
         updateTruckTimer();
         updateOrderTimers();
         updateMerchantTimer();
+        updateRareTimer();
         if (ui.tick % 10 === 0 && ui.qtab === 'village') renderContest();
     }
     return false;
@@ -21346,6 +22678,9 @@ function calculateOfflineProgress() {
         (report.hungry ? row(ico('item', 'feed'), `${report.hungry} animal${report.hungry > 1 ? 'aux ont' : ' a'} faim`) : '') +
         (ready ? row(ico('ui', 'scroll'), `${ready} commande${ready > 1 ? 's' : ''} prête${ready > 1 ? 's' : ''} à livrer`) : '') +
         (sold ? row(ico('ui', 'stall'), `${sold} vente${sold > 1 ? 's' : ''} à encaisser à l'étal`) : '') +
+        (state.rare.type && rareActive(state.rare.type)
+            ? row(ico('ui', RARE_EVENTS[state.rare.type].icon), `En ce moment : ${RARE_EVENTS[state.rare.type].name.toLowerCase()}`)
+            : '') +
         (neigh ? row(ico('ui', 'heart'), `${neigh} voisin${neigh > 1 ? 's' : ''} à aider`) : '') +
         (state.truck.status === 'here' ? row(ico('ui', 'trainIcon'), 'Le train de marchandises est en gare') : '') +
         (state.balloon.status === 'here' ? row(ico('ui', 'balloon'), 'Une montgolfière attend dans le pré') : '') +
@@ -21445,6 +22780,8 @@ function updateHeader() {
     renderTodo();
     if (farmShown()) renderFarmyard();
     if (ui.view === 'upgrades') renderBookBadge();
+    if (farmShown()) renderGoal();
+    renderTabLocks();
 }
 
 function renderToolbar() {
@@ -21513,7 +22850,16 @@ function updateProgressBars() {
 // =====================================================================
 
 function bindEvents() {
-    document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchView(t.dataset.view)));
+    document.querySelectorAll('.tab').forEach(t =>
+        t.addEventListener('click', () => {
+            if (tabLocked(t.dataset.view)) {
+                toast(`${VIEW_NAMES[t.dataset.view]} : s'ouvre au niveau ${TAB_LVL()[t.dataset.view]}`, ico('ui', 'lock'));
+                sfx('error');
+                return;
+            }
+            switchView(t.dataset.view);
+        }),
+    );
     setupFarmInput();
     $('clock-pill').addEventListener('click', openAlmanac);
     $('dog').addEventListener('pointerdown', handleDog);
@@ -21574,6 +22920,7 @@ function initGame() {
     bindEvents();
     renderSettings();
     applyStyle();
+    applyRareVisuals();
     updateEnvironment();
     renderAll();
     requestAnimationFrame(tickMoney);
