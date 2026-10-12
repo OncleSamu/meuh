@@ -1,4 +1,5 @@
 // Les imprévus (corbeau, pucerons, bête malade, acheteur pressé) et les sols du champ.
+import { animalRobust } from './genetics.js';
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view, farmShown } from '../core/view.js';
@@ -38,7 +39,7 @@ export function incidentTick() {
 export function startIncident(force) {
     const t = now();
     const growing = state.grid.map((p, i) => [p, i]).filter(([p]) => p.isUnlocked && p.itemId && !p.isReady && ITEMS[p.itemId].type === 'crop');
-    const adults = state.animals.filter(a => isAdult(a) && !a.sick);
+    const adults = state.animals.filter(a => isAdult(a) && !a.sick && !(animalRobust(a) && Math.random() < 0.7));
     // le corbeau ne vient que si vous êtes au champ (il faut le chasser en 15 secondes)
     const crowSpots = growing.filter(([, i]) => !nearDeco(i, 'birdhouse'));
     const scared = state.grid.some(p => p.deco === 'scarecrow') && Math.random() < 0.75;

@@ -18,6 +18,7 @@ import { collect, record } from './book.js';
 import { sellPrice, hasMats, matMissing, payMats } from './market.js';
 import { challengeOn } from './prestige.js';
 import { eventProgress } from './events.js';
+import { varGrowth, varHardy, varExtra, varSelfWater, takeVarSeed, harvestVariety } from './genetics.js';
 
 const COIN = ['ui', 'coin'];
 
@@ -30,7 +31,12 @@ export function plotStage(p) {
     return p.growProgress < ITEMS[p.itemId].time / speedMult() / 2 ? 0 : 1;
 }
 
-export const plotRate = (p, i) => (p.pest ? 0 : (i >= 1000 ? GH.rate : cropRate(p.itemId) * decoGrowth(i) * soilMult(i, p.itemId)) * masterySpeed(p.itemId));
+export const plotRate = (p, i) =>
+    p.pest
+        ? 0
+        : (i >= 1000 ? GH.rate : cropRate(p.itemId) * decoGrowth(i) * soilMult(i, p.itemId) * (p.v && !isInSeason(p.itemId) ? varHardy(p.v) : 1)) *
+          masterySpeed(p.itemId) *
+          (p.v ? varGrowth(p.v) : 1);
 
 // secondes restantes avant la récolte
 export const plotLeft = (p, i) => Math.max(0, Math.ceil((ITEMS[p.itemId].time / speedMult() - p.growProgress) / plotRate(p, i)));
@@ -54,6 +60,7 @@ export function plotAction(p, tool, i) {
     if (tool === 'fert') return p.itemId && !p.isReady && !p.fert ? 'fert' : 'ferthint';
     if (p.terrain === 'grass') return 'plow';
     if (p.itemId && p.isReady) return 'harvest';
+    if (tool === 'var' && !p.itemId) return 'plantVar';
     if (p.itemId && !p.isWatered) return 'water';
     if (p.itemId) return 'info';
     if (tool !== 'hand') return 'plant';
@@ -61,7 +68,7 @@ export function plotAction(p, tool, i) {
 }
 
 // actions qu'on peut enchaîner en glissant le doigt sur le champ
-export const DRAG_ACTIONS = ['plow', 'harvest', 'water', 'plant', 'fert'];
+export const DRAG_ACTIONS = ['plow', 'harvest', 'water', 'plant', 'plantVar', 'fert'];
 
 let pendingDig = null;
 
@@ -132,6 +139,7 @@ export function doPlotAction(i, action, at) {
             }
             pendingDig = null;
             p.itemId = null;
+            p.v = null;
             p.hand = null;
             p.isWatered = false;
             p.isReady = false;
@@ -175,6 +183,33 @@ export function doPlotAction(i, action, at) {
             burst(at, 'water', 9, -4);
             buzz(6);
             break;
+        case 'plantVar': {
+            // une graine de variété (labo) : elle pousse comme son espèce, avec ses propres gènes
+            const vid = state.genetics && state.genetics.tool;
+            const v = vid && state.genetics.vars[vid];
+            if (!v) return;
+            if (ITEMS[v.base].island) {
+                toast('Cette variété pousse sur l’île : semez-la dans les plantations de l’île', ['item', v.base]);
+                return;
+            }
+            if (i < 1000 && ITEMS[v.base].ghOnly) {
+                toast('Cette variété ne pousse que dans la serre', ['ui', 'greenhouse']);
+                return;
+            }
+            if (!takeVarSeed(vid)) {
+                toast('Plus de graines de cette variété', ['ui', 'flowers']);
+                sfx('error');
+                return;
+            }
+            resetPlot(p, v.base);
+            p.v = vid;
+            if (i >= 1000 || varSelfWater(vid)) p.isWatered = true;
+            sfx('plant');
+            burst(at, 'dirt', 5, 6);
+            burst(at, 'sparkle', 4, -4);
+            buzz(6);
+            break;
+        }
         case 'plant': {
             const d = ITEMS[tool];
             if (i < 1000 && d.ghOnly) {
@@ -251,6 +286,7 @@ export function plantSeed(plot, id) {
 
 export function resetPlot(plot, id) {
     plot.itemId = id;
+    plot.v = null;
     plot.growProgress = 0;
     plot.isReady = false;
     plot.isWatered = false;
@@ -499,8 +535,10 @@ export function rollQuality(plot) {
 export function harvestPlot(plot) {
     const d = ITEMS[plot.itemId];
     const gi = gridIndex(plot);
-    const qty = rollYield('crop') + bonusYield(plot, d, gi);
+    const vid = plot.v;
+    const qty = rollYield('crop') + bonusYield(plot, d, gi) + (vid ? varExtra(vid) : 0);
     state.inventory[plot.itemId] += qty;
+    if (vid) harvestVariety(vid, qty);
     state.stats.harvested += qty;
     addMastery(d.id, qty);
     const quality = rollQuality(plot);
@@ -518,10 +556,16 @@ export function harvestPlot(plot) {
         plot.growProgress = (d.time / speedMult()) * 0.5;
     } else {
         plot.itemId = null;
+        plot.v = null;
         plot.isWatered = inGreenhouse(plot);
         plot.isReady = false;
         plot.growProgress = 0;
-        if (state.settings.autoReplant) autoReplant(plot, d);
+        // une variété se replante avec ses propres graines, s'il en reste
+        if (vid && state.settings.autoReplant && takeVarSeed(vid)) {
+            resetPlot(plot, d.id);
+            plot.v = vid;
+            plot.isWatered = inGreenhouse(plot) || varSelfWater(vid);
+        } else if (state.settings.autoReplant) autoReplant(plot, d);
     }
     return { item: d, qty, golden, quality };
 }

@@ -123,6 +123,7 @@ function famBonus(lot) {
     if ((f === 'wine' || f === 'cider') && projectDone('cooperage')) b += 0.06;
     if ((f === 'wine' || f === 'cider') && state.cave.gear.oldBarrel) b += 0.04;
     if (lot.boost > 0) b += 0.15;
+    b += (lot.q || 0) * 0.04;
     return b;
 }
 
@@ -218,9 +219,19 @@ export function putInCave(slot, id, n, at) {
     const c = state.cave;
     n = Math.max(1, Math.min(n, CAVE_LOT_MAX));
     if (!id || c.slots[slot] || !(state.inventory[id] >= n)) return false;
+    // les produits de qualité partent en premier : un lot tout en or (ou en argent) vieillit mieux
+    const qq = state.quality[id];
+    let lq = 0;
+    if (qq && qq.g >= n) {
+        qq.g -= n;
+        lq = 2;
+    } else if (qq && qq.s >= n) {
+        qq.s -= n;
+        lq = 1;
+    }
     state.inventory[id] -= n;
     const t = now();
-    c.slots[slot] = { uid: caveUid(), id, n, rank: 0, bad: false, next: t + caveStep(id), care: t, boost: 0, put: t };
+    c.slots[slot] = { uid: caveUid(), id, n, rank: 0, bad: false, next: t + caveStep(id), care: t, boost: 0, put: t, q: lq };
     sfx('pop');
     burst(at, 'sparkle', 8);
     if (CAVE_ITEMS[id] === 'champagne') tip('champagne');

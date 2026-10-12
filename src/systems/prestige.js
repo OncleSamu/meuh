@@ -2,6 +2,7 @@
 import { ensureOrchard } from './orchard.js';
 import { ensurePastures } from './pastures.js';
 import { ensureIsland } from './island.js';
+import { ensureGenetics } from './genetics.js';
 import { state, newState, setState, fillGrid } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { emit, toast, sfx, buzz } from '../core/bus.js';
@@ -46,6 +47,8 @@ export function doPrestige(challenge, theme) {
         })(),
         // le village rénové et la grange restent acquis
         projects: state.projects,
+        // la génétique garde ses créations, ses variétés et leurs graines ; produits et bêtes partent avec la ferme
+        genetics: state.genetics ? { ...state.genetics, stock: {}, cross: null, breed: null } : null,
         story: state.story,
         barn: state.barn,
         farmhand: state.farmhand,
@@ -74,6 +77,7 @@ export function doPrestige(challenge, theme) {
     ensurePastures();
     ensureOrchard();
     ensureIsland();
+    ensureGenetics();
     state.truck.arriveAt = now() + 60000;
     ensureVillagers();
     addPhoto('ui', 'ribbon', 'Une nouvelle ferme', `${state.prestige.rubans} rubans en poche`);

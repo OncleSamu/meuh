@@ -35,17 +35,20 @@ export const storyOk = d => !d || !d.needProject || projectDone(d.needProject);
 export const storyLockText = d => (d && d.needProject && !projectDone(d.needProject) ? `Après le chantier « ${PROJECTS[d.needProject].name} »` : '');
 
 // une carte s'ouvre quand son chapitre d'entrée est fini, ou dès le niveau du chapitre suivant (sauf « strict »)
+// les fils parallèles (l'île, la station) s'ouvrent avec leur premier chapitre
+export const BRANCH_MAPS = ['island', 'station'];
+const firstOf = map => CHAPTERS.find(c => c.map === map);
 export const mapOpen = m =>
-    m.id === 'island'
-        ? chapterOpen(13) || chapterDone(13)
+    BRANCH_MAPS.includes(m.id)
+        ? chapterOpen(firstOf(m.id).n) || chapterDone(firstOf(m.id).n)
         : !m.openChapter || chapterDone(m.openChapter) || (!m.strict && state.level >= CHAPTERS[m.openChapter].lvl);
 export const openMaps = () => STORY_MAPS.filter(mapOpen);
 export const mapReady = m => Object.values(PROJECTS).some(p => mapOf(p) === m && projectOpen(p.id) && projectComplete(p.id));
 
-// le chapitre en cours : celui de l'histoire principale, ou celui d'une carte (l'île a son propre fil)
+// le chapitre en cours : celui de l'histoire principale, ou celui d'un fil parallèle (l'île, la station)
 export function currentChapter(map) {
-    if (map === 'island') return CHAPTERS.find(c => c.map === 'island' && !chapterDone(c.n)) || null;
-    for (const c of CHAPTERS) if (!chapterDone(c.n) && c.map !== 'island') return c;
+    if (BRANCH_MAPS.includes(map)) return CHAPTERS.find(c => c.map === map && !chapterDone(c.n)) || null;
+    for (const c of CHAPTERS) if (!chapterDone(c.n) && !BRANCH_MAPS.includes(c.map)) return c;
     return null;
 }
 
@@ -58,7 +61,7 @@ export function projectsNeed(item) {
 
 // Annonce un nouveau chapitre une seule fois
 export function syncStory() {
-    const c = [currentChapter(), currentChapter('island')].find(x => x && chapterOpen(x.n) && !state.story.seen[x.n]);
+    const c = [currentChapter(), ...BRANCH_MAPS.map(currentChapter)].find(x => x && chapterOpen(x.n) && !state.story.seen[x.n]);
     if (!c) return false;
     state.story.seen[c.n] = true;
     if (view.started) {
@@ -66,6 +69,7 @@ export function syncStory() {
         if (c.n === 1) tip('village');
         if (c.n === 5) tip('hamlet');
         if (c.n === 13) tip('isle');
+        if (c.n === 15) tip('station');
         sfx('level');
     }
     return true;
@@ -145,7 +149,7 @@ export function applyProjectReward(pid) {
     if (pid === 'washhouse') ensureStall();
     if (pid === 'bandstand') state.prestige.rubans += 5;
     if (pid === 'ferry') ensureIsland();
-    if (pid === 'carnival') state.prestige.rubans += 5;
+    if (pid === 'carnival' || pid === 'salonHall') state.prestige.rubans += 5;
 }
 
 const MAP_TEASE = {
@@ -154,12 +158,15 @@ const MAP_TEASE = {
     alpine: 'là-haut, les alpages',
     domaine: 'sur les coteaux, un vieux domaine',
     island: 'depuis le hameau, une île tiède',
+    station: 'au bout du chemin des vergers, une station de recherche',
 };
 
 // la suite de l'histoire, après une rénovation
 export function storyNextText(p) {
-    const c = currentChapter(mapOf(p) === 'island' ? 'island' : undefined);
-    if (mapOf(p) === 'island' && !c) return 'L’île est en fête : toute son histoire est écrite. Merci !';
+    const branch = BRANCH_MAPS.includes(mapOf(p)) ? mapOf(p) : undefined;
+    const c = currentChapter(branch);
+    if (branch === 'station' && !c) return 'La station de recherche est complète : à vous les plus belles créations !';
+    if (branch === 'island' && !c) return 'L’île est en fête : toute son histoire est écrite. Merci !';
     if (!c)
         return 'Le village et le hameau sont rénovés : l’histoire est terminée. Merci pour tout ! Prochain grand but : la Ferme légendaire (Livre de la ferme).';
     const at = state.level < c.lvl ? ` au niveau ${c.lvl}` : '';

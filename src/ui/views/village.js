@@ -64,7 +64,7 @@ function storyCard() {
     if (!maps.some(x => x.id === m)) m = 'village';
     ui.sel.map = m;
     // l'île a son propre fil d'histoire
-    const cc = m === 'island' ? G.currentChapter('island') : c;
+    const cc = G.BRANCH_MAPS.includes(m) ? G.currentChapter(m) : c;
     const M = STORY_MAPS.find(x => x.id === m);
     const projs = Object.values(PROJECTS).filter(p => G.mapOf(p) === m);
     let sel = ui.sel.proj;
@@ -96,7 +96,9 @@ function storyCard() {
         ? `<div class="card-title">Chapitre ${cc.n} · ${cc.name}</div><div class="card-sub">${G.chapterOpen(cc.n) ? `${cc.intro} (${G.chapterProjects(cc.n).filter(p => G.projectDone(p.id)).length} / ${G.chapterProjects(cc.n).length})` : `Ce chapitre s’ouvre au niveau ${cc.lvl}.`}</div>`
         : m === 'island'
           ? '<div class="card-title">L’île est en fête !</div><div class="card-sub">Bac, paillote, four, brûlerie, rhumerie et carnaval : Tiago et Maëva vous remercient.</div>'
-          : '<div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port, alpage et domaine : merci, citoyen d’honneur. Tout le canton vous adore.</div>';
+          : m === 'station'
+            ? '<div class="card-title">La station est au complet !</div><div class="card-sub">Serre, étable, laboratoire, conservatoire, ruche et salle du Salon : Agathe et Victor vous remercient.</div>'
+            : '<div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port, alpage et domaine : merci, citoyen d’honneur. Tout le canton vous adore.</div>';
     return `<div class="card story-card"><div class="chapter-head">${top}</div>${switcher}
         <div class="vmap ${M.id}${party ? ' party' : ''}">${MAP_BG[M.id]}${party ? '<div class="bunting"></div>' : ''}${blds}</div>${projectDetail(sel)}</div>`;
 }

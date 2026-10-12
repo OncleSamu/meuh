@@ -35,6 +35,7 @@ import { trimDayEarn } from './book.js';
 import { ensureOrchard, orchardTick, orchardOffline } from './orchard.js';
 import { ensurePastures } from './pastures.js';
 import { ensureIsland, islandTick, islandOffline } from './island.js';
+import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -66,6 +67,7 @@ export function normalizeState() {
     ensurePastures();
     ensureOrchard();
     ensureIsland();
+    ensureGenetics();
     ensureNature();
     ensureMachineData();
     ensureQuests();
@@ -88,6 +90,7 @@ export function isToolValid(t) {
         (decoTool(t) && state.decorInv[decoTool(t)] > 0) ||
         t === 'hand' ||
         t === 'shovel' ||
+        (t === 'var' && !!state.genetics && !!state.genetics.tool && state.genetics.seeds[state.genetics.tool] > 0) ||
         t === 'feed' ||
         (t === 'fert' && state.level >= 4) ||
         (state.seeds[t] !== undefined &&
@@ -181,6 +184,7 @@ function tickDeliveries() {
     if (ensureFarmSeason()) changed = true;
     if (state.level >= CONTRACT_LVL && ensureContract()) changed = true;
     if (ensureHoliday()) changed = true;
+    if (geneticsTick()) changed = true;
     if (contestTick()) changed = true;
     if (syncStory()) changed = true;
     return changed;
@@ -200,6 +204,7 @@ function tickProgress() {
     if (state.stats.maxLevel < state.level) state.stats.maxLevel = state.level;
     checkNewAchievements();
     trimDayEarn();
+    clampVarieties();
     return false;
 }
 

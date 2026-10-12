@@ -16,9 +16,10 @@ import { storyOk, storyLockText } from './story.js';
 import { speedMult, rollYield, addXp } from './player.js';
 import { machineBoost, machineSlots } from './home.js';
 import { masterySpeed, addMastery } from './mastery.js';
-import { clampAllQuality } from './farm.js';
+import { clampAllQuality, addQuality } from './farm.js';
 import { inBarn, barnBlocked, rollRare } from './barn.js';
 import { collect } from './book.js';
+import { takeIngredients } from './genetics.js';
 
 export const recipesOf = type => Object.values(RECIPES).filter(r => r.machine === type);
 
@@ -70,14 +71,22 @@ export function ensureMachineData() {
     });
 }
 
+// une recette en file, avec la qualité promise par ses ingrédients
+function pushJob(m, id, q) {
+    m.queue.push(id);
+    m.qq = m.qq || [];
+    while (m.qq.length < m.queue.length - 1) m.qq.push(0);
+    m.qq.push(q || 0);
+}
+
 // Production en boucle : la machine relance sa dernière recette tant qu'il y a les ingrédients
 export function loopRefill(m) {
     if (!m.loop || !m.last || m.queue.length >= machineSlots()) return false;
     const r = RECIPES[m.last];
     if (!r || !recipeUnlocked(r.id) || !canCook(r.id)) return false;
-    Object.entries(r.ing).forEach(([k, n]) => (state.inventory[k] -= n));
+    const q = takeIngredients(r.id);
     if (!m.queue.length) m.progress = 0;
-    m.queue.push(r.id);
+    pushJob(m, r.id, q);
     return true;
 }
 
@@ -109,7 +118,15 @@ export function advanceMachine(m, dt) {
         }
         dt -= need;
         const id = m.queue.shift();
+        const q = (m.qq || []).shift() || 0;
         m.out[id] = (m.out[id] || 0) + 1;
+        // la qualité du lot (de meilleurs ingrédients) suit le produit jusqu'à la récupération
+        if (q) {
+            m.outq = m.outq || {};
+            const o = (m.outq[id] = m.outq[id] || { s: 0, g: 0 });
+            if (q === 2) o.g++;
+            else o.s++;
+        }
         m.progress = 0;
         done++;
         loopRefill(m);
@@ -156,10 +173,10 @@ export function queueRecipe(i, id, at) {
         emit('shake', at);
         return false;
     }
-    Object.entries(r.ing).forEach(([k, n]) => (state.inventory[k] -= n));
+    const q = takeIngredients(id);
     clampAllQuality();
     if (!m.queue.length) m.progress = 0;
-    m.queue.push(id);
+    pushJob(m, id, q);
     m.last = id;
     sfx('machine');
     buzz(8);
@@ -172,6 +189,7 @@ export function cancelQueued(i, k) {
     const m = state.machines[i];
     if (!m || k < 1 || !m.queue[k]) return false;
     const id = m.queue.splice(k, 1)[0];
+    if (m.qq) m.qq.splice(k, 1);
     Object.entries(RECIPES[id].ing).forEach(([key, n]) => (state.inventory[key] += n));
     sfx('click');
     toast(`${ITEMS[id].name} retiré de la file, ingrédients rendus`, ['item', id]);
@@ -190,8 +208,21 @@ export function collectMachine(i, at, quiet) {
         if (!n) continue;
         const r = RECIPES[id];
         let qty = 0;
-        for (let j = 0; j < n; j++) qty += rollYield() * (r.outQty || 1);
+        const per = [];
+        for (let j = 0; j < n; j++) {
+            const x = rollYield() * (r.outQty || 1);
+            per.push(x);
+            qty += x;
+        }
         state.inventory[id] += qty;
+        // les lots faits de meilleurs ingrédients sortent en argent ou en or
+        const oq = m.outq && m.outq[id];
+        if (oq) {
+            let j = 0;
+            for (let g = 0; g < oq.g && j < per.length; g++) addQuality(id, 2, per[j++]);
+            for (let s2 = 0; s2 < oq.s && j < per.length; s2++) addQuality(id, 1, per[j++]);
+            delete m.outq[id];
+        }
         state.stats.crafted += qty;
         if (m.type === 'kitchen') state.stats.cooked += qty;
         collect('k_' + id);
@@ -235,8 +266,7 @@ export function restartAllMachines(at) {
     state.machines.forEach((m, i) => {
         const id = m.last;
         if (machineBusy(m) || !id || !RECIPES[id] || !recipeUnlocked(id) || !canCook(id)) return;
-        Object.entries(RECIPES[id].ing).forEach(([k, q]) => (state.inventory[k] -= q));
-        m.queue.push(id);
+        pushJob(m, id, takeIngredients(id));
         m.progress = 0;
         burst(anchor('machine', i), 'smoke', 5, -20);
         n++;
