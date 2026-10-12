@@ -1,0 +1,752 @@
+/* Ferme | Champ : parcelles, serre, chien, maison */
+.field {
+    position: relative;
+    padding: 16px 10px 12px;
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    background-color: #82c95a;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cpath d='M6 20l1.5-5 1.5 5M22 10l1.5-5 1.5 5M17 30l1.2-4 1.2 4' stroke='%2364ad3f' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    box-shadow:
+        inset 0 -6px 0 rgba(0, 0, 0, 0.08),
+        0 8px 0 #5c8f36,
+        0 8px 0 3px var(--ink);
+    margin-bottom: 14px;
+}
+
+.fence {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: -15px;
+    height: 26px;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='26'%3E%3Crect x='0' y='9' width='28' height='5' fill='%23e8c38c' stroke='%233a2618' stroke-width='2'/%3E%3Crect x='0' y='17' width='28' height='4' fill='%23e8c38c' stroke='%233a2618' stroke-width='2'/%3E%3Cpath d='M9 25V7l5-5 5 5v18z' fill='%23f5deb3' stroke='%233a2618' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E")
+        repeat-x;
+}
+
+.plots {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 7px;
+    touch-action: none;
+}
+
+.plot {
+    position: relative;
+    aspect-ratio: 1;
+    border: 2.5px solid var(--ink);
+    border-radius: 11px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 rgba(58, 38, 24, 0.6);
+}
+
+.plot.grass {
+    background-color: #9bd96f;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Cpath d='M4 13l1.3-4 1.3 4M14 6l1.3-4 1.3 4M12 19l1-3 1 3' stroke='%236cc04a' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.plot.plowed {
+    background-color: #7f5130;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2040%2042'%20preserveAspectRatio='none'%3E%3Crect%20width='40'%20height='42'%20fill='%237f5130'/%3E%3Cpath%20d='M3%209%20Q20%204%2037%209%20L37%2015%20Q20%2011%203%2015Z'%20fill='%239a6638'/%3E%3Cpath%20d='M5%209%20Q20%204.8%2035%209'%20fill='none'%20stroke='%23b98552'%20stroke-width='1.6'%20stroke-linecap='round'/%3E%3Cpath%20d='M4%2015.5%20Q20%2011.6%2036%2015.5'%20fill='none'%20stroke='%235e3a1e'%20stroke-width='1.8'%20stroke-linecap='round'/%3E%3Cpath%20d='M3%2021%20Q20%2016%2037%2021%20L37%2027%20Q20%2023%203%2027Z'%20fill='%239a6638'/%3E%3Cpath%20d='M5%2021%20Q20%2016.8%2035%2021'%20fill='none'%20stroke='%23b98552'%20stroke-width='1.6'%20stroke-linecap='round'/%3E%3Cpath%20d='M4%2027.5%20Q20%2023.6%2036%2027.5'%20fill='none'%20stroke='%235e3a1e'%20stroke-width='1.8'%20stroke-linecap='round'/%3E%3Cpath%20d='M3%2033%20Q20%2028%2037%2033%20L37%2039%20Q20%2035%203%2039Z'%20fill='%239a6638'/%3E%3Cpath%20d='M5%2033%20Q20%2028.8%2035%2033'%20fill='none'%20stroke='%23b98552'%20stroke-width='1.6'%20stroke-linecap='round'/%3E%3Cpath%20d='M4%2039.5%20Q20%2035.6%2036%2039.5'%20fill='none'%20stroke='%235e3a1e'%20stroke-width='1.8'%20stroke-linecap='round'/%3E%3Cellipse%20cx='10'%20cy='16'%20rx='1.4'%20ry='1'%20fill='%23c79a6b'/%3E%3Cellipse%20cx='29'%20cy='28'%20rx='1.2'%20ry='.9'%20fill='%23c79a6b'/%3E%3Cellipse%20cx='22'%20cy='39'%20rx='1.1'%20ry='.8'%20fill='%23c79a6b'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    box-shadow:
+        inset 0 3px 0 rgba(0, 0, 0, 0.18),
+        0 4px 0 rgba(58, 38, 24, 0.6);
+}
+
+.plot.watered {
+    background-color: #523119;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2040%2042'%20preserveAspectRatio='none'%3E%3Crect%20width='40'%20height='42'%20fill='%23523119'/%3E%3Cpath%20d='M3%209%20Q20%204%2037%209%20L37%2015%20Q20%2011%203%2015Z'%20fill='%2366401f'/%3E%3Cpath%20d='M5%209%20Q20%204.8%2035%209'%20fill='none'%20stroke='%2380562f'%20stroke-width='1.6'%20stroke-linecap='round'/%3E%3Cpath%20d='M4%2015.5%20Q20%2011.6%2036%2015.5'%20fill='none'%20stroke='%233a2210'%20stroke-width='1.8'%20stroke-linecap='round'/%3E%3Cpath%20d='M3%2021%20Q20%2016%2037%2021%20L37%2027%20Q20%2023%203%2027Z'%20fill='%2366401f'/%3E%3Cpath%20d='M5%2021%20Q20%2016.8%2035%2021'%20fill='none'%20stroke='%2380562f'%20stroke-width='1.6'%20stroke-linecap='round'/%3E%3Cpath%20d='M4%2027.5%20Q20%2023.6%2036%2027.5'%20fill='none'%20stroke='%233a2210'%20stroke-width='1.8'%20stroke-linecap='round'/%3E%3Cpath%20d='M3%2033%20Q20%2028%2037%2033%20L37%2039%20Q20%2035%203%2039Z'%20fill='%2366401f'/%3E%3Cpath%20d='M5%2033%20Q20%2028.8%2035%2033'%20fill='none'%20stroke='%2380562f'%20stroke-width='1.6'%20stroke-linecap='round'/%3E%3Cpath%20d='M4%2039.5%20Q20%2035.6%2036%2039.5'%20fill='none'%20stroke='%233a2210'%20stroke-width='1.8'%20stroke-linecap='round'/%3E%3Cellipse%20cx='12'%20cy='10'%20rx='7'%20ry='2.5'%20fill='%23bfe6ff'%20opacity='.25'/%3E%3Cellipse%20cx='27'%20cy='25'%20rx='5'%20ry='1.8'%20fill='%23bfe6ff'%20opacity='.2'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+}
+
+.plot.locked {
+    background: rgba(255, 255, 255, 0.16);
+    border: 2.5px dashed rgba(58, 38, 24, 0.55);
+    box-shadow: none;
+}
+
+.plot.locked.next {
+    background: rgba(242, 193, 78, 0.35);
+    border-color: var(--ink);
+    border-style: dashed;
+}
+
+.plot.hidden {
+    display: none;
+}
+
+.lock-ico {
+    position: absolute;
+    inset: 24%;
+    opacity: 0.9;
+}
+
+.lock-ico.dim {
+    opacity: 0.35;
+}
+
+.price-chip {
+    position: absolute;
+    left: 50%;
+    bottom: -9px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 1px 6px 1px 2px;
+    background: var(--wood-ll);
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    font-family: var(--display);
+    font-size: 0.7rem;
+    white-space: nowrap;
+    z-index: 3;
+}
+
+.price-chip .ico {
+    width: 15px;
+    height: 15px;
+}
+
+.spr-wrap {
+    position: absolute;
+    left: -2%;
+    right: -2%;
+    top: -20%;
+    bottom: 2%;
+    pointer-events: none;
+    transform-origin: 50% 92%;
+    z-index: 1;
+}
+
+.spr-wrap.pop {
+    animation: grow 0.38s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.plot.ready .spr-wrap {
+    animation:
+        grow 0.38s cubic-bezier(0.3, 1.6, 0.5, 1),
+        sway 2.6s ease-in-out 0.4s infinite;
+}
+
+.plot.ready::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    width: 14px;
+    height: 14px;
+    z-index: 2;
+    pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M10 0l2 8 8 2-8 2-2 8-2-8-8-2 8-2z' fill='%23fff'/%3E%3C/svg%3E")
+        center/contain no-repeat;
+    animation: glint 2.4s ease-in-out infinite;
+}
+
+.pbar {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: 5px;
+    height: 7px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.pbar > i {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(#c6f09e, #7fcf4c);
+    transition: width 1s linear;
+}
+
+.need-water {
+    position: absolute;
+    top: -9px;
+    right: -8px;
+    width: 26px;
+    height: 26px;
+    padding: 3px;
+    z-index: 3;
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    animation: hop 1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cloud,
+    .rays,
+    .plot.ready .spr-wrap,
+    .critter-body,
+    .need-water,
+    .bubble,
+    .plot.ready::after {
+        animation: none !important;
+    }
+}
+
+html.season-automne .field {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M8 12 q5 -5 9 0 q-4 5 -9 0z' fill='%23e8792a'/%3E%3Cpath d='M40 44 q5 -5 9 0 q-4 5 -9 0z' fill='%23c8453a'/%3E%3C/svg%3E");
+    background-color: #a9c25a;
+}
+
+html.season-hiver .field {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Cg fill='%23fff' opacity='.9'%3E%3Ccircle cx='8' cy='10' r='2'/%3E%3Ccircle cx='36' cy='30' r='1.6'/%3E%3Ccircle cx='20' cy='42' r='1.8'/%3E%3C/g%3E%3C/svg%3E");
+    background-color: #c5dcc6;
+    box-shadow:
+        inset 0 -6px 0 rgba(0, 0, 0, 0.06),
+        0 8px 0 #8aa79a,
+        0 8px 0 3px var(--ink);
+}
+
+html.season-hiver .plot.grass {
+    background-color: #e4efe6;
+}
+
+.crow {
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    top: -40%;
+    z-index: 4;
+    pointer-events: none;
+    animation: crow 0.5s ease-in-out infinite alternate;
+    transform-origin: 50% 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #weather > div,
+    .crow,
+    .sails {
+        animation: none !important;
+    }
+}
+
+.gh-card.locked {
+    opacity: 0.65;
+}
+
+.glasshouse {
+    position: relative;
+    padding: 10px 10px 12px;
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    margin-top: 26px;
+    background: linear-gradient(160deg, rgba(220, 244, 255, 0.85), rgba(191, 230, 251, 0.7));
+    box-shadow:
+        0 6px 0 #8a8f98,
+        0 6px 0 3px var(--ink);
+}
+
+.glasshouse::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 15px;
+    pointer-events: none;
+    background: repeating-linear-gradient(90deg, transparent 0 calc(33.33% - 2px), rgba(255, 255, 255, 0.9) calc(33.33% - 2px) 33.33%);
+    opacity: 0.5;
+}
+
+.gh-roof {
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    top: -24px;
+    height: 24px;
+    background: #cfeefc;
+    border: 3px solid var(--ink);
+    border-bottom: none;
+    clip-path: polygon(0 100%, 12% 0, 88% 0, 100% 100%);
+}
+
+.gh-head {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-family: var(--display);
+    font-weight: 600;
+}
+
+.gh-head .ico {
+    width: 26px;
+    height: 26px;
+}
+
+.gh-head small {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.72rem;
+    opacity: 0.75;
+}
+
+#gh-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 300px;
+    margin: 0 auto;
+    touch-action: none;
+}
+
+.plot.gh {
+    background-color: #6b4426;
+}
+
+.fert-badge {
+    position: absolute;
+    left: -7px;
+    bottom: -7px;
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+    z-index: 3;
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+}
+
+.egg-spot {
+    position: absolute;
+    inset: 14%;
+    z-index: 4;
+    pointer-events: none;
+    animation: eggWobble 1s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.9));
+}
+
+.plot.deco {
+    cursor: pointer;
+}
+
+.deco-spr {
+    position: absolute;
+    inset: -6% 4% 4% 4%;
+    z-index: 1;
+    pointer-events: none;
+    transform-origin: 50% 90%;
+}
+
+.deco-spr.pop {
+    animation: grow 0.4s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.plot.aura {
+    box-shadow:
+        0 4px 0 rgba(58, 38, 24, 0.6),
+        0 0 0 3px rgba(255, 210, 63, 0.95),
+        0 0 14px rgba(255, 210, 63, 0.8);
+}
+
+.plots.deco-mode .plot:not(.deco):not(.planted):not(.locked) {
+    outline: 2px dashed rgba(255, 255, 255, 0.75);
+    outline-offset: -6px;
+}
+
+.dog {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 58px;
+    height: 58px;
+    z-index: 5;
+    cursor: pointer;
+    transition:
+        left 1.6s ease-in-out,
+        top 1.6s ease-in-out;
+    touch-action: none;
+}
+
+.dog[hidden] {
+    display: none;
+}
+
+.dog-body {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.25s;
+    filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.15));
+}
+
+.dog.flip .dog-body {
+    transform: scaleX(-1);
+}
+
+.dog.walking .dog-body .spr {
+    animation: waddle 0.3s ease-in-out infinite;
+    transform-origin: 50% 90%;
+}
+
+.dog.wag .dog-body .spr {
+    animation: wag 0.5s ease-in-out 2;
+    transform-origin: 50% 90%;
+}
+
+.dog .bubble {
+    bottom: 88%;
+}
+
+.dog-name {
+    position: absolute;
+    left: 50%;
+    top: 92%;
+    transform: translateX(-50%);
+    padding: 0 6px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1.5px solid var(--ink);
+    font-family: var(--display);
+    font-size: 0.62rem;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.honey-badge {
+    position: absolute;
+    right: -8px;
+    top: -10px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    padding: 1px 6px 1px 2px;
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    font-family: var(--display);
+    font-size: 0.75rem;
+    animation: hop 1s ease-in-out infinite;
+}
+
+.honey-badge svg {
+    width: 20px;
+    height: 20px;
+}
+
+html.calm .cloud,
+html.calm .rays,
+html.calm .plot.ready .spr-wrap,
+html.calm .critter-body,
+html.calm .need-water,
+html.calm .bubble,
+html.calm .plot.ready::after,
+html.calm #weather > div,
+html.calm .crow,
+html.calm .sails,
+html.calm .honey-badge,
+html.calm .egg-spot,
+html.calm .ripple {
+    animation: none !important;
+}
+
+.pest {
+    position: absolute;
+    inset: 8% 8% 20%;
+    z-index: 2;
+    pointer-events: none;
+    animation: wiggle 0.5s ease-in-out infinite alternate;
+}
+
+.soil {
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.soil.wet {
+    background: radial-gradient(ellipse at 70% 80%, rgba(79, 179, 246, 0.28), transparent 60%);
+}
+
+.soil.dry {
+    background: radial-gradient(ellipse at 30% 20%, rgba(255, 210, 63, 0.3), transparent 60%);
+}
+
+.soil.shade {
+    background: linear-gradient(135deg, rgba(20, 60, 20, 0.28), transparent 70%);
+}
+
+.soil i {
+    position: absolute;
+    left: 2px;
+    bottom: 2px;
+    width: 14px;
+    height: 14px;
+    opacity: 0.75;
+}
+
+.soil.fit i {
+    opacity: 1;
+    filter: drop-shadow(0 0 2px #fff);
+}
+
+.plot.planted .soil i {
+    opacity: 0.45;
+}
+
+.plot.planted .soil.fit i {
+    opacity: 1;
+}
+
+.soil-tag {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    width: 18px;
+    height: 18px;
+}
+
+.plot.pested {
+    box-shadow:
+        0 4px 0 rgba(58, 38, 24, 0.6),
+        0 0 0 3px #e8364b;
+    animation: pestPulse 0.9s ease-in-out infinite alternate;
+}
+
+.plot.pinned {
+    box-shadow:
+        0 4px 0 rgba(58, 38, 24, 0.6),
+        0 0 0 3px #f5a623;
+}
+
+.farmyard {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 4px 12px 4px 6px;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    color: var(--ink);
+}
+
+.farmyard .card-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.farmyard .card-title,
+.farmyard .card-sub {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.yard-house {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+}
+
+.yard-hand {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    animation: bob 1.4s ease-in-out infinite alternate;
+}
+
+.farmyard .dot,
+.map-tabs .dot,
+.plot.hand::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 2px dashed rgba(255, 255, 255, 0.75);
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+html.season-hiver .fence::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 3px;
+    height: 6px;
+    border-radius: 6px;
+    background: repeating-linear-gradient(90deg, #fff 0 22px, transparent 22px 28px);
+    opacity: 0.95;
+}
+
+html.season-printemps .field {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='10' cy='14' r='2.2' fill='%23fff'/%3E%3Ccircle cx='10' cy='14' r='.9' fill='%23ffd23f'/%3E%3Ccircle cx='44' cy='42' r='2.2' fill='%23f6a5b5'/%3E%3C/svg%3E");
+}
+
+.fence.fence-white {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='26'%3E%3Crect x='0' y='9' width='28' height='5' fill='%23ffffff' stroke='%233a2618' stroke-width='2'/%3E%3Crect x='0' y='17' width='28' height='4' fill='%23ffffff' stroke='%233a2618' stroke-width='2'/%3E%3Cpath d='M9 25V7l5-5 5 5v18z' fill='%23ffffff' stroke='%233a2618' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.fence.fence-stone {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='26'%3E%3Crect x='1' y='8' width='16' height='8' rx='3' fill='%23c9c2b8' stroke='%233a2618' stroke-width='2'/%3E%3Crect x='19' y='8' width='16' height='8' rx='3' fill='%23b9ad9a' stroke='%233a2618' stroke-width='2'/%3E%3Crect x='-8' y='16' width='16' height='8' rx='3' fill='%23b9ad9a' stroke='%233a2618' stroke-width='2'/%3E%3Crect x='10' y='16' width='16' height='8' rx='3' fill='%23d8d0c2' stroke='%233a2618' stroke-width='2'/%3E%3Crect x='28' y='16' width='16' height='8' rx='3' fill='%23c9c2b8' stroke='%233a2618' stroke-width='2'/%3E%3C/svg%3E");
+}
+
+.fence.fence-hedge {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='26'%3E%3Cpath d='M0 24 V12 q7 -10 15 -2 q8 -8 15 2 V24z' fill='%234f9e3a' stroke='%233a2618' stroke-width='2'/%3E%3Ccircle cx='9' cy='15' r='1.4' fill='%237fcf4c'/%3E%3Ccircle cx='21' cy='18' r='1.4' fill='%237fcf4c'/%3E%3C/svg%3E");
+}
+
+.fence.fence-flowers {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='26'%3E%3Crect x='0' y='12' width='28' height='5' fill='%23e8c38c' stroke='%233a2618' stroke-width='2'/%3E%3Cpath d='M12 25V9l2-2 2 2v16z' fill='%23f5deb3' stroke='%233a2618' stroke-width='2'/%3E%3Ccircle cx='5' cy='8' r='3.4' fill='%23e8364b' stroke='%233a2618' stroke-width='1.4'/%3E%3Ccircle cx='23' cy='7' r='3.4' fill='%23ffd23f' stroke='%233a2618' stroke-width='1.4'/%3E%3C/svg%3E");
+}
+
+.field.path-gravel {
+    background-color: #d9cdb4;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cg fill='%23a89a82'%3E%3Ccircle cx='4' cy='5' r='1.4'/%3E%3Ccircle cx='15' cy='9' r='1.1'/%3E%3Ccircle cx='9' cy='18' r='1.3'/%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.field.path-cobble {
+    background-color: #b9ad9a;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cg fill='%23d8d0c2' stroke='%238f8574' stroke-width='1.4'%3E%3Crect x='1' y='1' width='12' height='12' rx='4'/%3E%3Crect x='15' y='1' width='12' height='12' rx='4'/%3E%3Crect x='8' y='15' width='12' height='12' rx='4'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.field.path-meadow {
+    background-color: #8fd062;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='8' cy='9' r='2.6' fill='%23fff'/%3E%3Ccircle cx='8' cy='9' r='1' fill='%23ffd23f'/%3E%3Ccircle cx='28' cy='22' r='2.6' fill='%23f6a5b5'/%3E%3Ccircle cx='16' cy='33' r='2.4' fill='%23b58ad6'/%3E%3C/svg%3E");
+}
+
+html.hol-halloween .field::after,
+html.hol-noel .field::after,
+html.hol-paques .field::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: -26px;
+    height: 26px;
+    pointer-events: none;
+    background-repeat: repeat-x;
+    z-index: 2;
+}
+
+html.hol-halloween .field::after {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='26'%3E%3Cpath%20d='M0%202%20Q32%2014%2064%202'%20fill='none'%20stroke='%233a2618'%20stroke-width='2'/%3E%3Cpath%20d='M10%206%20L22%206%20L16%2020Z'%20fill='%23f5913b'%20stroke='%233a2618'%20stroke-width='1.6'/%3E%3Cpath%20d='M38%207%20L50%205%20L45%2019Z'%20fill='%236b3fa0'%20stroke='%233a2618'%20stroke-width='1.6'/%3E%3C/svg%3E");
+}
+
+html.hol-noel .field::after {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='26'%3E%3Cpath%20d='M0%204%20Q32%2016%2064%204'%20fill='none'%20stroke='%232b5e2e'%20stroke-width='3'/%3E%3Ccircle%20cx='12'%20cy='11'%20r='4'%20fill='%23e2412f'%20stroke='%233a2618'%20stroke-width='1.4'/%3E%3Ccircle%20cx='32'%20cy='14'%20r='4'%20fill='%23ffd23f'%20stroke='%233a2618'%20stroke-width='1.4'/%3E%3Ccircle%20cx='52'%20cy='11'%20r='4'%20fill='%235aa9e6'%20stroke='%233a2618'%20stroke-width='1.4'/%3E%3C/svg%3E");
+}
+
+html.hol-paques .field::after {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='26'%3E%3Cpath%20d='M0%202%20Q32%2014%2064%202'%20fill='none'%20stroke='%233a2618'%20stroke-width='2'/%3E%3Cellipse%20cx='16'%20cy='14'%20rx='5'%20ry='7'%20fill='%23f6a5b5'%20stroke='%233a2618'%20stroke-width='1.4'/%3E%3Cellipse%20cx='42'%20cy='14'%20rx='5'%20ry='7'%20fill='%239be06b'%20stroke='%233a2618'%20stroke-width='1.4'/%3E%3C/svg%3E");
+}
+
+@keyframes grow {
+    from {
+        transform: scale(0.2, 0.1);
+    }
+}
+
+@keyframes sway {
+    0%,
+    100% {
+        transform: rotate(-3deg);
+    }
+    50% {
+        transform: rotate(3deg);
+    }
+}
+
+@keyframes glint {
+    0%,
+    70%,
+    100% {
+        opacity: 0;
+        transform: scale(0.3) rotate(0);
+    }
+    82% {
+        opacity: 1;
+        transform: scale(1) rotate(45deg);
+    }
+}
+
+@keyframes hop {
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+@keyframes waddle {
+    0%,
+    100% {
+        transform: rotate(-4deg) translateY(0);
+    }
+    50% {
+        transform: rotate(4deg) translateY(-3px);
+    }
+}
+
+@keyframes crow {
+    from {
+        transform: translateY(0) rotate(-6deg);
+    }
+    to {
+        transform: translateY(-5px) rotate(6deg);
+    }
+}
+
+@keyframes eggWobble {
+    0%,
+    100% {
+        transform: rotate(-10deg) translateY(0);
+    }
+    50% {
+        transform: rotate(10deg) translateY(-4px);
+    }
+}
+
+@keyframes wag {
+    25% {
+        transform: rotate(-8deg) translateY(-6px);
+    }
+    75% {
+        transform: rotate(8deg) translateY(-6px);
+    }
+}
+
+@keyframes ripple {
+    from {
+        transform: scale(0.4);
+        opacity: 1;
+    }
+    to {
+        transform: scale(2.4);
+        opacity: 0;
+    }
+}
+
+@keyframes bob {
+    50% {
+        transform: translateY(3px);
+    }
+}
+
+@keyframes bob {
+    to {
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes wiggle {
+    to {
+        transform: translate(2px, -2px) rotate(4deg);
+    }
+}
+
+@keyframes pestPulse {
+    to {
+        box-shadow:
+            0 4px 0 rgba(58, 38, 24, 0.6),
+            0 0 0 5px rgba(232, 54, 75, 0.5);
+    }
+}

@@ -1,0 +1,396 @@
+// Robot de jeu : joue efficacement en accéléré, sans interface, et mesure le temps pour chaque niveau.
+// usage : node tools/bot.mjs [heures=60] [graine=777]
+import { setClock } from '../src/core/clock.js';
+import { state, setStore } from '../src/core/state.js';
+import { setView } from '../src/core/view.js';
+import * as G from '../src/systems/index.js';
+import { ITEMS } from '../src/data/items.js';
+import { ANIMALS } from '../src/data/animals.js';
+import { MACHINES, MACHINE_SLOTS, RECIPES } from '../src/data/machines.js';
+import { DECOS, UPGRADES } from '../src/data/farm.js';
+import { PROJECTS, STORIES, RIVALS, CHAPTERS } from '../src/data/village.js';
+import { RARE, STALL_MAX_QTY } from '../src/data/commerce.js';
+import { NATURE } from '../src/data/nature.js';
+import { TRANS_KINDS } from '../src/data/animals.js';
+import { FARM_SEASON_TIERS } from '../src/data/port.js';
+import { CAVE_ITEMS, CAVE_LOT_MAX, CAVE_SHELVES, CAVE_GEAR } from '../src/data/cave.js';
+import { BALANCE } from '../src/data/progress.js';
+import { SKILLS, ACHIEVEMENTS } from '../src/data/meta.js';
+import { pickRand } from '../src/core/format.js';
+
+const hours = +(process.argv[2] || 60),
+    seed = +(process.argv[3] || 777);
+
+// hasard reproductible (le même que le robot de la 6.2)
+Math.random = (() => {
+    let a = seed;
+    return () => {
+        a |= 0;
+        a = (a + 0x6d2b79f5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+})();
+let now = Date.UTC(2026, 3, 1, 8, 0, 0);
+setClock(() => now);
+setStore(null);
+G.loadGame();
+setView({ tab: 'none', started: true, hidden: false });
+state.tutorial.done = true;
+
+const xpBy = {};
+const levels = { 1: 0 };
+let t = 0;
+const stuck = {};
+const log = [];
+const tag = (s, fn) => {
+    const lvl = state.level,
+        xp0 = state.xp;
+    fn();
+    // expérience gagnée pendant le geste (approximatif lors d'un passage de niveau)
+    const gained = state.level === lvl ? state.xp - xp0 : G.getXpReq(lvl) - xp0 + state.xp;
+    if (gained > 0) xpBy[s] = (xpBy[s] || 0) + gained;
+};
+
+const crops = () => Object.values(ITEMS).filter(i => i.type === 'crop' && !i.exotic && !i.ghOnly && G.storyOk(i) && state.level >= i.reqLvl);
+// produits à affiner : ce que la cave peut accueillir
+const caveWant = () => {
+    if (!G.caveOpen()) return {};
+    const free = state.cave.slots.filter(l => !l).length;
+    const ok = Object.keys(CAVE_ITEMS).filter(id => RECIPES[id] && G.recipeUnlocked(id) && G.hasMachine(RECIPES[id].machine));
+    ok.sort((a, b) => ITEMS[b].sell - ITEMS[a].sell);
+    return free && ok.length ? { [ok[0]]: CAVE_LOT_MAX, ...(ok[1] && free > 1 ? { [ok[1]]: CAVE_LOT_MAX } : {}) } : {};
+};
+// quantités utiles : commandes, train, montgolfière, chantiers, et ingrédients de ces produits
+const need = () => {
+    const n = {};
+    const add = (id, q) => (n[id] = (n[id] || 0) + q);
+    state.quests.forEach(q => G.isOpen(q) && q.items.forEach(x => add(x.id, x.qty)));
+    if (state.truck.status === 'here') state.truck.slots.forEach(sl => !sl.loaded && add(sl.id, sl.qty));
+    if (state.balloon.status === 'here') state.balloon.items.forEach(x => add(x.id, x.qty));
+    if (state.boat.status === 'here') state.boat.items.forEach(x => add(x.id, x.qty));
+    if (state.incident && state.incident.type === 'express') state.incident.items.forEach(x => add(x.id, x.qty));
+    Object.values(PROJECTS).forEach(p => G.projectOpen(p.id) && Object.keys(p.need).forEach(id => add(id, G.projectLeft(p.id, id))));
+    const ct = state.contract;
+    if (ct && !ct.done) add(ct.item, ct.qty - ct.given);
+    Object.keys(STORIES).forEach(v => G.villagerStoryOpen(v) && Object.keys(G.storyNeed(v)).forEach(k => add(k, G.storyLeftOf(v, k))));
+    if (G.rareActive('critic') && !state.rare.served) add(state.rare.dish, 1);
+    const bc = G.barnUpCost(state.barn.lvl);
+    ['plank', 'nail'].forEach(id => add(id, Math.max(0, bc[id] - state.inventory[id])));
+    if (state.level >= 11 && G.toolLvl('forest') < 3) add('tools', 1);
+    const hn = G.houseNext();
+    if (hn && state.level >= hn.lvl) ['beam', 'plank', 'nail', 'tools'].forEach(id => hn.cost[id] && add(id, hn.cost[id]));
+    const kn = G.handLvl() && G.handNext();
+    if (kn && state.level >= kn.lvl) add('tools', kn.cost.tools);
+    Object.keys(n).forEach(id => {
+        const r = RECIPES[id];
+        if (r) Object.entries(r.ing).forEach(([k, q]) => add(k, q * Math.max(0, n[id] - state.inventory[id])));
+    });
+    return n;
+};
+
+function farm() {
+    const nd = need();
+    const best = crops()
+        .sort((a, b) => (b.sell - b.cost) / b.time - (a.sell - a.cost) / a.time)
+        .slice(0, 4);
+    const wanted = crops().filter(c => (nd[c.id] || 0) > state.inventory[c.id]);
+    let k = 0;
+    // un arbre fruitier quand un fruit est demandé et qu'aucun ne pousse
+    const tree = Object.values(ITEMS).find(
+        d => d.type === 'tree' && state.level >= d.reqLvl && (nd[d.id] || 0) > state.inventory[d.id] && !G.allPlots().some(([p]) => p.itemId === d.id),
+    );
+    if (tree && state.money > tree.cost * 3) {
+        const spot = G.allPlots().find(([p, i]) => i < 1000 && p.isUnlocked && !p.deco && (!p.itemId || ITEMS[p.itemId].type === 'crop'));
+        if (spot) {
+            G.resetPlot(spot[0], null);
+            G.spend(tree.cost);
+            state.seeds[tree.id]++;
+            G.plantSeed(spot[0], tree.id);
+        }
+    }
+    G.allPlots().forEach(([p, i]) => {
+        if (!p.isUnlocked) return;
+        if (p.pest) tag('imprévus', () => G.treatPest(i));
+        if (p.terrain === 'grass') p.terrain = 'plowed';
+        if (p.itemId && p.isReady && !G.barnBlocked(true))
+            tag('récoltes', () => {
+                const r = G.harvestPlot(p);
+                G.addXp(r.item.xp);
+                G.rollRare(BALANCE.rareDrop);
+            });
+        if (!p.itemId && !p.deco) {
+            const pick = wanted.length ? wanted[k % wanted.length] : best[k % best.length];
+            k++;
+            if (pick && state.money > pick.cost + 50) G.plantSeed(p, pick.id);
+        }
+        if (p.itemId) p.isWatered = true;
+    });
+    if (state.unlockedPlots < 36 && state.money > G.getExpCost() * 3) G.buyExp();
+}
+
+function animals() {
+    Object.values(ANIMALS).forEach(a => {
+        const n = G.animalCount(a.id);
+        if (state.level >= a.reqLvl && n < 3 && state.money > a.cost * 2.5) G.buy('animal', a.id, 1);
+    });
+    if (state.inventory.feed < 30 && state.money > 200) {
+        state.money -= 60;
+        state.inventory.feed += 30;
+    }
+    state.animals.forEach((a, k) => {
+        if (a.sick && state.money > G.cureCost() * 2) tag('imprévus', () => G.cureAnimal(k));
+        while (a.food < G.maxFood() && state.inventory.feed > 0) {
+            a.food++;
+            state.inventory.feed--;
+        }
+        if (a.stack && !G.barnBlocked(true))
+            tag('animaux', () => {
+                const r = G.collectAnimal(a);
+                G.addXp(r.xp);
+            });
+    });
+}
+
+function machines() {
+    Object.values(MACHINES).forEach(m => {
+        if (state.level >= m.reqLvl && !G.hasMachine(m.id) && state.money > m.cost * 1.5 && G.hasMats(G.matCost('machine', m.id))) G.buy('machine', m.id, 1);
+    });
+    const nd = need();
+    state.machines.forEach((m, i) => {
+        if (G.outCount(m)) tag('atelier', () => G.collectMachine(i, null, true));
+        let guard = 0;
+        while (m.queue.length < MACHINE_SLOTS && guard++ < 4) {
+            const opts = G.recipesOf(m.type).filter(r => G.recipeUnlocked(r.id) && G.canCook(r.id));
+            if (!opts.length) break;
+            const cw = caveWant();
+            const dem = x => (nd[x.id] || 0) - state.inventory[x.id];
+            opts.sort(
+                (a, b) =>
+                    dem(b) - dem(a) ||
+                    (cw[b.id] && state.inventory[b.id] < cw[b.id] ? 1 : 0) - (cw[a.id] && state.inventory[a.id] < cw[a.id] ? 1 : 0) ||
+                    (ITEMS[b.id].sell || 0) / b.time - (ITEMS[a.id].sell || 0) / a.time,
+            );
+            const r = opts[0];
+            if (!(nd[r.id] > state.inventory[r.id]) && G.barnSpace() < G.barnCap() * 0.3) break;
+            Object.entries(r.ing).forEach(([k2, n]) => (state.inventory[k2] -= n));
+            if (!m.queue.length) m.progress = 0;
+            m.queue.push(r.id);
+        }
+    });
+}
+
+function orders() {
+    state.quests.forEach((q, i) => {
+        if (!G.isOpen(q)) return;
+        const key = q.items.map(x => x.id + x.qty).join() + q.gold;
+        if (G.checkQuestReady(q)) {
+            tag('commandes', () => G.turnInQuest(i));
+            return;
+        }
+        stuck[key] = (stuck[key] || 0) + 5;
+        if (stuck[key] > 2400) {
+            G.trashQuest(i);
+            delete stuck[key];
+        }
+    });
+    const tr = state.truck;
+    if (tr.status === 'here')
+        tr.slots.forEach((sl, k) => {
+            if (!sl.loaded && state.inventory[sl.id] >= sl.qty) tag('train', () => G.loadSlot(k));
+        });
+    if (state.balloon.status === 'here' && G.hasAll(state.balloon.items)) tag('montgolfière', () => G.sendBalloon());
+    if (state.boat.status === 'here' && G.hasAll(state.boat.items)) tag('bateau', () => G.sendBoat());
+    if (G.netOpen() && !state.net.until) G.castNet();
+    if (G.netReady() && !G.barnBlocked(true)) tag('nature', () => G.haulNet());
+    if (G.transOpen() && !state.trans.returnAt) {
+        const pick = state.animals
+            .map((a, i) => [a, i])
+            .filter(([a]) => TRANS_KINDS.includes(a.type) && G.isAdult(a) && !a.alpine)
+            .slice(0, G.transMax())
+            .map(([, i]) => i);
+        if (pick.length) G.startTrans(pick);
+    }
+    if (G.farmSeasonOpen()) for (let k = 0; k < FARM_SEASON_TIERS.length; k++) tag('saison', () => G.claimSeasonTier(k));
+    const inc = state.incident;
+    if (inc && inc.type === 'express' && G.hasAll(inc.items)) tag('commandes', () => G.deliverExpress());
+    Object.values(PROJECTS).forEach(p => {
+        if (!G.projectOpen(p.id)) return;
+        G.giveAllToProject(p.id);
+        if (G.projectComplete(p.id)) {
+            tag('chantiers', () => G.finishProject(p.id));
+            log.push(`${Math.round(t / 60)} min : ${p.name} (niv. ${state.level})`);
+        }
+    });
+    if (state.neighbors)
+        RIVALS.forEach(
+            (r, k) => state.neighbors[k] && state.neighbors[k].req && G.hasAll(state.neighbors[k].req.items) && tag('voisins', () => G.helpNeighbor(k)),
+        );
+    for (let k = 0; k < 3; k++) if (state.contest && !state.contest.tiers[k]) G.claimContestTier(k);
+    G.ensureContract();
+    if (G.contractReady()) tag('commandes', () => G.giveContract());
+    Object.keys(STORIES).forEach(v => G.villagerStoryReady(v) && tag('commandes', () => G.giveStory(v)));
+    if (G.rareActive('critic') && !state.rare.served && state.inventory[state.rare.dish] > 0) tag('commandes', () => G.serveCritic());
+    if (G.rareActive('fair')) state.rare.offers.forEach((o, k) => !o.sold && state.money > o.price * 4 && G.buyStarAnimal(k));
+    if (state.merchant.status === 'here')
+        state.merchant.stock.forEach((o, k) => {
+            if (!o.sold && o.kind === 'rare' && state.money > o.price * 3) G.buyMerchant(k);
+        });
+    if (RARE.every(id => state.inventory[id] >= G.barnUpCost(state.barn.lvl)[id]) && state.money > G.barnUpCost(state.barn.lvl).coins * 2) G.upgradeBarn();
+}
+
+function sell() {
+    // l'étal : encaisser, puis remettre en vente le surplus le plus précieux au prix normal
+    G.ensureStall();
+    state.stall.slots.forEach((x, k) => x && x.sold && G.collectStall(k, null, true));
+    state.stall.slots.forEach((x, k) => {
+        if (x) return;
+        const id = G.stallChoices().find(i => G.sellableQty(i) - (need()[i] || 0) >= 3);
+        if (!id) return;
+        G.listStall(k, id, Math.min(STALL_MAX_QTY, G.sellableQty(id) - (need()[id] || 0)), 1);
+    });
+    const nd = need();
+    const full = G.barnUsed() > G.barnCap() * 0.7;
+    Object.keys(ITEMS).forEach(id => {
+        const it = ITEMS[id];
+        if (!it.sell || !state.inventory[id]) return;
+        const usedInRecipe = Object.values(RECIPES).some(r => r.ing[id] && G.hasMachine(r.machine) && G.recipeUnlocked(r.id));
+        const keep = (nd[id] || 0) + (usedInRecipe && !full ? 4 : 0);
+        const n = state.inventory[id] - keep;
+        if (n > 0 && (full || !G.inBarn(id) || !usedInRecipe)) {
+            const r = G.sellBatch(id, n, true);
+            G.earn(r.gain, null);
+        }
+    });
+}
+
+function progress() {
+    Object.keys(SKILLS).forEach(b =>
+        SKILLS[b].list.forEach((sk, k) => {
+            if (G.skillPoints() > 0 && G.rank(sk.id) < sk.max && !G.skillReq(b, k)) G.learnSkill(b, k);
+        }),
+    );
+    ACHIEVEMENTS.forEach(a => {
+        if (G.achClaimable(a)) tag('succès', () => G.claimAchievement(a.id));
+    });
+    if (state.inventory.tools > 0) ['forest', 'mine'].forEach(k => G.upgradeTool(k));
+    if (state.level >= DECOS.lightningRod.reqLvl && !G.hasRod() && state.money > DECOS.lightningRod.cost * 3) {
+        const spot = state.grid.find(p => p.isUnlocked && !p.deco && (!p.itemId || ITEMS[p.itemId].type === 'crop'));
+        if (spot) {
+            G.spend(DECOS.lightningRod.cost);
+            G.resetPlot(spot, null);
+            spot.deco = 'lightningRod';
+        }
+    }
+    const hn = G.houseNext();
+    if (hn && state.level >= hn.lvl && G.hasCost({ ...hn.cost, coins: hn.cost.coins * 2 })) G.upgradeHouse();
+    const kn = G.handNext();
+    if (G.handLvl() && kn && state.level >= kn.lvl && G.hasCost({ ...kn.cost, coins: kn.cost.coins * 2 })) G.upgradeHand();
+    ['speed', 'price', 'feeder'].forEach(u => {
+        if (state.upgrades[u] < UPGRADES[u].maxLvl && state.money > G.upgradeCost(u) * 4) G.buyUpgrade(u);
+    });
+    // forêt et mine : une coupe toutes les 30 s environ
+    if (t % 30 === 0 && state.level >= 3)
+        tag('nature', () => {
+            state.inventory.wood += 2.5;
+            G.addXp(4);
+            if (state.level >= 5) {
+                state.inventory.stone += 2.5;
+                G.addXp(6);
+            }
+        });
+    if (t % 400 === 0 && state.level >= NATURE.mine.lvl) state.inventory[pickRand(['fossil', 'amethyst', 'nugget'])]++;
+    if (t % 120 === 0 && state.level >= NATURE.pond.lvl && !G.barnBlocked(true)) {
+        state.inventory[pickRand(['roach', 'perch', 'trout'])]++;
+        G.addXp(10);
+    }
+}
+
+// la cave : mettre en cave ce qui dépasse, soigner, régler le climat, vendre
+function cave() {
+    if (!G.caveOpen()) return;
+    G.ensureCave();
+    const c = state.cave,
+        nd = need();
+    if (CAVE_SHELVES[c.shelves] !== undefined && state.money > CAVE_SHELVES[c.shelves] * 4) G.buyShelf();
+    Object.keys(CAVE_GEAR).forEach(k => !c.gear[k] && state.money > CAVE_GEAR[k].cost * 5 && G.buyCaveGear(k));
+    ['temp', 'hum'].forEach(k => !G.inBand(c[k]) && G.nudgeClimate(k, c[k] < 50 ? 1 : -1));
+    c.slots.forEach((lot, i) => {
+        if (!lot) {
+            const id = Object.keys(CAVE_ITEMS)
+                .filter(x => state.inventory[x] - (nd[x] || 0) >= 2)
+                .sort((a, b) => ITEMS[b].sell - ITEMS[a].sell)[0];
+            if (id) G.putInCave(i, id, Math.min(CAVE_LOT_MAX, state.inventory[id] - (nd[id] || 0)));
+            return;
+        }
+        if (G.careNeeded(lot)) tag('cave', () => G.careLot(i));
+        const o = G.lotOdds(lot);
+        if (lot.bad || lot.rank >= 3 || (lot.rank >= 2 && o.good < 0.45)) tag('cave', () => G.takeOut(i));
+    });
+    const a = c.auction;
+    c.reserve.slice().forEach(l => {
+        if (!a.lots && a.deposits.length < G.depositMax() && !l.bad) G.depositLot(l.uid);
+    });
+    if (c.reserve.length > 3) G.sellNegociant(c.reserve[0].uid);
+    if (a.lots && !a.over) a.lots.forEach((l, k) => l.kind === 'buy' && !l.done && l.leader !== 'you' && state.money > l.price * 6 && G.playerBid(k));
+}
+
+function step() {
+    cave();
+    farm();
+    animals();
+    machines();
+    orders();
+    sell();
+    progress();
+}
+
+const total = Math.round(hours * 3600);
+for (let k = 0; k < total; k++) {
+    t++;
+    now += 1000;
+    G.gameTick();
+    if (t % 5 === 0) step();
+    if (!levels[state.level]) levels[state.level] = t;
+}
+
+const fmtH = sec => (sec >= 3600 ? `${Math.floor(sec / 3600)} h ${String(Math.floor((sec % 3600) / 60)).padStart(2, '0')}` : `${Math.floor(sec / 60)} min`);
+const out = {
+    level: state.level,
+    money: Math.round(state.money),
+    levels: Object.fromEntries(Object.entries(levels).map(([l, sec]) => [l, sec])),
+    xpBy,
+    income: Object.fromEntries(Object.entries(state.income).map(([k, v]) => [k, Math.round(v)])),
+    stats: { orders: state.stats.orders, wagons: state.stats.wagons, balloons: state.stats.balloons, incidents: state.stats.incidents },
+    world: {
+        chapters: CHAPTERS.filter(c => G.chapterDone(c.n)).length,
+        house: G.houseLvl(),
+        hand: G.handLvl(),
+        league: state.league,
+        renown: state.renown,
+        cave: { lots: state.stats.caveLots || 0, sold: state.stats.auctionSold || 0, legend: state.stats.caveLegend || 0 },
+        boats: state.stats.boats || 0,
+    },
+};
+const saveAt = process.argv.indexOf('--save');
+if (saveAt > 0) {
+    state.lastSaved = now;
+    (await import('fs')).writeFileSync(process.argv[saveAt + 1], JSON.stringify(state));
+}
+if (process.argv.includes('--json')) console.log(JSON.stringify(out));
+else {
+    console.log('niveau atteint :', out.level, '· pièces :', out.money);
+    for (const [l, sec] of Object.entries(levels)) if (+l % 5 === 0 || +l === out.level) console.log(`  niveau ${String(l).padStart(2)} à ${fmtH(sec)}`);
+    const tot = Object.values(xpBy).reduce((a, b) => a + b, 0) || 1;
+    console.log(
+        'expérience :',
+        Object.entries(xpBy)
+            .sort((a, b) => b[1] - a[1])
+            .map(([k, v]) => `${k} ${Math.round((v / tot) * 100)} %`)
+            .join(', '),
+    );
+    console.log('revenus :', out.income, '· activité :', out.stats);
+    console.log('monde :', JSON.stringify(out.world));
+    log.slice(-5).forEach(l => console.log('  chantier :', l));
+}

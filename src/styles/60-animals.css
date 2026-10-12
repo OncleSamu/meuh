@@ -1,0 +1,499 @@
+/* Animaux : le pré, les bêtes, la transhumance */
+.meadow {
+    position: relative;
+    height: 380px;
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    overflow: hidden;
+    background-color: #8ccf62;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M6 22l1.5-5 1.5 5M26 10l1.5-5 1.5 5M20 34l1.2-4 1.2 4' stroke='%236cc04a' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='34' cy='30' r='2' fill='%23fff'/%3E%3Ccircle cx='34' cy='30' r='.8' fill='%23ffd23f'/%3E%3C/svg%3E");
+    box-shadow:
+        0 8px 0 #5c8f36,
+        0 8px 0 3px var(--ink);
+    margin: 10px 0 14px;
+}
+
+.meadow .pond {
+    position: absolute;
+    right: -30px;
+    bottom: -24px;
+    width: 150px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at 40% 35%, #a6e1ff, var(--water));
+    border: 3px solid var(--ink);
+}
+
+.meadow .empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.critter {
+    position: absolute;
+    width: 76px;
+    height: 76px;
+    margin: -38px 0 0 -38px;
+    cursor: pointer;
+    transition:
+        left 3.2s linear,
+        top 3.2s linear;
+}
+
+.critter-body {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.25s;
+    animation: idle 2.4s ease-in-out infinite;
+    transform-origin: 50% 90%;
+}
+
+.critter.flip .critter-body {
+    transform: scaleX(-1);
+}
+
+.critter.walking .critter-body .spr {
+    animation: waddle 0.35s ease-in-out infinite;
+    transform-origin: 50% 90%;
+}
+
+.critter.shake .critter-body {
+    animation: shake 0.3s;
+}
+
+.bubble {
+    position: absolute;
+    left: 50%;
+    bottom: 82%;
+    transform: translateX(-50%);
+    display: none;
+    align-items: center;
+    gap: 2px;
+    padding: 3px 7px 3px 3px;
+    background: #fff;
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    font-family: var(--display);
+    font-size: 0.8rem;
+    white-space: nowrap;
+    animation: hop 1.1s ease-in-out infinite;
+}
+
+.bubble.show {
+    display: flex;
+}
+
+.bubble::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -7px;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-right: 2.5px solid var(--ink);
+    border-bottom: 2.5px solid var(--ink);
+    transform: translateX(-50%) rotate(45deg);
+}
+
+.bubble .ico {
+    width: 24px;
+    height: 24px;
+}
+
+.food-meter {
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 2px;
+}
+
+.food-meter i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.food-meter i.on {
+    background: var(--gold);
+}
+
+.bar.cbar {
+    margin: 0;
+    position: absolute;
+    left: 18%;
+    right: 18%;
+    bottom: -16px;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    overflow: hidden;
+    display: none;
+}
+
+.critter.busy .bar.cbar {
+    display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cloud,
+    .rays,
+    .plot.ready .spr-wrap,
+    .critter-body,
+    .need-water,
+    .bubble,
+    .plot.ready::after {
+        animation: none !important;
+    }
+    .critter {
+        transition: none;
+    }
+}
+
+html.season-hiver .meadow {
+    background-color: #cfe2d0;
+}
+
+html.season-automne .meadow {
+    background-color: #b5c964;
+}
+
+.critter.baby .critter-body {
+    transform: scale(0.62);
+    transform-origin: 50% 85%;
+}
+
+.critter.baby.flip .critter-body {
+    transform: scale(-0.62, 0.62);
+}
+
+.bar.gbar {
+    margin: 0;
+    position: absolute;
+    left: 22%;
+    right: 22%;
+    bottom: -16px;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    overflow: hidden;
+    display: none;
+}
+
+.bar.gbar > i {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(#ffe9a8, #f2c14e);
+    transition: width 1s linear;
+}
+
+.critter.baby .bar.gbar {
+    display: block;
+}
+
+.critter.baby .food-meter {
+    bottom: 2px;
+}
+
+.critter-name {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 8px);
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    padding: 0 6px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1.5px solid var(--ink);
+    font-family: var(--display);
+    font-size: 0.62rem;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.critter-name .ico {
+    width: 11px;
+    height: 11px;
+}
+
+.critter.baby .critter-name {
+    top: calc(100% + 14px);
+}
+
+.animal-art {
+    width: 130px;
+    height: 130px;
+    margin: -82px auto 4px;
+    padding: 12px;
+    border-radius: 50%;
+    background: #c9eaa8;
+    border: 3px solid var(--ink);
+    box-shadow: 0 5px 0 var(--wood-d);
+}
+
+.animal-art.baby .spr {
+    transform: scale(0.8);
+}
+
+html.calm .cloud,
+html.calm .rays,
+html.calm .plot.ready .spr-wrap,
+html.calm .critter-body,
+html.calm .need-water,
+html.calm .bubble,
+html.calm .plot.ready::after,
+html.calm #weather > div,
+html.calm .crow,
+html.calm .sails,
+html.calm .honey-badge,
+html.calm .egg-spot,
+html.calm .ripple {
+    animation: none !important;
+}
+
+html.calm .critter {
+    transition: none;
+}
+
+.critter.sick .critter-body {
+    filter: hue-rotate(60deg) saturate(0.6);
+}
+
+.star-animal {
+    filter: drop-shadow(0 0 4px #ffd23f);
+}
+
+.critter.star .critter-body {
+    filter: drop-shadow(0 0 5px #ffd23f);
+}
+
+.trans-card,
+.boat-card,
+.trans-card {
+    background: #e6f2dc;
+}
+
+.trans-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0 10px;
+}
+
+.trans-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px 4px 4px;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.8rem;
+    color: var(--ink);
+    background: var(--paper);
+    border: 2.5px solid var(--ink);
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.trans-chip .ico {
+    width: 30px;
+    height: 30px;
+}
+
+.trans-chip.on {
+    background: var(--gold);
+    box-shadow: 0 0 0 3px #fff;
+}
+
+.trans-chip.alpine {
+    border-style: dashed;
+}
+
+.critter.away {
+    opacity: 0.25;
+    pointer-events: none;
+    filter: grayscale(0.6);
+}
+
+@keyframes hop {
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+@keyframes idle {
+    50% {
+        translate: 0 -2px;
+        scale: 1.02 0.98;
+    }
+}
+
+@keyframes waddle {
+    0%,
+    100% {
+        transform: rotate(-4deg) translateY(0);
+    }
+    50% {
+        transform: rotate(4deg) translateY(-3px);
+    }
+}
+
+@keyframes shake {
+    25% {
+        translate: -4px 0;
+    }
+    75% {
+        translate: 4px 0;
+    }
+}
+
+@keyframes crow {
+    from {
+        transform: translateY(0) rotate(-6deg);
+    }
+    to {
+        transform: translateY(-5px) rotate(6deg);
+    }
+}
+
+@keyframes ripple {
+    from {
+        transform: scale(0.4);
+        opacity: 1;
+    }
+    to {
+        transform: scale(2.4);
+        opacity: 0;
+    }
+}
+
+/* un grand troupeau : des bêtes un peu plus petites */
+.meadow.crowd .critter {
+    width: 62px;
+    height: 62px;
+    margin: -31px 0 0 -31px;
+}
+
+/* ---------------- l'étable : le troupeau en fiches ---------------- */
+.stable {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+}
+.st-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 6px 9px;
+    background: linear-gradient(#fffdf4, #f6e8c6);
+    border: 2.5px solid var(--ink);
+    border-radius: 16px;
+    box-shadow: 0 3px 0 rgba(58, 38, 24, 0.45);
+    font: inherit;
+    color: var(--ink);
+    cursor: pointer;
+}
+.st-tile:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(58, 38, 24, 0.45);
+}
+.st-tile.ready {
+    background: linear-gradient(#f2ffe4, #d4f0b6);
+}
+.st-tile.sick {
+    background: linear-gradient(#fff0ec, #f6d2c8);
+}
+.st-tile.away {
+    opacity: 0.6;
+}
+.st-art {
+    width: 58px;
+    height: 50px;
+}
+.st-art svg {
+    width: 100%;
+    height: 100%;
+}
+.st-art.baby svg {
+    transform: scale(0.7);
+    transform-origin: 50% 90%;
+}
+.st-tile b {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    max-width: 100%;
+    font-size: 0.78rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.st-tile b .ico {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+}
+.st-tile .food-meter {
+    position: static;
+    transform: none;
+}
+.st-tile .food-meter i {
+    width: 7px;
+    height: 7px;
+}
+.st-tile .bar.cbar,
+.st-tile .bar.gbar {
+    position: static;
+    width: 80%;
+    height: 7px;
+    margin-top: 2px;
+}
+.st-tag {
+    position: absolute;
+    top: -8px;
+    right: -6px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    padding: 1px 6px 1px 2px;
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-family: var(--display);
+    font-size: 0.74rem;
+    box-shadow: 0 2px 0 rgba(58, 38, 24, 0.35);
+}
+.st-tag .ico {
+    width: 20px;
+    height: 20px;
+}
+.st-tag.ready {
+    background: #e9ffd8;
+}
+.st-tag.hungry {
+    background: #fff1b8;
+    padding: 1px 2px;
+}
+.st-tag.sick {
+    background: #ffe0d8;
+    padding: 1px 2px;
+}

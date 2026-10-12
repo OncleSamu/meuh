@@ -1,0 +1,368 @@
+/* Ferme | Nature : forêt, mine, étang, mer */
+.nature-card {
+    padding: 12px;
+    margin-bottom: 14px;
+}
+
+.nature-card.locked .res-row,
+.nature-card.locked .pond,
+.nature-card.locked .fish-btn {
+    opacity: 0.45;
+    filter: grayscale(0.6);
+    pointer-events: none;
+}
+
+.nature-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.nature-head > .ico {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.nature-head > div {
+    flex: 1;
+}
+
+.lock-tag {
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--ink);
+    color: #fff;
+    font-family: var(--display);
+    font-size: 0.72rem;
+}
+
+.lock-tag[hidden] {
+    display: none;
+}
+
+.res-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    padding: 8px 6px 4px;
+    border-radius: 14px;
+    background: linear-gradient(#9bd96f, #7fc35a);
+    border: 2.5px solid var(--ink);
+}
+
+.res-row.mine {
+    background: linear-gradient(#b9a184, #8f7558);
+}
+
+.res-slot {
+    position: relative;
+    aspect-ratio: 1 / 1.15;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.res-slot .res-art {
+    position: absolute;
+    inset: 0 0 8% 0;
+    transform-origin: 50% 95%;
+}
+
+.res-slot.down .res-art {
+    opacity: 0.9;
+}
+
+.res-slot .hp {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: 0;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1.5px solid var(--ink);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.res-slot .hp div {
+    height: 100%;
+    background: #ffd23f;
+}
+
+.regrow {
+    position: absolute;
+    left: 50%;
+    bottom: -2px;
+    transform: translateX(-50%);
+    padding: 0 5px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1.5px solid var(--ink);
+    font-family: var(--display);
+    font-size: 0.6rem;
+    white-space: nowrap;
+}
+
+.pond {
+    position: relative;
+    height: 150px;
+    border-radius: 50% / 40%;
+    margin: 4px 8px 12px;
+    overflow: hidden;
+    cursor: pointer;
+    background: radial-gradient(ellipse at 40% 35%, #a6e1ff, #4fb3f6 60%, #2f8fd0);
+    border: 3px solid var(--ink);
+    box-shadow:
+        inset 0 6px 0 rgba(255, 255, 255, 0.25),
+        0 6px 0 #6b8f4a;
+}
+
+.ripple {
+    position: absolute;
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    border-radius: 50%;
+    animation: ripple 3s ease-out infinite;
+}
+
+.ripple.r1 {
+    left: 20%;
+    top: 50%;
+    width: 30px;
+    height: 12px;
+}
+
+.ripple.r2 {
+    left: 66%;
+    top: 30%;
+    width: 24px;
+    height: 10px;
+    animation-delay: 1.4s;
+}
+
+.lily {
+    position: absolute;
+    width: 34px;
+    height: 22px;
+    border-radius: 50%;
+    background: #6cc04a;
+    border: 2px solid var(--ink);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 60%, 50% 50%, 0 40%);
+}
+
+.lily.l1 {
+    left: 10%;
+    top: 20%;
+}
+
+.lily.l2 {
+    right: 12%;
+    bottom: 18%;
+    transform: rotate(140deg);
+}
+
+.bobber {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 18px;
+    height: 22px;
+    margin: -11px 0 0 -9px;
+    border-radius: 50% 50% 45% 45%;
+    border: 2px solid var(--ink);
+    background: linear-gradient(#e2412f 0 50%, #fff 50%);
+    opacity: 0;
+    transform: translateY(-60px) scale(0.5);
+    transition:
+        transform 0.5s cubic-bezier(0.3, 1.4, 0.5, 1),
+        opacity 0.2s;
+}
+
+.bobber .excl {
+    position: absolute;
+    left: 50%;
+    top: -34px;
+    transform: translateX(-50%);
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: #fff;
+    display: none;
+    text-shadow:
+        0 2px 0 var(--ink),
+        0 -2px 0 var(--ink),
+        2px 0 0 var(--ink),
+        -2px 0 0 var(--ink);
+}
+
+.pond[data-phase='wait'] .bobber,
+.pond[data-phase='bite'] .bobber,
+.pond[data-phase='reel'] .bobber {
+    opacity: 1;
+    transform: none;
+    animation: bob 1.6s ease-in-out infinite;
+}
+
+.pond[data-phase='bite'] .bobber {
+    animation: dip 0.25s ease-in-out infinite;
+}
+
+.pond[data-phase='bite'] .bobber .excl {
+    display: block;
+    animation: hop 0.4s ease-in-out infinite;
+}
+
+.reel {
+    position: relative;
+    height: 26px;
+    margin: 0 4px 12px;
+    border-radius: 13px;
+    background: rgba(58, 38, 24, 0.55);
+    border: 2.5px solid var(--ink);
+    overflow: hidden;
+}
+
+.reel[hidden] {
+    display: none;
+}
+
+.reel-zone {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: #7fcf4c;
+    border-left: 2px solid var(--ink);
+    border-right: 2px solid var(--ink);
+}
+
+.reel-cursor {
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    width: 6px;
+    margin-left: -3px;
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 3px;
+}
+
+html.calm .cloud,
+html.calm .rays,
+html.calm .plot.ready .spr-wrap,
+html.calm .critter-body,
+html.calm .need-water,
+html.calm .bubble,
+html.calm .plot.ready::after,
+html.calm #weather > div,
+html.calm .crow,
+html.calm .sails,
+html.calm .honey-badge,
+html.calm .egg-spot,
+html.calm .ripple {
+    animation: none !important;
+}
+
+.tool-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 0.78rem;
+}
+
+.tool-row > .ico {
+    width: 24px;
+    height: 24px;
+}
+
+.tool-row span {
+    flex: 1;
+}
+
+.tool-row .btn .ico {
+    width: 16px;
+    height: 16px;
+}
+
+.res-slot.big .res-art {
+    transform: scale(1.22);
+    transform-origin: 50% 90%;
+}
+
+.sea {
+    position: relative;
+    height: 64px;
+    margin: 8px 0 10px;
+    border: 2.5px solid var(--ink);
+    border-radius: 12px;
+    background: linear-gradient(#8fd0f5, #3f8fd0);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sea svg {
+    width: 52px;
+    height: 52px;
+    transition: transform 0.4s;
+}
+
+.sea.out svg {
+    transform: translateY(14px) scale(0.85);
+    opacity: 0.75;
+    animation: seabob 2.4s ease-in-out infinite;
+}
+
+@keyframes hop {
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+@keyframes crow {
+    from {
+        transform: translateY(0) rotate(-6deg);
+    }
+    to {
+        transform: translateY(-5px) rotate(6deg);
+    }
+}
+
+@keyframes ripple {
+    from {
+        transform: scale(0.4);
+        opacity: 1;
+    }
+    to {
+        transform: scale(2.4);
+        opacity: 0;
+    }
+}
+
+@keyframes bob {
+    50% {
+        transform: translateY(3px);
+    }
+}
+
+@keyframes dip {
+    50% {
+        transform: translateY(9px) scale(0.9);
+    }
+}
+
+@keyframes bob {
+    to {
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes seabob {
+    50% {
+        translate: 0 -4px;
+    }
+}

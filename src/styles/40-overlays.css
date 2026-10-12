@@ -1,0 +1,631 @@
+/* Par-dessus le jeu : tiroirs, grands moments, messages, annulation, tutoriel, effets */
+
+/* ---------------- tiroirs ---------------- */
+#sheets {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    pointer-events: none;
+}
+.sheet-wrap {
+    position: absolute;
+    inset: 0;
+    pointer-events: auto;
+}
+.sheet-back {
+    position: absolute;
+    inset: 0;
+    background: rgba(30, 18, 8, 0.45);
+    opacity: 0;
+    transition: opacity 0.22s;
+}
+.sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-width: 640px;
+    margin: 0 auto;
+    max-height: calc(100dvh - 34px - var(--safe-t));
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 60px),
+        repeating-linear-gradient(176deg, rgba(122, 74, 42, 0.05) 0 2px, transparent 2px 13px), var(--wood-ll);
+    border: 3px solid var(--ink);
+    border-bottom: 0;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -8px 30px rgba(30, 18, 8, 0.35);
+    transform: translateY(105%);
+    transition: transform 0.26s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.sheet-wrap.in .sheet {
+    transform: none;
+}
+.sheet-wrap.in .sheet-back {
+    opacity: 1;
+}
+.sheet-wrap.out .sheet {
+    transform: translateY(105%);
+}
+.sheet-wrap.out .sheet-back {
+    opacity: 0;
+}
+.sheet-wrap.under .sheet-back {
+    opacity: 0;
+}
+.sheet-grip {
+    display: grid;
+    place-items: center;
+    height: 16px;
+    touch-action: none;
+    cursor: grab;
+}
+.sheet-grip i {
+    width: 44px;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(58, 38, 24, 0.35);
+}
+.sheet-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px 8px 16px;
+    touch-action: none;
+}
+.sheet-title {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.25rem;
+    font-weight: 900;
+}
+.sheet-title .ico {
+    width: 1.5em;
+    height: 1.5em;
+}
+.sheet-title .back {
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    margin-right: 2px;
+}
+.sheet-title .back .ico {
+    width: 100%;
+    height: 100%;
+}
+.icon-btn.close {
+    width: 36px;
+    height: 36px;
+    padding: 7px;
+    background: var(--paper);
+}
+.sheet-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 2px 14px 16px;
+}
+.sheet-body > .block + .block {
+    margin-top: 10px;
+}
+.sheet-body > p {
+    margin-bottom: 10px;
+}
+.sheet-foot {
+    padding: 10px 14px calc(12px + var(--safe-b));
+    border-top: 2px solid rgba(58, 38, 24, 0.2);
+    background: rgba(255, 248, 230, 0.6);
+}
+.sheet-body:last-child {
+    padding-bottom: calc(18px + var(--safe-b));
+}
+@media (min-width: 700px) {
+    .sheet {
+        bottom: 24px;
+        border-bottom: 3px solid var(--ink);
+        border-radius: 24px;
+        max-height: calc(100dvh - 60px);
+    }
+    .sheet-foot {
+        border-radius: 0 0 22px 22px;
+    }
+}
+
+/* ---------------- grands moments ---------------- */
+.moment {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: grid;
+    place-items: center;
+    padding: 70px 16px 20px;
+}
+.moment-back {
+    position: absolute;
+    inset: 0;
+    background: rgba(30, 18, 8, 0.55);
+    opacity: 0;
+    transition: opacity 0.25s;
+}
+.moment.in .moment-back {
+    opacity: 1;
+}
+.moment-card {
+    position: relative;
+    width: min(420px, 100%);
+    max-height: calc(100dvh - 100px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 18px 16px 16px;
+    text-align: center;
+    background: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 80px), var(--paper);
+    border: 3px solid var(--ink);
+    border-radius: 24px;
+    box-shadow:
+        0 6px 0 var(--wood-d),
+        0 18px 40px rgba(30, 18, 8, 0.4);
+    transform: scale(0.85);
+    opacity: 0;
+    transition:
+        transform 0.3s cubic-bezier(0.3, 1.5, 0.5, 1),
+        opacity 0.2s;
+}
+.moment.in .moment-card {
+    transform: none;
+    opacity: 1;
+}
+.moment h2 {
+    font-size: 1.45rem;
+    font-weight: 900;
+    line-height: 1.15;
+}
+.moment p {
+    font-size: 0.95rem;
+}
+.moment p.sub {
+    color: var(--ink-soft);
+    font-size: 0.86rem;
+}
+.moment .lines {
+    text-align: left;
+}
+.burst {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    margin: -64px auto 0;
+}
+.rays {
+    position: absolute;
+    inset: -40px;
+    animation: spin 14s linear infinite;
+    background: repeating-conic-gradient(from 0deg, rgba(255, 226, 122, 0.75) 0 12deg, transparent 12deg 30deg);
+    border-radius: 50%;
+    mask: radial-gradient(circle, #000 30%, transparent 70%);
+    -webkit-mask: radial-gradient(circle, #000 30%, transparent 70%);
+}
+.burst-art {
+    position: absolute;
+    inset: 0;
+    animation: starIn 0.6s cubic-bezier(0.3, 1.7, 0.5, 1);
+    filter: drop-shadow(0 4px 0 rgba(58, 38, 24, 0.4));
+}
+.burst-num {
+    position: absolute;
+    inset: 12px 0 0;
+    display: grid;
+    place-items: center;
+    font-size: 2.4rem;
+    font-weight: 900;
+}
+.moment-avatar,
+.moment-building {
+    width: 110px;
+    height: 110px;
+    margin: -60px auto 0;
+    padding: 4px;
+    background: #fff8e6;
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+    overflow: hidden;
+    animation: popIn 0.4s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.moment-building {
+    border-radius: 22px;
+    background: #bfe6fb;
+}
+.speech {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    text-align: left;
+    font-style: italic;
+}
+.tip-head {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: -60px;
+}
+.tip-head .avatar {
+    width: 96px;
+    height: 96px;
+}
+.tip-icon {
+    width: 54px;
+    height: 54px;
+    margin-left: -20px;
+    padding: 6px;
+    background: #fff;
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+}
+.daily {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+.day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 5px 2px;
+    background: #fff8e6;
+    border: 2px solid rgba(58, 38, 24, 0.5);
+    border-radius: 12px;
+    font-size: 0.72rem;
+}
+.day .day-gift {
+    width: 32px;
+    height: 32px;
+}
+.day b {
+    display: inline-flex;
+    align-items: center;
+}
+.day b .ico {
+    width: 14px;
+    height: 14px;
+}
+.day.done {
+    opacity: 0.6;
+}
+.day.today {
+    background: linear-gradient(#ffe48a, var(--gold));
+    border: 2.5px solid var(--ink);
+    transform: scale(1.06);
+}
+
+/* ---------------- messages ---------------- */
+#toasts {
+    position: fixed;
+    left: 50%;
+    top: calc(58px + var(--safe-t));
+    transform: translateX(-50%);
+    z-index: 80;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: max-content;
+    max-width: calc(100vw - 24px);
+    pointer-events: none;
+}
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px 7px 8px;
+    font-weight: 800;
+    font-size: 0.86rem;
+    line-height: 1.25;
+    background: var(--paper-l);
+    border: 2.5px solid var(--ink);
+    border-radius: 16px;
+    box-shadow:
+        0 3px 0 var(--wood-d),
+        0 6px 14px rgba(30, 18, 8, 0.2);
+    animation: toast 2.6s forwards;
+}
+.toast .ico {
+    width: 26px;
+    height: 26px;
+}
+.undo {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--tabs-h) + 18px + var(--safe-b));
+    transform: translateX(-50%);
+    z-index: 35;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 6px 6px 14px;
+    max-width: calc(100vw - 24px);
+    white-space: nowrap;
+    background: var(--paper-l);
+    border: 2.5px solid var(--ink);
+    border-radius: 16px;
+    box-shadow: 0 4px 0 var(--wood-d);
+    overflow: hidden;
+    font-size: 0.86rem;
+}
+.undo .ico {
+    width: 18px;
+    height: 18px;
+}
+.undo > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+.undo-time {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    background: var(--gold-d);
+    transform-origin: left;
+}
+.undo.run .undo-time {
+    animation: undoTime 5s linear forwards;
+}
+.update-bar {
+    position: fixed;
+    left: 50%;
+    top: calc(10px + var(--safe-t));
+    transform: translateX(-50%);
+    z-index: 95;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: min(92vw, 460px);
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    text-align: left;
+    background: linear-gradient(#ffe48a, var(--gold));
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    box-shadow: 0 4px 0 var(--wood-d);
+}
+.update-bar .ico {
+    width: 28px;
+    height: 28px;
+}
+
+/* ---------------- tutoriel ---------------- */
+#tuto {
+    position: fixed;
+    inset: 0;
+    z-index: 65;
+    pointer-events: none;
+}
+.tuto-ring {
+    position: fixed;
+    left: 0;
+    top: 0;
+    border: 3px solid #ffd23f;
+    border-radius: 14px;
+    box-shadow:
+        0 0 0 9999px rgba(30, 18, 8, 0.38),
+        0 0 18px 4px rgba(255, 210, 63, 0.8);
+    transition:
+        transform 0.3s ease,
+        width 0.3s ease,
+        height 0.3s ease;
+    animation: ringPulse 1.2s ease-in-out infinite;
+}
+.tuto-hand {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 46px;
+    height: 46px;
+    transition: transform 0.3s ease;
+}
+.tuto-hand .spr {
+    animation: tapHint 1s ease-in-out infinite;
+    transform-origin: 30% 10%;
+    filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.3));
+}
+.tuto-bubble {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: calc(var(--tabs-h) + 92px + var(--safe-b));
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 12px;
+    pointer-events: auto;
+    background: var(--paper);
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 0 5px 0 var(--wood-d);
+}
+.tuto-bubble.top {
+    bottom: auto;
+    top: calc(110px + var(--safe-t));
+}
+.tuto-bubble.pop {
+    animation: grow 0.35s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.tuto-avatar {
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fff;
+    border: 2.5px solid var(--ink);
+}
+.tuto-main {
+    flex: 1;
+    min-width: 0;
+}
+.tuto-name {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 900;
+}
+.tuto-name span {
+    font-weight: 700;
+    font-size: 0.78rem;
+    opacity: 0.6;
+}
+.tuto-text {
+    margin: 2px 0 8px;
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+.tuto-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.tuto-skip {
+    margin-left: auto;
+    font-size: 0.78rem;
+    text-decoration: underline;
+    opacity: 0.65;
+}
+
+/* ---------------- effets ---------------- */
+#fx {
+    position: fixed;
+    inset: 0;
+    z-index: 75;
+    pointer-events: none;
+    overflow: hidden;
+}
+.fx-fly,
+.fx-p {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform, opacity;
+}
+.fx-fly > svg {
+    width: 100%;
+    height: 100%;
+}
+.fx-float {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    font-weight: 900;
+    font-size: 1.15rem;
+    color: #fff;
+    text-shadow:
+        0 2px 0 var(--ink),
+        0 -2px 0 var(--ink),
+        2px 0 0 var(--ink),
+        -2px 0 0 var(--ink),
+        1.5px 1.5px 0 var(--ink),
+        -1.5px -1.5px 0 var(--ink),
+        1.5px -1.5px 0 var(--ink),
+        -1.5px 1.5px 0 var(--ink);
+}
+.fx-float .ico {
+    width: 22px;
+    height: 22px;
+}
+.fx-float.gold {
+    color: #ffe27a;
+}
+.fx-float.xp {
+    color: #b9e2ff;
+    font-size: 0.95rem;
+}
+.fx-float.bad {
+    color: #ffb3a8;
+}
+.confetti {
+    position: absolute;
+    top: -20px;
+    width: 9px;
+    height: 14px;
+    border-radius: 2px;
+}
+.swing {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    z-index: 76;
+    pointer-events: none;
+    animation: swing 0.35s ease-in forwards;
+    transform-origin: 20% 90%;
+}
+
+@keyframes grow {
+    from {
+        transform: scale(0.2, 0.1);
+    }
+}
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+@keyframes starIn {
+    from {
+        transform: scale(0) rotate(-90deg);
+    }
+}
+@keyframes toast {
+    0% {
+        transform: translateY(-14px) scale(0.9);
+        opacity: 0;
+    }
+    10% {
+        transform: none;
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes ringPulse {
+    50% {
+        border-color: #fff6c2;
+    }
+}
+@keyframes tapHint {
+    0%,
+    100% {
+        transform: rotate(-20deg) translate(0, 0);
+    }
+    50% {
+        transform: rotate(-20deg) translate(-4px, -8px) scale(0.94);
+    }
+}
+@keyframes swing {
+    from {
+        transform: rotate(-50deg);
+    }
+    to {
+        transform: rotate(30deg);
+    }
+}
+@keyframes undoTime {
+    to {
+        transform: scaleX(0);
+    }
+}

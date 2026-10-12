@@ -1,0 +1,161 @@
+// Données qui contenaient autrefois du code : textes à trous, icônes, conditions.
+// Les trous : {n} = nombre formaté, {s} = « s » si pluriel, {x} = valeur du rang (compétences).
+
+// ---------------- Succès ----------------
+export const ACHIEVEMENTS = [
+    { id: 'harvested', name: 'Main verte', desc: 'Récolter {n} cultures', icon: ['item', 'wheat'], tiers: [50, 500, 5000] },
+    { id: 'earned', name: 'Bas de laine', desc: 'Gagner {n} pièces au total', icon: ['ui', 'coin'], tiers: [5000, 100000, 2000000] },
+    { id: 'collected', name: 'Ami des bêtes', desc: 'Ramasser {n} produits animaux', icon: ['item', 'egg'], tiers: [20, 250, 2500] },
+    { id: 'crafted', name: 'Artisan', desc: "Fabriquer {n} produits à l'atelier", icon: ['item', 'bread'], tiers: [10, 150, 1500] },
+    { id: 'orders', name: 'Serviable', desc: 'Livrer {n} commandes du village', icon: ['ui', 'scroll'], tiers: [5, 50, 300] },
+    { id: 'trucks', name: 'Routier', desc: 'Remplir {n} trains complets', icon: ['ui', 'trainIcon'], tiers: [3, 25, 150] },
+    { id: 'wagons', name: 'Chef de gare', desc: 'Charger {n} wagons', icon: ['ui', 'trainIcon'], tiers: [10, 80, 400] },
+    { id: 'projects', name: 'Bâtisseur', desc: 'Rénover {n} bâtiment{s} du village', icon: ['ui', 'village'], tiers: [1, 4, 8] },
+    { id: 'pests', name: 'Garde champêtre', desc: 'Chasser {n} invasions de pucerons', icon: ['ui', 'pest'], tiers: [1, 10, 50] },
+    { id: 'crows', name: 'Épouvanteur', desc: 'Chasser {n} corbeaux', icon: ['ui', 'crow'], tiers: [5, 40, 200] },
+    { id: 'golden', name: "Doigts d'or", desc: 'Faire {n} récolte{s} dorée{s}', icon: ['ui', 'star'], tiers: [1, 10, 50] },
+    { id: 'maxLevel', name: 'Expérience', desc: 'Atteindre le niveau {n}', icon: ['ui', 'xp'], tiers: [10, 25, 40] },
+    { id: 'maxPlots', name: 'Grand domaine', desc: 'Posséder {n} parcelles', icon: ['ui', 'barn'], tiers: [18, 30, 48] },
+    { id: 'prestiges', name: 'Renaissance', desc: 'Vendre la ferme {n} fois', icon: ['ui', 'ribbon'], tiers: [1, 3, 10] },
+    { id: 'cooked', name: 'Cordon bleu', desc: 'Cuisiner {n} plats', icon: ['item', 'pie'], tiers: [5, 50, 400] },
+    { id: 'hearts', name: 'Âme du village', desc: "Gagner {n} cœurs d'amitié", icon: ['ui', 'heart'], tiers: [5, 15, 30] },
+    { id: 'goldQ', name: 'Qualité supérieure', desc: 'Récolter {n} cultures de qualité or', icon: ['ui', 'star'], tiers: [5, 50, 500] },
+    { id: 'eventsDone', name: 'Esprit de fête', desc: 'Remporter {n} trophée{s} de fête', icon: ['ui', 'trophy'], tiers: [1, 4, 12] },
+    { id: 'contracts', name: 'Habitué des concours', desc: 'Ouvrir {n} coffre{s} du concours de la semaine', icon: ['ui', 'chest'], tiers: [1, 5, 20] },
+    { id: 'dogFinds', name: 'Bon chien', desc: 'Recevoir {n} trouvailles du chien', icon: ['ui', 'dog'], tiers: [5, 40, 200] },
+    { id: 'honey', name: 'Apiculteur', desc: 'Récolter {n} pots de miel', icon: ['item', 'honey'], tiers: [10, 80, 500] },
+    { id: 'pets', name: 'Câlins à volonté', desc: 'Faire {n} câlins à vos animaux', icon: ['ui', 'heart'], tiers: [10, 60, 300] },
+    { id: 'fish', name: 'Pêcheur', desc: 'Pêcher {n} poissons', icon: ['item', 'trout'], tiers: [10, 100, 500] },
+    { id: 'chopped', name: 'Bûcheron', desc: 'Abattre {n} arbres', icon: ['item', 'wood'], tiers: [20, 200, 1000] },
+    { id: 'caveLots', name: 'Maître de chai', desc: 'Sortir {n} lots de la cave', icon: ['ui', 'cave'], tiers: [3, 25, 120] },
+    { id: 'caveLegend', name: 'Légende de la cave', desc: 'Affiner {n} lot{s} jusqu’au rang légendaire', icon: ['ui', 'star'], tiers: [1, 5, 20] },
+    { id: 'auctionSold', name: 'Adjugé, vendu !', desc: 'Vendre {n} lots aux enchères', icon: ['ui', 'gavel'], tiers: [2, 20, 80] },
+];
+
+// ---------------- Compétences ----------------
+// desc : {x} = rang × per
+export const SKILLS = {
+    agri: {
+        name: 'Agriculture',
+        icon: ['item', 'wheat'],
+        list: [
+            { id: 'green', name: 'Main verte', max: 3, icon: ['item', 'carrot'], desc: 'Les cultures poussent {x} % plus vite', per: 5 },
+            { id: 'bounty', name: 'Récolte généreuse', max: 3, icon: ['ui', 'basket'], desc: '+{x} % de chances de double récolte', per: 4 },
+            { id: 'expert', name: "Œil d'expert", max: 2, icon: ['star', 2], desc: '+{x} % de chances de qualité argent ou or', per: 5 },
+            { id: 'midas', name: "Toucher d'or", max: 1, cap: true, icon: ['ui', 'star'], desc: 'Les récoltes dorées sont 60 % plus fréquentes' },
+        ],
+    },
+    elev: {
+        name: 'Élevage',
+        icon: ['animal', 'cow'],
+        list: [
+            { id: 'fed', name: 'Bien nourris', max: 3, icon: ['item', 'feed'], desc: 'Les animaux produisent {x} % plus vite', per: 8 },
+            { id: 'trough', name: 'Grande mangeoire', max: 2, icon: ['animal', 'pig'], desc: 'La mangeoire contient {x} repas de plus', per: 2 },
+            { id: 'pasture', name: 'Pâturage fertile', max: 3, icon: ['item', 'egg'], desc: '+{x} % de chances de double production', per: 5 },
+            { id: 'nursery', name: 'Pouponnière', max: 1, cap: true, icon: ['ui', 'chick'], desc: 'Les bébés animaux grandissent deux fois plus vite' },
+        ],
+    },
+    comm: {
+        name: 'Commerce',
+        icon: ['ui', 'coin'],
+        list: [
+            { id: 'gab', name: 'Bagou', max: 3, icon: ['ui', 'price'], desc: 'Tout se vend {x} % plus cher', per: 4 },
+            { id: 'loyal', name: 'Client fidèle', max: 2, icon: ['ui', 'heart'], desc: 'Les commandes du village rapportent {x} % de plus', per: 10 },
+            { id: 'logistics', name: 'Logisticien', max: 2, icon: ['ui', 'trainIcon'], desc: 'Les trains paient {x} % de plus', per: 10 },
+            {
+                id: 'trader',
+                name: 'Marchand avisé',
+                max: 1,
+                cap: true,
+                icon: ['ui', 'crate'],
+                desc: 'Les prix baissent deux fois moins vite quand vous vendez beaucoup',
+            },
+        ],
+    },
+};
+
+// ---------------- Défis de prestige ----------------
+export const CHALLENGES = {
+    noAnimals: { name: 'Sans animaux', desc: "Impossible d'acheter des animaux", icon: ['animal', 'chicken'] },
+    winter: { name: 'Hiver éternel', desc: "La saison reste bloquée sur l'hiver", icon: ['ui', 's_winter'] },
+    smallField: { name: 'Petit lopin', desc: 'Le champ ne dépasse pas 12 parcelles', icon: ['ui', 'lock'] },
+    noMarket: { name: 'Marché fermé', desc: 'Pas de vente au marché : seuls les commandes et les trains rapportent', icon: ['ui', 'crate'] },
+};
+
+// ---------------- Poissons de l'étang ----------------
+// when : saisons, nuit, météo ; sans « when », toute l'année
+export const FISH = {
+    roach: { name: 'Gardon', sell: 25, w: [0.1, 0.4], zone: 0.34, speed: 1, odds: 30, hint: "Toute l'année" },
+    perch: { name: 'Perche', sell: 45, w: [0.2, 0.9], zone: 0.3, speed: 1.2, odds: 22, when: { seasons: ['printemps', 'ete'] }, hint: 'Printemps et été' },
+    trout: {
+        name: 'Truite',
+        sell: 90,
+        w: [0.4, 2],
+        zone: 0.24,
+        speed: 1.4,
+        odds: 16,
+        when: { seasons: ['printemps', 'automne'] },
+        hint: 'Printemps et automne',
+    },
+    carp: { name: 'Carpe', sell: 120, w: [1, 6], zone: 0.22, speed: 1.3, odds: 14, when: { seasons: ['ete'] }, hint: 'Été' },
+    pike: { name: 'Brochet', sell: 200, w: [1.5, 8], zone: 0.18, speed: 1.7, odds: 10, when: { seasons: ['automne', 'hiver'] }, hint: 'Automne et hiver' },
+    eel: { name: 'Anguille', sell: 160, w: [0.5, 2.5], zone: 0.2, speed: 1.8, odds: 12, when: { night: true }, hint: 'La nuit' },
+    catfish: {
+        name: 'Silure',
+        sell: 600,
+        w: [5, 40],
+        zone: 0.15,
+        speed: 1.6,
+        odds: 5,
+        when: { weather: ['rain', 'storm'] },
+        hint: "Par temps de pluie ou d'orage",
+    },
+    goldfish: { name: 'Poisson doré', sell: 2000, w: [0.2, 0.6], zone: 0.1, speed: 2.1, odds: 1.2, hint: "Très rare, n'importe quand" },
+    boot: { name: 'Vieille botte', sell: 1, w: [0.8, 1.2], zone: 0.45, speed: 0.8, odds: 6, hint: 'On en pêche toujours une…', junk: true },
+};
+
+// ---------------- Livre de la ferme : les pages ----------------
+export const BOOK_PAGES = [
+    { id: 'garden', name: "Potager d'or" },
+    { id: 'fish', name: 'Poissons' },
+    { id: 'kitchen', name: 'Recettes' },
+    { id: 'treasure', name: 'Trésors' },
+    { id: 'cave', name: 'Grands crus' },
+];
+export const TREASURES = [
+    { key: 't_fossil', icon: ['item', 'fossil'], name: 'Fossile', hint: 'Caché dans les rochers de la mine' },
+    { key: 't_amethyst', icon: ['item', 'amethyst'], name: 'Améthyste', hint: 'Caché dans les rochers de la mine' },
+    { key: 't_nugget', icon: ['item', 'nugget'], name: "Pépite d'or", hint: 'Caché dans les rochers de la mine' },
+    { key: 't_golden', icon: ['ui', 'star'], name: 'Récolte dorée', hint: 'Une chance rare à chaque récolte' },
+    { key: 't_dogTreasure', icon: ['ui', 'chest'], name: 'Trésor du chien', hint: 'Votre chien le déterrera peut-être' },
+    { key: 't_paintedEgg', icon: ['item', 'paintedEgg'], name: 'Œuf décoré', hint: 'Pendant la chasse aux œufs du printemps' },
+];
+
+// ---------------- Ferme légendaire ----------------
+export const LEGEND_GOALS = [
+    { id: 'level', name: 'Atteindre le niveau 40' },
+    { id: 'chapters', name: 'Terminer les 6 chapitres du village et du hameau' },
+    { id: 'house', name: 'Agrandir la maison au niveau 5' },
+    { id: 'league', name: 'Monter en ligue diamant au concours' },
+    { id: 'mastery', name: 'Maîtriser 10 produits en or' },
+];
+
+// ---------------- Records personnels ----------------
+export const RECORDS = {
+    order: { name: 'Plus grosse commande', unit: 'pièces', icon: ['ui', 'scroll'] },
+    harvest: { name: 'Plus belle récolte d’un coup', unit: 'produits', icon: ['ui', 'basket'] },
+    contest: { name: 'Meilleur score au concours', unit: 'points', icon: ['ui', 'podium'] },
+    auction: { name: 'Plus belle vente aux enchères', unit: 'pièces', icon: ['ui', 'gavel'] },
+    lot: { name: 'Plus beau lot sorti de la cave', unit: 'pièces', icon: ['ui', 'cave'] },
+    streak: { name: 'Plus longue série de cadeaux du jour', unit: 'jour', icon: ['ui', 'calendar'] },
+};
+
+// ---------------- Cartes du village ----------------
+// openChapter : la carte s'ouvre quand ce chapitre est fini, ou dès le niveau du chapitre suivant (sauf « strict »)
+export const STORY_MAPS = [
+    { id: 'village', name: 'Le village', openChapter: 0, party: 'townhall' },
+    { id: 'hamlet', name: 'Le hameau', openChapter: 4, party: 'bandstand' },
+    { id: 'port', name: 'Le port', openChapter: 6, party: 'shipyard' },
+    { id: 'alpine', name: "L'alpage", openChapter: 8, party: 'refuge' },
+    { id: 'domaine', name: 'Le domaine', openChapter: 10, strict: true, party: 'crayere' },
+];

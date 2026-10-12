@@ -1,0 +1,190 @@
+// Les animaux : prix, production, croissance des petits, noms.
+// Valeurs reprises telles quelles de la version 6.2 (même équilibre).
+
+export const ANIMALS = {
+    chicken: {
+        id: 'chicken',
+        name: 'Poule',
+        prodId: 'egg',
+        cost: 100,
+        time: 60,
+        reqLvl: 2,
+        xp: 1,
+    },
+    duck: {
+        id: 'duck',
+        name: 'Canard',
+        prodId: 'feather',
+        cost: 250,
+        time: 150,
+        reqLvl: 5,
+        xp: 1,
+    },
+    sheep: {
+        id: 'sheep',
+        name: 'Mouton',
+        prodId: 'wool',
+        cost: 500,
+        time: 300,
+        reqLvl: 7,
+        xp: 3,
+    },
+    rabbit: {
+        id: 'rabbit',
+        name: 'Lapin',
+        prodId: 'angora',
+        cost: 1200,
+        time: 420,
+        reqLvl: 10,
+        xp: 5,
+    },
+    cow: {
+        id: 'cow',
+        name: 'Vache',
+        prodId: 'milk',
+        cost: 2000,
+        time: 900,
+        reqLvl: 16,
+        xp: 12,
+    },
+    goat: {
+        id: 'goat',
+        name: 'Chèvre',
+        prodId: 'goatMilk',
+        cost: 4500,
+        time: 1200,
+        reqLvl: 22,
+        xp: 18,
+    },
+    pig: {
+        id: 'pig',
+        name: 'Cochon',
+        prodId: 'truffle',
+        cost: 8000,
+        time: 3600,
+        reqLvl: 26,
+        xp: 40,
+    },
+    goose: {
+        id: 'goose',
+        name: 'Oie',
+        prodId: 'gooseEgg',
+        cost: 3000,
+        time: 600,
+        reqLvl: 12,
+        xp: 7,
+    },
+    bees: {
+        id: 'bees',
+        name: "Ruche d'élevage",
+        prodId: 'wax',
+        cost: 6000,
+        time: 900,
+        reqLvl: 17,
+        xp: 12,
+    },
+    horse: {
+        id: 'horse',
+        name: 'Cheval',
+        prodId: 'horsehair',
+        cost: 15000,
+        time: 1800,
+        reqLvl: 28,
+        xp: 24,
+    },
+    peacock: {
+        id: 'peacock',
+        name: 'Paon',
+        prodId: 'peacockFeather',
+        cost: 9000,
+        time: 1800,
+        reqLvl: 20,
+        xp: 26,
+    },
+    alpaca: {
+        id: 'alpaca',
+        name: 'Alpaga',
+        prodId: 'alpacaWool',
+        cost: 12000,
+        time: 1500,
+        reqLvl: 24,
+        xp: 24,
+    },
+    buffalo: {
+        id: 'buffalo',
+        name: 'Bufflonne',
+        prodId: 'buffaloMilk',
+        cost: 20000,
+        time: 1200,
+        reqLvl: 30,
+        xp: 22,
+    },
+    donkey: {
+        id: 'donkey',
+        name: 'Ânesse',
+        prodId: 'donkeyMilk',
+        cost: 25000,
+        time: 1500,
+        reqLvl: 33,
+        xp: 26,
+    },
+    turkey: {
+        id: 'turkey',
+        name: 'Dinde',
+        prodId: 'turkeyEgg',
+        cost: 7000,
+        time: 1500,
+        reqLvl: 17,
+        xp: 21,
+    },
+};
+
+export const GROW = {
+    chicken: 150,
+    duck: 200,
+    sheep: 360,
+    rabbit: 480,
+    cow: 720,
+    goat: 900,
+    pig: 1200,
+    goose: 400,
+    bees: 600,
+    horse: 1500,
+    peacock: 1000,
+    alpaca: 1200,
+    buffalo: 1500,
+    donkey: 1500,
+    turkey: 900,
+};
+
+export const NAMES = {
+    chicken: ['Cocotte', 'Plume', 'Paprika', 'Noisette', 'Coquette', 'Biscuit', 'Pépite', 'Caramel'],
+    sheep: ['Nuage', 'Flocon', 'Pompon', 'Barbe-à-papa', 'Guimauve', 'Bouclette', 'Cotonnade'],
+    cow: ['Marguerite', 'Vanille', 'Praline', 'Duchesse', 'Clochette', 'Myrtille', 'Bergamote'],
+    duck: ['Coin-coin', 'Donatella', 'Plumette', 'Gaufrette', 'Barnabé', 'Clafoutis'],
+    rabbit: ['Pompon', 'Câlin', 'Noisette', 'Carotte', 'Flocon', 'Biscotin', 'Doudou'],
+    goat: ['Biquette', 'Blanchette', 'Séguin', 'Chabichou', 'Cabriole', 'Edelweiss'],
+    pig: ['Saucisse', 'Rosette', 'Cacahuète', 'Groin-groin', 'Pistache', 'Framboise', 'Bonbon'],
+    goose: ['Capitolina', 'Gertrude', 'Plumeau', 'Honorine', 'Cancan', 'Bérénice'],
+    bees: ['Bzzz', 'Reine Margot', 'Butineuse', 'Mielline', 'Pollen', 'Abeillette'],
+    horse: ['Tonnerre', 'Éclair', 'Caramel', 'Pégase', 'Noisette', 'Fougère'],
+    peacock: ['Narcisse', 'Saphir', 'Paonne', 'Majesté', 'Éventail', 'Topaze'],
+    alpaca: ['Pompon', 'Lama-Lama', 'Frisette', 'Inca', 'Doudou', 'Machu'],
+    buffalo: ['Bella', 'Mozza', 'Napoli', 'Rosina', 'Bufala', 'Sofia'],
+    donkey: ['Cadichon', 'Grisette', 'Hi-Han', 'Pâquerette', 'Bourrique', 'Anatole'],
+    turkey: ['Glouglou', 'Dindonnette', 'Gobble', 'Plumette', 'Caroline', 'Barnabé'],
+};
+
+export const MAX_STACK = 5;
+
+export const MAX_FOOD = 5;
+
+export const STAR_ANIMAL_SPEED = 1.5;
+
+export const PEACOCK_CHARM = 15;
+
+export const TRANS_KINDS = ['cow', 'goat', 'sheep', 'buffalo'];
+
+export const TRANS_TIME = 5400000;
+
+export const ALPINE_SPEED = 1.2;

@@ -1,0 +1,182 @@
+// La progression : expérience, maîtrise, maison, commis, ligues, prestige, album.
+// Valeurs reprises telles quelles de la version 6.2 (même équilibre).
+
+export const BALANCE = {
+    xpBase: 300,
+    xpGrowth: 1.52,
+    xpKnee: 10,
+    xpA: 614,
+    xpP: 1.7,
+    cropXp: 0.06,
+    animalXp: 0.08,
+    craftXp: 0.25,
+    orderXp: 0.13,
+    truckXp: 0.3,
+    balloonXp: 0.3,
+    marketStart: 0.6,
+    marketEnd: 0.2,
+    marketSlope: 0.06,
+    orderPay: 2.5,
+    trainPay: 2.4,
+    balloonPay: 3,
+    machineCost: 2,
+    plotCost: 1.5,
+    rareDrop: 0.012,
+};
+
+export const MAX_LEVEL = 40;
+
+export const RENOWN_XP = 250000;
+
+export const ACH_REWARDS = [
+    {
+        coins: 300,
+        xp: 50,
+    },
+    {
+        coins: 3000,
+        xp: 400,
+    },
+    {
+        coins: 30000,
+        xp: 2500,
+        ruban: 1,
+    },
+];
+
+export const MEDALS = ['medalB', 'medalS', 'medalG'];
+
+export const CAP_REQ = 4;
+
+export const MASTERY_LVL = 3;
+
+export const MASTERY_TIERS = {
+    crop: [300, 2500, 10000],
+    animal: [200, 1500, 6000],
+    craft: [50, 400, 2000],
+};
+
+export const MASTERY_NAMES = ['bronze', 'argent', 'or'];
+
+export const HOUSE = [
+    {
+        name: 'La vieille maison',
+        desc: 'Une maison toute simple au bord du champ.',
+    },
+    {
+        lvl: 5,
+        name: 'Maison rafraîchie',
+        bonus: '+40 places dans la grange',
+        cost: {
+            coins: 3000,
+            plank: 5,
+            nail: 5,
+        },
+    },
+    {
+        lvl: 12,
+        name: 'Maison avec véranda',
+        bonus: '+1 commande au tableau',
+        cost: {
+            coins: 15000,
+            beam: 6,
+            plank: 10,
+            nail: 10,
+        },
+    },
+    {
+        lvl: 20,
+        name: 'Maison à étage',
+        bonus: "+1 place dans la file d'attente de chaque machine",
+        cost: {
+            coins: 60000,
+            beam: 12,
+            tools: 4,
+            paint: 4,
+        },
+    },
+    {
+        lvl: 28,
+        name: 'Belle demeure',
+        bonus: "+1 place à l'étal",
+        cost: {
+            coins: 200000,
+            beam: 20,
+            tools: 8,
+            paint: 8,
+        },
+    },
+    {
+        lvl: 35,
+        name: 'Grande ferme',
+        bonus: 'Toutes les commandes paient 10 % de plus',
+        cost: {
+            coins: 600000,
+            beam: 30,
+            tools: 15,
+            paint: 15,
+        },
+    },
+];
+
+export const FARMHAND = [
+    null,
+    {
+        plots: 6,
+        every: 40,
+    },
+    {
+        lvl: 29,
+        plots: 12,
+        every: 30,
+        cost: {
+            coins: 80000,
+            tools: 4,
+        },
+    },
+    {
+        lvl: 33,
+        plots: 18,
+        every: 22,
+        cost: {
+            coins: 200000,
+            tools: 8,
+        },
+    },
+    {
+        lvl: 37,
+        plots: 24,
+        every: 15,
+        cost: {
+            coins: 450000,
+            tools: 12,
+        },
+    },
+    {
+        lvl: 39,
+        plots: 36,
+        every: 10,
+        cost: {
+            coins: 900000,
+            tools: 20,
+        },
+    },
+];
+
+export const PRESTIGE_LVL = 40;
+
+export const CHALLENGE_BONUS = 3;
+
+export const ALBUM_MAX = 60;
+
+export const ALBUM_LEVELS = [5, 10, 20, 30, 40];
+
+export const BOOK_QUARTERS = [0.25, 0.5, 0.75, 1];
+
+export const BOOK_SECTIONS = [
+    ['collection', 'Collection', 'book'],
+    ['mastery', 'Maîtrise', 'medalG'],
+    ['exploits', 'Exploits', 'trophy'],
+    ['legend', 'Légende', 'goldCow'],
+    ['album', 'Album', 'camera'],
+];
