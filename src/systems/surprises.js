@@ -116,7 +116,7 @@ export function buyStarAnimal(k, at) {
     if (!rareActive('fair') || !o || o.sold) return false;
     if (challengeOn('noAnimals')) return false;
     if (herdFull()) {
-        toast('Tous vos prés sont pleins : achetez un nouveau pré dans l’onglet Animaux', ['ui', 'flowers']);
+        toast('Tous vos prés sont pleins : achetez un nouveau pré dans l’onglet Animaux', ['ui', 'flowers']);
         sfx('error');
         return false;
     }

@@ -33,7 +33,10 @@ const SPOTS = [
     [8, 74],
     [56, 95],
 ];
-const groundHtml = t => SPOTS.slice(0, t.ground).map(([x, y]) => `<i class="o-fruit" style="left:${x}%;top:${y}%">${art('item', t.id)}</i>`).join('');
+const groundHtml = t =>
+    SPOTS.slice(0, t.ground)
+        .map(([x, y]) => `<i class="o-fruit" style="left:${x}%;top:${y}%">${art('item', t.id)}</i>`)
+        .join('');
 
 defineLive('tree', k => {
     const sl = state.orchard.slots[k];
@@ -68,7 +71,7 @@ function spot(sl, k, nextLocked) {
         ${tag}<span class="o-tree">${treeArt(t)}${groundHtml(t)}</span>
         <b>${ITEMS[t.id].seedName}</b>
         ${st === 'dead' ? '<small>Touchez pour le débiter</small>' : bar(0, `o-bar ${st}${full ? ' full' : ''}`, `tree:${k}`)}
-        ${st === 'dead' ? '' : `<small class="o-when">${full ? 'Sol plein : ramassez !' : `${st === 'young' ? 'Adulte' : 'Fruit'} dans ${timer(now() + left * 1000)}`}</small>`}
+        ${st === 'dead' ? '' : `<small class="o-when">${full ? 'Sol plein : ramassez !' : `${st === 'young' ? 'Adulte' : 'Fruit'} dans ${timer(now() + left * 1000)}`}</small>`}
     </button>`;
 }
 
@@ -90,16 +93,13 @@ function renderOrchard(el) {
                 anchor: 'btn:pickTrees',
             })}</div></div>`,
         ],
-        [
-            'orchard',
-            `<div class="orchard">${slots.map((sl, k) => spot(sl, k, nextLocked)).join('')}</div>`,
-        ],
+        ['orchard', `<div class="orchard">${slots.map((sl, k) => spot(sl, k, nextLocked)).join('')}</div>`],
         [
             'hint',
             hint(
                 dead
-                    ? `${dead} arbre${dead > 1 ? 's sont morts' : ' est mort'} de vieillesse : touchez-le pour récupérer son bois, puis replantez.`
-                    : `Un arbre grandit, puis fait tomber ses fruits à son pied : ramassez-les avant qu’ils ne pourrissent. Après une centaine de fruits il vieillit, puis meurt et donne du bois.`,
+                    ? `${dead} arbre${dead > 1 ? 's sont morts' : ' est mort'} de vieillesse : touchez-le pour récupérer son bois, puis replantez.`
+                    : `Un arbre grandit, puis fait tomber ses fruits à son pied : ramassez-les avant qu’ils ne pourrissent. Après une centaine de fruits il vieillit, puis meurt et donne du bois.`,
             ),
         ],
     ]);
@@ -151,12 +151,18 @@ defineSheet('tree', {
         const info = [];
         if (st === 'young') info.push([['ui', 'clock'], `Donnera ses premiers fruits dans ${formatDuration(G.treeLeft(t))}`]);
         else if (st !== 'dead') {
-            info.push([['item', t.id], `Un fruit environ toutes les ${formatDuration(G.fruitTime(t) / (G.treeRate(t) || 1))}${st === 'old' ? ' (il ralentit avec l’âge)' : ''}`]);
-            info.push([['ui', 'basket'], `${t.ground} / ${ORCHARD.groundMax} fruits au sol${G.groundFull(t) ? ' : il attend qu’on ramasse, et ses fruits pourrissent' : ''}`]);
+            info.push([
+                ['item', t.id],
+                `Un fruit environ toutes les ${formatDuration(G.fruitTime(t) / (G.treeRate(t) || 1))}${st === 'old' ? ' (il ralentit avec l’âge)' : ''}`,
+            ]);
+            info.push([
+                ['ui', 'basket'],
+                `${t.ground} / ${ORCHARD.groundMax} fruits au sol${G.groundFull(t) ? ' : il attend qu’on ramasse, et ses fruits pourrissent' : ''}`,
+            ]);
         }
         info.push([['ui', 'calendar'], `${t.drops} fruit${t.drops > 1 ? 's donnés' : ' donné'} sur une vie d’environ ${ORCHARD.life}`]);
         if (G.season().id === 'hiver') info.push([['ui', 'w_snow'], 'L’hiver, il dort à moitié']);
-        else if (G.season().id === 'automne') info.push([['ui', 'w_cloudy'], 'L’automne, il produit 20 % plus vite']);
+        else if (G.season().id === 'automne') info.push([['ui', 'w_cloudy'], 'L’automne, il produit 20 % plus vite']);
         const fellWood = st === 'dead' ? treeWood(d) : st === 'young' ? 0 : Math.round(treeWood(d) * ORCHARD.felledWood * life);
         return `<div class="tree-card">
             <div class="tree-art ${st}">${treeArt(t)}${groundHtml(t)}</div>

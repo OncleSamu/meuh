@@ -112,7 +112,7 @@ export function plantTree(k, id, at) {
         d = ITEMS[id];
     if (!slot || !slot.open || slot.tree || !d || d.type !== 'tree') return false;
     if (!treeUnlocked(d)) {
-        toast(`${d.seedName} : débloqué au niveau ${d.reqLvl}`, ['ui', 'lock']);
+        toast(`${d.seedName} : débloqué au niveau ${d.reqLvl}`, ['ui', 'lock']);
         sfx('error');
         return false;
     }
@@ -241,7 +241,10 @@ export function fellTree(k, at) {
         float(at, [`+${wood}`, ['item', 'wood']], '', -22);
         fly(at, 'wood', Math.min(3, wood));
     }
-    toast(dead ? `Le vieux ${d.seedName.toLowerCase()} donne ${wood} bois. La place est libre.` : `${d.seedName} abattu${wood ? ` : ${wood} bois` : ''}`, ['item', 'wood']);
+    toast(dead ? `Le vieux ${d.seedName.toLowerCase()} donne ${wood} bois. La place est libre.` : `${d.seedName} abattu${wood ? ` : ${wood} bois` : ''}`, [
+        'item',
+        'wood',
+    ]);
     changed('orchard');
     return true;
 }
@@ -305,7 +308,8 @@ export function orchardTick() {
         const after = treeStage(t);
         if (r.fell || r.rot || before !== after) ch = true;
         if (r.fell) emit('ripe', 'orchard');
-        if (before !== 'dead' && after === 'dead') toast(`Un ${ITEMS[t.id].seedName.toLowerCase()} est mort de vieillesse : débitez-le en bois au verger`, ['item', 'wood']);
+        if (before !== 'dead' && after === 'dead')
+            toast(`Un ${ITEMS[t.id].seedName.toLowerCase()} est mort de vieillesse : débitez-le en bois au verger`, ['item', 'wood']);
     }
     return ch;
 }

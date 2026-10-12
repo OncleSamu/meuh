@@ -365,9 +365,16 @@ function fruitOf(id) {
             FC(x - 3, y - 1, 0.9, '#fff', 0.7);
     if (id === 'peach')
         return (x, y) =>
-            C(x, y, 5, col, 2) + FC(x + 1.5, y + 1, 2.6, '#ff8a6a', 0.6) + L(`M${x} ${y - 4} Q${x - 1.5} ${y} ${x} ${y + 4}`, 1, '#e07a52') + FC(x - 2, y - 2, 1.3, '#fff', 0.6);
+            C(x, y, 5, col, 2) +
+            FC(x + 1.5, y + 1, 2.6, '#ff8a6a', 0.6) +
+            L(`M${x} ${y - 4} Q${x - 1.5} ${y} ${x} ${y + 4}`, 1, '#e07a52') +
+            FC(x - 2, y - 2, 1.3, '#fff', 0.6);
     if (id === 'kiwi') return (x, y) => E(x, y, 4, 5.4, col, 15, 1.8) + FC(x - 1.2, y - 1.6, 1, '#d6b98a', 0.8) + FC(x + 1, y + 1.4, 0.8, '#d6b98a', 0.8);
-    if (id === 'kaki') return (x, y) => C(x, y, 5, col, 2) + P(`M${x - 4} ${y - 4} L${x} ${y - 2.5} L${x + 4} ${y - 4} L${x + 2} ${y - 6} L${x} ${y - 4.5} L${x - 2} ${y - 6}Z`, '#5f8f2e', 1.2) + FC(x - 2, y, 1.3, '#fff', 0.55);
+    if (id === 'kaki')
+        return (x, y) =>
+            C(x, y, 5, col, 2) +
+            P(`M${x - 4} ${y - 4} L${x} ${y - 2.5} L${x + 4} ${y - 4} L${x + 2} ${y - 6} L${x} ${y - 4.5} L${x - 2} ${y - 6}Z`, '#5f8f2e', 1.2) +
+            FC(x - 2, y, 1.3, '#fff', 0.55);
     return (x, y) => C(x, y, 4.6, col, 2) + FC(x - 1.5, y - 1.5, 1.4, '#fff', 0.6);
 }
 

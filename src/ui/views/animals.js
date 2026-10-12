@@ -157,7 +157,7 @@ function transCard() {
 
 // le pré grandit avec le troupeau pour que chacun ait sa place
 const meadowHtml = n =>
-    `<div class="meadow${n > 14 ? ' crowd' : ''}" id="pasture" style="height:${Math.min(720, Math.max(380, 160 + n * 28))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${state.animals.length ? 'Ce pré est vide : déplacez-y des bêtes depuis leur fiche.' : 'Votre pâturage est vide. Achetez une poule au marché pour commencer.'}</div>`}</div>`;
+    `<div class="meadow${n > 14 ? ' crowd' : ''}" id="pasture" style="height:${Math.min(720, Math.max(380, 160 + n * 28))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${state.animals.length ? 'Ce pré est vide : déplacez-y des bêtes depuis leur fiche.' : 'Votre pâturage est vide. Achetez une poule au marché pour commencer.'}</div>`}</div>`;
 
 // une bête de l'étable
 function stableTile(a, i, mf) {
@@ -191,7 +191,9 @@ function stableHtml(k) {
     if (k !== 'all') return `<div class="stable">${group(k) || '<p class="empty">Ce pré est vide.</p>'}</div>`;
     return state.pastures
         .map((p, j) =>
-            G.pastureLoad(j) ? `<h3 class="section-title st-head"><span>${esc(p.name)}</span><small>${G.pastureLoad(j)}/20</small></h3><div class="stable">${group(j)}</div>` : '',
+            G.pastureLoad(j)
+                ? `<h3 class="section-title st-head"><span>${esc(p.name)}</span><small>${G.pastureLoad(j)}/20</small></h3><div class="stable">${group(j)}</div>`
+                : '',
         )
         .join('');
 }
@@ -204,7 +206,10 @@ function pastureBar(mode, cur) {
             return `<button class="pas-chip${cur === k ? ' on' : ''}${n >= 20 ? ' full' : ''}" data-act="pickPasture" data-k="${k}"><span>${esc(p.name)}</span><small>${n}/20</small></button>`;
         })
         .join('');
-    const all = mode === 'stable' && state.pastures.length > 1 ? `<button class="pas-chip${cur === 'all' ? ' on' : ''}" data-act="pickPasture" data-k="all"><span>Tous les prés</span><small>${state.animals.length}</small></button>` : '';
+    const all =
+        mode === 'stable' && state.pastures.length > 1
+            ? `<button class="pas-chip${cur === 'all' ? ' on' : ''}" data-act="pickPasture" data-k="all"><span>Tous les prés</span><small>${state.animals.length}</small></button>`
+            : '';
     const add = G.canAddPasture()
         ? `<button class="pas-chip add${G.herdFull() ? ' urge' : ''}" data-act="buyPasture">${ico(['ui', 'plus'])}<span>Nouveau pré</span><small>${fmt(G.pastureCost())}${ico(['ui', 'coin'])}</small></button>`
         : '';
@@ -243,7 +248,7 @@ function renderAnimals(el) {
             hint(
                 mode === 'stable'
                     ? 'Touchez un animal pour ramasser sa production, ou pour ouvrir sa fiche quand il n’a rien à donner.'
-                    : 'Chaque sac de nourriture donne une production. Touchez un animal pour ouvrir sa fiche : câlin, nourriture, nom et pré.',
+                    : 'Chaque sac de nourriture donne une production. Touchez un animal pour ouvrir sa fiche : câlin, nourriture, nom et pré.',
             ),
         ],
         ['trans', transCard()],

@@ -257,7 +257,7 @@ export function buy(type, id, qty = 1, at) {
         return false;
     }
     if (type === 'animal' && herdFull()) {
-        toast('Tous vos prés sont pleins : achetez un nouveau pré dans l’onglet Animaux', ['ui', 'flowers']);
+        toast('Tous vos prés sont pleins : achetez un nouveau pré dans l’onglet Animaux', ['ui', 'flowers']);
         sfx('error');
         return false;
     }
@@ -281,8 +281,7 @@ export function buy(type, id, qty = 1, at) {
         const a = newAnimal(id);
         placeAnimal(a);
         state.animals.push(a);
-    }
-    else if (type === 'machine') state.machines.push(newMachine(id));
+    } else if (type === 'machine') state.machines.push(newMachine(id));
     else if (type === 'placedeco') state.decorInv[id] = (state.decorInv[id] || 0) + 1;
     sfx('buy');
     buzz(10);

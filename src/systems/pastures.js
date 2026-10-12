@@ -74,7 +74,7 @@ export function buyPasture(at) {
     buzz(15);
     burst(at, 'sparkle', 12);
     float(at, [`-${fmt(cost)}`, COIN], 'bad', -14);
-    toast(`${state.pastures[state.pastures.length - 1].name} est à vous : 20 places de plus`, ['ui', 'flowers']);
+    toast(`${state.pastures[state.pastures.length - 1].name} est à vous : 20 places de plus`, ['ui', 'flowers']);
     changed('animals');
     return state.pastures.length - 1;
 }

@@ -100,7 +100,8 @@ export function selectTool(t) {
 }
 
 // Graines disponibles dans la barre : cultures puis arbres, par niveau
-export const plantableSeeds = () => seedList().filter(i => i.type === 'crop' && ((state.level >= i.reqLvl && !i.exotic && storyOk(i)) || state.seeds[i.id] > 0));
+export const plantableSeeds = () =>
+    seedList().filter(i => i.type === 'crop' && ((state.level >= i.reqLvl && !i.exotic && storyOk(i)) || state.seeds[i.id] > 0));
 
 // ---------------- une seconde de jeu ----------------
 // chaque sous-système avance d'une seconde ; celui qui plante est isolé et n'arrête pas les autres

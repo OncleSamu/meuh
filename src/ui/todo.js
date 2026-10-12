@@ -29,7 +29,10 @@ export function todoList() {
         const trees = state.orchard.slots.filter(x => x.tree);
         const withFruit = trees.filter(x => x.tree.ground > 0);
         const fruits = withFruit.reduce((a, x) => a + x.tree.ground, 0);
-        if (fruits) add('farm/orchard', ['item', withFruit[0].tree.id], `${fruits} fruit${s(fruits)} au verger`, withFruit.length, { urgent: withFruit.some(x => G.groundFull(x.tree)) });
+        if (fruits)
+            add('farm/orchard', ['item', withFruit[0].tree.id], `${fruits} fruit${s(fruits)} au verger`, withFruit.length, {
+                urgent: withFruit.some(x => G.groundFull(x.tree)),
+            });
         const dead = G.deadTrees();
         add('farm/orchard', ['item', 'wood'], `${dead} arbre${s(dead)} mort${s(dead)}`, dead);
     }

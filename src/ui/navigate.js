@@ -29,7 +29,10 @@ export function produce(id) {
     }
     if (it.type === 'tree') {
         go('farm/orchard');
-        return toast(G.livingTrees(id) ? `Ramassez les fruits de vos ${it.seedName.toLowerCase()}s au verger` : `Plantez un ${it.seedName.toLowerCase()} au verger`, ['seed', id]);
+        return toast(
+            G.livingTrees(id) ? `Ramassez les fruits de vos ${it.seedName.toLowerCase()}s au verger` : `Plantez un ${it.seedName.toLowerCase()} au verger`,
+            ['seed', id],
+        );
     }
     if (it.type === 'crop') {
         if (state.seeds[id] > 0 || (it.type === 'crop' && !it.exotic && state.level >= it.reqLvl)) {
