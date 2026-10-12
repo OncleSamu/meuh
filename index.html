@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
         <meta name="theme-color" content="#7cc8f0" />
-        <title>Meuh 6.0</title>
+        <title>Meuh 6.2</title>
             <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -7256,6 +7256,89 @@ body.calm #weather .flutter {
     margin-left: auto;
 }
 
+/* ================= Meuh 6.1 et 6.2 ================= */
+body.hol-halloween .field::after,
+body.hol-noel .field::after,
+body.hol-paques .field::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: -26px;
+    height: 26px;
+    pointer-events: none;
+    background-repeat: repeat-x;
+    z-index: 2;
+}
+body.hol-halloween .field::after {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='26'%3E%3Cpath%20d='M0%202%20Q32%2014%2064%202'%20fill='none'%20stroke='%233a2618'%20stroke-width='2'/%3E%3Cpath%20d='M10%206%20L22%206%20L16%2020Z'%20fill='%23f5913b'%20stroke='%233a2618'%20stroke-width='1.6'/%3E%3Cpath%20d='M38%207%20L50%205%20L45%2019Z'%20fill='%236b3fa0'%20stroke='%233a2618'%20stroke-width='1.6'/%3E%3C/svg%3E");
+}
+body.hol-noel .field::after {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='26'%3E%3Cpath%20d='M0%204%20Q32%2016%2064%204'%20fill='none'%20stroke='%232b5e2e'%20stroke-width='3'/%3E%3Ccircle%20cx='12'%20cy='11'%20r='4'%20fill='%23e2412f'%20stroke='%233a2618'%20stroke-width='1.4'/%3E%3Ccircle%20cx='32'%20cy='14'%20r='4'%20fill='%23ffd23f'%20stroke='%233a2618'%20stroke-width='1.4'/%3E%3Ccircle%20cx='52'%20cy='11'%20r='4'%20fill='%235aa9e6'%20stroke='%233a2618'%20stroke-width='1.4'/%3E%3C/svg%3E");
+}
+body.hol-paques .field::after {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='64'%20height='26'%3E%3Cpath%20d='M0%202%20Q32%2014%2064%202'%20fill='none'%20stroke='%233a2618'%20stroke-width='2'/%3E%3Cellipse%20cx='16'%20cy='14'%20rx='5'%20ry='7'%20fill='%23f6a5b5'%20stroke='%233a2618'%20stroke-width='1.4'/%3E%3Cellipse%20cx='42'%20cy='14'%20rx='5'%20ry='7'%20fill='%239be06b'%20stroke='%233a2618'%20stroke-width='1.4'/%3E%3C/svg%3E");
+}
+.holiday-card {
+    padding: 12px;
+    margin-bottom: 12px;
+}
+.holiday-card.halloween {
+    background-color: #f5c08a;
+}
+.holiday-card.noel {
+    background-color: #d8ecd2;
+}
+.holiday-card.paques {
+    background-color: #fbe1ea;
+}
+.holiday-card .vstory-row {
+    margin: 8px 0 6px;
+}
+.rec-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    font-size: 0.82rem;
+}
+.rec-row .ico {
+    width: 26px;
+    height: 26px;
+}
+.rec-row span {
+    flex: 1;
+}
+.book-quarters {
+    padding: 10px 12px;
+    margin-bottom: 10px;
+}
+.bq-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+.bq-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin: 8px 0 4px;
+}
+.bq-steps > * {
+    min-height: 34px;
+    font-size: 0.78rem;
+}
+.postcard-btn {
+    margin-bottom: 10px;
+}
+.postcard-preview > svg {
+    display: block;
+    height: auto;
+    max-height: 62dvh;
+    margin: 0 auto 12px;
+    border-radius: 10px;
+}
+
         </style>
     </head>
     <body>
@@ -7459,6 +7542,7 @@ body.calm #weather .flutter {
                 <div id="qpane-village" hidden>
                     <div id="rare-container"></div>
                     <div id="story-container"></div>
+                    <div id="holiday-container"></div>
                     <div id="contract-container"></div>
                     <div id="fseason-container"></div>
                     <div id="neighbors-container"></div>
@@ -7813,7 +7897,7 @@ body.calm #weather .flutter {
             <div class="modal-box board photo">
                 <div id="photo-body"></div>
                 <div class="row-actions stretch">
-                    <button class="btn gold" onclick="sharePhoto(this)"><i class="ico" data-spr="ui:camera"></i>Partager</button>
+                    <button class="btn gold" id="photo-share" onclick="sharePhoto(this)"><i class="ico" data-spr="ui:camera"></i>Partager</button>
                     <button class="btn" onclick="closeModal('photo-modal')">Fermer</button>
                 </div>
             </div>
@@ -7824,6 +7908,7 @@ body.calm #weather .flutter {
                 <h2>Livre de la ferme</h2>
                 <div class="branch-tabs five book-sections" id="book-sections"></div>
                 <div id="book-collection">
+                    <div id="book-quarters"></div>
                     <div class="branch-tabs four" id="book-tabs"></div>
                     <div class="book-grid" id="book-grid"></div>
                     <div id="book-foot"></div>
@@ -7855,6 +7940,10 @@ body.calm #weather .flutter {
                 <div class="chart-block">
                     <div class="chart-title">D'où viennent vos pièces</div>
                     <div id="chart-sources"></div>
+                </div>
+                <div class="chart-block">
+                    <div class="chart-title">Records personnels</div>
+                    <div class="list" id="stats-records"></div>
                 </div>
                 <button class="btn wide" onclick="closeModal('stats-modal')">Fermer</button>
             </div>
@@ -12369,6 +12458,272 @@ const SPR = (() => {
         },
     });
 
+    // ================= Meuh 6.1 et 6.2 =================
+    const perfume = (liquid, cap, b) =>
+        SHADOW(32, 59, 14, 2.5) +
+        R(16, 26, 32, 32, 9, '#f4fbff') +
+        F('M18.5 38 L45.5 38 L45.5 50 Q45.5 55.5 40 55.5 L24 55.5 Q18.5 55.5 18.5 50Z', liquid, 0.8) +
+        F('M20 30 L23 29 L23 52 L20 52Z', '#fff', 0.6) +
+        R(16, 26, 32, 32, 9, 'none') +
+        R(27, 18, 10, 9, 2, '#e9e1d0') +
+        C(32, 12, 7, cap) +
+        HL(29, 10, 2, 1.4, -30, 0.6) +
+        (b ? badge(b) : '');
+    const mushCap = (x, y, s = 1, c = '#c8693a') =>
+        `<g transform="translate(${x} ${y}) scale(${s})">` +
+        R(-4, -2, 8, 14, 3, '#f7ecd8', 1.8) +
+        P('M-14 0 Q-14 -14 0 -14 Q14 -14 14 0Z', c, 2) +
+        FC(-6, -7, 2, '#fff', 0.8) +
+        FC(5, -9, 1.6, '#fff', 0.8) +
+        `</g>`;
+    const flaxFlower = (x, y, r = 4) =>
+        [0, 72, 144, 216, 288].map(a => `<g transform="rotate(${a} ${x} ${y})">${E(x, y - r, r * 0.6, r, '#6f9be8', 0, 1.2)}</g>`).join('') +
+        FC(x, y, r * 0.45, '#ffd23f');
+    Object.assign(items, {
+        turkeyEgg: () =>
+            SHADOW(32, 57, 14, 2.5) +
+            P('M32 10 C45 10 51 31 50 42 C49 52 41 57 32 57 C23 57 15 52 14 42 C13 31 19 10 32 10Z', '#efe1c6') +
+            [
+                [24, 26],
+                [38, 22],
+                [42, 38],
+                [26, 44],
+                [34, 34],
+                [20, 36],
+            ]
+                .map(([x, y]) => FE(x, y, 2, 1.5, '#a8693a', 0.75))
+                .join('') +
+            HL(24, 22, 3.5, 6, 20, 0.6),
+        flax: () =>
+            SHADOW(32, 58, 16, 2.5) +
+            L('M24 58 L28 20 M32 58 L32 16 M40 58 L36 22', 2, GD) +
+            flaxFlower(28, 18, 5) +
+            flaxFlower(36, 14, 4.4) +
+            flaxFlower(24, 30, 4) +
+            R(20, 46, 24, 6, 2, '#e8c38c', 1.6),
+        mushroom: () => SHADOW(32, 58, 22, 3) + mushCap(22, 44, 1) + mushCap(40, 40, 1.2) + mushCap(32, 50, 0.7, '#e8a93a'),
+        vanilla: () =>
+            SHADOW(32, 58, 20, 3) +
+            L('M14 54 Q30 30 50 10', 5.6) +
+            L('M14 54 Q30 30 50 10', 3, '#5e3a1e') +
+            L('M20 56 Q34 34 54 16', 5.6) +
+            L('M20 56 Q34 34 54 16', 3, '#7a4a2a') +
+            [0, 72, 144, 216, 288].map(a => `<g transform="rotate(${a} 18 20)">${E(18, 13, 3.4, 6, '#fff7d6', 0, 1.4)}</g>`).join('') +
+            FC(18, 20, 2.4, '#f2c14e'),
+        linen: () => bolt('#efe6d2', '#c9b99a'),
+        linenShirt: () => shirt('#efe6d2', 'long', L('M32 18 L32 54', 1.4, '#c9b99a') + FC(32, 26, 1.4, '#a8693a') + FC(32, 36, 1.4, '#a8693a')),
+        mushroomOmelette: () => plateB() + P('M14 44 C14 30 50 30 50 44Z', '#ffd95a') + L('M14 44 L50 44', 2) + mushCap(26, 38, 0.45) + mushCap(38, 36, 0.4),
+        mushroomRisotto: () => bowlB('#f3e2b0') + mushCap(24, 30, 0.4) + mushCap(38, 29, 0.45) + FC(32, 26, 1.6, '#6cc04a'),
+        giantOmelette: () =>
+            SHADOW(32, 58, 28, 3) +
+            E(32, 44, 28, 12, '#ffffff') +
+            P('M8 44 C8 24 56 24 56 44Z', '#ffd23f') +
+            L('M8 44 L56 44', 2) +
+            FE(24, 36, 4, 2, '#f2c14e', 0.9) +
+            FE(40, 34, 3, 1.6, '#f2c14e', 0.9) +
+            badge('turkeyEgg'),
+        vanillaFlan: () =>
+            plateB() +
+            P('M16 46 L20 26 L44 26 L48 46Z', '#f7d374') +
+            E(32, 26, 12, 3.6, '#a8693a') +
+            F('M20 27 Q22 34 24 27 Q28 34 30 27', '#7a4a2a', 0.8) +
+            L('M38 18 L46 10', 2.4, '#5e3a1e'),
+        vanillaIce: () =>
+            cone([
+                [32, 24, 11, '#fff7d6'],
+                [32, 12, 8, '#fbefc0'],
+            ]) + L('M26 22 L28 26 M36 18 L37 22', 1.4, '#3a2618'),
+        lavenderWater: () => perfume('#b58ad6', '#8e6fb5', 'lavender'),
+        summerPerfume: () => perfume('#ffcf6a', '#f5a623', 'sunflower'),
+        vanillaPerfume: () => perfume('#f3e2b0', '#a8693a', 'vanilla'),
+        grandParfum: () =>
+            SHADOW(32, 59, 16, 2.5) +
+            P('M32 18 L50 36 L32 58 L14 36Z', '#f4fbff') +
+            F('M32 30 L44 38 L32 54 L20 38Z', '#e8364b', 0.75) +
+            P('M32 18 L50 36 L32 58 L14 36Z', 'none') +
+            R(28, 10, 8, 9, 2, '#ffd23f') +
+            C(32, 8, 4, '#ffd23f', 1.6) +
+            FC(22, 30, 1.6, '#fff', 0.9) +
+            FC(46, 24, 1.6, '#ffd23f', 0.9),
+        witchCandy: () =>
+            SHADOW(32, 56, 24, 3) +
+            P('M10 34 Q32 22 54 34 L48 54 L16 54Z', '#5e3a1e') +
+            E(32, 34, 22, 6, '#3a2618') +
+            [
+                [22, 30, '#f5913b'],
+                [32, 28, '#8e6fb5'],
+                [42, 30, '#9be06b'],
+            ]
+                .map(([x, y, c]) => C(x, y, 4.4, c, 1.6))
+                .join('') +
+            L('M12 40 Q8 30 14 24', 1.8, '#8a8f98'),
+        buche: () =>
+            plateB() +
+            R(10, 30, 40, 16, 8, '#7a4a2a') +
+            E(50, 38, 6, 8, '#a8693a') +
+            E(50, 38, 2.6, 3.6, '#7a4a2a', 0, 1.2) +
+            L('M14 34 Q24 30 34 35 Q40 38 46 33', 1.4, '#5e3a1e') +
+            leaf(22, 30, 8, -120, GD, 0.5) +
+            C(26, 28, 2, '#e2412f', 1.2),
+        sugarEggs: () =>
+            SHADOW(32, 57, 24, 3) +
+            P('M12 40 Q32 30 52 40 L48 56 L16 56Z', '#e8c38c') +
+            [
+                [22, 36, '#f6a5b5'],
+                [32, 32, '#8fd0f7'],
+                [42, 36, '#9be06b'],
+            ]
+                .map(([x, y, c]) => E(x, y, 6, 8, c, 0, 1.6) + L(`M${x - 5} ${y} L${x + 5} ${y}`, 1.2, '#fff'))
+                .join(''),
+    });
+    Object.assign(youngExtra, {
+        flax: () => mound() + L('M28 56 L28 34 M32 56 L32 30 M36 56 L36 34', 2, G),
+        mushroom: () => mound() + mushCap(32, 50, 0.45, '#e8c38c'),
+        vanilla: () => mound() + L('M32 56 Q26 40 34 30', 2.4, '#7fae4a') + leaf(30, 42, 10, -160, G, 0.45) + leaf(33, 34, 10, -20, GL, 0.45),
+    });
+    Object.assign(readyExtra, {
+        flax: () =>
+            mound() + L('M24 56 L26 22 M32 56 L32 16 M40 56 L38 22', 2, G) + flaxFlower(26, 20, 4.6) + flaxFlower(32, 14, 4.6) + flaxFlower(38, 20, 4.6),
+        mushroom: () => mound() + mushCap(24, 48, 0.9) + mushCap(40, 46, 1.05) + mushCap(32, 54, 0.6, '#e8a93a'),
+        vanilla: () =>
+            mound() +
+            L('M32 56 Q22 36 34 16', 2.6, '#7fae4a') +
+            leaf(28, 40, 12, -160, G, 0.45) +
+            leaf(32, 28, 12, -20, GL, 0.45) +
+            L('M36 22 L42 44 M40 20 L46 40', 2.6, '#5e3a1e') +
+            C(24, 22, 3.6, '#fff7d6', 1.2),
+    });
+    Object.assign(animals, {
+        turkey: () =>
+            SHADOW(40, 72, 21, 3.5) +
+            [-60, -35, -10, 15, 40]
+                .map(
+                    a =>
+                        `<g transform="rotate(${a} 26 44)">${E(26, 22, 6, 16, '#8b5a2b', 0, 2) + FE(26, 12, 3, 4, '#e8a93a') + FE(26, 10, 1.6, 2, '#f7f3ea')}</g>`,
+                )
+                .join('') +
+            leg('M36 60 L35 70 M32 71 L38 71', '#f5a623') +
+            leg('M46 60 L47 70 M44 71 L50 71', '#f5a623') +
+            E(40, 48, 15, 14, '#6d4a2e') +
+            L('M30 46 Q40 52 50 46 M32 54 Q40 58 48 54', 1.4, '#3a2618') +
+            P('M50 44 C48 34 50 24 56 22 C62 22 62 30 58 36 L56 44Z', '#8f8574') +
+            C(57, 24, 6, '#a8b0b8') +
+            P('M62 24 L68 27 L62 29Z', '#f5a623', 2) +
+            P('M58 28 Q62 34 58 40 Q55 34 57 28Z', '#e2412f', 1.8) +
+            eye(57, 22),
+    });
+    Object.assign(machines, {
+        perfumery: () =>
+            SHADOW(32, 60, 28, 3) +
+            R(8, 28, 48, 30, 4, '#fbe1ea') +
+            P('M8 28 L56 28 L52 18 L12 18Z', '#b58ad6') +
+            R(14, 34, 36, 18, 3, '#f4fbff', 1.6) +
+            `<g transform="translate(16 32) scale(.32)">${items.lavenderWater()}</g>` +
+            `<g transform="translate(30 32) scale(.32)">${items.vanillaPerfume()}</g>` +
+            C(48, 12, 5, '#b58ad6', 1.6),
+    });
+    Object.assign(ui, {
+        seeder: () =>
+            SHADOW(32, 60, 28, 3) +
+            R(8, 26, 48, 16, 4, '#3f8f2e') +
+            P('M12 26 L18 12 L46 12 L52 26Z', '#e2412f') +
+            [16, 26, 38, 48].map(x => L(`M${x} 42 L${x} 52`, 2.6) + FC(x, 55, 2, '#d9a066')).join('') +
+            C(14, 46, 6, '#3a2618') +
+            C(50, 46, 6, '#3a2618'),
+        harvester: () =>
+            SHADOW(32, 60, 30, 3) +
+            R(18, 22, 34, 24, 4, '#e2412f') +
+            R(34, 10, 16, 14, 2, '#bfe6fb', 2) +
+            R(4, 34, 16, 14, 2, '#f2c14e') +
+            L('M6 38 L18 38 M6 43 L18 43', 1.6, '#c9952a') +
+            C(26, 50, 9, '#3a2618') +
+            C(26, 50, 3.6, '#8a8f98', 1.4) +
+            C(46, 52, 6, '#3a2618') +
+            C(46, 52, 2.4, '#8a8f98', 1.2),
+        duckPond: () =>
+            SHADOW(32, 58, 28, 3) +
+            E(32, 44, 28, 13, '#5aa9e6') +
+            E(32, 44, 22, 9, '#8fd0f7', 0, 0) +
+            `<g transform="translate(18 18) scale(.36)">${animals.duck ? animals.duck() : ''}</g>` +
+            leaf(10, 40, 9, -30, G, 0.5) +
+            FE(46, 48, 6, 2, '#fff', 0.6),
+        miniMill: () =>
+            SHADOW(32, 60, 16, 3) +
+            P('M22 60 L26 26 L38 26 L42 60Z', '#f2d6a2') +
+            P('M24 26 L32 16 L40 26Z', '#c8453a') +
+            R(29, 44, 6, 16, 2, '#8b5a2b', 1.6) +
+            `<g transform="rotate(20 32 24)">${L('M32 24 L32 2 M32 24 L54 24 M32 24 L32 46 M32 24 L10 24', 4, '#8b5a2b')}${[
+                [32, 8],
+                [48, 24],
+                [32, 40],
+                [16, 24],
+            ]
+                .map(([x, y]) => R(x - 4, y - 6, 8, 12, 1.5, '#f7f3ea', 1.6))
+                .join('')}</g>` +
+            C(32, 24, 3, '#3a2618', 1),
+        flowerArch: () =>
+            SHADOW(32, 60, 26, 3) +
+            L('M10 60 L10 26 Q10 6 32 6 Q54 6 54 26 L54 60', 7, '#8b5a2b') +
+            L('M10 60 L10 26 Q10 6 32 6 Q54 6 54 26 L54 60', 3.4, '#c08b52') +
+            [
+                [10, 30],
+                [12, 16],
+                [22, 8],
+                [32, 6],
+                [42, 8],
+                [52, 16],
+                [54, 30],
+                [10, 44],
+                [54, 44],
+            ]
+                .map(([x, y], k) => C(x, y, 4.2, ['#f6a5b5', '#ffd23f', '#e8364b', '#b58ad6'][k % 4], 1.4) + FC(x, y, 1.4, '#fff'))
+                .join('') +
+            leaf(14, 22, 8, -40, G, 0.5) +
+            leaf(50, 22, 8, -140, G, 0.5),
+        jackLantern: () =>
+            SHADOW(32, 59, 22, 3) +
+            E(32, 40, 24, 18, '#f5913b') +
+            L('M22 24 Q20 40 22 56 M42 24 Q44 40 42 56 M32 22 L32 58', 1.6, '#c8693a') +
+            P('M18 36 L26 32 L26 40Z M46 36 L38 32 L38 40Z', '#ffd23f', 1.6) +
+            P('M20 46 L26 50 L30 46 L34 50 L38 46 L44 50 Q32 58 20 46Z', '#ffd23f', 1.6) +
+            R(29, 14, 6, 10, 2, '#3f8f2e'),
+        xmasTree: () =>
+            SHADOW(32, 60, 18, 3) +
+            R(28, 50, 8, 10, 2, '#8b5a2b') +
+            P('M32 6 L50 30 L42 30 L54 48 L10 48 L22 30 L14 30Z', '#3f8f2e') +
+            L('M18 40 Q32 44 46 38 M22 28 Q32 32 42 26', 1.6, '#ffd23f') +
+            [
+                [20, 42, '#e2412f'],
+                [44, 42, '#5aa9e6'],
+                [32, 34, '#ffd23f'],
+                [26, 24, '#f6a5b5'],
+                [38, 22, '#e2412f'],
+            ]
+                .map(([x, y, c]) => C(x, y, 2.6, c, 1.2))
+                .join('') +
+            P('M32 2 L34 7 L39 7 L35 10 L37 15 L32 12 L27 15 L29 10 L25 7 L30 7Z', '#ffd23f', 1.4),
+        easterBunny: () =>
+            SHADOW(32, 60, 20, 3) +
+            E(24, 14, 4.5, 12, '#f7f3ea', -12) +
+            E(40, 14, 4.5, 12, '#f7f3ea', 12) +
+            FE(24, 15, 2, 8, '#f6a5b5', 0.9, -12) +
+            FE(40, 15, 2, 8, '#f6a5b5', 0.9, 12) +
+            E(32, 46, 16, 13, '#f7f3ea') +
+            C(32, 30, 11, '#f7f3ea') +
+            eye(28, 29) +
+            eye(36, 29) +
+            FE(32, 34, 2, 1.4, '#f49a8f') +
+            E(46, 52, 6, 7, '#8fd0f7', 0, 1.6) +
+            L('M41 52 L51 52', 1.2, '#fff'),
+        goldenBook: () =>
+            SHADOW(32, 59, 24, 3) +
+            P('M8 16 Q20 12 32 18 L32 56 Q20 50 8 54Z', '#ffd23f') +
+            P('M56 16 Q44 12 32 18 L32 56 Q44 50 56 54Z', '#f2c14e') +
+            L('M12 24 Q20 22 28 26 M12 32 Q20 30 28 34 M36 26 Q44 22 52 24 M36 34 Q44 30 52 32', 1.4, '#c9952a') +
+            FC(18, 10, 2, '#fff', 0.9) +
+            FC(48, 8, 1.6, '#fff', 0.9),
+    });
+
     // API publique
     return {
         farmhouse(l, roof) {
@@ -12838,7 +13193,7 @@ const EVENTS = {
     hiver: { name: 'Marché de Noël', icon: ['ui', 's_winter'], effect: 'Les trains de marchandises paient 30 % de plus pendant la fête.' },
 };
 
-const GAME_VERSION = '6.0';
+const GAME_VERSION = '6.2';
 
 const BACKUP_KEY = SAVE_KEY + '_secours';
 
@@ -15551,6 +15906,216 @@ const TIPS_8 = {
 })();
 
 // =====================================================================
+//  Meuh 6.1 et 6.2 : la vie à la ferme et les petites touches.
+//  Dinde, lin, champignons, vanille, parfumerie, semoir et moissonneuse ;
+//  fêtes aux vraies dates, décorations à effet, records, livre, carte postale.
+// =====================================================================
+
+// ---------------- 6.1 : nouveaux produits ----------------
+Object.assign(DB.Animals, {
+    turkey: { id: 'turkey', name: 'Dinde', prodId: 'turkeyEgg', cost: 7000, time: 1500, reqLvl: 17, xp: Math.round(260 * BALANCE.animalXp) },
+});
+GROW.turkey = 900;
+NAMES.turkey = ['Glouglou', 'Dindonnette', 'Gobble', 'Plumette', 'Caroline', 'Barnabé'];
+
+const cropDef = (id, name, seedName, cost, sell, time, reqLvl, xp, extra = {}) => ({
+    id,
+    name,
+    seedName,
+    type: 'crop',
+    cost,
+    sell,
+    time,
+    reqLvl,
+    xp: Math.round(xp * BALANCE.cropXp),
+    ...extra,
+});
+Object.assign(DB.Items, {
+    turkeyEgg: { id: 'turkeyEgg', name: 'Œuf de dinde', type: 'product', sell: 240 },
+    flax: cropDef('flax', 'Lin', 'Graines de lin', 12, 40, 500, 14, 60, { seasons: ['printemps', 'ete'] }),
+    mushroom: cropDef('mushroom', 'Champignons', 'Mycélium de champignons', 25, 80, 800, 21, 110, { seasons: ['automne', 'printemps'] }),
+    vanilla: cropDef('vanilla', 'Vanille', 'Bouture de vanillier', 80, 190, 1600, 32, 230, { ghOnly: true }),
+});
+SOILS.wet.crops.push('flax');
+SOILS.shade.crops.push('mushroom');
+
+Object.assign(DB.Machines, {
+    perfumery: { id: 'perfumery', name: 'Parfumerie', cost: 16000 * BALANCE.machineCost, reqLvl: 26, desc: 'Eaux de lavande et parfums' },
+});
+
+const VIE2_RECIPES = {
+    linen: ['loom', 'Toile de lin', { flax: 3 }, 240],
+    linenShirt: ['tailor', 'Chemise de lin', { linen: 2 }, 360],
+    mushroomOmelette: ['kitchen', 'Omelette aux champignons', { mushroom: 2, egg: 2 }, 240],
+    mushroomRisotto: ['kitchen', 'Risotto aux champignons', { rice: 2, mushroom: 2, cream: 1 }, 360],
+    giantOmelette: ['kitchen', 'Omelette géante', { turkeyEgg: 2, cheese: 1 }, 300],
+    vanillaFlan: ['bakery', 'Flan à la vanille', { turkeyEgg: 2, milk: 2, vanilla: 1 }, 360],
+    vanillaIce: ['icecream', 'Glace à la vanille', { cream: 1, vanilla: 1, sugar: 1 }, 300],
+    lavenderWater: ['perfumery', 'Eau de lavande', { lavender: 4 }, 300],
+    summerPerfume: ['perfumery', "Parfum d'été", { sunflower: 3, peach: 1 }, 360],
+    vanillaPerfume: ['perfumery', 'Parfum à la vanille', { vanilla: 2, lavender: 1 }, 420],
+    grandParfum: ['perfumery', 'Grand parfum de Meuh', { lavenderWater: 1, vanillaPerfume: 1, honey: 1 }, 600],
+};
+
+// ---------------- 6.1 : engins agricoles ----------------
+Object.assign(DB.Upgrades, {
+    seeder: {
+        id: 'seeder',
+        name: 'Semoir',
+        desc: 'Une graine plantée sème toute la rangée (sur les parcelles labourées et vides)',
+        baseCost: 15000,
+        mult: 1,
+        maxLvl: 1,
+        reqLvl: 13,
+    },
+    harvester: {
+        id: 'harvester',
+        name: 'Moissonneuse',
+        desc: 'Une rangée entière d’une même culture donne 35 % de récolte en plus',
+        baseCost: 45000,
+        mult: 1,
+        maxLvl: 1,
+        reqLvl: 19,
+    },
+});
+const HARVESTER_BONUS = 0.35;
+
+// ---------------- 6.2 : décorations à effet ----------------
+Object.assign(DECOS, {
+    duckPond: { id: 'duckPond', name: 'Mare aux canards', desc: 'Les canards mangent les pucerons des 8 voisines', cost: 5000, reqLvl: 13, charm: 10 },
+    miniMill: { id: 'miniMill', name: 'Moulin miniature', desc: 'Voisines : 25 % de chances de récolte double', cost: 7000, reqLvl: 16, charm: 12 },
+    flowerArch: { id: 'flowerArch', name: 'Arche fleurie', desc: 'Voisines : poussent 10 % plus vite ; +20 de charme', cost: 9000, reqLvl: 20, charm: 20 },
+    jackLantern: {
+        id: 'jackLantern',
+        name: 'Citrouille-lanterne',
+        desc: 'Trophée d’Halloween : +30 de charme au concours',
+        cost: 0,
+        reqLvl: 1,
+        charm: 30,
+        rare: true,
+    },
+    xmasTree: { id: 'xmasTree', name: 'Sapin de Noël', desc: 'Trophée de Noël : +30 de charme au concours', cost: 0, reqLvl: 1, charm: 30, rare: true },
+    easterBunny: {
+        id: 'easterBunny',
+        name: 'Lapin de Pâques',
+        desc: 'Trophée de Pâques : +30 de charme au concours',
+        cost: 0,
+        reqLvl: 1,
+        charm: 30,
+        rare: true,
+    },
+    goldenBook: {
+        id: 'goldenBook',
+        name: 'Livre d’or',
+        desc: 'Le Livre de la ferme est complet : +40 de charme au concours',
+        cost: 0,
+        reqLvl: 1,
+        charm: 40,
+        rare: true,
+    },
+});
+
+// ---------------- 6.2 : fêtes aux vraies dates ----------------
+// dates en [mois, jour] ; Pâques se calcule chaque année
+const HOLIDAYS = {
+    halloween: {
+        name: 'Halloween',
+        icon: ['ui', 'jackLantern'],
+        from: [10, 24],
+        to: [11, 2],
+        recipe: 'witchCandy',
+        goal: { pumpkin: 30, witchCandy: 6, honey: 8 },
+        deco: 'jackLantern',
+        text: 'Citrouilles, bonbons et chauves-souris : remplissez le chaudron de la sorcière du village !',
+    },
+    noel: {
+        name: 'Noël',
+        icon: ['ui', 'xmasTree'],
+        from: [12, 15],
+        to: [1, 1],
+        recipe: 'buche',
+        goal: { buche: 5, cookies: 20, wool: 20 },
+        deco: 'xmasTree',
+        text: 'Le village prépare le réveillon : une bûche, des biscuits et de la laine pour les cadeaux.',
+    },
+    paques: {
+        name: 'Pâques',
+        icon: ['ui', 'easterBunny'],
+        easter: [-4, 3],
+        recipe: 'sugarEggs',
+        goal: { sugarEggs: 6, egg: 40, carrot: 40 },
+        deco: 'easterBunny',
+        text: 'Le lapin de Pâques a besoin d’aide pour remplir son panier : œufs, carottes et œufs en sucre.',
+    },
+};
+const HOLIDAY_RECIPES = {
+    witchCandy: ['confectionery', 'Bonbons de la sorcière', { pumpkin: 2, sugar: 2 }, 240, 'halloween'],
+    buche: ['bakery', 'Bûche de Noël', { flour: 2, egg: 3, cream: 1, sugar: 1 }, 420, 'noel'],
+    sugarEggs: ['confectionery', 'Œufs en sucre', { sugar: 2, egg: 2 }, 240, 'paques'],
+};
+
+// ---------------- 6.2 : livre de la ferme, par quart ----------------
+const BOOK_QUARTERS = [0.25, 0.5, 0.75, 1];
+
+// ---------------- Guide et bulles ----------------
+GUIDE.push(
+    {
+        id: 'engines',
+        icon: ['ui', 'harvester'],
+        name: 'Semoir et moissonneuse',
+        lvl: 13,
+        view: 'shop',
+        text: 'Au magasin. Le semoir plante toute une rangée d’un seul geste ; la moissonneuse récolte 35 % de plus sur une rangée entière d’une même culture.',
+    },
+    {
+        id: 'holidays',
+        icon: ['ui', 'jackLantern'],
+        name: 'Fêtes de l’année',
+        lvl: 3,
+        view: 'quests',
+        text: 'Halloween, Noël et Pâques, aux vraies dates : une recette du moment, un panier à remplir au village et une décoration unique à gagner.',
+    },
+);
+const TIPS_9 = {
+    holiday: {
+        icon: ['ui', 'jackLantern'],
+        title: 'Une fête aux vraies dates',
+        text: 'C’est la fête ! Une recette spéciale est ouverte à l’atelier, et le village attend un panier (volet Village) contre une décoration unique.',
+    },
+    seeder: {
+        icon: ['ui', 'seeder'],
+        title: 'Le semoir',
+        text: 'Plantez une graine : le semoir sème toute la rangée, sur les parcelles labourées et vides.',
+    },
+};
+
+(function setupVie2() {
+    const avail = id => {
+        if (RECIPES[id]) return RECIPES[id].lvl;
+        const a = Object.values(DB.Animals).find(x => x.prodId === id);
+        if (a) return a.reqLvl;
+        return DB.Items[id].reqLvl || 1;
+    };
+    const add = (id, machine, name, ing, time) => {
+        DB.Items[id] = { id, name, type: 'artisan' };
+        const lvl = Math.max(DB.Machines[machine].reqLvl, ...Object.keys(ing).map(avail));
+        const value = Object.entries(ing).reduce((a, [k, n]) => a + ingValue(k) * n, 0);
+        DB.Items[id].sell = Math.round((value * 1.25 + time * 0.3 + 5) / 5) * 5;
+        RECIPES[id] = { id, machine, ing, time, lvl, base: lvl };
+        RECIPES[id].xp = Math.max(1, Math.round(Math.max(5, Math.round(time / 10 + DB.Items[id].sell / 30)) * BALANCE.craftXp));
+    };
+    for (const [id, [machine, name, ing, time]] of Object.entries(VIE2_RECIPES)) add(id, machine, name, ing, time);
+    for (const [id, [machine, name, ing, time, holiday]] of Object.entries(HOLIDAY_RECIPES)) {
+        add(id, machine, name, ing, time);
+        RECIPES[id].holiday = holiday;
+    }
+    VILLAGERS.rose.likes.push('lavenderWater', 'summerPerfume');
+    VILLAGERS.gaston.likes.push('mushroomRisotto', 'vanillaFlan');
+    VILLAGERS.odette.likes.push('linen', 'mushroomOmelette');
+    VILLAGERS.lucie.likes.push('vanillaIce');
+})();
+
+// =====================================================================
 //  État de la partie : création, chargement, migrations et sauvegarde.
 // =====================================================================
 
@@ -15588,7 +16153,7 @@ function newState() {
         animals: [],
         machines: [],
         quests: [],
-        upgrades: { speed: 0, price: 0, yield: 0, feeder: 0 },
+        upgrades: { speed: 0, price: 0, yield: 0, feeder: 0, seeder: 0, harvester: 0 },
         tools: { axe: 0, pick: 0 },
         settings: {
             music: true,
@@ -15697,6 +16262,9 @@ function newState() {
         fseason: null,
         farmTheme: 'none',
         cave: { slots: [], shelves: 0, gear: {}, temp: 50, hum: 50, climAt: 0, reserve: [], cote: 0, auction: null, lastSale: null, uid: 0 },
+        holiday: null,
+        records: {},
+        bookQuarters: [],
         crow: null,
         daily: { last: '', streak: 0 },
     };
@@ -16950,6 +17518,13 @@ function doPlotAction(i, action) {
             sfx('plant');
             burst(c.x, c.y + 6, 'dirt', 5);
             buzz(6);
+            if (state.upgrades.seeder && i < 1000 && DB.Items[tool].type === 'crop') {
+                const n = seedRow(i, tool);
+                if (n) {
+                    floatText(c.x, c.y - 44, `${ico('ui', 'seeder')}+${n} semées`, 'gold');
+                    tip('seeder');
+                }
+            }
             if (res === 'bought') floatText(c.x, c.y - 14, `-${DB.Items[tool].cost}${COIN()}`, 'bad');
             if (soilFits(i, tool)) {
                 floatText(c.x, c.y - 30, `${ico('ui', SOILS[soilOf(i)].icon)}Sol idéal`, 'gold');
@@ -17108,6 +17683,10 @@ function actionHarvestAll(btn) {
                 .join(' '),
         );
         addXp(xp, c.x, c.y + 10);
+        record(
+            'harvest',
+            Object.values(totals).reduce((a, b) => a + b, 0),
+        );
         renderFarm();
         renderToolbar();
         updateHeader();
@@ -17367,7 +17946,7 @@ function rollQuality(plot) {
 
 function harvestPlot(plot) {
     const d = DB.Items[plot.itemId];
-    const qty = rollYield('crop');
+    const qty = rollYield('crop') + bonusYield(plot, d, gridIndex(plot));
     state.inventory[plot.itemId] += qty;
     state.stats.harvested += qty;
     addMastery(d.id, qty);
@@ -17564,7 +18143,7 @@ function neighbors(i) {
 
 const nearDeco = (i, id) => neighbors(i).some(j => state.grid[j].isUnlocked && state.grid[j].deco === id);
 
-const decoGrowth = i => (nearDeco(i, 'hive') ? 1.15 : 1);
+const decoGrowth = i => (nearDeco(i, 'hive') ? 1.15 : 1) * (nearDeco(i, 'flowerArch') ? 1.1 : 1);
 
 const gridIndex = plot => state.grid.indexOf(plot);
 
@@ -18326,7 +18905,13 @@ const LEGACY_RECIPE = { mill: 'feed', bakery: 'bread', press: 'juice', loom: 'cl
 
 const recipeUnlocked = id => {
     const r = RECIPES[id];
-    return state.level >= (r.lvl || 1) && (!r.teacher || heartsOf(r.teacher) >= r.hearts) && (!r.fete || eventActive(r.fete)) && storyOk(DB.Items[id]);
+    return (
+        state.level >= (r.lvl || 1) &&
+        (!r.teacher || heartsOf(r.teacher) >= r.hearts) &&
+        (!r.fete || eventActive(r.fete)) &&
+        (!r.holiday || holidayActive(r.holiday)) &&
+        storyOk(DB.Items[id])
+    );
 };
 const canCook = id => Object.entries(RECIPES[id].ing).every(([k, n]) => state.inventory[k] >= n);
 const missingFor = id =>
@@ -18345,9 +18930,11 @@ const recipeLockText = r =>
         ? `Niveau ${r.lvl}`
         : !storyOk(DB.Items[r.id])
           ? storyLockText(DB.Items[r.id])
-          : r.fete
-            ? `Pendant la fête : ${EVENTS[r.fete].name}`
-            : `${VILLAGERS[r.teacher].name} · ${r.hearts} cœur${r.hearts > 1 ? 's' : ''} d'amitié`;
+          : r.holiday
+            ? `Pendant ${HOLIDAYS[r.holiday].name}`
+            : r.fete
+              ? `Pendant la fête : ${EVENTS[r.fete].name}`
+              : `${VILLAGERS[r.teacher].name} · ${r.hearts} cœur${r.hearts > 1 ? 's' : ''} d'amitié`;
 // Les recettes apprises auprès d'un villageois portent son portrait
 const teacherBadge = r => (r.teacher ? `<span class="rt-who" title="Recette de ${VILLAGERS[r.teacher].name}">${SPR.villager(r.teacher)}</span>` : '');
 
@@ -19964,6 +20551,7 @@ function unlocksAt(lvl) {
                 name: `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage', domaine: 'Domaine' }[c.map] || 'Village'} : chapitre ${c.n}, « ${c.name} » (après le chapitre ${c.n - 1})`,
             });
     });
+    Object.values(DB.Upgrades).forEach(u => u.reqLvl === lvl && list.push({ html: SPR.ui(u.id), name: `${u.name} (au magasin)` }));
     if (lvl === CAVE_LVL) list.push({ html: SPR.ui('cave'), name: 'La cave : affinez fromages et cidres, et vendez-les aux enchères (Atelier | Cave)' });
     if (lvl === CHAPTERS[0].lvl) list.push({ html: SPR.ui('village'), name: 'Rénovez le village : premier chapitre (onglet Village)' });
     if (lvl === INCIDENT_LVL) list.push({ html: SPR.ui('pest'), name: 'Des imprévus surviennent à la ferme : réagissez vite !' });
@@ -20079,6 +20667,7 @@ function claimDaily(btn) {
     if (r.feed) state.inventory.feed += r.feed;
     if (r.seeds) state.seeds[r.seeds[0]] += r.seeds[1];
     state.daily = { last: d.today, streak: d.streak };
+    record('streak', d.streak);
     ui.dailyPending = null;
     const c = centerOf(btn);
     sfx('level');
@@ -20375,6 +20964,9 @@ function doPrestige() {
         album: state.album,
         stories: state.stories,
         fseason: state.fseason,
+        records: state.records,
+        bookQuarters: state.bookQuarters,
+        holiday: state.holiday,
         farmTheme: ui.themePick || 'none',
         // la cave garde ses étagères, son équipement et sa cote ; les lots partent avec la ferme
         cave: { ...newState().cave, shelves: state.cave.shelves, gear: state.cave.gear, cote: state.cave.cote, uid: state.cave.uid },
@@ -20499,6 +21091,7 @@ function openBook() {
 }
 
 function renderBook() {
+    $('book-quarters').innerHTML = bookQuartersHtml();
     const page = BOOK.find(p => p.id === ui.bookPage),
         list = page.entries();
     const found = list.filter(e => state.collection[e.key]).length;
@@ -20554,6 +21147,7 @@ function openStats() {
 }
 
 function renderStats() {
+    $('stats-records').innerHTML = recordsHtml();
     const S = state.stats;
     const tiles = [
         ['Temps de jeu', fmtTime(S.playSec || 0)],
@@ -21289,6 +21883,16 @@ function todoList() {
     );
     const idle = state.machines.filter(m => !isBusy(m) && recipesOf(m.type).some(r => recipeUnlocked(r.id) && canCook(r.id))).length;
     add('machines', SPR.machine('mill'), `${idle} à l'arrêt`, idle);
+    if (holidayReady())
+        list.push({
+            view: 'quests',
+            pane: 'village',
+            icon: SPR.ui(HOLIDAYS[state.holiday.id].deco),
+            text: `${HOLIDAYS[state.holiday.id].name} : panier à remplir`,
+            n: 1,
+        });
+    const bq = quartersClaimable();
+    if (bq) list.push({ view: 'upgrades', pane: 'book', icon: SPR.ui('book'), text: 'Récompense du livre', n: bq });
     if (caveOpen()) {
         const care = caveCareCount();
         if (care) list.push({ view: 'machines', pane: 'cave', icon: SPR.ui('turn'), text: `${care} lot${care > 1 ? 's' : ''} à soigner`, n: care });
@@ -21692,7 +22296,13 @@ function questPool() {
         else if (i.type === 'fish') ok = state.level >= NATURE.pond.lvl && !!FISH[id] && FISH[id].odds >= 10 && !FISH[id].junk;
         else if (i.type === 'artisan') {
             const r = RECIPES[id];
-            ok = !!r && !r.fete && state.machines.some(m => m.type === r.machine) && recipeUnlocked(id) && Object.keys(r.ing).every(k => can(k, depth + 1));
+            ok =
+                !!r &&
+                !r.fete &&
+                !r.holiday &&
+                state.machines.some(m => m.type === r.machine) &&
+                recipeUnlocked(id) &&
+                Object.keys(r.ing).every(k => can(k, depth + 1));
         }
         return (memo[id] = ok);
     };
@@ -21821,6 +22431,7 @@ function turnInQuest(i, btn) {
     payItems(q.items);
     state.stats.orders++;
     state.income.orders += q.gold;
+    record('order', q.gold);
     if (q.vid) addFriendship(q.vid, VILLAGERS[q.vid].likes.some(id => q.items.some(x => x.id === id)) ? 4 : 2, btn);
     const c = centerOf(btn);
     sfx('buy');
@@ -22209,6 +22820,7 @@ function renderQuestsView() {
     } else {
         renderRare();
         renderStory();
+        renderHoliday();
         renderContract();
         renderFarmSeason();
         renderNeighbors();
@@ -22554,8 +23166,10 @@ function startIncident(force) {
         state.incident = { type, plot: i, until: 0 };
         sfx('caw');
     } else if (type === 'aphids') {
-        if (!growing.length) return false;
-        const [p, i] = pickRand(growing);
+        // les canards de la mare mangent les pucerons des parcelles voisines
+        const prey = growing.filter(([, j]) => !nearDeco(j, 'duckPond'));
+        if (!prey.length) return false;
+        const [p, i] = pickRand(prey);
         p.pest = true;
         state.incident = { type, plot: i, until: now + I.time };
     } else if (type === 'sick') {
@@ -22919,6 +23533,7 @@ function contestReward(rank, score, league = 0) {
     }
     const move = leagueAfterContest(rank);
     state.lastContest = { rank, score, league: leagueOf() };
+    record('contest', score);
     ui.contestResult = { rank, score, coins, rub, move };
     setTimeout(showContestResult, ui.started ? 0 : 2500);
 }
@@ -23114,7 +23729,7 @@ const TIPS = {
     },
 };
 
-Object.assign(TIPS, TIPS_4, TIPS_5, TIPS_6, TIPS_7, TIPS_8);
+Object.assign(TIPS, TIPS_4, TIPS_5, TIPS_6, TIPS_7, TIPS_8, TIPS_9);
 
 function tip(id) {
     if (!TIPS[id] || state.tips[id] || !state.tutorial.done) return;
@@ -24367,8 +24982,10 @@ const photoDate = ph => new Date(ph.at).toLocaleDateString('fr-FR', { day: 'nume
 
 function albumHtml() {
     const list = state.album || [];
-    if (!list.length) return '<p class="card-sub center">Les grands moments de votre ferme (chantiers, niveaux, concours…) apparaîtront ici en photo.</p>';
-    return `<p class="card-sub center">${list.length} souvenir${list.length > 1 ? 's' : ''}. Touchez une photo pour la regarder ou la partager.</p>
+    const card = `<button class="btn wide gold postcard-btn" onclick="openPostcard()">${ico('ui', 'camera')}Une carte postale de la ferme</button>`;
+    if (!list.length)
+        return card + '<p class="card-sub center">Les grands moments de votre ferme (chantiers, niveaux, concours…) apparaîtront ici en photo.</p>';
+    return `${card}<p class="card-sub center">${list.length} souvenir${list.length > 1 ? 's' : ''}. Touchez une photo pour la regarder ou la partager.</p>
         <div class="album">${list
             .map(
                 (ph, k) =>
@@ -24381,6 +24998,7 @@ function openPhoto(k) {
     const ph = state.album[k];
     if (!ph) return;
     ui.photo = k;
+    $('photo-share').setAttribute('onclick', 'sharePhoto(this)');
     $('photo-body').innerHTML =
         `<div class="polaroid big"><span class="ph-art" style="background:${PHOTO_BG[ph.season] || '#fff'}">${photoArt(ph)}</span><b>${ph.title}</b><small>${ph.sub ? ph.sub + ' · ' : ''}Jour ${ph.day} de la ferme · ${photoDate(ph)}</small></div>`;
     openModal('photo-modal');
@@ -24407,28 +25025,7 @@ function sharePhoto(btn) {
     const ph = state.album && state.album[ui.photo];
     if (!ph) return;
     squish(btn);
-    const img = new Image();
-    img.onload = () => {
-        const cv = document.createElement('canvas');
-        cv.width = 600;
-        cv.height = 700;
-        cv.getContext('2d').drawImage(img, 0, 0);
-        cv.toBlob(blob => {
-            if (!blob) return;
-            const file = new File([blob], 'meuh-souvenir.png', { type: 'image/png' });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) navigator.share({ files: [file], title: `Meuh : ${ph.title}` }).catch(() => {});
-            else {
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'meuh-souvenir.png';
-                a.click();
-                setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-                toast('Photo enregistrée dans vos téléchargements', ico('ui', 'camera'));
-            }
-        }, 'image/png');
-    };
-    img.onerror = () => toast("Impossible de préparer l'image", ico('ui', 'camera'));
-    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(photoSvg(ph));
+    shareSvg(photoSvg(ph), 600, 700, 'meuh-souvenir.png', `Meuh : ${ph.title}`, 'Photo enregistrée dans vos téléchargements');
 }
 
 // ---------------- Écran large : la ferme à gauche, le reste à droite ----------------
@@ -25777,6 +26374,7 @@ function takeOut(i, btn) {
     c.slots[i] = null;
     c.reserve.push({ uid: lot.uid, id: lot.id, n: lot.n, rank: lot.rank, bad: lot.bad });
     state.stats.caveLots = (state.stats.caveLots || 0) + 1;
+    if (!lot.bad) record('lot', lotValue(lot));
     if (!lot.bad && lot.rank >= 3) collect('cave_' + lot.id);
     if (!lot.bad && lot.rank >= 4) {
         state.stats.caveLegend = (state.stats.caveLegend || 0) + 1;
@@ -25978,6 +26576,7 @@ function closeLot(a, l) {
             earn(l.price, null);
             state.income.cave = (state.income.cave || 0) + l.price;
             state.stats.auctionSold = (state.stats.auctionSold || 0) + 1;
+            record('auction', l.price);
             c.cote = Math.max(0, Math.min(100, c.cote + (l.lot.bad ? -3 : l.lot.rank * 2)));
             addXp(Math.round(l.price / 60));
             if (BIDDERS[l.leader].villager && state.villagers[l.leader]) addFriendship(l.leader, 2 + l.lot.rank, null);
@@ -26320,6 +26919,331 @@ const VMAP_BG5 = `<svg class="vmap-bg" viewBox="0 0 160 110" preserveAspectRatio
 STORY_MAPS.push({ id: 'domaine', name: 'Le domaine', open: () => chapterDone(10), bg: () => VMAP_BG5, party: 'crayere' });
 
 // =====================================================================
+//  Meuh 6.1 et 6.2 : semoir et moissonneuse, fêtes aux vraies dates,
+//  records personnels, livre par quart, carte postale de la ferme.
+// =====================================================================
+
+// ---------------- Semoir : toute la rangée d'un geste ----------------
+const rowOf = i => Array.from({ length: COLS }, (_, k) => Math.floor(i / COLS) * COLS + k).filter(j => j < state.grid.length);
+
+function seedRow(i, id) {
+    let n = 0;
+    rowOf(i).forEach(j => {
+        const p = state.grid[j];
+        if (j === i || !p.isUnlocked || p.deco || p.itemId || p.terrain !== 'plowed') return;
+        if (plantSeed(p, id)) n++;
+    });
+    return n;
+}
+
+// ---------------- Moissonneuse : bonus de rangée ----------------
+// une rangée est « entière » si toutes ses parcelles portent (ou viennent de porter) la même culture
+function fullRow(i, id) {
+    const now = Date.now();
+    return rowOf(i).every(j => {
+        const p = state.grid[j];
+        return p.isUnlocked && !p.deco && (p.itemId === id || (p.lastCrop === id && now - (p.lastAt || 0) < 4000));
+    });
+}
+
+// récolte en plus : moissonneuse sur une rangée entière, moulin miniature voisin
+function bonusYield(plot, d, gi) {
+    let extra = 0;
+    if (gi < 0 || d.type !== 'crop') return 0;
+    if (state.upgrades.harvester && fullRow(gi, d.id) && Math.random() < HARVESTER_BONUS) extra++;
+    if (nearDeco(gi, 'miniMill') && Math.random() < 0.25) extra++;
+    plot.lastCrop = d.id;
+    plot.lastAt = Date.now();
+    return extra;
+}
+
+// ---------------- Fêtes aux vraies dates ----------------
+// dimanche de Pâques (calcul grégorien)
+function easterDate(y) {
+    const a = y % 19,
+        b = Math.floor(y / 100),
+        c = y % 100,
+        d = Math.floor(b / 4),
+        e = b % 4,
+        f = Math.floor((b + 8) / 25),
+        g = Math.floor((b - f + 1) / 3),
+        h = (19 * a + b - d - g + 15) % 30,
+        i = Math.floor(c / 4),
+        k = c % 4,
+        l = (32 + 2 * e + 2 * i - h - k) % 7,
+        m = Math.floor((a + 11 * h + 22 * l) / 451),
+        month = Math.floor((h + l - 7 * m + 114) / 31),
+        day = ((h + l - 7 * m + 114) % 31) + 1;
+    return new Date(y, month - 1, day);
+}
+
+function holidayNow() {
+    if (ui.holidayForce !== undefined) return ui.holidayForce;
+    const now = new Date(Date.now()),
+        y = now.getFullYear(),
+        md = (now.getMonth() + 1) * 100 + now.getDate();
+    for (const [id, h] of Object.entries(HOLIDAYS)) {
+        if (h.easter) {
+            const e = easterDate(y);
+            const from = new Date(e.getTime() + h.easter[0] * 864e5),
+                to = new Date(e.getTime() + (h.easter[1] + 1) * 864e5);
+            if (now >= from && now < to) return id;
+            continue;
+        }
+        const a = h.from[0] * 100 + h.from[1],
+            b = h.to[0] * 100 + h.to[1];
+        if (a <= b ? md >= a && md <= b : md >= a || md <= b) return id;
+    }
+    return null;
+}
+const holidayActive = id => holidayNow() === id;
+// l'année de la fête (Noël déborde sur janvier)
+const holidayYear = () => {
+    const d = new Date(Date.now());
+    return d.getMonth() === 0 ? d.getFullYear() - 1 : d.getFullYear();
+};
+
+function ensureHoliday() {
+    const id = holidayNow();
+    document.body.classList.toggle('hol-halloween', id === 'halloween');
+    document.body.classList.toggle('hol-noel', id === 'noel');
+    document.body.classList.toggle('hol-paques', id === 'paques');
+    if (!id || state.level < 3) return false;
+    const y = holidayYear();
+    if (state.holiday && state.holiday.id === id && state.holiday.year === y) return false;
+    state.holiday = { id, year: y, given: {}, done: false };
+    if (ui.started) {
+        toast(`C'est ${HOLIDAYS[id].name} à la ferme !`, ico(HOLIDAYS[id].icon[0], HOLIDAYS[id].icon[1]));
+        tip('holiday');
+    }
+    return true;
+}
+
+const holidayLeft = k => HOLIDAYS[state.holiday.id].goal[k] - (state.holiday.given[k] || 0);
+const holidayOpen = () => !!(state.holiday && !state.holiday.done && holidayActive(state.holiday.id));
+const holidayReady = () => holidayOpen() && Object.keys(HOLIDAYS[state.holiday.id].goal).some(k => holidayLeft(k) > 0 && state.inventory[k] > 0);
+
+function giveHoliday(btn) {
+    if (!holidayOpen()) return;
+    const h = HOLIDAYS[state.holiday.id];
+    let gave = 0;
+    Object.keys(h.goal).forEach(k => {
+        const n = Math.min(holidayLeft(k), state.inventory[k] || 0);
+        if (n <= 0) return;
+        state.inventory[k] -= n;
+        state.holiday.given[k] = (state.holiday.given[k] || 0) + n;
+        gave += n;
+    });
+    if (!gave) return;
+    const c = centerOf(btn);
+    sfx('pop');
+    burst(c.x, c.y, 'sparkle', 8);
+    if (Object.keys(h.goal).every(k => holidayLeft(k) <= 0)) {
+        state.holiday.done = true;
+        const coins = Math.round((3000 * (1 + state.level * 0.2)) / 50) * 50;
+        earn(coins, btn);
+        state.decorInv[h.deco] = (state.decorInv[h.deco] || 0) + 1;
+        RARE.forEach(id => (state.inventory[id] += 2));
+        sfx('level');
+        burst(c.x, c.y, 'sparkle', 20);
+        toast(`${h.name} : panier complet ! ${DECOS[h.deco].name} à poser dans le champ`, ico('ui', h.deco));
+        addPhoto('ui', h.deco, `${h.name} ${state.holiday.year}`, 'Panier de fête rempli');
+    }
+    renderHoliday();
+    updateHeader();
+    saveState();
+}
+
+function renderHoliday() {
+    const box = $('holiday-container');
+    if (!box) return;
+    const id = holidayNow();
+    if (!id || !state.holiday || state.holiday.id !== id) {
+        box.innerHTML = '';
+        return;
+    }
+    const h = HOLIDAYS[id],
+        s = state.holiday;
+    const r = RECIPES[h.recipe];
+    box.innerHTML = `<div class="board holiday-card ${id}"><div class="event-head">${ico(h.icon[0], h.icon[1], 'ico ev-ico')}<div class="card-main"><div class="card-title">${h.name}</div>
+        <div class="card-sub">${s.done ? `Panier rempli, merci ! ${DECOS[h.deco].name} est dans vos décorations.` : h.text}</div></div></div>
+        ${
+            s.done
+                ? ''
+                : `<div class="vstory-row">${Object.keys(h.goal)
+                      .map(
+                          k =>
+                              `<span class="vstory-need ${holidayLeft(k) <= 0 ? 'ok' : ''}"><i class="ico pgo">${SPR.item(k)}</i>${Math.max(0, h.goal[k] - holidayLeft(k))}/${h.goal[k]}</span>`,
+                      )
+                      .join(
+                          '',
+                      )}<button class="btn small ${holidayReady() ? 'gold' : ''}" onclick="giveHoliday(this)" ${holidayReady() ? '' : 'disabled'}>Apporter</button></div>
+                  <div class="card-sub">${ico('item', h.recipe)} Recette du moment : ${DB.Items[h.recipe].name.toLowerCase()} (${DB.Machines[r.machine].name.toLowerCase()}). Récompense : ${DECOS[h.deco].name.toLowerCase()}, des pièces et 2 de chaque matériau rare.</div>`
+        }</div>`;
+}
+
+// ---------------- Records personnels ----------------
+const RECORDS = {
+    order: { name: 'Plus grosse commande', fmt: v => `${fmt(v)} pièces`, icon: ['ui', 'scroll'] },
+    harvest: { name: 'Plus belle récolte d’un coup', fmt: v => `${fmt(v)} produits`, icon: ['ui', 'basket'] },
+    contest: { name: 'Meilleur score au concours', fmt: v => `${fmt(v)} points`, icon: ['ui', 'podium'] },
+    auction: { name: 'Plus belle vente aux enchères', fmt: v => `${fmt(v)} pièces`, icon: ['ui', 'gavel'] },
+    lot: { name: 'Plus beau lot sorti de la cave', fmt: v => `${fmt(v)} pièces`, icon: ['ui', 'cave'] },
+    streak: { name: 'Plus longue série de cadeaux du jour', fmt: v => `${v} jour${v > 1 ? 's' : ''}`, icon: ['ui', 'calendar'] },
+};
+
+function record(key, v) {
+    if (!state.records) state.records = {};
+    const old = state.records[key] || 0;
+    if (v <= old) return false;
+    state.records[key] = v;
+    // pas de fanfare pour le tout premier record de chaque sorte
+    if (old && ui.started && v >= old * 1.05) setTimeout(() => toast(`Nouveau record : ${RECORDS[key].name.toLowerCase()} !`, ico('ui', 'trophy')), 900);
+    return true;
+}
+
+function recordsHtml() {
+    const r = state.records || {};
+    return Object.entries(RECORDS)
+        .map(
+            ([k, d]) =>
+                `<div class="paper rec-row"><i class="ico">${sprite(d.icon[0], d.icon[1])}</i><span>${d.name}</span><b>${r[k] ? d.fmt(r[k]) : '—'}</b></div>`,
+        )
+        .join('');
+}
+
+// ---------------- Livre de la ferme : une récompense par quart ----------------
+function bookProgress() {
+    const all = BOOK.flatMap(p => p.entries());
+    return { found: all.filter(e => state.collection[e.key]).length, total: all.length };
+}
+const quarterReward = k => ({ coins: Math.round((4000 * (k + 1) * (1 + state.level * 0.2)) / 50) * 50, rares: k + 1 });
+const quarterReady = k => {
+    const p = bookProgress();
+    return !(state.bookQuarters || [])[k] && p.found >= Math.ceil(p.total * BOOK_QUARTERS[k]);
+};
+const quartersClaimable = () => BOOK_QUARTERS.filter((_, k) => quarterReady(k)).length;
+
+function claimQuarter(k, btn) {
+    if (!quarterReady(k)) return;
+    state.bookQuarters = state.bookQuarters || [];
+    state.bookQuarters[k] = true;
+    const r = quarterReward(k);
+    earn(r.coins, btn);
+    RARE.forEach(id => (state.inventory[id] += r.rares));
+    if (k === 3) {
+        state.decorInv.goldenBook = (state.decorInv.goldenBook || 0) + 1;
+        state.prestige.rubans++;
+        addPhoto('ui', 'goldenBook', 'Livre de la ferme complet', 'Toutes les pages');
+    }
+    const c = centerOf(btn);
+    sfx('level');
+    burst(c.x, c.y, 'sparkle', 16);
+    toast(k === 3 ? 'Livre complet : le Livre d’or et 1 ruban !' : `Le livre est rempli à ${BOOK_QUARTERS[k] * 100} % !`, ico('ui', 'book'));
+    renderBook();
+    updateHeader();
+    saveState();
+}
+
+function bookQuartersHtml() {
+    const p = bookProgress(),
+        got = state.bookQuarters || [];
+    return `<div class="paper book-quarters"><div class="bq-head"><b>Tout le livre : ${p.found} / ${p.total}</b><span>${Math.floor((p.found / p.total) * 100)} %</span></div>
+        <div class="qbar"><div style="width:${(p.found / p.total) * 100}%"></div></div>
+        <div class="bq-steps">${BOOK_QUARTERS.map((q, k) =>
+            got[k]
+                ? `<span class="stier done">${ico('ui', 'check')}</span>`
+                : quarterReady(k)
+                  ? `<button class="btn small gold" onclick="claimQuarter(${k}, this)">${q * 100} %</button>`
+                  : `<span class="stier">${q * 100} %</span>`,
+        ).join('')}</div>
+        <div class="card-sub">À chaque quart : des pièces et des matériaux rares. Livre complet : le Livre d’or et 1 ruban.</div></div>`;
+}
+
+// ---------------- Carte postale de la ferme ----------------
+function postcardSvg() {
+    const S = 92,
+        G = 8,
+        rows = Math.ceil(state.grid.filter(p => p.isUnlocked).length / COLS) || 1;
+    const x0 = 400 - (COLS * S + (COLS - 1) * G) / 2,
+        y0 = 330;
+    const inner = s => s.replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+    const vbOf = s => (s.match(/viewBox="([^"]+)"/) || [0, '0 0 64 64'])[1];
+    const place = (art, x, y, w, h) => `<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="${vbOf(art)}">${inner(art)}</svg>`;
+    let plots = '';
+    state.grid.slice(0, rows * COLS).forEach((p, i) => {
+        const x = x0 + (i % COLS) * (S + G),
+            y = y0 + Math.floor(i / COLS) * (S + G);
+        if (!p.isUnlocked) return;
+        const ground = p.terrain === 'plowed' ? (p.isWatered ? '#5e3a1e' : '#8f5d34') : '#9bd96f';
+        plots += `<rect x="${x}" y="${y}" width="${S}" height="${S}" rx="12" fill="${ground}" stroke="#3a2618" stroke-width="3"/>`;
+        if (p.deco && SPR.has.ui[p.deco]) plots += place(SPR.ui(p.deco), x + 6, y + 4, S - 12, S - 12);
+        else if (p.itemId) plots += place(SPR.plant(p.itemId, plotStage(p)), x + 4, y - 14, S - 8, S);
+    });
+    const h = y0 + rows * (S + G) + 150;
+    const bg = PHOTO_BG[season().id] || '#d8f0c0';
+    const title = `La ferme de Meuh`;
+    const sub = `Niveau ${state.level} · jour ${state.day} · ${season().name.toLowerCase()} · ${new Date(Date.now()).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+    return {
+        w: 800,
+        h,
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="${h}" viewBox="0 0 800 ${h}">
+        <rect width="800" height="${h}" fill="#fbecc9"/>
+        <rect x="24" y="24" width="752" height="${h - 48}" rx="18" fill="${bg}" stroke="#3a2618" stroke-width="5"/>
+        <rect x="24" y="24" width="752" height="250" rx="18" fill="#bfe6fb" stroke="#3a2618" stroke-width="5"/>
+        <path d="M27 230 Q200 180 400 214 Q600 246 773 200 L773 276 L27 276Z" fill="#9bd96f"/>
+        ${place(SPR.farmhouse(houseLvl(), state.style && state.style.roof !== 'auto' ? state.style.roof : undefined), 300, 40, 200, 200)}
+        <rect x="${x0 - 20}" y="${y0 - 22}" width="${COLS * S + (COLS - 1) * G + 40}" height="${rows * (S + G) + 30}" rx="24" fill="#82c95a" stroke="#3a2618" stroke-width="4"/>
+        ${plots}
+        <text x="400" y="${h - 80}" text-anchor="middle" font-family="Nunito, sans-serif" font-weight="900" font-size="44" fill="#3a2618">${title}</text>
+        <text x="400" y="${h - 42}" text-anchor="middle" font-family="Nunito, sans-serif" font-weight="700" font-size="22" fill="#7a4a2a">${sub}</text>
+    </svg>`,
+    };
+}
+
+// dessine un SVG dans une image PNG, puis la partage (ou la télécharge)
+function shareSvg(svg, w, h, file, title, done) {
+    const img = new Image();
+    img.onload = () => {
+        const cv = document.createElement('canvas');
+        cv.width = w;
+        cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0);
+        cv.toBlob(blob => {
+            if (!blob) return;
+            const f = new File([blob], file, { type: 'image/png' });
+            if (navigator.canShare && navigator.canShare({ files: [f] })) navigator.share({ files: [f], title }).catch(() => {});
+            else {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = file;
+                a.click();
+                setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+                toast(done, ico('ui', 'camera'));
+            }
+        }, 'image/png');
+    };
+    img.onerror = () => toast("Impossible de préparer l'image", ico('ui', 'camera'));
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+function sendPostcard(btn) {
+    squish(btn);
+    const p = postcardSvg();
+    shareSvg(p.svg, p.w, p.h, 'meuh-carte-postale.png', 'Une carte postale de ma ferme', 'Carte postale enregistrée dans vos téléchargements');
+    state.stats.postcards = (state.stats.postcards || 0) + 1;
+    saveState();
+}
+
+function openPostcard() {
+    const p = postcardSvg();
+    $('photo-body').innerHTML = `<div class="postcard-preview">${p.svg.replace(/width="800" height="\d+"/, 'width="100%"')}</div>`;
+    $('photo-share').setAttribute('onclick', 'sendPostcard(this)');
+    openModal('photo-modal');
+    sfx('click');
+}
+
+// =====================================================================
 //  Boucle principale : chaque sous-système avance d'une seconde.
 //  Un sous-système qui plante est isolé et n'arrête pas les autres.
 // =====================================================================
@@ -26447,6 +27371,7 @@ function tickDeliveries() {
         if (q) renderFarmSeason();
     }
     if (state.level >= CONTRACT_LVL && (!state.contract || state.contract.key !== seasonKey()) && q) renderContract();
+    if (ensureHoliday() && q) renderHoliday();
     if (contestTick() && q) renderContest();
     if (syncStory() && q) renderStory();
     if (q) {
