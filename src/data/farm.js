@@ -486,3 +486,53 @@ export const STYLES = {
 export const STYLE_LVL = 8;
 
 export const STYLE_CHARM = 8;
+
+// ---------------- le verger (bêta 2) ----------------
+// Un arbre : jeune plant (pousse pendant son temps de culture), adulte qui fait tomber un fruit
+// toutes les moitiés de ce temps, vieil arbre qui produit moins, puis arbre mort qui donne du bois.
+export const ORCHARD = {
+    lvl: 11, // le premier arbre (pommier)
+    base: 4, // emplacements offerts à l'ouverture
+    max: 24,
+    cost: 2000, // prix du 5e emplacement, puis ×mult
+    mult: 1.3,
+    groundMax: 6, // fruits au pied de l'arbre ; ensuite l'arbre attend
+    rotEvery: 4, // sol plein : un fruit pourrit tous les 4 temps de fruit
+    life: 100, // fruits qu'un arbre fait tomber dans sa vie
+    oldAt: 0.75, // part de sa vie à partir de laquelle il vieillit
+    oldRate: 0.6, // vitesse d'un vieil arbre
+    fruitRate: 0.5, // un fruit toutes les (temps de culture × fruitRate)
+    felledWood: 0.5, // part du bois rendue si on abat un arbre vivant
+};
+// bois d'un arbre mort
+export const treeWood = d => 8 + Math.round(d.cost / 250);
+
+// ---------------- les prés (bêta 2) ----------------
+export const PASTURE = {
+    cap: 20, // bêtes par pré
+    max: 20, // prés en tout
+    cost: 5000, // prix du 2e pré, puis ×mult
+    mult: 1.45,
+};
+export const PASTURE_NAMES = [
+    'Le grand pré',
+    'Le pré du ruisseau',
+    'Le pré aux chênes',
+    'Le pré fleuri',
+    'Le pré du moulin',
+    'Le pré des collines',
+    'Le pré aux saules',
+    'Le pré du lavoir',
+    'Le pré des coquelicots',
+    'Le pré du vieux mur',
+    'Le pré de la source',
+    'Le pré aux noisetiers',
+    'Le pré du bas',
+    'Le pré du haut',
+    'Le pré des genêts',
+    'Le pré de la chapelle',
+    'Le pré aux bleuets',
+    'Le pré du verger',
+    'Le pré des vents',
+    'Le pré du bout du monde',
+];

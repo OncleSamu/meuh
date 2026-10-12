@@ -1,5 +1,6 @@
 // Les commandes : tableau de commandes du village, train de marchandises (3 wagons) et montgolfière.
 // C'est le vrai cœur de l'économie.
+import { livingTrees } from './orchard.js';
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -40,7 +41,7 @@ export function questPool() {
         else if (id === 'alpineMilk') ok = transOpen();
         else if (id === 'honey') ok = state.grid.some(p => p.deco === 'hive');
         else if (i.type === 'crop') ok = state.level >= i.reqLvl && storyOk(i) && !i.ghOnly;
-        else if (i.type === 'tree') ok = state.grid.some(p => p.itemId === i.id);
+        else if (i.type === 'tree') ok = livingTrees(i.id) > 0;
         else if (i.type === 'product') ok = state.animals.some(a => ANIMALS[a.type].prodId === i.id);
         else if (i.type === 'fish') ok = state.level >= NATURE.pond.lvl && !!FISH[id] && FISH[id].odds >= 10 && !FISH[id].junk;
         else if (i.type === 'artisan') {

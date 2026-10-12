@@ -108,7 +108,7 @@ function itemSource(id) {
     if (it.type === 'crop' && it.needProject)
         return `Graines au niveau ${it.reqLvl}, après « ${PROJECTS[it.needProject].name} »${it.ghOnly ? ', seulement dans la serre' : ''}`;
     if (it.type === 'crop') return it.exotic ? 'Graines chez le marchand ambulant' : `Champ, graines au niveau ${it.reqLvl}`;
-    if (it.type === 'tree') return `Arbre fruitier au marché, niveau ${it.reqLvl}`;
+    if (it.type === 'tree') return `Arbre fruitier du verger, niveau ${it.reqLvl}`;
     if (it.type === 'fish') return 'Pêche à l’étang';
     if (it.sea) return 'Filet de pêche en mer (Ferme | Nature), après le phare';
     if (id === 'alpineMilk') return 'Au retour de la transhumance, puis chez les vaches, chèvres et bufflonnes qui sont montées';
@@ -159,6 +159,7 @@ function itemCard(id) {
 
 const GUIDE_GO = {
     farm: 'farm/field',
+    orchard: 'farm/orchard',
     nature: 'farm/nature',
     animals: 'animals',
     machines: 'machines/workshop',

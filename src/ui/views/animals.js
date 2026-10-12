@@ -1,6 +1,6 @@
 // Animaux : le pâturage, les bêtes qui se promènent, la fiche de chaque animal et la transhumance.
 import { state } from '../../core/state.js';
-import { formatDuration } from '../../core/format.js';
+import { fmt, formatDuration } from '../../core/format.js';
 import { on } from '../../core/bus.js';
 import { ANIMALS, MAX_STACK } from '../../data/animals.js';
 import { ITEMS } from '../../data/items.js';
@@ -37,10 +37,20 @@ function freeSpot(self, list = els) {
 
 const babyBody = a => (a.type === 'chicken' ? art('ui', 'chick') : a.type === 'duck' ? art('ui', 'duckling') : art('animal', a.type));
 
-function build(meadow) {
+// le pré regardé : un numéro, ou 'all' (l'étable de tout le troupeau)
+const shownPasture = () => {
+    const k = ui.sel.pasture;
+    return k === 'all' || (typeof k === 'number' && k < state.pastures.length) ? k : 0;
+};
+const meadowPasture = () => (shownPasture() === 'all' ? 0 : shownPasture());
+const herdIdx = k => state.animals.map((a, i) => i).filter(i => (state.animals[i].p || 0) === k);
+let builtKey = '';
+
+function build(meadow, idx) {
     meadow.querySelectorAll('.critter').forEach(n => n.remove());
     const placed = [];
-    els = state.animals.map((a, i) => {
+    els = [];
+    idx.forEach(i => {
         const el = document.createElement('div');
         el.className = 'critter';
         el.dataset.i = i;
@@ -53,16 +63,23 @@ function build(meadow) {
         el.style.left = x + '%';
         el.style.top = y + '%';
         requestAnimationFrame(() => (el.style.transition = ''));
-        return el;
+        els[i] = el;
     });
 }
 
 function renderCritters() {
     const meadow = byId('pasture');
     if (!meadow) return;
-    if (els.length !== state.animals.length || (els[0] && !els[0].isConnected)) build(meadow);
+    const idx = herdIdx(meadowPasture());
+    const key = idx.join(',');
+    const first = els[idx[0]];
+    if (key !== builtKey || (first && !first.isConnected) || (idx.length && !first)) {
+        build(meadow, idx);
+        builtKey = key;
+    }
     const mf = G.maxFood();
-    state.animals.forEach((a, i) => {
+    idx.forEach(i => {
+        const a = state.animals[i];
         const el = els[i],
             d = ANIMALS[a.type];
         const adult = G.isAdult(a);
@@ -140,37 +157,71 @@ function transCard() {
 
 // le pré grandit avec le troupeau pour que chacun ait sa place
 const meadowHtml = n =>
-    `<div class="meadow${n > 18 ? ' crowd' : ''}" id="pasture" style="height:${Math.min(980, Math.max(380, 150 + n * 24))}px"><div class="pond"></div>${n ? '' : '<div class="empty">Votre pâturage est vide. Achetez une poule au marché pour commencer.</div>'}</div>`;
+    `<div class="meadow${n > 14 ? ' crowd' : ''}" id="pasture" style="height:${Math.min(720, Math.max(380, 160 + n * 28))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${state.animals.length ? 'Ce pré est vide : déplacez-y des bêtes depuis leur fiche.' : 'Votre pâturage est vide. Achetez une poule au marché pour commencer.'}</div>`}</div>`;
 
-// l'étable : tout le troupeau en fiches compactes, triées par espèce
-function stableHtml() {
+// une bête de l'étable
+function stableTile(a, i, mf) {
+    const d = ANIMALS[a.type],
+        adult = G.isAdult(a);
+    const tag = a.sick
+        ? `<span class="st-tag sick">${ico(['ui', 'sick'])}</span>`
+        : a.stack > 0
+          ? `<span class="st-tag ready">${ico(['item', d.prodId])}×${a.stack}</span>`
+          : a.food === 0 && adult
+            ? `<span class="st-tag hungry">${ico(['item', 'feed'])}</span>`
+            : G.isAway(a)
+              ? `<span class="st-tag">${ico(['ui', 'mountain'])}</span>`
+              : '';
+    return `<button class="st-tile${a.stack > 0 ? ' ready' : ''}${a.sick ? ' sick' : ''}${G.isAway(a) ? ' away' : ''}" data-act="animal" data-i="${i}" data-anchor="animal:${i}">
+        ${tag}<span class="st-art${adult ? '' : ' baby'}">${adult ? art('animal', a.type) : babyBody(a)}</span>
+        <b>${a.star ? ico(['ui', 'star']) : ''}${esc(a.name)}</b>
+        <span class="food-meter">${Array.from({ length: mf }, (_, k) => `<i class="${k < a.food ? 'on' : ''}"></i>`).join('')}</span>
+        ${adult ? bar(0, 'cbar', `prod:${i}`) : bar(0, 'gbar', `grow:${i}`)}</button>`;
+}
+
+// l'étable : le troupeau en fiches compactes, par pré puis par espèce
+function stableHtml(k) {
     const mf = G.maxFood();
-    const order = state.animals.map((a, i) => [a, i]).sort((x, y) => (x[0].type < y[0].type ? -1 : x[0].type > y[0].type ? 1 : x[1] - y[1]));
-    return `<div class="stable">${order
-        .map(([a, i]) => {
-            const d = ANIMALS[a.type],
-                adult = G.isAdult(a);
-            const tag = a.sick
-                ? `<span class="st-tag sick">${ico(['ui', 'sick'])}</span>`
-                : a.stack > 0
-                  ? `<span class="st-tag ready">${ico(['item', d.prodId])}×${a.stack}</span>`
-                  : a.food === 0 && adult
-                    ? `<span class="st-tag hungry">${ico(['item', 'feed'])}</span>`
-                    : G.isAway(a)
-                      ? `<span class="st-tag">${ico(['ui', 'mountain'])}</span>`
-                      : '';
-            return `<button class="st-tile${a.stack > 0 ? ' ready' : ''}${a.sick ? ' sick' : ''}${G.isAway(a) ? ' away' : ''}" data-act="animal" data-i="${i}" data-anchor="animal:${i}">
-                ${tag}<span class="st-art${adult ? '' : ' baby'}">${adult ? art('animal', a.type) : babyBody(a)}</span>
-                <b>${a.star ? ico(['ui', 'star']) : ''}${esc(a.name)}</b>
-                <span class="food-meter">${Array.from({ length: mf }, (_, k) => `<i class="${k < a.food ? 'on' : ''}"></i>`).join('')}</span>
-                ${adult ? bar(0, 'cbar', `prod:${i}`) : bar(0, 'gbar', `grow:${i}`)}</button>`;
+    const group = p => {
+        const order = herdIdx(p)
+            .map(i => [state.animals[i], i])
+            .sort((x, y) => (x[0].type < y[0].type ? -1 : x[0].type > y[0].type ? 1 : x[1] - y[1]));
+        return order.map(([a, i]) => stableTile(a, i, mf)).join('');
+    };
+    if (k !== 'all') return `<div class="stable">${group(k) || '<p class="empty">Ce pré est vide.</p>'}</div>`;
+    return state.pastures
+        .map((p, j) =>
+            G.pastureLoad(j)
+                ? `<h3 class="section-title st-head"><span>${esc(p.name)}</span><small>${G.pastureLoad(j)}/20</small></h3><div class="stable">${group(j)}</div>`
+                : '',
+        )
+        .join('');
+}
+
+// les prés : une pastille par pré, et le bouton pour en acheter un
+function pastureBar(mode, cur) {
+    const chips = state.pastures
+        .map((p, k) => {
+            const n = G.pastureLoad(k);
+            return `<button class="pas-chip${cur === k ? ' on' : ''}${n >= 20 ? ' full' : ''}" data-act="pickPasture" data-k="${k}"><span>${esc(p.name)}</span><small>${n}/20</small></button>`;
         })
-        .join('')}</div>`;
+        .join('');
+    const all =
+        mode === 'stable' && state.pastures.length > 1
+            ? `<button class="pas-chip${cur === 'all' ? ' on' : ''}" data-act="pickPasture" data-k="all"><span>Tous les prés</span><small>${state.animals.length}</small></button>`
+            : '';
+    const add = G.canAddPasture()
+        ? `<button class="pas-chip add${G.herdFull() ? ' urge' : ''}" data-act="buyPasture">${ico(['ui', 'plus'])}<span>Nouveau pré</span><small>${fmt(G.pastureCost())}${ico(['ui', 'coin'])}</small></button>`
+        : '';
+    return `<div class="pas-bar">${all}${chips}${add}</div>`;
 }
 
 function renderAnimals(el) {
     const n = state.animals.length;
     const mode = n > 6 ? ui.sel.animalMode || (n > 16 ? 'stable' : 'meadow') : 'meadow';
+    let k = shownPasture();
+    if (mode === 'meadow' && k === 'all') k = 0;
+    if (mode === 'stable' && ui.sel.pasture === undefined && state.pastures.length > 1) k = 'all';
     blocks(el, [
         [
             'top',
@@ -190,18 +241,19 @@ function renderAnimals(el) {
                   )
                 : '',
         ],
-        ['meadow', mode === 'stable' ? stableHtml() : meadowHtml(n)],
+        ['pastures', n || state.pastures.length > 1 ? pastureBar(mode, k) : ''],
+        ['meadow', mode === 'stable' ? stableHtml(k) : meadowHtml(G.pastureLoad(k))],
         [
             'hint',
             hint(
                 mode === 'stable'
                     ? 'Touchez un animal pour ramasser sa production, ou pour ouvrir sa fiche quand il n’a rien à donner.'
-                    : 'Chaque sac de nourriture donne une production. Touchez un animal pour ouvrir sa fiche : câlin, nourriture et nom.',
+                    : 'Chaque sac de nourriture donne une production. Touchez un animal pour ouvrir sa fiche : câlin, nourriture, nom et pré.',
             ),
         ],
         ['trans', transCard()],
     ]);
-    renderCritters();
+    if (mode === 'meadow') renderCritters();
 }
 defineView('animals', renderAnimals);
 
@@ -236,6 +288,17 @@ defineSheet('animal', {
             ${a.sick ? `<div class="line sick">${ico(['ui', 'sick'])}<div>${esc(a.name)} est malade et ne produit plus.</div>${btn(`Soigner · ${G.cureCost()}${ico(['ui', 'coin'])}`, { act: 'cure', data: { i }, kind: 'green', size: 'sm' })}</div>` : ''}
             ${lines(info)}
             <div class="row-btns">${btn(a.love >= 5 ? 'Affection au maximum' : petted ? 'Déjà câliné aujourd’hui' : 'Faire un câlin', { act: 'pet', data: { i }, kind: 'gold', disabled: petted || a.love >= 5, icon: ['ui', 'heart'] })}${btn('Nourrir', { act: 'feedOne', data: { i }, icon: ['item', 'feed'] })}</div>
+            ${
+                state.pastures.length > 1
+                    ? `<div class="set-sub">Son pré</div><div class="chips-row pas-move">${state.pastures
+                          .map((p, k) => {
+                              const here = (a.p || 0) === k,
+                                  full = !here && G.pastureFree(k) <= 0;
+                              return `<button class="pick-chip${here ? ' on' : ''}" data-act="moveAnimal" data-i="${i}" data-k="${k}" ${full ? 'disabled' : ''}><span>${esc(p.name)}</span><small>${G.pastureLoad(k)}/20</small></button>`;
+                          })
+                          .join('')}</div>`
+                    : ''
+            }
             <div class="rename"><input type="text" maxlength="16" value="${esc(a.name)}" aria-label="Nom de l’animal" id="rename-animal">${btn('Renommer', { act: 'renameAnimal', data: { i }, size: 'sm' })}</div>
         </div>`;
     },
@@ -244,6 +307,12 @@ defineSheet('animal', {
 export function setupAnimals() {
     actions({
         animalMode: (el, d) => (ui.sel.animalMode = d.v),
+        pickPasture: (el, d) => (ui.sel.pasture = d.k === 'all' ? 'all' : +d.k),
+        buyPasture: el => {
+            const k = G.buyPasture(el);
+            if (k !== false) ui.sel.pasture = k;
+        },
+        moveAnimal: (el, d) => G.moveAnimal(+d.i, +d.k),
         feedAll: el => G.feedAll(el),
         collectAnimals: el => G.collectAll(el),
         animal: (el, d) => {

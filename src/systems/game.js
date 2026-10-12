@@ -32,6 +32,8 @@ import { contestTick } from './contest.js';
 import { caveOpen, caveTick, auctionTick, caveCareCount } from './cave.js';
 import { tip } from './tips.js';
 import { trimDayEarn } from './book.js';
+import { ensureOrchard, orchardTick, orchardOffline } from './orchard.js';
+import { ensurePastures } from './pastures.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -60,6 +62,8 @@ export function normalizeState() {
     ensureVillagers();
     ensureGhPlots();
     ensureAnimalData();
+    ensurePastures();
+    ensureOrchard();
     ensureNature();
     ensureMachineData();
     ensureQuests();
@@ -84,7 +88,7 @@ export function isToolValid(t) {
         t === 'shovel' ||
         t === 'feed' ||
         (t === 'fert' && state.level >= 4) ||
-        (state.seeds[t] !== undefined && ((state.level >= ITEMS[t].reqLvl && storyOk(ITEMS[t])) || state.seeds[t] > 0))
+        (state.seeds[t] !== undefined && ITEMS[t].type === 'crop' && ((state.level >= ITEMS[t].reqLvl && storyOk(ITEMS[t])) || state.seeds[t] > 0))
     );
 }
 
@@ -96,7 +100,8 @@ export function selectTool(t) {
 }
 
 // Graines disponibles dans la barre : cultures puis arbres, par niveau
-export const plantableSeeds = () => seedList().filter(i => (state.level >= i.reqLvl && !i.exotic && storyOk(i)) || state.seeds[i.id] > 0);
+export const plantableSeeds = () =>
+    seedList().filter(i => i.type === 'crop' && ((state.level >= i.reqLvl && !i.exotic && storyOk(i)) || state.seeds[i.id] > 0));
 
 // ---------------- une seconde de jeu ----------------
 // chaque sous-système avance d'une seconde ; celui qui plante est isolé et n'arrête pas les autres
@@ -147,6 +152,7 @@ function tickFarm() {
         }
     });
     if (ghTick()) changed = true;
+    if (orchardTick()) changed = true;
     if (wellTick()) changed = true;
     if (honeyTick(1)) changed = true;
     if (crowTick()) changed = true;
@@ -219,6 +225,7 @@ export function offlineProgress() {
     // les imprévus attendent votre retour
     if (state.incident && state.incident.until) state.incident.until += elapsed * 1000;
     crops += ghOffline(elapsed);
+    const orch = orchardOffline(elapsed);
     // le commis travaille pendant votre absence
     const hand = handOffline(elapsed);
     state.grid.forEach((plot, gi) => {
@@ -261,6 +268,8 @@ export function offlineProgress() {
     const lines = [];
     const add = (cond, icon, text) => cond && lines.push([icon, text]);
     add(crops, ['item', 'wheat'], `${crops} culture${s(crops)} prête${s(crops)} à récolter`);
+    add(orch.fell, ['item', 'apple'], `${orch.fell} fruit${s(orch.fell)} tombé${s(orch.fell)} au verger`);
+    add(orch.dead, ['item', 'wood'], `${orch.dead} arbre${s(orch.dead)} mort${s(orch.dead)} de vieillesse au verger`);
     add(pasture.products, ['item', 'egg'], `${pasture.products} produit${s(pasture.products)} à ramasser au pâturage`);
     add(artisan, ['machine', 'bakery'], `${artisan} produit${s(artisan)} terminé${s(artisan)} à l’atelier`);
     add(hand.crops, ['villager', 'theo'], `Théo, votre commis, a récolté ${hand.crops} produit${s(hand.crops)}`);

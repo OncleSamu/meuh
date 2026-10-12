@@ -97,17 +97,22 @@ function farm() {
         .slice(0, 4);
     const wanted = crops().filter(c => (nd[c.id] || 0) > state.inventory[c.id]);
     let k = 0;
-    // un arbre fruitier quand un fruit est demandé et qu'aucun ne pousse
-    const tree = Object.values(ITEMS).find(
-        d => d.type === 'tree' && state.level >= d.reqLvl && (nd[d.id] || 0) > state.inventory[d.id] && !G.allPlots().some(([p]) => p.itemId === d.id),
-    );
-    if (tree && state.money > tree.cost * 3) {
-        const spot = G.allPlots().find(([p, i]) => i < 1000 && p.isUnlocked && !p.deco && (!p.itemId || ITEMS[p.itemId].type === 'crop'));
-        if (spot) {
-            G.resetPlot(spot[0], null);
-            G.spend(tree.cost);
-            state.seeds[tree.id]++;
-            G.plantSeed(spot[0], tree.id);
+    // le verger : un arbre quand un fruit est demandé et qu'aucun ne pousse ; ramasser ; débiter les morts
+    if (G.orchardOpen()) {
+        state.orchard.slots.forEach((sl, j) => {
+            if (!sl.tree) return;
+            if (G.treeStage(sl.tree) === 'dead') G.fellTree(j);
+            else if (sl.tree.ground && !G.barnBlocked(true))
+                tag('verger', () => {
+                    const r = G.pickTree(j, null, true);
+                    if (r) G.addXp(r.xp);
+                });
+        });
+        const tree = G.treeList().find(d => state.level >= d.reqLvl && (nd[d.id] || 0) > state.inventory[d.id] && !G.livingTrees(d.id));
+        if (tree && state.money > tree.cost * 3) {
+            let j = state.orchard.slots.findIndex(x => x.open && !x.tree);
+            if (j < 0 && state.money > G.slotCost() * 3 && G.buySlot()) j = state.orchard.slots.findIndex(x => x.open && !x.tree);
+            if (j >= 0) G.plantTree(j, tree.id);
         }
     }
     G.allPlots().forEach(([p, i]) => {
@@ -131,6 +136,7 @@ function farm() {
 }
 
 function animals() {
+    if (G.herdFull() && state.money > G.pastureCost() * 2) G.buyPasture();
     Object.values(ANIMALS).forEach(a => {
         const n = G.animalCount(a.id);
         if (state.level >= a.reqLvl && n < 3 && state.money > a.cost * 2.5) G.buy('animal', a.id, 1);

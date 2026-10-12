@@ -32,7 +32,15 @@ export const GUIDE = [
         name: 'Les animaux',
         lvl: 2,
         view: 'animals',
-        text: 'Nourrissez-les avec la nourriture du moulin, ramassez leurs produits. Un câlin par jour les rend plus productifs. La mangeoire automatique les nourrit seule.',
+        text: 'Nourrissez-les avec la nourriture du moulin, ramassez leurs produits. Un câlin par jour les rend plus productifs. La mangeoire automatique les nourrit seule. Un pré accueille 20 bêtes : achetez-en d’autres, et changez une bête de pré depuis sa fiche. L’étable montre tout le troupeau en fiches.',
+    },
+    {
+        id: 'orchard',
+        icon: ['item', 'apple'],
+        name: 'Le verger',
+        lvl: 11,
+        view: 'orchard',
+        text: 'Les arbres fruitiers ont leur verger, avec ses propres places. Un arbre grandit, puis fait tomber ses fruits à son pied : ramassez-les, sinon il attend et ses fruits pourrissent. Après une centaine de fruits il vieillit et ralentit, puis meurt : débitez-le en bois et replantez. L’hiver il dort à moitié, l’automne il produit plus vite.',
     },
     {
         id: 'workshop',
@@ -245,6 +253,16 @@ export const GUIDE = [
 ];
 
 export const TIPS = {
+    orchard: {
+        icon: ['item', 'apple'],
+        title: 'Le verger',
+        text: 'Un arbre grandit, puis laisse tomber ses fruits à son pied : viens les ramasser avant qu’ils ne pourrissent. Après une centaine de fruits il vieillit, puis meurt : il donne alors du bois, et tu replantes.',
+    },
+    pasture: {
+        icon: ['ui', 'flowers'],
+        title: 'Un pré tout plein',
+        text: 'Un pré accueille 20 bêtes. Achète un nouveau pré pour agrandir le troupeau, et déplace tes animaux d’un pré à l’autre depuis leur fiche.',
+    },
     machine: {
         icon: ['ui', 'gear'],
         title: 'Ta première machine',

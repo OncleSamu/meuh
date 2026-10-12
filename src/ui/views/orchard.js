@@ -1,0 +1,211 @@
+// Ferme | Verger : les arbres fruitiers, leurs fruits au sol, leur âge ; plantation et fiche de chaque arbre.
+import { state } from '../../core/state.js';
+import { fmt, formatDuration } from '../../core/format.js';
+import { now } from '../../core/clock.js';
+import { on } from '../../core/bus.js';
+import { ITEMS } from '../../data/items.js';
+import { ORCHARD, treeWood } from '../../data/farm.js';
+import * as G from '../../systems/index.js';
+import { blocks, actions, anchorEl, QUIET } from '../dom.js';
+import { confirmTap } from '../confirm.js';
+import { ico, art } from '../icons.js';
+import { btn, bar, hint, timer, lines } from '../kit.js';
+import { defineView, defineLive } from '../app.js';
+import { defineSheet, openSheet, closeSheet } from '../sheets.js';
+import { burstAt } from '../fx.js';
+
+const STAGE_ART = { young: 0, adult: 2, old: 3, dead: 4 };
+const STAGE_NAME = { young: 'Jeune plant', adult: 'En pleine forme', old: 'Vieil arbre', dead: 'Arbre mort' };
+
+// le dessin selon l'âge (un jeune plant devient arbrisseau à mi-pousse)
+function treeArt(t) {
+    const st = G.treeStage(t);
+    const n = st === 'young' ? (G.treeGrowPct(t) < 0.5 ? 0 : 1) : STAGE_ART[st];
+    return art('plant', `${t.id}:${n}`);
+}
+
+// les fruits tombés, éparpillés au pied
+const SPOTS = [
+    [18, 84],
+    [70, 88],
+    [38, 92],
+    [82, 78],
+    [8, 74],
+    [56, 95],
+];
+const groundHtml = t =>
+    SPOTS.slice(0, t.ground)
+        .map(([x, y]) => `<i class="o-fruit" style="left:${x}%;top:${y}%">${art('item', t.id)}</i>`)
+        .join('');
+
+defineLive('tree', k => {
+    const sl = state.orchard.slots[k];
+    const t = sl && sl.tree;
+    if (!t) return 0;
+    const st = G.treeStage(t);
+    return st === 'young' ? G.treeGrowPct(t) : st === 'dead' || G.groundFull(t) ? 1 : G.treeFruitPct(t);
+});
+
+function spot(sl, k, nextLocked) {
+    if (!sl.open) {
+        if (k !== nextLocked) return '';
+        const cost = G.slotCost(),
+            ok = state.money >= cost;
+        return `<button class="o-spot locked${ok ? ' can' : ''}" data-act="buyOrchardSlot" data-anchor="tree:${k}">
+            <span class="o-lock">${art('ui', 'lock')}</span><span class="price-chip">${ico(['ui', 'coin'])}${fmt(cost)}</span></button>`;
+    }
+    const t = sl.tree;
+    if (!t)
+        return `<button class="o-spot empty" data-act="open" data-sheet="plantTree" data-k="${k}" data-anchor="tree:${k}">
+            <span class="o-hole"></span><span class="o-plus">${ico(['ui', 'plus'])}</span><small>Planter</small></button>`;
+    const st = G.treeStage(t);
+    const full = st !== 'dead' && G.groundFull(t);
+    const left = st !== 'dead' && !full ? G.treeLeft(t) : 0;
+    const tag =
+        st === 'dead'
+            ? `<span class="o-tag dead">${ico(['item', 'wood'])}Bois</span>`
+            : t.ground
+              ? `<span class="o-tag ready${full ? ' full' : ''}">${ico(['item', t.id])}×${t.ground}</span>`
+              : '';
+    return `<button class="o-spot ${st}${t.ground ? ' has-fruit' : ''}" data-act="tree" data-k="${k}" data-anchor="tree:${k}">
+        ${tag}<span class="o-tree">${treeArt(t)}${groundHtml(t)}</span>
+        <b>${ITEMS[t.id].seedName}</b>
+        ${st === 'dead' ? '<small>Touchez pour le débiter</small>' : bar(0, `o-bar ${st}${full ? ' full' : ''}`, `tree:${k}`)}
+        ${st === 'dead' ? '' : `<small class="o-when">${full ? 'Sol plein : ramassez !' : `${st === 'young' ? 'Adulte' : 'Fruit'} dans ${timer(now() + left * 1000)}`}</small>`}
+    </button>`;
+}
+
+function renderOrchard(el) {
+    G.ensureOrchard();
+    const slots = state.orchard.slots;
+    const nextLocked = slots.findIndex(x => !x.open);
+    const fruits = G.fruitsOnGround();
+    const dead = G.deadTrees();
+    blocks(el, [
+        [
+            'top',
+            `<div class="view-top"><span class="o-count">${ico(['item', 'apple'])}${G.treeCountText()}</span><div class="actions">${btn('Tout ramasser', {
+                act: 'pickAllTrees',
+                kind: fruits ? 'green' : '',
+                size: 'sm',
+                icon: ['ui', 'basket'],
+                disabled: !fruits,
+                anchor: 'btn:pickTrees',
+            })}</div></div>`,
+        ],
+        ['orchard', `<div class="orchard">${slots.map((sl, k) => spot(sl, k, nextLocked)).join('')}</div>`],
+        [
+            'hint',
+            hint(
+                dead
+                    ? `${dead} arbre${dead > 1 ? 's sont morts' : ' est mort'} de vieillesse : touchez-le pour récupérer son bois, puis replantez.`
+                    : `Un arbre grandit, puis fait tomber ses fruits à son pied : ramassez-les avant qu’ils ne pourrissent. Après une centaine de fruits il vieillit, puis meurt et donne du bois.`,
+            ),
+        ],
+    ]);
+}
+defineView('farm/orchard', renderOrchard);
+
+// ---------------- planter ----------------
+const shortDur = sec => (sec < 90 ? `${Math.round(sec)} s` : sec < 5400 ? `${Math.round(sec / 60)} min` : `${Math.round(sec / 360) / 10} h`);
+
+defineSheet('plantTree', {
+    title: 'Planter un arbre',
+    render(o) {
+        const k = +o.k;
+        const list = G.treeList().sort((a, b) => a.reqLvl - b.reqLvl);
+        return `<p class="card-sub center">Un arbre vit une centaine de fruits, puis donne du bois en mourant.</p>
+            <div class="pick-grid trees">${list
+                .map(d => {
+                    const open = G.treeUnlocked(d),
+                        stock = state.seeds[d.id] || 0;
+                    const ok = open && (stock > 0 || state.money >= d.cost);
+                    const fruitEvery = (d.time * ORCHARD.fruitRate) / G.speedMult();
+                    return `<button class="pick-cell${open ? '' : ' locked'}${ok ? '' : ' short'}" data-act="plantTree" data-k="${k}" data-id="${d.id}" ${open ? '' : 'disabled'}>
+                        <span class="pc-art">${art('plant', `${d.id}:2`)}</span><b>${d.seedName}</b>
+                        ${
+                            open
+                                ? `<small>${ico(['item', d.id])}${fmt(G.sellPrice(d.id))}${ico(['ui', 'coin'])}</small><small>${ico(['ui', 'clock'])}1 fruit / ${shortDur(fruitEvery)}</small>
+                        <span class="pc-cost">${stock > 0 ? `${stock} en stock` : `${fmt(d.cost)}${ico(['ui', 'coin'])}`}</span>`
+                                : `<small class="lock-txt">${ico(['ui', 'lock'])}Niveau ${d.reqLvl}</small>`
+                        }
+                    </button>`;
+                })
+                .join('')}</div>`;
+    },
+});
+
+// ---------------- la fiche d'un arbre ----------------
+defineSheet('tree', {
+    title: o => {
+        const t = (state.orchard.slots[o.k] || {}).tree;
+        return t ? `${ico(['item', t.id])}${ITEMS[t.id].seedName}` : '';
+    },
+    render(o) {
+        const k = +o.k,
+            t = (state.orchard.slots[k] || {}).tree;
+        if (!t) return '<p class="empty">Cet emplacement est vide.</p>';
+        const d = ITEMS[t.id],
+            st = G.treeStage(t);
+        const life = G.treeLife(t);
+        const info = [];
+        if (st === 'young') info.push([['ui', 'clock'], `Donnera ses premiers fruits dans ${formatDuration(G.treeLeft(t))}`]);
+        else if (st !== 'dead') {
+            info.push([
+                ['item', t.id],
+                `Un fruit environ toutes les ${formatDuration(G.fruitTime(t) / (G.treeRate(t) || 1))}${st === 'old' ? ' (il ralentit avec l’âge)' : ''}`,
+            ]);
+            info.push([
+                ['ui', 'basket'],
+                `${t.ground} / ${ORCHARD.groundMax} fruits au sol${G.groundFull(t) ? ' : il attend qu’on ramasse, et ses fruits pourrissent' : ''}`,
+            ]);
+        }
+        info.push([['ui', 'calendar'], `${t.drops} fruit${t.drops > 1 ? 's donnés' : ' donné'} sur une vie d’environ ${ORCHARD.life}`]);
+        if (G.season().id === 'hiver') info.push([['ui', 'w_snow'], 'L’hiver, il dort à moitié']);
+        else if (G.season().id === 'automne') info.push([['ui', 'w_cloudy'], 'L’automne, il produit 20 % plus vite']);
+        const fellWood = st === 'dead' ? treeWood(d) : st === 'young' ? 0 : Math.round(treeWood(d) * ORCHARD.felledWood * life);
+        return `<div class="tree-card">
+            <div class="tree-art ${st}">${treeArt(t)}${groundHtml(t)}</div>
+            <div class="animal-kind">${STAGE_NAME[st]}</div>
+            ${st === 'dead' ? '' : `<div class="life"><span>Vie</span>${bar(life, `life-bar${life < 1 - ORCHARD.oldAt ? ' low' : ''}`)}</div>`}
+            ${lines(info)}
+            <div class="row-btns">${
+                st === 'dead'
+                    ? btn(`Débiter en bois · +${fellWood}${ico(['item', 'wood'])}`, { act: 'fellTree', data: { k }, kind: 'gold', wide: true })
+                    : `${btn(t.ground ? `Ramasser ${t.ground}${ico(['item', t.id])}` : 'Rien à ramasser', { act: 'pickTree', data: { k }, kind: t.ground ? 'green' : '', disabled: !t.ground })}${btn(fellWood ? `Abattre · +${fellWood}${ico(['item', 'wood'])}` : 'Arracher', { act: 'fellTree', data: { k }, kind: 'red' })}`
+            }</div>
+        </div>`;
+    },
+});
+
+export function setupOrchard() {
+    actions({
+        buyOrchardSlot: el => G.buySlot(el),
+        pickAllTrees: el => G.pickAllTrees(el),
+        tree: (el, d) => {
+            const t = (state.orchard.slots[+d.k] || {}).tree;
+            if (!t) return;
+            if (t.ground) G.pickTree(+d.k, el);
+            else openSheet('tree', { k: +d.k });
+        },
+        pickTree: (el, d) => G.pickTree(+d.k, anchorEl(`tree:${d.k}`) || el),
+        plantTree: (el, d) => {
+            if (G.plantTree(+d.k, d.id, anchorEl(`tree:${d.k}`) || el)) closeSheet('plantTree');
+        },
+        fellTree: (el, d) => {
+            const t = (state.orchard.slots[+d.k] || {}).tree;
+            if (!t) return;
+            // un arbre vivant ne s'abat qu'au second appui
+            if (G.treeStage(t) !== 'dead' && !confirmTap('fell' + d.k, el, 'Toucher encore pour confirmer')) return QUIET;
+            if (G.fellTree(+d.k, anchorEl(`tree:${d.k}`) || el)) closeSheet('tree');
+        },
+    });
+    on('treeFx', ({ k, delay }) => {
+        const el = anchorEl(`tree:${k}`);
+        if (!el) return;
+        setTimeout(() => {
+            const r = el.getBoundingClientRect();
+            burstAt(r.left + r.width / 2, r.top + r.height * 0.6, 'sparkle', 5);
+        }, delay || 0);
+    });
+}

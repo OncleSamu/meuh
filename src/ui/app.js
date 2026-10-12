@@ -7,6 +7,7 @@ import { on, emit } from '../core/bus.js';
 import { ANIMALS } from '../data/animals.js';
 import { MACHINES } from '../data/machines.js';
 import { NATURE } from '../data/nature.js';
+import { ORCHARD } from '../data/farm.js';
 import { CAVE_LVL } from '../data/cave.js';
 import { MAX_LEVEL } from '../data/progress.js';
 import * as G from '../systems/index.js';
@@ -33,6 +34,7 @@ export const TABS = [
         icon: ['item', 'wheat'],
         subs: [
             ['field', 'Champ', ['ui', 'basket']],
+            ['orchard', 'Verger', ['item', 'apple'], () => (state.orchard && state.orchard.slots.some(x => x.open) ? 1 : ORCHARD.lvl)],
             ['nature', 'Nature', ['item', 'wood'], () => NATURE.forest.lvl],
         ],
     },
@@ -91,7 +93,7 @@ export function go(path, opts = {}) {
     const [tab, sub0] = path.split('/');
     let sub = sub0;
     // écran large : l'onglet Ferme montre la nature à droite (le champ est toujours à gauche)
-    if (view.wide && tab === 'farm' && !sub && !subLocked('farm', 'nature')) sub = 'nature';
+    if (view.wide && tab === 'farm' && !sub) sub = !subLocked('farm', 'orchard') ? 'orchard' : !subLocked('farm', 'nature') ? 'nature' : sub;
     if (tabLocked(tab)) {
         emit('toast', { text: `${tabDef(tab).name} : s’ouvre au niveau ${tabLockLvl(tab)}`, icon: ['ui', 'lock'] });
         emit('sfx', 'error');
@@ -181,8 +183,8 @@ function renderSubnav() {
 }
 
 // grand écran : la nature s'affiche à droite, le champ restant à gauche
-const asideShown = () => view.wide && ui.tab === 'farm' && ui.sub.farm === 'nature';
-export const viewEl = path => (view.wide && path === 'farm/nature' ? byId('view-aside') : byId('view-' + path.split('/')[0]));
+const asideShown = () => view.wide && ui.tab === 'farm' && ui.sub.farm !== 'field';
+export const viewEl = path => (view.wide && path.startsWith('farm/') && path !== 'farm/field' ? byId('view-aside') : byId('view-' + path.split('/')[0]));
 
 // ---------------- rafraîchissement ----------------
 let toolbarRender = () => {};

@@ -11,7 +11,7 @@ import { currentPath, setToolbar } from './app.js';
 import { defineSheet, closeSheet } from './sheets.js';
 import { hint } from './kit.js';
 
-const isSeed = t => ITEMS[t] && (ITEMS[t].type === 'crop' || ITEMS[t].type === 'tree');
+const isSeed = t => ITEMS[t] && ITEMS[t].type === 'crop';
 
 function seedButton() {
     const t = state.selectedTool,

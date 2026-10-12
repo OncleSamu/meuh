@@ -1,4 +1,5 @@
 // Le commerce : magasin, matériaux de construction, marché, prix et annulation d'une vente.
+import { herdFull, placeAnimal } from './pastures.js';
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -241,7 +242,7 @@ export function canBuy(type, id, qty = 1) {
     const d = shopDef(type, id);
     if (!d || state.level < (d.reqLvl || 1) || !storyOk(d)) return false;
     if (type === 'machine' && hasMachine(id)) return false;
-    if (type === 'animal' && challengeOn('noAnimals')) return false;
+    if (type === 'animal' && (challengeOn('noAnimals') || herdFull())) return false;
     return state.money >= d.cost * qty && hasMats(matCost(type, id));
 }
 
@@ -252,6 +253,11 @@ export function buy(type, id, qty = 1, at) {
     const total = d.cost * qty;
     if (type === 'animal' && challengeOn('noAnimals')) {
         toast('Défi « Sans animaux » : pas d’animaux sur cette ferme', ['ui', 'flag']);
+        sfx('error');
+        return false;
+    }
+    if (type === 'animal' && herdFull()) {
+        toast('Tous vos prés sont pleins : achetez un nouveau pré dans l’onglet Animaux', ['ui', 'flowers']);
         sfx('error');
         return false;
     }
@@ -271,8 +277,11 @@ export function buy(type, id, qty = 1, at) {
     if (type === 'feed') state.inventory.feed += qty;
     else if (type === 'compost') state.inventory.fertilizer += qty;
     else if (type === 'seed') state.seeds[id] += qty;
-    else if (type === 'animal') state.animals.push(newAnimal(id));
-    else if (type === 'machine') state.machines.push(newMachine(id));
+    else if (type === 'animal') {
+        const a = newAnimal(id);
+        placeAnimal(a);
+        state.animals.push(a);
+    } else if (type === 'machine') state.machines.push(newMachine(id));
     else if (type === 'placedeco') state.decorInv[id] = (state.decorInv[id] || 0) + 1;
     sfx('buy');
     buzz(10);

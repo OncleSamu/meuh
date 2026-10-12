@@ -46,7 +46,7 @@ export const FARM_SEASONS = [
         name: 'La saison des vergers',
         icon: 'apple',
         deco: 'orchardSwing',
-        items: ['apple', 'cherry', 'orange', 'peach', 'grape', 'olive', 'juice', 'cider', 'grapeJuice', 'pie', 'jam', 'cherryBeer', 'oliveOil'],
+        items: ['apple', 'cherry', 'orange', 'peach', 'grape', 'olive', 'kiwi', 'kaki', 'juice', 'cider', 'grapeJuice', 'pie', 'jam', 'cherryBeer', 'oliveOil'],
     },
     {
         id: 'mountain',

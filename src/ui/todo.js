@@ -24,6 +24,18 @@ export function todoList() {
     add('farm/field', ['item', 'honey'], `${honey} pot${s(honey)} de miel`, honey);
     if (state.dog.found) add('farm/field', ['ui', 'dog'], `${state.dog.name} a trouvé quelque chose`);
     if (G.houseCanUp()) push('sheet:house', ['ui', 'house'], 'Maison à agrandir', 0);
+    // le verger : un arbre au sol plein compte comme une tâche
+    if (state.orchard) {
+        const trees = state.orchard.slots.filter(x => x.tree);
+        const withFruit = trees.filter(x => x.tree.ground > 0);
+        const fruits = withFruit.reduce((a, x) => a + x.tree.ground, 0);
+        if (fruits)
+            add('farm/orchard', ['item', withFruit[0].tree.id], `${fruits} fruit${s(fruits)} au verger`, withFruit.length, {
+                urgent: withFruit.some(x => G.groundFull(x.tree)),
+            });
+        const dead = G.deadTrees();
+        add('farm/orchard', ['item', 'wood'], `${dead} arbre${s(dead)} mort${s(dead)}`, dead);
+    }
 
     const products = state.animals.reduce((a, x) => a + x.stack, 0);
     const firstProd = state.animals.find(x => x.stack);

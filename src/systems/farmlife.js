@@ -278,7 +278,7 @@ export function flowerScore(i) {
         const q = state.grid[j];
         if (!q.isUnlocked) return a;
         if (q.deco === 'flowers') return a + 3;
-        if (q.itemId) return a + (ITEMS[q.itemId].type === 'tree' ? 2 : 1);
+        if (q.itemId) return a + 1;
         return a;
     }, 0);
 }

@@ -72,8 +72,10 @@ function seeds() {
                           i.ghOnly ? meta(['ui', 'greenhouse'], 'serre seulement') : '',
                       ].join('')
                     : [
-                          meta(['ui', 'clock'], `${formatDuration(i.time / sm)}, puis ${formatDuration(i.time / sm / 2)}`),
+                          meta(['ui', 'clock'], `adulte en ${formatDuration(i.time / sm)}, puis 1 fruit / ${formatDuration(i.time / sm / 2)}`),
                           meta(['ui', 'coin'], `${G.sellPrice(i.id)} le fruit`),
+                          meta(['item', 'apple'], 'se plante au verger'),
+                          state.seeds[i.id] ? meta(null, `${state.seeds[i.id]} en stock`, 'stock') : '',
                       ].join('');
             const btns =
                 i.type === 'crop'
