@@ -5,7 +5,7 @@ import { on } from '../../core/bus.js';
 import { ANIMALS, MAX_STACK } from '../../data/animals.js';
 import { ITEMS } from '../../data/items.js';
 import * as G from '../../systems/index.js';
-import { byId, blocks, esc, actions, run } from '../dom.js';
+import { byId, blocks, esc, actions } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, hint, hearts, bar, timer, lines, segmented } from '../kit.js';
 import { defineView, defineLive, ui, currentPath } from '../app.js';
@@ -53,6 +53,8 @@ function build(meadow, idx) {
     idx.forEach(i => {
         const el = document.createElement('div');
         el.className = 'critter';
+        // un appui ouvre la fiche au « clic » : avec un appui au doigt, la fiche ouverte trop tôt se refermait aussitôt
+        el.dataset.act = 'animal';
         el.dataset.i = i;
         el.dataset.anchor = 'animal:' + i;
         el.innerHTML = `<div class="critter-body"></div><div class="bubble"></div><div class="food-meter"></div>${bar(0, 'cbar', `prod:${i}`)}${bar(0, 'gbar', `grow:${i}`)}<div class="critter-name"></div>`;
@@ -218,7 +220,7 @@ function pastureBar(mode, cur) {
 
 function renderAnimals(el) {
     const n = state.animals.length;
-    const mode = n > 6 ? ui.sel.animalMode || (n > 16 ? 'stable' : 'meadow') : 'meadow';
+    const mode = n > 0 ? ui.sel.animalMode || (n > 16 ? 'stable' : 'meadow') : 'meadow';
     let k = shownPasture();
     if (mode === 'meadow' && k === 'all') k = 0;
     if (mode === 'stable' && ui.sel.pasture === undefined && state.pastures.length > 1) k = 'all';
@@ -230,7 +232,7 @@ function renderAnimals(el) {
         ['pin', pinBar()],
         [
             'mode',
-            n > 6
+            n > 0
                 ? segmented(
                       [
                           ['meadow', 'Le pré', ['ui', 'flowers']],
@@ -335,12 +337,6 @@ export function setupAnimals() {
         startTrans: el => {
             if (G.startTrans(ui.sel.trans, el)) ui.sel.trans = [];
         },
-    });
-    byId('view-animals').addEventListener('pointerdown', e => {
-        const c = e.target.closest('.critter');
-        if (!c) return;
-        e.preventDefault();
-        run('animal', c, c.dataset);
     });
     on('animalFx', ({ i }) => {
         const el = els[i];
