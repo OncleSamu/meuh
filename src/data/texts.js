@@ -266,6 +266,11 @@ export const TIPS = {
         title: 'Une station de recherche',
         text: 'Au bout du chemin des vergers, Agathe et Victor rouvrent une station de recherche (volet Village, carte « La station »). Croisements de plantes, élevage de sélection, et bientôt vos propres variétés !',
     },
+    defis: {
+        icon: ['ui', 'cupGold'],
+        title: 'Les grands défis',
+        text: 'Toutes les deux semaines, un villageois vous confie un grand défi (volet Commandes). 4 étapes, à faire dans l’ordre que vous voulez : 2 pour le bronze, 3 pour l’argent, 4 pour l’or. Les médailles s’exposent dans la salle des trophées (menu).',
+    },
     genetics: {
         icon: ['item', 'strawberry'],
         title: 'Croiser, c’est parier',

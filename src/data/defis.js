@@ -79,10 +79,10 @@ export const DEFIS = {
         deco: 'banquetTable',
         intro: 'Tout le canton est invité ! Il me faut les plus beaux plats de la vallée.',
         steps: [
-            { kind: 'give', name: 'Les entrées', pool: ENTREES, k: 2, n: 10, q: 1 },
-            { kind: 'give', name: 'Les plats', pool: PLATS, k: 2, n: 8, q: 1 },
-            { kind: 'give', name: 'Les desserts', pool: DESSERTS, k: 2, n: 8, q: 1 },
-            { kind: 'give', name: 'Le plat d’honneur', pool: PLATS, k: 1, n: 4, q: 2 },
+            { kind: 'give', name: 'Les entrées', pool: ENTREES, k: 2, n: 8, q: 1 },
+            { kind: 'give', name: 'Les plats', pool: PLATS, k: 2, n: 6, q: 1 },
+            { kind: 'give', name: 'Les desserts', pool: DESSERTS, k: 2, n: 6, q: 1 },
+            { kind: 'give', name: 'Le plat d’honneur', pool: PLATS, k: 1, n: 3, q: 2 },
         ],
     },
     bestiaux: {
@@ -93,7 +93,7 @@ export const DEFIS = {
         open: 'breed',
         intro: 'La foire revient ! Montrons au jury les plus belles bêtes du canton.',
         steps: [
-            { kind: 'give', name: 'Les beaux produits', pool: ANIMAL_GOODS, k: 2, n: 15, q: 2 },
+            { kind: 'give', name: 'Les beaux produits', pool: ANIMAL_GOODS, k: 2, n: 15, q: 1 },
             { kind: 'count', name: 'Des naissances', stat: 'births', n: 3, icon: ['ui', 'heart'], text: 'Faire naître {n} petits à l’étable de sélection' },
             { kind: 'animal', name: 'La bête de concours', n: 3, text: 'Présenter une bête qui dépasse son espèce de {n} points de gènes' },
             { kind: 'count', name: 'Une création', stat: 'creations', n: 1, icon: ['ui', 'trophy'], text: 'Fixer une nouvelle race ou variété' },

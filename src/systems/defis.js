@@ -20,6 +20,7 @@ import { caveOpen, hallOpen } from './cave.js';
 import { netOpen, boatOpen, transOpen } from './port.js';
 import { breedOpen, plantLabOpen, labOpen, animalGain, flavorGain, varieties, varName } from './genetics.js';
 import { addPhoto } from './style.js';
+import { tip } from './tips.js';
 
 const DAY = 24 * 3600 * 1000;
 
@@ -111,6 +112,7 @@ export function startDefi(id = drawDefi(), t = now()) {
     while (D.recent.length > DEFI.noRepeat) D.recent.shift();
     D.next = 0;
     if (view.started) {
+        tip('defis');
         toast(`Nouveau grand défi : ${DEFIS[id].name} !`, ['villager', DEFIS[id].who]);
         sfx('level');
     }

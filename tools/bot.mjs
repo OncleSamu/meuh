@@ -76,6 +76,8 @@ const need = () => {
     if (ct && !ct.done) add(ct.item, ct.qty - ct.given);
     Object.keys(STORIES).forEach(v => G.villagerStoryOpen(v) && Object.keys(G.storyNeed(v)).forEach(k => add(k, G.storyLeftOf(v, k))));
     if (G.rareActive('critic') && !state.rare.served) add(state.rare.dish, 1);
+    const df = G.curDefi();
+    if (df && !df.awarded) df.steps.forEach(st => st.kind === 'give' && !st.done && st.items.forEach(x => add(x.id, x.n - x.got)));
     const bc = G.barnUpCost(state.barn.lvl);
     ['plank', 'nail'].forEach(id => add(id, Math.max(0, bc[id] - state.inventory[id])));
     if (state.level >= 11 && G.toolLvl('forest') < 3) add('tools', 1);
@@ -187,9 +189,8 @@ function machines() {
             );
             const r = opts[0];
             if (!(nd[r.id] > state.inventory[r.id]) && G.barnSpace() < G.barnCap() * 0.3) break;
-            Object.entries(r.ing).forEach(([k2, n]) => (state.inventory[k2] -= n));
-            if (!m.queue.length) m.progress = 0;
-            m.queue.push(r.id);
+            // comme le joueur : les meilleurs ingrédients d'abord (plats d'argent et d'or)
+            if (!G.queueRecipe(i, r.id, null)) break;
         }
     });
 }
@@ -414,11 +415,26 @@ function lab() {
     }
 }
 
+// les grands défis : livrer dès qu'on peut, présenter la meilleure bête ou variété
+function defis() {
+    const d = G.curDefi();
+    if (!d || d.awarded) return;
+    d.steps.forEach((st, k) => {
+        if (G.canGive(st)) tag('défi', () => G.giveDefi(k));
+        if (G.canPresent(st)) {
+            const c =
+                st.kind === 'animal' ? G.animalCandidates().sort((a, b) => b.score - a.score)[0] : G.varietyCandidates().sort((a, b) => b.score - a.score)[0];
+            if (c) G.presentDefi(k, st.kind === 'animal' ? c.a.uid : c.v.id);
+        }
+    });
+}
+
 function step() {
     cave();
     farm();
     island();
     lab();
+    defis();
     animals();
     machines();
     orders();
@@ -451,6 +467,8 @@ const out = {
         renown: state.renown,
         cave: { lots: state.stats.caveLots || 0, sold: state.stats.auctionSold || 0, legend: state.stats.caveLegend || 0 },
         boats: state.stats.boats || 0,
+        defis: state.defis ? Object.fromEntries(Object.entries(state.defis.trophies).map(([k, v]) => [k, v.best])) : {},
+        defi: state.defis && state.defis.cur ? `${state.defis.cur.id} ${G.stepsDone()} / 4` : '',
     },
 };
 const saveAt = process.argv.indexOf('--save');
