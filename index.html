@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
         <meta name="theme-color" content="#7cc8f0" />
-        <title>Meuh 5.0</title>
+        <title>Meuh 6.0</title>
             <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -6803,6 +6803,459 @@ body.calm #weather .flutter {
     background: #fff1b8;
 }
 
+/* ================= Meuh 6.0 : la Cave ================= */
+#mtabs[hidden],
+#atelier-pane[hidden],
+#cave-pane[hidden] {
+    display: none;
+}
+.map-tabs.n5 {
+    grid-template-columns: repeat(3, 1fr);
+}
+.cave-clim {
+    padding: 12px;
+    margin-bottom: 12px;
+    background-color: #e9d2ad;
+}
+.gauge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+.gauge > .ico {
+    width: 30px;
+    height: 30px;
+}
+.gauge-main {
+    flex: 1;
+    min-width: 0;
+}
+.gauge-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+.gauge-label b {
+    font-size: 0.72rem;
+    color: var(--leaf-d);
+}
+.gauge.off .gauge-label b {
+    color: var(--red);
+}
+.gauge-bar {
+    position: relative;
+    height: 12px;
+    margin-top: 3px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: linear-gradient(90deg, #8fd0f7, #f7f3ea 50%, #f59a6a);
+    overflow: hidden;
+}
+.gauge-bar .band {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: rgba(108, 192, 74, 0.45);
+    border-left: 2px dashed rgba(58, 38, 24, 0.5);
+    border-right: 2px dashed rgba(58, 38, 24, 0.5);
+}
+.gauge-bar .needle {
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    width: 6px;
+    margin-left: -3px;
+    border-radius: 3px;
+    background: var(--ink);
+    transition: left 0.4s;
+}
+.gauge.off .gauge-bar .needle {
+    background: var(--red);
+    box-shadow: 0 0 0 2px #fff;
+}
+.cave-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.cave-slot {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    min-height: 168px;
+    font: inherit;
+    color: var(--ink);
+    text-align: left;
+}
+.cave-slot.empty,
+.cave-slot.locked {
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-align: center;
+    border: 2.5px dashed rgba(58, 38, 24, 0.5);
+    border-radius: 18px;
+    background: rgba(251, 236, 201, 0.55);
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 0.82rem;
+}
+.cave-slot.empty b {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+.cave-slot.locked .ico {
+    width: 34px;
+    height: 34px;
+}
+.cave-slot.locked:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+.cave-slot.r2 {
+    background-color: #f1d8a8;
+}
+.cave-slot.r3 {
+    background-color: #f6dc96;
+    box-shadow:
+        0 5px 0 var(--wood-d),
+        0 0 0 3px #ffd23f,
+        inset 0 2px 0 rgba(255, 255, 255, 0.4);
+}
+.cave-slot.r4 {
+    background-color: #f9e27a;
+    box-shadow:
+        0 5px 0 var(--wood-d),
+        0 0 0 3px #ffd23f,
+        0 0 16px rgba(255, 210, 63, 0.8);
+}
+.cave-slot.bad {
+    background-color: #d9cfbf;
+    filter: saturate(0.6);
+}
+.cave-slot.flash {
+    animation: bump 0.4s 2;
+}
+.cs-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.cs-ico {
+    width: 44px;
+    height: 44px;
+}
+.cs-main {
+    min-width: 0;
+}
+.cs-name {
+    font-weight: 800;
+    font-size: 0.86rem;
+    line-height: 1.15;
+}
+.cs-name small {
+    opacity: 0.7;
+}
+.cs-rank {
+    font-size: 0.74rem;
+    font-weight: 900;
+    color: #8e2c22;
+}
+.cave-slot.bad .cs-rank {
+    color: #6d7680;
+}
+.cs-stars {
+    display: flex;
+    gap: 2px;
+    margin-top: 2px;
+}
+.cs-stars i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink);
+    background: rgba(255, 255, 255, 0.6);
+}
+.cs-stars i.on {
+    background: var(--gold);
+}
+.cs-value {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+.cs-value .ico {
+    width: 18px;
+    height: 18px;
+}
+.cs-timer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+.cs-timer .qbar {
+    flex: 1;
+    margin: 0;
+}
+.cs-timer .qbar div {
+    background: #9a6fd0;
+}
+.odds {
+    display: flex;
+    height: 9px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    overflow: hidden;
+}
+.odds .g {
+    background: var(--leaf);
+}
+.odds .b {
+    background: #c9a46a;
+}
+.odds .r {
+    background: var(--red);
+}
+.odds-txt {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    opacity: 0.85;
+}
+.cs-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: auto;
+}
+.cs-actions .btn {
+    flex: 1 1 auto;
+    padding: 6px 7px;
+    font-size: 0.76rem;
+}
+.cs-boost {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    padding: 1px 6px 1px 2px;
+    border-radius: 999px;
+    border: 2px solid var(--ink);
+    background: #e8f6d8;
+    font-size: 0.7rem;
+    font-weight: 900;
+}
+.cs-boost .ico {
+    width: 16px;
+    height: 16px;
+}
+.reserve-row,
+.dep-row,
+.auc-res,
+.live-lot {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+}
+.reserve-row > .ico,
+.dep-row > .ico,
+.auc-res > .ico,
+.live-lot > .ico {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+}
+.reserve-row {
+    flex-wrap: wrap;
+}
+.reserve-row .card-main {
+    flex: 1 1 140px;
+}
+.reserve-btns {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+}
+.reserve-row.bad {
+    opacity: 0.8;
+}
+.auction-card {
+    padding: 12px;
+    margin: 14px 0;
+    background-color: #e3c9a0;
+}
+.auction-card .list {
+    margin-top: 10px;
+}
+.auction-card.live {
+    background-color: #f3d58c;
+    animation: livePulse 1.6s ease-in-out infinite;
+}
+@keyframes livePulse {
+    50% {
+        box-shadow:
+            0 5px 0 var(--wood-d),
+            0 0 0 4px rgba(232, 54, 75, 0.35);
+    }
+}
+.dep-reserve {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 0.78rem;
+}
+.dep-reserve .ico {
+    width: 15px;
+    height: 15px;
+}
+.dep-row > .btn svg {
+    display: block;
+    width: 16px;
+    height: 16px;
+}
+.bidders {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-top: 8px;
+}
+.bidders .ico {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1.5px solid rgba(58, 38, 24, 0.4);
+}
+.auc-res .card-main {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.85rem;
+}
+.auc-res small {
+    opacity: 0.75;
+}
+.auc-res.sold {
+    background: linear-gradient(#fffbe6, #fff1bf);
+}
+.auc-res > b {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+}
+.auc-res > b .ico {
+    width: 16px;
+    height: 16px;
+}
+.live-lot.bump {
+    animation: bump 0.3s;
+}
+.live-lot.done {
+    opacity: 0.75;
+}
+.live-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 3px;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+.live-row .ico {
+    width: 22px;
+    height: 22px;
+}
+.live-price {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-family: var(--display);
+    font-size: 1.05rem;
+}
+.live-price .ico {
+    width: 17px;
+    height: 17px;
+}
+.live-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+.cave-pick {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    max-height: 46dvh;
+    overflow-y: auto;
+    padding: 4px 2px 8px;
+}
+.cave-pick-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 4px;
+    font: inherit;
+    color: var(--ink);
+    cursor: pointer;
+}
+.cave-pick-cell .ico {
+    width: 40px;
+    height: 40px;
+}
+.cave-pick-cell b {
+    font-size: 0.76rem;
+    line-height: 1.1;
+    text-align: center;
+}
+.cave-pick-cell small {
+    font-size: 0.62rem;
+    opacity: 0.75;
+}
+.cave-pick-cell.on {
+    background: #fff1b8;
+    box-shadow: 0 0 0 3px var(--gold);
+}
+.cave-qty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 10px 0 6px;
+}
+.cave-qty .btn {
+    width: 44px;
+    font-size: 1.2rem;
+}
+.cave-qty span b {
+    font-size: 1.3rem;
+}
+/* l'onglet Atelier | Cave tient lieu de titre */
+#mtabs:not([hidden]) + #atelier-pane .view-title {
+    display: none;
+}
+#mtabs:not([hidden]) + #atelier-pane .row-actions {
+    margin-left: auto;
+}
+
         </style>
     </head>
     <body>
@@ -6964,17 +7417,26 @@ body.calm #weather .flutter {
             </section>
 
             <section id="view-machines" class="view">
-                <div class="view-head">
-                    <h2 class="view-title">Atelier</h2>
-                    <div class="row-actions">
-                        <button class="btn small" onclick="restartAllMachines(this)">Tout relancer</button>
-                        <button class="btn gold small" id="btn-collect-all" onclick="collectAllMachines(this)">
-                            <i class="ico" data-spr="ui:basket"></i>Tout récupérer
-                        </button>
-                    </div>
+                <div class="qsegs" id="mtabs" role="tablist" hidden>
+                    <button class="qseg active" data-m="atelier" onclick="switchMtab('atelier')"><i class="ico" data-spr="machine:bakery"></i>Atelier</button>
+                    <button class="qseg" data-m="cave" onclick="switchMtab('cave')">
+                        <i class="ico" data-spr="ui:cave"></i>Cave<span class="dot soft" id="badge-cave" hidden></span>
+                    </button>
                 </div>
-                <p class="hint">Touchez « Produire » pour choisir une recette. Chaque machine peut enchaîner 4 lots, même différents.</p>
-                <div class="list" id="machines-container"></div>
+                <div id="atelier-pane">
+                    <div class="view-head">
+                        <h2 class="view-title">Atelier</h2>
+                        <div class="row-actions">
+                            <button class="btn small" onclick="restartAllMachines(this)">Tout relancer</button>
+                            <button class="btn gold small" id="btn-collect-all" onclick="collectAllMachines(this)">
+                                <i class="ico" data-spr="ui:basket"></i>Tout récupérer
+                            </button>
+                        </div>
+                    </div>
+                    <p class="hint">Touchez « Produire » pour choisir une recette. Chaque machine peut enchaîner 4 lots, même différents.</p>
+                    <div class="list" id="machines-container"></div>
+                </div>
+                <div id="cave-pane" hidden><div id="cave-container"></div></div>
             </section>
 
             <section id="view-quests" class="view">
@@ -7408,6 +7870,12 @@ body.calm #weather .flutter {
             </div>
         </div>
 
+        <div id="cave-modal" class="modal">
+            <div class="modal-box board sheet">
+                <h2>Mettre en cave</h2>
+                <div id="cave-modal-body"></div>
+            </div>
+        </div>
         <div id="seed-modal" class="modal">
             <div class="modal-box board sheet">
                 <h2>Que planter ?</h2>
@@ -11638,6 +12106,269 @@ const SPR = (() => {
         },
     });
 
+    // ================= Meuh 6.0 : la Cave et le Domaine =================
+    // bouteille de vin élancée : épaules hautes, capsule, étiquette
+    const wineBottle = (liquid, label, cap, glass = '#2f5e3a') =>
+        SHADOW(32, 60, 12, 2.5) +
+        P('M27 4 L37 4 L37 20 Q44 24 44 32 L44 56 Q44 60 40 60 L24 60 Q20 60 20 56 L20 32 Q20 24 27 20Z', glass) +
+        F('M21.5 34 L42.5 34 L42.5 56 Q42.5 58.5 40 58.5 L24 58.5 Q21.5 58.5 21.5 56Z', liquid, 0.55) +
+        R(22, 36, 20, 14, 2, label, 1.6) +
+        L('M26 41 L38 41 M27 45 L37 45', 1.2, 'rgba(58,38,24,.55)') +
+        F('M23 24 L25.5 22 L25.5 54 L23 54Z', '#fff', 0.35) +
+        R(26, 2, 12, 12, 2, cap);
+    // bouteille de champagne : col doré, muselet
+    const champBottle = (label, foil = '#f2c14e') =>
+        SHADOW(32, 60, 13, 2.5) +
+        P('M28 8 L36 8 L36 20 Q46 26 46 36 L46 56 Q46 60 42 60 L22 60 Q18 60 18 56 L18 36 Q18 26 28 20Z', '#2b4a2e') +
+        P('M27 2 L37 2 L37 22 Q34 24 32 24 Q30 24 27 22Z', foil) +
+        L('M28 12 L36 12 M28 17 L36 17', 1.2, '#b08a2a') +
+        R(21, 38, 22, 13, 2, label, 1.6) +
+        C(32, 44.5, 3.6, foil, 1.2) +
+        F('M21 30 L24 27 L24 54 L21 54Z', '#fff', 0.3) +
+        FC(44, 6, 1.6, '#fff', 0.9) +
+        FC(48, 11, 1.2, '#fff', 0.8);
+    const grapesArt = () =>
+        L('M32 8 L32 16', 2.4, '#7a4a2a') +
+        leaf(33, 12, 12, -20, G, 0.5) +
+        [
+            [24, 22],
+            [32, 22],
+            [40, 22],
+            [28, 30],
+            [36, 30],
+            [44, 30],
+            [24, 38],
+            [32, 38],
+            [40, 38],
+            [28, 46],
+            [36, 46],
+            [32, 54],
+        ]
+            .map(([x, y]) => C(x, y, 5, '#7a3f8f', 1.6) + FC(x - 1.6, y - 1.6, 1.3, '#fff', 0.5))
+            .join('');
+    Object.assign(items, {
+        camembert: () =>
+            SHADOW(32, 57, 25, 3) +
+            E(32, 46, 25, 9, '#c79a6b') +
+            R(7, 36, 50, 10, 3, '#d9b07a') +
+            E(32, 36, 25, 9, '#f7f3ea') +
+            P('M32 36 L56 33 L54 44 L32 46Z', '#fff7d6', 1.6) +
+            E(32, 36, 16, 5, 'none', 0, 1) +
+            FC(22, 34, 1.4, '#e9e1d0') +
+            FC(38, 38, 1.2, '#e9e1d0'),
+        bleu: () =>
+            SHADOW(32, 55, 24, 3) +
+            P('M8 40 L40 18 L56 32 L56 46 L8 52Z', '#f3ead2') +
+            P('M8 40 L40 18 L56 32Z', '#fbf4e2') +
+            L('M16 44 Q22 40 26 46 M30 42 Q36 38 40 44 M44 40 Q48 36 52 40 M30 28 Q34 26 38 30', 2, '#4b6fb5') +
+            FC(20, 48, 1.6, '#3f5a9a') +
+            FC(46, 46, 1.4, '#3f5a9a'),
+        comte: () =>
+            SHADOW(32, 56, 26, 3) +
+            E(32, 44, 26, 8, '#b5782f') +
+            R(6, 28, 52, 16, 4, '#c98d3d') +
+            E(32, 28, 26, 8, '#e8b84a') +
+            P('M32 28 L56 24 L56 40 L32 44Z', '#f2c96a', 1.6) +
+            FC(44, 32, 1.8, '#d9a441') +
+            FC(50, 36, 1.4, '#d9a441'),
+        redWine: () => wineBottle('#7a1f2b', '#f7ecd8', '#8e2c22'),
+        whiteWine: () => wineBottle('#f2e48a', '#f7ecd8', '#e8b84a', '#7fa65a'),
+        roseWine: () => wineBottle('#f59ab1', '#fff4f6', '#e8364b', '#e9b7c2'),
+        pommeau: () => bottle('#c8693a', 'apple', '#f2d6a2', '#5e3a1e'),
+        champagne: () => champBottle('#f7ecd8'),
+        champagneRose: () => champBottle('#fbd1dc', '#f6a5b5'),
+        ferment: () =>
+            jar('#f7f3ea', '#3f8f2e') +
+            [
+                [24, 32],
+                [36, 40],
+                [28, 46],
+                [40, 30],
+            ]
+                .map(([x, y]) => FC(x, y, 2.6, '#6aa07a', 0.9))
+                .join(''),
+        yeast: () =>
+            SHADOW(32, 58, 16, 3) +
+            P('M18 14 L46 14 L48 56 L16 56Z', '#f2d6a2') +
+            L('M18 22 L46 22', 2) +
+            C(32, 38, 8, '#fffaf0', 1.6) +
+            [
+                [29, 36],
+                [34, 40],
+                [33, 34],
+            ]
+                .map(([x, y]) => FC(x, y, 1.6, '#e8c38c'))
+                .join(''),
+    });
+    Object.assign(machines, {
+        winery: () =>
+            SHADOW(32, 60, 28, 3) +
+            P('M10 22 L54 22 L50 58 L14 58Z', '#a8693a') +
+            L('M12 34 L52 34 M13 46 L51 46', 2.4, '#5e3a1e') +
+            E(32, 22, 22, 6, '#7a1f2b') +
+            HL(24, 20, 6, 1.5, 0, 0.4) +
+            `<g transform="translate(38 2) scale(.32)">${grapesArt()}</g>`,
+    });
+    Object.assign(ui, {
+        grapes: grapesArt,
+        cave: () =>
+            SHADOW(32, 60, 28, 3) +
+            P('M4 60 L4 30 Q4 6 32 6 Q60 6 60 30 L60 60Z', '#8f8574') +
+            P('M12 60 L12 32 Q12 14 32 14 Q52 14 52 32 L52 60Z', '#3a2618') +
+            [
+                [22, 52],
+                [42, 52],
+                [32, 38],
+            ]
+                .map(([x, y]) => E(x, y, 9, 8, '#a8693a', 0, 2) + L(`M${x - 9} ${y} L${x + 9} ${y}`, 1.4, '#5e3a1e') + E(x, y, 3, 3, '#5e3a1e', 0, 1.2))
+                .join('') +
+            L('M8 20 L14 22 M50 22 L56 20 M18 10 L22 13', 1.4, '#6d6457'),
+        barrel: () =>
+            SHADOW(32, 60, 20, 3) +
+            P('M16 8 Q12 34 16 58 L48 58 Q52 34 48 8Z', '#a8693a') +
+            L('M14 18 Q32 22 50 18 M13 46 Q32 50 51 46', 3, '#5e5548') +
+            L('M24 8 Q22 34 24 58 M40 8 Q42 34 40 58', 1.2, '#7a4a2a') +
+            E(32, 8, 16, 4, '#c08b52') +
+            FC(32, 32, 2, '#3a2618'),
+        turn: () =>
+            `<g transform="translate(10 12) scale(.68)">${items.beaufort()}</g>` +
+            L('M10 22 Q14 6 32 6 Q46 6 52 16', 3.2) +
+            L('M10 22 Q14 6 32 6 Q46 6 52 16', 1.6, '#f2c14e') +
+            P('M48 10 L56 18 L46 20Z', '#f2c14e', 1.6),
+        riddle: () =>
+            SHADOW(32, 60, 26, 3) +
+            L('M10 60 L24 6 M54 60 L40 6 M24 6 L40 6', 4, '#8b5a2b') +
+            [18, 30, 42]
+                .map(
+                    y =>
+                        `<g transform="translate(${16 + (y - 18) * 0.3} ${y}) rotate(-60 12 6)">${R(0, 3, 22, 6, 3, '#2b4a2e', 1.4)}${R(18, 3, 6, 6, 1, '#f2c14e', 1)}</g>`,
+                )
+                .join(''),
+        thermo: () =>
+            R(26, 6, 12, 42, 6, '#f7f3ea') +
+            C(32, 50, 9, '#e2412f') +
+            R(29.5, 18, 5, 30, 2.5, '#e2412f', 0) +
+            L('M38 14 L42 14 M38 22 L42 22 M38 30 L42 30 M38 38 L42 38', 1.4),
+        hygro: () =>
+            C(32, 34, 24, '#f7f3ea') +
+            P('M14 34 A18 18 0 0 1 50 34', 'none', 0) +
+            L('M14 34 A18 18 0 0 1 50 34', 5, '#bfe6fb') +
+            L('M23 22 A18 18 0 0 1 41 22', 5, '#9be06b') +
+            L('M32 34 L42 18', 2.6) +
+            C(32, 34, 3.4, '#3a2618', 1.2) +
+            P('M30 46 Q32 40 34 46 Q34 50 32 50 Q30 50 30 46Z', '#4fb3f6', 1.4),
+        vault: () =>
+            SHADOW(32, 60, 28, 3) +
+            P('M4 60 L4 32 Q4 6 32 6 Q60 6 60 32 L60 60 L48 60 L48 34 Q48 18 32 18 Q16 18 16 34 L16 60Z', '#c9c2b8') +
+            L('M6 44 L16 44 M48 44 L58 44 M8 24 L18 30 M56 24 L46 30 M32 6 L32 18', 1.6, '#8f8574'),
+        gavel: () =>
+            SHADOW(32, 60, 24, 3) +
+            R(10, 50, 34, 8, 3, '#8b5a2b') +
+            `<g transform="rotate(-35 32 30)">${R(14, 18, 22, 14, 4, '#a8693a')}${L('M20 18 L20 32 M30 18 L30 32', 1.6, '#5e3a1e')}${R(34, 22, 26, 6, 3, '#c08b52')}</g>` +
+            FC(50, 12, 2, '#ffd23f') +
+            FC(56, 20, 1.6, '#ffd23f'),
+        taste: () =>
+            P('M18 8 L46 8 Q48 30 32 34 Q16 30 18 8Z', '#f7f9fb') +
+            F('M19 18 L45 18 Q44 30 32 32 Q20 30 19 18Z', '#7a1f2b', 0.85) +
+            L('M32 34 L32 52', 2.6) +
+            E(32, 54, 12, 4, '#f7f9fb') +
+            HL(23, 14, 1.6, 4, 0, 0.6),
+        shelf: () =>
+            SHADOW(32, 60, 28, 3) +
+            R(6, 8, 52, 50, 3, '#a8693a') +
+            R(10, 12, 44, 18, 1, '#5e3a1e', 1.6) +
+            R(10, 34, 44, 18, 1, '#5e3a1e', 1.6) +
+            [16, 26, 36, 46].map(x => R(x - 3, 14, 6, 15, 2, '#2f5e3a', 1.2)).join('') +
+            [20, 34, 46].map(x => E(x, 46, 6, 5, '#f2c14e', 0, 1.4)).join(''),
+        rot: () =>
+            `<g transform="translate(6 8) scale(.8)">${items.tomme()}</g>` +
+            [
+                [22, 34],
+                [34, 30],
+                [42, 38],
+                [28, 42],
+            ]
+                .map(([x, y]) => FC(x, y, 3.4, '#7fae4a', 0.9))
+                .join('') +
+            L('M44 12 L48 8 M48 12 L44 8', 1.6) +
+            E(50, 14, 4, 2.4, '#3a2618', 20, 1),
+        oldPress: () =>
+            SHADOW(32, 60, 26, 3) +
+            L('M10 58 L10 10 M54 58 L54 10 M8 10 L56 10', 5, '#5e3a1e') +
+            L('M32 10 L32 30', 4, '#8a8f98') +
+            L('M22 18 L42 18', 3, '#8a8f98') +
+            R(16, 30, 32, 6, 2, '#a8693a') +
+            P('M14 38 L50 38 L48 58 L16 58Z', '#a8693a') +
+            L('M14 46 L50 46', 2.4, '#5e5548') +
+            `<g transform="translate(36 40) scale(.3)">${grapesArt()}</g>`,
+    });
+    Object.assign(people, {
+        margaux: () =>
+            bust('#7a1f2b', R(22, 50, 20, 16, 3, '#e9dcc4', 2)) +
+            P('M16 34 C12 18 24 13 32 14 C42 13 52 18 48 34 C46 26 40 22 32 22 C24 22 18 26 16 34Z', '#5e3a1e') +
+            P('M46 26 Q52 36 48 48 Q46 40 44 34Z', '#5e3a1e', 2) +
+            face() +
+            E(32, 18, 23, 5, '#f2d6a2') +
+            P('M20 18 Q22 6 32 6 Q42 6 44 18Z', '#f2d6a2') +
+            L('M21 16 L43 16', 2.4, '#7a1f2b'),
+        anselme: () =>
+            bust('#f7f3ea', L('M32 46 L32 66 M28 52 L28 52 M28 58 L28 58', 2.4, '#8a8f98')) +
+            face({ noSmile: true }) +
+            P('M20 36 C22 46 28 46 32 44 C36 46 42 46 44 36 C40 40 36 40 32 39 C28 40 24 40 20 36Z', '#e9e9ef', 2) +
+            L('M28 41 Q32 43 36 41', 1.6) +
+            E(30, 18, 16, 6, '#3a2618', -8) +
+            C(30, 12, 2, '#3a2618', 1.2),
+        duval: () =>
+            bust('#3a2618', P('M28 46 L32 52 L36 46Z', '#fff', 1.6) + P('M26 50 L32 53 L38 50 L38 56 L32 53 L26 56Z', '#e2412f', 1.6)) +
+            P('M18 28 C18 16 46 16 46 28 C42 22 22 22 18 28Z', '#8f8574') +
+            face() +
+            C(27, 30, 4.4, 'none', 1.6) +
+            C(37, 30, 4.4, 'none', 1.6) +
+            L('M31.4 30 L32.6 30', 1.6),
+        valcourt: () =>
+            bust('#4b5bb8', P('M28 46 L32 54 L36 46Z', '#fff', 1.6)) +
+            face({ noSmile: true }) +
+            L('M24 37 Q28 34 32 37 Q36 34 40 37', 2.6, '#5e3a1e') +
+            R(20, 4, 24, 16, 2, '#3a2618') +
+            E(32, 20, 20, 3.6, '#3a2618') +
+            R(20, 14, 24, 3, 1, '#e2412f', 1),
+        iris: () =>
+            bust('#3a2618', C(32, 54, 5, '#f2c14e', 1.6) + L('M32 46 L32 49', 1.6, '#f2c14e')) +
+            P('M15 36 C10 16 24 11 32 12 C42 11 54 16 49 36 C47 26 41 21 32 21 C23 21 17 26 15 36Z', '#2a2f6b') +
+            face() +
+            P('M46 28 Q54 40 48 52 Q46 42 44 36Z', '#2a2f6b', 2),
+        tomette: () =>
+            bust('#f6a5b5', P('M22 47 L32 56 L42 47', 'none', 2)) +
+            P('M18 32 C16 18 48 18 46 32 C44 24 38 21 32 21 C26 21 20 24 18 32Z', '#c9c2b8') +
+            face() +
+            E(32, 16, 24, 5, '#b58ad6') +
+            P('M20 16 Q22 4 32 4 Q42 4 44 16Z', '#b58ad6') +
+            C(42, 10, 3.4, '#f6a5b5', 1.4),
+    });
+    Object.assign(BLD, {
+        chai: { w: 72, h: 32, wall: '#e9d6a8', roof: '#8e2c22', sign: ['item', 'redWine'] },
+        cooperage: { w: 56, h: 32, wall: '#c08b52', roof: '#5e3a1e', sign: ['ui', 'barrel'] },
+        affinage: { w: 58, h: 36, wall: '#f7f3ea', roof: '#6b8f3a', sign: ['item', 'camembert'], floors: 2 },
+        auctionHall: { w: 72, h: 40, wall: '#f2d6a2', roof: '#2a2f6b', sign: ['ui', 'gavel'], tower: true },
+        cidery: { w: 56, h: 32, wall: '#f7e3c0', roof: '#c8453a', sign: ['item', 'cider'] },
+        crayere: { kind: 'crayere' },
+    });
+    Object.assign(KINDS, {
+        crayere(s) {
+            const chalk = s === 0 ? grey : '#f3ede0',
+                dark = s === 0 ? '#5e5548' : '#3a2618';
+            let o = SHADOW(50, 87, 42, 3) + P('M4 88 Q10 40 50 34 Q90 40 96 88Z', chalk);
+            o += L('M18 70 Q24 60 30 66 M70 60 Q76 52 84 58 M40 48 Q46 44 52 46', 1.4, s === 0 ? greyD : '#d8d0c2');
+            o += P('M36 88 L36 68 Q36 54 50 54 Q64 54 64 68 L64 88Z', dark);
+            if (s === 0) o += L('M38 66 L62 84 M62 66 L38 84', 3, '#a8693a');
+            else o += `<g transform="translate(40 60) scale(.32)">${ui.riddle()}</g>`;
+            if (s === 2)
+                o += `<g transform="translate(70 30) scale(.3)">${items.champagne()}</g>` + C(22, 84, 2.6, '#ffd23f', 1.2) + C(80, 84, 2.6, '#f6a5b5', 1.2);
+            if (s === 1) o += scaffold(32, 54, 68);
+            return o;
+        },
+    });
+
     // API publique
     return {
         farmhouse(l, roof) {
@@ -12107,7 +12838,7 @@ const EVENTS = {
     hiver: { name: 'Marché de Noël', icon: ['ui', 's_winter'], effect: 'Les trains de marchandises paient 30 % de plus pendant la fête.' },
 };
 
-const GAME_VERSION = '5.0';
+const GAME_VERSION = '6.0';
 
 const BACKUP_KEY = SAVE_KEY + '_secours';
 
@@ -14418,6 +15149,408 @@ const TIPS_7 = {
 })();
 
 // =====================================================================
+//  Meuh 6.0 : la Cave. Fromages, cidres, vins et champagnes vieillissent :
+//  à chaque étape ils peuvent bien vieillir, mal vieillir ou se perdre.
+//  Soins, climat, salle des ventes, et le Domaine (chapitres 11 et 12).
+// =====================================================================
+
+const CAVE_LVL = 20;
+const CAVE_H = 3600 * 1000;
+
+// ---------------- Familles : rythme, rangs, geste de soin ----------------
+const CAVE_FAMILIES = {
+    cheese: {
+        name: 'Fromages',
+        step: 2 * CAVE_H,
+        ranks: ['Jeune', 'Affiné', 'Vieux', 'Grand affinage', 'Légendaire'],
+        care: 'Retourner',
+        careIcon: 'turn',
+        careDone: 'Meules retournées',
+    },
+    cider: {
+        name: 'Cidres',
+        step: 6 * CAVE_H,
+        ranks: ['Jeune', 'Bouché', 'Vieux', 'Grande réserve', 'Légendaire'],
+        care: 'Soutirer',
+        careIcon: 'barrel',
+        careDone: 'Cidre soutiré',
+    },
+    wine: {
+        name: 'Vins',
+        step: 12 * CAVE_H,
+        ranks: ['Jeune', 'Bon', 'Vieux', 'Grand cru', 'Légendaire'],
+        care: 'Ouiller',
+        careIcon: 'barrel',
+        careDone: 'Fûts ouillés',
+    },
+    champagne: {
+        name: 'Champagnes',
+        step: 8 * CAVE_H,
+        ranks: ['Sur lattes', 'Brut', 'Millésimé', 'Grande cuvée', 'Légendaire'],
+        care: 'Remuer',
+        careIcon: 'riddle',
+        careDone: 'Bouteilles remuées',
+    },
+};
+// ce qui peut aller en cave, et sa famille
+const CAVE_ITEMS = {
+    cheese: 'cheese',
+    goatCheese: 'cheese',
+    beaufort: 'cheese',
+    tomme: 'cheese',
+    reblochon: 'cheese',
+    camembert: 'cheese',
+    bleu: 'cheese',
+    comte: 'cheese',
+    cider: 'cider',
+    pommeau: 'cider',
+    redWine: 'wine',
+    whiteWine: 'wine',
+    roseWine: 'wine',
+    champagne: 'champagne',
+    champagneRose: 'champagne',
+};
+// valeur selon le rang (Jeune → Légendaire) ; un produit tourné vaut 60 %
+const CAVE_MULT = [1, 1.8, 3.2, 5.5, 10];
+const CAVE_TURNED = 0.6;
+// chances de base à chaque étape, selon le rang atteint : bien vieillir, se perdre (le reste : tourner)
+const CAVE_GOOD = [0.82, 0.68, 0.52, 0.34];
+const CAVE_ROT = [0.03, 0.06, 0.1, 0.16];
+// un produit légendaire laissé en cave ne gagne plus rien : il ne peut que se perdre ou tourner
+const CAVE_LEGEND_RISK = { rot: 0.12, bad: 0.18 };
+const CAVE_LOT_MAX = 8;
+const CAVE_SLOTS_START = 4;
+// le climat : idéal entre 35 et 65
+const CAVE_IDEAL = [35, 65];
+const CAVE_NUDGE = 14;
+
+// ---------------- Équipement de la cave ----------------
+const CAVE_SHELVES = [2500, 6000, 12000, 25000, 50000, 90000]; // +2 places chacune
+const CAVE_GEAR = {
+    hygro: { name: 'Hygromètre', desc: 'Le climat bouge 40 % moins vite, et une alerte prévient quand il dérive', cost: 8000, icon: 'hygro' },
+    vault: { name: 'Voûte en pierre', desc: 'Murs épais : le climat bouge deux fois moins vite', cost: 30000, mats: { stone: 80, beam: 10 }, icon: 'vault' },
+};
+
+// ---------------- Salle des ventes ----------------
+const AUCTION_SMALL_EVERY = 4 * CAVE_H;
+const AUCTION_BIG_HOUR = 19; // la grande vente du soir, à l'heure du téléphone
+const AUCTION_SMALL_LIVE = 90 * 1000;
+const AUCTION_BIG_LIVE = 180 * 1000;
+const AUCTION_SMALL_LOTS = 2;
+const AUCTION_BIG_LOTS = 6;
+const NEGOCIANT = 0.75; // vente immédiate au négociant
+// enchérisseurs : goûts par famille (×), budget (en multiple du niveau), et ceux qu'on ne voit qu'aux grandes ventes
+const BIDDERS = {
+    gaston: { name: 'Chef Gaston', taste: { cheese: 1.25, wine: 1.15 }, budget: 1, villager: true },
+    paul: { name: 'Monsieur Paul', taste: { cider: 1.25, cheese: 1.05 }, budget: 0.7, villager: true },
+    odette: { name: 'Mamie Odette', taste: { cheese: 1.2, cider: 1.1 }, budget: 0.6, villager: true },
+    marcel: { name: 'Tonton Marcel', taste: { cider: 1.2, wine: 1.05 }, budget: 0.6, villager: true },
+    morgane: { name: 'Capitaine Morgane', taste: { wine: 1.2, cider: 1.1, champagne: 1.05 }, budget: 1, villager: true },
+    bruno: { name: 'Bruno', taste: { cheese: 1.3 }, budget: 0.8, villager: true },
+    anselme: { name: 'Maître Anselme', taste: { cheese: 1.35 }, budget: 1.6, villager: true },
+    margaux: { name: 'Margaux', taste: { wine: 1.3, champagne: 1.2 }, budget: 1.6, villager: true },
+    valcourt: { name: 'Le comte de Valcourt', taste: { wine: 1.45, champagne: 1.3 }, budget: 4, big: true },
+    iris: { name: 'Iris, sommelière', taste: { champagne: 1.45, wine: 1.25, cheese: 1.1 }, budget: 3, big: true },
+    tomette: { name: 'Madame Tomette', taste: { cheese: 1.5, cider: 1.15 }, budget: 2.5, big: true },
+};
+// lots rares qu'on peut acheter aux grandes ventes
+const AUCTION_FINDS = {
+    ferment: { name: 'Ferment noble', desc: 'Sur un fromage : bien vieillir +15 % pendant 3 étapes', value: 6000, icon: ['item', 'ferment'] },
+    yeast: { name: 'Levure de tirage', desc: 'Sur un vin ou un champagne : bien vieillir +15 % pendant 3 étapes', value: 8000, icon: ['item', 'yeast'] },
+    oldBarrel: { name: 'Fût centenaire', desc: 'Pour toujours : vins et cidres vieillissent mieux (+4 %)', value: 25000, icon: ['ui', 'barrel'], once: true },
+    oldPress: { name: 'Pressoir ancien', desc: 'Décoration rare : +30 de charme au concours', value: 30000, icon: ['ui', 'oldPress'], once: true },
+    vintage: { name: 'Vieux millésime', desc: 'Un lot de vin déjà « Grand cru », à revendre ou à garder', value: 0, icon: ['item', 'redWine'] },
+};
+
+// ---------------- Villageois du Domaine ----------------
+Object.assign(VILLAGERS, {
+    margaux: {
+        id: 'margaux',
+        name: 'Margaux',
+        role: 'La vigneronne du Domaine',
+        ch: 11,
+        likes: ['grape', 'cheese', 'bread', 'cherry', 'honey', 'peach'],
+    },
+    anselme: {
+        id: 'anselme',
+        name: 'Maître Anselme',
+        role: 'Le maître affineur',
+        ch: 11,
+        likes: ['milk', 'goatMilk', 'cream', 'beaufort', 'bread'],
+    },
+    duval: {
+        id: 'duval',
+        name: 'Maître Duval',
+        role: 'Le commissaire-priseur',
+        ch: 12,
+        likes: ['tea', 'cookies', 'honey', 'cider', 'pie', 'jam'],
+    },
+});
+
+// ---------------- Nouveaux produits ----------------
+Object.assign(DB.Items, {
+    ferment: { id: 'ferment', name: 'Ferment noble', type: 'material' },
+    yeast: { id: 'yeast', name: 'Levure de tirage', type: 'material' },
+});
+const CAVE_RECIPES = {
+    camembert: ['dairy', 'Camembert', { milk: 3, cream: 1 }, 420, 'affinage'],
+    bleu: ['dairy', 'Bleu des Coteaux', { goatMilk: 2, milk: 2 }, 480, 'affinage'],
+    comte: ['alpineDairy', 'Comté', { alpineMilk: 4 }, 540, 'affinage'],
+    redWine: ['winery', 'Vin rouge', { grape: 4 }, 600, 'chai'],
+    whiteWine: ['winery', 'Vin blanc', { grape: 3, sugar: 1 }, 540, 'chai'],
+    roseWine: ['winery', 'Vin rosé', { grape: 3, cherry: 1 }, 540, 'chai'],
+    pommeau: ['press', 'Pommeau', { cider: 2, apple: 2 }, 480, 'cidery'],
+    champagne: ['winery', 'Champagne brut', { whiteWine: 2, sugar: 1 }, 720, 'crayere'],
+    champagneRose: ['winery', 'Champagne rosé', { roseWine: 2, sugar: 1 }, 720, 'crayere'],
+};
+Object.assign(DB.Machines, {
+    winery: {
+        id: 'winery',
+        name: 'Cuverie',
+        cost: 30000 * BALANCE.machineCost,
+        reqLvl: 40,
+        needProject: 'chai',
+        desc: 'Vins rouge, blanc et rosé, puis champagnes',
+    },
+});
+
+// ---------------- Chapitres 11 et 12 : le Domaine ----------------
+CHAPTERS.push(
+    {
+        n: 11,
+        name: 'Le domaine des Coteaux',
+        lvl: 40,
+        map: 'domaine',
+        intro: 'Sur les coteaux, un vieux domaine viticole dort sous les ronces. Margaux et Maître Anselme rêvent de le réveiller.',
+    },
+    {
+        n: 12,
+        name: 'La grande vente',
+        lvl: 40,
+        map: 'domaine',
+        intro: 'Le domaine revit ! Maître Duval veut y ouvrir la plus belle salle des ventes du pays.',
+    },
+);
+PROGRESSION.chapters.push(40, 40);
+
+Object.assign(PROJECTS, {
+    chai: P3(
+        'chai',
+        11,
+        'Le chai',
+        'margaux',
+        { grape: 40, beam: 25, stone: 60, tools: 6 },
+        'Sans chai, pas de vin. Aidez-moi à le relever et nous ferons couler le premier rouge des Coteaux.',
+        'Les cuves sont prêtes ! La cuverie est à vendre au magasin : vins rouge, blanc et rosé.',
+        'La cuverie (au magasin) et le vin',
+        22,
+        34,
+        'domaine',
+    ),
+    cooperage: P3(
+        'cooperage',
+        11,
+        'La tonnellerie',
+        'margaux',
+        { wood: 120, plank: 40, nail: 30, beam: 15 },
+        'Un bon vin a besoin d’un bon fût. Le vieux tonnelier nous a laissé ses outils, il manque juste le bois.',
+        'Les premiers fûts de chêne sentent bon le bois chaud. Vos vins et vos cidres vieilliront mieux.',
+        'Fûts de chêne : vins et cidres vieillissent mieux (+6 %)',
+        74,
+        28,
+        'domaine',
+    ),
+    affinage: P3(
+        'affinage',
+        11,
+        'La maison de l’affineur',
+        'anselme',
+        { cheese: 20, goatCheese: 12, beaufort: 4, crate: 10 },
+        'Je cherche une maison avec une cave fraîche pour affiner mes meules. Je vous apprendrai mes secrets.',
+        'Ma cave est parfaite ! Camembert, bleu et comté sont à vous, et votre cave gagne quatre places.',
+        'Camembert, bleu et comté, +4 places en cave, fromages +6 %',
+        48,
+        62,
+        'domaine',
+    ),
+    auctionHall: P3(
+        'auctionHall',
+        12,
+        'La salle des ventes',
+        'duval',
+        { beam: 30, paint: 10, cloth: 12, stone: 80 },
+        'Une salle des ventes digne de ce nom : des lustres, des chaises, et un marteau qui claque. Adjugé ?',
+        'Adjugé ! La grande vente a lieu chaque soir à 19 h : collectionneurs, lots rares, et des prix fous.',
+        'La grande vente du soir et ses lots rares',
+        20,
+        72,
+        'domaine',
+    ),
+    cidery: P3(
+        'cidery',
+        12,
+        'La cidrerie',
+        'margaux',
+        { apple: 60, cider: 10, plank: 20, nail: 20 },
+        'Les pommiers des Coteaux donnent un cidre fameux. Il faut juste une cidrerie digne de lui.',
+        'La cidrerie tourne : le pommeau est au pressoir, et le cidre vieillit plus vite (une étape toutes les 4 h).',
+        'Le pommeau, et un cidre qui vieillit plus vite',
+        80,
+        66,
+        'domaine',
+    ),
+    crayere: P3(
+        'crayere',
+        12,
+        'La crayère',
+        'margaux',
+        { stone: 150, tools: 10, whiteWine: 10, beam: 20 },
+        'Sous la colline, une vieille carrière de craie : la cave idéale pour le champagne. Il faut la consolider.',
+        'Les pupitres sont en place. Champagne brut et rosé : remuez-les bien, et gare aux bouteilles qui sautent !',
+        'Le champagne (à la cuverie)',
+        52,
+        20,
+        'domaine',
+    ),
+});
+
+// ---------------- Histoires des nouveaux villageois ----------------
+Object.assign(STORIES, {
+    margaux: {
+        title: 'La cuvée des Coteaux',
+        steps: [
+            ['Je veux créer une cuvée qui porte le nom du domaine. D’abord, du raisin, beaucoup de raisin.', { grape: 30 }],
+            ['Il faut goûter, encore et encore. Du fromage et du pain pour accompagner.', { cheese: 10, bread: 10 }],
+            ['La cuvée est prête : trois bouteilles de rouge pour la présenter au village.', { redWine: 3 }],
+        ],
+        end: 'La cuvée des Coteaux est née. Chaque bouteille porte un petit bout de votre ferme.',
+    },
+    anselme: {
+        title: 'Le concours des affineurs',
+        steps: [
+            ['Le concours des affineurs approche. Il me faut du bon lait pour mes essais.', { milk: 30, goatMilk: 15 }],
+            ['Mes meules ont besoin de foin propre et de caisses pour voyager.', { crate: 8, feed: 60 }],
+            ['Pour le jury : un camembert et un comté dignes de ce nom.', { camembert: 3, comte: 2 }],
+        ],
+        end: 'Médaille d’or ! Le jury a parlé de « la meilleure croûte depuis trente ans ».',
+    },
+    duval: {
+        title: 'La vente de charité',
+        steps: [
+            ['Je prépare une vente de charité pour l’école. Il me faut de jolis lots à offrir.', { jam: 10, honey: 10 }],
+            ['Des affiches et des banderoles pour annoncer la vente.', { cloth: 8, paint: 4 }],
+            ['Le clou de la vente : du champagne pour trinquer.', { champagne: 2 }],
+        ],
+        end: 'Adjugé, vendu ! L’école aura sa nouvelle bibliothèque. Merci pour ce beau geste.',
+    },
+});
+
+// ---------------- Pages du guide et bulles ----------------
+GUIDE.push(
+    {
+        id: 'cave',
+        icon: ['ui', 'cave'],
+        name: 'La cave',
+        lvl: CAVE_LVL,
+        view: 'machines',
+        text: 'Atelier | Cave. Mettez fromages, cidres, vins et champagnes en cave. À chaque étape, ils peuvent bien vieillir (leur valeur grimpe), mal vieillir (ils tournent) ou se perdre. Soignez-les et gardez le climat entre 35 et 65.',
+    },
+    {
+        id: 'auction',
+        icon: ['ui', 'gavel'],
+        name: 'Les enchères',
+        lvl: CAVE_LVL,
+        view: 'machines',
+        text: 'Sortez un lot de la cave, puis déposez-le à la prochaine vente avec un prix de réserve. Chaque enchérisseur a ses goûts et son budget. La grande vente du soir (19 h) attire les collectionneurs et propose des lots rares.',
+    },
+    {
+        id: 'domaine',
+        icon: ['ui', 'grapes'],
+        name: 'Le Domaine',
+        lvl: 40,
+        view: 'quests',
+        text: 'Chapitres 11 et 12 : le chai et le vin, la tonnellerie, la maison de l’affineur, la salle des ventes, la cidrerie et la crayère du champagne.',
+    },
+);
+const TIPS_8 = {
+    cave: {
+        icon: ['ui', 'cave'],
+        title: 'La cave',
+        text: 'Une cave s’ouvre dans l’Atelier ! Mettez-y vos fromages et votre cidre : plus ils vieillissent, plus ils valent cher… mais gare, ils peuvent tourner ou se perdre.',
+    },
+    caveStep: {
+        icon: ['ui', 'turn'],
+        title: 'Une étape de passée',
+        text: 'Un lot a passé une étape. Sortez-le quand vous voulez : plus il est vieux, plus il vaut cher, et plus le prochain pas est risqué.',
+    },
+    auction: {
+        icon: ['ui', 'gavel'],
+        title: 'La salle des ventes',
+        text: 'Déposez vos plus beaux lots à la prochaine vente. Les enchères montent en direct, et rien n’est vendu sous votre prix de réserve.',
+    },
+    champagne: {
+        icon: ['item', 'champagne'],
+        title: 'Le champagne',
+        text: 'Remuez vos bouteilles à chaque étape. Une bouteille oubliée sur son pupitre peut sauter !',
+    },
+};
+
+(function setupCave() {
+    const avail = id => {
+        if (RECIPES[id]) return RECIPES[id].lvl;
+        const a = Object.values(DB.Animals).find(x => x.prodId === id);
+        if (a) return a.reqLvl;
+        return DB.Items[id].reqLvl || 1;
+    };
+    for (const [id, [machine, name, ing, time, project]] of Object.entries(CAVE_RECIPES)) {
+        DB.Items[id] = { id, name, type: 'artisan', needProject: project };
+        const lvl = Math.max(DB.Machines[machine].reqLvl, ...Object.keys(ing).map(avail));
+        const value = Object.entries(ing).reduce((a, [k, n]) => a + ingValue(k) * n, 0);
+        DB.Items[id].sell = Math.round((value * 1.25 + time * 0.3 + 5) / 5) * 5;
+        RECIPES[id] = { id, machine, ing, time, lvl, base: lvl };
+        RECIPES[id].xp = Math.max(1, Math.round(Math.max(5, Math.round(time / 10 + DB.Items[id].sell / 30)) * BALANCE.craftXp));
+    }
+    Object.assign(DECOS, {
+        oldPress: {
+            id: 'oldPress',
+            name: 'Pressoir ancien',
+            desc: 'Trouvé à la grande vente : +30 de charme au concours',
+            cost: 0,
+            reqLvl: 1,
+            charm: 30,
+            rare: true,
+        },
+    });
+    ACHIEVEMENTS.push(
+        { id: 'caveLots', name: 'Maître de chai', desc: n => `Sortir ${fmt(n)} lots de la cave`, icon: ['ui', 'cave'], tiers: [3, 25, 120] },
+        {
+            id: 'caveLegend',
+            name: 'Légende de la cave',
+            desc: n => `Affiner ${n} lot${n > 1 ? 's' : ''} jusqu’au rang légendaire`,
+            icon: ['ui', 'star'],
+            tiers: [1, 5, 20],
+        },
+        { id: 'auctionSold', name: 'Adjugé, vendu !', desc: n => `Vendre ${fmt(n)} lots aux enchères`, icon: ['ui', 'gavel'], tiers: [2, 20, 80] },
+    );
+    BOOK.push({
+        id: 'cave',
+        name: 'Grands crus',
+        entries: () =>
+            Object.keys(CAVE_ITEMS).map(id => ({
+                key: 'cave_' + id,
+                icon: SPR.item(id),
+                name: DB.Items[id].name,
+                hint: `Sortez-en un lot au moins « ${CAVE_FAMILIES[CAVE_ITEMS[id]].ranks[3]} »`,
+                star: true,
+            })),
+    });
+    VILLAGERS.margaux.likes.push('redWine', 'roseWine');
+    VILLAGERS.anselme.likes.push('camembert', 'comte');
+    VILLAGERS.duval.likes.push('champagne', 'pommeau');
+    VILLAGERS.gaston.likes.push('bleu');
+})();
+
+// =====================================================================
 //  État de la partie : création, chargement, migrations et sauvegarde.
 // =====================================================================
 
@@ -14526,7 +15659,7 @@ function newState() {
         pagesDone: {},
         challenge: null,
         challengesDone: {},
-        income: { market: 0, stall: 0, orders: 0, trucks: 0 },
+        income: { market: 0, stall: 0, orders: 0, trucks: 0, cave: 0 },
         dayEarn: {},
         sold: {},
         decorInv: {},
@@ -14563,6 +15696,7 @@ function newState() {
         trans: { returnAt: 0 },
         fseason: null,
         farmTheme: 'none',
+        cave: { slots: [], shelves: 0, gear: {}, temp: 50, hum: 50, climAt: 0, reserve: [], cote: 0, auction: null, lastSale: null, uid: 0 },
         crow: null,
         daily: { last: '', streak: 0 },
     };
@@ -17192,7 +18326,7 @@ const LEGACY_RECIPE = { mill: 'feed', bakery: 'bread', press: 'juice', loom: 'cl
 
 const recipeUnlocked = id => {
     const r = RECIPES[id];
-    return state.level >= (r.lvl || 1) && (!r.teacher || heartsOf(r.teacher) >= r.hearts) && (!r.fete || eventActive(r.fete));
+    return state.level >= (r.lvl || 1) && (!r.teacher || heartsOf(r.teacher) >= r.hearts) && (!r.fete || eventActive(r.fete)) && storyOk(DB.Items[id]);
 };
 const canCook = id => Object.entries(RECIPES[id].ing).every(([k, n]) => state.inventory[k] >= n);
 const missingFor = id =>
@@ -17209,9 +18343,11 @@ const machineCard = i => $('machines-container').children[i];
 const recipeLockText = r =>
     state.level < (r.lvl || 1)
         ? `Niveau ${r.lvl}`
-        : r.fete
-          ? `Pendant la fête : ${EVENTS[r.fete].name}`
-          : `${VILLAGERS[r.teacher].name} · ${r.hearts} cœur${r.hearts > 1 ? 's' : ''} d'amitié`;
+        : !storyOk(DB.Items[r.id])
+          ? storyLockText(DB.Items[r.id])
+          : r.fete
+            ? `Pendant la fête : ${EVENTS[r.fete].name}`
+            : `${VILLAGERS[r.teacher].name} · ${r.hearts} cœur${r.hearts > 1 ? 's' : ''} d'amitié`;
 // Les recettes apprises auprès d'un villageois portent son portrait
 const teacherBadge = r => (r.teacher ? `<span class="rt-who" title="Recette de ${VILLAGERS[r.teacher].name}">${SPR.villager(r.teacher)}</span>` : '');
 
@@ -17395,7 +18531,9 @@ function queueRecipe(i, id, btn) {
         toast(
             r.teacher
                 ? `Recette de ${VILLAGERS[r.teacher].name} : gagnez ${r.hearts} cœur${r.hearts > 1 ? 's' : ''} d'amitié`
-                : `Recette débloquée au niveau ${r.lvl}`,
+                : !storyOk(DB.Items[id])
+                  ? storyLockText(DB.Items[id])
+                  : `Recette débloquée au niveau ${r.lvl}`,
             ico('ui', 'lock'),
         );
         sfx('error');
@@ -18823,9 +19961,10 @@ function unlocksAt(lvl) {
         if (c.lvl === lvl && c.n > 1)
             list.push({
                 html: SPR.ui('village'),
-                name: `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage' }[c.map] || 'Village'} : chapitre ${c.n}, « ${c.name} » (après le chapitre ${c.n - 1})`,
+                name: `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage', domaine: 'Domaine' }[c.map] || 'Village'} : chapitre ${c.n}, « ${c.name} » (après le chapitre ${c.n - 1})`,
             });
     });
+    if (lvl === CAVE_LVL) list.push({ html: SPR.ui('cave'), name: 'La cave : affinez fromages et cidres, et vendez-les aux enchères (Atelier | Cave)' });
     if (lvl === CHAPTERS[0].lvl) list.push({ html: SPR.ui('village'), name: 'Rénovez le village : premier chapitre (onglet Village)' });
     if (lvl === INCIDENT_LVL) list.push({ html: SPR.ui('pest'), name: 'Des imprévus surviennent à la ferme : réagissez vite !' });
     if (lvl === DOG.reqLvl) list.push({ html: SPR.ui('dog'), name: 'Un chien de ferme à adopter' });
@@ -19237,6 +20376,8 @@ function doPrestige() {
         stories: state.stories,
         fseason: state.fseason,
         farmTheme: ui.themePick || 'none',
+        // la cave garde ses étagères, son équipement et sa cote ; les lots partent avec la ferme
+        cave: { ...newState().cave, shelves: state.cave.shelves, gear: state.cave.gear, cote: state.cave.cote, uid: state.cave.uid },
         contest: state.contest,
         lastContest: state.lastContest,
         day: state.day,
@@ -19467,13 +20608,14 @@ function renderStats() {
 
     // Origine des pièces
     const inc = state.income,
-        known = inc.market + (inc.stall || 0) + inc.orders + inc.trucks;
+        known = inc.market + (inc.stall || 0) + inc.orders + inc.trucks + (inc.cave || 0);
     const other = Math.max(0, (S.earned || 0) - known);
     const src = [
         ['Étal', inc.stall || 0],
         ['Grossiste', inc.market],
         ['Commandes', inc.orders],
         ['Trains', inc.trucks],
+        ['Cave et enchères', inc.cave || 0],
         ['Autres', other],
     ];
     const tot = Math.max(
@@ -20147,6 +21289,17 @@ function todoList() {
     );
     const idle = state.machines.filter(m => !isBusy(m) && recipesOf(m.type).some(r => recipeUnlocked(r.id) && canCook(r.id))).length;
     add('machines', SPR.machine('mill'), `${idle} à l'arrêt`, idle);
+    if (caveOpen()) {
+        const care = caveCareCount();
+        if (care) list.push({ view: 'machines', pane: 'cave', icon: SPR.ui('turn'), text: `${care} lot${care > 1 ? 's' : ''} à soigner`, n: care });
+        if (!climOk() && state.cave.slots.some(Boolean))
+            list.push({ view: 'machines', pane: 'cave', icon: SPR.ui('thermo'), text: 'Climat de la cave à régler', n: 1, urgent: !!state.cave.gear.hygro });
+        const a = state.cave.auction;
+        if (a && a.lots && !a.over) list.push({ view: 'machines', pane: 'cave', icon: SPR.ui('gavel'), text: 'Enchères en direct !', n: 1, urgent: true });
+        const last = state.cave.lastSale;
+        if (last && last.results.length && Date.now() < last.until)
+            list.push({ view: 'machines', pane: 'cave', icon: SPR.ui('gavel'), text: 'Résultats de la vente', n: 1 });
+    }
 
     // imprévus en premier : ils pressent
     const inc = incidentTodo();
@@ -20226,6 +21379,12 @@ function renderTodo() {
         b.hidden = !counts[v];
         b.textContent = counts[v] || '';
     });
+    const bc = $('badge-cave');
+    if (bc) {
+        const n = list.filter(t => t.pane === 'cave').reduce((x, t) => x + t.n, 0);
+        bc.hidden = !n;
+        bc.textContent = n || '';
+    }
     if (!farmShown()) return;
     const sig = list.map(t => t.view + t.text).join('|');
     if (ui.view === 'quests' && ui.qSig !== sig) {
@@ -20263,6 +21422,7 @@ function toggleTodo() {
 
 function goTodo(view, pane) {
     if (view === 'quests') ui.qtab = pane || 'orders';
+    if (view === 'machines') ui.mtab = pane === 'cave' ? 'cave' : 'atelier';
     if (view === 'animals' && state.incident && state.incident.type === 'sick') {
         const k = state.animals.findIndex(a => a.sick);
         switchView('animals');
@@ -20284,6 +21444,10 @@ function goTodo(view, pane) {
     }
     if (view === 'farm') {
         document.querySelector('.field').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+    if (view === 'machines' && ui.view === 'machines') {
+        renderMachinesView();
         return;
     }
     switchView(view);
@@ -21209,7 +22373,7 @@ function showStory(pid) {
     $('story-next').textContent = !c
         ? "Le village et le hameau sont rénovés : l'histoire est terminée. Merci pour tout ! Prochain grand but : la Ferme légendaire (Livre de la ferme)."
         : chapterDone(p.ch) && c.map && c.map !== (p.map || 'village')
-          ? `Ce n'est pas fini : ${{ hamlet: "de l'autre côté de la rivière, un vieux hameau", port: 'au bout de la route, un petit port', alpine: 'là-haut, les alpages' }[c.map]} vous attend${state.level < c.lvl ? ` au niveau ${c.lvl}` : ''}.`
+          ? `Ce n'est pas fini : ${{ hamlet: "de l'autre côté de la rivière, un vieux hameau", port: 'au bout de la route, un petit port', alpine: 'là-haut, les alpages', domaine: 'sur les coteaux, un vieux domaine' }[c.map]} vous attend${state.level < c.lvl ? ` au niveau ${c.lvl}` : ''}.`
           : chapterDone(p.ch)
             ? `Chapitre ${p.ch} terminé ! Prochain chapitre : « ${c.name} »${state.level < c.lvl ? ` au niveau ${c.lvl}` : ''}.`
             : '';
@@ -21297,7 +22461,7 @@ function renderStory() {
                   ? `${c.intro} (${chapterProjects(c.n).filter(p => projectDone(p.id)).length} / ${chapterProjects(c.n).length})`
                   : `Ce chapitre s'ouvre au niveau ${c.lvl}.`
           }</div></div>`
-        : `<div class="chapter-head"><div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port et alpage : merci, citoyen d'honneur. Tout le canton vous adore.</div></div>`;
+        : `<div class="chapter-head"><div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port, alpage et domaine : merci, citoyen d'honneur. Tout le canton vous adore.</div></div>`;
     box.innerHTML = `<div class="board story-card">${head}${switcher}
         <div class="vmap ${party ? 'party' : ''} ${M.id}">${M.bg()}${party ? '<div class="bunting"></div>' : ''}${map}</div>
         ${projectDetail(ui.projSel)}</div>`;
@@ -21950,7 +23114,7 @@ const TIPS = {
     },
 };
 
-Object.assign(TIPS, TIPS_4, TIPS_5, TIPS_6, TIPS_7);
+Object.assign(TIPS, TIPS_4, TIPS_5, TIPS_6, TIPS_7, TIPS_8);
 
 function tip(id) {
     if (!TIPS[id] || state.tips[id] || !state.tutorial.done) return;
@@ -24353,6 +25517,809 @@ function setupSheets() {
 }
 
 // =====================================================================
+//  Meuh 6.0 : la Cave (onglet Atelier | Cave).
+//  Vieillissement par étapes, climat et soins, réserve, salle des ventes.
+// =====================================================================
+
+const caveOpen = () => state.level >= CAVE_LVL;
+const caveFam = id => CAVE_FAMILIES[CAVE_ITEMS[id]];
+const caveSlots = () => CAVE_SLOTS_START + 2 * state.cave.shelves + (projectDone('affinage') ? 4 : 0);
+const caveStep = id => (CAVE_ITEMS[id] === 'cider' && projectDone('cidery') ? 4 * CAVE_H : caveFam(id).step);
+const rankName = lot => (lot.bad ? 'Tourné' : caveFam(lot.id).ranks[lot.rank]);
+const lotUnit = lot => Math.round(DB.Items[lot.id].sell * CAVE_MULT[lot.rank] * (lot.bad ? CAVE_TURNED : 1));
+const lotValue = lot => lotUnit(lot) * lot.n;
+const caveUid = () => (state.cave.uid = (state.cave.uid || 0) + 1);
+
+function ensureCave() {
+    const c = state.cave;
+    while (c.slots.length < caveSlots()) c.slots.push(null);
+    if (!c.climAt) c.climAt = Date.now();
+    ensureAuction();
+}
+
+// ---------------- Soins ----------------
+// 1 si le lot a été soigné pendant l'étape en cours, puis baisse jusqu'à 0
+function careLevel(lot, t = Date.now()) {
+    const step = caveStep(lot.id),
+        since = t - lot.care;
+    return since <= step * 0.8 ? 1 : Math.max(0, 1 - (since - step * 0.8) / (step * 1.2));
+}
+const careNeeded = lot => !lot.bad && Date.now() - lot.care >= caveStep(lot.id) * 0.5;
+
+function careLot(i, btn) {
+    const lot = state.cave.slots[i];
+    if (!lot || !careNeeded(lot)) return;
+    lot.care = Date.now();
+    const c = centerOf(btn);
+    sfx('pop');
+    buzz(8);
+    burst(c.x, c.y, 'sparkle', 6);
+    addXp(4 + lot.rank * 3, c.x, c.y);
+    toast(caveFam(lot.id).careDone, ico('ui', caveFam(lot.id).careIcon));
+    renderCave();
+    saveState();
+}
+
+function careAll(btn) {
+    const list = state.cave.slots.map((l, i) => [l, i]).filter(([l]) => l && careNeeded(l));
+    if (!list.length) return;
+    list.forEach(([l]) => (l.care = Date.now()));
+    const c = centerOf(btn);
+    sfx('pop');
+    burst(c.x, c.y, 'sparkle', 10);
+    addXp(
+        list.reduce((a, [l]) => a + 4 + l.rank * 3, 0),
+        c.x,
+        c.y,
+    );
+    toast(`${list.length} lot${list.length > 1 ? 's' : ''} soigné${list.length > 1 ? 's' : ''}`, ico('ui', 'cave'));
+    renderCave();
+    saveState();
+}
+
+// ---------------- Climat ----------------
+const climTarget = () => {
+    const s = season().id,
+        w = state.weather;
+    const temp = { printemps: 50, ete: 74, automne: 44, hiver: 24 }[s] + (w === 'heat' ? 10 : w === 'snow' ? -8 : 0);
+    const hum = 50 + ({ rain: 22, storm: 26, heat: -22, snow: 6, cloud: 8, cloudy: 4 }[w] || 0);
+    return { temp, hum };
+};
+const climDrift = () => 4 * (state.cave.gear.hygro ? 0.6 : 1) * (state.cave.gear.vault ? 0.5 : 1);
+const inBand = v => v >= CAVE_IDEAL[0] && v <= CAVE_IDEAL[1];
+const climOff = v => Math.max(0, CAVE_IDEAL[0] - v, v - CAVE_IDEAL[1]);
+const climFit = () => Math.max(0, 1 - (climOff(state.cave.temp) + climOff(state.cave.hum)) / 40);
+const climOk = () => inBand(state.cave.temp) && inBand(state.cave.hum);
+
+function nudgeClimate(kind, dir) {
+    const c = state.cave;
+    c[kind] = Math.max(0, Math.min(100, c[kind] + dir * CAVE_NUDGE));
+    sfx('click');
+    buzz(6);
+    renderCave();
+    saveState();
+}
+
+// ---------------- Vieillissement ----------------
+function famBonus(lot) {
+    const f = CAVE_ITEMS[lot.id];
+    let b = 0;
+    if (f === 'cheese' && projectDone('affinage')) b += 0.06;
+    if ((f === 'wine' || f === 'cider') && projectDone('cooperage')) b += 0.06;
+    if ((f === 'wine' || f === 'cider') && state.cave.gear.oldBarrel) b += 0.04;
+    if (lot.boost > 0) b += 0.15;
+    return b;
+}
+
+// chances de la prochaine étape : { good, bad, rot, stay }
+function lotOdds(lot, c = careLevel(lot), f = climFit()) {
+    const champ = CAVE_ITEMS[lot.id] === 'champagne';
+    const riskMul = (1.6 - 0.8 * c) * (1.5 - 0.5 * f);
+    if (lot.rank >= 4) {
+        const rot = Math.min(0.6, CAVE_LEGEND_RISK.rot * riskMul + (champ && c < 0.3 ? 0.12 : 0)),
+            bad = Math.min(0.6, CAVE_LEGEND_RISK.bad * riskMul);
+        return { good: 0, bad, rot, stay: Math.max(0, 1 - rot - bad) };
+    }
+    const good = Math.max(0.05, Math.min(0.95, CAVE_GOOD[lot.rank] + 0.14 * (c - 0.6) + 0.12 * (f - 0.7) + famBonus(lot)));
+    const rot = Math.min(1 - good, CAVE_ROT[lot.rank] * riskMul + (champ && c < 0.3 ? 0.12 : 0));
+    return { good, bad: Math.max(0, 1 - good - rot), rot, stay: 0 };
+}
+
+// une étape : bien vieillir, tourner ou se perdre
+function stepLot(i, t, sum) {
+    const c = state.cave,
+        lot = c.slots[i];
+    const o = lotOdds(lot, careLevel(lot, t), climFit());
+    const r = Math.random();
+    lot.next += caveStep(lot.id);
+    if (lot.boost > 0) lot.boost--;
+    lot.tasted = 0;
+    if (r < o.rot) {
+        c.slots[i] = null;
+        state.inventory.fertilizer = (state.inventory.fertilizer || 0) + lot.n;
+        sum.rot.push(lot);
+        state.stats.caveRot = (state.stats.caveRot || 0) + 1;
+    } else if (r < o.rot + o.bad) {
+        lot.bad = true;
+        sum.bad.push(lot);
+    } else if (r < o.rot + o.bad + o.good) {
+        lot.rank++;
+        lot.flash = 'up';
+        sum.up.push(lot);
+    }
+}
+
+// le temps passe dans la cave (aussi pendant l'absence) : climat par tranches de 10 minutes
+function caveTick(now = Date.now()) {
+    const sum = { up: [], bad: [], rot: [] };
+    if (!caveOpen()) return sum;
+    ensureCave();
+    const c = state.cave,
+        CH = 10 * 60 * 1000;
+    let guard = 0;
+    while (c.climAt + CH <= now && guard++ < 2000) {
+        c.climAt += CH;
+        const tg = climTarget(),
+            d = climDrift();
+        ['temp', 'hum'].forEach(k => {
+            const diff = (k === 'temp' ? tg.temp : tg.hum) - c[k];
+            c[k] += Math.sign(diff) * Math.min(Math.abs(diff), d);
+        });
+        c.slots.forEach((lot, i) => {
+            let g = 0;
+            while (c.slots[i] === lot && lot && !lot.bad && lot.next <= c.climAt && g++ < 50) stepLot(i, c.climAt, sum);
+        });
+    }
+    if (guard >= 2000) c.climAt = now;
+    // les étapes échues depuis la dernière tranche de climat
+    c.slots.forEach((lot, i) => {
+        let g = 0;
+        while (c.slots[i] === lot && lot && !lot.bad && lot.next <= now && g++ < 50) stepLot(i, now, sum);
+    });
+    if (ui.started && sum.up.length + sum.bad.length + sum.rot.length) {
+        if (sum.rot.length) {
+            const l = sum.rot[0];
+            toast(
+                CAVE_ITEMS[l.id] === 'champagne'
+                    ? `Une bouteille a sauté : ${DB.Items[l.id].name.toLowerCase()} perdu (au compost)`
+                    : `${DB.Items[l.id].name} perdu en cave (au compost)`,
+                ico('ui', 'rot'),
+            );
+        } else if (sum.bad.length) toast(`${DB.Items[sum.bad[0].id].name} a mal vieilli : il a tourné`, ico('ui', 'cave'));
+        else {
+            const l = sum.up[0];
+            toast(`${DB.Items[l.id].name} : « ${rankName(l)} » !`, ico('item', l.id));
+            sfx('pop');
+        }
+        tip('caveStep');
+    }
+    return sum;
+}
+
+// ---------------- Mettre en cave, goûter, sortir ----------------
+const caveCandidates = () => Object.keys(CAVE_ITEMS).filter(id => state.inventory[id] > 0);
+
+function openCavePut(i) {
+    ui.cavePut = { slot: i, id: caveCandidates()[0] || null, n: CAVE_LOT_MAX };
+    renderCavePut();
+    openModal('cave-modal');
+    sfx('click');
+}
+
+function renderCavePut() {
+    const p = ui.cavePut,
+        list = caveCandidates();
+    if (p.id && !list.includes(p.id)) p.id = list[0] || null;
+    const max = p.id ? Math.min(CAVE_LOT_MAX, state.inventory[p.id]) : 0;
+    p.n = Math.max(1, Math.min(p.n, max));
+    $('cave-modal-body').innerHTML = list.length
+        ? `<div class="cave-pick">${list
+              .map(
+                  id =>
+                      `<button class="paper cave-pick-cell ${p.id === id ? 'on' : ''}" onclick="ui.cavePut.id='${id}'; ui.cavePut.n=${Math.min(CAVE_LOT_MAX, state.inventory[id])}; renderCavePut()"><i class="ico">${SPR.item(id)}</i><b>${DB.Items[id].name}</b><small>×${state.inventory[id]} · ${caveFam(id).name.toLowerCase()}</small></button>`,
+              )
+              .join('')}</div>
+           <div class="cave-qty"><button class="btn small" onclick="ui.cavePut.n--; renderCavePut()" ${p.n <= 1 ? 'disabled' : ''}>−</button>
+           <span><b>${p.n}</b> × ${DB.Items[p.id].name.toLowerCase()}</span>
+           <button class="btn small" onclick="ui.cavePut.n++; renderCavePut()" ${p.n >= max ? 'disabled' : ''}>+</button></div>
+           <p class="card-sub center">Une étape toutes les ${formatDuration(caveStep(p.id) / 1000)}. Valeur jeune : ${fmt(DB.Items[p.id].sell * p.n)}${COIN()}, légendaire : ${fmt(DB.Items[p.id].sell * p.n * CAVE_MULT[4])}${COIN()}</p>
+           <button class="btn green wide" onclick="putInCave(this)">Mettre en cave</button>`
+        : `<p class="card-sub center">Rien à mettre en cave pour l’instant. Fabriquez du fromage à la laiterie ou du cidre au pressoir${projectDone('chai') ? ', du vin à la cuverie' : ''}.</p>`;
+}
+
+function putInCave(btn) {
+    const p = ui.cavePut,
+        c = state.cave;
+    if (!p || !p.id || c.slots[p.slot] || state.inventory[p.id] < p.n) return;
+    state.inventory[p.id] -= p.n;
+    const now = Date.now();
+    c.slots[p.slot] = { uid: caveUid(), id: p.id, n: p.n, rank: 0, bad: false, next: now + caveStep(p.id), care: now, boost: 0, put: now };
+    const cc = centerOf(btn);
+    sfx('pop');
+    burst(cc.x, cc.y, 'sparkle', 8);
+    if (CAVE_ITEMS[p.id] === 'champagne') tip('champagne');
+    closeModal('cave-modal');
+    renderCave();
+    updateHeader();
+    saveState();
+}
+
+function tasteLot(i, btn) {
+    const lot = state.cave.slots[i];
+    if (!lot || lot.n < 2 || lot.bad || lot.tasted) return;
+    lot.n--;
+    lot.tasted = 1;
+    const c = centerOf(btn);
+    sfx('pop');
+    burst(c.x, c.y, 'sparkle', 5);
+    renderCave();
+    saveState();
+}
+
+function boostLot(i) {
+    const lot = state.cave.slots[i],
+        k = boostKind(lot);
+    if (!k || !(state.inventory[k] > 0) || lot.boost > 0) return;
+    state.inventory[k]--;
+    lot.boost = 3;
+    sfx('level');
+    toast(`${DB.Items[k].name} ajouté : 3 étapes plus sûres`, ico('item', k));
+    renderCave();
+    saveState();
+}
+const boostKind = lot =>
+    !lot || lot.bad ? null : CAVE_ITEMS[lot.id] === 'cheese' ? 'ferment' : ['wine', 'champagne'].includes(CAVE_ITEMS[lot.id]) ? 'yeast' : null;
+
+function takeOut(i, btn) {
+    const c = state.cave,
+        lot = c.slots[i];
+    if (!lot) return;
+    c.slots[i] = null;
+    c.reserve.push({ uid: lot.uid, id: lot.id, n: lot.n, rank: lot.rank, bad: lot.bad });
+    state.stats.caveLots = (state.stats.caveLots || 0) + 1;
+    if (!lot.bad && lot.rank >= 3) collect('cave_' + lot.id);
+    if (!lot.bad && lot.rank >= 4) {
+        state.stats.caveLegend = (state.stats.caveLegend || 0) + 1;
+        addPhoto('item', lot.id, `${DB.Items[lot.id].name} légendaire`, 'Sorti de la cave');
+    }
+    const cc = centerOf(btn);
+    sfx(lot.rank >= 3 && !lot.bad ? 'level' : 'harvest');
+    burst(cc.x, cc.y, 'sparkle', 4 + lot.rank * 3);
+    addXp(Math.round(lotValue(lot) * (lot.bad ? 0.01 : 0.04)), cc.x, cc.y);
+    renderCave();
+    saveState();
+}
+
+// ---------------- Réserve : négociant ou enchères ----------------
+function sellNegociant(uid, btn) {
+    const c = state.cave,
+        k = c.reserve.findIndex(l => l.uid === uid);
+    if (k < 0) return;
+    const lot = c.reserve[k];
+    c.reserve.splice(k, 1);
+    const gain = Math.round(lotValue(lot) * NEGOCIANT);
+    earn(gain, btn);
+    state.income.cave = (state.income.cave || 0) + gain;
+    sfx('coin');
+    renderCave();
+    updateHeader();
+    saveState();
+}
+
+// ---------------- Salle des ventes ----------------
+const hallOpen = () => projectDone('auctionHall');
+const nextBoundary = every => Math.ceil((Date.now() + 1) / every) * every;
+const nextEvening = () => {
+    const d = new Date(Date.now());
+    d.setHours(AUCTION_BIG_HOUR, 0, 0, 0);
+    while (d.getTime() <= Date.now()) d.setDate(d.getDate() + 1);
+    return d.getTime();
+};
+
+function ensureAuction() {
+    const c = state.cave;
+    if (c.auction && !c.auction.over) return;
+    const small = nextBoundary(AUCTION_SMALL_EVERY);
+    const big = hallOpen() ? nextEvening() : Infinity;
+    const isBig = big <= small;
+    c.auction = {
+        big: isBig,
+        startAt: isBig ? big : small,
+        deposits: [],
+        finds: isBig ? pickFinds() : [],
+        lots: null,
+        over: false,
+        results: [],
+    };
+}
+
+function pickFinds() {
+    const pool = Object.keys(AUCTION_FINDS).filter(
+        k => !(AUCTION_FINDS[k].once && (state.cave.gear[k] || state.decorInv[k] || state.grid.some(p => p.deco === k))),
+    );
+    const out = [];
+    while (out.length < 3 && pool.length) out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+    return out;
+}
+const findValue = k => (k === 'vintage' ? Math.round(DB.Items.redWine.sell * CAVE_MULT[3] * 3) : Math.round(AUCTION_FINDS[k].value * (1 + state.level * 0.02)));
+
+const depositMax = () => (state.cave.auction.big ? AUCTION_BIG_LOTS : AUCTION_SMALL_LOTS);
+
+function depositLot(uid) {
+    const c = state.cave,
+        a = c.auction;
+    if (a.lots || a.over || a.deposits.length >= depositMax()) return;
+    const k = c.reserve.findIndex(l => l.uid === uid);
+    if (k < 0) return;
+    const lot = c.reserve.splice(k, 1)[0];
+    a.deposits.push({ lot, reserve: Math.round((lotValue(lot) * 0.8) / 10) * 10 });
+    sfx('click');
+    tip('auction');
+    renderCave();
+    saveState();
+}
+
+function withdrawLot(uid) {
+    const a = state.cave.auction;
+    if (a.lots) return;
+    const k = a.deposits.findIndex(d => d.lot.uid === uid);
+    if (k < 0) return;
+    state.cave.reserve.push(a.deposits.splice(k, 1)[0].lot);
+    sfx('click');
+    renderCave();
+    saveState();
+}
+
+function setReserve(uid, dir) {
+    const d = state.cave.auction.deposits.find(x => x.lot.uid === uid);
+    if (!d || state.cave.auction.lots) return;
+    const v = lotValue(d.lot);
+    d.reserve = Math.round(Math.max(v * 0.5, Math.min(v * 2, d.reserve + dir * v * 0.1)) / 10) * 10;
+    sfx('click');
+    renderCave();
+    saveState();
+}
+
+// qui vient à la vente
+function bidderPool(big) {
+    return Object.entries(BIDDERS)
+        .filter(([id, b]) => (b.big ? big : !b.villager || !VILLAGERS[id].ch || chapterDone(VILLAGERS[id].ch - 1)))
+        .map(([id]) => id);
+}
+const bidderBudget = id => (20000 + state.level * 3000) * BIDDERS[id].budget;
+
+function makeNpcs(fam, value, big) {
+    const pool = bidderPool(big).sort(() => Math.random() - 0.5);
+    const want = (big ? 3 : 2) + Math.floor(Math.random() * 2) + Math.floor(state.cave.cote / 40);
+    const cote = 1 + state.cave.cote / 200;
+    return pool
+        .filter(id => BIDDERS[id].taste[fam] || Math.random() < 0.35)
+        .slice(0, want)
+        .map(id => ({
+            who: id,
+            max: Math.min(bidderBudget(id), value * (BIDDERS[id].taste[fam] || 1) * (0.85 + Math.random() * 0.45) * cote * (big ? 1.15 : 1)),
+        }));
+}
+
+function startAuction(a) {
+    const now = a.startAt,
+        live = a.big ? AUCTION_BIG_LIVE : AUCTION_SMALL_LIVE;
+    a.lots = [
+        ...a.deposits.map(d => {
+            const v = lotValue(d.lot);
+            return {
+                kind: 'sell',
+                lot: d.lot,
+                reserve: d.reserve,
+                value: v,
+                price: Math.round(Math.max(d.reserve * 0.7, v * 0.5) / 10) * 10,
+                leader: null,
+                npcs: makeNpcs(d.lot.bad ? 'none' : CAVE_ITEMS[d.lot.id], d.lot.bad ? v * 0.7 : v, a.big),
+                next: now + 1500 + Math.random() * 4000,
+                end: now + live,
+                bids: 0,
+            };
+        }),
+        ...a.finds.map(k => {
+            const v = findValue(k);
+            return {
+                kind: 'buy',
+                find: k,
+                value: v,
+                price: Math.round((v * 0.6) / 10) * 10,
+                leader: null,
+                // les collectionneurs s'emballent moins pour les lots rares que pour vos grands crus
+                npcs: makeNpcs(k === 'ferment' ? 'cheese' : k === 'yeast' ? 'champagne' : 'wine', v * 0.8, true),
+                next: now + 2000 + Math.random() * 5000,
+                end: now + live,
+                bids: 0,
+            };
+        }),
+    ];
+    a.simAt = now;
+    if (ui.started && Date.now() - now < 10000) {
+        toast(a.big ? 'La grande vente commence !' : 'La vente aux enchères commence !', ico('ui', 'gavel'));
+        sfx('level');
+    }
+}
+
+// une seconde de vente : les enchérisseurs surenchérissent tant que leur limite le permet
+function auctionStep(a, t) {
+    a.lots.forEach(l => {
+        if (l.done || t < l.next) return;
+        const step = l.leader ? 1 + 0.05 + Math.random() * 0.06 : 1;
+        const ask = Math.round((l.price * step) / 10) * 10;
+        const can = l.npcs.filter(n => n.who !== l.leader && n.max >= ask);
+        if (!can.length) {
+            l.next = Infinity;
+            return;
+        }
+        // les plus motivés enchérissent plus souvent
+        can.sort((x, y) => y.max - x.max);
+        const n = can[Math.random() < 0.6 ? 0 : Math.floor(Math.random() * can.length)];
+        l.price = ask;
+        l.leader = n.who;
+        l.bids++;
+        l.flash = t;
+        l.next = t + 1500 + Math.random() * 3500;
+        if (l.end - t < 5000) l.end = t + 5000; // une enchère de dernière seconde prolonge la vente
+    });
+    a.lots.forEach(l => {
+        if (!l.done && t >= l.end) closeLot(a, l);
+    });
+}
+
+function closeLot(a, l) {
+    l.done = true;
+    const c = state.cave;
+    if (l.kind === 'sell') {
+        if (l.leader && l.price >= l.reserve) {
+            l.sold = true;
+            earn(l.price, null);
+            state.income.cave = (state.income.cave || 0) + l.price;
+            state.stats.auctionSold = (state.stats.auctionSold || 0) + 1;
+            c.cote = Math.max(0, Math.min(100, c.cote + (l.lot.bad ? -3 : l.lot.rank * 2)));
+            addXp(Math.round(l.price / 60));
+            if (BIDDERS[l.leader].villager && state.villagers[l.leader]) addFriendship(l.leader, 2 + l.lot.rank, null);
+        } else c.reserve.push(l.lot);
+    } else if (l.leader === 'you') {
+        if (state.money >= l.price) {
+            spend(l.price);
+            giveFind(l.find);
+            l.won = true;
+        } else l.leader = null;
+    }
+    a.results.push(l);
+}
+
+function giveFind(k) {
+    const c = state.cave;
+    if (k === 'ferment' || k === 'yeast') state.inventory[k] = (state.inventory[k] || 0) + 2;
+    else if (k === 'oldBarrel') c.gear.oldBarrel = true;
+    else if (k === 'oldPress') state.decorInv.oldPress = (state.decorInv.oldPress || 0) + 1;
+    else if (k === 'vintage') c.reserve.push({ uid: caveUid(), id: 'redWine', n: 3, rank: 3, bad: false });
+}
+
+function auctionTick(now = Date.now()) {
+    if (!caveOpen()) return false;
+    ensureCave();
+    const a = state.cave.auction;
+    if (a.over) return false;
+    if (!a.lots) {
+        if (now < a.startAt) return false;
+        if (!a.deposits.length && !a.finds.length) {
+            a.over = true;
+            ensureAuction();
+            return true;
+        }
+        startAuction(a);
+    }
+    let guard = 0;
+    while (a.simAt + 1000 <= now && guard++ < 4000 && !a.lots.every(l => l.done)) {
+        a.simAt += 1000;
+        auctionStep(a, a.simAt);
+    }
+    if (a.lots.every(l => l.done)) {
+        a.over = true;
+        // les résultats restent affichés une demi-heure, la vente suivante s'ouvre aussitôt
+        state.cave.lastSale = { big: a.big, results: a.results, until: now + 30 * 60 * 1000 };
+        const sold = a.results.filter(l => l.sold);
+        if (ui.started && Date.now() - a.simAt < 60000) {
+            sfx('level');
+            toast(
+                sold.length
+                    ? `Adjugé ! ${sold.length} lot${sold.length > 1 ? 's' : ''} vendu${sold.length > 1 ? 's' : ''} pour ${fmt(sold.reduce((x, l) => x + l.price, 0))} pièces`
+                    : 'Vente close : aucun lot vendu',
+                ico('ui', 'gavel'),
+            );
+        }
+        a.deposits = [];
+        ensureAuction();
+    }
+    return true;
+}
+
+function playerBid(k, btn) {
+    const a = state.cave.auction,
+        l = a.lots && a.lots[k];
+    if (!l || l.done || l.kind !== 'buy' || l.leader === 'you') return;
+    const ask = l.leader ? Math.round((l.price * 1.08) / 10) * 10 : l.price;
+    if (state.money < ask) {
+        toast("Pas assez d'argent pour enchérir", ico('ui', 'coin'));
+        sfx('error');
+        return;
+    }
+    l.price = ask;
+    l.leader = 'you';
+    l.bids++;
+    l.flash = Date.now();
+    l.next = Date.now() + 1500 + Math.random() * 2500;
+    if (l.end - Date.now() < 8000) l.end = Date.now() + 8000;
+    const c = centerOf(btn);
+    sfx('click');
+    buzz(10);
+    burst(c.x, c.y, 'sparkle', 5);
+    renderAuction();
+    saveState();
+}
+
+function dismissAuction() {
+    state.cave.lastSale = null;
+    renderCave();
+    saveState();
+}
+
+// ---------------- Équipement ----------------
+function buyShelf(btn) {
+    const k = state.cave.shelves,
+        cost = CAVE_SHELVES[k];
+    if (cost === undefined || state.money < cost) return;
+    spend(cost);
+    state.cave.shelves++;
+    ensureCave();
+    const c = centerOf(btn);
+    sfx('level');
+    burst(c.x, c.y, 'sparkle', 10);
+    toast('Nouvelle étagère : +2 places en cave', ico('ui', 'cave'));
+    renderCave();
+    updateHeader();
+    saveState();
+}
+
+function buyCaveGear(k, btn) {
+    const g = CAVE_GEAR[k];
+    if (state.cave.gear[k] || state.money < g.cost || (g.mats && !hasMats(g.mats))) return;
+    spend(g.cost);
+    if (g.mats) Object.entries(g.mats).forEach(([m, n]) => (state.inventory[m] -= n));
+    state.cave.gear[k] = true;
+    const c = centerOf(btn);
+    sfx('level');
+    burst(c.x, c.y, 'sparkle', 10);
+    toast(`${g.name} installé`, ico('ui', g.icon));
+    renderCave();
+    updateHeader();
+    saveState();
+}
+
+// ---------------- Onglet Atelier | Cave ----------------
+function switchMtab(t) {
+    if (ui.mtab === t) return;
+    ui.mtab = t;
+    sfx('click');
+    $('game-area').scrollTop = 0;
+    renderMachinesView();
+}
+
+function renderMachinesView() {
+    const cave = ui.mtab === 'cave' && caveOpen();
+    $('mtabs').hidden = !caveOpen();
+    document.querySelectorAll('#mtabs .qseg').forEach(b => b.classList.toggle('active', b.dataset.m === (cave ? 'cave' : 'atelier')));
+    $('atelier-pane').hidden = cave;
+    $('cave-pane').hidden = !cave;
+    if (cave) renderCave();
+    else renderMachines();
+}
+
+// ---------------- Affichage de la cave ----------------
+const gauge = (kind, label, icon) => {
+    const v = Math.round(state.cave[kind]),
+        ok = inBand(v);
+    const dir = v < CAVE_IDEAL[0] ? 1 : v > CAVE_IDEAL[1] ? -1 : 0;
+    const act = kind === 'temp' ? (dir > 0 ? 'Réchauffer' : 'Rafraîchir') : dir > 0 ? 'Humidifier' : 'Assécher';
+    return `<div class="gauge ${ok ? 'ok' : 'off'}"><i class="ico">${SPR.ui(icon)}</i><div class="gauge-main"><div class="gauge-label">${label}<b>${ok ? 'idéal' : dir > 0 ? 'trop bas' : 'trop haut'}</b></div>
+        <div class="gauge-bar"><span class="band" style="left:${CAVE_IDEAL[0]}%;width:${CAVE_IDEAL[1] - CAVE_IDEAL[0]}%"></span><span class="needle" style="left:${v}%"></span></div></div>
+        <button class="btn small ${ok ? '' : 'blue'}" onclick="nudgeClimate('${kind}', ${dir || (v < 50 ? 1 : -1)})">${ok ? (v < 50 ? (kind === 'temp' ? 'Réchauffer' : 'Humidifier') : kind === 'temp' ? 'Rafraîchir' : 'Assécher') : act}</button></div>`;
+};
+
+const oddsBar = o =>
+    `<div class="odds"><span class="g" style="flex:${o.good + o.stay}"></span><span class="b" style="flex:${o.bad}"></span><span class="r" style="flex:${o.rot}"></span></div>
+     <div class="odds-txt"><span>${o.good ? `${Math.round(o.good * 100)} % mieux` : `${Math.round(o.stay * 100)} % stable`}</span><span>${Math.round(o.bad * 100)} % tourne</span><span>${Math.round(o.rot * 100)} % perdu</span></div>`;
+
+const trend = o =>
+    o.rank >= 4 ? 'au sommet' : o.good >= 0.7 ? "s'annonce très bien" : o.good >= 0.5 ? 'prometteur' : o.good >= 0.35 ? 'fragile' : 'très risqué';
+
+function lotCard(lot, i) {
+    if (!lot) return `<button class="cave-slot empty" onclick="openCavePut(${i})"><b>+</b><span>Mettre en cave</span></button>`;
+    const fam = caveFam(lot.id),
+        step = caveStep(lot.id),
+        left = Math.max(0, (lot.next - Date.now()) / 1000);
+    const o = lotOdds(lot);
+    const need = careNeeded(lot),
+        bk = boostKind(lot);
+    const stars = Array.from({ length: 4 }, (_, k) => `<i class="${k < lot.rank ? 'on' : ''}"></i>`).join('');
+    return `<div class="cave-slot board ${lot.bad ? 'bad' : ''} r${lot.rank} ${lot.flash ? 'flash' : ''}" data-uid="${lot.uid}">
+        <div class="cs-top"><i class="ico cs-ico">${SPR.item(lot.id)}</i><div class="cs-main"><div class="cs-name">${DB.Items[lot.id].name} <small>×${lot.n}</small></div>
+        <div class="cs-rank">${rankName(lot)}</div><div class="cs-stars">${stars}</div></div></div>
+        <div class="cs-value">${fmt(lotValue(lot))}${COIN()}</div>
+        ${
+            lot.bad
+                ? '<div class="card-sub">Il ne vieillira plus : sortez-le.</div>'
+                : `<div class="cs-timer"><div class="qbar"><div style="width:${Math.min(100, (1 - left / (step / 1000)) * 100)}%"></div></div><span id="cs-t-${lot.uid}">${formatDuration(left)}</span></div>
+                   ${lot.tasted ? oddsBar(o) : `<div class="card-sub">${lot.rank >= 4 ? 'Légendaire : il ne gagnera plus rien' : `${need ? 'À soigner pour bien vieillir' : 'Goûtez-le pour connaître ses chances'}`}</div>`}`
+        }
+        <div class="cs-actions">
+            ${need ? `<button class="btn small gold" onclick="careLot(${i}, this)">${ico('ui', fam.careIcon)}${fam.care}</button>` : ''}
+            ${!lot.bad && lot.n >= 2 && !lot.tasted ? `<button class="btn small" onclick="tasteLot(${i}, this)">${ico('ui', 'taste')}Goûter</button>` : ''}
+            ${bk && state.inventory[bk] > 0 && !lot.boost ? `<button class="btn small" onclick="boostLot(${i})" aria-label="${DB.Items[bk].name}">${ico('item', bk)}+15 %</button>` : ''}
+            <button class="btn small ${lot.bad || lot.rank >= 4 ? 'green' : ''}" onclick="takeOut(${i}, this)">Sortir</button>
+        </div>
+        ${lot.boost ? `<span class="cs-boost">${ico('item', bk || 'ferment')}${lot.boost}</span>` : ''}
+    </div>`;
+}
+
+function renderCave() {
+    const box = $('cave-container');
+    if (!box || !caveOpen()) return;
+    ensureCave();
+    const c = state.cave;
+    const needCare = c.slots.filter(l => l && careNeeded(l)).length;
+    const nextShelf = CAVE_SHELVES[c.shelves];
+    box.innerHTML = `
+    <div class="board cave-clim"><div class="event-head">${ico('ui', 'cave', 'ico ev-ico')}<div class="card-main"><div class="card-title">La cave</div>
+        <div class="card-sub">Cote de la cave : <b>${Math.round(c.cote)}</b> / 100${climOk() ? '' : ' · le climat abîme vos lots'}</div></div>
+        ${needCare > 1 ? `<button class="btn small gold" onclick="careAll(this)">Tout soigner (${needCare})</button>` : ''}</div>
+        ${gauge('temp', 'Température', 'thermo')}${gauge('hum', 'Humidité', 'hygro')}</div>
+    <div class="cave-grid">${c.slots.map(lotCard).join('')}
+        ${nextShelf !== undefined ? `<button class="cave-slot locked" onclick="buyShelf(this)" ${state.money < nextShelf ? 'disabled' : ''}>${ico('ui', 'shelf')}<span>Étagère : +2 places</span><b>${fmt(nextShelf)}${COIN()}</b></button>` : ''}
+    </div>
+    ${renderReserveHtml()}
+    <div id="auction-box">${auctionHtml()}</div>
+    <h3 class="section-title">Équipement</h3>
+    <div class="list">${Object.entries(CAVE_GEAR)
+        .map(([k, g]) =>
+            shopCard(
+                SPR.ui(g.icon),
+                g.name,
+                g.desc,
+                c.gear[k]
+                    ? `<span class="meta now">${ico('ui', 'check')}installé</span>`
+                    : `<button class="btn small green" onclick="buyCaveGear('${k}', this)" ${state.money >= g.cost && (!g.mats || hasMats(g.mats)) ? '' : 'disabled'}>${fmt(g.cost)}${COIN()}${g.mats ? matChips(g.mats) : ''}</button>`,
+                false,
+            ),
+        )
+        .join('')}
+        ${c.gear.oldBarrel ? shopCard(SPR.ui('barrel'), 'Fût centenaire', AUCTION_FINDS.oldBarrel.desc, `<span class="meta now">${ico('ui', 'check')}à vous</span>`, false) : ''}
+    </div>`;
+    c.slots.forEach(l => l && (l.flash = 0));
+}
+
+function renderReserveHtml() {
+    const c = state.cave,
+        a = c.auction,
+        canDep = !a.lots && !a.over && a.deposits.length < depositMax();
+    if (!c.reserve.length) return '';
+    return `<h3 class="section-title">Réserve</h3><div class="list">${c.reserve
+        .map(
+            l => `<div class="paper reserve-row ${l.bad ? 'bad' : ''}"><i class="ico">${SPR.item(l.id)}</i><div class="card-main"><div class="card-title">${DB.Items[l.id].name} ×${l.n}</div>
+        <div class="card-sub">${rankName(l)} · vaut ${fmt(lotValue(l))}${COIN()}</div></div>
+        <div class="reserve-btns"><button class="btn small" onclick="sellNegociant(${l.uid}, this)">Négociant ${fmt(lotValue(l) * NEGOCIANT)}${COIN()}</button>
+        <button class="btn small gold" onclick="depositLot(${l.uid})" ${canDep ? '' : 'disabled'}>${ico('ui', 'gavel')}Aux enchères</button></div></div>`,
+        )
+        .join('')}</div>`;
+}
+
+const bidderName = id => (id === 'you' ? 'Vous' : BIDDERS[id] ? BIDDERS[id].name : '');
+const bidderIco = id => (id === 'you' ? SPR.ui('star') : SPR.villager(id));
+
+function auctionHtml() {
+    const a = state.cave.auction,
+        last = state.cave.lastSale;
+    const title = a.big ? 'La grande vente du soir' : 'Vente aux enchères';
+    return (last && Date.now() < last.until ? lastSaleHtml(last) : '') + nextSaleHtml(a, title);
+}
+
+function lastSaleHtml(last) {
+    return `<div class="board auction-card done"><div class="event-head">${ico('ui', 'gavel', 'ico ev-ico')}<div class="card-main"><div class="card-title">${last.big ? 'La grande vente' : 'La vente'} : résultats</div></div></div>
+        <div class="list">${last.results
+            .map(l =>
+                l.kind === 'sell'
+                    ? `<div class="paper auc-res ${l.sold ? 'sold' : ''}"><i class="ico">${SPR.item(l.lot.id)}</i><div class="card-main"><b>${DB.Items[l.lot.id].name} ×${l.lot.n}</b><small>${l.sold ? `Adjugé à ${bidderName(l.leader)}` : 'Invendu : revenu en réserve'}</small></div>${l.sold ? `<b class="gold">${fmt(l.price)}${COIN()}</b>` : ''}</div>`
+                    : `<div class="paper auc-res ${l.won ? 'sold' : ''}"><i class="ico">${sprite(AUCTION_FINDS[l.find].icon[0], AUCTION_FINDS[l.find].icon[1])}</i><div class="card-main"><b>${AUCTION_FINDS[l.find].name}</b><small>${l.won ? 'Pour vous !' : l.leader ? `Parti chez ${bidderName(l.leader)}` : 'Sans preneur'}</small></div>${l.won ? `<b>−${fmt(l.price)}${COIN()}</b>` : ''}</div>`,
+            )
+            .join('')}</div>
+        <button class="btn wide" onclick="dismissAuction()">Vu !</button></div>`;
+}
+
+function nextSaleHtml(a, title) {
+    if (a.lots) {
+        return `<div class="board auction-card live"><div class="event-head">${ico('ui', 'gavel', 'ico ev-ico')}<div class="card-main"><div class="card-title">${title} : en direct</div><div class="card-sub">Les enchères montent… Une offre de dernière seconde prolonge la vente.</div></div></div>
+        <div class="list">${a.lots.map((l, k) => liveLotHtml(l, k)).join('')}</div></div>`;
+    }
+    const left = Math.max(0, (a.startAt - Date.now()) / 1000);
+    return `<div class="board auction-card"><div class="event-head">${ico('ui', 'gavel', 'ico ev-ico')}<div class="card-main"><div class="card-title">${title}</div>
+        <div class="card-sub">Dans <b id="auc-timer">${formatDuration(left)}</b> · jusqu’à ${depositMax()} lots${a.big ? ', collectionneurs et lots rares' : ''}</div></div></div>
+        ${
+            a.deposits.length
+                ? `<div class="list">${a.deposits
+                      .map(
+                          d => `<div class="paper dep-row"><i class="ico">${SPR.item(d.lot.id)}</i><div class="card-main"><div class="card-title">${DB.Items[d.lot.id].name} ×${d.lot.n}</div>
+                <div class="card-sub">${rankName(d.lot)} · estimé ${fmt(lotValue(d.lot))}${COIN()}</div>
+                <div class="dep-reserve"><button class="btn small" onclick="setReserve(${d.lot.uid}, -1)">−</button><span>Réserve <b>${fmt(d.reserve)}</b>${COIN()}</span><button class="btn small" onclick="setReserve(${d.lot.uid}, 1)">+</button></div></div>
+                <button class="btn small" onclick="withdrawLot(${d.lot.uid})" aria-label="Retirer">${CLOSE_SVG}</button></div>`,
+                      )
+                      .join('')}</div>`
+                : `<p class="card-sub">Sortez un lot de la cave, puis touchez « Aux enchères » dans la réserve.</p>`
+        }
+        ${a.finds.length ? `<div class="card-sub"><b>Lots rares à cette vente :</b> ${a.finds.map(k => AUCTION_FINDS[k].name.toLowerCase()).join(', ')}</div>` : ''}
+        <div class="card-sub bidders">${bidderPool(a.big)
+            .slice(0, 8)
+            .map(id => `<i class="ico" title="${BIDDERS[id].name}">${SPR.villager(id)}</i>`)
+            .join('')}</div></div>`;
+}
+
+function liveLotHtml(l, k) {
+    const name = l.kind === 'sell' ? `${DB.Items[l.lot.id].name} ×${l.lot.n}` : AUCTION_FINDS[l.find].name;
+    const icon = l.kind === 'sell' ? SPR.item(l.lot.id) : sprite(AUCTION_FINDS[l.find].icon[0], AUCTION_FINDS[l.find].icon[1]);
+    const left = Math.max(0, (l.end - Date.now()) / 1000);
+    const sub =
+        l.kind === 'sell'
+            ? `${rankName(l.lot)} · réserve ${fmt(l.reserve)}${COIN()}${l.leader && l.price < l.reserve ? ' (pas encore atteinte)' : ''}`
+            : AUCTION_FINDS[l.find].desc;
+    return `<div class="paper live-lot ${l.done ? 'done' : ''} ${l.flash && Date.now() - l.flash < 900 ? 'bump' : ''}"><i class="ico">${icon}</i>
+        <div class="card-main"><div class="card-title">${name}</div><div class="card-sub">${sub}</div>
+        <div class="live-row">${l.leader ? `<i class="ico">${bidderIco(l.leader)}</i><span>${bidderName(l.leader)}</span>` : '<span>Pas encore d’offre</span>'}<b class="live-price">${fmt(l.price)}${COIN()}</b></div></div>
+        <div class="live-side">${l.done ? '<b>Adjugé</b>' : `<span class="timer-pill">${ico('ui', 'clock')}${Math.ceil(left)} s</span>`}
+        ${l.kind === 'buy' && !l.done ? `<button class="btn small ${l.leader === 'you' ? '' : 'gold'}" onclick="playerBid(${k}, this)" ${l.leader === 'you' ? 'disabled' : ''}>${l.leader === 'you' ? 'En tête' : `Enchérir ${fmt(l.leader ? Math.round((l.price * 1.08) / 10) * 10 : l.price)}`}</button>` : ''}</div></div>`;
+}
+
+function renderAuction() {
+    const b = $('auction-box');
+    if (b) b.innerHTML = auctionHtml();
+}
+
+// chaque seconde, sur l'écran de la cave
+function updateCaveTimers() {
+    if (ui.view !== 'machines' || ui.mtab !== 'cave' || !caveOpen()) return;
+    const a = state.cave.auction;
+    if (a.lots && !a.over) renderAuction();
+    else {
+        const t = $('auc-timer');
+        if (t) t.textContent = formatDuration(Math.max(0, (a.startAt - Date.now()) / 1000));
+    }
+    state.cave.slots.forEach(l => {
+        const el = l && $('cs-t-' + l.uid);
+        if (el) el.textContent = formatDuration(Math.max(0, (l.next - Date.now()) / 1000));
+    });
+}
+
+// pour la liste « À faire »
+const caveCareCount = () => (caveOpen() ? state.cave.slots.filter(l => l && careNeeded(l)).length : 0);
+
+// ---------------- Carte du Domaine ----------------
+const VMAP_BG5 = `<svg class="vmap-bg" viewBox="0 0 160 110" preserveAspectRatio="none" aria-hidden="true">
+    <rect width="160" height="110" fill="#bfe6fb"/>
+    <path d="M0 40 Q40 18 80 30 Q120 42 160 22 L160 110 L0 110Z" fill="#b7d97a"/>
+    <path d="M0 62 Q50 44 100 56 Q130 62 160 50 L160 110 L0 110Z" fill="#9bd96f"/>
+    <g stroke="#5e8f2e" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".75">
+        <path d="M6 48 Q40 30 76 40"/><path d="M8 54 Q42 36 78 46"/><path d="M96 40 Q128 30 156 26"/><path d="M98 46 Q130 36 158 32"/>
+    </g>
+    <g fill="#7a3f8f" opacity=".8"><circle cx="20" cy="44" r="1.3"/><circle cx="44" cy="38" r="1.3"/><circle cx="62" cy="42" r="1.3"/><circle cx="118" cy="36" r="1.3"/><circle cx="140" cy="30" r="1.3"/></g>
+    <path d="M10 104 Q60 82 90 92 Q120 100 150 80" stroke="#f2d6a2" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M40 18 Q52 6 64 18Z" fill="#e9e2d0" opacity=".8"/>
+</svg>`;
+STORY_MAPS.push({ id: 'domaine', name: 'Le domaine', open: () => chapterDone(10), bg: () => VMAP_BG5, party: 'crayere' });
+
+// =====================================================================
 //  Boucle principale : chaque sous-système avance d'une seconde.
 //  Un sous-système qui plante est isolé et n'arrête pas les autres.
 // =====================================================================
@@ -24514,7 +26481,22 @@ function tickProgress() {
     return false;
 }
 
-const SYSTEMS = [tickClock, tickWorld, tickFarm, tickAnimals, tickWorkshop, tickDeliveries, tickProgress];
+// la cave : vieillissement, climat et salle des ventes
+function tickCave() {
+    if (!caveOpen()) return false;
+    tip('cave');
+    const s = caveTick();
+    auctionTick();
+    const a = state.cave.auction;
+    const sig = `${a.startAt}|${a.over}|${!!a.lots}`;
+    const onCave = ui.view === 'machines' && ui.mtab === 'cave';
+    if (onCave && (s.up.length + s.bad.length + s.rot.length || ui.aucSig !== sig)) renderCave();
+    else updateCaveTimers();
+    ui.aucSig = sig;
+    return false;
+}
+
+const SYSTEMS = [tickClock, tickWorld, tickFarm, tickAnimals, tickWorkshop, tickDeliveries, tickCave, tickProgress];
 
 function gameTick() {
     ui.tick = (ui.tick || 0) + 1;
@@ -24541,6 +26523,10 @@ function calculateOfflineProgress() {
     honeyTick(elapsed);
     growTick(elapsed);
     const transBack = transTick();
+    const caveSum = caveTick();
+    const aucBefore = caveOpen() && state.cave.auction && !state.cave.auction.over;
+    auctionTick();
+    const aucDone = aucBefore && state.cave.auction.over ? state.cave.auction.results.filter(l => l.sold) : null;
     // les imprévus attendent votre retour
     if (state.incident && state.incident.until) state.incident.until += elapsed * 1000;
     report.crops += ghOffline(elapsed);
@@ -24618,6 +26604,23 @@ function calculateOfflineProgress() {
             : '') +
         (neigh ? row(ico('ui', 'heart'), `${neigh} voisin${neigh > 1 ? 's' : ''} à aider`) : '') +
         (transBack ? row(ico('ui', 'mountain'), 'Le troupeau est redescendu des estives avec du lait d’alpage') : '') +
+        (caveSum.up.length ? row(ico('ui', 'cave'), `En cave, ${caveSum.up.length} lot${caveSum.up.length > 1 ? 's ont' : ' a'} bien vieilli`) : '') +
+        (caveSum.bad.length ? row(ico('ui', 'cave'), `${caveSum.bad.length} lot${caveSum.bad.length > 1 ? 's ont' : ' a'} tourné en cave`) : '') +
+        (caveSum.rot.length
+            ? row(
+                  ico('ui', 'rot'),
+                  `${caveSum.rot.length} lot${caveSum.rot.length > 1 ? 's' : ''} perdu${caveSum.rot.length > 1 ? 's' : ''} en cave (au compost)`,
+              )
+            : '') +
+        (caveCareCount() ? row(ico('ui', 'turn'), `${caveCareCount()} lot${caveCareCount() > 1 ? 's' : ''} à soigner en cave`) : '') +
+        (aucDone
+            ? row(
+                  ico('ui', 'gavel'),
+                  aucDone.length
+                      ? `Vente aux enchères : ${aucDone.length} lot${aucDone.length > 1 ? 's' : ''} adjugé${aucDone.length > 1 ? 's' : ''} pour ${fmt(aucDone.reduce((x, l) => x + l.price, 0))} pièces`
+                      : 'Vente aux enchères close : rien de vendu',
+              )
+            : '') +
         (netReady() ? row(ico('ui', 'net'), 'Le filet de pêche est plein') : '') +
         (state.boat.status === 'here' ? row(ico('ui', 'boat'), 'Un cargo attend au port') : '') +
         (state.truck.status === 'here' ? row(ico('ui', 'trainIcon'), 'Le train de marchandises est en gare') : '') +
@@ -24677,7 +26680,7 @@ function renderAll() {
             renderTrans();
             break;
         case 'machines':
-            renderMachines();
+            renderMachinesView();
             break;
         case 'quests':
             renderQuestsView();
@@ -24773,7 +26776,7 @@ function updateProgressBars() {
             const f = ui.animalEls[i] && ui.animalEls[i].querySelector('.pfill');
             if (f) f.style.width = `${Math.min(100, (a.prodProgress / animalTime(a)) * 100)}%`;
         });
-    if (ui.view === 'machines')
+    if (ui.view === 'machines' && ui.mtab !== 'cave')
         state.machines.forEach((m, i) => {
             const card = $('machines-container').children[i];
             if (!isBusy(m) || !card) return;
