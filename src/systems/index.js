@@ -8,6 +8,7 @@ export * from './events.js';
 export * from './farm.js';
 export * from './farmlife.js';
 export * from './game.js';
+export * from './genetics.js';
 export * from './holidays.js';
 export * from './home.js';
 export * from './incidents.js';

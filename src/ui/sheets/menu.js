@@ -26,6 +26,7 @@ defineSheet('menu', {
         return `<div class="menu-grid">
             ${navRow('Progrès', 'open', { sheet: 'progress' }, ['ui', 'skillbook'], badge(pts), 'Compétences, prestige et défis')}
             ${navRow('Livre de la ferme', 'open', { sheet: 'book' }, ['ui', 'book'], badge(book), 'Collection, maîtrise, exploits, légende, album')}
+            ${state.genetics && G.geneticsOpen() ? navRow('Mes créations', 'open', { sheet: 'creations' }, ['ui', 'trophy'], '›', 'Vos variétés et vos races fixées') : ''}
             ${navRow('Les niveaux', 'open', { sheet: 'levels' }, ['ui', 'star'], '›', `Niveau ${state.level}${state.level < MAX_LEVEL ? ` sur ${MAX_LEVEL}` : ''}`)}
             ${navRow('Statistiques', 'open', { sheet: 'stats' }, ['ui', 'chart'], '›', 'Gains, ventes et records')}
             ${navRow('Mes bonus', 'open', { sheet: 'bonus' }, ['ui', 'upgrade'], '›', 'Tous vos bonus permanents')}

@@ -109,7 +109,7 @@ export function unlocksAt(lvl) {
         if (c.lvl === lvl && c.n > 1)
             add(
                 ['ui', 'village'],
-                `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage', domaine: 'Domaine', island: 'Île' }[c.map] || 'Village'} : chapitre ${c.n}, « ${c.name} » (après le chapitre ${c.after !== undefined ? c.after : c.n - 1})`,
+                `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage', domaine: 'Domaine', island: 'Île', station: 'Station' }[c.map] || 'Village'} : chapitre ${c.n}, « ${c.name} » (après le chapitre ${c.after !== undefined ? c.after : c.n - 1})`,
             );
     });
     Object.values(UPGRADES).forEach(u => u.reqLvl === lvl && add(['ui', u.id], `${u.name} (au magasin)`));

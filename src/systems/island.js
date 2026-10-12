@@ -15,6 +15,7 @@ import { collect, record } from './book.js';
 import { addQuality } from './farm.js';
 import { eventProgress } from './events.js';
 import { tip } from './tips.js';
+import { takeVarSeed, harvestVariety, varExtra, varGrowth } from './genetics.js';
 
 const COIN = ['ui', 'coin'];
 
@@ -80,13 +81,29 @@ export function plantIsland(k, id, at, quiet) {
         }
         return false;
     }
-    Object.assign(p, { id, prog: 0, ready: false, last: id });
+    Object.assign(p, { id, prog: 0, ready: false, last: id, v: null });
     if (!quiet) {
         sfx('plant');
         burst(at, 'dirt', 6, 6);
         buzz(6);
         tip('island');
     }
+    changed('island');
+    return true;
+}
+
+// semer une variété de l'île (labo)
+export function plantIslandVar(k, vid, at) {
+    const p = islandPlots()[k];
+    const v = state.genetics && state.genetics.vars[vid];
+    if (!p || !p.open || p.id || !v || !ITEMS[v.base].island) return false;
+    if (!takeVarSeed(vid)) {
+        toast('Plus de graines de cette variété', ['ui', 'flowers']);
+        return false;
+    }
+    Object.assign(p, { id: v.base, prog: 0, ready: false, last: v.base, v: vid });
+    sfx('plant');
+    burst(at, 'sparkle', 4, -4);
     changed('island');
     return true;
 }
@@ -104,8 +121,9 @@ export function harvestIsland(k, at, quiet) {
     if (!p || !p.ready) return null;
     if (barnBlocked()) return null;
     const d = ITEMS[p.id];
-    const qty = rollYield('crop');
+    const qty = rollYield('crop') + (p.v ? varExtra(p.v) : 0);
     state.inventory[d.id] += qty;
+    if (p.v) harvestVariety(p.v, qty);
     state.stats.harvested += qty;
     addMastery(d.id, qty);
     const q = rollIslandQuality();
@@ -116,7 +134,7 @@ export function harvestIsland(k, at, quiet) {
     }
     eventProgress('harvest', d.id, qty);
     rollRare(BALANCE.rareDrop, at);
-    Object.assign(p, { id: null, prog: 0, ready: false });
+    Object.assign(p, { id: null, prog: 0, ready: false, v: null });
     if (!quiet) {
         sfx('harvest');
         buzz(12);
@@ -183,7 +201,7 @@ export function replantIsland(at) {
 // ---------------- le temps qui passe ----------------
 function grow(p, dt) {
     if (!p.id || p.ready) return false;
-    p.prog += dt * islandRate(p.id);
+    p.prog += dt * islandRate(p.id) * (p.v ? varGrowth(p.v) : 1);
     if (p.prog >= islandGrowTime(p.id)) {
         p.prog = islandGrowTime(p.id);
         p.ready = true;

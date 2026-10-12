@@ -6,7 +6,7 @@ import { MACHINES, RECIPES } from '../../data/machines.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, byId } from '../dom.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, hint, empty, timer } from '../kit.js';
+import { btn, bar, hint, empty, timer, toggle } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
 import { defineSheet } from '../sheets.js';
 import { pinBar } from './common.js';
@@ -116,6 +116,18 @@ defineSheet('machine', {
                 ${btn(m.loop ? 'En boucle' : 'Boucle', { act: 'toggleLoop', data: { i }, icon: ['ui', 'loop'], cls: m.loop ? 'on' : '', title: 'Relancer automatiquement la dernière recette' })}</div>`,
             ],
             [
+                'best',
+                state.genetics && G.geneticsOpen()
+                    ? toggle(
+                          'Meilleurs ingrédients d’abord',
+                          state.genetics.bestFirst,
+                          'toggleBest',
+                          null,
+                          'Variétés savoureuses et produits argent ou or : le plat sort en argent ou en or',
+                      )
+                    : '',
+            ],
+            [
                 'filters',
                 `<div class="chips-row">${filters.map(([k, t]) => `<button class="pick-chip${f === k ? ' on' : ''}" data-act="recipeFilter" data-f="${k}">${t}</button>`).join('')}</div>`,
             ],
@@ -150,5 +162,6 @@ export function setupWorkshop() {
         cancelQueued: (el, d) => G.cancelQueued(+d.i, +d.k),
         toggleLoop: (el, d) => G.toggleLoop(+d.i),
         recipeFilter: (el, d) => (ui.sel.recipeFilter = d.f),
+        toggleBest: () => (state.genetics.bestFirst = !state.genetics.bestFirst),
     });
 }

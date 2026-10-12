@@ -11,10 +11,13 @@ import { alpineMult, themeAnimalMult, isAway } from './port.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
 import { fmt } from '../core/format.js';
+import { wildAnimal, animalSpeedGene, animalYieldGene, animalQuality, animalSaves } from './genetics.js';
+import { addQuality } from './farm.js';
 
 export const maxFood = () => MAX_FOOD + rank('trough') * 2;
 export const isAdult = a => a.adult !== false;
-export const animalMult = a => (1 + rank('fed') * 0.08) * (1 + ((a && a.love) || 0) * 0.04) * starAnimalMult(a) * alpineMult(a) * themeAnimalMult();
+export const animalMult = a =>
+    (1 + rank('fed') * 0.08) * (1 + ((a && a.love) || 0) * 0.04) * starAnimalMult(a) * alpineMult(a) * themeAnimalMult() * (a ? animalSpeedGene(a) : 1);
 export const animalTime = a => ANIMALS[a.type].time / (speedMult() * animalMult(a) * masterySpeed(ANIMALS[a.type].prodId));
 export const growLeft = a => Math.max(0, (GROW[a.type] - (a.age || 0)) / (rank('nursery') ? 2 : 1) / speedMult());
 export const growPct = a => Math.min(1, (a.age || 0) / GROW[a.type]);
@@ -32,7 +35,22 @@ export function pickName(type) {
 }
 
 export function newAnimal(type) {
-    return { type, food: 0, prodProgress: 0, stack: 0, adult: false, age: 0, name: pickName(type), love: 0, petDay: 0, produced: 0 };
+    const G = state.genetics;
+    return {
+        type,
+        food: 0,
+        prodProgress: 0,
+        stack: 0,
+        adult: false,
+        age: 0,
+        name: pickName(type),
+        love: 0,
+        petDay: 0,
+        produced: 0,
+        uid: 'a' + (G ? G.next++ : Date.now()),
+        g: wildAnimal(type, true),
+        gen: 0,
+    };
 }
 
 export function ensureAnimalData() {
@@ -55,8 +73,12 @@ export function autoFeed(a) {
 export function collectAnimal(a) {
     if (a.stack <= 0 || barnBlocked()) return 0;
     const d = ANIMALS[a.type];
-    const qty = a.stack * rollYield('animal');
+    let qty = a.stack * rollYield('animal');
+    if (Math.random() < animalYieldGene(a)) qty++;
     state.inventory[d.prodId] += qty;
+    // de bons gènes donnent des produits de qualité
+    const q = animalQuality(a);
+    if (q) addQuality(d.prodId, q, qty);
     a.produced = (a.produced || 0) + qty;
     state.stats.collected += qty;
     addMastery(d.prodId, qty);
@@ -242,7 +264,7 @@ export function animalsTick() {
         if (anim.prodProgress < animalTime(anim)) return;
         anim.prodProgress = 0;
         anim.stack++;
-        anim.food--;
+        if (!animalSaves(anim)) anim.food--;
         changed = true;
         if (viewShown('animals')) sfx('pop');
     });
