@@ -49,7 +49,7 @@ export const section = (title, extra = '') => `<h3 class="section-title"><span>$
 
 export const empty = text => `<p class="empty">${text}</p>`;
 export const hint = text => `<p class="hint">${text}</p>`;
-export const dot = n => (n ? `<span class="dot">${n > 99 ? '99+' : n}</span>` : '');
+export const dot = n => (n ? `<span class="dot">${n > 9 ? '9+' : n}</span>` : '');
 
 // coût en pièces et matériaux : parts = [{ icon, n, ok }]
 export const costRow = list => `<span class="cost">${list.map(c => `<span class="${c.ok ? 'ok' : 'short'}">${ico(c.icon)}${fmt(c.n)}</span>`).join('')}</span>`;

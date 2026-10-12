@@ -7,8 +7,8 @@ import { DECOS } from '../data/farm.js';
 import * as G from '../systems/index.js';
 import { byId, patch, actions } from './dom.js';
 import { ico, art, COIN } from './icons.js';
-import { ui, currentPath, setToolbar } from './app.js';
-import { defineSheet, openSheet, closeSheet } from './sheets.js';
+import { currentPath, setToolbar } from './app.js';
+import { defineSheet, closeSheet } from './sheets.js';
 import { hint } from './kit.js';
 
 const isSeed = t => ITEMS[t] && (ITEMS[t].type === 'crop' || ITEMS[t].type === 'tree');
@@ -85,5 +85,4 @@ export function setupToolbar() {
             closeSheet('seeds');
         },
     });
-    return { openSeeds: () => openSheet('seeds'), ui };
 }

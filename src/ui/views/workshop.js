@@ -8,7 +8,7 @@ import { blocks, actions, byId } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, bar, hint, empty, timer } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
-import { defineSheet, openSheet } from '../sheets.js';
+import { defineSheet } from '../sheets.js';
 import { pinBar } from './common.js';
 import { now } from '../../core/clock.js';
 
@@ -145,5 +145,4 @@ export function setupWorkshop() {
         toggleLoop: (el, d) => G.toggleLoop(+d.i),
         recipeFilter: (el, d) => (ui.sel.recipeFilter = d.f),
     });
-    return openSheet;
 }

@@ -9,6 +9,9 @@ export const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').r
 // remplace le contenu seulement s'il a changé : pas de clignotement, le défilement et les animations restent
 export function patch(el, html) {
     if (!el || el._html === html) return false;
+    // on ne remplace pas une zone où le joueur est en train d'écrire ou de glisser un curseur
+    const a = document.activeElement;
+    if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && el.contains(a)) return false;
     el.innerHTML = html;
     el._html = html;
     return true;
@@ -47,11 +50,13 @@ export const actions = map => Object.assign(ACTIONS, map);
 export const afterAction = fn => (after = fn);
 export const hasAction = name => !!ACTIONS[name];
 
+// une action qui renvoie QUIET ne redessine rien (un curseur qu'on fait glisser, par exemple)
+export const QUIET = Symbol('quiet');
 export function run(name, el, data = {}) {
     const fn = ACTIONS[name];
     if (!fn) return console.warn('action inconnue', name);
     const r = fn(el, data);
-    after(name, r);
+    if (r !== QUIET) after(name, r);
     return r;
 }
 

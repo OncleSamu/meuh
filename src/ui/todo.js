@@ -107,8 +107,10 @@ export function todoCounts(list) {
     const c = {};
     for (const t of list) {
         const tab = t.go.startsWith('sheet:') ? 'menu' : t.go.split('/')[0];
-        c[tab] = (c[tab] || 0) + t.n;
-        if (t.go.includes('/')) c[t.go] = (c[t.go] || 0) + t.n;
+        // une pastille compte les choses à faire, pas les objets : « 35 à récolter » compte pour une
+        const n = t.n ? 1 : 0;
+        c[tab] = (c[tab] || 0) + n;
+        if (t.go.includes('/')) c[t.go] = (c[t.go] || 0) + n;
     }
     // la maison et la grange s'ouvrent depuis la ferme : pas dans le menu
     return c;

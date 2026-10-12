@@ -232,7 +232,7 @@ function nextGoal() {
 function goalHtml() {
     const g = nextGoal();
     if (!g) return '';
-    return `<button class="goal" data-act="go" data-path="${g.go}"${g.sec ? ` data-sec="${g.sec}"` : ''}>${g.icon[0] === 'building' ? `<i class="ico">${art('building', g.icon[1])}</i>` : ico(g.icon)}<span>${g.text}</span><b>›</b></button>`;
+    return `<button class="goal-line" data-act="go" data-path="${g.go}"${g.sec ? ` data-sec="${g.sec}"` : ''}>${g.icon[0] === 'building' ? `<i class="ico">${art('building', g.icon[1])}</i>` : ico(g.icon)}<span>${g.text}</span><b>›</b></button>`;
 }
 
 // ce qui attend, en puces qu'on fait défiler du doigt

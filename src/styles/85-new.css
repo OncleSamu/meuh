@@ -1,0 +1,574 @@
+/* Les nouveautés de la refonte : vignettes de machines, grille du marché, tiroirs, menus */
+
+/* ---------------- papier commun ---------------- */
+.ticket,
+.goods,
+.mtile,
+.cave-slot:not(.empty):not(.locked),
+.entry,
+.offer,
+.pick-cell,
+.rtile,
+.seed,
+.bgood,
+.sslot,
+.day {
+    background: linear-gradient(#fffbee, var(--paper));
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    box-shadow:
+        0 3px 0 rgba(58, 38, 24, 0.35),
+        inset 0 1.5px 0 #fff;
+}
+
+/* ---------------- ferme ---------------- */
+.goal-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 6px 12px 6px 8px;
+    background: linear-gradient(#fffaf0, #f6e2b6);
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 0 3px 0 var(--wood-d);
+    font-weight: 900;
+    font-size: 0.88rem;
+    text-align: left;
+}
+.goal-line .ico {
+    width: 30px;
+    height: 30px;
+}
+.goal-line span {
+    flex: 1;
+}
+.todo {
+    margin: 0 -10px;
+}
+.todo-chip.soft {
+    opacity: 0.85;
+    background: #fff8e6;
+}
+.pin-who {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
+.pin-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 5px 12px 5px 6px;
+    background: #fff1b8;
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 0 3px 0 var(--gold-d);
+    font-size: 0.82rem;
+    font-weight: 900;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.pin-bar > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+.pin-bar > span.ok {
+    color: var(--leaf-d);
+}
+.pin-bar > b {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+}
+.pin-bar.ready {
+    background: #d9f2c4;
+}
+.yard-house > svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* ---------------- atelier : vignettes ---------------- */
+.mgrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+@media (min-width: 560px) {
+    .mgrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+.mtile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-width: 3px;
+    border-radius: 18px;
+    box-shadow: 0 4px 0 var(--wood-d);
+}
+.mtile.has-out {
+    background: linear-gradient(#fff6c8, #ffe48a);
+}
+.mtile-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 8px 8px;
+    text-align: center;
+    flex: 1;
+}
+.m-art {
+    position: relative;
+    width: 66px;
+    height: 66px;
+}
+.m-art > svg {
+    width: 100%;
+    height: 100%;
+}
+.m-art.big {
+    width: 84px;
+    height: 84px;
+    flex-shrink: 0;
+}
+.mtile.working .m-art > svg {
+    animation: machineHum 1.4s ease-in-out infinite;
+}
+@keyframes machineHum {
+    50% {
+        transform: translateY(-2px) rotate(-1.5deg);
+    }
+}
+.m-name {
+    font-weight: 900;
+    font-size: 0.92rem;
+    line-height: 1.15;
+}
+.m-loop {
+    width: 16px;
+    height: 16px;
+    margin-left: 3px;
+}
+.m-now {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    max-width: 100%;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+}
+.m-now span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.m-bar {
+    width: 100%;
+    height: 10px;
+}
+.m-time {
+    font-size: 0.74rem;
+    color: var(--ink-soft);
+}
+.m-idle {
+    font-size: 0.8rem;
+    color: var(--red);
+}
+.m-collect {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 6px 6px;
+    background: var(--gold);
+    border-top: 2.5px solid var(--ink);
+    font-size: 0.8rem;
+    font-weight: 900;
+}
+.m-collect span {
+    display: inline-flex;
+    align-items: center;
+}
+.m-collect b {
+    width: 100%;
+    text-align: center;
+}
+.machine-head {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+.slot-bar {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 3px;
+    height: 7px;
+    margin: 0;
+}
+
+/* ---------------- village ---------------- */
+.ticket {
+    background: linear-gradient(#fffef6, #fff6dc);
+}
+.ticket.ready {
+    background: linear-gradient(#e9ffd8, #c9efa9);
+}
+.ticket.empty {
+    background: rgba(255, 248, 230, 0.55);
+    border-style: dashed;
+    box-shadow: none;
+}
+.oline-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+.oline-main small {
+    color: var(--ink-soft);
+    font-weight: 700;
+}
+.goal-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    margin-top: 6px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 2px solid rgba(58, 38, 24, 0.35);
+    border-radius: 12px;
+}
+.goal-row.claimed {
+    opacity: 0.6;
+}
+.delivery-card {
+    align-items: flex-start;
+}
+.delivery-art {
+    width: 70px;
+    height: 84px;
+    flex-shrink: 0;
+}
+.delivery-art > svg {
+    width: 100%;
+    height: 100%;
+}
+.story-card {
+    display: block;
+}
+.proj {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 2px solid rgba(58, 38, 24, 0.35);
+    border-radius: 14px;
+}
+.proj.open {
+    display: block;
+}
+.proj.done {
+    background: #e3f6d2;
+}
+.needs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    margin: 6px 0;
+}
+.needs > .btn {
+    margin-left: auto;
+}
+.need {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px 2px 2px;
+    background: #fff8e6;
+    border: 2px solid rgba(58, 38, 24, 0.45);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+.need.ok {
+    background: #d9f2c4;
+}
+.pgo {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+}
+.pgo .ico {
+    width: 100%;
+    height: 100%;
+}
+.tiers-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    margin: 8px 0 4px;
+}
+.stier {
+    min-width: 44px;
+    padding: 4px 6px;
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 900;
+    background: #fff8e6;
+    border: 2px solid rgba(58, 38, 24, 0.4);
+    border-radius: 10px;
+}
+.stier.done {
+    background: #d9f2c4;
+}
+.offers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+.offer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 6px;
+    text-align: center;
+    font-size: 0.8rem;
+}
+.offer.sold {
+    opacity: 0.55;
+}
+.offer-art {
+    width: 48px;
+    height: 48px;
+}
+.offer-art > svg {
+    width: 100%;
+    height: 100%;
+}
+.league {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 1px 8px;
+    font-size: 0.72rem;
+    vertical-align: middle;
+    background: #cd8a4a;
+    color: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+}
+.league.l1 {
+    background: #a7adb4;
+}
+.league.l2 {
+    background: var(--gold-d);
+}
+.league.l3 {
+    background: #5aa9e6;
+}
+
+/* ---------------- marché ---------------- */
+.cats .pick-chip {
+    padding-left: 6px;
+}
+.shop-list .card-art > svg {
+    width: 100%;
+    height: 100%;
+}
+.goods-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+@media (max-width: 370px) {
+    .goods-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+.goods {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 6px;
+    text-align: center;
+}
+.goods.hot {
+    background: linear-gradient(#fff6c8, #ffe48a);
+}
+.goods-art {
+    width: 50px;
+    height: 50px;
+}
+.goods-art > svg {
+    width: 100%;
+    height: 100%;
+}
+.goods-name {
+    font-size: 0.84rem;
+    line-height: 1.15;
+}
+.goods-name small {
+    color: var(--ink-soft);
+}
+.goods-btns {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    margin-top: 4px;
+}
+.goods-btns .btn {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 3px;
+    font-size: 0.78rem;
+}
+.unit {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.74rem;
+}
+.unit .ico {
+    width: 14px;
+    height: 14px;
+}
+.card.banner {
+    padding: 8px 12px;
+}
+.card.banner.hot {
+    background: linear-gradient(#fff6c8, #ffe48a);
+}
+
+/* ---------------- tiroirs ---------------- */
+.menu-grid .row {
+    background: linear-gradient(#fffbee, var(--paper));
+    border: 2.5px solid var(--ink);
+    box-shadow: 0 3px 0 rgba(58, 38, 24, 0.3);
+}
+.menu-grid .row .dot {
+    font-size: 0.75rem;
+}
+.set-group {
+    margin-bottom: 12px;
+}
+.book-seg {
+    position: sticky;
+    top: -2px;
+    z-index: 2;
+    padding-bottom: 6px;
+    background: var(--wood-ll);
+}
+.book-seg .seg > button span {
+    font-size: 0.74rem;
+}
+.book-seg .seg > button {
+    flex-direction: column;
+    gap: 0;
+    min-height: 48px;
+}
+.pick-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+}
+.pick-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 0.82rem;
+}
+.pick-cell small {
+    color: var(--ink-soft);
+}
+.pick-cell.on {
+    background: linear-gradient(#ffe48a, var(--gold));
+}
+.animal-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.animal-card .lines {
+    width: 100%;
+}
+.animal-card .row-btns,
+.animal-card .rename {
+    width: 100%;
+}
+.animal-kind {
+    font-weight: 900;
+    color: var(--ink-soft);
+}
+.animal-art {
+    width: 140px;
+    height: 140px;
+}
+.animal-art > svg {
+    width: 100%;
+    height: 100%;
+}
+.seed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    gap: 10px;
+}
+.seed {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 4px 4px;
+}
+.seed > svg {
+    width: 52px;
+    height: 52px;
+}
+.seed small {
+    font-size: 0.7rem;
+    line-height: 1.1;
+    text-align: center;
+}
+.seed .badge {
+    top: -6px;
+    bottom: auto;
+}
+.seed.on {
+    background: linear-gradient(#ffe48a, var(--gold));
+    box-shadow: 0 0 0 3px #fff inset;
+}
+.seed.empty {
+    opacity: 0.55;
+}
+.season-tag {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    width: 22px;
+    height: 22px;
+}
+.recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+}

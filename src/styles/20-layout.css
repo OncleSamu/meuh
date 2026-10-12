@@ -1,0 +1,385 @@
+/* La coque : en-tête, volets, vues, barre d'outils et onglets du bas */
+#scene {
+    z-index: 0;
+}
+#app {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+}
+
+/* ---------------- en-tête ---------------- */
+#hud {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: max(8px, var(--safe-t)) max(10px, env(safe-area-inset-right)) 6px max(10px, env(safe-area-inset-left));
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto;
+}
+.lvl {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+}
+.lvl-star {
+    position: relative;
+    z-index: 2;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 3px 0 rgba(58, 38, 24, 0.4));
+}
+.lvl-star .ico {
+    width: 100%;
+    height: 100%;
+}
+.lvl-star b {
+    position: absolute;
+    inset: 4px 0 0;
+    display: grid;
+    place-items: center;
+    font-size: 1.05rem;
+    font-weight: 900;
+}
+.lvl.legend .lvl-star {
+    filter: drop-shadow(0 0 6px #ffd23f) drop-shadow(0 3px 0 rgba(58, 38, 24, 0.4));
+}
+.xp {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    height: 22px;
+    margin-left: -14px;
+    background: rgba(58, 38, 24, 0.55);
+    border: 2.5px solid var(--ink);
+    border-radius: 0 12px 12px 0;
+    overflow: hidden;
+}
+.xp i {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: linear-gradient(#8fd0f7, var(--xp));
+    transition: width 0.5s cubic-bezier(0.3, 1.4, 0.6, 1);
+}
+.xp small {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding-left: 12px;
+    font-size: 0.72rem;
+    font-weight: 900;
+    color: #fff;
+    white-space: nowrap;
+    text-shadow:
+        0 1px 0 var(--ink),
+        0 -1px 0 var(--ink),
+        1px 0 0 var(--ink),
+        -1px 0 0 var(--ink);
+}
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 36px;
+    padding: 0 10px 0 4px;
+    background: var(--wood-ll);
+    border: 2.5px solid var(--ink);
+    border-radius: 20px;
+    box-shadow: 0 3px 0 var(--wood-d);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.pill .ico {
+    width: 26px;
+    height: 26px;
+}
+.pill b {
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+.pill.coins b {
+    font-size: 1.08rem;
+    min-width: 2.4em;
+}
+.pill.coins.bump,
+.pill.barn.bump {
+    animation: bump 0.18s;
+}
+.pill.barn b {
+    font-size: 0.82rem;
+}
+.pill.barn.near {
+    background: #ffe2a6;
+}
+.pill.barn.full {
+    background: #ffb3a8;
+}
+.pill.barn.shake {
+    animation: shake 0.4s;
+}
+@keyframes shake {
+    25% {
+        transform: translateX(-4px);
+    }
+    75% {
+        transform: translateX(4px);
+    }
+}
+.menu-btn {
+    flex-shrink: 0;
+}
+@media (max-width: 360px) {
+    .pill.barn .ico {
+        display: none;
+    }
+    .pill.barn {
+        padding-left: 8px;
+    }
+}
+
+/* ---------------- volets (sous-onglets) ---------------- */
+#subnav {
+    padding: 2px 10px 6px;
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ---------------- les vues ---------------- */
+#views {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto;
+}
+.view {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    padding: 4px 10px 28px;
+    display: none;
+    -webkit-overflow-scrolling: touch;
+}
+.view.on {
+    display: block;
+    animation: fadeUp 0.2s ease-out;
+}
+.view > .block + .block {
+    margin-top: 10px;
+}
+.view > .block:empty {
+    display: none;
+}
+.view-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.view-top .actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+.view-title {
+    font-weight: 900;
+    font-size: 1.2rem;
+    padding: 2px 16px;
+    background: linear-gradient(#fffaf0, #f6e2b6);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    box-shadow:
+        0 3px 0 rgba(58, 38, 24, 0.35),
+        inset 0 1.5px 0 #fff;
+}
+.pill.clock {
+    gap: 3px;
+    padding: 0 8px 0 4px;
+}
+.pill.clock .ico {
+    width: 24px;
+    height: 24px;
+}
+
+/* ---------------- barre d'outils ---------------- */
+#toolbar {
+    position: relative;
+    z-index: 3;
+    padding: 6px 10px 4px;
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto;
+}
+.tools {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 6px;
+    background: linear-gradient(rgba(255, 255, 255, 0.2), transparent 30px), var(--wood-l);
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 0 4px 0 var(--wood-d);
+}
+.tool {
+    position: relative;
+    flex: 1;
+    max-width: 66px;
+    aspect-ratio: 1;
+    padding: 7px;
+    background: linear-gradient(#fff9ea, var(--wood-ll));
+    border: 2.5px solid var(--ink);
+    border-radius: 13px;
+    box-shadow: 0 3px 0 rgba(58, 38, 24, 0.55);
+    transition: transform 0.08s;
+}
+.tool > svg {
+    width: 100%;
+    height: 100%;
+}
+.tool.on {
+    background: linear-gradient(#ffe48a, var(--gold));
+    transform: translateY(-3px);
+    box-shadow:
+        0 5px 0 var(--gold-d),
+        0 0 0 3px #fff;
+}
+.tool:active {
+    transform: translateY(1px);
+}
+.badge {
+    position: absolute;
+    right: -6px;
+    bottom: -6px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    background: var(--leaf-d);
+    color: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 11px;
+    font-size: 0.72rem;
+    font-weight: 900;
+    line-height: 1;
+}
+.badge.blue {
+    background: #3f6fb5;
+}
+.badge.price {
+    background: var(--paper-l);
+    color: var(--ink);
+}
+.badge .ico {
+    width: 13px;
+    height: 13px;
+}
+
+/* ---------------- onglets du bas ---------------- */
+#tabs {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    gap: 4px;
+    padding: 6px 8px calc(6px + var(--safe-b));
+    background: linear-gradient(rgba(255, 255, 255, 0.22), transparent 24px), var(--wood);
+    border-top: 3px solid var(--ink);
+    box-shadow: 0 -4px 12px rgba(58, 38, 24, 0.18);
+}
+.tab {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 128px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 4px 2px 3px;
+    border-radius: 13px;
+    color: #fff4dc;
+    transition:
+        transform 0.12s,
+        background 0.12s;
+}
+.tab-ico {
+    width: 32px;
+    height: 32px;
+    filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.25));
+    transition: transform 0.15s;
+}
+.tab-ico .ico {
+    width: 100%;
+    height: 100%;
+}
+.tab-name {
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
+.tab.on {
+    background: linear-gradient(#ffe48a, var(--gold));
+    color: var(--ink);
+    border: 2.5px solid var(--ink);
+    box-shadow: 0 3px 0 var(--gold-d);
+    transform: translateY(-6px);
+    padding: 2px 2px 1px;
+}
+.tab.on .tab-name {
+    text-shadow: none;
+}
+.tab.on .tab-ico {
+    transform: scale(1.1);
+}
+.tab.locked {
+    opacity: 0.55;
+}
+.tab .dot {
+    position: absolute;
+    top: -6px;
+    right: calc(50% - 30px);
+}
+.tab.got .tab-ico {
+    animation: bump 0.25s;
+}
+
+/* ---------------- grand écran : le champ à gauche, l'onglet à droite ---------------- */
+body.wide #views {
+    max-width: 1280px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+body.wide #view-farm.on {
+    position: relative;
+    grid-column: 1;
+    display: block;
+}
+body.wide .view.on:not(#view-farm) {
+    position: relative;
+    grid-column: 2;
+}
+body.wide #hud,
+body.wide #subnav,
+body.wide #toolbar {
+    max-width: 1280px;
+}
+body.wide #tabs {
+    justify-content: center;
+}

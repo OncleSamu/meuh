@@ -1,0 +1,519 @@
+/* Atelier | Cave */
+.cave-clim {
+    padding: 12px;
+    margin-bottom: 12px;
+    background-color: #e9d2ad;
+}
+
+.gauge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.gauge > .ico {
+    width: 30px;
+    height: 30px;
+}
+
+.gauge-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.gauge-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.gauge-label b {
+    font-size: 0.72rem;
+    color: var(--leaf-d);
+}
+
+.gauge.off .gauge-label b {
+    color: var(--red);
+}
+
+.gauge-bar {
+    position: relative;
+    height: 12px;
+    margin-top: 3px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: linear-gradient(90deg, #8fd0f7, #f7f3ea 50%, #f59a6a);
+    overflow: hidden;
+}
+
+.gauge-bar .band {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: rgba(108, 192, 74, 0.45);
+    border-left: 2px dashed rgba(58, 38, 24, 0.5);
+    border-right: 2px dashed rgba(58, 38, 24, 0.5);
+}
+
+.gauge-bar .needle {
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    width: 6px;
+    margin-left: -3px;
+    border-radius: 3px;
+    background: var(--ink);
+    transition: left 0.4s;
+}
+
+.gauge.off .gauge-bar .needle {
+    background: var(--red);
+    box-shadow: 0 0 0 2px #fff;
+}
+
+.cave-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.cave-slot {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    min-height: 168px;
+    font: inherit;
+    color: var(--ink);
+    text-align: left;
+}
+
+.cave-slot.empty,
+.cave-slot.locked {
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-align: center;
+    border: 2.5px dashed rgba(58, 38, 24, 0.5);
+    border-radius: 18px;
+    background: rgba(251, 236, 201, 0.55);
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 0.82rem;
+}
+
+.cave-slot.empty b {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.cave-slot.locked .ico {
+    width: 34px;
+    height: 34px;
+}
+
+.cave-slot.locked:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.cave-slot.r2 {
+    background-color: #f1d8a8;
+}
+
+.cave-slot.r3 {
+    background-color: #f6dc96;
+    box-shadow:
+        0 5px 0 var(--wood-d),
+        0 0 0 3px #ffd23f,
+        inset 0 2px 0 rgba(255, 255, 255, 0.4);
+}
+
+.cave-slot.r4 {
+    background-color: #f9e27a;
+    box-shadow:
+        0 5px 0 var(--wood-d),
+        0 0 0 3px #ffd23f,
+        0 0 16px rgba(255, 210, 63, 0.8);
+}
+
+.cave-slot.bad {
+    background-color: #d9cfbf;
+    filter: saturate(0.6);
+}
+
+.cave-slot.flash {
+    animation: bump 0.4s 2;
+}
+
+.cs-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cs-ico {
+    width: 44px;
+    height: 44px;
+}
+
+.cs-main {
+    min-width: 0;
+}
+
+.cs-name {
+    font-weight: 800;
+    font-size: 0.86rem;
+    line-height: 1.15;
+}
+
+.cs-name small {
+    opacity: 0.7;
+}
+
+.cs-rank {
+    font-size: 0.74rem;
+    font-weight: 900;
+    color: #8e2c22;
+}
+
+.cave-slot.bad .cs-rank {
+    color: #6d7680;
+}
+
+.cs-stars {
+    display: flex;
+    gap: 2px;
+    margin-top: 2px;
+}
+
+.cs-stars i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink);
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.cs-stars i.on {
+    background: var(--gold);
+}
+
+.cs-value {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.cs-value .ico {
+    width: 18px;
+    height: 18px;
+}
+
+.cs-timer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.cs-timer .qbar {
+    flex: 1;
+    margin: 0;
+}
+
+.cs-timer .qbar div {
+    background: #9a6fd0;
+}
+
+.odds {
+    display: flex;
+    height: 9px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.odds .g {
+    background: var(--leaf);
+}
+
+.odds .b {
+    background: #c9a46a;
+}
+
+.odds .r {
+    background: var(--red);
+}
+
+.odds-txt {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    opacity: 0.85;
+}
+
+.cs-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: auto;
+}
+
+.cs-actions .btn {
+    flex: 1 1 auto;
+    padding: 6px 7px;
+    font-size: 0.76rem;
+}
+
+.cs-boost {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    padding: 1px 6px 1px 2px;
+    border-radius: 999px;
+    border: 2px solid var(--ink);
+    background: #e8f6d8;
+    font-size: 0.7rem;
+    font-weight: 900;
+}
+
+.cs-boost .ico {
+    width: 16px;
+    height: 16px;
+}
+
+.reserve-row,
+.dep-row,
+.auc-res,
+.live-lot {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+}
+
+.reserve-row > .ico,
+.dep-row > .ico,
+.auc-res > .ico,
+.live-lot > .ico {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.reserve-row {
+    flex-wrap: wrap;
+}
+
+.reserve-row .card-main {
+    flex: 1 1 140px;
+}
+
+.reserve-row.bad {
+    opacity: 0.8;
+}
+
+.auction-card {
+    padding: 12px;
+    margin: 14px 0;
+    background-color: #e3c9a0;
+}
+
+.auction-card .list {
+    margin-top: 10px;
+}
+
+.auction-card.live {
+    background-color: #f3d58c;
+    animation: livePulse 1.6s ease-in-out infinite;
+}
+
+.dep-reserve {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 0.78rem;
+}
+
+.dep-reserve .ico {
+    width: 15px;
+    height: 15px;
+}
+
+.dep-row > .btn svg {
+    display: block;
+    width: 16px;
+    height: 16px;
+}
+
+.bidders {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-top: 8px;
+}
+
+.bidders .ico {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1.5px solid rgba(58, 38, 24, 0.4);
+}
+
+.auc-res .card-main {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.85rem;
+}
+
+.auc-res small {
+    opacity: 0.75;
+}
+
+.auc-res.sold {
+    background: linear-gradient(#fffbe6, #fff1bf);
+}
+
+.auc-res > b {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+}
+
+.auc-res > b .ico {
+    width: 16px;
+    height: 16px;
+}
+
+.live-lot.bump {
+    animation: bump 0.3s;
+}
+
+.live-lot.done {
+    opacity: 0.75;
+}
+
+.live-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 3px;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.live-row .ico {
+    width: 22px;
+    height: 22px;
+}
+
+.live-price {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-family: var(--display);
+    font-size: 1.05rem;
+}
+
+.live-price .ico {
+    width: 17px;
+    height: 17px;
+}
+
+.live-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.cave-pick {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    max-height: 46dvh;
+    overflow-y: auto;
+    padding: 4px 2px 8px;
+}
+
+.cave-pick-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 4px;
+    font: inherit;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.cave-pick-cell .ico {
+    width: 40px;
+    height: 40px;
+}
+
+.cave-pick-cell b {
+    font-size: 0.76rem;
+    line-height: 1.1;
+    text-align: center;
+}
+
+.cave-pick-cell small {
+    font-size: 0.62rem;
+    opacity: 0.75;
+}
+
+.cave-pick-cell.on {
+    background: #fff1b8;
+    box-shadow: 0 0 0 3px var(--gold);
+}
+
+.cave-qty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 10px 0 6px;
+}
+
+.cave-qty .btn {
+    width: 44px;
+    font-size: 1.2rem;
+}
+
+.cave-qty span b {
+    font-size: 1.3rem;
+}
+
+@keyframes bump {
+    50% {
+        transform: scale(1.12);
+    }
+}
+
+@keyframes livePulse {
+    50% {
+        box-shadow:
+            0 5px 0 var(--wood-d),
+            0 0 0 4px rgba(232, 54, 75, 0.35);
+    }
+}
+

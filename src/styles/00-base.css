@@ -1,0 +1,147 @@
+/* Meuh : couleurs, polices et règles de base */
+@property --sky-top {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #7cc8f0;
+}
+@property --sky-bot {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #cdeffd;
+}
+
+:root {
+    --ink: #3a2618;
+    --ink-soft: rgba(58, 38, 24, 0.68);
+    --wood: #a8693a;
+    --wood-d: #7a4a2a;
+    --wood-l: #e8c38c;
+    --wood-ll: #f5deb3;
+    --paper: #fbecc9;
+    --paper-l: #fff7e0;
+    --leaf: #6cc04a;
+    --leaf-l: #8fd65f;
+    --leaf-d: #3f8f2e;
+    --gold: #f2c14e;
+    --gold-d: #c9952a;
+    --red: #c8453a;
+    --red-l: #ef8a7e;
+    --water: #4fb3f6;
+    --blue-l: #8fd0f7;
+    --xp: #5aa9e6;
+    --pink: #f59ab1;
+    --display: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --r: 16px;
+    --r-sm: 11px;
+    --gap: 10px;
+    --tabs-h: 64px;
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-t: env(safe-area-inset-top, 0px);
+    font-size: 16px;
+}
+html.ts-1 {
+    font-size: 17.5px;
+}
+html.ts-2 {
+    font-size: 19px;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+html,
+body {
+    margin: 0;
+    height: 100%;
+    overscroll-behavior: none;
+}
+body {
+    font-family: var(--display);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--ink);
+    overflow: hidden;
+    touch-action: manipulation;
+    background: #7cc8f0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-font-smoothing: antialiased;
+}
+button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    text-align: inherit;
+}
+input,
+textarea {
+    font: inherit;
+    color: inherit;
+    user-select: text;
+    -webkit-user-select: text;
+}
+h2,
+h3,
+p {
+    margin: 0;
+}
+[hidden] {
+    display: none !important;
+}
+small {
+    font-size: 0.78em;
+}
+.spr {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+}
+.ico {
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    vertical-align: -0.3em;
+    flex-shrink: 0;
+    font-style: normal;
+}
+.ico.big {
+    width: 2.4em;
+    height: 2.4em;
+}
+.ico.huge {
+    width: 3.4em;
+    height: 3.4em;
+}
+.ico > svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+}
+:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+@keyframes bump {
+    50% {
+        transform: scale(1.12);
+    }
+}
+@keyframes popIn {
+    from {
+        transform: scale(0.6);
+        opacity: 0;
+    }
+}
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
