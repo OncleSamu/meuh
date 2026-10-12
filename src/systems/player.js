@@ -90,7 +90,8 @@ export function unlocksAt(lvl) {
     const add = (icon, name) => list.push({ icon, name });
     Object.values(ITEMS).forEach(x => {
         if (x.reqLvl !== lvl || x.exotic) return;
-        if (x.type === 'crop' || x.type === 'tree') add(['seed', x.id], x.seedName + (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : ''));
+        if (x.type === 'crop' || x.type === 'tree')
+            add(['seed', x.id], x.seedName + (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : x.island ? ' (sur l’île)' : ''));
         else add(['item', x.id], `${x.name} (au magasin)`);
     });
     Object.values(ANIMALS).forEach(x => x.reqLvl === lvl && add(['animal', x.id], x.name));
@@ -108,7 +109,7 @@ export function unlocksAt(lvl) {
         if (c.lvl === lvl && c.n > 1)
             add(
                 ['ui', 'village'],
-                `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage', domaine: 'Domaine' }[c.map] || 'Village'} : chapitre ${c.n}, « ${c.name} » (après le chapitre ${c.n - 1})`,
+                `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage', domaine: 'Domaine', island: 'Île' }[c.map] || 'Village'} : chapitre ${c.n}, « ${c.name} » (après le chapitre ${c.after !== undefined ? c.after : c.n - 1})`,
             );
     });
     Object.values(UPGRADES).forEach(u => u.reqLvl === lvl && add(['ui', u.id], `${u.name} (au magasin)`));

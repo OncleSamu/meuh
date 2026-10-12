@@ -160,6 +160,7 @@ function itemCard(id) {
 const GUIDE_GO = {
     farm: 'farm/field',
     orchard: 'farm/orchard',
+    island: 'farm/island',
     nature: 'farm/nature',
     animals: 'animals',
     machines: 'machines/workshop',

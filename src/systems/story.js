@@ -14,12 +14,15 @@ import { addFriendship } from './village.js';
 import { addXp } from './player.js';
 import { ensureQuests } from './orders.js';
 import { ensureStall } from './stall.js';
+import { ensureIsland } from './island.js';
 
 export const projState = id => state.projects[id] || (state.projects[id] = { given: {}, done: false });
 export const projectDone = id => !!(state.projects[id] && state.projects[id].done);
 export const chapterProjects = n => Object.values(PROJECTS).filter(p => p.ch === n);
 export const chapterDone = n => chapterProjects(n).every(p => projectDone(p.id));
-export const chapterOpen = n => state.level >= CHAPTERS[n - 1].lvl && (n === 1 || chapterDone(n - 1));
+// un chapitre suit le précédent, sauf s'il part d'ailleurs (l'île part du hameau : « after »)
+export const chapterAfter = n => (CHAPTERS[n - 1].after !== undefined ? CHAPTERS[n - 1].after : n - 1);
+export const chapterOpen = n => state.level >= CHAPTERS[n - 1].lvl && (n === 1 || chapterDone(chapterAfter(n)));
 export const projectOpen = id => chapterOpen(PROJECTS[id].ch) && !projectDone(id);
 export const givenOf = (id, item) => projState(id).given[item] || 0;
 export const projectLeft = (id, item) => Math.max(0, PROJECTS[id].need[item] - givenOf(id, item));
@@ -32,12 +35,17 @@ export const storyOk = d => !d || !d.needProject || projectDone(d.needProject);
 export const storyLockText = d => (d && d.needProject && !projectDone(d.needProject) ? `Après le chantier « ${PROJECTS[d.needProject].name} »` : '');
 
 // une carte s'ouvre quand son chapitre d'entrée est fini, ou dès le niveau du chapitre suivant (sauf « strict »)
-export const mapOpen = m => !m.openChapter || chapterDone(m.openChapter) || (!m.strict && state.level >= CHAPTERS[m.openChapter].lvl);
+export const mapOpen = m =>
+    m.id === 'island'
+        ? chapterOpen(13) || chapterDone(13)
+        : !m.openChapter || chapterDone(m.openChapter) || (!m.strict && state.level >= CHAPTERS[m.openChapter].lvl);
 export const openMaps = () => STORY_MAPS.filter(mapOpen);
 export const mapReady = m => Object.values(PROJECTS).some(p => mapOf(p) === m && projectOpen(p.id) && projectComplete(p.id));
 
-export function currentChapter() {
-    for (const c of CHAPTERS) if (!chapterDone(c.n)) return c;
+// le chapitre en cours : celui de l'histoire principale, ou celui d'une carte (l'île a son propre fil)
+export function currentChapter(map) {
+    if (map === 'island') return CHAPTERS.find(c => c.map === 'island' && !chapterDone(c.n)) || null;
+    for (const c of CHAPTERS) if (!chapterDone(c.n) && c.map !== 'island') return c;
     return null;
 }
 
@@ -50,13 +58,14 @@ export function projectsNeed(item) {
 
 // Annonce un nouveau chapitre une seule fois
 export function syncStory() {
-    const c = currentChapter();
-    if (!c || !chapterOpen(c.n) || state.story.seen[c.n]) return false;
+    const c = [currentChapter(), currentChapter('island')].find(x => x && chapterOpen(x.n) && !state.story.seen[x.n]);
+    if (!c) return false;
     state.story.seen[c.n] = true;
     if (view.started) {
         toast(`Chapitre ${c.n} : ${c.name}`, ['ui', 'village']);
         if (c.n === 1) tip('village');
         if (c.n === 5) tip('hamlet');
+        if (c.n === 13) tip('isle');
         sfx('level');
     }
     return true;
@@ -135,6 +144,8 @@ export function applyProjectReward(pid) {
     }
     if (pid === 'washhouse') ensureStall();
     if (pid === 'bandstand') state.prestige.rubans += 5;
+    if (pid === 'ferry') ensureIsland();
+    if (pid === 'carnival') state.prestige.rubans += 5;
 }
 
 const MAP_TEASE = {
@@ -142,11 +153,13 @@ const MAP_TEASE = {
     port: 'au bout de la route, un petit port',
     alpine: 'là-haut, les alpages',
     domaine: 'sur les coteaux, un vieux domaine',
+    island: 'depuis le hameau, une île tiède',
 };
 
 // la suite de l'histoire, après une rénovation
 export function storyNextText(p) {
-    const c = currentChapter();
+    const c = currentChapter(mapOf(p) === 'island' ? 'island' : undefined);
+    if (mapOf(p) === 'island' && !c) return 'L’île est en fête : toute son histoire est écrite. Merci !';
     if (!c)
         return 'Le village et le hameau sont rénovés : l’histoire est terminée. Merci pour tout ! Prochain grand but : la Ferme légendaire (Livre de la ferme).';
     const at = state.level < c.lvl ? ` au niveau ${c.lvl}` : '';

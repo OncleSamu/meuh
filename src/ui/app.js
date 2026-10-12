@@ -8,6 +8,7 @@ import { ANIMALS } from '../data/animals.js';
 import { MACHINES } from '../data/machines.js';
 import { NATURE } from '../data/nature.js';
 import { ORCHARD } from '../data/farm.js';
+import { ISLAND } from '../data/island.js';
 import { CAVE_LVL } from '../data/cave.js';
 import { MAX_LEVEL } from '../data/progress.js';
 import * as G from '../systems/index.js';
@@ -36,6 +37,7 @@ export const TABS = [
             ['field', 'Champ', ['ui', 'basket']],
             ['orchard', 'Verger', ['item', 'apple'], () => (state.orchard && state.orchard.slots.some(x => x.open) ? 1 : ORCHARD.lvl)],
             ['nature', 'Nature', ['item', 'wood'], () => NATURE.forest.lvl],
+            ['island', 'Île', ['item', 'pineapple'], () => ISLAND.lvl],
         ],
     },
     { id: 'animals', name: 'Animaux', icon: ['animal', 'chicken'], lock: () => ANIMALS.chicken.reqLvl },

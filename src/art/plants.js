@@ -354,7 +354,24 @@ export const oldTreeBase = () =>
     FC(36, 18, 2.2, '#d9a23a', 0.7) +
     L('M38 36 Q42 34 44 30', 1.6, '#7f8a2e');
 
-const FRUIT_COL = { apple: '#e2412f', orange: '#f5a623', cherry: '#c2253f', peach: '#ffb07a', kiwi: '#9a7444', kaki: '#f07a1c' };
+const FRUIT_COL = {
+    apple: '#e2412f',
+    orange: '#f5a623',
+    cherry: '#c2253f',
+    peach: '#ffb07a',
+    kiwi: '#9a7444',
+    kaki: '#f07a1c',
+    mango: '#ffa630',
+    lime: '#7cc23a',
+    avocado: '#3f6b2a',
+    guava: '#a8d65c',
+    lychee: '#d9364b',
+    greenCoffee: '#c8303a',
+};
+// les palmiers de l'île (dessinés dans island.js, branchés ici pour éviter une boucle d'imports)
+const PALM_IDS = ['banana', 'coconut', 'papaya'];
+let palmTree = () => '';
+export const setPalm = fn => (palmTree = fn);
 function fruitOf(id) {
     const col = FRUIT_COL[id] || '#e2412f';
     if (id === 'cherry')
@@ -379,6 +396,7 @@ function fruitOf(id) {
 }
 
 export const tree = (id, stage) => {
+    if (PALM_IDS.includes(id) && stage > 0 && stage < 4) return palmTree(id, stage);
     if (stage === 0) return mound() + stem('M32 56 L32 34', '#8b5a2b', 2.5) + leaf(32, 42, 13, -150, G) + leaf(32, 38, 13, -30, G) + leaf(32, 35, 12, -95, GL);
     if (stage === 1) return treeBase();
     if (stage === 4) return deadTree();

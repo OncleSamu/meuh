@@ -12,6 +12,7 @@ import { defineView, defineLive, ui, currentPath } from '../app.js';
 import { defineSheet, openSheet } from '../sheets.js';
 import { reduceMotion, burstAt } from '../fx.js';
 import { pinBar } from './common.js';
+import { longPress } from '../longpress.js';
 
 let els = [];
 
@@ -306,64 +307,8 @@ defineSheet('animal', {
     },
 });
 
-// ---------------- appui long : la fiche de la bête ----------------
-// Un appui court ramasse ou nourrit ; en restant appuyé (ou clic droit), la fiche s'ouvre.
-const LONG_MS = 450;
-let swallowClick = 0;
-function setupLongPress() {
-    const view = byId('view-animals');
-    let timer = null,
-        start = null;
-    const cancel = () => {
-        clearTimeout(timer);
-        timer = null;
-    };
-    const target = e => e.target.closest('.critter[data-i], .st-tile[data-i]');
-    view.addEventListener('pointerdown', e => {
-        const el = target(e);
-        if (!el || (e.pointerType === 'mouse' && e.button !== 0)) return;
-        start = [e.clientX, e.clientY];
-        cancel();
-        el.classList.add('pressing');
-        timer = setTimeout(() => {
-            timer = null;
-            el.classList.remove('pressing');
-            swallowClick = Date.now() + 900;
-            if (navigator.vibrate && state.settings.haptics) navigator.vibrate(15);
-            openSheet('animal', { i: +el.dataset.i });
-        }, LONG_MS);
-    });
-    view.addEventListener('pointermove', e => {
-        if (timer && start && Math.hypot(e.clientX - start[0], e.clientY - start[1]) > 12) {
-            cancel();
-            view.querySelectorAll('.pressing').forEach(x => x.classList.remove('pressing'));
-        }
-    });
-    const end = () => {
-        cancel();
-        view.querySelectorAll('.pressing').forEach(x => x.classList.remove('pressing'));
-    };
-    ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => view.addEventListener(t, end));
-    // le « clic » qui suit un appui long ne doit ni nourrir ni refermer la fiche
-    document.addEventListener(
-        'click',
-        e => {
-            if (swallowClick > Date.now()) {
-                swallowClick = 0;
-                e.stopPropagation();
-                e.preventDefault();
-            }
-        },
-        true,
-    );
-    view.addEventListener('contextmenu', e => {
-        const el = target(e);
-        if (!el) return;
-        e.preventDefault();
-        cancel();
-        openSheet('animal', { i: +el.dataset.i });
-    });
-}
+// appui long : la fiche de la bête (un appui court ramasse ou nourrit)
+const setupLongPress = () => longPress(byId('view-animals'), '.critter[data-i], .st-tile[data-i]', el => openSheet('animal', { i: +el.dataset.i }));
 
 export function setupAnimals() {
     actions({

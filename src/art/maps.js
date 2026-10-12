@@ -43,4 +43,14 @@ export const MAP_BG = {
     <path d="M10 104 Q60 82 90 92 Q120 100 150 80" stroke="#f2d6a2" stroke-width="5" fill="none" stroke-linecap="round"/>
     <path d="M40 18 Q52 6 64 18Z" fill="#e9e2d0" opacity=".8"/>
 </svg>`,
+    island: `<svg class="vmap-bg" viewBox="0 0 160 110" preserveAspectRatio="none" aria-hidden="true">
+    <rect width="160" height="110" fill="#4fb3d9"/>
+    <path d="M6 20 Q16 17 26 20 M120 14 Q130 11 140 14 M136 96 Q146 93 156 96 M60 104 Q70 101 80 104" stroke="#bfe6fb" stroke-width="1" fill="none"/>
+    <path d="M18 64 Q10 40 34 26 Q60 10 100 14 Q140 18 150 46 Q156 78 124 92 Q90 104 54 98 Q22 92 18 64Z" fill="#f2dfa8"/>
+    <path d="M30 60 Q26 42 44 32 Q66 20 98 24 Q130 28 138 50 Q142 74 116 84 Q88 92 58 88 Q34 82 30 60Z" fill="#7fcf5a"/>
+    <path d="M24 70 Q50 64 80 70 Q110 76 136 66" stroke="#f2d6a2" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <g fill="#3f8f2e"><circle cx="46" cy="44" r="5"/><circle cx="112" cy="40" r="6"/><circle cx="96" cy="58" r="4"/><circle cx="62" cy="58" r="5"/></g>
+    <g stroke="#8b5a2b" stroke-width="1.6" fill="none"><path d="M42 40 L44 52"/><path d="M110 34 L112 48"/></g>
+    <path d="M0 74 L18 72 L18 78 L0 80Z" fill="#a8693a"/>
+</svg>`,
 };

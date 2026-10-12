@@ -223,7 +223,7 @@ function neighborGift(k, h) {
         state.decorInv[deco.id] = (state.decorInv[deco.id] || 0) + 1;
         txt = `${deco.name} offerte`;
     } else if (h === 2) {
-        const ex = pickRand(['pineapple', 'saffron']);
+        const ex = pickRand(['saffron']);
         state.seeds[ex] += 4;
         txt = `4 ${ITEMS[ex].seedName.toLowerCase()}`;
     } else {

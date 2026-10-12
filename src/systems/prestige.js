@@ -1,6 +1,7 @@
 // Le prestige : vendre la ferme, rubans et défis.
 import { ensureOrchard } from './orchard.js';
 import { ensurePastures } from './pastures.js';
+import { ensureIsland } from './island.js';
 import { state, newState, setState, fillGrid } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { emit, toast, sfx, buzz } from '../core/bus.js';
@@ -72,6 +73,7 @@ export function doPrestige(challenge, theme) {
     fillGrid();
     ensurePastures();
     ensureOrchard();
+    ensureIsland();
     state.truck.arriveAt = now() + 60000;
     ensureVillagers();
     addPhoto('ui', 'ribbon', 'Une nouvelle ferme', `${state.prestige.rubans} rubans en poche`);
