@@ -27,7 +27,6 @@ export const slotsOf = (z = 'farm') => (z === 'island' ? (state.island && state.
 export const isIslandTree = id => !!ITEMS[id].island;
 export const treeList = (z = 'farm') => Object.values(ITEMS).filter(i => i.type === 'tree' && !!i.island === (z === 'island'));
 export const orchardOpen = () => state.level >= ORCHARD.lvl || state.orchard.slots.some(x => x.open);
-export const orchardSlots = z => slotsOf(z);
 export const openSlots = z => slotsOf(z).filter(x => x.open).length;
 export const slotCost = (z = 'farm') =>
     z === 'island'
@@ -350,7 +349,6 @@ export function orchardOffline(elapsed) {
 // ---------------- résumés ----------------
 export const fruitsOnGround = z => slotsOf(z).reduce((a, x) => a + (x.tree ? x.tree.ground : 0), 0);
 export const deadTrees = z => slotsOf(z).filter(x => x.tree && treeStage(x.tree) === 'dead').length;
-export const emptySlots = z => slotsOf(z).filter(x => x.open && !x.tree).length;
 export const livingTrees = id => allSlots().filter(x => x.tree && x.tree.id === id && treeStage(x.tree) !== 'dead').length;
 export const treeCountText = z => {
     const n = slotsOf(z).filter(x => x.tree).length;

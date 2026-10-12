@@ -189,7 +189,6 @@ export function scheduleFind() {
 
 // le chien court vers le corbeau puis le chasse
 let chase = null;
-export const dogChasing = () => chase;
 
 export function handleDog(at) {
     const d = state.dog;

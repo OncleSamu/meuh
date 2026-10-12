@@ -182,7 +182,6 @@ export const varieties = () => Object.values(state.genetics.vars);
 export const variety = id => state.genetics.vars[id];
 export const openVarieties = () => varieties().filter(v => !v.fixed);
 export const fixedVarieties = () => varieties().filter(v => v.fixed);
-export const varietiesOf = base => varieties().filter(v => v.base === base);
 export const varName = v => v.name || v.auto;
 
 // un nom tout trouvé pour un hybride : le début d'une espèce et la fin de l'autre (Fraipiment)
@@ -327,15 +326,6 @@ export function fixVariety(id, name, at) {
     return true;
 }
 
-export function renameVariety(id, name) {
-    const v = state.genetics.vars[id];
-    const n = String(name || '')
-        .trim()
-        .slice(0, 22);
-    if (!v || !n) return false;
-    v.name = n;
-    return true;
-}
 
 export function discardVariety(id) {
     const G = state.genetics;

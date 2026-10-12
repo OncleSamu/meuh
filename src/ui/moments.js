@@ -146,7 +146,6 @@ export function closeMoment() {
 }
 
 export const momentShown = () => !!current;
-export const momentType = () => current && current.type;
 
 export function setupMoments(onClose) {
     refresh = onClose;

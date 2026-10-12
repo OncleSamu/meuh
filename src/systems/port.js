@@ -24,7 +24,6 @@ import { addPhoto } from './style.js';
 // ---------------- pêche en mer ----------------
 export const netOpen = () => projectDone('lighthouse');
 export const netReady = () => netOpen() && state.net.until && now() >= state.net.until;
-export const netLeft = () => Math.max(0, (state.net.until - now()) / 1000);
 
 export function castNet(at) {
     if (!netOpen() || state.net.until) return false;
@@ -77,7 +76,6 @@ export function haulNet(at) {
 export const boatOpen = () => projectDone('quay');
 export const boatPay = () => BOAT_PAY * (projectDone('shipyard') ? 1.25 : 1);
 export const boatAway = () => BOAT_AWAY - (projectDone('shipyard') ? 60 * 60 * 1000 : 0);
-export const boatLeft = () => Math.max(0, ((state.boat.status === 'here' ? state.boat.expiresAt : state.boat.arriveAt) - now()) / 1000);
 
 export function boatTick() {
     if (!boatOpen()) return false;
@@ -141,7 +139,6 @@ export function sendBoat(at) {
 export const transOpen = () => projectDone('sheepfold');
 export const transMax = () => (projectDone('cablecar') ? 8 : 4);
 export const transTime = () => TRANS_TIME / (projectDone('cablecar') ? 2 : 1);
-export const transLeft = () => Math.max(0, (state.trans.returnAt - now()) / 1000);
 export const isAway = a => !!(a && a.away);
 export const alpineMult = a => (a && a.alpine ? ALPINE_SPEED : 1);
 // les bêtes qui peuvent monter : [animal, index]

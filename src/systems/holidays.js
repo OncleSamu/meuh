@@ -31,7 +31,6 @@ export function easterDate(y) {
 
 // pour essayer une fête hors saison (outils de test)
 let forced;
-export const forceHoliday = id => (forced = id);
 
 export function holidayNow() {
     if (forced !== undefined) return forced;

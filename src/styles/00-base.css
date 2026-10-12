@@ -128,11 +128,6 @@ small {
     outline-offset: 2px;
     border-radius: 8px;
 }
-@keyframes bump {
-    50% {
-        transform: scale(1.12);
-    }
-}
 @keyframes popIn {
     from {
         transform: scale(0.6);
@@ -143,5 +138,74 @@ small {
     from {
         opacity: 0;
         transform: translateY(10px);
+    }
+}
+/*  animations partagées (une seule définition chacune)  */
+@keyframes bump {
+    50% {
+        transform: scale(1.12);
+    }
+}
+@keyframes crow {
+    from {
+        transform: translateY(0) rotate(-6deg);
+    }
+    to {
+        transform: translateY(-5px) rotate(6deg);
+    }
+}
+@keyframes ripple {
+    from {
+        transform: scale(0.4);
+        opacity: 1;
+    }
+    to {
+        transform: scale(2.4);
+        opacity: 0;
+    }
+}
+@keyframes shake {
+    25% {
+        translate: -4px 0;
+    }
+    75% {
+        translate: 4px 0;
+    }
+}
+@keyframes grow {
+    from {
+        transform: scale(0.2, 0.1);
+    }
+}
+@keyframes hop {
+    50% {
+        transform: translateY(-4px);
+    }
+}
+@keyframes waddle {
+    0%,
+    100% {
+        transform: rotate(-4deg) translateY(0);
+    }
+    50% {
+        transform: rotate(4deg) translateY(-3px);
+    }
+}
+@keyframes bob {
+    to {
+        transform: translateY(-3px);
+    }
+}
+@keyframes idle {
+    50% {
+        translate: 0 -2px;
+        scale: 1.02 0.98;
+    }
+}
+@keyframes pulseCard {
+    50% {
+        box-shadow:
+            0 5px 0 var(--wood-d),
+            0 0 0 6px rgba(232, 54, 75, 0.25);
     }
 }

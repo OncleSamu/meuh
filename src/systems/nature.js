@@ -25,7 +25,6 @@ export const toolLvl = kind => state.tools[toolKey(kind)] || 0;
 export const slotHp = (kind, sl) => Math.max(1, NATURE[kind].hp + (sl.big ? 2 : 0) - toolLvl(kind));
 export const toolCost = kind => ({ tools: toolLvl(kind) + 1, coins: 400 * Math.pow(toolLvl(kind) + 1, 2) });
 export const slotUp = sl => !sl.until || now() >= sl.until;
-export const natureOpen = kind => state.level >= NATURE[kind].lvl;
 
 export function upgradeTool(kind, at) {
     const lvl = toolLvl(kind),

@@ -42,7 +42,6 @@ export const dateKey = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padSt
 
 // « s » si pluriel
 export const s = n => (n > 1 ? 's' : '');
-export const plural = (n, one, many) => (n > 1 ? many : one);
 
 // textes à trous des données : {n} nombre formaté, {s} pluriel, {x} valeur
 export const fill = (text, n, x) =>
@@ -55,4 +54,3 @@ export const pct = (x, digits = 0) => `${(x * 100).toFixed(digits).replace('.', 
 // prix arrondi à 5 pièces, jamais moins de 5
 export const round5 = n => Math.max(5, Math.round(n / 5) * 5);
 export const pickRand = list => list[Math.floor(Math.random() * list.length)];
-export const clamp = (v, a, b) => Math.max(a, Math.min(b, v));

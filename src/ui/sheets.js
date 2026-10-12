@@ -8,7 +8,6 @@ import { ico } from './icons.js';
 const SHEETS = {};
 const stack = []; // [{ name, opts, el }]
 export const defineSheet = (name, def) => (SHEETS[name] = def);
-export const sheetOpen = name => stack.some(s => s.name === name);
 export const topSheet = () => stack[stack.length - 1] || null;
 export const anySheet = () => stack.length > 0;
 

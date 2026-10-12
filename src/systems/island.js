@@ -229,4 +229,3 @@ export function islandOffline(elapsed) {
 }
 
 export const islandReady = () => islandPlots().filter(p => p.ready).length;
-export const islandEmpty = () => islandPlots().filter(p => p.open && !p.id).length;

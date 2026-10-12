@@ -9,7 +9,6 @@ import { tip } from './tips.js';
 const COIN = ['ui', 'coin'];
 
 export const pastures = () => state.pastures;
-export const pastureCount = () => state.pastures.length;
 export const inPasture = k => state.animals.filter(a => (a.p || 0) === k);
 export const pastureLoad = k => inPasture(k).length;
 export const pastureFree = k => PASTURE.cap - pastureLoad(k);
@@ -94,10 +93,3 @@ export function moveAnimal(i, k) {
     return true;
 }
 
-export function renamePasture(k, name) {
-    const p = state.pastures[k],
-        n = (name || '').trim().slice(0, 24);
-    if (!p || !n) return false;
-    p.name = n;
-    return true;
-}

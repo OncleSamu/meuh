@@ -48,7 +48,6 @@ let after = () => {};
 export const action = (name, fn) => (ACTIONS[name] = fn);
 export const actions = map => Object.assign(ACTIONS, map);
 export const afterAction = fn => (after = fn);
-export const hasAction = name => !!ACTIONS[name];
 
 // une action qui renvoie QUIET ne redessine rien (un curseur qu'on fait glisser, par exemple)
 export const QUIET = Symbol('quiet');

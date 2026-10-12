@@ -99,55 +99,6 @@ html.season-automne .meadow {
     opacity: 0.6;
 }
 
-.truck-card.locked .truck-art {
-    width: 96px;
-    flex-shrink: 0;
-}
-
-.truck-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.truck-art {
-    position: relative;
-    width: 150px;
-    height: 80px;
-    margin: -4px auto 0;
-}
-
-.truck-art .spr {
-    width: 100%;
-    height: 100%;
-}
-
-.truck-art.ghost {
-    opacity: 0.35;
-}
-
-.truck-art.arrive {
-    animation: driveIn 1.3s cubic-bezier(0.2, 0.8, 0.3, 1);
-}
-
-.truck-art.leave {
-    animation: driveOut 1s ease-in forwards;
-}
-
-.truck-card.here .truck-art:not(.arrive):not(.leave) {
-    animation: idleTruck 0.6s ease-in-out infinite alternate;
-}
-
-.slot-ico {
-    width: 44px;
-    height: 44px;
-}
-
-.slot-qty {
-    font-family: var(--display);
-    font-weight: 600;
-}
-
 .slot-have {
     font-size: 0.7rem;
     opacity: 0.7;
@@ -156,12 +107,6 @@ html.season-automne .meadow {
 .slot-have.ok {
     color: var(--leaf-d);
     opacity: 1;
-}
-
-.slot-check {
-    width: 28px;
-    height: 28px;
-    margin-top: 4px;
 }
 
 .truck-reward {
@@ -280,17 +225,6 @@ html.season-automne .meadow {
     opacity: 0.6;
 }
 
-.goal-ico {
-    width: 38px;
-    height: 38px;
-    flex-shrink: 0;
-}
-
-.goal-ico svg {
-    width: 100%;
-    height: 100%;
-}
-
 .goal-t {
     font-weight: 800;
     font-size: 0.85rem;
@@ -309,10 +243,6 @@ html.season-automne .meadow {
 
 .truck-card.away {
     display: block;
-}
-
-.truck-card.away .road {
-    margin-top: 0;
 }
 
 .todo {
@@ -352,14 +282,6 @@ html.season-automne .meadow {
 
 .todo-chip.here {
     background: #fff6cf;
-}
-
-.todo-calm {
-    font-size: 0.8rem;
-    color: var(--ink);
-    padding: 4px 10px;
-    border-radius: 10px;
-    background: rgba(251, 236, 201, 0.85);
 }
 
 @media (pointer: coarse) {
@@ -512,13 +434,6 @@ html.season-automne .meadow {
         0 5px 0 var(--wood-d),
         0 0 0 3px rgba(232, 54, 75, 0.6);
     animation: pulseCard 1.6s ease-in-out infinite;
-}
-
-.od-head {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
 }
 
 .olines,
@@ -685,11 +600,6 @@ html.season-automne .meadow {
     height: 16px;
 }
 
-.wagon .slot-check {
-    width: 26px;
-    height: 26px;
-}
-
 .wagon.loaded .wagon-spr {
     filter: saturate(0.6);
 }
@@ -697,26 +607,6 @@ html.season-automne .meadow {
 .truck-card.away .card-ico,
 .truck-card.locked .card-ico {
     width: 64px;
-}
-
-.balloon-card {
-    padding: 10px;
-}
-
-.balloon-card.here {
-    display: flex;
-    gap: 10px;
-    background-color: #dff1fb;
-}
-
-.balloon-art {
-    width: 70px;
-    flex-shrink: 0;
-    animation: floaty 3s ease-in-out infinite;
-}
-
-.balloon-art.fly {
-    animation: flyAway 1s ease-in forwards;
 }
 
 .chapter-head {
@@ -837,11 +727,6 @@ html.season-automne .meadow {
 
 .pline .pname small {
     opacity: 0.7;
-}
-
-.pline .qbar {
-    margin-top: 2px;
-    height: 8px;
 }
 
 .pline .btn {
@@ -966,10 +851,6 @@ html.season-automne .meadow {
     margin: 4px 14px 52px 4px;
 }
 
-.tiers .qbar {
-    height: 14px;
-}
-
 .tier {
     position: absolute;
     top: 18px;
@@ -1017,23 +898,8 @@ html.season-automne .meadow {
     white-space: nowrap;
 }
 
-.todo-chip.more {
-    font-family: var(--display);
-    background: var(--wood-ll);
-}
-
 .todo.all {
     flex-wrap: wrap;
-}
-
-.stall-form .od-head > .ico {
-    width: 40px;
-    height: 40px;
-}
-
-.barn-item .od-head > .ico {
-    width: 36px;
-    height: 36px;
 }
 
 .pin-bar {
@@ -1045,55 +911,6 @@ html.season-automne .meadow {
 
 .pin-bar[hidden] {
     display: none;
-}
-
-.pin-in {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    width: 100%;
-    padding: 4px 10px 4px 6px;
-    background: var(--paper);
-    border: 2.5px solid var(--ink);
-    border-radius: 14px;
-    box-shadow: 0 3px 0 var(--wood-d);
-    font-family: var(--display);
-    font-size: 0.78rem;
-    cursor: pointer;
-}
-
-.pin-in.ready {
-    background: #e8f6d8;
-}
-
-.pin-in .pin {
-    width: 18px;
-    height: 18px;
-}
-
-.pin-in span {
-    display: flex;
-    align-items: center;
-}
-
-.pin-in span.ok {
-    color: var(--leaf-d);
-}
-
-.pin-in span .ico {
-    width: 22px;
-    height: 22px;
-}
-
-.pin-in b {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-}
-
-.pin-in b .ico {
-    width: 16px;
-    height: 16px;
 }
 
 .t-pin {
@@ -1163,29 +980,6 @@ button.oline:hover {
     margin-right: 6px;
 }
 
-.league-chip {
-    display: inline-block;
-    margin-left: 4px;
-    padding: 1px 8px;
-    border-radius: 10px;
-    border: 2px solid var(--ink);
-    font-size: 0.7rem;
-    vertical-align: middle;
-    background: #e9a465;
-}
-
-.league-chip.l1 {
-    background: #dfe7ec;
-}
-
-.league-chip.l2 {
-    background: var(--gold);
-}
-
-.league-chip.l3 {
-    background: linear-gradient(135deg, #bfe6fb, #e8d8ff);
-}
-
 html.season-automne #weather .leaves {
     opacity: 0.7;
 }
@@ -1240,25 +1034,6 @@ html.season-printemps .field {
     background: #fff6cf;
 }
 
-.critic-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
-    margin-top: 8px;
-}
-
-.critic-row > .ico {
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
-}
-
-.critic-row .card-main {
-    flex: 1;
-    min-width: 0;
-}
-
 .vstory {
     display: flex;
     flex-direction: column;
@@ -1285,34 +1060,6 @@ html.season-printemps .field {
 .vstory b .ico {
     width: 18px;
     height: 18px;
-}
-
-.vstory-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-}
-
-.vstory-need {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    font-weight: 800;
-    font-size: 0.8rem;
-}
-
-.vstory-need.ok {
-    color: var(--leaf-d);
-}
-
-.vstory-need .pgo {
-    width: 28px;
-    height: 28px;
-}
-
-.vstory-row .btn {
-    margin-left: auto;
 }
 
 .season-items {
@@ -1382,23 +1129,6 @@ html.season-printemps .field {
     background-color: #fbe1ea;
 }
 
-.holiday-card .vstory-row {
-    margin: 8px 0 6px;
-}
-
-@keyframes grow {
-    from {
-        transform: scale(0.2, 0.1);
-    }
-}
-
-@keyframes idle {
-    50% {
-        translate: 0 -2px;
-        scale: 1.02 0.98;
-    }
-}
-
 @keyframes driveIn {
     from {
         transform: translateX(-140%);
@@ -1417,20 +1147,6 @@ html.season-printemps .field {
     }
 }
 
-@keyframes bob {
-    50% {
-        transform: translateY(3px);
-    }
-}
-
-@keyframes pulseCard {
-    50% {
-        box-shadow:
-            0 5px 0 var(--wood-d),
-            0 0 0 6px rgba(232, 54, 75, 0.25);
-    }
-}
-
 @keyframes floaty {
     50% {
         transform: translateY(-6px);
@@ -1441,11 +1157,5 @@ html.season-printemps .field {
     to {
         transform: translateY(-240px) scale(0.6);
         opacity: 0;
-    }
-}
-
-@keyframes bob {
-    to {
-        transform: translateY(-3px);
     }
 }

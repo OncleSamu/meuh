@@ -283,103 +283,14 @@ html.calm .critter {
 }
 
 .trans-card,
-.boat-card,
 .trans-card {
     background: #e6f2dc;
-}
-
-.trans-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 8px 0 10px;
-}
-
-.trans-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 8px 4px 4px;
-    font: inherit;
-    font-weight: 800;
-    font-size: 0.8rem;
-    color: var(--ink);
-    background: var(--paper);
-    border: 2.5px solid var(--ink);
-    border-radius: 20px;
-    cursor: pointer;
-}
-
-.trans-chip .ico {
-    width: 30px;
-    height: 30px;
-}
-
-.trans-chip.on {
-    background: var(--gold);
-    box-shadow: 0 0 0 3px #fff;
-}
-
-.trans-chip.alpine {
-    border-style: dashed;
 }
 
 .critter.away {
     opacity: 0.25;
     pointer-events: none;
     filter: grayscale(0.6);
-}
-
-@keyframes hop {
-    50% {
-        transform: translateY(-4px);
-    }
-}
-
-@keyframes idle {
-    50% {
-        translate: 0 -2px;
-        scale: 1.02 0.98;
-    }
-}
-
-@keyframes waddle {
-    0%,
-    100% {
-        transform: rotate(-4deg) translateY(0);
-    }
-    50% {
-        transform: rotate(4deg) translateY(-3px);
-    }
-}
-
-@keyframes shake {
-    25% {
-        translate: -4px 0;
-    }
-    75% {
-        translate: 4px 0;
-    }
-}
-
-@keyframes crow {
-    from {
-        transform: translateY(0) rotate(-6deg);
-    }
-    to {
-        transform: translateY(-5px) rotate(6deg);
-    }
-}
-
-@keyframes ripple {
-    from {
-        transform: scale(0.4);
-        opacity: 1;
-    }
-    to {
-        transform: scale(2.4);
-        opacity: 0;
-    }
 }
 
 /* un grand troupeau : des bêtes un peu plus petites */

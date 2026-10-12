@@ -32,7 +32,6 @@ export const peacockCharm = () => state.animals.filter(a => a.type === 'peacock'
 
 // ---------------- événements rares ----------------
 export const rareActive = type => !!(state.rare && state.rare.type === type && now() < state.rare.until);
-export const rareLeft = () => Math.max(0, ((state.rare && state.rare.until) || 0) - now()) / 1000;
 // la nuée de papillons s'ajoute à l'arc-en-ciel
 export const butterflyGolden = () => (rareActive('butterflies') ? 3 : 1);
 
