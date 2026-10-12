@@ -22,7 +22,7 @@ export const INCIDENTS = {
         name: 'Animal malade',
         icon: 'sick',
         time: 1800000,
-        text: 'Un animal est malade et ne produit plus : ouvrez sa fiche pour le soigner.',
+        text: 'Un animal est malade et ne produit plus : restez appuyé dessus pour ouvrir sa fiche et le soigner.',
     },
     express: {
         name: 'Acheteur pressé',

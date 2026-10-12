@@ -249,8 +249,8 @@ function renderAnimals(el) {
             'hint',
             hint(
                 mode === 'stable'
-                    ? 'Touchez un animal pour ramasser sa production, ou pour ouvrir sa fiche quand il n’a rien à donner.'
-                    : 'Chaque sac de nourriture donne une production. Touchez un animal pour ouvrir sa fiche : câlin, nourriture, nom et pré.',
+                    ? 'Touchez une bête pour ramasser sa production ou la nourrir. Restez appuyé pour ouvrir sa fiche : câlin, nom et pré.'
+                    : 'Touchez une bête pour ramasser ou la nourrir (un sac = une production). Restez appuyé pour ouvrir sa fiche : câlin, nom et pré.',
             ),
         ],
         ['trans', transCard()],
@@ -306,6 +306,65 @@ defineSheet('animal', {
     },
 });
 
+// ---------------- appui long : la fiche de la bête ----------------
+// Un appui court ramasse ou nourrit ; en restant appuyé (ou clic droit), la fiche s'ouvre.
+const LONG_MS = 450;
+let swallowClick = 0;
+function setupLongPress() {
+    const view = byId('view-animals');
+    let timer = null,
+        start = null;
+    const cancel = () => {
+        clearTimeout(timer);
+        timer = null;
+    };
+    const target = e => e.target.closest('.critter[data-i], .st-tile[data-i]');
+    view.addEventListener('pointerdown', e => {
+        const el = target(e);
+        if (!el || (e.pointerType === 'mouse' && e.button !== 0)) return;
+        start = [e.clientX, e.clientY];
+        cancel();
+        el.classList.add('pressing');
+        timer = setTimeout(() => {
+            timer = null;
+            el.classList.remove('pressing');
+            swallowClick = Date.now() + 900;
+            if (navigator.vibrate && state.settings.haptics) navigator.vibrate(15);
+            openSheet('animal', { i: +el.dataset.i });
+        }, LONG_MS);
+    });
+    view.addEventListener('pointermove', e => {
+        if (timer && start && Math.hypot(e.clientX - start[0], e.clientY - start[1]) > 12) {
+            cancel();
+            view.querySelectorAll('.pressing').forEach(x => x.classList.remove('pressing'));
+        }
+    });
+    const end = () => {
+        cancel();
+        view.querySelectorAll('.pressing').forEach(x => x.classList.remove('pressing'));
+    };
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => view.addEventListener(t, end));
+    // le « clic » qui suit un appui long ne doit ni nourrir ni refermer la fiche
+    document.addEventListener(
+        'click',
+        e => {
+            if (swallowClick > Date.now()) {
+                swallowClick = 0;
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        },
+        true,
+    );
+    view.addEventListener('contextmenu', e => {
+        const el = target(e);
+        if (!el) return;
+        e.preventDefault();
+        cancel();
+        openSheet('animal', { i: +el.dataset.i });
+    });
+}
+
 export function setupAnimals() {
     actions({
         animalMode: (el, d) => (ui.sel.animalMode = d.v),
@@ -317,9 +376,7 @@ export function setupAnimals() {
         moveAnimal: (el, d) => G.moveAnimal(+d.i, +d.k),
         feedAll: el => G.feedAll(el),
         collectAnimals: el => G.collectAll(el),
-        animal: (el, d) => {
-            if (G.tapAnimal(+d.i, el) === 'card') openSheet('animal', { i: +d.i });
-        },
+        animal: (el, d) => G.tapAnimal(+d.i, el),
         pet: (el, d) => G.petAnimal(+d.i, byId('sheets').querySelector('[data-anchor="animalArt"]')),
         feedOne: (el, d) => G.feedOne(+d.i, byId('sheets').querySelector('[data-anchor="animalArt"]')),
         cure: (el, d) => G.cureAnimal(+d.i, el),
@@ -338,6 +395,7 @@ export function setupAnimals() {
             if (G.startTrans(ui.sel.trans, el)) ui.sel.trans = [];
         },
     });
+    setupLongPress();
     on('animalFx', ({ i }) => {
         const el = els[i];
         if (!el || !el.isConnected) return;

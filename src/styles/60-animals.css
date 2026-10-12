@@ -238,7 +238,7 @@ html.season-automne .meadow {
 .animal-art {
     width: 130px;
     height: 130px;
-    margin: -82px auto 4px;
+    margin: 2px auto 4px;
     padding: 12px;
     border-radius: 50%;
     background: #c9eaa8;
@@ -594,4 +594,16 @@ html.calm .critter {
 }
 .pas-move .pick-chip:disabled {
     opacity: 0.45;
+}
+/* appui long : la bête se tasse, et le téléphone n'affiche pas son menu */
+.critter,
+.st-tile {
+    -webkit-touch-callout: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.critter.pressing .critter-body,
+.st-tile.pressing .st-art {
+    filter: brightness(1.12) drop-shadow(0 0 6px rgba(255, 235, 150, 0.95));
+    transition: filter 0.4s;
 }

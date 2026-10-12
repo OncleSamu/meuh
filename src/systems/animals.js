@@ -69,28 +69,12 @@ export function collectAnimal(a) {
     return { qty, xp };
 }
 
-// Un appui sur une bête : nourrir (outil nourriture), ramasser, ou ouvrir sa fiche (renvoie 'card')
+// Un appui sur une bête : ramasser sa production, sinon la nourrir (un repas).
+// Avec l'outil nourriture en main, on nourrit toujours. La fiche s'ouvre par un appui long (interface).
 export function tapAnimal(i, at) {
     const a = state.animals[i],
         d = ANIMALS[a.type];
-    if (state.selectedTool === 'feed') {
-        if (a.food >= maxFood()) {
-            float(at, ['Repu !'], '', -30);
-            sfx('click');
-            return;
-        }
-        if (state.inventory.feed <= 0) {
-            toast('Plus de nourriture : achetez-en au magasin', ['item', 'feed']);
-            sfx('error');
-            return;
-        }
-        state.inventory.feed--;
-        a.food++;
-        sfx('feed');
-        burst(at, 'crumbs', 7, 10);
-        buzz(6);
-        float(at, ['+1', ['item', 'feed']], '', -30);
-    } else if (a.stack > 0) {
+    if (a.stack > 0 && state.selectedTool !== 'feed') {
         if (barnBlocked()) return;
         const r = collectAnimal(a);
         rollRare(BALANCE.rareDrop, at);
@@ -102,8 +86,22 @@ export function tapAnimal(i, at) {
         fly(at, d.prodId, r.qty);
         addXp(r.xp, at);
     } else {
-        sfx(a.type);
-        return 'card';
+        if (a.food >= maxFood()) {
+            float(at, ['Repu !'], '', -30);
+            sfx(a.type);
+            return;
+        }
+        if (state.inventory.feed <= 0) {
+            toast('Plus de nourriture : achetez-en au magasin ou au moulin', ['item', 'feed']);
+            sfx('error');
+            return;
+        }
+        state.inventory.feed--;
+        a.food++;
+        sfx('feed');
+        burst(at, 'crumbs', 7, 10);
+        buzz(6);
+        float(at, ['+1', ['item', 'feed']], '', -30);
     }
     squish(at);
     return true;
