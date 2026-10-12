@@ -7,7 +7,8 @@ import { ITEMS } from '../../data/items.js';
 import { ISLAND } from '../../data/island.js';
 import { PROJECTS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
-import { blocks, actions, anchorEl } from '../dom.js';
+import { blocks, actions, anchorEl, esc } from '../dom.js';
+import { genWrap } from '../genlook.js';
 import { ico, art } from '../icons.js';
 import { btn, bar, hint, timer, section } from '../kit.js';
 import { defineView, defineLive, ui, go } from '../app.js';
@@ -31,7 +32,7 @@ function plotHtml(p, k, nextLocked) {
         return `<button class="i-plot empty" data-act="open" data-sheet="plantIsland" data-k="${k}" data-anchor="${anc}">
             <span class="o-plus">${ico(['ui', 'plus'])}</span>${p.last ? `<small>${ITEMS[p.last].name}</small>` : '<small>Planter</small>'}</button>`;
     return `<button class="i-plot${p.ready ? ' ready' : ''}" data-act="islandPlot" data-k="${k}" data-anchor="${anc}">
-        <span class="i-art">${art('plant', `${p.id}:${plotStage(p)}`)}</span>
+        <span class="i-art">${p.v && state.genetics && state.genetics.vars[p.v] ? genWrap(art('plant', `${p.id}:${plotStage(p)}`), state.genetics.vars[p.v].g) : art('plant', `${p.id}:${plotStage(p)}`)}</span>
         ${p.ready ? `<span class="o-tag ready">${ico(['item', p.id])}</span>` : `${bar(0, 'i-bar', `isle:${k}`)}<small>${timer(now() + G.islandLeft(p) * 1000)}</small>`}
     </button>`;
 }
@@ -111,7 +112,18 @@ defineSheet('plantIsland', {
     title: 'Planter sur l’île',
     render(o) {
         const k = +o.k;
-        return `<div class="pick-grid trees">${G.islandCrops()
+        const vars = state.genetics
+            ? G.varieties().filter(v => ITEMS[v.base].island && (state.genetics.seeds[v.id] || 0) > 0)
+            : [];
+        const varHtml = vars.length
+            ? `<h3 class="section-title"><span>Mes variétés</span></h3><div class="pick-grid trees">${vars
+                  .map(
+                      v =>
+                          `<button class="pick-cell var${ui.sel.isleVar === v.id ? ' on' : ''}" data-act="plantIslandVar" data-k="${k}" data-id="${v.id}"><span class="pc-art">${genWrap(art('plant', `${v.base}:2`), v.g)}</span><b>${esc(G.varName(v))}</b><span class="pc-cost">${state.genetics.seeds[v.id]} graines</span></button>`,
+                  )
+                  .join('')}</div><h3 class="section-title"><span>Cultures</span></h3>`
+            : '';
+        return `${varHtml}<div class="pick-grid trees">${G.islandCrops()
             .sort((a, b) => a.reqLvl - b.reqLvl)
             .map(d => {
                 const open = G.islandCropOk(d),
@@ -139,6 +151,9 @@ export function setupIsland() {
         },
         plantIsland: (el, d) => {
             if (G.plantIsland(+d.k, d.id, anchorEl(`isle:${d.k}`) || el)) closeSheet('plantIsland');
+        },
+        plantIslandVar: (el, d) => {
+            if (G.plantIslandVar(+d.k, d.id, anchorEl(`isle:${d.k}`) || el)) closeSheet('plantIsland');
         },
         harvestIsland: el => G.harvestAllIsland(el),
         replantIsland: el => G.replantIsland(el),

@@ -261,6 +261,16 @@ export const GUIDE = [
 ];
 
 export const TIPS = {
+    station: {
+        icon: ['ui', 'flowers'],
+        title: 'Une station de recherche',
+        text: 'Au bout du chemin des vergers, Agathe et Victor rouvrent une station de recherche (volet Village, carte « La station »). Croisements de plantes, élevage de sélection, et bientôt vos propres variétés !',
+    },
+    genetics: {
+        icon: ['item', 'strawberry'],
+        title: 'Croiser, c’est parier',
+        text: 'Chaque gène a deux versions, dont une souvent cachée. Le labo montre les chances de chaque issue. Gardez les meilleures variétés, recroisez-les avec elles-mêmes, et fixez-les pour leur donner un nom. Les meilleurs ingrédients font des plats en argent ou en or.',
+    },
     isle: {
         icon: ['item', 'pineapple'],
         title: 'Une île au bout du bac',

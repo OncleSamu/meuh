@@ -53,4 +53,13 @@ export const MAP_BG = {
     <g stroke="#8b5a2b" stroke-width="1.6" fill="none"><path d="M42 40 L44 52"/><path d="M110 34 L112 48"/></g>
     <path d="M0 74 L18 72 L18 78 L0 80Z" fill="#a8693a"/>
 </svg>`,
+    station: `<svg class="vmap-bg" viewBox="0 0 160 110" preserveAspectRatio="none" aria-hidden="true">
+    <rect width="160" height="110" fill="#a7d978"/>
+    <g stroke="#7fae4a" stroke-width="1.4" stroke-linecap="round" opacity=".7"><path d="M6 14 L40 14 M6 20 L40 20 M6 26 L40 26"/><path d="M120 92 L156 92 M120 98 L156 98 M120 104 L156 104"/></g>
+    <path d="M0 58 Q40 50 80 58 Q120 66 160 56" stroke="#f2d6a2" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M80 58 L80 24 M80 58 L80 96" stroke="#f2d6a2" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <g fill="#ffd23f"><circle cx="14" cy="96" r="1.6"/><circle cx="22" cy="100" r="1.6"/><circle cx="134" cy="16" r="1.6"/></g>
+    <g fill="#e8364b"><circle cx="18" cy="92" r="1.6"/><circle cx="140" cy="20" r="1.6"/><circle cx="148" cy="14" r="1.6"/></g>
+    <g fill="#6cc04a"><circle cx="150" cy="40" r="5"/><circle cx="8" cy="66" r="5"/><circle cx="104" cy="104" r="4"/></g>
+</svg>`,
 };

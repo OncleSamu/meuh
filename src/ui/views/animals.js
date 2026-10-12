@@ -8,8 +8,10 @@ import * as G from '../../systems/index.js';
 import { byId, blocks, esc, actions } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, hint, hearts, bar, timer, lines, segmented } from '../kit.js';
-import { defineView, defineLive, ui, currentPath } from '../app.js';
-import { defineSheet, openSheet } from '../sheets.js';
+import { defineView, defineLive, ui, currentPath, go } from '../app.js';
+import { defineSheet, openSheet, closeSheet } from '../sheets.js';
+import { genWrap, looksText } from '../genlook.js';
+import { animalTraits } from './lab.js';
 import { reduceMotion, burstAt } from '../fx.js';
 import { pinBar } from './common.js';
 import { longPress } from '../longpress.js';
@@ -37,6 +39,8 @@ function freeSpot(self, list = els) {
 }
 
 const babyBody = a => (a.type === 'chicken' ? art('ui', 'chick') : a.type === 'duck' ? art('ui', 'duckling') : art('animal', a.type));
+// le dessin d'une bête, avec l'apparence de ses gènes (robe, taille, motif)
+const bodyOf = a => genWrap(G.isAdult(a) ? art('animal', a.type) : babyBody(a), a.g);
 
 // le pré regardé : un numéro, ou 'all' (l'étable de tout le troupeau)
 const shownPasture = () => {
@@ -86,7 +90,7 @@ function renderCritters() {
         const el = els[i],
             d = ANIMALS[a.type];
         const adult = G.isAdult(a);
-        const sig = `${a.type}|${adult}|${esc(a.name)}|${a.love}|${a.star ? 1 : 0}|${G.isAway(a) ? 1 : 0}|${a.stack}|${a.food}|${mf}|${a.sick ? 1 : 0}`;
+        const sig = `${a.type}|${adult}|${a.g ? JSON.stringify(G.looksOf(a.g)) : ''}|${esc(a.name)}|${a.love}|${a.star ? 1 : 0}|${G.isAway(a) ? 1 : 0}|${a.stack}|${a.food}|${mf}|${a.sick ? 1 : 0}`;
         if (el._sig === sig) return;
         el._sig = sig;
         el.classList.toggle('baby', !adult);
@@ -94,7 +98,7 @@ function renderCritters() {
         el.classList.toggle('away', G.isAway(a));
         el.classList.toggle('sick', !!a.sick);
         el.classList.toggle('busy', G.isBusy(a));
-        el.querySelector('.critter-body').innerHTML = adult ? art('animal', a.type) : babyBody(a);
+        el.querySelector('.critter-body').innerHTML = bodyOf(a);
         el.querySelector('.critter-name').innerHTML = `${a.star ? ico(['ui', 'star']) : ''}${a.love ? ico(['ui', 'heart']) : ''}${esc(a.name)}`;
         const bubble = el.querySelector('.bubble');
         let b = '';
@@ -176,7 +180,7 @@ function stableTile(a, i, mf) {
               ? `<span class="st-tag">${ico(['ui', 'mountain'])}</span>`
               : '';
     return `<button class="st-tile${a.stack > 0 ? ' ready' : ''}${a.sick ? ' sick' : ''}${G.isAway(a) ? ' away' : ''}" data-act="animal" data-i="${i}" data-anchor="animal:${i}">
-        ${tag}<span class="st-art${adult ? '' : ' baby'}">${adult ? art('animal', a.type) : babyBody(a)}</span>
+        ${tag}<span class="st-art${adult ? '' : ' baby'}">${bodyOf(a)}</span>
         <b>${a.star ? ico(['ui', 'star']) : ''}${esc(a.name)}</b>
         <span class="food-meter">${Array.from({ length: mf }, (_, k) => `<i class="${k < a.food ? 'on' : ''}"></i>`).join('')}</span>
         ${adult ? bar(0, 'cbar', `prod:${i}`) : bar(0, 'gbar', `grow:${i}`)}</button>`;
@@ -260,6 +264,19 @@ function renderAnimals(el) {
 }
 defineView('animals', renderAnimals);
 
+// ---------------- les gènes d'une bête (station de recherche) ----------------
+function geneBlock(a) {
+    if (!state.genetics || !G.geneticsOpen() || !a.g) return '';
+    const race = a.race && state.genetics.races[a.race];
+    const can = G.canFixRace(a);
+    return `<div class="gene-box"><div class="set-sub">Ses gènes${race ? ` · race « ${esc(race.name)} »` : a.gen ? ` · génération ${a.gen}` : ''}</div>
+        <p class="card-sub">${looksText(a.g)}${a.parents ? ` · fille de ${a.parents.map(esc).join(' et ')}` : ''}</p>
+        ${animalTraits(a)}
+        <div class="row-btns wrap">${G.labOpen() && !a.analyzed ? btn(`Analyser · ${fmt(G.analyzeCost())}${ico(['ui', 'coin'])}`, { act: 'analyze', data: { id: a.uid }, size: 'sm', icon: ['ui', 'search'] }) : ''}${G.breedOpen() && G.isAdult(a) ? btn('Choisir pour l’élevage', { act: 'breedWith', data: { id: a.uid }, size: 'sm', icon: ['ui', 'heart'] }) : ''}</div>
+        ${can ? `<div class="rename"><input type="text" maxlength="22" id="race-name" placeholder="Nom de la race">${btn('Fixer la race', { act: 'fixRace', data: { id: a.uid }, kind: 'gold', size: 'sm' })}</div>` : ''}
+    </div>`;
+}
+
 // ---------------- la fiche d'un animal ----------------
 defineSheet('animal', {
     cls: 'animal-sheet',
@@ -285,7 +302,7 @@ defineSheet('animal', {
         if (a.produced) info.push([['ui', 'basket'], G.producedText(a)]);
         const petted = a.petDay === state.day;
         return `<div class="animal-card">
-            <div class="animal-art${adult ? '' : ' baby'}" data-anchor="animalArt">${adult ? art('animal', a.type) : babyBody(a)}</div>
+            <div class="animal-art${adult ? '' : ' baby'}" data-anchor="animalArt">${bodyOf(a)}</div>
             <div class="animal-kind">${adult ? d.name : `Bébé ${d.name.toLowerCase()}`}${a.star ? ` · ${ico(['ui', 'star'])} d’exception` : ''}</div>
             <div class="hearts-big">${hearts(a.love)}</div>
             ${a.sick ? `<div class="line sick">${ico(['ui', 'sick'])}<div>${esc(a.name)} est malade et ne produit plus.</div>${btn(`Soigner · ${G.cureCost()}${ico(['ui', 'coin'])}`, { act: 'cure', data: { i }, kind: 'green', size: 'sm' })}</div>` : ''}
@@ -302,6 +319,7 @@ defineSheet('animal', {
                           .join('')}</div>`
                     : ''
             }
+            ${geneBlock(a, i)}
             <div class="rename"><input type="text" maxlength="16" value="${esc(a.name)}" aria-label="Nom de l’animal" id="rename-animal">${btn('Renommer', { act: 'renameAnimal', data: { i }, size: 'sm' })}</div>
         </div>`;
     },
@@ -313,6 +331,15 @@ const setupLongPress = () => longPress(byId('view-animals'), '.critter[data-i], 
 export function setupAnimals() {
     actions({
         animalMode: (el, d) => (ui.sel.animalMode = d.v),
+        breedWith: (el, d) => {
+            ui.sel.breed = { a: d.id };
+            closeSheet('animal');
+            go('machines/lab');
+        },
+        fixRace: (el, d) => {
+            const input = document.getElementById('race-name');
+            G.fixRace(d.id, input ? input.value : '', el);
+        },
         pickPasture: (el, d) => (ui.sel.pasture = d.k === 'all' ? 'all' : +d.k),
         buyPasture: el => {
             const k = G.buyPasture(el);

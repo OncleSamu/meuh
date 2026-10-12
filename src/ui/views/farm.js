@@ -10,6 +10,7 @@ import { EVENTS } from '../../data/world.js';
 import * as G from '../../systems/index.js';
 import { byId, blocks, actions, run } from '../dom.js';
 import { ico, art, COIN } from '../icons.js';
+import { genWrap } from '../genlook.js';
 import { btn, toggle, hint, bar } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
 import { reduceMotion } from '../fx.js';
@@ -38,6 +39,12 @@ const hiveBadge = p => {
     return j ? `<div class="honey-badge">${art('item', 'honey')}<b>${j}</b></div>` : '';
 };
 const egg = i => (G.eggAt(i) ? `<div class="egg-spot">${art('item', 'paintedEgg')}</div>` : '');
+
+// une variété du labo pousse avec son apparence (couleur, taille, motif)
+const plantArt = (p, stage) => {
+    const v = p.v && state.genetics && state.genetics.vars[p.v];
+    return v ? genWrap(art('plant', `${p.itemId}:${stage}`), v.g) : art('plant', `${p.itemId}:${stage}`);
+};
 
 function buildPlots(box) {
     box.innerHTML = '';
@@ -69,7 +76,7 @@ function renderPlots() {
         let sig;
         if (!p.isUnlocked) sig = i >= visibleLimit ? 'H' : `L|${i === nextLocked ? cost : ''}`;
         else
-            sig = `${p.terrain}|${p.isWatered}|${p.itemId}|${p.itemId ? G.plotStage(p) : ''}|${p.pest ? 'pest' : ''}|${state.crow && state.crow.plot === i ? 'crow' : ''}|${G.eggAt(i) ? 'egg' : ''}|${p.fert ? 'f' : ''}|d:${p.deco || ''}|h:${p.deco === 'hive' ? Math.floor(p.honey || 0) : ''}|${pins.has(p.itemId) ? 'pin' : ''}|${zone.has(i) ? 'z' : ''}|${auras && G.hasAura(i) ? 'a' : ''}`;
+            sig = `${p.terrain}|${p.isWatered}|${p.itemId}|${p.itemId ? G.plotStage(p) : ''}|v:${p.v || ''}|${p.pest ? 'pest' : ''}|${state.crow && state.crow.plot === i ? 'crow' : ''}|${G.eggAt(i) ? 'egg' : ''}|${p.fert ? 'f' : ''}|d:${p.deco || ''}|h:${p.deco === 'hive' ? Math.floor(p.honey || 0) : ''}|${pins.has(p.itemId) ? 'pin' : ''}|${zone.has(i) ? 'z' : ''}|${auras && G.hasAura(i) ? 'a' : ''}`;
         if (plotSig[i] === sig) return;
         const prev = plotSig[i];
         plotSig[i] = sig;
@@ -104,7 +111,7 @@ function renderPlots() {
         const stageChanged = !prev || prev.split('|')[2] !== String(p.itemId) || prev.split('|')[3] !== String(stage);
         el.innerHTML =
             soilHtml(i, p.itemId) +
-            `<div class="spr-wrap${stageChanged ? ' pop' : ''}">${art('plant', `${p.itemId}:${stage}`)}</div>` +
+            `<div class="spr-wrap${stageChanged ? ' pop' : ''}${p.v ? ' var' : ''}">${plantArt(p, stage)}</div>` +
             (p.pest ? `<div class="pest">${art('ui', 'pest')}</div>` : '') +
             (p.isReady ? '' : bar(0, 'pbar', `plot:${i}`)) +
             (!p.isWatered && !p.isReady ? `<div class="need-water">${art('ui', 'drop')}</div>` : '') +
@@ -156,7 +163,7 @@ function renderGreenhouse() {
     const nextLocked = g.plots.findIndex(p => !p.isUnlocked);
     g.plots.forEach((p, k) => {
         const el = ghEls[k];
-        const sig = !p.isUnlocked ? (k === nextLocked ? `L|${cost}` : 'H') : `${p.itemId}|${p.itemId ? G.plotStage(p) : ''}`;
+        const sig = !p.isUnlocked ? (k === nextLocked ? `L|${cost}` : 'H') : `${p.itemId}|${p.itemId ? G.plotStage(p) : ''}|${p.v || ''}`;
         if (ghSig[k] === sig) return;
         const prev = ghSig[k];
         ghSig[k] = sig;
@@ -177,7 +184,7 @@ function renderGreenhouse() {
         }
         const stage = G.plotStage(p);
         el.innerHTML =
-            `<div class="spr-wrap${!prev || prev !== sig ? ' pop' : ''}">${art('plant', `${p.itemId}:${stage}`)}</div>` +
+            `<div class="spr-wrap${!prev || prev !== sig ? ' pop' : ''}">${plantArt(p, stage)}</div>` +
             (p.isReady ? '' : bar(0, 'pbar', `gh:${k}`));
     });
 }

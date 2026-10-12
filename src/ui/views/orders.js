@@ -4,7 +4,9 @@ import { fmt, formatDuration } from '../../core/format.js';
 import { EVENTS } from '../../data/world.js';
 import { VILLAGERS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
-import { blocks, actions } from '../dom.js';
+import { PLANT_TRAITS } from '../../data/genetics.js';
+import { blocks, actions, esc } from '../dom.js';
+import { ITEMS } from '../../data/items.js';
 import { ico, art, SPR } from '../icons.js';
 import { btn, bar, timer, section, hint } from '../kit.js';
 import { defineView } from '../app.js';
@@ -95,6 +97,27 @@ function express() {
     </div>`;
 }
 
+// ---------------- la commande du chef : un goût précis (station de recherche) ----------------
+function chefCard() {
+    const c = state.genetics && state.genetics.chef;
+    if (!c || !c.base || !G.plantLabOpen()) return null;
+    const need = Object.entries(c.need)
+        .map(([k, n]) => {
+            const t = PLANT_TRAITS.find(x => x.id === k);
+            return `<span class="chip">${ico(t.icon)}${t.name.toLowerCase()} ${n}</span>`;
+        })
+        .join('');
+    const ok = G.varieties().filter(v => G.chefMatches(v));
+    const ready = ok.find(v => (state.genetics.stock[v.id] || 0) >= c.qty);
+    return `<div class="card express-card chef-card">
+        <div class="card-head">${ico(['villager', 'gaston'], 'ico big')}<div class="card-main"><div class="card-title">Le chef cherche un goût</div>
+        <div class="card-sub">${c.qty} ${ITEMS[c.base].name.toLowerCase()} d’une variété qui a au moins :</div></div><span class="timer-pill">${ico(['ui', 'clock'])}${timer(c.until)}</span></div>
+        <div class="lab-ranges">${need}</div>
+        <p class="card-sub">${ready ? `« ${esc(G.varName(ready))} » convient, et vous en avez assez.` : ok.length ? `« ${esc(G.varName(ok[0]))} » convient : récoltez-en ${c.qty}.` : 'Aucune de vos variétés ne convient encore : croisez au labo !'}</p>
+        <div class="od-foot">${rewardHtml(c.gold, 150 + state.level * 8)}${btn('Livrer', { act: 'chef', data: { id: ready ? ready.id : '' }, kind: ready ? 'green' : '', disabled: !ready })}</div>
+    </div>`;
+}
+
 // ---------------- le train ----------------
 const WAGON_COLORS = ['#8b5a2b', '#3f8f2e', '#3f6fb5'];
 function train() {
@@ -147,6 +170,7 @@ function renderOrders(el) {
     blocks(el, [
         ['event', eventCard()],
         ['express', express()],
+        ['chef', chefCard()],
         ['title', section('Tableau des commandes')],
         ['board', board()],
         ['train', train()],
@@ -163,6 +187,7 @@ export function setupOrders() {
         trash: (el, d) => confirmTap('trash' + d.i, el, 'Jeter ?') && G.trashQuest(+d.i) && closeSheet('order'),
         pin: (el, d) => G.togglePin(+d.i),
         express: el => G.deliverExpress(el),
+        chef: (el, d) => G.deliverChef(d.id, el),
         loadWagon: (el, d) => G.loadSlot(+d.k, el.closest('[data-anchor]')),
         sendBalloon: el => G.sendBalloon(el),
         sendBoat: el => G.sendBoat(el),

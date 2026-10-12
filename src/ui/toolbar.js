@@ -5,7 +5,8 @@ import { toast } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { DECOS } from '../data/farm.js';
 import * as G from '../systems/index.js';
-import { byId, patch, actions } from './dom.js';
+import { byId, patch, actions, esc } from './dom.js';
+import { genWrap } from './genlook.js';
 import { ico, art, COIN } from './icons.js';
 import { currentPath, setToolbar } from './app.js';
 import { defineSheet, closeSheet } from './sheets.js';
@@ -13,10 +14,15 @@ import { hint } from './kit.js';
 
 const isSeed = t => ITEMS[t] && ITEMS[t].type === 'crop';
 
+const curVar = () => (state.selectedTool === 'var' && state.genetics && state.genetics.vars[state.genetics.tool]) || null;
+
 function seedButton() {
     const t = state.selectedTool,
-        deco = G.decoTool(t);
+        deco = G.decoTool(t),
+        v = curVar();
     let badge = '';
+    if (v)
+        return `<button class="tool seeds-btn on" data-act="open" data-sheet="seeds" aria-label="Choisir une graine">${genWrap(art('item', v.base), v.g)}<span class="badge gold">${state.genetics.seeds[v.id] || 0}</span></button>`;
     if (isSeed(t)) {
         const n = state.seeds[t];
         badge =
@@ -82,7 +88,16 @@ defineSheet('seeds', {
                     `<button class="seed${state.selectedTool === 'deco:' + d.id ? ' on' : ''}" data-act="pickSeed" data-t="deco:${d.id}">${art('ui', d.id)}<span class="badge blue">${state.decorInv[d.id]}</span><small>${d.name}</small></button>`,
             )
             .join('');
-        return `<div class="seed-grid">${seeds}</div>${decos ? `<h3 class="section-title"><span>Décorations à poser</span></h3><div class="seed-grid">${decos}</div>` : ''}${hint(`En ${G.season().name.toLowerCase()}, les cultures marquées ${ico(['ui', G.season().icon])} poussent 30 % plus vite.`)}${sid ? '' : ''}`;
+        const vars = state.genetics
+            ? G.varieties()
+                  .filter(v => (state.genetics.seeds[v.id] || 0) > 0 && !ITEMS[v.base].island)
+                  .map(
+                      v =>
+                          `<button class="seed var${curVar() === v ? ' on' : ''}" data-act="pickVarSeed" data-id="${v.id}">${genWrap(art('item', v.base), v.g)}<span class="badge gold">${state.genetics.seeds[v.id]}</span><small>${esc(G.varName(v))}</small></button>`,
+                  )
+                  .join('')
+            : '';
+        return `${vars ? `<h3 class="section-title"><span>Mes variétés</span></h3><div class="seed-grid">${vars}</div><h3 class="section-title"><span>Graines</span></h3>` : ''}<div class="seed-grid">${seeds}</div>${decos ? `<h3 class="section-title"><span>Décorations à poser</span></h3><div class="seed-grid">${decos}</div>` : ''}${hint(`En ${G.season().name.toLowerCase()}, les cultures marquées ${ico(['ui', G.season().icon])} poussent 30 % plus vite.`)}${sid ? '' : ''}`;
     },
 });
 
@@ -92,6 +107,11 @@ export function setupToolbar() {
         tool: (el, d) => selectTool(d.t),
         pickSeed: (el, d) => {
             selectTool(d.t);
+            closeSheet('seeds');
+        },
+        pickVarSeed: (el, d) => {
+            state.genetics.tool = d.id;
+            selectTool('var');
             closeSheet('seeds');
         },
     });
