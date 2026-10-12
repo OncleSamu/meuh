@@ -12,6 +12,7 @@ import { setupToolbar } from './ui/toolbar.js';
 import { updateScene } from './ui/scene.js';
 import { setupFarm, wanderDog } from './ui/views/farm.js';
 import { setupNature } from './ui/views/nature.js';
+import { setupOrchard } from './ui/views/orchard.js';
 import { setupAnimals, wanderAnimals } from './ui/views/animals.js';
 import { setupWorkshop } from './ui/views/workshop.js';
 import { setupCave } from './ui/views/cave.js';
@@ -43,6 +44,7 @@ function start() {
     setupToolbar();
     setupFarm();
     setupNature();
+    setupOrchard();
     setupAnimals();
     setupWorkshop();
     setupCave();

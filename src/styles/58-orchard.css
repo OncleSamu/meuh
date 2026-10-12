@@ -1,0 +1,312 @@
+/* ---------------- Ferme | Verger ---------------- */
+.o-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 12px 3px 6px;
+    background: linear-gradient(#fffaf0, #f6e2b6);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: 0.82rem;
+    box-shadow: 0 2px 0 rgba(58, 38, 24, 0.35);
+}
+.o-count .ico {
+    width: 20px;
+    height: 20px;
+}
+
+/* l'herbe du verger, bordée d'une haie */
+.orchard {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px 8px;
+    padding: 14px 10px 16px;
+    margin: 10px 0 14px;
+    background-color: #93d36a;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M6 22l1.5-5 1.5 5M26 10l1.5-5 1.5 5M20 34l1.2-4 1.2 4' stroke='%2372c24f' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='34' cy='30' r='1.8' fill='%23fff'/%3E%3Ccircle cx='34' cy='30' r='.7' fill='%23f7a8c4'/%3E%3C/svg%3E");
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    box-shadow:
+        0 8px 0 #5c8f36,
+        0 8px 0 3px var(--ink),
+        inset 0 0 0 5px #6fb34a;
+}
+html.season-hiver .orchard {
+    background-color: #cfe2d0;
+}
+html.season-automne .orchard {
+    background-color: #bcd06a;
+}
+
+.o-spot {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-height: 150px;
+    padding: 4px 2px 6px;
+    font: inherit;
+    color: var(--ink);
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.o-spot:active .o-tree {
+    transform: scale(0.95);
+}
+.o-tree {
+    position: relative;
+    width: 92px;
+    height: 92px;
+    transition: transform 0.12s;
+}
+.o-tree > svg {
+    width: 100%;
+    height: 100%;
+}
+.o-spot.adult .o-tree > svg {
+    transform-origin: 50% 95%;
+    animation: treeSway 5s ease-in-out infinite;
+}
+@keyframes treeSway {
+    50% {
+        transform: rotate(1.2deg);
+    }
+}
+html.calm .o-spot.adult .o-tree > svg {
+    animation: none;
+}
+.o-spot.dead .o-tree {
+    opacity: 0.9;
+}
+
+/* les fruits tombés au pied */
+.o-fruit {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    margin: -11px 0 0 -11px;
+    filter: drop-shadow(0 2px 0 rgba(58, 38, 24, 0.25));
+    animation: fruitDrop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+.o-fruit svg {
+    width: 100%;
+    height: 100%;
+}
+@keyframes fruitDrop {
+    from {
+        transform: translateY(-40px);
+        opacity: 0;
+    }
+}
+
+.o-spot b {
+    max-width: 100%;
+    padding: 1px 8px;
+    background: rgba(255, 250, 235, 0.92);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.o-spot small {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: #24400f;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.o-spot .bar.o-bar {
+    width: 70%;
+    height: 8px;
+    margin: 2px 0 0;
+    border-width: 2px;
+}
+.bar.o-bar > i {
+    background: linear-gradient(#ffe48a, var(--gold));
+}
+.bar.o-bar.young > i {
+    background: linear-gradient(#b4ec8a, var(--leaf));
+}
+.bar.o-bar.old > i {
+    background: linear-gradient(#f2d38a, #c99a3a);
+}
+.bar.o-bar.full > i {
+    background: linear-gradient(#ffb0a0, #e8564b);
+}
+
+/* l'étiquette des fruits prêts */
+.o-tag {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    padding: 1px 7px 1px 2px;
+    background: #e9ffd8;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-family: var(--display);
+    font-size: 0.78rem;
+    box-shadow: 0 2px 0 rgba(58, 38, 24, 0.35);
+}
+.o-tag .ico {
+    width: 20px;
+    height: 20px;
+}
+.o-tag.full {
+    background: #ffe0d8;
+    animation: bob 1.2s ease-in-out infinite;
+}
+.o-tag.dead {
+    background: var(--wood-ll);
+    padding-right: 8px;
+}
+.o-spot.has-fruit .o-tree::after {
+    content: '';
+    position: absolute;
+    inset: 10% 5% 0;
+    border-radius: 50%;
+    background: radial-gradient(rgba(255, 240, 150, 0.55), transparent 65%);
+    z-index: -1;
+}
+
+/* une place vide : un trou de terre à planter */
+.o-spot.empty,
+.o-spot.locked {
+    justify-content: center;
+}
+.o-hole {
+    width: 70px;
+    height: 26px;
+    margin-top: 44px;
+    border-radius: 50%;
+    background: radial-gradient(#5e3a1e 40%, #7a4a2a);
+    border: 2.5px solid var(--ink);
+}
+.o-plus {
+    position: absolute;
+    top: 38px;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(#b4ec8a, var(--leaf));
+    border: 2.5px solid var(--ink);
+    border-radius: 50%;
+    box-shadow: 0 3px 0 var(--leaf-d);
+}
+.o-plus .ico {
+    width: 22px;
+    height: 22px;
+}
+.o-spot.empty small {
+    margin-top: 6px;
+}
+.o-spot.locked {
+    border: 2.5px dashed rgba(58, 38, 24, 0.45);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.18);
+    margin: 10px 6px 18px;
+    min-height: 120px;
+}
+.o-lock {
+    width: 44px;
+    height: 44px;
+    opacity: 0.75;
+}
+.o-lock svg {
+    width: 100%;
+    height: 100%;
+}
+.o-spot.locked:not(.can) {
+    opacity: 0.7;
+}
+
+/* la fiche d'un arbre */
+.tree-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.tree-art {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 70%, #b4ec8a, #8ccf62 70%);
+    border: 3px solid var(--ink);
+    box-shadow: 0 4px 0 var(--leaf-d);
+}
+.tree-art > svg {
+    position: absolute;
+    inset: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+}
+.tree-art .o-fruit {
+    width: 26px;
+    height: 26px;
+}
+.tree-art.dead {
+    background: radial-gradient(circle at 50% 70%, #e8dcc0, #cbb88e 70%);
+    box-shadow: 0 4px 0 #9a845a;
+}
+.life {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 320px;
+    font-weight: 900;
+    font-size: 0.82rem;
+}
+.life .bar {
+    flex: 1;
+    margin: 0;
+}
+.bar.life-bar > i {
+    background: linear-gradient(#b4ec8a, var(--leaf));
+}
+.bar.life-bar.low > i {
+    background: linear-gradient(#f2d38a, #c99a3a);
+}
+.pick-grid.trees .pc-art {
+    width: 64px;
+    height: 64px;
+}
+.pick-grid.trees .pc-art svg {
+    width: 100%;
+    height: 100%;
+}
+.pick-cell .pc-cost {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-family: var(--display);
+    font-size: 0.8rem;
+}
+.pick-cell .pc-cost .ico,
+.pick-cell small .ico {
+    width: 14px;
+    height: 14px;
+}
+.pick-cell.locked {
+    opacity: 0.6;
+}
+.pick-cell.short:not(.locked) {
+    opacity: 0.8;
+}
+
+@media (min-width: 520px) {
+    .orchard {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}

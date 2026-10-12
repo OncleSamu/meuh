@@ -335,25 +335,52 @@ export const treeBase = () =>
     L('M38 36 Q42 34 44 30', 1.6, GD) +
     L('M20 30 Q22 33 26 33', 1.6, GD);
 
+// stades : 0 jeune plant, 1 arbre sans fruit, 2 arbre en fruits, 3 vieil arbre, 4 arbre mort
+export const deadTree = () =>
+    SHADOW(32, 58, 12, 2.5) +
+    P('M27 58 L29 34 L35 34 L37 58Z', '#8a6a4a') +
+    L('M32 36 L24 24 M24 24 L20 25 M24 24 L22 16 M32 38 L40 22 M40 22 L46 20 M40 22 L39 14 M33 30 L32 18', 3.2) +
+    L('M32 36 L24 24 M24 24 L20 25 M24 24 L22 16 M32 38 L40 22 M40 22 L46 20 M40 22 L39 14 M33 30 L32 18', 1.6, '#a8865e') +
+    L('M30 50 Q32 46 31 42', 1.2, '#5e4630');
+
+const OLD_CANOPY = '#a9b34a';
+export const oldTreeBase = () =>
+    SHADOW(32, 58, 14, 3) +
+    P('M26 58 L28 36 L36 36 L38 58Z', '#7a5230') +
+    L('M29 52 Q31 46 29 40 M35 54 Q33 48 35 42', 1.3, '#5e3a1e') +
+    P(canopy, OLD_CANOPY) +
+    FC(22, 30, 3, '#d9a23a', 0.8) +
+    FC(44, 24, 2.6, '#c98a2a', 0.8) +
+    FC(36, 18, 2.2, '#d9a23a', 0.7) +
+    L('M38 36 Q42 34 44 30', 1.6, '#7f8a2e');
+
+const FRUIT_COL = { apple: '#e2412f', orange: '#f5a623', cherry: '#c2253f', peach: '#ffb07a', kiwi: '#9a7444', kaki: '#f07a1c' };
+function fruitOf(id) {
+    const col = FRUIT_COL[id] || '#e2412f';
+    if (id === 'cherry')
+        return (x, y) =>
+            L(`M${x - 2} ${y} Q${x} ${y - 6} ${x + 1} ${y - 7} M${x + 3} ${y + 1} Q${x + 2} ${y - 5} ${x + 1} ${y - 7}`, 1.3, '#6b3d1e') +
+            C(x - 2, y, 3, col, 1.6) +
+            C(x + 3, y + 1, 3, col, 1.6) +
+            FC(x - 3, y - 1, 0.9, '#fff', 0.7);
+    if (id === 'peach')
+        return (x, y) =>
+            C(x, y, 5, col, 2) + FC(x + 1.5, y + 1, 2.6, '#ff8a6a', 0.6) + L(`M${x} ${y - 4} Q${x - 1.5} ${y} ${x} ${y + 4}`, 1, '#e07a52') + FC(x - 2, y - 2, 1.3, '#fff', 0.6);
+    if (id === 'kiwi') return (x, y) => E(x, y, 4, 5.4, col, 15, 1.8) + FC(x - 1.2, y - 1.6, 1, '#d6b98a', 0.8) + FC(x + 1, y + 1.4, 0.8, '#d6b98a', 0.8);
+    if (id === 'kaki') return (x, y) => C(x, y, 5, col, 2) + P(`M${x - 4} ${y - 4} L${x} ${y - 2.5} L${x + 4} ${y - 4} L${x + 2} ${y - 6} L${x} ${y - 4.5} L${x - 2} ${y - 6}Z`, '#5f8f2e', 1.2) + FC(x - 2, y, 1.3, '#fff', 0.55);
+    return (x, y) => C(x, y, 4.6, col, 2) + FC(x - 1.5, y - 1.5, 1.4, '#fff', 0.6);
+}
+
 export const tree = (id, stage) => {
     if (stage === 0) return mound() + stem('M32 56 L32 34', '#8b5a2b', 2.5) + leaf(32, 42, 13, -150, G) + leaf(32, 38, 13, -30, G) + leaf(32, 35, 12, -95, GL);
     if (stage === 1) return treeBase();
+    if (stage === 4) return deadTree();
+    if (stage === 3) {
+        const f = fruitOf(id);
+        return id === 'grape' || id === 'olive' ? treeFruitExtra(id, oldTreeBase()) : oldTreeBase() + f(24, 27) + f(42, 30);
+    }
     if (id === 'grape' || id === 'olive') return treeFruitExtra(id, treeBase());
-    const col = { apple: '#e2412f', orange: '#f5a623', cherry: '#c2253f', peach: '#ffb07a' }[id] || '#e2412f';
-    const fruit =
-        id === 'cherry'
-            ? (x, y) =>
-                  L(`M${x - 2} ${y} Q${x} ${y - 6} ${x + 1} ${y - 7} M${x + 3} ${y + 1} Q${x + 2} ${y - 5} ${x + 1} ${y - 7}`, 1.3, '#6b3d1e') +
-                  C(x - 2, y, 3, col, 1.6) +
-                  C(x + 3, y + 1, 3, col, 1.6) +
-                  FC(x - 3, y - 1, 0.9, '#fff', 0.7)
-            : id === 'peach'
-              ? (x, y) =>
-                    C(x, y, 5, col, 2) +
-                    FC(x + 1.5, y + 1, 2.6, '#ff8a6a', 0.6) +
-                    L(`M${x} ${y - 4} Q${x - 1.5} ${y} ${x} ${y + 4}`, 1, '#e07a52') +
-                    FC(x - 2, y - 2, 1.3, '#fff', 0.6)
-              : (x, y) => C(x, y, 4.6, col, 2) + FC(x - 1.5, y - 1.5, 1.4, '#fff', 0.6);
+    const fruit = fruitOf(id);
     return treeBase() + fruit(22, 27) + fruit(41, 22) + fruit(31, 35) + fruit(46, 33) + fruit(31, 17) + fruit(18, 37);
 };
 

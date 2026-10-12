@@ -245,6 +245,16 @@ export const GUIDE = [
 ];
 
 export const TIPS = {
+    orchard: {
+        icon: ['item', 'apple'],
+        title: 'Le verger',
+        text: 'Un arbre grandit, puis laisse tomber ses fruits à son pied : viens les ramasser avant qu’ils ne pourrissent. Après une centaine de fruits il vieillit, puis meurt : il donne alors du bois, et tu replantes.',
+    },
+    pasture: {
+        icon: ['ui', 'flowers'],
+        title: 'Un pré tout plein',
+        text: 'Un pré accueille 20 bêtes. Achète un nouveau pré pour agrandir le troupeau, et déplace tes animaux d’un pré à l’autre depuis leur fiche.',
+    },
     machine: {
         icon: ['ui', 'gear'],
         title: 'Ta première machine',

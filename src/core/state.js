@@ -30,6 +30,8 @@ export function newState() {
         seeds,
         grid: [],
         animals: [],
+        pastures: [],
+        orchard: null,
         machines: [],
         quests: [],
         upgrades: { speed: 0, price: 0, yield: 0, feeder: 0, seeder: 0, harvester: 0 },

@@ -36,7 +36,8 @@ export const bar = (p, cls = '', live = '') =>
 export const chip = (text, icon, cls = '') => `<span class="chip ${cls}">${icon ? ico(icon) : ''}${text}</span>`;
 
 // minuterie qui se met à jour seule : until en millisecondes
-export const timer = (until, cls = '') => `<span class="timer ${cls}" data-until="${Math.round(until)}"></span>`;
+// arrondi à la seconde : le code de la vue ne change pas d'une seconde à l'autre (pas de redessin inutile)
+export const timer = (until, cls = '') => `<span class="timer ${cls}" data-until="${Math.round(until / 1000) * 1000}"></span>`;
 
 export const coins = (n, cls = '') => `<span class="coins ${cls}">${fmt(n)}${ico(['ui', 'coin'])}</span>`;
 
