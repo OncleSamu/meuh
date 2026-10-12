@@ -2,7 +2,15 @@
 // La version change à chaque mise en ligne (remplacée par build.py --pwa).
 const VERSION = '{{BUILD}}';
 const CACHE = 'meuh-' + VERSION;
-const FILES = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png'];
+const FILES = [
+    './',
+    './index.html',
+    './manifest.webmanifest',
+    './icons/icon-192.png',
+    './icons/icon-512.png',
+    './icons/maskable-512.png',
+    './icons/apple-touch-icon.png',
+];
 
 self.addEventListener('install', e => {
     e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));

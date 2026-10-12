@@ -111,7 +111,15 @@ function legend() {
 
 // ---------------- album ----------------
 export const photoArt = ph =>
-    ph.kind === 'building' ? SPR.building(ph.id, 2) : ph.kind === 'house' ? SPR.farmhouse(+ph.id) : ph.kind === 'item' ? SPR.item(ph.id) : ph.kind === 'villager' ? SPR.villager(ph.id) : SPR.ui(ph.id);
+    ph.kind === 'building'
+        ? SPR.building(ph.id, 2)
+        : ph.kind === 'house'
+          ? SPR.farmhouse(+ph.id)
+          : ph.kind === 'item'
+            ? SPR.item(ph.id)
+            : ph.kind === 'villager'
+              ? SPR.villager(ph.id)
+              : SPR.ui(ph.id);
 
 function album() {
     const list = state.album || [];
@@ -149,7 +157,16 @@ defineSheet('book', {
             o.sec,
             'bookSec',
         );
-        const body = o.sec === 'collection' ? collection(o) : o.sec === 'mastery' ? [['m', mastery()]] : o.sec === 'exploits' ? exploits() : o.sec === 'legend' ? [['l', legend()]] : [['a', album()]];
+        const body =
+            o.sec === 'collection'
+                ? collection(o)
+                : o.sec === 'mastery'
+                  ? [['m', mastery()]]
+                  : o.sec === 'exploits'
+                    ? exploits()
+                    : o.sec === 'legend'
+                      ? [['l', legend()]]
+                      : [['a', album()]];
         return [['seg', `<div class="book-seg">${seg}</div>`], ...body.map(([k, h]) => [o.sec + k, h])];
     },
 });

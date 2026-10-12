@@ -15,7 +15,7 @@ const js = await build({
     bundle: true,
     format: 'iife',
     target: ['es2020', 'safari14'],
-    minify: true,
+    minify: !process.argv.includes('--dev'),
     legalComments: 'none',
     write: false,
 });
@@ -29,9 +29,7 @@ const css = fs
     .sort()
     .map(f => fs.readFileSync(path.join(cssDir, f), 'utf8'))
     .join('\n');
-const cssMin = (
-    await build({ stdin: { contents: css, loader: 'css' }, minify: true, write: false, target: ['safari14', 'chrome90'] })
-).outputFiles[0].text;
+const cssMin = (await build({ stdin: { contents: css, loader: 'css' }, minify: true, write: false, target: ['safari14', 'chrome90'] })).outputFiles[0].text;
 
 const page = src('index.html')
     .replace('/*CSS*/', () => cssMin)

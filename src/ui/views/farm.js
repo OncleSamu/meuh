@@ -80,13 +80,18 @@ function renderPlots() {
         }
         if (!p.isUnlocked) {
             el.className = 'plot locked' + (i === nextLocked ? ' next' : '');
-            el.innerHTML = `<div class="lock-ico${i === nextLocked ? '' : ' dim'}">${art('ui', 'lock')}</div>` + (i === nextLocked ? `<div class="price-chip">${COIN()}${fmt(cost)}</div>` : '');
+            el.innerHTML =
+                `<div class="lock-ico${i === nextLocked ? '' : ' dim'}">${art('ui', 'lock')}</div>` +
+                (i === nextLocked ? `<div class="price-chip">${COIN()}${fmt(cost)}</div>` : '');
             return;
         }
         const aura = auras && G.hasAura(i) ? ' aura' : '';
         if (p.deco) {
             el.className = `plot ${p.terrain} deco${aura}`;
-            el.innerHTML = `<div class="deco-spr${prev && prev.includes('d:' + p.deco) ? '' : ' pop'}">${art('ui', p.deco)}</div>` + (p.deco === 'hive' ? hiveBadge(p) : '') + egg(i);
+            el.innerHTML =
+                `<div class="deco-spr${prev && prev.includes('d:' + p.deco) ? '' : ' pop'}">${art('ui', p.deco)}</div>` +
+                (p.deco === 'hive' ? hiveBadge(p) : '') +
+                egg(i);
             return;
         }
         el.className = `plot ${p.terrain}${p.isWatered ? ' watered' : ''}${p.itemId ? ' planted' : ''}${p.isReady ? ' ready' : ''}${p.pest ? ' pested' : ''}${pins.has(p.itemId) ? ' pinned' : ''}${zone.has(i) ? ' hand' : ''}${aura}`;
@@ -171,7 +176,9 @@ function renderGreenhouse() {
             return;
         }
         const stage = G.plotStage(p);
-        el.innerHTML = `<div class="spr-wrap${!prev || prev !== sig ? ' pop' : ''}">${art('plant', `${p.itemId}:${stage}`)}</div>` + (p.isReady ? '' : bar(0, 'pbar', `gh:${k}`));
+        el.innerHTML =
+            `<div class="spr-wrap${!prev || prev !== sig ? ' pop' : ''}">${art('plant', `${p.itemId}:${stage}`)}</div>` +
+            (p.isReady ? '' : bar(0, 'pbar', `gh:${k}`));
     });
 }
 
@@ -217,7 +224,11 @@ function nextGoal() {
     if (open) {
         const tot = Object.values(open.need).reduce((a, b) => a + b, 0),
             got = Object.keys(open.need).reduce((a, k) => a + (open.need[k] - G.projectLeft(open.id, k)), 0);
-        return { icon: ['building', open.id], text: `Prochain but : rénover ${open.name.toLowerCase()} (${Math.floor((got / tot) * 100)} %)`, go: 'village/village' };
+        return {
+            icon: ['building', open.id],
+            text: `Prochain but : rénover ${open.name.toLowerCase()} (${Math.floor((got / tot) * 100)} %)`,
+            go: 'village/village',
+        };
     }
     const c = G.currentChapter();
     if (c && state.level < c.lvl) return { icon: ['ui', 'village'], text: `Chapitre ${c.n} au niveau ${c.lvl} : « ${c.name} »`, go: 'sheet:levels' };
@@ -450,4 +461,3 @@ function crowFlyAway(i, withPlant) {
     ).onfinish = () => f.remove();
     burstAt(c.x, c.y - 10, withPlant ? 'leaf' : 'feather', 8);
 }
-

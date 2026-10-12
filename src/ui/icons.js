@@ -3,6 +3,15 @@ import { sprite, SPR } from '../art/index.js';
 import { QUALITY } from '../data/farm.js';
 
 const cache = new Map();
+// un dessin manquant ne doit jamais casser l'écran
+function safeSprite(kind, id) {
+    try {
+        return sprite(kind, id);
+    } catch (e) {
+        console.warn('dessin introuvable', kind, id);
+        return '';
+    }
+}
 export function art(kind, id) {
     const key = kind + ':' + id;
     let s = cache.get(key);
@@ -13,8 +22,12 @@ export function art(kind, id) {
                 : kind === 'house'
                   ? SPR.farmhouse(+id)
                   : kind === 'plant'
-                    ? SPR.plant(...String(id).split(':').map((x, i) => (i ? +x : x)))
-                    : sprite(kind, id);
+                    ? SPR.plant(
+                          ...String(id)
+                              .split(':')
+                              .map((x, i) => (i ? +x : x)),
+                      )
+                    : safeSprite(kind, id);
         cache.set(key, s);
     }
     return s;
@@ -29,7 +42,7 @@ export const qStar = (q, cls = 'qstar') =>
 export function ico(spec, cls = 'ico') {
     if (!spec) return '';
     const [kind, id] = spec;
-    if (kind === 'q') return id ? `<i class="${cls}">${qStar(id, 'spr')}</i>` : '';
+    if (kind === 'q' || kind === 'star') return id ? `<i class="${cls}">${qStar(id, 'spr')}</i>` : '';
     if (kind === 'coin') return `<i class="${cls}">${art('ui', 'coin')}</i>`;
     return `<i class="${cls}">${art(kind, id)}</i>`;
 }

@@ -208,7 +208,7 @@ export const GUIDE = [
         name: 'La cave',
         lvl: 20,
         view: 'machines',
-        text: 'Atelier | Cave. Mettez fromages, cidres, vins et champagnes en cave. À chaque étape, ils peuvent bien vieillir (leur valeur grimpe), mal vieillir (ils tournent) ou se perdre. Soignez-les et gardez le climat entre 35 et 65.',
+        text: 'Onglet Atelier, puis Cave. Mettez fromages, cidres, vins et champagnes en cave. À chaque étape, ils peuvent bien vieillir (leur valeur grimpe), mal vieillir (ils tournent) ou se perdre. Soignez-les et gardez le climat entre 35 et 65.',
     },
     {
         id: 'auction',

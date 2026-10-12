@@ -155,12 +155,20 @@ function gearHtml() {
                     side: c.gear[k]
                         ? `<span class="chip ok">${ico(['ui', 'check'])}installé</span>`
                         : btn(
-                              `${fmt(g.cost)}${COIN()}${g.mats ? Object.entries(g.mats).map(([m, n]) => ` ${ico(['item', m])}${n}`).join('') : ''}`,
+                              `${fmt(g.cost)}${COIN()}${
+                                  g.mats
+                                      ? Object.entries(g.mats)
+                                            .map(([m, n]) => ` ${ico(['item', m])}${n}`)
+                                            .join('')
+                                      : ''
+                              }`,
                               { act: 'caveGear', data: { k }, kind: 'green', size: 'sm', disabled: !(state.money >= g.cost && (!g.mats || G.hasMats(g.mats))) },
                           ),
                 }),
             )
-            .join('')}${c.gear.oldBarrel ? card({ icon: ['ui', 'barrel'], title: 'Fût centenaire', sub: AUCTION_FINDS.oldBarrel.desc, side: `<span class="chip ok">${ico(['ui', 'check'])}à vous</span>` }) : ''}</div>`
+            .join(
+                '',
+            )}${c.gear.oldBarrel ? card({ icon: ['ui', 'barrel'], title: 'Fût centenaire', sub: AUCTION_FINDS.oldBarrel.desc, side: `<span class="chip ok">${ico(['ui', 'check'])}à vous</span>` }) : ''}</div>`
     );
 }
 

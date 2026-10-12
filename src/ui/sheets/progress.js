@@ -18,7 +18,10 @@ function skills() {
     return `<div class="card skills-card"><div class="card-head">${ico(['ui', 'skillbook'], 'ico big')}<div class="card-main"><div class="card-title">${pts ? `${pts} point${pts > 1 ? 's' : ''} à placer` : 'Aucun point à placer'}</div>
         <div class="card-sub">Vous gagnez un point à chaque niveau. Les compétences repartent à zéro si vous vendez la ferme.</div></div></div>
         <div class="seg">${Object.entries(SKILLS)
-            .map(([id, br]) => `<button class="${id === b ? 'on' : ''}" data-act="branch" data-b="${id}">${ico(br.icon)}<span>${br.name}</span><small>${G.branchSpent(id)}</small></button>`)
+            .map(
+                ([id, br]) =>
+                    `<button class="${id === b ? 'on' : ''}" data-act="branch" data-b="${id}">${ico(br.icon)}<span>${br.name}</span><small>${G.branchSpent(id)}</small></button>`,
+            )
             .join('')}</div>
         <div class="tree">${SKILLS[b].list
             .map((sk, k) => {
@@ -82,7 +85,9 @@ defineSheet('prestige', {
             <div class="keep-lose"><div class="line ok"><div><b>Vous gardez</b><br>Rubans, succès, amitiés, chien, décorations, village rénové, grange, livre, cave (étagères et cote), statistiques</div></div>
             <div class="line bad"><div><b>Vous perdez</b><br>Pièces, niveau, compétences, champs, serre, animaux, machines, stocks, améliorations</div></div></div>
             <div class="set-title">Défi pour la prochaine ferme (facultatif)</div>
-            <div class="choice-list"><button class="choice${o.ch ? '' : ' on'}" data-act="pickChallenge" data-c="">Aucun défi</button>${Object.entries(CHALLENGES)
+            <div class="choice-list"><button class="choice${o.ch ? '' : ' on'}" data-act="pickChallenge" data-c="">Aucun défi</button>${Object.entries(
+                CHALLENGES,
+            )
                 .map(
                     ([id, ch]) =>
                         `<button class="choice${o.ch === id ? ' on' : ''}" data-act="pickChallenge" data-c="${id}">${ico(ch.icon)}<span><b>${ch.name}</b>${state.challengesDone[id] ? ' ✓' : ''}<small>${ch.desc}</small></span></button>`,

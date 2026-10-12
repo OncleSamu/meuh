@@ -572,3 +572,58 @@
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 8px;
 }
+
+/* cartes du magasin : boutons empilés, étiquettes sur plusieurs colonnes */
+.card.shop .card-side {
+    flex-direction: column;
+    align-items: stretch;
+}
+.card.shop .card-side .btn {
+    justify-content: center;
+}
+.card.shop .metas .chip {
+    font-size: 0.74rem;
+    padding: 1px 7px 1px 3px;
+}
+.bq-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+.bq-head span {
+    font-family: var(--display);
+    color: var(--leaf-d);
+}
+/* compétences : trois branches côte à côte, icône au-dessus du nom */
+.skills-card .seg > button {
+    flex-direction: column;
+    gap: 1px;
+    padding: 5px 4px;
+    font-size: 0.8rem;
+}
+.skills-card .seg > button small {
+    position: absolute;
+    top: 3px;
+    right: 6px;
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+.sheet-wrap.swap .sheet {
+    animation: sheetSwap 0.18s ease-out;
+}
+@keyframes sheetSwap {
+    from {
+        opacity: 0.4;
+        transform: translateY(14px);
+    }
+}
+.foot-note {
+    margin-top: 12px;
+}
+.cave-slot.empty,
+.cave-slot.locked {
+    min-height: 96px;
+    background: rgba(251, 236, 201, 0.92);
+}

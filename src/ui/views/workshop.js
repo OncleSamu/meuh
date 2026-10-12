@@ -37,7 +37,7 @@ function renderWorkshop(el) {
     blocks(el, [
         [
             'top',
-            `<div class="view-top"><h2 class="view-title">Atelier</h2><div class="actions">${btn('Relancer', { act: 'restartMachines', size: 'sm', icon: ['ui', 'loop'] })}${btn('Tout récupérer', { act: 'collectMachines', kind: any ? 'gold' : '', size: 'sm', icon: ['ui', 'basket'], disabled: !any })}</div></div>`,
+            `<div class="view-top end"><div class="actions">${btn('Relancer', { act: 'restartMachines', size: 'sm', icon: ['ui', 'loop'] })}${btn('Tout récupérer', { act: 'collectMachines', kind: any ? 'gold' : '', size: 'sm', icon: ['ui', 'basket'], disabled: !any })}</div></div>`,
         ],
         ['pin', pinBar()],
         [
@@ -86,7 +86,10 @@ defineSheet('machine', {
                     open = G.recipeUnlocked(r.id),
                     ok = open && G.canCook(r.id);
                 const ings = Object.entries(r.ing)
-                    .map(([k, n]) => `<span class="ing${state.inventory[k] >= n ? ' ok' : ''}">${ico(['item', k])}${Math.min(state.inventory[k], n)}/${n}</span>`)
+                    .map(
+                        ([k, n]) =>
+                            `<span class="ing${state.inventory[k] >= n ? ' ok' : ''}">${ico(['item', k])}${Math.min(state.inventory[k], n)}/${n}</span>`,
+                    )
                     .join('');
                 const price = it.sell ? `${fmt(G.sellPrice(r.id))}${ico(['ui', 'coin'])}` : `${r.outQty} sacs`;
                 return `<button class="rtile${open ? (ok ? ' ok' : ' short') : ' locked'}${wanted.has(r.id) ? ' wanted' : ''}${o.focus === r.id ? ' focus' : ''}" data-act="queue" data-i="${i}" data-id="${r.id}" data-anchor="recipe:${r.id}">
@@ -112,7 +115,10 @@ defineSheet('machine', {
                 `<div class="row-btns">${ready.length ? btn(`Récupérer ${ready.map(([id, n]) => `${ico(['item', id])}×${n * (RECIPES[id].outQty || 1)}`).join(' ')}`, { act: 'collectMachine', data: { i }, kind: 'gold' }) : ''}
                 ${btn(m.loop ? 'En boucle' : 'Boucle', { act: 'toggleLoop', data: { i }, icon: ['ui', 'loop'], cls: m.loop ? 'on' : '', title: 'Relancer automatiquement la dernière recette' })}</div>`,
             ],
-            ['filters', `<div class="chips-row">${filters.map(([k, t]) => `<button class="pick-chip${f === k ? ' on' : ''}" data-act="recipeFilter" data-f="${k}">${t}</button>`).join('')}</div>`],
+            [
+                'filters',
+                `<div class="chips-row">${filters.map(([k, t]) => `<button class="pick-chip${f === k ? ' on' : ''}" data-act="recipeFilter" data-f="${k}">${t}</button>`).join('')}</div>`,
+            ],
             [
                 'grid',
                 list.length

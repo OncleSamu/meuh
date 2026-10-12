@@ -7,7 +7,7 @@ import * as G from '../../systems/index.js';
 import { byId, blocks, actions, run, $ } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, timer, hint } from '../kit.js';
-import { defineView, currentPath } from '../app.js';
+import { defineView, currentPath, viewEl } from '../app.js';
 
 function toolRow(kind) {
     if (state.level < NATURE[kind].lvl) return '';
@@ -84,7 +84,7 @@ function renderNature(el) {
     blocks(el, [
         [
             'head',
-            `<div class="view-top"><h2 class="view-title">Nature</h2><div class="mats"><span class="mat big">${ico(['item', 'wood'])}${state.inventory.wood}</span><span class="mat big">${ico(['item', 'stone'])}${state.inventory.stone}</span></div></div>`,
+            `<div class="view-top end"><div class="mats"><span class="mat big">${ico(['item', 'wood'])}${fmt(Math.floor(state.inventory.wood))}</span><span class="mat big">${ico(['item', 'stone'])}${fmt(Math.floor(state.inventory.stone))}</span></div></div>`,
         ],
         ['hint', hint('Le bois et la pierre servent à construire les machines, la serre et les décorations.')],
         ['forest', resCard('forest', 'Forêt', 'Touchez un arbre pour le couper. Les gros arbres donnent plus de bois.', ['ui', 'axe'])],
@@ -110,7 +110,7 @@ function fishLoop() {
         const ph = G.fishPhase();
         if (ph !== last) {
             last = ph;
-            renderNature(byId('view-farm'));
+            renderNature(viewEl('farm/nature'));
         }
         if (ph === 'reel') {
             const c = byId('reel-cursor');
@@ -137,7 +137,7 @@ export function setupNature() {
         hit: (el, d) => G.hitSlot(d.res, +d.k, el),
     });
     // un coup de hache au premier contact, sans attendre le « clic »
-    byId('view-farm').addEventListener('pointerdown', e => {
+    const down = e => {
         const slot = e.target.closest('[data-res]');
         if (slot && !slot.disabled) {
             e.preventDefault();
@@ -149,5 +149,7 @@ export function setupNature() {
             e.preventDefault();
             run('fish', null);
         }
-    });
+    };
+    byId('view-farm').addEventListener('pointerdown', down);
+    byId('view-aside').addEventListener('pointerdown', down);
 }

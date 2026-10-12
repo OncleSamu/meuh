@@ -9,9 +9,31 @@ for (const [k, v] of Object.entries(old)) {
     let n;
     try {
         n =
-            kind === 'item' ? SPR.item(id) : kind === 'animal' ? SPR.animal(id) : kind === 'machine' ? SPR.machine(id) : kind === 'ui' ? SPR.ui(id)
-            : kind === 'villager' ? SPR.villager(id) : kind === 'plant' ? SPR.plant(id, +s) : kind === 'seed' ? SPR.seed(id) : kind === 'bld' ? SPR.building(id, +s)
-            : kind === 'farmhouse' ? SPR.farmhouse(+id) : kind === 'truck' ? SPR.truck() : kind === 'loco' ? SPR.loco() : kind === 'wagon' ? SPR.wagon('#c8453a') : SPR.balloon();
+            kind === 'item'
+                ? SPR.item(id)
+                : kind === 'animal'
+                  ? SPR.animal(id)
+                  : kind === 'machine'
+                    ? SPR.machine(id)
+                    : kind === 'ui'
+                      ? SPR.ui(id)
+                      : kind === 'villager'
+                        ? SPR.villager(id)
+                        : kind === 'plant'
+                          ? SPR.plant(id, +s)
+                          : kind === 'seed'
+                            ? SPR.seed(id)
+                            : kind === 'bld'
+                              ? SPR.building(id, +s)
+                              : kind === 'farmhouse'
+                                ? SPR.farmhouse(+id)
+                                : kind === 'truck'
+                                  ? SPR.truck()
+                                  : kind === 'loco'
+                                    ? SPR.loco()
+                                    : kind === 'wagon'
+                                      ? SPR.wagon('#c8453a')
+                                      : SPR.balloon();
     } catch (e) {
         n = 'ERR ' + e.message;
     }

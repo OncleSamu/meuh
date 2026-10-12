@@ -32,7 +32,12 @@ export function todoList() {
     add('animals', ['item', 'feed'], `${hungry} ${hungry > 1 ? 'ont' : 'a'} faim`, hungry);
 
     const done = state.machines.filter(m => G.outCount(m) > 0);
-    add('machines/workshop', done.length ? ['item', G.machineOutput(done[0])] : null, `${done.length} machine${s(done.length)} prête${s(done.length)}`, done.length);
+    add(
+        'machines/workshop',
+        done.length ? ['item', G.machineOutput(done[0])] : null,
+        `${done.length} machine${s(done.length)} prête${s(done.length)}`,
+        done.length,
+    );
     const idle = state.machines.filter(m => !G.machineBusy(m) && G.recipesOf(m.type).some(r => G.recipeUnlocked(r.id) && G.canCook(r.id))).length;
     add('machines/workshop', ['machine', 'mill'], `${idle} à l’arrêt`, idle);
     if (G.holidayReady()) push('village/village', ['ui', HOLIDAYS[state.holiday.id].deco], `${HOLIDAYS[state.holiday.id].name} : panier à remplir`, 1);
@@ -41,7 +46,8 @@ export function todoList() {
     if (G.caveOpen()) {
         const care = G.caveCareCount();
         if (care) push('machines/cave', ['ui', 'turn'], `${care} lot${s(care)} à soigner`, care);
-        if (!G.climOk() && state.cave.slots.some(Boolean)) push('machines/cave', ['ui', 'thermo'], 'Climat de la cave à régler', 1, { urgent: !!state.cave.gear.hygro });
+        if (!G.climOk() && state.cave.slots.some(Boolean))
+            push('machines/cave', ['ui', 'thermo'], 'Climat de la cave à régler', 1, { urgent: !!state.cave.gear.hygro });
         const a = state.cave.auction;
         if (a && a.lots && !a.over) push('machines/cave', ['ui', 'gavel'], 'Enchères en direct !', 1, { urgent: true });
         const last = state.cave.lastSale;

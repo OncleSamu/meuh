@@ -19,7 +19,7 @@ function eventCard() {
     if (!e || e.ended) {
         const n = G.nextFete(),
             next = n.season;
-        return `<div class="card event-card idle" title="${EVENTS[next.id].effect}">${ico(G.eventIcon(next.id))}<span>Prochaine fête : <b>${EVENTS[next.id].name}</b></span><small>dans ${formatDuration(n.secs)}</small></div>`;
+        return `<div class="card event-card idle" title="${EVENTS[next.id].effect}"><div class="card-ico">${ico(G.eventIcon(next.id), 'ico')}</div><div class="card-main"><div class="card-title">${EVENTS[next.id].name}</div><div class="card-sub">Prochaine fête dans <b>${formatDuration(n.secs)}</b></div></div></div>`;
     }
     const ev = EVENTS[e.season];
     const allClaimed = e.goals.every(x => x.claimed);

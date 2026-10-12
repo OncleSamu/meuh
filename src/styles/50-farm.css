@@ -178,7 +178,6 @@
     animation: hop 1s ease-in-out infinite;
 }
 
-
 @media (prefers-reduced-motion: reduce) {
     .cloud,
     .rays,
@@ -560,7 +559,6 @@ html.calm .ripple {
 
 .farmyard .dot,
 .map-tabs .dot,
-
 .plot.hand::before {
     content: '';
     position: absolute;
@@ -752,4 +750,3 @@ html.hol-paques .field::after {
             0 0 0 5px rgba(232, 54, 75, 0.5);
     }
 }
-

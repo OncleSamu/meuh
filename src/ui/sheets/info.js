@@ -20,7 +20,6 @@ import { defineSheet, sheetOpts, closeSheet } from '../sheets.js';
 import { go } from '../app.js';
 import { photoArt } from './book.js';
 
-
 // ---------------- statistiques ----------------
 defineSheet('stats', {
     title: 'Statistiques',
@@ -47,18 +46,28 @@ defineSheet('stats', {
                     ${i === imax && v ? `<text x="${x + (bw - pad) / 2}" y="${H - h - 5}" text-anchor="middle" class="lbl">${fmt(v)}</text>` : ''}
                     <text x="${x + (bw - pad) / 2}" y="${H + 15}" text-anchor="middle" class="ax">J${day}</text></g>`;
                 })
-                .join('')}</svg><p class="card-sub">${o.tip != null && d.perDay[o.tip] ? `Jour ${d.perDay[o.tip].day} : ${fmt(d.perDay[o.tip].v)} pièces` : 'Touchez une barre pour voir son montant.'}</p>`
+                .join(
+                    '',
+                )}</svg><p class="card-sub">${o.tip != null && d.perDay[o.tip] ? `Jour ${d.perDay[o.tip].day} : ${fmt(d.perDay[o.tip].v)} pièces` : 'Touchez une barre pour voir son montant.'}</p>`
             : '<p class="card-sub">Pas encore de données : revenez après une journée de jeu.</p>';
         const tmax = d.top.length ? d.top[0][1] : 1;
         const top = d.top.length
-            ? d.top.map(([id, v]) => `<div class="hbar">${ico(['item', id])}<span class="hname">${ITEMS[id].name}</span><div class="htrack"><i style="width:${Math.max(2, (v / tmax) * 100)}%"></i></div><span class="hval">${fmt(v)}</span></div>`).join('')
+            ? d.top
+                  .map(
+                      ([id, v]) =>
+                          `<div class="hbar">${ico(['item', id])}<span class="hname">${ITEMS[id].name}</span><div class="htrack"><i style="width:${Math.max(2, (v / tmax) * 100)}%"></i></div><span class="hval">${fmt(v)}</span></div>`,
+                  )
+                  .join('')
             : '<p class="card-sub">Vendez au marché pour voir ce qui rapporte le plus.</p>';
         const tot = Math.max(
             1,
             d.sources.reduce((a, [, v]) => a + v, 0),
         );
         const src = d.sources
-            .map(([l, v]) => `<div class="hbar"><span class="hname wide">${l}</span><div class="htrack"><i style="width:${Math.max(v ? 2 : 0, (v / tot) * 100)}%"></i></div><span class="hval">${Math.round((v / tot) * 100)} %</span></div>`)
+            .map(
+                ([l, v]) =>
+                    `<div class="hbar"><span class="hname wide">${l}</span><div class="htrack"><i style="width:${Math.max(v ? 2 : 0, (v / tot) * 100)}%"></i></div><span class="hval">${Math.round((v / tot) * 100)} %</span></div>`,
+            )
             .join('');
         const r = state.records || {};
         const recs = Object.entries(RECORDS)
@@ -69,7 +78,13 @@ defineSheet('stats', {
             ['tiles', tiles],
             ['days', block('Pièces gagnées par jour de jeu', chart)],
             ['top', block('Ce qui rapporte le plus à la vente', top)],
-            ['src', block('D’où viennent vos pièces', src + '<p class="card-sub">« Autres » regroupe les succès, cadeaux, trouvailles du chien, fêtes et contrats.</p>')],
+            [
+                'src',
+                block(
+                    'D’où viennent vos pièces',
+                    src + '<p class="card-sub">« Autres » regroupe les succès, cadeaux, trouvailles du chien, fêtes et contrats.</p>',
+                ),
+            ],
             ['rec', block('Records personnels', recs)],
         ];
     },
@@ -85,16 +100,13 @@ defineSheet('bonus', {
 });
 
 // ---------------- le guide ----------------
-const norm = sv =>
-    String(sv)
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '');
+const norm = sv => String(sv).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 // d'où vient un produit, en une ligne
 function itemSource(id) {
     const it = ITEMS[id];
-    if (it.type === 'crop' && it.needProject) return `Graines au niveau ${it.reqLvl}, après « ${PROJECTS[it.needProject].name} »${it.ghOnly ? ', seulement dans la serre' : ''}`;
+    if (it.type === 'crop' && it.needProject)
+        return `Graines au niveau ${it.reqLvl}, après « ${PROJECTS[it.needProject].name} »${it.ghOnly ? ', seulement dans la serre' : ''}`;
     if (it.type === 'crop') return it.exotic ? 'Graines chez le marchand ambulant' : `Champ, graines au niveau ${it.reqLvl}`;
     if (it.type === 'tree') return `Arbre fruitier au marché, niveau ${it.reqLvl}`;
     if (it.type === 'fish') return 'Pêche à l’étang';
@@ -105,7 +117,11 @@ function itemSource(id) {
         const how = Object.entries(r.ing)
             .map(([k, n]) => `${n} ${ITEMS[k].name.toLowerCase()}`)
             .join(', ');
-        const lock = r.fete ? ` (pendant ${EVENTS[r.fete].name})` : r.teacher ? ` (recette de ${VILLAGERS[r.teacher].name}, ${r.hearts} cœur${r.hearts > 1 ? 's' : ''})` : ` (niveau ${r.lvl})`;
+        const lock = r.fete
+            ? ` (pendant ${EVENTS[r.fete].name})`
+            : r.teacher
+              ? ` (recette de ${VILLAGERS[r.teacher].name}, ${r.hearts} cœur${r.hearts > 1 ? 's' : ''})`
+              : ` (niveau ${r.lvl})`;
         return `${MACHINES[r.machine].name}${lock} : ${how}`;
     }
     const a = Object.values(ANIMALS).find(x => x.prodId === id);
@@ -141,7 +157,16 @@ function itemCard(id) {
         ${btn('Produire', { act: 'produce', data: { id }, size: 'sm' })}</div>`;
 }
 
-const GUIDE_GO = { farm: 'farm/field', nature: 'farm/nature', animals: 'animals', machines: 'machines/workshop', quests: 'village/orders', shop: 'market/shop', market: 'market/sell', upgrades: 'sheet:progress' };
+const GUIDE_GO = {
+    farm: 'farm/field',
+    nature: 'farm/nature',
+    animals: 'animals',
+    machines: 'machines/workshop',
+    quests: 'village/orders',
+    shop: 'market/shop',
+    market: 'market/sell',
+    upgrades: 'sheet:progress',
+};
 function guidePage(g) {
     const locked = state.level < g.lvl;
     const path = GUIDE_GO[g.view] || 'farm/field';
@@ -150,7 +175,8 @@ function guidePage(g) {
 
 function guideResults(q) {
     q = norm(q || '').trim();
-    if (q.length < 2) return `<p class="card-sub center">Cherchez un produit pour savoir où le faire et qui le demande, ou touchez une page.</p>${GUIDE.map(guidePage).join('')}`;
+    if (q.length < 2)
+        return `<p class="card-sub center">Cherchez un produit pour savoir où le faire et qui le demande, ou touchez une page.</p>${GUIDE.map(guidePage).join('')}`;
     const items = Object.keys(ITEMS)
         .filter(id => norm(ITEMS[id].name).includes(q) && ITEMS[id].type !== 'material')
         .slice(0, 8);
@@ -166,7 +192,10 @@ defineSheet('guide', {
     cls: 'guide-sheet',
     title: 'Guide du fermier',
     render: o => [
-        ['search', `<input type="search" class="search" placeholder="Chercher un produit ou un sujet…" autocomplete="off" data-input="guideSearch" value="${esc(o.q || '')}">`],
+        [
+            'search',
+            `<input type="search" class="search" placeholder="Chercher un produit ou un sujet…" autocomplete="off" data-input="guideSearch" value="${esc(o.q || '')}">`,
+        ],
         ['res', `<div id="guide-res">${guideResults(o.q)}</div>`],
     ],
 });

@@ -7,7 +7,10 @@ import * as acorn from 'acorn';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../..');
 const SRC = path.join(root, 'src');
-const walk = d => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => (e.isDirectory() ? walk(path.join(d, e.name)) : e.name.endsWith('.js') ? [path.join(d, e.name)] : []));
+const walk = d =>
+    fs
+        .readdirSync(d, { withFileTypes: true })
+        .flatMap(e => (e.isDirectory() ? walk(path.join(d, e.name)) : e.name.endsWith('.js') ? [path.join(d, e.name)] : []));
 
 // index des exports : nom → [fichiers]
 const index = {};
@@ -39,7 +42,9 @@ for (let pass = 0; pass < 3; pass++) {
         for (const nm of names) {
             const from = (index[nm] || []).filter(f => f !== r.filePath);
             if (from.length !== 1) {
-                (unresolved[path.relative(root, r.filePath)] = unresolved[path.relative(root, r.filePath)] || new Set()).add(nm + (from.length > 1 ? ` (${from.map(f => path.relative(SRC, f)).join(', ')})` : ''));
+                (unresolved[path.relative(root, r.filePath)] = unresolved[path.relative(root, r.filePath)] || new Set()).add(
+                    nm + (from.length > 1 ? ` (${from.map(f => path.relative(SRC, f)).join(', ')})` : ''),
+                );
                 continue;
             }
             let rel = path.relative(path.dirname(r.filePath), from[0]).replace(/\\/g, '/');
@@ -50,7 +55,10 @@ for (let pass = 0; pass < 3; pass++) {
             const re = new RegExp(`import \\{([^}]*)\\} from '${rel.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}';`);
             const m = src.match(re);
             if (m) {
-                const have = m[1].split(',').map(x => x.trim()).filter(Boolean);
+                const have = m[1]
+                    .split(',')
+                    .map(x => x.trim())
+                    .filter(Boolean);
                 src = src.replace(re, `import { ${[...new Set([...have, ...list])].join(', ')} } from '${rel}';`);
             } else {
                 // après le dernier import, ou après le commentaire d'en-tête

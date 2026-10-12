@@ -55,7 +55,10 @@ defineSheet('house', {
         const l = G.houseLvl(),
             n = G.houseNext();
         const levels = HOUSE.slice(1)
-            .map((h, k) => `<div class="hlvl${k + 1 <= l ? ' on' : ''}"><b>${k + 1}</b><span>${h.bonus}</span>${k + 1 <= l ? ico(['ui', 'check']) : `<small>niv. ${h.lvl}</small>`}</div>`)
+            .map(
+                (h, k) =>
+                    `<div class="hlvl${k + 1 <= l ? ' on' : ''}"><b>${k + 1}</b><span>${h.bonus}</span>${k + 1 <= l ? ico(['ui', 'check']) : `<small>niv. ${h.lvl}</small>`}</div>`,
+            )
             .join('');
         const up = n
             ? `<div class="card house-up"><div class="card-title">Prochaine étape : ${n.name}</div><div class="card-sub">${n.bonus}.</div>${costRow(G.costParts(n.cost))}

@@ -75,7 +75,12 @@ export function burstAt(x, y, kind, n = 10) {
         el.animate(
             [
                 { transform: `translate(-50%,-50%) rotate(0deg) scale(1)`, opacity: 1 },
-                { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${rot / 2}deg) scale(1)`, opacity: 1, offset: 0.45, easing: 'ease-in' },
+                {
+                    transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${rot / 2}deg) scale(1)`,
+                    opacity: 1,
+                    offset: 0.45,
+                    easing: 'ease-in',
+                },
                 {
                     transform: `translate(calc(-50% + ${dx * 1.3}px), calc(-50% + ${dy + (kind === 'smoke' ? -30 : 50)}px)) rotate(${rot}deg) scale(.4)`,
                     opacity: 0,
@@ -155,7 +160,9 @@ export function confetti() {
 export function lightning() {
     const f = byId('flash');
     if (!f || reduceMotion() || document.hidden) return;
-    f.animate([{ opacity: 0 }, { opacity: 0.85, offset: 0.08 }, { opacity: 0.1, offset: 0.2 }, { opacity: 0.6, offset: 0.3 }, { opacity: 0 }], { duration: 700 });
+    f.animate([{ opacity: 0 }, { opacity: 0.85, offset: 0.08 }, { opacity: 0.1, offset: 0.2 }, { opacity: 0.6, offset: 0.3 }, { opacity: 0 }], {
+        duration: 700,
+    });
 }
 
 // ---------------- l'argent qui arrive dans la bourse ----------------
@@ -271,7 +278,8 @@ export function setupFx({ sfx, tabEl }) {
     on('hearts', ({ at: a, n = 3 }) => {
         if (!anchorEl(a)) return;
         const c = at(a);
-        for (let k = 0; k < n; k++) setTimeout(() => floatText(c.x + (Math.random() - 0.5) * 60, c.y - 20, `<i class="ico">${art('ui', 'heart')}</i>`), k * 110);
+        for (let k = 0; k < n; k++)
+            setTimeout(() => floatText(c.x + (Math.random() - 0.5) * 60, c.y - 20, `<i class="ico">${art('ui', 'heart')}</i>`), k * 110);
     });
     on('barnFull', () => bump(byId('barn-pill'), 'shake'));
 }

@@ -131,7 +131,10 @@ export function tutoTick() {
     if (st.view && currentPath() !== st.view && !(st.view === 'farm/field' && document.body.classList.contains('wide'))) {
         target = tab(st.view.split('/')[0]);
         text = `Retourne dans l’onglet ${VIEW_NAMES[st.view]} pour continuer.`;
-        if (currentPath().startsWith(st.view.split('/')[0])) target = document.querySelector(`#subnav [data-v="${st.view.split('/')[1]}"]`);
+        if (currentPath().startsWith(st.view.split('/')[0])) {
+            target = document.querySelector(`#subnav [data-v="${st.view.split('/')[1]}"]`);
+            if (target) text = `Touche « ${(target.querySelector('span') || target).textContent.trim()} » en haut pour continuer.`;
+        }
     } else if (st.target) target = st.target();
     const q = s => wrap.querySelector(s);
     q('.tuto-text').textContent = text;

@@ -189,6 +189,9 @@
     gap: 8px;
     flex-wrap: wrap;
 }
+.view-top.end {
+    justify-content: flex-end;
+}
 .view-top .actions {
     display: flex;
     gap: 8px;
@@ -236,9 +239,9 @@
 .tool {
     position: relative;
     flex: 1;
-    max-width: 66px;
+    max-width: 56px;
     aspect-ratio: 1;
-    padding: 7px;
+    padding: 6px;
     background: linear-gradient(#fff9ea, var(--wood-ll));
     border: 2.5px solid var(--ink);
     border-radius: 13px;

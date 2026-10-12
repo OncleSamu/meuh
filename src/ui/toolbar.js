@@ -19,7 +19,12 @@ function seedButton() {
     let badge = '';
     if (isSeed(t)) {
         const n = state.seeds[t];
-        badge = n > 0 ? `<span class="badge">${n}</span>` : ITEMS[t].type === 'crop' ? `<span class="badge price">${COIN()}${ITEMS[t].cost}</span>` : '<span class="badge">0</span>';
+        badge =
+            n > 0
+                ? `<span class="badge">${n}</span>`
+                : ITEMS[t].type === 'crop'
+                  ? `<span class="badge price">${COIN()}${ITEMS[t].cost}</span>`
+                  : '<span class="badge">0</span>';
     } else if (deco) badge = `<span class="badge blue">${state.decorInv[deco]}</span>`;
     return `<button class="tool seeds-btn${isSeed(t) || deco ? ' on' : ''}" data-act="open" data-sheet="seeds" aria-label="Choisir une graine">${isSeed(t) ? art('seed', t) : deco ? art('ui', deco) : art('ui', 'packet')}${badge}</button>`;
 }
@@ -60,7 +65,12 @@ defineSheet('seeds', {
         const seeds = G.plantableSeeds()
             .map(i => {
                 const n = state.seeds[i.id];
-                const badge = n > 0 ? `<span class="badge">${n}</span>` : i.type === 'crop' ? `<span class="badge price">${COIN()}${i.cost}</span>` : '<span class="badge">0</span>';
+                const badge =
+                    n > 0
+                        ? `<span class="badge">${n}</span>`
+                        : i.type === 'crop'
+                          ? `<span class="badge price">${COIN()}${i.cost}</span>`
+                          : '<span class="badge">0</span>';
                 const tag = G.isInSeason(i.id) ? `<span class="season-tag">${art('ui', G.season().icon)}</span>` : '';
                 return `<button class="seed${state.selectedTool === i.id ? ' on' : ''}${n === 0 && i.type === 'tree' ? ' empty' : ''}" data-act="pickSeed" data-t="${i.id}">${art('seed', i.id)}${badge}${tag}<small>${i.name}</small></button>`;
             })

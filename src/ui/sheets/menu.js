@@ -18,6 +18,7 @@ const COIN = () => ico(['ui', 'coin']);
 // ---------------- le menu ----------------
 defineSheet('menu', {
     title: 'Menu',
+    hub: true,
     render() {
         const pts = G.skillPoints(),
             book = G.bookAllClaimable() + G.quartersClaimable();
@@ -50,7 +51,10 @@ defineSheet('levels', {
                   ? 'Votre niveau actuel'
                   : `Encore ${fmt(G.xpToLevel(L))} points d’expérience${L === state.level + 1 ? '' : ` (${L - state.level} niveaux)`}`;
         const strip = Array.from({ length: MAX_LEVEL }, (_, k) => k + 1)
-            .map(l => `<button class="lv-chip${l < state.level ? ' done' : l === state.level ? ' now' : ''}${l === L ? ' on' : ''}" data-act="lvPick" data-l="${l}">${l}</button>`)
+            .map(
+                l =>
+                    `<button class="lv-chip${l < state.level ? ' done' : l === state.level ? ' now' : ''}${l === L ? ' on" data-center="1' : ''}" data-act="lvPick" data-l="${l}">${l}</button>`,
+            )
             .join('');
         return [
             [
@@ -75,11 +79,14 @@ defineSheet('almanac', {
         return `<div class="alm-season">${ico(['ui', sv.icon], 'ico huge')}<div><div class="card-title">${sv.name}</div><div class="card-sub">Jour ${G.dayInSeason()} sur ${DAYS_PER_SEASON} · jour ${state.day} de la ferme</div></div></div>
             ${lines([
                 [['ui', w.icon], `<b>Aujourd’hui : ${w.name}</b><div class="card-sub">${w.desc}</div>`],
-                [['ui', nw.icon], `<b>Demain : ${nw.name}</b>${tomorrow.id !== sv.id ? ` · début du ${tomorrow.name.toLowerCase()}` : ''}<div class="card-sub">${nw.desc}</div>`],
+                [
+                    ['ui', nw.icon],
+                    `<b>Demain : ${nw.name}</b>${tomorrow.id !== sv.id ? ` · début du ${tomorrow.name.toLowerCase()}` : ''}<div class="card-sub">${nw.desc}</div>`,
+                ],
             ])}
             <h3 class="section-title"><span>De saison (pousse 30 % plus vite)</span></h3>
             <div class="alm-crops">${crops.map(c => `<div class="alm-crop${state.level < c.reqLvl ? ' locked' : ''}">${art('item', c.id)}<span>${c.name}</span></div>`).join('') || '<span class="card-sub">Aucune culture</span>'}</div>
-            <p class="card-sub">${sv.id === 'hiver' ? 'En hiver, les cultures hors saison poussent presque deux fois moins vite et les arbres dorment à moitié.' : sv.id === 'automne' ? 'En automne, les arbres fruitiers produisent 20 % plus vite.' : 'Profitez-en pour planter ce qui est de saison.'}</p>`;
+            <p class="card-sub foot-note">${sv.id === 'hiver' ? 'En hiver, les cultures hors saison poussent presque deux fois moins vite et les arbres dorment à moitié.' : sv.id === 'automne' ? 'En automne, les arbres fruitiers produisent 20 % plus vite.' : 'Profitez-en pour planter ce qui est de saison.'}</p>`;
     },
 });
 
@@ -122,7 +129,13 @@ defineSheet('barn', {
                         : '<p class="empty">La grange est vide.</p>'
                 }</div>`,
             ],
-            ['item', item || (goods.length ? '<p class="card-sub center">Touchez un produit pour le vendre, le mettre à l’étal, le verrouiller ou aller en produire.</p>' : '')],
+            [
+                'item',
+                item ||
+                    (goods.length
+                        ? '<p class="card-sub center">Touchez un produit pour le vendre, le mettre à l’étal, le verrouiller ou aller en produire.</p>'
+                        : ''),
+            ],
             [
                 'up',
                 `<div class="card barn-up"><div class="card-title">Agrandir la grange · niveau ${l + 2}</div>

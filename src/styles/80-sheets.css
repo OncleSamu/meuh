@@ -1036,6 +1036,9 @@ svg.chart .bar:hover path {
 
 .lv-chip {
     flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    padding: 0;
     width: 34px;
     height: 34px;
     border-radius: 50%;
@@ -1194,4 +1197,3 @@ svg.chart .bar:hover path {
             0 0 0 6px rgba(232, 54, 75, 0.25);
     }
 }
-

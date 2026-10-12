@@ -39,7 +39,10 @@ function rareCard() {
     if (r.type === 'fair')
         body = `<div class="offers">${r.offers
             .map(
-                (o, k) => `<div class="offer${o.sold ? ' sold' : ''}"><span class="offer-art star-animal">${art('animal', o.id)}</span><b>${ANIMALS[o.id].name} d’exception</b>
+                (
+                    o,
+                    k,
+                ) => `<div class="offer${o.sold ? ' sold' : ''}"><span class="offer-art star-animal">${art('animal', o.id)}</span><b>${ANIMALS[o.id].name} d’exception</b>
                 ${o.sold ? '<small>Vendu</small>' : btn(`${fmt(o.price)}${COIN()}`, { act: 'starAnimal', data: { k }, kind: state.money >= o.price ? 'green' : '', size: 'sm', disabled: state.money < o.price })}</div>`,
             )
             .join('')}</div>`;
@@ -72,7 +75,10 @@ function storyCard() {
     const switcher =
         maps.length > 1
             ? `<div class="chips-row maps">${maps
-                  .map(x => `<button class="pick-chip${m === x.id ? ' on' : ''}" data-act="map" data-m="${x.id}">${x.name}${m !== x.id && G.mapReady(x.id) ? '<span class="dot">!</span>' : ''}</button>`)
+                  .map(
+                      x =>
+                          `<button class="pick-chip${m === x.id ? ' on' : ''}" data-act="map" data-m="${x.id}">${x.name}${m !== x.id && G.mapReady(x.id) ? '<span class="dot">!</span>' : ''}</button>`,
+                  )
                   .join('')}</div>`
             : '';
     const blds = projs
@@ -97,7 +103,8 @@ function projectDetail(pid) {
     const who = `<div class="avatar sm">${art('villager', p.vid)}</div>`;
     if (!G.chapterOpen(p.ch))
         return `<div class="proj">${who}<div class="card-main"><div class="card-title">${p.name}</div><div class="card-sub">Chapitre ${p.ch} : s’ouvre au niveau ${CHAPTERS[p.ch - 1].lvl}${p.ch > 1 ? ', après le chapitre ' + (p.ch - 1) : ''}.</div></div></div>`;
-    if (G.projectDone(pid)) return `<div class="proj done">${who}<div class="card-main"><div class="card-title">${p.name} ${ico(['ui', 'check'])}</div><div class="card-sub">« ${p.after} »</div></div></div>`;
+    if (G.projectDone(pid))
+        return `<div class="proj done">${who}<div class="card-main"><div class="card-title">${p.name} ${ico(['ui', 'check'])}</div><div class="card-sub">« ${p.after} »</div></div></div>`;
     const lines = Object.entries(p.need)
         .map(([item, n]) => {
             const g = G.givenOf(pid, item),
@@ -107,7 +114,15 @@ function projectDetail(pid) {
                 item,
                 g,
                 n,
-                left ? btn(have ? `+${Math.min(have, left)}` : '0 en stock', { act: 'giveProject', data: { p: pid, item }, kind: have ? 'green' : '', size: 'sm', disabled: !have }) : ico(['ui', 'check']),
+                left
+                    ? btn(have ? `+${Math.min(have, left)}` : '0 en stock', {
+                          act: 'giveProject',
+                          data: { p: pid, item },
+                          kind: have ? 'green' : '',
+                          size: 'sm',
+                          disabled: !have,
+                      })
+                    : ico(['ui', 'check']),
             );
         })
         .join('');
@@ -128,7 +143,10 @@ function holidayCard() {
             sv.done
                 ? ''
                 : `<div class="needs">${Object.keys(h.goal)
-                      .map(k => `<span class="need${G.holidayLeft(k) <= 0 ? ' ok' : ''}">${ico(['item', k])}${Math.max(0, h.goal[k] - G.holidayLeft(k))}/${h.goal[k]}</span>`)
+                      .map(
+                          k =>
+                              `<span class="need${G.holidayLeft(k) <= 0 ? ' ok' : ''}">${ico(['item', k])}${Math.max(0, h.goal[k] - G.holidayLeft(k))}/${h.goal[k]}</span>`,
+                      )
                       .join('')}${btn('Apporter', { act: 'giveHoliday', kind: G.holidayReady() ? 'gold' : '', size: 'sm', disabled: !G.holidayReady() })}</div>
             <div class="card-sub">${ico(['item', h.recipe])} Recette du moment : ${ITEMS[h.recipe].name.toLowerCase()} (${MACHINES[r.machine].name.toLowerCase()}). Récompense : ${DECOS[h.deco].name.toLowerCase()}, ${fmt(G.holidayReward())} pièces et 2 de chaque matériau rare.</div>`
         }</div>`;
@@ -150,8 +168,14 @@ function contractCard() {
                       c.item,
                       c.given,
                       c.qty,
-                      btn(have ? `+${Math.min(have, c.qty - c.given)}` : '0 en stock', { act: 'giveContract', kind: have ? 'green' : '', size: 'sm', disabled: !have }),
-                  ) + `<div class="card-sub reward-line">${ico(['ui', 'star'])} ${fmt(c.coins)} pièces, ${fmt(c.xp)} d’expérience, et 2 de chaque matériau rare</div>`
+                      btn(have ? `+${Math.min(have, c.qty - c.given)}` : '0 en stock', {
+                          act: 'giveContract',
+                          kind: have ? 'green' : '',
+                          size: 'sm',
+                          disabled: !have,
+                      }),
+                  ) +
+                  `<div class="card-sub reward-line">${ico(['ui', 'star'])} ${fmt(c.coins)} pièces, ${fmt(c.xp)} d’expérience, et 2 de chaque matériau rare</div>`
         }</div>`;
 }
 
@@ -169,7 +193,12 @@ function farmSeasonCard() {
             sv.got[k]
                 ? `<span class="stier done">${ico(['ui', 'check'])}</span>`
                 : sv.pts >= t
-                  ? btn(k === 4 ? ico(['ui', th.deco]) : `${fmt(G.seasonTierReward(k).coins)}${COIN()}`, { act: 'seasonTier', data: { k }, kind: 'gold', size: 'sm' })
+                  ? btn(k === 4 ? ico(['ui', th.deco]) : `${fmt(G.seasonTierReward(k).coins)}${COIN()}`, {
+                        act: 'seasonTier',
+                        data: { k },
+                        kind: 'gold',
+                        size: 'sm',
+                    })
                   : `<span class="stier">${fmt(t)}</span>`,
         ).join('')}</div><div class="card-sub center">${fmt(sv.pts)} points</div></div>`;
 }
@@ -177,7 +206,12 @@ function farmSeasonCard() {
 // ---------------- voisins ----------------
 function neighborsCard() {
     if (state.level < NEIGHBOR_LVL)
-        return card({ icon: ['villager', RIVALS[0].avatar], title: 'Fermes voisines', sub: `Vos voisins viendront vous demander de l’aide à partir du niveau ${NEIGHBOR_LVL}.`, locked: true });
+        return card({
+            icon: ['villager', RIVALS[0].avatar],
+            title: 'Fermes voisines',
+            sub: `Vos voisins viendront vous demander de l’aide à partir du niveau ${NEIGHBOR_LVL}.`,
+            locked: true,
+        });
     G.ensureNeighbors();
     return `<div class="card neighbors-card"><div class="card-title">Fermes voisines</div>
         <p class="card-sub">Vos rivales du concours sont aussi vos voisines. Aidez-les : elles paient bien, et leur amitié rapporte des cadeaux.</p>
@@ -197,7 +231,12 @@ function merchantCard() {
     if (!G.merchantOpen()) return null;
     const m = state.merchant;
     if (m.status !== 'here')
-        return card({ icon: ['ui', 'merchant'], title: 'Marchand ambulant', sub: `Zéphyr repasse dans ${timer(m.arriveAt, 'b')}. Il vend des matériaux rares, des graines exotiques et des décorations uniques.`, cls: 'away' });
+        return card({
+            icon: ['ui', 'merchant'],
+            title: 'Marchand ambulant',
+            sub: `Zéphyr repasse dans ${timer(m.arriveAt, 'b')}. Il vend des matériaux rares, des graines exotiques et des décorations uniques.`,
+            cls: 'away',
+        });
     return `<div class="card merchant-card">
         <div class="card-head"><div class="avatar sm">${art('villager', 'merchant')}</div><div class="card-main"><div class="card-title">Zéphyr, marchand ambulant</div><div class="card-sub">« Des merveilles venues de loin ! » · repart dans ${timer(m.expiresAt, 'b')}</div></div></div>
         <div class="offers">${m.stock
@@ -211,7 +250,12 @@ function merchantCard() {
 // ---------------- concours de la semaine ----------------
 function contestCard() {
     if (!G.contestOpen())
-        return card({ icon: ['ui', 'podium'], title: 'Concours de la semaine', sub: `Les fermes de la région s’affrontent chaque semaine, à partir du niveau ${CONTEST_LVL}.`, locked: true });
+        return card({
+            icon: ['ui', 'podium'],
+            title: 'Concours de la semaine',
+            sub: `Les fermes de la région s’affrontent chaque semaine, à partir du niveau ${CONTEST_LVL}.`,
+            locked: true,
+        });
     G.contestTick();
     const c = state.contest;
     const list = G.contestRanking();
@@ -237,7 +281,12 @@ function contestCard() {
                         c.tiers[k]
                             ? ico(['ui', 'check'])
                             : ok
-                              ? btn(k < 2 ? `${fmt(r.coins * (k + 1))}${COIN()}` : `${ico(['ui', 'chest'])}coffre`, { act: 'contestTier', data: { k }, kind: 'gold', size: 'sm' })
+                              ? btn(k < 2 ? `${fmt(r.coins * (k + 1))}${COIN()}` : `${ico(['ui', 'chest'])}coffre`, {
+                                    act: 'contestTier',
+                                    data: { k },
+                                    kind: 'gold',
+                                    size: 'sm',
+                                })
                               : `<span>${fmt(t)}</span>`
                     }</div>`;
                 })
@@ -251,7 +300,8 @@ function villagerStory(vid) {
     if (!STORIES[vid] || G.heartsOf(vid) < 5) return '';
     const S = STORIES[vid],
         st = G.storyState(vid);
-    if (st.step >= S.steps.length) return `<div class="vstory done"><b>${ico(['ui', 'check'])}${S.title}</b><span class="card-sub">Histoire terminée</span></div>`;
+    if (st.step >= S.steps.length)
+        return `<div class="vstory done"><b>${ico(['ui', 'check'])}${S.title}</b><span class="card-sub">Histoire terminée</span></div>`;
     const [text, need] = S.steps[st.step];
     const lines = Object.entries(need)
         .map(([item, n]) => {

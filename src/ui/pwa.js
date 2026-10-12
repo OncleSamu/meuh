@@ -74,7 +74,9 @@ export function toggleRemind(done) {
     Notification.requestPermission().then(p => {
         state.settings.remind = p === 'granted';
         toast(
-            p === 'granted' ? 'Rappels activés : Meuh vous prévient quand le jeu est en arrière-plan' : 'Rappels refusés par le navigateur : vous pouvez les autoriser dans ses réglages',
+            p === 'granted'
+                ? 'Rappels activés : Meuh vous prévient quand le jeu est en arrière-plan'
+                : 'Rappels refusés par le navigateur : vous pouvez les autoriser dans ses réglages',
             ['ui', 'clock'],
         );
         done();

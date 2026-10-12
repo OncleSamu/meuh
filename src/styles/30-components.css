@@ -148,10 +148,8 @@
     gap: 10px;
     width: 100%;
     padding: 10px 12px;
-    background:
-        linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 40px),
-        repeating-linear-gradient(176deg, rgba(122, 74, 42, 0.05) 0 2px, transparent 2px 13px),
-        var(--paper);
+    background: linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 40px),
+        repeating-linear-gradient(176deg, rgba(122, 74, 42, 0.05) 0 2px, transparent 2px 13px), var(--paper);
     border: 3px solid var(--ink);
     border-radius: var(--r);
     box-shadow:

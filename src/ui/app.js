@@ -88,7 +88,10 @@ export function go(path, opts = {}) {
         openSheet(path.slice(6), opts);
         return;
     }
-    const [tab, sub] = path.split('/');
+    const [tab, sub0] = path.split('/');
+    let sub = sub0;
+    // écran large : l'onglet Ferme montre la nature à droite (le champ est toujours à gauche)
+    if (view.wide && tab === 'farm' && !sub && !subLocked('farm', 'nature')) sub = 'nature';
     if (tabLocked(tab)) {
         emit('toast', { text: `${tabDef(tab).name} : s’ouvre au niveau ${tabLockLvl(tab)}`, icon: ['ui', 'lock'] });
         emit('sfx', 'error');
@@ -153,7 +156,7 @@ function renderTabs() {
 function renderSubnav() {
     const t = tabDef(ui.tab);
     const el = byId('subnav');
-    if (!t.subs || (view.wide && ui.tab === 'farm')) {
+    if (!t.subs) {
         el.hidden = true;
         return;
     }
@@ -163,13 +166,23 @@ function renderSubnav() {
         segmented(
             t.subs.map(([id, label, icon]) => {
                 const locked = subLocked(t.id, id);
-                return [id, locked ? `${label} · niv. ${subLockLvl(t.id, id)}` : label, locked ? ['ui', 'lock'] : icon, locked ? 0 : ui.counts[`${t.id}/${id}`] || 0, locked];
+                return [
+                    id,
+                    locked ? `${label} · niv. ${subLockLvl(t.id, id)}` : label,
+                    locked ? ['ui', 'lock'] : icon,
+                    locked ? 0 : ui.counts[`${t.id}/${id}`] || 0,
+                    locked,
+                ];
             }),
             ui.sub[t.id],
             'sub',
         ),
     );
 }
+
+// grand écran : la nature s'affiche à droite, le champ restant à gauche
+const asideShown = () => view.wide && ui.tab === 'farm' && ui.sub.farm === 'nature';
+export const viewEl = path => (view.wide && path === 'farm/nature' ? byId('view-aside') : byId('view-' + path.split('/')[0]));
 
 // ---------------- rafraîchissement ----------------
 let toolbarRender = () => {};
@@ -184,11 +197,14 @@ export function refresh() {
     renderHud();
     renderTabs();
     renderSubnav();
-    $$('.view').forEach(v => v.classList.toggle('on', v.dataset.tab === ui.tab || (view.wide && v.dataset.tab === 'farm')));
     const path = currentPath();
-    if (VIEWS[path]) VIEWS[path](byId('view-' + ui.tab));
+    const aside = asideShown();
+    $$('.view').forEach(v =>
+        v.classList.toggle('on', v.dataset.tab === 'aside' ? aside : (v.dataset.tab === ui.tab && !aside) || (view.wide && v.dataset.tab === 'farm')),
+    );
+    if (VIEWS[path]) VIEWS[path](viewEl(path));
     // grand écran : le champ toujours à gauche
-    if (view.wide && ui.tab !== 'farm') VIEWS['farm/field'](byId('view-farm'));
+    if (view.wide && (ui.tab !== 'farm' || aside)) VIEWS['farm/field'](byId('view-farm'));
     toolbarRender();
     renderSheets();
     live();
@@ -343,6 +359,8 @@ export function setupApp() {
             if (sub && (tabDef(tab).subs || []).some(s => s[0] === sub) && !subLocked(tab, sub)) ui.sub[tab] = sub;
         }
     }
+    // grand écran : le champ est déjà à gauche, la colonne de droite montre le village
+    if (view.wide && ui.tab === 'farm' && ui.sub.farm === 'field') ui.tab = 'village';
     started = true;
 }
 

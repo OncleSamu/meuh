@@ -40,25 +40,17 @@ setView({ tab: 'none', started: true, hidden: false });
 state.tutorial.done = true;
 
 const xpBy = {};
-let src = 'autre';
 const levels = { 1: 0 };
 let t = 0;
 const stuck = {};
 const log = [];
 const tag = (s, fn) => {
-    const before = state.xp + G.xpToLevel(41) * 0; // repère
     const lvl = state.level,
         xp0 = state.xp;
-    src = s;
-    try {
-        fn();
-    } finally {
-        src = 'autre';
-    }
+    fn();
     // expérience gagnée pendant le geste (approximatif lors d'un passage de niveau)
     const gained = state.level === lvl ? state.xp - xp0 : G.getXpReq(lvl) - xp0 + state.xp;
     if (gained > 0) xpBy[s] = (xpBy[s] || 0) + gained;
-    return before;
 };
 
 const crops = () => Object.values(ITEMS).filter(i => i.type === 'crop' && !i.exotic && !i.ghOnly && G.storyOk(i) && state.level >= i.reqLvl);

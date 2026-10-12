@@ -18,7 +18,10 @@ export function produce(id) {
     }
     if (id === 'alpineMilk') {
         go('animals');
-        return toast(G.transOpen() ? 'Envoyez vaches et chèvres en transhumance, elles donnent ensuite du lait d’alpage' : G.storyLockText({ needProject: 'sheepfold' }), ['ui', 'mountain']);
+        return toast(
+            G.transOpen() ? 'Envoyez vaches et chèvres en transhumance, elles donnent ensuite du lait d’alpage' : G.storyLockText({ needProject: 'sheepfold' }),
+            ['ui', 'mountain'],
+        );
     }
     if (it.type === 'crop' && !G.storyOk(it)) {
         go('village/village');
@@ -41,7 +44,10 @@ export function produce(id) {
         const a = Object.values(ANIMALS).find(x => x.prodId === id);
         const owned = G.animalCount(a.id) > 0;
         go(owned ? 'animals' : 'market/shop');
-        return toast(owned ? `${a.name} : nourrissez-les pour obtenir ${it.name.toLowerCase()}` : `Il vous faut un animal : ${a.name.toLowerCase()} (marché)`, ['animal', a.id]);
+        return toast(owned ? `${a.name} : nourrissez-les pour obtenir ${it.name.toLowerCase()}` : `Il vous faut un animal : ${a.name.toLowerCase()} (marché)`, [
+            'animal',
+            a.id,
+        ]);
     }
     if (it.type === 'fish' || it.type === 'gem' || id === 'wood' || id === 'stone') return go('farm/nature');
     const r = RECIPES[id];

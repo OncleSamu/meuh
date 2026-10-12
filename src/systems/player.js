@@ -112,7 +112,7 @@ export function unlocksAt(lvl) {
             );
     });
     Object.values(UPGRADES).forEach(u => u.reqLvl === lvl && add(['ui', u.id], `${u.name} (au magasin)`));
-    if (lvl === CAVE_LVL) add(['ui', 'cave'], 'La cave : affinez fromages et cidres, et vendez-les aux enchères (Atelier | Cave)');
+    if (lvl === CAVE_LVL) add(['ui', 'cave'], 'La cave : affinez fromages et cidres, et vendez-les aux enchères (onglet Atelier, puis Cave)');
     if (lvl === CHAPTERS[0].lvl) add(['ui', 'village'], 'Rénovez le village : premier chapitre (onglet Village)');
     if (lvl === INCIDENT_LVL) add(['ui', 'pest'], 'Des imprévus surviennent à la ferme : réagissez vite !');
     if (lvl === DOG.reqLvl) add(['ui', 'dog'], 'Un chien de ferme à adopter');

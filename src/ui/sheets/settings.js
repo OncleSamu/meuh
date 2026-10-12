@@ -49,7 +49,9 @@ function mainPage() {
         group(
             'Écran',
             (document.documentElement.requestFullscreen ? navRow('Plein écran', 'fullscreen') : '') +
-                (inst.standalone ? '<p class="card-sub">Le jeu est installé sur cet appareil.</p>' : navRow('Installer l’appli', 'install', null, null, '›', inst.hint)),
+                (inst.standalone
+                    ? '<p class="card-sub">Le jeu est installé sur cet appareil.</p>'
+                    : navRow('Installer l’appli', 'install', null, null, '›', inst.hint)),
         ),
         group(
             'Sauvegarde',
@@ -107,14 +109,21 @@ function installPage() {
     const local = !location.protocol.startsWith('http');
     const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     return (
-        (local ? '<div class="line bad"><div>Le jeu est ouvert comme un fichier. Pour l’installer, ouvrez-le depuis son adresse web (https).</div></div>' : '') +
+        (local
+            ? '<div class="line bad"><div>Le jeu est ouvert comme un fichier. Pour l’installer, ouvrez-le depuis son adresse web (https).</div></div>'
+            : '') +
         (ios
             ? '<ol class="steps"><li>Ouvrez cette page dans <b>Safari</b>.</li><li>Touchez le bouton <b>Partager</b> (le carré avec une flèche vers le haut).</li><li>Choisissez <b>Sur l’écran d’accueil</b>, puis <b>Ajouter</b>.</li></ol>'
             : '<ol class="steps"><li>Ouvrez cette page dans <b>Chrome</b>, <b>Edge</b> ou <b>Samsung Internet</b>.</li><li>Touchez le menu <b>⋮</b> en haut à droite.</li><li>Choisissez <b>Installer l’application</b> ou <b>Ajouter à l’écran d’accueil</b>.</li></ol>')
     );
 }
 
-const PAGES = { main: ['Réglages', mainPage], export: ['Exporter ma ferme', exportPage], import: ['Importer une ferme', importPage], install: ['Installer l’appli', installPage] };
+const PAGES = {
+    main: ['Réglages', mainPage],
+    export: ['Exporter ma ferme', exportPage],
+    import: ['Importer une ferme', importPage],
+    install: ['Installer l’appli', installPage],
+};
 
 defineSheet('settings', {
     cls: 'settings-sheet',

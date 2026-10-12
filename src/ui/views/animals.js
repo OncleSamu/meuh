@@ -7,7 +7,7 @@ import { ITEMS } from '../../data/items.js';
 import * as G from '../../systems/index.js';
 import { byId, blocks, esc, actions, run } from '../dom.js';
 import { ico, art } from '../icons.js';
-import { btn, hint, hearts, bar, timer, lines } from '../kit.js';
+import { btn, hint, hearts, bar, timer, lines, segmented } from '../kit.js';
 import { defineView, defineLive, ui, currentPath } from '../app.js';
 import { defineSheet, openSheet } from '../sheets.js';
 import { reduceMotion, burstAt } from '../fx.js';
@@ -20,10 +20,15 @@ function freeSpot(self, list = els) {
     const others = list.filter(e => e && e !== self && e.style.left).map(e => [parseFloat(e.style.left), parseFloat(e.style.top)]);
     let best = null,
         bestD = -1;
+    // marges en pixels : la bulle au-dessus, le nom en dessous, la mare en bas à droite
+    const h = (self && self.parentElement && self.parentElement.offsetHeight) || 380;
+    const y0 = (84 / h) * 100,
+        y1 = 100 - (46 / h) * 100,
+        pond = 100 - (120 / h) * 100;
     for (let k = 0; k < 14; k++) {
         const x = 12 + Math.random() * 70,
-            y = 22 + Math.random() * 56;
-        if (x > 62 && y > 64) continue; // la mare
+            y = y0 + Math.random() * (y1 - y0);
+        if (x > 62 && y > pond) continue; // la mare
         const d = others.reduce((m, [ox, oy]) => Math.min(m, Math.hypot(x - ox, (y - oy) * 1.4)), 999);
         if (d > bestD) [best, bestD] = [[x, y], d];
     }
@@ -41,12 +46,12 @@ function build(meadow) {
         el.dataset.i = i;
         el.dataset.anchor = 'animal:' + i;
         el.innerHTML = `<div class="critter-body"></div><div class="bubble"></div><div class="food-meter"></div>${bar(0, 'cbar', `prod:${i}`)}${bar(0, 'gbar', `grow:${i}`)}<div class="critter-name"></div>`;
+        meadow.appendChild(el);
         const [x, y] = freeSpot(el, placed);
         placed.push(el);
         el.style.transition = 'none';
         el.style.left = x + '%';
         el.style.top = y + '%';
-        meadow.appendChild(el);
         requestAnimationFrame(() => (el.style.transition = ''));
         return el;
     });
@@ -133,18 +138,67 @@ function transCard() {
         ${btn(`Monter aux estives (${pick.length}/${G.transMax()})`, { act: 'startTrans', kind: pick.length ? 'green' : '', wide: true, disabled: !pick.length })}</div>`;
 }
 
+// le pré grandit avec le troupeau pour que chacun ait sa place
+const meadowHtml = n =>
+    `<div class="meadow${n > 18 ? ' crowd' : ''}" id="pasture" style="height:${Math.min(980, Math.max(380, 150 + n * 24))}px"><div class="pond"></div>${n ? '' : '<div class="empty">Votre pâturage est vide. Achetez une poule au marché pour commencer.</div>'}</div>`;
+
+// l'étable : tout le troupeau en fiches compactes, triées par espèce
+function stableHtml() {
+    const mf = G.maxFood();
+    const order = state.animals.map((a, i) => [a, i]).sort((x, y) => (x[0].type < y[0].type ? -1 : x[0].type > y[0].type ? 1 : x[1] - y[1]));
+    return `<div class="stable">${order
+        .map(([a, i]) => {
+            const d = ANIMALS[a.type],
+                adult = G.isAdult(a);
+            const tag = a.sick
+                ? `<span class="st-tag sick">${ico(['ui', 'sick'])}</span>`
+                : a.stack > 0
+                  ? `<span class="st-tag ready">${ico(['item', d.prodId])}×${a.stack}</span>`
+                  : a.food === 0 && adult
+                    ? `<span class="st-tag hungry">${ico(['item', 'feed'])}</span>`
+                    : G.isAway(a)
+                      ? `<span class="st-tag">${ico(['ui', 'mountain'])}</span>`
+                      : '';
+            return `<button class="st-tile${a.stack > 0 ? ' ready' : ''}${a.sick ? ' sick' : ''}${G.isAway(a) ? ' away' : ''}" data-act="animal" data-i="${i}" data-anchor="animal:${i}">
+                ${tag}<span class="st-art${adult ? '' : ' baby'}">${adult ? art('animal', a.type) : babyBody(a)}</span>
+                <b>${a.star ? ico(['ui', 'star']) : ''}${esc(a.name)}</b>
+                <span class="food-meter">${Array.from({ length: mf }, (_, k) => `<i class="${k < a.food ? 'on' : ''}"></i>`).join('')}</span>
+                ${adult ? bar(0, 'cbar', `prod:${i}`) : bar(0, 'gbar', `grow:${i}`)}</button>`;
+        })
+        .join('')}</div>`;
+}
+
 function renderAnimals(el) {
+    const n = state.animals.length;
+    const mode = n > 6 ? ui.sel.animalMode || (n > 16 ? 'stable' : 'meadow') : 'meadow';
     blocks(el, [
         [
             'top',
-            `<div class="view-top"><h2 class="view-title">Pâturage</h2><div class="actions">${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'], anchor: 'btn:feed' })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'], anchor: 'btn:collect' })}</div></div>`,
+            `<div class="view-top end"><div class="actions">${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'], anchor: 'btn:feed' })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'], anchor: 'btn:collect' })}</div></div>`,
         ],
         ['pin', pinBar()],
         [
-            'meadow',
-            `<div class="meadow" id="pasture"><div class="pond"></div>${state.animals.length ? '' : '<div class="empty">Votre pâturage est vide. Achetez une poule au marché pour commencer.</div>'}</div>`,
+            'mode',
+            n > 6
+                ? segmented(
+                      [
+                          ['meadow', 'Le pré', ['ui', 'flowers']],
+                          ['stable', 'L’étable', ['ui', 'barn']],
+                      ],
+                      mode,
+                      'animalMode',
+                  )
+                : '',
         ],
-        ['hint', hint('Chaque sac de nourriture donne une production. Touchez un animal pour ouvrir sa fiche : câlin, nourriture et nom.')],
+        ['meadow', mode === 'stable' ? stableHtml() : meadowHtml(n)],
+        [
+            'hint',
+            hint(
+                mode === 'stable'
+                    ? 'Touchez un animal pour ramasser sa production, ou pour ouvrir sa fiche quand il n’a rien à donner.'
+                    : 'Chaque sac de nourriture donne une production. Touchez un animal pour ouvrir sa fiche : câlin, nourriture et nom.',
+            ),
+        ],
         ['trans', transCard()],
     ]);
     renderCritters();
@@ -167,7 +221,11 @@ defineSheet('animal', {
         const adult = G.isAdult(a);
         const info = [];
         if (!adult) info.push([['ui', 'clock'], `Devient adulte dans ${formatDuration(G.growLeft(a))}. Vous pouvez déjà remplir sa mangeoire.`]);
-        else info.push([['item', d.prodId], `${p.name} toutes les ${formatDuration(G.animalTime(a))}${a.love ? ` (+${a.love * 4} % grâce à l’affection)` : ''}`]);
+        else
+            info.push([
+                ['item', d.prodId],
+                `${p.name} toutes les ${formatDuration(G.animalTime(a))}${a.love ? ` (+${a.love * 4} % grâce à l’affection)` : ''}`,
+            ]);
         info.push([['item', 'feed'], `Mangeoire : ${a.food} / ${G.maxFood()} repas`]);
         if (a.produced) info.push([['ui', 'basket'], G.producedText(a)]);
         const petted = a.petDay === state.day;
@@ -185,6 +243,7 @@ defineSheet('animal', {
 
 export function setupAnimals() {
     actions({
+        animalMode: (el, d) => (ui.sel.animalMode = d.v),
         feedAll: el => G.feedAll(el),
         collectAnimals: el => G.collectAll(el),
         animal: (el, d) => {

@@ -24,6 +24,14 @@ export function openSheet(name, opts = {}) {
         render();
         return;
     }
+    // le menu est un carrefour : la fenêtre choisie le remplace au lieu de s'empiler dessus
+    const top = topSheet();
+    let replace = false;
+    if (top && SHEETS[top.name].hub) {
+        stack.pop();
+        top.el.remove();
+        replace = true;
+    }
     const el = document.createElement('div');
     el.className = `sheet-wrap ${def.cls || ''}`;
     el.innerHTML = `<div class="sheet-back" data-act="sheetClose"></div>
@@ -37,8 +45,10 @@ export function openSheet(name, opts = {}) {
     stack.push({ name, opts, el });
     if (def.open) def.open(opts);
     grip(el);
-    history.pushState({ sheet: name }, '');
-    requestAnimationFrame(() => el.classList.add('in'));
+    if (replace) history.replaceState({ sheet: name }, '');
+    else history.pushState({ sheet: name }, '');
+    if (replace) el.classList.add('in', 'swap');
+    else requestAnimationFrame(() => el.classList.add('in'));
     render();
     emit('sfx', 'click');
 }
@@ -81,9 +91,19 @@ export function render() {
         const content = def.render(s.opts, s);
         if (Array.isArray(content)) blocks(body, content);
         else patch(body, content);
+        centerMarked(body);
         patch(s.el.querySelector('.sheet-foot'), def.foot ? def.foot(s.opts) : '');
         s.el.querySelector('.sheet-foot').hidden = !def.foot;
     }
+}
+
+// un élément marqué data-center est ramené au milieu de sa bande défilante (une fois par dessin)
+function centerMarked(root) {
+    root.querySelectorAll('[data-center]:not([data-centered])').forEach(c => {
+        c.dataset.centered = '1';
+        const p = c.parentElement;
+        p.scrollLeft = c.offsetLeft - p.offsetLeft - (p.clientWidth - c.offsetWidth) / 2;
+    });
 }
 
 export const sheetOpts = name => {
