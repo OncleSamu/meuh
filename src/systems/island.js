@@ -125,6 +125,7 @@ export function harvestIsland(k, at, quiet) {
     state.inventory[d.id] += qty;
     if (p.v) harvestVariety(p.v, qty);
     state.stats.harvested += qty;
+    state.stats.islandHarvest = (state.stats.islandHarvest || 0) + qty;
     addMastery(d.id, qty);
     const q = rollIslandQuality();
     if (q) addQuality(d.id, q, qty);

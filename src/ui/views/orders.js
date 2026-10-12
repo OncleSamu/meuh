@@ -13,6 +13,7 @@ import { defineView } from '../app.js';
 import { defineSheet, closeSheet } from '../sheets.js';
 import { itemLine, rewardHtml } from './common.js';
 import { confirmTap } from '../confirm.js';
+import { defiCard } from './defis.js';
 
 // ---------------- la fête de saison ----------------
 function eventCard() {
@@ -168,6 +169,7 @@ function delivery(kind) {
 
 function renderOrders(el) {
     blocks(el, [
+        ['defi', defiCard()],
         ['event', eventCard()],
         ['express', express()],
         ['chef', chefCard()],

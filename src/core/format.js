@@ -27,6 +27,7 @@ export function formatDuration(s) {
     const h = Math.floor(s / 3600),
         m = Math.floor((s % 3600) / 60),
         r = s % 60;
+    if (h >= 48) return `${Math.floor(h / 24)} j ${h % 24} h`;
     if (h > 0) return `${h} h ${String(m).padStart(2, '0')}`;
     if (m > 0) return `${m} min ${String(r).padStart(2, '0')}`;
     return `${r} s`;

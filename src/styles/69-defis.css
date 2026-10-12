@@ -1,0 +1,219 @@
+/* ---------------- les grands défis (1.1) ---------------- */
+.defi-card {
+    background: linear-gradient(#fff6dc, #f7e2b0);
+}
+.defi-card.won {
+    background: linear-gradient(#fff6dc, #f6dc8f);
+}
+.defi-cups {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 4px 0 6px;
+}
+.defi-cups i {
+    width: 34px;
+    height: 34px;
+    opacity: 0.28;
+    filter: grayscale(1);
+    transition:
+        opacity 0.3s,
+        filter 0.3s;
+}
+.defi-cups i.on {
+    opacity: 1;
+    filter: none;
+}
+.defi-cups svg {
+    width: 100%;
+    height: 100%;
+}
+.defi-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+.defi-step {
+    display: grid;
+    grid-template-columns: 34px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 2px solid rgba(58, 38, 24, 0.25);
+    border-radius: 12px;
+}
+.defi-step > .ico {
+    width: 30px;
+    height: 30px;
+}
+.defi-step.ready {
+    border-color: var(--ink);
+    background: #fffaf0;
+    box-shadow: 0 2px 0 rgba(58, 38, 24, 0.3);
+}
+.defi-step.done {
+    background: rgba(108, 192, 74, 0.18);
+    border-color: rgba(63, 143, 46, 0.5);
+}
+.defi-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.defi-main b {
+    font-size: 0.9rem;
+}
+.defi-main small {
+    color: var(--ink-soft);
+    font-size: 0.74rem;
+    line-height: 1.25;
+}
+.defi-num {
+    font-weight: 900;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+.defi-items {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 6px;
+}
+.defi-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 6px 4px;
+    background: #fffbee;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    text-align: center;
+}
+.defi-item .ico {
+    width: 34px;
+    height: 34px;
+}
+.defi-item span {
+    font-size: 0.74rem;
+    font-weight: 800;
+    line-height: 1.15;
+}
+.defi-item b {
+    font-size: 0.82rem;
+}
+.defi-item small {
+    font-size: 0.66rem;
+    color: var(--ink-soft);
+}
+.defi-item.ok {
+    background: rgba(108, 192, 74, 0.2);
+}
+.defi-intro {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.defi-intro > svg {
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
+}
+.defi-intro p {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+.defi-medals {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+}
+.defi-rewards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+}
+.defi-reward {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 6px 4px;
+    background: #fffbee;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+}
+.defi-reward svg {
+    width: 40px;
+    height: 40px;
+}
+.defi-reward small {
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+    line-height: 1.2;
+}
+.defi-deco > svg {
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
+}
+
+/* salle des trophées */
+.trophy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+.trophy {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+    padding: 8px 4px;
+    background: linear-gradient(#fffbee, var(--paper));
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+}
+.trophy > svg {
+    width: 52px;
+    height: 52px;
+}
+.trophy b {
+    font-size: 0.74rem;
+    line-height: 1.15;
+}
+.trophy small {
+    font-size: 0.66rem;
+    color: var(--ink-soft);
+}
+.trophy.none {
+    background: #efe3c6;
+}
+.trophy.now {
+    box-shadow: 0 0 0 3px #f2c14e;
+}
+.trophy-deco {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 26px;
+    height: 26px;
+}
+.trophy-deco svg {
+    width: 100%;
+    height: 100%;
+}
+.pick-cell.short {
+    opacity: 0.6;
+}

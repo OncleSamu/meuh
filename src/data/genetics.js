@@ -145,7 +145,7 @@ export const GENETICS = {
     varietySellCap: 2.5,
     // une recette faite avec de meilleurs ingrédients : argent puis or (déjà ×1,25 et ×1,6)
     silverScore: 1.2,
-    goldScore: 2.2,
+    goldScore: 1.8, // des ingrédients tous en or suffisent ; les variétés savoureuses aident à y arriver
 };
 
 // ---------------- le Salon de l'agriculture ----------------

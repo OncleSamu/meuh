@@ -34,6 +34,7 @@ export function newState() {
         orchard: null,
         island: null,
         genetics: null,
+        defis: null,
         machines: [],
         quests: [],
         upgrades: { speed: 0, price: 0, yield: 0, feeder: 0, seeder: 0, harvester: 0 },

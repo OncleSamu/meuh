@@ -133,6 +133,7 @@ export function unlocksAt(lvl) {
     if (lvl === MAX_LEVEL) {
         add(['ui', 'star'], 'Niveau maximum : l’expérience vous rapporte désormais des étoiles de renommée');
         add(['ui', 'goldCow'], 'Visez le titre de Ferme légendaire (Livre de la ferme)');
+        add(['ui', 'cupGold'], 'Les grands défis : un défi de deux semaines, des médailles et des décorations uniques (volet Commandes)');
     }
     return list;
 }

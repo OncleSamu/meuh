@@ -22,6 +22,7 @@ import { challengeOn } from './prestige.js';
 import { hasMachine, newMachine } from './workshop.js';
 import { newAnimal } from './animals.js';
 import { tip } from './tips.js';
+import { defiNeed } from './defis.js';
 
 const COIN = ['ui', 'coin'];
 
@@ -106,6 +107,7 @@ export function reservedQty(id) {
     if (state.balloon.status === 'here') state.balloon.items.forEach(x => x.id === id && (n += x.qty));
     if (state.incident && state.incident.type === 'express') state.incident.items.forEach(x => x.id === id && (n += x.qty));
     n += projectsNeed(id);
+    n += defiNeed(id);
     if (state.truck.status === 'here')
         state.truck.slots.forEach(sl => {
             if (!sl.loaded && sl.id === id) n += sl.qty;

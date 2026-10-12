@@ -220,7 +220,10 @@ export function collectMachine(i, at, quiet) {
         const oq = m.outq && m.outq[id];
         if (oq) {
             let j = 0;
-            for (let g = 0; g < oq.g && j < per.length; g++) addQuality(id, 2, per[j++]);
+            for (let g = 0; g < oq.g && j < per.length; g++) {
+                state.stats.goldDishes = (state.stats.goldDishes || 0) + per[j];
+                addQuality(id, 2, per[j++]);
+            }
             for (let s2 = 0; s2 < oq.s && j < per.length; s2++) addQuality(id, 1, per[j++]);
             delete m.outq[id];
         }

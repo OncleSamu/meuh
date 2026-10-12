@@ -171,6 +171,7 @@ export function pickTree(k, at, quiet, z = 'farm') {
     const qty = t.ground;
     state.inventory[t.id] += qty;
     state.stats.harvested += qty;
+    state.stats[z === 'island' ? 'islandHarvest' : 'orchardFruits'] = (state.stats[z === 'island' ? 'islandHarvest' : 'orchardFruits'] || 0) + qty;
     addMastery(t.id, qty);
     let gold = 0,
         silver = 0;

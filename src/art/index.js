@@ -12,6 +12,7 @@ import './icons.js';
 import './glyphs.js';
 import './island.js';
 import './station.js';
+import './defis.js';
 
 export const SPR = {
     farmhouse(l, roof) {
