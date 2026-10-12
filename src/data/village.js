@@ -164,6 +164,20 @@ export const VILLAGERS = {
         ch: 11,
         likes: ['milk', 'goatMilk', 'cream', 'beaufort', 'bread', 'camembert', 'comte'],
     },
+    maeva: {
+        id: 'maeva',
+        name: 'Maëva',
+        role: 'La cueilleuse de l’île',
+        ch: 13,
+        likes: ['mango', 'pineapple', 'tiare', 'coconutMilk', 'mangoPassion', 'monoi', 'coconutFlan', 'honey'],
+    },
+    tiago: {
+        id: 'tiago',
+        name: 'Tiago',
+        role: 'Le passeur du bac',
+        ch: 13,
+        likes: ['banana', 'coconut', 'coffee', 'rum', 'accras', 'grilledMackerel', 'bread', 'cafeLatte'],
+    },
     duval: {
         id: 'duval',
         name: 'Maître Duval',
@@ -257,6 +271,21 @@ export const CHAPTERS = [
         lvl: 40,
         map: 'domaine',
         intro: 'Le domaine revit ! Maître Duval veut y ouvrir la plus belle salle des ventes du pays.',
+    },
+    {
+        n: 13,
+        name: 'L’île aux Alizés',
+        lvl: 30,
+        after: 5,
+        map: 'island',
+        intro: 'Depuis le hameau, un vieux bac mène à une île tiède et oubliée. Tiago le passeur et Maëva la cueilleuse rêvent d’y faire pousser des fruits.',
+    },
+    {
+        n: 14,
+        name: 'Le carnaval des îles',
+        lvl: 35,
+        map: 'island',
+        intro: 'L’île est en fleurs ! Café, rhum et musique : Tiago et Maëva préparent le plus beau carnaval de la région.',
     },
 ];
 
