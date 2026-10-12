@@ -667,13 +667,27 @@ html.season-automne .meadow {
     left: 50%;
     bottom: -4px;
     transform: translateX(-50%);
-    white-space: nowrap;
-    padding: 0 5px;
+    /* un nom long passe sur deux lignes plutôt que de sortir de la carte */
+    width: max-content;
+    max-width: 104px;
+    text-align: center;
+    line-height: 1.15;
+    padding: 1px 5px;
     font-family: var(--display);
     font-size: 0.58rem;
     background: rgba(251, 236, 201, 0.9);
     border: 1.5px solid var(--ink);
     border-radius: 7px;
+}
+
+.vbld.edge-l .vlabel {
+    left: 0;
+    transform: none;
+}
+.vbld.edge-r .vlabel {
+    left: auto;
+    right: 0;
+    transform: none;
 }
 
 .vbld .dot {

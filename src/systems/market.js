@@ -185,7 +185,6 @@ export function rememberSale(parts) {
     emit('sale', lastSale);
 }
 
-
 export function undoSale() {
     const sl = pendingSale();
     if (!sl) return false;

@@ -369,4 +369,3 @@ export function setupApp() {
     if (view.wide && ui.tab === 'farm' && ui.sub.farm === 'field') ui.tab = 'village';
     started = true;
 }
-

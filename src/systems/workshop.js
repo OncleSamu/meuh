@@ -20,6 +20,7 @@ import { clampAllQuality, addQuality } from './farm.js';
 import { inBarn, barnBlocked, rollRare } from './barn.js';
 import { collect } from './book.js';
 import { takeIngredients } from './genetics.js';
+import { qtyName } from '../core/format.js';
 
 export const recipesOf = type => Object.values(RECIPES).filter(r => r.machine === type);
 
@@ -37,7 +38,7 @@ export const canCook = id => Object.entries(RECIPES[id].ing).every(([k, n]) => s
 export const missingFor = id =>
     Object.entries(RECIPES[id].ing)
         .filter(([k, n]) => state.inventory[k] < n)
-        .map(([k, n]) => `${n - state.inventory[k]} ${ITEMS[k].name.toLowerCase()}`);
+        .map(([k, n]) => qtyName(n - state.inventory[k], ITEMS[k].name));
 export const newMachine = type => ({ type, queue: [], progress: 0, out: {}, last: null });
 export const machineBusy = m => m.queue.length > 0;
 export const outCount = m => Object.values(m.out).reduce((a, b) => a + b, 0);

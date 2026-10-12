@@ -92,4 +92,3 @@ export function moveAnimal(i, k) {
     changed('animals');
     return true;
 }
-

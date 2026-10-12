@@ -196,7 +196,6 @@ export function trashQuest(i) {
     return true;
 }
 
-
 // D'où vient un produit
 export function sourceOf(id) {
     const it = ITEMS[id];

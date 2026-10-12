@@ -54,3 +54,29 @@ export const pct = (x, digits = 0) => `${(x * 100).toFixed(digits).replace('.', 
 // prix arrondi à 5 pièces, jamais moins de 5
 export const round5 = n => Math.max(5, Math.round(n / 5) * 5);
 export const pickRand = list => list[Math.floor(Math.random() * list.length)];
+
+// pluriel d'un nom de produit : « pomme de terre » → « pommes de terre », « patate douce » → « patates douces »
+// (le nom et ses adjectifs jusqu'au premier « de », « d' », « à », « au », « aux », « en »)
+const plWord = w => {
+    if (/[sxz]$/i.test(w) || w.includes('-')) return w;
+    if (/^bleu$/i.test(w)) return w + 's';
+    if (/^chou$/i.test(w)) return w + 'x';
+    if (/(eau|au|eu)$/i.test(w)) return w + 'x';
+    if (/al$/i.test(w)) return w.slice(0, -2) + 'aux';
+    return w + 's';
+};
+export function pluralFr(name) {
+    const words = name.split(' ');
+    let stop = false;
+    return words
+        .map((w, k) => {
+            if (stop || (k > 0 && /^(de|du|des|à|au|aux|en|d[’'].*)$/i.test(w)) || /^d[’']/i.test(w)) {
+                stop = true;
+                return w;
+            }
+            return plWord(w);
+        })
+        .join(' ');
+}
+// « 5 oignons », « 1 pomme de terre » (en minuscules, comme dans une phrase)
+export const qtyName = (n, name) => `${fmt(n)} ${(n > 1 ? pluralFr(name) : name).toLowerCase()}`;
