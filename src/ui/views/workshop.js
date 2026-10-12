@@ -118,7 +118,13 @@ defineSheet('machine', {
             [
                 'best',
                 state.genetics && G.geneticsOpen()
-                    ? toggle('Meilleurs ingrédients d’abord', state.genetics.bestFirst, 'toggleBest', null, 'Variétés savoureuses et produits argent ou or : le plat sort en argent ou en or')
+                    ? toggle(
+                          'Meilleurs ingrédients d’abord',
+                          state.genetics.bestFirst,
+                          'toggleBest',
+                          null,
+                          'Variétés savoureuses et produits argent ou or : le plat sort en argent ou en or',
+                      )
                     : '',
             ],
             [

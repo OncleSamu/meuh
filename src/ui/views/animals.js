@@ -269,7 +269,7 @@ function geneBlock(a) {
     if (!state.genetics || !G.geneticsOpen() || !a.g) return '';
     const race = a.race && state.genetics.races[a.race];
     const can = G.canFixRace(a);
-    return `<div class="gene-box"><div class="set-sub">Ses gènes${race ? ` · race « ${esc(race.name)} »` : a.gen ? ` · génération ${a.gen}` : ''}</div>
+    return `<div class="gene-box"><div class="set-sub">Ses gènes${race ? ` · race « ${esc(race.name)} »` : a.gen ? ` · génération ${a.gen}` : ''}</div>
         <p class="card-sub">${looksText(a.g)}${a.parents ? ` · fille de ${a.parents.map(esc).join(' et ')}` : ''}</p>
         ${animalTraits(a)}
         <div class="row-btns wrap">${G.labOpen() && !a.analyzed ? btn(`Analyser · ${fmt(G.analyzeCost())}${ico(['ui', 'coin'])}`, { act: 'analyze', data: { id: a.uid }, size: 'sm', icon: ['ui', 'search'] }) : ''}${G.breedOpen() && G.isAdult(a) ? btn('Choisir pour l’élevage', { act: 'breedWith', data: { id: a.uid }, size: 'sm', icon: ['ui', 'heart'] }) : ''}</div>

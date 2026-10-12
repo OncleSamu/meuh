@@ -111,9 +111,9 @@ function chefCard() {
     const ready = ok.find(v => (state.genetics.stock[v.id] || 0) >= c.qty);
     return `<div class="card express-card chef-card">
         <div class="card-head">${ico(['villager', 'gaston'], 'ico big')}<div class="card-main"><div class="card-title">Le chef cherche un goût</div>
-        <div class="card-sub">${c.qty} ${ITEMS[c.base].name.toLowerCase()} d’une variété qui a au moins :</div></div><span class="timer-pill">${ico(['ui', 'clock'])}${timer(c.until)}</span></div>
+        <div class="card-sub">${c.qty} ${ITEMS[c.base].name.toLowerCase()} d’une variété qui a au moins :</div></div><span class="timer-pill">${ico(['ui', 'clock'])}${timer(c.until)}</span></div>
         <div class="lab-ranges">${need}</div>
-        <p class="card-sub">${ready ? `« ${esc(G.varName(ready))} » convient, et vous en avez assez.` : ok.length ? `« ${esc(G.varName(ok[0]))} » convient : récoltez-en ${c.qty}.` : 'Aucune de vos variétés ne convient encore : croisez au labo !'}</p>
+        <p class="card-sub">${ready ? `« ${esc(G.varName(ready))} » convient, et vous en avez assez.` : ok.length ? `« ${esc(G.varName(ok[0]))} » convient : récoltez-en ${c.qty}.` : 'Aucune de vos variétés ne convient encore : croisez au labo !'}</p>
         <div class="od-foot">${rewardHtml(c.gold, 150 + state.level * 8)}${btn('Livrer', { act: 'chef', data: { id: ready ? ready.id : '' }, kind: ready ? 'green' : '', disabled: !ready })}</div>
     </div>`;
 }

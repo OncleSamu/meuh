@@ -382,10 +382,36 @@ function island() {
     }
 }
 
+// le labo (bêta 4) : un croisement de temps en temps, recroiser la meilleure variété, livrer le chef, entrer au Salon
+function lab() {
+    if (!state.genetics || !G.plantLabOpen()) return;
+    const gx = state.genetics;
+    if (G.crossReady()) G.finishCross();
+    if (!gx.cross && state.money > G.crossCost() * 20) {
+        const best = G.openVarieties().sort((a, b) => G.flavorGain(b.g) - G.flavorGain(a.g))[0];
+        if (best && Math.random() < 0.6) G.startCross(best.id, best.id);
+        else {
+            const pool = crops()
+                .map(i => i.id)
+                .filter(G.isPlant);
+            if (pool.length > 1) G.startCross(pool[t % pool.length], pool[(t * 7 + 3) % pool.length]);
+        }
+    }
+    G.varieties().forEach(v => {
+        if (G.canFix(v)) G.fixVariety(v.id, `Bot ${v.id}`);
+        if (gx.stock[v.id] > 0 && G.chefMatches(v)) G.deliverChef(v.id);
+    });
+    if (G.salonOpen() && gx.salon && !gx.salon.entry) {
+        const c = G.salonCandidates().sort((a, b) => b.score - a.score)[0];
+        if (c) G.enterSalon(c.id);
+    }
+}
+
 function step() {
     cave();
     farm();
     island();
+    lab();
     animals();
     machines();
     orders();

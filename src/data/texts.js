@@ -264,7 +264,7 @@ export const TIPS = {
     station: {
         icon: ['ui', 'flowers'],
         title: 'Une station de recherche',
-        text: 'Au bout du chemin des vergers, Agathe et Victor rouvrent une station de recherche (volet Village, carte « La station »). Croisements de plantes, élevage de sélection, et bientôt vos propres variétés !',
+        text: 'Au bout du chemin des vergers, Agathe et Victor rouvrent une station de recherche (volet Village, carte « La station »). Croisements de plantes, élevage de sélection, et bientôt vos propres variétés !',
     },
     genetics: {
         icon: ['item', 'strawberry'],

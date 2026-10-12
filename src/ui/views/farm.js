@@ -183,9 +183,7 @@ function renderGreenhouse() {
             return;
         }
         const stage = G.plotStage(p);
-        el.innerHTML =
-            `<div class="spr-wrap${!prev || prev !== sig ? ' pop' : ''}">${plantArt(p, stage)}</div>` +
-            (p.isReady ? '' : bar(0, 'pbar', `gh:${k}`));
+        el.innerHTML = `<div class="spr-wrap${!prev || prev !== sig ? ' pop' : ''}">${plantArt(p, stage)}</div>` + (p.isReady ? '' : bar(0, 'pbar', `gh:${k}`));
     });
 }
 

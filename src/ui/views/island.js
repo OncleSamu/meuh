@@ -112,9 +112,7 @@ defineSheet('plantIsland', {
     title: 'Planter sur l’île',
     render(o) {
         const k = +o.k;
-        const vars = state.genetics
-            ? G.varieties().filter(v => ITEMS[v.base].island && (state.genetics.seeds[v.id] || 0) > 0)
-            : [];
+        const vars = state.genetics ? G.varieties().filter(v => ITEMS[v.base].island && (state.genetics.seeds[v.id] || 0) > 0) : [];
         const varHtml = vars.length
             ? `<h3 class="section-title"><span>Mes variétés</span></h3><div class="pick-grid trees">${vars
                   .map(

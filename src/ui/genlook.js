@@ -45,7 +45,11 @@ export function genWrap(svg, g, cls = '') {
 // une petite description lisible de l'apparence
 export function looksText(g) {
     if (!g || !g.l) return '';
-    const L = { size: ['Petite', 'Normale', 'Grosse', 'Géante', 'Fine'], color: ['', 'rouge', 'dorée', 'violette', 'blanche', 'sombre', 'bleutée'], pattern: ['', 'à taches', 'à pois', 'à rayures', 'à reflets'] };
+    const L = {
+        size: ['Petite', 'Normale', 'Grosse', 'Géante', 'Fine'],
+        color: ['', 'rouge', 'dorée', 'violette', 'blanche', 'sombre', 'bleutée'],
+        pattern: ['', 'à taches', 'à pois', 'à rayures', 'à reflets'],
+    };
     const l = G.looksOf(g);
     const parts = [L.size[l.size]];
     if (l.color) parts.push(L.color[l.color]);

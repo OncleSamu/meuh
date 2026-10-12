@@ -113,7 +113,12 @@ export function crossGenomes(A, B, rate = GX.mutation) {
         l = {};
     for (const k of Object.keys(A.t)) t[k] = [pick(A.t[k]), pick(B.t[k] || A.t[k])];
     for (const k of LOOK_IDS) l[k] = [pick(A.l[k]), pick(B.l[k])];
-    const child = { t, l, form: A.form === B.form ? A.form : Math.random() < 0.5 ? A.form : B.form, halo: (A.halo && Math.random() < 0.5) || (B.halo && Math.random() < 0.5) };
+    const child = {
+        t,
+        l,
+        form: A.form === B.form ? A.form : Math.random() < 0.5 ? A.form : B.form,
+        halo: (A.halo && Math.random() < 0.5) || (B.halo && Math.random() < 0.5),
+    };
     let mutated = false;
     if (Math.random() < rate) {
         mutated = true;
@@ -213,7 +218,7 @@ export function startCross(a, b, at) {
         B = parentGenome(b);
     if (!A || !B) return false;
     if (openVarieties().length >= GX.maxVarieties) {
-        toast(`Déjà ${GX.maxVarieties} variétés en cours : fixez-en ou jetez-en avant d’en créer d’autres`, ['ui', 'flowers']);
+        toast(`Déjà ${GX.maxVarieties} variétés en cours : fixez-en ou jetez-en avant d’en créer d’autres`, ['ui', 'flowers']);
         sfx('error');
         return false;
     }
@@ -244,7 +249,7 @@ export function finishCross(at) {
         B = parentGenome(c.b);
     if (!A || !B) return null;
     if (Math.random() < sterileChance(A, B)) {
-        toast('Les graines sont stériles : rien n’a germé. Un autre essai ?', ['ui', 'rot']);
+        toast('Les graines sont stériles : rien n’a germé. Un autre essai ?', ['ui', 'rot']);
         sfx('error');
         changed('lab');
         return null;
@@ -272,7 +277,7 @@ export function finishCross(at) {
     burst(at, 'sparkle', 16);
     addXp(40 + state.level * 4, at);
     emit('newVariety', id);
-    if (mutated) toast(`Mutation ! ${varName(v)} a quelque chose d’unique`, ['ui', 'star']);
+    if (mutated) toast(`Mutation ! ${varName(v)} a quelque chose d’unique`, ['ui', 'star']);
     changed('lab');
     return v;
 }
@@ -306,7 +311,7 @@ export function fixVariety(id, name, at) {
         .trim()
         .slice(0, 22);
     if (!n) {
-        toast('Donnez-lui un nom !');
+        toast('Donnez-lui un nom !');
         return false;
     }
     v.fixed = true;
@@ -317,7 +322,7 @@ export function fixVariety(id, name, at) {
     buzz(40);
     burst(at, 'sparkle', 20);
     addXp(200 + state.level * 10, at);
-    toast(`« ${n} » entre dans Mes créations !`, ['ui', 'trophy']);
+    toast(`« ${n} » entre dans Mes créations !`, ['ui', 'trophy']);
     changed('lab');
     return true;
 }
@@ -441,7 +446,7 @@ export function sellVariety(id, n, at) {
     state.income.market += gain;
     earn(gain, at);
     sfx('coin');
-    toast(`${n} ${varName(v)} vendu${n > 1 ? 's' : ''} : ${fmt(gain)} pièces`, ['item', v.base]);
+    toast(`${n} ${varName(v)} vendu${n > 1 ? 's' : ''} : ${fmt(gain)} pièces`, ['item', v.base]);
     return gain;
 }
 
@@ -532,7 +537,7 @@ export function startBreed(ua, ub, at) {
         b = animalByUid(ub);
     if (!breedOpen() || G.breed || !breedable(a, b)) return false;
     if (herdFull()) {
-        toast('Tous vos prés sont pleins : il faut une place pour le petit', ['ui', 'flowers']);
+        toast('Tous vos prés sont pleins : il faut une place pour le petit', ['ui', 'flowers']);
         sfx('error');
         return false;
     }
@@ -571,10 +576,10 @@ export function breedTick() {
     placeAnimal(baby);
     state.animals.push(baby);
     state.stats.births = (state.stats.births || 0) + 1;
-    toast(`${baby.name} est né${c.type === 'chicken' || c.type === 'cow' || c.type === 'goat' ? 'e' : ''} à l’étable de sélection${mutated ? ' : une mutation !' : ''}`, [
-        'animal',
-        c.type,
-    ]);
+    toast(
+        `${baby.name} est né${c.type === 'chicken' || c.type === 'cow' || c.type === 'goat' ? 'e' : ''} à l’étable de sélection${mutated ? ' : une mutation !' : ''}`,
+        ['animal', c.type],
+    );
     sfx(c.type);
     addXp(60 + state.level * 5);
     return true;
@@ -597,7 +602,7 @@ export function fixRace(uid, name, at) {
     buzz(40);
     burst(at, 'sparkle', 20);
     addXp(250 + state.level * 10, at);
-    toast(`La race « ${n} » entre dans Mes créations !`, ['ui', 'trophy']);
+    toast(`La race « ${n} » entre dans Mes créations !`, ['ui', 'trophy']);
     return true;
 }
 export const racePrice = r => Math.round(ANIMALS[r.type].cost * GX.babyPriceMult);
@@ -625,7 +630,7 @@ export function buyRaceBaby(rid, at) {
     state.animals.push(baby);
     sfx(r.type);
     float(at, [`-${fmt(cost)}`, ['ui', 'coin']], 'bad', -14);
-    toast(`Un petit de la race « ${r.name} » arrive au pré`, ['animal', r.type]);
+    toast(`Un petit de la race « ${r.name} » arrive au pré`, ['animal', r.type]);
     return true;
 }
 
@@ -667,7 +672,7 @@ export function deliverChef(vid, at) {
     G.chef = { wait: now() + 60 * 60 * 1000, done: true };
     sfx('level');
     burst(at, 'sparkle', 16);
-    toast(`Le chef est ravi : ${fmt(c.gold)} pièces et 2 ${ITEMS[mat].name.toLowerCase()}`, ['ui', 'star']);
+    toast(`Le chef est ravi : ${fmt(c.gold)} pièces et 2 ${ITEMS[mat].name.toLowerCase()}`, ['ui', 'star']);
     return true;
 }
 
@@ -683,7 +688,10 @@ export function ensureSalon() {
     if (G.salon && G.salon.entry && !G.salon.paid) awardSalon(G.salon);
     const crit = SALON_CRITERIA[k % SALON_CRITERIA.length];
     const lvlBoost = Math.min(1.2, (state.level - 33) * 0.1);
-    const rivals = ['La ferme des Peupliers', 'Le domaine Bellerive', 'Les Jardins du Moulin'].map((name, j) => ({ name, score: Math.round((2.8 + j * 0.6 + lvlBoost + Math.random() * 0.8) * 10) / 10 }));
+    const rivals = ['La ferme des Peupliers', 'Le domaine Bellerive', 'Les Jardins du Moulin'].map((name, j) => ({
+        name,
+        score: Math.round((2.8 + j * 0.6 + lvlBoost + Math.random() * 0.8) * 10) / 10,
+    }));
     G.salon = { k, crit: crit.id, end: (k + 1) * SALON_PERIOD, rivals, entry: null, paid: false };
     return true;
 }
@@ -705,7 +713,12 @@ export function salonCandidates() {
     if (!crit) return [];
     if (crit.kind === 'plant') return varieties().map(v => ({ id: v.id, name: varName(v), score: salonScore(crit, v) }));
     return state.animals
-        .filter(a => a.g && (crit.id !== 'richMilk' || ['cow', 'goat', 'buffalo', 'donkey'].includes(a.type)) && (crit.id !== 'softWool' || ['sheep', 'alpaca', 'rabbit'].includes(a.type)))
+        .filter(
+            a =>
+                a.g &&
+                (crit.id !== 'richMilk' || ['cow', 'goat', 'buffalo', 'donkey'].includes(a.type)) &&
+                (crit.id !== 'softWool' || ['sheep', 'alpaca', 'rabbit'].includes(a.type)),
+        )
         .map(a => ({ id: a.uid, name: a.name, score: salonScore(crit, a) }));
 }
 export function enterSalon(id) {
@@ -746,7 +759,7 @@ export function geneticsTick() {
     let ch = false;
     if (state.genetics.cross && crossReady() && !state.genetics.cross.told) {
         state.genetics.cross.told = true;
-        toast('Le croisement est prêt : récoltez les graines au labo', ['ui', 'flowers']);
+        toast('Le croisement est prêt : récoltez les graines au labo', ['ui', 'flowers']);
         ch = true;
     }
     if (breedTick()) ch = true;
