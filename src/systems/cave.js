@@ -196,14 +196,14 @@ export function caveTick(t = now()) {
             const l = sum.rot[0];
             toast(
                 CAVE_ITEMS[l.id] === 'champagne'
-                    ? `Une bouteille a sauté : ${ITEMS[l.id].name.toLowerCase()} perdu (au compost)`
+                    ? `Une bouteille a sauté : ${ITEMS[l.id].name.toLowerCase()} perdu (au compost)`
                     : `${ITEMS[l.id].name} perdu en cave (au compost)`,
                 ['ui', 'rot'],
             );
-        } else if (sum.bad.length) toast(`${ITEMS[sum.bad[0].id].name} a mal vieilli : il a tourné`, ['ui', 'cave']);
+        } else if (sum.bad.length) toast(`${ITEMS[sum.bad[0].id].name} a mal vieilli : il a tourné`, ['ui', 'cave']);
         else {
             const l = sum.up[0];
-            toast(`${ITEMS[l.id].name} : « ${rankName(l)} » !`, ['item', l.id]);
+            toast(`${ITEMS[l.id].name} : « ${rankName(l)} » !`, ['item', l.id]);
             sfx('pop');
         }
         tip('caveStep');
@@ -247,7 +247,7 @@ export function boostLot(i) {
     state.inventory[k]--;
     lot.boost = 3;
     sfx('level');
-    toast(`${ITEMS[k].name} ajouté : 3 étapes plus sûres`, ['item', k]);
+    toast(`${ITEMS[k].name} ajouté : 3 étapes plus sûres`, ['item', k]);
     return true;
 }
 
@@ -415,7 +415,7 @@ function startAuction(a) {
     ];
     a.simAt = t0;
     if (view.started && now() - t0 < 10000) {
-        toast(a.big ? 'La grande vente commence !' : 'La vente aux enchères commence !', ['ui', 'gavel']);
+        toast(a.big ? 'La grande vente commence !' : 'La vente aux enchères commence !', ['ui', 'gavel']);
         sfx('level');
     }
 }
@@ -506,8 +506,8 @@ export function auctionTick(t = now()) {
             sfx('level');
             toast(
                 sold.length
-                    ? `Adjugé ! ${sold.length} lot${sold.length > 1 ? 's' : ''} vendu${sold.length > 1 ? 's' : ''} pour ${fmt(sold.reduce((x, l) => x + l.price, 0))} pièces`
-                    : 'Vente close : aucun lot vendu',
+                    ? `Adjugé ! ${sold.length} lot${sold.length > 1 ? 's' : ''} vendu${sold.length > 1 ? 's' : ''} pour ${fmt(sold.reduce((x, l) => x + l.price, 0))} pièces`
+                    : 'Vente close : aucun lot vendu',
                 ['ui', 'gavel'],
             );
         }
@@ -557,7 +557,7 @@ export function buyShelf(at) {
     ensureCave();
     sfx('level');
     burst(at, 'sparkle', 10);
-    toast('Nouvelle étagère : +2 places en cave', ['ui', 'cave']);
+    toast('Nouvelle étagère : +2 places en cave', ['ui', 'cave']);
     return true;
 }
 

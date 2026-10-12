@@ -120,7 +120,7 @@ export function syncEvent() {
     if (active && (!state.event || state.event.key !== key)) {
         state.event = { key, season: sid, goals: makeEventGoals(sid), ended: false, rewarded: false };
         if (view.started) {
-            toast(`La fête commence : ${EVENTS[sid].name} !`, eventIcon(sid));
+            toast(`La fête commence : ${EVENTS[sid].name} !`, eventIcon(sid));
             tip('fete');
             sfx('level');
         }
@@ -131,7 +131,7 @@ export function syncEvent() {
         state.event.ended = true;
         if (view.started)
             toast(
-                done ? `${EVENTS[state.event.season].name} est terminée. Bravo !` : `${EVENTS[state.event.season].name} est terminée.`,
+                done ? `${EVENTS[state.event.season].name} est terminée. Bravo !` : `${EVENTS[state.event.season].name} est terminée.`,
                 eventIcon(state.event.season),
             );
         return true;
@@ -146,7 +146,7 @@ export function eventProgress(type, item, n = 1) {
         if (x.item && item && x.item !== item) return;
         x.prog = Math.min(x.target, x.prog + n);
         if (x.prog >= x.target) {
-            toast(`Objectif de fête atteint : ${goalText(x).toLowerCase()}`, eventIcon(state.event.season));
+            toast(`Objectif de fête atteint : ${goalText(x).toLowerCase()}`, eventIcon(state.event.season));
             sfx('pop');
         }
     });
@@ -209,9 +209,9 @@ export function claimEvent(at) {
     if (first) state.prestige.rubans++;
     emit('celebrate', {
         icon: ['ui', 'trophy'],
-        title: `Trophée : ${EVENTS[e.season].name} !`,
-        sub: first ? 'Premier trophée de cette fête : vous gagnez aussi un ruban de concours.' : 'Un trophée de plus sur votre étagère.',
-        lines: [[['ui', 'trophy'], `${fmt(r.coins * 4)} pièces`], ...(first ? [[['ui', 'ribbon'], '1 ruban : +5 % de ventes, +3 % de vitesse']] : [])],
+        title: `Trophée : ${EVENTS[e.season].name} !`,
+        sub: first ? 'Premier trophée de cette fête : vous gagnez aussi un ruban de concours.' : 'Un trophée de plus sur votre étagère.',
+        lines: [[['ui', 'trophy'], `${fmt(r.coins * 4)} pièces`], ...(first ? [[['ui', 'ribbon'], '1 ruban : +5 % de ventes, +3 % de vitesse']] : [])],
     });
     sfx('level');
     buzz(40);

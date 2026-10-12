@@ -49,7 +49,7 @@ function rareCard() {
     if (r.type === 'critic') {
         const have = state.inventory[r.dish] || 0;
         body = `<div class="pline">${ico(['item', r.dish], 'ico big')}<div class="card-main"><div class="card-title">${ITEMS[r.dish].name}</div>
-            <div class="card-sub">${have ? `En stock : ${have}` : `Produit à l’atelier · ${MACHINES[RECIPES[r.dish].machine].name}`} · maîtrise ${'★'.repeat(G.masteryStars(r.dish)) || '—'}</div></div>
+            <div class="card-sub">${have ? `En stock : ${have}` : `Produit à l’atelier · ${MACHINES[RECIPES[r.dish].machine].name}`} · maîtrise ${'★'.repeat(G.masteryStars(r.dish)) || '—'}</div></div>
             ${r.served ? '<span class="card-sub">Servi</span>' : have ? btn('Servir', { act: 'serveCritic', kind: 'gold', size: 'sm' }) : btn('Produire', { act: 'produce', data: { id: r.dish }, size: 'sm' })}</div>`;
     }
     return `<div class="card rare-card">${head(['ui', E.icon], E.name, E.text, pill(['ui', 'clock'], timer(r.until)))}${body}</div>`;
@@ -92,7 +92,7 @@ function storyCard() {
         .join('');
     const top = c
         ? `<div class="card-title">Chapitre ${c.n} · ${c.name}</div><div class="card-sub">${G.chapterOpen(c.n) ? `${c.intro} (${G.chapterProjects(c.n).filter(p => G.projectDone(p.id)).length} / ${G.chapterProjects(c.n).length})` : `Ce chapitre s’ouvre au niveau ${c.lvl}.`}</div>`
-        : '<div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port, alpage et domaine : merci, citoyen d’honneur. Tout le canton vous adore.</div>';
+        : '<div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port, alpage et domaine : merci, citoyen d’honneur. Tout le canton vous adore.</div>';
     return `<div class="card story-card"><div class="chapter-head">${top}</div>${switcher}
         <div class="vmap ${M.id}${party ? ' party' : ''}">${MAP_BG[M.id]}${party ? '<div class="bunting"></div>' : ''}${blds}</div>${projectDetail(sel)}</div>`;
 }
@@ -102,9 +102,9 @@ function projectDetail(pid) {
         v = VILLAGERS[p.vid];
     const who = `<div class="avatar sm">${art('villager', p.vid)}</div>`;
     if (!G.chapterOpen(p.ch))
-        return `<div class="proj">${who}<div class="card-main"><div class="card-title">${p.name}</div><div class="card-sub">Chapitre ${p.ch} : s’ouvre au niveau ${CHAPTERS[p.ch - 1].lvl}${p.ch > 1 ? ', après le chapitre ' + (p.ch - 1) : ''}.</div></div></div>`;
+        return `<div class="proj">${who}<div class="card-main"><div class="card-title">${p.name}</div><div class="card-sub">Chapitre ${p.ch} : s’ouvre au niveau ${CHAPTERS[p.ch - 1].lvl}${p.ch > 1 ? ', après le chapitre ' + (p.ch - 1) : ''}.</div></div></div>`;
     if (G.projectDone(pid))
-        return `<div class="proj done">${who}<div class="card-main"><div class="card-title">${p.name} ${ico(['ui', 'check'])}</div><div class="card-sub">« ${p.after} »</div></div></div>`;
+        return `<div class="proj done">${who}<div class="card-main"><div class="card-title">${p.name} ${ico(['ui', 'check'])}</div><div class="card-sub">« ${p.after} »</div></div></div>`;
     const lines = Object.entries(p.need)
         .map(([item, n]) => {
             const g = G.givenOf(pid, item),
@@ -126,9 +126,9 @@ function projectDetail(pid) {
             );
         })
         .join('');
-    return `<div class="proj open"><div class="card-head">${who}<div class="card-main"><div class="card-title">${p.name}</div><div class="card-sub">${v.name} : « ${p.before} »</div></div></div>
+    return `<div class="proj open"><div class="card-head">${who}<div class="card-main"><div class="card-title">${p.name}</div><div class="card-sub">${v.name} : « ${p.before} »</div></div></div>
         <div class="plines">${lines}</div><div class="card-sub reward-line">${ico(['ui', 'star'])} ${p.reward}</div>
-        ${G.projectComplete(pid) ? btn('Rénover !', { act: 'finishProject', data: { p: pid }, kind: 'gold', wide: true, size: 'lg', icon: ['ui', 'village'] }) : btn('Tout apporter', { act: 'giveAllProject', data: { p: pid }, wide: true })}</div>`;
+        ${G.projectComplete(pid) ? btn('Rénover !', { act: 'finishProject', data: { p: pid }, kind: 'gold', wide: true, size: 'lg', icon: ['ui', 'village'] }) : btn('Tout apporter', { act: 'giveAllProject', data: { p: pid }, wide: true })}</div>`;
 }
 
 // ---------------- fête du calendrier ----------------
@@ -138,7 +138,7 @@ function holidayCard() {
     const h = HOLIDAYS[id],
         sv = state.holiday,
         r = RECIPES[h.recipe];
-    return `<div class="card holiday-card ${id}">${head(h.icon, h.name, sv.done ? `Panier rempli, merci ! ${DECOS[h.deco].name} est dans vos décorations.` : h.text)}
+    return `<div class="card holiday-card ${id}">${head(h.icon, h.name, sv.done ? `Panier rempli, merci ! ${DECOS[h.deco].name} est dans vos décorations.` : h.text)}
         ${
             sv.done
                 ? ''
@@ -148,7 +148,7 @@ function holidayCard() {
                               `<span class="need${G.holidayLeft(k) <= 0 ? ' ok' : ''}">${ico(['item', k])}${Math.max(0, h.goal[k] - G.holidayLeft(k))}/${h.goal[k]}</span>`,
                       )
                       .join('')}${btn('Apporter', { act: 'giveHoliday', kind: G.holidayReady() ? 'gold' : '', size: 'sm', disabled: !G.holidayReady() })}</div>
-            <div class="card-sub">${ico(['item', h.recipe])} Recette du moment : ${ITEMS[h.recipe].name.toLowerCase()} (${MACHINES[r.machine].name.toLowerCase()}). Récompense : ${DECOS[h.deco].name.toLowerCase()}, ${fmt(G.holidayReward())} pièces et 2 de chaque matériau rare.</div>`
+            <div class="card-sub">${ico(['item', h.recipe])} Recette du moment : ${ITEMS[h.recipe].name.toLowerCase()} (${MACHINES[r.machine].name.toLowerCase()}). Récompense : ${DECOS[h.deco].name.toLowerCase()}, ${fmt(G.holidayReward())} pièces et 2 de chaque matériau rare.</div>`
         }</div>`;
 }
 
@@ -187,7 +187,7 @@ function farmSeasonCard() {
         th = G.farmSeasonTheme(),
         top = FARM_SEASON_TIERS.at(-1);
     const days = Math.floor(G.farmSeasonEndsIn() / 86400);
-    return `<div class="card fseason-card">${head(['item', th.icon], th.name, `Chaque produit du thème rapporte des points (3 pour un produit d’atelier). Au dernier palier : ${DECOS[th.deco].name.toLowerCase()} et 1 ruban.`, pill(['ui', 'calendar'], `${days} j`))}
+    return `<div class="card fseason-card">${head(['item', th.icon], th.name, `Chaque produit du thème rapporte des points (3 pour un produit d’atelier). Au dernier palier : ${DECOS[th.deco].name.toLowerCase()} et 1 ruban.`, pill(['ui', 'calendar'], `${days} j`))}
         <div class="season-items">${th.items.map(id => ico(['item', id])).join('')}</div>${bar(sv.pts / top)}
         <div class="tiers-row">${FARM_SEASON_TIERS.map((t, k) =>
             sv.got[k]
@@ -214,7 +214,7 @@ function neighborsCard() {
         });
     G.ensureNeighbors();
     return `<div class="card neighbors-card"><div class="card-title">Fermes voisines</div>
-        <p class="card-sub">Vos rivales du concours sont aussi vos voisines. Aidez-les : elles paient bien, et leur amitié rapporte des cadeaux.</p>
+        <p class="card-sub">Vos rivales du concours sont aussi vos voisines. Aidez-les : elles paient bien, et leur amitié rapporte des cadeaux.</p>
         ${RIVALS.map((r, k) => {
             const n = state.neighbors[k],
                 q = n.req;
@@ -238,7 +238,7 @@ function merchantCard() {
             cls: 'away',
         });
     return `<div class="card merchant-card">
-        <div class="card-head"><div class="avatar sm">${art('villager', 'merchant')}</div><div class="card-main"><div class="card-title">Zéphyr, marchand ambulant</div><div class="card-sub">« Des merveilles venues de loin ! » · repart dans ${timer(m.expiresAt, 'b')}</div></div></div>
+        <div class="card-head"><div class="avatar sm">${art('villager', 'merchant')}</div><div class="card-main"><div class="card-title">Zéphyr, marchand ambulant</div><div class="card-sub">« Des merveilles venues de loin ! » · repart dans ${timer(m.expiresAt, 'b')}</div></div></div>
         <div class="offers">${m.stock
             .map(
                 (o, k) =>
@@ -309,7 +309,7 @@ function villagerStory(vid) {
             return `<span class="need${g >= n ? ' ok' : ''}"><button class="pgo" data-act="produce" data-id="${item}" aria-label="Produire">${ico(['item', item])}</button>${Math.min(g + (state.inventory[item] || 0), n)}/${n}</span>`;
         })
         .join('');
-    return `<div class="vstory"><b>${ico(['ui', 'scroll'])}${S.title} · étape ${st.step + 1} sur 3</b><span class="card-sub">« ${text} »</span>
+    return `<div class="vstory"><b>${ico(['ui', 'scroll'])}${S.title} · étape ${st.step + 1} sur 3</b><span class="card-sub">« ${text} »</span>
         <div class="needs">${lines}${btn('Apporter', { act: 'giveStory', data: { v: vid }, kind: G.villagerStoryReady(vid) ? 'gold' : '', size: 'sm' })}</div></div>`;
 }
 
@@ -324,7 +324,7 @@ function villagersHtml() {
             return `<div class="card villager-card">
                 <div class="avatar">${art('villager', id)}</div>
                 <div class="card-main"><div class="card-title">${v.name}</div><div class="card-sub">${v.role}</div>${hearts(h)}${h < 5 ? bar(G.heartProgress(id), 'pink') : ''}
-                <div class="likes"><span class="card-sub">Aime :</span>${v.likes.map(x => `<i class="ico${state.inventory[x] > 0 ? '' : ' dim'}" title="${ITEMS[x].name}">${art('item', x)}</i>`).join('')}</div>
+                <div class="likes"><span class="card-sub">Aime :</span>${v.likes.map(x => `<i class="ico${state.inventory[x] > 0 ? '' : ' dim'}" title="${ITEMS[x].name}">${art('item', x)}</i>`).join('')}</div>
                 <div class="card-sub">${G.nextRewardText(id)}</div>${villagerStory(id)}
                 ${open ? `<div class="gift-row">${can.length ? can.map(x => btn(`${state.inventory[x]}`, { act: 'gift', data: { v: id, id: x }, size: 'sm', icon: ['item', x] })).join('') : '<span class="card-sub">Vous n’avez rien qu’il ou elle aime en stock.</span>'}</div>` : ''}</div>
                 <div class="card-side">${btn(gifted ? 'Offert' : open ? 'Fermer' : 'Offrir', { act: 'toggleGift', data: { v: id }, kind: gifted ? '' : 'gold', size: 'sm', disabled: gifted })}</div></div>`;

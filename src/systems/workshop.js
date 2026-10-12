@@ -53,7 +53,7 @@ export const recipeLockText = r =>
           : r.holiday
             ? `Pendant ${HOLIDAYS[r.holiday].name}`
             : r.fete
-              ? `Pendant la fête : ${EVENTS[r.fete].name}`
+              ? `Pendant la fête : ${EVENTS[r.fete].name}`
               : `${VILLAGERS[r.teacher].name} · ${r.hearts} cœur${r.hearts > 1 ? 's' : ''} d’amitié`;
 export const hasMachine = type => state.machines.some(m => m.type === type);
 
@@ -86,10 +86,10 @@ export function toggleLoop(i) {
     if (!m) return;
     m.loop = !m.loop;
     if (m.loop && !m.last) {
-        toast('Lancez d’abord une recette : la machine la répétera ensuite', ['machine', m.type]);
+        toast('Lancez d’abord une recette : la machine la répétera ensuite', ['machine', m.type]);
         m.loop = false;
     } else
-        toast(m.loop ? `${MACHINES[m.type].name} : production en boucle (${ITEMS[m.last].name.toLowerCase()})` : 'Production en boucle arrêtée', [
+        toast(m.loop ? `${MACHINES[m.type].name} : production en boucle (${ITEMS[m.last].name.toLowerCase()})` : 'Production en boucle arrêtée', [
             'machine',
             m.type,
         ]);
@@ -136,7 +136,7 @@ export function queueRecipe(i, id, at) {
     if (!recipeUnlocked(id)) {
         toast(
             r.teacher
-                ? `Recette de ${VILLAGERS[r.teacher].name} : gagnez ${r.hearts} cœur${r.hearts > 1 ? 's' : ''} d’amitié`
+                ? `Recette de ${VILLAGERS[r.teacher].name} : gagnez ${r.hearts} cœur${r.hearts > 1 ? 's' : ''} d’amitié`
                 : !storyOk(ITEMS[id])
                   ? storyLockText(ITEMS[id])
                   : `Recette débloquée au niveau ${r.lvl}`,
@@ -164,7 +164,7 @@ export function queueRecipe(i, id, at) {
     sfx('machine');
     buzz(8);
     burst(at, 'smoke', 4);
-    float(at, [m.queue.length === 1 ? 'Lancé !' : 'En file'], '', -20);
+    float(at, [m.queue.length === 1 ? 'Lancé !' : 'En file'], '', -20);
     return true;
 }
 

@@ -75,12 +75,12 @@ export function doPrestige(challenge, theme) {
     sfx('level');
     buzz(60);
     emit('reset', 'prestige');
-    toast(`Nouvelle ferme ! Vous gardez ${state.prestige.rubans} ruban${state.prestige.rubans > 1 ? 's' : ''}`, ['ui', 'ribbon']);
+    toast(`Nouvelle ferme ! Vous gardez ${state.prestige.rubans} ruban${state.prestige.rubans > 1 ? 's' : ''}`, ['ui', 'ribbon']);
     return true;
 }
 
 export function abandonChallenge() {
     state.challenge = null;
-    toast('Défi abandonné : la ferme reprend ses règles normales', ['ui', 'flag']);
+    toast('Défi abandonné : la ferme reprend ses règles normales', ['ui', 'flag']);
     return true;
 }

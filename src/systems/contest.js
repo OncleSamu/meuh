@@ -87,7 +87,7 @@ export function contestTick() {
         base: contestSnapshot(),
         tiers: [false, false, false],
     };
-    if (c && view.started) toast('Un nouveau concours de la semaine commence !', ['ui', 'podium']);
+    if (c && view.started) toast('Un nouveau concours de la semaine commence !', ['ui', 'podium']);
     if (view.started) tip('contest');
     return true;
 }
@@ -141,8 +141,8 @@ function openChest(r) {
     addXp(r.xp * 3);
     emit('celebrate', {
         icon: ['ui', 'chest'],
-        title: 'Coffre du concours !',
-        sub: 'Dernier palier atteint, le jury vous félicite :',
+        title: 'Coffre du concours !',
+        sub: 'Dernier palier atteint, le jury vous félicite :',
         lines: [
             [['ui', 'coin'], `${fmt(r.coins * 3)} pièces`],
             [['ui', 'ribbon'], '1 ruban de concours'],

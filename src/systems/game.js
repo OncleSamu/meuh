@@ -270,7 +270,7 @@ export function offlineProgress() {
     add(
         state.rare.type && rareActive(state.rare.type),
         state.rare.type && ['ui', RARE_EVENTS[state.rare.type].icon],
-        state.rare.type && `En ce moment : ${RARE_EVENTS[state.rare.type].name.toLowerCase()}`,
+        state.rare.type && `En ce moment : ${RARE_EVENTS[state.rare.type].name.toLowerCase()}`,
     );
     add(neigh, ['ui', 'heart'], `${neigh} voisin${s(neigh)} à aider`);
     add(transBack, ['ui', 'mountain'], 'Le troupeau est redescendu des estives avec du lait d’alpage');
@@ -287,21 +287,21 @@ export function offlineProgress() {
         ['ui', 'gavel'],
         aucDone &&
             (aucDone.length
-                ? `Vente aux enchères : ${aucDone.length} lot${s(aucDone.length)} adjugé${s(aucDone.length)} pour ${fmt(aucDone.reduce((x, l) => x + l.price, 0))} pièces`
-                : 'Vente aux enchères close : rien de vendu'),
+                ? `Vente aux enchères : ${aucDone.length} lot${s(aucDone.length)} adjugé${s(aucDone.length)} pour ${fmt(aucDone.reduce((x, l) => x + l.price, 0))} pièces`
+                : 'Vente aux enchères close : rien de vendu'),
     );
     add(netReady(), ['ui', 'net'], 'Le filet de pêche est plein');
     add(state.boat.status === 'here', ['ui', 'boat'], 'Un cargo attend au port');
     add(state.truck.status === 'here', ['ui', 'trainIcon'], 'Le train de marchandises est en gare');
     add(state.balloon.status === 'here', ['ui', 'balloon'], 'Une montgolfière attend dans le pré');
     add(state.merchant.status === 'here', ['ui', 'merchant'], 'Zéphyr, le marchand ambulant, est au village');
-    add(eventActive(), eventActive() && eventIcon(state.event.season), eventActive() && `La fête bat son plein : ${EVENTS[state.event.season].name}`);
+    add(eventActive(), eventActive() && eventIcon(state.event.season), eventActive() && `La fête bat son plein : ${EVENTS[state.event.season].name}`);
     const inc = state.incident && state.incident.type !== 'crow' && INCIDENTS[state.incident.type];
-    add(inc, inc && ['ui', inc.icon], inc && `Imprévu en cours : ${inc.name.toLowerCase()}`);
+    add(inc, inc && ['ui', inc.icon], inc && `Imprévu en cours : ${inc.name.toLowerCase()}`);
     add(
         days,
         ['ui', season().icon],
-        `${days} jour${s(days)} de jeu ont passé : c’est ${season().id === 'printemps' ? 'le ' : 'l’'}${season().name.toLowerCase()}, temps ${weather().name.toLowerCase()}`,
+        `${days} jour${s(days)} de jeu ont passé : c’est ${season().id === 'printemps' ? 'le ' : 'l’'}${season().name.toLowerCase()}, temps ${weather().name.toLowerCase()}`,
     );
     return { elapsed, lines };
 }

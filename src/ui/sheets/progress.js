@@ -29,7 +29,7 @@ function skills() {
                     req = G.skillReq(b, k),
                     full = r >= sk.max;
                 const can = !full && !req && pts > 0;
-                const desc = r ? G.skillDesc(sk, r) + (full ? '.' : `. Prochain rang : ${G.skillDesc(sk, r + 1).toLowerCase()}.`) : G.skillDesc(sk, 1) + '.';
+                const desc = r ? G.skillDesc(sk, r) + (full ? '.' : `. Prochain rang : ${G.skillDesc(sk, r + 1).toLowerCase()}.`) : G.skillDesc(sk, 1) + '.';
                 return `<div class="node${r ? ' learned' : ''}${req ? ' locked' : ''}${sk.cap ? ' cap' : ''}">${ico(sk.icon, 'ico big')}
                 <div class="card-main"><div class="card-title">${sk.name}${pips(r, sk.max)}</div><div class="card-sub">${desc}</div>${req ? `<div class="card-sub req">${req}.</div>` : ''}</div>
                 ${full ? ico(['ui', 'check']) : btn('Apprendre', { act: 'learn', data: { b, k }, kind: can ? 'green' : '', size: 'sm', disabled: !can })}</div>`;
@@ -43,8 +43,8 @@ function challengeCard() {
     const done = Object.keys(state.challengesDone).length;
     return card({
         icon: ['ui', 'flag'],
-        title: ch ? `Défi en cours : ${ch.name}` : 'Défis de prestige',
-        sub: `${ch ? `${ch.desc}. Vendez la ferme pour remporter ${CHALLENGE_BONUS} rubans de plus.` : `Au moment de vendre la ferme, choisissez un défi pour la suivante : réussi, il rapporte ${CHALLENGE_BONUS} rubans de plus.`} ${done}/4 défis réussis.`,
+        title: ch ? `Défi en cours : ${ch.name}` : 'Défis de prestige',
+        sub: `${ch ? `${ch.desc}. Vendez la ferme pour remporter ${CHALLENGE_BONUS} rubans de plus.` : `Au moment de vendre la ferme, choisissez un défi pour la suivante : réussi, il rapporte ${CHALLENGE_BONUS} rubans de plus.`} ${done}/4 défis réussis.`,
         side: ch ? btn('Abandonner', { act: 'abandon', size: 'sm' }) : '',
     });
 }
@@ -56,7 +56,7 @@ function prestigeCard() {
     return card({
         icon: ['ui', 'ribbon'],
         title: `${r} ruban${r > 1 ? 's' : ''} de concours`,
-        sub: `Chaque ruban donne +5 % sur les ventes et +3 % de vitesse, pour toujours. Bonus actuel : +${r * 5} % de ventes, +${r * 3} % de vitesse. ${state.level < PRESTIGE_LVL ? `Vendre la ferme est possible à partir du niveau ${PRESTIGE_LVL}.` : `En vendant maintenant : <b>+${gain} ruban${gain > 1 ? 's' : ''}</b> (selon les pièces gagnées depuis le début de cette ferme).`}`,
+        sub: `Chaque ruban donne +5 % sur les ventes et +3 % de vitesse, pour toujours. Bonus actuel : +${r * 5} % de ventes, +${r * 3} % de vitesse. ${state.level < PRESTIGE_LVL ? `Vendre la ferme est possible à partir du niveau ${PRESTIGE_LVL}.` : `En vendant maintenant : <b>+${gain} ruban${gain > 1 ? 's' : ''}</b> (selon les pièces gagnées depuis le début de cette ferme).`}`,
         side: btn('Vendre la ferme', { act: 'open', data: { sheet: 'prestige' }, kind: can ? 'red' : '', size: 'sm', disabled: !can }),
     });
 }
@@ -71,7 +71,7 @@ defineSheet('progress', {
 
 // ---------------- vendre la ferme ----------------
 defineSheet('prestige', {
-    title: 'Vendre la ferme ?',
+    title: 'Vendre la ferme ?',
     open(o) {
         o.ch = '';
         o.theme = state.farmTheme || 'none';
@@ -81,7 +81,7 @@ defineSheet('prestige', {
         const after = state.prestige.rubans + gain;
         return `<p>Vous repartez de zéro sur une nouvelle ferme, avec des rubans de concours qui rendent tout plus rentable.</p>
             <div class="prestige-gain">+${gain}${ico(['ui', 'ribbon'])}</div>
-            <p class="card-sub center">${state.challenge ? `Défi « ${CHALLENGES[state.challenge].name} » réussi : ${CHALLENGE_BONUS} rubans en plus. ` : ''}Après : +${after * 5} % de ventes et +${after * 3} % de vitesse.</p>
+            <p class="card-sub center">${state.challenge ? `Défi « ${CHALLENGES[state.challenge].name} » réussi : ${CHALLENGE_BONUS} rubans en plus. ` : ''}Après : +${after * 5} % de ventes et +${after * 3} % de vitesse.</p>
             <div class="keep-lose"><div class="line ok"><div><b>Vous gardez</b><br>Rubans, succès, amitiés, chien, décorations, village rénové, grange, livre, cave (étagères et cote), statistiques</div></div>
             <div class="line bad"><div><b>Vous perdez</b><br>Pièces, niveau, compétences, champs, serre, animaux, machines, stocks, améliorations</div></div></div>
             <div class="set-title">Défi pour la prochaine ferme (facultatif)</div>
@@ -111,8 +111,8 @@ export function setupProgress() {
     actions({
         branch: (el, d) => (ui.sel.branch = d.b),
         learn: (el, d) => G.learnSkill(d.b, +d.k, el),
-        respec: el => confirmTap('respec', el, `Touchez encore : ${fmt(G.respecCost())} pièces`) && G.respecSkills(),
-        abandon: el => confirmTap('abandon', el, 'Confirmer ?') && G.abandonChallenge(),
+        respec: el => confirmTap('respec', el, `Touchez encore : ${fmt(G.respecCost())} pièces`) && G.respecSkills(),
+        abandon: el => confirmTap('abandon', el, 'Confirmer ?') && G.abandonChallenge(),
         pickChallenge: (el, d) => (sheetOpts('prestige').ch = d.c),
         pickTheme: (el, d) => (sheetOpts('prestige').theme = d.t),
         doPrestige: () => {

@@ -42,7 +42,7 @@ export function upgradeTool(kind, at) {
     sfx('level');
     buzz(20);
     burst(at, 'sparkle', 12);
-    toast(`${kind === 'forest' ? 'Hache' : 'Pioche'} améliorée : niveau ${toolLvl(kind) + 1}`, ['ui', kind === 'forest' ? 'axe' : 'pickaxe']);
+    toast(`${kind === 'forest' ? 'Hache' : 'Pioche'} améliorée : niveau ${toolLvl(kind) + 1}`, ['ui', kind === 'forest' ? 'axe' : 'pickaxe']);
     return true;
 }
 
@@ -74,7 +74,7 @@ export function hitSlot(kind, k, at) {
     if (kind === 'forest') {
         if (Math.random() < 0.05) {
             state.seeds.apple++;
-            toast('Une jeune pousse de pommier était cachée sous l’arbre !', ['seed', 'apple']);
+            toast('Une jeune pousse de pommier était cachée sous l’arbre !', ['seed', 'apple']);
         }
     } else {
         const r = Math.random(),
@@ -133,7 +133,7 @@ export function fishPhase() {
     }
     if (f.phase === 'bite' && t >= f.biteAt + BITE_WINDOW) {
         f.phase = 'idle';
-        toast('Trop tard, il s’est sauvé !', ['ui', 'rod']);
+        toast('Trop tard, il s’est sauvé !', ['ui', 'rod']);
         sfx('error');
     }
     return f.phase;
@@ -154,7 +154,7 @@ export function fishAction(at) {
         buzz(6);
     } else if (phase === 'wait') {
         f.phase = 'idle';
-        toast('Rien n’a mordu. Attendez le « ! » avant de ferrer.', ['ui', 'rod']);
+        toast('Rien n’a mordu. Attendez le « ! » avant de ferrer.', ['ui', 'rod']);
         sfx('click');
     } else if (phase === 'bite') startReel();
     else if (phase === 'reel') stopReel(at);
@@ -177,7 +177,7 @@ function stopReel(at) {
     const ok = Math.abs(reelPos() - f.center) <= f.width / 2;
     f.phase = 'idle';
     if (!ok) {
-        toast(F.junk ? 'La botte est retombée à l’eau. Pas grave !' : `Le ${F.name.toLowerCase()} s’est échappé…`, ['item', f.id]);
+        toast(F.junk ? 'La botte est retombée à l’eau. Pas grave !' : `Le ${F.name.toLowerCase()} s’est échappé…`, ['item', f.id]);
         sfx('error');
         burst(at, 'water', 8);
         return false;
@@ -195,7 +195,7 @@ function stopReel(at) {
     fly(at, f.id, 1);
     addXp(F.junk ? 2 : 8 + Math.round(F.sell / 12), at);
     if (f.id === 'goldfish') {
-        toast('Un poisson doré ! Une prise de légende', ['item', 'goldfish']);
+        toast('Un poisson doré ! Une prise de légende', ['item', 'goldfish']);
         emit('confetti');
     }
     return true;

@@ -124,7 +124,7 @@ function transCard() {
     const pick = ui.sel.trans || [];
     const can = G.transCandidates();
     return `<div class="card trans-card"><div class="card-head">${ico(['ui', 'mountain'], 'ico big')}<div class="card-main"><div class="card-title">Transhumance</div>
-        <div class="card-sub">Choisissez jusqu’à ${G.transMax()} vaches, chèvres, moutons ou bufflonnes. Partis ${formatDuration(G.transTime() / 1000)}, ils reviennent avec du lait d’alpage (de la laine pour les moutons) et produisent ensuite 20 % plus vite.</div></div></div>
+        <div class="card-sub">Choisissez jusqu’à ${G.transMax()} vaches, chèvres, moutons ou bufflonnes. Partis ${formatDuration(G.transTime() / 1000)}, ils reviennent avec du lait d’alpage (de la laine pour les moutons) et produisent ensuite 20 % plus vite.</div></div></div>
         <div class="chips-row">${
             can.length
                 ? can
@@ -196,7 +196,7 @@ function renderAnimals(el) {
             hint(
                 mode === 'stable'
                     ? 'Touchez un animal pour ramasser sa production, ou pour ouvrir sa fiche quand il n’a rien à donner.'
-                    : 'Chaque sac de nourriture donne une production. Touchez un animal pour ouvrir sa fiche : câlin, nourriture et nom.',
+                    : 'Chaque sac de nourriture donne une production. Touchez un animal pour ouvrir sa fiche : câlin, nourriture et nom.',
             ),
         ],
         ['trans', transCard()],
@@ -224,9 +224,9 @@ defineSheet('animal', {
         else
             info.push([
                 ['item', d.prodId],
-                `${p.name} toutes les ${formatDuration(G.animalTime(a))}${a.love ? ` (+${a.love * 4} % grâce à l’affection)` : ''}`,
+                `${p.name} toutes les ${formatDuration(G.animalTime(a))}${a.love ? ` (+${a.love * 4} % grâce à l’affection)` : ''}`,
             ]);
-        info.push([['item', 'feed'], `Mangeoire : ${a.food} / ${G.maxFood()} repas`]);
+        info.push([['item', 'feed'], `Mangeoire : ${a.food} / ${G.maxFood()} repas`]);
         if (a.produced) info.push([['ui', 'basket'], G.producedText(a)]);
         const petted = a.petDay === state.day;
         return `<div class="animal-card">

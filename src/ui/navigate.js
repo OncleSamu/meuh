@@ -31,7 +31,7 @@ export function produce(id) {
         if (state.seeds[id] > 0 || (it.type === 'crop' && !it.exotic && state.level >= it.reqLvl)) {
             go('farm/field');
             G.selectTool(id);
-            return toast(`${it.seedName} en main : touchez une parcelle ${it.ghOnly ? 'de la serre' : 'labourée'} pour planter`, ['seed', id]);
+            return toast(`${it.seedName} en main : touchez une parcelle ${it.ghOnly ? 'de la serre' : 'labourée'} pour planter`, ['seed', id]);
         }
         go('market/shop');
         return toast(it.exotic ? 'Seul le marchand ambulant vend ces graines' : `Achetez un ${it.seedName.toLowerCase()} au marché`, ['seed', id]);
@@ -44,7 +44,7 @@ export function produce(id) {
         const a = Object.values(ANIMALS).find(x => x.prodId === id);
         const owned = G.animalCount(a.id) > 0;
         go(owned ? 'animals' : 'market/shop');
-        return toast(owned ? `${a.name} : nourrissez-les pour obtenir ${it.name.toLowerCase()}` : `Il vous faut un animal : ${a.name.toLowerCase()} (marché)`, [
+        return toast(owned ? `${a.name} : nourrissez-les pour obtenir ${it.name.toLowerCase()}` : `Il vous faut un animal : ${a.name.toLowerCase()} (marché)`, [
             'animal',
             a.id,
         ]);
@@ -55,7 +55,7 @@ export function produce(id) {
     const k = state.machines.findIndex(m => m.type === r.machine);
     if (k < 0) {
         go('market/shop');
-        return toast(`Il vous faut : ${MACHINES[r.machine].name}`, ['machine', r.machine]);
+        return toast(`Il vous faut : ${MACHINES[r.machine].name}`, ['machine', r.machine]);
     }
     go('machines/workshop');
     openSheet('machine', { i: k, focus: id });

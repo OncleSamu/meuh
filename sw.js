@@ -1,8 +1,16 @@
 // Service worker de Meuh : le jeu marche hors-ligne et affiche les rappels.
 // La version change à chaque mise en ligne (remplacée par build.py --pwa).
-const VERSION = '6.2-20261012112555';
+const VERSION = '1.0-bêta-20261012143707';
 const CACHE = 'meuh-' + VERSION;
-const FILES = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png'];
+const FILES = [
+    './',
+    './index.html',
+    './manifest.webmanifest',
+    './icons/icon-192.png',
+    './icons/icon-512.png',
+    './icons/maskable-512.png',
+    './icons/apple-touch-icon.png',
+];
 
 self.addEventListener('install', e => {
     e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));

@@ -46,7 +46,7 @@ export function seasonCropsText() {
     const list = seasonCrops()
         .filter(i => state.level >= i.reqLvl)
         .map(i => i.name.toLowerCase());
-    return list.length ? `De saison : ${list.join(', ')}.` : '';
+    return list.length ? `De saison : ${list.join(', ')}.` : '';
 }
 
 export function newDay(silent) {
@@ -56,12 +56,12 @@ export function newDay(silent) {
     state.nextWeather = rollWeather(seasonOfDay(state.day + 1).id);
     if (silent) return;
     if (season().id !== before) {
-        toast(`C’est le ${season().name.toLowerCase()} ! ${seasonCropsText()}`, ['ui', season().icon]);
+        toast(`C’est le ${season().name.toLowerCase()} ! ${seasonCropsText()}`, ['ui', season().icon]);
         sfx('level');
     } else if (state.weather === 'storm' && !hasRod())
-        toast(`Jour ${state.day} : orage ! La foudre peut brûler une culture. Un paratonnerre protège tout le champ.`, ['ui', 'w_storm']);
-    else if (state.weather === 'rainbow') toast(`Jour ${state.day} : arc-en-ciel ! Les récoltes dorées sont bien plus fréquentes.`, ['ui', 'w_rainbow']);
-    else toast(`Jour ${state.day} : ${weather().name.toLowerCase()}`, ['ui', weather().icon]);
+        toast(`Jour ${state.day} : orage ! La foudre peut brûler une culture. Un paratonnerre protège tout le champ.`, ['ui', 'w_storm']);
+    else if (state.weather === 'rainbow') toast(`Jour ${state.day} : arc-en-ciel ! Les récoltes dorées sont bien plus fréquentes.`, ['ui', 'w_rainbow']);
+    else toast(`Jour ${state.day} : ${weather().name.toLowerCase()}`, ['ui', weather().icon]);
     if (state.weather === 'storm') emit('tip', 'storm');
     emit('newDay', state.day);
 }

@@ -24,7 +24,7 @@ export function merchantTick() {
         m.expiresAt = t + MERCHANT_STAY;
         m.stock = merchantStock();
         if (view.started) {
-            toast('Zéphyr, le marchand ambulant, est sur la place du village !', ['ui', 'merchant']);
+            toast('Zéphyr, le marchand ambulant, est sur la place du village !', ['ui', 'merchant']);
             tip('merchant');
             sfx('horn');
         }
@@ -85,6 +85,6 @@ export function buyMerchant(k, at) {
     buzz(12);
     squish(at);
     float(at, [`-${fmt(o.price)}`, ['ui', 'coin']], 'bad', -16);
-    toast(o.kind === 'deco' ? `${DECOS[o.id].name} : posez-la dans le champ` : 'Merci, à la prochaine !', ['ui', 'merchant']);
+    toast(o.kind === 'deco' ? `${DECOS[o.id].name} : posez-la dans le champ` : 'Merci, à la prochaine !', ['ui', 'merchant']);
     return true;
 }

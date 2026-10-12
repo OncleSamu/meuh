@@ -69,7 +69,7 @@ export function haulNet(at) {
     addXp(8 * n, at);
     burst(at, 'water', 16);
     sfx('harvest');
-    if (got.lobster) toast('Un homard dans le filet !', ['item', 'lobster']);
+    if (got.lobster) toast('Un homard dans le filet !', ['item', 'lobster']);
     return true;
 }
 
@@ -106,7 +106,7 @@ export function boatTick() {
             mats: [pickRand(RARE), pickRand(RARE), pickRand(RARE)],
         });
         if (view.started && !view.hidden) {
-            toast('Un cargo accoste au port !', ['ui', 'boat']);
+            toast('Un cargo accoste au port !', ['ui', 'boat']);
             tip('boat');
             sfx('level');
         }
@@ -133,7 +133,7 @@ export function sendBoat(at) {
     state.stats.boats = (state.stats.boats || 0) + 1;
     state.income.orders += b.gold;
     Object.assign(b, { status: 'away', items: [], arriveAt: now() + boatAway() });
-    toast('Le cargo appareille, chargé de vos produits !', ['ui', 'boat']);
+    toast('Le cargo appareille, chargé de vos produits !', ['ui', 'boat']);
     return true;
 }
 
@@ -178,7 +178,7 @@ export function transTick() {
     t.returnAt = 0;
     state.stats.trans = (state.stats.trans || 0) + 1;
     if (view.started && n) {
-        toast(`Le troupeau redescend des estives : +${milk} lait d’alpage`, ['item', 'alpineMilk']);
+        toast(`Le troupeau redescend des estives : +${milk} lait d’alpage`, ['item', 'alpineMilk']);
         sfx('level');
     }
     return true;
@@ -196,7 +196,7 @@ export function ensureFarmSeason() {
     if (state.fseason && state.fseason.key === key) return false;
     state.fseason = { key, pts: 0, got: [false, false, false, false, false] };
     if (view.started) {
-        toast(`Nouvelle saison de la ferme : ${farmSeasonTheme().name.toLowerCase()}`, ['ui', 'trophy']);
+        toast(`Nouvelle saison de la ferme : ${farmSeasonTheme().name.toLowerCase()}`, ['ui', 'trophy']);
         tip('farmSeason');
     }
     return true;
@@ -223,7 +223,7 @@ export function claimSeasonTier(k, at) {
         state.decorInv[deco] = (state.decorInv[deco] || 0) + 1;
         state.prestige.rubans++;
         addPhoto('ui', deco, farmSeasonTheme().name, 'Dernier palier atteint');
-        toast(`${DECOS[deco].name} : posez-la dans le champ (+1 ruban)`, ['ui', deco]);
+        toast(`${DECOS[deco].name} : posez-la dans le champ (+1 ruban)`, ['ui', deco]);
     }
     burst(at, 'sparkle', 14);
     sfx('level');

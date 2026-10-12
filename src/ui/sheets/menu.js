@@ -78,15 +78,15 @@ defineSheet('almanac', {
         const crops = G.seasonCrops(sv.id);
         return `<div class="alm-season">${ico(['ui', sv.icon], 'ico huge')}<div><div class="card-title">${sv.name}</div><div class="card-sub">Jour ${G.dayInSeason()} sur ${DAYS_PER_SEASON} · jour ${state.day} de la ferme</div></div></div>
             ${lines([
-                [['ui', w.icon], `<b>Aujourd’hui : ${w.name}</b><div class="card-sub">${w.desc}</div>`],
+                [['ui', w.icon], `<b>Aujourd’hui : ${w.name}</b><div class="card-sub">${w.desc}</div>`],
                 [
                     ['ui', nw.icon],
-                    `<b>Demain : ${nw.name}</b>${tomorrow.id !== sv.id ? ` · début du ${tomorrow.name.toLowerCase()}` : ''}<div class="card-sub">${nw.desc}</div>`,
+                    `<b>Demain : ${nw.name}</b>${tomorrow.id !== sv.id ? ` · début du ${tomorrow.name.toLowerCase()}` : ''}<div class="card-sub">${nw.desc}</div>`,
                 ],
             ])}
-            <h3 class="section-title"><span>De saison (pousse 30 % plus vite)</span></h3>
+            <h3 class="section-title"><span>De saison (pousse 30 % plus vite)</span></h3>
             <div class="alm-crops">${crops.map(c => `<div class="alm-crop${state.level < c.reqLvl ? ' locked' : ''}">${art('item', c.id)}<span>${c.name}</span></div>`).join('') || '<span class="card-sub">Aucune culture</span>'}</div>
-            <p class="card-sub foot-note">${sv.id === 'hiver' ? 'En hiver, les cultures hors saison poussent presque deux fois moins vite et les arbres dorment à moitié.' : sv.id === 'automne' ? 'En automne, les arbres fruitiers produisent 20 % plus vite.' : 'Profitez-en pour planter ce qui est de saison.'}</p>`;
+            <p class="card-sub foot-note">${sv.id === 'hiver' ? 'En hiver, les cultures hors saison poussent presque deux fois moins vite et les arbres dorment à moitié.' : sv.id === 'automne' ? 'En automne, les arbres fruitiers produisent 20 % plus vite.' : 'Profitez-en pour planter ce qui est de saison.'}</p>`;
     },
 });
 
@@ -107,7 +107,7 @@ defineSheet('barn', {
                 surplus = G.isLocked(sel) ? 0 : G.sellableQty(sel);
             const r = surplus ? G.sellBatch(sel, surplus, false) : { gain: 0 };
             item = `<div class="card barn-item"><div class="card-head">${ico(['item', sel], 'ico big')}<div class="card-main"><div class="card-title">${it.name} ×${state.inventory[sel]}</div>
-                <div class="card-sub">${keep ? `${keep} gardé${keep > 1 ? 's' : ''} pour les commandes · ` : ''}${G.isLocked(sel) ? 'verrouillé : jamais vendu' : `surplus : ${surplus}`}</div></div></div>
+                <div class="card-sub">${keep ? `${keep} gardé${keep > 1 ? 's' : ''} pour les commandes · ` : ''}${G.isLocked(sel) ? 'verrouillé : jamais vendu' : `surplus : ${surplus}`}</div></div></div>
                 <div class="row-btns">${btn(G.isLocked(sel) ? 'Déverrouiller' : 'Verrouiller', { act: 'lock', data: { id: sel }, size: 'sm', icon: ['ui', 'lock'] })}
                 ${surplus && !G.challengeOn('noMarket') ? btn(`Grossiste +${fmt(r.gain)}${COIN()}`, { act: 'barnSell', data: { id: sel }, kind: 'gold', size: 'sm' }) : ''}
                 ${surplus && it.sell ? btn('À l’étal', { act: 'barnStall', data: { id: sel }, kind: 'green', size: 'sm' }) : ''}
@@ -141,7 +141,7 @@ defineSheet('barn', {
                 `<div class="card barn-up"><div class="card-title">Agrandir la grange · niveau ${l + 2}</div>
                 <div class="card-sub">+${G.barnCapAt(l + 1) - G.barnCapAt(l)} places. Les planches, clous et pots de peinture se trouvent en récoltant, en ramassant, à l’atelier, dans les livraisons et chez le marchand ambulant.</div>
                 <div class="rare-row">${RARE.map(id => `<div class="rare-chip${state.inventory[id] >= cost[id] ? ' ok' : ''}">${ico(['item', id])}<b>${state.inventory[id]}</b><small>/ ${cost[id]}</small><span>${ITEMS[id].name}</span></div>`).join('')}</div>
-                <div class="card-sub">Autres matériaux : ${ico(['item', 'wood'])} ${state.inventory.wood} bois, ${ico(['item', 'stone'])} ${state.inventory.stone} pierre</div>
+                <div class="card-sub">Autres matériaux : ${ico(['item', 'wood'])} ${state.inventory.wood} bois, ${ico(['item', 'stone'])} ${state.inventory.stone} pierre</div>
                 ${btn(`Agrandir · ${fmt(cost.coins)}${COIN()}`, { act: 'upgradeBarn', kind: can ? 'gold' : '', wide: true, disabled: !can })}</div>`,
             ],
             ['hint', '<p class="hint">Les graines, la nourriture, le compost et les matériaux ne prennent pas de place.</p>'],
@@ -166,7 +166,7 @@ export function setupMenu() {
         barnStall: (el, d) => {
             G.ensureStall();
             const k = G.stallFree();
-            if (k < 0) return toast('L’étal est plein : encaissez ou attendez une vente', ['ui', 'stall']);
+            if (k < 0) return toast('L’étal est plein : encaissez ou attendez une vente', ['ui', 'stall']);
             closeSheet('barn');
             go('market/sell');
             openSheet('stall', { k, id: d.id });

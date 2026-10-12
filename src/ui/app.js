@@ -93,13 +93,13 @@ export function go(path, opts = {}) {
     // écran large : l'onglet Ferme montre la nature à droite (le champ est toujours à gauche)
     if (view.wide && tab === 'farm' && !sub && !subLocked('farm', 'nature')) sub = 'nature';
     if (tabLocked(tab)) {
-        emit('toast', { text: `${tabDef(tab).name} : s’ouvre au niveau ${tabLockLvl(tab)}`, icon: ['ui', 'lock'] });
+        emit('toast', { text: `${tabDef(tab).name} : s’ouvre au niveau ${tabLockLvl(tab)}`, icon: ['ui', 'lock'] });
         emit('sfx', 'error');
         return;
     }
     if (sub && subLocked(tab, sub)) {
         const s = tabDef(tab).subs.find(x => x[0] === sub);
-        emit('toast', { text: `${s[1]} : s’ouvre au niveau ${subLockLvl(tab, sub)}`, icon: ['ui', 'lock'] });
+        emit('toast', { text: `${s[1]} : s’ouvre au niveau ${subLockLvl(tab, sub)}`, icon: ['ui', 'lock'] });
         emit('sfx', 'error');
         return;
     }
@@ -124,7 +124,7 @@ export function go(path, opts = {}) {
 function renderHud() {
     const req = G.xpNeed();
     const p = Math.min(1, state.xp / req);
-    const xpText = state.level >= MAX_LEVEL ? `★ ${state.renown || 0} · ${Math.floor(p * 100)} %` : `${fmtK(state.xp)} / ${fmtK(req)}`;
+    const xpText = state.level >= MAX_LEVEL ? `★ ${state.renown || 0} · ${Math.floor(p * 100)} %` : `${fmtK(state.xp)} / ${fmtK(req)}`;
     const used = G.barnUsed(),
         cap = G.barnCap();
     const menuN = ui.counts.menu || 0;

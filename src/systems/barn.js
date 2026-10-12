@@ -34,7 +34,7 @@ export function barnBlocked(quiet) {
     if (barnSpace() > 0) return false;
     if (!quiet && now() - warnedAt > 2500) {
         warnedAt = now();
-        toast('La grange est pleine : vendez, livrez ou agrandissez-la', ['ui', 'barn']);
+        toast('La grange est pleine : vendez, livrez ou agrandissez-la', ['ui', 'barn']);
         sfx('error');
         emit('barnFull');
     }
@@ -70,6 +70,6 @@ export function upgradeBarn(at) {
     sfx('level');
     buzz(30);
     burst(at, 'sparkle', 16);
-    toast(`Grange agrandie : ${barnCap()} places`, ['ui', 'barn']);
+    toast(`Grange agrandie : ${barnCap()} places`, ['ui', 'barn']);
     return true;
 }

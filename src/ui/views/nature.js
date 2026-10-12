@@ -44,7 +44,7 @@ function resCard(kind, title, sub, icon) {
 }
 
 // ---------------- l'étang ----------------
-const PHASE_BTN = { idle: 'Lancer la ligne', wait: 'Ferrer', bite: 'Ferrer !', reel: 'Ferrer !' };
+const PHASE_BTN = { idle: 'Lancer la ligne', wait: 'Ferrer', bite: 'Ferrer !', reel: 'Ferrer !' };
 function pondCard() {
     const locked = state.level < NATURE.pond.lvl;
     const f = G.fishing,
@@ -52,12 +52,12 @@ function pondCard() {
     const msg = locked
         ? `L’étang ouvre au niveau ${NATURE.pond.lvl}.`
         : {
-              idle: `Poissons possibles maintenant : ${G.fishAvailable()
+              idle: `Poissons possibles maintenant : ${G.fishAvailable()
                   .map(id => FISH[id].name.toLowerCase())
                   .join(', ')}.`,
-              wait: 'Patience… Ferrez quand le bouchon plonge et que « ! » apparaît.',
-              bite: 'Ça mord !',
-              reel: 'Arrêtez le curseur dans la zone verte !',
+              wait: 'Patience… Ferrez quand le bouchon plonge et que « ! » apparaît.',
+              bite: 'Ça mord !',
+              reel: 'Arrêtez le curseur dans la zone verte !',
           }[ph];
     const zone = ph === 'reel' ? `left:${(f.center - f.width / 2) * 100}%;width:${f.width * 100}%` : '';
     return `<div class="card nature-card pond-card${locked ? ' locked' : ''}">
@@ -73,7 +73,7 @@ function netCard() {
     const n = state.net;
     return `<div class="card nature-card net-card">
         <div class="nature-head">${ico(['ui', 'net'])}<div class="card-main"><div class="card-title">Pêche en mer</div>
-        <div class="card-sub">${!n.until ? 'Posez le filet, et relevez-le dans 20 minutes : sardines, maquereaux, crevettes, bars, parfois un homard.' : G.netReady() ? 'Le filet est plein, relevez-le !' : `Le filet est en mer : encore ${timer(n.until)}.`}</div></div></div>
+        <div class="card-sub">${!n.until ? 'Posez le filet, et relevez-le dans 20 minutes : sardines, maquereaux, crevettes, bars, parfois un homard.' : G.netReady() ? 'Le filet est plein, relevez-le !' : `Le filet est en mer : encore ${timer(n.until)}.`}</div></div></div>
         <div class="sea${n.until ? ' out' : ''}">${art('ui', 'net')}</div>
         ${!n.until ? btn('Poser le filet', { act: 'castNet', kind: 'blue', wide: true }) : btn('Relever le filet', { act: 'haulNet', kind: G.netReady() ? 'gold' : '', wide: true, disabled: !G.netReady() })}
     </div>`;

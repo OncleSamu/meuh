@@ -59,7 +59,7 @@ function selectTool(t) {
 
 // ---------------- le tiroir des graines ----------------
 defineSheet('seeds', {
-    title: 'Que planter ?',
+    title: 'Que planter ?',
     render() {
         const sid = G.season().id;
         const seeds = G.plantableSeeds()
@@ -82,7 +82,7 @@ defineSheet('seeds', {
                     `<button class="seed${state.selectedTool === 'deco:' + d.id ? ' on' : ''}" data-act="pickSeed" data-t="deco:${d.id}">${art('ui', d.id)}<span class="badge blue">${state.decorInv[d.id]}</span><small>${d.name}</small></button>`,
             )
             .join('');
-        return `<div class="seed-grid">${seeds}</div>${decos ? `<h3 class="section-title"><span>Décorations à poser</span></h3><div class="seed-grid">${decos}</div>` : ''}${hint(`En ${G.season().name.toLowerCase()}, les cultures marquées ${ico(['ui', G.season().icon])} poussent 30 % plus vite.`)}${sid ? '' : ''}`;
+        return `<div class="seed-grid">${seeds}</div>${decos ? `<h3 class="section-title"><span>Décorations à poser</span></h3><div class="seed-grid">${decos}</div>` : ''}${hint(`En ${G.season().name.toLowerCase()}, les cultures marquées ${ico(['ui', G.season().icon])} poussent 30 % plus vite.`)}${sid ? '' : ''}`;
     },
 });
 

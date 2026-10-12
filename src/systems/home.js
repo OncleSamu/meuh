@@ -59,7 +59,7 @@ export function upgradeHouse(at) {
     buzz(30);
     burst(at, 'sparkle', 18);
     emit('confetti');
-    toast(`${n.name} : ${n.bonus.toLowerCase()}`, ['ui', 'house']);
+    toast(`${n.name} : ${n.bonus.toLowerCase()}`, ['ui', 'house']);
     addPhoto('house', state.house.lvl, n.name, 'La maison s’agrandit');
     ensureQuests();
     ensureStall();

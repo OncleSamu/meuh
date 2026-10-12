@@ -127,7 +127,7 @@ export function treatPest(i, at) {
     buzz(15);
     burst(at, 'leaf', 10, -6);
     burst(at, 'sparkle', 8, -10);
-    float(at, ['Ouste !'], '', -24);
+    float(at, ['Ouste !'], '', -24);
     addXp(20 + state.level * 3, at);
     endIncident(true);
     return true;
@@ -150,7 +150,7 @@ export function cureAnimal(i, at) {
     sfx(a.type);
     buzz(15);
     burst(at, 'sparkle', 12);
-    float(at, ['Guéri !'], '', -30);
+    float(at, ['Guéri !'], '', -30);
     addXp(15 + state.level * 3, at);
     return true;
 }

@@ -75,8 +75,8 @@ export function toggleRemind(done) {
         state.settings.remind = p === 'granted';
         toast(
             p === 'granted'
-                ? 'Rappels activés : Meuh vous prévient quand le jeu est en arrière-plan'
-                : 'Rappels refusés par le navigateur : vous pouvez les autoriser dans ses réglages',
+                ? 'Rappels activés : Meuh vous prévient quand le jeu est en arrière-plan'
+                : 'Rappels refusés par le navigateur : vous pouvez les autoriser dans ses réglages',
             ['ui', 'clock'],
         );
         done();
@@ -112,7 +112,7 @@ export function setupPwa() {
     });
     window.addEventListener('appinstalled', () => {
         installPrompt = null;
-        toast('Meuh est installé sur votre appareil !', ['ui', 'check']);
+        toast('Meuh est installé sur votre appareil !', ['ui', 'check']);
     });
     for (const [name, content] of [
         ['apple-mobile-web-app-capable', 'yes'],

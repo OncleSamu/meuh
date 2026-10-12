@@ -21,7 +21,7 @@ function tile(m, i) {
     const ready = Object.entries(m.out).filter(([, n]) => n > 0);
     const status = cur
         ? `<div class="m-now">${ico(['item', cur])}<span>${ITEMS[cur].name}</span></div>${bar(G.machinePct(m), 'm-bar', `mac:${i}`)}<div class="m-time">${timer(now() + G.machineLeft(m) * 1000)}${m.queue.length > 1 ? ` · +${m.queue.length - 1} en file` : ''}</div>`
-        : `<div class="m-idle">${m.loop ? 'En boucle : ingrédients manquants' : 'À l’arrêt'}</div>`;
+        : `<div class="m-idle">${m.loop ? 'En boucle : ingrédients manquants' : 'À l’arrêt'}</div>`;
     return `<div class="mtile${G.machineBusy(m) ? ' working' : ''}${ready.length ? ' has-out' : ''}" data-anchor="machine:${i}">
         <button class="mtile-main" data-act="open" data-sheet="machine" data-i="${i}">
             <span class="m-art">${art('machine', m.type)}${puffs(m)}</span>
@@ -108,7 +108,7 @@ defineSheet('machine', {
             [
                 'head',
                 `<div class="machine-head"><span class="m-art big">${art('machine', m.type)}${puffs(m)}</span><div class="card-main"><div class="card-sub">${MACHINES[m.type].desc}</div>
-                ${queueSlots(m, i)}<div class="card-sub">${full ? 'La file est pleine : attendez la fin du lot en cours.' : m.queue.length > 1 ? 'Touchez un lot en attente pour l’annuler (ingrédients rendus).' : 'Touchez une recette pour la lancer ou l’ajouter à la file.'}</div></div></div>`,
+                ${queueSlots(m, i)}<div class="card-sub">${full ? 'La file est pleine : attendez la fin du lot en cours.' : m.queue.length > 1 ? 'Touchez un lot en attente pour l’annuler (ingrédients rendus).' : 'Touchez une recette pour la lancer ou l’ajouter à la file.'}</div></div></div>`,
             ],
             [
                 'out',

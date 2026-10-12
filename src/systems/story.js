@@ -29,7 +29,7 @@ export const storyClaimable = () => Object.keys(PROJECTS).filter(id => projectOp
 export const mapOf = p => p.map || 'village';
 // un produit ou une machine qui attend la fin d'un chantier
 export const storyOk = d => !d || !d.needProject || projectDone(d.needProject);
-export const storyLockText = d => (d && d.needProject && !projectDone(d.needProject) ? `Après le chantier « ${PROJECTS[d.needProject].name} »` : '');
+export const storyLockText = d => (d && d.needProject && !projectDone(d.needProject) ? `Après le chantier « ${PROJECTS[d.needProject].name} »` : '');
 
 // une carte s'ouvre quand son chapitre d'entrée est fini, ou dès le niveau du chapitre suivant (sauf « strict »)
 export const mapOpen = m => !m.openChapter || chapterDone(m.openChapter) || (!m.strict && state.level >= CHAPTERS[m.openChapter].lvl);
@@ -54,7 +54,7 @@ export function syncStory() {
     if (!c || !chapterOpen(c.n) || state.story.seen[c.n]) return false;
     state.story.seen[c.n] = true;
     if (view.started) {
-        toast(`Chapitre ${c.n} : ${c.name}`, ['ui', 'village']);
+        toast(`Chapitre ${c.n} : ${c.name}`, ['ui', 'village']);
         if (c.n === 1) tip('village');
         if (c.n === 5) tip('hamlet');
         sfx('level');
@@ -148,9 +148,9 @@ const MAP_TEASE = {
 export function storyNextText(p) {
     const c = currentChapter();
     if (!c)
-        return 'Le village et le hameau sont rénovés : l’histoire est terminée. Merci pour tout ! Prochain grand but : la Ferme légendaire (Livre de la ferme).';
+        return 'Le village et le hameau sont rénovés : l’histoire est terminée. Merci pour tout ! Prochain grand but : la Ferme légendaire (Livre de la ferme).';
     const at = state.level < c.lvl ? ` au niveau ${c.lvl}` : '';
-    if (chapterDone(p.ch) && c.map && c.map !== mapOf(p)) return `Ce n’est pas fini : ${MAP_TEASE[c.map]} vous attend${at}.`;
-    if (chapterDone(p.ch)) return `Chapitre ${p.ch} terminé ! Prochain chapitre : « ${c.name} »${at}.`;
+    if (chapterDone(p.ch) && c.map && c.map !== mapOf(p)) return `Ce n’est pas fini : ${MAP_TEASE[c.map]} vous attend${at}.`;
+    if (chapterDone(p.ch)) return `Chapitre ${p.ch} terminé ! Prochain chapitre : « ${c.name} »${at}.`;
     return '';
 }

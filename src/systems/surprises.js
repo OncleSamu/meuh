@@ -96,7 +96,7 @@ export function startRare(force) {
     }
     state.stats.rareEvents = (state.stats.rareEvents || 0) + 1;
     if (view.started) {
-        toast(`${E.name} !`, ['ui', E.icon]);
+        toast(`${E.name} !`, ['ui', E.icon]);
         sfx('level');
         tip('rareEvent');
     }
@@ -154,14 +154,14 @@ export function serveCritic(at) {
         title: `${'★'.repeat(stars)}${'☆'.repeat(5 - stars)}`,
         sub:
             stars === 5
-                ? `« ${name} : un chef-d’œuvre. Je reviendrai. »`
+                ? `« ${name} : un chef-d’œuvre. Je reviendrai. »`
                 : stars >= 4
-                  ? `« ${name} : excellent, presque parfait. »`
-                  : `« ${name} : honnête. La maîtrise viendra. »`,
+                  ? `« ${name} : excellent, presque parfait. »`
+                  : `« ${name} : honnête. La maîtrise viendra. »`,
         lines: [
             [['ui', 'coin'], `${fmt(coins)} pièces`],
             ...(stars === 5 ? [[['ui', 'ribbon'], '1 ruban de concours']] : []),
-            ...(stars < 5 ? [[['ui', 'medalG'], 'Astuce : plus vous maîtrisez un plat, meilleure est la note.']] : []),
+            ...(stars < 5 ? [[['ui', 'medalG'], 'Astuce : plus vous maîtrisez un plat, meilleure est la note.']] : []),
         ],
     });
     sfx('level');
@@ -184,7 +184,7 @@ export function ensureContract() {
     const qty = Math.max(10, Math.min(200, Math.round((1000 + state.level * 300) / it.sell / 5) * 5));
     const coins = round5(it.sell * qty * 2.2);
     state.contract = { key, item: it.id, qty, given: 0, done: false, coins, xp: Math.round(coins * 0.08) };
-    if (view.started && c) toast(`Nouveau contrat de saison : ${qty} × ${it.name.toLowerCase()}`, ['ui', 'calendar']);
+    if (view.started && c) toast(`Nouveau contrat de saison : ${qty} × ${it.name.toLowerCase()}`, ['ui', 'calendar']);
     if (view.started) tip('contract');
     return true;
 }
@@ -211,7 +211,7 @@ export function giveContract(at) {
         state.stats.contractsDone = (state.stats.contractsDone || 0) + 1;
         burst(at, 'sparkle', 20);
         emit('confetti');
-        toast('Contrat de saison rempli : 2 planches, 2 clous et 2 pots de peinture en prime', ['item', 'paint']);
+        toast('Contrat de saison rempli : 2 planches, 2 clous et 2 pots de peinture en prime', ['item', 'paint']);
     }
     return true;
 }
@@ -264,7 +264,7 @@ export function giveStory(vid, at) {
             addPhoto('villager', vid, S.title, `L’histoire de ${VILLAGERS[vid].name}`);
             emit('storyEnd', { vid, coins });
             sfx('level');
-        } else toast(`${VILLAGERS[vid].name} : étape ${st.step} sur 3 réussie (+${fmt(coins)} pièces)`, ['villager', vid]);
+        } else toast(`${VILLAGERS[vid].name} : étape ${st.step} sur 3 réussie (+${fmt(coins)} pièces)`, ['villager', vid]);
     }
     return true;
 }

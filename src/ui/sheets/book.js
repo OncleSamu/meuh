@@ -18,15 +18,15 @@ const medals = n => `<span class="medals">${MEDALS.map((m, k) => `<i class="ico"
 function quarters() {
     const p = G.bookProgress(),
         got = state.bookQuarters || [];
-    return `<div class="card book-quarters"><div class="bq-head"><b>Tout le livre : ${p.found} / ${p.total}</b><span>${Math.floor((p.found / p.total) * 100)} %</span></div>${bar(p.found / p.total)}
+    return `<div class="card book-quarters"><div class="bq-head"><b>Tout le livre : ${p.found} / ${p.total}</b><span>${Math.floor((p.found / p.total) * 100)} %</span></div>${bar(p.found / p.total)}
         <div class="tiers-row">${BOOK_QUARTERS.map((q, k) =>
             got[k]
                 ? `<span class="stier done">${ico(['ui', 'check'])}</span>`
                 : G.quarterReady(k)
-                  ? btn(`${q * 100} %`, { act: 'quarter', data: { k }, kind: 'gold', size: 'sm' })
-                  : `<span class="stier">${q * 100} %</span>`,
+                  ? btn(`${q * 100} %`, { act: 'quarter', data: { k }, kind: 'gold', size: 'sm' })
+                  : `<span class="stier">${q * 100} %</span>`,
         ).join('')}</div>
-        <div class="card-sub">À chaque quart : des pièces et des matériaux rares. Livre complet : le Livre d’or et 1 ruban.</div></div>`;
+        <div class="card-sub">À chaque quart : des pièces et des matériaux rares. Livre complet : le Livre d’or et 1 ruban.</div></div>`;
 }
 
 function collection(o) {
@@ -38,14 +38,14 @@ function collection(o) {
         .map(e => {
             const c = state.collection[e.key];
             return `<div class="entry${c ? '' : ' unknown'}"><span class="entry-ico">${art(e.icon[0], e.icon[1])}${c && e.star ? qStar(2, 'entry-star') : ''}</span>
-            <b>${c ? e.name : '???'}</b><small>${c ? (e.fish ? `Record : ${(c.best || 0).toString().replace('.', ',')} kg` : `×${fmt(c.n)}`) : e.hint}</small></div>`;
+            <b>${c ? e.name : '???'}</b><small>${c ? (e.fish ? `Record : ${(c.best || 0).toString().replace('.', ',')} kg` : `×${fmt(c.n)}`) : e.hint}</small></div>`;
         })
         .join('');
     const done = found === list.length,
         claimed = state.pagesDone[page.id];
     const foot = claimed
-        ? '<p class="card-sub center">Page complétée, bravo !</p>'
-        : `${bar(found / list.length)}<p class="card-sub center">${found} / ${list.length} · Page complète : ${fmt(G.pageReward())} pièces et 1 ruban</p>${btn('Réclamer la page', { act: 'claimPage', data: { p: page.id }, kind: done ? 'gold' : '', wide: true, disabled: !done })}`;
+        ? '<p class="card-sub center">Page complétée, bravo !</p>'
+        : `${bar(found / list.length)}<p class="card-sub center">${found} / ${list.length} · Page complète : ${fmt(G.pageReward())} pièces et 1 ruban</p>${btn('Réclamer la page', { act: 'claimPage', data: { p: page.id }, kind: done ? 'gold' : '', wide: true, disabled: !done })}`;
     return [
         ['q', quarters()],
         ['tabs', tabs],
@@ -59,7 +59,7 @@ function mastery() {
     const known = G.masteryKnown();
     if (!known.length) return '<p class="empty">Produisez pour commencer à maîtriser vos produits.</p>';
     const gold = G.goldMasteries();
-    return `<p class="card-sub center">Chaque étoile : +5 % sur le prix du produit. L’or le rend aussi 15 % plus rapide à produire. ${gold} produit${gold > 1 ? 's' : ''} en or.</p>
+    return `<p class="card-sub center">Chaque étoile : +5 % sur le prix du produit. L’or le rend aussi 15 % plus rapide à produire. ${gold} produit${gold > 1 ? 's' : ''} en or.</p>
         <div class="list">${known
             .map(id => {
                 const sv = G.masteryStars(id),
@@ -106,7 +106,7 @@ function legend() {
         <p class="card-sub center">${done ? 'Le canton entier connaît votre nom. La vache dorée veille sur vos champs.' : 'Le grand but de Meuh. Réussissez ces cinq exploits pour recevoir la vache dorée, 10 rubans et le titre pour toujours.'}</p>
         <div class="lgoals">${goals.map(g => `<div class="lgoal${g.ok ? ' ok' : ''}">${ico(['ui', g.ok ? 'check' : 'medalOff'])}<span>${g.name}</span><small>${g.v}</small></div>`).join('')}</div>
         ${done ? '' : btn('Devenir légendaire', { act: 'claimLegend', kind: G.legendReady() ? 'gold' : '', wide: true, disabled: !G.legendReady() })}
-        <p class="card-sub center">Renommée : ${r} étoile${r > 1 ? 's' : ''}${state.level >= MAX_LEVEL ? '' : ` · au niveau ${MAX_LEVEL}, l’expérience se transforme en étoiles de renommée`}. Ligue actuelle : ${G.leagueName(G.leagueOf()).toLowerCase()}.</p></div>`;
+        <p class="card-sub center">Renommée : ${r} étoile${r > 1 ? 's' : ''}${state.level >= MAX_LEVEL ? '' : ` · au niveau ${MAX_LEVEL}, l’expérience se transforme en étoiles de renommée`}. Ligue actuelle : ${G.leagueName(G.leagueOf()).toLowerCase()}.</p></div>`;
 }
 
 // ---------------- album ----------------

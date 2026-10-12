@@ -39,7 +39,7 @@ export function shooCrow(i, at) {
     emit('crowAway', { i, plant: false });
     earn(5 + state.level * 4, at);
     addXp(10 + state.level * 2, at);
-    float(at, ['Ouste !'], '', -40);
+    float(at, ['Ouste !'], '', -40);
 }
 
 export function crowEats() {
@@ -52,7 +52,7 @@ export function crowEats() {
         p.itemId = null;
         p.isWatered = false;
         p.growProgress = 0;
-        toast(`Le corbeau a mangé votre ${name}. Un épouvantail aiderait !`, ['ui', 'crow']);
+        toast(`Le corbeau a mangé votre ${name}. Un épouvantail aiderait !`, ['ui', 'crow']);
         sfx('error');
     }
     emit('crowAway', { i, plant: true });
@@ -128,7 +128,7 @@ export function placeDeco(i, id, at) {
     sfx('buy');
     buzz(15);
     burst(at, 'sparkle', 12);
-    toast(`${DECOS[id].name} installé : ${DECOS[id].desc.toLowerCase()}`, ['ui', id]);
+    toast(`${DECOS[id].name} installé : ${DECOS[id].desc.toLowerCase()}`, ['ui', id]);
     if (!state.decorInv[id] && state.selectedTool === 'deco:' + id) selectTool('hand');
 }
 
@@ -202,7 +202,7 @@ export function handleDog(at) {
         if (f.kind !== 'coins' && f.kind !== 'treasure') float(at, [`+${f.n}`, findIcon(f)], '', -30);
         if (f.kind === 'treasure') {
             collect('t_dogTreasure');
-            toast(`${d.name} a déterré un trésor !`, ['ui', 'chest']);
+            toast(`${d.name} a déterré un trésor !`, ['ui', 'chest']);
             sfx('golden');
             burst(at, 'sparkle', 18);
         } else sfx('harvest');
@@ -231,7 +231,7 @@ export function dogTick() {
         changed = true;
         if (farmShown() && !view.hidden) {
             sfx('bark');
-            toast(`${d.name} a trouvé quelque chose : touchez-le !`, ['ui', 'dog']);
+            toast(`${d.name} a trouvé quelque chose : touchez-le !`, ['ui', 'dog']);
         }
     }
     if (chase && now() >= chase.until) {
@@ -243,7 +243,7 @@ export function dogTick() {
             sfx('bark');
             sfx('caw');
             emit('crowAway', { i, plant: false });
-            emit('plotFloat', { i, parts: [`Wouf ! ${d.name} veille`], dy: -30 });
+            emit('plotFloat', { i, parts: [`Wouf ! ${d.name} veille`], dy: -30 });
             changed = true;
         }
     } else if (!chase && state.crow && farmShown() && now() - (state.crow.until - CROW_TIME) > DOG.chaseDelay) {
@@ -261,7 +261,7 @@ export function buyDog(at) {
     sfx('bark');
     buzz(20);
     burst(at, 'sparkle', 14);
-    toast(`${state.dog.name} rejoint la ferme ! Retrouvez-le dans le champ`, ['ui', 'dog']);
+    toast(`${state.dog.name} rejoint la ferme ! Retrouvez-le dans le champ`, ['ui', 'dog']);
     return true;
 }
 
@@ -304,7 +304,7 @@ export function handleHive(i, at) {
     const jars = Math.floor(p.honey || 0);
     if (jars < 1) {
         const r = honeyRate(i);
-        if (!r) toast('Les abeilles ont besoin de fleurs : plantez des cultures ou un parterre autour de la ruche', ['ui', 'hive']);
+        if (!r) toast('Les abeilles ont besoin de fleurs : plantez des cultures ou un parterre autour de la ruche', ['ui', 'hive']);
         else float(at, [['item', 'honey'], formatDuration((1 - (p.honey || 0)) / (r * speedMult()))], '', -24);
         sfx('click');
         return false;
@@ -334,7 +334,7 @@ export function stormTick() {
     emit('lightning');
     if (hasRod()) {
         state.stats.rodSaves = (state.stats.rodSaves || 0) + 1;
-        if (state.day !== rodToastDay) toast('Le paratonnerre a détourné la foudre : vos cultures sont sauves', ['ui', 'lightningRod']);
+        if (state.day !== rodToastDay) toast('Le paratonnerre a détourné la foudre : vos cultures sont sauves', ['ui', 'lightningRod']);
         rodToastDay = state.day;
         return false;
     }

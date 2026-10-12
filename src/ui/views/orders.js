@@ -41,7 +41,7 @@ function eventCard() {
                 <div class="card-main"><div class="goal-t">${G.goalText(x)}</div>${bar(x.prog / x.target)}<div class="card-sub">${fmt(x.prog)} / ${fmt(x.target)}</div></div>${side}</div>`;
             })
             .join('')}</div>
-        ${e.rewarded ? '<div class="card-sub center">Trophée remporté, bravo !</div>' : btn('Remporter le trophée', { act: 'claimEvent', kind: allClaimed ? 'gold' : '', wide: true, icon: ['ui', 'trophy'], disabled: !allClaimed })}
+        ${e.rewarded ? '<div class="card-sub center">Trophée remporté, bravo !</div>' : btn('Remporter le trophée', { act: 'claimEvent', kind: allClaimed ? 'gold' : '', wide: true, icon: ['ui', 'trophy'], disabled: !allClaimed })}
     </div>`;
 }
 
@@ -121,7 +121,7 @@ function train() {
     return `<div class="card truck-card here">
         <div class="card-head"><div class="card-main"><div class="card-title">Train de marchandises</div></div><span class="timer-pill">${ico(['ui', 'clock'])}${timer(t.expiresAt)}</span></div>
         <div class="rails"><div class="train-row">${wagons}<div class="loco">${SPR.loco()}</div></div></div>
-        <div class="truck-reward"><span>Train complet : bonus</span>${rewardHtml(t.gold, t.xp)}${ico(['ui', 'barn'])}</div>
+        <div class="truck-reward"><span>Train complet : bonus</span>${rewardHtml(t.gold, t.xp)}${ico(['ui', 'barn'])}</div>
     </div>`;
 }
 
@@ -160,7 +160,7 @@ defineView('village/orders', renderOrders);
 export function setupOrders() {
     actions({
         deliver: (el, d) => G.turnInQuest(+d.i, el) && closeSheet('order'),
-        trash: (el, d) => confirmTap('trash' + d.i, el, 'Jeter ?') && G.trashQuest(+d.i) && closeSheet('order'),
+        trash: (el, d) => confirmTap('trash' + d.i, el, 'Jeter ?') && G.trashQuest(+d.i) && closeSheet('order'),
         pin: (el, d) => G.togglePin(+d.i),
         express: el => G.deliverExpress(el),
         loadWagon: (el, d) => G.loadSlot(+d.k, el.closest('[data-anchor]')),

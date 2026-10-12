@@ -30,7 +30,7 @@ export const stallBase = id => ITEMS[id].sell * masteryMult(id) * priceMult() * 
 export const stallWait = ratio => 4 + 14 * Math.pow(ratio, 3);
 export const stallUnit = (id, ratio) => Math.max(1, Math.round(stallBase(id) * ratio));
 export const stallMood = ratio =>
-    ratio <= 0.8 ? 'Bon marché : vendu vite' : ratio <= 1.1 ? 'Prix juste' : ratio <= 1.3 ? 'Un peu cher : patience' : 'Très cher : les clients hésitent';
+    ratio <= 0.8 ? 'Bon marché : vendu vite' : ratio <= 1.1 ? 'Prix juste' : ratio <= 1.3 ? 'Un peu cher : patience' : 'Très cher : les clients hésitent';
 export const stallMax = id => Math.min(STALL_MAX_QTY, sellableQty(id));
 
 export function ensureStall() {
@@ -47,7 +47,7 @@ export function stallTick() {
             sl.sold = true;
             changed = true;
             if (view.started && !view.hidden) {
-                toast(`Un client a acheté ${sl.qty} ${ITEMS[sl.id].name.toLowerCase()} à l’étal !`, ['item', sl.id]);
+                toast(`Un client a acheté ${sl.qty} ${ITEMS[sl.id].name.toLowerCase()} à l’étal !`, ['item', sl.id]);
                 sfx('coin');
             }
         }
@@ -117,7 +117,7 @@ export function toggleLock(id) {
     if (state.locked[id]) delete state.locked[id];
     else state.locked[id] = true;
     sfx('click');
-    toast(isLocked(id) ? `${ITEMS[id].name} : jamais vendu, même avec « Tout vendre »` : `${ITEMS[id].name} : de nouveau vendable`, ['ui', 'lock']);
+    toast(isLocked(id) ? `${ITEMS[id].name} : jamais vendu, même avec « Tout vendre »` : `${ITEMS[id].name} : de nouveau vendable`, ['ui', 'lock']);
 }
 
 export function sellFromBarn(id, at) {
@@ -141,7 +141,7 @@ export function togglePin(i) {
     state.quests.forEach(x => x && (x.pinned = false));
     q.pinned = on;
     sfx('click');
-    if (on) toast('Commande épinglée : elle reste visible partout, et ses cultures brillent dans le champ', ['ui', 'pin']);
+    if (on) toast('Commande épinglée : elle reste visible partout, et ses cultures brillent dans le champ', ['ui', 'pin']);
     return true;
 }
 
@@ -206,7 +206,7 @@ export function helpNeighbor(k, at) {
     state.stats.neighborHelps = (state.stats.neighborHelps || 0) + 1;
     sfx('level');
     buzz(20);
-    toast(`${r.owner} vous remercie chaleureusement !`, ['villager', r.avatar]);
+    toast(`${r.owner} vous remercie chaleureusement !`, ['villager', r.avatar]);
     while (n.hearts < 5 && n.pts >= NEIGHBOR_HEARTS[n.hearts]) {
         n.hearts++;
         neighborGift(k, n.hearts);
@@ -230,7 +230,7 @@ function neighborGift(k, h) {
         RARE.forEach(id => (state.inventory[id] += 2));
         txt = '2 planches, 2 clous et 2 pots de peinture';
     }
-    toast(`${r.owner} vous apprécie (${h} cœur${h > 1 ? 's' : ''}) : ${txt} !`, ['ui', 'heart']);
+    toast(`${r.owner} vous apprécie (${h} cœur${h > 1 ? 's' : ''}) : ${txt} !`, ['ui', 'heart']);
     emit('confetti');
 }
 

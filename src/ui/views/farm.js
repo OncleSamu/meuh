@@ -219,23 +219,23 @@ const moonSvg = `<i class="ico"><svg viewBox="0 0 64 64" class="spr"><path d="M4
 function nextGoal() {
     if (!state.tutorial.done) return null;
     const ready = Object.values(PROJECTS).find(p => G.projectOpen(p.id) && G.projectComplete(p.id));
-    if (ready) return { icon: ['ui', 'village'], text: `Terminez la rénovation : ${ready.name.toLowerCase()}`, go: 'village/village' };
+    if (ready) return { icon: ['ui', 'village'], text: `Terminez la rénovation : ${ready.name.toLowerCase()}`, go: 'village/village' };
     const open = Object.values(PROJECTS).find(p => G.projectOpen(p.id));
     if (open) {
         const tot = Object.values(open.need).reduce((a, b) => a + b, 0),
             got = Object.keys(open.need).reduce((a, k) => a + (open.need[k] - G.projectLeft(open.id, k)), 0);
         return {
             icon: ['building', open.id],
-            text: `Prochain but : rénover ${open.name.toLowerCase()} (${Math.floor((got / tot) * 100)} %)`,
+            text: `Prochain but : rénover ${open.name.toLowerCase()} (${Math.floor((got / tot) * 100)} %)`,
             go: 'village/village',
         };
     }
     const c = G.currentChapter();
-    if (c && state.level < c.lvl) return { icon: ['ui', 'village'], text: `Chapitre ${c.n} au niveau ${c.lvl} : « ${c.name} »`, go: 'sheet:levels' };
+    if (c && state.level < c.lvl) return { icon: ['ui', 'village'], text: `Chapitre ${c.n} au niveau ${c.lvl} : « ${c.name} »`, go: 'sheet:levels' };
     if (G.houseCanUp()) return { icon: ['ui', 'house'], text: 'Agrandissez la maison de la ferme', go: 'sheet:house' };
     if (!state.legend) {
         const n = G.legendGoals().filter(g => g.ok).length;
-        return { icon: ['ui', 'goldCow'], text: `Ferme légendaire : ${n} exploit${n > 1 ? 's' : ''} sur 5`, go: 'sheet:book', sec: 'legend' };
+        return { icon: ['ui', 'goldCow'], text: `Ferme légendaire : ${n} exploit${n > 1 ? 's' : ''} sur 5`, go: 'sheet:book', sec: 'legend' };
     }
     return null;
 }
@@ -281,7 +281,7 @@ export function renderFarm(el) {
         ['gh', state.greenhouse.built ? GH_BOX : null],
         ['yard', farmyardHtml()],
         ['replant', toggle('Replanter automatiquement après la récolte', state.settings.autoReplant, 'setting', { key: 'autoReplant' })],
-        ['hint', hint('Astuce : gardez le doigt appuyé et glissez sur les parcelles pour labourer, planter, arroser ou récolter d’un seul geste.')],
+        ['hint', hint('Astuce : gardez le doigt appuyé et glissez sur les parcelles pour labourer, planter, arroser ou récolter d’un seul geste.')],
     ]);
     renderPlots();
     renderGreenhouse();

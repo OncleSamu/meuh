@@ -43,7 +43,7 @@ function mainPage() {
                 navRow('Taille du texte', 'textSize', null, null, `<b>${TEXT_SIZES[s.textSize || 0]}</b>`) +
                 toggle('Contraste renforcé', !!s.contrast, 'setting', { key: 'contrast' }) +
                 (matchMedia('(hover: hover)').matches
-                    ? '<p class="card-sub">Au clavier : 1 à 5 pour les onglets, A pour arroser, R pour récolter ou ramasser, N pour nourrir, V pour tout vendre, Échap pour fermer.</p>'
+                    ? '<p class="card-sub">Au clavier : 1 à 5 pour les onglets, A pour arroser, R pour récolter ou ramasser, N pour nourrir, V pour tout vendre, Échap pour fermer.</p>'
                     : ''),
         ),
         group(
@@ -80,7 +80,7 @@ function mainPage() {
                     : ''),
         ),
         btn('Recommencer à zéro', { act: 'resetGame', kind: 'red', wide: true }),
-        `<p class="card-sub center">Meuh ${VERSION} · fait avec amour, sans serveur ni compte : votre ferme reste sur votre appareil.</p>`,
+        `<p class="card-sub center">Meuh ${VERSION} · fait avec amour, sans serveur ni compte : votre ferme reste sur votre appareil.</p>`,
     ].join('');
 }
 
@@ -99,8 +99,8 @@ function importPage(o) {
         <div id="import-preview">${
             o.preview
                 ? o.preview.ok
-                    ? `<div class="line ok">${ico(['ui', 'check'])}<div><b>Sauvegarde valide</b><div class="card-sub">${o.preview.sum}</div></div></div>${btn('Remplacer ma ferme par celle-ci', { act: 'applyImport', kind: 'red', wide: true })}<p class="card-sub">Votre ferme actuelle est gardée en secours : vous pourrez revenir en arrière depuis les réglages.</p>`
-                    : '<div class="line bad"><div>Ce code n’est pas une sauvegarde de Meuh. Vérifiez qu’il a été copié en entier, du début « MEUH » jusqu’au dernier caractère.</div></div>'
+                    ? `<div class="line ok">${ico(['ui', 'check'])}<div><b>Sauvegarde valide</b><div class="card-sub">${o.preview.sum}</div></div></div>${btn('Remplacer ma ferme par celle-ci', { act: 'applyImport', kind: 'red', wide: true })}<p class="card-sub">Votre ferme actuelle est gardée en secours : vous pourrez revenir en arrière depuis les réglages.</p>`
+                    : '<div class="line bad"><div>Ce code n’est pas une sauvegarde de Meuh. Vérifiez qu’il a été copié en entier, du début « MEUH » jusqu’au dernier caractère.</div></div>'
                 : ''
         }</div>`;
 }
@@ -216,7 +216,7 @@ export function setupSettings() {
                 document.execCommand('copy');
                 t.setAttribute('readonly', '');
             }
-            toast('Code copié : collez-le où vous voulez le garder', ['ui', 'check']);
+            toast('Code copié : collez-le où vous voulez le garder', ['ui', 'check']);
         },
         shareExport: () => navigator.share({ title: 'Ma ferme dans Meuh', text: o().code }).catch(() => {}),
         downloadExport: () => {

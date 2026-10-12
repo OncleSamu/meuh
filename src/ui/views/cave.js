@@ -28,7 +28,7 @@ function gauge(kind, label, icon) {
 
 const oddsBar = o =>
     `<div class="odds"><span class="g" style="flex:${o.good + o.stay}"></span><span class="b" style="flex:${o.bad}"></span><span class="r" style="flex:${o.rot}"></span></div>
-     <div class="odds-txt"><span>${o.good ? `${Math.round(o.good * 100)} % mieux` : `${Math.round(o.stay * 100)} % stable`}</span><span>${Math.round(o.bad * 100)} % tourne</span><span>${Math.round(o.rot * 100)} % perdu</span></div>`;
+     <div class="odds-txt"><span>${o.good ? `${Math.round(o.good * 100)} % mieux` : `${Math.round(o.stay * 100)} % stable`}</span><span>${Math.round(o.bad * 100)} % tourne</span><span>${Math.round(o.rot * 100)} % perdu</span></div>`;
 
 defineLive('lot', i => {
     const lot = state.cave.slots[i];
@@ -49,14 +49,14 @@ function lotCard(lot, i) {
         <div class="cs-value">${fmt(G.lotValue(lot))}${COIN()}</div>
         ${
             lot.bad
-                ? '<div class="card-sub">Il ne vieillira plus : sortez-le.</div>'
+                ? '<div class="card-sub">Il ne vieillira plus : sortez-le.</div>'
                 : `<div class="cs-timer">${bar(0, '', `lot:${i}`)}${timer(lot.next)}</div>
-                   ${lot.tasted ? oddsBar(o) : `<div class="card-sub">${lot.rank >= 4 ? 'Légendaire : il ne gagnera plus rien' : need ? 'À soigner pour bien vieillir' : 'Goûtez-le pour connaître ses chances'}</div>`}`
+                   ${lot.tasted ? oddsBar(o) : `<div class="card-sub">${lot.rank >= 4 ? 'Légendaire : il ne gagnera plus rien' : need ? 'À soigner pour bien vieillir' : 'Goûtez-le pour connaître ses chances'}</div>`}`
         }
         <div class="cs-actions">
             ${need ? btn(fam.care, { act: 'careLot', data: { i }, kind: 'gold', size: 'sm', icon: ['ui', fam.careIcon] }) : ''}
             ${!lot.bad && lot.n >= 2 && !lot.tasted ? btn('Goûter', { act: 'tasteLot', data: { i }, size: 'sm', icon: ['ui', 'taste'] }) : ''}
-            ${bk && state.inventory[bk] > 0 && !lot.boost ? btn('+15 %', { act: 'boostLot', data: { i }, size: 'sm', icon: ['item', bk], title: ITEMS[bk].name }) : ''}
+            ${bk && state.inventory[bk] > 0 && !lot.boost ? btn('+15 %', { act: 'boostLot', data: { i }, size: 'sm', icon: ['item', bk], title: ITEMS[bk].name }) : ''}
             ${btn('Sortir', { act: 'takeOut', data: { i }, size: 'sm', kind: lot.bad || lot.rank >= 4 ? 'green' : '' })}
         </div>
         ${lot.boost ? `<span class="cs-boost">${ico(['item', bk || 'ferment'])}${lot.boost}</span>` : ''}
@@ -84,15 +84,15 @@ function reserveHtml() {
 const bidderIco = id => (id === 'you' ? ico(['ui', 'star']) : ico(['villager', id]));
 
 function lastSaleHtml(last) {
-    return `<div class="card auction-card done"><div class="card-head">${ico(['ui', 'gavel'], 'ico big')}<div class="card-main"><div class="card-title">${last.big ? 'La grande vente' : 'La vente'} : résultats</div></div></div>
+    return `<div class="card auction-card done"><div class="card-head">${ico(['ui', 'gavel'], 'ico big')}<div class="card-main"><div class="card-title">${last.big ? 'La grande vente' : 'La vente'} : résultats</div></div></div>
         <div class="list">${last.results
             .map(l =>
                 l.kind === 'sell'
-                    ? `<div class="auc-res${l.sold ? ' sold' : ''}">${ico(['item', l.lot.id])}<div class="card-main"><b>${ITEMS[l.lot.id].name} ×${l.lot.n}</b><small>${l.sold ? `Adjugé à ${G.bidderName(l.leader)}` : 'Invendu : revenu en réserve'}</small></div>${l.sold ? `<b class="gold">${fmt(l.price)}${COIN()}</b>` : ''}</div>`
-                    : `<div class="auc-res${l.won ? ' sold' : ''}">${ico(findIcon(l.find))}<div class="card-main"><b>${AUCTION_FINDS[l.find].name}</b><small>${l.won ? 'Pour vous !' : l.leader ? `Parti chez ${G.bidderName(l.leader)}` : 'Sans preneur'}</small></div>${l.won ? `<b>−${fmt(l.price)}${COIN()}</b>` : ''}</div>`,
+                    ? `<div class="auc-res${l.sold ? ' sold' : ''}">${ico(['item', l.lot.id])}<div class="card-main"><b>${ITEMS[l.lot.id].name} ×${l.lot.n}</b><small>${l.sold ? `Adjugé à ${G.bidderName(l.leader)}` : 'Invendu : revenu en réserve'}</small></div>${l.sold ? `<b class="gold">${fmt(l.price)}${COIN()}</b>` : ''}</div>`
+                    : `<div class="auc-res${l.won ? ' sold' : ''}">${ico(findIcon(l.find))}<div class="card-main"><b>${AUCTION_FINDS[l.find].name}</b><small>${l.won ? 'Pour vous !' : l.leader ? `Parti chez ${G.bidderName(l.leader)}` : 'Sans preneur'}</small></div>${l.won ? `<b>−${fmt(l.price)}${COIN()}</b>` : ''}</div>`,
             )
             .join('')}</div>
-        ${btn('Vu !', { act: 'dismissAuction', wide: true })}</div>`;
+        ${btn('Vu !', { act: 'dismissAuction', wide: true })}</div>`;
 }
 
 function liveLot(l, k) {
@@ -117,7 +117,7 @@ function saleHtml() {
     if (a.lots)
         return (
             html +
-            `<div class="card auction-card live"><div class="card-head">${ico(['ui', 'gavel'], 'ico big')}<div class="card-main"><div class="card-title">${title} : en direct</div><div class="card-sub">Les enchères montent… Une offre de dernière seconde prolonge la vente.</div></div></div>
+            `<div class="card auction-card live"><div class="card-head">${ico(['ui', 'gavel'], 'ico big')}<div class="card-main"><div class="card-title">${title} : en direct</div><div class="card-sub">Les enchères montent… Une offre de dernière seconde prolonge la vente.</div></div></div>
         <div class="list">${a.lots.map(liveLot).join('')}</div></div>`
         );
     html += `<div class="card auction-card"><div class="card-head">${ico(['ui', 'gavel'], 'ico big')}<div class="card-main"><div class="card-title">${title}</div>
@@ -132,9 +132,9 @@ function saleHtml() {
                 ${btn('', { act: 'withdraw', data: { uid: d.lot.uid }, size: 'sm', icon: ['ui', 'cross'], title: 'Retirer' })}</div>`,
                       )
                       .join('')}</div>`
-                : '<p class="card-sub">Sortez un lot de la cave, puis touchez « Aux enchères » dans la réserve.</p>'
+                : '<p class="card-sub">Sortez un lot de la cave, puis touchez « Aux enchères » dans la réserve.</p>'
         }
-        ${a.finds.length ? `<div class="card-sub"><b>Lots rares à cette vente :</b> ${a.finds.map(k => AUCTION_FINDS[k].name.toLowerCase()).join(', ')}</div>` : ''}
+        ${a.finds.length ? `<div class="card-sub"><b>Lots rares à cette vente :</b> ${a.finds.map(k => AUCTION_FINDS[k].name.toLowerCase()).join(', ')}</div>` : ''}
         <div class="bidders">${G.bidderPool(a.big)
             .slice(0, 8)
             .map(id => `<i class="ico" title="${BIDDERS[id].name}">${art('villager', id)}</i>`)
@@ -182,7 +182,7 @@ function renderCave(el) {
         [
             'clim',
             `<div class="card cave-clim"><div class="card-head">${ico(['ui', 'cave'], 'ico big')}<div class="card-main"><div class="card-title">La cave</div>
-            <div class="card-sub">Cote de la cave : <b>${Math.round(c.cote)}</b> / 100${G.climOk() ? '' : ' · le climat abîme vos lots'}</div></div>
+            <div class="card-sub">Cote de la cave : <b>${Math.round(c.cote)}</b> / 100${G.climOk() ? '' : ' · le climat abîme vos lots'}</div></div>
             ${needCare > 1 ? btn(`Tout soigner (${needCare})`, { act: 'careAll', kind: 'gold', size: 'sm' }) : ''}</div>
             ${gauge('temp', 'Température', 'thermo')}${gauge('hum', 'Humidité', 'hygro')}</div>`,
         ],
@@ -190,7 +190,7 @@ function renderCave(el) {
             'slots',
             `<div class="cave-grid">${c.slots.map(lotCard).join('')}${
                 nextShelf !== undefined
-                    ? `<button class="cave-slot locked" data-act="buyShelf"${state.money < nextShelf ? ' disabled' : ''}>${ico(['ui', 'shelf'])}<span>Étagère : +2 places</span><b>${fmt(nextShelf)}${COIN()}</b></button>`
+                    ? `<button class="cave-slot locked" data-act="buyShelf"${state.money < nextShelf ? ' disabled' : ''}>${ico(['ui', 'shelf'])}<span>Étagère : +2 places</span><b>${fmt(nextShelf)}${COIN()}</b></button>`
                     : ''
             }</div>`,
         ],
@@ -224,7 +224,7 @@ defineSheet('cavePut', {
             )
             .join('')}</div>
            <div class="stepper big">${btn('', { act: 'caveQty', data: { d: -1 }, icon: ['ui', 'minus'], disabled: o.n <= 1, title: 'Moins' })}<span><b>${o.n}</b> × ${ITEMS[o.id].name.toLowerCase()}</span>${btn('', { act: 'caveQty', data: { d: 1 }, icon: ['ui', 'plus'], disabled: o.n >= max, title: 'Plus' })}</div>
-           <p class="card-sub center">Une étape toutes les ${formatDuration(G.caveStep(o.id) / 1000)}. Valeur jeune : ${fmt(ITEMS[o.id].sell * o.n)}${COIN()}, légendaire : ${fmt(ITEMS[o.id].sell * o.n * CAVE_MULT[4])}${COIN()}</p>`;
+           <p class="card-sub center">Une étape toutes les ${formatDuration(G.caveStep(o.id) / 1000)}. Valeur jeune : ${fmt(ITEMS[o.id].sell * o.n)}${COIN()}, légendaire : ${fmt(ITEMS[o.id].sell * o.n * CAVE_MULT[4])}${COIN()}</p>`;
     },
     foot: o => (o.id ? btn('Mettre en cave', { act: 'putInCave', kind: 'green', wide: true, size: 'lg' }) : ''),
 });

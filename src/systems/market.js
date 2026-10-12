@@ -79,7 +79,7 @@ export function pickHot() {
     const pool = questPool().filter(i => i.sell);
     state.market.hot = pool.length ? pool[Math.floor(Math.random() * pool.length)].id : null;
     state.market.hotDay = state.day;
-    if (state.market.hot && view.started) toast(`Produit du jour au marché : ${ITEMS[state.market.hot].name.toLowerCase()} +50 %`, ['item', state.market.hot]);
+    if (state.market.hot && view.started) toast(`Produit du jour au marché : ${ITEMS[state.market.hot].name.toLowerCase()} +50 %`, ['item', state.market.hot]);
 }
 
 export function marketTick() {
@@ -124,7 +124,7 @@ export function toggleReserve() {
 
 function marketClosed() {
     if (!challengeOn('noMarket')) return false;
-    toast('Défi « Marché fermé » : livrez plutôt des commandes et des trains', ['ui', 'flag']);
+    toast('Défi « Marché fermé » : livrez plutôt des commandes et des trains', ['ui', 'flag']);
     sfx('error');
     return true;
 }
@@ -133,7 +133,7 @@ function marketClosed() {
 export function sellItem(id, qty, at) {
     if (marketClosed()) return false;
     if (isLocked(id)) {
-        toast(`${ITEMS[id].name} est verrouillé : déverrouillez-le dans la grange pour le vendre`, ['ui', 'lock']);
+        toast(`${ITEMS[id].name} est verrouillé : déverrouillez-le dans la grange pour le vendre`, ['ui', 'lock']);
         sfx('error');
         return false;
     }
@@ -193,7 +193,7 @@ export function undoSale() {
     if (!sl) return false;
     lastSale = null;
     if (state.money < sl.gain) {
-        toast('Cet argent a déjà été dépensé : impossible d’annuler', COIN);
+        toast('Cet argent a déjà été dépensé : impossible d’annuler', COIN);
         sfx('error');
         return false;
     }
@@ -214,7 +214,7 @@ export function undoSale() {
     if (eventActive()) state.event.goals.forEach(x => x.type === 'sell' && !x.claimed && (x.prog = Math.max(0, x.prog - sl.gain)));
     emit('undo', sl.gain);
     sfx('click');
-    toast('Vente annulée : les produits sont de retour dans la grange', ['ui', 'barn']);
+    toast('Vente annulée : les produits sont de retour dans la grange', ['ui', 'barn']);
     return true;
 }
 
@@ -230,7 +230,7 @@ export function matMissing(m) {
         .filter(([k, n]) => state.inventory[k] < n)
         .map(([k, n]) => `${n - state.inventory[k]} ${k === 'wood' ? 'bois' : 'pierre'}`);
     const where = Object.keys(m).some(k => k === 'stone' && state.inventory.stone < m.stone) ? 'cassez des rochers' : 'coupez des arbres';
-    return `Il manque ${miss.join(' et ')} : ${where} dans l’onglet Nature`;
+    return `Il manque ${miss.join(' et ')} : ${where} dans l’onglet Nature`;
 }
 
 // ---------------- le magasin ----------------
@@ -251,7 +251,7 @@ export function buy(type, id, qty = 1, at) {
     if (type === 'machine' && hasMachine(id)) return false;
     const total = d.cost * qty;
     if (type === 'animal' && challengeOn('noAnimals')) {
-        toast('Défi « Sans animaux » : pas d’animaux sur cette ferme', ['ui', 'flag']);
+        toast('Défi « Sans animaux » : pas d’animaux sur cette ferme', ['ui', 'flag']);
         sfx('error');
         return false;
     }
@@ -291,9 +291,9 @@ export function buy(type, id, qty = 1, at) {
     const to = type === 'animal' ? 'animals' : type === 'machine' ? 'machines' : 'farm';
     emit('flyIcon', { at, icon, to });
     if (type === 'animal') {
-        toast(`Bébé ${d.name.toLowerCase()} arrive au pâturage : dites bonjour à ${state.animals[state.animals.length - 1].name} !`, ['animal', id]);
+        toast(`Bébé ${d.name.toLowerCase()} arrive au pâturage : dites bonjour à ${state.animals[state.animals.length - 1].name} !`, ['animal', id]);
         sfx(id);
-    } else if (type === 'placedeco') toast(`${d.name} ajouté à votre barre d’outils : posez-le dans le champ`, ['ui', id]);
+    } else if (type === 'placedeco') toast(`${d.name} ajouté à votre barre d’outils : posez-le dans le champ`, ['ui', id]);
     else if (type === 'machine') {
         toast(`${d.name} installé(e) à l’atelier`, ['machine', id]);
         tip('machine');

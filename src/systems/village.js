@@ -31,11 +31,11 @@ export function heartReward(vid, h) {
 // les récompenses en lignes [icône, texte]
 export function rewardLines(r) {
     const lines = [];
-    if (r.recipe) lines.push([['item', r.recipe], `Recette apprise : ${ITEMS[r.recipe].name.toLowerCase()}`]);
+    if (r.recipe) lines.push([['item', r.recipe], `Recette apprise : ${ITEMS[r.recipe].name.toLowerCase()}`]);
     if (r.coins) lines.push([['ui', 'coin'], `${fmt(r.coins)} pièces`]);
     if (r.seeds) lines.push([['seed', r.seeds[0]], `${r.seeds[1]} ${ITEMS[r.seeds[0]].seedName.toLowerCase()}`]);
     if (r.feed) lines.push([['item', 'feed'], `${r.feed} sacs de nourriture`]);
-    if (r.best) lines.push([['ui', 'heart'], 'Meilleurs amis : ses commandes rapportent 25 % de plus']);
+    if (r.best) lines.push([['ui', 'heart'], 'Meilleurs amis : ses commandes rapportent 25 % de plus']);
     return lines;
 }
 
@@ -44,7 +44,7 @@ export function nextRewardText(vid) {
     if (h >= 5) return 'Meilleurs amis pour la vie.';
     const r = heartReward(vid, h + 1);
     return (
-        `Au cœur ${h + 1} : ` +
+        `Au cœur ${h + 1} : ` +
         rewardLines(r)
             .map(l => l[1].toLowerCase())
             .join(', ') +
@@ -93,6 +93,6 @@ export function giveGift(vid, id, at) {
     buzz(15);
     burst(at, 'sparkle', 10);
     addFriendship(vid, pts, at);
-    toast(`${VILLAGERS[vid].name} adore ce cadeau !`, ['ui', 'heart']);
+    toast(`${VILLAGERS[vid].name} adore ce cadeau !`, ['ui', 'heart']);
     return true;
 }

@@ -90,47 +90,47 @@ export function unlocksAt(lvl) {
     const add = (icon, name) => list.push({ icon, name });
     Object.values(ITEMS).forEach(x => {
         if (x.reqLvl !== lvl || x.exotic) return;
-        if (x.type === 'crop' || x.type === 'tree') add(['seed', x.id], x.seedName + (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : ''));
+        if (x.type === 'crop' || x.type === 'tree') add(['seed', x.id], x.seedName + (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : ''));
         else add(['item', x.id], `${x.name} (au magasin)`);
     });
     Object.values(ANIMALS).forEach(x => x.reqLvl === lvl && add(['animal', x.id], x.name));
     Object.values(MACHINES).forEach(
-        x => x.reqLvl === lvl && add(['machine', x.id], x.name + (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : '')),
+        x => x.reqLvl === lvl && add(['machine', x.id], x.name + (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : '')),
     );
     const recs = Object.values(RECIPES).filter(r => r.lvl === lvl && !r.teacher && r.lvl > MACHINES[r.machine].reqLvl);
     if (recs.length)
         add(
             ['item', recs[0].id],
-            `${recs.length} nouvelle${recs.length > 1 ? 's' : ''} recette${recs.length > 1 ? 's' : ''} : ${recs.map(r => ITEMS[r.id].name.toLowerCase()).join(', ')}`,
+            `${recs.length} nouvelle${recs.length > 1 ? 's' : ''} recette${recs.length > 1 ? 's' : ''} : ${recs.map(r => ITEMS[r.id].name.toLowerCase()).join(', ')}`,
         );
-    Object.values(DECOS).forEach(x => x.reqLvl === lvl && !x.rare && add(['ui', x.id], `Décoration : ${x.name.toLowerCase()}`));
+    Object.values(DECOS).forEach(x => x.reqLvl === lvl && !x.rare && add(['ui', x.id], `Décoration : ${x.name.toLowerCase()}`));
     CHAPTERS.forEach(c => {
         if (c.lvl === lvl && c.n > 1)
             add(
                 ['ui', 'village'],
-                `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage', domaine: 'Domaine' }[c.map] || 'Village'} : chapitre ${c.n}, « ${c.name} » (après le chapitre ${c.n - 1})`,
+                `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage', domaine: 'Domaine' }[c.map] || 'Village'} : chapitre ${c.n}, « ${c.name} » (après le chapitre ${c.n - 1})`,
             );
     });
     Object.values(UPGRADES).forEach(u => u.reqLvl === lvl && add(['ui', u.id], `${u.name} (au magasin)`));
-    if (lvl === CAVE_LVL) add(['ui', 'cave'], 'La cave : affinez fromages et cidres, et vendez-les aux enchères (onglet Atelier, puis Cave)');
-    if (lvl === CHAPTERS[0].lvl) add(['ui', 'village'], 'Rénovez le village : premier chapitre (onglet Village)');
-    if (lvl === INCIDENT_LVL) add(['ui', 'pest'], 'Des imprévus surviennent à la ferme : réagissez vite !');
+    if (lvl === CAVE_LVL) add(['ui', 'cave'], 'La cave : affinez fromages et cidres, et vendez-les aux enchères (onglet Atelier, puis Cave)');
+    if (lvl === CHAPTERS[0].lvl) add(['ui', 'village'], 'Rénovez le village : premier chapitre (onglet Village)');
+    if (lvl === INCIDENT_LVL) add(['ui', 'pest'], 'Des imprévus surviennent à la ferme : réagissez vite !');
     if (lvl === DOG.reqLvl) add(['ui', 'dog'], 'Un chien de ferme à adopter');
-    if (lvl === NATURE.forest.lvl) add(['item', 'wood'], 'La forêt : coupez du bois (Ferme | Nature)');
-    if (lvl === NATURE.mine.lvl) add(['item', 'stone'], 'La mine : cassez des rochers (Ferme | Nature)');
-    if (lvl === NATURE.pond.lvl) add(['ui', 'rod'], 'L’étang : allez pêcher (Ferme | Nature)');
+    if (lvl === NATURE.forest.lvl) add(['item', 'wood'], 'La forêt : coupez du bois (Ferme | Nature)');
+    if (lvl === NATURE.mine.lvl) add(['item', 'stone'], 'La mine : cassez des rochers (Ferme | Nature)');
+    if (lvl === NATURE.pond.lvl) add(['ui', 'rod'], 'L’étang : allez pêcher (Ferme | Nature)');
     if (lvl === GH.lvl) add(['ui', 'greenhouse'], 'Serre (à construire dans la ferme)');
-    if (lvl === CONTRACT_LVL) add(['ui', 'calendar'], 'Contrats de saison : une grosse livraison par saison, avec un ruban (onglet Village)');
-    if (lvl === RARE_EVENT_LVL) add(['ui', 'fair'], 'Événements rares : foire aux bestiaux, critique gastronomique, nuée de papillons');
-    if (lvl === STYLE_LVL) add(['item', 'brush'], 'Personnalisation : clôture, allées, toit et grange (touchez la maison)');
-    if (lvl === MASTERY_LVL) add(['ui', 'medalB'], 'Maîtrise des produits : produisez beaucoup pour gagner des étoiles (Livre de la ferme)');
-    HOUSE.forEach((h, k) => h.lvl === lvl && add(['ui', 'house'], `Maison de la ferme, niveau ${k} : ${h.bonus.toLowerCase()}`));
-    FARMHAND.forEach((h, k) => h && h.lvl === lvl && add(['villager', 'theo'], `Commis de ferme, niveau ${k} : ${h.plots} parcelles`));
+    if (lvl === CONTRACT_LVL) add(['ui', 'calendar'], 'Contrats de saison : une grosse livraison par saison, avec un ruban (onglet Village)');
+    if (lvl === RARE_EVENT_LVL) add(['ui', 'fair'], 'Événements rares : foire aux bestiaux, critique gastronomique, nuée de papillons');
+    if (lvl === STYLE_LVL) add(['item', 'brush'], 'Personnalisation : clôture, allées, toit et grange (touchez la maison)');
+    if (lvl === MASTERY_LVL) add(['ui', 'medalB'], 'Maîtrise des produits : produisez beaucoup pour gagner des étoiles (Livre de la ferme)');
+    HOUSE.forEach((h, k) => h.lvl === lvl && add(['ui', 'house'], `Maison de la ferme, niveau ${k} : ${h.bonus.toLowerCase()}`));
+    FARMHAND.forEach((h, k) => h && h.lvl === lvl && add(['villager', 'theo'], `Commis de ferme, niveau ${k} : ${h.plots} parcelles`));
     LEAGUES.forEach(g => {
-        if (g.lvl === lvl && g.lvl > CONTEST_LVL) add(['ui', 'podium'], `Concours : la ligue ${g.name.toLowerCase()} est ouverte (gagnez pour y monter)`);
+        if (g.lvl === lvl && g.lvl > CONTEST_LVL) add(['ui', 'podium'], `Concours : la ligue ${g.name.toLowerCase()} est ouverte (gagnez pour y monter)`);
     });
     if (lvl === MAX_LEVEL) {
-        add(['ui', 'star'], 'Niveau maximum : l’expérience vous rapporte désormais des étoiles de renommée');
+        add(['ui', 'star'], 'Niveau maximum : l’expérience vous rapporte désormais des étoiles de renommée');
         add(['ui', 'goldCow'], 'Visez le titre de Ferme légendaire (Livre de la ferme)');
     }
     return list;
@@ -203,7 +203,7 @@ export function claimAchievement(id, at) {
         state.prestige.rubans++;
         float(at, ['+1', ['ui', 'ribbon']], '', -50);
     }
-    toast(`Succès « ${a.name} » : médaille ${['de bronze', 'd’argent', 'd’or'][tier]} !`, ['ui', MEDALS[tier]]);
+    toast(`Succès « ${a.name} » : médaille ${['de bronze', 'd’argent', 'd’or'][tier]} !`, ['ui', MEDALS[tier]]);
     return true;
 }
 
@@ -228,7 +228,7 @@ export const skillDesc = (sk, r) => fill(sk.desc, 0, r * (sk.per || 0));
 
 export function skillReq(b, k) {
     const sk = SKILLS[b].list[k];
-    if (k > 0 && rank(SKILLS[b].list[k - 1].id) < 1) return `Apprenez d’abord « ${SKILLS[b].list[k - 1].name} »`;
+    if (k > 0 && rank(SKILLS[b].list[k - 1].id) < 1) return `Apprenez d’abord « ${SKILLS[b].list[k - 1].name} »`;
     if (sk.cap && branchSpent(b) < CAP_REQ) return `Placez ${CAP_REQ} points en ${SKILLS[b].name.toLowerCase()} pour le débloquer`;
     return null;
 }
@@ -255,6 +255,6 @@ export function respecSkills() {
     spend(cost);
     state.skills = {};
     sfx('buy');
-    toast('Points de compétence rendus : replacez-les comme vous voulez', ['ui', 'skillbook']);
+    toast('Points de compétence rendus : replacez-les comme vous voulez', ['ui', 'skillbook']);
     return true;
 }

@@ -29,7 +29,7 @@ export const ACHIEVEMENTS = [
     { id: 'chopped', name: 'Bûcheron', desc: 'Abattre {n} arbres', icon: ['item', 'wood'], tiers: [20, 200, 1000] },
     { id: 'caveLots', name: 'Maître de chai', desc: 'Sortir {n} lots de la cave', icon: ['ui', 'cave'], tiers: [3, 25, 120] },
     { id: 'caveLegend', name: 'Légende de la cave', desc: 'Affiner {n} lot{s} jusqu’au rang légendaire', icon: ['ui', 'star'], tiers: [1, 5, 20] },
-    { id: 'auctionSold', name: 'Adjugé, vendu !', desc: 'Vendre {n} lots aux enchères', icon: ['ui', 'gavel'], tiers: [2, 20, 80] },
+    { id: 'auctionSold', name: 'Adjugé, vendu !', desc: 'Vendre {n} lots aux enchères', icon: ['ui', 'gavel'], tiers: [2, 20, 80] },
 ];
 
 // ---------------- Compétences ----------------
@@ -39,19 +39,19 @@ export const SKILLS = {
         name: 'Agriculture',
         icon: ['item', 'wheat'],
         list: [
-            { id: 'green', name: 'Main verte', max: 3, icon: ['item', 'carrot'], desc: 'Les cultures poussent {x} % plus vite', per: 5 },
-            { id: 'bounty', name: 'Récolte généreuse', max: 3, icon: ['ui', 'basket'], desc: '+{x} % de chances de double récolte', per: 4 },
-            { id: 'expert', name: "Œil d'expert", max: 2, icon: ['star', 2], desc: '+{x} % de chances de qualité argent ou or', per: 5 },
-            { id: 'midas', name: "Toucher d'or", max: 1, cap: true, icon: ['ui', 'star'], desc: 'Les récoltes dorées sont 60 % plus fréquentes' },
+            { id: 'green', name: 'Main verte', max: 3, icon: ['item', 'carrot'], desc: 'Les cultures poussent {x} % plus vite', per: 5 },
+            { id: 'bounty', name: 'Récolte généreuse', max: 3, icon: ['ui', 'basket'], desc: '+{x} % de chances de double récolte', per: 4 },
+            { id: 'expert', name: "Œil d'expert", max: 2, icon: ['star', 2], desc: '+{x} % de chances de qualité argent ou or', per: 5 },
+            { id: 'midas', name: "Toucher d'or", max: 1, cap: true, icon: ['ui', 'star'], desc: 'Les récoltes dorées sont 60 % plus fréquentes' },
         ],
     },
     elev: {
         name: 'Élevage',
         icon: ['animal', 'cow'],
         list: [
-            { id: 'fed', name: 'Bien nourris', max: 3, icon: ['item', 'feed'], desc: 'Les animaux produisent {x} % plus vite', per: 8 },
+            { id: 'fed', name: 'Bien nourris', max: 3, icon: ['item', 'feed'], desc: 'Les animaux produisent {x} % plus vite', per: 8 },
             { id: 'trough', name: 'Grande mangeoire', max: 2, icon: ['animal', 'pig'], desc: 'La mangeoire contient {x} repas de plus', per: 2 },
-            { id: 'pasture', name: 'Pâturage fertile', max: 3, icon: ['item', 'egg'], desc: '+{x} % de chances de double production', per: 5 },
+            { id: 'pasture', name: 'Pâturage fertile', max: 3, icon: ['item', 'egg'], desc: '+{x} % de chances de double production', per: 5 },
             { id: 'nursery', name: 'Pouponnière', max: 1, cap: true, icon: ['ui', 'chick'], desc: 'Les bébés animaux grandissent deux fois plus vite' },
         ],
     },
@@ -59,9 +59,9 @@ export const SKILLS = {
         name: 'Commerce',
         icon: ['ui', 'coin'],
         list: [
-            { id: 'gab', name: 'Bagou', max: 3, icon: ['ui', 'price'], desc: 'Tout se vend {x} % plus cher', per: 4 },
-            { id: 'loyal', name: 'Client fidèle', max: 2, icon: ['ui', 'heart'], desc: 'Les commandes du village rapportent {x} % de plus', per: 10 },
-            { id: 'logistics', name: 'Logisticien', max: 2, icon: ['ui', 'trainIcon'], desc: 'Les trains paient {x} % de plus', per: 10 },
+            { id: 'gab', name: 'Bagou', max: 3, icon: ['ui', 'price'], desc: 'Tout se vend {x} % plus cher', per: 4 },
+            { id: 'loyal', name: 'Client fidèle', max: 2, icon: ['ui', 'heart'], desc: 'Les commandes du village rapportent {x} % de plus', per: 10 },
+            { id: 'logistics', name: 'Logisticien', max: 2, icon: ['ui', 'trainIcon'], desc: 'Les trains paient {x} % de plus', per: 10 },
             {
                 id: 'trader',
                 name: 'Marchand avisé',
@@ -79,7 +79,7 @@ export const CHALLENGES = {
     noAnimals: { name: 'Sans animaux', desc: "Impossible d'acheter des animaux", icon: ['animal', 'chicken'] },
     winter: { name: 'Hiver éternel', desc: "La saison reste bloquée sur l'hiver", icon: ['ui', 's_winter'] },
     smallField: { name: 'Petit lopin', desc: 'Le champ ne dépasse pas 12 parcelles', icon: ['ui', 'lock'] },
-    noMarket: { name: 'Marché fermé', desc: 'Pas de vente au marché : seuls les commandes et les trains rapportent', icon: ['ui', 'crate'] },
+    noMarket: { name: 'Marché fermé', desc: 'Pas de vente au marché : seuls les commandes et les trains rapportent', icon: ['ui', 'crate'] },
 };
 
 // ---------------- Poissons de l'étang ----------------

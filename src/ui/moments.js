@@ -24,7 +24,7 @@ const BUILD = {
     level: l => {
         const un = G.unlocksAt(l);
         return {
-            html: `${burst(['ui', 'star'], l)}<h2>Niveau ${l} !</h2><p>${un.length ? 'Nouveautés débloquées :' : 'Votre ferme grandit. Continuez comme ça !'}</p>${lines(un.map(u => [u.icon, u.name]))}`,
+            html: `${burst(['ui', 'star'], l)}<h2>Niveau ${l} !</h2><p>${un.length ? 'Nouveautés débloquées :' : 'Votre ferme grandit. Continuez comme ça !'}</p>${lines(un.map(u => [u.icon, u.name]))}`,
             ok: 'Continuer',
             party: true,
         };
@@ -37,16 +37,16 @@ const BUILD = {
     friend: ({ vid, h, r }) => {
         const v = VILLAGERS[vid];
         return {
-            html: `<div class="moment-avatar">${art('villager', vid)}</div><h2>${h === 5 ? `${v.name} vous adore !` : `${v.name} vous apprécie`}</h2><div class="hearts-big">${hearts(h)}</div>${lines(G.rewardLines(r))}`,
-            ok: 'Merci !',
+            html: `<div class="moment-avatar">${art('villager', vid)}</div><h2>${h === 5 ? `${v.name} vous adore !` : `${v.name} vous apprécie`}</h2><div class="hearts-big">${hearts(h)}</div>${lines(G.rewardLines(r))}`,
+            ok: 'Merci !',
             party: true,
         };
     },
     story: ({ pid, next }) => {
         const p = PROJECTS[pid];
         return {
-            html: `<div class="moment-building">${art('building', pid)}</div><h2>${p.name} : rénovation terminée !</h2>
-                <div class="speech"><div class="avatar sm">${art('villager', p.vid)}</div><p>« ${p.after} »</p></div>
+            html: `<div class="moment-building">${art('building', pid)}</div><h2>${p.name} : rénovation terminée !</h2>
+                <div class="speech"><div class="avatar sm">${art('villager', p.vid)}</div><p>« ${p.after} »</p></div>
                 ${lines([[['ui', 'star'], p.reward]])}${next ? `<p class="sub">${next}</p>` : ''}`,
             ok: 'Continuer',
             party: true,
@@ -57,16 +57,16 @@ const BUILD = {
         return {
             html: `<div class="moment-avatar">${art('villager', vid)}</div><h2>${S.title}</h2><div class="hearts-big">${hearts(5)}</div>
                 ${lines([
-                    [['villager', vid], `« ${S.end} »`],
+                    [['villager', vid], `« ${S.end} »`],
                     [['ui', 'coin'], `${fmt(coins)} pièces`],
                     [['ui', 'ribbon'], '1 ruban de concours'],
                 ])}`,
-            ok: 'Merci !',
+            ok: 'Merci !',
             party: true,
         };
     },
     contest: r => ({
-        html: `${burst(['ui', r.rank === 1 ? 'trophy' : 'podium'])}<h2>${r.rank === 1 ? 'Vous gagnez le concours !' : `Concours : ${r.rank}e place`}</h2>
+        html: `${burst(['ui', r.rank === 1 ? 'trophy' : 'podium'])}<h2>${r.rank === 1 ? 'Vous gagnez le concours !' : `Concours : ${r.rank}e place`}</h2>
             <p>Votre ferme a obtenu ${fmt(r.score)} points cette semaine.</p>
             ${lines([[['ui', 'coin'], `${fmt(r.coins)} pièces`], ...(r.rub ? [[['ui', 'ribbon'], '1 ruban de concours']] : []), ...(r.move ? [[['ui', 'podium'], r.move]] : [])])}`,
         ok: 'Continuer',
@@ -76,13 +76,13 @@ const BUILD = {
         const t = TIPS[id];
         return {
             html: `<div class="tip-head"><div class="avatar">${art('villager', 'odette')}</div><div class="tip-icon">${art(t.icon[0], t.icon[1])}</div></div><h2>${t.title}</h2><p>${t.text}</p>`,
-            ok: 'Compris !',
+            ok: 'Compris !',
             cls: 'tip',
         };
     },
     offline: r => ({
-        html: `<div class="moment-avatar">${art('ui', 'house')}</div><h2>Bon retour !</h2><p>Pendant votre absence (${formatDuration(r.elapsed)}) :</p>${lines(r.lines)}`,
-        ok: 'Au travail !',
+        html: `<div class="moment-avatar">${art('ui', 'house')}</div><h2>Bon retour !</h2><p>Pendant votre absence (${formatDuration(r.elapsed)}) :</p>${lines(r.lines)}`,
+        ok: 'Au travail !',
     }),
     daily: d => {
         const grid = DAILY_REWARDS.map((r, k) => {

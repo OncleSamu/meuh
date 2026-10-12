@@ -141,14 +141,14 @@ function gear() {
     let html = shopCard(
         art('item', 'feed'),
         'Nourriture',
-        `Un sac = une production animale. En stock : ${state.inventory.feed}`,
+        `Un sac = une production animale. En stock : ${state.inventory.feed}`,
         buyBtn('feed', 'feed', 1, f.cost) + buyBtn('feed', 'feed', 10, f.cost),
         false,
     );
     html += shopCard(
         art('item', 'fertilizer'),
         'Compost',
-        `Sur une culture qui pousse : bien meilleures chances de qualité argent ou or. En stock : ${state.inventory.fertilizer}`,
+        `Sur une culture qui pousse : bien meilleures chances de qualité argent ou or. En stock : ${state.inventory.fertilizer}`,
         buyBtn('compost', 'fertilizer', 1, cp.cost, cpLocked) + buyBtn('compost', 'fertilizer', 10, cp.cost, cpLocked),
         cpLocked,
         cp.reqLvl,
@@ -197,7 +197,7 @@ function decos() {
         owned = state.dog.owned;
     const dog = shopCard(
         art('ui', 'dog'),
-        `Chien de ferme${owned ? ` : ${esc(state.dog.name)}` : ''}`,
+        `Chien de ferme${owned ? ` : ${esc(state.dog.name)}` : ''}`,
         'Chasse les corbeaux, rapporte des trouvailles et adore les caresses',
         owned
             ? `<span class="chip ok">${ico(['ui', 'check'])}Adopté</span>`
@@ -237,7 +237,7 @@ function stallCard() {
     const sold = G.stallSoldCount();
     const later = G.STALL_LEVELS.filter(l => state.level < l);
     return `<div class="card stall-card">
-        <div class="card-head">${ico(['ui', 'stall'], 'ico big')}<div class="card-main"><div class="card-title">L’étal de la ferme</div><div class="card-sub">Vous choisissez le prix : les passants achètent, mais il faut attendre qu’ils viennent.</div></div>
+        <div class="card-head">${ico(['ui', 'stall'], 'ico big')}<div class="card-main"><div class="card-title">L’étal de la ferme</div><div class="card-sub">Vous choisissez le prix : les passants achètent, mais il faut attendre qu’ils viennent.</div></div>
         ${sold ? btn('Tout encaisser', { act: 'collectStalls', kind: 'gold', size: 'sm' }) : ''}</div>
         <div class="stall-slots">${slots
             .map((sl, k) => {
@@ -257,19 +257,19 @@ function banners() {
     if (G.challengeOn('noMarket'))
         html += card({
             icon: ['ui', 'flag'],
-            title: 'Défi « Marché fermé »',
-            sub: 'Le grossiste n’achète rien sur cette ferme : livrez des commandes et des trains.',
+            title: 'Défi « Marché fermé »',
+            sub: 'Le grossiste n’achète rien sur cette ferme : livrez des commandes et des trains.',
             cls: 'banner',
         });
     if (hot)
         html += card({
             icon: ['item', hot],
-            title: `Produit du jour : ${ITEMS[hot].name}`,
-            sub: `Vendu 50 % plus cher aujourd’hui${state.inventory[hot] ? '' : ', mais vous n’en avez pas en stock'}.`,
+            title: `Produit du jour : ${ITEMS[hot].name}`,
+            sub: `Vendu 50 % plus cher aujourd’hui${state.inventory[hot] ? '' : ', mais vous n’en avez pas en stock'}.`,
             cls: 'banner hot',
         });
     if (G.eventActive('ete'))
-        html += card({ icon: ['ui', 's_summer'], title: 'Fête de l’été', sub: 'Toutes les ventes rapportent 25 % de plus.', cls: 'banner fair' });
+        html += card({ icon: ['ui', 's_summer'], title: 'Fête de l’été', sub: 'Toutes les ventes rapportent 25 % de plus.', cls: 'banner fair' });
     return html || null;
 }
 
@@ -287,10 +287,10 @@ function goodsGrid() {
             const keep = G.reservedQty(k),
                 all = G.sellBatch(k, n - keep, false),
                 one = G.sellBatch(k, 1, false);
-            const trend = f < 0.98 ? `<span class="trend">−${Math.round((1 - f) * 100)} %</span>` : '';
+            const trend = f < 0.98 ? `<span class="trend">−${Math.round((1 - f) * 100)} %</span>` : '';
             const qs = [q.g ? `<span class="qchip">${qStar(2)}${q.g}</span>` : '', q.s ? `<span class="qchip">${qStar(1)}${q.s}</span>` : ''].join('');
             return `<div class="goods${k === hot ? ' hot' : ''}" data-anchor="goods:${k}">
-                ${k === hot ? '<span class="hot-tag">+50 %</span>' : ''}
+                ${k === hot ? '<span class="hot-tag">+50 %</span>' : ''}
                 <span class="goods-art">${art('item', k)}</span>
                 <b class="goods-name">${it.name} <small>×${n}</small></b>
                 ${qs ? `<span class="qrow">${qs}</span>` : ''}
@@ -344,16 +344,16 @@ defineSheet('stall', {
         const list = G.stallChoices();
         const grid = list.length
             ? `<div class="barn-goods">${list.map(id => `<button class="bgood${o.id === id ? ' sel' : ''}" data-act="stallPick" data-id="${id}" title="${ITEMS[id].name}">${ico(['item', id])}<b>${G.sellableQty(id)}</b></button>`).join('')}</div>`
-            : empty('Rien à vendre : les produits gardés pour les commandes ou verrouillés ne sont pas proposés.');
+            : empty('Rien à vendre : les produits gardés pour les commandes ou verrouillés ne sont pas proposés.');
         if (!o.id || !list.includes(o.id)) return grid + (list.length ? '<p class="card-sub center">Choisissez un produit à mettre en vente.</p>' : '');
         const max = G.stallMax(o.id);
         o.qty = Math.max(1, Math.min(o.qty, max));
         const unit = G.stallUnit(o.id, o.ratio);
         const whole = G.unitPrice(o.id, 0);
         return `${grid}<div class="stall-form">
-            <div class="card-head">${ico(['item', o.id], 'ico big')}<div class="card-main"><div class="card-title">${ITEMS[o.id].name}</div><div class="card-sub">${G.sellableQty(o.id)} disponible${G.sellableQty(o.id) > 1 ? 's' : ''} · au grossiste : ${fmt(whole)} pièce${whole > 1 ? 's' : ''} l’unité</div></div></div>
+            <div class="card-head">${ico(['item', o.id], 'ico big')}<div class="card-main"><div class="card-title">${ITEMS[o.id].name}</div><div class="card-sub">${G.sellableQty(o.id)} disponible${G.sellableQty(o.id) > 1 ? 's' : ''} · au grossiste : ${fmt(whole)} pièce${whole > 1 ? 's' : ''} l’unité</div></div></div>
             <div class="form-row"><span>Quantité</span><div class="stepper">${btn('', { act: 'stallQty', data: { d: -1 }, size: 'sm', icon: ['ui', 'minus'], title: 'Moins' })}<b>${o.qty}</b>${btn('', { act: 'stallQty', data: { d: 1 }, size: 'sm', icon: ['ui', 'plus'], title: 'Plus' })}${btn('Max', { act: 'stallQty', data: { d: 99 }, size: 'sm' })}</div></div>
-            <div class="form-row"><span>Prix</span><input type="range" min="50" max="150" step="5" value="${Math.round(o.ratio * 100)}" data-input="stallPrice"><b id="stall-pct">${Math.round(o.ratio * 100)} %</b></div>
+            <div class="form-row"><span>Prix</span><input type="range" min="50" max="150" step="5" value="${Math.round(o.ratio * 100)}" data-input="stallPrice"><b id="stall-pct">${Math.round(o.ratio * 100)} %</b></div>
             <div class="stall-sum" id="stall-sum">${stallSum(o, unit)}</div>
         </div>`;
     },
@@ -387,7 +387,7 @@ export function setupMarket() {
         stallPrice: (el, d) => {
             const o = so();
             o.ratio = +d.value / 100;
-            document.getElementById('stall-pct').textContent = `${Math.round(o.ratio * 100)} %`;
+            document.getElementById('stall-pct').textContent = `${Math.round(o.ratio * 100)} %`;
             document.getElementById('stall-sum').innerHTML = stallSum(o, G.stallUnit(o.id, o.ratio));
             return QUIET;
         },

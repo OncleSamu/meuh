@@ -47,7 +47,7 @@ export function addMastery(id, qty) {
     earn(coins, null);
     if (!view.started) return;
     tip('mastery');
-    toast(`Maîtrise ${MASTERY_NAMES[after - 1]} : ${ITEMS[id].name} (+${fmt(coins)} pièces)`, ['ui', MEDALS[after - 1]]);
+    toast(`Maîtrise ${MASTERY_NAMES[after - 1]} : ${ITEMS[id].name} (+${fmt(coins)} pièces)`, ['ui', MEDALS[after - 1]]);
     sfx('golden');
 }
 
@@ -66,8 +66,8 @@ export function renownStar() {
     emit('celebrate', {
         icon: ['ui', 'star'],
         num: n,
-        title: `Renommée : ${n} étoile${n > 1 ? 's' : ''} !`,
-        sub: 'Votre ferme fait parler d’elle dans tout le canton :',
+        title: `Renommée : ${n} étoile${n > 1 ? 's' : ''} !`,
+        sub: 'Votre ferme fait parler d’elle dans tout le canton :',
         lines: [
             [['ui', 'coin'], `${fmt(coins)} pièces`],
             [['item', 'paint'], '3 planches, 3 clous et 3 pots de peinture'],
@@ -87,7 +87,7 @@ export function leagueAfterContest(place) {
         state.league = l + 1;
         state.stats.bestLeague = Math.max(state.stats.bestLeague || 0, state.league);
         tip('league');
-        return `Promotion en ligue ${leagueName(state.league).toLowerCase()} !`;
+        return `Promotion en ligue ${leagueName(state.league).toLowerCase()} !`;
     }
     if (place === RIVALS.length + 1 && l > 0) {
         state.league = l - 1;
@@ -121,8 +121,8 @@ export function claimLegend(at) {
     burst(at, 'sparkle', 30);
     emit('celebrate', {
         icon: ['ui', 'goldCow'],
-        title: 'Ferme légendaire !',
-        sub: 'Tout le canton vient admirer votre ferme. Vous recevez :',
+        title: 'Ferme légendaire !',
+        sub: 'Tout le canton vient admirer votre ferme. Vous recevez :',
         lines: [
             [['ui', 'goldCow'], 'La vache dorée, à poser dans le champ (+100 de charme)'],
             [['ui', 'ribbon'], '10 rubans de concours'],

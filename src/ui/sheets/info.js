@@ -48,8 +48,8 @@ defineSheet('stats', {
                 })
                 .join(
                     '',
-                )}</svg><p class="card-sub">${o.tip != null && d.perDay[o.tip] ? `Jour ${d.perDay[o.tip].day} : ${fmt(d.perDay[o.tip].v)} pièces` : 'Touchez une barre pour voir son montant.'}</p>`
-            : '<p class="card-sub">Pas encore de données : revenez après une journée de jeu.</p>';
+                )}</svg><p class="card-sub">${o.tip != null && d.perDay[o.tip] ? `Jour ${d.perDay[o.tip].day} : ${fmt(d.perDay[o.tip].v)} pièces` : 'Touchez une barre pour voir son montant.'}</p>`
+            : '<p class="card-sub">Pas encore de données : revenez après une journée de jeu.</p>';
         const tmax = d.top.length ? d.top[0][1] : 1;
         const top = d.top.length
             ? d.top
@@ -66,7 +66,7 @@ defineSheet('stats', {
         const src = d.sources
             .map(
                 ([l, v]) =>
-                    `<div class="hbar"><span class="hname wide">${l}</span><div class="htrack"><i style="width:${Math.max(v ? 2 : 0, (v / tot) * 100)}%"></i></div><span class="hval">${Math.round((v / tot) * 100)} %</span></div>`,
+                    `<div class="hbar"><span class="hname wide">${l}</span><div class="htrack"><i style="width:${Math.max(v ? 2 : 0, (v / tot) * 100)}%"></i></div><span class="hval">${Math.round((v / tot) * 100)} %</span></div>`,
             )
             .join('');
         const r = state.records || {};
@@ -82,7 +82,7 @@ defineSheet('stats', {
                 'src',
                 block(
                     'D’où viennent vos pièces',
-                    src + '<p class="card-sub">« Autres » regroupe les succès, cadeaux, trouvailles du chien, fêtes et contrats.</p>',
+                    src + '<p class="card-sub">« Autres » regroupe les succès, cadeaux, trouvailles du chien, fêtes et contrats.</p>',
                 ),
             ],
             ['rec', block('Records personnels', recs)],
@@ -106,7 +106,7 @@ const norm = sv => String(sv).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,
 function itemSource(id) {
     const it = ITEMS[id];
     if (it.type === 'crop' && it.needProject)
-        return `Graines au niveau ${it.reqLvl}, après « ${PROJECTS[it.needProject].name} »${it.ghOnly ? ', seulement dans la serre' : ''}`;
+        return `Graines au niveau ${it.reqLvl}, après « ${PROJECTS[it.needProject].name} »${it.ghOnly ? ', seulement dans la serre' : ''}`;
     if (it.type === 'crop') return it.exotic ? 'Graines chez le marchand ambulant' : `Champ, graines au niveau ${it.reqLvl}`;
     if (it.type === 'tree') return `Arbre fruitier au marché, niveau ${it.reqLvl}`;
     if (it.type === 'fish') return 'Pêche à l’étang';
@@ -122,7 +122,7 @@ function itemSource(id) {
             : r.teacher
               ? ` (recette de ${VILLAGERS[r.teacher].name}, ${r.hearts} cœur${r.hearts > 1 ? 's' : ''})`
               : ` (niveau ${r.lvl})`;
-        return `${MACHINES[r.machine].name}${lock} : ${how}`;
+        return `${MACHINES[r.machine].name}${lock} : ${how}`;
     }
     const a = Object.values(ANIMALS).find(x => x.prodId === id);
     if (a) return `${a.name}, niveau ${a.reqLvl}`;
@@ -152,8 +152,8 @@ function itemCard(id) {
         src = itemSource(id);
     return `<div class="card guide-item">${ico(['item', id], 'ico big')}<div class="card-main">
         <div class="card-title">${it.name}${G.masteryCount(id) ? ` <small>${'★'.repeat(G.masteryStars(id))}</small>` : ''}</div>
-        <div class="card-sub">En stock : <b>${fmt(state.inventory[id] || 0)}</b>${it.sell ? ` · vaut ${fmt(Math.round(it.sell * G.masteryMult(id)))} pièces` : ''}</div>
-        ${src ? `<div class="card-sub">${src}</div>` : ''}${demand.length ? `<div class="card-sub want">Demandé par : ${demand.join(', ')}</div>` : ''}</div>
+        <div class="card-sub">En stock : <b>${fmt(state.inventory[id] || 0)}</b>${it.sell ? ` · vaut ${fmt(Math.round(it.sell * G.masteryMult(id)))} pièces` : ''}</div>
+        ${src ? `<div class="card-sub">${src}</div>` : ''}${demand.length ? `<div class="card-sub want">Demandé par : ${demand.join(', ')}</div>` : ''}</div>
         ${btn('Produire', { act: 'produce', data: { id }, size: 'sm' })}</div>`;
 }
 
@@ -184,7 +184,7 @@ function guideResults(q) {
     return (
         (items.length ? `<div class="set-title">Produits</div>${items.map(itemCard).join('')}` : '') +
         (pages.length ? `<div class="set-title">Guide</div>${pages.map(guidePage).join('')}` : '') +
-        (!items.length && !pages.length ? empty('Rien trouvé. Essayez « fromage », « grange » ou « concours ».') : '')
+        (!items.length && !pages.length ? empty('Rien trouvé. Essayez « fromage », « grange » ou « concours ».') : '')
     );
 }
 
@@ -312,7 +312,7 @@ export function setupInfo() {
         },
         sharePhoto: () => {
             const ph = (state.album || [])[+sheetOpts('photo').k];
-            if (ph) shareSvg(photoSvg(ph), 600, 700, 'meuh-souvenir.png', `Meuh : ${ph.title}`, 'Photo enregistrée dans vos téléchargements');
+            if (ph) shareSvg(photoSvg(ph), 600, 700, 'meuh-souvenir.png', `Meuh : ${ph.title}`, 'Photo enregistrée dans vos téléchargements');
         },
         sendPostcard: () => {
             const p = postcardSvg();

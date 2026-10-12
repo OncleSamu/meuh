@@ -18,7 +18,7 @@ const VIEW_NAMES = { 'farm/field': 'Ferme', 'market/sell': 'Marché', 'village/o
 let base = null;
 
 const STEPS = [
-    { text: 'Bienvenue à la ferme ! Je suis Mamie Odette. Je te montre l’essentiel, ça prend une minute.', btn: 'C’est parti !' },
+    { text: 'Bienvenue à la ferme ! Je suis Mamie Odette. Je te montre l’essentiel, ça prend une minute.', btn: 'C’est parti !' },
     {
         view: 'farm/field',
         text: 'Avec la main, touche une parcelle d’herbe pour la labourer.',
@@ -28,19 +28,19 @@ const STEPS = [
     },
     {
         view: 'farm/field',
-        text: 'Bien ! Choisis maintenant les graines de blé : touche le sachet de graines dans la barre du bas.',
+        text: 'Bien ! Choisis maintenant les graines de blé : touche le sachet de graines dans la barre du bas.',
         target: () => document.querySelector('.sheet .seed[data-t="wheat"]') || document.querySelector('#toolbar .seeds-btn'),
         done: () => state.selectedTool === 'wheat' || state.grid.some(p => p.itemId),
     },
     {
         view: 'farm/field',
-        text: 'Touche la terre labourée pour semer. Astuce : garde le doigt appuyé et glisse sur plusieurs parcelles.',
+        text: 'Touche la terre labourée pour semer. Astuce : garde le doigt appuyé et glisse sur plusieurs parcelles.',
         target: () => plotWhere(p => p.terrain === 'plowed' && !p.itemId),
         done: () => state.grid.some(p => p.itemId),
     },
     {
         view: 'farm/field',
-        text: 'Une graine a besoin d’eau : touche-la pour l’arroser.',
+        text: 'Une graine a besoin d’eau : touche-la pour l’arroser.',
         target: () => plotWhere(p => p.itemId && !p.isWatered && !p.isReady),
         done: () => state.grid.some(p => p.itemId && (p.isWatered || p.isReady)),
     },
@@ -52,7 +52,7 @@ const STEPS = [
     },
     {
         view: 'farm/field',
-        text: 'C’est prêt ! Touche le blé pour le récolter.',
+        text: 'C’est prêt ! Touche le blé pour le récolter.',
         target: () => plotWhere(p => p.isReady),
         done: () => state.stats.harvested > base.harvested,
     },
@@ -64,14 +64,14 @@ const STEPS = [
         done: () => state.stats.earned > base.earned,
     },
     {
-        text: 'Dernière chose : les villageois passent des commandes bien payées. Va voir l’onglet Village.',
+        text: 'Dernière chose : les villageois passent des commandes bien payées. Va voir l’onglet Village.',
         target: () => tab('village'),
         done: () => currentPath().startsWith('village'),
     },
     {
         view: 'village/orders',
-        text: 'Le tableau des commandes rapporte bien plus que le marché : c’est là qu’on gagne sa vie ! Et dans le volet Village, aide les habitants à rénover leurs bâtiments. Attention, la grange a une place limitée. Amuse-toi bien !',
-        btn: 'Merci Mamie !',
+        text: 'Le tableau des commandes rapporte bien plus que le marché : c’est là qu’on gagne sa vie ! Et dans le volet Village, aide les habitants à rénover leurs bâtiments. Attention, la grange a une place limitée. Amuse-toi bien !',
+        btn: 'Merci Mamie !',
     },
 ];
 
@@ -103,7 +103,7 @@ function finish(reward) {
     if (reward) {
         state.seeds.wheat += 10;
         G.earn(100, document.querySelector('#tuto .tuto-bubble'));
-        toast('Cadeau de Mamie Odette : 100 pièces et 10 graines de blé', ['villager', 'odette']);
+        toast('Cadeau de Mamie Odette : 100 pièces et 10 graines de blé', ['villager', 'odette']);
         emit('sfx', 'level');
         confetti();
     }
@@ -133,7 +133,7 @@ export function tutoTick() {
         text = `Retourne dans l’onglet ${VIEW_NAMES[st.view]} pour continuer.`;
         if (currentPath().startsWith(st.view.split('/')[0])) {
             target = document.querySelector(`#subnav [data-v="${st.view.split('/')[1]}"]`);
-            if (target) text = `Touche « ${(target.querySelector('span') || target).textContent.trim()} » en haut pour continuer.`;
+            if (target) text = `Touche « ${(target.querySelector('span') || target).textContent.trim()} » en haut pour continuer.`;
         }
     } else if (st.target) target = st.target();
     const q = s => wrap.querySelector(s);

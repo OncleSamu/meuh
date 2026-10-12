@@ -75,12 +75,12 @@ export function tapAnimal(i, at) {
         d = ANIMALS[a.type];
     if (state.selectedTool === 'feed') {
         if (a.food >= maxFood()) {
-            float(at, ['Repu !'], '', -30);
+            float(at, ['Repu !'], '', -30);
             sfx('click');
             return;
         }
         if (state.inventory.feed <= 0) {
-            toast('Plus de nourriture : achetez-en au magasin', ['item', 'feed']);
+            toast('Plus de nourriture : achetez-en au magasin', ['item', 'feed']);
             sfx('error');
             return;
         }
@@ -134,7 +134,7 @@ export function feedAll(at) {
         emit('animalsFx', 'crumbs');
         toast(`${used} repas distribué${used > 1 ? 's' : ''}`, ['item', 'feed']);
     } else {
-        toast(state.inventory.feed <= 0 ? 'Plus de nourriture : achetez-en au magasin' : 'Toutes les mangeoires sont pleines', ['item', 'feed']);
+        toast(state.inventory.feed <= 0 ? 'Plus de nourriture : achetez-en au magasin' : 'Toutes les mangeoires sont pleines', ['item', 'feed']);
         squish(at);
     }
     return used;
@@ -194,7 +194,7 @@ export function feedOne(i, at) {
         return false;
     }
     if (state.inventory.feed <= 0) {
-        toast('Plus de nourriture : achetez-en au magasin ou au moulin', ['item', 'feed']);
+        toast('Plus de nourriture : achetez-en au magasin ou au moulin', ['item', 'feed']);
         sfx('error');
         return false;
     }
@@ -226,7 +226,7 @@ export function growTick(dt, quiet) {
             grew = true;
             if (!quiet) {
                 const f = a.type === 'chicken' || a.type === 'cow' ? 'e' : '';
-                toast(`${a.name} est devenu${f} grand${f} : place à la production !`, ['animal', a.type]);
+                toast(`${a.name} est devenu${f} grand${f} : place à la production !`, ['animal', a.type]);
                 sfx(a.type);
             }
         }

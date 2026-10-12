@@ -92,7 +92,7 @@ export function doPlotAction(i, action, at) {
         case 'decoInfo': {
             const d = DECOS[p.deco];
             float(at, [d.name], '', -24);
-            toast(`${d.name} : ${d.desc.toLowerCase()}. Reprenez-le avec la pelle.`, ['ui', p.deco]);
+            toast(`${d.name} : ${d.desc.toLowerCase()}. Reprenez-le avec la pelle.`, ['ui', p.deco]);
             sfx('click');
             return;
         }
@@ -233,7 +233,7 @@ export function plantSeed(plot, id) {
     } else {
         toast(
             d.exotic
-                ? `Plus de ${d.seedName.toLowerCase()} : seul le marchand ambulant en vend`
+                ? `Plus de ${d.seedName.toLowerCase()} : seul le marchand ambulant en vend`
                 : d.type === 'tree'
                   ? `Achetez un ${d.seedName.toLowerCase()} au magasin`
                   : 'Pas assez d’argent pour des graines',
@@ -260,9 +260,9 @@ export function goldenHarvest(item, at) {
     sfx('golden');
     buzz(40);
     burst(at, 'sparkle', 22);
-    float(at, ['Récolte dorée !'], 'gold', -46);
+    float(at, ['Récolte dorée !'], 'gold', -46);
     earn(sellPrice(item.id) * 10, at);
-    toast(`${item.name} doré${FEMININE.includes(item.id) ? 'e' : ''} : vendu dix fois son prix !`, ['ui', 'star']);
+    toast(`${item.name} doré${FEMININE.includes(item.id) ? 'e' : ''} : vendu dix fois son prix !`, ['ui', 'star']);
 }
 
 export function waterAll(at) {
@@ -332,7 +332,7 @@ export const getExpCost = () => Math.floor(GRID.expBaseCost * BALANCE.plotCost *
 export function buyExp(at) {
     const cost = getExpCost();
     if (challengeOn('smallField') && state.unlockedPlots >= 12) {
-        toast('Défi « Petit lopin » : le champ reste à 12 parcelles', ['ui', 'flag']);
+        toast('Défi « Petit lopin » : le champ reste à 12 parcelles', ['ui', 'flag']);
         sfx('error');
         return false;
     }
@@ -382,7 +382,7 @@ export function buildGreenhouse(at) {
     buzz(30);
     burst(at, 'sparkle', 18);
     float(at, [`-${fmt(GH.cost)}`, COIN], 'bad', -20);
-    toast('La serre est construite ! Plantez-y même en hiver', ['ui', 'greenhouse']);
+    toast('La serre est construite ! Plantez-y même en hiver', ['ui', 'greenhouse']);
     changed('farm');
     return true;
 }
@@ -531,7 +531,7 @@ export function autoReplant(plot, d) {
     else if (d.exotic) return;
     else if (state.money >= d.cost) spend(d.cost);
     else {
-        if (now() - replantWarned > 4000) toast(`Plus assez de pièces pour replanter : ${d.name.toLowerCase()}`, ['item', d.id]);
+        if (now() - replantWarned > 4000) toast(`Plus assez de pièces pour replanter : ${d.name.toLowerCase()}`, ['item', d.id]);
         replantWarned = now();
         return;
     }
@@ -543,7 +543,7 @@ export function autoReplant(plot, d) {
 export function applyCompost(i, at) {
     const p = getPlot(i);
     if (state.inventory.fertilizer <= 0) {
-        toast('Plus de compost : achetez-en au magasin', ['item', 'fertilizer']);
+        toast('Plus de compost : achetez-en au magasin', ['item', 'fertilizer']);
         sfx('error');
         return false;
     }

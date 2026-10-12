@@ -229,7 +229,7 @@ export function truckTick() {
     if (t.status === 'away' && n >= t.arriveAt) {
         makeTruck();
         if (t.status === 'here' && !view.hidden && view.started) {
-            toast('Le train de marchandises entre en gare !', ['ui', 'trainIcon']);
+            toast('Le train de marchandises entre en gare !', ['ui', 'trainIcon']);
             tip('train');
             sfx('horn');
         }
@@ -319,7 +319,7 @@ export function sendTruck(at) {
     t.status = 'away';
     t.slots = [];
     t.arriveAt = now() + trainAway();
-    toast('Train complet, le chef de gare vous félicite !', ['ui', 'trainIcon']);
+    toast('Train complet, le chef de gare vous félicite !', ['ui', 'trainIcon']);
     return true;
 }
 
@@ -350,7 +350,7 @@ export function balloonTick() {
             mats: [pickRand(RARE), pickRand(RARE)],
         });
         if (view.started && !view.hidden) {
-            toast('Une montgolfière se pose dans le pré !', ['ui', 'balloon']);
+            toast('Une montgolfière se pose dans le pré !', ['ui', 'balloon']);
             tip('balloon');
             sfx('level');
         }
@@ -378,7 +378,7 @@ export function sendBalloon(at) {
     state.income.orders += b.gold;
     emit('balloonLeaves');
     Object.assign(b, { status: 'away', items: [], arriveAt: now() + BALLOON_AWAY });
-    toast('La montgolfière s’envole, chargée de vos produits !', ['ui', 'balloon']);
+    toast('La montgolfière s’envole, chargée de vos produits !', ['ui', 'balloon']);
     return true;
 }
 

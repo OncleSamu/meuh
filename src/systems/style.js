@@ -32,7 +32,7 @@ export function pickStyle(k, v, at) {
         spend(cost);
         state.style.owned[k + ':' + v] = true;
         burst(at, 'sparkle', 12);
-        toast(`Nouveau style : ${list[idx][1].toLowerCase()} (+${STYLE_CHARM} de charme au concours)`, ['item', 'brush']);
+        toast(`Nouveau style : ${list[idx][1].toLowerCase()} (+${STYLE_CHARM} de charme au concours)`, ['item', 'brush']);
         sfx('buy');
     } else sfx('click');
     state.style[k] = v;
@@ -45,7 +45,7 @@ export function addPhoto(kind, id, title, sub) {
     state.album.unshift({ kind, id, title, sub: sub || '', day: state.day, season: season().id, at: now(), lvl: state.level });
     if (state.album.length > ALBUM_MAX) state.album.length = ALBUM_MAX;
     if (!view.started) return;
-    toast(`Nouvelle photo dans l’album : ${title}`, ['ui', 'camera']);
+    toast(`Nouvelle photo dans l’album : ${title}`, ['ui', 'camera']);
     tip('album');
 }
 
@@ -61,9 +61,9 @@ export function reminders() {
     if (state.truck.status === 'here') out.push(['train:' + state.truck.expiresAt, 'Le train de marchandises est en gare.']);
     if (state.balloon.status === 'here') out.push(['balloon:' + state.balloon.expiresAt, 'Une montgolfière attend dans le pré.']);
     if (state.machines.length && state.machines.every(m => !machineBusy(m)) && state.machines.some(m => outCount(m)))
-        out.push(['machines', 'Vos machines ont fini : l’atelier attend.']);
+        out.push(['machines', 'Vos machines ont fini : l’atelier attend.']);
     const sold = state.stall.slots.filter(sl => sl && sl.sold).length;
-    if (sold && sold === state.stall.slots.filter(Boolean).length) out.push(['stall', 'Tout est vendu à l’étal : venez encaisser.']);
+    if (sold && sold === state.stall.slots.filter(Boolean).length) out.push(['stall', 'Tout est vendu à l’étal : venez encaisser.']);
     if (state.merchant.status === 'here') out.push(['merchant:' + state.merchant.expiresAt, 'Zéphyr, le marchand ambulant, est au village.']);
     return out;
 }

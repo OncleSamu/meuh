@@ -66,7 +66,7 @@ export function ensureHoliday() {
     if (state.holiday && state.holiday.id === id && state.holiday.year === y) return false;
     state.holiday = { id, year: y, given: {}, done: false };
     if (view.started) {
-        toast(`C’est ${HOLIDAYS[id].name} à la ferme !`, HOLIDAYS[id].icon);
+        toast(`C’est ${HOLIDAYS[id].name} à la ferme !`, HOLIDAYS[id].icon);
         tip('holiday');
     }
     return true;
@@ -98,7 +98,7 @@ export function giveHoliday(at) {
         RARE.forEach(id => (state.inventory[id] += 2));
         sfx('level');
         burst(at, 'sparkle', 20);
-        toast(`${h.name} : panier complet ! ${DECOS[h.deco].name} à poser dans le champ`, ['ui', h.deco]);
+        toast(`${h.name} : panier complet ! ${DECOS[h.deco].name} à poser dans le champ`, ['ui', h.deco]);
         addPhoto('ui', h.deco, `${h.name} ${state.holiday.year}`, 'Panier de fête rempli');
     }
     return true;

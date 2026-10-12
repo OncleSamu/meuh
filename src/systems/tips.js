@@ -16,7 +16,7 @@ export function tip(id) {
     emit('tip', id);
 }
 
-const signed = x => `${x >= 0 ? '+' : ''}${Math.round(x * 100)} %`;
+const signed = x => `${x >= 0 ? '+' : ''}${Math.round(x * 100)} %`;
 export const bonusValue = v => (typeof v === 'number' ? signed(v) : v);
 
 // [icône, nom, valeur, origine]
@@ -105,17 +105,17 @@ export function bonusLines() {
                 ['Commandes au tableau', extraOrders() ? `+${extraOrders()}` : 0],
                 ['File d’atelier', houseLvl() >= 3 ? '+1' : 0],
                 ['Places à l’étal', extraStall() ? `+${extraStall()}` : 0],
-                ['Commandes', houseLvl() >= 5 ? '+10 %' : 0],
-                ['Moulin et huilerie', projectDone('windmill') ? '+25 % de vitesse' : 0],
-                ['Train et montgolfière', projectDone('stud') ? '+15 %' : 0],
-                ['Concours', projectDone('bandstand') ? '+25 % de points' : 0],
+                ['Commandes', houseLvl() >= 5 ? '+10 %' : 0],
+                ['Moulin et huilerie', projectDone('windmill') ? '+25 % de vitesse' : 0],
+                ['Train et montgolfière', projectDone('stud') ? '+15 %' : 0],
+                ['Concours', projectDone('bandstand') ? '+25 % de points' : 0],
             ]),
         ],
         [
             ['ui', 'medalG'],
             'Produits maîtrisés en or',
             `${goldMasteries()}`,
-            'Chaque étoile de maîtrise : +5 % sur le prix du produit ; l’or le rend 15 % plus rapide.',
+            'Chaque étoile de maîtrise : +5 % sur le prix du produit ; l’or le rend 15 % plus rapide.',
         ],
     ];
 }

@@ -31,7 +31,7 @@ const ENTRIES = {
             hint: r.teacher
                 ? `Recette de ${VILLAGERS[r.teacher].name}`
                 : r.fete
-                  ? `Plat de fête : ${EVENTS[r.fete].name}`
+                  ? `Plat de fête : ${EVENTS[r.fete].name}`
                   : `${MACHINES[r.machine].name}, niveau ${r.lvl}`,
         })),
     treasure: () => TREASURES,
@@ -40,7 +40,7 @@ const ENTRIES = {
             key: 'cave_' + id,
             icon: ['item', id],
             name: ITEMS[id].name,
-            hint: `Sortez-en un lot au moins « ${CAVE_FAMILIES[CAVE_ITEMS[id]].ranks[3]} »`,
+            hint: `Sortez-en un lot au moins « ${CAVE_FAMILIES[CAVE_ITEMS[id]].ranks[3]} »`,
             star: true,
         })),
 };
@@ -54,7 +54,7 @@ export function collect(key, weight) {
         c.n++;
         if (weight && weight > (c.best || 0)) {
             c.best = weight;
-            if (view.started) toast(`Nouveau record : ${weight.toString().replace('.', ',')} kg !`, ['ui', 'trophy']);
+            if (view.started) toast(`Nouveau record : ${weight.toString().replace('.', ',')} kg !`, ['ui', 'trophy']);
         }
         return;
     }
@@ -65,7 +65,7 @@ export function collect(key, weight) {
     state.money += r;
     state.stats.earned += r;
     state.stats.earnedRun += r;
-    toast(`Nouveau dans le livre : ${e ? e.name : ''} (+${r} pièces)`, ['ui', 'book']);
+    toast(`Nouveau dans le livre : ${e ? e.name : ''} (+${r} pièces)`, ['ui', 'book']);
     sfx('pop');
 }
 
@@ -82,7 +82,7 @@ export function claimPage(id, at) {
     buzz(30);
     burst(at, 'sparkle', 18);
     emit('confetti');
-    toast(`Page « ${page.name} » complétée : +1 ruban de concours`, ['ui', 'ribbon']);
+    toast(`Page « ${page.name} » complétée : +1 ruban de concours`, ['ui', 'ribbon']);
     return true;
 }
 
@@ -147,7 +147,7 @@ export function record(key, v) {
     if (v <= old) return false;
     state.records[key] = v;
     // pas de fanfare pour le tout premier record de chaque sorte
-    if (old && view.started && v >= old * 1.05) toast(`Nouveau record : ${RECORDS[key].name.toLowerCase()} !`, ['ui', 'trophy']);
+    if (old && view.started && v >= old * 1.05) toast(`Nouveau record : ${RECORDS[key].name.toLowerCase()} !`, ['ui', 'trophy']);
     return true;
 }
 
@@ -177,6 +177,6 @@ export function claimQuarter(k, at) {
     }
     sfx('level');
     burst(at, 'sparkle', 16);
-    toast(k === 3 ? 'Livre complet : le Livre d’or et 1 ruban !' : `Le livre est rempli à ${BOOK_QUARTERS[k] * 100} % !`, ['ui', 'book']);
+    toast(k === 3 ? 'Livre complet : le Livre d’or et 1 ruban !' : `Le livre est rempli à ${BOOK_QUARTERS[k] * 100} % !`, ['ui', 'book']);
     return true;
 }

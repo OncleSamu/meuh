@@ -19,7 +19,7 @@ export function todoList() {
     add('farm/field', ready.length ? ['item', ready[0][0].itemId] : null, `${ready.length} à récolter`, ready.length);
     const dry = state.grid.filter(p => p.isUnlocked && p.itemId && !p.isReady && !p.isWatered).length;
     if (!G.weather().waters) add('farm/field', ['ui', 'drop'], `${dry} à arroser`, dry);
-    if (state.egg) add('farm/field', ['item', 'paintedEgg'], 'Un œuf caché !');
+    if (state.egg) add('farm/field', ['item', 'paintedEgg'], 'Un œuf caché !');
     const honey = state.grid.reduce((a, p) => a + (p.deco === 'hive' ? Math.floor(p.honey || 0) : 0), 0);
     add('farm/field', ['item', 'honey'], `${honey} pot${s(honey)} de miel`, honey);
     if (state.dog.found) add('farm/field', ['ui', 'dog'], `${state.dog.name} a trouvé quelque chose`);
@@ -40,7 +40,7 @@ export function todoList() {
     );
     const idle = state.machines.filter(m => !G.machineBusy(m) && G.recipesOf(m.type).some(r => G.recipeUnlocked(r.id) && G.canCook(r.id))).length;
     add('machines/workshop', ['machine', 'mill'], `${idle} à l’arrêt`, idle);
-    if (G.holidayReady()) push('village/village', ['ui', HOLIDAYS[state.holiday.id].deco], `${HOLIDAYS[state.holiday.id].name} : panier à remplir`, 1);
+    if (G.holidayReady()) push('village/village', ['ui', HOLIDAYS[state.holiday.id].deco], `${HOLIDAYS[state.holiday.id].name} : panier à remplir`, 1);
     const bq = G.quartersClaimable();
     if (bq) push('sheet:book', ['ui', 'book'], 'Récompense du livre', bq);
     if (G.caveOpen()) {
@@ -49,7 +49,7 @@ export function todoList() {
         if (!G.climOk() && state.cave.slots.some(Boolean))
             push('machines/cave', ['ui', 'thermo'], 'Climat de la cave à régler', 1, { urgent: !!state.cave.gear.hygro });
         const a = state.cave.auction;
-        if (a && a.lots && !a.over) push('machines/cave', ['ui', 'gavel'], 'Enchères en direct !', 1, { urgent: true });
+        if (a && a.lots && !a.over) push('machines/cave', ['ui', 'gavel'], 'Enchères en direct !', 1, { urgent: true });
         const last = state.cave.lastSale;
         if (last && last.results.length && now() < last.until) push('machines/cave', ['ui', 'gavel'], 'Résultats de la vente', 1);
     }
@@ -85,7 +85,7 @@ export function todoList() {
     add('market/sell', ['ui', 'stall'], `${sold} vente${s(sold)} à encaisser`, sold);
     if (state.rare.type && G.rareActive(state.rare.type) && state.rare.type !== 'butterflies')
         push('village/village', ['ui', RARE_EVENTS[state.rare.type].icon], RARE_EVENTS[state.rare.type].name, 1, { urgent: true });
-    if (G.rareActive('butterflies')) list.unshift({ go: 'farm/field', icon: ['ui', 'butterfly'], text: 'Papillons : récoltes dorées !', n: 0 });
+    if (G.rareActive('butterflies')) list.unshift({ go: 'farm/field', icon: ['ui', 'butterfly'], text: 'Papillons : récoltes dorées !', n: 0 });
     if (state.boat.status === 'here') {
         const ok = G.hasAll(state.boat.items);
         push('village/orders', ['ui', 'boat'], ok ? 'Cargo prêt à charger' : 'Un cargo au port', ok ? 1 : 0);
@@ -104,7 +104,7 @@ export function todoList() {
     const ach = G.claimableCount();
     add('sheet:book', ['ui', 'trophy'], `${ach} succès à réclamer`, ach);
     add('sheet:book', ['ui', 'book'], 'Page du livre complète', G.bookClaimable());
-    if (G.legendReady()) add('sheet:book', ['ui', 'goldCow'], 'Ferme légendaire !');
+    if (G.legendReady()) add('sheet:book', ['ui', 'goldCow'], 'Ferme légendaire !');
     return list;
 }
 
