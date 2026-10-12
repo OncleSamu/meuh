@@ -1,17 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#7cc8f0">
-    <title>Meuh 2.2</title>
-    <link rel="manifest" href="manifest.webmanifest">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+        <meta name="theme-color" content="#7cc8f0" />
+        <title>Meuh 4.0</title>
+            <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-@property --sky-top {
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+        <style>
+            @property --sky-top {
     syntax: '<color>';
     inherits: true;
     initial-value: #7cc8f0;
@@ -330,6 +330,7 @@ button {
     transition: width 0.5s cubic-bezier(0.3, 1.4, 0.6, 1);
 }
 #ui-xp-text {
+    white-space: nowrap;
     position: absolute;
     inset: 0;
     display: flex;
@@ -6551,513 +6552,854 @@ body.calm #weather .flutter {
     animation: none;
 }
 
-    </style>
-</head>
-<body>
-    <!-- Décor -->
-    <div id="scene" aria-hidden="true">
-        <div id="stars"></div>
-        <div id="sun" class="orb"></div>
-        <div id="moon" class="orb"></div>
-        <div class="cloud c1"><span></span></div>
-        <div class="cloud c2"><span></span></div>
-        <div class="cloud c3"><span></span></div>
-        <svg id="hills" viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
-            <path class="h1" d="M0 90 C60 55 120 60 180 80 C240 100 300 50 400 70 L400 200 L0 200Z" fill="#a9dc84" stroke="#3a2618" stroke-width="2.5"/>
-            <g transform="translate(286 38) scale(.62)">
-                <path id="hill-barn" d="M8 58 L8 28 L32 10 L56 28 L56 58Z" fill="#c8453a" stroke="#3a2618" stroke-width="3.5" stroke-linejoin="round"/>
-                <path d="M4 30 L32 8 L60 30" fill="none" stroke="#f7f3ea" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                <rect x="22" y="36" width="20" height="22" fill="#f7f3ea" stroke="#3a2618" stroke-width="3"/>
-                <path d="M22 36 L42 58 M42 36 L22 58" stroke="#3a2618" stroke-width="2.5"/>
-            </g>
-            <g stroke="#3a2618" stroke-width="2.2">
-                <rect x="66" y="70" width="5" height="14" fill="#8b5a2b"/><circle class="tree-top" cx="68" cy="62" r="13" fill="#6cc04a"/>
-                <rect x="96" y="64" width="5" height="16" fill="#8b5a2b"/><circle class="tree-top" cx="98" cy="55" r="11" fill="#7fcf4c"/>
-            </g>
-            <path class="h2" d="M0 125 C80 95 150 105 220 120 C290 135 340 105 400 112 L400 200 L0 200Z" fill="#82c95a" stroke="#3a2618" stroke-width="2.5"/>
-            <path class="h3" d="M0 160 C90 140 200 150 260 158 C320 166 360 150 400 152 L400 200 L0 200Z" fill="#6cc04a" stroke="#3a2618" stroke-width="2.5"/>
-        </svg>
-    </div>
-    <div id="night"></div>
-    <div id="weather" aria-hidden="true"><div class="rain r1"></div><div class="rain r2"></div><div class="snow s1"></div><div class="snow s2"></div><div class="heat"></div><div class="rainbow"></div><div class="leaves"></div><div class="petals"></div><div class="flutter"></div></div>
-    <div id="flash" aria-hidden="true"></div>
+/* ================= Meuh 3.0 / 4.0 : le Port et l'Alpage ================= */
+#net-card[hidden] {
+    display: none;
+}
+.sea {
+    position: relative;
+    height: 64px;
+    margin: 8px 0 10px;
+    border: 2.5px solid var(--ink);
+    border-radius: 12px;
+    background: linear-gradient(#8fd0f5, #3f8fd0);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sea svg {
+    width: 52px;
+    height: 52px;
+    transition: transform 0.4s;
+}
+.sea.out svg {
+    transform: translateY(14px) scale(0.85);
+    opacity: 0.75;
+    animation: seabob 2.4s ease-in-out infinite;
+}
+@keyframes seabob {
+    50% {
+        translate: 0 -4px;
+    }
+}
+.trans-card,
+.boat-card,
+.fseason-card {
+    padding: 12px;
+    margin-bottom: 12px;
+}
+.trans-card {
+    background: #e6f2dc;
+}
+.fseason-card {
+    background: #fdf1d6;
+}
+.trans-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0 10px;
+}
+.trans-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px 4px 4px;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.8rem;
+    color: var(--ink);
+    background: var(--paper);
+    border: 2.5px solid var(--ink);
+    border-radius: 20px;
+    cursor: pointer;
+}
+.trans-chip .ico {
+    width: 30px;
+    height: 30px;
+}
+.trans-chip.on {
+    background: var(--gold);
+    box-shadow: 0 0 0 3px #fff;
+}
+.trans-chip.alpine {
+    border-style: dashed;
+}
+.critter.away {
+    opacity: 0.25;
+    pointer-events: none;
+    filter: grayscale(0.6);
+}
+.season-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+    margin: 8px 0 2px;
+}
+.season-items .ico {
+    width: 30px;
+    height: 30px;
+}
+.season-tiers {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    margin: 8px 0 4px;
+}
+.season-tiers > * {
+    min-width: 0;
+    padding: 4px 2px;
+    font-size: 0.75rem;
+}
+.season-tiers .btn .ico {
+    width: 22px;
+    height: 22px;
+}
+.stier {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    border: 2px dashed rgba(58, 38, 24, 0.4);
+    border-radius: 10px;
+}
+.stier.done {
+    background: var(--leaf);
+    border: 2px solid var(--ink);
+}
+.stier .ico {
+    width: 18px;
+    height: 18px;
+}
+.map-tabs.n3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+.map-tabs.n4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+.map-tabs.n4 .branch {
+    font-size: 0.8rem;
+    padding: 7px 2px;
+}
+.theme-pick {
+    display: grid;
+    gap: 6px;
+    margin: 6px 0 14px;
+    text-align: left;
+}
 
-    <!-- HUD -->
-    <header id="hud">
-        <div class="lvl">
-            <div class="lvl-badge" id="lvl-badge" role="button" tabindex="0" aria-label="Voir les niveaux" onclick="openLevels()"><i data-spr="ui:star" class="spr-slot"></i><span id="ui-level">1</span></div>
-            <div class="xpbar"><div id="ui-xp-bar"></div><span id="ui-xp-text">0 / 100</span></div>
+        </style>
+    </head>
+    <body>
+        <!-- Décor -->
+        <div id="scene" aria-hidden="true">
+            <div id="stars"></div>
+            <div id="sun" class="orb"></div>
+            <div id="moon" class="orb"></div>
+            <div class="cloud c1"><span></span></div>
+            <div class="cloud c2"><span></span></div>
+            <div class="cloud c3"><span></span></div>
+            <svg id="hills" viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+                <path class="h1" d="M0 90 C60 55 120 60 180 80 C240 100 300 50 400 70 L400 200 L0 200Z" fill="#a9dc84" stroke="#3a2618" stroke-width="2.5" />
+                <g transform="translate(286 38) scale(.62)">
+                    <path id="hill-barn" d="M8 58 L8 28 L32 10 L56 28 L56 58Z" fill="#c8453a" stroke="#3a2618" stroke-width="3.5" stroke-linejoin="round" />
+                    <path d="M4 30 L32 8 L60 30" fill="none" stroke="#f7f3ea" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                    <rect x="22" y="36" width="20" height="22" fill="#f7f3ea" stroke="#3a2618" stroke-width="3" />
+                    <path d="M22 36 L42 58 M42 36 L22 58" stroke="#3a2618" stroke-width="2.5" />
+                </g>
+                <g stroke="#3a2618" stroke-width="2.2">
+                    <rect x="66" y="70" width="5" height="14" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="68" cy="62" r="13" fill="#6cc04a" />
+                    <rect x="96" y="64" width="5" height="16" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="98" cy="55" r="11" fill="#7fcf4c" />
+                </g>
+                <path
+                    class="h2"
+                    d="M0 125 C80 95 150 105 220 120 C290 135 340 105 400 112 L400 200 L0 200Z"
+                    fill="#82c95a"
+                    stroke="#3a2618"
+                    stroke-width="2.5"
+                />
+                <path
+                    class="h3"
+                    d="M0 160 C90 140 200 150 260 158 C320 166 360 150 400 152 L400 200 L0 200Z"
+                    fill="#6cc04a"
+                    stroke="#3a2618"
+                    stroke-width="2.5"
+                />
+            </svg>
         </div>
-        <div class="hud-right">
-            <div class="pill" id="coin-pill"><i class="ico" data-spr="ui:coin"></i><span id="ui-money">100</span></div>
-            <button class="pill barn-pill" id="barn-pill" aria-label="Grange" onclick="openBarn()"><i class="ico" data-spr="ui:barn"></i><span id="ui-barn">0/50</span></button>
-            <button class="icon-btn" id="btn-music" aria-label="Musique" onclick="toggleSetting('music')"><i data-spr="ui:music" class="spr-slot"></i></button>
-            <button class="icon-btn" id="btn-help" aria-label="Guide du fermier" onclick="openGuide()"><span class="help-q">?</span></button>
-            <button class="icon-btn" id="btn-settings" aria-label="Réglages" onclick="openSettings()"><i data-spr="ui:gear" class="spr-slot"></i></button>
+        <div id="night"></div>
+        <div id="weather" aria-hidden="true">
+            <div class="rain r1"></div>
+            <div class="rain r2"></div>
+            <div class="snow s1"></div>
+            <div class="snow s2"></div>
+            <div class="heat"></div>
+            <div class="rainbow"></div>
+            <div class="leaves"></div>
+            <div class="petals"></div>
+            <div class="flutter"></div>
         </div>
-    </header>
+        <div id="flash" aria-hidden="true"></div>
 
-    <nav id="tabs">
-        <button class="tab active" data-view="farm"><i class="ico" data-spr="item:wheat"></i>Ferme<span class="dot soft" id="badge-farm" hidden></span></button>
-        <button class="tab" data-view="animals"><i class="ico" data-spr="animal:chicken"></i>Animaux<span class="dot soft" id="badge-animals" hidden></span></button>
-        <button class="tab" data-view="machines"><i class="ico" data-spr="machine:bakery"></i>Atelier<span class="dot soft" id="badge-machines" hidden></span></button>
-        <button class="tab" data-view="quests"><i class="ico" data-spr="villager:gaston"></i>Village<span class="dot" id="badge-quests" hidden></span></button>
-        <button class="tab" data-view="shop"><i class="ico" data-spr="ui:shop"></i>Magasin</button>
-        <button class="tab" data-view="market" id="tab-market"><i class="ico" data-spr="ui:stall"></i>Étal<span class="dot soft" id="badge-market" hidden></span></button>
-        <button class="tab" data-view="nature"><i class="ico" data-spr="item:wood"></i>Nature</button>
-        <button class="tab" data-view="upgrades"><i class="ico" data-spr="ui:trophy"></i>Progrès<span class="dot" id="badge-upgrades" hidden></span></button>
-    </nav>
-
-    <main id="game-area">
-        <div id="pin-bar" class="pin-bar" hidden></div>
-        <section id="view-farm" class="view active">
-            <div class="view-head">
-                <button class="pill" id="clock-pill" aria-label="Ouvrir l'almanach"><i class="ico" id="ui-daynight"></i><span id="ui-time">08:00</span><i class="ico" id="ui-season"></i></button>
-                <div class="row-actions">
-                    <button class="btn blue small" id="btn-water-all" onclick="actionWaterAll(this)"><i class="ico" data-spr="ui:can"></i>Arroser</button>
-                    <button class="btn green small" id="btn-harvest-all" onclick="actionHarvestAll(this)"><i class="ico" data-spr="ui:basket"></i>Récolter</button>
+        <!-- HUD -->
+        <header id="hud">
+            <div class="lvl">
+                <div class="lvl-badge" id="lvl-badge" role="button" tabindex="0" aria-label="Voir les niveaux" onclick="openLevels()">
+                    <i data-spr="ui:star" class="spr-slot"></i><span id="ui-level">1</span>
+                </div>
+                <div class="xpbar">
+                    <div id="ui-xp-bar"></div>
+                    <span id="ui-xp-text">0 / 100</span>
                 </div>
             </div>
-            <button class="goal-line" id="goal-line" hidden onclick="goGoal()"></button>
-            <div class="todo" id="todo" aria-label="À faire"></div>
-            <button class="event-banner" id="event-banner" hidden onclick="switchView('quests')"></button>
-            <button class="farmyard board" id="farmyard" onclick="openHouse()" aria-label="Maison de la ferme"></button>
-            <div class="field"><div class="fence"></div><div id="dog" class="dog" hidden><div class="bubble"></div><div class="dog-body" data-spr="ui:dog"></div><div class="dog-name"></div></div><div id="farm-container"></div></div>
-            <div id="greenhouse"></div>
-            <button class="inline-switch" onclick="toggleSetting('autoReplant')"><span class="switch small" id="sw-replant-farm" role="switch"></span>Replanter automatiquement après la récolte</button>
-            <p class="hint">Astuce : gardez le doigt appuyé et glissez sur les parcelles pour labourer, planter, arroser ou récolter d'un seul geste.</p>
-        </section>
+            <div class="hud-right">
+                <div class="pill" id="coin-pill"><i class="ico" data-spr="ui:coin"></i><span id="ui-money">100</span></div>
+                <button class="pill barn-pill" id="barn-pill" aria-label="Grange" onclick="openBarn()">
+                    <i class="ico" data-spr="ui:barn"></i><span id="ui-barn">0/50</span>
+                </button>
+                <button class="icon-btn" id="btn-music" aria-label="Musique" onclick="toggleSetting('music')">
+                    <i data-spr="ui:music" class="spr-slot"></i>
+                </button>
+                <button class="icon-btn" id="btn-help" aria-label="Guide du fermier" onclick="openGuide()"><span class="help-q">?</span></button>
+                <button class="icon-btn" id="btn-settings" aria-label="Réglages" onclick="openSettings()"><i data-spr="ui:gear" class="spr-slot"></i></button>
+            </div>
+        </header>
 
-        <section id="view-animals" class="view">
-            <div class="view-head">
-                <h2 class="view-title">Pâturage</h2>
-                <div class="row-actions">
-                    <button class="btn gold small" id="btn-feed-all" onclick="feedAllAnimals(this)"><i class="ico" data-spr="item:feed"></i>Nourrir</button>
-                    <button class="btn green small" id="btn-collect-animals" onclick="collectAllAnimals(this)"><i class="ico" data-spr="ui:basket"></i>Ramasser</button>
+        <nav id="tabs">
+            <button class="tab active" data-view="farm">
+                <i class="ico" data-spr="item:wheat"></i>Ferme<span class="dot soft" id="badge-farm" hidden></span>
+            </button>
+            <button class="tab" data-view="animals">
+                <i class="ico" data-spr="animal:chicken"></i>Animaux<span class="dot soft" id="badge-animals" hidden></span>
+            </button>
+            <button class="tab" data-view="machines">
+                <i class="ico" data-spr="machine:bakery"></i>Atelier<span class="dot soft" id="badge-machines" hidden></span>
+            </button>
+            <button class="tab" data-view="quests">
+                <i class="ico" data-spr="villager:gaston"></i>Village<span class="dot" id="badge-quests" hidden></span>
+            </button>
+            <button class="tab" data-view="shop"><i class="ico" data-spr="ui:shop"></i>Magasin</button>
+            <button class="tab" data-view="market" id="tab-market">
+                <i class="ico" data-spr="ui:stall"></i>Étal<span class="dot soft" id="badge-market" hidden></span>
+            </button>
+            <button class="tab" data-view="nature"><i class="ico" data-spr="item:wood"></i>Nature</button>
+            <button class="tab" data-view="upgrades">
+                <i class="ico" data-spr="ui:trophy"></i>Progrès<span class="dot" id="badge-upgrades" hidden></span>
+            </button>
+        </nav>
+
+        <main id="game-area">
+            <div id="pin-bar" class="pin-bar" hidden></div>
+            <section id="view-farm" class="view active">
+                <div class="view-head">
+                    <button class="pill" id="clock-pill" aria-label="Ouvrir l'almanach">
+                        <i class="ico" id="ui-daynight"></i><span id="ui-time">08:00</span><i class="ico" id="ui-season"></i>
+                    </button>
+                    <div class="row-actions">
+                        <button class="btn blue small" id="btn-water-all" onclick="actionWaterAll(this)"><i class="ico" data-spr="ui:can"></i>Arroser</button>
+                        <button class="btn green small" id="btn-harvest-all" onclick="actionHarvestAll(this)">
+                            <i class="ico" data-spr="ui:basket"></i>Récolter
+                        </button>
+                    </div>
+                </div>
+                <button class="goal-line" id="goal-line" hidden onclick="goGoal()"></button>
+                <div class="todo" id="todo" aria-label="À faire"></div>
+                <button class="event-banner" id="event-banner" hidden onclick="switchView('quests')"></button>
+                <button class="farmyard board" id="farmyard" onclick="openHouse()" aria-label="Maison de la ferme"></button>
+                <div class="field">
+                    <div class="fence"></div>
+                    <div id="dog" class="dog" hidden>
+                        <div class="bubble"></div>
+                        <div class="dog-body" data-spr="ui:dog"></div>
+                        <div class="dog-name"></div>
+                    </div>
+                    <div id="farm-container"></div>
+                </div>
+                <div id="greenhouse"></div>
+                <button class="inline-switch" onclick="toggleSetting('autoReplant')">
+                    <span class="switch small" id="sw-replant-farm" role="switch"></span>Replanter automatiquement après la récolte
+                </button>
+                <p class="hint">Astuce : gardez le doigt appuyé et glissez sur les parcelles pour labourer, planter, arroser ou récolter d'un seul geste.</p>
+            </section>
+
+            <section id="view-animals" class="view">
+                <div class="view-head">
+                    <h2 class="view-title">Pâturage</h2>
+                    <div class="row-actions">
+                        <button class="btn gold small" id="btn-feed-all" onclick="feedAllAnimals(this)"><i class="ico" data-spr="item:feed"></i>Nourrir</button>
+                        <button class="btn green small" id="btn-collect-animals" onclick="collectAllAnimals(this)">
+                            <i class="ico" data-spr="ui:basket"></i>Ramasser
+                        </button>
+                    </div>
+                </div>
+                <div class="meadow" id="pasture"><div class="pond"></div></div>
+                <p class="hint">Chaque sac de nourriture donne une production. Touchez un animal pour ouvrir sa fiche : câlin, nourriture et nom.</p>
+                <div id="trans-container"></div>
+            </section>
+
+            <section id="view-machines" class="view">
+                <div class="view-head">
+                    <h2 class="view-title">Atelier</h2>
+                    <div class="row-actions">
+                        <button class="btn small" onclick="restartAllMachines(this)">Tout relancer</button>
+                        <button class="btn gold small" id="btn-collect-all" onclick="collectAllMachines(this)">
+                            <i class="ico" data-spr="ui:basket"></i>Tout récupérer
+                        </button>
+                    </div>
+                </div>
+                <p class="hint">Touchez « Produire » pour choisir une recette. Chaque machine peut enchaîner 4 lots, même différents.</p>
+                <div class="list" id="machines-container"></div>
+            </section>
+
+            <section id="view-quests" class="view">
+                <div class="qsegs" role="tablist">
+                    <button class="qseg active" data-q="orders" onclick="switchQtab('orders')">
+                        <i class="ico" data-spr="ui:scroll"></i>Commandes<span class="dot" id="qbadge-orders" hidden></span>
+                    </button>
+                    <button class="qseg" data-q="village" onclick="switchQtab('village')">
+                        <i class="ico" data-spr="ui:village"></i>Village<span class="dot" id="qbadge-village" hidden></span>
+                    </button>
+                </div>
+                <div id="qpane-orders">
+                    <div id="event-container"></div>
+                    <h3 class="section-title">Tableau des commandes</h3>
+                    <div id="quests-container"></div>
+                    <div id="truck-container"></div>
+                    <div id="balloon-container"></div>
+                    <div id="boat-container"></div>
+                </div>
+                <div id="qpane-village" hidden>
+                    <div id="rare-container"></div>
+                    <div id="story-container"></div>
+                    <div id="contract-container"></div>
+                    <div id="fseason-container"></div>
+                    <div id="neighbors-container"></div>
+                    <div id="merchant-container"></div>
+                    <div id="contest-container"></div>
+                    <h3 class="section-title">Les villageois</h3>
+                    <p class="hint">Livrez leurs commandes et offrez-leur ce qu'ils aiment (un cadeau par jour) pour gagner leur amitié.</p>
+                    <div class="list" id="village-container"></div>
+                </div>
+            </section>
+
+            <section id="view-shop" class="view">
+                <h3 class="section-title">Équipement de la ferme</h3>
+                <div class="list" id="shop-gear-list"></div>
+                <h3 class="section-title">Graines et arbres</h3>
+                <div class="list" id="shop-seeds-list"></div>
+                <h3 class="section-title">Animaux</h3>
+                <div class="list" id="shop-animals-list"></div>
+                <h3 class="section-title">Machines</h3>
+                <div class="list" id="shop-machines-list"></div>
+                <h3 class="section-title">Décorations et compagnon</h3>
+                <div class="list" id="shop-decor-list"></div>
+            </section>
+
+            <section id="view-market" class="view">
+                <div class="view-head">
+                    <h2 class="view-title">Étal et grossiste</h2>
+                    <button class="btn gold" id="btn-sell-all" onclick="sellAll(this)"><i class="ico" data-spr="ui:coin"></i>Tout vendre</button>
+                </div>
+                <div id="stall-container"></div>
+                <h3 class="section-title">Vente rapide au grossiste</h3>
+                <button class="inline-switch" onclick="toggleReserve()">
+                    <span class="switch small" id="sw-reserve" role="switch"></span>Garder ce qu'il faut pour les commandes, le train, les chantiers et la fête
+                </button>
+                <p class="hint">
+                    Le grossiste achète tout de suite, mais bien moins cher que vos clients de l'étal. Les graines, la nourriture, les matériaux et les produits
+                    verrouillés ne sont jamais vendus.
+                </p>
+                <div id="market-banner"></div>
+                <div class="market-grid" id="market-list"></div>
+                <div class="board empty-note" id="market-empty" hidden>
+                    Rien à vendre pour l'instant. Récoltez des cultures ou ramassez des produits pour remplir vos caisses.
+                </div>
+            </section>
+
+            <section id="view-nature" class="view">
+                <div class="view-head">
+                    <h2 class="view-title">Nature</h2>
+                    <div class="mats" id="nature-mats"></div>
+                </div>
+                <p class="hint">Le bois et la pierre servent à construire les machines, la serre et les décorations.</p>
+                <div class="board nature-card" id="forest-card">
+                    <div class="nature-head">
+                        <i class="ico" data-spr="ui:axe"></i>
+                        <div>
+                            <div class="card-title">Forêt</div>
+                            <div class="card-sub">Touchez un arbre pour le couper. Les gros arbres donnent plus de bois.</div>
+                        </div>
+                        <span class="lock-tag" id="forest-lock">Niveau 3</span>
+                    </div>
+                    <div class="res-row" id="forest-row"></div>
+                    <div id="forest-tool"></div>
+                </div>
+                <div class="board nature-card" id="mine-card">
+                    <div class="nature-head">
+                        <i class="ico" data-spr="ui:pickaxe"></i>
+                        <div>
+                            <div class="card-title">Mine</div>
+                            <div class="card-sub">Cassez les rochers. Les gros filons et ceux qui brillent cachent des trésors.</div>
+                        </div>
+                        <span class="lock-tag" id="mine-lock">Niveau 5</span>
+                    </div>
+                    <div class="res-row mine" id="mine-row"></div>
+                    <div id="mine-tool"></div>
+                </div>
+                <div class="board nature-card" id="pond-card">
+                    <div class="nature-head">
+                        <i class="ico" data-spr="ui:rod"></i>
+                        <div>
+                            <div class="card-title">Étang</div>
+                            <div class="card-sub" id="fish-msg"></div>
+                        </div>
+                        <span class="lock-tag" id="pond-lock">Niveau 6</span>
+                    </div>
+                    <div class="pond" id="pond" data-phase="idle">
+                        <div class="ripple r1"></div>
+                        <div class="ripple r2"></div>
+                        <div class="lily l1"></div>
+                        <div class="lily l2"></div>
+                        <div class="bobber" id="bobber"><span class="excl">!</span></div>
+                    </div>
+                    <div class="reel" id="reel" hidden>
+                        <div class="reel-zone" id="reel-zone"></div>
+                        <div class="reel-cursor" id="reel-cursor"></div>
+                    </div>
+                    <button class="btn wide" id="fish-btn" onpointerdown="fishAction(event)">Lancer la ligne</button>
+                </div>
+                <div class="board nature-card" id="net-card" hidden></div>
+            </section>
+
+            <section id="view-upgrades" class="view">
+                <div class="row-actions stretch progress-links">
+                    <button class="btn" onclick="openBook()">
+                        <i class="ico" data-spr="ui:book"></i>Livre<span class="dot" id="book-badge" hidden></span>
+                    </button>
+                    <button class="btn" onclick="openStats()"><i class="ico" data-spr="ui:chart"></i>Statistiques</button>
+                    <button class="btn" onclick="openBonuses()"><i class="ico" data-spr="ui:star"></i>Mes bonus</button>
+                </div>
+                <h3 class="section-title">Compétences</h3>
+                <div id="skills-container"></div>
+                <h3 class="section-title">Prestige</h3>
+                <div id="prestige-container"></div>
+            </section>
+        </main>
+
+        <footer id="toolbar" class="board">
+            <div class="tools">
+                <button class="tool active" id="tool-hand" onclick="selectTool('hand')" aria-label="Main"><i data-spr="ui:hand" class="spr-slot"></i></button>
+                <button class="tool" id="tool-shovel" onclick="selectTool('shovel')" aria-label="Pelle"><i data-spr="ui:shovel" class="spr-slot"></i></button>
+                <button class="tool" id="tool-feed" onclick="selectTool('feed')" aria-label="Nourriture">
+                    <i data-spr="item:feed" class="spr-slot"></i><span class="badge blue" id="ui-feed-count">0</span>
+                </button>
+                <button class="tool" id="tool-fert" onclick="selectTool('fert')" aria-label="Compost" hidden>
+                    <i data-spr="item:fertilizer" class="spr-slot"></i><span class="badge blue" id="ui-fert-count">0</span>
+                </button>
+                <button class="tool seeds-btn" id="tool-seeds" onclick="openSeedSheet()" aria-label="Choisir une graine">
+                    <span id="seed-btn-art" class="spr-slot"></span><span class="badge" id="seed-btn-badge" hidden></span>
+                </button>
+            </div>
+            <div class="sep"></div>
+            <div class="seeds" id="toolbar-seeds"></div>
+        </footer>
+
+        <div id="fx" aria-hidden="true"></div>
+        <div id="toasts" role="status" aria-live="polite"></div>
+
+        <div id="offline-modal" class="modal">
+            <div class="modal-box board">
+                <h2>Bon retour !</h2>
+                <p>Pendant votre absence (<span id="offline-time"></span>) :</p>
+                <div class="modal-list" id="offline-details"></div>
+                <button class="btn green wide" onclick="closeModal('offline-modal')">Au travail !</button>
+            </div>
+        </div>
+
+        <div id="almanac-modal" class="modal">
+            <div class="modal-box board sheet">
+                <h2>Almanach</h2>
+                <div id="almanac-body"></div>
+                <button class="btn green wide" onclick="closeModal('almanac-modal')">Fermer</button>
+            </div>
+        </div>
+
+        <div id="daily-modal" class="modal">
+            <div class="modal-box board">
+                <div class="lvl-burst small">
+                    <div class="rays"></div>
+                    <div class="big-star" data-spr="ui:yield"></div>
+                </div>
+                <h2>Cadeau du jour</h2>
+                <p id="daily-sub"></p>
+                <div class="daily-grid" id="daily-grid"></div>
+                <button class="btn gold wide" onclick="claimDaily(this)">Récupérer</button>
+            </div>
+        </div>
+
+        <div id="prestige-modal" class="modal">
+            <div class="modal-box board">
+                <div class="lvl-burst small">
+                    <div class="rays"></div>
+                    <div class="big-star" data-spr="ui:ribbon"></div>
+                </div>
+                <h2>Vendre la ferme ?</h2>
+                <p>Vous repartez de zéro sur une nouvelle ferme, avec des rubans de concours qui rendent tout plus rentable.</p>
+                <div class="prestige-gain" id="prestige-gain"></div>
+                <p class="card-sub" id="prestige-after"></p>
+                <div class="keep-lose">
+                    <div class="paper">
+                        <b>Vous gardez</b><span>Rubans, succès, amitiés, chien, décorations, village rénové, grange, livre de collection, statistiques</span>
+                    </div>
+                    <div class="paper"><b>Vous perdez</b><span>Pièces, niveau, compétences, champs, serre, animaux, machines, stocks, améliorations</span></div>
+                </div>
+                <div class="set-title">Défi pour la prochaine ferme (facultatif)</div>
+                <div class="challenge-pick" id="challenge-pick"></div>
+                <div id="theme-pick"></div>
+                <div class="row-actions stretch">
+                    <button class="btn wide" onclick="closeModal('prestige-modal')">Annuler</button>
+                    <button class="btn red wide" onclick="doPrestige()">Vendre</button>
                 </div>
             </div>
-            <div class="meadow" id="pasture"><div class="pond"></div></div>
-            <p class="hint">Chaque sac de nourriture donne une production. Touchez un animal pour ouvrir sa fiche : câlin, nourriture et nom.</p>
-        </section>
+        </div>
 
-        <section id="view-machines" class="view">
-            <div class="view-head"><h2 class="view-title">Atelier</h2>
-                <div class="row-actions">
-                    <button class="btn small" onclick="restartAllMachines(this)">Tout relancer</button>
-                    <button class="btn gold small" id="btn-collect-all" onclick="collectAllMachines(this)"><i class="ico" data-spr="ui:basket"></i>Tout récupérer</button>
+        <div id="friend-modal" class="modal">
+            <div class="modal-box board">
+                <div class="friend-avatar" id="friend-avatar"></div>
+                <h2 id="friend-title"></h2>
+                <div class="hearts big" id="friend-hearts"></div>
+                <div class="modal-list" id="friend-rewards"></div>
+                <button class="btn gold wide" onclick="closeModal('friend-modal')">Merci !</button>
+            </div>
+        </div>
+
+        <div id="settings-modal" class="modal">
+            <div class="modal-box board settings sheet" id="settings-panel" data-page="main">
+                <div class="page page-main">
+                    <h2>Réglages</h2>
+                    <div class="set-group">
+                        <div class="set-title">Son et sensations</div>
+                        <button class="set-row" onclick="toggleSetting('music')">
+                            <span>Musique (une ambiance par saison)</span><span class="switch" id="sw-music" role="switch"></span>
+                        </button>
+                        <label class="set-row vol-row"
+                            ><span>Volume de la musique</span
+                            ><input type="range" id="vol-music" min="0" max="100" step="5" oninput="setVolume('musicVol', this.value)"
+                        /></label>
+                        <button class="set-row" onclick="toggleSetting('sfx')">
+                            <span>Effets sonores</span><span class="switch" id="sw-sfx" role="switch"></span>
+                        </button>
+                        <label class="set-row vol-row"
+                            ><span>Volume des effets</span
+                            ><input type="range" id="vol-sfx" min="0" max="100" step="5" onchange="setVolume('sfxVol', this.value)"
+                        /></label>
+                        <button class="set-row" onclick="toggleSetting('haptics')">
+                            <span>Vibrations</span><span class="switch" id="sw-haptics" role="switch"></span>
+                        </button>
+                    </div>
+                    <div class="set-group">
+                        <div class="set-title">Confort</div>
+                        <button class="set-row" onclick="toggleSetting('autoReplant')">
+                            <span>Replanter après la récolte</span><span class="switch" id="sw-replant" role="switch"></span>
+                        </button>
+                        <button class="set-row" onclick="toggleRemind()">
+                            <span>Rappels (train en gare, cultures prêtes…) quand le jeu est en arrière-plan</span
+                            ><span class="switch" id="sw-remind" role="switch"></span>
+                        </button>
+                        <button class="set-row" onclick="toggleSetting('calm')">
+                            <span>Animations réduites</span><span class="switch" id="sw-calm" role="switch"></span>
+                        </button>
+                        <button class="set-row" onclick="cycleTextSize()"><span>Taille du texte</span><b class="set-val" id="ts-value">Normale</b></button>
+                        <button class="set-row" onclick="toggleSetting('contrast')">
+                            <span>Contraste renforcé</span><span class="switch" id="sw-contrast" role="switch"></span>
+                        </button>
+                        <p class="card-sub" id="keys-row">
+                            Au clavier : 1 à 8 pour les onglets, A pour arroser, R pour récolter ou ramasser, N pour nourrir, V pour tout vendre, Échap pour
+                            fermer.
+                        </p>
+                    </div>
+                    <div class="set-group">
+                        <div class="set-title">Écran</div>
+                        <div id="fs-row">
+                            <button class="set-row" onclick="toggleFullscreen()"><span>Plein écran</span><span class="chev">›</span></button>
+                        </div>
+                        <button class="set-row" id="btn-install" onclick="installApp()"><span>Installer l'appli</span><span class="chev">›</span></button>
+                        <p class="card-sub" id="install-status"></p>
+                    </div>
+                    <div class="set-group">
+                        <div class="set-title">Sauvegarde</div>
+                        <button class="set-row" onclick="settingsPage('export')"><span>Exporter ma ferme</span><span class="chev">›</span></button>
+                        <button class="set-row" onclick="settingsPage('import')"><span>Importer une ferme</span><span class="chev">›</span></button>
+                        <div class="set-sub">Copies de secours (touchez pour revenir en arrière)</div>
+                        <div id="backup-list"></div>
+                    </div>
+                    <div class="set-group">
+                        <div class="set-title">Aide</div>
+                        <button class="set-row" onclick="replayTutorial()"><span>Revoir le tutoriel</span><span class="chev">›</span></button>
+                        <div id="dog-row">
+                            <button class="set-row" onclick="renameDog()"><span>Renommer le chien</span><span class="chev">›</span></button>
+                        </div>
+                    </div>
+                    <button class="btn red wide" id="btn-reset" onclick="confirmReset()">Recommencer à zéro</button>
+                    <p class="card-sub center" id="version-label"></p>
+                    <button class="btn green wide" onclick="closeModal('settings-modal')">Fermer</button>
+                </div>
+                <div class="page page-export">
+                    <button class="back" onclick="settingsPage('main')">‹ Réglages</button>
+                    <h2>Exporter ma ferme</h2>
+                    <p>Gardez ce code en lieu sûr, ou importez-le sur un autre appareil pour y retrouver votre ferme.</p>
+                    <p class="card-sub" id="export-summary"></p>
+                    <textarea id="export-code" readonly></textarea>
+                    <div class="row-actions stretch">
+                        <button class="btn gold" onclick="copyExport(this)">Copier le code</button
+                        ><button class="btn" id="btn-share" onclick="shareExport(this)">Partager</button>
+                    </div>
+                    <button class="btn wide" onclick="downloadExport(this)">Télécharger un fichier</button>
+                </div>
+                <div class="page page-import">
+                    <button class="back" onclick="settingsPage('main')">‹ Réglages</button>
+                    <h2>Importer une ferme</h2>
+                    <p>Collez un code exporté, ou choisissez le fichier téléchargé.</p>
+                    <textarea id="import-text" placeholder="MEUH1.…" oninput="previewImport(this.value)"></textarea>
+                    <label class="btn wide file-btn"
+                        >Choisir un fichier<input type="file" accept=".json,application/json,text/plain" onchange="importFile(this)"
+                    /></label>
+                    <div id="import-preview"></div>
+                </div>
+                <div class="page page-install">
+                    <button class="back" onclick="settingsPage('main')">‹ Réglages</button>
+                    <h2>Installer l'appli</h2>
+                    <div id="install-steps"></div>
+                    <button class="btn green wide" onclick="settingsPage('main')">Compris</button>
                 </div>
             </div>
-            <p class="hint">Touchez « Produire » pour choisir une recette. Chaque machine peut enchaîner 4 lots, même différents.</p>
-            <div class="list" id="machines-container"></div>
-        </section>
+        </div>
 
-        <section id="view-quests" class="view">
-            <div class="qsegs" role="tablist">
-                <button class="qseg active" data-q="orders" onclick="switchQtab('orders')"><i class="ico" data-spr="ui:scroll"></i>Commandes<span class="dot" id="qbadge-orders" hidden></span></button>
-                <button class="qseg" data-q="village" onclick="switchQtab('village')"><i class="ico" data-spr="ui:village"></i>Village<span class="dot" id="qbadge-village" hidden></span></button>
-            </div>
-            <div id="qpane-orders">
-                <div id="event-container"></div>
-                <h3 class="section-title">Tableau des commandes</h3>
-                <div id="quests-container"></div>
-                <div id="truck-container"></div>
-                <div id="balloon-container"></div>
-            </div>
-            <div id="qpane-village" hidden>
-                <div id="rare-container"></div>
-                <div id="story-container"></div>
-                <div id="contract-container"></div>
-                <div id="neighbors-container"></div>
-                <div id="merchant-container"></div>
-                <div id="contest-container"></div>
-                <h3 class="section-title">Les villageois</h3>
-                <p class="hint">Livrez leurs commandes et offrez-leur ce qu'ils aiment (un cadeau par jour) pour gagner leur amitié.</p>
-                <div class="list" id="village-container"></div>
-            </div>
-        </section>
+        <div id="undo-bar" class="undo-bar" hidden>
+            <span id="undo-text"></span><button class="btn small gold" onclick="undoSale()">Annuler</button><i class="undo-time"></i>
+        </div>
 
-        <section id="view-shop" class="view">
-            <h3 class="section-title">Équipement de la ferme</h3><div class="list" id="shop-gear-list"></div>
-            <h3 class="section-title">Graines et arbres</h3><div class="list" id="shop-seeds-list"></div>
-            <h3 class="section-title">Animaux</h3><div class="list" id="shop-animals-list"></div>
-            <h3 class="section-title">Machines</h3><div class="list" id="shop-machines-list"></div>
-            <h3 class="section-title">Décorations et compagnon</h3><div class="list" id="shop-decor-list"></div>
-        </section>
-
-        <section id="view-market" class="view">
-            <div class="view-head">
-                <h2 class="view-title">Étal et grossiste</h2>
-                <button class="btn gold" id="btn-sell-all" onclick="sellAll(this)"><i class="ico" data-spr="ui:coin"></i>Tout vendre</button>
-            </div>
-            <div id="stall-container"></div>
-            <h3 class="section-title">Vente rapide au grossiste</h3>
-            <button class="inline-switch" onclick="toggleReserve()"><span class="switch small" id="sw-reserve" role="switch"></span>Garder ce qu'il faut pour les commandes, le train, les chantiers et la fête</button>
-            <p class="hint">Le grossiste achète tout de suite, mais bien moins cher que vos clients de l'étal. Les graines, la nourriture, les matériaux et les produits verrouillés ne sont jamais vendus.</p>
-            <div id="market-banner"></div>
-            <div class="market-grid" id="market-list"></div>
-            <div class="board empty-note" id="market-empty" hidden>Rien à vendre pour l'instant. Récoltez des cultures ou ramassez des produits pour remplir vos caisses.</div>
-        </section>
-
-        <section id="view-nature" class="view">
-            <div class="view-head"><h2 class="view-title">Nature</h2><div class="mats" id="nature-mats"></div></div>
-            <p class="hint">Le bois et la pierre servent à construire les machines, la serre et les décorations.</p>
-            <div class="board nature-card" id="forest-card">
-                <div class="nature-head"><i class="ico" data-spr="ui:axe"></i><div><div class="card-title">Forêt</div><div class="card-sub">Touchez un arbre pour le couper. Les gros arbres donnent plus de bois.</div></div><span class="lock-tag" id="forest-lock">Niveau 3</span></div>
-                <div class="res-row" id="forest-row"></div>
-                <div id="forest-tool"></div>
-            </div>
-            <div class="board nature-card" id="mine-card">
-                <div class="nature-head"><i class="ico" data-spr="ui:pickaxe"></i><div><div class="card-title">Mine</div><div class="card-sub">Cassez les rochers. Les gros filons et ceux qui brillent cachent des trésors.</div></div><span class="lock-tag" id="mine-lock">Niveau 5</span></div>
-                <div class="res-row mine" id="mine-row"></div>
-                <div id="mine-tool"></div>
-            </div>
-            <div class="board nature-card" id="pond-card">
-                <div class="nature-head"><i class="ico" data-spr="ui:rod"></i><div><div class="card-title">Étang</div><div class="card-sub" id="fish-msg"></div></div><span class="lock-tag" id="pond-lock">Niveau 6</span></div>
-                <div class="pond" id="pond" data-phase="idle">
-                    <div class="ripple r1"></div><div class="ripple r2"></div>
-                    <div class="lily l1"></div><div class="lily l2"></div>
-                    <div class="bobber" id="bobber"><span class="excl">!</span></div>
+        <div id="tuto" hidden>
+            <div id="tuto-ring"></div>
+            <div id="tuto-hand" data-spr="ui:hand"></div>
+            <div id="tuto-bubble" class="board">
+                <div class="tuto-avatar" data-spr="villager:odette"></div>
+                <div class="tuto-main">
+                    <div class="tuto-name">Mamie Odette <span id="tuto-step"></span></div>
+                    <p id="tuto-text"></p>
+                    <div class="tuto-actions">
+                        <button class="btn gold small" id="tuto-btn" onclick="tutoNext()"></button
+                        ><button class="tuto-skip" onclick="tutoSkip()">Passer le tutoriel</button>
+                    </div>
                 </div>
-                <div class="reel" id="reel" hidden><div class="reel-zone" id="reel-zone"></div><div class="reel-cursor" id="reel-cursor"></div></div>
-                <button class="btn wide" id="fish-btn" onpointerdown="fishAction(event)">Lancer la ligne</button>
-            </div>
-        </section>
-
-        <section id="view-upgrades" class="view">
-            <div class="row-actions stretch progress-links">
-                <button class="btn" onclick="openBook()"><i class="ico" data-spr="ui:book"></i>Livre<span class="dot" id="book-badge" hidden></span></button>
-                <button class="btn" onclick="openStats()"><i class="ico" data-spr="ui:chart"></i>Statistiques</button>
-                <button class="btn" onclick="openBonuses()"><i class="ico" data-spr="ui:star"></i>Mes bonus</button>
-            </div>
-            <h3 class="section-title">Compétences</h3>
-            <div id="skills-container"></div>
-            <h3 class="section-title">Prestige</h3>
-            <div id="prestige-container"></div>
-        </section>
-    </main>
-
-    <footer id="toolbar" class="board">
-        <div class="tools">
-            <button class="tool active" id="tool-hand" onclick="selectTool('hand')" aria-label="Main"><i data-spr="ui:hand" class="spr-slot"></i></button>
-            <button class="tool" id="tool-shovel" onclick="selectTool('shovel')" aria-label="Pelle"><i data-spr="ui:shovel" class="spr-slot"></i></button>
-            <button class="tool" id="tool-feed" onclick="selectTool('feed')" aria-label="Nourriture"><i data-spr="item:feed" class="spr-slot"></i><span class="badge blue" id="ui-feed-count">0</span></button>
-            <button class="tool" id="tool-fert" onclick="selectTool('fert')" aria-label="Compost" hidden><i data-spr="item:fertilizer" class="spr-slot"></i><span class="badge blue" id="ui-fert-count">0</span></button>
-            <button class="tool seeds-btn" id="tool-seeds" onclick="openSeedSheet()" aria-label="Choisir une graine"><span id="seed-btn-art" class="spr-slot"></span><span class="badge" id="seed-btn-badge" hidden></span></button>
-        </div>
-        <div class="sep"></div>
-        <div class="seeds" id="toolbar-seeds"></div>
-    </footer>
-
-    <div id="fx" aria-hidden="true"></div>
-    <div id="toasts" role="status" aria-live="polite"></div>
-
-    <div id="offline-modal" class="modal">
-        <div class="modal-box board">
-            <h2>Bon retour !</h2>
-            <p>Pendant votre absence (<span id="offline-time"></span>) :</p>
-            <div class="modal-list" id="offline-details"></div>
-            <button class="btn green wide" onclick="closeModal('offline-modal')">Au travail !</button>
-        </div>
-    </div>
-
-    <div id="almanac-modal" class="modal">
-        <div class="modal-box board sheet">
-            <h2>Almanach</h2>
-            <div id="almanac-body"></div>
-            <button class="btn green wide" onclick="closeModal('almanac-modal')">Fermer</button>
-        </div>
-    </div>
-
-    <div id="daily-modal" class="modal">
-        <div class="modal-box board">
-            <div class="lvl-burst small"><div class="rays"></div><div class="big-star" data-spr="ui:yield"></div></div>
-            <h2>Cadeau du jour</h2>
-            <p id="daily-sub"></p>
-            <div class="daily-grid" id="daily-grid"></div>
-            <button class="btn gold wide" onclick="claimDaily(this)">Récupérer</button>
-        </div>
-    </div>
-
-    <div id="prestige-modal" class="modal">
-        <div class="modal-box board">
-            <div class="lvl-burst small"><div class="rays"></div><div class="big-star" data-spr="ui:ribbon"></div></div>
-            <h2>Vendre la ferme ?</h2>
-            <p>Vous repartez de zéro sur une nouvelle ferme, avec des rubans de concours qui rendent tout plus rentable.</p>
-            <div class="prestige-gain" id="prestige-gain"></div>
-            <p class="card-sub" id="prestige-after"></p>
-            <div class="keep-lose">
-                <div class="paper"><b>Vous gardez</b><span>Rubans, succès, amitiés, chien, décorations, village rénové, grange, livre de collection, statistiques</span></div>
-                <div class="paper"><b>Vous perdez</b><span>Pièces, niveau, compétences, champs, serre, animaux, machines, stocks, améliorations</span></div>
-            </div>
-            <div class="set-title">Défi pour la prochaine ferme (facultatif)</div>
-            <div class="challenge-pick" id="challenge-pick"></div>
-            <div class="row-actions stretch">
-                <button class="btn wide" onclick="closeModal('prestige-modal')">Annuler</button>
-                <button class="btn red wide" onclick="doPrestige()">Vendre</button>
             </div>
         </div>
-    </div>
 
-    <div id="friend-modal" class="modal">
-        <div class="modal-box board">
-            <div class="friend-avatar" id="friend-avatar"></div>
-            <h2 id="friend-title"></h2>
-            <div class="hearts big" id="friend-hearts"></div>
-            <div class="modal-list" id="friend-rewards"></div>
-            <button class="btn gold wide" onclick="closeModal('friend-modal')">Merci !</button>
-        </div>
-    </div>
-
-    <div id="settings-modal" class="modal">
-        <div class="modal-box board settings sheet" id="settings-panel" data-page="main">
-            <div class="page page-main">
-                <h2>Réglages</h2>
-                <div class="set-group">
-                    <div class="set-title">Son et sensations</div>
-                    <button class="set-row" onclick="toggleSetting('music')"><span>Musique (une ambiance par saison)</span><span class="switch" id="sw-music" role="switch"></span></button>
-                    <label class="set-row vol-row"><span>Volume de la musique</span><input type="range" id="vol-music" min="0" max="100" step="5" oninput="setVolume('musicVol', this.value)"></label>
-                    <button class="set-row" onclick="toggleSetting('sfx')"><span>Effets sonores</span><span class="switch" id="sw-sfx" role="switch"></span></button>
-                    <label class="set-row vol-row"><span>Volume des effets</span><input type="range" id="vol-sfx" min="0" max="100" step="5" onchange="setVolume('sfxVol', this.value)"></label>
-                    <button class="set-row" onclick="toggleSetting('haptics')"><span>Vibrations</span><span class="switch" id="sw-haptics" role="switch"></span></button>
+        <div id="animal-modal" class="modal">
+            <div class="modal-box board">
+                <div class="animal-art" id="animal-art"></div>
+                <h2 id="animal-name"></h2>
+                <p class="card-sub" id="animal-kind"></p>
+                <div class="hearts big" id="animal-hearts"></div>
+                <div class="modal-list" id="animal-info"></div>
+                <div class="row-actions stretch">
+                    <button class="btn gold" id="btn-pet" onclick="petAnimal(this)">Faire un câlin</button>
+                    <button class="btn" onclick="feedFromCard(this)">Nourrir</button>
                 </div>
-                <div class="set-group">
-                    <div class="set-title">Confort</div>
-                    <button class="set-row" onclick="toggleSetting('autoReplant')"><span>Replanter après la récolte</span><span class="switch" id="sw-replant" role="switch"></span></button>
-                    <button class="set-row" onclick="toggleRemind()"><span>Rappels (train en gare, cultures prêtes…) quand le jeu est en arrière-plan</span><span class="switch" id="sw-remind" role="switch"></span></button>
-                    <button class="set-row" onclick="toggleSetting('calm')"><span>Animations réduites</span><span class="switch" id="sw-calm" role="switch"></span></button>
-                    <button class="set-row" onclick="cycleTextSize()"><span>Taille du texte</span><b class="set-val" id="ts-value">Normale</b></button>
-                    <button class="set-row" onclick="toggleSetting('contrast')"><span>Contraste renforcé</span><span class="switch" id="sw-contrast" role="switch"></span></button>
-                    <p class="card-sub" id="keys-row">Au clavier : 1 à 8 pour les onglets, A pour arroser, R pour récolter ou ramasser, N pour nourrir, V pour tout vendre, Échap pour fermer.</p>
+                <div class="row-actions stretch">
+                    <button class="btn" onclick="renameAnimal()">Renommer</button>
+                    <button class="btn green" onclick="closeModal('animal-modal')">Fermer</button>
                 </div>
-                <div class="set-group">
-                    <div class="set-title">Écran</div>
-                    <div id="fs-row"><button class="set-row" onclick="toggleFullscreen()"><span>Plein écran</span><span class="chev">›</span></button></div>
-                    <button class="set-row" id="btn-install" onclick="installApp()"><span>Installer l'appli</span><span class="chev">›</span></button>
-                    <p class="card-sub" id="install-status"></p>
+            </div>
+        </div>
+
+        <div id="house-modal" class="modal">
+            <div class="modal-box board house sheet">
+                <h2>Maison de la ferme</h2>
+                <div id="house-body"></div>
+                <button class="btn green wide" onclick="closeModal('house-modal')">Fermer</button>
+            </div>
+        </div>
+
+        <div id="photo-modal" class="modal">
+            <div class="modal-box board photo">
+                <div id="photo-body"></div>
+                <div class="row-actions stretch">
+                    <button class="btn gold" onclick="sharePhoto(this)"><i class="ico" data-spr="ui:camera"></i>Partager</button>
+                    <button class="btn green" onclick="closeModal('photo-modal')">Fermer</button>
                 </div>
-                <div class="set-group">
-                    <div class="set-title">Sauvegarde</div>
-                    <button class="set-row" onclick="settingsPage('export')"><span>Exporter ma ferme</span><span class="chev">›</span></button>
-                    <button class="set-row" onclick="settingsPage('import')"><span>Importer une ferme</span><span class="chev">›</span></button>
-                    <div class="set-sub">Copies de secours (touchez pour revenir en arrière)</div>
-                    <div id="backup-list"></div>
+            </div>
+        </div>
+
+        <div id="book-modal" class="modal">
+            <div class="modal-box board book sheet">
+                <h2>Livre de la ferme</h2>
+                <div class="branch-tabs five book-sections" id="book-sections"></div>
+                <div id="book-collection">
+                    <div class="branch-tabs four" id="book-tabs"></div>
+                    <div class="book-grid" id="book-grid"></div>
+                    <div id="book-foot"></div>
                 </div>
-                <div class="set-group">
-                    <div class="set-title">Aide</div>
-                    <button class="set-row" onclick="replayTutorial()"><span>Revoir le tutoriel</span><span class="chev">›</span></button>
-                    <div id="dog-row"><button class="set-row" onclick="renameDog()"><span>Renommer le chien</span><span class="chev">›</span></button></div>
+                <div id="book-mastery" hidden></div>
+                <div id="book-exploits" hidden>
+                    <div id="trophy-container"></div>
+                    <div class="list" id="ach-container"></div>
                 </div>
-                <button class="btn red wide" id="btn-reset" onclick="confirmReset()">Recommencer à zéro</button>
-                <p class="card-sub center" id="version-label"></p>
-                <button class="btn green wide" onclick="closeModal('settings-modal')">Fermer</button>
-            </div>
-            <div class="page page-export">
-                <button class="back" onclick="settingsPage('main')">‹ Réglages</button>
-                <h2>Exporter ma ferme</h2>
-                <p>Gardez ce code en lieu sûr, ou importez-le sur un autre appareil pour y retrouver votre ferme.</p>
-                <p class="card-sub" id="export-summary"></p>
-                <textarea id="export-code" readonly></textarea>
-                <div class="row-actions stretch"><button class="btn gold" onclick="copyExport(this)">Copier le code</button><button class="btn" id="btn-share" onclick="shareExport(this)">Partager</button></div>
-                <button class="btn wide" onclick="downloadExport(this)">Télécharger un fichier</button>
-            </div>
-            <div class="page page-import">
-                <button class="back" onclick="settingsPage('main')">‹ Réglages</button>
-                <h2>Importer une ferme</h2>
-                <p>Collez un code exporté, ou choisissez le fichier téléchargé.</p>
-                <textarea id="import-text" placeholder="MEUH1.…" oninput="previewImport(this.value)"></textarea>
-                <label class="btn wide file-btn">Choisir un fichier<input type="file" accept=".json,application/json,text/plain" onchange="importFile(this)"></label>
-                <div id="import-preview"></div>
-            </div>
-            <div class="page page-install">
-                <button class="back" onclick="settingsPage('main')">‹ Réglages</button>
-                <h2>Installer l'appli</h2>
-                <div id="install-steps"></div>
-                <button class="btn green wide" onclick="settingsPage('main')">Compris</button>
+                <div id="book-legend" hidden></div>
+                <div id="book-album" hidden></div>
+                <button class="btn green wide" onclick="closeModal('book-modal')">Fermer</button>
             </div>
         </div>
-    </div>
 
-    <div id="undo-bar" class="undo-bar" hidden><span id="undo-text"></span><button class="btn small gold" onclick="undoSale()">Annuler</button><i class="undo-time"></i></div>
-
-    <div id="tuto" hidden>
-        <div id="tuto-ring"></div>
-        <div id="tuto-hand" data-spr="ui:hand"></div>
-        <div id="tuto-bubble" class="board">
-            <div class="tuto-avatar" data-spr="villager:odette"></div>
-            <div class="tuto-main">
-                <div class="tuto-name">Mamie Odette <span id="tuto-step"></span></div>
-                <p id="tuto-text"></p>
-                <div class="tuto-actions"><button class="btn gold small" id="tuto-btn" onclick="tutoNext()"></button><button class="tuto-skip" onclick="tutoSkip()">Passer le tutoriel</button></div>
+        <div id="stats-modal" class="modal">
+            <div class="modal-box board stats sheet">
+                <h2>Statistiques</h2>
+                <div class="tiles" id="stats-tiles"></div>
+                <div class="chart-block">
+                    <div class="chart-title">Pièces gagnées par jour de jeu</div>
+                    <div id="chart-days"></div>
+                    <p class="card-sub" id="chart-days-tip"></p>
+                </div>
+                <div class="chart-block">
+                    <div class="chart-title">Ce qui rapporte le plus au marché</div>
+                    <div id="chart-items"></div>
+                </div>
+                <div class="chart-block">
+                    <div class="chart-title">D'où viennent vos pièces</div>
+                    <div id="chart-sources"></div>
+                </div>
+                <button class="btn green wide" onclick="closeModal('stats-modal')">Fermer</button>
             </div>
         </div>
-    </div>
 
-    <div id="animal-modal" class="modal">
-        <div class="modal-box board">
-            <div class="animal-art" id="animal-art"></div>
-            <h2 id="animal-name"></h2>
-            <p class="card-sub" id="animal-kind"></p>
-            <div class="hearts big" id="animal-hearts"></div>
-            <div class="modal-list" id="animal-info"></div>
-            <div class="row-actions stretch">
-                <button class="btn gold" id="btn-pet" onclick="petAnimal(this)">Faire un câlin</button>
-                <button class="btn" onclick="feedFromCard(this)">Nourrir</button>
-            </div>
-            <div class="row-actions stretch">
-                <button class="btn" onclick="renameAnimal()">Renommer</button>
-                <button class="btn green" onclick="closeModal('animal-modal')">Fermer</button>
+        <div id="recipe-modal" class="modal">
+            <div class="modal-box board sheet recipes-sheet">
+                <h2 id="recipe-title" class="recipe-title"></h2>
+                <div id="recipe-queue"></div>
+                <div class="chips" id="recipe-filters"></div>
+                <div class="recipe-grid" id="recipe-grid"></div>
+                <button class="btn green wide" onclick="closeModal('recipe-modal')">Fermer</button>
             </div>
         </div>
-    </div>
 
-    <div id="house-modal" class="modal">
-        <div class="modal-box board house sheet">
-            <h2>Maison de la ferme</h2>
-            <div id="house-body"></div>
-            <button class="btn green wide" onclick="closeModal('house-modal')">Fermer</button>
-        </div>
-    </div>
-
-    <div id="photo-modal" class="modal">
-        <div class="modal-box board photo">
-            <div id="photo-body"></div>
-            <div class="row-actions stretch">
-                <button class="btn gold" onclick="sharePhoto(this)"><i class="ico" data-spr="ui:camera"></i>Partager</button>
-                <button class="btn green" onclick="closeModal('photo-modal')">Fermer</button>
+        <div id="seed-modal" class="modal">
+            <div class="modal-box board sheet">
+                <h2>Que planter ?</h2>
+                <div class="seed-grid" id="seed-grid"></div>
+                <button class="btn green wide" onclick="closeModal('seed-modal')">Fermer</button>
             </div>
         </div>
-    </div>
 
-    <div id="book-modal" class="modal">
-        <div class="modal-box board book sheet">
-            <h2>Livre de la ferme</h2>
-            <div class="branch-tabs five book-sections" id="book-sections"></div>
-            <div id="book-collection">
-                <div class="branch-tabs four" id="book-tabs"></div>
-                <div class="book-grid" id="book-grid"></div>
-                <div id="book-foot"></div>
-            </div>
-            <div id="book-mastery" hidden></div>
-            <div id="book-exploits" hidden><div id="trophy-container"></div><div class="list" id="ach-container"></div></div>
-            <div id="book-legend" hidden></div>
-            <div id="book-album" hidden></div>
-            <button class="btn green wide" onclick="closeModal('book-modal')">Fermer</button>
-        </div>
-    </div>
-
-    <div id="stats-modal" class="modal">
-        <div class="modal-box board stats sheet">
-            <h2>Statistiques</h2>
-            <div class="tiles" id="stats-tiles"></div>
-            <div class="chart-block"><div class="chart-title">Pièces gagnées par jour de jeu</div><div id="chart-days"></div><p class="card-sub" id="chart-days-tip"></p></div>
-            <div class="chart-block"><div class="chart-title">Ce qui rapporte le plus au marché</div><div id="chart-items"></div></div>
-            <div class="chart-block"><div class="chart-title">D'où viennent vos pièces</div><div id="chart-sources"></div></div>
-            <button class="btn green wide" onclick="closeModal('stats-modal')">Fermer</button>
-        </div>
-    </div>
-
-    <div id="recipe-modal" class="modal">
-        <div class="modal-box board sheet recipes-sheet">
-            <h2 id="recipe-title" class="recipe-title"></h2>
-            <div id="recipe-queue"></div>
-            <div class="chips" id="recipe-filters"></div>
-            <div class="recipe-grid" id="recipe-grid"></div>
-            <button class="btn green wide" onclick="closeModal('recipe-modal')">Fermer</button>
-        </div>
-    </div>
-
-    <div id="seed-modal" class="modal">
-        <div class="modal-box board sheet">
-            <h2>Que planter ?</h2>
-            <div class="seed-grid" id="seed-grid"></div>
-            <button class="btn green wide" onclick="closeModal('seed-modal')">Fermer</button>
-        </div>
-    </div>
-
-    <div id="barn-modal" class="modal">
-        <div class="modal-box board sheet">
-            <h2 class="barn-title"><i class="ico" data-spr="ui:barn"></i>Grange</h2>
-            <div id="barn-body"></div>
-            <div class="row-actions stretch">
-                <button class="btn" onclick="closeModal('barn-modal'); switchView('market')"><i class="ico" data-spr="ui:crate"></i>Marché</button>
-                <button class="btn green" onclick="closeModal('barn-modal')">Fermer</button>
+        <div id="barn-modal" class="modal">
+            <div class="modal-box board sheet">
+                <h2 class="barn-title"><i class="ico" data-spr="ui:barn"></i>Grange</h2>
+                <div id="barn-body"></div>
+                <div class="row-actions stretch">
+                    <button
+                        class="btn"
+                        onclick="
+                            closeModal('barn-modal');
+                            switchView('market');
+                        "
+                    >
+                        <i class="ico" data-spr="ui:crate"></i>Marché
+                    </button>
+                    <button class="btn green" onclick="closeModal('barn-modal')">Fermer</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="story-modal" class="modal">
-        <div class="modal-box board story-box">
-            <div class="story-art" id="story-art"></div>
-            <h2 id="story-title"></h2>
-            <div class="story-who" id="story-who"></div>
-            <div class="modal-list" id="story-reward"></div>
-            <p class="card-sub" id="story-next"></p>
-            <button class="btn gold wide" onclick="closeModal('story-modal')">Continuer</button>
-        </div>
-    </div>
-
-    <div id="bonus-modal" class="modal">
-        <div class="modal-box board sheet">
-            <h2>Mes bonus</h2>
-            <p class="card-sub center">Le total de vos compétences, de l'équipement, des rubans et du village.</p>
-            <div class="modal-list" id="bonus-list"></div>
-            <button class="btn green wide" onclick="closeModal('bonus-modal')">Fermer</button>
-        </div>
-    </div>
-
-    <div id="stall-modal" class="modal">
-        <div class="modal-box board sheet">
-            <h2 class="barn-title"><i class="ico" data-spr="ui:stall"></i>Mettre en vente</h2>
-            <div class="barn-goods" id="stall-grid"></div>
-            <div id="stall-form"></div>
-            <button class="btn green wide" onclick="closeModal('stall-modal')">Fermer</button>
-        </div>
-    </div>
-
-    <div id="tip-modal" class="modal">
-        <div class="modal-box board tip-box">
-            <div class="tip-head"><div class="avatar" data-spr="villager:odette"></div><div class="tip-icon" id="tip-icon"></div></div>
-            <h2 id="tip-title"></h2>
-            <p id="tip-text"></p>
-            <button class="btn gold wide" onclick="closeModal('tip-modal')">Compris !</button>
-        </div>
-    </div>
-
-    <div id="guide-modal" class="modal">
-        <div class="modal-box board guide sheet">
-            <h2>Guide du fermier</h2>
-            <input type="search" class="guide-search" id="guide-search" placeholder="Chercher un produit ou un sujet…" oninput="searchGuide(this.value)" autocomplete="off">
-            <div class="guide-body" id="guide-body"></div>
-            <button class="btn green wide" onclick="closeModal('guide-modal')">Fermer</button>
-        </div>
-    </div>
-
-    <div id="levels-modal" class="modal">
-        <div class="modal-box board levels sheet">
-            <h2>Les niveaux</h2>
-            <div class="lv-nav">
-                <button class="btn small" id="lv-prev" onclick="stepLevels(-1)" aria-label="Niveau précédent">‹</button>
-                <div class="lv-head"><b id="lv-title">Niveau 2</b><small id="lv-status"></small></div>
-                <button class="btn small" id="lv-next" onclick="stepLevels(1)" aria-label="Niveau suivant">›</button>
+        <div id="story-modal" class="modal">
+            <div class="modal-box board story-box">
+                <div class="story-art" id="story-art"></div>
+                <h2 id="story-title"></h2>
+                <div class="story-who" id="story-who"></div>
+                <div class="modal-list" id="story-reward"></div>
+                <p class="card-sub" id="story-next"></p>
+                <button class="btn gold wide" onclick="closeModal('story-modal')">Continuer</button>
             </div>
-            <div class="lv-strip" id="lv-strip"></div>
-            <div class="modal-list" id="lv-list"></div>
-            <button class="btn green wide" onclick="closeModal('levels-modal')">Fermer</button>
         </div>
-    </div>
 
-    <div id="level-modal" class="modal">
-        <div class="modal-box board">
-            <div class="lvl-burst"><div class="rays"></div><div class="big-star" data-spr="ui:star"></div><span id="lvl-num">2</span></div>
-            <h2 id="lvl-title">Niveau 2 !</h2>
-            <p id="lvl-sub">Nouveautés débloquées :</p>
-            <div class="modal-list" id="lvl-unlocks"></div>
-            <button class="btn gold wide" onclick="closeModal('level-modal')">Continuer</button>
+        <div id="bonus-modal" class="modal">
+            <div class="modal-box board sheet">
+                <h2>Mes bonus</h2>
+                <p class="card-sub center">Le total de vos compétences, de l'équipement, des rubans et du village.</p>
+                <div class="modal-list" id="bonus-list"></div>
+                <button class="btn green wide" onclick="closeModal('bonus-modal')">Fermer</button>
+            </div>
         </div>
-    </div>
 
-    <script>
-// =====================================================================
+        <div id="stall-modal" class="modal">
+            <div class="modal-box board sheet">
+                <h2 class="barn-title"><i class="ico" data-spr="ui:stall"></i>Mettre en vente</h2>
+                <div class="barn-goods" id="stall-grid"></div>
+                <div id="stall-form"></div>
+                <button class="btn green wide" onclick="closeModal('stall-modal')">Fermer</button>
+            </div>
+        </div>
+
+        <div id="tip-modal" class="modal">
+            <div class="modal-box board tip-box">
+                <div class="tip-head">
+                    <div class="avatar" data-spr="villager:odette"></div>
+                    <div class="tip-icon" id="tip-icon"></div>
+                </div>
+                <h2 id="tip-title"></h2>
+                <p id="tip-text"></p>
+                <button class="btn gold wide" onclick="closeModal('tip-modal')">Compris !</button>
+            </div>
+        </div>
+
+        <div id="guide-modal" class="modal">
+            <div class="modal-box board guide sheet">
+                <h2>Guide du fermier</h2>
+                <input
+                    type="search"
+                    class="guide-search"
+                    id="guide-search"
+                    placeholder="Chercher un produit ou un sujet…"
+                    oninput="searchGuide(this.value)"
+                    autocomplete="off"
+                />
+                <div class="guide-body" id="guide-body"></div>
+                <button class="btn green wide" onclick="closeModal('guide-modal')">Fermer</button>
+            </div>
+        </div>
+
+        <div id="levels-modal" class="modal">
+            <div class="modal-box board levels sheet">
+                <h2>Les niveaux</h2>
+                <div class="lv-nav">
+                    <button class="btn small" id="lv-prev" onclick="stepLevels(-1)" aria-label="Niveau précédent">‹</button>
+                    <div class="lv-head"><b id="lv-title">Niveau 2</b><small id="lv-status"></small></div>
+                    <button class="btn small" id="lv-next" onclick="stepLevels(1)" aria-label="Niveau suivant">›</button>
+                </div>
+                <div class="lv-strip" id="lv-strip"></div>
+                <div class="modal-list" id="lv-list"></div>
+                <button class="btn green wide" onclick="closeModal('levels-modal')">Fermer</button>
+            </div>
+        </div>
+
+        <div id="level-modal" class="modal">
+            <div class="modal-box board">
+                <div class="lvl-burst">
+                    <div class="rays"></div>
+                    <div class="big-star" data-spr="ui:star"></div>
+                    <span id="lvl-num">2</span>
+                </div>
+                <h2 id="lvl-title">Niveau 2 !</h2>
+                <p id="lvl-sub">Nouveautés débloquées :</p>
+                <div class="modal-list" id="lvl-unlocks"></div>
+                <button class="btn gold wide" onclick="closeModal('level-modal')">Continuer</button>
+            </div>
+        </div>
+
+        <script>
+            // =====================================================================
 //  SPRITES — illustrations vectorielles (style cartoon, contour brun)
 // =====================================================================
 const SPR = (() => {
@@ -10838,6 +11180,342 @@ const SPR = (() => {
             L('M31 18 Q26 8 22 8 M33 18 Q38 8 42 8', 1.6),
     });
 
+    // ================= Meuh 3.0 et 4.0 : le Port et l'Alpage =================
+    Object.assign(people, {
+        morgane: () =>
+            bust('#3f6fb5', L('M24 50 L40 50 M24 56 L40 56', 1.6, '#f7f3ea')) +
+            P('M16 34 C12 18 24 12 32 13 C42 12 52 18 48 34 C46 26 40 21 32 21 C24 21 18 26 16 34Z', '#8e2c22') +
+            face() +
+            E(32, 17, 19, 4, '#2a2f6b') +
+            P('M18 17 Q20 5 32 5 Q44 5 46 17Z', '#2a2f6b') +
+            C(32, 11, 3, '#ffd23f', 1.4),
+        yann: () =>
+            bust('#f7f3ea', P('M22 46 L42 46 L44 66 L20 66Z', '#5aa9e6', 2) + L('M24 52 L40 52 M24 58 L40 58', 1.2, '#f7f3ea')) +
+            face({ noSmile: true }) +
+            P('M19 32 C19 44 25 48 32 48 C39 48 45 44 45 32 C42 37 38 38 32 37 C26 38 22 37 19 32Z', '#c97a3a', 2) +
+            L('M29 40 Q32 41.5 35 40', 1.6, SKIN) +
+            R(18, 14, 28, 9, 4, '#e2412f'),
+        bruno: () =>
+            bust('#7a4a2a', P('M22 46 L42 46 L40 66 L24 66Z', '#e9dcc4', 2)) +
+            face({ noSmile: true }) +
+            P('M18 32 C18 48 25 52 32 52 C39 52 46 48 46 32 C43 39 38 40 32 39 C26 40 21 39 18 32Z', '#5e5548', 2) +
+            L('M29 41 Q32 42.5 35 41', 1.6, SKIN) +
+            E(32, 18, 22, 4.5, '#3a2618') +
+            P('M21 18 Q21 6 32 6 Q43 6 43 18Z', '#3a2618') +
+            L('M40 9 L48 3', 2.2, '#e2412f'),
+        lea: () =>
+            bust('#e8364b', L('M32 46 L32 66', 1.6, '#8e2c22')) +
+            P('M16 32 C12 16 24 12 32 13 C42 12 52 16 48 32 C46 24 40 20 32 20 C24 20 18 24 16 32Z', '#a8693a') +
+            face() +
+            P('M46 26 Q54 34 50 48 Q48 40 44 34Z', '#a8693a', 2) +
+            P('M19 24 C22 16 42 16 45 24 C40 19 26 19 19 24Z', '#a8693a') +
+            R(16, 20, 32, 4, 2, '#3f8f2e', 1.6),
+    });
+    const fishOf = (body, belly, fin, extra = '') => fishBody(body, belly, fin, extra);
+    Object.assign(items, {
+        sardine: () => fishOf('#b8c4cc', '#eef3f6', '#8aa0b0', L('M14 26 L44 26', 1.4, '#5a7fa6')),
+        mackerel: () => fishOf('#3f8f9e', '#eef3f6', '#2f6f7a', L('M14 24 Q20 20 24 26 Q28 20 32 26 Q36 20 40 26', 1.6, '#1f4f5a')),
+        seabass: () => fishOf('#a7adb4', '#f7f3ea', '#6d7680'),
+        shrimp: () =>
+            SHADOW(32, 56, 20, 3) +
+            P('M46 20 C58 26 56 46 40 50 C28 52 18 46 16 38 L24 36 C26 42 34 44 40 40 C48 36 46 28 40 26Z', '#f59a6a') +
+            L('M42 30 L50 32 M40 38 L48 42 M32 42 L36 48', 1.4, '#c8693a') +
+            P('M16 38 L8 34 L10 42Z', '#f59a6a', 1.6) +
+            L('M46 20 Q50 10 58 8 M48 22 Q56 16 60 16', 1.2) +
+            FC(44, 24, 1.6, O),
+        lobster: () =>
+            SHADOW(32, 58, 22, 3) +
+            E(32, 38, 9, 16, '#e2412f') +
+            L('M24 30 L32 32 L40 30 M24 38 L40 38 M24 46 L40 46', 1.2, '#8e2c22') +
+            P('M28 52 L32 60 L36 52Z', '#e2412f', 1.6) +
+            P('M24 24 C12 20 8 10 14 6 C18 10 16 14 22 16 C24 12 30 12 28 18Z', '#e2412f', 1.8) +
+            P('M40 24 C52 20 56 10 50 6 C46 10 48 14 42 16 C40 12 34 12 36 18Z', '#e2412f', 1.8) +
+            FC(29, 24, 1.6, O) +
+            FC(35, 24, 1.6, O),
+        alpineMilk: () =>
+            bottle('#ffffff', null, '#e4f5ff', '#3f8f2e') + P('M22 40 L28 32 L32 38 L36 30 L42 40Z', '#9aa3ad', 1.2) + P('M26 35 L28 32 L30 35Z', '#fff', 1),
+        hop: () =>
+            SHADOW(32, 56, 16, 3) +
+            L('M32 8 L32 16', 2, GD) +
+            [
+                [32, 30],
+                [22, 40],
+                [42, 40],
+            ]
+                .map(
+                    ([x, y]) =>
+                        E(x, y, 9, 13, '#b9d96a', 0, 1.8) + L(`M${x - 6} ${y - 4} L${x + 6} ${y - 4} M${x - 7} ${y + 3} L${x + 7} ${y + 3}`, 1, '#7a8f2e'),
+                )
+                .join('') +
+            leaf(32, 16, 12, -30, G, 0.4),
+        cacao: () =>
+            SHADOW(32, 58, 18, 3) +
+            E(32, 34, 14, 22, '#c8693a', 15, 2) +
+            L('M26 14 Q22 34 28 54 M34 12 Q32 34 38 54 M40 16 Q42 34 44 50', 1.4, '#8e3f1e') +
+            HL(26, 26, 3, 8, 15, 0.4) +
+            E(48, 48, 5, 7, '#f3e2c4', 0, 1.6),
+        genepi: () =>
+            SHADOW(32, 58, 16, 3) +
+            L('M32 58 L32 24 M32 40 L22 30 M32 36 L42 26', 2, '#7fae4a') +
+            [
+                [32, 20],
+                [21, 27],
+                [43, 23],
+            ]
+                .map(([x, y]) => C(x, y, 5, '#f2d16b', 1.6) + FC(x, y, 2, '#e8a93a'))
+                .join('') +
+            leaf(32, 50, 12, -150, '#9aa3ad', 0.4) +
+            leaf(32, 46, 12, -30, '#9aa3ad', 0.4),
+        cannedSardines: () => SHADOW(32, 56, 24, 3) + R(8, 30, 48, 22, 10, '#c9d3dc') + R(12, 26, 40, 8, 4, '#e8364b') + sub('sardine', 18, 30, 26),
+        mackerelRillettes: () => jar('#f3e2c4', '#3f8f9e', 'mackerel'),
+        cannedShrimp: () => jar('#f59a6a', '#c9d3dc', 'shrimp'),
+        peeledTomatoes: () =>
+            SHADOW(32, 58, 16, 3) +
+            R(16, 18, 32, 38, 3, '#e2412f') +
+            R(14, 14, 36, 6, 2, '#c9d3dc') +
+            R(14, 52, 36, 6, 2, '#c9d3dc') +
+            C(32, 36, 8, '#fff', 1.6) +
+            sub('tomato', 25, 29, 14),
+        blondBeer: () => bottle('#f2c14e', 'hop', '#d9f0c4', '#3f8f2e'),
+        amberBeer: () => bottle('#c8693a', 'caramel', '#f7e3c0', '#8e2c22'),
+        cherryBeer: () => bottle('#b02040', 'cherry', '#f7e3e8', '#8e2c22'),
+        mead: () => bottle('#f5a623', 'honey', '#fff3d6', '#a8693a'),
+        darkChoc: () =>
+            SHADOW(32, 56, 24, 3) +
+            R(10, 18, 44, 34, 3, '#5e3a1e') +
+            L('M10 29 L54 29 M10 40 L54 40 M25 18 L25 52 M39 18 L39 52', 1.4, '#3a2618') +
+            P('M10 44 L30 52 L10 52Z', '#c8453a', 1.6),
+        milkChoc: () =>
+            SHADOW(32, 56, 24, 3) +
+            R(10, 18, 44, 34, 3, '#a8693a') +
+            L('M10 29 L54 29 M10 40 L54 40 M25 18 L25 52 M39 18 L39 52', 1.4, '#7a4a2a') +
+            P('M10 44 L30 52 L10 52Z', '#3f6fb5', 1.6),
+        hotChoc: () => cup('#7a4a2a') + C(26, 20, 3, '#fff', 1) + C(36, 18, 2.5, '#fff', 1),
+        chocBox: () =>
+            SHADOW(32, 58, 24, 3) +
+            P('M10 28 L54 28 L50 56 L14 56Z', '#e8364b') +
+            R(8, 22, 48, 8, 3, '#c8453a') +
+            L('M32 22 L32 56', 3, '#ffd23f') +
+            [
+                [20, 18],
+                [32, 16],
+                [44, 18],
+            ]
+                .map(([x, y]) => C(x, y, 5, '#5e3a1e', 1.6))
+                .join(''),
+        chocCake: () =>
+            plateB() +
+            P('M14 30 L50 30 L48 46 L16 46Z', '#5e3a1e') +
+            E(32, 30, 18, 5, '#7a4a2a') +
+            F('M22 30 Q24 40 26 30 Q30 38 32 30', '#3a2618', 0.8) +
+            C(32, 26, 3, '#e2412f', 1.4),
+        bouillabaisse: () => bowlB('#e8792a') + sub('shrimp', 18, 18, 16) + sub('seabass', 30, 20, 16),
+        lobsterDish: () => plateB() + `<g transform="translate(8 8) scale(.75)">${items.lobster()}</g>` + leaf(46, 40, 8, -40, G, 0.5),
+        grilledMackerel: () =>
+            plateB() + `<g transform="translate(10 14) scale(.7)">${items.mackerel()}</g>` + L('M20 40 L44 36 M20 46 L44 42', 1.6, '#3a2618'),
+        beaufort: () =>
+            SHADOW(32, 56, 26, 3) +
+            E(32, 44, 26, 8, '#e8a93a') +
+            R(6, 28, 52, 16, 4, '#f2c14e') +
+            E(32, 28, 26, 8, '#f7d374') +
+            P('M32 28 L54 24 L54 40 L32 44Z', '#ffe48a', 1.6),
+        tomme: () =>
+            SHADOW(32, 56, 24, 3) +
+            E(32, 44, 24, 8, '#8f8574') +
+            R(8, 28, 48, 16, 4, '#a7a08f') +
+            E(32, 28, 24, 8, '#c9c2b8') +
+            FC(24, 28, 2, '#8f8574') +
+            FC(40, 30, 2.5, '#8f8574'),
+        reblochon: () =>
+            SHADOW(32, 56, 22, 3) + E(32, 44, 22, 7, '#e8c38c') + R(10, 32, 44, 12, 4, '#f3e2c4') + E(32, 32, 22, 7, '#f7ecd8') + C(32, 32, 4, '#3f8f2e', 1.2),
+        raclette: () =>
+            board() +
+            E(22, 40, 10, 5, '#f2c14e', 0, 1.6) +
+            C(38, 42, 5, '#e8c38c', 1.6) +
+            C(48, 40, 4, '#e8c38c', 1.6) +
+            F('M16 38 Q20 46 24 38', '#f7d374', 0.9),
+        fondue: () =>
+            SHADOW(32, 58, 22, 3) +
+            P('M12 30 L52 30 Q52 54 32 54 Q12 54 12 30Z', '#c8453a') +
+            E(32, 30, 20, 6, '#f7d374') +
+            L('M40 10 L34 30 M46 14 L38 30', 1.6, '#8a8f98') +
+            R(36, 6, 6, 6, 2, '#e8c38c', 1.4),
+        tartiflette: () => dish('#f2c14e', E(22, 40, 5, 4, '#e8c38c', 0, 1.4) + E(40, 38, 5, 4, '#e8c38c', 0, 1.4) + R(28, 34, 10, 4, 2, '#f7ecd8', 1.2)),
+        genepiLiqueur: () => bottle('#c9d96a', 'genepi', '#f4fbe0', '#3a2618'),
+    });
+    Object.assign(youngExtra, {
+        hop: () => mound() + L('M32 56 L32 24', 2, GD) + leaf(32, 44, 12, -150, G) + leaf(32, 36, 12, -30, GL),
+        cacao: () => mound() + R(29, 30, 6, 26, 2, '#8b5a2b', 1.6) + leaf(32, 32, 14, -150, GD) + leaf(32, 30, 14, -30, G),
+        genepi: () => mound() + L('M32 56 L32 38', 2, '#7fae4a') + leaf(32, 46, 10, -150, '#9aa3ad') + leaf(32, 44, 10, -30, '#9aa3ad'),
+    });
+    Object.assign(readyExtra, {
+        hop: () =>
+            mound() +
+            L('M24 58 L24 10 M40 58 L40 10', 2, '#a8693a') +
+            L('M22 12 L42 12', 1.6, '#a8693a') +
+            [
+                [24, 24],
+                [40, 30],
+                [24, 40],
+                [40, 46],
+            ]
+                .map(([x, y]) => E(x, y, 5, 7, '#b9d96a', 0, 1.6))
+                .join('') +
+            leaf(32, 34, 10, -60, G, 0.4),
+        cacao: () =>
+            mound() +
+            R(29, 18, 6, 38, 2, '#8b5a2b', 1.6) +
+            leaf(32, 20, 16, -150, GD) +
+            leaf(32, 18, 16, -30, G) +
+            E(26, 36, 5, 8, '#c8693a', 10, 1.6) +
+            E(38, 40, 5, 8, '#e8a93a', -10, 1.6),
+        genepi: () =>
+            mound() +
+            L('M32 56 L32 24 M32 40 L22 30 M32 36 L42 26', 2, '#7fae4a') +
+            C(32, 22, 4, '#f2d16b', 1.4) +
+            C(22, 28, 4, '#f2d16b', 1.4) +
+            C(42, 24, 4, '#f2d16b', 1.4),
+    });
+    Object.assign(machines, {
+        cannery: () =>
+            SHADOW(32, 60, 28, 3) +
+            R(6, 26, 52, 32, 4, '#8a8f98') +
+            R(4, 20, 56, 8, 3, '#5e6670') +
+            R(14, 34, 36, 10, 3, '#c9d3dc', 1.6) +
+            [20, 32, 44].map(x => R(x - 5, 46, 10, 10, 3, '#e8364b', 1.6)).join('') +
+            R(46, 6, 8, 16, 2, '#5e6670', 1.6),
+        brewery: () =>
+            SHADOW(32, 60, 28, 3) +
+            E(22, 40, 14, 18, '#c8693a') +
+            L('M8 32 L36 32 M8 48 L36 48', 2, '#5e3a1e') +
+            R(38, 26, 20, 32, 3, '#e8c38c') +
+            L('M44 34 L52 34 M44 42 L52 42', 1.6, '#8b5a2b') +
+            P('M18 22 Q22 12 26 22Z', '#fff', 1.4),
+        chocolatier: () =>
+            SHADOW(32, 60, 28, 3) +
+            R(8, 30, 48, 28, 4, '#f7e3c0') +
+            P('M8 30 L56 30 L52 18 L12 18Z', '#7a4a2a') +
+            R(18, 38, 28, 14, 3, '#5e3a1e', 1.6) +
+            L('M18 45 L46 45', 1.2, '#3a2618') +
+            C(32, 12, 5, '#5e3a1e', 1.6),
+        alpineDairy: () =>
+            SHADOW(32, 60, 28, 3) +
+            P('M6 58 L6 30 L32 12 L58 30 L58 58Z', '#c08b52') +
+            P('M2 32 L32 10 L62 32', 'none', 3) +
+            R(24, 38, 16, 20, 2, '#7a4a2a', 1.8) +
+            E(16, 48, 6, 4, '#f2c14e', 0, 1.4) +
+            E(48, 48, 6, 4, '#f2c14e', 0, 1.4) +
+            R(26, 20, 12, 8, 1, '#bfe6fb', 1.4),
+    });
+    Object.assign(ui, {
+        net: () =>
+            SHADOW(32, 58, 26, 3) +
+            P('M8 14 L56 14 L46 54 L18 54Z', 'none', 2.2) +
+            L('M14 24 L50 24 M16 34 L48 34 M18 44 L46 44 M20 14 L26 54 M32 14 L32 54 M44 14 L38 54', 1.2, '#8b5a2b') +
+            R(6, 10, 52, 6, 3, '#a8693a') +
+            C(14, 13, 3, '#e2412f', 1.2) +
+            C(50, 13, 3, '#e2412f', 1.2) +
+            `<g transform="translate(20 30) scale(.4)">${items.sardine()}</g>`,
+        boat: () =>
+            P('M2 52 Q32 60 62 52 L62 62 L2 62Z', '#5aa9e6') +
+            P('M6 42 L58 42 L52 54 L12 54Z', '#c8453a') +
+            R(14, 30, 30, 12, 2, '#f7f3ea') +
+            R(18, 33, 6, 5, 1, '#bfe6fb', 1.2) +
+            R(28, 33, 6, 5, 1, '#bfe6fb', 1.2) +
+            R(40, 18, 8, 14, 2, '#3a2618') +
+            R(40, 18, 8, 4, 1, '#e2412f', 1.2) +
+            R(10, 36, 4, 6, 1, '#f2c14e', 1.2) +
+            FC(48, 10, 3, '#fff', 0.7) +
+            FC(54, 6, 2.4, '#fff', 0.6),
+        mountain: () =>
+            P('M2 56 L22 16 L32 32 L42 22 L62 56Z', '#8f9aa6') +
+            P('M16 28 L22 16 L28 28 L25 26 L22 30 L19 26Z', '#fff', 1.6) +
+            P('M38 30 L42 22 L46 30 L44 29 L42 32 L40 29Z', '#fff', 1.4) +
+            P('M2 56 Q20 46 34 52 Q48 58 62 50 L62 60 L2 60Z', '#6cc04a'),
+        cheeseWheel: () =>
+            SHADOW(32, 58, 26, 3) +
+            E(32, 46, 26, 8, '#e8a93a') +
+            R(6, 30, 52, 16, 4, '#ffd23f') +
+            E(32, 30, 26, 8, '#ffe48a') +
+            FC(14, 14, 2, '#fff', 0.9) +
+            FC(50, 12, 1.6, '#fff', 0.9) +
+            C(32, 30, 5, '#f2c14e', 1.4),
+        anchorDeco: () =>
+            SHADOW(32, 60, 18, 3) +
+            C(32, 12, 5, 'none', 3) +
+            L('M32 17 L32 54 M22 26 L42 26', 4) +
+            L('M32 17 L32 54 M22 26 L42 26', 2, '#8a8f98') +
+            P('M12 40 Q14 56 32 56 Q50 56 52 40 L46 44 Q44 50 32 50 Q20 50 18 44Z', '#8a8f98', 2),
+        orchardSwing: () =>
+            SHADOW(32, 60, 24, 3) +
+            L('M10 58 L18 8 M54 58 L46 8 M14 10 L50 10', 3.4, '#8b5a2b') +
+            L('M24 10 L24 40 M40 10 L40 40', 1.4) +
+            R(20, 40, 24, 5, 2, '#e8364b') +
+            C(14, 8, 5, '#6cc04a', 1.6) +
+            C(50, 8, 5, '#6cc04a', 1.6) +
+            C(32, 6, 4, '#e2412f', 1.4),
+        cowbell: () =>
+            SHADOW(32, 60, 18, 3) +
+            L('M18 8 Q32 18 46 8', 4, '#e2412f') +
+            P('M20 20 L44 20 L50 50 L14 50Z', '#f2c14e') +
+            R(12, 48, 40, 6, 3, '#e8a93a') +
+            C(32, 56, 4, '#8a8f98', 1.6) +
+            HL(24, 30, 2, 8, 0, 0.5),
+    });
+    Object.assign(BLD, {
+        lighthouse: { kind: 'lighthouse' },
+        fishmarket: { w: 70, h: 30, wall: '#bfe6fb', roof: '#3f6fb5', sign: ['item', 'sardine'] },
+        quay: { kind: 'quay' },
+        brewhouse: { w: 58, h: 36, wall: '#e8c38c', roof: '#8e2c22', sign: ['item', 'hop'] },
+        chocoshop: { w: 54, h: 34, wall: '#fbe1ea', roof: '#7a4a2a', sign: ['item', 'darkChoc'] },
+        shipyard: { kind: 'shipyard' },
+        sheepfold: { w: 66, h: 30, wall: '#c9c2b8', roof: '#5e3a1e', sign: ['item', 'wool'] },
+        chalet: { w: 60, h: 36, wall: '#c08b52', roof: '#7a4a2a', sign: ['item', 'genepi'], floors: 2 },
+        alpinedairy: { w: 62, h: 32, wall: '#f7f3ea', roof: '#5e3a1e', sign: ['item', 'beaufort'] },
+        cablecar: { kind: 'cablecar' },
+        chapel: { w: 44, h: 36, wall: '#f7f3ea', roof: '#8f9aa6', sign: ['ui', 'star'], tower: true },
+        refuge: { w: 64, h: 32, wall: '#a8693a', roof: '#3a2618', sign: ['item', 'fondue'] },
+    });
+    Object.assign(KINDS, {
+        lighthouse(s) {
+            const c1 = s === 0 ? grey : '#f7f3ea',
+                c2 = s === 0 ? greyD : '#e2412f';
+            let o = SHADOW(50, 87, 20, 3) + P('M38 86 L42 26 L58 26 L62 86Z', c1);
+            o += P('M40 66 L60 66 L61 76 L39 76Z M41 46 L59 46 L60 56 L40 56Z', c2, 1.6);
+            o += R(40, 14, 20, 12, 2, s === 0 ? '#5e5548' : '#ffe48a') + P('M38 14 L50 2 L62 14Z', c2);
+            if (s === 2) o += P('M60 18 L96 8 L96 28Z', '#ffe48a', 0) + P('M40 18 L4 8 L4 28Z', '#ffe48a', 0);
+            if (s === 1) o += scaffold(38, 30, 62);
+            return o;
+        },
+        quay(s) {
+            let o = F('M0 64 Q50 56 100 64 L100 92 L0 92Z', '#5aa9e6') + L('M10 78 Q18 75 26 78 M66 82 Q74 79 82 82', 1.4, '#bfe6fb');
+            o += R(6, 52, 88, 10, 2, s === 0 ? grey : '#a8693a') + [14, 34, 54, 74].map(x => L(`M${x} 62 L${x} 88`, 4, s === 0 ? greyD : '#5e3a1e')).join('');
+            if (s === 0) o += R(40, 50, 14, 4, 1, '#5aa9e6', 0);
+            if (s === 2) o += `<g transform="translate(46 10) scale(.6)">${ui.boat()}</g>` + C(20, 48, 4, '#e2412f', 1.4);
+            if (s === 1) o += scaffold(10, 50, 90);
+            return o;
+        },
+        shipyard(s) {
+            let o = SHADOW(50, 87, 40, 3) + L('M14 86 L14 30 M86 86 L86 30 M14 30 L86 30', 4, s === 0 ? greyD : '#8b5a2b');
+            o += P('M24 70 Q50 84 76 70 L72 58 L28 58Z', s === 0 ? grey : '#c8453a') + L('M30 62 L70 62', 1.4, s === 0 ? greyD : '#8e2c22');
+            if (s === 2) o += L('M50 58 L50 34', 2.4) + P('M50 36 L66 54 L50 54Z', '#f7f3ea', 1.6) + C(80, 82, 2.4, '#ffd23f', 1.4);
+            if (s === 1) o += scaffold(24, 50, 76);
+            return o;
+        },
+        cablecar(s) {
+            let o = SHADOW(50, 87, 30, 3) + L('M0 20 L100 70', 1.8, s === 0 ? greyD : '#3a2618');
+            o += R(8, 20, 14, 66, 2, s === 0 ? grey : '#8f9aa6') + R(78, 58, 14, 28, 2, s === 0 ? grey : '#8f9aa6');
+            if (s !== 0)
+                o +=
+                    L('M50 46 L50 52', 2) +
+                    R(40, 52, 20, 16, 3, s === 2 ? '#e2412f' : '#c9c2b8') +
+                    R(43, 55, 6, 6, 1, '#bfe6fb', 1.2) +
+                    R(51, 55, 6, 6, 1, '#bfe6fb', 1.2);
+            if (s === 1) o += scaffold(30, 50, 70);
+            return o;
+        },
+    });
+
     // API publique
     return {
         farmhouse(l, roof) {
@@ -10885,7 +11563,7 @@ const SPR = (() => {
     };
 })();
 
-// =====================================================================
+            // =====================================================================
 //  Données du jeu : objets, animaux, machines, recettes, villageois, saisons, météo,
 //  poissons, compétences, succès… Tout ce qui se règle sans toucher au code.
 // =====================================================================
@@ -11307,7 +11985,7 @@ const EVENTS = {
     hiver: { name: 'Marché de Noël', icon: ['ui', 's_winter'], effect: 'Les trains de marchandises paient 30 % de plus pendant la fête.' },
 };
 
-const GAME_VERSION = '2.2';
+const GAME_VERSION = '4.0';
 
 const BACKUP_KEY = SAVE_KEY + '_secours';
 
@@ -13070,6 +13748,554 @@ const TIPS_6 = {
 };
 
 // =====================================================================
+//  Meuh 3.0 et 4.0 : le Port (chapitres 7 et 8) et l'Alpage (chapitres 9 et 10).
+//  Les nouveautés s'ouvrent par l'histoire, pas par de nouveaux niveaux.
+// =====================================================================
+
+// ---------------- Villageois ----------------
+Object.assign(VILLAGERS, {
+    morgane: {
+        id: 'morgane',
+        name: 'Capitaine Morgane',
+        role: 'La capitaine du port',
+        ch: 7,
+        likes: ['sardine', 'mackerel', 'crate', 'beam', 'cider', 'smokedTrout'],
+    },
+    yann: { id: 'yann', name: 'Yann', role: 'Le poissonnier de la criée', ch: 7, likes: ['shrimp', 'seabass', 'garlic', 'onion', 'bread', 'butter'] },
+    bruno: { id: 'bruno', name: 'Bruno', role: 'Le berger des estives', ch: 9, likes: ['wool', 'milk', 'goatMilk', 'cheese', 'bread', 'blueberry'] },
+    lea: { id: 'lea', name: 'Léa', role: 'La guide de montagne', ch: 9, likes: ['blueberry', 'honey', 'apple', 'woolHat', 'cookies', 'juice'] },
+});
+
+// ---------------- Nouveaux produits et cultures ----------------
+Object.assign(DB.Items, {
+    sardine: { id: 'sardine', name: 'Sardine', type: 'product', sell: 40, sea: true },
+    mackerel: { id: 'mackerel', name: 'Maquereau', type: 'product', sell: 60, sea: true },
+    shrimp: { id: 'shrimp', name: 'Crevettes', type: 'product', sell: 70, sea: true },
+    seabass: { id: 'seabass', name: 'Bar de ligne', type: 'product', sell: 120, sea: true },
+    lobster: { id: 'lobster', name: 'Homard', type: 'product', sell: 400, sea: true },
+    alpineMilk: { id: 'alpineMilk', name: "Lait d'alpage", type: 'product', sell: 250 },
+    hop: {
+        id: 'hop',
+        name: 'Houblon',
+        seedName: 'Plants de houblon',
+        type: 'crop',
+        cost: 30,
+        sell: 75,
+        time: 900,
+        reqLvl: 34,
+        xp: Math.round(120 * BALANCE.cropXp),
+        seasons: ['ete', 'automne'],
+        needProject: 'brewhouse',
+    },
+    cacao: {
+        id: 'cacao',
+        name: 'Fèves de cacao',
+        seedName: 'Cacaoyer en pot',
+        type: 'crop',
+        cost: 70,
+        sell: 170,
+        time: 1500,
+        reqLvl: 37,
+        xp: Math.round(220 * BALANCE.cropXp),
+        needProject: 'chocoshop',
+        ghOnly: true,
+    },
+    genepi: {
+        id: 'genepi',
+        name: 'Génépi',
+        seedName: 'Plants de génépi',
+        type: 'crop',
+        cost: 50,
+        sell: 130,
+        time: 1200,
+        reqLvl: 40,
+        xp: Math.round(180 * BALANCE.cropXp),
+        seasons: ['ete'],
+        needProject: 'chalet',
+    },
+});
+SOILS.wet.crops.push('hop');
+SOILS.shade.crops.push('genepi');
+
+// la pêche en mer : un filet à relever
+const SEA_NET_TIME = 20 * 60 * 1000;
+const SEA_CATCH = [
+    ['sardine', 40],
+    ['mackerel', 28],
+    ['shrimp', 20],
+    ['seabass', 10],
+    ['lobster', 4],
+];
+
+// le bateau de livraison
+const BOAT_STAY = 2 * 60 * 60 * 1000,
+    BOAT_AWAY = 3 * 60 * 60 * 1000,
+    BOAT_PAY = 3.5;
+
+// la transhumance
+const TRANS_KINDS = ['cow', 'goat', 'sheep', 'buffalo'];
+const TRANS_TIME = 90 * 60 * 1000;
+const ALPINE_SPEED = 1.2;
+
+// ---------------- Usines ----------------
+Object.assign(DB.Machines, {
+    cannery: {
+        id: 'cannery',
+        name: 'Conserverie',
+        cost: 15000 * BALANCE.machineCost,
+        reqLvl: 34,
+        needProject: 'fishmarket',
+        desc: 'Conserves de poissons et de légumes',
+    },
+    brewery: { id: 'brewery', name: 'Brasserie', cost: 18000 * BALANCE.machineCost, reqLvl: 37, needProject: 'brewhouse', desc: 'Bières et hydromel' },
+    chocolatier: {
+        id: 'chocolatier',
+        name: 'Chocolaterie',
+        cost: 20000 * BALANCE.machineCost,
+        reqLvl: 37,
+        needProject: 'chocoshop',
+        desc: 'Tablettes, bonbons et fondants',
+    },
+    alpineDairy: {
+        id: 'alpineDairy',
+        name: "Fromagerie d'alpage",
+        cost: 25000 * BALANCE.machineCost,
+        reqLvl: 40,
+        needProject: 'alpinedairy',
+        desc: 'Beaufort, tomme et reblochon',
+    },
+});
+
+const SEA_MOUNTAIN_RECIPES = {
+    cannedSardines: ['cannery', 'Sardines en boîte', { sardine: 4, oliveOil: 1 }, 300],
+    mackerelRillettes: ['cannery', 'Rillettes de maquereau', { mackerel: 3, butter: 1 }, 300],
+    cannedShrimp: ['cannery', 'Crevettes en bocal', { shrimp: 4 }, 240],
+    peeledTomatoes: ['cannery', 'Tomates pelées', { tomato: 6 }, 200],
+    blondBeer: ['brewery', 'Bière blonde', { hop: 3, wheat: 4 }, 360],
+    amberBeer: ['brewery', 'Bière ambrée', { hop: 3, wheat: 3, caramel: 1 }, 420],
+    cherryBeer: ['brewery', 'Bière à la cerise', { hop: 2, cherry: 4 }, 420],
+    mead: ['brewery', 'Hydromel', { honey: 4 }, 400],
+    darkChoc: ['chocolatier', 'Tablette de chocolat', { cacao: 3, sugar: 1 }, 300],
+    milkChoc: ['chocolatier', 'Chocolat au lait', { cacao: 2, milk: 2, sugar: 1 }, 300],
+    hotChoc: ['chocolatier', 'Chocolat chaud', { cacao: 1, milk: 2 }, 180],
+    chocBox: ['chocolatier', 'Ballotin de chocolats', { darkChoc: 1, milkChoc: 1, pralines: 1 }, 480],
+    chocCake: ['chocolatier', 'Fondant au chocolat', { darkChoc: 1, butter: 1, egg: 3, flour: 1 }, 360],
+    bouillabaisse: ['kitchen', 'Bouillabaisse', { seabass: 2, shrimp: 2, tomato: 2, garlic: 1 }, 420],
+    lobsterDish: ['kitchen', 'Homard grillé', { lobster: 1, butter: 1, garlic: 1 }, 360],
+    grilledMackerel: ['kitchen', 'Maquereau grillé', { mackerel: 2, potato: 3 }, 240],
+    beaufort: ['alpineDairy', 'Beaufort', { alpineMilk: 3 }, 480],
+    tomme: ['alpineDairy', 'Tomme de montagne', { alpineMilk: 2, goatMilk: 1 }, 420],
+    reblochon: ['alpineDairy', 'Reblochon', { alpineMilk: 2, cream: 1 }, 420],
+    raclette: ['kitchen', 'Plateau raclette', { tomme: 1, potato: 4, onion: 1 }, 300],
+    fondue: ['kitchen', 'Fondue savoyarde', { beaufort: 1, bread: 3, garlic: 1 }, 360],
+    tartiflette: ['kitchen', 'Tartiflette', { reblochon: 1, potato: 4, onion: 1, cream: 1 }, 420],
+    genepiLiqueur: ['press', 'Liqueur de génépi', { genepi: 4, sugar: 1 }, 480],
+};
+
+// ---------------- Chapitres 7 à 10 ----------------
+CHAPTERS.push(
+    {
+        n: 7,
+        name: 'Le port endormi',
+        lvl: 34,
+        map: 'port',
+        intro: 'Au bout de la route du hameau, un petit port attend que les bateaux reviennent. La capitaine Morgane compte sur vous.',
+    },
+    {
+        n: 8,
+        name: 'La route des mers',
+        lvl: 37,
+        map: 'port',
+        intro: 'Les bateaux sont revenus ! Brasseurs et chocolatiers voudraient s’installer sur le quai.',
+    },
+    {
+        n: 9,
+        name: 'Les estives',
+        lvl: 40,
+        map: 'alpine',
+        intro: 'Là-haut, les alpages n’attendent que les troupeaux. Bruno le berger et Léa la guide vous montrent le chemin.',
+    },
+    {
+        n: 10,
+        name: 'La fête de la montagne',
+        lvl: 40,
+        map: 'alpine',
+        intro: 'Toute la vallée monte à l’alpage pour la grande fête de la montagne. Dernier chapitre : faites-en un souvenir.',
+    },
+);
+PROGRESSION.chapters.push(34, 37, 40, 40);
+
+const P3 = (id, ch, name, vid, need, before, after, reward, x, y, map) => ({ id, ch, name, vid, need, before, after, reward, x, y, map });
+Object.assign(PROJECTS, {
+    lighthouse: P3(
+        'lighthouse',
+        7,
+        'Le phare',
+        'morgane',
+        { stone: 120, beam: 20, tools: 8, paint: 6 },
+        'Sans phare, aucun pêcheur ne sort la nuit. Rallumons-le, et la mer vous ouvrira ses filets.',
+        'La lumière tourne de nouveau ! Vous pouvez poser un filet en mer depuis l’onglet Nature.',
+        'La pêche en mer au filet (onglet Nature)',
+        18,
+        30,
+        'port',
+    ),
+    fishmarket: P3(
+        'fishmarket',
+        7,
+        'La criée',
+        'yann',
+        { trout: 15, smokedTrout: 8, crate: 10, nail: 20 },
+        'Une criée sans poisson, c’est un hangar vide. Aide-moi à la remplir et je t’apprends à faire des conserves.',
+        'La criée résonne de cris joyeux. La conserverie est à vendre au magasin.',
+        'La conserverie (au magasin)',
+        48,
+        58,
+        'port',
+    ),
+    quay: P3(
+        'quay',
+        7,
+        'Le quai',
+        'morgane',
+        { beam: 30, plank: 30, nail: 30 },
+        'Un vrai quai, et les cargos reviendront charger vos produits. Ils paient bien, crois-moi.',
+        'Le premier bateau accoste déjà ! Il reviendra régulièrement chercher de grosses commandes.',
+        'Le bateau de livraison vient chercher de grosses commandes',
+        78,
+        74,
+        'port',
+    ),
+    brewhouse: P3(
+        'brewhouse',
+        8,
+        'La brasserie du port',
+        'yann',
+        { wheat: 200, crate: 15, beam: 15, sardine: 20 },
+        'Les marins ont soif ! Une brasserie au bout du quai, et tout le port viendra trinquer.',
+        'Santé ! La brasserie est à vendre au magasin, et vous pouvez planter du houblon.',
+        'La brasserie et le houblon',
+        22,
+        64,
+        'port',
+    ),
+    chocoshop: P3(
+        'chocoshop',
+        8,
+        'La chocolaterie',
+        'lucie',
+        { sugar: 30, milk: 40, cream: 10, cottonCandy: 5 },
+        'Les bateaux rapportent des fèves de cacao ! On pourrait ouvrir une chocolaterie, dis ?',
+        'Ça sent le chocolat jusqu’au phare ! La chocolaterie est au magasin, et le cacaoyer pousse dans la serre.',
+        'La chocolaterie, et le cacao dans la serre',
+        56,
+        24,
+        'port',
+    ),
+    shipyard: P3(
+        'shipyard',
+        8,
+        'Le chantier naval',
+        'morgane',
+        { beam: 40, tools: 15, paint: 10, cloth: 20 },
+        'Avec un chantier naval, je construis un cargo plus rapide. Plus de voyages, plus de commandes !',
+        'Le nouveau cargo file sur l’eau : le bateau revient plus vite et paie 25 % de plus.',
+        'Bateau 25 % mieux payé, et de retour une heure plus tôt',
+        84,
+        36,
+        'port',
+    ),
+    sheepfold: P3(
+        'sheepfold',
+        9,
+        'La bergerie d’altitude',
+        'bruno',
+        { wool: 80, beam: 30, stone: 150, feed: 200 },
+        'Là-haut, l’herbe est la meilleure du monde. Réparons la bergerie, et tes bêtes pourront monter aux estives.',
+        'La bergerie est prête ! Envoyez vos vaches, chèvres et moutons en transhumance depuis l’onglet Animaux.',
+        'La transhumance (onglet Animaux)',
+        20,
+        34,
+        'alpine',
+    ),
+    chalet: P3(
+        'chalet',
+        9,
+        'Le chalet',
+        'lea',
+        { beam: 40, plank: 40, tools: 20, blueberry: 60 },
+        'Un chalet pour accueillir les randonneurs, et un jardin d’altitude pour le génépi.',
+        'Le chalet est chaleureux, et le génépi pousse dans votre champ.',
+        'Le génépi (graines au magasin)',
+        52,
+        62,
+        'alpine',
+    ),
+    alpinedairy: P3(
+        'alpinedairy',
+        9,
+        'La fromagerie d’alpage',
+        'bruno',
+        { milk: 120, goatMilk: 40, cheese: 15, goatCheese: 8 },
+        'Le lait d’alpage, c’est de l’or blanc. Avec une vraie fromagerie, on en fera du beaufort.',
+        'Les meules s’alignent dans la cave. La fromagerie d’alpage est au magasin.',
+        "La fromagerie d'alpage (au magasin)",
+        82,
+        40,
+        'alpine',
+    ),
+    cablecar: P3(
+        'cablecar',
+        10,
+        'Le téléphérique',
+        'lea',
+        { tools: 30, nail: 60, paint: 15, beam: 40 },
+        'Un téléphérique, et la montée aux estives prendra deux fois moins de temps !',
+        'La cabine file au-dessus des sapins : la transhumance est deux fois plus rapide et emmène deux fois plus de bêtes.',
+        'Transhumance deux fois plus rapide, 8 animaux au lieu de 4',
+        26,
+        70,
+        'alpine',
+    ),
+    chapel: P3(
+        'chapel',
+        10,
+        'La chapelle des neiges',
+        'odette',
+        { stone: 200, paint: 20, scentedCandle: 10, flowerPot: 10 },
+        'Toute la vallée se retrouve à la chapelle pour la fête. Elle mérite de briller de nouveau.',
+        'Les cloches sonnent dans toute la vallée : les saisons de la ferme commencent (volet Village).',
+        'Les saisons de la ferme, de 4 semaines',
+        58,
+        28,
+        'alpine',
+    ),
+    refuge: P3(
+        'refuge',
+        10,
+        'Le refuge',
+        'bruno',
+        { fondue: 4, genepiLiqueur: 6, beaufort: 6, colorSweater: 6 },
+        'Le refuge, c’est là que finit toute belle montée. On y fêtera la fin de ton grand voyage.',
+        'Quelle fête ! Toute la vallée vous acclame. En vendant la ferme, vous pourrez désormais choisir une ferme à thème. Et 5 rubans !',
+        'Fermes à thème au prestige, 5 rubans',
+        84,
+        76,
+        'alpine',
+    ),
+});
+
+// ---------------- Saisons de la ferme (4 semaines) ----------------
+const FARM_SEASON_MS = 28 * 864e5;
+const FARM_SEASON_TIERS = [300, 900, 2200, 5000, 10000];
+const FARM_SEASONS = [
+    {
+        id: 'cheese',
+        name: 'La saison des fromages',
+        icon: 'cheese',
+        deco: 'cheeseWheel',
+        items: ['cheese', 'goatCheese', 'mozzarella', 'beaufort', 'tomme', 'reblochon', 'butter', 'cream', 'milk', 'goatMilk', 'alpineMilk', 'buffaloMilk'],
+    },
+    {
+        id: 'sea',
+        name: 'La saison de la mer',
+        icon: 'sardine',
+        deco: 'anchorDeco',
+        items: [
+            'sardine',
+            'mackerel',
+            'shrimp',
+            'seabass',
+            'lobster',
+            'trout',
+            'cannedSardines',
+            'mackerelRillettes',
+            'cannedShrimp',
+            'bouillabaisse',
+            'lobsterDish',
+            'grilledMackerel',
+            'smokedTrout',
+            'fishSoup',
+        ],
+    },
+    {
+        id: 'orchard',
+        name: 'La saison des vergers',
+        icon: 'apple',
+        deco: 'orchardSwing',
+        items: ['apple', 'cherry', 'orange', 'peach', 'grape', 'olive', 'juice', 'cider', 'grapeJuice', 'pie', 'jam', 'cherryBeer', 'oliveOil'],
+    },
+    {
+        id: 'mountain',
+        name: 'La saison de la montagne',
+        icon: 'genepi',
+        deco: 'cowbell',
+        items: ['alpineMilk', 'genepi', 'genepiLiqueur', 'blueberry', 'wool', 'alpacaWool', 'honey', 'raclette', 'fondue', 'tartiflette', 'woolHat', 'hotChoc'],
+    },
+];
+Object.assign(DECOS, {
+    cheeseWheel: {
+        id: 'cheeseWheel',
+        name: "Meule d'or",
+        desc: 'Trophée de la saison des fromages : +30 de charme au concours',
+        cost: 0,
+        reqLvl: 1,
+        charm: 30,
+        rare: true,
+    },
+    anchorDeco: {
+        id: 'anchorDeco',
+        name: 'Ancre marine',
+        desc: 'Trophée de la saison de la mer : +30 de charme au concours',
+        cost: 0,
+        reqLvl: 1,
+        charm: 30,
+        rare: true,
+    },
+    orchardSwing: {
+        id: 'orchardSwing',
+        name: 'Balançoire du verger',
+        desc: 'Trophée de la saison des vergers : +30 de charme au concours',
+        cost: 0,
+        reqLvl: 1,
+        charm: 30,
+        rare: true,
+    },
+    cowbell: {
+        id: 'cowbell',
+        name: 'Grande cloche',
+        desc: 'Trophée de la saison de la montagne : +30 de charme au concours',
+        cost: 0,
+        reqLvl: 1,
+        charm: 30,
+        rare: true,
+    },
+});
+
+// ---------------- Fermes à thème au prestige ----------------
+const FARM_THEMES = {
+    none: { name: 'Ferme classique', desc: 'Aucun bonus particulier' },
+    garden: { name: 'Ferme maraîchère', icon: ['item', 'carrot'], desc: 'Les cultures poussent 15 % plus vite' },
+    dairy: { name: 'Ferme laitière', icon: ['animal', 'cow'], desc: 'Les animaux produisent 20 % plus vite' },
+    orchard: { name: 'Ferme fruitière', icon: ['item', 'apple'], desc: 'Les arbres fruitiers poussent 30 % plus vite' },
+    coast: { name: 'Ferme du littoral', icon: ['item', 'sardine'], desc: 'Le filet de pêche rapporte deux fois plus' },
+};
+
+// ---------------- Histoires des nouveaux villageois ----------------
+Object.assign(STORIES, {
+    morgane: {
+        title: 'Le trésor du capitaine',
+        steps: [
+            ['Mon grand-père a caché un trésor sur une île. Pour la traversée, il faut un bateau solide.', { beam: 20, nail: 20 }],
+            ['Il faut des provisions pour l’équipage : du pain et des conserves.', { bread: 20, cannedSardines: 4 }],
+            ['La carte parle d’un coffre sous un rocher. Une pioche, des outils, et on y va !', { tools: 6, lobster: 2 }],
+        ],
+        end: 'Le coffre était plein de vieilles cartes marines. Pour moi, c’est le plus beau des trésors. Merci, matelot !',
+    },
+    yann: {
+        title: 'Le concours de la criée',
+        steps: [
+            ['Chaque année, la criée élit le plus bel étal. Commençons par des crevettes bien fraîches.', { shrimp: 12 }],
+            ['Il me faut des bars de ligne, les rois de l’étal.', { seabass: 6 }],
+            ['Et pour impressionner le jury : une bouillabaisse comme à Marseille !', { bouillabaisse: 3 }],
+        ],
+        end: 'Premier prix de la criée ! Le jury n’a jamais vu un étal pareil.',
+    },
+    bruno: {
+        title: 'La grande montée',
+        steps: [
+            ['Cette année, je monte le plus beau troupeau de la vallée. Il faut des forces aux bêtes.', { feed: 120 }],
+            ['Là-haut, il fait froid la nuit. De la laine pour les couvertures du berger.', { wool: 30 }],
+            ['La fête des estives approche : du beaufort pour toute la vallée.', { beaufort: 4, bread: 10 }],
+        ],
+        end: 'Le troupeau est redescendu fier et gras. Toute la vallée en parle encore !',
+    },
+    lea: {
+        title: 'Le sommet du Grand Mont',
+        steps: [
+            ['Je rêve de gravir le Grand Mont. D’abord, des provisions légères pour la marche.', { blueberry: 20, cookies: 10 }],
+            ['Il faut de l’équipement chaud pour la nuit au refuge.', { woolHat: 3, cloth: 10 }],
+            ['Au sommet, on trinquera au génépi en regardant la vallée.', { genepiLiqueur: 2, hotChoc: 4 }],
+        ],
+        end: 'Le lever de soleil au sommet… Je n’oublierai jamais. Et tu étais là.',
+    },
+});
+
+// ---------------- Pages du guide et bulles ----------------
+GUIDE.push(
+    {
+        id: 'port',
+        icon: ['ui', 'boat'],
+        name: 'Le Port',
+        lvl: 34,
+        view: 'quests',
+        text: 'Chapitres 7 et 8 : le phare ouvre la pêche en mer, la criée la conserverie, le quai le bateau de livraison. Brasserie et chocolaterie suivent.',
+    },
+    {
+        id: 'alpine',
+        icon: ['ui', 'mountain'],
+        name: "L'Alpage",
+        lvl: 40,
+        view: 'quests',
+        text: 'Chapitres 9 et 10 : transhumance, fromagerie d’alpage, génépi, puis les saisons de la ferme et les fermes à thème au prestige.',
+    },
+    {
+        id: 'seasons4',
+        icon: ['ui', 'trophy'],
+        name: 'Saisons de la ferme',
+        lvl: 40,
+        view: 'quests',
+        text: 'Toutes les 4 semaines, un thème : produisez ses produits pour franchir 5 paliers. Le dernier offre une décoration unique.',
+    },
+);
+const TIPS_7 = {
+    seaNet: {
+        icon: ['ui', 'net'],
+        title: 'La pêche en mer',
+        text: 'Posez le filet dans l’onglet Nature, revenez 20 minutes plus tard et relevez-le : sardines, maquereaux, crevettes, bars… et parfois un homard !',
+    },
+    boat: {
+        icon: ['ui', 'boat'],
+        title: 'Le bateau de livraison',
+        text: 'Le cargo vient chercher de très grosses commandes. Il paie mieux que tout le reste, mais il ne reste que deux heures.',
+    },
+    trans: {
+        icon: ['ui', 'mountain'],
+        title: 'La transhumance',
+        text: 'Envoyez des vaches, chèvres, moutons ou bufflonnes à l’alpage. Ils reviennent avec du lait d’alpage et produisent ensuite 20 % plus vite.',
+    },
+    farmSeason: {
+        icon: ['ui', 'trophy'],
+        title: 'Les saisons de la ferme',
+        text: 'Toutes les 4 semaines, un nouveau thème. Chaque produit du thème rapporte des points : 5 paliers, et une décoration unique au bout.',
+    },
+};
+
+(function setupSeaMountain() {
+    const avail = id => {
+        if (RECIPES[id]) return RECIPES[id].lvl;
+        const a = Object.values(DB.Animals).find(x => x.prodId === id);
+        if (a) return a.reqLvl;
+        return DB.Items[id].reqLvl || 1;
+    };
+    MAT_VALUE.alpineMilk = 250;
+    for (const [id, [machine, name, ing, time]] of Object.entries(SEA_MOUNTAIN_RECIPES)) {
+        DB.Items[id] = { id, name, type: 'artisan' };
+        const lvl = Math.max(DB.Machines[machine].reqLvl, ...Object.keys(ing).map(avail));
+        const value = Object.entries(ing).reduce((a, [k, n]) => a + ingValue(k) * n, 0);
+        DB.Items[id].sell = Math.round((value * 1.25 + time * 0.3 + 5) / 5) * 5;
+        RECIPES[id] = { id, machine, ing, time, lvl, base: lvl };
+        RECIPES[id].xp = Math.max(1, Math.round(Math.max(5, Math.round(time / 10 + DB.Items[id].sell / 30)) * BALANCE.craftXp));
+    }
+    VILLAGERS.morgane.likes.push('cannedSardines', 'blondBeer');
+    VILLAGERS.yann.likes.push('bouillabaisse', 'grilledMackerel');
+    VILLAGERS.bruno.likes.push('beaufort', 'tomme', 'raclette');
+    VILLAGERS.lea.likes.push('hotChoc', 'genepiLiqueur', 'fondue');
+    VILLAGERS.lucie.likes.push('darkChoc', 'milkChoc');
+    VILLAGERS.gaston.likes.push('tartiflette', 'lobsterDish');
+})();
+
+// =====================================================================
 //  État de la partie : création, chargement, migrations et sauvegarde.
 // =====================================================================
 
@@ -13210,6 +14436,11 @@ function newState() {
         rare: { type: null, until: 0, next: 0, offers: [], dish: null, served: false },
         contract: null,
         stories: {},
+        net: { until: 0 },
+        boat: { status: 'idle', arriveAt: 0, expiresAt: 0, items: [], gold: 0, xp: 0, mats: [] },
+        trans: { returnAt: 0 },
+        fseason: null,
+        farmTheme: 'none',
         crow: null,
         daily: { last: '', streak: 0 },
     };
@@ -13309,7 +14540,7 @@ function isToolValid(t) {
         t === 'shovel' ||
         t === 'feed' ||
         (t === 'fert' && state.level >= 4) ||
-        (state.seeds[t] !== undefined && (state.level >= DB.Items[t].reqLvl || state.seeds[t] > 0))
+        (state.seeds[t] !== undefined && ((state.level >= DB.Items[t].reqLvl && storyOk(DB.Items[t])) || state.seeds[t] > 0))
     );
 }
 
@@ -14125,7 +15356,7 @@ function cropRate(id) {
     let f;
     if (d.type === 'tree') f = s === 'hiver' ? 0.5 : s === 'automne' ? 1.2 : 1;
     else f = isInSeason(id) ? 1.3 : s === 'hiver' ? 0.6 : 1;
-    return f * weather().crop * (1 + rank('green') * 0.05);
+    return f * weather().crop * (1 + rank('green') * 0.05) * themeCropMult(id);
 }
 
 function newDay(silent) {
@@ -14440,6 +15671,11 @@ function doPlotAction(i, action) {
             buzz(6);
             break;
         case 'plant': {
+            if (i < 1000 && DB.Items[tool].ghOnly) {
+                toast(`Le ${DB.Items[tool].seedName.toLowerCase()} ne pousse que dans la serre`, ico('ui', 'greenhouse'));
+                sfx('error');
+                return;
+            }
             if (i >= 1000 && DB.Items[tool].type === 'tree') {
                 toast('Les arbres sont trop grands pour la serre', ico('ui', 'greenhouse'));
                 sfx('error');
@@ -14473,7 +15709,7 @@ function doPlotAction(i, action) {
 function plantSeed(plot, id) {
     const d = DB.Items[id];
     // des graines reçues en cadeau se plantent même avant le niveau de la culture
-    if (state.level < d.reqLvl && !(state.seeds[id] > 0)) return false;
+    if ((state.level < d.reqLvl || !storyOk(d)) && !(state.seeds[id] > 0)) return false;
     if (state.seeds[id] > 0) {
         state.seeds[id]--;
     } else if (d.type === 'crop' && !d.exotic && state.money >= d.cost) {
@@ -15504,6 +16740,8 @@ function collectAnimal(a) {
     a.produced = (a.produced || 0) + qty;
     state.stats.collected += qty;
     addMastery(d.prodId, qty);
+    // une bête qui a fait la transhumance donne aussi du lait d'alpage
+    if (a.alpine && (a.type === 'cow' || a.type === 'goat' || a.type === 'buffalo')) state.inventory.alpineMilk += Math.ceil(qty / 2);
     // la ruche d'élevage donne aussi un peu de miel
     if (a.type === 'bees') state.inventory.honey += Math.ceil(qty / 2);
     const xp = d.xp * a.stack;
@@ -15634,7 +16872,7 @@ function autoFeed(a) {
     state.inventory.feed -= n;
 }
 
-const animalMult = a => (1 + rank('fed') * 0.08) * (1 + ((a && a.love) || 0) * 0.04) * starAnimalMult(a);
+const animalMult = a => (1 + rank('fed') * 0.08) * (1 + ((a && a.love) || 0) * 0.04) * starAnimalMult(a) * alpineMult(a) * themeAnimalMult();
 
 const animalTime = a => DB.Animals[a.type].time / (speedMult() * animalMult(a) * masterySpeed(DB.Animals[a.type].prodId));
 
@@ -15690,11 +16928,12 @@ function babyBody(a) {
 function decorateCritter(a, i) {
     const el = ui.animalEls[i];
     if (!el) return;
-    const key = `${isAdult(a)}|${a.name}|${a.love}|${a.star ? 1 : 0}`;
+    const key = `${isAdult(a)}|${a.name}|${a.love}|${a.star ? 1 : 0}|${a.away ? 1 : 0}|${a.alpine ? 1 : 0}`;
     if (el._deco === key) return;
     el._deco = key;
     el.classList.toggle('baby', !isAdult(a));
     el.classList.toggle('star', !!a.star);
+    el.classList.toggle('away', isAway(a));
     el.querySelector('.critter-body').innerHTML = isAdult(a) ? SPR.animal(a.type) : babyBody(a);
     let tag = el.querySelector('.critter-name');
     if (!tag) {
@@ -16589,7 +17828,7 @@ const weekEndsIn = () => (weekStart().getTime() + 7 * 864e5 - Date.now()) / 1000
 function shopCard(icon, title, sub, buttons, locked, reqLvl) {
     return `<div class="board card ${locked ? 'locked' : ''}">
         <div class="card-ico">${icon}</div>
-        <div class="card-main"><div class="card-title">${title}</div><div class="card-sub">${locked ? `Débloqué au niveau ${reqLvl}` : sub}</div></div>
+        <div class="card-main"><div class="card-title">${title}</div><div class="card-sub">${locked ? (typeof reqLvl === 'string' ? reqLvl : `Débloqué au niveau ${reqLvl}`) : sub}</div></div>
         <div class="card-actions">${buttons}</div></div>`;
 }
 
@@ -16624,7 +17863,7 @@ function renderShop() {
     let html = '';
     seedList().forEach(i => {
         if (i.exotic) return;
-        const locked = state.level < i.reqLvl;
+        const locked = state.level < i.reqLvl || !storyOk(i);
         const seasonTxt = i.seasons
             ? ` · de saison : ${seasonNames(i.seasons).toLowerCase()}${isInSeason(i.id) ? ' <b class="now">(en ce moment)</b>' : ''}`
             : '';
@@ -16634,7 +17873,14 @@ function renderShop() {
                 : `Première récolte en ${formatDuration(i.time / sm)}, puis toutes les ${formatDuration(i.time / sm / 2)} · ${i.name.toLowerCase()} vendue ${sellPrice(i.id)} pièces`;
         const btns =
             i.type === 'crop' ? buyBtn('seed', i.id, 1, i.cost, locked) + buyBtn('seed', i.id, 10, i.cost, locked) : buyBtn('seed', i.id, 1, i.cost, locked);
-        html += shopCard(SPR.seed(i.id), i.seedName, sub, btns, locked, i.reqLvl);
+        html += shopCard(
+            SPR.seed(i.id),
+            i.seedName,
+            i.ghOnly ? sub + ' · seulement dans la serre' : sub,
+            btns,
+            locked,
+            state.level < i.reqLvl ? i.reqLvl : storyLockText(i),
+        );
     });
     $('shop-seeds-list').innerHTML = html;
 
@@ -16658,7 +17904,7 @@ function renderShop() {
     $('shop-machines-list').innerHTML = Object.values(DB.Machines)
         .sort((a, b) => a.reqLvl - b.reqLvl)
         .map(m => {
-            const locked = state.level < m.reqLvl,
+            const locked = state.level < m.reqLvl || !storyOk(m),
                 owned = state.machines.some(x => x.type === m.id);
             const btn = owned ? `<button class="btn small" disabled>Possédé</button>` : buyBtn('machine', m.id, 1, m.cost, locked);
             const recs = recipesOf(m.id);
@@ -16666,7 +17912,14 @@ function renderShop() {
                 .slice(0, 7)
                 .map(r => `<i class="ico">${SPR.item(r.id)}</i>`)
                 .join('')}${recs.length > 7 ? `<b>+${recs.length - 7}</b>` : ''}</span>`;
-            return shopCard(SPR.machine(m.id), m.name, `${m.desc} · ${recs.length} recettes${strip}`, btn, locked, m.reqLvl);
+            return shopCard(
+                SPR.machine(m.id),
+                m.name,
+                `${m.desc} · ${recs.length} recettes${strip}`,
+                btn,
+                locked,
+                state.level < m.reqLvl ? m.reqLvl : storyLockText(m),
+            );
         })
         .join('');
 
@@ -16675,7 +17928,7 @@ function renderShop() {
 
 function buy(type, id, qty = 1, btn) {
     const d = type === 'animal' ? DB.Animals[id] : type === 'machine' ? DB.Machines[id] : type === 'placedeco' ? DECOS[id] : DB.Items[id];
-    if (!d || state.level < (d.reqLvl || 1)) return;
+    if (!d || state.level < (d.reqLvl || 1) || !storyOk(d)) return;
     if (type === 'machine' && state.machines.some(m => m.type === id)) return;
     const total = d.cost * qty;
     if (type === 'animal' && challengeOn('noAnimals')) {
@@ -17390,14 +18643,15 @@ function unlocksAt(lvl) {
     const list = [{ html: SPR.ui('skillbook'), name: '1 point de compétence à placer dans Progrès' }];
     Object.values(DB.Items).forEach(x => {
         if (x.reqLvl !== lvl || x.exotic) return;
-        if (x.type === 'crop' || x.type === 'tree') list.push({ html: SPR.seed(x.id), name: x.seedName });
+        if (x.type === 'crop' || x.type === 'tree')
+            list.push({ html: SPR.seed(x.id), name: x.seedName + (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : '') });
         else list.push({ html: SPR.item(x.id), name: `${x.name} (au magasin)` });
     });
     Object.values(DB.Animals).forEach(x => {
         if (x.reqLvl === lvl) list.push({ html: SPR.animal(x.id), name: x.name });
     });
     Object.values(DB.Machines).forEach(x => {
-        if (x.reqLvl === lvl) list.push({ html: SPR.machine(x.id), name: x.name });
+        if (x.reqLvl === lvl) list.push({ html: SPR.machine(x.id), name: x.name + (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : '') });
     });
     const recs = Object.values(RECIPES).filter(r => r.lvl === lvl && !r.teacher && r.lvl > DB.Machines[r.machine].reqLvl);
     if (recs.length)
@@ -17410,7 +18664,10 @@ function unlocksAt(lvl) {
     });
     CHAPTERS.forEach(c => {
         if (c.lvl === lvl && c.n > 1)
-            list.push({ html: SPR.ui('village'), name: `${c.map ? 'Hameau' : 'Village'} : chapitre ${c.n}, « ${c.name} » (après le chapitre ${c.n - 1})` });
+            list.push({
+                html: SPR.ui('village'),
+                name: `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage' }[c.map] || 'Village'} : chapitre ${c.n}, « ${c.name} » (après le chapitre ${c.n - 1})`,
+            });
     });
     if (lvl === CHAPTERS[0].lvl) list.push({ html: SPR.ui('village'), name: 'Rénovez le village : premier chapitre (onglet Village)' });
     if (lvl === INCIDENT_LVL) list.push({ html: SPR.ui('pest'), name: 'Des imprévus surviennent à la ferme : réagissez vite !' });
@@ -17775,6 +19032,8 @@ function openPrestige() {
         `Après : +${(state.prestige.rubans + gain) * 5} % de ventes et +${(state.prestige.rubans + gain) * 3} % de vitesse.`;
     ui.challengePick = '';
     $('challenge-pick').innerHTML = challengePickHtml();
+    ui.themePick = state.farmTheme || 'none';
+    $('theme-pick').innerHTML = farmThemePickHtml();
     openModal('prestige-modal');
     sfx('click');
 }
@@ -17819,6 +19078,8 @@ function doPrestige() {
         style: state.style,
         album: state.album,
         stories: state.stories,
+        fseason: state.fseason,
+        farmTheme: ui.themePick || 'none',
         contest: state.contest,
         lastContest: state.lastContest,
         day: state.day,
@@ -18762,6 +20023,13 @@ function todoList() {
             urgent: true,
         });
     if (rareActive('butterflies')) list.unshift({ view: 'farm', icon: SPR.ui('butterfly'), text: 'Papillons : récoltes dorées !', n: 0 });
+    if (state.boat.status === 'here') {
+        const ok = hasAll(state.boat.items);
+        list.push({ view: 'quests', icon: SPR.ui('boat'), text: ok ? 'Cargo prêt à charger' : 'Un cargo au port', n: ok ? 1 : 0 });
+    }
+    if (netReady()) list.push({ view: 'nature', icon: SPR.ui('net'), text: 'Filet de pêche plein', n: 1 });
+    const fst = farmSeasonClaimable();
+    if (fst) list.push({ view: 'quests', pane: 'village', icon: SPR.ui('trophy'), text: `${fst} palier${fst > 1 ? 's' : ''} de saison`, n: fst });
     if (contractReady()) list.push({ view: 'quests', pane: 'village', icon: SPR.ui('calendar'), text: 'Contrat de saison prêt', n: 1 });
     const stories = storiesReady();
     if (stories)
@@ -18885,7 +20153,7 @@ function renderQuestsBadges(list) {
 // =====================================================================
 
 // Graines disponibles dans la barre : cultures puis arbres, par niveau
-const plantableSeeds = () => seedList().filter(i => (state.level >= i.reqLvl && !i.exotic) || state.seeds[i.id] > 0);
+const plantableSeeds = () => seedList().filter(i => (state.level >= i.reqLvl && !i.exotic && storyOk(i)) || state.seeds[i.id] > 0);
 
 // Le bouton « Graines » montre la graine (ou la décoration) en main
 function renderSeedButton() {
@@ -19094,8 +20362,10 @@ function questPool() {
         const i = DB.Items[id];
         let ok = false;
         if (!i || i.exotic || depth > 4) ok = false;
+        else if (i.sea) ok = netOpen() && id !== 'lobster';
+        else if (id === 'alpineMilk') ok = transOpen();
         else if (id === 'honey') ok = state.grid.some(p => p.deco === 'hive');
-        else if (i.type === 'crop') ok = state.level >= i.reqLvl;
+        else if (i.type === 'crop') ok = state.level >= i.reqLvl && storyOk(i) && !i.ghOnly;
         else if (i.type === 'tree') ok = state.grid.some(p => p.itemId === i.id);
         else if (i.type === 'product') ok = state.animals.some(a => DB.Animals[a.type].prodId === i.id);
         else if (i.type === 'fish') ok = state.level >= NATURE.pond.lvl && !!FISH[id] && FISH[id].odds >= 10 && !FISH[id].junk;
@@ -19118,12 +20388,13 @@ function qtyFor(it, target, max = 12) {
     return Math.max(1, Math.min(max, Math.round(target / it.sell)));
 }
 
-// Plus une chaîne de production est longue (ou demande de pêcher), plus le produit est rare dans les commandes
+// Plus une chaîne de production est longue (ou demande de pêcher, en mer ou à l'étang, ou de monter aux estives), plus le produit est rare dans les commandes
 function itemWeight(id) {
     const r = RECIPES[id];
+    if (DB.Items[id].sea || id === 'alpineMilk') return 0.3;
     if (!r) return 1;
     const ing = Object.keys(r.ing);
-    if (ing.some(k => DB.Items[k].type === 'fish')) return 0.2;
+    if (ing.some(k => DB.Items[k].type === 'fish' || DB.Items[k].sea || k === 'alpineMilk')) return 0.2;
     if (ing.some(k => RECIPES[k])) return 0.35;
     return 0.7;
 }
@@ -19267,6 +20538,9 @@ function selectOrder(i) {
 function sourceOf(id) {
     const it = DB.Items[id];
     if (id === 'honey') return 'Ruche';
+    if (it.sea) return 'Pêche en mer';
+    if (id === 'alpineMilk') return 'Transhumance';
+    if (it.ghOnly) return 'Serre';
     if (it.type === 'crop') return isInSeason(id) ? 'Champ (de saison)' : 'Champ';
     if (it.type === 'tree') return 'Arbre fruitier';
     if (it.type === 'fish') return 'Étang';
@@ -19609,11 +20883,13 @@ function renderQuestsView() {
         renderEvent();
         renderTruck();
         renderBalloon();
+        renderBoat();
         renderQuests();
     } else {
         renderRare();
         renderStory();
         renderContract();
+        renderFarmSeason();
         renderNeighbors();
         renderMerchant();
         renderContest();
@@ -19775,8 +21051,8 @@ function showStory(pid) {
     const c = currentChapter();
     $('story-next').textContent = !c
         ? "Le village et le hameau sont rénovés : l'histoire est terminée. Merci pour tout ! Prochain grand but : la Ferme légendaire (Livre de la ferme)."
-        : c.n === 5 && chapterDone(4) && p.ch === 4
-          ? `Ce n'est pas fini : de l'autre côté de la rivière, un vieux hameau vous attend${state.level < c.lvl ? ` au niveau ${c.lvl}` : ''}.`
+        : chapterDone(p.ch) && c.map && c.map !== (p.map || 'village')
+          ? `Ce n'est pas fini : ${{ hamlet: "de l'autre côté de la rivière, un vieux hameau", port: 'au bout de la route, un petit port', alpine: 'là-haut, les alpages' }[c.map]} vous attend${state.level < c.lvl ? ` au niveau ${c.lvl}` : ''}.`
           : chapterDone(p.ch)
             ? `Chapitre ${p.ch} terminé ! Prochain chapitre : « ${c.name} »${state.level < c.lvl ? ` au niveau ${c.lvl}` : ''}.`
             : '';
@@ -19814,7 +21090,6 @@ const VMAP_BG2 = `<svg class="vmap-bg" viewBox="0 0 160 110" preserveAspectRatio
 </svg>`;
 
 const mapOf = p => p.map || 'village';
-const hamletOpen = () => chapterDone(4) || state.level >= CHAPTERS[4].lvl;
 
 function setStoryMap(m) {
     ui.storyMap = m;
@@ -19827,8 +21102,10 @@ function renderStory() {
     const box = $('story-container');
     if (!box) return;
     const c = currentChapter();
-    if (!ui.storyMap) ui.storyMap = c && c.map && hamletOpen() ? c.map : 'village';
-    if (!hamletOpen()) ui.storyMap = 'village';
+    const maps = STORY_MAPS.filter(m => m.open());
+    if (!ui.storyMap) ui.storyMap = c && c.map && maps.some(m => m.id === c.map) ? c.map : 'village';
+    if (!maps.some(m => m.id === ui.storyMap)) ui.storyMap = 'village';
+    const M = STORY_MAPS.find(m => m.id === ui.storyMap);
     const projs = Object.values(PROJECTS).filter(p => mapOf(p) === ui.storyMap);
     if (PROJECTS[ui.projSel] && mapOf(PROJECTS[ui.projSel]) !== ui.storyMap) ui.projSel = null;
     // par défaut : un chantier prêt à finir, sinon le premier chantier ouvert
@@ -19836,20 +21113,18 @@ function renderStory() {
         const open = projs.find(p => projectOpen(p.id) && projectComplete(p.id)) || projs.find(p => projectOpen(p.id));
         ui.projSel = open ? open.id : projs[0].id;
     }
-    const hamlet = ui.storyMap === 'hamlet';
-    const party = hamlet ? projectDone('bandstand') : projectDone('townhall');
+    const party = projectDone(M.party);
     const mapReady = m => Object.values(PROJECTS).some(p => mapOf(p) === m && projectOpen(p.id) && projectComplete(p.id));
-    const switcher = hamletOpen()
-        ? `<div class="branch-tabs map-tabs">${[
-              ['village', 'Le village'],
-              ['hamlet', 'Le hameau'],
-          ]
-              .map(
-                  ([m, n]) =>
-                      `<button class="branch ${ui.storyMap === m ? 'on' : ''}" onclick="setStoryMap('${m}')">${n}${ui.storyMap !== m && mapReady(m) ? '<span class="dot">!</span>' : ''}</button>`,
-              )
-              .join('')}</div>`
-        : '';
+    const switcher =
+        maps.length > 1
+            ? `<div class="branch-tabs map-tabs n${maps.length}">${maps
+                  .map(x => [x.id, x.name])
+                  .map(
+                      ([m, n]) =>
+                          `<button class="branch ${ui.storyMap === m ? 'on' : ''}" onclick="setStoryMap('${m}')">${n}${ui.storyMap !== m && mapReady(m) ? '<span class="dot">!</span>' : ''}</button>`,
+                  )
+                  .join('')}</div>`
+            : '';
     const map = projs
         .map(p => {
             const st = projectStage(p.id),
@@ -19865,9 +21140,9 @@ function renderStory() {
                   ? `${c.intro} (${chapterProjects(c.n).filter(p => projectDone(p.id)).length} / ${chapterProjects(c.n).length})`
                   : `Ce chapitre s'ouvre au niveau ${c.lvl}.`
           }</div></div>`
-        : `<div class="chapter-head"><div class="card-title">Le village et le hameau sont rénovés !</div><div class="card-sub">Merci, citoyen d'honneur. Tout le canton vous adore.</div></div>`;
+        : `<div class="chapter-head"><div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port et alpage : merci, citoyen d'honneur. Tout le canton vous adore.</div></div>`;
     box.innerHTML = `<div class="board story-card">${head}${switcher}
-        <div class="vmap ${party ? 'party' : ''} ${hamlet ? 'hamlet' : ''}">${hamlet ? VMAP_BG2 : VMAP_BG}${party ? '<div class="bunting"></div>' : ''}${map}</div>
+        <div class="vmap ${party ? 'party' : ''} ${M.id}">${M.bg()}${party ? '<div class="bunting"></div>' : ''}${map}</div>
         ${projectDetail(ui.projSel)}</div>`;
 }
 
@@ -20523,7 +21798,7 @@ const TIPS = {
     },
 };
 
-Object.assign(TIPS, TIPS_4, TIPS_5, TIPS_6);
+Object.assign(TIPS, TIPS_4, TIPS_5, TIPS_6, TIPS_7);
 
 function tip(id) {
     if (!TIPS[id] || state.tips[id] || !state.tutorial.done) return;
@@ -20997,11 +22272,29 @@ const pinnedCrops = () => {
 function goProduce(id) {
     const it = DB.Items[id];
     closeModal('barn-modal');
+    if (it.sea) {
+        switchView('nature');
+        toast(netOpen() ? 'Les produits de la mer viennent du filet (onglet Nature)' : storyLockText({ needProject: 'lighthouse' }), ico('ui', 'net'));
+        return;
+    }
+    if (id === 'alpineMilk') {
+        switchView('animals');
+        toast(
+            transOpen() ? "Envoyez vaches et chèvres en transhumance, elles donnent ensuite du lait d'alpage" : storyLockText({ needProject: 'sheepfold' }),
+            ico('ui', 'mountain'),
+        );
+        return;
+    }
+    if (it.type === 'crop' && !storyOk(it)) {
+        switchView('quests');
+        toast(storyLockText(it), ico('ui', 'village'));
+        return;
+    }
     if (it.type === 'crop' || it.type === 'tree') {
         if (state.seeds[id] > 0 || (it.type === 'crop' && !it.exotic && state.level >= it.reqLvl)) {
             switchView('farm');
             selectTool(id);
-            toast(`${it.seedName} en main : touchez une parcelle labourée pour planter`, ico('seed', id));
+            toast(`${it.seedName} en main : touchez une parcelle ${it.ghOnly ? 'de la serre' : 'labourée'} pour planter`, ico('seed', id));
         } else {
             switchView('shop');
             toast(it.exotic ? 'Seul le marchand ambulant vend ces graines' : `Achetez un ${it.seedName.toLowerCase()} au magasin`, ico('seed', id));
@@ -21445,6 +22738,7 @@ const goldMasteries = () => Object.keys(state.mastery || {}).filter(id => DB.Ite
 const masteryReward = (id, s) => Math.round(((DB.Items[id].sell || 20) * [20, 60, 150][s - 1]) / 10) * 10;
 
 function addMastery(id, qty) {
+    farmSeasonAdd(id, qty);
     if (!DB.Items[id] || !DB.Items[id].sell) return;
     const before = masteryStars(id);
     state.mastery[id] = masteryCount(id) + qty;
@@ -21534,7 +22828,11 @@ function leagueAfterContest(rank) {
 // ---------------- Ferme légendaire ----------------
 const LEGEND_GOALS = [
     { name: 'Atteindre le niveau 40', ok: () => state.stats.maxLevel >= MAX_LEVEL, v: () => `${Math.min(state.level, MAX_LEVEL)} / ${MAX_LEVEL}` },
-    { name: 'Terminer les 6 chapitres du village et du hameau', ok: () => chapterDone(6), v: () => `${CHAPTERS.filter(c => chapterDone(c.n)).length} / 6` },
+    {
+        name: 'Terminer les 6 chapitres du village et du hameau',
+        ok: () => chapterDone(6),
+        v: () => `${CHAPTERS.filter(c => c.n <= 6 && chapterDone(c.n)).length} / 6`,
+    },
     { name: 'Agrandir la maison au niveau 5', ok: () => (state.stats.houseMax || 0) >= 5, v: () => `${state.stats.houseMax || 0} / 5` },
     { name: 'Monter en ligue diamant au concours', ok: () => (state.stats.bestLeague || 0) >= 3, v: () => leagueName(state.stats.bestLeague || 0) },
     { name: 'Maîtriser 10 produits en or', ok: () => goldMasteries() >= 10, v: () => `${Math.min(10, goldMasteries())} / 10` },
@@ -22287,6 +23585,10 @@ function itemSource(id) {
     if (it.type === 'crop') return it.exotic ? 'Graines chez le marchand ambulant' : `Champ, graines au niveau ${it.reqLvl}`;
     if (it.type === 'tree') return `Arbre fruitier au magasin, niveau ${it.reqLvl}`;
     if (it.type === 'fish') return "Pêche à l'étang";
+    if (it.sea) return 'Filet de pêche en mer (onglet Nature), après le phare';
+    if (id === 'alpineMilk') return 'Au retour de la transhumance, puis chez les vaches, chèvres et bufflonnes qui sont montées';
+    if (it.type === 'crop' && it.needProject)
+        return `Graines au niveau ${it.reqLvl}, après « ${PROJECTS[it.needProject].name} »${it.ghOnly ? ', seulement dans la serre' : ''}`;
     if (RECIPES[id]) {
         const r = RECIPES[id];
         const how = Object.entries(r.ing)
@@ -22434,6 +23736,412 @@ function cycleTextSize() {
 }
 
 // =====================================================================
+//  Meuh 3.0 et 4.0 : le Port et l'Alpage.
+//  Pêche en mer, bateau de livraison, transhumance, saisons de la ferme,
+//  fermes à thème, et les nouveautés qui s'ouvrent par l'histoire.
+// =====================================================================
+
+// ---------------- Ce que l'histoire débloque ----------------
+const storyOk = d => !d || !d.needProject || projectDone(d.needProject);
+const storyLockText = d => (d && d.needProject && !projectDone(d.needProject) ? `Après le chantier « ${PROJECTS[d.needProject].name} »` : '');
+
+// ---------------- Pêche en mer ----------------
+const netOpen = () => projectDone('lighthouse');
+const netReady = () => netOpen() && state.net.until && Date.now() >= state.net.until;
+
+function castNet(btn) {
+    if (!netOpen() || state.net.until) return;
+    state.net.until = Date.now() + SEA_NET_TIME;
+    sfx('water');
+    const c = centerOf(btn);
+    burst(c.x, c.y, 'water', 12);
+    tip('seaNet');
+    renderNet();
+    saveState();
+}
+
+function pickCatch() {
+    let x = Math.random() * SEA_CATCH.reduce((a, [, w]) => a + w, 0);
+    for (const [id, w] of SEA_CATCH) {
+        x -= w;
+        if (x <= 0) return id;
+    }
+    return 'sardine';
+}
+
+function haulNet(btn) {
+    if (!netReady()) return;
+    if (barnBlocked()) return;
+    const n = (6 + Math.floor(Math.random() * 5) + rank('bounty')) * (state.farmTheme === 'coast' ? 2 : 1);
+    const got = {};
+    for (let k = 0; k < n; k++) {
+        const id = pickCatch();
+        got[id] = (got[id] || 0) + 1;
+    }
+    Object.entries(got).forEach(([id, q]) => {
+        state.inventory[id] += q;
+        addMastery(id, q);
+    });
+    state.stats.fish = (state.stats.fish || 0) + n;
+    state.stats.seaHauls = (state.stats.seaHauls || 0) + 1;
+    state.net.until = 0;
+    const c = centerOf(btn);
+    floatText(
+        c.x,
+        c.y - 20,
+        Object.entries(got)
+            .map(([id, q]) => `+${q}${ico('item', id)}`)
+            .join(' '),
+    );
+    addXp(8 * n, c.x, c.y + 10);
+    burst(c.x, c.y, 'water', 16);
+    sfx('harvest');
+    if (got.lobster) toast('Un homard dans le filet !', ico('item', 'lobster'));
+    renderNet();
+    updateHeader();
+    saveState();
+}
+
+function renderNet() {
+    const box = $('net-card');
+    if (!box) return;
+    box.hidden = !netOpen();
+    if (!netOpen()) return;
+    const n = state.net;
+    const left = Math.max(0, (n.until - Date.now()) / 1000);
+    box.innerHTML = `<div class="nature-head"><i class="ico">${SPR.ui('net')}</i><div><div class="card-title">Pêche en mer</div>
+        <div class="card-sub">${!n.until ? 'Posez le filet, et relevez-le dans 20 minutes : sardines, maquereaux, crevettes, bars, parfois un homard.' : netReady() ? 'Le filet est plein, relevez-le !' : `Le filet est en mer : encore <b id="net-timer">${formatDuration(left)}</b>.`}</div></div></div>
+        <div class="sea ${n.until ? 'out' : ''}">${SPR.ui('net')}</div>
+        ${
+            !n.until
+                ? `<button class="btn wide blue" onclick="castNet(this)">Poser le filet</button>`
+                : `<button class="btn wide ${netReady() ? 'gold' : ''}" onclick="haulNet(this)" ${netReady() ? '' : 'disabled'}>Relever le filet</button>`
+        }`;
+}
+
+function updateNetTimer() {
+    const el = $('net-timer');
+    if (!el) return;
+    const left = Math.max(0, (state.net.until - Date.now()) / 1000);
+    if (left <= 0) renderNet();
+    else el.textContent = formatDuration(left);
+}
+
+// ---------------- Bateau de livraison ----------------
+const boatOpen = () => projectDone('quay');
+const boatPay = () => BOAT_PAY * (projectDone('shipyard') ? 1.25 : 1);
+const boatAway = () => BOAT_AWAY - (projectDone('shipyard') ? 60 * 60 * 1000 : 0);
+
+function boatTick() {
+    if (!boatOpen()) return false;
+    const b = state.boat,
+        now = Date.now();
+    if (b.status === 'idle') {
+        Object.assign(b, { status: 'away', arriveAt: now + 30000 });
+        return false;
+    }
+    if (b.status === 'away' && now >= b.arriveAt) {
+        const its = pickItems(4);
+        if (its.length < 3) {
+            b.arriveAt = now + 60000;
+            return false;
+        }
+        const target = 150 + state.level * 55;
+        const items = its.map(it => ({ id: it.id, qty: qtyFor(it, target * (0.8 + Math.random() * 0.5), 30) }));
+        const value = items.reduce((a, x) => a + DB.Items[x.id].sell * x.qty, 0);
+        const gold = round5(value * boatPay());
+        Object.assign(b, {
+            status: 'here',
+            expiresAt: now + BOAT_STAY,
+            items,
+            gold,
+            xp: Math.round(value * BOAT_PAY * BALANCE.balloonXp * xpBonus()),
+            mats: [pickRand(RARE), pickRand(RARE), pickRand(RARE)],
+        });
+        if (ui.started && !document.hidden) {
+            toast('Un cargo accoste au port !', ico('ui', 'boat'));
+            tip('boat');
+            sfx('level');
+        }
+        return true;
+    }
+    if (b.status === 'here' && now >= b.expiresAt) {
+        if (ui.started) toast('Le cargo a repris la mer', ico('ui', 'boat'));
+        Object.assign(b, { status: 'away', items: [], arriveAt: now + boatAway() });
+        return true;
+    }
+    return false;
+}
+
+function sendBoat(btn) {
+    const b = state.boat;
+    if (b.status !== 'here' || !hasAll(b.items)) return;
+    payItems(b.items);
+    const c = centerOf(btn);
+    sfx('level');
+    buzz(30);
+    burst(c.x, c.y, 'sparkle', 18);
+    earn(b.gold, btn);
+    addXp(b.xp, c.x, c.y + 24);
+    b.mats.forEach(m => giveRare(m, 1, btn));
+    state.stats.boats = (state.stats.boats || 0) + 1;
+    state.income.orders += b.gold;
+    Object.assign(b, { status: 'away', items: [], arriveAt: Date.now() + boatAway() });
+    toast('Le cargo appareille, chargé de vos produits !', ico('ui', 'boat'));
+    renderBoat();
+    updateHeader();
+    saveState();
+}
+
+function renderBoat() {
+    const box = $('boat-container');
+    if (!box) return;
+    const b = state.boat;
+    if (!boatOpen()) {
+        box.innerHTML = '';
+        return;
+    }
+    if (b.status !== 'here') {
+        box.innerHTML = `<div class="board card balloon-card away"><div class="card-ico">${SPR.ui('boat')}</div><div class="card-main"><div class="card-title">Bateau de livraison</div><div class="card-sub">Le cargo revient dans <b id="boat-timer">${formatDuration(Math.max(0, (b.arriveAt - Date.now()) / 1000))}</b></div></div></div>`;
+        return;
+    }
+    const ok = hasAll(b.items);
+    box.innerHTML = `<div class="board balloon-card here boat-card">
+        <div class="balloon-art">${SPR.ui('boat')}</div>
+        <div class="card-main">
+            <div class="truck-head"><div class="card-title">Bateau de livraison</div><div class="timer-pill">${ico('ui', 'clock')}<span id="boat-timer">${formatDuration(Math.max(0, (b.expiresAt - Date.now()) / 1000))}</span></div></div>
+            <div class="olines">${b.items.map(x => itemLine(x)).join('')}</div>
+            <div class="od-foot"><div class="rewards">${rewardHtml(b.gold, b.xp, b.mats)}</div>
+            <button class="btn ${ok ? 'green' : ''}" onclick="sendBoat(this)" ${ok ? '' : 'disabled'}>Charger</button></div>
+        </div>
+    </div>`;
+}
+
+function updateBoatTimer() {
+    const el = $('boat-timer'),
+        b = state.boat;
+    if (el) el.textContent = formatDuration(Math.max(0, ((b.status === 'here' ? b.expiresAt : b.arriveAt) - Date.now()) / 1000));
+}
+
+// ---------------- Transhumance ----------------
+const transOpen = () => projectDone('sheepfold');
+const transMax = () => (projectDone('cablecar') ? 8 : 4);
+const transTime = () => TRANS_TIME / (projectDone('cablecar') ? 2 : 1);
+const isAway = a => !!(a && a.away);
+const alpineMult = a => (a && a.alpine ? ALPINE_SPEED : 1);
+
+function toggleTransPick(i) {
+    ui.transPick = ui.transPick || [];
+    const k = ui.transPick.indexOf(i);
+    if (k >= 0) ui.transPick.splice(k, 1);
+    else if (ui.transPick.length < transMax()) ui.transPick.push(i);
+    sfx('click');
+    renderTrans();
+}
+
+function startTrans(btn) {
+    const pick = (ui.transPick || []).filter(i => state.animals[i] && isAdult(state.animals[i]) && !isAway(state.animals[i]));
+    if (!transOpen() || !pick.length || state.trans.returnAt) return;
+    const back = Date.now() + transTime();
+    pick.forEach(i => (state.animals[i].away = back));
+    state.trans.returnAt = back;
+    ui.transPick = [];
+    sfx('level');
+    const c = centerOf(btn);
+    burst(c.x, c.y, 'leaf', 14);
+    toast(`${pick.length} bête${pick.length > 1 ? 's' : ''} monte${pick.length > 1 ? 'nt' : ''} aux estives`, ico('ui', 'mountain'));
+    ui.animalSig = [];
+    renderTrans();
+    renderPasture();
+    saveState();
+}
+
+// au retour : du lait d'alpage, et des bêtes plus vigoureuses
+function transTick() {
+    const t = state.trans;
+    if (!t.returnAt || Date.now() < t.returnAt) return false;
+    let milk = 0,
+        n = 0;
+    state.animals.forEach(a => {
+        if (!a.away) return;
+        a.away = 0;
+        a.alpine = true;
+        n++;
+        milk += a.type === 'sheep' ? 2 : 6;
+        if (a.type === 'sheep') state.inventory.wool = (state.inventory.wool || 0) + 6;
+    });
+    state.inventory.alpineMilk = (state.inventory.alpineMilk || 0) + milk;
+    addMastery('alpineMilk', milk);
+    t.returnAt = 0;
+    state.stats.trans = (state.stats.trans || 0) + 1;
+    ui.animalSig = [];
+    if (ui.started && n) {
+        toast(`Le troupeau redescend des estives : +${milk} lait d'alpage`, ico('item', 'alpineMilk'));
+        sfx('level');
+    }
+    return true;
+}
+
+function renderTrans() {
+    const box = $('trans-container');
+    if (!box) return;
+    if (!transOpen()) {
+        box.innerHTML = '';
+        return;
+    }
+    const t = state.trans;
+    if (t.returnAt) {
+        const away = state.animals.filter(isAway);
+        box.innerHTML = `<div class="board trans-card"><div class="event-head">${ico('ui', 'mountain', 'ico ev-ico')}<div class="card-main"><div class="card-title">Transhumance en cours</div>
+            <div class="card-sub">${away.map(a => a.name).join(', ')} profite${away.length > 1 ? 'nt' : ''} de l'herbe des estives.</div></div>
+            <div class="timer-pill">${ico('ui', 'clock')}<span id="trans-timer">${formatDuration(Math.max(0, (t.returnAt - Date.now()) / 1000))}</span></div></div></div>`;
+        return;
+    }
+    const pick = ui.transPick || [];
+    const can = state.animals.map((a, i) => [a, i]).filter(([a]) => TRANS_KINDS.includes(a.type) && isAdult(a));
+    box.innerHTML = `<div class="board trans-card"><div class="event-head">${ico('ui', 'mountain', 'ico ev-ico')}<div class="card-main"><div class="card-title">Transhumance</div>
+        <div class="card-sub">Choisissez jusqu'à ${transMax()} vaches, chèvres, moutons ou bufflonnes. Partis ${formatDuration(transTime() / 1000)}, ils reviennent avec du lait d'alpage (de la laine pour les moutons) et produisent ensuite 20 % plus vite.</div></div></div>
+        <div class="trans-row">${
+            can.length
+                ? can
+                      .map(
+                          ([a, i]) =>
+                              `<button class="trans-chip ${pick.includes(i) ? 'on' : ''} ${a.alpine ? 'alpine' : ''}" onclick="toggleTransPick(${i})"><i class="ico">${SPR.animal(a.type)}</i><span>${a.name}</span></button>`,
+                      )
+                      .join('')
+                : '<span class="card-sub">Aucun animal adulte qui puisse monter.</span>'
+        }</div>
+        <button class="btn wide ${pick.length ? 'green' : ''}" onclick="startTrans(this)" ${pick.length ? '' : 'disabled'}>Monter aux estives (${pick.length}/${transMax()})</button></div>`;
+}
+
+function updateTransTimer() {
+    const el = $('trans-timer');
+    if (el) el.textContent = formatDuration(Math.max(0, (state.trans.returnAt - Date.now()) / 1000));
+}
+
+// ---------------- Saisons de la ferme (4 semaines) ----------------
+const farmSeasonOpen = () => projectDone('chapel');
+const farmSeasonKey = () => Math.floor(Date.now() / FARM_SEASON_MS);
+const farmSeasonTheme = () => FARM_SEASONS.at(farmSeasonKey() % FARM_SEASONS.length);
+const farmSeasonEndsIn = () => ((farmSeasonKey() + 1) * FARM_SEASON_MS - Date.now()) / 1000;
+
+function ensureFarmSeason() {
+    if (!farmSeasonOpen()) return;
+    const key = farmSeasonKey();
+    if (state.fseason && state.fseason.key === key) return;
+    state.fseason = { key, pts: 0, got: [false, false, false, false, false] };
+    if (ui.started) {
+        toast(`Nouvelle saison de la ferme : ${farmSeasonTheme().name.toLowerCase()}`, ico('ui', 'trophy'));
+        tip('farmSeason');
+    }
+}
+
+// appelé à chaque production (récolte, ramassage, atelier, pêche)
+function farmSeasonAdd(id, qty) {
+    if (!farmSeasonOpen()) return;
+    ensureFarmSeason();
+    if (farmSeasonTheme().items.includes(id)) state.fseason.pts += qty * (RECIPES[id] ? 3 : 1);
+}
+
+const seasonTierReward = k => ({ coins: Math.round((2000 * (k + 1) * (1 + state.level * 0.2)) / 50) * 50, rares: k + 1 });
+
+function claimSeasonTier(k, btn) {
+    const s = state.fseason;
+    if (!s || s.got[k] || s.pts < FARM_SEASON_TIERS[k]) return;
+    s.got[k] = true;
+    const r = seasonTierReward(k);
+    earn(r.coins, btn);
+    RARE.forEach(id => (state.inventory[id] += r.rares));
+    if (k === 4) {
+        const deco = farmSeasonTheme().deco;
+        state.decorInv[deco] = (state.decorInv[deco] || 0) + 1;
+        state.prestige.rubans++;
+        addPhoto('ui', deco, farmSeasonTheme().name, 'Dernier palier atteint');
+        toast(`${DECOS[deco].name} : posez-la dans le champ (+1 ruban)`, ico('ui', deco));
+        ui.toolbarSig = '';
+    }
+    const c = centerOf(btn);
+    burst(c.x, c.y, 'sparkle', 14);
+    sfx('level');
+    renderFarmSeason();
+    updateHeader();
+    saveState();
+}
+
+const farmSeasonClaimable = () =>
+    state.fseason && farmSeasonOpen() ? FARM_SEASON_TIERS.filter((t, k) => !state.fseason.got[k] && state.fseason.pts >= t).length : 0;
+
+function renderFarmSeason() {
+    const box = $('fseason-container');
+    if (!box) return;
+    if (!farmSeasonOpen()) {
+        box.innerHTML = '';
+        return;
+    }
+    ensureFarmSeason();
+    const s = state.fseason,
+        th = farmSeasonTheme(),
+        top = FARM_SEASON_TIERS.at(-1);
+    const days = Math.floor(farmSeasonEndsIn() / 86400);
+    box.innerHTML = `<div class="board fseason-card"><div class="event-head">${ico('item', th.icon, 'ico ev-ico')}<div class="card-main"><div class="card-title">${th.name}</div>
+        <div class="card-sub">Chaque produit du thème rapporte des points (3 pour un produit d'atelier). Au dernier palier : ${DECOS[th.deco].name.toLowerCase()} et 1 ruban.</div></div>
+        <div class="timer-pill">${ico('ui', 'calendar')}<span>${days} j</span></div></div>
+        <div class="season-items">${th.items.map(id => `<i class="ico" title="${DB.Items[id].name}">${SPR.item(id)}</i>`).join('')}</div>
+        <div class="qbar"><div style="width:${Math.min(100, (s.pts / top) * 100)}%"></div></div>
+        <div class="season-tiers">${FARM_SEASON_TIERS.map((t, k) =>
+            s.got[k]
+                ? `<span class="stier done">${ico('ui', 'check')}</span>`
+                : s.pts >= t
+                  ? `<button class="btn small gold" onclick="claimSeasonTier(${k}, this)">${k === 4 ? ico('ui', th.deco) : fmt(seasonTierReward(k).coins) + COIN()}</button>`
+                  : `<span class="stier">${fmt(t)}</span>`,
+        ).join('')}</div>
+        <div class="card-sub center">${fmt(s.pts)} points</div></div>`;
+}
+
+// ---------------- Fermes à thème ----------------
+const themeCropMult = id =>
+    state.farmTheme === 'garden' && DB.Items[id] && DB.Items[id].type === 'crop'
+        ? 1.15
+        : state.farmTheme === 'orchard' && DB.Items[id] && DB.Items[id].type === 'tree'
+          ? 1.3
+          : 1;
+const themeAnimalMult = () => (state.farmTheme === 'dairy' ? 1.2 : 1);
+
+function farmThemePickHtml() {
+    if (!projectDone('refuge')) return '';
+    const pick = ui.themePick || 'none';
+    return `<div class="card-sub">Ferme à thème pour la prochaine partie :</div><div class="theme-pick">${Object.entries(FARM_THEMES)
+        .map(
+            ([id, t]) =>
+                `<button class="ch-chip ${pick === id ? 'on' : ''}" onclick="ui.themePick='${id}'; $('theme-pick').innerHTML=farmThemePickHtml(); sfx('click')">${t.icon ? `<i class="ico">${sprite(t.icon[0], t.icon[1])}</i>` : ''}<span><b>${t.name}</b><small>${t.desc}</small></span></button>`,
+        )
+        .join('')}</div>`;
+}
+
+// ---------------- Cartes du Port et de l'Alpage ----------------
+const VMAP_BG3 = `<svg class="vmap-bg" viewBox="0 0 160 110" preserveAspectRatio="none" aria-hidden="true">
+    <rect width="160" height="110" fill="#5aa9e6"/>
+    <path d="M0 0 L160 0 L160 46 Q120 52 90 44 Q60 36 30 46 Q12 52 0 48Z" fill="#e9d6a8"/>
+    <path d="M0 0 L160 0 L160 30 Q120 36 80 28 Q40 20 0 30Z" fill="#9bd96f"/>
+    <path d="M10 70 Q20 67 30 69 M70 82 Q80 79 90 81 M120 64 Q130 61 140 63 M40 96 Q50 93 60 95" stroke="#bfe6fb" stroke-width="1" fill="none"/>
+    <path d="M70 46 L70 76 L100 76 L100 70 L76 70 L76 46Z" fill="#a8693a" opacity=".9"/>
+</svg>`;
+const VMAP_BG4 = `<svg class="vmap-bg" viewBox="0 0 160 110" preserveAspectRatio="none" aria-hidden="true">
+    <rect width="160" height="110" fill="#bfe6fb"/>
+    <path d="M0 50 L30 14 L52 38 L78 6 L104 34 L128 12 L160 44 L160 110 L0 110Z" fill="#8f9aa6"/>
+    <path d="M24 22 L30 14 L36 22 L33 20 L30 24 L27 20Z M72 14 L78 6 L84 14 L81 12 L78 16 L75 12Z M122 20 L128 12 L134 20 L131 18 L128 22 L125 18Z" fill="#fff"/>
+    <path d="M0 58 Q40 40 80 52 Q120 62 160 48 L160 110 L0 110Z" fill="#9bd96f"/>
+    <path d="M20 100 Q50 80 80 92 Q110 100 140 84" stroke="#f2d6a2" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <g fill="#3f8f2e"><path d="M8 72 L12 62 L16 72Z"/><path d="M140 70 L144 60 L148 70Z"/><path d="M110 104 L114 94 L118 104Z"/></g>
+</svg>`;
+const STORY_MAPS = [
+    { id: 'village', name: 'Le village', open: () => true, bg: () => VMAP_BG, party: 'townhall' },
+    { id: 'hamlet', name: 'Le hameau', open: () => chapterDone(4) || state.level >= CHAPTERS[4].lvl, bg: () => VMAP_BG2, party: 'bandstand' },
+    { id: 'port', name: 'Le port', open: () => chapterDone(6) || state.level >= CHAPTERS[6].lvl, bg: () => VMAP_BG3, party: 'shipyard' },
+    { id: 'alpine', name: "L'alpage", open: () => chapterDone(8) || state.level >= CHAPTERS[8].lvl, bg: () => VMAP_BG4, party: 'refuge' },
+];
+
+// =====================================================================
 //  Boucle principale : chaque sous-système avance d'une seconde.
 //  Un sous-système qui plante est isolé et n'arrête pas les autres.
 // =====================================================================
@@ -22501,7 +24209,7 @@ function tickAnimals() {
     let changed = false;
     state.animals.forEach(anim => {
         autoFeed(anim);
-        if (!isAdult(anim) || anim.sick || anim.food <= 0 || anim.stack >= MAX_STACK) return;
+        if (!isAdult(anim) || anim.sick || isAway(anim) || anim.food <= 0 || anim.stack >= MAX_STACK) return;
         anim.prodProgress++;
         if (anim.prodProgress < animalTime(anim)) return;
         anim.prodProgress = 0;
@@ -22549,6 +24257,17 @@ function tickDeliveries() {
     if (stallTick() && ui.view === 'market') renderStall();
     if (neighborTick() && q) renderNeighbors();
     if (rareTick() && q) renderRare();
+    if (boatTick() && q) renderBoat();
+    if (transTick()) {
+        if (ui.view === 'animals') {
+            renderTrans();
+            renderPasture();
+        }
+    }
+    if (farmSeasonOpen() && (!state.fseason || state.fseason.key !== farmSeasonKey())) {
+        ensureFarmSeason();
+        if (q) renderFarmSeason();
+    }
     if (state.level >= CONTRACT_LVL && (!state.contract || state.contract.key !== seasonKey()) && q) renderContract();
     if (contestTick() && q) renderContest();
     if (syncStory() && q) renderStory();
@@ -22558,6 +24277,7 @@ function tickDeliveries() {
         updateOrderTimers();
         updateMerchantTimer();
         updateRareTimer();
+        updateBoatTimer();
         if (ui.tick % 10 === 0 && ui.qtab === 'village') renderContest();
     }
     return false;
@@ -22574,7 +24294,9 @@ function tickProgress() {
             .sort((a, b) => a - b)
             .slice(0, days.length - 30)
             .forEach(k => delete state.dayEarn[k]);
+    if (ui.view === 'animals') updateTransTimer();
     if (ui.view === 'nature') {
+        updateNetTimer();
         updateNatureTimers();
         if (natureSig() !== ui.natureSig) renderNature();
     }
@@ -22607,6 +24329,7 @@ function calculateOfflineProgress() {
 
     honeyTick(elapsed);
     growTick(elapsed);
+    const transBack = transTick();
     // les imprévus attendent votre retour
     if (state.incident && state.incident.until) state.incident.until += elapsed * 1000;
     report.crops += ghOffline(elapsed);
@@ -22628,7 +24351,7 @@ function calculateOfflineProgress() {
         const timeReq = animalTime(anim);
         let t = elapsed;
         autoFeed(anim);
-        while (isAdult(anim) && !anim.sick && anim.food > 0 && anim.stack < MAX_STACK) {
+        while (isAdult(anim) && !anim.sick && !isAway(anim) && anim.food > 0 && anim.stack < MAX_STACK) {
             const need = timeReq - anim.prodProgress;
             if (t >= need) {
                 t -= need;
@@ -22660,6 +24383,7 @@ function calculateOfflineProgress() {
     merchantTick();
     stallTick();
     neighborTick();
+    boatTick();
     const sold = state.stall.slots.filter(s => s && s.sold).length;
     const neigh = neighborsReady();
     syncEvent();
@@ -22682,6 +24406,9 @@ function calculateOfflineProgress() {
             ? row(ico('ui', RARE_EVENTS[state.rare.type].icon), `En ce moment : ${RARE_EVENTS[state.rare.type].name.toLowerCase()}`)
             : '') +
         (neigh ? row(ico('ui', 'heart'), `${neigh} voisin${neigh > 1 ? 's' : ''} à aider`) : '') +
+        (transBack ? row(ico('ui', 'mountain'), 'Le troupeau est redescendu des estives avec du lait d’alpage') : '') +
+        (netReady() ? row(ico('ui', 'net'), 'Le filet de pêche est plein') : '') +
+        (state.boat.status === 'here' ? row(ico('ui', 'boat'), 'Un cargo attend au port') : '') +
         (state.truck.status === 'here' ? row(ico('ui', 'trainIcon'), 'Le train de marchandises est en gare') : '') +
         (state.balloon.status === 'here' ? row(ico('ui', 'balloon'), 'Une montgolfière attend dans le pré') : '') +
         (state.merchant.status === 'here' ? row(ico('ui', 'merchant'), 'Zéphyr, le marchand ambulant, est au village') : '') +
@@ -22736,6 +24463,7 @@ function renderAll() {
             break;
         case 'animals':
             renderPasture();
+            renderTrans();
             break;
         case 'machines':
             renderMachines();
@@ -22751,6 +24479,7 @@ function renderAll() {
             break;
         case 'nature':
             renderNature();
+            renderNet();
             break;
         case 'upgrades':
             renderSkills();
@@ -22768,7 +24497,7 @@ function updateHeader() {
     $('ui-level').textContent = state.level;
     const req = xpNeed();
     $('ui-xp-text').textContent =
-        state.level >= MAX_LEVEL ? `★ ${state.renown || 0} · ${Math.floor((state.xp / req) * 100)} %` : `${fmt(state.xp)} / ${fmt(req)}`;
+        state.level >= MAX_LEVEL ? `★${state.renown || 0} · ${Math.floor((state.xp / req) * 100)}%` : `${fmt(state.xp)} / ${fmt(req)}`;
     $('lvl-badge').classList.toggle('legend', !!state.legend);
     $('ui-xp-bar').style.width = `${Math.min(100, (state.xp / req) * 100)}%`;
     const h = Math.floor(state.gameTimeMinutes / 60),
@@ -22950,6 +24679,6 @@ function initGame() {
 
 window.addEventListener('load', initGame);
 
-    </script>
-</body>
+        </script>
+    </body>
 </html>
