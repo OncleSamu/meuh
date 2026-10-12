@@ -32,7 +32,7 @@ export const GUIDE = [
         name: 'Les animaux',
         lvl: 2,
         view: 'animals',
-        text: 'Nourrissez-les avec la nourriture du moulin, ramassez leurs produits. Un câlin par jour les rend plus productifs. La mangeoire automatique les nourrit seule. Un pré accueille 20 bêtes : achetez-en d’autres, et changez une bête de pré depuis sa fiche. L’étable montre tout le troupeau en fiches.',
+        text: 'Touchez une bête pour ramasser sa production ou lui donner un repas ; restez appuyé pour ouvrir sa fiche. Un câlin par jour les rend plus productifs. La mangeoire automatique les nourrit seule. Un pré accueille 20 bêtes : achetez-en d’autres, et changez une bête de pré depuis sa fiche. L’étable montre tout le troupeau en fiches.',
     },
     {
         id: 'orchard',
@@ -336,7 +336,7 @@ export const TIPS = {
     sick: {
         icon: ['ui', 'sick'],
         title: 'Un animal est malade',
-        text: 'Il ne produit plus. Ouvre sa fiche au pâturage et appelle le vétérinaire. Sinon, il guérira seul, mais lentement.',
+        text: 'Il ne produit plus. Reste appuyé sur lui au pâturage pour ouvrir sa fiche, et appelle le vétérinaire. Sinon, il guérira seul, mais lentement.',
     },
     express: {
         icon: ['ui', 'express'],
