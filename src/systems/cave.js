@@ -269,7 +269,10 @@ export function takeOut(i, at) {
     c.reserve.push({ uid: lot.uid, id: lot.id, n: lot.n, rank: lot.rank, bad: lot.bad });
     state.stats.caveLots = (state.stats.caveLots || 0) + 1;
     if (!lot.bad) record('lot', lotValue(lot));
-    if (!lot.bad && lot.rank >= 3) collect('cave_' + lot.id);
+    if (!lot.bad && lot.rank >= 3) {
+        collect('cave_' + lot.id);
+        state.stats.caveTop = (state.stats.caveTop || 0) + 1;
+    }
     if (!lot.bad && lot.rank >= 4) {
         state.stats.caveLegend = (state.stats.caveLegend || 0) + 1;
         addPhoto('item', lot.id, `${ITEMS[lot.id].name} légendaire`, 'Sorti de la cave');

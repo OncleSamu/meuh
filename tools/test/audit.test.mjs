@@ -17,7 +17,11 @@ test('pluriel des noms de produits', () => {
 });
 
 test('chaque recette et chaque chantier peut être fait avant le niveau 40', () => {
-    const ok = new Set(Object.values(ITEMS).filter(i => i.type !== 'artisan' && (i.reqLvl || 0) <= 40).map(i => i.id));
+    const ok = new Set(
+        Object.values(ITEMS)
+            .filter(i => i.type !== 'artisan' && (i.reqLvl || 0) <= 40)
+            .map(i => i.id),
+    );
     let grew = true;
     while (grew) {
         grew = false;
@@ -27,6 +31,9 @@ test('chaque recette et chaque chantier peut être fait avant le niveau 40', () 
                 grew = true;
             }
     }
-    assert.deepEqual(Object.keys(RECIPES).filter(id => !ok.has(id)), []);
+    assert.deepEqual(
+        Object.keys(RECIPES).filter(id => !ok.has(id)),
+        [],
+    );
     for (const p of Object.values(PROJECTS)) for (const k of Object.keys(p.need)) assert.ok(ok.has(k), `${p.id} : ${k}`);
 });

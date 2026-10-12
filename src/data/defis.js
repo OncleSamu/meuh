@@ -1,0 +1,283 @@
+// Les grands défis (1.1) : un objectif de deux semaines après le niveau 40, tiré au hasard parmi douze.
+// Chaque défi a 4 étapes. Sortes d'étapes :
+//   give    : livrer des produits, k tirés dans la liste (q : 0 tout, 1 argent ou mieux, 2 or), n chacun
+//   count   : réussir une action (un compteur de state.stats qui avance pendant le défi)
+//   animal  : présenter une bête dont les gènes dépassent ceux de son espèce d'au moins n points
+//   variety : présenter une variété dont le gain de saveur atteint n
+// open : ce qui doit être ouvert pour que le défi puisse sortir ; alt : étape de remplacement si l'étape demande
+// une partie du jeu fermée (needs) ou des produits qu'on ne sait pas encore faire.
+
+export const DEFI = {
+    lvl: 40,
+    days: 14,
+    noRepeat: 3, // un défi joué ne revient qu'au 4e tirage après lui
+    perStar: 0.08, // +8 % de quantités par étoile de renommée
+    maxScale: 3,
+    stepCoins: 6000, // par étape finie (× l'échelle)
+    stepXp: 12000,
+    medals: [
+        // bronze, argent, or : pièces, part d'étoile de renommée, rubans
+        { name: 'Bronze', coins: 30000, star: 0.25, rubans: 0, color: '#c8803a' },
+        { name: 'Argent', coins: 60000, star: 0.5, rubans: 1, color: '#b9c2cc' },
+        { name: 'Or', coins: 120000, star: 1, rubans: 2, color: '#f2c14e' },
+    ],
+};
+
+const ENTREES = ['soup', 'salad', 'quiche', 'garlicSoup', 'caprese', 'fishSoup', 'peasCarrots'];
+const PLATS = ['lasagna', 'risotto', 'gratin', 'ratatouille', 'potee', 'tartiflette', 'mushroomRisotto', 'bouillabaisse', 'ravioli', 'pizza'];
+const DESSERTS = ['pie', 'cherryPie', 'strawberryCake', 'peachTart', 'spongeCake', 'blueberryPie', 'vanillaFlan', 'chocCake', 'crepes'];
+const ANIMAL_GOODS = ['milk', 'egg', 'wool', 'goatMilk', 'angora', 'gooseEgg', 'buffaloMilk', 'donkeyMilk', 'alpacaWool', 'turkeyEgg'];
+const FRUITS = ['apple', 'cherry', 'peach', 'orange', 'kiwi', 'kaki', 'olive', 'grape'];
+const FRUIT_GOODS = ['jam', 'cherryPie', 'peachTart', 'pie', 'juice', 'cider', 'orangeJuice', 'peachNectar', 'fruitSalad', 'grapeJuice'];
+const ISLE_RAW = [
+    'banana',
+    'coconut',
+    'mango',
+    'papaya',
+    'lime',
+    'avocado',
+    'guava',
+    'lychee',
+    'pineapple',
+    'passionFruit',
+    'sweetPotato',
+    'cassava',
+    'ginger',
+    'tiare',
+];
+const ISLE_GOODS = [
+    'islandCocktail',
+    'bananaSmoothie',
+    'mangoPassion',
+    'lassi',
+    'limeade',
+    'bananaBread',
+    'coconutFlan',
+    'pineappleCake',
+    'limePie',
+    'blancManger',
+];
+const ISLE_FINE = ['rum', 'arrangedRum', 'coconutPunch', 'coffee', 'cafeLatte', 'tiramisu'];
+const CHEESES = ['cheese', 'camembert', 'bleu', 'goatCheese', 'mozzarella'];
+const FINISH = ['forgeLantern', 'weathervane', 'paintedVase', 'vase', 'horseshoe', 'teaSet'];
+const FISH_DISH = ['bouillabaisse', 'grilledFish', 'grilledMackerel', 'lobsterDish', 'fishSoup', 'accras', 'fishFritters'];
+const CANS = ['cannedSardines', 'mackerelRillettes', 'cannedShrimp'];
+const ALP_CHEESE = ['beaufort', 'tomme', 'reblochon', 'comte'];
+const ALP_DISH = ['raclette', 'fondue', 'tartiflette'];
+const YARNS = ['cloth', 'angoraYarn', 'alpacaYarn', 'linen', 'cottonFabric', 'dyedWool'];
+const DYES = ['redDye', 'yellowDye', 'blueDye'];
+const CLOTHES = ['sweater', 'scarf', 'colorSweater', 'woolHat', 'alpacaScarf', 'linenShirt', 'tshirt', 'strawHat', 'quilt'];
+const FLOWERS = ['lavender', 'vanilla', 'tiare'];
+const SOAPS = ['lavenderSoap', 'goatSoap', 'oliveSoap', 'donkeySoap', 'coconutSoap', 'lavenderBag', 'scentedCandle'];
+const PERFUMES = ['lavenderWater', 'summerPerfume', 'vanillaPerfume', 'monoi', 'perfume'];
+
+export const DEFIS = {
+    banquet: {
+        name: 'Le banquet du village',
+        who: 'gaston',
+        icon: ['item', 'lasagna'],
+        deco: 'banquetTable',
+        intro: 'Tout le canton est invité ! Il me faut les plus beaux plats de la vallée.',
+        steps: [
+            { kind: 'give', name: 'Les entrées', pool: ENTREES, k: 2, n: 10, q: 1 },
+            { kind: 'give', name: 'Les plats', pool: PLATS, k: 2, n: 8, q: 1 },
+            { kind: 'give', name: 'Les desserts', pool: DESSERTS, k: 2, n: 8, q: 1 },
+            { kind: 'give', name: 'Le plat d’honneur', pool: PLATS, k: 1, n: 4, q: 2 },
+        ],
+    },
+    bestiaux: {
+        name: 'La grande foire aux bestiaux',
+        who: 'victor',
+        icon: ['animal', 'cow'],
+        deco: 'bullStatue',
+        open: 'breed',
+        intro: 'La foire revient ! Montrons au jury les plus belles bêtes du canton.',
+        steps: [
+            { kind: 'give', name: 'Les beaux produits', pool: ANIMAL_GOODS, k: 2, n: 15, q: 2 },
+            { kind: 'count', name: 'Des naissances', stat: 'births', n: 3, icon: ['ui', 'heart'], text: 'Faire naître {n} petits à l’étable de sélection' },
+            { kind: 'animal', name: 'La bête de concours', n: 3, text: 'Présenter une bête qui dépasse son espèce de {n} points de gènes' },
+            { kind: 'count', name: 'Une création', stat: 'creations', n: 1, icon: ['ui', 'trophy'], text: 'Fixer une nouvelle race ou variété' },
+        ],
+    },
+    verger: {
+        name: 'Le verger d’exception',
+        who: 'lucie',
+        icon: ['item', 'apple'],
+        deco: 'appleCart',
+        intro: 'Je rêve d’un goûter avec tous les fruits du verger. Tu m’aides ?',
+        steps: [
+            { kind: 'give', name: 'Les paniers de fruits', pool: FRUITS, k: 3, n: 25, q: 0 },
+            { kind: 'give', name: 'Confitures et douceurs', pool: FRUIT_GOODS, k: 2, n: 10, q: 0 },
+            { kind: 'count', name: 'La cueillette', stat: 'orchardFruits', n: 120, icon: ['ui', 'basket'], text: 'Ramasser {n} fruits au verger de la ferme' },
+            { kind: 'give', name: 'Le panier d’exception', pool: FRUITS, k: 1, n: 10, q: 1 },
+        ],
+    },
+    iles: {
+        name: 'La route des îles',
+        who: 'tiago',
+        icon: ['item', 'pineapple'],
+        deco: 'hammock',
+        open: 'island',
+        intro: 'Les comptoirs du continent réclament nos merveilles. Le bac est prêt !',
+        steps: [
+            { kind: 'give', name: 'Les produits de l’île', pool: ISLE_RAW, k: 3, n: 25, q: 0 },
+            { kind: 'give', name: 'Jus et pâtisseries', pool: ISLE_GOODS, k: 2, n: 8, q: 1 },
+            { kind: 'give', name: 'Le meilleur des îles', pool: ISLE_FINE, k: 1, n: 6, q: 0 },
+            { kind: 'count', name: 'Les plantations', stat: 'islandHarvest', n: 60, icon: ['item', 'banana'], text: 'Récolter {n} produits sur l’île' },
+        ],
+    },
+    cave: {
+        name: 'La cave du siècle',
+        who: 'anselme',
+        icon: ['ui', 'cave'],
+        deco: 'honorBarrel',
+        open: 'cave',
+        intro: 'Les grands amateurs viendront goûter. Montrez-leur ce que vaut votre cave.',
+        steps: [
+            { kind: 'count', name: 'Les lots sortis', stat: 'caveLots', n: 6, icon: ['ui', 'cave'], text: 'Sortir {n} lots de la cave' },
+            { kind: 'count', name: 'Les grands lots', stat: 'caveTop', n: 3, icon: ['ui', 'star'], text: 'Sortir {n} lots du 4e rang ou mieux' },
+            { kind: 'count', name: 'Le lot légendaire', stat: 'caveLegend', n: 1, icon: ['ui', 'star'], text: 'Affiner un lot jusqu’au rang légendaire' },
+            {
+                kind: 'count',
+                name: 'Adjugé !',
+                stat: 'auctionSold',
+                n: 3,
+                icon: ['ui', 'gavel'],
+                text: 'Vendre {n} lots aux enchères',
+                needs: 'hall',
+                alt: { kind: 'give', name: 'Le plateau de fromages', pool: CHEESES, k: 2, n: 12, q: 1 },
+            },
+        ],
+    },
+    export: {
+        name: 'Le grand export',
+        who: 'morgane',
+        icon: ['ui', 'trainIcon'],
+        deco: 'miniLoco',
+        open: 'train',
+        intro: 'Les marchés du pays entier veulent nos produits. Chargez tout ce qui roule et ce qui flotte !',
+        steps: [
+            { kind: 'count', name: 'Les wagons', stat: 'wagons', n: 20, icon: ['ui', 'trainIcon'], text: 'Charger {n} wagons' },
+            { kind: 'count', name: 'Les trains complets', stat: 'trucks', n: 4, icon: ['ui', 'trainIcon'], text: 'Remplir {n} trains complets' },
+            {
+                kind: 'count',
+                name: 'Par la mer',
+                stat: 'boats',
+                n: 3,
+                icon: ['ui', 'boat'],
+                text: 'Remplir {n} cargos',
+                needs: 'boat',
+                alt: { kind: 'count', name: 'Par les airs', stat: 'balloons', n: 5, icon: ['ui', 'balloon'], text: 'Remplir {n} montgolfières' },
+            },
+            { kind: 'give', name: 'Les caisses', pool: ['crate'], k: 1, n: 40, q: 0 },
+        ],
+    },
+    chateau: {
+        name: 'Le château de la vallée',
+        who: 'jules',
+        icon: ['item', 'beam'],
+        deco: 'castleTower',
+        intro: 'Le vieux château tombe en ruine. Avec vos matériaux, on peut lui rendre sa fierté !',
+        steps: [
+            { kind: 'give', name: 'La charpente', pool: ['plank', 'beam'], k: 2, n: 120, q: 0 },
+            { kind: 'give', name: 'Les murs', pool: ['stone', 'nail'], k: 2, n: 200, q: 0 },
+            { kind: 'give', name: 'Les ateliers', pool: ['tools', 'paint'], k: 2, n: 30, q: 0 },
+            {
+                kind: 'give',
+                name: 'Les finitions',
+                pool: FINISH,
+                k: 2,
+                n: 6,
+                q: 0,
+                alt: { kind: 'give', name: 'Les caisses de l’intendance', pool: ['crate'], k: 1, n: 40, q: 0 },
+            },
+        ],
+    },
+    salon: {
+        name: 'Le Salon national',
+        who: 'agathe',
+        icon: ['ui', 'trophy'],
+        deco: 'bigMedal',
+        open: 'lab',
+        intro: 'Paris nous ouvre ses portes ! Il faut la variété la plus savoureuse du pays.',
+        steps: [
+            { kind: 'count', name: 'Les croisements', stat: 'crosses', n: 8, icon: ['ui', 'packet'], text: 'Réussir {n} croisements' },
+            { kind: 'variety', name: 'La variété du Salon', n: 5, text: 'Présenter une variété qui gagne {n} points de saveur' },
+            { kind: 'count', name: 'Une création', stat: 'creations', n: 1, icon: ['ui', 'trophy'], text: 'Fixer une nouvelle variété ou race' },
+            { kind: 'count', name: 'Les plats d’or', stat: 'goldDishes', n: 12, icon: ['ui', 'star'], text: 'Sortir {n} produits en or de l’atelier' },
+        ],
+    },
+    maree: {
+        name: 'La grande marée',
+        who: 'yann',
+        icon: ['item', 'lobster'],
+        deco: 'miniLighthouse',
+        open: 'net',
+        intro: 'Grande marée cette semaine : la criée attend la plus belle pêche de l’année !',
+        steps: [
+            { kind: 'count', name: 'Les filets', stat: 'seaHauls', n: 8, icon: ['item', 'sardine'], text: 'Remonter {n} filets en mer' },
+            { kind: 'give', name: 'Le homard', pool: ['lobster'], k: 1, n: 1, q: 0 },
+            {
+                kind: 'give',
+                name: 'Les conserves',
+                pool: CANS,
+                k: 2,
+                n: 8,
+                q: 0,
+                needs: 'cannery',
+                alt: { kind: 'give', name: 'La pêche du jour', pool: ['sardine', 'mackerel', 'shrimp', 'seabass'], k: 2, n: 15, q: 0 },
+            },
+            { kind: 'give', name: 'Le plat de la marée', pool: FISH_DISH, k: 1, n: 4, q: 2 },
+        ],
+    },
+    transhumance: {
+        name: 'La transhumance d’honneur',
+        who: 'bruno',
+        icon: ['item', 'alpineMilk'],
+        deco: 'miniChalet',
+        open: 'trans',
+        intro: 'Toute la vallée montera voir passer nos bêtes. Que la fête soit belle !',
+        steps: [
+            { kind: 'count', name: 'Les montées', stat: 'trans', n: 3, icon: ['animal', 'cow'], text: 'Mener {n} transhumances' },
+            { kind: 'give', name: 'Le lait d’alpage', pool: ['alpineMilk'], k: 1, n: 30, q: 0 },
+            { kind: 'give', name: 'Les fromages d’alpage', pool: ALP_CHEESE, k: 2, n: 6, q: 0 },
+            { kind: 'give', name: 'Le repas des estives', pool: ALP_DISH, k: 2, n: 5, q: 1 },
+        ],
+    },
+    defile: {
+        name: 'Le défilé de la vallée',
+        who: 'odette',
+        icon: ['item', 'sweater'],
+        deco: 'mannequin',
+        intro: 'De mon temps, on tricotait pour le défilé du village. Faisons-le revivre, mon petit !',
+        steps: [
+            { kind: 'give', name: 'Les fils et les toiles', pool: YARNS, k: 2, n: 15, q: 0 },
+            { kind: 'give', name: 'Les teintures', pool: DYES, k: 2, n: 10, q: 0 },
+            { kind: 'give', name: 'La collection', pool: CLOTHES, k: 3, n: 5, q: 0 },
+            { kind: 'give', name: 'La pièce maîtresse', pool: CLOTHES, k: 1, n: 3, q: 2 },
+        ],
+    },
+    parfums: {
+        name: 'Le jardin des parfums',
+        who: 'rose',
+        icon: ['item', 'lavender'],
+        deco: 'perfumeFountain',
+        open: 'soap',
+        intro: 'Un jardin où chaque allée sent bon… et une boutique pour ses parfums. Vous m’aidez ?',
+        steps: [
+            { kind: 'give', name: 'Les fleurs', pool: FLOWERS, k: 2, n: 40, q: 0 },
+            { kind: 'give', name: 'Les savons', pool: SOAPS, k: 2, n: 8, q: 0 },
+            { kind: 'give', name: 'Les eaux et parfums', pool: PERFUMES, k: 2, n: 5, q: 0 },
+            {
+                kind: 'give',
+                name: 'Le Grand parfum',
+                pool: ['grandParfum'],
+                k: 1,
+                n: 2,
+                q: 1,
+                needs: 'perfumery',
+                alt: { kind: 'give', name: 'Les bougies', pool: ['scentedCandle', 'candle', 'waxBalm'], k: 2, n: 8, q: 1 },
+            },
+        ],
+    },
+};

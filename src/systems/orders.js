@@ -29,6 +29,7 @@ import { isInSeason } from './world.js';
 import { isAdult } from './animals.js';
 import { tip } from './tips.js';
 import { eventActive, eventProgress } from './events.js';
+import { defiWanted } from './defis.js';
 
 // Ce que la ferme sait produire en ce moment (ingrédients compris)
 export function questPool() {
@@ -389,5 +390,6 @@ export function wantedItems() {
     if (state.balloon.status === 'here') state.balloon.items.forEach(x => state.inventory[x.id] < x.qty && w.add(x.id));
     if (state.incident && state.incident.type === 'express') state.incident.items.forEach(x => w.add(x.id));
     Object.values(PROJECTS).forEach(p => projectOpen(p.id) && Object.keys(p.need).forEach(id => projectLeft(p.id, id) > state.inventory[id] && w.add(id)));
+    defiWanted().forEach(id => w.add(id));
     return w;
 }

@@ -98,6 +98,8 @@ export function todoList() {
     const proj = G.storyClaimable();
     if (proj) push('village/village', ['ui', 'village'], `${proj} chantier${s(proj)} à terminer`, proj);
     if (state.merchant.status === 'here') push('village/village', ['ui', 'merchant'], 'Le marchand est là', 0);
+    const dr = G.defiReady();
+    if (dr) push('village/orders', ['ui', 'cupGold'], `Grand défi : ${dr} étape${s(dr)} à faire avancer`, dr);
     const goals = G.eventReady();
     add('village/orders', G.eventIcon(G.season().id), `${goals} objectif${s(goals)} de fête`, goals);
     const tiers = G.contestClaimable();
