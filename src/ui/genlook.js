@@ -9,20 +9,22 @@ const SIZE = [
     [1.3, 1.3],
     [0.8, 1.1],
 ];
+// teintes « absolues » : sepia ramène tout à une même teinte, que hue-rotate oriente ensuite
 const COLOR = [
     '',
-    'hue-rotate(-35deg) saturate(1.5)',
-    'sepia(.55) saturate(2) hue-rotate(-12deg) brightness(1.06)',
-    'hue-rotate(250deg) saturate(1.2)',
-    'grayscale(.85) brightness(1.3)',
-    'brightness(.68) saturate(1.3)',
-    'hue-rotate(160deg) saturate(1.1)',
+    'sepia(.9) saturate(5) hue-rotate(-45deg) brightness(.95)',
+    'sepia(.9) saturate(3.2) hue-rotate(5deg) brightness(1.12)',
+    'sepia(.9) saturate(3) hue-rotate(225deg) brightness(.9)',
+    'grayscale(1) brightness(1.45) contrast(.9)',
+    'grayscale(.4) brightness(.55) contrast(1.2)',
+    'sepia(.9) saturate(3) hue-rotate(165deg) brightness(.95)',
 ];
 const masks = new Map();
 const maskOf = svg => {
     let m = masks.get(svg);
     if (!m) {
-        m = `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+        // guillemets simples : la valeur vit dans un attribut style="…"
+        m = `url('data:image/svg+xml;utf8,${encodeURIComponent(svg).replace(/'/g, '%27')}')`;
         if (masks.size > 400) masks.clear();
         masks.set(svg, m);
     }
