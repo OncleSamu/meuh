@@ -204,8 +204,6 @@ let store = (() => {
 })();
 export const setStore = s => (store = s);
 export const getStore = () => store;
-let disabled = false;
-export const setSaveDisabled = v => (disabled = v);
 
 export function readSave() {
     try {
@@ -217,7 +215,7 @@ export function readSave() {
 }
 
 export function writeSave() {
-    if (disabled || !store) return false;
+    if (!store) return false;
     state.lastSaved = now();
     try {
         store.setItem(SAVE_KEY, JSON.stringify(state));

@@ -15,6 +15,7 @@ import { addXp } from './player.js';
 import { ensureQuests } from './orders.js';
 import { ensureStall } from './stall.js';
 import { ensureIsland } from './island.js';
+import { pluralFr } from '../core/format.js';
 
 export const projState = id => state.projects[id] || (state.projects[id] = { given: {}, done: false });
 export const projectDone = id => !!(state.projects[id] && state.projects[id].done);
@@ -86,7 +87,7 @@ export function giveToProject(pid, item, at) {
     if (!projectOpen(pid)) return false;
     const n = Math.min(state.inventory[item], projectLeft(pid, item));
     if (n <= 0) {
-        toast(`Il vous faut encore des ${ITEMS[item].name.toLowerCase()}`, ['item', item]);
+        toast(`Il vous faut encore des ${pluralFr(ITEMS[item].name).toLowerCase()}`, ['item', item]);
         sfx('error');
         return false;
     }

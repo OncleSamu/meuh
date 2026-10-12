@@ -1,7 +1,7 @@
 // Village | Village : événement rare, carte et chantiers, fête du calendrier, contrat, saison de la ferme,
 // voisins, marchand ambulant, concours de la semaine et villageois.
 import { state } from '../../core/state.js';
-import { fmt } from '../../core/format.js';
+import { fmt, qtyName } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { ANIMALS } from '../../data/animals.js';
 import { MACHINES, RECIPES } from '../../data/machines.js';
@@ -88,7 +88,8 @@ function storyCard() {
             const st = G.projectStage(p.id),
                 open = G.chapterOpen(p.ch);
             const ready = G.projectOpen(p.id) && G.projectComplete(p.id);
-            return `<button class="vbld s${st}${open ? '' : ' locked'}${sel === p.id ? ' sel' : ''}${ready ? ' ready' : ''}" style="left:${p.x}%;top:${p.y}%" data-act="proj" data-p="${p.id}" aria-label="${p.name}">
+            const edge = p.x < 18 ? ' edge-l' : p.x > 82 ? ' edge-r' : '';
+            return `<button class="vbld s${st}${edge}${open ? '' : ' locked'}${sel === p.id ? ' sel' : ''}${ready ? ' ready' : ''}" style="left:${p.x}%;top:${p.y}%" data-act="proj" data-p="${p.id}" aria-label="${p.name}">
                 ${SPR.building(p.id, st)}<span class="vlabel">${p.name}</span>${ready ? '<span class="dot">!</span>' : ''}</button>`;
         })
         .join('');
@@ -166,7 +167,7 @@ function contractCard() {
     const it = ITEMS[c.item],
         have = state.inventory[c.item] || 0;
     const end = { printemps: 'du printemps', ete: 'de l’été', automne: 'de l’automne', hiver: 'de l’hiver' }[G.season().id];
-    return `<div class="card contract-card">${head(['ui', 'calendar'], 'Contrat de saison', c.done ? 'Contrat rempli. Un nouveau client viendra à la prochaine saison.' : `Un grossiste veut ${c.qty} ${it.name.toLowerCase()} avant la fin ${end}.`, pill(['ui', 'calendar'], `${G.seasonDaysLeft()} j`))}
+    return `<div class="card contract-card">${head(['ui', 'calendar'], 'Contrat de saison', c.done ? 'Contrat rempli. Un nouveau client viendra à la prochaine saison.' : `Un grossiste veut ${qtyName(c.qty, it.name)} avant la fin ${end}.`, pill(['ui', 'calendar'], `${G.seasonDaysLeft()} j`))}
         ${
             c.done
                 ? ''

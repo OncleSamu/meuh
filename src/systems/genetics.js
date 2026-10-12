@@ -8,7 +8,7 @@
 // Une bête porte son génome (a.g), sa génération (a.gen) et sa race fixée (a.race).
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
-import { fmt, pickRand } from '../core/format.js';
+import { fmt, pickRand, qtyName } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { ANIMALS } from '../data/animals.js';
@@ -182,7 +182,6 @@ export const varieties = () => Object.values(state.genetics.vars);
 export const variety = id => state.genetics.vars[id];
 export const openVarieties = () => varieties().filter(v => !v.fixed);
 export const fixedVarieties = () => varieties().filter(v => v.fixed);
-export const varietiesOf = base => varieties().filter(v => v.base === base);
 export const varName = v => v.name || v.auto;
 
 // un nom tout trouvé pour un hybride : le début d'une espèce et la fin de l'autre (Fraipiment)
@@ -324,16 +323,6 @@ export function fixVariety(id, name, at) {
     addXp(200 + state.level * 10, at);
     toast(`« ${n} » entre dans Mes créations !`, ['ui', 'trophy']);
     changed('lab');
-    return true;
-}
-
-export function renameVariety(id, name) {
-    const v = state.genetics.vars[id];
-    const n = String(name || '')
-        .trim()
-        .slice(0, 22);
-    if (!v || !n) return false;
-    v.name = n;
     return true;
 }
 
@@ -672,7 +661,7 @@ export function deliverChef(vid, at) {
     G.chef = { wait: now() + 60 * 60 * 1000, done: true };
     sfx('level');
     burst(at, 'sparkle', 16);
-    toast(`Le chef est ravi : ${fmt(c.gold)} pièces et 2 ${ITEMS[mat].name.toLowerCase()}`, ['ui', 'star']);
+    toast(`Le chef est ravi : ${fmt(c.gold)} pièces et ${qtyName(2, ITEMS[mat].name)}`, ['ui', 'star']);
     return true;
 }
 

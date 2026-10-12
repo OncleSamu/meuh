@@ -4,7 +4,7 @@ import { now } from '../core/clock.js';
 import { fmt, s, formatDuration } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, shake, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { GRID, COLS, GH, QUALITY, SOILS, SOIL_BONUS, DECOS, MAT, HARVESTER_BONUS } from '../data/farm.js';
+import { GRID, COLS, GH, SOILS, SOIL_BONUS, DECOS, MAT, HARVESTER_BONUS } from '../data/farm.js';
 import { BALANCE } from '../data/progress.js';
 import { speedMult, addXp, spend, earn, rank, rollYield } from './player.js';
 import { cropRate, isInSeason } from './world.js';
@@ -490,7 +490,6 @@ export function ghOffline(elapsed) {
 
 // ---------------- la qualité (argent, or) ----------------
 export const qual = id => (state.quality[id] = state.quality[id] || { s: 0, g: 0 });
-export const qColor = q => QUALITY[q].color;
 
 export function clampQuality(id) {
     const q = state.quality[id];

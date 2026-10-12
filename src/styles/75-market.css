@@ -1,15 +1,4 @@
 /* Marché, étal, grange */
-.market-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-}
-
-@media (max-width: 380px) {
-    .market-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
 
 .goods {
     display: flex;
@@ -54,22 +43,6 @@
 .goods .btns .btn {
     flex: 1;
     padding: 6px 4px;
-}
-
-.hot-banner {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-}
-
-.hot-banner.fair {
-    background-color: #ffe9a8;
-}
-
-.ico.hot-ico {
-    width: 40px;
-    height: 40px;
 }
 
 .goods.hot {
@@ -171,30 +144,12 @@
     animation: shakeX 0.4s;
 }
 
-.barn-title {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.barn-title .ico {
-    width: 40px;
-    height: 40px;
-}
-
 .barn-meter {
     display: flex;
     align-items: center;
     gap: 10px;
     font-family: var(--display);
     margin-bottom: 10px;
-}
-
-.barn-meter .qbar {
-    flex: 1;
-    height: 16px;
-    margin: 0;
 }
 
 .barn-goods {
@@ -385,34 +340,6 @@
     margin: 10px 0;
 }
 
-.stall-form .od-head > .ico {
-    width: 40px;
-    height: 40px;
-}
-
-.stall-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 6px 0;
-}
-
-.stall-row > span {
-    width: 70px;
-    font-size: 0.82rem;
-}
-
-.stall-row input[type='range'] {
-    flex: 1;
-    accent-color: var(--gold-d);
-}
-
-.stall-row b {
-    min-width: 42px;
-    text-align: center;
-    font-family: var(--display);
-}
-
 .stall-sum {
     display: flex;
     flex-direction: column;
@@ -446,11 +373,6 @@ button.bgood {
 .barn-item {
     padding: 10px;
     margin-bottom: 10px;
-}
-
-.barn-item .od-head > .ico {
-    width: 36px;
-    height: 36px;
 }
 
 .rare-card,
@@ -494,28 +416,11 @@ button.bgood {
     background: #fff1b8;
 }
 
-@keyframes shake {
-    25% {
-        translate: -4px 0;
-    }
-    75% {
-        translate: 4px 0;
-    }
-}
-
 @keyframes shakeX {
     25% {
         transform: translateX(-4px);
     }
     75% {
         transform: translateX(4px);
-    }
-}
-
-@keyframes pulseCard {
-    50% {
-        box-shadow:
-            0 5px 0 var(--wood-d),
-            0 0 0 6px rgba(232, 54, 75, 0.25);
     }
 }

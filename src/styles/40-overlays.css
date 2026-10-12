@@ -570,12 +570,6 @@
     animation: swing 0.35s ease-in forwards;
     transform-origin: 20% 90%;
 }
-
-@keyframes grow {
-    from {
-        transform: scale(0.2, 0.1);
-    }
-}
 @keyframes spin {
     to {
         transform: rotate(360deg);

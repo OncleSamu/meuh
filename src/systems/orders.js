@@ -196,8 +196,6 @@ export function trashQuest(i) {
     return true;
 }
 
-export const orderWait = q => Math.max(0, (q.wait - now()) / 1000);
-
 // D'où vient un produit
 export function sourceOf(id) {
     const it = ITEMS[id];
@@ -223,7 +221,6 @@ export const inProduction = id => state.machines.reduce((n, m) => n + m.queue.fi
 export const trainOpen = () => projectDone('station');
 // chaque cheval fait revenir le train 10 % plus tôt (30 % au plus)
 export const trainAway = () => TRAIN_AWAY * (1 - Math.min(0.3, 0.1 * state.animals.filter(a => a.type === 'horse' && isAdult(a)).length));
-export const truckLeft = () => Math.max(0, ((state.truck.status === 'here' ? state.truck.expiresAt : state.truck.arriveAt) - now()) / 1000);
 
 export function truckTick() {
     if (!trainOpen()) return false;
@@ -328,7 +325,6 @@ export function sendTruck(at) {
 
 // ---------------- la montgolfière ----------------
 export const balloonOpen = () => projectDone('inn');
-export const balloonLeft = () => Math.max(0, ((state.balloon.status === 'here' ? state.balloon.expiresAt : state.balloon.arriveAt) - now()) / 1000);
 
 export function balloonTick() {
     if (!balloonOpen()) return false;

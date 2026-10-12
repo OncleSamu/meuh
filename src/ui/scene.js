@@ -68,6 +68,8 @@ export function updateScene() {
         `season-${season().id}`,
         hol && state.level >= 3 ? `hol-${hol}` : '',
         rareActive('butterflies') ? 'butterflies' : '',
+        `fence-${styleOf('fence')}`,
+        `path-${styleOf('path')}`,
         `ts-${state.settings.textSize || 0}`,
         state.settings.contrast ? 'contrast' : '',
         state.settings.calm ? 'calm' : '',

@@ -317,47 +317,9 @@ html.calm .ripple {
     animation: seabob 2.4s ease-in-out infinite;
 }
 
-@keyframes hop {
-    50% {
-        transform: translateY(-4px);
-    }
-}
-
-@keyframes crow {
-    from {
-        transform: translateY(0) rotate(-6deg);
-    }
-    to {
-        transform: translateY(-5px) rotate(6deg);
-    }
-}
-
-@keyframes ripple {
-    from {
-        transform: scale(0.4);
-        opacity: 1;
-    }
-    to {
-        transform: scale(2.4);
-        opacity: 0;
-    }
-}
-
-@keyframes bob {
-    50% {
-        transform: translateY(3px);
-    }
-}
-
 @keyframes dip {
     50% {
         transform: translateY(9px) scale(0.9);
-    }
-}
-
-@keyframes bob {
-    to {
-        transform: translateY(-3px);
     }
 }
 

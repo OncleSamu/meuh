@@ -48,7 +48,6 @@ export const caveStep = id => (CAVE_ITEMS[id] === 'cider' && projectDone('cidery
 export const rankName = lot => (lot.bad ? 'Tourné' : caveFam(lot.id).ranks[lot.rank]);
 export const lotUnit = lot => Math.round(ITEMS[lot.id].sell * CAVE_MULT[lot.rank] * (lot.bad ? CAVE_TURNED : 1));
 export const lotValue = lot => lotUnit(lot) * lot.n;
-export const lotLeft = lot => Math.max(0, (lot.next - now()) / 1000);
 const caveUid = () => (state.cave.uid = (state.cave.uid || 0) + 1);
 
 export function ensureCave() {
@@ -333,7 +332,6 @@ function pickFinds() {
 export const findValue = k =>
     k === 'vintage' ? Math.round(ITEMS.redWine.sell * CAVE_MULT[3] * 3) : Math.round(AUCTION_FINDS[k].value * (1 + state.level * 0.02));
 export const depositMax = () => (state.cave.auction.big ? AUCTION_BIG_LOTS : AUCTION_SMALL_LOTS);
-export const auctionStartsIn = () => Math.max(0, (state.cave.auction.startAt - now()) / 1000);
 
 export function depositLot(uid) {
     const c = state.cave,

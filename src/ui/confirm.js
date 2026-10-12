@@ -26,5 +26,3 @@ export function confirmTap(key, btn, label) {
     }, 3000);
     return false;
 }
-// tant qu'une confirmation attend, l'interface ne redessine pas ce bouton
-export const isArmed = () => armed !== null;

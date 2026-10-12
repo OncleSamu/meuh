@@ -4,7 +4,7 @@ import { herdFull, placeAnimal } from './pastures.js';
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
-import { fmt, pickRand, round5 } from '../core/format.js';
+import { fmt, pickRand, round5, pluralFr } from '../core/format.js';
 import { emit, toast, sfx, burst, float } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { ANIMALS, STAR_ANIMAL_SPEED, PEACOCK_CHARM } from '../data/animals.js';
@@ -32,7 +32,6 @@ export const peacockCharm = () => state.animals.filter(a => a.type === 'peacock'
 
 // ---------------- événements rares ----------------
 export const rareActive = type => !!(state.rare && state.rare.type === type && now() < state.rare.until);
-export const rareLeft = () => Math.max(0, ((state.rare && state.rare.until) || 0) - now()) / 1000;
 // la nuée de papillons s'ajoute à l'arc-en-ciel
 export const butterflyGolden = () => (rareActive('butterflies') ? 3 : 1);
 
@@ -201,7 +200,7 @@ export function giveContract(at) {
     if (!c || c.done) return false;
     const n = Math.min(state.inventory[c.item] || 0, c.qty - c.given);
     if (n <= 0) {
-        toast(`Il vous faut des ${ITEMS[c.item].name.toLowerCase()}`, ['item', c.item]);
+        toast(`Il vous faut des ${pluralFr(ITEMS[c.item].name).toLowerCase()}`, ['item', c.item]);
         sfx('error');
         return false;
     }

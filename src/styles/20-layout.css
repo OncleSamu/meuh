@@ -125,14 +125,6 @@
 .pill.barn.shake {
     animation: shake 0.4s;
 }
-@keyframes shake {
-    25% {
-        transform: translateX(-4px);
-    }
-    75% {
-        transform: translateX(4px);
-    }
-}
 .menu-btn {
     flex-shrink: 0;
 }

@@ -16,7 +16,7 @@ import * as G from '../systems/index.js';
 import { $$, byId, patch, setupActions, afterAction, actions } from './dom.js';
 import { ico, parts } from './icons.js';
 import { segmented, dot } from './kit.js';
-import { render as renderSheets, openSheet, anySheet, closeSheet, topSheet } from './sheets.js';
+import { render as renderSheets, openSheet, anySheet, closeSheet } from './sheets.js';
 import { momentShown, closeMoment } from './moments.js';
 import { todoList, todoCounts } from './todo.js';
 
@@ -369,5 +369,3 @@ export function setupApp() {
     if (view.wide && ui.tab === 'farm' && ui.sub.farm === 'field') ui.tab = 'village';
     started = true;
 }
-
-export const topSheetName = () => (topSheet() ? topSheet().name : null);

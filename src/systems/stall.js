@@ -2,7 +2,7 @@
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
-import { pickRand, fmt, round5 } from '../core/format.js';
+import { pickRand, fmt, round5, qtyName } from '../core/format.js';
 import { emit, toast, sfx, buzz, float, squish } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { DECOS } from '../data/farm.js';
@@ -47,7 +47,7 @@ export function stallTick() {
             sl.sold = true;
             changed = true;
             if (view.started && !view.hidden) {
-                toast(`Un client a acheté ${sl.qty} ${ITEMS[sl.id].name.toLowerCase()} à l’étal !`, ['item', sl.id]);
+                toast(`Un client a acheté ${qtyName(sl.qty, ITEMS[sl.id].name)} à l’étal !`, ['item', sl.id]);
                 sfx('coin');
             }
         }

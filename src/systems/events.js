@@ -2,7 +2,7 @@
 import { state } from '../core/state.js';
 import { now, today } from '../core/clock.js';
 import { view } from '../core/view.js';
-import { fmt, dateKey } from '../core/format.js';
+import { fmt, dateKey, qtyName } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { EVENTS, FETE_START, DAYS_PER_SEASON, GAME_MIN_PER_SEC } from '../data/world.js';
@@ -61,14 +61,13 @@ export function makeEventGoals(sid) {
 }
 
 export function goalText(x) {
-    const nm = x.item ? ITEMS[x.item].name.toLowerCase() : '';
     switch (x.type) {
         case 'find':
             return `Trouver ${x.target} œufs décorés dans le champ`;
         case 'harvest':
-            return `Récolter ${x.target} ${nm}`;
+            return `Récolter ${qtyName(x.target, ITEMS[x.item].name)}`;
         case 'deliver':
-            return `Apporter ${x.target} ${nm} au stand`;
+            return `Apporter ${qtyName(x.target, ITEMS[x.item].name)} au stand`;
         case 'sell':
             return `Vendre pour ${fmt(x.target)} pièces au marché`;
         case 'gold':

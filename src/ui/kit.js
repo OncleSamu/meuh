@@ -15,10 +15,6 @@ export function btn(label, { act, data, kind = '', size = '', icon, disabled, wi
     return `<button class="${c}"${act ? ` data-act="${act}"` : ''}${dataAttrs(data)}${disabled ? ' disabled' : ''}${title ? ` aria-label="${title}" title="${title}"` : ''}${anchor ? ` data-anchor="${anchor}"` : ''}>${icon ? ico(icon) : ''}${label ? `<span>${label}</span>` : ''}</button>`;
 }
 
-// un bouton rond avec seulement une icône
-export const iconBtn = (icon, act, data, title, cls = '') =>
-    `<button class="icon-btn ${cls}" data-act="${act}"${dataAttrs(data)} aria-label="${title}" title="${title}">${ico(icon)}</button>`;
-
 // une carte : icône à gauche, titre et sous-titre, actions à droite
 export function card({ icon, art: big, title, sub, side = '', body = '', cls = '', act, data, locked }) {
     const tag = act ? 'button' : 'div';

@@ -142,4 +142,11 @@ html.season-automne .orchard.island {
         width: 20px;
         height: 20px;
     }
+    /* « Verger · niv. 11 » passe sur deux lignes au lieu de déborder sur le volet voisin */
+    .seg.n4 > button span {
+        max-width: 100%;
+        white-space: normal;
+        text-align: center;
+        line-height: 1.1;
+    }
 }

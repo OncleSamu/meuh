@@ -1,6 +1,6 @@
 // Statistiques, mes bonus, le guide du fermier, une photo de l'album et la carte postale.
 import { state } from '../../core/state.js';
-import { fmt } from '../../core/format.js';
+import { fmt, qtyName } from '../../core/format.js';
 import { now } from '../../core/clock.js';
 import { toast } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
@@ -115,7 +115,7 @@ function itemSource(id) {
     if (RECIPES[id]) {
         const r = RECIPES[id];
         const how = Object.entries(r.ing)
-            .map(([k, n]) => `${n} ${ITEMS[k].name.toLowerCase()}`)
+            .map(([k, n]) => qtyName(n, ITEMS[k].name))
             .join(', ');
         const lock = r.fete
             ? ` (pendant ${EVENTS[r.fete].name})`

@@ -83,10 +83,17 @@ const need = () => {
     if (hn && state.level >= hn.lvl) ['beam', 'plank', 'nail', 'tools'].forEach(id => hn.cost[id] && add(id, hn.cost[id]));
     const kn = G.handLvl() && G.handNext();
     if (kn && state.level >= kn.lvl) add('tools', kn.cost.tools);
-    Object.keys(n).forEach(id => {
-        const r = RECIPES[id];
-        if (r) Object.entries(r.ing).forEach(([k, q]) => add(k, q * Math.max(0, n[id] - state.inventory[id])));
-    });
+    // ingrédients des produits demandés, sur trois étages (flan coco → lait de coco → noix de coco)
+    let level = Object.keys(n);
+    for (let d = 0; d < 3 && level.length; d++) {
+        const next = [];
+        level.forEach(id => {
+            const r = RECIPES[id];
+            const miss = Math.max(0, n[id] - state.inventory[id]);
+            if (r && miss) Object.entries(r.ing).forEach(([k, q]) => (next.push(k), add(k, q * miss)));
+        });
+        level = next;
+    }
     return n;
 };
 

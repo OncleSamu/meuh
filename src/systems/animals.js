@@ -24,7 +24,6 @@ export const growPct = a => Math.min(1, (a.age || 0) / GROW[a.type]);
 export const prodPct = a => Math.min(1, (a.prodProgress || 0) / animalTime(a));
 // une bête qui travaille : adulte, en forme, nourrie et pas encore pleine
 export const isBusy = a => isAdult(a) && !a.sick && !isAway(a) && a.food > 0 && a.stack < MAX_STACK;
-export const animalProduct = a => ANIMALS[a.type].prodId;
 export const animalCount = type => state.animals.filter(a => a.type === type).length;
 
 export function pickName(type) {

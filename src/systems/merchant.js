@@ -13,7 +13,6 @@ import { isInSeason } from './world.js';
 import { spend } from './player.js';
 
 export const merchantOpen = () => projectDone('fountain');
-export const merchantLeft = () => Math.max(0, ((state.merchant.status === 'here' ? state.merchant.expiresAt : state.merchant.arriveAt) - now()) / 1000);
 
 export function merchantTick() {
     if (!merchantOpen()) return false;
