@@ -46,7 +46,7 @@ export function merchantStock() {
         const qty = 2 + Math.floor(Math.random() * 2);
         return { kind: 'rare', id, qty, price: round5((200 + L * 35) * qty) };
     });
-    const ex = pickRand(['pineapple', 'saffron']);
+    const ex = pickRand(['saffron']);
     stock.push({ kind: 'seed', id: ex, qty: 5, price: round5(ITEMS[ex].cost * 5 * 1.4) });
     // graines de la saison, à prix doux
     const fresh = Object.values(ITEMS).filter(i => i.type === 'crop' && !i.exotic && state.level >= i.reqLvl && isInSeason(i.id));

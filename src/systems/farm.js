@@ -222,6 +222,10 @@ export function doPlotAction(i, action, at) {
 
 export function plantSeed(plot, id) {
     const d = ITEMS[id];
+    if (d.island) {
+        toast(`${d.seedName} : cette culture ne pousse que sur l’île`, ['item', id]);
+        return false;
+    }
     // des graines reçues en cadeau se plantent même avant le niveau de la culture
     if ((state.level < d.reqLvl || !storyOk(d)) && !(state.seeds[id] > 0)) return false;
     if (state.seeds[id] > 0) {

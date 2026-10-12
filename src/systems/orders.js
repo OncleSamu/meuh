@@ -1,6 +1,7 @@
 // Les commandes : tableau de commandes du village, train de marchandises (3 wagons) et montgolfière.
 // C'est le vrai cœur de l'économie.
 import { livingTrees } from './orchard.js';
+import { islandOpen } from './island.js';
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -40,7 +41,7 @@ export function questPool() {
         else if (i.sea) ok = netOpen() && id !== 'lobster';
         else if (id === 'alpineMilk') ok = transOpen();
         else if (id === 'honey') ok = state.grid.some(p => p.deco === 'hive');
-        else if (i.type === 'crop') ok = state.level >= i.reqLvl && storyOk(i) && !i.ghOnly;
+        else if (i.type === 'crop') ok = state.level >= i.reqLvl && storyOk(i) && !i.ghOnly && (!i.island || islandOpen());
         else if (i.type === 'tree') ok = livingTrees(i.id) > 0;
         else if (i.type === 'product') ok = state.animals.some(a => ANIMALS[a.type].prodId === i.id);
         else if (i.type === 'fish') ok = state.level >= NATURE.pond.lvl && !!FISH[id] && FISH[id].odds >= 10 && !FISH[id].junk;
@@ -64,11 +65,11 @@ export const qtyFor = (it, target, max = 12) => Math.max(1, Math.min(max, Math.r
 export function itemWeight(id) {
     const r = RECIPES[id];
     if (ITEMS[id].sea || id === 'alpineMilk') return 0.3;
-    if (!r) return 1;
+    if (!r) return ITEMS[id].island ? 0.6 : 1;
     const ing = Object.keys(r.ing);
     if (ing.some(k => ITEMS[k].type === 'fish' || ITEMS[k].sea || k === 'alpineMilk')) return 0.2;
     if (ing.some(k => RECIPES[k])) return 0.35;
-    return 0.7;
+    return ITEMS[id].island ? 0.5 : 0.7;
 }
 
 function pickWeighted(list) {
@@ -204,6 +205,7 @@ export function sourceOf(id) {
     if (it.sea) return 'Pêche en mer';
     if (id === 'alpineMilk') return 'Transhumance';
     if (it.ghOnly) return 'Serre';
+    if (it.island) return it.type === 'tree' ? 'Verger de l’île' : 'Île';
     if (it.type === 'crop') return isInSeason(id) ? 'Champ (de saison)' : 'Champ';
     if (it.type === 'tree') return 'Arbre fruitier';
     if (it.type === 'fish') return 'Étang';

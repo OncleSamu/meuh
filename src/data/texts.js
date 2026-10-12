@@ -253,6 +253,16 @@ export const GUIDE = [
 ];
 
 export const TIPS = {
+    isle: {
+        icon: ['item', 'pineapple'],
+        title: 'Une île au bout du bac',
+        text: 'Depuis le hameau, un vieux bac mène à une île tropicale. Répare-le (volet Village, carte « L’île ») : tu pourras y planter ananas, bananiers et cocotiers.',
+    },
+    island: {
+        icon: ['item', 'banana'],
+        title: 'Les cultures de l’île',
+        text: 'Sur l’île, pas besoin d’arroser : les pluies tropicales s’en chargent, et tout est toujours de saison. « Replanter » remet sur chaque parcelle vide sa dernière culture.',
+    },
     orchard: {
         icon: ['item', 'apple'],
         title: 'Le verger',

@@ -11,6 +11,7 @@ export * from './game.js';
 export * from './holidays.js';
 export * from './home.js';
 export * from './incidents.js';
+export * from './island.js';
 export * from './market.js';
 export * from './mastery.js';
 export * from './merchant.js';
