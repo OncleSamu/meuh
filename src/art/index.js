@@ -9,6 +9,7 @@ import './animals.js';
 import './people.js';
 import './machines.js';
 import './icons.js';
+import './glyphs.js';
 
 export const SPR = {
     farmhouse(l, roof) {

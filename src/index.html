@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+        <meta name="theme-color" content="#7cc8f0" />
+        <meta name="description" content="Votre ferme dans la poche : cultures, animaux, village, cave et concours." />
+        <title>Meuh</title>
+        <!--PWA-->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+        <style>
+            /*CSS*/
+        </style>
+    </head>
+    <body>
+        <!-- le décor : ciel, collines, météo -->
+        <div id="scene" aria-hidden="true">
+            <div id="stars"></div>
+            <div id="sun" class="orb"></div>
+            <div id="moon" class="orb"></div>
+            <div class="cloud c1"><span></span></div>
+            <div class="cloud c2"><span></span></div>
+            <div class="cloud c3"><span></span></div>
+            <svg id="hills" viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    class="h1"
+                    d="M0 90 C60 55 120 60 180 80 C240 100 300 50 400 70 L400 200 L0 200Z"
+                    fill="#a9dc84"
+                    stroke="#3a2618"
+                    stroke-width="2.5"
+                    vector-effect="non-scaling-stroke"
+                />
+                <g transform="translate(286 38) scale(.62)">
+                    <path id="hill-barn" d="M8 58 L8 28 L32 10 L56 28 L56 58Z" fill="#c8453a" stroke="#3a2618" stroke-width="3.5" stroke-linejoin="round" />
+                    <path d="M4 30 L32 8 L60 30" fill="none" stroke="#f7f3ea" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                    <rect x="22" y="36" width="20" height="22" fill="#f7f3ea" stroke="#3a2618" stroke-width="3" />
+                    <path d="M22 36 L42 58 M42 36 L22 58" stroke="#3a2618" stroke-width="2.5" />
+                </g>
+                <g stroke="#3a2618" stroke-width="2.2">
+                    <rect x="66" y="70" width="5" height="14" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="68" cy="62" r="13" fill="#6cc04a" />
+                    <rect x="96" y="64" width="5" height="16" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="98" cy="55" r="11" fill="#7fcf4c" />
+                </g>
+                <path
+                    class="h2"
+                    d="M0 125 C80 95 150 105 220 120 C290 135 340 105 400 112 L400 200 L0 200Z"
+                    fill="#82c95a"
+                    stroke="#3a2618"
+                    stroke-width="2.5"
+                    vector-effect="non-scaling-stroke"
+                />
+                <path
+                    class="h3"
+                    d="M0 160 C90 140 200 150 260 158 C320 166 360 150 400 152 L400 200 L0 200Z"
+                    fill="#6cc04a"
+                    stroke="#3a2618"
+                    stroke-width="2.5"
+                    vector-effect="non-scaling-stroke"
+                />
+            </svg>
+            <div id="weather">
+                <div class="rain r1"></div>
+                <div class="rain r2"></div>
+                <div class="snow s1"></div>
+                <div class="snow s2"></div>
+                <div class="heat"></div>
+                <div class="rainbow"></div>
+                <div class="leaves"></div>
+                <div class="petals"></div>
+                <div class="flutter"></div>
+            </div>
+            <div id="night"></div>
+        </div>
+        <div id="flash" aria-hidden="true"></div>
+
+        <div id="app">
+            <header id="hud"></header>
+            <div id="subnav"></div>
+            <main id="views">
+                <section id="view-farm" class="view" data-tab="farm"></section>
+                <section id="view-animals" class="view" data-tab="animals"></section>
+                <section id="view-machines" class="view" data-tab="machines"></section>
+                <section id="view-village" class="view" data-tab="village"></section>
+                <section id="view-market" class="view" data-tab="market"></section>
+            </main>
+            <footer id="toolbar"></footer>
+            <nav id="tabs"></nav>
+        </div>
+
+        <div id="sheets"></div>
+        <div id="moment" class="moment" hidden></div>
+        <div id="undo" class="undo" hidden></div>
+        <div id="tuto" hidden></div>
+        <div id="fx" aria-hidden="true"></div>
+        <div id="toasts" role="status" aria-live="polite"></div>
+
+        <script>
+            /*JS*/
+        </script>
+    </body>
+</html>

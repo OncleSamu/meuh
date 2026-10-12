@@ -357,7 +357,7 @@ export function setReserve(uid, dir) {
 }
 
 // qui vient à la vente
-function bidderPool(big) {
+export function bidderPool(big) {
     return Object.entries(BIDDERS)
         .filter(([id, b]) => (b.big ? big : !b.villager || !VILLAGERS[id].ch || chapterDone(VILLAGERS[id].ch - 1)))
         .map(([id]) => id);
