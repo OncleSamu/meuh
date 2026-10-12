@@ -68,5 +68,8 @@ test('le verger de l’île n’accepte que les arbres tropicaux', () => {
     G.advanceTree(G.slotsOf('island')[k].tree, 3000);
     assert.ok(G.slotsOf('island')[k].tree.ground > 0);
     assert.ok(G.livingTrees('banana') > 0);
-    assert.ok(G.questPool().some(i => i.id === 'banana'), 'les bananes peuvent être commandées');
+    assert.ok(
+        G.questPool().some(i => i.id === 'banana'),
+        'les bananes peuvent être commandées',
+    );
 });

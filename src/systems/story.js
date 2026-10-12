@@ -35,7 +35,10 @@ export const storyOk = d => !d || !d.needProject || projectDone(d.needProject);
 export const storyLockText = d => (d && d.needProject && !projectDone(d.needProject) ? `Après le chantier « ${PROJECTS[d.needProject].name} »` : '');
 
 // une carte s'ouvre quand son chapitre d'entrée est fini, ou dès le niveau du chapitre suivant (sauf « strict »)
-export const mapOpen = m => (m.id === 'island' ? chapterOpen(13) || chapterDone(13) : !m.openChapter || chapterDone(m.openChapter) || (!m.strict && state.level >= CHAPTERS[m.openChapter].lvl));
+export const mapOpen = m =>
+    m.id === 'island'
+        ? chapterOpen(13) || chapterDone(13)
+        : !m.openChapter || chapterDone(m.openChapter) || (!m.strict && state.level >= CHAPTERS[m.openChapter].lvl);
 export const openMaps = () => STORY_MAPS.filter(mapOpen);
 export const mapReady = m => Object.values(PROJECTS).some(p => mapOf(p) === m && projectOpen(p.id) && projectComplete(p.id));
 
@@ -156,7 +159,7 @@ const MAP_TEASE = {
 // la suite de l'histoire, après une rénovation
 export function storyNextText(p) {
     const c = currentChapter(mapOf(p) === 'island' ? 'island' : undefined);
-    if (mapOf(p) === 'island' && !c) return 'L’île est en fête : toute son histoire est écrite. Merci !';
+    if (mapOf(p) === 'island' && !c) return 'L’île est en fête : toute son histoire est écrite. Merci !';
     if (!c)
         return 'Le village et le hameau sont rénovés : l’histoire est terminée. Merci pour tout ! Prochain grand but : la Ferme légendaire (Livre de la ferme).';
     const at = state.level < c.lvl ? ` au niveau ${c.lvl}` : '';

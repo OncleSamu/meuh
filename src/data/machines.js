@@ -188,7 +188,7 @@ export const MACHINES = {
         cost: 32000,
         reqLvl: 26,
         desc: 'Eaux de lavande et parfums',
-    },    // l'île
+    }, // l'île
     juiceBar: {
         id: 'juiceBar',
         name: 'Bar à jus',

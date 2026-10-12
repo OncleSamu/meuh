@@ -66,7 +66,7 @@ export function plantIsland(k, id, at, quiet) {
         d = ITEMS[id];
     if (!p || !p.open || p.id || !d || !d.island || d.type !== 'crop') return false;
     if (!islandCropOk(d)) {
-        if (!quiet) toast(`${d.seedName} : débloqué au niveau ${d.reqLvl}`, ['ui', 'lock']);
+        if (!quiet) toast(`${d.seedName} : débloqué au niveau ${d.reqLvl}`, ['ui', 'lock']);
         return false;
     }
     if (state.seeds[id] > 0) state.seeds[id]--;
@@ -174,7 +174,7 @@ export function replantIsland(at) {
         sfx('plant');
         toast(`${n} parcelle${s(n)} replantée${s(n)} sur l’île`, ['item', 'pineapple']);
     } else {
-        toast('Aucune parcelle à replanter (graines ou pièces manquantes ?)');
+        toast('Aucune parcelle à replanter (graines ou pièces manquantes ?)');
         squish(at);
     }
     return n;

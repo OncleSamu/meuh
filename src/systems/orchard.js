@@ -327,7 +327,10 @@ export function orchardTick() {
         if (r.fell || r.rot || before !== after) ch = true;
         if (r.fell) emit('ripe', 'orchard');
         if (before !== 'dead' && after === 'dead')
-            toast(`Un ${ITEMS[t.id].seedName.toLowerCase()} est mort de vieillesse : débitez-le en bois ${ITEMS[t.id].island ? 'sur l’île' : 'au verger'}`, ['item', 'wood']);
+            toast(`Un ${ITEMS[t.id].seedName.toLowerCase()} est mort de vieillesse : débitez-le en bois ${ITEMS[t.id].island ? 'sur l’île' : 'au verger'}`, [
+                'item',
+                'wood',
+            ]);
     }
     return ch;
 }

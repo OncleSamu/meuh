@@ -342,9 +342,50 @@ function cave() {
     if (a.lots && !a.over) a.lots.forEach((l, k) => l.kind === 'buy' && !l.done && l.leader !== 'you' && state.money > l.price * 6 && G.playerBid(k));
 }
 
+// l'île : récolter, replanter ce qui est demandé (sinon le plus rentable), arbres tropicaux demandés
+function island() {
+    if (!G.islandOpen()) return;
+    const nd = need();
+    const plots = G.islandPlots();
+    plots.forEach((p, k) => {
+        if (p.ready && !G.barnBlocked(true))
+            tag('île', () => {
+                const r = G.harvestIsland(k, null, true);
+                if (r) G.addXp(r.xp);
+            });
+    });
+    const ok = G.islandCrops().filter(d => state.level >= d.reqLvl);
+    const wanted = ok.filter(d => (nd[d.id] || 0) > state.inventory[d.id]);
+    const best = [...ok].sort((a, b) => (b.sell - b.cost) / b.time - (a.sell - a.cost) / a.time);
+    let j = 0;
+    plots.forEach((p, k) => {
+        if (!p.open || p.id) return;
+        const pick = wanted.length ? wanted[j % wanted.length] : best[j % Math.min(3, best.length)];
+        j++;
+        if (pick && state.money > pick.cost + 50) G.plantIsland(k, pick.id, null, true);
+    });
+    if (plots.filter(p => p.open).length < 12 && state.money > G.islandPlotCost() * 3) G.buyIslandPlot();
+    G.slotsOf('island').forEach((sl, k) => {
+        if (!sl.tree) return;
+        if (G.treeStage(sl.tree) === 'dead') G.fellTree(k, null, 'island');
+        else if (sl.tree.ground && !G.barnBlocked(true))
+            tag('île', () => {
+                const r = G.pickTree(k, null, true, 'island');
+                if (r) G.addXp(r.xp);
+            });
+    });
+    const tree = G.treeList('island').find(d => state.level >= d.reqLvl && (nd[d.id] || 0) > state.inventory[d.id] && !G.livingTrees(d.id));
+    if (tree && state.money > tree.cost * 3) {
+        let k = G.slotsOf('island').findIndex(x => x.open && !x.tree);
+        if (k < 0 && state.money > G.slotCost('island') * 3 && G.buySlot(null, 'island')) k = G.slotsOf('island').findIndex(x => x.open && !x.tree);
+        if (k >= 0) G.plantTree(k, tree.id, null, 'island');
+    }
+}
+
 function step() {
     cave();
     farm();
+    island();
     animals();
     machines();
     orders();

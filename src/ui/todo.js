@@ -24,6 +24,16 @@ export function todoList() {
     add('farm/field', ['item', 'honey'], `${honey} pot${s(honey)} de miel`, honey);
     if (state.dog.found) add('farm/field', ['ui', 'dog'], `${state.dog.name} a trouvé quelque chose`);
     if (G.houseCanUp()) push('sheet:house', ['ui', 'house'], 'Maison à agrandir', 0);
+    // l'île : cultures prêtes, fruits au pied des arbres
+    if (state.island && G.islandOpen()) {
+        const r = G.islandReady();
+        add('farm/island', ['item', 'pineapple'], `${r} récolte${s(r)} sur l’île`, r);
+        const isl = G.slotsOf('island').filter(x => x.tree && x.tree.ground > 0);
+        const fr = isl.reduce((a, x) => a + x.tree.ground, 0);
+        if (fr) add('farm/island', ['item', isl[0].tree.id], `${fr} fruit${s(fr)} sur l’île`, isl.length, { urgent: isl.some(x => G.groundFull(x.tree)) });
+        const dd = G.deadTrees('island');
+        add('farm/island', ['item', 'wood'], `${dd} arbre${s(dd)} mort${s(dd)} sur l’île`, dd);
+    }
     // le verger : un arbre au sol plein compte comme une tâche
     if (state.orchard) {
         const trees = state.orchard.slots.filter(x => x.tree);
@@ -33,7 +43,7 @@ export function todoList() {
             add('farm/orchard', ['item', withFruit[0].tree.id], `${fruits} fruit${s(fruits)} au verger`, withFruit.length, {
                 urgent: withFruit.some(x => G.groundFull(x.tree)),
             });
-        const dead = G.deadTrees();
+        const dead = G.deadTrees('farm');
         add('farm/orchard', ['item', 'wood'], `${dead} arbre${s(dead)} mort${s(dead)}`, dead);
     }
 

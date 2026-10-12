@@ -43,6 +43,14 @@ export const GUIDE = [
         text: 'Les arbres fruitiers ont leur verger, avec ses propres places. Un arbre grandit, puis fait tomber ses fruits à son pied : ramassez-les, sinon il attend et ses fruits pourrissent. Après une centaine de fruits il vieillit et ralentit, puis meurt : débitez-le en bois et replantez. L’hiver il dort à moitié, l’automne il produit plus vite.',
     },
     {
+        id: 'island',
+        icon: ['item', 'pineapple'],
+        name: 'L’île',
+        lvl: 30,
+        view: 'island',
+        text: 'Au niveau 30, réparez le bac de Tiago (volet Village, carte « L’île »). Sur l’île, les cultures tropicales poussent sans arrosage et en toute saison : ananas, patate douce, fruit de la passion, manioc, gingembre, tiaré. Son verger accueille bananiers, cocotiers, manguiers, papayers, citronniers verts, avocatiers, goyaviers, caféiers et litchis. Puis paillote, four des îles, brûlerie et rhumerie ouvrent quatre nouvelles machines.',
+    },
+    {
         id: 'workshop',
         icon: ['machine', 'bakery'],
         name: 'L’atelier',
@@ -256,12 +264,12 @@ export const TIPS = {
     isle: {
         icon: ['item', 'pineapple'],
         title: 'Une île au bout du bac',
-        text: 'Depuis le hameau, un vieux bac mène à une île tropicale. Répare-le (volet Village, carte « L’île ») : tu pourras y planter ananas, bananiers et cocotiers.',
+        text: 'Depuis le hameau, un vieux bac mène à une île tropicale. Répare-le (volet Village, carte « L’île ») : tu pourras y planter ananas, bananiers et cocotiers.',
     },
     island: {
         icon: ['item', 'banana'],
         title: 'Les cultures de l’île',
-        text: 'Sur l’île, pas besoin d’arroser : les pluies tropicales s’en chargent, et tout est toujours de saison. « Replanter » remet sur chaque parcelle vide sa dernière culture.',
+        text: 'Sur l’île, pas besoin d’arroser : les pluies tropicales s’en chargent, et tout est toujours de saison. « Replanter » remet sur chaque parcelle vide sa dernière culture.',
     },
     orchard: {
         icon: ['item', 'apple'],

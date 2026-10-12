@@ -90,7 +90,10 @@ export function isToolValid(t) {
         t === 'shovel' ||
         t === 'feed' ||
         (t === 'fert' && state.level >= 4) ||
-        (state.seeds[t] !== undefined && ITEMS[t].type === 'crop' && !ITEMS[t].island && ((state.level >= ITEMS[t].reqLvl && storyOk(ITEMS[t])) || state.seeds[t] > 0))
+        (state.seeds[t] !== undefined &&
+            ITEMS[t].type === 'crop' &&
+            !ITEMS[t].island &&
+            ((state.level >= ITEMS[t].reqLvl && storyOk(ITEMS[t])) || state.seeds[t] > 0))
     );
 }
 

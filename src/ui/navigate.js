@@ -27,6 +27,10 @@ export function produce(id) {
         go('village/village');
         return toast(G.storyLockText(it), ['ui', 'village']);
     }
+    if (it.island && (it.type === 'tree' || it.type === 'crop')) {
+        go(G.islandOpen() ? 'farm/island' : 'village/village');
+        return toast(G.islandOpen() ? `${it.name} : à cultiver sur l’île` : 'Réparez d’abord le bac de Tiago pour rejoindre l’île', ['item', id]);
+    }
     if (it.type === 'tree') {
         go('farm/orchard');
         return toast(
