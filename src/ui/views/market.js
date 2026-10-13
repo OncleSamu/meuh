@@ -29,7 +29,7 @@ function buyBtn(type, id, qty, unit, locked) {
     const total = unit * qty,
         m = G.matCost(type, id);
     const ok = !locked && G.canBuy(type, id, qty);
-    return btn(`${qty > 1 ? `×${qty} ` : ''}${fmt(total)}${COIN()}${matChips(m)}`, {
+    return btn(`${qty > 1 ? `<i class="qty-tag">×${qty}</i>` : ''}${fmt(total)}${COIN()}${matChips(m)}`, {
         act: 'buy',
         data: { type, id, qty },
         kind: 'green',
