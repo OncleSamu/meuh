@@ -594,6 +594,465 @@ const DRINKS = () => ({
         F('M44 20 L46 20 L46 56 L44 56Z', '#000', 0.08),
 });
 
+// ---------------- les plats et pâtisseries ----------------
+// ---- contenants communs ----
+const plate = (y = 46) => SHADOW(32, y + 10, 27, 3) + E(32, y, 28, 10, '#ffffff') + E(32, y - 1, 20, 6.5, '#eef3f6', 0, 1.4);
+// un bol en faïence à liseré bleu, rempli à ras
+const bowl = (fill, top = 30, rim = '#5aa9e6') =>
+    SHADOW(32, 59, 23, 3) +
+    P(`M7 ${top} Q8 57 32 57 Q56 57 57 ${top}Z`, '#fbf7ee') +
+    L(`M10 ${top + 8} Q32 ${top + 14} 54 ${top + 8}`, 2, rim) +
+    R(24, 55, 16, 4, 2, '#fbf7ee') +
+    E(32, top, 25, 6.5, fill) +
+    E(32, top, 25, 6.5, 'none', 0, 2.5) +
+    HL(14, top + 10, 2, 5, -15, 0.6);
+const steamF = L('M24 12 Q20 8 24 4 M32 14 Q28 9 32 4 M40 12 Q36 8 40 4', 1.8, 'rgba(255,255,255,.95)');
+// un bocal à couvercle et étiquette illustrée
+const jar = (fill, lid, mark, lidTop = lid) =>
+    SHADOW(32, 60, 16, 2.6) +
+    P('M16 18 L48 18 L48 54 Q48 59 43 59 L21 59 Q16 59 16 54Z', '#eaf6fd') +
+    F('M17.4 22 L46.6 22 L46.6 54 Q46.6 57.6 43 57.6 L21 57.6 Q17.4 57.6 17.4 54Z', fill) +
+    R(14, 9, 36, 10, 3, lid) +
+    L('M17 12 L47 12', 1, lidTop === lid ? 'rgba(255,255,255,.45)' : lidTop) +
+    R(20, 32, 24, 18, 4, '#fffaf0', 1.6) +
+    mark +
+    F('M19 24 L21.5 22.5 L21.5 52 L19 52Z', '#fff', 0.45);
+// une boîte de conserve ouverte
+// une coupe de glace en verre
+const coupe = (scoops, extra = '') =>
+    SHADOW(32, 61, 13, 2.6) +
+    R(26, 56, 12, 4, 2, '#eaf6fd') +
+    L('M32 44 L32 56', 4) +
+    L('M32 44 L32 56', 2, '#eaf6fd') +
+    scoops +
+    P('M9 32 L55 32 Q53 47 32 47 Q11 47 9 32Z', '#eaf6fd') +
+    FE(16, 37, 2, 4, '#fff', 0.7, -20) +
+    extra;
+const scoop = (x, y, r, c, hi = '#fff') => C(x, y, r, c) + FC(x - r * 0.35, y - r * 0.4, r * 0.25, hi, 0.7);
+const woodBoard = () => SHADOW(32, 58, 28, 3) + R(4, 42, 56, 12, 5, '#c08b52') + L('M10 47 L30 47 M36 49 L52 49', 1, '#a0703a') + C(54, 48, 2, '#8b5a2b', 1.2);
+const tray = (fill, x = 6, w = 52) =>
+    SHADOW(32, 58, 27, 3) + R(x, 30, w, 24, 6, '#e8792a') + R(x + 4, 33, w - 8, 15, 4, fill, 1.6) + L(`M${x - 2} 40 L${x} 40 M${x + w} 40 L${x + w + 2} 40`, 3);
+
+// dessinés à la demande, comme les boissons
+const FOOD = () => ({
+    // la soupe à l'ail : bol fumant, croûtons, une tête d'ail
+    garlicSoup:
+        bowl('#f2e3b0') +
+        FC(22, 30, 2.2, '#e8b04a') +
+        FC(34, 28, 2, '#e8b04a') +
+        FC(42, 31, 1.8, '#e8b04a') +
+        leaf(28, 31, 5, -20, '#6cc04a', 0.5) +
+        steamF +
+        sub('garlic', 42, 34, 22),
+    // le risotto : grains crémeux, parmesan, feuille de persil
+    risotto:
+        plate(46) +
+        P('M10 44 Q12 32 32 31 Q52 32 54 44 Q32 50 10 44Z', '#f6e7b4') +
+        [
+            [18, 41],
+            [24, 37],
+            [30, 42],
+            [36, 36],
+            [42, 41],
+            [46, 38],
+            [27, 33],
+            [38, 33],
+        ]
+            .map(([x, y]) => E(x, y, 2.2, 1.2, '#fffaf0', 30, 0.8))
+            .join('') +
+        leaf(33, 35, 6, -30, '#4caf50', 0.5) +
+        leaf(35, 36, 6, 30, '#4caf50', 0.5) +
+        steamF,
+    // le riz au lait : bol, cannelle, gousse de vanille
+    ricePudding:
+        bowl('#fff6e0') +
+        [
+            [20, 29],
+            [28, 32],
+            [36, 28],
+            [44, 31],
+            [24, 27],
+            [40, 27],
+        ]
+            .map(([x, y]) => E(x, y, 2.2, 1.2, '#fffdf6', 20, 0.8))
+            .join('') +
+        L('M18 30 L28 26 M20 32 L30 28', 2.2, '#a0582a') +
+        L('M38 22 Q46 18 56 22', 2.6, '#3a2618'),
+    // le gâteau de Savoie : un grand biscuit en couronne, du sucre glace
+    spongeCake:
+        plate(50) +
+        P('M10 46 L10 34 Q12 16 32 14 Q52 16 54 34 L54 46 Q32 52 10 46Z', '#f5c96a') +
+        P('M10 34 Q12 16 32 14 Q52 16 54 34 Q32 40 10 34Z', '#e8a548') +
+        E(32, 26, 7, 3, '#fffaf0', 0, 1.6) +
+        L('M16 24 Q22 20 26 22 M38 20 Q44 20 48 26', 1.2, '#fffaf0') +
+        [
+            [18, 30],
+            [44, 30],
+            [30, 32],
+            [24, 20],
+            [40, 18],
+        ]
+            .map(([x, y]) => FC(x, y, 1.2, '#fffaf0'))
+            .join('') +
+        HL(16, 40, 2, 4, 0, 0.5),
+    // les sorbets : une coupe et le fruit à côté
+    melonSorbet: coupe(
+        scoop(23, 25, 10, '#f2546b') +
+            scoop(41, 25, 10, '#f77d8f') +
+            scoop(32, 19, 9, '#f2546b') +
+            [
+                [20, 24],
+                [26, 28],
+                [39, 25],
+                [44, 28],
+                [30, 17],
+                [34, 21],
+            ]
+                .map(([x, y]) => FE(x, y, 0.8, 1.2, '#3a2618', 1))
+                .join(''),
+        sub('watermelon', 38, 0, 22) + leaf(34, 11, 6, -50, '#4caf50', 0.5),
+    ),
+    peachSorbet: coupe(
+        scoop(23, 25, 10, '#ffb27f') + scoop(41, 25, 10, '#ffc69e') + scoop(32, 19, 9, '#ffb27f'),
+        sub('peach', 40, 2, 20) + leaf(34, 11, 6, -50, '#4caf50', 0.5),
+    ),
+    // les pâtes : un nid de tagliatelles et de la farine
+    pasta:
+        woodBoard() +
+        [0, 1, 2]
+            .map(
+                k =>
+                    E(20 + k * 12, 38 - (k % 2) * 3, 7, 5, '#f7d77a', 0, 1.6) +
+                    L(
+                        `M${15 + k * 12} ${37 - (k % 2) * 3} Q${20 + k * 12} ${33 - (k % 2) * 3} ${25 + k * 12} ${37 - (k % 2) * 3} M${16 + k * 12} ${40 - (k % 2) * 3} Q${20 + k * 12} ${36 - (k % 2) * 3} ${24 + k * 12} ${40 - (k % 2) * 3}`,
+                        1,
+                        '#e3b24a',
+                    ),
+            )
+            .join('') +
+        FE(52, 40, 6, 2.2, '#fffdf6', 1) +
+        FC(48, 36, 0.8, '#fffdf6') +
+        FC(55, 35, 0.6, '#fffdf6'),
+    // les pâtes à l'ail : assiette de spaghettis, persil, ail
+    garlicPasta:
+        plate(46) +
+        P('M12 44 Q14 30 32 30 Q50 30 52 44 Q32 50 12 44Z', '#f7d77a') +
+        L('M16 42 Q24 32 32 40 Q40 32 48 42 M20 38 Q28 30 36 38 M28 44 Q36 36 44 42', 1.3, '#e3b24a') +
+        FC(26, 36, 1.4, '#4caf50') +
+        FC(38, 38, 1.2, '#4caf50') +
+        FC(32, 34, 1.2, '#4caf50') +
+        sub('garlic', 42, 26, 20),
+    // les rillettes de maquereau : un pot en terre et une tartine
+    mackerelRillettes:
+        SHADOW(30, 59, 24, 3) +
+        P('M10 26 Q8 52 18 56 L38 56 Q46 52 44 26Z', '#d9b07a') +
+        E(27, 26, 17, 5, '#a8793a') +
+        E(27, 25, 14, 3.6, '#f2c79a', 0, 1.2) +
+        L('M10 38 Q27 44 44 38', 2, '#5aa9e6') +
+        sub('mackerel', 4, 36, 22) +
+        P('M40 52 L60 46 L62 52 L42 58Z', '#e8a548') +
+        P('M41 50 L60 44 L61 47 L42 53Z', '#f2c79a', 1.2),
+    // les crevettes en bocal
+    cannedShrimp: jar('#fbd1c4', '#5aa9e6', sub('shrimp', 22, 31, 20)),
+    // l'omelette géante dans sa poêle, des œufs autour
+    giantOmelette:
+        SHADOW(30, 58, 28, 3) +
+        L('M50 42 L62 50', 6) +
+        L('M50 42 L62 50', 3, '#8b5a2b') +
+        E(28, 42, 26, 12, '#3a3a3a') +
+        E(28, 40, 22, 9, '#ffd75a', 0, 1.4) +
+        FE(20, 38, 4, 2, '#fff6b0', 1) +
+        [
+            [22, 42],
+            [34, 38],
+            [30, 45],
+        ]
+            .map(([x, y]) => FC(x, y, 1.4, '#4caf50'))
+            .join('') +
+        E(14, 22, 5, 6.5, '#fffaf0') +
+        E(26, 18, 5, 6.5, '#fffaf0') +
+        HL(12, 20, 1, 2, 0, 0.7),
+    // la tarte au citron vert meringuée
+    limePie:
+        plate(50) +
+        P('M10 44 L14 34 L50 34 L54 44Z', '#e8a548') +
+        E(32, 34, 18, 5, '#c8e870') +
+        P('M14 34 Q14 22 20 26 Q22 18 28 23 Q32 15 36 23 Q42 18 44 26 Q50 22 50 34 Q32 38 14 34Z', '#fffaf0') +
+        L('M20 30 Q22 26 24 30 M34 28 Q36 24 38 28', 1, '#e8c38c') +
+        C(48, 18, 6, '#a6d94a', 2) +
+        C(48, 18, 3.8, '#e8f8c8', 1) +
+        L('M48 14.2 L48 21.8 M44.2 18 L51.8 18', 0.8, '#6cc04a'),
+    // le blanc-manger coco et sa fleur de tiaré
+    blancManger:
+        plate(50) +
+        P('M14 46 L18 22 Q32 14 46 22 L50 46 Q32 52 14 46Z', '#ffffff') +
+        E(32, 22, 14, 4.5, '#fffdf6') +
+        L('M20 30 Q32 34 44 30 M18 38 Q32 42 46 38', 1.2, '#e9eef2') +
+        sub('tiare', 24, 8, 16) +
+        FC(14, 44, 1.6, '#8b5a2b') +
+        FC(50, 44, 1.6, '#8b5a2b'),
+    // le gâteau de patate douce : une belle part orange
+    sweetPotatoCake:
+        plate(50) +
+        P('M10 44 L10 32 L52 22 L54 34 Q54 44 48 46 L14 48 Q10 48 10 44Z', '#f28c28') +
+        P('M10 32 L52 22 L54 26 L12 36Z', '#c9611a', 0) +
+        L('M10 32 L52 22', 2) +
+        L('M12 40 L54 30', 1.2, '#c9611a') +
+        P('M10 32 L52 22 L46 18 L8 28Z', '#fffaf0') +
+        FC(30, 23, 1.4, '#a0582a') +
+        FC(40, 21, 1.2, '#a0582a') +
+        sub('sweetPotato', 38, 34, 22),
+    // le riz au lait de coco dans une demi-noix
+    coconutRice:
+        SHADOW(32, 58, 24, 3) +
+        P('M8 30 Q8 56 32 56 Q56 56 56 30Z', '#7a4a2a') +
+        L('M12 40 Q18 44 22 40 M40 48 Q44 52 48 48', 1.2, '#5e3a1e') +
+        E(32, 30, 24, 7, '#fffaf0') +
+        E(32, 30, 24, 7, 'none', 0, 3) +
+        [
+            [20, 29],
+            [28, 32],
+            [36, 28],
+            [44, 31],
+            [26, 27],
+        ]
+            .map(([x, y]) => E(x, y, 2.2, 1.2, '#ffffff', 20, 0.8))
+            .join('') +
+        FC(40, 30, 2.4, '#ffd23f') +
+        leaf(42, 26, 6, -40, '#4caf50', 0.5),
+    // le curry de légumes au coco : bol jaune, légumes et riz
+    coconutCurry:
+        bowl('#f2b33d', 30, '#e8364b') +
+        C(22, 30, 3, '#f28c28', 1.2) +
+        C(38, 28, 2.6, '#6cc04a', 1.2) +
+        E(30, 31, 3, 2, '#e8364b', 0, 1.2) +
+        C(44, 31, 2.2, '#fffaf0', 1) +
+        P('M38 24 Q44 18 52 22 Q50 28 42 28Z', '#ffffff', 1.6) +
+        leaf(25, 27, 5, -30, '#4caf50', 0.5) +
+        steamF,
+    // la purée de patate douce
+    sweetPotatoMash:
+        bowl('#f28c28') +
+        P('M16 30 Q20 22 28 24 Q32 18 38 23 Q46 21 48 30Z', '#f6a24a', 1.8) +
+        L('M24 26 Q30 22 34 26', 1, '#c9611a') +
+        FE(30, 21, 3, 1.6, '#ffe48a', 1) +
+        sub('sweetPotato', 40, 36, 22),
+    // le chutney de mangue en bocal
+    mangoChutney: jar('#f7a21b', '#4caf50', sub('mango', 22, 31, 20)),
+    // les litchis au sirop
+    lycheeSyrup: jar('#fff1d8', '#e8364b', sub('lychee', 22, 31, 20)),
+    // le pain de maïs : des carrés dorés dans un plat
+    cornbread:
+        tray('#f5c542') +
+        L('M24 33 L24 48 M40 33 L40 48 M10 40.5 L54 40.5', 1.6, '#c9952a') +
+        [
+            [16, 36],
+            [32, 44],
+            [47, 37],
+            [30, 36],
+        ]
+            .map(([x, y]) => FC(x, y, 1.2, '#c9952a'))
+            .join('') +
+        sub('corn', 40, 6, 22),
+    // la raclette : fromage fondu qui coule sur des pommes de terre
+    raclette:
+        plate(48) +
+        E(20, 42, 7, 5.5, '#d9a84a') +
+        E(34, 44, 7, 5.5, '#d9a84a') +
+        E(26, 36, 6.5, 5, '#e8b65a') +
+        P('M14 38 Q20 30 30 32 Q38 30 42 38 Q40 44 36 40 Q34 46 30 41 Q26 46 24 40 Q18 44 14 38Z', '#ffd75a') +
+        E(46, 38, 8, 5, '#f2a8a0') +
+        L('M40 36 Q46 33 52 36 M41 39 Q46 37 52 40', 1, '#e07a6e') +
+        C(48, 46, 2.6, '#6cc04a', 1.2),
+    // la focaccia : une galette dorée, olives et romarin
+    focaccia:
+        woodBoard() +
+        P('M8 40 Q8 24 32 24 Q56 24 56 40 Q56 46 32 46 Q8 46 8 40Z', '#f2c46a') +
+        [
+            [16, 32],
+            [26, 30],
+            [38, 30],
+            [48, 34],
+            [20, 40],
+            [32, 38],
+            [44, 41],
+        ]
+            .map(([x, y]) => C(x, y, 1.6, '#c9952a', 0))
+            .join('') +
+        C(22, 35, 2.6, '#5e7a2e', 1.2) +
+        C(40, 36, 2.6, '#3a2a26', 1.2) +
+        C(30, 28, 2.4, '#5e7a2e', 1.2) +
+        leaf(46, 28, 6, 30, '#4f9e3a', 0.4) +
+        leaf(48, 30, 6, -10, '#4f9e3a', 0.4) +
+        HL(16, 28, 4, 1.4, -6, 0.5),
+    // le pain à l'ail : tranches beurrées et persillées
+    garlicBread:
+        woodBoard() +
+        [0, 1, 2]
+            .map(
+                k =>
+                    P(`M${8 + k * 15} 44 L${10 + k * 15} 28 Q${17 + k * 15} 22 ${24 + k * 15} 28 L${24 + k * 15} 44Z`, '#e8a548') +
+                    P(`M${11 + k * 15} 42 L${12 + k * 15} 30 Q${17 + k * 15} 26 ${22 + k * 15} 30 L${22 + k * 15} 42Z`, '#ffe08a', 1.2) +
+                    FC(15 + k * 15, 34, 1, '#4caf50') +
+                    FC(18 + k * 15, 38, 1, '#4caf50'),
+            )
+            .join('') +
+        sub('garlic', 44, 18, 18),
+    // l'anguille fumée en tronçons sur une planche
+    smokedEel:
+        woodBoard() +
+        [0, 1, 2, 3]
+            .map(
+                k =>
+                    R(8 + k * 12, 32, 10, 12, 3, '#6b4a2e') +
+                    E(13 + k * 12, 32, 5, 2.2, '#f2c79a', 0, 1.2) +
+                    L(`M${10 + k * 12} 38 Q${13 + k * 12} 36 ${16 + k * 12} 38`, 0.9, '#8b6a4a'),
+            )
+            .join('') +
+        leaf(54, 34, 7, 30, '#4caf50', 0.5),
+    // la terrine de brochet : une tranche marbrée et la terrine
+    pikeTerrine:
+        woodBoard() +
+        R(6, 26, 30, 18, 3, '#f7e6d2') +
+        L('M8 31 Q21 28 34 31 M8 37 Q21 34 34 37', 1.2, '#f2b6a0') +
+        C(14, 34, 1.6, '#4caf50', 0) +
+        C(28, 33, 1.4, '#e8364b', 0) +
+        R(36, 24, 22, 20, 3, '#e8792a') +
+        R(39, 22, 16, 5, 2, '#e8792a') +
+        L('M38 30 L56 30', 1.2, '#b9561a') +
+        leaf(18, 26, 6, -30, '#4caf50', 0.5),
+    // la tartiflette dans son plat, reblochon fondu et lardons
+    tartiflette:
+        tray('#ffd75a') +
+        [
+            [16, 38],
+            [28, 41],
+            [40, 37],
+            [48, 43],
+            [22, 45],
+        ]
+            .map(([x, y]) => E(x, y, 4, 3, '#e8b65a', 0, 1))
+            .join('') +
+        [
+            [20, 36],
+            [34, 44],
+            [46, 39],
+        ]
+            .map(([x, y]) => R(x - 1.6, y - 1.6, 3.2, 3.2, 0.8, '#e07a6e', 0.8))
+            .join('') +
+        FE(32, 38, 10, 3, '#fff6b0', 0.6) +
+        steamF,
+    // le tofu sauté : wok, dés dorés, légumes, baguettes
+    stirTofu:
+        SHADOW(30, 58, 27, 3) +
+        L('M52 38 L62 32', 5) +
+        L('M52 38 L62 32', 2.4, '#8b5a2b') +
+        P('M4 34 Q8 54 30 54 Q52 54 56 34Z', '#4a4f57') +
+        E(30, 34, 26, 7, '#5e6670') +
+        [
+            [14, 33],
+            [24, 31],
+            [34, 34],
+            [42, 31],
+            [20, 36],
+        ]
+            .map(([x, y]) => R(x - 3, y - 3, 6, 6, 1.2, '#f7e2a0', 1.2))
+            .join('') +
+        E(30, 31, 3, 1.6, '#e8364b', 0, 1) +
+        E(46, 35, 3, 1.6, '#6cc04a', 0, 1) +
+        E(10, 36, 3, 1.6, '#6cc04a', 0, 1) +
+        L('M20 26 L48 6 M24 28 L50 10', 2.2, '#c08b52'),
+    // les accras : beignets dorés, citron vert et sauce
+    accras:
+        plate(48) +
+        [
+            [18, 40],
+            [30, 38],
+            [42, 41],
+            [24, 33],
+            [36, 32],
+        ]
+            .map(
+                ([x, y]) =>
+                    C(x, y, 6, '#e8a548') +
+                    [
+                        [-2, -1],
+                        [2, 1],
+                        [0, 2.5],
+                    ]
+                        .map(([dx, dy]) => FC(x + dx, y + dy, 0.9, '#c9781a'))
+                        .join('') +
+                    FC(x - 2, y - 2, 1.4, '#ffd27a', 0.8),
+            )
+            .join('') +
+        P('M44 32 L54 30 Q56 36 50 38Z', '#a6d94a', 1.4) +
+        leaf(28, 27, 6, -30, '#4caf50', 0.5),
+    // les galettes de manioc, empilées
+    cassavaCakes:
+        plate(48) +
+        [0, 1, 2]
+            .map(
+                k =>
+                    E(30 - k * 2, 42 - k * 5, 17, 5.5, k === 2 ? '#fbf1cf' : '#f2e3b0', 0, 1.8) +
+                    [
+                        [24, 0],
+                        [31, 1],
+                        [38, -1],
+                    ]
+                        .map(([x, d]) => FC(x - k * 2, 41 - k * 5 + d, 0.9, '#d9b07a'))
+                        .join(''),
+            )
+            .join('') +
+        FE(22, 31, 5, 1.4, '#fff', 0.6) +
+        sub('cassava', 40, 26, 20),
+    // les rochers coco dans leurs caissettes
+    coconutRocks:
+        plate(48) +
+        [
+            [20, 38],
+            [34, 40],
+            [27, 30],
+            [43, 32],
+        ]
+            .map(
+                ([x, y]) =>
+                    P(`M${x - 6} ${y + 2} L${x - 5} ${y + 7} L${x + 5} ${y + 7} L${x + 6} ${y + 2}Z`, '#f6a5b5', 1.2) +
+                    P(`M${x - 6} ${y + 2} Q${x - 7} ${y - 6} ${x} ${y - 7} Q${x + 7} ${y - 6} ${x + 6} ${y + 2}Z`, '#fbf3df') +
+                    L(`M${x - 3} ${y - 3} L${x - 1} ${y - 1} M${x + 1} ${y - 5} L${x + 3} ${y - 3} M${x - 2} ${y + 0.5} L${x} ${y + 1.5}`, 0.9, '#d9c49a'),
+            )
+            .join(''),
+    // le banana bread : un cake tranché avec une banane dessus
+    bananaBread:
+        woodBoard() +
+        P('M8 44 L8 28 Q8 22 14 22 L42 22 Q48 22 48 28 L48 44Z', '#c98b4a') +
+        P('M8 28 Q8 22 14 22 L42 22 Q48 22 48 28 Q28 32 8 28Z', '#a8693a') +
+        P('M14 24 Q28 14 42 24 Q28 20 14 24Z', '#ffd94a', 1.6) +
+        R(48, 26, 9, 18, 2, '#f2c79a') +
+        [
+            [51, 32],
+            [54, 38],
+            [51, 41],
+        ]
+            .map(([x, y]) => FC(x, y, 0.9, '#8b5a2b'))
+            .join('') +
+        HL(14, 30, 4, 1.4, 0, 0.5),
+    // le gâteau renversé à l'ananas : anneaux d'ananas et cerises
+    pineappleCake:
+        plate(50) +
+        P('M8 44 L8 32 Q32 28 56 32 L56 44 Q32 50 8 44Z', '#e8a548') +
+        E(32, 32, 24, 7, '#c9781a') +
+        [
+            [18, 31],
+            [32, 33],
+            [46, 31],
+        ]
+            .map(([x, y]) => E(x, y, 6, 3.2, '#ffd94a', 0, 1.4) + E(x, y, 2.2, 1.2, '#c9781a', 0, 1) + C(x, y - 0.5, 1.6, '#e8364b', 1))
+            .join('') +
+        L('M10 40 Q32 44 54 40', 1.2, '#c9781a'),
+    // la sauce tomate en bocal, une tomate et du basilic
+    sauce: jar('#d93a2b', '#4caf50', sub('tomato', 22, 31, 20)) + leaf(46, 12, 8, -30, '#4caf50', 0.5),
+});
+
 Object.assign(items, Object.fromEntries(Object.entries({ ...WINES, ...CHEESES }).map(([k, v]) => [k, () => v])));
 let drinks = null;
 const DRINK_IDS = [
@@ -635,3 +1094,41 @@ const DRINK_IDS = [
     'soyMilk',
 ];
 DRINK_IDS.forEach(k => (items[k] = () => (drinks = drinks || DRINKS())[k]));
+
+let food = null;
+const FOOD_IDS = [
+    'garlicSoup',
+    'risotto',
+    'ricePudding',
+    'spongeCake',
+    'melonSorbet',
+    'peachSorbet',
+    'pasta',
+    'garlicPasta',
+    'mackerelRillettes',
+    'cannedShrimp',
+    'giantOmelette',
+    'limePie',
+    'blancManger',
+    'sweetPotatoCake',
+    'coconutRice',
+    'coconutCurry',
+    'sweetPotatoMash',
+    'mangoChutney',
+    'lycheeSyrup',
+    'cornbread',
+    'raclette',
+    'focaccia',
+    'garlicBread',
+    'smokedEel',
+    'pikeTerrine',
+    'tartiflette',
+    'stirTofu',
+    'accras',
+    'cassavaCakes',
+    'coconutRocks',
+    'bananaBread',
+    'pineappleCake',
+    'sauce',
+];
+FOOD_IDS.forEach(k => (items[k] = () => (food = food || FOOD())[k]));
