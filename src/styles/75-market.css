@@ -151,6 +151,9 @@
     font-family: var(--display);
     margin-bottom: 10px;
 }
+.barn-meter .bar {
+    flex: 1;
+}
 
 .barn-goods {
     display: grid;

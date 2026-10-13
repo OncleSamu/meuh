@@ -226,10 +226,14 @@ function neighborsCard() {
             const n = state.neighbors[k],
                 q = n.req;
             const ok = q && G.hasAll(q.items);
-            return `<div class="neighbor"><div class="avatar sm">${art('villager', r.avatar)}</div>
-                <div class="card-main"><div class="card-title">${r.owner} <small>· ${r.name}</small></div>${hearts(n.hearts)}
-                ${q ? `<div class="olines">${q.items.map(x => itemLine(x)).join('')}</div><div class="card-sub">${rewardHtml(q.coins, G.neighborXp(q), q.mats)} · repart dans ${timer(q.until)}</div>` : `<div class="card-sub">Pas de demande pour l’instant · revient dans ${timer(Math.max(n.next, now()))}</div>`}</div>
-                ${q ? btn('Aider', { act: 'helpNeighbor', data: { k }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok }) : ''}</div>`;
+            // en-tête (portrait, nom, cœurs), puis la demande sur toute la largeur, puis la récompense et le bouton
+            return `<div class="neighbor"><div class="nb-head"><div class="avatar sm">${art('villager', r.avatar)}</div>
+                <div class="card-main"><div class="card-title">${r.owner} <small>· ${r.name}</small></div>${hearts(n.hearts)}</div></div>
+                ${
+                    q
+                        ? `<div class="olines">${q.items.map(x => itemLine(x)).join('')}</div><div class="nb-foot"><div class="card-sub">${rewardHtml(q.coins, G.neighborXp(q), q.mats)}<br>repart dans ${timer(q.until)}</div>${btn('Aider', { act: 'helpNeighbor', data: { k }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}</div>`
+                        : `<div class="card-sub">Pas de demande pour l’instant · revient dans ${timer(Math.max(n.next, now()))}</div>`
+                }</div>`;
         }).join('')}</div>`;
 }
 

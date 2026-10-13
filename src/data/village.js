@@ -487,8 +487,8 @@ export const PROJECTS = {
         before: 'Le lavoir était le cœur du hameau. On y lavait, on y bavardait… Il est plein de vase.',
         after: 'Le lavoir chante de nouveau ! Les lavandières parlent de votre étal à tout le canton : une place de plus.',
         reward: "+1 place à l'étal",
-        x: 54,
-        y: 74,
+        x: 40,
+        y: 78,
         map: 'hamlet',
     },
     windmill: {
@@ -562,8 +562,8 @@ export const PROJECTS = {
         before: 'Le kiosque, c’est là que joue la fanfare. Le jour de la foire, je voudrais qu’il soit le plus beau du canton.',
         after: 'La fanfare joue, tout le canton danse ! Le jury du concours est sous le charme : +25 % de points au concours, et 5 rubans.',
         reward: 'Concours +25 % de points, 5 rubans',
-        x: 72,
-        y: 70,
+        x: 76,
+        y: 68,
         map: 'hamlet',
     },
     lighthouse: {
@@ -778,7 +778,7 @@ export const PROJECTS = {
         after: 'Quelle fête ! Toute la vallée vous acclame. En vendant la ferme, vous pourrez désormais choisir une ferme à thème. Et 5 rubans !',
         reward: 'Fermes à thème au prestige, 5 rubans',
         x: 84,
-        y: 76,
+        y: 68,
         map: 'alpine',
     },
     chai: {
@@ -916,7 +916,7 @@ Object.assign(PROJECTS, {
         after: 'Les premiers jus coulent ! Le bar à jus est à vendre au magasin.',
         reward: 'Le bar à jus (au magasin)',
         x: 50,
-        y: 76,
+        y: 72,
         map: 'island',
     },
     bakehut: {
@@ -967,8 +967,8 @@ Object.assign(PROJECTS, {
         before: 'Pour le carnaval, il faut des fleurs partout, des cocktails et des flans coco pour tout le monde !',
         after: 'Le carnaval bat son plein, toute la région danse sur la plage. Merci : voici 5 rubans de concours.',
         reward: '5 rubans de concours, et la fête sur l’île',
-        x: 78,
-        y: 84,
+        x: 80,
+        y: 72,
         map: 'island',
     },
 });
@@ -1011,7 +1011,7 @@ Object.assign(PROJECTS, {
         after: 'Le laboratoire tourne : analysez les gènes cachés, et fixez vos variétés et vos races pour leur donner un nom.',
         reward: 'Les analyses et la fixation des variétés',
         x: 48,
-        y: 66,
+        y: 62,
         map: 'station',
     },
     seedbank: {
@@ -1023,8 +1023,8 @@ Object.assign(PROJECTS, {
         before: 'Vos variétés fixées méritent d’être gardées précieusement. Un conservatoire, et vous pourrez en racheter les graines.',
         after: 'Le conservatoire est ouvert : rachetez les graines de vos variétés et les petits de vos races dans « Mes créations ».',
         reward: 'Racheter graines et petits de vos créations',
-        x: 18,
-        y: 76,
+        x: 20,
+        y: 70,
         map: 'station',
     },
     selectHive: {
@@ -1037,7 +1037,7 @@ Object.assign(PROJECTS, {
         after: 'Les abeilles s’en donnent à cœur joie : les mutations sont presque deux fois plus fréquentes.',
         reward: 'Plus de mutations rares',
         x: 80,
-        y: 74,
+        y: 68,
         map: 'station',
     },
     salonHall: {
