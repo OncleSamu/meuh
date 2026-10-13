@@ -1,5 +1,5 @@
 // Refonte des dessins (1.3) : les produits redessinés, famille par famille. Ces dessins remplacent ceux de items.js.
-import { C, E, F, FC, FE, HL, L, P, R, SHADOW, leaf, sub, items, animals } from './kit.js';
+import { C, E, F, FC, FE, HL, L, P, R, SHADOW, leaf, sub, items, animals, machines } from './kit.js';
 
 // ---------------- les vins et champagnes ----------------
 const grapeMark = (x, y, c) =>
@@ -1548,3 +1548,82 @@ const CRAFT_IDS = [
     'down',
 ];
 CRAFT_IDS.forEach(k => (items[k] = () => (craft = craft || CRAFT())[k]));
+
+// ---------------- quatre machines redessinées ----------------
+const MACH = () => ({
+    // la fromagerie d'alpage : un grand chaudron de cuivre sur le feu, des meules sur l'étagère
+    alpineDairy:
+        SHADOW(32, 60, 29, 3) +
+        R(36, 10, 24, 46, 3, '#c08b52') +
+        L('M36 24 L60 24 M36 38 L60 38', 2.4) +
+        E(48, 20, 9, 3, '#e2a548', 0, 1.6) +
+        R(39, 16, 18, 4, 1, '#e2a548', 1.6) +
+        E(48, 34, 9, 3, '#d3913a', 0, 1.6) +
+        R(39, 30, 18, 4, 1, '#d3913a', 1.6) +
+        E(48, 48, 9, 3, '#e2a548', 0, 1.6) +
+        R(39, 44, 18, 5, 1, '#e2a548', 1.6) +
+        P('M4 28 L36 28 Q36 50 20 52 Q4 50 4 28Z', '#d4793a') +
+        E(20, 28, 16, 4.6, '#b8612a') +
+        E(20, 28, 13, 3.4, '#fff6dc', 0, 1.2) +
+        L('M8 34 Q20 40 32 34', 1.4, '#a8531f') +
+        HL(9, 38, 1.6, 5, 0, 0.5) +
+        L('M20 18 L20 26', 3) +
+        L('M14 14 L26 14', 3, '#8b5a2b') +
+        P('M10 56 Q12 50 16 54 Q18 48 21 54 Q24 49 26 56Z', '#f28c28', 1.4) +
+        R(6, 54, 28, 4, 2, '#5e5548'),
+    // la chocolaterie : une marmite où fond le chocolat qui coule dans un moule à tablettes
+    chocolatier:
+        SHADOW(32, 60, 29, 3) +
+        R(4, 46, 56, 12, 3, '#d9b07a') +
+        L('M4 50 L60 50', 1.2, '#a8793a') +
+        R(30, 38, 26, 10, 2, '#5e3a1e', 1.8) +
+        L('M38.6 38 L38.6 48 M47.2 38 L47.2 48', 1.2, '#3a2618') +
+        FE(36, 41, 2, 1, '#8b5a2b', 1) +
+        P('M6 16 L32 16 L30 40 Q30 44 26 44 L12 44 Q8 44 8 40Z', '#c9d3dc') +
+        E(19, 16, 13, 3.6, '#5e3a1e') +
+        E(19, 16, 13, 3.6, 'none') +
+        P('M30 18 Q38 18 40 26 L40 40 Q40 42 38 40 L36 28 Q34 22 30 22Z', '#5e3a1e', 1.6) +
+        FC(39, 42, 1.6, '#5e3a1e') +
+        L('M12 6 L22 16', 2.6) +
+        E(11, 5, 4, 2.4, '#d8d0c2', 40, 1.4) +
+        HL(10, 24, 1.4, 6, 0, 0.6) +
+        L('M2 22 L6 22 M32 22 L36 22', 2.4),
+    // la conserverie : un tapis où défilent les boîtes, la sertisseuse au-dessus
+    cannery:
+        SHADOW(32, 60, 29, 3) +
+        R(4, 40, 56, 8, 3, '#5e5548') +
+        [10, 22, 34, 46, 56].map(x => C(x, 44, 2.4, '#8f8574', 1.2)).join('') +
+        R(4, 48, 4, 10, 1, '#5e5548', 1.6) +
+        R(56, 48, 4, 10, 1, '#5e5548', 1.6) +
+        [
+            [10, '#e8364b'],
+            [24, '#3f6fb5'],
+            [38, '#f7a21b'],
+        ]
+            .map(([x, c]) => R(x - 5, 28, 10, 12, 2, '#c9d3dc') + R(x - 5, 31, 10, 6, 0, c, 1.2) + E(x, 28, 5, 1.6, '#dfe6ec', 0, 1.4))
+            .join('') +
+        R(44, 6, 16, 22, 3, '#3f8f9e') +
+        R(48, 28, 8, 6, 1.5, '#8f8574') +
+        L('M52 34 L52 37', 2.4) +
+        R(46, 10, 12, 7, 2, '#dfe6ec', 1.4) +
+        FC(49, 22, 1.6, '#e8364b') +
+        FC(55, 22, 1.6, '#6cc04a'),
+    // la brasserie : une cuve de cuivre à dôme, le houblon et une chope
+    brewery:
+        SHADOW(32, 60, 28, 3) +
+        R(4, 54, 40, 5, 2, '#5e5548') +
+        P('M8 30 Q8 16 24 14 Q40 16 40 30 L40 52 Q40 56 36 56 L12 56 Q8 56 8 52Z', '#d4793a') +
+        L('M8 34 L40 34 M8 46 L40 46', 1.6, '#a8531f') +
+        L('M24 14 L24 6 L46 6 L46 20', 3) +
+        L('M24 14 L24 6 L46 6 L46 20', 1.4, '#e2a548') +
+        C(24, 40, 4, '#e2a548', 1.4) +
+        FC(24, 40, 1.6, '#3a2618') +
+        HL(13, 28, 2, 8, 0, 0.5) +
+        R(44, 34, 14, 22, 3, '#eaf6fd') +
+        F('M45.4 40 L56.6 40 L56.6 54 Q56.6 55 55 55 L47 55 Q45.4 55 45.4 54Z', '#f5c542') +
+        P('M43 36 Q42 28 48 30 Q51 26 55 30 Q60 30 59 36Z', '#fffdf3') +
+        L('M58 40 Q63 40 63 46 Q63 51 58 51', 2.2) +
+        sub('hop', 4, 4, 16),
+});
+let mach = null;
+['alpineDairy', 'chocolatier', 'cannery', 'brewery'].forEach(k => (machines[k] = () => (mach = mach || MACH())[k]));
