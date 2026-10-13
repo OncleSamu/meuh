@@ -4,7 +4,7 @@ import { ITEMS } from '../data/items.js';
 import { items, animals, machines, ui, people, svg } from './kit.js';
 import { tree, sprout, youngPlant, readyPlant } from './plants.js';
 import { building, farmhouseArt } from './buildings.js';
-import { truck, loco, wagon, balloonArt } from './vehicles.js';
+import { truck, loco, wagon } from './vehicles.js';
 import './items.js';
 import './animals.js';
 import './people.js';
@@ -19,6 +19,7 @@ import './v12.js';
 import './items2.js';
 import './buildings2.js';
 import './plants2.js';
+import { balloon2 } from './misc2.js';
 
 export const SPR = {
     farmhouse(l, roof) {
@@ -58,7 +59,7 @@ export const SPR = {
         return svg(wagon(c), '0 0 64 64', 'wagon-spr');
     },
     balloon(a = '#e8364b', b = '#ffd23f') {
-        return svg(balloonArt(a, b), '0 0 64 80', 'balloon-spr');
+        return svg(balloon2(a, b), '0 0 64 80', 'balloon-spr');
     },
     building,
     // les arbres se montrent en arbre, les graines en produit
