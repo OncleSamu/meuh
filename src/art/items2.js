@@ -1204,6 +1204,222 @@ const RAW = () => ({
         HL(22, 30, 1.4, 8, 0, 0.4),
 });
 
+// ---------------- les produits d'atelier ----------------
+const ani = (id, x, y, s) => `<g transform="translate(${x} ${y}) scale(${s / 80})">${animals[id]()}</g>`;
+
+// ---- savons : un pain arrondi, une empreinte, des bulles ----
+const soap = (c, d, mark, extra = '') =>
+    SHADOW(32, 56, 25, 3) +
+    P('M8 34 Q8 24 18 24 L46 24 Q56 24 56 34 L56 44 Q56 52 46 52 L18 52 Q8 52 8 44Z', c) +
+    P('M8 34 Q8 24 18 24 L46 24 Q56 24 56 34 Q32 40 8 34Z', d, 0) +
+    L('M8 34 Q32 40 56 34', 1.4, 'rgba(58,38,24,.4)') +
+    R(20, 38, 24, 10, 4, 'none', 0) +
+    mark +
+    HL(16, 30, 5, 1.6, -6, 0.6) +
+    C(48, 16, 4, '#eaf6fd', 1.4) +
+    C(55, 9, 2.6, '#eaf6fd', 1.2) +
+    C(41, 9, 2, '#eaf6fd', 1) +
+    extra;
+// ---- huiles : une burette en verre, l'huile dorée, une goutte, l'ingrédient en étiquette ----
+const oil = (c, ing, cap = '#c8453a') => {
+    const body = 'M27 8 L37 8 L37 20 Q48 26 48 38 L48 56 Q48 60 44 60 L20 60 Q16 60 16 56 L16 38 Q16 26 27 20Z';
+    return (
+        SHADOW(32, 61, 16, 2.6) +
+        P(body, '#eaf6fd') +
+        F('M17.4 34 Q22 28 32 28 Q42 28 46.6 34 L46.6 56 Q46.6 58.6 44 58.6 L20 58.6 Q17.4 58.6 17.4 56Z', c) +
+        C(32, 46, 9, '#fffaf0', 1.6) +
+        sub(ing, 25, 39, 14) +
+        F('M19 34 L21.5 32 L21.5 54 L19 54Z', '#fff', 0.5) +
+        P(body, 'none') +
+        P('M28 8 L36 8 L35 2 L29 2Z', cap) +
+        P('M50 14 Q46 22 50 24 Q54 22 50 14Z', c, 1.4) +
+        HL(49, 21, 0.8, 1.2, 0, 0.8)
+    );
+};
+// ---- teintures : un pot de teinte, des coulures et la fleur qui donne la couleur ----
+const dye = (c, d, ing) =>
+    SHADOW(30, 58, 22, 3) +
+    P('M10 24 L46 24 L42 56 Q42 58 40 58 L16 58 Q14 58 14 56Z', '#8f8574') +
+    L('M12 34 L44 34', 1.4, '#6d6457') +
+    E(28, 24, 18, 5, '#6d6457') +
+    E(28, 24, 15, 3.8, c, 0, 1.2) +
+    P('M14 25 Q14 33 17 32 Q18 28 18 26 M38 26 Q40 36 42 34 Q42 30 41 26', c, 1.4) +
+    L('M28 20 L44 4', 3, '#a0703a') +
+    E(46, 3, 4, 2, c, -40, 1.4) +
+    sub(ing, 38, 36, 22) +
+    FE(22, 23, 4, 1, '#fff', 0.5);
+// ---- parfums : flacons de formes différentes ----
+const flacon = (shape, c, cap, extra = '') => {
+    const B = {
+        round: 'M20 26 Q8 34 10 46 Q12 58 32 58 Q52 58 54 46 Q56 34 44 26Z',
+        square: 'M14 26 L50 26 L50 54 Q50 58 46 58 L18 58 Q14 58 14 54Z',
+        tall: 'M22 22 L42 22 L46 54 Q46 58 42 58 L22 58 Q18 58 18 54Z',
+        drop: 'M32 22 Q50 36 48 48 Q46 58 32 58 Q18 58 16 48 Q14 36 32 22Z',
+    }[shape];
+    const LQ = {
+        round: 'M10.6 40 L53.4 40 Q53.8 43 53.6 46 Q51.6 56.6 32 56.6 Q12.4 56.6 10.4 46 Q10.2 43 10.6 40Z',
+        square: 'M15.4 38 L48.6 38 L48.6 54 Q48.6 56.6 46 56.6 L18 56.6 Q15.4 56.6 15.4 54Z',
+        tall: 'M19.6 38 L44.4 38 L44.6 54 Q44.6 56.6 42 56.6 L22 56.6 Q19.4 56.6 19.4 54Z',
+        drop: 'M17.6 40 L46.4 40 Q47.4 44 46.6 48 Q45 56.6 32 56.6 Q19 56.6 17.4 48 Q16.6 44 17.6 40Z',
+    }[shape];
+    return (
+        SHADOW(32, 60, 18, 2.6) +
+        P(B, '#f4fbff') +
+        F(LQ, c, 0.9) +
+        P(B, 'none') +
+        R(27, 14, 10, 9, 2, '#d8d0c2') +
+        cap +
+        extra +
+        FE(22, 40, 2, 5, '#fff', 0.6, 10)
+    );
+};
+const atom = c => C(32, 10, 5, c) + L('M37 10 Q44 10 46 4', 2) + C(48, 3, 3, c, 1.4);
+
+// dessinés à la demande
+const CRAFT = () => ({
+    lavenderSoap: soap(
+        '#c9a7e8',
+        '#ddc6f2',
+        L('M26 46 L38 40', 1.6, '#5a7a2e') + [0, 1, 2, 3].map(k => E(29 + k * 2.4, 44 - k * 1.3, 1.8, 1.1, '#7f56b5', -30, 0.8)).join(''),
+    ),
+    goatSoap: soap('#fbf6ea', '#ffffff', ani('goat', 22, 33, 20)),
+    oliveSoap: soap(
+        '#b8c88a',
+        '#cbd8a2',
+        L('M22 44 Q32 40 42 44', 1.6, '#5a7a2e') +
+            E(27, 42, 2.2, 3, '#4a6a2a', 30, 1) +
+            E(37, 41, 2.2, 3, '#3a2a26', -20, 1) +
+            leaf(32, 42, 5, -60, '#6cc04a', 0.4),
+    ),
+    donkeySoap: soap('#e9dcf4', '#f4ecfb', ani('donkey', 22, 32, 20)),
+    coconutSoap: soap('#ffffff', '#fdfaf2', E(32, 43, 7, 4.5, '#7a4a2a', 0, 1.4) + E(32, 42, 5, 3, '#fffaf0', 0, 1)),
+    sunflowerOil: oil('#f6c94a', 'sunflower', '#ffd23f'),
+    soyOil: oil('#efd98a', 'soy', '#6cc04a'),
+    oliveOil: oil('#b7c24a', 'olive', '#4f7a2e'),
+    coconutOil:
+        SHADOW(32, 60, 18, 2.6) +
+        P('M14 22 L50 22 L50 54 Q50 58 46 58 L18 58 Q14 58 14 54Z', '#eaf6fd') +
+        F('M15.4 28 L48.6 28 L48.6 54 Q48.6 56.6 46 56.6 L18 56.6 Q15.4 56.6 15.4 54Z', '#fbf5e6') +
+        R(12, 14, 40, 9, 3, '#8b5a2b') +
+        C(32, 42, 9, '#fffaf0', 1.6) +
+        E(32, 43, 6, 4, '#7a4a2a', 0, 1.2) +
+        E(32, 42, 4.2, 2.6, '#fffaf0', 0, 0.8) +
+        F('M17 30 L19.5 28 L19.5 54 L17 54Z', '#fff', 0.6),
+    redDye: dye('#d93a2b', '#a12a1e', 'beet'),
+    yellowDye: dye('#f5c542', '#c9952a', 'sunflower'),
+    blueDye: dye('#3f6fb5', '#2a4f8a', 'blueberry'),
+    perfume: flacon(
+        'square',
+        '#c9a7e8',
+        atom('#9a6fd0'),
+        leaf(26, 46, 8, -60, '#6cc04a', 0.3) + [0, 1, 2].map(k => E(28 + k * 2, 42 - k * 3, 1.8, 1.2, '#7f56b5', -30, 0.8)).join(''),
+    ),
+    lavenderWater: flacon(
+        'tall',
+        '#d9c4f0',
+        R(26, 4, 12, 10, 2, '#7f56b5'),
+        L('M30 54 L34 34', 1.4, '#5a7a2e') + [0, 1, 2, 3].map(k => E(34 + k * 0.4, 34 + k * 3, 1.6, 1.1, '#9a6fd0', -20, 0.8)).join(''),
+    ),
+    summerPerfume: flacon('round', '#ffd27a', atom('#f28c28'), sub('sunflower', 22, 34, 20)),
+    vanillaPerfume: flacon(
+        'drop',
+        '#f0c97a',
+        C(32, 9, 5.5, '#3a2618') + HL(30, 7, 1.4, 1, 0, 0.7),
+        L('M22 52 Q32 36 42 46', 2.6, '#3a2618') + L('M22 52 Q32 36 42 46', 1, '#6b4a2e'),
+    ),
+    monoi: flacon('round', '#fff2c8', C(32, 9, 5, '#f2c14e'), sub('tiare', 22, 34, 20)),
+    // la crème au lait d'ânesse : un petit pot rond et son étiquette
+    donkeyCream:
+        SHADOW(32, 58, 22, 3) +
+        P('M10 30 L54 30 L52 52 Q52 56 48 56 L16 56 Q12 56 12 52Z', '#f4ecfb') +
+        R(8, 22, 48, 10, 4, '#b58ad6') +
+        L('M12 26 L52 26', 1, 'rgba(255,255,255,.6)') +
+        R(18, 36, 28, 16, 4, '#fffaf0', 1.6) +
+        ani('donkey', 22, 34, 20) +
+        HL(15, 40, 1.4, 5, 0, 0.6),
+    // le sirop de canne : une bouteille ambrée, un tronçon de canne
+    caneSyrup:
+        SHADOW(30, 61, 16, 2.6) +
+        P('M24 8 L34 8 L34 18 Q44 24 44 34 L44 56 Q44 60 40 60 L18 60 Q14 60 14 56 L14 34 Q14 24 24 18Z', '#f4fbff') +
+        F('M15.4 32 Q20 26 29 26 Q38 26 42.6 32 L42.6 56 Q42.6 58.6 40 58.6 L18 58.6 Q15.4 58.6 15.4 56Z', '#d98a2a') +
+        R(18, 38, 22, 14, 3, '#fffaf0', 1.4) +
+        FE(29, 45, 6, 3, '#d98a2a', 1) +
+        P('M14 32 Q20 26 29 26 Q38 26 44 32', 'none', 0) +
+        P('M24 8 L34 8 L34 18 Q44 24 44 34 L44 56 Q44 60 40 60 L18 60 Q14 60 14 56 L14 34 Q14 24 24 18Z', 'none') +
+        R(23, 3, 12, 7, 2.5, '#8b5a2b') +
+        R(46, 20, 7, 40, 3, '#9ac45a') +
+        L('M46 32 L53 32 M46 46 L53 46', 2) +
+        leaf(50, 20, 10, -70, '#6cc04a', 0.35),
+    // la cassonade : un bocal de grains roux et une cuillère
+    brownSugar:
+        SHADOW(32, 60, 20, 3) +
+        P('M12 30 Q10 56 22 58 L42 58 Q54 56 52 30Z', '#f4fbff') +
+        F('M11.6 38 L52.4 38 Q53 56 42 56.6 L22 56.6 Q11 56 11.6 38Z', '#c9853e') +
+        [
+            [18, 44],
+            [26, 48],
+            [36, 44],
+            [44, 50],
+            [30, 52],
+            [22, 54],
+            [40, 54],
+        ]
+            .map(([x, y]) => R(x - 1.4, y - 1.4, 2.8, 2.8, 0.6, '#e8a856', 0))
+            .join('') +
+        E(32, 30, 20, 5, '#eaf6fd') +
+        E(32, 30, 20, 5, 'none') +
+        L('M40 34 L54 14', 3) +
+        L('M40 34 L54 14', 1.4, '#d8d0c2') +
+        E(56, 12, 5, 3, '#d8d0c2', -50, 1.6) +
+        FC(56, 11, 1.6, '#c9853e') +
+        HL(16, 46, 1.4, 6, 0, 0.5),
+    // le coussin de plumes : gonflé, coins noués, une plume qui s'échappe
+    pillow:
+        SHADOW(32, 58, 26, 3) +
+        P('M8 18 Q32 26 56 18 Q50 36 56 54 Q32 46 8 54 Q14 36 8 18Z', '#fbe1ea') +
+        L('M14 24 Q32 30 50 24 M14 48 Q32 42 50 48', 1, '#e8b4c4') +
+        C(32, 36, 3, '#e8364b', 1.4) +
+        L('M32 36 L26 30 M32 36 L38 30 M32 36 L26 42 M32 36 L38 42', 0.9, '#e8b4c4') +
+        P('M50 6 Q60 4 58 12 Q54 8 50 6Z', '#ffffff', 1.4) +
+        L('M50 6 L60 12', 0.9) +
+        HL(16, 26, 4, 1.4, 10, 0.6),
+    // la toile de coton : un rouleau blanc et une fleur de coton
+    cottonFabric:
+        SHADOW(30, 58, 26, 3) +
+        P('M8 30 L44 30 L44 50 L8 50Z', '#fffdf6') +
+        E(44, 40, 6, 10, '#fffdf6') +
+        E(44, 40, 3, 5, '#e6dfcc', 0, 1.2) +
+        E(8, 40, 6, 10, '#f4efe2') +
+        P('M8 50 L4 58 L40 58 L44 50Z', '#fffdf6', 1.8) +
+        L('M14 30 L14 50 M24 30 L24 50 M34 30 L34 50', 0.8, '#ece6d6') +
+        sub('cotton', 40, 4, 22),
+    // la toile de lin : un rouleau écru, un brin de lin bleu
+    linen:
+        SHADOW(30, 58, 26, 3) +
+        P('M8 30 L44 30 L44 50 L8 50Z', '#e6d6b0') +
+        E(44, 40, 6, 10, '#e6d6b0') +
+        E(44, 40, 3, 5, '#c9b88f', 0, 1.2) +
+        E(8, 40, 6, 10, '#d9c79e') +
+        P('M8 50 L4 58 L40 58 L44 50Z', '#e6d6b0', 1.8) +
+        L('M10 34 L42 34 M10 38 L42 38 M10 42 L42 42 M10 46 L42 46', 0.6, '#c9b88f') +
+        sub('flax', 40, 4, 22),
+    // le duvet : un petit sac en toile d'où sortent des plumes légères
+    down:
+        SHADOW(32, 58, 22, 3) +
+        P('M16 28 Q12 52 20 56 L44 56 Q52 52 48 28Z', '#e9eef2') +
+        L('M16 30 Q32 36 48 30', 2) +
+        L('M22 40 L42 40 M22 46 L42 46', 0.9, '#c9d3dc') +
+        [
+            [22, 22, -20],
+            [32, 16, 0],
+            [42, 22, 20],
+            [28, 8, -30],
+            [40, 10, 30],
+        ]
+            .map(([x, y, a]) => `<g transform="rotate(${a} ${x} ${y})">${E(x, y, 4, 7, '#ffffff', 0, 1.4)}${L(`M${x} ${y - 6} L${x} ${y + 7}`, 0.9)}</g>`)
+            .join(''),
+});
+
 Object.assign(items, Object.fromEntries(Object.entries({ ...WINES, ...CHEESES }).map(([k, v]) => [k, () => v])));
 let drinks = null;
 const DRINK_IDS = [
@@ -1303,3 +1519,32 @@ const RAW_IDS = [
     'yeast',
 ];
 RAW_IDS.forEach(k => (items[k] = () => (raw = raw || RAW())[k]));
+
+let craft = null;
+const CRAFT_IDS = [
+    'lavenderSoap',
+    'goatSoap',
+    'oliveSoap',
+    'donkeySoap',
+    'coconutSoap',
+    'sunflowerOil',
+    'soyOil',
+    'oliveOil',
+    'coconutOil',
+    'redDye',
+    'yellowDye',
+    'blueDye',
+    'perfume',
+    'lavenderWater',
+    'summerPerfume',
+    'vanillaPerfume',
+    'monoi',
+    'donkeyCream',
+    'caneSyrup',
+    'brownSugar',
+    'pillow',
+    'cottonFabric',
+    'linen',
+    'down',
+];
+CRAFT_IDS.forEach(k => (items[k] = () => (craft = craft || CRAFT())[k]));
