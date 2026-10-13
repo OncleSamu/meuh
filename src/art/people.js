@@ -1,22 +1,34 @@
 // Les portraits des villageois et des visiteurs.
-import { C, E, FC, G, HL, L, O, P, R, leaf, people } from './kit.js';
+import { C, E, F, FC, G, HL, L, O, P, R, leaf, people } from './kit.js';
 
 export const SKIN = '#f6cfa6';
 
-export const bust = (shirt, extra = '') => P('M8 66 C8 51 19 45 32 45 C45 45 56 51 56 66Z', shirt) + extra + R(28, 38, 8, 9, 3, SKIN, 2);
+export const bust = (shirt, extra = '') =>
+    P('M8 66 C8 51 19 45 32 45 C45 45 56 51 56 66Z', shirt) +
+    // un pli d'ombre sous les épaules et un reflet sur l'épaule gauche
+    F('M10 62 C12 54 18 50 24 49 C18 53 14 58 13 66 L9 66Z', 'rgba(0,0,0,.12)') +
+    HL(20, 52, 4, 1.6, -30, 0.35) +
+    extra +
+    R(28, 38, 8, 9, 3, SKIN, 2) +
+    F('M28.6 40 L35.4 40 L35.4 42.5 Q32 44.5 28.6 42.5Z', '#e2ad84', 0.9);
 
+// le visage commun : oreilles, joues, yeux brillants, petit nez, sourire ouvert
 export const face = (o = {}) =>
+    E(18, 31, 2.8, 3.8, SKIN, 0, 2) +
+    E(46, 31, 2.8, 3.8, SKIN, 0, 2) +
+    L('M17.6 29.5 Q16.6 31 17.8 32.6 M46.4 29.5 Q47.4 31 46.2 32.6', 1.1, '#d9967a') +
     C(32, 30, 14, SKIN) +
-    E(18, 31, 2.6, 3.6, SKIN, 0, 2) +
-    E(46, 31, 2.6, 3.6, SKIN, 0, 2) +
-    C(32, 30, 14, SKIN) +
-    FC(27, 30, 1.9, O) +
-    FC(37, 30, 1.9, O) +
-    FC(27.6, 29.4, 0.6, '#fff') +
-    FC(37.6, 29.4, 0.6, '#fff') +
-    (o.noSmile ? '' : L('M28 36 Q32 39.5 36 36', 2)) +
-    FC(23.5, 34, 2.6, '#f49a8f', 0.55) +
-    FC(40.5, 34, 2.6, '#f49a8f', 0.55);
+    // ombre douce sous la joue droite
+    F('M40 38 Q45 33 45.6 27 Q47 36 39 42 Q36 43.5 33 43.8 Q37 42 40 38Z', '#e9b48a', 0.7) +
+    E(27, 30, 1.9, 2.4, O, 0, 0) +
+    E(37, 30, 1.9, 2.4, O, 0, 0) +
+    FC(27.7, 29.1, 0.75, '#fff') +
+    FC(37.7, 29.1, 0.75, '#fff') +
+    L('M32 31.2 Q33.6 33.6 31.6 34.2', 1.3, '#c98a62') +
+    (o.noSmile ? '' : P('M28.2 36.2 Q32 40.6 35.8 36.2 Q32 37.4 28.2 36.2Z', '#b5523f', 1.6)) +
+    FC(23.5, 34.2, 2.7, '#f49a8f', 0.5) +
+    FC(40.5, 34.2, 2.7, '#f49a8f', 0.5) +
+    HL(26, 22, 4, 1.6, -20, 0.35);
 
 Object.assign(people, {
     odette: () =>
