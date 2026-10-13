@@ -53,7 +53,8 @@ export function doPrestige(challenge, theme) {
         defis: state.defis ? { ...state.defis, cur: null } : null,
         night: state.night,
         carnet: state.carnet,
-        story: state.story,
+        // les chapitres gardés à la conversion 1.4 ne survivent pas à une nouvelle ferme
+        story: { ...state.story, keep: {} },
         barn: state.barn,
         farmhand: state.farmhand,
         mastery: state.mastery,
