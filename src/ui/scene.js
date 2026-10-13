@@ -1,6 +1,6 @@
 // Le décor : couleur du ciel selon l'heure et la météo, soleil et lune, nuit, saison, fêtes.
 import { state } from '../core/state.js';
-import { SKY } from '../data/world.js';
+import { SKY, HOLIDAY_LVL } from '../data/world.js';
 import { weather, season } from '../systems/world.js';
 import { styleOf } from '../systems/style.js';
 import { rareActive } from '../systems/surprises.js';
@@ -66,7 +66,7 @@ export function updateScene() {
     const cls = [
         `w-${state.weather}`,
         `season-${season().id}`,
-        hol && state.level >= 3 ? `hol-${hol}` : '',
+        hol && state.level >= HOLIDAY_LVL ? `hol-${hol}` : '',
         rareActive('butterflies') ? 'butterflies' : '',
         `fence-${styleOf('fence')}`,
         `path-${styleOf('path')}`,

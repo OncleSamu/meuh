@@ -4,7 +4,7 @@ import { today } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { toast, sfx, burst } from '../core/bus.js';
 import { DECOS } from '../data/farm.js';
-import { HOLIDAYS } from '../data/world.js';
+import { HOLIDAYS, HOLIDAY_LVL } from '../data/world.js';
 import { RARE } from '../data/commerce.js';
 import { tip } from './tips.js';
 import { earn } from './player.js';
@@ -60,7 +60,7 @@ const holidayYear = () => {
 
 export function ensureHoliday() {
     const id = holidayNow();
-    if (!id || state.level < 3) return false;
+    if (!id || state.level < HOLIDAY_LVL) return false;
     const y = holidayYear();
     if (state.holiday && state.holiday.id === id && state.holiday.year === y) return false;
     state.holiday = { id, year: y, given: {}, done: false };
