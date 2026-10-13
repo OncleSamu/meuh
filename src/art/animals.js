@@ -12,7 +12,7 @@ const puffs = (list, r, f) => list.map(([x, y]) => C(x, y, r, f, 1.6)).join('');
 
 Object.assign(animals, {
     // le canard colvert : tête verte, collier blanc, poitrail brun, ailes grises
-    duck:
+    duck: () =>
         SHADOW(38, 72, 20, 3.5) +
         leg('M32 60 L31 70 M28 71 L35 71', '#f5a623') +
         leg('M42 60 L43 70 M40 71 L47 71', '#f5a623') +
@@ -195,7 +195,7 @@ Object.assign(animals, {
 
 Object.assign(animals, {
     // l'oie grise : long cou, ventre clair, bec orange à bouton
-    goose:
+    goose: () =>
         SHADOW(38, 72, 22, 3.5) +
         leg('M32 60 L31 70 M28 71 L35 71', '#f08a24') +
         leg('M44 60 L45 70 M42 71 L49 71', '#f08a24') +
