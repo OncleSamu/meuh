@@ -6,19 +6,21 @@ import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { ANIMALS } from '../data/animals.js';
 import { MACHINES, RECIPES } from '../data/machines.js';
-import { UPGRADES, DECOS, DOG, GH, STYLE_LVL } from '../data/farm.js';
-import { CHAPTERS, PROJECTS } from '../data/village.js';
+import { UPGRADES, DECOS, DOG, GH, STYLE_LVL, ORCHARD, CROW_LVL } from '../data/farm.js';
+import { NIGHT } from '../data/night.js';
+import { CHAPTERS, PROJECTS, NEIGHBOR_LVL } from '../data/village.js';
 import { NATURE } from '../data/nature.js';
 import { CAVE_LVL } from '../data/cave.js';
 import { INCIDENT_LVL, RARE_EVENT_LVL } from '../data/surprises.js';
 import { CONTRACT_LVL, CONTEST_LVL, LEAGUES } from '../data/commerce.js';
-import { DAILY_REWARDS } from '../data/world.js';
+import { DAILY_REWARDS, HOLIDAY_LVL } from '../data/world.js';
 import { BALANCE, MAX_LEVEL, RENOWN_XP, ACH_REWARDS, MEDALS, CAP_REQ, MASTERY_LVL, HOUSE, FARMHAND, ALBUM_LEVELS } from '../data/progress.js';
 import { ACHIEVEMENTS, SKILLS } from '../data/meta.js';
 import { trackDayEarn, record } from './book.js';
 import { renownStar } from './mastery.js';
 import { addPhoto } from './style.js';
 import { ensureQuests } from './orders.js';
+import { STALL_LEVELS } from './stall.js';
 
 // ---------------- argent ----------------
 export function earn(amount, at) {
@@ -124,7 +126,18 @@ export function unlocksAt(lvl) {
     if (lvl === CONTRACT_LVL) add(['ui', 'calendar'], 'Contrats de saison : une grosse livraison par saison, avec un ruban (onglet Village)');
     if (lvl === RARE_EVENT_LVL) add(['ui', 'fair'], 'Événements rares : foire aux bestiaux, critique gastronomique, nuée de papillons');
     if (lvl === STYLE_LVL) add(['item', 'brush'], 'Personnalisation : clôture, allées, toit et grange (touchez la maison)');
-    if (lvl === MASTERY_LVL) add(['ui', 'medalB'], 'Maîtrise des produits : produisez beaucoup pour gagner des étoiles (Livre de la ferme)');
+    if (lvl === MASTERY_LVL) {
+        add(['ui', 'medalB'], 'Maîtrise des produits : produisez beaucoup pour gagner des étoiles (Livre de la ferme)');
+        add(['villager', 'odette'], 'Le carnet de Mamie Odette : une histoire par recette maîtrisée (menu)');
+    }
+    if (lvl === HOLIDAY_LVL) add(['ui', 'basket'], 'Les fêtes : Pâques, Halloween et Noël, avec leur recette et leur panier (aux vraies dates)');
+    if (lvl === CROW_LVL) add(['ui', 'crow'], 'Les corbeaux viennent picorer le champ : touchez-les pour les chasser');
+    if (lvl === CONTEST_LVL) add(['ui', 'podium'], 'Le concours de la semaine : gagnez des points, montez de ligue (onglet Village)');
+    if (lvl === NEIGHBOR_LVL) add(['ui', 'heart'], 'Les fermes voisines : aidez-les, gagnez leur amitié et leurs cadeaux (onglet Village)');
+    if (STALL_LEVELS.includes(lvl)) add(['ui', 'stall'], 'Une place de plus à l’étal (onglet Marché)');
+    if (lvl === NIGHT.lvl) add(['ui', 'firefly'], 'La nuit : lucioles au printemps et en été, étoiles filantes pour faire un vœu');
+    if (lvl === ORCHARD.lvl) add(['ui', 'appleCart'], 'Le verger : plantez vos arbres, ils donnent des fruits longtemps (Ferme | Verger)');
+    if (lvl === NIGHT.marketLvl) add(['ui', 'lantern'], 'Le marché de nuit : les soirs d’été, des graines et des décorations rares (Marché | Acheter)');
     HOUSE.forEach((h, k) => h.lvl === lvl && add(['ui', 'house'], `Maison de la ferme, niveau ${k} : ${h.bonus.toLowerCase()}`));
     FARMHAND.forEach((h, k) => h && h.lvl === lvl && add(['villager', 'theo'], `Commis de ferme, niveau ${k} : ${h.plots} parcelles`));
     LEAGUES.forEach(g => {
@@ -133,6 +146,7 @@ export function unlocksAt(lvl) {
     if (lvl === MAX_LEVEL) {
         add(['ui', 'star'], 'Niveau maximum : l’expérience vous rapporte désormais des étoiles de renommée');
         add(['ui', 'goldCow'], 'Visez le titre de Ferme légendaire (Livre de la ferme)');
+        add(['ui', 'ribbon'], 'Vendre la ferme : repartez de zéro avec des rubans, des bonus pour toujours (Progrès)');
         add(['ui', 'cupGold'], 'Les grands défis : un défi de deux semaines, des médailles et des décorations uniques (volet Commandes)');
     }
     return list;

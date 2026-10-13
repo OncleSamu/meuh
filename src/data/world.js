@@ -3,6 +3,9 @@
 
 export const GAME_MIN_PER_SEC = 5;
 
+// les fêtes de saison (Pâques, Halloween, Noël) commencent à ce niveau
+export const HOLIDAY_LVL = 3;
+
 export const DAYS_PER_SEASON = 12;
 
 export const FETE_START = 4;
