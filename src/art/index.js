@@ -6,7 +6,6 @@ import { tree, sprout, youngPlant, readyPlant } from './plants.js';
 import { building, farmhouseArt } from './buildings.js';
 import { truck, loco, wagon, balloonArt } from './vehicles.js';
 import './items.js';
-import './items2.js';
 import './animals.js';
 import './people.js';
 import './machines.js';
@@ -16,6 +15,8 @@ import './island.js';
 import './station.js';
 import './defis.js';
 import './v12.js';
+// les dessins refaits (1.2.1 et suivantes) passent en dernier : ils remplacent les anciens
+import './items2.js';
 
 export const SPR = {
     farmhouse(l, roof) {
