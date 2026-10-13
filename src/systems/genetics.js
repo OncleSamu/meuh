@@ -13,7 +13,19 @@ import { emit, toast, sfx, buzz, burst, float, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { ANIMALS } from '../data/animals.js';
 import { RECIPES } from '../data/machines.js';
-import { FLAVORS, PLANT_BASE, ANIMAL_BASE, PLANT_TRAITS, ANIMAL_TRAITS, LOOKS, GENETICS as GX, SALON_CRITERIA, SALON_PERIOD } from '../data/genetics.js';
+import {
+    FLAVORS,
+    PLANT_BASE,
+    ANIMAL_BASE,
+    PLANT_TRAITS,
+    ANIMAL_TRAITS,
+    LOOKS,
+    GENETICS as GX,
+    SALON_CRITERIA,
+    SALON_PERIOD,
+    FEATURES,
+    featuresOf,
+} from '../data/genetics.js';
 import { RARE } from '../data/commerce.js';
 import { spend, earn, addXp } from './player.js';
 import { projectDone, storyOk } from './story.js';
@@ -25,7 +37,6 @@ import { tip } from './tips.js';
 export const FLAVOR_IDS = PLANT_TRAITS.filter(t => t.flavor).map(t => t.id);
 export const PLANT_IDS = PLANT_TRAITS.map(t => t.id);
 export const ANIMAL_IDS = ANIMAL_TRAITS.map(t => t.id);
-const LOOK_IDS = Object.keys(LOOKS);
 
 // ---------------- ouverture ----------------
 export const plantLabOpen = () => projectDone(GX.plantProject);
@@ -47,8 +58,10 @@ export function ensureGenetics() {
     state.animals.forEach(a => {
         if (!a.uid) a.uid = 'a' + G.next++;
         if (!a.g) a.g = wildAnimal(a.type, true);
+        addFeatures(a.g, a.type, true);
         a.gen = a.gen || 0;
     });
+    Object.values(G.races).forEach(r => addFeatures(r.g, r.type, false));
 }
 
 // ---------------- génomes ----------------
@@ -84,8 +97,21 @@ export function wildAnimal(type, vary) {
     const l = baseLooks();
     if (vary && Math.random() < 0.25) l.color = [l.color[0], [1 + Math.floor(Math.random() * 6), 0]];
     if (vary && Math.random() < 0.2) l.pattern = [l.pattern[0], [1 + Math.floor(Math.random() * 4), 0]];
-    return { t, l, halo: false };
+    return addFeatures({ t, l, halo: false }, type, vary);
 }
+
+// cornes, oreilles, toison (1.2) : ajoutés aux génomes des espèces concernées, parfois avec une version cachée
+export function addFeatures(g, type, vary) {
+    if (!g || !g.l) return g;
+    for (const k of featuresOf(type)) {
+        if (g.l[k]) continue;
+        g.l[k] = pair(0);
+        if (vary && Math.random() < 0.3) g.l[k][1] = [1 + Math.floor(Math.random() * (FEATURES[k].list.length - 1)), 0];
+    }
+    return g;
+}
+export const featureOf = (g, k) => (g && g.l && g.l[k] ? expressLook(g.l[k]) : 0);
+export const featureLooks = (g, type) => featuresOf(type).map(k => featureOf(g, k));
 
 // le caractère visible d'un gène
 export const express = p => (p[0][1] !== p[1][1] ? (p[0][1] ? p[0][0] : p[1][0]) : Math.round((p[0][0] + p[1][0]) / 2));
@@ -112,7 +138,7 @@ export function crossGenomes(A, B, rate = GX.mutation) {
     const t = {},
         l = {};
     for (const k of Object.keys(A.t)) t[k] = [pick(A.t[k]), pick(B.t[k] || A.t[k])];
-    for (const k of LOOK_IDS) l[k] = [pick(A.l[k]), pick(B.l[k])];
+    for (const k of Object.keys(A.l)) l[k] = [pick(A.l[k]), pick(B.l[k] || A.l[k])];
     const child = {
         t,
         l,
@@ -124,8 +150,9 @@ export function crossGenomes(A, B, rate = GX.mutation) {
         mutated = true;
         if (Math.random() < 0.2) child.halo = true;
         else if (Math.random() < 0.35) {
-            const k = pickRand(LOOK_IDS);
-            child.l[k][Math.random() < 0.5 ? 0 : 1] = [Math.floor(Math.random() * LOOKS[k].length), Math.random() < 0.5 ? 1 : 0];
+            const k = pickRand(Object.keys(child.l));
+            const n = (LOOKS[k] || FEATURES[k].list).length;
+            child.l[k][Math.random() < 0.5 ? 0 : 1] = [Math.floor(Math.random() * n), Math.random() < 0.5 ? 1 : 0];
         } else {
             const k = pickRand(Object.keys(t));
             const j = Math.random() < 0.5 ? 0 : 1;
@@ -267,6 +294,7 @@ export function finishCross(at) {
         analyzed: false,
         mut: mutated,
         born: now(),
+        lin: [G.vars[c.a] ? lineSnap(G.vars[c.a], true) : wildSnap(c.a), G.vars[c.b] ? lineSnap(G.vars[c.b], true) : wildSnap(c.b)],
     };
     G.vars[id] = v;
     G.seeds[id] = (G.seeds[id] || 0) + GX.seedsPerCross;
@@ -546,6 +574,22 @@ export function startBreed(ua, ub, at) {
     return true;
 }
 
+// la lignée (1.2) : parents et grands-parents, en petites fiches qui survivent à la vente des bêtes
+const snapLooks = g => (g && g.l ? { l: JSON.parse(JSON.stringify(g.l)), halo: !!g.halo } : null);
+export function lineSnap(x, deep) {
+    if (!x) return null;
+    const isVar = !!x.kind;
+    const s = isVar
+        ? { n: varName(x), b: x.base, g: snapLooks(x.g), gen: x.gen || 0 }
+        : x.t
+          ? { n: x.name || x.n, t: x.t, g: x.g, gen: x.gen || 0 }
+          : { n: x.name, t: x.type, g: snapLooks(x.g), gen: x.gen || 0 };
+    if (deep && x.lin) s.lin = x.lin.map(y => y && { n: y.n, t: y.t, b: y.b, g: y.g, gen: y.gen });
+    return s;
+}
+// une plante sauvage dans une lignée : son espèce, génération 0
+const wildSnap = id => ({ n: ITEMS[id] ? ITEMS[id].name : id, b: id, g: null, gen: 0 });
+
 // la naissance : un petit dont les gènes viennent des deux parents
 export function breedTick() {
     const G = state.genetics;
@@ -561,6 +605,7 @@ export function breedTick() {
     baby.g = g;
     baby.gen = Math.max(a.gen || 0, b.gen || 0) + 1;
     baby.parents = [a.name, b.name];
+    baby.lin = [lineSnap(a, true), lineSnap(b, true)];
     if (a.race && a.race === b.race) baby.race = a.race;
     placeAnimal(baby);
     state.animals.push(baby);
@@ -695,6 +740,9 @@ export function salonScore(crit, target) {
         const s = (l.size === 3 ? 2 : l.size === 2 ? 1 : 0) + (l.color ? 1.2 : 0) + (l.pattern ? 1 : 0) + (l.halo ? 1.5 : 0);
         return Math.round(s * 10) / 10;
     }
+    // cornes et toison : plus le trait est marqué, mieux c'est, puis la robustesse ou la douceur départagent
+    if (crit.trait === 'horns') return featureOf(g, 'horns') >= 2 ? featureOf(g, 'horns') + traitOf(g, 'robust') / 2 : 0;
+    if (crit.trait === 'coat') return featureOf(g, 'coat') ? 2 + featureOf(g, 'coat') + traitOf(g, 'soft') / 2 : traitOf(g, 'soft') / 2;
     return traitOf(g, crit.trait) + (g.halo ? 0.5 : 0);
 }
 export function salonCandidates() {
@@ -706,7 +754,9 @@ export function salonCandidates() {
             a =>
                 a.g &&
                 (crit.id !== 'richMilk' || ['cow', 'goat', 'buffalo', 'donkey'].includes(a.type)) &&
-                (crit.id !== 'softWool' || ['sheep', 'alpaca', 'rabbit'].includes(a.type)),
+                (crit.id !== 'softWool' || ['sheep', 'alpaca', 'rabbit'].includes(a.type)) &&
+                (crit.trait !== 'horns' || FEATURES.horns.species.includes(a.type)) &&
+                (crit.trait !== 'coat' || FEATURES.coat.species.includes(a.type)),
         )
         .map(a => ({ id: a.uid, name: a.name, score: salonScore(crit, a) }));
 }
@@ -755,4 +805,26 @@ export function geneticsTick() {
     if (ensureChef()) ch = true;
     if (salonTick()) ch = true;
     return ch;
+}
+
+// renommer une variété ou une race (1.2)
+const cleanName = name =>
+    String(name || '')
+        .trim()
+        .slice(0, 22);
+export function renameVariety(id, name) {
+    const v = state.genetics && state.genetics.vars[id],
+        n = cleanName(name);
+    if (!v || !n) return false;
+    v.name = n;
+    toast(`Variété renommée : ${n}`, ['ui', 'pencil']);
+    return true;
+}
+export function renameRace(id, name) {
+    const r = state.genetics && state.genetics.races[id],
+        n = cleanName(name);
+    if (!r || !n) return false;
+    r.name = n;
+    toast(`Race renommée : ${n}`, ['ui', 'pencil']);
+    return true;
 }

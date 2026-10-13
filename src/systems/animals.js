@@ -13,6 +13,7 @@ import { barnBlocked, rollRare } from './barn.js';
 import { fmt } from '../core/format.js';
 import { wildAnimal, animalSpeedGene, animalYieldGene, animalQuality, animalSaves } from './genetics.js';
 import { addQuality } from './farm.js';
+import { wishAnimals } from './night.js';
 
 export const maxFood = () => MAX_FOOD + rank('trough') * 2;
 export const isAdult = a => a.adult !== false;
@@ -74,6 +75,8 @@ export function collectAnimal(a) {
     const d = ANIMALS[a.type];
     let qty = a.stack * rollYield('animal');
     if (Math.random() < animalYieldGene(a)) qty++;
+    // vœu d'étoile filante : le double pendant 10 minutes
+    if (wishAnimals()) qty *= 2;
     state.inventory[d.prodId] += qty;
     // de bons gènes donnent des produits de qualité
     const q = animalQuality(a);

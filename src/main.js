@@ -28,6 +28,9 @@ import { setupProgress } from './ui/sheets/progress.js';
 import { setupBook } from './ui/sheets/book.js';
 import { setupInfo } from './ui/sheets/info.js';
 import { setupSettings } from './ui/sheets/settings.js';
+import { setupRename } from './ui/sheets/rename.js';
+import { setupNight, updateNight } from './ui/night.js';
+import { setupCarnet } from './ui/sheets/carnet.js';
 import { setupNavigate } from './ui/navigate.js';
 import { setupTutorial, tutoTick } from './ui/tutorial.js';
 import { setupPwa, remindTick } from './ui/pwa.js';
@@ -63,6 +66,9 @@ function start() {
     setupBook();
     setupInfo();
     setupSettings();
+    setupRename();
+    setupNight();
+    setupCarnet();
     setupNavigate();
     setupTutorial();
     actions({
@@ -84,6 +90,7 @@ function start() {
         G.gameTick();
         updateScene();
         refresh();
+        updateNight();
         remindTick();
     }, 1000);
     setInterval(saveNow, 5000);

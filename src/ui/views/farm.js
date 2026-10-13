@@ -271,7 +271,7 @@ function eventBanner() {
 
 const FIELD = `<div class="field"><div class="fence"></div>
     <div id="dog" class="dog" hidden data-anchor="dog"><div class="bubble"></div><div class="dog-body"></div><div class="dog-name"></div></div>
-    <div id="plots" class="plots"></div></div>`;
+    <div id="plots" class="plots"></div><div class="field-night"></div><div id="flies" class="flies"></div></div>`;
 const GH_BOX = `<div class="glasshouse"><div class="gh-roof"></div><div class="gh-head">${ico(['ui', 'greenhouse'])}<span>Serre</span><small>toujours de saison · arrosage automatique</small></div><div id="gh-grid" class="plots gh"></div></div>`;
 
 export function renderFarm(el) {

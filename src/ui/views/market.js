@@ -1,4 +1,5 @@
 // Marché | Acheter (le magasin) et Marché | Vendre (l'étal et le grossiste).
+import { nightMarketCard } from '../night.js';
 import { state } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
@@ -222,6 +223,7 @@ function renderShop(el) {
     const cat = ui.sel.shop || 'seeds';
     const c = CATS.find(x => x[0] === cat);
     blocks(el, [
+        ['night', nightMarketCard()],
         ['pin', pinBar()],
         [
             'cats',

@@ -415,6 +415,30 @@ function lab() {
     }
 }
 
+// le verger de la ferme : ramasser, débiter les arbres morts, planter les fruits demandés ou les plus rentables
+function orchard() {
+    if (!G.orchardOpen()) return;
+    const nd = need();
+    G.slotsOf('farm').forEach((sl, k) => {
+        if (!sl.tree) return;
+        if (G.treeStage(sl.tree) === 'dead') G.fellTree(k, null, 'farm');
+        else if (sl.tree.ground && !G.barnBlocked(true))
+            tag('verger', () => {
+                const r = G.pickTree(k, null, true, 'farm');
+                if (r) G.addXp(r.xp);
+            });
+    });
+    const ok = G.treeList('farm').filter(d => state.level >= d.reqLvl);
+    if (!ok.length) return;
+    const wanted = ok.filter(d => (nd[d.id] || 0) > state.inventory[d.id]);
+    const best = [...ok].sort((a, b) => b.sell / b.time - a.sell / a.time);
+    let k = G.slotsOf('farm').findIndex(x => x.open && !x.tree);
+    if (k < 0 && state.money > G.slotCost('farm') * 4 && G.buySlot(null, 'farm')) k = G.slotsOf('farm').findIndex(x => x.open && !x.tree);
+    if (k < 0) return;
+    const pick = wanted.find(d => G.livingTrees(d.id) < 2) || best[t % Math.min(3, best.length)];
+    if (pick && state.money > pick.cost * 3) G.plantTree(k, pick.id, null, 'farm');
+}
+
 // les grands défis : livrer dès qu'on peut, présenter la meilleure bête ou variété
 function defis() {
     const d = G.curDefi();
@@ -433,6 +457,7 @@ function step() {
     cave();
     farm();
     island();
+    orchard();
     lab();
     defis();
     animals();

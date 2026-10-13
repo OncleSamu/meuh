@@ -217,3 +217,41 @@
 .pick-cell.short {
     opacity: 0.6;
 }
+
+/* ---------------- renommer (1.2) ---------------- */
+.rename-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    margin-left: 6px;
+    padding: 0;
+    vertical-align: middle;
+    background: #fffaf0;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    box-shadow: 0 2px 0 rgba(58, 38, 24, 0.35);
+    flex: 0 0 auto;
+}
+.rename-btn svg {
+    width: 16px;
+    height: 16px;
+}
+.pas-ren {
+    display: flex;
+    align-items: center;
+    padding: 0 2px;
+}
+.pas-ren .rename-btn {
+    width: 34px;
+    height: 34px;
+    margin: 0;
+}
+.pas-ren .rename-btn svg {
+    width: 20px;
+    height: 20px;
+}
+.rename.big input {
+    font-size: 1.05rem;
+}

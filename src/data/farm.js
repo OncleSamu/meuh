@@ -231,6 +231,24 @@ export const DECOS = {
         charm: 30,
         rare: true,
     },
+    // la nuit (1.2)
+    owlBox: {
+        id: 'owlBox',
+        name: 'Nichoir à chouette',
+        desc: 'Une chouette s’y installe et chasse les corbeaux (6 sur 10) : +10 de charme au concours',
+        cost: 4000,
+        reqLvl: 15,
+        charm: 10,
+    },
+    fireflyJar: {
+        id: 'fireflyJar',
+        name: 'Lanterne à lucioles',
+        desc: 'Votre premier bocal de lucioles, qui brille doucement : +25 de charme au concours',
+        cost: 0,
+        reqLvl: 1,
+        charm: 25,
+        rare: true,
+    },
     // les grands défis (1.1) : une décoration unique par défi gagné en or
     banquetTable: {
         id: 'banquetTable',
@@ -605,12 +623,12 @@ export const ORCHARD = {
     max: 24,
     cost: 2000, // prix du 5e emplacement, puis ×mult
     mult: 1.3,
-    groundMax: 6, // fruits au pied de l'arbre ; ensuite l'arbre attend
+    groundMax: 8, // fruits au pied de l'arbre ; ensuite l'arbre attend (1.2 : 8 au lieu de 6, pour les absences)
     rotEvery: 4, // sol plein : un fruit pourrit tous les 4 temps de fruit
     life: 100, // fruits qu'un arbre fait tomber dans sa vie
     oldAt: 0.75, // part de sa vie à partir de laquelle il vieillit
     oldRate: 0.6, // vitesse d'un vieil arbre
-    fruitRate: 0.5, // un fruit toutes les (temps de culture × fruitRate)
+    fruitRate: 0.45, // un fruit toutes les (temps de culture × fruitRate) ; 1.2 : 0,45 au lieu de 0,5
     felledWood: 0.5, // part du bois rendue si on abat un arbre vivant
 };
 // bois d'un arbre mort

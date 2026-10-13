@@ -1,0 +1,147 @@
+/* ---------------- la ferme la nuit (1.2) ---------------- */
+.flies {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+}
+.fly {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    padding: 0;
+    background: none;
+    border: none;
+    pointer-events: auto;
+    animation: flyDrift 3.2s ease-in-out infinite alternate;
+    animation-delay: var(--d, 0s);
+    filter: drop-shadow(0 0 6px #fff59a);
+}
+.fly svg {
+    width: 100%;
+    height: 100%;
+    animation: flyGlow 1.6s ease-in-out infinite alternate;
+}
+@keyframes flyDrift {
+    from {
+        transform: translate(-6px, 4px);
+    }
+    to {
+        transform: translate(8px, -6px);
+    }
+}
+@keyframes flyGlow {
+    from {
+        opacity: 0.65;
+    }
+    to {
+        opacity: 1;
+    }
+}
+html.calm .fly,
+html.calm .fly svg {
+    animation: none;
+}
+.night-pill {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px 3px 4px;
+    background: rgba(40, 34, 70, 0.82);
+    color: #fff6c8;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 900;
+    pointer-events: none;
+}
+.night-pill .ico {
+    width: 24px;
+    height: 24px;
+}
+
+/* l'étoile filante traverse le haut de l'écran */
+#wish-star {
+    position: fixed;
+    left: 0;
+    z-index: 60;
+    width: 64px;
+    height: 64px;
+    padding: 0;
+    background: none;
+    border: none;
+    filter: drop-shadow(0 0 8px #fff3a0);
+    transform: translateX(-80px);
+}
+#wish-star svg {
+    width: 100%;
+    height: 100%;
+}
+#wish-star.go {
+    animation: wishFly var(--dur, 6s) linear forwards;
+}
+@keyframes wishFly {
+    from {
+        transform: translate(-80px, 0);
+    }
+    to {
+        transform: translate(calc(100vw + 20px), 60px);
+    }
+}
+html.calm #wish-star.go {
+    animation-duration: calc(var(--dur, 6s) * 1.4);
+}
+
+/* le marché de nuit */
+.night-market {
+    background: linear-gradient(#3b3566, #2b2650);
+    color: #fff6dc;
+}
+.night-market .card-sub {
+    color: #d8d2f0;
+}
+.nm-offers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+}
+.nm-offer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 6px 4px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 246, 200, 0.5);
+    border-radius: 12px;
+}
+.nm-offer b {
+    font-size: 0.72rem;
+    line-height: 1.15;
+}
+.nm-offer.sold {
+    opacity: 0.55;
+}
+.night-market .timer-pill {
+    color: var(--ink);
+}
+/* le champ s'assombrit la nuit (les lucioles restent vives au-dessus) */
+.field-night {
+    position: absolute;
+    inset: 0;
+    border-radius: 19px;
+    background: rgba(24, 26, 70, 0.3);
+    opacity: 0;
+    transition: opacity 2s;
+    pointer-events: none;
+    z-index: 2;
+}
+html.night .field-night {
+    opacity: 1;
+}

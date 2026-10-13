@@ -12,7 +12,7 @@ import { actions, esc } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, bar, timer, section, hint, empty } from '../kit.js';
 import { defineSheet, closeSheet } from '../sheets.js';
-import { genWrap } from '../genlook.js';
+import { animalArt } from '../genlook.js';
 import { varArt } from './lab.js';
 
 const CUPS = ['cupNone', 'cupBronze', 'cupSilver', 'cupGold'];
@@ -107,7 +107,7 @@ defineSheet('defiPick', {
                     .slice(0, 24)
                     .map(
                         c =>
-                            `<button class="pick-cell${c.score >= st.n ? ' ok' : ' short'}" data-act="presentDefi" data-k="${o.k}" data-id="${c.a.uid}"><span class="pc-art">${genWrap(art('animal', c.a.type), c.a.g)}</span><b>${esc(c.a.name)}</b><span class="pc-cost">${ANIMALS[c.a.type].name} · ${c.score} pt${c.score > 1 ? 's' : ''}</span></button>`,
+                            `<button class="pick-cell${c.score >= st.n ? ' ok' : ' short'}" data-act="presentDefi" data-k="${o.k}" data-id="${c.a.uid}"><span class="pc-art">${animalArt(c.a.type, c.a.g)}</span><b>${esc(c.a.name)}</b><span class="pc-cost">${ANIMALS[c.a.type].name} · ${c.score} pt${c.score > 1 ? 's' : ''}</span></button>`,
                     )
                     .join('')}</div>`;
         }

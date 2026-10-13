@@ -26,6 +26,7 @@ defineSheet('menu', {
         return `<div class="menu-grid">
             ${navRow('Progrès', 'open', { sheet: 'progress' }, ['ui', 'skillbook'], badge(pts), 'Compétences, prestige et défis')}
             ${navRow('Livre de la ferme', 'open', { sheet: 'book' }, ['ui', 'book'], badge(book), 'Collection, maîtrise, exploits, légende, album')}
+            ${navRow('Le carnet de Mamie Odette', 'open', { sheet: 'carnet' }, ['villager', 'odette'], G.carnetClaimable() ? dot(G.carnetClaimable()) : G.carnetNew() ? '<span class="dot">!</span>' : '›', `${G.carnetFound()} / ${G.carnetTotal()} histoires de recettes`)}
             ${state.level >= 38 ? navRow('Salle des trophées', 'open', { sheet: 'trophies' }, ['ui', 'cupGold'], '›', 'Les médailles des grands défis') : ''}
             ${state.genetics && G.geneticsOpen() ? navRow('Mes créations', 'open', { sheet: 'creations' }, ['ui', 'trophy'], '›', 'Vos variétés et vos races fixées') : ''}
             ${navRow('Les niveaux', 'open', { sheet: 'levels' }, ['ui', 'star'], '›', `Niveau ${state.level}${state.level < MAX_LEVEL ? ` sur ${MAX_LEVEL}` : ''}`)}
