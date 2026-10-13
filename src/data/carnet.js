@@ -466,5 +466,141 @@ Object.assign(CARNET, {
         'Le yaourt de brebis est plus épais que les autres, et plus doux. Avec une cuillère de miel, c’était le goûter préféré de ta mère quand elle avait de la fièvre.',
 });
 
+// ---------------- 1.3.3 : les recettes de complément ----------------
+Object.assign(CARNET, {
+    pondFry:
+        'Le dimanche, ton grand-père revenait de l’étang avec un seau de petits poissons. La friture, on la mangeait avec les doigts, brûlante, debout dans la cuisine. Personne n’attendait d’être assis.',
+    perchMeuniere:
+        'La perche meunière, c’est du beurre, de la farine et de la patience. Il faut la retourner une seule fois. Ton grand-père la retournait trois fois, pour voir. Elle était en miettes, mais délicieuse.',
+    pikeQuenelles:
+        'Les quenelles de brochet, c’est la recette de ma tante de Lyon. Elle disait qu’une bonne quenelle doit gonfler comme une brioche. Les miennes gonflaient comme des galets.',
+    pondRillettes:
+        'Avec les poissons trop petits ou trop pleins d’arêtes, on faisait des rillettes. Rien ne se jette. Même les mauvaises pêches finissent sur une tartine.',
+    stuffedCarp:
+        'La carpe farcie, c’était le plat des grands jours de pêche. Papi Lucien en a sorti une de huit kilos. Il l’a mesurée tous les ans en racontant l’histoire : elle grandissait à chaque fois.',
+    eelMatelote:
+        'La matelote d’anguille au cidre, c’est la cuisine du bord de l’eau. On la mangeait à la guinguette, les pieds presque dans la rivière, avec un accordéon pas loin.',
+    smokedCatfish:
+        'Le silure est un monstre de la rivière, grand comme un enfant. Fumé, il devient doux comme du jambon. Comme quoi, il ne faut pas juger les gens sur leur moustache.',
+    catfishBeurreBlanc:
+        'Le beurre blanc, il ne faut jamais le faire bouillir, sinon il tourne. Comme le caractère de ton grand-père : il fallait le chauffer tout doucement.',
+    smokedPike:
+        'Le brochet a des dents comme des aiguilles. Ton grand-père en a gardé une cicatrice au pouce, qu’il montrait à tous les enfants du village. Il disait que c’était un requin.',
+    goldfishBowl:
+        'Le poisson doré, on ne le mange pas, voyons ! On le met dans un beau bocal, sur le buffet. Le nôtre s’appelait Monsieur Paul. Le vrai Monsieur Paul n’a jamais su.',
+    goldScalePendant:
+        'Une écaille du poisson doré, sertie d’or, ça porte bonheur. Je l’ai portée le jour de mon mariage, sous ma robe. Le bonheur est venu, alors je ne l’ai jamais enlevée.',
+    goldfishMobile:
+        'Un mobile de poissons dorés au-dessus du berceau de ta mère. Elle les regardait tourner pendant des heures. C’est peut-être pour ça qu’elle aime tant l’eau.',
+    grilledSardines:
+        'Les sardines grillées, ça se mange dehors, parce que ça sent fort. Les voisins venaient toujours voir ce qu’on faisait. On en grillait donc toujours le double.',
+    pissaladiere:
+        'La pissaladière, c’est la pizza du Midi, avec des oignons fondus et des petits poissons. Les cousins italiens n’ont jamais voulu reconnaître que c’était aussi bon que chez eux.',
+    mackerelWine:
+        'Les maquereaux marinés au cidre se gardent une semaine au frais. Le pêcheur du port m’en apportait toujours une caisse en août. Je lui rendais en confitures.',
+    seabassTartare:
+        'Un tartare de bar, c’est du poisson si frais qu’on le mange cru, avec un filet de citron vert. Ton grand-père a mis dix ans à oser y goûter. Après, il en redemandait.',
+    lobsterArmoricaine:
+        'Le homard à l’armoricaine, je ne l’ai fait qu’une fois, pour nos quarante ans de mariage. Le homard s’est échappé dans la cuisine. On l’a retrouvé sous le buffet, le lendemain.',
+    lobsterBisque:
+        'La bisque, c’est la soupe des carapaces. Rien ne se perd, même chez les riches. Surtout chez les riches, d’ailleurs : c’est comme ça qu’ils le restent.',
+    radishButter:
+        'Des radis, du beurre et du sel, sur une tartine de pain frais. C’est le goûter des jours où l’on n’a pas le temps de faire un gâteau. Ce sont souvent les meilleurs jours.',
+    peasFrench:
+        'Les petits pois à la française, avec la laitue et les petits oignons. Ma mère disait que c’était la recette du roi. Je pense que le roi n’a jamais écossé un petit pois de sa vie.',
+    eggplantCaviar:
+        'Le caviar d’aubergine, c’est le caviar du pauvre. Mais je préfère celui-là à l’autre. L’autre, je ne l’ai goûté qu’une fois : ça avait le goût de la mer et du porte-monnaie vide.',
+    popcorn:
+        'Le pop-corn, c’est la fête foraine qui revient. Les grains sautent dans la casserole comme des enfants dans un manège. Il faut tenir le couvercle, sinon c’est le plafond qui en profite.',
+    beetSyrup:
+        'Le sirop de betterave, on le faisait pendant la guerre, quand le sucre manquait. C’est un peu terreux, mais sur une tartine, ça vous redonne le sourire.',
+    soySauce:
+        'La sauce soja fermente des mois dans un tonneau. Victor dit que c’est de la chimie. Moi je dis que c’est de la patience. On est tous les deux un peu dans le vrai.',
+    marmalade:
+        'La marmelade d’oranges, avec l’amertume des écorces. Les Anglais la mangent au petit-déjeuner. Ton grand-père la mangeait à toute heure, avec une cuillère, directement dans le pot.',
+    kiwiJam:
+        'Le pied de kiwi grimpe partout, sur la tonnelle, sur le mur, sur le pommier. Il a fallu en faire de la confiture, sinon il aurait mangé la maison.',
+    kiwiSorbet:
+        'Le sorbet au kiwi est vert comme une pelouse au printemps. Les petits-enfants croyaient que c’était de la glace à l’herbe. Ils en reprenaient quand même.',
+    kiwiJuice:
+        'Le kiwi a plus de vitamines qu’une orange, disait le docteur. Alors l’hiver, un verre de jus chaque matin. Personne n’a jamais été malade. Enfin, presque personne.',
+    driedKaki:
+        'Au Japon, on sèche les kakis pendus sous le toit, et on les masse chaque jour pour les rendre tendres. J’ai essayé. Les voisins m’ont regardée bizarrement.',
+    kakiSyrup:
+        'Le kaki, il faut attendre qu’il soit mou comme une confiture pour le manger. Au sirop, il se garde tout l’hiver. Il est encore plus patient que moi.',
+    kakiSorbet:
+        'Le kaki bien mûr, on le met au congélateur et on le mange à la petite cuillère. C’est un sorbet tout fait, sans rien faire. Ma recette préférée, tu l’auras compris.',
+    papayaSmoothie:
+        'Maëva m’a appris le smoothie papaye-banane. Elle le boit au lever du soleil, sur la plage. Moi je le bois dans la cuisine, mais je ferme les yeux.',
+    candiedPapaya: 'La papaye confite ressemble à des bonbons de couleur. Les enfants la cherchent dans le pain d’épices comme des trésors.',
+    avocadoShrimp:
+        'L’avocat-crevettes, c’était le grand chic des années soixante-dix. Tout le monde en servait aux mariages. Celui-là, il revient toujours à la mode, comme les pattes d’éléphant.',
+    guavaSorbet: 'La goyave sent si fort qu’on la sent avant de la voir. En sorbet, c’est comme un bouquet de fleurs qu’on pourrait manger.',
+    coffeeLiqueur:
+        'La liqueur de café, Tiago la sert après le repas, dans des petits verres. Il dit que ça aide à digérer. Ça aide surtout à raconter des histoires.',
+    coffeeBeans:
+        'Des grains de café enrobés de chocolat noir. On en croque un, puis deux, puis on ne dort plus de la nuit. Je te préviens : n’en mange pas après quatre heures.',
+    lycheeSorbet:
+        'Le litchi a un goût de rose. En sorbet, c’est le dessert le plus élégant que je connaisse. Je le sers dans des coupes en cristal, pour faire la fière.',
+    lycheeCocktail:
+        'Le cocktail litchi-citron vert, c’est pour les soirées sur l’île, quand le soleil se couche dans la mer. Je n’en bois qu’un. Le deuxième, c’est pour la chanson.',
+    bubbleTea:
+        'Les perles de tapioca qui roulent au fond du verre, avec une grosse paille. Les petits adorent. Moi, j’ai eu peur d’en avaler une de travers. Je suis de l’ancienne école.',
+    truffleOmelette:
+        'On enferme la truffe avec les œufs dans un bocal, une nuit entière. Le lendemain, les œufs ont pris tout son parfum, à travers la coquille. C’est de la magie, je te dis.',
+    truffleBrie:
+        'Le brie truffé, c’est le fromage des fêtes. On coupe le brie en deux, on glisse la truffe dedans et on attend trois jours. Le plus dur, c’est d’attendre.',
+    truffleOil:
+        'Quelques gouttes d’huile de truffe sur des pâtes, et c’est un plat de restaurant. Ne le dis pas à Gaston : il en met partout et il fait payer le double.',
+    saffronRisotto:
+        'Le safran vient d’une fleur, trois filaments par fleur. Il faut des milliers de fleurs pour une petite boîte. Quand j’en mets dans le risotto, je compte les filaments, un par un.',
+    paella: 'La paella, c’est la grande poêle du dimanche, au milieu de la table. Chacun pioche de son côté. Ton grand-père piochait toujours du côté des crevettes.',
+    saffronBrioche: 'La brioche au safran est jaune comme le soleil. On la faisait pour la Sainte-Lucie, en hiver, pour se rappeler que la lumière revient.',
+    genepiTea:
+        'La tisane des cimes, avec les fleurs de génépi cueillies là-haut. Elle sent la montagne et le vent. On la boit le soir, au refuge, en regardant les étoiles.',
+    genepiChoc:
+        'Un carré de chocolat au génépi, c’est la montagne qui fond sur la langue. Le guide du refuge en avait toujours dans sa poche, pour les marcheurs fatigués.',
+    tiarePerfume:
+        'Le parfum de tiaré, Maëva m’en a offert un flacon. Il sent l’île, la mer chaude et les fleurs dans les cheveux. Je le garde pour les jours gris.',
+    tiareCrown:
+        'Sur l’île, on accueille les visiteurs avec une couronne de fleurs de tiaré. Ton grand-père l’a gardée sur la tête toute la journée. Il était très beau, avec ses fleurs.',
+    goosePasta:
+        'Un œuf d’oie, c’est comme trois œufs de poule. Avec un seul, on fait des pâtes pour toute la famille. Les oies le savent, et elles en sont très fières.',
+    cremeAnglaise:
+        'La crème anglaise, il faut la remuer sans s’arrêter, en faisant des huit avec la cuillère. Quand elle nappe la cuillère, c’est prêt. Pas avant, pas après.',
+    truffleTagliatelle:
+        'Les tagliatelles aux truffes, avec les œufs de dinde qui rendent la pâte toute jaune. C’est le plat que Papi Lucien demandait pour son anniversaire. Tous les ans, le même.',
+    burrata:
+        'La burrata, c’est une mozzarella qui cache de la crème dans son cœur. Comme certaines personnes : dures dehors, tendres dedans. Ton grand-père était comme ça.',
+    ricotta:
+        'La ricotta se fait avec le petit-lait qui reste, réchauffé une deuxième fois. Son nom veut dire « recuite ». C’est le fromage des secondes chances.',
+    donkeyShampoo:
+        'Le lait d’ânesse adoucit les cheveux, disait ma grand-mère. Cléopâtre s’y baignait. Moi, je me contente d’un shampoing. Je ne suis pas reine d’Égypte.',
+    cottonThread:
+        'Le fil de coton, on l’enroule sur des bobines en bois. J’ai une boîte pleine de bobines de toutes les couleurs. Je ne couds presque plus, mais j’aime les regarder.',
+    teaTowel:
+        'J’ai brodé un torchon pour chaque petit-enfant, avec son prénom. Ils s’en servent pour essuyer la vaisselle, et c’est très bien comme ça. Un torchon, c’est fait pour servir.',
+    linseedOil:
+        'L’huile de lin, on en passait sur les meubles et sur le manche des outils. Ça les nourrit, comme une crème. Le vieux buffet en a bu des litres, et il brille encore.',
+    woolSocks:
+        'Je tricotais des chaussettes de laine pour tout le monde, à chaque Noël. Ton grand-père en avait trente paires. Il disait qu’il avait les pieds les plus heureux du canton.',
+    featherDuster:
+        'Le plumeau en plumes de canard, pour la poussière des étagères hautes. Les poules le regardaient d’un drôle d’air. Je crois qu’elles avaient peur d’y finir.',
+    dreamcatcher:
+        'L’attrape-rêves, accroché au-dessus du lit, garde les beaux rêves et laisse filer les mauvais. Celui de ta mère n’a jamais laissé passer un seul cauchemar.',
+    angoraMittens:
+        'Les mitaines angora, douces comme un lapin. Les doigts dépassent pour pouvoir tricoter. C’est un tricot pour tricoter. On n’arrête jamais, dans la famille.',
+    angoraBlanket:
+        'Un plaid angora sur le fauteuil, et le chat ne le quitte plus. Je l’avais fait pour moi. Maintenant, c’est le plaid du chat. Je demande la permission pour m’asseoir.',
+    horsehairBrush:
+        'La brosse en crin de cheval, pour faire briller les chaussures du dimanche. Ton grand-père cirait ses souliers tous les samedis soir, en sifflant. On l’entendait de la grange.',
+    plumedHat: 'Un chapeau de paille avec une plume de paon, pour la grande fête du village. J’étais la plus élégante. Le paon, lui, ne m’a jamais pardonné.',
+    quillPen:
+        'J’écris ce carnet avec un porte-plume. Ça va moins vite qu’un stylo, mais on a le temps de choisir ses mots. Et les mots, mon petit, ça se choisit.',
+    poncho: 'Le poncho d’alpaga, c’est une couverture avec un trou pour la tête. Ton grand-père le mettait pour aller voir les bêtes, l’hiver. Il ressemblait à un berger des Andes.',
+    alpacaBlanket:
+        'La couverture en alpaga est plus chaude que trois couvertures de laine. On la sort pour les grandes gelées. Ce soir-là, tout le monde veut dormir dans le même lit.',
+});
+
 // les pages du carnet : une par machine, dans l'ordre de la ferme
 export const CARNET_DONE_REWARD = { coins: 5000, rubans: 1 };
