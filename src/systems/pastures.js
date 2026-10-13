@@ -92,3 +92,15 @@ export function moveAnimal(i, k) {
     changed('animals');
     return true;
 }
+
+// renommer un pré (1.2)
+export function renamePasture(k, name) {
+    const p = state.pastures[k];
+    const n = String(name || '')
+        .trim()
+        .slice(0, 22);
+    if (!p || !n) return false;
+    p.name = n;
+    toast(`Le pré s’appelle maintenant « ${n} »`, ['ui', 'flowers']);
+    return true;
+}

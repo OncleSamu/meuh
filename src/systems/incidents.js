@@ -15,6 +15,8 @@ import { questPool, pickItems, qtyFor, xpBonus, hasAll, payItems } from './order
 import { tip } from './tips.js';
 import { addXp, spend, earn } from './player.js';
 import { rollRare } from './barn.js';
+import { owlHere } from './night.js';
+import { NIGHT } from '../data/night.js';
 
 export function scheduleIncident() {
     state.nextIncident = now() + INCIDENT_GAP[0] + Math.random() * (INCIDENT_GAP[1] - INCIDENT_GAP[0]);
@@ -42,7 +44,7 @@ export function startIncident(force) {
     const adults = state.animals.filter(a => isAdult(a) && !a.sick && !(animalRobust(a) && Math.random() < 0.7));
     // le corbeau ne vient que si vous êtes au champ (il faut le chasser en 15 secondes)
     const crowSpots = growing.filter(([, i]) => !nearDeco(i, 'birdhouse'));
-    const scared = state.grid.some(p => p.deco === 'scarecrow') && Math.random() < 0.75;
+    const scared = (state.grid.some(p => p.deco === 'scarecrow') && Math.random() < 0.75) || (owlHere() && Math.random() < NIGHT.owlScare);
     const kinds = [];
     if (farmShown() && crowSpots.length && !scared) kinds.push('crow', 'crow');
     if (state.level >= INCIDENT_LVL) {

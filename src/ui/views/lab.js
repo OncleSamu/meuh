@@ -14,7 +14,8 @@ import { btn, hint, timer, section, bar, empty } from '../kit.js';
 import { defineView, ui, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { confirmTap } from '../confirm.js';
-import { genWrap, looksText } from '../genlook.js';
+import { genWrap, looksText, animalArt, lineageHtml } from '../genlook.js';
+import { renameBtn } from '../sheets/rename.js';
 
 const pct = x => `${Math.round(x * 100)} %`;
 
@@ -70,7 +71,7 @@ function parentSlot(slot, p, kind) {
     const a = p ? (kind === 'plant' ? parentArt(p) : animalArtOf(G.animalByUid(p))) : `<span class="o-plus">${ico(['ui', 'plus'])}</span>`;
     return `<button class="lab-parent${p ? '' : ' empty'}" data-act="pickParent" data-kind="${kind}" data-slot="${slot}"><span class="lp-art">${a}</span><b>${name}</b></button>`;
 }
-const animalArtOf = a => (a ? genWrap(art('animal', a.type), a.g) : '');
+const animalArtOf = a => (a ? animalArt(a.type, a.g) : '');
 
 function crossCard() {
     if (!G.plantLabOpen()) return lockedCard('pollination', ['item', 'strawberry'], 'Croiser des plantes');
@@ -278,12 +279,13 @@ defineSheet('variety', {
                             ? `Génération ${v.gen} : il en faut au moins ${GX.fixGen}. Recroisez-la avec elle-même.`
                             : 'Encore des gènes mélangés : recroisez-la avec elle-même et gardez les meilleures.'
                 }</p>
-                ${G.canFix(v) ? `<div class="rename"><input type="text" maxlength="22" id="fix-name" placeholder="Son nom" value="${esc(v.auto)}">${btn('Fixer', { act: 'fixVariety', data: { id: v.id }, kind: 'gold', size: 'sm' })}</div>` : ''}</div>`;
+                ${G.canFix(v) ? `<div class="rename"><input type="text" maxlength="22" id="fix-name" placeholder="Son nom" value="${esc(G.varName(v))}">${btn('Fixer', { act: 'fixVariety', data: { id: v.id }, kind: 'gold', size: 'sm' })}</div>` : ''}</div>`;
         return `<div class="variety-card">
             <div class="tree-art var-art">${varPlantArt(v)}</div>
-            <div class="animal-kind">${v.fixed ? 'Création' : `Hybride · génération ${v.gen}`}</div>
+            <div class="animal-kind">${v.fixed ? 'Création' : `Hybride · génération ${v.gen}`}${renameBtn('variety', v.id, 'Renommer la variété')}</div>
             <div class="lines">${lines.map(l => `<div class="line"><div>${l}</div></div>`).join('')}</div>
             ${plantTraits(v.g, v.analyzed)}
+            ${v.lin ? `<div class="set-sub">Sa lignée</div>${lineageHtml({ lin: v.lin, me: G.lineSnap(v) })}` : ''}
             ${v.analyzed ? '' : `<p class="card-sub center">« ? » : la version cachée de chaque gène${G.labOpen() ? ', révélée par une analyse' : ''}.</p>`}
             ${fix}
             <div class="row-btns wrap">${actionsHtml}</div>
@@ -301,14 +303,14 @@ defineSheet('creations', {
         if (!vars.length && !races.length) return empty('Fixez une variété ou une race au laboratoire : elle apparaîtra ici, avec le nom que vous lui donnez.');
         const vHtml = vars
             .map(
-                v => `<div class="card crea-card"><span class="crea-art">${varArt(v)}</span><div class="card-main"><div class="card-title">${esc(v.name)}</div>
+                v => `<div class="card crea-card"><span class="crea-art">${varArt(v)}</span><div class="card-main"><div class="card-title">${esc(v.name)}${renameBtn('variety', v.id, 'Renommer la variété')}</div>
                 <div class="card-sub">${ITEMS[v.base].name} · ${looksText(v.g)}</div>${plantTraits(v.g, true, G.FLAVOR_IDS)}</div>
                 <div class="card-side col">${G.seedbankOpen() ? btn(`5 graines · ${fmt(G.seedPrice(v) * 5)}${ico(['ui', 'coin'])}`, { act: 'buyVarSeeds', data: { id: v.id }, size: 'sm', kind: 'green' }) : ''}${btn('Fiche', { act: 'open', data: { sheet: 'variety', id: v.id }, size: 'sm' })}</div></div>`,
             )
             .join('');
         const rHtml = races
             .map(
-                r => `<div class="card crea-card"><span class="crea-art">${genWrap(art('animal', r.type), r.g)}</span><div class="card-main"><div class="card-title">${esc(r.name)}</div>
+                r => `<div class="card crea-card"><span class="crea-art">${animalArt(r.type, r.g)}</span><div class="card-main"><div class="card-title">${esc(r.name)}${renameBtn('race', r.id, 'Renommer la race')}</div>
                 <div class="card-sub">${ANIMALS[r.type].name} · ${looksText(r.g)}</div>${animalTraits({ type: r.type, g: r.g, analyzed: true })}</div>
                 <div class="card-side col">${G.seedbankOpen() ? btn(`Un petit · ${fmt(G.racePrice(r))}${ico(['ui', 'coin'])}`, { act: 'buyRaceBaby', data: { id: r.id }, size: 'sm', kind: 'green' }) : ''}</div></div>`,
             )

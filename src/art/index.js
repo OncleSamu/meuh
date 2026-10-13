@@ -1,4 +1,5 @@
 // API des dessins : chaque fonction renvoie un <svg> prêt à insérer.
+import { featuresOf } from '../data/genetics.js';
 import { ITEMS } from '../data/items.js';
 import { items, animals, machines, ui, people, svg } from './kit.js';
 import { tree, sprout, youngPlant, readyPlant } from './plants.js';
@@ -13,6 +14,7 @@ import './glyphs.js';
 import './island.js';
 import './station.js';
 import './defis.js';
+import './v12.js';
 
 export const SPR = {
     farmhouse(l, roof) {
@@ -26,8 +28,12 @@ export const SPR = {
     item(id) {
         return items[id] ? svg(items[id]()) : ui.star ? svg(ui.star()) : '';
     },
-    animal(id) {
-        return svg(animals[id](), '0 0 80 80', 'animal-spr');
+    // « cow~201 » : la vache avec ses traits de gènes (cornes, oreilles, toison dans l'ordre de featuresOf)
+    animal(key) {
+        const [id, code] = String(key).split('~');
+        const o = {};
+        if (code) featuresOf(id).forEach((k, j) => (o[k] = +code[j] || 0));
+        return svg(animals[id](o), '0 0 80 80', 'animal-spr');
     },
     machine(id) {
         return svg(machines[id]());

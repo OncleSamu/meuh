@@ -19,6 +19,7 @@ import { sellPrice, hasMats, matMissing, payMats } from './market.js';
 import { challengeOn } from './prestige.js';
 import { eventProgress } from './events.js';
 import { varGrowth, varHardy, varExtra, varSelfWater, takeVarSeed, harvestVariety } from './genetics.js';
+import { wishGold } from './night.js';
 
 const COIN = ['ui', 'coin'];
 
@@ -517,6 +518,8 @@ export function addQuality(id, q, n) {
 }
 
 export function rollQuality(plot) {
+    // vœu d'étoile filante : les prochaines récoltes sont en or
+    if (wishGold()) return 2;
     const inGh = inGreenhouse(plot);
     let x = 0.08;
     if (inGh || isInSeason(plot.itemId)) x += 0.15;

@@ -35,6 +35,8 @@ export function cropRate(id) {
     let f;
     if (d.type === 'tree') f = sid === 'hiver' ? 0.5 : sid === 'automne' ? 1.2 : 1;
     else f = isInSeason(id) ? 1.3 : sid === 'hiver' ? 0.6 : 1;
+    // les champignons aiment la nuit (1.2)
+    if (id === 'mushroom' && isNight()) f *= 1.3;
     return f * weather().crop * (1 + rank('green') * 0.05) * themeCropMult(id);
 }
 

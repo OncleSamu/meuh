@@ -37,6 +37,7 @@ import { ensurePastures } from './pastures.js';
 import { ensureIsland, islandTick, islandOffline } from './island.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
+import { ensureNight, nightTick } from './night.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -70,6 +71,7 @@ export function normalizeState() {
     ensureIsland();
     ensureGenetics();
     ensureDefis();
+    ensureNight();
     ensureNature();
     ensureMachineData();
     ensureQuests();
@@ -188,6 +190,7 @@ function tickDeliveries() {
     if (ensureHoliday()) changed = true;
     if (geneticsTick()) changed = true;
     if (defiTick()) changed = true;
+    if (nightTick()) changed = true;
     if (contestTick()) changed = true;
     if (syncStory()) changed = true;
     return changed;

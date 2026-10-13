@@ -30,6 +30,15 @@ export const LOOKS = {
     pattern: ['Unie', 'Taches', 'Pois', 'Rayures', 'Reflets'],
 };
 
+// les traits des animaux (1.2) : cornes, oreilles, toison ; seulement pour les espèces où ils se voient.
+// L'indice 0 est l'allure naturelle de l'espèce. Comme les autres apparences, jamais choisis.
+export const FEATURES = {
+    horns: { name: 'Cornes', list: ['Naturelles', 'Sans cornes', 'Longues', 'En lyre'], species: ['cow', 'goat', 'buffalo', 'sheep'] },
+    ears: { name: 'Oreilles', list: ['Naturelles', 'Tombantes'], species: ['rabbit', 'pig', 'goat'] },
+    coat: { name: 'Toison', list: ['Naturelle', 'Longue', 'Frisée'], species: ['sheep', 'alpaca', 'horse', 'donkey'] },
+};
+export const featuresOf = type => Object.keys(FEATURES).filter(k => FEATURES[k].species.includes(type));
+
 // ---------------- saveurs de base des plantes ----------------
 // sucré, acide, amer, épicé, umami (0 à 5)
 const F = {
@@ -159,5 +168,7 @@ export const SALON_CRITERIA = [
     { id: 'softWool', name: 'La toison la plus douce', kind: 'animal', trait: 'soft', icon: ['item', 'wool'] },
     { id: 'coat', name: 'La plus belle robe', kind: 'animal', trait: 'looks', icon: ['animal', 'cow'] },
     { id: 'giant', name: 'La plus belle géante', kind: 'plant', trait: 'looks', icon: ['item', 'pumpkin'] },
+    { id: 'hornsBest', name: 'Les plus belles cornes', kind: 'animal', trait: 'horns', icon: ['animal', 'goat'] },
+    { id: 'fleece', name: 'La plus belle toison', kind: 'animal', trait: 'coat', icon: ['animal', 'alpaca'] },
 ];
 export const SALON_PERIOD = 2 * 24 * 3600 * 1000; // un Salon tous les deux jours

@@ -1,6 +1,8 @@
 // L'apparence d'une création : le dessin de l'espèce, modifié par ses gènes (taille, couleur, motif, auréole).
 // Jamais choisie par le joueur : elle découle des gènes. Le motif est posé par-dessus, découpé à la forme du dessin.
 import * as G from '../systems/index.js';
+import { art } from './icons.js';
+import { FEATURES, featuresOf } from '../data/genetics.js';
 
 const SIZE = [
     [0.82, 0.82],
@@ -56,4 +58,37 @@ export function looksText(g) {
     if (l.pattern) parts.push(L.pattern[l.pattern]);
     if (l.halo) parts.push('auréolée');
     return parts.join(', ');
+}
+
+// le dessin d'une bête avec ses traits de gènes (cornes, oreilles, toison), puis son apparence
+export function animalKey(type, g) {
+    const f = g ? G.featureLooks(g, type) : [];
+    return f.some(Boolean) ? `${type}~${f.join('')}` : type;
+}
+export const animalArt = (type, g, cls = '') => genWrap(art('animal', animalKey(type, g)), g, cls);
+// « cornes longues, toison frisée »
+export function featuresText(type, g) {
+    return featuresOf(type)
+        .map(k => [k, G.featureOf(g, k)])
+        .filter(([, v]) => v)
+        .map(([k, v]) => `${FEATURES[k].name.toLowerCase()} ${FEATURES[k].list[v].toLowerCase()}`)
+        .join(', ');
+}
+
+// la lignée (1.2) : grands-parents, parents, puis la création elle-même
+const escName = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+function lineNode(x, me) {
+    if (!x) return '<div class="ln-node empty"><span class="ln-art"></span><b>Inconnu</b></div>';
+    const pic = x.t ? animalArt(x.t, x.g) : x.g ? genWrap(art('item', x.b), x.g) : art('item', x.b);
+    return `<div class="ln-node${me ? ' me' : ''}"><span class="ln-art">${pic}</span><b>${escName(x.n)}</b><small>${x.gen ? `gén. ${x.gen}` : 'sauvage'}</small></div>`;
+}
+export function lineageHtml(self) {
+    if (!self || !self.lin) return '';
+    const grand = self.lin.flatMap(p => (p && p.lin ? p.lin : [null, null]));
+    const hasGrand = grand.some(Boolean);
+    return `<div class="lineage">
+        ${hasGrand ? `<div class="ln-row four">${grand.map(x => lineNode(x)).join('')}</div><div class="ln-links four"></div>` : ''}
+        <div class="ln-row two">${self.lin.map(x => lineNode(x)).join('')}</div><div class="ln-links two"></div>
+        <div class="ln-row one">${lineNode(self.me, true)}</div>
+    </div>`;
 }

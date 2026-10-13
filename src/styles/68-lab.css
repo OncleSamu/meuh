@@ -354,3 +354,69 @@ html.calm .gp-4 {
 .chef-card {
     background-color: #fdf2d8;
 }
+
+/* ---------------- la lignée (1.2) ---------------- */
+.lineage {
+    margin: 8px 0 4px;
+    padding: 8px 6px 6px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 2px dashed rgba(58, 38, 24, 0.3);
+    border-radius: 14px;
+}
+.ln-row {
+    display: grid;
+    gap: 6px;
+    justify-items: center;
+}
+.ln-row.four {
+    grid-template-columns: repeat(4, 1fr);
+}
+.ln-row.two {
+    grid-template-columns: repeat(2, 1fr);
+}
+.ln-row.one {
+    grid-template-columns: 1fr;
+}
+.ln-links {
+    height: 12px;
+    margin: 0 12.5%;
+    border: 2px solid rgba(58, 38, 24, 0.35);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+}
+.ln-links.two {
+    margin: 0 25%;
+}
+.ln-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 0;
+    max-width: 100%;
+}
+.ln-art {
+    width: 44px;
+    height: 44px;
+}
+.ln-art svg,
+.ln-art > .gl {
+    width: 100%;
+    height: 100%;
+}
+.ln-node b {
+    font-size: 0.7rem;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+}
+.ln-node small {
+    font-size: 0.62rem;
+    color: var(--ink-soft);
+}
+.ln-node.me .ln-art {
+    width: 58px;
+    height: 58px;
+}
+.ln-node.empty {
+    opacity: 0.4;
+}

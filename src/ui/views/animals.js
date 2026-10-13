@@ -10,11 +10,12 @@ import { ico, art } from '../icons.js';
 import { btn, hint, hearts, bar, timer, lines, segmented } from '../kit.js';
 import { defineView, defineLive, ui, currentPath, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
-import { genWrap, looksText } from '../genlook.js';
+import { genWrap, looksText, animalKey, featuresText, lineageHtml } from '../genlook.js';
 import { animalTraits } from './lab.js';
 import { reduceMotion, burstAt } from '../fx.js';
 import { pinBar } from './common.js';
 import { longPress } from '../longpress.js';
+import { renameBtn } from '../sheets/rename.js';
 
 let els = [];
 
@@ -40,7 +41,7 @@ function freeSpot(self, list = els) {
 
 const babyBody = a => (a.type === 'chicken' ? art('ui', 'chick') : a.type === 'duck' ? art('ui', 'duckling') : art('animal', a.type));
 // le dessin d'une bête, avec l'apparence de ses gènes (robe, taille, motif)
-const bodyOf = a => genWrap(G.isAdult(a) ? art('animal', a.type) : babyBody(a), a.g);
+const bodyOf = a => genWrap(G.isAdult(a) ? art('animal', animalKey(a.type, a.g)) : babyBody(a), a.g);
 
 // le pré regardé : un numéro, ou 'all' (l'étable de tout le troupeau)
 const shownPasture = () => {
@@ -199,7 +200,7 @@ function stableHtml(k) {
     return state.pastures
         .map((p, j) =>
             G.pastureLoad(j)
-                ? `<h3 class="section-title st-head"><span>${esc(p.name)}</span><small>${G.pastureLoad(j)}/20</small></h3><div class="stable">${group(j)}</div>`
+                ? `<h3 class="section-title st-head"><span>${esc(p.name)}</span>${renameBtn('pasture', j, 'Renommer ce pré')}<small>${G.pastureLoad(j)}/20</small></h3><div class="stable">${group(j)}</div>`
                 : '',
         )
         .join('');
@@ -220,7 +221,8 @@ function pastureBar(mode, cur) {
     const add = G.canAddPasture()
         ? `<button class="pas-chip add${G.herdFull() ? ' urge' : ''}" data-act="buyPasture">${ico(['ui', 'plus'])}<span>Nouveau pré</span><small>${fmt(G.pastureCost())}${ico(['ui', 'coin'])}</small></button>`
         : '';
-    return `<div class="pas-bar">${all}${chips}${add}</div>`;
+    const ren = typeof cur === 'number' && state.pastures[cur] ? `<span class="pas-ren">${renameBtn('pasture', cur, 'Renommer ce pré')}</span>` : '';
+    return `<div class="pas-bar">${all}${chips}${ren}${add}</div>`;
 }
 
 function renderAnimals(el) {
@@ -270,7 +272,8 @@ function geneBlock(a) {
     const race = a.race && state.genetics.races[a.race];
     const can = G.canFixRace(a);
     return `<div class="gene-box"><div class="set-sub">Ses gènes${race ? ` · race « ${esc(race.name)} »` : a.gen ? ` · génération ${a.gen}` : ''}</div>
-        <p class="card-sub">${looksText(a.g)}${a.parents ? ` · fille de ${a.parents.map(esc).join(' et ')}` : ''}</p>
+        <p class="card-sub">${[looksText(a.g), featuresText(a.type, a.g)].filter(Boolean).join(', ')}${a.parents ? ` · fille de ${a.parents.map(esc).join(' et ')}` : ''}</p>
+        ${a.lin ? lineageHtml({ lin: a.lin, me: G.lineSnap(a) }) : ''}
         ${animalTraits(a)}
         <div class="row-btns wrap">${G.labOpen() && !a.analyzed ? btn(`Analyser · ${fmt(G.analyzeCost())}${ico(['ui', 'coin'])}`, { act: 'analyze', data: { id: a.uid }, size: 'sm', icon: ['ui', 'search'] }) : ''}${G.breedOpen() && G.isAdult(a) ? btn('Choisir pour l’élevage', { act: 'breedWith', data: { id: a.uid }, size: 'sm', icon: ['ui', 'heart'] }) : ''}</div>
         ${can ? `<div class="rename"><input type="text" maxlength="22" id="race-name" placeholder="Nom de la race">${btn('Fixer la race', { act: 'fixRace', data: { id: a.uid }, kind: 'gold', size: 'sm' })}</div>` : ''}
