@@ -1,6 +1,6 @@
 // L'île (bêta 3) : plantations tropicales et verger des îles, ouverts par le chantier « Le bac ».
 export const ISLAND = {
-    lvl: 35,
+    lvl: 38,
     project: 'ferry',
     // parcelles : jamais d'arrosage (les pluies tropicales s'en chargent), toujours de saison
     plotsBase: 6,

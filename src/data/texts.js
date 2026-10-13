@@ -46,9 +46,9 @@ export const GUIDE = [
         id: 'island',
         icon: ['item', 'pineapple'],
         name: 'L’île',
-        lvl: 35,
+        lvl: 38,
         view: 'island',
-        text: 'Au niveau 35, une fois le port rénové, réparez le bac de Tiago (volet Village, carte « L’île »). Sur l’île, les cultures tropicales poussent sans arrosage et en toute saison : ananas, patate douce, fruit de la passion, manioc, gingembre, tiaré. Son verger accueille bananiers, cocotiers, manguiers, papayers, citronniers verts, avocatiers, goyaviers, caféiers et litchis. Puis paillote, four des îles, brûlerie et rhumerie ouvrent quatre nouvelles machines.',
+        text: 'Au niveau 38, une fois l’abbaye rénovée, réparez le bac de Tiago (volet Village, carte « L’île »). Sur l’île, les cultures tropicales poussent sans arrosage et en toute saison : ananas, patate douce, fruit de la passion, manioc, gingembre, tiaré. Son verger accueille bananiers, cocotiers, manguiers, papayers, citronniers verts, avocatiers, goyaviers, caféiers et litchis. Puis paillote, four des îles, brûlerie et rhumerie ouvrent quatre nouvelles machines.',
     },
     {
         id: 'workshop',
@@ -88,7 +88,7 @@ export const GUIDE = [
         name: 'Le village et le hameau',
         lvl: 2,
         view: 'quests',
-        text: 'Seize chapitres de chantiers à rénover avec vos produits, du village jusqu’au domaine des Coteaux. Chaque bâtiment donne un bonus pour toujours : le train, la montgolfière, le marchand, le commis…',
+        text: 'Dix-huit chapitres de chantiers à rénover avec vos produits, du village jusqu’au domaine des Coteaux. Chaque bâtiment donne un bonus pour toujours : le train, la montgolfière, le marchand, le commis…',
     },
     {
         id: 'friends',
@@ -208,7 +208,7 @@ export const GUIDE = [
         name: "L'Alpage",
         lvl: 45,
         view: 'quests',
-        text: 'Chapitres 13 et 14 : transhumance, fromagerie d’alpage, génépi, puis les saisons de la ferme et les fermes à thème au prestige.',
+        text: 'Chapitres 15 et 16 : transhumance, fromagerie d’alpage, génépi, puis les saisons de la ferme et les fermes à thème au prestige.',
     },
     {
         id: 'seasons4',
@@ -240,7 +240,15 @@ export const GUIDE = [
         name: 'Le Domaine',
         lvl: 48,
         view: 'quests',
-        text: 'Chapitres 15 et 16 : le chai et le vin, la tonnellerie, la maison de l’affineur, la salle des ventes, la cidrerie et la crayère du champagne.',
+        text: 'Chapitres 17 et 18 : le chai et le vin, la tonnellerie, la maison de l’affineur, la salle des ventes, la cidrerie et la crayère du champagne.',
+    },
+    {
+        id: 'abbey',
+        icon: ['ui', 'beer'],
+        name: 'L’abbaye et ses bières',
+        lvl: 35,
+        view: 'quests',
+        text: 'Chapitres 9 et 10 : la malterie grille l’orge en malt blond, ambré, brun ou noir. À la brasserie (Atelier, volet Brasserie), une bière = un malt, une dose de houblon et jusqu’à trois ingrédients de la ferme, chacun dosé. L’accord (jusqu’à 3 étoiles) fait le prix. Nommez vos bières, faites-les vieillir en fût au cellier, et remplissez le livre des bières.',
     },
     {
         id: 'engines',
@@ -261,6 +269,16 @@ export const GUIDE = [
 ];
 
 export const TIPS = {
+    abbey: {
+        icon: ['ui', 'beer'],
+        title: 'Une abbaye et sa brasserie',
+        text: 'Derrière le port, Frère Hugues et Agnès rallument la brasserie de l’abbaye (volet Village, carte « L’abbaye »). Semez de l’orge : il en faudra pour le malt.',
+    },
+    brew: {
+        icon: ['ui', 'beer'],
+        title: 'Inventer sa bière',
+        text: 'Un malt donne la couleur, le houblon l’amertume, et chaque fruit ou légume son goût. Regardez l’accord avant de brasser : certains mariages valent beaucoup plus cher. La première fois, la bière reçoit un nom : touchez le crayon pour le changer.',
+    },
     station: {
         icon: ['ui', 'flowers'],
         title: 'Une station de recherche',

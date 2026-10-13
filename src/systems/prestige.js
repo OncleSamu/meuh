@@ -49,6 +49,8 @@ export function doPrestige(challenge, theme) {
         projects: state.projects,
         // la génétique garde ses créations, ses variétés et leurs graines ; produits et bêtes partent avec la ferme
         genetics: state.genetics ? { ...state.genetics, stock: {}, cross: null, breed: null } : null,
+        // la brasserie garde ses recettes et son livre ; les bouteilles, les cuves et les fûts partent avec la ferme
+        brew: state.brew ? { ...state.brew, stock: {}, vats: [], barrels: [] } : null,
         // les grands défis gardent leurs trophées ; le défi en cours est mis de côté
         defis: state.defis ? { ...state.defis, cur: null } : null,
         night: state.night,

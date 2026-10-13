@@ -156,6 +156,7 @@ export const STORY_MAPS = [
     { id: 'village', name: 'Le village', openChapter: 0, party: 'townhall' },
     { id: 'hamlet', name: 'Le hameau', openChapter: 4, party: 'bandstand' },
     { id: 'port', name: 'Le port', openChapter: 6, party: 'shipyard' },
+    { id: 'abbey', name: 'L’abbaye', openChapter: 16, party: 'beerfest' },
     { id: 'island', name: "L'île", openChapter: 12, party: 'carnival' },
     { id: 'station', name: 'La station', openChapter: 14, party: 'salonHall' },
     { id: 'alpine', name: "L'alpage", openChapter: 8, party: 'refuge' },

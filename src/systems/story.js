@@ -16,6 +16,7 @@ import { addXp } from './player.js';
 import { ensureQuests } from './orders.js';
 import { ensureStall } from './stall.js';
 import { ensureIsland } from './island.js';
+import { ensureBrew } from './brewery.js';
 import { pluralFr } from '../core/format.js';
 
 export const projState = id => state.projects[id] || (state.projects[id] = { given: {}, done: false });
@@ -72,6 +73,7 @@ export function syncStory() {
         toast(`Chapitre ${chapterNum(c.n)} : ${c.name}`, ['ui', 'village']);
         if (c.n === 1) tip('village');
         if (c.n === 5) tip('hamlet');
+        if (c.n === 17) tip('abbey');
         if (c.n === 13) tip('isle');
         if (c.n === 15) tip('station');
         sfx('level');
@@ -153,7 +155,9 @@ export function applyProjectReward(pid) {
     if (pid === 'washhouse') ensureStall();
     if (pid === 'bandstand') state.prestige.rubans += 5;
     if (pid === 'ferry') ensureIsland();
-    if (pid === 'carnival' || pid === 'salonHall') state.prestige.rubans += 5;
+    if (pid === 'carnival' || pid === 'salonHall' || pid === 'beerfest') state.prestige.rubans += 5;
+    if (pid === 'brewhall') tip('brew');
+    if (pid === 'brewhall' || pid === 'fermenters' || pid === 'beerfest' || pid === 'barrelcellar') ensureBrew();
 }
 
 const MAP_TEASE = {
@@ -161,6 +165,7 @@ const MAP_TEASE = {
     port: 'au bout de la route, un petit port',
     alpine: 'là-haut, les alpages',
     domaine: 'sur les coteaux, un vieux domaine',
+    abbey: 'derrière le port, une vieille abbaye',
     island: 'depuis le port, une île tiède',
     station: 'au bout du chemin des vergers, une station de recherche',
 };
@@ -169,7 +174,7 @@ const MAP_TEASE = {
 export function storyNextText(p) {
     const c = currentChapter();
     if (!c)
-        return 'Village, hameau, port, île, station, alpage et domaine : toute l’histoire est écrite. Merci pour tout ! Prochain grand but : la Ferme légendaire (Livre de la ferme).';
+        return 'Village, hameau, port, abbaye, île, station, alpage et domaine : toute l’histoire est écrite. Merci pour tout ! Prochain grand but : la Ferme légendaire (Livre de la ferme).';
     const at = state.level < c.lvl ? ` au niveau ${c.lvl}` : '';
     if (chapterDone(p.ch) && c.map && c.map !== mapOf(p)) return `Ce n’est pas fini : ${MAP_TEASE[c.map]} vous attend${at}.`;
     if (chapterDone(p.ch)) return `Chapitre ${chapterNum(p.ch)} terminé ! Prochain chapitre : « ${c.name} »${at}.`;

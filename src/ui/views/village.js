@@ -95,11 +95,13 @@ function storyCard() {
         .join('');
     const top = cc
         ? `<div class="card-title">Chapitre ${G.chapterNum(cc.n)} · ${cc.name}</div><div class="card-sub">${G.chapterOpen(cc.n) ? `${cc.intro} (${G.chapterProjects(cc.n).filter(p => G.projectDone(p.id)).length} / ${G.chapterProjects(cc.n).length})` : `Ce chapitre s’ouvre au niveau ${cc.lvl}${G.chapterAfter(cc.n) ? `, après le chapitre ${G.chapterNum(G.chapterAfter(cc.n))}` : ''}.`}</div>`
-        : m === 'island'
-          ? '<div class="card-title">L’île est en fête !</div><div class="card-sub">Bac, paillote, four, brûlerie, rhumerie et carnaval : Tiago et Maëva vous remercient.</div>'
-          : m === 'station'
-            ? '<div class="card-title">La station est au complet !</div><div class="card-sub">Serre, étable, laboratoire, conservatoire, ruche et salle du Salon : Agathe et Victor vous remercient.</div>'
-            : '<div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port, alpage et domaine : merci, citoyen d’honneur. Tout le canton vous adore.</div>';
+        : m === 'abbey'
+          ? '<div class="card-title">L’abbaye brasse de nouveau !</div><div class="card-sub">Malterie, salle de brassage, cuves, cellier, étiqueterie et fête de la bière : Frère Hugues et Agnès lèvent leur chope à votre santé.</div>'
+          : m === 'island'
+            ? '<div class="card-title">L’île est en fête !</div><div class="card-sub">Bac, paillote, four, brûlerie, rhumerie et carnaval : Tiago et Maëva vous remercient.</div>'
+            : m === 'station'
+              ? '<div class="card-title">La station est au complet !</div><div class="card-sub">Serre, étable, laboratoire, conservatoire, ruche et salle du Salon : Agathe et Victor vous remercient.</div>'
+              : '<div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port, alpage et domaine : merci, citoyen d’honneur. Tout le canton vous adore.</div>';
     return `<div class="card story-card"><div class="chapter-head">${top}</div>${switcher}
         <div class="vmap ${M.id}${party ? ' party' : ''}">${MAP_BG[M.id]}${party ? '<div class="bunting"></div>' : ''}${blds}</div>${projectDetail(sel)}</div>`;
 }

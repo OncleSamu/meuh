@@ -19,6 +19,7 @@ import { setupLab } from './ui/views/lab.js';
 import { setupAnimals, wanderAnimals } from './ui/views/animals.js';
 import { setupWorkshop } from './ui/views/workshop.js';
 import { setupCave } from './ui/views/cave.js';
+import { setupBrewery } from './ui/views/brewery.js';
 import { setupOrders } from './ui/views/orders.js';
 import { setupDefis } from './ui/views/defis.js';
 import { setupVillage } from './ui/views/village.js';
@@ -58,6 +59,7 @@ function start() {
     setupAnimals();
     setupWorkshop();
     setupCave();
+    setupBrewery();
     setupOrders();
     setupDefis();
     setupVillage();
@@ -91,8 +93,8 @@ function start() {
     if (state.pendingGift131) {
         pushMoment('celebrate', {
             icon: ['machine', 'pastry'],
-            title: 'De nouvelles machines !',
-            sub: 'Des recettes ont déménagé pour que chaque machine garde une liste courte. Pour que vous n’en perdiez aucune, ces machines vous sont offertes :',
+            title: 'De nouvelles machines !',
+            sub: 'Des recettes ont déménagé pour que chaque machine garde une liste courte. Pour que vous n’en perdiez aucune, ces machines vous sont offertes :',
             lines: state.pendingGift131.map(n => [['ui', 'check'], n]),
         });
         delete state.pendingGift131;

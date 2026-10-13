@@ -10,6 +10,7 @@ import { NATURE } from '../data/nature.js';
 import { ORCHARD } from '../data/farm.js';
 import { ISLAND } from '../data/island.js';
 import { GENETICS } from '../data/genetics.js';
+import { ABBEY } from '../data/abbey.js';
 import { CAVE_LVL } from '../data/cave.js';
 import { MAX_LEVEL } from '../data/progress.js';
 import * as G from '../systems/index.js';
@@ -50,6 +51,7 @@ export const TABS = [
         subs: [
             ['workshop', 'Machines', ['machine', 'mill']],
             ['cave', 'Cave', ['ui', 'cave'], () => CAVE_LVL],
+            ['brew', 'Brasserie', ['ui', 'beer'], () => ABBEY.lvl],
             ['lab', 'Labo', ['ui', 'flowers'], () => GENETICS.lvl],
         ],
     },

@@ -144,6 +144,7 @@ export const SOILS = {
             'artichoke',
             'buckwheat',
             'espelette',
+            'barley',
         ],
     },
     shade: {
@@ -500,6 +501,7 @@ export const MAT = {
     machine: {
         deli: { wood: 8, stone: 6 },
         crepery: { wood: 12, stone: 8 },
+        malthouse: { wood: 20, stone: 20 },
         pastry: { wood: 10, stone: 6 },
         fishmonger: { wood: 10, stone: 8 },
         stove: { wood: 8, stone: 14 },

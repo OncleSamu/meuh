@@ -3329,3 +3329,19 @@ Object.assign(RECIPES, {
     spreadCrepe: { id: 'spreadCrepe', machine: 'crepery', ing: { flour: 2, egg: 1, milk: 1, hazelnutSpread: 1 }, time: 150, lvl: 36, base: 36, xp: 10 },
     calvadosCrepe: { id: 'calvadosCrepe', machine: 'crepery', ing: { flour: 2, egg: 1, milk: 1, calvados: 1 }, time: 180, lvl: 35, base: 35, xp: 11 },
 });
+
+// ---------------- 1.6 : la malterie de l'abbaye ----------------
+MACHINES.malthouse = {
+    id: 'malthouse',
+    name: 'Malterie',
+    cost: 12000,
+    reqLvl: 35,
+    needProject: 'malthouse',
+    desc: 'L’orge germée, grillée plus ou moins longtemps',
+};
+Object.assign(RECIPES, {
+    maltBlond: { id: 'maltBlond', machine: 'malthouse', ing: { barley: 3 }, time: 60, lvl: 35, base: 35, xp: 4 },
+    maltAmber: { id: 'maltAmber', machine: 'malthouse', ing: { barley: 3 }, time: 120, lvl: 35, base: 35, xp: 8 },
+    maltBrown: { id: 'maltBrown', machine: 'malthouse', ing: { barley: 3 }, time: 180, lvl: 35, base: 35, xp: 11 },
+    maltBlack: { id: 'maltBlack', machine: 'malthouse', ing: { barley: 3 }, time: 240, lvl: 35, base: 35, xp: 15 },
+});

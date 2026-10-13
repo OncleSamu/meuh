@@ -23,7 +23,7 @@ test('toutes les recettes de l’île ont des ingrédients et une machine connus
     assert.equal(isl.length, 41);
 });
 
-test('l’île se débloque par le bac, après le port (1.4 : une seule histoire)', () => {
+test('l’île se débloque par le bac, après l’abbaye (une seule histoire)', () => {
     const st = memStore();
     st.setItem(SAVE_KEY, OLD);
     setStore(st);
@@ -33,11 +33,13 @@ test('l’île se débloque par le bac, après le port (1.4 : une seule histoire
     // l'ancien niveau 31 passe à l'échelle des 50 niveaux, sans rien perdre
     assert.ok(state.level >= 37 && state.level <= 40, 'niveau converti : ' + state.level);
     assert.ok(G.chapterOpen(6), 'le chapitre commencé reste ouvert');
-    assert.equal(G.chapterAfter(13), 8);
-    assert.equal(G.chapterNum(13), 9);
-    assert.equal(G.chapterOpen(13), false, 'l’île attend la fin du port');
-    for (const p of Object.values(PROJECTS)) if ([1, 2, 3, 4, 5, 6, 7, 8].includes(p.ch)) state.projects[p.id] = { given: {}, done: true };
-    assert.ok(G.chapterOpen(13), 'le chapitre de l’île est ouvert (port fini, niveau 35)');
+    // 1.6 : l'abbaye vient entre le port et l'île
+    assert.equal(G.chapterAfter(13), 18);
+    assert.equal(G.chapterNum(13), 11);
+    assert.equal(G.chapterOpen(13), false, 'l’île attend la fin de l’abbaye');
+    state.level = Math.max(state.level, 39);
+    for (const p of Object.values(PROJECTS)) if ([1, 2, 3, 4, 5, 6, 7, 8, 17, 18].includes(p.ch)) state.projects[p.id] = { given: {}, done: true };
+    assert.ok(G.chapterOpen(13), 'le chapitre de l’île est ouvert (abbaye finie, niveau 38)');
     assert.equal(G.islandOpen(), false);
     // réparer le bac
     state.money = 1e9;
