@@ -19,7 +19,9 @@ import { record } from './book.js';
 import { earn, addXp } from './player.js';
 
 export const contestOpen = () => state.level >= CONTEST_LVL;
-export const contestTarget = L => Math.round((300 + L * 170) / 50) * 50;
+// 1.4 : le niveau est ramené à l'échelle des 40 niveaux (sinon les rivales grandissent plus vite que vos points)
+const lv40 = L => 1 + ((L - 1) * 39) / 49;
+export const contestTarget = L => Math.round((300 + lv40(L) * 170) / 50) * 50;
 export const contestEndsIn = () => (state.contest ? Math.max(0, state.contest.end - now()) / 1000 : weekEndsIn());
 // part de la semaine écoulée depuis votre inscription : les rivales partent en même temps que vous
 export const contestFrac = (c, at = now()) => Math.max(0, Math.min(c.end, at) - c.start) / WEEK_MS;
@@ -48,7 +50,10 @@ export function myContestScore() {
 // une inscription en cours de semaine donne des paliers plus bas
 const contestWindow = c => Math.max(0.15, (c.end - c.start) / WEEK_MS);
 export const contestTiers = c => CONTEST_TIERS.map(f => Math.max(10, Math.round((contestTarget(c.lvl) * contestWindow(c) * f) / 10) * 10));
-export const tierReward = c => ({ coins: Math.round((500 * (1 + c.lvl * 0.3) * LEAGUES[c.league || 0].pay) / 10) * 10, xp: 200 + c.lvl * 40 });
+export const tierReward = c => ({
+    coins: Math.round((500 * (1 + lv40(c.lvl) * 0.3) * LEAGUES[c.league || 0].pay) / 10) * 10,
+    xp: Math.round(200 + lv40(c.lvl) * 40),
+});
 
 function rivalScore(r, c, frac) {
     const noise = 0.9 + ((Math.sin((c.start / 864e5 + 1) * (r.f * 97.3)) + 1) / 2) * 0.2;
@@ -93,7 +98,7 @@ export function contestTick() {
 }
 
 export function contestReward(place, score, league = 0) {
-    const coins = Math.round((1000 * (1 + state.level * 0.3) * [0, 1, 0.6, 0.35, 0.15, 0.1][place] * LEAGUES[league].pay) / 10) * 10;
+    const coins = Math.round((1000 * (1 + lv40(state.level) * 0.3) * [0, 1, 0.6, 0.35, 0.15, 0.1][place] * LEAGUES[league].pay) / 10) * 10;
     const rub = place === 1 ? 1 : 0;
     state.money += coins;
     state.stats.earned += coins;
