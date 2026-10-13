@@ -9,7 +9,7 @@ import { ANIMALS } from '../src/data/animals.js';
 import { MACHINES, MACHINE_SLOTS, RECIPES } from '../src/data/machines.js';
 import { DECOS, UPGRADES } from '../src/data/farm.js';
 import { PROJECTS, STORIES, RIVALS, CHAPTERS } from '../src/data/village.js';
-import { RARE, STALL_MAX_QTY } from '../src/data/commerce.js';
+import { RARE, STALL_MAX_QTY, CONTEST_POINTS } from '../src/data/commerce.js';
 import { NATURE } from '../src/data/nature.js';
 import { TRANS_KINDS } from '../src/data/animals.js';
 import { FARM_SEASON_TIERS } from '../src/data/port.js';
@@ -467,6 +467,10 @@ function step() {
     progress();
 }
 
+// --contest : points du concours gagnés chaque heure de jeu (sans le charme), pour régler les ligues
+const contestLog = process.argv.includes('--contest') ? [] : null;
+const contestPts = () => Object.entries(CONTEST_POINTS).reduce((a, [k, P]) => a + (state.stats[k] || 0) * P.pts, 0);
+let cp0 = contestPts();
 const total = Math.round(hours * 3600);
 for (let k = 0; k < total; k++) {
     t++;
@@ -474,7 +478,13 @@ for (let k = 0; k < total; k++) {
     G.gameTick();
     if (t % 5 === 0) step();
     if (!levels[state.level]) levels[state.level] = t;
+    if (contestLog && t % 3600 === 0) {
+        const p = contestPts();
+        contestLog.push([state.level, Math.round(p - cp0), G.charmScore()]);
+        cp0 = p;
+    }
 }
+if (contestLog) console.log('CONTEST ' + JSON.stringify(contestLog));
 
 const fmtH = sec => (sec >= 3600 ? `${Math.floor(sec / 3600)} h ${String(Math.floor((sec % 3600) / 60)).padStart(2, '0')}` : `${Math.floor(sec / 60)} min`);
 const out = {
