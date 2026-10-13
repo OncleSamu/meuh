@@ -1,5 +1,5 @@
 // Refonte des dessins (1.3) : les produits redessinés, famille par famille. Ces dessins remplacent ceux de items.js.
-import { C, E, F, FC, FE, HL, L, P, R, SHADOW, leaf, items } from './kit.js';
+import { C, E, F, FC, FE, HL, L, P, R, SHADOW, leaf, sub, items } from './kit.js';
 
 // ---------------- les vins et champagnes ----------------
 const grapeMark = (x, y, c) =>
@@ -313,4 +313,325 @@ const CHEESES = {
         HL(18, 30, 3, 1.4, 0, 0.6),
 };
 
+// ---------------- les boissons ----------------
+// ---- formes communes ----
+// bouteille de jus ronde : liquide visible, bouchon à vis, étiquette ronde avec le fruit
+const juiceB = (liquid, fruit, cap = '#c8453a') => {
+    const body = 'M26 6 L38 6 L38 13 Q51 19 51 33 L51 54 Q51 60 45 60 L19 60 Q13 60 13 54 L13 33 Q13 19 26 13Z';
+    return (
+        SHADOW(32, 61, 17, 2.6) +
+        P(body, '#eaf6fd') +
+        // le jus, avec un reflet à sa surface
+        F('M14.4 27 Q20 23.5 32 23.5 Q44 23.5 49.6 27 L49.6 54 Q49.6 58.6 45 58.6 L19 58.6 Q14.4 58.6 14.4 54Z', liquid) +
+        F('M14.4 27 Q32 23.5 49.6 27 L49.6 29.4 Q32 25.6 14.4 29.4Z', '#fff', 0.35) +
+        // l'étiquette : un grand cartouche crème avec le fruit, un liseré de la couleur du bouchon
+        R(17, 34, 30, 21, 5, '#fffaf0', 1.8) +
+        R(19.5, 36.5, 25, 16, 3.5, 'none', 0) +
+        L('M20 51.5 L44 51.5', 1.6, cap) +
+        sub(fruit, 22, 33.5, 20) +
+        // gouttes de fraîcheur et reflets
+        FC(47, 30, 1, '#fff', 0.8) +
+        FE(47.5, 33, 0.8, 1.3, '#fff', 0.7) +
+        F('M16.4 29 L19.4 27.4 L19.4 52 L16.4 52Z', '#fff', 0.5) +
+        P(body, 'none') +
+        // le bouchon à vis, couleur du fruit
+        R(24, 1.5, 16, 7.5, 2.5, cap) +
+        L('M27 3.5 L27 7.5 M30.3 3.5 L30.3 7.5 M33.6 3.5 L33.6 7.5 M37 3.5 L37 7.5', 0.9, 'rgba(58,38,24,.35)') +
+        HL(26, 4, 1, 1.6, 0, 0.6)
+    );
+};
+// grand verre : boisson, glaçons, paille et garniture sur le bord
+const tallGlass = (liquid, garnish = '', top = '#fff6e0', straw = '#e8364b') => {
+    const g = 'M15 10 L49 10 L45 58 Q45 60 43 60 L21 60 Q19 60 19 58Z';
+    return (
+        SHADOW(32, 61, 14, 2.6) +
+        P(g, '#eaf6fd') +
+        F('M16.6 20 L47.4 20 L44 57 Q44 58.6 42.5 58.6 L21.5 58.6 Q20 58.6 20 57Z', liquid) +
+        F('M16.6 20 L47.4 20 L47.1 23 L16.9 23Z', top, 0.8) +
+        R(23, 28, 7, 7, 1.6, '#ffffff', 1.4) +
+        R(33, 36, 7, 7, 1.6, '#ffffff', 1.4) +
+        L('M37 14 L44 -2', 3.2) +
+        L('M37 14 L44 -2', 1.6, straw) +
+        F('M19 14 L22 13 L24 55 L22 56Z', '#fff', 0.45) +
+        P(g, 'none') +
+        garnish
+    );
+};
+// une tasse et sa soucoupe, avec de la vapeur
+const steam = L('M24 10 Q20 6 24 2 M32 12 Q28 7 32 2 M40 10 Q36 6 40 2', 1.8, 'rgba(255,255,255,.9)');
+const cup = (tea, extra = '', cupC = '#ffffff') =>
+    SHADOW(32, 58, 24, 3) +
+    E(32, 52, 26, 6, '#ffffff') +
+    E(32, 51, 18, 3.6, '#eef3f6', 0, 1.2) +
+    P('M48 28 Q60 28 58 38 Q56 46 46 44', 'none', 3.4) +
+    P('M48 28 Q60 28 58 38 Q56 46 46 44', 'none', 0) +
+    L('M48 28 Q60 28 58 38 Q56 46 46 44', 1.6, cupC) +
+    P('M10 24 L54 24 Q54 46 32 50 Q10 46 10 24Z', cupC) +
+    E(32, 24, 22, 5.5, cupC) +
+    E(32, 24.5, 18.5, 4, tea, 0, 1.2) +
+    HL(16, 32, 2, 6, -10, 0.6) +
+    steam +
+    extra;
+// une chope de bière avec sa mousse
+const chope = (beer, extra = '') => {
+    const g = 'M12 18 L44 18 L44 56 Q44 60 40 60 L16 60 Q12 60 12 56Z';
+    return (
+        SHADOW(30, 61, 18, 2.6) +
+        L('M44 26 Q56 26 56 38 Q56 48 44 48', 6) +
+        L('M44 26 Q56 26 56 38 Q56 48 44 48', 2.6, '#eaf6fd') +
+        P(g, '#eaf6fd') +
+        F('M13.4 22 L42.6 22 L42.6 56 Q42.6 58.6 40 58.6 L16 58.6 Q13.4 58.6 13.4 56Z', beer) +
+        [
+            [20, 50],
+            [30, 42],
+            [36, 52],
+            [24, 36],
+        ]
+            .map(([x, y]) => FC(x, y, 1.2, '#fff', 0.7))
+            .join('') +
+        F('M16 24 L19 24 L19 54 L16 54Z', '#fff', 0.4) +
+        P(g, 'none') +
+        P('M10 20 Q8 10 18 10 Q22 4 30 8 Q38 3 42 10 Q50 10 46 20 Q46 24 42 22 Q38 26 34 22 Q28 26 24 22 Q18 26 14 22 Q10 24 10 20Z', '#fffdf3') +
+        extra
+    );
+};
+const BUB = (x, y, r = 1.4) => FC(x, y, r, '#fff', 0.85);
+
+// dessinées à la demande : certains fruits (île) sont enregistrés après ce fichier
+const DRINKS = () => ({
+    juice: juiceB('#f5c542', 'apple', '#6cc04a'),
+    carrotJuice: juiceB('#f28c28', 'carrot'),
+    orangeJuice: juiceB('#f7a21b', 'orange', '#f28c28'),
+    watermelonJuice: juiceB('#f2546b', 'watermelon', '#4caf50'),
+    peachNectar: juiceB('#ffb27f', 'peach', '#f28c28'),
+    grapeJuice: juiceB('#7b2d86', 'grape', '#6b2a5e'),
+    blueberryJuice: juiceB('#3f4fa0', 'blueberry', '#2f3f7a'),
+    pineappleJuice: juiceB('#ffd94a', 'pineapple', '#4caf50'),
+    mangoJuice: juiceB('#ffad33', 'mango', '#e8792a'),
+    guavaJuice: juiceB('#f78fa7', 'guava', '#6cc04a'),
+    // le cidre : bouteille bouchée, muselet et étiquette à la pomme
+    cider:
+        SHADOW(32, 61, 13, 2.6) +
+        P('M27 6 L37 6 L37 18 Q46 23 46 34 L46 56 Q46 60 42 60 L22 60 Q18 60 18 56 L18 34 Q18 23 27 18Z', '#5f7f3a') +
+        F('M19.4 32 Q22 24 32 24 Q42 24 44.6 32 L44.6 56 Q44.6 58.6 42 58.6 L22 58.6 Q19.4 58.6 19.4 56Z', '#e8b04a', 0.75) +
+        R(21, 36, 22, 16, 3, '#fffaf0', 1.6) +
+        sub('apple', 25.5, 37.5, 13) +
+        R(26, 1, 12, 8, 3, '#d9b07a') +
+        L('M26 8 L38 8 M28 2 L28 9 M36 2 L36 9', 1.4, '#8f8574') +
+        F('M21 30 L23.5 27 L23.5 54 L21 54Z', '#fff', 0.35) +
+        BUB(30, 30) +
+        BUB(36, 28, 1),
+    // le pommeau : une petite carafe ventrue, couleur d'ambre
+    pommeau:
+        SHADOW(32, 61, 17, 2.6) +
+        P('M27 4 L37 4 L37 22 Q52 28 52 44 Q52 60 32 60 Q12 60 12 44 Q12 28 27 22Z', '#f3e7d2') +
+        F('M13.5 40 Q20 34 32 34 Q44 34 50.5 40 Q51 58.6 32 58.6 Q13 58.6 13.5 40Z', '#b5562a') +
+        P('M27 4 L37 4 L37 22 Q52 28 52 44 Q52 60 32 60 Q12 60 12 44 Q12 28 27 22Z', 'none') +
+        R(25, 0, 14, 6, 2.5, '#7a3a1e') +
+        R(22, 42, 20, 9, 2, '#f2c14e', 1.4) +
+        sub('apple', 27, 41.5, 10) +
+        HL(19, 42, 2, 7, 10, 0.5),
+    // la liqueur de génépi : une bouteille fine avec un brin de plante dedans
+    genepiLiqueur:
+        SHADOW(32, 61, 11, 2.6) +
+        P('M28 4 L36 4 L36 16 Q42 20 42 28 L42 56 Q42 60 38 60 L26 60 Q22 60 22 56 L22 28 Q22 20 28 16Z', '#eef8e6') +
+        F('M23.4 28 Q26 22 32 22 Q38 22 40.6 28 L40.6 56 Q40.6 58.6 38 58.6 L26 58.6 Q23.4 58.6 23.4 56Z', '#cfe89a') +
+        L('M32 56 Q30 42 33 28', 1.6, '#5a7a2e') +
+        leaf(31, 46, 6, 210, '#6cc04a', 0.5) +
+        leaf(33, 38, 6, -30, '#6cc04a', 0.5) +
+        C(33, 28, 1.8, '#ffd23f', 1) +
+        P('M28 4 L36 4 L36 16 Q42 20 42 28 L42 56 Q42 60 38 60 L26 60 Q22 60 22 56 L22 28 Q22 20 28 16Z', 'none') +
+        R(27, 0, 10, 6, 2, '#4f9e3a') +
+        F('M24.4 30 L26.4 28 L26.4 54 L24.4 54Z', '#fff', 0.5),
+    // le punch de l'été : un grand saladier en verre, des fruits et une louche
+    summerPunch:
+        SHADOW(32, 60, 26, 3) +
+        P('M6 26 Q8 54 32 56 Q56 54 58 26Z', '#eaf6fd') +
+        F('M7.6 30 L56.4 30 Q54 52 32 54.4 Q10 52 7.6 30Z', '#f2546b') +
+        E(32, 26, 26, 6, '#fde0e6') +
+        E(32, 26, 26, 6, 'none') +
+        C(18, 26, 4, '#f7a21b', 1.4) +
+        C(42, 25, 3.5, '#e8364b', 1.4) +
+        C(30, 27, 3, '#6cc04a', 1.4) +
+        L('M46 30 L56 6', 3) +
+        E(56, 6, 5, 3, '#d8d0c2', -20, 1.6) +
+        HL(14, 38, 2, 7, -20, 0.5) +
+        R(24, 54, 16, 4, 2, '#eaf6fd'),
+    // le lait de coco : une demi-noix et son lait
+    coconutMilk:
+        SHADOW(32, 58, 24, 3) +
+        P('M8 30 Q8 56 32 56 Q56 56 56 30Z', '#7a4a2a') +
+        L('M12 40 Q18 44 22 40 M30 48 Q34 52 38 48 M44 40 Q48 44 52 38', 1.2, '#5e3a1e') +
+        E(32, 30, 24, 7, '#fffaf0') +
+        E(32, 30, 24, 7, 'none', 0, 3) +
+        E(32, 30, 20, 5, '#ffffff', 0, 0) +
+        FE(26, 29, 6, 1.6, '#fff', 0.9) +
+        C(50, 14, 7, '#7a4a2a') +
+        FE(52, 16, 3, 2, '#fffaf0', 1) +
+        FC(47, 11, 1.2, '#3a2618'),
+    bananaSmoothie: tallGlass('#ffe28a', sub('banana', 6, 0, 18), '#ffd0da', '#f2546b'),
+    mangoPassion: tallGlass('#ffad33', sub('passionFruit', 42, 0, 16), '#ffd9a0', '#7b2d86'),
+    lassi: tallGlass('#ffe7b0', sub('mango', 42, 0, 16), '#fffaf0', '#e8792a'),
+    limeade: tallGlass(
+        '#dff5b8',
+        C(15, 10, 7, '#a6d94a', 2) + C(15, 10, 4.5, '#e8f8c8', 1) + L('M15 5.5 L15 14.5 M10.5 10 L19.5 10', 0.8, '#6cc04a'),
+        '#ffffff',
+        '#4caf50',
+    ),
+    // le cocktail des îles : dans une noix de coco, avec une ombrelle
+    islandCocktail:
+        SHADOW(32, 59, 22, 3) +
+        P('M10 32 Q10 58 32 58 Q54 58 54 32Z', '#8b5a2b') +
+        L('M14 42 Q20 46 24 42 M34 50 Q38 54 42 50', 1.2, '#5e3a1e') +
+        E(32, 32, 22, 6, '#ffad33') +
+        E(32, 32, 22, 6, 'none', 0, 3) +
+        L('M36 32 L48 4', 1.8, '#c08b52') +
+        P('M38 10 Q48 -2 60 8 Q50 6 49 10 Q46 6 38 10Z', '#e8364b', 1.6) +
+        L('M44 6 L49 10 M54 6 L49 10', 1, '#fff') +
+        L('M24 32 L30 6', 3) +
+        L('M24 32 L30 6', 1.6, '#4fb3f6') +
+        sub('pineapple', 4, 14, 18),
+    // les thés
+    greenTea: cup('#a6c84a', leaf(50, 18, 9, -40, '#6cc04a', 0.5)),
+    lavenderTea: cup('#c9a7e8', L('M44 28 L52 4', 1.6, '#5a7a2e') + [6, 9, 12, 15].map(y => E(50 - (y - 6) * 0.3, y, 2.2, 1.6, '#9a6fd0', -20, 1)).join('')),
+    milkTea: cup('#d9b07a', P('M4 8 Q6 2 12 4 Q16 0 20 6 Q24 6 22 10 L6 12Z', 'none', 0)),
+    gingerTea: cup('#e8c14e', sub('ginger', 44, 36, 18)),
+    icedTea: tallGlass('#d9893a', C(49, 12, 6.5, '#ffb27f', 2) + C(49, 12, 3.5, '#ffd9b8', 1), '#f2c79a', '#f28c28'),
+    // les bières
+    blondBeer: chope('#f5c542'),
+    amberBeer: chope('#c4682a'),
+    cherryBeer: chope('#b51d38', sub('cherry', 40, 30, 22)),
+    // l'hydromel : une cruche en grès et une goutte de miel
+    mead:
+        SHADOW(32, 60, 18, 3) +
+        P('M22 10 L42 10 L42 16 Q54 24 54 40 Q54 58 32 58 Q10 58 10 40 Q10 24 22 16Z', '#d9b07a') +
+        L('M42 22 Q58 22 56 34 Q54 42 50 42', 4) +
+        L('M42 22 Q58 22 56 34 Q54 42 50 42', 1.8, '#d9b07a') +
+        R(20, 6, 24, 6, 3, '#a8793a') +
+        F('M10.6 34 L53.4 34 L53.6 40 L10.4 40Z', '#ffd23f', 0.95) +
+        P('M22 10 L42 10 L42 16 Q54 24 54 40 Q54 58 32 58 Q10 58 10 40 Q10 24 22 16Z', 'none') +
+        P('M22 12 Q22 20 25 20 Q28 20 27 14', '#ffd23f', 1.4) +
+        sub('honey', 22, 40, 18) +
+        HL(17, 30, 2, 6, -10, 0.5),
+    // le rhum blanc : bouteille carrée, étiquette à la canne à sucre
+    rum:
+        SHADOW(32, 61, 14, 2.6) +
+        P('M27 4 L37 4 L37 16 Q46 18 46 24 L46 56 Q46 60 42 60 L22 60 Q18 60 18 56 L18 24 Q18 18 27 16Z', '#f1f8fb') +
+        R(21, 32, 22, 18, 3, '#2f9e8f', 1.6) +
+        sub('sugarcane', 24, 32, 16) +
+        R(26, 0, 12, 7, 2, '#8b5a2b') +
+        F('M20 26 L22.5 24 L22.5 54 L20 54Z', '#fff', 0.6) +
+        FE(42, 26, 1.2, 2.4, '#fff', 0.7, 20),
+    // le rhum arrangé : une grande dame-jeanne pleine de fruits
+    arrangedRum:
+        SHADOW(32, 61, 21, 3) +
+        P('M24 6 L40 6 L40 14 Q56 20 56 38 Q56 60 32 60 Q8 60 8 38 Q8 20 24 14Z', '#f6e8c8') +
+        F('M9.6 32 Q14 24 32 24 Q50 24 54.4 32 Q56 58.6 32 58.6 Q8 58.6 9.6 32Z', '#e8a548', 0.7) +
+        sub('pineapple', 12, 30, 18) +
+        sub('lime', 30, 38, 16) +
+        sub('vanilla', 34, 24, 16) +
+        C(22, 50, 3, '#e8364b', 1.2) +
+        P('M24 6 L40 6 L40 14 Q56 20 56 38 Q56 60 32 60 Q8 60 8 38 Q8 20 24 14Z', 'none') +
+        R(22, 1, 20, 7, 3, '#8b5a2b') +
+        HL(15, 36, 2.4, 9, 6, 0.5),
+    // le punch coco : un verre crémeux, une rondelle de coco
+    coconutPunch: tallGlass('#fff6e0', C(48, 11, 6.5, '#8b5a2b', 2) + C(48, 11, 4, '#fffaf0', 1), '#ffffff', '#8b5a2b'),
+    // le café : un sac de grains torréfiés ouvert
+    coffee:
+        SHADOW(32, 60, 22, 3) +
+        P('M14 20 L50 20 L54 54 Q54 58 50 58 L14 58 Q10 58 10 54Z', '#d9b07a') +
+        P('M14 20 Q20 26 32 24 Q44 26 50 20 L48 14 Q32 18 16 14Z', '#c08b52') +
+        [
+            [22, 18],
+            [30, 15],
+            [38, 18],
+            [44, 15],
+            [27, 21],
+            [35, 21],
+        ]
+            .map(([x, y]) => E(x, y, 3.4, 2.4, '#5e3a1e', 20, 1.2) + L(`M${x - 2} ${y + 0.6} Q${x} ${y - 0.6} ${x + 2} ${y + 0.6}`, 0.7, '#2a1a10'))
+            .join('') +
+        C(32, 40, 9, '#fffaf0', 1.6) +
+        E(32, 40, 4.5, 3, '#5e3a1e', 30, 1.2) +
+        L('M29.5 41.5 Q32 39 34.5 38.5', 0.8, '#2a1a10') +
+        HL(16, 34, 2, 8, -6, 0.4),
+    // le café au lait : un grand bol et un cœur de mousse
+    cafeLatte:
+        SHADOW(32, 58, 24, 3) +
+        P('M8 22 Q8 52 32 52 Q56 52 56 22Z', '#f5f1e6') +
+        R(24, 50, 16, 5, 2, '#f5f1e6') +
+        E(32, 22, 24, 6.5, '#f5f1e6') +
+        E(32, 22.5, 20.5, 5, '#c08b52', 0, 1.2) +
+        P('M32 26 Q26 21 28.5 19 Q31 18 32 20.5 Q33 18 35.5 19 Q38 21 32 26Z', '#fffaf0', 0) +
+        L('M10 34 Q32 40 54 34', 2.4, '#5aa9e6') +
+        HL(14, 30, 2, 6, -10, 0.6) +
+        steam,
+    // le chocolat chaud : une tasse fumante et une guimauve
+    hotChoc:
+        SHADOW(32, 58, 20, 3) +
+        L('M46 28 Q58 28 56 38 Q54 46 44 44', 5) +
+        L('M46 28 Q58 28 56 38 Q54 46 44 44', 2.4, '#e8364b') +
+        P('M12 22 L48 22 L46 54 Q46 58 42 58 L18 58 Q14 58 14 54Z', '#e8364b') +
+        L('M13 40 L47 40', 2, '#fff') +
+        L('M13 44 L47 44', 1.2, '#fff') +
+        E(30, 22, 18, 4.6, '#e8364b') +
+        E(30, 22.5, 15, 3.4, '#6b3a1e', 0, 1.2) +
+        R(24, 14, 10, 8, 2, '#fffaf0', 1.6) +
+        R(32, 16, 8, 7, 2, '#f8c8d4', 1.4) +
+        HL(18, 32, 2, 6, -6, 0.5) +
+        steam,
+    // le lait de soja : une brique avec les graines
+    soyMilk:
+        SHADOW(32, 60, 16, 2.6) +
+        P('M16 18 L32 6 L48 18 L48 58 L16 58Z', '#ffffff') +
+        P('M16 18 L32 6 L48 18Z', '#e8f4dc') +
+        L('M32 6 L32 2 L38 2', 2, '#3a2618') +
+        R(16, 26, 32, 22, 0, '#a6c84a', 0) +
+        L('M16 26 L48 26 M16 48 L48 48', 2) +
+        sub('soy', 22, 27, 20) +
+        L('M16 18 L48 18', 1.6) +
+        P('M16 18 L32 6 L48 18 L48 58 L16 58Z', 'none') +
+        F('M44 20 L46 20 L46 56 L44 56Z', '#000', 0.08),
+});
+
 Object.assign(items, Object.fromEntries(Object.entries({ ...WINES, ...CHEESES }).map(([k, v]) => [k, () => v])));
+let drinks = null;
+const DRINK_IDS = [
+    'juice',
+    'carrotJuice',
+    'orangeJuice',
+    'watermelonJuice',
+    'peachNectar',
+    'grapeJuice',
+    'blueberryJuice',
+    'pineappleJuice',
+    'mangoJuice',
+    'guavaJuice',
+    'cider',
+    'pommeau',
+    'genepiLiqueur',
+    'summerPunch',
+    'coconutMilk',
+    'bananaSmoothie',
+    'mangoPassion',
+    'lassi',
+    'limeade',
+    'islandCocktail',
+    'greenTea',
+    'lavenderTea',
+    'milkTea',
+    'gingerTea',
+    'icedTea',
+    'blondBeer',
+    'amberBeer',
+    'cherryBeer',
+    'mead',
+    'rum',
+    'arrangedRum',
+    'coconutPunch',
+    'coffee',
+    'cafeLatte',
+    'hotChoc',
+    'soyMilk',
+];
+DRINK_IDS.forEach(k => (items[k] = () => (drinks = drinks || DRINKS())[k]));
