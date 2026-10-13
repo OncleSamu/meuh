@@ -41,7 +41,7 @@ function mainPage() {
                 toggle('Confirmer les gros achats', s.confirmBuy !== false, 'setting', { key: 'confirmBuy' }, 'Parcelles, verger, prés, serre, machines') +
                 toggle('Rappels en arrière-plan', remindOn(), 'remind', null, 'Train en gare, cultures prêtes…') +
                 toggle('Animations réduites', s.calm, 'setting', { key: 'calm' }) +
-                navRow('Taille du texte', 'textSize', null, null, `<b>${TEXT_SIZES[s.textSize || 0]}</b>`) +
+                navRow('Taille du texte', 'textSize', null, null, `<b>${TEXT_SIZES[s.textSize] || TEXT_SIZES[0]}</b>`) +
                 toggle('Contraste renforcé', !!s.contrast, 'setting', { key: 'contrast' }) +
                 (matchMedia('(hover: hover)').matches
                     ? '<p class="card-sub">Au clavier : 1 à 5 pour les onglets, A pour arroser, R pour récolter ou ramasser, N pour nourrir, V pour tout vendre, Échap pour fermer.</p>'
@@ -81,7 +81,7 @@ function mainPage() {
                     : ''),
         ),
         btn('Recommencer à zéro', { act: 'resetGame', kind: 'red', wide: true }),
-        `<p class="card-sub center">Meuh ${VERSION} · fait avec amour, sans serveur ni compte : votre ferme reste sur votre appareil.</p>`,
+        `<p class="card-sub center set-foot">Meuh ${VERSION} · fait avec amour, sans serveur ni compte : votre ferme reste sur votre appareil.</p>`,
     ].join('');
 }
 

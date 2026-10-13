@@ -549,7 +549,6 @@ html.calm .ripple {
     animation: bob 1.4s ease-in-out infinite alternate;
 }
 
-.farmyard .dot,
 .plot.hand::before {
     content: '';
     position: absolute;

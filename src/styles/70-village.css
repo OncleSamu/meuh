@@ -665,19 +665,21 @@ html.season-automne .meadow {
 .vlabel {
     position: absolute;
     left: 50%;
-    bottom: -4px;
+    /* sous le bâtiment, sans le cacher */
+    top: calc(100% - 12px);
     transform: translateX(-50%);
     /* un nom long passe sur deux lignes plutôt que de sortir de la carte */
     width: max-content;
-    max-width: 104px;
+    max-width: 96px;
     text-align: center;
     line-height: 1.15;
     padding: 1px 5px;
     font-family: var(--display);
     font-size: 0.58rem;
-    background: rgba(251, 236, 201, 0.9);
+    background: var(--paper-l);
     border: 1.5px solid var(--ink);
     border-radius: 7px;
+    z-index: 2;
 }
 
 .vbld.edge-l .vlabel {
@@ -972,21 +974,29 @@ button.oline:hover {
 }
 
 .neighbor {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    padding: 8px;
+    display: grid;
+    gap: 6px;
+    padding: 10px 0 2px;
     margin-top: 8px;
+    border-top: 2px dashed rgba(58, 38, 24, 0.2);
+}
+.nb-head,
+.nb-foot {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.nb-foot {
+    justify-content: space-between;
+}
+.neighbor .olines {
+    margin: 0;
 }
 
 .neighbor .card-title small {
     font-family: 'Nunito', sans-serif;
     font-size: 0.72rem;
     opacity: 0.7;
-}
-
-.neighbor .olines {
-    margin: 4px 0;
 }
 
 .neighbor .card-sub .reward {

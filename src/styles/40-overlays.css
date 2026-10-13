@@ -198,9 +198,10 @@
 }
 .burst {
     position: relative;
-    width: 130px;
-    height: 130px;
-    margin: -64px auto 0;
+    width: 120px;
+    height: 120px;
+    /* la carte défile (overflow) : le dessin reste à l'intérieur, sinon il est coupé */
+    margin: 4px auto 0;
 }
 .rays {
     position: absolute;
@@ -229,7 +230,8 @@
 .moment-building {
     width: 110px;
     height: 110px;
-    margin: -60px auto 0;
+    /* dans la carte : elle défile, un dessin qui dépasse serait coupé */
+    margin: 0 auto;
     padding: 4px;
     background: #fff8e6;
     border: 3px solid var(--ink);
@@ -252,7 +254,6 @@
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    margin-top: -60px;
 }
 .tip-head .avatar {
     width: 96px;

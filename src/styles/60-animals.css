@@ -518,3 +518,9 @@ html.calm .critter {
     filter: brightness(1.12) drop-shadow(0 0 6px rgba(255, 235, 150, 0.95));
     transition: filter 0.4s;
 }
+
+/* un grand troupeau : on ne garde que l'essentiel (les noms et les repas restent dans l'étable et la fiche) */
+.meadow.crowd .critter-name,
+.meadow.crowd .food-meter {
+    display: none;
+}

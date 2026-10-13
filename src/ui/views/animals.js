@@ -167,7 +167,7 @@ function transCard() {
 
 // le pré grandit avec le troupeau pour que chacun ait sa place
 const meadowHtml = n =>
-    `<div class="meadow${n > 14 ? ' crowd' : ''}" id="pasture" style="height:${Math.min(720, Math.max(380, 160 + n * 28))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${state.animals.length ? 'Ce pré est vide : déplacez-y des bêtes depuis leur fiche.' : 'Votre pâturage est vide. Achetez une poule au marché pour commencer.'}</div>`}</div>`;
+    `<div class="meadow${n > 14 ? ' crowd' : ''}" id="pasture" style="height:${Math.min(1000, Math.max(380, 160 + n * 42))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${state.animals.length ? 'Ce pré est vide : déplacez-y des bêtes depuis leur fiche.' : 'Votre pâturage est vide. Achetez une poule au marché pour commencer.'}</div>`}</div>`;
 
 // une bête de l'étable
 function stableTile(a, i, mf) {

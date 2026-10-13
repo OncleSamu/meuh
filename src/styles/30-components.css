@@ -435,7 +435,7 @@ button.card {
 }
 .section-title > span {
     padding: 2px 12px;
-    background: rgba(255, 248, 230, 0.92);
+    background: var(--paper-l);
     border: 2px solid var(--ink);
     border-radius: 999px;
 }
@@ -443,7 +443,7 @@ button.card {
     font-size: 0.8rem;
     padding: 7px 11px;
     border-radius: 12px;
-    background: rgba(251, 236, 201, 0.88);
+    background: #f6e7c4;
     border: 1.5px dashed rgba(58, 38, 24, 0.35);
 }
 .empty {
@@ -451,7 +451,7 @@ button.card {
     text-align: center;
     font-size: 0.9rem;
     color: var(--ink-soft);
-    background: rgba(255, 248, 230, 0.85);
+    background: var(--paper-l);
     border: 2px dashed rgba(58, 38, 24, 0.35);
     border-radius: var(--r);
 }
@@ -640,7 +640,7 @@ button.card {
     transform: translateX(20px);
 }
 .toggle.row {
-    background: rgba(255, 248, 230, 0.92);
+    background: var(--paper-l);
 }
 .lines {
     display: flex;
