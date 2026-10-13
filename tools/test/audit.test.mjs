@@ -37,3 +37,30 @@ test('chaque recette et chaque chantier peut être fait au plus tard au niveau 5
     );
     for (const p of Object.values(PROJECTS)) for (const k of Object.keys(p.need)) assert.ok(ok.has(k), `${p.id} : ${k}`);
 });
+
+test('1.4.1 : ce que demande un chantier est débloqué avant son chapitre', async () => {
+    const { ANIMALS } = await import('../../src/data/animals.js');
+    const { CHAPTERS } = await import('../../src/data/village.js');
+    const prodBy = {};
+    for (const a of Object.values(ANIMALS)) prodBy[a.prodId] = Math.min(prodBy[a.prodId] || 99, a.reqLvl);
+    // produits qui attendent un chantier ou l'île : ils arrivent avec leur propre chapitre
+    const gated = id => {
+        const it = ITEMS[id],
+            r = RECIPES[id];
+        if (it.needProject || it.island) return true;
+        return !!r && (!!MACHINES[r.machine].needProject || Object.keys(r.ing).some(gated));
+    };
+    const memo = {};
+    const lvlOf = id => {
+        if (memo[id] !== undefined) return memo[id];
+        memo[id] = 0;
+        let l = Math.min(ITEMS[id].reqLvl || 99, prodBy[id] || 99);
+        const r = RECIPES[id];
+        if (r) l = Math.min(l, Math.max(r.lvl || 1, MACHINES[r.machine].reqLvl, ...Object.keys(r.ing).map(lvlOf)));
+        return (memo[id] = l === 99 ? 0 : l);
+    };
+    for (const p of Object.values(PROJECTS)) {
+        const c = CHAPTERS[p.ch - 1].lvl;
+        for (const k of Object.keys(p.need)) if (!gated(k)) assert.ok(lvlOf(k) <= Math.max(2, c - 1), `${p.id} (niveau ${c}) : ${k} au niveau ${lvlOf(k)}`);
+    }
+});

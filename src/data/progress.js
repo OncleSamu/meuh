@@ -7,7 +7,7 @@ export const BALANCE = {
     xpKnee: 10,
     xpA: 614,
     xpP: 1.7,
-    xpK: 1.06, // 1.4 : la courbe des 50 niveaux est un peu plus longue que celle des 40
+    xpK: 1.18, // 1.4 : la courbe des 50 niveaux est un peu plus longue que celle des 40
     cropXp: 0.06,
     animalXp: 0.08,
     craftXp: 0.25,
