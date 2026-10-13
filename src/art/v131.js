@@ -791,3 +791,6 @@ let rec = null;
 Object.keys(RECIPES_ART()).forEach(k => (items[k] = () => (rec = rec || RECIPES_ART())[k]));
 let mach = null;
 Object.keys(MACH()).forEach(k => (machines[k] = () => (mach = mach || MACH())[k]));
+
+// pour la 1.3.2
+export { pod, pearShape, plum, apricotFruit, figFruit, walnutShell, chestnutNut, artichokeHead, cocotte, ramekin };

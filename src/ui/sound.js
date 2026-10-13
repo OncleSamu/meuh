@@ -206,6 +206,7 @@ export const SoundEngine = (() => {
                 tone(1000, t + 0.09, 0.07, { type: 'square', vol: 0.04, glide: 1400 });
                 break;
             case 'sheep':
+            case 'ewe':
                 tone(420, t, 0.35, { type: 'sawtooth', vol: 0.04, glide: 380 });
                 break;
             case 'cow':

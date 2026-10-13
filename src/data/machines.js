@@ -3176,3 +3176,36 @@ Object.assign(RECIPES, {
     walnutWine: { id: 'walnutWine', machine: 'still', ing: { walnut: 3, redWine: 1, sugar: 1 }, time: 480, lvl: 40, base: 40, xp: 30 },
     roastChestnut: { id: 'roastChestnut', machine: 'roastery', ing: { chestnut: 3 }, time: 180, lvl: 35, base: 35, xp: 11 },
 });
+
+// ---------------- 1.3.2 : le saloir et 26 recettes ----------------
+Object.assign(MACHINES, {
+    saloir: { id: 'saloir', name: 'Saloir', cost: 7000, reqLvl: 12, desc: 'Jambons, confits, terrines et viandes séchées' },
+});
+Object.assign(RECIPES, {
+    ham: { id: 'ham', machine: 'saloir', ing: { lard: 2 }, time: 600, lvl: 26, base: 26, xp: 38 },
+    lardons: { id: 'lardons', machine: 'saloir', ing: { lard: 1 }, time: 240, lvl: 26, base: 26, xp: 15 },
+    saucisson: { id: 'saucisson', machine: 'saloir', ing: { lard: 1, garlic: 2 }, time: 420, lvl: 26, base: 26, xp: 27 },
+    driedMagret: { id: 'driedMagret', machine: 'saloir', ing: { magret: 2 }, time: 480, lvl: 12, base: 12, xp: 30 },
+    duckConfit: { id: 'duckConfit', machine: 'saloir', ing: { magret: 2 }, time: 600, lvl: 12, base: 12, xp: 38 },
+    gooseConfit: { id: 'gooseConfit', machine: 'saloir', ing: { gooseLeg: 2 }, time: 600, lvl: 12, base: 12, xp: 38 },
+    gooseRillettes: { id: 'gooseRillettes', machine: 'saloir', ing: { gooseLeg: 1 }, time: 360, lvl: 12, base: 12, xp: 23 },
+    smokedTurkey: { id: 'smokedTurkey', machine: 'saloir', ing: { turkeyFillet: 2 }, time: 480, lvl: 17, base: 17, xp: 30 },
+    driedBeef: { id: 'driedBeef', machine: 'saloir', ing: { beef: 2 }, time: 720, lvl: 16, base: 16, xp: 46 },
+    rabbitTerrine: { id: 'rabbitTerrine', machine: 'saloir', ing: { rabbitSaddle: 2 }, time: 420, lvl: 12, base: 12, xp: 27 },
+    melonHam: { id: 'melonHam', machine: 'deli', ing: { melon: 1, ham: 1 }, time: 120, lvl: 26, base: 26, xp: 8 },
+    hamSandwich: { id: 'hamSandwich', machine: 'deli', ing: { baguette: 1, ham: 1, butter: 1 }, time: 120, lvl: 26, base: 26, xp: 8 },
+    cassoulet: { id: 'cassoulet', machine: 'stove', ing: { greenBean: 3, lardons: 1, gooseConfit: 1, tomato: 2 }, time: 600, lvl: 26, base: 26, xp: 38 },
+    petitSale: { id: 'petitSale', machine: 'stove', ing: { lentil: 2, lardons: 1, carrot: 2 }, time: 480, lvl: 26, base: 26, xp: 30 },
+    potAuFeu: { id: 'potAuFeu', machine: 'stove', ing: { beef: 1, leek: 2, carrot: 2, potato: 2 }, time: 600, lvl: 16, base: 16, xp: 38 },
+    turkeyChestnut: { id: 'turkeyChestnut', machine: 'stove', ing: { turkeyFillet: 1, chestnut: 2, onion: 1 }, time: 540, lvl: 30, base: 30, xp: 34 },
+    rabbitMustard: { id: 'rabbitMustard', machine: 'stove', ing: { rabbitSaddle: 1, mustardSauce: 1, cream: 1 }, time: 480, lvl: 17, base: 17, xp: 30 },
+    magretFigs: { id: 'magretFigs', machine: 'stove', ing: { magret: 1, fig: 2, honey: 1 }, time: 420, lvl: 25, base: 25, xp: 27 },
+    moussaka: { id: 'moussaka', machine: 'stove', ing: { eggplant: 2, beef: 1, tomato: 2 }, time: 540, lvl: 16, base: 16, xp: 34 },
+    choucroute: { id: 'choucroute', machine: 'stove', ing: { cabbage: 2, lard: 1, potato: 2 }, time: 540, lvl: 26, base: 26, xp: 34 },
+    stuffedCabbage: { id: 'stuffedCabbage', machine: 'stove', ing: { cabbage: 1, turkeyFillet: 1, onion: 1 }, time: 480, lvl: 17, base: 17, xp: 30 },
+    gooseLegApples: { id: 'gooseLegApples', machine: 'stove', ing: { gooseLeg: 1, apple: 2 }, time: 480, lvl: 12, base: 12, xp: 30 },
+    rabbitPrunes: { id: 'rabbitPrunes', machine: 'stove', ing: { rabbitSaddle: 1, prunes: 1 }, time: 480, lvl: 18, base: 18, xp: 30 },
+    roquefort: { id: 'roquefort', machine: 'dairy', ing: { sheepMilk: 3 }, time: 600, lvl: 23, base: 23, xp: 38 },
+    sheepTomme: { id: 'sheepTomme', machine: 'dairy', ing: { sheepMilk: 3 }, time: 540, lvl: 23, base: 23, xp: 34 },
+    sheepYogurt: { id: 'sheepYogurt', machine: 'dairy', ing: { sheepMilk: 2, honey: 1 }, time: 300, lvl: 23, base: 23, xp: 19 },
+});

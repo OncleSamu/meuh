@@ -21,6 +21,7 @@ import './buildings2.js';
 import './plants2.js';
 import { balloon2 } from './misc2.js';
 import './v131.js';
+import './v132.js';
 
 export const SPR = {
     farmhouse(l, roof) {
