@@ -215,19 +215,19 @@ export const CHAPTERS = [
     {
         n: 2,
         name: 'Les bonnes odeurs',
-        lvl: 10,
+        lvl: 7,
         intro: "Les habitants reprennent espoir. Gaston rêve de rouvrir l'auberge, et Lucie voudrait retrouver son école.",
     },
     {
         n: 3,
         name: 'Le cœur du village',
-        lvl: 18,
+        lvl: 13,
         intro: 'Les visiteurs reviennent ! Rose et Marcel ont eux aussi des projets plein la tête.',
     },
     {
         n: 4,
         name: 'La grande fête',
-        lvl: 22,
+        lvl: 19,
         intro: 'Il ne reste plus que la mairie. Une fois rénovée, tout le village fera la fête en votre honneur.',
     },
     {
@@ -240,83 +240,86 @@ export const CHAPTERS = [
     {
         n: 6,
         name: 'La grande foire',
-        lvl: 31,
+        lvl: 28,
         map: 'hamlet',
         intro: 'Le hameau revit ! Pour fêter ça, tout le canton prépare une grande foire. Il ne manque plus que vous.',
     },
     {
         n: 7,
         name: 'Le port endormi',
-        lvl: 34,
+        lvl: 30,
         map: 'port',
         intro: 'Au bout de la route du hameau, un petit port attend que les bateaux reviennent. La capitaine Morgane compte sur vous.',
     },
     {
         n: 8,
         name: 'La route des mers',
-        lvl: 37,
+        lvl: 33,
         map: 'port',
         intro: 'Les bateaux sont revenus ! Brasseurs et chocolatiers voudraient s’installer sur le quai.',
     },
     {
         n: 9,
         name: 'Les estives',
-        lvl: 40,
+        lvl: 45,
         map: 'alpine',
         intro: 'Là-haut, les alpages n’attendent que les troupeaux. Bruno le berger et Léa la guide vous montrent le chemin.',
     },
     {
         n: 10,
         name: 'La fête de la montagne',
-        lvl: 40,
+        lvl: 46,
         map: 'alpine',
         intro: 'Toute la vallée monte à l’alpage pour la grande fête de la montagne. Dernier chapitre : faites-en un souvenir.',
     },
     {
         n: 11,
         name: 'Le domaine des Coteaux',
-        lvl: 40,
+        lvl: 48,
         map: 'domaine',
         intro: 'Sur les coteaux, un vieux domaine viticole dort sous les ronces. Margaux et Maître Anselme rêvent de le réveiller.',
     },
     {
         n: 12,
         name: 'La grande vente',
-        lvl: 40,
+        lvl: 49,
         map: 'domaine',
         intro: 'Le domaine revit ! Maître Duval veut y ouvrir la plus belle salle des ventes du pays.',
     },
     {
         n: 13,
         name: 'L’île aux Alizés',
-        lvl: 30,
-        after: 5,
+        lvl: 35,
         map: 'island',
-        intro: 'Depuis le hameau, un vieux bac mène à une île tiède et oubliée. Tiago le passeur et Maëva la cueilleuse rêvent d’y faire pousser des fruits.',
+        intro: 'Depuis le port, un vieux bac mène à une île tiède et oubliée. Tiago le passeur et Maëva la cueilleuse rêvent d’y faire pousser des fruits.',
     },
     {
         n: 14,
         name: 'Le carnaval des îles',
-        lvl: 35,
+        lvl: 38,
         map: 'island',
         intro: 'L’île est en fleurs ! Café, rhum et musique : Tiago et Maëva préparent le plus beau carnaval de la région.',
     },
     {
         n: 15,
         name: 'La station de recherche',
-        lvl: 33,
-        after: 5,
+        lvl: 40,
         map: 'station',
         intro: 'Au bout du chemin des vergers, une vieille station de recherche agricole dort sous la vigne vierge. La docteure Agathe et Victor le vétérinaire veulent la rouvrir : croiser plantes et animaux, créer ses propres variétés.',
     },
     {
         n: 16,
         name: 'Le Salon de l’agriculture',
-        lvl: 36,
+        lvl: 43,
         map: 'station',
         intro: 'Vos créations font parler d’elles ! Un conservatoire pour les garder, une ruche pour les surprises, et une grande salle pour le Salon de l’agriculture.',
     },
 ];
+
+// 1.4 : les chapitres forment une seule histoire, jouée dans cet ordre (numéros 1 à 16 à l'écran)
+export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 15, 16, 9, 10, 11, 12];
+export const chapterNum = n => CHAPTER_ORDER.indexOf(n) + 1;
+export const chapterAfter = n => CHAPTER_ORDER[CHAPTER_ORDER.indexOf(n) - 1] || 0;
 
 export const PROJECTS = {
     station: {

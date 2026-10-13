@@ -1,3 +1,4 @@
+import { LV_ITEM } from './levels14.js';
 // Tous les produits du jeu : cultures, arbres, produits animaux, plats, matériaux.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -2597,3 +2598,6 @@ Object.assign(ITEMS, {
     poncho: { id: 'poncho', name: 'Poncho en alpaga', type: 'artisan', sell: 730 },
     alpacaBlanket: { id: 'alpacaBlanket', name: 'Couverture en alpaga', type: 'artisan', sell: 1060 },
 });
+
+// 1.4 : 50 niveaux
+for (const [id, l] of Object.entries(LV_ITEM)) if (ITEMS[id]) [ITEMS[id].lvOld, ITEMS[id].reqLvl] = [ITEMS[id].reqLvl || 1, l];

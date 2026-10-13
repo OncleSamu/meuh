@@ -5,7 +5,8 @@ import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { CHAPTERS, PROJECTS } from '../data/village.js';
+import { CHAPTERS, PROJECTS, CHAPTER_ORDER, chapterNum, chapterAfter } from '../data/village.js';
+export { CHAPTER_ORDER, chapterNum, chapterAfter };
 import { STORY_MAPS } from '../data/meta.js';
 import { tip } from './tips.js';
 import { clampQuality } from './farm.js';
@@ -21,9 +22,9 @@ export const projState = id => state.projects[id] || (state.projects[id] = { giv
 export const projectDone = id => !!(state.projects[id] && state.projects[id].done);
 export const chapterProjects = n => Object.values(PROJECTS).filter(p => p.ch === n);
 export const chapterDone = n => chapterProjects(n).every(p => projectDone(p.id));
-// un chapitre suit le précédent, sauf s'il part d'ailleurs (l'île part du hameau : « after »)
-export const chapterAfter = n => (CHAPTERS[n - 1].after !== undefined ? CHAPTERS[n - 1].after : n - 1);
-export const chapterOpen = n => state.level >= CHAPTERS[n - 1].lvl && (n === 1 || chapterDone(chapterAfter(n)));
+// un chapitre déjà ouvert avant la 1.4 le reste (state.story.keep, posé à la conversion)
+export const chapterKept = n => !!(state.story.keep && state.story.keep[n]);
+export const chapterOpen = n => chapterKept(n) || (state.level >= CHAPTERS[n - 1].lvl && (chapterAfter(n) === 0 || chapterDone(chapterAfter(n))));
 export const projectOpen = id => chapterOpen(PROJECTS[id].ch) && !projectDone(id);
 export const givenOf = (id, item) => projState(id).given[item] || 0;
 export const projectLeft = (id, item) => Math.max(0, PROJECTS[id].need[item] - givenOf(id, item));
@@ -35,21 +36,23 @@ export const mapOf = p => p.map || 'village';
 export const storyOk = d => !d || !d.needProject || projectDone(d.needProject);
 export const storyLockText = d => (d && d.needProject && !projectDone(d.needProject) ? `Après le chantier « ${PROJECTS[d.needProject].name} »` : '');
 
-// une carte s'ouvre quand son chapitre d'entrée est fini, ou dès le niveau du chapitre suivant (sauf « strict »)
-// les fils parallèles (l'île, la station) s'ouvrent avec leur premier chapitre
-export const BRANCH_MAPS = ['island', 'station'];
-const firstOf = map => CHAPTERS.find(c => c.map === map);
-export const mapOpen = m =>
-    BRANCH_MAPS.includes(m.id)
-        ? chapterOpen(firstOf(m.id).n) || chapterDone(firstOf(m.id).n)
-        : !m.openChapter || chapterDone(m.openChapter) || (!m.strict && state.level >= CHAPTERS[m.openChapter].lvl);
+// une carte s'ouvre avec son premier chapitre, ou dès son niveau pour la voir de loin (sauf « strict »)
+export const BRANCH_MAPS = [];
+const firstOf = map => CHAPTERS[CHAPTER_ORDER.find(n => CHAPTERS[n - 1].map === map) - 1];
+export const mapOpen = m => {
+    if (m.id === 'village') return true;
+    const f = firstOf(m.id);
+    return chapterOpen(f.n) || chapterDone(f.n) || (!m.strict && state.level >= f.lvl);
+};
 export const openMaps = () => STORY_MAPS.filter(mapOpen);
 export const mapReady = m => Object.values(PROJECTS).some(p => mapOf(p) === m && projectOpen(p.id) && projectComplete(p.id));
 
-// le chapitre en cours : celui de l'histoire principale, ou celui d'un fil parallèle (l'île, la station)
+// le chapitre en cours : le premier pas fini de l'histoire (ou d'une carte donnée)
 export function currentChapter(map) {
-    if (BRANCH_MAPS.includes(map)) return CHAPTERS.find(c => c.map === map && !chapterDone(c.n)) || null;
-    for (const c of CHAPTERS) if (!chapterDone(c.n) && !BRANCH_MAPS.includes(c.map)) return c;
+    for (const n of CHAPTER_ORDER) {
+        const c = CHAPTERS[n - 1];
+        if (!chapterDone(n) && (!map || (c.map || 'village') === map)) return c;
+    }
     return null;
 }
 
@@ -62,11 +65,11 @@ export function projectsNeed(item) {
 
 // Annonce un nouveau chapitre une seule fois
 export function syncStory() {
-    const c = [currentChapter(), ...BRANCH_MAPS.map(currentChapter)].find(x => x && chapterOpen(x.n) && !state.story.seen[x.n]);
+    const c = CHAPTER_ORDER.map(n => CHAPTERS[n - 1]).find(x => !chapterDone(x.n) && chapterOpen(x.n) && !state.story.seen[x.n]);
     if (!c) return false;
     state.story.seen[c.n] = true;
     if (view.started) {
-        toast(`Chapitre ${c.n} : ${c.name}`, ['ui', 'village']);
+        toast(`Chapitre ${chapterNum(c.n)} : ${c.name}`, ['ui', 'village']);
         if (c.n === 1) tip('village');
         if (c.n === 5) tip('hamlet');
         if (c.n === 13) tip('isle');
@@ -128,7 +131,7 @@ export function finishProject(pid, at) {
     applyProjectReward(pid);
     addPhoto('building', pid, p.name, 'Rénovation terminée');
     addFriendship(p.vid, 6, at);
-    addXp(150 + p.ch * 150, at);
+    addXp(150 + chapterNum(p.ch) * 150, at);
     emit('story', { pid, next: storyNextText(p) });
     sfx('level');
     buzz(40);
@@ -158,20 +161,17 @@ const MAP_TEASE = {
     port: 'au bout de la route, un petit port',
     alpine: 'là-haut, les alpages',
     domaine: 'sur les coteaux, un vieux domaine',
-    island: 'depuis le hameau, une île tiède',
+    island: 'depuis le port, une île tiède',
     station: 'au bout du chemin des vergers, une station de recherche',
 };
 
 // la suite de l'histoire, après une rénovation
 export function storyNextText(p) {
-    const branch = BRANCH_MAPS.includes(mapOf(p)) ? mapOf(p) : undefined;
-    const c = currentChapter(branch);
-    if (branch === 'station' && !c) return 'La station de recherche est complète : à vous les plus belles créations !';
-    if (branch === 'island' && !c) return 'L’île est en fête : toute son histoire est écrite. Merci !';
+    const c = currentChapter();
     if (!c)
-        return 'Le village et le hameau sont rénovés : l’histoire est terminée. Merci pour tout ! Prochain grand but : la Ferme légendaire (Livre de la ferme).';
+        return 'Village, hameau, port, île, station, alpage et domaine : toute l’histoire est écrite. Merci pour tout ! Prochain grand but : la Ferme légendaire (Livre de la ferme).';
     const at = state.level < c.lvl ? ` au niveau ${c.lvl}` : '';
     if (chapterDone(p.ch) && c.map && c.map !== mapOf(p)) return `Ce n’est pas fini : ${MAP_TEASE[c.map]} vous attend${at}.`;
-    if (chapterDone(p.ch)) return `Chapitre ${p.ch} terminé ! Prochain chapitre : « ${c.name} »${at}.`;
+    if (chapterDone(p.ch)) return `Chapitre ${chapterNum(p.ch)} terminé ! Prochain chapitre : « ${c.name} »${at}.`;
     return '';
 }

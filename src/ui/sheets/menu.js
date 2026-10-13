@@ -1,5 +1,5 @@
 // Le menu (en haut à droite), les niveaux, l'almanach et la grange.
-import { state } from '../../core/state.js';
+import { state, lvOk } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { DAYS_PER_SEASON, WEATHER } from '../../data/world.js';
@@ -8,7 +8,7 @@ import { MAX_LEVEL } from '../../data/progress.js';
 import * as G from '../../systems/index.js';
 import { actions } from '../dom.js';
 import { ico, art } from '../icons.js';
-import { btn, navRow, lines, bar, dot } from '../kit.js';
+import { btn, navRow, lines, line, bar, dot } from '../kit.js';
 import { go } from '../app.js';
 import { toast } from '../../core/bus.js';
 import { defineSheet, openSheet, closeSheet, sheetOpts } from '../sheets.js';
@@ -27,7 +27,7 @@ defineSheet('menu', {
             ${navRow('Progrès', 'open', { sheet: 'progress' }, ['ui', 'skillbook'], badge(pts), 'Compétences, prestige et défis')}
             ${navRow('Livre de la ferme', 'open', { sheet: 'book' }, ['ui', 'book'], badge(book), 'Collection, maîtrise, exploits, légende, album')}
             ${navRow('Le carnet de Mamie Odette', 'open', { sheet: 'carnet' }, ['villager', 'odette'], G.carnetClaimable() ? dot(G.carnetClaimable()) : G.carnetNew() ? '<span class="dot">!</span>' : '›', `${G.carnetFound()} / ${G.carnetTotal()} histoires de recettes`)}
-            ${state.level >= 38 ? navRow('Salle des trophées', 'open', { sheet: 'trophies' }, ['ui', 'cupGold'], '›', 'Les médailles des grands défis') : ''}
+            ${state.level >= 48 ? navRow('Salle des trophées', 'open', { sheet: 'trophies' }, ['ui', 'cupGold'], '›', 'Les médailles des grands défis') : ''}
             ${state.genetics && G.geneticsOpen() ? navRow('Mes créations', 'open', { sheet: 'creations' }, ['ui', 'trophy'], '›', 'Vos variétés et vos races fixées') : ''}
             ${navRow('Les niveaux', 'open', { sheet: 'levels' }, ['ui', 'star'], '›', `Niveau ${state.level}${state.level < MAX_LEVEL ? ` sur ${MAX_LEVEL}` : ''}`)}
             ${navRow('Statistiques', 'open', { sheet: 'stats' }, ['ui', 'chart'], '›', 'Gains, ventes et records')}
@@ -42,6 +42,7 @@ defineSheet('menu', {
 // ---------------- les niveaux ----------------
 defineSheet('levels', {
     title: 'Les niveaux',
+    cls: 'lv-sheet', // hauteur fixe : passer d'un niveau à l'autre ne fait pas sauter la fenêtre
     open(o) {
         o.l = Math.min(MAX_LEVEL, state.level + 1);
     },
@@ -52,7 +53,7 @@ defineSheet('levels', {
                 ? 'Déjà débloqué'
                 : L === state.level
                   ? 'Votre niveau actuel'
-                  : `Encore ${fmt(G.xpToLevel(L))} points d’expérience${L === state.level + 1 ? '' : ` (${L - state.level} niveaux)`}`;
+                  : `Encore ${fmt(G.xpToLevel(L))} d’expérience${L === state.level + 1 ? '' : ` · ${L - state.level} niveaux`}`;
         const strip = Array.from({ length: MAX_LEVEL }, (_, k) => k + 1)
             .map(
                 l =>
@@ -65,7 +66,12 @@ defineSheet('levels', {
                 `<div class="lv-nav">${btn('', { act: 'lvStep', data: { d: -1 }, icon: ['ui', 'back'], disabled: L <= 1, title: 'Niveau précédent' })}<div class="lv-head"><b>Niveau ${L}</b><small>${status}</small></div>${btn('', { act: 'lvStep', data: { d: 1 }, icon: ['ui', 'next'], disabled: L >= MAX_LEVEL, title: 'Niveau suivant' })}</div>`,
             ],
             ['strip', `<div class="lv-strip">${strip}</div>`],
-            ['list', `<div class="${L <= state.level ? 'got' : ''}">${lines(G.unlocksAt(L).map(u => [u.icon, u.name]))}</div>`],
+            [
+                'list',
+                `<div class="lines${L <= state.level ? ' got' : ''}">${G.unlocksAt(L)
+                    .map(u => line(u.icon, u.name, u.big ? 'big' : ''))
+                    .join('')}</div>`,
+            ],
         ];
     },
 });
@@ -88,7 +94,7 @@ defineSheet('almanac', {
                 ],
             ])}
             <h3 class="section-title"><span>De saison (pousse 30 % plus vite)</span></h3>
-            <div class="alm-crops">${crops.map(c => `<div class="alm-crop${state.level < c.reqLvl ? ' locked' : ''}">${art('item', c.id)}<span>${c.name}</span></div>`).join('') || '<span class="card-sub">Aucune culture</span>'}</div>
+            <div class="alm-crops">${crops.map(c => `<div class="alm-crop${!lvOk(c) ? ' locked' : ''}">${art('item', c.id)}<span>${c.name}</span></div>`).join('') || '<span class="card-sub">Aucune culture</span>'}</div>
             <p class="card-sub foot-note">${sv.id === 'hiver' ? 'En hiver, les cultures hors saison poussent presque deux fois moins vite et les arbres dorment à moitié.' : sv.id === 'automne' ? 'En automne, les arbres fruitiers produisent 20 % plus vite.' : 'Profitez-en pour planter ce qui est de saison.'}</p>`;
     },
 });
@@ -153,13 +159,23 @@ defineSheet('barn', {
     foot: () => btn('Aller au marché', { act: 'barnMarket', wide: true, icon: ['ui', 'crate'] }),
 });
 
+// la liste d'un nouveau niveau repart du haut
+const lvTop = () => {
+    const el = document.querySelector('.lv-sheet [data-key="list"]');
+    if (el) el.scrollTop = 0;
+};
+
 export function setupMenu() {
     actions({
         lvStep: (el, d) => {
             const o = sheetOpts('levels');
             o.l = Math.max(1, Math.min(MAX_LEVEL, o.l + +d.d));
+            lvTop();
         },
-        lvPick: (el, d) => (sheetOpts('levels').l = +d.l),
+        lvPick: (el, d) => {
+            sheetOpts('levels').l = +d.l;
+            lvTop();
+        },
         barnSel: (el, d) => {
             const o = sheetOpts('barn');
             o.sel = o.sel === d.id ? null : d.id;

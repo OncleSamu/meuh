@@ -1,5 +1,5 @@
 // Le monde : saisons, météo et passage des jours.
-import { state } from '../core/state.js';
+import { state, lvOk } from '../core/state.js';
 import { emit, toast, sfx } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { SEASONS, DAYS_PER_SEASON, WEATHER, WEATHER_ODDS } from '../data/world.js';
@@ -46,7 +46,7 @@ export function seasonCrops(sid = season().id) {
 
 export function seasonCropsText() {
     const list = seasonCrops()
-        .filter(i => state.level >= i.reqLvl)
+        .filter(i => lvOk(i))
         .map(i => i.name.toLowerCase());
     return list.length ? `De saison : ${list.join(', ')}.` : '';
 }

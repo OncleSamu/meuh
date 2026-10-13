@@ -7,6 +7,7 @@ export const BALANCE = {
     xpKnee: 10,
     xpA: 614,
     xpP: 1.7,
+    xpK: 1.06, // 1.4 : la courbe des 50 niveaux est un peu plus longue que celle des 40
     cropXp: 0.06,
     animalXp: 0.08,
     craftXp: 0.25,
@@ -24,7 +25,7 @@ export const BALANCE = {
     rareDrop: 0.012,
 };
 
-export const MAX_LEVEL = 40;
+export const MAX_LEVEL = 50;
 
 export const RENOWN_XP = 250000;
 
@@ -74,7 +75,7 @@ export const HOUSE = [
         },
     },
     {
-        lvl: 12,
+        lvl: 14,
         name: 'Maison avec véranda',
         bonus: '+1 commande au tableau',
         cost: {
@@ -85,7 +86,7 @@ export const HOUSE = [
         },
     },
     {
-        lvl: 20,
+        lvl: 23,
         name: 'Maison à étage',
         bonus: "+1 place dans la file d'attente de chaque machine",
         cost: {
@@ -96,7 +97,7 @@ export const HOUSE = [
         },
     },
     {
-        lvl: 28,
+        lvl: 32,
         name: 'Belle demeure',
         bonus: "+1 place à l'étal",
         cost: {
@@ -107,7 +108,7 @@ export const HOUSE = [
         },
     },
     {
-        lvl: 35,
+        lvl: 42,
         name: 'Grande ferme',
         bonus: 'Toutes les commandes paient 10 % de plus',
         cost: {
@@ -126,7 +127,7 @@ export const FARMHAND = [
         every: 40,
     },
     {
-        lvl: 29,
+        lvl: 31,
         plots: 12,
         every: 30,
         cost: {
@@ -135,7 +136,7 @@ export const FARMHAND = [
         },
     },
     {
-        lvl: 33,
+        lvl: 37,
         plots: 18,
         every: 22,
         cost: {
@@ -144,7 +145,7 @@ export const FARMHAND = [
         },
     },
     {
-        lvl: 37,
+        lvl: 41,
         plots: 24,
         every: 15,
         cost: {
@@ -153,7 +154,7 @@ export const FARMHAND = [
         },
     },
     {
-        lvl: 39,
+        lvl: 47,
         plots: 36,
         every: 10,
         cost: {
@@ -163,13 +164,13 @@ export const FARMHAND = [
     },
 ];
 
-export const PRESTIGE_LVL = 40;
+export const PRESTIGE_LVL = 50;
 
 export const CHALLENGE_BONUS = 3;
 
 export const ALBUM_MAX = 60;
 
-export const ALBUM_LEVELS = [5, 10, 20, 30, 40];
+export const ALBUM_LEVELS = [5, 10, 20, 30, 40, 50];
 
 export const BOOK_QUARTERS = [0.25, 0.5, 0.75, 1];
 

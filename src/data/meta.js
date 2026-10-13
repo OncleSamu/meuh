@@ -14,7 +14,7 @@ export const ACHIEVEMENTS = [
     { id: 'pests', name: 'Garde champêtre', desc: 'Chasser {n} invasions de pucerons', icon: ['ui', 'pest'], tiers: [1, 10, 50] },
     { id: 'crows', name: 'Épouvanteur', desc: 'Chasser {n} corbeaux', icon: ['ui', 'crow'], tiers: [5, 40, 200] },
     { id: 'golden', name: "Doigts d'or", desc: 'Faire {n} récolte{s} dorée{s}', icon: ['ui', 'star'], tiers: [1, 10, 50] },
-    { id: 'maxLevel', name: 'Expérience', desc: 'Atteindre le niveau {n}', icon: ['ui', 'xp'], tiers: [10, 25, 40] },
+    { id: 'maxLevel', name: 'Expérience', desc: 'Atteindre le niveau {n}', icon: ['ui', 'xp'], tiers: [10, 30, 50] },
     { id: 'maxPlots', name: 'Grand domaine', desc: 'Posséder {n} parcelles', icon: ['ui', 'barn'], tiers: [18, 30, 48] },
     { id: 'prestiges', name: 'Renaissance', desc: 'Vendre la ferme {n} fois', icon: ['ui', 'ribbon'], tiers: [1, 3, 10] },
     { id: 'cooked', name: 'Cordon bleu', desc: 'Cuisiner {n} plats', icon: ['item', 'pie'], tiers: [5, 50, 400] },
@@ -133,7 +133,7 @@ export const TREASURES = [
 
 // ---------------- Ferme légendaire ----------------
 export const LEGEND_GOALS = [
-    { id: 'level', name: 'Atteindre le niveau 40' },
+    { id: 'level', name: 'Atteindre le niveau 50' },
     { id: 'chapters', name: 'Terminer les 6 chapitres du village et du hameau' },
     { id: 'house', name: 'Agrandir la maison au niveau 5' },
     { id: 'league', name: 'Monter en ligue diamant au concours' },
@@ -151,13 +151,13 @@ export const RECORDS = {
 };
 
 // ---------------- Cartes du village ----------------
-// openChapter : la carte s'ouvre quand ce chapitre est fini, ou dès le niveau du chapitre suivant (sauf « strict »)
+// dans l'ordre de l'histoire ; une carte s'ouvre avec son premier chapitre (openChapter ne sert plus depuis la 1.4)
 export const STORY_MAPS = [
     { id: 'village', name: 'Le village', openChapter: 0, party: 'townhall' },
     { id: 'hamlet', name: 'Le hameau', openChapter: 4, party: 'bandstand' },
     { id: 'port', name: 'Le port', openChapter: 6, party: 'shipyard' },
-    { id: 'alpine', name: "L'alpage", openChapter: 8, party: 'refuge' },
-    { id: 'domaine', name: 'Le domaine', openChapter: 10, strict: true, party: 'crayere' },
     { id: 'island', name: "L'île", openChapter: 12, party: 'carnival' },
     { id: 'station', name: 'La station', openChapter: 14, party: 'salonHall' },
+    { id: 'alpine', name: "L'alpage", openChapter: 8, party: 'refuge' },
+    { id: 'domaine', name: 'Le domaine', openChapter: 10, strict: true, party: 'crayere' },
 ];

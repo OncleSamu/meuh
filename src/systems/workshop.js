@@ -1,7 +1,7 @@
 // L'atelier : chaque machine a plusieurs recettes. Une machine a une file de production
 // (le premier lot est en cours, les suivants attendent, ingrédients déjà payés)
 // et des produits finis qui s'accumulent jusqu'à la récupération.
-import { state } from '../core/state.js';
+import { state, lvOk } from '../core/state.js';
 import { viewShown } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float, squish, anchor } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
@@ -29,7 +29,7 @@ export const recipesOf = type => Object.values(RECIPES).filter(r => r.machine ==
 export const recipeUnlocked = id => {
     const r = RECIPES[id];
     return (
-        state.level >= (r.lvl || 1) &&
+        lvOk(r, r.lvl) &&
         (!r.teacher || heartsOf(r.teacher) >= r.hearts) &&
         (!r.fete || eventActive(r.fete)) &&
         (!r.holiday || holidayActive(r.holiday)) &&
@@ -50,7 +50,7 @@ export const recipeTime = id => RECIPES[id].time / (speedMult() * machineBoost(R
 export const machinePct = m => (m.queue.length ? Math.min(1, m.progress / recipeTime(m.queue[0])) : 0);
 export const machineLeft = m => (m.queue.length ? Math.max(0, recipeTime(m.queue[0]) - m.progress) : 0);
 export const recipeLockText = r =>
-    state.level < (r.lvl || 1)
+    !lvOk(r, r.lvl)
         ? `Niveau ${r.lvl}`
         : !storyOk(ITEMS[r.id])
           ? storyLockText(ITEMS[r.id])

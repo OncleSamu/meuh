@@ -1,5 +1,5 @@
 // Les fêtes de saison : quatre jours d'objectifs et un trophée.
-import { state } from '../core/state.js';
+import { state, scaleLvl } from '../core/state.js';
 import { now, today } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { fmt, dateKey, qtyName } from '../core/format.js';
@@ -24,7 +24,7 @@ const pickFrom = (ids, fallback) => {
 };
 
 // objectifs prévus pour une fête de quatre jours de jeu
-const scaleN = (base, per) => Math.round((base + state.level * per) * 1.6);
+const scaleN = (base, per) => Math.round((base + scaleLvl() * per) * 1.6);
 
 export function makeEventGoals(sid) {
     const g = [];
@@ -97,7 +97,7 @@ export const goalIcon = x =>
 export const goalCanGive = x =>
     x.prog < x.target && ((x.type === 'deliver' && state.inventory[x.item] > 0) || (x.type === 'gold' && Object.values(state.quality).some(q => q.g > 0)));
 
-export const goalReward = () => ({ coins: Math.round((150 * (1 + state.level * 0.4)) / 10) * 10, xp: 40 + state.level * 10 });
+export const goalReward = () => ({ coins: Math.round((150 * (1 + scaleLvl() * 0.4)) / 10) * 10, xp: 40 + scaleLvl() * 10 });
 
 export function eventEndsIn() {
     const daysLeft = feteEnd() - dayInSeason();

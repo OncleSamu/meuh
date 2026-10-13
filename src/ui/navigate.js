@@ -1,5 +1,5 @@
 // « Aller produire » : depuis une commande ou un chantier, mène là où ce produit se fabrique.
-import { state } from '../core/state.js';
+import { state, lvOk } from '../core/state.js';
 import { toast } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { ANIMALS } from '../data/animals.js';
@@ -39,7 +39,7 @@ export function produce(id) {
         );
     }
     if (it.type === 'crop') {
-        if (state.seeds[id] > 0 || (it.type === 'crop' && !it.exotic && state.level >= it.reqLvl)) {
+        if (state.seeds[id] > 0 || (it.type === 'crop' && !it.exotic && lvOk(it))) {
             go('farm/field');
             G.selectTool(id);
             return toast(`${it.seedName} en main : touchez une parcelle ${it.ghOnly ? 'de la serre' : 'labourée'} pour planter`, ['seed', id]);

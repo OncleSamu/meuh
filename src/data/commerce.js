@@ -35,7 +35,7 @@ export const BALLOON_STAY = 3600000;
 
 export const MERCHANT_STAY = 7200000;
 
-export const CONTRACT_LVL = 12;
+export const CONTRACT_LVL = 13;
 
 export const CONTEST_LVL = 4;
 
@@ -89,20 +89,20 @@ export const LEAGUES = [
         name: 'Argent',
         f: 1.2,
         pay: 1.5,
-        lvl: 15,
+        lvl: 17,
     },
     {
         id: 'gold',
         name: 'Or',
         f: 1.45,
         pay: 2,
-        lvl: 25,
+        lvl: 29,
     },
     {
         id: 'diamond',
         name: 'Diamant',
         f: 1.75,
         pay: 3,
-        lvl: 38,
+        lvl: 44,
     },
 ];

@@ -1,6 +1,6 @@
 // Le concours de la semaine : des points pour tout ce que vous faites, trois paliers,
 // un classement contre les fermes voisines et des ligues.
-import { state } from '../core/state.js';
+import { state, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { pickRand, fmt } from '../core/format.js';
@@ -133,7 +133,7 @@ export function claimContestTier(k, at) {
 // Coffre du dernier palier : pièces, un ruban et une décoration
 function openChest(r) {
     state.stats.contracts++;
-    const pool = Object.values(DECOS).filter(d => state.level >= d.reqLvl && !d.rare);
+    const pool = Object.values(DECOS).filter(d => lvOk(d) && !d.rare);
     const deco = pool.length ? pickRand(pool) : DECOS.birdhouse;
     state.decorInv[deco.id] = (state.decorInv[deco.id] || 0) + 1;
     state.prestige.rubans++;

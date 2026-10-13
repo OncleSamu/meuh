@@ -1,6 +1,6 @@
 // Le commerce : magasin, matériaux de construction, marché, prix et annulation d'une vente.
 import { herdFull, placeAnimal } from './pastures.js';
-import { state } from '../core/state.js';
+import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { fmt } from '../core/format.js';
@@ -27,7 +27,7 @@ import { defiNeed } from './defis.js';
 const COIN = ['ui', 'coin'];
 
 // ---------------- les prix ----------------
-export const marketMult = () => Math.max(BALANCE.marketEnd, BALANCE.marketStart - BALANCE.marketSlope * (state.level - 1));
+export const marketMult = () => Math.max(BALANCE.marketEnd, BALANCE.marketStart - BALANCE.marketSlope * (scaleLvl() - 1));
 export const sellPrice = id => Math.floor(ITEMS[id].sell * masteryMult(id) * marketMult() * priceMult());
 export const demand = id => (state.market.f[id] === undefined ? 1 : state.market.f[id]);
 export const dropPer = id => 0.0075 * (1 + Math.log10(ITEMS[id].sell)) * (rank('trader') ? 0.5 : 1);
@@ -238,7 +238,7 @@ export const shopDef = (type, id) => (type === 'animal' ? ANIMALS[id] : type ===
 // peut-on acheter (sans le dire) ?
 export function canBuy(type, id, qty = 1) {
     const d = shopDef(type, id);
-    if (!d || state.level < (d.reqLvl || 1) || !storyOk(d)) return false;
+    if (!d || !lvOk(d) || !storyOk(d)) return false;
     if (type === 'machine' && hasMachine(id)) return false;
     if (type === 'animal' && (challengeOn('noAnimals') || herdFull())) return false;
     return state.money >= d.cost * qty && hasMats(matCost(type, id));
@@ -246,7 +246,7 @@ export function canBuy(type, id, qty = 1) {
 
 export function buy(type, id, qty = 1, at) {
     const d = shopDef(type, id);
-    if (!d || state.level < (d.reqLvl || 1) || !storyOk(d)) return false;
+    if (!d || !lvOk(d) || !storyOk(d)) return false;
     if (type === 'machine' && hasMachine(id)) return false;
     const total = d.cost * qty;
     if (type === 'animal' && challengeOn('noAnimals')) {

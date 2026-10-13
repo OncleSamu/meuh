@@ -6,7 +6,7 @@
 // Une variété (plantes) : { id, kind: 'plant', base, name, g, gen, fixed, analyzed, born }
 //   ses graines (genetics.seeds[id]) se sèment ; ses produits (genetics.stock[id]) font partie du stock de l'espèce.
 // Une bête porte son génome (a.g), sa génération (a.gen) et sa race fixée (a.race).
-import { state } from '../core/state.js';
+import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { fmt, pickRand, qtyName } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, changed } from '../core/bus.js';
@@ -229,12 +229,12 @@ export const parentBase = p => (state.genetics.vars[p] ? state.genetics.vars[p].
 export const parentName = p => (state.genetics.vars[p] ? varName(state.genetics.vars[p]) : ITEMS[p] ? `${ITEMS[p].name} (sauvage)` : '?');
 export const parentGen = p => (state.genetics.vars[p] ? state.genetics.vars[p].gen : 0);
 export const plantParents = () => {
-    const wild = Object.keys(FLAVORS).filter(id => ITEMS[id] && ITEMS[id].type === 'crop' && state.level >= ITEMS[id].reqLvl && storyOk(ITEMS[id]));
+    const wild = Object.keys(FLAVORS).filter(id => ITEMS[id] && ITEMS[id].type === 'crop' && lvOk(ITEMS[id]) && storyOk(ITEMS[id]));
     return [...varieties().map(v => v.id), ...wild];
 };
-export const crossCost = () => GX.crossCost(state.level);
-export const breedCost = () => GX.breedCost(state.level);
-export const analyzeCost = () => GX.analyzeCost(state.level);
+export const crossCost = () => Math.round(GX.crossCost(scaleLvl()) / 10) * 10;
+export const breedCost = () => Math.round(GX.breedCost(scaleLvl()) / 10) * 10;
+export const analyzeCost = () => Math.round(GX.analyzeCost(scaleLvl()) / 10) * 10;
 
 // lancer une pollinisation (au labo) : elle prend un peu de temps
 export function startCross(a, b, at) {
@@ -302,7 +302,7 @@ export function finishCross(at) {
     sfx('level');
     buzz(25);
     burst(at, 'sparkle', 16);
-    addXp(40 + state.level * 4, at);
+    addXp(40 + scaleLvl() * 4, at);
     emit('newVariety', id);
     if (mutated) toast(`Mutation ! ${varName(v)} a quelque chose d’unique`, ['ui', 'star']);
     changed('lab');
@@ -348,7 +348,7 @@ export function fixVariety(id, name, at) {
     sfx('level');
     buzz(40);
     burst(at, 'sparkle', 20);
-    addXp(200 + state.level * 10, at);
+    addXp(200 + scaleLvl() * 10, at);
     toast(`« ${n} » entre dans Mes créations !`, ['ui', 'trophy']);
     changed('lab');
     return true;
@@ -615,7 +615,7 @@ export function breedTick() {
         ['animal', c.type],
     );
     sfx(c.type);
-    addXp(60 + state.level * 5);
+    addXp(60 + scaleLvl() * 5);
     return true;
 }
 
@@ -635,7 +635,7 @@ export function fixRace(uid, name, at) {
     sfx('level');
     buzz(40);
     burst(at, 'sparkle', 20);
-    addXp(250 + state.level * 10, at);
+    addXp(250 + scaleLvl() * 10, at);
     toast(`La race « ${n} » entre dans Mes créations !`, ['ui', 'trophy']);
     return true;
 }
@@ -677,13 +677,13 @@ export function ensureChef() {
     if (G.chef && t < G.chef.until) return false;
     if (G.chef && !G.chef.done && t >= G.chef.until) G.chef = { wait: t + 30 * 60 * 1000 };
     if (G.chef && G.chef.wait && t < G.chef.wait) return false;
-    const pool = Object.keys(FLAVORS).filter(id => ITEMS[id].type === 'crop' && state.level >= ITEMS[id].reqLvl && !ITEMS[id].island && storyOk(ITEMS[id]));
+    const pool = Object.keys(FLAVORS).filter(id => ITEMS[id].type === 'crop' && lvOk(ITEMS[id]) && !ITEMS[id].island && storyOk(ITEMS[id]));
     const base = pickRand(pool);
     const f = FLAVORS[base];
     const order = FLAVOR_IDS.map((k, j) => [k, f[j]]).sort((x, y) => y[1] - x[1]);
     const need = { [order[0][0]]: Math.min(5, order[0][1] + 1 + (Math.random() < 0.4 ? 1 : 0)) };
     if (Math.random() < 0.6) need[order[1][0]] = Math.min(5, order[1][1] + 1);
-    G.chef = { base, need, qty: 5, gold: Math.round(ITEMS[base].sell * 5 * 9 + state.level * 200), until: t + 4 * 3600 * 1000 };
+    G.chef = { base, need, qty: 5, gold: Math.round(ITEMS[base].sell * 5 * 9 + scaleLvl() * 200), until: t + 4 * 3600 * 1000 };
     return true;
 }
 export const chefMatches = v => {
@@ -702,7 +702,7 @@ export function deliverChef(vid, at) {
     state.income.orders += c.gold;
     const mat = pickRand(RARE);
     state.inventory[mat] = (state.inventory[mat] || 0) + 2;
-    addXp(150 + state.level * 8, at);
+    addXp(150 + scaleLvl() * 8, at);
     G.chef = { wait: now() + 60 * 60 * 1000, done: true };
     sfx('level');
     burst(at, 'sparkle', 16);
@@ -721,7 +721,7 @@ export function ensureSalon() {
     // l'ancien Salon se termine : on remet les prix
     if (G.salon && G.salon.entry && !G.salon.paid) awardSalon(G.salon);
     const crit = SALON_CRITERIA[k % SALON_CRITERIA.length];
-    const lvlBoost = Math.min(1.2, (state.level - 33) * 0.1);
+    const lvlBoost = Math.min(1.2, (state.level - GX.lvl) * 0.08);
     const rivals = ['La ferme des Peupliers', 'Le domaine Bellerive', 'Les Jardins du Moulin'].map((name, j) => ({
         name,
         score: Math.round((2.8 + j * 0.6 + lvlBoost + Math.random() * 0.8) * 10) / 10,
@@ -775,7 +775,7 @@ function awardSalon(s) {
     s.paid = true;
     const r = salonRank(s);
     if (!r) return;
-    const coins = [0, 12000, 6000, 3000, 1000][r] * (1 + state.level * 0.05);
+    const coins = Math.round(([0, 12000, 6000, 3000, 1000][r] * (1 + scaleLvl() * 0.05)) / 10) * 10;
     const rub = r === 1 ? 2 : r === 2 ? 1 : 0;
     earn(Math.round(coins), null);
     state.prestige.rubans += rub;

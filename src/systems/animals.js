@@ -1,5 +1,5 @@
 // Le pâturage : production, bébés, câlins et mangeoires.
-import { state } from '../core/state.js';
+import { state, scaleLvl } from '../core/state.js';
 import { viewShown } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish } from '../core/bus.js';
 import { ANIMALS, GROW, NAMES, MAX_STACK, MAX_FOOD, EXTRA_DROP } from '../data/animals.js';
@@ -214,7 +214,7 @@ export function petAnimal(i, at) {
     sfx('pop');
     buzz(15);
     emit('hearts', { at, n: 4 });
-    addXp(5 + state.level * 2, at);
+    addXp(5 + scaleLvl() * 2, at);
     return true;
 }
 

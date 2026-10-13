@@ -1,7 +1,7 @@
 // Événements rares (foire aux bestiaux, critique gastronomique, nuée de papillons), contrats de saison,
 // histoires des villageois, animaux d'exception et charme du paon.
 import { herdFull, placeAnimal } from './pastures.js';
-import { state } from '../core/state.js';
+import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { fmt, pickRand, round5, pluralFr } from '../core/format.js';
@@ -77,7 +77,7 @@ export function startRare(force) {
     if (type === 'fair') {
         // parmi les animaux les plus précieux déjà disponibles
         const pool = Object.values(ANIMALS)
-            .filter(a => state.level >= a.reqLvl)
+            .filter(a => lvOk(a))
             .sort((a, b) => b.cost - a.cost)
             .slice(0, 5);
         r.offers = pool
@@ -187,7 +187,7 @@ export function ensureContract() {
     const pool = questPool().filter(i => i.sell >= 20 && !(RECIPES[i.id] && RECIPES[i.id].fete));
     if (!pool.length) return false;
     const it = pickRand(pool);
-    const qty = Math.max(10, Math.min(200, Math.round((1000 + state.level * 300) / it.sell / 5) * 5));
+    const qty = Math.max(10, Math.min(200, Math.round((1000 + scaleLvl() * 300) / it.sell / 5) * 5));
     const coins = round5(it.sell * qty * 2.2);
     state.contract = { key, item: it.id, qty, given: 0, done: false, coins, xp: Math.round(coins * 0.08) };
     if (view.started && c) toast(`Nouveau contrat de saison : ${qty} × ${it.name.toLowerCase()}`, ['ui', 'calendar']);

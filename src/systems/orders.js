@@ -2,7 +2,7 @@
 // C'est le vrai cœur de l'économie.
 import { livingTrees } from './orchard.js';
 import { islandOpen } from './island.js';
-import { state } from '../core/state.js';
+import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { pickRand, round5 } from '../core/format.js';
@@ -42,7 +42,7 @@ export function questPool() {
         else if (i.sea) ok = netOpen() && id !== 'lobster';
         else if (id === 'alpineMilk') ok = transOpen();
         else if (id === 'honey') ok = state.grid.some(p => p.deco === 'hive');
-        else if (i.type === 'crop') ok = state.level >= i.reqLvl && storyOk(i) && !i.ghOnly && (!i.island || islandOpen());
+        else if (i.type === 'crop') ok = lvOk(i) && storyOk(i) && !i.ghOnly && (!i.island || islandOpen());
         else if (i.type === 'tree') ok = livingTrees(i.id) > 0;
         else if (i.type === 'product') ok = state.animals.some(a => ANIMALS[a.type].prodId === i.id);
         else if (i.type === 'fish') ok = state.level >= NATURE.pond.lvl && !!FISH[id] && FISH[id].odds >= 10 && !FISH[id].junk;
@@ -55,7 +55,7 @@ export function questPool() {
     return Object.values(ITEMS).filter(i => i.type !== 'fish' && can(i.id));
 }
 
-export const orderSlots = () => Math.min(ORDER_MAX + extraOrders(), 3 + Math.floor(state.level / 2) + (projectDone('bakery') ? 1 : 0) + extraOrders());
+export const orderSlots = () => Math.min(ORDER_MAX + extraOrders(), 3 + Math.floor(scaleLvl() / 2) + (projectDone('bakery') ? 1 : 0) + extraOrders());
 export const xpBonus = () => (projectDone('school') ? 1.1 : 1);
 
 // Quantité qui donne à peu près la valeur visée, bornée
@@ -103,7 +103,7 @@ export function makeOrder() {
     const vid = pickRand(presentVillagers());
     const its = pickItems(orderCount(), VILLAGERS[vid].likes);
     if (!its.length) return null;
-    const target = 30 + state.level * 22;
+    const target = 30 + scaleLvl() * 22;
     const items = its.map(it => ({ id: it.id, qty: qtyFor(it, target * (0.6 + Math.random() * 0.8)) }));
     const value = items.reduce((a, x) => a + ITEMS[x.id].sell * x.qty, 0);
     // la maîtrise et la maison paient plus, sans changer l'expérience
@@ -251,7 +251,7 @@ function makeTruck() {
         t.arriveAt = n + 60000;
         return;
     }
-    const target = 60 + state.level * 30;
+    const target = 60 + scaleLvl() * 30;
     const mult = BALANCE.trainPay * (eventActive('hiver') ? 1.3 : 1) * (1 + rank('logistics') * 0.1) * studPay();
     const slots = its.map(it => {
         const qty = qtyFor(it, target * (0.8 + Math.random() * 0.5), 20);
@@ -337,7 +337,7 @@ export function balloonTick() {
             b.arriveAt = n + 60000;
             return false;
         }
-        const target = 90 + state.level * 40;
+        const target = 90 + scaleLvl() * 40;
         const items = its.map(it => ({ id: it.id, qty: qtyFor(it, target * (0.8 + Math.random() * 0.5), 20) }));
         const value = items.reduce((a, x) => a + ITEMS[x.id].sell * x.qty, 0);
         const gold = round5(value * BALANCE.balloonPay * studPay());

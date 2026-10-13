@@ -8,7 +8,7 @@ import { setView } from '../../src/core/view.js';
 import * as G from '../../src/systems/index.js';
 import { ITEMS } from '../../src/data/items.js';
 import { RECIPES, MACHINES } from '../../src/data/machines.js';
-import { PROJECTS, CHAPTERS } from '../../src/data/village.js';
+import { PROJECTS } from '../../src/data/village.js';
 
 const OLD = readFileSync(new URL('./fixtures/save-6.2.json', import.meta.url), 'utf8');
 
@@ -23,16 +23,21 @@ test('toutes les recettes de l’île ont des ingrédients et une machine connus
     assert.equal(isl.length, 41);
 });
 
-test('l’île se débloque par le bac, en parallèle de l’histoire principale', () => {
+test('l’île se débloque par le bac, après le port (1.4 : une seule histoire)', () => {
     const st = memStore();
     st.setItem(SAVE_KEY, OLD);
     setStore(st);
     clock.t = JSON.parse(OLD).lastSaved + 1000;
     G.loadGame();
     setView({ started: true, tab: 'farm' });
-    assert.ok(state.level >= 30);
-    assert.equal(CHAPTERS[12].after, 5);
-    assert.ok(G.chapterOpen(13), 'le chapitre de l’île est ouvert (hameau fini, niveau 30)');
+    // l'ancien niveau 31 passe à l'échelle des 50 niveaux, sans rien perdre
+    assert.ok(state.level >= 37 && state.level <= 40, 'niveau converti : ' + state.level);
+    assert.ok(G.chapterOpen(6), 'le chapitre commencé reste ouvert');
+    assert.equal(G.chapterAfter(13), 8);
+    assert.equal(G.chapterNum(13), 9);
+    assert.equal(G.chapterOpen(13), false, 'l’île attend la fin du port');
+    for (const p of Object.values(PROJECTS)) if ([1, 2, 3, 4, 5, 6, 7, 8].includes(p.ch)) state.projects[p.id] = { given: {}, done: true };
+    assert.ok(G.chapterOpen(13), 'le chapitre de l’île est ouvert (port fini, niveau 35)');
     assert.equal(G.islandOpen(), false);
     // réparer le bac
     state.money = 1e9;

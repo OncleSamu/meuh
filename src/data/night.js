@@ -1,6 +1,6 @@
 // La ferme la nuit (1.2). Une nuit dure de 20 h à 6 h (environ 2 minutes de jeu).
 export const NIGHT = {
-    lvl: 10,
+    lvl: 11,
     flySeasons: ['printemps', 'ete'], // les lucioles
     flyEvery: 5, // une luciole toutes les 5 s environ
     flyMax: 5,
@@ -9,7 +9,7 @@ export const NIGHT = {
     jar: 20, // lucioles pour remplir le bocal
     starChance: 0.4, // une étoile filante passe pendant 4 nuits sur 10
     starLife: 6000,
-    marketLvl: 12,
+    marketLvl: 14,
     marketSeasons: ['ete'],
     mushroomNight: 1.3, // les champignons poussent plus vite la nuit
     owlScare: 0.6, // la chouette chasse 60 % des corbeaux

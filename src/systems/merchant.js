@@ -1,5 +1,5 @@
 // Zéphyr, le marchand ambulant.
-import { state } from '../core/state.js';
+import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { fmt, pickRand, round5 } from '../core/format.js';
@@ -39,16 +39,15 @@ export function merchantTick() {
 }
 
 export function merchantStock() {
-    const L = state.level;
     const rare = [...RARE].sort(() => Math.random() - 0.5).slice(0, 2);
     const stock = rare.map(id => {
         const qty = 2 + Math.floor(Math.random() * 2);
-        return { kind: 'rare', id, qty, price: round5((200 + L * 35) * qty) };
+        return { kind: 'rare', id, qty, price: round5((200 + scaleLvl() * 35) * qty) };
     });
     const ex = pickRand(['saffron']);
     stock.push({ kind: 'seed', id: ex, qty: 5, price: round5(ITEMS[ex].cost * 5 * 1.4) });
     // graines de la saison, à prix doux
-    const fresh = Object.values(ITEMS).filter(i => i.type === 'crop' && !i.exotic && state.level >= i.reqLvl && isInSeason(i.id));
+    const fresh = Object.values(ITEMS).filter(i => i.type === 'crop' && !i.exotic && lvOk(i) && isInSeason(i.id));
     if (fresh.length) {
         const f = pickRand(fresh);
         stock.push({ kind: 'seed', id: f.id, qty: 15, price: round5(f.cost * 15 * 0.5) });

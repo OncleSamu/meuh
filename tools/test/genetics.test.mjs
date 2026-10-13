@@ -22,7 +22,7 @@ const build = id => {
     return G.finishProject(id);
 };
 
-test('une vieille ferme reçoit des génomes, et la station s’ouvre au niveau 33', () => {
+test('une vieille ferme reçoit des génomes, et la station s’ouvre au niveau 40', () => {
     const st = memStore();
     st.setItem(SAVE_KEY, OLD);
     setStore(st);
@@ -30,9 +30,11 @@ test('une vieille ferme reçoit des génomes, et la station s’ouvre au niveau 
     G.loadGame();
     setView({ started: true, tab: 'farm' });
     assert.ok(state.animals.every(a => a.uid && a.g && a.g.t.rich));
-    state.level = 34;
+    state.level = 41;
     state.money = 1e9;
     state.barn.lvl = 60;
+    // 1.4 : la station suit l'île dans l'histoire ; les chapitres d'avant sont finis
+    G.CHAPTER_ORDER.slice(0, G.CHAPTER_ORDER.indexOf(15)).forEach(n => G.chapterProjects(n).forEach(p => (G.projState(p.id).done = true)));
     assert.ok(G.chapterOpen(15));
     for (const id of ['pollination', 'breeding', 'lab']) assert.ok(build(id), id);
     assert.ok(G.plantLabOpen() && G.breedOpen() && G.labOpen());
@@ -114,7 +116,7 @@ test('élevage : un petit naît avec les gènes de ses parents ; une race se fix
 });
 
 test('le Salon et la commande du chef', () => {
-    state.level = 37;
+    state.level = 44;
     for (const id of ['seedbank', 'selectHive', 'salonHall']) assert.ok(build(id), id);
     tick(2);
     assert.ok(state.genetics.salon && state.genetics.salon.crit);
@@ -129,7 +131,7 @@ test('le Salon et la commande du chef', () => {
 
 test('vendre la ferme garde les créations', () => {
     const races = Object.keys(state.genetics.races).length;
-    state.level = 40;
+    state.level = 50;
     G.doPrestige('', 'none');
     assert.equal(Object.keys(state.genetics.races).length, races);
     tick(5);

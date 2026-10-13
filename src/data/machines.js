@@ -1,3 +1,4 @@
+import { LV_MACH, LV_REC } from './levels14.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -3282,3 +3283,7 @@ Object.assign(RECIPES, {
     poncho: { id: 'poncho', machine: 'loom', ing: { alpacaWool: 1 }, time: 240, lvl: 24, base: 24, xp: 15 },
     alpacaBlanket: { id: 'alpacaBlanket', machine: 'loom', ing: { alpacaWool: 1, wool: 3 }, time: 240, lvl: 24, base: 24, xp: 15 },
 });
+
+// 1.4 : 50 niveaux
+for (const [id, l] of Object.entries(LV_MACH)) if (MACHINES[id]) [MACHINES[id].lvOld, MACHINES[id].reqLvl] = [MACHINES[id].reqLvl || 1, l];
+for (const [id, l] of Object.entries(LV_REC)) if (RECIPES[id]) [RECIPES[id].lvOld, RECIPES[id].lvl, RECIPES[id].base] = [RECIPES[id].lvl || 1, l, l];

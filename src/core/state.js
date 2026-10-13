@@ -19,6 +19,7 @@ export function newState() {
     seeds.wheat = 6;
     return {
         version: SAVE_VERSION,
+        lv14: true, // échelle des 50 niveaux
         money: 100,
         xp: 0,
         level: 1,
@@ -160,6 +161,10 @@ export function newState() {
 // l'état courant : les modules lisent `state` (liaison vivante) et le remplacent par setState
 export let state = newState();
 export const setState = s => (state = s);
+// 1.4 : le jeu passe de 40 à 50 niveaux ; les gains et les tailles de commandes gardent l'échelle des 40 niveaux
+// 1.4 : ce qu'une ancienne partie avait déjà débloqué reste ouvert (state.lvKeep, posé à la conversion)
+export const lvOk = (d, lvl = d.reqLvl) => state.level >= (lvl || 1) || !!(state.lvKeep && state.lvKeep[d.id]);
+export const scaleLvl = () => 1 + ((state.level - 1) * 39) / 49;
 
 // champs remis à zéro à chaque chargement (états passagers)
 const TRANSIENT_KEYS = ['crow', 'egg'];
@@ -179,6 +184,8 @@ export function fromSave(parsed) {
     for (const id of Object.keys(base.inventory)) if (typeof s.inventory[id] !== 'number') s.inventory[id] = 0;
     for (const id of Object.keys(base.seeds)) if (typeof s.seeds[id] !== 'number') s.seeds[id] = 0;
     s.version = SAVE_VERSION;
+    // une sauvegarde d'avant la 1.4 est convertie aux 50 niveaux (normalizeState)
+    if (!parsed.lv14) s.lv14 = false;
     return s;
 }
 

@@ -32,7 +32,7 @@ export const INCIDENTS = {
     },
 };
 
-export const RARE_EVENT_LVL = 10;
+export const RARE_EVENT_LVL = 12;
 
 export const RARE_EVENT_GAP = [5400000, 10800000];
 

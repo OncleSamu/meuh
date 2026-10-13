@@ -1,5 +1,5 @@
 // Le carnet de Mamie Odette (1.2) : une anecdote par recette, débloquée à la maîtrise bronze (une étoile).
-import { state } from '../core/state.js';
+import { state, scaleLvl } from '../core/state.js';
 import { view } from '../core/view.js';
 import { fmt } from '../core/format.js';
 import { emit, toast, sfx } from '../core/bus.js';
@@ -26,7 +26,7 @@ export const carnetPageDone = p => p.ids.every(carnetOpen);
 export const carnetFound = () => Object.keys(CARNET).filter(carnetOpen).length;
 export const carnetTotal = () => Object.keys(CARNET).length;
 export const carnetNew = () => Object.keys(CARNET).filter(id => carnetOpen(id) && !(state.carnet && state.carnet.seen[id])).length;
-export const carnetPageReward = () => 2000 + state.level * 150;
+export const carnetPageReward = () => Math.round((2000 + scaleLvl() * 150) / 10) * 10;
 export const carnetClaimable = () => carnetPages().filter(p => carnetPageDone(p) && !(state.carnet && state.carnet.claimed[p.m])).length;
 
 export function markCarnetSeen(ids) {

@@ -64,7 +64,7 @@ function storyCard() {
     if (!maps.some(x => x.id === m)) m = 'village';
     ui.sel.map = m;
     // l'île a son propre fil d'histoire
-    const cc = G.BRANCH_MAPS.includes(m) ? G.currentChapter(m) : c;
+    const cc = G.currentChapter(m);
     const M = STORY_MAPS.find(x => x.id === m);
     const projs = Object.values(PROJECTS).filter(p => G.mapOf(p) === m);
     let sel = ui.sel.proj;
@@ -94,12 +94,12 @@ function storyCard() {
         })
         .join('');
     const top = cc
-        ? `<div class="card-title">Chapitre ${cc.n} · ${cc.name}</div><div class="card-sub">${G.chapterOpen(cc.n) ? `${cc.intro} (${G.chapterProjects(cc.n).filter(p => G.projectDone(p.id)).length} / ${G.chapterProjects(cc.n).length})` : `Ce chapitre s’ouvre au niveau ${cc.lvl}.`}</div>`
+        ? `<div class="card-title">Chapitre ${G.chapterNum(cc.n)} · ${cc.name}</div><div class="card-sub">${G.chapterOpen(cc.n) ? `${cc.intro} (${G.chapterProjects(cc.n).filter(p => G.projectDone(p.id)).length} / ${G.chapterProjects(cc.n).length})` : `Ce chapitre s’ouvre au niveau ${cc.lvl}${G.chapterAfter(cc.n) ? `, après le chapitre ${G.chapterNum(G.chapterAfter(cc.n))}` : ''}.`}</div>`
         : m === 'island'
           ? '<div class="card-title">L’île est en fête !</div><div class="card-sub">Bac, paillote, four, brûlerie, rhumerie et carnaval : Tiago et Maëva vous remercient.</div>'
           : m === 'station'
-            ? '<div class="card-title">La station est au complet !</div><div class="card-sub">Serre, étable, laboratoire, conservatoire, ruche et salle du Salon : Agathe et Victor vous remercient.</div>'
-            : '<div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port, alpage et domaine : merci, citoyen d’honneur. Tout le canton vous adore.</div>';
+            ? '<div class="card-title">La station est au complet !</div><div class="card-sub">Serre, étable, laboratoire, conservatoire, ruche et salle du Salon : Agathe et Victor vous remercient.</div>'
+            : '<div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port, alpage et domaine : merci, citoyen d’honneur. Tout le canton vous adore.</div>';
     return `<div class="card story-card"><div class="chapter-head">${top}</div>${switcher}
         <div class="vmap ${M.id}${party ? ' party' : ''}">${MAP_BG[M.id]}${party ? '<div class="bunting"></div>' : ''}${blds}</div>${projectDetail(sel)}</div>`;
 }
@@ -109,7 +109,7 @@ function projectDetail(pid) {
         v = VILLAGERS[p.vid];
     const who = `<div class="avatar sm">${art('villager', p.vid)}</div>`;
     if (!G.chapterOpen(p.ch))
-        return `<div class="proj">${who}<div class="card-main"><div class="card-title">${p.name}</div><div class="card-sub">Chapitre ${p.ch} : s’ouvre au niveau ${CHAPTERS[p.ch - 1].lvl}${p.ch > 1 ? ', après le chapitre ' + G.chapterAfter(p.ch) : ''}.</div></div></div>`;
+        return `<div class="proj">${who}<div class="card-main"><div class="card-title">${p.name}</div><div class="card-sub">Chapitre ${G.chapterNum(p.ch)} : s’ouvre au niveau ${CHAPTERS[p.ch - 1].lvl}${G.chapterAfter(p.ch) ? ', après le chapitre ' + G.chapterNum(G.chapterAfter(p.ch)) : ''}.</div></div></div>`;
     if (G.projectDone(pid))
         return `<div class="proj done">${who}<div class="card-main"><div class="card-title">${p.name} ${ico(['ui', 'check'])}</div><div class="card-sub">« ${p.after} »</div></div></div>`;
     const lines = Object.entries(p.need)

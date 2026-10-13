@@ -1,6 +1,6 @@
 // Les imprévus (corbeau, pucerons, bête malade, acheteur pressé) et les sols du champ.
 import { animalRobust } from './genetics.js';
-import { state } from '../core/state.js';
+import { state, scaleLvl } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view, farmShown } from '../core/view.js';
 import { pickRand, round5, formatDuration } from '../core/format.js';
@@ -79,7 +79,7 @@ export function startIncident(force) {
     } else {
         const its = pickItems(state.level < 6 ? 1 : 2);
         if (!its.length) return false;
-        const items = its.map(it => ({ id: it.id, qty: qtyFor(it, 40 + state.level * 20, 10) }));
+        const items = its.map(it => ({ id: it.id, qty: qtyFor(it, 40 + scaleLvl() * 20, 10) }));
         const value = items.reduce((a, x) => a + ITEMS[x.id].sell * x.qty, 0);
         const gold = round5(value * BALANCE.orderPay * 3);
         state.incident = { type, items, gold, xp: Math.round(gold * BALANCE.orderXp * 0.5 * xpBonus()), until: t + I.time };
@@ -131,12 +131,12 @@ export function treatPest(i, at) {
     burst(at, 'leaf', 10, -6);
     burst(at, 'sparkle', 8, -10);
     float(at, ['Ouste !'], '', -24);
-    addXp(20 + state.level * 3, at);
+    addXp(20 + scaleLvl() * 3, at);
     endIncident(true);
     return true;
 }
 
-export const cureCost = () => Math.round((40 + state.level * 15) / 5) * 5;
+export const cureCost = () => Math.round((40 + scaleLvl() * 15) / 5) * 5;
 
 export function cureAnimal(i, at) {
     const a = state.animals[i];
@@ -154,7 +154,7 @@ export function cureAnimal(i, at) {
     buzz(15);
     burst(at, 'sparkle', 12);
     float(at, ['Guéri !'], '', -30);
-    addXp(15 + state.level * 3, at);
+    addXp(15 + scaleLvl() * 3, at);
     return true;
 }
 

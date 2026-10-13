@@ -1,5 +1,5 @@
 // Le port et l'alpage : pêche en mer, cargo de livraison, transhumance, saisons de la ferme et fermes à thème.
-import { state } from '../core/state.js';
+import { state, scaleLvl } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { pickRand, round5 } from '../core/format.js';
@@ -91,7 +91,7 @@ export function boatTick() {
             b.arriveAt = t + 60000;
             return false;
         }
-        const target = 150 + state.level * 55;
+        const target = 150 + scaleLvl() * 55;
         const items = its.map(it => ({ id: it.id, qty: qtyFor(it, target * (0.8 + Math.random() * 0.5), 30) }));
         const value = items.reduce((a, x) => a + ITEMS[x.id].sell * x.qty, 0);
         const gold = round5(value * boatPay());
@@ -206,7 +206,7 @@ export function farmSeasonAdd(id, qty) {
     if (farmSeasonTheme().items.includes(id)) state.fseason.pts += qty * (RECIPES[id] ? 3 : 1);
 }
 
-export const seasonTierReward = k => ({ coins: Math.round((2000 * (k + 1) * (1 + state.level * 0.2)) / 50) * 50, rares: k + 1 });
+export const seasonTierReward = k => ({ coins: Math.round((2000 * (k + 1) * (1 + scaleLvl() * 0.2)) / 50) * 50, rares: k + 1 });
 
 export function claimSeasonTier(k, at) {
     const sn = state.fseason;

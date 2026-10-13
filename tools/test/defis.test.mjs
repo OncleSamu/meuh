@@ -30,7 +30,7 @@ test('les données des défis sont complètes', () => {
     }
 });
 
-test('au niveau 40, un défi arrive ; un défi ne revient pas avant le 4e tirage', () => {
+test('au niveau 50, un défi arrive ; un défi ne revient pas avant le 4e tirage', () => {
     const st = memStore();
     st.setItem(SAVE_KEY, OLD);
     setStore(st);
@@ -38,8 +38,8 @@ test('au niveau 40, un défi arrive ; un défi ne revient pas avant le 4e tirage
     G.loadGame();
     setView({ started: true, tab: 'farm' });
     tick(2);
-    assert.equal(G.curDefi(), null, 'rien avant le niveau 40');
-    state.level = 40;
+    assert.equal(G.curDefi(), null, 'rien avant le niveau 50');
+    state.level = 50;
     tick(2);
     const d = G.curDefi();
     assert.ok(d && DEFIS[d.id], 'un défi en cours');

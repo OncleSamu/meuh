@@ -1,5 +1,5 @@
-// Les grands défis (1.1) : après le niveau 40, un défi de 14 jours tiré au hasard parmi douze, 4 étapes, une médaille.
-import { state } from '../core/state.js';
+// Les grands défis (1.1) : après le niveau 50, un défi de 14 jours tiré au hasard parmi douze, 4 étapes, une médaille.
+import { state, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { fmt, qtyName } from '../core/format.js';
@@ -57,7 +57,7 @@ export function canGet(id) {
     if (!i) return false;
     if (['material', 'rare'].includes(i.type) || id === 'crate') return true;
     if (id === 'lobster') return netOpen();
-    if (i.type === 'tree') return state.level >= (i.reqLvl || 0) && storyOk(i) && (!i.island || islandOpen());
+    if (i.type === 'tree') return lvOk(i) && storyOk(i) && (!i.island || islandOpen());
     if (!poolMemo || poolMemo.t !== now()) poolMemo = { t: now(), ids: new Set(questPool().map(x => x.id)) };
     return poolMemo.ids.has(id);
 }
