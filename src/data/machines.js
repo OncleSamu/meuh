@@ -3287,3 +3287,45 @@ Object.assign(RECIPES, {
 // 1.4 : 50 niveaux
 for (const [id, l] of Object.entries(LV_MACH)) if (MACHINES[id]) [MACHINES[id].lvOld, MACHINES[id].reqLvl] = [MACHINES[id].reqLvl || 1, l];
 for (const [id, l] of Object.entries(LV_REC)) if (RECIPES[id]) [RECIPES[id].lvOld, RECIPES[id].lvl, RECIPES[id].base] = [RECIPES[id].lvl || 1, l, l];
+
+// ---------------- 1.5 : la crêperie et les recettes des nouveaux produits ----------------
+MACHINES.crepery = { id: 'crepery', name: 'Crêperie', cost: 8000, reqLvl: 21, desc: 'Galettes de sarrasin et crêpes' };
+Object.assign(RECIPES, {
+    buckwheatFlour: { id: 'buckwheatFlour', machine: 'mill', ing: { buckwheat: 3 }, time: 60, lvl: 20, base: 20, xp: 4 },
+    sobacha: { id: 'sobacha', machine: 'teahouse', ing: { buckwheat: 2 }, time: 120, lvl: 27, base: 27, xp: 8 },
+    buckwheatSalad: { id: 'buckwheatSalad', machine: 'deli', ing: { buckwheat: 2, cucumber: 1, lemon: 1 }, time: 150, lvl: 21, base: 21, xp: 10 },
+    tzatziki: { id: 'tzatziki', machine: 'deli', ing: { cucumber: 2, yogurt: 1, garlic: 1 }, time: 120, lvl: 29, base: 29, xp: 8 },
+    gazpacho: { id: 'gazpacho', machine: 'deli', ing: { tomato: 2, cucumber: 1, pepper: 1 }, time: 120, lvl: 12, base: 12, xp: 8 },
+    quailSalad: { id: 'quailSalad', machine: 'deli', ing: { quailEgg: 3, spinach: 2, lemon: 1 }, time: 150, lvl: 20, base: 20, xp: 10 },
+    raspberrySorbet: { id: 'raspberrySorbet', machine: 'icecream', ing: { raspberry: 3, sugar: 1 }, time: 180, lvl: 25, base: 25, xp: 11 },
+    hazelnutIce: { id: 'hazelnutIce', machine: 'icecream', ing: { hazelnut: 2, milk: 1, sugar: 1 }, time: 180, lvl: 26, base: 26, xp: 11 },
+    lemonade: { id: 'lemonade', machine: 'press', ing: { lemon: 2, sugar: 1 }, time: 120, lvl: 19, base: 19, xp: 8 },
+    almondMilk: { id: 'almondMilk', machine: 'press', ing: { almond: 3 }, time: 150, lvl: 34, base: 34, xp: 10 },
+    raspberryLiqueur: { id: 'raspberryLiqueur', machine: 'still', ing: { raspberry: 4, sugar: 1 }, time: 360, lvl: 28, base: 28, xp: 23 },
+    limoncello: { id: 'limoncello', machine: 'still', ing: { lemon: 4, sugar: 1 }, time: 360, lvl: 29, base: 29, xp: 23 },
+    quinceRatafia: { id: 'quinceRatafia', machine: 'still', ing: { quince: 3, sugar: 1 }, time: 360, lvl: 30, base: 30, xp: 23 },
+    rhubarbCompote: { id: 'rhubarbCompote', machine: 'cannery', ing: { rhubarb: 3, sugar: 1 }, time: 240, lvl: 31, base: 31, xp: 15 },
+    pickles: { id: 'pickles', machine: 'cannery', ing: { cucumber: 3, mustard: 1 }, time: 240, lvl: 32, base: 32, xp: 15 },
+    piperade: { id: 'piperade', machine: 'cannery', ing: { pepper: 2, tomato: 2, espelette: 1 }, time: 300, lvl: 33, base: 33, xp: 19 },
+    quinceJelly: { id: 'quinceJelly', machine: 'cannery', ing: { quince: 3, sugar: 2 }, time: 300, lvl: 31, base: 31, xp: 19 },
+    rhubarbJam: { id: 'rhubarbJam', machine: 'confectionery', ing: { strawberry: 2, rhubarb: 2, sugar: 1 }, time: 240, lvl: 23, base: 23, xp: 15 },
+    rhubarbTart: { id: 'rhubarbTart', machine: 'bakery', ing: { rhubarb: 3, flour: 2, butter: 1 }, time: 240, lvl: 18, base: 18, xp: 15 },
+    spinachQuiche: { id: 'spinachQuiche', machine: 'bakery', ing: { spinach: 3, egg: 3, flour: 2, cheese: 1 }, time: 240, lvl: 18, base: 18, xp: 15 },
+    lemonTart: { id: 'lemonTart', machine: 'bakery', ing: { lemon: 2, flour: 2, egg: 2, butter: 1, sugar: 1 }, time: 300, lvl: 19, base: 19, xp: 19 },
+    galetteRois: { id: 'galetteRois', machine: 'bakery', ing: { almond: 3, flour: 2, butter: 1, egg: 1 }, time: 360, lvl: 35, base: 35, xp: 23 },
+    espelettePowder: { id: 'espelettePowder', machine: 'dryer', ing: { espelette: 3 }, time: 300, lvl: 30, base: 30, xp: 19 },
+    quincePaste: { id: 'quincePaste', machine: 'dryer', ing: { quince: 3, sugar: 2 }, time: 360, lvl: 29, base: 29, xp: 23 },
+    espeletteHam: { id: 'espeletteHam', machine: 'saloir', ing: { ham: 1, espelette: 1 }, time: 480, lvl: 34, base: 34, xp: 30 },
+    hazelnutSpread: { id: 'hazelnutSpread', machine: 'chocolatier', ing: { hazelnut: 3, milkChoc: 1, sugar: 1 }, time: 300, lvl: 36, base: 36, xp: 19 },
+    praline: { id: 'praline', machine: 'chocolatier', ing: { hazelnut: 2, almond: 2, sugar: 2 }, time: 300, lvl: 35, base: 35, xp: 19 },
+    chocAlmonds: { id: 'chocAlmonds', machine: 'chocolatier', ing: { almond: 3, darkChoc: 1 }, time: 240, lvl: 36, base: 36, xp: 15 },
+    hazelnutOil: { id: 'hazelnutOil', machine: 'oilmill', ing: { hazelnut: 4 }, time: 240, lvl: 24, base: 24, xp: 15 },
+    smokedQuailEggs: { id: 'smokedQuailEggs', machine: 'smokehouse', ing: { quailEgg: 6 }, time: 240, lvl: 15, base: 15, xp: 15 },
+    galetteComplete: { id: 'galetteComplete', machine: 'crepery', ing: { buckwheatFlour: 2, egg: 1, ham: 1, cheese: 1 }, time: 240, lvl: 34, base: 34, xp: 15 },
+    spinachGalette: { id: 'spinachGalette', machine: 'crepery', ing: { buckwheatFlour: 2, spinach: 2, cheese: 1 }, time: 180, lvl: 21, base: 21, xp: 11 },
+    quailGalette: { id: 'quailGalette', machine: 'crepery', ing: { buckwheatFlour: 2, quailEgg: 3, spinach: 1 }, time: 180, lvl: 22, base: 22, xp: 11 },
+    lemonCrepe: { id: 'lemonCrepe', machine: 'crepery', ing: { flour: 2, egg: 1, milk: 1, lemon: 1, sugar: 1 }, time: 150, lvl: 21, base: 21, xp: 10 },
+    raspberryCrepe: { id: 'raspberryCrepe', machine: 'crepery', ing: { flour: 2, egg: 1, milk: 1, raspberry: 2 }, time: 150, lvl: 21, base: 21, xp: 10 },
+    spreadCrepe: { id: 'spreadCrepe', machine: 'crepery', ing: { flour: 2, egg: 1, milk: 1, hazelnutSpread: 1 }, time: 150, lvl: 36, base: 36, xp: 10 },
+    calvadosCrepe: { id: 'calvadosCrepe', machine: 'crepery', ing: { flour: 2, egg: 1, milk: 1, calvados: 1 }, time: 180, lvl: 35, base: 35, xp: 11 },
+});

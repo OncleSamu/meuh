@@ -604,3 +604,66 @@ Object.assign(CARNET, {
 
 // les pages du carnet : une par machine, dans l'ordre de la ferme
 export const CARNET_DONE_REWARD = { coins: 5000, rubans: 1 };
+
+// ---------------- 1.5 : la crêperie et les nouveaux produits ----------------
+Object.assign(CARNET, {
+    buckwheatFlour:
+        'Le sarrasin, on l’appelle aussi blé noir, mais ce n’est pas du blé. Ton grand-père a mis vingt ans à l’admettre. Il disait « blé noir » par principe.',
+    sobacha:
+        'Une voisine japonaise m’a appris à griller le sarrasin pour en faire du thé. Ça sent la noisette et le pain chaud. Papi Lucien y trempait ses tartines, le pauvre.',
+    buckwheatSalad: 'Une salade de sarrasin, c’est ce que je prépare quand il fait trop chaud pour allumer le four. C’est-à-dire trois jours par an, ici.',
+    tzatziki:
+        'Le tzatziki, c’est un souvenir de notre seul voyage en Grèce. Papi Lucien a attrapé un coup de soleil sur le crâne et il a juré qu’on ne repartirait plus. On n’est pas repartis.',
+    gazpacho:
+        'Une soupe froide ! Ma mère trouvait ça scandaleux. Elle la faisait réchauffer en cachette. Ce n’était plus du gaspacho, mais elle était contente.',
+    quailSalad: 'Les œufs de caille, on les écale à la petite cuillère, un par un. C’est long. C’est pour ça que je te demande toujours de m’aider, mon chéri.',
+    raspberrySorbet:
+        'Les framboises du fond du jardin, on les mangeait directement sur la tige. Celles qui arrivaient à la cuisine, c’étaient les survivantes.',
+    hazelnutIce: 'Les écureuils et moi, on se dispute le noisetier depuis quarante ans. Ils gagnent souvent. Mais la glace, c’est moi qui la fais.',
+    lemonade: 'La limonade, c’était la boisson des moissons. Les hommes rentraient des champs et vidaient la cruche avant même de dire bonjour.',
+    almondMilk: 'Le lait d’amande, c’est pour ta cousine qui ne digère pas le lait de vache. Elle digère très bien mes gâteaux au beurre, par contre.',
+    raspberryLiqueur: 'Une liqueur de framboise, ça se garde pour les grandes occasions. Ton grand-père trouvait une grande occasion presque chaque dimanche.',
+    limoncello:
+        'Le limoncello se boit glacé, dans un tout petit verre. Papi Lucien prenait un grand verre « pour ne pas avoir à se resservir ». Il se resservait quand même.',
+    quinceRatafia:
+        'Le ratafia, c’est la recette de ma tante Berthe. Elle le cachait dans l’armoire à draps, derrière les taies d’oreiller. Toute la famille savait où.',
+    rhubarbCompote: 'La rhubarbe pousse toute seule, partout, comme les mauvaises herbes et les cousins. Alors on en fait de la compote, beaucoup de compote.',
+    pickles:
+        'Les cornichons se ramassent tout petits, au petit matin. Ton père, à cinq ans, croyait que c’étaient des bébés concombres qu’on volait à leur maman.',
+    piperade: 'La piperade, je l’ai apprise d’un berger basque qui passait avec ses brebis. Il chantait en cuisinant. Moi aussi, depuis, mais je chante faux.',
+    quinceJelly:
+        'Un coing cru, c’est dur comme une pierre et ça ne sent rien dans la bouche. Cuit, ça devient de l’or rose. Comme quoi, il ne faut jamais juger trop vite.',
+    rhubarbJam: 'Fraise et rhubarbe, c’est un couple comme ton grand-père et moi : l’une est douce, l’autre est acide, et ensemble ça marche très bien.',
+    rhubarbTart:
+        'La tarte à la rhubarbe, il faut la sucrer un peu plus qu’on ne croit. Et puis encore un peu. Et puis demander à Papi Lucien, qui en voulait toujours plus.',
+    spinachQuiche:
+        'Ton père refusait les épinards. Je les ai cachés dans une quiche, avec beaucoup de fromage. Il en a repris trois fois. Il ne le sait toujours pas.',
+    lemonTart:
+        'La meringue, il faut la battre jusqu’à ce qu’elle tienne quand on retourne le bol au-dessus de sa tête. Je ne te conseille pas d’essayer avec ton grand-père à côté.',
+    galetteRois:
+        'Chaque année, Papi Lucien trichait pour avoir la fève. Il la reconnaissait au toucher, disait-il. En vrai, il la cherchait avec sa fourchette avant de servir.',
+    espelettePowder:
+        'Les piments d’Espelette, on les fait sécher en guirlandes sur la façade. Les touristes les prenaient en photo. Papi Lucien posait devant, très fier.',
+    quincePaste:
+        'La pâte de coing se coupe en petits carrés et se roule dans le sucre. J’en gardais une boîte pour les visites. Elle se vidait toujours avant les visites.',
+    espeletteHam: 'Un jambon frotté au piment, ça réveille. Le facteur en a goûté une tranche un matin, il a fini sa tournée en courant.',
+    hazelnutSpread: 'Ma pâte à tartiner n’a pas de marque, mais elle a des noisettes. Beaucoup de noisettes. Les écureuils ne me le pardonnent pas.',
+    praline: 'Le praliné, il faut caraméliser les noisettes et les amandes puis tout broyer. Le bruit du moulin faisait aboyer le chien pendant une heure.',
+    chocAlmonds:
+        'Les amandes au chocolat, c’était les bonbons de Noël. On les comptait pour que chacun ait les mêmes. Papi Lucien recomptait toujours, au cas où.',
+    hazelnutOil: 'Quelques gouttes d’huile de noisette sur une salade, et c’est dimanche. Même le mardi.',
+    smokedQuailEggs:
+        'Fumer des œufs de caille, c’est une idée de ton grand-père. Il voulait « inventer quelque chose ». C’est la seule de ses inventions qui marchait.',
+    galetteComplete:
+        'La galette complète : jambon, œuf, fromage. L’œuf doit rester coulant au milieu. Si tu le crèves, on recommence. Ce sont les règles de la maison.',
+    spinachGalette:
+        'Une galette aux épinards, c’est le repas du vendredi. Ne me demande pas pourquoi le vendredi. C’était comme ça chez ma mère, et chez sa mère avant elle.',
+    quailGalette:
+        'Trois petits œufs de caille sur une galette, comme trois boutons sur un manteau. Ta cousine les mangeait un par un en faisant un vœu à chaque fois.',
+    lemonCrepe:
+        'La crêpe au citron et au sucre, c’est la plus simple et la meilleure. Quand on ne sait pas quoi faire, on fait simple. Ça marche aussi dans la vie.',
+    raspberryCrepe:
+        'Pour la Chandeleur, on faisait sauter la première crêpe avec une pièce dans la main pour avoir de l’argent toute l’année. La mienne a fini sur l’armoire.',
+    spreadCrepe: 'La crêpe à la pâte à tartiner, c’est ton goûter préféré depuis tes trois ans. Tu en avais jusque dans les oreilles. On a des photos.',
+    calvadosCrepe: 'Flamber une crêpe, c’est spectaculaire. Papi Lucien a flambé ses sourcils, une fois. Il a gardé l’air étonné pendant tout un mois.',
+});
