@@ -28,21 +28,41 @@ const rhubarbStalk = (x, y, s, rot = 0) =>
     L('M0 -2 L0 -30', 0.9, 'rgba(255,255,255,.4)') +
     `</g>`;
 // une framboise : petites boules serrées
-const rasp = (x, y, s = 1) => {
-    let o = `<g transform="translate(${x} ${y}) scale(${s})">` + P('M-7 -4 Q-8 6 0 10 Q8 6 7 -4 Q0 -8 -7 -4Z', '#d8264a', 2);
-    for (const [a, b] of [
-        [-4, -2],
-        [0, -3],
-        [4, -2],
-        [-5, 2],
-        [-1, 2],
-        [3, 2],
-        [-2, 6],
-        [2, 6],
-    ])
-        o += C(a, b, 2, '#e8405a', 0.9);
-    return o + FC(-3, -3, 0.8, '#fff', 0.8) + P('M-4 -5 L0 -9 L4 -5 L0 -6Z', '#4f9a3a', 1.2) + '</g>';
+// une framboise : des petites billes rouges serrées, silhouette bosselée, à peine un reste de collerette
+const RASP = [
+    [-4.4, -6.4],
+    [0, -7],
+    [4.4, -6.4],
+    [-6.6, -2.4],
+    [-2.2, -2.6],
+    [2.2, -2.6],
+    [6.6, -2.4],
+    [-6, 2.2],
+    [-2, 1.8],
+    [2, 1.8],
+    [6, 2.2],
+    [-3.8, 6.2],
+    [0, 6],
+    [3.8, 6.2],
+    [-1.6, 9.6],
+    [1.6, 9.6],
+];
+const rasp = (x, y, s = 1, rot = 0) => {
+    let o = `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">`;
+    // la silhouette : chaque bille cerclée de brun, puis recouverte pour ne garder que le bord
+    o += RASP.map(([a, b]) => C(a, b, 3, '#c81e44', 2.4)).join('');
+    o += RASP.map(([a, b], k) => FC(a, b, 3, k % 3 === 1 ? '#e8405a' : k % 3 === 2 ? '#d82a4c' : '#c81e44')).join('');
+    o += RASP.map(
+        ([a, b]) => `<circle cx="${a}" cy="${b}" r="2.9" fill="none" stroke="#8a1030" stroke-width=".7" opacity=".55"/>` + FC(a - 1, b - 1, 0.8, '#fff', 0.7),
+    ).join('');
+    return o + P('M-4 -9.6 L-2 -11.6 L0 -10 L2 -11.6 L4 -9.6 Q0 -8.4 -4 -9.6Z', '#5fa040', 1.4) + L('M0 -11 L0.6 -14', 1.6, '#3f7a2e') + '</g>';
 };
+// une feuille de framboisier, dentelée
+const raspLeaf = (x, y, s, rot) =>
+    `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">` +
+    P('M0 0 L-4 -4 L-7 -4 L-8 -9 L-11 -11 L-9 -15 L-10 -19 L-5 -21 L-3 -25 L0 -28 L3 -25 L5 -21 L10 -19 L9 -15 L11 -11 L8 -9 L7 -4 L4 -4Z', '#4f9a3a', 2) +
+    L('M0 -2 L0 -25 M0 -9 L-6 -14 M0 -9 L6 -14 M0 -16 L-5 -20 M0 -16 L5 -20', 1, 'rgba(255,255,255,.4)') +
+    `</g>`;
 // un grain de sarrasin : petit tétraèdre brun
 const bwSeed = (x, y, r = 2.4, c = '#8b5a2b') => P(`M${x} ${y - r} L${x + r} ${y + r * 0.7} L${x - r} ${y + r * 0.7}Z`, c, 0.9);
 // un piment d'Espelette, rouge vif et pointu
@@ -150,16 +170,8 @@ const RAW = {
         rhubarbStalk(32, 58, 0.95, 0) +
         rhubarbStalk(38, 58, 0.9, 12) +
         L('M24 48 Q32 52 40 48', 2.6, '#d9a066'),
-    // les framboises : une barquette
-    raspberry: () =>
-        SHADOW(32, 58, 22, 3) +
-        P('M10 36 L54 36 L50 56 L14 56Z', '#fff6e8') +
-        L('M12 42 L52 42 M13 48 L51 48 M20 36 L22 56 M32 36 L32 56 M44 36 L42 56', 1, 'rgba(58,38,24,.2)') +
-        rasp(18, 32, 0.9) +
-        rasp(30, 30, 1) +
-        rasp(42, 31, 0.95) +
-        rasp(24, 24, 0.85) +
-        rasp(37, 23, 0.9),
+    // les framboises : trois belles framboises sur leur feuille
+    raspberry: () => SHADOW(32, 58, 22, 3) + raspLeaf(32, 50, 1.25, -60) + rasp(20, 40, 1.15, -12) + rasp(43, 41, 1.15, 14) + rasp(31, 30, 1.2, 0),
     // le sarrasin : un épi de grains bruns et quelques fleurs blanches
     buckwheat: () => {
         let o = SHADOW(32, 58, 18, 3) + stem('M32 58 Q30 40 32 14', '#b8483a', 1.8);
@@ -199,11 +211,7 @@ Object.assign(youngExtra, {
     cucumber: () => sprout('#4f9a3a'),
     rhubarb: () => mound() + rhubarbStalk(28, 56, 0.5, -15) + rhubarbStalk(36, 56, 0.5, 15) + leaf(32, 40, 14, -90, '#5fa040', 0.6),
     raspberry: () =>
-        mound() +
-        stem('M28 56 L26 30', '#8a5a3a', 1.6) +
-        stem('M36 56 L38 34', '#8a5a3a', 1.6) +
-        leaf(26, 40, 10, -150, G, 0.5) +
-        leaf(38, 42, 10, -30, G, 0.5),
+        mound() + stem('M28 56 L26 30', '#8a5a3a', 1.6) + stem('M36 56 L38 34', '#8a5a3a', 1.6) + raspLeaf(26, 44, 0.45, -60) + raspLeaf(38, 46, 0.45, 60),
     buckwheat: () => mound() + [26, 32, 38].map(x => stem(`M${x} 56 L${x} 38`, '#b8483a', 1.2) + leaf(x, 42, 7, -120, G, 0.6)).join(''),
     espelette: () => sprout('#4f9a3a') + stem('M32 54 L32 40', G, 1.4),
 });
@@ -229,16 +237,16 @@ Object.assign(readyExtra, {
         P('M24 22 Q22 6 32 4 Q42 6 40 22Z', '#6cb04a', 2),
     raspberry: () =>
         mound() +
-        stem('M24 56 Q20 34 24 14', '#8a5a3a', 1.6) +
-        stem('M40 56 Q44 34 40 14', '#8a5a3a', 1.6) +
-        leaf(22, 42, 11, -150, G, 0.5) +
-        leaf(42, 40, 11, -30, G, 0.5) +
-        leaf(24, 26, 10, -150, GL, 0.5) +
-        leaf(40, 24, 10, -30, GL, 0.5) +
-        rasp(20, 32, 0.6) +
-        rasp(28, 20, 0.6) +
-        rasp(44, 30, 0.6) +
-        rasp(36, 16, 0.55),
+        stem('M24 56 Q20 34 26 12', '#8a5a3a', 1.6) +
+        stem('M40 56 Q44 34 38 12', '#8a5a3a', 1.6) +
+        raspLeaf(22, 40, 0.5, -60) +
+        raspLeaf(42, 38, 0.5, 60) +
+        raspLeaf(26, 22, 0.45, -50) +
+        raspLeaf(38, 20, 0.45, 50) +
+        rasp(19, 30, 0.55, 15) +
+        rasp(45, 28, 0.55, -15) +
+        rasp(30, 16, 0.5, 10) +
+        rasp(34, 40, 0.5, -10),
     buckwheat: () =>
         mound() +
         [22, 30, 38, 44]
