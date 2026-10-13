@@ -1,0 +1,365 @@
+/* 1.6 : la brasserie de l'abbaye */
+.brew-vats {
+    display: grid;
+    align-items: start;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+}
+.brew-vat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--paper-l);
+    border: 2.5px solid var(--ink);
+    border-radius: var(--r-sm);
+    min-width: 0;
+    flex-wrap: wrap;
+}
+.brew-vat.empty {
+    opacity: 0.6;
+    border-style: dashed;
+    font-weight: 700;
+}
+.brew-vat.ready {
+    background: #eaf7d8;
+}
+.brew-vat .bv-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.brew-vat .bv-main b {
+    font-size: 0.86rem;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+.brew-vat .bv-main small {
+    font-size: 0.74rem;
+    opacity: 0.8;
+}
+.brew-vat .btn {
+    width: 100%;
+}
+.ico.brew-bottle {
+    width: 34px;
+    height: 34px;
+    flex: none;
+}
+.brew-compose {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.bc-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.bc-label {
+    font-weight: 800;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.brew-malts {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+.brew-malt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 2px;
+    border: 2.5px solid var(--ink);
+    border-radius: var(--r-sm);
+    background: var(--paper-l);
+    font: inherit;
+    color: var(--ink);
+    min-width: 0;
+}
+.brew-malt.on {
+    background: var(--gold);
+    box-shadow: 0 3px 0 var(--gold-d);
+}
+.brew-malt .swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+}
+.brew-malt b {
+    font-size: 0.8rem;
+}
+.brew-malt small {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.72rem;
+}
+.brew-malt small .ico,
+.brew-hops small .ico,
+.brew-ing .ico {
+    width: 16px;
+    height: 16px;
+}
+.brew-hops > button {
+    flex-direction: column;
+    gap: 0;
+}
+.brew-hops small {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.7rem;
+}
+.brew-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.brew-slot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+    border: 2.5px solid var(--ink);
+    border-radius: var(--r-sm);
+    background: var(--paper-l);
+}
+.brew-slot.empty {
+    justify-content: center;
+    border-style: dashed;
+    font: inherit;
+    font-weight: 800;
+    color: var(--ink);
+    min-height: 52px;
+}
+.brew-slot.empty b {
+    font-size: 1.3rem;
+}
+.brew-slot .bs-pick {
+    flex: 1;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 6px;
+    align-items: center;
+    text-align: left;
+    background: none;
+    border: 0;
+    font: inherit;
+    color: var(--ink);
+    min-width: 0;
+    padding: 0;
+}
+.brew-slot .bs-pick .ico {
+    grid-row: span 2;
+    width: 38px;
+    height: 38px;
+}
+.brew-slot .bs-pick span {
+    font-weight: 800;
+    font-size: 0.9rem;
+}
+.brew-slot .bs-pick small {
+    font-size: 0.72rem;
+    opacity: 0.75;
+}
+.brew-preview {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    border-radius: var(--r-sm);
+    background: rgba(255, 255, 255, 0.55);
+    border: 2px dashed rgba(58, 38, 24, 0.3);
+}
+.brew-preview .bp-art {
+    flex: none;
+    width: 74px;
+}
+.brew-preview .bp-art svg {
+    width: 74px;
+    height: 74px;
+}
+.brew-preview .bp-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.bp-name {
+    font-weight: 900;
+    font-size: 1rem;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+.bp-name .chip {
+    font-size: 0.68rem;
+    vertical-align: middle;
+}
+.bp-why {
+    margin: 0;
+    padding-left: 16px;
+    font-size: 0.78rem;
+    line-height: 1.3;
+}
+.brew-stars i {
+    font-style: normal;
+    color: rgba(58, 38, 24, 0.22);
+    font-size: 1rem;
+}
+.brew-stars i.on {
+    color: #f2b01e;
+    text-shadow: 0 0 1px var(--ink);
+}
+.brew-notes {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.brew-notes .bn {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+.brew-notes .bn i {
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(58, 38, 24, 0.12);
+    overflow: hidden;
+}
+.brew-notes .bn b {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+}
+.brew-ing {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    margin-right: 3px;
+}
+.brew-ing b {
+    font-size: 0.7rem;
+}
+.brew-beer.none {
+    opacity: 0.6;
+}
+.brew-beer .card-art svg {
+    width: 52px;
+    height: 52px;
+}
+.brew-beer .card-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-wrap: anywhere;
+}
+.brew-beer .card-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+.brew-beer .card-side small {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+.brew-barrels {
+    display: grid;
+    align-items: start;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+}
+.brew-barrel {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    border: 2.5px solid var(--ink);
+    border-radius: var(--r-sm);
+    background: #f2e2c4;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+.brew-barrel.empty {
+    justify-content: center;
+    border-style: dashed;
+    font: inherit;
+    font-weight: 800;
+    color: var(--ink);
+    opacity: 0.75;
+}
+.brew-barrel.done {
+    background: #eaf7d8;
+}
+.brew-barrel.bad {
+    background: #f6d6d0;
+}
+.brew-barrel .bb-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.brew-barrel .bb-main b {
+    font-size: 0.84rem;
+    overflow-wrap: anywhere;
+}
+.brew-barrel .bb-main small {
+    font-size: 0.72rem;
+    opacity: 0.85;
+}
+.brew-barrel .bb-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    width: 100%;
+}
+.brew-barrel .bb-side small {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: 800;
+}
+.brew-book {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin: 8px 0;
+}
+.brew-book .ico {
+    width: 26px;
+    height: 26px;
+}
+.brew-book .ico.off {
+    filter: grayscale(1);
+    opacity: 0.3;
+}
+
+.brew-barrel.empty {
+    min-height: 64px;
+}
+.brew-slot .stepper {
+    gap: 4px;
+}
+.brew-slot .stepper .btn.sm {
+    min-width: 34px;
+    padding: 4px;
+}
+.bc-row + .bc-row {
+    margin-top: 2px;
+}

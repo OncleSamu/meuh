@@ -122,6 +122,7 @@ const F = {
     hazelnut: '20102',
     quince: '23100',
     almond: '30101',
+    barley: '20101',
 };
 export const FLAVORS = Object.fromEntries(Object.entries(F).map(([id, s]) => [id, [...s].map(Number)]));
 // qualités de culture de base (pousse, soif, rusticité, rendement) : 2 partout

@@ -24,6 +24,7 @@ import './v131.js';
 import './v132.js';
 import './v133.js';
 import './v15.js';
+import './abbey.js';
 
 export const SPR = {
     farmhouse(l, roof) {

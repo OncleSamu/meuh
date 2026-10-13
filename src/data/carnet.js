@@ -667,3 +667,14 @@ Object.assign(CARNET, {
     spreadCrepe: 'La crêpe à la pâte à tartiner, c’est ton goûter préféré depuis tes trois ans. Tu en avais jusque dans les oreilles. On a des photos.',
     calvadosCrepe: 'Flamber une crêpe, c’est spectaculaire. Papi Lucien a flambé ses sourcils, une fois. Il a gardé l’air étonné pendant tout un mois.',
 });
+
+// ---------------- 1.6 : la malterie ----------------
+Object.assign(CARNET, {
+    maltBlond:
+        'Le malt, c’est de l’orge qu’on fait germer puis sécher. Frère Hugues dit qu’il faut l’écouter craquer. Moi, j’entends surtout mon dos qui craque.',
+    maltAmber:
+        'Grillé un peu plus longtemps, le malt sent le pain d’épices. Ton grand-père venait « surveiller » la malterie. Il surveillait surtout le goûter.',
+    maltBrown: 'Le malt brun sent le café et la noisette. Agnès en met une poignée dans son pain. Elle dit que ça fait des tartines qui tiennent au corps.',
+    maltBlack:
+        'Le malt noir, il faut le sortir juste avant qu’il brûle. Une seconde de trop et c’est du charbon. Agnès compte à voix haute ; personne n’a le droit de lui parler.',
+});

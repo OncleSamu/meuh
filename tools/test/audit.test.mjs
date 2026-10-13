@@ -64,3 +64,17 @@ test('1.4.1 : ce que demande un chantier est débloqué avant son chapitre', asy
         for (const k of Object.keys(p.need)) if (!gated(k)) assert.ok(lvlOf(k) <= Math.max(2, c - 1), `${p.id} (niveau ${c}) : ${k} au niveau ${lvlOf(k)}`);
     }
 });
+
+test('aucune règle exportée deux fois sous le même nom (sinon elle disparaît de systems/index.js)', async () => {
+    const fs = await import('node:fs');
+    const dir = new URL('../../src/systems/', import.meta.url);
+    const seen = {};
+    for (const f of fs.readdirSync(dir)) {
+        if (f === 'index.js') continue;
+        for (const k of Object.keys(await import(new URL(f, dir)))) (seen[k] = seen[k] || []).push(f);
+    }
+    assert.deepEqual(
+        Object.entries(seen).filter(([, v]) => v.length > 1),
+        [],
+    );
+});

@@ -2719,3 +2719,23 @@ Object.assign(ITEMS, {
     spreadCrepe: { id: 'spreadCrepe', name: 'Crêpe à la pâte à tartiner', type: 'artisan', sell: 4620 },
     calvadosCrepe: { id: 'calvadosCrepe', name: 'Crêpe flambée au calvados', type: 'artisan', sell: 3855 },
 });
+
+// ---------------- 1.6 : l'abbaye — l'orge et les malts ----------------
+Object.assign(ITEMS, {
+    barley: {
+        id: 'barley',
+        name: 'Orge',
+        seedName: 'Graines d’orge',
+        type: 'crop',
+        cost: 25,
+        sell: 75,
+        time: 200,
+        reqLvl: 34,
+        xp: 3,
+        seasons: ['printemps', 'ete'],
+    },
+    maltBlond: { id: 'maltBlond', name: 'Malt blond', type: 'artisan', sell: 310 },
+    maltAmber: { id: 'maltAmber', name: 'Malt ambré', type: 'artisan', sell: 320 },
+    maltBrown: { id: 'maltBrown', name: 'Malt brun', type: 'artisan', sell: 325 },
+    maltBlack: { id: 'maltBlack', name: 'Malt noir', type: 'artisan', sell: 330 },
+});

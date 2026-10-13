@@ -157,7 +157,7 @@ export function unlocksAt(lvl) {
         if (c.lvl === lvl && c.n > 1)
             add(
                 ['ui', 'village'],
-                `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage', domaine: 'Domaine', island: 'Île', station: 'Station' }[c.map] || 'Village'} : chapitre ${chapterNum(c.n)}, « ${c.name} » (après le chapitre ${chapterNum(chapterAfter(c.n))})`,
+                `${{ hamlet: 'Hameau', port: 'Port', abbey: 'Abbaye', alpine: 'Alpage', domaine: 'Domaine', island: 'Île', station: 'Station' }[c.map] || 'Village'} : chapitre ${chapterNum(c.n)}, « ${c.name} » (après le chapitre ${chapterNum(chapterAfter(c.n))})`,
             );
     });
     Object.values(UPGRADES).forEach(u => u.reqLvl === lvl && add(['ui', u.id], `${u.name} (au magasin)`));
@@ -194,6 +194,10 @@ export function unlocksAt(lvl) {
     if (lvl === CAVE_LVL) big(['ui', 'barrel'], 'Grande étape : la cave et ses enchères');
     if (lvl === CHAPTERS[4].lvl) big(['villager', 'theo'], 'Grande étape : le hameau, puis Théo le commis (avec le pont)');
     if (lvl === CHAPTERS[6].lvl) big(['ui', 'boat'], 'Grande étape : le port (pêche en mer, bateau de livraison)');
+    if (lvl === CHAPTERS[16].lvl) big(['ui', 'beer'], 'Grande étape : l’abbaye et sa brasserie (vos propres bières)');
+    if (lvl === CHAPTERS[16].lvl)
+        add(['ui', 'vat'], 'La brasserie : un malt, du houblon et vos ingrédients ; nommez vos bières (après « La salle de brassage »)');
+    if (lvl === CHAPTERS[17].lvl) add(['ui', 'barrel'], 'Le cellier à fûts : faites vieillir vos bières (après « Le cellier à fûts »)');
     if (lvl === ISLAND.lvl) big(['item', 'coconut'], 'Grande étape : l’île aux Alizés (cultures et verger tropicaux)');
     if (lvl === GENETICS.lvl) big(['ui', 'search'], 'Grande étape : la station de recherche et la génétique');
     if (lvl === CHAPTERS[15].lvl) big(['ui', 'trophy'], 'Grande étape : le Salon de l’agriculture');

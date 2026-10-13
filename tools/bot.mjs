@@ -15,6 +15,7 @@ import { TRANS_KINDS } from '../src/data/animals.js';
 import { FARM_SEASON_TIERS } from '../src/data/port.js';
 import { CAVE_ITEMS, CAVE_LOT_MAX, CAVE_SHELVES, CAVE_GEAR } from '../src/data/cave.js';
 import { BALANCE } from '../src/data/progress.js';
+import { MALT_IDS } from '../src/data/abbey.js';
 import { SKILLS, ACHIEVEMENTS } from '../src/data/meta.js';
 import { pickRand } from '../src/core/format.js';
 
@@ -453,7 +454,43 @@ function defis() {
     });
 }
 
+// l'abbaye : brasser la meilleure bière possible avec ce qu'on a, et tout vendre
+function abbey() {
+    if (!G.brewOpen()) return;
+    const B = G.ensureBrew();
+    B.vats.forEach((v, i) => G.vatReady(v) && tag('brasserie', () => G.collectVat(i)));
+    for (const b of Object.values(B.beers)) if (G.beerStock(b.id)) G.sellBeer(b.id, G.beerStock(b.id));
+    if (!B.vats.some(v => !v) || (state.inventory.hop || 0) < 2) return;
+    const malts = MALT_IDS.filter(m => (state.inventory[m] || 0) >= 4);
+    if (!malts.length) return;
+    const pool = G.BREWABLE.filter(id => (state.inventory[id] || 0) >= 6)
+        .sort((a, b) => state.inventory[b] - state.inventory[a])
+        .slice(0, 6);
+    let best = null;
+    const tryOne = (malt, ings) => {
+        for (const hop of [1, 2, 3]) {
+            const h = G.brewHarmony(malt, hop, ings).stars;
+            const v = G.brewValue(malt, hop, ings, h);
+            if (!best || h > best.h || (h === best.h && v > best.v)) best = { malt, hop, ings, h, v };
+        }
+    };
+    for (const m of malts)
+        for (let i = 0; i < pool.length; i++) {
+            tryOne(m, [[pool[i], 1]]);
+            if (G.brewSlots() > 1)
+                for (let j = i + 1; j < pool.length; j++)
+                    tryOne(m, [
+                        [pool[i], 1],
+                        [pool[j], 1],
+                    ]);
+        }
+    if (!best) return;
+    B.draft = { malt: best.malt, hop: best.hop, ings: best.ings };
+    G.startBrew();
+}
+
 function step() {
+    abbey();
     cave();
     farm();
     island();

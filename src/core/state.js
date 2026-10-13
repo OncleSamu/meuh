@@ -35,6 +35,7 @@ export function newState() {
         orchard: null,
         island: null,
         genetics: null,
+        brew: null, // 1.6 : la brasserie de l'abbaye
         defis: null,
         night: null,
         carnet: null,

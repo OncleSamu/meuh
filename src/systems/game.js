@@ -40,6 +40,7 @@ import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
 import { ensureNight, nightTick } from './night.js';
 import { ensureCarnet } from './carnet.js';
+import { brewOpen, ensureBrew, brewTick } from './brewery.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -79,6 +80,7 @@ export function normalizeState() {
     ensureOrchard();
     ensureIsland();
     ensureGenetics();
+    if (brewOpen()) ensureBrew();
     ensureDefis();
     ensureNight();
     ensureCarnet();
@@ -196,6 +198,7 @@ function tickDeliveries() {
     if (state.level >= CONTRACT_LVL && ensureContract()) changed = true;
     if (ensureHoliday()) changed = true;
     if (geneticsTick()) changed = true;
+    if (brewTick()) changed = true;
     if (defiTick()) changed = true;
     if (nightTick()) changed = true;
     if (contestTick()) changed = true;

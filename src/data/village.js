@@ -192,6 +192,20 @@ export const VILLAGERS = {
         ch: 15,
         likes: ['milk', 'cheese', 'carrot', 'apple', 'bread', 'honey', 'cafeLatte', 'beaufort'],
     },
+    hugues: {
+        id: 'hugues',
+        name: 'Frère Hugues',
+        role: 'Le frère brasseur de l’abbaye',
+        ch: 17,
+        likes: ['hop', 'barley', 'honey', 'bread', 'cheese', 'blondBeer', 'amberBeer', 'maltAmber'],
+    },
+    agnes: {
+        id: 'agnes',
+        name: 'Agnès',
+        role: 'La malteuse',
+        ch: 17,
+        likes: ['barley', 'wheat', 'apple', 'raspberry', 'cookies', 'cider', 'maltBlond', 'bread'],
+    },
     duval: {
         id: 'duval',
         name: 'Maître Duval',
@@ -289,14 +303,14 @@ export const CHAPTERS = [
     {
         n: 13,
         name: 'L’île aux Alizés',
-        lvl: 35,
+        lvl: 38,
         map: 'island',
         intro: 'Depuis le port, un vieux bac mène à une île tiède et oubliée. Tiago le passeur et Maëva la cueilleuse rêvent d’y faire pousser des fruits.',
     },
     {
         n: 14,
         name: 'Le carnaval des îles',
-        lvl: 38,
+        lvl: 39,
         map: 'island',
         intro: 'L’île est en fleurs ! Café, rhum et musique : Tiago et Maëva préparent le plus beau carnaval de la région.',
     },
@@ -314,10 +328,24 @@ export const CHAPTERS = [
         map: 'station',
         intro: 'Vos créations font parler d’elles ! Un conservatoire pour les garder, une ruche pour les surprises, et une grande salle pour le Salon de l’agriculture.',
     },
+    {
+        n: 17,
+        name: 'La brasserie de l’abbaye',
+        lvl: 35,
+        map: 'abbey',
+        intro: 'Derrière le port, une vieille abbaye garde une brasserie endormie. Frère Hugues et Agnès la malteuse rêvent de la rallumer : vos bières, à vous de les inventer.',
+    },
+    {
+        n: 18,
+        name: 'La fête de la bière',
+        lvl: 37,
+        map: 'abbey',
+        intro: 'Les cuves tournent ! Un cellier pour faire vieillir vos bières, une étiqueterie, et toute la vallée attend la grande fête de la bière.',
+    },
 ];
 
 // 1.4 : les chapitres forment une seule histoire, jouée dans cet ordre (numéros 1 à 16 à l'écran)
-export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 15, 16, 9, 10, 11, 12];
+export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12];
 export const chapterNum = n => CHAPTER_ORDER.indexOf(n) + 1;
 export const chapterAfter = n => CHAPTER_ORDER[CHAPTER_ORDER.indexOf(n) - 1] || 0;
 
@@ -1474,3 +1502,85 @@ export const RIVALS = [
         avatar: 'firmin',
     },
 ];
+
+// ---------------- 1.6 : l'abbaye ----------------
+Object.assign(PROJECTS, {
+    malthouse: {
+        id: 'malthouse',
+        ch: 17,
+        name: 'La malterie',
+        vid: 'agnes',
+        need: { barley: 60, wheat: 150, stone: 60, beam: 20 },
+        before: 'Pas de bière sans malt ! Ma vieille malterie n’attend qu’un toit neuf et de l’orge à faire germer.',
+        after: 'La malterie fume de nouveau : achetez-la au magasin et grillez votre orge en malt blond, ambré, brun ou noir.',
+        reward: 'La malterie (malts blond, ambré, brun et noir)',
+        x: 20,
+        y: 66,
+        map: 'abbey',
+    },
+    brewhall: {
+        id: 'brewhall',
+        ch: 17,
+        name: 'La salle de brassage',
+        vid: 'hugues',
+        need: { hop: 40, plank: 30, nail: 20, honey: 30 },
+        before: 'Les cuves de cuivre de mes anciens frères sont toujours là, sous la poussière. Aidez-moi à les faire briller.',
+        after: 'Brassez vos propres bières (Atelier, volet Brasserie) : un malt, une dose de houblon et un ingrédient de la ferme. Donnez-leur un nom !',
+        reward: 'La brasserie : composez et nommez vos bières',
+        x: 50,
+        y: 40,
+        map: 'abbey',
+    },
+    fermenters: {
+        id: 'fermenters',
+        ch: 17,
+        name: 'Les cuves de fermentation',
+        vid: 'hugues',
+        need: { plank: 25, nail: 25, paint: 6, sugar: 40 },
+        before: 'Une seule cuve, c’est bien peu pour une abbaye. Avec de grandes cuves, on brasse plus, et on ose les mélanges.',
+        after: 'Une cuve de plus, et vos bières peuvent mêler deux ingrédients.',
+        reward: 'Une cuve de plus, deux ingrédients par bière',
+        x: 80,
+        y: 62,
+        map: 'abbey',
+    },
+    barrelcellar: {
+        id: 'barrelcellar',
+        ch: 18,
+        name: 'Le cellier à fûts',
+        vid: 'agnes',
+        need: { beam: 30, stone: 80, calvados: 4, maltAmber: 20 },
+        before: 'Une bonne bière de garde dort longtemps dans le bois. Le cellier de l’abbaye peut accueillir des fûts.',
+        after: 'Le cellier est prêt : faites vieillir vos bières en fût de chêne, de calvados, de rhum ou de vin. Plus elles attendent, plus elles valent.',
+        reward: 'Le vieillissement en fût',
+        x: 22,
+        y: 30,
+        map: 'abbey',
+    },
+    labelshop: {
+        id: 'labelshop',
+        ch: 18,
+        name: 'L’étiqueterie',
+        vid: 'hugues',
+        need: { paint: 10, cloth: 15, maltBlond: 30, crate: 10 },
+        before: 'Chaque bière mérite sa belle étiquette. Et avec une presse, on pourra noter des recettes plus riches.',
+        after: 'Vos bières peuvent maintenant mêler trois ingrédients.',
+        reward: 'Trois ingrédients par bière',
+        x: 78,
+        y: 28,
+        map: 'abbey',
+    },
+    beerfest: {
+        id: 'beerfest',
+        ch: 18,
+        name: 'La fête de la bière',
+        vid: 'agnes',
+        need: { blondBeer: 15, cheese: 20, bread: 40, maltBlack: 15 },
+        before: 'Montons des tables sous les arbres du cloître : toute la vallée viendra goûter vos créations !',
+        after: 'Quelle fête ! Une cuve de plus pour l’abbaye, et 5 rubans pour vous remercier.',
+        reward: 'Une cuve de plus et 5 rubans',
+        x: 50,
+        y: 76,
+        map: 'abbey',
+    },
+});
