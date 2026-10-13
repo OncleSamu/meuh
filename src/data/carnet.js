@@ -418,5 +418,53 @@ Object.assign(CARNET, {
         'Les châtaignes grillées dans la poêle trouée, au coin du feu. On se brûlait les doigts à les éplucher, et on recommençait. Le bonheur, ça brûle un peu les doigts.',
 });
 
+// ---------------- 1.3.2 : la brebis et le saloir ----------------
+Object.assign(CARNET, {
+    ham: 'Le jambon pendait au plafond de la cave, enveloppé dans un torchon. Chaque fois que ton grand-père descendait chercher du vin, il remontait avec une tranche. Il disait que c’était le loyer.',
+    lardons: 'Une poignée de lardons, et n’importe quel plat devient un plat du dimanche. Même les épinards. Surtout les épinards, disait ta mère.',
+    saucisson:
+        'Le saucisson se coupe sur la planche, au couteau de poche, pendant la pause des foins. Chacun avait son couteau, et personne ne prêtait le sien.',
+    driedMagret:
+        'Le magret séché se coupe en tranches fines comme du papier à cigarette. Ton grand-père les coupait épaisses comme des semelles. On ne l’a jamais laissé recommencer.',
+    duckConfit:
+        'Le confit se garde tout l’hiver dans sa graisse, au fond du pot. C’est la recette des gens prévoyants. Moi, j’en faisais toujours un pot de plus, au cas où.',
+    gooseConfit:
+        'Pour le confit d’oie, il faut cuire longtemps, à tout petit feu. Ma mère disait : « Le feu doit à peine sourire. » J’ai mis des années à comprendre.',
+    gooseRillettes:
+        'Les rillettes sur une tranche de pain grillé, à quatre heures, après l’école. Ton père en mettait jusqu’aux oreilles. Les oreilles, je ne sais pas comment.',
+    smokedTurkey:
+        'La dinde fumée, c’était l’idée de Bruno, qui fume tout ce qui passe : les poissons, les jambons, et sa pipe. Pour une fois, c’était une bonne idée.',
+    driedBeef:
+        'La viande séchée, on l’emportait à l’alpage, roulée dans du papier. Après trois heures de montée, c’est la meilleure chose du monde. Même la vue passe après.',
+    rabbitTerrine:
+        'La terrine de lapin se fait la veille et se mange le lendemain. C’est la seule recette où il faut savoir attendre. Ton grand-père n’a jamais su.',
+    melonHam: 'Le melon et le jambon, c’est le sucré et le salé qui se donnent la main. Comme ton grand-père et moi. Je te laisse deviner qui était le sucré.',
+    hamSandwich: 'Le jambon-beurre, c’était le casse-croûte des jours de marché. On le mangeait dans le camion, entre deux clients. Il avait le goût du matin.',
+    cassoulet: 'Le cassoulet doit cuire si longtemps qu’on casse la croûte sept fois. Ton grand-père la cassait huit fois, pour être sûr. Il était comme ça.',
+    petitSale: 'Le petit salé aux lentilles, c’est le plat des lundis de pluie. On le laissait mijoter pendant qu’on réparait les outils dans la grange.',
+    potAuFeu: 'Le pot-au-feu, c’est trois plats en un : le bouillon d’abord, la viande ensuite, et les restes le lendemain en hachis. Rien ne se perd.',
+    turkeyChestnut:
+        'La dinde aux marrons, c’était Noël. Une année, la dinde était si grosse qu’elle n’entrait pas dans le four. On l’a coupée en deux. Personne n’a rien dit.',
+    rabbitMustard:
+        'Le lapin à la moutarde, avec la moutarde à l’ancienne. Il faut en mettre beaucoup, et la crème adoucit tout. C’est comme les remontrances : avec de la crème, ça passe.',
+    magretFigs: 'Les figues du mur du sud, et le magret de nos canards. C’est le plat des fins d’été, quand on dîne dehors jusqu’à la nuit, avec les grillons.',
+    moussaka:
+        'La moussaka, c’est une recette de Grèce. Un voisin grec nous l’a apprise un soir d’été. Il chantait en cuisinant, en grec. On ne comprenait rien, mais c’était beau.',
+    choucroute:
+        'La choucroute, c’est la recette de mon arrière-grand-mère alsacienne. Le chou doit fermenter des semaines dans un grand pot de grès. La cave sentait le chou tout l’hiver.',
+    stuffedCabbage:
+        'Pour le chou farci, on décolle les feuilles une à une, sans les déchirer. Les enfants s’en chargeaient. On en déchirait beaucoup, alors on faisait des petits choux.',
+    gooseLegApples:
+        'La cuisse d’oie rôtie avec les pommes du verger. Les pommes fondent dans le jus. Ton grand-père disait qu’on aurait pu servir les pommes seules. Il en reprenait trois fois.',
+    rabbitPrunes:
+        'Le lapin aux pruneaux, c’est le sucré qui rencontre le gibier. Ma grand-mère le faisait pour les baptêmes. Nous avons eu beaucoup de baptêmes, et beaucoup de pruneaux.',
+    roquefort:
+        'Le roquefort mûrit dans des caves où souffle un vent frais. Le nôtre mûrit dans notre cave à nous, avec un courant d’air sous la porte. C’est presque pareil.',
+    sheepTomme:
+        'La tomme de brebis a un petit goût de noisette. On la mange avec de la confiture de cerises noires. Ça paraît bizarre, mais essaie : tu m’en diras des nouvelles.',
+    sheepYogurt:
+        'Le yaourt de brebis est plus épais que les autres, et plus doux. Avec une cuillère de miel, c’était le goûter préféré de ta mère quand elle avait de la fièvre.',
+});
+
 // les pages du carnet : une par machine, dans l'ordre de la ferme
 export const CARNET_DONE_REWARD = { coins: 5000, rubans: 1 };

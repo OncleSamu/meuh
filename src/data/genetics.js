@@ -35,7 +35,7 @@ export const LOOKS = {
 export const FEATURES = {
     horns: { name: 'Cornes', list: ['Naturelles', 'Sans cornes', 'Longues', 'En lyre'], species: ['cow', 'goat', 'buffalo', 'sheep'] },
     ears: { name: 'Oreilles', list: ['Naturelles', 'Tombantes'], species: ['rabbit', 'pig', 'goat'] },
-    coat: { name: 'Toison', list: ['Naturelle', 'Longue', 'Frisée'], species: ['sheep', 'alpaca', 'horse', 'donkey'] },
+    coat: { name: 'Toison', list: ['Naturelle', 'Longue', 'Frisée'], species: ['sheep', 'alpaca', 'horse', 'donkey', 'ewe'] },
 };
 export const featuresOf = type => Object.keys(FEATURES).filter(k => FEATURES[k].species.includes(type));
 
@@ -135,6 +135,7 @@ const A = {
     buffalo: '4132213',
     donkey: '3422223',
     turkey: '2222222',
+    ewe: '3422223',
 };
 export const ANIMAL_BASE = Object.fromEntries(Object.entries(A).map(([id, s]) => [id, [...s].map(Number)]));
 

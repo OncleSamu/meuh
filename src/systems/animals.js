@@ -2,7 +2,7 @@
 import { state } from '../core/state.js';
 import { viewShown } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish } from '../core/bus.js';
-import { ANIMALS, GROW, NAMES, MAX_STACK, MAX_FOOD } from '../data/animals.js';
+import { ANIMALS, GROW, NAMES, MAX_STACK, MAX_FOOD, EXTRA_DROP } from '../data/animals.js';
 import { ITEMS } from '../data/items.js';
 import { BALANCE } from '../data/progress.js';
 import { rank, speedMult, rollYield, addXp } from './player.js';
@@ -88,9 +88,19 @@ export function collectAnimal(a) {
     if (a.alpine && (a.type === 'cow' || a.type === 'goat' || a.type === 'buffalo')) state.inventory.alpineMilk += Math.ceil(qty / 2);
     // la ruche d'élevage donne aussi un peu de miel
     if (a.type === 'bees') state.inventory.honey += Math.ceil(qty / 2);
+    // 1.3.2 : de temps en temps, un produit pour le saloir
+    let extra = 0;
+    if (d.extra) {
+        const ch = EXTRA_DROP.chance + EXTRA_DROP.gene * animalYieldGene(a);
+        for (let k = 0; k < a.stack; k++) if (Math.random() < ch) extra++;
+        if (extra) {
+            state.inventory[d.extra] = (state.inventory[d.extra] || 0) + extra;
+            addMastery(d.extra, extra);
+        }
+    }
     const xp = d.xp * a.stack;
     a.stack = 0;
-    return { qty, xp };
+    return { qty, xp, extra, extraId: d.extra };
 }
 
 // Un appui sur une bête : ramasser sa production, sinon la nourrir (un repas).
@@ -106,7 +116,7 @@ export function tapAnimal(i, at) {
         sfx(a.type);
         buzz(12);
         burst(at, 'sparkle', 7, -20);
-        float(at, [`+${r.qty}`, ['item', d.prodId]], '', -36);
+        float(at, [`+${r.qty}`, ['item', d.prodId], ...(r.extra ? [` +${r.extra}`, ['item', r.extraId]] : [])], '', -36);
         fly(at, d.prodId, r.qty);
         addXp(r.xp, at);
     } else {
@@ -171,6 +181,7 @@ export function collectAll(at) {
             rollRare(BALANCE.rareDrop, at);
             const id = ANIMALS[a.type].prodId;
             totals[id] = (totals[id] || 0) + r.qty;
+            if (r.extra) totals[r.extraId] = (totals[r.extraId] || 0) + r.extra;
             xp += r.xp;
             emit('animalFx', { i: k, item: id });
         }

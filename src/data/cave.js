@@ -38,6 +38,15 @@ export const CAVE_FAMILIES = {
         careIcon: 'riddle',
         careDone: 'Bouteilles remuées',
     },
+    // 1.3.2 : jambons et viandes séchées, pendus au plafond de la cave
+    charcuterie: {
+        name: 'Salaisons',
+        step: 14400000,
+        ranks: ['Frais', 'Séché', 'Affiné', 'Grande réserve', 'Légendaire'],
+        care: 'Retourner',
+        careIcon: 'turn',
+        careDone: 'Jambons retournés',
+    },
 };
 
 export const CAVE_ITEMS = {
@@ -56,6 +65,12 @@ export const CAVE_ITEMS = {
     roseWine: 'wine',
     champagne: 'champagne',
     champagneRose: 'champagne',
+    // 1.3.1 et 1.3.2
+    calvados: 'cider',
+    roquefort: 'cheese',
+    sheepTomme: 'cheese',
+    ham: 'charcuterie',
+    driedBeef: 'charcuterie',
 };
 
 export const CAVE_MULT = [1, 1.8, 3.2, 5.5, 10];

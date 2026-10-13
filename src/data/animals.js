@@ -137,7 +137,23 @@ export const ANIMALS = {
         reqLvl: 17,
         xp: 21,
     },
+    // 1.3.2 : la brebis laitière (le mouton garde sa laine)
+    ewe: {
+        id: 'ewe',
+        name: 'Brebis laitière',
+        prodId: 'sheepMilk',
+        cost: 5500,
+        time: 1200,
+        reqLvl: 23,
+        xp: 18,
+    },
 };
+
+// 1.3.2 : un second produit, pour le saloir, de temps en temps au ramassage (le gène « rendement » aide un peu)
+export const EXTRA_DROP = { chance: 0.1, gene: 0.5 };
+Object.entries({ pig: 'lard', duck: 'magret', goose: 'gooseLeg', turkey: 'turkeyFillet', cow: 'beef', rabbit: 'rabbitSaddle' }).forEach(
+    ([a, id]) => (ANIMALS[a].extra = id),
+);
 
 export const GROW = {
     chicken: 150,
@@ -155,6 +171,7 @@ export const GROW = {
     buffalo: 1500,
     donkey: 1500,
     turkey: 900,
+    ewe: 800,
 };
 
 export const NAMES = {
@@ -172,6 +189,7 @@ export const NAMES = {
     alpaca: ['Pompon', 'Lama-Lama', 'Frisette', 'Inca', 'Doudou', 'Machu'],
     buffalo: ['Bella', 'Mozza', 'Napoli', 'Rosina', 'Bufala', 'Sofia'],
     donkey: ['Cadichon', 'Grisette', 'Hi-Han', 'Pâquerette', 'Bourrique', 'Anatole'],
+    ewe: ['Roquette', 'Bergère', 'Brebisette', 'Lainette', 'Marjolaine', 'Pâquerette'],
     turkey: ['Glouglou', 'Dindonnette', 'Gobble', 'Plumette', 'Caroline', 'Barnabé'],
 };
 

@@ -753,7 +753,7 @@ export function salonCandidates() {
         .filter(
             a =>
                 a.g &&
-                (crit.id !== 'richMilk' || ['cow', 'goat', 'buffalo', 'donkey'].includes(a.type)) &&
+                (crit.id !== 'richMilk' || ['cow', 'goat', 'buffalo', 'donkey', 'ewe'].includes(a.type)) &&
                 (crit.id !== 'softWool' || ['sheep', 'alpaca', 'rabbit'].includes(a.type)) &&
                 (crit.trait !== 'horns' || FEATURES.horns.species.includes(a.type)) &&
                 (crit.trait !== 'coat' || FEATURES.coat.species.includes(a.type)),
