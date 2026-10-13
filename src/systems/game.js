@@ -13,7 +13,7 @@ import { ensureVillagers } from './village.js';
 import { ensureGhPlots, seedList, plotRate, ghTick, ghOffline } from './farm.js';
 import { ensureAnimalData, animalsTick, growTick, animalsOffline } from './animals.js';
 import { ensureNature } from './nature.js';
-import { ensureMachineData, workshopTick, advanceMachine } from './workshop.js';
+import { ensureMachineData, ensureRecipeMoves, workshopTick, advanceMachine } from './workshop.js';
 import { ensureQuests, truckTick, balloonTick, checkQuestReady } from './orders.js';
 import { ensureStall, stallTick, neighborTick, neighborsReady } from './stall.js';
 import { scheduleFind, decoTool, eggTick, wellTick, honeyTick, crowTick, dogTick } from './farmlife.js';
@@ -76,6 +76,7 @@ export function normalizeState() {
     ensureCarnet();
     ensureNature();
     ensureMachineData();
+    ensureRecipeMoves();
     ensureQuests();
     ensureStall();
     // le corbeau ne survit pas à un rechargement de la page

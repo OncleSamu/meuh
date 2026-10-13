@@ -64,7 +64,7 @@ function pickRareType() {
 
 // plats que le critique peut demander : des recettes que vous savez déjà faire
 function criticDishes() {
-    const food = ['kitchen', 'bakery', 'confectionery', 'icecream', 'dairy', 'pastaworks', 'teahouse', 'press'];
+    const food = ['kitchen', 'stove', 'deli', 'fishmonger', 'pastry', 'bakery', 'confectionery', 'icecream', 'dairy', 'pastaworks', 'teahouse', 'press'];
     return Object.values(RECIPES).filter(r => food.includes(r.machine) && !r.fete && recipeUnlocked(r.id) && hasMachine(r.machine) && ITEMS[r.id].sell);
 }
 

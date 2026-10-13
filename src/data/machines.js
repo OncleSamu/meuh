@@ -14,14 +14,14 @@ export const MACHINES = {
         name: 'Four à pain',
         cost: 1000,
         reqLvl: 4,
-        desc: 'Pains, viennoiseries, tartes et pizzas',
+        desc: 'Pains, viennoiseries, tartes salées et pizzas',
     },
     kitchen: {
         id: 'kitchen',
         name: 'Cuisine',
         cost: 5000,
         reqLvl: 8,
-        desc: 'Plats mijotés, dont les recettes des villageois',
+        desc: 'Omelettes, risottos, soupes et plats du jour',
     },
     smokehouse: {
         id: 'smokehouse',
@@ -3083,3 +3083,96 @@ export const RECIPES = {
         xp: 13,
     },
 };
+
+// ---------------- 1.3.1 : six nouvelles machines, 47 recettes ----------------
+Object.assign(MACHINES, {
+    deli: { id: 'deli', name: 'Comptoir froid', cost: 4000, reqLvl: 8, desc: 'Salades, tartares et sandwichs' },
+    pastry: { id: 'pastry', name: 'Pâtisserie', cost: 4500, reqLvl: 10, desc: 'Gâteaux, tartes sucrées et crêpes' },
+    fishmonger: { id: 'fishmonger', name: 'Poissonnerie', cost: 5000, reqLvl: 11, desc: 'Tous les plats de poisson' },
+    stove: { id: 'stove', name: 'Fourneau', cost: 6000, reqLvl: 12, desc: 'Plats mijotés en cocotte' },
+    dryer: { id: 'dryer', name: 'Séchoir à fruits', cost: 9000, reqLvl: 18, desc: 'Fruits séchés et mélanges' },
+    still: { id: 'still', name: 'Alambic', cost: 14000, reqLvl: 22, desc: 'Eaux-de-vie, à vieillir en cave' },
+});
+
+// des recettes changent de machine pour que chacune en garde 20 au plus
+export const MOVED_RECIPES = {
+    deli: ['salad', 'fruitSalad', 'sushi', 'caprese', 'guacamole', 'exoticSalad'],
+    fishmonger: ['grilledFish', 'bouillabaisse', 'lobsterDish', 'grilledMackerel', 'accras'],
+    pastry: [
+        'cookies',
+        'cherryPie',
+        'strawberryCake',
+        'peachTart',
+        'spongeCake',
+        'blueberryPie',
+        'muffins',
+        'easterCake',
+        'pumpkinPie',
+        'vanillaFlan',
+        'buche',
+        'pie',
+        'gingerbread',
+        'crepes',
+    ],
+    stove: ['coconutCurry', 'sweetPotatoMash'],
+    dairy: ['yogurt', 'ricePudding'],
+    alpineDairy: ['raclette', 'fondue', 'tartiflette'],
+    islandBakery: ['bananasFlambe', 'coconutRice', 'cassavaCakes'],
+};
+// LEGACY_FROM : la machine d'origine de chaque recette déplacée (pour la reprise des anciennes fermes)
+export const LEGACY_FROM = {};
+for (const [mach, ids] of Object.entries(MOVED_RECIPES))
+    ids.forEach(id => {
+        LEGACY_FROM[id] = RECIPES[id].machine;
+        RECIPES[id].machine = mach;
+    });
+
+Object.assign(RECIPES, {
+    pesto: { id: 'pesto', machine: 'deli', ing: { basil: 3, garlic: 1, oliveOil: 1 }, time: 240, lvl: 29, base: 29, xp: 15 },
+    nicoise: { id: 'nicoise', machine: 'deli', ing: { greenBean: 2, tomato: 2, olive: 1, egg: 1 }, time: 240, lvl: 29, base: 29, xp: 15 },
+    lentilSalad: { id: 'lentilSalad', machine: 'deli', ing: { lentil: 2, onion: 1, mustardSauce: 1 }, time: 180, lvl: 17, base: 17, xp: 11 },
+    asparagusMousseline: { id: 'asparagusMousseline', machine: 'kitchen', ing: { asparagus: 2, egg: 2, butter: 1 }, time: 300, lvl: 20, base: 20, xp: 19 },
+    asparagusVeloute: { id: 'asparagusVeloute', machine: 'kitchen', ing: { asparagus: 2, cream: 1, potato: 2 }, time: 300, lvl: 21, base: 21, xp: 19 },
+    barigoule: { id: 'barigoule', machine: 'stove', ing: { artichoke: 2, onion: 1, carrot: 1, oliveOil: 1 }, time: 360, lvl: 29, base: 29, xp: 23 },
+    pistou: { id: 'pistou', machine: 'stove', ing: { greenBean: 2, zucchini: 1, basil: 1, potato: 1 }, time: 300, lvl: 15, base: 15, xp: 19 },
+    leekVeloute: { id: 'leekVeloute', machine: 'stove', ing: { leek: 2, potato: 2, cream: 1 }, time: 300, lvl: 16, base: 16, xp: 19 },
+    peaVeloute: { id: 'peaVeloute', machine: 'stove', ing: { peas: 3, cream: 1, basil: 1 }, time: 240, lvl: 17, base: 17, xp: 15 },
+    dhal: { id: 'dhal', machine: 'stove', ing: { lentil: 2, coconutMilk: 1, ginger: 1 }, time: 360, lvl: 33, base: 33, xp: 23 },
+    eelGreen: { id: 'eelGreen', machine: 'fishmonger', ing: { eel: 1, basil: 2, lettuce: 2 }, time: 300, lvl: 14, base: 14, xp: 19 },
+    seabassSalt: { id: 'seabassSalt', machine: 'fishmonger', ing: { seabass: 1, lime: 1, basil: 1 }, time: 360, lvl: 35, base: 35, xp: 23 },
+    flamiche: { id: 'flamiche', machine: 'bakery', ing: { leek: 2, flour: 2, butter: 1, cream: 1 }, time: 360, lvl: 17, base: 17, xp: 23 },
+    artichokeTart: { id: 'artichokeTart', machine: 'bakery', ing: { artichoke: 2, flour: 2, oliveOil: 1 }, time: 300, lvl: 29, base: 29, xp: 19 },
+    tatin: { id: 'tatin', machine: 'pastry', ing: { apple: 3, flour: 2, butter: 1, sugar: 1 }, time: 360, lvl: 16, base: 16, xp: 23 },
+    madeleines: { id: 'madeleines', machine: 'pastry', ing: { flour: 2, egg: 2, butter: 1, honey: 1 }, time: 240, lvl: 16, base: 16, xp: 15 },
+    waffles: { id: 'waffles', machine: 'pastry', ing: { flour: 2, egg: 2, milk: 1, sugar: 1 }, time: 240, lvl: 16, base: 16, xp: 15 },
+    mirabelleTart: { id: 'mirabelleTart', machine: 'pastry', ing: { mirabelle: 3, flour: 2, sugar: 1 }, time: 300, lvl: 18, base: 18, xp: 19 },
+    apricotTart: { id: 'apricotTart', machine: 'pastry', ing: { apricot: 3, flour: 2, sugar: 1, egg: 1 }, time: 300, lvl: 21, base: 21, xp: 19 },
+    walnutCake: { id: 'walnutCake', machine: 'pastry', ing: { walnut: 3, flour: 2, egg: 2, honey: 1 }, time: 420, lvl: 27, base: 27, xp: 27 },
+    figJam: { id: 'figJam', machine: 'confectionery', ing: { fig: 3, sugar: 1 }, time: 300, lvl: 25, base: 25, xp: 19 },
+    apricotJam: { id: 'apricotJam', machine: 'confectionery', ing: { apricot: 3, sugar: 1 }, time: 300, lvl: 21, base: 21, xp: 19 },
+    melonJam: { id: 'melonJam', machine: 'confectionery', ing: { melon: 2, sugar: 1, lime: 1 }, time: 300, lvl: 33, base: 33, xp: 19 },
+    chestnutCream: { id: 'chestnutCream', machine: 'confectionery', ing: { chestnut: 3, sugar: 1, vanilla: 1 }, time: 360, lvl: 32, base: 32, xp: 23 },
+    marronsGlaces: { id: 'marronsGlaces', machine: 'confectionery', ing: { chestnut: 4, sugar: 2, vanilla: 1 }, time: 600, lvl: 34, base: 34, xp: 38 },
+    belleHelene: { id: 'belleHelene', machine: 'icecream', ing: { pear: 2, milkChoc: 1, vanillaIce: 1 }, time: 360, lvl: 37, base: 37, xp: 23 },
+    melonIce: { id: 'melonIce', machine: 'icecream', ing: { melon: 2, sugar: 1 }, time: 240, lvl: 20, base: 20, xp: 15 },
+    pearJuice: { id: 'pearJuice', machine: 'press', ing: { pear: 3 }, time: 180, lvl: 13, base: 13, xp: 11 },
+    apricotJuice: { id: 'apricotJuice', machine: 'press', ing: { apricot: 3 }, time: 180, lvl: 21, base: 21, xp: 11 },
+    mustardSauce: { id: 'mustardSauce', machine: 'mill', ing: { mustard: 3 }, time: 150, lvl: 17, base: 17, xp: 10 },
+    walnutOil: { id: 'walnutOil', machine: 'oilmill', ing: { walnut: 4 }, time: 300, lvl: 27, base: 27, xp: 19 },
+    mustardOil: { id: 'mustardOil', machine: 'oilmill', ing: { mustard: 4 }, time: 240, lvl: 17, base: 17, xp: 15 },
+    cannedArtichoke: { id: 'cannedArtichoke', machine: 'cannery', ing: { artichoke: 3, oliveOil: 1 }, time: 360, lvl: 34, base: 34, xp: 23 },
+    cannedBeans: { id: 'cannedBeans', machine: 'cannery', ing: { greenBean: 4 }, time: 300, lvl: 34, base: 34, xp: 19 },
+    radishPickles: { id: 'radishPickles', machine: 'cannery', ing: { radish: 4, mustard: 1, sugar: 1 }, time: 300, lvl: 34, base: 34, xp: 19 },
+    asparagusJar: { id: 'asparagusJar', machine: 'cannery', ing: { asparagus: 3 }, time: 360, lvl: 34, base: 34, xp: 23 },
+    cremeBrulee: { id: 'cremeBrulee', machine: 'dairy', ing: { milk: 2, egg: 2, vanilla: 1, sugar: 1 }, time: 360, lvl: 32, base: 32, xp: 23 },
+    prunes: { id: 'prunes', machine: 'dryer', ing: { mirabelle: 3 }, time: 420, lvl: 18, base: 18, xp: 27 },
+    driedPear: { id: 'driedPear', machine: 'dryer', ing: { pear: 3 }, time: 420, lvl: 18, base: 18, xp: 27 },
+    driedApricot: { id: 'driedApricot', machine: 'dryer', ing: { apricot: 3 }, time: 420, lvl: 21, base: 21, xp: 27 },
+    driedFig: { id: 'driedFig', machine: 'dryer', ing: { fig: 3 }, time: 420, lvl: 25, base: 25, xp: 27 },
+    trailMix: { id: 'trailMix', machine: 'dryer', ing: { walnut: 2, driedApricot: 1, driedFig: 1 }, time: 300, lvl: 27, base: 27, xp: 19 },
+    pearBrandy: { id: 'pearBrandy', machine: 'still', ing: { pear: 5 }, time: 600, lvl: 22, base: 22, xp: 38 },
+    mirabelleBrandy: { id: 'mirabelleBrandy', machine: 'still', ing: { mirabelle: 5 }, time: 600, lvl: 22, base: 22, xp: 38 },
+    calvados: { id: 'calvados', machine: 'still', ing: { cider: 3 }, time: 600, lvl: 22, base: 22, xp: 38 },
+    walnutWine: { id: 'walnutWine', machine: 'still', ing: { walnut: 3, redWine: 1, sugar: 1 }, time: 480, lvl: 40, base: 40, xp: 30 },
+    roastChestnut: { id: 'roastChestnut', machine: 'roastery', ing: { chestnut: 3 }, time: 180, lvl: 35, base: 35, xp: 11 },
+});

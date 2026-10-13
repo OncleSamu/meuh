@@ -354,7 +354,7 @@ export const oldTreeBase = () =>
     FC(36, 18, 2.2, '#d9a23a', 0.7) +
     L('M38 36 Q42 34 44 30', 1.6, '#7f8a2e');
 
-const FRUIT_COL = {
+export const FRUIT_COL = {
     apple: '#e2412f',
     orange: '#f5a623',
     cherry: '#c2253f',
@@ -372,7 +372,10 @@ const FRUIT_COL = {
 const PALM_IDS = ['banana', 'coconut', 'papaya'];
 let palmTree = () => '';
 export const setPalm = fn => (palmTree = fn);
+// des fruits à la forme particulière (1.3.1)
+export const fruitExtra = {};
 function fruitOf(id) {
+    if (fruitExtra[id]) return fruitExtra[id];
     const col = FRUIT_COL[id] || '#e2412f';
     if (id === 'cherry')
         return (x, y) =>
