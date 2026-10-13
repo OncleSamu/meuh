@@ -36,6 +36,7 @@ export function newState() {
         genetics: null,
         defis: null,
         night: null,
+        carnet: null,
         machines: [],
         quests: [],
         upgrades: { speed: 0, price: 0, yield: 0, feeder: 0, seeder: 0, harvester: 0 },

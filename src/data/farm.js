@@ -235,7 +235,7 @@ export const DECOS = {
     owlBox: {
         id: 'owlBox',
         name: 'Nichoir à chouette',
-        desc: 'Une chouette s’y installe et chasse les corbeaux (6 sur 10) : +10 de charme au concours',
+        desc: 'Une chouette s’y installe et chasse les corbeaux (6 sur 10) : +10 de charme au concours',
         cost: 4000,
         reqLvl: 15,
         charm: 10,
@@ -243,7 +243,7 @@ export const DECOS = {
     fireflyJar: {
         id: 'fireflyJar',
         name: 'Lanterne à lucioles',
-        desc: 'Votre premier bocal de lucioles, qui brille doucement : +25 de charme au concours',
+        desc: 'Votre premier bocal de lucioles, qui brille doucement : +25 de charme au concours',
         cost: 0,
         reqLvl: 1,
         charm: 25,

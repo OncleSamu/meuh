@@ -38,6 +38,7 @@ import { ensureIsland, islandTick, islandOffline } from './island.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
 import { ensureNight, nightTick } from './night.js';
+import { ensureCarnet } from './carnet.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -72,6 +73,7 @@ export function normalizeState() {
     ensureGenetics();
     ensureDefis();
     ensureNight();
+    ensureCarnet();
     ensureNature();
     ensureMachineData();
     ensureQuests();

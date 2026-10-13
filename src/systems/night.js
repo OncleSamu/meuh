@@ -93,11 +93,11 @@ export function catchFly(id, at) {
         N.jars++;
         if (N.jars === 1) {
             state.decorInv.fireflyJar = (state.decorInv.fireflyJar || 0) + 1;
-            toast(`Bocal rempli ! Une décoration unique : ${DECOS.fireflyJar.name}`, ['ui', 'fireflyJar']);
+            toast(`Bocal rempli ! Une décoration unique : ${DECOS.fireflyJar.name}`, ['ui', 'fireflyJar']);
         } else {
             const coins = 300 + state.level * 150;
             earn(coins, at);
-            toast(`Bocal rempli ! Vous relâchez les lucioles : ${fmt(coins)} pièces`, ['ui', 'fireflyJar']);
+            toast(`Bocal rempli ! Vous relâchez les lucioles : ${fmt(coins)} pièces`, ['ui', 'fireflyJar']);
         }
         sfx('golden');
     } else float(at, [`${N.jar} / ${NIGHT.jar}`, ['ui', 'firefly']], '', -16);
@@ -115,10 +115,10 @@ export function catchStar(at) {
         const coins = 500 + state.level * 250;
         earn(coins, at);
         ['plank', 'nail', 'paint'].forEach(id => (state.inventory[id] += 2));
-        toast(`Vœu exaucé : ${fmt(coins)} pièces, 2 planches, 2 clous et 2 pots de peinture !`, ['ui', 'wishStar']);
+        toast(`Vœu exaucé : ${fmt(coins)} pièces, 2 planches, 2 clous et 2 pots de peinture !`, ['ui', 'wishStar']);
     } else {
         N.wish = { kind: w.kind, ...(w.left ? { left: w.left } : {}), ...(w.secs ? { until: now() + w.secs * 1000 } : {}) };
-        toast(`Vœu exaucé : ${w.text}`, ['ui', 'wishStar']);
+        toast(`Vœu exaucé : ${w.text}`, ['ui', 'wishStar']);
     }
     burst(at, 'sparkle', 24);
     sfx('golden');
@@ -159,7 +159,7 @@ export function buyNight(k, at) {
     sfx('coin');
     burst(at, 'sparkle', 8);
     toast(
-        o.kind === 'deco' ? `${DECOS[o.id].name} : dans vos décorations` : `${o.n} graines de ${ITEMS[o.id].name.toLowerCase()}`,
+        o.kind === 'deco' ? `${DECOS[o.id].name} : dans vos décorations` : `${o.n} graines de ${ITEMS[o.id].name.toLowerCase()}`,
         o.kind === 'deco' ? ['ui', o.id] : ['item', o.id],
     );
     return true;

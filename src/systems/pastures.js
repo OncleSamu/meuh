@@ -101,6 +101,6 @@ export function renamePasture(k, name) {
         .slice(0, 22);
     if (!p || !n) return false;
     p.name = n;
-    toast(`Le pré s’appelle maintenant « ${n} »`, ['ui', 'flowers']);
+    toast(`Le pré s’appelle maintenant « ${n} »`, ['ui', 'flowers']);
     return true;
 }

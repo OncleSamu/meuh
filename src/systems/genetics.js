@@ -817,7 +817,7 @@ export function renameVariety(id, name) {
         n = cleanName(name);
     if (!v || !n) return false;
     v.name = n;
-    toast(`Variété renommée : ${n}`, ['ui', 'pencil']);
+    toast(`Variété renommée : ${n}`, ['ui', 'pencil']);
     return true;
 }
 export function renameRace(id, name) {
@@ -825,6 +825,6 @@ export function renameRace(id, name) {
         n = cleanName(name);
     if (!r || !n) return false;
     r.name = n;
-    toast(`Race renommée : ${n}`, ['ui', 'pencil']);
+    toast(`Race renommée : ${n}`, ['ui', 'pencil']);
     return true;
 }

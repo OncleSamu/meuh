@@ -51,6 +51,8 @@ export function doPrestige(challenge, theme) {
         genetics: state.genetics ? { ...state.genetics, stock: {}, cross: null, breed: null } : null,
         // les grands défis gardent leurs trophées ; le défi en cours est mis de côté
         defis: state.defis ? { ...state.defis, cur: null } : null,
+        night: state.night,
+        carnet: state.carnet,
         story: state.story,
         barn: state.barn,
         farmhand: state.farmhand,
