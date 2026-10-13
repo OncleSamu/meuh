@@ -101,17 +101,35 @@ export const SOILS = {
     wet: {
         name: 'Sol humide',
         icon: 'soilWet',
-        crops: ['carrot', 'potato', 'cabbage', 'peas', 'beet', 'lettuce', 'zucchini', 'rice', 'sugarcane', 'hop', 'flax'],
+        crops: ['carrot', 'potato', 'cabbage', 'peas', 'beet', 'lettuce', 'zucchini', 'rice', 'sugarcane', 'hop', 'flax', 'greenBean', 'asparagus'],
     },
     dry: {
         name: 'Sol sec et ensoleillé',
         icon: 'soilDry',
-        crops: ['wheat', 'corn', 'tomato', 'pepper', 'eggplant', 'lavender', 'cotton', 'watermelon', 'pineapple', 'sunflower', 'soy', 'grape', 'olive'],
+        crops: [
+            'wheat',
+            'corn',
+            'tomato',
+            'pepper',
+            'eggplant',
+            'lavender',
+            'cotton',
+            'watermelon',
+            'pineapple',
+            'sunflower',
+            'soy',
+            'grape',
+            'olive',
+            'basil',
+            'lentil',
+            'melon',
+            'artichoke',
+        ],
     },
     shade: {
         name: 'Sol ombragé',
         icon: 'soilShade',
-        crops: ['strawberry', 'pumpkin', 'onion', 'radish', 'saffron', 'garlic', 'tea', 'blueberry', 'genepi', 'mushroom'],
+        crops: ['strawberry', 'pumpkin', 'onion', 'radish', 'saffron', 'garlic', 'tea', 'blueberry', 'genepi', 'mushroom', 'leek', 'mustard'],
     },
 };
 
@@ -460,6 +478,12 @@ export const LIGHTNING_CHANCE = 0.011111111111111112;
 
 export const MAT = {
     machine: {
+        deli: { wood: 8, stone: 6 },
+        pastry: { wood: 10, stone: 6 },
+        fishmonger: { wood: 10, stone: 8 },
+        stove: { wood: 8, stone: 14 },
+        dryer: { wood: 16, stone: 4 },
+        still: { wood: 10, stone: 18 },
         mill: {
             wood: 4,
         },

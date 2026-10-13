@@ -334,5 +334,89 @@ export const CARNET = {
         'Le punch coco se sert le soir de la fête du carnaval, aux grands. Les enfants, eux, ont le lait de coco à la vanille, et ils dansent plus longtemps.',
 };
 
+// ---------------- 1.3.1 : les nouvelles cultures et les nouveaux arbres ----------------
+Object.assign(CARNET, {
+    pesto: 'Le basilic, il faut le piler, pas le hacher. Ton grand-père tournait le pilon en chantant, il disait que ça donnait du goût. Il chantait faux : le pesto était quand même bon.',
+    nicoise:
+        'Une vraie niçoise, c’est sans riz et sans pommes de terre. J’ai dit ça une fois à un Niçois : il m’a répondu que chez lui, on y met ce qu’on veut. On est restés amis.',
+    lentilSalad: 'Les lentilles du lundi, avec la moutarde du dimanche. Rien ne se perdait, chez nous. Même pas les disputes : on les finissait le lendemain.',
+    asparagusMousseline:
+        'Les asperges, on les mange avec les doigts. C’est la seule fois de l’année où ta mère avait le droit de manger avec les doigts à table. Elle attendait le printemps pour ça.',
+    asparagusVeloute:
+        'Avec les queues d’asperges qui restaient, je faisais un velouté. Papi Lucien croyait que c’était un plat de restaurant. Je ne l’ai jamais détrompé.',
+    barigoule:
+        'Pour manger un artichaut, il faut de la patience, feuille après feuille. Ton grand-père n’en avait aucune : il allait directement au cœur. Comme avec moi, au bal.',
+    pistou: 'La soupe au pistou se fait en été, avec tout ce que le potager donne en trop. On la mangeait froide, le soir, sur le banc devant la maison, en regardant les hirondelles.',
+    leekVeloute:
+        'Le poireau, c’est l’asperge du pauvre, disait ma mère. Moi je trouve que c’est l’asperge de l’hiver. Et l’hiver, on a besoin d’un velouté chaud.',
+    peaVeloute: 'Écosser les petits pois, c’était le travail des enfants. On en mangeait un sur deux, alors il fallait en cueillir le double.',
+    dhal: 'C’est Maëva qui m’a appris le dhal, avec le lait de coco de l’île. Les lentilles de chez nous et les épices de là-bas : ça se marie très bien, comme les gens.',
+    eelGreen:
+        'L’anguille au vert, avec toutes les herbes du jardin. Papi Lucien la pêchait la nuit, à la lanterne. Il revenait mouillé jusqu’aux genoux et fier comme un roi.',
+    seabassSalt:
+        'Le bar en croûte de sel, c’est un spectacle : on casse la croûte à table, au marteau. Les enfants adoraient. Le poisson, un peu moins, mais le marteau, oui.',
+    flamiche:
+        'La flamiche vient du Nord, comme ma grand-mère. Elle disait que là-bas, il pleut tellement qu’il faut des tartes bien grasses pour garder le moral.',
+    artichokeTart:
+        'Une tarte fine, croustillante, avec les cœurs d’artichaut en rosace. C’est joli comme une fleur. D’ailleurs, l’artichaut, c’est une fleur qu’on mange avant qu’elle s’ouvre.',
+    tatin: 'Les demoiselles Tatin ont raté leur tarte et l’ont retournée. Moi aussi, j’ai raté beaucoup de choses dans ma vie. Il suffit souvent de les retourner.',
+    madeleines:
+        'Une madeleine réussie a une bosse sur le dos. Ton grand-père aussi avait une bosse sur le dos, à force de se pencher sur ses légumes. Je l’aimais avec sa bosse.',
+    waffles:
+        'Le gaufrier venait de ma marraine. Il fallait le tourner sur la flamme et compter jusqu’à cent. Les enfants comptaient avec moi, et ils sautaient toujours de quarante à soixante.',
+    mirabelleTart: 'Les mirabelles tombent toutes en même temps, fin août. Pendant une semaine, toute la maison sent la tarte. Les guêpes le savent aussi.',
+    apricotTart:
+        'Les abricots, il faut les cueillir quand ils se détachent tout seuls, au creux de la main. Trop tôt, ils boudent. Trop tard, ce sont les merles qui se régalent.',
+    walnutCake: 'Le gâteau aux noix se garde une semaine dans un torchon. Chez nous, il ne passait jamais le mercredi. Le torchon, lui, est toujours là.',
+    figJam: 'Le figuier pousse contre le mur du sud, là où il fait le plus chaud. Ton grand-père y faisait la sieste, dessous. Il disait qu’il gardait les figues des voleurs.',
+    apricotJam: 'Dans chaque pot de confiture d’abricots, je mettais une amande du noyau. C’est un secret de ma mère. Maintenant, c’est le tien.',
+    melonJam:
+        'La confiture de melon, c’est pour les melons qui ont trop attendu. Avec un filet de citron vert, ils retrouvent toute leur jeunesse. Dommage que ça ne marche pas sur les grands-mères.',
+    chestnutCream: 'À l’automne, on ramassait les châtaignes en bottes, à cause des bogues qui piquent. La crème de marrons, c’était la récompense de l’hiver.',
+    marronsGlaces:
+        'Les marrons glacés demandent quatre jours de patience. Je n’en faisais qu’à Noël, et j’en cachais toujours trois pour moi. Ne le dis à personne.',
+    belleHelene:
+        'La poire Belle-Hélène, c’est le dessert des grandes occasions. Papi Lucien l’a commandée au restaurant le jour de nos noces d’argent. Il en a renversé la moitié sur sa cravate.',
+    melonIce:
+        'Le sorbet au melon, on le faisait dans une bassine, avec de la glace du marchand. Il fallait tourner sans s’arrêter. Le premier qui avait mal au bras perdait sa part.',
+    pearJuice:
+        'Le vieux poirier donnait trop de poires pour une seule famille. Alors on en faisait du jus, et on en portait à tout le village. C’est comme ça qu’on se fait des amis.',
+    apricotJuice:
+        'Un verre de jus d’abricot bien frais, au mois de juillet, sous la tonnelle. Je ne connais pas meilleur remède contre la chaleur, ni contre la mauvaise humeur.',
+    mustardSauce:
+        'La moutarde à l’ancienne, avec les grains entiers. Ton grand-père en mettait partout, même sur le fromage. Il pleurait un peu, mais il disait que c’était l’émotion.',
+    walnutOil:
+        'Une goutte d’huile de noix sur une salade de pissenlits, et c’est tout l’automne dans l’assiette. Le moulin à huile du village sentait la noix grillée jusque dans l’église.',
+    mustardOil:
+        'L’huile de moutarde pique le nez, attention. On s’en servait aussi pour frictionner les rhumes. Ça ne guérissait rien, mais on oubliait le rhume.',
+    cannedArtichoke:
+        'Les petits artichauts violets, on les met en bocal à l’huile, avec un brin de thym. En plein hiver, en ouvrant le pot, c’est l’été qui sort.',
+    cannedBeans:
+        'En août, on mettait les haricots verts en bocaux toute la journée. La cuisine devenait une étuve. Le soir, on comptait les pots alignés comme des soldats.',
+    radishPickles: 'Les radis à la moutarde, c’est une recette des cousins anglais. Ils mangent des choses bizarres, les Anglais, mais là, ils avaient raison.',
+    asparagusJar:
+        'Les asperges en bocal, pour les retrouver à Noël. Ta mère croyait que c’était un cadeau du Père Noël. En un sens, ça l’était : c’était le printemps qui revenait.',
+    cremeBrulee:
+        'La crème brûlée, il faut la caraméliser au fer rouge. Avant les chalumeaux, on chauffait une vieille cuillère dans la cheminée. Ça sentait le sucre brûlé dans toute la maison.',
+    prunes: 'Les pruneaux sèchent sur des claies, au soleil, puis au four. Ton grand-père en mangeait trois chaque matin. Il disait que c’était le secret pour vivre vieux. Il avait presque raison.',
+    driedPear:
+        'Les poires tapées, on les aplatit au maillet après le séchage. C’était le jeu des enfants : taper les poires sans les écraser. Personne n’y arrivait.',
+    driedApricot: 'Les abricots secs dans les poches, pour la randonnée. Ils collaient au fond, avec les mouchoirs et les billes. On les mangeait quand même.',
+    driedFig:
+        'Les figues séchées, enfilées en collier sur une ficelle, pendues au-dessus du poêle. L’hiver, on en décrochait une à chaque fois qu’on passait. Le collier raccourcissait vite.',
+    trailMix:
+        'Pour monter à l’alpage, chacun avait son sachet : noix, abricots, figues. Ton grand-père y ajoutait un carré de chocolat. Il disait que c’était pour les marmottes.',
+    pearBrandy:
+        'Dans la poire Williams, il y a une poire entière dans la bouteille. On accroche la bouteille à la branche, et la poire pousse dedans. Ton père y croit encore, je crois.',
+    mirabelleBrandy:
+        'L’eau-de-vie de mirabelle, on la garde pour les grandes fêtes, et pour les rhumes. Ton grand-père avait beaucoup de rhumes, curieusement.',
+    calvados:
+        'Le calvados dort des années dans le tonneau. Celui de notre mariage, on l’a ouvert pour nos cinquante ans. Il avait pris le goût du temps qui passe.',
+    walnutWine:
+        'Le vin de noix se fait avec les noix vertes de la Saint-Jean, cueillies avant que la coque durcisse. On le boit à l’apéritif, en racontant des histoires. Comme celle-ci.',
+    roastChestnut:
+        'Les châtaignes grillées dans la poêle trouée, au coin du feu. On se brûlait les doigts à les éplucher, et on recommençait. Le bonheur, ça brûle un peu les doigts.',
+});
+
 // les pages du carnet : une par machine, dans l'ordre de la ferme
 export const CARNET_DONE_REWARD = { coins: 5000, rubans: 1 };

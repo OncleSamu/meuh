@@ -98,6 +98,20 @@ const F = {
     guava: '33000',
     greenCoffee: '01500',
     lychee: '42000',
+    greenBean: '10002',
+    leek: '10013',
+    basil: '01131',
+    lentil: '10003',
+    mustard: '01150',
+    melon: '50000',
+    asparagus: '10113',
+    artichoke: '01301',
+    pear: '42000',
+    mirabelle: '42100',
+    apricot: '34000',
+    fig: '50001',
+    walnut: '10302',
+    chestnut: '30102',
 };
 export const FLAVORS = Object.fromEntries(Object.entries(F).map(([id, s]) => [id, [...s].map(Number)]));
 // qualités de culture de base (pousse, soif, rusticité, rendement) : 2 partout

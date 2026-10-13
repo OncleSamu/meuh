@@ -5,7 +5,7 @@ import { state } from '../core/state.js';
 import { viewShown } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float, squish, anchor } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { MACHINES, LEGACY_RECIPE, RECIPES } from '../data/machines.js';
+import { MACHINES, LEGACY_RECIPE, RECIPES, MOVED_RECIPES, LEGACY_FROM } from '../data/machines.js';
 import { VILLAGERS } from '../data/village.js';
 import { EVENTS, HOLIDAYS } from '../data/world.js';
 import { BALANCE } from '../data/progress.js';
@@ -22,6 +22,8 @@ import { collect } from './book.js';
 import { takeIngredients } from './genetics.js';
 import { qtyName } from '../core/format.js';
 
+// les machines de cuisine (le compteur « plats cuisinés »)
+export const COOKING = ['kitchen', 'stove', 'deli', 'fishmonger'];
 export const recipesOf = type => Object.values(RECIPES).filter(r => r.machine === type);
 
 export const recipeUnlocked = id => {
@@ -70,6 +72,28 @@ export function ensureMachineData() {
         Object.keys(m).forEach(k => k !== 'type' && delete m[k]);
         Object.assign(m, { queue, progress: queue.length ? progress : 0, out: n && rid ? { [rid]: n } : {}, last: rid });
     });
+}
+
+// 1.3.1 : des recettes ont changé de machine. Une ferme qui avait l'ancienne machine reçoit la nouvelle,
+// pour ne perdre aucune recette ; la « boucle » d'une machine ne relance plus une recette partie ailleurs.
+export function ensureRecipeMoves() {
+    if (state.moved131) return;
+    state.moved131 = true;
+    const has = new Set(state.machines.map(m => m.type));
+    const gift = [];
+    for (const [to, ids] of Object.entries(MOVED_RECIPES)) {
+        if (has.has(to)) continue;
+        const from = new Set(ids.map(id => LEGACY_FROM[id]).filter(Boolean));
+        if ([...from].some(f => has.has(f)) && MACHINES[to] && !MACHINES[to].needProject) {
+            state.machines.push(newMachine(to));
+            has.add(to);
+            gift.push(MACHINES[to].name);
+        }
+    }
+    state.machines.forEach(m => {
+        if (m.last && RECIPES[m.last] && RECIPES[m.last].machine !== m.type) m.last = null;
+    });
+    if (gift.length) state.pendingGift131 = gift;
 }
 
 // une recette en file, avec la qualité promise par ses ingrédients
@@ -228,7 +252,7 @@ export function collectMachine(i, at, quiet) {
             delete m.outq[id];
         }
         state.stats.crafted += qty;
-        if (m.type === 'kitchen') state.stats.cooked += qty;
+        if (COOKING.includes(m.type)) state.stats.cooked += qty;
         collect('k_' + id);
         addMastery(id, qty);
         eventProgress('craft', id, qty);

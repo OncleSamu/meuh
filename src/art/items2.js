@@ -1627,3 +1627,6 @@ const MACH = () => ({
 });
 let mach = null;
 ['alpineDairy', 'chocolatier', 'cannery', 'brewery'].forEach(k => (machines[k] = () => (mach = mach || MACH())[k]));
+
+// les outils de dessin, réutilisés par les familles suivantes (1.3.1)
+export { plate, bowl, jar, coupe, scoop, juiceB, tallGlass, tray, steamF, woodBoard, cup, oil };
