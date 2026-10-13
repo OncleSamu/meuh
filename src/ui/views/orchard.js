@@ -9,6 +9,7 @@ import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, QUIET, byId } from '../dom.js';
 import { longPress } from '../longpress.js';
 import { confirmTap } from '../confirm.js';
+import { askBuy } from '../sheets/askbuy.js';
 import { ico, art } from '../icons.js';
 import { btn, bar, hint, timer, lines } from '../kit.js';
 import { defineView, defineLive } from '../app.js';
@@ -190,7 +191,19 @@ defineSheet('tree', {
 
 export function setupOrchard() {
     actions({
-        buyOrchardSlot: (el, d) => G.buySlot(el, d.z || 'farm'),
+        buyOrchardSlot: (el, d) => {
+            const z = d.z || 'farm';
+            return askBuy(
+                {
+                    title: z === 'island' ? 'Agrandir le verger des îles' : 'Agrandir le verger',
+                    icon: z === 'island' ? ['item', 'coconut'] : ['item', 'apple'],
+                    text: 'Une place de plus pour planter un arbre.',
+                    cost: G.slotCost(z),
+                    run: at => G.buySlot(at, z),
+                },
+                el,
+            );
+        },
         pickAllTrees: (el, d) => G.pickAllTrees(el, d.z || 'farm'),
         // un appui : ramasser, ou débiter un arbre mort ; l'appui long ouvre la fiche
         tree: (el, d) => {

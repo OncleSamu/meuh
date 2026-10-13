@@ -15,6 +15,7 @@ import { defineView, defineLive, ui, go } from '../app.js';
 import { defineSheet, closeSheet } from '../sheets.js';
 import { burstAt } from '../fx.js';
 import { spot } from './orchard.js';
+import { askBuy } from '../sheets/askbuy.js';
 
 defineLive('isle', k => G.islandPct(G.islandPlots()[+k] || {}));
 
@@ -142,7 +143,17 @@ defineSheet('plantIsland', {
 
 export function setupIsland() {
     actions({
-        buyIslandPlot: el => G.buyIslandPlot(el),
+        buyIslandPlot: el =>
+            askBuy(
+                {
+                    title: 'Agrandir les parcelles de l’île',
+                    icon: ['item', 'pineapple'],
+                    text: 'Une parcelle de plus sur l’île.',
+                    cost: G.islandPlotCost(),
+                    run: at => G.buyIslandPlot(at),
+                },
+                el,
+            ),
         islandPlot: (el, d) => {
             const p = G.islandPlots()[+d.k];
             if (p && p.ready) G.harvestIsland(+d.k, el);

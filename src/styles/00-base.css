@@ -108,6 +108,8 @@ small {
     vertical-align: -0.3em;
     flex-shrink: 0;
     font-style: normal;
+    /* les contours de texte (chiffres qui s'envolent…) ne doivent pas déborder sur les dessins */
+    text-shadow: none;
 }
 .ico.big {
     width: 2.4em;

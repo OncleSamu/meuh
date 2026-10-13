@@ -198,13 +198,13 @@ html.season-hiver #hills .tree-top {
 .tree::before {
     content: '';
     position: absolute;
-    left: 31px;
-    top: 26px;
-    bottom: 26px;
+    left: 28px;
+    top: 30px;
+    bottom: 30px;
     width: 5px;
     background: var(--wood-d);
     border-radius: 3px;
-    opacity: 0.5;
+    opacity: 0.45;
 }
 
 .node {
@@ -228,9 +228,33 @@ html.season-hiver #hills .tree-top {
     font-weight: 800;
 }
 
+/* chaque compétence dans une pastille ronde, posée sur le fil de l'arbre */
 .node > .ico {
-    width: 30px;
-    height: 30px;
+    position: relative;
+    z-index: 1;
+    width: 44px;
+    height: 44px;
+    padding: 6px;
+    background: var(--wood-ll);
+    border: 2.5px solid var(--ink);
+    border-radius: 50%;
+    box-shadow: 0 2px 0 var(--ink);
+}
+.node.learned > .ico {
+    background: #d9f2c4;
+}
+.node.cap > .ico {
+    background: #ffe48a;
+}
+.node .card-title {
+    line-height: 1.25;
+}
+.node .card-sub {
+    margin-top: 3px;
+    line-height: 1.35;
+}
+.node .card-main {
+    min-width: 0;
 }
 
 .book-grid {
@@ -1043,4 +1067,63 @@ svg.chart .bar:hover path {
         opacity: 0;
         transform: translate(8px, -36px) scale(1.8);
     }
+}
+
+/* un bouton sous le texte d'une carte (au lieu d'une colonne serrée à droite) */
+.card-foot {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+/* confirmer un gros achat */
+.askbuy {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    text-align: center;
+}
+.askbuy-art {
+    width: 84px;
+    height: 84px;
+    padding: 10px;
+    background: var(--paper-l);
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+    box-shadow: 0 4px 0 var(--wood-d);
+}
+.askbuy-art > svg {
+    width: 100%;
+    height: 100%;
+}
+.askbuy > p {
+    margin: 0;
+    font-weight: 700;
+}
+.askbuy-price {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    font-size: 1.3rem;
+    font-weight: 900;
+    background: #fff3cf;
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+}
+.askbuy-price .ico {
+    width: 1.2em;
+    height: 1.2em;
+}
+.askbuy-price .mat {
+    font-size: 0.7em;
+}
+.askbuy-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    margin-top: 4px;
 }

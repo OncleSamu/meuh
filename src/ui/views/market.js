@@ -14,6 +14,7 @@ import { btn, card, chip, hint, section, empty, toggle, pips, timer } from '../k
 import { defineView, ui } from '../app.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 import { pinBar } from './common.js';
+import { askBuy } from '../sheets/askbuy.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const matChips = m =>
@@ -368,7 +369,20 @@ export function setupMarket() {
     const so = () => sheetOpts('stall');
     actions({
         shopCat: (el, d) => (ui.sel.shop = d.c),
-        buy: (el, d) => G.buy(d.type, d.id, +d.qty, el),
+        buy: (el, d) =>
+            d.type === 'machine'
+                ? askBuy(
+                      {
+                          title: `Acheter : ${MACHINES[d.id].name.toLowerCase()}`,
+                          icon: ['machine', d.id],
+                          text: 'Une nouvelle machine pour l’atelier.',
+                          cost: MACHINES[d.id].cost,
+                          mats: G.matCost('machine', d.id),
+                          run: at => G.buy(d.type, d.id, +d.qty, at),
+                      },
+                      el,
+                  )
+                : G.buy(d.type, d.id, +d.qty, el),
         upgrade: (el, d) => G.buyUpgrade(d.id, el.closest('.card')),
         buyDog: el => G.buyDog(el),
         sell: (el, d) => G.sellItem(d.id, +d.n, el),

@@ -48,6 +48,7 @@ export function newState() {
             sfxVol: 0.8,
             haptics: true,
             autoReplant: false,
+            confirmBuy: true,
             reserve: true,
             calm: false,
             remind: false,

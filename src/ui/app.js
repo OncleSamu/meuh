@@ -138,7 +138,7 @@ function renderHud() {
         byId('hud'),
         `<button class="lvl${state.legend ? ' legend' : ''}" data-act="open" data-sheet="levels" aria-label="Niveau ${state.level}, voir les niveaux">
             <span class="lvl-star">${ico(['ui', 'star'])}<b>${state.level}</b></span>
-            <span class="xp"><i style="width:${(p * 100).toFixed(1)}%"></i><small>${xpText}</small></span>
+            <span class="xp-bar"><i style="width:${(p * 100).toFixed(1)}%"></i><small>${xpText}</small></span>
         </button>
         <span class="pill coins" id="coin-pill">${ico(['ui', 'coin'])}<b id="ui-money"></b></span>
         <button class="pill barn${used >= cap ? ' full' : used >= cap * 0.85 ? ' near' : ''}" id="barn-pill" data-act="open" data-sheet="barn" aria-label="Grange">${ico(['ui', 'barn'])}<b>${used}/${cap}</b></button>

@@ -45,7 +45,7 @@ function challengeCard() {
         icon: ['ui', 'flag'],
         title: ch ? `Défi en cours : ${ch.name}` : 'Défis de prestige',
         sub: `${ch ? `${ch.desc}. Vendez la ferme pour remporter ${CHALLENGE_BONUS} rubans de plus.` : `Au moment de vendre la ferme, choisissez un défi pour la suivante : réussi, il rapporte ${CHALLENGE_BONUS} rubans de plus.`} ${done}/4 défis réussis.`,
-        side: ch ? btn('Abandonner', { act: 'abandon', size: 'sm' }) : '',
+        body: ch ? `<div class="card-foot">${btn('Abandonner', { act: 'abandon', size: 'sm' })}</div>` : '',
     });
 }
 
@@ -57,7 +57,7 @@ function prestigeCard() {
         icon: ['ui', 'ribbon'],
         title: `${r} ruban${r > 1 ? 's' : ''} de concours`,
         sub: `Chaque ruban donne +5 % sur les ventes et +3 % de vitesse, pour toujours. Bonus actuel : +${r * 5} % de ventes, +${r * 3} % de vitesse. ${state.level < PRESTIGE_LVL ? `Vendre la ferme est possible à partir du niveau ${PRESTIGE_LVL}.` : `En vendant maintenant : <b>+${gain} ruban${gain > 1 ? 's' : ''}</b> (selon les pièces gagnées depuis le début de cette ferme).`}`,
-        side: btn('Vendre la ferme', { act: 'open', data: { sheet: 'prestige' }, kind: can ? 'red' : '', size: 'sm', disabled: !can }),
+        body: `<div class="card-foot">${btn('Vendre la ferme', { act: 'open', data: { sheet: 'prestige' }, kind: can ? 'red' : '', size: 'sm', disabled: !can })}</div>`,
     });
 }
 
@@ -65,7 +65,7 @@ defineSheet('progress', {
     title: 'Progrès',
     render: () => [
         ['skills', section('Compétences') + skills()],
-        ['prestige', section('Prestige') + challengeCard() + prestigeCard()],
+        ['prestige', section('Prestige') + `<div class="list">${challengeCard()}${prestigeCard()}</div>`],
     ],
 });
 
