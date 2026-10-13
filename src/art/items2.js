@@ -1,5 +1,5 @@
 // Refonte des dessins (1.3) : les produits redessinés, famille par famille. Ces dessins remplacent ceux de items.js.
-import { C, E, F, FC, FE, HL, L, P, R, SHADOW, leaf, sub, items } from './kit.js';
+import { C, E, F, FC, FE, HL, L, P, R, SHADOW, leaf, sub, items, animals } from './kit.js';
 
 // ---------------- les vins et champagnes ----------------
 const grapeMark = (x, y, c) =>
@@ -1053,6 +1053,157 @@ const FOOD = () => ({
     sauce: jar('#d93a2b', '#4caf50', sub('tomato', 22, 31, 20)) + leaf(46, 12, 8, -30, '#4caf50', 0.5),
 });
 
+// ---------------- les produits bruts ----------------
+// ---- le lait : une bouteille en verre, capsule et étiquette avec l'animal ----
+const milkB = (cap, label, animal, milk = '#ffffff', shape = 'round') => {
+    const body =
+        shape === 'jug'
+            ? 'M22 8 L42 8 L42 16 Q50 22 50 32 L50 56 Q50 60 46 60 L18 60 Q14 60 14 56 L14 32 Q14 22 22 16Z'
+            : 'M26 6 L38 6 L38 16 Q48 22 48 32 L48 56 Q48 60 44 60 L20 60 Q16 60 16 56 L16 32 Q16 22 26 16Z';
+    return (
+        SHADOW(32, 61, 16, 2.6) +
+        (shape === 'jug' ? L('M49 28 Q60 28 58 40 Q56 48 49 47', 5) + L('M49 28 Q60 28 58 40 Q56 48 49 47', 2.4, '#eaf6fd') : '') +
+        P(body, '#eaf6fd') +
+        F(
+            shape === 'jug'
+                ? 'M15.4 26 Q20 22 32 22 Q44 22 48.6 26 L48.6 56 Q48.6 58.6 46 58.6 L18 58.6 Q15.4 58.6 15.4 56Z'
+                : 'M17.4 26 Q22 22 32 22 Q42 22 46.6 26 L46.6 56 Q46.6 58.6 44 58.6 L20 58.6 Q17.4 58.6 17.4 56Z',
+            milk,
+        ) +
+        R(shape === 'jug' ? 17 : 19, 34, shape === 'jug' ? 30 : 26, 18, 3, label, 1.6) +
+        `<g transform="translate(${shape === 'jug' ? 21 : 22} 33) scale(${20 / 80})">${animals[animal]()}</g>` +
+        F('M19 26 L22 24 L22 54 L19 54Z', '#fff', 0.5) +
+        P(body, 'none') +
+        R(shape === 'jug' ? 20 : 24.5, shape === 'jug' ? 3 : 1.5, shape === 'jug' ? 24 : 15, 7, 2.5, cap) +
+        HL(27, 4, 1, 1.6, 0, 0.6)
+    );
+};
+// ---- poissons : silhouettes et motifs propres à chaque espèce ----
+const fishBody2 = (body, belly, fin, marks = '', tail = fin, shape = 'M6 34 Q14 20 32 20 Q46 20 52 30 L60 22 L58 34 L60 46 L52 38 Q46 48 32 48 Q14 48 6 34Z') =>
+    SHADOW(32, 56, 24, 3) +
+    P('M24 21 Q30 12 38 20Z', fin, 1.8) +
+    P('M28 47 Q32 54 38 47Z', fin, 1.8) +
+    P(shape, body) +
+    F('M8 36 Q16 46 32 46 Q44 46 50 38 Q40 42 32 42 Q18 42 8 36Z', belly, 0.9) +
+    marks +
+    P('M52 30 L60 22 L58 34 L60 46 L52 38', tail, 2) +
+    C(15, 30, 3.2, '#ffffff', 1.4) +
+    FC(15.6, 30, 1.5, '#3a2618') +
+    L('M22 26 Q25 34 22 42', 1.6, 'rgba(58,38,24,.5)') +
+    HL(26, 25, 6, 1.6, -6, 0.6) +
+    P(shape, 'none');
+// ---- la laine : une pelote, fil qui dépasse ----
+const yarn = (c, d, extra = '') =>
+    SHADOW(30, 58, 22, 3) +
+    C(30, 34, 22, c) +
+    L('M12 24 Q30 34 48 22 M10 34 Q30 46 52 32 M14 46 Q30 52 46 46 M20 14 Q16 34 22 54 M34 12 Q42 34 36 56', 1.4, d) +
+    C(30, 34, 22, 'none') +
+    L('M50 44 Q58 52 54 58 Q50 62 58 62', 1.8, d) +
+    HL(20, 24, 4, 2, -30, 0.6) +
+    extra;
+
+// dessinés à la demande (les animaux sont enregistrés après ce fichier)
+const RAW = () => ({
+    milk: milkB('#5aa9e6', '#e9f4fb', 'cow'),
+    goatMilk: milkB('#6cc04a', '#eef8e6', 'goat', '#fffcf2', 'jug'),
+    buffaloMilk: milkB('#4a4f57', '#eef0f2', 'buffalo', '#fffdf6'),
+    donkeyMilk: milkB('#b58ad6', '#f4ecfb', 'donkey', '#fffaf4', 'jug'),
+    // le lait d'alpage : un bidon en fer avec une fleur
+    alpineMilk:
+        SHADOW(32, 61, 18, 2.6) +
+        P('M18 18 L46 18 L48 56 Q48 60 44 60 L20 60 Q16 60 16 56Z', '#c9d3dc') +
+        R(22, 6, 20, 13, 3, '#dfe6ec') +
+        R(20, 4, 24, 5, 2, '#9aa6b2') +
+        L('M18 30 L46 30 M17 48 L47 48', 3, '#9aa6b2') +
+        L('M22 12 Q14 12 14 20 M42 12 Q50 12 50 20', 2.4) +
+        C(32, 39, 6, '#fffaf0', 1.4) +
+        [0, 72, 144, 216, 288]
+            .map(a => FE(32 + 3.4 * Math.cos((a * Math.PI) / 180), 39 + 3.4 * Math.sin((a * Math.PI) / 180), 2, 1.3, '#f6a5b5', 1, a))
+            .join('') +
+        FC(32, 39, 1.4, '#ffd23f') +
+        HL(21, 34, 1.6, 7, 0, 0.6),
+    // gardon : argenté, nageoires rouges
+    roach: fishBody2('#c9d3dc', '#eef3f6', '#e8364b', L('M20 32 L48 32', 1, '#9aa6b2')),
+    // perche : verte à bandes sombres, nageoire dorsale épineuse
+    perch: fishBody2('#9cc45a', '#e8f4c8', '#f28c28', [24, 31, 38, 44].map(x => L(`M${x} 22 Q${x + 2} 34 ${x} 46`, 3, '#5e7a2e')).join('')),
+    // sardine : fine et bleutée, rangée de points
+    sardine: fishBody2(
+        '#7fa7c9',
+        '#eef3f6',
+        '#5b7f9e',
+        [22, 27, 32, 37, 42].map(x => FC(x, 30, 1.2, '#3f5f7a')).join(''),
+        '#5b7f9e',
+        'M6 34 Q14 26 32 26 Q46 26 52 31 L60 24 L58 34 L60 44 L52 37 Q46 42 32 42 Q14 42 6 34Z',
+    ),
+    // bar : gris argent, dos foncé, grande gueule
+    seabass: fishBody2(
+        '#a8b4be',
+        '#f2f5f7',
+        '#6d7a86',
+        F('M10 28 Q20 20 34 20 Q46 21 52 30 Q40 26 30 27 Q18 28 10 30Z', '#6d7a86', 0.9) + L('M6 35 L12 36', 1.4),
+    ),
+    // les laines
+    wool: yarn('#f7f3ea', '#c9bfa8'),
+    alpacaWool: yarn('#e8c38c', '#b98a4a'),
+    // le crin de cheval : une mèche nouée d'un ruban
+    horsehair:
+        SHADOW(32, 58, 18, 3) +
+        P('M24 10 Q14 30 18 56 L26 56 Q22 34 30 14Z', '#5e3a1e') +
+        P('M30 10 Q30 34 34 56 L42 56 Q38 32 38 10Z', '#7a4a2a') +
+        P('M36 10 Q48 30 46 56 L52 56 Q56 30 42 10Z', '#5e3a1e') +
+        L('M22 30 Q22 44 24 54 M34 20 Q36 40 38 54 M46 26 Q50 42 50 54', 1, '#a0703a') +
+        R(20, 16, 26, 7, 3, '#e8364b') +
+        P('M33 19 L26 28 L30 29Z', '#e8364b', 1.4) +
+        P('M33 19 L40 28 L36 29Z', '#e8364b', 1.4),
+    // la patate douce : tubercule rose, chair orangée
+    sweetPotato:
+        SHADOW(32, 56, 26, 3) +
+        P('M6 36 Q8 24 22 22 Q40 18 54 28 Q60 34 56 42 Q48 50 30 48 Q10 48 6 36Z', '#c25a6a') +
+        P('M40 30 Q50 26 56 34 Q52 44 42 42 Q36 38 40 30Z', '#f7a24a', 1.6) +
+        L('M14 30 L18 32 M24 40 L28 40 M30 26 L33 28', 1.2, '#8e3a48') +
+        L('M6 36 L1 38 M56 30 L62 26', 1.6) +
+        HL(18, 28, 6, 2, -10, 0.45),
+    // le ferment noble : un pot de grès et ses bulles
+    ferment:
+        SHADOW(32, 60, 18, 3) +
+        P('M16 22 Q12 44 20 58 L44 58 Q52 44 48 22Z', '#d9b07a') +
+        R(14, 14, 36, 9, 3, '#8b5a2b') +
+        L('M14 34 Q32 38 50 34', 2, '#4f9e3a') +
+        [
+            [26, 8],
+            [34, 4],
+            [40, 9],
+        ]
+            .map(([x, y], k) => C(x, y, 2.2 + k * 0.4, '#fff6dc', 1.2))
+            .join('') +
+        C(32, 46, 6, '#fffaf0', 1.4) +
+        FC(32, 46, 2.4, '#4f9e3a') +
+        HL(20, 40, 1.6, 6, 0, 0.5),
+    // la levure : un sachet en papier et une pincée qui s'en échappe
+    yeast:
+        SHADOW(32, 60, 17, 3) +
+        P('M18 16 L46 16 L48 58 L16 58Z', '#f2e3b0') +
+        L('M18 16 L22 10 L42 10 L46 16', 2.4) +
+        L('M20 22 L44 22', 1.4, '#c9b07a') +
+        C(32, 40, 8, '#fffaf0', 1.6) +
+        [
+            [30, 38],
+            [34, 41],
+            [31, 43],
+            [35, 37],
+        ]
+            .map(([x, y]) => FC(x, y, 1.4, '#d9b07a'))
+            .join('') +
+        [
+            [50, 12],
+            [54, 8],
+            [52, 16],
+        ]
+            .map(([x, y]) => FC(x, y, 1.4, '#fffaf0'))
+            .join('') +
+        HL(22, 30, 1.4, 8, 0, 0.4),
+});
+
 Object.assign(items, Object.fromEntries(Object.entries({ ...WINES, ...CHEESES }).map(([k, v]) => [k, () => v])));
 let drinks = null;
 const DRINK_IDS = [
@@ -1132,3 +1283,23 @@ const FOOD_IDS = [
     'sauce',
 ];
 FOOD_IDS.forEach(k => (items[k] = () => (food = food || FOOD())[k]));
+
+let raw = null;
+const RAW_IDS = [
+    'milk',
+    'goatMilk',
+    'buffaloMilk',
+    'donkeyMilk',
+    'alpineMilk',
+    'roach',
+    'perch',
+    'sardine',
+    'seabass',
+    'wool',
+    'alpacaWool',
+    'horsehair',
+    'sweetPotato',
+    'ferment',
+    'yeast',
+];
+RAW_IDS.forEach(k => (items[k] = () => (raw = raw || RAW())[k]));
