@@ -31,6 +31,15 @@ import { balloonArt, cart, loco, truck } from './vehicles.js';
 import { farmhouseArt } from './buildings.js';
 import { eye } from './animals.js';
 
+// une étoile (niveau, expérience) : ombre en bas, reflet le long du bras gauche, tout à l'intérieur du contour
+const STAR = 'M32 6 L39.5 23 L58 24.5 L44 36.5 L48.5 55 L32 45 L15.5 55 L20 36.5 L6 24.5 L24.5 23Z';
+const starIcon = (fill, shade) =>
+    F(STAR, fill) +
+    F('M32 45 L15.5 55 L20 36.5 L32 41 L44 36.5 L48.5 55Z', shade, 0.55) +
+    L('M13.5 26.8 L26.3 25.6 L31.6 13.6', 2.6, 'rgba(255,255,255,.75)') +
+    FC(19, 33, 1.4, '#fff', 0.6) +
+    P(STAR, 'none');
+
 Object.assign(ui, {
     hive: () =>
         SHADOW(32, 60, 20, 3) +
@@ -397,8 +406,8 @@ Object.assign(ui, {
         `<circle cx="32" cy="32" r="15.5" fill="none" stroke="#c9952a" stroke-width="2.5"/>` +
         F('M32 21 L35 29 L43 29 L37 34 L39 42 L32 37 L25 42 L27 34 L21 29 L29 29Z', '#d9a441') +
         HL(22, 21, 6, 3, -40, 0.7),
-    star: () => P('M32 6 L39.5 23 L58 24.5 L44 36.5 L48.5 55 L32 45 L15.5 55 L20 36.5 L6 24.5 L24.5 23Z', '#ffd23f') + HL(25, 22, 4, 2, -30, 0.8),
-    xp: () => P('M32 6 L39.5 23 L58 24.5 L44 36.5 L48.5 55 L32 45 L15.5 55 L20 36.5 L6 24.5 L24.5 23Z', '#5aa9e6') + HL(25, 22, 4, 2, -30, 0.8),
+    star: () => starIcon('#ffd23f', '#e8a317'),
+    xp: () => starIcon('#6cbcf2', '#3f8fd0'),
     lock: () =>
         L('M22 30 L22 22 C22 10 42 10 42 22 L42 30', 8) +
         L('M22 30 L22 22 C22 10 42 10 42 22 L42 30', 4, '#b8c4cc') +
