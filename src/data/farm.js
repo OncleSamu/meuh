@@ -1,3 +1,4 @@
+import { LV_DECO, LV_UPG } from './levels14.js';
 // Le champ, la serre, les sols, la qualité, les décorations, le chien, les engins et les styles.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -68,7 +69,7 @@ export const UPGRADES = {
 };
 
 export const GH = {
-    lvl: 14,
+    lvl: 15,
     cost: 6000,
     basePlots: 3,
     maxPlots: 9,
@@ -642,7 +643,7 @@ export const STYLE_CHARM = 8;
 // Un arbre : jeune plant (pousse pendant son temps de culture), adulte qui fait tomber un fruit
 // toutes les moitiés de ce temps, vieil arbre qui produit moins, puis arbre mort qui donne du bois.
 export const ORCHARD = {
-    lvl: 11, // le premier arbre (pommier)
+    lvl: 10, // le premier arbre (pommier)
     base: 4, // emplacements offerts à l'ouverture
     max: 24,
     cost: 2000, // prix du 5e emplacement, puis ×mult
@@ -687,3 +688,7 @@ export const PASTURE_NAMES = [
     'Le pré des vents',
     'Le pré du bout du monde',
 ];
+
+// 1.4 : 50 niveaux
+for (const [id, l] of Object.entries(LV_DECO)) if (DECOS[id]) [DECOS[id].lvOld, DECOS[id].reqLvl] = [DECOS[id].reqLvl || 1, l];
+for (const [id, l] of Object.entries(LV_UPG)) if (UPGRADES[id]) [UPGRADES[id].lvOld, UPGRADES[id].reqLvl] = [UPGRADES[id].reqLvl || 1, l];

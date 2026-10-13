@@ -1,5 +1,5 @@
 // Le joueur : argent, expérience et niveaux, équipement, compétences, succès et cadeau du jour.
-import { state } from '../core/state.js';
+import { state, lvOk } from '../core/state.js';
 import { today } from '../core/clock.js';
 import { fmt, dateKey, fill } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
@@ -8,8 +8,10 @@ import { ANIMALS } from '../data/animals.js';
 import { MACHINES, RECIPES } from '../data/machines.js';
 import { UPGRADES, DECOS, DOG, GH, STYLE_LVL, ORCHARD, CROW_LVL } from '../data/farm.js';
 import { NIGHT } from '../data/night.js';
-import { CHAPTERS, PROJECTS, NEIGHBOR_LVL } from '../data/village.js';
+import { CHAPTERS, PROJECTS, NEIGHBOR_LVL, chapterNum, chapterAfter } from '../data/village.js';
 import { NATURE } from '../data/nature.js';
+import { ISLAND } from '../data/island.js';
+import { GENETICS } from '../data/genetics.js';
 import { CAVE_LVL } from '../data/cave.js';
 import { INCIDENT_LVL, RARE_EVENT_LVL } from '../data/surprises.js';
 import { CONTRACT_LVL, CONTEST_LVL, LEAGUES } from '../data/commerce.js';
@@ -45,12 +47,54 @@ export const rollYield = kind =>
     Math.random() < state.upgrades.yield * 0.1 + (kind === 'crop' ? rank('bounty') * 0.04 : kind === 'animal' ? rank('pasture') * 0.05 : 0) ? 2 : 1;
 
 // ---------------- expérience et niveaux ----------------
-export const getXpReq = lvl => {
+// la courbe des 40 niveaux (jusqu'à la 1.3)
+export const getXpReqOld = lvl => {
     const B = BALANCE,
         early = l => B.xpBase * Math.pow(B.xpGrowth, l - 1);
     const xp = lvl <= B.xpKnee ? early(lvl) : early(B.xpKnee) + B.xpA * Math.pow(lvl - B.xpKnee, B.xpP);
     return Math.round(xp / 10) * 10;
 };
+// 1.4 : 50 niveaux. La courbe reprend celle des 40 niveaux, étirée (×39/49) et un peu allongée (xpK)
+const cumOld = x => {
+    let s = 0,
+        i = 1;
+    for (; i + 1 <= x; i++) s += getXpReqOld(i);
+    return s + (x - i) * getXpReqOld(i);
+};
+const REQ = [];
+export const getXpReq = lvl => {
+    if (REQ[lvl] === undefined) {
+        const cum = L => BALANCE.xpK * cumOld(1 + ((L - 1) * 39) / 49);
+        REQ[lvl] = Math.round((cum(lvl + 1) - cum(lvl)) / 10) * 10;
+    }
+    return REQ[lvl];
+};
+// expérience totale pour atteindre un niveau
+export const xpToReach = (L, req = getXpReq) => {
+    let s = 0;
+    for (let l = 1; l < L; l++) s += req(l);
+    return s;
+};
+
+// 1.4 : une partie des 40 niveaux passe à l'échelle des 50, à expérience totale égale (on garde l'avance)
+export function migrateLevels14() {
+    const OLD_MAX = 40;
+    const toNew = (lvl, xp) => {
+        if (lvl >= OLD_MAX) return [MAX_LEVEL, xp];
+        const tot = xpToReach(lvl, getXpReqOld) + xp;
+        let L = 1;
+        while (L < MAX_LEVEL && xpToReach(L + 1) <= tot) L++;
+        return [L, Math.max(0, tot - xpToReach(L))];
+    };
+    const before = Math.min(state.level, OLD_MAX);
+    [state.level, state.xp] = toNew(before, state.xp);
+    // ce qui était ouvert avec l'ancien niveau le reste (lvOldLvl : niveau d'avant la 1.4)
+    state.lvKeep = {};
+    for (const o of [ITEMS, ANIMALS, MACHINES, DECOS, UPGRADES])
+        for (const d of Object.values(o)) if (d.lvOld !== undefined && d.lvOld <= before && d.reqLvl > state.level) state.lvKeep[d.id] = true;
+    for (const r of Object.values(RECIPES)) if (r.lvOld !== undefined && r.lvOld <= before && r.lvl > state.level) state.lvKeep[r.id] = true;
+    state.stats.maxLevel = Math.max(state.level, toNew(Math.min(state.stats.maxLevel || 1, OLD_MAX), 0)[0]);
+}
 
 export function addXp(amount, at) {
     amount = Math.floor(amount);
@@ -90,6 +134,8 @@ export function unlocksAt(lvl) {
     if (lvl === 1) return [{ icon: ['seed', 'wheat'], name: 'Graines de blé, le champ et le magasin' }];
     const list = [{ icon: ['ui', 'skillbook'], name: '1 point de compétence à placer dans Progrès' }];
     const add = (icon, name) => list.push({ icon, name });
+    // les grandes étapes, en tête de liste
+    const big = (icon, name) => list.splice(1, 0, { icon, name, big: true });
     Object.values(ITEMS).forEach(x => {
         if (x.reqLvl !== lvl || x.exotic) return;
         if (x.type === 'crop' || x.type === 'tree')
@@ -111,7 +157,7 @@ export function unlocksAt(lvl) {
         if (c.lvl === lvl && c.n > 1)
             add(
                 ['ui', 'village'],
-                `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage', domaine: 'Domaine', island: 'Île', station: 'Station' }[c.map] || 'Village'} : chapitre ${c.n}, « ${c.name} » (après le chapitre ${c.after !== undefined ? c.after : c.n - 1})`,
+                `${{ hamlet: 'Hameau', port: 'Port', alpine: 'Alpage', domaine: 'Domaine', island: 'Île', station: 'Station' }[c.map] || 'Village'} : chapitre ${chapterNum(c.n)}, « ${c.name} » (après le chapitre ${chapterNum(chapterAfter(c.n))})`,
             );
     });
     Object.values(UPGRADES).forEach(u => u.reqLvl === lvl && add(['ui', u.id], `${u.name} (au magasin)`));
@@ -143,7 +189,17 @@ export function unlocksAt(lvl) {
     LEAGUES.forEach(g => {
         if (g.lvl === lvl && g.lvl > CONTEST_LVL) add(['ui', 'podium'], `Concours : la ligue ${g.name.toLowerCase()} est ouverte (gagnez pour y monter)`);
     });
+    if (lvl === ORCHARD.lvl) big(['ui', 'appleCart'], 'Grande étape : le verger');
+    if (lvl === GH.lvl) big(['ui', 'greenhouse'], 'Grande étape : la serre');
+    if (lvl === CAVE_LVL) big(['ui', 'barrel'], 'Grande étape : la cave et ses enchères');
+    if (lvl === CHAPTERS[4].lvl) big(['villager', 'theo'], 'Grande étape : le hameau, puis Théo le commis (avec le pont)');
+    if (lvl === CHAPTERS[6].lvl) big(['ui', 'boat'], 'Grande étape : le port (pêche en mer, bateau de livraison)');
+    if (lvl === ISLAND.lvl) big(['item', 'coconut'], 'Grande étape : l’île aux Alizés (cultures et verger tropicaux)');
+    if (lvl === GENETICS.lvl) big(['ui', 'search'], 'Grande étape : la station de recherche et la génétique');
+    if (lvl === CHAPTERS[15].lvl) big(['ui', 'trophy'], 'Grande étape : le Salon de l’agriculture');
+    if (lvl === CHAPTERS[8].lvl) big(['ui', 'mountain'], 'Grande étape : l’alpage et la transhumance');
     if (lvl === MAX_LEVEL) {
+        big(['ui', 'cupGold'], 'Grande étape : grands défis, renommée, prestige et Ferme légendaire');
         add(['ui', 'star'], 'Niveau maximum : l’expérience vous rapporte désormais des étoiles de renommée');
         add(['ui', 'goldCow'], 'Visez le titre de Ferme légendaire (Livre de la ferme)');
         add(['ui', 'ribbon'], 'Vendre la ferme : repartez de zéro avec des rubans, des bonus pour toujours (Progrès)');
@@ -154,7 +210,7 @@ export function unlocksAt(lvl) {
 
 // ---------------- équipement de la ferme ----------------
 export const upgradeCost = id => Math.floor(UPGRADES[id].baseCost * Math.pow(UPGRADES[id].mult, state.upgrades[id] || 0));
-export const upgradeOpen = id => state.level >= (UPGRADES[id].reqLvl || 1);
+export const upgradeOpen = id => lvOk(UPGRADES[id]);
 
 export function buyUpgrade(id, at) {
     const u = UPGRADES[id];

@@ -1,4 +1,4 @@
-// Les grands défis (1.1) : un objectif de deux semaines après le niveau 40, tiré au hasard parmi douze.
+// Les grands défis (1.1) : un objectif de deux semaines après le niveau 50, tiré au hasard parmi douze.
 // Chaque défi a 4 étapes. Sortes d'étapes :
 //   give    : livrer des produits, k tirés dans la liste (q : 0 tout, 1 argent ou mieux, 2 or), n chacun
 //   count   : réussir une action (un compteur de state.stats qui avance pendant le défi)
@@ -8,7 +8,7 @@
 // une partie du jeu fermée (needs) ou des produits qu'on ne sait pas encore faire.
 
 export const DEFI = {
-    lvl: 40,
+    lvl: 50,
     days: 14,
     noRepeat: 3, // un défi joué ne revient qu'au 4e tirage après lui
     perStar: 0.08, // +8 % de quantités par étoile de renommée

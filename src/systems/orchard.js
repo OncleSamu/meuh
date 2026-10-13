@@ -3,7 +3,7 @@
 //   age    = secondes de croissance (adulte quand age atteint le temps de culture),
 //   drops  = fruits déjà tombés dans sa vie (vieux puis mort selon ORCHARD.life),
 //   ground = fruits au pied de l'arbre, prog = avancée vers le fruit suivant, gq = fruits dorés au sol.
-import { state } from '../core/state.js';
+import { state, lvOk } from '../core/state.js';
 import { fmt, s } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
@@ -32,7 +32,7 @@ export const slotCost = (z = 'farm') =>
     z === 'island'
         ? Math.floor(ISLAND.slotCost * Math.pow(ISLAND.slotMult, Math.max(0, openSlots(z) - ISLAND.slotsBase)))
         : Math.floor(ORCHARD.cost * Math.pow(ORCHARD.mult, Math.max(0, openSlots(z) - ORCHARD.base)));
-export const treeUnlocked = d => (state.level >= d.reqLvl && storyOk(d)) || state.seeds[d.id] > 0;
+export const treeUnlocked = d => (lvOk(d) && storyOk(d)) || state.seeds[d.id] > 0;
 
 // l'état d'un arbre : 'young', 'adult', 'old' ou 'dead'
 export function treeStage(t) {

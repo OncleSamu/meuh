@@ -141,7 +141,7 @@ export const ANIMAL_BASE = Object.fromEntries(Object.entries(A).map(([id, s]) =>
 
 // ---------------- le labo ----------------
 export const GENETICS = {
-    lvl: 33,
+    lvl: 40,
     // chantiers qui ouvrent chaque partie
     plantProject: 'pollination', // croisements de plantes
     animalProject: 'breeding', // étable de sélection

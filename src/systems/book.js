@@ -1,5 +1,5 @@
 // Le livre de la ferme : collection, pages, et les chiffres des statistiques.
-import { state } from '../core/state.js';
+import { state, scaleLvl } from '../core/state.js';
 import { view } from '../core/view.js';
 import { fmt, fmtTime } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst } from '../core/bus.js';
@@ -16,8 +16,8 @@ import { earn, claimableCount } from './player.js';
 import { legendReady } from './mastery.js';
 import { addPhoto } from './style.js';
 
-export const entryReward = () => 40 + state.level * 10;
-export const pageReward = () => Math.round((1500 * (1 + state.level * 0.2)) / 10) * 10;
+export const entryReward = () => Math.round(40 + scaleLvl() * 10);
+export const pageReward = () => Math.round((1500 * (1 + scaleLvl() * 0.2)) / 10) * 10;
 
 // les entrées d'une page : [{ key, icon, name, hint, star?, fish? }]
 const ENTRIES = {
@@ -156,7 +156,7 @@ export function bookProgress() {
     const all = allEntries();
     return { found: all.filter(e => state.collection[e.key]).length, total: all.length };
 }
-export const quarterReward = k => ({ coins: Math.round((4000 * (k + 1) * (1 + state.level * 0.2)) / 50) * 50, rares: k + 1 });
+export const quarterReward = k => ({ coins: Math.round((4000 * (k + 1) * (1 + scaleLvl() * 0.2)) / 50) * 50, rares: k + 1 });
 export const quarterReady = k => {
     const p = bookProgress();
     return !(state.bookQuarters || [])[k] && p.found >= Math.ceil(p.total * BOOK_QUARTERS[k]);

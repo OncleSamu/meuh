@@ -1,5 +1,5 @@
 // La partie : chargement et remise en ordre de l'état, outil en main, la seconde de jeu et l'absence.
-import { state, setState, newState, fromSave, fillGrid, readSave } from '../core/state.js';
+import { state, setState, newState, fromSave, fillGrid, readSave, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { s, fmt } from '../core/format.js';
@@ -9,6 +9,7 @@ import { GAME_MIN_PER_SEC, EVENTS } from '../data/world.js';
 import { CONTRACT_LVL } from '../data/commerce.js';
 import { INCIDENTS, RARE_EVENTS } from '../data/surprises.js';
 import { MAX_LEVEL } from '../data/progress.js';
+import { CHAPTERS } from '../data/village.js';
 import { ensureVillagers } from './village.js';
 import { ensureGhPlots, seedList, plotRate, ghTick, ghOffline } from './farm.js';
 import { ensureAnimalData, animalsTick, growTick, animalsOffline } from './animals.js';
@@ -17,11 +18,11 @@ import { ensureMachineData, ensureRecipeMoves, workshopTick, advanceMachine } fr
 import { ensureQuests, truckTick, balloonTick, checkQuestReady } from './orders.js';
 import { ensureStall, stallTick, neighborTick, neighborsReady } from './stall.js';
 import { scheduleFind, decoTool, eggTick, wellTick, honeyTick, crowTick, dogTick } from './farmlife.js';
-import { projectDone, storyOk, syncStory } from './story.js';
+import { projectDone, storyOk, syncStory, chapterDone } from './story.js';
 import { newDay, weatherTick, season, weather } from './world.js';
 import { marketTick } from './market.js';
 import { syncEvent, eventActive, eventIcon } from './events.js';
-import { speedMult, checkNewAchievements } from './player.js';
+import { speedMult, checkNewAchievements, migrateLevels14 } from './player.js';
 import { handTick, handOffline } from './home.js';
 import { incidentTick } from './incidents.js';
 import { merchantTick } from './merchant.js';
@@ -64,6 +65,13 @@ export function loadGame() {
 
 // Complète les données que chaque système attend (anciennes sauvegardes, nouvelle partie)
 export function normalizeState() {
+    // 1.4 : passage aux 50 niveaux (les chapitres déjà ouverts le restent)
+    if (!state.lv14) {
+        state.story.keep = {};
+        for (const c of CHAPTERS) if (state.story.seen[c.n] && !chapterDone(c.n)) state.story.keep[c.n] = true;
+        migrateLevels14();
+        state.lv14 = true;
+    }
     ensureVillagers();
     ensureGhPlots();
     ensureAnimalData();
@@ -100,10 +108,7 @@ export function isToolValid(t) {
         (t === 'var' && !!state.genetics && !!state.genetics.tool && state.genetics.seeds[state.genetics.tool] > 0) ||
         t === 'feed' ||
         (t === 'fert' && state.level >= 4) ||
-        (state.seeds[t] !== undefined &&
-            ITEMS[t].type === 'crop' &&
-            !ITEMS[t].island &&
-            ((state.level >= ITEMS[t].reqLvl && storyOk(ITEMS[t])) || state.seeds[t] > 0))
+        (state.seeds[t] !== undefined && ITEMS[t].type === 'crop' && !ITEMS[t].island && ((lvOk(ITEMS[t]) && storyOk(ITEMS[t])) || state.seeds[t] > 0))
     );
 }
 
@@ -115,8 +120,7 @@ export function selectTool(t) {
 }
 
 // Graines disponibles dans la barre : cultures puis arbres, par niveau
-export const plantableSeeds = () =>
-    seedList().filter(i => i.type === 'crop' && !i.island && ((state.level >= i.reqLvl && !i.exotic && storyOk(i)) || state.seeds[i.id] > 0));
+export const plantableSeeds = () => seedList().filter(i => i.type === 'crop' && !i.island && ((lvOk(i) && !i.exotic && storyOk(i)) || state.seeds[i.id] > 0));
 
 // ---------------- une seconde de jeu ----------------
 // chaque sous-système avance d'une seconde ; celui qui plante est isolé et n'arrête pas les autres

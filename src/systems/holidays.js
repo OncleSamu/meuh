@@ -1,5 +1,5 @@
 // Les fêtes aux vraies dates : Halloween, Noël et Pâques.
-import { state } from '../core/state.js';
+import { state, scaleLvl } from '../core/state.js';
 import { today } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { toast, sfx, burst } from '../core/bus.js';
@@ -74,7 +74,7 @@ export function ensureHoliday() {
 export const holidayLeft = k => HOLIDAYS[state.holiday.id].goal[k] - (state.holiday.given[k] || 0);
 export const holidayOpen = () => !!(state.holiday && !state.holiday.done && holidayActive(state.holiday.id));
 export const holidayReady = () => holidayOpen() && Object.keys(HOLIDAYS[state.holiday.id].goal).some(k => holidayLeft(k) > 0 && state.inventory[k] > 0);
-export const holidayReward = () => Math.round((3000 * (1 + state.level * 0.2)) / 50) * 50;
+export const holidayReward = () => Math.round((3000 * (1 + scaleLvl() * 0.2)) / 50) * 50;
 
 export function giveHoliday(at) {
     if (!holidayOpen()) return false;

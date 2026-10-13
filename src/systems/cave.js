@@ -1,5 +1,5 @@
 // La cave (Atelier | Cave) : vieillissement par étapes, climat et soins, réserve, salle des ventes.
-import { state } from '../core/state.js';
+import { state, scaleLvl } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { fmt } from '../core/format.js';
@@ -333,7 +333,7 @@ function pickFinds() {
     return out;
 }
 export const findValue = k =>
-    k === 'vintage' ? Math.round(ITEMS.redWine.sell * CAVE_MULT[3] * 3) : Math.round(AUCTION_FINDS[k].value * (1 + state.level * 0.02));
+    k === 'vintage' ? Math.round(ITEMS.redWine.sell * CAVE_MULT[3] * 3) : Math.round(AUCTION_FINDS[k].value * (1 + scaleLvl() * 0.02));
 export const depositMax = () => (state.cave.auction.big ? AUCTION_BIG_LOTS : AUCTION_SMALL_LOTS);
 
 export function depositLot(uid) {
@@ -374,7 +374,7 @@ export function bidderPool(big) {
         .filter(([id, b]) => (b.big ? big : !b.villager || !VILLAGERS[id].ch || chapterDone(VILLAGERS[id].ch - 1)))
         .map(([id]) => id);
 }
-const bidderBudget = id => (20000 + state.level * 3000) * BIDDERS[id].budget;
+const bidderBudget = id => (20000 + scaleLvl() * 3000) * BIDDERS[id].budget;
 export const bidderName = id => (id === 'you' ? 'Vous' : BIDDERS[id] ? BIDDERS[id].name : '');
 
 function makeNpcs(fam, value, big) {

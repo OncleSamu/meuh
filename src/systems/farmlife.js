@@ -1,5 +1,5 @@
 // La vie du champ : décorations, miel, corbeau, œufs de Pâques et chien.
-import { state } from '../core/state.js';
+import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view, farmShown } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float, fly } from '../core/bus.js';
@@ -37,8 +37,8 @@ export function shooCrow(i, at) {
     sfx('caw');
     buzz(15);
     emit('crowAway', { i, plant: false });
-    earn(5 + state.level * 4, at);
-    addXp(10 + state.level * 2, at);
+    earn(5 + scaleLvl() * 4, at);
+    addXp(10 + scaleLvl() * 2, at);
     float(at, ['Ouste !'], '', -40);
 }
 
@@ -162,7 +162,7 @@ export function wellTick() {
 export function dogFinds() {
     const r = Math.random(),
         L = state.level;
-    if (r < 0.38) return { kind: 'coins', n: 30 + L * 15 };
+    if (r < 0.38) return { kind: 'coins', n: Math.round(30 + scaleLvl() * 15) };
     if (r < 0.58 && L >= 4) return { kind: 'fertilizer', n: 2 + Math.floor(Math.random() * 2) };
     if (r < 0.76) return { kind: 'feed', n: 5 + Math.floor(Math.random() * 6) };
     if (r < 0.95) {
@@ -216,7 +216,7 @@ export function handleDog(at) {
     emit('dogPet', at);
     if (d.petDay !== state.day) {
         d.petDay = state.day;
-        addXp(10 + state.level * 3, at);
+        addXp(10 + scaleLvl() * 3, at);
     }
     return 'pet';
 }
@@ -253,7 +253,7 @@ export function dogTick() {
 }
 
 export function buyDog(at) {
-    if (state.dog.owned || state.level < DOG.reqLvl || state.money < DOG.cost) return false;
+    if (state.dog.owned || !lvOk(DOG) || state.money < DOG.cost) return false;
     spend(DOG.cost);
     state.dog.owned = true;
     scheduleFind();

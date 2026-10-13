@@ -237,7 +237,8 @@ function nextGoal() {
         };
     }
     const c = G.currentChapter();
-    if (c && state.level < c.lvl) return { icon: ['ui', 'village'], text: `Chapitre ${c.n} au niveau ${c.lvl} : « ${c.name} »`, go: 'sheet:levels' };
+    if (c && state.level < c.lvl)
+        return { icon: ['ui', 'village'], text: `Chapitre ${G.chapterNum(c.n)} au niveau ${c.lvl} : « ${c.name} »`, go: 'sheet:levels' };
     if (G.houseCanUp()) return { icon: ['ui', 'house'], text: 'Agrandissez la maison de la ferme', go: 'sheet:house' };
     if (!state.legend) {
         const n = G.legendGoals().filter(g => g.ok).length;
@@ -368,7 +369,7 @@ function askPlot(i) {
         {
             title: gh ? 'Agrandir la serre' : 'Agrandir le champ',
             icon: gh ? ['ui', 'greenhouse'] : ['ui', 'shovel'],
-            text: gh ? 'Une parcelle de plus dans la serre.' : `Une parcelle de plus : le champ passera à ${state.unlockedPlots + 1} parcelles.`,
+            text: gh ? 'Une parcelle de plus dans la serre.' : `Une parcelle de plus : le champ passera à ${state.unlockedPlots + 1} parcelles.`,
             cost: gh ? G.ghCost() : G.getExpCost(),
             run: at => run('plot', at, { i, a: 'buy' }),
         },
@@ -386,7 +387,7 @@ export function setupFarm() {
                 {
                     title: 'Construire la serre',
                     icon: ['ui', 'greenhouse'],
-                    text: 'Une serre : on y cultive toute l’année, sans arrosage.',
+                    text: 'Une serre : on y cultive toute l’année, sans arrosage.',
                     cost: GH.cost,
                     mats: MAT.greenhouse,
                     run: at => G.buildGreenhouse(at),

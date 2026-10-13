@@ -1,5 +1,5 @@
 // L'étal de la ferme, les produits verrouillés, la commande épinglée et les fermes voisines.
-import { state } from '../core/state.js';
+import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { pickRand, fmt, round5, qtyName } from '../core/format.js';
@@ -23,7 +23,7 @@ import { tip } from './tips.js';
 // ---------------- l'étal ----------------
 // On y met jusqu'à 10 exemplaires d'un produit au prix choisi. Plus c'est cher, plus
 // le client met de temps à venir. Le grossiste (vente immédiate) paie beaucoup moins.
-export const STALL_LEVELS = [8, 15, 22, 29];
+export const STALL_LEVELS = [8, 16, 26, 36];
 export const stallSlots = () => 4 + STALL_LEVELS.filter(l => state.level >= l).length + extraStall();
 export const stallBase = id => ITEMS[id].sell * masteryMult(id) * priceMult() * (state.market.hot === id ? HOT_MULT : 1) * eventSellMult();
 // délai moyen avant qu'un client achète, en minutes, selon le prix (1 = valeur normale)
@@ -174,7 +174,7 @@ export function neighborTick() {
             const its = pickItems(1);
             if (!its.length) return;
             const it = its[0];
-            const qty = qtyFor(it, (40 + state.level * 25) * (0.7 + Math.random() * 0.6), 15);
+            const qty = qtyFor(it, (40 + scaleLvl() * 25) * (0.7 + Math.random() * 0.6), 15);
             const value = it.sell * qty;
             n.req = {
                 items: [{ id: it.id, qty }],
@@ -219,7 +219,7 @@ function neighborGift(k, h) {
     const r = RIVALS[k];
     let txt;
     if (h % 2) {
-        const deco = pickRand(Object.values(DECOS).filter(d => state.level >= d.reqLvl));
+        const deco = pickRand(Object.values(DECOS).filter(d => lvOk(d)));
         state.decorInv[deco.id] = (state.decorInv[deco.id] || 0) + 1;
         txt = `${deco.name} offerte`;
     } else if (h === 2) {

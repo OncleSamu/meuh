@@ -1,5 +1,5 @@
 // La maison de la ferme et Théo, le commis ; coûts en pièces et matériaux.
-import { state } from '../core/state.js';
+import { state, lvOk } from '../core/state.js';
 import { emit, toast, sfx, buzz, burst } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { MACHINE_SLOTS } from '../data/machines.js';
@@ -87,7 +87,7 @@ export function handZone() {
 // replante la culture que le joueur avait mise sur cette parcelle
 function handPlant(p) {
     const d = ITEMS[p.hand];
-    if (!d || d.type !== 'crop' || state.level < d.reqLvl) return false;
+    if (!d || d.type !== 'crop' || !lvOk(d)) return false;
     if (state.seeds[d.id] > 0) state.seeds[d.id]--;
     else if (!d.exotic && state.money >= d.cost * 4) spend(d.cost);
     else return false;

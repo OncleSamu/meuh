@@ -1,6 +1,6 @@
 // Marché | Acheter (le magasin) et Marché | Vendre (l'étal et le grossiste).
 import { nightMarketCard } from '../night.js';
-import { state } from '../../core/state.js';
+import { state, lvOk } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { ANIMALS } from '../../data/animals.js';
@@ -54,7 +54,7 @@ function seeds() {
     return G.seedList()
         .filter(i => !i.exotic)
         .map(i => {
-            const locked = state.level < i.reqLvl || !G.storyOk(i);
+            const locked = !lvOk(i) || !G.storyOk(i);
             const season = i.seasons
                 ? meta(
                       ['ui', SEASONS.find(sv => sv.id === i.seasons[0]).icon],
@@ -83,14 +83,7 @@ function seeds() {
                 i.type === 'crop'
                     ? buyBtn('seed', i.id, 1, i.cost, locked) + buyBtn('seed', i.id, 10, i.cost, locked)
                     : buyBtn('seed', i.id, 1, i.cost, locked);
-            return shopCard(
-                art('seed', i.id),
-                i.seedName,
-                `<span class="metas">${sub}</span>`,
-                btns,
-                locked,
-                state.level < i.reqLvl ? i.reqLvl : G.storyLockText(i),
-            );
+            return shopCard(art('seed', i.id), i.seedName, `<span class="metas">${sub}</span>`, btns, locked, !lvOk(i) ? i.reqLvl : G.storyLockText(i));
         })
         .join('');
 }
@@ -100,7 +93,7 @@ function animals() {
     return Object.values(ANIMALS)
         .sort((a, b) => a.reqLvl - b.reqLvl)
         .map(a => {
-            const locked = state.level < a.reqLvl,
+            const locked = !lvOk(a),
                 p = ITEMS[a.prodId];
             const owned = G.animalCount(a.id);
             return shopCard(
@@ -119,7 +112,7 @@ function machines() {
     return Object.values(MACHINES)
         .sort((a, b) => a.reqLvl - b.reqLvl)
         .map(m => {
-            const locked = state.level < m.reqLvl || !G.storyOk(m),
+            const locked = !lvOk(m) || !G.storyOk(m),
                 owned = G.hasMachine(m.id);
             const recs = G.recipesOf(m.id);
             const strip = `<span class="rec-strip">${recs
@@ -132,7 +125,7 @@ function machines() {
                 `${m.desc} · ${recs.length} recettes${strip}`,
                 owned ? `<span class="chip ok">${ico(['ui', 'check'])}Possédé</span>` : buyBtn('machine', m.id, 1, m.cost, locked),
                 locked,
-                state.level < m.reqLvl ? m.reqLvl : G.storyLockText(m),
+                !lvOk(m) ? m.reqLvl : G.storyLockText(m),
             );
         })
         .join('');
@@ -141,7 +134,7 @@ function machines() {
 function gear() {
     const f = ITEMS.feed,
         cp = ITEMS.fertilizer,
-        cpLocked = state.level < cp.reqLvl;
+        cpLocked = !lvOk(cp);
     let html = shopCard(
         art('item', 'feed'),
         'Nourriture',
@@ -185,7 +178,7 @@ function decos() {
     const list = Object.values(DECOS)
         .filter(d => !d.rare)
         .map(d => {
-            const locked = state.level < d.reqLvl;
+            const locked = !lvOk(d);
             const n = G.decoCount(d.id);
             return shopCard(
                 art('ui', d.id),
@@ -197,7 +190,7 @@ function decos() {
             );
         })
         .join('');
-    const locked = state.level < DOG.reqLvl,
+    const locked = !lvOk(DOG),
         owned = state.dog.owned;
     const dog = shopCard(
         art('ui', 'dog'),
@@ -373,7 +366,7 @@ export function setupMarket() {
             d.type === 'machine'
                 ? askBuy(
                       {
-                          title: `Acheter : ${MACHINES[d.id].name.toLowerCase()}`,
+                          title: `Acheter : ${MACHINES[d.id].name.toLowerCase()}`,
                           icon: ['machine', d.id],
                           text: 'Une nouvelle machine pour l’atelier.',
                           cost: MACHINES[d.id].cost,

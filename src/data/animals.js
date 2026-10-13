@@ -1,3 +1,4 @@
+import { LV_ANIMAL } from './levels14.js';
 // Les animaux : prix, production, croissance des petits, noms.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -206,3 +207,6 @@ export const TRANS_KINDS = ['cow', 'goat', 'sheep', 'buffalo'];
 export const TRANS_TIME = 5400000;
 
 export const ALPINE_SPEED = 1.2;
+
+// 1.4 : 50 niveaux
+for (const [id, l] of Object.entries(LV_ANIMAL)) if (ANIMALS[id]) [ANIMALS[id].lvOld, ANIMALS[id].reqLvl] = [ANIMALS[id].reqLvl || 1, l];

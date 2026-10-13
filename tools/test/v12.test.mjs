@@ -47,9 +47,11 @@ test('chaque variante de dessin s’affiche', () => {
 });
 
 test('un petit hérite des traits et garde sa lignée sur deux générations', () => {
-    state.level = 34;
+    state.level = 41;
     state.money = 1e9;
     state.barn.lvl = 60;
+    // 1.4 : la station suit l'île dans l'histoire ; les chapitres d'avant sont finis
+    G.CHAPTER_ORDER.slice(0, G.CHAPTER_ORDER.indexOf(15)).forEach(n => G.chapterProjects(n).forEach(p => (G.projState(p.id).done = true)));
     for (const id of ['pollination', 'breeding', 'lab']) build(id);
     const cows = state.animals.filter(a => a.type === 'cow' && G.isAdult(a));
     cows[0].g.l.horns = [

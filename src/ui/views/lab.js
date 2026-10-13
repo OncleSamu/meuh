@@ -58,7 +58,7 @@ function closedCard() {
             lvl
                 ? `Au niveau ${GX.lvl}, la docteure Agathe et Victor le vétérinaire rouvrent la vieille station : croisez plantes et animaux, et créez vos propres variétés et races.`
                 : !G.chapterOpen(15)
-                  ? 'Finissez d’abord le chapitre du hameau : la station est au bout du chemin des vergers.'
+                  ? `Finissez d’abord le chapitre ${G.chapterNum(G.chapterAfter(15))} (l’île) : la station est au bout du chemin des vergers.`
                   : 'Aidez Agathe et Victor à rénover la station (volet Village, carte « La station ») : la serre de pollinisation ouvre les croisements de plantes, l’étable de sélection l’élevage.'
         }</p>
         ${lvl ? '' : btn('Voir la station', { act: 'goStation', kind: 'gold', wide: true, icon: ['ui', 'village'] })}

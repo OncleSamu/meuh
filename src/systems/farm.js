@@ -1,5 +1,5 @@
 // Le champ : parcelles, cultures, qualité, compost et serre.
-import { state } from '../core/state.js';
+import { state, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { fmt, s, formatDuration } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, shake, changed } from '../core/bus.js';
@@ -190,7 +190,7 @@ export function doPlotAction(i, action, at) {
             const v = vid && state.genetics.vars[vid];
             if (!v) return;
             if (ITEMS[v.base].island) {
-                toast('Cette variété pousse sur l’île : semez-la dans les plantations de l’île', ['item', v.base]);
+                toast('Cette variété pousse sur l’île : semez-la dans les plantations de l’île', ['item', v.base]);
                 return;
             }
             if (i < 1000 && ITEMS[v.base].ghOnly) {
@@ -259,11 +259,11 @@ export function doPlotAction(i, action, at) {
 export function plantSeed(plot, id) {
     const d = ITEMS[id];
     if (d.island) {
-        toast(`${d.seedName} : cette culture ne pousse que sur l’île`, ['item', id]);
+        toast(`${d.seedName} : cette culture ne pousse que sur l’île`, ['item', id]);
         return false;
     }
     // des graines reçues en cadeau se plantent même avant le niveau de la culture
-    if ((state.level < d.reqLvl || !storyOk(d)) && !(state.seeds[id] > 0)) return false;
+    if ((!lvOk(d) || !storyOk(d)) && !(state.seeds[id] > 0)) return false;
     if (state.seeds[id] > 0) {
         state.seeds[id]--;
     } else if (d.type === 'crop' && !d.exotic && state.money >= d.cost) {
@@ -576,7 +576,7 @@ let replantWarned = 0;
 
 // Replante la même culture juste après la récolte (graines en stock, sinon achetées)
 export function autoReplant(plot, d) {
-    if (state.level < d.reqLvl) return;
+    if (!lvOk(d)) return;
     if (state.seeds[d.id] > 0) state.seeds[d.id]--;
     else if (d.exotic) return;
     else if (state.money >= d.cost) spend(d.cost);

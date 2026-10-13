@@ -1,5 +1,5 @@
 // La ferme la nuit (1.2) : lucioles et bocal, étoile filante et vœux, chouette du nichoir, marché de nuit l'été.
-import { state } from '../core/state.js';
+import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { fmt } from '../core/format.js';
@@ -95,7 +95,7 @@ export function catchFly(id, at) {
             state.decorInv.fireflyJar = (state.decorInv.fireflyJar || 0) + 1;
             toast(`Bocal rempli ! Une décoration unique : ${DECOS.fireflyJar.name}`, ['ui', 'fireflyJar']);
         } else {
-            const coins = 300 + state.level * 150;
+            const coins = Math.round((300 + scaleLvl() * 150) / 10) * 10;
             earn(coins, at);
             toast(`Bocal rempli ! Vous relâchez les lucioles : ${fmt(coins)} pièces`, ['ui', 'fireflyJar']);
         }
@@ -112,7 +112,7 @@ export function catchStar(at) {
     const w = WISHES[Math.floor(Math.random() * WISHES.length)];
     state.stats.wishes = (state.stats.wishes || 0) + 1;
     if (w.kind === 'gift') {
-        const coins = 500 + state.level * 250;
+        const coins = Math.round((500 + scaleLvl() * 250) / 10) * 10;
         earn(coins, at);
         ['plank', 'nail', 'paint'].forEach(id => (state.inventory[id] += 2));
         toast(`Vœu exaucé : ${fmt(coins)} pièces, 2 planches, 2 clous et 2 pots de peinture !`, ['ui', 'wishStar']);
@@ -136,7 +136,7 @@ export const wishAnimals = () => wishActive('animals');
 // ---------------- le marché de nuit (été) ----------------
 export const nightMarketOpen = () => nightOpen() && state.level >= NIGHT.marketLvl && isNight() && NIGHT.marketSeasons.includes(season().id);
 function marketOffers() {
-    const crops = Object.values(ITEMS).filter(i => i.type === 'crop' && !i.island && !i.exotic && !i.ghOnly && state.level >= i.reqLvl && storyOk(i));
+    const crops = Object.values(ITEMS).filter(i => i.type === 'crop' && !i.island && !i.exotic && !i.ghOnly && lvOk(i) && storyOk(i));
     const c = crops.length ? crops[Math.floor(Math.random() * crops.length)] : ITEMS.wheat;
     return [
         { kind: 'deco', id: 'lantern', price: Math.round(DECOS.lantern.cost * 0.8) },

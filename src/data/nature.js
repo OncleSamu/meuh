@@ -15,7 +15,7 @@ export const NATURE = {
         slots: 5,
     },
     pond: {
-        lvl: 10,
+        lvl: 9,
     },
 };
 

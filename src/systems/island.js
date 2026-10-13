@@ -1,6 +1,6 @@
 // L'île : des parcelles tropicales (jamais à arroser, toujours de saison) et un verger des îles.
 // Une parcelle : { open, id, prog, ready, last } ; le verger de l'île est géré par orchard.js (zone 'island').
-import { state } from '../core/state.js';
+import { state, lvOk } from '../core/state.js';
 import { fmt, s } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
@@ -21,7 +21,7 @@ const COIN = ['ui', 'coin'];
 
 export const islandOpen = () => projectDone(ISLAND.project);
 export const islandCrops = () => Object.values(ITEMS).filter(i => i.type === 'crop' && i.island);
-export const islandCropOk = d => (state.level >= d.reqLvl && storyOk(d)) || state.seeds[d.id] > 0;
+export const islandCropOk = d => (lvOk(d) && storyOk(d)) || state.seeds[d.id] > 0;
 export const islandPlots = () => (state.island ? state.island.plots : []);
 const openPlots = () => islandPlots().filter(p => p.open).length;
 export const islandPlotCost = () => Math.floor(ISLAND.plotCost * Math.pow(ISLAND.plotMult, Math.max(0, openPlots() - ISLAND.plotsBase)));

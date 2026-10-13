@@ -1136,3 +1136,46 @@ svg.chart .bar:hover path {
 .set-foot {
     margin-top: 12px;
 }
+
+/* 1.4 : la fenêtre des niveaux garde la même hauteur ; seule la liste défile */
+.lv-sheet .sheet {
+    height: min(600px, calc(100dvh - 34px - var(--safe-t)));
+}
+@media (min-width: 700px) {
+    .lv-sheet .sheet {
+        height: min(600px, calc(100dvh - 60px));
+    }
+}
+.lv-sheet .sheet-body {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.lv-sheet .sheet-body > .block {
+    flex: none;
+}
+.lv-sheet .sheet-body > [data-key='list'] {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    margin-right: -6px;
+    padding-right: 6px;
+}
+.lines .line.big > div {
+    font-weight: 800;
+    color: var(--ink);
+}
+.lines .line.big {
+    background: rgba(255, 210, 63, 0.28);
+    border-radius: 12px;
+}
+.lv-sheet .lv-head small {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.lv-sheet .lv-head {
+    min-width: 0;
+}
