@@ -93,6 +93,32 @@
 .btn .mat {
     font-size: 0.78em;
 }
+/* le lot de 10 : une petite étiquette dorée posée sur le bouton */
+.qty-tag {
+    display: inline-grid;
+    place-items: center;
+    margin: -2px 4px -2px -4px;
+    padding: 1px 6px 2px;
+    font-style: normal;
+    font-size: 0.82em;
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+    background: linear-gradient(#ffc93c 0 45%, #f0a020 45%);
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    box-shadow: 0 2px 0 var(--ink);
+    transform: rotate(-6deg);
+    text-shadow:
+        1px 0 0 var(--ink),
+        -1px 0 0 var(--ink),
+        0 1px 0 var(--ink),
+        0 -1px 0 var(--ink);
+}
+.btn:disabled .qty-tag {
+    filter: grayscale(0.7);
+    opacity: 0.8;
+}
 .icon-btn {
     position: relative;
     width: 38px;
