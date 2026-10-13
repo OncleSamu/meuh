@@ -9,6 +9,7 @@ import { DECOS } from '../data/farm.js';
 import { NIGHT, WISHES } from '../data/night.js';
 import { isNight, hour, season } from './world.js';
 import { earn, addXp, spend } from './player.js';
+import { storyOk } from './story.js';
 
 export function ensureNight() {
     const N = (state.night = state.night || {});
@@ -135,7 +136,7 @@ export const wishAnimals = () => wishActive('animals');
 // ---------------- le marché de nuit (été) ----------------
 export const nightMarketOpen = () => nightOpen() && state.level >= NIGHT.marketLvl && isNight() && NIGHT.marketSeasons.includes(season().id);
 function marketOffers() {
-    const crops = Object.values(ITEMS).filter(i => i.type === 'crop' && !i.island && !i.exotic && !i.ghOnly && state.level >= i.reqLvl);
+    const crops = Object.values(ITEMS).filter(i => i.type === 'crop' && !i.island && !i.exotic && !i.ghOnly && state.level >= i.reqLvl && storyOk(i));
     const c = crops.length ? crops[Math.floor(Math.random() * crops.length)] : ITEMS.wheat;
     return [
         { kind: 'deco', id: 'lantern', price: Math.round(DECOS.lantern.cost * 0.8) },

@@ -128,3 +128,20 @@ html.calm #wish-star.go {
 .nm-offer.sold {
     opacity: 0.55;
 }
+.night-market .timer-pill {
+    color: var(--ink);
+}
+/* le champ s'assombrit la nuit (les lucioles restent vives au-dessus) */
+.field-night {
+    position: absolute;
+    inset: 0;
+    border-radius: 19px;
+    background: rgba(24, 26, 70, 0.3);
+    opacity: 0;
+    transition: opacity 2s;
+    pointer-events: none;
+    z-index: 2;
+}
+html.night .field-night {
+    opacity: 1;
+}

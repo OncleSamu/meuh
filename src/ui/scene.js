@@ -73,6 +73,7 @@ export function updateScene() {
         `ts-${state.settings.textSize || 0}`,
         state.settings.contrast ? 'contrast' : '',
         state.settings.calm ? 'calm' : '',
+        h < 5.5 || h >= 20.5 ? 'night' : '',
     ]
         .filter(Boolean)
         .join(' ');
