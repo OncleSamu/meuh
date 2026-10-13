@@ -16,6 +16,8 @@ import { reduceMotion, burstAt } from '../fx.js';
 import { pinBar } from './common.js';
 import { longPress } from '../longpress.js';
 import { renameBtn } from '../sheets/rename.js';
+import { askBuy } from '../sheets/askbuy.js';
+import { PASTURE } from '../../data/farm.js';
 
 let els = [];
 
@@ -344,10 +346,20 @@ export function setupAnimals() {
             G.fixRace(d.id, input ? input.value : '', el);
         },
         pickPasture: (el, d) => (ui.sel.pasture = d.k === 'all' ? 'all' : +d.k),
-        buyPasture: el => {
-            const k = G.buyPasture(el);
-            if (k !== false) ui.sel.pasture = k;
-        },
+        buyPasture: el =>
+            askBuy(
+                {
+                    title: 'Un pré de plus',
+                    icon: ['ui', 'barn'],
+                    text: `Un nouveau pré pour ${PASTURE.cap} bêtes.`,
+                    cost: G.pastureCost(),
+                    run: at => {
+                        const k = G.buyPasture(at);
+                        if (k !== false) ui.sel.pasture = k;
+                    },
+                },
+                el,
+            ),
         moveAnimal: (el, d) => G.moveAnimal(+d.i, +d.k),
         feedAll: el => G.feedAll(el),
         collectAnimals: el => G.collectAll(el),

@@ -22,6 +22,7 @@ import { burstAt, floatText, flyTo } from '../fx.js';
 import { centerOf } from '../dom.js';
 import { SPR, parts as partsHtml } from '../icons.js';
 import { tabEl } from '../app.js';
+import { askBuy } from '../sheets/askbuy.js';
 
 const plotEls = [],
     plotSig = [];
@@ -354,8 +355,25 @@ function plotEl(i) {
 function press(i) {
     const p = G.getPlot(i);
     const a = G.plotAction(p, state.selectedTool, i);
-    run('plot', plotEl(i), { i, a });
+    // agrandir : on demande au relâché, pour que le doigt ne valide pas la fenêtre
+    if (a === 'buy') buyPress = i;
+    else run('plot', plotEl(i), { i, a });
     return a;
+}
+
+let buyPress = null;
+function askPlot(i) {
+    const gh = i >= 1000;
+    askBuy(
+        {
+            title: gh ? 'Agrandir la serre' : 'Agrandir le champ',
+            icon: gh ? ['ui', 'greenhouse'] : ['ui', 'shovel'],
+            text: gh ? 'Une parcelle de plus dans la serre.' : `Une parcelle de plus : le champ passera à ${state.unlockedPlots + 1} parcelles.`,
+            cost: gh ? G.ghCost() : G.getExpCost(),
+            run: at => run('plot', at, { i, a: 'buy' }),
+        },
+        plotEl(i),
+    );
 }
 
 export function setupFarm() {
@@ -363,7 +381,18 @@ export function setupFarm() {
         plot: (el, d) => G.doPlotAction(+d.i, d.a, el),
         waterAll: el => G.waterAll(el),
         harvestAll: el => G.harvestAll(el),
-        buildGreenhouse: el => G.buildGreenhouse(el),
+        buildGreenhouse: el =>
+            askBuy(
+                {
+                    title: 'Construire la serre',
+                    icon: ['ui', 'greenhouse'],
+                    text: 'Une serre : on y cultive toute l’année, sans arrosage.',
+                    cost: GH.cost,
+                    mats: MAT.greenhouse,
+                    run: at => G.buildGreenhouse(at),
+                },
+                el,
+            ),
         dog: el => G.handleDog(el),
     });
     const down = e => {
@@ -392,7 +421,14 @@ export function setupFarm() {
         drag.done.add(i);
         if (G.plotAction(G.getPlot(i), state.selectedTool, i) === drag.mode) run('plot', el, { i, a: drag.mode });
     });
-    const end = () => (drag = null);
+    const end = e => {
+        drag = null;
+        if (buyPress === null) return;
+        const i = buyPress;
+        buyPress = null;
+        const el = e.target && e.target.closest && e.target.closest('.plot[data-i]');
+        if (el && +el.dataset.i === i && e.type === 'pointerup') askPlot(i);
+    };
     window.addEventListener('pointerup', end);
     window.addEventListener('pointercancel', end);
     // le geste ne fait pas défiler la page pendant qu'on glisse sur le champ

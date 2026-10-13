@@ -10,6 +10,7 @@ import { ico, art } from '../icons.js';
 import { btn, bar, timer, card, section, empty } from '../kit.js';
 import { defineView, defineLive } from '../app.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
+import { askBuy } from '../sheets/askbuy.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const findIcon = k => AUCTION_FINDS[k].icon;
@@ -244,7 +245,11 @@ export function setupCave() {
         reserve: (el, d) => G.setReserve(+d.uid, +d.d),
         bid: (el, d) => G.playerBid(+d.k, el),
         dismissAuction: () => G.dismissAuction(),
-        buyShelf: el => G.buyShelf(el),
+        buyShelf: el =>
+            askBuy(
+                { title: 'Une étagère de plus', icon: ['ui', 'shelf'], text: 'Deux places de plus en cave.', cost: G.shelfCost(), run: at => G.buyShelf(at) },
+                el,
+            ),
         caveGear: (el, d) => G.buyCaveGear(d.k, el),
         cavePick: (el, d) => {
             const o = put();

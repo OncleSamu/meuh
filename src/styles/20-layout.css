@@ -51,7 +51,7 @@
 .lvl.legend .lvl-star {
     filter: drop-shadow(0 0 6px #ffd23f) drop-shadow(0 3px 0 rgba(58, 38, 24, 0.4));
 }
-.xp {
+.xp-bar {
     position: relative;
     flex: 1;
     min-width: 0;
@@ -63,14 +63,14 @@
     border-radius: 0 12px 12px 0;
     overflow: hidden;
 }
-.xp i {
+.xp-bar > i {
     position: absolute;
     inset: 0 auto 0 0;
     background: linear-gradient(#bfe6fb 0 22%, #8fd0f7 22%, var(--xp));
     border-right: 2px solid var(--ink);
     transition: width 0.5s cubic-bezier(0.3, 1.4, 0.6, 1);
 }
-.xp small {
+.xp-bar > small {
     position: absolute;
     inset: 0;
     display: grid;

@@ -31,6 +31,7 @@ import { setupSettings } from './ui/sheets/settings.js';
 import { setupRename } from './ui/sheets/rename.js';
 import { setupNight, updateNight } from './ui/night.js';
 import { setupCarnet } from './ui/sheets/carnet.js';
+import { setupAskBuy } from './ui/sheets/askbuy.js';
 import { setupNavigate } from './ui/navigate.js';
 import { setupTutorial, tutoTick } from './ui/tutorial.js';
 import { setupPwa, remindTick } from './ui/pwa.js';
@@ -69,6 +70,7 @@ function start() {
     setupRename();
     setupNight();
     setupCarnet();
+    setupAskBuy();
     setupNavigate();
     setupTutorial();
     actions({

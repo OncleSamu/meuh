@@ -38,6 +38,7 @@ function mainPage() {
         group(
             'Confort',
             toggle('Replanter après la récolte', s.autoReplant, 'setting', { key: 'autoReplant' }) +
+                toggle('Confirmer les gros achats', s.confirmBuy !== false, 'setting', { key: 'confirmBuy' }, 'Parcelles, verger, prés, serre, machines') +
                 toggle('Rappels en arrière-plan', remindOn(), 'remind', null, 'Train en gare, cultures prêtes…') +
                 toggle('Animations réduites', s.calm, 'setting', { key: 'calm' }) +
                 navRow('Taille du texte', 'textSize', null, null, `<b>${TEXT_SIZES[s.textSize || 0]}</b>`) +
@@ -171,7 +172,8 @@ export function setupSettings() {
     actions({
         setting: (el, d) => {
             const s = state.settings;
-            s[d.key] = !s[d.key];
+            // confirmBuy est actif quand il manque (anciennes sauvegardes)
+            s[d.key] = d.key === 'confirmBuy' ? s.confirmBuy === false : !s[d.key];
             SoundEngine.unlock();
             if (d.key === 'music') SoundEngine.setMusic(s.music);
             if (d.key === 'sfx') {
