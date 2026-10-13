@@ -112,6 +112,16 @@ const F = {
     fig: '50001',
     walnut: '10302',
     chestnut: '30102',
+    spinach: '00102',
+    cucumber: '10000',
+    rhubarb: '05100',
+    raspberry: '43000',
+    buckwheat: '10202',
+    espelette: '10050',
+    lemon: '05100',
+    hazelnut: '20102',
+    quince: '23100',
+    almond: '30101',
 };
 export const FLAVORS = Object.fromEntries(Object.entries(F).map(([id, s]) => [id, [...s].map(Number)]));
 // qualités de culture de base (pousse, soif, rusticité, rendement) : 2 partout
@@ -136,6 +146,7 @@ const A = {
     donkey: '3422223',
     turkey: '2222222',
     ewe: '3422223',
+    quail: '2222232',
 };
 export const ANIMAL_BASE = Object.fromEntries(Object.entries(A).map(([id, s]) => [id, [...s].map(Number)]));
 

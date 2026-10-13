@@ -202,6 +202,7 @@ export const SoundEngine = (() => {
                 [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone(f, t + i * 0.085, 0.4, { type: 'triangle', vol: 0.13 }));
                 break;
             case 'chicken':
+            case 'quail':
                 tone(900, t, 0.06, { type: 'square', vol: 0.04, glide: 1300 });
                 tone(1000, t + 0.09, 0.07, { type: 'square', vol: 0.04, glide: 1400 });
                 break;

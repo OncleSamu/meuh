@@ -148,6 +148,16 @@ export const ANIMALS = {
         reqLvl: 23,
         xp: 18,
     },
+    // 1.5 : la caille, petite et rapide
+    quail: {
+        id: 'quail',
+        name: 'Caille',
+        prodId: 'quailEgg',
+        cost: 2000,
+        time: 240,
+        reqLvl: 14,
+        xp: 4,
+    },
 };
 
 // 1.3.2 : un second produit, pour le saloir, de temps en temps au ramassage (le gène « rendement » aide un peu)
@@ -173,6 +183,7 @@ export const GROW = {
     donkey: 1500,
     turkey: 900,
     ewe: 800,
+    quail: 300,
 };
 
 export const NAMES = {
@@ -191,6 +202,7 @@ export const NAMES = {
     buffalo: ['Bella', 'Mozza', 'Napoli', 'Rosina', 'Bufala', 'Sofia'],
     donkey: ['Cadichon', 'Grisette', 'Hi-Han', 'Pâquerette', 'Bourrique', 'Anatole'],
     ewe: ['Roquette', 'Bergère', 'Brebisette', 'Lainette', 'Marjolaine', 'Pâquerette'],
+    quail: ['Caillette', 'Grain-de-blé', 'Mouchetée', 'Pistou', 'Noisette', 'Roucoule'],
     turkey: ['Glouglou', 'Dindonnette', 'Gobble', 'Plumette', 'Caroline', 'Barnabé'],
 };
 

@@ -102,7 +102,24 @@ export const SOILS = {
     wet: {
         name: 'Sol humide',
         icon: 'soilWet',
-        crops: ['carrot', 'potato', 'cabbage', 'peas', 'beet', 'lettuce', 'zucchini', 'rice', 'sugarcane', 'hop', 'flax', 'greenBean', 'asparagus'],
+        crops: [
+            'carrot',
+            'potato',
+            'cabbage',
+            'peas',
+            'beet',
+            'lettuce',
+            'zucchini',
+            'rice',
+            'sugarcane',
+            'hop',
+            'flax',
+            'greenBean',
+            'asparagus',
+            'spinach',
+            'cucumber',
+            'rhubarb',
+        ],
     },
     dry: {
         name: 'Sol sec et ensoleillé',
@@ -125,12 +142,14 @@ export const SOILS = {
             'lentil',
             'melon',
             'artichoke',
+            'buckwheat',
+            'espelette',
         ],
     },
     shade: {
         name: 'Sol ombragé',
         icon: 'soilShade',
-        crops: ['strawberry', 'pumpkin', 'onion', 'radish', 'saffron', 'garlic', 'tea', 'blueberry', 'genepi', 'mushroom', 'leek', 'mustard'],
+        crops: ['strawberry', 'pumpkin', 'onion', 'radish', 'saffron', 'garlic', 'tea', 'blueberry', 'genepi', 'mushroom', 'leek', 'mustard', 'raspberry'],
     },
 };
 
@@ -480,6 +499,7 @@ export const LIGHTNING_CHANCE = 0.011111111111111112;
 export const MAT = {
     machine: {
         deli: { wood: 8, stone: 6 },
+        crepery: { wood: 12, stone: 8 },
         pastry: { wood: 10, stone: 6 },
         fishmonger: { wood: 10, stone: 8 },
         stove: { wood: 8, stone: 14 },
