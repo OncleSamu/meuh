@@ -17,6 +17,7 @@ import './defis.js';
 import './v12.js';
 // les dessins refaits (1.2.1 et suivantes) passent en dernier : ils remplacent les anciens
 import './items2.js';
+import './buildings2.js';
 
 export const SPR = {
     farmhouse(l, roof) {
