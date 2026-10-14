@@ -186,7 +186,7 @@ const ABBEY_BLD = {
             chim: 'r',
             tall: true,
             door: 'barn',
-            wins: [12, 74],
+            wins: [27, 62],
             props: ({ x0 }) => R(x0 - 4, 76, 10, 10, 2, '#d8c08a', 1.6) + R(x0 - 2, 70, 8, 8, 2, '#d8c08a', 1.6),
             hang: 'l',
             noFlowers: true,
@@ -194,7 +194,7 @@ const ABBEY_BLD = {
     },
     brewhall: {
         cfg: { w: 66, h: 40, wall: STONE, roof: '#7a4a2a', sign: ['ui', 'beer'], floors: 2 },
-        st: { tex: 'stone', warch: true, door: 'arch', wins: [14, 74], top: bell, props: ({ x0, x1 }) => BARREL(x0 + 4, 86, 0.8) + BARREL(x1 - 4, 86, 0.8) },
+        st: { tex: 'stone', warch: true, door: 'arch', wins: [23, 66], top: bell, props: ({ x0, x1 }) => BARREL(x0 + 4, 86, 0.8) + BARREL(x1 - 4, 86, 0.8) },
     },
     fermenters: {
         cfg: { w: 56, h: 30, wall: '#f2e6d0', roof: '#5a6a7a', sign: ['ui', 'vat'] },
@@ -202,7 +202,7 @@ const ABBEY_BLD = {
             roof: 'hip',
             tex: 'planks',
             door: 'barn',
-            wins: [12, 70],
+            wins: [28, 61],
             back: ({ x1, ruin, g }) =>
                 (ruin ? '' : '') +
                 R(x1 - 4, 50, 16, 36, 6, g('#d98b3a')) +
