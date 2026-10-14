@@ -1,5 +1,5 @@
 // La brasserie de l'abbaye (1.6) : on compose ses bières (malt, houblon, 1 à 3 ingrédients), on les nomme,
-// on les vend, et on les fait vieillir en fût au cellier.
+// on les vend. Depuis 1.6.3, le vieillissement en fût se fait à la cave (le cellier ne sert plus qu'aux anciennes sauvegardes).
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -10,7 +10,7 @@ import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, PAIRS, BARRELS, CELLAR, BEER_
 import { VILLAGERS } from '../data/village.js';
 import { addFriendship } from './village.js';
 import { projectDone } from './story.js';
-import { earn, addXp, spend } from './player.js';
+import { earn, addXp } from './player.js';
 import { clampQuality } from './farm.js';
 
 // ---------------- ouverture ----------------
@@ -39,7 +39,6 @@ export function ensureBrew() {
     B.orders = B.orders || [];
     B.nextOrder = B.nextOrder || 0;
     while (B.vats.length < vatCount()) B.vats.push(null);
-    while (B.barrels.length < (cellarOpen() ? CELLAR.slots : 0)) B.barrels.push(null);
     return B;
 }
 
@@ -342,30 +341,8 @@ export function claimBeerBook(at) {
     return true;
 }
 
-// ---------------- le cellier : vieillir en fût ----------------
+// ---------------- l'ancien cellier (avant 1.6.3) : on vide ses fûts dans « Mes bières » ----------------
 export const barrelOk = k => !BARRELS[k].item || (state.inventory[BARRELS[k].item] || 0) >= 1;
-export function putInBarrel(slot, bid, n, k, at) {
-    const B = ensureBrew();
-    if (!cellarOpen() || B.barrels[slot] || !BARRELS[k]) return false;
-    const beer = beerOf(bid);
-    if (!beer || beer.aged) return false;
-    n = Math.min(n, B.stock[bid] || 0, CELLAR.maxBottles);
-    if (n <= 0) return false;
-    const bar = BARRELS[k];
-    if (bar.item) {
-        if (!barrelOk(k)) return false;
-        state.inventory[bar.item]--;
-        clampQuality(bar.item);
-    } else {
-        if (state.money < bar.cost) return false;
-        spend(bar.cost);
-    }
-    B.stock[bid] -= n;
-    B.barrels[slot] = { bid, n, k, stage: 0, next: now() + CELLAR.steps[0] * 1000, turned: false };
-    sfx('load');
-    if (at) burst(at, 'sparkle', 8);
-    return true;
-}
 export const barrelValue = b => Math.round((beerValue(b.bid) * CELLAR.mult[b.stage] * BARRELS[b.k].mult * (b.turned ? CELLAR.turned : 1)) / 5) * 5;
 export const barrelDone = b => b.turned || b.stage >= CELLAR.steps.length;
 export function cellarTick(t = now()) {
@@ -420,13 +397,7 @@ export function takeFromBarrel(slot, at) {
 export const myBeers = () =>
     Object.values(ensureBrew().beers).sort((a, b) => (state.brew.stock[b.id] || 0) - (state.brew.stock[a.id] || 0) || b.value - a.value);
 export const beerStock = bid => (state.brew && state.brew.stock[bid]) || 0;
-export const brewReadyCount = () =>
-    state.brew
-        ? state.brew.vats.filter(vatReady).length +
-          state.brew.barrels.filter(b => b && barrelDone(b)).length +
-          (beerBookClaimable() ? 1 : 0) +
-          beerOrdersReady()
-        : 0;
+export const brewReadyCount = () => (state.brew ? state.brew.vats.filter(vatReady).length + (beerBookClaimable() ? 1 : 0) + beerOrdersReady() : 0);
 // ---------------- les commandes de bière ----------------
 const pickR = a => a[Math.floor(Math.random() * a.length)];
 export function newBeerOrder() {
@@ -478,7 +449,7 @@ export const beerOrdersReady = () => (state.brew && state.brew.orders ? state.br
 export function brewTick() {
     if (!brewOpen()) return false;
     const B = ensureBrew();
-    let ch = cellarTick();
+    let ch = false;
     if (B.orders.length < BEER_ORDERS.max && now() >= B.nextOrder) {
         newBeerOrder();
         B.nextOrder = now() + BEER_ORDERS.every * 1000;

@@ -38,8 +38,8 @@ const ENTRIES = {
     cave: () =>
         Object.keys(CAVE_ITEMS).map(id => ({
             key: 'cave_' + id,
-            icon: ['item', id],
-            name: ITEMS[id].name,
+            icon: id === 'beer' ? ['ui', 'beer'] : ['item', id],
+            name: id === 'beer' ? 'Bière de garde' : ITEMS[id].name,
             hint: `Sortez-en un lot au moins « ${CAVE_FAMILIES[CAVE_ITEMS[id]].ranks[3]} »`,
             star: true,
         })),

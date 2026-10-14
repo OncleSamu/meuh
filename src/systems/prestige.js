@@ -71,8 +71,15 @@ export function doPrestige(challenge, theme) {
         bookQuarters: state.bookQuarters,
         holiday: state.holiday,
         farmTheme: theme || 'none',
-        // la cave garde ses étagères, son équipement et sa cote ; les lots partent avec la ferme
-        cave: { ...newState().cave, shelves: state.cave.shelves, gear: state.cave.gear, cote: state.cave.cote, uid: state.cave.uid },
+        // la cave garde ses étagères, son équipement, sa cote et ses trophées ; les lots partent avec la ferme
+        cave: {
+            ...newState().cave,
+            shelves: state.cave.shelves,
+            gear: state.cave.gear,
+            cote: state.cave.cote,
+            uid: state.cave.uid,
+            legends: state.cave.legends || {},
+        },
         contest: state.contest,
         lastContest: state.lastContest,
         day: state.day,

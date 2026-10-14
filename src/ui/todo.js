@@ -1,7 +1,6 @@
 // Ce qui attend le joueur, en un coup d'œil : la liste « À faire » et les pastilles des onglets.
 // Chaque entrée : { go: 'onglet/volet' ou 'menu:…', icon, text, n, urgent }
 import { state } from '../core/state.js';
-import { now } from '../core/clock.js';
 import { ANIMALS } from '../data/animals.js';
 import { HOLIDAYS } from '../data/world.js';
 import { RARE_EVENTS } from '../data/surprises.js';
@@ -70,19 +69,18 @@ export function todoList() {
         if (vr) push('machines/brew', ['ui', 'beer'], `${vr} cuve${s(vr)} à mettre en bouteille`, vr);
         const bo = G.beerOrdersReady();
         if (bo) push('machines/brew', ['villager', 'hugues'], `${bo} commande${s(bo)} de bière à livrer`, bo);
-        const bb = state.brew.barrels.filter(b => b && G.barrelDone(b)).length;
-        if (bb) push('machines/brew', ['ui', 'barrel'], `${bb} fût${s(bb)} à sortir`, bb);
         if (G.beerBookClaimable()) push('machines/brew', ['ui', 'beer'], 'Récompense du livre des bières', 1);
     }
     if (G.caveOpen()) {
         const care = G.caveCareCount();
         if (care) push('machines/cave', ['ui', 'turn'], `${care} lot${s(care)} à soigner`, care);
-        if (!G.climOk() && state.cave.slots.some(Boolean))
-            push('machines/cave', ['ui', 'thermo'], 'Climat de la cave à régler', 1, { urgent: !!state.cave.gear.hygro });
+        if (!G.climOk() && !state.cave.gear.hygro && state.cave.slots.some(Boolean)) push('machines/cave', ['ui', 'thermo'], 'Climat de la cave à régler', 1);
+        const co = G.caveOrdersReady();
+        if (co) push('machines/cave', ['ui', 'cave'], `${co} commande${s(co)} de cave à livrer`, co);
         const a = state.cave.auction;
         if (a && a.lots && !a.over) push('machines/cave', ['ui', 'gavel'], 'Enchères en direct !', 1, { urgent: true });
-        const last = state.cave.lastSale;
-        if (last && last.results.length && now() < last.until) push('machines/cave', ['ui', 'gavel'], 'Résultats de la vente', 1);
+        const last = G.lastSaleShown();
+        if (last && last.results.length) push('machines/cave', ['ui', 'gavel'], 'Résultats de la vente', 1);
     }
 
     // imprévus en premier : ils pressent
@@ -108,7 +106,7 @@ export function todoList() {
     if (proj) push('village/village', ['ui', 'village'], `${proj} chantier${s(proj)} à terminer`, proj);
     if (state.merchant.status === 'here') push('village/village', ['ui', 'merchant'], 'Le marchand est là', 0);
     const dr = G.defiReady();
-    if (dr) push('village/orders', ['ui', 'cupGold'], `Grand défi : ${dr} étape${s(dr)} à faire avancer`, dr);
+    if (dr) push('village/orders', ['ui', 'cupGold'], `Grand défi : ${dr} étape${s(dr)} à faire avancer`, dr);
     const goals = G.eventReady();
     add('village/orders', G.eventIcon(G.season().id), `${goals} objectif${s(goals)} de fête`, goals);
     const tiers = G.contestClaimable();

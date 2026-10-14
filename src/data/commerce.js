@@ -76,6 +76,10 @@ export const CONTEST_POINTS = {
         name: 'Commandes de bière',
         pts: 30,
     },
+    caveOrders: {
+        name: 'Commandes de cave',
+        pts: 40,
+    },
 };
 
 export const CONTEST_TIERS = [0.25, 0.55, 1];

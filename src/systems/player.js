@@ -197,7 +197,7 @@ export function unlocksAt(lvl) {
     if (lvl === CHAPTERS[16].lvl) big(['ui', 'beer'], 'Grande étape : l’abbaye et sa brasserie (vos propres bières)');
     if (lvl === CHAPTERS[16].lvl)
         add(['ui', 'vat'], 'La brasserie : un malt, du houblon et vos ingrédients ; nommez vos bières (après « La salle de brassage »)');
-    if (lvl === CHAPTERS[17].lvl) add(['ui', 'barrel'], 'Le cellier à fûts : faites vieillir vos bières (après « Le cellier à fûts »)');
+    if (lvl === CHAPTERS[17].lvl) add(['ui', 'barrel'], 'Les bières en fût, à la cave (après « Le cellier à fûts »)');
     if (lvl === ISLAND.lvl) big(['item', 'coconut'], 'Grande étape : l’île aux Alizés (cultures et verger tropicaux)');
     if (lvl === GENETICS.lvl) big(['ui', 'search'], 'Grande étape : la station de recherche et la génétique');
     if (lvl === CHAPTERS[15].lvl) big(['ui', 'trophy'], 'Grande étape : le Salon de l’agriculture');

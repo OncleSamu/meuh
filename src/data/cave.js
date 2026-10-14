@@ -47,6 +47,15 @@ export const CAVE_FAMILIES = {
         careIcon: 'turn',
         careDone: 'Jambons retournés',
     },
+    // 1.6.3 : les bières de l'abbaye vieillissent en fût, ici, avec les mêmes règles que le reste
+    beer: {
+        name: 'Bières',
+        step: 10800000,
+        ranks: ['Jeune', 'Élevée', 'De garde', 'Grande réserve', 'Légendaire'],
+        care: 'Rouler',
+        careIcon: 'barrel',
+        careDone: 'Fûts roulés',
+    },
 };
 
 export const CAVE_ITEMS = {
@@ -71,6 +80,7 @@ export const CAVE_ITEMS = {
     sheepTomme: 'cheese',
     ham: 'charcuterie',
     driedBeef: 'charcuterie',
+    beer: 'beer', // un lot de bière garde sa recette (bid) et son fût (k)
 };
 
 export const CAVE_MULT = [1, 1.8, 3.2, 5.5, 10];
@@ -87,6 +97,8 @@ export const CAVE_LEGEND_RISK = {
 };
 
 export const CAVE_LOT_MAX = 8;
+// 1.6.3 : les lots grandissent avec les étagères (8, 12, 16 puis 20)
+export const CAVE_LOT_GROW = 4;
 
 export const CAVE_SLOTS_START = 4;
 
@@ -99,13 +111,13 @@ export const CAVE_SHELVES = [2500, 6000, 12000, 25000, 50000, 90000];
 export const CAVE_GEAR = {
     hygro: {
         name: 'Hygromètre',
-        desc: 'Le climat bouge 40 % moins vite, et une alerte prévient quand il dérive',
+        desc: 'Le climat se règle tout seul et reste dans la bonne zone : plus besoin d’y toucher',
         cost: 8000,
         icon: 'hygro',
     },
     vault: {
         name: 'Voûte en pierre',
-        desc: 'Murs épais : le climat bouge deux fois moins vite',
+        desc: 'Murs épais : +2 places en cave, et vos lots vieillissent un peu mieux (+5 %)',
         cost: 30000,
         mats: {
             stone: 80,
@@ -128,6 +140,23 @@ export const AUCTION_SMALL_LOTS = 2;
 export const AUCTION_BIG_LOTS = 6;
 
 export const NEGOCIANT = 0.75;
+
+// 1.6.3 : avec l'hygromètre, le climat vise toujours cette zone
+export const CAVE_AUTO = [40, 60];
+
+// 1.6.3 : les commandes de la cave, comme celles de la brasserie
+export const CAVE_ORDERS = {
+    max: 2,
+    every: 45 * 60, // une nouvelle commande toutes les 45 minutes, s'il reste une place
+    qty: [2, 4],
+    pay: 1.6, // payée 1,6 fois la valeur du lot livré
+    xp: 80,
+    hearts: 3,
+    who: ['gaston', 'anselme', 'margaux', 'duval', 'odette', 'paul', 'hugues'],
+};
+
+// 1.6.3 : un ruban pour le premier lot légendaire de chaque famille
+export const CAVE_LEGEND_RUBANS = 1;
 
 export const BIDDERS = {
     gaston: {
@@ -160,6 +189,7 @@ export const BIDDERS = {
     marcel: {
         name: 'Tonton Marcel',
         taste: {
+            beer: 1.25,
             cider: 1.2,
             wine: 1.05,
         },
@@ -179,6 +209,7 @@ export const BIDDERS = {
     bruno: {
         name: 'Bruno',
         taste: {
+            beer: 1.2,
             cheese: 1.3,
         },
         budget: 0.8,
@@ -223,6 +254,7 @@ export const BIDDERS = {
     tomette: {
         name: 'Madame Tomette',
         taste: {
+            beer: 1.3,
             cheese: 1.5,
             cider: 1.15,
         },

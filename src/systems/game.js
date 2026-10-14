@@ -30,7 +30,7 @@ import { rareTick, ensureContract, rareActive } from './surprises.js';
 import { boatTick, transTick, ensureFarmSeason, netReady } from './port.js';
 import { ensureHoliday } from './holidays.js';
 import { contestTick } from './contest.js';
-import { caveOpen, caveTick, auctionTick, caveCareCount } from './cave.js';
+import { caveOpen, caveTick, auctionTick, caveCareCount, caveOrderTick } from './cave.js';
 import { tip } from './tips.js';
 import { trimDayEarn } from './book.js';
 import { ensureOrchard, orchardTick, orchardOffline } from './orchard.js';
@@ -212,6 +212,7 @@ function tickCave() {
     tip('cave');
     const sum = caveTick();
     const sale = auctionTick();
+    if (caveOrderTick()) return true;
     return sale || sum.up.length + sum.bad.length + sum.rot.length > 0;
 }
 

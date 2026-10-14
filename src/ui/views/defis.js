@@ -14,6 +14,8 @@ import { btn, bar, timer, section, hint, empty } from '../kit.js';
 import { defineSheet, closeSheet } from '../sheets.js';
 import { animalArt } from '../genlook.js';
 import { varArt } from './lab.js';
+import { legendCell } from './cave.js';
+import { CAVE_FAMILIES } from '../../data/cave.js';
 
 const CUPS = ['cupNone', 'cupBronze', 'cupSilver', 'cupGold'];
 const QNAME = ['', 'argent ou or', 'or'];
@@ -120,9 +122,19 @@ defineSheet('defiPick', {
                     c =>
                         `<button class="pick-cell${c.score >= st.n ? ' ok' : ' short'}" data-act="presentDefi" data-k="${o.k}" data-id="${c.v.id}"><span class="pc-art">${varArt(c.v)}</span><b>${esc(G.varName(c.v))}</b><span class="pc-cost">${String(c.score).replace('.', ',')} pts</span></button>`,
                 )
-                .join('')}</div>`;
+                .join('')}</div>${caveTrophies()}`;
     },
 });
+
+// 1.6.3 : les lots légendaires de la cave, un par famille
+function caveTrophies() {
+    if (!G.caveOpen()) return '';
+    const L = (state.cave && state.cave.legends) || {};
+    const fams = Object.keys(CAVE_FAMILIES).filter(f => f !== 'beer' || G.cellarOpen() || L.beer);
+    const won = fams.filter(f => L[f]).length;
+    return `${section('Lots légendaires de la cave', `<small>${won} / ${fams.length}</small>`)}<p class="card-sub">Le premier lot légendaire de chaque famille rapporte un ruban.</p>
+        <div class="trophy-grid">${fams.map(f => (L[f] ? legendCell(f, L[f]) : `<div class="trophy none">${ico(['ui', 'cave'], 'ico big')}<b>???</b><small>${CAVE_FAMILIES[f].name}</small></div>`)).join('')}</div>`;
+}
 
 // ---------------- la salle des trophées ----------------
 defineSheet('trophies', {

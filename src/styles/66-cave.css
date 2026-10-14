@@ -407,3 +407,34 @@
             0 0 0 4px rgba(232, 54, 75, 0.35);
     }
 }
+
+/* 1.6.3 : le climat réglé par l'hygromètre, en une ligne */
+.clim-mini {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    margin-top: 10px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: #f3e4c6;
+    font-size: 0.8rem;
+}
+.clim-mini > .ico {
+    width: 22px;
+    height: 22px;
+}
+.clim-mini.ok {
+    background: #e4f2cf;
+}
+.clim-mini small {
+    margin-left: auto;
+    color: var(--ink-soft);
+}
+.cave-clim > .btn.wide {
+    margin-top: 10px;
+}
+.cave-legend .ico.big {
+    width: 44px;
+    height: 44px;
+}
