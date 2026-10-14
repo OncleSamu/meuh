@@ -363,3 +363,39 @@
 .bc-row + .bc-row {
     margin-top: 2px;
 }
+
+.brew-secret {
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+}
+.bp-stars small {
+    font-size: 0.72rem;
+    opacity: 0.75;
+}
+.bv-btns {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+}
+.bv-btns .btn {
+    flex: 1;
+}
+.bb-low {
+    color: var(--red);
+}
+.brew-order .card-art svg {
+    width: 48px;
+    height: 48px;
+}
+.brew-order.ready {
+    background: #eaf7d8;
+}
+.brew-order .card-side {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+}
+.bb-again {
+    margin-top: 6px;
+}

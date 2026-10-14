@@ -65,6 +65,15 @@ export function todoList() {
     if (G.holidayReady()) push('village/village', ['ui', HOLIDAYS[state.holiday.id].deco], `${HOLIDAYS[state.holiday.id].name} : panier à remplir`, 1);
     const bq = G.quartersClaimable();
     if (bq) push('sheet:book', ['ui', 'book'], 'Récompense du livre', bq);
+    if (G.brewOpen() && state.brew) {
+        const vr = state.brew.vats.filter(v => G.vatReady(v) && !v.loop).length;
+        if (vr) push('machines/brew', ['ui', 'beer'], `${vr} cuve${s(vr)} à mettre en bouteille`, vr);
+        const bo = G.beerOrdersReady();
+        if (bo) push('machines/brew', ['villager', 'hugues'], `${bo} commande${s(bo)} de bière à livrer`, bo);
+        const bb = state.brew.barrels.filter(b => b && G.barrelDone(b)).length;
+        if (bb) push('machines/brew', ['ui', 'barrel'], `${bb} fût${s(bb)} à sortir`, bb);
+        if (G.beerBookClaimable()) push('machines/brew', ['ui', 'beer'], 'Récompense du livre des bières', 1);
+    }
     if (G.caveOpen()) {
         const care = G.caveCareCount();
         if (care) push('machines/cave', ['ui', 'turn'], `${care} lot${s(care)} à soigner`, care);
