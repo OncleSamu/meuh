@@ -1,4 +1,4 @@
-// L'abbaye (1.6) : la brasserie où l'on compose ses propres bières, et le cellier où on les fait vieillir.
+// L'abbaye (1.6) : la brasserie où l'on compose ses propres bières. Depuis 1.6.3, elles vieillissent en fût à la cave.
 // Une bière = un malt (sa couleur), une dose de houblon (son amertume), et 1 à 3 ingrédients de la ferme, chacun dosé de 1 à 3.
 
 export const ABBEY = {
@@ -41,7 +41,8 @@ export const PAIRS = {
     '1-4': -1, // acide et umami
 };
 
-// le cellier : des fûts pour faire vieillir ses bières, par étapes
+// les fûts (à la cave depuis 1.6.3) : chacun donne sa note et multiplie la valeur de la bière
+// CELLAR ne sert plus qu'à vider les fûts des anciennes sauvegardes
 export const BARRELS = {
     oak: { name: 'Chêne neuf', note: 'boisée', mult: 1, cost: 1500 },
     calvados: { name: 'Ancien fût de calvados', note: 'pommée', mult: 1.15, item: 'calvados' },

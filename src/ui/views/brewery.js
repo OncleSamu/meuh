@@ -1,17 +1,17 @@
 // Atelier | Brasserie (1.6) : composer sa bière (malt, houblon, 1 à 3 ingrédients), la brasser, la nommer,
-// la vendre, la faire vieillir en fût, et remplir le livre des bières.
+// la vendre, et remplir le livre des bières. Le vieillissement en fût se fait à la cave (1.6.3).
 import { state, lvOk } from '../../core/state.js';
 import { now } from '../../core/clock.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
-import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, NOTE_COL, BARRELS, CELLAR, BEER_BOOK } from '../../data/abbey.js';
+import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, NOTE_COL, BARRELS, BEER_BOOK } from '../../data/abbey.js';
 import { VILLAGERS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, bar, timer, section, empty } from '../kit.js';
 import { defineView, defineLive, ui, go } from '../app.js';
-import { defineSheet, openSheet, closeSheet, sheetOpts } from '../sheets.js';
+import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { renameBtn } from '../sheets/rename.js';
 import { beerSvg } from '../../art/abbey.js';
 
@@ -98,7 +98,7 @@ function composerHtml() {
             <div class="bp-name">${pv.name} ${pv.known ? '<span class="chip">déjà brassée</span>' : '<span class="chip ok">nouvelle !</span>'}</div>
             ${
                 pv.secret
-                    ? `<div class="bp-stars">Accord <b class="brew-secret">? ? ?</b> <small>à découvrir en la brassant</small></div><ul class="bp-why">${pv.hints.map(r => `<li>${r}</li>`).join('')}</ul>`
+                    ? `<div class="bp-stars">Accord <b class="brew-secret">? ? ?</b> <small>à découvrir en la brassant</small></div><ul class="bp-why">${pv.hints.map(r => `<li>${r}</li>`).join('')}</ul>`
                     : `<div class="bp-stars">Accord ${stars(pv.harmony.stars)}</div><ul class="bp-why">${pv.harmony.reasons.map(r => `<li>${r}</li>`).join('')}</ul>`
             }
             ${noteBars(pv.profile)}
@@ -127,7 +127,7 @@ function beersHtml() {
                 const price = G.beerPrice(b.id),
                     low = price < b.value;
                 const side =
-                    `<b class="bb-n">×${n}</b><small class="${low ? 'bb-low' : ''}" title="${low ? 'Vous en avez beaucoup vendu : le prix remonte avec le temps' : ''}">${fmt(price)}${COIN()}${low ? ' ↓' : ''}</small>` +
+                    `<b class="bb-n">×${n}</b><small class="${low ? 'bb-low' : ''}" title="${low ? 'Vous en avez beaucoup vendu : le prix remonte avec le temps' : ''}">${fmt(price)}${COIN()}${low ? ' ↓' : ''}</small>` +
                     (n
                         ? btn('Vendre', { act: 'sellBeer', data: { id: b.id, n: 1 }, size: 'sm' }) +
                           (n > 1 ? btn('Tout vendre', { act: 'sellBeer', data: { id: b.id, n }, kind: 'gold', size: 'sm' }) : '')
@@ -151,40 +151,21 @@ function ordersHtml() {
                 const best = fits[0];
                 const v = VILLAGERS[o.vid];
                 return `<div class="card brew-order${best ? ' ready' : ''}"><div class="card-art">${art('villager', o.vid)}</div><div class="card-main"><div class="card-title">${v ? v.name : ''}</div>
-                    <div class="card-sub">« ${G.beerOrderText(o)}. »</div>
-                    ${best ? `<div class="card-sub">Avec : <b>${best.name}</b> · ${fmt(G.beerOrderPay(o, best.id))}${COIN()}</div>` : '<div class="card-sub">Aucune de vos bières ne convient encore.</div>'}</div>
+                    <div class="card-sub">« ${G.beerOrderText(o)}. »</div>
+                    ${best ? `<div class="card-sub">Avec : <b>${best.name}</b> · ${fmt(G.beerOrderPay(o, best.id))}${COIN()}</div>` : '<div class="card-sub">Aucune de vos bières ne convient encore.</div>'}</div>
                     <div class="card-side">${btn('Livrer', { act: 'beerOrder', data: { id: o.id }, kind: 'green', size: 'sm', disabled: !best })}${btn('', { act: 'beerDrop', data: { id: o.id }, icon: ['ui', 'cross'], kind: 'ghost', size: 'sm', title: 'Refuser' })}</div></div>`;
             })
             .join('')}</div>`
     );
 }
 
-// ---------------- le cellier ----------------
-defineLive('barrel', i => {
-    const b = state.brew && state.brew.barrels[i];
-    if (!b || G.barrelDone(b)) return 1;
-    const step = CELLAR.steps[b.stage] * 1000;
-    return 1 - Math.max(0, b.next - now()) / step;
-});
+// ---------------- le cellier : 1.6.3, les fûts sont descendus à la cave ----------------
 function cellarHtml() {
     if (!G.cellarOpen()) return '';
-    const B = state.brew;
-    return (
-        section('Le cellier à fûts') +
-        `<div class="brew-barrels">${B.barrels
-            .map((b, i) => {
-                if (!b)
-                    return `<button class="brew-barrel empty" data-act="open" data-sheet="barrelPut" data-slot="${i}">${ico(['ui', 'barrel'])}<span>Mettre en fût</span></button>`;
-                const beer = B.beers[b.bid];
-                const done = G.barrelDone(b);
-                return `<div class="brew-barrel${b.turned ? ' bad' : ''}${done ? ' done' : ''}">${ico(['ui', 'barrel'], 'ico big')}<div class="bb-main"><b>${beer.name}</b><small>×${b.n} · ${BARRELS[b.k].name}</small>
-                    <small>${b.turned ? 'Elle a tourné' : CELLAR.stepNames[b.stage]}${done ? '' : ` · étape suivante ${timer(b.next)}`}</small>${done ? '' : bar(0, 'thin', `barrel:${i}`)}</div>
-                    <div class="bb-side"><small>${fmt(G.barrelValue(b))}${COIN()}</small>${btn(b.stage ? 'Sortir' : 'Reprendre', { act: 'takeBarrel', data: { i }, kind: done ? 'green' : '', size: 'sm' })}</div></div>`;
-            })
-            .join(
-                '',
-            )}</div><p class="hint">Chaque étape fait monter la valeur (×${CELLAR.mult[1]}, ×${CELLAR.mult[2]}, ×${CELLAR.mult[3]}). Une bière sur douze environ tourne en route.</p>`
-    );
+    const n = state.cave.slots.filter(l => l && l.id === 'beer').length;
+    return `<div class="card"><div class="card-head">${ico(['ui', 'barrel'], 'ico big')}<div class="card-main"><div class="card-title">Le vieillissement en fût</div>
+        <div class="card-sub">${n ? `${n} fût${n > 1 ? 's' : ''} en cave. ` : ''}Vos bières vieillissent à la cave, avec les fromages et les vins : un soin par étape, et elles peuvent devenir légendaires.</div></div>
+        ${btn('À la cave', { act: 'goCave', size: 'sm', icon: ['ui', 'cave'] })}</div></div>`;
 }
 
 // ---------------- le livre des bières ----------------
@@ -237,51 +218,9 @@ defineSheet('brewPick', {
     },
 });
 
-// ---------------- mettre en fût ----------------
-defineSheet('barrelPut', {
-    title: 'Mettre en fût',
-    open(o) {
-        const list = G.myBeers().filter(b => !b.aged && G.beerStock(b.id) > 0);
-        o.id = list[0] ? list[0].id : null;
-        o.k = 'oak';
-        o.n = o.id ? Math.min(CELLAR.maxBottles, G.beerStock(o.id)) : 1;
-    },
-    render(o) {
-        const list = G.myBeers().filter(b => !b.aged && G.beerStock(b.id) > 0);
-        if (!list.length) return empty('Brassez d’abord une bière : elles vieillissent en fût par lots de 12 bouteilles au plus.');
-        if (!list.some(b => b.id === o.id)) o.id = list[0].id;
-        const max = Math.min(CELLAR.maxBottles, G.beerStock(o.id));
-        o.n = Math.max(1, Math.min(o.n, max));
-        const kinds = Object.entries(BARRELS)
-            .map(
-                ([k, b]) =>
-                    `<button class="pick-cell${o.k === k ? ' on' : ''}${G.barrelOk(k) || !b.item ? '' : ' locked'}" data-act="barrelKind" data-k="${k}">${ico(b.item ? ['item', b.item] : ['ui', 'barrel'], 'ico big')}<b>${b.name}</b><small>${b.item ? `1 ${ITEMS[b.item].name.toLowerCase()} · ×${state.inventory[b.item] || 0}` : `${fmt(b.cost)} pièces`} · note ${b.note}</small></button>`,
-            )
-            .join('');
-        return `<div class="pick-grid">${list
-            .map(
-                b =>
-                    `<button class="pick-cell${o.id === b.id ? ' on' : ''}" data-act="barrelBeer" data-id="${b.id}"><span class="pc-art">${beerSvg(b)}</span><b>${b.name}</b><small>×${G.beerStock(b.id)}</small></button>`,
-            )
-            .join('')}</div>${section('Le fût')}<div class="pick-grid">${kinds}</div>
-            <div class="stepper big">${btn('', { act: 'barrelQty', data: { d: -1 }, icon: ['ui', 'minus'], disabled: o.n <= 1, title: 'Moins' })}<span><b>${o.n}</b> bouteille${o.n > 1 ? 's' : ''}</span>${btn('', { act: 'barrelQty', data: { d: 1 }, icon: ['ui', 'plus'], disabled: o.n >= max, title: 'Plus' })}</div>
-            <p class="card-sub center">Étapes de ${CELLAR.steps.map(s => formatDuration(s)).join(', ')}.</p>`;
-    },
-    foot: o =>
-        o.id
-            ? btn('Mettre en fût', {
-                  act: 'putBarrel',
-                  kind: 'green',
-                  wide: true,
-                  size: 'lg',
-                  disabled: !(BARRELS[o.k].item ? G.barrelOk(o.k) : state.money >= BARRELS[o.k].cost),
-              })
-            : '',
-});
-
 export function setupBrewery() {
-    const put = () => sheetOpts('barrelPut');
     actions({
+        goCave: () => go('machines/cave'),
         goAbbey: () => {
             ui.sel.map = 'abbey';
             ui.sel.proj = 'malthouse';
@@ -305,17 +244,5 @@ export function setupBrewery() {
         collectVat: (el, d) => G.collectVat(+d.i, el),
         sellBeer: (el, d) => G.sellBeer(d.id, +d.n, el),
         claimBeerBook: el => G.claimBeerBook(el),
-        takeBarrel: (el, d) => G.takeFromBarrel(+d.i, el),
-        barrelBeer: (el, d) => {
-            const o = put();
-            o.id = d.id;
-            o.n = Math.min(CELLAR.maxBottles, G.beerStock(d.id));
-        },
-        barrelKind: (el, d) => (put().k = d.k),
-        barrelQty: (el, d) => (put().n += +d.d),
-        putBarrel: el => {
-            const o = put();
-            if (G.putInBarrel(+o.slot, o.id, o.n, o.k, el)) closeSheet('barrelPut');
-        },
     });
 }

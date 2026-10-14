@@ -13,7 +13,7 @@ import { RARE, STALL_MAX_QTY, CONTEST_POINTS } from '../src/data/commerce.js';
 import { NATURE } from '../src/data/nature.js';
 import { TRANS_KINDS } from '../src/data/animals.js';
 import { FARM_SEASON_TIERS } from '../src/data/port.js';
-import { CAVE_ITEMS, CAVE_LOT_MAX, CAVE_SHELVES, CAVE_GEAR } from '../src/data/cave.js';
+import { CAVE_ITEMS, CAVE_SHELVES, CAVE_GEAR } from '../src/data/cave.js';
 import { BALANCE } from '../src/data/progress.js';
 import { MALT_IDS } from '../src/data/abbey.js';
 import { SKILLS, ACHIEVEMENTS } from '../src/data/meta.js';
@@ -61,7 +61,8 @@ const caveWant = () => {
     const free = state.cave.slots.filter(l => !l).length;
     const ok = Object.keys(CAVE_ITEMS).filter(id => RECIPES[id] && G.recipeUnlocked(id) && G.hasMachine(RECIPES[id].machine));
     ok.sort((a, b) => ITEMS[b].sell - ITEMS[a].sell);
-    return free && ok.length ? { [ok[0]]: CAVE_LOT_MAX, ...(ok[1] && free > 1 ? { [ok[1]]: CAVE_LOT_MAX } : {}) } : {};
+    const m = G.caveLotMax();
+    return free && ok.length ? { [ok[0]]: m, ...(ok[1] && free > 1 ? { [ok[1]]: m } : {}) } : {};
 };
 // quantités utiles : commandes, train, montgolfière, chantiers, et ingrédients de ces produits
 const need = () => {
@@ -342,7 +343,10 @@ function cave() {
             const id = Object.keys(CAVE_ITEMS)
                 .filter(x => state.inventory[x] - (nd[x] || 0) >= 2)
                 .sort((a, b) => ITEMS[b].sell - ITEMS[a].sell)[0];
-            if (id) G.putInCave(i, id, Math.min(CAVE_LOT_MAX, state.inventory[id] - (nd[id] || 0)));
+            if (id) G.putInCave(i, id, Math.min(G.caveLotMax(), state.inventory[id] - (nd[id] || 0)));
+            // 1.6.3 : une bière en fût de chêne, s'il en reste assez
+            const b = !id && G.caveBeers().find(x => G.beerStock(x.id) >= 6);
+            if (b && state.money > 20000) tag('cave', () => G.putBeerInCave(i, b.id, G.beerStock(b.id), 'oak'));
             return;
         }
         if (G.careNeeded(lot)) tag('cave', () => G.careLot(i));
@@ -350,6 +354,7 @@ function cave() {
         if (lot.bad || lot.rank >= 3 || (lot.rank >= 2 && o.good < 0.45)) tag('cave', () => G.takeOut(i));
     });
     const a = c.auction;
+    (c.orders || []).slice().forEach(o => G.caveOrderLot(o) && tag('cave', () => G.deliverCaveOrder(o.id)));
     c.reserve.slice().forEach(l => {
         if (!a.lots && a.deposits.length < G.depositMax() && !l.bad) G.depositLot(l.uid);
     });
@@ -555,7 +560,13 @@ const out = {
         hand: G.handLvl(),
         league: state.league,
         renown: state.renown,
-        cave: { lots: state.stats.caveLots || 0, sold: state.stats.auctionSold || 0, legend: state.stats.caveLegend || 0 },
+        cave: {
+            lots: state.stats.caveLots || 0,
+            sold: state.stats.auctionSold || 0,
+            legend: state.stats.caveLegend || 0,
+            orders: state.stats.caveOrders || 0,
+            income: Math.round(state.income.cave || 0),
+        },
         boats: state.stats.boats || 0,
         defis: state.defis ? Object.fromEntries(Object.entries(state.defis.trophies).map(([k, v]) => [k, v.best])) : {},
         defi: state.defis && state.defis.cur ? `${state.defis.cur.id} ${G.stepsDone()} / 4` : '',

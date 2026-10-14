@@ -7,7 +7,7 @@ import { setView } from '../../src/core/view.js';
 import * as G from '../../src/systems/index.js';
 import { PROJECTS, CHAPTERS } from '../../src/data/village.js';
 import { ITEMS } from '../../src/data/items.js';
-import { ABBEY, CELLAR } from '../../src/data/abbey.js';
+import { ABBEY } from '../../src/data/abbey.js';
 
 const tick = s => {
     for (let k = 0; k < s; k++) {
@@ -82,20 +82,31 @@ test('trois ingrédients, l’accord et le vieillissement en fût', () => {
     const vat = state.brew.vats.findIndex(v => v && v.bid === bid);
     tick(G.brewTime(pv.ings) + 1);
     assert.ok(G.collectVat(vat));
-    // en fût de chêne : la valeur monte à chaque étape
+    // 1.6.3 : en fût de chêne, à la cave ; la valeur monte à chaque étape
     state.money = 1e7;
-    assert.ok(G.putInBarrel(0, bid, 6, 'oak'));
+    G.ensureCave();
+    const slot = state.cave.slots.indexOf(null);
+    assert.ok(
+        G.caveBeers().some(b => b.id === bid),
+        'la bière peut descendre à la cave',
+    );
+    assert.ok(G.putBeerInCave(slot, bid, 6, 'oak'));
     assert.equal(G.beerStock(bid), 0);
-    const v0 = G.barrelValue(state.brew.barrels[0]);
-    clock.t += CELLAR.steps[0] * 1000 + 1000;
-    G.cellarTick();
-    const b = state.brew.barrels[0];
-    assert.ok(b.stage >= 1);
-    if (!b.turned) assert.ok(G.barrelValue(b) > v0);
-    assert.ok(G.takeFromBarrel(0));
+    const lot = state.cave.slots[slot];
+    assert.equal(lot.id, 'beer');
+    assert.equal(G.lotName(lot), G.beerOf(bid).name);
+    assert.equal(G.lotUnit(lot), Math.round(G.beerValue(bid)));
+    assert.ok(G.caveLotMax() >= 8);
+});
+
+test('1.6.3 : les fûts de l’ancien cellier reviennent dans « Mes bières »', () => {
+    const bid = Object.keys(state.brew.beers)[0];
+    state.brew.barrels = [{ bid, n: 4, k: 'oak', stage: 1, next: clock.t + 1e9, turned: false }, null];
+    G.ensureCave();
+    assert.equal(state.brew.barrels.length, 0);
     const aged = G.myBeers().find(x => x.aged && x.aged.from === bid);
-    assert.ok(aged, 'une bière de garde entre dans « Mes bières »');
-    assert.equal(G.beerStock(aged.id), 6);
+    assert.ok(aged, 'une bière de garde entre dans « Mes bières »');
+    assert.equal(G.beerStock(aged.id), 4);
 });
 
 test('la malterie et l’orge', () => {
@@ -116,7 +127,7 @@ test('vendre la ferme garde les recettes et le livre, pas les bouteilles', () =>
     );
 });
 
-test('1.6.2 : étoiles secrètes, rebrasser, boucle, demande et commandes de bière', () => {
+test('1.6.2 : étoiles secrètes, rebrasser, boucle, demande et commandes de bière', () => {
     state.level = 40;
     for (const p of ['malthouse', 'brewhall', 'fermenters', 'labelshop', 'barrelcellar']) state.projects[p] = { given: {}, done: true };
     G.ensureBrew();

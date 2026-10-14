@@ -224,7 +224,7 @@ export const GUIDE = [
         name: 'La cave',
         lvl: 20,
         view: 'machines',
-        text: 'Onglet Atelier, puis Cave. Mettez fromages, cidres, vins et champagnes en cave. À chaque étape, ils peuvent bien vieillir (leur valeur grimpe), mal vieillir (ils tournent) ou se perdre. Soignez-les et gardez le climat entre 35 et 65.',
+        text: 'Onglet Atelier, puis Cave. Mettez fromages, cidres, vins, champagnes, salaisons et bières en cave. À chaque étape, ils peuvent bien vieillir (leur valeur grimpe), mal vieillir (ils tournent) ou se perdre. Un soin par étape suffit (« Tout soigner » en un geste), et gardez le climat entre 35 et 65, ou installez l’hygromètre qui le règle tout seul. Plus d’étagères : plus de places et des lots plus grands. Les villageois passent aussi commande de lots vieillis.',
     },
     {
         id: 'auction',
@@ -232,7 +232,7 @@ export const GUIDE = [
         name: 'Les enchères',
         lvl: 20,
         view: 'machines',
-        text: 'Sortez un lot de la cave, puis déposez-le à la prochaine vente avec un prix de réserve. Chaque enchérisseur a ses goûts et son budget. La grande vente du soir (19 h) attire les collectionneurs et propose des lots rares.',
+        text: 'Sortez un lot de la cave, puis déposez-le à la prochaine vente avec un prix de réserve. Chaque enchérisseur a ses goûts et son budget. La grande vente du soir (19 h) attire les collectionneurs et propose des lots rares. Plus la cote de la cave monte, plus les acheteurs sont riches. Si vous n’étiez pas là, les résultats vous attendent.',
     },
     {
         id: 'domaine',
@@ -248,7 +248,7 @@ export const GUIDE = [
         name: 'L’abbaye et ses bières',
         lvl: 35,
         view: 'quests',
-        text: 'Chapitres 9 et 10 : la malterie grille l’orge en malt blond, ambré, brun ou noir. À la brasserie (Atelier, volet Brasserie), une bière = un malt, une dose de houblon et jusqu’à trois ingrédients de la ferme, chacun dosé. L’accord (jusqu’à 3 étoiles) fait le prix. Nommez vos bières, faites-les vieillir en fût au cellier, et remplissez le livre des bières.',
+        text: 'Chapitres 9 et 10 : la malterie grille l’orge en malt blond, ambré, brun ou noir. À la brasserie (Atelier, volet Brasserie), une bière = un malt, une dose de houblon et jusqu’à trois ingrédients de la ferme, chacun dosé. L’accord (jusqu’à 3 étoiles) fait le prix. Nommez vos bières, faites-les vieillir en fût à la cave (après le cellier à fûts), et remplissez le livre des bières.',
     },
     {
         id: 'engines',

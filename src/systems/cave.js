@@ -17,6 +17,10 @@ import {
     CAVE_ROT,
     CAVE_LEGEND_RISK,
     CAVE_LOT_MAX,
+    CAVE_LOT_GROW,
+    CAVE_AUTO,
+    CAVE_ORDERS,
+    CAVE_LEGEND_RUBANS,
     CAVE_SLOTS_START,
     CAVE_IDEAL,
     CAVE_NUDGE,
@@ -40,13 +44,24 @@ import { record, collect } from './book.js';
 import { addPhoto } from './style.js';
 import { addFriendship } from './village.js';
 import { hasMats } from './market.js';
+import { clampQuality } from './farm.js';
+import { BARRELS } from '../data/abbey.js';
+import { beerOf, beerValue, beerStock, ensureBrew, barrelOk, cellarOpen, takeFromBarrel, cellarTick } from './brewery.js';
 
 export const caveOpen = () => state.level >= CAVE_LVL;
 export const caveFam = id => CAVE_FAMILIES[CAVE_ITEMS[id]];
-export const caveSlots = () => CAVE_SLOTS_START + 2 * state.cave.shelves + (projectDone('affinage') ? 4 : 0);
+export const caveSlots = () =>
+    CAVE_SLOTS_START + 2 * state.cave.shelves + (projectDone('affinage') ? 4 : 0) + (state.cave.gear.vault ? 2 : 0) + (cellarOpen() ? 2 : 0);
 export const caveStep = id => (CAVE_ITEMS[id] === 'cider' && projectDone('cidery') ? 4 * CAVE_H : caveFam(id).step);
-export const rankName = lot => (lot.bad ? 'Tourné' : caveFam(lot.id).ranks[lot.rank]);
-export const lotUnit = lot => Math.round(ITEMS[lot.id].sell * CAVE_MULT[lot.rank] * (lot.bad ? CAVE_TURNED : 1));
+export const rankName = lot => (lot.bad ? (lot.id === 'beer' ? 'Tournée' : 'Tourné') : caveFam(lot.id).ranks[lot.rank]);
+// 1.6.3 : un lot peut être une bière (id 'beer', sa recette bid et son fût k)
+export const isBeerLot = lot => lot.id === 'beer';
+export const lotName = lot => (isBeerLot(lot) ? (beerOf(lot.bid) || { name: 'Bière' }).name : ITEMS[lot.id].name);
+export const lotIcon = lot => (isBeerLot(lot) ? ['ui', 'beer'] : ['item', lot.id]);
+const baseUnit = lot => (isBeerLot(lot) ? beerValue(lot.bid) * (BARRELS[lot.k] || BARRELS.oak).mult : ITEMS[lot.id].sell);
+export const lotUnit = lot => Math.round(baseUnit(lot) * CAVE_MULT[lot.rank] * (lot.bad ? CAVE_TURNED : 1));
+// la taille des lots grandit avec les étagères : 8, 12, 16 puis 20
+export const caveLotMax = () => CAVE_LOT_MAX + CAVE_LOT_GROW * Math.min(3, Math.floor(state.cave.shelves / 2));
 export const lotValue = lot => lotUnit(lot) * lot.n;
 const caveUid = () => (state.cave.uid = (state.cave.uid || 0) + 1);
 
@@ -54,17 +69,31 @@ export function ensureCave() {
     const c = state.cave;
     while (c.slots.length < caveSlots()) c.slots.push(null);
     if (!c.climAt) c.climAt = now();
+    c.orders = c.orders || [];
+    c.nextOrder = c.nextOrder || 0;
+    c.seen = c.seen || {};
+    c.legends = c.legends || {};
+    migrateCellar();
     ensureAuction();
 }
 
-// ---------------- soins ----------------
-// 1 si le lot a été soigné pendant l'étape en cours, puis baisse jusqu'à 0
-export function careLevel(lot, t = now()) {
-    const step = caveStep(lot.id),
-        since = t - lot.care;
-    return since <= step * 0.8 ? 1 : Math.max(0, 1 - (since - step * 0.8) / (step * 1.2));
+// 1.6.3 : l'ancien cellier de l'abbaye rejoint la cave ; ce qui dormait dans ses fûts revient dans « Mes bières »
+function migrateCellar() {
+    const B = state.brew;
+    if (!B || !B.barrels || !B.barrels.some(Boolean)) return;
+    cellarTick();
+    B.barrels.forEach((b, i) => b && takeFromBarrel(i));
+    B.barrels = [];
 }
-export const careNeeded = lot => !lot.bad && now() - lot.care >= caveStep(lot.id) * 0.5;
+
+// ---------------- soins ----------------
+// 1.6.3 : un soin par étape suffit. 1 si le lot a été soigné pendant l'étape, 0,6 pendant la précédente, sinon 0,3
+export function careLevel(lot) {
+    const step = caveStep(lot.id),
+        start = lot.next - step;
+    return lot.care >= start ? 1 : lot.care >= start - step ? 0.6 : 0.3;
+}
+export const careNeeded = lot => !lot.bad && lot.care < lot.next - caveStep(lot.id);
 export const caveCareCount = () => (caveOpen() ? state.cave.slots.filter(l => l && careNeeded(l)).length : 0);
 
 export function careLot(i, at) {
@@ -101,7 +130,7 @@ export const climTarget = () => {
     const hum = 50 + ({ rain: 22, storm: 26, heat: -22, snow: 6, cloud: 8, cloudy: 4 }[w] || 0);
     return { temp, hum };
 };
-const climDrift = () => 4 * (state.cave.gear.hygro ? 0.6 : 1) * (state.cave.gear.vault ? 0.5 : 1);
+const climDrift = () => 4 * (state.cave.gear.hygro ? 1.5 : 1) * (state.cave.gear.vault ? 0.5 : 1);
 export const inBand = v => v >= CAVE_IDEAL[0] && v <= CAVE_IDEAL[1];
 const climOff = v => Math.max(0, CAVE_IDEAL[0] - v, v - CAVE_IDEAL[1]);
 export const climFit = () => Math.max(0, 1 - (climOff(state.cave.temp) + climOff(state.cave.hum)) / 40);
@@ -119,9 +148,10 @@ function famBonus(lot) {
     const f = CAVE_ITEMS[lot.id];
     let b = 0;
     if (f === 'cheese' && projectDone('affinage')) b += 0.06;
-    if ((f === 'wine' || f === 'cider') && projectDone('cooperage')) b += 0.06;
-    if ((f === 'wine' || f === 'cider') && state.cave.gear.oldBarrel) b += 0.04;
+    if ((f === 'wine' || f === 'cider' || f === 'beer') && projectDone('cooperage')) b += 0.06;
+    if ((f === 'wine' || f === 'cider' || f === 'beer') && state.cave.gear.oldBarrel) b += 0.04;
     if (lot.boost > 0) b += 0.15;
+    if (state.cave.gear.vault) b += 0.05;
     b += (lot.q || 0) * 0.04;
     return b;
 }
@@ -144,7 +174,7 @@ export function lotOdds(lot, c = careLevel(lot), f = climFit()) {
 function stepLot(i, t, sum) {
     const c = state.cave,
         lot = c.slots[i];
-    const o = lotOdds(lot, careLevel(lot, t), climFit());
+    const o = lotOdds(lot, careLevel(lot), climFit());
     const r = Math.random();
     lot.next += caveStep(lot.id);
     if (lot.boost > 0) lot.boost--;
@@ -177,7 +207,10 @@ export function caveTick(t = now()) {
         const tg = climTarget(),
             d = climDrift();
         ['temp', 'hum'].forEach(k => {
-            const diff = (k === 'temp' ? tg.temp : tg.hum) - c[k];
+            let goal = k === 'temp' ? tg.temp : tg.hum;
+            // l'hygromètre garde le climat dans la bonne zone
+            if (c.gear.hygro) goal = Math.max(CAVE_AUTO[0], Math.min(CAVE_AUTO[1], goal));
+            const diff = goal - c[k];
             c[k] += Math.sign(diff) * Math.min(Math.abs(diff), d);
         });
         c.slots.forEach((lot, i) => {
@@ -196,14 +229,14 @@ export function caveTick(t = now()) {
             const l = sum.rot[0];
             toast(
                 CAVE_ITEMS[l.id] === 'champagne'
-                    ? `Une bouteille a sauté : ${ITEMS[l.id].name.toLowerCase()} perdu (au compost)`
-                    : `${ITEMS[l.id].name} perdu en cave (au compost)`,
+                    ? `Une bouteille a sauté : ${lotName(l).toLowerCase()} perdu (au compost)`
+                    : `${lotName(l)} perdu en cave (au compost)`,
                 ['ui', 'rot'],
             );
-        } else if (sum.bad.length) toast(`${ITEMS[sum.bad[0].id].name} a mal vieilli : il a tourné`, ['ui', 'cave']);
+        } else if (sum.bad.length) toast(`${lotName(sum.bad[0])} a mal vieilli : ${isBeerLot(sum.bad[0]) ? 'elle' : 'il'} a tourné`, ['ui', 'cave']);
         else {
             const l = sum.up[0];
-            toast(`${ITEMS[l.id].name} : « ${rankName(l)} » !`, ['item', l.id]);
+            toast(`${lotName(l)} : « ${rankName(l)} » !`, lotIcon(l));
             sfx('pop');
         }
         tip('caveStep');
@@ -212,12 +245,45 @@ export function caveTick(t = now()) {
 }
 
 // ---------------- mettre en cave, goûter, sortir ----------------
-export const caveCandidates = () => Object.keys(CAVE_ITEMS).filter(id => state.inventory[id] > 0);
+export const caveCandidates = () => Object.keys(CAVE_ITEMS).filter(id => id !== 'beer' && state.inventory[id] > 0);
+// les bières qu'on peut mettre en fût : celles de la brasserie, pas déjà vieillies
+export const caveBeers = () =>
+    cellarOpen() && state.brew
+        ? Object.values(state.brew.beers)
+              .filter(b => !b.aged && beerStock(b.id) > 0)
+              .sort((a, b) => b.value - a.value)
+        : [];
+
+// une bière en fût : on choisit le fût (chêne neuf payé en pièces, ou un ancien fût de calvados, de rhum ou de vin)
+export function putBeerInCave(slot, bid, n, k, at) {
+    const c = state.cave,
+        B = ensureBrew();
+    const beer = beerOf(bid),
+        bar = BARRELS[k];
+    n = Math.max(1, Math.min(n, caveLotMax(), beerStock(bid)));
+    if (!cellarOpen() || c.slots[slot] || !beer || beer.aged || !bar || !(beerStock(bid) >= n)) return false;
+    if (bar.item) {
+        if (!barrelOk(k)) return false;
+        state.inventory[bar.item]--;
+        clampQuality(bar.item);
+    } else {
+        if (state.money < bar.cost) return false;
+        spend(bar.cost);
+    }
+    B.stock[bid] -= n;
+    const t = now();
+    c.slots[slot] = { uid: caveUid(), id: 'beer', bid, k, n, rank: 0, bad: false, next: t + caveStep('beer'), care: t, boost: 0, put: t, q: 0 };
+    c.seen.beer = true;
+    sfx('load');
+    burst(at, 'sparkle', 8);
+    return true;
+}
 
 export function putInCave(slot, id, n, at) {
     const c = state.cave;
-    n = Math.max(1, Math.min(n, CAVE_LOT_MAX));
-    if (!id || c.slots[slot] || !(state.inventory[id] >= n)) return false;
+    n = Math.max(1, Math.min(n, caveLotMax()));
+    if (!id || id === 'beer' || c.slots[slot] || !(state.inventory[id] >= n)) return false;
+    c.seen[id] = true;
     // les produits de qualité partent en premier : un lot tout en or (ou en argent) vieillit mieux
     const qq = state.quality[id];
     let lq = 0;
@@ -266,7 +332,9 @@ export function takeOut(i, at) {
         lot = c.slots[i];
     if (!lot) return false;
     c.slots[i] = null;
-    c.reserve.push({ uid: lot.uid, id: lot.id, n: lot.n, rank: lot.rank, bad: lot.bad });
+    const kept = { uid: lot.uid, id: lot.id, n: lot.n, rank: lot.rank, bad: lot.bad };
+    if (isBeerLot(lot)) Object.assign(kept, { bid: lot.bid, k: lot.k });
+    c.reserve.push(kept);
     state.stats.caveLots = (state.stats.caveLots || 0) + 1;
     if (!lot.bad) record('lot', lotValue(lot));
     if (!lot.bad && lot.rank >= 3) {
@@ -275,13 +343,31 @@ export function takeOut(i, at) {
     }
     if (!lot.bad && lot.rank >= 4) {
         state.stats.caveLegend = (state.stats.caveLegend || 0) + 1;
-        addPhoto('item', lot.id, `${ITEMS[lot.id].name} légendaire`, 'Sorti de la cave');
+        addPhoto(...lotIcon(lot), `${lotName(lot)} légendaire`, 'Sorti de la cave');
+        addLegend(lot);
     }
     sfx(lot.rank >= 3 && !lot.bad ? 'level' : 'harvest');
     burst(at, 'sparkle', 4 + lot.rank * 3);
     addXp(Math.round(lotValue(lot) * (lot.bad ? 0.01 : 0.04)), at);
     return true;
 }
+
+// 1.6.3 : un lot légendaire entre dans la salle des trophées ; le premier de chaque famille rapporte un ruban
+function addLegend(lot) {
+    const c = state.cave,
+        f = CAVE_ITEMS[lot.id];
+    const first = !c.legends[f];
+    const L = (c.legends[f] = c.legends[f] || { n: 0, best: 0 });
+    L.n++;
+    const v = lotValue(lot);
+    if (v >= L.best) Object.assign(L, { best: v, name: lotName(lot), id: lot.id, bid: lot.bid || null, day: state.day });
+    if (first) {
+        state.prestige.rubans += CAVE_LEGEND_RUBANS;
+        if (view.started)
+            toast(`Premier lot légendaire de ${CAVE_FAMILIES[f].name.toLowerCase()} : un trophée et +${CAVE_LEGEND_RUBANS} ruban !`, ['ui', 'trophy']);
+    }
+}
+export const caveLegends = () => Object.entries((state.cave && state.cave.legends) || {});
 
 // ---------------- réserve : négociant ou enchères ----------------
 export function sellNegociant(uid, at) {
@@ -374,7 +460,8 @@ export function bidderPool(big) {
         .filter(([id, b]) => (b.big ? big : !b.villager || !VILLAGERS[id].ch || chapterDone(VILLAGERS[id].ch - 1)))
         .map(([id]) => id);
 }
-const bidderBudget = id => (20000 + scaleLvl() * 3000) * BIDDERS[id].budget;
+// 1.6.3 : une cave réputée attire des acheteurs plus riches (jusqu'à trois fois plus à 100 de cote)
+const bidderBudget = id => (20000 + scaleLvl() * 3000) * BIDDERS[id].budget * (1 + state.cave.cote / 50);
 export const bidderName = id => (id === 'you' ? 'Vous' : BIDDERS[id] ? BIDDERS[id].name : '');
 
 function makeNpcs(fam, value, big) {
@@ -511,10 +598,12 @@ export function auctionTick(t = now()) {
     }
     if (a.lots.every(l => l.done)) {
         a.over = true;
-        // les résultats restent affichés une demi-heure, la vente suivante s'ouvre aussitôt
-        state.cave.lastSale = { big: a.big, results: a.results, until: t + 30 * 60 * 1000 };
+        // les résultats restent affichés une demi-heure, la vente suivante s'ouvre aussitôt ;
+        // 1.6.3 : si on n'était pas là pour la voir, ils restent jusqu'à « Vu ! »
+        const seen = view.started && now() - a.simAt < 60000;
+        state.cave.lastSale = { big: a.big, results: a.results, until: t + 30 * 60 * 1000, keep: !seen };
         const sold = a.results.filter(l => l.sold);
-        if (view.started && now() - a.simAt < 60000) {
+        if (seen) {
             sfx('level');
             toast(
                 sold.length
@@ -556,6 +645,81 @@ export function playerBid(k, at) {
 
 export function dismissAuction() {
     state.cave.lastSale = null;
+}
+export const lastSaleShown = () => {
+    const l = state.cave && state.cave.lastSale;
+    return l && (l.keep || now() < l.until) ? l : null;
+};
+
+// ---------------- 1.6.3 : les commandes de la cave ----------------
+const pickR = a => a[Math.floor(Math.random() * a.length)];
+// ce que le joueur connaît : ce qu'il a déjà mis en cave, ou ce qu'il a sous la main
+const caveKnown = () => {
+    const c = state.cave;
+    const ids = new Set(Object.keys(c.seen || {}));
+    caveCandidates().forEach(id => ids.add(id));
+    c.slots.forEach(l => l && ids.add(l.id));
+    c.reserve.forEach(l => ids.add(l.id));
+    if (caveBeers().length) ids.add('beer');
+    return [...ids].filter(id => CAVE_ITEMS[id] && (id !== 'beer' || cellarOpen()));
+};
+export function newCaveOrder() {
+    const c = state.cave;
+    const items = caveKnown(),
+        who = CAVE_ORDERS.who.filter(v => VILLAGERS[v] && state.villagers[v]);
+    if (!items.length || !who.length) return null;
+    const best = Math.max(0, ...c.reserve.filter(l => !l.bad).map(l => l.rank), ...c.slots.filter(l => l && !l.bad).map(l => l.rank));
+    // une commande à sa portée : rarement plus d'un rang au-dessus du meilleur lot
+    const min = Math.max(1, Math.min(3, pickR([1, 1, 2, 2, 3]), best + 1));
+    const n = CAVE_ORDERS.qty[0] + Math.floor(Math.random() * (CAVE_ORDERS.qty[1] - CAVE_ORDERS.qty[0] + 1));
+    const o = { id: 'c' + caveUid(), vid: pickR(who), item: pickR(items), min, n };
+    c.orders.push(o);
+    return o;
+}
+export const caveOrderName = o => (o.item === 'beer' ? 'bière de garde' : ITEMS[o.item].name.toLowerCase());
+export const caveOrderText = o => `${o.n} × ${caveOrderName(o)}, au moins « ${CAVE_FAMILIES[CAVE_ITEMS[o.item]].ranks[o.min]} »`;
+const lotFits = (o, l) => l.id === o.item && !l.bad && l.rank >= o.min && l.n >= o.n;
+// le lot de la réserve qui convient, le moins précieux d'abord
+export const caveOrderLot = o => state.cave.reserve.filter(l => lotFits(o, l)).sort((a, b) => lotUnit(a) - lotUnit(b))[0] || null;
+export const caveOrderPay = (o, l) => Math.round((lotUnit(l) * o.n * CAVE_ORDERS.pay) / 10) * 10;
+export function deliverCaveOrder(oid, at) {
+    const c = state.cave;
+    const k = c.orders.findIndex(o => o.id === oid);
+    if (k < 0) return false;
+    const o = c.orders[k],
+        l = caveOrderLot(o);
+    if (!l) return false;
+    const pay = caveOrderPay(o, l);
+    l.n -= o.n;
+    if (l.n <= 0) c.reserve.splice(c.reserve.indexOf(l), 1);
+    earn(pay, at);
+    state.income.cave = (state.income.cave || 0) + pay;
+    addXp(CAVE_ORDERS.xp + 30 * o.min, at);
+    addFriendship(o.vid, CAVE_ORDERS.hearts, at);
+    c.cote = Math.min(100, c.cote + o.min);
+    state.stats.caveOrders = (state.stats.caveOrders || 0) + 1;
+    c.orders.splice(k, 1);
+    c.nextOrder = Math.min(c.nextOrder || Infinity, now() + 5 * 60 * 1000);
+    sfx('coin');
+    buzz(15);
+    return true;
+}
+export function dismissCaveOrder(oid) {
+    const c = state.cave;
+    const k = c.orders.findIndex(o => o.id === oid);
+    if (k < 0) return false;
+    c.orders.splice(k, 1);
+    c.nextOrder = now() + CAVE_ORDERS.every * 1000;
+    return true;
+}
+export const caveOrdersReady = () => (caveOpen() && state.cave.orders ? state.cave.orders.filter(caveOrderLot).length : 0);
+export function caveOrderTick(t = now()) {
+    if (!caveOpen()) return false;
+    ensureCave();
+    const c = state.cave;
+    if (c.orders.length >= CAVE_ORDERS.max || t < c.nextOrder) return false;
+    c.nextOrder = t + CAVE_ORDERS.every * 1000;
+    return !!newCaveOrder();
 }
 
 // ---------------- équipement ----------------
