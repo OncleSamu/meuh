@@ -58,7 +58,7 @@ test('composer et brasser une bière à un ingrédient', () => {
     assert.equal(G.beerOf(bid).name, 'La Rouge du cloître');
     const m = state.money;
     assert.ok(G.sellBeer(bid, 2));
-    assert.equal(state.money, m + G.beerOf(bid).value * 2);
+    assert.ok(state.money > m + G.beerOf(bid).value * 1.9 && state.money <= m + G.beerOf(bid).value * 2, 'deux bouteilles, la seconde un peu moins chère');
 });
 
 test('trois ingrédients, l’accord et le vieillissement en fût', () => {
@@ -114,4 +114,61 @@ test('vendre la ferme garde les recettes et le livre, pas les bouteilles', () =>
         Object.values(state.brew.stock).reduce((a, b) => a + b, 0),
         0,
     );
+});
+
+test('1.6.2 : étoiles secrètes, rebrasser, boucle, demande et commandes de bière', () => {
+    state.level = 40;
+    for (const p of ['malthouse', 'brewhall', 'fermenters', 'labelshop', 'barrelcellar']) state.projects[p] = { given: {}, done: true };
+    G.ensureBrew();
+    assert.ok(!G.BREWABLE.includes('hop'), 'le houblon n’est pas un ingrédient');
+    Object.assign(state.inventory, { maltAmber: 40, hop: 60, apple: 60, quince: 60, honey: 20 });
+    const d = {
+        malt: 'maltAmber',
+        hop: 1,
+        ings: [
+            ['apple', 2],
+            ['quince', 1],
+        ],
+    };
+    state.brew.draft = d;
+    const pv = G.brewPreview();
+    if (!pv.known) assert.ok(pv.secret && pv.hints.length, 'une recette nouvelle cache ses étoiles');
+    const bid = G.startBrew();
+    assert.ok(bid);
+    assert.equal(G.brewPreview().secret, false, 'après le premier brassin, les étoiles se voient');
+    // la cuve en boucle relance la même bière
+    const i = state.brew.vats.findIndex(v => v && v.bid === bid);
+    assert.ok(G.toggleVatLoop(i));
+    const apples = state.inventory.apple;
+    clock.t += G.brewTime(d.ings) * 1000 + 1000;
+    G.brewTick();
+    assert.equal(G.beerStock(bid) >= 6, true);
+    assert.ok(
+        state.brew.vats.some(v => v && v.bid === bid && v.loop),
+        'relancée',
+    );
+    assert.ok(state.inventory.apple < apples);
+    // rebrasser depuis « Mes bières »
+    assert.ok(G.rebrew(bid));
+    // la demande : le prix baisse quand on vend beaucoup, puis remonte
+    state.brew.stock[bid] = 60;
+    const p0 = G.beerPrice(bid);
+    G.sellBeer(bid, 30);
+    assert.ok(G.beerPrice(bid) < p0);
+    clock.t += 24 * 3600 * 1000;
+    assert.ok(G.beerPrice(bid) > p0 * 0.95);
+    // une commande de bière que notre bière remplit
+    const b = G.beerOf(bid);
+    state.brew.orders = [{ id: 'oTest', vid: 'hugues', malt: b.malt, note: G.beerNote(b), min: Math.min(1, b.stars), qty: 3 }];
+    assert.equal(G.beerOrderMatches(state.brew.orders[0])[0].id, bid);
+    const m = state.money,
+        before = state.stats.beerOrders || 0;
+    assert.ok(G.deliverBeerOrder('oTest'));
+    assert.ok(state.money > m);
+    assert.equal(state.stats.beerOrders, before + 1);
+    assert.equal(state.brew.orders.length, 0);
+    // de nouvelles commandes arrivent avec le temps
+    clock.t += 3600 * 1000;
+    G.brewTick();
+    assert.ok(state.brew.orders.length >= 1);
 });

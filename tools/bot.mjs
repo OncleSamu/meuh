@@ -86,6 +86,12 @@ const need = () => {
     if (hn && state.level >= hn.lvl) ['beam', 'plank', 'nail', 'tools'].forEach(id => hn.cost[id] && add(id, hn.cost[id]));
     const kn = G.handLvl() && G.handNext();
     if (kn && state.level >= kn.lvl) add('tools', kn.cost.tools);
+    // la brasserie : de quoi tenir deux brassins d'avance
+    if (G.brewOpen()) {
+        const maltStock = MALT_IDS.reduce((x, m) => x + (state.inventory[m] || 0), 0);
+        if (maltStock < 8) add(MALT_IDS[(state.day || 0) % 4], 8);
+        add('hop', Math.max(0, 12 - (state.inventory.hop || 0)));
+    }
     // ingrédients des produits demandés, sur trois étages (flan coco → lait de coco → noix de coco)
     let level = Object.keys(n);
     for (let d = 0; d < 3 && level.length; d++) {
@@ -459,11 +465,20 @@ function abbey() {
     if (!G.brewOpen()) return;
     const B = G.ensureBrew();
     B.vats.forEach((v, i) => G.vatReady(v) && tag('brasserie', () => G.collectVat(i)));
-    for (const b of Object.values(B.beers)) if (G.beerStock(b.id)) G.sellBeer(b.id, G.beerStock(b.id));
+    for (const o of [...B.orders]) if (G.beerOrderMatches(o).length) tag('brasserie', () => G.deliverBeerOrder(o.id));
+    // on garde de quoi servir les commandes ouvertes, on vend le reste tant que le prix tient
+    const keep = new Set(
+        B.orders.flatMap(o =>
+            G.myBeers()
+                .filter(b => G.beerFits(o, b))
+                .map(b => b.id),
+        ),
+    );
+    for (const b of Object.values(B.beers)) if (G.beerStock(b.id) && !keep.has(b.id) && G.demandMult(b.id) > 0.75) G.sellBeer(b.id, G.beerStock(b.id));
     if (!B.vats.some(v => !v) || (state.inventory.hop || 0) < 2) return;
     const malts = MALT_IDS.filter(m => (state.inventory[m] || 0) >= 4);
     if (!malts.length) return;
-    const pool = G.BREWABLE.filter(id => (state.inventory[id] || 0) >= 6)
+    const pool = G.BREWABLE.filter(id => (state.inventory[id] || 0) >= 4)
         .sort((a, b) => state.inventory[b] - state.inventory[a])
         .slice(0, 6);
     let best = null;
@@ -471,7 +486,10 @@ function abbey() {
         for (const hop of [1, 2, 3]) {
             const h = G.brewHarmony(malt, hop, ings).stars;
             const v = G.brewValue(malt, hop, ings, h);
-            if (!best || h > best.h || (h === best.h && v > best.v)) best = { malt, hop, ings, h, v };
+            // une commande ouverte que cette bière remplirait passe avant tout
+            const fits = B.orders.some(o => G.beerFits(o, { malt, hop, ings, stars: h }));
+            const sc = h + (fits ? 3 : 0);
+            if (!best || sc > best.sc || (sc === best.sc && v > best.v)) best = { malt, hop, ings, h, v, sc };
         }
     };
     for (const m of malts)

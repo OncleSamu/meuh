@@ -60,3 +60,17 @@ export const CELLAR = {
 
 // le livre des bières : une page par ingrédient brassé ; une récompense toutes les 10 pages
 export const BEER_BOOK = { every: 10, coins: 4000, rubans: 2 };
+
+// 1.6.2 : la demande baisse quand on vend beaucoup d'une même bière, puis remonte avec le temps
+export const DEMAND = { per: 0.012, floor: 0.5, half: 6 * 3600 };
+
+// 1.6.2 : les commandes de bière (frère Hugues, Agnès et quelques habitués)
+export const BEER_ORDERS = {
+    max: 3,
+    every: 30 * 60, // une nouvelle commande toutes les 30 minutes, s'il reste une place
+    qty: [3, 6],
+    pay: 1.8, // payée 1,8 fois la valeur de la bière livrée, sans baisse de la demande
+    xp: 60,
+    hearts: 2,
+    who: ['hugues', 'agnes', 'gaston', 'marcel', 'margaux', 'tiago'],
+};

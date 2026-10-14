@@ -6,7 +6,9 @@ import { view } from '../core/view.js';
 import { toast, sfx, buzz, burst, float, emit } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { FLAVORS } from '../data/genetics.js';
-import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, PAIRS, BARRELS, CELLAR, BEER_BOOK } from '../data/abbey.js';
+import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, PAIRS, BARRELS, CELLAR, BEER_BOOK, DEMAND, BEER_ORDERS } from '../data/abbey.js';
+import { VILLAGERS } from '../data/village.js';
+import { addFriendship } from './village.js';
 import { projectDone } from './story.js';
 import { earn, addXp, spend } from './player.js';
 import { clampQuality } from './farm.js';
@@ -18,7 +20,7 @@ export const brewSlots = () => (projectDone('labelshop') ? 3 : projectDone('ferm
 export const vatCount = () => Object.entries(ABBEY.vats).reduce((a, [p, n]) => a + (projectDone(p) ? n : 0), 0);
 // ce qu'on peut mettre dans une bière : toutes les cultures et tous les fruits
 export const BREWABLE = Object.values(ITEMS)
-    .filter(i => (i.type === 'crop' || i.type === 'tree') && FLAVORS[i.id])
+    .filter(i => (i.type === 'crop' || i.type === 'tree') && FLAVORS[i.id] && i.id !== 'hop')
     .map(i => i.id);
 
 export function ensureBrew() {
@@ -32,6 +34,10 @@ export function ensureBrew() {
     B.vats = B.vats || [];
     B.barrels = B.barrels || [];
     B.draft = B.draft || { malt: 'maltBlond', hop: 1, ings: [] };
+    B.draft.ings = B.draft.ings.filter(([id]) => BREWABLE.includes(id));
+    B.demand = B.demand || {};
+    B.orders = B.orders || [];
+    B.nextOrder = B.nextOrder || 0;
     while (B.vats.length < vatCount()) B.vats.push(null);
     while (B.barrels.length < (cellarOpen() ? CELLAR.slots : 0)) B.barrels.push(null);
     return B;
@@ -142,9 +148,28 @@ export function brewPreview(d = ensureBrew().draft) {
         value: ings.length ? brewValue(d.malt, d.hop, ings, h.stars) : 0,
         name: known ? state.brew.beers[known].name : ings.length ? brewName(d.malt, ings) : '',
         known,
+        // une recette jamais brassée garde ses étoiles secrètes : on les découvre en goûtant
+        secret: !known,
+        hints: brewHints(d.malt, ings),
         color: brewColor(d.malt),
         freeVat: ensureBrew().vats.findIndex(v => !v),
     };
+}
+
+// des indices sans les étoiles : le goût du malt et les deux notes principales
+export function brewHints(malt, ings) {
+    if (!ings.length) return [];
+    const ip = [0, 0, 0, 0, 0];
+    for (const [id, d] of ings) FLAVORS[id].forEach((v, k) => (ip[k] += v * d));
+    const order = ip.map((v, k) => [v, k]).sort((x, y) => y[0] - x[0]);
+    const notes = order[1][0] >= order[0][0] * 0.3 && order[1][0] > 0 ? `${NOTES[order[0][1]]} et ${NOTES[order[1][1]]}` : NOTES[order[0][1]];
+    return [`Notes principales : ${notes}.`, `Une ${MALTS[malt].name.toLowerCase()} ${MALTS[malt].text}.`];
+}
+// la note qui domine les ingrédients d'une bière (pour les commandes)
+export function beerNote(b) {
+    const ip = [0, 0, 0, 0, 0];
+    for (const [id, d] of b.ings) FLAVORS[id].forEach((v, k) => (ip[k] += v * d));
+    return noteOf(ip);
 }
 
 // ---------------- composer ----------------
@@ -176,12 +201,12 @@ export function setDraftDose(slot, n) {
 }
 
 // ---------------- brasser ----------------
-export function startBrew(at) {
+export function startBrew(at, d = ensureBrew().draft, quiet = false) {
     if (!brewOpen()) return false;
     const B = ensureBrew();
-    const pv = brewPreview();
+    const pv = brewPreview(d);
     if (!pv.ings.length || pv.miss.length || pv.freeVat < 0) {
-        if (pv.miss.length) {
+        if (pv.miss.length && !quiet) {
             toast(`Il manque : ${pv.miss.map(([id, n]) => `${n - (state.inventory[id] || 0)} ${low(id)}`).join(', ')}`, ['item', pv.miss[0][0]]);
             sfx('error');
         }
@@ -192,7 +217,6 @@ export function startBrew(at) {
         clampQuality(id);
     }
     // une bière déjà connue garde son nom ; une nouvelle entre dans « Mes bières »
-    const d = B.draft;
     const sig = sigOf(d.malt, d.hop, pv.ings);
     let bid = B.sig[sig];
     if (!bid) {
@@ -210,13 +234,30 @@ export function startBrew(at) {
             day: state.day,
         };
     }
-    B.vats[pv.freeVat] = { bid, until: now() + pv.time * 1000, n: ABBEY.bottles };
+    B.vats[pv.freeVat] = { bid, until: now() + pv.time * 1000, n: ABBEY.bottles, loop: !!d.loop };
+    if (quiet) return bid;
     sfx('machine');
     buzz(15);
     if (at) burst(at, 'sparkle', 8);
     return bid;
 }
 export const vatReady = v => !!v && now() >= v.until;
+// la recette d'une bière, pour la rebrasser
+export const recipeOf = bid => {
+    const b = beerOf(bid);
+    return b && !b.aged ? { malt: b.malt, hop: b.hop, ings: b.ings.map(x => [...x]) } : null;
+};
+export function rebrew(bid, at) {
+    const r = recipeOf(bid);
+    return r ? startBrew(at, r) : false;
+}
+// une cuve en boucle relance la même bière dès qu'elle est prête
+export function toggleVatLoop(i) {
+    const v = ensureBrew().vats[i];
+    if (!v) return false;
+    v.loop = !v.loop;
+    return true;
+}
 export function collectVat(i, at) {
     const B = ensureBrew();
     const v = B.vats[i];
@@ -247,13 +288,24 @@ export const beerValue = bid => {
     const b = beerOf(bid);
     return b ? b.value : 0;
 };
+// la demande : chaque bouteille vendue fait baisser le prix de cette bière, qui remonte de moitié toutes les 6 heures
+const demandNow = bid => {
+    const d = state.brew && state.brew.demand && state.brew.demand[bid];
+    return d ? d.n * Math.pow(0.5, (now() - d.t) / 1000 / DEMAND.half) : 0;
+};
+export const demandMult = bid => Math.max(DEMAND.floor, 1 - DEMAND.per * demandNow(bid));
+export const beerPrice = bid => Math.max(5, Math.round((beerValue(bid) * demandMult(bid)) / 5) * 5);
 export function sellBeer(bid, n, at) {
     const B = ensureBrew();
     const have = B.stock[bid] || 0;
     n = Math.min(have, n);
     if (n <= 0) return false;
     B.stock[bid] = have - n;
-    const coins = beerValue(bid) * n;
+    let coins = 0;
+    for (let k = 0; k < n; k++) {
+        coins += beerPrice(bid);
+        B.demand[bid] = { n: demandNow(bid) + 1, t: now() };
+    }
     earn(coins, at);
     state.stats.beersSold = (state.stats.beersSold || 0) + n;
     if (at) float(at, [`+${coins}`, ['ui', 'coin']], '', -20);
@@ -369,11 +421,79 @@ export const myBeers = () =>
     Object.values(ensureBrew().beers).sort((a, b) => (state.brew.stock[b.id] || 0) - (state.brew.stock[a.id] || 0) || b.value - a.value);
 export const beerStock = bid => (state.brew && state.brew.stock[bid]) || 0;
 export const brewReadyCount = () =>
-    state.brew ? state.brew.vats.filter(vatReady).length + state.brew.barrels.filter(b => b && barrelDone(b)).length + (beerBookClaimable() ? 1 : 0) : 0;
+    state.brew
+        ? state.brew.vats.filter(vatReady).length +
+          state.brew.barrels.filter(b => b && barrelDone(b)).length +
+          (beerBookClaimable() ? 1 : 0) +
+          beerOrdersReady()
+        : 0;
+// ---------------- les commandes de bière ----------------
+const pickR = a => a[Math.floor(Math.random() * a.length)];
+export function newBeerOrder() {
+    const B = ensureBrew();
+    const who = BEER_ORDERS.who.filter(v => VILLAGERS[v]);
+    const slots = brewSlots();
+    const min = slots >= 2 ? pickR([1, 2, 2, 3]) : pickR([1, 1, 2]);
+    // une demande réalisable : une note qu'au moins un ingrédient débloqué peut donner
+    const note = pickR([0, 0, 1, 2, 3, 4]);
+    const malt = Math.random() < 0.6 ? pickR(MALT_IDS) : null;
+    const qty = BEER_ORDERS.qty[0] + Math.floor(Math.random() * (BEER_ORDERS.qty[1] - BEER_ORDERS.qty[0] + 1));
+    const o = { id: 'o' + B.next++, vid: pickR(who), malt, note, min, qty };
+    B.orders.push(o);
+    return o;
+}
+export const beerOrderText = o =>
+    `${o.qty} bouteilles d’une ${o.malt ? MALTS[o.malt].name.toLowerCase() : 'bière'} plutôt ${['sucrée', 'acide', 'amère', 'épicée', 'umami'][o.note]}, ${o.min} étoile${o.min > 1 ? 's' : ''} au moins`;
+export const beerFits = (o, b) => (!o.malt || b.malt === o.malt) && b.stars >= o.min && beerNote(b) === o.note;
+export const beerOrderMatches = o => myBeers().filter(b => beerFits(o, b) && beerStock(b.id) >= o.qty);
+export const beerOrderPay = (o, bid) => Math.round((beerValue(bid) * o.qty * BEER_ORDERS.pay) / 10) * 10;
+export function deliverBeerOrder(oid, bid, at) {
+    const B = ensureBrew();
+    const k = B.orders.findIndex(o => o.id === oid);
+    if (k < 0) return false;
+    const o = B.orders[k];
+    const b = beerOf(bid || (beerOrderMatches(o)[0] || {}).id);
+    if (!b || !beerFits(o, b) || beerStock(b.id) < o.qty) return false;
+    B.stock[b.id] -= o.qty;
+    earn(beerOrderPay(o, b.id), at);
+    addXp(BEER_ORDERS.xp + 20 * o.min, at);
+    addFriendship(o.vid, BEER_ORDERS.hearts, at);
+    state.stats.beerOrders = (state.stats.beerOrders || 0) + 1;
+    B.orders.splice(k, 1);
+    B.nextOrder = Math.min(B.nextOrder || Infinity, now() + 5 * 60 * 1000);
+    sfx('coin');
+    buzz(15);
+    return true;
+}
+export function dismissBeerOrder(oid) {
+    const B = ensureBrew();
+    const k = B.orders.findIndex(o => o.id === oid);
+    if (k < 0) return false;
+    B.orders.splice(k, 1);
+    B.nextOrder = now() + BEER_ORDERS.every * 1000;
+    return true;
+}
+export const beerOrdersReady = () => (state.brew && state.brew.orders ? state.brew.orders.filter(o => beerOrderMatches(o).length).length : 0);
+
 export function brewTick() {
     if (!brewOpen()) return false;
     const B = ensureBrew();
     let ch = cellarTick();
+    if (B.orders.length < BEER_ORDERS.max && now() >= B.nextOrder) {
+        newBeerOrder();
+        B.nextOrder = now() + BEER_ORDERS.every * 1000;
+        ch = true;
+    }
+    // les cuves en boucle : on met en bouteille et on relance la même bière
+    B.vats.forEach((v, i) => {
+        if (v && v.loop && vatReady(v)) {
+            const bid = v.bid;
+            collectVat(i);
+            if (startBrew(null, { ...recipeOf(bid), loop: true }, true)) ch = true;
+            else if (view.started) toast(`${B.beers[bid].name} : plus assez d’ingrédients pour la relancer`, ['ui', 'beer']);
+            ch = true;
+        }
+    });
     B.vats.forEach(v => {
         if (v && vatReady(v) && !v.told) {
             v.told = true;
