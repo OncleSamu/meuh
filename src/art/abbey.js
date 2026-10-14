@@ -136,7 +136,9 @@ ui.vat = () =>
 // la couleur du malt, l'étiquette crème avec l'ingrédient principal, la capsule et les étoiles d'accord
 export function beerSvg(b) {
     const c = (MALTS[b.malt] || MALTS.maltBlond).color;
-    const main = b.ings && b.ings.length ? [...b.ings].sort((x, y) => y[1] - x[1])[0][0] : 'barley';
+    // 1.7 : une variété du labo se dessine avec le produit de son espèce
+    const base = id => (b.bases && b.bases[id]) || id;
+    const main = b.ings && b.ings.length ? base([...b.ings].sort((x, y) => y[1] - x[1])[0][0]) : 'barley';
     const body = 'M27 4 L37 4 L37 16 Q46 22 46 30 L46 56 Q46 60 42 60 L22 60 Q18 60 18 56 L18 30 Q18 22 27 16Z';
     const aged = !!b.aged;
     const inner =
@@ -149,7 +151,7 @@ export function beerSvg(b) {
         (b.ings && b.ings.length > 1
             ? b.ings
                   .slice(1)
-                  .map(([id], k) => C(23 + k * 18, 33, 3.6, '#fffaf0', 1.2) + sub(id, 20 + k * 18, 30, 6))
+                  .map(([id], k) => C(23 + k * 18, 33, 3.6, '#fffaf0', 1.2) + sub(base(id), 20 + k * 18, 30, 6))
                   .join('')
             : '') +
         F('M20.5 28 L23 26 L23 54 L20.5 54Z', '#fff', 0.4) +

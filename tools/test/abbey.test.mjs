@@ -107,6 +107,8 @@ test('1.6.3 : les fûts de l’ancien cellier reviennent dans « Mes bières 
     const aged = G.myBeers().find(x => x.aged && x.aged.from === bid);
     assert.ok(aged, 'une bière de garde entre dans « Mes bières »');
     assert.equal(G.beerStock(aged.id), 4);
+    // 1.7 : un nom trop long est raccourci au mot près, sans couper l'âge
+    assert.ok(aged.name.length <= 22 && aged.name.endsWith('élevée'), aged.name);
 });
 
 test('la malterie et l’orge', () => {

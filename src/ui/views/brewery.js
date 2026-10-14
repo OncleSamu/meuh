@@ -14,11 +14,15 @@ import { defineView, defineLive, ui, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { renameBtn } from '../sheets/rename.js';
 import { beerSvg } from '../../art/abbey.js';
+import { genWrap } from '../genlook.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const stars = n => `<span class="brew-stars">${[0, 1, 2].map(k => `<i class="${k < n ? 'on' : ''}">★</i>`).join('')}</span>`;
 const bottle = b => `<i class="ico brew-bottle">${beerSvg(b)}</i>`;
-const ingIcons = ings => ings.map(([id, d]) => `<span class="brew-ing">${ico(['item', id])}${d > 1 ? `<b>×${d}</b>` : ''}</span>`).join('');
+// 1.7 : une variété du labo se dessine avec son apparence
+const varOf = id => state.genetics && state.genetics.vars[id];
+const ingIco = (id, cls = 'ico') => (varOf(id) ? `<i class="${cls}">${genWrap(art('item', varOf(id).g.form), varOf(id).g)}</i>` : ico(['item', id], cls));
+const ingIcons = ings => ings.map(([id, d]) => `<span class="brew-ing">${ingIco(id)}${d > 1 ? `<b>×${d}</b>` : ''}</span>`).join('');
 
 // ---------------- l'abbaye fermée ----------------
 function closedCard() {
@@ -81,7 +85,7 @@ function composerHtml() {
         const it = d.ings[s];
         if (!it) return `<button class="brew-slot empty" data-act="brewPick" data-s="${s}"><b>+</b><span>Ingrédient</span></button>`;
         const [id, dose] = it;
-        return `<div class="brew-slot"><button class="bs-pick" data-act="brewPick" data-s="${s}">${ico(['item', id], 'ico big')}<span>${ITEMS[id].name}</span><small>${state.inventory[id] || 0} en stock</small></button>
+        return `<div class="brew-slot"><button class="bs-pick" data-act="brewPick" data-s="${s}">${ingIco(id, 'ico big')}<span>${G.ingName(id)}${varOf(id) ? ' <small class="chip ok">variété</small>' : ''}</span><small>${G.ingHave(id)} en stock</small></button>
             <div class="stepper">${btn('', { act: 'brewDose', data: { s, d: -1 }, icon: ['ui', 'minus'], disabled: dose <= 1, title: 'Moins', size: 'sm' })}<b>×${dose}</b>${btn('', { act: 'brewDose', data: { s, d: 1 }, icon: ['ui', 'plus'], disabled: dose >= 3, title: 'Plus', size: 'sm' })}</div>
             ${btn('', { act: 'brewDrop', data: { s }, icon: ['ui', 'cross'], kind: 'ghost', size: 'sm', title: 'Retirer' })}</div>`;
     }).join('');
@@ -89,9 +93,9 @@ function composerHtml() {
         G.brewSlots() < 3
             ? `<p class="hint">${G.brewSlots() === 1 ? 'Deux ingrédients après les cuves de fermentation.' : 'Trois ingrédients après l’étiqueterie.'}</p>`
             : '';
-    const beerLike = { malt: d.malt, ings: pv.ings, stars: pv.secret ? 0 : pv.harmony.stars };
+    const beerLike = { malt: d.malt, ings: pv.ings, stars: pv.secret ? 0 : pv.harmony.stars, bases: pv.bases };
     const cost = Object.entries(pv.cost)
-        .map(([id, n]) => `<span class="${(state.inventory[id] || 0) >= n ? 'ok' : 'short'}">${ico(['item', id])}${state.inventory[id] || 0}/${n}</span>`)
+        .map(([id, n]) => `<span class="${G.ingHave(id) >= n ? 'ok' : 'short'}">${ingIco(id)}${G.ingHave(id)}/${n}</span>`)
         .join('');
     const preview = pv.ings.length
         ? `<div class="brew-preview"><div class="bp-art">${beerSvg(beerLike)}</div><div class="bp-main">
@@ -209,7 +213,22 @@ defineSheet('brewPick', {
     render(o) {
         const used = state.brew.draft.ings.map(([id]) => id);
         const list = brewables();
-        return `<p class="card-sub">Il en faut ${ABBEY.ingPerDose} par dose. Les pages déjà dans le livre des bières sont cochées.</p><div class="pick-grid">${list
+        const vars = G.brewVarieties();
+        const top = id =>
+            G.ingFlavor(id)
+                .map((v, k) => [v, k])
+                .filter(x => x[0] >= 3)
+                .map(([v, k]) => `${NOTES[k]} ${v}`)
+                .join(', ');
+        const varHtml = vars.length
+            ? `${section('Mes variétés')}<p class="card-sub">Une variété garde son propre goût dans la bière.</p><div class="pick-grid">${vars
+                  .map(
+                      v =>
+                          `<button class="pick-cell${used.includes(v.id) ? ' locked' : ''}" data-act="brewSet" data-id="${v.id}" data-s="${o.s}"${used.includes(v.id) ? ' disabled' : ''}>${ingIco(v.id, 'ico big')}<b>${G.varName(v)}</b><small>×${G.ingHave(v.id)}${top(v.id) ? ` · ${top(v.id)}` : ''}</small></button>`,
+                  )
+                  .join('')}</div>${section('Espèces')}`
+            : '';
+        return `<p class="card-sub">Il en faut ${ABBEY.ingPerDose} par dose. Les pages déjà dans le livre des bières sont cochées.</p>${varHtml}<div class="pick-grid">${list
             .map(
                 id =>
                     `<button class="pick-cell${used.includes(id) ? ' locked' : ''}" data-act="brewSet" data-id="${id}" data-s="${o.s}"${used.includes(id) ? ' disabled' : ''}>${ico(['item', id], 'ico big')}<b>${ITEMS[id].name}</b><small>×${state.inventory[id] || 0}${state.brew.book[id] ? ' ✓' : ''}</small></button>`,

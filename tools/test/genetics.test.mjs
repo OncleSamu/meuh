@@ -47,7 +47,12 @@ test('un croisement donne des graines d’une nouvelle variété, qui pousse au 
     for (let k = 0; k < 20 && !v; k++) {
         assert.ok(G.startCross('strawberry', 'pepper'));
         tick(GENETICS.crossTime + 1);
-        v = G.finishCross();
+        // 1.7 : une portée de jeunes plants, on en garde un
+        const L = G.finishCross();
+        if (L) {
+            assert.ok(L.kids.length >= 1 && L.kids.length <= GENETICS.litterLab);
+            v = G.keepSeedling(L.id, 0);
+        }
     }
     assert.ok(v, 'au moins un croisement réussi');
     assert.ok(['strawberry', 'pepper'].includes(v.base));

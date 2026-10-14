@@ -500,3 +500,102 @@ html.calm .gp-4 {
     color: var(--ink-soft);
     font-size: 0.78rem;
 }
+
+/* ---------------- 1.7 : portées, but, saveurs d'un coup d'œil ---------------- */
+.fl-mini {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 18px;
+    margin: 2px 0;
+}
+.fl-mini i {
+    position: relative;
+    width: 7px;
+    height: 100%;
+    background: #ead8b4;
+    border: 1.5px solid var(--ink);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.fl-mini b {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.seedlings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(98px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+.seedling {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 4px;
+    background: linear-gradient(#fffdf4, #f6e8c6);
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    text-align: center;
+}
+.seedling.top {
+    background: linear-gradient(#f3ffe4, #d9f2b8);
+    box-shadow: 0 0 0 3px #9be06b;
+}
+.seedling.mut .v-art {
+    filter: drop-shadow(0 0 6px #ffd23f);
+}
+.seedling b {
+    font-size: 0.76rem;
+    line-height: 1.1;
+}
+.seedling small {
+    font-size: 0.66rem;
+    font-weight: 800;
+    color: var(--ink-soft);
+}
+.seedling .chip {
+    font-size: 0.64rem;
+}
+.lab-run {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 6px 8px;
+    background: #f6ead0;
+    border-radius: 12px;
+}
+.lab-run > .card-sub {
+    flex: 1;
+}
+.lab-pair.small .lab-parent {
+    padding: 4px;
+}
+.lab-pair.small .lp-art {
+    width: 36px;
+    height: 36px;
+}
+.lab-pair.small b {
+    font-size: 0.7rem;
+}
+.goal-card.on {
+    background: linear-gradient(#fffdf0, #fdf1c6);
+}
+.goal-card .lab-ranges {
+    margin-top: 4px;
+}
+.gene-fx {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.gene-fx .ico {
+    width: 18px;
+    height: 18px;
+    flex: none;
+}

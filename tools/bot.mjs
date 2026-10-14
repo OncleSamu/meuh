@@ -406,20 +406,31 @@ function island() {
 function lab() {
     if (!state.genetics || !G.plantLabOpen()) return;
     const gx = state.genetics;
-    if (G.crossReady()) G.finishCross();
-    if (!gx.cross && state.money > G.crossCost() * 20) {
+    // 1.7 : une portée : garder le jeune plant le plus proche du but, ou le plus savoureux
+    while (G.crossReady()) G.finishCross();
+    gx.litters.slice().forEach(L => {
+        const score = k => (G.goalOf() ? G.goalScore(k.g) * 10 : 0) + G.flavorGain(k.g) + G.stability(k.g);
+        const best = L.kids.map((k, j) => [score(k), j]).sort((x, y) => y[0] - x[0])[0];
+        if (!G.keepSeedling(L.id, best[1])) G.dropLitter(L.id);
+    });
+    if (gx.chef && gx.chef.base && !G.goalOf()) G.setGoal('chef');
+    if (G.junkVarieties().length > 6) G.compostJunk();
+    while (G.crossFree() && state.money > G.crossCost() * 20) {
+        const plan = G.goalPlan();
+        if (plan && plan.a && G.startCross(plan.a, plan.b)) continue;
         const best = G.openVarieties().sort((a, b) => G.flavorGain(b.g) - G.flavorGain(a.g))[0];
-        if (best && Math.random() < 0.6) G.startCross(best.id, best.id);
-        else {
-            const pool = crops()
-                .map(i => i.id)
-                .filter(G.isPlant);
-            if (pool.length > 1) G.startCross(pool[t % pool.length], pool[(t * 7 + 3) % pool.length]);
-        }
+        if (best && Math.random() < 0.6 && G.startCross(best.id, best.id)) continue;
+        const pool = crops()
+            .map(i => i.id)
+            .filter(G.isPlant);
+        if (!(pool.length > 1 && G.startCross(pool[t % pool.length], pool[(t * 7 + 3) % pool.length]))) break;
     }
     G.varieties().forEach(v => {
         if (G.canFix(v)) G.fixVariety(v.id, `Bot ${v.id}`);
         if (gx.stock[v.id] > 0 && G.chefMatches(v)) G.deliverChef(v.id);
+        // le but atteint : la semer par défaut pour en récolter
+        const p = G.goalPlan();
+        if (p && p.done === v.id && G.preferOf(v.base) !== v.id) G.setPrefer(v.id);
     });
     if (G.salonOpen() && gx.salon && !gx.salon.entry) {
         const c = G.salonCandidates().sort((a, b) => b.score - a.score)[0];

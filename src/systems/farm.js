@@ -18,7 +18,7 @@ import { collect, record } from './book.js';
 import { sellPrice, hasMats, matMissing, payMats } from './market.js';
 import { challengeOn } from './prestige.js';
 import { eventProgress } from './events.js';
-import { varGrowth, varHardy, varExtra, varSelfWater, takeVarSeed, harvestVariety } from './genetics.js';
+import { varGrowth, varHardy, varExtra, varSelfWater, takeVarSeed, harvestVariety, preferSeed } from './genetics.js';
 import { wishGold } from './night.js';
 
 const COIN = ['ui', 'coin'];
@@ -225,6 +225,12 @@ export function doPlotAction(i, action, at) {
             }
             const res = plantSeed(p, tool);
             if (res && i >= 1000) p.isWatered = true;
+            // 1.7 : la variété préférée de cette espèce pousse à sa place
+            const pv = res && d.type === 'crop' && preferSeed(tool);
+            if (pv) {
+                p.v = pv;
+                if (varSelfWater(pv)) p.isWatered = true;
+            }
             if (!res) {
                 sfx('error');
                 shake(at);
@@ -567,7 +573,11 @@ export function harvestPlot(plot) {
             resetPlot(plot, d.id);
             plot.v = vid;
             plot.isWatered = inGreenhouse(plot) || varSelfWater(vid);
-        } else if (state.settings.autoReplant) autoReplant(plot, d);
+        } else if (state.settings.autoReplant) {
+            autoReplant(plot, d);
+            const pv = plot.itemId === d.id && !plot.v && preferSeed(d.id);
+            if (pv) plot.v = pv;
+        }
     }
     return { item: d, qty, golden, quality };
 }
