@@ -45,6 +45,10 @@ export const labOpen = () => projectDone(GX.labProject);
 export const seedbankOpen = () => projectDone(GX.seedbankProject);
 export const salonOpen = () => projectDone(GX.salonProject);
 export const geneticsOpen = () => plantLabOpen() || breedOpen();
+// 1.7 : deux pollinisations à la fois avec la ruche, une portée plus grande avec le laboratoire, plusieurs enclos
+export const crossSlots = () => (projectDone(GX.hiveProject) ? GX.crossSlotsHive : 1);
+export const litterSize = () => (labOpen() ? GX.litterLab : GX.litter);
+export const breedSlots = () => GX.breedPens + (labOpen() ? 1 : 0) + (seedbankOpen() ? 1 : 0);
 export const isPlant = id => ITEMS[id] && (ITEMS[id].type === 'crop' || ITEMS[id].type === 'tree') && FLAVORS[id];
 
 export function ensureGenetics() {
@@ -55,6 +59,15 @@ export function ensureGenetics() {
     G.stock = G.stock || {};
     G.races = G.races || {};
     if (G.bestFirst === undefined) G.bestFirst = true;
+    // 1.7 : plusieurs croisements et élevages à la fois, des portées, un but, des variétés semées par défaut
+    if (!G.crosses) G.crosses = G.cross ? [G.cross] : [];
+    if (!G.breeds) G.breeds = G.breed ? [G.breed] : [];
+    delete G.cross;
+    delete G.breed;
+    G.litters = G.litters || [];
+    G.prefer = G.prefer || {};
+    G.salonWon = G.salonWon || {};
+    if (G.goal === undefined) G.goal = null;
     state.animals.forEach(a => {
         if (!a.uid) a.uid = 'a' + G.next++;
         if (!a.g) a.g = wildAnimal(a.type, true);
@@ -237,9 +250,10 @@ export const breedCost = () => Math.round(GX.breedCost(scaleLvl()) / 10) * 10;
 export const analyzeCost = () => Math.round(GX.analyzeCost(scaleLvl()) / 10) * 10;
 
 // lancer une pollinisation (au labo) : elle prend un peu de temps
+export const crossFree = () => plantLabOpen() && state.genetics.crosses.length < crossSlots();
 export function startCross(a, b, at) {
     const G = state.genetics;
-    if (!plantLabOpen() || G.cross) return false;
+    if (!plantLabOpen() || !crossFree()) return false;
     const A = parentGenome(a),
         B = parentGenome(b);
     if (!A || !B) return false;
@@ -255,7 +269,7 @@ export function startCross(a, b, at) {
         return false;
     }
     spend(cost);
-    G.cross = { a, b, until: now() + GX.crossTime * 1000 };
+    G.crosses.push({ a, b, until: now() + GX.crossTime * 1000 });
     sfx('plant');
     burst(at, 'sparkle', 10);
     float(at, [`-${fmt(cost)}`, ['ui', 'coin']], 'bad', -14);
@@ -263,50 +277,152 @@ export function startCross(a, b, at) {
     changed('lab');
     return true;
 }
-export const crossReady = () => !!(state.genetics.cross && now() >= state.genetics.cross.until);
+export const crossReady = () => !!(state.genetics && state.genetics.crosses.some(c => now() >= c.until));
 
-// récolter les graines d'un croisement terminé ; renvoie la nouvelle variété, ou null (stérile)
+// 1.7 : récolter un croisement terminé donne une portée de jeunes plants ; on en garde un.
+// Renvoie la portée, ou null si toutes les graines sont stériles.
 export function finishCross(at) {
-    const G = state.genetics,
-        c = G.cross;
-    if (!c || now() < c.until) return null;
-    G.cross = null;
+    const G = state.genetics;
+    const k = G.crosses.findIndex(c => now() >= c.until);
+    if (k < 0) return null;
+    const c = G.crosses.splice(k, 1)[0];
     const A = parentGenome(c.a),
         B = parentGenome(c.b);
     if (!A || !B) return null;
-    if (Math.random() < sterileChance(A, B)) {
+    const kids = [];
+    for (let j = 0; j < litterSize(); j++) {
+        if (Math.random() < sterileChance(A, B)) continue;
+        const { g, mutated } = crossGenomes(A, B, mutationRate());
+        kids.push({ g, mut: mutated });
+    }
+    state.stats.crosses = (state.stats.crosses || 0) + 1;
+    if (!kids.length) {
         toast('Les graines sont stériles : rien n’a germé. Un autre essai ?', ['ui', 'rot']);
         sfx('error');
         changed('lab');
         return null;
     }
-    const { g, mutated } = crossGenomes(A, B, mutationRate());
+    const litter = {
+        id: 'L' + G.next++,
+        a: c.a,
+        b: c.b,
+        gen: Math.max(parentGen(c.a), parentGen(c.b)) + 1,
+        auto: hybridName(parentBase(c.a), parentBase(c.b)),
+        lin: [G.vars[c.a] ? lineSnap(G.vars[c.a], true) : wildSnap(c.a), G.vars[c.b] ? lineSnap(G.vars[c.b], true) : wildSnap(c.b)],
+        kids,
+    };
+    G.litters.push(litter);
+    sfx('level');
+    buzz(20);
+    burst(at, 'sparkle', 12);
+    addXp(40 + scaleLvl() * 4, at);
+    if (kids.some(x => x.mut)) toast('Mutation dans la portée : un jeune plant a quelque chose d’unique', ['ui', 'star']);
+    changed('lab');
+    return litter;
+}
+
+// garder un jeune plant de la portée : il devient une variété, avec ses graines ; les autres partent au compost
+export function keepSeedling(lid, k, at) {
+    const G = state.genetics;
+    const li = G.litters.findIndex(l => l.id === lid);
+    const L = G.litters[li];
+    const kid = L && L.kids[k];
+    if (!kid) return null;
+    if (openVarieties().length >= GX.maxVarieties) {
+        toast(`Déjà ${GX.maxVarieties} variétés en cours : fixez-en ou jetez-en d’abord`, ['ui', 'flowers']);
+        sfx('error');
+        return null;
+    }
+    G.litters.splice(li, 1);
     const id = 'v' + G.next++;
     const v = {
         id,
         kind: 'plant',
-        base: g.form,
-        auto: hybridName(parentBase(c.a), parentBase(c.b)),
+        base: kid.g.form,
+        auto: L.auto,
         name: null,
-        g,
-        gen: Math.max(parentGen(c.a), parentGen(c.b)) + 1,
+        g: kid.g,
+        gen: L.gen,
         fixed: false,
         analyzed: false,
-        mut: mutated,
+        mut: kid.mut,
         born: now(),
-        lin: [G.vars[c.a] ? lineSnap(G.vars[c.a], true) : wildSnap(c.a), G.vars[c.b] ? lineSnap(G.vars[c.b], true) : wildSnap(c.b)],
+        lin: L.lin,
     };
     G.vars[id] = v;
     G.seeds[id] = (G.seeds[id] || 0) + GX.seedsPerCross;
-    state.stats.crosses = (state.stats.crosses || 0) + 1;
-    sfx('level');
-    buzz(25);
-    burst(at, 'sparkle', 16);
-    addXp(40 + scaleLvl() * 4, at);
+    state.inventory.fertilizer = (state.inventory.fertilizer || 0) + L.kids.length - 1;
+    sfx('pop');
+    burst(at, 'sparkle', 10);
     emit('newVariety', id);
-    if (mutated) toast(`Mutation ! ${varName(v)} a quelque chose d’unique`, ['ui', 'star']);
     changed('lab');
     return v;
+}
+export function dropLitter(lid) {
+    const G = state.genetics;
+    const li = G.litters.findIndex(l => l.id === lid);
+    if (li < 0) return false;
+    state.inventory.fertilizer = (state.inventory.fertilizer || 0) + G.litters[li].kids.length;
+    G.litters.splice(li, 1);
+    changed('lab');
+    return true;
+}
+
+// ---------------- 1.7 : viser un goût (commande du chef, Salon) ----------------
+const FI = k => FLAVOR_IDS.indexOf(k);
+export function setGoal(from) {
+    const G = state.genetics;
+    if (!from) G.goal = null;
+    else if (from === 'chef') {
+        const c = G.chef;
+        if (!c || !c.base) return false;
+        G.goal = { from, base: c.base, need: { ...c.need } };
+    } else if (from === 'salon') {
+        const crit = salonCrit();
+        if (!crit || crit.kind !== 'plant' || !FLAVOR_IDS.includes(crit.trait)) return false;
+        G.goal = { from, base: null, need: { [crit.trait]: 5 }, crit: crit.id };
+    } else return false;
+    changed('lab');
+    return true;
+}
+// le but tient-il encore ? (la commande du chef a pu changer, le Salon aussi)
+function checkGoal() {
+    const G = state.genetics,
+        o = G.goal;
+    if (!o) return false;
+    const gone = o.from === 'chef' ? !G.chef || G.chef.base !== o.base : !G.salon || G.salon.crit !== o.crit;
+    if (gone) G.goal = null;
+    return gone;
+}
+export const goalOf = () => (state.genetics && state.genetics.goal) || null;
+// de 0 à 1 : à quel point un génome s'approche du but
+export function goalScore(g, goal = goalOf()) {
+    if (!goal || !g) return 0;
+    const keys = Object.keys(goal.need);
+    const tot = keys.reduce((a, k) => a + goal.need[k], 0);
+    const s = keys.reduce((a, k) => a + Math.min(traitOf(g, k), goal.need[k]), 0) / tot;
+    return goal.base && g.form !== goal.base ? s * 0.5 : s;
+}
+const carried = (g, k) => Math.max(g.t[k][0][0], g.t[k][1][0]);
+// le meilleur point de départ et le prochain croisement conseillé
+export function goalPlan(goal = goalOf()) {
+    if (!goal) return null;
+    const keys = Object.keys(goal.need);
+    const mine = varieties()
+        .filter(v => !goal.base || v.g.form === goal.base)
+        .sort((x, y) => goalScore(y.g, goal) - goalScore(x.g, goal) || stability(y.g) - stability(x.g));
+    const best = mine[0];
+    if (best && goalScore(best.g, goal) >= 1) return { done: best.id };
+    const wild = Object.keys(FLAVORS).filter(id => ITEMS[id] && ITEMS[id].type === 'crop' && lvOk(ITEMS[id]) && storyOk(ITEMS[id]) && !ITEMS[id].island);
+    const byTrait = k => [...wild].sort((x, y) => FLAVORS[y][FI(k)] - FLAVORS[x][FI(k)]);
+    const start = best && goalScore(best.g, goal) > goalScore(wildPlant(goal.base || byTrait(keys[0])[0]), goal) ? best.id : goal.base || byTrait(keys[0])[0];
+    const g = parentGenome(start);
+    const missing = keys.filter(k => carried(g, k) < goal.need[k]);
+    // toutes les bonnes versions sont là : il faut les rassembler en recroisant la plante avec elle-même
+    if (!missing.length) return { a: start, b: start, self: true };
+    const k = missing[0];
+    const donor = byTrait(k).find(id => id !== parentBase(start));
+    return { a: start, b: donor, trait: k };
 }
 
 // analyser : les versions cachées des gènes deviennent visibles
@@ -354,6 +470,31 @@ export function fixVariety(id, name, at) {
     return true;
 }
 
+// 1.7 : les variétés sans intérêt (rien gagné, rien en stock, pas visées), proposées au compost
+export function junkVarieties() {
+    const G = state.genetics;
+    const plan = goalPlan();
+    const keep = new Set([...(plan ? [plan.a, plan.b, plan.done] : []), ...Object.values(G.prefer || {})]);
+    return openVarieties().filter(
+        v =>
+            !keep.has(v.id) &&
+            !v.g.halo &&
+            !(G.stock[v.id] > 0) &&
+            flavorGain(v.g) === 0 &&
+            (!goalOf() || goalScore(v.g) < 0.6) &&
+            now() - (v.born || 0) > 10 * 60 * 1000,
+    );
+}
+export function compostJunk() {
+    const list = junkVarieties();
+    list.forEach(v => discardVariety(v.id));
+    if (list.length) {
+        state.inventory.fertilizer = (state.inventory.fertilizer || 0) + list.length;
+        toast(`${list.length} variété${list.length > 1 ? 's' : ''} au compost`, ['ui', 'flowers']);
+    }
+    return list.length;
+}
+
 export function discardVariety(id) {
     const G = state.genetics;
     const v = G.vars[id];
@@ -361,6 +502,7 @@ export function discardVariety(id) {
     delete G.vars[id];
     delete G.seeds[id];
     delete G.stock[id];
+    if (G.prefer && G.prefer[v.base] === id) delete G.prefer[v.base];
     if (G.tool === id) G.tool = null;
     if (state.selectedTool === 'var' && !G.tool) state.selectedTool = 'hand';
     changed('lab');
@@ -389,19 +531,19 @@ export function buyVarietySeeds(id, n = 5, at) {
 // les gènes de culture jouent sur la pousse, la soif, la saison et le rendement
 export const varGrowth = vid => {
     const v = state.genetics && state.genetics.vars[vid];
-    return v ? 1 + (traitOf(v.g, 'speed') - 2) * 0.06 : 1;
+    return v ? 1 + (traitOf(v.g, 'speed') - 2) * GX.geneSpeed : 1;
 };
 export const varHardy = vid => {
     const v = state.genetics && state.genetics.vars[vid];
-    return v ? 1 + Math.max(0, traitOf(v.g, 'hardy') - 2) * 0.1 : 1;
+    return v ? 1 + Math.max(0, traitOf(v.g, 'hardy') - 2) * GX.geneHardy : 1;
 };
 export const varSelfWater = vid => {
     const v = state.genetics && state.genetics.vars[vid];
-    return v ? Math.random() < Math.max(0, traitOf(v.g, 'drought') - 2) * 0.15 : false;
+    return v ? Math.random() < Math.max(0, traitOf(v.g, 'drought') - 2) * GX.geneDrought : false;
 };
 export const varExtra = vid => {
     const v = state.genetics && state.genetics.vars[vid];
-    return v && Math.random() < Math.max(0, traitOf(v.g, 'yield') - 2) * 0.08 ? 1 : 0;
+    return v && Math.random() < Math.max(0, traitOf(v.g, 'yield') - 2) * GX.geneYield ? 1 : 0;
 };
 
 // prendre une graine de variété pour semer ; renvoie l'espèce à planter, ou null
@@ -411,6 +553,38 @@ export function takeVarSeed(vid) {
     if (!v || !(G.seeds[vid] > 0)) return null;
     G.seeds[vid]--;
     return v.base;
+}
+
+// 1.7 : semer sa variété par défaut. Quand on sème l'espèce, c'est la variété préférée qui pousse :
+// avec ses graines s'il en reste, sinon (variété fixée et conservatoire) en payant la différence de prix.
+export function setPrefer(vid) {
+    const G = state.genetics,
+        v = G.vars[vid];
+    if (!v) return false;
+    if (G.prefer[v.base] === vid) delete G.prefer[v.base];
+    else G.prefer[v.base] = vid;
+    return true;
+}
+export const preferOf = base => {
+    const G = state.genetics;
+    const vid = G && G.prefer && G.prefer[base];
+    return vid && G.vars[vid] ? vid : null;
+};
+export function preferSeed(base) {
+    const vid = preferOf(base);
+    if (!vid) return null;
+    const G = state.genetics,
+        v = G.vars[vid];
+    if (G.seeds[vid] > 0) {
+        G.seeds[vid]--;
+        return vid;
+    }
+    const extra = Math.max(0, seedPrice(v) - (ITEMS[base].cost || 0));
+    if (v.fixed && seedbankOpen() && state.money >= extra) {
+        spend(extra);
+        return vid;
+    }
+    return null;
 }
 
 // une récolte de variété : ses produits gardent leur nom, et parfois une graine tombe
@@ -449,7 +623,7 @@ export function clampVarieties() {
 }
 
 // revendre des produits de variété, à prix d'or selon leur goût
-export const varietyMult = v => Math.min(GX.varietySellCap, 1 + flavorGain(v.g) / 6 + (v.g.halo ? 0.3 : 0));
+export const varietyMult = v => Math.min(GX.varietySellCap, 1 + flavorGain(v.g) / GX.varietySellDiv + (v.g.halo ? 0.3 : 0));
 export const varietyPrice = v => Math.round(unitPrice(v.base) * varietyMult(v));
 export function sellVariety(id, n, at) {
     clampVarieties();
@@ -552,7 +726,7 @@ export function startBreed(ua, ub, at) {
     const G = state.genetics;
     const a = animalByUid(ua),
         b = animalByUid(ub);
-    if (!breedOpen() || G.breed || !breedable(a, b)) return false;
+    if (!breedOpen() || G.breeds.length >= breedSlots() || !breedable(a, b) || breeding(ua) || breeding(ub)) return false;
     if (herdFull()) {
         toast('Tous vos prés sont pleins : il faut une place pour le petit', ['ui', 'flowers']);
         sfx('error');
@@ -565,7 +739,7 @@ export function startBreed(ua, ub, at) {
         return false;
     }
     spend(cost);
-    G.breed = { a: ua, b: ub, type: a.type, until: now() + GX.breedTime * 1000 };
+    G.breeds.push({ a: ua, b: ub, type: a.type, until: now() + GX.breedTime * 1000 });
     sfx(a.type);
     burst(at, 'sparkle', 10);
     float(at, [`-${fmt(cost)}`, ['ui', 'coin']], 'bad', -14);
@@ -590,33 +764,66 @@ export function lineSnap(x, deep) {
 // une plante sauvage dans une lignée : son espèce, génération 0
 const wildSnap = id => ({ n: ITEMS[id] ? ITEMS[id].name : id, b: id, g: null, gen: 0 });
 
-// la naissance : un petit dont les gènes viennent des deux parents
+// la naissance : un petit dont les gènes viennent des deux parents ; parfois des jumeaux (1.7)
+export const breeding = uid => !!(state.genetics && state.genetics.breeds.some(b => b.a === uid || b.b === uid));
+export const breedFree = () => breedOpen() && state.genetics.breeds.length < breedSlots();
 export function breedTick() {
     const G = state.genetics;
-    const c = G && G.breed;
-    if (!c || now() < c.until || herdFull()) return false;
-    const a = animalByUid(c.a),
-        b = animalByUid(c.b);
-    G.breed = null;
-    if (!a || !b) return true;
+    if (!G || !G.breeds || !G.breeds.length) return false;
+    let ch = false;
+    for (const c of [...G.breeds]) {
+        if (now() < c.until || herdFull()) continue;
+        G.breeds.splice(G.breeds.indexOf(c), 1);
+        ch = true;
+        const a = animalByUid(c.a),
+            b = animalByUid(c.b);
+        if (!a || !b) continue;
+        const n = Math.random() < GX.twins ? 2 : 1;
+        const born = [];
+        for (let j = 0; j < n && !herdFull(); j++) born.push(birth(a, b, c.type));
+        if (!born.length) continue;
+        const [baby] = born;
+        const e = c.type === 'chicken' || c.type === 'cow' || c.type === 'goat' ? 'e' : '';
+        toast(
+            born.length > 1
+                ? `Des jumeaux ! ${baby.name} et ${born[1].name} sont nés à l’étable de sélection`
+                : `${baby.name} est né${e} à l’étable de sélection${baby.mut ? ' : une mutation !' : ''}`,
+            ['animal', c.type],
+        );
+        sfx(c.type);
+        addXp((60 + scaleLvl() * 5) * born.length);
+    }
+    return ch;
+}
+function birth(a, b, type) {
+    const G = state.genetics;
     const { g, mutated } = crossGenomes(a.g, b.g, mutationRate());
-    const baby = newAnimal(c.type);
+    const baby = newAnimal(type);
     baby.uid = 'a' + G.next++;
     baby.g = g;
     baby.gen = Math.max(a.gen || 0, b.gen || 0) + 1;
     baby.parents = [a.name, b.name];
     baby.lin = [lineSnap(a, true), lineSnap(b, true)];
+    if (mutated) baby.mut = true;
     if (a.race && a.race === b.race) baby.race = a.race;
     placeAnimal(baby);
     state.animals.push(baby);
     state.stats.births = (state.stats.births || 0) + 1;
-    toast(
-        `${baby.name} est né${c.type === 'chicken' || c.type === 'cow' || c.type === 'goat' ? 'e' : ''} à l’étable de sélection${mutated ? ' : une mutation !' : ''}`,
-        ['animal', c.type],
-    );
-    sfx(c.type);
-    addXp(60 + scaleLvl() * 5);
-    return true;
+    return baby;
+}
+
+// 1.7 : ce que les gènes d'une bête lui apportent, en mots simples
+export function geneEffects(a) {
+    if (!a || !a.g) return [];
+    const up = k => Math.max(0, animalTrait(a, k) - animalBase(a, k));
+    const out = [];
+    const q = up('rich') + up('soft') + up('aroma');
+    if (q) out.push(`produits de meilleure qualité (+${q})`);
+    if (animalTrait(a, 'yield') > 2) out.push(`+${Math.round(animalYieldGene(a) * 100)} % de produits`);
+    if (animalTrait(a, 'speed') > 2) out.push(`produit ${Math.round((animalSpeedGene(a) - 1) * 100)} % plus vite`);
+    if (animalTrait(a, 'appetite') > 2) out.push(`mange moins (${Math.round((animalTrait(a, 'appetite') - 2) * 7)} % de repas offerts)`);
+    if (animalRobust(a)) out.push('presque jamais malade');
+    return out;
 }
 
 export const canFixRace = a => labOpen() && a && !a.race && (a.gen || 0) >= GX.fixGen && a.g && stability(a.g) === 1;
@@ -683,7 +890,7 @@ export function ensureChef() {
     const order = FLAVOR_IDS.map((k, j) => [k, f[j]]).sort((x, y) => y[1] - x[1]);
     const need = { [order[0][0]]: Math.min(5, order[0][1] + 1 + (Math.random() < 0.4 ? 1 : 0)) };
     if (Math.random() < 0.6) need[order[1][0]] = Math.min(5, order[1][1] + 1);
-    G.chef = { base, need, qty: 5, gold: Math.round(ITEMS[base].sell * 5 * 9 + scaleLvl() * 200), until: t + 4 * 3600 * 1000 };
+    G.chef = { base, need, qty: 5, gold: Math.round(ITEMS[base].sell * 5 * 9 + scaleLvl() * 200), until: t + GX.chefHours * 3600 * 1000 };
     return true;
 }
 export const chefMatches = v => {
@@ -704,6 +911,7 @@ export function deliverChef(vid, at) {
     state.inventory[mat] = (state.inventory[mat] || 0) + 2;
     addXp(150 + scaleLvl() * 8, at);
     G.chef = { wait: now() + 60 * 60 * 1000, done: true };
+    if (G.goal && G.goal.from === 'chef') G.goal = null;
     sfx('level');
     burst(at, 'sparkle', 16);
     toast(`Le chef est ravi : ${fmt(c.gold)} pièces et ${qtyName(2, ITEMS[mat].name)}`, ['ui', 'star']);
@@ -776,7 +984,10 @@ function awardSalon(s) {
     const r = salonRank(s);
     if (!r) return;
     const coins = Math.round(([0, 12000, 6000, 3000, 1000][r] * (1 + scaleLvl() * 0.05)) / 10) * 10;
-    const rub = r === 1 ? 2 : r === 2 ? 1 : 0;
+    const G = state.genetics;
+    const first = r === 1 && !G.salonWon[s.crit];
+    const rub = r === 1 ? (first ? GX.salonFirstRuban : GX.salonRuban) : 0;
+    if (r === 1) G.salonWon[s.crit] = (G.salonWon[s.crit] || 0) + 1;
     earn(Math.round(coins), null);
     state.prestige.rubans += rub;
     state.stats.salonWins = (state.stats.salonWins || 0) + (r === 1 ? 1 : 0);
@@ -796,11 +1007,13 @@ export function salonTick() {
 export function geneticsTick() {
     if (!state.genetics) return false;
     let ch = false;
-    if (state.genetics.cross && crossReady() && !state.genetics.cross.told) {
-        state.genetics.cross.told = true;
-        toast('Le croisement est prêt : récoltez les graines au labo', ['ui', 'flowers']);
-        ch = true;
-    }
+    for (const c of state.genetics.crosses || [])
+        if (now() >= c.until && !c.told) {
+            c.told = true;
+            toast('Le croisement est prêt : découvrez la portée au labo', ['ui', 'flowers']);
+            ch = true;
+        }
+    if (checkGoal()) ch = true;
     if (breedTick()) ch = true;
     if (ensureChef()) ch = true;
     if (salonTick()) ch = true;

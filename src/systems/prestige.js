@@ -48,7 +48,7 @@ export function doPrestige(challenge, theme) {
         // le village rénové et la grange restent acquis
         projects: state.projects,
         // la génétique garde ses créations, ses variétés et leurs graines ; produits et bêtes partent avec la ferme
-        genetics: state.genetics ? { ...state.genetics, stock: {}, cross: null, breed: null } : null,
+        genetics: state.genetics ? { ...state.genetics, stock: {}, crosses: [], breeds: [], litters: [] } : null,
         // la brasserie garde ses recettes et son livre ; les bouteilles, les cuves et les fûts partent avec la ferme
         brew: state.brew ? { ...state.brew, stock: {}, vats: [], barrels: [] } : null,
         // les grands défis gardent leurs trophées ; le défi en cours est mis de côté

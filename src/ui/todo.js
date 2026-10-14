@@ -71,6 +71,13 @@ export function todoList() {
         if (bo) push('machines/brew', ['villager', 'hugues'], `${bo} commande${s(bo)} de bière à livrer`, bo);
         if (G.beerBookClaimable()) push('machines/brew', ['ui', 'beer'], 'Récompense du livre des bières', 1);
     }
+    // 1.7 : le labo
+    if (state.genetics && G.geneticsOpen()) {
+        const lt = state.genetics.litters.length + (G.crossReady() ? 1 : 0);
+        if (lt) push('machines/lab', ['ui', 'flowers'], `${lt} portée${s(lt)} à découvrir`, lt);
+        const p = G.goalPlan();
+        if (p && p.done && !(state.genetics.stock[p.done] > 0)) push('machines/lab', ['ui', 'search'], 'But atteint : semez la variété', 1);
+    }
     if (G.caveOpen()) {
         const care = G.caveCareCount();
         if (care) push('machines/cave', ['ui', 'turn'], `${care} lot${s(care)} à soigner`, care);

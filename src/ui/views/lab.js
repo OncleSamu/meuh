@@ -1,6 +1,7 @@
 // Atelier | Labo : croiser des plantes, élever des animaux, suivre ses variétés, fixer et nommer ses créations, le Salon.
 // Lisible avant tout : des icônes et des jauges, jamais de tableau de génétique.
 import { state } from '../../core/state.js';
+import { now } from '../../core/clock.js';
 import { fmt } from '../../core/format.js';
 import { on, toast } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
@@ -16,6 +17,8 @@ import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { confirmTap } from '../confirm.js';
 import { genWrap, looksText, animalArt, lineageHtml } from '../genlook.js';
 import { renameBtn } from '../sheets/rename.js';
+import { NOTE_COL } from '../../data/abbey.js';
+import { chefCard } from './orders.js';
 
 const pct = x => `${Math.round(x * 100)} %`;
 
@@ -46,6 +49,14 @@ export function animalTraits(a) {
     const base = ANIMAL_BASE[a.type] || [];
     return `<div class="traits">${ANIMAL_TRAITS.map((t, j) => traitRow(t, a.g, base[j] || 2, a.analyzed)).join('')}</div>`;
 }
+// 1.7 : les cinq saveurs en petites barres, lisibles d'un coup d'œil
+export function flavorMini(g) {
+    return `<span class="fl-mini">${G.FLAVOR_IDS.map((k, j) => {
+        const v = G.traitOf(g, k);
+        return `<i title="${PLANT_TRAITS[j].name} ${v}"><b style="height:${v * 20}%;background:${NOTE_COL[j]}"></b></i>`;
+    }).join('')}</span>`;
+}
+const goalPct = g => (G.goalOf() ? `<span class="chip ${G.goalScore(g) >= 1 ? 'ok' : 'now'}">but ${pct(G.goalScore(g))}</span>` : '');
 const chance = (label, x, cls = '') => (x > 0.004 ? `<span class="chip ${cls}">${label} ${pct(x)}</span>` : '');
 
 // ---------------- la station fermée ----------------
@@ -75,12 +86,17 @@ const animalArtOf = a => (a ? animalArt(a.type, a.g) : '');
 
 function crossCard() {
     if (!G.plantLabOpen()) return lockedCard('pollination', ['item', 'strawberry'], 'Croiser des plantes');
-    const c = state.genetics.cross;
-    if (c)
-        return `<div class="card lab-card"><div class="card-head">${ico(['ui', 'flowers'], 'ico big')}<div class="card-main"><div class="card-title">Pollinisation en cours</div>
-            <div class="card-sub">${G.parentName(c.a)} × ${G.parentName(c.b)}</div></div></div>
-            <div class="lab-pair">${parentSlotStatic(c.a)}<span class="lab-x">×</span>${parentSlotStatic(c.b)}</div>
-            ${G.crossReady() ? btn('Récolter les graines', { act: 'finishCross', kind: 'gold', wide: true, size: 'lg', icon: ['ui', 'basket'] }) : `<div class="lab-wait">${ico(['ui', 'clock'])}Prêt dans ${timer(c.until)}</div>`}</div>`;
+    const list = state.genetics.crosses;
+    const running = list
+        .map(
+            c => `<div class="lab-run"><span class="lab-pair small">${parentSlotStatic(c.a)}<span class="lab-x">×</span>${parentSlotStatic(c.b)}</span>
+            ${now() >= c.until ? btn('Découvrir la portée', { act: 'finishCross', kind: 'gold', size: 'sm', icon: ['ui', 'basket'] }) : `<span class="lab-wait">${ico(['ui', 'clock'])}${timer(c.until)}</span>`}</div>`,
+        )
+        .join('');
+    const slots = G.crossSlots();
+    const head = `<div class="card-head">${ico(['ui', 'flowers'], 'ico big')}<div class="card-main"><div class="card-title">Croiser des plantes</div>
+        <div class="card-sub">Deux espèces, ou deux variétés : chaque croisement donne une portée de ${G.litterSize()} jeunes plants, et vous gardez le meilleur.${slots > 1 ? ` ${slots} pollinisations à la fois.` : ''}</div></div></div>`;
+    if (!G.crossFree()) return `<div class="card lab-card">${head}${running}</div>`;
     const sel = (ui.sel.cross = ui.sel.cross || {});
     const ready = sel.a && sel.b && G.parentGenome(sel.a) && G.parentGenome(sel.b);
     let preview = '';
@@ -96,12 +112,72 @@ function crossCard() {
                 })
                 .join('')}</div>`;
     }
-    return `<div class="card lab-card"><div class="card-head">${ico(['ui', 'flowers'], 'ico big')}<div class="card-main"><div class="card-title">Croiser des plantes</div>
-        <div class="card-sub">Deux espèces, ou deux variétés : les graines mêlent leurs gènes. Les issues ci-dessous sont des chances, pas des promesses.</div></div></div>
+    return `<div class="card lab-card">${head}${running}
         <div class="lab-pair">${parentSlot('a', sel.a, 'plant')}<span class="lab-x">×</span>${parentSlot('b', sel.b, 'plant')}</div>
         ${preview}
         ${btn(`Polliniser · ${fmt(G.crossCost())}${ico(['ui', 'coin'])}`, { act: 'startCross', kind: ready ? 'green' : '', wide: true, disabled: !ready })}</div>`;
 }
+
+// ---------------- 1.7 : la portée ----------------
+function littersHtml() {
+    const L = state.genetics.litters;
+    if (!L.length) return '';
+    return L.map(l => {
+        const best = G.goalOf() ? Math.max(...l.kids.map(k => G.goalScore(k.g))) : -1;
+        const cells = l.kids
+            .map((k, j) => {
+                const top = best >= 0 && G.goalScore(k.g) === best && best > 0;
+                return `<div class="seedling${top ? ' top' : ''}${k.mut ? ' mut' : ''}"><span class="v-art">${genWrap(art('item', k.g.form), k.g)}</span>
+                    <b>${ITEMS[k.g.form].name}</b>${flavorMini(k.g)}
+                    <small>${pct(G.stability(k.g))} stable${k.mut ? ' · mutation' : ''}</small>${goalPct(k.g)}${top ? '<span class="chip ok">le plus proche</span>' : ''}
+                    ${btn('Garder', { act: 'keepSeedling', data: { l: l.id, k: j }, kind: top ? 'green' : '', size: 'sm' })}</div>`;
+            })
+            .join('');
+        return `<div class="card lab-card litter"><div class="card-head">${ico(['ui', 'flowers'], 'ico big')}<div class="card-main"><div class="card-title">La portée : ${esc(l.auto)}</div>
+            <div class="card-sub">${G.parentName(l.a)} × ${G.parentName(l.b)} · génération ${l.gen}. Gardez-en un, les autres vont au compost.</div></div></div>
+            <div class="seedlings">${cells}</div>
+            <div class="row-btns">${btn('Tout composter', { act: 'dropLitter', data: { l: l.id }, kind: 'ghost', size: 'sm' })}</div></div>`;
+    }).join('');
+}
+
+// ---------------- 1.7 : viser un goût ----------------
+function goalCard() {
+    if (!G.plantLabOpen()) return '';
+    const goal = G.goalOf();
+    const crit = G.salonCrit();
+    const salonOk = G.salonOpen() && crit && crit.kind === 'plant' && G.FLAVOR_IDS.includes(crit.trait);
+    const chef = state.genetics.chef && state.genetics.chef.base;
+    if (!goal) {
+        if (!chef && !salonOk) return '';
+        return `<div class="card lab-card goal-card"><div class="card-head">${ico(['ui', 'search'], 'ico big')}<div class="card-main"><div class="card-title">Un projet de sélection</div>
+            <div class="card-sub">Choisissez un but : le labo propose les bons parents et montre les jeunes plants qui s’en approchent.</div></div></div>
+            <div class="row-btns wrap">${chef ? btn('Viser la commande du chef', { act: 'aimGoal', data: { from: 'chef' }, kind: 'gold', size: 'sm' }) : ''}${salonOk ? btn(`Viser le Salon : ${crit.name.toLowerCase()}`, { act: 'aimGoal', data: { from: 'salon' }, kind: 'gold', size: 'sm' }) : ''}</div></div>`;
+    }
+    const need = Object.entries(goal.need)
+        .map(([k, n]) => {
+            const t = PLANT_TRAITS.find(x => x.id === k);
+            return `<span class="chip">${ico(t.icon)}${t.name.toLowerCase()} ${n}</span>`;
+        })
+        .join('');
+    const plan = G.goalPlan();
+    let todo = '';
+    if (plan && plan.done) {
+        const v = G.variety(plan.done);
+        todo = `<p class="card-sub">« ${esc(G.varName(v))} » atteint le but ! ${goal.from === 'chef' ? 'Semez-la et récoltez-en assez pour le chef.' : 'Inscrivez-la au Salon.'}</p>
+            <div class="row-btns">${btn('Voir la variété', { act: 'open', data: { sheet: 'variety', id: v.id }, kind: 'green', size: 'sm' })}${goal.from === 'salon' ? btn('Inscrire', { act: 'enterSalon', data: { id: v.id }, kind: 'gold', size: 'sm' }) : ''}</div>`;
+    } else if (plan) {
+        const t = plan.trait && PLANT_TRAITS.find(x => x.id === plan.trait);
+        const why = plan.self
+            ? 'Toutes les bonnes versions des gènes sont là : recroisez-la avec elle-même pour les rassembler.'
+            : `Il manque du goût « ${t.name.toLowerCase()} » : croisez avec ${ITEMS[plan.b].name.toLowerCase()}, qui en a beaucoup.`;
+        const busy = state.genetics.crosses.some(c => (c.a === plan.a && c.b === plan.b) || (c.a === plan.b && c.b === plan.a));
+        todo = `<p class="card-sub">${why}</p><div class="lab-pair small">${parentSlotStatic(plan.a)}<span class="lab-x">×</span>${parentSlotStatic(plan.b)}</div>
+            ${busy ? `<p class="card-sub center">${ico(['ui', 'clock'])} Ce croisement pousse déjà : attendez sa portée.</p>` : btn(G.crossFree() ? `Lancer ce croisement · ${fmt(G.crossCost())}${ico(['ui', 'coin'])}` : 'Les pollinisations sont occupées', { act: 'planCross', kind: 'green', wide: true, disabled: !G.crossFree() })}`;
+    }
+    return `<div class="card lab-card goal-card on"><div class="card-head">${ico(['ui', 'search'], 'ico big')}<div class="card-main"><div class="card-title">${goal.from === 'chef' ? 'Pour le chef' : 'Pour le Salon'}${goal.base ? ` : ${ITEMS[goal.base].name.toLowerCase()}` : ''}</div>
+        <div class="lab-ranges">${need}</div></div>${btn('', { act: 'aimGoal', data: { from: '' }, icon: ['ui', 'cross'], kind: 'ghost', size: 'sm', title: 'Abandonner ce but' })}</div>${todo}</div>`;
+}
+
 const parentSlotStatic = p => `<span class="lab-parent"><span class="lp-art">${parentArt(p)}</span><b>${G.parentName(p)}</b></span>`;
 
 function lockedCard(pid, icon, title) {
@@ -112,18 +188,22 @@ function lockedCard(pid, icon, title) {
 // ---------------- élever ----------------
 function breedCard() {
     if (!G.breedOpen()) return lockedCard('breeding', ['animal', 'cow'], 'Élever des animaux');
-    const b = state.genetics.breed;
-    if (b) {
-        const A = G.animalByUid(b.a),
-            B = G.animalByUid(b.b);
-        return `<div class="card lab-card"><div class="card-head">${ico(['animal', b.type], 'ico big')}<div class="card-main"><div class="card-title">Un petit est en route</div>
-            <div class="card-sub">${esc(A ? A.name : '?')} et ${esc(B ? B.name : '?')}</div></div></div>
-            <div class="lab-wait">${ico(['ui', 'clock'])}Naissance dans ${timer(b.until)}${G.herdFull() ? ' · il faut une place au pré !' : ''}</div></div>`;
-    }
+    const running = state.genetics.breeds
+        .map(b => {
+            const A = G.animalByUid(b.a),
+                B = G.animalByUid(b.b);
+            return `<div class="lab-run">${ico(['animal', b.type], 'ico big')}<span class="card-sub">${esc(A ? A.name : '?')} et ${esc(B ? B.name : '?')}</span>
+                <span class="lab-wait">${ico(['ui', 'clock'])}${timer(b.until)}${G.herdFull() ? ' · il faut une place au pré !' : ''}</span></div>`;
+        })
+        .join('');
+    const pens = G.breedSlots();
+    const head = `<div class="card-head">${ico(['animal', 'cow'], 'ico big')}<div class="card-main"><div class="card-title">Élever des animaux</div>
+        <div class="card-sub">Deux adultes de la même espèce : le petit tient de l’un et de l’autre (parfois des jumeaux), et naît dans un pré qui a de la place.${pens > 1 ? ` ${pens} enclos.` : ''}</div></div></div>`;
+    if (!G.breedFree()) return `<div class="card lab-card">${head}${running}</div>`;
     const sel = (ui.sel.breed = ui.sel.breed || {});
     const A = G.animalByUid(sel.a),
         B = G.animalByUid(sel.b);
-    const ready = G.breedable(A, B);
+    const ready = G.breedable(A, B) && !G.breeding(sel.a) && !G.breeding(sel.b);
     let preview = '';
     if (ready) {
         const P = G.crossPreview(A.g, B.g, 'animal', 200);
@@ -133,8 +213,7 @@ function breedCard() {
                 return `<span class="chip">${ico(t.icon)}${lo === hi ? lo : `${lo} à ${hi}`}</span>`;
             }).join('')}</div>`;
     }
-    return `<div class="card lab-card"><div class="card-head">${ico(['animal', 'cow'], 'ico big')}<div class="card-main"><div class="card-title">Élever des animaux</div>
-        <div class="card-sub">Deux adultes de la même espèce : le petit tient de l’un et de l’autre, et naît dans un pré qui a de la place.</div></div></div>
+    return `<div class="card lab-card">${head}${running}
         <div class="lab-pair">${parentSlot('a', sel.a, 'animal')}<span class="lab-x">×</span>${parentSlot('b', sel.b, 'animal')}</div>
         ${preview}
         ${btn(`Faire naître · ${fmt(G.breedCost())}${ico(['ui', 'coin'])}`, { act: 'startBreed', kind: ready ? 'green' : '', wide: true, disabled: !ready })}</div>`;
@@ -144,13 +223,15 @@ function breedCard() {
 function varTile(v) {
     const seeds = state.genetics.seeds[v.id] || 0,
         stock = state.genetics.stock[v.id] || 0;
+    const pref = G.preferOf(v.base) === v.id;
     return `<button class="v-tile${v.fixed ? ' fixed' : ''}${G.canFix(v) ? ' can-fix' : ''}" data-act="open" data-sheet="variety" data-id="${v.id}">
-        <span class="v-art">${varArt(v)}</span><b>${esc(G.varName(v))}</b>
-        <small>${v.fixed ? `${ico(['ui', 'trophy'])}Fixée` : `Gén. ${v.gen} · ${pct(G.stability(v.g))} stable`}</small>
+        <span class="v-art">${varArt(v)}</span><b>${pref ? ico(['ui', 'star']) : ''}${esc(G.varName(v))}</b>${flavorMini(v.g)}
+        <small>${v.fixed ? `${ico(['ui', 'trophy'])}Fixée` : `Gén. ${v.gen} · ${pct(G.stability(v.g))} stable`}</small>${goalPct(v.g)}
         <span class="v-counts">${seeds ? `<span>${ico(['ui', 'packet'])}${seeds}</span>` : ''}${stock ? `<span>${ico(['item', v.base])}${stock}</span>` : ''}</span></button>`;
 }
 function varietiesBlock() {
-    const list = G.varieties().sort((a, b) => b.fixed - a.fixed || b.born - a.born);
+    const goal = G.goalOf();
+    const list = G.varieties().sort((a, b) => (goal ? G.goalScore(b.g) - G.goalScore(a.g) : 0) || b.fixed - a.fixed || b.born - a.born);
     if (!list.length) return G.plantLabOpen() ? empty('Aucune variété pour le moment : faites votre premier croisement !') : '';
     return `<div class="v-grid">${list.map(varTile).join('')}</div>`;
 }
@@ -168,6 +249,7 @@ function salonCard() {
     return `<div class="card salon-card"><div class="card-head">${ico(crit.icon, 'ico big')}<div class="card-main"><div class="card-title">Salon de l’agriculture</div>
         <div class="card-sub">${crit.name} · se termine dans ${timer(s.end)}</div></div></div>
         <ol class="ranking">${rows}</ol>
+        <p class="card-sub">Premier prix : ${GX.salonRuban} ruban (${GX.salonFirstRuban} la première fois pour ce critère).</p>
         ${btn(s.entry ? 'Changer de candidat' : 'Inscrire une création', { act: 'open', data: { sheet: 'salonPick' }, kind: s.entry ? '' : 'gold', wide: true })}</div>`;
 }
 
@@ -177,16 +259,21 @@ function renderLab(el) {
         blocks(el, [['closed', closedCard()]]);
         return;
     }
+    const junk = G.plantLabOpen() ? G.junkVarieties().length : 0;
     blocks(el, [
+        ['litters', littersHtml()],
+        ['goal', goalCard()],
+        ['chef', chefCard()],
         ['cross', crossCard()],
         ['breed', breedCard()],
         [
             'h1',
             section(
                 'Mes variétés',
-                G.fixedVarieties().length || Object.keys(state.genetics.races).length
-                    ? btn('Mes créations', { act: 'open', data: { sheet: 'creations' }, size: 'sm', icon: ['ui', 'trophy'] })
-                    : '',
+                (junk ? btn(`Composter ${junk} sans intérêt`, { act: 'compostJunk', size: 'sm', kind: 'ghost' }) : '') +
+                    (G.fixedVarieties().length || Object.keys(state.genetics.races).length
+                        ? btn('Mes créations', { act: 'open', data: { sheet: 'creations' }, size: 'sm', icon: ['ui', 'trophy'] })
+                        : ''),
             ),
         ],
         ['vars', varietiesBlock()],
@@ -194,7 +281,7 @@ function renderLab(el) {
         [
             'hint',
             hint(
-                'Une variété se sème comme son espèce (graines dans la barre du champ, ou plantations de l’île). Pour la fixer : recroisez-la avec elle-même jusqu’à ce que tous ses gènes soient identiques par paires, puis nommez-la au laboratoire.',
+                'Une variété se sème comme son espèce (graines dans la barre du champ, ou plantations de l’île), ou à sa place si vous la semez par défaut. Elle garde son goût dans les plats et dans les bières. Pour la fixer : recroisez-la avec elle-même jusqu’à ce que tous ses gènes soient identiques par paires, puis nommez-la au laboratoire.',
             ),
         ],
     ]);
@@ -207,7 +294,7 @@ defineSheet('parentPick', {
     render(o) {
         if (o.kind === 'animal') {
             const other = G.animalByUid((ui.sel.breed || {})[o.slot === 'a' ? 'b' : 'a']);
-            const list = state.animals.filter(a => G.isAdult(a) && !a.sick && (!other || (a.type === other.type && a !== other)));
+            const list = state.animals.filter(a => G.isAdult(a) && !a.sick && !G.breeding(a.uid) && (!other || (a.type === other.type && a !== other)));
             if (!list.length) return empty('Aucun adulte disponible.');
             return `<div class="pick-grid animals">${list
                 .sort((a, b) => (a.type < b.type ? -1 : a.type > b.type ? 1 : G.animalGain(b) - G.animalGain(a)))
@@ -234,6 +321,16 @@ defineSheet('parentPick', {
 });
 
 // ---------------- la fiche d'une variété ----------------
+// ce que ses gènes de culture lui apportent au champ (1.7)
+function fieldGenes(v) {
+    const t = k => G.traitOf(v.g, k) - 2;
+    const out = [];
+    if (t('speed') > 0) out.push(`pousse ${Math.round(t('speed') * GX.geneSpeed * 100)} % plus vite`);
+    if (t('drought') > 0) out.push(`s’arrose seule ${Math.round(t('drought') * GX.geneDrought * 100)} % du temps`);
+    if (t('hardy') > 0) out.push(`+${Math.round(t('hardy') * GX.geneHardy * 100)} % hors saison`);
+    if (t('yield') > 0) out.push(`+${Math.round(t('yield') * GX.geneYield * 100)} % de récolte`);
+    return out;
+}
 defineSheet('variety', {
     title: o => {
         const v = G.variety(o.id);
@@ -249,12 +346,27 @@ defineSheet('variety', {
         const lines = [
             `${ico(['item', v.base])}Pousse comme : <b>${ITEMS[v.base].name.toLowerCase()}</b>${island ? ' (sur l’île)' : ''}`,
             `${ico(['ui', 'star'])}Apparence : ${looksText(v.g)}${v.mut ? ' · mutation' : ''}`,
-            `${ico(['ui', 'packet'])}${seeds} graine${seeds > 1 ? 's' : ''} · ${ico(['item', v.base])}${stock} en stock`,
+            `${ico(['ui', 'packet'])}${seeds} graine${seeds > 1 ? 's' : ''} · ${ico(['item', v.base])}${stock} en stock · se vend ×${String(Math.round(G.varietyMult(v) * 100) / 100).replace('.', ',')}`,
+            ...(G.preferOf(v.base) === v.id
+                ? [`${ico(['ui', 'star'])}Semée par défaut à la place de l’espèce${v.fixed && G.seedbankOpen() ? ' (graines rachetées toutes seules)' : ''}`]
+                : []),
+            ...(fieldGenes(v).length ? [`${ico(['ui', 'basket'])}Au champ : ${fieldGenes(v).join(', ')}`] : []),
+            ...(G.goalOf() ? [`${ico(['ui', 'search'])}But : ${pct(G.goalScore(v.g))}`] : []),
         ];
         const actionsHtml = [
             seeds ? btn('Semer', { act: 'sowVariety', data: { id: v.id }, kind: 'green', icon: ['ui', 'packet'] }) : '',
-            !v.fixed && G.plantLabOpen() && !state.genetics.cross
-                ? btn('Recroiser avec elle-même', { act: 'selfCross', data: { id: v.id }, icon: ['ui', 'loop'] })
+            !v.fixed && G.crossFree() ? btn('Recroiser avec elle-même', { act: 'selfCross', data: { id: v.id }, icon: ['ui', 'loop'] }) : '',
+            !ITEMS[v.base].island && (seeds || (v.fixed && G.seedbankOpen()))
+                ? btn(
+                      G.preferOf(v.base) === v.id
+                          ? 'Ne plus semer par défaut'
+                          : `Semer à la place ${ITEMS[v.base].name.toLowerCase().startsWith('h') ? 'du' : 'de'} ${ITEMS[v.base].name.toLowerCase()}`,
+                      {
+                          act: 'preferVar',
+                          data: { id: v.id },
+                          icon: ['ui', 'star'],
+                      },
+                  )
                 : '',
             G.plantLabOpen() ? btn('Croiser avec…', { act: 'crossWith', data: { id: v.id }, icon: ['ui', 'flowers'] }) : '',
             G.labOpen() && !v.analyzed
@@ -358,10 +470,28 @@ export function setupLab() {
             const s = ui.sel.cross || {};
             if (G.startCross(s.a, s.b, el)) ui.sel.cross = {};
         },
-        finishCross: el => {
-            const v = G.finishCross(el);
+        finishCross: el => G.finishCross(el),
+        keepSeedling: (el, d) => {
+            const v = G.keepSeedling(d.l, +d.k, el);
             if (v) openSheet('variety', { id: v.id });
         },
+        dropLitter: (el, d) => {
+            if (!confirmTap('drop' + d.l, el, 'Toucher encore pour tout composter')) return QUIET;
+            G.dropLitter(d.l);
+        },
+        aimGoal: (el, d) => {
+            G.setGoal(d.from || null);
+            if (d.from) go('machines/lab');
+        },
+        planCross: el => {
+            const p = G.goalPlan();
+            if (p && p.a && G.startCross(p.a, p.b, el)) ui.sel.cross = {};
+        },
+        compostJunk: el => {
+            if (!confirmTap('compostJunk', el, 'Toucher encore pour composter')) return QUIET;
+            G.compostJunk();
+        },
+        preferVar: (el, d) => G.setPrefer(d.id),
         startBreed: el => {
             const s = ui.sel.breed || {};
             if (G.startBreed(s.a, s.b, el)) ui.sel.breed = {};

@@ -93,7 +93,7 @@ function renderCritters() {
         const el = els[i],
             d = ANIMALS[a.type];
         const adult = G.isAdult(a);
-        const sig = `${a.type}|${adult}|${a.g ? JSON.stringify(G.looksOf(a.g)) : ''}|${esc(a.name)}|${a.love}|${a.star ? 1 : 0}|${G.isAway(a) ? 1 : 0}|${a.stack}|${a.food}|${mf}|${a.sick ? 1 : 0}`;
+        const sig = `${a.type}|${adult}|${a.g ? JSON.stringify(G.looksOf(a.g)) : ''}|${esc(a.name)}|${a.race || ''}|${a.love}|${a.star ? 1 : 0}|${G.isAway(a) ? 1 : 0}|${a.stack}|${a.food}|${mf}|${a.sick ? 1 : 0}`;
         if (el._sig === sig) return;
         el._sig = sig;
         el.classList.toggle('baby', !adult);
@@ -102,7 +102,8 @@ function renderCritters() {
         el.classList.toggle('sick', !!a.sick);
         el.classList.toggle('busy', G.isBusy(a));
         el.querySelector('.critter-body').innerHTML = bodyOf(a);
-        el.querySelector('.critter-name').innerHTML = `${a.star ? ico(['ui', 'star']) : ''}${a.love ? ico(['ui', 'heart']) : ''}${esc(a.name)}`;
+        el.querySelector('.critter-name').innerHTML =
+            `${a.star ? ico(['ui', 'star']) : ''}${a.race ? ico(['ui', 'ribbon']) : ''}${a.love ? ico(['ui', 'heart']) : ''}${esc(a.name)}`;
         const bubble = el.querySelector('.bubble');
         let b = '';
         if (a.sick) b = ico(['ui', 'sick']);
@@ -184,7 +185,7 @@ function stableTile(a, i, mf) {
               : '';
     return `<button class="st-tile${a.stack > 0 ? ' ready' : ''}${a.sick ? ' sick' : ''}${G.isAway(a) ? ' away' : ''}" data-act="animal" data-i="${i}" data-anchor="animal:${i}">
         ${tag}<span class="st-art${adult ? '' : ' baby'}">${bodyOf(a)}</span>
-        <b>${a.star ? ico(['ui', 'star']) : ''}${esc(a.name)}</b>
+        <b>${a.star ? ico(['ui', 'star']) : ''}${a.race ? ico(['ui', 'ribbon']) : ''}${esc(a.name)}</b>
         <span class="food-meter">${Array.from({ length: mf }, (_, k) => `<i class="${k < a.food ? 'on' : ''}"></i>`).join('')}</span>
         ${adult ? bar(0, 'cbar', `prod:${i}`) : bar(0, 'gbar', `grow:${i}`)}</button>`;
 }
@@ -275,9 +276,10 @@ function geneBlock(a) {
     const can = G.canFixRace(a);
     return `<div class="gene-box"><div class="set-sub">Ses gènes${race ? ` · race « ${esc(race.name)} »` : a.gen ? ` · génération ${a.gen}` : ''}</div>
         <p class="card-sub">${[looksText(a.g), featuresText(a.type, a.g)].filter(Boolean).join(', ')}${a.parents ? ` · fille de ${a.parents.map(esc).join(' et ')}` : ''}</p>
+        ${G.geneEffects(a).length ? `<p class="card-sub gene-fx">${ico(['ui', race ? 'ribbon' : 'star'])}${race ? 'Ce que lui donne sa race' : 'Ce que lui donnent ses gènes'} : ${G.geneEffects(a).join(', ')}.</p>` : ''}
         ${a.lin ? lineageHtml({ lin: a.lin, me: G.lineSnap(a) }) : ''}
         ${animalTraits(a)}
-        <div class="row-btns wrap">${G.labOpen() && !a.analyzed ? btn(`Analyser · ${fmt(G.analyzeCost())}${ico(['ui', 'coin'])}`, { act: 'analyze', data: { id: a.uid }, size: 'sm', icon: ['ui', 'search'] }) : ''}${G.breedOpen() && G.isAdult(a) ? btn('Choisir pour l’élevage', { act: 'breedWith', data: { id: a.uid }, size: 'sm', icon: ['ui', 'heart'] }) : ''}</div>
+        <div class="row-btns wrap">${G.labOpen() && !a.analyzed ? btn(`Analyser · ${fmt(G.analyzeCost())}${ico(['ui', 'coin'])}`, { act: 'analyze', data: { id: a.uid }, size: 'sm', icon: ['ui', 'search'] }) : ''}${G.breedOpen() && G.isAdult(a) && !G.breeding(a.uid) ? btn('Choisir pour l’élevage', { act: 'breedWith', data: { id: a.uid }, size: 'sm', icon: ['ui', 'heart'] }) : ''}</div>
         ${can ? `<div class="rename"><input type="text" maxlength="22" id="race-name" placeholder="Nom de la race">${btn('Fixer la race', { act: 'fixRace', data: { id: a.uid }, kind: 'gold', size: 'sm' })}</div>` : ''}
     </div>`;
 }

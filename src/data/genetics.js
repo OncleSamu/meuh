@@ -177,11 +177,27 @@ export const GENETICS = {
     // prix d'une graine de variété fixée et d'un petit de race fixée (× le prix de l'espèce)
     seedPriceMult: 3,
     babyPriceMult: 4,
-    // revente d'une variété : × (1 + gain de saveur / 6), plafonné
-    varietySellCap: 2.5,
+    // revente d'une variété : × (1 + gain de saveur / 4), plafonné à ×3 (1.7)
+    varietySellCap: 3,
     // une recette faite avec de meilleurs ingrédients : argent puis or (déjà ×1,25 et ×1,6)
     silverScore: 1.2,
     goldScore: 1.8, // des ingrédients tous en or suffisent ; les variétés savoureuses aident à y arriver
+    // 1.7 : une portée de jeunes plants par croisement, on en garde un
+    litter: 3,
+    litterLab: 4, // avec le laboratoire
+    crossSlotsHive: 2, // deux pollinisations à la fois avec la ruche de sélection
+    breedPens: 1, // enclos d'élevage : +1 avec le laboratoire, +1 avec le conservatoire
+    twins: 0.15, // chance d'avoir des jumeaux
+    chefHours: 8, // une commande du chef dure 8 heures
+    // 1.7 : les gènes de culture comptent vraiment (par point au-dessus de 2)
+    geneSpeed: 0.1,
+    geneHardy: 0.15,
+    geneDrought: 0.2,
+    geneYield: 0.15,
+    varietySellDiv: 4,
+    // 1.7 : le Salon donne 1 ruban au premier prix, 2 la première fois qu'on gagne un critère
+    salonRuban: 1,
+    salonFirstRuban: 2,
 };
 
 // ---------------- le Salon de l'agriculture ----------------

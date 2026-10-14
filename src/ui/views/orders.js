@@ -99,7 +99,7 @@ function express() {
 }
 
 // ---------------- la commande du chef : un goût précis (station de recherche) ----------------
-function chefCard() {
+export function chefCard() {
     const c = state.genetics && state.genetics.chef;
     if (!c || !c.base || !G.plantLabOpen()) return null;
     const need = Object.entries(c.need)
@@ -115,7 +115,11 @@ function chefCard() {
         <div class="card-sub">${qtyName(c.qty, ITEMS[c.base].name)} d’une variété qui a au moins :</div></div><span class="timer-pill">${ico(['ui', 'clock'])}${timer(c.until)}</span></div>
         <div class="lab-ranges">${need}</div>
         <p class="card-sub">${ready ? `« ${esc(G.varName(ready))} » convient, et vous en avez assez.` : ok.length ? `« ${esc(G.varName(ok[0]))} » convient : récoltez-en ${c.qty}.` : 'Aucune de vos variétés ne convient encore : croisez au labo !'}</p>
-        <div class="od-foot">${rewardHtml(c.gold, Math.floor(150 + scaleLvl() * 8))}${btn('Livrer', { act: 'chef', data: { id: ready ? ready.id : '' }, kind: ready ? 'green' : '', disabled: !ready })}</div>
+        <div class="od-foot">${rewardHtml(c.gold, Math.floor(150 + scaleLvl() * 8))}${
+            ready || (state.genetics.goal && state.genetics.goal.from === 'chef')
+                ? ''
+                : btn('Viser ce goût', { act: 'aimGoal', data: { from: 'chef' }, size: 'sm', icon: ['ui', 'flowers'] })
+        }${btn('Livrer', { act: 'chef', data: { id: ready ? ready.id : '' }, kind: ready ? 'green' : '', disabled: !ready })}</div>
     </div>`;
 }
 

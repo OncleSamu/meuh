@@ -12,6 +12,7 @@ import { addFriendship } from './village.js';
 import { projectDone } from './story.js';
 import { earn, addXp } from './player.js';
 import { clampQuality } from './farm.js';
+import { varietyMult, varName, traitOf, FLAVOR_IDS, clampVarieties } from './genetics.js';
 
 // ---------------- ouverture ----------------
 export const brewOpen = () => projectDone('brewhall');
@@ -22,6 +23,38 @@ export const vatCount = () => Object.entries(ABBEY.vats).reduce((a, [p, n]) => a
 export const BREWABLE = Object.values(ITEMS)
     .filter(i => (i.type === 'crop' || i.type === 'tree') && FLAVORS[i.id] && i.id !== 'hop')
     .map(i => i.id);
+
+// ---------------- 1.7 : un ingrédient peut être une variété du labo (son identifiant « v12 ») ----------------
+const VAR = id => (state.genetics && state.genetics.vars[id]) || null;
+export const isVarIng = id => !!VAR(id);
+export const ingBase = id => (VAR(id) ? VAR(id).base : id);
+// le goût d'un ingrédient : celui de l'espèce, ou celui que la variété exprime vraiment
+export const ingFlavor = id => (VAR(id) ? FLAVOR_IDS.map(k => traitOf(VAR(id).g, k)) : FLAVORS[id] || [0, 0, 0, 0, 0]);
+export const ingName = id => (VAR(id) ? varName(VAR(id)) : ITEMS[id] ? ITEMS[id].name : 'variété perdue');
+const ingLow = id => (VAR(id) ? varName(VAR(id)) : ITEMS[id] ? ITEMS[id].name.toLowerCase() : 'variété perdue');
+const ingValue = id => (VAR(id) ? (ITEMS[VAR(id).base].sell || 0) * varietyMult(VAR(id)) : (ITEMS[id] && ITEMS[id].sell) || 0);
+// combien on en a : pour une variété, ses produits (qui font partie du stock de l'espèce)
+export function ingHave(id) {
+    const v = VAR(id);
+    if (!v) return state.inventory[id] || 0;
+    clampVarieties();
+    return Math.min(state.genetics.stock[id] || 0, state.inventory[v.base] || 0);
+}
+function ingTake(id, n) {
+    const v = VAR(id);
+    if (v) {
+        state.genetics.stock[id] -= n;
+        state.inventory[v.base] -= n;
+        clampQuality(v.base);
+    } else {
+        state.inventory[id] -= n;
+        clampQuality(id);
+    }
+}
+// les variétés qu'on peut mettre dans une bière : celles d'une espèce brassable, avec des produits en stock
+export const brewVarieties = () => (state.genetics ? Object.values(state.genetics.vars).filter(v => BREWABLE.includes(v.base) && ingHave(v.id) > 0) : []);
+// pour le dessin de la bouteille : l'espèce de chaque variété
+const basesOf = ings => Object.fromEntries(ings.filter(([id]) => VAR(id)).map(([id]) => [id, VAR(id).base]));
 
 export function ensureBrew() {
     const B = (state.brew = state.brew || {});
@@ -34,7 +67,8 @@ export function ensureBrew() {
     B.vats = B.vats || [];
     B.barrels = B.barrels || [];
     B.draft = B.draft || { malt: 'maltBlond', hop: 1, ings: [] };
-    B.draft.ings = B.draft.ings.filter(([id]) => BREWABLE.includes(id));
+    B.draft.ings = B.draft.ings.filter(([id]) => BREWABLE.includes(id) || (VAR(id) && BREWABLE.includes(VAR(id).base)));
+    fixAgedNames(B);
     B.demand = B.demand || {};
     B.orders = B.orders || [];
     B.nextOrder = B.nextOrder || 0;
@@ -50,7 +84,7 @@ const cap = t => t[0].toUpperCase() + t.slice(1);
 export function brewProfile(malt, hop, ings) {
     const p = [...MALTS[malt].taste];
     p[2] += hop;
-    for (const [id, d] of ings) FLAVORS[id].forEach((v, k) => (p[k] += v * d));
+    for (const [id, d] of ings) ingFlavor(id).forEach((v, k) => (p[k] += v * d));
     return p;
 }
 // l'accord : de 0 à 3 étoiles, avec ses raisons
@@ -59,7 +93,7 @@ export function brewHarmony(malt, hop, ings) {
     if (!ings.length) return { stars: 0, reasons: ['Ajoutez au moins un ingrédient.'] };
     // le goût des ingrédients seuls, selon leurs doses
     const ip = [0, 0, 0, 0, 0];
-    for (const [id, d] of ings) FLAVORS[id].forEach((v, k) => (ip[k] += v * d));
+    for (const [id, d] of ings) ingFlavor(id).forEach((v, k) => (ip[k] += v * d));
     const order = ip.map((v, k) => [v, k]).sort((x, y) => y[0] - x[0]);
     const [a, b] = [order[0][1], order[1][1]];
     let score = 0;
@@ -86,7 +120,7 @@ export function brewHarmony(malt, hop, ings) {
         reasons.push('Le houblon fort relève ce goût.');
     }
     // plusieurs ingrédients : un vrai mélange, ou une dispute
-    const tops = ings.map(([id]) => noteOf(FLAVORS[id]));
+    const tops = ings.map(([id]) => noteOf(ingFlavor(id)));
     let clash = false;
     for (let x = 0; x < tops.length; x++)
         for (let y = x + 1; y < tops.length; y++) if ((PAIRS[`${Math.min(tops[x], tops[y])}-${Math.max(tops[x], tops[y])}`] || 0) < 0) clash = true;
@@ -105,7 +139,7 @@ export function brewColor(malt) {
 }
 
 // ---------------- le nom proposé ----------------
-const low = id => ITEMS[id].name.toLowerCase();
+const low = id => ingLow(id);
 export function brewName(malt, ings) {
     const list = [...ings].sort((x, y) => y[1] - x[1]).map(([id]) => low(id));
     const what = list.length === 1 ? list[0] : list.length === 2 ? `${list[0]}-${list[1]}` : `${list[0]}, ${list[1]} et ${list[2]}`;
@@ -126,7 +160,7 @@ export function brewCost(malt, hop, ings) {
 export const brewTime = ings => ABBEY.baseTime + ABBEY.perIng * ings.length;
 // valeur d'une bouteille
 export function brewValue(malt, hop, ings, stars) {
-    const cost = Object.entries(brewCost(malt, hop, ings)).reduce((a, [id, n]) => a + (ITEMS[id].sell || 0) * n, 0);
+    const cost = Object.entries(brewCost(malt, hop, ings)).reduce((a, [id, n]) => a + ingValue(id) * n, 0);
     return Math.round((((ABBEY.price * cost + 0.1 * brewTime(ings)) / ABBEY.bottles) * ABBEY.harmony[stars]) / 5) * 5;
 }
 // tout ce qu'il faut pour brasser la recette en cours
@@ -134,7 +168,7 @@ export function brewPreview(d = ensureBrew().draft) {
     const ings = d.ings.filter(([id]) => id).slice(0, brewSlots());
     const h = brewHarmony(d.malt, d.hop, ings);
     const cost = brewCost(d.malt, d.hop, ings);
-    const miss = Object.entries(cost).filter(([id, n]) => (state.inventory[id] || 0) < n);
+    const miss = Object.entries(cost).filter(([id, n]) => ingHave(id) < n);
     const sig = sigOf(d.malt, d.hop, ings);
     const known = ensureBrew().sig[sig];
     return {
@@ -151,6 +185,7 @@ export function brewPreview(d = ensureBrew().draft) {
         secret: !known,
         hints: brewHints(d.malt, ings),
         color: brewColor(d.malt),
+        bases: basesOf(ings),
         freeVat: ensureBrew().vats.findIndex(v => !v),
     };
 }
@@ -159,15 +194,16 @@ export function brewPreview(d = ensureBrew().draft) {
 export function brewHints(malt, ings) {
     if (!ings.length) return [];
     const ip = [0, 0, 0, 0, 0];
-    for (const [id, d] of ings) FLAVORS[id].forEach((v, k) => (ip[k] += v * d));
+    for (const [id, d] of ings) ingFlavor(id).forEach((v, k) => (ip[k] += v * d));
     const order = ip.map((v, k) => [v, k]).sort((x, y) => y[0] - x[0]);
     const notes = order[1][0] >= order[0][0] * 0.3 && order[1][0] > 0 ? `${NOTES[order[0][1]]} et ${NOTES[order[1][1]]}` : NOTES[order[0][1]];
-    return [`Notes principales : ${notes}.`, `Une ${MALTS[malt].name.toLowerCase()} ${MALTS[malt].text}.`];
+    return [`Notes principales : ${notes}.`, `Une ${MALTS[malt].name.toLowerCase()} ${MALTS[malt].text}.`];
 }
 // la note qui domine les ingrédients d'une bière (pour les commandes)
 export function beerNote(b) {
+    if (b.note !== undefined) return b.note;
     const ip = [0, 0, 0, 0, 0];
-    for (const [id, d] of b.ings) FLAVORS[id].forEach((v, k) => (ip[k] += v * d));
+    for (const [id, d] of b.ings) ingFlavor(id).forEach((v, k) => (ip[k] += v * d));
     return noteOf(ip);
 }
 
@@ -184,7 +220,7 @@ export function setDraftHop(n) {
 export function setDraftIng(slot, id) {
     const d = ensureBrew().draft;
     if (slot >= brewSlots()) return false;
-    if (id && !BREWABLE.includes(id)) return false;
+    if (id && !BREWABLE.includes(id) && !(VAR(id) && BREWABLE.includes(VAR(id).base))) return false;
     // un même ingrédient une seule fois
     if (id && d.ings.some(([x], k) => x === id && k !== slot)) return false;
     while (d.ings.length <= slot) d.ings.push([null, 1]);
@@ -206,15 +242,12 @@ export function startBrew(at, d = ensureBrew().draft, quiet = false) {
     const pv = brewPreview(d);
     if (!pv.ings.length || pv.miss.length || pv.freeVat < 0) {
         if (pv.miss.length && !quiet) {
-            toast(`Il manque : ${pv.miss.map(([id, n]) => `${n - (state.inventory[id] || 0)} ${low(id)}`).join(', ')}`, ['item', pv.miss[0][0]]);
+            toast(`Il manque : ${pv.miss.map(([id, n]) => `${n - ingHave(id)} ${low(id)}`).join(', ')}`, ['item', ingBase(pv.miss[0][0])]);
             sfx('error');
         }
         return false;
     }
-    for (const [id, n] of Object.entries(pv.cost)) {
-        state.inventory[id] -= n;
-        clampQuality(id);
-    }
+    for (const [id, n] of Object.entries(pv.cost)) ingTake(id, n);
     // une bière déjà connue garde son nom ; une nouvelle entre dans « Mes bières »
     const sig = sigOf(d.malt, d.hop, pv.ings);
     let bid = B.sig[sig];
@@ -229,6 +262,8 @@ export function startBrew(at, d = ensureBrew().draft, quiet = false) {
             ings: pv.ings.map(x => [...x]),
             stars: pv.harmony.stars,
             value: pv.value,
+            bases: pv.bases,
+            note: beerNote({ ings: pv.ings }),
             made: 0,
             day: state.day,
         };
@@ -268,11 +303,13 @@ export function collectVat(i, at) {
     state.stats.beers = (state.stats.beers || 0) + v.n;
     // le livre des bières : une page par ingrédient
     let newPages = 0;
-    for (const [id] of beer.ings)
-        if (!B.book[id]) {
+    for (const [id0] of beer.ings) {
+        const id = ingBase(id0);
+        if (ITEMS[id] && !B.book[id]) {
             B.book[id] = true;
             newPages++;
         }
+    }
     addXp(Math.round(((brewTime(beer.ings) * 3.8) / 60) * (0.8 + beer.stars * 0.2)), at);
     if (at) float(at, [`+${v.n}`, ['ui', 'beer']], '', -20);
     if (newPages) toast(`Livre des bières : ${Object.keys(B.book).length} / ${BREWABLE.length} ingrédients`, ['ui', 'beer']);
@@ -342,6 +379,24 @@ export function claimBeerBook(at) {
 }
 
 // ---------------- l'ancien cellier (avant 1.6.3) : on vide ses fûts dans « Mes bières » ----------------
+// le nom d'une bière de garde : celui de la bière, raccourci au mot près si besoin, puis son âge
+function agedName(name, what) {
+    const full = `${name} ${what}`;
+    if (full.length <= 22) return full;
+    const room = 22 - what.length - 2;
+    const cut = name.slice(0, room).replace(/[\s,-]+\S*$/, '');
+    return `${cut || name.slice(0, room)}… ${what}`;
+}
+// 1.7 : les noms coupés en plein mot par la 1.6.3 sont réparés
+function fixAgedNames(B) {
+    for (const b of Object.values(B.beers)) {
+        if (!b.aged || b.named) continue;
+        const src = B.beers[b.aged.from];
+        if (!src) continue;
+        const what = b.aged.turned ? 'tournée' : CELLAR.stepNames[b.aged.stage];
+        if (b.name === cleanName(`${src.name} ${what}`) && b.name.length === 22) b.name = agedName(src.name, what);
+    }
+}
 export const barrelOk = k => !BARRELS[k].item || (state.inventory[BARRELS[k].item] || 0) >= 1;
 export const barrelValue = b => Math.round((beerValue(b.bid) * CELLAR.mult[b.stage] * BARRELS[b.k].mult * (b.turned ? CELLAR.turned : 1)) / 5) * 5;
 export const barrelDone = b => b.turned || b.stage >= CELLAR.steps.length;
@@ -379,7 +434,7 @@ export function takeFromBarrel(slot, at) {
         B.beers[bid] = {
             ...src,
             id: bid,
-            name: cleanName(`${src.name} ${what}`),
+            name: agedName(src.name, what),
             aged: { from: b.bid, k: b.k, stage: b.stage, turned: b.turned },
             value: barrelValue(b),
             made: 0,
@@ -461,7 +516,7 @@ export function brewTick() {
             const bid = v.bid;
             collectVat(i);
             if (startBrew(null, { ...recipeOf(bid), loop: true }, true)) ch = true;
-            else if (view.started) toast(`${B.beers[bid].name} : plus assez d’ingrédients pour la relancer`, ['ui', 'beer']);
+            else if (view.started) toast(`${B.beers[bid].name} : plus assez d’ingrédients pour la relancer`, ['ui', 'beer']);
             ch = true;
         }
     });
