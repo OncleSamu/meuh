@@ -5,7 +5,8 @@ import { on } from '../../core/bus.js';
 import { ANIMALS, MAX_STACK } from '../../data/animals.js';
 import { ITEMS } from '../../data/items.js';
 import * as G from '../../systems/index.js';
-import { byId, blocks, esc, actions } from '../dom.js';
+import { byId, blocks, esc, actions, QUIET } from '../dom.js';
+import { confirmTap } from '../confirm.js';
 import { ico, art } from '../icons.js';
 import { btn, hint, hearts, bar, timer, lines, segmented } from '../kit.js';
 import { defineView, defineLive, ui, currentPath, go } from '../app.js';
@@ -328,6 +329,11 @@ defineSheet('animal', {
             }
             ${geneBlock(a, i)}
             <div class="rename"><input type="text" maxlength="16" value="${esc(a.name)}" aria-label="Nom de l’animal" id="rename-animal">${btn('Renommer', { act: 'renameAnimal', data: { i }, size: 'sm' })}</div>
+            <div class="row-btns">${
+                G.animalSellBlock(a)
+                    ? `<p class="card-sub center">${G.animalSellBlock(a)} : impossible de la vendre pour l’instant.</p>`
+                    : btn(`Vendre · ${fmt(G.animalSalePrice(a))}${ico(['ui', 'coin'])}`, { act: 'sellAnimal', data: { i }, kind: 'red', size: 'sm' })
+            }</div>
         </div>`;
     },
 });
@@ -338,6 +344,11 @@ const setupLongPress = () => longPress(byId('view-animals'), '.critter[data-i], 
 export function setupAnimals() {
     actions({
         animalMode: (el, d) => (ui.sel.animalMode = d.v),
+        sellAnimal: (el, d) => {
+            const a = state.animals[+d.i];
+            if (!a || !confirmTap('sell' + a.uid, el, `Toucher encore pour vendre ${a.name}`)) return QUIET;
+            if (G.sellAnimal(+d.i, el)) closeSheet('animal');
+        },
         breedWith: (el, d) => {
             ui.sel.breed = { a: d.id };
             closeSheet('animal');

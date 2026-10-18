@@ -5,7 +5,7 @@ import { emit, toast, sfx, buzz, burst, float, fly, squish } from '../core/bus.j
 import { ANIMALS, GROW, NAMES, MAX_STACK, MAX_FOOD, EXTRA_DROP } from '../data/animals.js';
 import { ITEMS } from '../data/items.js';
 import { BALANCE } from '../data/progress.js';
-import { rank, speedMult, rollYield, addXp } from './player.js';
+import { rank, speedMult, rollYield, addXp, earn } from './player.js';
 import { starAnimalMult } from './surprises.js';
 import { alpineMult, themeAnimalMult, isAway } from './port.js';
 import { masterySpeed, addMastery } from './mastery.js';
@@ -317,4 +317,46 @@ export function producedText(a) {
     const p = ITEMS[ANIMALS[a.type].prodId];
     const many = a.produced > 1;
     return `${fmt(a.produced)} ${p.name.toLowerCase()}${many && !p.name.endsWith('s') && p.id !== 'milk' && p.id !== 'wool' ? 's' : ''} produit${many ? 's' : ''} depuis son arrivée`;
+}
+
+// ---------------- 1.8.2 : vendre une bête ----------------
+// la moitié de son prix d'achat ; plus pour une bête d'exception ou de race, moins pour un bébé
+export function animalSalePrice(a) {
+    if (!a) return 0;
+    let p = ANIMALS[a.type].cost * 0.5;
+    if (a.star) p *= 1.5;
+    if (a.race) p *= 1.3;
+    if (!isAdult(a)) p *= 0.6;
+    return Math.max(5, Math.round(p / 5) * 5);
+}
+// pas pendant la transhumance, ni quand elle fait un petit à l'étable de sélection
+export const animalSellBlock = a =>
+    !a
+        ? 'introuvable'
+        : isAway(a)
+          ? 'Elle est en transhumance'
+          : state.genetics && state.genetics.breeds && state.genetics.breeds.some(b => b.a === a.uid || b.b === a.uid)
+            ? 'Elle fait un petit à l’étable de sélection'
+            : '';
+export function sellAnimal(i, at) {
+    const a = state.animals[i];
+    const why = animalSellBlock(a);
+    if (why) {
+        toast(why, ['ui', 'flowers']);
+        sfx('error');
+        return false;
+    }
+    // ce qu'elle a produit part d'abord à la grange
+    if (a.stack > 0) collectAnimal(a);
+    const price = animalSalePrice(a);
+    state.animals.splice(i, 1);
+    earn(price, at);
+    state.stats.animalsSold = (state.stats.animalsSold || 0) + 1;
+    sfx('coin');
+    buzz(12);
+    toast(`${a.name} est vendu${a.type === 'cow' || a.type === 'goat' || a.type === 'chicken' || a.type === 'ewe' ? 'e' : ''} : ${fmt(price)} pièces`, [
+        'animal',
+        a.type,
+    ]);
+    return price;
 }
