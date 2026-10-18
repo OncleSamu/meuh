@@ -1,7 +1,7 @@
 // 2.0 (pêche) : sept nouveaux poissons de l'étang et leurs recettes.
 import { C, E, F, FC, FE, HL, L, P, R, SHADOW, leaf, items } from './kit.js';
-import { plate, bowl, jar, woodBoard, steamF, fishBody2 } from './items2.js';
-import { cocotte, ramekin } from './v131.js';
+import { plate, bowl, woodBoard, steamF, fishBody2 } from './items2.js';
+import { cocotte } from './v131.js';
 
 const O = '#3a2618';
 
