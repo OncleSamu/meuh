@@ -333,7 +333,7 @@ export function setupApp() {
         save();
     });
     actions({
-        go: (el, d) => go(d.path, d),
+        go: (el, d) => go(d.path, { ...d }), // une copie : le dataset du bouton transforme tout en texte
         sub: (el, d) => go(`${ui.tab}/${d.v}`),
         open: (el, d) => openSheet(d.sheet, { ...d }),
         sheetClose: () => closeSheet(),
