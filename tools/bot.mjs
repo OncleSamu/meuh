@@ -403,6 +403,16 @@ function island() {
 }
 
 // le labo (bêta 4) : un croisement de temps en temps, recroiser la meilleure variété, livrer le chef, entrer au Salon
+// 1.8 : l'avion-cargo : charger ce qui dépasse des besoins
+function cargo() {
+    if (!G.cargoHere() || !state.cargo || state.cargo.done) return;
+    const nd = need();
+    state.cargo.holds.forEach((h, i) => {
+        const spare = (state.inventory[h.id] || 0) - (nd[h.id] || 0);
+        if (spare > 0 && h.got < h.qty) tag('cargo', () => G.loadHold(i, undefined, spare));
+    });
+}
+
 function lab() {
     if (!state.genetics || !G.plantLabOpen()) return;
     const gx = state.genetics;
@@ -526,6 +536,7 @@ function abbey() {
 function step() {
     abbey();
     cave();
+    cargo();
     farm();
     island();
     orchard();

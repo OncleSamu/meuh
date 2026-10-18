@@ -2,6 +2,23 @@
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
 export const GUIDE = [
+    // 1.8 : le temps du jeu et le temps réel
+    {
+        id: 'time',
+        icon: ['ui', 'clock'],
+        name: 'Le temps',
+        lvl: 1,
+        view: 'farm',
+        text: 'L’horloge en haut du champ est l’heure de la ferme : une journée de jeu dure environ 5 minutes, une saison environ une heure. Tous les minuteurs, eux, sont en temps réel (« 2 h » = deux vraies heures). Jeu fermé, la ferme continue : cultures arrosées, bêtes nourries, machines, cave, visiteurs et commis avancent ; seuls les imprévus attendent votre retour. L’almanach (touchez l’horloge) le rappelle.',
+    },
+    {
+        id: 'cargo',
+        icon: ['ui', 'plane'],
+        name: 'L’avion-cargo',
+        lvl: 30,
+        view: 'quests',
+        text: 'Toutes les 48 heures (temps réel), un avion-cargo se pose pour 24 heures. Ses six soutes demandent d’énormes quantités : trois produits de la ferme, trois de l’atelier. Chargez petit à petit : chaque unité est payée tout de suite, et l’avion plein donne un gros bonus et des matériaux rares. Touchez un produit pour aller le produire.',
+    },
     {
         id: 'field',
         icon: ['item', 'wheat'],

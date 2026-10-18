@@ -71,6 +71,9 @@ export function todoList() {
         if (bo) push('machines/brew', ['villager', 'hugues'], `${bo} commande${s(bo)} de bière à livrer`, bo);
         if (G.beerBookClaimable()) push('machines/brew', ['ui', 'beer'], 'Récompense du livre des bières', 1);
     }
+    // 1.8 : l'avion-cargo
+    const cg = G.cargoReady();
+    if (cg) push('village/orders', ['ui', 'plane'], `${cg} soute${s(cg)} de l’avion-cargo à charger`, cg);
     // 1.7 : le labo
     if (state.genetics && G.geneticsOpen()) {
         const lt = state.genetics.litters.length + (G.crossReady() ? 1 : 0);

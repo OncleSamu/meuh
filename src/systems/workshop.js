@@ -5,7 +5,7 @@ import { state, lvOk } from '../core/state.js';
 import { viewShown } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float, squish, anchor } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { MACHINES, LEGACY_RECIPE, RECIPES, MOVED_RECIPES, LEGACY_FROM } from '../data/machines.js';
+import { MACHINES, LEGACY_RECIPE, RECIPES } from '../data/machines.js';
 import { VILLAGERS } from '../data/village.js';
 import { EVENTS, HOLIDAYS } from '../data/world.js';
 import { BALANCE } from '../data/progress.js';
@@ -74,26 +74,15 @@ export function ensureMachineData() {
     });
 }
 
-// 1.3.1 : des recettes ont changé de machine. Une ferme qui avait l'ancienne machine reçoit la nouvelle,
-// pour ne perdre aucune recette ; la « boucle » d'une machine ne relance plus une recette partie ailleurs.
+// 1.3.1 : des recettes ont changé de machine ; la « boucle » d'une machine ne relance plus une recette partie ailleurs.
+// 1.8 : plus aucune machine offerte au chargement (un cadeau trop gros, et sans recette au bon niveau) :
+// la nouvelle machine s'achète au magasin quand son niveau arrive.
 export function ensureRecipeMoves() {
-    if (state.moved131) return;
-    state.moved131 = true;
-    const has = new Set(state.machines.map(m => m.type));
-    const gift = [];
-    for (const [to, ids] of Object.entries(MOVED_RECIPES)) {
-        if (has.has(to)) continue;
-        const from = new Set(ids.map(id => LEGACY_FROM[id]).filter(Boolean));
-        if ([...from].some(f => has.has(f)) && MACHINES[to] && !MACHINES[to].needProject) {
-            state.machines.push(newMachine(to));
-            has.add(to);
-            gift.push(MACHINES[to].name);
-        }
-    }
     state.machines.forEach(m => {
         if (m.last && RECIPES[m.last] && RECIPES[m.last].machine !== m.type) m.last = null;
     });
-    if (gift.length) state.pendingGift131 = gift;
+    delete state.pendingGift131;
+    state.moved131 = true;
 }
 
 // une recette en file, avec la qualité promise par ses ingrédients

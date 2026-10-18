@@ -2,7 +2,7 @@
 import { state, lvOk } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
-import { DAYS_PER_SEASON, WEATHER } from '../../data/world.js';
+import { DAYS_PER_SEASON, WEATHER, GAME_MIN_PER_SEC } from '../../data/world.js';
 import { RARE } from '../../data/commerce.js';
 import { MAX_LEVEL } from '../../data/progress.js';
 import * as G from '../../systems/index.js';
@@ -95,6 +95,21 @@ defineSheet('almanac', {
             ])}
             <h3 class="section-title"><span>De saison (pousse 30 % plus vite)</span></h3>
             <div class="alm-crops">${crops.map(c => `<div class="alm-crop${!lvOk(c) ? ' locked' : ''}">${art('item', c.id)}<span>${c.name}</span></div>`).join('') || '<span class="card-sub">Aucune culture</span>'}</div>
+            <h3 class="section-title"><span>Le temps à la ferme</span></h3>
+            ${lines([
+                [
+                    ['ui', 'w_sun'],
+                    `<b>L’heure de la ferme</b><div class="card-sub">Une journée de jeu dure environ ${Math.round(1440 / GAME_MIN_PER_SEC / 60)} minutes en vrai ; une saison (${DAYS_PER_SEASON} jours de jeu) environ ${Math.round((DAYS_PER_SEASON * 1440) / GAME_MIN_PER_SEC / 60)} minutes. Elle règle le jour, la nuit, la météo et les saisons.</div>`,
+                ],
+                [
+                    ['ui', 'clock'],
+                    '<b>Tous les minuteurs sont en temps réel</b><div class="card-sub">Cultures, bêtes, machines, cave, train, montgolfière, bateau, avion-cargo, brasserie, labo : « 2 h » veut dire deux vraies heures.</div>',
+                ],
+                [
+                    ['ui', 'house'],
+                    '<b>Jeu fermé, la ferme continue</b><div class="card-sub">Les cultures arrosées poussent, les bêtes produisent tant qu’elles ont à manger, les machines terminent leur file, la cave vieillit, les visiteurs arrivent et repartent, le commis récolte. Seuls les imprévus attendent votre retour.</div>',
+                ],
+            ])}
             <p class="card-sub foot-note">${sv.id === 'hiver' ? 'En hiver, les cultures hors saison poussent presque deux fois moins vite et les arbres dorment à moitié.' : sv.id === 'automne' ? 'En automne, les arbres fruitiers produisent 20 % plus vite.' : 'Profitez-en pour planter ce qui est de saison.'}</p>`;
     },
 });

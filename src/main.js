@@ -1,5 +1,4 @@
 // Meuh : le démarrage. Les règles du jeu (systems) tournent toutes seules ; l'interface (ui) les montre.
-import { state } from './core/state.js';
 import { setView } from './core/view.js';
 import { emit } from './core/bus.js';
 import * as G from './systems/index.js';
@@ -89,17 +88,6 @@ function start() {
     if (away && away.lines.length && away.elapsed >= 300) pushMoment('offline', away);
     const daily = G.dailyDue();
     if (daily) pushMoment('daily', daily);
-    // 1.3.1 : les nouvelles machines offertes aux fermes qui avaient déjà l'ancienne
-    if (state.pendingGift131) {
-        pushMoment('celebrate', {
-            icon: ['machine', 'pastry'],
-            title: 'De nouvelles machines !',
-            sub: 'Des recettes ont déménagé pour que chaque machine garde une liste courte. Pour que vous n’en perdiez aucune, ces machines vous sont offertes :',
-            lines: state.pendingGift131.map(n => [['ui', 'check'], n]),
-        });
-        delete state.pendingGift131;
-    }
-
     // la seconde de jeu
     setInterval(() => {
         G.gameTick();

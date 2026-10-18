@@ -36,3 +36,4 @@ export * from './world.js';
 export * from './defis.js';
 export * from './night.js';
 export * from './carnet.js';
+export * from './cargo.js';

@@ -1,13 +1,13 @@
 // Village | Village : événement rare, carte et chantiers, fête du calendrier, contrat, saison de la ferme,
 // voisins, marchand ambulant, concours de la semaine et villageois.
 import { state } from '../../core/state.js';
-import { fmt, qtyName } from '../../core/format.js';
+import { fmt, qtyName, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { ANIMALS } from '../../data/animals.js';
 import { MACHINES, RECIPES } from '../../data/machines.js';
 import { DECOS } from '../../data/farm.js';
 import { VILLAGERS, PROJECTS, CHAPTERS, STORIES, RIVALS, NEIGHBOR_LVL } from '../../data/village.js';
-import { HOLIDAYS } from '../../data/world.js';
+import { HOLIDAYS, GAME_MIN_PER_SEC } from '../../data/world.js';
 import { RARE_EVENTS } from '../../data/surprises.js';
 import { CONTEST_LVL, CONTRACT_LVL } from '../../data/commerce.js';
 import { now } from '../../core/clock.js';
@@ -154,7 +154,7 @@ function holidayCard() {
                 : `<div class="needs">${Object.keys(h.goal)
                       .map(
                           k =>
-                              `<span class="need${G.holidayLeft(k) <= 0 ? ' ok' : ''}">${ico(['item', k])}${Math.max(0, h.goal[k] - G.holidayLeft(k))}/${h.goal[k]}</span>`,
+                              `<span class="need${G.holidayLeft(k) <= 0 ? ' ok' : ''}"><button class="pgo" data-act="produce" data-id="${k}" aria-label="Produire">${ico(['item', k])}</button>${Math.max(0, h.goal[k] - G.holidayLeft(k))}/${h.goal[k]}</span>`,
                       )
                       .join('')}${btn('Apporter', { act: 'giveHoliday', kind: G.holidayReady() ? 'gold' : '', size: 'sm', disabled: !G.holidayReady() })}</div>
             <div class="card-sub">${ico(['item', h.recipe])} Recette du moment : ${ITEMS[h.recipe].name.toLowerCase()} (${MACHINES[r.machine].name.toLowerCase()}). Récompense : ${DECOS[h.deco].name.toLowerCase()}, ${fmt(G.holidayReward())} pièces et 2 de chaque matériau rare.</div>`
@@ -169,7 +169,7 @@ function contractCard() {
     const it = ITEMS[c.item],
         have = state.inventory[c.item] || 0;
     const end = { printemps: 'du printemps', ete: 'de l’été', automne: 'de l’automne', hiver: 'de l’hiver' }[G.season().id];
-    return `<div class="card contract-card">${head(['ui', 'calendar'], 'Contrat de saison', c.done ? 'Contrat rempli. Un nouveau client viendra à la prochaine saison.' : `Un grossiste veut ${qtyName(c.qty, it.name)} avant la fin ${end}.`, pill(['ui', 'calendar'], `${G.seasonDaysLeft()} j`))}
+    return `<div class="card contract-card">${head(['ui', 'calendar'], 'Contrat de saison', c.done ? 'Contrat rempli. Un nouveau client viendra à la prochaine saison.' : `Un grossiste veut ${qtyName(c.qty, it.name)} avant la fin ${end}.`, pill(['ui', 'clock'], `≈ ${formatDuration((G.seasonDaysLeft() * 1440) / GAME_MIN_PER_SEC)}`))}
         ${
             c.done
                 ? ''
@@ -195,8 +195,7 @@ function farmSeasonCard() {
     const sv = state.fseason,
         th = G.farmSeasonTheme(),
         top = FARM_SEASON_TIERS.at(-1);
-    const days = Math.floor(G.farmSeasonEndsIn() / 86400);
-    return `<div class="card fseason-card">${head(['item', th.icon], th.name, `Chaque produit du thème rapporte des points (3 pour un produit d’atelier). Au dernier palier : ${DECOS[th.deco].name.toLowerCase()} et 1 ruban.`, pill(['ui', 'calendar'], `${days} j`))}
+    return `<div class="card fseason-card">${head(['item', th.icon], th.name, `Chaque produit du thème rapporte des points (3 pour un produit d’atelier). Au dernier palier : ${DECOS[th.deco].name.toLowerCase()} et 1 ruban.`, pill(['ui', 'clock'], formatDuration(G.farmSeasonEndsIn())))}
         <div class="season-items">${th.items.map(id => ico(['item', id])).join('')}</div>${bar(sv.pts / top)}
         <div class="tiers-row">${FARM_SEASON_TIERS.map((t, k) =>
             sv.got[k]

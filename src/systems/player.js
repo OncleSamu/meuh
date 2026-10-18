@@ -14,7 +14,7 @@ import { ISLAND } from '../data/island.js';
 import { GENETICS } from '../data/genetics.js';
 import { CAVE_LVL } from '../data/cave.js';
 import { INCIDENT_LVL, RARE_EVENT_LVL } from '../data/surprises.js';
-import { CONTRACT_LVL, CONTEST_LVL, LEAGUES } from '../data/commerce.js';
+import { CONTRACT_LVL, CONTEST_LVL, LEAGUES, CARGO } from '../data/commerce.js';
 import { DAILY_REWARDS, HOLIDAY_LVL } from '../data/world.js';
 import { BALANCE, MAX_LEVEL, RENOWN_XP, ACH_REWARDS, MEDALS, CAP_REQ, MASTERY_LVL, HOUSE, FARMHAND, ALBUM_LEVELS } from '../data/progress.js';
 import { ACHIEVEMENTS, SKILLS } from '../data/meta.js';
@@ -143,9 +143,17 @@ export function unlocksAt(lvl) {
         else add(['item', x.id], `${x.name} (au magasin)`);
     });
     Object.values(ANIMALS).forEach(x => x.reqLvl === lvl && add(['animal', x.id], x.name));
-    Object.values(MACHINES).forEach(
-        x => x.reqLvl === lvl && add(['machine', x.id], x.name + (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : '')),
-    );
+    // 1.8 : une machine arrive toujours avec ses premières recettes
+    Object.values(MACHINES).forEach(x => {
+        if (x.reqLvl !== lvl) return;
+        const first = Object.values(RECIPES).filter(r => r.machine === x.id && r.lvl === lvl && !r.teacher && !r.fete && !r.holiday);
+        add(
+            ['machine', x.id],
+            x.name +
+                (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : '') +
+                (first.length ? ` : ${first.map(r => ITEMS[r.id].name.toLowerCase()).join(', ')}` : ''),
+        );
+    });
     const recs = Object.values(RECIPES).filter(r => r.lvl === lvl && !r.teacher && r.lvl > MACHINES[r.machine].reqLvl);
     if (recs.length)
         add(
@@ -161,6 +169,7 @@ export function unlocksAt(lvl) {
             );
     });
     Object.values(UPGRADES).forEach(u => u.reqLvl === lvl && add(['ui', u.id], `${u.name} (au magasin)`));
+    if (lvl === CARGO.lvl) add(['ui', 'plane'], 'L’avion-cargo : toutes les 48 heures, d’énormes soutes à remplir (onglet Village, commandes)');
     if (lvl === CAVE_LVL) add(['ui', 'cave'], 'La cave : affinez fromages et cidres, et vendez-les aux enchères (onglet Atelier, puis Cave)');
     if (lvl === CHAPTERS[0].lvl) add(['ui', 'village'], 'Rénovez le village : premier chapitre (onglet Village)');
     if (lvl === INCIDENT_LVL) add(['ui', 'pest'], 'Des imprévus surviennent à la ferme : réagissez vite !');

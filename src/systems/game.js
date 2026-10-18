@@ -2,7 +2,7 @@
 import { state, setState, newState, fromSave, fillGrid, readSave, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
-import { s, fmt } from '../core/format.js';
+import { s, fmt, formatDuration } from '../core/format.js';
 import { emit, toast } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { GAME_MIN_PER_SEC, EVENTS } from '../data/world.js';
@@ -10,6 +10,7 @@ import { CONTRACT_LVL } from '../data/commerce.js';
 import { INCIDENTS, RARE_EVENTS } from '../data/surprises.js';
 import { MAX_LEVEL } from '../data/progress.js';
 import { CHAPTERS } from '../data/village.js';
+import { MACHINES, RECIPES } from '../data/machines.js';
 import { ensureVillagers } from './village.js';
 import { ensureGhPlots, seedList, plotRate, ghTick, ghOffline } from './farm.js';
 import { ensureAnimalData, animalsTick, growTick, animalsOffline } from './animals.js';
@@ -41,6 +42,7 @@ import { ensureDefis, defiTick } from './defis.js';
 import { ensureNight, nightTick } from './night.js';
 import { ensureCarnet } from './carnet.js';
 import { brewOpen, ensureBrew, brewTick } from './brewery.js';
+import { cargoTick, cargoHere, cargoLeave } from './cargo.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -72,6 +74,17 @@ export function normalizeState() {
         for (const c of CHAPTERS) if (state.story.seen[c.n] && !chapterDone(c.n)) state.story.keep[c.n] = true;
         migrateLevels14();
         state.lv14 = true;
+    }
+    // 1.8 : machines et recettes ont changé de niveau ; ce qu'une partie avait déjà ouvert le reste
+    if (!state.lv18) {
+        state.lvKeep = state.lvKeep || {};
+        for (const o of [MACHINES, RECIPES])
+            for (const d of Object.values(o)) {
+                const was = d.lv17,
+                    now18 = o === MACHINES ? d.reqLvl : d.lvl;
+                if (was !== undefined && was <= state.level && now18 > state.level) state.lvKeep[d.id] = true;
+            }
+        state.lv18 = true;
     }
     ensureVillagers();
     ensureGhPlots();
@@ -199,6 +212,7 @@ function tickDeliveries() {
     if (ensureHoliday()) changed = true;
     if (geneticsTick()) changed = true;
     if (brewTick()) changed = true;
+    if (cargoTick()) changed = true;
     if (defiTick()) changed = true;
     if (nightTick()) changed = true;
     if (contestTick()) changed = true;
@@ -284,6 +298,7 @@ export function offlineProgress() {
     // ce qui attend au village (train, montgolfière, marchand, fête, commandes)
     truckTick();
     balloonTick();
+    cargoTick();
     merchantTick();
     stallTick();
     neighborTick();
@@ -332,6 +347,11 @@ export function offlineProgress() {
     add(netReady(), ['ui', 'net'], 'Le filet de pêche est plein');
     add(state.boat.status === 'here', ['ui', 'boat'], 'Un cargo attend au port');
     add(state.truck.status === 'here', ['ui', 'trainIcon'], 'Le train de marchandises est en gare');
+    add(
+        cargoHere() && state.cargo && !state.cargo.done,
+        ['ui', 'plane'],
+        `L’avion-cargo est posé : il repart dans ${formatDuration((cargoLeave() - now()) / 1000)}`,
+    );
     add(state.balloon.status === 'here', ['ui', 'balloon'], 'Une montgolfière attend dans le pré');
     add(state.merchant.status === 'here', ['ui', 'merchant'], 'Zéphyr, le marchand ambulant, est au village');
     add(eventActive(), eventActive() && eventIcon(state.event.season), eventActive() && `La fête bat son plein : ${EVENTS[state.event.season].name}`);
