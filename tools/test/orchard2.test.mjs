@@ -40,6 +40,7 @@ const start = () => {
     state.inventory.pear = 20;
     state.bld = null;
     state.barn.lvl = 12;
+    state.upgrades.yield = 0;
     state.orchard.cuttings = [];
     state.orchard.picker = null;
     state.orchard.odile = null;
