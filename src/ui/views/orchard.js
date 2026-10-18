@@ -15,6 +15,7 @@ import { btn, bar, hint, timer, lines } from '../kit.js';
 import { defineView, defineLive } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { burstAt } from '../fx.js';
+import { orchardCards, treeExtras, cuttingsHtml, setupOrchard2 } from './orchard2.js';
 
 const STAGE_ART = { young: 0, adult: 2, old: 3, dead: 4 };
 const STAGE_NAME = { young: 'Jeune plant', adult: 'En pleine forme', old: 'Vieil arbre', dead: 'Arbre mort' };
@@ -102,6 +103,7 @@ function renderOrchard(el) {
             })}</div></div>`,
         ],
         ['orchard', `<div class="orchard">${slots.map((sl, k) => spot(sl, k, nextLocked)).join('')}</div>`],
+        ['cards', `<div class="orchard-cards">${orchardCards()}</div>`],
         [
             'hint',
             hint(
@@ -123,7 +125,7 @@ defineSheet('plantTree', {
         const k = +o.k,
             z = o.z || 'farm';
         const list = G.treeList(z).sort((a, b) => a.reqLvl - b.reqLvl);
-        return `<p class="card-sub center">Un arbre vit une centaine de fruits, puis donne du bois en mourant.</p>
+        return `${cuttingsHtml(k, z)}<p class="card-sub center">Un arbre vit une centaine de fruits, puis donne du bois en mourant.</p>
             <div class="pick-grid trees">${list
                 .map(d => {
                     const open = G.treeUnlocked(d),
@@ -167,10 +169,13 @@ defineSheet('tree', {
             ]);
             info.push([
                 ['ui', 'basket'],
-                `${t.ground} / ${ORCHARD.groundMax} fruits au sol${G.groundFull(t) ? ' : il attend qu’on ramasse, et ses fruits pourrissent' : ''}`,
+                `${t.ground} / ${G.groundMax()} fruits au sol${G.groundFull(t) ? ' : il attend qu’on ramasse, et ses fruits pourrissent' : ''}`,
             ]);
         }
-        info.push([['ui', 'calendar'], `${t.drops} fruit${t.drops > 1 ? 's donnés' : ' donné'} sur une vie d’environ ${ORCHARD.life}`]);
+        info.push([
+            ['ui', 'calendar'],
+            `${t.drops} fruit${t.drops > 1 ? 's donnés' : ' donné'}${G.lifeMax(t) === Infinity ? ' : il ne vieillit jamais' : ` sur une vie d’environ ${Math.round(G.lifeMax(t))}`}`,
+        ]);
         if (d.island) info.push([['ui', 'w_sun'], 'Sous les tropiques : pas d’hiver, il produit toute l’année']);
         else if (G.season().id === 'hiver') info.push([['ui', 'w_snow'], 'L’hiver, il dort à moitié']);
         else if (G.season().id === 'automne') info.push([['ui', 'w_cloudy'], 'L’automne, il produit 20 % plus vite']);
@@ -180,6 +185,7 @@ defineSheet('tree', {
             <div class="animal-kind">${STAGE_NAME[st]}</div>
             ${st === 'dead' ? '' : `<div class="life"><span>Vie</span>${bar(life, `life-bar${life < 1 - ORCHARD.oldAt ? ' low' : ''}`)}</div>`}
             ${lines(info)}
+            ${treeExtras(t, k, z)}
             <div class="row-btns">${
                 st === 'dead'
                     ? btn(`Débiter en bois · +${fellWood}${ico(['item', 'wood'])}`, { act: 'fellTree', data: { k, z }, kind: 'gold', wide: true })
@@ -190,6 +196,7 @@ defineSheet('tree', {
 });
 
 export function setupOrchard() {
+    setupOrchard2();
     actions({
         buyOrchardSlot: (el, d) => {
             const z = d.z || 'farm';

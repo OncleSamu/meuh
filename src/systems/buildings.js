@@ -31,7 +31,7 @@ export function bldNext(kind, id) {
 }
 export const bldOpen = id => {
     if (id === 'cave') return state.level >= 20;
-    if (id === 'orchard') return state.level >= 10;
+    if (id === 'orchard' || id === 'ladder' || id === 'basket') return state.level >= 10;
     if (id === 'greenhouse') return !!(state.greenhouse && state.greenhouse.built);
     if (id === 'traps') return state.level >= 12;
     if (id === 'pens') return state.animals.length > 0;
@@ -70,6 +70,11 @@ export const troughBonus = () => (bldLvl('pens') >= 2 ? 2 : 0);
 export const caveBonus = () => 2 * bldLvl('cave') * (bldLvl('cave') === 3 ? 1 : 1);
 export const orchardLife = base => base * (1 + 0.1 * bldLvl('orchard'));
 export const orchardRate = () => 1 - 0.06 * Math.max(0, bldLvl('orchard') - 1);
+export const ladderBonus = () => 2 * bldLvl('ladder');
+export const basketBonus = qty => {
+    const l = bldLvl('basket');
+    return l ? Math.floor(qty / [0, 8, 6, 4][l]) : 0;
+};
 export const trapBonus = () => bldLvl('traps');
 export const ghExtraPlots = () => bldLvl('greenhouse');
 // les parcelles libres de la serre

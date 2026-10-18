@@ -114,6 +114,12 @@ export const VILLAGERS = {
         role: 'Le bûcheron de la forêt',
         likes: ['hardwood', 'resin', 'ironPan', 'cider', 'birchSyrup', 'pineTorch', 'syrupCrepe', 'smokedSalmon', 'ironIngot'],
     },
+    odile: {
+        id: 'odile',
+        name: 'Odile',
+        role: 'L’arboricultrice du verger',
+        likes: ['apple', 'pear', 'cherry', 'peach', 'cider', 'jam', 'juice', 'honey', 'hardwood', 'fertilizer'],
+    },
     jules: {
         id: 'jules',
         name: 'Jules',
