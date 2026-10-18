@@ -156,6 +156,8 @@ export function sellAll(at) {
     let total = 0;
     const parts = [];
     sellableKeys().forEach(k => {
+        // les matériaux de la nature (bois, pierre, minerais, lingots, gemmes) se vendent un par un
+        if (['ore', 'ingot', 'gem'].includes(ITEMS[k].type) || k === 'wood' || k === 'stone') return;
         const n = sellableQty(k);
         if (n <= 0) return;
         const f0 = state.market.f[k];

@@ -14,8 +14,9 @@ import { fmt } from '../core/format.js';
 import { wildAnimal, animalSpeedGene, animalYieldGene, animalQuality, animalSaves } from './genetics.js';
 import { addQuality } from './farm.js';
 import { wishAnimals } from './night.js';
+import { troughBonus } from './buildings.js';
 
-export const maxFood = () => MAX_FOOD + rank('trough') * 2;
+export const maxFood = () => MAX_FOOD + rank('trough') * 2 + troughBonus();
 export const isAdult = a => a.adult !== false;
 export const animalMult = a =>
     (1 + rank('fed') * 0.08) * (1 + ((a && a.love) || 0) * 0.04) * starAnimalMult(a) * alpineMult(a) * themeAnimalMult() * (a ? animalSpeedGene(a) : 1);

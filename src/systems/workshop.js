@@ -21,6 +21,7 @@ import { inBarn, barnBlocked, rollRare } from './barn.js';
 import { collect } from './book.js';
 import { takeIngredients } from './genetics.js';
 import { qtyName } from '../core/format.js';
+import { mTimeMult, mExtraYield } from './buildings.js';
 
 // les machines de cuisine (le compteur « plats cuisinés »)
 export const COOKING = ['kitchen', 'stove', 'deli', 'fishmonger'];
@@ -46,7 +47,7 @@ export const machineBusy = m => m.queue.length > 0;
 export const outCount = m => Object.values(m.out).reduce((a, b) => a + b, 0);
 export const machineOutput = m => Object.keys(m.out).find(k => m.out[k] > 0) || m.queue[0] || null;
 // durée réelle d'une recette : vitesse générale, moulin du hameau, maîtrise
-export const recipeTime = id => RECIPES[id].time / (speedMult() * machineBoost(RECIPES[id].machine) * masterySpeed(id));
+export const recipeTime = id => (RECIPES[id].time / (speedMult() * machineBoost(RECIPES[id].machine) * masterySpeed(id))) * mTimeMult(RECIPES[id].machine);
 export const machinePct = m => (m.queue.length ? Math.min(1, m.progress / recipeTime(m.queue[0])) : 0);
 export const machineLeft = m => (m.queue.length ? Math.max(0, recipeTime(m.queue[0]) - m.progress) : 0);
 export const recipeLockText = r =>
@@ -95,7 +96,7 @@ function pushJob(m, id, q) {
 
 // Production en boucle : la machine relance sa dernière recette tant qu'il y a les ingrédients
 export function loopRefill(m) {
-    if (!m.loop || !m.last || m.queue.length >= machineSlots()) return false;
+    if (!m.loop || !m.last || m.queue.length >= machineSlots(m.type)) return false;
     const r = RECIPES[m.last];
     if (!r || !recipeUnlocked(r.id) || !canCook(r.id)) return false;
     const q = takeIngredients(r.id);
@@ -176,7 +177,7 @@ export function queueRecipe(i, id, at) {
         sfx('error');
         return false;
     }
-    if (m.queue.length >= machineSlots()) {
+    if (m.queue.length >= machineSlots(m.type)) {
         toast('La file de cette machine est pleine', ['machine', m.type]);
         sfx('error');
         return false;
@@ -224,7 +225,7 @@ export function collectMachine(i, at, quiet) {
         let qty = 0;
         const per = [];
         for (let j = 0; j < n; j++) {
-            const x = rollYield() * (r.outQty || 1);
+            const x = rollYield() * (r.outQty || 1) + mExtraYield(m.type);
             per.push(x);
             qty += x;
         }

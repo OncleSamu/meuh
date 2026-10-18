@@ -108,6 +108,12 @@ export const VILLAGERS = {
         role: 'Le pêcheur bourru',
         likes: ['pumpkin', 'potato', 'juice', 'soup', 'trout', 'cabbage', 'feather', 'smokedTrout', 'cider', 'fishSoup', 'sushi', 'garlicSoup', 'crate'],
     },
+    gaspard: {
+        id: 'gaspard',
+        name: 'Gaspard',
+        role: 'Le bûcheron de la forêt',
+        likes: ['hardwood', 'resin', 'ironPan', 'cider', 'birchSyrup', 'pineTorch', 'syrupCrepe', 'smokedSalmon', 'ironIngot'],
+    },
     jules: {
         id: 'jules',
         name: 'Jules',

@@ -47,11 +47,12 @@ import { hasMats } from './market.js';
 import { clampQuality } from './farm.js';
 import { BARRELS } from '../data/abbey.js';
 import { beerOf, beerValue, beerStock, ensureBrew, barrelOk, cellarOpen, takeFromBarrel, cellarTick } from './brewery.js';
+import { caveBonus } from './buildings.js';
 
 export const caveOpen = () => state.level >= CAVE_LVL;
 export const caveFam = id => CAVE_FAMILIES[CAVE_ITEMS[id]];
 export const caveSlots = () =>
-    CAVE_SLOTS_START + 2 * state.cave.shelves + (projectDone('affinage') ? 4 : 0) + (state.cave.gear.vault ? 2 : 0) + (cellarOpen() ? 2 : 0);
+    CAVE_SLOTS_START + 2 * state.cave.shelves + (projectDone('affinage') ? 4 : 0) + (state.cave.gear.vault ? 2 : 0) + (cellarOpen() ? 2 : 0) + caveBonus();
 export const caveStep = id => (CAVE_ITEMS[id] === 'cider' && projectDone('cidery') ? 4 * CAVE_H : caveFam(id).step);
 export const rankName = lot => (lot.bad ? (lot.id === 'beer' ? 'Tournée' : 'Tourné') : caveFam(lot.id).ranks[lot.rank]);
 // 1.6.3 : un lot peut être une bière (id 'beer', sa recette bid et son fût k)

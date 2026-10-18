@@ -707,3 +707,53 @@ Object.assign(CARNET, {
         'L’esturgeon est un poisson d’avant les dinosaures, avec des plaques sur le dos comme une armure. Ton grand-père n’en a sorti qu’un seul de toute sa vie. Il en a parlé pendant quarante ans.',
     caviar: 'Le caviar, je n’en ai mangé qu’une fois, avec l’esturgeon de Papi Lucien. Une cuillère chacun, sur une tartine beurrée. Ça avait le goût de la rivière et de la fête en même temps.',
 });
+
+// ---------------- 1.11 : la nature ----------------
+Object.assign(CARNET, {
+    cutStone:
+        'La pierre taillée, c’est la pierre qui a été bien élevée. Ton grand-père la dégrossissait au ciseau le soir, à la lampe. Il disait que chaque mur de la ferme avait été « poli à la patience ».',
+    ironIngot:
+        'Un lingot de fer, ça sort rouge du feu et ça refroidit gris. Papi Lucien posait la main près, jamais dessus, et il savait au degré près s’il était prêt. Il lui manquait deux doigts de sa jeunesse, mais ça, il n’en parlait pas.',
+    copperIngot:
+        'Le cuivre, c’est le métal des cuisinières. Il chauffe vite, il se patine, il s’entretient avec du citron et du sel. On t’y a mis la main une fois, le jour de tes dix ans, pour que tu comprennes pourquoi on dit « faire briller ».',
+    silverIngot:
+        'On raconte que l’argent du fond de la grotte a un son particulier quand on le frappe. Ton grand-père tendait l’oreille comme un chat. Moi, j’entendais surtout le silence qui suivait.',
+    goldIngot:
+        'L’or, la première fois qu’on en voit un lingot, on rit bêtement. Ça pèse beaucoup plus que ça n’en a l’air. Ton grand-père l’a posé sur la table de la cuisine et on a mangé autour sans oser y toucher.',
+    ironPan:
+        'Une poêle en fer ne se lave pas, elle se « soigne ». Un peu d’huile, un chiffon, jamais de savon. Celle-ci a dix-sept ans et fait les meilleures crêpes de la région, tout le monde le sait.',
+    copperPot:
+        'La casserole en cuivre, c’était pour les confitures. Elle accrochait la lumière du soleil et la renvoyait dans toute la cuisine. Ta grand-mère disait qu’elle faisait deux fois le travail : cuire et décorer.',
+    silverCutlery:
+        'Les couverts d’argent sortaient deux fois par an : à Noël et le jour du mariage de ta tante. On les comptait avant, on les comptait après. Il en manquait toujours un. On l’a retrouvé, des années plus tard, dans un pot de fleurs.',
+    goldenBell:
+        'La cloche dorée sonnait pour annoncer les grandes nouvelles : une naissance, une récolte exceptionnelle, un mariage. Je ne l’ai entendue que trois fois. À chaque fois, tout le village a levé la tête en même temps.',
+    pineTorch:
+        'Une torche de résine de pin, c’est pour les nuits où l’on va voir si les bêtes vont bien. Elle sent la forêt et éclaire plus loin qu’on ne croit. Le chien suivait la lumière en trottinant, sans jamais la dépasser.',
+    solidOak:
+        'Le chêne massif, c’est du bois qu’on ne remplace pas. Il faut cent ans pour le faire pousser et il en dure trois cents. Ton grand-père disait : « On ne coupe pas un chêne, on lui emprunte une poutre. »',
+    resinCandle:
+        'Une bougie à la résine, ça sent le sapin et la cire d’abeille mélangés. On l’allumait pour les longues soirées d’hiver, et la ferme tout entière sentait la forêt, même avec les volets fermés.',
+    birchSyrup:
+        'Le sirop de bouleau, il faut quatre seaux de sève pour en tirer une bouteille. Au printemps, ton grand-père plantait un petit tuyau dans l’écorce et on écoutait goutter, comme une horloge qui prendrait son temps.',
+    birchGingerbread:
+        'Le pain d’épices au sirop de bouleau, c’est la recette de ma voisine, qui ne l’a jamais voulue donner. Je l’ai retrouvée à force de goûter. Elle ne l’a jamais su, ou elle a fait semblant.',
+    syrupCrepe:
+        'La crêpe au sirop de bouleau, c’est la réponse à toutes les mauvaises journées. Une louche de pâte, une cuillerée de sirop, un peu de silence. Ça marche aussi bien qu’une conversation.',
+    crystalVase:
+        'Le vase de cristal de roche, tu le remplissais d’eau de pluie, et le soleil faisait des arcs-en-ciel sur le mur du salon. Je n’y ai jamais mis de fleurs : il était déjà assez beau tout seul.',
+    quartzPendant:
+        'Un pendentif de quartz, c’est un petit bout de grotte qu’on porte autour du cou. Ton grand-père disait que ça protège des orages. Il n’a jamais été foudroyé, alors le raisonnement tenait.',
+    rubyBrooch:
+        'Une broche en rubis, c’était pour les grands bals de la ville. Ta tante la portait à gauche, près du cœur, comme une petite braise. Elle disait que ça la gardait au chaud, même en hiver.',
+    sapphirePendant:
+        'Le saphir, c’est la couleur du ciel avant l’orage. Ton grand-père en avait trouvé un tout petit dans le fond de la mine, et il l’a fait monter sur un pendentif pour moi. Je l’ai porté tous les dimanches.',
+    sapphireRing:
+        'La bague en saphir, on l’a offerte à ta grand-mère le jour de leurs noces d’argent. Elle a dit « elle est trop belle » et ne l’a plus quittée. C’est ce qu’on dit d’un bijou réussi.',
+    rubyRing:
+        'La bague en rubis est la plus rare de ma boîte à bijoux. Elle brille comme une cerise bien mûre. Je l’ai gagnée à un concours de confitures. Il n’y avait que deux participantes, mais enfin.',
+    emeraldBrooch:
+        'L’émeraude a la couleur des prés au mois de mai. On dit qu’elle porte chance aux fermiers. Moi, je la mettais pour les foires, et mes fromages se vendaient toujours mieux, allez savoir.',
+    emeraldRing:
+        'La bague en émeraude, on ne la sort que pour les grands moments. Le jour où tu l’auras au doigt, ça voudra dire que ta ferme est devenue le plus beau domaine du pays. Et que je peux être fière de toi.',
+});

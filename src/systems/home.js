@@ -13,6 +13,7 @@ import { ensureQuests } from './orders.js';
 import { ensureStall } from './stall.js';
 import { resetPlot, harvestPlot, plotRate } from './farm.js';
 import { barnBlocked } from './barn.js';
+import { mSlotsBonus } from './buildings.js';
 
 // ---------------- coûts en pièces et matériaux ----------------
 export const hasCost = c => Object.entries(c).every(([k, n]) => (k === 'coins' ? state.money >= n : (state.inventory[k] || 0) >= n));
@@ -41,7 +42,7 @@ export const houseCanUp = () => {
 };
 // bonus cumulés de la maison et des chantiers
 export const extraOrders = () => (houseLvl() >= 2 ? 1 : 0) + (projectDone('hall') ? 1 : 0);
-export const machineSlots = () => MACHINE_SLOTS + (houseLvl() >= 3 ? 1 : 0);
+export const machineSlots = type => MACHINE_SLOTS + (houseLvl() >= 3 ? 1 : 0) + (type ? mSlotsBonus(type) : 0);
 export const extraStall = () => (houseLvl() >= 4 ? 1 : 0) + (projectDone('washhouse') ? 1 : 0);
 export const houseBarn = () => (houseLvl() >= 1 ? 40 : 0);
 export const housePay = () => (houseLvl() >= 5 ? 1.1 : 1);

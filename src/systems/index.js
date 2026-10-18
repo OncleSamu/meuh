@@ -18,6 +18,8 @@ export * from './market.js';
 export * from './mastery.js';
 export * from './merchant.js';
 export * from './nature.js';
+export * from './natureplus.js';
+export * from './buildings.js';
 export * from './orchard.js';
 export * from './orders.js';
 export * from './pastures.js';

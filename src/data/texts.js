@@ -169,7 +169,7 @@ export const GUIDE = [
         name: 'Forêt et mine',
         lvl: 3,
         view: 'nature',
-        text: 'Bois et pierre pour construire, pierres précieuses pour la joaillerie. Améliorez la hache et la pioche avec des outils.',
+        text: 'La forêt donne du bois, du bois dur (chêne, châtaignier), de la résine (pin) et de la sève (bouleau). La mine a trois profondeurs : la carrière (pierre, charbon), la galerie dès le niveau 18 (fer, cuivre, avec une lampe et un wagonnet) et la grotte dès le niveau 30 (argent, or, rubis, saphirs, émeraudes). Une veine qui brille donne toujours une pierre précieuse. La forge fond les lingots, la scierie fait le chêne massif. Avec tout cela, le Chantier de la ferme améliore chaque bâtiment en trois niveaux. Le bûcheron et le mineur travaillent même jeu fermé, Gaspard donne un défi par jour.',
     },
     {
         id: 'pond',

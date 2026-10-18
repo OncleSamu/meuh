@@ -11,6 +11,7 @@ import { NIGHT } from '../data/night.js';
 import { CHAPTERS, PROJECTS, NEIGHBOR_LVL, chapterNum, chapterAfter } from '../data/village.js';
 import { NATURE } from '../data/nature.js';
 import { POND_UNLOCKS } from '../data/fishing.js';
+import { NATURE_UNLOCKS } from '../data/nature.js';
 import { ISLAND } from '../data/island.js';
 import { GENETICS } from '../data/genetics.js';
 import { CAVE_LVL } from '../data/cave.js';
@@ -177,6 +178,7 @@ export function unlocksAt(lvl) {
     if (lvl === DOG.reqLvl) add(['ui', 'dog'], 'Un chien de ferme à adopter');
     if (lvl === NATURE.forest.lvl) add(['item', 'wood'], 'La forêt : coupez du bois (Ferme | Nature)');
     if (lvl === NATURE.mine.lvl) add(['item', 'stone'], 'La mine : cassez des rochers (Ferme | Nature)');
+    NATURE_UNLOCKS.forEach(([l, t]) => l === lvl && add(['ui', 'pickaxe'], `${t} (Ferme | Nature)`));
     POND_UNLOCKS.forEach(([l, t]) => l === lvl && add(['ui', 'rod'], `${t} (Ferme | Étang)`));
     if (lvl === GH.lvl) add(['ui', 'greenhouse'], 'Serre (à construire dans la ferme)');
     if (lvl === CONTRACT_LVL) add(['ui', 'calendar'], 'Contrats de saison : une grosse livraison par saison, avec un ruban (onglet Village, volet Commandes)');

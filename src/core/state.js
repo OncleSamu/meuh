@@ -38,6 +38,8 @@ export function newState() {
         genetics: null,
         brew: null, // 1.6 : la brasserie de l'abbaye
         cargo: null, // 1.8 : l'avion-cargo
+        nat: null, // 1.11 : la nature (mine, ouvriers, charbonnière, carnet, défi de Gaspard)
+        bld: null, // 1.11 : les bâtiments améliorés
         pond: null, // 1.10 : la pêche (coins, appâts, nasses, défis, concours)
         defis: null,
         night: null,
