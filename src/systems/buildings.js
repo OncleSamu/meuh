@@ -34,6 +34,8 @@ export const bldOpen = id => {
     if (id === 'orchard' || id === 'ladder' || id === 'basket') return state.level >= 10;
     if (id === 'greenhouse') return !!(state.greenhouse && state.greenhouse.built);
     if (id === 'traps') return state.level >= 12;
+    if (id === 'brewery') return !!(state.projects && state.projects.brewhall && state.projects.brewhall.done);
+    if (id === 'labPens') return !!(state.projects && state.projects.lab && state.projects.lab.done);
     if (id === 'pens') return state.animals.length > 0;
     return true;
 };
@@ -75,6 +77,8 @@ export const basketBonus = qty => {
     const l = bldLvl('basket');
     return l ? Math.floor(qty / [0, 8, 6, 4][l]) : 0;
 };
+export const vatBonus = () => bldLvl('brewery');
+export const labPenBonus = () => bldLvl('labPens');
 export const trapBonus = () => bldLvl('traps');
 export const ghExtraPlots = () => bldLvl('greenhouse');
 // les parcelles libres de la serre

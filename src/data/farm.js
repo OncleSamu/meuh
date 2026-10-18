@@ -439,6 +439,30 @@ export const DECOS = {
         reqLvl: 20,
         charm: 20,
     },
+    copperBell: {
+        id: 'copperBell',
+        name: 'Cloche de cuivre',
+        desc: 'Voisines : poussent 8 % plus vite ; +14 de charme',
+        cost: 6000,
+        reqLvl: 26,
+        charm: 14,
+    },
+    oakBench: {
+        id: 'oakBench',
+        name: 'Banc de chêne',
+        desc: 'Voisines : 10 % de chances de plus d’une récolte argent ou or ; +16 de charme',
+        cost: 8000,
+        reqLvl: 28,
+        charm: 16,
+    },
+    ironLamp: {
+        id: 'ironLamp',
+        name: 'Lanterne de fer',
+        desc: 'Voisines : poussent 8 % plus vite ; +14 de charme',
+        cost: 7000,
+        reqLvl: 30,
+        charm: 14,
+    },
     jackLantern: {
         id: 'jackLantern',
         name: 'Citrouille-lanterne',
@@ -584,6 +608,18 @@ export const MAT = {
         },
     },
     placedeco: {
+        copperBell: {
+            copperIngot: 4,
+            plank: 4,
+        },
+        oakBench: {
+            solidOak: 2,
+            plank: 6,
+        },
+        ironLamp: {
+            ironIngot: 3,
+            coal: 4,
+        },
         birdhouse: {
             wood: 3,
         },

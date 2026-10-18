@@ -6,6 +6,7 @@
 // Une variété (plantes) : { id, kind: 'plant', base, name, g, gen, fixed, analyzed, born }
 //   ses graines (genetics.seeds[id]) se sèment ; ses produits (genetics.stock[id]) font partie du stock de l'espèce.
 // Une bête porte son génome (a.g), sa génération (a.gen) et sa race fixée (a.race).
+import { labPenBonus } from './buildings.js';
 import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { fmt, pickRand, qtyName } from '../core/format.js';
@@ -48,7 +49,7 @@ export const geneticsOpen = () => plantLabOpen() || breedOpen();
 // 1.7 : deux pollinisations à la fois avec la ruche, une portée plus grande avec le laboratoire, plusieurs enclos
 export const crossSlots = () => (projectDone(GX.hiveProject) ? GX.crossSlotsHive : 1);
 export const litterSize = () => (labOpen() ? GX.litterLab : GX.litter);
-export const breedSlots = () => GX.breedPens + (labOpen() ? 1 : 0) + (seedbankOpen() ? 1 : 0);
+export const breedSlots = () => GX.breedPens + (labOpen() ? 1 : 0) + (seedbankOpen() ? 1 : 0) + (labOpen() ? labPenBonus() : 0);
 export const isPlant = id => ITEMS[id] && (ITEMS[id].type === 'crop' || ITEMS[id].type === 'tree') && FLAVORS[id];
 
 export function ensureGenetics() {

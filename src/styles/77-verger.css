@@ -171,3 +171,21 @@
 .medal.or {
     background: #ffd23f;
 }
+
+/* 1.14 : le mur du salon */
+.wall-plaque {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    background: #a8693a;
+    border: 3px solid #3a2618;
+    color: #fff7e0;
+}
+.wall-plaque .spr {
+    width: 44px;
+    height: 44px;
+}

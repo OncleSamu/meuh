@@ -32,10 +32,11 @@ import './v20fish.js';
 import './v111nature.js';
 import './v112verger.js';
 import './v113verger.js';
+import './v114.js';
 
 export const SPR = {
     farmhouse(l, roof) {
-        return svg(farmhouseArt(Math.max(0, Math.min(5, l)), roof), '0 0 64 64', 'farmhouse');
+        return svg(farmhouseArt(Math.max(0, Math.min(6, l)), roof), '0 0 64 64', 'farmhouse');
     },
     plant(id, stage) {
         const d = ITEMS[id];

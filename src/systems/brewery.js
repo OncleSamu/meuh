@@ -12,13 +12,14 @@ import { addFriendship } from './village.js';
 import { projectDone } from './story.js';
 import { earn, addXp } from './player.js';
 import { clampQuality } from './farm.js';
+import { vatBonus } from './buildings.js';
 import { varietyMult, varName, traitOf, FLAVOR_IDS, clampVarieties } from './genetics.js';
 
 // ---------------- ouverture ----------------
 export const brewOpen = () => projectDone('brewhall');
 export const cellarOpen = () => projectDone('barrelcellar');
 export const brewSlots = () => (projectDone('labelshop') ? 3 : projectDone('fermenters') ? 2 : 1);
-export const vatCount = () => Object.entries(ABBEY.vats).reduce((a, [p, n]) => a + (projectDone(p) ? n : 0), 0);
+export const vatCount = () => Object.entries(ABBEY.vats).reduce((a, [p, n]) => a + (projectDone(p) ? n : 0), 0) + (brewOpen() ? vatBonus() : 0);
 // ce qu'on peut mettre dans une bière : toutes les cultures et tous les fruits
 export const BREWABLE = Object.values(ITEMS)
     .filter(i => (i.type === 'crop' || i.type === 'tree') && FLAVORS[i.id] && i.id !== 'hop')

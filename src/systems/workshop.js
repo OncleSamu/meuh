@@ -188,7 +188,13 @@ export function queueRecipe(i, id, at) {
         emit('shake', at);
         return false;
     }
-    const q = takeIngredients(id);
+    let q = takeIngredients(id);
+    // 1.14 : le bois fruitier parfume le fumoir : un lot sur quatre sort en argent
+    if (m.type === 'smokehouse' && !q && state.inventory.fruitWood > 0 && Math.random() < 0.25) {
+        state.inventory.fruitWood--;
+        q = 1;
+        toast('Le bois fruitier parfume le lot : il sortira en argent', ['item', 'fruitWood']);
+    }
     clampAllQuality();
     if (!m.queue.length) m.progress = 0;
     pushJob(m, id, q);

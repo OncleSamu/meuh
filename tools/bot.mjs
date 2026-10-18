@@ -352,7 +352,7 @@ function progress() {
                 const id = ['eternal', 'double', 'gold', 'robust'].find(g => G.graftStock(g));
                 if (id) G.graftTree(k, id);
             });
-            ['barn', 'pens', 'cave', 'orchard', 'ladder', 'basket', 'greenhouse', 'traps'].forEach(
+            ['barn', 'pens', 'cave', 'orchard', 'ladder', 'basket', 'brewery', 'labPens', 'greenhouse', 'traps'].forEach(
                 id => G.bldOpen(id) && G.bldCan('b', id) && state.money > G.bldNext('b', id).cost.coins * 3 && G.upgradeBld('b', id),
             );
             state.machines.forEach(m => G.bldCan('m', m.type) && state.money > G.bldNext('m', m.type).cost.coins * 4 && G.upgradeBld('m', m.type));

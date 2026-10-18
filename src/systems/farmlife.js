@@ -114,7 +114,8 @@ export function neighbors(i) {
 
 // 1.9 : la parcelle de la décoration en profite aussi
 export const nearDeco = (i, id) => i >= 0 && i < 1000 && [i, ...neighbors(i)].some(j => state.grid[j].isUnlocked && state.grid[j].deco === id);
-export const decoGrowth = i => (nearDeco(i, 'hive') ? 1.15 : 1) * (nearDeco(i, 'flowerArch') ? 1.1 : 1);
+export const decoGrowth = i =>
+    (nearDeco(i, 'hive') ? 1.15 : 1) * (nearDeco(i, 'flowerArch') ? 1.1 : 1) * (nearDeco(i, 'copperBell') ? 1.08 : 1) * (nearDeco(i, 'ironLamp') ? 1.08 : 1);
 export const decoTool = t => (typeof t === 'string' && t.startsWith('deco:') ? t.slice(5) : null);
 // une parcelle sous l'influence d'une décoration voisine
 export const hasAura = i => state.grid[i].isUnlocked && [i, ...neighbors(i)].some(j => state.grid[j].deco);

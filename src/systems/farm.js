@@ -539,6 +539,7 @@ export function rollQuality(plot) {
     if (soilFits(gi, plot.itemId)) x += SOIL_BONUS.quality;
     x += rank('expert') * 0.05;
     if (gi >= 0 && nearDeco(gi, 'flowers')) x += 0.1;
+    if (gi >= 0 && nearDeco(gi, 'oakBench')) x += 0.1;
     x += Math.min(0.1, state.prestige.rubans * 0.01);
     const r = Math.random();
     return r < x * 0.35 * rainbowGold() ? 2 : r < x ? 1 : 0;
