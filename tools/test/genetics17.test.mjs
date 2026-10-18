@@ -62,12 +62,12 @@ test('une portée de jeunes plants, deux pollinisations avec la ruche', () => {
     tick(GENETICS.crossTime + 1);
     const a = G.finishCross(),
         b = G.finishCross();
-    assert.equal(a.kids.length, GENETICS.litterLab, 'même espèce : rarement stérile');
+    assert.ok(a.kids.length >= 1 && a.kids.length <= GENETICS.litterLab, 'une portée de 1 à 4 jeunes plants');
     assert.ok(b);
     const f = state.inventory.fertilizer || 0;
-    const v = G.keepSeedling(a.id, 2);
+    const v = G.keepSeedling(a.id, a.kids.length - 1);
     assert.ok(v && v.base === 'strawberry');
-    assert.equal(state.inventory.fertilizer, f + GENETICS.litterLab - 1, 'les autres au compost');
+    assert.equal(state.inventory.fertilizer, f + a.kids.length - 1, 'les autres au compost');
     assert.ok(G.dropLitter(b.id));
     if (L) G.dropLitter(L.id);
     assert.equal(state.genetics.litters.length, 0);

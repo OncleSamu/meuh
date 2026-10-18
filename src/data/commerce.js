@@ -114,3 +114,18 @@ export const LEAGUES = [
         lvl: 44,
     },
 ];
+
+// 1.8 : l'avion-cargo. Toutes les 48 heures (vraie vie), il reste 24 heures et emporte d'énormes quantités.
+export const CARGO = {
+    lvl: 30,
+    every: 48 * 3600 * 1000,
+    stay: 24 * 3600 * 1000,
+    holds: 6, // six soutes : trois produits de la ferme, trois de l'atelier
+    value: lvl => 1800 + lvl * 650, // valeur d'une soute, au prix de vente
+    min: 40,
+    max: 400,
+    pay: 2.2, // chaque unité chargée rapporte 2,2 fois son prix
+    xp: 0.35,
+    bonus: 0.8, // l'avion plein : 80 % de plus, et des matériaux rares
+    mats: 3,
+};

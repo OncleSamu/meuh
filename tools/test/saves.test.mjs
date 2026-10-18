@@ -33,10 +33,11 @@ test('une sauvegarde de la 6.2 se charge sans rien perdre', () => {
         lv0 = state.level;
     assert.equal(state.money, old.money);
     assert.equal(state.animals.length, old.animals.length);
-    // 1.3.1 : la cuisine et le four à pain apportent le comptoir froid, la poissonnerie, le fourneau et la pâtisserie
+    // 1.8 : on garde ses machines, mais on n'en reçoit plus en cadeau au chargement
     const types = new Set(state.machines.map(m => m.type));
     old.machines.forEach(m => assert.ok(types.has(m.type), m.type));
-    assert.ok(types.has('pastry') && types.has('deli') && types.has('fishmonger') && types.has('stove'));
+    assert.equal(state.machines.length, old.machines.length);
+    assert.equal(state.pendingGift131, undefined);
     assert.equal(state.grid.length, old.grid.length);
     assert.equal(state.prestige.rubans, old.prestige.rubans);
     for (const k of Object.keys(old)) assert.ok(k in state, 'clé perdue : ' + k);

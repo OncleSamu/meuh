@@ -81,7 +81,7 @@ const BUILD = {
         };
     },
     offline: r => ({
-        html: `<div class="moment-avatar">${art('ui', 'house')}</div><h2>Bon retour !</h2><p>Pendant votre absence (${formatDuration(r.elapsed)}) :</p>${lines(r.lines)}`,
+        html: `<div class="moment-avatar">${art('ui', 'house')}</div><h2>Bon retour !</h2><p>Vous êtes parti ${formatDuration(r.elapsed)} (en vrai). La ferme a continué sans vous :</p>${lines(r.lines)}`,
         ok: 'Au travail !',
     }),
     daily: d => {

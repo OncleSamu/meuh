@@ -1,4 +1,5 @@
 import { LV_MACH, LV_REC } from './levels14.js';
+import { LV18_MACH, LV18_REC } from './levels18.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -3345,3 +3346,16 @@ Object.assign(RECIPES, {
     maltBrown: { id: 'maltBrown', machine: 'malthouse', ing: { barley: 3 }, time: 180, lvl: 35, base: 35, xp: 11 },
     maltBlack: { id: 'maltBlack', machine: 'malthouse', ing: { barley: 3 }, time: 240, lvl: 35, base: 35, xp: 15 },
 });
+
+// ---------------- 1.8 : une machine par niveau, toujours avec ses recettes ----------------
+// lv17 : le niveau d'avant, pour qu'une ancienne partie garde ce qu'elle avait déjà ouvert
+for (const [id, l] of Object.entries(LV18_MACH)) if (MACHINES[id]) [MACHINES[id].lv17, MACHINES[id].reqLvl] = [MACHINES[id].reqLvl, l];
+for (const [id, l] of Object.entries(LV18_REC)) if (RECIPES[id]) [RECIPES[id].lv17, RECIPES[id].lvl, RECIPES[id].base] = [RECIPES[id].lvl, l, l];
+// une recette ne s'ouvre jamais avant sa machine
+for (const r of Object.values(RECIPES)) {
+    const m = MACHINES[r.machine];
+    if (m && r.lvl < m.reqLvl) {
+        if (r.lv17 === undefined) r.lv17 = r.lvl;
+        r.lvl = r.base = m.reqLvl;
+    }
+}

@@ -510,9 +510,8 @@ export const MAT = {
         mill: {
             wood: 4,
         },
-        bakery: {
-            wood: 6,
-        },
+        // 1.8 : la première machine ne demande pas de bois (la forêt s'ouvre au niveau 3)
+        bakery: null,
         press: {
             wood: 10,
             stone: 4,

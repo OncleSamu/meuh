@@ -78,3 +78,41 @@ test('aucune règle exportée deux fois sous le même nom (sinon elle disparaît
         [],
     );
 });
+
+test('1.8 : une machine par niveau, avec au moins une recette faisable et ses matériaux', async () => {
+    const { MAT } = await import('../../src/data/farm.js');
+    const { NATURE } = await import('../../src/data/nature.js');
+    const { ANIMALS } = await import('../../src/data/animals.js');
+    const { CHAPTERS } = await import('../../src/data/village.js');
+    const prodBy = {};
+    for (const a of Object.values(ANIMALS)) prodBy[a.prodId] = Math.min(prodBy[a.prodId] || 99, a.reqLvl);
+    const projLvl = p => CHAPTERS[PROJECTS[p].ch - 1].lvl;
+    const avail = id => {
+        const r = RECIPES[id];
+        if (r) return Math.max(r.lvl, MACHINES[r.machine].reqLvl, MACHINES[r.machine].needProject ? projLvl(MACHINES[r.machine].needProject) : 0);
+        const it = ITEMS[id];
+        return Math.min(Math.max(it.reqLvl || 1, it.needProject ? projLvl(it.needProject) : 0), prodBy[id] || 99);
+    };
+    const seen = {};
+    for (const m of Object.values(MACHINES)) {
+        assert.ok(!seen[m.reqLvl], `niveau ${m.reqLvl} : ${seen[m.reqLvl]} et ${m.id}`);
+        seen[m.reqLvl] = m.id;
+        const rs = Object.values(RECIPES).filter(r => r.machine === m.id);
+        assert.ok(
+            rs.every(r => r.lvl >= m.reqLvl),
+            `${m.id} : une recette avant la machine`,
+        );
+        const ok = rs.filter(
+            r =>
+                r.lvl <= m.reqLvl &&
+                !r.teacher &&
+                !r.fete &&
+                !r.holiday &&
+                Object.keys(r.ing).every(k => avail(k) <= Math.max(m.reqLvl, m.needProject ? projLvl(m.needProject) : 0)),
+        );
+        assert.ok(ok.length >= 1, `${m.id} (niveau ${m.reqLvl}) : aucune recette faisable à son ouverture`);
+        const mats = MAT.machine[m.id] || {};
+        if (mats.wood) assert.ok(m.reqLvl >= NATURE.forest.lvl, `${m.id} : du bois avant la forêt`);
+        if (mats.stone) assert.ok(m.reqLvl >= NATURE.mine.lvl, `${m.id} : de la pierre avant la mine`);
+    }
+});

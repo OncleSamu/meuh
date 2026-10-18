@@ -136,7 +136,7 @@ function train() {
             const have = state.inventory[sl.id],
                 ok = have >= sl.qty;
             return `<div class="wagon${sl.loaded ? ' loaded' : ''}" data-anchor="wagon:${k}">
-                <div class="wagon-load">${sl.loaded ? `<div class="crate">${art('ui', 'crate')}</div>` : `${ico(['item', sl.id])}<b>×${sl.qty}</b>`}</div>
+                ${sl.loaded ? `<div class="wagon-load"><div class="crate">${art('ui', 'crate')}</div></div>` : `<button class="wagon-load go" data-act="produce" data-id="${sl.id}" aria-label="Aller produire">${ico(['item', sl.id])}<b>×${sl.qty}</b></button>`}
                 <div class="wagon-spr">${SPR.wagon(WAGON_COLORS[k])}</div>
                 <div class="wagon-info">${
                     sl.loaded
@@ -151,6 +151,29 @@ function train() {
         <div class="rails"><div class="train-row">${wagons}<div class="loco">${SPR.loco()}</div></div></div>
         <div class="truck-reward"><span>Train complet : bonus</span>${rewardHtml(t.gold, t.xp)}${ico(['ui', 'barn'])}</div>
     </div>`;
+}
+
+// ---------------- 1.8 : l'avion-cargo ----------------
+function cargoCard() {
+    if (!G.cargoOpen()) return null;
+    const c = state.cargo;
+    if (!G.cargoHere() || !c || !c.holds.length)
+        return `<div class="card away">${ico(['ui', 'plane'], 'ico big')}<div class="card-main"><div class="card-title">Avion-cargo</div><div class="card-sub">Prochain atterrissage dans ${timer(G.cargoArrive(), 'b')} · il vient toutes les 48 heures et reste 24 heures, même jeu fermé</div></div></div>`;
+    const holds = c.holds
+        .map((h, i) => {
+            const have = state.inventory[h.id] || 0,
+                left = h.qty - h.got,
+                full = left <= 0;
+            return `<div class="hold${full ? ' full' : ''}"><button class="hold-item" data-act="produce" data-id="${h.id}" aria-label="Aller produire">${ico(['item', h.id], 'ico big')}</button>
+                <div class="hold-main"><b>${ITEMS[h.id].name}</b>${bar(h.got / h.qty)}<small>${fmt(h.got)} / ${fmt(h.qty)}${full ? '' : ` · ${fmt(have)} en stock${have ? ` · ${fmt(G.holdPay(h, Math.min(have, left)))}${ico(['ui', 'coin'])}` : ''}`}</small></div>
+                ${full ? ico(['ui', 'check'], 'ico tick') : btn(have ? `Charger ${fmt(Math.min(have, left))}` : 'Produire', { act: have ? 'loadHold' : 'produce', data: have ? { i } : { id: h.id }, kind: have ? 'green' : '', size: 'sm' })}</div>`;
+        })
+        .join('');
+    return `<div class="card cargo-card here"><div class="card-head">${ico(['ui', 'plane'], 'ico big')}<div class="card-main"><div class="card-title">Avion-cargo</div>
+        <div class="card-sub">${c.done ? 'Soutes pleines : merci ! Il repartira à l’heure.' : 'D’énormes soutes : chaque unité chargée est payée tout de suite, l’avion plein donne un gros bonus.'}</div></div>
+        <span class="timer-pill" title="Temps réel">${ico(['ui', 'clock'])}${timer(G.cargoLeave())}</span></div>
+        <div class="holds">${holds}</div>
+        ${c.done ? '' : `<div class="truck-reward"><span>Avion plein : bonus</span>${rewardHtml(G.cargoBonus(), G.cargoBonusXp())}${ico(['item', 'plank'])}${ico(['item', 'nail'])}${ico(['item', 'paint'])}</div>`}</div>`;
 }
 
 function delivery(kind) {
@@ -180,6 +203,7 @@ function renderOrders(el) {
         ['title', section('Tableau des commandes')],
         ['board', board()],
         ['train', train()],
+        ['cargo', cargoCard()],
         ['balloon', delivery('balloon')],
         ['boat', delivery('boat')],
         ['hint', hint('Touchez une ligne rouge pour aller produire ce qui manque.')],
@@ -193,6 +217,7 @@ export function setupOrders() {
         trash: (el, d) => confirmTap('trash' + d.i, el, 'Jeter ?') && G.trashQuest(+d.i) && closeSheet('order'),
         pin: (el, d) => G.togglePin(+d.i),
         express: el => G.deliverExpress(el),
+        loadHold: (el, d) => G.loadHold(+d.i, el),
         chef: (el, d) => G.deliverChef(d.id, el),
         loadWagon: (el, d) => G.loadSlot(+d.k, el.closest('[data-anchor]')),
         sendBalloon: el => G.sendBalloon(el),

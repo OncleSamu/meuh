@@ -20,6 +20,7 @@ export function newState() {
     return {
         version: SAVE_VERSION,
         lv14: true, // échelle des 50 niveaux
+        lv18: true, // machines et recettes aux niveaux de la 1.8
         money: 100,
         xp: 0,
         level: 1,
@@ -36,6 +37,7 @@ export function newState() {
         island: null,
         genetics: null,
         brew: null, // 1.6 : la brasserie de l'abbaye
+        cargo: null, // 1.8 : l'avion-cargo
         defis: null,
         night: null,
         carnet: null,
@@ -187,6 +189,7 @@ export function fromSave(parsed) {
     s.version = SAVE_VERSION;
     // une sauvegarde d'avant la 1.4 est convertie aux 50 niveaux (normalizeState)
     if (!parsed.lv14) s.lv14 = false;
+    if (!parsed.lv18) s.lv18 = false;
     return s;
 }
 
