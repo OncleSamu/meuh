@@ -678,3 +678,32 @@ Object.assign(CARNET, {
     maltBlack:
         'Le malt noir, il faut le sortir juste avant qu’il brûle. Une seconde de trop et c’est du charbon. Agnès compte à voix haute ; personne n’a le droit de lui parler.',
 });
+
+// ---------------- 1.10 : la pêche ----------------
+Object.assign(CARNET, {
+    bleakFry:
+        'Les ablettes, c’est le poisson des enfants : on en prend dix d’un coup, on les roule dans la farine et on les mange dans un cornet de papier, comme des frites. Ta mère en volait toujours deux avant que ce soit cuit.',
+    crayfishBisque:
+        'Les écrevisses, ton grand-père les pêchait à la balance, avec un bout de lard. Il fallait les attraper par le dos. Moi, je les attrapais par le dos de la cuillère, dans la bisque.',
+    tenchHerbs:
+        'La tanche a un goût de vase si on la cuit mal. Avec beaucoup d’herbes du jardin, elle devient fine comme une truite. C’est ce que je disais aux invités, et personne n’a jamais vérifié.',
+    burbotCider:
+        'La lotte de rivière ne sort que les nuits d’hiver, quand il fait un froid de loup. Papi Lucien partait avec une lanterne et une thermos de cidre chaud. Il revenait avec la lotte, la thermos était vide.',
+    pochouse:
+        'La pochouse, c’est la matelote de Bourgogne : tous les poissons de l’étang dans la même cocotte. On la faisait le jour où le seau était trop varié pour décider. Personne ne se disputait le meilleur morceau, il n’y en avait pas.',
+    zanderLeeks:
+        'Le sandre a de gros yeux de verre parce qu’il chasse dans l’eau trouble. Ton grand-père disait qu’il nous regardait de travers. Avec des poireaux fondus, on lui pardonnait.',
+    smokedSalmon:
+        'Une fois par an, à l’automne, les saumons remontaient la rivière. Tout le village était sur le ponton. Le premier saumon fumé de l’année, on le partageait en tranches si fines qu’on voyait le journal à travers.',
+    salmonSteak:
+        'Un pavé de saumon, une cuillère de miel des ruches et un filet de citron. C’est la recette que je faisais quand je n’avais pas le temps. Tout le monde croyait que j’avais passé l’après-midi en cuisine.',
+    salmonTartare:
+        'Le tartare, c’est ta tante qui l’a ramené de la ville. Du poisson cru ! Ton grand-père a refusé d’y goûter pendant dix ans. La onzième année, il en a repris trois fois.',
+    crayfishGratin:
+        'Le gratin d’écrevisses, c’était pour les grandes occasions : il faut une heure pour décortiquer les queues. On s’y mettait à quatre autour de la table, et on racontait des histoires pour passer le temps.',
+    pondTerrine:
+        'La terrine de l’étang, c’est le sandre et le saumon en deux couches, le blanc et le rose. Je la démoulais toujours devant tout le monde. Une fois sur trois, elle cassait. On disait que c’était une terrine rustique.',
+    smokedSturgeon:
+        'L’esturgeon est un poisson d’avant les dinosaures, avec des plaques sur le dos comme une armure. Ton grand-père n’en a sorti qu’un seul de toute sa vie. Il en a parlé pendant quarante ans.',
+    caviar: 'Le caviar, je n’en ai mangé qu’une fois, avec l’esturgeon de Papi Lucien. Une cuillère chacun, sur une tartine beurrée. Ça avait le goût de la rivière et de la fête en même temps.',
+});

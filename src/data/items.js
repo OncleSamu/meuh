@@ -2739,3 +2739,27 @@ Object.assign(ITEMS, {
     maltBrown: { id: 'maltBrown', name: 'Malt brun', type: 'artisan', sell: 325 },
     maltBlack: { id: 'maltBlack', name: 'Malt noir', type: 'artisan', sell: 330 },
 });
+
+// ---------------- 1.10 : la pêche — sept nouveaux poissons et leurs recettes ----------------
+Object.assign(ITEMS, {
+    bleak: { id: 'bleak', name: 'Ablette', type: 'fish', sell: 20 },
+    crayfish: { id: 'crayfish', name: 'Écrevisse', type: 'fish', sell: 60 },
+    tench: { id: 'tench', name: 'Tanche', type: 'fish', sell: 80 },
+    burbot: { id: 'burbot', name: 'Lotte de rivière', type: 'fish', sell: 140 },
+    zander: { id: 'zander', name: 'Sandre', type: 'fish', sell: 220 },
+    salmon: { id: 'salmon', name: 'Saumon', type: 'fish', sell: 260 },
+    sturgeon: { id: 'sturgeon', name: 'Esturgeon', type: 'fish', sell: 900 },
+    bleakFry: { id: 'bleakFry', name: 'Cornet d’ablettes', type: 'artisan', sell: 230 },
+    crayfishBisque: { id: 'crayfishBisque', name: 'Bisque d’écrevisses', type: 'artisan', sell: 595 },
+    tenchHerbs: { id: 'tenchHerbs', name: 'Tanche aux herbes', type: 'artisan', sell: 630 },
+    burbotCider: { id: 'burbotCider', name: 'Lotte au cidre', type: 'artisan', sell: 1610 },
+    pochouse: { id: 'pochouse', name: 'Pochouse', type: 'artisan', sell: 1290 },
+    zanderLeeks: { id: 'zanderLeeks', name: 'Sandre aux poireaux', type: 'artisan', sell: 740 },
+    smokedSalmon: { id: 'smokedSalmon', name: 'Saumon fumé', type: 'artisan', sell: 375 },
+    salmonSteak: { id: 'salmonSteak', name: 'Pavé de saumon au miel', type: 'artisan', sell: 825 },
+    salmonTartare: { id: 'salmonTartare', name: 'Tartare de saumon', type: 'artisan', sell: 770 },
+    crayfishGratin: { id: 'crayfishGratin', name: 'Gratin d’écrevisses', type: 'artisan', sell: 2240 },
+    pondTerrine: { id: 'pondTerrine', name: 'Terrine de l’étang', type: 'artisan', sell: 1325 },
+    smokedSturgeon: { id: 'smokedSturgeon', name: 'Esturgeon fumé', type: 'artisan', sell: 1305 },
+    caviar: { id: 'caviar', name: 'Caviar de l’étang', type: 'artisan', sell: 1800 },
+});

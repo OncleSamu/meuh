@@ -37,3 +37,4 @@ export * from './defis.js';
 export * from './night.js';
 export * from './carnet.js';
 export * from './cargo.js';
+export * from './fishing.js';

@@ -11,8 +11,6 @@ import { ITEMS } from '../data/items.js';
 import { ANIMALS } from '../data/animals.js';
 import { MACHINES, RECIPES } from '../data/machines.js';
 import { VILLAGERS, BEST_FRIEND_BONUS, PROJECTS } from '../data/village.js';
-import { NATURE } from '../data/nature.js';
-import { FISH } from '../data/meta.js';
 import { RARE, ORDER_MAX, ORDER_REFILL, ORDER_TRASH_WAIT, TRAIN_STAY, TRAIN_AWAY, BALLOON_STAY, BALLOON_AWAY } from '../data/commerce.js';
 import { BALANCE } from '../data/progress.js';
 import { netOpen, transOpen } from './port.js';
@@ -30,6 +28,7 @@ import { isAdult } from './animals.js';
 import { tip } from './tips.js';
 import { eventActive, eventProgress } from './events.js';
 import { defiWanted } from './defis.js';
+import { fishOrderOk } from './fishing.js';
 
 // Ce que la ferme sait produire en ce moment (ingrédients compris)
 export function questPool() {
@@ -45,7 +44,7 @@ export function questPool() {
         else if (i.type === 'crop') ok = lvOk(i) && storyOk(i) && !i.ghOnly && (!i.island || islandOpen());
         else if (i.type === 'tree') ok = livingTrees(i.id) > 0;
         else if (i.type === 'product') ok = state.animals.some(a => ANIMALS[a.type].prodId === i.id);
-        else if (i.type === 'fish') ok = state.level >= NATURE.pond.lvl && !!FISH[id] && FISH[id].odds >= 10 && !FISH[id].junk;
+        else if (i.type === 'fish') ok = fishOrderOk(id);
         else if (i.type === 'artisan') {
             const r = RECIPES[id];
             ok = !!r && !r.fete && !r.holiday && hasMachine(r.machine) && recipeUnlocked(id) && Object.keys(r.ing).every(k => can(k, depth + 1));

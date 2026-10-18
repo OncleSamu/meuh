@@ -11,7 +11,7 @@ import { EVENTS } from '../../data/world.js';
 import { RARE } from '../../data/commerce.js';
 import { COLS } from '../../data/farm.js';
 import { GUIDE } from '../../data/texts.js';
-import { RECORDS } from '../../data/meta.js';
+import { RECORDS, FISH } from '../../data/meta.js';
 import * as G from '../../systems/index.js';
 import { actions, QUIET, esc } from '../dom.js';
 import { ico, SPR } from '../icons.js';
@@ -109,8 +109,8 @@ function itemSource(id) {
         return `Graines au niveau ${it.reqLvl}, après « ${PROJECTS[it.needProject].name} »${it.ghOnly ? ', seulement dans la serre' : ''}`;
     if (it.type === 'crop') return it.exotic ? 'Graines chez le marchand ambulant' : `Champ, graines au niveau ${it.reqLvl}`;
     if (it.type === 'tree') return `Arbre fruitier du verger, niveau ${it.reqLvl}`;
-    if (it.type === 'fish') return 'Pêche à l’étang';
-    if (it.sea) return 'Filet de pêche en mer (Ferme | Nature), après le phare';
+    if (it.type === 'fish') return FISH[id] ? `Pêche à l’étang : ${FISH[id].hint.toLowerCase()}` : 'Pêche à l’étang';
+    if (it.sea) return 'Filet de pêche en mer (Ferme | Étang), après le phare';
     if (id === 'alpineMilk') return 'Au retour de la transhumance, puis chez les vaches, chèvres et bufflonnes qui sont montées';
     if (RECIPES[id]) {
         const r = RECIPES[id];
@@ -162,6 +162,7 @@ const GUIDE_GO = {
     orchard: 'farm/orchard',
     island: 'farm/island',
     nature: 'farm/nature',
+    pond: 'farm/pond',
     animals: 'animals',
     machines: 'machines/workshop',
     quests: 'village/orders',

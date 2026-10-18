@@ -28,6 +28,7 @@ import './abbey.js';
 import './v16.js';
 import './v18.js';
 import './v18redraw.js';
+import './v20fish.js';
 
 export const SPR = {
     farmhouse(l, roof) {

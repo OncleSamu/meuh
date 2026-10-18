@@ -131,7 +131,12 @@ export function todoList() {
         const ok = G.hasAll(state.boat.items);
         push('village/orders', ['ui', 'boat'], ok ? 'Cargo prêt à charger' : 'Un cargo au port', ok ? 1 : 0);
     }
-    if (G.netReady()) push('farm/nature', ['ui', 'net'], 'Filet de pêche plein', 1);
+    if (G.netReady()) push('farm/pond', ['ui', 'net'], 'Filet de pêche plein', 1);
+    const traps = G.trapsReady();
+    if (traps) push('farm/pond', ['ui', 'trap'], `${traps} nasse${s(traps)} pleine${s(traps)}`, traps);
+    if (G.marcelReady()) push('farm/pond', ['villager', 'marcel'], 'Défi de Marcel réussi', 1);
+    if (G.runReady()) push('farm/pond', ['item', 'salmon'], 'Défi de la remontée réussi', 1);
+    if (G.contestResultReady()) push('farm/pond', ['ui', 'trophy'], 'Résultats du concours de pêche', 1);
     const fst = G.farmSeasonClaimable();
     if (fst) push('village/orders', ['ui', 'trophy'], `${fst} palier${s(fst)} de saison`, fst);
     if (G.contractReady()) push('village/orders', ['ui', 'calendar'], 'Contrat de saison prêt', 1);

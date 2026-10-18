@@ -43,6 +43,7 @@ import { ensureNight, nightTick } from './night.js';
 import { ensureCarnet } from './carnet.js';
 import { brewOpen, ensureBrew, brewTick } from './brewery.js';
 import { cargoTick, cargoHere, cargoLeave } from './cargo.js';
+import { pondTick, trapsReady } from './fishing.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -213,6 +214,7 @@ function tickDeliveries() {
     if (geneticsTick()) changed = true;
     if (brewTick()) changed = true;
     if (cargoTick()) changed = true;
+    if (pondTick()) changed = true;
     if (defiTick()) changed = true;
     if (nightTick()) changed = true;
     if (contestTick()) changed = true;
@@ -299,6 +301,7 @@ export function offlineProgress() {
     truckTick();
     balloonTick();
     cargoTick();
+    pondTick();
     merchantTick();
     stallTick();
     neighborTick();
@@ -345,6 +348,8 @@ export function offlineProgress() {
                 : 'Vente aux enchères close : rien de vendu'),
     );
     add(netReady(), ['ui', 'net'], 'Le filet de pêche est plein');
+    const traps = trapsReady();
+    add(traps, ['ui', 'trap'], `${traps} nasse${s(traps)} pleine${s(traps)} à l’étang`);
     add(state.boat.status === 'here', ['ui', 'boat'], 'Un cargo attend au port');
     add(state.truck.status === 'here', ['ui', 'trainIcon'], 'Le train de marchandises est en gare');
     add(

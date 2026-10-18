@@ -8,13 +8,14 @@ import * as G from '../systems/index.js';
 import { actions } from './dom.js';
 import { go } from './app.js';
 import { closeAll, openSheet } from './sheets.js';
+import { goFish } from './views/pond.js';
 
 export function produce(id) {
     const it = ITEMS[id];
     closeAll();
     if (it.sea) {
-        go('farm/nature');
-        return toast(G.netOpen() ? 'Les produits de la mer viennent du filet (Ferme | Nature)' : G.storyLockText({ needProject: 'lighthouse' }), ['ui', 'net']);
+        go('farm/pond');
+        return toast(G.netOpen() ? 'Les produits de la mer viennent du filet (Ferme | Étang)' : G.storyLockText({ needProject: 'lighthouse' }), ['ui', 'net']);
     }
     if (id === 'alpineMilk') {
         go('animals');
@@ -60,7 +61,8 @@ export function produce(id) {
             a.id,
         ]);
     }
-    if (it.type === 'fish' || it.type === 'gem' || id === 'wood' || id === 'stone') return go('farm/nature');
+    if (it.type === 'fish') return goFish(id);
+    if (it.type === 'gem' || id === 'wood' || id === 'stone') return go('farm/nature');
     const r = RECIPES[id];
     if (!r) return;
     const k = state.machines.findIndex(m => m.type === r.machine);
