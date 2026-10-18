@@ -99,3 +99,24 @@ test('l’avion-cargo survit à la sauvegarde', async () => {
     assert.ok(state.cargo && state.cargo.holds.length);
     assert.deepEqual(copy.cargo, state.cargo);
 });
+
+test('1.8.2 : vendre une bête, sauf en transhumance ou à l’élevage', () => {
+    const n = state.animals.length;
+    const i = state.animals.findIndex(a => !G.animalSellBlock(a));
+    const a = state.animals[i];
+    a.stack = 1;
+    const prod = state.inventory[G.ANIMALS ? G.ANIMALS[a.type].prodId : 'egg'] || 0;
+    const price = G.animalSalePrice(a);
+    const m = state.money;
+    assert.ok(price > 0);
+    assert.equal(G.sellAnimal(i), price);
+    assert.equal(state.animals.length, n - 1);
+    assert.equal(state.money, m + price);
+    assert.ok(prod >= 0);
+    // une bête qui fait un petit ne se vend pas
+    const b = state.animals[0];
+    state.genetics.breeds = [{ a: b.uid, b: 'x', type: b.type, until: clock.t + 1e6 }];
+    assert.ok(G.animalSellBlock(b));
+    assert.equal(G.sellAnimal(0), false);
+    state.genetics.breeds = [];
+});
