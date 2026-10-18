@@ -93,7 +93,7 @@ export function remindTick() {
     for (const [key, text] of G.reminders()) {
         if (notified[key]) continue;
         notified[key] = true;
-        const opts = { body: text, tag: 'meuh-' + key.split(':')[0], icon: 'icons/icon-192.png', badge: 'icons/icon-192.png' };
+        const opts = { body: text, tag: 'meuh-' + key.split(':')[0], icon: 'icons/icon-192.png', badge: 'icons/badge-96.png' };
         // dans l'appli installée, c'est le service worker qui affiche le rappel (obligatoire sur Android)
         if (workerReg) workerReg.showNotification('Meuh', opts).catch(() => {});
         else
