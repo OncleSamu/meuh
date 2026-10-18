@@ -129,7 +129,18 @@ function itemSource(id) {
     if (id === 'honey') return 'Ruche posée dans le champ, ou ruche d’élevage';
     if (id === 'wood' || id === 'stone') return id === 'wood' ? 'Forêt (Ferme | Nature)' : 'Mine (Ferme | Nature)';
     if (RARE.includes(id)) return 'Trouvé en récoltant, à l’atelier, dans les livraisons, chez le marchand';
-    if (['fossil', 'amethyst', 'nugget'].includes(id)) return 'Caché dans les rochers de la mine';
+    if (['fossil', 'amethyst', 'nugget', 'quartz', 'ruby', 'sapphire', 'emerald'].includes(id))
+        return 'Caché dans les rochers de la mine (les veines en donnent toujours)';
+    if (['coal', 'ironOre', 'copperOre', 'silverOre', 'goldOre'].includes(id))
+        return {
+            coal: 'Carrière, galerie, ou charbonnière',
+            ironOre: 'Galerie de la mine',
+            copperOre: 'Galerie de la mine',
+            silverOre: 'Grotte profonde',
+            goldOre: 'Grotte profonde',
+        }[id];
+    if (['hardwood', 'resin', 'birchSap'].includes(id))
+        return { hardwood: 'Chênes et châtaigniers de la forêt', resin: 'Pins de la forêt', birchSap: 'Bouleaux de la forêt' }[id];
     return '';
 }
 

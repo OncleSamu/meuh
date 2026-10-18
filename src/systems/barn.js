@@ -9,6 +9,7 @@ import { projectDone } from './story.js';
 import { houseBarn } from './home.js';
 import { tip } from './tips.js';
 import { spend } from './player.js';
+import { barnBonus } from './buildings.js';
 
 export const inBarn = id => BARN_TYPES.includes(ITEMS[id].type);
 export const barnCapAt = l => (l < BARN_CAPS.length ? BARN_CAPS[l] : 550 + (l - BARN_CAPS.length + 1) * 100);
@@ -20,7 +21,7 @@ export function barnUsed() {
     return n;
 }
 
-export const barnCap = () => barnCapAt(state.barn.lvl) + (projectDone('pontoon') ? 60 : 0) + houseBarn();
+export const barnCap = () => barnCapAt(state.barn.lvl) + (projectDone('pontoon') ? 60 : 0) + houseBarn() + barnBonus();
 export const barnSpace = () => barnCap() - barnUsed();
 export const barnGoods = () =>
     Object.keys(ITEMS)

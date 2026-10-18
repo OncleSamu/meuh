@@ -134,6 +134,11 @@ export function todoList() {
     if (G.netReady()) push('farm/pond', ['ui', 'net'], 'Filet de pêche plein', 1);
     const traps = G.trapsReady();
     if (traps) push('farm/pond', ['ui', 'trap'], `${traps} nasse${s(traps)} pleine${s(traps)}`, traps);
+    if (G.bldReady()) push('sheet:upgrades', ['ui', 'granary'], 'Un bâtiment peut être amélioré', 0);
+    if (G.gaspardReady()) push('farm/nature', ['villager', 'gaspard'], 'Défi de Gaspard réussi', 1);
+    if (G.loadsReady('lumber')) push('farm/nature', ['ui', 'axe'], 'Le bûcheron a une charge', G.loadsReady('lumber'));
+    if (G.loadsReady('miner')) push('farm/nature', ['ui', 'pickaxe'], 'Le mineur a une charge', G.loadsReady('miner'));
+    if (G.kilnReady()) push('farm/nature', ['item', 'coal'], 'La charbonnière a fini', 1);
     if (G.marcelReady()) push('farm/pond', ['villager', 'marcel'], 'Défi de Marcel réussi', 1);
     if (G.runReady()) push('farm/pond', ['item', 'salmon'], 'Défi de la remontée réussi', 1);
     if (G.contestResultReady()) push('farm/pond', ['ui', 'trophy'], 'Résultats du concours de pêche', 1);

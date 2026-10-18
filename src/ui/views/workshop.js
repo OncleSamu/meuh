@@ -11,6 +11,7 @@ import { defineView, defineLive, ui } from '../app.js';
 import { defineSheet } from '../sheets.js';
 import { pinBar } from './common.js';
 import { now } from '../../core/clock.js';
+import { bldRow } from '../sheets/upgrades.js';
 
 const puffs = m => (G.machineBusy(m) ? '<i class="puff"></i><i class="puff p2"></i><i class="puff p3"></i>' : '');
 defineLive('mac', i => G.machinePct(state.machines[i] || { queue: [] }));
@@ -55,7 +56,7 @@ defineView('machines/workshop', renderWorkshop);
 const teacherBadge = r => (r.teacher ? `<span class="rt-who">${art('villager', r.teacher)}</span>` : '');
 
 function queueSlots(m, i) {
-    return `<div class="mslots">${Array.from({ length: G.machineSlots() }, (_, k) => {
+    return `<div class="mslots">${Array.from({ length: G.machineSlots(m.type) }, (_, k) => {
         const id = m.queue[k];
         if (!id) return '<span class="mslot empty"></span>';
         if (k === 0) return `<span class="mslot now">${art('item', id)}${bar(G.machinePct(m), 'slot-bar', `mac:${i}`)}</span>`;
@@ -73,7 +74,7 @@ defineSheet('machine', {
         const i = +o.i,
             m = state.machines[i];
         if (!m) return '';
-        const full = m.queue.length >= G.machineSlots();
+        const full = m.queue.length >= G.machineSlots(m.type);
         const ready = Object.entries(m.out).filter(([, n]) => n > 0);
         const f = ui.sel.recipeFilter || 'all',
             wanted = G.wantedItems();
@@ -115,6 +116,7 @@ defineSheet('machine', {
                 `<div class="row-btns">${ready.length ? btn(`Récupérer ${ready.map(([id, n]) => `${ico(['item', id])}×${n * (RECIPES[id].outQty || 1)}`).join(' ')}`, { act: 'collectMachine', data: { i }, kind: 'gold' }) : ''}
                 ${btn(m.loop ? 'En boucle' : 'Boucle', { act: 'toggleLoop', data: { i }, icon: ['ui', 'loop'], cls: m.loop ? 'on' : '', title: 'Relancer automatiquement la dernière recette' })}</div>`,
             ],
+            ['up', bldRow('m', m.type)],
             [
                 'best',
                 state.genetics && G.geneticsOpen()

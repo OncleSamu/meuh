@@ -196,6 +196,16 @@ export const BIDDERS = {
         budget: 0.6,
         villager: true,
     },
+    gaspard: {
+        name: 'Gaspard',
+        taste: {
+            cider: 1.25,
+            beer: 1.2,
+            wine: 1.05,
+        },
+        budget: 0.6,
+        villager: true,
+    },
     morgane: {
         name: 'Capitaine Morgane',
         taste: {

@@ -26,6 +26,7 @@ import { setupVillage } from './ui/views/village.js';
 import { setupMarket } from './ui/views/market.js';
 import { setupMenu } from './ui/sheets/menu.js';
 import { setupHouse } from './ui/sheets/house.js';
+import { setupUpgrades } from './ui/sheets/upgrades.js';
 import { setupProgress } from './ui/sheets/progress.js';
 import { setupBook } from './ui/sheets/book.js';
 import { setupInfo } from './ui/sheets/info.js';
@@ -67,6 +68,7 @@ function start() {
     setupMarket();
     setupMenu();
     setupHouse();
+    setupUpgrades();
     setupProgress();
     setupBook();
     setupInfo();

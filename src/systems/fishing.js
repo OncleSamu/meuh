@@ -17,6 +17,7 @@ import { season, isNight, dayInSeason } from './world.js';
 import { barnBlocked, barnSpace } from './barn.js';
 import { projectDone } from './story.js';
 import { addFriendship } from './village.js';
+import { trapBonus } from './buildings.js';
 
 export const pondOpen = () => state.level >= NATURE.pond.lvl;
 // les noms féminins, pour « une truite » ou « un brochet »
@@ -382,7 +383,7 @@ function logStep(id, at) {
 const pluralName = id => qtyName(2, FISH[id].name).replace(/^2 /, '');
 
 // ---------------- les nasses ----------------
-export const trapMax = () => (state.level >= TRAPS.lvl ? TRAPS.max(state.level) : 0);
+export const trapMax = () => (state.level >= TRAPS.lvl ? TRAPS.max(state.level) + trapBonus() : 0);
 export const trapReady = t => !!(t && t.start && now() >= t.start + TRAPS.every);
 export const trapsReady = () => (state.pond ? state.pond.traps.filter(trapReady).length : 0);
 export const trapsIdle = () => (state.pond ? state.pond.traps.filter(t => !t.start).length : 0);

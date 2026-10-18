@@ -5,13 +5,15 @@ import { toast, sfx, buzz, burst, float, changed } from '../core/bus.js';
 import { PASTURE, PASTURE_NAMES } from '../data/farm.js';
 import { spend } from './player.js';
 import { tip } from './tips.js';
+import { penBonus } from './buildings.js';
 
 const COIN = ['ui', 'coin'];
 
 export const pastures = () => state.pastures;
 export const inPasture = k => state.animals.filter(a => (a.p || 0) === k);
 export const pastureLoad = k => inPasture(k).length;
-export const pastureFree = k => PASTURE.cap - pastureLoad(k);
+export const penCap = () => PASTURE.cap + penBonus();
+export const pastureFree = k => penCap() - pastureLoad(k);
 export const pastureCost = () => Math.floor(PASTURE.cost * Math.pow(PASTURE.mult, Math.max(0, state.pastures.length - 1)));
 export const canAddPasture = () => state.pastures.length < PASTURE.max;
 // le premier pré qui a de la place (en commençant par celui qu'on regarde)
@@ -27,20 +29,20 @@ const newPasture = k => ({ name: PASTURE_NAMES[k] || `Pré ${k + 1}` });
 // Anciennes sauvegardes : autant de prés que nécessaire, offerts, et chaque bête rangée
 export function ensurePastures() {
     if (!Array.isArray(state.pastures) || !state.pastures.length) state.pastures = [newPasture(0)];
-    const need = Math.min(PASTURE.max, Math.max(1, Math.ceil(state.animals.length / PASTURE.cap)));
+    const need = Math.min(PASTURE.max, Math.max(1, Math.ceil(state.animals.length / penCap())));
     while (state.pastures.length < need) state.pastures.push(newPasture(state.pastures.length));
     // bêtes sans pré, ou dans un pré qui n'existe pas ou qui déborde
     const count = state.pastures.map(() => 0);
     const homeless = [];
     state.animals.forEach(a => {
         const k = a.p || 0;
-        if (k < state.pastures.length && count[k] < PASTURE.cap) {
+        if (k < state.pastures.length && count[k] < penCap()) {
             a.p = k;
             count[k]++;
         } else homeless.push(a);
     });
     homeless.forEach(a => {
-        let k = count.findIndex(c => c < PASTURE.cap);
+        let k = count.findIndex(c => c < penCap());
         if (k < 0) k = state.pastures.length - 1; // au-delà de 400 bêtes : on tasse dans le dernier
         a.p = k;
         count[k]++;

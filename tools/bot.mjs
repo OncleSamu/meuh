@@ -313,17 +313,37 @@ function progress() {
     ['speed', 'price', 'feeder'].forEach(u => {
         if (state.upgrades[u] < UPGRADES[u].maxLvl && state.money > G.upgradeCost(u) * 4) G.buyUpgrade(u);
     });
-    // forêt et mine : une coupe toutes les 30 s environ
+    // forêt et mine : un arbre ou une roche toutes les 30 s environ (vrais coups de hache et de pioche)
     if (t % 30 === 0 && state.level >= 3)
         tag('nature', () => {
-            state.inventory.wood += 2.5;
-            G.addXp(4);
-            if (state.level >= 5) {
-                state.inventory.stone += 2.5;
-                G.addXp(6);
-            }
+            G.ensureNature();
+            ['forest', 'mine'].forEach(kind => {
+                if (state.level < NATURE[kind].lvl) return;
+                const k = state[kind].findIndex(sl => G.slotUp(sl));
+                for (let n = 0; k >= 0 && n < 12; n++) if (G.hitSlot(kind, k) !== 'hit') break;
+            });
         });
-    if (t % 400 === 0 && state.level >= NATURE.mine.lvl) state.inventory[pickRand(['fossil', 'amethyst', 'nugget'])]++;
+    // la mine : l'équipement, la profondeur, les ouvriers, la charbonnière, Gaspard, les bâtiments
+    if (t % 600 === 0 && state.level >= 3) {
+        tag('nature', () => {
+            G.ensureNature();
+            ['lamp', 'cart'].forEach(k => state.money > 12000 && G.buyGear(k));
+            ['cave', 'gallery'].find(d => G.depthOpen(d) && (G.setDepth(d) || state.nat.depth === d));
+            ['lumber', 'miner'].forEach(k => {
+                if (G.workerOpen(k) && !G.workerLvl(k) && state.money > 20000) G.hireWorker(k);
+                if (G.workerLvl(k) && G.workerNext(k) && state.money > 80000) G.upgradeWorker(k);
+                G.collectLoads(k);
+            });
+            if (G.kilnOpen() && !state.nat.kiln && state.money > 5000) G.buildKiln();
+            if (G.kilnReady()) G.kilnTake();
+            if (state.nat.kiln && !G.kilnBusy() && state.inventory.wood > 40) G.kilnLight();
+            if (G.gaspardReady()) G.claimGaspard();
+            ['barn', 'pens', 'cave', 'orchard', 'greenhouse', 'traps'].forEach(
+                id => G.bldOpen(id) && G.bldCan('b', id) && state.money > G.bldNext('b', id).cost.coins * 3 && G.upgradeBld('b', id),
+            );
+            state.machines.forEach(m => G.bldCan('m', m.type) && state.money > G.bldNext('m', m.type).cost.coins * 4 && G.upgradeBld('m', m.type));
+        });
+    }
     // la pêche : un lancer toutes les 2 minutes, les nasses, Marcel et le concours
     if (t % 120 === 0 && state.level >= NATURE.pond.lvl && !G.barnBlocked(true)) {
         G.ensurePond();

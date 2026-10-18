@@ -20,6 +20,7 @@ import { challengeOn } from './prestige.js';
 import { eventProgress } from './events.js';
 import { varGrowth, varHardy, varExtra, varSelfWater, takeVarSeed, harvestVariety, preferSeed } from './genetics.js';
 import { wishGold, fireflyHarvest } from './night.js';
+import { ghExtra } from './buildings.js';
 
 const COIN = ['ui', 'coin'];
 
@@ -410,6 +411,7 @@ export function ensureGhPlots() {
     if (!g.built) return;
     while (g.plots.length < GH.maxPlots)
         g.plots.push({ isUnlocked: g.plots.length < GH.basePlots, terrain: 'plowed', itemId: null, growProgress: 0, isWatered: true, isReady: false });
+    ghExtra();
 }
 
 export const ghUnlocked = () => state.greenhouse.plots.filter(p => p.isUnlocked).length;

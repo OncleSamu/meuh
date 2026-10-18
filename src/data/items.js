@@ -2763,3 +2763,45 @@ Object.assign(ITEMS, {
     smokedSturgeon: { id: 'smokedSturgeon', name: 'Esturgeon fumé', type: 'artisan', sell: 1305 },
     caviar: { id: 'caviar', name: 'Caviar de l’étang', type: 'artisan', sell: 1800 },
 });
+
+// ---------------- 1.11 : la nature — minerais, lingots, bois, pierres précieuses, bijoux et objets forgés ----------------
+Object.assign(ITEMS, {
+    coal: { id: 'coal', name: 'Charbon', type: 'ore', sell: 12 },
+    ironOre: { id: 'ironOre', name: 'Minerai de fer', type: 'ore', sell: 30 },
+    copperOre: { id: 'copperOre', name: 'Minerai de cuivre', type: 'ore', sell: 40 },
+    silverOre: { id: 'silverOre', name: 'Minerai d’argent', type: 'ore', sell: 90 },
+    goldOre: { id: 'goldOre', name: 'Minerai d’or', type: 'ore', sell: 160 },
+    ironIngot: { id: 'ironIngot', name: 'Lingot de fer', type: 'ingot', sell: 90 },
+    copperIngot: { id: 'copperIngot', name: 'Lingot de cuivre', type: 'ingot', sell: 120 },
+    silverIngot: { id: 'silverIngot', name: 'Lingot d’argent', type: 'ingot', sell: 280 },
+    goldIngot: { id: 'goldIngot', name: 'Lingot d’or', type: 'ingot', sell: 520 },
+    cutStone: { id: 'cutStone', name: 'Pierre taillée', type: 'ingot', sell: 25 },
+    hardwood: { id: 'hardwood', name: 'Bois dur', type: 'ingot', sell: 15 },
+    solidOak: { id: 'solidOak', name: 'Chêne massif', type: 'ingot', sell: 180 },
+    resin: { id: 'resin', name: 'Résine', type: 'ingot', sell: 20 },
+    birchSap: { id: 'birchSap', name: 'Sève de bouleau', type: 'ingot', sell: 12 },
+    birchSyrup: { id: 'birchSyrup', name: 'Sirop de bouleau', type: 'artisan', sell: 110 },
+    quartz: { id: 'quartz', name: 'Quartz', type: 'gem', sell: 220 },
+    ruby: { id: 'ruby', name: 'Rubis', type: 'gem', sell: 900 },
+    sapphire: { id: 'sapphire', name: 'Saphir', type: 'gem', sell: 1000 },
+    emerald: { id: 'emerald', name: 'Émeraude', type: 'gem', sell: 1200 },
+    quartzPendant: { id: 'quartzPendant', name: 'Pendentif de quartz', type: 'artisan', sell: 750 },
+    rubyRing: { id: 'rubyRing', name: 'Bague en rubis', type: 'artisan', sell: 2200 },
+    rubyBrooch: { id: 'rubyBrooch', name: 'Broche en rubis', type: 'artisan', sell: 1700 },
+    sapphirePendant: { id: 'sapphirePendant', name: 'Pendentif en saphir', type: 'artisan', sell: 1900 },
+    sapphireRing: { id: 'sapphireRing', name: 'Bague en saphir', type: 'artisan', sell: 2300 },
+    emeraldBrooch: { id: 'emeraldBrooch', name: 'Broche en émeraude', type: 'artisan', sell: 2600 },
+    emeraldRing: { id: 'emeraldRing', name: 'Bague en émeraude', type: 'artisan', sell: 3100 },
+    crystalVase: { id: 'crystalVase', name: 'Vase de cristal', type: 'artisan', sell: 900 },
+    ironPan: { id: 'ironPan', name: 'Poêle en fer', type: 'artisan', sell: 330 },
+    copperPot: { id: 'copperPot', name: 'Casserole en cuivre', type: 'artisan', sell: 420 },
+    silverCutlery: { id: 'silverCutlery', name: 'Couverts d’argent', type: 'artisan', sell: 800 },
+    goldenBell: { id: 'goldenBell', name: 'Cloche dorée', type: 'artisan', sell: 1500 },
+    pineTorch: { id: 'pineTorch', name: 'Torche de résine', type: 'artisan', sell: 70 },
+    resinCandle: { id: 'resinCandle', name: 'Bougie à la résine', type: 'artisan', sell: 340 },
+    birchGingerbread: { id: 'birchGingerbread', name: 'Pain d’épices au sirop', type: 'artisan', sell: 260 },
+    syrupCrepe: { id: 'syrupCrepe', name: 'Crêpe au sirop de bouleau', type: 'artisan', sell: 190 },
+});
+// le bois et la pierre se vendent un peu (marché), sans jamais servir de commande
+ITEMS.wood.sell = 3;
+ITEMS.stone.sell = 4;

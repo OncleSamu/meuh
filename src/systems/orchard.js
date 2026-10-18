@@ -19,6 +19,7 @@ import { collect, record } from './book.js';
 import { addQuality } from './farm.js';
 import { eventProgress } from './events.js';
 import { tip } from './tips.js';
+import { orchardLife, orchardRate } from './buildings.js';
 
 const COIN = ['ui', 'coin'];
 
@@ -34,14 +35,15 @@ export const slotCost = (z = 'farm') =>
         : Math.floor(ORCHARD.cost * Math.pow(ORCHARD.mult, Math.max(0, openSlots(z) - ORCHARD.base)));
 export const treeUnlocked = d => (lvOk(d) && storyOk(d)) || state.seeds[d.id] > 0;
 
+const lifeMax = () => orchardLife(ORCHARD.life);
 // l'état d'un arbre : 'young', 'adult', 'old' ou 'dead'
 export function treeStage(t) {
     const d = ITEMS[t.id];
-    if (t.drops >= ORCHARD.life) return 'dead';
+    if (t.drops >= lifeMax()) return 'dead';
     if (t.age < d.time) return 'young';
-    return t.drops >= ORCHARD.life * ORCHARD.oldAt ? 'old' : 'adult';
+    return t.drops >= lifeMax() * ORCHARD.oldAt ? 'old' : 'adult';
 }
-export const treeLife = t => Math.max(0, 1 - t.drops / ORCHARD.life);
+export const treeLife = t => Math.max(0, 1 - t.drops / lifeMax());
 
 // vitesse : saison (l'arbre dort à moitié en hiver), météo, compétences, thème, maîtrise, vieillesse
 // sur l'île, pas d'hiver : toujours la même douceur (seule la météo du jour joue un peu)
@@ -49,7 +51,7 @@ export const treeRate = t =>
     (isIslandTree(t.id) ? ISLAND.rate * (1 + rank('green') * 0.05) * Math.max(0.9, weather().crop) : cropRate(t.id)) *
     masterySpeed(t.id) *
     (treeStage(t) === 'old' ? ORCHARD.oldRate : 1);
-export const fruitTime = t => (ITEMS[t.id].time * ORCHARD.fruitRate) / speedMult();
+export const fruitTime = t => (ITEMS[t.id].time * ORCHARD.fruitRate * orchardRate()) / speedMult();
 export const treeGrowPct = t => Math.min(1, t.age / ITEMS[t.id].time);
 export const treeFruitPct = t => Math.min(1, t.prog / fruitTime(t));
 // secondes réelles avant le prochain événement (adulte, ou fruit suivant)
@@ -284,7 +286,7 @@ export function advanceTree(t, dt) {
     }
     // fruits ; quand le sol est plein l'arbre attend, et de temps en temps un fruit au sol pourrit
     let guard = 0;
-    while (dt > 0 && t.drops < ORCHARD.life && guard++ < 500) {
+    while (dt > 0 && t.drops < lifeMax() && guard++ < 500) {
         const r = treeRate(t) || 0.0001;
         if (groundFull(t)) {
             const need = (fruitTime(t) * ORCHARD.rotEvery - (t.rot || 0)) / r;

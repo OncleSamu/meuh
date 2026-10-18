@@ -62,7 +62,7 @@ export function produce(id) {
         ]);
     }
     if (it.type === 'fish') return goFish(id);
-    if (it.type === 'gem' || id === 'wood' || id === 'stone') return go('farm/nature');
+    if (it.type === 'gem' || it.type === 'ore' || ['wood', 'stone', 'hardwood', 'resin', 'birchSap'].includes(id)) return go('farm/nature');
     const r = RECIPES[id];
     if (!r) return;
     const k = state.machines.findIndex(m => m.type === r.machine);

@@ -3364,6 +3364,33 @@ Object.assign(RECIPES, {
     caviar: { id: 'caviar', machine: 'deli', ing: { sturgeon: 1 }, time: 480, lvl: 25, base: 25, xp: 30 },
 });
 
+// ---------------- 1.11 : la nature, forge, scierie, bijouterie et cuisine ----------------
+Object.assign(RECIPES, {
+    cutStone: { id: 'cutStone', machine: 'forge', ing: { stone: 4 }, time: 180, lvl: 14, base: 14, xp: 6 },
+    ironIngot: { id: 'ironIngot', machine: 'forge', ing: { ironOre: 2, coal: 1 }, time: 240, lvl: 18, base: 18, xp: 10 },
+    copperIngot: { id: 'copperIngot', machine: 'forge', ing: { copperOre: 2, coal: 1 }, time: 240, lvl: 18, base: 18, xp: 10 },
+    silverIngot: { id: 'silverIngot', machine: 'forge', ing: { silverOre: 2, coal: 1 }, time: 300, lvl: 30, base: 30, xp: 16 },
+    goldIngot: { id: 'goldIngot', machine: 'forge', ing: { goldOre: 2, coal: 2 }, time: 360, lvl: 30, base: 30, xp: 22 },
+    ironPan: { id: 'ironPan', machine: 'forge', ing: { ironIngot: 2, plank: 1 }, time: 300, lvl: 20, base: 20, xp: 16 },
+    copperPot: { id: 'copperPot', machine: 'forge', ing: { copperIngot: 2, plank: 1 }, time: 300, lvl: 21, base: 21, xp: 18 },
+    silverCutlery: { id: 'silverCutlery', machine: 'forge', ing: { silverIngot: 2 }, time: 420, lvl: 32, base: 32, xp: 28 },
+    goldenBell: { id: 'goldenBell', machine: 'forge', ing: { goldIngot: 2 }, time: 480, lvl: 33, base: 33, xp: 34 },
+    pineTorch: { id: 'pineTorch', machine: 'sawmill', ing: { resin: 2, wood: 1 }, time: 120, lvl: 12, base: 12, xp: 5 },
+    solidOak: { id: 'solidOak', machine: 'sawmill', ing: { hardwood: 4, beam: 1 }, time: 300, lvl: 22, base: 22, xp: 20 },
+    resinCandle: { id: 'resinCandle', machine: 'soapworks', ing: { resin: 2, wax: 1 }, time: 240, lvl: 24, base: 24, xp: 14 },
+    birchSyrup: { id: 'birchSyrup', machine: 'kitchen', ing: { birchSap: 4 }, time: 300, lvl: 14, base: 14, xp: 9 },
+    birchGingerbread: { id: 'birchGingerbread', machine: 'pastry', ing: { birchSyrup: 1, flour: 2, egg: 1 }, time: 240, lvl: 18, base: 18, xp: 12 },
+    syrupCrepe: { id: 'syrupCrepe', machine: 'crepery', ing: { birchSyrup: 1, flour: 1, egg: 1, milk: 1 }, time: 180, lvl: 22, base: 22, xp: 10 },
+    crystalVase: { id: 'crystalVase', machine: 'pottery', ing: { quartz: 3 }, time: 360, lvl: 24, base: 24, xp: 20 },
+    quartzPendant: { id: 'quartzPendant', machine: 'jewelry', ing: { quartz: 1, silverIngot: 1 }, time: 480, lvl: 30, base: 30, xp: 26 },
+    rubyBrooch: { id: 'rubyBrooch', machine: 'jewelry', ing: { ruby: 1, silverIngot: 1 }, time: 540, lvl: 31, base: 31, xp: 30 },
+    sapphirePendant: { id: 'sapphirePendant', machine: 'jewelry', ing: { sapphire: 1, silverIngot: 1 }, time: 540, lvl: 31, base: 31, xp: 31 },
+    sapphireRing: { id: 'sapphireRing', machine: 'jewelry', ing: { sapphire: 1, silverIngot: 2 }, time: 600, lvl: 33, base: 33, xp: 33 },
+    rubyRing: { id: 'rubyRing', machine: 'jewelry', ing: { ruby: 1, goldIngot: 1 }, time: 600, lvl: 33, base: 33, xp: 34 },
+    emeraldBrooch: { id: 'emeraldBrooch', machine: 'jewelry', ing: { emerald: 1, goldIngot: 1 }, time: 600, lvl: 34, base: 34, xp: 36 },
+    emeraldRing: { id: 'emeraldRing', machine: 'jewelry', ing: { emerald: 1, goldIngot: 2 }, time: 660, lvl: 35, base: 35, xp: 40 },
+});
+
 // ---------------- 1.8 : une machine par niveau, toujours avec ses recettes ----------------
 // lv17 : le niveau d'avant, pour qu'une ancienne partie garde ce qu'elle avait déjà ouvert
 for (const [id, l] of Object.entries(LV18_MACH)) if (MACHINES[id]) [MACHINES[id].lv17, MACHINES[id].reqLvl] = [MACHINES[id].reqLvl, l];
