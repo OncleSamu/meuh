@@ -2805,3 +2805,12 @@ Object.assign(ITEMS, {
 // le bois et la pierre se vendent un peu (marché), sans jamais servir de commande
 ITEMS.wood.sell = 3;
 ITEMS.stone.sell = 4;
+
+// ---------------- 1.12 : le verger — les greffons ----------------
+Object.assign(ITEMS, {
+    graftGold: { id: 'graftGold', name: 'Greffon doré', type: 'material' },
+    graftDouble: { id: 'graftDouble', name: 'Greffon double', type: 'material' },
+    graftEternal: { id: 'graftEternal', name: 'Greffon éternel', type: 'material' },
+    graftEarly: { id: 'graftEarly', name: 'Greffon précoce', type: 'material' },
+    graftRobust: { id: 'graftRobust', name: 'Greffon robuste', type: 'material' },
+});

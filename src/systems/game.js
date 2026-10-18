@@ -35,6 +35,7 @@ import { caveOpen, caveTick, auctionTick, caveCareCount, caveOrderTick } from '.
 import { tip } from './tips.js';
 import { trimDayEarn } from './book.js';
 import { ensureOrchard, orchardTick, orchardOffline } from './orchard.js';
+import { pickerTick, pickerAfterOffline } from './orchardplus.js';
 import { ensurePastures } from './pastures.js';
 import { ensureIsland, islandTick, islandOffline } from './island.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
@@ -188,6 +189,7 @@ function tickFarm() {
     });
     if (ghTick()) changed = true;
     if (orchardTick()) changed = true;
+    if (pickerTick()) changed = true;
     if (islandTick()) changed = true;
     if (wellTick()) changed = true;
     if (honeyTick(1)) changed = true;
@@ -270,6 +272,7 @@ export function offlineProgress() {
     if (state.incident && state.incident.until) state.incident.until += elapsed * 1000;
     crops += ghOffline(elapsed);
     const orch = orchardOffline(elapsed);
+    pickerAfterOffline();
     const isl = islandOffline(elapsed);
     // le commis travaille pendant votre absence
     const hand = handOffline(elapsed);
@@ -317,6 +320,7 @@ export function offlineProgress() {
     add(crops, ['item', 'wheat'], `${crops} culture${s(crops)} prête${s(crops)} à récolter`);
     add(isl, ['item', 'pineapple'], `${isl} culture${s(isl)} prête${s(isl)} sur l’île`);
     add(orch.fell, ['item', 'apple'], `${orch.fell} fruit${s(orch.fell)} tombé${s(orch.fell)} au verger`);
+    add(orch.picked, ['villager', 'picker'], `Le cueilleur a ramassé ${orch.picked} fruit${s(orch.picked)} au verger`);
     add(orch.dead, ['item', 'wood'], `${orch.dead} arbre${s(orch.dead)} mort${s(orch.dead)} de vieillesse au verger`);
     add(pasture.products, ['item', 'egg'], `${pasture.products} produit${s(pasture.products)} à ramasser au pâturage`);
     add(artisan, ['machine', 'bakery'], `${artisan} produit${s(artisan)} terminé${s(artisan)} à l’atelier`);

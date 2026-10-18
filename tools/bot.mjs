@@ -338,7 +338,15 @@ function progress() {
             if (G.kilnReady()) G.kilnTake();
             if (state.nat.kiln && !G.kilnBusy() && state.inventory.wood > 40) G.kilnLight();
             if (G.gaspardReady()) G.claimGaspard();
-            ['barn', 'pens', 'cave', 'orchard', 'greenhouse', 'traps'].forEach(
+            // le verger : cueilleur, Odile, greffons
+            if (G.pickerOpen() && G.pickerNext() && state.money > 60000) G.upgradePicker();
+            if (G.ensureOdile() && G.odileReady()) G.claimOdile();
+            state.orchard.slots.forEach((sl, k) => {
+                if (!sl.tree || sl.tree.g) return;
+                const id = ['eternal', 'double', 'gold', 'robust'].find(g => G.graftStock(g));
+                if (id) G.graftTree(k, id);
+            });
+            ['barn', 'pens', 'cave', 'orchard', 'ladder', 'basket', 'greenhouse', 'traps'].forEach(
                 id => G.bldOpen(id) && G.bldCan('b', id) && state.money > G.bldNext('b', id).cost.coins * 3 && G.upgradeBld('b', id),
             );
             state.machines.forEach(m => G.bldCan('m', m.type) && state.money > G.bldNext('m', m.type).cost.coins * 4 && G.upgradeBld('m', m.type));
@@ -495,6 +503,10 @@ function orchard() {
                 const r = G.pickTree(k, null, true, 'farm');
                 if (r) G.addXp(r.xp);
             });
+    });
+    (state.orchard.cuttings || []).forEach((c, ci) => {
+        const j = G.slotsOf('farm').findIndex(x => x.open && !x.tree);
+        if (j >= 0 && !ITEMS[c.id].island) G.plantCutting(j, ci, null, 'farm');
     });
     const ok = G.treeList('farm').filter(d => state.level >= d.reqLvl);
     if (!ok.length) return;
