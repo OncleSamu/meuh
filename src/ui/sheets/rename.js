@@ -13,6 +13,7 @@ const WHAT = {
         name: o => G.varName(o),
         set: (id, n) => G.renameVariety(id, n),
     },
+    lot: { title: 'Nommer la cuvée', get: id => G.findLot(id), name: o => o.name || '', set: (id, n) => G.renameLot(id, n) },
     beer: { title: 'Renommer la bière', get: id => G.beerOf(id), name: o => o.name, set: (id, n) => G.renameBeer(id, n) },
     race: { title: 'Renommer la race', get: id => state.genetics && state.genetics.races[id], name: o => o.name, set: (id, n) => G.renameRace(id, n) },
 };

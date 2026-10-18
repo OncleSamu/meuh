@@ -49,7 +49,7 @@ import { BARRELS } from '../data/abbey.js';
 import { beerOf, beerValue, beerStock, ensureBrew, barrelOk, cellarOpen, takeFromBarrel, cellarTick } from './brewery.js';
 import { caveBonus } from './buildings.js';
 import { DAYS_PER_SEASON } from '../data/world.js';
-import { VINTAGES } from '../data/cave.js';
+import { VINTAGES, LABEL_COUNT } from '../data/cave.js';
 
 // 1.15 : millésimes. L'année de jeu donne à chaque vin une qualité (0 à 3), la même pour tout le monde.
 export const gameYear = () => Math.floor((state.day - 1) / (DAYS_PER_SEASON * 4)) + 1;
@@ -58,6 +58,26 @@ export const vintageQ = y => {
     return h < 0.2 ? 0 : h < 0.65 ? 1 : h < 0.9 ? 2 : 3;
 };
 const isVinous = id => ['wine', 'champagne'].includes(CAVE_ITEMS[id]);
+// 1.15 : une cuvée porte un nom et une étiquette au choix (les vins et les champagnes)
+export const bottleLots = () => [...state.cave.slots, ...state.cave.reserve].filter(l => l && !isBeerLot(l) && isVinous(l.id));
+export const findLot = uid => bottleLots().find(l => l.uid === +uid) || null;
+export function renameLot(uid, name) {
+    const l = findLot(uid),
+        n = String(name || '')
+            .trim()
+            .slice(0, 22);
+    if (!l) return false;
+    if (n) l.name = n;
+    else delete l.name;
+    return true;
+}
+export function cycleLabel(uid) {
+    const l = findLot(uid);
+    if (!l) return false;
+    l.ls = ((l.ls || 0) + 1) % LABEL_COUNT;
+    sfx('pop');
+    return true;
+}
 export const vintageOf = lot => (lot && lot.vy && isVinous(lot.id) ? VINTAGES[lot.vq] : null);
 
 export const caveOpen = () => state.level >= CAVE_LVL;
@@ -68,7 +88,7 @@ export const caveStep = id => (CAVE_ITEMS[id] === 'cider' && projectDone('cidery
 export const rankName = lot => (lot.bad ? (lot.id === 'beer' ? 'Tournée' : 'Tourné') : caveFam(lot.id).ranks[lot.rank]);
 // 1.6.3 : un lot peut être une bière (id 'beer', sa recette bid et son fût k)
 export const isBeerLot = lot => lot.id === 'beer';
-export const lotName = lot => (isBeerLot(lot) ? (beerOf(lot.bid) || { name: 'Bière' }).name : ITEMS[lot.id].name);
+export const lotName = lot => lot.name || (isBeerLot(lot) ? (beerOf(lot.bid) || { name: 'Bière' }).name : ITEMS[lot.id].name);
 export const lotIcon = lot => (isBeerLot(lot) ? ['ui', 'beer'] : ['item', lot.id]);
 const baseUnit = lot => (isBeerLot(lot) ? beerValue(lot.bid) * (BARRELS[lot.k] || BARRELS.oak).mult : ITEMS[lot.id].sell);
 export const lotUnit = lot => Math.round(baseUnit(lot) * CAVE_MULT[lot.rank] * (vintageOf(lot) ? vintageOf(lot).mult : 1) * (lot.bad ? CAVE_TURNED : 1));
@@ -351,6 +371,8 @@ export function takeOut(i, at) {
     c.slots[i] = null;
     const kept = { uid: lot.uid, id: lot.id, n: lot.n, rank: lot.rank, bad: lot.bad };
     if (lot.vy) Object.assign(kept, { vy: lot.vy, vq: lot.vq });
+    if (lot.name) kept.name = lot.name;
+    if (lot.ls) kept.ls = lot.ls;
     if (isBeerLot(lot)) Object.assign(kept, { bid: lot.bid, k: lot.k });
     c.reserve.push(kept);
     state.stats.caveLots = (state.stats.caveLots || 0) + 1;

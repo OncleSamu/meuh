@@ -13,7 +13,24 @@ const grapeMark = (x, y, c) =>
     ]
         .map(([dx, dy]) => FC(x + dx, y + dy, 1.5, c))
         .join('') + L(`M${x} ${y - 1.6} Q${x + 1} ${y - 3.6} ${x + 2.6} ${y - 4}`, 0.9, '#5a7a2e');
-const wine2 = ({ glass, glassHi, wine, label, band, capsule, capsuleD, mark }) => {
+const WINE_P = {};
+const CHAMP_P = {};
+// 1.15 : étiquettes au choix et millésime écrit sur la bouteille
+export const LABEL_STYLES = [
+    { name: 'Classique' },
+    { name: 'Château', label: '#f1e6c8', band: '#2e4a7a', mark: '#2e4a7a' },
+    { name: 'Rustique', label: '#e7d3a8', band: '#6b4a2a', mark: '#6b4a2a' },
+    { name: 'Doré', label: '#fff2c2', band: '#d9a520', mark: '#9a6a10' },
+];
+// la capsule dit la qualité de l'année : froide (grise), grande (argent), siècle (or)
+const CAPS = [['#8a9a9a', '#5a6a6a'], null, ['#cfd6dc', '#8a96a0'], ['#ffd23f', '#b8860b']];
+const yearText = (x, y, year) =>
+    `<text x="${x}" y="${y}" font-family="Georgia,serif" font-size="6.2" font-weight="700" text-anchor="middle" fill="#3a2618">${year}</text>`;
+const wineDraw = ({ glass, glassHi, wine, label, band, capsule, capsuleD, mark }, o = {}) => {
+    const st = LABEL_STYLES[o.ls] || LABEL_STYLES[0];
+    if (st.label) ({ label, band, mark } = { label: st.label, band: st.band, mark: st.mark });
+    const cp = o.vq != null ? CAPS[o.vq] : null;
+    if (cp) [capsule, capsuleD] = cp;
     const body = 'M27.5 3 L36.5 3 L36.5 19 Q36.5 22 39 23.5 Q45 27 45 34 L45 57 Q45 61 41 61 L23 61 Q19 61 19 57 L19 34 Q19 27 25 23.5 Q27.5 22 27.5 19Z';
     return (
         SHADOW(32, 61.5, 14, 2.6) +
@@ -26,7 +43,7 @@ const wine2 = ({ glass, glassHi, wine, label, band, capsule, capsuleD, mark }) =
         R(21.5, 36, 21, 3.4, 1, band, 0) +
         L('M21.5 39.4 L42.5 39.4', 1.2) +
         grapeMark(32, 42.5, mark) +
-        L('M26 49.5 L38 49.5', 1.1, 'rgba(58,38,24,.5)') +
+        (o.year ? yearText(32, 51, o.year) : L('M26 49.5 L38 49.5', 1.1, 'rgba(58,38,24,.5)')) +
         // la capsule plissée et le col
         P('M27 2 L37 2 L37 15 L27 15Z', capsule, 2.2) +
         L('M29.5 4 L29.5 14 M32 4 L32 14 M34.5 4 L34.5 14', 0.8, capsuleD) +
@@ -35,10 +52,24 @@ const wine2 = ({ glass, glassHi, wine, label, band, capsule, capsuleD, mark }) =
         F('M22.6 32 Q22.8 27.8 25.6 26 L25.6 55 Q22.6 55 22.6 52Z', glassHi, 0.55) +
         FE(40.5, 30, 1.2, 2.8, '#fff', 0.55, 20) +
         FC(24, 57, 0.9, '#fff', 0.5) +
+        (o.vq === 3 ? P('M49 5 L50.6 9 L54.6 10.4 L50.6 11.8 L49 16 L47.4 11.8 L43.4 10.4 L47.4 9Z', '#ffd23f', 1.4) : '') +
         P(body, 'none')
     );
 };
-const champ2 = ({ label, foil, foilD, wine }) => {
+const wine2 = (id, p) => {
+    WINE_P[id] = p;
+    return wineDraw(p);
+};
+const champ2 = (id, p) => {
+    CHAMP_P[id] = p;
+    return champDraw(p);
+};
+export const wineBottle = (id, o) => (WINE_P[id] ? wineDraw(WINE_P[id], o) : CHAMP_P[id] ? champDraw(CHAMP_P[id], o) : '');
+const champDraw = ({ label, foil, foilD, wine }, o = {}) => {
+    const st = LABEL_STYLES[o.ls] || LABEL_STYLES[0];
+    if (st.label) label = st.label;
+    const cp = o.vq != null ? CAPS[o.vq] : null;
+    if (cp) [foil, foilD] = cp;
     const body = 'M28.5 6 L35.5 6 L35.5 20 Q35.5 23 38.5 25 Q46 29 46 37 L46 57 Q46 61 42 61 L22 61 Q18 61 18 57 L18 37 Q18 29 25.5 25 Q28.5 23 28.5 20Z';
     return (
         SHADOW(32, 61.5, 15, 2.6) +
@@ -58,8 +89,7 @@ const champ2 = ({ label, foil, foilD, wine }) => {
         L('M28 8 L36 8 M28 13 L36 13 M28 18 L36 18', 0.9, foilD) +
         // l'étiquette en écusson et le médaillon
         P('M20.5 38 Q32 34 43.5 38 L43.5 51 Q32 55 20.5 51Z', label, 1.6) +
-        C(32, 44.5, 4.2, foil, 1.3) +
-        P('M30 43.5 L32 41.5 L34 43.5 L32 47.5Z', foilD, 0) +
+        (o.year ? yearText(32, 47, o.year) : C(32, 44.5, 4.2, foil, 1.3) + P('M30 43.5 L32 41.5 L34 43.5 L32 47.5Z', foilD, 0)) +
         F('M22 33 Q22.5 29.5 25.5 28 L25.5 55 Q22 55 22 52Z', '#ffffff', 0.22) +
         FE(41, 33, 1.2, 2.6, '#fff', 0.5, 20) +
         // l'étincelle de fête
@@ -70,7 +100,7 @@ const champ2 = ({ label, foil, foilD, wine }) => {
 };
 
 const WINES = {
-    tableWine: wine2({
+    tableWine: wine2('tableWine', {
         glass: '#9a7a3c',
         glassHi: '#e8d5a0',
         wine: '#8a2b3a',
@@ -80,7 +110,7 @@ const WINES = {
         capsuleD: '#7a5028',
         mark: '#8a2b3a',
     }),
-    redWine: wine2({
+    redWine: wine2('redWine', {
         glass: '#2b4f30',
         glassHi: '#7fb08a',
         wine: '#6b1424',
@@ -90,7 +120,7 @@ const WINES = {
         capsuleD: '#6b1424',
         mark: '#6b2a5e',
     }),
-    whiteWine: wine2({
+    whiteWine: wine2('whiteWine', {
         glass: '#cfe6b8',
         glassHi: '#ffffff',
         wine: '#f2d76a',
@@ -100,7 +130,7 @@ const WINES = {
         capsuleD: '#b48a24',
         mark: '#a6c24a',
     }),
-    roseWine: wine2({
+    roseWine: wine2('roseWine', {
         glass: '#f3e7ea',
         glassHi: '#ffffff',
         wine: '#f39ab0',
@@ -110,8 +140,8 @@ const WINES = {
         capsuleD: '#c46a82',
         mark: '#c4406a',
     }),
-    champagne: champ2({ label: '#f7ecd8', foil: '#f2c14e', foilD: '#b08a2a', wine: '#f2d76a' }),
-    champagneRose: champ2({ label: '#fbd9e2', foil: '#f6a5b5', foilD: '#c46a82', wine: '#f39ab0' }),
+    champagne: champ2('champagne', { label: '#f7ecd8', foil: '#f2c14e', foilD: '#b08a2a', wine: '#f2d76a' }),
+    champagneRose: champ2('champagneRose', { label: '#fbd9e2', foil: '#f6a5b5', foilD: '#c46a82', wine: '#f39ab0' }),
 };
 
 // ---------------- les fromages et la laiterie ----------------

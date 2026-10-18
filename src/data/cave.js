@@ -326,3 +326,4 @@ export const VINTAGES = [
     { name: 'Grande année', mult: 1.15, good: 0.03 },
     { name: 'Année du siècle', mult: 1.4, good: 0.06 },
 ];
+export const LABEL_COUNT = 4;

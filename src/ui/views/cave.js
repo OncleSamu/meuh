@@ -7,6 +7,8 @@ import { CAVE_FAMILIES, CAVE_IDEAL, CAVE_SHELVES, CAVE_GEAR, CAVE_MULT, NEGOCIAN
 import { BARRELS } from '../../data/abbey.js';
 import { VILLAGERS } from '../../data/village.js';
 import { beerSvg } from '../../art/abbey.js';
+import { wineBottle, LABEL_STYLES } from '../../art/items2.js';
+import { renameBtn } from '../sheets/rename.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions } from '../dom.js';
 import { ico, art } from '../icons.js';
@@ -18,7 +20,16 @@ import { askBuy } from '../sheets/askbuy.js';
 const COIN = () => ico(['ui', 'coin']);
 const findIcon = k => AUCTION_FINDS[k].icon;
 // l'icône d'un lot : sa bouteille pour une bière, sinon le produit
-const lotIco = (l, cls = 'ico') => (l.id === 'beer' && G.beerOf(l.bid) ? `<i class="${cls}">${beerSvg(G.beerOf(l.bid))}</i>` : ico(['item', l.id], cls));
+const lotIco = (l, cls = 'ico') =>
+    l.id === 'beer' && G.beerOf(l.bid)
+        ? `<i class="${cls}">${beerSvg(G.beerOf(l.bid))}</i>`
+        : l.vy && G.vintageOf(l)
+          ? `<i class="${cls}"><svg viewBox="0 0 64 64">${wineBottle(l.id, { year: l.vy, vq: l.vq, ls: l.ls })}</svg></i>`
+          : ico(['item', l.id], cls);
+const bottleTools = l =>
+    l.vy && G.vintageOf(l)
+        ? `<span class="bottle-tools">${renameBtn('lot', l.uid, 'Nommer la cuvée')}<button class="rename-btn" data-act="cycleLabel" data-uid="${l.uid}" aria-label="Changer l’étiquette" title="Étiquette : ${LABEL_STYLES[l.ls || 0].name}">🏷</button></span>`
+        : '';
 const lotSub = l =>
     (l.id === 'beer' && BARRELS[l.k] ? ` · ${BARRELS[l.k].name.toLowerCase()}` : '') +
     (G.vintageOf(l) ? ` · ${G.vintageOf(l).name.toLowerCase()} ${l.vy}` : '');
@@ -53,7 +64,7 @@ function lotCard(lot, i) {
         bk = G.boostKind(lot);
     const stars = Array.from({ length: 4 }, (_, k) => `<i class="${k < lot.rank ? 'on' : ''}"></i>`).join('');
     return `<div class="cave-slot${lot.bad ? ' bad' : ''} r${lot.rank}${lot.flash ? ' flash' : ''}" data-anchor="lot:${i}">
-        <div class="cs-top">${lotIco(lot, 'ico cs-ico')}<div class="cs-main"><div class="cs-name">${G.lotName(lot)} <small>×${lot.n}</small></div>
+        <div class="cs-top">${lotIco(lot, 'ico cs-ico')}<div class="cs-main"><div class="cs-name">${G.lotName(lot)} <small>×${lot.n}</small>${bottleTools(lot)}</div>
         <div class="cs-rank">${G.rankName(lot)}${lotSub(lot)}</div><div class="cs-stars">${stars}</div></div></div>
         <div class="cs-value">${fmt(G.lotValue(lot))}${COIN()}</div>
         ${
@@ -81,7 +92,7 @@ function reserveHtml() {
         section('Réserve') +
         `<div class="list">${c.reserve
             .map(
-                l => `<div class="card reserve-row${l.bad ? ' bad' : ''}">${lotIco(l, 'ico big')}<div class="card-main"><div class="card-title">${G.lotName(l)} ×${l.n}</div>
+                l => `<div class="card reserve-row${l.bad ? ' bad' : ''}">${lotIco(l, 'ico big')}<div class="card-main"><div class="card-title">${G.lotName(l)} ×${l.n}${bottleTools(l)}</div>
         <div class="card-sub">${G.rankName(l)} · vaut ${fmt(G.lotValue(l))}${COIN()}</div></div>
         <div class="card-side col">${btn(`Négociant ${fmt(G.lotValue(l) * NEGOCIANT)}${COIN()}`, { act: 'negociant', data: { uid: l.uid }, size: 'sm' })}
         ${btn('Aux enchères', { act: 'deposit', data: { uid: l.uid }, size: 'sm', kind: 'gold', icon: ['ui', 'gavel'], disabled: !canDep })}</div></div>`,
@@ -321,6 +332,7 @@ export function setupCave() {
         nudge: (el, d) => G.nudgeClimate(d.k, +d.d),
         careLot: (el, d) => G.careLot(+d.i, el),
         careAll: el => G.careAll(el),
+        cycleLabel: (el, d) => G.cycleLabel(d.uid),
         tasteLot: (el, d) => G.tasteLot(+d.i, el),
         boostLot: (el, d) => G.boostLot(+d.i),
         takeOut: (el, d) => G.takeOut(+d.i, el),

@@ -86,3 +86,25 @@ test('les vendanges : on livre les raisins puis on réclame', () => {
     assert.equal(state.inventory.tableWine, before + G.vendReward().bottles);
     assert.ok(!G.claimVend());
 });
+
+test('bouteilles personnalisées : millésime, étiquette, nom de cuvée', async () => {
+    start();
+    const { wineBottle } = await import('../../src/art/items2.js');
+    const a = wineBottle('redWine', { year: 12, vq: 3, ls: 1 });
+    assert.ok(a.includes('>12<'));
+    assert.notEqual(a, wineBottle('redWine', { year: 12, vq: 0, ls: 0 }));
+    assert.ok(wineBottle('champagne', { year: 5, vq: 2, ls: 3 }).includes('>5<'));
+    G.ensureCave();
+    state.inventory.redWine = 2;
+    G.putInCave(0, 'redWine', 2);
+    const uid = state.cave.slots[0].uid;
+    assert.ok(G.renameLot(uid, 'Cuvée Lucien'));
+    assert.equal(G.lotName(state.cave.slots[0]), 'Cuvée Lucien');
+    assert.ok(G.cycleLabel(uid));
+    G.takeOut(0);
+    const r = state.cave.reserve.at(-1);
+    assert.equal(r.name, 'Cuvée Lucien');
+    assert.equal(r.ls, 1);
+    assert.ok(G.renameLot(uid, ''));
+    assert.equal(G.lotName(r), ITEMS.redWine.name);
+});
