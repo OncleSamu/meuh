@@ -19,7 +19,9 @@ const COIN = () => ico(['ui', 'coin']);
 const findIcon = k => AUCTION_FINDS[k].icon;
 // l'icône d'un lot : sa bouteille pour une bière, sinon le produit
 const lotIco = (l, cls = 'ico') => (l.id === 'beer' && G.beerOf(l.bid) ? `<i class="${cls}">${beerSvg(G.beerOf(l.bid))}</i>` : ico(['item', l.id], cls));
-const lotSub = l => (l.id === 'beer' && BARRELS[l.k] ? ` · ${BARRELS[l.k].name.toLowerCase()}` : '');
+const lotSub = l =>
+    (l.id === 'beer' && BARRELS[l.k] ? ` · ${BARRELS[l.k].name.toLowerCase()}` : '') +
+    (G.vintageOf(l) ? ` · ${G.vintageOf(l).name.toLowerCase()} ${l.vy}` : '');
 
 // ---------------- climat ----------------
 function gauge(kind, label, icon) {

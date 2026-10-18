@@ -69,6 +69,7 @@ export const CAVE_ITEMS = {
     comte: 'cheese',
     cider: 'cider',
     pommeau: 'cider',
+    tableWine: 'wine',
     redWine: 'wine',
     whiteWine: 'wine',
     roseWine: 'wine',
@@ -317,3 +318,11 @@ export const AUCTION_FINDS = {
         icon: ['item', 'redWine'],
     },
 };
+
+// 1.15 : qualité d'un millésime (selon l'année de jeu)
+export const VINTAGES = [
+    { name: 'Année froide', mult: 0.9, good: -0.03 },
+    { name: 'Bonne année', mult: 1, good: 0 },
+    { name: 'Grande année', mult: 1.15, good: 0.03 },
+    { name: 'Année du siècle', mult: 1.4, good: 0.06 },
+];

@@ -137,6 +137,7 @@ export function todoList() {
     if (G.bldReady()) push('sheet:upgrades', ['ui', 'granary'], 'Un bâtiment peut être amélioré', 0);
     if (G.odileReady()) push('farm/orchard', ['villager', 'odile'], 'Défi d’Odile réussi', 1);
     if (G.harvestReady()) push('farm/orchard', ['item', 'apple'], 'Grande cueillette réussie', 1);
+    if (G.vendReady()) push('farm/orchard', ['item', 'grape'], 'Les vendanges sont finies', 1);
     if (G.feteReady()) push('farm/orchard', ['item', 'cider'], 'La pressée est prête', 1);
     if (G.logReady()) push('farm/orchard', ['ui', 'orchardBook'], 'Une médaille du carnet du verger', 1);
     if (G.basketResultReady()) push('farm/orchard', ['item', 'apple'], 'Résultats du concours du panier', 1);

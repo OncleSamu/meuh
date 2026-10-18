@@ -17,6 +17,7 @@ import { cropRate, season, weather, dayInSeason } from './world.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
 import { storyOk } from './story.js';
+import { preferSeed, harvestVariety } from './genetics.js';
 import { collect, record } from './book.js';
 import { addQuality } from './farm.js';
 import { eventProgress } from './events.js';
@@ -195,6 +196,11 @@ export function plantTree(k, id, at, z = 'farm') {
         return false;
     }
     slot.tree = { id, age: 0, drops: 0, ground: 0, prog: 0, gq: 0 };
+    const vid = preferSeed(id);
+    if (vid) {
+        slot.tree.v = vid;
+        toast('Un cépage de votre labo !', ['item', id]);
+    }
     if (z === 'farm' && state.level >= REMARK.lvl && Math.random() < REMARK.chance) {
         slot.tree.rem = Math.random() < 0.5 ? 'gold' : 'twin';
         toast(`Un jeune plant étrange : ${REMARK.kinds[slot.tree.rem].name.toLowerCase()} !`, ['item', id]);
@@ -248,6 +254,7 @@ export function pickTree(k, at, quiet, z = 'farm') {
         state.stats.goldQ += gold;
         collect('g_' + t.id);
     }
+    if (t.v) harvestVariety(t.v, qty);
     eventProgress('harvest', t.id, qty);
     pickHooks.forEach(fn => fn(t, qty, silver, gold));
     t.ground = 0;
@@ -306,7 +313,7 @@ export function leaveCutting(t) {
     if (matOf(t) < MATURE.cutMin) return false;
     const o = state.orchard;
     o.cuttings = o.cuttings || [];
-    o.cuttings.push({ id: t.id, g: t.g || null, rem: t.rem || null, mat: Math.floor(matOf(t) * MATURE.cutKeep) });
+    o.cuttings.push({ id: t.id, g: t.g || null, rem: t.rem || null, v: t.v || null, mat: Math.floor(matOf(t) * MATURE.cutKeep) });
     toast(`Une bouture de ${ITEMS[t.id].seedName.toLowerCase()} garde la lignée de l’arbre`, ['item', 'cutting']);
     return true;
 }
@@ -320,7 +327,7 @@ export function plantCutting(k, ci, at, z = 'farm') {
         return false;
     }
     state.orchard.cuttings.splice(ci, 1);
-    slot.tree = { id: c.id, age: 0, drops: 0, ground: 0, prog: 0, gq: 0, mat: c.mat, g: c.g || null, rem: c.rem || null };
+    slot.tree = { id: c.id, age: 0, drops: 0, ground: 0, prog: 0, gq: 0, mat: c.mat, g: c.g || null, rem: c.rem || null, v: c.v || null };
     sfx('plant');
     burst(at, 'dirt', 8, 6);
     burst(at, 'leaf', 5);

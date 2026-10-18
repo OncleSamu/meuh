@@ -70,6 +70,16 @@ const champ2 = ({ label, foil, foilD, wine }) => {
 };
 
 const WINES = {
+    tableWine: wine2({
+        glass: '#9a7a3c',
+        glassHi: '#e8d5a0',
+        wine: '#8a2b3a',
+        label: '#fff7e0',
+        band: '#b07a45',
+        capsule: '#b07a45',
+        capsuleD: '#7a5028',
+        mark: '#8a2b3a',
+    }),
     redWine: wine2({
         glass: '#2b4f30',
         glassHi: '#7fb08a',

@@ -284,6 +284,8 @@ export const CARNET = {
     comte: 'Un comté de trois ans a des petits cristaux qui craquent sous la dent. Maître Anselme dit que c’est le fromage qui a des souvenirs.',
 
     // ---------------- la cuverie ----------------
+    tableWine:
+        'Le vin de table, on le buvait au déjeuner, coupé d’eau pour les enfants. Papi Lucien disait qu’un bon vin de table ne se vante pas : il se laisse boire, et on en redemande.',
     redWine:
         'Le vin rouge de Margaux attend dans les tonneaux pendant que nous attendons, nous, qu’il soit prêt. C’est une boisson pour les grands, et pour les gens patients.',
     whiteWine: 'Le vin blanc se sert frais, avec le poisson de Marcel, pour les grands. Les enfants ont le jus de raisin, qui vient de la même vigne.',

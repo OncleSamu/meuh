@@ -1721,6 +1721,12 @@ export const ITEMS = {
         needProject: 'affinage',
         sell: 1415,
     },
+    tableWine: {
+        id: 'tableWine',
+        name: 'Vin de table',
+        type: 'artisan',
+        sell: 1150,
+    },
     redWine: {
         id: 'redWine',
         name: 'Vin rouge',

@@ -344,6 +344,8 @@ function progress() {
             if (G.frostStatus() === 'warn') G.lightTorches();
             if (G.feteState() && !G.feteState().claimed) ['apple', 'pear'].forEach(id => state.inventory[id] > 30 && G.giveFete(id));
             if (G.feteReady()) G.claimFete();
+            if (G.vendState() && !G.vendState().claimed && state.inventory.grape >= 10) G.giveVend();
+            if (G.vendReady()) G.claimVend();
             if (G.harvestReady()) G.claimHarvest();
             if (G.basketResultReady()) G.claimBasket();
             G.logIds().forEach(id => G.logCan(id) && G.claimLog(id));

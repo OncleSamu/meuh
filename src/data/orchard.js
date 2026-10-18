@@ -114,6 +114,8 @@ export const BASKET_CONTEST = {
     xp: lvl => 60 + lvl * 5,
 };
 export const CIDER_FETE = { lvl: 26, need: [20, 16], coins: lvl => 1500 + lvl * 100, xp: lvl => 120 + lvl * 6, cider: 12, hearts: 2 };
+// 1.15 : les vendanges et la fête du vin (automne), avec Margaux
+export const WINE_FETE = { lvl: 33, need: 24, coins: lvl => 2200 + lvl * 120, xp: lvl => 150 + lvl * 7, bottles: 6, hearts: 2 };
 // un jeune plant « bizarre » : fruits dorés ou deux fruits d'un coup, toute sa vie
 export const REMARK = {
     lvl: 34,
@@ -128,5 +130,6 @@ export const ORCHARD_UNLOCKS_2 = [
     [24, 'La floraison : les ruches du champ pollinisent le verger'],
     [26, 'La fête du cidre, chaque automne'],
     [28, 'La gelée de printemps : les torches de résine protègent le verger'],
+    [33, 'Les vendanges et la fête du vin, chaque automne'],
     [34, 'La grande cueillette d’automne et les arbres remarquables'],
 ];

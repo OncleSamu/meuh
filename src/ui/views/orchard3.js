@@ -86,6 +86,20 @@ function feteCard() {
                   `<div class="row-btns">${btn(G.feteDone(f) ? `${fmt(r.coins)}${ico(['ui', 'coin'])} + ${r.cider} cidres` : 'En préparation', { act: 'claimFete', kind: G.feteDone(f) ? 'green' : '', size: 'sm', disabled: !G.feteDone(f) })}</div>`
         }</div>`;
 }
+function vendCard() {
+    if (!G.vendOpen()) return '';
+    const v = G.vendState();
+    if (!v) return '';
+    const r = G.vendReward();
+    return `<div class="card fete-card${G.vendReady() ? ' on' : ''}"><div class="nature-head">${ico(['item', 'grape'], 'ico big')}<div class="card-main"><div class="card-title">Les vendanges</div>
+        <div class="card-sub">${v.claimed ? 'Le vin nouveau coule au village. À l’an prochain !' : 'Margaux prépare la fête du vin : livrez vos raisins, elle vous rend des bouteilles de vin de table.'}</div></div></div>
+        ${
+            v.claimed
+                ? ''
+                : `<div class="need-row">${ico(['item', 'grape'])}<b>${ITEMS.grape.name}</b>${bar(v.given, v.need)}${btn('Livrer', { act: 'giveVend', size: 'sm', disabled: v.given >= v.need || !state.inventory.grape })}</div>` +
+                  `<div class="row-btns">${btn(G.vendDone(v) ? `${fmt(r.coins)}${ico(['ui', 'coin'])} + ${r.bottles} vins de table` : 'En cours', { act: 'claimVend', kind: G.vendDone(v) ? 'green' : '', size: 'sm', disabled: !G.vendDone(v) })}</div>`
+        }</div>`;
+}
 function basketCard() {
     if (!G.basketOpen()) return '';
     const o = state.orchard,
@@ -111,7 +125,7 @@ function logCard() {
         <div class="card-sub">Une page par espèce, des médailles à 100, 500 et 2 000 fruits.</div></div>${btn(G.logReady() ? 'À réclamer !' : 'Ouvrir', { act: 'open', data: { sheet: 'orchardLog' }, kind: G.logReady() ? 'green' : '', size: 'sm' })}</div></div>`;
 }
 export function lifeCards() {
-    return bloomCard() + frostCard() + harvestCard() + feteCard() + basketCard() + logCard();
+    return bloomCard() + frostCard() + harvestCard() + feteCard() + vendCard() + basketCard() + logCard();
 }
 
 // ---- le carnet ----
@@ -146,6 +160,8 @@ export function setupOrchard3() {
         claimHarvest: el => G.claimHarvest(el),
         giveFete: (el, d) => G.giveFete(d.id, el),
         claimFete: el => G.claimFete(el),
+        giveVend: el => G.giveVend(el),
+        claimVend: el => G.claimVend(el),
         claimBasket: el => G.claimBasket(el),
         claimLog: (el, d) => G.claimLog(d.id, el),
     });

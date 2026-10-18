@@ -2326,6 +2326,17 @@ export const RECIPES = {
         base: 40,
         xp: 25,
     },
+    tableWine: {
+        id: 'tableWine',
+        machine: 'press',
+        ing: {
+            grape: 4,
+        },
+        time: 480,
+        lvl: 31,
+        base: 31,
+        xp: 22,
+    },
     redWine: {
         id: 'redWine',
         machine: 'winery',

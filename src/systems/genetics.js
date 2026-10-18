@@ -243,7 +243,7 @@ export const parentBase = p => (state.genetics.vars[p] ? state.genetics.vars[p].
 export const parentName = p => (state.genetics.vars[p] ? varName(state.genetics.vars[p]) : ITEMS[p] ? `${ITEMS[p].name} (sauvage)` : '?');
 export const parentGen = p => (state.genetics.vars[p] ? state.genetics.vars[p].gen : 0);
 export const plantParents = () => {
-    const wild = Object.keys(FLAVORS).filter(id => ITEMS[id] && ITEMS[id].type === 'crop' && lvOk(ITEMS[id]) && storyOk(ITEMS[id]));
+    const wild = Object.keys(FLAVORS).filter(id => ITEMS[id] && (ITEMS[id].type === 'crop' || id === 'grape') && lvOk(ITEMS[id]) && storyOk(ITEMS[id]));
     return [...varieties().map(v => v.id), ...wild];
 };
 export const crossCost = () => Math.round(GX.crossCost(scaleLvl()) / 10) * 10;

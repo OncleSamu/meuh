@@ -7,7 +7,7 @@ import { toast, sfx, emit } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { DAYS_PER_SEASON } from '../data/world.js';
 import { RIVALS } from '../data/village.js';
-import { GRAFTS, TREE_SEASON, FROST, HARVEST, ORCHARD_LOG, BASKET_CONTEST, CIDER_FETE } from '../data/orchard.js';
+import { GRAFTS, TREE_SEASON, FROST, HARVEST, ORCHARD_LOG, BASKET_CONTEST, CIDER_FETE, WINE_FETE } from '../data/orchard.js';
 import { earn, addXp } from './player.js';
 import { addFriendship } from './village.js';
 import { season, dayInSeason, hour } from './world.js';
@@ -296,6 +296,53 @@ export function claimFete(at) {
     return true;
 }
 
+// ---------------- les vendanges et la fête du vin ----------------
+export const vendOpen = () => state.level >= WINE_FETE.lvl;
+export const vendActive = () => vendOpen() && season().id === 'automne';
+export function vendState() {
+    const o = orch();
+    if (!vendActive()) return o.vend && o.vend.s === seasonIdx() ? o.vend : null;
+    const s = seasonIdx();
+    if (!o.vend || o.vend.s !== s) o.vend = { s, need: WINE_FETE.need + Math.floor(state.level / 2), given: 0, claimed: false };
+    return o.vend;
+}
+export const vendDone = v => !!v && v.given >= v.need;
+export const vendReady = () => {
+    const v = orch().vend;
+    return !!(v && v.s === seasonIdx() && !v.claimed && vendDone(v));
+};
+export function giveVend(at) {
+    const v = vendState();
+    if (!v || v.claimed) return false;
+    const n = Math.min(state.inventory.grape || 0, v.need - v.given);
+    if (n <= 0) {
+        sfx('error');
+        return false;
+    }
+    state.inventory.grape -= n;
+    clampQuality('grape');
+    v.given += n;
+    sfx('pop');
+    void at;
+    if (vendDone(v) && view.started) toast('Les vendanges sont finies ! Margaux vous attend', ['item', 'grape']);
+    return true;
+}
+export const vendReward = () => ({ coins: round5(WINE_FETE.coins(state.level)), xp: WINE_FETE.xp(state.level), bottles: WINE_FETE.bottles });
+export function claimVend(at) {
+    const v = orch().vend;
+    if (!v || v.claimed || !vendDone(v)) return false;
+    v.claimed = true;
+    const r = vendReward();
+    earn(r.coins, at);
+    addXp(r.xp, at);
+    state.inventory.tableWine = (state.inventory.tableWine || 0) + r.bottles;
+    addFriendship('margaux', WINE_FETE.hearts, at);
+    state.stats.vendanges = (state.stats.vendanges || 0) + 1;
+    sfx('level');
+    emit('confetti');
+    return true;
+}
+
 // ---------------- à chaque cueillette ----------------
 onTreePick((t, qty, silver, gold) => {
     const o = orch();
@@ -322,6 +369,7 @@ export function lifeTick() {
     if (frostTick(false)) ch = true;
     if (harvestOpen()) ensureHarvest();
     if (feteOpen()) feteState();
+    if (vendOpen()) vendState();
     if (basketTick()) ch = true;
     return ch;
 }

@@ -48,6 +48,17 @@ import { clampQuality } from './farm.js';
 import { BARRELS } from '../data/abbey.js';
 import { beerOf, beerValue, beerStock, ensureBrew, barrelOk, cellarOpen, takeFromBarrel, cellarTick } from './brewery.js';
 import { caveBonus } from './buildings.js';
+import { DAYS_PER_SEASON } from '../data/world.js';
+import { VINTAGES } from '../data/cave.js';
+
+// 1.15 : millésimes. L'année de jeu donne à chaque vin une qualité (0 à 3), la même pour tout le monde.
+export const gameYear = () => Math.floor((state.day - 1) / (DAYS_PER_SEASON * 4)) + 1;
+export const vintageQ = y => {
+    const h = Math.abs(Math.sin(y * 12.9898 + 4.1414) * 43758.5453) % 1;
+    return h < 0.2 ? 0 : h < 0.65 ? 1 : h < 0.9 ? 2 : 3;
+};
+const isVinous = id => ['wine', 'champagne'].includes(CAVE_ITEMS[id]);
+export const vintageOf = lot => (lot && lot.vy && isVinous(lot.id) ? VINTAGES[lot.vq] : null);
 
 export const caveOpen = () => state.level >= CAVE_LVL;
 export const caveFam = id => CAVE_FAMILIES[CAVE_ITEMS[id]];
@@ -60,7 +71,7 @@ export const isBeerLot = lot => lot.id === 'beer';
 export const lotName = lot => (isBeerLot(lot) ? (beerOf(lot.bid) || { name: 'Bière' }).name : ITEMS[lot.id].name);
 export const lotIcon = lot => (isBeerLot(lot) ? ['ui', 'beer'] : ['item', lot.id]);
 const baseUnit = lot => (isBeerLot(lot) ? beerValue(lot.bid) * (BARRELS[lot.k] || BARRELS.oak).mult : ITEMS[lot.id].sell);
-export const lotUnit = lot => Math.round(baseUnit(lot) * CAVE_MULT[lot.rank] * (lot.bad ? CAVE_TURNED : 1));
+export const lotUnit = lot => Math.round(baseUnit(lot) * CAVE_MULT[lot.rank] * (vintageOf(lot) ? vintageOf(lot).mult : 1) * (lot.bad ? CAVE_TURNED : 1));
 // la taille des lots grandit avec les étagères : 8, 12, 16 puis 20
 export const caveLotMax = () => CAVE_LOT_MAX + CAVE_LOT_GROW * Math.min(3, Math.floor(state.cave.shelves / 2));
 export const lotValue = lot => lotUnit(lot) * lot.n;
@@ -154,6 +165,7 @@ function famBonus(lot) {
     if (lot.boost > 0) b += 0.15;
     if (state.cave.gear.vault) b += 0.05;
     b += (lot.q || 0) * 0.04;
+    if (vintageOf(lot)) b += vintageOf(lot).good;
     return b;
 }
 
@@ -298,6 +310,10 @@ export function putInCave(slot, id, n, at) {
     state.inventory[id] -= n;
     const t = now();
     c.slots[slot] = { uid: caveUid(), id, n, rank: 0, bad: false, next: t + caveStep(id), care: t, boost: 0, put: t, q: lq };
+    if (isVinous(id)) {
+        const y = gameYear();
+        Object.assign(c.slots[slot], { vy: y, vq: vintageQ(y) });
+    }
     sfx('pop');
     burst(at, 'sparkle', 8);
     if (CAVE_ITEMS[id] === 'champagne') tip('champagne');
@@ -334,6 +350,7 @@ export function takeOut(i, at) {
     if (!lot) return false;
     c.slots[i] = null;
     const kept = { uid: lot.uid, id: lot.id, n: lot.n, rank: lot.rank, bad: lot.bad };
+    if (lot.vy) Object.assign(kept, { vy: lot.vy, vq: lot.vq });
     if (isBeerLot(lot)) Object.assign(kept, { bid: lot.bid, k: lot.k });
     c.reserve.push(kept);
     state.stats.caveLots = (state.stats.caveLots || 0) + 1;
