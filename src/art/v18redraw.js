@@ -1,4 +1,4 @@
-// 1.8 : la lavande, les salades et les biscuits redessinés (en attente de validation : branchés dans art/index.js une fois validés).
+// 1.8 : la lavande, les salades et les biscuits redessinés (validés le 18 octobre 2026).
 // La lavande redessinée. De vrais épis serrés de petites fleurs violettes, des tiges gris-vert,
 // un bouquet noué de raphia ; au champ, une touffe ronde d'où montent les épis.
 import { C, E, F, FC, HL, L, P, SHADOW, mound, items, youngExtra, readyExtra } from './kit.js';
