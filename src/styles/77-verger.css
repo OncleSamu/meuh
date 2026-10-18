@@ -77,3 +77,97 @@
 .cuttings {
     margin-bottom: 10px;
 }
+
+/* 1.13 / 1.14 */
+.bloom-card {
+    background: linear-gradient(#fde3ee, var(--paper));
+}
+.frost-card.on {
+    background: linear-gradient(#dff0fb, var(--paper));
+}
+.harvest-card.on,
+.fete-card.on,
+.basket-card.on,
+.log-card.on {
+    background: linear-gradient(#e4f5cf, var(--paper));
+}
+.bloom-card .ico.big,
+.frost-card .ico.big,
+.harvest-card .ico.big,
+.fete-card .ico.big,
+.basket-card .ico.big,
+.log-card .ico.big {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+}
+.need-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+.need-row .gaspard-bar {
+    flex: 1;
+    margin: 0;
+}
+.basket-board {
+    display: grid;
+    gap: 3px;
+    margin-top: 6px;
+    font-size: 0.8rem;
+}
+.basket-board > div {
+    display: flex;
+    justify-content: space-between;
+}
+.basket-board .you {
+    font-weight: bold;
+    color: #2f6f22;
+}
+.log-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+.log-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px;
+    border-radius: 12px;
+    background: var(--paper);
+    border: 2px solid #3a2618;
+    text-align: center;
+}
+.log-page.ready {
+    background: #e4f5cf;
+}
+.log-page .spr {
+    width: 40px;
+    height: 40px;
+}
+.medals {
+    display: flex;
+    gap: 4px;
+}
+.medal {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #3a2618;
+    opacity: 0.3;
+}
+.medal.on {
+    opacity: 1;
+}
+.medal.bronze {
+    background: #c9692f;
+}
+.medal.argent {
+    background: #c8d2da;
+}
+.medal.or {
+    background: #ffd23f;
+}

@@ -8,6 +8,7 @@ import { actions, anchorEl } from '../dom.js';
 import { closeSheet } from '../sheets.js';
 import { ico } from '../icons.js';
 import { btn, lines } from '../kit.js';
+import { seasonLine, remLine } from './orchard3.js';
 
 const costOf = c =>
     G.costParts(c)
@@ -33,6 +34,7 @@ export function treeExtras(t, k, z) {
             : `Maturité ${pct} % (${m} / ${MATURE.at} fruits) : plus de fruits et de qualité en vieillissant`,
     ]);
     if (g) info.push([['item', g.item], `${g.name} : ${g.text}`]);
+    for (const l of [seasonLine(t), remLine(t)]) if (l) info.push(l);
     if (G.isPruned(t)) info.push([['ui', 'pruners'], 'Taillé : fruits 15 % plus vite cette saison']);
     if (G.manureLeft(t)) info.push([['item', 'fertilizer'], `Fumé : 25 % plus vite pendant encore ${formatDuration(G.manureLeft(t) / 1000)}`]);
     let html = `<div class="tree-mat">${stars(t)}${lines(info)}</div>`;

@@ -12,7 +12,7 @@ import { CHAPTERS, PROJECTS, NEIGHBOR_LVL, chapterNum, chapterAfter } from '../d
 import { NATURE } from '../data/nature.js';
 import { POND_UNLOCKS } from '../data/fishing.js';
 import { NATURE_UNLOCKS } from '../data/nature.js';
-import { ORCHARD_UNLOCKS } from '../data/orchard.js';
+import { ORCHARD_UNLOCKS, ORCHARD_UNLOCKS_2 } from '../data/orchard.js';
 import { ISLAND } from '../data/island.js';
 import { GENETICS } from '../data/genetics.js';
 import { CAVE_LVL } from '../data/cave.js';
@@ -179,6 +179,7 @@ export function unlocksAt(lvl) {
     if (lvl === DOG.reqLvl) add(['ui', 'dog'], 'Un chien de ferme à adopter');
     if (lvl === NATURE.forest.lvl) add(['item', 'wood'], 'La forêt : coupez du bois (Ferme | Nature)');
     if (lvl === NATURE.mine.lvl) add(['item', 'stone'], 'La mine : cassez des rochers (Ferme | Nature)');
+    ORCHARD_UNLOCKS_2.forEach(([l, t]) => l === lvl && add(['item', 'apple'], `${t} (Ferme | Verger)`));
     ORCHARD_UNLOCKS.forEach(([l, t]) => l === lvl && add(['item', 'apple'], `${t} (Ferme | Verger)`));
     NATURE_UNLOCKS.forEach(([l, t]) => l === lvl && add(['ui', 'pickaxe'], `${t} (Ferme | Nature)`));
     POND_UNLOCKS.forEach(([l, t]) => l === lvl && add(['ui', 'rod'], `${t} (Ferme | Étang)`));

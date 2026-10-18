@@ -15,6 +15,7 @@ import { btn, bar, hint, timer, lines } from '../kit.js';
 import { defineView, defineLive } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { burstAt } from '../fx.js';
+import { lifeCards, setupOrchard3 } from './orchard3.js';
 import { orchardCards, treeExtras, cuttingsHtml, setupOrchard2 } from './orchard2.js';
 
 const STAGE_ART = { young: 0, adult: 2, old: 3, dead: 4 };
@@ -103,7 +104,7 @@ function renderOrchard(el) {
             })}</div></div>`,
         ],
         ['orchard', `<div class="orchard">${slots.map((sl, k) => spot(sl, k, nextLocked)).join('')}</div>`],
-        ['cards', `<div class="orchard-cards">${orchardCards()}</div>`],
+        ['cards', `<div class="orchard-cards">${lifeCards()}${orchardCards()}</div>`],
         [
             'hint',
             hint(
@@ -197,6 +198,7 @@ defineSheet('tree', {
 
 export function setupOrchard() {
     setupOrchard2();
+    setupOrchard3();
     actions({
         buyOrchardSlot: (el, d) => {
             const z = d.z || 'farm';

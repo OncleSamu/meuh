@@ -341,6 +341,12 @@ function progress() {
             // le verger : cueilleur, Odile, greffons
             if (G.pickerOpen() && G.pickerNext() && state.money > 60000) G.upgradePicker();
             if (G.ensureOdile() && G.odileReady()) G.claimOdile();
+            if (G.frostStatus() === 'warn') G.lightTorches();
+            if (G.feteState() && !G.feteState().claimed) ['apple', 'pear'].forEach(id => state.inventory[id] > 30 && G.giveFete(id));
+            if (G.feteReady()) G.claimFete();
+            if (G.harvestReady()) G.claimHarvest();
+            if (G.basketResultReady()) G.claimBasket();
+            G.logIds().forEach(id => G.logCan(id) && G.claimLog(id));
             state.orchard.slots.forEach((sl, k) => {
                 if (!sl.tree || sl.tree.g) return;
                 const id = ['eternal', 'double', 'gold', 'robust'].find(g => G.graftStock(g));

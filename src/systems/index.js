@@ -21,6 +21,7 @@ export * from './nature.js';
 export * from './natureplus.js';
 export * from './buildings.js';
 export * from './orchardplus.js';
+export * from './orchardlife.js';
 export * from './orchard.js';
 export * from './orders.js';
 export * from './pastures.js';
