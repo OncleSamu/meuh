@@ -112,12 +112,19 @@ export function neighbors(i) {
     return out;
 }
 
-export const nearDeco = (i, id) => neighbors(i).some(j => state.grid[j].isUnlocked && state.grid[j].deco === id);
+// 1.9 : la parcelle de la décoration en profite aussi
+export const nearDeco = (i, id) => i >= 0 && i < 1000 && [i, ...neighbors(i)].some(j => state.grid[j].isUnlocked && state.grid[j].deco === id);
 export const decoGrowth = i => (nearDeco(i, 'hive') ? 1.15 : 1) * (nearDeco(i, 'flowerArch') ? 1.1 : 1);
 export const decoTool = t => (typeof t === 'string' && t.startsWith('deco:') ? t.slice(5) : null);
 // une parcelle sous l'influence d'une décoration voisine
-export const hasAura = i => state.grid[i].isUnlocked && !state.grid[i].deco && neighbors(i).some(j => state.grid[j].deco);
+export const hasAura = i => state.grid[i].isUnlocked && [i, ...neighbors(i)].some(j => state.grid[j].deco);
 export const decoCount = id => state.grid.filter(p => p.deco === id).length + (state.decorInv[id] || 0);
+
+// 1.9 : montrer les parcelles que touche une décoration, juste après la pose
+export const decoZone = i => [i, ...neighbors(i)].filter(j => state.grid[j].isUnlocked);
+function zoneFlash(i) {
+    state.decoFlash = { i, until: now() + 2500 };
+}
 
 export function placeDeco(i, id, at) {
     const p = state.grid[i];
@@ -125,6 +132,7 @@ export function placeDeco(i, id, at) {
     state.decorInv[id]--;
     p.deco = id;
     p.honey = 0;
+    zoneFlash(i);
     sfx('buy');
     buzz(15);
     burst(at, 'sparkle', 12);
@@ -147,7 +155,7 @@ export function wellTick() {
     let changed = false;
     state.grid.forEach((p, i) => {
         if (p.deco !== 'well' || !p.isUnlocked) return;
-        neighbors(i).forEach(j => {
+        [i, ...neighbors(i)].forEach(j => {
             const q = state.grid[j];
             if (q.isUnlocked && q.itemId && !q.isReady && !q.isWatered) {
                 q.isWatered = true;

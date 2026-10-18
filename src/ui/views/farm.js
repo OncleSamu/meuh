@@ -1,6 +1,7 @@
 // Ferme | Champ : les parcelles, la serre, la maison, le chien et ce qui attend le joueur.
 import { state } from '../../core/state.js';
 import { farmShown } from '../../core/view.js';
+import { now } from '../../core/clock.js';
 import { fmt } from '../../core/format.js';
 import { on } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
@@ -72,12 +73,15 @@ function renderPlots() {
     const tool = state.selectedTool;
     const auras = !!G.decoTool(tool) || tool === 'shovel';
     box.classList.toggle('deco-mode', !!G.decoTool(tool));
+    // 1.9 : juste après la pose d'une décoration, ses parcelles s'éclairent
+    const fl = state.decoFlash;
+    const flash = new Set(fl && now() < fl.until ? G.decoZone(fl.i) : []);
     state.grid.forEach((p, i) => {
         const el = plotEls[i];
         let sig;
         if (!p.isUnlocked) sig = i >= visibleLimit ? 'H' : `L|${i === nextLocked ? cost : ''}`;
         else
-            sig = `${p.terrain}|${p.isWatered}|${p.itemId}|${p.itemId ? G.plotStage(p) : ''}|v:${p.v || ''}|${p.pest ? 'pest' : ''}|${state.crow && state.crow.plot === i ? 'crow' : ''}|${G.eggAt(i) ? 'egg' : ''}|${p.fert ? 'f' : ''}|d:${p.deco || ''}|h:${p.deco === 'hive' ? Math.floor(p.honey || 0) : ''}|${pins.has(p.itemId) ? 'pin' : ''}|${zone.has(i) ? 'z' : ''}|${auras && G.hasAura(i) ? 'a' : ''}`;
+            sig = `${p.terrain}|${p.isWatered}|${p.itemId}|${p.itemId ? G.plotStage(p) : ''}|v:${p.v || ''}|${p.pest ? 'pest' : ''}|${state.crow && state.crow.plot === i ? 'crow' : ''}|${G.eggAt(i) ? 'egg' : ''}|${p.fert ? 'f' : ''}|d:${p.deco || ''}|h:${p.deco === 'hive' ? Math.floor(p.honey || 0) : ''}|${pins.has(p.itemId) ? 'pin' : ''}|${zone.has(i) ? 'z' : ''}|${(auras && G.hasAura(i)) || flash.has(i) ? 'a' : ''}`;
         if (plotSig[i] === sig) return;
         const prev = plotSig[i];
         plotSig[i] = sig;
@@ -93,18 +97,14 @@ function renderPlots() {
                 (i === nextLocked ? `<div class="price-chip">${COIN()}${fmt(cost)}</div>` : '');
             return;
         }
-        const aura = auras && G.hasAura(i) ? ' aura' : '';
-        if (p.deco) {
-            el.className = `plot ${p.terrain} deco${aura}`;
-            el.innerHTML =
-                `<div class="deco-spr${prev && prev.includes('d:' + p.deco) ? '' : ' pop'}">${art('ui', p.deco)}</div>` +
-                (p.deco === 'hive' ? hiveBadge(p) : '') +
-                egg(i);
-            return;
-        }
-        el.className = `plot ${p.terrain}${p.isWatered ? ' watered' : ''}${p.itemId ? ' planted' : ''}${p.isReady ? ' ready' : ''}${p.pest ? ' pested' : ''}${pins.has(p.itemId) ? ' pinned' : ''}${zone.has(i) ? ' hand' : ''}${aura}`;
+        const aura = (auras && G.hasAura(i)) || flash.has(i) ? ' aura' : '';
+        // 1.9 : la décoration est dans le coin de la parcelle, la culture pousse à côté
+        const deco = p.deco
+            ? `<div class="deco-corner${prev && prev.includes('d:' + p.deco) ? '' : ' pop'}">${art('ui', p.deco)}</div>${p.deco === 'hive' ? hiveBadge(p) : ''}`
+            : '';
+        el.className = `plot ${p.terrain}${p.isWatered ? ' watered' : ''}${p.itemId ? ' planted' : ''}${p.isReady ? ' ready' : ''}${p.pest ? ' pested' : ''}${pins.has(p.itemId) ? ' pinned' : ''}${zone.has(i) ? ' hand' : ''}${p.deco ? ' has-deco' : ''}${aura}`;
         if (!p.itemId) {
-            el.innerHTML = soilHtml(i) + egg(i);
+            el.innerHTML = soilHtml(i) + deco + egg(i);
             return;
         }
         const stage = G.plotStage(p);
@@ -118,6 +118,7 @@ function renderPlots() {
             (!p.isWatered && !p.isReady ? `<div class="need-water">${art('ui', 'drop')}</div>` : '') +
             (state.crow && state.crow.plot === i ? `<div class="crow">${art('ui', 'crow')}</div>` : '') +
             (p.fert && !p.isReady ? `<div class="fert-badge">${art('item', 'fertilizer')}</div>` : '') +
+            deco +
             egg(i);
     });
 }
@@ -346,6 +347,17 @@ export function wanderDog() {
     if (!f) return;
     placeDogAt(10 + Math.random() * (f.clientWidth - 70), 10 + Math.random() * (f.clientHeight - 70));
 }
+// 1.9 : le chien se pousse vers le bord du champ (quand on touche une parcelle sous lui, ou après quelques caresses)
+let dogPets = 0;
+function scootDog() {
+    const f = document.querySelector('.field');
+    if (!f) return;
+    dogPets = 0;
+    dogBusy = true;
+    const left = Math.random() < 0.5;
+    placeDogAt(left ? -8 : f.clientWidth - 46, 10 + Math.random() * (f.clientHeight - 70));
+    setTimeout(() => (dogBusy = false), 6000);
+}
 
 // ---------------- les gestes sur le champ ----------------
 let drag = null;
@@ -407,7 +419,22 @@ export function setupFarm() {
         }
         if (e.target.closest('#dog')) {
             e.preventDefault();
+            // 1.9 : sans trouvaille, le doigt traverse le chien jusqu'à la parcelle, et il se pousse
+            if (!state.dog.found) {
+                const under = document.elementsFromPoint(e.clientX, e.clientY).find(x => x.closest && x.closest('.plot[data-i]'));
+                const pl = under && under.closest('.plot[data-i]');
+                if (pl) {
+                    scootDog();
+                    const i = +pl.dataset.i;
+                    const a = press(i);
+                    if (G.DRAG_ACTIONS.includes(a)) drag = { mode: a, done: new Set([i]) };
+                    return;
+                }
+            }
+            const found = !!state.dog.found;
             run('dog', byId('dog'));
+            // une trouvaille ramassée, ou trois caresses : il laisse la place
+            if (found || ++dogPets >= 3) setTimeout(scootDog, 700);
         }
     };
     const viewEl = byId('view-farm');

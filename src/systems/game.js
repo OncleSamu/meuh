@@ -353,7 +353,7 @@ export function offlineProgress() {
         `L’avion-cargo est posé : il repart dans ${formatDuration((cargoLeave() - now()) / 1000)}`,
     );
     add(state.balloon.status === 'here', ['ui', 'balloon'], 'Une montgolfière attend dans le pré');
-    add(state.merchant.status === 'here', ['ui', 'merchant'], 'Zéphyr, le marchand ambulant, est au village');
+    add(state.merchant.status === 'here', ['ui', 'merchant'], 'Zéphyr, le marchand ambulant, est là (onglet Marché)');
     add(eventActive(), eventActive() && eventIcon(state.event.season), eventActive() && `La fête bat son plein : ${EVENTS[state.event.season].name}`);
     const inc = state.incident && state.incident.type !== 'crow' && INCIDENTS[state.incident.type];
     add(inc, inc && ['ui', inc.icon], inc && `Imprévu en cours : ${inc.name.toLowerCase()}`);

@@ -13,7 +13,11 @@
     padding: 0;
     background: none;
     border: none;
-    pointer-events: auto;
+    /* 1.9 : le doigt les traverse, elles ne gênent plus les récoltes */
+    pointer-events: none;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
     animation: flyDrift 3.2s ease-in-out infinite alternate;
     animation-delay: var(--d, 0s);
     filter: drop-shadow(0 0 6px #fff59a);

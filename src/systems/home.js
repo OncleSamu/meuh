@@ -105,7 +105,7 @@ export function handPass() {
         watered = 0;
     for (const i of handZone()) {
         const p = state.grid[i];
-        if (p.deco || p.pest) continue;
+        if (p.pest) continue;
         if (p.itemId && ITEMS[p.itemId].type === 'crop') p.hand = p.itemId;
         if (p.isReady) {
             if (barnBlocked(true)) continue;
@@ -148,7 +148,7 @@ export function handOffline(elapsed) {
     let crops = 0;
     for (const i of zone) {
         const p = state.grid[i];
-        if (p.deco || p.pest) continue;
+        if (p.pest) continue;
         if (p.itemId && ITEMS[p.itemId].type === 'crop') p.hand = p.itemId;
         let t = elapsed;
         for (let k = 0; k < 40 && t > 0; k++) {

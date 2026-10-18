@@ -394,7 +394,7 @@ export const TIPS = {
     neighbors: {
         icon: ['ui', 'heart'],
         title: 'Un voisin a besoin de vous',
-        text: 'Les fermes rivales du concours sont aussi vos voisines. Aidez-les (onglet Village, volet « Village ») : elles paient bien, offrent des matériaux rares et des cadeaux en devenant vos amies.',
+        text: 'Les fermes rivales du concours sont aussi vos voisines. Aidez-les (onglet Village, volet « Commandes ») : elles paient bien, offrent des matériaux rares et des cadeaux en devenant vos amies.',
     },
     aphids: {
         icon: ['ui', 'pest'],

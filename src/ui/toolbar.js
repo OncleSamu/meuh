@@ -60,7 +60,11 @@ function renderToolbar() {
 function selectTool(t) {
     if (!G.isToolValid(t)) return;
     G.selectTool(t);
-    if (G.decoTool(t)) toast('Touchez une parcelle vide pour poser la décoration. La zone dorée montre son effet.', ['ui', G.decoTool(t)]);
+    if (G.decoTool(t))
+        toast('Touchez une parcelle pour poser la décoration dans son coin : la culture continue de pousser. La zone dorée montre son effet.', [
+            'ui',
+            G.decoTool(t),
+        ]);
 }
 
 // ---------------- le tiroir des graines ----------------
