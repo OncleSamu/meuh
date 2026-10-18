@@ -43,8 +43,8 @@ export const houseCanUp = () => {
 // bonus cumulés de la maison et des chantiers
 export const extraOrders = () => (houseLvl() >= 2 ? 1 : 0) + (projectDone('hall') ? 1 : 0);
 export const machineSlots = type => MACHINE_SLOTS + (houseLvl() >= 3 ? 1 : 0) + (type ? mSlotsBonus(type) : 0);
-export const extraStall = () => (houseLvl() >= 4 ? 1 : 0) + (projectDone('washhouse') ? 1 : 0);
-export const houseBarn = () => (houseLvl() >= 1 ? 40 : 0);
+export const extraStall = () => (houseLvl() >= 4 ? 1 : 0) + (houseLvl() >= 6 ? 1 : 0) + (projectDone('washhouse') ? 1 : 0);
+export const houseBarn = () => (houseLvl() >= 1 ? 40 : 0) + (houseLvl() >= 6 ? 80 : 0);
 export const housePay = () => (houseLvl() >= 5 ? 1.1 : 1);
 export const feteEnd = () => FETE_END + (projectDone('hall') ? 2 : 0);
 export const machineBoost = type => (projectDone('windmill') && (type === 'mill' || type === 'oilmill') ? 1.25 : 1);

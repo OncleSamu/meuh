@@ -2777,6 +2777,7 @@ Object.assign(ITEMS, {
     goldIngot: { id: 'goldIngot', name: 'Lingot d’or', type: 'ingot', sell: 520 },
     cutStone: { id: 'cutStone', name: 'Pierre taillée', type: 'ingot', sell: 25 },
     hardwood: { id: 'hardwood', name: 'Bois dur', type: 'ingot', sell: 15 },
+    fruitWood: { id: 'fruitWood', name: 'Bois fruitier', type: 'ingot', sell: 25 },
     solidOak: { id: 'solidOak', name: 'Chêne massif', type: 'ingot', sell: 180 },
     resin: { id: 'resin', name: 'Résine', type: 'ingot', sell: 20 },
     birchSap: { id: 'birchSap', name: 'Sève de bouleau', type: 'ingot', sell: 12 },

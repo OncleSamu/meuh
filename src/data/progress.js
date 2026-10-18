@@ -118,6 +118,18 @@ export const HOUSE = [
             paint: 15,
         },
     },
+    {
+        lvl: 47,
+        name: 'Le manoir',
+        bonus: '+80 places dans la grange et 1 place de plus à l’étal',
+        cost: {
+            coins: 1500000,
+            solidOak: 8,
+            silverIngot: 6,
+            cutStone: 20,
+            tools: 20,
+        },
+    },
 ];
 
 export const FARMHAND = [

@@ -137,8 +137,8 @@ export function building(id, s) {
 }
 
 export function farmhouseArt(l, roofColor) {
-    const wall = ['#e9dcc4', '#f7e3c0', '#f7e3c0', '#fbe1ea', '#f7f3ea', '#f7f3ea'][l],
-        roof = roofColor || ['#8f8574', '#c8453a', '#c8453a', '#3f6fb5', '#8e2c22', '#3f6fb5'][l];
+    const wall = ['#e9dcc4', '#f7e3c0', '#f7e3c0', '#fbe1ea', '#f7f3ea', '#f7f3ea', '#efe6d2'][l],
+        roof = roofColor || ['#8f8574', '#c8453a', '#c8453a', '#3f6fb5', '#8e2c22', '#3f6fb5', '#3d6b57'][l];
     const w = 26 + l * 3,
         x0 = 32 - w / 2,
         x1 = 32 + w / 2,
@@ -153,7 +153,14 @@ export function farmhouseArt(l, roofColor) {
     (l >= 3 ? [y0 + 4, y0 + 17] : [y0 + 5]).forEach(y => (o += R(x0 + 3, y, 7, 7, 1, '#bfe6fb', 1.6) + R(x1 - 10, y, 7, 7, 1, '#bfe6fb', 1.6)));
     o += R(28.5, 46, 7, 12, 1.2, '#8b5a2b', 1.8) + FC(34, 52, 0.9, '#ffd23f');
     if (l >= 2) o += R(x0 - 5, 44, w + 10, 3, 1, '#a8693a', 1.6) + L(`M${x0 - 3} 47 L${x0 - 3} 58 M${x1 + 3} 47 L${x1 + 3} 58`, 1.8);
-    if (l >= 5) o += L('M32 ' + (y0 - 15) + ' L32 ' + (y0 - 24), 1.6) + P(`M32 ${y0 - 24} L40 ${y0 - 21} L32 ${y0 - 18}Z`, '#e8364b', 1.4);
+    if (l >= 5) o += L('M32 ' + (y0 - 15) + ' L32 ' + (y0 - 24), 1.6) + P(`M32 ${y0 - 24} L40 ${y0 - 21} L32 ${y0 - 18}Z`, l >= 6 ? '#ffd23f' : '#e8364b', 1.4);
+    // le manoir : un soubassement de pierre et deux lucarnes sous le toit
+    if (l >= 6)
+        o +=
+            R(x0 - 1, 52, w + 2, 6, 1.5, '#b8b0a0', 1.8) +
+            [x0 + 12, x1 - 20]
+                .map(lx => R(lx, y0 - 6, 8, 8, 1, '#bfe6fb', 1.6) + P(`M${lx - 1} ${y0 - 6} L${lx + 4} ${y0 - 11} L${lx + 9} ${y0 - 6}Z`, roof, 1.6))
+                .join('');
     if (l >= 1) o += [x0 - 2, x0 + 2, x1 - 2, x1 + 2].map((fx, k) => C(fx, 58, 2, ['#e8364b', '#ffd23f', '#f6a5b5', '#b58ad6'][k], 1.2)).join('');
     return o;
 }

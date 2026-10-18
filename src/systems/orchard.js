@@ -338,6 +338,9 @@ export function fellTree(k, at, z = 'farm') {
     leaveCutting(t);
     const wood = dead ? treeWood(d) : treeStage(t) === 'young' ? 0 : Math.round(treeWood(d) * ORCHARD.felledWood * treeLife(t));
     if (wood) state.inventory.wood += wood;
+    // 1.14 : un arbre adulte laisse aussi du bois fruitier, qui parfume le fumoir
+    const fw = treeStage(t) === 'young' ? 0 : Math.max(1, Math.round(wood / 10));
+    if (fw) state.inventory.fruitWood = (state.inventory.fruitWood || 0) + fw;
     slot.tree = null;
     state.stats.felled = (state.stats.felled || 0) + 1;
     sfx('chop');
@@ -348,10 +351,12 @@ export function fellTree(k, at, z = 'farm') {
         float(at, [`+${wood}`, ['item', 'wood']], '', -22);
         fly(at, 'wood', Math.min(3, wood));
     }
-    toast(dead ? `Le vieux ${d.seedName.toLowerCase()} donne ${wood} bois. La place est libre.` : `${d.seedName} abattu${wood ? ` : ${wood} bois` : ''}`, [
-        'item',
-        'wood',
-    ]);
+    toast(
+        dead
+            ? `Le vieux ${d.seedName.toLowerCase()} donne ${wood} bois et ${fw} bois fruitier. La place est libre.`
+            : `${d.seedName} abattu${wood ? ` : ${wood} bois` : ''}`,
+        ['item', 'wood'],
+    );
     changed('orchard');
     return true;
 }

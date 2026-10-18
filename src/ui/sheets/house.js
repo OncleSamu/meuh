@@ -34,6 +34,22 @@ function styles() {
             .join('')}`;
 }
 
+function wall() {
+    const list = G.wallCandidates(),
+        cur = G.wallFish();
+    if (!list.length)
+        return '<div class="card locked"><div class="card-sub">Pêchez un poisson à l’étang : le plus beau pourra être accroché au mur du salon (+20 de charme au concours).</div></div>';
+    return `<div class="card wall-card"><div class="wall-plaque">${cur ? `${art('item', cur.id)}<b>${cur.name}</b><small>${G.kgText(cur.w)}</small>` : '<small>Le mur est vide</small>'}</div>
+        <div class="card-sub">Accrochez une prise (son record de poids) : +${G.WALL_CHARM} de charme au concours.</div>
+        <div class="chips-row wrap">${list
+            .slice(0, 12)
+            .map(
+                f =>
+                    `<button class="style-chip${cur && cur.id === f.id ? ' on' : ''}" data-act="hangFish" data-id="${f.id}">${art('item', f.id)}<span>${f.name} · ${G.kgText(f.w)}</span></button>`,
+            )
+            .join('')}</div></div>`;
+}
+
 function hand() {
     const hl = G.handLvl(),
         hn = G.handNext();
@@ -68,6 +84,7 @@ defineSheet('house', {
             ['art', `<div class="house-art">${houseArt(l)}</div><div class="card-title center">${HOUSE[l].name}</div>`],
             ['levels', `<div class="hlevels">${levels}</div>${up}`],
             ['hand', section('Le commis') + hand()],
+            ['wall', section('Le mur du salon') + wall()],
             ['styles', section('Personnaliser la ferme') + styles()],
         ];
     },
@@ -77,6 +94,7 @@ export function setupHouse() {
     actions({
         upgradeHouse: el => G.upgradeHouse(el),
         upgradeHand: el => G.upgradeHand(el),
+        hangFish: (el, d) => G.hangFish(d.id),
         style: (el, d) => {
             G.pickStyle(d.k, d.v, el);
             updateScene();
