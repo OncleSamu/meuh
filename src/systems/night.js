@@ -59,7 +59,7 @@ export function nightTick() {
     // les lucioles (printemps et été)
     const before = N.flies.length;
     N.flies = N.flies.filter(f => f.until > t);
-    if (fliesSeason() && N.flies.length < NIGHT.flyMax && Math.random() < 1 / NIGHT.flyEvery)
+    if (fliesSeason() && state.settings.fireflies !== false && N.flies.length < NIGHT.flyMax && Math.random() < 1 / NIGHT.flyEvery)
         N.flies.push({ id: N.uid++, x: 6 + Math.random() * 82, y: 8 + Math.random() * 78, until: t + NIGHT.flyLife });
     if (N.flies.length !== before) changed = true;
     // l'étoile filante
@@ -77,11 +77,21 @@ export function nightTick() {
 }
 
 // ---------------- les lucioles ----------------
+// 1.9 : les lucioles ne s'attrapent plus au doigt (elles gênaient les récoltes) ;
+// une récolte de nuit, au printemps ou en été, en met une dans le bocal
+export function fireflyHarvest(at) {
+    if (!nightOpen() || !isNight() || !fliesSeason()) return false;
+    return addFly(at);
+}
 export function catchFly(id, at) {
     const N = ensureNight();
     const k = N.flies.findIndex(f => f.id === +id);
     if (k < 0) return false;
     N.flies.splice(k, 1);
+    return addFly(at);
+}
+function addFly(at) {
+    const N = ensureNight();
     N.jar++;
     state.stats.flies = (state.stats.flies || 0) + 1;
     addXp(NIGHT.flyXp, at);
@@ -100,7 +110,7 @@ export function catchFly(id, at) {
             toast(`Bocal rempli ! Vous relâchez les lucioles : ${fmt(coins)} pièces`, ['ui', 'fireflyJar']);
         }
         sfx('golden');
-    } else float(at, [`${N.jar} / ${NIGHT.jar}`, ['ui', 'firefly']], '', -16);
+    } else if (at) float(at, [`${N.jar} / ${NIGHT.jar}`, ['ui', 'firefly']], '', -40);
     return true;
 }
 

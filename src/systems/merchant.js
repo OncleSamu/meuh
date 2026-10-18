@@ -23,7 +23,7 @@ export function merchantTick() {
         m.expiresAt = t + MERCHANT_STAY;
         m.stock = merchantStock();
         if (view.started) {
-            toast('Zéphyr, le marchand ambulant, est sur la place du village !', ['ui', 'merchant']);
+            toast('Zéphyr, le marchand ambulant, est arrivé : il vous attend au Marché !', ['ui', 'merchant']);
             tip('merchant');
             sfx('horn');
         }

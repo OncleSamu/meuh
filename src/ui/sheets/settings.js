@@ -41,6 +41,7 @@ function mainPage() {
                 toggle('Confirmer les gros achats', s.confirmBuy !== false, 'setting', { key: 'confirmBuy' }, 'Parcelles, verger, prés, serre, machines') +
                 toggle('Rappels en arrière-plan', remindOn(), 'remind', null, 'Train en gare, cultures prêtes…') +
                 toggle('Animations réduites', s.calm, 'setting', { key: 'calm' }) +
+                toggle('Lucioles la nuit', s.fireflies !== false, 'setting', { key: 'fireflies' }, 'Pur décor : vos récoltes de nuit remplissent le bocal') +
                 navRow('Taille du texte', 'textSize', null, null, `<b>${TEXT_SIZES[s.textSize] || TEXT_SIZES[0]}</b>`) +
                 toggle('Contraste renforcé', !!s.contrast, 'setting', { key: 'contrast' }) +
                 (matchMedia('(hover: hover)').matches
@@ -173,7 +174,7 @@ export function setupSettings() {
         setting: (el, d) => {
             const s = state.settings;
             // confirmBuy est actif quand il manque (anciennes sauvegardes)
-            s[d.key] = d.key === 'confirmBuy' ? s.confirmBuy === false : !s[d.key];
+            s[d.key] = d.key === 'confirmBuy' || d.key === 'fireflies' ? s[d.key] === false : !s[d.key];
             SoundEngine.unlock();
             if (d.key === 'music') SoundEngine.setMusic(s.music);
             if (d.key === 'sfx') {

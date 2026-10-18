@@ -61,7 +61,7 @@ export function todoList() {
     );
     const idle = state.machines.filter(m => !G.machineBusy(m) && G.recipesOf(m.type).some(r => G.recipeUnlocked(r.id) && G.canCook(r.id))).length;
     add('machines/workshop', ['machine', 'mill'], `${idle} à l’arrêt`, idle);
-    if (G.holidayReady()) push('village/village', ['ui', HOLIDAYS[state.holiday.id].deco], `${HOLIDAYS[state.holiday.id].name} : panier à remplir`, 1);
+    if (G.holidayReady()) push('village/orders', ['ui', HOLIDAYS[state.holiday.id].deco], `${HOLIDAYS[state.holiday.id].name} : panier à remplir`, 1);
     const bq = G.quartersClaimable();
     if (bq) push('sheet:book', ['ui', 'book'], 'Récompense du livre', bq);
     if (G.brewOpen() && state.brew) {
@@ -114,7 +114,7 @@ export function todoList() {
     }
     const proj = G.storyClaimable();
     if (proj) push('village/village', ['ui', 'village'], `${proj} chantier${s(proj)} à terminer`, proj);
-    if (state.merchant.status === 'here') push('village/village', ['ui', 'merchant'], 'Le marchand est là', 0);
+    if (state.merchant.status === 'here') push('market/shop', ['ui', 'merchant'], 'Le marchand est là', 0);
     const dr = G.defiReady();
     if (dr) push('village/orders', ['ui', 'cupGold'], `Grand défi : ${dr} étape${s(dr)} à faire avancer`, dr);
     const goals = G.eventReady();
@@ -125,7 +125,7 @@ export function todoList() {
     const sold = G.stallSoldCount();
     add('market/sell', ['ui', 'stall'], `${sold} vente${s(sold)} à encaisser`, sold);
     if (state.rare.type && G.rareActive(state.rare.type) && state.rare.type !== 'butterflies')
-        push('village/village', ['ui', RARE_EVENTS[state.rare.type].icon], RARE_EVENTS[state.rare.type].name, 1, { urgent: true });
+        push('village/orders', ['ui', RARE_EVENTS[state.rare.type].icon], RARE_EVENTS[state.rare.type].name, 1, { urgent: true });
     if (G.rareActive('butterflies')) list.unshift({ go: 'farm/field', icon: ['ui', 'butterfly'], text: 'Papillons : récoltes dorées !', n: 0 });
     if (state.boat.status === 'here') {
         const ok = G.hasAll(state.boat.items);
@@ -133,12 +133,12 @@ export function todoList() {
     }
     if (G.netReady()) push('farm/nature', ['ui', 'net'], 'Filet de pêche plein', 1);
     const fst = G.farmSeasonClaimable();
-    if (fst) push('village/village', ['ui', 'trophy'], `${fst} palier${s(fst)} de saison`, fst);
-    if (G.contractReady()) push('village/village', ['ui', 'calendar'], 'Contrat de saison prêt', 1);
+    if (fst) push('village/orders', ['ui', 'trophy'], `${fst} palier${s(fst)} de saison`, fst);
+    if (G.contractReady()) push('village/orders', ['ui', 'calendar'], 'Contrat de saison prêt', 1);
     const stories = G.storiesReady();
     if (stories) push('village/village', ['ui', 'scroll'], `${stories} histoire${s(stories)} à faire avancer`, stories);
     const neigh = G.neighborsReady();
-    if (neigh) push('village/village', ['ui', 'heart'], `${neigh} voisin${s(neigh)} à aider`, neigh);
+    if (neigh) push('village/orders', ['ui', 'heart'], `${neigh} voisin${s(neigh)} à aider`, neigh);
 
     const pts = G.skillPoints();
     add('sheet:progress', ['ui', 'skillbook'], `${pts} point${s(pts)} de compétence`, pts);

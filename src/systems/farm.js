@@ -19,7 +19,7 @@ import { sellPrice, hasMats, matMissing, payMats } from './market.js';
 import { challengeOn } from './prestige.js';
 import { eventProgress } from './events.js';
 import { varGrowth, varHardy, varExtra, varSelfWater, takeVarSeed, harvestVariety, preferSeed } from './genetics.js';
-import { wishGold } from './night.js';
+import { wishGold, fireflyHarvest } from './night.js';
 
 const COIN = ['ui', 'coin'];
 
@@ -54,9 +54,10 @@ export function plotAction(p, tool, i) {
     if (state.crow && state.crow.plot === i) return 'crow';
     if (p.pest) return 'pest';
     if (eggAt(i)) return 'egg';
-    if (p.deco) return tool === 'shovel' ? 'pickDeco' : p.deco === 'hive' ? 'hive' : 'decoInfo';
-    if (decoTool(tool)) return i < 1000 && !p.itemId ? 'placeDeco' : 'decoHint';
-    if (tool === 'shovel') return p.itemId ? 'dig' : null;
+    // 1.9 : une décoration se pose dans le coin d'une parcelle ; la culture pousse toujours dessous
+    if (decoTool(tool)) return i < 1000 && !p.deco ? 'placeDeco' : 'decoHint';
+    if (p.deco === 'hive' && Math.floor(p.honey || 0) >= 1 && !(p.itemId && p.isReady)) return 'hive';
+    if (tool === 'shovel') return p.itemId ? 'dig' : p.deco ? 'pickDeco' : null;
     if (tool === 'feed') return 'feedhint';
     if (tool === 'fert') return p.itemId && !p.isReady && !p.fert ? 'fert' : 'ferthint';
     if (p.terrain === 'grass') return 'plow';
@@ -65,7 +66,7 @@ export function plotAction(p, tool, i) {
     if (p.itemId && !p.isWatered) return 'water';
     if (p.itemId) return 'info';
     if (tool !== 'hand') return 'plant';
-    return 'seedhint';
+    return p.deco ? (p.deco === 'hive' ? 'hive' : 'decoInfo') : 'seedhint';
 }
 
 // actions qu'on peut enchaîner en glissant le doigt sur le champ
@@ -100,12 +101,12 @@ export function doPlotAction(i, action, at) {
         case 'decoInfo': {
             const d = DECOS[p.deco];
             float(at, [d.name], '', -24);
-            toast(`${d.name} : ${d.desc.toLowerCase()}. Reprenez-le avec la pelle.`, ['ui', p.deco]);
+            toast(`${d.name} : ${d.desc.toLowerCase()}. Reprenez-la avec la pelle quand la parcelle est vide.`, ['ui', p.deco]);
             sfx('click');
             return;
         }
         case 'decoHint':
-            toast(i >= 1000 ? 'Les décorations se posent dans le champ, pas dans la serre' : 'Posez la décoration sur une parcelle vide, sans culture', [
+            toast(i >= 1000 ? 'Les décorations se posent dans le champ, pas dans la serre' : 'Il y a déjà une décoration sur cette parcelle', [
                 'ui',
                 decoTool(tool),
             ]);
@@ -176,6 +177,7 @@ export function doPlotAction(i, action, at) {
             addXp(r.item.xp, at);
             if (r.golden) goldenHarvest(r.item, at);
             rollRare(BALANCE.rareDrop, at);
+            if (i < 1000) fireflyHarvest(at);
             break;
         }
         case 'water':
@@ -630,7 +632,7 @@ export function seedRow(i, id) {
     let n = 0;
     rowOf(i).forEach(j => {
         const p = state.grid[j];
-        if (j === i || !p.isUnlocked || p.deco || p.itemId || p.terrain !== 'plowed') return;
+        if (j === i || !p.isUnlocked || p.itemId || p.terrain !== 'plowed') return;
         if (plantSeed(p, id)) n++;
     });
     return n;
@@ -641,7 +643,7 @@ export function fullRow(i, id) {
     const t = now();
     return rowOf(i).every(j => {
         const p = state.grid[j];
-        return p.isUnlocked && !p.deco && (p.itemId === id || (p.lastCrop === id && t - (p.lastAt || 0) < 4000));
+        return p.isUnlocked && (p.itemId === id || (p.lastCrop === id && t - (p.lastAt || 0) < 4000));
     });
 }
 

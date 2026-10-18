@@ -56,6 +56,7 @@ export function newState() {
             reserve: true,
             calm: false,
             remind: false,
+            fireflies: true, // 1.9 : les lucioles la nuit (pur décor)
             textSize: 0,
             contrast: false,
             bigText: false,

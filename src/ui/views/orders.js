@@ -14,6 +14,7 @@ import { defineSheet, closeSheet } from '../sheets.js';
 import { itemLine, rewardHtml } from './common.js';
 import { confirmTap } from '../confirm.js';
 import { defiCard } from './defis.js';
+import { rareCard, holidayCard, contractCard, farmSeasonCard, neighborsCard } from './village.js';
 
 // ---------------- la fête de saison ----------------
 function eventCard() {
@@ -206,6 +207,12 @@ function renderOrders(el) {
         ['cargo', cargoCard()],
         ['balloon', delivery('balloon')],
         ['boat', delivery('boat')],
+        // 1.9 : venus du volet Village
+        ['rare', rareCard()],
+        ['holiday', holidayCard()],
+        ['contract', contractCard()],
+        ['fseason', farmSeasonCard()],
+        ['neighbors', neighborsCard()],
         ['hint', hint('Touchez une ligne rouge pour aller produire ce qui manque.')],
     ]);
 }

@@ -15,6 +15,7 @@ import { defineView, ui } from '../app.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 import { pinBar } from './common.js';
 import { askBuy } from '../sheets/askbuy.js';
+import { merchantCard } from './village.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const matChips = m =>
@@ -183,7 +184,7 @@ function decos() {
             return shopCard(
                 art('ui', d.id),
                 d.name,
-                `${d.desc}. À poser sur une parcelle vide${n ? ` · vous en avez ${n}` : ''}`,
+                `${d.desc}. Se pose dans un coin de parcelle : la culture pousse toujours${n ? ` · vous en avez ${n}` : ''}`,
                 buyBtn('placedeco', d.id, 1, d.cost, locked),
                 locked,
                 d.reqLvl,
@@ -217,6 +218,7 @@ function renderShop(el) {
     const cat = ui.sel.shop || 'seeds';
     const c = CATS.find(x => x[0] === cat);
     blocks(el, [
+        ['merchant', merchantCard()],
         ['night', nightMarketCard()],
         ['pin', pinBar()],
         [

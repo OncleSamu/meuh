@@ -686,3 +686,27 @@ html.hol-paques .field::after {
             0 0 0 5px rgba(232, 54, 75, 0.5);
     }
 }
+
+/* 1.9 : la décoration dans le coin de la parcelle, la culture pousse à côté */
+.deco-corner {
+    position: absolute;
+    right: -4%;
+    top: -10%;
+    width: 46%;
+    height: 46%;
+    z-index: 3;
+    pointer-events: none;
+    transform-origin: 50% 90%;
+    filter: drop-shadow(0 2px 0 rgba(58, 38, 24, 0.35));
+}
+.deco-corner > svg {
+    width: 100%;
+    height: 100%;
+}
+.deco-corner.pop {
+    animation: grow 0.4s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.plot.has-deco .honey-badge {
+    top: auto;
+    bottom: 2%;
+}

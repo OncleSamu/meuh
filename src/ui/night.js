@@ -18,7 +18,7 @@ export function updateNight() {
     const N = state.night;
     const layer = document.getElementById('flies');
     if (layer) {
-        const flies = N && G.isNight() && G.nightOpen() ? N.flies : [];
+        const flies = N && G.isNight() && G.nightOpen() && state.settings.fireflies !== false ? N.flies : [];
         const wish = N && N.wish && G.wishActive(N.wish.kind) ? N.wish : null;
         const showJar = flies.length || (N && N.jar && G.isNight() && G.fliesSeason());
         const key = flies.map(f => f.id).join(',') + '|' + (showJar ? N.jar : '') + '|' + (wish ? wish.kind + (wish.left || '') : '');
@@ -26,10 +26,7 @@ export function updateNight() {
             lastFlies = key;
             layer.innerHTML =
                 flies
-                    .map(
-                        f =>
-                            `<button class="fly" data-act="catchFly" data-id="${f.id}" style="left:${f.x}%;top:${f.y}%;--d:${(f.id % 5) * 0.4}s" aria-label="Attraper la luciole">${art('ui', 'firefly')}</button>`,
-                    )
+                    .map(f => `<span class="fly" aria-hidden="true" style="left:${f.x}%;top:${f.y}%;--d:${(f.id % 5) * 0.4}s">${art('ui', 'firefly')}</span>`)
                     .join('') +
                 (showJar || wish
                     ? `<div class="night-pill">${showJar ? `${ico(['ui', 'fireflyJar'])}<b>${N.jar} / ${NIGHT.jar}</b>` : ''}${wish ? `${ico(['ui', 'wishStar'])}<span>${wish.kind === 'gold' ? `${wish.left} récolte${wish.left > 1 ? 's' : ''} en or` : 'Bêtes ×2'}</span>` : ''}</div>`

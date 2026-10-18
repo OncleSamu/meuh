@@ -31,7 +31,7 @@ const needLine = (item, got, n, side) =>
     <div class="card-main"><div class="pname">${ITEMS[item].name} <small>${Math.min(got, n)} / ${n}</small></div>${bar(got / n)}</div>${side}</div>`;
 
 // ---------------- événement rare ----------------
-function rareCard() {
+export function rareCard() {
     const r = state.rare;
     if (!r || !r.type || !G.rareActive(r.type)) return null;
     const E = RARE_EVENTS[r.type];
@@ -141,7 +141,7 @@ function projectDetail(pid) {
 }
 
 // ---------------- fête du calendrier ----------------
-function holidayCard() {
+export function holidayCard() {
     const id = G.holidayNow();
     if (!id || !state.holiday || state.holiday.id !== id) return null;
     const h = HOLIDAYS[id],
@@ -162,7 +162,7 @@ function holidayCard() {
 }
 
 // ---------------- contrat de saison ----------------
-function contractCard() {
+export function contractCard() {
     G.ensureContract();
     const c = state.contract;
     if (state.level < CONTRACT_LVL || !c) return null;
@@ -189,7 +189,7 @@ function contractCard() {
 }
 
 // ---------------- saison de la ferme ----------------
-function farmSeasonCard() {
+export function farmSeasonCard() {
     if (!G.farmSeasonOpen()) return null;
     G.ensureFarmSeason();
     const sv = state.fseason,
@@ -212,7 +212,7 @@ function farmSeasonCard() {
 }
 
 // ---------------- voisins ----------------
-function neighborsCard() {
+export function neighborsCard() {
     if (state.level < NEIGHBOR_LVL)
         return card({
             icon: ['villager', RIVALS[0].avatar],
@@ -239,7 +239,7 @@ function neighborsCard() {
 }
 
 // ---------------- marchand ambulant ----------------
-function merchantCard() {
+export function merchantCard() {
     if (!G.merchantOpen()) return null;
     const m = state.merchant;
     if (m.status !== 'here')
@@ -346,13 +346,8 @@ function villagersHtml() {
 
 function renderVillage(el) {
     blocks(el, [
-        ['rare', rareCard()],
+        // 1.9 : tout ce qu'on livre est dans Commandes, le marchand au Marché ; ici, le village et ses habitants
         ['story', storyCard()],
-        ['holiday', holidayCard()],
-        ['contract', contractCard()],
-        ['fseason', farmSeasonCard()],
-        ['neighbors', neighborsCard()],
-        ['merchant', merchantCard()],
         ['contest', contestCard()],
         ['vtitle', section('Les villageois')],
         ['vhint', hint('Livrez leurs commandes et offrez-leur ce qu’ils aiment (un cadeau par jour) pour gagner leur amitié.')],
