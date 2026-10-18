@@ -363,8 +363,12 @@ function progress() {
     // la pêche : un lancer toutes les 2 minutes, les nasses, Marcel et le concours
     if (t % 120 === 0 && state.level >= NATURE.pond.lvl && !G.barnBlocked(true)) {
         G.ensurePond();
-        const spot = pickRand(['bank', 'reeds', 'pier'].filter(G.spotOpen));
-        const id = G.pickFish(spot, null);
+        // une truite est demandée par un chantier : elle ne mord qu'à la mouche, sur la berge
+        const wantTrout =
+            Object.values(PROJECTS).some(p => G.projectOpen(p.id) && (G.projectLeft(p.id, 'trout') > 0 || G.projectLeft(p.id, 'smokedTrout') > 0)) &&
+            G.spotOpen('bank');
+        const spot = wantTrout ? 'bank' : pickRand(['bank', 'reeds', 'pier'].filter(G.spotOpen));
+        const id = G.pickFish(spot, wantTrout ? 'fly' : null);
         const [a, b] = FISH[id].w;
         G.landFish(id, a + (b - a) * Math.random(), null, Math.random() < 0.2);
     }
@@ -668,5 +672,18 @@ else {
     );
     console.log('revenus :', out.income, '· activité :', out.stats);
     console.log('monde :', JSON.stringify(out.world));
-    log.slice(-5).forEach(l => console.log('  chantier :', l));
+    log.slice(process.argv.includes('--chapters') ? 0 : -5).forEach(l => console.log('  chantier :', l));
+    // les chantiers ouverts qui ne sont pas finis : ce qui manque
+    Object.values(PROJECTS)
+        .filter(p => G.projectOpen(p.id))
+        .forEach(p =>
+            console.log(
+                '  en cours :',
+                p.name,
+                Object.keys(p.need)
+                    .filter(k => G.projectLeft(p.id, k) > 0)
+                    .map(k => `${k} ${G.projectLeft(p.id, k)} (stock ${state.inventory[k] || 0})`)
+                    .join(', '),
+            ),
+        );
 }

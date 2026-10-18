@@ -5,14 +5,14 @@ import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { CHAPTERS, PROJECTS, CHAPTER_ORDER, chapterNum, chapterAfter } from '../data/village.js';
+import { CHAPTERS, PROJECTS, CHAPTER_ORDER, STORY_REWARD, chapterNum, chapterAfter } from '../data/village.js';
 export { CHAPTER_ORDER, chapterNum, chapterAfter };
 import { STORY_MAPS } from '../data/meta.js';
 import { tip } from './tips.js';
 import { clampQuality } from './farm.js';
 import { addPhoto } from './style.js';
 import { addFriendship } from './village.js';
-import { addXp } from './player.js';
+import { addXp, earn, getXpReq } from './player.js';
 import { ensureQuests } from './orders.js';
 import { ensureStall } from './stall.js';
 import { ensureIsland } from './island.js';
@@ -125,6 +125,20 @@ export function giveAllToProject(pid, at) {
     return true;
 }
 
+// expérience d'un chantier : l'ancienne valeur, ou une part du niveau du chapitre quand il est plus haut
+export const projectXp = p => Math.round(Math.max(150 + chapterNum(p.ch) * 150, STORY_REWARD.xpFrac * getXpReq(CHAPTERS[p.ch - 1].lvl)) / 10) * 10;
+// le dernier chantier d'un chapitre rapporte des pièces, et un ruban à partir du chapitre 5
+export function chapterBonus(n, at) {
+    const done = (state.story.bonus = state.story.bonus || {});
+    if (done[n]) return null;
+    done[n] = true;
+    const coins = Math.round(STORY_REWARD.chapterCoins(CHAPTERS[n - 1].lvl) / 5) * 5;
+    earn(coins, at);
+    const ruban = chapterNum(n) >= STORY_REWARD.chapterRuban ? 1 : 0;
+    state.prestige.rubans += ruban;
+    return { n, coins, ruban };
+}
+
 export function finishProject(pid, at) {
     if (!projectOpen(pid) || !projectComplete(pid)) return false;
     const p = PROJECTS[pid];
@@ -133,8 +147,10 @@ export function finishProject(pid, at) {
     applyProjectReward(pid);
     addPhoto('building', pid, p.name, 'Rénovation terminée');
     addFriendship(p.vid, 6, at);
-    addXp(150 + chapterNum(p.ch) * 150, at);
-    emit('story', { pid, next: storyNextText(p) });
+    const xp = projectXp(p);
+    addXp(xp, at);
+    const bonus = chapterDone(p.ch) ? chapterBonus(p.ch, at) : null;
+    emit('story', { pid, next: storyNextText(p), xp, bonus });
     sfx('level');
     buzz(40);
     return true;

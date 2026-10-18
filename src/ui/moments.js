@@ -42,12 +42,15 @@ const BUILD = {
             party: true,
         };
     },
-    story: ({ pid, next }) => {
+    story: ({ pid, next, xp, bonus }) => {
         const p = PROJECTS[pid];
+        const extra = [];
+        if (xp) extra.push([['ui', 'star'], `+${fmt(xp)} d’expérience`]);
+        if (bonus) extra.push([['ui', 'coin'], `Chapitre terminé : +${fmt(bonus.coins)} pièces${bonus.ruban ? ' et 1 ruban' : ''}`]);
         return {
             html: `<div class="moment-building">${art('building', pid)}</div><h2>${p.name} : rénovation terminée !</h2>
                 <div class="speech"><div class="avatar sm">${art('villager', p.vid)}</div><p>« ${p.after} »</p></div>
-                ${lines([[['ui', 'star'], p.reward]])}${next ? `<p class="sub">${next}</p>` : ''}`,
+                ${lines([[['ui', 'star'], p.reward], ...extra])}${next ? `<p class="sub">${next}</p>` : ''}`,
             ok: 'Continuer',
             party: true,
         };

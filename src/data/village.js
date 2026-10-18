@@ -357,6 +357,9 @@ export const CHAPTERS = [
 ];
 
 // 1.4 : les chapitres forment une seule histoire, jouée dans cet ordre (numéros 1 à 16 à l'écran)
+// 1.16 : récompenses des chantiers à l'échelle des 50 niveaux
+// expérience d'un chantier : au moins l'ancienne valeur, sinon une part de ce que coûte le niveau du chapitre
+export const STORY_REWARD = { xpFrac: 0.03, chapterCoins: lvl => 500 + lvl * lvl * 8, chapterRuban: 5 };
 export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12];
 export const chapterNum = n => CHAPTER_ORDER.indexOf(n) + 1;
 export const chapterAfter = n => CHAPTER_ORDER[CHAPTER_ORDER.indexOf(n) - 1] || 0;
@@ -633,8 +636,8 @@ export const PROJECTS = {
         name: 'La criée',
         vid: 'yann',
         need: {
-            trout: 15,
-            smokedTrout: 8,
+            trout: 8,
+            smokedTrout: 4,
             crate: 10,
             nail: 20,
         },
@@ -686,10 +689,10 @@ export const PROJECTS = {
         name: 'La chocolaterie',
         vid: 'lucie',
         need: {
-            sugar: 30,
-            milk: 40,
-            cream: 10,
-            caramel: 5,
+            sugar: 24,
+            milk: 30,
+            cream: 8,
+            caramel: 4,
         },
         before: 'Les bateaux rapportent des fèves de cacao ! On pourrait ouvrir une chocolaterie, dis ?',
         after: 'Ça sent le chocolat jusqu’au phare ! La chocolaterie est au magasin, et le cacaoyer pousse dans la serre.',
@@ -758,10 +761,10 @@ export const PROJECTS = {
         name: 'La fromagerie d’alpage',
         vid: 'bruno',
         need: {
-            milk: 120,
-            goatMilk: 40,
-            cheese: 15,
-            goatCheese: 8,
+            milk: 70,
+            goatMilk: 24,
+            cheese: 10,
+            goatCheese: 5,
         },
         before: 'Le lait d’alpage, c’est de l’or blanc. Avec une vraie fromagerie, on en fera du beaufort.',
         after: 'Les meules s’alignent dans la cave. La fromagerie d’alpage est au magasin.',
@@ -866,8 +869,8 @@ export const PROJECTS = {
         name: 'La maison de l’affineur',
         vid: 'anselme',
         need: {
-            cheese: 20,
-            goatCheese: 12,
+            cheese: 12,
+            goatCheese: 6,
             beaufort: 4,
             crate: 10,
         },
@@ -993,7 +996,7 @@ Object.assign(PROJECTS, {
         ch: 14,
         name: 'La rhumerie',
         vid: 'tiago',
-        need: { sugarcane: 80, crate: 15, beam: 20, tools: 10 },
+        need: { sugarcane: 60, crate: 15, beam: 20, tools: 10 },
         before: 'La canne à sucre de ta ferme ferait un rhum fameux. Il me faut des fûts et une distillerie.',
         after: 'Le premier rhum vieillit déjà en fût. La rhumerie est au magasin.',
         reward: 'La rhumerie (au magasin)',
@@ -1006,7 +1009,7 @@ Object.assign(PROJECTS, {
         ch: 14,
         name: 'Le kiosque du carnaval',
         vid: 'maeva',
-        need: { tiare: 30, islandCocktail: 10, coconutFlan: 8, paint: 10 },
+        need: { tiare: 20, islandCocktail: 6, coconutFlan: 5, paint: 10 },
         before: 'Pour le carnaval, il faut des fleurs partout, des cocktails et des flans coco pour tout le monde !',
         after: 'Le carnaval bat son plein, toute la région danse sur la plage. Merci : voici 5 rubans de concours.',
         reward: '5 rubans de concours, et la fête sur l’île',
@@ -1062,7 +1065,7 @@ Object.assign(PROJECTS, {
         ch: 16,
         name: 'Le conservatoire des semences',
         vid: 'agathe',
-        need: { wheat: 200, rice: 80, plank: 30, crate: 15 },
+        need: { wheat: 150, rice: 60, plank: 30, crate: 15 },
         before: 'Vos variétés fixées méritent d’être gardées précieusement. Un conservatoire, et vous pourrez en racheter les graines.',
         after: 'Le conservatoire est ouvert : rachetez les graines de vos variétés et les petits de vos races dans « Mes créations ».',
         reward: 'Racheter graines et petits de vos créations',
@@ -1075,7 +1078,7 @@ Object.assign(PROJECTS, {
         ch: 16,
         name: 'La ruche de sélection',
         vid: 'victor',
-        need: { honey: 40, wax: 20, plank: 20, lavender: 60 },
+        need: { honey: 30, wax: 20, plank: 20, lavender: 45 },
         before: 'Les abeilles butinent d’une fleur à l’autre et mélangent tout… Une ruche de sélection, et les surprises seront plus fréquentes.',
         after: 'Les abeilles s’en donnent à cœur joie : les mutations sont presque deux fois plus fréquentes.',
         reward: 'Plus de mutations rares',
@@ -1088,7 +1091,7 @@ Object.assign(PROJECTS, {
         ch: 16,
         name: 'La salle du Salon',
         vid: 'victor',
-        need: { paint: 12, beam: 25, cloth: 20, cheese: 15 },
+        need: { paint: 12, beam: 25, cloth: 20, cheese: 12 },
         before: 'Montrons vos plus belles créations à tout le pays ! Il faut une grande salle pour le Salon de l’agriculture.',
         after: 'Le Salon ouvre ses portes : un nouveau concours tous les deux jours, avec des rubans à gagner. Merci : voici 5 rubans.',
         reward: 'Le Salon de l’agriculture, et 5 rubans',
@@ -1561,7 +1564,7 @@ Object.assign(PROJECTS, {
         ch: 18,
         name: 'Le cellier à fûts',
         vid: 'agnes',
-        need: { beam: 30, stone: 80, calvados: 4, maltAmber: 20 },
+        need: { beam: 30, stone: 80, calvados: 3, maltAmber: 12 },
         before: 'Une bonne bière de garde dort longtemps dans le bois. Le cellier de l’abbaye peut accueillir des fûts.',
         after: 'Les fûts sont descendus à la cave : faites vieillir vos bières en fût de chêne, de calvados, de rhum ou de vin, à côté des fromages et des vins. Plus elles attendent, plus elles valent.',
         reward: 'Le vieillissement en fût, à la cave (+2 places)',
@@ -1574,7 +1577,7 @@ Object.assign(PROJECTS, {
         ch: 18,
         name: 'L’étiqueterie',
         vid: 'hugues',
-        need: { paint: 10, cloth: 15, maltBlond: 30, crate: 10 },
+        need: { paint: 10, cloth: 15, maltBlond: 20, crate: 10 },
         before: 'Chaque bière mérite sa belle étiquette. Et avec une presse, on pourra noter des recettes plus riches.',
         after: 'Vos bières peuvent maintenant mêler trois ingrédients.',
         reward: 'Trois ingrédients par bière',
@@ -1587,7 +1590,7 @@ Object.assign(PROJECTS, {
         ch: 18,
         name: 'La fête de la bière',
         vid: 'agnes',
-        need: { blondBeer: 15, cheese: 20, bread: 40, maltBlack: 15 },
+        need: { blondBeer: 10, cheese: 12, bread: 24, maltBlack: 8 },
         before: 'Montons des tables sous les arbres du cloître : toute la vallée viendra goûter vos créations !',
         after: 'Quelle fête ! Une cuve de plus pour l’abbaye, et 5 rubans pour vous remercier.',
         reward: 'Une cuve de plus et 5 rubans',
