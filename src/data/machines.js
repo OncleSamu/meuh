@@ -3347,6 +3347,23 @@ Object.assign(RECIPES, {
     maltBlack: { id: 'maltBlack', machine: 'malthouse', ing: { barley: 3 }, time: 240, lvl: 35, base: 35, xp: 15 },
 });
 
+// ---------------- 1.10 : la pêche, les recettes des nouveaux poissons ----------------
+Object.assign(RECIPES, {
+    bleakFry: { id: 'bleakFry', machine: 'fishmonger', ing: { bleak: 6, flour: 1 }, time: 180, lvl: 14, base: 14, xp: 11 },
+    crayfishBisque: { id: 'crayfishBisque', machine: 'smokehouse', ing: { crayfish: 5, tomato: 2, onion: 1 }, time: 300, lvl: 16, base: 16, xp: 19 },
+    tenchHerbs: { id: 'tenchHerbs', machine: 'fishmonger', ing: { tench: 2, basil: 2, leek: 1 }, time: 240, lvl: 16, base: 16, xp: 15 },
+    burbotCider: { id: 'burbotCider', machine: 'fishmonger', ing: { burbot: 2, cider: 1, leek: 2 }, time: 300, lvl: 17, base: 17, xp: 19 },
+    pochouse: { id: 'pochouse', machine: 'fishmonger', ing: { tench: 1, perch: 2, burbot: 1, cider: 1 }, time: 360, lvl: 18, base: 18, xp: 23 },
+    zanderLeeks: { id: 'zanderLeeks', machine: 'fishmonger', ing: { zander: 1, leek: 2, onion: 1 }, time: 300, lvl: 19, base: 19, xp: 19 },
+    smokedSalmon: { id: 'smokedSalmon', machine: 'smokehouse', ing: { salmon: 1 }, time: 300, lvl: 19, base: 19, xp: 19 },
+    salmonSteak: { id: 'salmonSteak', machine: 'fishmonger', ing: { salmon: 1, honey: 1, lemon: 1 }, time: 300, lvl: 20, base: 20, xp: 19 },
+    salmonTartare: { id: 'salmonTartare', machine: 'deli', ing: { salmon: 1, lemon: 1, onion: 2 }, time: 240, lvl: 21, base: 21, xp: 15 },
+    crayfishGratin: { id: 'crayfishGratin', machine: 'fishmonger', ing: { crayfish: 4, cream: 1, cheese: 1 }, time: 360, lvl: 22, base: 22, xp: 23 },
+    pondTerrine: { id: 'pondTerrine', machine: 'fishmonger', ing: { zander: 1, salmon: 1, cream: 1, egg: 2 }, time: 420, lvl: 23, base: 23, xp: 26 },
+    smokedSturgeon: { id: 'smokedSturgeon', machine: 'smokehouse', ing: { sturgeon: 1 }, time: 360, lvl: 25, base: 25, xp: 23 },
+    caviar: { id: 'caviar', machine: 'deli', ing: { sturgeon: 1 }, time: 480, lvl: 25, base: 25, xp: 30 },
+});
+
 // ---------------- 1.8 : une machine par niveau, toujours avec ses recettes ----------------
 // lv17 : le niveau d'avant, pour qu'une ancienne partie garde ce qu'elle avait déjà ouvert
 for (const [id, l] of Object.entries(LV18_MACH)) if (MACHINES[id]) [MACHINES[id].lv17, MACHINES[id].reqLvl] = [MACHINES[id].reqLvl, l];

@@ -1,0 +1,271 @@
+/* Ferme | Étang (1.10) : coins de pêche, appâts, canne, nasses, Marcel, concours, carnet */
+.pond-top .mat small {
+    font-size: 0.62rem;
+    opacity: 0.8;
+}
+
+.pond-banner {
+    margin-bottom: 12px;
+}
+.pond-banner.run {
+    background: linear-gradient(#ffe7d6, #fbd1c0);
+}
+.pond-banner.contest {
+    background: linear-gradient(#fff3c4, #f9e19a);
+}
+.pond-banner .ico.big,
+.contest-card .ico.big {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+}
+
+/* les coins de pêche */
+.spot-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.spot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 4px 8px;
+    border: 2.5px solid var(--ink);
+    border-radius: var(--r-sm);
+    background: var(--paper-l);
+    font-family: var(--display);
+    font-size: 0.78rem;
+    color: var(--ink);
+    box-shadow: 0 3px 0 var(--wood-d);
+}
+.spot.on {
+    background: #d9f1ff;
+    box-shadow:
+        0 3px 0 var(--wood-d),
+        inset 0 0 0 3px var(--water);
+}
+.spot.locked {
+    opacity: 0.6;
+    filter: grayscale(0.5);
+}
+.spot-art svg {
+    width: 52px;
+    height: 52px;
+    display: block;
+}
+.spot small {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.62rem;
+    text-align: center;
+}
+.spot small .ico {
+    width: 12px;
+    height: 12px;
+}
+
+/* les appâts */
+.bait-row {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 2px 2px 8px;
+    margin-bottom: 4px;
+    scrollbar-width: none;
+}
+.bait {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 9px 5px 6px;
+    border: 2px solid var(--ink);
+    border-radius: 18px;
+    background: var(--paper-l);
+    font-family: var(--display);
+    font-size: 0.74rem;
+    color: var(--ink);
+}
+.bait .ico {
+    width: 22px;
+    height: 22px;
+}
+.bait b {
+    padding: 0 5px;
+    border-radius: 8px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 0.66rem;
+}
+.bait.on {
+    background: var(--gold);
+}
+.bait.empty b {
+    background: var(--red);
+}
+.bait.craft {
+    border-style: dashed;
+    background: transparent;
+}
+.bait.craft small .ico {
+    width: 14px;
+    height: 14px;
+}
+
+/* ce qui mord ici, et ses chances */
+.catch-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    margin: -2px 0 8px;
+}
+.catch {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    font-size: 0.7rem;
+    font-family: var(--display);
+}
+.catch .ico {
+    width: 24px;
+    height: 24px;
+}
+.catch.boost b {
+    color: #2f7d1f;
+}
+.catch.boost b::after {
+    content: ' ★';
+}
+
+/* l'eau change selon le coin */
+.pond.spot-reeds {
+    background: radial-gradient(ellipse at 40% 35%, #a6dcc4, #4fa98a 60%, #2f7d6a);
+}
+.pond.spot-pier {
+    background: radial-gradient(ellipse at 40% 35%, #7fc0f0, #2f7fc0 60%, #1f5a96);
+}
+
+/* Marcel et le concours */
+.marcel-card,
+.contest-card {
+    margin-bottom: 12px;
+}
+.contest-card.on {
+    background: linear-gradient(#fff3c4, var(--paper));
+}
+.podium-list {
+    margin: 4px 0 2px;
+    padding-left: 20px;
+    font-size: 0.74rem;
+}
+.podium-list li b {
+    float: right;
+    font-family: var(--display);
+}
+.podium-list li.me {
+    font-weight: 800;
+    color: #2f7d1f;
+}
+
+/* les nasses */
+.traps-card {
+    margin-bottom: 12px;
+}
+.trap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-top: 1.5px dashed rgba(58, 38, 24, 0.25);
+    font-size: 0.78rem;
+}
+.trap > .ico {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+}
+.trap > span {
+    flex: 1;
+}
+.trap.ready > span {
+    font-weight: 800;
+}
+.trap .btn .ico {
+    width: 15px;
+    height: 15px;
+}
+
+/* le carnet de pêche */
+.log-card {
+    margin-bottom: 12px;
+}
+.log-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(94px, 1fr));
+    gap: 6px;
+}
+.log-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 6px 4px;
+    border: 2px solid var(--ink);
+    border-radius: var(--r-sm);
+    background: var(--paper-l);
+    color: var(--ink);
+    font-family: var(--display);
+    text-align: center;
+}
+.log-tile b {
+    font-size: 0.72rem;
+    line-height: 1.1;
+}
+.log-tile small {
+    font-size: 0.6rem;
+    line-height: 1.15;
+    opacity: 0.85;
+}
+.log-art {
+    position: relative;
+}
+.log-art > .ico {
+    width: 46px;
+    height: 46px;
+}
+.log-tile.unknown .log-art > .ico {
+    filter: brightness(0) opacity(0.35);
+}
+.log-art .medal {
+    position: absolute;
+    right: -8px;
+    bottom: -2px;
+}
+.log-art .medal .ico {
+    width: 20px;
+    height: 20px;
+}
+
+.gear-card {
+    margin-bottom: 12px;
+}
+.tool-row.soon {
+    opacity: 0.7;
+}
+
+/* cinq volets (Champ, Verger, Nature, Étang, Île) : seuls les icônes, sauf le volet ouvert */
+@media (max-width: 700px) {
+    .seg.n5 > button:not(.on) span {
+        display: none;
+    }
+    .seg.n5 > button.on {
+        flex: 2.4 1 0;
+    }
+}
+.pond-card .pond {
+    height: 118px;
+}

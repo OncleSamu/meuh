@@ -39,6 +39,7 @@ export const TABS = [
             ['field', 'Champ', ['ui', 'basket']],
             ['orchard', 'Verger', ['item', 'apple'], () => (state.orchard && state.orchard.slots.some(x => x.open) ? 1 : ORCHARD.lvl)],
             ['nature', 'Nature', ['item', 'wood'], () => NATURE.forest.lvl],
+            ['pond', 'Étang', ['ui', 'rod'], () => NATURE.pond.lvl],
             ['island', 'Île', ['item', 'pineapple'], () => ISLAND.lvl],
         ],
     },

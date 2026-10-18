@@ -12,6 +12,7 @@ import { setupToolbar } from './ui/toolbar.js';
 import { updateScene } from './ui/scene.js';
 import { setupFarm, wanderDog } from './ui/views/farm.js';
 import { setupNature } from './ui/views/nature.js';
+import { setupPond } from './ui/views/pond.js';
 import { setupOrchard } from './ui/views/orchard.js';
 import { setupIsland } from './ui/views/island.js';
 import { setupLab } from './ui/views/lab.js';
@@ -52,6 +53,7 @@ function start() {
     setupToolbar();
     setupFarm();
     setupNature();
+    setupPond();
     setupOrchard();
     setupIsland();
     setupLab();

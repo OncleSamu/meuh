@@ -10,6 +10,7 @@ import { MACHINES, MACHINE_SLOTS, RECIPES } from '../src/data/machines.js';
 import { DECOS, UPGRADES } from '../src/data/farm.js';
 import { PROJECTS, STORIES, RIVALS, CHAPTERS } from '../src/data/village.js';
 import { RARE, STALL_MAX_QTY, CONTEST_POINTS } from '../src/data/commerce.js';
+import { FISH } from '../src/data/meta.js';
 import { NATURE } from '../src/data/nature.js';
 import { TRANS_KINDS } from '../src/data/animals.js';
 import { FARM_SEASON_TIERS } from '../src/data/port.js';
@@ -323,9 +324,23 @@ function progress() {
             }
         });
     if (t % 400 === 0 && state.level >= NATURE.mine.lvl) state.inventory[pickRand(['fossil', 'amethyst', 'nugget'])]++;
+    // la pêche : un lancer toutes les 2 minutes, les nasses, Marcel et le concours
     if (t % 120 === 0 && state.level >= NATURE.pond.lvl && !G.barnBlocked(true)) {
-        state.inventory[pickRand(['roach', 'perch', 'trout'])]++;
-        G.addXp(10);
+        G.ensurePond();
+        const spot = pickRand(['bank', 'reeds', 'pier'].filter(G.spotOpen));
+        const id = G.pickFish(spot, null);
+        const [a, b] = FISH[id].w;
+        G.landFish(id, a + (b - a) * Math.random(), null, Math.random() < 0.2);
+    }
+    if (t % 60 === 0 && state.pond) {
+        if (state.pond.traps.length < G.trapMax() && state.money > 5000) G.buyTrap();
+        state.pond.traps.forEach((x, i) => {
+            if (G.trapReady(x) && !G.barnBlocked(true)) G.haulTrap(i);
+            else if (!x.start) G.setTrap(i, G.spotOpen('reeds') && i % 2 ? 'reeds' : 'bank', 'worm');
+        });
+        if (G.marcelReady()) G.claimMarcel();
+        if (G.runReady()) G.claimRun();
+        if (G.contestResultReady()) G.claimContest();
     }
 }
 

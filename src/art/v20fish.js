@@ -1,5 +1,5 @@
-// 2.0 (pêche) : sept nouveaux poissons de l'étang et leurs recettes.
-import { C, E, F, FC, FE, HL, L, P, R, SHADOW, leaf, items } from './kit.js';
+// 1.10 (pêche) : sept nouveaux poissons de l'étang et leurs recettes.
+import { C, E, F, FC, FE, HL, L, P, R, SHADOW, leaf, items, ui } from './kit.js';
 import { plate, bowl, woodBoard, steamF, fishBody2 } from './items2.js';
 import { cocotte } from './v131.js';
 
@@ -336,3 +336,69 @@ const NEW_DISH = {
 export const NEW_FISH_IDS = Object.keys(NEW_FISH);
 export const NEW_DISH_IDS = Object.keys(NEW_DISH);
 for (const [k, v] of Object.entries({ ...NEW_FISH, ...NEW_DISH })) items[k] = () => v;
+
+// ================= l'étang : appâts, nasse, coins de pêche =================
+// la boîte à vers : une boîte de conserve, de la terre, deux vers roses qui dépassent
+ui.worm = () =>
+    SHADOW(32, 59, 18, 2.6) +
+    P('M14 26 L50 26 L48 56 Q48 59 45 59 L19 59 Q16 59 16 56Z', '#c9d3dc') +
+    L('M15 36 L49 36 M15.6 46 L48.4 46', 1.4, '#9aa6b2') +
+    E(32, 26, 18, 5, '#6b4426') +
+    L('M24 26 Q20 14 28 12 Q34 11 32 18', 5.6) +
+    L('M24 26 Q20 14 28 12 Q34 11 32 18', 3.4, '#f29aa8') +
+    L('M38 26 Q42 18 48 20', 5.6) +
+    L('M38 26 Q42 18 48 20', 3.4, '#f29aa8') +
+    E(32, 26, 18, 5, 'none', 0, 2.4) +
+    FC(26, 25, 1.2, '#4a2e18') +
+    FC(36, 27, 1.2, '#4a2e18') +
+    HL(20, 42, 1.6, 5, 0, 0.6);
+// la mouche de pêche : un hameçon, un corps de laine, des plumes
+ui.fly = () =>
+    SHADOW(32, 58, 14, 2.4) +
+    L('M40 12 L40 44 Q40 54 32 54 Q24 54 24 46', 4.4) +
+    L('M40 12 L40 44 Q40 54 32 54 Q24 54 24 46', 2.2, '#c9d3dc') +
+    P('M24 46 L20 42 L26 42Z', '#c9d3dc', 1.4) +
+    P('M40 14 Q22 8 14 18 Q24 22 40 22Z', '#e8a43a') +
+    P('M40 16 Q30 22 22 34 Q34 30 40 24Z', '#c87a2a') +
+    R(36, 18, 8, 22, 4, '#3f8f2e') +
+    L('M36 24 L44 24 M36 30 L44 30 M36 36 L44 36', 1.2, '#f2c23a') +
+    C(40, 12, 3, '#3a2618', 1.4) +
+    HL(20, 15, 4, 1.4, -15, 0.6);
+// la nasse : un panier en osier allongé, un entonnoir à l'entrée, une corde
+ui.trap = () =>
+    SHADOW(32, 56, 26, 3) +
+    P('M8 26 Q6 36 8 46 L48 44 Q60 36 48 28Z', '#d9a85a') +
+    L('M16 26 L16 46 M24 26 L24 46 M32 26 L32 46 M40 27 L40 45', 1.4, '#9c6a2a') +
+    L('M8 32 Q30 30 54 32 M8 40 Q30 42 54 40', 1.2, '#9c6a2a') +
+    P('M8 26 Q6 36 8 46 L48 44 Q60 36 48 28Z', 'none') +
+    E(8, 36, 4, 10, '#b8823a') +
+    E(8, 36, 2, 5, '#5e3a1e', 0, 1.4) +
+    L('M54 34 Q60 24 58 12', 2.2, '#8b5a2b') +
+    HL(28, 29, 7, 1.4, -2, 0.55);
+const water = (y = 40) =>
+    P(`M2 ${y} Q16 ${y - 3} 32 ${y} Q48 ${y + 3} 62 ${y} L62 58 Q32 62 2 58Z`, '#7fc4e8') +
+    L(`M10 ${y + 8} Q16 ${y + 6} 22 ${y + 8} M36 ${y + 12} Q42 ${y + 10} 48 ${y + 12}`, 1.4, '#e8f6fd');
+// la berge : herbe, galets, eau claire
+ui.spotBank = () =>
+    water(38) +
+    P('M2 30 Q20 24 40 30 Q50 33 62 30 L62 40 Q40 36 20 40 Q10 42 2 40Z', '#8fd16a') +
+    C(14, 40, 4, '#c9d3dc', 1.6) +
+    C(24, 41, 3, '#dfe6ec', 1.6) +
+    C(46, 37, 3.4, '#c9d3dc', 1.6) +
+    L('M8 30 L6 22 M12 30 L13 21 M54 30 L52 22 M58 31 L60 23', 2, '#3f8f2e');
+// les roseaux : de hautes tiges brunes au bord de l'eau calme
+ui.spotReeds = () =>
+    water(42) +
+    [10, 18, 26, 40, 50, 56].map((x, k) => L(`M${x} 50 Q${x - 2} 30 ${x + (k % 2 ? 2 : -2)} ${12 + (k % 3) * 4}`, 2.4, '#3f8f2e')).join('') +
+    [18, 40, 56].map((x, k) => R(x - 2.4 + (k % 2 ? 2 : -2), 12 + (k % 3) * 4, 5, 12, 2.4, '#8b5a2b', 1.6)).join('') +
+    E(32, 52, 6, 2, '#5aa83a', 0, 1.4);
+// le ponton : des planches sur pilotis au-dessus de l'eau profonde
+ui.spotPier = () =>
+    P('M2 34 Q16 31 32 34 Q48 37 62 34 L62 58 Q32 62 2 58Z', '#4f8fc0') +
+    L('M10 46 Q16 44 22 46 M40 50 Q46 48 52 50', 1.4, '#cfe8f8') +
+    R(14, 30, 4, 24, 1.5, '#8b5a2b', 1.8) +
+    R(40, 30, 4, 24, 1.5, '#8b5a2b', 1.8) +
+    P('M4 24 L60 24 L58 32 L6 32Z', '#c08b52') +
+    L('M18 24 L17 32 M32 24 L32 32 M46 24 L47 32', 1.2, '#8b5a2b') +
+    R(50, 12, 3, 13, 1, '#8b5a2b', 1.6) +
+    HL(20, 26, 6, 1, 0, 0.5);

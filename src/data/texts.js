@@ -166,10 +166,18 @@ export const GUIDE = [
     {
         id: 'nature',
         icon: ['item', 'wood'],
-        name: 'Forêt, mine et étang',
+        name: 'Forêt et mine',
         lvl: 3,
         view: 'nature',
-        text: 'Bois et pierre pour construire, pierres précieuses pour la joaillerie, poissons pour la cuisine. Améliorez la hache et la pioche avec des outils.',
+        text: 'Bois et pierre pour construire, pierres précieuses pour la joaillerie. Améliorez la hache et la pioche avec des outils.',
+    },
+    {
+        id: 'pond',
+        icon: ['ui', 'rod'],
+        name: 'L’étang',
+        lvl: 9,
+        view: 'pond',
+        text: 'Trois coins de pêche (la berge, les roseaux, puis le ponton) et chacun ses poissons. Un appât multiplie les chances des poissons qu’il vise : ver, maïs, mouche ou vif. Au mini-jeu, chaque poisson se bat à sa façon ; une touche au cœur de la zone verte est une prise parfaite (+20 % de poids). Les nasses pêchent seules toutes les 2 heures, Marcel donne un défi par jour, et chaque week-end un concours oppose votre plus gros poisson à ceux des fermes voisines.',
     },
     {
         id: 'skills',
@@ -464,7 +472,7 @@ export const TIPS = {
     seaNet: {
         icon: ['ui', 'net'],
         title: 'La pêche en mer',
-        text: 'Posez le filet dans l’onglet Nature, revenez 20 minutes plus tard et relevez-le : sardines, maquereaux, crevettes, bars… et parfois un homard !',
+        text: 'Posez le filet dans le volet Étang, revenez 20 minutes plus tard et relevez-le : sardines, maquereaux, crevettes, bars… et parfois un homard !',
     },
     boat: {
         icon: ['ui', 'boat'],

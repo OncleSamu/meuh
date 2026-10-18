@@ -38,6 +38,7 @@ export function newState() {
         genetics: null,
         brew: null, // 1.6 : la brasserie de l'abbaye
         cargo: null, // 1.8 : l'avion-cargo
+        pond: null, // 1.10 : la pêche (coins, appâts, nasses, défis, concours)
         defis: null,
         night: null,
         carnet: null,
