@@ -13,7 +13,7 @@ import { ISLAND } from '../data/island.js';
 import { DAYS_PER_SEASON } from '../data/world.js';
 import { BALANCE } from '../data/progress.js';
 import { speedMult, addXp, spend, rank, rollYield } from './player.js';
-import { cropRate, season, weather } from './world.js';
+import { cropRate, season, weather, dayInSeason } from './world.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
 import { storyOk } from './story.js';
@@ -22,7 +22,7 @@ import { addQuality } from './farm.js';
 import { eventProgress } from './events.js';
 import { tip } from './tips.js';
 import { orchardLife, orchardRate, ladderBonus, basketBonus } from './buildings.js';
-import { MATURE, GRAFTS, CARE } from '../data/orchard.js';
+import { MATURE, GRAFTS, CARE, TREE_SEASON, SEASON_IN, SEASON_OUT, BLOOM, REMARK } from '../data/orchard.js';
 
 const COIN = ['ui', 'coin'];
 
@@ -59,6 +59,21 @@ const lifeOf = t => {
     if (g && g.eternal) return Infinity;
     return orchardLife(ORCHARD.life) * (g && g.life ? g.life : 1);
 };
+// 1.13 : la saison de l'espèce, la floraison et ses ruches
+export const treeSeasonOf = id => TREE_SEASON[id] || null;
+export const seasonMult = t => {
+    const sid = treeSeasonOf(t.id);
+    if (!sid || isIslandTree(t.id)) return 1;
+    return season().id === sid ? SEASON_IN : SEASON_OUT;
+};
+export const bloomOn = () => state.level >= BLOOM.lvl && season().id === 'printemps' && dayInSeason() <= BLOOM.days;
+export const hiveCount = () => state.grid.filter(p => p.deco === 'hive' && p.isUnlocked).length;
+// la chance d'un fruit en plus donnée par les ruches : toute la saison du printemps, doublée pendant la floraison
+export const pollination = () => {
+    if (state.level < BLOOM.lvl || season().id !== 'printemps') return 0;
+    return Math.min(BLOOM.cap, hiveCount() * BLOOM.perHive * (bloomOn() ? 2 : 1));
+};
+export const remOf = t => (t.rem && REMARK.kinds[t.rem]) || null;
 export const groundMax = () => ORCHARD.groundMax + ladderBonus();
 export const lifeMax = lifeOf;
 // l'état d'un arbre : 'young', 'adult', 'old' ou 'dead'
@@ -76,6 +91,7 @@ export const treeRate = t =>
     (isIslandTree(t.id) ? ISLAND.rate * (1 + rank('green') * 0.05) * Math.max(0.9, weather().crop) : cropRate(t.id)) *
     masterySpeed(t.id) *
     careRate(t) *
+    seasonMult(t) *
     (treeStage(t) === 'old' ? ORCHARD.oldRate : 1);
 export const fruitTime = t => (ITEMS[t.id].time * ORCHARD.fruitRate * orchardRate() * (graftOf(t) && graftOf(t).slow ? graftOf(t).slow : 1)) / speedMult();
 export const treeGrowPct = t => Math.min(1, t.age / ITEMS[t.id].time);
@@ -125,10 +141,10 @@ export function ensureOrchard() {
 }
 
 // branchés par orchardplus.js (Hortense, cueilleur) sans import circulaire
-let pickHook = () => {},
-    pickerEveryHook = () => 0,
+const pickHooks = [];
+let pickerEveryHook = () => 0,
     autoPickHook = () => 0;
-export const onTreePick = fn => (pickHook = fn);
+export const onTreePick = fn => pickHooks.push(fn);
 export const onOrchardPicker = (every, pick) => {
     pickerEveryHook = every;
     autoPickHook = pick;
@@ -179,6 +195,11 @@ export function plantTree(k, id, at, z = 'farm') {
         return false;
     }
     slot.tree = { id, age: 0, drops: 0, ground: 0, prog: 0, gq: 0 };
+    if (z === 'farm' && state.level >= REMARK.lvl && Math.random() < REMARK.chance) {
+        slot.tree.rem = Math.random() < 0.5 ? 'gold' : 'twin';
+        toast(`Un jeune plant étrange : ${REMARK.kinds[slot.tree.rem].name.toLowerCase()} !`, ['item', id]);
+        state.stats.remarkable = (state.stats.remarkable || 0) + 1;
+    }
     sfx('plant');
     burst(at, 'dirt', 8, 6);
     burst(at, 'leaf', 5);
@@ -198,6 +219,7 @@ function rollTreeQuality(id, t) {
     if (season().id === 'hiver' && !ITEMS[id].island) x -= 0.1;
     const r = Math.random();
     if (g && g.gold && Math.random() < g.gold) return 2;
+    if (t && remOf(t) && remOf(t).gold && Math.random() < remOf(t).gold) return 2;
     return r < x * 0.35 ? 2 : r < x ? 1 : 0;
 }
 
@@ -227,7 +249,7 @@ export function pickTree(k, at, quiet, z = 'farm') {
         collect('g_' + t.id);
     }
     eventProgress('harvest', t.id, qty);
-    pickHook(t, qty, silver, gold);
+    pickHooks.forEach(fn => fn(t, qty, silver, gold));
     t.ground = 0;
     t.gq = 0;
     rollRare(BALANCE.rareDrop, at);
@@ -284,7 +306,7 @@ export function leaveCutting(t) {
     if (matOf(t) < MATURE.cutMin) return false;
     const o = state.orchard;
     o.cuttings = o.cuttings || [];
-    o.cuttings.push({ id: t.id, g: t.g || null, mat: Math.floor(matOf(t) * MATURE.cutKeep) });
+    o.cuttings.push({ id: t.id, g: t.g || null, rem: t.rem || null, mat: Math.floor(matOf(t) * MATURE.cutKeep) });
     toast(`Une bouture de ${ITEMS[t.id].seedName.toLowerCase()} garde la lignée de l’arbre`, ['item', 'cutting']);
     return true;
 }
@@ -298,7 +320,7 @@ export function plantCutting(k, ci, at, z = 'farm') {
         return false;
     }
     state.orchard.cuttings.splice(ci, 1);
-    slot.tree = { id: c.id, age: 0, drops: 0, ground: 0, prog: 0, gq: 0, mat: c.mat, g: c.g || null };
+    slot.tree = { id: c.id, age: 0, drops: 0, ground: 0, prog: 0, gq: 0, mat: c.mat, g: c.g || null, rem: c.rem || null };
     sfx('plant');
     burst(at, 'dirt', 8, 6);
     burst(at, 'leaf', 5);
@@ -379,7 +401,13 @@ export function advanceTree(t, dt) {
         t.drops++;
         t.mat = matOf(t) + 1;
         const g = graftOf(t);
-        t.ground = Math.min(groundMax(), t.ground + rollYield('crop') + (g && g.double ? 1 : 0) + (Math.random() < MATURE.extra * maturity(t) ? 1 : 0));
+        t.ground = Math.min(
+            groundMax(),
+            t.ground +
+                rollYield('crop') +
+                ((g && g.double) || (remOf(t) && remOf(t).double) ? 1 : 0) +
+                (Math.random() < MATURE.extra * maturity(t) + pollination() ? 1 : 0),
+        );
         fell++;
     }
     return { fell, rot };

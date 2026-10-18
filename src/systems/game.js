@@ -36,6 +36,7 @@ import { tip } from './tips.js';
 import { trimDayEarn } from './book.js';
 import { ensureOrchard, orchardTick, orchardOffline } from './orchard.js';
 import { pickerTick, pickerAfterOffline } from './orchardplus.js';
+import { lifeTick, lifeAfterOffline } from './orchardlife.js';
 import { ensurePastures } from './pastures.js';
 import { ensureIsland, islandTick, islandOffline } from './island.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
@@ -190,6 +191,7 @@ function tickFarm() {
     if (ghTick()) changed = true;
     if (orchardTick()) changed = true;
     if (pickerTick()) changed = true;
+    if (lifeTick()) changed = true;
     if (islandTick()) changed = true;
     if (wellTick()) changed = true;
     if (honeyTick(1)) changed = true;
@@ -273,6 +275,7 @@ export function offlineProgress() {
     crops += ghOffline(elapsed);
     const orch = orchardOffline(elapsed);
     pickerAfterOffline();
+    lifeAfterOffline();
     const isl = islandOffline(elapsed);
     // le commis travaille pendant votre absence
     const hand = handOffline(elapsed);

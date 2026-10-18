@@ -135,6 +135,13 @@ export function todoList() {
     const traps = G.trapsReady();
     if (traps) push('farm/pond', ['ui', 'trap'], `${traps} nasse${s(traps)} pleine${s(traps)}`, traps);
     if (G.bldReady()) push('sheet:upgrades', ['ui', 'granary'], 'Un bâtiment peut être amélioré', 0);
+    if (G.odileReady()) push('farm/orchard', ['villager', 'odile'], 'Défi d’Odile réussi', 1);
+    if (G.harvestReady()) push('farm/orchard', ['item', 'apple'], 'Grande cueillette réussie', 1);
+    if (G.feteReady()) push('farm/orchard', ['item', 'cider'], 'La pressée est prête', 1);
+    if (G.logReady()) push('farm/orchard', ['ui', 'orchardBook'], 'Une médaille du carnet du verger', 1);
+    if (G.basketResultReady()) push('farm/orchard', ['item', 'apple'], 'Résultats du concours du panier', 1);
+    if (G.frostStatus() === 'warn' && !(state.orchard.frost && state.orchard.frost.lit))
+        push('farm/orchard', ['item', 'pineTorch'], 'Gelée en vue : torches !', 1);
     if (G.gaspardReady()) push('farm/nature', ['villager', 'gaspard'], 'Défi de Gaspard réussi', 1);
     if (G.loadsReady('lumber')) push('farm/nature', ['ui', 'axe'], 'Le bûcheron a une charge', G.loadsReady('lumber'));
     if (G.loadsReady('miner')) push('farm/nature', ['ui', 'pickaxe'], 'Le mineur a une charge', G.loadsReady('miner'));

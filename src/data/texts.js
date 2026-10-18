@@ -57,7 +57,7 @@ export const GUIDE = [
         name: 'Le verger',
         lvl: 10,
         view: 'orchard',
-        text: 'Les arbres fruitiers ont leur verger, avec ses propres places. Un arbre grandit, puis fait tomber ses fruits à son pied : ramassez-les, sinon il attend et ses fruits pourrissent. Après une centaine de fruits il vieillit et ralentit, puis meurt : débitez-le en bois et replantez. L’hiver il dort à moitié, l’automne il produit plus vite.',
+        text: 'Les arbres fruitiers ont leur verger, avec ses propres places. Un arbre grandit, puis fait tomber ses fruits à son pied : ramassez-les, sinon il attend et ses fruits pourrissent. Après une centaine de fruits il vieillit et ralentit, puis meurt : débitez-le en bois et replantez. Chaque espèce a sa saison, où elle produit plus vite. Touchez longuement un arbre : maturité, greffons, soins. Odile, l’arboricultrice, propose un défi par jour.',
     },
     {
         id: 'island',
