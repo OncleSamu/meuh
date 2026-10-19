@@ -243,7 +243,13 @@ export function reelPos(t = now()) {
     const f = fishing,
         ph = ((t - f.t0) / 1000) * f.speed * 2.6;
     if (f.fight === 'zigzag') return (Math.sin(ph - Math.PI / 2 + 0.9 * Math.sin(ph * 0.7)) + 1) / 2;
-    if (f.fight === 'dart') return (Math.sin(ph - Math.PI / 2 + 2.1 * Math.floor(ph / 1.7)) + 1) / 2;
+    if (f.fight === 'dart') {
+        // des à-coups, mais sans téléportation : le curseur file d'un côté à l'autre en un instant
+        const k = ph / 2.4,
+            i = Math.floor(k),
+            fr = Math.min(1, (k - i) / 0.35);
+        return (Math.sin(ph - Math.PI / 2 + 1.8 * (i + fr * fr * (3 - 2 * fr))) + 1) / 2;
+    }
     return (Math.sin(ph - Math.PI / 2) + 1) / 2;
 }
 // la zone verte : un poisson qui tire fort l'emmène avec lui
