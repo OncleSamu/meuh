@@ -598,9 +598,9 @@ export const MAT = {
             wood: 12,
             stone: 24,
         },
-        teahouse: {
-            wood: 22,
-            stone: 16,
+        counter: {
+            wood: 30,
+            stone: 24,
         },
         sugarmill: {
             wood: 20,

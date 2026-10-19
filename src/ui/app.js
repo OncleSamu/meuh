@@ -51,6 +51,7 @@ export const TABS = [
         lock: () => MACHINES.mill.reqLvl,
         subs: [
             ['workshop', 'Machines', ['machine', 'mill']],
+            ['counter', 'Comptoir', ['machine', 'counter'], () => MACHINES.counter.reqLvl],
             ['cave', 'Cave', ['ui', 'cave'], () => CAVE_LVL],
             ['brew', 'Brasserie', ['ui', 'beer'], () => ABBEY.lvl],
             ['lab', 'Labo', ['ui', 'flowers'], () => GENETICS.lvl],

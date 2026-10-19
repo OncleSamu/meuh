@@ -35,8 +35,15 @@ test('une sauvegarde de la 6.2 se charge sans rien perdre', () => {
     assert.equal(state.animals.length, old.animals.length);
     // 1.8 : on garde ses machines, mais on n'en reçoit plus en cadeau au chargement
     const types = new Set(state.machines.map(m => m.type));
-    old.machines.forEach(m => assert.ok(types.has(m.type), m.type));
-    assert.equal(state.machines.length, old.machines.length);
+    // 1.17 : le salon de thé et la brûlerie deviennent un seul comptoir
+    const moved = t => (t === 'teahouse' || t === 'roastery' ? 'counter' : t);
+    old.machines.forEach(m => assert.ok(types.has(moved(m.type)), m.type));
+    assert.equal(
+        state.machines.length,
+        new Set(old.machines.map(m => moved(m.type))).size +
+            old.machines.filter(m => moved(m.type) === m.type).length -
+            new Set(old.machines.filter(m => moved(m.type) === m.type).map(m => m.type)).size,
+    );
     assert.equal(state.pendingGift131, undefined);
     assert.equal(state.grid.length, old.grid.length);
     assert.equal(state.prestige.rubans, old.prestige.rubans);

@@ -1,4 +1,5 @@
 import { LV_ITEM } from './levels14.js';
+import { NEW_DRINKS, COFFEE_GATED } from './counter.js';
 // Tous les produits du jeu : cultures, arbres, produits animaux, plats, matériaux.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -2821,3 +2822,14 @@ Object.assign(ITEMS, {
     graftEarly: { id: 'graftEarly', name: 'Greffon précoce', type: 'material' },
     graftRobust: { id: 'graftRobust', name: 'Greffon robuste', type: 'material' },
 });
+
+// ---------------- 1.17 : le comptoir, les thés et cafés nouveaux ----------------
+// le prix suit les ingrédients (même marge que les anciennes boissons : environ 1,37 fois leur valeur)
+for (const [id, name, ing, , , tag] of NEW_DRINKS) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+    if (tag === 'island' || tag === 'coffee') ITEMS[id].island = true;
+    if (tag === 'coffee') ITEMS[id].needProject = 'roasting';
+}
+// le café n'ouvre qu'après la brûlerie de l'île (c'était la condition de la machine)
+COFFEE_GATED.forEach(id => (ITEMS[id].needProject = 'roasting'));

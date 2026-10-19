@@ -1,5 +1,6 @@
 import { LV_MACH, LV_REC } from './levels14.js';
 import { LV18_MACH, LV18_REC } from './levels18.js';
+import { NEW_DRINKS } from './counter.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -130,12 +131,12 @@ export const MACHINES = {
         reqLvl: 23,
         desc: 'Bijoux à partir des trésors de la mine',
     },
-    teahouse: {
-        id: 'teahouse',
-        name: 'Salon de thé',
-        cost: 18000,
-        reqLvl: 25,
-        desc: 'Thés et tisanes',
+    counter: {
+        id: 'counter',
+        name: 'Comptoir',
+        cost: 24000,
+        reqLvl: 32,
+        desc: 'Thés et cafés préparés à la main, pour le stock et pour les clients',
     },
     sugarmill: {
         id: 'sugarmill',
@@ -206,14 +207,6 @@ export const MACHINES = {
         reqLvl: 31,
         needProject: 'bakehut',
         desc: 'Banana bread, flans et gâteaux des îles',
-    },
-    roastery: {
-        id: 'roastery',
-        name: 'Brûlerie',
-        cost: 46000,
-        reqLvl: 35,
-        needProject: 'roasting',
-        desc: 'Café torréfié, café au lait, tiramisu',
     },
     rumDistillery: {
         id: 'rumDistillery',
@@ -1461,7 +1454,7 @@ export const RECIPES = {
     },
     greenTea: {
         id: 'greenTea',
-        machine: 'teahouse',
+        machine: 'counter',
         ing: {
             tea: 3,
         },
@@ -1472,7 +1465,7 @@ export const RECIPES = {
     },
     lavenderTea: {
         id: 'lavenderTea',
-        machine: 'teahouse',
+        machine: 'counter',
         ing: {
             lavender: 2,
             honey: 1,
@@ -1484,7 +1477,7 @@ export const RECIPES = {
     },
     icedTea: {
         id: 'icedTea',
-        machine: 'teahouse',
+        machine: 'counter',
         ing: {
             tea: 1,
             peach: 1,
@@ -1497,7 +1490,7 @@ export const RECIPES = {
     },
     milkTea: {
         id: 'milkTea',
-        machine: 'teahouse',
+        machine: 'counter',
         ing: {
             tea: 1,
             milk: 1,
@@ -2773,7 +2766,7 @@ export const RECIPES = {
     },
     coffee: {
         id: 'coffee',
-        machine: 'roastery',
+        machine: 'counter',
         ing: {
             greenCoffee: 3,
         },
@@ -2784,7 +2777,7 @@ export const RECIPES = {
     },
     cafeLatte: {
         id: 'cafeLatte',
-        machine: 'roastery',
+        machine: 'counter',
         ing: {
             coffee: 1,
             milk: 2,
@@ -2796,7 +2789,7 @@ export const RECIPES = {
     },
     tiramisu: {
         id: 'tiramisu',
-        machine: 'roastery',
+        machine: 'counter',
         ing: {
             coffee: 1,
             cream: 2,
@@ -3084,7 +3077,7 @@ export const RECIPES = {
     },
     gingerTea: {
         id: 'gingerTea',
-        machine: 'teahouse',
+        machine: 'counter',
         ing: {
             tea: 2,
             ginger: 1,
@@ -3187,7 +3180,7 @@ Object.assign(RECIPES, {
     mirabelleBrandy: { id: 'mirabelleBrandy', machine: 'still', ing: { mirabelle: 5 }, time: 600, lvl: 22, base: 22, xp: 38 },
     calvados: { id: 'calvados', machine: 'still', ing: { cider: 3 }, time: 600, lvl: 22, base: 22, xp: 38 },
     walnutWine: { id: 'walnutWine', machine: 'still', ing: { walnut: 3, redWine: 1, sugar: 1 }, time: 480, lvl: 40, base: 40, xp: 30 },
-    roastChestnut: { id: 'roastChestnut', machine: 'roastery', ing: { chestnut: 3 }, time: 180, lvl: 35, base: 35, xp: 11 },
+    roastChestnut: { id: 'roastChestnut', machine: 'counter', ing: { chestnut: 3 }, time: 180, lvl: 35, base: 35, xp: 11 },
 });
 
 // ---------------- 1.3.2 : le saloir et 26 recettes ----------------
@@ -3271,7 +3264,7 @@ Object.assign(RECIPES, {
     saffronRisotto: { id: 'saffronRisotto', machine: 'stove', ing: { rice: 2, saffron: 1, butter: 1 }, time: 300, lvl: 19, base: 19, xp: 19 },
     paella: { id: 'paella', machine: 'fishmonger', ing: { rice: 2, saffron: 1, shrimp: 3, pepper: 3 }, time: 300, lvl: 34, base: 34, xp: 19 },
     saffronBrioche: { id: 'saffronBrioche', machine: 'bakery', ing: { saffron: 1, flour: 1, egg: 3, butter: 1 }, time: 300, lvl: 16, base: 16, xp: 19 },
-    genepiTea: { id: 'genepiTea', machine: 'teahouse', ing: { genepi: 2 }, time: 180, lvl: 40, base: 40, xp: 11 },
+    genepiTea: { id: 'genepiTea', machine: 'counter', ing: { genepi: 2 }, time: 180, lvl: 40, base: 40, xp: 11 },
     genepiChoc: { id: 'genepiChoc', machine: 'chocolatier', ing: { darkChoc: 1, genepi: 2 }, time: 300, lvl: 40, base: 40, xp: 19 },
     tiarePerfume: { id: 'tiarePerfume', machine: 'perfumery', ing: { tiare: 1 }, time: 240, lvl: 34, base: 34, xp: 15 },
     tiareCrown: { id: 'tiareCrown', machine: 'tailor', ing: { tiare: 1, flax: 3 }, time: 240, lvl: 34, base: 34, xp: 15 },
@@ -3304,7 +3297,7 @@ for (const [id, l] of Object.entries(LV_REC)) if (RECIPES[id]) [RECIPES[id].lvOl
 MACHINES.crepery = { id: 'crepery', name: 'Crêperie', cost: 8000, reqLvl: 21, desc: 'Galettes de sarrasin et crêpes' };
 Object.assign(RECIPES, {
     buckwheatFlour: { id: 'buckwheatFlour', machine: 'mill', ing: { buckwheat: 3 }, time: 60, lvl: 20, base: 20, xp: 4 },
-    sobacha: { id: 'sobacha', machine: 'teahouse', ing: { buckwheat: 2 }, time: 120, lvl: 27, base: 27, xp: 8 },
+    sobacha: { id: 'sobacha', machine: 'counter', ing: { buckwheat: 2 }, time: 120, lvl: 27, base: 27, xp: 8 },
     buckwheatSalad: { id: 'buckwheatSalad', machine: 'deli', ing: { buckwheat: 2, cucumber: 1, lemon: 1 }, time: 150, lvl: 21, base: 21, xp: 10 },
     tzatziki: { id: 'tzatziki', machine: 'deli', ing: { cucumber: 2, yogurt: 1, garlic: 1 }, time: 120, lvl: 29, base: 29, xp: 8 },
     gazpacho: { id: 'gazpacho', machine: 'deli', ing: { tomato: 2, cucumber: 1, pepper: 1 }, time: 120, lvl: 12, base: 12, xp: 8 },
@@ -3401,6 +3394,9 @@ Object.assign(RECIPES, {
     emeraldBrooch: { id: 'emeraldBrooch', machine: 'jewelry', ing: { emerald: 1, goldIngot: 1 }, time: 600, lvl: 34, base: 34, xp: 36 },
     emeraldRing: { id: 'emeraldRing', machine: 'jewelry', ing: { emerald: 1, goldIngot: 2 }, time: 660, lvl: 35, base: 35, xp: 40 },
 });
+
+// ---------------- 1.17 : le comptoir, une recette par boisson ----------------
+for (const [id, , ing, lvl, time] of NEW_DRINKS) RECIPES[id] = { id, machine: 'counter', ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 
 // ---------------- 1.8 : une machine par niveau, toujours avec ses recettes ----------------
 // lv17 : le niveau d'avant, pour qu'une ancienne partie garde ce qu'elle avait déjà ouvert

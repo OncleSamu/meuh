@@ -6,7 +6,7 @@ import { ANIMALS } from '../data/animals.js';
 import { MACHINES, RECIPES } from '../data/machines.js';
 import * as G from '../systems/index.js';
 import { actions } from './dom.js';
-import { go } from './app.js';
+import { go, ui } from './app.js';
 import { closeAll, openSheet } from './sheets.js';
 import { goFish } from './views/pond.js';
 
@@ -69,6 +69,10 @@ export function produce(id) {
     if (k < 0) {
         go('market/shop');
         return toast(`Il vous faut : ${MACHINES[r.machine].name}`, ['machine', r.machine]);
+    }
+    if (r.machine === 'counter') {
+        ui.sel.counterTab = 'atelier';
+        return go('machines/counter');
     }
     go('machines/workshop');
     openSheet('machine', { i: k, focus: id });

@@ -20,6 +20,7 @@ import { setupAnimals, wanderAnimals } from './ui/views/animals.js';
 import { setupWorkshop } from './ui/views/workshop.js';
 import { setupCave } from './ui/views/cave.js';
 import { setupBrewery } from './ui/views/brewery.js';
+import { setupCounter } from './ui/views/counter.js';
 import { setupOrders } from './ui/views/orders.js';
 import { setupDefis } from './ui/views/defis.js';
 import { setupVillage } from './ui/views/village.js';
@@ -62,6 +63,7 @@ function start() {
     setupWorkshop();
     setupCave();
     setupBrewery();
+    setupCounter();
     setupOrders();
     setupDefis();
     setupVillage();

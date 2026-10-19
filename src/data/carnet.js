@@ -758,3 +758,35 @@ Object.assign(CARNET, {
     emeraldRing:
         'La bague en émeraude, on ne la sort que pour les grands moments. Le jour où tu l’auras au doigt, ça voudra dire que ta ferme est devenue le plus beau domaine du pays. Et que je peux être fière de toi.',
 });
+
+// ---------------- 1.17 : le comptoir, thés et cafés ----------------
+Object.assign(CARNET, {
+    blackTea:
+        'Le thé noir, c’est celui de Papi Lucien. Il le voulait fort, presque noir, et il faisait la grimace quand je lui disais que c’était mauvais pour le sommeil.',
+    orangeTea: 'Les écorces d’orange séchées sur le radiateur, c’était l’odeur de décembre chez nous. Le thé à l’orange, c’est décembre en tasse.',
+    raspberryTea: 'Un thé à la framboise, ça se boit en regardant la pluie. Je ne sais pas pourquoi, mais ça ne marche pas quand il fait beau.',
+    lemonTea: 'Le citron dans le thé, c’est pour les gorges qui piquent et les journées qui traînent. Une tranche, pas deux, sinon on fait la grimace.',
+    apricotTea:
+        'Les abricots du voisin tombaient chez nous. Il disait que c’était du vol, je disais que c’était de la politesse. On a fini par en faire du thé ensemble.',
+    blueberryTea: 'Les myrtilles, on les cueille les doigts violets et on rentre avec la bouche pareille. Le thé garde un peu de ce souvenir.',
+    redInfusion: 'Les fruits rouges, c’est la tisane des petits-enfants : ça colore la tasse, ça sent bon, et personne ne se plaint.',
+    whiteTea: 'Le thé blanc, il faut le traiter comme une dame : de l’eau tiède, de la patience, et pas un mot plus haut que l’autre.',
+    barleyCoffee:
+        'Pendant les années difficiles, on faisait du café avec de l’orge grillée. À force, on a fini par préférer ça. Ne le dis pas aux vrais caféiers.',
+    barleyLatte: 'Le café d’orge au lait, c’était le petit déjeuner des enfants. Un bol, une tartine, et la journée pouvait commencer.',
+    matchaLatte: 'Le matcha, ça se fouette comme un blanc en neige. Gaston a essayé avec une fourchette. On n’en parle plus.',
+    tiareTea: 'Le tiaré, c’est la fleur qu’on glisse derrière l’oreille. En thé, elle sent les vacances que je n’ai jamais prises.',
+    lycheeTea: 'Un litchi, c’est un petit œuf qui cache une perle sucrée. Dans le thé, il se fait oublier et c’est lui qu’on goûte.',
+    chai: 'Un thé aux épices et au lait, plutôt costaud. Papi Lucien disait que ça réveillait les morts. Il en reprenait deux fois.',
+    espresso: 'Un expresso, ça ne se boit pas, ça se prend. Debout, au comptoir, en trois gorgées. Le reste de la journée peut attendre.',
+    cappuccino: 'La mousse de lait, c’est tout un art. La première fois, j’en ai mis partout, sauf dans la tasse. Le chien était ravi.',
+    hazelnutCoffee: 'Le café noisette, ma recette de dimanche. Les noisettes, je les écrase avec le dos de la cuillère, comme ma mère.',
+    vanillaLatte: 'Une gousse de vanille, c’est un trésor de gousse. Gratter, parfumer, et ne rien gaspiller. Même le fond du bocal sert.',
+    viennois: 'Un café sous un nuage de crème, voilà le viennois. À la première gorgée, on a une moustache. À la dernière, on en redemande.',
+    coconutCoffee: 'Le café à la noix de coco, c’est une idée de Maëva. Je me suis méfiée, puis j’ai tout bu.',
+    affogato: 'Une boule de glace, un café brûlant par-dessus. Ça fond, ça se mélange, et c’est à la fois un dessert et une pause.',
+    mocha: 'Le moka, c’est le café qui a fait des études de chocolat. Il en garde un petit air gourmand.',
+    islandCoffee: 'Un café, une goutte de rhum, de la crème par-dessus. On m’en servait un le soir de la Saint-Sylvestre, juste un. Enfin, un petit.',
+    chestnutCoffee: 'La crème de marron dans le café, c’est l’automne qui se glisse dans la tasse. Je le prépare quand les feuilles tombent.',
+    icedCaramel: 'Un café glacé, avec du lait et du caramel : en été, on en boit sur le perron, les pieds sur la rambarde. Papi Lucien m’en piquait la moitié.',
+});

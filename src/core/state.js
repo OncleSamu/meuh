@@ -46,6 +46,7 @@ export function newState() {
         defis: null,
         night: null,
         carnet: null,
+        counter: null, // 1.17 : le comptoir (salon, décors, clients)
         machines: [],
         quests: [],
         upgrades: { speed: 0, price: 0, yield: 0, feeder: 0, seeder: 0, harvester: 0 },

@@ -33,6 +33,7 @@ import './v111nature.js';
 import './v112verger.js';
 import './v113verger.js';
 import './v114.js';
+import './v117drinks.js';
 
 export const SPR = {
     farmhouse(l, roof) {

@@ -15,6 +15,7 @@ import { ensureVillagers } from './village.js';
 import { ensureGhPlots, seedList, plotRate, ghTick, ghOffline } from './farm.js';
 import { ensureAnimalData, animalsTick, growTick, animalsOffline } from './animals.js';
 import { ensureNature } from './nature.js';
+import { migrateCounter, counterTick } from './counter.js';
 import { ensureMachineData, ensureRecipeMoves, workshopTick, advanceMachine } from './workshop.js';
 import { ensureQuests, truckTick, balloonTick, checkQuestReady } from './orders.js';
 import { ensureStall, stallTick, neighborTick, neighborsReady } from './stall.js';
@@ -100,6 +101,7 @@ export function normalizeState() {
     ensureDefis();
     ensureNight();
     ensureCarnet();
+    migrateCounter();
     ensureNature();
     ensureMachineData();
     ensureRecipeMoves();
@@ -245,7 +247,7 @@ function tickProgress() {
     return false;
 }
 
-const SYSTEMS = [tickClock, tickWorld, tickFarm, animalsTick, workshopTick, tickDeliveries, tickCave, tickProgress];
+const SYSTEMS = [tickClock, tickWorld, tickFarm, animalsTick, workshopTick, () => counterTick(1), tickDeliveries, tickCave, tickProgress];
 
 // renvoie vrai si quelque chose de visible a changé
 export function gameTick() {

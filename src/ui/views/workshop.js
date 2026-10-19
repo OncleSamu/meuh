@@ -24,7 +24,7 @@ function tile(m, i) {
         ? `<div class="m-now">${ico(['item', cur])}<span>${ITEMS[cur].name}</span></div>${bar(G.machinePct(m), 'm-bar', `mac:${i}`)}<div class="m-time">${timer(now() + G.machineLeft(m) * 1000)}${m.queue.length > 1 ? ` · +${m.queue.length - 1} en file` : ''}</div>`
         : `<div class="m-idle">${m.loop ? 'En boucle : ingrédients manquants' : 'À l’arrêt'}</div>`;
     return `<div class="mtile${G.machineBusy(m) ? ' working' : ''}${ready.length ? ' has-out' : ''}" data-anchor="machine:${i}">
-        <button class="mtile-main" data-act="open" data-sheet="machine" data-i="${i}">
+        <button class="mtile-main" ${m.type === 'counter' ? 'data-act="go" data-path="machines/counter"' : `data-act="open" data-sheet="machine" data-i="${i}"`}>
             <span class="m-art">${art('machine', m.type)}${puffs(m)}</span>
             <span class="m-name">${d.name}${m.loop ? ico(['ui', 'loop'], 'ico m-loop') : ''}</span>
             ${status}
