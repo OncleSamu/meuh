@@ -2,7 +2,7 @@
 // Le joueur lui déclare un produit phare (au moins une étoile de maîtrise) ; Armand en demande 60 à 1200 d'un coup.
 // Chaque unité livrée paie tout de suite à prix fixe ; la commande finie donne un bonus, des matériaux rares et +1 de fidélité.
 import { state, scaleLvl } from '../core/state.js';
-import { now } from '../core/clock.js';
+import { visitor } from '../core/visits.js';
 import { view } from '../core/view.js';
 import { pickRand, round5 } from '../core/format.js';
 import { toast, sfx, buzz, burst } from '../core/bus.js';
@@ -14,15 +14,16 @@ import { giveRare } from './barn.js';
 import { masteryKnown, masteryStars, masteryMult, masteryExtra } from './mastery.js';
 
 export const armandOpen = () => state.level >= ARMAND.lvl;
-const cycle = (t = now()) => Math.floor(t / ARMAND.every);
-export const armandArrive = (t = now()) => (cycle(t) + (t - cycle(t) * ARMAND.every < ARMAND.stay ? 0 : 1)) * ARMAND.every;
-export const armandLeave = () => cycle() * ARMAND.every + ARMAND.stay;
-export const armandHere = (t = now()) => armandOpen() && t - cycle(t) * ARMAND.every < ARMAND.stay;
+const V = visitor(ARMAND.every, ARMAND.stay);
+const cycle = V.cycle;
+export const armandArrive = V.arrive;
+export const armandLeave = V.leave;
+export const armandHere = t => armandOpen() && V.here(t);
 const A = () => (state.armand = state.armand || { k: -1, flagship: null, fid: {}, order: null });
 
 export const armandFlagship = () => (state.armand && state.armand.flagship) || null;
 export const armandFid = id => (state.armand && state.armand.fid && state.armand.fid[id]) || 0;
-export const armandOrder = () => (state.armand && state.armand.order) || null;
+export const armandOrder = () => (state.armand && state.armand.order && ITEMS[state.armand.order.id] ? state.armand.order : null);
 // il attend encore quelque chose
 export const armandPending = () => {
     const o = armandOrder();
@@ -84,7 +85,7 @@ export function setFlagship(id) {
 // livrer tout ce qu'on a (ou n unités)
 export function deliverArmand(at, n) {
     const a = state.armand;
-    const o = a && armandHere() && a.order;
+    const o = a && armandHere() && a.k === cycle() && armandOrder();
     if (!o || o.done) return false;
     const can = Math.min(state.inventory[o.id] || 0, o.qty - o.got, n || Infinity);
     if (can <= 0) return false;

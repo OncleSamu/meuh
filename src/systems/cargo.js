@@ -2,7 +2,7 @@
 // Six soutes énormes : trois produits de la ferme, trois de l'atelier. Chaque unité chargée paie tout de suite ;
 // l'avion plein donne un gros bonus. Les soutes se remplissent petit à petit.
 import { state, scaleLvl } from '../core/state.js';
-import { now } from '../core/clock.js';
+import { visitor } from '../core/visits.js';
 import { view } from '../core/view.js';
 import { pickRand, round5 } from '../core/format.js';
 import { toast, sfx, buzz, burst } from '../core/bus.js';
@@ -15,11 +15,11 @@ import { clampQuality } from './farm.js';
 import { giveRare } from './barn.js';
 
 export const cargoOpen = () => state.level >= CARGO.lvl;
-// le créneau en cours : un avion par période de 48 heures, posé pendant les 24 premières
-const cycle = (t = now()) => Math.floor(t / CARGO.every);
-export const cargoArrive = (t = now()) => (cycle(t) + (t - cycle(t) * CARGO.every < CARGO.stay ? 0 : 1)) * CARGO.every;
-export const cargoLeave = () => cycle() * CARGO.every + CARGO.stay;
-export const cargoHere = (t = now()) => cargoOpen() && t - cycle(t) * CARGO.every < CARGO.stay;
+const V = visitor(CARGO.every, CARGO.stay);
+const cycle = V.cycle;
+export const cargoArrive = V.arrive;
+export const cargoLeave = V.leave;
+export const cargoHere = t => cargoOpen() && V.here(t);
 
 function pickWeighted(list) {
     let x = Math.random() * list.reduce((a, i) => a + itemWeight(i.id), 0);

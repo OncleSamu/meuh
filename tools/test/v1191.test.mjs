@@ -55,3 +55,38 @@ test('Armand : produit phare, commande, livraison, fidélité', () => {
         setClock(() => Date.now());
     }
 });
+
+test('Armand : une ancienne sauvegarde sans Armand se recharge', () => {
+    fresh();
+    assert.equal(G.armandFid('apple'), 0);
+    assert.equal(G.armandOrder(), null);
+});
+test('Armand : on peut changer de produit avant la première livraison, pas après ; absent, rien à livrer', () => {
+    fresh();
+    state.mastery.apple = 1000;
+    state.mastery.milk = 1000;
+    const base = Math.floor(Date.now() / ARMAND.every) * ARMAND.every;
+    setClock(() => base + 1000);
+    try {
+        G.armandTick();
+        assert.ok(G.setFlagship('apple'));
+        assert.ok(G.setFlagship('milk'));
+        assert.equal(G.armandOrder().id, 'milk');
+        state.inventory.milk = 5;
+        assert.ok(G.deliverArmand(null, 2));
+        assert.equal(G.setFlagship('apple'), false);
+        // il repart : la commande disparaît, on peut rechoisir, plus de livraison possible
+        setClock(() => base + ARMAND.stay + 1000);
+        G.armandTick();
+        assert.equal(G.armandOrder(), null);
+        assert.equal(G.deliverArmand(null), false);
+        assert.ok(G.setFlagship('apple'));
+        // la visite suivante repart d'une commande neuve
+        setClock(() => base + ARMAND.every + 1000);
+        G.armandTick();
+        assert.equal(G.armandOrder().id, 'apple');
+        assert.equal(G.armandOrder().got, 0);
+    } finally {
+        setClock(() => Date.now());
+    }
+});

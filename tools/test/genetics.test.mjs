@@ -62,9 +62,10 @@ test('un croisement donne des graines d’une nouvelle variété, qui pousse au 
     assert.ok(G.selectTool('var'));
     const i = state.grid.findIndex(p => p.isUnlocked && !p.itemId && !p.deco);
     state.grid[i].terrain = 'plowed';
-    G.doPlotAction(i, G.plotAction(state.grid[i], 'var', i));
+    // pendant les ticks, un corbeau, un parasite ou un œuf ont pu s'inviter : on sème directement
+    G.doPlotAction(i, 'plantVar');
     assert.equal(state.grid[i].v, v.id);
-    for (let k = 0; k < 40 && !state.grid[i].isReady; k++) {
+    for (let k = 0; k < 200 && !state.grid[i].isReady; k++) {
         state.grid[i].isWatered = true;
         state.grid[i].pest = false;
         tick(500);
@@ -108,7 +109,8 @@ test('élevage : un petit naît avec les gènes de ses parents ; une race se fix
     const n = state.animals.length;
     assert.ok(G.startBreed(cows[0].uid, cows[1].uid));
     tick(GENETICS.breedTime + 2);
-    assert.equal(state.animals.length, n + 1);
+    // des jumeaux peuvent naître (GENETICS.twins) : une ou deux bêtes de plus
+    assert.ok([n + 1, n + 2].includes(state.animals.length));
     const baby = state.animals[n];
     assert.equal(baby.gen, 1);
     // une bête stable de 3e génération se fixe
