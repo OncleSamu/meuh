@@ -438,3 +438,32 @@
     width: 44px;
     height: 44px;
 }
+
+/* 1.15.3 : la bouteille en grand */
+.bottle-view {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 0 14px;
+}
+.bottle-big {
+    flex: none;
+    filter: drop-shadow(0 6px 6px rgba(58, 38, 24, 0.25));
+}
+.bottle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+.bottle-year {
+    font:
+        700 28px/1 Georgia,
+        serif;
+    color: var(--brown, #3a2618);
+}
+.cave-slot .ico[data-sheet='bottle'],
+.reserve-row .ico[data-sheet='bottle'] {
+    cursor: zoom-in;
+}

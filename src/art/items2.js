@@ -25,7 +25,7 @@ export const LABEL_STYLES = [
 // la capsule dit la qualité de l'année : froide (grise), grande (argent), siècle (or)
 const CAPS = [['#8a9a9a', '#5a6a6a'], null, ['#cfd6dc', '#8a96a0'], ['#ffd23f', '#b8860b']];
 const yearText = (x, y, year) =>
-    `<text x="${x}" y="${y}" font-family="Georgia,serif" font-size="6.2" font-weight="700" text-anchor="middle" fill="#3a2618">${year}</text>`;
+    `<text x="${x}" y="${y}" font-family="Georgia,serif" font-size="6.8" font-weight="700" text-anchor="middle" fill="#3a2618">${year}</text>`;
 const wineDraw = ({ glass, glassHi, wine, label, band, capsule, capsuleD, mark }, o = {}) => {
     const st = LABEL_STYLES[o.ls] || LABEL_STYLES[0];
     if (st.label) ({ label, band, mark } = { label: st.label, band: st.band, mark: st.mark });

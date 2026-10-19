@@ -9,6 +9,7 @@ import { VILLAGERS } from '../../data/village.js';
 import { beerSvg } from '../../art/abbey.js';
 import { wineBottle, LABEL_STYLES } from '../../art/items2.js';
 import { renameBtn } from '../sheets/rename.js';
+import '../sheets/bottle.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions } from '../dom.js';
 import { ico, art } from '../icons.js';
@@ -24,7 +25,7 @@ const lotIco = (l, cls = 'ico') =>
     l.id === 'beer' && G.beerOf(l.bid)
         ? `<i class="${cls}">${beerSvg(G.beerOf(l.bid))}</i>`
         : l.vy && G.vintageOf(l)
-          ? `<i class="${cls}"><svg viewBox="0 0 64 64">${wineBottle(l.id, { year: l.vy, vq: l.vq, ls: l.ls })}</svg></i>`
+          ? `<i class="${cls}" data-act="open" data-sheet="bottle" data-uid="${l.uid}" role="button" aria-label="Voir la bouteille en grand"><svg viewBox="0 0 64 64">${wineBottle(l.id, { year: l.vy, vq: l.vq, ls: l.ls })}</svg></i>`
           : ico(['item', l.id], cls);
 const bottleTools = l =>
     l.vy && G.vintageOf(l)

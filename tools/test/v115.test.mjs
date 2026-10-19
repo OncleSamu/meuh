@@ -108,3 +108,14 @@ test('bouteilles personnalisées : millésime, étiquette, nom de cuvée', async
     assert.ok(G.renameLot(uid, ''));
     assert.equal(G.lotName(r), ITEMS.redWine.name);
 });
+
+test('la bouteille en grand : fenêtre et dessin', async () => {
+    start();
+    const { bottleSvg } = await import('../../src/ui/sheets/bottle.js');
+    G.ensureCave();
+    state.inventory.whiteWine = 2;
+    G.putInCave(1, 'whiteWine', 2);
+    const l = state.cave.slots[1];
+    assert.ok(G.findLot(l.uid));
+    assert.ok(bottleSvg(l).includes('>' + l.vy + '<'));
+});
