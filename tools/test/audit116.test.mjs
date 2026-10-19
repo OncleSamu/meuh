@@ -40,3 +40,18 @@ test('Débiter les morts : un appui libère toutes les places', () => {
     assert.ok(state.inventory.wood > before);
     assert.equal(G.fellDeadTrees(null), 0);
 });
+
+test('Semer plante la graine choisie sur toutes les parcelles vides', () => {
+    G.loadGame();
+    state.level = 10;
+    state.money = 10000;
+    state.selectedTool = 'carrot';
+    state.seeds.carrot = 3;
+    [0, 1, 2].forEach(i => Object.assign(state.grid[i], { isUnlocked: true, terrain: 'plowed', itemId: null }));
+    const free = [...G.allPlots()].filter(([p]) => p.isUnlocked && !p.itemId && p.terrain !== 'grass').length;
+    const n = G.plantAll(null);
+    assert.equal(n, free);
+    assert.ok(n >= 1);
+    state.selectedTool = 'hand';
+    assert.equal(G.plantAll(null), 0);
+});

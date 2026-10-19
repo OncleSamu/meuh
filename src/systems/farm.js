@@ -336,6 +336,25 @@ export function waterAll(at) {
     return n;
 }
 
+// 1.15.5 : sème l'outil choisi sur toutes les parcelles vides d'un coup
+export function plantAll(at) {
+    const tool = state.selectedTool;
+    if (!ITEMS[tool] || !['crop', 'tree'].includes(ITEMS[tool].type)) {
+        toast('Choisissez d’abord une graine dans la barre d’outils');
+        return 0;
+    }
+    let n = 0;
+    for (const [p, i] of allPlots()) {
+        if (plotAction(p, tool, i) !== 'plant' || p.itemId) continue;
+        doPlotAction(i, 'plant', at);
+        if (!p.itemId) break;
+        n++;
+    }
+    if (n) changed('farm');
+    else squish(at);
+    return n;
+}
+
 export function harvestAll(at) {
     const totals = {};
     let n = 0,

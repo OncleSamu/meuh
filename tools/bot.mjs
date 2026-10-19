@@ -200,7 +200,9 @@ function machines() {
                     (cw[b.id] && state.inventory[b.id] < cw[b.id] ? 1 : 0) - (cw[a.id] && state.inventory[a.id] < cw[a.id] ? 1 : 0) ||
                     (ITEMS[b.id].sell || 0) / b.time - (ITEMS[a.id].sell || 0) / a.time,
             );
-            const r = opts[0];
+            // ce qui n'est pas demandé ne mange pas les ingrédients dont un chantier a besoin (sucre, crème…)
+            const r = opts.find(x => nd[x.id] > state.inventory[x.id] || !Object.keys(x.ing).some(k => nd[k] > state.inventory[k]));
+            if (!r) break;
             if (!(nd[r.id] > state.inventory[r.id]) && G.barnSpace() < G.barnCap() * 0.3) break;
             // comme le joueur : les meilleurs ingrédients d'abord (plats d'argent et d'or)
             if (!G.queueRecipe(i, r.id, null)) break;
