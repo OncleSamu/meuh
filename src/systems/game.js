@@ -45,6 +45,7 @@ import { ensureDefis, defiTick } from './defis.js';
 import { ensureNight, nightTick } from './night.js';
 import { brewOpen, ensureBrew, brewTick } from './brewery.js';
 import { cargoTick, cargoHere, cargoLeave } from './cargo.js';
+import { armandTick, armandHere, armandLeave, armandPending } from './armand.js';
 import { pondTick, trapsReady } from './fishing.js';
 
 // ---------------- chargement ----------------
@@ -219,6 +220,7 @@ function tickDeliveries() {
     if (geneticsTick()) changed = true;
     if (brewTick()) changed = true;
     if (cargoTick()) changed = true;
+    if (armandTick()) changed = true;
     if (pondTick()) changed = true;
     if (defiTick()) changed = true;
     if (nightTick()) changed = true;
@@ -308,6 +310,7 @@ export function offlineProgress() {
     truckTick();
     balloonTick();
     cargoTick();
+    armandTick();
     pondTick();
     merchantTick();
     stallTick();
@@ -364,6 +367,11 @@ export function offlineProgress() {
         cargoHere() && state.cargo && !state.cargo.done,
         ['ui', 'plane'],
         `L’avion-cargo est posé : il repart dans ${formatDuration((cargoLeave() - now()) / 1000)}`,
+    );
+    add(
+        armandHere() && armandPending(),
+        ['villager', 'armand'],
+        `Armand, du Grand Hôtel, attend sa commande : il repart dans ${formatDuration((armandLeave() - now()) / 1000)}`,
     );
     add(state.balloon.status === 'here', ['ui', 'balloon'], 'Une montgolfière attend dans le pré');
     add(state.merchant.status === 'here', ['ui', 'merchant'], 'Zéphyr, le marchand ambulant, est là (onglet Marché)');

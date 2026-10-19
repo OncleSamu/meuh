@@ -10,7 +10,7 @@ import { ITEMS } from '../../data/items.js';
 import { ico, art, SPR } from '../icons.js';
 import { btn, bar, timer, section, hint } from '../kit.js';
 import { defineView } from '../app.js';
-import { defineSheet, closeSheet } from '../sheets.js';
+import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { itemLine, rewardHtml } from './common.js';
 import { confirmTap } from '../confirm.js';
 import { defiCard } from './defis.js';
@@ -177,6 +177,52 @@ function cargoCard() {
         ${c.done ? '' : `<div class="truck-reward"><span>Avion plein : bonus</span>${rewardHtml(G.cargoBonus(), G.cargoBonusXp())}${ico(['item', 'plank'])}${ico(['item', 'nail'])}${ico(['item', 'paint'])}</div>`}</div>`;
 }
 
+// ---------------- 1.19.1 : Armand, chef du Grand Hôtel ----------------
+const portrait = ico(['villager', 'armand'], 'ico big');
+function armandCard() {
+    if (!G.armandOpen()) return null;
+    const f = G.armandFlagship(),
+        o = G.armandOrder();
+    const fidStars = id => '★'.repeat(G.armandFid(id)) + '☆'.repeat(5 - G.armandFid(id));
+    const pick = btn(f ? 'Changer' : 'Choisir', { act: 'armandPick', size: 'sm', disabled: !G.armandCanChange() });
+    if (!G.armandHere())
+        return `<div class="card away armand-card">${portrait}<div class="card-main"><div class="card-title">Armand, chef du Grand Hôtel</div>
+            <div class="card-sub">${f ? `Produit phare : <b>${ITEMS[f].name}</b> · fidélité ${fidStars(f)}` : 'Dites-lui votre produit phare : il vous en commandera des quantités énormes.'}<br>Prochaine visite dans ${timer(G.armandArrive(), 'b')} · une fois par semaine, il reste trois jours</div>
+            <div class="od-foot">${pick}</div></div></div>`;
+    if (!o)
+        return `<div class="card armand-card here">${portrait}<div class="card-main"><div class="card-title">Armand, chef du Grand Hôtel</div>
+            <div class="card-sub">« Quel est votre produit phare ? Je vous en prendrai des montagnes ! » Il reste ${timer(G.armandLeave(), 'b')}.</div>
+            <div class="od-foot">${btn('Choisir', { act: 'armandPick', kind: 'green', size: 'sm' })}</div></div></div>`;
+    const have = state.inventory[o.id] || 0,
+        left = o.qty - o.got,
+        n = Math.min(have, left);
+    return `<div class="card armand-card here"><div class="card-head">${portrait}<div class="card-main"><div class="card-title">Armand, chef du Grand Hôtel</div>
+        <div class="card-sub">${o.done ? 'Commande complète : merci, le Grand Hôtel n’oubliera pas !' : `Il veut <b>${fmt(o.qty)} ${ITEMS[o.id].name.toLowerCase()}</b>, payés ${fmt(G.armandPay(o, 1))} pièces l’unité, quel que soit le marché.`} Fidélité ${fidStars(o.id)}</div></div>
+        <span class="timer-pill" title="Temps réel">${ico(['ui', 'clock'])}${timer(G.armandLeave())}</span></div>
+        <div class="holds"><div class="hold${o.done ? ' full' : ''}"><button class="hold-item" data-act="produce" data-id="${o.id}" aria-label="Aller produire">${ico(['item', o.id], 'ico big')}</button>
+            <div class="hold-main"><b>${ITEMS[o.id].name}</b>${bar(o.got / o.qty)}<small>${fmt(o.got)} / ${fmt(o.qty)}${o.done ? '' : ` · ${fmt(have)} en stock${have ? ` · ${fmt(G.armandPay(o, n))}${ico(['ui', 'coin'])}` : ''}`}</small></div>
+            ${o.done ? ico(['ui', 'check'], 'ico tick') : btn(have ? `Livrer ${fmt(n)}` : 'Produire', { act: have ? 'armandGive' : 'produce', data: have ? {} : { id: o.id }, kind: have ? 'green' : '', size: 'sm' })}</div></div>
+        ${o.done ? '' : `<div class="truck-reward"><span>Commande finie : bonus</span>${rewardHtml(G.armandBonus(), G.armandBonusXp())}${ico(['item', 'plank'])}${ico(['item', 'nail'])}${ico(['item', 'paint'])}</div>`}
+        <div class="od-foot">${btn('Changer de produit phare', { act: 'armandPick', size: 'sm', disabled: !G.armandCanChange() })}</div></div>`;
+}
+defineSheet('armandPick', {
+    cls: 'armand-sheet',
+    title: () => 'Produit phare d’Armand',
+    render() {
+        const list = G.armandCandidates();
+        const f = G.armandFlagship();
+        const rows = list
+            .map(
+                id => `<div class="hold${id === f ? ' full' : ''}">${ico(['item', id], 'ico big')}<div class="hold-main"><b>${ITEMS[id].name}</b>
+                <small>${fmt(G.armandQty(id))} unités · ${fmt(G.armandPay({ id }, 1))} pièces l’unité · fidélité ${G.armandFid(id)}/5</small></div>
+                ${id === f ? ico(['ui', 'check'], 'ico tick') : btn('Choisir', { act: 'armandSet', data: { id }, kind: 'green', size: 'sm' })}</div>`,
+            )
+            .join('');
+        return `<div class="armand-pick"><p class="card-sub">Armand ne commande que ce que vous maîtrisez (au moins une étoile). Sa commande grossit avec la maîtrise et la fidélité, de ${fmt(60)} à ${fmt(1200)} unités.</p>
+            <div class="holds">${rows || '<p class="card-sub center">Aucun produit maîtrisé pour l’instant : gagnez une étoile de maîtrise (livre des produits).</p>'}</div></div>`;
+    },
+});
+
 function delivery(kind) {
     const isBoat = kind === 'boat';
     const open = isBoat ? G.boatOpen() : G.balloonOpen();
@@ -205,6 +251,7 @@ function renderOrders(el) {
         ['board', board()],
         ['train', train()],
         ['cargo', cargoCard()],
+        ['armand', armandCard()],
         ['balloon', delivery('balloon')],
         ['boat', delivery('boat')],
         // 1.9 : venus du volet Village
@@ -225,6 +272,9 @@ export function setupOrders() {
         pin: (el, d) => G.togglePin(+d.i),
         express: el => G.deliverExpress(el),
         loadHold: (el, d) => G.loadHold(+d.i, el),
+        armandGive: el => G.deliverArmand(el),
+        armandPick: () => openSheet('armandPick', {}),
+        armandSet: (el, d) => G.setFlagship(d.id) && closeSheet('armandPick'),
         chef: (el, d) => G.deliverChef(d.id, el),
         loadWagon: (el, d) => G.loadSlot(+d.k, el.closest('[data-anchor]')),
         sendBalloon: el => G.sendBalloon(el),

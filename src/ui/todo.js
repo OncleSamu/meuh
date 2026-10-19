@@ -71,6 +71,12 @@ export function todoList() {
         if (bo) push('machines/brew', ['villager', 'hugues'], `${bo} commande${s(bo)} de bière à livrer`, bo);
         if (G.beerBookClaimable()) push('machines/brew', ['ui', 'beer'], 'Récompense du livre des bières', 1);
     }
+    // 1.19.1 : Armand
+    if (G.armandHere()) {
+        const ao = G.armandOrder();
+        if (!ao && G.armandCandidates().length) push('village/orders', ['villager', 'armand'], 'Armand cherche un produit phare', 1);
+        else if (ao && !ao.done && (state.inventory[ao.id] || 0) > 0) push('village/orders', ['villager', 'armand'], 'Armand attend sa commande', 1);
+    }
     // 1.8 : l'avion-cargo
     const cg = G.cargoReady();
     if (cg) push('village/orders', ['ui', 'plane'], `${cg} soute${s(cg)} de l’avion-cargo à charger`, cg);

@@ -129,3 +129,20 @@ export const CARGO = {
     bonus: 0.8, // l'avion plein : 80 % de plus, et des matériaux rares
     mats: 3,
 };
+
+// 1.19.1 : Armand, chef du Grand Hôtel. Il passe rarement, et demande le produit phare en quantité énorme.
+export const ARMAND = {
+    lvl: 22,
+    every: 7 * 24 * 3600 * 1000, // il vient une fois par semaine (temps réel, même jeu fermé)
+    stay: 3 * 24 * 3600 * 1000, // et reste trois jours
+    min: 60,
+    max: 1200,
+    value: lvl => 5 * (1800 + lvl * 650), // valeur de la commande, au prix de vente
+    pay: 1.8, // chaque unité livrée rapporte 1,8 fois son prix, quelle que soit la demande du marché
+    fidPay: 0.1, // +10 % par point de fidélité
+    fidQty: 0.2, // +20 % de quantité par point de fidélité
+    fidMax: 5,
+    bonus: 0.6,
+    xp: 0.35,
+    mats: 3,
+};
