@@ -1,5 +1,6 @@
 import { LV_ITEM } from './levels14.js';
 import { NEW_DRINKS, COFFEE_GATED } from './counter.js';
+import { SERRE_RECIPES } from './serre.js';
 // Tous les produits du jeu : cultures, arbres, produits animaux, plats, matériaux.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -2823,6 +2824,23 @@ Object.assign(ITEMS, {
     graftRobust: { id: 'graftRobust', name: 'Greffon robuste', type: 'material' },
 });
 
+// ---------------- 1.18.7 : les cultures de la serre ----------------
+Object.assign(ITEMS, {
+    mint: { id: 'mint', name: 'Menthe', seedName: 'Plants de menthe', type: 'crop', cost: 40, sell: 120, time: 420, reqLvl: 24, xp: 6, ghOnly: true },
+    peppercorn: {
+        id: 'peppercorn',
+        name: 'Poivre noir',
+        seedName: 'Poivrier en pot',
+        type: 'crop',
+        cost: 90,
+        sell: 300,
+        time: 720,
+        reqLvl: 35,
+        xp: 11,
+        ghOnly: true,
+    },
+    orchid: { id: 'orchid', name: 'Orchidée', seedName: 'Orchidée en pot', type: 'crop', cost: 120, sell: 380, time: 900, reqLvl: 41, xp: 13, ghOnly: true },
+});
 // ---------------- 1.17 : le comptoir, les thés et cafés nouveaux ----------------
 // le prix suit les ingrédients (même marge que les anciennes boissons : environ 1,37 fois leur valeur)
 for (const [id, name, ing, , , tag] of NEW_DRINKS) {
@@ -2833,3 +2851,9 @@ for (const [id, name, ing, , , tag] of NEW_DRINKS) {
 }
 // le café n'ouvre qu'après la brûlerie de l'île (c'était la condition de la machine)
 COFFEE_GATED.forEach(id => (ITEMS[id].needProject = 'roasting'));
+
+// ---------------- 1.18.7 : les cultures de la serre et leurs recettes ----------------
+for (const [id, name, , ing] of SERRE_RECIPES) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}

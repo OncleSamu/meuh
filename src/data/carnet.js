@@ -790,3 +790,20 @@ Object.assign(CARNET, {
     chestnutCoffee: 'La crème de marron dans le café, c’est l’automne qui se glisse dans la tasse. Je le prépare quand les feuilles tombent.',
     icedCaramel: 'Un café glacé, avec du lait et du caramel : en été, on en boit sur le perron, les pieds sur la rambarde. Papi Lucien m’en piquait la moitié.',
 });
+
+// ---------------- 1.18.7 : les cultures de la serre ----------------
+Object.assign(CARNET, {
+    taboule:
+        'Le taboulé, c’est la semoule qui apprend à être fraîche. Beaucoup de menthe, beaucoup de citron, et on le mange le lendemain, quand il a pris ses couleurs.',
+    mintIce:
+        'La glace à la menthe, c’est un petit coup de vent dans la bouche. Papi Lucien en voulait toujours avec des pépites de chocolat, « pour la raison ».',
+    mintTea: 'Le thé à la menthe, on le verse de très haut, pour qu’il fasse de la mousse. Ça ne change rien au goût, mais ça impressionne les invités.',
+    pepperMagret:
+        'Un magret, du poivre en grains écrasés au dernier moment, un peu de crème. Ton grand-père disait que c’était le plat des dimanches qui comptent.',
+    pepperCheese: 'Le fromage au poivre pique juste ce qu’il faut. Avec un verre de rouge, ton grand-père en oubliait l’heure du dîner.',
+    pepperSaucisson: 'Dans le saucisson, le poivre, c’est comme les rires dans une famille : on les voit partout quand on regarde bien.',
+    orchidPerfume:
+        'Un parfum d’orchidée, ça sent une fleur qui se prend au sérieux. J’en mets une goutte derrière l’oreille les jours de fête, et personne ne me résiste.',
+    orchidSoap: 'Le savon à l’orchidée est si joli que personne n’ose s’en servir. Il reste sur le rebord, et la salle de bains sent bon quand même.',
+    orchidDried: 'Une orchidée séchée garde sa forme, mais plus ses manières. Pendue la tête en bas dans le couloir, elle fait le plus joli des mobiles.',
+});

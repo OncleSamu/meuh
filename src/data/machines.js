@@ -1,6 +1,7 @@
 import { LV_MACH, LV_REC } from './levels14.js';
 import { LV18_MACH, LV18_REC } from './levels18.js';
 import { NEW_DRINKS } from './counter.js';
+import { SERRE_RECIPES } from './serre.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -3402,6 +3403,8 @@ for (const [id, , ing, lvl, time] of NEW_DRINKS) RECIPES[id] = { id, machine: 'c
 // lv17 : le niveau d'avant, pour qu'une ancienne partie garde ce qu'elle avait déjà ouvert
 for (const [id, l] of Object.entries(LV18_MACH)) if (MACHINES[id]) [MACHINES[id].lv17, MACHINES[id].reqLvl] = [MACHINES[id].reqLvl, l];
 for (const [id, l] of Object.entries(LV18_REC)) if (RECIPES[id]) [RECIPES[id].lv17, RECIPES[id].lvl, RECIPES[id].base] = [RECIPES[id].lvl, l, l];
+// 1.18.7 : les recettes des cultures de la serre
+for (const [id, , machine, ing, time, lvl, xp] of SERRE_RECIPES) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp };
 // une recette ne s'ouvre jamais avant sa machine
 for (const r of Object.values(RECIPES)) {
     const m = MACHINES[r.machine];

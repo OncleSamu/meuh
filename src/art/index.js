@@ -36,6 +36,7 @@ import './v114.js';
 import './v117drinks.js';
 import './v117redraw.js';
 import './v118decos.js';
+import './v1186serre.js';
 
 export const SPR = {
     farmhouse(l, roof) {
