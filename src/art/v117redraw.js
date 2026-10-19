@@ -1,5 +1,5 @@
-// 1.17 : les kakis séchés, les lardons et huit plats redessinés.
-import { C, E, F, FC, FE, HL, L, O, P, R, SHADOW, items, sub } from './kit.js';
+// 1.17.4 : kakis séchés, lardons et douze autres sprites redessinés.
+import { C, E, F, FC, FE, HL, L, O, P, R, SHADOW, items, leaf, sub } from './kit.js';
 import { woodBoard } from './items2.js';
 
 // ---------------- kakis séchés : trois hoshigaki pendus à la ficelle ----------------
@@ -265,3 +265,111 @@ items.banana = () =>
     P('M18 8 Q32 2 46 9 L45 15 Q32 9 19 15Z', '#7a8c34', 2.4) +
     F('M22 9 Q32 5 40 8 Q32 7 22 11Z', '#b6c862', 0.8) +
     `</g>`;
+
+// ---------------- couette, écharpe, torchon, rochers coco ----------------
+// la couette : un gros matelassé bleu, carreaux piqués, revers crème, bords gonflés
+items.quilt = () => {
+    const BL = '#86c4ea';
+    const puff = [];
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) puff.push([12 + c * 12.4 + r * 0, 29 + r * 7.6]);
+    return (
+        SHADOW(32, 58, 27, 3) +
+        P('M5 30 Q4 24 10 22 L54 22 Q60 24 59 30 L58 49 Q58 55 52 55 L12 55 Q6 55 6 49Z', BL, 2.4) +
+        puff.map(([x, y]) => E(x + 1, y + 1.5, 5.6, 3.6, '#a6d6f2', 0, 0)).join('') +
+        L('M18 24 L16 54 M30 24 L30 54 M42 24 L44 54 M8 33 Q32 36 56 33 M7 43 Q32 47 57 43', 1.5, '#4f93bf') +
+        L('M18 24 L16 54 M30 24 L30 54 M42 24 L44 54', 0.6, '#fff') +
+        // le revers crème
+        P('M6 22 Q32 16 58 22 L58 29 Q32 24 6 29Z', '#fff4dc', 2.2) +
+        L('M10 25 Q32 20 54 25', 1, '#e8cf9a') +
+        P('M32 36 L34 40 L38.5 40.5 L35 43.5 L36.2 48 L32 45.5 L27.8 48 L29 43.5 L25.5 40.5 L30 40Z', '#ffd84a', 1.4) +
+        HL(14, 32, 4, 1.4, -8, 0.7)
+    );
+};
+
+// l'écharpe angora : écharpe lilas en boucle, rayures crème, franges, bord duveteux
+items.scarf = () => {
+    const band = 'M10 14 Q8 30 20 36 Q34 40 44 34 Q52 30 50 18 L40 20 Q42 26 36 28 Q28 30 22 26 Q20 20 22 14Z';
+    const fluff = [
+        [11, 18],
+        [10, 26],
+        [14, 33],
+        [22, 36],
+        [32, 39],
+        [42, 36],
+        [49, 30],
+        [51, 22],
+    ]
+        .map(([x, y]) => C(x, y, 2.6, '#d6b4ec', 1.6))
+        .join('');
+    return (
+        SHADOW(32, 58, 24, 3) +
+        // la queue qui pend devant
+        P('M42 33 L52 32 L55 52 L43 53Z', '#c49ae0', 2.2) +
+        L('M43.5 40 L54 39.5 M43.5 46 L54.5 45.5', 3, '#fff4dc') +
+        L('M44 53 L44 58 M47 53 L47 59 M50 52.5 L50 58 M53 52 L53.5 58', 1.8) +
+        L('M44 53 L44 58 M47 53 L47 59 M50 52.5 L50 58 M53 52 L53.5 58', 0.8, '#fff4dc') +
+        fluff +
+        P(band, '#c49ae0', 2.4) +
+        L('M13 16 Q12 28 22 33 M17 15 Q16 24 24 28', 2.6, '#fff4dc') +
+        L('M12 20 Q11 28 18 33 M20 14 Q19 18 22 22', 0.8, '#9a6cc0') +
+        P('M20 36 Q34 41 44 34 L43 40 Q34 46 20 42Z', '#d8b6ee', 2) +
+        HL(16, 24, 2.2, 5, -12, 0.6) +
+        FC(30, 40, 1, '#fff', 0.8)
+    );
+};
+
+// le torchon brodé : lin crème, bandes rouges, fleur brodée au point, bord festonné
+items.teaTowel = () =>
+    SHADOW(32, 58, 24, 3) +
+    P('M10 8 L54 8 L56 50 Q50 54 44 51 Q38 54 32 51 Q26 54 20 51 Q14 54 8 50Z', '#fbf5e6', 2.4) +
+    R(8.8, 14, 46.4, 5, 0, '#d8493a', 0) +
+    R(8.8, 22, 46.4, 2.6, 0, '#d8493a', 0) +
+    L('M9.8 14 L54.6 14 M9.8 19 L55 19 M10 22 L55.2 22 M10 24.6 L55.3 24.6', 1.4) +
+    L('M15 15 L50 15 M15 17.8 L50 17.8', 0.8, '#f5b0a0') +
+    // la fleur brodée
+    L('M32 46 Q31 40 32 34', 2.6, '#3f8a3a') +
+    [
+        [32, 29, 0],
+        [37, 33, 72],
+        [35, 39, 144],
+        [29, 39, 216],
+        [27, 33, 288],
+    ]
+        .map(([x, y]) => E(x, y, 3.2, 2.6, '#e8607a', 0, 1.4))
+        .join('') +
+    C(32, 34, 2.4, '#ffd84a', 1.4) +
+    leaf(33, 43, 7, -35, '#4f9a42', 0.45) +
+    leaf(31, 41, 7, 215, '#4f9a42', 0.45) +
+    L('M12 30 L16 30 M12 34 L16 34 M48 30 L52 30 M48 34 L52 34', 1, '#d8493a') +
+    HL(14, 12, 3.4, 1, -4, 0.7);
+
+// les rochers coco : trois pics ébouriffés dorés sur du papier
+function rocher(x, y, s) {
+    const flecks = [
+        [-5, -3],
+        [4, -6],
+        [-2, -10],
+        [6, -1],
+        [-8, 1],
+        [1, -3],
+        [-4, -7],
+    ]
+        .map(([a, b]) => L(`M${a - 1.5} ${b + 1} l3 -2.2`, 1.3, '#fff9e8'))
+        .join('');
+    return (
+        `<g transform="translate(${x} ${y}) scale(${s})">` +
+        P('M-11 0 Q-10 -6 -6 -9 Q-5 -15 -1 -19 Q1 -22 2 -19 Q4 -14 6 -9 Q10 -6 11 0 Q0 4 -11 0Z', '#f4e4b6', 2.2) +
+        F('M-1 -19 Q1 -22 2 -19 Q4 -14 6 -9 Q3 -13 -1 -19Z', '#d89a3a', 0.85) +
+        F('M-8 -4 Q-3 -8 3 -5 Q8 -3 10 -1 Q8 1 4 1.5 Q-4 2 -9 0Z', '#e0b45a', 0.6) +
+        flecks +
+        HL(-5, -11, 1.4, 3.4, 20, 0.7) +
+        `</g>`
+    );
+}
+items.coconutRocks = () =>
+    SHADOW(32, 58, 27, 3) +
+    P('M3 50 L8 40 L56 40 L61 50 Q32 58 3 50Z', '#f3ecda', 2.2) +
+    L('M10 46 Q32 51 54 46', 1, '#d9cba8') +
+    rocher(19, 48, 0.95) +
+    rocher(45, 48, 0.95) +
+    rocher(32, 45, 1.2);
