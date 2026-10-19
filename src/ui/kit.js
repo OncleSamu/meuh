@@ -56,7 +56,7 @@ export const segmented = (items, current, act) =>
     `<div class="seg n${items.length}" role="tablist">${items
         .map(
             ([id, label, icon, badge, locked]) =>
-                `<button role="tab" class="${id === current ? 'on' : ''}${locked ? ' locked' : ''}" data-act="${act}" data-v="${id}" aria-selected="${id === current}">${icon ? ico(icon) : ''}<span>${label}</span>${dot(badge)}</button>`,
+                `<button role="tab" class="${id === current ? 'on' : ''}${locked ? ' locked' : ''}" data-act="${act}" data-v="${id}" title="${label.replace(/"/g, '')}" aria-label="${label.replace(/"/g, '')}" aria-selected="${id === current}">${icon ? ico(icon) : ''}<span>${label}</span>${dot(badge)}</button>`,
         )
         .join('')}</div>`;
 

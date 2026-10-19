@@ -148,7 +148,7 @@ html.season-hiver #hills .tree-top {
 }
 
 .trophy-slot .card-sub {
-    font-size: 0.66rem;
+    font-size: 0.7rem;
     min-height: 2.4em;
 }
 
@@ -322,7 +322,7 @@ html.season-hiver #hills .tree-top {
 }
 
 .tile span {
-    font-size: 0.66rem;
+    font-size: 0.7rem;
     opacity: 0.8;
 }
 
@@ -556,7 +556,7 @@ svg.chart .bar:hover path {
 }
 
 .rtile .ing {
-    font-size: 0.68rem;
+    font-size: 0.7rem;
 }
 
 .rtile .ing .ico {
@@ -805,7 +805,7 @@ svg.chart .bar:hover path {
     display: inline-flex;
     align-items: center;
     gap: 2px;
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     opacity: 0.85;
 }
 
@@ -894,7 +894,7 @@ svg.chart .bar:hover path {
 }
 
 .polaroid small {
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     opacity: 0.7;
 }
 
@@ -948,9 +948,10 @@ svg.chart .bar:hover path {
     display: flex;
     gap: 5px;
     overflow-x: auto;
-    padding: 4px 2px 8px;
+    padding: 4px 14px 8px;
     margin-bottom: 6px;
     scrollbar-width: none;
+    scroll-padding: 0 40%;
 }
 
 .lv-chip {

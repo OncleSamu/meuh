@@ -103,7 +103,7 @@
     background: rgba(255, 255, 255, 0.9);
     border: 1.5px solid var(--ink);
     font-family: var(--display);
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     white-space: nowrap;
 }
 

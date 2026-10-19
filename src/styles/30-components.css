@@ -608,6 +608,7 @@ button.card {
 }
 .row.slider input {
     width: 45%;
+    min-height: 40px;
     accent-color: var(--leaf-d);
 }
 /* l'interrupteur : la boule reste bien centrée */

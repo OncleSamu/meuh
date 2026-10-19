@@ -78,10 +78,17 @@ function pageView(page) {
         page.dyn && !list.length
             ? `<p class="card-sub center">${page.id === 'varieties' ? 'Croisez des plantes au labo : chaque variété créée a sa fiche ici.' : page.id === 'beers' ? 'Brassez une bière à la brasserie : elle aura sa fiche ici.' : 'Fixez une race à la station : elle aura sa fiche ici.'}</p>`
             : '';
+    // les entrées encore inconnues : les 9 premières seulement, le reste est compté
+    let shownUnknown = 0,
+        hidden = 0;
     const grid = list
         .map(e => {
             const f = G.isFound(e),
                 c = state.collection[e.key];
+            if (!f && ++shownUnknown > 9) {
+                hidden++;
+                return '';
+            }
             if (!f) return `<div class="entry unknown"><span class="entry-ico">${art(e.icon[0], e.icon[1])}</span><b>???</b><small>${e.hint}</small></div>`;
             const sub = e.fish
                 ? `Record : ${((c && c.best) || 0).toString().replace('.', ',')} kg`
@@ -98,7 +105,7 @@ function pageView(page) {
             return `<button class="entry" data-act="open" data-sheet="bookEntry" data-key="${e.key}"><span class="entry-ico">${art(e.icon[0], e.icon[1])}${f && e.star && e.kind !== 'variety' ? qStar(2, 'entry-star') : ''}</span><b>${esc(e.name)}</b>${starsOf(bs)}<small>${sub}</small>${dots(e)}</button>`;
         })
         .join('');
-    return `<button class="bk-back" data-act="bookBack">‹ Toutes les pages</button>${head}${empty}<div class="book-grid">${grid}</div>`;
+    return `<button class="bk-back" data-act="bookBack">‹ Toutes les pages</button>${head}${empty}<div class="book-grid">${grid}</div>${hidden ? `<p class="card-sub center">… et ${hidden} autre${hidden > 1 ? 's' : ''} à découvrir.</p>` : ''}`;
 }
 
 function collection(o) {

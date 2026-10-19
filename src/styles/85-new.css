@@ -45,6 +45,10 @@
 }
 .todo {
     margin: 0 -10px;
+    padding-right: 24px;
+    /* le bord droit s'estompe : signe qu'on peut faire glisser */
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent);
 }
 .todo-chip.soft {
     opacity: 0.85;

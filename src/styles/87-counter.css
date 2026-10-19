@@ -14,11 +14,11 @@
 .cseat.empty {
     border-style: dashed;
     box-shadow: none;
-    background: rgba(255, 247, 224, 0.35);
+    background: rgba(255, 247, 224, 0.82);
     align-items: center;
     justify-content: center;
     min-height: 64px;
-    color: var(--ink-soft);
+    color: var(--ink);
 }
 .cseat .card-main {
     display: flex;

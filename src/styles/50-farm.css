@@ -403,7 +403,7 @@ html.season-hiver .plot.grass {
     background: rgba(255, 255, 255, 0.85);
     border: 1.5px solid var(--ink);
     font-family: var(--display);
-    font-size: 0.62rem;
+    font-size: 0.7rem;
     white-space: nowrap;
     pointer-events: none;
 }

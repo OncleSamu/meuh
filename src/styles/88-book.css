@@ -88,7 +88,8 @@
     color: #7a4a2a;
     background: none;
     border: 0;
-    padding: 4px 2px 8px;
+    padding: 0 10px;
+    min-height: 40px;
     cursor: pointer;
 }
 .bk-head {
@@ -118,7 +119,7 @@
     background: #efe3c8;
     text-align: center;
     padding: 4px 2px;
-    font-size: 10px;
+    font-size: 11px;
     line-height: 1.15;
     color: #3a2618;
 }
@@ -136,7 +137,7 @@
     font-style: normal;
     font-weight: 800;
     color: #7a4a2a;
-    font-size: 10px;
+    font-size: 11px;
     margin: 2px 0;
 }
 button.entry {
@@ -208,7 +209,7 @@ button.entry {
     font-size: 19px;
 }
 .bk-cnt small {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 900;
     color: #7a4a2a;
 }

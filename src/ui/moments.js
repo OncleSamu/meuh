@@ -111,7 +111,8 @@ export function pushMoment(type, data, first) {
 // la carte suivante : les bulles d'aide attendent qu'aucun tiroir ne soit ouvert
 export function pump() {
     if (current || !queue.length) return;
-    let k = queue.findIndex(m => m.type !== 'tip');
+    // le cadeau du jour attend la fin du tutoriel : Mamie parle d'abord
+    let k = queue.findIndex(m => m.type !== 'tip' && (m.type !== 'daily' || state.tutorial.done));
     if (k < 0) {
         if (anySheet() || !state.tutorial.done) return;
         k = 0;

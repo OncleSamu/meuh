@@ -63,12 +63,14 @@ defineSheet('stats', {
             1,
             d.sources.reduce((a, [, v]) => a + v, 0),
         );
-        const src = d.sources
-            .map(
-                ([l, v]) =>
-                    `<div class="hbar"><span class="hname wide">${l}</span><div class="htrack"><i style="width:${Math.max(v ? 2 : 0, (v / tot) * 100)}%"></i></div><span class="hval">${Math.round((v / tot) * 100)} %</span></div>`,
-            )
-            .join('');
+        const src = !d.sources.some(([, v]) => v)
+            ? '<p class="card-sub">Gagnez vos premières pièces pour voir d’où elles viennent.</p>'
+            : d.sources
+                  .map(
+                      ([l, v]) =>
+                          `<div class="hbar"><span class="hname wide">${l}</span><div class="htrack"><i style="width:${Math.max(v ? 2 : 0, (v / tot) * 100)}%"></i></div><span class="hval">${Math.round((v / tot) * 100)} %</span></div>`,
+                  )
+                  .join('');
         const r = state.records || {};
         const recs = Object.entries(RECORDS)
             .map(([k, def]) => `<div class="rec-row">${ico(def.icon)}<span>${def.name}</span><b>${r[k] ? G.recordText(k, r[k]) : '—'}</b></div>`)
@@ -93,10 +95,18 @@ defineSheet('stats', {
 // ---------------- mes bonus ----------------
 defineSheet('bonus', {
     title: 'Mes bonus',
-    render: () =>
-        `<p class="card-sub center">Le total de vos compétences, de l’équipement, des rubans et du village.</p><div class="lines">${G.bonusLines()
-            .map(([icon, name, v, from]) => line(icon, `<div class="card-title">${name} <b>${G.bonusValue(v)}</b></div><div class="card-sub">${from}</div>`))
-            .join('')}</div>`,
+    render: () => {
+        const all = G.bonusLines(),
+            idle = l => String(l[3]).startsWith('aucun bonus'),
+            on = all.filter(l => !idle(l)),
+            off = all.filter(idle);
+        const row = ([icon, name, v, from]) => line(icon, `<div class="card-title">${name} <b>${G.bonusValue(v)}</b></div><div class="card-sub">${from}</div>`);
+        return `<p class="card-sub center">Le total de vos compétences, de l’équipement, des rubans et du village.</p>${on.length ? `<div class="lines">${on.map(row).join('')}</div>` : ''}${
+            off.length
+                ? `<p class="card-sub center">${on.length ? 'Pas encore de bonus : ' : 'Aucun bonus pour l’instant : '}${off.map(l => String(l[1]).toLowerCase()).join(', ')}.</p>`
+                : ''
+        }`;
+    },
 });
 
 // ---------------- le guide ----------------

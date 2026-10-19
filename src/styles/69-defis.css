@@ -106,7 +106,7 @@
     font-size: 0.82rem;
 }
 .defi-item small {
-    font-size: 0.66rem;
+    font-size: 0.7rem;
     color: var(--ink-soft);
 }
 .defi-item.ok {
@@ -157,7 +157,7 @@
     height: 40px;
 }
 .defi-reward small {
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     color: var(--ink-soft);
     line-height: 1.2;
 }
@@ -194,7 +194,7 @@
     line-height: 1.15;
 }
 .trophy small {
-    font-size: 0.66rem;
+    font-size: 0.7rem;
     color: var(--ink-soft);
 }
 .trophy.none {

@@ -2,7 +2,7 @@
 import { state, lvOk } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
-import { DAYS_PER_SEASON, WEATHER, GAME_MIN_PER_SEC } from '../../data/world.js';
+import { DAYS_PER_SEASON, WEATHER } from '../../data/world.js';
 import { RARE } from '../../data/commerce.js';
 import { MAX_LEVEL } from '../../data/progress.js';
 import * as G from '../../systems/index.js';
@@ -24,10 +24,10 @@ defineSheet('menu', {
             book = G.bookAllClaimable() + G.quartersClaimable();
         const badge = n => (n ? dot(n) : '›');
         return `<div class="menu-grid">
-            ${navRow('Progrès', 'open', { sheet: 'progress' }, ['ui', 'skillbook'], badge(pts), 'Compétences, prestige et défis')}
+            ${navRow('Progrès', 'open', { sheet: 'progress' }, ['ui', 'skillbook'], badge(pts), `${pts ? `${pts} point${pts > 1 ? 's' : ''} de compétence à placer · ` : ''}Compétences, prestige et défis`)}
             ${navRow('Livre de la ferme', 'open', { sheet: 'book' }, ['ui', 'book'], badge(book), 'Collection, maîtrise, exploits, légende, album et histoires de Mamie')}
             ${state.level >= 48 || G.caveLegends().length ? navRow('Salle des trophées', 'open', { sheet: 'trophies' }, ['ui', 'cupGold'], '›', 'Médailles des défis et lots légendaires') : ''}
-            ${state.genetics && G.geneticsOpen() ? navRow('Mes créations', 'open', { sheet: 'creations' }, ['ui', 'trophy'], '›', 'Vos variétés et vos races fixées') : ''}
+            ${state.genetics && G.geneticsOpen() ? navRow('Mes créations', 'open', { sheet: 'creations' }, ['ui', 'flowers'], '›', 'Vos variétés et vos races fixées') : ''}
             ${navRow('Les niveaux', 'open', { sheet: 'levels' }, ['ui', 'star'], '›', `Niveau ${state.level}${state.level < MAX_LEVEL ? ` sur ${MAX_LEVEL}` : ''}`)}
             ${navRow('Statistiques', 'open', { sheet: 'stats' }, ['ui', 'chart'], '›', 'Gains, ventes et records')}
             ${navRow('Mes bonus', 'open', { sheet: 'bonus' }, ['ui', 'upgrade'], '›', 'Tous vos bonus permanents')}
@@ -94,21 +94,7 @@ defineSheet('almanac', {
             ])}
             <h3 class="section-title"><span>De saison (pousse 30 % plus vite)</span></h3>
             <div class="alm-crops">${crops.map(c => `<div class="alm-crop${!lvOk(c) ? ' locked' : ''}">${art('item', c.id)}<span>${c.name}</span></div>`).join('') || '<span class="card-sub">Aucune culture</span>'}</div>
-            <h3 class="section-title"><span>Le temps à la ferme</span></h3>
-            ${lines([
-                [
-                    ['ui', 'w_sun'],
-                    `<b>L’heure de la ferme</b><div class="card-sub">Une journée de jeu dure environ ${Math.round(1440 / GAME_MIN_PER_SEC / 60)} minutes en vrai ; une saison (${DAYS_PER_SEASON} jours de jeu) environ ${Math.round((DAYS_PER_SEASON * 1440) / GAME_MIN_PER_SEC / 60)} minutes. Elle règle le jour, la nuit, la météo et les saisons.</div>`,
-                ],
-                [
-                    ['ui', 'clock'],
-                    '<b>Tous les minuteurs sont en temps réel</b><div class="card-sub">Cultures, bêtes, machines, cave, train, montgolfière, bateau, avion-cargo, brasserie, labo : « 2 h » veut dire deux vraies heures.</div>',
-                ],
-                [
-                    ['ui', 'house'],
-                    '<b>Jeu fermé, la ferme continue</b><div class="card-sub">Les cultures arrosées poussent, les bêtes produisent tant qu’elles ont à manger, les machines terminent leur file, la cave vieillit, les visiteurs arrivent et repartent, le commis récolte. Seuls les imprévus attendent votre retour.</div>',
-                ],
-            ])}
+            ${navRow('Comment passe le temps ?', 'open', { sheet: 'guide' }, ['ui', 'clock'], '›', 'Heure de la ferme, minuteurs en temps réel, ferme qui continue : voir le Guide du fermier')}
             <p class="card-sub foot-note">${sv.id === 'hiver' ? 'En hiver, les cultures hors saison poussent presque deux fois moins vite et les arbres dorment à moitié.' : sv.id === 'automne' ? 'En automne, les arbres fruitiers produisent 20 % plus vite.' : 'Profitez-en pour planter ce qui est de saison.'}</p>`;
     },
 });

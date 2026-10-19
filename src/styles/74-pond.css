@@ -1,6 +1,6 @@
 /* Ferme | Étang (1.10) : coins de pêche, appâts, canne, nasses, Marcel, concours, carnet */
 .pond-top .mat small {
-    font-size: 0.62rem;
+    font-size: 0.7rem;
     opacity: 0.8;
 }
 
@@ -60,7 +60,7 @@
     display: flex;
     align-items: center;
     gap: 2px;
-    font-size: 0.62rem;
+    font-size: 0.7rem;
     text-align: center;
 }
 .spot small .ico {
@@ -99,7 +99,7 @@
     border-radius: 8px;
     background: var(--ink);
     color: #fff;
-    font-size: 0.66rem;
+    font-size: 0.7rem;
 }
 .bait.on {
     background: var(--gold);
@@ -226,7 +226,7 @@
     line-height: 1.1;
 }
 .log-tile small {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     line-height: 1.15;
     opacity: 0.85;
 }
@@ -257,13 +257,13 @@
     opacity: 0.7;
 }
 
-/* cinq volets (Champ, Verger, Nature, Étang, Île) : seuls les icônes, sauf le volet ouvert */
-@media (max-width: 700px) {
+/* cinq volets (Champ, Verger, Nature, Étang, Île) : seuls les icônes, sauf le volet ouvert (les noms reviennent sur grand écran) */
+@media (max-width: 520px) {
     .seg.n5 > button:not(.on) span {
         display: none;
     }
     .seg.n5 > button.on {
-        flex: 2.4 1 0;
+        flex: 3.2 1 0;
     }
 }
 .pond-card .pond {

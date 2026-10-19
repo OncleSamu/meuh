@@ -159,7 +159,7 @@ defineSheet('trophies', {
                 .map(([id, def]) => {
                     const t = T[id] || { best: 0, n: 0 };
                     const now = cur && cur.id === id;
-                    return `<div class="trophy${t.best ? '' : ' none'}${now ? ' now' : ''}">${art('ui', CUPS[t.best || 0])}<b>${t.best || now ? def.name : '???'}</b><small>${now ? 'En cours' : t.n ? `${t.n} fois · ${DEFI.medals[t.best - 1].name.toLowerCase()}` : 'Pas encore joué'}</small>${t.gold ? `<span class="trophy-deco">${art('ui', def.deco)}</span>` : ''}</div>`;
+                    return `<div class="trophy${t.best ? '' : ' none'}${now ? ' now' : ''}">${art('ui', CUPS[t.best || 0])}<b>${def.name}</b><small>${now ? 'En cours' : t.n ? `${t.n} fois · ${DEFI.medals[t.best - 1].name.toLowerCase()}` : 'Pas encore joué'}</small>${t.gold ? `<span class="trophy-deco">${art('ui', def.deco)}</span>` : ''}</div>`;
                 })
                 .join('')}</div>`;
     },

@@ -6,7 +6,7 @@ import { byId, actions } from './dom.js';
 import { art } from './icons.js';
 import { currentPath, save, refresh } from './app.js';
 import { anySheet } from './sheets.js';
-import { momentShown } from './moments.js';
+import { momentShown, pump } from './moments.js';
 import { confetti } from './fx.js';
 
 const plotWhere = fn => {
@@ -109,6 +109,7 @@ function finish(reward) {
     }
     refresh();
     save();
+    setTimeout(pump, 600);
 }
 
 export function tutoTick() {

@@ -184,7 +184,7 @@ html.calm .gp-4 {
     display: flex;
     align-items: center;
     gap: 2px;
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     font-weight: 800;
     color: var(--ink-soft);
 }
@@ -410,7 +410,7 @@ html.calm .gp-4 {
     overflow-wrap: anywhere;
 }
 .ln-node small {
-    font-size: 0.62rem;
+    font-size: 0.7rem;
     color: var(--ink-soft);
 }
 .ln-node.me .ln-art {
@@ -473,12 +473,12 @@ html.calm .gp-4 {
     line-height: 1.1;
 }
 .seedling small {
-    font-size: 0.66rem;
+    font-size: 0.7rem;
     font-weight: 800;
     color: var(--ink-soft);
 }
 .seedling .chip {
-    font-size: 0.64rem;
+    font-size: 0.7rem;
 }
 .lab-run {
     display: flex;

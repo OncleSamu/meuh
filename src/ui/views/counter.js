@@ -143,7 +143,7 @@ function renderCounter(el) {
             segmented(
                 [
                     ['salon', 'Salon', ['ui', 'heart']],
-                    ['atelier', 'Atelier', ['machine', 'counter']],
+                    ['atelier', 'Recettes', ['machine', 'counter']],
                     ['bat', 'Bâtiment', ['ui', 'gear']],
                 ],
                 t,
