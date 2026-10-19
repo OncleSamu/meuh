@@ -2766,7 +2766,7 @@ export const RECIPES = {
     },
     coffee: {
         id: 'coffee',
-        machine: 'counter',
+        machine: 'dryer',
         ing: {
             greenCoffee: 3,
         },

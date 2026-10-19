@@ -13,7 +13,7 @@ import { PROJECTS } from '../../src/data/village.js';
 test('chaque boisson a ses gestes, son prix et sa recette au comptoir', () => {
     assert.ok(MACHINES.counter && !MACHINES.teahouse && !MACHINES.roastery);
     const ids = [...OLD_DRINKS, ...NEW_DRINKS.map(d => d[0])];
-    assert.equal(ids.length, 34);
+    assert.equal(ids.length, 33);
     for (const id of ids) {
         assert.ok(BREW[id] && BREW[id].st.length >= 2, 'gestes ' + id);
         assert.ok(ITEMS[id] && ITEMS[id].sell > 0, 'produit ' + id);
@@ -22,6 +22,7 @@ test('chaque boisson a ses gestes, son prix et sa recette au comptoir', () => {
     // le café reste derrière la brûlerie de l'île
     assert.equal(ITEMS.espresso.needProject, 'roasting');
     assert.equal(ITEMS.coffee.needProject, 'roasting');
+    assert.equal(RECIPES.coffee.machine, 'dryer');
 });
 
 test('un comptoir : préparer pour le stock, servir un client, les gains sont raisonnables', () => {

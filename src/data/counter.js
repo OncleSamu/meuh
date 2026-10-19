@@ -43,7 +43,6 @@ export const BREW = {
     barleyCoffee: { col: '#6a3d1e', st: [temp(95), steep(0.55, 0.78)] },
     barleyLatte: { col: '#c89b6a', st: [temp(95), steep(0.55, 0.78), pour(0.8, MILK, 'le lait')] },
     // ---- cafés ----
-    coffee: { col: '#5a3218', st: [grind(4, 50), extract(0.62, 0.06, '#5a3218')] },
     espresso: { col: '#3a1f10', st: [grind(5, 34), extract(0.3, 0.035, '#3a1f10')] },
     cafeLatte: { col: '#c08b52', st: [grind(4, 40), extract(0.3), pour(0.8, MILK, 'le lait')] },
     cappuccino: { col: '#a0673a', st: [grind(4, 40), extract(0.3), ['foam', {}]] },
@@ -89,7 +88,7 @@ export const NEW_DRINKS = [
 ];
 
 // Les produits existants qui passent du salon de thé et de la brûlerie au comptoir
-export const OLD_DRINKS = ['greenTea', 'sobacha', 'milkTea', 'lavenderTea', 'icedTea', 'gingerTea', 'genepiTea', 'coffee', 'cafeLatte'];
+export const OLD_DRINKS = ['greenTea', 'sobacha', 'milkTea', 'lavenderTea', 'icedTea', 'gingerTea', 'genepiTea', 'cafeLatte'];
 export const COFFEE_GATED = ['coffee', 'cafeLatte', 'tiramisu'];
 
 // La qualité du jeu (normale, argent, or) devient les étoiles du comptoir
@@ -130,7 +129,7 @@ export const FAVORITE = {
     paul: 'blackTea',
     rose: 'whiteTea',
     marcel: 'chai',
-    gaspard: 'coffee',
+    gaspard: 'viennois',
     odile: 'apricotTea',
     jules: 'mocha',
     ines: 'greenTea',
@@ -142,7 +141,7 @@ export const FAVORITE = {
     anselme: 'barleyCoffee',
     maeva: 'lycheeTea',
     tiago: 'cafeLatte',
-    agathe: 'coffee',
+    agathe: 'vanillaLatte',
     victor: 'cafeLatte',
     hugues: 'barleyLatte',
     agnes: 'milkTea',
