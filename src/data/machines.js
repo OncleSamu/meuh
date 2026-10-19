@@ -2789,7 +2789,7 @@ export const RECIPES = {
     },
     tiramisu: {
         id: 'tiramisu',
-        machine: 'counter',
+        machine: 'islandBakery',
         ing: {
             coffee: 1,
             cream: 2,
@@ -3180,7 +3180,7 @@ Object.assign(RECIPES, {
     mirabelleBrandy: { id: 'mirabelleBrandy', machine: 'still', ing: { mirabelle: 5 }, time: 600, lvl: 22, base: 22, xp: 38 },
     calvados: { id: 'calvados', machine: 'still', ing: { cider: 3 }, time: 600, lvl: 22, base: 22, xp: 38 },
     walnutWine: { id: 'walnutWine', machine: 'still', ing: { walnut: 3, redWine: 1, sugar: 1 }, time: 480, lvl: 40, base: 40, xp: 30 },
-    roastChestnut: { id: 'roastChestnut', machine: 'counter', ing: { chestnut: 3 }, time: 180, lvl: 35, base: 35, xp: 11 },
+    roastChestnut: { id: 'roastChestnut', machine: 'smokehouse', ing: { chestnut: 3 }, time: 180, lvl: 35, base: 35, xp: 11 },
 });
 
 // ---------------- 1.3.2 : le saloir et 26 recettes ----------------

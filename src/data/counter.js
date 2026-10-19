@@ -56,8 +56,6 @@ export const BREW = {
     coconutCoffee: { col: '#8a5a33', st: [grind(4, 42), extract(0.4), pour(0.8, '#fff6e0', 'le lait de coco')] },
     islandCoffee: { col: '#3b1f12', st: [grind(4, 40), extract(0.35), pour(0.75, CREAM, 'la crème')] },
     chestnutCoffee: { col: '#a0673a', st: [grind(4, 40), extract(0.35), ['foam', {}]] },
-    tiramisu: { col: '#6b3a1e', st: [grind(4, 42), extract(0.3), pour(0.8, '#fff0c8', 'la crème')] },
-    roastChestnut: { col: '#a0673a', st: [temp(85, 5), steep(0.45, 0.65)] },
 };
 
 // Les nouveaux produits (les autres existent déjà dans items.js) : nom, recette, niveau, durée de référence
@@ -91,20 +89,8 @@ export const NEW_DRINKS = [
 ];
 
 // Les produits existants qui passent du salon de thé et de la brûlerie au comptoir
-export const OLD_DRINKS = [
-    'greenTea',
-    'sobacha',
-    'milkTea',
-    'lavenderTea',
-    'icedTea',
-    'gingerTea',
-    'genepiTea',
-    'coffee',
-    'cafeLatte',
-    'tiramisu',
-    'roastChestnut',
-];
-export const COFFEE_GATED = ['coffee', 'cafeLatte', 'tiramisu', 'roastChestnut'];
+export const OLD_DRINKS = ['greenTea', 'sobacha', 'milkTea', 'lavenderTea', 'icedTea', 'gingerTea', 'genepiTea', 'coffee', 'cafeLatte'];
+export const COFFEE_GATED = ['coffee', 'cafeLatte', 'tiramisu'];
 
 // La qualité du jeu (normale, argent, or) devient les étoiles du comptoir
 export const STAR_TIER = [0, 1, 2];

@@ -13,7 +13,7 @@ import { PROJECTS } from '../../src/data/village.js';
 test('chaque boisson a ses gestes, son prix et sa recette au comptoir', () => {
     assert.ok(MACHINES.counter && !MACHINES.teahouse && !MACHINES.roastery);
     const ids = [...OLD_DRINKS, ...NEW_DRINKS.map(d => d[0])];
-    assert.equal(ids.length, 36);
+    assert.equal(ids.length, 34);
     for (const id of ids) {
         assert.ok(BREW[id] && BREW[id].st.length >= 2, 'gestes ' + id);
         assert.ok(ITEMS[id] && ITEMS[id].sell > 0, 'produit ' + id);
