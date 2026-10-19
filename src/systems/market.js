@@ -9,9 +9,9 @@ import { ITEMS } from '../data/items.js';
 import { ANIMALS } from '../data/animals.js';
 import { MACHINES } from '../data/machines.js';
 import { DECOS, MAT, QUALITY } from '../data/farm.js';
-import { MARKET_FLOOR, HOT_MULT, MARKET_RECOVER, UNDO_MS } from '../data/commerce.js';
+import { HOT_MULT, MARKET_RECOVER, UNDO_MS } from '../data/commerce.js';
 import { BALANCE } from '../data/progress.js';
-import { masteryMult } from './mastery.js';
+import { masteryMult, dropMult, demandFloor } from './mastery.js';
 import { priceMult, rank, earn, spend } from './player.js';
 import { eventActive, eventProgress } from './events.js';
 import { clampQuality, qual } from './farm.js';
@@ -30,7 +30,7 @@ const COIN = ['ui', 'coin'];
 export const marketMult = () => Math.max(BALANCE.marketEnd, BALANCE.marketStart - BALANCE.marketSlope * (scaleLvl() - 1));
 export const sellPrice = id => Math.floor(ITEMS[id].sell * masteryMult(id) * marketMult() * priceMult());
 export const demand = id => (state.market.f[id] === undefined ? 1 : state.market.f[id]);
-export const dropPer = id => 0.0075 * (1 + Math.log10(ITEMS[id].sell)) * (rank('trader') ? 0.5 : 1);
+export const dropPer = id => 0.0075 * (1 + Math.log10(ITEMS[id].sell)) * (rank('trader') ? 0.5 : 1) * dropMult(id);
 export const eventSellMult = () => (eventActive('ete') ? 1.25 : 1);
 export const unitPrice = (id, q = 0, f = demand(id)) =>
     Math.max(
@@ -62,7 +62,7 @@ export function sellBatch(id, n, apply) {
     for (const [ql, cnt] of seq)
         for (let k = 0; k < cnt; k++) {
             gain += unitPrice(id, ql, f);
-            f = Math.max(MARKET_FLOOR, f - dropPer(id));
+            f = Math.max(Math.min(f, demandFloor(id)), f - dropPer(id));
         }
     const sold = take.g + take.s + take.n;
     if (apply) {

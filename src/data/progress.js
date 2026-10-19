@@ -59,6 +59,16 @@ export const MASTERY_TIERS = {
 
 export const MASTERY_NAMES = ['bronze', 'argent', 'or'];
 
+// 1.19 : après l'or, deux rangs de plus (platine, diamant) : la demande du marché baisse moins et ne descend pas si bas
+export const MASTERY_EXTRA = {
+    crop: [25000, 60000],
+    animal: [15000, 36000],
+    craft: [5000, 12000],
+};
+export const MASTERY_EXTRA_NAMES = ['platine', 'diamant'];
+export const MASTERY_EXTRA_REWARD = [300, 500]; // × le prix de vente
+export const MASTERY_EXTRA_FLOOR = [0.25, 0.4, 0.55]; // plancher de la demande, par rang
+
 export const HOUSE = [
     {
         name: 'La vieille maison',

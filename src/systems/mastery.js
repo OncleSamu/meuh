@@ -7,7 +7,18 @@ import { ITEMS } from '../data/items.js';
 import { RECIPES } from '../data/machines.js';
 import { CHAPTERS, RIVALS } from '../data/village.js';
 import { RARE, LEAGUES } from '../data/commerce.js';
-import { MAX_LEVEL, RENOWN_XP, MEDALS, MASTERY_LVL, MASTERY_TIERS, MASTERY_NAMES } from '../data/progress.js';
+import {
+    MAX_LEVEL,
+    RENOWN_XP,
+    MEDALS,
+    MASTERY_LVL,
+    MASTERY_TIERS,
+    MASTERY_NAMES,
+    MASTERY_EXTRA,
+    MASTERY_EXTRA_NAMES,
+    MASTERY_EXTRA_REWARD,
+    MASTERY_EXTRA_FLOOR,
+} from '../data/progress.js';
 import { LEGEND_GOALS } from '../data/meta.js';
 import { farmSeasonAdd } from './port.js';
 import { addPhoto } from './style.js';
@@ -24,12 +35,20 @@ export function masteryKind(id) {
 }
 export const masteryCount = id => (state.mastery && state.mastery[id]) || 0;
 export const masteryStars = id => (id && ITEMS[id] ? MASTERY_TIERS[masteryKind(id)].filter(t => masteryCount(id) >= t).length : 0);
-// +5 % de prix par étoile ; l'or rend aussi la production 15 % plus rapide
-export const masteryMult = id => 1 + 0.05 * masteryStars(id);
-export const masterySpeed = id => (masteryStars(id) >= 3 ? 1.15 : 1);
+// 1.19 : les rangs au-delà de l'or (0, 1 platine, 2 diamant)
+export const masteryExtra = id => (id && ITEMS[id] && masteryStars(id) >= 3 ? MASTERY_EXTRA[masteryKind(id)].filter(t => masteryCount(id) >= t).length : 0);
+// +5 % de prix par étoile (+3 % par rang de plus) ; l'or rend aussi la production 15 % plus rapide (+3 % par rang de plus)
+export const masteryMult = id => 1 + 0.05 * masteryStars(id) + 0.03 * masteryExtra(id);
+export const masterySpeed = id => (masteryStars(id) >= 3 ? 1.15 + 0.03 * masteryExtra(id) : 1);
+// la demande du marché baisse moins vite (−25 %, −50 %) et ne descend pas si bas (40 %, 55 % du prix)
+export const dropMult = id => 1 - 0.25 * masteryExtra(id);
+export const demandFloor = id => MASTERY_EXTRA_FLOOR[masteryExtra(id)];
+export const extraName = id => MASTERY_EXTRA_NAMES[masteryExtra(id) - 1] || '';
 export const goldMasteries = () => Object.keys(state.mastery || {}).filter(id => ITEMS[id] && masteryStars(id) >= 3).length;
 export const masteryReward = (id, st) => Math.round(((ITEMS[id].sell || 20) * [20, 60, 150][st - 1]) / 10) * 10;
 export const nextTier = id => MASTERY_TIERS[masteryKind(id)][Math.min(2, masteryStars(id))];
+// le prochain seuil au-delà de l'or (0 si le rang diamant est atteint)
+export const nextExtra = id => MASTERY_EXTRA[masteryKind(id)][masteryExtra(id)] || 0;
 export const masteryKnown = () =>
     Object.keys(ITEMS)
         .filter(id => ITEMS[id].sell && (state.mastery[id] || 0) > 0)
@@ -38,9 +57,19 @@ export const masteryKnown = () =>
 export function addMastery(id, qty) {
     farmSeasonAdd(id, qty);
     if (!ITEMS[id] || !ITEMS[id].sell) return;
-    const before = masteryStars(id);
+    const before = masteryStars(id),
+        beforeX = masteryExtra(id);
     state.mastery[id] = masteryCount(id) + qty;
-    const after = masteryStars(id);
+    const after = masteryStars(id),
+        afterX = masteryExtra(id);
+    if (afterX > beforeX && state.level >= MASTERY_LVL) {
+        const coins = Math.round(((ITEMS[id].sell || 20) * MASTERY_EXTRA_REWARD[afterX - 1]) / 10) * 10;
+        earn(coins, null);
+        if (view.started) {
+            toast(`Maîtrise ${MASTERY_EXTRA_NAMES[afterX - 1]} : ${ITEMS[id].name} (+${fmt(coins)} pièces) · la demande baisse moins`, ['ui', 'medalG']);
+            sfx('golden');
+        }
+    }
     if (after <= before || state.level < MASTERY_LVL) return;
     const coins = masteryReward(id, after);
     if (after === 3 && goldMasteries() <= 5) addPhoto('item', id, `${ITEMS[id].name} maîtrisé`, 'Maîtrise or');

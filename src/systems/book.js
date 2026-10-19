@@ -15,7 +15,7 @@ import { RARE } from '../data/commerce.js';
 import { BOOK_QUARTERS, MASTERY_NAMES } from '../data/progress.js';
 import { seedList } from './farm.js';
 import { earn, claimableCount } from './player.js';
-import { legendReady, masteryCount, masteryStars } from './mastery.js';
+import { legendReady, masteryCount, masteryStars, masteryExtra, extraName } from './mastery.js';
 import { carnetOpen } from './carnet.js';
 import { beerOf, beerPrice } from './brewery.js';
 import { flavorGain, stability } from './genetics.js';
@@ -216,7 +216,7 @@ export function entryInfo(key) {
             ['En or', q.g],
         ];
         const sv = masteryStars(e.id);
-        info.lines.push(['Maîtrise', sv ? `${MASTERY_NAMES[sv - 1]}` : 'pas encore']);
+        info.lines.push(['Maîtrise', sv ? `${MASTERY_NAMES[sv - 1]}${masteryExtra(e.id) ? ` · rang ${extraName(e.id)}` : ''}` : 'pas encore']);
         if (day) info.lines.push(['Première fois', day]);
         if (CARNET[e.id]) {
             info.anecdote = carnetOpen(e.id) ? CARNET[e.id] : 'Une anecdote de Mamie Odette se débloque à la maîtrise bronze de ce produit.';

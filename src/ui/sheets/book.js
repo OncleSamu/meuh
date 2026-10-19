@@ -3,7 +3,7 @@ import { state } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { SEASONS, EVENTS } from '../../data/world.js';
-import { ACH_REWARDS, MEDALS, MAX_LEVEL, BOOK_QUARTERS, MASTERY_NAMES } from '../../data/progress.js';
+import { ACH_REWARDS, MEDALS, MAX_LEVEL, BOOK_QUARTERS, MASTERY_NAMES, MASTERY_EXTRA_NAMES as EXTRA_NAMES } from '../../data/progress.js';
 import { ACHIEVEMENTS } from '../../data/meta.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
@@ -144,14 +144,14 @@ function mastery() {
     const known = G.masteryKnown();
     if (!known.length) return '<p class="empty">Produisez pour commencer à maîtriser vos produits.</p>';
     const gold = G.goldMasteries();
-    return `<p class="card-sub center">Chaque étoile : +5 % sur le prix du produit. L’or le rend aussi 15 % plus rapide à produire. ${gold} produit${gold > 1 ? 's' : ''} en or.</p>
+    return `<p class="card-sub center">Chaque étoile : +5 % sur le prix du produit. L’or le rend aussi 15 % plus rapide à produire. Au-delà, les rangs platine et diamant font moins baisser la demande au marché. ${gold} produit${gold > 1 ? 's' : ''} en or.</p>
         <div class="list">${known
             .map(id => {
                 const sv = G.masteryStars(id),
                     t = G.nextTier(id),
                     n = G.masteryCount(id);
                 return `<div class="mrow">${ico(['item', id], 'ico big')}<div class="card-main"><div class="pname">${ITEMS[id].name}${medals(sv)}</div>
-                ${sv >= 3 ? `<div class="card-sub">Maîtrise complète · ${fmt(n)} produits</div>` : `${bar(n / t)}<div class="card-sub">${fmt(n)} / ${fmt(t)} pour l’étoile ${MASTERY_NAMES[sv]}</div>`}</div></div>`;
+                ${sv >= 3 ? (G.nextExtra(id) ? `${bar(n / G.nextExtra(id))}<div class="card-sub">${fmt(n)} / ${fmt(G.nextExtra(id))} pour le rang ${EXTRA_NAMES[G.masteryExtra(id)]}${G.masteryExtra(id) ? ` · rang ${EXTRA_NAMES[G.masteryExtra(id) - 1]} atteint` : ''}</div>` : `<div class="card-sub">Rang diamant · ${fmt(n)} produits</div>`) : `${bar(n / t)}<div class="card-sub">${fmt(n)} / ${fmt(t)} pour l’étoile ${MASTERY_NAMES[sv]}</div>`}</div></div>`;
             })
             .join('')}</div>`;
 }
