@@ -1,6 +1,6 @@
 // Service worker de Meuh : le jeu marche hors-ligne et affiche les rappels.
 // La version change à chaque mise en ligne (remplacée par build.py --pwa).
-const VERSION = '1.18-20261019151101';
+const VERSION = '1.18-20261019151842';
 const CACHE = 'meuh-' + VERSION;
 const FILES = [
     './',
@@ -14,7 +14,12 @@ const FILES = [
 ];
 
 self.addEventListener('install', e => {
-    e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
+    e.waitUntil(
+        caches
+            .open(CACHE)
+            .then(c => c.addAll(FILES))
+            .then(() => self.skipWaiting()),
+    );
 });
 
 self.addEventListener('activate', e => {
@@ -48,8 +53,16 @@ self.addEventListener('fetch', e => {
         return;
     }
     if (url.origin !== location.origin) return;
-    // le jeu : la version en cache tout de suite (rapide, hors-ligne) ; la mise à jour arrive par un nouveau service worker
-    e.respondWith(caches.match(req, { ignoreSearch: true }).then(hit => hit || fetch(req)));
+    // le jeu : la dernière version en ligne, la copie du cache sans réseau
+    // 1.18.3 : en ligne, on prend d'abord la dernière version (et on la garde en cache) ; hors ligne, la copie du cache
+    e.respondWith(
+        fetch(req, { cache: 'no-cache' })
+            .then(r => {
+                if (r.ok) caches.open(CACHE).then(c => c.put(req, r.clone()));
+                return r;
+            })
+            .catch(() => caches.match(req, { ignoreSearch: true })),
+    );
 });
 
 // toucher un rappel ramène dans le jeu
