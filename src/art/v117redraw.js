@@ -1,5 +1,5 @@
 // 1.17 : les kakis séchés et les lardons redessinés.
-import { E, F, FC, FE, HL, L, P, R, SHADOW, items } from './kit.js';
+import { F, FC, FE, HL, L, P, R, SHADOW, items } from './kit.js';
 import { woodBoard } from './items2.js';
 
 // ---------------- kakis séchés : trois hoshigaki pendus à la ficelle ----------------
