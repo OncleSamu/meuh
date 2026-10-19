@@ -3,6 +3,7 @@ import { state } from '../core/state.js';
 import { toast, sfx, buzz, burst, emit } from '../core/bus.js';
 import { MACHINES } from '../data/machines.js';
 import { BUILDINGS, BLD_IDS, BLD_MAX, TIER_LVL, tierCost } from '../data/buildings.js';
+import { GH } from '../data/farm.js';
 import { hasCost, payCost } from './home.js';
 
 export function ensureBld() {
@@ -86,7 +87,7 @@ export function ghExtra() {
     const g = state.greenhouse;
     if (!g || !g.built) return;
     g.plots.forEach((p, k) => {
-        if (k < 3 + ghExtraPlots()) p.isUnlocked = true;
+        if (k < GH.basePlots + ghExtraPlots()) p.isUnlocked = true;
     });
 }
 // la machine : une place de plus dans la file par niveau, 8 % de temps en moins, un lot de bonus une fois sur cinq au niveau 3

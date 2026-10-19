@@ -139,7 +139,7 @@ function greenhouseHtml() {
     return `<div class="card gh-card${locked ? ' locked' : ''}">
         <div class="card-art">${art('ui', 'greenhouse')}</div>
         <div class="card-main"><div class="card-title">Serre</div>
-        <div class="card-sub">Toujours de saison, arrosage automatique et à l’abri des corbeaux.${locked ? ` Constructible au niveau ${GH.lvl}.` : ''}</div>
+        <div class="card-sub">Toujours de saison, arrosage automatique, pousse plus vite, plus belles récoltes (surtout hors saison) et à l’abri des corbeaux.${locked ? ` Constructible au niveau ${GH.lvl}.` : ''}</div>
         ${locked ? '' : `<div class="cost">${COIN()}${fmt(GH.cost)} ${mats}</div>`}</div>
         ${locked ? '' : `<div class="card-side">${btn('Construire', { act: 'buildGreenhouse', kind: can ? 'green' : '', disabled: !can, anchor: 'gh:build' })}</div>`}
     </div>`;
@@ -275,7 +275,7 @@ function eventBanner() {
 const FIELD = `<div class="field"><div class="fence"></div>
     <div id="dog" class="dog" hidden data-anchor="dog"><div class="bubble"></div><div class="dog-body"></div><div class="dog-name"></div></div>
     <div id="plots" class="plots"></div><div class="field-night"></div><div id="flies" class="flies"></div></div>`;
-const GH_BOX = `<div class="glasshouse"><div class="gh-roof"></div><div class="gh-head">${ico(['ui', 'greenhouse'])}<span>Serre</span><small>toujours de saison · arrosage automatique</small></div><div id="gh-grid" class="plots gh"></div></div>`;
+const GH_BOX = `<div class="glasshouse"><div class="gh-roof"></div><div class="gh-head">${ico(['ui', 'greenhouse'])}<span>Serre</span><small>toujours de saison · arrosage automatique · plus belles récoltes</small></div><div id="gh-grid" class="plots gh"></div></div>`;
 
 export function renderFarm(el) {
     blocks(el, [

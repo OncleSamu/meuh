@@ -230,7 +230,7 @@ test('les bâtiments s’améliorent en trois niveaux avec les matériaux de la 
     // la serre : des parcelles libres, les nasses : une de plus
     const gh = G.ghUnlocked();
     assert.ok(G.upgradeBld('b', 'greenhouse'));
-    assert.equal(G.ghUnlocked(), Math.max(gh, 3 + 1));
+    assert.equal(G.ghUnlocked(), Math.max(gh, 6 + 1));
     for (const id of BLD_IDS) assert.ok(G.bldNext('b', id) === null || G.bldNext('b', id).cost.coins > 0, id);
     assert.ok(BUILDINGS.barn.lines.length === 3);
 });

@@ -71,11 +71,11 @@ export const UPGRADES = {
 export const GH = {
     lvl: 15,
     cost: 6000,
-    basePlots: 3,
-    maxPlots: 9,
-    plotCost: 1500,
-    plotMult: 1.6,
-    rate: 1.3,
+    basePlots: 6,
+    maxPlots: 12,
+    plotCost: 1000,
+    plotMult: 1.35,
+    rate: 1.6,
 };
 
 export const QUALITY = [

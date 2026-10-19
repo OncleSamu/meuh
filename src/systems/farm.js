@@ -555,6 +555,8 @@ export function rollQuality(plot) {
     const inGh = inGreenhouse(plot);
     let x = 0.08;
     if (inGh || isInSeason(plot.itemId)) x += 0.15;
+    // sous verre les récoltes sont plus belles, et surtout hors saison (primeurs)
+    if (inGh) x += 0.1 + (isInSeason(plot.itemId) ? 0 : 0.15);
     if (!inGh && (state.weather === 'sun' || state.weather === 'rain')) x += 0.05;
     if (plot.fert) x += 0.35;
     const gi = gridIndex(plot);
