@@ -856,7 +856,7 @@ export const ITEMS = {
     },
     perfume: {
         id: 'perfume',
-        name: 'Eau de lavande',
+        name: 'Essence de lavande',
         type: 'artisan',
         sell: 705,
     },
@@ -1402,7 +1402,7 @@ export const ITEMS = {
     },
     yuleLog: {
         id: 'yuleLog',
-        name: 'Bûche de Noël',
+        name: 'Bûche au caramel',
         type: 'artisan',
         sell: 2925,
     },
@@ -1725,7 +1725,7 @@ export const ITEMS = {
         id: 'tableWine',
         name: 'Vin de table',
         type: 'artisan',
-        sell: 1150,
+        sell: 1300,
     },
     redWine: {
         id: 'redWine',
@@ -2805,9 +2805,9 @@ Object.assign(ITEMS, {
     silverCutlery: { id: 'silverCutlery', name: 'Couverts d’argent', type: 'artisan', sell: 800 },
     goldenBell: { id: 'goldenBell', name: 'Cloche dorée', type: 'artisan', sell: 1500 },
     pineTorch: { id: 'pineTorch', name: 'Torche de résine', type: 'artisan', sell: 70 },
-    resinCandle: { id: 'resinCandle', name: 'Bougie à la résine', type: 'artisan', sell: 340 },
+    resinCandle: { id: 'resinCandle', name: 'Bougie à la résine', type: 'artisan', sell: 400 },
     birchGingerbread: { id: 'birchGingerbread', name: 'Pain d’épices au sirop', type: 'artisan', sell: 260 },
-    syrupCrepe: { id: 'syrupCrepe', name: 'Crêpe au sirop de bouleau', type: 'artisan', sell: 190 },
+    syrupCrepe: { id: 'syrupCrepe', name: 'Crêpe au sirop de bouleau', type: 'artisan', sell: 650 },
 });
 // le bois et la pierre se vendent un peu (marché), sans jamais servir de commande
 ITEMS.wood.sell = 3;

@@ -333,8 +333,6 @@ const NEW_DISH = {
         smoke(32),
 };
 
-export const NEW_FISH_IDS = Object.keys(NEW_FISH);
-export const NEW_DISH_IDS = Object.keys(NEW_DISH);
 for (const [k, v] of Object.entries({ ...NEW_FISH, ...NEW_DISH })) items[k] = () => v;
 
 // ================= l'étang : appâts, nasse, coins de pêche =================

@@ -334,7 +334,7 @@ export const SoundEngine = (() => {
 export function setupSound() {
     on('sfx', name => SoundEngine.play(name));
     on('buzz', ms => {
-        if (state.settings.haptics && navigator.vibrate)
+        if (state.settings.haptics && navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive))
             try {
                 navigator.vibrate(ms || 8);
             } catch {

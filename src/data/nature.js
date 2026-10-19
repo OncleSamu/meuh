@@ -91,7 +91,6 @@ export const DEPTHS = {
         ],
     },
 };
-export const DEPTH_IDS = Object.keys(DEPTHS);
 // équipement acheté une fois pour descendre
 export const MINE_GEAR = {
     lamp: { name: 'Lampe de mineur', icon: 'lamp', cost: { coins: 1500, plank: 4, coal: 3 } },

@@ -5,7 +5,7 @@ import { view } from '../core/view.js';
 import { round5 } from '../core/format.js';
 import { toast, sfx, burst, emit } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { KILN, WORKERS, WORKER_EVERY, workerCap, NAT_LOG, NAT_LOG_IDS, GASPARD, DEPTHS, SPECIES } from '../data/nature.js';
+import { KILN, WORKERS, WORKER_EVERY, workerCap, NAT_LOG, GASPARD, SPECIES } from '../data/nature.js';
 import { earn, addXp } from './player.js';
 import { hasCost, payCost } from './home.js';
 import { addFriendship } from './village.js';
@@ -86,7 +86,6 @@ export function loadsReady(k) {
     if (!w || w.lvl < 1) return 0;
     return Math.min(workerCap(w.lvl), Math.floor((now() - w.at) / WORKER_EVERY));
 }
-export const workersReady = () => loadsReady('lumber') + loadsReady('miner');
 // ce qu'une charge contient, selon le niveau de l'ouvrier et ce que la mine a ouvert
 export function loadOf(k) {
     const l = workerLvl(k),
@@ -226,7 +225,6 @@ export const natLogStep = id => {
     return NAT_LOG.steps.filter(s => n >= s).length;
 };
 export const natLogCan = id => natLogStep(id) > ((state.nat && state.nat.logClaimed[id]) || 0);
-export const natLogReady = () => natLogOpen() && NAT_LOG_IDS.some(natLogCan);
 export function claimNatLog(id, at) {
     if (!natLogCan(id)) return false;
     const n = ensureNat(),
@@ -237,4 +235,3 @@ export function claimNatLog(id, at) {
     toast(`Carnet : ${ITEMS[id].name.toLowerCase()}, palier ${k + 1}`, ['item', id]);
     return true;
 }
-export const natDepthNames = () => Object.values(DEPTHS).map(d => d.name);

@@ -605,7 +605,6 @@ Object.assign(CARNET, {
 });
 
 // les pages du carnet : une par machine, dans l'ordre de la ferme
-export const CARNET_DONE_REWARD = { coins: 5000, rubans: 1 };
 
 // ---------------- 1.5 : la crêperie et les nouveaux produits ----------------
 Object.assign(CARNET, {

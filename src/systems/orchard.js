@@ -335,7 +335,7 @@ export function plantCutting(k, ci, at, z = 'farm') {
     return true;
 }
 
-export function fellTree(k, at, z = 'farm') {
+export function fellTree(k, at, z = 'farm', quiet = false) {
     const slot = slotsOf(z)[k],
         t = slot && slot.tree;
     if (!t) return false;
@@ -350,6 +350,10 @@ export function fellTree(k, at, z = 'farm') {
     if (fw) state.inventory.fruitWood = (state.inventory.fruitWood || 0) + fw;
     slot.tree = null;
     state.stats.felled = (state.stats.felled || 0) + 1;
+    if (quiet) {
+        changed('orchard');
+        return { wood, fw };
+    }
     sfx('chop');
     buzz(20);
     burst(at, 'leaf', 10);
@@ -366,6 +370,28 @@ export function fellTree(k, at, z = 'farm') {
     );
     changed('orchard');
     return true;
+}
+
+// 1.15.4 : débiter d'un coup tous les arbres morts d'un verger
+export function fellDeadTrees(at, z = 'farm') {
+    let n = 0,
+        wood = 0,
+        fw = 0;
+    slotsOf(z).forEach((slot, k) => {
+        if (!slot.tree || treeStage(slot.tree) !== 'dead') return;
+        const r = fellTree(k, at, z, true);
+        if (!r) return;
+        n++;
+        wood += r.wood;
+        fw += r.fw;
+    });
+    if (!n) return 0;
+    sfx('chop');
+    buzz(20);
+    burst(at, 'leaf', 10);
+    float(at, [`+${wood}`, ['item', 'wood']], '', -22);
+    toast(`${n} vieux arbre${n > 1 ? 's' : ''} débité${n > 1 ? 's' : ''} : ${wood} bois et ${fw} bois fruitier. Les places sont libres.`, ['item', 'wood']);
+    return n;
 }
 
 // ---------------- le temps qui passe ----------------

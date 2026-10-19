@@ -467,3 +467,9 @@
 .reserve-row .ico[data-sheet='bottle'] {
     cursor: zoom-in;
 }
+.bottle-tools {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+}

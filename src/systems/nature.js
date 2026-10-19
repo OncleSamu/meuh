@@ -80,7 +80,6 @@ export function setDepth(id) {
     sfx('click');
     return true;
 }
-export const gearCost = k => MINE_GEAR[k].cost;
 export function buyGear(k, at) {
     const n = ensureNat();
     if (n.gear[k] || state.level < DEPTHS.gallery.lvl) return false;

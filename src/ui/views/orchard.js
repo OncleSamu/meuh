@@ -101,7 +101,7 @@ function renderOrchard(el) {
                 icon: ['ui', 'basket'],
                 disabled: !fruits,
                 anchor: 'btn:pickTrees',
-            })}</div></div>`,
+            })}${dead > 1 ? btn(`Débiter les morts (${dead})`, { act: 'fellDead', size: 'sm', icon: ['item', 'wood'] }) : ''}</div></div>`,
         ],
         ['orchard', `<div class="orchard">${slots.map((sl, k) => spot(sl, k, nextLocked)).join('')}</div>`],
         ['cards', `<div class="orchard-cards">${lifeCards()}${orchardCards()}</div>`],
@@ -214,6 +214,7 @@ export function setupOrchard() {
             );
         },
         pickAllTrees: (el, d) => G.pickAllTrees(el, d.z || 'farm'),
+        fellDead: (el, d) => G.fellDeadTrees(el, d.z || 'farm'),
         // un appui : ramasser, ou débiter un arbre mort ; l'appui long ouvre la fiche
         tree: (el, d) => {
             const z = d.z || 'farm',

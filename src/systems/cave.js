@@ -337,6 +337,7 @@ export function putInCave(slot, id, n, at) {
     sfx('pop');
     burst(at, 'sparkle', 8);
     if (CAVE_ITEMS[id] === 'champagne') tip('champagne');
+    if (isVinous(id)) tip('vintage');
     return true;
 }
 

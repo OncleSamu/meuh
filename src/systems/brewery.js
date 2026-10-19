@@ -27,7 +27,6 @@ export const BREWABLE = Object.values(ITEMS)
 
 // ---------------- 1.7 : un ingrédient peut être une variété du labo (son identifiant « v12 ») ----------------
 const VAR = id => (state.genetics && state.genetics.vars[id]) || null;
-export const isVarIng = id => !!VAR(id);
 export const ingBase = id => (VAR(id) ? VAR(id).base : id);
 // le goût d'un ingrédient : celui de l'espèce, ou celui que la variété exprime vraiment
 export const ingFlavor = id => (VAR(id) ? FLAVOR_IDS.map(k => traitOf(VAR(id).g, k)) : FLAVORS[id] || [0, 0, 0, 0, 0]);
@@ -453,7 +452,6 @@ export function takeFromBarrel(slot, at) {
 export const myBeers = () =>
     Object.values(ensureBrew().beers).sort((a, b) => (state.brew.stock[b.id] || 0) - (state.brew.stock[a.id] || 0) || b.value - a.value);
 export const beerStock = bid => (state.brew && state.brew.stock[bid]) || 0;
-export const brewReadyCount = () => (state.brew ? state.brew.vats.filter(vatReady).length + (beerBookClaimable() ? 1 : 0) + beerOrdersReady() : 0);
 // ---------------- les commandes de bière ----------------
 const pickR = a => a[Math.floor(Math.random() * a.length)];
 export function newBeerOrder() {

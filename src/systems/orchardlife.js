@@ -10,6 +10,7 @@ import { RIVALS } from '../data/village.js';
 import { GRAFTS, TREE_SEASON, FROST, HARVEST, ORCHARD_LOG, BASKET_CONTEST, CIDER_FETE, WINE_FETE } from '../data/orchard.js';
 import { earn, addXp } from './player.js';
 import { addFriendship } from './village.js';
+import { tip } from './tips.js';
 import { season, dayInSeason, hour } from './world.js';
 import { clampQuality } from './farm.js';
 import { fishWeek, isWeekend, weekendEnd } from './fishing.js';
@@ -60,7 +61,10 @@ export function frostStatus() {
     const f = ensureFrost();
     if (!f || !f.on || f.done || f.s !== seasonIdx()) return null;
     const d = dayInSeason();
-    if (d >= f.day - FROST.warnDays && d <= f.day) return 'warn';
+    if (d >= f.day - FROST.warnDays && d <= f.day) {
+        tip('frost');
+        return 'warn';
+    }
     return null;
 }
 export const torchStock = () => state.inventory[FROST.torch] || 0;
@@ -303,6 +307,7 @@ export function vendState() {
     const o = orch();
     if (!vendActive()) return o.vend && o.vend.s === seasonIdx() ? o.vend : null;
     const s = seasonIdx();
+    tip('vend');
     if (!o.vend || o.vend.s !== s) o.vend = { s, need: WINE_FETE.need + Math.floor(state.level / 2), given: 0, claimed: false };
     return o.vend;
 }

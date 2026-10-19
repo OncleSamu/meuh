@@ -74,4 +74,3 @@ const ART = {
         F('M21 21 C23 19 25 19 26 19 C25 22 23 24 22 26Z', '#fff', 0.7),
 };
 for (const [k, v] of Object.entries(ART)) ui[k] = () => v;
-export const VERGER2_ART_IDS = Object.keys(ART);

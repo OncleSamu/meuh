@@ -294,6 +294,21 @@ export const GUIDE = [
 ];
 
 export const TIPS = {
+    frost: {
+        icon: ['item', 'apple'],
+        title: 'Gelée de printemps',
+        text: 'Une gelée menace le verger : les arbres non protégés perdent des fruits. Allumez des torches de résine avant la nuit (une torche couvre deux arbres), ou laissez-les s’allumer seules si vous en avez en réserve.',
+    },
+    vend: {
+        icon: ['item', 'grape'],
+        title: 'Les vendanges',
+        text: 'Margaux prépare la fête du vin : livrez vos raisins dans l’onglet Ferme, volet Verger. Elle vous rend des bouteilles de vin de table à mettre en cave, des pièces et de son amitié.',
+    },
+    vintage: {
+        icon: ['item', 'redWine'],
+        title: 'Un vin, un millésime',
+        text: 'Chaque vin garde l’année de sa mise en cave. Une année froide vaut moins ; une grande année, ou l’année du siècle, vieillit mieux et vaut bien plus. Touchez la bouteille pour la voir en grand et nommer votre cuvée.',
+    },
     abbey: {
         icon: ['ui', 'beer'],
         title: 'Une abbaye et sa brasserie',

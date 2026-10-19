@@ -21,6 +21,8 @@ export function newState() {
         version: SAVE_VERSION,
         lv14: true, // échelle des 50 niveaux
         lv18: true, // machines et recettes aux niveaux de la 1.8
+        lvKeep: {}, // ce qu'une ancienne partie avait déjà ouvert (posé à la conversion)
+        moved131: false,
         money: 100,
         xp: 0,
         level: 1,

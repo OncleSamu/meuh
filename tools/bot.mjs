@@ -88,6 +88,10 @@ const need = () => {
     if (hn && state.level >= hn.lvl) ['beam', 'plank', 'nail', 'tools'].forEach(id => hn.cost[id] && add(id, hn.cost[id]));
     const kn = G.handLvl() && G.handNext();
     if (kn && state.level >= kn.lvl) add('tools', kn.cost.tools);
+    // le bois et la pierre d'une machine qu'on peut acheter (sinon le robot n'achète jamais la malterie ni la sucrerie)
+    Object.values(MACHINES).forEach(m => {
+        if (state.level >= m.reqLvl && !G.hasMachine(m.id) && G.storyOk(m)) Object.entries(G.matCost('machine', m.id) || {}).forEach(([id, q]) => add(id, q));
+    });
     // la brasserie : de quoi tenir deux brassins d'avance
     if (G.brewOpen()) {
         const maltStock = MALT_IDS.reduce((x, m) => x + (state.inventory[m] || 0), 0);
@@ -673,6 +677,20 @@ else {
     console.log('revenus :', out.income, '· activité :', out.stats);
     console.log('monde :', JSON.stringify(out.world));
     log.slice(process.argv.includes('--chapters') ? 0 : -5).forEach(l => console.log('  chantier :', l));
+    if (process.argv.includes('--debug'))
+        console.log(
+            'debug :',
+            'confiserie',
+            G.hasMachine('confectionery'),
+            'sucre',
+            state.inventory.sugar,
+            'crème',
+            state.inventory.cream,
+            'caramel',
+            state.inventory.caramel,
+            'files',
+            JSON.stringify(state.machines.map(m => [m.type, m.queue.length])),
+        );
     // les chantiers ouverts qui ne sont pas finis : ce qui manque
     Object.values(PROJECTS)
         .filter(p => G.projectOpen(p.id))

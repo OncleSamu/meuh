@@ -38,7 +38,6 @@ export const storyOk = d => !d || !d.needProject || projectDone(d.needProject);
 export const storyLockText = d => (d && d.needProject && !projectDone(d.needProject) ? `Après le chantier « ${PROJECTS[d.needProject].name} »` : '');
 
 // une carte s'ouvre avec son premier chapitre, ou dès son niveau pour la voir de loin (sauf « strict »)
-export const BRANCH_MAPS = [];
 const firstOf = map => CHAPTERS[CHAPTER_ORDER.find(n => CHAPTERS[n - 1].map === map) - 1];
 export const mapOpen = m => {
     if (m.id === 'village') return true;

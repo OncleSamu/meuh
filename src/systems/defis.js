@@ -31,7 +31,6 @@ export function ensureDefis() {
 export const defiOpen = () => state.level >= DEFI.lvl;
 export const defiScale = () => Math.min(DEFI.maxScale, 1 + DEFI.perStar * (state.renown || 0));
 export const curDefi = () => (state.defis && state.defis.cur) || null;
-export const defiDef = d => DEFIS[d.id];
 
 // ---------------- ce qui est ouvert ----------------
 const PARTS = {

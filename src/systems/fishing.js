@@ -174,7 +174,6 @@ export function catchTable(spot = state.pond.spot, bait = state.pond.bait) {
         .map(([id, o]) => ({ id, pct: Math.max(1, Math.round((o / tot) * 100)), boosted: !!(b && FISH[id].bait && FISH[id].bait.includes(b)) }))
         .sort((x, y) => y.pct - x.pct);
 }
-export const fishAvailable = (spot = state.pond ? state.pond.spot : 'bank') => catchTable(spot, null).map(r => r.id);
 // le meilleur coin et le meilleur appât pour un poisson (pour « Aller pêcher » depuis une commande)
 export function bestFor(id) {
     const f = FISH[id];
@@ -386,7 +385,6 @@ const pluralName = id => qtyName(2, FISH[id].name).replace(/^2 /, '');
 export const trapMax = () => (state.level >= TRAPS.lvl ? TRAPS.max(state.level) + trapBonus() : 0);
 export const trapReady = t => !!(t && t.start && now() >= t.start + TRAPS.every);
 export const trapsReady = () => (state.pond ? state.pond.traps.filter(trapReady).length : 0);
-export const trapsIdle = () => (state.pond ? state.pond.traps.filter(t => !t.start).length : 0);
 export function buyTrap(at) {
     ensurePond();
     const p = state.pond,

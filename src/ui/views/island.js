@@ -48,7 +48,7 @@ function closedCard() {
             lvl
                 ? `Au niveau ${ISLAND.lvl}, Tiago le passeur vous attend au port : son vieux bac mène à une île où poussent bananes, ananas et noix de coco.`
                 : !G.chapterOpen(13)
-                  ? `Finissez d’abord le chapitre ${G.chapterNum(G.chapterAfter(13))} (le port) : Tiago vous attend sur le quai.`
+                  ? `Finissez d’abord le chapitre ${G.chapterNum(G.chapterAfter(13))} (l’abbaye) : Tiago vous attend sur le quai.`
                   : 'Tiago a besoin de vous pour réparer son bac. Apportez-lui planches, poutres, clous et toile dans le volet Village, carte « L’île ».'
         }</p>
         ${lvl ? '' : btn('Voir le bac', { act: 'goFerry', kind: 'gold', wide: true, icon: ['ui', 'village'] })}
