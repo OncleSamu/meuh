@@ -41,6 +41,7 @@ export function openSheet(name, opts = {}) {
             <div class="sheet-foot"></div>
         </div>`;
     byId('sheets').appendChild(el);
+    el._t = performance.now();
     stack.push({ name, opts, el });
     if (def.open) def.open(opts);
     grip(el);

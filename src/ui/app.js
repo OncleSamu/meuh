@@ -337,7 +337,12 @@ export function setupApp() {
         go: (el, d) => go(d.path, { ...d }), // une copie : le dataset du bouton transforme tout en texte
         sub: (el, d) => go(`${ui.tab}/${d.v}`),
         open: (el, d) => openSheet(d.sheet, { ...d }),
-        sheetClose: () => closeSheet(),
+        // sur téléphone, le « clic » qui suit le geste d'ouverture tombe sur le fond de la fenêtre qui vient de s'ouvrir : on l'ignore
+        sheetClose: el => {
+            const w = el && el.closest && el.closest('.sheet-wrap');
+            if (el && el.classList && el.classList.contains('sheet-back') && w && performance.now() - (w._t || 0) < 450) return;
+            closeSheet();
+        },
         momentOk: () => closeMoment(),
         undoSale: () => {
             G.undoSale();
