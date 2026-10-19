@@ -54,7 +54,6 @@ export function doPrestige(challenge, theme) {
         // les grands défis gardent leurs trophées ; le défi en cours est mis de côté
         defis: state.defis ? { ...state.defis, cur: null } : null,
         night: state.night,
-        carnet: state.carnet,
         // les chapitres gardés à la conversion 1.4 ne survivent pas à une nouvelle ferme
         story: { ...state.story, keep: {} },
         barn: state.barn,

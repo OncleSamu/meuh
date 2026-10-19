@@ -45,7 +45,6 @@ export function newState() {
         pond: null, // 1.10 : la pêche (coins, appâts, nasses, défis, concours)
         defis: null,
         night: null,
-        carnet: null,
         counter: null, // 1.17 : le comptoir (salon, décors, clients)
         machines: [],
         quests: [],

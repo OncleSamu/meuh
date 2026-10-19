@@ -189,7 +189,7 @@ export function unlocksAt(lvl) {
     if (lvl === STYLE_LVL) add(['item', 'brush'], 'Personnalisation : clôture, allées, toit et grange (touchez la maison)');
     if (lvl === MASTERY_LVL) {
         add(['ui', 'medalB'], 'Maîtrise des produits : produisez beaucoup pour gagner des étoiles (Livre de la ferme)');
-        add(['villager', 'odette'], 'Le carnet de Mamie Odette : une histoire par recette maîtrisée (menu)');
+        add(['villager', 'odette'], 'Les histoires de Mamie Odette : une par recette maîtrisée, dans la fiche de chaque plat (Livre de la ferme)');
     }
     if (lvl === HOLIDAY_LVL) add(['ui', 'basket'], 'Les fêtes : Pâques, Halloween et Noël, avec leur recette et leur panier (aux vraies dates)');
     if (lvl === CROW_LVL) add(['ui', 'crow'], 'Les corbeaux viennent picorer le champ : touchez-les pour les chasser');

@@ -104,13 +104,13 @@ test('la nuit : lucioles, bocal, étoile filante et vœu', () => {
     assert.equal(state.night.flies.length, 0);
 });
 
-test('le carnet : une page par recette, une page complète se réclame', () => {
+test('les histoires de Mamie : une par recette, lues dans la fiche du livre une fois la maîtrise bronze atteinte', () => {
     assert.equal(Object.keys(CARNET).length, Object.keys(RECIPES).length);
-    const p = G.carnetPages().find(x => x.m === 'mill');
-    p.ids.forEach(id => (state.mastery[id] = 1000));
-    assert.ok(G.carnetPageDone(p));
-    const before = state.money;
-    assert.ok(G.claimCarnetPage('mill'));
-    assert.ok(state.money > before);
-    assert.ok(!G.claimCarnetPage('mill'), 'une seule fois');
+    const id = 'flour';
+    state.mastery[id] = 0;
+    state.collection['k_' + id] = { n: 1, best: 0, day: 1 };
+    assert.ok(G.entryInfo('k_' + id).locked, 'verrouillée au départ');
+    state.mastery[id] = 1000;
+    const info = G.entryInfo('k_' + id);
+    assert.ok(!info.locked && info.anecdote === CARNET[id]);
 });

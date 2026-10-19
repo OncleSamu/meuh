@@ -43,7 +43,6 @@ import { ensureIsland, islandTick, islandOffline } from './island.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
 import { ensureNight, nightTick } from './night.js';
-import { ensureCarnet } from './carnet.js';
 import { brewOpen, ensureBrew, brewTick } from './brewery.js';
 import { cargoTick, cargoHere, cargoLeave } from './cargo.js';
 import { pondTick, trapsReady } from './fishing.js';
@@ -100,7 +99,6 @@ export function normalizeState() {
     if (brewOpen()) ensureBrew();
     ensureDefis();
     ensureNight();
-    ensureCarnet();
     migrateCounter();
     syncBook();
     ensureNature();
