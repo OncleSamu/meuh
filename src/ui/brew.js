@@ -528,7 +528,7 @@ function result(o, id, scores, vid, close) {
     res.innerHTML = `<div class="cb-res" role="dialog" aria-label="Résultat"><h2>${st === 3 ? 'Parfait !' : st === 2 ? 'Bien servi' : 'À améliorer'}</h2><div class="cb-stars">${stars(st)}</div>
         <div class="cb-rows">${scores.map(s => `<div class="cb-row"><span>${LBL[s[0]]}</span><i>${Math.round(s[1] * 100)} %</i></div>`).join('')}
         ${who ? `<div class="cb-row"><span>${VILLAGERS[who].name} attend</span><i>${ico(['item', id])}</i></div>` : ''}</div>
-        <div class="cb-acts">${who ? '<button class="btn gold" id="cbkeep">Au stock</button><button class="btn green" id="cbserve">Servir</button>' : '<button class="btn gold" id="cbagain">Rejouer</button><button class="btn green" id="cbkeep">Ranger</button>'}</div></div>`;
+        <div class="cb-acts">${who ? '<button class="btn gold" id="cbkeep">Au stock</button><button class="btn green" id="cbserve">Servir</button>' : '<button class="btn green" id="cbkeep">Ranger au stock</button>'}</div></div>`;
     o.appendChild(res);
     sfx(st === 3 ? 'golden' : 'harvest');
     const done = (b, target) => {
@@ -544,13 +544,5 @@ function result(o, id, scores, vid, close) {
         sv.onclick = e => {
             done(e.currentTarget, who);
             close();
-        };
-    const ag = res.querySelector('#cbagain');
-    if (ag)
-        ag.onclick = e => {
-            done(e.currentTarget, null);
-            run++;
-            o.remove();
-            openBrew(id, null);
         };
 }

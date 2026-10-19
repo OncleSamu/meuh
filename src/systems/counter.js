@@ -22,6 +22,8 @@ import { sellPrice } from './market.js';
 import { mExtraYield } from './buildings.js';
 
 const DAY = 86400000;
+// le jour du téléphone (minuit à l'heure locale)
+const dayNum = () => Math.floor((now() - new Date(now()).getTimezoneOffset() * -60000) / DAY);
 export const counterRecipes = () => Object.values(RECIPES).filter(r => r.machine === 'counter');
 export const counterOwned = () => hasMachine('counter');
 
@@ -61,11 +63,11 @@ export const decorCount = () => Object.values(ensureCounter().decor).filter(Bool
 export const patienceMax = () => CLIENT.patience * (1 + DECOR_PATIENCE * Math.min(3, decorCount()));
 export const dailyLeft = () => {
     const C = ensureCounter();
-    return Math.max(0, CLIENT.daily(C.lvl) - (C.day === Math.floor(now() / DAY) ? C.served : 0));
+    return Math.max(0, CLIENT.daily(C.lvl) - (C.day === dayNum() ? C.served : 0));
 };
 function rollDay() {
     const C = ensureCounter(),
-        d = Math.floor(now() / DAY);
+        d = dayNum();
     if (C.day !== d) {
         C.day = d;
         C.served = 0;
