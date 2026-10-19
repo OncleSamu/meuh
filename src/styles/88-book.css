@@ -1,0 +1,261 @@
+/* 1.18 : le Grand livre (étagère des pages, paliers, fiche d'une entrée) */
+.bk-shelf {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+.bk-pg {
+    position: relative;
+    text-align: left;
+    font: inherit;
+    color: #3a2618;
+    background: #fff7e0;
+    border: 3px solid #3a2618;
+    border-radius: 14px;
+    padding: 8px 8px 7px;
+    box-shadow: 0 3px 0 #7a4a2a;
+    cursor: pointer;
+}
+.bk-pg:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #7a4a2a;
+}
+.bk-pg .top {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.bk-pg .top .ico {
+    flex: none;
+    width: 42px;
+    height: 42px;
+}
+.bk-pg b {
+    display: block;
+    font-size: 13px;
+    line-height: 1.1;
+}
+.bk-pg small {
+    font-size: 11px;
+    color: #7a5a3a;
+    font-weight: 800;
+}
+.bk-pg .bar {
+    margin: 6px 0 5px;
+}
+.bk-pips {
+    display: flex;
+    gap: 4px;
+}
+.bk-pips span {
+    flex: 1;
+    height: 14px;
+    border: 2px solid #3a2618;
+    border-radius: 5px;
+    background: #e9dcc0;
+    font-size: 8px;
+    font-weight: 900;
+    line-height: 10px;
+    text-align: center;
+    color: #7a5a3a;
+}
+.bk-pips span.on {
+    background: #f2c14e;
+    color: #3a2618;
+}
+.bk-pips span.rdy {
+    background: #8fd45a;
+    color: #fff;
+}
+.bk-new {
+    position: absolute;
+    top: -7px;
+    right: -5px;
+    min-width: 20px;
+    text-align: center;
+    background: #e2412f;
+    color: #fff;
+    border: 2px solid #3a2618;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 0 5px;
+}
+.bk-back {
+    font: inherit;
+    font-weight: 900;
+    color: #7a4a2a;
+    background: none;
+    border: 0;
+    padding: 4px 2px 8px;
+    cursor: pointer;
+}
+.bk-head {
+    background: #fff7e0;
+    border: 3px solid #3a2618;
+    border-radius: 14px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+.bk-head h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    color: #3a2618;
+}
+.bk-head h3 small {
+    color: #7a5a3a;
+}
+.bk-ladder {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    margin-top: 8px;
+}
+.bk-ladder > div {
+    border: 2px solid #3a2618;
+    border-radius: 9px;
+    background: #efe3c8;
+    text-align: center;
+    padding: 4px 2px;
+    font-size: 10px;
+    line-height: 1.15;
+    color: #3a2618;
+}
+.bk-ladder > div.on {
+    background: #ffe08a;
+}
+.bk-ladder > div.rdy {
+    background: #d6f0b8;
+}
+.bk-ladder b {
+    display: block;
+}
+.bk-ladder em {
+    display: block;
+    font-style: normal;
+    font-weight: 800;
+    color: #7a4a2a;
+    font-size: 10px;
+    margin: 2px 0;
+}
+button.entry {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+.bk-dots {
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+    margin-top: 3px;
+}
+.bk-dots i {
+    width: 9px;
+    height: 9px;
+    border: 2px solid #3a2618;
+    border-radius: 50%;
+    background: #e9dcc0;
+}
+.bk-dots i.b {
+    background: #c8803a;
+}
+.bk-dots i.s {
+    background: #cfd6dc;
+}
+.bk-dots i.g {
+    background: #f2c14e;
+}
+.bk-star {
+    display: block;
+    color: #f2a900;
+    font-size: 11px;
+    letter-spacing: -1px;
+}
+.bk-fiche {
+    background: #fff7e0;
+    border: 3px solid #3a2618;
+    border-radius: 16px;
+    padding: 12px;
+    text-align: center;
+}
+.bk-fiche > .spr,
+.bk-fiche > svg {
+    width: 92px;
+    height: 92px;
+}
+.bk-fiche h3 {
+    margin: 2px 0 0;
+    font-size: 18px;
+    color: #3a2618;
+}
+.bk-cnt {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 6px;
+    margin: 10px 0;
+}
+.bk-cnt > div {
+    border: 2px solid #3a2618;
+    border-radius: 10px;
+    background: #efe3c8;
+    padding: 5px 2px;
+    color: #3a2618;
+}
+.bk-cnt b {
+    display: block;
+    font-size: 19px;
+}
+.bk-cnt small {
+    font-size: 10px;
+    font-weight: 900;
+    color: #7a4a2a;
+}
+.bk-cnt .s {
+    background: #e3e8ec;
+}
+.bk-cnt .g {
+    background: #ffe08a;
+}
+.bk-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #3a2618;
+    padding: 4px 2px;
+    border-bottom: 1.5px dashed #c9b48a;
+    text-align: left;
+}
+.bk-line span:last-child {
+    text-align: right;
+}
+.bk-odette {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    background: #fbecc9;
+    border: 2px solid #3a2618;
+    border-radius: 12px;
+    padding: 8px;
+    margin-top: 10px;
+    text-align: left;
+}
+.bk-odette > .spr,
+.bk-odette > svg {
+    width: 40px;
+    height: 40px;
+    flex: none;
+}
+.bk-odette p {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: #3a2618;
+    line-height: 1.35;
+}
+.bk-odette small {
+    color: #7a5a3a;
+}

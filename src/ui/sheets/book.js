@@ -6,9 +6,9 @@ import { SEASONS, EVENTS } from '../../data/world.js';
 import { ACH_REWARDS, MEDALS, MAX_LEVEL, BOOK_QUARTERS, MASTERY_NAMES } from '../../data/progress.js';
 import { ACHIEVEMENTS } from '../../data/meta.js';
 import * as G from '../../systems/index.js';
-import { actions } from '../dom.js';
+import { actions, esc } from '../dom.js';
 import { ico, art, qStar, SPR } from '../icons.js';
-import { btn, bar, segmented } from '../kit.js';
+import { btn, bar, segmented, empty } from '../kit.js';
 import { defineSheet, sheetOpts } from '../sheets.js';
 
 const COIN = () => ico(['ui', 'coin']);
@@ -29,30 +29,108 @@ function quarters() {
         <div class="card-sub">À chaque quart : des pièces et des matériaux rares. Livre complet : le Livre d’or et 1 ruban.</div></div>`;
 }
 
-function collection(o) {
-    const page = G.BOOK.find(p => p.id === o.page) || G.BOOK[0],
-        list = page.entries();
-    const found = G.pageFound(page);
-    const tabs = `<div class="chips-row">${G.BOOK.map(p => `<button class="pick-chip${p.id === page.id ? ' on' : ''}" data-act="bookPage" data-p="${p.id}">${p.name}<small>${G.pageFound(p)}/${p.entries().length}</small></button>`).join('')}</div>`;
-    const grid = list
-        .map(e => {
-            const c = state.collection[e.key];
-            return `<div class="entry${c ? '' : ' unknown'}"><span class="entry-ico">${art(e.icon[0], e.icon[1])}${c && e.star ? qStar(2, 'entry-star') : ''}</span>
-            <b>${c ? e.name : '???'}</b><small>${c ? (e.fish ? `Record : ${(c.best || 0).toString().replace('.', ',')} kg` : `×${fmt(c.n)}`) : e.hint}</small></div>`;
+const pct = q => `${Math.round(q * 100)} %`;
+const dots = e => {
+    if (!(e.kind === 'item' && e.id)) return '';
+    const q = state.qmade[e.id] || { s: 0, g: 0 };
+    return `<span class="bk-dots"><i class="b"></i><i class="${q.s ? 's' : ''}"></i><i class="${q.g ? 'g' : ''}"></i></span>`;
+};
+const starsOf = n => (n ? `<span class="bk-star">${'★'.repeat(n)}${'☆'.repeat(Math.max(0, 3 - n))}</span>` : '');
+
+// l'étagère : une carte par page, avec ses quatre paliers
+function shelf() {
+    const cards = G.BOOK.map(p => {
+        const n = G.pageCount(p),
+            tot = p.abs ? p.abs[3] : p.entries().length;
+        const got = [0, 1, 2].map(k => (state.bookTiers[p.id] || [])[k]);
+        got[3] = state.pagesDone[p.id];
+        const pips = [0, 1, 2, 3]
+            .map(
+                k =>
+                    `<span class="${got[k] ? 'on' : (k < 3 ? G.pageTierReady(p, k) : G.pageDone(p)) ? 'rdy' : ''}">${got[k] ? '✓' : p.abs ? G.pageGoal(p, k) : pct(BOOK_QUARTERS[k]).replace(' %', '')}</span>`,
+            )
+            .join('');
+        const rdy = G.pageReadyCount(p);
+        return `<button class="bk-pg" data-act="bookPage" data-p="${p.id}">${rdy ? `<span class="bk-new">${rdy}</span>` : ''}<div class="top">${ico(p.icon, 'ico big')}<div><b>${p.name}</b><small>${fmt(n)} / ${fmt(tot)}</small></div></div>${bar(Math.min(1, n / tot))}<div class="bk-pips">${pips}</div></button>`;
+    }).join('');
+    return `<div class="bk-shelf">${cards}</div><p class="card-sub center">Touchez une page pour l’ouvrir. Chaque page a quatre paliers : le dernier donne 1 ruban.</p>`;
+}
+
+function pageView(page) {
+    const list = page.entries(),
+        n = G.pageCount(page),
+        tot = page.abs ? page.abs[3] : list.length;
+    const ladder = [0, 1, 2, 3]
+        .map(k => {
+            const r = k < 3 ? G.pageTierReward(k) : null;
+            const got = k < 3 ? (state.bookTiers[page.id] || [])[k] : state.pagesDone[page.id];
+            const ready = k < 3 ? G.pageTierReady(page, k) : G.pageDone(page) && !got;
+            const lab = page.abs ? `${G.pageGoal(page, k)} ${page.unit || ''}${G.pageGoal(page, k) > 1 ? 's' : ''}` : pct(BOOK_QUARTERS[k]);
+            const rew = k < 3 ? `${fmt(r.coins)}${r.item ? ` + ${r.item[1]} ${ITEMS[r.item[0]].name.toLowerCase()}` : ''}` : `${fmt(G.pageReward())} + 1 ruban`;
+            const action = ready
+                ? btn('Réclamer', { act: k < 3 ? 'bookTier' : 'claimPage', data: k < 3 ? { p: page.id, k } : { p: page.id }, kind: 'gold', size: 'sm' })
+                : '';
+            return `<div class="${got ? 'on' : ready ? 'rdy' : ''}"><b>${got ? '✓ ' : ''}${lab}</b><em>${rew}</em>${action}</div>`;
         })
         .join('');
-    const done = found === list.length,
-        claimed = state.pagesDone[page.id];
-    const foot = claimed
-        ? '<p class="card-sub center">Page complétée, bravo !</p>'
-        : `${bar(found / list.length)}<p class="card-sub center">${found} / ${list.length} · Page complète : ${fmt(G.pageReward())} pièces et 1 ruban</p>${btn('Réclamer la page', { act: 'claimPage', data: { p: page.id }, kind: done ? 'gold' : '', wide: true, disabled: !done })}`;
-    return [
-        ['q', quarters()],
-        ['tabs', tabs],
-        ['grid', `<div class="book-grid">${grid}</div>`],
-        ['foot', foot],
-    ];
+    const head = `<div class="bk-head"><h3>${page.name} <small>${fmt(n)} / ${fmt(tot)}</small></h3>${bar(Math.min(1, n / tot))}<div class="bk-ladder">${ladder}</div></div>`;
+    const empty =
+        page.dyn && !list.length
+            ? `<p class="card-sub center">${page.id === 'varieties' ? 'Croisez des plantes au labo : chaque variété créée a sa fiche ici.' : page.id === 'beers' ? 'Brassez une bière à la brasserie : elle aura sa fiche ici.' : 'Fixez une race à la station : elle aura sa fiche ici.'}</p>`
+            : '';
+    const grid = list
+        .map(e => {
+            const f = G.isFound(e),
+                c = state.collection[e.key];
+            if (!f) return `<div class="entry unknown"><span class="entry-ico">${art(e.icon[0], e.icon[1])}</span><b>???</b><small>${e.hint}</small></div>`;
+            const sub = e.fish
+                ? `Record : ${((c && c.best) || 0).toString().replace('.', ',')} kg`
+                : e.kind === 'beer'
+                  ? ''
+                  : e.kind === 'variety'
+                    ? e.star
+                        ? 'Fixée'
+                        : 'Pas fixée'
+                    : c
+                      ? `×${fmt(c.n)}`
+                      : '';
+            const bs = e.kind === 'beer' && state.brew && state.brew.beers[e.id] ? state.brew.beers[e.id].stars : 0;
+            return `<button class="entry" data-act="open" data-sheet="bookEntry" data-key="${e.key}"><span class="entry-ico">${art(e.icon[0], e.icon[1])}${f && e.star && e.kind !== 'variety' ? qStar(2, 'entry-star') : ''}</span><b>${esc(e.name)}</b>${starsOf(bs)}<small>${sub}</small>${dots(e)}</button>`;
+        })
+        .join('');
+    return `<button class="bk-back" data-act="bookBack">‹ Toutes les pages</button>${head}${empty}<div class="book-grid">${grid}</div>`;
 }
+
+function collection(o) {
+    const page = G.BOOK.find(p => p.id === o.page);
+    return page
+        ? [['p', pageView(page)]]
+        : [
+              ['q', quarters()],
+              ['shelf', shelf()],
+          ];
+}
+
+// la fiche d'une entrée
+defineSheet('bookEntry', {
+    title: o => {
+        const i = G.entryInfo(o.key);
+        return i ? i.e.name : 'Fiche';
+    },
+    render(o) {
+        const i = G.entryInfo(o.key);
+        if (!i) return empty('Cette page n’existe plus.');
+        const e = i.e;
+        const cnt = i.counters
+            ? `<div class="bk-cnt">${i.counters.map((c, k) => `<div class="${k === 1 ? 's' : k === 2 ? 'g' : ''}"><b>${fmt(c[1])}</b><small>${c[0].toUpperCase()}</small></div>`).join('')}</div>`
+            : '';
+        const lines = i.lines.map(([l, v]) => `<div class="bk-line"><span>${l}</span><span>${esc(String(v))}</span></div>`).join('');
+        const mamie = i.anecdote
+            ? `<div class="bk-odette">${art('villager', 'odette')}<p>${i.locked ? esc(i.anecdote) : `« ${esc(i.anecdote)} »`}<br><small>Page de Mamie Odette</small></p></div>`
+            : '';
+        return `<div class="bk-fiche">${art(e.icon[0], e.icon[1])}<h3>${esc(e.name)}</h3>${starsOf(i.stars)}${i.found ? '' : `<p class="card-sub">${e.hint}</p>`}${cnt}${lines}${mamie}</div>`;
+    },
+});
 
 // ---------------- maîtrise ----------------
 function mastery() {
@@ -148,7 +226,7 @@ defineSheet('book', {
     cls: 'book-sheet',
     title: 'Livre de la ferme',
     open(o) {
-        o.page = o.page || 'garden';
+        G.syncBook();
         if (!o.sec) o.sec = G.claimableCount() ? 'exploits' : G.legendReady() ? 'legend' : 'collection';
     },
     render(o) {
@@ -176,6 +254,8 @@ export function setupBook() {
     actions({
         bookSec: (el, d) => (o().sec = d.v),
         bookPage: (el, d) => (o().page = d.p),
+        bookBack: () => (o().page = null),
+        bookTier: (el, d) => G.claimPageTier(d.p, +d.k, el),
         claimPage: (el, d) => G.claimPage(d.p, el),
         quarter: (el, d) => G.claimQuarter(+d.k, el),
         claimAch: (el, d) => G.claimAchievement(d.id, el),

@@ -34,7 +34,7 @@ import { ensureHoliday } from './holidays.js';
 import { contestTick } from './contest.js';
 import { caveOpen, caveTick, auctionTick, caveCareCount, caveOrderTick } from './cave.js';
 import { tip } from './tips.js';
-import { trimDayEarn } from './book.js';
+import { trimDayEarn, syncBook } from './book.js';
 import { ensureOrchard, orchardTick, orchardOffline } from './orchard.js';
 import { pickerTick, pickerAfterOffline } from './orchardplus.js';
 import { lifeTick, lifeAfterOffline } from './orchardlife.js';
@@ -102,6 +102,7 @@ export function normalizeState() {
     ensureNight();
     ensureCarnet();
     migrateCounter();
+    syncBook();
     ensureNature();
     ensureMachineData();
     ensureRecipeMoves();

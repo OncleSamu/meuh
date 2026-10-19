@@ -142,6 +142,7 @@ const give = (id, q, at, cls = '', dy = -30, delay = 0) => {
     state.inventory[id] = (state.inventory[id] || 0) + q;
     natGot(id, q);
     if (ITEMS[id].type === 'gem') collect('t_' + id);
+    if (ITEMS[id].type === 'ore') collect('m_' + id);
     emit('float', { at, parts: [`+${q}`, ['item', id]], cls, dy, delay });
 };
 

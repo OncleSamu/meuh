@@ -544,6 +544,9 @@ export function addQuality(id, q, n) {
     const o = qual(id);
     if (q === 2) o.g += n;
     else o.s += n;
+    const m = (state.qmade = state.qmade || {});
+    const t = (m[id] = m[id] || { s: 0, g: 0 });
+    t[q === 2 ? 'g' : 's'] += n;
 }
 
 export function rollQuality(plot) {

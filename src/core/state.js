@@ -163,6 +163,8 @@ export function newState() {
         holiday: null,
         records: {},
         bookQuarters: [],
+        bookTiers: {},
+        qmade: {},
         crow: null,
         daily: { last: '', streak: 0 },
     };

@@ -276,12 +276,36 @@ export const FISH = {
 };
 
 // ---------------- Livre de la ferme : les pages ----------------
+// 1.18 : le Grand livre. icon : [genre, id] ; abs : paliers en nombre (pages qui grandissent avec la partie) ;
+// machines : les machines dont les recettes forment la page ; dyn : la page n'entre pas dans le total du livre.
 export const BOOK_PAGES = [
-    { id: 'garden', name: "Potager d'or" },
-    { id: 'fish', name: 'Poissons' },
-    { id: 'kitchen', name: 'Recettes' },
-    { id: 'treasure', name: 'Trésors' },
-    { id: 'cave', name: 'Grands crus' },
+    { id: 'garden', name: "Potager d'or", icon: ['item', 'carrot'] },
+    { id: 'orchard', name: 'Verger', icon: ['item', 'apple'] },
+    { id: 'varieties', name: 'Variétés du labo', icon: ['item', 'strawberry'], abs: [1, 3, 6, 10], dyn: true, unit: 'variété fixée' },
+    { id: 'fish', name: 'Poissons', icon: ['item', 'perch'] },
+    { id: 'dishes', name: 'Plats', icon: ['item', 'lasagna'], machines: ['kitchen', 'stove', 'pastaworks', 'crepery', 'deli'] },
+    { id: 'sea', name: 'Mer et étang', icon: ['item', 'bouillabaisse'], machines: ['fishmonger', 'smokehouse', 'cannery'] },
+    {
+        id: 'sweets',
+        name: 'Pâtisseries et douceurs',
+        icon: ['item', 'cherryPie'],
+        machines: ['pastry', 'bakery', 'confectionery', 'icecream', 'chocolatier', 'islandBakery', 'sugarmill'],
+    },
+    { id: 'cheese', name: 'Fromagerie', icon: ['item', 'camembert'], machines: ['dairy', 'alpineDairy'] },
+    { id: 'counter', name: 'Boissons du comptoir', icon: ['item', 'cappuccino'], machines: ['counter'] },
+    { id: 'drinks', name: 'Jus et alcools', icon: ['item', 'juice'], machines: ['press', 'juiceBar', 'still', 'rumDistillery', 'brewery', 'winery'] },
+    { id: 'beers', name: 'Bières maison', icon: ['ui', 'beer'], abs: [2, 5, 10, 20], dyn: true, unit: 'bière' },
+    { id: 'vintages', name: 'Cuvées et millésimes', icon: ['item', 'champagne'] },
+    {
+        id: 'crafts',
+        name: 'Artisanat',
+        icon: ['item', 'sweater'],
+        machines: ['loom', 'tailor', 'pottery', 'forge', 'sawmill', 'jewelry', 'soapworks', 'perfumery', 'dyeworks', 'oilmill'],
+    },
+    { id: 'pantry', name: 'Épicerie et salaison', icon: ['item', 'flour'], machines: ['mill', 'dryer', 'saloir', 'malthouse'] },
+    { id: 'treasure', name: 'Mines et gemmes', icon: ['item', 'ruby'] },
+    { id: 'races', name: 'Races', icon: ['animal', 'cow'], abs: [1, 2, 4, 8], dyn: true, unit: 'race fixée' },
+    { id: 'cave', name: 'Grands crus', icon: ['ui', 'cave'] },
 ];
 export const TREASURES = [
     { key: 't_fossil', icon: ['item', 'fossil'], name: 'Fossile', hint: 'Caché dans les rochers de la mine' },
