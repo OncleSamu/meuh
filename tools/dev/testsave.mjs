@@ -23,8 +23,6 @@ for (const r of Object.values(RECIPES).filter(x => x.machine === 'counter')) for
 G.migrateCounter();
 if (!state.machines.some(m => m.type === 'counter')) state.machines.push(G.newMachine('counter'));
 G.ensureCounter();
-// quelques cœurs d'amitié pour voir les clients
-['odette', 'gaston', 'lucie', 'paul'].forEach(v => state.villagers[v] && (state.villagers[v].pts = 40));
 G.normalizeState();
 writeFileSync(process.argv[2] || 'testsave.json', JSON.stringify(state));
 console.log('ok', G.counterOwned(), G.islandOpen(), G.counterRecipes().filter(r => G.recipeUnlocked(r.id)).length + '/' + G.counterRecipes().length);
