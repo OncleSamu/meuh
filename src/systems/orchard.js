@@ -248,6 +248,7 @@ export function pickTree(k, at, quiet, z = 'farm') {
         if (q === 2) gold++;
         else if (q === 1) silver++;
     }
+    if (z !== 'island' && silver + gold) state.stats.orchardQual = (state.stats.orchardQual || 0) + silver + gold;
     if (silver) addQuality(t.id, 1, silver);
     if (gold) {
         addQuality(t.id, 2, gold);

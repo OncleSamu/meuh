@@ -341,7 +341,10 @@ export function landFish(id, w, at, perfect) {
     state.inventory[id]++;
     state.stats.fish = (state.stats.fish || 0) + 1;
     collect('f_' + id, w);
-    if (perfect) p.perfect++;
+    if (perfect) {
+        p.perfect++;
+        state.stats.perfectFish = (state.stats.perfectFish || 0) + 1;
+    }
     sfx(id === 'goldfish' ? 'golden' : 'harvest');
     buzz(20);
     burst(at, 'water', 12);

@@ -378,6 +378,8 @@ export function takeOut(i, at) {
     c.reserve.push(kept);
     state.stats.caveLots = (state.stats.caveLots || 0) + 1;
     if (!lot.bad) record('lot', lotValue(lot));
+    if (!lot.bad && vintageOf(lot) && lot.vq >= 2) state.stats.vintageTop = (state.stats.vintageTop || 0) + 1;
+    if (!lot.bad && lot.name && isVinous(lot.id)) state.stats.cuvees = (state.stats.cuvees || 0) + 1;
     if (!lot.bad && lot.rank >= 3) {
         collect('cave_' + lot.id);
         state.stats.caveTop = (state.stats.caveTop || 0) + 1;

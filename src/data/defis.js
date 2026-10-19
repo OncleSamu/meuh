@@ -1,9 +1,13 @@
-// Les grands défis (1.1) : un objectif de deux semaines après le niveau 50, tiré au hasard parmi douze.
+import { FISH } from './meta.js';
+import { NEW_DRINKS } from './counter.js';
+
+// Les grands défis (1.1, 17 défis depuis la 1.18) : un objectif de deux semaines après le niveau 50, tiré au hasard.
 // Chaque défi a 4 étapes. Sortes d'étapes :
 //   give    : livrer des produits, k tirés dans la liste (q : 0 tout, 1 argent ou mieux, 2 or), n chacun
 //   count   : réussir une action (un compteur de state.stats qui avance pendant le défi)
 //   animal  : présenter une bête dont les gènes dépassent ceux de son espèce d'au moins n points
 //   variety : présenter une variété dont le gain de saveur atteint n
+//   beer    : présenter une bière maison d'au moins n étoiles (1.18)
 // open : ce qui doit être ouvert pour que le défi puisse sortir ; alt : étape de remplacement si l'étape demande
 // une partie du jeu fermée (needs) ou des produits qu'on ne sait pas encore faire.
 
@@ -23,12 +27,93 @@ export const DEFI = {
     ],
 };
 
-const ENTREES = ['soup', 'salad', 'quiche', 'garlicSoup', 'caprese', 'fishSoup', 'peasCarrots'];
-const PLATS = ['lasagna', 'risotto', 'gratin', 'ratatouille', 'potee', 'tartiflette', 'mushroomRisotto', 'bouillabaisse', 'ravioli', 'pizza'];
-const DESSERTS = ['pie', 'cherryPie', 'strawberryCake', 'peachTart', 'spongeCake', 'blueberryPie', 'vanillaFlan', 'chocCake', 'crepes'];
+const ENTREES = [
+    'soup',
+    'salad',
+    'quiche',
+    'garlicSoup',
+    'caprese',
+    'fishSoup',
+    'peasCarrots',
+    'tian',
+    'nicoise',
+    'gazpacho',
+    'leekVeloute',
+    'peaVeloute',
+    'pistou',
+    'asparagusVeloute',
+    'spinachQuiche',
+    'pissaladiere',
+];
+const PLATS = [
+    'lasagna',
+    'risotto',
+    'gratin',
+    'ratatouille',
+    'potee',
+    'tartiflette',
+    'mushroomRisotto',
+    'bouillabaisse',
+    'ravioli',
+    'pizza',
+    'cassoulet',
+    'moussaka',
+    'choucroute',
+    'potAuFeu',
+    'barigoule',
+    'paella',
+    'dhal',
+    'stuffedCabbage',
+    'saffronRisotto',
+    'garlicBread',
+];
+const DESSERTS = [
+    'pie',
+    'cherryPie',
+    'strawberryCake',
+    'peachTart',
+    'spongeCake',
+    'blueberryPie',
+    'vanillaFlan',
+    'chocCake',
+    'crepes',
+    'tatin',
+    'mirabelleTart',
+    'apricotTart',
+    'pumpkinPie',
+    'cremeBrulee',
+    'lemonTart',
+    'rhubarbTart',
+    'madeleines',
+    'waffles',
+    'walnutCake',
+    'saffronBrioche',
+];
 const ANIMAL_GOODS = ['milk', 'egg', 'wool', 'goatMilk', 'angora', 'gooseEgg', 'buffaloMilk', 'donkeyMilk', 'alpacaWool', 'turkeyEgg', 'quailEgg'];
-const FRUITS = ['apple', 'cherry', 'peach', 'orange', 'kiwi', 'kaki', 'olive', 'grape'];
-const FRUIT_GOODS = ['jam', 'cherryPie', 'peachTart', 'pie', 'juice', 'cider', 'orangeJuice', 'peachNectar', 'fruitSalad', 'grapeJuice'];
+const FRUITS = ['apple', 'cherry', 'peach', 'orange', 'kiwi', 'kaki', 'olive', 'grape', 'pear', 'mirabelle', 'apricot', 'fig', 'lemon', 'quince'];
+const FRUIT_GOODS = [
+    'jam',
+    'cherryPie',
+    'peachTart',
+    'pie',
+    'juice',
+    'cider',
+    'orangeJuice',
+    'peachNectar',
+    'fruitSalad',
+    'grapeJuice',
+    'pearJuice',
+    'apricotJuice',
+    'kiwiJuice',
+    'pommeau',
+    'tatin',
+    'mirabelleTart',
+    'apricotTart',
+    'rhubarbJam',
+    'kiwiJam',
+    'marmalade',
+    'quinceJelly',
+];
 const ISLE_RAW = [
     'banana',
     'coconut',
@@ -56,20 +141,66 @@ const ISLE_GOODS = [
     'pineappleCake',
     'limePie',
     'blancManger',
+    'papayaSmoothie',
+    'lycheeCocktail',
+    'bubbleTea',
+    'coconutRice',
+    'bananasFlambe',
+    'cassavaCakes',
 ];
-const ISLE_FINE = ['rum', 'arrangedRum', 'coconutPunch', 'coffee', 'cafeLatte', 'tiramisu'];
-const CHEESES = ['cheese', 'camembert', 'bleu', 'goatCheese', 'mozzarella'];
+const ISLE_FINE = ['rum', 'arrangedRum', 'coconutPunch', 'coffee', 'cafeLatte', 'tiramisu', 'islandCoffee', 'coconutCoffee'];
+const CHEESES = ['cheese', 'camembert', 'bleu', 'goatCheese', 'mozzarella', 'roquefort', 'truffleBrie', 'burrata', 'sheepTomme'];
 const FINISH = ['forgeLantern', 'weathervane', 'paintedVase', 'vase', 'horseshoe', 'teaSet'];
-const FISH_DISH = ['bouillabaisse', 'grilledFish', 'grilledMackerel', 'lobsterDish', 'fishSoup', 'accras', 'fishFritters'];
-const CANS = ['cannedSardines', 'mackerelRillettes', 'cannedShrimp'];
+const FISH_DISH = [
+    'bouillabaisse',
+    'grilledFish',
+    'grilledMackerel',
+    'lobsterDish',
+    'fishSoup',
+    'accras',
+    'fishFritters',
+    'perchMeuniere',
+    'pikeQuenelles',
+    'pochouse',
+    'zanderLeeks',
+    'salmonSteak',
+    'crayfishGratin',
+    'paella',
+];
+const CANS = ['cannedSardines', 'mackerelRillettes', 'cannedShrimp', 'pondRillettes', 'mackerelWine', 'lobsterBisque'];
 const ALP_CHEESE = ['beaufort', 'tomme', 'reblochon', 'comte'];
 const ALP_DISH = ['raclette', 'fondue', 'tartiflette'];
 const YARNS = ['cloth', 'angoraYarn', 'alpacaYarn', 'linen', 'cottonFabric', 'dyedWool'];
 const DYES = ['redDye', 'yellowDye', 'blueDye'];
-const CLOTHES = ['sweater', 'scarf', 'colorSweater', 'woolHat', 'alpacaScarf', 'linenShirt', 'tshirt', 'strawHat', 'quilt'];
+const CLOTHES = [
+    'sweater',
+    'scarf',
+    'colorSweater',
+    'woolHat',
+    'alpacaScarf',
+    'linenShirt',
+    'tshirt',
+    'strawHat',
+    'quilt',
+    'woolSocks',
+    'angoraMittens',
+    'plumedHat',
+    'teaTowel',
+];
 const FLOWERS = ['lavender', 'vanilla', 'tiare'];
-const SOAPS = ['lavenderSoap', 'goatSoap', 'oliveSoap', 'donkeySoap', 'coconutSoap', 'lavenderBag', 'scentedCandle'];
-const PERFUMES = ['lavenderWater', 'summerPerfume', 'vanillaPerfume', 'monoi', 'perfume'];
+const SOAPS = ['lavenderSoap', 'goatSoap', 'oliveSoap', 'donkeySoap', 'coconutSoap', 'lavenderBag', 'scentedCandle', 'resinCandle', 'donkeyCream'];
+const PERFUMES = ['lavenderWater', 'summerPerfume', 'vanillaPerfume', 'monoi', 'perfume', 'tiarePerfume'];
+
+// 1.18 : les nouveaux défis
+const FISHES = Object.entries(FISH)
+    .filter(([, f]) => !f.junk)
+    .map(([id]) => id);
+const MINE_ORES = ['ironOre', 'copperOre', 'silverOre', 'goldOre'];
+const MINE_GEMS = ['quartz', 'amethyst', 'ruby', 'sapphire', 'emerald'];
+const MINE_INGOTS = ['ironIngot', 'copperIngot', 'silverIngot', 'goldIngot'];
+const PUB_DISH = ['pizza', 'tartiflette', 'potee', 'choucroute', 'cassoulet', 'garlicBread'];
+const WINES = ['redWine', 'whiteWine', 'roseWine', 'tableWine'];
+const BUBBLES = ['champagne', 'champagneRose'];
 
 export const DEFIS = {
     banquet: {
@@ -108,7 +239,14 @@ export const DEFIS = {
         steps: [
             { kind: 'give', name: 'Les paniers de fruits', pool: FRUITS, k: 3, n: 25, q: 0 },
             { kind: 'give', name: 'Confitures et douceurs', pool: FRUIT_GOODS, k: 2, n: 10, q: 0 },
-            { kind: 'count', name: 'La cueillette', stat: 'orchardFruits', n: 120, icon: ['ui', 'basket'], text: 'Ramasser {n} fruits au verger de la ferme' },
+            {
+                kind: 'count',
+                name: 'La cueillette',
+                stat: 'orchardQual',
+                n: 40,
+                icon: ['ui', 'basket'],
+                text: 'Ramasser {n} fruits de qualité argent ou or au verger de la ferme',
+            },
             { kind: 'give', name: 'Le panier d’exception', pool: FRUITS, k: 1, n: 10, q: 1 },
         ],
     },
@@ -135,7 +273,16 @@ export const DEFIS = {
         intro: 'Les grands amateurs viendront goûter. Montrez-leur ce que vaut votre cave.',
         steps: [
             { kind: 'count', name: 'Les lots sortis', stat: 'caveLots', n: 6, icon: ['ui', 'cave'], text: 'Sortir {n} lots de la cave' },
-            { kind: 'count', name: 'Les grands lots', stat: 'caveTop', n: 3, icon: ['ui', 'star'], text: 'Sortir {n} lots du 4e rang ou mieux' },
+            {
+                kind: 'count',
+                name: 'Le millésime',
+                stat: 'vintageTop',
+                n: 2,
+                icon: ['ui', 'star'],
+                text: 'Sortir {n} vins d’un millésime exceptionnel',
+                needs: 'wine',
+                alt: { kind: 'count', name: 'Les grands lots', stat: 'caveTop', n: 3, icon: ['ui', 'star'], text: 'Sortir {n} lots du 4e rang ou mieux' },
+            },
             { kind: 'count', name: 'Le lot légendaire', stat: 'caveLegend', n: 1, icon: ['ui', 'star'], text: 'Affiner un lot jusqu’au rang légendaire' },
             {
                 kind: 'count',
@@ -278,6 +425,84 @@ export const DEFIS = {
                 needs: 'perfumery',
                 alt: { kind: 'give', name: 'Les bougies', pool: ['scentedCandle', 'candle', 'waxBalm'], k: 2, n: 8, q: 1 },
             },
+        ],
+    },
+    brasserie: {
+        name: 'La fête de la brasserie',
+        who: 'hugues',
+        icon: ['ui', 'beer'],
+        deco: 'brewBarrel',
+        open: 'brew',
+        intro: 'Toute l’abbaye lèvera son verre ! Il me faut du houblon, de la patience et de belles cuvées.',
+        steps: [
+            { kind: 'count', name: 'Les cuvées', stat: 'beers', n: 24, icon: ['ui', 'beer'], text: 'Brasser {n} bouteilles' },
+            { kind: 'count', name: 'Les commandes', stat: 'beerOrders', n: 3, icon: ['ui', 'beer'], text: 'Livrer {n} commandes de bière' },
+            { kind: 'beer', name: 'La bière de la maison', n: 2, text: 'Présenter une bière maison de {n} étoiles' },
+            { kind: 'give', name: 'Le plat de la brasserie', pool: PUB_DISH, k: 1, n: 4, q: 2 },
+        ],
+    },
+    comptoir: {
+        name: 'Le comptoir en fête',
+        who: 'paul',
+        icon: ['item', 'cappuccino'],
+        deco: 'neonSign',
+        open: 'counter',
+        intro: 'Un café de quartier, ça se juge au sourire des clients. Faisons chanter le comptoir !',
+        steps: [
+            { kind: 'count', name: 'Les clients', stat: 'clients', n: 12, icon: ['villager', 'paul'], text: 'Servir {n} clients au comptoir' },
+            { kind: 'count', name: 'Les trois étoiles', stat: 'perfectDrinks', n: 6, icon: ['ui', 'star'], text: 'Réussir {n} boissons à 3 étoiles' },
+            { kind: 'give', name: 'La carte des boissons', pool: NEW_DRINKS.map(d => d[0]), k: 2, n: 6, q: 1 },
+            { kind: 'count', name: 'Le service', stat: 'drinks', n: 30, icon: ['item', 'espresso'], text: 'Préparer {n} boissons' },
+        ],
+    },
+    grandePeche: {
+        name: 'La grande pêche',
+        who: 'marcel',
+        icon: ['item', 'perch'],
+        deco: 'fishTrophy',
+        open: 'pond',
+        intro: 'Moi, j’ai vu passer un brochet gros comme ça. Montre-moi ce que tu sais faire, petit.',
+        steps: [
+            { kind: 'count', name: 'La pêche', stat: 'fish', n: 40, icon: ['item', 'perch'], text: 'Pêcher {n} poissons' },
+            { kind: 'count', name: 'Les prises parfaites', stat: 'perfectFish', n: 8, icon: ['ui', 'star'], text: 'Réussir {n} prises parfaites' },
+            { kind: 'give', name: 'Les belles prises', pool: FISHES, k: 3, n: 4, q: 0 },
+            { kind: 'give', name: 'Le plat de l’étang', pool: FISH_DISH, k: 1, n: 4, q: 2 },
+        ],
+    },
+    expedition: {
+        name: 'L’expédition de la mine',
+        who: 'gaspard',
+        icon: ['item', 'ruby'],
+        deco: 'minecart',
+        open: 'gallery',
+        intro: 'Lampe au front, pioche en main : on descend ! Il y a de quoi faire briller le village.',
+        steps: [
+            { kind: 'count', name: 'La descente', stat: 'deepMined', n: 40, icon: ['item', 'ironOre'], text: 'Casser {n} blocs en galerie ou en grotte' },
+            { kind: 'give', name: 'Les minerais', pool: MINE_ORES, k: 2, n: 15, q: 0 },
+            { kind: 'give', name: 'Les gemmes', pool: MINE_GEMS, k: 2, n: 3, q: 0 },
+            {
+                kind: 'give',
+                name: 'La forge',
+                pool: MINE_INGOTS,
+                k: 2,
+                n: 6,
+                q: 0,
+                alt: { kind: 'count', name: 'Les filons', stat: 'veins', n: 6, icon: ['item', 'quartz'], text: 'Briser {n} filons de gemmes' },
+            },
+        ],
+    },
+    cuvee: {
+        name: 'La grande cuvée',
+        who: 'margaux',
+        icon: ['item', 'champagne'],
+        deco: 'champagneRack',
+        open: 'wine',
+        intro: 'Chaque millésime raconte une année. Faisons de celle-ci la plus belle de la vallée.',
+        steps: [
+            { kind: 'give', name: 'Les vins', pool: WINES, k: 2, n: 8, q: 1 },
+            { kind: 'give', name: 'Les bulles', pool: BUBBLES, k: 1, n: 4, q: 1 },
+            { kind: 'count', name: 'Les cuvées baptisées', stat: 'cuvees', n: 2, icon: ['ui', 'cave'], text: 'Sortir {n} cuvées baptisées de la cave' },
+            { kind: 'count', name: 'Les millésimes', stat: 'vintageTop', n: 3, icon: ['ui', 'star'], text: 'Sortir {n} vins d’un millésime exceptionnel' },
         ],
     },
 };

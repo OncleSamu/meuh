@@ -20,13 +20,16 @@ const tick = s => {
 };
 
 test('les données des défis sont complètes', () => {
-    assert.equal(Object.keys(DEFIS).length, 12);
+    assert.equal(Object.keys(DEFIS).length, 17);
     for (const [id, d] of Object.entries(DEFIS)) {
         assert.ok(VILLAGERS[d.who], `${id} : ${d.who}`);
         assert.ok(DECOS[d.deco], `${id} : ${d.deco}`);
         assert.equal(d.steps.length, 4, id);
         for (const s0 of d.steps)
-            for (const s of [s0, s0.alt].filter(Boolean)) if (s.kind === 'give') for (const x of s.pool) assert.ok(ITEMS[x], `${id} : ${x}`);
+            for (const s of [s0, s0.alt].filter(Boolean)) {
+                if (s.kind === 'give') for (const x of s.pool) assert.ok(ITEMS[x], `${id} : ${x}`);
+                if (s.kind === 'count') assert.ok(s.stat && s.text, `${id} : ${s.name}`);
+            }
     }
 });
 
@@ -101,4 +104,30 @@ test('le marché garde ce que le défi attend ; vendre la ferme garde les troph�
     assert.equal(Object.keys(state.defis.trophies).length, n);
     assert.equal(G.curDefi(), null);
     tick(3);
+});
+
+test('1.18 : les 5 nouveaux défis se construisent, les compteurs avancent et la bière se présente', () => {
+    for (const id of ['brasserie', 'comptoir', 'grandePeche', 'expedition', 'cuvee']) {
+        G.startDefi(id);
+        const d = G.curDefi();
+        assert.equal(d.id, id);
+        assert.equal(d.steps.length, 4);
+        for (const st of d.steps) assert.ok(st.kind !== 'give' || st.items.length > 0, `${id} : ${st.name}`);
+    }
+    // la bière maison : refusée sous les étoiles demandées, acceptée au-dessus
+    G.startDefi('brasserie');
+    const k = G.curDefi().steps.findIndex(s => s.kind === 'beer');
+    assert.ok(k >= 0);
+    const need = G.curDefi().steps[k].n;
+    state.brew = state.brew || { beers: {} };
+    state.brew.beers = { b1: { id: 'b1', name: 'La Blonde', stars: Math.max(1, need - 1), made: 3 } };
+    assert.equal(G.presentDefi(k, 'b1'), false);
+    state.brew.beers.b1.stars = need;
+    assert.ok(G.presentDefi(k, 'b1'));
+    assert.equal(G.curDefi().steps[k].who, 'La Blonde');
+    // un compteur de défi avance quand on agit
+    G.startDefi('comptoir');
+    const c = G.curDefi().steps.findIndex(s => s.stat === 'clients');
+    state.stats.clients = (state.stats.clients || 0) + G.curDefi().steps[c].n;
+    assert.equal(G.stepCount(G.curDefi().steps[c]), G.curDefi().steps[c].n);
 });

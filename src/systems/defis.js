@@ -1,4 +1,4 @@
-// Les grands défis (1.1) : après le niveau 50, un défi de 14 jours tiré au hasard parmi douze, 4 étapes, une médaille.
+// Les grands défis (1.1) : après le niveau 50, un défi de 14 jours tiré au hasard parmi dix-sept, 4 étapes, une médaille.
 import { state, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -17,6 +17,9 @@ import { hasMachine } from './workshop.js';
 import { storyOk } from './story.js';
 import { islandOpen } from './island.js';
 import { caveOpen, hallOpen } from './cave.js';
+import { pondOpen, fishOrderOk } from './fishing.js';
+import { depthOpen } from './nature.js';
+import { DEPTHS } from '../data/nature.js';
 import { netOpen, boatOpen, transOpen } from './port.js';
 import { breedOpen, plantLabOpen, labOpen, animalGain, flavorGain, varieties, varName } from './genetics.js';
 import { addPhoto } from './style.js';
@@ -44,6 +47,11 @@ const PARTS = {
     soap: () => hasMachine('soapworks') || hasMachine('perfumery'),
     hall: () => hallOpen(),
     boat: () => boatOpen(),
+    brew: () => hasMachine('brewery'),
+    counter: () => hasMachine('counter'),
+    pond: () => pondOpen(),
+    gallery: () => depthOpen('gallery'),
+    wine: () => hasMachine('winery'),
     cannery: () => hasMachine('cannery'),
     perfumery: () => hasMachine('perfumery'),
 };
@@ -56,6 +64,8 @@ export function canGet(id) {
     if (!i) return false;
     if (['material', 'rare'].includes(i.type) || id === 'crate') return true;
     if (id === 'lobster') return netOpen();
+    if (i.type === 'fish') return fishOrderOk(id);
+    if (i.type === 'ore' || i.type === 'gem') return Object.values(DEPTHS).some(d => depthOpen(d.id) && [...d.ores, ...d.gems].some(([x]) => x === id));
     if (i.type === 'tree') return lvOk(i) && storyOk(i) && (!i.island || islandOpen());
     if (!poolMemo || poolMemo.t !== now()) poolMemo = { t: now(), ids: new Set(questPool().map(x => x.id)) };
     return poolMemo.ids.has(id);
@@ -88,6 +98,8 @@ function buildStep(s0) {
             .map(id => ({ id, n: FIXED.has(id) ? s.n : Math.round(s.n * k), got: 0 }));
     } else if (s.kind === 'count') {
         Object.assign(st, { stat: s.stat, n: s.n <= 1 ? s.n : Math.round(s.n * k), base: state.stats[s.stat] || 0, icon: s.icon, text: s.text });
+    } else if (s.kind === 'beer') {
+        Object.assign(st, { n: Math.min(3, s.n + Math.floor((state.renown || 0) / 20)), text: s.text });
     } else {
         Object.assign(st, { n: s.n + Math.floor((state.renown || 0) / 10), text: s.text });
     }
@@ -163,9 +175,17 @@ export const defiLeft = (d = curDefi()) => (d ? Math.max(0, d.end - now()) : 0);
 export const canGive = st => st.kind === 'give' && !st.done && st.items.some(x => x.got < x.n && haveQ(x.id, st.q) > 0);
 export const animalCandidates = () => state.animals.filter(a => a.g).map(a => ({ a, score: animalGain(a) }));
 export const varietyCandidates = () => (state.genetics ? varieties().map(v => ({ v, score: Math.round(flavorGain(v.g) * 10) / 10 })) : []);
+export const beerCandidates = () =>
+    state.brew && state.brew.beers
+        ? Object.values(state.brew.beers)
+              .filter(b => b.stars > 0 && (b.made || 0) > 0)
+              .map(b => ({ b, score: b.stars }))
+        : [];
 export const canPresent = st =>
     !st.done &&
-    ((st.kind === 'animal' && animalCandidates().some(c => c.score >= st.n)) || (st.kind === 'variety' && varietyCandidates().some(c => c.score >= st.n)));
+    ((st.kind === 'animal' && animalCandidates().some(c => c.score >= st.n)) ||
+        (st.kind === 'variety' && varietyCandidates().some(c => c.score >= st.n)) ||
+        (st.kind === 'beer' && beerCandidates().some(c => c.score >= st.n)));
 // nombre d'étapes où l'on peut agir tout de suite (pastille)
 export const defiReady = () => {
     const d = curDefi();
@@ -217,12 +237,17 @@ export function presentDefi(k, ref, at) {
     const d = curDefi();
     const st = d && d.steps[k];
     if (!st || st.done) return false;
-    const c = st.kind === 'animal' ? animalCandidates().find(x => x.a.uid === ref) : varietyCandidates().find(x => x.v.id === ref);
+    const c =
+        st.kind === 'animal'
+            ? animalCandidates().find(x => x.a.uid === ref)
+            : st.kind === 'beer'
+              ? beerCandidates().find(x => x.b.id === ref)
+              : varietyCandidates().find(x => x.v.id === ref);
     if (!c || c.score < st.n) {
         toast('Le jury attend mieux : il faut plus de points', ['ui', 'trophy']);
         return false;
     }
-    st.who = st.kind === 'animal' ? c.a.name : varName(c.v);
+    st.who = st.kind === 'animal' ? c.a.name : st.kind === 'beer' ? c.b.name : varName(c.v);
     finishStep(st, at);
     return true;
 }

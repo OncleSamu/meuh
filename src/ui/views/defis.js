@@ -26,7 +26,7 @@ function stepIcon(st) {
     if (st.done) return ['ui', 'check'];
     if (st.kind === 'give') return ['item', st.items[0].id];
     if (st.kind === 'count') return st.icon || ['ui', 'trophy'];
-    return st.kind === 'animal' ? ['animal', 'cow'] : ['ui', 'packet'];
+    return st.kind === 'animal' ? ['animal', 'cow'] : st.kind === 'beer' ? ['ui', 'beer'] : ['ui', 'packet'];
 }
 
 // une ligne d'étape (carte et fiche)
@@ -113,6 +113,17 @@ defineSheet('defiPick', {
                     )
                     .join('')}</div>`;
         }
+        if (st.kind === 'beer') {
+            const list = G.beerCandidates().sort((a, b) => b.score - a.score);
+            if (!list.length) return empty('Aucune bière maison : brassez-en une à la brasserie.');
+            return `<p class="card-sub">Le jury veut une bière maison d’au moins <b>${st.n} étoile${st.n > 1 ? 's' : ''}</b> (accordez bien le malt, le houblon et les ingrédients).</p>
+                <div class="pick-grid">${list
+                    .map(
+                        c =>
+                            `<button class="pick-cell${c.score >= st.n ? ' ok' : ' short'}" data-act="presentDefi" data-k="${o.k}" data-id="${c.b.id}"><span class="pc-art">${ico(['ui', 'beer'], 'ico big')}</span><b>${esc(c.b.name)}</b><small>${'★'.repeat(c.score)}</small></button>`,
+                    )
+                    .join('')}</div>`;
+        }
         const list = G.varietyCandidates().sort((a, b) => b.score - a.score);
         if (!list.length) return empty('Aucune variété : croisez des plantes au labo.');
         return `<p class="card-sub">Le jury veut une variété qui gagne au moins <b>${st.n} points</b> de saveur sur son espèce.</p>
@@ -143,7 +154,7 @@ defineSheet('trophies', {
         const T = (state.defis && state.defis.trophies) || {};
         const cur = G.curDefi();
         const won = Object.values(T).filter(t => t.best).length;
-        return `<p class="card-sub">${G.defiOpen() ? `${won} défi${won > 1 ? 's' : ''} sur 12 médaillé${won > 1 ? 's' : ''}. Un nouveau défi arrive toutes les deux semaines, tiré au hasard.` : `Les grands défis commencent au niveau ${DEFI.lvl}.`}</p>
+        return `<p class="card-sub">${G.defiOpen() ? `${won} défi${won > 1 ? 's' : ''} sur ${Object.keys(DEFIS).length} médaillé${won > 1 ? 's' : ''}. Un nouveau défi arrive toutes les deux semaines, tiré au hasard.` : `Les grands défis commencent au niveau ${DEFI.lvl}.`}</p>
             <div class="trophy-grid">${Object.entries(DEFIS)
                 .map(([id, def]) => {
                     const t = T[id] || { best: 0, n: 0 };

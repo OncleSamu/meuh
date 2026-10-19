@@ -169,6 +169,7 @@ export function hitSlot(kind, k, at) {
         bonus = Math.random() < state.upgrades.yield * 0.1 ? 2 : 0;
     const stoneQty = 2 + Math.floor(Math.random() * 2) + (sl.big ? 3 : 0) + tl + bonus;
     state.stats[kind === 'forest' ? 'chopped' : 'mined']++;
+    if (kind === 'mine' && ensureNat().depth !== 'quarry') state.stats.deepMined = (state.stats.deepMined || 0) + 1;
     let xp = kind === 'forest' ? 4 : 6;
     if (kind === 'forest') {
         const sp = SPECIES[sl.sp] || SPECIES.oak;
