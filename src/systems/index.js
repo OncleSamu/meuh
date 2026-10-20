@@ -44,4 +44,5 @@ export * from './carnet.js';
 export * from './counter.js';
 export * from './cargo.js';
 export * from './armand.js';
+export * from './agenda.js';
 export * from './fishing.js';

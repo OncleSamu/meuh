@@ -90,3 +90,15 @@ test('Armand : on peut changer de produit avant la première livraison, pas apr�
         setClock(() => Date.now());
     }
 });
+
+test('Agenda : visiteurs ouverts, présents d’abord, puis par date', () => {
+    fresh();
+    const a = G.agenda();
+    assert.ok(a.length >= 3);
+    assert.ok(a.some(e => e.id === 'armand') && a.some(e => e.id === 'fete'));
+    const firstAway = a.findIndex(e => !e.here);
+    assert.ok(a.slice(firstAway < 0 ? a.length : firstAway).every(e => !e.here));
+    for (let i = 1; i < a.length; i++) if (a[i].here === a[i - 1].here) assert.ok(a[i].at >= a[i - 1].at);
+    state.level = 3;
+    assert.ok(!G.agenda().some(e => e.id === 'armand' || e.id === 'cargo'));
+});

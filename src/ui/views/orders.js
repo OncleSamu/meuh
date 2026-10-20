@@ -177,6 +177,24 @@ function cargoCard() {
         ${c.done ? '' : `<div class="truck-reward"><span>Avion plein : bonus</span>${rewardHtml(G.cargoBonus(), G.cargoBonusXp())}${ico(['item', 'plank'])}${ico(['item', 'nail'])}${ico(['item', 'paint'])}</div>`}</div>`;
 }
 
+// ---------------- 1.19.2 : l'Agenda ----------------
+const agendaRow = e =>
+    `<div class="agenda-row${e.here ? ' here' : ''}">${ico(e.icon, 'ico big')}<div class="card-main"><b>${e.title}</b><small>${e.note}</small></div>
+    <span class="timer-pill" title="Temps réel">${e.here ? 'reste ' : 'dans '}${timer(e.at)}</span></div>`;
+function agendaCard() {
+    const list = G.agenda();
+    if (list.length < 2) return null;
+    return `<div class="card agenda-card"><div class="card-head">${ico(['ui', 'calendar'], 'ico big')}<div class="card-main"><div class="card-title">Agenda</div>
+        <div class="card-sub">Ce qui est là, ce qui arrive : tout au même endroit.</div></div></div>
+        <div class="agenda-list">${list.slice(0, 4).map(agendaRow).join('')}</div>
+        ${list.length > 4 ? `<div class="od-foot">${btn(`Tout voir (${list.length})`, { act: 'agendaAll', size: 'sm' })}</div>` : ''}</div>`;
+}
+defineSheet('agenda', {
+    cls: 'agenda-sheet',
+    title: () => 'Agenda',
+    render: () => `<div class="agenda-list">${G.agenda().map(agendaRow).join('')}</div>`,
+});
+
 // ---------------- 1.19.1 : Armand, chef du Grand Hôtel ----------------
 const portrait = ico(['villager', 'armand'], 'ico big');
 function armandCard() {
@@ -243,6 +261,7 @@ function delivery(kind) {
 
 function renderOrders(el) {
     blocks(el, [
+        ['agenda', agendaCard()],
         ['defi', defiCard()],
         ['event', eventCard()],
         ['express', express()],
@@ -272,6 +291,7 @@ export function setupOrders() {
         pin: (el, d) => G.togglePin(+d.i),
         express: el => G.deliverExpress(el),
         loadHold: (el, d) => G.loadHold(+d.i, el),
+        agendaAll: () => openSheet('agenda', {}),
         armandGive: el => G.deliverArmand(el),
         armandPick: () => openSheet('armandPick', {}),
         armandSet: (el, d) => G.setFlagship(d.id) && closeSheet('armandPick'),
