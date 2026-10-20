@@ -190,7 +190,7 @@ export const TIPS = {
     contract: {
         icon: ['ui', 'calendar'],
         title: 'Un contrat de saison',
-        text: 'Un client veut une grosse quantité d’un produit avant la fin de la saison. Apportez-le petit à petit depuis le volet Village.',
+        text: 'Un client veut une grosse quantité d’un produit avant la fin de la saison (au moins une heure). Apportez-le petit à petit depuis le volet Village.',
     },
     seaNet: {
         icon: ['ui', 'net'],

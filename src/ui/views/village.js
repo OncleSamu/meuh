@@ -173,8 +173,7 @@ export function contractCard() {
     if (state.level < CONTRACT_LVL || !c) return null;
     const it = ITEMS[c.item],
         have = state.inventory[c.item] || 0;
-    const end = { printemps: 'du printemps', ete: 'de l’été', automne: 'de l’automne', hiver: 'de l’hiver' }[G.season().id];
-    return `<div class="card contract-card">${head(['ui', 'calendar'], 'Contrat de saison', c.done ? 'Contrat rempli. Un nouveau client viendra à la prochaine saison.' : `Un grossiste veut ${qtyName(c.qty, it.name)} avant la fin ${end}.`, pill(['ui', 'clock'], `≈ ${formatDuration((G.seasonDaysLeft() * 1440) / GAME_MIN_PER_SEC)}`))}
+    return `<div class="card contract-card">${head(['ui', 'calendar'], 'Contrat de saison', c.done ? 'Contrat rempli. Un nouveau client viendra bientôt.' : `Un grossiste veut ${qtyName(c.qty, it.name)} avant la fin du délai.`, pill(['ui', 'clock'], `≈ ${formatDuration((G.contractDaysLeft(c) * 1440) / GAME_MIN_PER_SEC)}`))}
         ${
             c.done
                 ? ''

@@ -98,3 +98,21 @@ test('1.22 : la note de robe compte les apparences rares', () => {
     ];
     assert.ok(G.salonScore(crit, { g: rare }) > G.salonScore(crit, { g: base }) + 2);
 });
+
+test('1.22 : un contrat de saison dure au moins 13 jours, même en fin de saison', () => {
+    fresh();
+    state.level = 40;
+    state.day = 12; // dernier jour de la saison
+    state.contract = null;
+    assert.ok(G.ensureContract());
+    assert.ok(G.contractDaysLeft(state.contract) >= 13);
+    state.day += 5;
+    assert.equal(G.ensureContract(), false, 'toujours le même contrat');
+    state.day = state.contract.endDay + 1;
+    assert.ok(G.ensureContract(), 'un nouveau après la fin');
+    // ancien contrat sans fin : il reçoit le délai minimal
+    state.contract = { key: 0, item: 'wheat', qty: 10, given: 0, done: false, coins: 1, xp: 1 };
+    state.day = 12;
+    G.ensureContract();
+    assert.ok(state.contract.endDay >= 25);
+});

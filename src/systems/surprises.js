@@ -179,17 +179,24 @@ export function serveCritic(at) {
 export const seasonKey = () => Math.floor((state.day - 1) / DAYS_PER_SEASON);
 export const seasonDaysLeft = () => DAYS_PER_SEASON - dayInSeason() + 1;
 
+// 1.22 : un contrat dure jusqu'à la fin de la saison, mais au moins 13 jours (≈ 1 h 02 de temps réel)
+export const CONTRACT_MIN_DAYS = 13;
+const contractEnd = () => Math.max((seasonKey() + 1) * DAYS_PER_SEASON, state.day + CONTRACT_MIN_DAYS);
+export const contractDaysLeft = c => Math.max(0, (c || state.contract).endDay - state.day + 1);
+
 export function ensureContract() {
     if (state.level < CONTRACT_LVL) return false;
     const key = seasonKey(),
         c = state.contract;
-    if (c && c.key === key) return false;
+    // les contrats d'avant n'avaient pas de fin précise : ils reçoivent le délai minimal
+    if (c && c.endDay === undefined) c.endDay = contractEnd();
+    if (c && state.day <= c.endDay) return false;
     const pool = questPool().filter(i => i.sell >= 20 && !(RECIPES[i.id] && RECIPES[i.id].fete));
     if (!pool.length) return false;
     const it = pickRand(pool);
     const qty = Math.max(10, Math.min(200, Math.round((1000 + scaleLvl() * 300) / it.sell / 5) * 5));
     const coins = round5(it.sell * qty * 2.2);
-    state.contract = { key, item: it.id, qty, given: 0, done: false, coins, xp: Math.round(coins * 0.08) };
+    state.contract = { key, endDay: contractEnd(), item: it.id, qty, given: 0, done: false, coins, xp: Math.round(coins * 0.08) };
     if (view.started && c) toast(`Nouveau contrat de saison : ${qty} × ${it.name.toLowerCase()}`, ['ui', 'calendar']);
     if (view.started) tip('contract');
     return true;

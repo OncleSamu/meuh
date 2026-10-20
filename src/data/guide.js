@@ -866,7 +866,10 @@ export const GUIDE_PAGES = [
         secs: [
             {
                 h: 'Comment ça marche',
-                b: ['Livrez petit à petit avant la fin de la saison.', 'La récompense (pièces, expérience, ruban, matériaux rares) vaut le coup.'],
+                b: [
+                    'Livrez petit à petit avant la fin de la saison : le délai est d’au moins 13 jours du jeu (environ une heure réelle), même si le contrat arrive tard.',
+                    'La récompense (pièces, expérience, ruban, matériaux rares) vaut le coup.',
+                ],
             },
         ],
         see: ['orders', 'seasons'],
