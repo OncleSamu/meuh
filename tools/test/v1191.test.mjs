@@ -18,13 +18,27 @@ test('Armand : fermé avant le niveau 22', () => {
     assert.equal(G.armandTick(), false);
     assert.equal(G.setFlagship('apple'), false);
 });
-test('Armand : quantités bornées 60..1200 et paiement fixe', () => {
+test('Armand : quantités bornées 10..1200, paiement fixe', () => {
     fresh();
     for (const id of Object.keys(ITEMS).filter(i => ITEMS[i].sell)) {
         const q = G.armandQty(id);
         assert.ok(q >= ARMAND.min && q <= ARMAND.max, id + ' ' + q);
     }
     assert.ok(G.armandRate('apple') >= ARMAND.pay);
+});
+test('Armand : la commande ne dépasse jamais le budget du niveau', () => {
+    fresh();
+    for (const lvl of [22, 35, 50]) {
+        state.level = lvl;
+        for (const id of Object.keys(ITEMS).filter(i => ITEMS[i].sell)) {
+            const q = G.armandQty(id);
+            const total = ITEMS[id].sell * q * ARMAND.pay;
+            // sans étoile ni fidélité : au plus la valeur du niveau (+ une unité d'arrondi), sauf le minimum de 10 d'un produit trop cher, alors non éligible
+            const eligible = q > ARMAND.min || ITEMS[id].sell * ARMAND.min <= ARMAND.value(G.scaleLvl ? G.scaleLvl() : lvl);
+            if (eligible && q < ARMAND.max)
+                assert.ok(total <= ARMAND.value(lvl) * ARMAND.pay * 1.2 + ITEMS[id].sell * ARMAND.pay, `${id} niv ${lvl} : ${total}`);
+        }
+    }
 });
 test('Armand : produit phare, commande, livraison, fidélité', () => {
     fresh();

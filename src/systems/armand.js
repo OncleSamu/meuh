@@ -1,5 +1,5 @@
 // 1.19.1 : Armand, chef du Grand Hôtel. Une fois par semaine (temps réel, même jeu fermé) il passe trois jours.
-// Le joueur lui déclare un produit phare (au moins une étoile de maîtrise) ; Armand en demande 60 à 1200 d'un coup.
+// Le joueur lui déclare un produit phare (au moins une étoile de maîtrise) ; Armand en demande de 10 à 1200 d'un coup, jamais plus que ce que vaut le niveau du joueur.
 // Chaque unité livrée paie tout de suite à prix fixe ; la commande finie donne un bonus, des matériaux rares et +1 de fidélité.
 import { state, scaleLvl } from '../core/state.js';
 import { visitor } from '../core/visits.js';
@@ -55,21 +55,22 @@ export const armandPending = () => {
     return false;
 };
 // les produits qu'on peut déclarer « produit phare » (un même produit ne peut pas occuper deux places)
-export const armandCandidates = () => masteryKnown().filter(id => masteryStars(id) >= 1);
-
-export const armandQty = id => {
-    const it = ITEMS[id];
+// 1.21.2 : la commande vaut au plus ce que permet le niveau (valeur × maîtrise × fidélité) ; un produit trop cher pour ce budget (moins de 10 unités) ne se choisit pas
+const armandRaw = id => {
     const boost = (1 + 0.1 * masteryStars(id) + 0.1 * masteryExtra(id)) * (1 + ARMAND.fidQty * armandFid(id));
-    const raw = (ARMAND.value(scaleLvl()) * boost) / Math.max(1, it.sell);
-    return Math.max(ARMAND.min, Math.min(ARMAND.max, Math.round(raw / 5) * 5));
+    return (ARMAND.value(scaleLvl()) * boost) / Math.max(1, ITEMS[id].sell);
 };
+export const armandCandidates = () => masteryKnown().filter(id => masteryStars(id) >= 1 && armandRaw(id) >= ARMAND.min);
+
+export const armandQty = id => Math.max(ARMAND.min, Math.min(ARMAND.max, Math.round(armandRaw(id) / 5) * 5));
 export const armandRate = id => ARMAND.pay * masteryMult(id) * (1 + ARMAND.fidPay * armandFid(id)) * (1 + domStepSum('armand', 'pay'));
 export const armandPay = (o, n) => round5(ITEMS[o.id].sell * n * armandRate(o.id));
 export const armandTotal = o => (o ? armandPay(o, o.qty) : 0);
 export const armandBonus = o => round5(armandTotal(o) * ARMAND.bonus);
 export const armandBonusXp = o => Math.round(armandBonus(o) * ARMAND.xp);
 
-const makeOrder = id => ({ id, qty: armandQty(id), got: 0, done: false });
+// un produit devenu trop cher pour le budget du niveau (ancienne sauvegarde) ne donne pas de commande
+const makeOrder = id => (armandRaw(id) < ARMAND.min ? null : { id, qty: armandQty(id), got: 0, done: false });
 
 // à chaque seconde (et au retour) : une nouvelle visite au début de chaque semaine
 export function armandTick() {

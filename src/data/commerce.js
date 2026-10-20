@@ -135,7 +135,7 @@ export const ARMAND = {
     lvl: 22,
     every: 7 * 24 * 3600 * 1000, // il vient une fois par semaine (temps réel, même jeu fermé)
     stay: 3 * 24 * 3600 * 1000, // et reste trois jours
-    min: 60,
+    min: 10, // en dessous, le produit est trop cher pour son niveau : on ne peut pas le choisir
     max: 1200,
     value: lvl => 5 * (1800 + lvl * 650), // valeur de la commande, au prix de vente
     pay: 1.8, // chaque unité livrée rapporte 1,8 fois son prix, quelle que soit la demande du marché

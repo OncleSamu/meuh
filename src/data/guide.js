@@ -845,7 +845,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'La commande',
                 b: [
-                    'De 60 à 1 200 unités, selon votre niveau, la maîtrise et la fidélité.',
+                    'De 10 à 1 200 unités. Le total est borné par votre niveau (puis relevé par la maîtrise et la fidélité) : un produit trop cher pour votre niveau ne peut pas être choisi.',
                     'Payée à prix fixe (environ 1,8 fois le prix, plus la maîtrise et la fidélité), quelle que soit la demande du marché.',
                     'Commande finie : bonus de 60 %, trois matériaux rares et +1 de fidélité (5 au maximum, par produit).',
                     'Plus la fidélité monte, plus la commande grossit et mieux elle paie.',
