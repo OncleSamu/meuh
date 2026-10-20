@@ -94,7 +94,7 @@ defineSheet('almanac', {
             ])}
             <h3 class="section-title"><span>De saison (pousse 30 % plus vite)</span></h3>
             <div class="alm-crops">${crops.map(c => `<div class="alm-crop${!lvOk(c) ? ' locked' : ''}">${art('item', c.id)}<span>${c.name}</span></div>`).join('') || '<span class="card-sub">Aucune culture</span>'}</div>
-            ${navRow('Comment passe le temps ?', 'open', { sheet: 'guide' }, ['ui', 'clock'], '›', 'Heure de la ferme, minuteurs en temps réel, ferme qui continue : voir le Guide du fermier')}
+            ${navRow('Comment passe le temps ?', 'open', { sheet: 'guide', page: 'time' }, ['ui', 'clock'], '›', 'Heure de la ferme, minuteurs en temps réel, ferme qui continue : voir le Guide du fermier')}
             <p class="card-sub foot-note">${sv.id === 'hiver' ? 'En hiver, les cultures hors saison poussent presque deux fois moins vite et les arbres dorment à moitié.' : sv.id === 'automne' ? 'En automne, les arbres fruitiers produisent 20 % plus vite.' : 'Profitez-en pour planter ce qui est de saison.'}</p>`;
     },
 });

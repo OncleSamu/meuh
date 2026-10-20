@@ -10,7 +10,7 @@ import { VILLAGERS, PROJECTS, STORIES } from '../../data/village.js';
 import { EVENTS } from '../../data/world.js';
 import { RARE } from '../../data/commerce.js';
 import { COLS } from '../../data/farm.js';
-import { GUIDE } from '../../data/texts.js';
+import { GUIDE_CATS, GUIDE_PAGES } from '../../data/guide.js';
 import { RECORDS, FISH } from '../../data/meta.js';
 import * as G from '../../systems/index.js';
 import { actions, QUIET, esc } from '../dom.js';
@@ -184,33 +184,57 @@ const GUIDE_GO = {
     island: 'farm/island',
     nature: 'farm/nature',
     pond: 'farm/pond',
-    animals: 'animals',
-    machines: 'machines/workshop',
-    quests: 'village/orders',
-    shop: 'market/shop',
-    market: 'market/sell',
-    upgrades: 'sheet:progress',
 };
-function guidePage(g) {
+const guideById = id => GUIDE_PAGES.find(g => g.id === id);
+const pagePath = g => GUIDE_GO[g.go] || g.go || 'farm/field';
+const guideText = g => [g.name, g.intro, ...g.secs.map(x => x.h + ' ' + (x.t || (x.b || []).join(' '))), ...(g.tips || [])].join(' ');
+
+function guideCard(g, snippet) {
     const locked = state.level < g.lvl;
-    const path = GUIDE_GO[g.view] || 'farm/field';
-    return `<button class="card guide-page${locked ? ' locked' : ''}"${locked ? '' : ` data-act="guideGo" data-path="${path}"`}>${ico(g.icon, 'ico big')}<span class="card-main"><span class="card-title">${g.name}${locked ? ` <small>niveau ${g.lvl}</small>` : ''}</span><span class="card-sub">${g.text}</span></span></button>`;
+    return `<button class="card guide-page${locked ? ' locked' : ''}" data-act="guidePage" data-p="${g.id}">${ico(g.icon, 'ico big')}<span class="card-main"><span class="card-title">${g.name}${locked ? ` <small>niveau ${g.lvl}</small>` : ''}</span><span class="card-sub">${snippet || g.intro}</span></span></button>`;
+}
+
+function guideHome(o) {
+    const cat = o.cat || GUIDE_CATS[0].id;
+    const chips = GUIDE_CATS.map(
+        c => `<button class="chip${c.id === cat ? ' on' : ''}" data-act="guideCat" data-c="${c.id}">${ico(c.icon, 'ico sm')}<span>${c.name}</span></button>`,
+    ).join('');
+    return `<div class="guide-chips">${chips}</div>${GUIDE_PAGES.filter(g => g.cat === cat)
+        .map(g => guideCard(g))
+        .join('')}`;
+}
+
+function guideRead(g) {
+    const locked = state.level < g.lvl;
+    const secs = g.secs.map(x => `<h4>${x.h}</h4>${x.t ? `<p>${x.t}</p>` : `<ul>${x.b.map(i => `<li>${i}</li>`).join('')}</ul>`}`).join('');
+    const tips = (g.tips || []).length ? `<div class="guide-tips"><b>À retenir</b>${g.tips.map(t => `<p>${t}</p>`).join('')}</div>` : '';
+    const see = (g.see || []).map(guideById).filter(Boolean);
+    return `<button class="chip guide-back" data-act="guidePage" data-p="">‹ Tous les sujets</button>
+        <div class="card guide-head">${ico(g.icon, 'ico big')}<div class="card-main"><div class="card-title">${g.name}</div><div class="card-sub">${g.intro}</div>${locked ? `<div class="card-sub want">S’ouvre au niveau ${g.lvl}</div>` : ''}</div></div>
+        <div class="guide-body">${secs}${tips}</div>
+        ${btn('Y aller', { act: 'guideGo', data: { path: pagePath(g) }, kind: 'gold', wide: true, disabled: locked })}
+        ${see.length ? `<div class="set-title">Voir aussi</div><div class="guide-chips">${see.map(x => `<button class="chip" data-act="guidePage" data-p="${x.id}">${ico(x.icon, 'ico sm')}<span>${x.name}</span></button>`).join('')}</div>` : ''}`;
 }
 
 function guideResults(q) {
     q = norm(q || '').trim();
-    if (q.length < 2)
-        return `<p class="card-sub center">Cherchez un produit pour savoir où le faire et qui le demande, ou touchez une page.</p>${GUIDE.map(guidePage).join('')}`;
     const items = Object.keys(ITEMS)
         .filter(id => norm(ITEMS[id].name).includes(q) && ITEMS[id].type !== 'material')
         .slice(0, 8);
-    const pages = GUIDE.filter(g => norm(g.name + ' ' + g.text).includes(q));
+    const pages = GUIDE_PAGES.filter(g => norm(guideText(g)).includes(q));
     return (
         (items.length ? `<div class="set-title">Produits</div>${items.map(itemCard).join('')}` : '') +
-        (pages.length ? `<div class="set-title">Guide</div>${pages.map(guidePage).join('')}` : '') +
-        (!items.length && !pages.length ? empty('Rien trouvé. Essayez « fromage », « grange » ou « concours ».') : '')
+        (pages.length ? `<div class="set-title">Guide</div>${pages.map(g => guideCard(g)).join('')}` : '') +
+        (!items.length && !pages.length ? empty('Rien trouvé. Essayez « fromage », « grange » ou « concours ».') : '')
     );
 }
+
+const guideBody = o => {
+    const q = norm(o.q || '').trim();
+    if (q.length >= 2) return guideResults(o.q);
+    const g = o.page && guideById(o.page);
+    return g ? guideRead(g) : guideHome(o);
+};
 
 defineSheet('guide', {
     cls: 'guide-sheet',
@@ -220,7 +244,7 @@ defineSheet('guide', {
             'search',
             `<input type="search" class="search" placeholder="Chercher un produit ou un sujet…" autocomplete="off" data-input="guideSearch" value="${esc(o.q || '')}">`,
         ],
-        ['res', `<div id="guide-res">${guideResults(o.q)}</div>`],
+        ['res', `<div id="guide-res">${guideBody(o)}</div>`],
     ],
 });
 
@@ -326,9 +350,15 @@ export function setupInfo() {
             const o = sheetOpts('guide');
             o.q = d.value;
             const box = document.getElementById('guide-res');
-            if (box) box.innerHTML = guideResults(o.q);
+            if (box) box.innerHTML = guideBody(o);
             return QUIET;
         },
+        guidePage: (el, d) => {
+            const o = sheetOpts('guide');
+            o.q = '';
+            o.page = d.p || '';
+        },
+        guideCat: (el, d) => (sheetOpts('guide').cat = d.c),
         guideGo: (el, d) => {
             closeSheet('guide');
             closeSheet('menu');

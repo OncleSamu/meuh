@@ -1180,3 +1180,79 @@ svg.chart .bar:hover path {
 .lv-sheet .lv-head {
     min-width: 0;
 }
+
+/* guide du fermier : catégories, pages lues */
+.guide-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 6px 0 10px;
+}
+
+.guide-chips .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.guide-chips .chip.on {
+    box-shadow: 0 0 0 3px var(--ink);
+}
+
+.guide-chips .ico.sm {
+    width: 20px;
+    height: 20px;
+}
+
+.guide-back {
+    margin: 4px 0 8px;
+}
+
+.guide-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+}
+
+.guide-head .want {
+    color: #8e3f1e;
+    font-weight: 800;
+}
+
+.guide-body {
+    margin: 8px 2px 12px;
+    line-height: 1.4;
+}
+
+.guide-body h4 {
+    margin: 16px 0 4px;
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: #8e3f1e;
+}
+
+.guide-body p,
+.guide-body ul {
+    margin: 0 0 6px;
+}
+
+.guide-body ul {
+    padding-left: 20px;
+}
+
+.guide-body li {
+    margin-bottom: 3px;
+}
+
+.guide-tips {
+    margin-top: 12px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: #fff3c4;
+    border: 2px solid var(--ink);
+}
+
+.guide-tips p {
+    margin: 4px 0 0;
+}
