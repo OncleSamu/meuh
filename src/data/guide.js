@@ -17,7 +17,6 @@ export const GUIDE_CATS = [
 ];
 
 export const GUIDE_PAGES = [
-    // ================= LES BASES =================
     {
         id: 'start',
         cat: 'base',
@@ -113,10 +112,7 @@ export const GUIDE_PAGES = [
                 h: 'Le panneau « À faire »',
                 t: 'Au-dessus du champ, des pastilles disent où quelque chose vous attend. Les urgences passent devant ; le reste se cache derrière « +N ».',
             },
-            {
-                h: 'Grands écrans',
-                t: 'Sur un ordinateur ou une tablette large, le champ reste à gauche et l’onglet courant s’affiche à droite.',
-            },
+            { h: 'Grands écrans', t: 'Sur un ordinateur ou une tablette large, le champ reste à gauche et l’onglet courant s’affiche à droite.' },
         ],
         see: ['start', 'barn'],
     },
@@ -173,10 +169,7 @@ export const GUIDE_PAGES = [
                 h: 'Les grandes étapes',
                 t: 'Verger 10, serre 15, cave 20, hameau et commis 25, port 30, abbaye et brasserie 35, île 38, génétique 40, Salon 43, alpage 45, et le niveau 50 pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.',
             },
-            {
-                h: 'Après le niveau 50',
-                t: 'L’expérience donne des étoiles de renommée : voir « Renommée et Ferme légendaire ».',
-            },
+            { h: 'Après le niveau 50', t: 'L’expérience donne des étoiles de renommée : voir « Renommée et Ferme légendaire ».' },
         ],
         see: ['skills', 'legend'],
     },
@@ -211,7 +204,6 @@ export const GUIDE_PAGES = [
         tips: ['Aucune donnée ne quitte l’appareil : si vous changez de téléphone, exportez d’abord votre code.'],
         see: ['start'],
     },
-    // ================= LA FERME =================
     {
         id: 'field',
         cat: 'farm',
@@ -273,10 +265,7 @@ export const GUIDE_PAGES = [
                     'Neige, brouillard, éclaircies, couvert : de l’ambiance, sans effet majeur.',
                 ],
             },
-            {
-                h: 'Où voir ce qui arrive',
-                t: 'L’almanach (touchez l’horloge) montre la saison, la météo et les fêtes à venir.',
-            },
+            { h: 'Où voir ce qui arrive', t: 'L’almanach (touchez l’horloge) montre la saison, la météo et les fêtes à venir.' },
         ],
         see: ['field', 'time', 'events'],
     },
@@ -293,10 +282,7 @@ export const GUIDE_PAGES = [
                 h: 'Trois sols',
                 t: 'Humide, sec et ensoleillé, ombragé. Une culture posée dans le sol qu’elle aime pousse plus vite et donne plus souvent des récoltes de qualité ; dans un sol qu’elle n’aime pas, c’est l’inverse.',
             },
-            {
-                h: 'Où voir le sol préféré',
-                t: 'Le magasin l’indique pour chaque graine, et le champ montre le sol de chaque parcelle.',
-            },
+            { h: 'Où voir le sol préféré', t: 'Le magasin l’indique pour chaque graine, et le champ montre le sol de chaque parcelle.' },
         ],
         tips: ['Pas besoin de tout optimiser : choisissez simplement la bonne parcelle pour vos cultures les plus rentables.'],
         see: ['field'],
@@ -318,10 +304,7 @@ export const GUIDE_PAGES = [
                     'Certaines cultures ne poussent qu’en serre : cacao, vanille, menthe (niveau 24), poivre noir (35), orchidée (41).',
                 ],
             },
-            {
-                h: 'Comment s’en servir',
-                t: 'Construisez-la dans la ferme, puis semez dedans comme au champ. Le bouton Récolter la couvre aussi.',
-            },
+            { h: 'Comment s’en servir', t: 'Construisez-la dans la ferme, puis semez dedans comme au champ. Le bouton Récolter la couvre aussi.' },
         ],
         see: ['field', 'seasons'],
     },
@@ -351,10 +334,7 @@ export const GUIDE_PAGES = [
                 h: 'Greffons et boutures',
                 t: 'Un greffon par arbre : doré (un fruit sur quatre en or), double (deux fruits, plus lent), éternel (ne vieillit jamais), précoce (plus vite) et robuste (plus durable). Un arbre abattu après au moins 50 fruits laisse une bouture qui garde son greffon.',
             },
-            {
-                h: 'Soins',
-                t: 'Tailler en hiver, fumer, rajeunir : voir la fiche de l’arbre. La vitesse totale est plafonnée.',
-            },
+            { h: 'Soins', t: 'Tailler en hiver, fumer, rajeunir : voir la fiche de l’arbre. La vitesse totale est plafonnée.' },
             {
                 h: 'Odile et les événements',
                 b: [
@@ -381,10 +361,7 @@ export const GUIDE_PAGES = [
         go: 'farm/island',
         intro: 'Une île tropicale où tout pousse sans arrosage et en toute saison.',
         secs: [
-            {
-                h: 'Comment l’ouvrir',
-                t: 'Au niveau 38, une fois l’abbaye rénovée, réparez le bac de Tiago (Village › Village, carte « L’île »).',
-            },
+            { h: 'Comment l’ouvrir', t: 'Au niveau 38, une fois l’abbaye rénovée, réparez le bac de Tiago (Village › Village, carte « L’île »).' },
             {
                 h: 'Les parcelles et le verger',
                 b: [
@@ -409,10 +386,7 @@ export const GUIDE_PAGES = [
         go: 'farm/field',
         intro: 'De 20 h à 6 h du jeu, le champ s’assombrit et la nuit réserve de petites surprises.',
         secs: [
-            {
-                h: 'Durée',
-                t: 'La nuit dure environ 2 minutes réelles.',
-            },
+            { h: 'Durée', t: 'La nuit dure environ 2 minutes réelles.' },
             {
                 h: 'Lucioles et étoiles filantes',
                 b: [
@@ -421,10 +395,7 @@ export const GUIDE_PAGES = [
                     'Les champignons poussent plus vite la nuit ; certains poissons ne mordent que la nuit.',
                 ],
             },
-            {
-                h: 'Marché de nuit',
-                t: 'Les soirs d’été (niveau 14), le Marché de nuit propose des graines et des décorations rares.',
-            },
+            { h: 'Marché de nuit', t: 'Les soirs d’été (niveau 14), le Marché de nuit propose des graines et des décorations rares.' },
         ],
         see: ['pond', 'market'],
     },
@@ -450,14 +421,10 @@ export const GUIDE_PAGES = [
                 h: 'Les protections',
                 t: 'L’épouvantail, le nichoir à chouette et le chien éloignent les corbeaux ; le paratonnerre protège de la foudre. Ce sont des décorations à poser sur une parcelle.',
             },
-            {
-                h: 'Jeu fermé',
-                t: 'Les imprévus n’arrivent pas en votre absence : ils attendent votre retour.',
-            },
+            { h: 'Jeu fermé', t: 'Les imprévus n’arrivent pas en votre absence : ils attendent votre retour.' },
         ],
         see: ['decor', 'events'],
     },
-    // ================= LES ANIMAUX =================
     {
         id: 'animals',
         cat: 'animals',
@@ -483,10 +450,7 @@ export const GUIDE_PAGES = [
                 h: 'La fiche d’une bête',
                 t: 'Nom (à changer), gènes, lignée, soins. Elle permet aussi de la vendre (la moitié de son prix, plus pour une bête d’exception ou de race) ou de la déplacer vers un autre pré.',
             },
-            {
-                h: 'Animal d’exception',
-                t: 'Rare : 50 % plus rapide.',
-            },
+            { h: 'Animal d’exception', t: 'Rare : 50 % plus rapide.' },
             {
                 h: 'Seconds produits',
                 t: 'Environ une fois sur dix au ramassage, certaines bêtes donnent en plus un produit pour le saloir : lard du cochon, magret du canard, cuisse de l’oie, filet de la dinde, bœuf de la vache, râble du lapin.',
@@ -511,14 +475,8 @@ export const GUIDE_PAGES = [
                     'Renommez un pré avec le petit crayon, déplacez une bête depuis sa fiche.',
                 ],
             },
-            {
-                h: 'L’étable',
-                t: 'Elle présente tout le troupeau en fiches : pratique pour comparer, soigner et vendre.',
-            },
-            {
-                h: 'Le charme',
-                t: 'Les paons ajoutent du charme au concours de la semaine.',
-            },
+            { h: 'L’étable', t: 'Elle présente tout le troupeau en fiches : pratique pour comparer, soigner et vendre.' },
+            { h: 'Le charme', t: 'Les paons ajoutent du charme au concours de la semaine.' },
         ],
         see: ['animals', 'contest'],
     },
@@ -542,7 +500,6 @@ export const GUIDE_PAGES = [
         ],
         see: ['village', 'workshop'],
     },
-    // ================= L’ATELIER =================
     {
         id: 'workshop',
         cat: 'craft',
@@ -564,10 +521,7 @@ export const GUIDE_PAGES = [
                 h: 'Les recettes',
                 t: 'Chaque ingrédient (légume, fruit, produit animal, poisson) sert à au moins 3 recettes. Une recette se débloque avec le niveau, un villageois qui vous l’apprend (amitié) ou une fête.',
             },
-            {
-                h: 'Qualité',
-                t: 'Avec de bons ingrédients (argent, or, belles variétés), un plat sort en argent ou en or, et se vend plus cher.',
-            },
+            { h: 'Qualité', t: 'Avec de bons ingrédients (argent, or, belles variétés), un plat sort en argent ou en or, et se vend plus cher.' },
             {
                 h: 'Chaque machine, un métier',
                 t: 'Moulin, four, cuisine, huilerie, forge, pressoir, fumoir, laiterie, poterie, confiserie, glacier, joaillerie, saloir, alambic… Certaines viennent d’un chantier du village, d’autres de l’île ou de l’alpage.',
@@ -646,10 +600,7 @@ export const GUIDE_PAGES = [
                     'Le négociant achète tout de suite, mais moins cher.',
                 ],
             },
-            {
-                h: 'Trophées',
-                t: 'Chaque lot légendaire entre dans la salle des trophées ; le premier de chaque famille rapporte un ruban.',
-            },
+            { h: 'Trophées', t: 'Chaque lot légendaire entre dans la salle des trophées ; le premier de chaque famille rapporte un ruban.' },
         ],
         see: ['brewery', 'orchard'],
     },
@@ -712,19 +663,12 @@ export const GUIDE_PAGES = [
                     'Une récompense en pièces à chaque rang.',
                 ],
             },
-            {
-                h: 'Où la voir',
-                t: 'Dans le Livre de la ferme (Maîtrise) et dans la fiche de chaque produit.',
-            },
-            {
-                h: 'Armand',
-                t: 'Armand ne commande que des produits où vous avez au moins une étoile.',
-            },
+            { h: 'Où la voir', t: 'Dans le Livre de la ferme (Maîtrise) et dans la fiche de chaque produit.' },
+            { h: 'Armand', t: 'Armand ne commande que des produits où vous avez au moins une étoile.' },
         ],
         tips: ['Produire en boucle un même produit n’est jamais puni : la maîtrise compense la baisse de demande.'],
         see: ['armand', 'book'],
     },
-    // ================= NATURE ET PÊCHE =================
     {
         id: 'forest',
         cat: 'nature',
@@ -763,10 +707,7 @@ export const GUIDE_PAGES = [
                 h: 'Le Chantier de la ferme',
                 t: 'Aux niveaux 14, 22 et 34, trois niveaux d’amélioration pour la grange, les prés, la cave, le verger, la serre, les nasses et chaque machine, fabriqués avec vos matériaux.',
             },
-            {
-                h: 'Au marché',
-                t: 'Bois, pierre, minerais, lingots et pierres précieuses se vendent un par un ; « Tout vendre » garde ce qu’il faut.',
-            },
+            { h: 'Au marché', t: 'Bois, pierre, minerais, lingots et pierres précieuses se vendent un par un ; « Tout vendre » garde ce qu’il faut.' },
         ],
         see: ['barn', 'workshop', 'domaine'],
     },
@@ -809,14 +750,10 @@ export const GUIDE_PAGES = [
                     'Le carnet de pêche garde chaque espèce, où et quand la pêcher, et vos records.',
                 ],
             },
-            {
-                h: 'En mer',
-                t: 'Après le phare du port, un filet de pêche en mer rapporte sardines, maquereaux, crevettes, bars et parfois un homard.',
-            },
+            { h: 'En mer', t: 'Après le phare du port, un filet de pêche en mer rapporte sardines, maquereaux, crevettes, bars et parfois un homard.' },
         ],
         see: ['night', 'village', 'workshop'],
     },
-    // ================= VENDRE ET LIVRER =================
     {
         id: 'orders',
         cat: 'trade',
@@ -855,18 +792,12 @@ export const GUIDE_PAGES = [
                 h: 'Le train (après la gare)',
                 t: 'Des wagons à remplir ; un bonus quand tout est chargé. Chaque cheval du haras le fait revenir plus tôt. Il reste environ 1 heure.',
             },
-            {
-                h: 'La montgolfière (après l’auberge)',
-                t: 'De grosses commandes bien payées, qui partent après environ 1 heure.',
-            },
+            { h: 'La montgolfière (après l’auberge)', t: 'De grosses commandes bien payées, qui partent après environ 1 heure.' },
             {
                 h: 'Le bateau (après le quai)',
                 t: 'Quatre produits payés très cher ; il part, puis revient. Le chantier naval le fait revenir plus vite, et le domaine (Quai agrandi) ajoute des lignes.',
             },
-            {
-                h: 'Le domaine y change des choses',
-                t: 'La branche « Réception » les fait rester plus longtemps.',
-            },
+            { h: 'Le domaine y change des choses', t: 'La branche « Réception » les fait rester plus longtemps.' },
         ],
         tips: ['Si un visiteur est là, l’onglet Village › Commandes affiche son compte à rebours ; l’Agenda les rassemble tous.'],
         see: ['agenda', 'domaine'],
@@ -880,10 +811,7 @@ export const GUIDE_PAGES = [
         go: 'village/orders',
         intro: 'Un avion qui se pose toutes les 48 heures et demande d’énormes quantités.',
         secs: [
-            {
-                h: 'Le rythme',
-                t: 'Toutes les 48 heures (temps réel, même jeu fermé), il se pose pour 24 heures.',
-            },
+            { h: 'Le rythme', t: 'Toutes les 48 heures (temps réel, même jeu fermé), il se pose pour 24 heures.' },
             {
                 h: 'Les soutes',
                 b: [
@@ -905,10 +833,7 @@ export const GUIDE_PAGES = [
         go: 'village/orders',
         intro: 'Un visiteur rare qui commande votre produit phare en quantités énormes.',
         secs: [
-            {
-                h: 'Les visites',
-                t: 'Une fois par semaine (temps réel, même jeu fermé), il reste 3 jours. Manquer sa visite ne coûte rien.',
-            },
+            { h: 'Les visites', t: 'Une fois par semaine (temps réel, même jeu fermé), il reste 3 jours. Manquer sa visite ne coûte rien.' },
             {
                 h: 'Le produit phare',
                 b: [
@@ -971,10 +896,7 @@ export const GUIDE_PAGES = [
                 h: 'L’étal',
                 t: 'Vous fixez le prix : plus il est haut, plus le client tarde. 4 places, puis une de plus aux niveaux 8, 16, 26 et 36 (et jusqu’à 3 de plus avec la maison et le domaine).',
             },
-            {
-                h: 'Le produit du jour et la réserve',
-                t: 'Un produit du jour paie plus. La réserve met de côté ce que demandent commandes et défis.',
-            },
+            { h: 'Le produit du jour et la réserve', t: 'Un produit du jour paie plus. La réserve met de côté ce que demandent commandes et défis.' },
             {
                 h: 'Les améliorations',
                 t: 'Engrais magique (niveau 6), négociation (11), mangeoire automatique (14), semoir (16), abondance (17), moissonneuse (24).',
@@ -1003,7 +925,6 @@ export const GUIDE_PAGES = [
         ],
         see: ['cargo', 'armand', 'trains'],
     },
-    // ================= LE VILLAGE =================
     {
         id: 'village',
         cat: 'village',
@@ -1011,46 +932,65 @@ export const GUIDE_PAGES = [
         icon: ['ui', 'house'],
         lvl: 1,
         go: 'village/village',
-        intro: 'Des chapitres à reconstruire, des villageois à connaître, des voisins à défier.',
+        intro: 'Le village se reconstruit chapitre après chapitre ; ses habitants et ses voisins font la vie de la ferme.',
         secs: [
+            { h: 'Où le trouver', t: 'Onglet Village › sous-onglet Village : la carte de l’histoire, les villageois, les voisins, le concours et le domaine.' },
             {
                 h: 'L’histoire',
-                t: 'Chaque chapitre demande des produits, des pièces et des matériaux. Une fois fini, il ouvre de nouveaux bâtiments, de nouvelles machines et de nouveaux villageois.',
-            },
-            {
-                h: 'Les villageois',
                 b: [
-                    'Parlez-leur, livrez-leur des commandes, servez-les au comptoir : leur amitié monte.',
-                    'À chaque palier d’amitié : une recette, une récompense ou un cadeau.',
-                    'Leurs goûts se découvrent peu à peu ; leur anniversaire est une bonne occasion d’offrir.',
+                    'Chaque chapitre est un chantier : on y livre des produits, des pièces et des matériaux, et chaque chapitre rapporte de l’expérience et des pièces (un ruban dès le chapitre 5).',
+                    'Un chapitre fini ouvre des bâtiments, des machines, des cultures ou des villageois. Les grandes étapes (hameau, port, abbaye, île, station, alpage) ouvrent une nouvelle carte.',
+                    'Un chantier ne demande jamais un produit que vous n’avez pas encore pu débloquer.',
                 ],
             },
             {
-                h: 'Les fermes voisines',
-                t: 'Elles s’invitent aux concours, aux classements et aux fêtes. Leur niveau évolue avec le vôtre.',
+                h: 'Les villageois et l’amitié',
+                b: [
+                    'Elle monte quand vous livrez leurs commandes, leur servez une boisson au comptoir ou leur faites un cadeau.',
+                    'Un cadeau par villageois et par jour : 1 point, 3 si c’est un produit fabriqué. Choisissez dans ce qu’il aime.',
+                    'Cinq cœurs en tout. Chaque cœur rapporte des pièces, parfois des graines ou une recette que le villageois vous apprend ; le cinquième fait de lui un ami pour la vie, avec une récompense et l’histoire qu’il raconte.',
+                ],
+            },
+            {
+                h: 'Les fermes voisines (niveau 6)',
+                t: 'Elles passent par l’onglet Village › Commandes pour quelques heures. Les aider fait monter leur amitié (cinq paliers) et vaut des cadeaux.',
             },
         ],
         see: ['contest', 'events', 'orders'],
+        tips: ['Le cinquième cœur d’un villageois fait payer ses commandes 25 % de plus.'],
     },
     {
         id: 'contest',
         cat: 'village',
         name: 'Concours et ligues',
         icon: ['ui', 'trophy'],
-        lvl: 8,
+        lvl: 4,
         go: 'village/village',
-        intro: 'Chaque semaine, un concours contre les fermes voisines, avec classement le lundi.',
+        intro: 'Chaque semaine, tout ce que vous faites compte des points contre les fermes voisines.',
         secs: [
             {
-                h: 'Le concours de la semaine',
-                t: 'Un thème par semaine (pêche, légumes, fromages, bières, élevage…). Présentez votre meilleure production et gagnez des points.',
+                h: 'Les points',
+                b: [
+                    'Ils viennent de ce que vous faites pendant la semaine : commandes, wagons, montgolfières, chantiers, récoltes (or en bonus), produits animaux, fabrications, commandes de bière et de cave…',
+                    'Le charme de la ferme s’ajoute : décorations, styles de la maison, poisson accroché au mur du salon.',
+                    'Le kiosque du village (chantier) ajoute 25 % à vos points.',
+                ],
+            },
+            {
+                h: 'Les paliers et le classement',
+                t: 'Trois paliers rapportent chacun des pièces et de l’expérience au fil de la semaine. Le classement contre les voisines tombe le lundi : la première place paie le plus, puis de moins en moins.',
             },
             {
                 h: 'Les ligues',
-                t: 'Les points s’accumulent par saison. Montez de ligue pour de meilleures récompenses ; le classement est remis à zéro à chaque saison.',
+                b: [
+                    'Bronze (niveau 4), argent (17), or (29), diamant (44).',
+                    'Première du classement : vous montez, avec des récompenses plus grosses et des rivales plus fortes.',
+                    'Dernière : vous redescendez d’une ligue.',
+                ],
             },
         ],
-        see: ['village', 'events'],
+        see: ['decor', 'village', 'pond'],
+        tips: ['Pas besoin de viser le concours : il suffit de jouer. Les décorations et le style de la maison comptent chaque semaine.'],
     },
     {
         id: 'events',
@@ -1059,67 +999,101 @@ export const GUIDE_PAGES = [
         icon: ['ui', 'calendar'],
         lvl: 1,
         go: 'village/village',
-        intro: 'Les saisons ont chacune leur fête, et le jeu réserve des surprises.',
+        intro: 'Des fêtes de saison, des fêtes aux vraies dates, des imprévus et des visiteurs rares.',
         secs: [
             {
                 h: 'Les fêtes de saison',
-                t: 'Une fête par saison, avec ses animations, ses décors et ses récompenses (recettes, matériaux, objets de décoration).',
+                b: [
+                    'Printemps : chasse aux œufs, des œufs décorés se cachent dans le champ.',
+                    'Été : toutes les ventes rapportent 25 % de plus.',
+                    'Automne : foire d’automne, le concours récompense les récoltes de qualité or.',
+                    'Hiver : marché de Noël, les trains paient 30 % de plus.',
+                ],
             },
             {
-                h: 'Les événements rares',
+                h: 'Halloween, Noël et Pâques (niveau 3)',
+                t: 'Ils tombent aux vraies dates du calendrier. Chacun apporte une recette, un panier à remplir avec le village et une décoration à gagner.',
+            },
+            {
+                h: 'Les imprévus (niveau 7)',
                 b: [
-                    'Comète, aurore, marée, visiteurs inattendus : ils apparaissent au hasard.',
-                    'Le marchand ambulant et le marché de nuit passent de temps en temps.',
+                    'Corbeau : touchez-le avant qu’il ne mange la récolte.',
+                    'Pucerons : touchez la culture vite, sinon elle est perdue.',
+                    'Animal malade : appui long sur la bête pour la soigner.',
+                    'Acheteur pressé : il paie le triple mais repart au bout de 10 minutes.',
+                ],
+            },
+            {
+                h: 'Les événements rares (niveau 12)',
+                b: [
+                    'Foire aux bestiaux : deux animaux d’exception à vendre, 50 % plus rapides.',
+                    'Critique gastronomique : il goûte un de vos plats, et sa note dépend de votre maîtrise de la recette.',
+                    'Nuée de papillons : les récoltes dorées sont trois fois plus fréquentes.',
                 ],
             },
         ],
-        tips: ['L’Agenda liste ce qui est là et ce qui arrive.'],
-        see: ['agenda', 'village'],
+        tips: ['L’Agenda liste ce qui est là et ce qui arrive ; les événements rares n’y figurent pas, ils surviennent au hasard.'],
+        see: ['agenda', 'incidents', 'night'],
     },
-    // ================= PROGRESSER =================
     {
         id: 'house',
         cat: 'grow',
         name: 'La maison',
         icon: ['ui', 'house'],
-        lvl: 6,
+        lvl: 5,
         go: 'sheet:house',
-        intro: 'Votre maison grandit, apporte du confort et des capacités, et se décore.',
+        intro: 'Six agrandissements, chacun avec un avantage, et une personnalisation du décor.',
         secs: [
             {
-                h: 'Les niveaux',
-                t: 'Chaque amélioration coûte des pièces et des matériaux, et ajoute des capacités : files de machines plus longues, places d’étal, commandes en plus, plus de stockage.',
+                h: 'Les agrandissements',
+                b: [
+                    'Niveau 5, maison rafraîchie : +40 places dans la grange.',
+                    'Niveau 14, véranda : +1 commande au tableau.',
+                    'Niveau 23, étage : +1 place dans la file de chaque machine.',
+                    'Niveau 32, belle demeure : +1 place à l’étal.',
+                    'Niveau 42, grande ferme : toutes les commandes paient 10 % de plus.',
+                    'Niveau 47, le manoir : +80 places dans la grange et 1 place de plus à l’étal.',
+                ],
             },
             {
-                h: 'Théo',
-                t: 'Théo, le menuisier, est un personnage à part entière : il vous aide et propose ses services.',
+                h: 'Théo, le commis',
+                t: 'Après le pont du hameau (chapitre 5), Théo récolte, replante et arrose à votre place les parcelles encadrées du champ, en replantant la dernière culture posée. On le forme de plus en plus : de 6 parcelles à 36 au dernier niveau (31, 37, 41 puis 47). L’aide au champ du domaine lui ajoute des parcelles.',
             },
             {
-                h: 'Décorations',
-                t: 'Des styles de maison et de très nombreuses décorations s’achètent et s’installent. Elles servent au confort et à la jolie ferme.',
+                h: 'Personnaliser',
+                t: 'Dès le niveau 8, clôture, allées, toit et grange se choisissent et s’achètent dans la feuille de la maison. Voir « Style, décorations et souvenirs ».',
             },
         ],
-        see: ['domaine', 'decor'],
+        see: ['decor', 'domaine', 'orders'],
     },
     {
         id: 'decor',
         cat: 'grow',
-        name: 'Décorations et photos',
+        name: 'Style, décorations et souvenirs',
         icon: ['ui', 'camera'],
-        lvl: 6,
+        lvl: 5,
         go: 'sheet:house',
-        intro: 'Décorez, prenez des photos, gardez des souvenirs.',
+        intro: 'Ce qui embellit la ferme compte pour le concours, et la ferme se garde en photos.',
         secs: [
             {
-                h: 'Décorer',
-                t: 'Les décorations s’achètent au marché ou se gagnent en fête. Elles se placent dans la ferme et la maison.',
+                h: 'Les décorations',
+                b: [
+                    'Elles s’achètent au marché (magasin, marché de nuit) ou se gagnent en fêtes et en grands défis.',
+                    'Chacune se pose dans un coin d’une parcelle sans la gâcher, et beaucoup ont un effet : le nichoir tient les corbeaux à distance, le parterre améliore les qualités des parcelles voisines.',
+                    'Toutes ont un charme qui compte pour le concours.',
+                ],
             },
             {
-                h: 'Photos et cartes postales',
-                t: 'Un mode photo cadre votre ferme, et des cartes postales se débloquent avec les événements.',
+                h: 'Le style de la maison (niveau 8)',
+                t: 'Clôture, allées, toit et grange : chaque style acheté donne 8 points de charme au concours, pour toujours. Changez à volonté parmi ceux que vous avez.',
+            },
+            { h: 'Le mur du salon', t: 'Accrochez votre plus gros poisson : +20 points de charme.' },
+            {
+                h: 'Photos et carte postale',
+                t: 'Les grands moments (niveaux, chapitres, amis pour la vie, concours gagné, nouvelle ferme) prennent une photo dans l’album de la ferme, 60 au plus, qui se partage. La carte postale (menu) dessine votre ferme du moment, à envoyer.',
             },
         ],
-        see: ['house'],
+        see: ['contest', 'house'],
     },
     {
         id: 'domaine',
@@ -1128,46 +1102,82 @@ export const GUIDE_PAGES = [
         icon: ['ui', 'house'],
         lvl: 25,
         go: 'village/village',
-        intro: 'Le grand chantier du jeu : neuf branches, cinq paliers chacune, jusqu’à 10 millions de pièces.',
+        intro: 'Le grand chantier du jeu : neuf branches de cinq paliers, qui ne donnent que de la capacité et du confort.',
         secs: [
             {
                 h: 'Où le trouver',
-                t: 'Village › sous-onglet Village, sous la carte de l’histoire (niveau 25).',
+                t: 'Village › sous-onglet Village, sous la carte de l’histoire (niveau 25). Une scène de la ferme montre chaque branche, du chantier au grand bâtiment.',
             },
             {
-                h: 'Les branches',
+                h: 'Les neuf branches',
                 b: [
-                    'Grange et prés : capacité d’élevage.',
-                    'Cuisine, champs, commerce : files, parcelles, étal et commandes.',
-                    'Annexes des métiers : cave, brasserie, salon, pièges.',
-                    'Suite d’Armand : plusieurs produits phares.',
-                    'Cargo, Quai agrandi : plus de soutes, plus de lignes.',
-                    'Réception : les visiteurs restent plus longtemps.',
+                    'Grange agrandie : de la place pour ranger.',
+                    'Cuisines et ateliers : +1 place dans la file de chaque machine, à chaque palier.',
+                    'Aide au champ : Théo soigne plus de parcelles.',
+                    'Commerce : des commandes au tableau et des places à l’étal en plus.',
+                    'Annexes des métiers : une cuve de brasserie, un siège au comptoir, une étagère de cave, une nasse, une place à l’étable de sélection.',
+                    'Suite d’Armand : jusqu’à quatre produits phares, commande conservée d’une visite à l’autre, +10 % de paiement.',
+                    'Piste du cargo : quatre soutes de plus, +20 % au bonus d’avion plein.',
+                    'Quai agrandi : quatre lignes de plus au bateau, qui revient 25 % plus vite.',
+                    'Réception : les visiteurs restent jusqu’à deux fois plus longtemps.',
                 ],
             },
             {
-                h: 'Comment acheter',
-                t: 'Chaque palier coûte des pièces et des matériaux, et s’achète dans l’ordre. Un total montre ce qu’il reste à dépenser dans chaque branche.',
+                h: 'Comment ça s’achète',
+                b: [
+                    'Chaque branche s’achète palier par palier, du premier au cinquième. Chaque palier coûte des pièces et deux matériaux, de plus en plus cher.',
+                    'Les premiers paliers sont accessibles, les derniers sont le grand puits d’argent du jeu : c’est fait pour la longue durée.',
+                    'Un récapitulatif montre ce qu’il reste à dépenser.',
+                ],
             },
         ],
-        see: ['house', 'armand', 'cargo'],
+        see: ['house', 'armand', 'cargo', 'trains'],
+        tips: ['Rien n’accélère ni n’enrichit directement : le domaine agrandit, il ne change pas l’équilibre.'],
     },
     {
         id: 'skills',
         cat: 'grow',
         name: 'Les compétences',
         icon: ['ui', 'star'],
-        lvl: 5,
-        go: 'sheet:levels',
-        intro: 'À chaque niveau, un point à investir dans trois arbres : agriculture, élevage, commerce.',
+        lvl: 2,
+        go: 'sheet:progress',
+        intro: 'Chaque niveau gagné donne un point à placer dans trois arbres : agriculture, élevage, commerce.',
         secs: [
+            { h: 'Où', t: 'Menu › Progrès. Le menu signale les points à placer.' },
             {
-                h: 'Les trois arbres',
-                t: 'Agriculture, élevage et commerce : quatre compétences chacune. Investissez selon votre style.',
+                h: 'Agriculture',
+                b: [
+                    'Main verte : les cultures poussent plus vite (3 rangs).',
+                    'Récolte généreuse : chance de double récolte (3).',
+                    'Œil d’expert : plus de qualité argent ou or (2).',
+                    'Toucher d’or : les récoltes dorées sont 60 % plus fréquentes.',
+                ],
             },
             {
-                h: 'Changer d’avis',
-                t: 'Vous pouvez tout redistribuer contre des pièces (400 × votre niveau).',
+                h: 'Élevage',
+                b: [
+                    'Bien nourris : les bêtes produisent plus vite (3).',
+                    'Grande mangeoire : plus de repas (2).',
+                    'Pâturage fertile : chance de double production (3).',
+                    'Pouponnière : les bébés grandissent deux fois plus vite.',
+                ],
+            },
+            {
+                h: 'Commerce',
+                b: [
+                    'Bagou : tout se vend plus cher (3).',
+                    'Client fidèle : les commandes du village paient plus (2).',
+                    'Logisticien : les trains paient plus (2).',
+                    'Marchand avisé : les prix baissent deux fois moins vite quand vous vendez beaucoup.',
+                ],
+            },
+            {
+                h: 'Règles',
+                b: [
+                    'Dans chaque arbre, on apprend dans l’ordre ; la dernière compétence demande 4 points déjà placés dans l’arbre.',
+                    'Il y a 26 rangs en tout : vous aurez les points pour tout apprendre.',
+                    'Vous pouvez tout redistribuer contre des pièces (400 × votre niveau).',
+                ],
             },
         ],
         see: ['mastery', 'market'],
@@ -1179,89 +1189,165 @@ export const GUIDE_PAGES = [
         icon: ['ui', 'book'],
         lvl: 3,
         go: 'sheet:book',
-        intro: 'Le Grand livre : tout ce que vous avez produit, découvert et accompli.',
+        intro: 'Tout ce que vous avez produit, découvert et accompli, en cinq sections.',
         secs: [
             {
-                h: 'Contenu',
-                t: 'Pages de produits, maîtrise, bières, poissons, cultures… avec des récompenses à compléter.',
+                h: 'Les cinq sections',
+                b: [
+                    'Collection : l’étagère de 17 pages (potager, verger, poissons, plats, fromagerie, boissons, bières, cuvées, mines et gemmes, races…). Chaque page donne des récompenses à 25, 50, 75 et 100 % (un ruban au complet).',
+                    'Maîtrise : les étoiles de chaque produit.',
+                    'Exploits : les succès, avec pièces, expérience et parfois un ruban.',
+                    'Légende : le chemin vers la Ferme légendaire.',
+                    'Album : les photos de vos grands moments.',
+                ],
+            },
+            {
+                h: 'Les fiches',
+                t: 'Chaque entrée de la collection a sa fiche : combien vous en avez fabriqué, en argent et en or, sa maîtrise, la première fois, et l’anecdote de Mamie Odette.',
             },
         ],
-        see: ['mastery'],
+        see: ['mastery', 'legend', 'decor'],
     },
-    // ================= GÉNÉTIQUE =================
     {
         id: 'labplants',
         cat: 'lab',
         name: 'Le laboratoire de plantes',
         icon: ['ui', 'packet'],
-        lvl: 15,
+        lvl: 40,
         go: 'machines/lab',
-        intro: 'Croiser des plantes pour créer de nouvelles variétés.',
+        intro: 'Croiser des plantes pour créer des variétés plus savoureuses ou plus robustes, à garder pour toujours.',
         secs: [
             {
-                h: 'Croisements',
-                t: 'Deux plantes parentes donnent des descendants qui héritent de leurs qualités. Les variétés se plantent et se multiplient.',
+                h: 'Ce qui l’ouvre',
+                t: 'La station de recherche (niveau 40) : Agathe et Victor. La serre de pollinisation, puis le laboratoire et le conservatoire des semences, sont des chantiers du village.',
+            },
+            {
+                h: 'Croiser',
+                b: [
+                    'Choisissez deux plantes ; la pollinisation dure environ 10 minutes, en temps réel.',
+                    'Elle donne une portée de jeunes plants (3, 4 avec le laboratoire) : vous en gardez un.',
+                    'Chaque gène peut muter (5 %, 9 % avec la ruche de sélection).',
+                    'Deux espèces différentes donnent plus souvent des graines stériles.',
+                ],
+            },
+            {
+                h: 'Fixer une variété',
+                b: [
+                    'Une variété se fixe à partir de la 3e génération, avec le laboratoire (qui analyse aussi les gènes).',
+                    'Une variété fixée donne ses graines : une récolte en rend une une fois sur deux.',
+                    'Les gènes comptent : vitesse de pousse, résistance au froid et à la sécheresse, rendement, saveur.',
+                    'Une variété savoureuse améliore les plats (argent, or) et la revente.',
+                ],
+            },
+            {
+                h: 'Mes créations et le chef',
+                t: 'Mes créations garde chaque variété et permet de racheter graines et petits. Le chef passe des commandes de plusieurs heures qui demandent un trait précis.',
             },
         ],
-        see: ['labanimals'],
+        see: ['labanimals', 'workshop'],
     },
     {
         id: 'labanimals',
         cat: 'lab',
         name: 'L’élevage et le Salon',
         icon: ['ui', 'nursery'],
-        lvl: 15,
+        lvl: 40,
         go: 'machines/lab',
-        intro: 'Choisir ses reproducteurs, faire naître des petits aux qualités rares.',
+        intro: 'Choisir ses reproducteurs pour des petits aux traits rares, puis les présenter au Salon.',
         secs: [
             {
-                h: 'Élevage',
-                t: 'Associez deux parents ; les petits héritent de leurs traits. Des places d’élevage s’achètent au domaine.',
+                h: 'L’étable de sélection',
+                b: [
+                    'Associez deux parents : la naissance prend environ 15 minutes, en temps réel.',
+                    'Les petits héritent de leurs traits : cornes, oreilles, toison, lait plus riche…',
+                    'Jumeaux dans 15 % des naissances.',
+                    'Un enclos d’élevage de base, un de plus avec le laboratoire, un autre avec le conservatoire, un de plus avec le domaine.',
+                    'Une race fixée donne des petits dont le prix est plus élevé.',
+                ],
             },
             {
-                h: 'Le Salon',
-                t: 'Présentez vos plus beaux animaux au Salon.',
+                h: 'Le Salon de l’agriculture (niveau 43)',
+                t: 'Un critère par période (fruit le plus sucré, légume le plus épicé, lait le plus riche, toison la plus douce, plus belle robe…). Présentez votre meilleure plante ou bête face à des rivales dont le score grandit avec votre niveau. Le premier prix rapporte un ruban, deux la première fois qu’on gagne un critère.',
             },
         ],
-        see: ['labplants', 'animals'],
+        see: ['labplants', 'animals', 'legend'],
     },
-    // ================= FIN DE PARTIE =================
     {
         id: 'legend',
         cat: 'end',
         name: 'Grands défis et Ferme légendaire',
         icon: ['ui', 'trophy'],
-        lvl: 40,
+        lvl: 50,
         go: 'sheet:progress',
-        intro: 'Les objectifs de long terme, la renommée et le prestige.',
+        intro: 'Au niveau 50, le jeu change : défis, renommée, Ferme légendaire et prestige.',
         secs: [
             {
-                h: 'Grands défis',
-                t: 'Des objectifs ambitieux, avec de grosses récompenses.',
+                h: 'Les grands défis',
+                t: 'Un défi de deux semaines, tiré parmi dix-sept, en quatre étapes. Des médailles, une salle des trophées et des décorations uniques à gagner. Il se trouve dans Village › Commandes.',
             },
             {
-                h: 'Prestige',
-                t: 'Recommencez avec des bonus durables : rubans, défis, fermes à thème, saisons de la ferme.',
+                h: 'La renommée',
+                t: 'Au niveau 50, l’expérience donne des étoiles de renommée : une étoile tous les 250 000 points, avec pièces et matériaux, et un ruban toutes les cinq.',
+            },
+            {
+                h: 'La Ferme légendaire',
+                t: 'Cinq objectifs dans la section Légende du livre : le niveau 50, les chapitres terminés, la maison, la ligue diamant, dix produits maîtrisés à l’or.',
+            },
+            {
+                h: 'Vendre la ferme',
+                b: [
+                    'Vous recommencez à zéro mais gardez les rubans, les succès, les amitiés, le chien, les décorations, le village rénové, la grange, le livre, la maîtrise, la cave (étagères et cote) et les créations de génétique.',
+                    'Les rubans gagnés dépendent de ce que vous avez gagné pendant la ferme. Chacun donne +5 % aux ventes et +3 % de vitesse, pour toujours.',
+                    'Un défi de prestige (sans animaux, hiver éternel, petit lopin, marché fermé) réussi rapporte 3 rubans de plus.',
+                    'Un thème de ferme : maraîchère (cultures 15 % plus rapides), laitière (bêtes 20 %), fruitière (arbres 30 %), du littoral (filet de mer double).',
+                ],
             },
         ],
-        see: ['skills', 'domaine'],
+        see: ['skills', 'domaine', 'book'],
+        tips: ['Le prestige est facultatif : on peut rester sur sa ferme et viser la Ferme légendaire.'],
     },
-    // ================= AIDE-MÉMOIRE =================
     {
         id: 'memo',
         cat: 'memo',
-        name: 'Durées en temps réel',
+        name: 'Aide-mémoire',
         icon: ['ui', 'clock'],
         lvl: 1,
         go: 'village/orders',
-        intro: 'Ce qui continue pendant que le jeu est fermé.',
+        intro: 'Les durées et les adresses à retenir.',
         secs: [
             {
-                h: 'Temps réel',
+                h: 'Visiteurs et livraisons (temps réel)',
                 b: [
-                    'Cultures, machines, cave, pêche en mer, ouvriers : tout avance jeu fermé.',
-                    'Cargo : 48 h / 24 h. Armand : 7 jours / 3 jours.',
-                    'Nasses et ouvriers : une charge toutes les 2 heures.',
+                    'Train : 1 heure sur place, 1 heure d’absence. Montgolfière : 1 heure, absente 2 heures. Marchand ambulant : 2 heures, absent 4 heures.',
+                    'Avion-cargo : toutes les 48 heures, 24 heures sur place. Armand : tous les 7 jours, 3 jours sur place.',
+                    'Fermes voisines : 2 heures sur place.',
+                    'Acheteur pressé : 10 minutes. Critique : 20 minutes. Foire aux bestiaux : 30 minutes.',
+                ],
+            },
+            {
+                h: 'Ce qui travaille jeu fermé',
+                b: [
+                    'Cultures, serre, bêtes, machines, cave, brasserie, élevage et pollinisation.',
+                    'Nasses, bûcheron, mineur, cueilleur et filet de mer : une charge toutes les 2 heures.',
+                    'Théo.',
+                ],
+            },
+            {
+                h: 'Rythme du jeu',
+                b: [
+                    'Ventes aux enchères : petite toutes les 4 heures, grande à 19 h.',
+                    'Concours : une semaine, classement le lundi.',
+                    'Défi de Marcel et de Gaspard : un par jour.',
+                ],
+            },
+            {
+                h: 'Où trouver quoi',
+                b: [
+                    'Un produit manquant : touchez-le dans une commande, ou cherchez-le dans ce guide.',
+                    'Ce qu’un niveau ouvre : Menu › Les niveaux.',
+                    'Points de compétence, prestige : Menu › Progrès.',
+                    'Livre de la ferme, album, légende : Menu › Livre de la ferme.',
+                    'Bonus actifs : Menu › Mes bonus.',
                 ],
             },
         ],
