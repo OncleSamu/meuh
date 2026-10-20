@@ -232,7 +232,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les graines',
-                t: '47 cultures au champ, chacune ouverte à son niveau (blé 1, carotte 2, tomate 4, maïs 6…). Certaines demandent un chantier (houblon, génépi) ou ne poussent qu’en serre (cacao, vanille, menthe, poivre noir, orchidée). Le safran ne se trouve que chez le marchand ambulant.',
+                t: '51 cultures hors île, chacune ouverte à son niveau (blé 1, carotte 2, tomate 4, maïs 6…). Certaines demandent un chantier (houblon, génépi) ou ne poussent qu’en serre (cacao, vanille, menthe, poivre noir, orchidée). Le safran ne se trouve que chez le marchand ambulant.',
             },
             {
                 h: 'Replanter vite',
@@ -253,16 +253,16 @@ export const GUIDE_PAGES = [
         secs: [
             {
                 h: 'Les saisons',
-                t: 'Printemps, été, automne, hiver. Une culture de saison pousse 30 % plus vite ; certaines ne poussent qu’à leur saison. Chaque saison a sa fête (chasse aux œufs, fête de l’été, foire d’automne, marché de Noël) et ses arbres de saison au verger.',
+                t: 'Printemps, été, automne, hiver. Une culture de saison pousse 30 % plus vite et donne plus souvent des récoltes de qualité ; hors saison elle pousse normalement, sauf en hiver où elle va 40 % moins vite (la serre n’a pas ce défaut). Chaque saison a sa fête (chasse aux œufs, fête de l’été, foire d’automne, marché de Noël) et ses arbres de saison au verger.',
             },
             {
                 h: 'La météo',
                 b: [
-                    'Pluie : elle arrose le champ pour vous.',
-                    'Canicule : elle assèche les parcelles.',
-                    'Orage : la foudre peut brûler une culture, sauf si un paratonnerre est posé.',
-                    'Arc-en-ciel : les récoltes dorées sont bien plus fréquentes.',
-                    'Neige, brouillard, éclaircies, couvert : de l’ambiance, sans effet majeur.',
+                    'Ensoleillé : +10 % de pousse. Couvert : −5 %. Neige : −20 %. Éclaircies : rien de spécial.',
+                    'Pluie : elle arrose tout le champ pour vous.',
+                    'Canicule : +15 % de pousse, mais la terre sèche deux fois plus vite : arrosez souvent, ou laissez faire un puits.',
+                    'Orage : tout est arrosé et la pousse gagne 20 %, mais la foudre peut brûler une culture, sauf si un paratonnerre est posé.',
+                    'Arc-en-ciel : les récoltes dorées sont trois fois plus fréquentes, et la qualité or deux fois plus.',
                 ],
             },
             { h: 'Où voir ce qui arrive', t: 'L’almanach (touchez l’horloge) montre la saison, la météo et les fêtes à venir.' },
@@ -280,7 +280,7 @@ export const GUIDE_PAGES = [
         secs: [
             {
                 h: 'Trois sols',
-                t: 'Humide, sec et ensoleillé, ombragé. Une culture posée dans le sol qu’elle aime pousse plus vite et donne plus souvent des récoltes de qualité ; dans un sol qu’elle n’aime pas, c’est l’inverse.',
+                t: 'Sol humide, sol sec et ensoleillé, sol ombragé. Une culture posée dans le sol qu’elle aime pousse 25 % plus vite et donne plus souvent des récoltes de qualité (+12 points de chance) ; ailleurs elle pousse normalement, sans pénalité.',
             },
             { h: 'Où voir le sol préféré', t: 'Le magasin l’indique pour chaque graine, et le champ montre le sol de chaque parcelle.' },
         ],
@@ -507,7 +507,7 @@ export const GUIDE_PAGES = [
         icon: ['machine', 'bakery'],
         lvl: 3,
         go: 'machines/workshop',
-        intro: 'Transformer vaut mieux que vendre brut : 39 machines et plus de 400 recettes.',
+        intro: 'Transformer vaut mieux que vendre brut : 38 machines et près de 500 recettes.',
         secs: [
             {
                 h: 'Les machines',
@@ -680,7 +680,7 @@ export const GUIDE_PAGES = [
         secs: [
             {
                 h: 'La forêt (niveau 3)',
-                t: 'Quatre essences : chêne et châtaignier (bois dur), pin (résine), bouleau (sève, qui devient sirop). Jusqu’à 9 arbres, qui repoussent. Dès le niveau 20, la cueillette de saison (fraises, myrtilles, champignons, noisettes, châtaignes, miel).',
+                t: 'Quatre essences : chêne (bois dur) et pin (résine) dès le niveau 3, bouleau (sève, qui devient sirop) et châtaignier (bois dur) dès le niveau 12. Jusqu’à 9 arbres, qui repoussent. Dès le niveau 20, la cueillette de saison (fraises, myrtilles, champignons, noisettes, châtaignes, miel).',
             },
             {
                 h: 'La mine',
@@ -1303,7 +1303,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'La Ferme légendaire',
-                t: 'Cinq objectifs dans la section Légende du livre : le niveau 50, les chapitres terminés, la maison, la ligue diamant, dix produits maîtrisés à l’or.',
+                t: 'Cinq objectifs dans la section Légende du livre : le niveau 50, les 6 chapitres du village et du hameau terminés, la maison au niveau 5, la ligue diamant, dix produits maîtrisés à l’or.',
             },
             {
                 h: 'Vendre la ferme',
