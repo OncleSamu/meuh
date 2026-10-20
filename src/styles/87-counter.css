@@ -412,3 +412,51 @@
     align-items: center;
     gap: 10px;
 }
+
+/* l'Agenda replié : une ligne fine */
+.agenda-card {
+    padding: 4px 8px;
+}
+.agenda-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 40px;
+    background: none;
+    border: 0;
+    padding: 2px 2px;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+.agenda-bar .ico {
+    flex: none;
+}
+.agenda-bar b {
+    font-size: 14px;
+    flex: none;
+}
+.agenda-sum {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    opacity: 0.8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.agenda-chev {
+    flex: none;
+    font-style: normal;
+    font-size: 14px;
+    transition: transform 0.2s;
+}
+.agenda-chev.up {
+    transform: rotate(180deg);
+}
+.agenda-card.open .agenda-list {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}

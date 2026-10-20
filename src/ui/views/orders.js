@@ -181,19 +181,23 @@ function cargoCard() {
 const agendaRow = e =>
     `<div class="agenda-row${e.here ? ' here' : ''}">${ico(e.icon, 'ico big')}<div class="card-main"><b>${e.title}</b><small>${e.note}</small></div>
     <span class="timer-pill" title="Temps réel">${e.here ? 'reste ' : 'dans '}${timer(e.at)}</span></div>`;
+// replié par défaut : une seule ligne fine ; un toucher déplie toute la liste (le choix est retenu sur cet appareil)
+const agendaOpen = () => {
+    try {
+        return localStorage.getItem('meuhAgenda') === '1';
+    } catch {
+        return false;
+    }
+};
 function agendaCard() {
     const list = G.agenda();
     if (list.length < 2) return null;
-    return `<div class="card agenda-card"><div class="card-head">${ico(['ui', 'calendar'], 'ico big')}<div class="card-main"><div class="card-title">Agenda</div>
-        <div class="card-sub">Ce qui est là, ce qui arrive : tout au même endroit.</div></div></div>
-        <div class="agenda-list">${list.slice(0, 4).map(agendaRow).join('')}</div>
-        ${list.length > 4 ? `<div class="od-foot">${btn(`Tout voir (${list.length})`, { act: 'agendaAll', size: 'sm' })}</div>` : ''}</div>`;
+    const open = agendaOpen(),
+        first = list[0];
+    const head = `<button class="agenda-bar" data-act="agendaToggle" aria-expanded="${open}" aria-label="Agenda : ${open ? 'replier' : 'déplier'}">${ico(['ui', 'calendar'])}<b>Agenda</b>
+        ${open ? '<span class="agenda-sum">Ce qui est là, ce qui arrive</span>' : `<span class="agenda-sum">${first.here ? 'là : ' : 'bientôt : '}${first.title} · ${timer(first.at)}</span>`}<i class="agenda-chev${open ? ' up' : ''}" aria-hidden="true">▾</i></button>`;
+    return `<div class="card agenda-card${open ? ' open' : ''}">${head}${open ? `<div class="agenda-list">${list.map(agendaRow).join('')}</div>` : ''}</div>`;
 }
-defineSheet('agenda', {
-    cls: 'agenda-sheet',
-    title: () => 'Agenda',
-    render: () => `<div class="agenda-list">${G.agenda().map(agendaRow).join('')}</div>`,
-});
 
 // ---------------- 1.19.1 : Armand, chef du Grand Hôtel ----------------
 const portrait = ico(['villager', 'armand'], 'ico big');
@@ -295,7 +299,13 @@ export function setupOrders() {
         pin: (el, d) => G.togglePin(+d.i),
         express: el => G.deliverExpress(el),
         loadHold: (el, d) => G.loadHold(+d.i, el),
-        agendaAll: () => openSheet('agenda', {}),
+        agendaToggle: () => {
+            try {
+                localStorage.setItem('meuhAgenda', agendaOpen() ? '0' : '1');
+            } catch {
+                /* tant pis : le choix n'est pas retenu */
+            }
+        },
         armandGive: (el, d) => G.deliverArmand(el, +d.slot || 0),
         armandPick: (el, d) => openSheet('armandPick', { slot: +d.slot || 0 }),
         armandSet: (el, d) => G.setFlagship(d.id, +d.slot || 0) && closeSheet('armandPick'),
