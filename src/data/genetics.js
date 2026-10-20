@@ -34,6 +34,7 @@ export const ANIMAL_TRAITS = [
     { id: 'health', name: 'Santé', icon: ['ui', 'sick'], extra: true, hint: 'tombe moins souvent malade' },
     { id: 'docile', name: 'Docilité', icon: ['ui', 'hand'], extra: true, hint: 'l’amitié rend la bête encore plus productive' },
     { id: 'social', name: 'Sociabilité', icon: ['ui', 'chick'], extra: true, hint: 'produit plus vite entourée de sa propre espèce' },
+    { id: 'jump', name: 'Détente', icon: ['ui', 'hSaut'], extra: true, species: ['horse'], hint: 'plafond du saut d’obstacles aux écuries' },
     { id: 'curious', name: 'Curiosité', icon: ['ui', 'sparkle'], extra: true, hint: 'trouve parfois un petit trésor à la collecte' },
 ];
 // les gènes d'apparence : jamais choisis, ils découlent des croisements
@@ -167,8 +168,11 @@ export const EXTRA_DEFAULT = {
     fertile: 0,
     health: 0,
     curious: 0,
+    jump: 0,
 };
 export const EXTRA_SPECIES = {
+    docile: { horse: 2 }, // 1.23 : le cheval sauvage vaut 2 en docilité et en détente
+    jump: { horse: 2 },
     regrow: { tomato: 3, pepper: 3, eggplant: 2, strawberry: 2, raspberry: 3, blueberry: 2, zucchini: 2, cucumber: 2, espelette: 3, greenBean: 2, peas: 2 },
 };
 export const extraBase = (k, id) => (EXTRA_SPECIES[k] && EXTRA_SPECIES[k][id]) || EXTRA_DEFAULT[k] || 0;

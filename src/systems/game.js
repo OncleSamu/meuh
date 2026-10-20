@@ -39,6 +39,7 @@ import { ensureOrchard, orchardTick, orchardOffline } from './orchard.js';
 import { pickerTick, pickerAfterOffline } from './orchardplus.js';
 import { lifeTick, lifeAfterOffline } from './orchardlife.js';
 import { ensurePastures } from './pastures.js';
+import { ensureHaras, tidyHaras } from './haras.js';
 import { ensureIsland, islandTick, islandOffline } from './island.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
@@ -101,6 +102,8 @@ export function normalizeState() {
     ensureDefis();
     ensureNight();
     migrateCounter();
+    ensureHaras();
+    tidyHaras();
     syncBook();
     ensureNature();
     ensureMachineData();

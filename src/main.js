@@ -16,6 +16,7 @@ import { setupPond } from './ui/views/pond.js';
 import { setupOrchard } from './ui/views/orchard.js';
 import { setupIsland } from './ui/views/island.js';
 import { setupLab } from './ui/views/lab.js';
+import { setupHaras } from './ui/views/haras.js';
 import { setupAnimals, wanderAnimals } from './ui/views/animals.js';
 import { setupWorkshop } from './ui/views/workshop.js';
 import { setupCave } from './ui/views/cave.js';
@@ -58,6 +59,7 @@ function start() {
     setupOrchard();
     setupIsland();
     setupLab();
+    setupHaras();
     setupAnimals();
     setupWorkshop();
     setupCave();

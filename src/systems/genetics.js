@@ -50,6 +50,8 @@ export const CORE_PLANT = PLANT_TRAITS.filter(t => !t.extra).map(t => t.id);
 export const CORE_ANIMAL = ANIMAL_TRAITS.filter(t => !t.extra).map(t => t.id);
 const EXTRA_PLANT = PLANT_TRAITS.filter(t => t.extra).map(t => t.id);
 const EXTRA_ANIMAL = ANIMAL_TRAITS.filter(t => t.extra).map(t => t.id);
+// 1.23 : un caractère peut ne concerner qu'une espèce (la détente, propre au cheval)
+const extraFor = type => ANIMAL_TRAITS.filter(t => t.extra && (!t.species || t.species.includes(type))).map(t => t.id);
 
 // ---------------- ouverture ----------------
 export const plantLabOpen = () => projectDone(GX.plantProject);
@@ -89,9 +91,19 @@ export function ensureGenetics() {
     });
     Object.values(G.races).forEach(r => addFeatures(r.g, r.type, false));
     // 1.22 : caractères discrets et finitions pour les créations d'avant
-    state.animals.forEach(a => addExtras(a.g, EXTRA_ANIMAL, a.type));
-    Object.values(G.races).forEach(r => addExtras(r.g, EXTRA_ANIMAL, r.type));
+    state.animals.forEach(a => addExtras(a.g, extraFor(a.type), a.type));
+    Object.values(G.races).forEach(r => addExtras(r.g, extraFor(r.type), r.type));
     Object.values(G.vars).forEach(v => addExtras(v.g, EXTRA_PLANT, v.g.form));
+    // 1.23 : un cheval d'avant a la docilité et la détente d'un cheval sauvage (gène 2) au lieu de 0, une seule fois
+    if (!G.v123) {
+        G.v123 = true;
+        const fixHorse = g => {
+            if (!g || !g.t) return;
+            for (const k of ['docile', 'jump']) if (g.t[k] && !g.t[k][0][0] && !g.t[k][1][0]) g.t[k] = pair(2);
+        };
+        state.animals.forEach(a => a.type === 'horse' && fixHorse(a.g));
+        Object.values(G.races).forEach(r => r.type === 'horse' && fixHorse(r.g));
+    }
 }
 function addExtras(g, keys, id) {
     if (!g || !g.t) return;
@@ -121,7 +133,7 @@ export function wildPlant(id) {
 export function wildAnimal(type, vary) {
     const b = ANIMAL_BASE[type] || [2, 2, 2, 2, 2, 2, 2];
     const t = {};
-    EXTRA_ANIMAL.forEach(k => (t[k] = pair(extraBase(k, type))));
+    extraFor(type).forEach(k => (t[k] = pair(extraBase(k, type))));
     CORE_ANIMAL.forEach((k, j) => {
         const v = b[j];
         if (!vary) return (t[k] = pair(v));

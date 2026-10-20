@@ -502,6 +502,50 @@ export const GUIDE_PAGES = [
         see: ['village', 'workshop'],
     },
     {
+        id: 'haras',
+        cat: 'animals',
+        name: 'Les grandes écuries',
+        icon: ['ui', 'hEcuries'],
+        lvl: 44,
+        go: 'farm/haras',
+        intro: 'Logez vos chevaux en boxes, soignez-les et entraînez-les au galop, à l’endurance, au dressage et au saut.',
+        secs: [
+            {
+                h: 'Le bâtiment',
+                b: [
+                    'Au niveau 44, construisez les écuries (onglet Ferme, volet Écuries) : 4 boxes, puis 8 et 12 avec deux agrandissements.',
+                    'Un cheval logé quitte les prés (il ne compte plus dans leur place) mais donne toujours son crin : ramassez-le depuis sa fiche.',
+                ],
+            },
+            {
+                h: 'La forme',
+                t: 'Cinq pastilles. Un entraînement ou une randonnée en coûte une ; elle remonte d’une pastille toutes les 30 minutes, même jeu fermé. À zéro, rien n’est perdu : il suffit d’attendre.',
+            },
+            {
+                h: 'Les quatre aptitudes',
+                b: [
+                    'Galop (gène Vitesse), endurance (Robustesse), dressage (Docilité) et saut (Détente, un gène propre au cheval).',
+                    'Chaque aptitude monte de 0 jusqu’à un plafond de 40 + 12 × le gène (gène 2 : 64 ; gène 5 : 100). Croisez vos chevaux au labo pour viser plus haut.',
+                    'Une séance donne 2 à 6 points ; le gain diminue près du plafond. Les cœurs d’amitié et une ration (carotte, pomme ou orge : +10 % pendant 1 heure) l’augmentent.',
+                    'Touchez l’icône d’une discipline pour en faire la spécialité du cheval : elle comptera davantage en concours.',
+                ],
+            },
+            {
+                h: 'Les soins',
+                b: [
+                    'Brosser : un cœur de plus (une fois par jour) et parfois une pastille de forme.',
+                    'Nourrir : remplit la mangeoire avec la nourriture du stock.',
+                    'Randonnée de 2 heures : une pastille de forme, quelques trouvailles (champignons, châtaignes, bois, miel…) et 2 points d’endurance.',
+                ],
+            },
+            {
+                h: 'Et ensuite',
+                t: 'Les mini-jeux d’entraînement puis les concours, avec leurs divisions et leurs rubans, arrivent dans les prochaines versions.',
+            },
+        ],
+        see: ['animals', 'labanimals'],
+    },
+    {
         id: 'workshop',
         cat: 'craft',
         name: 'L’atelier et les machines',
@@ -1272,7 +1316,7 @@ export const GUIDE_PAGES = [
                 h: 'L’étable de sélection',
                 b: [
                     'Associez deux parents : la naissance prend environ 15 minutes, en temps réel.',
-                    'Les petits héritent de leurs traits : cornes, oreilles, toison, lait plus riche…',
+                    'Les petits héritent de leurs traits : cornes, oreilles, toison, lait plus riche… et, chez le cheval, la détente et la docilité qui fixent ses plafonds aux écuries.',
                     'Jumeaux dans 15 % des naissances.',
                     'Un enclos d’élevage de base, un de plus avec le laboratoire, un autre avec le conservatoire, un de plus avec le domaine.',
                     'Une race fixée donne des petits dont le prix est plus élevé.',

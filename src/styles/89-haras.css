@@ -1,0 +1,219 @@
+/* Les grandes écuries (1.23) : boxes, forme, aptitudes, soins */
+.hz-stable svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.hz-head .card-art {
+    width: 120px;
+    flex: none;
+}
+.hz-up {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+.hz-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    background: linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 40px), var(--paper);
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    box-shadow:
+        0 4px 0 var(--wood-d),
+        inset 0 2px 0 rgba(255, 255, 255, 0.55);
+    min-width: 0;
+}
+.hz-card.empty {
+    border-style: dashed;
+    box-shadow: none;
+    background: rgba(255, 247, 224, 0.82);
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+.hz-card.away {
+    opacity: 0.92;
+}
+.hz-top {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+.hz-art {
+    position: relative;
+    width: 150px;
+    aspect-ratio: 120 / 80;
+    flex: none;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.hz-art.small {
+    width: 96px;
+}
+.hz-art > svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.hz-art .hb-horse {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: 4%;
+    top: 6%;
+    display: block;
+}
+.hz-art .hb-horse svg,
+.hz-art > .spr {
+    width: 100%;
+    height: 100%;
+}
+.hz-who {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    flex: 1;
+    justify-content: center;
+}
+.hz-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.05rem;
+}
+.hz-forme {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+.hz-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+.hz-form b {
+    margin-right: 4px;
+    font-size: 0.85rem;
+}
+.hz-form i {
+    width: 20px;
+    height: 20px;
+    display: block;
+    filter: grayscale(1) opacity(0.35);
+}
+.hz-form i.on {
+    filter: none;
+}
+.hz-form i svg {
+    width: 100%;
+    height: 100%;
+}
+.hz-form small {
+    margin-left: 6px;
+    font-weight: 800;
+    color: var(--ink-soft);
+}
+.hz-ration {
+    font-size: 0.8rem;
+}
+.hz-apts {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.hz-apt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.hz-spec {
+    width: 36px;
+    height: 36px;
+    flex: none;
+    padding: 3px;
+    border-radius: 10px;
+    border: 2px solid var(--ink);
+    background: var(--paper-l);
+}
+.hz-spec .ico {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.hz-apt.spec .hz-spec {
+    background: var(--gold);
+    box-shadow: 0 0 0 2px var(--gold-d);
+}
+.hz-apt-main {
+    flex: 1;
+    min-width: 0;
+}
+.hz-apt-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 6px;
+}
+.hz-apt-top small {
+    color: var(--ink-soft);
+    font-weight: 700;
+}
+.hz-bar {
+    position: relative;
+    height: 12px;
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    background: rgba(58, 38, 24, 0.18);
+    overflow: hidden;
+}
+.hz-bar i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--leaf);
+    transition: width 0.4s;
+}
+.hz-bar u {
+    position: absolute;
+    left: var(--cap);
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(135deg, rgba(58, 38, 24, 0.35) 0 4px, transparent 4px 8px);
+}
+.hz-care {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+.hz-rando {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 800;
+}
+.hz-rando .ico {
+    width: 22px;
+    height: 22px;
+}
+.hz-foot {
+    display: flex;
+    justify-content: flex-end;
+}
+.hz-pick {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+}

@@ -220,7 +220,7 @@ function pastureBar(mode, cur) {
         .join('');
     const all =
         mode === 'stable' && state.pastures.length > 1
-            ? `<button class="pas-chip${cur === 'all' ? ' on' : ''}" data-act="pickPasture" data-k="all"><span>Tous les prés</span><small>${state.animals.length}</small></button>`
+            ? `<button class="pas-chip${cur === 'all' ? ' on' : ''}" data-act="pickPasture" data-k="all"><span>Tous les prés</span><small>${state.animals.filter(a => !a.box).length}</small></button>`
             : '';
     const add = G.canAddPasture()
         ? `<button class="pas-chip add${G.herdFull() ? ' urge' : ''}" data-act="buyPasture">${ico(['ui', 'plus'])}<span>Nouveau pré</span><small>${fmt(G.pastureCost())}${ico(['ui', 'coin'])}</small></button>`

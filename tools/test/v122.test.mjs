@@ -17,7 +17,9 @@ test('1.22 : les génomes sauvages portent les caractères discrets et une finit
     assert.equal(G.traitOf(t, 'regrow'), 3, 'la tomate repousse déjà');
     assert.equal(G.traitOf(G.wildPlant('wheat'), 'regrow'), 0);
     const a = G.wildAnimal('cow', true);
-    for (const tr of ANIMAL_TRAITS.filter(x => x.extra)) assert.ok(a.t[tr.id], tr.id);
+    for (const tr of ANIMAL_TRAITS.filter(x => x.extra && !x.species)) assert.ok(a.t[tr.id], tr.id);
+    assert.ok(!a.t.jump, 'la détente est propre au cheval');
+    assert.equal(G.traitOf(G.wildAnimal('horse', false), 'jump'), 2);
     assert.equal(G.looksOf(a).finish, 0);
 });
 

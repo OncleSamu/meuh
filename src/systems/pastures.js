@@ -10,7 +10,7 @@ import { penBonus } from './buildings.js';
 const COIN = ['ui', 'coin'];
 
 export const pastures = () => state.pastures;
-export const inPasture = k => state.animals.filter(a => (a.p || 0) === k);
+export const inPasture = k => state.animals.filter(a => !a.box && (a.p || 0) === k);
 export const pastureLoad = k => inPasture(k).length;
 export const penCap = () => PASTURE.cap + penBonus();
 export const pastureFree = k => penCap() - pastureLoad(k);
@@ -35,6 +35,7 @@ export function ensurePastures() {
     const count = state.pastures.map(() => 0);
     const homeless = [];
     state.animals.forEach(a => {
+        if (a.box) return; // 1.23 : un cheval logé aux écuries ne compte dans aucun pré
         const k = a.p || 0;
         if (k < state.pastures.length && count[k] < penCap()) {
             a.p = k;

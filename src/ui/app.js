@@ -12,6 +12,7 @@ import { ISLAND } from '../data/island.js';
 import { GENETICS } from '../data/genetics.js';
 import { ABBEY } from '../data/abbey.js';
 import { CAVE_LVL } from '../data/cave.js';
+import { HARAS_LVL } from '../data/haras.js';
 import { MAX_LEVEL } from '../data/progress.js';
 import * as G from '../systems/index.js';
 import { $$, byId, patch, setupActions, afterAction, actions } from './dom.js';
@@ -41,6 +42,7 @@ export const TABS = [
             ['nature', 'Nature', ['item', 'wood'], () => NATURE.forest.lvl],
             ['pond', 'Étang', ['ui', 'rod'], () => NATURE.pond.lvl],
             ['island', 'Île', ['item', 'pineapple'], () => ISLAND.lvl],
+            ['haras', 'Écuries', ['ui', 'hEcuries'], () => HARAS_LVL],
         ],
     },
     { id: 'animals', name: 'Animaux', icon: ['animal', 'chicken'], lock: () => ANIMALS.chicken.reqLvl },

@@ -48,6 +48,7 @@ export function newState() {
         defis: null,
         night: null,
         counter: null, // 1.17 : le comptoir (salon, décors, clients)
+        haras: null, // 1.23 : les grandes écuries (niveau, fiches des chevaux logés)
         machines: [],
         quests: [],
         upgrades: { speed: 0, price: 0, yield: 0, feeder: 0, seeder: 0, harvester: 0 },

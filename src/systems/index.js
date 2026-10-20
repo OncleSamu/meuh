@@ -11,6 +11,7 @@ export * from './farmlife.js';
 export * from './game.js';
 export * from './genetics.js';
 export * from './holidays.js';
+export * from './haras.js';
 export * from './home.js';
 export * from './incidents.js';
 export * from './island.js';

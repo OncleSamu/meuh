@@ -16,6 +16,7 @@ import { ORCHARD_UNLOCKS, ORCHARD_UNLOCKS_2 } from '../data/orchard.js';
 import { ISLAND } from '../data/island.js';
 import { GENETICS } from '../data/genetics.js';
 import { CAVE_LVL } from '../data/cave.js';
+import { HARAS_LVL } from '../data/haras.js';
 import { INCIDENT_LVL, RARE_EVENT_LVL } from '../data/surprises.js';
 import { CONTRACT_LVL, CONTEST_LVL, LEAGUES, CARGO, ARMAND } from '../data/commerce.js';
 import { DOMAINE_LVL } from '../data/domaine.js';
@@ -183,6 +184,11 @@ export function unlocksAt(lvl) {
         add(
             ['ui', 'house'],
             'L’amélioration du domaine : grange, cuisines, aide au champ, commerce, annexes, Armand, cargo, quai et réception (onglet Village)',
+        );
+    if (lvl === HARAS_LVL)
+        add(
+            ['ui', 'hEcuries'],
+            'Les grandes écuries : logez vos chevaux, soignez-les et entraînez-les au galop, à l’endurance, au dressage et au saut (Ferme | Écuries)',
         );
     if (lvl === CAVE_LVL) add(['ui', 'cave'], 'La cave : affinez fromages et cidres, et vendez-les aux enchères (onglet Atelier, puis Cave)');
     if (lvl === CHAPTERS[0].lvl) add(['ui', 'village'], 'Rénovez le village : premier chapitre (onglet Village)');
