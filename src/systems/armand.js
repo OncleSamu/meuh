@@ -19,7 +19,8 @@ const V = visitor(ARMAND.every, () => stayOf(ARMAND.stay, ARMAND.every));
 const cycle = V.cycle;
 export const armandArrive = V.arrive;
 export const armandLeave = V.leave;
-export const armandHere = t => armandOpen() && V.here(t);
+// 1.22 : un visiteur déjà reparti ne revient pas dans la même semaine si la Réception allonge son séjour
+export const armandHere = t => armandOpen() && V.here(t) && !(state.armand && state.armand.gone === cycle(t));
 // 1.20 : la Suite d'Armand (domaine) ouvre jusqu'à 4 produits phares, garde la commande en cours d'une visite à l'autre et paie 10 % de plus.
 export const armandSlots = () => 1 + domStepSum('armand', 'slot');
 const keepOn = () => domStepSum('armand', 'keep') > 0;
@@ -78,6 +79,7 @@ export function armandTick() {
     const k = cycle();
     const a = A();
     if (!armandHere()) {
+        if (a.k === k && !V.here()) a.gone = k;
         if (!a.orders.some(Boolean)) return false;
         // il repart : sans la Suite, les commandes disparaissent ; avec elle, seules les commandes finies s'effacent
         const next = a.orders.map(o => (keepOn() && o && !o.done ? o : null));

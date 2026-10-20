@@ -439,7 +439,7 @@ export const GUIDE_PAGES = [
                 b: [
                     'Un appui ramasse la production ou donne un repas ; un appui long ouvre la fiche.',
                     '« Tout nourrir » donne un repas à tout le monde. La mangeoire automatique les nourrit seule.',
-                    'Un câlin par jour rend une bête plus productive.',
+                    'Un câlin par jour de jeu (environ 5 minutes réelles) rend une bête plus productive, jusqu’à 5 cœurs.',
                 ],
             },
             {
@@ -492,8 +492,9 @@ export const GUIDE_PAGES = [
             {
                 h: 'Comment ça marche',
                 b: [
-                    'Après la bergerie d’altitude (chapitre 15), 4 bêtes peuvent monter à l’alpage (8 avec le téléphérique).',
-                    'Elles rapportent du lait d’alpage et de la laine, puis produisent plus vite.',
+                    'Après la bergerie d’altitude (chapitre 9, « Les estives », niveau 45), 4 bêtes adultes peuvent monter à l’alpage (8 avec le téléphérique). Seules les vaches, chèvres, moutons et bufflonnes montent.',
+                    'Le séjour dure 1 h 30 (45 minutes avec le téléphérique). Au retour : du lait d’alpage (6 par bête, 2 par mouton) et 6 laines par mouton.',
+                    'Les bêtes revenues produisent ensuite 20 % plus vite.',
                     'Une bête en transhumance ne peut pas être vendue.',
                 ],
             },
@@ -739,7 +740,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les nasses',
-                t: 'Posées dans un coin, avec ou sans appât, elles attrapent 2 à 4 poissons toutes les 2 heures, même jeu fermé. Relevez-les d’un appui. Le domaine en ajoute une.',
+                t: 'Deux nasses dès le niveau 12, quatre dès le niveau 14 (une de plus avec le domaine). Posées dans un coin, avec ou sans appât, elles attrapent 2 à 4 poissons communs toutes les 2 heures, même jeu fermé. Relevez-les d’un appui.',
             },
             {
                 h: 'Défis et concours',
@@ -950,7 +951,7 @@ export const GUIDE_PAGES = [
                 h: 'Les villageois et l’amitié',
                 b: [
                     'Elle monte quand vous livrez leurs commandes, leur servez une boisson au comptoir ou leur faites un cadeau.',
-                    'Un cadeau par villageois et par jour : 1 point, 3 si c’est un produit fabriqué. Choisissez dans ce qu’il aime.',
+                    'Un cadeau par villageois et par jour de jeu (environ 5 minutes réelles) : 1 point, 3 si c’est un produit fabriqué. Choisissez dans ce qu’il aime.',
                     'Cinq cœurs en tout. Chaque cœur rapporte des pièces, parfois des graines ou une recette que le villageois vous apprend ; le cinquième fait de lui un ami pour la vie, avec une récompense et l’histoire qu’il raconte.',
                 ],
             },

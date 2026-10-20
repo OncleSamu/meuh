@@ -21,7 +21,8 @@ const V = visitor(CARGO.every, () => stayOf(CARGO.stay, CARGO.every));
 const cycle = V.cycle;
 export const cargoArrive = V.arrive;
 export const cargoLeave = V.leave;
-export const cargoHere = t => cargoOpen() && V.here(t);
+// 1.22 : un avion déjà reparti ne revient pas dans la même période si la Réception allonge son séjour
+export const cargoHere = t => cargoOpen() && V.here(t) && !(state.cargo && state.cargo.gone === cycle(t));
 
 function pickWeighted(list) {
     let x = Math.random() * list.reduce((a, i) => a + itemWeight(i.id), 0);
@@ -61,6 +62,7 @@ export function cargoTick() {
     const k = cycle();
     const c = (state.cargo = state.cargo || { k: -1, holds: [], done: false });
     if (!cargoHere()) {
+        if (c.k === k && !V.here()) c.gone = k;
         if (c.holds.length && c.k === k) {
             c.holds = [];
             return true;
