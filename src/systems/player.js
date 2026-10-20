@@ -17,7 +17,8 @@ import { ISLAND } from '../data/island.js';
 import { GENETICS } from '../data/genetics.js';
 import { CAVE_LVL } from '../data/cave.js';
 import { INCIDENT_LVL, RARE_EVENT_LVL } from '../data/surprises.js';
-import { CONTRACT_LVL, CONTEST_LVL, LEAGUES, CARGO } from '../data/commerce.js';
+import { CONTRACT_LVL, CONTEST_LVL, LEAGUES, CARGO, ARMAND } from '../data/commerce.js';
+import { DOMAINE_LVL } from '../data/domaine.js';
 import { DAILY_REWARDS, HOLIDAY_LVL } from '../data/world.js';
 import { BALANCE, MAX_LEVEL, RENOWN_XP, ACH_REWARDS, MEDALS, CAP_REQ, MASTERY_LVL, HOUSE, FARMHAND, ALBUM_LEVELS } from '../data/progress.js';
 import { ACHIEVEMENTS, SKILLS } from '../data/meta.js';
@@ -173,6 +174,16 @@ export function unlocksAt(lvl) {
     });
     Object.values(UPGRADES).forEach(u => u.reqLvl === lvl && add(['ui', u.id], `${u.name} (au magasin)`));
     if (lvl === CARGO.lvl) add(['ui', 'plane'], 'L’avion-cargo : toutes les 48 heures, d’énormes soutes à remplir (onglet Village, commandes)');
+    if (lvl === ARMAND.lvl)
+        add(
+            ['villager', 'armand'],
+            'Armand, chef du Grand Hôtel : une fois par semaine, il commande en énorme quantité votre produit phare (onglet Village, commandes)',
+        );
+    if (lvl === DOMAINE_LVL)
+        add(
+            ['ui', 'house'],
+            'L’amélioration du domaine : grange, cuisines, aide au champ, commerce, annexes, Armand, cargo, quai et réception (onglet Village)',
+        );
     if (lvl === CAVE_LVL) add(['ui', 'cave'], 'La cave : affinez fromages et cidres, et vendez-les aux enchères (onglet Atelier, puis Cave)');
     if (lvl === CHAPTERS[0].lvl) add(['ui', 'village'], 'Rénovez le village : premier chapitre (onglet Village)');
     if (lvl === INCIDENT_LVL) add(['ui', 'pest'], 'Des imprévus surviennent à la ferme : réagissez vite !');
@@ -207,6 +218,7 @@ export function unlocksAt(lvl) {
     });
     if (lvl === ORCHARD.lvl) big(['ui', 'appleCart'], 'Grande étape : le verger');
     if (lvl === GH.lvl) big(['ui', 'greenhouse'], 'Grande étape : la serre');
+    if (lvl === DOMAINE_LVL) big(['ui', 'house'], 'Grande étape : le domaine, un puits pour vos pièces');
     if (lvl === CAVE_LVL) big(['ui', 'barrel'], 'Grande étape : la cave et ses enchères');
     if (lvl === CHAPTERS[4].lvl) big(['villager', 'theo'], 'Grande étape : le hameau, puis Théo le commis (avec le pont)');
     if (lvl === CHAPTERS[6].lvl) big(['ui', 'boat'], 'Grande étape : le port (pêche en mer, bateau de livraison)');

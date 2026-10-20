@@ -86,7 +86,14 @@ test('jeu fermé : cultures, machines et cave avancent', () => {
     m.out = {};
     state.lastSaved = clock.t - 6 * 3600 * 1000;
     const day = state.day;
-    const r = G.offlineProgress();
+    let r = G.offlineProgress();
+    // un parasite ou un corbeau peut s'inviter pendant l'absence (hasard) : on retente quelques fois
+    for (let k = 0; k < 8 && !p.isReady; k++) {
+        Object.assign(p, { itemId: 'wheat', isReady: false, isWatered: true, pest: false, growProgress: 0, terrain: 'plowed' });
+        state.crow = null;
+        state.lastSaved = clock.t - 6 * 3600 * 1000;
+        r = G.offlineProgress();
+    }
     assert.ok(p.isReady, 'le blé a poussé');
     assert.ok(Object.values(m.out).reduce((a, b) => a + b, 0) >= 1, 'la machine a fini');
     assert.ok(state.day > day, 'des jours de jeu ont passé');

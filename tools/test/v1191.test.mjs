@@ -194,3 +194,10 @@ test('Domaine : annexes, cargo, quai et Suite d’Armand', () => {
         setClock(() => Date.now());
     }
 });
+
+test('Liste des nouveautés par niveau : Armand (22) et le domaine (25)', () => {
+    fresh();
+    assert.ok(G.unlocksAt(ARMAND.lvl).some(u => /Armand/.test(u.name)));
+    assert.ok(G.unlocksAt(25).some(u => /domaine/.test(u.name)));
+    assert.ok(G.unlocksAt(25).some(u => u.big));
+});
