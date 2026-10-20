@@ -611,6 +611,17 @@ export const varPestGuard = vid => Math.random() < varTrait(vid, 'pest') * FX.pe
 // qualité : la maturation lente améliore les chances, le gros calibre les réduit un peu
 export const varQuality = vid => varTrait(vid, 'late') * FX.lateQ - varTrait(vid, 'calibre') * FX.calibreQ;
 export const animalPestGuard = a => Math.random() < animalTrait(a, 'health') * FX.health;
+export const varLuck = vid => varTrait(vid, 'luck') * FX.luck;
+// part du bonus de bon sol accordée à une variété sur un mauvais sol (0 à 0,75)
+export const varSoilShare = vid => Math.min(1, varTrait(vid, 'soilfit') * FX.soilfit);
+// bonus de vitesse de la docilité (par cœur) et de la sociabilité (selon les voisines de la même espèce, plafonné)
+export const animalDocile = a => (a.love || 0) * animalTrait(a, 'docile') * FX.docile;
+export const animalSocial = a => {
+    const pts = animalTrait(a, 'social');
+    if (!pts) return 0;
+    const mates = state.animals.filter(b => b !== a && b.type === a.type && (b.p || 0) === (a.p || 0) && isAdult(b)).length;
+    return Math.min(FX.socialCap, mates * pts * FX.social);
+};
 export const animalCurious = a => Math.random() < animalTrait(a, 'curious') * FX.curious;
 export const animalFertile = (a, b) => ((animalTrait(a, 'fertile') + animalTrait(b, 'fertile')) / 2) * FX.fertile;
 // une variété qui n'a rien de plus que son espèce (saveurs ou caractères discrets)

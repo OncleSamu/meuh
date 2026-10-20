@@ -18,7 +18,19 @@ import { collect, record } from './book.js';
 import { sellPrice, hasMats, matMissing, payMats } from './market.js';
 import { challengeOn } from './prestige.js';
 import { eventProgress } from './events.js';
-import { varGrowth, varHardy, varExtra, varSelfWater, varRegrow, varQuality, takeVarSeed, harvestVariety, preferSeed } from './genetics.js';
+import {
+    varGrowth,
+    varHardy,
+    varExtra,
+    varSelfWater,
+    varRegrow,
+    varQuality,
+    varLuck,
+    varSoilShare,
+    takeVarSeed,
+    harvestVariety,
+    preferSeed,
+} from './genetics.js';
 import { wishGold, fireflyHarvest } from './night.js';
 import { ghExtra } from './buildings.js';
 
@@ -36,7 +48,9 @@ export function plotStage(p) {
 export const plotRate = (p, i) =>
     p.pest
         ? 0
-        : (i >= 1000 ? GH.rate : cropRate(p.itemId) * decoGrowth(i) * soilMult(i, p.itemId) * (p.v && !isInSeason(p.itemId) ? varHardy(p.v) : 1)) *
+        : (i >= 1000
+              ? GH.rate
+              : cropRate(p.itemId) * decoGrowth(i) * soilMult(i, p.itemId, p.v ? varSoilShare(p.v) : 0) * (p.v && !isInSeason(p.itemId) ? varHardy(p.v) : 1)) *
           masterySpeed(p.itemId) *
           (p.v ? varGrowth(p.v) : 1);
 
@@ -561,6 +575,7 @@ export function rollQuality(plot) {
     if (plot.fert) x += 0.35;
     const gi = gridIndex(plot);
     if (soilFits(gi, plot.itemId)) x += SOIL_BONUS.quality;
+    else if (plot.v) x += SOIL_BONUS.quality * varSoilShare(plot.v);
     x += rank('expert') * 0.05;
     if (gi >= 0 && nearDeco(gi, 'flowers')) x += 0.1;
     if (gi >= 0 && nearDeco(gi, 'oakBench')) x += 0.1;
@@ -586,7 +601,9 @@ export function harvestPlot(plot) {
         collect('g_' + d.id);
     }
     eventProgress('harvest', d.id, qty);
-    const golden = d.type === 'crop' && Math.random() < 0.025 * rainbowGolden() * (1 + rank('midas') * 0.6) * (gi >= 0 && nearDeco(gi, 'gnome') ? 2 : 1);
+    const golden =
+        d.type === 'crop' &&
+        Math.random() < 0.025 * rainbowGolden() * (1 + rank('midas') * 0.6) * (gi >= 0 && nearDeco(gi, 'gnome') ? 2 : 1) + (vid ? varLuck(vid) : 0);
     plot.fert = false;
     if (d.type === 'tree') {
         plot.isReady = false;

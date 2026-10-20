@@ -18,6 +18,8 @@ export const PLANT_TRAITS = [
     { id: 'late', name: 'Maturation lente', icon: ['ui', 'star'], extra: true, hint: 'plus longue à pousser, plus souvent en argent ou en or' },
     { id: 'pest', name: 'Anti-nuisibles', icon: ['ui', 'pest'], extra: true, hint: 'moins de pucerons et de corbeaux' },
     { id: 'seedy', name: 'Graine généreuse', icon: ['ui', 'packet'], extra: true, hint: 'plus de graines à la récolte' },
+    { id: 'luck', name: 'Chance', icon: ['ui', 'wishStar'], extra: true, hint: 'plus de récoltes dorées' },
+    { id: 'soilfit', name: 'Terre d’accueil', icon: ['ui', 'soilWet'], extra: true, hint: 'profite du bonus de bon sol sur n’importe quel sol' },
     { id: 'calibre', name: 'Calibre', icon: ['ui', 'yield'], extra: true, hint: 'parfois une unité de plus, mais un peu moins de qualité' },
 ];
 export const ANIMAL_TRAITS = [
@@ -30,6 +32,8 @@ export const ANIMAL_TRAITS = [
     { id: 'robust', name: 'Robustesse', icon: ['ui', 'thermo'] },
     { id: 'fertile', name: 'Fécondité', icon: ['ui', 'remTwin'], extra: true, hint: 'plus de jumeaux à l’étable de sélection' },
     { id: 'health', name: 'Santé', icon: ['ui', 'sick'], extra: true, hint: 'tombe moins souvent malade' },
+    { id: 'docile', name: 'Docilité', icon: ['ui', 'hand'], extra: true, hint: 'l’amitié rend la bête encore plus productive' },
+    { id: 'social', name: 'Sociabilité', icon: ['ui', 'chick'], extra: true, hint: 'produit plus vite entourée de sa propre espèce' },
     { id: 'curious', name: 'Curiosité', icon: ['ui', 'sparkle'], extra: true, hint: 'trouve parfois un petit trésor à la collecte' },
 ];
 // les gènes d'apparence : jamais choisis, ils découlent des croisements
@@ -150,7 +154,20 @@ export const FLAVORS = Object.fromEntries(Object.entries(F).map(([id, s]) => [id
 // qualités de culture de base (pousse, soif, rusticité, rendement) : 2 partout
 export const PLANT_BASE = { speed: 2, drought: 2, hardy: 2, yield: 2 };
 // 1.22 : caractères discrets (0 par défaut) ; quelques espèces ont déjà de la repousse
-export const EXTRA_DEFAULT = { regrow: 0, late: 0, pest: 0, seedy: 0, calibre: 0, fertile: 0, health: 0, curious: 0 };
+export const EXTRA_DEFAULT = {
+    luck: 0,
+    soilfit: 0,
+    docile: 0,
+    social: 0,
+    regrow: 0,
+    late: 0,
+    pest: 0,
+    seedy: 0,
+    calibre: 0,
+    fertile: 0,
+    health: 0,
+    curious: 0,
+};
 export const EXTRA_SPECIES = {
     regrow: { tomato: 3, pepper: 3, eggplant: 2, strawberry: 2, raspberry: 3, blueberry: 2, zucchini: 2, cucumber: 2, espelette: 3, greenBean: 2, peas: 2 },
 };
@@ -167,6 +184,11 @@ export const EXTRA_FX = {
     fertile: 0.05,
     health: 0.12,
     curious: 0.03,
+    luck: 0.01, // chance de récolte dorée en plus, par point
+    soilfit: 0.15, // part du bonus de bon sol, par point
+    docile: 0.005, // vitesse en plus par point et par cœur (en plus des 4 % du cœur)
+    social: 0.02, // vitesse en plus par point et par bête voisine de la même espèce
+    socialCap: 0.1, // plafond du bonus de sociabilité d’une bête
 };
 
 // ---------------- caractères de base des animaux ----------------

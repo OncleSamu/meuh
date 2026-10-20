@@ -11,7 +11,7 @@ import { alpineMult, themeAnimalMult, isAway } from './port.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
 import { fmt } from '../core/format.js';
-import { wildAnimal, animalSpeedGene, animalYieldGene, animalQuality, animalSaves, animalCurious } from './genetics.js';
+import { wildAnimal, animalSpeedGene, animalYieldGene, animalQuality, animalSaves, animalCurious, animalDocile, animalSocial } from './genetics.js';
 import { addQuality } from './farm.js';
 import { wishAnimals } from './night.js';
 import { troughBonus } from './buildings.js';
@@ -19,7 +19,12 @@ import { troughBonus } from './buildings.js';
 export const maxFood = () => MAX_FOOD + rank('trough') * 2 + troughBonus();
 export const isAdult = a => a.adult !== false;
 export const animalMult = a =>
-    (1 + rank('fed') * 0.08) * (1 + ((a && a.love) || 0) * 0.04) * starAnimalMult(a) * alpineMult(a) * themeAnimalMult() * (a ? animalSpeedGene(a) : 1);
+    (1 + rank('fed') * 0.08) *
+    (1 + ((a && a.love) || 0) * 0.04 + (a ? animalDocile(a) + animalSocial(a) : 0)) *
+    starAnimalMult(a) *
+    alpineMult(a) *
+    themeAnimalMult() *
+    (a ? animalSpeedGene(a) : 1);
 export const animalTime = a => ANIMALS[a.type].time / (speedMult() * animalMult(a) * masterySpeed(ANIMALS[a.type].prodId));
 export const growLeft = a => Math.max(0, (GROW[a.type] - (a.age || 0)) / (rank('nursery') ? 2 : 1) / speedMult());
 export const growPct = a => Math.min(1, (a.age || 0) / GROW[a.type]);

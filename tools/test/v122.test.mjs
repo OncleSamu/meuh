@@ -116,3 +116,40 @@ test('1.22 : un contrat de saison dure au moins 13 jours, même en fin de saison
     G.ensureContract();
     assert.ok(state.contract.endDay >= 25);
 });
+
+test('1.22.4 : chance, terre d’accueil, docilité et sociabilité', () => {
+    fresh();
+    const g = G.wildPlant('wheat');
+    g.t.luck = [
+        [5, 1],
+        [5, 1],
+    ];
+    g.t.soilfit = [
+        [4, 1],
+        [4, 1],
+    ];
+    state.genetics.vars.vl = { id: 'vl', kind: 'plant', base: 'wheat', g };
+    assert.ok(Math.abs(G.varLuck('vl') - 0.05) < 1e-9);
+    assert.ok(Math.abs(G.varSoilShare('vl') - 0.6) < 1e-9);
+    const mk = () => ({ type: 'cow', p: 0, adult: true, love: 5, g: G.wildAnimal('cow', false) });
+    const a = mk(),
+        b = mk(),
+        c = mk();
+    state.animals = [a, b, c];
+    assert.equal(G.animalDocile(a), 0);
+    assert.equal(G.animalSocial(a), 0);
+    a.g.t.docile = [
+        [5, 1],
+        [5, 1],
+    ];
+    a.g.t.social = [
+        [5, 1],
+        [5, 1],
+    ];
+    assert.ok(Math.abs(G.animalDocile(a) - 0.125) < 1e-9);
+    assert.ok(Math.abs(G.animalSocial(a) - 0.1) < 1e-9, 'deux voisines à 5 points : plafonné');
+    b.p = 1;
+    assert.ok(Math.abs(G.animalSocial(a) - 0.1) < 1e-9);
+    c.p = 1;
+    assert.equal(G.animalSocial(a), 0);
+});

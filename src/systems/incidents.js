@@ -194,5 +194,5 @@ export const soilFits = (i, id) => {
     const sl = soilOf(i);
     return !!(sl && id && SOILS[sl].crops.includes(id));
 };
-export const soilMult = (i, id) => (soilFits(i, id) ? SOIL_BONUS.speed : 1);
+export const soilMult = (i, id, share = 0) => (soilFits(i, id) ? SOIL_BONUS.speed : 1 + (SOIL_BONUS.speed - 1) * share);
 export const soilOfCrop = id => Object.keys(SOILS).find(k => SOILS[k].crops.includes(id));
