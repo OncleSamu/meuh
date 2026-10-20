@@ -10,6 +10,17 @@ const horn = (d, c = '#f3e2b8', w = 3.5) => L(d, w) + L(d, w * 0.46, c);
 const curl = (x, y, dir) => horn(`M${x} ${y} Q${x - 9 * dir} ${y - 4} ${x - 8 * dir} ${y + 5} Q${x - 6 * dir} ${y + 11} ${x + 1 * dir} ${y + 8}`, '#d8c39a', 4);
 const puffs = (list, r, f) => list.map(([x, y]) => C(x, y, r, f, 1.6)).join('');
 
+const ALP_CREAM = '#f7ecd8',
+    ALP_FAWN = '#e6d2ae',
+    ALP_DARK = '#b8946a';
+const alpLeg = (x, top, h) =>
+    L(`M${x} ${top} L${x} ${top + h}`, 5.2) +
+    L(`M${x} ${top} L${x} ${top + h}`, 2.6, ALP_CREAM) +
+    L(`M${x - 1.8} ${top + h + 0.5} L${x + 1.8} ${top + h + 0.5}`, 3.2, ALP_DARK);
+// un nuage de laine : les contours des boules, puis le remplissage seul par-dessus pour effacer les traits intérieurs
+const alpCloud = (pts, r, w = 2) =>
+    pts.map(([x, y, rr]) => C(x, y, rr || r, ALP_CREAM, w)).join('') + pts.map(([x, y, rr]) => FC(x, y, (rr || r) - 0.6, ALP_CREAM)).join('');
+
 Object.assign(animals, {
     // le canard colvert : tête verte, collier blanc, poitrail brun, ailes grises
     duck: () =>
@@ -284,45 +295,100 @@ Object.assign(animals, {
         FC(62, 11, 1.6, '#2f9e8f') +
         FC(66, 13, 1.6, '#2f9e8f') +
         HL(40, 45, 5, 2.5, -20, 0.5),
-    alpaca: (o = {}) =>
-        SHADOW(38, 73, 22, 3.5) +
-        leg('M26 56 L26 71', '#f3e2c4') +
-        leg('M34 58 L34 72', '#f3e2c4') +
-        leg('M46 58 L46 72', '#f3e2c4') +
-        leg('M53 56 L53 71', '#f3e2c4') +
-        [20, 28, 36, 44, 52, 58].map((x, k) => C(x, 44 + (k % 2) * 3, 9, '#f7ecd8')).join('') +
-        E(38, 48, 22, 12, '#f7ecd8') +
-        P('M52 44 L54 18 Q56 10 64 12 Q70 14 68 22 L62 26 L60 46Z', '#f7ecd8') +
-        (o.coat === 1
-            ? puffs(
-                  [
-                      [55, 22],
-                      [54, 30],
-                      [54, 38],
-                  ],
-                  5.5,
-                  '#f7ecd8',
-              )
-            : '') +
-        [56, 61, 66].map(x => C(x, 12, o.coat === 1 ? 5 : 4, '#f7ecd8')).join('') +
-        (o.coat === 2
+    // 1.21.3 : alpaga refait (laine en nuage, cou courbe, houppe, oreilles en banane)
+    alpaca: (o = {}) => {
+        const long = o.coat === 1,
+            curly = o.coat === 2;
+        const body = [
+            [20, 45],
+            [25, 39],
+            [33, 36.5],
+            [42, 37.5],
+            [50, 41],
+            [53.5, 47],
+            [48, 53.5],
+            [38, 55.5],
+            [28, 55],
+            [21, 51.5],
+            [36, 46, 13],
+        ];
+        const fringe = long
             ? [
-                  [24, 42],
-                  [32, 40],
-                  [40, 41],
-                  [48, 42],
-                  [28, 50],
-                  [38, 52],
-                  [48, 50],
+                  [23, 59, 3.2, 6.5],
+                  [31, 60, 3.2, 7.5],
+                  [40, 60, 3.2, 7.5],
+                  [48, 58, 3.2, 6.5],
               ]
-                  .map(([x, y]) => C(x, y, 2.4, 'none', 1.2))
+                  .map(([x, y, rx, ry]) => E(x, y, rx, ry, ALP_CREAM, 0, 2))
                   .join('')
-            : '') +
-        P('M58 8 L57 2 L61 6Z', '#f7ecd8', 1.6) +
-        P('M65 8 L67 2 L68 8Z', '#f7ecd8', 1.6) +
-        eye(63, 18) +
-        E(68, 23, 3.5, 2.5, '#e8c38c', 0, 1.6) +
-        FC(69, 22.5, 0.9, O),
+            : '';
+        return (
+            SHADOW(38, 73, 24, 3.4) +
+            alpLeg(25, 54, 17) +
+            alpLeg(32, 56, 16) +
+            alpLeg(47, 56, 16) +
+            alpLeg(54, 54, 17) +
+            fringe +
+            // cou : une courbe douce, qui part du poitrail
+            P('M44 47 C45 34 50 25 55 19 L65 23.5 C62 31 60 41 58.5 52Z', ALP_CREAM, 2) +
+            (long
+                ? alpCloud(
+                      [
+                          [52, 28],
+                          [51.5, 35],
+                          [52.5, 42],
+                          [56.5, 32],
+                          [56, 40],
+                      ],
+                      3.8,
+                  )
+                : '') +
+            // queue
+            alpCloud([[14.5, 44, 4]], 4) +
+            // corps
+            alpCloud(body, 7) +
+            FE(36, 53, 14, 3.6, ALP_FAWN, 0.5) +
+            HL(29, 41.5, 5.5, 2.2, -10, 0.75) +
+            (curly
+                ? [
+                      [24, 44],
+                      [32, 41],
+                      [40, 42.5],
+                      [47, 46],
+                      [29, 51],
+                      [38, 51.5],
+                      [45, 51],
+                  ]
+                      .map(([x, y]) => C(x, y, 2.5, 'none', 1.1))
+                      .join('')
+                : '') +
+            // tête et museau
+            E(62, 17, 8.4, 7.4, ALP_CREAM, -10, 2) +
+            E(70, 20.6, 4.6, 3.5, ALP_FAWN, -10, 2) +
+            FC(71.8, 19.6, 1, O) +
+            FC(69.8, 22, 0.7, O, 0.8) +
+            L('M68.4 23 Q70.8 24.6 73 22.6', 1.1) +
+            // oreilles en banane
+            P('M57.5 11.5 Q53.5 4 57.2 2 Q61.2 4 61 11.5Z', ALP_CREAM, 1.8) +
+            FE(58.2, 7.8, 1, 3, '#f2b9b0', 0.85) +
+            P('M64.5 10.5 Q64 3 67.6 2.6 Q70.4 5.4 68 11.8Z', ALP_CREAM, 1.8) +
+            FE(66.8, 7.6, 1, 3, '#f2b9b0', 0.85) +
+            // houppe : un seul nuage sur le front
+            alpCloud(
+                [
+                    [57.6, 12.6, 3.2],
+                    [61.2, 10.6, 4],
+                    [65.4, 11.4, 3.4],
+                ],
+                3.4,
+                1.8,
+            ) +
+            // œil
+            FC(64.2, 16.6, 2.2, O) +
+            FC(65, 15.8, 0.75, '#fff') +
+            L('M62.2 14 Q64.2 13 66 14', 1.1)
+        );
+    },
     buffalo: (o = {}) =>
         SHADOW(38, 74, 27, 3.5) +
         leg('M18 52 L18 71', '#4a4f57') +
