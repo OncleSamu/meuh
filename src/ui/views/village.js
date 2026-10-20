@@ -24,6 +24,7 @@ import { askBuy } from '../sheets/askbuy.js';
 import { defineSheet, openSheet } from '../sheets.js';
 import { DOMAINE, DOMAINE_IDS, DOMAINE_LVL } from '../../data/domaine.js';
 import { costRow } from '../kit.js';
+import { domaineScene, domThumb } from '../../art/v1201domaine.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const head = (icon, title, sub, side = '') =>
@@ -353,7 +354,7 @@ function domaineCard() {
     if (!G.domaineOpen())
         return `<div class="card locked">${ico(['ui', 'lock'], 'ico big')}<div class="card-main"><div class="card-title">Amélioration du domaine</div><div class="card-sub">Au niveau ${DOMAINE_LVL}, faites grandir votre domaine : grange, cuisines, aide au champ, commerce, réception.</div></div></div>`;
     const ready = G.domReady();
-    return `<div class="card domaine-card">${head(['ui', 'house'], 'Amélioration du domaine', `${G.domTotal()} / ${DOMAINE_IDS.length * G.domMax()} paliers · de grands chantiers pour vos pièces`, ready ? `<span class="dot">${ready}</span>` : '')}
+    return `<div class="card domaine-card"><div class="dom-banner">${domaineScene(state.domaine)}</div>${head(['ui', 'house'], 'Amélioration du domaine', `${G.domTotal()} / ${DOMAINE_IDS.length * G.domMax()} paliers · de grands chantiers pour vos pièces`, ready ? `<span class="dot">${ready}</span>` : '')}
         <div class="od-foot">${btn('Ouvrir le domaine', { act: 'domaine', kind: ready ? 'green' : '', size: 'sm' })}</div></div>`;
 }
 const stepName = (b, k) => DOMAINE[b].steps[k][0];
@@ -365,6 +366,24 @@ const domTotalText = b =>
         field: () => `Théo soigne ${G.domStepSum('field')} parcelles de plus`,
         trade: () =>
             `+${G.domStepSum('trade', 'orders')} commande${G.domStepSum('trade', 'orders') > 1 ? 's' : ''} et +${G.domStepSum('trade', 'stall')} place${G.domStepSum('trade', 'stall') > 1 ? 's' : ''} à l’étal`,
+        annex: () =>
+            [
+                ['vat', 'cuve'],
+                ['seat', 'siège'],
+                ['shelf', 'place de cave'],
+                ['trap', 'nasse'],
+                ['breed', 'place de sélection'],
+            ]
+                .map(([k, n]) => [G.domStepSum('annex', k), n])
+                .filter(([v]) => v)
+                .map(([v, n]) => `+${v} ${n}${v > 1 && !n.includes(' ') ? 's' : ''}`)
+                .join(', '),
+        armand: () =>
+            `${G.armandSlots()} produit${G.armandSlots() > 1 ? 's' : ''} phare${G.armandSlots() > 1 ? 's' : ''}${G.domStepSum('armand', 'keep') ? ', commande conservée' : ''}${G.domStepSum('armand', 'pay') ? `, +${Math.round(G.domStepSum('armand', 'pay') * 100)} % de paiement` : ''}`,
+        cargo: () =>
+            `+${G.domStepSum('cargo', 'hold')} soute${G.domStepSum('cargo', 'hold') > 1 ? 's' : ''}${G.domStepSum('cargo', 'bonus') ? `, +${Math.round(G.domStepSum('cargo', 'bonus') * 100)} % de bonus` : ''}`,
+        quay: () =>
+            `+${G.domStepSum('quay', 'line')} ligne${G.domStepSum('quay', 'line') > 1 ? 's' : ''}${G.domStepSum('quay', 'fast') ? `, retour ${Math.round(G.domStepSum('quay', 'fast') * 100)} % plus rapide` : ''}`,
         guests: () => `Les visiteurs restent ${Math.round(G.domStepSum('guests') * 100)} % plus longtemps`,
     })[b]();
 function branchHtml(b) {
@@ -373,7 +392,7 @@ function branchHtml(b) {
         max = G.domMax();
     const pips = Array.from({ length: max }, (_, k) => `<i class="${k < l ? 'on' : ''}"></i>`).join('');
     const next = l < max ? G.domCost(b) : null;
-    return `<div class="card branch-card"><div class="card-head">${ico(D.icon, 'ico big')}<div class="card-main"><div class="card-title">${D.name} · ${l} / ${max}</div>
+    return `<div class="card branch-card"><div class="card-head"><div class="dom-thumb-wrap">${domThumb(b, l)}</div><div class="card-main"><div class="card-title">${D.name} · ${l} / ${max}</div>
         <div class="card-sub">${D.desc}</div><span class="pips">${pips}</span></div></div>
         ${l ? `<div class="card-sub">En tout : ${domTotalText(b)}</div>` : ''}
         ${
@@ -386,7 +405,7 @@ defineSheet('domaine', {
     cls: 'domaine-sheet',
     title: () => 'Le domaine',
     render: () =>
-        `<p class="card-sub">Chaque palier améliore votre ferme pour toujours : de la place, des files plus longues, des visiteurs qui restent. Aucun bonus de production : seulement du confort.</p>${DOMAINE_IDS.map(branchHtml).join('')}`,
+        `${domaineScene(state.domaine)}<p class="card-sub">Chaque palier améliore votre ferme pour toujours : de la place, des files plus longues, des visiteurs qui restent. Aucun bonus de production : seulement du confort.</p>${DOMAINE_IDS.map(branchHtml).join('')}`,
 });
 
 function renderVillage(el) {

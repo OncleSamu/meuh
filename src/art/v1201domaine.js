@@ -59,22 +59,22 @@ export const DOM_ART = {
     kitchen: [
         () =>
             SHADOW(50, 87, 34, 3) +
+            R(58, 22, 8, 30, 1, STONE, 2) +
+            smoke(62, 18) +
             R(26, 54, 48, 32, 1.5, CREAM, 2) +
             gable(26, 74, 36, 54, '#c8693a') +
-            R(60, 26, 8, 18, 1, STONE, 2) +
-            smoke(64, 22) +
             door(34, 64, 12, 22, WOODD) +
             win(54, 62, 10) +
             R(52, 76, 14, 10, 3, '#8f8574', 1.8) +
             F('M55 80 Q59 76 63 80', '#ff9a3c'),
         () =>
             SHADOW(50, 87, 44, 3) +
+            R(24, 10, 8, 30, 1, STONE, 2) +
+            R(66, 10, 8, 30, 1, STONE, 2) +
+            smoke(70, 8) +
             R(16, 38, 68, 48, 2, CREAM, 2.2) +
             R(16, 38, 68, 4, 0, '#e8d3a6', 1.5) +
             gable(16, 84, 20, 38, RED) +
-            R(26, 8, 8, 14, 1, STONE, 2) +
-            R(64, 10, 8, 12, 1, STONE, 2) +
-            smoke(68, 8) +
             [22, 38, 56, 70].map(x => win(x, 48, 9)).join('') +
             R(40, 62, 22, 24, 11, WOODD, 2) +
             R(44, 66, 14, 20, 7, '#f2c14e', 1.2) +
@@ -99,10 +99,10 @@ export const DOM_ART = {
             HL(34, 48, 7, 2, -22, 0.35),
         () =>
             SHADOW(50, 87, 42, 3) +
+            R(56, 22, 7, 28, 1, STONE, 2) +
+            smoke(59.5, 18) +
             R(22, 46, 52, 40, 2, '#f1d9a6', 2.2) +
             gable(22, 74, 24, 46, '#4f8f4e') +
-            R(56, 26, 7, 14, 1, STONE, 2) +
-            smoke(60, 22) +
             door(34, 60, 14, 26, '#a8693a') +
             win(54, 56, 11) +
             win(28, 52, 8) +
@@ -188,12 +188,12 @@ export const DOM_ART = {
             flag(50, 30, RED),
         () =>
             SHADOW(50, 87, 46, 3) +
+            R(28, 12, 7, 28, 1, STONE, 1.8) +
+            smoke(31.5, 8) +
             R(14, 40, 72, 46, 2, '#f7f3ea', 2.2) +
             R(14, 40, 72, 5, 0, '#e8d8b8', 1.4) +
             P('M10 42 L50 18 L90 42Z', '#2f4a7a') +
             HL(36, 30, 9, 2.4, -24, 0.4) +
-            R(30, 10, 5, 8, 1, STONE, 1.8) +
-            smoke(32.5, 8) +
             [22, 36, 58, 72].map(x => win(x, 50, 8)).join('') +
             [22, 36, 58, 72].map(x => P(`M${x - 1} 49 h10 l-1 -3 h-8Z`, RED, 0.8)).join('') +
             R(42, 60, 16, 26, 8, '#6b3f1f', 2) +
@@ -296,3 +296,110 @@ export const DOM_ART = {
             flag(86, 46, '#f2c14e'),
     ],
 };
+
+// ---------- le chantier d'une branche : tant que le palier 2 n'est pas atteint ----------
+const SITE_NAMES = {
+    barn: 'Grange',
+    kitchen: 'Cuisines',
+    field: 'Aide au champ',
+    trade: 'Commerce',
+    annex: 'Annexes',
+    armand: 'Suite d’Armand',
+    cargo: 'Piste',
+    quay: 'Quai',
+    guests: 'Réception',
+};
+const site = (b, n) =>
+    SHADOW(50, 78, 36, 4) +
+    E(50, 72, 34, 10, '#c9a36a', 0, 1.6) +
+    [20, 40, 60, 80].map(x => L(`M${x} 78 V60`, 2.4)).join('') +
+    L('M20 62 Q35 66 50 62 T80 62', 1.2, '#f5efe0') +
+    crate(30, 66, 8) +
+    R(56, 64, 12, 3, 1, '#d9b57a', 1.2) +
+    R(56, 67, 12, 3, 1, '#d9b57a', 1.2) +
+    R(34, 40, 32, 14, 2, '#f7ecd8', 1.8) +
+    L('M50 54 V62', 2) +
+    `<text x="50" y="50" font-size="7.4" font-weight="700" text-anchor="middle" fill="${O}" font-family="sans-serif">${SITE_NAMES[b]}</text>` +
+    (n ? `<text x="50" y="33" font-size="8" font-weight="700" text-anchor="middle" fill="#6b4a1c" font-family="sans-serif">${n} / 5</text>` : '');
+
+// l'étape à dessiner : 0 chantier, 1 modeste (palier 2), 2 grande (palier 5)
+export const domStage = lvl => (lvl >= 5 ? 2 : lvl >= 2 ? 1 : 0);
+export const domPiece = (b, lvl) => (domStage(lvl) ? DOM_ART[b][domStage(lvl) - 1]() : site(b, lvl));
+// la vignette d'une branche (cartes de la feuille du domaine)
+export const domThumb = (b, lvl) =>
+    `<svg class="dom-thumb" viewBox="0 0 100 90" aria-hidden="true"><path d="M0 70 Q50 62 100 70 V90 H0Z" fill="#9bd96f"/>${domPiece(b, lvl)}</svg>`;
+
+// ---------- la vue d'ensemble du domaine ----------
+const tree = (x, y, s = 1) =>
+    `<g transform="translate(${x} ${y}) scale(${s})">${SHADOW(0, 2, 9, 2.4)}${R(-2, -9, 4, 11, 1, '#8b5a2b', 1.4)}${C(0, -17, 9, '#4f9f3a', 1.8)}${C(-4, -19, 3.4, '#7bc65a', 0)}</g>`;
+const fence = (x0, y, n) =>
+    [...Array(n)].map((_, k) => R(x0 + k * 9, y - 7, 2.6, 8, 0.6, '#d9b57a', 1.1)).join('') + L(`M${x0} ${y - 4} H${x0 + n * 9}`, 1.5, O);
+const rows = (x, y, n) => [...Array(n)].map((_, k) => L(`M${x} ${y + k * 6} H${x + 40}`, 2.2, k % 2 ? '#5fae3c' : '#3f8f2e')).join('');
+const bed = (x, y) => E(x, y, 11, 4, '#6b4a2a', 0, 1.4) + FC(x - 5, y - 1, 2, '#e8364b') + FC(x, y - 2, 2, '#ffd23f') + FC(x + 5, y - 1, 2, '#f6a5b5');
+const SLOTS = {
+    barn: [10, 16, 1],
+    cargo: [236, 10, 1],
+    field: [22, 138, 0.92],
+    kitchen: [128, 118, 0.96],
+    trade: [244, 120, 0.94],
+    annex: [14, 246, 0.9],
+    armand: [124, 232, 1],
+    guests: [132, 346, 0.95],
+    quay: [250, 336, 0.95],
+};
+export function domaineScene(levels) {
+    const lv = b => (levels && levels[b]) || 0;
+    const order = Object.keys(SLOTS).sort((a, b) => SLOTS[a][1] + 90 * SLOTS[a][2] - (SLOTS[b][1] + 90 * SLOTS[b][2]));
+    const bg =
+        `<rect width="360" height="470" fill="#bfe6fb"/>` +
+        FE0(20, 22, 26, 8) +
+        FE0(280, 40, 30, 9) +
+        `<path d="M0 60 Q70 36 150 52 T360 40 V470 H0Z" fill="#b7d97a"/>` +
+        `<path d="M0 150 Q120 126 240 146 T360 138 V470 H0Z" fill="#9bd96f"/>` +
+        `<path d="M200 330 Q250 318 300 326 Q340 332 360 322 V470 H180 Q170 400 200 330Z" fill="#5aa9e6"/>` +
+        `<path d="M214 372 q10 -4 20 0 M290 440 q10 -4 20 0 M246 420 q8 -3 16 0" stroke="#bfe6fb" stroke-width="1.4" fill="none"/>` +
+        // chemins : une grande allée depuis l'entrée, des sentiers vers chaque bâtiment
+        `<g stroke="#f2d6a2" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round">` +
+        `<path d="M170 470 C172 430 150 410 170 380 C190 350 150 330 170 300 C190 270 150 250 172 220 C190 190 160 170 176 120 C186 90 170 70 160 60"/>` +
+        `<path d="M170 300 C140 296 110 296 60 292 M172 220 C140 212 100 212 80 196 M176 120 C150 118 120 124 100 124"/>` +
+        `<path d="M172 220 C210 226 240 226 260 214 M176 150 C220 154 250 150 290 126 M174 372 C200 376 220 380 245 384"/>` +
+        `<path d="M180 70 C220 70 250 70 280 70"/></g>` +
+        `<g stroke="#e4bf84" stroke-width="2" fill="none" stroke-dasharray="1 5" stroke-linecap="round"><path d="M170 470 C172 430 150 410 170 380"/></g>`;
+    // portail d'entrée
+    const gate =
+        R(142, 452, 5, 18, 1, '#8b5a2b', 1.6) +
+        R(194, 452, 5, 18, 1, '#8b5a2b', 1.6) +
+        L('M144 454 Q170 444 197 454', 2.6) +
+        `<rect x="156" y="440" width="30" height="8" rx="2" fill="#f7ecd8" stroke="${O}" stroke-width="1.4"/><text x="171" y="446.4" font-size="6" font-weight="700" text-anchor="middle" fill="${O}" font-family="sans-serif">DOMAINE</text>`;
+    const deco =
+        fence(8, 134, 8) +
+        fence(200, 104, 3) +
+        fence(8, 236, 7) +
+        fence(234, 238, 9) +
+        tree(112, 108, 1.1) +
+        tree(232, 110, 0.9) +
+        tree(120, 222, 1.1) +
+        tree(222, 232, 1) +
+        tree(8, 300, 1.2) +
+        tree(36, 330, 1) +
+        tree(100, 330, 0.9) +
+        tree(212, 326, 1) +
+        tree(330, 232, 1.1) +
+        tree(346, 262, 0.9) +
+        tree(60, 440, 1.1) +
+        tree(100, 456, 0.9) +
+        bed(110, 290) +
+        bed(220, 290) +
+        bed(100, 400) +
+        bed(236, 300) +
+        rows(18, 226, 3) +
+        '';
+    const parts = order.map(b => {
+        const [x, y, s] = SLOTS[b];
+        return `<g transform="translate(${x} ${y}) scale(${s})">${domPiece(b, lv(b))}</g>`;
+    });
+    return `<svg class="dom-scene" viewBox="0 0 360 470" role="img" aria-label="Vue du domaine">${bg}${deco}${gate}${parts.join('')}</svg>`;
+}
+function FE0(x, y, rx, ry) {
+    return `<ellipse cx="${x + rx}" cy="${y}" rx="${rx}" ry="${ry}" fill="#fff" opacity=".85"/><ellipse cx="${x + rx + 14}" cy="${y - 4}" rx="${rx * 0.6}" ry="${ry * 0.8}" fill="#fff" opacity=".85"/>`;
+}
