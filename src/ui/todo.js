@@ -76,9 +76,10 @@ export function todoList() {
         push('village/village', ['ui', 'house'], `${G.domReady()} chantier${s(G.domReady())} du domaine à lancer`, G.domReady());
     // 1.19.1 : Armand
     if (G.armandHere()) {
-        const ao = G.armandOrder();
-        if (!ao && G.armandCandidates().length) push('village/orders', ['villager', 'armand'], 'Armand cherche un produit phare', 1);
-        else if (ao && !ao.done && (state.inventory[ao.id] || 0) > 0) push('village/orders', ['villager', 'armand'], 'Armand attend sa commande', 1);
+        const slots = Array.from({ length: G.armandSlots() }, (_, i) => G.armandOrder(i));
+        if (slots.some(o => !o) && G.armandCandidates().length) push('village/orders', ['villager', 'armand'], 'Armand cherche un produit phare', 1);
+        else if (slots.some(o => o && !o.done && (state.inventory[o.id] || 0) > 0))
+            push('village/orders', ['villager', 'armand'], 'Armand attend sa commande', 1);
     }
     // 1.8 : l'avion-cargo
     const cg = G.cargoReady();

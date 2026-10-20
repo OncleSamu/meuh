@@ -11,7 +11,7 @@ import { projectDone } from './story.js';
 import { tip } from './tips.js';
 import { isInSeason } from './world.js';
 import { spend } from './player.js';
-import { stayOf } from './home.js';
+import { stayOf } from './estate.js';
 
 export const merchantOpen = () => projectDone('fountain');
 

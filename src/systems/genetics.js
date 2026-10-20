@@ -34,6 +34,7 @@ import { isAdult, newAnimal } from './animals.js';
 import { placeAnimal, herdFull } from './pastures.js';
 import { unitPrice } from './market.js';
 import { tip } from './tips.js';
+import { domStepSum } from './estate.js';
 
 export const FLAVOR_IDS = PLANT_TRAITS.filter(t => t.flavor).map(t => t.id);
 export const PLANT_IDS = PLANT_TRAITS.map(t => t.id);
@@ -49,7 +50,7 @@ export const geneticsOpen = () => plantLabOpen() || breedOpen();
 // 1.7 : deux pollinisations à la fois avec la ruche, une portée plus grande avec le laboratoire, plusieurs enclos
 export const crossSlots = () => (projectDone(GX.hiveProject) ? GX.crossSlotsHive : 1);
 export const litterSize = () => (labOpen() ? GX.litterLab : GX.litter);
-export const breedSlots = () => GX.breedPens + (labOpen() ? 1 : 0) + (seedbankOpen() ? 1 : 0) + (labOpen() ? labPenBonus() : 0);
+export const breedSlots = () => GX.breedPens + (labOpen() ? 1 : 0) + (seedbankOpen() ? 1 : 0) + (labOpen() ? labPenBonus() : 0) + domStepSum('annex', 'breed');
 export const isPlant = id => ITEMS[id] && (ITEMS[id].type === 'crop' || ITEMS[id].type === 'tree') && FLAVORS[id];
 
 export function ensureGenetics() {

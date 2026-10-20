@@ -20,6 +20,7 @@ import { eventProgress } from './events.js';
 import { rollRare } from './barn.js';
 import { sellPrice } from './market.js';
 import { mExtraYield } from './buildings.js';
+import { domStepSum } from './estate.js';
 
 const DAY = 86400000;
 // le jour du téléphone (minuit à l'heure locale)
@@ -57,7 +58,7 @@ export function migrateCounter() {
 
 // ---------------- le salon ----------------
 export const salonLvl = () => ensureCounter().lvl;
-export const salonDef = () => SALON[salonLvl()];
+export const salonDef = () => ({ ...SALON[salonLvl()], seats: SALON[salonLvl()].seats + domStepSum('annex', 'seat') });
 export const salonNext = () => SALON[salonLvl() + 1] || null;
 export const decorCount = () => Object.values(ensureCounter().decor).filter(Boolean).length;
 export const patienceMax = () => CLIENT.patience * (1 + DECOR_PATIENCE * Math.min(3, decorCount()));

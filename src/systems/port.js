@@ -20,7 +20,7 @@ import { addMastery } from './mastery.js';
 import { pickItems, qtyFor, xpBonus, hasAll, payItems } from './orders.js';
 import { isAdult } from './animals.js';
 import { addPhoto } from './style.js';
-import { stayOf } from './home.js';
+import { stayOf, domStepSum } from './estate.js';
 
 // ---------------- pêche en mer ----------------
 export const netOpen = () => projectDone('lighthouse');
@@ -76,7 +76,7 @@ export function haulNet(at) {
 // ---------------- cargo de livraison ----------------
 export const boatOpen = () => projectDone('quay');
 export const boatPay = () => BOAT_PAY * (projectDone('shipyard') ? 1.25 : 1);
-export const boatAway = () => BOAT_AWAY - (projectDone('shipyard') ? 60 * 60 * 1000 : 0);
+export const boatAway = () => (BOAT_AWAY - (projectDone('shipyard') ? 60 * 60 * 1000 : 0)) * (1 - domStepSum('quay', 'fast'));
 
 export function boatTick() {
     if (!boatOpen()) return false;
@@ -87,7 +87,7 @@ export function boatTick() {
         return false;
     }
     if (b.status === 'away' && t >= b.arriveAt) {
-        const its = pickItems(4);
+        const its = pickItems(4 + domStepSum('quay', 'line'));
         if (its.length < 3) {
             b.arriveAt = t + 60000;
             return false;

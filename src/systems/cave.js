@@ -50,6 +50,7 @@ import { beerOf, beerValue, beerStock, ensureBrew, barrelOk, cellarOpen, takeFro
 import { caveBonus } from './buildings.js';
 import { DAYS_PER_SEASON } from '../data/world.js';
 import { VINTAGES, LABEL_COUNT } from '../data/cave.js';
+import { domStepSum } from './estate.js';
 
 // 1.15 : millésimes. L'année de jeu donne à chaque vin une qualité (0 à 3), la même pour tout le monde.
 export const gameYear = () => Math.floor((state.day - 1) / (DAYS_PER_SEASON * 4)) + 1;
@@ -83,7 +84,13 @@ export const vintageOf = lot => (lot && lot.vy && isVinous(lot.id) ? VINTAGES[lo
 export const caveOpen = () => state.level >= CAVE_LVL;
 export const caveFam = id => CAVE_FAMILIES[CAVE_ITEMS[id]];
 export const caveSlots = () =>
-    CAVE_SLOTS_START + 2 * state.cave.shelves + (projectDone('affinage') ? 4 : 0) + (state.cave.gear.vault ? 2 : 0) + (cellarOpen() ? 2 : 0) + caveBonus();
+    CAVE_SLOTS_START +
+    2 * state.cave.shelves +
+    (projectDone('affinage') ? 4 : 0) +
+    (state.cave.gear.vault ? 2 : 0) +
+    (cellarOpen() ? 2 : 0) +
+    caveBonus() +
+    domStepSum('annex', 'shelf');
 export const caveStep = id => (CAVE_ITEMS[id] === 'cider' && projectDone('cidery') ? 4 * CAVE_H : caveFam(id).step);
 export const rankName = lot => (lot.bad ? (lot.id === 'beer' ? 'Tournée' : 'Tourné') : caveFam(lot.id).ranks[lot.rank]);
 // 1.6.3 : un lot peut être une bière (id 'beer', sa recette bid et son fût k)

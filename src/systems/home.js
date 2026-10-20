@@ -6,7 +6,8 @@ import { MACHINE_SLOTS } from '../data/machines.js';
 import { VILLAGERS } from '../data/village.js';
 import { FETE_END } from '../data/world.js';
 import { HOUSE, FARMHAND } from '../data/progress.js';
-import { DOMAINE, DOMAINE_IDS, DOMAINE_LVL, DOMAINE_COINS, DOMAINE_MATS } from '../data/domaine.js';
+import { DOMAINE, DOMAINE_IDS, DOMAINE_COINS, DOMAINE_MATS } from '../data/domaine.js';
+import { domaineOpen, domLvl, domMax, domStepSum } from './estate.js';
 import { spend, addXp, speedMult } from './player.js';
 import { chapterOpen, projectDone } from './story.js';
 import { addPhoto } from './style.js';
@@ -190,22 +191,6 @@ export function upgradeHand(at) {
 }
 
 // ---------------- 1.20 : l'Amélioration du domaine ----------------
-export const domaineOpen = () => state.level >= DOMAINE_LVL;
-export const domLvl = b => (state.domaine && state.domaine[b]) || 0;
-export const domMax = () => DOMAINE_COINS.length;
-// somme des effets des paliers atteints d'une branche ; key : champ de l'effet s'il est un objet
-export function domStepSum(b, key) {
-    if (!domaineOpen()) return 0;
-    let sum = 0;
-    for (let k = 0; k < domLvl(b); k++) {
-        const v = DOMAINE[b].steps[k][1];
-        sum += typeof v === 'object' ? v[key] || 0 : v;
-    }
-    return sum;
-}
-// les visiteurs restent plus longtemps, sans jamais rester tout l'intervalle
-export const stayMult = () => 1 + domStepSum('guests');
-export const stayOf = (stay, every) => (every ? Math.min(stay * stayMult(), every - 3600000) : stay * stayMult());
 export const domCost = (b, n = domLvl(b) + 1) =>
     n > domMax() ? null : { coins: DOMAINE_COINS[n - 1], [DOMAINE[b].mats[0]]: DOMAINE_MATS[n - 1][0], [DOMAINE[b].mats[1]]: DOMAINE_MATS[n - 1][1] };
 export const domCan = b => domaineOpen() && domLvl(b) < domMax() && hasCost(domCost(b));

@@ -13,8 +13,9 @@ import { questPool, itemWeight } from './orders.js';
 import { earn, addXp } from './player.js';
 import { clampQuality } from './farm.js';
 import { giveRare } from './barn.js';
-import { stayOf } from './home.js';
+import { stayOf, domStepSum } from './estate.js';
 
+export const holdCount = () => CARGO.holds + domStepSum('cargo', 'hold');
 export const cargoOpen = () => state.level >= CARGO.lvl;
 const V = visitor(CARGO.every, () => stayOf(CARGO.stay, CARGO.every));
 const cycle = V.cycle;
@@ -39,8 +40,8 @@ function makeHolds() {
         }
     };
     take(raw, 3);
-    take(made, CARGO.holds - out.length);
-    take(pool, CARGO.holds - out.length);
+    take(made, holdCount() - out.length);
+    take(pool, holdCount() - out.length);
     const value = CARGO.value(scaleLvl());
     return out.map(it => ({
         id: it.id,
@@ -50,7 +51,7 @@ function makeHolds() {
 }
 export const holdPay = (h, n) => round5(ITEMS[h.id].sell * n * CARGO.pay);
 export const cargoTotal = () => (state.cargo && state.cargo.holds ? state.cargo.holds.reduce((a, h) => a + holdPay(h, h.qty), 0) : 0);
-export const cargoBonus = () => round5(cargoTotal() * CARGO.bonus);
+export const cargoBonus = () => round5(cargoTotal() * (CARGO.bonus + domStepSum('cargo', 'bonus')));
 export const cargoBonusXp = () => Math.round(cargoBonus() * CARGO.xp);
 export const cargoFull = () => !!(state.cargo && state.cargo.holds && state.cargo.holds.every(h => h.got >= h.qty));
 

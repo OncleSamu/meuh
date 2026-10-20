@@ -42,7 +42,7 @@ test('Armand : produit phare, commande, livraison, fidélité', () => {
         assert.equal(o.id, id);
         state.inventory[id] = 10;
         const m = state.money;
-        assert.ok(G.deliverArmand(null, 4));
+        assert.ok(G.deliverArmand(null, 0, 4));
         assert.equal(o.got, 4);
         assert.ok(state.money > m);
         assert.equal(G.armandCanChange(), false);
@@ -73,7 +73,7 @@ test('Armand : on peut changer de produit avant la première livraison, pas apr�
         assert.ok(G.setFlagship('milk'));
         assert.equal(G.armandOrder().id, 'milk');
         state.inventory.milk = 5;
-        assert.ok(G.deliverArmand(null, 2));
+        assert.ok(G.deliverArmand(null, 0, 2));
         assert.equal(G.setFlagship('apple'), false);
         // il repart : la commande disparaît, on peut rechoisir, plus de livraison possible
         setClock(() => base + ARMAND.stay + 1000);
@@ -138,4 +138,59 @@ test('Domaine : fermé avant le niveau 25, achat, effets cumulés et séjours bo
     assert.equal(G.stayOf(3600000), 7200000);
     assert.equal(G.stayOf(24 * 3600000, 48 * 3600000), 47 * 3600000);
     assert.ok(MACHINE_SLOTS > 0);
+});
+
+test('Domaine : annexes, cargo, quai et Suite d’Armand', () => {
+    fresh();
+    state.level = 40;
+    state.money = 1e10;
+    for (const k of ['beam', 'plank', 'tools', 'nail', 'paint']) state.inventory[k] = 999;
+    // annexes : une cuve, un siège, une étagère, une nasse, une place de sélection
+    const v = G.vatCount(),
+        sl = G.salonDef().seats,
+        c = G.caveSlots ? G.caveSlots() : null,
+        t = G.trapMax(),
+        b = G.breedSlots();
+    for (let k = 0; k < 5; k++) assert.ok(G.buyDomaine('annex'));
+    assert.equal(G.salonDef().seats, sl + 1);
+    assert.equal(G.trapMax(), t + 1);
+    assert.equal(G.breedSlots(), b + 1);
+    if (G.brewOpen()) assert.equal(G.vatCount(), v + 1);
+    if (c !== null) assert.equal(G.caveSlots(), c + 2);
+    // cargo : 3 soutes de plus au palier 4 ; bonus +20 % au palier 3
+    const h = G.holdCount();
+    for (let k = 0; k < 5; k++) assert.ok(G.buyDomaine('cargo'));
+    assert.equal(G.holdCount(), h + 4);
+    // quai : le bateau revient plus vite
+    const away = G.boatAway();
+    for (let k = 0; k < 5; k++) assert.ok(G.buyDomaine('quay'));
+    assert.ok(G.boatAway() < away);
+    // Armand : 2e, 3e, 4e produits phares et paiement +10 %
+    const r = G.armandRate('apple');
+    for (let k = 0; k < 5; k++) assert.ok(G.buyDomaine('armand'));
+    assert.equal(G.armandSlots(), 4);
+    assert.ok(Math.abs(G.armandRate('apple') / r - 1.1) < 1e-9);
+    state.mastery.apple = 1000;
+    state.mastery.milk = 1000;
+    const base = Math.floor(Date.now() / ARMAND.every) * ARMAND.every;
+    setClock(() => base + 1000);
+    try {
+        G.armandTick();
+        assert.ok(G.setFlagship('apple', 0));
+        assert.equal(G.setFlagship('apple', 1), false, 'pas deux fois le même produit');
+        assert.ok(G.setFlagship('milk', 1));
+        state.inventory.apple = 7;
+        assert.ok(G.deliverArmand(null, 0, 7));
+        // il repart : sa commande entamée est gardée pour la visite suivante
+        setClock(() => base + ARMAND.stay * 3);
+        G.armandTick();
+        assert.equal(G.armandOrder(0).got, 7);
+        assert.equal(G.armandOrder(1).got, 0);
+        setClock(() => base + ARMAND.every + 1000);
+        G.armandTick();
+        assert.equal(G.armandOrder(0).got, 7);
+        assert.equal(G.armandOrder(1).got, 0);
+    } finally {
+        setClock(() => Date.now());
+    }
 });
