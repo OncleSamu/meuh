@@ -13,9 +13,10 @@ import { questPool, itemWeight } from './orders.js';
 import { earn, addXp } from './player.js';
 import { clampQuality } from './farm.js';
 import { giveRare } from './barn.js';
+import { stayOf } from './home.js';
 
 export const cargoOpen = () => state.level >= CARGO.lvl;
-const V = visitor(CARGO.every, CARGO.stay);
+const V = visitor(CARGO.every, () => stayOf(CARGO.stay, CARGO.every));
 const cycle = V.cycle;
 export const cargoArrive = V.arrive;
 export const cargoLeave = V.leave;

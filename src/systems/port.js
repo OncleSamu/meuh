@@ -20,6 +20,7 @@ import { addMastery } from './mastery.js';
 import { pickItems, qtyFor, xpBonus, hasAll, payItems } from './orders.js';
 import { isAdult } from './animals.js';
 import { addPhoto } from './style.js';
+import { stayOf } from './home.js';
 
 // ---------------- pêche en mer ----------------
 export const netOpen = () => projectDone('lighthouse');
@@ -97,7 +98,7 @@ export function boatTick() {
         const gold = round5(value * boatPay());
         Object.assign(b, {
             status: 'here',
-            expiresAt: t + BOAT_STAY,
+            expiresAt: t + stayOf(BOAT_STAY),
             items,
             gold,
             xp: Math.round(value * BOAT_PAY * BALANCE.balloonXp * xpBonus()),

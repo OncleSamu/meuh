@@ -102,3 +102,40 @@ test('Agenda : visiteurs ouverts, présents d’abord, puis par date', () => {
     state.level = 3;
     assert.ok(!G.agenda().some(e => e.id === 'armand' || e.id === 'cargo'));
 });
+
+test('Domaine : fermé avant le niveau 25, achat, effets cumulés et séjours bornés', async () => {
+    const { DOMAINE_COINS } = await import('../../src/data/domaine.js');
+    const { MACHINE_SLOTS } = await import('../../src/data/machines.js');
+    fresh();
+    state.level = 24;
+    state.money = 1e9;
+    state.inventory.beam = state.inventory.plank = state.inventory.tools = state.inventory.nail = state.inventory.paint = 500;
+    assert.equal(G.domaineOpen(), false);
+    assert.equal(G.buyDomaine('barn'), false);
+    state.level = 30;
+    const cap = G.barnCap(),
+        q = G.machineSlots('oven');
+    assert.ok(G.buyDomaine('barn'));
+    assert.equal(G.barnCap(), cap + 100);
+    assert.ok(G.buyDomaine('kitchen'));
+    assert.equal(G.machineSlots('oven'), q + 1);
+    const o = G.extraOrders(),
+        s = G.extraStall();
+    G.buyDomaine('trade');
+    assert.equal(G.extraOrders(), o + 1);
+    G.buyDomaine('trade');
+    assert.equal(G.extraStall(), s + 1);
+    // une branche se termine après 5 paliers, au prix prévu
+    const m0 = state.money;
+    for (let k = 0; k < 5; k++) assert.ok(G.buyDomaine('guests'), 'palier ' + (k + 1));
+    assert.equal(G.buyDomaine('guests'), false);
+    assert.equal(
+        m0 - state.money,
+        DOMAINE_COINS.reduce((a, b) => a + b, 0),
+    );
+    // le séjour double, mais ne couvre jamais tout l'intervalle
+    assert.equal(G.stayMult(), 2);
+    assert.equal(G.stayOf(3600000), 7200000);
+    assert.equal(G.stayOf(24 * 3600000, 48 * 3600000), 47 * 3600000);
+    assert.ok(MACHINE_SLOTS > 0);
+});

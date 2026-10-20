@@ -6,6 +6,7 @@ import { MACHINE_SLOTS } from '../data/machines.js';
 import { VILLAGERS } from '../data/village.js';
 import { FETE_END } from '../data/world.js';
 import { HOUSE, FARMHAND } from '../data/progress.js';
+import { DOMAINE, DOMAINE_IDS, DOMAINE_LVL, DOMAINE_COINS, DOMAINE_MATS } from '../data/domaine.js';
 import { spend, addXp, speedMult } from './player.js';
 import { chapterOpen, projectDone } from './story.js';
 import { addPhoto } from './style.js';
@@ -41,10 +42,10 @@ export const houseCanUp = () => {
     return !!n && state.level >= n.lvl && hasCost(n.cost);
 };
 // bonus cumulés de la maison et des chantiers
-export const extraOrders = () => (houseLvl() >= 2 ? 1 : 0) + (projectDone('hall') ? 1 : 0);
-export const machineSlots = type => MACHINE_SLOTS + (houseLvl() >= 3 ? 1 : 0) + (type ? mSlotsBonus(type) : 0);
-export const extraStall = () => (houseLvl() >= 4 ? 1 : 0) + (houseLvl() >= 6 ? 1 : 0) + (projectDone('washhouse') ? 1 : 0);
-export const houseBarn = () => (houseLvl() >= 1 ? 40 : 0) + (houseLvl() >= 6 ? 80 : 0);
+export const extraOrders = () => (houseLvl() >= 2 ? 1 : 0) + (projectDone('hall') ? 1 : 0) + domStepSum('trade', 'orders');
+export const machineSlots = type => MACHINE_SLOTS + (houseLvl() >= 3 ? 1 : 0) + domStepSum('kitchen') + (type ? mSlotsBonus(type) : 0);
+export const extraStall = () => (houseLvl() >= 4 ? 1 : 0) + (houseLvl() >= 6 ? 1 : 0) + (projectDone('washhouse') ? 1 : 0) + domStepSum('trade', 'stall');
+export const houseBarn = () => (houseLvl() >= 1 ? 40 : 0) + (houseLvl() >= 6 ? 80 : 0) + domStepSum('barn');
 export const housePay = () => (houseLvl() >= 5 ? 1.1 : 1);
 export const feteEnd = () => FETE_END + (projectDone('hall') ? 2 : 0);
 export const machineBoost = type => (projectDone('windmill') && (type === 'mill' || type === 'oilmill') ? 1.25 : 1);
@@ -81,7 +82,7 @@ export function handZone() {
     const l = handLvl();
     if (!l) return [];
     const out = [];
-    for (let i = 0; i < state.grid.length && out.length < FARMHAND[l].plots; i++) if (state.grid[i].isUnlocked) out.push(i);
+    for (let i = 0; i < state.grid.length && out.length < FARMHAND[l].plots + domStepSum('field'); i++) if (state.grid[i].isUnlocked) out.push(i);
     return out;
 }
 
@@ -185,5 +186,43 @@ export function upgradeHand(at) {
     buzz(25);
     burst(at, 'sparkle', 14);
     toast(`Théo s’occupe maintenant de ${FARMHAND[handLvl()].plots} parcelles`, ['villager', 'theo']);
+    return true;
+}
+
+// ---------------- 1.20 : l'Amélioration du domaine ----------------
+export const domaineOpen = () => state.level >= DOMAINE_LVL;
+export const domLvl = b => (state.domaine && state.domaine[b]) || 0;
+export const domMax = () => DOMAINE_COINS.length;
+// somme des effets des paliers atteints d'une branche ; key : champ de l'effet s'il est un objet
+export function domStepSum(b, key) {
+    if (!domaineOpen()) return 0;
+    let sum = 0;
+    for (let k = 0; k < domLvl(b); k++) {
+        const v = DOMAINE[b].steps[k][1];
+        sum += typeof v === 'object' ? v[key] || 0 : v;
+    }
+    return sum;
+}
+// les visiteurs restent plus longtemps, sans jamais rester tout l'intervalle
+export const stayMult = () => 1 + domStepSum('guests');
+export const stayOf = (stay, every) => (every ? Math.min(stay * stayMult(), every - 3600000) : stay * stayMult());
+export const domCost = (b, n = domLvl(b) + 1) =>
+    n > domMax() ? null : { coins: DOMAINE_COINS[n - 1], [DOMAINE[b].mats[0]]: DOMAINE_MATS[n - 1][0], [DOMAINE[b].mats[1]]: DOMAINE_MATS[n - 1][1] };
+export const domCan = b => domaineOpen() && domLvl(b) < domMax() && hasCost(domCost(b));
+export const domReady = () => DOMAINE_IDS.filter(domCan).length;
+export const domTotal = () => DOMAINE_IDS.reduce((a, b) => a + domLvl(b), 0);
+export function buyDomaine(b, at) {
+    if (!DOMAINE[b] || !domCan(b)) return false;
+    payCost(domCost(b));
+    state.domaine = state.domaine || {};
+    state.domaine[b] = domLvl(b) + 1;
+    state.stats.domaine = domTotal();
+    sfx('level');
+    buzz(30);
+    burst(at, 'sparkle', 18);
+    emit('confetti');
+    toast(`${DOMAINE[b].name} : ${DOMAINE[b].steps[domLvl(b) - 1][0].toLowerCase()}`, DOMAINE[b].icon);
+    ensureQuests();
+    ensureStall();
     return true;
 }

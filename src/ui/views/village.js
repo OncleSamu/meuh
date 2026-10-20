@@ -20,6 +20,10 @@ import { ico, art, SPR } from '../icons.js';
 import { btn, bar, timer, section, hint, hearts, card } from '../kit.js';
 import { defineView, ui } from '../app.js';
 import { itemLine, rewardHtml } from './common.js';
+import { askBuy } from '../sheets/askbuy.js';
+import { defineSheet, openSheet } from '../sheets.js';
+import { DOMAINE, DOMAINE_IDS, DOMAINE_LVL } from '../../data/domaine.js';
+import { costRow } from '../kit.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const head = (icon, title, sub, side = '') =>
@@ -344,10 +348,52 @@ function villagersHtml() {
         .join('')}</div>`;
 }
 
+// ---------------- 1.20 : l'Amélioration du domaine ----------------
+function domaineCard() {
+    if (!G.domaineOpen())
+        return `<div class="card locked">${ico(['ui', 'lock'], 'ico big')}<div class="card-main"><div class="card-title">Amélioration du domaine</div><div class="card-sub">Au niveau ${DOMAINE_LVL}, faites grandir votre domaine : grange, cuisines, aide au champ, commerce, réception.</div></div></div>`;
+    const ready = G.domReady();
+    return `<div class="card domaine-card">${head(['ui', 'house'], 'Amélioration du domaine', `${G.domTotal()} / ${DOMAINE_IDS.length * G.domMax()} paliers · de grands chantiers pour vos pièces`, ready ? `<span class="dot">${ready}</span>` : '')}
+        <div class="od-foot">${btn('Ouvrir le domaine', { act: 'domaine', kind: ready ? 'green' : '', size: 'sm' })}</div></div>`;
+}
+const stepName = (b, k) => DOMAINE[b].steps[k][0];
+// ce que la branche donne en tout, au palier atteint
+const domTotalText = b =>
+    ({
+        barn: () => `+${G.domStepSum('barn')} places dans la grange`,
+        kitchen: () => `+${G.domStepSum('kitchen')} place${G.domStepSum('kitchen') > 1 ? 's' : ''} dans la file de chaque machine`,
+        field: () => `Théo soigne ${G.domStepSum('field')} parcelles de plus`,
+        trade: () =>
+            `+${G.domStepSum('trade', 'orders')} commande${G.domStepSum('trade', 'orders') > 1 ? 's' : ''} et +${G.domStepSum('trade', 'stall')} place${G.domStepSum('trade', 'stall') > 1 ? 's' : ''} à l’étal`,
+        guests: () => `Les visiteurs restent ${Math.round(G.domStepSum('guests') * 100)} % plus longtemps`,
+    })[b]();
+function branchHtml(b) {
+    const D = DOMAINE[b],
+        l = G.domLvl(b),
+        max = G.domMax();
+    const pips = Array.from({ length: max }, (_, k) => `<i class="${k < l ? 'on' : ''}"></i>`).join('');
+    const next = l < max ? G.domCost(b) : null;
+    return `<div class="card branch-card"><div class="card-head">${ico(D.icon, 'ico big')}<div class="card-main"><div class="card-title">${D.name} · ${l} / ${max}</div>
+        <div class="card-sub">${D.desc}</div><span class="pips">${pips}</span></div></div>
+        ${l ? `<div class="card-sub">En tout : ${domTotalText(b)}</div>` : ''}
+        ${
+            next
+                ? `<div class="od-foot"><div class="card-main"><small>Palier ${l + 1} : ${stepName(b, l)}</small>${costRow(G.costParts(next))}</div>${btn('Construire', { act: 'buyDomaine', data: { b }, kind: G.domCan(b) ? 'green' : '', size: 'sm', disabled: !G.domCan(b) })}</div>`
+                : '<div class="card-sub">Tout est construit.</div>'
+        }</div>`;
+}
+defineSheet('domaine', {
+    cls: 'domaine-sheet',
+    title: () => 'Le domaine',
+    render: () =>
+        `<p class="card-sub">Chaque palier améliore votre ferme pour toujours : de la place, des files plus longues, des visiteurs qui restent. Aucun bonus de production : seulement du confort.</p>${DOMAINE_IDS.map(branchHtml).join('')}`,
+});
+
 function renderVillage(el) {
     blocks(el, [
         // 1.9 : tout ce qu'on livre est dans Commandes, le marchand au Marché ; ici, le village et ses habitants
         ['story', storyCard()],
+        ['domaine', domaineCard()],
         ['contest', contestCard()],
         ['vtitle', section('Les villageois')],
         ['vhint', hint('Livrez leurs commandes et offrez-leur ce qu’ils aiment (un cadeau par jour) pour gagner leur amitié.')],
@@ -358,6 +404,22 @@ defineView('village/village', renderVillage);
 
 export function setupVillage() {
     actions({
+        domaine: () => openSheet('domaine', {}),
+        buyDomaine: (el, d) => {
+            const b = d.b,
+                n = G.domLvl(b) + 1;
+            askBuy(
+                {
+                    title: DOMAINE[b].name,
+                    icon: ['ui', DOMAINE[b].icon[1]],
+                    text: `Palier ${n} : ${stepName(b, n - 1).toLowerCase()}.`,
+                    cost: G.domCost(b).coins,
+                    mats: Object.fromEntries(Object.entries(G.domCost(b)).filter(([k]) => k !== 'coins')),
+                    run: at => G.buyDomaine(b, at),
+                },
+                el,
+            );
+        },
         map: (el, d) => {
             ui.sel.map = d.m;
             ui.sel.proj = null;

@@ -40,6 +40,7 @@ export function newState() {
         genetics: null,
         brew: null, // 1.6 : la brasserie de l'abbaye
         cargo: null, // 1.8 : l'avion-cargo
+        domaine: {}, // 1.20 : paliers du domaine par branche { barn: n, … }
         armand: null, // 1.19.1 : Armand, le chef du Grand Hôtel (produit phare, commande, fidélité)
         nat: null, // 1.11 : la nature (mine, ouvriers, charbonnière, carnet, défi de Gaspard)
         bld: null, // 1.11 : les bâtiments améliorés

@@ -11,10 +11,11 @@ import { ARMAND, RARE } from '../data/commerce.js';
 import { earn, addXp } from './player.js';
 import { clampQuality } from './farm.js';
 import { giveRare } from './barn.js';
+import { stayOf } from './home.js';
 import { masteryKnown, masteryStars, masteryMult, masteryExtra } from './mastery.js';
 
 export const armandOpen = () => state.level >= ARMAND.lvl;
-const V = visitor(ARMAND.every, ARMAND.stay);
+const V = visitor(ARMAND.every, () => stayOf(ARMAND.stay, ARMAND.every));
 const cycle = V.cycle;
 export const armandArrive = V.arrive;
 export const armandLeave = V.leave;

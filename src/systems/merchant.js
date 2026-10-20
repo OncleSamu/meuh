@@ -11,6 +11,7 @@ import { projectDone } from './story.js';
 import { tip } from './tips.js';
 import { isInSeason } from './world.js';
 import { spend } from './player.js';
+import { stayOf } from './home.js';
 
 export const merchantOpen = () => projectDone('fountain');
 
@@ -20,7 +21,7 @@ export function merchantTick() {
         t = now();
     if (m.status === 'away' && t >= m.arriveAt) {
         m.status = 'here';
-        m.expiresAt = t + MERCHANT_STAY;
+        m.expiresAt = t + stayOf(MERCHANT_STAY);
         m.stock = merchantStock();
         if (view.started) {
             toast('Zéphyr, le marchand ambulant, est arrivé : il vous attend au Marché !', ['ui', 'merchant']);

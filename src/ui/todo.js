@@ -71,6 +71,9 @@ export function todoList() {
         if (bo) push('machines/brew', ['villager', 'hugues'], `${bo} commande${s(bo)} de bière à livrer`, bo);
         if (G.beerBookClaimable()) push('machines/brew', ['ui', 'beer'], 'Récompense du livre des bières', 1);
     }
+    // 1.20 : le domaine
+    if (G.domaineOpen() && G.domReady())
+        push('village/village', ['ui', 'house'], `${G.domReady()} chantier${s(G.domReady())} du domaine à lancer`, G.domReady());
     // 1.19.1 : Armand
     if (G.armandHere()) {
         const ao = G.armandOrder();

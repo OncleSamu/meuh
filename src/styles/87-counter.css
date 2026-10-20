@@ -356,3 +356,23 @@
     white-space: nowrap;
     flex: none;
 }
+
+/* 1.20 : le domaine */
+.branch-card {
+    margin-top: 8px;
+}
+.branch-card .od-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.branch-card .od-foot .card-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.domaine-card .dot {
+    margin-left: auto;
+}

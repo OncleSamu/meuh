@@ -16,7 +16,7 @@ import { BALANCE } from '../data/progress.js';
 import { netOpen, transOpen } from './port.js';
 import { storyOk, projectDone, projectOpen, projectLeft } from './story.js';
 import { hasMachine, recipeUnlocked } from './workshop.js';
-import { extraOrders, presentVillagers, housePay, studPay } from './home.js';
+import { extraOrders, presentVillagers, housePay, studPay, stayOf } from './home.js';
 import { masteryMult } from './mastery.js';
 import { heartsOf, addFriendship } from './village.js';
 import { rank, earn, addXp } from './player.js';
@@ -267,7 +267,7 @@ function makeTruck() {
     const sum = slots.reduce((a, sl) => a + sl.gold, 0);
     Object.assign(t, {
         status: 'here',
-        expiresAt: n + TRAIN_STAY,
+        expiresAt: n + stayOf(TRAIN_STAY),
         slots,
         gold: round5(sum * 0.5),
         xp: Math.round(sum * 0.5 * BALANCE.truckXp * xpBonus()),
@@ -342,7 +342,7 @@ export function balloonTick() {
         const gold = round5(value * BALANCE.balloonPay * studPay());
         Object.assign(b, {
             status: 'here',
-            expiresAt: n + BALLOON_STAY,
+            expiresAt: n + stayOf(BALLOON_STAY),
             items,
             gold,
             xp: Math.round(gold * BALANCE.balloonXp * xpBonus()),
