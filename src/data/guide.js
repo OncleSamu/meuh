@@ -1240,6 +1240,15 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'Apparences et caractères discrets',
+                b: [
+                    'Les mutations peuvent donner de nouvelles couleurs (rose, orange vif, argentée, cuivrée, dégradée), de nouveaux motifs (damier, zébrures, mouchetée fine, marbrée) et la taille naine ; le gros fruit n’existe que chez les plantes.',
+                    'Une finition rare, une seule par création : givrée, moussue, étincelante, vernie ou fleurie. La saison en favorise une.',
+                    'Ces apparences ne changent pas la valeur, mais elles comptent pour « La plus belle robe » et « La plus belle géante » du Salon.',
+                    'Cinq caractères de plantes (repousse, maturation lente, anti-nuisibles, graine généreuse, calibre) et trois de bêtes (fécondité, santé, curiosité) valent 0 au départ ; ils n’apparaissent dans la fiche que s’ils sont présents. La tomate et quelques autres repoussent déjà.',
+                ],
+            },
+            {
                 h: 'Mes créations et le chef',
                 t: 'Mes créations garde chaque variété et permet de racheter graines et petits. Le chef passe des commandes de plusieurs heures qui demandent un trait précis.',
             },

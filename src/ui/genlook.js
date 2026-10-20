@@ -10,6 +10,8 @@ const SIZE = [
     [1.14, 1.14],
     [1.3, 1.3],
     [0.8, 1.1],
+    [0.68, 0.68], // naine
+    [1, 1], // gros fruit : le dessin garde sa taille, c'est le fruit qui grossit
 ];
 // teintes « absolues » : sepia ramène tout à une même teinte, que hue-rotate oriente ensuite
 const COLOR = [
@@ -20,6 +22,22 @@ const COLOR = [
     'grayscale(1) brightness(1.45) contrast(.9)',
     'grayscale(.4) brightness(.55) contrast(1.2)',
     'sepia(.9) saturate(3) hue-rotate(165deg) brightness(.95)',
+    'sepia(.8) saturate(3) hue-rotate(290deg) brightness(1.2)', // rose
+    'sepia(.9) saturate(5.5) hue-rotate(-18deg) brightness(1.1)', // orange vif
+    'grayscale(1) brightness(1.25) contrast(1.15)', // argentée
+    'sepia(1) saturate(3.2) hue-rotate(-28deg) brightness(.92) contrast(1.05)', // cuivrée
+    'sepia(.6) saturate(2) hue-rotate(200deg) brightness(1.05)', // dégradée
+];
+// finitions : un filtre léger et/ou un calque découpé à la forme du dessin
+const FINISH_FILTER = ['', 'saturate(.8) brightness(1.06) drop-shadow(0 0 3px #bfe9ff)', '', '', 'saturate(1.3) contrast(1.1)', ''];
+const SPARKS = [
+    [8, 12],
+    [88, 20],
+    [18, 60],
+    [82, 66],
+    [50, 4],
+    [70, 40],
+    [30, 35],
 ];
 const masks = new Map();
 const maskOf = svg => {
@@ -37,25 +55,38 @@ const maskOf = svg => {
 export function genWrap(svg, g, cls = '') {
     if (!g || !g.l) return svg;
     const l = G.looksOf(g);
-    if (l.size === 1 && !l.color && !l.pattern && !l.halo) return svg;
+    // le gros fruit ne vaut que pour les plantes (les bêtes gardent leur taille)
+    const bigFruit = l.size === 6 && !!g.form;
+    if ((l.size === 1 || l.size === 6) && !bigFruit && !l.color && !l.pattern && !l.halo && !l.finish) return svg;
     const [sx, sy] = SIZE[l.size] || SIZE[1];
-    const filter = [COLOR[l.color] || '', l.halo ? 'drop-shadow(0 0 4px #ffd23f) drop-shadow(0 0 2px #fff6c8)' : ''].join(' ').trim();
-    const pat = l.pattern ? `<i class="gp gp-${l.pattern}" style="-webkit-mask-image:${maskOf(svg)};mask-image:${maskOf(svg)}"></i>` : '';
-    return `<span class="gl ${cls}" style="--gsx:${sx};--gsy:${sy};${filter ? `filter:${filter}` : ''}">${svg}${pat}</span>`;
+    const filter = [COLOR[l.color] || '', FINISH_FILTER[l.finish] || '', l.halo ? 'drop-shadow(0 0 4px #ffd23f) drop-shadow(0 0 2px #fff6c8)' : '']
+        .join(' ')
+        .trim();
+    const m = `-webkit-mask-image:${maskOf(svg)};mask-image:${maskOf(svg)}`;
+    const ov = c => `<i class="gp ${c}" style="${m}"></i>`;
+    let over = '';
+    if (l.color >= 9) over += ov(`gp-c${l.color}`);
+    if (l.pattern) over += ov(`gp-${l.pattern}`);
+    if (l.finish && l.finish !== 3) over += ov(`gp-f${l.finish}`);
+    if (l.finish === 3) over += SPARKS.map(([x, y], i) => `<b class="spk" style="left:${x}%;top:${y}%;animation-delay:${i * 0.37}s"></b>`).join('');
+    const big = bigFruit ? `<div class="bigpart">${svg}</div>` : '';
+    return `<span class="gl ${cls}" style="--gsx:${sx};--gsy:${sy};${filter ? `filter:${filter}` : ''}">${svg}${big}${over}</span>`;
 }
 
 // une petite description lisible de l'apparence
 export function looksText(g) {
     if (!g || !g.l) return '';
     const L = {
-        size: ['Petite', 'Normale', 'Grosse', 'Géante', 'Fine'],
-        color: ['', 'rouge', 'dorée', 'violette', 'blanche', 'sombre', 'bleutée'],
-        pattern: ['', 'à taches', 'à pois', 'à rayures', 'à reflets'],
+        size: ['Petite', 'Normale', 'Grosse', 'Géante', 'Fine', 'Naine', 'Gros fruit'],
+        color: ['', 'rouge', 'dorée', 'violette', 'blanche', 'sombre', 'bleutée', 'rose', 'orange vif', 'argentée', 'cuivrée', 'dégradée'],
+        pattern: ['', 'à taches', 'à pois', 'à rayures', 'à reflets', 'en damier', 'zébrée', 'mouchetée fin', 'marbrée'],
+        finish: ['', 'givrée', 'moussue', 'étincelante', 'vernie', 'fleurie'],
     };
     const l = G.looksOf(g);
     const parts = [L.size[l.size]];
     if (l.color) parts.push(L.color[l.color]);
     if (l.pattern) parts.push(L.pattern[l.pattern]);
+    if (l.finish) parts.push(L.finish[l.finish]);
     if (l.halo) parts.push('auréolée');
     return parts.join(', ');
 }

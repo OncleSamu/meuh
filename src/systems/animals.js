@@ -11,7 +11,7 @@ import { alpineMult, themeAnimalMult, isAway } from './port.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
 import { fmt } from '../core/format.js';
-import { wildAnimal, animalSpeedGene, animalYieldGene, animalQuality, animalSaves } from './genetics.js';
+import { wildAnimal, animalSpeedGene, animalYieldGene, animalQuality, animalSaves, animalCurious } from './genetics.js';
 import { addQuality } from './farm.js';
 import { wishAnimals } from './night.js';
 import { troughBonus } from './buildings.js';
@@ -99,6 +99,8 @@ export function collectAnimal(a) {
             addMastery(d.extra, extra);
         }
     }
+    // 1.22 : une bête curieuse trouve parfois un petit trésor
+    if (animalCurious(a)) rollRare(1);
     const xp = d.xp * a.stack;
     a.stack = 0;
     return { qty, xp, extra, extraId: d.extra };

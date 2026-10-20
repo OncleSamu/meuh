@@ -26,6 +26,11 @@ import {
     SALON_PERIOD,
     FEATURES,
     featuresOf,
+    extraBase,
+    EXTRA_FX as FX,
+    LOOK_WEIGHT,
+    FINISH_CHANCE,
+    FINISH_SEASON,
 } from '../data/genetics.js';
 import { RARE } from '../data/commerce.js';
 import { spend, earn, addXp } from './player.js';
@@ -35,10 +40,16 @@ import { placeAnimal, herdFull } from './pastures.js';
 import { unitPrice } from './market.js';
 import { tip } from './tips.js';
 import { domStepSum } from './estate.js';
+import { season } from './world.js';
 
 export const FLAVOR_IDS = PLANT_TRAITS.filter(t => t.flavor).map(t => t.id);
 export const PLANT_IDS = PLANT_TRAITS.map(t => t.id);
 export const ANIMAL_IDS = ANIMAL_TRAITS.map(t => t.id);
+// les caractères « de base » (hors discrets 1.22) servent aux scores, aux buts et à la valeur
+export const CORE_PLANT = PLANT_TRAITS.filter(t => !t.extra).map(t => t.id);
+export const CORE_ANIMAL = ANIMAL_TRAITS.filter(t => !t.extra).map(t => t.id);
+const EXTRA_PLANT = PLANT_TRAITS.filter(t => t.extra).map(t => t.id);
+const EXTRA_ANIMAL = ANIMAL_TRAITS.filter(t => t.extra).map(t => t.id);
 
 // ---------------- ouverture ----------------
 export const plantLabOpen = () => projectDone(GX.plantProject);
@@ -77,6 +88,15 @@ export function ensureGenetics() {
         a.gen = a.gen || 0;
     });
     Object.values(G.races).forEach(r => addFeatures(r.g, r.type, false));
+    // 1.22 : caractères discrets et finitions pour les créations d'avant
+    state.animals.forEach(a => addExtras(a.g, EXTRA_ANIMAL, a.type));
+    Object.values(G.races).forEach(r => addExtras(r.g, EXTRA_ANIMAL, r.type));
+    Object.values(G.vars).forEach(v => addExtras(v.g, EXTRA_PLANT, v.g.form));
+}
+function addExtras(g, keys, id) {
+    if (!g || !g.t) return;
+    for (const k of keys) if (!g.t[k]) g.t[k] = pair(extraBase(k, id));
+    if (g.l && !g.l.finish) g.l.finish = pair(0);
 }
 
 // ---------------- génomes ----------------
@@ -85,7 +105,7 @@ const pair = (v, d = 1) => [
     [v, d],
 ];
 const clamp5 = v => Math.max(0, Math.min(5, v));
-const baseLooks = () => ({ size: pair(1), color: pair(0), pattern: pair(0) });
+const baseLooks = () => ({ size: pair(1), color: pair(0), pattern: pair(0), finish: pair(0) });
 
 // le génome sauvage d'une plante : ses saveurs de base, sans surprise
 export function wildPlant(id) {
@@ -93,6 +113,7 @@ export function wildPlant(id) {
     const t = {};
     FLAVOR_IDS.forEach((k, j) => (t[k] = pair(f[j])));
     Object.entries(PLANT_BASE).forEach(([k, v]) => (t[k] = pair(v)));
+    EXTRA_PLANT.forEach(k => (t[k] = pair(extraBase(k, id))));
     return { t, l: baseLooks(), form: id, halo: false };
 }
 
@@ -100,7 +121,8 @@ export function wildPlant(id) {
 export function wildAnimal(type, vary) {
     const b = ANIMAL_BASE[type] || [2, 2, 2, 2, 2, 2, 2];
     const t = {};
-    ANIMAL_IDS.forEach((k, j) => {
+    EXTRA_ANIMAL.forEach(k => (t[k] = pair(extraBase(k, type))));
+    CORE_ANIMAL.forEach((k, j) => {
         const v = b[j];
         if (!vary) return (t[k] = pair(v));
         const alt = Math.random() < 0.35 ? clamp5(v + (Math.random() < 0.5 ? -1 : 1)) : v;
@@ -132,7 +154,29 @@ export const featureLooks = (g, type) => featuresOf(type).map(k => featureOf(g, 
 export const express = p => (p[0][1] !== p[1][1] ? (p[0][1] ? p[0][0] : p[1][0]) : Math.round((p[0][0] + p[1][0]) / 2));
 export const expressLook = p => (p[0][1] !== p[1][1] ? (p[0][1] ? p[0][0] : p[1][0]) : Math.max(p[0][0], p[1][0]));
 export const traitOf = (g, k) => (g.t[k] ? express(g.t[k]) : 0);
-export const looksOf = g => ({ size: expressLook(g.l.size), color: expressLook(g.l.color), pattern: expressLook(g.l.pattern), halo: !!g.halo });
+export const looksOf = g => ({
+    size: expressLook(g.l.size),
+    color: expressLook(g.l.color),
+    pattern: expressLook(g.l.pattern),
+    finish: g.l.finish ? expressLook(g.l.finish) : 0,
+    halo: !!g.halo,
+});
+// tirage pondéré d'une apparence (les plus rares tombent moins) ; le gros fruit ne concerne que les plantes
+const lookPick = (k, n, plant) => {
+    const w = Array.from({ length: n }, (_, i) => (LOOK_WEIGHT[k] && LOOK_WEIGHT[k][i] !== undefined ? LOOK_WEIGHT[k][i] : 3));
+    if (k === 'size' && !plant) w[6] = 0;
+    let r = Math.random() * w.reduce((a, b) => a + b, 0);
+    for (let i = 0; i < n; i++) if ((r -= w[i]) < 0) return i;
+    return 0;
+};
+// une finition, avec un coup de pouce à celle de la saison
+function finishPick() {
+    const fav = FINISH_SEASON[season().id];
+    const w = [0, 1, 1, 1, 1, 1].map((x, i) => (i === fav ? 3 : x));
+    let r = Math.random() * w.reduce((a, b) => a + b, 0);
+    for (let i = 0; i < w.length; i++) if ((r -= w[i]) < 0) return i;
+    return 1;
+}
 export const homozygous = p => p[0][0] === p[1][0];
 // part des gènes « fixés » (deux versions identiques)
 export function stability(g) {
@@ -153,7 +197,10 @@ export function crossGenomes(A, B, rate = GX.mutation) {
     const t = {},
         l = {};
     for (const k of Object.keys(A.t)) t[k] = [pick(A.t[k]), pick(B.t[k] || A.t[k])];
-    for (const k of Object.keys(A.l)) l[k] = [pick(A.l[k]), pick(B.l[k] || A.l[k])];
+    for (const k of new Set([...Object.keys(A.l), ...Object.keys(B.l)])) {
+        const pa = A.l[k] || (k === 'finish' ? pair(0) : B.l[k]);
+        l[k] = [pick(pa), pick(B.l[k] || pa)];
+    }
     const child = {
         t,
         l,
@@ -165,9 +212,12 @@ export function crossGenomes(A, B, rate = GX.mutation) {
         mutated = true;
         if (Math.random() < 0.2) child.halo = true;
         else if (Math.random() < 0.35) {
-            const k = pickRand(Object.keys(child.l));
+            // les finitions sont rares ; sinon une apparence, tirée selon sa rareté
+            const fin = Math.random() < FINISH_CHANCE;
+            const k = fin ? 'finish' : pickRand(Object.keys(child.l).filter(x => x !== 'finish'));
             const n = (LOOKS[k] || FEATURES[k].list).length;
-            child.l[k][Math.random() < 0.5 ? 0 : 1] = [Math.floor(Math.random() * n), Math.random() < 0.5 ? 1 : 0];
+            const i = fin ? finishPick() : LOOKS[k] ? lookPick(k, n, !!A.form) : Math.floor(Math.random() * n);
+            child.l[k][Math.random() < 0.5 ? 0 : 1] = [i, Math.random() < 0.5 ? 1 : 0];
         } else {
             const k = pickRand(Object.keys(t));
             const j = Math.random() < 0.5 ? 0 : 1;
@@ -192,7 +242,7 @@ export function crossPreview(A, B, kind = 'plant', n = 300) {
     const sig = g => keys.map(k => traitOf(g, k)).join('');
     const sa = sig(A),
         sb = sig(B);
-    const goal = g => keys.filter(k => (kind === 'plant' ? FLAVOR_IDS.includes(k) : true)).reduce((x, k) => x + traitOf(g, k), 0);
+    const goal = g => keys.filter(k => (kind === 'plant' ? FLAVOR_IDS.includes(k) : CORE_ANIMAL.includes(k))).reduce((x, k) => x + traitOf(g, k), 0);
     const best = Math.max(goal(A), goal(B));
     for (let j = 0; j < n; j++) {
         const { g, mutated } = crossGenomes(A, B, mutationRate());
@@ -483,6 +533,7 @@ export function junkVarieties() {
             !v.g.halo &&
             !(G.stock[v.id] > 0) &&
             flavorGain(v.g) === 0 &&
+            extraGain(v.g) === 0 &&
             (!goalOf() || goalScore(v.g) < 0.6) &&
             now() - (v.born || 0) > 10 * 60 * 1000,
     );
@@ -533,7 +584,7 @@ export function buyVarietySeeds(id, n = 5, at) {
 // les gènes de culture jouent sur la pousse, la soif, la saison et le rendement
 export const varGrowth = vid => {
     const v = state.genetics && state.genetics.vars[vid];
-    return v ? 1 + (traitOf(v.g, 'speed') - 2) * GX.geneSpeed : 1;
+    return v ? (1 + (traitOf(v.g, 'speed') - 2) * GX.geneSpeed) / (1 + traitOf(v.g, 'late') * FX.lateTime) : 1;
 };
 export const varHardy = vid => {
     const v = state.genetics && state.genetics.vars[vid];
@@ -545,8 +596,25 @@ export const varSelfWater = vid => {
 };
 export const varExtra = vid => {
     const v = state.genetics && state.genetics.vars[vid];
-    return v && Math.random() < Math.max(0, traitOf(v.g, 'yield') - 2) * GX.geneYield ? 1 : 0;
+    if (!v) return 0;
+    let n = Math.random() < Math.max(0, traitOf(v.g, 'yield') - 2) * GX.geneYield ? 1 : 0;
+    if (Math.random() < traitOf(v.g, 'calibre') * FX.calibre) n++;
+    return n;
 };
+// 1.22 : caractères discrets des plantes (un point = quelques pour cent)
+const varTrait = (vid, k) => {
+    const v = state.genetics && state.genetics.vars[vid];
+    return v ? traitOf(v.g, k) : 0;
+};
+export const varRegrow = vid => Math.random() < varTrait(vid, 'regrow') * FX.regrow;
+export const varPestGuard = vid => Math.random() < varTrait(vid, 'pest') * FX.pest;
+// qualité : la maturation lente améliore les chances, le gros calibre les réduit un peu
+export const varQuality = vid => varTrait(vid, 'late') * FX.lateQ - varTrait(vid, 'calibre') * FX.calibreQ;
+export const animalPestGuard = a => Math.random() < animalTrait(a, 'health') * FX.health;
+export const animalCurious = a => Math.random() < animalTrait(a, 'curious') * FX.curious;
+export const animalFertile = (a, b) => ((animalTrait(a, 'fertile') + animalTrait(b, 'fertile')) / 2) * FX.fertile;
+// une variété qui n'a rien de plus que son espèce (saveurs ou caractères discrets)
+export const extraGain = g => EXTRA_PLANT.reduce((x, k) => x + Math.max(0, traitOf(g, k) - extraBase(k, g.form)), 0);
 
 // prendre une graine de variété pour semer ; renvoie l'espèce à planter, ou null
 export function takeVarSeed(vid) {
@@ -595,7 +663,7 @@ export function harvestVariety(vid, qty) {
     const v = G.vars[vid];
     if (!v) return;
     G.stock[vid] = (G.stock[vid] || 0) + qty;
-    if (Math.random() < GX.seedDrop) G.seeds[vid] = (G.seeds[vid] || 0) + 1;
+    if (Math.random() < GX.seedDrop + varTrait(vid, 'seedy') * FX.seedy) G.seeds[vid] = (G.seeds[vid] || 0) + 1;
 }
 
 // les produits de variété font partie du stock de l'espèce : quand le stock baisse, ils partent en dernier
@@ -706,8 +774,8 @@ export function takeIngredients(rid) {
 }
 
 // ---------------- les bêtes ----------------
-export const animalTrait = (a, k) => (a && a.g ? traitOf(a.g, k) : (ANIMAL_BASE[a.type] || [])[ANIMAL_IDS.indexOf(k)] || 2);
-const animalBase = (a, k) => (ANIMAL_BASE[a.type] || [])[ANIMAL_IDS.indexOf(k)] || 2;
+const animalBase = (a, k) => (EXTRA_ANIMAL.includes(k) ? extraBase(k, a.type) : (ANIMAL_BASE[a.type] || [])[CORE_ANIMAL.indexOf(k)] || 2);
+export const animalTrait = (a, k) => (a && a.g && a.g.t[k] ? traitOf(a.g, k) : animalBase(a, k));
 export const animalSpeedGene = a => 1 + (animalTrait(a, 'speed') - 2) * 0.05;
 export const animalYieldGene = a => Math.max(0, animalTrait(a, 'yield') - 2) * 0.05;
 export const animalSaves = a => Math.random() < Math.max(0, animalTrait(a, 'appetite') - 2) * 0.07;
@@ -719,7 +787,7 @@ export function animalQuality(a) {
     const r = Math.random();
     return r < gain * 0.08 ? 2 : r < gain * 0.2 ? 1 : 0;
 }
-export const animalGain = a => ANIMAL_IDS.reduce((x, k) => x + Math.max(0, animalTrait(a, k) - animalBase(a, k)), 0);
+export const animalGain = a => CORE_ANIMAL.reduce((x, k) => x + Math.max(0, animalTrait(a, k) - animalBase(a, k)), 0);
 
 export const breedable = (a, b) => a && b && a !== b && a.type === b.type && isAdult(a) && isAdult(b) && !a.sick && !b.sick;
 export const animalByUid = uid => state.animals.find(a => a.uid === uid);
@@ -780,7 +848,7 @@ export function breedTick() {
         const a = animalByUid(c.a),
             b = animalByUid(c.b);
         if (!a || !b) continue;
-        const n = Math.random() < GX.twins ? 2 : 1;
+        const n = Math.random() < GX.twins + animalFertile(a, b) ? 2 : 1;
         const born = [];
         for (let j = 0; j < n && !herdFull(); j++) born.push(birth(a, b, c.type));
         if (!born.length) continue;
@@ -947,7 +1015,9 @@ export function salonScore(crit, target) {
     const g = target.g;
     if (crit.trait === 'looks') {
         const l = looksOf(g);
-        const s = (l.size === 3 ? 2 : l.size === 2 ? 1 : 0) + (l.color ? 1.2 : 0) + (l.pattern ? 1 : 0) + (l.halo ? 1.5 : 0);
+        // 1.22 : les apparences rares et les finitions comptent davantage
+        const sz = l.size === 3 || (l.size === 6 && g.form) ? 2 : l.size === 2 || l.size === 5 ? 1 : 0;
+        const s = sz + (l.color >= 9 ? 1.6 : l.color ? 1.2 : 0) + (l.pattern >= 8 ? 1.3 : l.pattern ? 1 : 0) + (l.finish ? 1.5 : 0) + (l.halo ? 1.5 : 0);
         return Math.round(s * 10) / 10;
     }
     // cornes et toison : plus le trait est marqué, mieux c'est, puis la robustesse ou la douceur départagent

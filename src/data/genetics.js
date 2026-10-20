@@ -13,6 +13,12 @@ export const PLANT_TRAITS = [
     { id: 'drought', name: 'Résiste à la soif', icon: ['ui', 'drop'] },
     { id: 'hardy', name: 'Rusticité', icon: ['ui', 'w_snow'] },
     { id: 'yield', name: 'Rendement', icon: ['ui', 'basket'] },
+    // 1.22 : caractères discrets, à 0 chez les espèces sauvages (sauf quelques-unes), qui se cultivent par croisement
+    { id: 'regrow', name: 'Repousse', icon: ['ui', 'loop'], extra: true, hint: 'la plante repousse après la récolte' },
+    { id: 'late', name: 'Maturation lente', icon: ['ui', 'star'], extra: true, hint: 'plus longue à pousser, plus souvent en argent ou en or' },
+    { id: 'pest', name: 'Anti-nuisibles', icon: ['ui', 'pest'], extra: true, hint: 'moins de pucerons et de corbeaux' },
+    { id: 'seedy', name: 'Graine généreuse', icon: ['ui', 'packet'], extra: true, hint: 'plus de graines à la récolte' },
+    { id: 'calibre', name: 'Calibre', icon: ['ui', 'yield'], extra: true, hint: 'parfois une unité de plus, mais un peu moins de qualité' },
 ];
 export const ANIMAL_TRAITS = [
     { id: 'rich', name: 'Richesse', icon: ['item', 'cream'], flavor: true },
@@ -22,13 +28,26 @@ export const ANIMAL_TRAITS = [
     { id: 'speed', name: 'Vitesse', icon: ['ui', 'clock'] },
     { id: 'appetite', name: 'Petit appétit', icon: ['item', 'feed'] },
     { id: 'robust', name: 'Robustesse', icon: ['ui', 'thermo'] },
+    { id: 'fertile', name: 'Fécondité', icon: ['ui', 'remTwin'], extra: true, hint: 'plus de jumeaux à l’étable de sélection' },
+    { id: 'health', name: 'Santé', icon: ['ui', 'sick'], extra: true, hint: 'tombe moins souvent malade' },
+    { id: 'curious', name: 'Curiosité', icon: ['ui', 'sparkle'], extra: true, hint: 'trouve parfois un petit trésor à la collecte' },
 ];
 // les gènes d'apparence : jamais choisis, ils découlent des croisements
 export const LOOKS = {
-    size: ['Petite', 'Normale', 'Grosse', 'Géante', 'Fine'],
-    color: ['Naturelle', 'Rouge', 'Dorée', 'Violette', 'Blanche', 'Sombre', 'Bleutée'],
-    pattern: ['Unie', 'Taches', 'Pois', 'Rayures', 'Reflets'],
+    size: ['Petite', 'Normale', 'Grosse', 'Géante', 'Fine', 'Naine', 'Gros fruit'],
+    color: ['Naturelle', 'Rouge', 'Dorée', 'Violette', 'Blanche', 'Sombre', 'Bleutée', 'Rose', 'Orange vif', 'Argentée', 'Cuivrée', 'Dégradée'],
+    pattern: ['Unie', 'Taches', 'Pois', 'Rayures', 'Reflets', 'Damier', 'Zébrures', 'Mouchetée fin', 'Marbrée'],
+    finish: ['Aucune', 'Givrée', 'Moussue', 'Étincelles', 'Vernie', 'Fleurie'],
 };
+// 1.22 : la rareté des apparences à la mutation (poids ; les absentes valent 3). Les finitions sont rares et uniques.
+export const LOOK_WEIGHT = {
+    size: { 0: 3, 1: 3, 2: 3, 3: 2, 4: 3, 5: 1, 6: 0.5 },
+    color: { 7: 2, 8: 2, 9: 1, 10: 1, 11: 1 },
+    pattern: { 5: 2, 6: 2, 7: 2, 8: 1 },
+};
+export const FINISH_CHANCE = 0.25; // part des mutations d'apparence qui donnent une finition
+// finition favorisée par la saison (×3) : l'hiver givrée, le printemps fleurie, l'été étincelles, l'automne moussue
+export const FINISH_SEASON = { hiver: 1, printemps: 5, ete: 3, automne: 2 };
 
 // les traits des animaux (1.2) : cornes, oreilles, toison ; seulement pour les espèces où ils se voient.
 // L'indice 0 est l'allure naturelle de l'espèce. Comme les autres apparences, jamais choisis.
@@ -130,6 +149,25 @@ const F = {
 export const FLAVORS = Object.fromEntries(Object.entries(F).map(([id, s]) => [id, [...s].map(Number)]));
 // qualités de culture de base (pousse, soif, rusticité, rendement) : 2 partout
 export const PLANT_BASE = { speed: 2, drought: 2, hardy: 2, yield: 2 };
+// 1.22 : caractères discrets (0 par défaut) ; quelques espèces ont déjà de la repousse
+export const EXTRA_DEFAULT = { regrow: 0, late: 0, pest: 0, seedy: 0, calibre: 0, fertile: 0, health: 0, curious: 0 };
+export const EXTRA_SPECIES = {
+    regrow: { tomato: 3, pepper: 3, eggplant: 2, strawberry: 2, raspberry: 3, blueberry: 2, zucchini: 2, cucumber: 2, espelette: 3, greenBean: 2, peas: 2 },
+};
+export const extraBase = (k, id) => (EXTRA_SPECIES[k] && EXTRA_SPECIES[k][id]) || EXTRA_DEFAULT[k] || 0;
+// effets par point
+export const EXTRA_FX = {
+    regrow: 0.08, // chance de rester en place et de repousser
+    lateTime: 0.06, // temps de pousse en plus
+    lateQ: 0.04, // chance d'argent/or en plus
+    pest: 0.12, // nuisibles en moins
+    seedy: 0.06, // chance de graine en plus
+    calibre: 0.08, // chance d'une unité de plus
+    calibreQ: 0.04, // chance de qualité en moins
+    fertile: 0.05,
+    health: 0.12,
+    curious: 0.03,
+};
 
 // ---------------- caractères de base des animaux ----------------
 // richesse, douceur, arôme, rendement, vitesse, appétit, robustesse

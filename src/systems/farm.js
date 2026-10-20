@@ -18,7 +18,7 @@ import { collect, record } from './book.js';
 import { sellPrice, hasMats, matMissing, payMats } from './market.js';
 import { challengeOn } from './prestige.js';
 import { eventProgress } from './events.js';
-import { varGrowth, varHardy, varExtra, varSelfWater, takeVarSeed, harvestVariety, preferSeed } from './genetics.js';
+import { varGrowth, varHardy, varExtra, varSelfWater, varRegrow, varQuality, takeVarSeed, harvestVariety, preferSeed } from './genetics.js';
 import { wishGold, fireflyHarvest } from './night.js';
 import { ghExtra } from './buildings.js';
 
@@ -565,6 +565,7 @@ export function rollQuality(plot) {
     if (gi >= 0 && nearDeco(gi, 'flowers')) x += 0.1;
     if (gi >= 0 && nearDeco(gi, 'oakBench')) x += 0.1;
     x += Math.min(0.1, state.prestige.rubans * 0.01);
+    if (plot.v) x += varQuality(plot.v);
     const r = Math.random();
     return r < x * 0.35 * rainbowGold() ? 2 : r < x ? 1 : 0;
 }
@@ -591,6 +592,11 @@ export function harvestPlot(plot) {
         plot.isReady = false;
         plot.isWatered = inGreenhouse(plot);
         plot.growProgress = (d.time / speedMult()) * 0.5;
+    } else if (vid && varRegrow(vid)) {
+        // 1.22 : la plante repousse toute seule
+        plot.isWatered = inGreenhouse(plot) || varSelfWater(vid);
+        plot.isReady = false;
+        plot.growProgress = 0;
     } else {
         plot.itemId = null;
         plot.v = null;

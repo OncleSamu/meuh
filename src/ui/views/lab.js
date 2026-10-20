@@ -6,7 +6,7 @@ import { fmt } from '../../core/format.js';
 import { on, toast } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
 import { ANIMALS } from '../../data/animals.js';
-import { PLANT_TRAITS, ANIMAL_TRAITS, FLAVORS, ANIMAL_BASE, GENETICS as GX } from '../../data/genetics.js';
+import { PLANT_TRAITS, ANIMAL_TRAITS, FLAVORS, ANIMAL_BASE, extraBase, GENETICS as GX } from '../../data/genetics.js';
 import { PROJECTS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc, QUIET } from '../dom.js';
@@ -36,18 +36,20 @@ function traitRow(t, g, base, analyzed) {
     const p = g.t[t.id];
     if (!p) return '';
     const v = G.express(p);
+    // les caractères discrets n'apparaissent que s'ils sont présents (ou cachés, une fois analysés)
+    if (t.extra && !v && !(analyzed && (p[0][0] || p[1][0]))) return '';
     const pips = Array.from({ length: 5 }, (_, k) => `<i class="${k < v ? (k >= base ? 'on up' : 'on') : ''}"></i>`).join('');
     const hid = analyzed ? `<small class="tr-al">${p[0][0]}${p[0][1] ? '' : 'r'} · ${p[1][0]}${p[1][1] ? '' : 'r'}</small>` : '<small class="tr-al">?</small>';
-    return `<div class="tr" title="${t.name}">${ico(t.icon)}<span class="tr-name">${t.name}</span><span class="tr-pips">${pips}</span>${hid}</div>`;
+    return `<div class="tr" title="${t.name}${t.hint ? ' : ' + t.hint : ''}">${ico(t.icon)}<span class="tr-name">${t.name}</span><span class="tr-pips">${pips}</span>${hid}</div>`;
 }
 export function plantTraits(g, analyzed, keys) {
     const base = FLAVORS[g.form] || [0, 0, 0, 0, 0];
     const list = PLANT_TRAITS.filter(t => !keys || keys.includes(t.id));
-    return `<div class="traits">${list.map(t => traitRow(t, g, t.flavor ? base[G.FLAVOR_IDS.indexOf(t.id)] : 2, analyzed)).join('')}</div>`;
+    return `<div class="traits">${list.map(t => traitRow(t, g, t.flavor ? base[G.FLAVOR_IDS.indexOf(t.id)] : t.extra ? extraBase(t.id, g.form) : 2, analyzed)).join('')}</div>`;
 }
 export function animalTraits(a) {
     const base = ANIMAL_BASE[a.type] || [];
-    return `<div class="traits">${ANIMAL_TRAITS.map((t, j) => traitRow(t, a.g, base[j] || 2, a.analyzed)).join('')}</div>`;
+    return `<div class="traits">${ANIMAL_TRAITS.map((t, j) => traitRow(t, a.g, t.extra ? extraBase(t.id, a.type) : base[j] || 2, a.analyzed)).join('')}</div>`;
 }
 // 1.7 : les cinq saveurs en petites barres, lisibles d'un coup d'œil
 export function flavorMini(g) {
@@ -208,10 +210,12 @@ function breedCard() {
     if (ready) {
         const P = G.crossPreview(A.g, B.g, 'animal', 200);
         preview = `<div class="lab-odds">${chance('Mieux que les parents', P.better, 'now')}${chance('Comme un parent', P.back)}${chance('Mutation', P.mutation, 'stock')}</div>
-            <div class="lab-ranges">${ANIMAL_TRAITS.map(t => {
-                const [lo, hi] = P.range[t.id];
-                return `<span class="chip">${ico(t.icon)}${lo === hi ? lo : `${lo} à ${hi}`}</span>`;
-            }).join('')}</div>`;
+            <div class="lab-ranges">${ANIMAL_TRAITS.filter(t => !t.extra)
+                .map(t => {
+                    const [lo, hi] = P.range[t.id];
+                    return `<span class="chip">${ico(t.icon)}${lo === hi ? lo : `${lo} à ${hi}`}</span>`;
+                })
+                .join('')}</div>`;
     }
     return `<div class="card lab-card">${head}${running}
         <div class="lab-pair">${parentSlot('a', sel.a, 'animal')}<span class="lab-x">×</span>${parentSlot('b', sel.b, 'animal')}</div>

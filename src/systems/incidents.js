@@ -1,5 +1,5 @@
 // Les imprévus (corbeau, pucerons, bête malade, acheteur pressé) et les sols du champ.
-import { animalRobust } from './genetics.js';
+import { animalRobust, animalPestGuard, varPestGuard } from './genetics.js';
 import { state, scaleLvl } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view, farmShown } from '../core/view.js';
@@ -41,9 +41,9 @@ export function incidentTick() {
 export function startIncident(force) {
     const t = now();
     const growing = state.grid.map((p, i) => [p, i]).filter(([p]) => p.isUnlocked && p.itemId && !p.isReady && ITEMS[p.itemId].type === 'crop');
-    const adults = state.animals.filter(a => isAdult(a) && !a.sick && !(animalRobust(a) && Math.random() < 0.7));
+    const adults = state.animals.filter(a => isAdult(a) && !a.sick && !(animalRobust(a) && Math.random() < 0.7) && !animalPestGuard(a));
     // le corbeau ne vient que si vous êtes au champ (il faut le chasser en 15 secondes)
-    const crowSpots = growing.filter(([, i]) => !nearDeco(i, 'birdhouse'));
+    const crowSpots = growing.filter(([p, i]) => !nearDeco(i, 'birdhouse') && !(p.v && varPestGuard(p.v)));
     const scared = (state.grid.some(p => p.deco === 'scarecrow') && Math.random() < 0.75) || (owlHere() && Math.random() < NIGHT.owlScare);
     const kinds = [];
     if (farmShown() && crowSpots.length && !scared) kinds.push('crow', 'crow');
@@ -66,7 +66,7 @@ export function startIncident(force) {
         sfx('caw');
     } else if (type === 'aphids') {
         // les canards de la mare mangent les pucerons des parcelles voisines
-        const prey = growing.filter(([, j]) => !nearDeco(j, 'duckPond'));
+        const prey = growing.filter(([p, j]) => !nearDeco(j, 'duckPond') && !(p.v && varPestGuard(p.v)));
         if (!prey.length) return false;
         const [p, i] = pickRand(prey);
         p.pest = true;
