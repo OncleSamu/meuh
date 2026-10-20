@@ -289,6 +289,7 @@ export function renderFarm(el) {
         ['gh', state.greenhouse.built ? GH_BOX : null],
         ['yard', farmyardHtml()],
         ['replant', toggle('Replanter automatiquement après la récolte', state.settings.autoReplant, 'setting', { key: 'autoReplant' })],
+        ['seeder', state.upgrades.seeder ? toggle('Semoir : planter toute la rangée', state.settings.seeder !== false, 'setting', { key: 'seeder' }) : null],
         ['hint', hint('Astuce : gardez le doigt appuyé et glissez sur les parcelles pour labourer, planter, arroser ou récolter d’un seul geste.')],
     ]);
     renderPlots();

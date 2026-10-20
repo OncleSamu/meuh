@@ -242,7 +242,7 @@ export function doPlotAction(i, action, at) {
             sfx('plant');
             burst(at, 'dirt', 5, 6);
             buzz(6);
-            if (state.upgrades.seeder && i < 1000 && d.type === 'crop') {
+            if (state.upgrades.seeder && state.settings.seeder !== false && i < 1000 && d.type === 'crop') {
                 const n = seedRow(i, tool);
                 if (n) {
                     float(at, [['ui', 'seeder'], `+${n} semées`], 'gold', -44);
