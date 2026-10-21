@@ -96,6 +96,8 @@ for (const [name, age] of [
 G.ensureStud();
 G.studTick();
 G.normalizeState();
+state.tutorial = { ...(state.tutorial || {}), done: true };
+for (const k of ['plank', 'beam', 'nail', 'stone', 'paint', 'wood']) state.inventory[k] = Math.min(state.inventory[k], 60);
 // la grange ne doit pas déborder : on ramène le stock à 15 de chaque (sauf l'équipement et les matériaux)
 for (const k of Object.keys(state.inventory))
     if (!EQUIP.items[k] && !['plank', 'beam', 'nail', 'stone', 'paint', 'wood'].includes(k)) state.inventory[k] = Math.min(state.inventory[k], 15);
