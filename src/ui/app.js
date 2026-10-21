@@ -110,7 +110,10 @@ export function go(path, opts = {}) {
         openSheet(path.slice(6), opts);
         return;
     }
-    const [tab, sub0] = path.split('/');
+    // « market/shop#neighbors » : ouvre le volet sur un rayon (ui.sel[volet])
+    const [path0, hash] = path.split('#');
+    const [tab, sub0] = path0.split('/');
+    if (hash && sub0) ui.sel[sub0] = hash;
     let sub = sub0;
     // écran large : l'onglet Ferme montre la nature à droite (le champ est toujours à gauche)
     if (view.wide && tab === 'farm' && !sub) sub = !subLocked('farm', 'orchard') ? 'orchard' : !subLocked('farm', 'nature') ? 'nature' : sub;

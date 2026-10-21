@@ -124,6 +124,8 @@ export function todoList() {
     }
     const proj = G.storyClaimable();
     if (proj) push('village/village', ['ui', 'village'], `${proj} chantier${s(proj)} à terminer`, proj);
+    const asks = G.asksReady();
+    add('market/shop#neighbors', ['ui', 'nmCaisse'], `${asks} livraison${s(asks)} des voisines`, asks);
     if (state.merchant.status === 'here') push('market/shop', ['ui', 'merchant'], 'Le marchand est là', 0);
     const dr = G.defiReady();
     if (dr) push('village/orders', ['ui', 'cupGold'], `Grand défi : ${dr} étape${s(dr)} à faire avancer`, dr);
@@ -185,7 +187,8 @@ export function todoCounts(list) {
         // une pastille compte les choses à faire, pas les objets : « 35 à récolter » compte pour une
         const n = t.n ? 1 : 0;
         c[tab] = (c[tab] || 0) + n;
-        if (t.go.includes('/')) c[t.go] = (c[t.go] || 0) + n;
+        const path = t.go.split('#')[0];
+        if (path.includes('/')) c[path] = (c[path] || 0) + n;
     }
     // la maison et la grange s'ouvrent depuis la ferme : pas dans le menu
     return c;

@@ -10,12 +10,14 @@ import { SEASONS } from '../../data/world.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc, QUIET } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
-import { btn, card, chip, hint, section, empty, toggle, pips, timer } from '../kit.js';
+import { btn, card, chip, hint, section, empty, toggle, pips, timer, hearts } from '../kit.js';
 import { defineView, ui } from '../app.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 import { pinBar } from './common.js';
 import { askBuy } from '../sheets/askbuy.js';
 import { merchantCard } from './village.js';
+import { NMARKET } from '../../data/commerce.js';
+import { RIVALS } from '../../data/village.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const matChips = m =>
@@ -206,12 +208,62 @@ function decos() {
     return list + dog;
 }
 
+// ---------------- 1.26 : les étals des voisines et la demande d'achat ----------------
+function neighborsList() {
+    if (!G.nmarketOpen()) return empty(`Les fermes voisines ouvrent leurs étals au niveau ${NMARKET.lvl}.`);
+    G.nmarketTick();
+    const m = G.ensureNMarket();
+    const head = `<div class="card nm-head"><div class="card-main"><div class="card-title">Le marché des voisines</div><div class="card-sub">Nouveaux étals dans ${timer(G.nmarketRenewAt(), 'b')} · plus d’offres et de meilleurs prix avec l’amitié</div></div></div>`;
+    const stalls = m.stalls
+        .map(st => {
+            const r = RIVALS[st.k],
+                h = G.nHearts(st.k);
+            const [c1, c2] = NMARKET.colors[st.k];
+            const offers = st.offers
+                .map(
+                    (o, n) =>
+                        `<div class="offer nm-offer${o.sold ? ' sold' : ''}${o.gold ? ' gold' : ''}"><span class="offer-art">${art('item', o.id)}${o.gold ? qStar(2) : ''}</span><b>${o.qty} × ${ITEMS[o.id].name}</b>${o.gold ? '<small>Coup de cœur : qualité or</small>' : ''}${
+                            o.sold
+                                ? '<small>Vendu</small>'
+                                : btn(`${fmt(o.price)}${COIN()}`, {
+                                      act: 'nmBuy',
+                                      data: { k: st.k, n },
+                                      kind: state.money >= o.price ? 'green' : '',
+                                      size: 'sm',
+                                      disabled: state.money < o.price,
+                                  })
+                        }</div>`,
+                )
+                .join('');
+            return `<div class="card nm-stall" style="--a1:${c1};--a2:${c2}"><div class="nm-awning"></div>
+                <div class="card-head"><div class="avatar sm">${art('villager', r.avatar)}</div><div class="card-main"><div class="card-title">${r.owner}</div><div class="card-sub">${r.name} · ${NMARKET.specs[st.k]}</div>${hearts(h)}</div>
+                <small class="nm-price${h >= 3 ? ' good' : ''}">${h >= 5 ? 'Prix d’amie' : h >= 3 ? 'Bons prix' : 'Prix normal'}</small></div>
+                <div class="offers">${offers || '<small>Rien à vendre pour l’instant : débloquez ses produits.</small>'}</div>
+                <div class="nm-loyal"><small>Fidélité</small><i><u style="width:${Math.round(G.loyaltyPct(st.k) * 100)}%"></u></i></div></div>`;
+        })
+        .join('');
+    const asks = m.asks
+        .map(
+            (a, n) =>
+                `<div class="card nm-ask${a.ready ? ' ready' : ''}"><span class="offer-art">${art('item', a.id)}</span><div class="card-main"><div class="card-title">${a.qty} × ${ITEMS[a.id].name}</div>
+                <div class="card-sub">${RIVALS[a.k].owner} · ${fmt(a.price)}${COIN()} à la livraison${a.ready ? '' : ` · ${timer(a.until)}`}</div></div>${
+                    a.ready
+                        ? btn('Récupérer', { act: 'nmCollect', data: { n }, kind: 'green', size: 'sm' })
+                        : btn('Annuler', { act: 'nmCancel', data: { n }, kind: 'ghost', size: 'sm' })
+                }</div>`,
+        )
+        .join('');
+    const askHead = `<div class="card nm-askhead"><span class="offer-art">${art('ui', 'nmDemande')}</span><div class="card-main"><div class="card-title">Demande d’achat</div><div class="card-sub">L’étal à l’envers : vous fixez votre prix, une voisine livre d’autant plus vite. ${m.asks.length}/${G.askSlots()} demandes.</div></div>${btn('Demander', { act: 'open', data: { sheet: 'nmAsk' }, kind: 'gold', size: 'sm', disabled: m.asks.length >= G.askSlots() })}</div>`;
+    return head + stalls + askHead + asks;
+}
+
 const CATS = [
     ['seeds', 'Graines', ['ui', 'packet'], seeds],
     ['animals', 'Animaux', ['animal', 'chicken'], animals],
     ['machines', 'Machines', ['machine', 'mill'], machines],
     ['gear', 'Équipement', ['ui', 'upgrade'], gear],
     ['decos', 'Décos', ['ui', 'flowers'], decos],
+    ['neighbors', 'Voisines', ['ui', 'nmEtal'], neighborsList],
 ];
 
 function renderShop(el) {
@@ -329,6 +381,37 @@ function renderSell(el) {
 }
 defineView('market/sell', renderSell);
 
+// ---------------- 1.26 : la demande d'achat ----------------
+const ASK_MULTS = [1.2, 1.5, 2, 2.5];
+defineSheet('nmAsk', {
+    title: `${ico(['ui', 'nmDemande'])}Demande d’achat`,
+    open(o) {
+        o.qty = 10;
+        o.mult = 1.5;
+    },
+    render(o) {
+        const ks = [0, 1, 2, 3].filter(k => G.specialtyOf(k).length);
+        if (!ks.includes(o.k)) o.k = ks[0];
+        const ids = G.specialtyOf(o.k);
+        const groups = `<div class="chips-row wrap nm-who">${ks.map(k => `<button class="pick-chip${o.k === k ? ' on' : ''}" data-act="nmWho" data-k="${k}"><i class="avatar xs">${art('villager', RIVALS[k].avatar)}</i>${RIVALS[k].owner}</button>`).join('')}</div>
+            <small class="nm-spec">${NMARKET.specs[o.k]}</small>
+            <div class="barn-goods">${ids.map(id => `<button class="bgood${o.id === id ? ' sel' : ''}" data-act="nmPick" data-id="${id}" title="${ITEMS[id].name}">${ico(['item', id])}<b>${state.inventory[id] || 0}</b></button>`).join('')}</div>`;
+        if (!o.id) return groups + '<p class="card-sub center">Choisissez le produit qu’il vous manque.</p>';
+        const k = G.sellerOf(o.id);
+        const max = G.askMaxQty(k);
+        o.qty = Math.max(1, Math.min(o.qty, max));
+        const price = G.askPrice(o.id, o.qty, o.mult);
+        const delay = G.askDelay(k, o.mult);
+        return `${groups}<div class="stall-form">
+            <div class="card-head">${ico(['item', o.id], 'ico big')}<div class="card-main"><div class="card-title">${ITEMS[o.id].name}</div><div class="card-sub">valeur ${fmt(ITEMS[o.id].sell)} · ${state.inventory[o.id] || 0} en stock · livré par ${RIVALS[k].owner}</div></div></div>
+            <div class="form-row"><span>Quantité</span><div class="stepper">${btn('', { act: 'nmQty', data: { d: -5 }, size: 'sm', icon: ['ui', 'minus'], title: 'Moins' })}<b>${o.qty}</b>${btn('', { act: 'nmQty', data: { d: 5 }, size: 'sm', icon: ['ui', 'plus'], title: 'Plus' })}${btn('Max', { act: 'nmQty', data: { d: 999 }, size: 'sm' })}</div></div>
+            <div class="form-row"><span>Votre prix</span><div class="chips-row nm-mult">${ASK_MULTS.map(m => `<button class="pick-chip${o.mult === m ? ' on' : ''}" data-act="nmMult" data-m="${m}">${String(m).replace('.', ',')} ×</button>`).join('')}</div></div>
+            <div class="stall-sum"><span><b>${fmt(price)}${COIN()}</b> à la livraison (max ${max})</span><small>Livraison dans ${delay >= 60 ? `${Math.floor(delay / 60)} h ${String(delay % 60).padStart(2, '0')}` : `${delay} min`} environ${G.nHearts(k) ? ` · amitié de ${RIVALS[k].owner} : −${Math.round(NMARKET.ask.heartCut * G.nHearts(k) * 100)} %` : ''}</small></div>
+        </div>`;
+    },
+    foot: o => (o.id ? btn('Envoyer la demande', { act: 'nmSend', kind: 'gold', wide: true, size: 'lg' }) : ''),
+});
+
 // ---------------- mettre en vente à l'étal ----------------
 const stallSum = (o, unit) =>
     `<span>${fmt(unit)}${COIN()} l’unité · <b>${fmt(unit * o.qty)}${COIN()}</b> en tout</span><small>${G.stallMood(o.ratio)} · un client vers ${Math.round(G.stallWait(o.ratio))} min</small>`;
@@ -364,6 +447,21 @@ export function setupMarket() {
     const so = () => sheetOpts('stall');
     actions({
         shopCat: (el, d) => (ui.sel.shop = d.c),
+        nmBuy: (el, d) => G.buyOffer(+d.k, +d.n, el),
+        nmCollect: (el, d) => G.collectAsk(+d.n, el),
+        nmCancel: (el, d) => G.cancelAsk(+d.n),
+        nmPick: (el, d) => (sheetOpts('nmAsk').id = d.id),
+        nmWho: (el, d) => (sheetOpts('nmAsk').k = +d.k),
+        nmQty: (el, d) => {
+            const o = sheetOpts('nmAsk');
+            const max = G.askMaxQty(G.sellerOf(o.id));
+            o.qty = +d.d === 999 ? max : Math.max(1, Math.min(max, o.qty + +d.d));
+        },
+        nmMult: (el, d) => (sheetOpts('nmAsk').mult = +d.m),
+        nmSend: () => {
+            const o = sheetOpts('nmAsk');
+            if (G.placeAsk(o.id, o.qty, o.mult)) closeSheet('nmAsk');
+        },
         buy: (el, d) =>
             d.type === 'machine'
                 ? askBuy(

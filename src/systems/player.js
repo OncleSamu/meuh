@@ -19,7 +19,7 @@ import { CAVE_LVL } from '../data/cave.js';
 import { HARAS_LVL } from '../data/haras.js';
 import { COMP_LVL } from '../data/companions.js';
 import { INCIDENT_LVL, RARE_EVENT_LVL } from '../data/surprises.js';
-import { CONTRACT_LVL, CONTEST_LVL, LEAGUES, CARGO, ARMAND } from '../data/commerce.js';
+import { CONTRACT_LVL, CONTEST_LVL, LEAGUES, CARGO, ARMAND, NMARKET } from '../data/commerce.js';
 import { DOMAINE_LVL } from '../data/domaine.js';
 import { DAILY_REWARDS, HOLIDAY_LVL } from '../data/world.js';
 import { BALANCE, MAX_LEVEL, RENOWN_XP, ACH_REWARDS, MEDALS, CAP_REQ, MASTERY_LVL, HOUSE, FARMHAND, ALBUM_LEVELS } from '../data/progress.js';
@@ -186,6 +186,8 @@ export function unlocksAt(lvl) {
             ['ui', 'house'],
             'L’amélioration du domaine : grange, cuisines, aide au champ, commerce, annexes, Armand, cargo, quai et réception (onglet Village)',
         );
+    if (lvl === NMARKET.lvl)
+        add(['ui', 'nmEtal'], 'Le marché des voisines : leurs étals et la demande d’achat, meilleurs avec l’amitié (Marché | Acheter, rayon Voisines)');
     if (lvl === COMP_LVL)
         add(
             ['ui', 'cpCarnet'],

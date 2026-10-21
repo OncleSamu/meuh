@@ -7,6 +7,11 @@ export const TIPS = {
         title: 'Les grandes écuries',
         text: 'Logez vos chevaux en boxes (onglet Animaux, volet Écuries). Brossez-les, nourrissez-les, puis entraînez-les : chaque séance coûte une pastille de forme, qui remonte toutes les 30 minutes. Chaque aptitude monte jusqu’à un plafond que fixe un gène du cheval : croisez au labo pour viser plus haut.',
     },
+    nmarket: {
+        icon: ['ui', 'nmEtal'],
+        title: 'Le marché des voisines',
+        text: 'Les quatre fermes voisines tiennent un étal (Marché | Acheter, rayon Voisines), renouvelé toutes les 4 heures. Plus elles vous aiment, plus elles proposent d’offres, de quantité et de bons prix. Il vous manque un produit ? Faites une demande d’achat : plus vous payez, plus vite elles livrent.',
+    },
     companions: {
         icon: ['ui', 'cpCarnet'],
         title: 'Les cultures compagnes',

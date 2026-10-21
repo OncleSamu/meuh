@@ -1,0 +1,149 @@
+/* 1.26 : le marché des voisines */
+.nm-stall {
+    position: relative;
+    padding-top: 22px;
+    overflow: hidden;
+}
+.nm-awning {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 16px;
+    border-bottom: 2px solid var(--ink);
+    background: repeating-linear-gradient(90deg, var(--a1) 0 18px, var(--a2) 18px 36px);
+}
+.nm-awning::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -8px;
+    height: 8px;
+    background:
+        radial-gradient(circle at 9px 0, var(--a1) 8px, transparent 9px) 0 0 / 36px 8px repeat-x,
+        radial-gradient(circle at 27px 0, var(--a2) 8px, transparent 9px) 0 0 / 36px 8px repeat-x;
+}
+.nm-stall .card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.nm-stall .hearts .ico {
+    width: 14px;
+    height: 14px;
+}
+.nm-price {
+    align-self: flex-start;
+    padding: 2px 8px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: #fff7e0;
+    font-weight: 800;
+    white-space: nowrap;
+}
+.nm-price.good {
+    background: #d9f2c4;
+}
+.nm-offer {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+}
+.nm-offer b {
+    line-height: 1.1;
+}
+.nm-offer.gold {
+    background: #fff1b8;
+    box-shadow: 0 0 0 2px var(--gold);
+}
+.nm-offer .offer-art {
+    position: relative;
+}
+.nm-offer .qstar {
+    position: absolute;
+    right: -4px;
+    bottom: -2px;
+    width: 18px;
+    height: 18px;
+}
+.nm-offer small {
+    font-size: 0.68rem;
+    opacity: 0.75;
+}
+.nm-loyal {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 0.75rem;
+}
+.nm-loyal i {
+    flex: 1;
+    height: 8px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: #fff;
+    overflow: hidden;
+}
+.nm-loyal u {
+    display: block;
+    height: 100%;
+    background: #e8364b;
+}
+.nm-askhead,
+.nm-ask {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.nm-askhead {
+    margin-top: 14px;
+    background: #fff7e0;
+}
+.nm-ask.ready {
+    background: #d9f2c4;
+}
+.nm-ask .card-main,
+.nm-askhead .card-main {
+    flex: 1;
+    min-width: 0;
+}
+.nm-group > small {
+    display: block;
+    margin: 4px 2px;
+    font-weight: 800;
+}
+.nm-group .barn-goods {
+    max-height: 18vh;
+    margin-bottom: 6px;
+}
+.nm-who {
+    margin-bottom: 6px;
+}
+.nm-who .pick-chip {
+    gap: 6px;
+}
+.avatar.xs {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.avatar.xs svg {
+    width: 100%;
+    height: 100%;
+}
+.nm-spec {
+    display: block;
+    margin: 0 2px 6px;
+    font-weight: 800;
+    opacity: 0.7;
+}
+.nm-mult {
+    gap: 4px;
+    flex-wrap: nowrap;
+}
+.nm-mult .pick-chip {
+    padding: 4px 8px;
+    min-width: 0;
+}

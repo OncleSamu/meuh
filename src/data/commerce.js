@@ -146,3 +146,41 @@ export const ARMAND = {
     xp: 0.35,
     mats: 3,
 };
+
+// ---------------- 1.26 : le marché des voisines (Marché › Acheter › Voisines) ----------------
+// chaque ferme voisine (même ordre que RIVALS) tient un étal ; l'amitié (0 à 5 cœurs) règle le nombre d'offres, la quantité et le prix
+export const NMARKET = {
+    lvl: 12,
+    every: 4 * 3600 * 1000, // les étals se renouvellent toutes les 4 heures réelles
+    price: [2.4, 2.2, 2.2, 1.9, 1.9, 1.6], // × la valeur du produit, selon les cœurs (jamais sous 1,6 : pas d'achat-revente)
+    offers: [2, 3, 3, 4, 5, 6],
+    qty: [0.4, 0.6, 0.6, 0.8, 0.9, 1.2], // part de la quantité de base
+    base: lvl => 500 + lvl * 110, // valeur d'une offre « pleine », en pièces de valeur
+    smallFirmin: 0.6, // les ingrédients d'atelier en plus petites quantités
+    loyalty: lvl => 2500 + lvl * 250, // pièces dépensées chez une voisine pour 1 point d'amitié
+    specs: ['Légumes et fruits', 'Lait, œufs, laine, miel', 'Poissons et viandes', 'Farine, huile, sucre, tissu'],
+    colors: [
+        ['#6cc04a', '#fff'],
+        ['#6ba3d6', '#fff'],
+        ['#e8364b', '#fff'],
+        ['#ffd23f', '#c8453a'],
+    ],
+    // l'atelier de Firmin : des ingrédients de base, jamais de plats
+    firmin: [
+        'flour',
+        'sugar',
+        'cornmeal',
+        'starch',
+        'buckwheatFlour',
+        'sunflowerOil',
+        'soyOil',
+        'oliveOil',
+        'walnutOil',
+        'hazelnutOil',
+        'cloth',
+        'cottonThread',
+        'linen',
+    ],
+    // la demande d'achat : le prix choisi règle le délai de livraison
+    ask: { min: 1.2, max: 2.5, slow: 180, fast: 15, heartCut: 0.05, slots: [2, 2, 2, 3, 3, 4], maxQty: h => 10 + 6 * h },
+};

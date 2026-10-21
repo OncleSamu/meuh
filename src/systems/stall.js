@@ -215,7 +215,7 @@ export function helpNeighbor(k, at) {
 }
 
 // Cadeau à chaque cœur d'amitié : décoration, graines exotiques ou matériaux rares
-function neighborGift(k, h) {
+export function neighborGift(k, h) {
     const r = RIVALS[k];
     let txt;
     if (h % 2) {

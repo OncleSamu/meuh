@@ -42,6 +42,7 @@ import { ensurePastures } from './pastures.js';
 import { ensureHaras, tidyHaras } from './haras.js';
 import { showTick } from './show.js';
 import { studTick } from './stud.js';
+import { nmarketTick } from './nmarket.js';
 import { ensureIsland, islandTick, islandOffline } from './island.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
@@ -232,6 +233,7 @@ function tickDeliveries() {
     if (contestTick()) changed = true;
     if (showTick()) changed = true;
     if (studTick()) changed = true;
+    if (nmarketTick()) changed = true;
     if (syncStory()) changed = true;
     return changed;
 }
