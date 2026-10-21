@@ -9,6 +9,8 @@ import { merchantOpen } from './merchant.js';
 import { trainOpen, balloonOpen } from './orders.js';
 import { boatOpen } from './port.js';
 import { contestOpen, contestEndsIn } from './contest.js';
+import { showOpen, showEndsIn, weekDisc, gpActive, gpAt } from './show.js';
+import { DISC } from '../data/haras.js';
 import { eventActive, eventIcon, eventEndsIn, nextFete } from './events.js';
 
 const visit = (status, b) => (status === 'here' ? { here: true, at: b.expiresAt } : { here: false, at: b.arriveAt });
@@ -52,6 +54,10 @@ export function agenda() {
     if (boatOpen() && (state.boat.status === 'here' || state.boat.status === 'away'))
         add('boat', ['ui', 'boat'], 'Bateau de livraison', state.boat.status === 'here', visit(state.boat.status, state.boat).at, 'Charger le cargo');
     if (contestOpen()) add('contest', ['ui', 'podium'], 'Concours de la semaine', true, t + contestEndsIn() * 1000, 'Fin de la semaine');
+    if (showOpen()) {
+        add('show', ['ui', 'hCup0'], `Concours du haras : ${DISC[weekDisc()].name.toLowerCase()}`, true, t + showEndsIn() * 1000, 'Inscription et passage');
+        add('gp', ['ui', 'hCup2'], 'Grand Prix du mois', gpActive(), gpAt(), gpActive() ? 'Les quatre épreuves' : 'Premier week-end du mois');
+    }
     if (eventActive()) add('fete', eventIcon(state.event.season), EVENTS[state.event.season].name, true, t + eventEndsIn() * 1000, 'Fin de la fête');
     else {
         const n = nextFete();

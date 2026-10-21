@@ -100,10 +100,10 @@ const introArt = (d, a, silks) =>
     );
 
 // le panneau d'ouverture : choisir de jouer ou de faire une séance rapide
-export function openHorseGame(uid, d, el) {
+export function openHorseGame(uid, d, el, mode = null) {
     const a = G.horseByUid(uid);
     if (!a || !a.box || !G.hasGame(d)) return;
-    if (!G.canTrain(a)) return void G.trainHorse(uid, d, el); // fatigué, en randonnée ou au plafond : le message s'affiche
+    if (!G.canTrain(a)) return void (mode ? G.startPass(uid) : G.trainHorse(uid, d, el)); // fatigué, en randonnée ou au plafond : le message s'affiche
     const me = ++run;
     const { o, stage, q } = shell(`${DISC[d].name} · ${a.name}`);
     const close = () => {
@@ -117,24 +117,26 @@ export function openHorseGame(uid, d, el) {
     stage.innerHTML = `<div class="hg-intro">
         <div class="hg-hart">${introArt(d, a, silksOf(a))}</div>
         <p class="hg-rules">${RULES[d]}</p>
-        <p class="hg-sub">${DISC[d].name} : ${pts}/${cap} · la séance coûte 1 de forme dès le départ.</p>
-        <div class="hg-btns"><button class="btn gold" id="hgplay">Jouer</button><button class="btn" id="hgquick">Séance rapide</button></div>
-        <small>Séance rapide : un score moyen, sans jouer.</small></div>`;
-    q('#hgquick').onclick = () => {
-        G.trainHorse(uid, d, el);
-        close();
-    };
+        <p class="hg-sub">${mode ? `Passage de concours : ${DISC[d].name.toLowerCase()} ${pts}/${cap} · il coûte 1 de forme et compte pour la note.` : `${DISC[d].name} : ${pts}/${cap} · la séance coûte 1 de forme dès le départ.`}</p>
+        <div class="hg-btns"><button class="btn gold" id="hgplay">Jouer</button>${mode ? '' : '<button class="btn" id="hgquick">Séance rapide</button>'}</div>
+        ${mode ? '' : '<small>Séance rapide : un score moyen, sans jouer.</small>'}</div>`;
+    if (!mode)
+        q('#hgquick').onclick = () => {
+            G.trainHorse(uid, d, el);
+            close();
+        };
     q('#hgplay').onclick = () => {
         if (me !== run) return;
-        if (!G.startTrain(uid, d)) return close();
-        ({ galop: playGalop, saut: playSaut, dressage: playDressage, endurance: playRaid })[d]({ a, d, o, stage, q, me, close, el, uid });
+        if (!(mode === 'show' ? G.startShowPass(uid) : mode === 'gp' ? G.startGpPass(uid, d) : G.startTrain(uid, d))) return close();
+        ({ galop: playGalop, saut: playSaut, dressage: playDressage, endurance: playRaid })[d]({ a, d, o, stage, q, me, close, el, uid, mode });
     };
 }
 
 // le panneau de fin : points gagnés
 function finish(c, score, lines) {
     const n = score >= 0.85 ? 3 : score >= 0.6 ? 2 : score >= 0.3 ? 1 : 0;
-    const gain = G.endTrain(c.uid, c.d, c.el, score);
+    const note = c.mode === 'show' ? G.endShowPass(c.uid, score) : c.mode === 'gp' ? G.endGpPass(c.uid, c.d, score) : null;
+    const gain = c.mode ? 0 : G.endTrain(c.uid, c.d, c.el, score);
     sfx(n >= 2 ? 'level' : 'pop');
     buzz(18);
     const star = on =>
@@ -142,7 +144,7 @@ function finish(c, score, lines) {
     const box = document.createElement('div');
     box.className = 'hg-result';
     box.innerHTML = `<h3>${n >= 3 ? 'Magnifique !' : n === 2 ? 'Belle séance' : n === 1 ? 'Séance honnête' : 'On fera mieux'}</h3><div class="hg-stars">${[1, 2, 3].map(i => star(i <= n)).join('')}</div>
-        ${lines.map(l => `<p>${l}</p>`).join('')}<p class="hg-gain">${gain ? `+${gain} point${gain > 1 ? 's' : ''} ${/^[aeiouéè]/i.test(DISC[c.d].name) ? 'd’' : 'de '}${DISC[c.d].name.toLowerCase()}` : 'Plafond atteint'}</p><button class="btn gold" id="hgdone">Terminer</button>`;
+        ${lines.map(l => `<p>${l}</p>`).join('')}<p class="hg-gain">${c.mode ? `Passage : ${Math.round(score * 100)}/100 · note du concours ${note ? note.note.toFixed(1).replace('.', ',') : ''}` : gain ? `+${gain} point${gain > 1 ? 's' : ''} ${/^[aeiouéè]/i.test(DISC[c.d].name) ? 'd’' : 'de '}${DISC[c.d].name.toLowerCase()}` : 'Plafond atteint'}</p><button class="btn gold" id="hgdone">Terminer</button>`;
     c.stage.appendChild(box);
     c.q('#hgdone').onclick = c.close;
 }

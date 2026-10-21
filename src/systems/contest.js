@@ -14,6 +14,7 @@ import { projectDone } from './story.js';
 import { styleCharm, addPhoto } from './style.js';
 import { peacockCharm } from './surprises.js';
 import { wallCharm } from './wall.js';
+import { showCharm } from './show.js';
 import { leagueOf, leagueName, leagueAfterContest } from './mastery.js';
 import { tip } from './tips.js';
 import { record } from './book.js';
@@ -31,7 +32,8 @@ export const charmScore = () =>
     state.grid.reduce((a, p) => a + (p.deco && DECOS[p.deco] ? DECOS[p.deco].charm || 0 : 0), 0) * (projectDone('florist') ? 2 : 1) +
     styleCharm() +
     peacockCharm() +
-    wallCharm();
+    wallCharm() +
+    showCharm();
 
 export function contestSnapshot() {
     const o = {};

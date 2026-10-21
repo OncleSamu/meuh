@@ -540,8 +540,13 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
-                h: 'Et ensuite',
-                t: 'Les concours, avec leurs divisions et leurs rubans, arrivent dans les prochaines versions.',
+                h: 'Les concours',
+                b: [
+                    'Onglet Animaux, « Concours » : une discipline par semaine (galop, saut, dressage, endurance), cinq divisions (Poneys, Amateurs, Club, Élite, Grand Prix). Choisissez une division, inscrivez un cheval logé (5 % de la bourse), puis jouez son passage quand vous voulez avant lundi : un passage coûte une pastille de forme. Pas de passage ? Jules monte à votre place.',
+                    'La note : aptitude 55 %, passage 30 %, présentation 15 % (les cœurs d’amitié), +10 % pour la spécialité. Le lundi, le cheval est classé contre cinq rivales : bourse pour les trois premiers (100, 50 et 25 %), rosette pour les deux premiers, coupe pour le vainqueur.',
+                    'Trois rosettes dans une division ouvrent la suivante. La première victoire de chaque division (sauf Poneys) offre une décoration unique ; une victoire en Élite et chaque Grand Prix rapportent un ruban. Rosettes et coupes comptent dans le charme du concours de la ferme.',
+                    'Le Grand Prix du mois, le premier week-end : les quatre disciplines avec le même cheval, bourses doubles. L’Agenda affiche tout cela.',
+                ],
             },
         ],
         see: ['animals', 'labanimals'],

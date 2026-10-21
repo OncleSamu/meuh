@@ -119,3 +119,32 @@ export const RAID = {
     vetOk: 90, // pouls d'arrivée à partir duquel le contrôle se dégrade
     vetSpan: 40,
 };
+// 1.24 : les concours. Une discipline par semaine, cinq divisions, cinq rivales, un Grand Prix le premier week-end du mois.
+export const SHOW = {
+    rot: ['galop', 'saut', 'dressage', 'endurance'], // la discipline de la semaine tourne dans cet ordre
+    divs: [
+        { name: 'Poneys', rivals: [30, 45], purse: 3000 },
+        { name: 'Amateurs', rivals: [45, 60], purse: 9000 },
+        { name: 'Club', rivals: [58, 72], purse: 27000 },
+        { name: 'Élite', rivals: [70, 84], purse: 81000 },
+        { name: 'Grand Prix', rivals: [82, 95], purse: 243000 },
+    ],
+    open: 3, // rosettes à gagner dans une division pour ouvrir la suivante
+    rivalsN: 5,
+    fee: 0.05, // inscription, en part de la bourse
+    places: [1, 0.5, 0.25], // part de la bourse pour les trois premiers
+    wApt: 0.55,
+    wPass: 0.3,
+    wPres: 0.15,
+    spec: 1.1, // bonus de la spécialité
+    jules: 0.75, // Jules monte : 75 % de l'aptitude tient lieu de passage
+    presBase: 40,
+    presLove: 12, // points de présentation par cœur d'amitié
+    gpMult: 2, // le Grand Prix double les bourses et les rivales sont les mêmes
+    cupCharm: 6,
+    roseCharm: 2,
+    charmCap: 120,
+    // la première victoire de chaque division (sauf la première) donne une décoration unique
+    decos: ['whitefence', 'showjump', 'horsevane', 'showpodium'],
+    names: ['Éclair', 'Tempête', 'Opale', 'Caramel', 'Sultane', 'Mirage', 'Bellone', 'Orage', 'Pistache', 'Roméo', 'Gaston', 'Fanfan'],
+};

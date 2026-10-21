@@ -345,3 +345,84 @@
     font-size: 1.2rem;
     color: var(--leaf-d);
 }
+
+/* 1.24 : les concours */
+.sh-week,
+.sh-gp {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.sh-week .card-art,
+.sh-gp .card-art {
+    width: 56px;
+    flex: none;
+}
+.sh-gp.off {
+    opacity: 0.75;
+}
+.sh-divs .pick-chip .ico {
+    width: 20px;
+    height: 20px;
+}
+.sh-divs .pick-chip.off {
+    opacity: 0.55;
+}
+.sh-horse {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+}
+.sh-horse.mine {
+    outline: 3px solid #ffd23f;
+}
+.sh-result .sh-ranks {
+    display: grid;
+    gap: 4px;
+    margin: 8px 0;
+}
+.sh-rank {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 2px solid var(--ink, #3a2618);
+    border-radius: 14px;
+    padding: 3px 10px;
+    font-weight: 800;
+}
+.sh-rank b {
+    width: 18px;
+}
+.sh-rank span {
+    flex: 1;
+}
+.sh-rank.me {
+    background: #ffe9a8;
+}
+.sh-gains {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+.sh-shelfrow {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 6px;
+}
+.sh-ros {
+    text-align: center;
+    font-weight: 900;
+}
+.sh-ros .ico {
+    width: 44px;
+    height: 44px;
+    display: block;
+    margin: 0 auto;
+}
+.sh-ros.none .ico {
+    filter: grayscale(1);
+    opacity: 0.35;
+}

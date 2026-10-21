@@ -119,6 +119,15 @@ export function startTrain(uid, d) {
         return toast(`${a.name} est fatigué : la forme remonte d’une pastille toutes les 30 minutes`, ['ui', 'hForme']), sfx('error'), null;
     return a;
 }
+// 1.24 : un passage de concours coûte aussi une pastille de forme (mais ne donne pas de points d'aptitude)
+export function startPass(uid) {
+    const a = horseByUid(uid);
+    if (!a || !a.box) return null;
+    if (onRando(a)) return toast(`${a.name} est en randonnée`, ['ui', 'hRando']), null;
+    if (!spendForm(a, TRAIN.cost))
+        return toast(`${a.name} est fatigué : la forme remonte d’une pastille toutes les 30 minutes`, ['ui', 'hForme']), sfx('error'), null;
+    return a;
+}
 export function endTrain(uid, d, at, score = TRAIN.easyScore) {
     const a = horseByUid(uid);
     if (!a || !a.box || !DISC[d]) return 0;

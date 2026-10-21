@@ -48,6 +48,7 @@ export function newState() {
         defis: null,
         night: null,
         counter: null, // 1.17 : le comptoir (salon, décors, clients)
+        show: null, // 1.24 : les concours du haras (division, rosettes, inscription, résultats)
         haras: null, // 1.23 : les grandes écuries (niveau, fiches des chevaux logés)
         machines: [],
         quests: [],
