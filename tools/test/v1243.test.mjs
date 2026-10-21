@@ -161,7 +161,7 @@ test('1.24.7 : aucune recette ne s’ouvre avant ses ingrédients', async () => 
     const pa = {};
     for (const a of Object.values(A.ANIMALS)) {
         pa[a.prodId] = a.reqLvl;
-        if (a.extraId) pa[a.extraId] = a.reqLvl;
+        if (a.extra) pa[a.extra] = a.reqLvl;
     }
     const lv = id => {
         const r = M.RECIPES[id];

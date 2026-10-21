@@ -3437,7 +3437,7 @@ Object.assign(RECIPES, {
     const animalLvl = {};
     for (const a of Object.values(ANIMALS)) {
         if (a.prodId) animalLvl[a.prodId] = Math.min(animalLvl[a.prodId] ?? 99, a.reqLvl);
-        if (a.extraId) animalLvl[a.extraId] = Math.min(animalLvl[a.extraId] ?? 99, a.reqLvl);
+        if (a.extra) animalLvl[a.extra] = Math.min(animalLvl[a.extra] ?? 99, a.reqLvl);
     }
     const lvOf = id => {
         const r = RECIPES[id];
