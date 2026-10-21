@@ -189,3 +189,49 @@
     width: 44px;
     height: 44px;
 }
+.wall-card .wall-plaque {
+    justify-content: flex-start;
+    padding: 6px 12px;
+}
+.wall-plaque > svg {
+    width: 40px;
+    height: 40px;
+    flex: none;
+}
+.wall-plaque small {
+    margin-left: auto;
+}
+.wall-picks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    gap: 6px;
+    max-height: 150px;
+    overflow-y: auto;
+    margin-top: 8px;
+    padding: 2px;
+}
+.wall-pick {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 4px 2px;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    background: var(--wood-ll);
+    font: inherit;
+    color: var(--ink);
+    cursor: pointer;
+}
+.wall-pick > svg {
+    width: 34px;
+    height: 34px;
+}
+.wall-pick small {
+    font-size: 0.62rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+.wall-pick.on {
+    background: var(--gold);
+}

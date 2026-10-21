@@ -41,11 +41,10 @@ function wall() {
         return '<div class="card locked"><div class="card-sub">Pêchez un poisson à l’étang : le plus beau pourra être accroché au mur du salon (+20 de charme au concours).</div></div>';
     return `<div class="card wall-card"><div class="wall-plaque">${cur ? `${art('item', cur.id)}<b>${cur.name}</b><small>${G.kgText(cur.w)}</small>` : '<small>Le mur est vide</small>'}</div>
         <div class="card-sub">Accrochez une prise (son record de poids) : +${G.WALL_CHARM} de charme au concours.</div>
-        <div class="chips-row wrap">${list
-            .slice(0, 12)
+        <div class="wall-picks">${list
             .map(
                 f =>
-                    `<button class="style-chip${cur && cur.id === f.id ? ' on' : ''}" data-act="hangFish" data-id="${f.id}">${art('item', f.id)}<span>${f.name} · ${G.kgText(f.w)}</span></button>`,
+                    `<button class="wall-pick${cur && cur.id === f.id ? ' on' : ''}" data-act="hangFish" data-id="${f.id}" title="${f.name}" aria-label="${f.name}, ${G.kgText(f.w)}">${art('item', f.id)}<small>${G.kgText(f.w)}</small></button>`,
             )
             .join('')}</div></div>`;
 }
