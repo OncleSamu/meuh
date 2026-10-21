@@ -9,8 +9,8 @@ export const TIPS = {
     },
     nmarket: {
         icon: ['ui', 'nmEtal'],
-        title: 'Le marché des voisines',
-        text: 'Les quatre fermes voisines tiennent un étal (Marché | Acheter, rayon Voisines), renouvelé toutes les 4 heures. Plus elles vous aiment, plus elles proposent d’offres, de quantité et de bons prix. Il vous manque un produit ? Faites une demande d’achat : plus vous payez, plus vite elles livrent.',
+        title: 'Le marché des voisins',
+        text: 'Les quatre fermes voisines tiennent un étal (Marché | Acheter, rayon Voisins), renouvelé toutes les 4 heures. Plus vos voisins vous aiment, plus ils proposent d’offres, de quantité et de bons prix. Il vous manque un produit ? Faites une demande d’achat : plus vous payez, plus vite ils livrent.',
     },
     companions: {
         icon: ['ui', 'cpCarnet'],

@@ -1,4 +1,4 @@
-// Le marché des voisines (1.26) : étal, demande d'achat, livraison, coup de cœur.
+// Le marché des voisins (1.26) : étal, demande d'achat, livraison, coup de cœur.
 import { C, HL, L, P, R, SHADOW, ui } from './kit.js';
 const awn = (c1, c2) =>
     [0, 1, 2, 3, 4, 5].map(k => P(`M${8 + k * 8} 14 L${16 + k * 8} 14 L${16 + k * 8} 22 Q${12 + k * 8} 27 ${8 + k * 8} 22Z`, k % 2 ? c2 : c1, 1.6)).join('');

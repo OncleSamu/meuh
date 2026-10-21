@@ -1,5 +1,5 @@
 // Le marché des voisines (1.26) : les étals des quatre fermes voisines (selon l'amitié) et la demande d'achat,
-// l'étal à l'envers (on fixe son prix, une voisine livre d'autant plus vite qu'on paie cher).
+// l'étal à l'envers (on fixe son prix, un voisin livre d'autant plus vite qu'on paie cher).
 import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { round5 } from '../core/format.js';
@@ -23,7 +23,7 @@ export const nmarketOpen = () => state.level >= NMARKET.lvl;
 export const nHearts = k => (state.neighbors && state.neighbors[k] ? state.neighbors[k].hearts || 0 : 0);
 const unit = id => ITEMS[id].sell || 0;
 
-// ce que chaque voisine peut vendre (seulement ce que le joueur a débloqué)
+// ce que chaque voisin peut vendre (seulement ce que le joueur a débloqué)
 export function specialtyOf(k) {
     const all = Object.values(ITEMS);
     if (k === 0) return all.filter(i => (i.type === 'crop' || i.type === 'tree') && !i.exotic && lvOk(i) && storyOk(i) && unit(i.id) > 0).map(i => i.id);
@@ -85,7 +85,7 @@ export function nmarketTick() {
     return ch;
 }
 export const nmarketRenewAt = () => ensureNMarket().at + NMARKET.every;
-// la fidélité : acheter chez une voisine fait monter son amitié
+// la fidélité : acheter chez un voisin fait monter son amitié
 function loyalty(k, coins) {
     ensureNeighbors();
     const m = ensureNMarket();
@@ -131,7 +131,7 @@ export function buyOffer(k, n, at) {
 // ---------------- la demande d'achat ----------------
 export const askSlots = () => NMARKET.ask.slots[Math.max(...[0, 1, 2, 3].map(nHearts))];
 export const askMaxQty = k => NMARKET.ask.maxQty(nHearts(k));
-// délai en minutes : de 3 h (prix 1,2 ×) à 15 min (2,5 ×), raccourci par les cœurs de la voisine
+// délai en minutes : de 3 h (prix 1,2 ×) à 15 min (2,5 ×), raccourci par les cœurs du voisin
 export function askDelay(k, mult) {
     const A = NMARKET.ask;
     const t = Math.max(0, Math.min(1, (mult - A.min) / (A.max - A.min)));
@@ -142,7 +142,7 @@ export const askPrice = (id, qty, mult) => round5(unit(id) * qty * mult);
 export function placeAsk(id, qty, mult) {
     const m = ensureNMarket();
     const k = sellerOf(id);
-    if (!nmarketOpen() || k == null) return toast('Aucune voisine ne vend ce produit', ['ui', 'merchant']), false;
+    if (!nmarketOpen() || k == null) return toast('Aucun voisin ne vend ce produit', ['ui', 'merchant']), false;
     if (m.asks.length >= askSlots()) return toast(`${askSlots()} demandes au plus en même temps`, ['ui', 'merchant']), sfx('error'), false;
     qty = Math.max(1, Math.min(askMaxQty(k), Math.round(qty)));
     mult = Math.max(NMARKET.ask.min, Math.min(NMARKET.ask.max, mult));

@@ -157,7 +157,7 @@ export const NMARKET = {
     qty: [0.4, 0.6, 0.6, 0.8, 0.9, 1.2], // part de la quantité de base
     base: lvl => 500 + lvl * 110, // valeur d'une offre « pleine », en pièces de valeur
     smallFirmin: 0.6, // les ingrédients d'atelier en plus petites quantités
-    loyalty: lvl => 2500 + lvl * 250, // pièces dépensées chez une voisine pour 1 point d'amitié
+    loyalty: lvl => 2500 + lvl * 250, // pièces dépensées chez un voisin pour 1 point d'amitié
     specs: ['Légumes et fruits', 'Lait, œufs, laine, miel', 'Poissons et viandes', 'Farine, huile, sucre, tissu'],
     colors: [
         ['#6cc04a', '#fff'],

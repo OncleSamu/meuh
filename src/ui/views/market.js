@@ -208,12 +208,12 @@ function decos() {
     return list + dog;
 }
 
-// ---------------- 1.26 : les étals des voisines et la demande d'achat ----------------
+// ---------------- 1.26 : les étals des voisins et la demande d'achat ----------------
 function neighborsList() {
     if (!G.nmarketOpen()) return empty(`Les fermes voisines ouvrent leurs étals au niveau ${NMARKET.lvl}.`);
     G.nmarketTick();
     const m = G.ensureNMarket();
-    const head = `<div class="card nm-head"><div class="card-main"><div class="card-title">Le marché des voisines</div><div class="card-sub">Nouveaux étals dans ${timer(G.nmarketRenewAt(), 'b')} · plus d’offres et de meilleurs prix avec l’amitié</div></div></div>`;
+    const head = `<div class="card nm-head"><div class="card-main"><div class="card-title">Le marché des voisins</div><div class="card-sub">Nouveaux étals dans ${timer(G.nmarketRenewAt(), 'b')} · plus d’offres et de meilleurs prix avec l’amitié</div></div></div>`;
     const stalls = m.stalls
         .map(st => {
             const r = RIVALS[st.k],
@@ -237,7 +237,7 @@ function neighborsList() {
                 .join('');
             return `<div class="card nm-stall" style="--a1:${c1};--a2:${c2}"><div class="nm-awning"></div>
                 <div class="card-head"><div class="avatar sm">${art('villager', r.avatar)}</div><div class="card-main"><div class="card-title">${r.owner}</div><div class="card-sub">${r.name} · ${NMARKET.specs[st.k]}</div>${hearts(h)}</div>
-                <small class="nm-price${h >= 3 ? ' good' : ''}">${h >= 5 ? 'Prix d’amie' : h >= 3 ? 'Bons prix' : 'Prix normal'}</small></div>
+                <small class="nm-price${h >= 3 ? ' good' : ''}">${h >= 5 ? 'Prix d’ami' : h >= 3 ? 'Bons prix' : 'Prix normal'}</small></div>
                 <div class="offers">${offers || '<small>Rien à vendre pour l’instant : débloquez ses produits.</small>'}</div>
                 <div class="nm-loyal"><small>Fidélité</small><i><u style="width:${Math.round(G.loyaltyPct(st.k) * 100)}%"></u></i></div></div>`;
         })
@@ -253,7 +253,7 @@ function neighborsList() {
                 }</div>`,
         )
         .join('');
-    const askHead = `<div class="card nm-askhead"><span class="offer-art">${art('ui', 'nmDemande')}</span><div class="card-main"><div class="card-title">Demande d’achat</div><div class="card-sub">L’étal à l’envers : vous fixez votre prix, une voisine livre d’autant plus vite. ${m.asks.length}/${G.askSlots()} demandes.</div></div>${btn('Demander', { act: 'open', data: { sheet: 'nmAsk' }, kind: 'gold', size: 'sm', disabled: m.asks.length >= G.askSlots() })}</div>`;
+    const askHead = `<div class="card nm-askhead"><span class="offer-art">${art('ui', 'nmDemande')}</span><div class="card-main"><div class="card-title">Demande d’achat</div><div class="card-sub">L’étal à l’envers : vous fixez votre prix, un voisin livre d’autant plus vite. ${m.asks.length}/${G.askSlots()} demandes.</div></div>${btn('Demander', { act: 'open', data: { sheet: 'nmAsk' }, kind: 'gold', size: 'sm', disabled: m.asks.length >= G.askSlots() })}</div>`;
     return head + stalls + askHead + asks;
 }
 
@@ -263,7 +263,7 @@ const CATS = [
     ['machines', 'Machines', ['machine', 'mill'], machines],
     ['gear', 'Équipement', ['ui', 'upgrade'], gear],
     ['decos', 'Décos', ['ui', 'flowers'], decos],
-    ['neighbors', 'Voisines', ['ui', 'nmEtal'], neighborsList],
+    ['neighbors', 'Voisins', ['ui', 'nmEtal'], neighborsList],
 ];
 
 function renderShop(el) {

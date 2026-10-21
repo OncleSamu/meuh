@@ -187,7 +187,7 @@ export function unlocksAt(lvl) {
             'L’amélioration du domaine : grange, cuisines, aide au champ, commerce, annexes, Armand, cargo, quai et réception (onglet Village)',
         );
     if (lvl === NMARKET.lvl)
-        add(['ui', 'nmEtal'], 'Le marché des voisines : leurs étals et la demande d’achat, meilleurs avec l’amitié (Marché | Acheter, rayon Voisines)');
+        add(['ui', 'nmEtal'], 'Le marché des voisins : leurs étals et la demande d’achat, meilleurs avec l’amitié (Marché | Acheter, rayon Voisins)');
     if (lvl === COMP_LVL)
         add(
             ['ui', 'cpCarnet'],

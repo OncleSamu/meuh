@@ -207,7 +207,7 @@ export const GUIDE_PAGES = [
     {
         id: 'nmarket',
         cat: 'trade',
-        name: 'Le marché des voisines',
+        name: 'Le marché des voisins',
         icon: ['ui', 'nmEtal'],
         lvl: 12,
         go: 'market/shop',
@@ -216,21 +216,21 @@ export const GUIDE_PAGES = [
             {
                 h: 'Les étals',
                 b: [
-                    'Marché | Acheter, rayon Voisines. Hortense (les Tilleuls) vend légumes et fruits ; Bastien (Bellevue) lait, œufs, laine et miel ; Yvette (les Trois Chênes) poissons et viandes ; Firmin (le Moulin Rouge) farine, huile, sucre et tissu. Seulement des produits que vous avez déjà débloqués.',
-                    'Les étals changent toutes les 4 heures. Plus une voisine a de cœurs, plus elle propose d’offres (de 2 à 6), de quantité, et moins c’est cher (de 2,4 fois la valeur du produit à 1,6 fois). À 5 cœurs, sa première offre est un coup de cœur en qualité or.',
+                    'Marché | Acheter, rayon Voisins. Hortense (les Tilleuls) vend légumes et fruits ; Bastien (Bellevue) lait, œufs, laine et miel ; Yvette (les Trois Chênes) poissons et viandes ; Firmin (le Moulin Rouge) farine, huile, sucre et tissu. Seulement des produits que vous avez déjà débloqués.',
+                    'Les étals changent toutes les 4 heures. Plus un voisin a de cœurs, plus il propose d’offres (de 2 à 6), de quantité, et moins c’est cher (de 2,4 fois la valeur du produit à 1,6 fois). À 5 cœurs, sa première offre est un coup de cœur en qualité or.',
                 ],
             },
             {
                 h: 'La demande d’achat',
                 b: [
-                    'L’étal à l’envers : choisissez un produit, une quantité et votre prix (de 1,2 à 2,5 fois la valeur). Plus vous payez, plus elle livre vite : 3 heures au prix le plus bas, 15 minutes au plus haut. Chaque cœur de la voisine raccourcit le délai de 5 %.',
+                    'L’étal à l’envers : choisissez un produit, une quantité et votre prix (de 1,2 à 2,5 fois la valeur). Plus vous payez, plus il livre vite : 3 heures au prix le plus bas, 15 minutes au plus haut. Chaque cœur de la voisine raccourcit le délai de 5 %.',
                     'Vous ne payez qu’à la livraison, et vous pouvez annuler avant. 2 demandes en même temps, puis 3 et 4 avec l’amitié ; la quantité maximale grandit aussi avec les cœurs.',
                 ],
             },
             {
                 h: 'La fidélité',
                 b: [
-                    'Chaque achat chez une voisine remplit sa jauge de fidélité : pleine, elle vous offre un cœur de plus. Acheter, c’est aussi se faire des amies.',
+                    'Chaque achat chez un voisin remplit sa jauge de fidélité : pleine, il vous offre un cœur de plus. Acheter, c’est aussi se faire des amis.',
                 ],
             },
         ],
@@ -1115,7 +1115,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les paliers et le classement',
-                t: 'Trois paliers rapportent chacun des pièces et de l’expérience au fil de la semaine. Le classement contre les voisines tombe le lundi : la première place paie le plus, puis de moins en moins.',
+                t: 'Trois paliers rapportent chacun des pièces et de l’expérience au fil de la semaine. Le classement contre les fermes voisines tombe le lundi : la première place paie le plus, puis de moins en moins.',
             },
             {
                 h: 'Les ligues',
