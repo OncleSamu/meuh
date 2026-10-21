@@ -424,7 +424,7 @@ export const LV_REC = {
     coconutMilk: 39,
     bananaSmoothie: 45,
     bananaBread: 45,
-    coconutFlan: 46,
+    coconutFlan: 39, // 1.24.6 : demandé par le kiosque du carnaval (chapitre 14, niveau 39)
     coconutRice: 46,
     cassavaCakes: 45,
     coconutRocks: 45,
@@ -453,7 +453,7 @@ export const LV_REC = {
     limePie: 40,
     mangoChutney: 40,
     seabassSalt: 41,
-    islandCocktail: 42,
+    islandCocktail: 39, // 1.24.6 : idem
     guacamole: 47,
     seabassTartare: 47,
     avocadoShrimp: 47,
@@ -493,11 +493,11 @@ export const LV_REC = {
     genepiLiqueur: 45,
     genepiTea: 46,
     genepiChoc: 47,
-    beaufort: 48,
+    beaufort: 46, // 1.24.6 : demandé par le refuge (chapitre 10, niveau 46)
     tomme: 46,
     reblochon: 47,
     raclette: 49,
-    fondue: 48,
+    fondue: 46, // 1.24.6 : idem
     tartiflette: 49,
     driedKaki: 47,
     kakiSorbet: 48,

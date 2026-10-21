@@ -504,22 +504,23 @@ export const GUIDE_PAGES = [
     {
         id: 'haras',
         cat: 'animals',
-        name: 'Les grandes écuries',
+        name: 'Le Grand Haras',
         icon: ['ui', 'hEcuries'],
         lvl: 44,
         go: 'animals/haras',
-        intro: 'Logez vos chevaux en boxes, soignez-les et entraînez-les au galop, à l’endurance, au dressage et au saut.',
+        intro: 'Logez vos chevaux en boxes, soignez-les, entraînez-les au galop, à l’endurance, au dressage et au saut, faites-les concourir chaque semaine et élevez vos propres lignées.',
         secs: [
             {
                 h: 'Le bâtiment',
                 b: [
                     'Au niveau 44, construisez les écuries (onglet Animaux, volet Écuries) : 4 boxes, puis 8 et 12 avec deux agrandissements.',
                     'Un cheval logé quitte les prés (il ne compte plus dans leur place) mais donne toujours son crin : ramassez-le depuis sa fiche.',
+                    'Chaque box est une petite carte (nom, forme, aptitudes) : touchez-la pour ouvrir la fiche complète, la flèche du coin la replie.',
                 ],
             },
             {
                 h: 'La forme',
-                t: 'Cinq pastilles. Un entraînement ou une randonnée en coûte une ; elle remonte d’une pastille toutes les 30 minutes, même jeu fermé. À zéro, rien n’est perdu : il suffit d’attendre.',
+                t: 'Cinq pastilles. Un entraînement, un passage de concours ou une randonnée en coûte une ; elle remonte d’une pastille toutes les 30 minutes, même jeu fermé. À zéro, rien n’est perdu : il suffit d’attendre.',
             },
             {
                 h: 'Les quatre aptitudes',
@@ -558,7 +559,7 @@ export const GUIDE_PAGES = [
                 h: 'Les concours',
                 b: [
                     'Onglet Animaux, « Concours » : une discipline par semaine (galop, saut, dressage, endurance), cinq divisions (Poneys, Amateurs, Club, Élite, Prestige). Choisissez une division et inscrivez jusqu’à trois chevaux logés différents (5 % de la bourse chacun) ; ceux d’une même division courent aussi entre eux. Jouez leurs passages quand vous voulez avant lundi : un passage coûte une pastille de forme. Pas de passage ? Jules monte à votre place.',
-                    'La note : aptitude 55 %, passage 30 %, présentation 15 % (les cœurs d’amitié), +10 % pour la spécialité. Le lundi, le cheval est classé contre cinq rivales : bourse pour les trois premiers (100, 50 et 25 %), rosette pour les deux premiers, coupe pour le vainqueur.',
+                    'La note : aptitude 55 %, passage 30 %, présentation 15 % (les cœurs d’amitié), +10 % pour la spécialité. Le lundi, vos chevaux sont classés avec cinq rivales : bourse pour les trois premiers (100, 50 et 25 %), rosette pour les deux premiers, coupe pour le vainqueur.',
                     'Trois rosettes dans une division ouvrent la suivante ; une victoire écrasante (12 points d’avance sur la 2e) en compte deux. La première victoire de chaque division (sauf Poneys) offre une décoration unique ; une victoire en Élite et chaque Grand Prix rapportent un ruban. Rosettes et coupes comptent dans le charme du concours de la ferme.',
                     'Le Grand Prix du mois, le premier week-end : les quatre disciplines avec le même cheval, bourses doubles. L’Agenda affiche tout cela.',
                 ],

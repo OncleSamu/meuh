@@ -7,6 +7,16 @@ export const TIPS = {
         title: 'Les grandes écuries',
         text: 'Logez vos chevaux en boxes (onglet Animaux, volet Écuries). Brossez-les, nourrissez-les, puis entraînez-les : chaque séance coûte une pastille de forme, qui remonte toutes les 30 minutes. Chaque aptitude monte jusqu’à un plafond que fixe un gène du cheval : croisez au labo pour viser plus haut.',
     },
+    show: {
+        icon: ['ui', 'hCup2'],
+        title: 'Les concours du haras',
+        text: 'Chaque semaine, une discipline. Inscrivez jusqu’à trois chevaux, jouez leurs passages avant lundi (sinon Jules monte), et les résultats tombent le lundi. Trois rosettes ouvrent la division suivante ; une victoire écrasante en compte deux.',
+    },
+    stud: {
+        icon: ['ui', 'hEcusson'],
+        title: 'Un champion !',
+        text: 'Votre cheval a gagné en division Élite. Il peut maintenant prendre sa retraite (Animaux, volet Élevage) : il rapportera des saillies chaque jour et ses poulains naîtront avec un peu de son talent. Trois champions de suite dans une famille : une lignée célèbre !',
+    },
     frost: {
         icon: ['item', 'apple'],
         title: 'Gelée de printemps',

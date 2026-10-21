@@ -9,6 +9,7 @@ import { weekStart, weekKey } from './events.js';
 import { earn, addXp } from './player.js';
 import { addPhoto } from './style.js';
 import { champWon } from './stud.js';
+import { tip } from './tips.js';
 import { harasOpen, horseByUid, aptOf, rec, startPass, equipApt, equipPres } from './haras.js';
 
 export const showOpen = () => harasOpen();
@@ -110,6 +111,7 @@ export function enterShow(uid, div, at) {
     const ne = { key: weekKey(), uid, div, disc: weekDisc(), passage: null, fee };
     if (e) s.entries[s.entries.indexOf(e)] = ne;
     else s.entries.push(ne);
+    tip('show');
     sfx('pop');
     emit('changed', 'show');
     return true;

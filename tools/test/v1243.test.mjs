@@ -136,3 +136,20 @@ test('1.24.5 : fers dessinés, couleur fantaisiste reportée sur les couleurs du
     const pink = filterHex('#a8693a', 'sepia(.8) saturate(3) hue-rotate(290deg) brightness(1.2)');
     assert.ok(parseInt(pink.slice(1, 3), 16) > 200 && parseInt(pink.slice(5, 7), 16) > 150);
 });
+
+test('1.24.6 : chaque chantier ne demande que des produits ouverts au niveau de son chapitre', async () => {
+    const V = await import('../../src/data/village.js');
+    const M = await import('../../src/data/machines.js');
+    const I = await import('../../src/data/items.js');
+    const lv = id => {
+        const r = M.RECIPES[id],
+            it = I.ITEMS[id];
+        return Math.max(r ? Math.max(r.lvl || 0, (M.MACHINES[r.machine] || {}).reqLvl || 0) : 0, (it && it.reqLvl) || 0);
+    };
+    const bad = [];
+    for (const p of Object.values(V.PROJECTS)) {
+        const c = V.CHAPTERS.find(x => x.n === p.ch);
+        for (const id of Object.keys(p.need)) if (lv(id) > c.lvl) bad.push(`${p.name} : ${id} (niveau ${lv(id)} > ${c.lvl})`);
+    }
+    assert.deepEqual(bad, []);
+});

@@ -186,9 +186,9 @@ export function unlocksAt(lvl) {
             'L’amélioration du domaine : grange, cuisines, aide au champ, commerce, annexes, Armand, cargo, quai et réception (onglet Village)',
         );
     if (lvl === HARAS_LVL)
-        add(
+        big(
             ['ui', 'hEcuries'],
-            'Les grandes écuries : logez vos chevaux, soignez-les et entraînez-les au galop, à l’endurance, au dressage et au saut (Animaux | Écuries)',
+            'Grande étape : le Grand Haras. Écuries et mini-jeux (galop, endurance, dressage, saut), concours de la semaine, élevage et lignées (onglet Animaux)',
         );
     if (lvl === CAVE_LVL) add(['ui', 'cave'], 'La cave : affinez fromages et cidres, et vendez-les aux enchères (onglet Atelier, puis Cave)');
     if (lvl === CHAPTERS[0].lvl) add(['ui', 'village'], 'Rénovez le village : premier chapitre (onglet Village)');

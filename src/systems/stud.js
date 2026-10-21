@@ -9,6 +9,7 @@ import { earn, addXp } from './player.js';
 import { placeAnimal } from './pastures.js';
 import { ensureHaras, harasOpen, horses, horseByUid, rec, onRando, aptCap } from './haras.js';
 import { coatOf } from './coat.js';
+import { tip } from './tips.js';
 
 const dayNo = () => Math.floor((now() / 60000 - new Date(now()).getTimezoneOffset()) / 1440);
 export function ensureStud() {
@@ -48,6 +49,7 @@ export function champWon(uid, div) {
     const sire = horseByUid(a.sire),
         dam = horseByUid(a.dam);
     a.chain = Math.max(a.pc || 0, isChampion(sire) ? chainOf(sire) : 0, isChampion(dam) ? chainOf(dam) : 0) + 1;
+    tip('stud');
     if (a.chain === STUD.famous) {
         ensureStud().famous++;
         toast(`Lignée célèbre : ${a.name} est le ${STUD.famous}e champion de suite de sa famille !`, ['ui', 'hCouronne']);
