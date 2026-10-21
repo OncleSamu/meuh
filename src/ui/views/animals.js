@@ -11,6 +11,7 @@ import { ico, art } from '../icons.js';
 import { btn, hint, hearts, bar, timer, lines, segmented } from '../kit.js';
 import { defineView, defineLive, ui, currentPath, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
+import { STUD } from '../../data/haras.js';
 import { genWrap, looksText, animalKey, featuresText, lineageHtml } from '../genlook.js';
 import { animalTraits } from './lab.js';
 import { reduceMotion, burstAt } from '../fx.js';
@@ -42,7 +43,14 @@ function freeSpot(self, list = els) {
     return best || [30, 40];
 }
 
-const babyBody = a => (a.type === 'chicken' ? art('ui', 'chick') : a.type === 'duck' ? art('ui', 'duckling') : art('animal', a.type));
+const babyBody = a =>
+    a.type === 'chicken'
+        ? art('ui', 'chick')
+        : a.type === 'duck'
+          ? art('ui', 'duckling')
+          : a.type === 'horse'
+            ? art('animal', animalKey('horse', a.g, G.growPct(a) < STUD.stages[0] ? 0 : 1))
+            : art('animal', a.type);
 // le dessin d'une bête, avec l'apparence de ses gènes (robe, taille, motif)
 const bodyOf = a => genWrap(G.isAdult(a) ? art('animal', animalKey(a.type, a.g)) : babyBody(a), a.g);
 
@@ -94,10 +102,11 @@ function renderCritters() {
         const el = els[i],
             d = ANIMALS[a.type];
         const adult = G.isAdult(a);
-        const sig = `${a.type}|${adult}|${a.g ? JSON.stringify(G.looksOf(a.g)) : ''}|${esc(a.name)}|${a.race || ''}|${a.love}|${a.star ? 1 : 0}|${G.isAway(a) ? 1 : 0}|${a.stack}|${a.food}|${mf}|${a.sick ? 1 : 0}`;
+        const sig = `${a.type}|${adult}|${a.g ? JSON.stringify(G.looksOf(a.g)) : ''}|${a.g && a.g.coat ? G.coatKey(a.g) : ''}|${a.type === 'horse' && !adult ? (G.growPct(a) < STUD.stages[0] ? 0 : 1) : ''}|${esc(a.name)}|${a.race || ''}|${a.love}|${a.star ? 1 : 0}|${G.isAway(a) ? 1 : 0}|${a.stack}|${a.food}|${mf}|${a.sick ? 1 : 0}`;
         if (el._sig === sig) return;
         el._sig = sig;
         el.classList.toggle('baby', !adult);
+        el.classList.toggle('foal', !adult && a.type === 'horse');
         el.classList.toggle('star', !!a.star);
         el.classList.toggle('away', G.isAway(a));
         el.classList.toggle('sick', !!a.sick);

@@ -53,6 +53,7 @@ export const TABS = [
             ['pasture', 'Prés', ['animal', 'cow']],
             ['haras', 'Écuries', ['ui', 'hEcuries'], () => HARAS_LVL],
             ['show', 'Concours', ['ui', 'hCup2'], () => HARAS_LVL],
+            ['stud', 'Élevage', ['ui', 'hEcusson'], () => HARAS_LVL],
         ],
     },
     {

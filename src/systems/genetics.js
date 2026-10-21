@@ -7,6 +7,8 @@
 //   ses graines (genetics.seeds[id]) se sèment ; ses produits (genetics.stock[id]) font partie du stock de l'espèce.
 // Une bête porte son génome (a.g), sa génération (a.gen) et sa race fixée (a.race).
 import { labPenBonus } from './buildings.js';
+import { founderCoat, crossCoat } from './coat.js';
+import { studBorn } from './stud.js';
 import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { fmt, pickRand, qtyName } from '../core/format.js';
@@ -90,6 +92,9 @@ export function ensureGenetics() {
         a.gen = a.gen || 0;
     });
     Object.values(G.races).forEach(r => addFeatures(r.g, r.type, false));
+    // 1.24.2 : un cheval d'avant reçoit des gènes de robe et de marques, une seule fois
+    state.animals.forEach(a => a.type === 'horse' && a.g && !a.g.coat && (a.g.coat = founderCoat()));
+    Object.values(G.races).forEach(r => r.type === 'horse' && r.g && !r.g.coat && (r.g.coat = founderCoat()));
     // 1.22 : caractères discrets et finitions pour les créations d'avant
     state.animals.forEach(a => addExtras(a.g, extraFor(a.type), a.type));
     Object.values(G.races).forEach(r => addExtras(r.g, extraFor(r.type), r.type));
@@ -146,7 +151,9 @@ export function wildAnimal(type, vary) {
     const l = baseLooks();
     if (vary && Math.random() < 0.25) l.color = [l.color[0], [1 + Math.floor(Math.random() * 6), 0]];
     if (vary && Math.random() < 0.2) l.pattern = [l.pattern[0], [1 + Math.floor(Math.random() * 4), 0]];
-    return addFeatures({ t, l, halo: false }, type, vary);
+    const g = addFeatures({ t, l, halo: false }, type, vary);
+    if (type === 'horse') g.coat = founderCoat();
+    return g;
 }
 
 // cornes, oreilles, toison (1.2) : ajoutés aux génomes des espèces concernées, parfois avec une version cachée
@@ -219,6 +226,7 @@ export function crossGenomes(A, B, rate = GX.mutation) {
         form: A.form === B.form ? A.form : Math.random() < 0.5 ? A.form : B.form,
         halo: (A.halo && Math.random() < 0.5) || (B.halo && Math.random() < 0.5),
     };
+    if (A.coat || B.coat) child.coat = crossCoat(A.coat, B.coat);
     let mutated = false;
     if (Math.random() < rate) {
         mutated = true;
@@ -842,7 +850,8 @@ export function startBreed(ua, ub, at) {
 }
 
 // la lignée (1.2) : parents et grands-parents, en petites fiches qui survivent à la vente des bêtes
-const snapLooks = g => (g && g.l ? { l: JSON.parse(JSON.stringify(g.l)), halo: !!g.halo } : null);
+const snapLooks = g =>
+    g && g.l ? { l: JSON.parse(JSON.stringify(g.l)), halo: !!g.halo, coat: g.coat ? JSON.parse(JSON.stringify(g.coat)) : undefined } : null;
 export function lineSnap(x, deep) {
     if (!x) return null;
     const isVar = !!x.kind;
@@ -850,7 +859,7 @@ export function lineSnap(x, deep) {
         ? { n: varName(x), b: x.base, g: snapLooks(x.g), gen: x.gen || 0 }
         : x.t
           ? { n: x.name || x.n, t: x.t, g: x.g, gen: x.gen || 0 }
-          : { n: x.name, t: x.type, g: snapLooks(x.g), gen: x.gen || 0 };
+          : { n: x.name, t: x.type, g: snapLooks(x.g), gen: x.gen || 0, u: x.uid };
     if (deep && x.lin) s.lin = x.lin.map(y => y && { n: y.n, t: y.t, b: y.b, g: y.g, gen: y.gen });
     return s;
 }
@@ -897,6 +906,7 @@ function birth(a, b, type) {
     baby.gen = Math.max(a.gen || 0, b.gen || 0) + 1;
     baby.parents = [a.name, b.name];
     baby.lin = [lineSnap(a, true), lineSnap(b, true)];
+    if (type === 'horse') studBorn(baby, a, b);
     if (mutated) baby.mut = true;
     if (a.race && a.race === b.race) baby.race = a.race;
     placeAnimal(baby);

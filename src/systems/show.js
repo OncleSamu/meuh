@@ -8,6 +8,7 @@ import { SHOW, DISC } from '../data/haras.js';
 import { weekStart, weekKey } from './events.js';
 import { earn, addXp } from './player.js';
 import { addPhoto } from './style.js';
+import { champWon } from './stud.js';
 import { harasOpen, horseByUid, aptOf, rec, startPass, equipApt, equipPres } from './haras.js';
 
 export const showOpen = () => harasOpen();
@@ -192,6 +193,7 @@ function settle(e, kind) {
         s.wins++;
         s.titles[e.uid] = (s.titles[e.uid] || 0) + 1;
         if (e.div === 3) out.ribbon++;
+        out.ribbon += champWon(e.uid, e.div);
         const dId = e.div > 0 ? SHOW.decos[e.div - 1] : null;
         if (dId && !s['deco' + e.div]) {
             s['deco' + e.div] = true;

@@ -14,6 +14,8 @@ export * from './holidays.js';
 export * from './haras.js';
 export * from './horsegames.js';
 export * from './show.js';
+export * from './coat.js';
+export * from './stud.js';
 export * from './home.js';
 export * from './incidents.js';
 export * from './island.js';

@@ -171,3 +171,60 @@ export const EQUIP = {
         hairBrush: { slot: 'brosse', brush: 0.6 }, // chance que le brossage rende une pastille de forme (au lieu de BRUSH.form)
     },
 };
+// 1.24.2 : l'élevage. Les robes et les marques sont des gènes (dominants ou récessifs) ; l'apparence fantaisiste des gènes du jeu vient par-dessus.
+export const COAT = {
+    // fréquence de l'allèle « dominant » chez un cheval d'origine
+    freq: {
+        E: 0.72,
+        A: 0.6,
+        Br: 0.8,
+        Cr: 0.1,
+        G: 0.05,
+        Rn: 0.06,
+        D: 0.07,
+        etoile: 0.3,
+        liste: 0.22,
+        belleface: 0.7,
+        balzanes: 0.28,
+        pie: 0.08,
+        appaloosa: 0.06,
+        raie: 0.1,
+        lave: 0.7,
+    },
+    mut: 0.015, // chance qu'un allèle bascule à la transmission
+    robes: {
+        bai: 'Bai',
+        baibrun: 'Bai brun',
+        alezan: 'Alezan',
+        noir: 'Noir',
+        gris: 'Gris',
+        palomino: 'Palomino',
+        isabelle: 'Isabelle',
+        creme: 'Crème',
+        rouan: 'Rouan',
+        aubere: 'Aubère',
+        louvet: 'Louvet',
+    },
+    marks: {
+        etoile: 'Étoile en tête',
+        liste: 'Liste',
+        belleface: 'Belle face',
+        balzanes: 'Balzanes',
+        pie: 'Pie',
+        appaloosa: 'Appaloosa',
+        raie: 'Raie de mulet',
+        lave: 'Crins lavés',
+    },
+};
+// 1.24.2 : la retraite des champions et le livre généalogique
+export const STUD = {
+    champDiv: 3, // il faut avoir gagné en division Élite (ou au-dessus)
+    max: 3, // reproducteurs au pré
+    income: 450, // par jour et par reproducteur, × (1 + niveau / 50)
+    incomeDays: 7, // on cumule au plus une semaine d'absence
+    foalPts: 10, // points d'aptitude offerts au poulain dans la spécialité du parent
+    famous: 4, // champions de suite dans une lignée
+    famousRibbons: 1,
+    defaultName: 'Haras des Quatre Vents',
+    stages: [0.5], // le poulain devient jeune à la moitié de sa croissance
+};

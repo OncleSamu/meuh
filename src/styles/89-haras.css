@@ -452,3 +452,57 @@
 .hz-eq-on {
     background: #ffe9a8;
 }
+
+/* 1.24.2 : l'élevage */
+.sd-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.sd-horse {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.sd-horse .card-main {
+    flex: 1;
+    min-width: 0;
+}
+.sd-pic {
+    width: 76px;
+    flex: none;
+}
+.sd-pic > svg,
+.sd-pic .gl {
+    width: 100%;
+    display: block;
+}
+.sd-robes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin: 8px 0;
+}
+.sd-robe {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 800;
+}
+.sd-robe svg {
+    width: 100%;
+    display: block;
+}
+.sd-robe.none svg {
+    filter: brightness(0) opacity(0.25);
+}
+.chip.off {
+    opacity: 0.45;
+}
+.sd-genes {
+    display: block;
+    margin-top: 6px;
+    font-family: monospace;
+    font-size: 10px;
+    opacity: 0.7;
+    word-break: break-all;
+}

@@ -547,6 +547,14 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'L’élevage : robes, poulains et retraite',
+                b: [
+                    'Chaque cheval a des gènes de robe (bai, alezan, noir, gris, palomino, isabelle, crème, rouan, aubère, louvet, bai brun) et de marques (étoile, liste, belle face, balzanes, pie, appaloosa, raie de mulet, crins lavés). Ils viennent des deux parents : certains sont dominants (le gris l’emporte sur tout), d’autres récessifs (la belle face, les crins lavés), et il peut y avoir une surprise. L’apparence fantaisiste des gènes du jeu (couleur, motif, finition) se pose par-dessus la robe.',
+                    'Un poulain naît à l’étable de sélection, avec le dessin d’un poulain puis d’un jeune avant d’être adulte. Onglet Animaux, « Élevage » : votre nom d’élevage (le crayon le change), la collection des robes et des marques déjà vues, les descendants et l’arbre de famille.',
+                    'Un cheval qui a gagné en division Élite peut prendre sa retraite (3 reproducteurs au plus) : il quitte son box pour le pré, rapporte des saillies chaque jour (jusqu’à une semaine cumulée) et ses poulains naissent avec 10 points dans sa spécialité. Quatre champions de suite dans une même famille : « Lignée célèbre » et un ruban.',
+                ],
+            },
+            {
                 h: 'Les concours',
                 b: [
                     'Onglet Animaux, « Concours » : une discipline par semaine (galop, saut, dressage, endurance), cinq divisions (Poneys, Amateurs, Club, Élite, Grand Prix). Choisissez une division, inscrivez un cheval logé (5 % de la bourse), puis jouez son passage quand vous voulez avant lundi : un passage coûte une pastille de forme. Pas de passage ? Jules monte à votre place.',

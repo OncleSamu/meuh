@@ -17,7 +17,7 @@ const SADDLE_OUTFIT = { saddleDress: 'horseSdress', saddleJump: 'horseSjump', sa
 const horseArt = (a, r) => {
     const eq = r.eq || {};
     const outfit = eq.couv ? 'horseScover' : SADDLE_OUTFIT[eq.selle] || (eq.selle ? 'horseS' : OUTFIT[r.spec] || 'horseS');
-    return `<span class="hb-horse">${genWrap(art('animal', outfit), a.g)}</span>`;
+    return `<span class="hb-horse">${genWrap(art('animal', a.g && a.g.coat ? `${outfit}~@${G.coatKey(a.g)}` : outfit), a.g)}</span>`;
 };
 const EQ_FX = id => {
     const e = EQUIP.items[id],

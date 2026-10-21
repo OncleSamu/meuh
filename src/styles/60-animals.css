@@ -178,6 +178,14 @@ html.season-automne .meadow {
     transform-origin: 50% 85%;
 }
 
+.critter.baby.foal .critter-body {
+    transform: scale(0.95);
+}
+
+.critter.baby.foal.flip .critter-body {
+    transform: scale(-0.95, 0.95);
+}
+
 .critter.baby.flip .critter-body {
     transform: scale(-0.62, 0.62);
 }

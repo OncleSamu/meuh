@@ -120,8 +120,8 @@ test('1.24 : la première victoire d’une division donne une décoration unique
     G.showTick();
     const l = state.show.last;
     if (l.place === 1) {
-        assert.equal(l.deco, 'showpodium');
-        assert.equal(state.decorInv.showpodium, 1);
+        assert.equal(l.deco, 'horsevane');
+        assert.equal(state.decorInv.horsevane, 1);
         assert.equal(state.prestige.rubans, rub + 1);
     } else assert.ok(l.place > 1);
 });

@@ -261,6 +261,7 @@ export function collectRando(uid, at) {
 export function lodge(uid) {
     const a = horseByUid(uid);
     if (!a || a.box || !harasOpen() || !boxFree()) return false;
+    if (rec(a).retired) return toast(`${a.name} est à la retraite au pré`, ['ui', 'hRetraite']), false;
     if (a.adult === false) return toast(`${a.name} est encore trop jeune pour les écuries`, ['animal', 'horse']), false;
     a.box = true;
     a.p = -1;

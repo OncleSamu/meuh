@@ -92,11 +92,14 @@ export function looksText(g) {
 }
 
 // le dessin d'une bête avec ses traits de gènes (cornes, oreilles, toison), puis son apparence
-export function animalKey(type, g) {
+export function animalKey(type, g, stage) {
     const f = g ? G.featureLooks(g, type) : [];
-    return f.some(Boolean) ? `${type}~${f.join('')}` : type;
+    const base = f.some(Boolean) ? `${type}~${f.join('')}` : type;
+    // 1.24.2 : la robe et les marques d'un cheval (et son âge : 0 poulain, 1 jeune)
+    if (type === 'horse' && g && g.coat) return `${base.includes('~') ? base : type + '~'}@${G.coatKey(g)}${stage === 0 || stage === 1 ? '.' + stage : ''}`;
+    return base;
 }
-export const animalArt = (type, g, cls = '') => genWrap(art('animal', animalKey(type, g)), g, cls);
+export const animalArt = (type, g, cls = '', stage) => genWrap(art('animal', animalKey(type, g, stage)), g, cls);
 // « cornes longues, toison frisée »
 export function featuresText(type, g) {
     return featuresOf(type)

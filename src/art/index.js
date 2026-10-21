@@ -41,6 +41,7 @@ import './v119armand.js';
 import './v123haras.js';
 import './v124show.js';
 import './v1241sellerie.js';
+import './v1242robes.js';
 
 export const SPR = {
     farmhouse(l, roof) {
@@ -56,9 +57,17 @@ export const SPR = {
     },
     // « cow~201 » : la vache avec ses traits de gènes (cornes, oreilles, toison dans l'ordre de featuresOf)
     animal(key) {
-        const [id, code] = String(key).split('~');
+        const [id, rest] = String(key).split('~');
+        const [code, robe] = String(rest || '').split('@');
         const o = {};
         if (code) featuresOf(id).forEach((k, j) => (o[k] = +code[j] || 0));
+        // 1.24.2 : « horse~0@bai.etoile+balzanes.1 » : la robe, les marques et l'âge du cheval
+        if (robe) {
+            const [r, m, st] = robe.split('.');
+            o.robe = r;
+            o.marks = m ? m.split('+') : [];
+            if (st !== undefined && st !== '') o.stage = +st;
+        }
         return svg(animals[id](o), '0 0 80 80', 'animal-spr');
     },
     machine(id) {
