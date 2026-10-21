@@ -139,7 +139,7 @@ export function trainHorse(uid, d, at, score = TRAIN.easyScore) {
     return startTrain(uid, d) ? endTrain(uid, d, at, score) : 0;
 }
 // les disciplines qui ont leur mini-jeu
-export const hasGame = d => d === 'galop' || d === 'saut';
+export const hasGame = d => ['galop', 'saut', 'dressage', 'endurance'].includes(d);
 export function setSpec(uid, d) {
     const a = horseByUid(uid);
     if (!a || !DISC[d]) return false;

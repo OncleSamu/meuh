@@ -81,3 +81,41 @@ export const SAUT = {
     goodValue: 0.6,
     seq: ['vertical', 'oxer', 'haie', 'mur', 'riviere', 'barriere', 'vertical', 'oxer'],
 };
+// 1.23.3 : le dressage. Quatre figures à suivre du doigt dans le manège (360 × 520) ; précision, régularité et tracé complet font la note.
+export const DRESSAGE = {
+    figures: ['volte', 'serpentine', 'diagonale', 'huit'],
+    tol: 34, // écart (en pixels) qui fait tomber la précision de 1 à 0
+    start: 46, // distance au point de départ pour lancer la figure
+    window: 14, // combien de points du tracé on peut avancer d'un coup (empêche de couper)
+    smoothMax: 0.8, // virage moyen (radians par pas) qui ramène la régularité à 0
+    step: 8, // longueur minimale d'un pas pour mesurer la régularité
+    end: 0.96, // la figure est finie à ce taux du tracé
+    wPrec: 0.6,
+    wSmooth: 0.4,
+};
+// 1.23.3 : le raid d'endurance. Trois étapes ; on choisit l'allure (pas, trot, galop). Le terrain change la vitesse et le pouls,
+// un pouls au-dessus de la limite (qui grimpe avec la forme) fait ralentir le cheval.
+export const RAID = {
+    stages: [
+        { terrain: 'plat', name: 'La plaine', len: 360, fast: 13, slow: 34, hint: 'Terrain roulant : le trot passe tout seul' },
+        { terrain: 'cote', name: 'La côte', len: 200, fast: 18, slow: 44, hint: 'Côte raide : ménagez le cheval, passez au pas' },
+        { terrain: 'sable', name: 'Les dunes', len: 300, fast: 14, slow: 38, hint: 'Le sable épuise : surveillez le pouls' },
+    ],
+    gaits: { pas: { v: 9, p: 60 }, trot: { v: 18, p: 84 }, galop: { v: 28, p: 106 } }, // vitesse (unités/s) et pouls visé au plat
+    terrain: {
+        plat: { add: 0, mult: { pas: 0.55, trot: 1, galop: 1.1 } },
+        cote: { add: 34, mult: { pas: 1, trot: 0.75, galop: 0.5 } },
+        sable: { add: 14, mult: { pas: 0.5, trot: 0.85, galop: 1 } },
+    },
+    rate: 0.4, // le pouls rejoint sa cible à ce rythme par seconde
+    rest: 62, // pouls au repos
+    limitBase: 108, // la limite vaut limitBase + limitForm × pastilles de forme
+    limitForm: 3,
+    over: 0.4, // vitesse restante au-dessus de la limite
+    recover: 0.5, // part de l'écart au repos qui reste après le contrôle vétérinaire
+    wTime: 0.65,
+    wCalm: 0.35,
+    wVet: 0.15, // poids des contrôles dans la note finale
+    vetOk: 90, // pouls d'arrivée à partir duquel le contrôle se dégrade
+    vetSpan: 40,
+};

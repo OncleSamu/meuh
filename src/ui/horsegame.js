@@ -1,7 +1,8 @@
-// Les mini-jeux du haras (1.23.2) : le galop et le saut, en plein écran. La règle est dans systems/horsegames.js.
+// Les mini-jeux du haras (1.23.2 et 1.23.3) : le galop, le saut, le dressage et le raid, en plein écran. La règle est dans systems/horsegames.js.
 import * as G from '../systems/index.js';
-import { GALOP, SAUT, DISC } from '../data/haras.js';
+import { GALOP, SAUT, DISC, DRESSAGE, RAID } from '../data/haras.js';
 import { horsePose, OBST, obstFault, MG } from '../art/v1232mg.js';
+import { endurancePose, topHorse, GAIT, TERRAIN, TCOL } from '../art/v1233mg.js';
 import { genWrap } from './genlook.js';
 import { sfx, buzz } from '../core/bus.js';
 import { refresh } from './app.js';
@@ -82,6 +83,22 @@ function shell(title) {
     return { o, stage, q: sel => o.querySelector(sel) };
 }
 
+const RULES = {
+    galop: 'Tenez le doigt pour accélérer, relâchez pour ralentir. À l’entrée de chaque virage, l’aiguille doit être dans le <b>vert</b>. Dans la dernière ligne droite, filez !',
+    saut: 'Un anneau se resserre sur la cible. Appuyez quand il touche le <b>vert</b> pour un saut parfait. Huit obstacles, trois fautes et c’est fini.',
+    dressage:
+        'Quatre figures dans le manège. Posez le doigt sur le <b>point de départ</b> puis suivez le tracé sans lâcher : précision, régularité et tracé complet font la note.',
+    endurance:
+        'Trois étapes, trois terrains. Choisissez l’allure : <b>pas</b>, <b>trot</b> ou <b>galop</b>. Un pouls trop haut ralentit le cheval, et le vétérinaire contrôle à chaque étape.',
+};
+const introArt = (d, a, silks) =>
+    genWrap(
+        d === 'dressage'
+            ? `<svg viewBox="0 -6 64 80" class="spr">${topHorse()}</svg>`
+            : `<svg viewBox="0 0 80 80" class="spr">${d === 'endurance' ? endurancePose('walkA') : horsePose(d === 'saut' ? 'jump1' : 'galB', { rider: silks })}</svg>`,
+        a.g,
+    );
+
 // le panneau d'ouverture : choisir de jouer ou de faire une séance rapide
 export function openHorseGame(uid, d, el) {
     const a = G.horseByUid(uid);
@@ -98,12 +115,8 @@ export function openHorseGame(uid, d, el) {
     const cap = G.aptCap(a, d),
         pts = G.aptOf(a, d);
     stage.innerHTML = `<div class="hg-intro">
-        <div class="hg-hart">${genWrap(`<svg viewBox="0 0 80 80" class="spr">${horsePose(d === 'saut' ? 'jump1' : 'galB', { rider: silksOf(a) })}</svg>`, a.g)}</div>
-        <p class="hg-rules">${
-            d === 'galop'
-                ? 'Tenez le doigt pour accélérer, relâchez pour ralentir. À l’entrée de chaque virage, l’aiguille doit être dans le <b>vert</b>. Dans la dernière ligne droite, filez !'
-                : 'Un anneau se resserre sur la cible. Appuyez quand il touche le <b>vert</b> pour un saut parfait. Huit obstacles, trois fautes et c’est fini.'
-        }</p>
+        <div class="hg-hart">${introArt(d, a, silksOf(a))}</div>
+        <p class="hg-rules">${RULES[d]}</p>
         <p class="hg-sub">${DISC[d].name} : ${pts}/${cap} · la séance coûte 1 de forme dès le départ.</p>
         <div class="hg-btns"><button class="btn gold" id="hgplay">Jouer</button><button class="btn" id="hgquick">Séance rapide</button></div>
         <small>Séance rapide : un score moyen, sans jouer.</small></div>`;
@@ -114,7 +127,7 @@ export function openHorseGame(uid, d, el) {
     q('#hgplay').onclick = () => {
         if (me !== run) return;
         if (!G.startTrain(uid, d)) return close();
-        (d === 'galop' ? playGalop : playSaut)({ a, d, o, stage, q, me, close, el, uid });
+        ({ galop: playGalop, saut: playSaut, dressage: playDressage, endurance: playRaid })[d]({ a, d, o, stage, q, me, close, el, uid });
     };
 }
 
@@ -129,7 +142,7 @@ function finish(c, score, lines) {
     const box = document.createElement('div');
     box.className = 'hg-result';
     box.innerHTML = `<h3>${n >= 3 ? 'Magnifique !' : n === 2 ? 'Belle séance' : n === 1 ? 'Séance honnête' : 'On fera mieux'}</h3><div class="hg-stars">${[1, 2, 3].map(i => star(i <= n)).join('')}</div>
-        ${lines.map(l => `<p>${l}</p>`).join('')}<p class="hg-gain">${gain ? `+${gain} point${gain > 1 ? 's' : ''} de ${DISC[c.d].name.toLowerCase()}` : 'Plafond atteint'}</p><button class="btn gold" id="hgdone">Terminer</button>`;
+        ${lines.map(l => `<p>${l}</p>`).join('')}<p class="hg-gain">${gain ? `+${gain} point${gain > 1 ? 's' : ''} ${/^[aeiouéè]/i.test(DISC[c.d].name) ? 'd’' : 'de '}${DISC[c.d].name.toLowerCase()}` : 'Plafond atteint'}</p><button class="btn gold" id="hgdone">Terminer</button>`;
     c.stage.appendChild(box);
     c.q('#hgdone').onclick = c.close;
 }
@@ -473,5 +486,309 @@ function playSaut(c) {
         requestAnimationFrame(loop);
     };
     place(110, GROUND, 0);
+    requestAnimationFrame(loop);
+}
+
+// ---------------- le dressage ----------------
+const LETTERS = [
+    ['C', 180, 66],
+    ['A', 180, 452],
+    ['K', 28, 150],
+    ['F', 332, 150],
+    ['B', 28, 260],
+    ['E', 332, 260],
+    ['P', 28, 370],
+    ['M', 332, 370],
+];
+const toPath = pts => 'M' + pts.map(p => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' L');
+const horseTop = (id, x, y, rot, k = 1.1) => `<g id="${id}" transform="translate(${x} ${y}) rotate(${rot}) scale(${k}) translate(-32 -32)">${topHorse()}</g>`;
+function playDressage(c) {
+    const { stage, q, me } = c;
+    const d = G.newDressage();
+    const arena =
+        rect(0, 0, 360, 520, 0, '#8bc86b', 0) +
+        rect(24, 70, 312, 380, 14, '#e0c48a', 3) +
+        `<rect x="34" y="80" width="292" height="360" rx="8" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.6"/>` +
+        Array.from({ length: 13 }, (_, k) =>
+            line(`M${44 + (k % 2) * 30} ${100 + k * 26} l50 0 M${236 + (k % 2) * 20} ${108 + k * 26} l50 0`, 2, 'rgba(160,120,60,.35)'),
+        ).join('') +
+        LETTERS.map(([l, x, y]) => rect(x - 12, y - 13, 24, 22, 4, '#fff', 2.2) + T(x, y + 3, 14, l)).join('') +
+        `<path d="M180 90 L180 430" stroke="rgba(255,255,255,.55)" stroke-width="1.8" stroke-dasharray="3 7"/>`;
+    stage.innerHTML = `<svg viewBox="0 0 360 520" class="hg-svg" style="touch-action:none">${defs}${arena}
+        <path id="hdguide" d="" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+        <path id="hdguide2" d="" fill="none" stroke="#c8453a" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 10"/>
+        <path id="hddone" d="" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        <path id="hddone2" d="" fill="none" stroke="#ffd23f" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <g id="hdflag"></g>${horseTop('hdh', 180, 430, 0)}
+        ${hudBox(`${T(60, 28, 12, 'Figure')}${T(60, 52, 20, '1 / 4', { id: 'hdn' })}${T(190, 28, 12, 'Volte', { id: 'hdname' })}${rect(145, 36, 90, 14, 7, '#fff', 2.2)}<rect id="hdbar" x="147" y="38" width="0" height="10" rx="5" fill="#6cc04a"/>`)}
+        ${rect(30, 470, 300, 36, 18, '#fff7e0', 2.8)}${T(180, 494, 14, 'Posez le doigt sur le point rouge', { id: 'hdmsg' })}
+        <g id="hdsay" opacity="0">${T(180, 250, 30, '', { id: 'hdsayt', c: '#fff', st: 1, sw: 6 })}</g></svg>`;
+    const $ = id => q('#' + id);
+    const svg = stage.querySelector('svg');
+    const horse = $('hdh');
+    let down = false,
+        hx = 180,
+        hy = 430,
+        tx = 180,
+        ty = 430,
+        rot = 0,
+        last = performance.now(),
+        wait = 0,
+        busy = false;
+    const trail = [];
+    const setFig = () => {
+        const f = d.fig,
+            path = toPath(f.path);
+        $('hdguide').setAttribute('d', path);
+        $('hdguide2').setAttribute('d', path);
+        $('hddone').setAttribute('d', '');
+        $('hddone2').setAttribute('d', '');
+        $('hdn').textContent = `${d.i + 1} / ${DRESSAGE.figures.length}`;
+        $('hdname').textContent = { volte: 'Volte', serpentine: 'Serpentine', diagonale: 'Diagonale', huit: 'Huit' }[f.id];
+        $('hdbar').setAttribute('width', 0);
+        $('hdflag').innerHTML = circ(f.path[0][0], f.path[0][1], 11, '#c8453a', 2.2) + T(f.path[0][0], f.path[0][1] + 5, 13, '1', { c: '#fff' });
+        $('hdmsg').textContent = 'Posez le doigt sur le point rouge';
+        [hx, hy] = f.path[0];
+        [tx, ty] = f.path[0];
+        const nx = f.path[Math.min(4, f.path.length - 1)];
+        rot = (Math.atan2(nx[1] - hy, nx[0] - hx) * 180) / Math.PI + 90;
+        trail.length = 0;
+    };
+    setFig();
+    const pt = e => {
+        const r = svg.getBoundingClientRect();
+        return [((e.clientX - r.left) * 360) / r.width, ((e.clientY - r.top) * 520) / r.height];
+    };
+    const say = t => {
+        $('hdsayt').textContent = t;
+        $('hdsay').setAttribute('opacity', 1);
+        wait = 0.9;
+    };
+    const endFig = () => {
+        if (busy) return;
+        const f = d.fig;
+        const st = G.figStats(f);
+        const before = d.i;
+        G.dressFinishFig(d);
+        const sc = d.scores[before];
+        say(sc >= 0.85 ? 'Parfait !' : sc >= 0.6 ? 'Bien' : sc >= 0.3 ? 'Passable' : 'Raté');
+        sfx(sc >= 0.5 ? 'pop' : 'error');
+        void st;
+        busy = true;
+    };
+    const onDown = e => {
+        e.preventDefault();
+        if (busy || d.done) return;
+        down = true;
+        [tx, ty] = pt(e);
+    };
+    const onMove = e => {
+        if (!down) return;
+        [tx, ty] = pt(e);
+    };
+    const onUp = () => {
+        if (!down) return;
+        down = false;
+        if (d.fig.started && !busy) endFig();
+    };
+    svg.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+    const cleanup = () => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onUp);
+    };
+    const origClose = c.close;
+    q('#hgquit').onclick = () => {
+        cleanup();
+        origClose();
+    };
+    const loop = now => {
+        if (me !== run) return cleanup();
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        if (wait > 0) {
+            wait -= dt;
+            if (wait <= 0) {
+                $('hdsay').setAttribute('opacity', 0);
+                busy = false;
+                if (d.done) {
+                    cleanup();
+                    const n = G.dressageNotes(d);
+                    finish(c, G.dressageScore(d), [
+                        `Précision : ${Math.round(n.prec * 10)}/10`,
+                        `Régularité : ${Math.round(n.smooth * 10)}/10`,
+                        `Tracé complet : ${Math.round(n.cover * 10)}/10`,
+                    ]);
+                    return;
+                }
+                setFig();
+            }
+        } else if (down) {
+            // le cheval suit le doigt avec un peu de souplesse : le tracé reste lisse
+            const k = 1 - Math.exp(-dt * 14);
+            const nx = hx + (tx - hx) * k,
+                ny = hy + (ty - hy) * k;
+            if (Math.hypot(nx - hx, ny - hy) > 0.4) rot = (Math.atan2(ny - hy, nx - hx) * 180) / Math.PI + 90;
+            hx = nx;
+            hy = ny;
+            const f = d.fig;
+            G.dressMove(d, hx, hy);
+            if (f.started) {
+                $('hdmsg').textContent = 'Suivez le tracé, doucement';
+                if (!trail.length || Math.hypot(hx - trail[trail.length - 1][0], hy - trail[trail.length - 1][1]) > 3) trail.push([hx, hy]);
+                const p = toPath(trail);
+                $('hddone').setAttribute('d', p);
+                $('hddone2').setAttribute('d', p);
+                const st = G.figStats(f);
+                $('hdbar').setAttribute('width', Math.max(0, 86 * st.cover * (0.5 + 0.5 * st.prec)));
+                if (G.dressFigDone(d)) {
+                    down = false;
+                    endFig();
+                }
+            }
+        }
+        horse.setAttribute('transform', `translate(${hx} ${hy}) rotate(${rot}) scale(1.1) translate(-32 -32)`);
+        requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+}
+
+// ---------------- le raid d'endurance ----------------
+const GAITN = { pas: 'Pas', trot: 'Trot', galop: 'Galop' };
+function playRaid(c) {
+    const { a, stage, q, me } = c;
+    const silks = '#2f9e8f';
+    const r = G.newRaid(G.formOf(a));
+    const calm = reduceMotion();
+    const frames = {
+        pas: ['walkA', 'walkB'].map(p => endurancePose(p)),
+        trot: ['trotA', 'trotB'].map(p => endurancePose(p)),
+        galop: ['galA', 'galB', 'galC', 'galB'].map(p => horseFrame(p, silks)),
+    };
+    const sceneBg = i => {
+        const t = RAID.stages[i].terrain;
+        return `<rect x="0" y="350" width="360" height="114" fill="${TCOL[t]}" stroke="${INK}" stroke-width="2.4"/><g transform="translate(0 140) scale(3 3.1)">${TERRAIN[t]()}</g>`;
+    };
+    const btn = (g, i) =>
+        `<g class="hr-btn" data-g="${g}" style="cursor:pointer"><rect id="hrb-${g}" x="${36 + i * 98}" y="474" width="96" height="28" rx="14" fill="#fff7e0"/>${at(GAIT[g](), 40 + i * 98, 472, 0.5)}${T(88 + i * 98, 494, 13, GAITN[g])}</g>`;
+    stage.innerHTML = `<svg viewBox="0 0 360 520" class="hg-svg">${defs}${rect(0, 0, 360, 520, 0, 'url(#hgsky)', 0)}
+        <g id="hrbg">${sceneBg(0)}</g>
+        <g id="hrdash"></g>
+        <rect x="0" y="464" width="360" height="56" fill="#5fa84a" stroke="${INK}" stroke-width="2.4"/>
+        <g transform="translate(150 372) scale(2.5) translate(-40 -44)"><g id="hrh">${frames.trot[0]}</g></g>
+        ${hudBox(`${at(GAIT.etape(), 6, 2, 0.8)}${T(100, 28, 12, 'Étape 1 / 3', { id: 'hrst' })}${T(100, 52, 18, '', { id: 'hrname' })}${rect(160, 22, 120, 16, 8, '#fff', 2.2)}<rect id="hrbar" x="162" y="24" width="0" height="12" rx="6" fill="#2f9e8f"/>${T(220, 52, 11, 'Parcours')}${T(318, 33, 12, 'Pouls')}${T(318, 52, 18, '62', { id: 'hrp' })}`)}
+        <g id="hrhint">${rect(30, 76, 300, 34, 17, '#ffd23f', 2.8)}${T(180, 98, 13, '', { id: 'hrhtxt' })}</g>
+        ${rect(30, 470, 300, 36, 18, '#fff7e0', 2.8)}${['pas', 'trot', 'galop'].map(btn).join('')}
+        <g id="hrvet" opacity="0" style="pointer-events:none"></g></svg>`;
+    const $ = id => q('#' + id);
+    const horse = $('hrh');
+    let fr = 0,
+        frT = 0,
+        off = 0,
+        last = performance.now(),
+        vet = false,
+        shown = -1;
+    const paintBtns = () => ['pas', 'trot', 'galop'].forEach(g => $('hrb-' + g).setAttribute('fill', g === r.gait ? '#ffd23f' : '#fff7e0'));
+    const pick = g => {
+        if (vet) return;
+        G.setGait(r, g);
+        paintBtns();
+        sfx('pop');
+    };
+    stage.querySelectorAll('.hr-btn').forEach(b => b.addEventListener('pointerdown', e => (e.preventDefault(), pick(b.dataset.g))));
+    const keys = e => ({ Digit1: 'pas', Digit2: 'trot', Digit3: 'galop' })[e.code] && pick({ Digit1: 'pas', Digit2: 'trot', Digit3: 'galop' }[e.code]);
+    window.addEventListener('keydown', keys);
+    const cleanup = () => window.removeEventListener('keydown', keys);
+    const origClose = c.close;
+    q('#hgquit').onclick = () => {
+        cleanup();
+        origClose();
+    };
+    const stageUi = () => {
+        if (shown === r.i) return;
+        shown = r.i;
+        const s = RAID.stages[Math.min(r.i, RAID.stages.length - 1)];
+        $('hrbg').innerHTML = sceneBg(Math.min(r.i, RAID.stages.length - 1));
+        $('hrst').textContent = `Étape ${Math.min(r.i + 1, 3)} / 3`;
+        $('hrname').textContent = s.name;
+        $('hrhtxt').textContent = s.hint;
+        $('hrhint').setAttribute('opacity', 1);
+    };
+    stageUi();
+    paintBtns();
+    const showVet = ev => {
+        vet = true;
+        const rows = [
+            ['pouls', 'Pouls', `${ev.pulse} bpm`, G.raidVet(ev.pulse)],
+            ['souffle', 'Souffle', ev.vet > 0.7 ? 'calme' : 'rapide', clamp(ev.vet + 0.1)],
+            ['pas', 'Allure', ev.score > 0.7 ? 'régulière' : 'irrégulière', ev.score],
+        ];
+        $('hrvet').innerHTML =
+            rect(14, 110, 332, 340, 18, '#fff7e0', 3) +
+            T(180, 150, 20, `Contrôle vétérinaire · étape ${ev.stage + 1}`) +
+            at(GAIT.veto(), 140, 156, 0.9) +
+            rows
+                .map(([ic, n, v, p], i) => {
+                    const y = 252 + i * 46;
+                    return `${at(GAIT[ic](), 24, y - 8, 0.62)}${T(76, y + 14, 15, n, { a: 'start' })}${rect(150, y, 100, 14, 7, '#fff', 2.2)}<rect x="152" y="${y + 2}" width="${Math.max(0, 96 * p - 4)}" height="10" rx="5" fill="${p > 0.75 ? '#6cc04a' : '#ffd23f'}"/>${T(336, y + 12, 11, v, { a: 'end' })}`;
+                })
+                .join('') +
+            (ev.vet > 0.35
+                ? rect(80, 396, 200, 36, 18, '#6cc04a', 3) + T(180, 421, 17, r.done ? 'Arrivée !' : 'Apte à repartir', { c: '#fff', st: 1, sw: 4 })
+                : rect(80, 396, 200, 36, 18, '#e07a3f', 3) + T(180, 421, 17, 'Repos conseillé', { c: '#fff', st: 1, sw: 4 }));
+        $('hrvet').setAttribute('opacity', 1);
+        $('hrvet').style.pointerEvents = 'auto';
+        $('hrvet').onpointerdown = () => {
+            $('hrvet').setAttribute('opacity', 0);
+            $('hrvet').style.pointerEvents = 'none';
+            vet = false;
+            last = performance.now();
+            if (r.done) {
+                cleanup();
+                const times = r.times.map(t => fmtT(t)).join(' · ');
+                finish(c, G.raidScore(r), [`Étapes : ${times}`, `Temps total : ${fmtT(r.t)}`]);
+            } else stageUi();
+        };
+        sfx('pop');
+    };
+    const loop = now => {
+        if (me !== run) return cleanup();
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        if (!vet) {
+            G.stepRaid(r, dt);
+            if (r.event) {
+                const ev = r.event;
+                r.event = null;
+                showVet(ev);
+            }
+            const sp = G.raidSpeed(r);
+            off = (off + sp * 6 * dt) % 360;
+            $('hrdash').innerHTML = [0, 1]
+                .map(k => line(`M${(k * 180 - off + 360) % 360} 440 l26 0 M${(k * 180 + 90 - off + 360) % 360} 456 l20 0`, 3, 'rgba(255,255,255,.55)'))
+                .join('');
+            frT += dt * (r.gait === 'pas' ? 3 : r.gait === 'trot' ? 6 : 12);
+            const arr = frames[r.gait];
+            const f = calm ? 0 : Math.floor(frT) % arr.length;
+            if (f !== fr || horse.dataset.g !== r.gait) {
+                fr = f;
+                horse.dataset.g = r.gait;
+                horse.innerHTML = arr[f % arr.length];
+            }
+            const st = G.raidStage(r);
+            $('hrbar').setAttribute('width', Math.min(116, 116 * (r.pos / st.len)));
+            $('hrp').textContent = Math.round(r.p);
+            $('hrp').setAttribute('fill', r.p > r.lim ? '#c8453a' : r.p > r.lim - 10 ? '#e07a3f' : '#2a8a3a');
+            if (r.stageT > 3.5) $('hrhint').setAttribute('opacity', 0);
+            if (r.p > r.lim) {
+                $('hrhtxt').textContent = 'Pouls trop haut : ralentissez !';
+                $('hrhint').setAttribute('opacity', 1);
+            }
+        }
+        requestAnimationFrame(loop);
+    };
     requestAnimationFrame(loop);
 }

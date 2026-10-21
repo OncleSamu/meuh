@@ -101,7 +101,7 @@ test('1.23.2 saut : trois fautes éliminent, huit obstacles finissent le parcour
 
 test('1.23.2 : une séance jouée paie la forme au départ et donne les points à la fin', () => {
     const a = horse();
-    assert.ok(G.hasGame('galop') && G.hasGame('saut') && !G.hasGame('dressage'));
+    assert.ok(G.hasGame('galop') && G.hasGame('saut') && !G.hasGame('autre'));
     assert.equal(G.formOf(a), 5);
     assert.ok(G.startTrain(a.uid, 'saut'));
     assert.equal(G.formOf(a), 4);

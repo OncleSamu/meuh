@@ -528,7 +528,7 @@ export const GUIDE_PAGES = [
                     'Chaque aptitude monte de 0 jusqu’à un plafond de 40 + 12 × le gène (gène 2 : 64 ; gène 5 : 100). Croisez vos chevaux au labo pour viser plus haut.',
                     'Une séance donne 2 à 6 points ; le gain diminue près du plafond. Les cœurs d’amitié et une ration (carotte, pomme ou orge : +10 % pendant 1 heure) l’augmentent.',
                     'Touchez l’icône d’une discipline pour en faire la spécialité du cheval : elle comptera davantage en concours.',
-                    'Galop et saut se jouent en mini-jeu (30 à 45 secondes) : le score décide des points. Le galop : tenez le doigt pour accélérer, relâchez pour ralentir, aiguille dans le vert à l’entrée des virages, puis sprint. Le saut : appuyez quand l’anneau touche la cible, huit obstacles, trois fautes éliminent. La séance coûte sa pastille de forme dès le départ ; « Séance rapide » donne un score moyen sans jouer.',
+                    'Les quatre disciplines se jouent en mini-jeu (30 à 60 secondes) : le score décide des points. Le galop : tenez le doigt pour accélérer, relâchez pour ralentir, aiguille dans le vert à l’entrée des virages, puis sprint. Le saut : appuyez quand l’anneau touche la cible, huit obstacles, trois fautes éliminent. Le dressage : suivez du doigt le tracé de quatre figures dans le manège (volte, serpentine, diagonale, huit), précision et régularité font la note. L’endurance : un raid en trois étapes, choisissez pas, trot ou galop selon le terrain, un pouls trop haut ralentit le cheval (la forme relève la limite) et le vétérinaire contrôle à chaque étape. La séance coûte sa pastille de forme dès le départ ; « Séance rapide » donne un score moyen sans jouer.',
                 ],
             },
             {
@@ -541,7 +541,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Et ensuite',
-                t: 'Les mini-jeux d’entraînement puis les concours, avec leurs divisions et leurs rubans, arrivent dans les prochaines versions.',
+                t: 'Les concours, avec leurs divisions et leurs rubans, arrivent dans les prochaines versions.',
             },
         ],
         see: ['animals', 'labanimals'],
