@@ -153,3 +153,23 @@ test('1.24.6 : chaque chantier ne demande que des produits ouverts au niveau de 
     }
     assert.deepEqual(bad, []);
 });
+
+test('1.24.7 : aucune recette ne s’ouvre avant ses ingrédients', async () => {
+    const M = await import('../../src/data/machines.js');
+    const I = await import('../../src/data/items.js');
+    const A = await import('../../src/data/animals.js');
+    const pa = {};
+    for (const a of Object.values(A.ANIMALS)) {
+        pa[a.prodId] = a.reqLvl;
+        if (a.extraId) pa[a.extraId] = a.reqLvl;
+    }
+    const lv = id => {
+        const r = M.RECIPES[id];
+        if (r) return Math.max(r.lvl || 0, (M.MACHINES[r.machine] || {}).reqLvl || 0);
+        return Math.max((I.ITEMS[id] && I.ITEMS[id].reqLvl) || 0, pa[id] || 0);
+    };
+    const bad = [];
+    for (const r of Object.values(M.RECIPES))
+        for (const k of Object.keys(r.ing || {})) if (lv(k) > lv(r.id)) bad.push(`${r.id} (${lv(r.id)}) ← ${k} (${lv(k)})`);
+    assert.deepEqual(bad, []);
+});

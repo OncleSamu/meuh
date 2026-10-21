@@ -2,6 +2,8 @@ import { LV_MACH, LV_REC } from './levels14.js';
 import { LV18_MACH, LV18_REC } from './levels18.js';
 import { NEW_DRINKS } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
+import { ITEMS } from './items.js';
+import { ANIMALS } from './animals.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -3427,3 +3429,30 @@ Object.assign(RECIPES, {
     winterBlanket: { id: 'winterBlanket', machine: 'saddlery', ing: { cloth: 3, wool: 2 }, time: 2400, lvl: 44, base: 44, xp: 26 },
     hairBrush: { id: 'hairBrush', machine: 'saddlery', ing: { hardwood: 1, horsehair: 3 }, time: 1200, lvl: 44, base: 44, xp: 16 },
 });
+
+// ---------------- 1.24.7 : une recette ne s'ouvre jamais avant ses ingrédients ----------------
+// (la pizza demandait du fromage d'un niveau plus loin, la crêpe au calvados du calvados…) ; on relève la recette
+// jusqu'au niveau de son ingrédient le plus tardif, en boucle pour les chaînes (fromage → pizza)
+{
+    const animalLvl = {};
+    for (const a of Object.values(ANIMALS)) {
+        if (a.prodId) animalLvl[a.prodId] = Math.min(animalLvl[a.prodId] ?? 99, a.reqLvl);
+        if (a.extraId) animalLvl[a.extraId] = Math.min(animalLvl[a.extraId] ?? 99, a.reqLvl);
+    }
+    const lvOf = id => {
+        const r = RECIPES[id];
+        if (r) return Math.max(r.lvl || 0, (MACHINES[r.machine] && MACHINES[r.machine].reqLvl) || 0);
+        return Math.max((ITEMS[id] && ITEMS[id].reqLvl) || 0, animalLvl[id] || 0);
+    };
+    for (let pass = 0, moved = true; moved && pass < 10; pass++) {
+        moved = false;
+        for (const r of Object.values(RECIPES)) {
+            const need = Math.max(0, ...Object.keys(r.ing || {}).map(lvOf));
+            if (need > r.lvl) {
+                if (r.lv17 === undefined) r.lv17 = r.lvl;
+                r.lvl = r.base = need;
+                moved = true;
+            }
+        }
+    }
+}
