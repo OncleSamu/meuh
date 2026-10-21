@@ -12,7 +12,7 @@ export const DIV = [
     { n: 'II', name: 'Amateurs', c: '#6ba3d6', d: '#3f6fb5' },
     { n: 'III', name: 'Club', c: '#c07ae0', d: '#8e5bc0' },
     { n: 'IV', name: 'Élite', c: '#f59a3f', d: '#c8702a' },
-    { n: 'V', name: 'Grand Prix', c: '#ffd23f', d: '#c8a020' },
+    { n: 'V', name: 'Prestige', c: '#ffd23f', d: '#c8a020' },
 ];
 // ---------- rosette (64 × 64) : frisons, cœur, rubans ----------
 export const rosette = (d, big = false) => {

@@ -162,12 +162,13 @@ export function setSpec(uid, d) {
 }
 
 // ---------------- les soins ----------------
+export const brushLeftMs = a => Math.max(0, (rec(a).brushAt || 0) + BRUSH.every - now());
 export function brushHorse(uid, at) {
     const a = horseByUid(uid);
     if (!a || !a.box) return false;
     const r = rec(a);
-    if (r.brushDay === state.day) return toast(`${a.name} est déjà bien brossé aujourd’hui`, ['ui', 'hBrosse']), false;
-    r.brushDay = state.day;
+    if (brushLeftMs(a) > 0) return toast(`${a.name} est déjà bien brossé : à nouveau dans ${fmtMin(brushLeftMs(a))}`, ['ui', 'hBrosse']), false;
+    r.brushAt = now();
     if ((a.love || 0) < 5) a.love = (a.love || 0) + 1;
     sfx(a.type);
     sfx('pop');
@@ -302,7 +303,10 @@ export function tidyHaras() {
         }
     });
 }
-export const fmtMin = ms => `${Math.max(1, Math.ceil(ms / 60000))} min`;
+export const fmtMin = ms => {
+    const m = Math.max(1, Math.ceil(ms / 60000));
+    return m >= 60 ? `${Math.floor(m / 60)} h${m % 60 ? ' ' + String(m % 60).padStart(2, '0') : ''}` : `${m} min`;
+};
 
 // ---------------- l'équipement (1.24.1) ----------------
 export const eqOf = a => (rec(a).eq ||= {});

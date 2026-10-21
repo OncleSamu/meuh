@@ -9,6 +9,7 @@ import { ico } from '../icons.js';
 import { btn, hint, section, timer } from '../kit.js';
 import { defineView } from '../app.js';
 import { openHorseGame } from '../horsegame.js';
+import { animalArt } from '../genlook.js';
 
 const divName = i => SHOW.divs[i].name;
 const num = n => Math.round(n);
@@ -55,7 +56,7 @@ function horseRow(a, disc, st) {
     else if (st.entry.passage == null)
         right = btn('Jouer', { act: 'shPlay', data: { uid: a.uid, d: disc }, size: 'sm', kind: 'green', disabled: !G.canTrain(a) });
     else right = `<span class="chip">${ico(['ui', 'hCup0'])}Passage joué</span>`;
-    return `<div class="card sh-horse${mine ? ' mine' : ''}"><div class="card-main"><div class="card-title">${esc(a.name)}${mine ? ' · inscrit' : ''}</div>
+    return `<div class="card sh-horse${mine ? ' mine' : ''}"><span class="sd-pic sm">${animalArt('horse', a.g)}</span><div class="card-main"><div class="card-title">${esc(a.name)}${mine ? ' · inscrit' : ''}</div>
         <div class="card-sub">${DISC[disc].name} ${G.aptOf(a, disc)}/${G.aptCap(a, disc)} · note espérée ${num(hope)}${G.titlesOf(a.uid) ? ` · ${G.titlesOf(a.uid)} victoire${G.titlesOf(a.uid) > 1 ? 's' : ''}` : ''}</div></div>${right}</div>`;
 }
 
@@ -72,6 +73,7 @@ function weekCard() {
     return `<div class="card sh-week"><div class="card-art">${ico(DISC[disc].icon, 'ico big')}</div><div class="card-main">
         <div class="card-sub">Cette semaine</div><div class="card-title">${DISC[disc].name}</div>
         <div class="card-sub">Division ${divName(div)} · bourse ${fmt(G.purseOf(div))} · inscription ${fmt(G.feeOf(div))}</div>
+        <div class="card-sub">Rivales : notes de ${SHOW.divs[div].rivals[0]} à ${SHOW.divs[div].rivals[1]}</div>
         <div class="card-sub">Résultats dans ${timer(Date.now() + G.showEndsIn() * 1000)}</div></div></div>
         ${divChips(div, 'shDiv')}<p class="hint">${hint2}</p>`;
 }
@@ -85,7 +87,7 @@ function gpCard(st, lod) {
         const div = st.div;
         return `<div class="card sh-gp"><div class="card-art">${ico(['ui', 'hCup2'], 'ico big')}</div><div class="card-main"><div class="card-title">Grand Prix du mois</div>
             <div class="card-sub">Ce week-end · bourse ${fmt(G.purseOf(div, SHOW.gpMult))} · inscription ${fmt(G.feeOf(div, SHOW.gpMult))} · jusqu’à dimanche soir</div></div></div>
-            <div class="chips-row wrap">${lod.map(a => `<button class="pick-chip" data-act="gpEnter" data-uid="${a.uid}">${esc(a.name)} · ${num(G.showHope(a, G.weekDisc()))}</button>`).join('') || '<small>Logez un cheval en box pour participer.</small>'}</div>`;
+            <div class="chips-row wrap">${lod.map(a => `<button class="pick-chip" data-act="gpEnter" data-uid="${a.uid}">${esc(a.name)} · ${num(SHOW.rot.reduce((n, d) => n + G.showHope(a, d), 0) / SHOW.rot.length)}</button>`).join('') || '<small>Logez un cheval en box pour participer.</small>'}</div>`;
     }
     const a = G.horseByUid(g.uid);
     const rows = SHOW.rot

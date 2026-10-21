@@ -534,7 +534,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Les soins',
                 b: [
-                    'Brosser : un cœur de plus (une fois par jour) et parfois une pastille de forme.',
+                    'Brosser : un cœur de plus et parfois une pastille de forme, une fois toutes les 2 heures.',
                     'Nourrir : remplit la mangeoire avec la nourriture du stock.',
                     'Randonnée de 2 heures : une pastille de forme, quelques trouvailles (champignons, châtaignes, bois, miel…) et 2 points d’endurance.',
                 ],
@@ -551,13 +551,13 @@ export const GUIDE_PAGES = [
                 b: [
                     'Chaque cheval a des gènes de robe (bai, alezan, noir, gris, palomino, isabelle, crème, rouan, aubère, louvet, bai brun) et de marques (étoile, liste, belle face, balzanes, pie, appaloosa, raie de mulet, crins lavés). Ils viennent des deux parents : certains sont dominants (le gris l’emporte sur tout), d’autres récessifs (la belle face, les crins lavés), et il peut y avoir une surprise. L’apparence fantaisiste des gènes du jeu (couleur, motif, finition) se pose par-dessus la robe.',
                     'Un poulain naît à l’étable de sélection, avec le dessin d’un poulain puis d’un jeune avant d’être adulte. Onglet Animaux, « Élevage » : votre nom d’élevage (le crayon le change), la collection des robes et des marques déjà vues, les descendants et l’arbre de famille.',
-                    'Un cheval qui a gagné en division Élite peut prendre sa retraite (3 reproducteurs au plus) : il quitte son box pour le pré, rapporte des saillies chaque jour (jusqu’à une semaine cumulée) et ses poulains naissent avec 10 points dans sa spécialité. Quatre champions de suite dans une même famille : « Lignée célèbre » et un ruban.',
+                    'Un cheval qui a gagné en division Élite peut prendre sa retraite (3 reproducteurs au plus) : il quitte son box pour le pré, rapporte des saillies chaque jour (plus il a gagné de concours, plus elles valent ; jusqu’à une semaine cumulée) et ses poulains naissent avec 10 points dans sa spécialité. Quatre champions de suite dans une même famille : « Lignée célèbre » et un ruban.',
                 ],
             },
             {
                 h: 'Les concours',
                 b: [
-                    'Onglet Animaux, « Concours » : une discipline par semaine (galop, saut, dressage, endurance), cinq divisions (Poneys, Amateurs, Club, Élite, Grand Prix). Choisissez une division, inscrivez un cheval logé (5 % de la bourse), puis jouez son passage quand vous voulez avant lundi : un passage coûte une pastille de forme. Pas de passage ? Jules monte à votre place.',
+                    'Onglet Animaux, « Concours » : une discipline par semaine (galop, saut, dressage, endurance), cinq divisions (Poneys, Amateurs, Club, Élite, Prestige). Choisissez une division, inscrivez un cheval logé (5 % de la bourse), puis jouez son passage quand vous voulez avant lundi : un passage coûte une pastille de forme. Pas de passage ? Jules monte à votre place.',
                     'La note : aptitude 55 %, passage 30 %, présentation 15 % (les cœurs d’amitié), +10 % pour la spécialité. Le lundi, le cheval est classé contre cinq rivales : bourse pour les trois premiers (100, 50 et 25 %), rosette pour les deux premiers, coupe pour le vainqueur.',
                     'Trois rosettes dans une division ouvrent la suivante. La première victoire de chaque division (sauf Poneys) offre une décoration unique ; une victoire en Élite et chaque Grand Prix rapportent un ruban. Rosettes et coupes comptent dans le charme du concours de la ferme.',
                     'Le Grand Prix du mois, le premier week-end : les quatre disciplines avec le même cheval, bourses doubles. L’Agenda affiche tout cela.',

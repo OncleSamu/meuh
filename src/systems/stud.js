@@ -2,6 +2,7 @@
 // qui héritent d'un peu de leur talent, le nom d'élevage et les lignées célèbres.
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
+import { fmt } from '../core/format.js';
 import { emit, toast, sfx, buzz } from '../core/bus.js';
 import { STUD, COAT, DISC } from '../data/haras.js';
 import { earn, addXp } from './player.js';
@@ -34,6 +35,7 @@ export const bestDiv = uid => {
     return b && b[uid] !== undefined ? b[uid] : -1;
 };
 export const isChampion = a => !!a && bestDiv(a.uid) >= STUD.champDiv;
+export const isChampionUid = uid => bestDiv(uid) >= STUD.champDiv;
 export const chainOf = a => (a && a.chain) || 0;
 // une victoire en division : le cheval devient champion ; sa lignée compte une génération de plus. Rend les rubans gagnés.
 export function champWon(uid, div) {
@@ -42,7 +44,10 @@ export function champWon(uid, div) {
     if (div > (s.best[uid] === undefined ? -1 : s.best[uid])) s.best[uid] = div;
     const a = horseByUid(uid);
     if (!a || div < STUD.champDiv || a.chain) return 0;
-    a.chain = (a.pc || 0) + 1;
+    // 1.24.3 : un parent devenu champion après la naissance compte aussi
+    const sire = horseByUid(a.sire),
+        dam = horseByUid(a.dam);
+    a.chain = Math.max(a.pc || 0, isChampion(sire) ? chainOf(sire) : 0, isChampion(dam) ? chainOf(dam) : 0) + 1;
     if (a.chain === STUD.famous) {
         ensureStud().famous++;
         toast(`Lignée célèbre : ${a.name} est le ${STUD.famous}e champion de suite de sa famille !`, ['ui', 'hCouronne']);
@@ -81,26 +86,30 @@ export function retire(uid) {
     sfx('level');
     buzz(30);
     addXp(150, null);
-    toast(`${a.name} prend sa retraite au pré : reproducteur du ${studName()}`, ['ui', 'hRetraite']);
+    toast(`${a.name} prend sa retraite au pré : reproducteur de l’élevage « ${studName()} »`, ['ui', 'hRetraite']);
     emit('changed', 'haras');
     return true;
 }
 
 // ---------------- les saillies : un revenu chaque jour ----------------
-export const studIncome = () => Math.round((STUD.income * (1 + state.level / 50)) / 10) * 10;
+// une saillie vaut plus quand le champion a beaucoup gagné
+export const studIncome = a => {
+    const wins = a && state.show && state.show.titles ? state.show.titles[a.uid] || 0 : 0;
+    return Math.round((STUD.income * (1 + state.level / 50) * (1 + Math.min(STUD.incomeWinMax, wins * STUD.incomeWin))) / 10) * 10;
+};
 export function studTick() {
     if (!state.haras || !state.haras.stud) return false;
     const s = ensureStud();
     const d = dayNo();
     let ch = false;
     if (d > s.day) {
-        const n = Math.min(STUD.incomeDays, d - s.day) * retired().length;
+        const days = Math.min(STUD.incomeDays, d - s.day);
+        const sum = days * retired().reduce((t, a) => t + studIncome(a), 0);
         s.day = d;
-        if (n) {
-            const sum = n * studIncome();
+        if (sum) {
             earn(sum, null);
             s.earned += sum;
-            toast(`Saillies : +${sum} pièces pour le ${s.name}`, ['ui', 'hSaillie']);
+            toast(`Saillies de l’élevage « ${s.name} » : +${fmt(sum)} pièces`, ['ui', 'hSaillie']);
             ch = true;
         }
     }

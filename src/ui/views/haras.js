@@ -52,7 +52,7 @@ function closedCard() {
     const n = G.stableNext();
     return `<div class="card island-closed"><div class="ic-art hz-stable">${stableSvg(0)}</div>
         <div class="card-title">Les grandes écuries</div>
-        <p class="card-sub">Logez vos chevaux en boxes, soignez-les, entraînez-les au galop, à l’endurance, au dressage et au saut. Les concours viendront ensuite : élever, soigner, entraîner, concourir.</p>
+        <p class="card-sub">Logez vos chevaux en boxes, soignez-les, entraînez-les au galop, à l’endurance, au dressage et au saut, puis faites-les concourir chaque semaine.</p>
         ${costRow(G.costParts(n.cost))}
         ${btn('Construire les écuries', { act: 'upStable', kind: 'green', wide: true, disabled: !G.stableCanUp(), icon: ['ui', 'hEcuries'] })}</div>`;
 }
@@ -71,8 +71,8 @@ function headCard() {
 
 const formPips = a => {
     const f = G.formOf(a);
-    return `<span class="hz-form" title="Forme : ${f}/${FORM.max}"><b>Forme</b>${Array.from({ length: FORM.max }, (_, k) => `<i class="${k < f ? 'on' : ''}">${art('ui', 'hForme')}</i>`).join('')}${
-        f < FORM.max ? `<small>${timer(Date.now() + G.formLeftMs(a))}</small>` : ''
+    return `<span class="hz-form" title="Forme : ${f}/${FORM.max}"><b>Forme ${f}/${FORM.max}</b><span class="hz-pips">${Array.from({ length: FORM.max }, (_, k) => `<i class="${k < f ? 'on' : ''}">${art('ui', 'hForme')}</i>`).join('')}</span>${
+        f < FORM.max ? `<small>+1 dans ${timer(Date.now() + G.formLeftMs(a))}</small>` : ''
     }</span>`;
 };
 
@@ -116,14 +116,9 @@ function horseCard(a) {
     const i = state.animals.indexOf(a);
     const ration = G.rationLeftMs(a) > 0 ? `<span class="chip hz-ration">${ico(['item', 'carrot'])}Ration ${timer(Date.now() + G.rationLeftMs(a))}</span>` : '';
     const rations = RATION.items
-        .map(id =>
-            btn(`${ITEMS[id].name} ×${state.inventory[id] || 0}`, {
-                act: 'haRation',
-                data: { uid: a.uid, id },
-                size: 'sm',
-                icon: ['item', id],
-                disabled: !state.inventory[id] || G.onRando(a),
-            }),
+        .map(
+            id =>
+                `<button class="pick-chip hz-rat" data-act="haRation" data-uid="${a.uid}" data-id="${id}" title="${ITEMS[id].name} : +${Math.round(RATION.bonus * 100)} % de points pendant ${RATION.hours} h"${!state.inventory[id] || G.onRando(a) ? ' disabled' : ''}>${ico(['item', id])}<small>${state.inventory[id] || 0}</small></button>`,
         )
         .join('');
     return `<div class="hz-card${G.onRando(a) ? ' away' : ''}">
@@ -138,12 +133,11 @@ function horseCard(a) {
         <div class="hz-apts">${DISCIPLINES.map(d => aptRow(a, d)).join('')}</div>
         ${equipCard(a)}
         <div class="hz-care">
-            ${btn('Brosser', { act: 'haBrush', data: { uid: a.uid }, size: 'sm', icon: ['ui', 'hBrosse'], disabled: r.brushDay === state.day })}
+            ${btn(G.brushLeftMs(a) > 0 ? `Brossé · ${timer(Date.now() + G.brushLeftMs(a))}` : 'Brosser', { act: 'haBrush', data: { uid: a.uid }, size: 'sm', icon: ['ui', 'hBrosse'], disabled: G.brushLeftMs(a) > 0 })}
             ${btn('Nourrir', { act: 'haFeed', data: { uid: a.uid }, size: 'sm', icon: ['item', 'feed'], disabled: a.food >= G.maxFood() })}
             ${randoRow(a)}
         </div>
-        <div class="hz-care">${rations}</div>
-        <div class="hz-foot">${btn('Au pré', { act: 'haOut', data: { uid: a.uid }, kind: 'ghost', size: 'sm', disabled: G.onRando(a) })}</div>
+        <div class="hz-foot"><span class="hz-rations"><small>Ration +${Math.round(RATION.bonus * 100)} %</small>${rations}</span>${btn('Au pré', { act: 'haOut', data: { uid: a.uid }, kind: 'ghost', size: 'sm', disabled: G.onRando(a) })}</div>
     </div>`;
 }
 
@@ -175,7 +169,7 @@ function renderHaras(el) {
         [
             'hint',
             hint(
-                `Chaque aptitude monte jusqu’à un plafond de 40 + 12 × le gène (de ${APT.base} à ${APT.max}) : pour aller plus loin, croisez vos chevaux au labo. Un entraînement coûte une pastille de forme ; elle remonte toutes les 30 minutes, même jeu fermé. Les chevaux logés donnent toujours leur crin. Les mini-jeux et les concours arrivent ensuite.`,
+                `Chaque aptitude monte jusqu’à un plafond de 40 + 12 × le gène (de ${APT.base} à ${APT.max}) : pour aller plus loin, croisez vos chevaux au labo. Un entraînement ou un passage de concours coûte une pastille de forme ; elle remonte toutes les 30 minutes, même jeu fermé. Touchez l’icône d’une discipline pour en faire la spécialité du cheval (+10 % en concours). Les chevaux logés donnent toujours leur crin.`,
             ),
         ],
     ]);

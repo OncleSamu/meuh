@@ -104,7 +104,7 @@ test('1.24.2 : la retraite demande un titre Élite, rapporte chaque jour et se l
     s.day -= 3;
     const m = state.money;
     assert.ok(G.studTick());
-    assert.equal(state.money - m, 3 * G.studIncome());
+    assert.equal(state.money - m, 3 * G.studIncome(a));
     assert.ok(!G.studTick());
 });
 test('1.24.2 : un poulain d’un reproducteur hérite de points et de la lignée de champions', () => {

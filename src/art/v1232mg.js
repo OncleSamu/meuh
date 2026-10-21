@@ -11,7 +11,7 @@ const leg = (pts, c = '#8b5a2b') => {
     return L(d, 5.4) + L(d, 2.4, c) + FC(pts[4], pts[5], 2.2, MN);
 };
 // jambes : [arrière loin, arrière près, avant loin, avant près] ; chacune = hanche → genou → sabot
-const POSES = {
+export const POSES = {
     stand: [
         [23, 50, 22, 62, 22, 71],
         [31, 52, 31, 62, 31, 72],
@@ -55,21 +55,22 @@ const POSES = {
         [54, 50, 62, 60, 64, 69],
     ],
 };
-export const horsePose = (pose, { K = KB, rider = null, tailUp = 0 } = {}) => {
+// 1.24.3 : K (robe), M (crins) et G (jambes) suivent la robe du cheval
+export const horsePose = (pose, { K = KB, M = MN, G = '#8b5a2b', rider = null, tailUp = 0 } = {}) => {
     const lg = POSES[pose];
-    const tail = P(`M15 34 Q${1 - tailUp} ${37 - tailUp} ${3 - tailUp} ${64 - tailUp * 3} Q${8} 52 16 44Z`, MN, 2);
+    const tail = P(`M15 34 Q${1 - tailUp} ${37 - tailUp} ${3 - tailUp} ${64 - tailUp * 3} Q${8} 52 16 44Z`, M, 2);
     return (
         SHADOW(36, 75, 26, 3) +
-        leg(lg[0]) +
-        leg(lg[1]) +
+        leg(lg[0], G) +
+        leg(lg[1], G) +
         tail +
         P('M13 37 Q13 30 21 30 L47 30 Q57 30 58 38 Q58 53 48 54 L24 54 Q13 53 13 37Z', K, 2.4) +
-        leg(lg[2]) +
-        leg(lg[3]) +
+        leg(lg[2], G) +
+        leg(lg[3], G) +
         P('M45 36 L53 10 Q57 5 62 8 L66 20 L58 42Z', K, 2.4) +
         P('M58 8 Q64 2 69 7 L77 19 Q79 25 74 26 L68 24 L61 17Z', K, 2.4) +
         P('M60 7 L59 0 L64 5Z', K, 2) +
-        P('M53 9 Q42 18 43 36 L52 35 Q52 22 59 10Z', MN, 2) +
+        P('M53 9 Q42 18 43 36 L52 35 Q52 22 59 10Z', M, 2) +
         eyeS(66, 11) +
         FE(75.5, 22.5, 1.3, 1, MN, 0.9) +
         HL(24, 38, 8, 3, -10, 0.45) +

@@ -1,5 +1,6 @@
 // Les dessins du dressage et du raid d'endurance (1.23.3) : manège vu de dessus, figures, allures, terrains, cheval d'endurance.
 import { C, E, F, FC, FE, HL, L, P, R, SHADOW, svg } from './kit.js';
+import { POSES as GPOSES } from './v1232mg.js';
 
 const MN = '#3a2618',
     KB = '#a8693a';
@@ -36,20 +37,20 @@ const POSES = {
         [54, 50, 55, 62, 55, 71],
     ],
 };
-export const endurancePose = (pose, { K = KB, bottle = true, rider = '#2f9e8f' } = {}) => {
-    const lg = POSES[pose];
+export const endurancePose = (pose, { K = KB, M = MN, G = '#8b5a2b', bottle = true, rider = '#2f9e8f' } = {}) => {
+    const lg = POSES[pose] || GPOSES[pose]; // 1.24.3 : le galop du raid garde la tenue d'endurance
     return (
         SHADOW(36, 75, 26, 3) +
-        leg(lg[0]) +
-        leg(lg[1]) +
-        P('M15 34 Q4 38 6 62 Q10 52 16 44Z', MN, 2) +
+        leg(lg[0], G) +
+        leg(lg[1], G) +
+        P('M15 34 Q4 38 6 62 Q10 52 16 44Z', M, 2) +
         P('M13 37 Q13 30 21 30 L47 30 Q57 30 58 38 Q58 53 48 54 L24 54 Q13 53 13 37Z', K, 2.4) +
-        leg(lg[2]) +
-        leg(lg[3]) +
+        leg(lg[2], G) +
+        leg(lg[3], G) +
         P('M45 36 L53 10 Q57 5 62 8 L66 20 L58 42Z', K, 2.4) +
         P('M58 8 Q64 2 69 7 L77 19 Q79 25 74 26 L68 24 L61 17Z', K, 2.4) +
         P('M60 7 L59 0 L64 5Z', K, 2) +
-        P('M53 9 Q44 20 46 38 L52 35 Q52 22 59 10Z', MN, 2) +
+        P('M53 9 Q44 20 46 38 L52 35 Q52 22 59 10Z', M, 2) +
         eyeS(66, 11) +
         FE(75.5, 22.5, 1.3, 1, MN, 0.9) +
         HL(24, 38, 8, 3, -10, 0.45) +
@@ -83,24 +84,24 @@ export const endurancePose = (pose, { K = KB, bottle = true, rider = '#2f9e8f' }
 export const endSvg = (pose, o) => svg(endurancePose(pose, o), '0 0 80 80');
 
 // ---------- le cheval vu de dessus (le manège) ----------
-export const topHorse = (K = KB) =>
+export const topHorse = (K = KB, M = MN, G = '#8b5a2b') =>
     SHADOW(32, 56, 12, 4) +
     // queue et jambes
-    P('M32 52 Q28 62 31 70 Q34 62 36 52Z', MN, 2) +
+    P('M32 52 Q28 62 31 70 Q34 62 36 52Z', M, 2) +
     [
         [24, 24],
         [40, 24],
         [24, 44],
         [40, 44],
     ]
-        .map(([x, y]) => R(x - 3, y - 4, 6, 9, 3, '#8b5a2b', 1.8))
+        .map(([x, y]) => R(x - 3, y - 4, 6, 9, 3, G, 1.8))
         .join('') +
     E(32, 38, 10, 17, K, 0, 2.4) +
     // encolure et tête
     P('M26 24 L28 10 Q32 4 36 10 L38 24Z', K, 2.4) +
     E(32, 6, 4.6, 7, K, 0, 2.2) +
     P('M27.4 2 L26.4 -3 L30 0Z M36.6 2 L37.6 -3 L34 0Z', K, 1.6) +
-    L('M32 6 L32 24', 2.6, MN) +
+    L('M32 6 L32 24', 2.6, M) +
     FC(29.6, 5, 0.9, MN) +
     FC(34.4, 5, 0.9, MN) +
     // la cavalière de dessus : veste noire, haut-de-forme, gants

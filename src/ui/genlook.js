@@ -114,7 +114,9 @@ const escName = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<
 function lineNode(x, me) {
     if (!x) return '<div class="ln-node empty"><span class="ln-art"></span><b>Inconnu</b></div>';
     const pic = x.t ? animalArt(x.t, x.g) : x.g ? genWrap(art('item', x.b), x.g) : art('item', x.b);
-    return `<div class="ln-node${me ? ' me' : ''}"><span class="ln-art">${pic}</span><b>${escName(x.n)}</b><small>${x.gen ? `gén. ${x.gen}` : 'sauvage'}</small></div>`;
+    // 1.24.3 : un cheval champion Élite porte une couronne ; un cheval de génération 0 est « d'origine »
+    const champ = x.t === 'horse' && x.u && G.isChampionUid(x.u) ? `<i class="ln-crown">${art('ui', 'hCouronne')}</i>` : '';
+    return `<div class="ln-node${me ? ' me' : ''}">${champ}<span class="ln-art">${pic}</span><b>${escName(x.n)}</b><small>${x.gen ? `gén. ${x.gen}` : x.t === 'horse' ? 'd’origine' : 'sauvage'}</small></div>`;
 }
 export function lineageHtml(self) {
     if (!self || !self.lin) return '';

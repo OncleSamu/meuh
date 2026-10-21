@@ -8,9 +8,11 @@ import * as G from '../../src/systems/index.js';
 import { ITEMS } from '../../src/data/items.js';
 import { PROJECTS } from '../../src/data/village.js';
 import { EQUIP, DISCIPLINES } from '../../src/data/haras.js';
+import { TIPS } from '../../src/data/texts.js';
 import { packSave } from '../../src/systems/savecodes.js';
 
-setClock(() => Date.UTC(2026, 9, 21, 12, 0, 0));
+const T0 = Date.now();
+setClock(() => T0);
 setStore(null);
 G.loadGame();
 state.level = 50;
@@ -62,6 +64,12 @@ for (const a of hs) {
     DISCIPLINES.forEach(d => (r.pts[d.id] = 40 + Math.floor(Math.random() * 40)));
 }
 G.rec(hs[0]).spec = 'galop';
+// des états variés à voir aux écuries : forme entamée, ration en cours, randonnée
+G.rec(hs[1]).form = 2;
+G.rec(hs[1]).t = T0 - 10 * 60000;
+G.rec(hs[2]).form = 0;
+G.rec(hs[2]).t = T0 - 10 * 60000;
+G.rec(hs[4]).ration = T0 + 40 * 60000;
 G.rec(hs[1]).spec = 'dressage';
 G.rec(hs[2]).spec = 'saut';
 // le concours : trois divisions ouvertes, deux champions Élite (l'un est prêt pour la retraite)
@@ -97,6 +105,8 @@ G.ensureStud();
 G.studTick();
 G.normalizeState();
 state.tutorial = { ...(state.tutorial || {}), done: true };
+state.tips = state.tips || {};
+for (const k of Object.keys(TIPS)) state.tips[k] = true;
 for (const k of ['plank', 'beam', 'nail', 'stone', 'paint', 'wood']) state.inventory[k] = Math.min(state.inventory[k], 60);
 // la grange ne doit pas déborder : on ramène le stock à 15 de chaque (sauf l'équipement et les matériaux)
 for (const k of Object.keys(state.inventory))

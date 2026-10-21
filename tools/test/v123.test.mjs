@@ -129,7 +129,7 @@ test('1.23 : près du plafond le gain diminue, la ration l’augmente', () => {
     assert.ok(G.rationLeftMs(a) > 0);
 });
 
-test('1.23 : le brossage donne un cœur une fois par jour', () => {
+test('1.23 : le brossage donne un cœur, puis attend 2 heures (1.24.3)', () => {
     const [a] = setup();
     G.upgradeStable();
     G.lodge(a.uid);
@@ -138,6 +138,8 @@ test('1.23 : le brossage donne un cœur une fois par jour', () => {
     assert.equal(a.love, 1);
     assert.equal(G.brushHorse(a.uid), false);
     state.day++;
+    assert.equal(G.brushHorse(a.uid), false);
+    clock.t += 2 * 3600 * 1000 + 1000;
     assert.ok(G.brushHorse(a.uid));
 });
 

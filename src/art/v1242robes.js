@@ -21,7 +21,7 @@ export const ROBES = {
 const WHITE = '#fffdf6';
 // les marques blanches, posées sur le cheval de profil (repère de 80 × 80)
 export const MARKS = {
-    etoile: () => FE(66.4, 13.6, 2.6, 3.4, WHITE, 1, 25),
+    etoile: () => FE(69.4, 9.6, 1.9, 2.6, WHITE, 1, 40), // 1.24.3 : sur le front, plus sur l'œil
     liste: () => P('M62 9 Q66 12 70 17 Q74 22 75 25 L72 25 Q69 21 65 16 Q62 13 60 10Z', WHITE, 0).replace(`stroke="${MN}" stroke-width="0"`, ''),
     balzanes: () =>
         [
@@ -125,10 +125,13 @@ const headOf = (r, marks) =>
 export const horseRSvg = (k, marks) => svg(horseR(ROBES[k], marks), '0 0 80 80');
 // ---------- les trois âges ----------
 export const foalOf = (r, stage) => foal(r, stage);
-export const foal = (r, stage) =>
-    stage === 0
-        ? `<g transform="translate(8 25) scale(0.74)">${bodyOf(r, [])}</g><g transform="translate(-2.5 17.4) scale(0.95)" >${headOf(r, []).replace(/transform=/g, 'transform=')}</g>`
-        : `<g transform="translate(5 8) scale(0.88)">${horseR(r, [])}</g>`;
+// 1.24.3 : le poulain garde ses marques et ses crins lavés ; il est remonté pour que les sabots et l'ombre tiennent dans le cadre
+export const foal = (r0, stage, marks = []) => {
+    const r = marks.includes('lave') ? { ...r0, M: '#f0d9a0' } : r0;
+    return stage === 0
+        ? `<g transform="translate(8 18) scale(0.74)">${bodyOf(r, marks)}</g><g transform="translate(-2.5 10.4) scale(0.95)">${headOf(r, marks)}</g>`
+        : `<g transform="translate(5 8) scale(0.88)">${horseR(r, marks)}</g>`;
+};
 export const foalSvg = (k, stage) => svg(foal(ROBES[k], stage), '0 0 80 80');
 // ---------- icônes (64 × 64) ----------
 const ic = inner => svg(inner, '0 0 64 64');
@@ -206,7 +209,7 @@ for (const [id, pieces] of Object.entries(PIECES)) {
         const r = o.robe && ROBES[o.robe];
         if (!r) return old ? old(o) : '';
         const marks = o.marks || [];
-        if (o.stage === 0 || o.stage === 1) return foal(r, o.stage);
+        if (o.stage === 0 || o.stage === 1) return foal(r, o.stage, marks);
         return horseR(r, marks) + (o.coat === 1 ? COATFX(r, 1) : '') + pieces.join('');
     };
 }

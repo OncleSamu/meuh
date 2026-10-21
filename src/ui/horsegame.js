@@ -4,6 +4,7 @@ import { GALOP, SAUT, DISC, DRESSAGE, RAID } from '../data/haras.js';
 import { horsePose, OBST, obstFault, MG } from '../art/v1232mg.js';
 import { endurancePose, topHorse, GAIT, TERRAIN, TCOL } from '../art/v1233mg.js';
 import { genWrap } from './genlook.js';
+import { ROBES } from '../art/v1242robes.js';
 import { sfx, buzz } from '../core/bus.js';
 import { refresh } from './app.js';
 import { reduceMotion } from './fx.js';
@@ -14,6 +15,13 @@ const fmtT = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2
 const SILKS = ['#c8453a', '#3f6fb5', '#2f9e8f', '#8e5bc0', '#e08a2f'];
 const silksOf = a => SILKS[(a.uid.length + (a.name || 'x').charCodeAt(0)) % SILKS.length];
 let run = 0;
+// 1.24.3 : les chevaux des mini-jeux prennent la robe du cheval (corps, crins, jambes)
+let ROBE = {};
+const robeOf = a => {
+    const c = G.coatOf(a && a.g);
+    const r = c && ROBES[c.robe];
+    return r ? { K: r.K, M: c.marks.includes('lave') ? '#f0d9a0' : r.M, G: r.G } : {};
+};
 
 // ---------------- les morceaux de dessin ----------------
 const T = (x, y, s, t, o = {}) =>
@@ -69,7 +77,7 @@ const ovalPos = t => {
     return [Math.cos(a) * 34, Math.sin(a) * 15];
 };
 const hudBox = inner => rect(8, 8, 344, 52, 14, 'rgba(255,247,224,.94)', 2.8) + inner;
-const horseFrame = (pose, silks, rot = 0) => `<g transform="rotate(${rot} 36 44)">${horsePose(pose, { rider: silks })}</g>`;
+const horseFrame = (pose, silks, rot = 0) => `<g transform="rotate(${rot} 36 44)">${horsePose(pose, { ...ROBE, rider: silks })}</g>`;
 
 // ---------------- l'écran ----------------
 function shell(title) {
@@ -94,8 +102,8 @@ const RULES = {
 const introArt = (d, a, silks) =>
     genWrap(
         d === 'dressage'
-            ? `<svg viewBox="0 -6 64 80" class="spr">${topHorse()}</svg>`
-            : `<svg viewBox="0 0 80 80" class="spr">${d === 'endurance' ? endurancePose('walkA') : horsePose(d === 'saut' ? 'jump1' : 'galB', { rider: silks })}</svg>`,
+            ? `<svg viewBox="0 -6 64 80" class="spr">${topHorse(ROBE.K, ROBE.M, ROBE.G)}</svg>`
+            : `<svg viewBox="0 0 80 80" class="spr">${d === 'endurance' ? endurancePose('walkA', ROBE) : horsePose(d === 'saut' ? 'jump1' : 'galB', { ...ROBE, rider: silks })}</svg>`,
         a.g,
     );
 
@@ -105,6 +113,7 @@ export function openHorseGame(uid, d, el, mode = null) {
     if (!a || !a.box || !G.hasGame(d)) return;
     if (!G.canTrain(a)) return void (mode ? G.startPass(uid) : G.trainHorse(uid, d, el)); // fatigué, en randonnée ou au plafond : le message s'affiche
     const me = ++run;
+    ROBE = robeOf(a);
     const { o, stage, q } = shell(`${DISC[d].name} · ${a.name}`);
     const close = () => {
         run++;
@@ -165,7 +174,7 @@ function playGalop(c) {
         <g id="hgspeed" opacity="0">${line('M20 352 L-20 352 M26 368 L-10 368 M16 384 L-30 384', 3.2, 'rgba(255,255,255,.8)')}</g>
         <g id="hgdust" opacity=".7"></g>
         <g transform="translate(140 352) scale(2.5) translate(-40 -44)"><g id="hgh">${frames[1]}</g></g>
-        ${hudBox(`<g id="hgoval" transform="translate(60 34)"><ellipse rx="42" ry="20" fill="#d9b57a" stroke="${INK}" stroke-width="2.6"/><ellipse rx="26" ry="9" fill="#6cc04a" stroke="${INK}" stroke-width="2.2"/>${line('M0 -20 L0 -9', 2.6, '#c8453a')}${Array.from({ length: GALOP.rivals }, (_, i) => `<circle id="hgr${i}" r="3.4" fill="#b9b3a6" stroke="${INK}" stroke-width="1.4"/>`).join('')}<circle id="hgme" r="5" fill="#ffd23f" stroke="${INK}" stroke-width="2"/></g>${T(190, 28, 12, 'Place')}${T(190, 50, 22, '1 / 6', { id: 'hgrank' })}${mg('chrono', 270, 11, 0.6)}${T(332, 46, 17, '0:00', { id: 'hgtime' })}`)}
+        ${hudBox(`<g id="hgoval" transform="translate(60 34)"><ellipse rx="42" ry="20" fill="#d9b57a" stroke="${INK}" stroke-width="2.6"/><ellipse rx="26" ry="9" fill="#6cc04a" stroke="${INK}" stroke-width="2.2"/>${line('M0 -20 L0 -9', 2.6, '#c8453a')}${Array.from({ length: GALOP.rivals }, (_, i) => `<circle id="hgr${i}" r="3.4" fill="#b9b3a6" stroke="${INK}" stroke-width="1.4"/>`).join('')}<circle id="hgme" r="5" fill="#ffd23f" stroke="${INK}" stroke-width="2"/></g>${T(190, 28, 12, 'Place')}${T(190, 50, 22, '1 / 6', { id: 'hgrank' })}${mg('chrono', 262, 11, 0.6)}${T(322, 46, 17, '0:00', { id: 'hgtime' })}`)}
         <g id="hgwarn" opacity="0">${rect(40, 70, 280, 38, 19, '#ffd23f', 2.8)}${T(180, 95, 18, 'Virage !', { id: 'hgwtxt' })}</g>
         <g id="hgmsg" opacity="0">${T(180, 200, 28, '', { id: 'hgmtxt', c: '#fff', st: 1, sw: 6 })}</g>
         ${gauge(g.v)}${T(180, 514, 12, 'Maintenez : accélérer · Relâchez : ralentir', { c: '#fff', st: 1, sw: 3.4 })}
@@ -323,7 +332,7 @@ function playSaut(c) {
         <g id="hgring" opacity="0" transform="translate(150 414)"><ellipse rx="${130 * (SAUT.target + 0.17)}" ry="${34 * (SAUT.target + 0.17)}" fill="rgba(108,192,74,.55)"/><ellipse rx="${130 * (SAUT.target + 0.07)}" ry="${34 * (SAUT.target + 0.07)}" fill="rgba(255,210,63,.9)"/><ellipse rx="${130 * (SAUT.target - 0.07)}" ry="${34 * (SAUT.target - 0.07)}" fill="rgba(255,247,224,.9)"/><ellipse id="hgrr" rx="130" ry="34" fill="rgba(255,255,255,.15)" stroke="#fff" stroke-width="4"/></g>
         <g id="hgob" transform="translate(500 287) scale(1.6)">${obst(0)}</g>
         <g id="hgh" transform="translate(110 ${GROUND}) scale(2) translate(-40 -44)">${run3[1]}</g>
-        ${hudBox(`${at(MG.plan(), 10, 4, 0.8)}${T(120, 28, 12, 'Obstacle')}${T(120, 50, 22, `1 / ${SAUT.obstacles}`, { id: 'hgn' })}${T(206, 28, 12, 'Fautes')}${Array.from({ length: SAUT.maxFaults }, (_, k) => `<g id="hgf${k}">${circ(186 + k * 26, 46, 9, '#fff7e0', 2.4)}</g>`).join('')}${mg('chrono', 270, 11, 0.6)}${T(332, 46, 17, '0:00', { id: 'hgtime' })}`)}
+        ${hudBox(`${at(MG.plan(), 10, 4, 0.8)}${T(120, 28, 12, 'Obstacle')}${T(120, 50, 22, `1 / ${SAUT.obstacles}`, { id: 'hgn' })}${T(206, 28, 12, 'Fautes')}${Array.from({ length: SAUT.maxFaults }, (_, k) => `<g id="hgf${k}">${circ(186 + k * 26, 46, 9, '#fff7e0', 2.4)}</g>`).join('')}${mg('chrono', 262, 11, 0.6)}${T(322, 46, 17, '0:00', { id: 'hgtime' })}`)}
         <g id="hgmsg" opacity="0">${at(MG.parfait(), 148, 90, 1, 'hgmicon')}${T(180, 192, 30, '', { id: 'hgmtxt', c: '#ffd23f', st: 1, sw: 6 })}</g>
         ${rect(30, 478, 300, 30, 15, '#fff7e0', 2.8)}${T(180, 499, 13, 'Appuyez quand l’anneau touche le vert !', { id: 'hghint' })}<g id="hgcount"></g></svg>`;
     const $ = id => q('#' + id);
@@ -503,7 +512,8 @@ const LETTERS = [
     ['M', 332, 370],
 ];
 const toPath = pts => 'M' + pts.map(p => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' L');
-const horseTop = (id, x, y, rot, k = 1.1) => `<g id="${id}" transform="translate(${x} ${y}) rotate(${rot}) scale(${k}) translate(-32 -32)">${topHorse()}</g>`;
+const horseTop = (id, x, y, rot, k = 1.1) =>
+    `<g id="${id}" transform="translate(${x} ${y}) rotate(${rot}) scale(${k}) translate(-32 -32)">${topHorse(ROBE.K, ROBE.M, ROBE.G)}</g>`;
 function playDressage(c) {
     const { stage, q, me } = c;
     const d = G.newDressage();
@@ -666,9 +676,9 @@ function playRaid(c) {
     const r = G.newRaid(G.formOf(a));
     const calm = reduceMotion();
     const frames = {
-        pas: ['walkA', 'walkB'].map(p => endurancePose(p)),
-        trot: ['trotA', 'trotB'].map(p => endurancePose(p)),
-        galop: ['galA', 'galB', 'galC', 'galB'].map(p => horseFrame(p, silks)),
+        pas: ['walkA', 'walkB'].map(p => endurancePose(p, ROBE)),
+        trot: ['trotA', 'trotB'].map(p => endurancePose(p, ROBE)),
+        galop: ['galA', 'galB', 'galC', 'galB'].map(p => endurancePose(p, { ...ROBE, rider: silks })),
     };
     const sceneBg = i => {
         const t = RAID.stages[i].terrain;
@@ -781,7 +791,7 @@ function playRaid(c) {
                 horse.innerHTML = arr[f % arr.length];
             }
             const st = G.raidStage(r);
-            $('hrbar').setAttribute('width', Math.min(116, 116 * (r.pos / st.len)));
+            $('hrbar').setAttribute('width', Math.max(0, Math.min(116, 116 * (r.pos / st.len))));
             $('hrp').textContent = Math.round(r.p);
             $('hrp').setAttribute('fill', r.p > r.lim ? '#c8453a' : r.p > r.lim - 10 ? '#e07a3f' : '#2a8a3a');
             if (r.stageT > 3.5) $('hrhint').setAttribute('opacity', 0);

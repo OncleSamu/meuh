@@ -285,7 +285,7 @@ function geneBlock(a) {
     const race = a.race && state.genetics.races[a.race];
     const can = G.canFixRace(a);
     return `<div class="gene-box"><div class="set-sub">Ses gènes${race ? ` · race « ${esc(race.name)} »` : a.gen ? ` · génération ${a.gen}` : ''}</div>
-        <p class="card-sub">${[looksText(a.g), featuresText(a.type, a.g)].filter(Boolean).join(', ')}${a.parents ? ` · fille de ${a.parents.map(esc).join(' et ')}` : ''}</p>
+        <p class="card-sub">${[G.coatText(a.g), looksText(a.g), featuresText(a.type, a.g)].filter(Boolean).join(', ')}${a.parents ? ` · ${a.type === 'horse' ? 'issu' : 'fille'} de ${a.parents.map(esc).join(' et ')}` : ''}${a.type === 'horse' && G.isRetired(a) ? ' · reproducteur à la retraite' : ''}</p>
         ${G.geneEffects(a).length ? `<p class="card-sub gene-fx">${ico(['ui', race ? 'ribbon' : 'star'])}${race ? 'Ce que lui donne sa race' : 'Ce que lui donnent ses gènes'} : ${G.geneEffects(a).join(', ')}.</p>` : ''}
         ${a.lin ? lineageHtml({ lin: a.lin, me: G.lineSnap(a) }) : ''}
         ${animalTraits(a)}

@@ -32,11 +32,11 @@ function retiredCard(a) {
     const r = G.rec(a);
     const spec =
         r.spec && DISC[r.spec]
-            ? `${DISC[r.spec].name} : ses poulains partent avec +${STUD.foalPts} points`
-            : 'Sans spécialité : choisissez-en une aux écuries pour transmettre ses points';
-    return `<div class="card sd-horse"><span class="sd-pic">${pic(a)}</span><div class="card-main"><div class="card-title">${esc(a.name)}${G.chainOf(a) ? ` · ${G.chainOf(a)}e champion de sa lignée` : ''}</div>
-        <div class="card-sub">${robeName(a)} · ${ico(['ui', 'hSaillie'])}${fmt(G.studIncome())} par jour</div><div class="card-sub">${spec}</div></div>
-        <button class="pick-chip" data-act="stPick" data-uid="${a.uid}">Arbre</button></div>`;
+            ? `Poulains : +${STUD.foalPts} en ${DISC[r.spec].name.toLowerCase()}`
+            : 'Sans spécialité : rien à transmettre (choisissez-en une aux Écuries)';
+    return `<div class="card sd-horse"><span class="sd-pic">${pic(a)}</span><div class="card-main"><div class="card-title">${esc(a.name)}</div>
+        <div class="card-sub">${robeName(a)} · ${ico(['ui', 'hSaillie'])}${fmt(G.studIncome(a))} / jour${G.chainOf(a) > 1 ? ` · ${G.chainOf(a)} champions de suite` : ''}</div><div class="card-sub">${spec}</div></div>
+        ${treeBtn(a)}</div>${sel === a.uid ? tree(a) : ''}`;
 }
 function candidateCard(a) {
     const why = G.retireWhy(a);
@@ -45,34 +45,36 @@ function candidateCard(a) {
         ${btn('Retraite', { act: 'stRetire', data: { uid: a.uid }, size: 'sm', kind: 'gold', disabled: !!why })}</div>`;
 }
 
+// 1.24.3 : robes et marques en vignettes de même taille, centrées ; les inconnues restent en silhouette
+const MARK_ROBE = { pie: 'noir', appaloosa: 'gris', raie: 'palomino', balzanes: 'alezan', lave: 'alezan', belleface: 'bai', liste: 'alezan', etoile: 'noir' };
+const tile = (seen, pic, name) => `<div class="sd-tile${seen ? '' : ' none'}">${pic}<small>${seen ? name : '?'}</small></div>`;
 function collection() {
     const s = G.ensureStud();
     const robes = Object.keys(COAT.robes)
-        .map(
-            k =>
-                `<div class="sd-robe${s.robes[k] ? '' : ' none'}" title="${COAT.robes[k]}">${svg(horseR(ROBES[k], []), '0 0 80 80')}<small>${s.robes[k] ? COAT.robes[k] : '?'}</small></div>`,
-        )
+        .map(k => tile(s.robes[k], svg(horseR(ROBES[k], []), '0 0 80 80'), COAT.robes[k]))
         .join('');
     const marks = Object.keys(COAT.marks)
-        .map(k => `<span class="chip${s.marks[k] ? '' : ' off'}">${s.marks[k] ? COAT.marks[k] : '?'}</span>`)
+        .map(k => tile(s.marks[k], svg(horseR(ROBES[MARK_ROBE[k]], [k]), '0 0 80 80'), COAT.marks[k]))
         .join('');
-    return `<div class="card"><div class="card-sub">Robes vues : <b>${G.robesSeen()}/${G.robesAll()}</b> · marques : <b>${G.marksSeen()}/${G.marksAll()}</b></div><div class="sd-robes">${robes}</div><div class="chips-row wrap">${marks}</div></div>`;
+    return `<div class="card"><div class="card-sub">Robes vues : <b>${G.robesSeen()}/${G.robesAll()}</b></div><div class="sd-tiles">${robes}</div>
+        <div class="card-sub">Marques vues : <b>${G.marksSeen()}/${G.marksAll()}</b></div><div class="sd-tiles">${marks}</div></div>`;
 }
 
 function foalCard(a) {
     const r = G.rec(a);
-    const heir = r.heir && r.heir.length ? ` · talent de ${r.heir.map(esc).join(' et ')}` : '';
+    const age = G.isAdult(a) ? `génération ${a.gen || 1}` : `${G.growPct(a) < STUD.stages[0] ? 'poulain' : 'jeune'} (${Math.round(G.growPct(a) * 100)} %)`;
+    const heir = r.heir && r.heir.length ? `<div class="card-sub">${ico(['ui', 'hSaillie'])}Talent de ${r.heir.map(esc).join(' et ')}</div>` : '';
     return `<div class="card sd-horse"><span class="sd-pic">${pic(a)}</span><div class="card-main"><div class="card-title">${esc(a.name)}</div>
-        <div class="card-sub">${robeName(a)}${G.isAdult(a) ? '' : ` · ${G.growPct(a) < STUD.stages[0] ? 'poulain' : 'jeune'} (${Math.round(G.growPct(a) * 100)} %)`}${heir}</div>
-        <div class="card-sub">${esc(G.coatText(a.g))}</div></div><button class="pick-chip" data-act="stPick" data-uid="${a.uid}">Arbre</button></div>`;
+        <div class="card-sub">${esc(G.coatText(a.g))} · ${age}</div>${heir}</div>${treeBtn(a)}</div>${sel === a.uid ? tree(a) : ''}`;
 }
 
-function tree() {
-    const a = sel && G.horseByUid(sel);
-    if (!a) return '<div class="card"><small>Touchez « Arbre » sur un cheval pour voir sa famille.</small></div>';
-    const self = { me: { n: a.name, t: 'horse', g: a.g, gen: a.gen || 0 }, lin: a.lin };
-    return `<div class="card"><div class="card-title">${esc(a.name)} · ${G.coatText(a.g)}</div>${a.lin ? lineageHtml(self) : '<small>Un cheval d’origine : pas d’ancêtres connus.</small>'}
-        ${a.g && a.g.coat ? `<small class="sd-genes">${G.geneLetters(a.g.coat)}</small>` : ''}</div>`;
+const treeBtn = a => `<button class="pick-chip${sel === a.uid ? ' on' : ''}" data-act="stPick" data-uid="${a.uid}">Arbre</button>`;
+// l'arbre s'ouvre sous la carte du cheval (plus en bas de page, où on ne le voyait pas)
+function tree(a) {
+    const self = { me: { n: a.name, t: 'horse', g: a.g, gen: a.gen || 0, u: a.uid }, lin: a.lin };
+    const champs = [a, ...(a.lin || [])].filter(x => x && G.bestDiv(x.uid || x.u) >= STUD.champDiv).length;
+    return `<div class="card sd-tree">${a.lin ? lineageHtml(self) : '<small>Un cheval d’origine : pas d’ancêtres connus.</small>'}
+        ${champs ? `<small>${ico(['ui', 'hCouronne'])}${champs} champion${champs > 1 ? 's' : ''} Élite dans cette famille proche${G.chainOf(a) ? ` · ${G.chainOf(a)}e champion de suite` : ''}</small>` : ''}</div>`;
 }
 
 function renderStud(el) {
@@ -107,8 +109,6 @@ function renderStud(el) {
         ...(foals.length
             ? foals.map(a => ['f' + a.uid, foalCard(a)])
             : [['fn', '<div class="card"><small>Croisez deux chevaux à l’étable de sélection (onglet Labo) pour avoir des poulains.</small></div>']]),
-        ['ts', section('Arbre de famille')],
-        ['tree', tree()],
     ]);
 }
 defineView('animals/stud', renderStud);
@@ -117,7 +117,7 @@ export function setupStud() {
     actions({
         stRetire: (el, d) => G.retire(d.uid),
         stPick: (el, d) => {
-            sel = d.uid;
+            sel = sel === d.uid ? null : d.uid;
             emit('changed', 'haras');
         },
     });

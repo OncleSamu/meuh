@@ -28,8 +28,9 @@ export const FORM = { max: 5, every: 30 * 60 * 1000 };
 export const TRAIN = { cost: 1, min: 2, span: 4, easyScore: 0.35, slow: 0.6, floor: 0.4, love: 0.02 };
 // la ration : une carotte, une pomme ou de l'orge ; +10 % de gain pendant une heure
 export const RATION = { items: ['carrot', 'apple', 'barley'], hours: 1, bonus: 0.1 };
-// la brosse : un cœur de plus (une fois par jour) et parfois une pastille de forme
-export const BRUSH = { form: 0.25 };
+// la brosse : un cœur de plus et parfois une pastille de forme ; 1.24.3 : une fois toutes les 2 heures réelles
+// (la journée du jeu dure 5 minutes : brosser « une fois par jour » rendait trop de forme)
+export const BRUSH = { form: 0.25, every: 2 * 3600 * 1000 };
 // la randonnée : 2 heures, 1 de forme ; des trouvailles à la maison, +2 points d'endurance
 export const RANDO = {
     hours: 2,
@@ -127,7 +128,7 @@ export const SHOW = {
         { name: 'Amateurs', rivals: [45, 60], purse: 9000 },
         { name: 'Club', rivals: [58, 72], purse: 27000 },
         { name: 'Élite', rivals: [70, 84], purse: 81000 },
-        { name: 'Grand Prix', rivals: [82, 95], purse: 243000 },
+        { name: 'Prestige', rivals: [82, 95], purse: 243000 },
     ],
     open: 3, // rosettes à gagner dans une division pour ouvrir la suivante
     rivalsN: 5,
@@ -220,7 +221,9 @@ export const COAT = {
 export const STUD = {
     champDiv: 3, // il faut avoir gagné en division Élite (ou au-dessus)
     max: 3, // reproducteurs au pré
-    income: 450, // par jour et par reproducteur, × (1 + niveau / 50)
+    income: 2500, // par jour et par reproducteur, × (1 + niveau / 50) ; 1.24.3 : 450 ne valait pas la peine
+    incomeWin: 0.1, // +10 % par victoire en concours, jusqu'au double
+    incomeWinMax: 1,
     incomeDays: 7, // on cumule au plus une semaine d'absence
     foalPts: 10, // points d'aptitude offerts au poulain dans la spécialité du parent
     famous: 4, // champions de suite dans une lignée
