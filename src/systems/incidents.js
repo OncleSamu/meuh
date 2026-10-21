@@ -1,4 +1,5 @@
 // Les imprévus (corbeau, pucerons, bête malade, acheteur pressé) et les sols du champ.
+import { plotFx } from './companions.js';
 import { animalRobust, animalPestGuard, varPestGuard } from './genetics.js';
 import { state, scaleLvl } from '../core/state.js';
 import { now } from '../core/clock.js';
@@ -38,6 +39,13 @@ export function incidentTick() {
     return startIncident();
 }
 
+// 1.25 : les cultures compagnes rendent une parcelle plus ou moins attirante pour les nuisibles
+function pickWeighted(list) {
+    const w = list.map(([, i]) => plotFx(i).pest);
+    let r = Math.random() * w.reduce((a, b) => a + b, 0);
+    for (let k = 0; k < list.length; k++) if ((r -= w[k]) <= 0) return list[k];
+    return list[list.length - 1];
+}
 export function startIncident(force) {
     const t = now();
     const growing = state.grid.map((p, i) => [p, i]).filter(([p]) => p.isUnlocked && p.itemId && !p.isReady && ITEMS[p.itemId].type === 'crop');
@@ -60,7 +68,7 @@ export function startIncident(force) {
     const I = INCIDENTS[type];
     if (type === 'crow') {
         if (!crowSpots.length) return false;
-        const [, i] = pickRand(crowSpots);
+        const [, i] = pickWeighted(crowSpots);
         state.crow = { plot: i, until: t + CROW_TIME };
         state.incident = { type, plot: i, until: 0 };
         sfx('caw');
@@ -68,7 +76,7 @@ export function startIncident(force) {
         // les canards de la mare mangent les pucerons des parcelles voisines
         const prey = growing.filter(([p, j]) => !nearDeco(j, 'duckPond') && !(p.v && varPestGuard(p.v)));
         if (!prey.length) return false;
-        const [p, i] = pickRand(prey);
+        const [p, i] = pickWeighted(prey);
         p.pest = true;
         state.incident = { type, plot: i, until: t + I.time };
     } else if (type === 'sick') {

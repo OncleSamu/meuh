@@ -7,6 +7,11 @@ export const TIPS = {
         title: 'Les grandes écuries',
         text: 'Logez vos chevaux en boxes (onglet Animaux, volet Écuries). Brossez-les, nourrissez-les, puis entraînez-les : chaque séance coûte une pastille de forme, qui remonte toutes les 30 minutes. Chaque aptitude monte jusqu’à un plafond que fixe un gène du cheval : croisez au labo pour viser plus haut.',
     },
+    companions: {
+        icon: ['ui', 'cpCarnet'],
+        title: 'Les cultures compagnes',
+        text: 'Certaines cultures s’entraident quand elles poussent côte à côte (une feuille verte entre deux parcelles), d’autres se gênent (une feuille fanée). Chaque association découverte entre dans le carnet du potager, sous le champ. Alternez vos rangées : le semoir et Théo suivent.',
+    },
     show: {
         icon: ['ui', 'hCup2'],
         title: 'Les concours du haras',

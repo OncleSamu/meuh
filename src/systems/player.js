@@ -17,6 +17,7 @@ import { ISLAND } from '../data/island.js';
 import { GENETICS } from '../data/genetics.js';
 import { CAVE_LVL } from '../data/cave.js';
 import { HARAS_LVL } from '../data/haras.js';
+import { COMP_LVL } from '../data/companions.js';
 import { INCIDENT_LVL, RARE_EVENT_LVL } from '../data/surprises.js';
 import { CONTRACT_LVL, CONTEST_LVL, LEAGUES, CARGO, ARMAND } from '../data/commerce.js';
 import { DOMAINE_LVL } from '../data/domaine.js';
@@ -184,6 +185,11 @@ export function unlocksAt(lvl) {
         add(
             ['ui', 'house'],
             'L’amélioration du domaine : grange, cuisines, aide au champ, commerce, annexes, Armand, cargo, quai et réception (onglet Village)',
+        );
+    if (lvl === COMP_LVL)
+        add(
+            ['ui', 'cpCarnet'],
+            'Les cultures compagnes : des cultures voisines qui s’entraident (ou se gênent), le carnet du potager et le conseil de Mamie (Ferme | Champ)',
         );
     if (lvl === HARAS_LVL)
         big(

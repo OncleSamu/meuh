@@ -205,6 +205,42 @@ export const GUIDE_PAGES = [
         see: ['start'],
     },
     {
+        id: 'companions',
+        cat: 'farm',
+        name: 'Les cultures compagnes',
+        icon: ['ui', 'cpCarnet'],
+        lvl: 9,
+        go: 'farm/field',
+        intro: 'Des cultures plantées côte à côte s’entraident ou se gênent, comme au vrai potager.',
+        secs: [
+            {
+                h: 'Le principe',
+                b: [
+                    'Une parcelle compte ses voisines directes : à gauche, à droite, dessus et dessous (le champ a 6 colonnes, la serre 4). Une bonne association donne une feuille verte entre les deux parcelles, une mauvaise une feuille fanée.',
+                    'Effets d’une association : pousse +15 %, qualité +12 (plus de récoltes en argent et en or), récolte +10 % (chance d’une unité de plus), ou moitié moins de pucerons et de corbeaux. Les malus : pousse −10 %, qualité −8, nuisibles ×1,5. Par parcelle, c’est plafonné : pousse +30 %, qualité +20, récolte +25 %.',
+                    'Les trois sœurs : maïs, haricot vert et citrouille réunis autour d’une parcelle (elle et ses voisines) donnent +25 % de récolte et +6 de qualité ; un petit insigne s’affiche dans le coin.',
+                    'La lavande et le sarrasin profitent à toutes leurs voisines ; une légumineuse (pois, haricot, lentilles, soja) fait pousser plus vite la céréale voisine (blé, maïs, orge, riz, sarrasin) : l’engrais vert.',
+                ],
+            },
+            {
+                h: 'Le carnet du potager',
+                b: [
+                    '42 associations (34 bonnes, 8 mauvaises), de plus en plus nombreuses avec les niveaux. Chacune se découvre la première fois qu’on récolte une parcelle qui en profite… ou qui en souffre.',
+                    'Récompenses à 5, 10, 20 et 30 associations (pièces, compost, graines de safran), et un ruban quand le carnet est complet. La carte du carnet est sous le champ.',
+                ],
+            },
+            {
+                h: 'Le conseil de Mamie',
+                t: 'Chaque jour, Mamie Odette propose une association à essayer : récoltez le nombre demandé de parcelles qui en profitent. Récompense : pièces, expérience, 3 graines de safran, et parfois du compost.',
+            },
+        ],
+        tips: [
+            'Alternez vos rangées (une de carottes, une d’oignons) : le semoir sème une rangée entière, et Théo replante la même culture au même endroit.',
+            '« Tout récolter » garde les associations : une parcelle tout juste récoltée compte encore pour ses voisines.',
+        ],
+        see: ['field'],
+    },
+    {
         id: 'field',
         cat: 'farm',
         name: 'Le champ',

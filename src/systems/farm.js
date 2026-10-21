@@ -33,6 +33,7 @@ import {
 } from './genetics.js';
 import { wishGold, fireflyHarvest } from './night.js';
 import { ghExtra } from './buildings.js';
+import { compSpeed, plotFx, compHarvest } from './companions.js';
 
 const COIN = ['ui', 'coin'];
 
@@ -52,7 +53,8 @@ export const plotRate = (p, i) =>
               ? GH.rate
               : cropRate(p.itemId) * decoGrowth(i) * soilMult(i, p.itemId, p.v ? varSoilShare(p.v) : 0) * (p.v && !isInSeason(p.itemId) ? varHardy(p.v) : 1)) *
           masterySpeed(p.itemId) *
-          (p.v ? varGrowth(p.v) : 1);
+          (p.v ? varGrowth(p.v) : 1) *
+          compSpeed(i); // 1.25 : les cultures compagnes
 
 // secondes restantes avant la récolte
 export const plotLeft = (p, i) => Math.max(0, Math.ceil((ITEMS[p.itemId].time / speedMult() - p.growProgress) / plotRate(p, i)));
@@ -499,12 +501,12 @@ export function buyGhPlot(at) {
 export function ghTick() {
     let changedAny = false;
     if (!state.greenhouse.built) return false;
-    state.greenhouse.plots.forEach(p => {
+    state.greenhouse.plots.forEach((p, k) => {
         if (!p.isUnlocked || !p.itemId || p.isReady) return;
         const req = ITEMS[p.itemId].time / speedMult();
         const firstHalf = p.growProgress < req / 2;
         p.isWatered = true;
-        p.growProgress += GH.rate;
+        p.growProgress += GH.rate * compSpeed(1000 + k);
         if (firstHalf && p.growProgress >= req / 2) changedAny = true;
         if (p.growProgress >= req) {
             p.isReady = true;
@@ -519,10 +521,10 @@ export function ghTick() {
 export function ghOffline(elapsed) {
     let n = 0;
     if (!state.greenhouse.built) return 0;
-    state.greenhouse.plots.forEach(p => {
+    state.greenhouse.plots.forEach((p, k) => {
         if (!p.isUnlocked || !p.itemId || p.isReady) return;
         const req = ITEMS[p.itemId].time / speedMult();
-        p.growProgress += elapsed * GH.rate;
+        p.growProgress += elapsed * GH.rate * compSpeed(1000 + k);
         if (p.growProgress >= req) {
             p.isReady = true;
             p.growProgress = req;
@@ -574,6 +576,7 @@ export function rollQuality(plot) {
     if (!inGh && (state.weather === 'sun' || state.weather === 'rain')) x += 0.05;
     if (plot.fert) x += 0.35;
     const gi = gridIndex(plot);
+    x += plotFx(plotIdx(plot)).quality; // 1.25 : cultures compagnes
     if (soilFits(gi, plot.itemId)) x += SOIL_BONUS.quality;
     else if (plot.v) x += SOIL_BONUS.quality * varSoilShare(plot.v);
     x += rank('expert') * 0.05;
@@ -585,11 +588,22 @@ export function rollQuality(plot) {
     return r < x * 0.35 * rainbowGold() ? 2 : r < x ? 1 : 0;
 }
 
+// l'index d'une parcelle du champ (0…) ou de la serre (1000…)
+export const plotIdx = plot => {
+    const gi = gridIndex(plot);
+    return gi >= 0 ? gi : 1000 + state.greenhouse.plots.indexOf(plot);
+};
 export function harvestPlot(plot) {
     const d = ITEMS[plot.itemId];
     const gi = gridIndex(plot);
     const vid = plot.v;
-    const qty = rollYield('crop') + bonusYield(plot, d, gi) + (vid ? varExtra(vid) : 0);
+    // 1.25 : les cultures compagnes (récolte en plus, découvertes du carnet, conseil de Mamie)
+    const pi = plotIdx(plot);
+    const comp = d.type === 'crop' ? plotFx(pi) : null;
+    if (comp) compHarvest(pi);
+    const qty = rollYield('crop') + bonusYield(plot, d, gi) + (vid ? varExtra(vid) : 0) + (comp && Math.random() < comp.extra ? 1 : 0);
+    plot.lastCrop = d.id;
+    plot.lastAt = now();
     state.inventory[plot.itemId] += qty;
     if (vid) harvestVariety(vid, qty);
     state.stats.harvested += qty;

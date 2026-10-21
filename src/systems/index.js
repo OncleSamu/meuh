@@ -16,6 +16,7 @@ export * from './horsegames.js';
 export * from './show.js';
 export * from './coat.js';
 export * from './stud.js';
+export * from './companions.js';
 export * from './home.js';
 export * from './incidents.js';
 export * from './island.js';

@@ -24,6 +24,7 @@ import { centerOf } from '../dom.js';
 import { SPR, parts as partsHtml } from '../icons.js';
 import { tabEl } from '../app.js';
 import { askBuy } from '../sheets/askbuy.js';
+import { compCard } from './companions.js';
 
 const plotEls = [],
     plotSig = [];
@@ -41,6 +42,20 @@ const hiveBadge = p => {
     return j ? `<div class="honey-badge">${art('item', 'honey')}<b>${j}</b></div>` : '';
 };
 const egg = i => (G.eggAt(i) ? `<div class="egg-spot">${art('item', 'paintedEgg')}</div>` : '');
+// 1.25 : les feuilles d'association vers la voisine de droite et celle du dessous, et le signe des trois sœurs
+function compCode(i, cols, len, base) {
+    if (!G.compOpen()) return '';
+    const k = i - base;
+    const r = k % cols < cols - 1 && k + 1 < len ? G.linkKind(i, i + 1) : '';
+    const b = k + cols < len ? G.linkKind(i, i + cols) : '';
+    return `${r}/${b}/${G.inTrio(i) ? 'T' : ''}`;
+}
+function compHtml(code) {
+    if (!code) return '';
+    const [r, b, t] = code.split('/');
+    const leaf = (k, dir) => (k ? `<i class="cp-leaf ${dir} ${k}">${art('ui', k === 'good' ? 'cpGood' : 'cpBad')}</i>` : '');
+    return leaf(r, 'r') + leaf(b, 'b') + (t ? `<i class="cp-trio">${art('ui', 'cpTrio')}</i>` : '');
+}
 
 // une variété du labo pousse avec son apparence (couleur, taille, motif)
 const plantArt = (p, stage) => {
@@ -81,7 +96,7 @@ function renderPlots() {
         let sig;
         if (!p.isUnlocked) sig = i >= visibleLimit ? 'H' : `L|${i === nextLocked ? cost : ''}`;
         else
-            sig = `${p.terrain}|${p.isWatered}|${p.itemId}|${p.itemId ? G.plotStage(p) : ''}|v:${p.v || ''}|${p.pest ? 'pest' : ''}|${state.crow && state.crow.plot === i ? 'crow' : ''}|${G.eggAt(i) ? 'egg' : ''}|${p.fert ? 'f' : ''}|d:${p.deco || ''}|h:${p.deco === 'hive' ? Math.floor(p.honey || 0) : ''}|${pins.has(p.itemId) ? 'pin' : ''}|${zone.has(i) ? 'z' : ''}|${(auras && G.hasAura(i)) || flash.has(i) ? 'a' : ''}`;
+            sig = `${p.terrain}|${p.isWatered}|${p.itemId}|${p.itemId ? G.plotStage(p) : ''}|v:${p.v || ''}|${p.pest ? 'pest' : ''}|${state.crow && state.crow.plot === i ? 'crow' : ''}|${G.eggAt(i) ? 'egg' : ''}|${p.fert ? 'f' : ''}|d:${p.deco || ''}|h:${p.deco === 'hive' ? Math.floor(p.honey || 0) : ''}|${pins.has(p.itemId) ? 'pin' : ''}|${zone.has(i) ? 'z' : ''}|${(auras && G.hasAura(i)) || flash.has(i) ? 'a' : ''}|cp:${compCode(i, 6, state.grid.length, 0)}`;
         if (plotSig[i] === sig) return;
         const prev = plotSig[i];
         plotSig[i] = sig;
@@ -103,8 +118,9 @@ function renderPlots() {
             ? `<div class="deco-corner${prev && prev.includes('d:' + p.deco) ? '' : ' pop'}">${art('ui', p.deco)}</div>${p.deco === 'hive' ? hiveBadge(p) : ''}`
             : '';
         el.className = `plot ${p.terrain}${p.isWatered ? ' watered' : ''}${p.itemId ? ' planted' : ''}${p.isReady ? ' ready' : ''}${p.pest ? ' pested' : ''}${pins.has(p.itemId) ? ' pinned' : ''}${zone.has(i) ? ' hand' : ''}${p.deco ? ' has-deco' : ''}${aura}`;
+        const cp = compHtml(compCode(i, 6, state.grid.length, 0));
         if (!p.itemId) {
-            el.innerHTML = soilHtml(i) + deco + egg(i);
+            el.innerHTML = soilHtml(i) + deco + egg(i) + cp;
             return;
         }
         const stage = G.plotStage(p);
@@ -119,7 +135,8 @@ function renderPlots() {
             (state.crow && state.crow.plot === i ? `<div class="crow">${art('ui', 'crow')}</div>` : '') +
             (p.fert && !p.isReady ? `<div class="fert-badge">${art('item', 'fertilizer')}</div>` : '') +
             deco +
-            egg(i);
+            egg(i) +
+            cp;
     });
 }
 
@@ -165,7 +182,8 @@ function renderGreenhouse() {
     const nextLocked = g.plots.findIndex(p => !p.isUnlocked);
     g.plots.forEach((p, k) => {
         const el = ghEls[k];
-        const sig = !p.isUnlocked ? (k === nextLocked ? `L|${cost}` : 'H') : `${p.itemId}|${p.itemId ? G.plotStage(p) : ''}|${p.v || ''}`;
+        const cpc = p.isUnlocked ? compCode(1000 + k, 4, g.plots.length, 1000) : '';
+        const sig = !p.isUnlocked ? (k === nextLocked ? `L|${cost}` : 'H') : `${p.itemId}|${p.itemId ? G.plotStage(p) : ''}|${p.v || ''}|${cpc}`;
         if (ghSig[k] === sig) return;
         const prev = ghSig[k];
         ghSig[k] = sig;
@@ -181,11 +199,12 @@ function renderGreenhouse() {
         }
         el.className = `plot plowed watered gh${p.itemId ? ' planted' : ''}${p.isReady ? ' ready' : ''}`;
         if (!p.itemId) {
-            el.innerHTML = '';
+            el.innerHTML = compHtml(cpc);
             return;
         }
         const stage = G.plotStage(p);
-        el.innerHTML = `<div class="spr-wrap${!prev || prev !== sig ? ' pop' : ''}">${plantArt(p, stage)}</div>` + (p.isReady ? '' : bar(0, 'pbar', `gh:${k}`));
+        const grew = !prev || prev.split('|').slice(0, 3).join('|') !== sig.split('|').slice(0, 3).join('|');
+        el.innerHTML = `<div class="spr-wrap${grew ? ' pop' : ''}">${plantArt(p, stage)}</div>` + (p.isReady ? '' : bar(0, 'pbar', `gh:${k}`)) + compHtml(cpc);
     });
 }
 
@@ -287,6 +306,7 @@ export function renderFarm(el) {
         ['field', FIELD],
         ['ghcard', greenhouseHtml()],
         ['gh', state.greenhouse.built ? GH_BOX : null],
+        ['comp', compCard()],
         ['yard', farmyardHtml()],
         ['replant', toggle('Replanter automatiquement après la récolte', state.settings.autoReplant, 'setting', { key: 'autoReplant' })],
         ['seeder', state.upgrades.seeder ? toggle('Semoir : planter toute la rangée', state.settings.seeder !== false, 'setting', { key: 'seeder' }) : null],

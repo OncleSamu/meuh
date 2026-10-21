@@ -1,0 +1,172 @@
+/* 1.25 : les cultures compagnes */
+.cp-leaf {
+    position: absolute;
+    z-index: 3;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff7e0;
+    border: 2px solid var(--ink);
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+.cp-leaf.bad,
+.cp-leaf.mix {
+    background: #ffe4dc;
+}
+.cp-leaf svg {
+    width: 16px;
+    height: 16px;
+}
+.cp-leaf.r {
+    right: -15px;
+    top: calc(50% - 11px);
+}
+.cp-leaf.b {
+    bottom: -15px;
+    left: calc(50% - 11px);
+}
+.cp-trio {
+    position: absolute;
+    z-index: 2;
+    top: -6px;
+    left: -6px;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+}
+.cp-trio svg {
+    width: 100%;
+    height: 100%;
+}
+.cp-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.cp-head,
+.cp-mamie {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.cp-head .card-main,
+.cp-mamie .card-main {
+    flex: 1;
+    min-width: 0;
+}
+.cp-book,
+.cp-av {
+    width: 48px;
+    height: 48px;
+    flex: none;
+}
+.cp-book svg,
+.cp-av svg {
+    width: 100%;
+    height: 100%;
+}
+.cp-mamie {
+    border-top: 2px dashed rgba(58, 38, 24, 0.25);
+    padding-top: 8px;
+}
+.cp-prog {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0 2px;
+}
+.cp-prog > i {
+    flex: 1;
+    height: 10px;
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    background: #fff;
+    overflow: hidden;
+    display: block;
+}
+.cp-prog u {
+    display: block;
+    height: 100%;
+    background: #6cc04a;
+}
+.cp-pics {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    flex: none;
+}
+.cp-pics .ico {
+    width: 24px;
+    height: 24px;
+}
+.cp-any {
+    font-style: normal;
+    font-weight: 900;
+    margin: 0 4px;
+}
+.cp-tier {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: #fff7e0;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    padding: 8px 10px;
+    margin: 8px 0;
+    font-weight: 800;
+}
+.cp-tier .ico {
+    width: 18px;
+    height: 18px;
+}
+.cp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.cp-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff7e0;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    padding: 6px 8px;
+}
+.cp-row.bad {
+    background: #ffe4dc;
+}
+.cp-row.unseen {
+    background: #e8dcc0;
+    opacity: 0.8;
+}
+.cp-row.unseen .cp-pics {
+    width: 52px;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: #a89878;
+}
+.cp-txt {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.cp-txt small {
+    font-weight: 700;
+    color: var(--ink-soft);
+}
+.cp-fx {
+    width: 28px;
+    height: 28px;
+    flex: none;
+}
+.cp-fx svg {
+    width: 100%;
+    height: 100%;
+}

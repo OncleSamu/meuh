@@ -19,6 +19,7 @@ import { setupLab } from './ui/views/lab.js';
 import { setupHaras } from './ui/views/haras.js';
 import { setupShow } from './ui/views/show.js';
 import { setupStud } from './ui/views/stud.js';
+import { setupCompanions } from './ui/views/companions.js';
 import { setupAnimals, wanderAnimals } from './ui/views/animals.js';
 import { setupWorkshop } from './ui/views/workshop.js';
 import { setupCave } from './ui/views/cave.js';
@@ -64,6 +65,7 @@ function start() {
     setupHaras();
     setupShow();
     setupStud();
+    setupCompanions();
     setupAnimals();
     setupWorkshop();
     setupCave();

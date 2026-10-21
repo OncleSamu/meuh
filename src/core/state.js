@@ -49,6 +49,7 @@ export function newState() {
         night: null,
         counter: null, // 1.17 : le comptoir (salon, décors, clients)
         show: null, // 1.24 : les concours du haras (division, rosettes, inscription, résultats)
+        compan: null, // 1.25 : les cultures compagnes (carnet du potager, conseil de Mamie)
         haras: null, // 1.23 : les grandes écuries (niveau, fiches des chevaux logés)
         machines: [],
         quests: [],
