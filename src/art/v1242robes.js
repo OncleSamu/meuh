@@ -203,6 +203,13 @@ const PIECES = {
 };
 // la toison du pré : crins longs ou frisés
 const COATFX = (r, c) => (c === 1 ? P('M12 38 Q0 46 4 70 Q8 58 15 48Z', r.M, 2) + P('M58 12 Q46 22 46 44 L54 36 Q56 24 63 15Z', r.M, 2) : '');
+// 1.24.5 : les fers sous les sabots, gris (fer) ou brillants (argent)
+const SHOES = k =>
+    [22, 31, 47, 55]
+        .map(
+            x => L(`M${x - 2.8} 74.4 Q${x} 76.6 ${x + 2.8} 74.4`, 3.4) + L(`M${x - 2.8} 74.4 Q${x} 76.6 ${x + 2.8} 74.4`, 1.6, k === 2 ? '#f4f6fb' : '#aab1bb'),
+        )
+        .join('') + (k === 2 ? [22, 47].map(x => FC(x + 2, 74, 0.8, '#fff')).join('') : '');
 for (const [id, pieces] of Object.entries(PIECES)) {
     const old = animals[id];
     animals[id] = (o = {}) => {
@@ -210,7 +217,7 @@ for (const [id, pieces] of Object.entries(PIECES)) {
         if (!r) return old ? old(o) : '';
         const marks = o.marks || [];
         if (o.stage === 0 || o.stage === 1) return foal(r, o.stage, marks);
-        return horseR(r, marks) + (o.coat === 1 ? COATFX(r, 1) : '') + pieces.join('');
+        return horseR(r, marks) + (o.coat === 1 ? COATFX(r, 1) : '') + pieces.join('') + (o.shoes ? SHOES(o.shoes) : '');
     };
 }
 Object.assign(ui, {

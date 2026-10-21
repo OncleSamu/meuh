@@ -28,7 +28,7 @@ function divChips(sel, act) {
 function resultBlock(l) {
     const deco = l.deco ? DECOS[l.deco] : null;
     return `<div class="sh-res1"><p class="card-sub">${esc(l.name)} finit <b>${l.place}${l.place === 1 ? 'er' : 'e'}</b> en ${divName(l.div)} avec ${l.note.toFixed(1).replace('.', ',')}${l.jules ? ' · Jules a monté' : ''}.</p>
-        <div class="sh-gains">${l.coins ? `<span class="chip">${ico(['ui', 'coin'])}+${fmt(l.coins)}</span>` : ''}${l.rosette ? `<span class="chip">${ico(['ui', 'hRos' + (l.div + 1)])}Rosette</span>` : ''}${l.cup ? `<span class="chip">${ico(['ui', 'hCup2'])}Coupe</span>` : ''}${l.ribbon ? `<span class="chip">${ico(['ui', 'ribbon'])}+${l.ribbon} ruban</span>` : ''}${deco ? `<span class="chip">${ico(['ui', deco.id])}${deco.name}</span>` : ''}</div></div>`;
+        <div class="sh-gains">${l.coins ? `<span class="chip">${ico(['ui', 'coin'])}+${fmt(l.coins)}</span>` : ''}${l.rosette ? `<span class="chip">${ico(['ui', 'hRos' + (l.div + 1)])}${l.crush ? 'Victoire écrasante : 2 rosettes' : 'Rosette'}</span>` : ''}${l.cup ? `<span class="chip">${ico(['ui', 'hCup2'])}Coupe</span>` : ''}${l.ribbon ? `<span class="chip">${ico(['ui', 'ribbon'])}+${l.ribbon} ruban</span>` : ''}${deco ? `<span class="chip">${ico(['ui', deco.id])}${deco.name}</span>` : ''}</div></div>`;
 }
 function lastCard() {
     const all = G.lastResults().filter(l => !l.seen);
@@ -157,7 +157,7 @@ function renderShow(el) {
         [
             'hint',
             hint(
-                `Une discipline par semaine (${DISCIPLINES.map(d => d.name.toLowerCase()).join(', ')}). La note : aptitude 55 %, passage 30 %, présentation 15 % (cœurs d’amitié), +10 % pour la spécialité. Jusqu’à trois chevaux par semaine (ceux d’une même division courent aussi entre eux). Trois rosettes ouvrent la division suivante ; un passage coûte une pastille de forme, et un cheval bien entraîné a un mini-jeu plus facile.`,
+                `Une discipline par semaine (${DISCIPLINES.map(d => d.name.toLowerCase()).join(', ')}). La note : aptitude 55 %, passage 30 %, présentation 15 % (cœurs d’amitié), +10 % pour la spécialité. Jusqu’à trois chevaux par semaine (ceux d’une même division courent aussi entre eux). Trois rosettes ouvrent la division suivante (une victoire avec 12 points d’avance en vaut deux) ; un passage coûte une pastille de forme, et un cheval bien entraîné a un mini-jeu plus facile.`,
             ),
         ],
     ]);

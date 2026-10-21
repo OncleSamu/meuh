@@ -3,7 +3,7 @@ import { GALOP, SAUT, DRESSAGE, RAID } from '../data/haras.js';
 
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 // 1.24.3 : l'aptitude du cheval (k de 0 à 1) rend le jeu plus facile ; à k = 0,5 le jeu est celui d'avant
-export const APT_FX = { galopRate: 0.16, galopZone: 0.06, sautDur: 0.3, sautPerfect: 0.05, sautGood: 0.07, dressTol: 0.4, raidLim: 16, raidSpeed: 0.12 };
+export const APT_FX = { galopRate: 0.2, galopZone: 0.12, sautDur: 0.3, sautPerfect: 0.05, sautGood: 0.07, dressTol: 0.9, raidLim: 8, raidSpeed: 0.14 };
 const dk = k => (k == null ? 0 : k - 0.5);
 
 // ---------------- le galop ----------------

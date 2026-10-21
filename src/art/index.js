@@ -63,10 +63,11 @@ export const SPR = {
         if (code) featuresOf(id).forEach((k, j) => (o[k] = +code[j] || 0));
         // 1.24.2 : « horse~0@bai.etoile+balzanes.1 » : la robe, les marques et l'âge du cheval
         if (robe) {
-            const [r, m, st] = robe.split('.');
+            const [r, m, st, fl] = robe.split('.');
             o.robe = r;
             o.marks = m ? m.split('+') : [];
             if (st !== undefined && st !== '') o.stage = +st;
+            if (fl && fl.includes('f')) o.shoes = fl.includes('fa') ? 2 : 1; // 1.24.5 : fers en fer (f) ou en argent (fa)
         }
         return svg(animals[id](o), '0 0 80 80', 'animal-spr');
     },

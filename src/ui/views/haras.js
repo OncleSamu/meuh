@@ -18,7 +18,8 @@ const SADDLE_OUTFIT = { saddleDress: 'horseSdress', saddleJump: 'horseSjump', sa
 const horseArt = (a, r) => {
     const eq = r.eq || {};
     const outfit = eq.couv ? 'horseScover' : SADDLE_OUTFIT[eq.selle] || (eq.selle ? 'horseS' : OUTFIT[r.spec] || 'horseS');
-    return `<span class="hb-horse">${genWrap(art('animal', a.g && a.g.coat ? `${outfit}~@${G.coatKey(a.g)}` : outfit), a.g)}</span>`;
+    const fl = eq.fers ? (eq.fers === 'shoeSilver' ? 'fa' : 'f') : '';
+    return `<span class="hb-horse">${genWrap(art('animal', a.g && a.g.coat ? `${outfit}~@${G.coatKey(a.g)}${fl ? '..' + fl : ''}` : outfit), a.g)}</span>`;
 };
 const EQ_FX = id => {
     const e = EQUIP.items[id],
@@ -142,11 +143,11 @@ function horseCard(a) {
                 `<button class="pick-chip hz-rat" data-act="haRation" data-uid="${a.uid}" data-id="${id}" title="${ITEMS[id].name} : +${Math.round(RATION.bonus * 100)} % de points pendant ${RATION.hours} h"${!state.inventory[id] || G.onRando(a) ? ' disabled' : ''}>${ico(['item', id])}<small>${state.inventory[id] || 0}</small></button>`,
         )
         .join('');
-    return `<div class="hz-card${G.onRando(a) ? ' away' : ''}">
+    return `<div class="hz-card${G.onRando(a) ? ' away' : ''}">${G.lodged().length > 1 ? `<button class="hz-fold" data-act="haOpen" data-uid="${a.uid}" aria-label="Replier" title="Replier"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M5 12.5 L10 7.5 L15 12.5" fill="none" stroke="#3a2618" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>` : ''}
         <div class="hz-top">
             <div class="hz-art">${boxSvg(false)}${horseArt(a, r)}</div>
             <div class="hz-who">
-                <div class="hz-name"><b>${esc(a.name)}</b>${hearts(a.love || 0)}${G.lodged().length > 1 ? `<button class="hz-fold" data-act="haOpen" data-uid="${a.uid}" aria-label="Replier" title="Replier">▴</button>` : ''}</div>
+                <div class="hz-name"><b>${esc(a.name)}</b>${hearts(a.love || 0)}</div>
                 <div class="hz-forme">${formPips(a)}${ration}</div>
                 ${a.stack > 0 ? btn(`Ramasser le crin ×${a.stack}`, { act: 'haHair', data: { i }, kind: 'green', size: 'sm', icon: ['item', 'horsehair'] }) : ''}
             </div>

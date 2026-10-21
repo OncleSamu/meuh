@@ -133,6 +133,7 @@ export const SHOW = {
     ],
     open: 3, // rosettes à gagner dans une division pour ouvrir la suivante
     entries: 3, // 1.24.3 : chevaux différents inscrits par semaine
+    crush: 12, // 1.24.5 : points d'avance sur la 2e pour une victoire écrasante (2 rosettes)
     rivalsN: 5,
     fee: 0.05, // inscription, en part de la bourse
     places: [1, 0.5, 0.25], // part de la bourse pour les trois premiers

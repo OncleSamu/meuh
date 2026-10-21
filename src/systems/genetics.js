@@ -7,7 +7,7 @@
 //   ses graines (genetics.seeds[id]) se sèment ; ses produits (genetics.stock[id]) font partie du stock de l'espèce.
 // Une bête porte son génome (a.g), sa génération (a.gen) et sa race fixée (a.race).
 import { labPenBonus } from './buildings.js';
-import { founderCoat, crossCoat } from './coat.js';
+import { founderCoat, crossCoat, legacyCoat } from './coat.js';
 import { studBorn } from './stud.js';
 import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
@@ -93,8 +93,9 @@ export function ensureGenetics() {
     });
     Object.values(G.races).forEach(r => addFeatures(r.g, r.type, false));
     // 1.24.2 : un cheval d'avant reçoit des gènes de robe et de marques, une seule fois
-    state.animals.forEach(a => a.type === 'horse' && a.g && !a.g.coat && (a.g.coat = founderCoat()));
-    Object.values(G.races).forEach(r => r.type === 'horse' && r.g && !r.g.coat && (r.g.coat = founderCoat()));
+    // 1.24.5 : ils restent bais, comme leur dessin d'avant (les gènes cachés varient)
+    state.animals.forEach(a => a.type === 'horse' && a.g && !a.g.coat && (a.g.coat = legacyCoat()));
+    Object.values(G.races).forEach(r => r.type === 'horse' && r.g && !r.g.coat && (r.g.coat = legacyCoat()));
     // 1.22 : caractères discrets et finitions pour les créations d'avant
     state.animals.forEach(a => addExtras(a.g, extraFor(a.type), a.type));
     Object.values(G.races).forEach(r => addExtras(r.g, extraFor(r.type), r.type));

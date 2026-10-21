@@ -3,7 +3,7 @@ import * as G from '../systems/index.js';
 import { GALOP, SAUT, DISC, DRESSAGE, RAID } from '../data/haras.js';
 import { horsePose, OBST, obstFault, MG } from '../art/v1232mg.js';
 import { endurancePose, topHorse, GAIT, TERRAIN, TCOL } from '../art/v1233mg.js';
-import { genWrap } from './genlook.js';
+import { tintHex } from './genlook.js';
 import { ROBES } from '../art/v1242robes.js';
 import { sfx, buzz } from '../core/bus.js';
 import { refresh } from './app.js';
@@ -20,7 +20,10 @@ let ROBE = {};
 const robeOf = a => {
     const c = G.coatOf(a && a.g);
     const r = c && ROBES[c.robe];
-    return r ? { K: r.K, M: c.marks.includes('lave') ? '#f0d9a0' : r.M, G: r.G } : {};
+    if (!r) return {};
+    // 1.24.5 : la couleur fantaisiste des gènes se voit aussi pendant le jeu
+    const t = x => tintHex(x, a.g);
+    return { K: t(r.K), M: t(c.marks.includes('lave') ? '#f0d9a0' : r.M), G: t(r.G) };
 };
 
 // ---------------- les morceaux de dessin ----------------
@@ -112,13 +115,11 @@ const RULES = {
     endurance:
         'Trois étapes, trois terrains. Choisissez l’allure : <b>pas</b>, <b>trot</b> ou <b>galop</b>. Un pouls trop haut ralentit le cheval, et le vétérinaire contrôle à chaque étape.',
 };
+// 1.24.5 : les couleurs du cheval sont déjà teintées (robe et gènes) : pas de filtre en plus
 const introArt = (d, a, silks) =>
-    genWrap(
-        d === 'dressage'
-            ? `<svg viewBox="0 -6 64 80" class="spr">${topHorse(ROBE.K, ROBE.M, ROBE.G)}</svg>`
-            : `<svg viewBox="0 0 80 80" class="spr">${d === 'endurance' ? endurancePose('walkA', ROBE) : horsePose(d === 'saut' ? 'jump1' : 'galB', { ...ROBE, rider: silks })}</svg>`,
-        a.g,
-    );
+    d === 'dressage'
+        ? `<svg viewBox="0 -6 64 80" class="spr">${topHorse(ROBE.K, ROBE.M, ROBE.G)}</svg>`
+        : `<svg viewBox="0 0 80 80" class="spr">${d === 'endurance' ? endurancePose('walkA', ROBE) : horsePose(d === 'saut' ? 'jump1' : 'galB', { ...ROBE, rider: silks })}</svg>`;
 
 // le panneau d'ouverture : choisir de jouer ou de faire une séance rapide
 export function openHorseGame(uid, d, el, mode = null) {

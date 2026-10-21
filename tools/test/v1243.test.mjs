@@ -107,3 +107,32 @@ test('1.24.3 : la fiche de naissance est annoncée et on peut nommer le poulain'
     assert.ok(!G.nameHorse('foal1', a.name));
     assert.ok(STUD.famous === 3);
 });
+
+test('1.24.5 : une victoire écrasante compte deux rosettes', () => {
+    const [a] = stable(1, 100);
+    G.enterShow(a.uid, 0);
+    G.startShowPass(a.uid);
+    G.endShowPass(a.uid, 1);
+    endWeek();
+    G.showTick();
+    const l = G.lastResults()[0];
+    assert.equal(l.place, 1);
+    assert.ok(l.crush);
+    assert.equal(state.show.rose[0], 2);
+});
+test('1.24.5 : un cheval d’avant les robes reste bai et sans marque', () => {
+    for (let i = 0; i < 50; i++) {
+        const c = G.legacyCoat();
+        assert.equal(G.robeOf(c), 'bai');
+        assert.deepEqual(G.marksOf(c), []);
+    }
+});
+test('1.24.5 : fers dessinés, couleur fantaisiste reportée sur les couleurs du jeu', async () => {
+    const { sprite } = await import('../../src/art/index.js');
+    assert.notEqual(sprite('animal', 'horseS~@bai...f'), sprite('animal', 'horseS~@bai.'));
+    assert.notEqual(sprite('animal', 'horseS~@bai...fa'), sprite('animal', 'horseS~@bai...f'));
+    const { filterHex } = await import('../../src/ui/genlook.js');
+    assert.equal(filterHex('#a8693a', ''), '#a8693a');
+    const pink = filterHex('#a8693a', 'sepia(.8) saturate(3) hue-rotate(290deg) brightness(1.2)');
+    assert.ok(parseInt(pink.slice(1, 3), 16) > 200 && parseInt(pink.slice(5, 7), 16) > 150);
+});

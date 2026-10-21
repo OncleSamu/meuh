@@ -194,6 +194,8 @@ function settle(e, kind, shared = null) {
     const mult = kind === 'gp' ? SHOW.gpMult : 1;
     const coins = place <= 3 ? Math.round(purseOf(e.div, mult) * SHOW.places[place - 1]) : 0;
     const rosette = place <= 2;
+    // 1.24.5 : une victoire écrasante (loin devant la 2e) compte deux rosettes : les divisions trop faciles passent vite
+    const crush = place === 1 && list.length > 1 && list[0].note - list[1].note >= SHOW.crush;
     const out = {
         kind,
         key: e.key,
@@ -207,13 +209,14 @@ function settle(e, kind, shared = null) {
         coins,
         rosette,
         cup: place === 1,
+        crush,
         ribbon: 0,
         deco: null,
         jules: played === 0,
         seen: false,
     };
     if (coins) earn(coins, null);
-    if (rosette) s.rose[e.div]++;
+    if (rosette) s.rose[e.div] += crush ? 2 : 1;
     if (place === 1) {
         s.cups++;
         s.wins++;

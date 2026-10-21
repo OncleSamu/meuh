@@ -15,6 +15,19 @@ export function founderCoat() {
     for (const k of GENES) c[k] = [Math.random() < COAT.freq[k], Math.random() < COAT.freq[k]];
     return c;
 }
+// 1.24.5 : un cheval d'avant les robes garde son apparence (bai, sans marque) ; seuls des allèles cachés
+// (récessifs) varient, pour que ses poulains puissent surprendre
+export function legacyCoat() {
+    const c = founderCoat();
+    c.E = [true, Math.random() < COAT.freq.E];
+    c.A = [true, Math.random() < COAT.freq.A];
+    c.Br = [true, Math.random() < COAT.freq.Br];
+    for (const k of ['G', 'Rn', 'D', 'etoile', 'liste', 'balzanes', 'pie', 'appaloosa', 'raie']) c[k] = [false, false];
+    c.Cr = [false, false];
+    c.belleface = [true, Math.random() < COAT.freq.belleface];
+    c.lave = [true, Math.random() < COAT.freq.lave];
+    return c;
+}
 // un poulain : un allèle de chaque parent, avec de rares mutations
 export function crossCoat(a, b, mut = COAT.mut) {
     const A = a || founderCoat(),

@@ -671,8 +671,19 @@
     font-size: 0.9rem;
     color: var(--ink-soft);
 }
+.hz-card {
+    position: relative;
+}
 .hz-fold {
-    margin-left: auto;
+    display: grid;
+    place-items: center;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 1;
+    padding: 0;
+    line-height: 1;
+    color: var(--ink);
     border: 2px solid var(--ink);
     background: var(--paper);
     border-radius: 50%;

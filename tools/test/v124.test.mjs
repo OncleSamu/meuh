@@ -84,7 +84,7 @@ test('1.24 : un cheval fort gagne en division I, touche la bourse, la rosette et
     assert.equal(l.place, 1);
     assert.ok(l.rosette && l.cup && l.coins === G.purseOf(0));
     assert.equal(state.money, m + l.coins);
-    assert.equal(state.show.rose[0], 1);
+    assert.equal(state.show.rose[0], l.crush ? 2 : 1);
     assert.equal(state.show.cups, 1);
     assert.equal(G.titlesOf(a.uid), 1);
     assert.equal(state.show.entries.length, 0);

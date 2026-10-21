@@ -73,6 +73,94 @@ export function genWrap(svg, g, cls = '') {
     return `<span class="gl ${cls}" style="--gsx:${sx};--gsy:${sy};${filter ? `filter:${filter}` : ''}">${svg}${big}${over}</span>`;
 }
 
+// 1.24.5 : la couleur des gènes appliquée à une couleur précise (les chevaux des mini-jeux sont dessinés couleur par couleur,
+// sans filtre CSS) : on rejoue les filtres sepia, saturate, hue-rotate, brightness, grayscale et contrast sur la couleur
+const MAT = {
+    grayscale: a => {
+        const k = 1 - a;
+        return [
+            0.2126 + 0.7874 * k,
+            0.7152 - 0.7152 * k,
+            0.0722 - 0.0722 * k,
+            0.2126 - 0.2126 * k,
+            0.7152 + 0.2848 * k,
+            0.0722 - 0.0722 * k,
+            0.2126 - 0.2126 * k,
+            0.7152 - 0.7152 * k,
+            0.0722 + 0.9278 * k,
+        ];
+    },
+    sepia: a => {
+        const k = 1 - a;
+        return [
+            0.393 + 0.607 * k,
+            0.769 - 0.769 * k,
+            0.189 - 0.189 * k,
+            0.349 - 0.349 * k,
+            0.686 + 0.314 * k,
+            0.168 - 0.168 * k,
+            0.272 - 0.272 * k,
+            0.534 - 0.534 * k,
+            0.131 + 0.869 * k,
+        ];
+    },
+    saturate: s => [
+        0.213 + 0.787 * s,
+        0.715 - 0.715 * s,
+        0.072 - 0.072 * s,
+        0.213 - 0.213 * s,
+        0.715 + 0.285 * s,
+        0.072 - 0.072 * s,
+        0.213 - 0.213 * s,
+        0.715 - 0.715 * s,
+        0.072 + 0.928 * s,
+    ],
+    'hue-rotate': deg => {
+        const a = (deg * Math.PI) / 180,
+            c = Math.cos(a),
+            n = Math.sin(a);
+        return [
+            0.213 + c * 0.787 - n * 0.213,
+            0.715 - c * 0.715 - n * 0.715,
+            0.072 - c * 0.072 + n * 0.928,
+            0.213 - c * 0.213 + n * 0.143,
+            0.715 + c * 0.285 + n * 0.14,
+            0.072 - c * 0.072 - n * 0.283,
+            0.213 - c * 0.213 - n * 0.787,
+            0.715 - c * 0.715 + n * 0.715,
+            0.072 + c * 0.928 + n * 0.072,
+        ];
+    },
+};
+const clamp1 = x => Math.max(0, Math.min(1, x));
+export function filterHex(hex, filter) {
+    let c = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255);
+    for (const [, fn, arg] of String(filter || '').matchAll(/([a-z-]+)\(([-\d.]+)(?:deg)?\)/g)) {
+        const v = +arg;
+        if (MAT[fn]) {
+            const m = MAT[fn](v);
+            c = [0, 1, 2].map(r => clamp1(m[r * 3] * c[0] + m[r * 3 + 1] * c[1] + m[r * 3 + 2] * c[2]));
+        } else if (fn === 'brightness') c = c.map(x => clamp1(x * v));
+        else if (fn === 'contrast') c = c.map(x => clamp1((x - 0.5) * v + 0.5));
+    }
+    return (
+        '#' +
+        c
+            .map(x =>
+                Math.round(x * 255)
+                    .toString(16)
+                    .padStart(2, '0'),
+            )
+            .join('')
+    );
+}
+// la couleur d'un dessin, teintée comme le ferait genWrap pour ce génome
+export const tintHex = (hex, g) => {
+    if (!g || !g.l || !hex) return hex;
+    const col = G.looksOf(g).color;
+    return col ? filterHex(hex, COLOR[col]) : hex;
+};
+
 // une petite description lisible de l'apparence
 export function looksText(g) {
     if (!g || !g.l) return '';
