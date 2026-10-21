@@ -415,6 +415,8 @@ function playSaut(c) {
             ob.setAttribute('transform', `translate(${500 - (500 - 205) * (1 - (1 - k) * (1 - k))} 287) scale(1.6)`);
             if (pt >= APPROACH) {
                 setPhase('ring');
+                rr.setAttribute('rx', 130);
+                rr.setAttribute('ry', 34);
                 ring.setAttribute('opacity', 1);
             }
         } else if (phase === 'ring') {

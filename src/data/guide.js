@@ -528,6 +528,7 @@ export const GUIDE_PAGES = [
                     'Chaque aptitude monte de 0 jusqu’à un plafond de 40 + 12 × le gène (gène 2 : 64 ; gène 5 : 100). Croisez vos chevaux au labo pour viser plus haut.',
                     'Une séance donne 2 à 6 points ; le gain diminue près du plafond. Les cœurs d’amitié et une ration (carotte, pomme ou orge : +10 % pendant 1 heure) l’augmentent.',
                     'Touchez l’icône d’une discipline pour en faire la spécialité du cheval : elle comptera davantage en concours.',
+                    'Galop et saut se jouent en mini-jeu (30 à 45 secondes) : le score décide des points. Le galop : tenez le doigt pour accélérer, relâchez pour ralentir, aiguille dans le vert à l’entrée des virages, puis sprint. Le saut : appuyez quand l’anneau touche la cible, huit obstacles, trois fautes éliminent. La séance coûte sa pastille de forme dès le départ ; « Séance rapide » donne un score moyen sans jouer.',
                 ],
             },
             {

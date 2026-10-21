@@ -106,8 +106,7 @@ export const jockey = col =>
     FC(55.4, 11.6, 0.9, '#3a2618') +
     P('M48.6 10.6 Q49 3.8 56 5 Q59.2 7 58 10.4 L48.6 10.6Z', '#fff', 1.9) +
     L('M48.8 8 Q53 6 58 8.4', 1.4, col) +
-    L('M57.4 9.8 L62 11.6', 2.8) +
-    L('M57.4 9.8 L62 11.6', 1.2, '#fff');
+    P('M57.2 9 L60.4 10.4 L57.4 11.4Z', '#fff', 1.6);
 
 export const horseSvg = (pose, o) => svg(horsePose(pose, o), '0 0 80 80');
 
