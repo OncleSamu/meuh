@@ -148,3 +148,26 @@ export const SHOW = {
     decos: ['whitefence', 'showjump', 'horsevane', 'showpodium'],
     names: ['Éclair', 'Tempête', 'Opale', 'Caramel', 'Sultane', 'Mirage', 'Bellone', 'Orage', 'Pistache', 'Roméo', 'Gaston', 'Fanfan'],
 };
+// 1.24.1 : la sellerie de Jules et l'équipement. Un objet par emplacement et par cheval ; il quitte le stock quand on l'équipe.
+export const EQUIP = {
+    slots: [
+        { id: 'selle', name: 'Selle' },
+        { id: 'bride', name: 'Bride' },
+        { id: 'tapis', name: 'Tapis' },
+        { id: 'fers', name: 'Fers' },
+        { id: 'couv', name: 'Couverture' },
+        { id: 'brosse', name: 'Brosse' },
+    ],
+    // apt : points d'aptitude ajoutés à la note de concours (pas à l'entraînement) ; pres : points de présentation
+    items: {
+        shoeIron: { slot: 'fers', apt: { galop: 3, saut: 3 } },
+        shoeSilver: { slot: 'fers', apt: { galop: 6, saut: 6 } },
+        saddleDress: { slot: 'selle', apt: { dressage: 6 } },
+        saddleJump: { slot: 'selle', apt: { saut: 6 } },
+        saddleRace: { slot: 'selle', apt: { galop: 8 } },
+        bridle: { slot: 'bride', apt: { dressage: 3 }, pres: 3 },
+        saddlePad: { slot: 'tapis', pres: 2 },
+        winterBlanket: { slot: 'couv', recover: 2 / 3 }, // la forme remonte en 20 minutes au lieu de 30
+        hairBrush: { slot: 'brosse', brush: 0.6 }, // chance que le brossage rende une pastille de forme (au lieu de BRUSH.form)
+    },
+};

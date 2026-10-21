@@ -8,7 +8,7 @@ import { SHOW, DISC } from '../data/haras.js';
 import { weekStart, weekKey } from './events.js';
 import { earn, addXp } from './player.js';
 import { addPhoto } from './style.js';
-import { harasOpen, horseByUid, aptOf, rec, startPass } from './haras.js';
+import { harasOpen, horseByUid, aptOf, rec, startPass, equipApt, equipPres } from './haras.js';
 
 export const showOpen = () => harasOpen();
 export function ensureShow() {
@@ -49,9 +49,9 @@ export const purseOf = (div, mult = 1) => Math.round((SHOW.divs[div].purse * mul
 export const feeOf = (div, mult = 1) => Math.ceil(purseOf(div, mult) * SHOW.fee);
 // la note prévue d'un cheval dans une discipline ; `pass` : le passage joué (0 à 1), ou null quand Jules monte
 export function showNote(a, disc, pass = null) {
-    const apt = aptOf(a, disc);
+    const apt = clamp(aptOf(a, disc) + equipApt(a, disc));
     const p = pass == null ? SHOW.jules * apt : clamp(pass * 100);
-    const pres = clamp(SHOW.presBase + SHOW.presLove * Math.min(5, a.love || 0));
+    const pres = clamp(SHOW.presBase + SHOW.presLove * Math.min(5, a.love || 0) + equipPres(a));
     const spec = rec(a).spec === disc ? SHOW.spec : 1;
     const note = clamp((SHOW.wApt * apt + SHOW.wPass * p + SHOW.wPres * pres) * spec);
     return { apt, pass: p, pres, spec: spec > 1, note, jules: pass == null };

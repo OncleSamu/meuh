@@ -40,6 +40,7 @@ import './v1186serre.js';
 import './v119armand.js';
 import './v123haras.js';
 import './v124show.js';
+import './v1241sellerie.js';
 
 export const SPR = {
     farmhouse(l, roof) {

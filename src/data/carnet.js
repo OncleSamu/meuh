@@ -806,4 +806,15 @@ Object.assign(CARNET, {
         'Un parfum d’orchidée, ça sent une fleur qui se prend au sérieux. J’en mets une goutte derrière l’oreille les jours de fête, et personne ne me résiste.',
     orchidSoap: 'Le savon à l’orchidée est si joli que personne n’ose s’en servir. Il reste sur le rebord, et la salle de bains sent bon quand même.',
     orchidDried: 'Une orchidée séchée garde sa forme, mais plus ses manières. Pendue la tête en bas dans le couloir, elle fait le plus joli des mobiles.',
+    // ---------------- la sellerie ----------------
+    shoeIron: 'Jules cloue les fers lui-même, en chantonnant. Les chevaux ne bougent pas : ils ont compris qu’il chantait faux, mais avec le cœur.',
+    shoeSilver: 'Des fers en argent, ça ne sert à rien de plus qu’un fer en fer. Mais le cheval marche la tête plus haute, et ça compte.',
+    saddleDress:
+        'La selle de dressage est profonde et sage. Elle demande de se tenir droit. Ton grand-père disait que c’était la seule selle qui lui faisait des remarques.',
+    saddleJump: 'La selle d’obstacle est plus courte : on y a les genoux haut et le cœur plus haut encore. Ne la prête jamais à quelqu’un qui a le vertige.',
+    saddleRace: 'La selle de course ne pèse presque rien. Jules assure qu’on la rangerait dans une poche, si seulement on avait une poche à sa taille.',
+    bridle: 'Une bride bien réglée, c’est une conversation sans mots. Le cheval dit oui, le cavalier dit peut-être, et on finit par s’entendre.',
+    saddlePad: 'Le tapis de selle, personne ne le regarde, sauf le cheval. Alors on le choisit propre et bien plié, parce que lui, il sait.',
+    winterBlanket: 'La couverture d’hiver sent la laine et le foin. Les jours de gel, les chevaux la portent comme un manteau de cérémonie.',
+    hairBrush: 'On brosse un cheval comme on coiffe un enfant : doucement, en racontant sa journée. Il écoute mieux que beaucoup de gens.',
 });

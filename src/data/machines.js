@@ -3413,3 +3413,17 @@ for (const r of Object.values(RECIPES)) {
         r.lvl = r.base = m.reqLvl;
     }
 }
+
+// ---------------- 1.24.1 : la sellerie de Jules (équipement des chevaux, voir data/haras.js) ----------------
+MACHINES.saddlery = { id: 'saddlery', name: 'Sellerie', cost: 120000, reqLvl: 44, desc: 'Selles, fers, brides, tapis et couvertures pour les chevaux' };
+Object.assign(RECIPES, {
+    shoeIron: { id: 'shoeIron', machine: 'saddlery', ing: { ironIngot: 2 }, time: 1200, lvl: 44, base: 44, xp: 20 },
+    shoeSilver: { id: 'shoeSilver', machine: 'saddlery', ing: { silverIngot: 2, ironIngot: 1 }, time: 1800, lvl: 44, base: 44, xp: 30 },
+    saddleDress: { id: 'saddleDress', machine: 'saddlery', ing: { cloth: 2, horsehair: 4, hardwood: 1 }, time: 2700, lvl: 44, base: 44, xp: 28 },
+    saddleJump: { id: 'saddleJump', machine: 'saddlery', ing: { cloth: 2, horsehair: 4, hardwood: 1 }, time: 2700, lvl: 44, base: 44, xp: 28 },
+    saddleRace: { id: 'saddleRace', machine: 'saddlery', ing: { cloth: 1, horsehair: 3, ironIngot: 1 }, time: 2700, lvl: 44, base: 44, xp: 30 },
+    bridle: { id: 'bridle', machine: 'saddlery', ing: { cloth: 1, horsehair: 2, ironIngot: 1 }, time: 1800, lvl: 44, base: 44, xp: 22 },
+    saddlePad: { id: 'saddlePad', machine: 'saddlery', ing: { cloth: 2, cottonThread: 1 }, time: 1500, lvl: 44, base: 44, xp: 18 },
+    winterBlanket: { id: 'winterBlanket', machine: 'saddlery', ing: { cloth: 3, wool: 2 }, time: 2400, lvl: 44, base: 44, xp: 26 },
+    hairBrush: { id: 'hairBrush', machine: 'saddlery', ing: { hardwood: 1, horsehair: 3 }, time: 1200, lvl: 44, base: 44, xp: 16 },
+});

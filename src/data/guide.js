@@ -540,6 +540,13 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'La sellerie et l’équipement',
+                b: [
+                    'La sellerie de Jules (au Marché, niveau 44) fabrique neuf objets : fers en fer (+3 galop et saut) ou en argent (+6), selles de dressage, d’obstacle (+6) et de course (+8 galop), bride (+3 dressage et +3 présentation), tapis (+2 présentation), couverture d’hiver et brosse en crin.',
+                    'Dans la fiche d’un cheval, « Équipement » : un objet par emplacement, il quitte votre stock. Les bonus d’aptitude et de présentation comptent pour la note de concours, pas pour l’entraînement. La couverture fait remonter la forme en 20 minutes au lieu de 30 ; la brosse rend plus souvent une pastille de forme quand on brosse.',
+                ],
+            },
+            {
                 h: 'Les concours',
                 b: [
                     'Onglet Animaux, « Concours » : une discipline par semaine (galop, saut, dressage, endurance), cinq divisions (Poneys, Amateurs, Club, Élite, Grand Prix). Choisissez une division, inscrivez un cheval logé (5 % de la bourse), puis jouez son passage quand vous voulez avant lundi : un passage coûte une pastille de forme. Pas de passage ? Jules monte à votre place.',

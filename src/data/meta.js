@@ -300,7 +300,7 @@ export const BOOK_PAGES = [
         id: 'crafts',
         name: 'Artisanat',
         icon: ['item', 'sweater'],
-        machines: ['loom', 'tailor', 'pottery', 'forge', 'sawmill', 'jewelry', 'soapworks', 'perfumery', 'dyeworks', 'oilmill'],
+        machines: ['loom', 'tailor', 'pottery', 'forge', 'sawmill', 'jewelry', 'soapworks', 'perfumery', 'dyeworks', 'oilmill', 'saddlery'],
     },
     { id: 'pantry', name: 'Épicerie et salaison', icon: ['item', 'flour'], machines: ['mill', 'dryer', 'saloir', 'malthouse'] },
     { id: 'treasure', name: 'Mines et gemmes', icon: ['item', 'ruby'] },

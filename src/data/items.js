@@ -2857,3 +2857,16 @@ for (const [id, name, , ing] of SERRE_RECIPES) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
 }
+
+// ---------------- 1.24.1 : la sellerie de Jules ----------------
+Object.assign(ITEMS, {
+    shoeIron: { id: 'shoeIron', name: 'Fers en fer', type: 'artisan', sell: 235 },
+    shoeSilver: { id: 'shoeSilver', name: 'Fers en argent', type: 'artisan', sell: 845 },
+    saddleDress: { id: 'saddleDress', name: 'Selle de dressage', type: 'artisan', sell: 3815 },
+    saddleJump: { id: 'saddleJump', name: 'Selle d’obstacle', type: 'artisan', sell: 3815 },
+    saddleRace: { id: 'saddleRace', name: 'Selle de course', type: 'artisan', sell: 2795 },
+    bridle: { id: 'bridle', name: 'Bride', type: 'artisan', sell: 2015 },
+    saddlePad: { id: 'saddlePad', name: 'Tapis de selle', type: 'artisan', sell: 1075 },
+    winterBlanket: { id: 'winterBlanket', name: 'Couverture d’hiver', type: 'artisan', sell: 1220 },
+    hairBrush: { id: 'hairBrush', name: 'Brosse en crin', type: 'artisan', sell: 2360 },
+});

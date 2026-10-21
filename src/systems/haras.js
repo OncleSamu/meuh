@@ -3,7 +3,7 @@ import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { HARAS_LVL, DISCIPLINES, DISC, APT, STABLE, FORM, TRAIN, RATION, BRUSH, RANDO } from '../data/haras.js';
+import { HARAS_LVL, DISCIPLINES, DISC, APT, STABLE, FORM, TRAIN, RATION, BRUSH, RANDO, EQUIP } from '../data/haras.js';
 import { animalTrait } from './genetics.js';
 import { placeAnimal } from './pastures.js';
 import { maxFood } from './animals.js';
@@ -56,20 +56,23 @@ export function rec(a) {
 }
 
 // ---------------- la forme ----------------
+// 1.24.1 : la couverture d'hiver raccourcit le délai d'une pastille
+export const formEvery = a => FORM.every * (equippedItem(a, 'couv') ? EQUIP.items[equippedItem(a, 'couv')].recover : 1);
 export function formOf(a) {
     const r = rec(a);
     if (r.form < FORM.max) {
-        const n = Math.floor((now() - r.t) / FORM.every);
+        const every = formEvery(a),
+            n = Math.floor((now() - r.t) / every);
         if (n > 0) {
             r.form = Math.min(FORM.max, r.form + n);
-            r.t = r.form >= FORM.max ? now() : r.t + n * FORM.every;
+            r.t = r.form >= FORM.max ? now() : r.t + n * every;
         }
     } else r.t = now();
     return r.form;
 }
 export const formLeftMs = a => {
     const r = rec(a);
-    return formOf(a) >= FORM.max ? 0 : Math.max(0, r.t + FORM.every - now());
+    return formOf(a) >= FORM.max ? 0 : Math.max(0, r.t + formEvery(a) - now());
 };
 function spendForm(a, n = 1) {
     const r = rec(a);
@@ -170,7 +173,7 @@ export function brushHorse(uid, at) {
     sfx('pop');
     buzz(12);
     emit('hearts', { at, n: 4 });
-    if (formOf(a) < FORM.max && Math.random() < BRUSH.form) {
+    if (formOf(a) < FORM.max && Math.random() < (equippedItem(a, 'brosse') ? EQUIP.items[equippedItem(a, 'brosse')].brush : BRUSH.form)) {
         addForm(a, 1);
         float(at, ['+1', ['ui', 'hForme']], '', -34);
     }
@@ -299,3 +302,40 @@ export function tidyHaras() {
     });
 }
 export const fmtMin = ms => `${Math.max(1, Math.ceil(ms / 60000))} min`;
+
+// ---------------- l'équipement (1.24.1) ----------------
+export const eqOf = a => (rec(a).eq ||= {});
+export const equippedItem = (a, slot) => (rec(a).eq || {})[slot] || null;
+export const equipFor = slot => Object.keys(EQUIP.items).filter(id => EQUIP.items[id].slot === slot);
+export function equip(uid, id, at) {
+    const a = horseByUid(uid),
+        e = EQUIP.items[id];
+    if (!a || !a.box || !e) return false;
+    if ((state.inventory[id] || 0) <= 0) return toast(`Il vous faut : ${ITEMS[id].name.toLowerCase()}`, ['item', id]), sfx('error'), false;
+    const eq = eqOf(a),
+        old = eq[e.slot];
+    state.inventory[id]--;
+    if (old) state.inventory[old] = (state.inventory[old] || 0) + 1;
+    eq[e.slot] = id;
+    sfx('pop');
+    buzz(10);
+    float(at, ['+', ['item', id]], '', -28);
+    emit('changed', 'haras');
+    return true;
+}
+export function unequip(uid, slot) {
+    const a = horseByUid(uid);
+    if (!a) return false;
+    const eq = eqOf(a),
+        old = eq[slot];
+    if (!old) return false;
+    state.inventory[old] = (state.inventory[old] || 0) + 1;
+    eq[slot] = null;
+    sfx('pop');
+    emit('changed', 'haras');
+    return true;
+}
+const eqItems = a => Object.values(rec(a).eq || {}).filter(Boolean);
+// les points d'aptitude de l'équipement dans une discipline, et les points de présentation (comptés au concours seulement)
+export const equipApt = (a, d) => eqItems(a).reduce((n, id) => n + ((EQUIP.items[id] && EQUIP.items[id].apt && EQUIP.items[id].apt[d]) || 0), 0);
+export const equipPres = a => eqItems(a).reduce((n, id) => n + ((EQUIP.items[id] && EQUIP.items[id].pres) || 0), 0);

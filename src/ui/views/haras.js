@@ -1,7 +1,7 @@
 // Animaux | Écuries (1.23) : les boxes, la forme, les soins, l'entraînement et la randonnée de vos chevaux.
 import { state } from '../../core/state.js';
 import { ITEMS } from '../../data/items.js';
-import { DISCIPLINES, STABLE_NAMES, FORM, RATION, RANDO, APT, HARAS_LVL } from '../../data/haras.js';
+import { DISCIPLINES, STABLE_NAMES, FORM, RATION, RANDO, APT, HARAS_LVL, EQUIP } from '../../data/haras.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc } from '../dom.js';
 import { genWrap } from '../genlook.js';
@@ -13,7 +13,40 @@ import { stableSvg, boxSvg } from '../../art/v123haras.js';
 
 // la tenue du cheval selon sa spécialité
 const OUTFIT = { galop: 'horseSrace', dressage: 'horseSdress', saut: 'horseSjump', endurance: 'horseS' };
-const horseArt = (a, r) => `<span class="hb-horse">${genWrap(art('animal', OUTFIT[r.spec] || 'horseS'), a.g)}</span>`;
+const SADDLE_OUTFIT = { saddleDress: 'horseSdress', saddleJump: 'horseSjump', saddleRace: 'horseSrace' };
+const horseArt = (a, r) => {
+    const eq = r.eq || {};
+    const outfit = eq.couv ? 'horseScover' : SADDLE_OUTFIT[eq.selle] || (eq.selle ? 'horseS' : OUTFIT[r.spec] || 'horseS');
+    return `<span class="hb-horse">${genWrap(art('animal', outfit), a.g)}</span>`;
+};
+const EQ_FX = id => {
+    const e = EQUIP.items[id],
+        out = [];
+    if (e.apt)
+        out.push(
+            Object.entries(e.apt)
+                .map(([d, n]) => `+${n} ${d}`)
+                .join(', '),
+        );
+    if (e.pres) out.push(`+${e.pres} prés.`);
+    if (e.recover) out.push('forme plus vite');
+    if (e.brush) out.push('brossage : forme');
+    return out.join(' · ');
+};
+function equipCard(a) {
+    const rows = EQUIP.slots
+        .map(sl => {
+            const cur = G.equippedItem(a, sl.id);
+            const opts = G.equipFor(sl.id).filter(id => (state.inventory[id] || 0) > 0 && id !== cur);
+            return `<div class="hz-eq"><b>${sl.name}</b>${
+                cur
+                    ? `<button class="chip hz-eq-on" data-act="haUnequip" data-uid="${a.uid}" data-slot="${sl.id}" title="${EQ_FX(cur)} · retirer">${ico(['item', cur])}${ITEMS[cur].name}</button>`
+                    : '<small>vide</small>'
+            }${opts.map(id => `<button class="pick-chip" data-act="haEquip" data-uid="${a.uid}" data-id="${id}" title="${EQ_FX(id)}">${ico(['item', id])}${ITEMS[id].name} ×${state.inventory[id]}</button>`).join('')}</div>`;
+        })
+        .join('');
+    return `<details class="hz-equip"><summary>Équipement</summary>${rows}<small>Fabriqué à la sellerie (Atelier). Les bonus comptent pour la note de concours.</small></details>`;
+}
 
 function closedCard() {
     const n = G.stableNext();
@@ -103,6 +136,7 @@ function horseCard(a) {
             </div>
         </div>
         <div class="hz-apts">${DISCIPLINES.map(d => aptRow(a, d)).join('')}</div>
+        ${equipCard(a)}
         <div class="hz-care">
             ${btn('Brosser', { act: 'haBrush', data: { uid: a.uid }, size: 'sm', icon: ['ui', 'hBrosse'], disabled: r.brushDay === state.day })}
             ${btn('Nourrir', { act: 'haFeed', data: { uid: a.uid }, size: 'sm', icon: ['item', 'feed'], disabled: a.food >= G.maxFood() })}
@@ -155,6 +189,8 @@ export function setupHaras() {
         haOut: (el, d) => G.unlodge(d.uid),
         haTrain: (el, d) => (G.hasGame(d.d) ? openHorseGame(d.uid, d.d, el) : G.trainHorse(d.uid, d.d, el)),
         haSpec: (el, d) => G.setSpec(d.uid, d.d),
+        haEquip: (el, d) => G.equip(d.uid, d.id, el),
+        haUnequip: (el, d) => G.unequip(d.uid, d.slot),
         haBrush: (el, d) => G.brushHorse(d.uid, el),
         haFeed: (el, d) => G.feedHorse(d.uid, el),
         haRation: (el, d) => G.giveRation(d.uid, d.id, el),
