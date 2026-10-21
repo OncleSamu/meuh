@@ -18,7 +18,7 @@ state.xp = 0;
 state.money = 50000000;
 state.barn.lvl = 50;
 for (const p of Object.values(PROJECTS)) state.projects[p.id] = { given: {}, done: true };
-for (const k of Object.keys(ITEMS)) state.inventory[k] = Math.max(state.inventory[k] || 0, 12);
+for (const k of Object.keys(ITEMS)) state.inventory[k] = Math.max(state.inventory[k] || 0, 300);
 for (const k of Object.keys(EQUIP.items)) state.inventory[k] = 3;
 if (!state.machines.some(m => m.type === 'saddlery')) state.machines.push(G.newMachine('saddlery'));
 G.ensureGenetics();
@@ -96,6 +96,9 @@ for (const [name, age] of [
 G.ensureStud();
 G.studTick();
 G.normalizeState();
+// la grange ne doit pas déborder : on ramène le stock à 15 de chaque (sauf l'équipement et les matériaux)
+for (const k of Object.keys(state.inventory))
+    if (!EQUIP.items[k] && !['plank', 'beam', 'nail', 'stone', 'paint', 'wood'].includes(k)) state.inventory[k] = Math.min(state.inventory[k], 15);
 // l'âge des poulains est fixé en dernier (la normalisation ne le touche pas)
 import('../../src/data/animals.js').then(async ({ GROW }) => {
     for (const [b, f] of foals) b.age = GROW.horse * f;
