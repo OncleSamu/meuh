@@ -24,39 +24,53 @@ function divChips(sel, act) {
         .join('')}</div>`;
 }
 
-function lastCard() {
-    const l = G.ensureShow().last;
-    if (!l || l.seen) return '';
+// 1.24.3 : un bloc par cheval inscrit ; le classement commun en dessous
+function resultBlock(l) {
     const deco = l.deco ? DECOS[l.deco] : null;
-    const rows = l.list
+    return `<div class="sh-res1"><p class="card-sub">${esc(l.name)} finit <b>${l.place}${l.place === 1 ? 'er' : 'e'}</b> en ${divName(l.div)} avec ${l.note.toFixed(1).replace('.', ',')}${l.jules ? ' · Jules a monté' : ''}.</p>
+        <div class="sh-gains">${l.coins ? `<span class="chip">${ico(['ui', 'coin'])}+${fmt(l.coins)}</span>` : ''}${l.rosette ? `<span class="chip">${ico(['ui', 'hRos' + (l.div + 1)])}Rosette</span>` : ''}${l.cup ? `<span class="chip">${ico(['ui', 'hCup2'])}Coupe</span>` : ''}${l.ribbon ? `<span class="chip">${ico(['ui', 'ribbon'])}+${l.ribbon} ruban</span>` : ''}${deco ? `<span class="chip">${ico(['ui', deco.id])}${deco.name}</span>` : ''}</div></div>`;
+}
+function lastCard() {
+    const all = G.lastResults().filter(l => !l.seen);
+    if (!all.length) return '';
+    const best = all.reduce((x, y) => (y.place < x.place ? y : x));
+    // les classements, un par division (sans doublon quand plusieurs chevaux couraient ensemble)
+    const seenDiv = new Set();
+    const tables = all
+        .filter(l => !seenDiv.has(l.kind + l.div) && seenDiv.add(l.kind + l.div))
         .map(
-            (x, i) =>
-                `<div class="sh-rank${x.me ? ' me' : ''}"><b>${i + 1}</b><span>${esc(x.name)}</span><em>${x.note.toFixed(1).replace('.', ',')}</em></div>`,
+            l =>
+                `<div class="sh-ranks"><small>${l.kind === 'gp' ? 'Grand Prix' : DISC[l.disc].name} · ${divName(l.div)}</small>${l.list
+                    .map(
+                        (x, i) =>
+                            `<div class="sh-rank${x.mine || x.me ? ' me' : ''}"><b>${i + 1}</b><span>${esc(x.name)}</span><em>${x.note.toFixed(1).replace('.', ',')}</em></div>`,
+                    )
+                    .join('')}</div>`,
         )
         .join('');
-    return `<div class="card sh-result"><div class="card-title">${ico(['ui', l.place === 1 ? 'hCup2' : 'hCup0'])}Résultats · ${l.kind === 'gp' ? 'Grand Prix' : DISC[l.disc].name} · ${divName(l.div)}</div>
-        <p class="card-sub">${esc(l.name)} finit <b>${l.place}${l.place === 1 ? 'er' : 'e'}</b> avec ${l.note.toFixed(1).replace('.', ',')}${l.jules ? ' · Jules a monté' : ''}.</p>
-        <div class="sh-ranks">${rows}</div>
-        <div class="sh-gains">${l.coins ? `<span class="chip">${ico(['ui', 'coin'])}+${fmt(l.coins)}</span>` : ''}${l.rosette ? `<span class="chip">${ico(['ui', 'hRos' + (l.div + 1)])}Rosette</span>` : ''}${l.cup ? `<span class="chip">${ico(['ui', 'hCup2'])}Coupe</span>` : ''}${l.ribbon ? `<span class="chip">${ico(['ui', 'ribbon'])}+${l.ribbon} ruban</span>` : ''}${deco ? `<span class="chip">${ico(['ui', deco.id])}${deco.name}</span>` : ''}</div>
+    return `<div class="card sh-result"><div class="card-title">${ico(['ui', best.place === 1 ? 'hCup2' : 'hCup0'])}Résultats du concours</div>
+        ${all.map(resultBlock).join('')}${tables}
         ${btn('Compris', { act: 'shSeen', size: 'sm', kind: 'gold' })}</div>`;
 }
 
-function horseRow(a, disc, st) {
+function horseRow(a, disc) {
     const hope = G.showHope(a, disc);
-    const mine = st.entry && st.entry.uid === a.uid;
+    const e = G.entryOf(a.uid);
+    const left = G.entriesLeft();
     let right;
-    if (!st.entry || !mine)
-        right = btn(st.entry ? 'Changer' : 'Inscrire', {
+    if (!e)
+        right = btn('Inscrire', {
             act: 'shEnter',
             data: { uid: a.uid },
             size: 'sm',
             kind: 'gold',
-            disabled: st.entry && st.entry.passage != null,
+            disabled: left <= 0,
+            title: left <= 0 ? `${SHOW.entries} chevaux au plus par semaine` : '',
         });
-    else if (st.entry.passage == null)
-        right = btn('Jouer', { act: 'shPlay', data: { uid: a.uid, d: disc }, size: 'sm', kind: 'green', disabled: !G.canTrain(a) });
+    else if (e.passage == null)
+        right = `<span class="sh-acts">${btn('Jouer', { act: 'shPlay', data: { uid: a.uid, d: disc }, size: 'sm', kind: 'green', disabled: !G.canTrain(a) })}${btn('Retirer', { act: 'shOut', data: { uid: a.uid }, size: 'sm', kind: 'ghost' })}</span>`;
     else right = `<span class="chip">${ico(['ui', 'hCup0'])}Passage joué</span>`;
-    return `<div class="card sh-horse${mine ? ' mine' : ''}"><span class="sd-pic sm">${animalArt('horse', a.g)}</span><div class="card-main"><div class="card-title">${esc(a.name)}${mine ? ' · inscrit' : ''}</div>
+    return `<div class="card sh-horse${e ? ' mine' : ''}"><span class="sd-pic sm">${animalArt('horse', a.g)}</span><div class="card-main"><div class="card-title">${esc(a.name)}${e ? ` · ${divName(e.div)}` : ''}</div>
         <div class="card-sub">${DISC[disc].name} ${G.aptOf(a, disc)}/${G.aptCap(a, disc)} · note espérée ${num(hope)}${G.titlesOf(a.uid) ? ` · ${G.titlesOf(a.uid)} victoire${G.titlesOf(a.uid) > 1 ? 's' : ''}` : ''}</div></div>${right}</div>`;
 }
 
@@ -64,14 +78,15 @@ function weekCard() {
     const st = G.ensureShow(),
         disc = G.weekDisc();
     const div = st.div;
-    const e = st.entry;
-    const hint2 = e
-        ? e.passage == null
-            ? 'Jouez votre passage quand vous voulez avant lundi, sinon Jules monte à votre place.'
-            : 'Passage joué : les résultats tombent lundi.'
-        : 'Choisissez une division, puis inscrivez un cheval.';
+    const n = G.entriesNow().length;
+    const toPlay = G.entriesNow().filter(e => e.passage == null).length;
+    const hint2 = n
+        ? toPlay
+            ? `Jouez les passages quand vous voulez avant lundi, sinon Jules monte à votre place. Vos chevaux d’une même division courent aussi entre eux.`
+            : 'Passages joués : les résultats tombent lundi.'
+        : 'Choisissez une division, puis inscrivez jusqu’à trois chevaux.';
     return `<div class="card sh-week"><div class="card-art">${ico(DISC[disc].icon, 'ico big')}</div><div class="card-main">
-        <div class="card-sub">Cette semaine</div><div class="card-title">${DISC[disc].name}</div>
+        <div class="card-sub">Cette semaine · ${n}/${SHOW.entries} inscrits</div><div class="card-title">${DISC[disc].name}</div>
         <div class="card-sub">Division ${divName(div)} · bourse ${fmt(G.purseOf(div))} · inscription ${fmt(G.feeOf(div))}</div>
         <div class="card-sub">Rivales : notes de ${SHOW.divs[div].rivals[0]} à ${SHOW.divs[div].rivals[1]}</div>
         <div class="card-sub">Résultats dans ${timer(Date.now() + G.showEndsIn() * 1000)}</div></div></div>
@@ -133,7 +148,7 @@ function renderShow(el) {
         ['week', weekCard()],
         ['hs', section('Vos chevaux')],
         ...(lod.length
-            ? lod.map(a => ['h' + a.uid, horseRow(a, disc, st)])
+            ? lod.map(a => ['h' + a.uid, horseRow(a, disc)])
             : [['none', '<div class="card"><small>Logez un cheval en box pour le faire concourir.</small></div>']]),
         ['gps', section('Le Grand Prix')],
         ['gp', gpCard(st, lod)],
@@ -142,7 +157,7 @@ function renderShow(el) {
         [
             'hint',
             hint(
-                `Une discipline par semaine (${DISCIPLINES.map(d => d.name.toLowerCase()).join(', ')}). La note : aptitude 55 %, passage 30 %, présentation 15 % (cœurs d’amitié), +10 % pour la spécialité. Trois rosettes ouvrent la division suivante ; un passage coûte une pastille de forme.`,
+                `Une discipline par semaine (${DISCIPLINES.map(d => d.name.toLowerCase()).join(', ')}). La note : aptitude 55 %, passage 30 %, présentation 15 % (cœurs d’amitié), +10 % pour la spécialité. Jusqu’à trois chevaux par semaine (ceux d’une même division courent aussi entre eux). Trois rosettes ouvrent la division suivante ; un passage coûte une pastille de forme, et un cheval bien entraîné a un mini-jeu plus facile.`,
             ),
         ],
     ]);
@@ -159,6 +174,7 @@ export function setupShow() {
         shEnter: (el, d) => G.enterShow(d.uid, G.ensureShow().div, el),
         shPlay: (el, d) => horseOf(d) && openHorseGame(d.uid, d.d, el, 'show'),
         shSeen: () => G.showSeen(),
+        shOut: (el, d) => G.withdrawShow(d.uid),
         gpEnter: (el, d) => G.enterGp(d.uid, G.ensureShow().div),
         gpPlay: (el, d) => horseOf(d) && openHorseGame(d.uid, d.d, el, 'gp'),
     });

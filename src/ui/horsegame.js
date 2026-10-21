@@ -59,11 +59,11 @@ const farTile = (x, tribune) =>
 const dashTile = (x, ys) =>
     `<g transform="translate(${x} 0)">${ys.map((y, i) => line(`M${20 + i * 70} ${y} l24 0 M${200 + i * 50} ${y + 14} l24 0`, 3, 'rgba(255,255,255,.5)')).join('')}</g>`;
 const mg = (k, x, y, s = 1) => at(MG[k](), x, y, s);
-const gauge = v => {
+const gauge = (v, zone = GALOP.zone) => {
     const x0 = 30,
         w = 300,
         y = 468,
-        [a, b] = GALOP.zone;
+        [a, b] = zone;
     return (
         rect(x0, y, w, 24, 12, '#fff7e0', 2.8) +
         line(`M${x0 + 14} ${y + 12} L${x0 + a * w - 8} ${y + 12}`, 5, '#e8c26a') +
@@ -91,6 +91,19 @@ function shell(title) {
     return { o, stage, q: sel => o.querySelector(sel) };
 }
 
+// 1.24.3 : ce que l'aptitude change dans le jeu
+const APT_HELP = {
+    galop: ['plus vite et une zone verte plus large', 'plus lent et une zone verte plus étroite'],
+    saut: ['un anneau plus lent et une cible plus large', 'un anneau plus rapide et une cible plus étroite'],
+    dressage: ['un tracé plus tolérant', 'un tracé plus exigeant'],
+    endurance: ['plus rapide et un pouls qui tient mieux', 'plus lent et un pouls qui grimpe plus vite'],
+};
+const aptHelp = (d, pts) =>
+    pts >= 55
+        ? `Aptitude ${pts} : ${APT_HELP[d][0]}.`
+        : pts <= 45
+          ? `Aptitude ${pts} : ${APT_HELP[d][1]}. Entraînez-le pour faciliter le jeu.`
+          : `Aptitude ${pts} : jeu normal.`;
 const RULES = {
     galop: 'Tenez le doigt pour accélérer, relâchez pour ralentir. À l’entrée de chaque virage, l’aiguille doit être dans le <b>vert</b>. Dans la dernière ligne droite, filez !',
     saut: 'Un anneau se resserre sur la cible. Appuyez quand il touche le <b>vert</b> pour un saut parfait. Huit obstacles, trois fautes et c’est fini.',
@@ -126,6 +139,7 @@ export function openHorseGame(uid, d, el, mode = null) {
     stage.innerHTML = `<div class="hg-intro">
         <div class="hg-hart">${introArt(d, a, silksOf(a))}</div>
         <p class="hg-rules">${RULES[d]}</p>
+        <p class="hg-sub hg-apt">${aptHelp(d, pts)}</p>
         <p class="hg-sub">${mode ? `Passage de concours : ${DISC[d].name.toLowerCase()} ${pts}/${cap} · il coûte 1 de forme et compte pour la note.` : `${DISC[d].name} : ${pts}/${cap} · la séance coûte 1 de forme dès le départ.`}</p>
         <div class="hg-btns"><button class="btn gold" id="hgplay">Jouer</button>${mode ? '' : '<button class="btn" id="hgquick">Séance rapide</button>'}</div>
         ${mode ? '' : '<small>Séance rapide : un score moyen, sans jouer.</small>'}</div>`;
@@ -137,7 +151,19 @@ export function openHorseGame(uid, d, el, mode = null) {
     q('#hgplay').onclick = () => {
         if (me !== run) return;
         if (!(mode === 'show' ? G.startShowPass(uid) : mode === 'gp' ? G.startGpPass(uid, d) : G.startTrain(uid, d))) return close();
-        ({ galop: playGalop, saut: playSaut, dressage: playDressage, endurance: playRaid })[d]({ a, d, o, stage, q, me, close, el, uid, mode });
+        ({ galop: playGalop, saut: playSaut, dressage: playDressage, endurance: playRaid })[d]({
+            a,
+            d,
+            o,
+            stage,
+            q,
+            me,
+            close,
+            el,
+            uid,
+            mode,
+            k: G.aptOf(a, d) / 100,
+        });
     };
 }
 
@@ -162,7 +188,7 @@ function finish(c, score, lines) {
 function playGalop(c) {
     const { a, stage, q, me } = c;
     const silks = silksOf(a);
-    const g = G.newGalop();
+    const g = G.newGalop(Math.random, c.k);
     const calm = reduceMotion();
     const frames = ['galA', 'galB', 'galC', 'galB'].map(p => horseFrame(p, silks));
     stage.innerHTML = `<svg viewBox="0 0 360 520" class="hg-svg">${defs}${rect(0, 0, 360, 520, 0, 'url(#hgsky)', 0)}${cloud(70, 130)}${cloud(260, 104, 0.8)}
@@ -177,7 +203,7 @@ function playGalop(c) {
         ${hudBox(`<g id="hgoval" transform="translate(60 34)"><ellipse rx="42" ry="20" fill="#d9b57a" stroke="${INK}" stroke-width="2.6"/><ellipse rx="26" ry="9" fill="#6cc04a" stroke="${INK}" stroke-width="2.2"/>${line('M0 -20 L0 -9', 2.6, '#c8453a')}${Array.from({ length: GALOP.rivals }, (_, i) => `<circle id="hgr${i}" r="3.4" fill="#b9b3a6" stroke="${INK}" stroke-width="1.4"/>`).join('')}<circle id="hgme" r="5" fill="#ffd23f" stroke="${INK}" stroke-width="2"/></g>${T(190, 28, 12, 'Place')}${T(190, 50, 22, '1 / 6', { id: 'hgrank' })}${mg('chrono', 262, 11, 0.6)}${T(322, 46, 17, '0:00', { id: 'hgtime' })}`)}
         <g id="hgwarn" opacity="0">${rect(40, 70, 280, 38, 19, '#ffd23f', 2.8)}${T(180, 95, 18, 'Virage !', { id: 'hgwtxt' })}</g>
         <g id="hgmsg" opacity="0">${T(180, 200, 28, '', { id: 'hgmtxt', c: '#fff', st: 1, sw: 6 })}</g>
-        ${gauge(g.v)}${T(180, 514, 12, 'Maintenez : accélérer · Relâchez : ralentir', { c: '#fff', st: 1, sw: 3.4 })}
+        ${gauge(g.v, G.galopZone(g.k))}${T(180, 514, 12, 'Maintenez : accélérer · Relâchez : ralentir', { c: '#fff', st: 1, sw: 3.4 })}
         <g id="hgcount"></g></svg>`;
     const $ = id => q('#' + id);
     const horse = $('hgh'),
@@ -250,7 +276,7 @@ function playGalop(c) {
             say(s >= 0.85 ? 'Parfait !' : s >= 0.5 ? 'Bien négocié' : g.v > GALOP.zone[1] ? 'Trop vite !' : 'Trop lent !', 1.1);
             sfx(s >= 0.5 ? 'pop' : 'error');
         }
-        const rate = G.galopRate(g.v);
+        const rate = G.galopRate(g.v, g.k);
         offF = (offF + rate * 0.45 * dt * 3) % 360;
         offR = (offR + rate * 2.4 * dt) % 360;
         offD = (offD + rate * 3.6 * dt) % 360;
@@ -317,7 +343,7 @@ const GROUND = 340;
 function playSaut(c) {
     const { a, stage, q, me } = c;
     const silks = silksOf(a);
-    const s = G.newSaut();
+    const s = G.newSaut(c.k);
     const calm = reduceMotion();
     const run3 = ['galA', 'galB', 'galC', 'galB'].map(p => horseFrame(p, silks));
     const jf = { up: horseFrame('jumpUp', silks, -12), land: horseFrame('jumpLand', silks, 8), pre: horseFrame('jump1', silks) };
@@ -444,12 +470,12 @@ function playSaut(c) {
                 ring.setAttribute('opacity', 1);
             }
         } else if (phase === 'ring') {
-            const dur = G.sautDur(s.i);
-            const r = G.ringAt(s.i, pt);
+            const dur = G.sautDur(s.i, s.k);
+            const r = G.ringAt(s.i, pt, s.k);
             rr.setAttribute('rx', 130 * r);
             rr.setAttribute('ry', 34 * r);
             if (tapT != null || pt >= dur + 0.15) {
-                verdict = G.judgeJump(s.i, tapT);
+                verdict = G.judgeJump(s.i, tapT, s.k);
                 ring.setAttribute('opacity', 0);
                 horse.firstElementChild.innerHTML = jf.pre;
                 sfx(verdict === 'faute' ? 'error' : 'pop');
@@ -516,7 +542,7 @@ const horseTop = (id, x, y, rot, k = 1.1) =>
     `<g id="${id}" transform="translate(${x} ${y}) rotate(${rot}) scale(${k}) translate(-32 -32)">${topHorse(ROBE.K, ROBE.M, ROBE.G)}</g>`;
 function playDressage(c) {
     const { stage, q, me } = c;
-    const d = G.newDressage();
+    const d = G.newDressage(c.k);
     const arena =
         rect(0, 0, 360, 520, 0, '#8bc86b', 0) +
         rect(24, 70, 312, 380, 14, '#e0c48a', 3) +
@@ -673,7 +699,7 @@ const GAITN = { pas: 'Pas', trot: 'Trot', galop: 'Galop' };
 function playRaid(c) {
     const { a, stage, q, me } = c;
     const silks = '#2f9e8f';
-    const r = G.newRaid(G.formOf(a));
+    const r = G.newRaid(G.formOf(a), c.k);
     const calm = reduceMotion();
     const frames = {
         pas: ['walkA', 'walkB'].map(p => endurancePose(p, ROBE)),

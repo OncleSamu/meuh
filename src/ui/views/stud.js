@@ -9,6 +9,7 @@ import { defineView } from '../app.js';
 import { animalArt, lineageHtml } from '../genlook.js';
 import { renameBtn } from '../sheets/rename.js';
 import { emit } from '../../core/bus.js';
+import { closeMoment } from '../moments.js';
 import { horseR, ROBES } from '../../art/v1242robes.js';
 import { svg } from '../../art/kit.js';
 
@@ -116,6 +117,11 @@ defineView('animals/stud', renderStud);
 export function setupStud() {
     actions({
         stRetire: (el, d) => G.retire(d.uid),
+        foalOk: (el, d) => {
+            const input = document.getElementById('foal-name');
+            if (input) G.nameHorse(d.uid, input.value);
+            closeMoment();
+        },
         stPick: (el, d) => {
             sel = sel === d.uid ? null : d.uid;
             emit('changed', 'haras');

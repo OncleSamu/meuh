@@ -5,6 +5,7 @@ import { fmt, formatDuration } from '../core/format.js';
 import { on, emit } from '../core/bus.js';
 import { PROJECTS, VILLAGERS, STORIES } from '../data/village.js';
 import { DAILY_REWARDS } from '../data/world.js';
+import { STUD } from '../data/haras.js';
 import { TIPS } from '../data/texts.js';
 import * as G from '../systems/index.js';
 import { byId, patch } from './dom.js';
@@ -12,6 +13,8 @@ import { ico, art } from './icons.js';
 import { lines, hearts, btn } from './kit.js';
 import { confetti } from './fx.js';
 import { anySheet } from './sheets.js';
+import { animalArt } from './genlook.js';
+import { esc } from './dom.js';
 
 const queue = [];
 let current = null;
@@ -87,6 +90,34 @@ const BUILD = {
         html: `<div class="moment-avatar">${art('ui', 'house')}</div><h2>Bon retour !</h2><p>Vous êtes parti ${formatDuration(r.elapsed)} (en vrai). La ferme a continué sans vous :</p>${lines(r.lines)}`,
         ok: 'Au travail !',
     }),
+    // 1.24.3 : la fiche de naissance d'un poulain du haras
+    foal: ({ uid }) => {
+        const a = G.horseByUid(uid);
+        if (!a) return { html: '<h2>Un poulain est né !</h2>', ok: 'Continuer' };
+        const r = G.rec(a);
+        const par = [G.horseByUid(a.sire), G.horseByUid(a.dam)];
+        const snap = a.lin || [];
+        const parent = (p, k) => {
+            const x = p || snap[k];
+            if (!x) return '';
+            return `<div class="fb-par"><span>${p ? animalArt('horse', p.g) : animalArt('horse', x.g)}</span><small>${esc(p ? p.name : x.n)}${p && G.isChampion(p) ? ` ${ico(['ui', 'hCouronne'])}` : ''}</small></div>`;
+        };
+        const heir = r.heir && r.heir.length ? [[['ui', 'hSaillie'], `Talent de ${r.heir.join(' et ')} : +${STUD.foalPts} points dans sa spécialité`]] : [];
+        const chain = a.pc ? [[['ui', 'hCouronne'], `Lignée de ${a.pc} champion${a.pc > 1 ? 's' : ''} Élite`]] : [];
+        return {
+            html: `<div class="fb-card"><div class="fb-head">${ico(['ui', 'hEcusson'])}<small>${esc(G.studName())}</small></div>
+                <div class="fb-art">${animalArt('horse', a.g, '', 0)}</div>
+                <h2>Un poulain est né !</h2>
+                <p class="fb-coat">${esc(G.coatText(a.g))}</p>
+                <div class="fb-pars">${parent(par[0], 0)}<b>+</b>${parent(par[1], 1)}</div>
+                ${lines([...heir, ...chain])}
+                <label class="fb-name"><small>Son nom</small><input type="text" id="foal-name" maxlength="22" value="${esc(a.name)}" aria-label="Nom du poulain"></label></div>`,
+            ok: 'Bienvenue !',
+            act: 'foalOk',
+            data: { uid },
+            party: true,
+        };
+    },
     daily: d => {
         const grid = DAILY_REWARDS.map((r, k) => {
             const day = k + 1,
@@ -128,7 +159,7 @@ function show(m) {
     el.className = `moment ${b.cls || ''}`;
     patch(
         el,
-        `<div class="moment-back"></div><div class="moment-card">${b.html}${btn(b.ok, { act: b.act || 'momentOk', kind: 'gold', wide: true, size: 'lg', anchor: 'moment:ok' })}</div>`,
+        `<div class="moment-back"></div><div class="moment-card">${b.html}${btn(b.ok, { act: b.act || 'momentOk', data: b.data, kind: 'gold', wide: true, size: 'lg', anchor: 'moment:ok' })}</div>`,
     );
     el.hidden = false;
     requestAnimationFrame(() => el.classList.add('in'));
@@ -160,5 +191,6 @@ export function setupMoments(onClose) {
     on('storyEnd', s => pushMoment('storyEnd', s));
     on('contestResult', r => pushMoment('contest', r));
     on('tip', id => pushMoment('tip', id));
+    on('foal', f => pushMoment('foal', f));
     on('sheetClosed', () => setTimeout(pump, 300));
 }

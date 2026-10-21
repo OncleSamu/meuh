@@ -68,7 +68,7 @@ export function retireWhy(a) {
     if (retired().length >= STUD.max) return `${STUD.max} reproducteurs au plus`;
     if (onRando(a)) return 'En randonnée';
     const s = state.show;
-    if (s && ((s.entry && s.entry.uid === a.uid) || (s.gp && s.gp.uid === a.uid))) return 'Inscrit à un concours';
+    if (s && ((s.entries || []).some(e => e.uid === a.uid) || (s.gp && s.gp.uid === a.uid))) return 'Inscrit à un concours';
     return '';
 }
 export const canRetire = a => !retireWhy(a);
@@ -145,6 +145,19 @@ export function studBorn(baby, a, b) {
     ensureStud().foals++;
     const c = coatOf(baby.g);
     if (c) baby.coatName = COAT.robes[c.robe];
+    emit('foal', { uid: baby.uid }); // la fiche de naissance (1.24.3)
+}
+// donner son nom à un poulain (fiche de naissance)
+export function nameHorse(uid, name) {
+    const a = horseByUid(uid);
+    const n = String(name || '')
+        .trim()
+        .slice(0, 22);
+    if (!a || !n || n === a.name) return false;
+    if (state.animals.some(x => x !== a && x.name === n)) return toast('Ce nom est déjà pris à la ferme', ['animal', 'horse']), false;
+    a.name = n;
+    emit('changed', 'haras');
+    return true;
 }
 // l'arbre de famille d'un cheval : parents et grands-parents (les fiches gardées dans sa lignée)
 export function familyOf(a) {

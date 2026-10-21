@@ -2,13 +2,17 @@
 import { GALOP, SAUT, DRESSAGE, RAID } from '../data/haras.js';
 
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+// 1.24.3 : l'aptitude du cheval (k de 0 à 1) rend le jeu plus facile ; à k = 0,5 le jeu est celui d'avant
+export const APT_FX = { galopRate: 0.16, galopZone: 0.06, sautDur: 0.3, sautPerfect: 0.05, sautGood: 0.07, dressTol: 0.4, raidLim: 16, raidSpeed: 0.12 };
+const dk = k => (k == null ? 0 : k - 0.5);
 
 // ---------------- le galop ----------------
 // on tient pour accélérer, on relâche pour ralentir ; à l'entrée de chaque virage l'allure doit être dans le vert ;
 // le sprint final récompense la vitesse. `rand` donne le rythme des rivales (injectable pour les tests).
-export function newGalop(rand = Math.random) {
+export function newGalop(rand = Math.random, k = 0.5) {
     return {
         kind: 'galop',
+        k,
         t: 0,
         dist: 0,
         v: 0.3,
@@ -22,11 +26,13 @@ export function newGalop(rand = Math.random) {
         sprintT: 0,
     };
 }
-export const galopRate = v => GALOP.rateMin + (GALOP.rateMax - GALOP.rateMin) * v;
+export const galopRate = (v, k = 0.5) => (GALOP.rateMin + (GALOP.rateMax - GALOP.rateMin) * v) * (1 + APT_FX.galopRate * dk(k));
+// la zone verte, un peu plus large pour un cheval doué
+export const galopZone = (k = 0.5) => [GALOP.zone[0] - APT_FX.galopZone * dk(k), GALOP.zone[1] + APT_FX.galopZone * dk(k)];
 export const galopTurnAhead = g => (g.turnIdx < GALOP.turns.length ? GALOP.turns[g.turnIdx] - g.dist : null);
 // la note d'un virage : 1 dans la zone verte, qui retombe vers 0 à mesure qu'on s'en éloigne
-export const turnScore = v => {
-    const [a, b] = GALOP.zone;
+export const turnScore = (v, k = 0.5) => {
+    const [a, b] = galopZone(k);
     const out = v < a ? a - v : v > b ? v - b : 0;
     return clamp(1 - out / GALOP.fall);
 };
@@ -34,11 +40,11 @@ export function stepGalop(g, dt) {
     if (g.done) return g;
     g.t += dt;
     g.v = clamp(g.v + (g.hold ? GALOP.up : -GALOP.down) * dt);
-    const rate = galopRate(g.v);
+    const rate = galopRate(g.v, g.k);
     g.dist += rate * dt;
     g.rivalDist = g.rivalDist.map((d, i) => d + g.rivals[i] * dt);
     while (g.turnIdx < GALOP.turns.length && g.dist >= GALOP.turns[g.turnIdx]) {
-        g.turnsDone.push(turnScore(g.v));
+        g.turnsDone.push(turnScore(g.v, g.k));
         g.turnIdx++;
     }
     if (g.dist >= GALOP.length - GALOP.sprint) {
@@ -61,21 +67,21 @@ export function galopScore(g) {
 
 // ---------------- le saut ----------------
 // un anneau se resserre de 1 à 0 ; on appuie quand il touche la cible (au rayon `target`).
-export function newSaut() {
-    return { kind: 'saut', i: 0, results: [], faults: 0, done: false, eliminated: false };
+export function newSaut(k = 0.5) {
+    return { kind: 'saut', k, i: 0, results: [], faults: 0, done: false, eliminated: false };
 }
-export const sautDur = i => SAUT.t0 + (SAUT.t1 - SAUT.t0) * (i / Math.max(1, SAUT.obstacles - 1));
-export const sautWindows = i => {
+export const sautDur = (i, a = 0.5) => (SAUT.t0 + (SAUT.t1 - SAUT.t0) * (i / Math.max(1, SAUT.obstacles - 1))) * (1 + APT_FX.sautDur * dk(a));
+export const sautWindows = (i, a = 0.5) => {
     const k = i / Math.max(1, SAUT.obstacles - 1);
-    return { perfect: SAUT.perfect - SAUT.shrink * k, good: SAUT.good - SAUT.shrink * k };
+    return { perfect: SAUT.perfect - SAUT.shrink * k + APT_FX.sautPerfect * dk(a), good: SAUT.good - SAUT.shrink * k + APT_FX.sautGood * dk(a) };
 };
 // le rayon de l'anneau à l'instant `t` de l'obstacle `i` (1 au départ, 0 à la fin)
-export const ringAt = (i, t) => clamp(1 - t / sautDur(i));
+export const ringAt = (i, t, a = 0.5) => clamp(1 - t / sautDur(i, a));
 // note d'un appui : 'parfait' | 'bon' | 'faute' ; t = null si le joueur n'a pas appuyé
-export function judgeJump(i, t) {
+export function judgeJump(i, t, a = 0.5) {
     if (t == null) return 'faute';
-    const r = ringAt(i, t),
-        w = sautWindows(i),
+    const r = ringAt(i, t, a),
+        w = sautWindows(i, a),
         d = Math.abs(r - SAUT.target);
     return d <= w.perfect ? 'parfait' : d <= w.good ? 'bon' : 'faute';
 }
@@ -135,8 +141,8 @@ const pathCache = {};
 export const figPath = id => (pathCache[id] ||= PATHS[id]());
 const hyp = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
 const newFig = id => ({ id, path: figPath(id), started: false, idx: 0, precSum: 0, precN: 0, turnSum: 0, turnN: 0, last: null, head: null, finished: false });
-export function newDressage() {
-    return { kind: 'dress', i: 0, fig: newFig(DRESSAGE.figures[0]), scores: [], notes: [], done: false };
+export function newDressage(k = 0.5) {
+    return { kind: 'dress', k, tol: DRESSAGE.tol * (1 + APT_FX.dressTol * dk(k)), i: 0, fig: newFig(DRESSAGE.figures[0]), scores: [], notes: [], done: false };
 }
 // la tête de la figure en cours : un point du doigt (ou du cheval) à chaque mouvement
 export function dressMove(d, x, y) {
@@ -154,8 +160,9 @@ export function dressMove(d, x, y) {
         const dd = hyp([x, y], f.path[k]);
         if (dd < bd) (bd = dd), (best = k);
     }
-    if (bd <= DRESSAGE.tol * 1.5) f.idx = best;
-    f.precSum += Math.max(0, 1 - bd / DRESSAGE.tol);
+    const tol = d.tol || DRESSAGE.tol;
+    if (bd <= tol * 1.5) f.idx = best;
+    f.precSum += Math.max(0, 1 - bd / tol);
     f.precN++;
     const dx = x - f.last[0],
         dy = y - f.last[1];
@@ -200,9 +207,10 @@ export const dressageNotes = d => {
 
 // ---------------- le raid d'endurance (1.23.3) ----------------
 export const raidLimit = form => RAID.limitBase + RAID.limitForm * clamp(form, 0, 5);
-export function newRaid(form = 3) {
+export function newRaid(form = 3, k = 0.5) {
     return {
         kind: 'raid',
+        vk: 1 + APT_FX.raidSpeed * dk(k),
         i: 0,
         pos: 0,
         t: 0,
@@ -210,7 +218,7 @@ export function newRaid(form = 3) {
         over: 0,
         gait: 'trot',
         p: RAID.rest,
-        lim: raidLimit(form),
+        lim: raidLimit(form) + Math.round(APT_FX.raidLim * dk(k)),
         scores: [],
         vets: [],
         times: [],
@@ -221,7 +229,7 @@ export function newRaid(form = 3) {
 export const raidStage = r => RAID.stages[Math.min(r.i, RAID.stages.length - 1)];
 export const raidTarget = (r, gait = r.gait) => RAID.gaits[gait].p + RAID.terrain[raidStage(r).terrain].add;
 export const raidSpeed = (r, gait = r.gait) => {
-    const base = RAID.gaits[gait].v * RAID.terrain[raidStage(r).terrain].mult[gait];
+    const base = RAID.gaits[gait].v * RAID.terrain[raidStage(r).terrain].mult[gait] * (r.vk || 1);
     return r.p > r.lim ? base * RAID.over : base;
 };
 export const raidVet = p => clamp(1 - (p - RAID.vetOk) / RAID.vetSpan);

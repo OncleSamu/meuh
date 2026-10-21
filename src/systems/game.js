@@ -339,7 +339,7 @@ export function offlineProgress() {
     add(pasture.products, ['item', 'egg'], `${pasture.products} produit${s(pasture.products)} à ramasser au pâturage`);
     add(artisan, ['machine', 'bakery'], `${artisan} produit${s(artisan)} terminé${s(artisan)} à l’atelier`);
     add(hand.crops, ['villager', 'theo'], `Théo, votre commis, a récolté ${hand.crops} produit${s(hand.crops)}`);
-    add(pasture.hungry, ['item', 'feed'], `${pasture.hungry} animal${pasture.hungry > 1 ? 'aux ont' : ' a'} faim`);
+    add(pasture.hungry, ['item', 'feed'], `${pasture.hungry} ${pasture.hungry > 1 ? 'animaux ont' : 'animal a'} faim`);
     add(ready, ['ui', 'scroll'], `${ready} commande${s(ready)} prête${s(ready)} à livrer`);
     add(sold, ['ui', 'stall'], `${sold} vente${s(sold)} à encaisser à l’étal`);
     add(

@@ -13,10 +13,13 @@ import { harasOpen, horseByUid, aptOf, rec, startPass, equipApt, equipPres } fro
 
 export const showOpen = () => harasOpen();
 export function ensureShow() {
-    if (!state.show) state.show = { rose: [0, 0, 0, 0, 0], cups: 0, wins: 0, titles: {}, div: 0, entry: null, gp: null, last: null, gpDone: 0 };
+    if (!state.show) state.show = { rose: [0, 0, 0, 0, 0], cups: 0, wins: 0, titles: {}, div: 0, entries: [], gp: null, last: null, lastAll: null, gpDone: 0 };
     const s = state.show;
     s.rose ||= [0, 0, 0, 0, 0];
     s.titles ||= {};
+    // 1.24.3 : trois inscriptions par semaine (une ancienne inscription unique devient la première)
+    if (!s.entries) s.entries = s.entry ? [s.entry] : [];
+    delete s.entry;
     return s;
 }
 const clamp = (x, a = 0, b = 100) => Math.max(a, Math.min(b, x));
@@ -79,39 +82,56 @@ export function rivalsFor(key, div) {
         note: Math.round((lo + (hi - lo) * r()) * 10) / 10,
     }));
 }
-export function ranking(key, div, myNote, myName) {
+export function ranking(key, div, myNote, myName, more = []) {
     const list = rivalsFor(key, div);
-    list.push({ name: myName, note: Math.round(myNote * 10) / 10, me: true });
+    if (myNote != null) list.push({ name: myName, note: Math.round(myNote * 10) / 10, me: true });
+    more.forEach(m => list.push({ name: m.name, note: Math.round(m.note * 10) / 10, me: true, uid: m.uid }));
     return list.sort((x, y) => y.note - x.note || (y.me ? 1 : 0) - (x.me ? 1 : 0));
 }
 
 // ---------------- s'inscrire, jouer ----------------
-export const entryOf = () => ensureShow().entry;
+// 1.24.3 : jusqu'à trois chevaux différents par semaine, chacun dans sa division
+export const entriesNow = () => ensureShow().entries.filter(e => e.key === weekKey());
+export const entryOf = uid => entriesNow().find(e => e.uid === uid) || null;
+export const entriesLeft = () => SHOW.entries - entriesNow().length;
 export function enterShow(uid, div, at) {
     const s = ensureShow(),
         a = horseByUid(uid);
     if (!showOpen() || !a || !a.box || !divOpen(div)) return false;
-    const e = s.entry;
-    if (e && e.key === weekKey() && e.passage != null) return toast('Le passage de la semaine est déjà joué', ['ui', 'hCup0']), false;
+    const e = entryOf(uid);
+    if (e && e.passage != null) return toast('Le passage de ce cheval est déjà joué', ['ui', 'hCup0']), false;
+    if (!e && entriesLeft() <= 0) return toast(`${SHOW.entries} chevaux au plus par semaine`, ['ui', 'hCup0']), sfx('error'), false;
     const fee = feeOf(div);
-    // changer de cheval ou de division avant le passage : l'inscription est remboursée
-    const back = e && e.key === weekKey() ? e.fee : 0;
+    // changer de division avant le passage : l'inscription est remboursée
+    const back = e ? e.fee : 0;
     if (state.money + back < fee) return toast('Pas assez de pièces pour l’inscription', ['ui', 'coin']), sfx('error'), false;
     state.money += back - fee;
     s.div = div;
-    s.entry = { key: weekKey(), uid, div, disc: weekDisc(), passage: null, fee };
+    const ne = { key: weekKey(), uid, div, disc: weekDisc(), passage: null, fee };
+    if (e) s.entries[s.entries.indexOf(e)] = ne;
+    else s.entries.push(ne);
     sfx('pop');
     emit('changed', 'show');
     return true;
 }
+// retirer un cheval avant son passage : l'inscription est remboursée
+export function withdrawShow(uid) {
+    const s = ensureShow(),
+        e = entryOf(uid);
+    if (!e || e.passage != null) return false;
+    state.money += e.fee;
+    s.entries.splice(s.entries.indexOf(e), 1);
+    emit('changed', 'show');
+    return true;
+}
 export function startShowPass(uid) {
-    const e = entryOf();
-    if (!e || e.uid !== uid || e.key !== weekKey() || e.passage != null) return null;
+    const e = entryOf(uid);
+    if (!e || e.passage != null) return null;
     return startPass(uid);
 }
 export function endShowPass(uid, score) {
-    const e = entryOf();
-    if (!e || e.uid !== uid || e.passage != null) return null;
+    const e = entryOf(uid);
+    if (!e || e.passage != null) return null;
     e.passage = clamp(score, 0, 1);
     addXp(10);
     emit('changed', 'show');
@@ -156,15 +176,21 @@ export function showCharm() {
     if (!s) return 0;
     return Math.min(SHOW.charmCap, s.cups * SHOW.cupCharm + s.rose.reduce((x, y) => x + y, 0) * SHOW.roseCharm);
 }
-function settle(e, kind) {
-    const s = ensureShow(),
-        a = horseByUid(e.uid);
+// la note d'une inscription (moyenne des quatre épreuves au Grand Prix)
+function entryNote(e, kind) {
+    const a = horseByUid(e.uid);
     const discs = kind === 'gp' ? SHOW.rot : [e.disc];
     const notes = discs.map(d => (a ? showNote(a, d, kind === 'gp' ? (e.passes[d] ?? null) : e.passage).note : 0));
-    const note = notes.reduce((x, y) => x + y, 0) / notes.length;
+    return notes.reduce((x, y) => x + y, 0) / notes.length;
+}
+// `list` : le classement commun quand plusieurs de vos chevaux courent dans la même division
+function settle(e, kind, shared = null) {
+    const s = ensureShow(),
+        a = horseByUid(e.uid);
+    const note = entryNote(e, kind);
     const played = kind === 'gp' ? Object.keys(e.passes).length : e.passage != null ? 1 : 0;
-    const list = ranking(e.key, e.div, note, a ? a.name : 'Votre cheval');
-    const place = list.findIndex(x => x.me) + 1;
+    const list = shared || ranking(e.key, e.div, note, a ? a.name : 'Votre cheval');
+    const place = shared ? list.findIndex(x => x.uid === e.uid) + 1 : list.findIndex(x => x.me) + 1;
     const mult = kind === 'gp' ? SHOW.gpMult : 1;
     const coins = place <= 3 ? Math.round(purseOf(e.div, mult) * SHOW.places[place - 1]) : 0;
     const rosette = place <= 2;
@@ -177,7 +203,7 @@ function settle(e, kind) {
         name: a ? a.name : 'Votre cheval',
         place,
         note: Math.round(note * 10) / 10,
-        list,
+        list: list.map(x => ({ name: x.name, note: x.note, me: x.me && (!shared || x.uid === e.uid), mine: !!x.me })),
         coins,
         rosette,
         cup: place === 1,
@@ -205,6 +231,7 @@ function settle(e, kind) {
     if (kind === 'gp') {
         s.gpDone++;
         out.ribbon += 1;
+        s.lastAll = [...(s.lastAll || []).filter(l => !l.seen), out];
     }
     state.prestige.rubans += out.ribbon;
     addXp(40 + e.div * 20, null);
@@ -225,9 +252,22 @@ export function showTick() {
     if (!state.show) return false;
     let changed = false;
     const s = state.show;
-    if (s.entry && s.entry.key !== weekKey()) {
-        settle(s.entry, 'week');
-        s.entry = null;
+    ensureShow();
+    const old = s.entries.filter(e => e.key !== weekKey());
+    if (old.length) {
+        s.entries = s.entries.filter(e => e.key === weekKey());
+        // un classement par semaine et par division : vos chevaux courent contre les rivales et entre eux
+        const outs = [];
+        const groups = {};
+        old.forEach(e => (groups[e.key + '|' + e.div] ||= []).push(e));
+        for (const g of Object.values(groups)) {
+            const more = g.map(e => ({ uid: e.uid, name: (horseByUid(e.uid) || {}).name || 'Votre cheval', note: entryNote(e, 'week') }));
+            const list = ranking(g[0].key, g[0].div, null, '', more);
+            g.forEach(e => outs.push(settle(e, 'week', list)));
+        }
+        outs.sort((x, y) => x.place - y.place);
+        s.lastAll = outs;
+        s.last = outs[0];
         changed = true;
     }
     if (s.gp && s.gp.key !== gpKey()) {
@@ -237,8 +277,14 @@ export function showTick() {
     }
     return changed;
 }
-export const showUnseen = () => !!(state.show && state.show.last && !state.show.last.seen);
+export const lastResults = () => {
+    const s = state.show;
+    if (!s) return [];
+    return s.lastAll && s.lastAll.length ? s.lastAll : s.last ? [s.last] : [];
+};
+export const showUnseen = () => lastResults().some(l => !l.seen);
 export function showSeen() {
+    lastResults().forEach(l => (l.seen = true));
     if (state.show && state.show.last) state.show.last.seen = true;
     emit('changed', 'show');
 }

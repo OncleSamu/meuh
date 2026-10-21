@@ -115,7 +115,7 @@ test('1.24.2 : un poulain d’un reproducteur hérite de points et de la lignée
     G.ensureGenetics();
     state.show = { rose: [0, 0, 0, 0, 0], cups: 0, wins: 0, titles: {}, best: { [a.uid]: 3 }, div: 0, entry: null, gp: null, last: null, gpDone: 0 };
     G.rec(a).spec = 'galop';
-    a.chain = 3;
+    a.chain = 2;
     G.retire(a.uid);
     const baby = G.newAnimal('horse');
     baby.uid = 'ax';
@@ -123,12 +123,12 @@ test('1.24.2 : un poulain d’un reproducteur hérite de points et de la lignée
     state.animals.push(baby);
     G.studBorn(baby, a, b);
     assert.equal(baby.sire, a.uid);
-    assert.equal(baby.pc, 3);
+    assert.equal(baby.pc, 2);
     assert.equal(G.rec(baby).pts.galop, Math.min(G.aptCap(baby, 'galop'), STUD.foalPts));
-    // le poulain gagne en Élite : 4e champion de suite, un ruban
+    // le poulain gagne en Élite : 3e champion de suite, un ruban
     const r0 = state.prestige.rubans || 0;
     assert.equal(G.champWon(baby.uid, 3), STUD.famousRibbons);
-    assert.equal(baby.chain, 4);
+    assert.equal(baby.chain, 3);
     assert.equal(G.champWon(baby.uid, 4), 0);
     assert.ok(r0 >= 0 && G.ensureStud().famous === 1);
 });

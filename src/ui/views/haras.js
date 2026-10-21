@@ -1,5 +1,6 @@
 // Animaux | Écuries (1.23) : les boxes, la forme, les soins, l'entraînement et la randonnée de vos chevaux.
 import { state } from '../../core/state.js';
+import { emit } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
 import { DISCIPLINES, STABLE_NAMES, FORM, RATION, RANDO, APT, HARAS_LVL, EQUIP } from '../../data/haras.js';
 import * as G from '../../systems/index.js';
@@ -111,7 +112,27 @@ function randoRow(a) {
     });
 }
 
+// 1.24.3 : les cartes sont repliées ; on ouvre celle du cheval dont on s'occupe
+const openCards = new Set();
+const isOpen = a => openCards.has(a.uid) || G.lodged().length === 1;
+function miniCard(a) {
+    const r = G.rec(a);
+    const f = G.formOf(a);
+    const bars = DISCIPLINES.map(d => {
+        const pts = G.aptOf(a, d.id);
+        return `<span class="hz-mbar${r.spec === d.id ? ' spec' : ''}">${ico(d.icon)}<i><u style="width:${pts}%"></u></i><b>${pts}</b></span>`;
+    }).join('');
+    const note = G.randoDone(a) ? 'Retour de randonnée !' : G.onRando(a) ? 'En randonnée' : f >= FORM.max ? 'En pleine forme' : '';
+    return `<div class="hz-card mini${G.onRando(a) ? ' away' : ''}" data-act="haOpen" data-uid="${a.uid}" role="button" aria-expanded="false">
+        <div class="hz-art">${boxSvg(false)}${horseArt(a, r)}</div>
+        <div class="hz-who">
+            <div class="hz-name"><b>${esc(a.name)}</b>${hearts(a.love || 0)}</div>
+            <div class="hz-minif">${Array.from({ length: FORM.max }, (_, k) => `<i class="${k < f ? 'on' : ''}">${art('ui', 'hForme')}</i>`).join('')}${note ? `<small>${note}</small>` : ''}</div>
+            <div class="hz-mbars">${bars}</div>
+        </div><span class="hz-chev" aria-hidden="true">▾</span></div>`;
+}
 function horseCard(a) {
+    if (!isOpen(a)) return miniCard(a);
     const r = G.rec(a);
     const i = state.animals.indexOf(a);
     const ration = G.rationLeftMs(a) > 0 ? `<span class="chip hz-ration">${ico(['item', 'carrot'])}Ration ${timer(Date.now() + G.rationLeftMs(a))}</span>` : '';
@@ -125,7 +146,7 @@ function horseCard(a) {
         <div class="hz-top">
             <div class="hz-art">${boxSvg(false)}${horseArt(a, r)}</div>
             <div class="hz-who">
-                <div class="hz-name"><b>${esc(a.name)}</b>${hearts(a.love || 0)}</div>
+                <div class="hz-name"><b>${esc(a.name)}</b>${hearts(a.love || 0)}${G.lodged().length > 1 ? `<button class="hz-fold" data-act="haOpen" data-uid="${a.uid}" aria-label="Replier" title="Replier">▴</button>` : ''}</div>
                 <div class="hz-forme">${formPips(a)}${ration}</div>
                 ${a.stack > 0 ? btn(`Ramasser le crin ×${a.stack}`, { act: 'haHair', data: { i }, kind: 'green', size: 'sm', icon: ['item', 'horsehair'] }) : ''}
             </div>
@@ -179,6 +200,11 @@ defineView('animals/haras', renderHaras);
 export function setupHaras() {
     actions({
         upStable: el => G.upgradeStable(el),
+        haOpen: (el, d) => {
+            if (openCards.has(d.uid)) openCards.delete(d.uid);
+            else openCards.add(d.uid);
+            emit('changed', 'haras');
+        },
         haIn: (el, d) => G.lodge(d.uid),
         haOut: (el, d) => G.unlodge(d.uid),
         haTrain: (el, d) => (G.hasGame(d.d) ? openHorseGame(d.uid, d.d, el) : G.trainHorse(d.uid, d.d, el)),

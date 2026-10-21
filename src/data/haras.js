@@ -25,7 +25,8 @@ export const STABLE_NAMES = ['Chantier', 'Les grandes écuries', 'Les grandes é
 // la forme : 5 pastilles, une de plus toutes les 30 minutes (même jeu fermé)
 export const FORM = { max: 5, every: 30 * 60 * 1000 };
 // un entraînement : coûte 1 de forme ; gain = (2 + 4 × score) points, réduit près du plafond
-export const TRAIN = { cost: 1, min: 2, span: 4, easyScore: 0.35, slow: 0.6, floor: 0.4, love: 0.02 };
+// 1.24.3 : un peu plus rapide (3 + 5 × score au lieu de 2 + 4 × score)
+export const TRAIN = { cost: 1, min: 3, span: 5, easyScore: 0.35, slow: 0.6, floor: 0.4, love: 0.02 };
 // la ration : une carotte, une pomme ou de l'orge ; +10 % de gain pendant une heure
 export const RATION = { items: ['carrot', 'apple', 'barley'], hours: 1, bonus: 0.1 };
 // la brosse : un cœur de plus et parfois une pastille de forme ; 1.24.3 : une fois toutes les 2 heures réelles
@@ -131,6 +132,7 @@ export const SHOW = {
         { name: 'Prestige', rivals: [82, 95], purse: 243000 },
     ],
     open: 3, // rosettes à gagner dans une division pour ouvrir la suivante
+    entries: 3, // 1.24.3 : chevaux différents inscrits par semaine
     rivalsN: 5,
     fee: 0.05, // inscription, en part de la bourse
     places: [1, 0.5, 0.25], // part de la bourse pour les trois premiers
@@ -226,7 +228,7 @@ export const STUD = {
     incomeWinMax: 1,
     incomeDays: 7, // on cumule au plus une semaine d'absence
     foalPts: 10, // points d'aptitude offerts au poulain dans la spécialité du parent
-    famous: 4, // champions de suite dans une lignée
+    famous: 3, // champions de suite dans une lignée (1.24.3 : 3 au lieu de 4)
     famousRibbons: 1,
     defaultName: 'Haras des Quatre Vents',
     stages: [0.5], // le poulain devient jeune à la moitié de sa croissance

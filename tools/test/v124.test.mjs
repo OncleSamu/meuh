@@ -21,7 +21,7 @@ const horse = (apt = 40) => {
     return a;
 };
 const endWeek = () => {
-    state.show.entry.key = 'old';
+    state.show.entries.forEach(e => (e.key = 'old'));
 };
 
 test('1.24 : la discipline de la semaine tourne sur les quatre', () => {
@@ -87,7 +87,7 @@ test('1.24 : un cheval fort gagne en division I, touche la bourse, la rosette et
     assert.equal(state.show.rose[0], 1);
     assert.equal(state.show.cups, 1);
     assert.equal(G.titlesOf(a.uid), 1);
-    assert.equal(state.show.entry, null);
+    assert.equal(state.show.entries.length, 0);
     assert.ok(G.showCharm() > 0);
 });
 test('1.24 : sans passage, Jules monte ; un cheval faible perd', () => {
