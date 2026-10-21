@@ -1,4 +1,4 @@
-// Ferme | Écuries (1.23) : les boxes, la forme, les soins, l'entraînement et la randonnée de vos chevaux.
+// Animaux | Écuries (1.23) : les boxes, la forme, les soins, l'entraînement et la randonnée de vos chevaux.
 import { state } from '../../core/state.js';
 import { ITEMS } from '../../data/items.js';
 import { DISCIPLINES, STABLE_NAMES, FORM, RATION, RANDO, APT, HARAS_LVL } from '../../data/haras.js';
@@ -145,7 +145,7 @@ function renderHaras(el) {
         ],
     ]);
 }
-defineView('farm/haras', renderHaras);
+defineView('animals/haras', renderHaras);
 
 export function setupHaras() {
     actions({

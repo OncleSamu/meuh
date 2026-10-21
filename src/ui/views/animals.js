@@ -127,7 +127,7 @@ defineLive('grow', i => {
 });
 
 export function wanderAnimals() {
-    if (currentPath() !== 'animals' || reduceMotion()) return;
+    if (currentPath() !== 'animals/pasture' || reduceMotion()) return;
     els.forEach(el => {
         if (Math.random() > 0.3 || !el.isConnected) return;
         const [x, y] = freeSpot(el);
@@ -268,7 +268,7 @@ function renderAnimals(el) {
     ]);
     if (mode === 'meadow') renderCritters();
 }
-defineView('animals', renderAnimals);
+defineView('animals/pasture', renderAnimals);
 
 // ---------------- les gènes d'une bête (station de recherche) ----------------
 function geneBlock(a) {

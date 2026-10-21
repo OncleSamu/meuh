@@ -188,7 +188,7 @@ export function unlocksAt(lvl) {
     if (lvl === HARAS_LVL)
         add(
             ['ui', 'hEcuries'],
-            'Les grandes écuries : logez vos chevaux, soignez-les et entraînez-les au galop, à l’endurance, au dressage et au saut (Ferme | Écuries)',
+            'Les grandes écuries : logez vos chevaux, soignez-les et entraînez-les au galop, à l’endurance, au dressage et au saut (Animaux | Écuries)',
         );
     if (lvl === CAVE_LVL) add(['ui', 'cave'], 'La cave : affinez fromages et cidres, et vendez-les aux enchères (onglet Atelier, puis Cave)');
     if (lvl === CHAPTERS[0].lvl) add(['ui', 'village'], 'Rénovez le village : premier chapitre (onglet Village)');

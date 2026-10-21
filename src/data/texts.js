@@ -5,7 +5,7 @@ export const TIPS = {
     haras: {
         icon: ['ui', 'hEcuries'],
         title: 'Les grandes écuries',
-        text: 'Logez vos chevaux en boxes (onglet Ferme, volet Écuries). Brossez-les, nourrissez-les, puis entraînez-les : chaque séance coûte une pastille de forme, qui remonte toutes les 30 minutes. Chaque aptitude monte jusqu’à un plafond que fixe un gène du cheval : croisez au labo pour viser plus haut.',
+        text: 'Logez vos chevaux en boxes (onglet Animaux, volet Écuries). Brossez-les, nourrissez-les, puis entraînez-les : chaque séance coûte une pastille de forme, qui remonte toutes les 30 minutes. Chaque aptitude monte jusqu’à un plafond que fixe un gène du cheval : croisez au labo pour viser plus haut.',
     },
     frost: {
         icon: ['item', 'apple'],

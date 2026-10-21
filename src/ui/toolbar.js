@@ -41,7 +41,7 @@ const tool = (id, icon, label, badge = '') =>
 function renderToolbar() {
     const el = byId('toolbar');
     const p = currentPath();
-    const show = p === 'farm/field' || p === 'animals' || view.wide;
+    const show = p === 'farm/field' || p === 'animals/pasture' || view.wide;
     el.hidden = !show;
     document.body.classList.toggle('with-toolbar', show);
     if (!show) return;

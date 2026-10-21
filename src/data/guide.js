@@ -507,13 +507,13 @@ export const GUIDE_PAGES = [
         name: 'Les grandes écuries',
         icon: ['ui', 'hEcuries'],
         lvl: 44,
-        go: 'farm/haras',
+        go: 'animals/haras',
         intro: 'Logez vos chevaux en boxes, soignez-les et entraînez-les au galop, à l’endurance, au dressage et au saut.',
         secs: [
             {
                 h: 'Le bâtiment',
                 b: [
-                    'Au niveau 44, construisez les écuries (onglet Ferme, volet Écuries) : 4 boxes, puis 8 et 12 avec deux agrandissements.',
+                    'Au niveau 44, construisez les écuries (onglet Animaux, volet Écuries) : 4 boxes, puis 8 et 12 avec deux agrandissements.',
                     'Un cheval logé quitte les prés (il ne compte plus dans leur place) mais donne toujours son crin : ramassez-le depuis sa fiche.',
                 ],
             },

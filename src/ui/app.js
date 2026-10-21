@@ -25,7 +25,7 @@ import { todoList, todoCounts } from './todo.js';
 // ---------------- l'état de l'interface (jamais sauvegardé, sauf l'onglet) ----------------
 export const ui = {
     tab: 'farm',
-    sub: { farm: 'field', machines: 'workshop', village: 'orders', market: 'shop' },
+    sub: { farm: 'field', animals: 'pasture', machines: 'workshop', village: 'orders', market: 'shop' },
     sel: {}, // sélections des vues : commande choisie, chantier, carte…
     todo: [],
     counts: {},
@@ -42,10 +42,18 @@ export const TABS = [
             ['nature', 'Nature', ['item', 'wood'], () => NATURE.forest.lvl],
             ['pond', 'Étang', ['ui', 'rod'], () => NATURE.pond.lvl],
             ['island', 'Île', ['item', 'pineapple'], () => ISLAND.lvl],
+        ],
+    },
+    {
+        id: 'animals',
+        name: 'Animaux',
+        icon: ['animal', 'chicken'],
+        lock: () => ANIMALS.chicken.reqLvl,
+        subs: [
+            ['pasture', 'Prés', ['animal', 'cow']],
             ['haras', 'Écuries', ['ui', 'hEcuries'], () => HARAS_LVL],
         ],
     },
-    { id: 'animals', name: 'Animaux', icon: ['animal', 'chicken'], lock: () => ANIMALS.chicken.reqLvl },
     {
         id: 'machines',
         name: 'Atelier',
@@ -319,8 +327,8 @@ function handleKey(e) {
     };
     if (p === 'farm/field' && k === 'a') press('waterAll');
     else if (p === 'farm/field' && k === 'r') press('harvestAll');
-    else if (p === 'animals' && k === 'n') press('feedAll');
-    else if (p === 'animals' && k === 'r') press('collectAnimals');
+    else if (p === 'animals/pasture' && k === 'n') press('feedAll');
+    else if (p === 'animals/pasture' && k === 'r') press('collectAnimals');
     else if (p === 'machines/workshop' && k === 'r') press('collectMachines');
     else if (p === 'market/sell' && k === 'v') press('sellAll');
 }
