@@ -108,14 +108,20 @@ export function trainGain(a, d, score = TRAIN.easyScore) {
 export function canTrain(a) {
     return !!a && a.box && !onRando(a) && formOf(a) >= TRAIN.cost;
 }
-export function trainHorse(uid, d, at, score = TRAIN.easyScore) {
+// une séance en deux temps : on paie la forme au départ (quitter en route la fait perdre), les points arrivent à la fin
+export function startTrain(uid, d) {
+    const a = horseByUid(uid);
+    if (!a || !a.box || !DISC[d]) return null;
+    if (onRando(a)) return toast(`${a.name} est en randonnée`, ['ui', 'hRando']), null;
+    if (aptOf(a, d) >= aptCap(a, d))
+        return toast(`${a.name} a atteint son plafond en ${DISC[d].name.toLowerCase()} : croisez pour viser plus haut`, DISC[d].icon), null;
+    if (!spendForm(a, TRAIN.cost))
+        return toast(`${a.name} est fatigué : la forme remonte d’une pastille toutes les 30 minutes`, ['ui', 'hForme']), sfx('error'), null;
+    return a;
+}
+export function endTrain(uid, d, at, score = TRAIN.easyScore) {
     const a = horseByUid(uid);
     if (!a || !a.box || !DISC[d]) return 0;
-    if (onRando(a)) return toast(`${a.name} est en randonnée`, ['ui', 'hRando']), 0;
-    if (aptOf(a, d) >= aptCap(a, d))
-        return toast(`${a.name} a atteint son plafond en ${DISC[d].name.toLowerCase()} : croisez pour viser plus haut`, DISC[d].icon), 0;
-    if (!spendForm(a, TRAIN.cost))
-        return toast(`${a.name} est fatigué : la forme remonte d’une pastille toutes les 30 minutes`, ['ui', 'hForme']), sfx('error'), 0;
     const r = rec(a);
     const g = trainGain(a, d, score);
     r.pts[d] = Math.min(aptCap(a, d), aptOf(a, d) + g);
@@ -129,6 +135,11 @@ export function trainHorse(uid, d, at, score = TRAIN.easyScore) {
     emit('changed', 'haras');
     return g;
 }
+export function trainHorse(uid, d, at, score = TRAIN.easyScore) {
+    return startTrain(uid, d) ? endTrain(uid, d, at, score) : 0;
+}
+// les disciplines qui ont leur mini-jeu
+export const hasGame = d => d === 'galop' || d === 'saut';
 export function setSpec(uid, d) {
     const a = horseByUid(uid);
     if (!a || !DISC[d]) return false;

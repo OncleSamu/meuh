@@ -8,6 +8,7 @@ import { genWrap } from '../genlook.js';
 import { ico, art } from '../icons.js';
 import { btn, hint, section, hearts, costRow, timer } from '../kit.js';
 import { defineView } from '../app.js';
+import { openHorseGame } from '../horsegame.js';
 import { stableSvg, boxSvg } from '../../art/v123haras.js';
 
 // la tenue du cheval selon sa spécialité
@@ -53,7 +54,7 @@ function aptRow(a, d) {
             <div class="hz-apt-top"><b>${d.name}</b><small>${pts}/${cap} · ${d.geneName} ${G.geneOf(a, d.id)}</small></div>
             <div class="hz-bar" style="--cap:${cap}%"><i style="width:${pts}%"></i><u></u></div>
         </div>
-        ${btn('Entraîner', { act: 'haTrain', data: { uid: a.uid, d: d.id }, kind: 'gold', size: 'sm', disabled: !can, title: pts >= cap ? 'Plafond atteint' : `S’entraîner : ${d.text}` })}
+        ${btn(G.hasGame(d.id) ? 'Jouer' : 'Entraîner', { act: 'haTrain', data: { uid: a.uid, d: d.id }, kind: 'gold', size: 'sm', disabled: !can, title: pts >= cap ? 'Plafond atteint' : `S’entraîner : ${d.text}` })}
     </div>`;
 }
 
@@ -152,7 +153,7 @@ export function setupHaras() {
         upStable: el => G.upgradeStable(el),
         haIn: (el, d) => G.lodge(d.uid),
         haOut: (el, d) => G.unlodge(d.uid),
-        haTrain: (el, d) => G.trainHorse(d.uid, d.d, el),
+        haTrain: (el, d) => (G.hasGame(d.d) ? openHorseGame(d.uid, d.d, el) : G.trainHorse(d.uid, d.d, el)),
         haSpec: (el, d) => G.setSpec(d.uid, d.d),
         haBrush: (el, d) => G.brushHorse(d.uid, el),
         haFeed: (el, d) => G.feedHorse(d.uid, el),

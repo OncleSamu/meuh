@@ -217,3 +217,131 @@
     min-width: 0;
     flex: 1;
 }
+
+/* les mini-jeux du haras (1.23.2) : galop et saut en plein écran */
+.hg-over {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    overflow-y: auto;
+    background: linear-gradient(to bottom, #7cc8f0, #cdeffd 45%, #b9e28c);
+    padding: calc(10px + var(--safe-t)) max(10px, env(safe-area-inset-right, 0px)) calc(14px + var(--safe-b)) max(10px, env(safe-area-inset-left, 0px));
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: none;
+}
+.hg-game {
+    max-width: 440px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.hg-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.hg-top h2 {
+    margin: 0;
+    font-weight: 900;
+    font-size: 1.1rem;
+    padding: 2px 16px;
+    background: linear-gradient(#fffaf0, #f6e2b6);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    box-shadow:
+        0 3px 0 rgba(58, 38, 24, 0.35),
+        inset 0 1.5px 0 #fff;
+}
+.hg-stage {
+    position: relative;
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--paper);
+    aspect-ratio: 360 / 520;
+    max-height: calc(100vh - 90px);
+    margin: 0 auto;
+    width: 100%;
+    outline: none;
+    box-shadow: 0 4px 0 var(--wood-d);
+}
+.hg-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.hg-intro,
+.hg-result {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px;
+    text-align: center;
+    background: linear-gradient(rgba(255, 255, 255, 0.2), transparent 40%), var(--paper);
+}
+.hg-result {
+    background: rgba(251, 236, 201, 0.96);
+    animation: hgpop 0.25s ease-out;
+}
+@keyframes hgpop {
+    from {
+        transform: scale(0.92);
+        opacity: 0;
+    }
+}
+.hg-hart {
+    width: 190px;
+}
+.hg-hart svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.hg-hart .gl {
+    display: block;
+}
+.hg-rules {
+    margin: 0;
+    font-weight: 700;
+    line-height: 1.35;
+}
+.hg-sub {
+    margin: 0;
+    color: var(--ink-soft);
+    font-weight: 800;
+    font-size: 0.9rem;
+}
+.hg-btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.hg-result h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+.hg-result p {
+    margin: 0;
+    font-weight: 800;
+}
+.hg-stars {
+    display: flex;
+    gap: 6px;
+}
+.hg-stars svg {
+    width: 46px;
+    height: 46px;
+}
+.hg-gain {
+    font-size: 1.2rem;
+    color: var(--leaf-d);
+}

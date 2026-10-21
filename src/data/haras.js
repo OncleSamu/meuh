@@ -46,3 +46,38 @@ export const RANDO = {
         ['stone', 1],
     ],
 };
+
+// 1.23.2 : le galop. 40 s environ ; trois virages ; le sprint final dans les dernières unités de piste.
+export const GALOP = {
+    length: 1000,
+    turns: [300, 600, 830],
+    sprint: 120,
+    zone: [0.42, 0.68], // la zone verte de l'allure
+    fall: 0.3, // écart (en allure) qui fait tomber la note d'un virage de 1 à 0
+    up: 0.5,
+    down: 0.32,
+    rateMin: 20, // unités de piste par seconde à l'arrêt de l'allure
+    rateMax: 50,
+    tMin: 22,
+    tMax: 44,
+    wTurn: 0.5,
+    wTime: 0.3,
+    wSprint: 0.2,
+    rivals: 5,
+    rivalMin: 31,
+    rivalMax: 41,
+    warn: 4, // secondes d'avance du panneau de virage
+};
+// 1.23.2 : le saut. Huit obstacles, l'anneau se resserre de plus en plus vite, trois fautes éliminent.
+export const SAUT = {
+    obstacles: 8,
+    maxFaults: 3,
+    t0: 1.6, // secondes de l'anneau au premier obstacle
+    t1: 1.05, // et au dernier
+    target: 0.2, // le rayon où appuyer
+    perfect: 0.07,
+    good: 0.17,
+    shrink: 0.03, // les fenêtres rétrécissent de ça au dernier obstacle
+    goodValue: 0.6,
+    seq: ['vertical', 'oxer', 'haie', 'mur', 'riviere', 'barriere', 'vertical', 'oxer'],
+};
