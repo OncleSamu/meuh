@@ -11,7 +11,7 @@ const read = () => {
         return {};
     }
 };
-const DEFAULT = { board: () => state.level < 10 };
+const DEFAULT = { board: () => state.level < 10, villagers: () => state.level < 10 };
 export const foldOpen = id => {
     const v = read()[id];
     return v === undefined ? (DEFAULT[id] ? DEFAULT[id]() : false) : !!v;

@@ -1099,6 +1099,7 @@ export const GUIDE_PAGES = [
                 h: 'Les villageois et l’amitié',
                 b: [
                     'Elle monte quand vous livrez leurs commandes, leur servez une boisson au comptoir ou leur faites un cadeau.',
+                    'La liste est une ligne repliable (comme l’Agenda) : repliée, elle annonce les cadeaux possibles ; touchez-la pour la déplier. Le choix est retenu.',
                     'Un cadeau par villageois et par jour de jeu (environ 5 minutes réelles) : 1 point, 3 si c’est un produit fabriqué. Choisissez dans ce qu’il aime.',
                     'Cinq cœurs en tout. Chaque cœur rapporte des pièces, parfois des graines ou une recette que le villageois vous apprend ; le cinquième fait de lui un ami pour la vie, avec une récompense et l’histoire qu’il raconte.',
                 ],

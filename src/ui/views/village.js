@@ -18,7 +18,7 @@ import { MAP_BG } from '../../art/maps.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions } from '../dom.js';
 import { ico, art, SPR } from '../icons.js';
-import { btn, bar, timer, section, hint, hearts, card } from '../kit.js';
+import { btn, bar, timer, hint, hearts, card } from '../kit.js';
 import { defineView, ui } from '../app.js';
 import { itemLine, rewardHtml } from './common.js';
 import { askBuy } from '../sheets/askbuy.js';
@@ -370,6 +370,15 @@ function villagersHtml() {
         .join('')}</div>`;
 }
 
+// 1.29.1 : les villageois se replient comme l'Agenda ; replié, on voit combien attendent un cadeau
+function villagersCard() {
+    const ids = G.presentVillagers(),
+        gift = ids.filter(id => !G.giftedToday(id) && G.giftable(id).length).length;
+    const sum = gift ? `${gift} cadeau${gift > 1 ? 'x' : ''} possible${gift > 1 ? 's' : ''}` : `${ids.length} villageois`;
+    const body = `${hint('Livrez leurs commandes et offrez-leur ce qu’ils aiment (un cadeau par jour) pour gagner leur amitié.')}${villagersHtml()}`;
+    return foldCard('villagers', ['ui', 'heart'], 'Les villageois', sum, body, gift > 0);
+}
+
 // ---------------- 1.20 : l'Amélioration du domaine ----------------
 function domaineCard() {
     if (!G.domaineOpen())
@@ -435,9 +444,7 @@ function renderVillage(el) {
         ['story', storyCard()],
         ['domaine', domaineCard()],
         ['contest', contestCard()],
-        ['vtitle', section('Les villageois')],
-        ['vhint', hint('Livrez leurs commandes et offrez-leur ce qu’ils aiment (un cadeau par jour) pour gagner leur amitié.')],
-        ['villagers', villagersHtml()],
+        ['villagers', villagersCard()],
     ]);
 }
 defineView('village/village', renderVillage);
