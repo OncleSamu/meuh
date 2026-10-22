@@ -22,7 +22,7 @@ import { askBuy } from '../sheets/askbuy.js';
 const COIN = () => ico(['ui', 'coin']);
 const findIcon = k => AUCTION_FINDS[k].icon;
 // l'icône d'un lot : sa bouteille pour une bière, sinon le produit
-const lotIco = (l, cls = 'ico') =>
+export const lotIco = (l, cls = 'ico') =>
     l.id === 'beer' && G.beerOf(l.bid)
         ? `<i class="${cls}">${beerSvg(G.beerOf(l.bid))}</i>`
         : l.vy && G.vintageOf(l)
@@ -32,7 +32,7 @@ const bottleTools = l =>
     l.vy && G.vintageOf(l)
         ? `<span class="bottle-tools">${renameBtn('lot', l.uid, 'Nommer la cuvée')}<button class="rename-btn" data-act="cycleLabel" data-uid="${l.uid}" aria-label="Changer l’étiquette" title="Étiquette : ${LABEL_STYLES[l.ls || 0].name}">🏷</button></span>`
         : '';
-const lotSub = l =>
+export const lotSub = l =>
     (l.id === 'beer' && BARRELS[l.k] ? ` · ${BARRELS[l.k].name.toLowerCase()}` : '') +
     (G.vintageOf(l) ? ` · ${G.vintageOf(l).name.toLowerCase()} ${l.vy}` : '');
 
@@ -97,7 +97,8 @@ function reserveHtml() {
                 l => `<div class="card reserve-row${l.bad ? ' bad' : ''}">${lotIco(l, 'ico big')}<div class="card-main"><div class="card-title">${G.lotName(l)} ×${l.n}${bottleTools(l)}</div>
         <div class="card-sub">${G.rankName(l)} · vaut ${fmt(G.lotValue(l))}${COIN()}</div></div>
         <div class="card-side col">${btn(`Négociant ${fmt(G.lotValue(l) * NEGOCIANT)}${COIN()}`, { act: 'negociant', data: { uid: l.uid }, size: 'sm' })}
-        ${btn('Aux enchères', { act: 'deposit', data: { uid: l.uid }, size: 'sm', kind: 'gold', icon: ['ui', 'gavel'], disabled: !canDep })}</div></div>`,
+        ${btn('Aux enchères', { act: 'deposit', data: { uid: l.uid }, size: 'sm', kind: 'gold', icon: ['ui', 'gavel'], disabled: !canDep })}
+        ${G.vaultOpen() ? btn('Au coffre', { act: 'vaultLot', data: { uid: l.uid }, size: 'sm', icon: ['ui', 'vault'] }) : ''}</div></div>`,
             )
             .join('')}</div>`
     );

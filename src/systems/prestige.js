@@ -79,6 +79,8 @@ export function doPrestige(challenge, theme) {
             uid: state.cave.uid,
             legends: state.cave.legends || {},
         },
+        // le coffre garde sa taille ; ce qu'il contient part avec la ferme
+        vault: { lvl: (state.vault && state.vault.lvl) || 0, slots: [] },
         contest: state.contest,
         lastContest: state.lastContest,
         day: state.day,

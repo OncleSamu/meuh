@@ -30,6 +30,7 @@ import { setupDefis } from './ui/views/defis.js';
 import { setupVillage } from './ui/views/village.js';
 import { setupMarket } from './ui/views/market.js';
 import { setupMenu } from './ui/sheets/menu.js';
+import { setupVault } from './ui/sheets/vault.js';
 import { setupHouse } from './ui/sheets/house.js';
 import { setupUpgrades } from './ui/sheets/upgrades.js';
 import { setupProgress } from './ui/sheets/progress.js';
@@ -76,6 +77,7 @@ function start() {
     setupVillage();
     setupMarket();
     setupMenu();
+    setupVault();
     setupHouse();
     setupUpgrades();
     setupProgress();

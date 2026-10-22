@@ -6,6 +6,7 @@ import { fmt } from '../core/format.js';
 import { toast, sfx, buzz, burst } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { QUALITY, QX } from '../data/farm.js';
+import { vaultLots, setVaultLotUnit } from './vault.js';
 import { VILLAGERS } from '../data/village.js';
 import {
     CAVE_LVL,
@@ -61,7 +62,7 @@ export const vintageQ = y => {
 };
 const isVinous = id => ['wine', 'champagne'].includes(CAVE_ITEMS[id]);
 // 1.15 : une cuvée porte un nom et une étiquette au choix (les vins et les champagnes)
-export const bottleLots = () => [...state.cave.slots, ...state.cave.reserve].filter(l => l && !isBeerLot(l) && isVinous(l.id));
+export const bottleLots = () => [...state.cave.slots, ...state.cave.reserve, ...vaultLots()].filter(l => l && !isBeerLot(l) && isVinous(l.id));
 export const findLot = uid => bottleLots().find(l => l.uid === +uid) || null;
 export function renameLot(uid, name) {
     const l = findLot(uid),
@@ -105,6 +106,7 @@ export const lotUnit = lot =>
 // la taille des lots grandit avec les étagères : 8, 12, 16 puis 20
 export const caveLotMax = () => CAVE_LOT_MAX + CAVE_LOT_GROW * Math.min(3, Math.floor(state.cave.shelves / 2));
 export const lotValue = lot => lotUnit(lot) * lot.n;
+setVaultLotUnit(lotUnit);
 const caveUid = () => (state.cave.uid = (state.cave.uid || 0) + 1);
 
 export function ensureCave() {

@@ -194,3 +194,13 @@ export const NREQ = {
     extra: 0.15, // pièces en plus par plat en plus
     special: { coins: 2.5, mats: 3, pts: 2, qChance: 0.5, goldChance: 0.25, maxQty: 4 },
 };
+
+// 1.29 : le coffre-fort de la grange (produits et lots de cave à garder, à l'abri de la vente)
+export const VAULT = {
+    lvl: 15,
+    base: 6, // emplacements au départ
+    per: 4, // emplacements par agrandissement
+    max: 4, // agrandissements
+    stack: 99, // un emplacement garde 99 unités d'un même produit et d'une même qualité
+    cost: l => 20000 * Math.pow(4, l),
+};

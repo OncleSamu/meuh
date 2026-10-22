@@ -144,3 +144,69 @@ test('1.28 : une bière brassée avec des ingrédients de rang garde ce rang jus
     G.sellBeer(bid, 1, null);
     assert.ok(state.money - money > base * 2, 'un diamant vaut ×2,8');
 });
+
+test('1.29 : le coffre-fort garde produits (avec leur rang) et lots de cave', () => {
+    fresh();
+    state.level = 20;
+    G.ensureVault();
+    assert.equal(G.vaultSlots(), 6);
+    state.inventory.wheat = 30;
+    state.quality.wheat = { s: 5, g: 3, p: 0, d: 2 };
+    assert.equal(G.vaultStock('wheat', 0), 20);
+    assert.equal(G.vaultStock('wheat', 4), 2);
+    assert.equal(G.vaultPut('wheat', 4, 2), 2);
+    assert.equal(state.inventory.wheat, 28);
+    assert.equal(state.quality.wheat.d, 0);
+    assert.equal(G.vaultPut('wheat', 0, 10), 10);
+    assert.equal(state.inventory.wheat, 18);
+    assert.equal(G.qCount(state.quality.wheat), 8, 'les rangs restants sont intacts');
+    assert.equal(G.vaultUsed(), 2);
+    assert.ok(G.vaultTotal() > 0);
+    // on les reprend avec leur rang
+    const k = G.vaultList().findIndex(s => s && s.q === 4);
+    assert.equal(G.vaultTake(k, 2), 2);
+    assert.equal(state.quality.wheat.d, 2);
+    assert.equal(state.inventory.wheat, 20);
+    // un emplacement garde 99 unités au plus
+    state.inventory.wheat = 250;
+    state.quality.wheat = { s: 0, g: 0, p: 0, d: 0 };
+    G.vaultPut('wheat', 0, 250);
+    assert.ok(G.vaultList().every(s => !s || s.n <= 99));
+    // rien ne se range sous le niveau d'ouverture
+    state.level = 14;
+    assert.equal(G.vaultPut('wheat', 0, 1), false);
+});
+
+test('1.29 : un lot de cave passe de la réserve au coffre et revient', () => {
+    fresh();
+    state.level = 30;
+    G.ensureCave();
+    G.ensureVault();
+    const lot = { uid: 777, id: 'champagneRose', n: 3, rank: 4, bad: false, q: 4 };
+    state.cave.reserve.push(lot);
+    const v = G.lotValue(lot);
+    assert.equal(G.vaultPutLot(777), true);
+    assert.equal(state.cave.reserve.length, 0);
+    assert.ok(G.vaultTotal() >= v - 1);
+    assert.deepEqual(
+        G.bottleLots().map(l => l.uid),
+        [777],
+        'une bouteille du coffre reste nommable',
+    );
+    assert.equal(G.vaultTake(G.vaultList().findIndex(s => s && s.kind === 'lot')), true);
+    assert.equal(state.cave.reserve[0].uid, 777);
+    assert.equal(state.cave.reserve[0].q, 4);
+});
+
+test('1.29 : agrandir le coffre coûte des pièces, le prestige le vide mais garde sa taille', () => {
+    fresh();
+    state.level = 30;
+    state.money = 1e9;
+    G.ensureVault();
+    assert.ok(G.upgradeVault());
+    assert.equal(G.vaultSlots(), 10);
+    for (let i = 0; i < 6; i++) G.upgradeVault();
+    assert.equal(G.vaultLvl(), 4);
+    assert.equal(G.vaultSlots(), 22);
+    assert.equal(G.upgradeVault(), false);
+});

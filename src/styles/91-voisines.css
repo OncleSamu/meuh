@@ -223,3 +223,79 @@
     color: #8a5a00;
     font-weight: 800;
 }
+
+/* le coffre-fort de la grange (1.29) */
+.vault-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(62px, 1fr));
+    gap: 8px;
+    margin: 6px 0;
+}
+
+.vslot {
+    position: relative;
+    aspect-ratio: 1;
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    background: #fff8e8;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vslot.empty {
+    border-style: dashed;
+    background: rgba(255, 248, 232, 0.45);
+    opacity: 0.7;
+}
+
+.vslot.sel {
+    background: #ffe9a8;
+    box-shadow: 0 0 0 3px var(--gold);
+}
+
+.vslot .vs-art,
+.vslot svg {
+    width: 100%;
+    height: 100%;
+}
+
+.vslot b {
+    position: absolute;
+    right: -4px;
+    bottom: -6px;
+    font-family: var(--display);
+    font-size: 0.75rem;
+    padding: 0 5px;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    background: #fff;
+}
+
+.vslot .vs-q {
+    position: absolute;
+    left: -6px;
+    top: -6px;
+    width: 22px;
+    height: 22px;
+}
+
+.vslot .vs-q .qstar {
+    width: 22px;
+    height: 22px;
+}
+
+.vault-lock {
+    opacity: 0.8;
+}
+
+.vtiers {
+    flex-wrap: wrap;
+    overflow: visible;
+    justify-content: center;
+}
+
+.vtiers .pick-chip {
+    white-space: nowrap;
+}

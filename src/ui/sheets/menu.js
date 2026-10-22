@@ -12,6 +12,7 @@ import { btn, navRow, lines, line, bar, dot } from '../kit.js';
 import { go } from '../app.js';
 import { toast } from '../../core/bus.js';
 import { defineSheet, openSheet, closeSheet, sheetOpts } from '../sheets.js';
+import { vaultCard } from './vault.js';
 
 const COIN = () => ico(['ui', 'coin']);
 
@@ -132,6 +133,7 @@ defineSheet('barn', {
                 ${qrow}<div class="row-btns">${btn(G.isLocked(sel) ? 'Déverrouiller' : 'Verrouiller', { act: 'lock', data: { id: sel }, size: 'sm', icon: ['ui', 'lock'] })}
                 ${surplus && !G.challengeOn('noMarket') ? btn(`Grossiste +${fmt(r.gain)}${COIN()}`, { act: 'barnSell', data: { id: sel }, kind: 'gold', size: 'sm' }) : ''}
                 ${surplus && it.sell ? btn('À l’étal', { act: 'barnStall', data: { id: sel }, kind: 'green', size: 'sm' }) : ''}
+                ${G.vaultOpen() ? btn('Au coffre', { act: 'vaultAdd', data: { id: sel }, size: 'sm', icon: ['ui', 'vault'] }) : ''}
                 ${btn('Produire', { act: 'produce', data: { id: sel }, size: 'sm' })}</div></div>`;
         }
         const can = G.canUpgradeBarn();
@@ -157,6 +159,7 @@ defineSheet('barn', {
                         ? '<p class="card-sub center">Touchez un produit pour le vendre, le mettre à l’étal, le verrouiller ou aller en produire.</p>'
                         : ''),
             ],
+            ['vault', vaultCard()],
             [
                 'up',
                 `<div class="card barn-up"><div class="card-title">Agrandir la grange · niveau ${l + 2}</div>

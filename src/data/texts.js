@@ -7,6 +7,11 @@ export const TIPS = {
         title: 'Les grandes écuries',
         text: 'Logez vos chevaux en boxes (onglet Animaux, volet Écuries). Brossez-les, nourrissez-les, puis entraînez-les : chaque séance coûte une pastille de forme, qui remonte toutes les 30 minutes. Chaque aptitude monte jusqu’à un plafond que fixe un gène du cheval : croisez au labo pour viser plus haut.',
     },
+    vault: {
+        icon: ['ui', 'vault'],
+        title: 'Le coffre-fort',
+        text: 'Dans la grange, le coffre garde vos plus beaux produits (avec leur qualité) et vos grands crus de la cave, à l’abri de la vente et des commandes. Touchez un produit de la grange, puis « Au coffre ».',
+    },
     nmarket: {
         icon: ['ui', 'nmEtal'],
         title: 'Le marché des voisins',

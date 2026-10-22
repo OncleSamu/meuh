@@ -142,6 +142,16 @@ export const GUIDE_PAGES = [
                 h: 'Garder de côté',
                 t: 'La réserve (Marché › Vendre) met de côté ce que demandent vos commandes et vos défis, pour ne pas le vendre par erreur.',
             },
+            {
+                h: 'Le coffre-fort (niveau 15)',
+                b: [
+                    'Dans la grange, touchez un produit puis « Au coffre » : choisissez la qualité (normal, argent, or, platine, diamant) et la quantité. Le produit garde sa qualité.',
+                    'Depuis la cave, la réserve a un bouton « Au coffre » pour garder un lot : un grand cru, un champagne légendaire en diamant.',
+                    'Ce qui est au coffre ne se vend pas, ne part pas dans une commande ou une recette, et ne prend pas de place dans la grange. « Reprendre » le rend (il faut de la place dans la grange).',
+                    '6 emplacements au départ, 4 agrandissements de 4 emplacements (20 000, 80 000, 320 000 puis 1 280 000 pièces). Un emplacement garde jusqu’à 99 unités d’un même produit et d’une même qualité.',
+                    'Une nouvelle ferme (prestige) vide le coffre, mais il garde sa taille.',
+                ],
+            },
         ],
         see: ['domaine', 'house', 'market'],
     },

@@ -165,6 +165,7 @@ export function newState() {
         fseason: null,
         farmTheme: 'none',
         cave: { slots: [], shelves: 0, gear: {}, temp: 50, hum: 50, climAt: 0, reserve: [], cote: 0, auction: null, lastSale: null, uid: 0 },
+        vault: { lvl: 0, slots: [] },
         holiday: null,
         records: {},
         bookQuarters: [],
