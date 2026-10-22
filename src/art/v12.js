@@ -1,5 +1,5 @@
 // Meuh 1.2 : crayon, nuit (lucioles, chouette, étoile filante, nichoir…).
-import { C, E, FC, HL, L, P, R, SHADOW, ui } from './kit.js';
+import { C, E, F, FC, HL, L, P, R, SHADOW, ui } from './kit.js';
 
 Object.assign(ui, {
     pencil: () =>
@@ -15,13 +15,17 @@ Object.assign(ui, {
         C(32, 44, 6, '#fff176', 1.8) +
         HL(30, 42, 2, 1.2, 0, 0.9),
 
-    // l'étoile filante
+    // l'étoile filante : la tête dorée à droite, la traînée derrière elle (elle file vers la droite, un peu vers le bas)
     wishStar: () =>
-        P('M4 54 L30 34', 'none', 0) +
-        L('M4 58 L28 36', 5, '#fff6c8') +
-        L('M8 50 L28 36', 3, '#ffe9a0') +
-        P('M40 12 L44 24 L57 24 L47 32 L51 45 L40 37 L29 45 L33 32 L23 24 L36 24Z', '#ffd23f', 2.2) +
-        HL(38, 22, 3, 2, -20, 0.8),
+        F('M2 21 Q18 23 35 24 L34 40 Q16 34 2 21Z', '#ffe27a') +
+        F('M10 25 Q22 27 35 28 L34 38 Q20 34 10 25Z', '#fff3b8') +
+        F('M20 29 L36 30 L35 36Z', '#ffffff') +
+        FC(12, 15, 1.8, '#fff6c8', 0.95) +
+        FC(6, 13, 1.2, '#fff6c8', 0.8) +
+        F('M20 5 L22 9 L26 11 L22 13 L20 17 L18 13 L14 11 L18 9Z', '#fff6c8') +
+        F('M15 43 L16.5 46 L19.5 47.5 L16.5 49 L15 52 L13.5 49 L10.5 47.5 L13.5 46Z', '#fff6c8', 0.9) +
+        P('M44 14 L48 26 L61 26 L51 34 L55 47 L44 39 L33 47 L37 34 L27 26 L40 26Z', '#ffd23f', 2.2) +
+        HL(42, 25, 3, 2, -20, 0.8),
 
     // le nichoir et sa chouette
     owlBox: () =>
