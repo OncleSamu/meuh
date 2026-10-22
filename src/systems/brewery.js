@@ -11,9 +11,10 @@ import { VILLAGERS } from '../data/village.js';
 import { addFriendship } from './village.js';
 import { projectDone } from './story.js';
 import { earn, addXp } from './player.js';
-import { clampQuality } from './farm.js';
+import { clampQuality, qual } from './farm.js';
+import { QUALITY, QX } from '../data/farm.js';
 import { vatBonus } from './buildings.js';
-import { varietyMult, varName, traitOf, FLAVOR_IDS, clampVarieties } from './genetics.js';
+import { varietyMult, varName, traitOf, FLAVOR_IDS, clampVarieties, scoreTier } from './genetics.js';
 import { domStepSum } from './estate.js';
 
 // ---------------- ouverture ----------------
@@ -42,16 +43,73 @@ export function ingHave(id) {
     clampVarieties();
     return Math.min(state.genetics.stock[id] || 0, state.inventory[v.base] || 0);
 }
-function ingTake(id, n) {
+const TIERS = [
+    [4, 'd'],
+    [3, 'p'],
+    [2, 'g'],
+    [1, 's'],
+];
+const bestOn = () => !!(state.genetics && state.genetics.bestFirst);
+// retire n unités d'un ingrédient ; avec « meilleurs ingrédients d'abord », les plus hauts rangs partent en premier.
+// Renvoie les points de qualité pris (0 à 4 par unité), pour le rang de la bière.
+function ingTake(id, n, best = false) {
     const v = VAR(id);
-    if (v) {
-        state.genetics.stock[id] -= n;
-        state.inventory[v.base] -= n;
-        clampQuality(v.base);
-    } else {
-        state.inventory[id] -= n;
-        clampQuality(id);
+    const base = v ? v.base : id;
+    let points = 0;
+    if (v) state.genetics.stock[id] -= n;
+    if (best && bestOn() && state.quality[base]) {
+        const q = qual(base);
+        let left = n;
+        for (const [pts, f] of TIERS) {
+            const t = Math.min(left, q[f]);
+            q[f] -= t;
+            left -= t;
+            points += t * pts;
+        }
     }
+    state.inventory[base] -= n;
+    clampQuality(base);
+    return points;
+}
+// le rang qu'aurait un brassin avec le stock actuel, sans rien prendre
+export function brewQuality(cost, ings) {
+    if (!bestOn()) return 0;
+    let points = 0,
+        units = 0;
+    for (const [id] of ings) {
+        const n = cost[id] || 0;
+        const base = VAR(id) ? VAR(id).base : id;
+        const q = state.quality[base];
+        let left = n;
+        units += n;
+        if (q)
+            for (const [pts, f] of TIERS) {
+                const t = Math.min(left, q[f] || 0);
+                left -= t;
+                points += t * pts;
+            }
+    }
+    return units ? scoreTier(points / units) : 0;
+}
+
+// ---------------- la qualité des bouteilles en stock : B.q[bid] = { s, g, p, d } ----------------
+export const beerQual = bid => {
+    const B = ensureBrew();
+    const q = (B.q[bid] = B.q[bid] || { s: 0, g: 0, p: 0, d: 0 });
+    let over = q.s + q.g + q.p + q.d - (B.stock[bid] || 0);
+    for (const k of ['s', 'g', 'p', 'd']) {
+        if (over <= 0) break;
+        const t = Math.min(q[k], over);
+        q[k] -= t;
+        over -= t;
+    }
+    return q;
+};
+// le plus haut rang dont le stock couvre tout un lot de n bouteilles
+export function beerPutQuality(bid, n) {
+    const q = beerQual(bid);
+    for (const [r, f] of TIERS) if (q[f] >= n) return r;
+    return 0;
 }
 // les variétés qu'on peut mettre dans une bière : celles d'une espèce brassable, avec des produits en stock
 export const brewVarieties = () => (state.genetics ? Object.values(state.genetics.vars).filter(v => BREWABLE.includes(v.base) && ingHave(v.id) > 0) : []);
@@ -64,6 +122,7 @@ export function ensureBrew() {
     B.beers = B.beers || {};
     B.sig = B.sig || {};
     B.stock = B.stock || {};
+    B.q = B.q || {};
     B.book = B.book || {};
     B.bookClaimed = B.bookClaimed || 0;
     B.vats = B.vats || [];
@@ -188,6 +247,7 @@ export function brewPreview(d = ensureBrew().draft) {
         hints: brewHints(d.malt, ings),
         color: brewColor(d.malt),
         bases: basesOf(ings),
+        q: brewQuality(cost, ings),
         freeVat: ensureBrew().vats.findIndex(v => !v),
     };
 }
@@ -249,7 +309,17 @@ export function startBrew(at, d = ensureBrew().draft, quiet = false) {
         }
         return false;
     }
-    for (const [id, n] of Object.entries(pv.cost)) ingTake(id, n);
+    let points = 0,
+        units = 0;
+    const isIng = id => pv.ings.some(x => x[0] === id);
+    for (const [id, n] of Object.entries(pv.cost)) {
+        const pts = ingTake(id, n, isIng(id));
+        if (isIng(id)) {
+            points += pts;
+            units += n;
+        }
+    }
+    const q = units ? scoreTier(points / units) : 0;
     // une bière déjà connue garde son nom ; une nouvelle entre dans « Mes bières »
     const sig = sigOf(d.malt, d.hop, pv.ings);
     let bid = B.sig[sig];
@@ -270,7 +340,7 @@ export function startBrew(at, d = ensureBrew().draft, quiet = false) {
             day: state.day,
         };
     }
-    B.vats[pv.freeVat] = { bid, until: now() + pv.time * 1000, n: ABBEY.bottles, loop: !!d.loop };
+    B.vats[pv.freeVat] = { bid, until: now() + pv.time * 1000, n: ABBEY.bottles, loop: !!d.loop, q };
     if (quiet) return bid;
     sfx('machine');
     buzz(15);
@@ -300,7 +370,9 @@ export function collectVat(i, at) {
     if (!vatReady(v)) return false;
     const beer = B.beers[v.bid];
     B.vats[i] = null;
+    beerQual(v.bid);
     B.stock[v.bid] = (B.stock[v.bid] || 0) + v.n;
+    if (v.q) B.q[v.bid][QX.keys[v.q]] += v.n;
     beer.made += v.n;
     state.stats.beers = (state.stats.beers || 0) + v.n;
     // le livre des bières : une page par ingrédient
@@ -338,10 +410,21 @@ export function sellBeer(bid, n, at) {
     const have = B.stock[bid] || 0;
     n = Math.min(have, n);
     if (n <= 0) return false;
+    const q = beerQual(bid);
     B.stock[bid] = have - n;
-    let coins = 0;
-    for (let k = 0; k < n; k++) {
-        coins += beerPrice(bid);
+    let coins = 0,
+        left = n;
+    // le plus haut rang part en premier
+    const ranks = [];
+    for (const [r, f] of TIERS) {
+        const t = Math.min(left, q[f]);
+        q[f] -= t;
+        left -= t;
+        for (let k = 0; k < t; k++) ranks.push(r);
+    }
+    while (left-- > 0) ranks.push(0);
+    for (const r of ranks) {
+        coins += Math.max(5, Math.round((beerPrice(bid) * QUALITY[r].mult) / 5) * 5);
         B.demand[bid] = { n: demandNow(bid) + 1, t: now() };
     }
     earn(coins, at);
@@ -482,6 +565,7 @@ export function deliverBeerOrder(oid, bid, at) {
     const b = beerOf(bid || (beerOrderMatches(o)[0] || {}).id);
     if (!b || !beerFits(o, b) || beerStock(b.id) < o.qty) return false;
     B.stock[b.id] -= o.qty;
+    beerQual(b.id);
     earn(beerOrderPay(o, b.id), at);
     addXp(BEER_ORDERS.xp + 20 * o.min, at);
     addFriendship(o.vid, BEER_ORDERS.hearts, at);

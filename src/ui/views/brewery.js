@@ -8,7 +8,8 @@ import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, NOTE_COL, BARRELS, BEER_BOOK 
 import { VILLAGERS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions } from '../dom.js';
-import { ico, art } from '../icons.js';
+import { ico, art, qStar } from '../icons.js';
+import { QUALITY } from '../../data/farm.js';
 import { btn, bar, timer, section, empty } from '../kit.js';
 import { defineView, defineLive, ui, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
@@ -107,7 +108,7 @@ function composerHtml() {
             }
             ${noteBars(pv.profile)}
             <div class="cost">${cost}</div>
-            <div class="card-sub">${ABBEY.bottles} bouteilles${pv.secret ? '' : ` à ${fmt(pv.value)}${COIN()}`} · ${formatDuration(pv.time)}</div></div></div>`
+            <div class="card-sub">${ABBEY.bottles} bouteilles${pv.secret ? '' : ` à ${fmt(pv.value)}${COIN()}`} · ${formatDuration(pv.time)}</div>${pv.q ? `<div class="card-sub bp-q">${qStar(pv.q)} sortira en ${QUALITY[pv.q].name} (×${String(QUALITY[pv.q].mult).replace('.', ',')})</div>` : ''}</div></div>`
         : '<p class="hint">Choisissez un ingrédient : chaque fruit et chaque légume de la ferme donne une bière différente.</p>';
     const can = pv.ings.length && !pv.miss.length && pv.freeVat >= 0;
     return `<div class="card brew-compose">
@@ -127,7 +128,18 @@ function beersHtml() {
         `<div class="list">${list
             .map(b => {
                 const n = G.beerStock(b.id);
-                const sub = `${stars(b.stars)} ${ingIcons(b.ings)}${b.aged ? ` <span class="chip">${BARRELS[b.aged.k].name.toLowerCase()}</span>` : ''}`;
+                const bq = n ? G.beerQual(b.id) : null;
+                const chips = bq
+                    ? [
+                          [4, 'd'],
+                          [3, 'p'],
+                          [2, 'g'],
+                          [1, 's'],
+                      ]
+                          .map(([r, f]) => (bq[f] ? `<span class="qchip">${qStar(r)}${bq[f]}</span>` : ''))
+                          .join('')
+                    : '';
+                const sub = `${stars(b.stars)} ${ingIcons(b.ings)}${chips}${b.aged ? ` <span class="chip">${BARRELS[b.aged.k].name.toLowerCase()}</span>` : ''}`;
                 const price = G.beerPrice(b.id),
                     low = price < b.value;
                 const side =

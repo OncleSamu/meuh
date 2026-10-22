@@ -47,7 +47,7 @@ import { addFriendship } from './village.js';
 import { hasMats } from './market.js';
 import { clampQuality } from './farm.js';
 import { BARRELS } from '../data/abbey.js';
-import { beerOf, beerValue, beerStock, ensureBrew, barrelOk, cellarOpen, takeFromBarrel, cellarTick } from './brewery.js';
+import { beerOf, beerValue, beerStock, ensureBrew, barrelOk, cellarOpen, takeFromBarrel, cellarTick, beerQual, beerPutQuality } from './brewery.js';
 import { caveBonus } from './buildings.js';
 import { DAYS_PER_SEASON } from '../data/world.js';
 import { VINTAGES, LABEL_COUNT } from '../data/cave.js';
@@ -313,9 +313,11 @@ export function putBeerInCave(slot, bid, n, k, at) {
         if (state.money < bar.cost) return false;
         spend(bar.cost);
     }
+    const lq = beerPutQuality(bid, n);
+    if (lq) beerQual(bid)[QX.keys[lq]] -= n;
     B.stock[bid] -= n;
     const t = now();
-    c.slots[slot] = { uid: caveUid(), id: 'beer', bid, k, n, rank: 0, bad: false, next: t + caveStep('beer'), care: t, boost: 0, put: t, q: 0 };
+    c.slots[slot] = { uid: caveUid(), id: 'beer', bid, k, n, rank: 0, bad: false, next: t + caveStep('beer'), care: t, boost: 0, put: t, q: lq };
     c.seen.beer = true;
     sfx('load');
     burst(at, 'sparkle', 8);

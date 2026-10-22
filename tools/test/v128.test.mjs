@@ -109,3 +109,38 @@ test('1.28 : un lot de cave garde sa qualité et la rend plus chère', () => {
     G.takeOut(0, null);
     assert.equal(state.cave.reserve[state.cave.reserve.length - 1].q, 2, 'le lot sorti garde son or');
 });
+
+test('1.28 : une bière brassée avec des ingrédients de rang garde ce rang jusqu’à la cave', () => {
+    fresh();
+    for (const p of ['brewhall', 'fermenters', 'barrelcellar']) state.projects[p] = { done: true };
+    G.ensureBrew();
+    const B = state.brew;
+    const ing = G.BREWABLE[0];
+    const draft = { malt: 'maltBlond', hop: 1, ings: [[ing, 1]] };
+    const cost = G.brewPreview(draft).cost;
+    for (const [id, n] of Object.entries(cost)) state.inventory[id] = n * 40;
+    state.quality[ing] = { s: 0, g: 0, p: 0, d: 0 };
+    assert.equal(G.brewPreview(draft).q, 0);
+    state.quality[ing] = { s: 0, g: 0, p: 0, d: state.inventory[ing] };
+    assert.equal(G.brewPreview(draft).q, 4);
+    const bid = G.startBrew(null, draft, true);
+    assert.ok(bid, 'la bière est lancée');
+    const vat = B.vats.find(v => v && v.bid === bid);
+    assert.equal(vat.q, 4);
+    vat.until = 0;
+    assert.ok(G.collectVat(B.vats.indexOf(vat)));
+    const n = G.beerStock(bid);
+    assert.equal(G.beerQual(bid).d, n);
+    // le lot de cave garde le diamant
+    G.ensureCave();
+    state.cave.slots = state.cave.slots.map(() => null);
+    assert.equal(G.beerPutQuality(bid, 2), 4);
+    assert.ok(G.putBeerInCave(0, bid, 2, 'oak', null));
+    assert.equal(state.cave.slots[0].q, 4);
+    assert.equal(G.beerQual(bid).d, n - 2);
+    // la vente rapporte plus qu'une bière normale
+    const base = G.beerPrice(bid);
+    const money = state.money;
+    G.sellBeer(bid, 1, null);
+    assert.ok(state.money - money > base * 2, 'un diamant vaut ×2,8');
+});

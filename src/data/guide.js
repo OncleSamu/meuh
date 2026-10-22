@@ -769,6 +769,7 @@ export const GUIDE_PAGES = [
                     'Les étoiles d’une recette restent secrètes jusqu’au premier brassin (on voit des indices).',
                     'Plus vous vendez une même bière, plus son prix baisse, puis il remonte avec le temps.',
                     '« Rebrasser » refait la dernière recette ; les cuves peuvent tourner en boucle.',
+                    'Qualité : avec « Meilleurs ingrédients d’abord » (atelier), un brassin fait d’ingrédients en argent, en or, en platine ou en diamant donne des bouteilles de ce rang (même score que les plats). Elles se vendent plus cher et gardent leur rang en cave.',
                 ],
             },
             {

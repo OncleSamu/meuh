@@ -312,7 +312,7 @@ defineSheet('cavePut', {
             : '';
         const unit = beer ? beer.value * BARRELS[o.k].mult : ITEMS[o.id].sell;
         const step = G.caveStep(beer ? 'beer' : o.id);
-        const lq = !beer && o.id ? G.putQuality(o.id, o.n) : 0;
+        const lq = beer ? G.beerPutQuality(bid, o.n) : o.id ? G.putQuality(o.id, o.n) : 0;
         return `<div class="pick-grid">${cells}</div>${kinds}
            ${lq ? `<p class="card-sub center cave-q">${qStar(lq)} Lot en ${QUALITY[lq].name} : il gardera sa qualité (vaut ×${String(QUALITY[lq].mult).replace('.', ',')}) et vieillit un peu mieux.</p>` : ''}
            <div class="stepper big">${btn('', { act: 'caveQty', data: { d: -1 }, icon: ['ui', 'minus'], disabled: o.n <= 1, title: 'Moins' })}<span><b>${o.n}</b> × ${beer ? 'bouteille' + (o.n > 1 ? 's' : '') : ITEMS[o.id].name.toLowerCase()}</span>${btn('', { act: 'caveQty', data: { d: 1 }, icon: ['ui', 'plus'], disabled: o.n >= max, title: 'Plus' })}</div>
