@@ -156,7 +156,7 @@ function renderHud() {
     patch(
         byId('hud'),
         `<button class="lvl${state.legend ? ' legend' : ''}" data-act="open" data-sheet="levels" aria-label="Niveau ${state.level}${state.level >= MAX_LEVEL ? `, renommée ${state.renown || 0}, ${Math.floor(p * 100)} % vers l’étoile suivante` : ''}, voir les niveaux" title="${state.level >= MAX_LEVEL ? `Renommée : ${state.renown || 0} étoile(s), ${Math.floor(p * 100)} % vers la suivante` : ''}">
-            <span class="lvl-star">${ico(['ui', 'star'])}<b>${state.level}</b></span>
+            <span class="lvl-star">${ico(['ui', 'star'])}<b${state.level > 9 ? ' class="two"' : ''}>${state.level}</b></span>
             <span class="xp-bar"><i style="width:${(p * 100).toFixed(1)}%"></i><small>${xpText}</small></span>
         </button>
         <span class="pill coins" id="coin-pill">${ico(['ui', 'coin'])}<b id="ui-money"></b></span>

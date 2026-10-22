@@ -48,6 +48,11 @@
     font-size: 1.05rem;
     font-weight: 900;
 }
+.lvl-star b.two {
+    font-size: 0.82rem;
+    letter-spacing: -0.06em;
+    padding-top: 2px;
+}
 .lvl.legend .lvl-star {
     filter: drop-shadow(0 0 6px #ffd23f) drop-shadow(0 3px 0 rgba(58, 38, 24, 0.4));
 }
