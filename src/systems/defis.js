@@ -140,7 +140,7 @@ export function haveQ(id, q) {
     return Math.min(inv, q === 2 ? o.g : o.s + o.g);
 }
 // retire n produits : les ordinaires d'abord quand la qualité ne compte pas, sinon l'argent avant l'or
-function takeQ(id, n, q) {
+export function takeQ(id, n, q) {
     clampQuality(id);
     const o = state.quality[id] || { s: 0, g: 0 };
     let left = n;

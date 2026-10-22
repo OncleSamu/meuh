@@ -216,6 +216,19 @@ export function farmSeasonCard() {
 }
 
 // ---------------- voisins ----------------
+// 1.27 : la commande spéciale de la semaine (un plat jamais livré aux voisins)
+function specialBlock() {
+    const sp = G.nmarketOpen() ? G.specialOf() : null;
+    if (!sp) return '';
+    const r = RIVALS[sp.k];
+    const head = `<div class="nb-head"><div class="avatar sm">${art('villager', r.avatar)}</div><div class="card-main"><div class="card-title">Commande spéciale <small>· ${r.owner}</small></div><div class="card-sub">${sp.done ? 'Livrée cette semaine, la prochaine arrive lundi' : G.dishServed(sp.items[0].id) ? 'Le plat le moins livré à vos voisins' : 'Un plat que vous n’avez jamais livré aux voisins'}</div></div></div>`;
+    if (sp.done) return `<div class="neighbor nb-special done">${head}</div>`;
+    const ok = G.reqReady(sp);
+    return `<div class="neighbor nb-special">${head}
+        <div class="olines">${sp.items.map(x => itemLine(x, G.haveQ(x.id, x.q || 0))).join('')}</div>
+        <div class="nb-foot"><div class="card-sub">${rewardHtml(sp.coins, G.neighborXp(sp), sp.mats)} <span class="reward">+${sp.pts}${ico(['ui', 'heart'])}</span><br>jusqu’à lundi · ${timer(sp.until)}</div>${btn('Livrer', { act: 'helpSpecial', kind: ok ? 'gold' : '', size: 'sm', disabled: !ok })}</div></div>`;
+}
+
 export function neighborsCard() {
     if (state.level < NEIGHBOR_LVL)
         return card({
@@ -226,17 +239,18 @@ export function neighborsCard() {
         });
     G.ensureNeighbors();
     return `<div class="card neighbors-card"><div class="card-title">Fermes voisines</div>
-        <p class="card-sub">Vos rivales du concours sont aussi vos voisines. Aidez-les : elles paient bien, et leur amitié rapporte des cadeaux.</p>
+        ${specialBlock()}
+        <p class="card-sub">Vos rivaux du concours sont aussi vos voisins. Aidez-les : ils paient bien, et leur amitié rapporte des cadeaux.</p>
         ${RIVALS.map((r, k) => {
             const n = state.neighbors[k],
                 q = n.req;
-            const ok = q && G.hasAll(q.items);
+            const ok = G.reqReady(q);
             // en-tête (portrait, nom, cœurs), puis la demande sur toute la largeur, puis la récompense et le bouton
             return `<div class="neighbor"><div class="nb-head"><div class="avatar sm">${art('villager', r.avatar)}</div>
                 <div class="card-main"><div class="card-title">${r.owner} <small>· ${r.name}</small></div><div class="card-sub">${NMARKET.specs[k]}</div>${hearts(n.hearts)}</div></div>
                 ${
                     q
-                        ? `<div class="olines">${q.items.map(x => itemLine(x)).join('')}</div><div class="nb-foot"><div class="card-sub">${rewardHtml(q.coins, G.neighborXp(q), q.mats)}<br>repart dans ${timer(q.until)}</div>${btn('Aider', { act: 'helpNeighbor', data: { k }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}</div>`
+                        ? `<div class="olines">${q.items.map(x => itemLine(x, G.haveQ(x.id, x.q || 0))).join('')}</div><div class="nb-foot"><div class="card-sub">${rewardHtml(q.coins, G.neighborXp(q), q.mats)}<br>repart dans ${timer(q.until)}</div>${btn('Aider', { act: 'helpNeighbor', data: { k }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}</div>`
                         : `<div class="card-sub">Pas de demande pour l’instant · revient dans ${timer(Math.max(n.next, now()))}</div>`
                 }</div>`;
         }).join('')}</div>`;
@@ -452,6 +466,7 @@ export function setupVillage() {
         giveContract: el => G.giveContract(el),
         seasonTier: (el, d) => G.claimSeasonTier(+d.k, el),
         helpNeighbor: (el, d) => G.helpNeighbor(+d.k, el),
+        helpSpecial: el => G.helpSpecial(el),
         buyMerchant: (el, d) => G.buyMerchant(+d.k, el),
         contestTier: (el, d) => G.claimContestTier(+d.k, el),
         giveStory: (el, d) => G.giveStory(d.v, el),

@@ -1,13 +1,13 @@
 // L'étal de la ferme, les produits verrouillés, la commande épinglée et les fermes voisines.
-import { state, scaleLvl, lvOk } from '../core/state.js';
+import { state, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
-import { pickRand, fmt, round5, qtyName } from '../core/format.js';
+import { pickRand, fmt, qtyName } from '../core/format.js';
 import { emit, toast, sfx, buzz, float, squish } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { DECOS } from '../data/farm.js';
 import { HOT_MULT, STALL_MAX_QTY, RARE } from '../data/commerce.js';
-import { RIVALS, NEIGHBOR_LVL, NEIGHBOR_HEARTS, NEIGHBOR_STAY } from '../data/village.js';
+import { RIVALS, NEIGHBOR_LVL, NEIGHBOR_HEARTS } from '../data/village.js';
 import { BALANCE } from '../data/progress.js';
 import { extraStall } from './home.js';
 import { masteryMult } from './mastery.js';
@@ -17,8 +17,8 @@ import { inBarn, giveRare } from './barn.js';
 import { clampQuality } from './farm.js';
 import { eventProgress } from './events.js';
 import { challengeOn } from './prestige.js';
-import { isOpen, qtyFor, hasAll, payItems } from './orders.js';
-import { neighborWant } from './neighbordish.js';
+import { isOpen } from './orders.js';
+import { makeNeighborReq, reqReady, reqPay, noteServed } from './neighbordish.js';
 import { tip } from './tips.js';
 
 // ---------------- l'étal ----------------
@@ -172,17 +172,10 @@ export function neighborTick() {
             changed = true;
         }
         if (!n.req && t >= n.next) {
-            const it = neighborWant(k, n.last);
-            if (!it) return;
-            n.last = it.id;
-            const qty = qtyFor(it, (40 + scaleLvl() * 25) * (0.7 + Math.random() * 0.6), 15);
-            const value = it.sell * qty;
-            n.req = {
-                items: [{ id: it.id, qty }],
-                until: t + NEIGHBOR_STAY,
-                coins: round5(value * 1.6),
-                mats: Math.random() < 0.5 ? [pickRand(RARE), pickRand(RARE)] : [pickRand(RARE)],
-            };
+            const req = makeNeighborReq(k, n.last);
+            if (!req) return;
+            n.last = req.items[0].id;
+            n.req = req;
             changed = true;
             if (view.started && !view.hidden) {
                 toast(`${r.owner} (${r.name}) vous demande un coup de main`, ['villager', r.avatar]);
@@ -196,23 +189,30 @@ export function neighborTick() {
 export function helpNeighbor(k, at) {
     const n = state.neighbors[k],
         r = RIVALS[k];
-    if (!n || !n.req || !hasAll(n.req.items)) return false;
-    payItems(n.req.items);
+    if (!n || !n.req || !reqReady(n.req)) return false;
+    reqPay(n.req.items);
+    noteServed(n.req.items);
     earn(n.req.coins, at);
     n.req.mats.forEach(m => giveRare(m, 1, at));
     addXp(neighborXp(n.req), at);
-    n.pts++;
     n.req = null;
     n.next = now() + (40 + Math.random() * 40) * 60000;
     state.stats.neighborHelps = (state.stats.neighborHelps || 0) + 1;
     sfx('level');
     buzz(20);
     toast(`${r.owner} vous remercie chaleureusement !`, ['villager', r.avatar]);
+    addNeighborPts(k, 1);
+    return true;
+}
+
+// des points d'amitié : les cœurs suivent, avec leurs cadeaux
+export function addNeighborPts(k, pts) {
+    const n = state.neighbors[k];
+    n.pts += pts;
     while (n.hearts < 5 && n.pts >= NEIGHBOR_HEARTS[n.hearts]) {
         n.hearts++;
         neighborGift(k, n.hearts);
     }
-    return true;
 }
 
 // Cadeau à chaque cœur d'amitié : décoration, graines exotiques ou matériaux rares
@@ -236,6 +236,4 @@ export function neighborGift(k, h) {
 }
 
 export const neighborsReady = () =>
-    state.level >= NEIGHBOR_LVL && state.neighbors
-        ? RIVALS.filter((r, k) => state.neighbors[k] && state.neighbors[k].req && hasAll(state.neighbors[k].req.items)).length
-        : 0;
+    state.level >= NEIGHBOR_LVL && state.neighbors ? RIVALS.filter((r, k) => state.neighbors[k] && reqReady(state.neighbors[k].req)).length : 0;

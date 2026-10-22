@@ -150,7 +150,7 @@ export const TIPS = {
     neighbors: {
         icon: ['ui', 'heart'],
         title: 'Un voisin a besoin de vous',
-        text: 'Les fermes rivales du concours sont aussi vos voisines. Aidez-les (onglet Village, volet « Commandes ») : elles paient bien, offrent des matériaux rares et des cadeaux en devenant vos amies.',
+        text: 'Les voisins du concours ont besoin de vous (onglet Village, volet « Commandes ») : chacun réclame un plat de sa spécialité (deux ou trois quand l’amitié monte, parfois en argent ou en or), paie bien et offre des matériaux rares, puis des cadeaux en devenant votre ami. Chaque lundi, une commande spéciale vous attend.',
     },
     aphids: {
         icon: ['ui', 'pest'],

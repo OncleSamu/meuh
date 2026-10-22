@@ -945,6 +945,7 @@ button.oline {
     width: 100%;
     border: none;
     font: inherit;
+    font-size: 0.85rem;
     text-align: left;
     cursor: pointer;
 }

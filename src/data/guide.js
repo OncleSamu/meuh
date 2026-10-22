@@ -1092,6 +1092,14 @@ export const GUIDE_PAGES = [
                 h: 'Les fermes voisines (niveau 6)',
                 t: 'Elles passent par l’onglet Village › Commandes pour quelques heures. Chacune demande un plat de sa spécialité : Hortense des légumes et des fruits (soupes, conserves, jus, salades), Bastien du lait, des œufs, de la laine ou du miel (fromages, glaces, vêtements), Yvette du poisson ou de la viande, Firmin de la farine, de l’huile, du sucre ou du tissu (pains, pâtes, gâteaux, bonbons). Au début, avant d’avoir les ateliers, elles se contentent de produits bruts. Les aider fait monter leur amitié (cinq paliers) et vaut des cadeaux ; leur marché (Marché › Acheter) s’améliore avec l’amitié.',
             },
+            {
+                h: 'Des demandes plus riches avec l’amitié',
+                b: [
+                    'À partir de 3 cœurs, un voisin demande deux plats, parfois trois (une chance sur deux à 5 cœurs), tous différents. Plus il y a de plats, plus la récompense grandit (15 % en plus par plat en plus).',
+                    'Il peut aussi exiger un plat en argent (ou mieux) ou en or : une étoile le signale. Il ne le demande que si votre ferme a déjà su faire ce plat dans cette qualité, et jamais sur plus d’un plat par demande. Pour livrer, les plats ordinaires partent d’abord, puis l’argent, puis l’or.',
+                    'Dès le niveau 12, chaque lundi, un voisin à tour de rôle vous passe la commande spéciale de la semaine : un seul plat de sa spécialité, un plat que vous n’avez jamais livré aux voisins (à défaut, un des moins livrés). La récompense est très belle : 2,5 fois la valeur en pièces, trois matériaux rares, de l’expérience et 2 points d’amitié. Elle disparaît lundi.',
+                ],
+            },
         ],
         see: ['contest', 'events', 'orders'],
         tips: ['Le cinquième cœur d’un villageois fait payer ses commandes 25 % de plus.'],

@@ -169,6 +169,7 @@ export function todoList() {
     if (stories) push('village/village', ['ui', 'scroll'], `${stories} histoire${s(stories)} à faire avancer`, stories);
     const neigh = G.neighborsReady();
     if (neigh) push('village/orders', ['ui', 'heart'], `${neigh} voisin${s(neigh)} à aider`, neigh);
+    if (G.specialReady()) push('village/orders', ['ui', 'star'], 'Commande spéciale des voisins', 1);
 
     const pts = G.skillPoints();
     add('sheet:progress', ['ui', 'skillbook'], `${pts} point${s(pts)} de compétence`, pts);

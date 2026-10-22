@@ -184,3 +184,13 @@ export const NMARKET = {
     // la demande d'achat : le prix choisi règle le délai de livraison
     ask: { min: 1.2, max: 2.5, slow: 180, fast: 15, heartCut: 0.05, slots: [2, 2, 2, 3, 3, 4], maxQty: h => 10 + 6 * h },
 };
+
+// ---------------- 1.27 : des demandes plus variées quand l'amitié monte, et la commande spéciale de la semaine ----------------
+export const NREQ = {
+    third: [0, 0, 0, 0.25, 0.25, 0.5], // chance d'un troisième plat (à partir de 3 cœurs, deux plats au moins)
+    qChance: [0, 0, 0, 0.25, 0.4, 0.5], // chance qu'un plat de la demande doive être en argent ou en or
+    goldShare: [0, 0, 0, 0, 0.3, 0.5], // part de l'or parmi ces exigences de qualité
+    qCap: [0, 4, 2], // quantité maximale d'un plat dont la qualité est exigée (argent, or)
+    extra: 0.15, // pièces en plus par plat en plus
+    special: { coins: 2.5, mats: 3, pts: 2, qChance: 0.5, goldChance: 0.25, maxQty: 4 },
+};

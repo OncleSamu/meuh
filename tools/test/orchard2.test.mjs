@@ -83,7 +83,7 @@ test('un arbre mûr donne plus de fruits que le même arbre jeune', () => {
     b.mat = MATURE.at;
     let fa = 0,
         fb = 0;
-    for (let i = 0; i < 600; i++) {
+    for (let i = 0; i < 3000; i++) {
         for (const t of [a, b]) {
             t.mat = t === a ? 0 : MATURE.at;
             t.ground = 0;
