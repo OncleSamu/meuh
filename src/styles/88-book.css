@@ -167,6 +167,12 @@ button.entry {
 .bk-dots i.g {
     background: #f2c14e;
 }
+.bk-dots i.p {
+    background: #5fd8c8;
+}
+.bk-dots i.d {
+    background: #b88cff;
+}
 .bk-star {
     display: block;
     color: #f2a900;

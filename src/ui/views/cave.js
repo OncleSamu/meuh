@@ -12,7 +12,8 @@ import { renameBtn } from '../sheets/rename.js';
 import '../sheets/bottle.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions } from '../dom.js';
-import { ico, art } from '../icons.js';
+import { ico, art, qStar } from '../icons.js';
+import { QUALITY } from '../../data/farm.js';
 import { btn, bar, timer, card, section, empty } from '../kit.js';
 import { defineView, defineLive } from '../app.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
@@ -311,7 +312,9 @@ defineSheet('cavePut', {
             : '';
         const unit = beer ? beer.value * BARRELS[o.k].mult : ITEMS[o.id].sell;
         const step = G.caveStep(beer ? 'beer' : o.id);
+        const lq = !beer && o.id ? G.putQuality(o.id, o.n) : 0;
         return `<div class="pick-grid">${cells}</div>${kinds}
+           ${lq ? `<p class="card-sub center cave-q">${qStar(lq)} Lot en ${QUALITY[lq].name} : il gardera sa qualité (vaut ×${String(QUALITY[lq].mult).replace('.', ',')}) et vieillit un peu mieux.</p>` : ''}
            <div class="stepper big">${btn('', { act: 'caveQty', data: { d: -1 }, icon: ['ui', 'minus'], disabled: o.n <= 1, title: 'Moins' })}<span><b>${o.n}</b> × ${beer ? 'bouteille' + (o.n > 1 ? 's' : '') : ITEMS[o.id].name.toLowerCase()}</span>${btn('', { act: 'caveQty', data: { d: 1 }, icon: ['ui', 'plus'], disabled: o.n >= max, title: 'Plus' })}</div>
            <p class="card-sub center">Une étape toutes les ${formatDuration(step / 1000)}, un soin par étape. Valeur jeune : ${fmt(unit * o.n)}${COIN()}, légendaire : ${fmt(unit * o.n * CAVE_MULT[4])}${COIN()}</p>`;
     },

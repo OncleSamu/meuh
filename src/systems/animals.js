@@ -12,7 +12,7 @@ import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
 import { fmt } from '../core/format.js';
 import { wildAnimal, animalSpeedGene, animalYieldGene, animalQuality, animalSaves, animalCurious, animalDocile, animalSocial } from './genetics.js';
-import { addQuality } from './farm.js';
+import { addQuality, ascend } from './farm.js';
 import { wishAnimals } from './night.js';
 import { troughBonus } from './buildings.js';
 
@@ -85,7 +85,7 @@ export function collectAnimal(a) {
     if (wishAnimals()) qty *= 2;
     state.inventory[d.prodId] += qty;
     // de bons gènes donnent des produits de qualité
-    const q = animalQuality(a);
+    const q = ascend(d.prodId, animalQuality(a));
     if (q) addQuality(d.prodId, q, qty);
     a.produced = (a.produced || 0) + qty;
     state.stats.collected += qty;

@@ -33,7 +33,7 @@ const pct = q => `${Math.round(q * 100)} %`;
 const dots = e => {
     if (!(e.kind === 'item' && e.id)) return '';
     const q = state.qmade[e.id] || { s: 0, g: 0 };
-    return `<span class="bk-dots"><i class="b"></i><i class="${q.s ? 's' : ''}"></i><i class="${q.g ? 'g' : ''}"></i></span>`;
+    return `<span class="bk-dots"><i class="b"></i><i class="${q.s ? 's' : ''}"></i><i class="${q.g ? 'g' : ''}"></i>${q.p || q.d ? `<i class="${q.p ? 'p' : ''}"></i><i class="${q.d ? 'd' : ''}"></i>` : ''}</span>`;
 };
 const starsOf = n => (n ? `<span class="bk-star">${'★'.repeat(n)}${'☆'.repeat(Math.max(0, 3 - n))}</span>` : '');
 

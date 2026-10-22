@@ -4,13 +4,13 @@ import { now } from '../core/clock.js';
 import { fmt, s, formatDuration } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, shake, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { GRID, COLS, GH, SOILS, SOIL_BONUS, DECOS, MAT, HARVESTER_BONUS } from '../data/farm.js';
+import { GRID, COLS, GH, SOILS, SOIL_BONUS, DECOS, MAT, HARVESTER_BONUS, QX } from '../data/farm.js';
 import { BALANCE } from '../data/progress.js';
 import { speedMult, addXp, spend, earn, rank, rollYield } from './player.js';
 import { cropRate, isInSeason } from './world.js';
 import { decoGrowth, eggAt, decoTool, shooCrow, collectEgg, placeDeco, pickDeco, handleHive, nearDeco, rainbowGold, rainbowGolden } from './farmlife.js';
 import { soilMult, treatPest, soilFits, soilOf } from './incidents.js';
-import { masterySpeed, addMastery } from './mastery.js';
+import { masterySpeed, addMastery, masteryStars, masteryExtra } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
 import { tip } from './tips.js';
 import { storyOk } from './story.js';
@@ -185,10 +185,10 @@ export function doPlotAction(i, action, at) {
             buzz(12);
             burst(at, 'sparkle', 7, -6);
             burst(at, 'leaf', 5);
-            float(at, [`+${r.qty}`, ['item', r.item.id], ['q', r.quality]], r.quality === 2 ? 'gold' : '', -18);
+            float(at, [`+${r.qty}`, ['item', r.item.id], ['q', r.quality]], r.quality >= 2 ? 'gold' : '', -18);
             if (r.quality) {
                 burst(at, 'sparkle', r.quality * 5, -10);
-                if (r.quality === 2) sfx('golden');
+                if (r.quality >= 2) sfx('golden');
             }
             fly(at, r.item.id, r.qty);
             addXp(r.item.xp, at);
@@ -534,20 +534,29 @@ export function ghOffline(elapsed) {
     return n;
 }
 
-// ---------------- la qualité (argent, or) ----------------
-export const qual = id => (state.quality[id] = state.quality[id] || { s: 0, g: 0 });
+// ---------------- la qualité (argent, or, platine, diamant) ----------------
+// state.quality[id] = { s, g, p, d } : combien d'unités du stock sont en argent, or, platine, diamant (le reste est normal)
+export const qual = id => {
+    const q = (state.quality[id] = state.quality[id] || { s: 0, g: 0 });
+    q.p = q.p || 0;
+    q.d = q.d || 0;
+    return q;
+};
+// le nombre d'unités de rang minimal « min » (1 : argent ou mieux, 2 : or ou mieux…)
+export const qCount = (o, min = 1) => QX.keys.reduce((a, k, r) => (k && r >= min ? a + (o[k] || 0) : a), 0);
 
 export function clampQuality(id) {
     const q = state.quality[id];
     if (!q) return;
     const inv = state.inventory[id] || 0;
-    let over = q.s + q.g - inv;
-    if (over > 0) {
-        const ds = Math.min(q.s, over);
-        q.s -= ds;
-        over -= ds;
+    let over = qCount(q) - inv;
+    // ce qui manque est retiré en commençant par le plus bas rang
+    for (const k of ['s', 'g', 'p', 'd']) {
+        if (over <= 0) break;
+        const d = Math.min(q[k] || 0, over);
+        q[k] = (q[k] || 0) - d;
+        over -= d;
     }
-    if (over > 0) q.g = Math.max(0, q.g - over);
 }
 
 export function clampAllQuality() {
@@ -558,11 +567,20 @@ export function addQuality(id, q, n) {
     if (!q) return;
     clampQuality(id);
     const o = qual(id);
-    if (q === 2) o.g += n;
-    else o.s += n;
+    const k = QX.keys[q];
+    o[k] += n;
     const m = (state.qmade = state.qmade || {});
     const t = (m[id] = m[id] || { s: 0, g: 0 });
-    t[q === 2 ? 'g' : 's'] += n;
+    t[k] = (t[k] || 0) + n;
+}
+
+// une unité en or peut monter en platine ou en diamant quand le produit est maîtrisé
+export function ascend(id, q) {
+    if (q !== 2 || !id || !ITEMS[id]) return q;
+    if (masteryStars(id) < 3) return 2;
+    const ex = masteryExtra(id);
+    if (Math.random() >= QX.plat[Math.min(2, ex)]) return 2;
+    return ex >= 1 && Math.random() < QX.diam[Math.min(1, ex - 1)] ? 4 : 3;
 }
 
 export function rollQuality(plot) {
@@ -608,9 +626,9 @@ export function harvestPlot(plot) {
     if (vid) harvestVariety(vid, qty);
     state.stats.harvested += qty;
     addMastery(d.id, qty);
-    const quality = rollQuality(plot);
+    const quality = ascend(d.id, rollQuality(plot));
     addQuality(d.id, quality, qty);
-    if (quality === 2) {
+    if (quality >= 2) {
         state.stats.goldQ += qty;
         collect('g_' + d.id);
     }

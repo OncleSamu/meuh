@@ -115,13 +115,17 @@ defineSheet('barn', {
                 keep = G.reservedQty(sel),
                 surplus = G.isLocked(sel) ? 0 : G.sellableQty(sel);
             const r = surplus ? G.sellBatch(sel, surplus, false) : { gain: 0 };
-            const qq = state.quality[sel] || { s: 0, g: 0 },
-                nq = Math.min(state.inventory[sel], qq.g + qq.s),
-                ng = Math.min(nq, qq.g),
-                ns = nq - ng,
+            const qq = G.qual(sel);
+            const tiers = [
+                [4, 'd', 'diamant'],
+                [3, 'p', 'platine'],
+                [2, 'g', 'or'],
+                [1, 's', 'argent'],
+            ];
+            const nq = Math.min(state.inventory[sel], G.qCount(qq)),
                 nplain = state.inventory[sel] - nq;
             const qrow = nq
-                ? `<div class="barn-q"><span class="qchip big">&nbsp;×${nplain} ${nplain > 1 ? 'normaux' : 'normal'}</span>${ns ? `<span class="qchip big">${qStar(1)}${ns} argent</span>` : ''}${ng ? `<span class="qchip big">${qStar(2)}${ng} or</span>` : ''}</div>`
+                ? `<div class="barn-q"><span class="qchip big">&nbsp;×${nplain} ${nplain > 1 ? 'normaux' : 'normal'}</span>${tiers.map(([r, f, n]) => (qq[f] ? `<span class="qchip big">${qStar(r)}${qq[f]} ${n}</span>` : '')).join('')}</div>`
                 : '';
             item = `<div class="card barn-item"><div class="card-head">${ico(['item', sel], 'ico big')}<div class="card-main"><div class="card-title">${it.name} ×${state.inventory[sel]}</div>
                 <div class="card-sub">${keep ? `${keep} gardé${keep > 1 ? 's' : ''} pour les commandes · ` : ''}${G.isLocked(sel) ? 'verrouillé : jamais vendu' : `surplus : ${surplus}`}</div></div></div>

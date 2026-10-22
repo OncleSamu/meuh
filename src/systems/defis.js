@@ -10,7 +10,7 @@ import { VILLAGERS } from '../data/village.js';
 import { RENOWN_XP } from '../data/progress.js';
 import { DEFI, DEFIS } from '../data/defis.js';
 import { earn, addXp } from './player.js';
-import { clampQuality } from './farm.js';
+import { clampQuality, qual, qCount } from './farm.js';
 import { questPool } from './orders.js';
 import { trainOpen } from './orders.js';
 import { hasMachine } from './workshop.js';
@@ -131,29 +131,34 @@ export function startDefi(id = drawDefi(), t = now()) {
 }
 
 // ---------------- les étapes ----------------
-// ce qu'on a en stock pour une qualité demandée (0 : tout, 1 : argent ou or, 2 : or)
+// ce qu'on a en stock pour une qualité demandée (0 : tout, 1 : argent ou mieux, 2 : or ou mieux)
 export function haveQ(id, q) {
     const inv = state.inventory[id] || 0;
     if (!q) return inv;
     clampQuality(id);
-    const o = state.quality[id] || { s: 0, g: 0 };
-    return Math.min(inv, q === 2 ? o.g : o.s + o.g);
+    return Math.min(inv, qCount(qual(id), q));
 }
-// retire n produits : les ordinaires d'abord quand la qualité ne compte pas, sinon l'argent avant l'or
+// retire n produits : les ordinaires d'abord quand la qualité ne compte pas, puis le plus bas rang qui convient
 export function takeQ(id, n, q) {
     clampQuality(id);
-    const o = state.quality[id] || { s: 0, g: 0 };
+    const o = qual(id);
     let left = n;
     if (!q) {
-        const plain = Math.max(0, (state.inventory[id] || 0) - o.s - o.g);
+        const plain = Math.max(0, (state.inventory[id] || 0) - qCount(o));
         left -= Math.min(plain, left);
     }
-    if (left > 0 && q < 2) {
-        const s = Math.min(o.s, left);
-        o.s -= s;
-        left -= s;
+    for (const [r, k] of [
+        [1, 's'],
+        [2, 'g'],
+        [3, 'p'],
+        [4, 'd'],
+    ]) {
+        if (left <= 0) break;
+        if (r < q) continue;
+        const t = Math.min(o[k], left);
+        o[k] -= t;
+        left -= t;
     }
-    if (left > 0) o.g = Math.max(0, o.g - left);
     state.inventory[id] -= n;
 }
 

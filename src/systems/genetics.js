@@ -40,6 +40,8 @@ import { projectDone, storyOk } from './story.js';
 import { isAdult, newAnimal } from './animals.js';
 import { placeAnimal, herdFull } from './pastures.js';
 import { unitPrice } from './market.js';
+import { qual } from './farm.js';
+import { QX } from '../data/farm.js';
 import { tip } from './tips.js';
 import { domStepSum } from './estate.js';
 import { season } from './world.js';
@@ -778,7 +780,7 @@ export function takeIngredients(rid) {
             // variétés : celles qui ont le plus du goût recherché
             const list = Object.keys(G.stock)
                 .filter(vid => G.vars[vid] && G.vars[vid].base === k && G.stock[vid] > 0)
-                .map(vid => [vid, Math.min(3, flavorGain(G.vars[vid].g, taste.length ? taste : FLAVOR_IDS))])
+                .map(vid => [vid, Math.min(QX.varCap, flavorGain(G.vars[vid].g, taste.length ? taste : FLAVOR_IDS))])
                 .sort((x, y) => y[1] - x[1]);
             for (const [vid, gain] of list) {
                 if (left <= 0) break;
@@ -789,27 +791,33 @@ export function takeIngredients(rid) {
             }
         }
         if (best && left > 0 && state.quality[k]) {
-            const q = state.quality[k];
-            const g = Math.min(left, q.g);
-            q.g -= g;
-            left -= g;
-            points += g * 2;
-            const s2 = Math.min(left, q.s);
-            q.s -= s2;
-            left -= s2;
-            points += s2;
+            const q = qual(k);
+            for (const [pts, f] of TIER_ORDER) {
+                const t = Math.min(left, q[f]);
+                q[f] -= t;
+                left -= t;
+                points += t * pts;
+            }
         }
         state.inventory[k] -= n;
     }
-    const score = units ? points / units : 0;
-    return score >= GX.goldScore ? 2 : score >= GX.silverScore ? 1 : 0;
+    return scoreTier(units ? points / units : 0);
 }
 
-// ce que donnerait un lot lancé maintenant, sans rien prendre : { q, gold, silver } (unités d'ingrédients de qualité utilisées)
+// du plus haut rang au plus bas : [points d'un ingrédient, champ de state.quality]
+const TIER_ORDER = [
+    [4, 'd'],
+    [3, 'p'],
+    [2, 'g'],
+    [1, 's'],
+];
+export const scoreTier = score => (score >= QX.diamScore ? 4 : score >= QX.platScore ? 3 : score >= GX.goldScore ? 2 : score >= GX.silverScore ? 1 : 0);
+
+// ce que donnerait un lot lancé maintenant, sans rien prendre : { q, d, p, g, s } (rang du lot, unités d'ingrédients de chaque qualité utilisées)
 export function previewBatch(rid) {
     const r = RECIPES[rid];
     const G = state.genetics;
-    const out = { q: 0, gold: 0, silver: 0 };
+    const out = { q: 0, d: 0, p: 0, g: 0, s: 0 };
     if (!r || !G || !G.bestFirst) return out;
     const taste = recipeTaste(rid);
     let points = 0,
@@ -820,7 +828,7 @@ export function previewBatch(rid) {
         if (FLAVORS[k]) {
             const list = Object.keys(G.stock)
                 .filter(vid => G.vars[vid] && G.vars[vid].base === k && G.stock[vid] > 0)
-                .map(vid => [G.stock[vid], Math.min(3, flavorGain(G.vars[vid].g, taste.length ? taste : FLAVOR_IDS))])
+                .map(vid => [G.stock[vid], Math.min(QX.varCap, flavorGain(G.vars[vid].g, taste.length ? taste : FLAVOR_IDS))])
                 .sort((x, y) => y[1] - x[1]);
             for (const [have, gain] of list) {
                 const d = Math.min(left, have);
@@ -830,17 +838,15 @@ export function previewBatch(rid) {
         }
         const q = state.quality[k];
         if (left > 0 && q) {
-            const g = Math.min(left, q.g);
-            left -= g;
-            points += g * 2;
-            out.gold += g;
-            const s2 = Math.min(left, q.s);
-            points += s2;
-            out.silver += s2;
+            for (const [pts, f] of TIER_ORDER) {
+                const t = Math.min(left, q[f] || 0);
+                left -= t;
+                points += t * pts;
+                out[f] += t;
+            }
         }
     }
-    const score = units ? points / units : 0;
-    out.q = score >= GX.goldScore ? 2 : score >= GX.silverScore ? 1 : 0;
+    out.q = scoreTier(units ? points / units : 0);
     return out;
 }
 

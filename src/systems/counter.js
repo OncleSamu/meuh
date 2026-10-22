@@ -12,7 +12,7 @@ import { heartsOf, addFriendship } from './village.js';
 import { presentVillagers, hasCost, payCost } from './home.js';
 import { recipeUnlocked, canCook, missingFor, hasMachine, newMachine } from './workshop.js';
 import { takeIngredients } from './genetics.js';
-import { addQuality, clampAllQuality } from './farm.js';
+import { addQuality, clampAllQuality, qual, qCount } from './farm.js';
 import { rollYield, addXp, earn } from './player.js';
 import { addMastery } from './mastery.js';
 import { collect } from './book.js';
@@ -210,17 +210,21 @@ export function counterServe(seat, at) {
     const C = ensureCounter(),
         s = C.seats[seat];
     if (!s || !(state.inventory[s.drink] > 0)) return false;
-    const q = state.quality[s.drink] || { s: 0, g: 0 };
+    const q = qual(s.drink);
     let tier = 0;
-    if (q.g > 0) {
-        q.g--;
-        tier = 2;
-    } else if (q.s > 0) {
-        q.s--;
-        tier = 1;
-    }
+    for (const [r, f] of [
+        [4, 'd'],
+        [3, 'p'],
+        [2, 'g'],
+        [1, 's'],
+    ])
+        if (q[f] > 0) {
+            q[f]--;
+            tier = r;
+            break;
+        }
     state.inventory[s.drink]--;
-    serve(seat, s.drink, tier, tier + 1, at);
+    serve(seat, s.drink, tier, Math.min(3, tier + 1), at);
     return true;
 }
 function serve(seat, id, tier, stars, at) {
@@ -254,8 +258,8 @@ export function counterSendAway(seat) {
     return true;
 }
 export const counterStars = r => {
-    const o = state.quality[r] || { s: 0, g: 0 };
-    return o.g > 0 ? 3 : o.s > 0 ? 2 : 1;
+    const o = qual(r);
+    return qCount(o, 2) > 0 ? 3 : o.s > 0 ? 2 : 1;
 };
 
 export const counterFavorite = vid => FAVORITE[vid];

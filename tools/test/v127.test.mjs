@@ -119,7 +119,7 @@ test('1.27 : livrer une demande avec qualité prend l’argent avant l’or et r
     assert.equal(state.money, money + 5000);
     assert.equal(state.inventory[a], 2);
     assert.equal(state.inventory[b], 0);
-    assert.deepEqual(state.quality[a], { s: 0, g: 1 }, 'l’argent part avant l’or');
+    assert.deepEqual({ s: state.quality[a].s, g: state.quality[a].g }, { s: 0, g: 1 }, 'l’argent part avant l’or');
     assert.equal(G.dishServed(a), 2);
     assert.equal(G.dishServed(b), 2);
     assert.equal(state.neighbors[3].pts, 1);
@@ -222,7 +222,7 @@ test('aperçu de la qualité d’un lot', async () => {
     assert.equal(G.previewBatch('flour').q, 0);
     state.quality.wheat = { s: 0, g: 50 };
     const p = G.previewBatch('flour');
-    assert.ok(p.q >= 1 && p.gold > 0);
+    assert.ok(p.q >= 2 && p.g > 0);
     assert.equal(state.inventory.wheat, 50, 'rien n’est consommé');
     state.genetics.bestFirst = false;
     assert.equal(G.previewBatch('flour').q, 0);

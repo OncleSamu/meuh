@@ -139,8 +139,8 @@ export function advanceMachine(m, dt) {
         if (q) {
             m.outq = m.outq || {};
             const o = (m.outq[id] = m.outq[id] || { s: 0, g: 0 });
-            if (q === 2) o.g++;
-            else o.s++;
+            const k = ['s', 's', 'g', 'p', 'd'][q];
+            o[k] = (o[k] || 0) + 1;
         }
         m.progress = 0;
         done++;
@@ -240,11 +240,16 @@ export function collectMachine(i, at, quiet) {
         const oq = m.outq && m.outq[id];
         if (oq) {
             let j = 0;
-            for (let g = 0; g < oq.g && j < per.length; g++) {
-                state.stats.goldDishes = (state.stats.goldDishes || 0) + per[j];
-                addQuality(id, 2, per[j++]);
-            }
-            for (let s2 = 0; s2 < oq.s && j < per.length; s2++) addQuality(id, 1, per[j++]);
+            for (const [r, f] of [
+                [4, 'd'],
+                [3, 'p'],
+                [2, 'g'],
+                [1, 's'],
+            ])
+                for (let g = 0; g < (oq[f] || 0) && j < per.length; g++) {
+                    if (r >= 2) state.stats.goldDishes = (state.stats.goldDishes || 0) + per[j];
+                    addQuality(id, r, per[j++]);
+                }
             delete m.outq[id];
         }
         state.stats.crafted += qty;

@@ -96,7 +96,31 @@ export const QUALITY = [
         mult: 1.6,
         color: '#ffd23f',
     },
+    // 1.28 : après l'or, deux qualités de maître (il faut la maîtrise or, puis platine, du produit)
+    {
+        id: 3,
+        name: 'platine',
+        mult: 2.1,
+        color: '#5fd8c8',
+    },
+    {
+        id: 4,
+        name: 'diamant',
+        mult: 2.8,
+        color: '#b88cff',
+    },
 ];
+
+// 1.28 : platine et diamant. Une unité en or peut monter d'un rang si le produit est maîtrisé :
+// platine dès la maîtrise or (chance selon le rang de maîtrise : or, platine, diamant), diamant dès la maîtrise platine.
+export const QX = {
+    plat: [0.15, 0.2, 0.25],
+    diam: [0.12, 0.2],
+    platScore: 2.5, // score moyen d'un plat : platine
+    diamScore: 3.5, // diamant
+    varCap: 2.4, // une variété savoureuse seule ne donne pas de platine
+    keys: [null, 's', 'g', 'p', 'd'], // le champ de state.quality de chaque rang
+};
 
 export const SOILS = {
     wet: {

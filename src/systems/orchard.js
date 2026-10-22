@@ -19,7 +19,7 @@ import { barnBlocked, rollRare } from './barn.js';
 import { storyOk } from './story.js';
 import { preferSeed, harvestVariety } from './genetics.js';
 import { collect, record } from './book.js';
-import { addQuality } from './farm.js';
+import { addQuality, ascend } from './farm.js';
 import { eventProgress } from './events.js';
 import { tip } from './tips.js';
 import { orchardLife, orchardRate, ladderBonus, basketBonus } from './buildings.js';
@@ -242,17 +242,13 @@ export function pickTree(k, at, quiet, z = 'farm') {
     state.stats[z === 'island' ? 'islandHarvest' : 'orchardFruits'] = (state.stats[z === 'island' ? 'islandHarvest' : 'orchardFruits'] || 0) + qty;
     addMastery(t.id, qty);
     collect('o_' + t.id);
-    let gold = 0,
-        silver = 0;
-    for (let j = 0; j < qty; j++) {
-        const q = rollTreeQuality(t.id, t);
-        if (q === 2) gold++;
-        else if (q === 1) silver++;
-    }
+    const got = [0, 0, 0, 0, 0];
+    for (let j = 0; j < qty; j++) got[ascend(t.id, rollTreeQuality(t.id, t))]++;
+    const silver = got[1],
+        gold = got[2] + got[3] + got[4];
     if (z !== 'island' && silver + gold) state.stats.orchardQual = (state.stats.orchardQual || 0) + silver + gold;
-    if (silver) addQuality(t.id, 1, silver);
+    for (let r = 1; r <= 4; r++) if (got[r]) addQuality(t.id, r, got[r]);
     if (gold) {
-        addQuality(t.id, 2, gold);
         state.stats.goldQ += gold;
         collect('g_' + t.id);
     }

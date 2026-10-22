@@ -38,7 +38,7 @@ function closedCard() {
 
 const stockQ = id => {
     const q = state.quality[id] || { s: 0, g: 0 };
-    return q.g > 0 ? 3 : q.s > 0 ? 2 : 1;
+    return q.g + (q.p || 0) + (q.d || 0) > 0 ? 3 : q.s > 0 ? 2 : 1;
 };
 
 // ---------------- le salon ----------------

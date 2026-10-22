@@ -10,7 +10,7 @@ export function itemLine(x, have = state.inventory[x.id]) {
     const ok = have >= x.qty;
     const cooking = ok ? 0 : G.inProduction(x.id);
     const hint = ok ? '' : `<small>${G.sourceOf(x.id)}${cooking ? ` · ${cooking} en préparation` : ''}</small>`;
-    return `<${ok ? 'div' : 'button'} class="oline${ok ? ' ok' : ' go'}"${ok ? '' : ` data-act="produce" data-id="${x.id}"`}>${ico(['item', x.id])}<span class="oline-main"><span>${ITEMS[x.id].name}${x.q ? ` ${qStar(x.q)}` : ''}</span>${x.q ? `<small>${x.q === 2 ? 'qualité or' : 'argent ou mieux'}</small>` : ''}${hint}</span><b>${Math.min(have, x.qty)} / ${x.qty}</b>${ok ? ico(['ui', 'check'], 'ico tick') : ico(['ui', 'arrow'], 'ico go-arrow')}</${ok ? 'div' : 'button'}>`;
+    return `<${ok ? 'div' : 'button'} class="oline${ok ? ' ok' : ' go'}"${ok ? '' : ` data-act="produce" data-id="${x.id}"`}>${ico(['item', x.id])}<span class="oline-main"><span>${ITEMS[x.id].name}${x.q ? ` ${qStar(x.q)}` : ''}</span>${x.q ? `<small>${x.q === 2 ? 'or ou mieux' : 'argent ou mieux'}</small>` : ''}${hint}</span><b>${Math.min(have, x.qty)} / ${x.qty}</b>${ok ? ico(['ui', 'check'], 'ico tick') : ico(['ui', 'arrow'], 'ico go-arrow')}</${ok ? 'div' : 'button'}>`;
 }
 
 export const rewardHtml = (gold, xp, mats) =>

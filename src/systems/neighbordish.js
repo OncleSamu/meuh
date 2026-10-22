@@ -97,7 +97,7 @@ export function neighborWant(k, last) {
 // a-t-on déjà fabriqué ce plat en argent (q = 1, ou mieux) ou en or (q = 2) ?
 export const madeQ = (id, q) => {
     const m = state.qmade && state.qmade[id];
-    return !!m && (q === 2 ? m.g > 0 : m.s + m.g > 0);
+    return !!m && (q === 2 ? m.g + (m.p || 0) + (m.d || 0) > 0 : m.s + m.g + (m.p || 0) + (m.d || 0) > 0);
 };
 // un plat dont on exige une qualité : pas trop d'exemplaires
 const capQ = x => (x.qty = Math.max(1, Math.min(x.qty, NREQ.qCap[x.q])));

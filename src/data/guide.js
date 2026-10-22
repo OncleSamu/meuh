@@ -295,7 +295,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Qualité des récoltes',
-                t: 'Chaque récolte sort normale, argent ou or. L’or vaut plus, compte pour les défis et donne des plats d’or. De bons sols, la serre, des engrais, les compétences et les variétés du labo augmentent les chances.',
+                t: 'Chaque récolte sort normale, argent ou or. L’or vaut plus, compte pour les défis et donne des plats d’or. De bons sols, la serre, des engrais, les compétences et les variétés du labo augmentent les chances. Quand vous maîtrisez un produit, une récolte en or peut monter en platine (maîtrise or), puis en diamant (maîtrise platine) : ×2,1 et ×2,8 le prix.',
             },
             {
                 h: 'Les graines',
@@ -657,7 +657,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Qualité',
-                t: 'Avec de bons ingrédients (argent, or, belles variétés), un plat sort en argent ou en or, et se vend plus cher. Dans la grange, touchez un produit pour voir combien sont normaux, en argent ou en or. À l’atelier, une étoile sur la recette annonce la qualité que donnerait le lot avec votre stock.',
+                t: 'Avec de bons ingrédients (argent, or, belles variétés), un plat sort en argent ou en or, et se vend plus cher. Platine et diamant demandent des ingrédients de ce rang. Dans la grange, touchez un produit pour voir combien sont normaux, en argent, en or, en platine ou en diamant. À l’atelier, une étoile sur la recette annonce la qualité que donnerait le lot avec votre stock.',
             },
             {
                 h: 'Chaque machine, un métier',
@@ -710,7 +710,7 @@ export const GUIDE_PAGES = [
         secs: [
             {
                 h: 'Mettre en cave',
-                t: 'Onglet Atelier, puis Cave. À chaque étape de l’affinage, un lot peut bien vieillir (sa valeur grimpe), mal vieillir (il tourne) ou se perdre.',
+                t: 'Onglet Atelier, puis Cave. À chaque étape de l’affinage, un lot peut bien vieillir (sa valeur grimpe), mal vieillir (il tourne) ou se perdre. Un lot entièrement en argent, en or, en platine ou en diamant garde sa qualité : il vieillit un peu mieux et se vend plus cher (un vin légendaire en or est le meilleur de la cave).',
             },
             {
                 h: 'Prendre soin',
@@ -798,6 +798,7 @@ export const GUIDE_PAGES = [
                     'À l’or : le produit est fabriqué 15 % plus vite (+3 % par rang suivant).',
                     'Platine et diamant : la demande du marché baisse 25 % puis 50 % moins vite et ne descend pas sous 40 % puis 55 % du prix.',
                     'Une récompense en pièces à chaque rang.',
+                    'Qualité : à la maîtrise or, vos récoltes, produits d’élevage et fruits en or peuvent sortir en platine ; à la maîtrise platine, en diamant.',
                 ],
             },
             { h: 'Où la voir', t: 'Dans le Livre de la ferme (Maîtrise) et dans la fiche de chaque produit.' },
@@ -1099,7 +1100,7 @@ export const GUIDE_PAGES = [
                 h: 'Des demandes plus riches avec l’amitié',
                 b: [
                     'À partir de 3 cœurs, un voisin demande deux plats, parfois trois (une chance sur deux à 5 cœurs), tous différents. Plus il y a de plats, plus la récompense grandit (15 % en plus par plat en plus).',
-                    'Il peut aussi exiger un plat en argent (ou mieux) ou en or : une étoile le signale. Il ne le demande que si votre ferme a déjà su faire ce plat dans cette qualité, et jamais sur plus d’un plat par demande. Pour livrer, les plats ordinaires partent d’abord, puis l’argent, puis l’or.',
+                    'Il peut aussi exiger un plat en argent (ou mieux) ou en or : une étoile le signale. Il ne le demande que si votre ferme a déjà su faire ce plat dans cette qualité, et jamais sur plus d’un plat par demande. Pour livrer, les plats ordinaires partent d’abord, puis l’argent, puis l’or (le platine et le diamant comptent comme de l’or).',
                     'Dès le niveau 12, chaque lundi, un voisin à tour de rôle vous passe la commande spéciale de la semaine : un seul plat de sa spécialité, un plat que vous n’avez jamais livré aux voisins (à défaut, un des moins livrés). La récompense est très belle : 2,5 fois la valeur en pièces, trois matériaux rares, de l’expérience et 2 points d’amitié. Elle disparaît lundi.',
                 ],
             },

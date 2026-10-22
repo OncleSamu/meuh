@@ -49,12 +49,18 @@ export function sellBatch(id, n, apply) {
     let left = Math.min(n, inv),
         f = demand(id),
         gain = 0;
-    const take = { g: Math.min(q.g, left) };
+    const take = { d: Math.min(q.d, left) };
+    left -= take.d;
+    take.p = Math.min(q.p, left);
+    left -= take.p;
+    take.g = Math.min(q.g, left);
     left -= take.g;
     take.s = Math.min(q.s, left);
     left -= take.s;
     take.n = left;
     const seq = [
+        [4, take.d],
+        [3, take.p],
         [2, take.g],
         [1, take.s],
         [0, take.n],
@@ -64,8 +70,10 @@ export function sellBatch(id, n, apply) {
             gain += unitPrice(id, ql, f);
             f = Math.max(Math.min(f, demandFloor(id)), f - dropPer(id));
         }
-    const sold = take.g + take.s + take.n;
+    const sold = take.d + take.p + take.g + take.s + take.n;
     if (apply) {
+        q.d -= take.d;
+        q.p -= take.p;
         q.g -= take.g;
         q.s -= take.s;
         state.inventory[id] -= sold;
@@ -177,6 +185,7 @@ export function sellAll(at) {
     return total;
 }
 
+const takeSum = t => (t.d || 0) + (t.p || 0) + t.g + t.s + t.n;
 // ---------------- annuler une vente (5 secondes) ----------------
 let lastSale = null;
 export const pendingSale = () => (lastSale && now() - lastSale.at < UNDO_MS ? lastSale : null);
@@ -184,7 +193,7 @@ export const pendingSale = () => (lastSale && now() - lastSale.at < UNDO_MS ? la
 export function rememberSale(parts) {
     const gain = parts.reduce((a, p) => a + p.gain, 0);
     if (!gain) return;
-    const n = parts.reduce((a, p) => a + p.take.g + p.take.s + p.take.n, 0);
+    const n = parts.reduce((a, p) => a + takeSum(p.take), 0);
     lastSale = { parts, gain, n, day: state.day, at: now() };
     emit('sale', lastSale);
 }
@@ -200,7 +209,9 @@ export function undoSale() {
     }
     sl.parts.forEach(p => {
         const q = qual(p.id);
-        state.inventory[p.id] += p.take.g + p.take.s + p.take.n;
+        state.inventory[p.id] += takeSum(p.take);
+        q.d += p.take.d || 0;
+        q.p += p.take.p || 0;
         q.g += p.take.g;
         q.s += p.take.s;
         if (p.f0 === undefined) delete state.market.f[p.id];

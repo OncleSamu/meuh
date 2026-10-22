@@ -5,6 +5,7 @@ import { view } from '../core/view.js';
 import { fmt } from '../core/format.js';
 import { toast, sfx, buzz, burst } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
+import { QUALITY, QX } from '../data/farm.js';
 import { VILLAGERS } from '../data/village.js';
 import {
     CAVE_LVL,
@@ -92,13 +93,15 @@ export const caveSlots = () =>
     caveBonus() +
     domStepSum('annex', 'shelf');
 export const caveStep = id => (CAVE_ITEMS[id] === 'cider' && projectDone('cidery') ? 4 * CAVE_H : caveFam(id).step);
-export const rankName = lot => (lot.bad ? (lot.id === 'beer' ? 'Tournée' : 'Tourné') : caveFam(lot.id).ranks[lot.rank]);
+export const rankName = lot =>
+    lot.bad ? (lot.id === 'beer' ? 'Tournée' : 'Tourné') : caveFam(lot.id).ranks[lot.rank] + (lot.q ? ` · ${QUALITY[lot.q].name}` : '');
 // 1.6.3 : un lot peut être une bière (id 'beer', sa recette bid et son fût k)
 export const isBeerLot = lot => lot.id === 'beer';
 export const lotName = lot => lot.name || (isBeerLot(lot) ? (beerOf(lot.bid) || { name: 'Bière' }).name : ITEMS[lot.id].name);
 export const lotIcon = lot => (isBeerLot(lot) ? ['ui', 'beer'] : ['item', lot.id]);
 const baseUnit = lot => (isBeerLot(lot) ? beerValue(lot.bid) * (BARRELS[lot.k] || BARRELS.oak).mult : ITEMS[lot.id].sell);
-export const lotUnit = lot => Math.round(baseUnit(lot) * CAVE_MULT[lot.rank] * (vintageOf(lot) ? vintageOf(lot).mult : 1) * (lot.bad ? CAVE_TURNED : 1));
+export const lotUnit = lot =>
+    Math.round(baseUnit(lot) * CAVE_MULT[lot.rank] * QUALITY[lot.q || 0].mult * (vintageOf(lot) ? vintageOf(lot).mult : 1) * (lot.bad ? CAVE_TURNED : 1));
 // la taille des lots grandit avec les étagères : 8, 12, 16 puis 20
 export const caveLotMax = () => CAVE_LOT_MAX + CAVE_LOT_GROW * Math.min(3, Math.floor(state.cave.shelves / 2));
 export const lotValue = lot => lotUnit(lot) * lot.n;
@@ -191,7 +194,7 @@ function famBonus(lot) {
     if ((f === 'wine' || f === 'cider' || f === 'beer') && state.cave.gear.oldBarrel) b += 0.04;
     if (lot.boost > 0) b += 0.15;
     if (state.cave.gear.vault) b += 0.05;
-    b += (lot.q || 0) * 0.04;
+    b += Math.min(4, lot.q || 0) * 0.04;
     if (vintageOf(lot)) b += vintageOf(lot).good;
     return b;
 }
@@ -319,21 +322,28 @@ export function putBeerInCave(slot, bid, n, k, at) {
     return true;
 }
 
+// la qualité qu'aurait un lot de n unités : le plus haut rang dont le stock couvre tout le lot
+export function putQuality(id, n) {
+    const qq = state.quality[id];
+    if (!qq || !(n > 0)) return 0;
+    for (const [r, f] of [
+        [4, 'd'],
+        [3, 'p'],
+        [2, 'g'],
+        [1, 's'],
+    ])
+        if ((qq[f] || 0) >= n) return r;
+    return 0;
+}
+
 export function putInCave(slot, id, n, at) {
     const c = state.cave;
     n = Math.max(1, Math.min(n, caveLotMax()));
     if (!id || id === 'beer' || c.slots[slot] || !(state.inventory[id] >= n)) return false;
     c.seen[id] = true;
     // les produits de qualité partent en premier : un lot tout en or (ou en argent) vieillit mieux
-    const qq = state.quality[id];
-    let lq = 0;
-    if (qq && qq.g >= n) {
-        qq.g -= n;
-        lq = 2;
-    } else if (qq && qq.s >= n) {
-        qq.s -= n;
-        lq = 1;
-    }
+    const lq = putQuality(id, n);
+    if (lq) state.quality[id][QX.keys[lq]] -= n;
     state.inventory[id] -= n;
     const t = now();
     c.slots[slot] = { uid: caveUid(), id, n, rank: 0, bad: false, next: t + caveStep(id), care: t, boost: 0, put: t, q: lq };
@@ -378,6 +388,7 @@ export function takeOut(i, at) {
     if (!lot) return false;
     c.slots[i] = null;
     const kept = { uid: lot.uid, id: lot.id, n: lot.n, rank: lot.rank, bad: lot.bad };
+    if (lot.q) kept.q = lot.q;
     if (lot.vy) Object.assign(kept, { vy: lot.vy, vq: lot.vq });
     if (lot.name) kept.name = lot.name;
     if (lot.ls) kept.ls = lot.ls;

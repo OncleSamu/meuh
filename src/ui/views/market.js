@@ -340,7 +340,14 @@ function goodsGrid() {
                 all = G.sellBatch(k, n - keep, false),
                 one = G.sellBatch(k, 1, false);
             const trend = f < 0.98 ? `<span class="trend">−${Math.round((1 - f) * 100)} %</span>` : '';
-            const qs = [q.g ? `<span class="qchip">${qStar(2)}${q.g}</span>` : '', q.s ? `<span class="qchip">${qStar(1)}${q.s}</span>` : ''].join('');
+            const qs = [
+                [4, 'd'],
+                [3, 'p'],
+                [2, 'g'],
+                [1, 's'],
+            ]
+                .map(([r, f]) => (q[f] ? `<span class="qchip">${qStar(r)}${q[f]}</span>` : ''))
+                .join('');
             return `<div class="goods${k === hot ? ' hot' : ''}" data-anchor="goods:${k}">
                 ${k === hot ? '<span class="hot-tag">+50 %</span>' : ''}
                 <span class="goods-art">${art('item', k)}</span>

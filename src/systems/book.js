@@ -214,6 +214,12 @@ export function entryInfo(key) {
             ['Fabriqués', masteryCount(e.id)],
             ['En argent', q.s],
             ['En or', q.g],
+            ...(q.p || q.d
+                ? [
+                      ['En platine', q.p || 0],
+                      ['En diamant', q.d || 0],
+                  ]
+                : []),
         ];
         const sv = masteryStars(e.id);
         info.lines.push(['Maîtrise', sv ? `${MASTERY_NAMES[sv - 1]}${masteryExtra(e.id) ? ` · rang ${extraName(e.id)}` : ''}` : 'pas encore']);

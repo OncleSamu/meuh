@@ -98,7 +98,7 @@ export const STAR_TIER = [0, 1, 2];
 // Un client paie plus que le marché, un peu plus encore avec une bonne note et avec l'amitié
 export const CLIENT = {
     premium: 1.2,
-    star: [1, 1.1, 1.25],
+    star: [1, 1.1, 1.25, 1.4, 1.6],
     heart: 0.03,
     patience: 150, // secondes, comptées seulement quand le comptoir est ouvert à l'écran
     daily: lvl => 8 + 4 * lvl, // clients servis par jour au plus

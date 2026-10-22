@@ -12,7 +12,7 @@ import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
 import { projectDone, storyOk } from './story.js';
 import { collect, record } from './book.js';
-import { addQuality } from './farm.js';
+import { addQuality, ascend } from './farm.js';
 import { eventProgress } from './events.js';
 import { tip } from './tips.js';
 import { takeVarSeed, harvestVariety, varExtra, varGrowth } from './genetics.js';
@@ -127,9 +127,9 @@ export function harvestIsland(k, at, quiet) {
     state.stats.harvested += qty;
     state.stats.islandHarvest = (state.stats.islandHarvest || 0) + qty;
     addMastery(d.id, qty);
-    const q = rollIslandQuality();
+    const q = ascend(d.id, rollIslandQuality());
     if (q) addQuality(d.id, q, qty);
-    if (q === 2) {
+    if (q >= 2) {
         state.stats.goldQ += qty;
         collect('g_' + d.id);
     }

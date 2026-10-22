@@ -3,6 +3,7 @@ import { state } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { MACHINES, RECIPES } from '../../data/machines.js';
+import { QUALITY } from '../../data/farm.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, byId } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
@@ -93,8 +94,8 @@ defineSheet('machine', {
                     )
                     .join('');
                 const pv = ok && state.genetics && state.genetics.bestFirst ? G.previewBatch(r.id) : null;
-                const qb = pv && pv.q ? `<span class="rt-q" title="${pv.q === 2 ? 'Sortira en or' : 'Sortira en argent'}">${qStar(pv.q)}</span>` : '';
-                const qtxt = pv && pv.q ? `<small class="rt-qtxt">${pv.q === 2 ? 'sortira en or' : 'sortira en argent'}</small>` : '';
+                const qb = pv && pv.q ? `<span class="rt-q" title="Sortira en ${QUALITY[pv.q].name}">${qStar(pv.q)}</span>` : '';
+                const qtxt = pv && pv.q ? `<small class="rt-qtxt">sortira en ${QUALITY[pv.q].name}</small>` : '';
                 const price = it.sell ? `${fmt(G.sellPrice(r.id))}${ico(['ui', 'coin'])}` : `${r.outQty} sacs`;
                 return `<button class="rtile${open ? (ok ? ' ok' : ' short') : ' locked'}${wanted.has(r.id) ? ' wanted' : ''}${o.focus === r.id ? ' focus' : ''}" data-act="queue" data-i="${i}" data-id="${r.id}" data-anchor="recipe:${r.id}">
                     <span class="rt-art">${art('item', r.id)}${r.outQty ? `<em>×${r.outQty}</em>` : ''}${teacherBadge(r)}${qb}</span>

@@ -10,7 +10,7 @@ import { questPool, trainOpen } from './orders.js';
 import { feteEnd } from './home.js';
 import { dayInSeason, seasonOfDay, season } from './world.js';
 import { tip } from './tips.js';
-import { clampQuality } from './farm.js';
+import { clampQuality, qCount } from './farm.js';
 import { earn, addXp } from './player.js';
 import { addPhoto } from './style.js';
 
@@ -95,7 +95,8 @@ export const goalIcon = x =>
 
 // on peut apporter quelque chose pour cet objectif
 export const goalCanGive = x =>
-    x.prog < x.target && ((x.type === 'deliver' && state.inventory[x.item] > 0) || (x.type === 'gold' && Object.values(state.quality).some(q => q.g > 0)));
+    x.prog < x.target &&
+    ((x.type === 'deliver' && state.inventory[x.item] > 0) || (x.type === 'gold' && Object.values(state.quality).some(q => qCount(q, 2) > 0)));
 
 export const goalReward = () => ({ coins: Math.round((150 * (1 + scaleLvl() * 0.4)) / 10) * 10, xp: 40 + scaleLvl() * 10 });
 
@@ -162,11 +163,12 @@ export function contributeGoal(k, at) {
     } else if (x.type === 'gold') {
         for (const id of Object.keys(state.quality)) {
             clampQuality(id);
-            while (state.quality[id].g > 0 && given < x.target - x.prog) {
-                state.quality[id].g--;
-                state.inventory[id]--;
-                given++;
-            }
+            for (const f of ['g', 'p', 'd'])
+                while (state.quality[id][f] > 0 && given < x.target - x.prog) {
+                    state.quality[id][f]--;
+                    state.inventory[id]--;
+                    given++;
+                }
         }
     }
     if (!given) {
