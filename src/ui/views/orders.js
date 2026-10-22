@@ -8,11 +8,12 @@ import { PLANT_TRAITS } from '../../data/genetics.js';
 import { blocks, actions, esc } from '../dom.js';
 import { ITEMS } from '../../data/items.js';
 import { ico, art, SPR } from '../icons.js';
-import { btn, bar, timer, section, hint } from '../kit.js';
+import { btn, bar, timer, hint } from '../kit.js';
 import { defineView } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { itemLine, rewardHtml } from './common.js';
 import { confirmTap } from '../confirm.js';
+import { foldCard, toggleFold } from '../fold.js';
 import { defiCard } from './defis.js';
 import { rareCard, holidayCard, contractCard, farmSeasonCard, neighborsCard } from './village.js';
 
@@ -50,6 +51,15 @@ function eventCard() {
 }
 
 // ---------------- le tableau des commandes ----------------
+// 1.27.1 : les commandes des villageois, repliables comme l'Agenda
+function boardCard() {
+    G.ensureQuests();
+    const open = state.quests.filter(q => G.isOpen(q)),
+        ready = open.filter(q => G.checkQuestReady(q)).length;
+    const sum = ready ? `${ready} prête${ready > 1 ? 's' : ''} sur ${open.length}` : `${open.length} commande${open.length > 1 ? 's' : ''} · aucune prête`;
+    return foldCard('board', ['ui', 'scroll'], 'Villageois', sum, board(), ready > 0);
+}
+
 function board() {
     G.ensureQuests();
     const qs = state.quests;
@@ -274,8 +284,7 @@ function renderOrders(el) {
         ['event', eventCard()],
         ['express', express()],
         ['chef', chefCard()],
-        ['title', section('Tableau des commandes')],
-        ['board', board()],
+        ['board', boardCard()],
         ['train', train()],
         ['cargo', cargoCard()],
         ['armand', armandCard()],
@@ -299,6 +308,7 @@ export function setupOrders() {
         pin: (el, d) => G.togglePin(+d.i),
         express: el => G.deliverExpress(el),
         loadHold: (el, d) => G.loadHold(+d.i, el),
+        foldToggle: (el, d) => toggleFold(d.id),
         agendaToggle: () => {
             try {
                 localStorage.setItem('meuhAgenda', agendaOpen() ? '0' : '1');

@@ -169,3 +169,21 @@
     height: 14px;
     vertical-align: -2px;
 }
+/* 1.27.1 : cartes repliables de Village | Commandes */
+.fold-card .fold-body {
+    margin: 6px 0 4px;
+}
+.fold-card .fold-body .order-board {
+    margin: 0;
+}
+.fold-card .fold-body .neighbors-card {
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+}
+.fold-card.ready .agenda-sum {
+    opacity: 1;
+    font-weight: 800;
+    color: #3f8f2e;
+}

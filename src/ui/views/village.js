@@ -10,6 +10,7 @@ import { VILLAGERS, PROJECTS, CHAPTERS, STORIES, RIVALS, NEIGHBOR_LVL } from '..
 import { HOLIDAYS, GAME_MIN_PER_SEC } from '../../data/world.js';
 import { RARE_EVENTS } from '../../data/surprises.js';
 import { CONTEST_LVL, CONTRACT_LVL, NMARKET } from '../../data/commerce.js';
+import { foldCard } from '../fold.js';
 import { now } from '../../core/clock.js';
 import { FARM_SEASON_TIERS } from '../../data/port.js';
 import { STORY_MAPS } from '../../data/meta.js';
@@ -238,7 +239,14 @@ export function neighborsCard() {
             locked: true,
         });
     G.ensureNeighbors();
-    return `<div class="card neighbors-card"><div class="card-title">Fermes voisines</div>
+    const ready = G.neighborsReady(),
+        special = G.specialReady();
+    const sum = special ? 'commande spéciale prête' : ready ? `${ready} voisin${ready > 1 ? 's' : ''} à aider` : 'rien à livrer';
+    return foldCard('neighbors', ['ui', 'heart'], 'Fermes voisines', sum, neighborsBody(), ready > 0 || special);
+}
+
+function neighborsBody() {
+    return `<div class="neighbors-card">
         ${specialBlock()}
         <p class="card-sub">Vos rivaux du concours sont aussi vos voisins. Aidez-les : ils paient bien, et leur amitié rapporte des cadeaux.</p>
         ${RIVALS.map((r, k) => {
