@@ -9,7 +9,7 @@ import { DECOS } from '../../data/farm.js';
 import { VILLAGERS, PROJECTS, CHAPTERS, STORIES, RIVALS, NEIGHBOR_LVL } from '../../data/village.js';
 import { HOLIDAYS, GAME_MIN_PER_SEC } from '../../data/world.js';
 import { RARE_EVENTS } from '../../data/surprises.js';
-import { CONTEST_LVL, CONTRACT_LVL } from '../../data/commerce.js';
+import { CONTEST_LVL, CONTRACT_LVL, NMARKET } from '../../data/commerce.js';
 import { now } from '../../core/clock.js';
 import { FARM_SEASON_TIERS } from '../../data/port.js';
 import { STORY_MAPS } from '../../data/meta.js';
@@ -233,7 +233,7 @@ export function neighborsCard() {
             const ok = q && G.hasAll(q.items);
             // en-tête (portrait, nom, cœurs), puis la demande sur toute la largeur, puis la récompense et le bouton
             return `<div class="neighbor"><div class="nb-head"><div class="avatar sm">${art('villager', r.avatar)}</div>
-                <div class="card-main"><div class="card-title">${r.owner} <small>· ${r.name}</small></div>${hearts(n.hearts)}</div></div>
+                <div class="card-main"><div class="card-title">${r.owner} <small>· ${r.name}</small></div><div class="card-sub">${NMARKET.specs[k]}</div>${hearts(n.hearts)}</div></div>
                 ${
                     q
                         ? `<div class="olines">${q.items.map(x => itemLine(x)).join('')}</div><div class="nb-foot"><div class="card-sub">${rewardHtml(q.coins, G.neighborXp(q), q.mats)}<br>repart dans ${timer(q.until)}</div>${btn('Aider', { act: 'helpNeighbor', data: { k }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}</div>`

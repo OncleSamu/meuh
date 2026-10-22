@@ -1090,7 +1090,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les fermes voisines (niveau 6)',
-                t: 'Elles passent par l’onglet Village › Commandes pour quelques heures. Les aider fait monter leur amitié (cinq paliers) et vaut des cadeaux.',
+                t: 'Elles passent par l’onglet Village › Commandes pour quelques heures. Chacune demande un plat de sa spécialité : Hortense des légumes et des fruits (soupes, conserves, jus, salades), Bastien du lait, des œufs, de la laine ou du miel (fromages, glaces, vêtements), Yvette du poisson ou de la viande, Firmin de la farine, de l’huile, du sucre ou du tissu (pains, pâtes, gâteaux, bonbons). Au début, avant d’avoir les ateliers, elles se contentent de produits bruts. Les aider fait monter leur amitié (cinq paliers) et vaut des cadeaux ; leur marché (Marché › Acheter) s’améliore avec l’amitié.',
             },
         ],
         see: ['contest', 'events', 'orders'],

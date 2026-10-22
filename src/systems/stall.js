@@ -17,7 +17,8 @@ import { inBarn, giveRare } from './barn.js';
 import { clampQuality } from './farm.js';
 import { eventProgress } from './events.js';
 import { challengeOn } from './prestige.js';
-import { isOpen, pickItems, qtyFor, hasAll, payItems } from './orders.js';
+import { isOpen, qtyFor, hasAll, payItems } from './orders.js';
+import { neighborWant } from './neighbordish.js';
 import { tip } from './tips.js';
 
 // ---------------- l'étal ----------------
@@ -171,9 +172,9 @@ export function neighborTick() {
             changed = true;
         }
         if (!n.req && t >= n.next) {
-            const its = pickItems(1);
-            if (!its.length) return;
-            const it = its[0];
+            const it = neighborWant(k, n.last);
+            if (!it) return;
+            n.last = it.id;
             const qty = qtyFor(it, (40 + scaleLvl() * 25) * (0.7 + Math.random() * 0.6), 15);
             const value = it.sell * qty;
             n.req = {

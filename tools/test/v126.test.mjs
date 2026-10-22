@@ -141,3 +141,87 @@ test('1.26 : la sauvegarde garde le marché', () => {
     G.loadGame();
     assert.equal(state.nmarket.asks.length, 1);
 });
+
+// ---------------- 1.26.3 : les demandes des voisins sont des plats de leur spécialité ----------------
+import { RECIPES as RCP, MACHINES } from '../../src/data/machines.js';
+import { PROJECTS } from '../../src/data/village.js';
+import { VILLAGERS } from '../../src/data/village.js';
+
+const fullFarm = () => {
+    farm(50);
+    for (const m of Object.keys(MACHINES)) if (!state.machines.some(x => x.type === m)) state.machines.push(G.newMachine(m));
+    for (const p of Object.values(PROJECTS)) state.projects[p.id] = { done: true };
+    for (const v of Object.keys(VILLAGERS)) state.villagers[v] = { ...(state.villagers[v] || {}), hearts: 10 };
+    state.barn.lvl = 30;
+};
+
+test('1.26.3 : chaque plat a un voisin (sauf fêtes, outils, bijoux, selles…)', () => {
+    const none = Object.keys(RCP).filter(id => G.dishOwner(id) < 0);
+    for (const id of none) {
+        const r = RCP[id];
+        assert.ok(
+            r.fete || r.holiday || ['forge', 'sawmill', 'jewelry', 'saddlery', 'pottery', 'counter'].includes(r.machine),
+            `${id} (${r.machine}) sans voisin`,
+        );
+    }
+    const by = [0, 1, 2, 3].map(k => Object.keys(RCP).filter(id => G.dishOwner(id) === k));
+    for (const l of by) assert.ok(l.length >= 40, 'chaque voisin a de quoi demander');
+});
+
+test('1.26.3 : les plats d’Yvette contiennent du poisson ou de la viande', () => {
+    const swallow = new Set(['sardine', 'mackerel', 'shrimp', 'seabass', 'lobster']);
+    const meats = new Set(
+        Object.values(ANIMALS)
+            .map(a => a.extra)
+            .filter(Boolean),
+    );
+    const deep = (id, d = 0) => (RCP[id] && d < 6 ? Object.keys(RCP[id].ing).flatMap(g => deep(g, d + 1)) : [id]);
+    for (const id of Object.keys(RCP).filter(i => G.dishOwner(i) === 2))
+        assert.ok(
+            deep(id).some(g => ITEMS[g].type === 'fish' || swallow.has(g) || meats.has(g)),
+            id,
+        );
+});
+
+test('1.26.3 : à haut niveau, une voisine demande un de ses plats, jamais un plat de fête', () => {
+    fullFarm();
+    const pool = new Set(G.questPool().map(i => i.id));
+    for (let k = 0; k < 4; k++) {
+        let last;
+        const seen = new Set();
+        for (let n = 0; n < 60; n++) {
+            const it = G.neighborWant(k, last);
+            assert.ok(pool.has(it.id));
+            assert.equal(G.dishOwner(it.id), k, `${it.id} pour ${k}`);
+            assert.notEqual(it.id, last, 'jamais deux fois de suite le même');
+            seen.add((last = it.id));
+        }
+        assert.ok(seen.size >= 12, `voisin ${k} : ${seen.size} plats différents en 60 demandes`);
+    }
+});
+
+test('1.26.3 : les demandes de la ferme (tick) donnent un plat du voisin', () => {
+    fullFarm();
+    state.neighbors = {};
+    G.ensureNeighbors();
+    G.neighborTick();
+    const reqs = [0, 1, 2, 3].map(k => state.neighbors[k].req);
+    for (const [k, r] of reqs.entries()) {
+        if (!r) continue;
+        assert.equal(G.dishOwner(r.items[0].id), k);
+        assert.ok(r.coins > 0 && r.items[0].qty >= 1);
+    }
+});
+
+test('1.26.3 : au niveau 6, sans atelier de cuisine, on demande ce que la ferme produit', () => {
+    farm(6);
+    state.neighbors = {};
+    G.ensureNeighbors();
+    for (let k = 0; k < 4; k++) {
+        const it = G.neighborWant(k);
+        assert.ok(it, `voisin ${k}`);
+    }
+    // Hortense (légumes et fruits) : une culture ou un plat de légumes
+    const h = G.neighborWant(0);
+    assert.ok(h.type === 'crop' || h.type === 'tree' || G.dishOwner(h.id) === 0);
+});
