@@ -655,7 +655,10 @@ export const GUIDE_PAGES = [
                 h: 'Les recettes',
                 t: 'Chaque ingrédient (légume, fruit, produit animal, poisson) sert à au moins 3 recettes. Une recette se débloque avec le niveau, un villageois qui vous l’apprend (amitié) ou une fête.',
             },
-            { h: 'Qualité', t: 'Avec de bons ingrédients (argent, or, belles variétés), un plat sort en argent ou en or, et se vend plus cher.' },
+            {
+                h: 'Qualité',
+                t: 'Avec de bons ingrédients (argent, or, belles variétés), un plat sort en argent ou en or, et se vend plus cher. Dans la grange, touchez un produit pour voir combien sont normaux, en argent ou en or. À l’atelier, une étoile sur la recette annonce la qualité que donnerait le lot avec votre stock.',
+            },
             {
                 h: 'Chaque machine, un métier',
                 t: 'Moulin, four, cuisine, huilerie, forge, pressoir, fumoir, laiterie, poterie, confiserie, glacier, joaillerie, saloir, alambic… Certaines viennent d’un chantier du village, d’autres de l’île ou de l’alpage.',

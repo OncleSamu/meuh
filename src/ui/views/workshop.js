@@ -5,7 +5,7 @@ import { ITEMS } from '../../data/items.js';
 import { MACHINES, RECIPES } from '../../data/machines.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, byId } from '../dom.js';
-import { ico, art } from '../icons.js';
+import { ico, art, qStar } from '../icons.js';
 import { btn, bar, hint, empty, timer, toggle } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
 import { defineSheet } from '../sheets.js';
@@ -92,11 +92,14 @@ defineSheet('machine', {
                             `<span class="ing${state.inventory[k] >= n ? ' ok' : ''}">${ico(['item', k])}${Math.min(state.inventory[k], n)}/${n}</span>`,
                     )
                     .join('');
+                const pv = ok && state.genetics && state.genetics.bestFirst ? G.previewBatch(r.id) : null;
+                const qb = pv && pv.q ? `<span class="rt-q" title="${pv.q === 2 ? 'Sortira en or' : 'Sortira en argent'}">${qStar(pv.q)}</span>` : '';
+                const qtxt = pv && pv.q ? `<small class="rt-qtxt">${pv.q === 2 ? 'sortira en or' : 'sortira en argent'}</small>` : '';
                 const price = it.sell ? `${fmt(G.sellPrice(r.id))}${ico(['ui', 'coin'])}` : `${r.outQty} sacs`;
                 return `<button class="rtile${open ? (ok ? ' ok' : ' short') : ' locked'}${wanted.has(r.id) ? ' wanted' : ''}${o.focus === r.id ? ' focus' : ''}" data-act="queue" data-i="${i}" data-id="${r.id}" data-anchor="recipe:${r.id}">
-                    <span class="rt-art">${art('item', r.id)}${r.outQty ? `<em>×${r.outQty}</em>` : ''}${teacherBadge(r)}</span>
+                    <span class="rt-art">${art('item', r.id)}${r.outQty ? `<em>×${r.outQty}</em>` : ''}${teacherBadge(r)}${qb}</span>
                     <b>${it.name}</b>
-                    ${open ? `<span class="ings">${ings}</span><small>${ico(['ui', 'clock'])}${formatDuration(G.recipeTime(r.id))} · ${price}</small>` : `<small class="lock-txt">${ico(['ui', 'lock'])}${G.recipeLockText(r)}</small>`}
+                    ${open ? `<span class="ings">${ings}</span>${qtxt}<small>${ico(['ui', 'clock'])}${formatDuration(G.recipeTime(r.id))} · ${price}</small>` : `<small class="lock-txt">${ico(['ui', 'lock'])}${G.recipeLockText(r)}</small>`}
                 </button>`;
             })
             .join('');

@@ -7,7 +7,7 @@ import { RARE } from '../../data/commerce.js';
 import { MAX_LEVEL } from '../../data/progress.js';
 import * as G from '../../systems/index.js';
 import { actions } from '../dom.js';
-import { ico, art } from '../icons.js';
+import { ico, art, qStar } from '../icons.js';
 import { btn, navRow, lines, line, bar, dot } from '../kit.js';
 import { go } from '../app.js';
 import { toast } from '../../core/bus.js';
@@ -115,9 +115,17 @@ defineSheet('barn', {
                 keep = G.reservedQty(sel),
                 surplus = G.isLocked(sel) ? 0 : G.sellableQty(sel);
             const r = surplus ? G.sellBatch(sel, surplus, false) : { gain: 0 };
+            const qq = state.quality[sel] || { s: 0, g: 0 },
+                nq = Math.min(state.inventory[sel], qq.g + qq.s),
+                ng = Math.min(nq, qq.g),
+                ns = nq - ng,
+                nplain = state.inventory[sel] - nq;
+            const qrow = nq
+                ? `<div class="barn-q"><span class="qchip big">&nbsp;×${nplain} ${nplain > 1 ? 'normaux' : 'normal'}</span>${ns ? `<span class="qchip big">${qStar(1)}${ns} argent</span>` : ''}${ng ? `<span class="qchip big">${qStar(2)}${ng} or</span>` : ''}</div>`
+                : '';
             item = `<div class="card barn-item"><div class="card-head">${ico(['item', sel], 'ico big')}<div class="card-main"><div class="card-title">${it.name} ×${state.inventory[sel]}</div>
                 <div class="card-sub">${keep ? `${keep} gardé${keep > 1 ? 's' : ''} pour les commandes · ` : ''}${G.isLocked(sel) ? 'verrouillé : jamais vendu' : `surplus : ${surplus}`}</div></div></div>
-                <div class="row-btns">${btn(G.isLocked(sel) ? 'Déverrouiller' : 'Verrouiller', { act: 'lock', data: { id: sel }, size: 'sm', icon: ['ui', 'lock'] })}
+                ${qrow}<div class="row-btns">${btn(G.isLocked(sel) ? 'Déverrouiller' : 'Verrouiller', { act: 'lock', data: { id: sel }, size: 'sm', icon: ['ui', 'lock'] })}
                 ${surplus && !G.challengeOn('noMarket') ? btn(`Grossiste +${fmt(r.gain)}${COIN()}`, { act: 'barnSell', data: { id: sel }, kind: 'gold', size: 'sm' }) : ''}
                 ${surplus && it.sell ? btn('À l’étal', { act: 'barnStall', data: { id: sel }, kind: 'green', size: 'sm' }) : ''}
                 ${btn('Produire', { act: 'produce', data: { id: sel }, size: 'sm' })}</div></div>`;

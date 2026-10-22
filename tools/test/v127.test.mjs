@@ -212,3 +212,18 @@ test('1.27 : le marché de nuit des voisins reste ouvert au niveau 12 (aucun eff
     assert.equal(NMARKET.lvl, 12);
     assert.ok(G.nmarketOpen());
 });
+
+test('aperçu de la qualité d’un lot', async () => {
+    const G = await import('../../src/systems/index.js');
+    const { state } = await import('../../src/core/state.js');
+    state.genetics.bestFirst = true;
+    state.inventory.wheat = 50;
+    state.quality.wheat = { s: 0, g: 0 };
+    assert.equal(G.previewBatch('flour').q, 0);
+    state.quality.wheat = { s: 0, g: 50 };
+    const p = G.previewBatch('flour');
+    assert.ok(p.q >= 1 && p.gold > 0);
+    assert.equal(state.inventory.wheat, 50, 'rien n’est consommé');
+    state.genetics.bestFirst = false;
+    assert.equal(G.previewBatch('flour').q, 0);
+});

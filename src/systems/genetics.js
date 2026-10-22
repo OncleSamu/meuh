@@ -805,6 +805,45 @@ export function takeIngredients(rid) {
     return score >= GX.goldScore ? 2 : score >= GX.silverScore ? 1 : 0;
 }
 
+// ce que donnerait un lot lancé maintenant, sans rien prendre : { q, gold, silver } (unités d'ingrédients de qualité utilisées)
+export function previewBatch(rid) {
+    const r = RECIPES[rid];
+    const G = state.genetics;
+    const out = { q: 0, gold: 0, silver: 0 };
+    if (!r || !G || !G.bestFirst) return out;
+    const taste = recipeTaste(rid);
+    let points = 0,
+        units = 0;
+    for (const [k, n] of Object.entries(r.ing)) {
+        units += n;
+        let left = n;
+        if (FLAVORS[k]) {
+            const list = Object.keys(G.stock)
+                .filter(vid => G.vars[vid] && G.vars[vid].base === k && G.stock[vid] > 0)
+                .map(vid => [G.stock[vid], Math.min(3, flavorGain(G.vars[vid].g, taste.length ? taste : FLAVOR_IDS))])
+                .sort((x, y) => y[1] - x[1]);
+            for (const [have, gain] of list) {
+                const d = Math.min(left, have);
+                left -= d;
+                points += d * gain;
+            }
+        }
+        const q = state.quality[k];
+        if (left > 0 && q) {
+            const g = Math.min(left, q.g);
+            left -= g;
+            points += g * 2;
+            out.gold += g;
+            const s2 = Math.min(left, q.s);
+            points += s2;
+            out.silver += s2;
+        }
+    }
+    const score = units ? points / units : 0;
+    out.q = score >= GX.goldScore ? 2 : score >= GX.silverScore ? 1 : 0;
+    return out;
+}
+
 // ---------------- les bêtes ----------------
 const animalBase = (a, k) => (EXTRA_ANIMAL.includes(k) ? extraBase(k, a.type) : (ANIMAL_BASE[a.type] || [])[CORE_ANIMAL.indexOf(k)] || 2);
 export const animalTrait = (a, k) => (a && a.g && a.g.t[k] ? traitOf(a.g, k) : animalBase(a, k));

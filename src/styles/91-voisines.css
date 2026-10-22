@@ -187,3 +187,39 @@
     font-weight: 800;
     color: #3f8f2e;
 }
+
+/* qualité visible : grange et atelier (1.27.2) */
+.barn-q {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin: 6px 0;
+}
+
+.qchip.big {
+    font-size: 0.85rem;
+    padding: 1px 8px 1px 4px;
+    gap: 3px;
+}
+
+.qchip.big .qstar {
+    width: 18px;
+    height: 18px;
+}
+
+.rt-q {
+    position: absolute;
+    left: -8px;
+    top: -6px;
+}
+
+.rt-q .qstar {
+    width: 20px;
+    height: 20px;
+}
+
+.rtile .rt-qtxt {
+    color: #8a5a00;
+    font-weight: 800;
+}
