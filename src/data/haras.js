@@ -28,7 +28,7 @@ export const FORM = { max: 5, every: 30 * 60 * 1000 };
 // 1.24.3 : un peu plus rapide (3 + 5 × score au lieu de 2 + 4 × score)
 export const TRAIN = { cost: 1, min: 3, span: 5, easyScore: 0.35, slow: 0.6, floor: 0.4, love: 0.02 };
 // la ration : une carotte, une pomme ou de l'orge ; +10 % de gain pendant une heure
-export const RATION = { items: ['carrot', 'apple', 'barley'], hours: 1, bonus: 0.1 };
+export const RATION = { items: ['carrot', 'apple', 'barley', 'oat'], hours: 1, bonus: 0.1 };
 // la brosse : un cœur de plus et parfois une pastille de forme ; 1.24.3 : une fois toutes les 2 heures réelles
 // (la journée du jeu dure 5 minutes : brosser « une fois par jour » rendait trop de forme)
 export const BRUSH = { form: 0.25, every: 2 * 3600 * 1000 };

@@ -68,6 +68,14 @@ export const ASSOCS = [
     A('pdtCourges', 'Pomme de terre et courges', 'potato', ['cucumber', 'pumpkin'], 'mn', { why: 'Elles attirent les mêmes maladies.' }),
     A('aspergeAlliacees', 'Asperge et alliacées', 'asparagus', ['garlic', 'onion'], 'mp', { why: 'L’ail et l’oignon freinent l’asperge.' }),
     A('haricotBetterave', 'Haricot et betterave', 'greenBean', 'beet', 'mp', { why: 'Ils se disputent la même terre.' }),
+    // 1.30 : les nouvelles cultures
+    A('favePdt', 'Fève et pomme de terre', 'favaBean', 'potato', 'n', { why: 'La fève éloigne le doryphore de la pomme de terre.' }),
+    A('navetPois', 'Navet et petits pois', 'turnip', 'peas', 'p', { why: 'Le pois enrichit la terre, le navet n’en demande pas plus.' }),
+    A('brocoliBetterave', 'Brocoli et betterave', 'broccoli', 'beet', 'q', { why: 'La betterave ne lui prend rien et couvre le sol.' }),
+    A('echaloteCarotte', 'Échalote et carotte', 'shallot', 'carrot', 'n', { why: 'L’échalote chasse la mouche de la carotte.' }),
+    A('butternutMais', 'Butternut et maïs', 'butternut', 'corn', 'r', { why: 'Le maïs abrite la courge, qui garde la terre fraîche.' }),
+    A('chanvre', 'Le chanvre, ami de tous', 'hemp', '*', 'p', { to: 'b', why: 'Ses racines profondes ameublissent la terre de ses voisines.' }),
+    A('faveEchalote', 'Fève et échalote', 'favaBean', 'shallot', 'mp', { why: 'L’échalote freine la fève.' }),
 ];
 export const ASSOC = Object.fromEntries(ASSOCS.map(a => [a.id, a]));
 export const isBad = a => a.fx[0] === 'm';

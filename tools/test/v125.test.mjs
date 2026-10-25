@@ -23,8 +23,8 @@ const plant = (i, id) => {
     state.grid[i].isWatered = true;
 };
 
-test('1.25 : 42 associations bien formées, cultures existantes', () => {
-    assert.equal(ASSOCS.length, 42);
+test('1.25 : 49 associations bien formées, cultures existantes', () => {
+    assert.equal(ASSOCS.length, 49);
     for (const a of ASSOCS) {
         for (const id of [...a.a, ...(a.b === '*' ? [] : a.b), ...(a.c || [])]) assert.ok(ITEMS[id] && ITEMS[id].type === 'crop', `${a.id} : ${id}`);
         assert.ok(G.assocLvl(a) >= COMP_LVL && G.assocLvl(a) <= 50, a.id);

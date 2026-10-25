@@ -260,13 +260,14 @@ export const GUIDE_PAGES = [
                     'Une parcelle compte ses voisines directes : à gauche, à droite, dessus et dessous (le champ a 6 colonnes, la serre 4). Une bonne association donne une feuille verte entre les deux parcelles, une mauvaise une feuille fanée.',
                     'Effets d’une association : pousse +15 %, qualité +12 (plus de récoltes en argent et en or), récolte +10 % (chance d’une unité de plus), ou moitié moins de pucerons et de corbeaux. Les malus : pousse −10 %, qualité −8, nuisibles ×1,5. Par parcelle, c’est plafonné : pousse +30 %, qualité +20, récolte +25 %.',
                     'Les trois sœurs : maïs, haricot vert et citrouille réunis autour d’une parcelle (elle et ses voisines) donnent +25 % de récolte et +6 de qualité ; un petit insigne s’affiche dans le coin.',
+                    'Le chanvre profite lui aussi à toutes ses voisines (elles poussent plus vite) ; la fève s’entend avec la pomme de terre, mais pas avec l’échalote.',
                     'La lavande et le sarrasin profitent à toutes leurs voisines ; une légumineuse (pois, haricot, lentilles, soja) fait pousser plus vite la céréale voisine (blé, maïs, orge, riz, sarrasin) : l’engrais vert.',
                 ],
             },
             {
                 h: 'Le carnet du potager',
                 b: [
-                    '42 associations (34 bonnes, 8 mauvaises), de plus en plus nombreuses avec les niveaux. Chacune se découvre la première fois qu’on récolte une parcelle qui en profite… ou qui en souffre.',
+                    '49 associations (40 bonnes, 9 mauvaises), de plus en plus nombreuses avec les niveaux. Chacune se découvre la première fois qu’on récolte une parcelle qui en profite… ou qui en souffre.',
                     'Récompenses à 5, 10, 20 et 30 associations (pièces, compost, graines de safran), et un ruban quand le carnet est complet. La carte du carnet est sous le champ.',
                 ],
             },
@@ -309,7 +310,11 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les graines',
-                t: '51 cultures hors île, chacune ouverte à son niveau (blé 1, carotte 2, tomate 4, maïs 6…). Certaines demandent un chantier (houblon, génépi) ou ne poussent qu’en serre (cacao, vanille, menthe, poivre noir, orchidée). Le safran ne se trouve que chez le marchand ambulant.',
+                t: '65 cultures hors île, chacune ouverte à son niveau (blé 1, carotte 2, tomate 4, maïs 6…). Certaines demandent un chantier (houblon, génépi) ou ne poussent qu’en serre (cacao, vanille, menthe, poivre noir, orchidée). Le safran ne se trouve que chez le marchand ambulant.',
+            },
+            {
+                h: 'Quatorze cultures de plus (1.30)',
+                t: 'Navet (niveau 8), fève (10), panais (14), échalote (17), brocoli (22), chou-fleur (24), avoine (25), chanvre (27), chicorée (28), pois chiche (29), butternut (30), mûre (33), cassis (36) et endive (37). Chacune a son sol préféré, ses saisons et ses recettes : farines, soupes, tartes, confitures, liqueurs, toile et corde de chanvre. L’avoine entre aussi dans la ration des chevaux du haras.',
             },
             {
                 h: 'Replanter vite',
@@ -651,7 +656,7 @@ export const GUIDE_PAGES = [
         icon: ['machine', 'bakery'],
         lvl: 3,
         go: 'machines/workshop',
-        intro: 'Transformer vaut mieux que vendre brut : 38 machines et près de 500 recettes.',
+        intro: 'Transformer vaut mieux que vendre brut : 40 machines et plus de 550 recettes.',
         secs: [
             {
                 h: 'Les machines',
@@ -660,6 +665,10 @@ export const GUIDE_PAGES = [
                     'Chaque machine a une file d’attente : ajoutez des lots, ils s’enchaînent. La file s’allonge avec la maison, le Chantier de la ferme et le domaine.',
                     'Le bouton Boucle relance la dernière recette tant qu’il y a les ingrédients.',
                 ],
+            },
+            {
+                h: 'La marmite',
+                t: 'Dès le niveau 8, la marmite fait mijoter soupes, veloutés, purées et gratins : soupe de navets, purée de panais, velouté de brocoli, gratin de chou-fleur, velouté de butternut. Elle décharge la cuisine et le fourneau.',
             },
             {
                 h: 'Les recettes',

@@ -818,3 +818,129 @@ Object.assign(CARNET, {
     winterBlanket: 'La couverture d’hiver sent la laine et le foin. Les jours de gel, les chevaux la portent comme un manteau de cérémonie.',
     hairBrush: 'On brosse un cheval comme on coiffe un enfant : doucement, en racontant sa journée. Il écoute mieux que beaucoup de gens.',
 });
+
+// ---------------- 1.30 : les nouvelles cultures ----------------
+Object.assign(CARNET, {
+    glazedTurnips:
+        'Un navet glacé bien brillant, c’est tout un art. Papi Lucien en mangeait six et jurait qu’il détestait ça. Il avait toujours un petit creux, ce jour-là.',
+    turnipSoup:
+        'La soupe de navets, on la servait au retour de la forêt, quand tes doigts étaient trop gelés pour tenir la cuillère. Elle te les réchauffait en cinq minutes.',
+    pickledTurnips:
+        'Les navets marinés, ça pique et ça croque. Ton père les mangeait en cachette dans la cave, avec les doigts. On l’entendait croquer d’en haut.',
+    turnipBaconTart:
+        'Une tarte aux navets, on la mange chaude, un soir d’automne, en racontant n’importe quoi. Papi Lucien y glissait un oignon de plus, « pour le caractère ».',
+    favaPuree:
+        'La fève demande de la patience : il faut l’écosser, puis la peler une deuxième fois. Ton grand-père appelait ça « le travail du dimanche », et il disparaissait toujours avant.',
+    favaGoatSalad: 'Les premières fèves, crues, avec un peu de chèvre frais. C’est le printemps dans un bol. Les suivantes, c’est déjà de la cuisine sérieuse.',
+    favaFlour:
+        'La farine de fève, c’est ma tante Berthe qui l’avait d’abord moulue, par erreur. Elle voulait des lentilles. Elle a eu du pain, et personne ne s’est plaint.',
+    favaBread:
+        'Ce pain-là est un peu verdâtre, un peu dense, et il tient au corps pendant des heures. Papi Lucien disait qu’avec une tranche, on labourait jusqu’au soir.',
+    canFavaBeans:
+        'On mettait les fèves en bocal pour l’hiver. Ton père lisait les étiquettes de mon écriture et ne comprenait jamais « fèves » : il lisait « fées ».',
+    parsnipMash:
+        'Le panais a un goût de noisette et de carotte qui aurait réfléchi. En purée, même les enfants difficiles en reprennent. Surtout si on ne leur dit pas ce que c’est.',
+    parsnipChips:
+        'Des chips de panais ! Ton grand-père les a goûtées en croyant que c’étaient des frites de salon. Il a fini le saladier et s’est plaint que ce n’était pas assez salé.',
+    parsnipCake:
+        'Un gâteau au panais, ça se prépare comme un gâteau à la carotte, avec un peu de miel en plus. Et personne ne devine ce qu’il y a dedans. C’est ça, la politesse.',
+    shallotConfit:
+        'Le confit d’échalotes, ça mijote lentement jusqu’à devenir presque une confiture. On le met sur du pain grillé avec du fromage. Ton oncle y a gagné le surnom « Monsieur Confit ».',
+    shallotTatin:
+        'Une tatin aux échalotes, c’est la tarte qui fait pleurer pendant qu’on l’épluche et sourire quand on la mange. L’un compense l’autre, comme dans la vie.',
+    shallotButter:
+        'Le beurre à l’échalote, sur une viande grillée ou une tranche de pain, c’est mon secret des jours de grande tablée. Je ne le dis à personne, sauf à toi.',
+    shallotFougasse:
+        'La fougasse aux échalotes, il faut la rompre à la main, pas la couper. C’est une règle. Ton grand-père la rompait toujours en deux parts très inégales.',
+    broccoliSoup:
+        'Le brocoli, ton père l’appelait « les petits arbres ». Il les mangeait tous pour que la forêt ne pousse pas dans son assiette. Il avait six ans. Il a toujours aimé ça.',
+    broccoliQuiche:
+        'Du brocoli et du saumon dans une quiche, c’est le mariage de la terre et de la rivière. Papi Lucien ne comprenait pas pourquoi je faisais tant de manières pour une tarte aux œufs.',
+    broccoliPasta:
+        'Des pâtes au brocoli, c’est ce que je fais quand il y a trop de choses à ranger dans le potager et pas assez de temps. Ça se prépare en un quart d’heure.',
+    cauliflowerGratin:
+        'Le gratin de chou-fleur, on le laisse dorer jusqu’à ce que le dessus craque. Ton grand-père grattait le plat avec une cuillère, sans honte, devant tout le monde.',
+    piccalilli:
+        'Le piccalilli est jaune vif, piquant, un peu moutardé, et on ne sait jamais très bien comment le servir. On le sort pour impressionner une cousine anglaise. Ça marche.',
+    cauliflowerPie:
+        'Une tourte au chou-fleur ? Ton père a froncé le nez. Puis il en a repris deux parts. Il prétend toujours que c’était pour me faire plaisir.',
+    roastedChicory:
+        'La chicorée torréfiée, c’est le café des pauvres et des malins. Pendant la disette, ma grand-mère n’en buvait pas d’autre. Elle disait que ça gardait l’esprit clair.',
+    chicoryMilk:
+        'Une chicorée au lait, très chaude, avec une petite cuillère de sucre. C’est la boisson des matins d’hiver, quand on n’ose pas sortir de la couverture.',
+    chicoryCake:
+        'Le gâteau chicorée-noisette est amer et doux à la fois, comme certains souvenirs. Ton grand-père en mangeait en regardant par la fenêtre, sans rien dire. Je savais.',
+    frisee: 'La frisée aux lardons, avec l’œuf mollet par-dessus : on pique le jaune, et c’est la sauce. Ton grand-père a inventé cette phrase. Il en était très fier.',
+    endiveHam:
+        'Les endives au jambon, c’est un plat que mes enfants redoutaient, parce que c’est un peu amer. Maintenant ils me demandent la recette. C’est ça, grandir.',
+    endiveTart: 'Une tarte fine aux endives caramélisées. Le caramel adoucit l’amertume. J’aurais bien aimé avoir ça pour certaines disputes de famille.',
+    endiveSalad:
+        'Une salade d’endives, de noix et de roquefort. Papi Lucien la mangeait avec un verre de vin blanc et affirmait que c’était « de la médecine ». Il se soignait souvent.',
+    oatFlakes:
+        'Les flocons d’avoine, il faut les laisser tremper une nuit entière. C’est pour ça que ton cousin avale les siens sans attendre, et qu’il s’en plaint ensuite.',
+    oatFlour: 'La farine d’avoine, grise et douce. Elle ne lève pas comme le blé, mais elle réchauffe le ventre. C’est suffisant pour moi.',
+    porridge:
+        'Le porridge, il faut le remuer sans arrêt, dans le même sens, sinon, dit la vieille légende, il porte malheur. Je remue toujours dans le même sens. On ne sait jamais.',
+    oatCookies:
+        'Mes cookies à l’avoine, je les cache sur l’étagère du haut. Ton père, à huit ans, a construit une tour de chaises pour les atteindre. Je l’ai laissé monter, puis je l’ai fait descendre.',
+    oatBread:
+        'Le pain d’avoine est dense, un peu sucré, parfait avec du beurre salé. Ton grand-père l’appelait « le pain du matin d’hiver ». Il en mangeait pour trois.',
+    oatGalette:
+        'Une galette d’avoine, fine et rustique, qu’on plie en quatre avec ce qu’on trouve. Papi Lucien y glissait un œuf, du fromage et, parfois, un peu de confiture. Ne le répète pas.',
+    hummus: 'Le houmous, c’est un voisin qui me l’avait fait goûter. Papi Lucien a demandé si c’était « de la crème de pois ». Le voisin a ri pendant dix minutes.',
+    falafel:
+        'Les falafels, ça se fait frire dans un grand bruit de friture. Ton père sortait de sa chambre à chaque fois, attiré par l’odeur. On n’a jamais eu besoin de sonner le dîner.',
+    chickpeaFlour:
+        'La farine de pois chiche est jaune pâle, un peu sucrée, et elle colle aux doigts. J’en ai toujours sur le tablier en fin de journée, comme une médaille.',
+    socca: 'La socca, on la cuit très chaude, on la mange tout de suite, avec les doigts, en se brûlant un peu. C’est comme ça qu’elle est la meilleure. Je me brûle volontiers.',
+    roastedChickpeas:
+        'Les pois chiches rôtis, c’est mon petit grignotage pour regarder la nuit tomber. Il y en a toujours moins dans le bol à la fin. C’est mystérieux.',
+    vegCouscous:
+        'Un couscous de légumes, avec tout ce qui traîne au fond du panier. Papi Lucien disait que c’était la meilleure idée que j’aie jamais eue. Il disait ça pour tous les plats, mais celui-ci, il le pensait.',
+    butternutSoup:
+        'Le velouté de butternut est doux, orangé, et il fait des moustaches sur les petits. On les essuie avec un coin de nappe. La nappe est toujours un peu orange chez nous.',
+    butternutGnocchi:
+        'Des gnocchis de butternut. Ça se roule, ça se coupe, ça se goûte avant même d’être cuit. Ton grand-père appelait ça de la « pâte de courge heureuse ».',
+    butternutTart:
+        'La tarte au butternut, on la fait à la place de la citrouille quand on veut quelque chose de plus fin. Papi Lucien préférait l’autre, mais il mangeait celle-ci aussi.',
+    butternutCompote:
+        'En compote, le butternut est si doux qu’on met à peine de sucre. Ton père l’appelait « la compote qui ne ment pas ». Je ne sais pas d’où il tenait ça.',
+    blackberryJam:
+        'Les mûres, on les cueille en se griffant les bras et en jurant à voix basse. La confiture qui en sort vaut toutes les égratignures. C’est le prix du bonheur.',
+    blackberryTart:
+        'Une tarte aux mûres, les doigts violets, la bouche violette, le tablier violet. On ne peut pas la manger discrètement. Papi Lucien a essayé. Il n’y est pas arrivé.',
+    blackberryIce:
+        'La glace aux mûres a un vert sombre dans les feuilles et un violet profond dans le bol. On dirait un coin de forêt qu’on aurait fait fondre.',
+    blackberryJuice:
+        'Le jus de mûre tache tout, sauf les souvenirs. Ceux-là restent d’un beau violet sur les doigts d’enfant, longtemps après la fin de l’été.',
+    blackberryLiqueur:
+        'La liqueur de mûre, on la garde pour les soirs de fête, dans un petit verre. Ton oncle disait qu’elle « réconcilie les familles ». Il la servait toujours en premier aux cousins fâchés.',
+    blackcurrantJelly:
+        'La gelée de cassis est presque noire, un peu acide, et elle se fige en un clin d’œil si on rate le moment. Il faut surveiller la casserole sans la quitter des yeux.',
+    blackcurrantSorbet:
+        'Un sorbet au cassis, très froid, très acide, très sucré. C’est ce qu’on mange pour se remettre d’un mauvais moment. Ou d’un bon, d’ailleurs.',
+    blackcurrantTart:
+        'La tarte au cassis, il faut la dorer sans la brûler. J’ai raté la première, brûlé la deuxième, et le troisième gâteau s’est mangé tout seul. Ça arrive.',
+    cassisCream:
+        'La crème de cassis, c’est la boisson du kir. Papi Lucien en mettait une larme dans le vin blanc et déclarait qu’il était devenu bourguignon. Il n’a jamais quitté la ferme.',
+    cassisPastilles:
+        'Les pâtes de fruits au cassis, on les roule dans le sucre, une par une. Ton cousin les compte avant et après. Il y en a toujours une de moins, et il a toujours une explication.',
+    hempCloth:
+        'La toile de chanvre est rude au début, puis douce à force de lavages. Ma grand-mère disait que c’était comme les gens : il faut du temps pour les adoucir.',
+    hempRope:
+        'La corde de chanvre, on la reconnaît à son odeur d’herbe sèche. Ton grand-père en avait toujours un bout dans la poche, « au cas où ». Au cas où quoi ? Il n’a jamais précisé.',
+    hempOil:
+        'L’huile de chanvre est verte, avec un goût de noisette. On l’utilise froide, sur une salade, jamais pour frire. C’est ma règle, et je ne l’explique pas.',
+    toastedHemp:
+        'Les graines de chanvre grillées sont croquantes, un peu salées, et on les avale sans compter. J’en laisse un bol près du poêle. Il se vide, comme par magie.',
+    hempBread:
+        'Le pain aux graines de chanvre est un peu sombre, très parfumé. Ton père refusait de le goûter avant d’avoir vu la croûte. Il a changé d’avis à la deuxième bouchée.',
+    hempBag:
+        'Un cabas en chanvre, solide, simple, qui ne se plaint jamais du poids des courses. Je l’emmène au marché depuis trente ans, et il tient encore. On ne peut pas en dire autant de moi.',
+    espadrilles:
+        'Des espadrilles en chanvre, légères comme des chaussons de danse. Papi Lucien en portait été comme hiver, et se plaignait des pieds froids en janvier. On ne l’a jamais convaincu.',
+    hempSoap:
+        'Le savon au chanvre est vert pâle, il sent l’herbe et le miel. Je l’offrais à la fête des mères, des pères, des cousins, des voisins, et à moi-même. Il y en a toujours eu assez.',
+    hempLead:
+        'Une longe en chanvre, souple et solide. Jules la tresse lui-même, en parlant à ses chevaux. Il prétend qu’ils comprennent. Je crois qu’il a raison.',
+});

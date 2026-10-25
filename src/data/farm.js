@@ -1,3 +1,4 @@
+import { CROPS_130 } from './v130.js';
 import { LV_DECO, LV_UPG } from './levels14.js';
 // Le champ, la serre, les sols, la qualité, les décorations, le chien, les engins et les styles.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
@@ -177,6 +178,9 @@ export const SOILS = {
         crops: ['strawberry', 'pumpkin', 'onion', 'radish', 'saffron', 'garlic', 'tea', 'blueberry', 'genepi', 'mushroom', 'leek', 'mustard', 'raspberry'],
     },
 };
+
+// 1.30 : le sol préféré des quatorze nouvelles cultures
+for (const c of CROPS_130) SOILS[c[9]].crops.push(c[0]);
 
 export const SOIL_BONUS = {
     speed: 1.25,
@@ -632,6 +636,7 @@ export const MAT = {
         crepery: { wood: 12, stone: 8 },
         saddlery: { wood: 30, stone: 20 },
         malthouse: { wood: 20, stone: 20 },
+        marmite: { wood: 10, stone: 8 },
         pastry: { wood: 10, stone: 6 },
         fishmonger: { wood: 10, stone: 8 },
         stove: { wood: 8, stone: 14 },

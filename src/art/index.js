@@ -20,6 +20,8 @@ import './items2.js';
 import './buildings2.js';
 import './plants2.js';
 import { balloon2 } from './misc2.js';
+import './v130.js';
+import './v130dishes.js';
 import './v131.js';
 import './v132.js';
 import './v133.js';

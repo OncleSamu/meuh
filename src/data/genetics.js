@@ -1,4 +1,5 @@
 // La génétique (bêta 4) : saveurs et caractères de chaque espèce, réglages du labo, de l'étable de sélection et du Salon.
+import { CROPS_130 } from './v130.js';
 
 // ---------------- les caractères ----------------
 // Chaque caractère va de 0 à 5. Les plantes ont des saveurs et des qualités de culture,
@@ -66,6 +67,7 @@ export const featuresOf = type => Object.keys(FEATURES).filter(k => FEATURES[k].
 // ---------------- saveurs de base des plantes ----------------
 // sucré, acide, amer, épicé, umami (0 à 5)
 const F = {
+    ...Object.fromEntries(CROPS_130.map(c => [c[0], c[10]])), // 1.30 : les quatorze nouvelles cultures
     wheat: '10101',
     carrot: '30000',
     tomato: '23003',

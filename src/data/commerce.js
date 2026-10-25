@@ -180,6 +180,14 @@ export const NMARKET = {
         'cloth',
         'cottonThread',
         'linen',
+        // 1.30 : farines et ouvrages des nouvelles cultures
+        'oatFlour',
+        'oatFlakes',
+        'favaFlour',
+        'chickpeaFlour',
+        'hempOil',
+        'hempCloth',
+        'hempRope',
     ],
     // la demande d'achat : le prix choisi règle le délai de livraison
     ask: { min: 1.2, max: 2.5, slow: 180, fast: 15, heartCut: 0.05, slots: [2, 2, 2, 3, 3, 4], maxQty: h => 10 + 6 * h },

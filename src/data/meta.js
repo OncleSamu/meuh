@@ -283,7 +283,7 @@ export const BOOK_PAGES = [
     { id: 'orchard', name: 'Verger', icon: ['item', 'apple'] },
     { id: 'varieties', name: 'Variétés du labo', icon: ['item', 'strawberry'], abs: [1, 3, 6, 10], dyn: true, unit: 'variété fixée' },
     { id: 'fish', name: 'Poissons', icon: ['item', 'perch'] },
-    { id: 'dishes', name: 'Plats', icon: ['item', 'lasagna'], machines: ['kitchen', 'stove', 'pastaworks', 'crepery', 'deli'] },
+    { id: 'dishes', name: 'Plats', icon: ['item', 'lasagna'], machines: ['kitchen', 'marmite', 'stove', 'pastaworks', 'crepery', 'deli'] },
     { id: 'sea', name: 'Mer et étang', icon: ['item', 'bouillabaisse'], machines: ['fishmonger', 'smokehouse', 'cannery'] },
     {
         id: 'sweets',

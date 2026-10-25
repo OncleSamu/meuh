@@ -1,6 +1,7 @@
 import { LV_ITEM } from './levels14.js';
 import { NEW_DRINKS, COFFEE_GATED } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
+import { CROPS_130, RECIPES_130 } from './v130.js';
 // Tous les produits du jeu : cultures, arbres, produits animaux, plats, matériaux.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -2854,6 +2855,14 @@ COFFEE_GATED.forEach(id => (ITEMS[id].needProject = 'roasting'));
 
 // ---------------- 1.18.7 : les cultures de la serre et leurs recettes ----------------
 for (const [id, name, , ing] of SERRE_RECIPES) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}
+
+// ---------------- 1.30 : quatorze cultures et leurs plats ----------------
+for (const [id, name, seedName, reqLvl, seasons, cost, sell, time, xp] of CROPS_130)
+    ITEMS[id] = { id, name, seedName, type: 'crop', cost, sell, time, reqLvl, xp, seasons };
+for (const [id, name, , ing] of RECIPES_130) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
 }

@@ -2,6 +2,7 @@ import { LV_MACH, LV_REC } from './levels14.js';
 import { LV18_MACH, LV18_REC } from './levels18.js';
 import { NEW_DRINKS } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
+import { MARMITE, RECIPES_130 } from './v130.js';
 import { ITEMS } from './items.js';
 import { ANIMALS } from './animals.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
@@ -3407,6 +3408,9 @@ for (const [id, l] of Object.entries(LV18_MACH)) if (MACHINES[id]) [MACHINES[id]
 for (const [id, l] of Object.entries(LV18_REC)) if (RECIPES[id]) [RECIPES[id].lv17, RECIPES[id].lvl, RECIPES[id].base] = [RECIPES[id].lvl, l, l];
 // 1.18.7 : les recettes des cultures de la serre
 for (const [id, , machine, ing, time, lvl, xp] of SERRE_RECIPES) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp };
+// 1.30 : la marmite et les soixante-quatre recettes des nouvelles cultures
+MACHINES.marmite = { id: 'marmite', name: MARMITE.name, cost: MARMITE.cost, reqLvl: MARMITE.reqLvl, desc: MARMITE.desc };
+for (const [id, , machine, ing, time, lvl] of RECIPES_130) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 // une recette ne s'ouvre jamais avant sa machine
 for (const r of Object.values(RECIPES)) {
     const m = MACHINES[r.machine];

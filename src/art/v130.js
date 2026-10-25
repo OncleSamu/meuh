@@ -1,5 +1,5 @@
 // 1.30 : quatorze nouvelles cultures. Chacune a trois dessins : la récolte (items), la jeune pousse (youngExtra) et la plante mûre (readyExtra).
-import { C, E, F, FC, FE, G, GD, GL, HL, L, P, R, SHADOW, leaf, mound, stem, items, youngExtra, readyExtra } from './kit.js';
+import { C, E, F, FC, FE, G, GD, GL, HL, L, P, SHADOW, leaf, mound, stem, items, youngExtra, readyExtra } from './kit.js';
 
 const PLANTS = {};
 const add = (id, icon, young, ready) => {
@@ -7,8 +7,7 @@ const add = (id, icon, young, ready) => {
 };
 
 // une petite touffe de feuilles au sol
-const tuft = (c1 = G, c2 = GL, y = 56, n = 3) =>
-    leaf(32, y, 16, -150, c1, 0.4) + leaf(32, y, 16, -30, c1, 0.4) + (n > 2 ? leaf(32, y, 18, -90, c2, 0.4) : '');
+const tuft = (c1 = G, c2 = GL, y = 56, n = 3) => leaf(32, y, 16, -150, c1, 0.4) + leaf(32, y, 16, -30, c1, 0.4) + (n > 2 ? leaf(32, y, 18, -90, c2, 0.4) : '');
 const grassBlade = (x, y, h, lean, c = G) => stem(`M${x} ${y} Q${x + lean / 2} ${y - h / 2} ${x + lean} ${y - h}`, c, 1.4);
 
 // ---------- le navet : boule blanche et violette, fanes vertes ----------
@@ -21,12 +20,7 @@ const turnip = (x, y, s = 1) =>
     `</g>`;
 add(
     'turnip',
-    () =>
-        SHADOW(32, 57, 22, 3) +
-        leaf(28, 30, 22, -115, G, 0.4) +
-        leaf(38, 30, 22, -65, GL, 0.4) +
-        leaf(32, 28, 22, -90, G, 0.4) +
-        turnip(32, 44, 1.25),
+    () => SHADOW(32, 57, 22, 3) + leaf(28, 30, 22, -115, G, 0.4) + leaf(38, 30, 22, -65, GL, 0.4) + leaf(32, 28, 22, -90, G, 0.4) + turnip(32, 44, 1.25),
     () => mound() + tuft(G, GL, 54) + F('M26 56 Q32 50 38 56Z', '#f4efe6'),
     () => mound() + leaf(24, 44, 22, -125, G, 0.4) + leaf(40, 44, 22, -55, GL, 0.4) + leaf(32, 42, 26, -90, G, 0.4) + turnip(32, 50, 0.8),
 );
@@ -41,7 +35,13 @@ const pod = (x, y, rot, s = 1) =>
 add(
     'favaBean',
     () => SHADOW(32, 57, 24, 3) + pod(30, 40, -20, 1.1) + pod(36, 50, 10, 0.9) + E(46, 30, 4, 3, '#a8d46a', 20, 1.6) + E(16, 52, 4, 3, '#a8d46a', -20, 1.6),
-    () => mound() + stem('M30 56 L30 30', G, 1.8) + stem('M36 56 L36 36', G, 1.8) + leaf(30, 38, 10, -150, GL, 0.5) + leaf(36, 42, 10, -30, G, 0.5) + leaf(30, 30, 9, -100, G, 0.5),
+    () =>
+        mound() +
+        stem('M30 56 L30 30', G, 1.8) +
+        stem('M36 56 L36 36', G, 1.8) +
+        leaf(30, 38, 10, -150, GL, 0.5) +
+        leaf(36, 42, 10, -30, G, 0.5) +
+        leaf(30, 30, 9, -100, G, 0.5),
     () =>
         mound() +
         stem('M30 56 L30 12', G, 2.2) +
@@ -67,7 +67,13 @@ add(
     'parsnip',
     () => SHADOW(32, 57, 22, 3) + leaf(26, 22, 18, -115, G, 0.35) + leaf(38, 22, 18, -65, GL, 0.35) + parsnip(26, 38, 1, 20) + parsnip(40, 40, 1.05, -12),
     () => mound() + leaf(32, 56, 16, -120, G, 0.3) + leaf(32, 56, 16, -60, GL, 0.3) + leaf(32, 56, 18, -90, G, 0.3),
-    () => mound() + leaf(24, 48, 24, -125, G, 0.33) + leaf(40, 48, 24, -55, GL, 0.33) + leaf(32, 46, 26, -90, G, 0.33) + leaf(32, 46, 20, -108, GL, 0.3) + P('M28 54 Q32 48 36 54Z', '#f2e4c0', 1.6),
+    () =>
+        mound() +
+        leaf(24, 48, 24, -125, G, 0.33) +
+        leaf(40, 48, 24, -55, GL, 0.33) +
+        leaf(32, 46, 26, -90, G, 0.33) +
+        leaf(32, 46, 20, -108, GL, 0.3) +
+        P('M28 54 Q32 48 36 54Z', '#f2e4c0', 1.6),
 );
 
 // ---------- l'échalote : bulbe allongé, cuivré ----------
@@ -93,14 +99,36 @@ add(
 const brocc = (x, y, s = 1) =>
     `<g transform="translate(${x} ${y}) scale(${s})">` +
     P('M-5 2 L-3 16 L3 16 L5 2Z', '#a8d070', 2) +
-    [[-10, -10, 8], [0, -14, 9], [10, -10, 8], [-5, -4, 8], [6, -4, 8]].map(([a, b, r]) => C(a, b, r, '#3f8a3a', 2)).join('') +
-    [[-10, -10], [0, -14], [10, -10], [-5, -4], [6, -4]].map(([a, b]) => FC(a - 2, b - 2, 4, '#5fa850', 0.9) + FC(a + 2, b + 2, 1, '#2f6a2a')).join('') +
+    [
+        [-10, -10, 8],
+        [0, -14, 9],
+        [10, -10, 8],
+        [-5, -4, 8],
+        [6, -4, 8],
+    ]
+        .map(([a, b, r]) => C(a, b, r, '#3f8a3a', 2))
+        .join('') +
+    [
+        [-10, -10],
+        [0, -14],
+        [10, -10],
+        [-5, -4],
+        [6, -4],
+    ]
+        .map(([a, b]) => FC(a - 2, b - 2, 4, '#5fa850', 0.9) + FC(a + 2, b + 2, 1, '#2f6a2a'))
+        .join('') +
     `</g>`;
 add(
     'broccoli',
     () => SHADOW(32, 57, 22, 3) + brocc(32, 40, 1.35),
     () => mound() + leaf(32, 56, 18, -150, '#5f9a6a', 0.4) + leaf(32, 56, 18, -30, '#5f9a6a', 0.4) + leaf(32, 54, 18, -90, '#6fae78', 0.4),
-    () => mound() + leaf(20, 48, 22, -160, '#5f9a6a', 0.4) + leaf(44, 48, 22, -20, '#5f9a6a', 0.4) + leaf(22, 40, 18, -130, '#6fae78', 0.4) + leaf(42, 40, 18, -50, '#6fae78', 0.4) + brocc(32, 38, 0.8),
+    () =>
+        mound() +
+        leaf(20, 48, 22, -160, '#5f9a6a', 0.4) +
+        leaf(44, 48, 22, -20, '#5f9a6a', 0.4) +
+        leaf(22, 40, 18, -130, '#6fae78', 0.4) +
+        leaf(42, 40, 18, -50, '#6fae78', 0.4) +
+        brocc(32, 38, 0.8),
 );
 
 // ---------- le chou-fleur : pomme blanche en grappe, collerette ----------
@@ -108,8 +136,24 @@ const cauli = (x, y, s = 1) =>
     `<g transform="translate(${x} ${y}) scale(${s})">` +
     leaf(-6, 8, 18, -150, '#6fae78', 0.4) +
     leaf(6, 8, 18, -30, '#5f9a6a', 0.4) +
-    [[-9, -6, 8], [0, -10, 9], [9, -6, 8], [-5, 1, 8], [6, 1, 8]].map(([a, b, r]) => C(a, b, r, '#f4efe0', 2)).join('') +
-    [[-9, -6], [0, -10], [9, -6], [-5, 1], [6, 1]].map(([a, b]) => FC(a - 2, b - 2, 3, '#fffdf4') + FC(a + 3, b + 2, 1.2, '#d8cfae')).join('') +
+    [
+        [-9, -6, 8],
+        [0, -10, 9],
+        [9, -6, 8],
+        [-5, 1, 8],
+        [6, 1, 8],
+    ]
+        .map(([a, b, r]) => C(a, b, r, '#f4efe0', 2))
+        .join('') +
+    [
+        [-9, -6],
+        [0, -10],
+        [9, -6],
+        [-5, 1],
+        [6, 1],
+    ]
+        .map(([a, b]) => FC(a - 2, b - 2, 3, '#fffdf4') + FC(a + 3, b + 2, 1.2, '#d8cfae'))
+        .join('') +
     `</g>`;
 add(
     'cauliflower',
@@ -134,7 +178,13 @@ add(
     'oat',
     () => SHADOW(32, 57, 20, 3) + oatSpike(24, 56, 40, -2) + oatSpike(32, 56, 46, 2) + oatSpike(40, 56, 40, 3),
     () => mound() + [24, 28, 32, 36, 40].map((x, k) => grassBlade(x, 56, 24 - (k % 2) * 4, (k - 2) * 3)).join(''),
-    () => mound() + oatSpike(22, 56, 34, -3) + oatSpike(32, 56, 42, 0) + oatSpike(42, 56, 36, 4) + leaf(28, 56, 14, -110, G, 0.2) + leaf(38, 56, 14, -70, GL, 0.2),
+    () =>
+        mound() +
+        oatSpike(22, 56, 34, -3) +
+        oatSpike(32, 56, 42, 0) +
+        oatSpike(42, 56, 36, 4) +
+        leaf(28, 56, 14, -110, G, 0.2) +
+        leaf(38, 56, 14, -70, GL, 0.2),
 );
 
 // ---------- le chanvre : feuille digitée ----------
@@ -164,7 +214,13 @@ const chicLeaf = (x, y, s, rot, c = '#5fa040') =>
     `</g>`;
 add(
     'chicory',
-    () => SHADOW(32, 57, 22, 3) + chicLeaf(18, 52, 1, -60) + chicLeaf(46, 52, 1, 60) + chicLeaf(24, 52, 1.05, -30, '#6cb04a') + chicLeaf(40, 52, 1.05, 30, '#6cb04a') + chicLeaf(32, 52, 1.1, 0, '#7ec45a'),
+    () =>
+        SHADOW(32, 57, 22, 3) +
+        chicLeaf(18, 52, 1, -60) +
+        chicLeaf(46, 52, 1, 60) +
+        chicLeaf(24, 52, 1.05, -30, '#6cb04a') +
+        chicLeaf(40, 52, 1.05, 30, '#6cb04a') +
+        chicLeaf(32, 52, 1.1, 0, '#7ec45a'),
     () => mound() + chicLeaf(32, 56, 0.55, -50) + chicLeaf(32, 56, 0.55, 50) + chicLeaf(32, 56, 0.6, 0, '#6cb04a'),
     () =>
         mound() +
@@ -173,15 +229,27 @@ add(
         stem('M32 56 L32 14', '#6a8a3a', 1.8) +
         [20, 30, 40].map((y, k) => leaf(32, y + 8, 9, k % 2 ? -30 : -150, G, 0.5)).join('') +
         FC(32, 12, 5, '#8fb8f0') +
-        [0, 60, 120, 180, 240, 300].map(a => FE(32 + 6 * Math.cos((a * Math.PI) / 180), 12 + 6 * Math.sin((a * Math.PI) / 180), 3.4, 1.8, '#a8c8f8', 1, a)).join('') +
+        [0, 60, 120, 180, 240, 300]
+            .map(a => FE(32 + 6 * Math.cos((a * Math.PI) / 180), 12 + 6 * Math.sin((a * Math.PI) / 180), 3.4, 1.8, '#a8c8f8', 1, a))
+            .join('') +
         FC(32, 12, 2, '#f0d878'),
 );
 
 // ---------- le pois chiche : gousse enflée, billes beiges ----------
-const chickpea = (x, y, r = 5) => C(x, y, r, '#e6c88a', 1.8) + P(`M${x - 1} ${y - r} L${x + 1.5} ${y - r - 2.4} L${x + 2} ${y - r + 0.5}Z`, '#d8b070', 1) + HL(x - 1.6, y - 1.6, 1.6, 1.2, -20, 0.6);
+const chickpea = (x, y, r = 5) =>
+    C(x, y, r, '#e6c88a', 1.8) +
+    P(`M${x - 1} ${y - r} L${x + 1.5} ${y - r - 2.4} L${x + 2} ${y - r + 0.5}Z`, '#d8b070', 1) +
+    HL(x - 1.6, y - 1.6, 1.6, 1.2, -20, 0.6);
 add(
     'chickpea',
-    () => SHADOW(32, 57, 22, 3) + chickpea(22, 50, 7) + chickpea(34, 52, 7.5) + chickpea(45, 49, 6.5) + chickpea(28, 40, 7) + chickpea(40, 39, 7) + chickpea(33, 30, 6.5),
+    () =>
+        SHADOW(32, 57, 22, 3) +
+        chickpea(22, 50, 7) +
+        chickpea(34, 52, 7.5) +
+        chickpea(45, 49, 6.5) +
+        chickpea(28, 40, 7) +
+        chickpea(40, 39, 7) +
+        chickpea(33, 30, 6.5),
     () => mound() + stem('M32 56 L32 38', G, 1.6) + leaf(32, 46, 10, -150, GL, 0.5) + leaf(32, 46, 10, -30, G, 0.5) + leaf(32, 38, 9, -90, GL, 0.5),
     () =>
         mound() +
@@ -221,7 +289,17 @@ add(
 
 // ---------- la mûre : baies noires, feuille dentelée ----------
 const blackberry = (x, y, s = 1, rot = 0) => {
-    const B = [[-4, -4], [4, -4], [0, -7], [-6, 1], [0, 0], [6, 1], [-3, 6], [3, 6], [0, 9]];
+    const B = [
+        [-4, -4],
+        [4, -4],
+        [0, -7],
+        [-6, 1],
+        [0, 0],
+        [6, 1],
+        [-3, 6],
+        [3, 6],
+        [0, 9],
+    ];
     return (
         `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">` +
         B.map(([a, b]) => C(a, b, 3.4, '#3a2a58', 2)).join('') +
@@ -233,7 +311,12 @@ const blackberry = (x, y, s = 1, rot = 0) => {
 const thornCane = (d, c = '#7a4a3a') => stem(d, c, 1.6);
 add(
     'blackberry',
-    () => SHADOW(32, 57, 22, 3) + leaf(32, 34, 16, -90, '#5fa040', 0.5) + blackberry(22, 42, 1.2, -10) + blackberry(40, 44, 1.2, 10) + blackberry(31, 30, 1.25, 0),
+    () =>
+        SHADOW(32, 57, 22, 3) +
+        leaf(32, 34, 16, -90, '#5fa040', 0.5) +
+        blackberry(22, 42, 1.2, -10) +
+        blackberry(40, 44, 1.2, 10) +
+        blackberry(31, 30, 1.25, 0),
     () => mound() + thornCane('M28 56 L26 32') + thornCane('M36 56 L40 36') + leaf(26, 44, 9, -140, '#5fa040', 0.5) + leaf(38, 46, 9, -40, G, 0.5),
     () =>
         mound() +
@@ -252,12 +335,22 @@ const cassisBerry = (x, y, r = 4.5) => C(x, y, r, '#2a2040', 1.8) + FC(x - 1.4, 
 const cluster = (x, y, s = 1, rot = 0) =>
     `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">` +
     L('M0 -22 L0 -6', 1.6, '#6a8a3a') +
-    [[-6, -4], [6, -2], [0, 4], [-7, 8], [7, 9], [0, 14]].map(([a, b]) => cassisBerry(a, b)).join('') +
+    [
+        [-6, -4],
+        [6, -2],
+        [0, 4],
+        [-7, 8],
+        [7, 9],
+        [0, 14],
+    ]
+        .map(([a, b]) => cassisBerry(a, b))
+        .join('') +
     `</g>`;
 add(
     'blackcurrant',
     () => SHADOW(32, 57, 22, 3) + leaf(30, 22, 14, -110, G, 0.5) + cluster(22, 36, 1.1, -10) + cluster(42, 38, 1.1, 10) + cluster(32, 30, 1.15, 0),
-    () => mound() + stem('M30 56 L28 34', '#8a6a4a', 1.6) + stem('M36 56 L38 36', '#8a6a4a', 1.6) + leaf(28, 42, 9, -145, G, 0.5) + leaf(38, 42, 9, -35, GL, 0.5),
+    () =>
+        mound() + stem('M30 56 L28 34', '#8a6a4a', 1.6) + stem('M36 56 L38 36', '#8a6a4a', 1.6) + leaf(28, 42, 9, -145, G, 0.5) + leaf(38, 42, 9, -35, GL, 0.5),
     () =>
         mound() +
         stem('M26 56 Q22 34 28 14', '#8a6a4a', 1.8) +
@@ -284,7 +377,13 @@ add(
     'endive',
     () => SHADOW(32, 58, 20, 3) + chicon(22, 38, 0.95, -12) + chicon(42, 38, 0.95, 12) + chicon(32, 34, 1.05, 0),
     () => mound() + leaf(32, 56, 18, -150, '#6fae78', 0.35) + leaf(32, 56, 18, -30, '#6fae78', 0.35) + leaf(32, 56, 20, -90, '#8fc890', 0.35),
-    () => mound() + chicon(24, 52, 0.55, -12) + chicon(40, 52, 0.55, 12) + chicon(32, 46, 0.65, 0) + leaf(14, 54, 12, -160, '#6fae78', 0.4) + leaf(50, 54, 12, -20, '#6fae78', 0.4),
+    () =>
+        mound() +
+        chicon(24, 52, 0.55, -12) +
+        chicon(40, 52, 0.55, 12) +
+        chicon(32, 46, 0.65, 0) +
+        leaf(14, 54, 12, -160, '#6fae78', 0.4) +
+        leaf(50, 54, 12, -20, '#6fae78', 0.4),
 );
 
 Object.entries(PLANTS).forEach(([id, p]) => {
