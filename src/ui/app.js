@@ -2,7 +2,7 @@
 import { state, writeSave } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view, setView } from '../core/view.js';
-import { fmtK, formatDuration } from '../core/format.js';
+import { fmt, fmtK, formatDuration } from '../core/format.js';
 import { on, emit } from '../core/bus.js';
 import { ANIMALS } from '../data/animals.js';
 import { MACHINES } from '../data/machines.js';
@@ -160,7 +160,7 @@ function renderHud() {
             <span class="xp-bar"><i style="width:${(p * 100).toFixed(1)}%"></i><small>${xpText}</small></span>
         </button>
         <span class="pill coins" id="coin-pill">${ico(['ui', 'coin'])}<b id="ui-money"></b></span>
-        <button class="pill barn${used >= cap ? ' full' : used >= cap * 0.85 ? ' near' : ''}" id="barn-pill" data-act="open" data-sheet="barn" aria-label="Grange">${ico(['ui', 'barn'])}<b>${used}/${cap}</b></button>
+        <button class="pill barn${used >= cap ? ' full' : used >= cap * 0.85 ? ' near' : ''}" id="barn-pill" data-act="open" data-sheet="barn" aria-label="Grange">${ico(['ui', 'barn'])}<b>${used >= 1e4 || cap >= 1e4 ? `${fmt(used)}/${fmt(cap)}` : `${used}/${cap}`}</b></button>
         <button class="icon-btn menu-btn" data-act="open" data-sheet="menu" aria-label="Menu">${ico(['ui', 'menu'])}${dot(menuN)}</button>`,
     );
     if (used >= cap * 0.8) G.tip('barn');

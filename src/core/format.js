@@ -2,6 +2,13 @@
 
 export function fmt(n) {
     n = Math.floor(n);
+    if (n >= 1e9)
+        return (
+            (n / 1e9)
+                .toFixed(n >= 1e10 ? 0 : 1)
+                .replace('.0', '')
+                .replace('.', ',') + ' Md'
+        );
     if (n >= 1e6)
         return (
             (n / 1e6)

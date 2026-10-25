@@ -26,15 +26,15 @@ function plotHtml(p, k, nextLocked) {
     if (!p.open) {
         if (k !== nextLocked) return '';
         const cost = G.islandPlotCost();
-        return `<button class="i-plot locked${state.money >= cost ? ' can' : ''}" data-act="buyIslandPlot" data-anchor="${anc}">
-            <span class="o-lock">${art('ui', 'lock')}</span><span class="price-chip">${ico(['ui', 'coin'])}${fmt(cost)}</span></button>`;
+        return `<button class="plot locked next${state.money >= cost ? ' can' : ''}" data-act="buyIslandPlot" data-anchor="${anc}">
+            <div class="lock-ico">${art('ui', 'lock')}</div><div class="price-chip">${ico(['ui', 'coin'])}${fmt(cost)}</div></button>`;
     }
     if (!p.id)
-        return `<button class="i-plot empty" data-act="open" data-sheet="plantIsland" data-k="${k}" data-anchor="${anc}">
-            <span class="o-plus">${ico(['ui', 'plus'])}</span>${p.last ? `<small>${ITEMS[p.last].name}</small>` : '<small>Planter</small>'}</button>`;
-    return `<button class="i-plot${p.ready ? ' ready' : ''}" data-act="islandPlot" data-k="${k}" data-anchor="${anc}">
-        <span class="i-art">${p.v && state.genetics && state.genetics.vars[p.v] ? genWrap(art('plant', `${p.id}:${plotStage(p)}`), state.genetics.vars[p.v].g) : art('plant', `${p.id}:${plotStage(p)}`)}</span>
-        ${p.ready ? `<span class="o-tag ready">${ico(['item', p.id])}</span>` : `${bar(0, 'i-bar', `isle:${k}`)}<small>${timer(now() + G.islandLeft(p) * 1000)}</small>`}
+        return `<button class="plot plowed watered i-empty" data-act="open" data-sheet="plantIsland" data-k="${k}" data-anchor="${anc}">
+            <span class="o-plus">${ico(['ui', 'plus'])}</span>${p.last ? `<small>${ITEMS[p.last].name}</small>` : ''}</button>`;
+    return `<button class="plot plowed watered planted${p.ready ? ' ready' : ''}" data-act="islandPlot" data-k="${k}" data-anchor="${anc}">
+        <div class="spr-wrap">${p.v && state.genetics && state.genetics.vars[p.v] ? genWrap(art('plant', `${p.id}:${plotStage(p)}`), state.genetics.vars[p.v].g) : art('plant', `${p.id}:${plotStage(p)}`)}</div>
+        ${p.ready ? '' : bar(0, 'pbar', `isle:${k}`)}
     </button>`;
 }
 
@@ -74,7 +74,7 @@ function renderIsland(el) {
         ['h1', section('Les plantations')],
         [
             'plots',
-            `<div class="isle">${plots
+            `<div class="field isle"><div class="plots">${plots
                 .map((p, k) =>
                     plotHtml(
                         p,
@@ -82,7 +82,7 @@ function renderIsland(el) {
                         plots.findIndex(x => !x.open),
                     ),
                 )
-                .join('')}</div>`,
+                .join('')}</div></div>`,
         ],
         ['h2', section('Le verger des îles', `<small class="o-count small">${G.treeCountText('island')}</small>`)],
         [
