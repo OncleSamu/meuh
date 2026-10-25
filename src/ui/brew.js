@@ -132,6 +132,8 @@ async function fill(p, c, msg) {
             res(fall(lvl(), target, p.w, 0.22));
         };
         const loop = t => {
+            // 1.43 : la partie a été quittée : on arrête tout (sinon la boucle tournait sans fin)
+            if (!c.alive()) return void ((done = true), off && off());
             const dt = last ? (t - last) / 1000 : 0;
             last = t;
             if (on) {
@@ -184,6 +186,7 @@ const STEP = {
                 };
                 const hit = () => end(clamp(1 - Math.abs(+ring.getAttribute('r') - tg) / p.tol));
                 const fr = () => {
+                    if (!c.alive()) return void ((fin = true), ac.abort());
                     const k = (performance.now() - t0) / dur;
                     ring.setAttribute('r', Math.max(14, 130 - (130 - 14) * k));
                     if (k >= 1) end(0);
@@ -295,7 +298,9 @@ const STEP = {
                 o,
             );
             window.addEventListener('pointerup', () => (down = false), o);
+            const watch = setInterval(() => !c.alive() && (clearInterval(watch), ac.abort()), 500);
             b.onclick = () => {
+                clearInterval(watch);
                 ac.abort();
                 if (drawn.length < 8) return res(0);
                 const cover = pts.filter(q => drawn.some(d => Math.hypot(d[0] - q[0], d[1] - q[1]) < 22)).length / pts.length;
@@ -328,6 +333,7 @@ const STEP = {
                 res(fall(T, p.t, p.w, 18));
             };
             const loop = t => {
+                if (!c.alive()) return void ((done = true), off && off());
                 const dt = last ? (t - last) / 1000 : 0;
                 last = t;
                 if (on) {
@@ -370,6 +376,7 @@ const STEP = {
             };
             const k = () => (performance.now() - t0) / 1000 / p.dur;
             const fr = () => {
+                if (!c.alive()) return void ((done = true), ac.abort());
                 const x = Math.min(1, k());
                 st.querySelector('#cbsf').style.width = x * 100 + '%';
                 st.querySelector('#cbbag').setAttribute('transform', `translate(0 ${x * 50})`);
@@ -424,6 +431,11 @@ const STEP = {
                 res(clamp(tot / (Math.PI * 2 * p.turns)));
             };
             iv = setInterval(() => {
+                if (!c.alive()) {
+                    done = true;
+                    ac.abort();
+                    return clearInterval(iv);
+                }
                 if (t0 == null) return;
                 const l = p.dur - (performance.now() - t0) / 1000;
                 st.querySelector('#cbwt').textContent = Math.max(0, Math.ceil(l)) + ' s';
@@ -470,6 +482,8 @@ export function openBrew(id, vid) {
     document.body.appendChild(o);
     const close = () => {
         run++;
+        window.removeEventListener('pointerup', unp);
+        window.removeEventListener('pointercancel', unp);
         o.remove();
         refresh();
     };
