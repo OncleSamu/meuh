@@ -1,4 +1,6 @@
 // Meuh : le démarrage. Les règles du jeu (systems) tournent toutes seules ; l'interface (ui) les montre.
+import { state } from './core/state.js';
+import { now } from './core/clock.js';
 import { setView } from './core/view.js';
 import { emit } from './core/bus.js';
 import * as G from './systems/index.js';
@@ -105,13 +107,32 @@ function start() {
     const daily = G.dailyDue();
     if (daily) pushMoment('daily', daily);
     // la seconde de jeu
-    setInterval(() => {
-        G.gameTick();
+    // 1.37.1 : le jeu suit l'heure réelle. Un onglet ou une appli en arrière-plan voit ses minuteries gelées ou ralenties :
+    // au retour, le temps manqué se rattrape comme une absence (au lieu d'être perdu seconde après seconde).
+    let lastRun = now();
+    const secondOfGame = () => {
+        const t = now(),
+            gap = Math.floor((t - lastRun) / 1000);
+        if (t < lastRun) lastRun = t; // l'horloge du téléphone a reculé
+        if (gap < 1) return;
+        if (gap >= 3) {
+            lastRun = t;
+            state.lastSaved = t - gap * 1000;
+            const back = G.offlineProgress();
+            if (back && back.lines.length && back.elapsed >= 300) pushMoment('offline', back);
+            else if (!back) for (let k = 0; k < gap; k++) G.gameTick();
+            state.lastSaved = t;
+        } else {
+            lastRun += gap * 1000; // le reste de la seconde se reporte
+            for (let k = 0; k < gap; k++) G.gameTick();
+        }
         updateScene();
         refresh();
         updateNight();
         remindTick();
-    }, 1000);
+    };
+    setInterval(secondOfGame, 1000);
+    document.addEventListener('visibilitychange', () => !document.hidden && secondOfGame());
     setInterval(saveNow, 5000);
     setInterval(wanderAnimals, 1600);
     setInterval(wanderDog, 2200);
