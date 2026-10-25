@@ -60,11 +60,44 @@ const stockChip = id => {
     return `<button class="chip meta stock sell-seed" data-act="sellSeeds" data-id="${id}" title="Revendre le stock">${n} en stock · revendre ${fmt(G.seedBackPrice(id) * n)}${COIN()}</button>`;
 };
 
+// 1.38 : les listes du magasin restent courtes. rows : [{ html, locked, lvl }]
+// les objets bloqués : seulement les 2 prochains, le reste résumé sur une ligne
+function tidy(rows) {
+    const open = rows.filter(r => !r.locked),
+        locked = rows.filter(r => r.locked).sort((a, b) => (a.lvl || 0) - (b.lvl || 0));
+    const next = locked.slice(0, 2),
+        rest = locked.slice(2);
+    const lv = rest.map(r => r.lvl).filter(x => typeof x === 'number');
+    const more = rest.length
+        ? `<p class="card-sub center shop-more">${ico(['ui', 'lock'])} ${rest.length} autre${rest.length > 1 ? 's' : ''} à débloquer plus tard${lv.length ? ` (niveaux ${Math.min(...lv)} à ${Math.max(...lv)})` : ''}</p>`
+        : '';
+    return open.map(r => r.html).join('') + next.map(r => r.html).join('') + more;
+}
+// ce qui est déjà acquis (machines possédées, améliorations au maximum) se replie sur une ligne
+const ownedFold = (id, label, list) =>
+    list.length
+        ? ui.sel['own_' + id]
+            ? list.join('') + `<button class="shop-fold" data-act="shopOwned" data-id="${id}">Replier ${label}</button>`
+            : `<button class="shop-fold" data-act="shopOwned" data-id="${id}">${ico(['ui', 'check'])} ${list.length} ${label} · voir</button>`
+        : '';
+
 // ---------------- catégories du magasin ----------------
 function seeds() {
     const sm = G.speedMult();
-    return G.seedList()
-        .filter(i => !i.exotic)
+    const all = G.seedList().filter(i => !i.exotic);
+    const open = all.filter(i => lvOk(i) && G.storyOk(i));
+    const tabs = [
+        ['season', 'De saison', open.filter(i => G.isInSeason(i.id)).length],
+        ['stock', 'En stock', open.filter(i => state.seeds[i.id] > 0).length],
+        ['crop', 'Cultures', open.filter(i => i.type === 'crop').length],
+        ['tree', 'Arbres', open.filter(i => i.type === 'tree').length],
+    ].filter(([, , n]) => n > 0);
+    let tab = ui.sel.seedShop;
+    if (!tabs.some(([k]) => k === tab)) tab = tabs.length ? tabs[0][0] : 'crop';
+    const keep = i => (tab === 'season' ? G.isInSeason(i.id) : tab === 'stock' ? state.seeds[i.id] > 0 : i.type === tab);
+    const head = `<div class="chips-row seed-tabs">${tabs.map(([k, label, n]) => `<button class="pick-chip${k === tab ? ' on' : ''}" data-act="seedShop" data-f="${k}">${label} · ${n}</button>`).join('')}</div>`;
+    const rows = all
+        .filter(i => (lvOk(i) && G.storyOk(i) ? keep(i) : tab === 'crop' || tab === 'tree' ? i.type === tab : false))
         .map(i => {
             const locked = !lvOk(i) || !G.storyOk(i);
             const season = i.seasons
@@ -95,52 +128,64 @@ function seeds() {
                 i.type === 'crop'
                     ? buyBtn('seed', i.id, 1, i.cost, locked) + buyBtn('seed', i.id, 10, i.cost, locked)
                     : buyBtn('seed', i.id, 1, i.cost, locked);
-            return shopCard(art('seed', i.id), i.seedName, `<span class="metas">${sub}</span>`, btns, locked, !lvOk(i) ? i.reqLvl : G.storyLockText(i));
-        })
-        .join('');
+            return {
+                html: shopCard(art('seed', i.id), i.seedName, `<span class="metas">${sub}</span>`, btns, locked, !lvOk(i) ? i.reqLvl : G.storyLockText(i)),
+                locked,
+                lvl: i.reqLvl,
+            };
+        });
+    return head + tidy(rows);
 }
 
 function animals() {
     const sm = G.speedMult();
-    return Object.values(ANIMALS)
+    const rows = Object.values(ANIMALS)
         .sort((a, b) => a.reqLvl - b.reqLvl)
         .map(a => {
             const locked = !lvOk(a),
                 p = ITEMS[a.prodId];
             const owned = G.animalCount(a.id);
-            return shopCard(
-                art('animal', a.id),
-                a.name,
-                `<span class="metas">${meta(['item', p.id], p.name)}${meta(['ui', 'clock'], formatDuration(a.time / sm))}${meta(['ui', 'coin'], G.sellPrice(p.id))}${owned ? meta(null, `${owned} à la ferme`, 'stock') : ''}</span>`,
-                buyBtn('animal', a.id, 1, a.cost, locked),
+            return {
+                html: shopCard(
+                    art('animal', a.id),
+                    a.name,
+                    `<span class="metas">${meta(['item', p.id], p.name)}${meta(['ui', 'clock'], formatDuration(a.time / sm))}${meta(['ui', 'coin'], G.sellPrice(p.id))}${owned ? meta(null, `${owned} à la ferme`, 'stock') : ''}</span>`,
+                    buyBtn('animal', a.id, 1, a.cost, locked),
+                    locked,
+                    a.reqLvl,
+                ),
                 locked,
-                a.reqLvl,
-            );
-        })
-        .join('');
+                lvl: a.reqLvl,
+            };
+        });
+    return tidy(rows);
 }
 
 function machines() {
-    return Object.values(MACHINES)
+    const owned = [];
+    const rows = Object.values(MACHINES)
         .sort((a, b) => a.reqLvl - b.reqLvl)
         .map(m => {
             const locked = !lvOk(m) || !G.storyOk(m),
-                owned = G.hasMachine(m.id);
+                own = G.hasMachine(m.id);
             const recs = G.recipesOf(m.id);
             const strip = `<span class="rec-strip">${recs
                 .slice(0, 7)
                 .map(r => ico(['item', r.id]))
                 .join('')}${recs.length > 7 ? `<b>+${recs.length - 7}</b>` : ''}</span>`;
-            return shopCard(
+            const html = shopCard(
                 art('machine', m.id),
                 m.name,
                 `${m.desc} · ${recs.length} recettes${strip}`,
-                owned ? `<span class="chip ok">${ico(['ui', 'check'])}Possédé</span>` : buyBtn('machine', m.id, 1, m.cost, locked),
+                own ? `<span class="chip ok">${ico(['ui', 'check'])}Possédé</span>` : buyBtn('machine', m.id, 1, m.cost, locked),
                 locked,
                 !lvOk(m) ? m.reqLvl : G.storyLockText(m),
             );
+            if (own) owned.push(html);
+            return own ? null : { html, locked, lvl: m.reqLvl };
         })
-        .join('');
+        .filter(Boolean);
+    return tidy(rows) + ownedFold('machines', `machine${owned.length > 1 ? 's' : ''} déjà achetée${owned.length > 1 ? 's' : ''}`, owned);
 }
 
 function gear() {
@@ -162,14 +207,15 @@ function gear() {
         cpLocked,
         cp.reqLvl,
     );
-    html += Object.keys(UPGRADES)
+    const done = [];
+    const rows = Object.keys(UPGRADES)
         .map(k => {
             const u = UPGRADES[k],
                 lvl = state.upgrades[k] || 0,
                 max = lvl >= u.maxLvl,
                 cost = G.upgradeCost(k);
-            if (!G.upgradeOpen(k)) return shopCard(art('ui', k), u.name, '', '', true, u.reqLvl);
-            return card({
+            if (!G.upgradeOpen(k)) return { html: shopCard(art('ui', k), u.name, '', '', true, u.reqLvl), locked: true, lvl: u.reqLvl };
+            const html = card({
                 art: art('ui', k),
                 title: `${u.name}${u.maxLvl > 1 ? pips(lvl, u.maxLvl) : ''}`,
                 sub: `${u.desc}.${u.maxLvl > 1 ? ` Niveau ${lvl} sur ${u.maxLvl}.` : lvl ? ' Installée.' : ''}`,
@@ -181,9 +227,11 @@ function gear() {
                     disabled: max || state.money < cost,
                 }),
             });
+            if (max) done.push(html);
+            return max ? null : { html, locked: false };
         })
-        .join('');
-    return html;
+        .filter(Boolean);
+    return html + tidy(rows) + ownedFold('gear', `amélioration${done.length > 1 ? 's' : ''} au maximum`, done);
 }
 
 function decos() {
@@ -192,16 +240,19 @@ function decos() {
         .map(d => {
             const locked = !lvOk(d);
             const n = G.decoCount(d.id);
-            return shopCard(
-                art('ui', d.id),
-                d.name,
-                `${d.desc}. Se pose dans un coin de parcelle : la culture pousse toujours${n ? ` · vous en avez ${n}` : ''}`,
-                buyBtn('placedeco', d.id, 1, d.cost, locked),
+            return {
+                html: shopCard(
+                    art('ui', d.id),
+                    d.name,
+                    `${d.desc}. Se pose dans un coin de parcelle : la culture pousse toujours${n ? ` · vous en avez ${n}` : ''}`,
+                    buyBtn('placedeco', d.id, 1, d.cost, locked),
+                    locked,
+                    d.reqLvl,
+                ),
                 locked,
-                d.reqLvl,
-            );
-        })
-        .join('');
+                lvl: d.reqLvl,
+            };
+        });
     const locked = !lvOk(DOG),
         owned = state.dog.owned;
     const dog = shopCard(
@@ -214,7 +265,7 @@ function decos() {
         locked,
         DOG.reqLvl,
     );
-    return list + dog;
+    return tidy(list) + dog;
 }
 
 // ---------------- 1.26 : les étals des voisins et la demande d'achat ----------------
@@ -297,12 +348,17 @@ function stallCard() {
     const slots = state.stall.slots;
     const sold = G.stallSoldCount();
     const later = G.STALL_LEVELS.filter(l => state.level < l);
+    const free = slots.map((x, k) => (x ? -1 : k)).filter(k => k >= 0);
     return `<div class="card stall-card">
         <div class="card-head">${ico(['ui', 'stall'], 'ico big')}<div class="card-main"><div class="card-title">L’étal de la ferme</div><div class="card-sub">Vous choisissez le prix : les passants achètent, mais il faut attendre qu’ils viennent.</div></div>
         ${sold ? btn('Tout encaisser', { act: 'collectStalls', kind: 'gold', size: 'sm' }) : ''}</div>
         <div class="stall-slots">${slots
             .map((sl, k) => {
-                if (!sl) return `<button class="sslot empty" data-act="open" data-sheet="stall" data-k="${k}"><b>+</b><span>Vendre</span></button>`;
+                // 1.38 : une seule case pour toutes les places libres
+                if (!sl)
+                    return k === free[0]
+                        ? `<button class="sslot empty free-row" data-act="open" data-sheet="stall" data-k="${k}"><b>+</b><span>Vendre · ${free.length} place${free.length > 1 ? 's' : ''} libre${free.length > 1 ? 's' : ''}</span></button>`
+                        : '';
                 if (sl.sold)
                     return `<button class="sslot sold" data-act="collectStall" data-k="${k}">${ico(['ui', 'coin'])}<b>${fmt(sl.qty * sl.price)}</b><span>Encaisser</span></button>`;
                 return `<div class="sslot listed">${ico(['item', sl.id])}<b>×${sl.qty}</b><span>${fmt(sl.price)}${COIN()} l’unité</span><small>client ≈ ${timer(sl.sellAt)}</small><button class="sx" data-act="cancelStall" data-k="${k}" aria-label="Retirer">×</button></div>`;
@@ -334,12 +390,35 @@ function banners() {
     return html || null;
 }
 
+// 1.38 : le grossiste par familles, les plus belles valeurs d'abord, 24 à la fois
+const FAMS = [
+    ['all', 'Tout', () => true],
+    ['crop', 'Récoltes', t => t === 'crop' || t === 'tree'],
+    ['product', 'Bêtes', t => t === 'product'],
+    ['artisan', 'Atelier', t => t === 'artisan'],
+    ['fish', 'Pêche', t => t === 'fish'],
+    ['other', 'Mine et forêt', t => ['gem', 'ore', 'ingot', 'material', 'junk'].includes(t)],
+];
+const GOODS_PAGE = 24;
 function goodsGrid() {
     G.clampAllQuality();
-    const keys = G.sellableKeys();
-    if (!keys.length) return empty('Rien à vendre pour l’instant. Récoltez des cultures ou ramassez des produits pour remplir vos caisses.');
+    const all = G.sellableKeys();
+    if (!all.length) return empty('Rien à vendre pour l’instant. Récoltez des cultures ou ramassez des produits pour remplir vos caisses.');
     const hot = state.market.hot;
-    return `<div class="goods-grid">${keys
+    const fams = FAMS.map(([id, label, ok]) => [id, label, all.filter(k => ok(ITEMS[k].type)).length]).filter(([id, , n]) => id === 'all' || n > 0);
+    let f = ui.sel.sellF || 'all';
+    if (!fams.some(([id]) => id === f)) f = 'all';
+    const ok = FAMS.find(x => x[0] === f)[2];
+    const sorted = all
+        .filter(k => ok(ITEMS[k].type))
+        .sort((a, b) => (b === hot) - (a === hot) || G.unitPrice(b, 0) * state.inventory[b] - G.unitPrice(a, 0) * state.inventory[a]);
+    const more = !ui.sel.sellMore && sorted.length > GOODS_PAGE;
+    const keys = more ? sorted.slice(0, GOODS_PAGE) : sorted;
+    const chips =
+        all.length > 12
+            ? `<div class="chips-row sell-fams">${fams.map(([id, label, n]) => `<button class="pick-chip${id === f ? ' on' : ''}" data-act="sellF" data-f="${id}">${label} · ${n}</button>`).join('')}</div>`
+            : '';
+    return `${chips}<div class="goods-grid">${keys
         .map(k => {
             const it = ITEMS[k],
                 n = state.inventory[k],
@@ -367,7 +446,7 @@ function goodsGrid() {
                 <span class="goods-btns">${btn(`+${fmt(one.gain)}`, { act: 'sell', data: { id: k, n: 1 }, size: 'sm' })}${btn(all.sold ? fmt(all.gain) : 'Gardé', { act: 'sell', data: { id: k, n: 0 }, kind: 'gold', size: 'sm', disabled: !all.sold })}</span>
             </div>`;
         })
-        .join('')}</div>`;
+        .join('')}</div>${more ? `<button class="shop-fold" data-act="sellMore">Voir les ${sorted.length - GOODS_PAGE} autres produits</button>` : ''}`;
 }
 
 function renderSell(el) {
@@ -463,6 +542,13 @@ export function setupMarket() {
     const so = () => sheetOpts('stall');
     actions({
         shopCat: (el, d) => (ui.sel.shop = d.c),
+        seedShop: (el, d) => (ui.sel.seedShop = d.f),
+        sellF: (el, d) => {
+            ui.sel.sellF = d.f;
+            ui.sel.sellMore = false;
+        },
+        sellMore: () => (ui.sel.sellMore = true),
+        shopOwned: (el, d) => (ui.sel['own_' + d.id] = !ui.sel['own_' + d.id]),
         nmBuy: (el, d) => G.buyOffer(+d.k, +d.n, el),
         nmCollect: (el, d) => G.collectAsk(+d.n, el),
         nmCancel: (el, d) => G.cancelAsk(+d.n),

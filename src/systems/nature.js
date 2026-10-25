@@ -72,11 +72,22 @@ export function ensureNature() {
 export function setDepth(id) {
     const n = ensureNat();
     if (!depthOpen(id) || n.depth === id) return false;
+    // 1.38 : chaque profondeur garde ses propres pierres (et leurs temps de repousse).
+    // Avant, changer de profondeur faisait tout réapparaître d'un coup, ailleurs comme ici.
+    n.mines = n.mines || {};
+    n.mines[n.depth] = state.mine;
     n.depth = id;
-    state.mine.forEach(sl => {
-        sl.until = 0;
-        reroll('mine', sl);
-    });
+    if (Array.isArray(n.mines[id]) && n.mines[id].length) state.mine = n.mines[id];
+    else {
+        state.mine = [];
+        while (state.mine.length < mineSlots()) {
+            const sl = { hp: NATURE.mine.hp, until: 0, gem: false };
+            reroll('mine', sl);
+            state.mine.push(sl);
+        }
+    }
+    delete n.mines[id];
+    ensureNature();
     sfx('click');
     return true;
 }

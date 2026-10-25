@@ -112,3 +112,21 @@ test('la statue dorée : les 17 défis en or', () => {
     assert.ok(G.cupPts() >= 10);
     assert.equal(G.checkStatue(), false);
 });
+
+test('la mine : chaque profondeur garde ses pierres quand on change', () => {
+    G.loadGame();
+    state.level = 60;
+    G.ensureNature();
+    const n = G.ensureNat();
+    n.gear.lamp = n.gear.cart = true;
+    G.setDepth('quarry');
+    state.mine.forEach((sl, k) => (sl.until = k === 0 ? clock.t + 3600e3 : 0));
+    const before = JSON.stringify(state.mine);
+    assert.ok(G.setDepth('gallery'));
+    const gal = JSON.stringify(state.mine);
+    assert.notEqual(gal, before);
+    assert.ok(G.setDepth('quarry'));
+    assert.equal(JSON.stringify(state.mine), before, 'la carrière est restée telle quelle (et sa pierre cassée attend toujours)');
+    assert.ok(G.setDepth('gallery'));
+    assert.equal(JSON.stringify(state.mine), gal, 'la galerie aussi');
+});
