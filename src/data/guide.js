@@ -280,7 +280,7 @@ export const GUIDE_PAGES = [
                 h: 'Le carnet du potager',
                 b: [
                     '49 associations (40 bonnes, 9 mauvaises), de plus en plus nombreuses avec les niveaux. Chacune se découvre la première fois qu’on récolte une parcelle qui en profite… ou qui en souffre.',
-                    'Récompenses à 5, 10, 20 et 30 associations (pièces, compost, graines de safran), et un ruban quand le carnet est complet. La carte du carnet est sous le champ.',
+                    'Récompenses à 5, 10, 20 et 30 associations (pièces, compost, graines de safran), et un ruban quand le carnet est complet. Le carnet s’ouvre depuis le menu, onglet Carnets.',
                 ],
             },
             {
@@ -682,7 +682,7 @@ export const GUIDE_PAGES = [
                 h: 'Les machines',
                 b: [
                     `Elles s’achètent au magasin, du four à pain (niveau 2) à la cuverie (niveau ${lv('winery')}). Une machine s’ouvre au plus par niveau, toujours avec au moins une recette faisable.`,
-                    'Chaque machine a une file d’attente : ajoutez des lots, ils s’enchaînent. La file s’allonge avec la maison, le Chantier de la ferme et le domaine.',
+                    'Chaque machine a une file d’attente : ajoutez des lots, ils s’enchaînent. La file s’allonge avec la maison, le Chantier de la ferme et le domaine. Dès le niveau 15, un deuxième poste (payant, une fois par machine, dans le tiroir de la machine) fait tourner deux lots à la fois.',
                     'Le bouton Boucle relance la dernière recette tant qu’il y a les ingrédients.',
                 ],
             },
