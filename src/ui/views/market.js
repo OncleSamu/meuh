@@ -55,6 +55,8 @@ const shopCard = (icon, title, sub, side, locked, req) =>
 const stockChip = id => {
     const n = state.seeds[id] || 0;
     if (!n) return '';
+    // un début de partie ne doit pas pouvoir revendre ses premières graines d'un doigt distrait
+    if (ITEMS[id].type === 'crop' && n < 50) return meta(null, `${n} en stock`, 'stock');
     return `<button class="chip meta stock sell-seed" data-act="sellSeeds" data-id="${id}" title="Revendre le stock">${n} en stock · revendre ${fmt(G.seedBackPrice(id) * n)}${COIN()}</button>`;
 };
 
