@@ -44,6 +44,20 @@ export const horses = () => state.animals.filter(a => a.type === 'horse');
 export const lodged = () => horses().filter(a => a.box);
 export const atGrass = () => horses().filter(a => !a.box);
 export const horseByUid = uid => state.animals.find(a => a.uid === uid && a.type === 'horse');
+// 1.43 : le record de chaque cheval dans chaque discipline (meilleur score, et au galop son temps et son parcours pour le fantôme)
+export const horseRecord = (uid, d) => {
+    const a = horseByUid(uid);
+    return (a && a.rec && a.rec[d]) || null;
+};
+export function saveHorseRecord(uid, d, score, extra = {}) {
+    const a = horseByUid(uid);
+    if (!a) return { isNew: false, prev: null };
+    a.rec = a.rec || {};
+    const prev = a.rec[d] || null;
+    const isNew = !prev || score > prev.s;
+    if (isNew) a.rec[d] = { s: Math.round(score * 1000) / 1000, ...extra };
+    return { isNew, prev };
+}
 export const boxFree = () => Math.max(0, boxCount() - lodged().length);
 
 // la fiche d'un cheval aux écuries (créée à la demande)

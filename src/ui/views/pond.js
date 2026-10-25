@@ -111,7 +111,7 @@ function rodCard() {
     }[ph];
     const zone = ph === 'reel' ? `left:${(G.zoneCenter() - f.width / 2) * 100}%;width:${f.width * 100}%` : '';
     return `<div class="card nature-card pond-card">
-        <div class="nature-head">${ico(['ui', 'rod'])}<div class="card-main"><div class="card-title">${SPOTS[p.spot].name}</div><div class="card-sub">${msg}</div></div></div>
+        <div class="nature-head">${ico(['ui', 'rod'])}<div class="card-main"><div class="card-title">${SPOTS[p.spot].name}</div><div class="card-sub">${msg}</div></div>${ph === 'idle' ? btn('?', { act: 'open', data: { sheet: 'guide', page: 'pond' }, size: 'sm', kind: 'ghost', title: 'Comment on pêche ?' }) : ''}</div>
         <div class="catch-row">${table.map(r => `<span class="catch${r.boosted ? ' boost' : ''}" title="${fname(r.id)}">${ico(['item', r.id])}<b>${r.pct}%</b></span>`).join('') || '<span class="card-sub">Rien ne mord ici en ce moment.</span>'}</div>
         <div class="pond spot-${p.spot}" id="pond" data-phase="${ph}" data-anchor="pond"><div class="ripple r1"></div><div class="ripple r2"></div><div class="lily l1"></div><div class="lily l2"></div><div class="bobber"><span class="excl">!</span></div></div>
         ${ph === 'reel' ? fightBar(f) : ''}

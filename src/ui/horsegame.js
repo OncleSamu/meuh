@@ -169,8 +169,18 @@ export function openHorseGame(uid, d, el, mode = null) {
 }
 
 // le panneau de fin : points gagnés
-function finish(c, score, lines) {
+function finish(c, score, lines, extra = {}) {
     const n = score >= 0.85 ? 3 : score >= 0.6 ? 2 : score >= 0.3 ? 1 : 0;
+    // 1.43 : le record du cheval dans cette discipline
+    const rec = G.saveHorseRecord(c.uid, c.d, score, extra);
+    lines = [
+        ...lines,
+        rec.isNew && rec.prev
+            ? `<b class="hg-rec">Nouveau record ! (avant : ${Math.round(rec.prev.s * 100)}/100)</b>`
+            : rec.isNew
+              ? `<b class="hg-rec">Premier record : ${Math.round(score * 100)}/100</b>`
+              : `Record de ${c.a.name} : ${Math.round(rec.prev.s * 100)}/100`,
+    ];
     const note = c.mode === 'show' ? G.endShowPass(c.uid, score) : c.mode === 'gp' ? G.endGpPass(c.uid, c.d, score) : null;
     const gain = c.mode ? 0 : G.endTrain(c.uid, c.d, c.el, score);
     sfx(n >= 2 ? 'level' : 'pop');
@@ -190,6 +200,9 @@ function playGalop(c) {
     const { a, stage, q, me } = c;
     const silks = silksOf(a);
     const g = G.newGalop(Math.random, c.k);
+    // 1.43 : le fantôme doré du meilleur passage de ce cheval, et le parcours de celui-ci (un point toutes les 0,25 s)
+    const ghost = (G.horseRecord(c.uid, 'galop') || {}).path || null;
+    const path = [];
     const calm = reduceMotion();
     const frames = ['galA', 'galB', 'galC', 'galB'].map(p => horseFrame(p, silks));
     stage.innerHTML = `<svg viewBox="0 0 360 520" class="hg-svg">${defs}${rect(0, 0, 360, 520, 0, 'url(#hgsky)', 0)}${cloud(70, 130)}${cloud(260, 104, 0.8)}
@@ -201,7 +214,7 @@ function playGalop(c) {
         <g id="hgspeed" opacity="0">${line('M20 352 L-20 352 M26 368 L-10 368 M16 384 L-30 384', 3.2, 'rgba(255,255,255,.8)')}</g>
         <g id="hgdust" opacity=".7"></g>
         <g transform="translate(140 352) scale(2.5) translate(-40 -44)"><g id="hgh">${frames[1]}</g></g>
-        ${hudBox(`<g id="hgoval" transform="translate(60 34)"><ellipse rx="42" ry="20" fill="#d9b57a" stroke="${INK}" stroke-width="2.6"/><ellipse rx="26" ry="9" fill="#6cc04a" stroke="${INK}" stroke-width="2.2"/>${line('M0 -20 L0 -9', 2.6, '#c8453a')}${Array.from({ length: GALOP.rivals }, (_, i) => `<circle id="hgr${i}" r="3.4" fill="#b9b3a6" stroke="${INK}" stroke-width="1.4"/>`).join('')}<circle id="hgme" r="5" fill="#ffd23f" stroke="${INK}" stroke-width="2"/></g>${T(190, 28, 12, 'Place')}${T(190, 50, 22, '1 / 6', { id: 'hgrank' })}${mg('chrono', 262, 11, 0.6)}${T(322, 46, 17, '0:00', { id: 'hgtime' })}`)}
+        ${hudBox(`<g id="hgoval" transform="translate(60 34)"><ellipse rx="42" ry="20" fill="#d9b57a" stroke="${INK}" stroke-width="2.6"/><ellipse rx="26" ry="9" fill="#6cc04a" stroke="${INK}" stroke-width="2.2"/>${line('M0 -20 L0 -9', 2.6, '#c8453a')}${Array.from({ length: GALOP.rivals }, (_, i) => `<circle id="hgr${i}" r="3.4" fill="#b9b3a6" stroke="${INK}" stroke-width="1.4"/>`).join('')}${ghost ? `<circle id="hgghost" r="5" fill="#fff2b3" stroke="#d99a2b" stroke-width="2" opacity=".75"/>` : ''}<circle id="hgme" r="5" fill="#ffd23f" stroke="${INK}" stroke-width="2"/></g>${T(190, 28, 12, 'Place')}${T(190, 50, 22, '1 / 6', { id: 'hgrank' })}${mg('chrono', 262, 11, 0.6)}${T(322, 46, 17, '0:00', { id: 'hgtime' })}`)}
         <g id="hgwarn" opacity="0">${rect(40, 70, 280, 38, 19, '#ffd23f', 2.8)}${T(180, 95, 18, 'Virage !', { id: 'hgwtxt' })}</g>
         <g id="hgmsg" opacity="0">${T(180, 200, 28, '', { id: 'hgmtxt', c: '#fff', st: 1, sw: 6 })}</g>
         ${gauge(g.v, G.galopZone(g.k))}${T(180, 514, 12, 'Maintenez : accélérer · Relâchez : ralentir', { c: '#fff', st: 1, sw: 3.4 })}
@@ -272,6 +285,14 @@ function playGalop(c) {
         }
         const before = g.turnsDone.length;
         G.stepGalop(g, dt);
+        while (path.length <= g.t / 0.25) path.push(Math.round(g.dist));
+        if (ghost) {
+            const gd = ghost[Math.min(ghost.length - 1, Math.floor(g.t / 0.25))];
+            const [gx, gy] = ovalPos(Math.min(1, gd / GALOP.length));
+            const gh = $('hgghost');
+            gh.setAttribute('cx', gx);
+            gh.setAttribute('cy', gy);
+        }
         if (g.turnsDone.length > before) {
             const s = g.turnsDone[g.turnsDone.length - 1];
             say(s >= 0.85 ? 'Parfait !' : s >= 0.5 ? 'Bien négocié' : g.v > GALOP.zone[1] ? 'Trop vite !' : 'Trop lent !', 1.1);
@@ -327,11 +348,17 @@ function playGalop(c) {
         if (g.done) {
             cleanup();
             stage.querySelector('.hg-svg') &&
-                finish(c, G.galopScore(g), [
-                    `Place : ${G.galopRank(g)} sur ${GALOP.rivals + 1}`,
-                    `Virages : ${g.turnsDone.map(s => (s >= 0.85 ? 'parfait' : s >= 0.5 ? 'bien' : 'raté')).join(', ')}`,
-                    `Temps : ${fmtT(g.t)}`,
-                ]);
+                finish(
+                    c,
+                    G.galopScore(g),
+                    [
+                        `Place : ${G.galopRank(g)} sur ${GALOP.rivals + 1}`,
+                        `Virages : ${g.turnsDone.map(s => (s >= 0.85 ? 'parfait' : s >= 0.5 ? 'bien' : 'raté')).join(', ')}`,
+                        `Temps : ${fmtT(g.t)}`,
+                        ...(ghost ? [`Fantôme : ${fmtT((ghost.length - 1) * 0.25)}`] : []),
+                    ],
+                    { t: Math.round(g.t * 100) / 100, path },
+                );
             return;
         }
         requestAnimationFrame(loop);
