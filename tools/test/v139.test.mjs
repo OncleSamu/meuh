@@ -73,3 +73,15 @@ test('votre score entre dans la moyenne et se garde dans la sauvegarde', () => {
     assert.deepEqual(back.contestHist, state.contestHist);
     assert.ok(back.contest.base0 > 0, 'les rivales du nouveau concours sont calées');
 });
+
+test('concours de pêche : les rivales pêchent par sorties pendant le week-end', () => {
+    G.loadGame();
+    state.level = 40;
+    const c = { id: G.contestFish(), week: 2970, startAt: Date.UTC(2026, 9, 24, 9) };
+    const ses = G.rivalCatches(c, 3);
+    assert.ok(ses.length >= 3 && ses.length <= 5, `${ses.length} sorties`);
+    const first = G.rivalsOf(c, ses[0].t - 1000)[3].w,
+        last = G.rivalsOf(c, ses[ses.length - 1].t + 1000)[3].w;
+    assert.equal(first, 0, 'rien avant la première sortie');
+    assert.ok(last > 0 && last >= G.rivalsOf(c, ses[0].t + 1000)[3].w, 'le record monte');
+});

@@ -3,6 +3,7 @@
 // la remontée des saumons et le concours de pêche du week-end.
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
+import { RIVAL_STYLE } from './rivals.js';
 import { view } from '../core/view.js';
 import { fmt, qtyName, round5 } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly } from '../core/bus.js';
@@ -620,16 +621,30 @@ export const contestFish = (week = fishWeek()) => {
     const list = contestPool();
     return list[(week * 7) % list.length];
 };
-// les fermes voisines : leur plus belle prise de la semaine (toujours la même pour une semaine donnée)
-export function rivalsOf(c, t = now()) {
+// les fermes voisines : leur plus belle prise de la semaine (toujours la même pour une semaine donnée).
+// 1.39 : elles pêchent par sorties pendant le week-end, chacune à ses heures : leur record monte par à-coups,
+// et la plus belle prise peut tomber le dimanche soir.
+export function rivalCatches(c, k) {
     const [a, b] = FISH[c.id].w;
-    const end = weekendEnd(c.endAt ? c.endAt - 1 : t);
-    const progress = Math.min(1, Math.max(0.35, 1 - (end - t) / (2 * 86400000)));
+    const end = weekendEnd(c.endAt ? c.endAt - 1 : c.startAt || now());
+    const start = end - 2 * 864e5;
+    const r = RIVALS[k];
+    const rnd = seedRand(c.week * 1000 + k);
+    const frac = Math.min(0.97, Math.max(0.2, 0.3 + rnd() * 0.5 + (r.f - 0.75) * 0.25));
+    const hours = (RIVAL_STYLE[k] || RIVAL_STYLE[0]).hours;
+    const slots = [0, 1].flatMap(d => hours.map(h => start + d * 864e5 + h * 3600e3 + (rnd() - 0.5) * 3600e3));
+    const n = Math.min(slots.length, 3 + Math.floor(rnd() * 3));
+    const picked = slots
+        .sort(() => rnd() - 0.5)
+        .slice(0, n)
+        .sort((x, y) => x - y);
+    const best = Math.floor(rnd() * n);
+    return picked.map((t, i) => ({ t, w: Math.round((a + (b - a) * frac * (i === best ? 1 : 0.7 + rnd() * 0.25)) * 100) / 100 }));
+}
+export function rivalsOf(c, t = now()) {
     return RIVALS.map((r, k) => {
-        const rnd = seedRand(c.week * 1000 + k);
-        const frac = Math.min(0.97, Math.max(0.2, 0.3 + rnd() * 0.5 + (r.f - 0.75) * 0.25));
-        const w = Math.round((a + (b - a) * frac) * 100) / 100;
-        return { name: r.name, owner: r.owner, avatar: r.avatar, w: Math.round(w * progress * 100) / 100 };
+        const got = rivalCatches(c, k).filter(x => x.t <= t);
+        return { name: r.name, owner: r.owner, avatar: r.avatar, w: got.length ? Math.max(...got.map(x => x.w)) : 0 };
     });
 }
 export function contestRank(c, t) {
