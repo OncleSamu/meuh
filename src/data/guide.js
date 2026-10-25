@@ -723,6 +723,10 @@ export const GUIDE_PAGES = [
                 t: 'Onglet Atelier, puis Cave. À chaque étape de l’affinage, un lot peut bien vieillir (sa valeur grimpe), mal vieillir (il tourne) ou se perdre. Un lot entièrement en argent, en or, en platine ou en diamant garde sa qualité : il vieillit un peu mieux et se vend plus cher (un vin légendaire en or est le meilleur de la cave).',
             },
             {
+                h: 'Quoi mettre en cave dès le niveau 20',
+                t: 'Le cidre s’ouvre au niveau 20 avec la cave : 3 pommes et du sucre au pressoir (niveau 15). Le fromage suit au niveau 21.',
+            },
+            {
                 h: 'Prendre soin',
                 b: [
                     'Un soin par étape suffit (retourner, soutirer, ouiller, remuer, rouler) ; « Tout soigner » les fait d’un geste.',

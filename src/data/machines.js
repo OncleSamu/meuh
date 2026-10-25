@@ -759,7 +759,7 @@ export const RECIPES = {
         machine: 'press',
         ing: {
             apple: 3,
-            honey: 1,
+            sugar: 1,
         },
         time: 420,
         lvl: 14,

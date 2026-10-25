@@ -220,7 +220,7 @@ export const LV_REC = {
     kiwiJuice: 22,
     crepes: 23,
     gingerbread: 29,
-    cider: 21,
+    cider: 20,
     eelMatelote: 29,
     yogurt: 29,
     croissant: 29,
