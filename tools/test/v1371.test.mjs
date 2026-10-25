@@ -1,6 +1,7 @@
 // 1.37.1 : le deuxième poste des machines (deux lots à la fois).
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { clock } from './helpers.mjs';
 import { state } from '../../src/core/state.js';
 import { setView } from '../../src/core/view.js';
 import * as G from '../../src/systems/index.js';
@@ -64,4 +65,16 @@ test('les pousses en trop se revendent (hors grange)', () => {
     assert.equal(state.seeds.apple, 0);
     assert.equal(state.money, money + 7 * G.seedBackPrice('apple'));
     assert.equal(G.barnUsed(), used);
+});
+
+test("l'absence fait pousser le champ à la même vitesse qu'en jeu", () => {
+    start();
+    const i = state.grid.findIndex(p => p.terrain === 'plowed' || p.terrain === 'grass');
+    const p = state.grid[i];
+    Object.assign(p, { terrain: 'plowed', itemId: 'pumpkin', isWatered: true, isReady: false, growProgress: 0, pest: false });
+    const rate = G.plotRate(p, i);
+    state.lastSaved = clock.t - 120 * 1000;
+    G.offlineProgress();
+    const need = 120 * rate;
+    assert.ok(p.isReady || Math.abs(p.growProgress - need) < 1e-6, `${p.growProgress} contre ${need}`);
 });
