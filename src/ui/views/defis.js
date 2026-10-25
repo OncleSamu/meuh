@@ -1,7 +1,7 @@
 // Les grands défis (1.1) : la carte du volet Commandes, la fiche du défi, le choix d'une création à présenter,
 // et la salle des trophées.
 import { state } from '../../core/state.js';
-import { fmt, formatDuration } from '../../core/format.js';
+import { fmt } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { ANIMALS } from '../../data/animals.js';
 import { DECOS } from '../../data/farm.js';
@@ -10,14 +10,16 @@ import { DEFI, DEFIS } from '../../data/defis.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, timer, section, hint, empty } from '../kit.js';
+import { btn, bar, timer, section, hint, empty, toggle } from '../kit.js';
+import { CUP_POINTS } from '../../data/cup.js';
+import { now } from '../../core/clock.js';
 import { defineSheet, closeSheet } from '../sheets.js';
 import { animalArt } from '../genlook.js';
 import { varArt } from './lab.js';
 import { legendCell } from './cave.js';
 import { CAVE_FAMILIES } from '../../data/cave.js';
 
-const CUPS = ['cupNone', 'cupBronze', 'cupSilver', 'cupGold'];
+const CUPS = ['cupNone', 'cupBronze', 'cupSilver', 'cupGold', 'cupPlat', 'cupDiamond'];
 const QNAME = ['', 'argent ou or', 'or'];
 const medalRow = n => `<span class="defi-cups">${[1, 2, 3].map(m => `<i class="${n >= m + 1 ? 'on' : ''}">${art('ui', CUPS[m])}</i>`).join('')}</span>`;
 const medalLabel = n => (n >= 4 ? 'Or' : n === 3 ? 'Argent' : n === 2 ? 'Bronze' : n === 1 ? 'Encore 1 étape pour le bronze' : '2 étapes pour le bronze');
@@ -58,14 +60,38 @@ export function defiCard() {
     if (!G.defiOpen())
         return `<div class="card locked defi-card">${ico(['ui', 'cupGold'], 'ico big')}<div class="card-main"><div class="card-title">Les grands défis</div><div class="card-sub">Au niveau ${DEFI.lvl}, un villageois vous confiera un grand défi de deux semaines : médailles, rubans et décorations uniques.</div></div></div>`;
     const d = G.curDefi();
-    if (!d) return null;
+    if (!d) return offerCard();
     const def = DEFIS[d.id],
         n = G.stepsDone(d);
     const head = `<div class="card-head">${ico(['villager', def.who], 'ico big')}<div class="card-main"><div class="card-title">${def.name}</div><div class="card-sub">Grand défi · ${medalLabel(n)}</div></div><span class="timer-pill">${ico(['ui', 'clock'])}${timer(d.end)}</span></div>`;
     if (d.awarded)
-        return `<div class="card defi-card won">${head}<p class="card-sub center">${ico(['ui', CUPS[d.awarded]], 'ico big')} Médaille ${DEFI.medals[d.awarded - 1].name.toLowerCase()} ! Le prochain défi arrive dans <b>${formatDuration(G.defiLeft(d) / 1000)}</b>.</p></div>`;
+        return `<div class="card defi-card won">${head}<p class="card-sub center">${ico(['ui', CUPS[d.awarded]], 'ico big')} Médaille ${DEFI.medals[d.awarded - 1].name.toLowerCase()} ! Choisissez dès maintenant le prochain défi.</p>${offerList()}</div>`;
     return `<div class="card defi-card">${head}${medalRow(n)}<div class="defi-steps">${d.steps.map((st, k) => stepRow(st, k, false)).join('')}</div>
         ${btn('Voir le défi', { act: 'open', data: { sheet: 'defi' }, size: 'sm', wide: true })}</div>`;
+}
+
+// 1.40 : on choisit son grand défi parmi trois
+function offerList() {
+    const offer = G.defiOffer();
+    if (!offer) return '';
+    const T = (state.defis && state.defis.trophies) || {};
+    return `<div class="defi-offer">${offer
+        .map(id => {
+            const def = DEFIS[id],
+                t = T[id];
+            const steps = def.steps.map(x => x.name).join(' · ');
+            const tag =
+                t && t.best
+                    ? `${ico(['ui', CUPS[t.best]])}meilleure médaille : ${DEFI.medals[t.best - 1].name.toLowerCase()}`
+                    : 'Jamais gagné en or : un monument à la clé';
+            return `<div class="offer-row">${ico(['villager', def.who], 'ico big')}<div class="card-main"><div class="card-title">${def.name}</div><div class="card-sub">${steps}</div><small class="offer-tag">${tag}</small></div>${btn('Choisir', { act: 'pickDefi', data: { id }, kind: 'gold', size: 'sm' })}</div>`;
+        })
+        .join('')}</div>`;
+}
+function offerCard() {
+    if (!G.defiOffer()) return null;
+    return `<div class="card defi-card offer"><div class="card-head">${ico(['ui', 'cupGold'], 'ico big')}<div class="card-main"><div class="card-title">Choisissez votre grand défi</div><div class="card-sub">Deux semaines pour quatre étapes. L’or construit son monument ; le platine et le diamant rapportent plus de points à la Coupe de la vallée.</div></div></div>${offerList()}
+        ${btn('La Coupe de la vallée', { act: 'open', data: { sheet: 'cup' }, size: 'sm', wide: true, icon: ['ui', 'cupRank' + G.cupRank()] })}</div>`;
 }
 
 // ---------------- la fiche du défi ----------------
@@ -80,19 +106,33 @@ defineSheet('defi', {
         const t = (state.defis.trophies || {})[d.id];
         return `<div class="defi-intro">${art('villager', def.who)}<div><b>${VILLAGERS[def.who].name}</b><p>« ${def.intro} »</p></div></div>
             <div class="defi-medals">${medalRow(n)}<span>${d.awarded ? `Médaille ${DEFI.medals[d.awarded - 1].name.toLowerCase()} gagnée` : medalLabel(n)} · encore ${timer(d.end, 'b')}</span></div>
+            ${d.awarded ? '' : aimRow(d)}
             ${section('Les 4 étapes')}<div class="defi-steps full">${d.steps.map((st, k) => stepRow(st, k, true)).join('')}</div>
             ${section('Les médailles')}
             <div class="defi-rewards">${DEFI.medals
                 .map((M, k) => {
                     const coins = Math.round(M.coins * G.defiScale());
-                    const star = M.star >= 1 ? '1 étoile' : M.star >= 0.5 ? '½ étoile' : '¼ d’étoile';
-                    return `<div class="defi-reward">${art('ui', CUPS[k + 1])}<b>${M.name}</b><small>${k + 2} étapes</small><small>${fmt(coins)} pièces · ${star}${M.rubans ? ` · ${M.rubans} ruban${M.rubans > 1 ? 's' : ''}` : ''}</small></div>`;
+                    const star =
+                        M.star >= 2 ? '2 étoiles' : M.star >= 1.5 ? '1,5 étoile' : M.star >= 1 ? '1 étoile' : M.star >= 0.5 ? '½ étoile' : '¼ d’étoile';
+                    const how = k < 3 ? `${k + 2} étapes` : k === 3 ? '4 étapes, tout livré en or ou mieux' : `platine en ${DEFI.diamondDays} jours`;
+                    return `<div class="defi-reward">${art('ui', CUPS[k + 1])}<b>${M.name}</b><small>${how} · ${CUP_POINTS[k + 1]} pt${CUP_POINTS[k + 1] > 1 ? 's' : ''} de Coupe</small><small>${fmt(coins)} pièces · ${star}${M.rubans ? ` · ${M.rubans} ruban${M.rubans > 1 ? 's' : ''}` : ''}</small></div>`;
                 })
                 .join('')}</div>
             <div class="card defi-deco">${art('ui', def.deco)}<div class="card-main"><div class="card-title">${deco.name}</div><div class="card-sub">${t && t.gold ? 'Déjà gagnée : elle est dans vos décorations.' : 'Décoration unique, la première fois que vous gagnez l’or sur ce défi.'}</div></div></div>
             ${hint('Livrer garde ce qui est déjà donné : vous pouvez apporter les produits en plusieurs fois. Le marché ne vend pas ce que le défi attend.')}`;
     },
 });
+
+// viser le platine : ne livrer que de l'or ou mieux ; le diamant, en moins de 7 jours
+function aimRow(d) {
+    const left = d.start + DEFI.diamondDays * 864e5;
+    const txt = d.mixed
+        ? 'Des produits ordinaires ont déjà été livrés : le platine n’est plus possible sur ce défi.'
+        : d.aimGold
+          ? `Platine en vue${now() < left ? `, et diamant si tout est fini dans ${timer(left, 'b')}` : ''}.`
+          : 'Activez pour ne livrer que de l’or ou mieux, et viser le platine.';
+    return `<div class="card aim-card">${toggle('Viser le platine (livrer en or)', d.aimGold, 'aimGold', {})}<p class="card-sub">${txt}</p></div>`;
+}
 
 // ---------------- présenter une bête ou une variété ----------------
 defineSheet('defiPick', {
@@ -169,5 +209,7 @@ export function setupDefis() {
     actions({
         giveDefi: (el, d) => G.giveDefi(+d.k, el),
         presentDefi: (el, d) => G.presentDefi(+d.k, d.id, el) && closeSheet('defiPick'),
+        pickDefi: (el, d) => G.pickDefi(d.id),
+        aimGold: () => G.toggleAimGold(),
     });
 }

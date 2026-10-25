@@ -1547,7 +1547,18 @@ export const GUIDE_PAGES = [
         secs: [
             {
                 h: 'Les grands défis',
-                t: 'Un défi de deux semaines, tiré parmi dix-sept, en quatre étapes. Des médailles, une salle des trophées et des décorations uniques à gagner. Il se trouve dans Village › Commandes.',
+                t: 'Un défi de deux semaines en quatre étapes, à choisir parmi trois proposés (dix-sept en tout). Bronze à 2 étapes, argent à 3, or à 4 ; platine si tout est livré en or ou mieux (réglage « Viser le platine » dans la fiche du défi), diamant si le platine est fini en moins de 7 jours. Une médaille gagnée avant la date : le défi suivant peut commencer tout de suite. Il se trouve dans Village › Commandes.',
+            },
+            {
+                h: 'La Coupe de la vallée',
+                b: [
+                    'La vraie ligne d’arrivée : six rangs, de « Ferme du canton » (0 point) à « Ferme du monde » (110 points). Menu › La Coupe de la vallée.',
+                    'Les médailles rapportent des points : bronze 1, argent 2, or 4, platine 7, diamant 10. Chaque défi gagné en or bâtit son monument dans le domaine des légendes ; les dix-sept en or dressent la grande statue dorée (+10).',
+                    'Le mécénat : six grands travaux pour la vallée (pont, thermes, cathédrale, observatoire, musée, opéra), de 50 millions à 1,2 milliard de pièces plus des matériaux, pour 6 à 16 points.',
+                    'Chaque rang donne un bonus permanent : étal plus grand, cave plus rapide, une commande de plus, deuxième poste à moitié prix, puis +5 % à l’étal et aux commandes.',
+                    'Les quatre fermes rivales gagnent leurs médailles à votre rythme moyen : le classement de la Coupe montre qui mène.',
+                    'Tout se garde quand on vend la ferme.',
+                ],
             },
             {
                 h: 'La renommée',

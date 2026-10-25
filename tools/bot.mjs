@@ -547,6 +547,9 @@ function orchard() {
 
 // les grands défis : livrer dès qu'on peut, présenter la meilleure bête ou variété
 function defis() {
+    // 1.40 : on choisit le premier des trois défis proposés
+    const offer = G.defiOffer();
+    if (offer && (!G.curDefi() || G.curDefi().awarded)) G.pickDefi(offer[0]);
     const d = G.curDefi();
     if (!d || d.awarded) return;
     d.steps.forEach((st, k) => {

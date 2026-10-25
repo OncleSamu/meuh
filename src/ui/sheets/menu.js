@@ -44,6 +44,7 @@ defineSheet('menu', {
         return `<div class="menu-grid">
             ${navRow('Progrès', 'open', { sheet: 'progress' }, ['ui', 'skillbook'], badge(pts), `${pts ? `${pts} point${pts > 1 ? 's' : ''} de compétence à placer · ` : ''}Compétences, prestige et défis`)}
             ${navRow('Livre de la ferme', 'open', { sheet: 'book' }, ['ui', 'book'], badge(book), 'Collection, maîtrise, exploits, légende, album et histoires de Mamie')}
+            ${G.defiOpen() ? navRow('La Coupe de la vallée', 'open', { sheet: 'cup' }, ['ui', 'cupRank' + G.cupRank()], '›', `${G.cupRankName()} · ${fmt(G.cupPts())} points`) : ''}
             ${navRow('Carnets', 'open', { sheet: 'carnets' }, ['ui', 'book'], badge(carnetsReady()), 'Pêche, forêt et mine, potager, verger')}
             ${state.level >= 58 || G.caveLegends().length ? navRow('Salle des trophées', 'open', { sheet: 'trophies' }, ['ui', 'cupGold'], '›', 'Médailles des défis et lots légendaires') : ''}
             ${state.genetics && G.geneticsOpen() ? navRow('Mes créations', 'open', { sheet: 'creations' }, ['ui', 'flowers'], '›', 'Vos variétés et vos races fixées') : ''}
