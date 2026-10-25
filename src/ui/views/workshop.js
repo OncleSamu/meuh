@@ -16,6 +16,7 @@ import { bldRow } from '../sheets/upgrades.js';
 
 const puffs = m => (G.machineBusy(m) ? '<i class="puff"></i><i class="puff p2"></i><i class="puff p3"></i>' : '');
 defineLive('mac', i => G.machinePct(state.machines[i] || { queue: [] }));
+defineLive('mac2', i => G.machinePct2(state.machines[i] || { queue: [] }));
 
 function tile(m, i) {
     const d = MACHINES[m.type];
@@ -61,8 +62,19 @@ function queueSlots(m, i) {
         const id = m.queue[k];
         if (!id) return '<span class="mslot empty"></span>';
         if (k === 0) return `<span class="mslot now">${art('item', id)}${bar(G.machinePct(m), 'slot-bar', `mac:${i}`)}</span>`;
+        if (k === 1 && m.lane2)
+            return `<button class="mslot now can-cancel" data-act="cancelQueued" data-i="${i}" data-k="${k}" aria-label="Annuler">${art('item', id)}${bar(G.machinePct2(m), 'slot-bar', `mac2:${i}`)}</button>`;
         return `<button class="mslot can-cancel" data-act="cancelQueued" data-i="${i}" data-k="${k}" aria-label="Annuler">${art('item', id)}<b>×</b></button>`;
     }).join('')}</div>`;
+}
+
+function lane2Row(m, i) {
+    if (m.lane2) return `<div class="card-sub center">${ico(['ui', 'check'])} Deuxième poste en service : deux lots tournent en même temps.</div>`;
+    if (!G.lane2Open()) return '';
+    const c = G.lane2Cost(m.type);
+    return `<div class="card lane2-card"><div class="card-main"><div class="card-title">Deuxième poste</div>
+        <div class="card-sub">Faire tourner deux plats à la fois dans la file de cette machine.</div></div>
+        ${btn(`${fmt(c)}${ico(['ui', 'coin'])}`, { act: 'buyLane2', data: { i }, kind: state.money >= c ? 'gold' : '', size: 'sm' })}</div>`;
 }
 
 defineSheet('machine', {
@@ -120,6 +132,7 @@ defineSheet('machine', {
                 `<div class="row-btns">${ready.length ? btn(`Récupérer ${ready.map(([id, n]) => `${ico(['item', id])}×${n * (RECIPES[id].outQty || 1)}`).join(' ')}`, { act: 'collectMachine', data: { i }, kind: 'gold' }) : ''}
                 ${btn(m.loop ? 'En boucle' : 'Boucle', { act: 'toggleLoop', data: { i }, icon: ['ui', 'loop'], cls: m.loop ? 'on' : '', title: 'Relancer automatiquement la dernière recette' })}</div>`,
             ],
+            ['lane2', lane2Row(m, i)],
             ['up', bldRow('m', m.type)],
             [
                 'best',
@@ -165,6 +178,7 @@ export function setupWorkshop() {
         collectMachines: el => G.collectAllMachines(el),
         restartMachines: el => G.restartAllMachines(el),
         queue: (el, d) => G.queueRecipe(+d.i, d.id, el),
+        buyLane2: (el, d) => G.buyLane2(+d.i, el),
         cancelQueued: (el, d) => G.cancelQueued(+d.i, +d.k),
         toggleLoop: (el, d) => G.toggleLoop(+d.i),
         recipeFilter: (el, d) => (ui.sel.recipeFilter = d.f),

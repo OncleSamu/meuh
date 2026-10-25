@@ -49,6 +49,7 @@ export const machineOutput = m => Object.keys(m.out).find(k => m.out[k] > 0) || 
 // durée réelle d'une recette : vitesse générale, moulin du hameau, maîtrise
 export const recipeTime = id => (RECIPES[id].time / (speedMult() * machineBoost(RECIPES[id].machine) * masterySpeed(id))) * mTimeMult(RECIPES[id].machine);
 export const machinePct = m => (m.queue.length ? Math.min(1, m.progress / recipeTime(m.queue[0])) : 0);
+export const machinePct2 = m => (m.lane2 && m.queue.length > 1 ? Math.min(1, (m.progress2 || 0) / recipeTime(m.queue[1])) : 0);
 export const machineLeft = m => (m.queue.length ? Math.max(0, recipeTime(m.queue[0]) - m.progress) : 0);
 export const recipeLockText = r =>
     !lvOk(r, r.lvl)
@@ -101,6 +102,7 @@ export function loopRefill(m) {
     if (!r || !recipeUnlocked(r.id) || !canCook(r.id)) return false;
     const q = takeIngredients(r.id);
     if (!m.queue.length) m.progress = 0;
+    if (m.queue.length < 2) m.progress2 = 0;
     pushJob(m, r.id, q);
     return true;
 }
@@ -121,31 +123,74 @@ export function toggleLoop(i) {
     loopRefill(m);
 }
 
+// 1.37.1 : un deuxième poste de travail (acheté une fois par machine) fait tourner deux lots à la fois :
+// le lot de tête (progress) et le suivant de la file (progress2).
+export const LANE2_LVL = 15;
+export const lane2Cost = type => Math.round(((MACHINES[type].cost || 6000) * 6 + 30000) / 1000) * 1000;
+export const lane2Open = () => state.level >= LANE2_LVL;
+export function buyLane2(i, at) {
+    const m = state.machines[i];
+    if (!m || m.lane2) return false;
+    const c = lane2Cost(m.type);
+    if (!lane2Open() || state.money < c) {
+        sfx('error');
+        toast(!lane2Open() ? `Le deuxième poste s’ouvre au niveau ${LANE2_LVL}` : 'Pas assez de pièces', ['ui', 'coin']);
+        emit('shake', at);
+        return false;
+    }
+    state.money -= c;
+    m.lane2 = true;
+    m.progress2 = 0;
+    sfx('level');
+    buzz(20);
+    burst(at, 'sparkle', 12);
+    toast(`${MACHINES[m.type].name} : deux lots à la fois`, ['machine', m.type]);
+    return true;
+}
+const laneB = m => !!m.lane2 && m.queue.length > 1;
+
+// une recette terminée : elle attend dans la sortie de la machine
+function finishJob(m, k) {
+    const id = m.queue.splice(k, 1)[0];
+    const q = (m.qq || []).splice(k, 1)[0] || 0;
+    m.out[id] = (m.out[id] || 0) + 1;
+    // la qualité du lot (de meilleurs ingrédients) suit le produit jusqu'à la récupération
+    if (q) {
+        m.outq = m.outq || {};
+        const o = (m.outq[id] = m.outq[id] || { s: 0, g: 0 });
+        const key = ['s', 's', 'g', 'p', 'd'][q];
+        o[key] = (o[key] || 0) + 1;
+    }
+}
+
 // Avance une machine de dt secondes ; renvoie le nombre de lots terminés
 export function advanceMachine(m, dt) {
     let done = 0;
     loopRefill(m);
-    while (m.queue.length && dt > 0) {
-        const need = recipeTime(m.queue[0]) - m.progress;
-        if (dt < need) {
-            m.progress += dt;
-            break;
+    if (!m.lane2) m.progress2 = 0;
+    for (let guard = 0; m.queue.length && dt > 1e-9 && guard < 5000; guard++) {
+        const needA = recipeTime(m.queue[0]) - m.progress;
+        const needB = laneB(m) ? recipeTime(m.queue[1]) - (m.progress2 || 0) : Infinity;
+        const step = Math.min(dt, needA, needB);
+        m.progress += step;
+        if (laneB(m)) m.progress2 = (m.progress2 || 0) + step;
+        dt -= step;
+        if (m.progress >= recipeTime(m.queue[0]) - 1e-9) {
+            // le lot de tête est fini : celui du second poste passe en tête avec son avance
+            const hadB = laneB(m);
+            finishJob(m, 0);
+            m.progress = hadB ? m.progress2 || 0 : 0;
+            m.progress2 = 0;
+            done++;
+            loopRefill(m);
+        } else if (laneB(m) && m.progress2 >= recipeTime(m.queue[1]) - 1e-9) {
+            finishJob(m, 1);
+            m.progress2 = 0;
+            done++;
+            loopRefill(m);
         }
-        dt -= need;
-        const id = m.queue.shift();
-        const q = (m.qq || []).shift() || 0;
-        m.out[id] = (m.out[id] || 0) + 1;
-        // la qualité du lot (de meilleurs ingrédients) suit le produit jusqu'à la récupération
-        if (q) {
-            m.outq = m.outq || {};
-            const o = (m.outq[id] = m.outq[id] || { s: 0, g: 0 });
-            const k = ['s', 's', 'g', 'p', 'd'][q];
-            o[k] = (o[k] || 0) + 1;
-        }
-        m.progress = 0;
-        done++;
-        loopRefill(m);
     }
+    if (!m.queue.length) m.progress = m.progress2 = 0;
     return done;
 }
 
@@ -197,6 +242,7 @@ export function queueRecipe(i, id, at) {
     }
     clampAllQuality();
     if (!m.queue.length) m.progress = 0;
+    if (m.queue.length < 2) m.progress2 = 0;
     pushJob(m, id, q);
     m.last = id;
     sfx('machine');
@@ -211,6 +257,7 @@ export function cancelQueued(i, k) {
     if (!m || k < 1 || !m.queue[k]) return false;
     const id = m.queue.splice(k, 1)[0];
     if (m.qq) m.qq.splice(k, 1);
+    if (k === 1) m.progress2 = 0;
     Object.entries(RECIPES[id].ing).forEach(([key, n]) => (state.inventory[key] += n));
     sfx('click');
     toast(`${ITEMS[id].name} retiré de la file, ingrédients rendus`, ['item', id]);
