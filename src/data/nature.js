@@ -1,4 +1,5 @@
 // La nature : forêt, mine, étang et poissons, pêche en mer.
+import { SEA_CATCH_133 } from './v133.js';
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
 export const NATURE = {
@@ -23,13 +24,8 @@ export const TOOL_MAX = 6;
 
 export const SEA_NET_TIME = 1200000;
 
-export const SEA_CATCH = [
-    ['sardine', 40],
-    ['mackerel', 28],
-    ['shrimp', 20],
-    ['seabass', 10],
-    ['lobster', 4],
-];
+// 1.33 : calmar, dorade, raie et thon rejoignent le filet (voir v133.js)
+export const SEA_CATCH = SEA_CATCH_133;
 
 // ---------------- 1.11 : la nature repensée ----------------
 // la mine a trois profondeurs ; chaque roche cache un minerai tiré selon la profondeur

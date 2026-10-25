@@ -15,7 +15,7 @@ export function produce(id) {
     closeAll();
     if (it.sea) {
         go('farm/pond');
-        return toast(G.netOpen() ? 'Les produits de la mer viennent du filet (Ferme | Étang)' : G.storyLockText({ needProject: 'lighthouse' }), ['ui', 'net']);
+        return toast(G.netOpen() ? 'Les produits de la mer viennent du filet (Ferme | Pêche)' : G.storyLockText({ needProject: 'lighthouse' }), ['ui', 'net']);
     }
     if (id === 'alpineMilk') {
         go('animals');

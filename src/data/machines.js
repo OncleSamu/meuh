@@ -5,6 +5,7 @@ import { SERRE_RECIPES } from './serre.js';
 import { MARMITE, RECIPES_130 } from './v130.js';
 import { RECIPES_131 } from './v131.js';
 import { RECIPES_132 } from './v132.js';
+import { RECIPES_133 } from './v133.js';
 import { ITEMS } from './items.js';
 import { ANIMALS } from './animals.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
@@ -3415,6 +3416,7 @@ MACHINES.marmite = { id: 'marmite', name: MARMITE.name, cost: MARMITE.cost, reqL
 for (const [id, , machine, ing, time, lvl] of RECIPES_130) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 for (const [id, , machine, ing, time, lvl] of RECIPES_131) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 for (const [id, , machine, ing, time, lvl] of RECIPES_132) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
+for (const [id, , machine, ing, time, lvl] of RECIPES_133) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 // une recette ne s'ouvre jamais avant sa machine
 for (const r of Object.values(RECIPES)) {
     const m = MACHINES[r.machine];

@@ -13,6 +13,15 @@ export const SPOTS = {
         desc: 'L’eau profonde, là où l’étang rejoint la rivière : les gros poissons.',
         weight: 1.25,
     },
+    // 1.33 : le lagon de l'île, ouvert avec l'île (niveau 38 et bac de Tiago réparé)
+    lagoon: {
+        name: 'Le lagon',
+        lvl: 38,
+        project: 'ferry',
+        icon: 'spotLagoon',
+        desc: 'L’eau claire de l’île : poulpes, vivaneaux, mahi-mahi et, la nuit, des langoustes.',
+        weight: 1.15,
+    },
 };
 export const SPOT_IDS = Object.keys(SPOTS);
 
@@ -23,6 +32,14 @@ export const BAITS = {
     worm: { name: 'Ver de terre', lvl: 9, have: 'worms', icon: ['ui', 'worm'], hint: 'Gardons, ablettes, perches, tanches, anguilles, lottes' },
     corn: { name: 'Maïs', lvl: 11, have: 'corn', icon: ['item', 'corn'], hint: 'Carpes et tanches' },
     fly: { name: 'Mouche', lvl: 13, have: 'flies', icon: ['ui', 'fly'], hint: 'Truites et saumons' },
+    shrimp: {
+        name: 'Crevette',
+        lvl: 38,
+        project: 'ferry',
+        have: 'shrimp',
+        icon: ['item', 'shrimp'],
+        hint: 'Poulpes, vivaneaux, mahi-mahi et langoustes du lagon',
+    },
     live: { name: 'Vif (une ablette)', lvl: 9, project: 'pontoon', have: 'bleak', icon: ['item', 'bleak'], hint: 'Brochets, sandres, silures, esturgeons' },
 };
 
@@ -89,4 +106,5 @@ export const POND_UNLOCKS = [
     [13, 'Les mouches (pour les truites et les saumons)'],
     [14, 'La canne en carbone, deux nasses de plus'],
     [20, 'La canne de compétition'],
+    [38, 'Le lagon de l’île et les crevettes comme appât (Ferme | Pêche)'],
 ];

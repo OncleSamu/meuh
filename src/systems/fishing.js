@@ -22,7 +22,7 @@ import { domStepSum } from './estate.js';
 
 export const pondOpen = () => state.level >= NATURE.pond.lvl;
 // les noms féminins, pour « une truite » ou « un brochet »
-const FEM = new Set(['bleak', 'perch', 'crayfish', 'trout', 'tench', 'carp', 'eel', 'burbot', 'boot']);
+const FEM = new Set(['bleak', 'perch', 'crayfish', 'trout', 'tench', 'carp', 'eel', 'burbot', 'boot', 'spinyLobster']);
 export const fishArt = id => (FEM.has(id) ? 'une' : 'un');
 const low = id => FISH[id].name.toLowerCase();
 const kg = w => (Math.round(w * 100) / 100).toString().replace('.', ',') + ' kg';
@@ -72,7 +72,8 @@ export const spotOpen = id => {
 export const spotLock = id => {
     const s = SPOTS[id];
     if (state.level < s.lvl) return `Niveau ${s.lvl}`;
-    if (s.project && !projectDone(s.project)) return 'Réparez le ponton de Marcel (chantier du village)';
+    if (s.project && !projectDone(s.project))
+        return s.project === 'ferry' ? 'Réparez le bac de Tiago (chantier du village)' : 'Réparez le ponton de Marcel (chantier du village)';
     return '';
 };
 export const baitOpen = id => {
@@ -428,8 +429,16 @@ export function setTrap(i, spot, bait, at) {
 // ce qu'une nasse attrape : les poissons courants de son coin (les écrevisses adorent les nasses)
 function trapPick(spot, bait) {
     const pool = Object.keys(FISH)
-        .filter(id => !FISH[id].junk && (FISH[id].odds >= TRAPS.minOdds || FISH[id].trap))
-        .map(id => [id, fishOdds(id, spot, bait) * (FISH[id].trap || 1)])
+        .filter(id => !FISH[id].junk && !FISH[id].noTrap && (FISH[id].odds >= TRAPS.minOdds || FISH[id].trap))
+        // trapAny : le poulpe se prend dans la nasse de jour comme de nuit
+        .map(id => [
+            id,
+            (FISH[id].trapAny
+                ? (FISH[id].spots || []).includes(spot)
+                    ? FISH[id].odds * (bait && (FISH[id].bait || []).includes(bait) ? BAIT_MULT : 1)
+                    : 0
+                : fishOdds(id, spot, bait)) * (FISH[id].trap || 1),
+        ])
         .filter(([, o]) => o > 0);
     if (!pool.length) return 'roach';
     let r = Math.random() * pool.reduce((a, [, o]) => a + o, 0);
@@ -605,7 +614,7 @@ export function weekendEnd(t = now()) {
 }
 const contestPool = () =>
     Object.keys(FISH).filter(
-        id => !FISH[id].junk && !FISH[id].small && !FISH[id].trap && FISH[id].odds >= 10 && (FISH[id].spots || []).some(x => x !== 'pier'),
+        id => !FISH[id].junk && !FISH[id].small && !FISH[id].trap && FISH[id].odds >= 10 && (FISH[id].spots || []).some(x => x !== 'pier' && spotOpen(x)),
     );
 export const contestFish = (week = fishWeek()) => {
     const list = contestPool();

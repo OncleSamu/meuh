@@ -25,6 +25,8 @@ import './v130dishes.js';
 import './v131trees.js';
 import './v132crops.js';
 import './v132dishes.js';
+import './v133fish.js';
+import './v133dishes.js';
 import './v131.js';
 import './v132.js';
 import './v133.js';

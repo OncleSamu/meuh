@@ -208,7 +208,7 @@ export function unlocksAt(lvl) {
     ORCHARD_UNLOCKS_2.forEach(([l, t]) => l === lvl && add(['item', 'apple'], `${t} (Ferme | Verger)`));
     ORCHARD_UNLOCKS.forEach(([l, t]) => l === lvl && add(['item', 'apple'], `${t} (Ferme | Verger)`));
     NATURE_UNLOCKS.forEach(([l, t]) => l === lvl && add(['ui', 'pickaxe'], `${t} (Ferme | Nature)`));
-    POND_UNLOCKS.forEach(([l, t]) => l === lvl && add(['ui', 'rod'], `${t} (Ferme | Étang)`));
+    POND_UNLOCKS.forEach(([l, t]) => l === lvl && add(['ui', 'rod'], `${t} (Ferme | Pêche)`));
     if (lvl === GH.lvl) add(['ui', 'greenhouse'], 'Serre (à construire dans la ferme)');
     if (lvl === CONTRACT_LVL) add(['ui', 'calendar'], 'Contrats de saison : une grosse livraison par saison, avec un ruban (onglet Village, volet Commandes)');
     if (lvl === RARE_EVENT_LVL) add(['ui', 'fair'], 'Événements rares : foire aux bestiaux, critique gastronomique, nuée de papillons');

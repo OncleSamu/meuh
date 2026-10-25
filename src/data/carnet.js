@@ -1076,3 +1076,73 @@ Object.assign(CARNET, {
     patchouliSachet:
         'Les sachets de patchouli, on les glisse dans les armoires, entre les draps. Ça éloigne les mites et ça parfume le linge. Ma tante Berthe en mettait partout, jusque dans les chaussures.',
 });
+
+// ---------------- 1.33 : les poissons et le lagon ----------------
+Object.assign(CARNET, {
+    gudgeonFry:
+        'La friture de goujons, on la mange avec les doigts, debout près de la poêle. Papi Lucien comptait chaque poisson. Il en volait toujours un de plus que lui-même.',
+    gudgeonLemon:
+        'Les goujons au citron, c’est la recette des jours où la pêche n’a rien donné d’autre. Elle est devenue la meilleure. Personne n’en parle à voix haute, de peur que le poisson l’entende.',
+    smokedGudgeon: 'Les goujons fumés pendent en rang dans la cheminée. Ton père dit qu’on dirait des chaussettes. Il en a mangé dix chaussettes ce soir-là.',
+    whitefishMeuniere:
+        'Le lavaret meunière, avec un beurre qui chante dans la poêle. Un monsieur du lac m’a dit que c’était le plus beau poisson d’eau douce. Il ne l’avait jamais goûté chez moi.',
+    smokedWhitefish:
+        'Le lavaret fumé a la chair rose et douce comme un petit secret. On le sert en fines tranches, avec du pain de seigle. Le silence est total pendant les premières bouchées.',
+    whitefishTartare:
+        'Le tartare de lavaret, coupé au couteau, avec une échalote et un filet de citron. Tante Berthe a dit que c’était cru. Je lui ai dit que c’était frais. Elle a repris une assiette.',
+    whitefishLeek:
+        'Le lavaret aux poireaux, un jour d’hiver, avec la crème qui nappe tout. On se croirait dans une carte postale de chalet. Même le chien lève le nez.',
+    grilledTuna:
+        'Le thon grillé, saisi une minute de chaque côté, rose au milieu. Papi Lucien prétendait en avoir pêché un plus gros que sa barque. Il ne l’avait jamais ramené.',
+    cannedTuna:
+        'Le thon en boîte, on en garde toujours deux au fond du placard, pour les soirs sans idées. Ce sont les soirs où on a le plus d’idées, finalement.',
+    tunaTartare:
+        'Le tartare de thon, avec l’avocat et un trait de citron vert. On me l’a servi un jour à la mer, tout petit dans une grande assiette. Je l’ai fait en plus grand, par principe.',
+    tunaPoke:
+        'Le poke bowl, un jeune du village me l’a décrit comme « une salade qui a réussi dans la vie ». Je ne l’ai pas contredit. J’ai juste demandé s’il en voulait encore.',
+    friedSquid:
+        'Les calamars frits sont dorés, croustillants, et disparaissent par poignées. Ton cousin les appelle « les anneaux magiques ». Il n’y a plus d’anneaux magiques à la fin du plat.',
+    stuffedSquid:
+        'Les calmars farcis, une sorte de patience en forme de poisson. On les ferme avec un cure-dent, on les laisse mijoter dans la sauce tomate. Le résultat vaut le dérangement.',
+    squidSalad:
+        'La salade de calamars, citronnée, fraîche, avec des tomates bien rouges. C’est l’été dans un bol. On la sert avec du pain, pour la sauce, évidemment.',
+    skateBlackButter:
+        'La raie au beurre noir est un plat de grand-mère, de grand-père, de toute la famille depuis toujours. On dit « noir », mais il doit être noisette. Papi Lucien le laissait toujours aller un peu trop loin.',
+    skateMustard:
+        'La raie à la moutarde, avec une crème épaisse et quelques câpres de notre jardin... quand il y en a. Cette fois, il n’y en avait pas, et c’était bon quand même.',
+    skateSoup:
+        'La soupe de raie est une soupe d’hiver, de ces soupes qui font grimper la vapeur jusqu’aux vitres. On y trempe du pain en silence, en écoutant la neige.',
+    bakedBream:
+        'La dorade au four, avec des pommes de terre et du citron, c’est le dimanche à la maison. Elle arrive dans son plat, entière, et tout le monde s’installe pour la regarder.',
+    herbBream:
+        'La dorade grillée aux herbes, parfumée comme un jardin tout entier. Ma voisine a dit qu’elle sentait le sud. J’ai dit que ça sentait la cuisine. Elle a répondu : « C’est pareil. »',
+    breamCeviche:
+        'Le ceviche de dorade, c’est du poisson cuit par le citron vert tout seul. Papi Lucien était persuadé que c’était de la magie. Il a refusé de me laisser lui expliquer le contraire.',
+    grilledOctopus:
+        'Le poulpe grillé, tendre dedans et croustillant dehors. On le bat un peu avant, paraît-il. Papi Lucien le tapait sur un rocher. J’ai un maillet de cuisine pour ça, c’est moins romantique.',
+    octopusProvencale:
+        'Le poulpe à la provençale mijote des heures dans la tomate et l’ail. Toute la maison a une odeur de vacances. On n’est pas en vacances. On s’en fiche.',
+    octopusSalad:
+        'La salade de poulpe avec des pommes de terre, on la sert tiède, au bord de la terrasse. Un voisin italien m’a juré que c’était fidèle. Je l’ai cru, il a pris du rab.',
+    octopusOil:
+        'Le poulpe à l’huile se garde longtemps dans son bocal doré. On l’ouvre pour les amis qui arrivent sans prévenir. Il y en a toujours assez, pour l’instant.',
+    grilledSpinyLobster:
+        'La langouste grillée, avec un beurre à l’ail qui coule. On la mange rarement, et ce n’est pas par économie : c’est parce qu’une fête, ça se prépare.',
+    vanillaSpinyLobster:
+        'La langouste à la vanille, une idée venue des îles. J’ai hésité, j’ai goûté, j’ai pleuré un peu. Ton grand-père a juste dit « encore ». C’est la plus belle critique que j’aie reçue.',
+    spinyBisque:
+        'La bisque de langouste, longue à faire, courte à manger. On la sert dans des tasses, pour les grandes occasions. Il y a toujours quelqu’un pour demander si c’est de la soupe. Il y a toujours quelqu’un pour répondre « non ».',
+    snapperLime:
+        'Le vivaneau au citron vert, avec du riz blanc, c’est la cuisine du lagon. On le mange les pieds dans le sable, même quand on est à la maison, pieds dans le tapis.',
+    creoleSnapper:
+        'Le vivaneau à la créole, avec le piment des îles, l’oignon et la tomate. Il pique juste assez pour faire dire « oh ! » et pas assez pour faire pleurer. Papi Lucien disait qu’il en fallait plus.',
+    snapperCeviche: 'Le ceviche de vivaneau, avec un cube de mangue pour la douceur. Les enfants le prennent pour un dessert. Je ne les détrompe pas.',
+    mahiPineapple:
+        'Le mahi-mahi à l’ananas, doré, sucré et salé à la fois. Un cuisinier de passage a dit que c’était audacieux. J’ai dit que c’était un mardi. On a mangé.',
+    mahiPoke:
+        'Le poke de mahi-mahi, avec de la mangue, du riz et du soja. C’est un plat de couleurs. Même ceux qui n’aiment pas le poisson regardent leur assiette avec respect.',
+    smokedMahi:
+        'Le mahi-mahi fumé a une belle couleur d’or ancien. On le coupe en tranches épaisses et on l’offre, enveloppé dans une feuille de bananier. C’est un cadeau qui se dit tout seul.',
+    mahiTacos:
+        'Les tacos de mahi-mahi, avec l’avocat et le citron vert. On les mange à deux mains, en se tachant, en riant. C’est la seule recette où l’on a le droit de se salir.',
+});

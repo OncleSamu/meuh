@@ -120,7 +120,7 @@ function itemSource(id) {
     if (it.type === 'crop') return it.exotic ? 'Graines chez le marchand ambulant' : `Champ, graines au niveau ${it.reqLvl}`;
     if (it.type === 'tree') return `Arbre fruitier du verger, niveau ${it.reqLvl}`;
     if (it.type === 'fish') return FISH[id] ? `Pêche à l’étang : ${FISH[id].hint.toLowerCase()}` : 'Pêche à l’étang';
-    if (it.sea) return 'Filet de pêche en mer (Ferme | Étang), après le phare';
+    if (it.sea) return 'Filet de pêche en mer (Ferme | Pêche), après le phare';
     if (id === 'alpineMilk') return 'Au retour de la transhumance, puis chez les vaches, chèvres et bufflonnes qui sont montées';
     if (RECIPES[id]) {
         const r = RECIPES[id];

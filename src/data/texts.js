@@ -225,7 +225,7 @@ export const TIPS = {
     seaNet: {
         icon: ['ui', 'net'],
         title: 'La pêche en mer',
-        text: 'Posez le filet dans le volet Étang, revenez 20 minutes plus tard et relevez-le : sardines, maquereaux, crevettes, bars… et parfois un homard !',
+        text: 'Posez le filet dans le volet Pêche, revenez 20 minutes plus tard et relevez-le : sardines, maquereaux, crevettes, bars… et parfois un homard !',
     },
     boat: {
         icon: ['ui', 'boat'],

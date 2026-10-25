@@ -1,3 +1,4 @@
+import { FISH_133 } from './v133.js';
 // Données qui contenaient autrefois du code : textes à trous, icônes, conditions.
 // Les trous : {n} = nombre formaté, {s} = « s » si pluriel, {x} = valeur du rang (compétences).
 
@@ -274,6 +275,9 @@ export const FISH = {
     goldfish: { name: 'Poisson doré', sell: 2000, w: [0.2, 0.6], zone: 0.1, speed: 2.1, odds: 1.2, hint: "Très rare, n'importe où", fight: 'dart' },
     boot: { name: 'Vieille botte', sell: 1, w: [0.8, 1.2], zone: 0.45, speed: 0.8, odds: 3, hint: 'On en pêche toujours une…', junk: true, fight: 'calm' },
 };
+
+// 1.33 : dix poissons de plus
+Object.assign(FISH, FISH_133);
 
 // ---------------- Livre de la ferme : les pages ----------------
 // 1.18 : le Grand livre. icon : [genre, id] ; abs : paliers en nombre (pages qui grandissent avec la partie) ;

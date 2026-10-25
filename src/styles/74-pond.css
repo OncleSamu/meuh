@@ -1,4 +1,4 @@
-/* Ferme | Étang (1.10) : coins de pêche, appâts, canne, nasses, Marcel, concours, carnet */
+/* Ferme | Pêche (1.10) : coins de pêche, appâts, canne, nasses, Marcel, concours, carnet */
 .pond-top .mat small {
     font-size: 0.7rem;
     opacity: 0.8;
@@ -257,7 +257,7 @@
     opacity: 0.7;
 }
 
-/* cinq volets (Champ, Verger, Nature, Étang, Île) : seuls les icônes, sauf le volet ouvert (les noms reviennent sur grand écran) */
+/* cinq volets (Champ, Verger, Nature, Pêche, Île) : seuls les icônes, sauf le volet ouvert (les noms reviennent sur grand écran) */
 @media (max-width: 520px) {
     .seg.n5 > button:not(.on) span {
         display: none;

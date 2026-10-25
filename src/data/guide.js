@@ -92,7 +92,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Les cinq onglets',
                 b: [
-                    'Ferme : le champ, la serre, le verger, la nature (forêt et mine), l’étang et l’île.',
+                    'Ferme : le champ, la serre, le verger, la nature (forêt et mine), la pêche et l’île.',
                     'Animaux : les prés, l’étable, la transhumance.',
                     'Atelier : les machines, le comptoir, la cave, la brasserie et le labo.',
                     'Village : les commandes (tableau, train, cargo, Armand…) et le village (chapitres, villageois, concours, domaine).',
@@ -880,24 +880,25 @@ export const GUIDE_PAGES = [
     {
         id: 'pond',
         cat: 'nature',
-        name: 'L’étang et la pêche',
+        name: 'La pêche',
         icon: ['ui', 'rod'],
         lvl: 9,
         go: 'farm/pond',
-        intro: 'Trois coins de pêche, des appâts, un mini-jeu où chaque poisson se bat à sa façon.',
+        intro: 'Quatre coins de pêche, des appâts, un mini-jeu où chaque poisson se bat à sa façon, et le filet en mer.',
         secs: [
             {
-                h: 'Les trois coins',
+                h: 'Les quatre coins',
                 b: [
-                    'La berge (niveau 9) : gardon, ablette, perche, écrevisse, truite.',
+                    'La berge (niveau 9) : gardon, ablette, goujon, perche, écrevisse, truite.',
                     'Les roseaux (niveau 11) : tanche, carpe, anguille (de nuit), lotte (nuits d’hiver), brochet, silure par temps de pluie.',
-                    'Le ponton (après le chantier du village) : sandre, brochet, silure, saumon, esturgeon ; poissons 25 % plus lourds.',
+                    'Le ponton (après le chantier du village) : sandre, brochet, silure, saumon, esturgeon, lavaret (automne et hiver, à la mouche) ; poissons 25 % plus lourds.',
+                    'Le lagon (niveau 38, bac de Tiago réparé) : vivaneau, mahi-mahi, poulpe et langouste (de nuit), à la crevette ; poissons 15 % plus lourds.',
                     'Le poisson doré, très rare, peut mordre partout.',
                 ],
             },
             {
                 h: 'Les appâts',
-                t: 'Un appât multiplie par 5 les chances des poissons qu’il vise : ver de terre (la boîte se remplit seule), maïs (niveau 11), mouche (niveau 13), vif (au ponton). L’écran montre ce qui mord ici et maintenant, avec les chances.',
+                t: 'Un appât multiplie par 5 les chances des poissons qu’il vise : ver de terre (la boîte se remplit seule), maïs (niveau 11), mouche (niveau 13), vif (au ponton), crevette (au lagon). L’écran montre ce qui mord ici et maintenant, avec les chances.',
             },
             {
                 h: 'Le mini-jeu',
@@ -916,7 +917,10 @@ export const GUIDE_PAGES = [
                     'Le carnet de pêche garde chaque espèce, où et quand la pêcher, et vos records.',
                 ],
             },
-            { h: 'En mer', t: 'Après le phare du port, un filet de pêche en mer rapporte sardines, maquereaux, crevettes, bars et parfois un homard.' },
+            {
+                h: 'En mer',
+                t: 'Après le phare du port, un filet de pêche en mer rapporte sardines, maquereaux, crevettes, calmars, bars, dorades, raies, thons et parfois un homard.',
+            },
         ],
         see: ['night', 'village', 'workshop'],
     },

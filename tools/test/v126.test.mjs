@@ -178,7 +178,7 @@ test('1.26.3 : les plats d’Yvette contiennent du poisson ou de la viande', () 
     const deep = (id, d = 0) => (RCP[id] && d < 6 ? Object.keys(RCP[id].ing).flatMap(g => deep(g, d + 1)) : [id]);
     for (const id of Object.keys(RCP).filter(i => G.dishOwner(i) === 2))
         assert.ok(
-            deep(id).some(g => ITEMS[g].type === 'fish' || swallow.has(g) || meats.has(g)),
+            deep(id).some(g => ITEMS[g].type === 'fish' || swallow.has(g) || ITEMS[g].sea || meats.has(g)),
             id,
         );
 });

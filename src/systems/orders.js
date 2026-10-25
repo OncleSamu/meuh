@@ -207,7 +207,7 @@ export function sourceOf(id) {
     if (it.island) return it.type === 'tree' ? 'Verger de l’île' : 'Île';
     if (it.type === 'crop') return isInSeason(id) ? 'Champ (de saison)' : 'Champ';
     if (it.type === 'tree') return 'Arbre fruitier';
-    if (it.type === 'fish') return 'Étang';
+    if (it.type === 'fish') return 'Pêche';
     if (it.type === 'product') {
         const a = Object.values(ANIMALS).find(x => x.prodId === id);
         return a ? a.name : '';

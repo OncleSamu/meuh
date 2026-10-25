@@ -4,6 +4,7 @@ import { SERRE_RECIPES } from './serre.js';
 import { CROPS_130, RECIPES_130 } from './v130.js';
 import { TREES_131, RECIPES_131 } from './v131.js';
 import { CROPS_132, RECIPES_132 } from './v132.js';
+import { FISH_ITEMS_133, RECIPES_133 } from './v133.js';
 // Tous les produits du jeu : cultures, arbres, produits animaux, plats, matériaux.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -2883,6 +2884,13 @@ for (const [id, name, , ing] of RECIPES_131) {
 for (const [id, name, seedName, reqLvl, cost, sell, time, xp] of CROPS_132)
     ITEMS[id] = { id, name, seedName, type: 'crop', cost, sell, time, reqLvl, xp, island: true };
 for (const [id, name, , ing] of RECIPES_132) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}
+
+// ---------------- 1.33 : dix poissons et leurs plats ----------------
+for (const [id, name, type, sell, sea] of FISH_ITEMS_133) ITEMS[id] = sea ? { id, name, type, sell, sea: true } : { id, name, type, sell };
+for (const [id, name, , ing] of RECIPES_133) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
 }

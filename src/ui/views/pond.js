@@ -1,4 +1,4 @@
-// Ferme | Étang (1.10) : les coins de pêche, les appâts, la canne et son mini-jeu, les nasses,
+// Ferme | Pêche (1.10) : les coins de pêche, les appâts, la canne et son mini-jeu, les nasses,
 // les défis de Marcel, le concours du week-end, le carnet de pêche et le filet en mer.
 import { state } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
@@ -55,7 +55,7 @@ function spotsRow() {
     return `<div class="spot-row">${SPOT_IDS.map(id => {
         const open = G.spotOpen(id);
         return `<button class="spot${p.spot === id ? ' on' : ''}${open ? '' : ' locked'}" data-act="pondSpot" data-id="${id}">
-            <span class="spot-art">${art('ui', SPOTS[id].icon)}</span><b>${SPOTS[id].name}</b>${open ? '' : `<small>${ico(['ui', 'lock'])}${G.spotLock(id).startsWith('Niveau') ? G.spotLock(id) : 'Chantier du ponton'}</small>`}</button>`;
+            <span class="spot-art">${art('ui', SPOTS[id].icon)}</span><b>${SPOTS[id].name}</b>${open ? '' : `<small>${ico(['ui', 'lock'])}${G.spotLock(id).startsWith('Niveau') ? G.spotLock(id) : id === 'lagoon' ? 'Chantier du bac' : 'Chantier du ponton'}</small>`}</button>`;
     }).join('')}</div>`;
 }
 

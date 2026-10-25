@@ -1,4 +1,4 @@
-// Ferme | Nature : forêt et mine (l'étang et le filet en mer ont leur volet, Ferme | Étang).
+// Ferme | Nature : forêt et mine (l'étang et le filet en mer ont leur volet, Ferme | Pêche).
 import { state } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
 import { NATURE, TOOL_MAX, DEPTHS, MINE_GEAR, KILN, WORKERS, workerCap, NAT_LOG, NAT_LOG_IDS } from '../../data/nature.js';
