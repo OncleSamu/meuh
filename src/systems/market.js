@@ -159,6 +159,20 @@ export function sellItem(id, qty, at) {
     return r;
 }
 
+// 1.37.1 : revendre des graines ou des pousses d'arbre en trop (40 % du prix d'achat)
+export const seedBackPrice = id => Math.max(1, Math.floor((ITEMS[id].cost || 0) * 0.4));
+export function sellSeeds(id, qty, at) {
+    const have = state.seeds[id] || 0,
+        n = Math.min(qty || have, have);
+    if (!ITEMS[id] || n <= 0) return false;
+    state.seeds[id] -= n;
+    sfx('click');
+    buzz(8);
+    earn(n * seedBackPrice(id), at);
+    toast(`Revendu : ${n} × ${(ITEMS[id].seedName || ITEMS[id].name).toLowerCase()}`, ['seed', id]);
+    return true;
+}
+
 export function sellAll(at) {
     if (marketClosed()) return 0;
     let total = 0;

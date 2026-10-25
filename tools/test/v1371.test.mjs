@@ -54,3 +54,14 @@ test('deuxième poste : un long temps hors-ligne vide la file au double de vites
     assert.equal(m.out[rid], 4);
     assert.equal(m.queue.length, 0);
 });
+
+test('les pousses en trop se revendent (hors grange)', () => {
+    start();
+    state.seeds.apple = 7;
+    const used = G.barnUsed(),
+        money = state.money;
+    assert.ok(G.sellSeeds('apple', 0));
+    assert.equal(state.seeds.apple, 0);
+    assert.equal(state.money, money + 7 * G.seedBackPrice('apple'));
+    assert.equal(G.barnUsed(), used);
+});

@@ -86,7 +86,15 @@ function seeds() {
                 i.type === 'crop'
                     ? buyBtn('seed', i.id, 1, i.cost, locked) + buyBtn('seed', i.id, 10, i.cost, locked)
                     : buyBtn('seed', i.id, 1, i.cost, locked);
-            return shopCard(art('seed', i.id), i.seedName, `<span class="metas">${sub}</span>`, btns, locked, !lvOk(i) ? i.reqLvl : G.storyLockText(i));
+            const have = state.seeds[i.id] || 0;
+            const back = have
+                ? btn(`Vendre${have > 1 ? ` ×${have}` : ''} · ${fmt(G.seedBackPrice(i.id) * have)}${COIN()}`, {
+                      act: 'sellSeeds',
+                      data: { id: i.id },
+                      size: 'sm',
+                  })
+                : '';
+            return shopCard(art('seed', i.id), i.seedName, `<span class="metas">${sub}</span>`, btns + back, locked, !lvOk(i) ? i.reqLvl : G.storyLockText(i));
         })
         .join('');
 }
@@ -469,6 +477,7 @@ export function setupMarket() {
             const o = sheetOpts('nmAsk');
             if (G.placeAsk(o.id, o.qty, o.mult)) closeSheet('nmAsk');
         },
+        sellSeeds: (el, d) => G.sellSeeds(d.id, 0, el),
         buy: (el, d) =>
             d.type === 'machine'
                 ? askBuy(
