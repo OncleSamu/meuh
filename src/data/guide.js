@@ -117,8 +117,12 @@ export const GUIDE_PAGES = [
                     'L’étoile et la barre bleue : votre niveau et votre expérience.',
                     'Les pièces : la monnaie du jeu.',
                     'La grange : votre stock et sa place. Touchez-la pour tout voir.',
-                    'Le menu : progrès, livre de la ferme, niveaux, statistiques, succès, almanach, guide, réglages.',
+                    'Le menu : progrès, livre de la ferme, carnets, niveaux, statistiques, succès, almanach, guide, réglages.',
                 ],
+            },
+            {
+                h: 'Les cartes repliables',
+                t: 'Beaucoup de cartes tiennent sur une ligne fine : un toucher les déplie. Elles se déplient toutes seules quand quelque chose y est prêt (une nasse pleine, un train à charger, un visiteur à servir) et se replient quand il n’y a rien à faire. Le train, l’avion-cargo, la montgolfière et le bateau sont réunis dans la carte « Livraisons ». Le tiroir des graines s’ouvre sur les graines de saison, avec les dernières semées en haut ; l’atelier a un filtre (prêtes, en marche, à l’arrêt).',
             },
             {
                 h: 'Le panneau « À faire »',
