@@ -77,6 +77,17 @@ function baitRow() {
     return `<div class="bait-row"><button class="bait${p.bait ? '' : ' on'}" data-act="pondBait" data-id="">${ico(['ui', 'rod'])}<span>Sans appât</span></button>${chips}${craft}</div>`;
 }
 
+// 1.43 : pendant le combat, les tirages, la ligne et le record de l'espèce
+function fightBar(f) {
+    if (!FISH[f.id]) return '';
+    const need = f.need || 1,
+        got = f.got || 0,
+        best = FISH[f.id].junk ? 0 : G.bestOf(f.id);
+    const pulls = need > 1 ? `<span class="pulls">${Array.from({ length: need }, (_, k) => `<i class="${k < got ? 'on' : ''}"></i>`).join('')}</span>` : '';
+    const line = need > 1 ? `<span class="line-t${f.miss ? ' tight' : ''}">${f.miss ? 'Ligne tendue !' : 'Ligne solide'}</span>` : '';
+    return `<div class="fight-bar">${pulls}${line}${best ? `<small>Record : ${G.kgText(best)}</small>` : ''}</div>`;
+}
+
 // ---------------- la canne : ce qui mord ici, le mini-jeu ----------------
 const PHASE_BTN = { idle: 'Lancer la ligne', wait: 'Ferrer', bite: 'Ferrer !', reel: 'Ferrer !' };
 function rodCard() {
@@ -88,7 +99,7 @@ function rodCard() {
     const last = f.last && ph === 'idle' ? f.last : null;
     const msg = {
         idle: last
-            ? `Dernière prise : ${fname(last.id)}${FISH[last.id].junk ? '' : ` de ${G.kgText(last.w)}`}${last.size ? ` · ${SIZES.find(s => s.id === last.size).name}` : ''}${last.perfect ? ' · Parfait !' : ''}`
+            ? `Dernière prise : ${fname(last.id)}${FISH[last.id].junk ? '' : ` de ${G.kgText(last.w)}`}${last.size ? ` · ${SIZES.find(s => s.id === last.size).name}` : ''}${last.perfect ? ' · Parfait !' : ''}${last.record ? ' · Nouveau record !' : ''}`
             : p.bait && G.baitCount(p.bait) && !table.some(r => r.boosted)
               ? `${BAITS[p.bait].name.replace(' (une ablette)', '')} : aucun poisson d’ici n’y mord en ce moment. Essayez un autre coin ou un autre appât.`
               : quick
@@ -103,6 +114,7 @@ function rodCard() {
         <div class="nature-head">${ico(['ui', 'rod'])}<div class="card-main"><div class="card-title">${SPOTS[p.spot].name}</div><div class="card-sub">${msg}</div></div></div>
         <div class="catch-row">${table.map(r => `<span class="catch${r.boosted ? ' boost' : ''}" title="${fname(r.id)}">${ico(['item', r.id])}<b>${r.pct}%</b></span>`).join('') || '<span class="card-sub">Rien ne mord ici en ce moment.</span>'}</div>
         <div class="pond spot-${p.spot}" id="pond" data-phase="${ph}" data-anchor="pond"><div class="ripple r1"></div><div class="ripple r2"></div><div class="lily l1"></div><div class="lily l2"></div><div class="bobber"><span class="excl">!</span></div></div>
+        ${ph === 'reel' ? fightBar(f) : ''}
         <div class="reel"${ph === 'reel' ? '' : ' hidden'}><div class="reel-zone" id="reel-zone" style="${zone}"></div><div class="reel-cursor" id="reel-cursor"></div></div>
         ${btn(PHASE_BTN[ph], { act: 'fish', kind: ph === 'idle' ? 'blue' : 'gold', wide: true, size: 'lg', cls: 'fish-btn' })}
     </div>`;
@@ -290,8 +302,9 @@ function fishLoop() {
             return;
         }
         const ph = G.fishPhase();
-        if (ph !== last) {
-            last = ph;
+        const sig = `${ph}:${G.fishing.got || 0}:${G.fishing.miss || 0}`;
+        if (sig !== last) {
+            last = sig;
             renderPond(viewEl('farm/pond'));
         }
         if (ph === 'reel') {

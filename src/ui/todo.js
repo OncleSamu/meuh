@@ -61,6 +61,9 @@ export function todoList() {
     );
     const idle = state.machines.filter(m => !G.machineBusy(m) && G.recipesOf(m.type).some(r => G.recipeUnlocked(r.id) && G.canCook(r.id))).length;
     add('machines/workshop', ['machine', 'mill'], `${idle} à l’arrêt`, idle);
+    // 1.43 : des clients attendent au comptoir
+    const cw = G.counterWaiting();
+    add('machines/counter', ['machine', 'counter'], `${cw} client${s(cw)} au comptoir`, cw);
     if (G.holidayReady()) push('village/orders', ['ui', HOLIDAYS[state.holiday.id].deco], `${HOLIDAYS[state.holiday.id].name} : panier à remplir`, 1);
     const bq = G.quartersClaimable();
     if (bq) push('sheet:book', ['ui', 'book'], 'Récompense du livre', bq);

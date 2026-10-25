@@ -130,10 +130,16 @@ export function counterTick(dt = 1) {
     if (!counterOwned() || !view.started) return false;
     const C = ensureCounter();
     rollDay();
-    if (!viewOpen()) return false;
+    // 1.43 : les clients arrivent dès que le jeu est ouvert ; ils ne s'impatientent que si le salon est à l'écran
+    const here = viewOpen();
+    if (view.hidden) return false;
     let changed = false;
     const keep = [];
     for (const s of C.seats) {
+        if (!here) {
+            keep.push(s);
+            continue;
+        }
         s.left -= dt;
         if (s.left <= 0) {
             changed = true;
@@ -145,7 +151,10 @@ export function counterTick(dt = 1) {
     C.next -= dt;
     if (C.next <= 0) {
         C.next = salonDef().every * (0.8 + Math.random() * 0.4);
-        if (C.seats.length < salonDef().seats && dailyLeft() > C.seats.length && newClient()) changed = true;
+        if (C.seats.length < salonDef().seats && dailyLeft() > C.seats.length && newClient()) {
+            changed = true;
+            if (!here) toast(`${VILLAGERS[C.seats[C.seats.length - 1].vid].name} attend au comptoir`, ['machine', 'counter']);
+        }
     }
     return changed;
 }
@@ -153,6 +162,9 @@ export function counterTick(dt = 1) {
 const addFriendshipMiss = () => {};
 const viewOpen = () => view.tab === 'machines' && view.sub === 'counter' && !view.hidden;
 export const counterSeats = () => ensureCounter().seats;
+// 1.43 : pourboire ×1,1 par boisson parfaite d'affilée après la première (×1,5 au plus)
+export const streakMult = () => 1 + 0.1 * Math.min(5, Math.max(0, (ensureCounter().streak || 0) - 1));
+export const counterWaiting = () => (counterOwned() ? ensureCounter().seats.length : 0);
 
 // ---------------- la préparation ----------------
 export const counterCooldown = () => Math.max(0, ensureCounter().last + BREW_COOLDOWN * 1000 - now());
@@ -191,6 +203,9 @@ export function counterFinish(id, stars, vid, at) {
     state.stats.drinks = (state.stats.drinks || 0) + qty;
     addXp(r.xp * Math.max(1, stars - 0), at);
     if (stars === 3) state.stats.perfectDrinks = (state.stats.perfectDrinks || 0) + 1;
+    // 1.43 : la série de boissons parfaites (elle fait monter les pourboires)
+    C.streak = stars === 3 ? (C.streak || 0) + 1 : 0;
+    C.bestStreak = Math.max(C.bestStreak || 0, C.streak);
     rollRare(BALANCE.rareDrop * 1.5, at);
     if (s && s.drink === id) {
         serve(seat, id, tier, stars, at);
@@ -238,7 +253,7 @@ function serve(seat, id, tier, stars, at) {
     earn(price, at);
     let tip = 0;
     if (stars === 3 && C.tips < CLIENT.tipMax) {
-        tip = Math.max(1, Math.round(price * CLIENT.tipRate));
+        tip = Math.max(1, Math.round(price * CLIENT.tipRate * streakMult()));
         C.tips++;
         earn(tip, at);
     }

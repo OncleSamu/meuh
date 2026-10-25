@@ -17,53 +17,66 @@ const extract = (t, w = 0.045, c = COFFEE) => ['extract', { t, w, c }];
 const pour = (t, c, label, w = 0.06) => ['pour', { t, c, label, w }];
 const temp = (t, w = 4) => ['temp', { t, w }];
 const steep = (a, b, dur = 6) => ['steep', { a, b, dur }];
+// 1.43 : cinq gestes de plus, pour que chaque boisson ait sa façon de se préparer
+//   squeeze : presser un agrume en tapotant (n appuis en dur secondes)
+//   stir    : remuer turns tours sans dépasser une vitesse
+//   shake   : secouer le shaker (n allers-retours en dur secondes)
+//   ice     : attraper n glaçons qui tombent
+//   drop    : doser une goutte (t visé, w tolérance), ça coule vite
+//   foam    : shape = heart, leaf ou tulip (motif à tracer, en dur secondes)
+const squeeze = (label, c, n = 20, dur = 4) => ['squeeze', { label, c, n, dur }];
+const stir = (turns = 3, c, dur = 8) => ['stir', { turns, c, dur, max: 9 }];
+const shake = (n = 6, dur = 5) => ['shake', { n, dur }];
+const ice = (n = 4, speed = 120) => ['ice', { n, speed, every: 650 }];
+const drop = (label, c, t = 0.3, w = 0.07) => ['drop', { label, c, t, w }];
+const foam = shape => ['foam', { shape, dur: 12 }];
 
 export const BREW = {
     // ---- thés et infusions déjà au jeu ----
     greenTea: { col: '#b9cc5a', st: [temp(80), steep(0.4, 0.62)] },
     sobacha: { col: '#c98a45', st: [temp(98, 5), steep(0.5, 0.75)] },
-    milkTea: { col: '#d9a066', st: [temp(90), steep(0.45, 0.65), pour(0.78, MILK, 'le lait')] },
-    lavenderTea: { col: '#b79ad8', st: [temp(85), steep(0.5, 0.72)] },
-    icedTea: { col: '#f2a54a', st: [temp(95), steep(0.5, 0.7), pour(0.82, '#f2a54a', 'le thé sur les glaçons')] },
-    gingerTea: { col: '#e0a03a', st: [temp(95), steep(0.55, 0.8, 7)] },
-    genepiTea: { col: '#9fc06a', st: [temp(90), steep(0.4, 0.6)] },
+    milkTea: { col: '#d9a066', st: [temp(90), steep(0.45, 0.65), pour(0.78, MILK, 'le lait'), stir(2, '#d9a066')] },
+    lavenderTea: { col: '#b79ad8', st: [temp(85), steep(0.5, 0.72), drop('le miel', '#e8b04a')] },
+    icedTea: { col: '#f2a54a', st: [temp(95), steep(0.5, 0.7), ice(4), pour(0.82, '#f2a54a', 'le thé sur les glaçons')] },
+    gingerTea: { col: '#e0a03a', st: [temp(95), steep(0.55, 0.8, 7), squeeze('le citron', '#f4d03f')] },
+    genepiTea: { col: '#9fc06a', st: [temp(90), steep(0.4, 0.6), drop('le génépi', '#b9d96a', 0.25)] },
     // ---- thés et infusions nouveaux ----
     blackTea: { col: '#b04e1c', st: [temp(95), steep(0.62, 0.82, 7)] },
     whiteTea: { col: '#f5ebb0', st: [temp(75, 2.5), steep(0.7, 0.82, 8)] },
-    lemonTea: { col: '#f0c040', st: [temp(90), steep(0.45, 0.65)] },
-    mintTea: { col: '#8fd16a', st: [temp(80), steep(0.4, 0.6)] },
-    orangeTea: { col: '#e8913a', st: [temp(90), steep(0.45, 0.65)] },
-    raspberryTea: { col: '#e8648a', st: [temp(85), steep(0.4, 0.6)] },
-    apricotTea: { col: '#f2a54a', st: [temp(85), steep(0.45, 0.65)] },
-    blueberryTea: { col: '#7a6ac8', st: [temp(85), steep(0.45, 0.65)] },
-    redInfusion: { col: '#c8283e', st: [temp(95), steep(0.5, 0.7)] },
+    lemonTea: { col: '#f0c040', st: [temp(90), steep(0.45, 0.65), squeeze('le citron', '#f4d03f')] },
+    mintTea: { col: '#8fd16a', st: [temp(80), steep(0.4, 0.6), stir(3, '#8fd16a')] },
+    orangeTea: { col: '#e8913a', st: [temp(90), steep(0.45, 0.65), squeeze('l’orange', '#f39c33', 22)] },
+    raspberryTea: { col: '#e8648a', st: [temp(85), steep(0.4, 0.6), drop('le sucre', '#fff6e0', 0.25)] },
+    apricotTea: { col: '#f2a54a', st: [temp(85), steep(0.45, 0.65), drop('le sucre', '#fff6e0', 0.25)] },
+    blueberryTea: { col: '#7a6ac8', st: [temp(85), steep(0.45, 0.65), drop('le miel', '#e8b04a')] },
+    redInfusion: { col: '#c8283e', st: [temp(95), steep(0.5, 0.7), stir(3, '#c8283e')] },
     tiareTea: { col: '#f2dc9a', st: [temp(80), steep(0.45, 0.62)] },
-    lycheeTea: { col: '#f4d9c6', st: [temp(85), steep(0.45, 0.65)] },
+    lycheeTea: { col: '#f4d9c6', st: [temp(85), steep(0.45, 0.65), ice(3)] },
     matchaLatte: { col: '#86b948', st: [temp(80, 3.5), ['whisk', { turns: 5, dur: 7 }], pour(0.8, MILK, 'le lait')] },
-    chai: { col: '#c98f56', st: [temp(95), steep(0.55, 0.75, 7), pour(0.8, MILK, 'le lait')] },
-    barleyCoffee: { col: '#6a3d1e', st: [temp(95), steep(0.55, 0.78)] },
-    barleyLatte: { col: '#c89b6a', st: [temp(95), steep(0.55, 0.78), pour(0.8, MILK, 'le lait')] },
+    chai: { col: '#c98f56', st: [temp(95), steep(0.55, 0.75, 7), drop('les épices', '#a0522d', 0.35), pour(0.8, MILK, 'le lait')] },
+    barleyCoffee: { col: '#6a3d1e', st: [temp(95), steep(0.55, 0.78), stir(2, '#6a3d1e')] },
+    barleyLatte: { col: '#c89b6a', st: [temp(95), steep(0.55, 0.78), pour(0.8, MILK, 'le lait'), stir(2, '#c89b6a')] },
     // ---- 1.34 : sept boissons de plus ----
-    chicoryCoffee: { col: '#5a3a22', st: [temp(95), steep(0.55, 0.78)] },
-    mandarinTea: { col: '#f09a3a', st: [temp(90), steep(0.45, 0.65)] },
-    hempTisane: { col: '#9ab25a', st: [temp(90), steep(0.45, 0.68)] },
-    hibiscusTea: { col: '#c8283e', st: [temp(95), steep(0.5, 0.7)] },
+    chicoryCoffee: { col: '#5a3a22', st: [temp(95), stir(3, '#5a3a22')] },
+    mandarinTea: { col: '#f09a3a', st: [temp(90), steep(0.45, 0.65), squeeze('la mandarine', '#f09a3a')] },
+    hempTisane: { col: '#9ab25a', st: [temp(90), steep(0.45, 0.68), stir(2, '#9ab25a')] },
+    hibiscusTea: { col: '#c8283e', st: [temp(95), steep(0.5, 0.7), ice(4)] },
     macchiato: { col: '#8a5a33', st: [grind(4, 38), extract(0.32, 0.04), pour(0.5, CREAM, 'une touche de mousse', 0.05)] },
-    frappe: { col: '#b88858', st: [grind(4, 44), extract(0.4), ['whisk', { turns: 5, dur: 7 }], pour(0.8, MILK, 'le lait')] },
-    spicedCoffee: { col: '#6a3a1e', st: [grind(4, 40), extract(0.35), pour(0.75, CREAM, 'la crème')] },
+    frappe: { col: '#b88858', st: [grind(4, 44), extract(0.4), ice(4), shake(6)] },
+    spicedCoffee: { col: '#6a3a1e', st: [grind(4, 40), extract(0.35), drop('les épices', '#a0522d', 0.3), pour(0.75, CREAM, 'la crème')] },
     // ---- cafés ----
     espresso: { col: '#3a1f10', st: [grind(5, 34), extract(0.3, 0.035, '#3a1f10')] },
     cafeLatte: { col: '#c08b52', st: [grind(4, 40), extract(0.3), pour(0.8, MILK, 'le lait')] },
-    cappuccino: { col: '#a0673a', st: [grind(4, 40), extract(0.3), ['foam', {}]] },
+    cappuccino: { col: '#a0673a', st: [grind(4, 40), extract(0.3), foam('heart')] },
     viennois: { col: '#4a2a14', st: [grind(4, 40), extract(0.45), pour(0.82, CREAM, 'la crème')] },
-    mocha: { col: '#3b1f12', st: [grind(4, 40), extract(0.35), pour(0.75, '#3b1f12', 'le chocolat')] },
-    icedCaramel: { col: '#3b1f12', st: [grind(4, 44), extract(0.4), pour(0.8, '#d7a971', 'le lait et le caramel')] },
-    hazelnutCoffee: { col: '#a0673a', st: [grind(4, 40), extract(0.35), ['foam', {}]] },
-    vanillaLatte: { col: '#c89b6a', st: [grind(4, 42), extract(0.3), pour(0.8, MILK, 'le lait vanillé')] },
+    mocha: { col: '#3b1f12', st: [grind(4, 40), extract(0.35), pour(0.75, '#3b1f12', 'le chocolat'), stir(2, '#3b1f12')] },
+    icedCaramel: { col: '#3b1f12', st: [grind(4, 44), extract(0.4), ice(4), pour(0.8, '#d7a971', 'le lait et le caramel')] },
+    hazelnutCoffee: { col: '#a0673a', st: [grind(4, 40), extract(0.35), drop('le sirop de noisette', '#a0673a'), foam('leaf')] },
+    vanillaLatte: { col: '#c89b6a', st: [grind(4, 42), extract(0.3), drop('la vanille', '#f3e2a0', 0.22), pour(0.8, MILK, 'le lait vanillé')] },
     affogato: { col: '#6b3a1e', st: [grind(4, 44), extract(0.3, 0.04)] },
-    coconutCoffee: { col: '#8a5a33', st: [grind(4, 42), extract(0.4), pour(0.8, '#fff6e0', 'le lait de coco')] },
-    islandCoffee: { col: '#3b1f12', st: [grind(4, 40), extract(0.35), pour(0.75, CREAM, 'la crème')] },
-    chestnutCoffee: { col: '#a0673a', st: [grind(4, 40), extract(0.35), ['foam', {}]] },
+    coconutCoffee: { col: '#8a5a33', st: [grind(4, 42), extract(0.4), shake(5), pour(0.8, '#fff6e0', 'le lait de coco')] },
+    islandCoffee: { col: '#3b1f12', st: [grind(4, 40), extract(0.35), drop('le rhum', '#b8642a', 0.25), pour(0.75, CREAM, 'la crème')] },
+    chestnutCoffee: { col: '#a0673a', st: [grind(4, 40), extract(0.35), foam('tulip')] },
 };
 
 // Les nouveaux produits (les autres existent déjà dans items.js) : nom, recette, niveau, durée de référence
@@ -119,7 +132,7 @@ export const CLIENT = {
     premium: 1.2,
     star: [1, 1.1, 1.25, 1.4, 1.6],
     heart: 0.03,
-    patience: 150, // secondes, comptées seulement quand le comptoir est ouvert à l'écran
+    patience: 150, // secondes, comptées seulement quand le comptoir est ouvert à l'écran (1.43 : ils arrivent même ailleurs)
     daily: lvl => 8 + 4 * lvl, // clients servis par jour au plus
     tipRate: 0.1, // pourboire d'une boisson parfaite
     tipMax: 5, // par jour

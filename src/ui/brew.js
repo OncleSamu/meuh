@@ -7,11 +7,49 @@ import { VILLAGERS } from '../data/village.js';
 
 import * as G from '../systems/index.js';
 import { ico } from './icons.js';
-import { sfx } from '../core/bus.js';
+import { sfx, buzz } from '../core/bus.js';
+
+let buzzAt = 0;
+// une petite vibration, pas plus d'une par demi-seconde
+const buzzSoft = () => {
+    const t = performance.now();
+    if (t - buzzAt > 500) {
+        buzzAt = t;
+        buzz(15);
+    }
+};
 import { refresh } from './app.js';
 
 const INK = '#3a2618';
-const LBL = { grind: 'Mouture', extract: 'Extraction', foam: 'Mousse', pour: 'Service', temp: 'Température', steep: 'Infusion', whisk: 'Fouet' };
+const LBL = {
+    grind: 'Mouture',
+    extract: 'Extraction',
+    foam: 'Mousse',
+    pour: 'Service',
+    temp: 'Température',
+    steep: 'Infusion',
+    whisk: 'Fouet',
+    squeeze: 'Pressage',
+    stir: 'Cuillère',
+    shake: 'Shaker',
+    ice: 'Glaçons',
+    drop: 'Dosage',
+};
+// 1.43 : la règle de chaque geste, montrée avant de commencer
+const HOW = {
+    grind: 'Touchez quand l’anneau rouge rejoint le cercle.',
+    extract: 'Maintenez pour verser, lâchez sur le trait rouge.',
+    pour: 'Maintenez pour verser, lâchez sur le trait rouge.',
+    foam: 'Tracez le motif au doigt dans la mousse, avant la fin du temps.',
+    temp: 'Maintenez pour chauffer, lâchez à la bonne température.',
+    steep: 'Retirez le sachet quand la barre est dans le vert.',
+    whisk: 'Tournez le doigt en rond pour fouetter.',
+    squeeze: 'Tapotez vite pour presser le fruit.',
+    stir: 'Tournez la cuillère, mais pas trop vite : ça déborde !',
+    shake: 'Secouez : glissez le doigt de haut en bas, en rythme.',
+    ice: 'Touchez les glaçons qui tombent pour les mettre dans le verre.',
+    drop: 'Maintenez pour doser, lâchez dans la zone verte. Ça coule vite !',
+};
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const fall = (x, t, w, f) => 1 - clamp((Math.abs(x - t) - w) / f);
@@ -108,7 +146,6 @@ async function ready(c) {
 
 async function fill(p, c, msg) {
     c.hint(msg);
-    await ready(c);
     const st = c.stage;
     st.innerHTML = '<div class="cb-pad" id="cbpad">Maintenez</div><div class="cb-read" id="cbfr"></div>';
     const layer = { c: p.c, h: 0 };
@@ -163,7 +200,6 @@ async function fill(p, c, msg) {
 const STEP = {
     async grind(p, c) {
         c.hint(`Moulez : touchez quand l’anneau rejoint le cercle (${p.beats} fois)`);
-        await ready(c);
         const st = c.stage,
             tg = 44;
         let tot = 0;
@@ -217,9 +253,13 @@ const STEP = {
     extract: (p, c) => fill(p, c, 'Maintenez pour verser, lâchez sur le trait'),
     pour: (p, c) => fill(p, c, `Maintenez pour verser ${p.label}, lâchez sur le trait`),
     async foam(p, c) {
-        c.hint('Dessinez un cœur en suivant les pointillés');
+        // 1.43 : trois motifs (cœur, feuille, tulipe) et un temps limité
+        const shape = p.shape || 'heart';
+        const NAMES = { heart: 'un cœur', leaf: 'une feuille', tulip: 'une tulipe' };
+        const limit = p.dur || 12;
+        c.hint(`Dessinez ${NAMES[shape]} en suivant les pointillés`);
         const st = c.stage;
-        st.innerHTML = '<canvas></canvas><div class="cb-read">Tracez avec le doigt</div>';
+        st.innerHTML = '<canvas></canvas><div class="cb-read" id="cbft">Tracez avec le doigt</div>';
         const cv = st.querySelector('canvas'),
             W = st.clientWidth,
             H = st.clientHeight,
@@ -232,9 +272,28 @@ const STEP = {
             cy = H / 2 + 10,
             s = Math.min(W, H) / 46;
         const pts = [];
-        for (let i = 0; i <= 80; i++) {
-            const t = (i / 80) * Math.PI * 2;
-            pts.push([cx + s * 16 * Math.pow(Math.sin(t), 3), cy - s * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))]);
+        if (shape === 'heart')
+            for (let i = 0; i <= 80; i++) {
+                const t = (i / 80) * Math.PI * 2;
+                pts.push([cx + s * 16 * Math.pow(Math.sin(t), 3), cy - s * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))]);
+            }
+        else if (shape === 'leaf') {
+            // une feuille en amande et sa nervure
+            for (let i = 0; i <= 64; i++) {
+                const t = (i / 64) * Math.PI * 2;
+                pts.push([cx + s * 9 * Math.sin(t) * Math.abs(Math.cos(t / 2)) * 1.4, cy - s * 15 * Math.cos(t)]);
+            }
+            for (let i = 0; i <= 16; i++) pts.push([cx, cy + s * 15 - (i / 16) * s * 30]);
+        } else {
+            // une tulipe : trois arches empilées et une tige
+            [-9, 0, 9].forEach((dy, k) => {
+                const r = s * (11 - k * 2.5);
+                for (let i = 0; i <= 24; i++) {
+                    const t = Math.PI + (i / 24) * Math.PI;
+                    pts.push([cx + Math.cos(t) * r, cy + dy * s * 0.9 + Math.sin(t) * r * 0.75]);
+                }
+            });
+            for (let i = 0; i <= 10; i++) pts.push([cx, cy + s * 9 + (i / 10) * s * 8]);
         }
         g.fillStyle = '#f3e2c4';
         g.strokeStyle = INK;
@@ -253,7 +312,13 @@ const STEP = {
         g.strokeStyle = '#8a5a33';
         g.lineWidth = 3;
         g.beginPath();
-        pts.forEach((q, i) => (i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1])));
+        let prev = null;
+        pts.forEach(q => {
+            // un saut entre deux morceaux du motif : on lève le crayon
+            if (!prev || Math.hypot(q[0] - prev[0], q[1] - prev[1]) > s * 6) g.moveTo(q[0], q[1]);
+            else g.lineTo(q[0], q[1]);
+            prev = q;
+        });
         g.stroke();
         g.setLineDash([]);
         const drawn = [];
@@ -298,8 +363,11 @@ const STEP = {
                 o,
             );
             window.addEventListener('pointerup', () => (down = false), o);
-            const watch = setInterval(() => !c.alive() && (clearInterval(watch), ac.abort()), 500);
-            b.onclick = () => {
+            const t0 = performance.now();
+            let over = false;
+            const end = () => {
+                if (over) return;
+                over = true;
                 clearInterval(watch);
                 ac.abort();
                 if (drawn.length < 8) return res(0);
@@ -307,11 +375,287 @@ const STEP = {
                 const good = drawn.filter(d => pts.some(q => Math.hypot(d[0] - q[0], d[1] - q[1]) < 28)).length / drawn.length;
                 res(clamp(cover * 0.7 + good * 0.3) * clamp(cover * 1.15));
             };
+            const watch = setInterval(() => {
+                if (!c.alive()) {
+                    over = true;
+                    clearInterval(watch);
+                    return ac.abort();
+                }
+                const left = limit - (performance.now() - t0) / 1000;
+                const tx = st.querySelector('#cbft');
+                if (tx) tx.textContent = left > 0 ? `${Math.ceil(left)} s` : 'Temps écoulé';
+                if (left <= 0) end();
+            }, 100);
+            b.onclick = end;
+        });
+    },
+    // 1.43 : presser un agrume en tapotant vite
+    async squeeze(p, c) {
+        c.hint(`Pressez ${p.label || 'le fruit'} : tapotez vite !`);
+        const st = c.stage;
+        st.innerHTML = `<svg class="cb-layer" viewBox="0 0 300 300"><g id="cbfruit"><ellipse cx="150" cy="150" rx="70" ry="56" fill="${p.c || '#f4d03f'}" stroke="${INK}" stroke-width="6"/><ellipse cx="128" cy="128" rx="16" ry="9" fill="#fff" opacity=".55"/><path d="M214 150 l18 -6 l-4 12z" fill="#6cc04a" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/></g></svg><div class="cb-bar"><i id="cbqf" style="width:0"></i></div><div class="cb-read" id="cbqt"></div>`;
+        const layer = { c: p.c || '#f4d03f', h: 0 };
+        c.layers.push(layer);
+        return new Promise(res => {
+            const ac = new AbortController();
+            let n = 0,
+                done = false,
+                t0 = null;
+            const fin = () => {
+                if (done) return;
+                done = true;
+                ac.abort();
+                clearInterval(iv);
+                res(clamp(n / p.n));
+            };
+            const iv = setInterval(() => {
+                if (!c.alive()) return fin();
+                if (t0 == null) return;
+                const l = p.dur - (performance.now() - t0) / 1000;
+                const t = st.querySelector('#cbqt');
+                if (t) t.textContent = Math.max(0, Math.ceil(l)) + ' s';
+                if (l <= 0) fin();
+            }, 100);
+            st.addEventListener(
+                'pointerdown',
+                () => {
+                    if (t0 == null) t0 = performance.now();
+                    n++;
+                    const k = clamp(n / p.n);
+                    st.querySelector('#cbqf').style.width = k * 100 + '%';
+                    st.querySelector('#cbfruit').setAttribute('transform', `translate(150 150) scale(${1 - 0.35 * k} ${1 - 0.2 * k}) translate(-150 -150)`);
+                    layer.h = 0.12 * k;
+                    c.cup(null);
+                    if (n >= p.n) fin();
+                },
+                { signal: ac.signal },
+            );
+        });
+    },
+    // 1.43 : remuer à la cuillère sans aller trop vite
+    async stir(p, c) {
+        c.hint(`Remuez ${p.turns} tours, doucement : trop vite, ça déborde !`);
+        const st = c.stage;
+        st.innerHTML = `<svg class="cb-layer" viewBox="0 0 300 300"><circle cx="150" cy="150" r="110" fill="${p.c || '#c98a45'}" stroke="${INK}" stroke-width="6"/><circle cx="150" cy="150" r="70" fill="none" stroke="#fff8e8" stroke-width="3" stroke-dasharray="3 12" opacity=".6"/><g id="cbsp"><line x1="150" y1="150" x2="150" y2="70" stroke="#cfd6de" stroke-width="9" stroke-linecap="round"/><ellipse cx="150" cy="70" rx="12" ry="16" fill="#e6ebef" stroke="${INK}" stroke-width="3"/></g></svg><div class="cb-bar"><i id="cbrf" style="width:0"></i></div><div class="cb-read" id="cbrt">Tournez doucement</div>`;
+        return new Promise(res => {
+            const ac = new AbortController(),
+                o = { signal: ac.signal };
+            let prev = null,
+                tot = 0,
+                spill = 0,
+                lastT = 0,
+                t0 = null,
+                done = false;
+            const goal = Math.PI * 2 * p.turns;
+            const fin = () => {
+                if (done) return;
+                done = true;
+                ac.abort();
+                clearInterval(iv);
+                res(clamp(tot / goal) * clamp(1 - 0.2 * spill));
+            };
+            const iv = setInterval(() => {
+                if (!c.alive()) return fin();
+                if (t0 == null) return;
+                if ((performance.now() - t0) / 1000 > p.dur) fin();
+            }, 100);
+            st.addEventListener(
+                'pointermove',
+                e => {
+                    const r = st.getBoundingClientRect(),
+                        a = Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)),
+                        t = performance.now();
+                    if (prev != null && (e.buttons || e.pointerType === 'touch')) {
+                        let d = a - prev;
+                        if (d > Math.PI) d -= Math.PI * 2;
+                        if (d < -Math.PI) d += Math.PI * 2;
+                        if (t0 == null) t0 = t;
+                        const speed = Math.abs(d) / Math.max(0.008, (t - lastT) / 1000);
+                        const tx = st.querySelector('#cbrt');
+                        if (speed > (p.max || 9)) {
+                            spill += Math.abs(d) / Math.PI;
+                            if (tx) tx.textContent = 'Trop vite, ça déborde !';
+                            buzzSoft();
+                        } else {
+                            tot += Math.abs(d);
+                            if (tx) tx.textContent = `${Math.min(p.turns, Math.floor(tot / (Math.PI * 2)))} / ${p.turns} tours`;
+                        }
+                        st.querySelector('#cbsp').setAttribute('transform', `rotate(${(a * 180) / Math.PI + 90} 150 150)`);
+                        st.querySelector('#cbrf').style.width = clamp(tot / goal) * 100 + '%';
+                        if (tot >= goal) fin();
+                    }
+                    prev = a;
+                    lastT = t;
+                },
+                o,
+            );
+            st.addEventListener('pointerup', () => (prev = null), o);
+        });
+    },
+    // 1.43 : le shaker, secoué de haut en bas
+    async shake(p, c) {
+        c.hint(`Secouez le shaker : ${p.n} allers-retours, du haut vers le bas`);
+        const st = c.stage;
+        st.innerHTML = `<svg class="cb-layer" viewBox="0 0 300 300"><g id="cbsh"><path d="M118 70 L182 70 L172 230 L128 230Z" fill="#cfd6de" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/><rect x="124" y="46" width="52" height="26" rx="8" fill="#9aa3ad" stroke="${INK}" stroke-width="5"/><rect x="140" y="30" width="20" height="18" rx="6" fill="#9aa3ad" stroke="${INK}" stroke-width="5"/><path d="M134 90 L136 200" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7"/></g></svg><div class="cb-bar"><i id="cbhf" style="width:0"></i></div><div class="cb-read" id="cbht"></div>`;
+        return new Promise(res => {
+            const ac = new AbortController(),
+                o = { signal: ac.signal };
+            let y0 = null,
+                dir = 0,
+                n = 0,
+                t0 = null,
+                done = false;
+            const fin = () => {
+                if (done) return;
+                done = true;
+                ac.abort();
+                clearInterval(iv);
+                res(clamp(n / p.n));
+            };
+            const iv = setInterval(() => {
+                if (!c.alive()) return fin();
+                if (t0 == null) return;
+                const l = p.dur - (performance.now() - t0) / 1000;
+                const t = st.querySelector('#cbht');
+                if (t) t.textContent = Math.max(0, Math.ceil(l)) + ' s';
+                if (l <= 0) fin();
+            }, 100);
+            st.addEventListener('pointerdown', e => (y0 = e.clientY), o);
+            st.addEventListener(
+                'pointermove',
+                e => {
+                    if (y0 == null || !(e.buttons || e.pointerType === 'touch')) return;
+                    const dy = e.clientY - y0;
+                    st.querySelector('#cbsh').setAttribute('transform', `translate(0 ${clamp(dy, -60, 60)})`);
+                    const d = dy > 36 ? 1 : dy < -36 ? -1 : 0;
+                    if (d && d !== dir) {
+                        if (t0 == null) t0 = performance.now();
+                        if (dir) n += 0.5;
+                        dir = d;
+                        y0 = e.clientY;
+                        st.querySelector('#cbhf').style.width = clamp(n / p.n) * 100 + '%';
+                        if (n >= p.n) fin();
+                    }
+                },
+                o,
+            );
+            window.addEventListener('pointerup', () => (y0 = null), o);
+        });
+    },
+    // 1.43 : attraper les glaçons qui tombent
+    async ice(p, c) {
+        c.hint(`Touchez les ${p.n} glaçons avant qu’ils ne tombent`);
+        const st = c.stage;
+        st.innerHTML = '<div class="cb-read" id="cbit">0</div>';
+        const W = st.clientWidth,
+            H = st.clientHeight;
+        return new Promise(res => {
+            let caught = 0,
+                gone = 0,
+                made = 0,
+                done = false;
+            const cubes = [];
+            const fin = () => {
+                if (done) return;
+                done = true;
+                clearInterval(spawn);
+                cancelAnimationFrame(raf);
+                res(clamp(caught / p.n));
+            };
+            const spawn = setInterval(() => {
+                if (!c.alive()) return fin();
+                if (made >= p.n) return clearInterval(spawn);
+                made++;
+                const el = document.createElement('button');
+                el.className = 'cb-ice';
+                el.setAttribute('aria-label', 'Glaçon');
+                const cube = { el, x: 20 + Math.random() * (W - 70), y: -40, v: (p.speed || 120) * (0.85 + Math.random() * 0.3), dead: false };
+                el.style.left = cube.x + 'px';
+                el.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    if (cube.dead) return;
+                    cube.dead = true;
+                    caught++;
+                    el.classList.add('got');
+                    setTimeout(() => el.remove(), 250);
+                    st.querySelector('#cbit').textContent = `${caught} / ${p.n}`;
+                    const top = c.layers[c.layers.length - 1];
+                    if (top) c.cup(null);
+                });
+                st.appendChild(el);
+                cubes.push(cube);
+            }, p.every || 650);
+            let last = 0,
+                raf;
+            const loop = t => {
+                if (!c.alive()) return fin();
+                const dt = last ? (t - last) / 1000 : 0;
+                last = t;
+                cubes.forEach(q => {
+                    if (q.dead) return;
+                    q.y += q.v * dt;
+                    q.el.style.top = q.y + 'px';
+                    if (q.y > H - 30) {
+                        q.dead = true;
+                        gone++;
+                        q.el.remove();
+                    }
+                });
+                if (caught + gone >= p.n) return fin();
+                raf = requestAnimationFrame(loop);
+            };
+            raf = requestAnimationFrame(loop);
+        });
+    },
+    // 1.43 : une goutte de sirop, dosée au plus juste (ça coule vite)
+    async drop(p, c) {
+        c.hint(`Dosez ${p.label || 'le sirop'} : maintenez, lâchez dans le vert`);
+        const st = c.stage;
+        const lo = (p.t - p.w) * 100,
+            hi = (p.t + p.w) * 100;
+        st.innerHTML = `<div class="cb-gauge"><u style="bottom:${lo}%;height:${hi - lo}%"></u><i id="cbdf" style="height:0"></i></div><svg class="cb-layer" viewBox="0 0 300 300" style="pointer-events:none"><path d="M150 40 L170 120 Q174 150 150 156 Q126 150 130 120Z" fill="${p.c || '#c8453a'}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/><ellipse cx="143" cy="118" rx="5" ry="12" fill="#fff" opacity=".5"/></svg><div class="cb-read" id="cbdt">Maintenez</div>`;
+        return new Promise(res => {
+            let v = 0,
+                on = false,
+                last = 0,
+                raf,
+                done = false,
+                off;
+            const stop = () => {
+                if (done) return;
+                done = true;
+                cancelAnimationFrame(raf);
+                off();
+                res(fall(v, p.t, p.w, 0.18));
+            };
+            const loop = t => {
+                if (!c.alive()) return void ((done = true), off && off());
+                const dt = last ? (t - last) / 1000 : 0;
+                last = t;
+                if (on) {
+                    v = Math.min(1, v + dt * (p.rate || 0.55));
+                    st.querySelector('#cbdf').style.height = v * 100 + '%';
+                    if (v >= 1) stop();
+                }
+                if (!done) raf = requestAnimationFrame(loop);
+            };
+            raf = requestAnimationFrame(loop);
+            off = hold(
+                st,
+                () => {
+                    on = true;
+                    const t = st.querySelector('#cbdt');
+                    if (t) t.textContent = 'Ça coule…';
+                },
+                () => {
+                    if (on && v > 0.02) stop();
+                    else on = false;
+                },
+            );
         });
     },
     async temp(p, c) {
         c.hint(`Chauffez l’eau à ${p.t} °C : maintenez, lâchez à bonne température`);
-        await ready(c);
         const st = c.stage,
             min = 20,
             max = 100,
@@ -359,7 +703,6 @@ const STEP = {
     },
     async steep(p, c) {
         c.hint('Retirez le sachet quand la barre est dans le vert');
-        await ready(c);
         const st = c.stage;
         st.innerHTML = `<div class="cb-read">Infusion…</div><div class="cb-bar"><u style="left:${p.a * 100}%;width:${(p.b - p.a) * 100}%"></u><i id="cbsf" style="width:0"></i></div><svg class="cb-layer" viewBox="0 0 300 300" style="pointer-events:none"><g id="cbbag"><line x1="150" y1="40" x2="150" y2="120" stroke="${INK}" stroke-width="4"/><rect x="128" y="120" width="44" height="52" rx="8" fill="#e8dca0" stroke="${INK}" stroke-width="4"/><path d="M136 134h28" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g></svg><button class="btn gold" id="cbrm" style="position:absolute;left:50%;transform:translateX(-50%);bottom:64px">Retirer le sachet</button>`;
         return new Promise(res => {
@@ -412,7 +755,6 @@ const STEP = {
     },
     async whisk(p, c) {
         c.hint('Fouettez en tournant le doigt en rond');
-        await ready(c);
         const st = c.stage;
         st.innerHTML = `<svg class="cb-layer" viewBox="0 0 300 300"><circle cx="150" cy="150" r="110" fill="#b9d96a" stroke="${INK}" stroke-width="6"/><circle cx="150" cy="150" r="80" fill="none" stroke="#fff8e8" stroke-width="4" stroke-dasharray="4 14" opacity=".7"/><g id="cbwk"><line x1="150" y1="150" x2="150" y2="60" stroke="${INK}" stroke-width="10" stroke-linecap="round"/><line x1="150" y1="150" x2="150" y2="60" stroke="#fff8e8" stroke-width="4" stroke-linecap="round"/><circle cx="150" cy="60" r="12" fill="#f4b92e" stroke="${INK}" stroke-width="4"/></g></svg><div class="cb-bar"><i id="cbwf" style="width:0"></i></div><div class="cb-read" id="cbwt"></div>`;
         return new Promise(res => {
@@ -507,6 +849,13 @@ export function openBrew(id, vid) {
     const cup = t => setCup(o, layers, t);
     cup();
     (async () => {
+        // 1.43 : « Comment on joue ? » : les gestes de la boisson, puis un seul « Prêt ? Go ! »
+        const kinds = [...new Set(d.st.map(x => x[0]))];
+        stage.innerHTML = `<div class="cb-how"><b>Comment on joue ?</b>${d.st.map((x, k) => `<p><i>${k + 1}</i><span><b>${LBL[x[0]]}</b> : ${HOW[x[0]]}</span></p>`).join('')}<button class="btn gold" id="cbgo">C’est parti !</button></div>`;
+        o.querySelector('#cbhint').textContent = `${d.st.length} geste${d.st.length > 1 ? 's' : ''} : ${kinds.map(k => LBL[k].toLowerCase()).join(', ')}`;
+        await new Promise(r => (o.querySelector('#cbgo').onclick = r));
+        if (me !== run) return;
+        await ready({ stage });
         const scores = [];
         for (let i = 0; i < d.st.length; i++) {
             if (me !== run) return;
@@ -542,6 +891,7 @@ function result(o, id, scores, vid, close) {
     res.innerHTML = `<div class="cb-res" role="dialog" aria-label="Résultat"><h2>${st === 3 ? 'Parfait !' : st === 2 ? 'Bien servi' : 'À améliorer'}</h2><div class="cb-stars">${stars(st)}</div>
         <div class="cb-rows">${scores.map(s => `<div class="cb-row"><span>${LBL[s[0]]}</span><i>${Math.round(s[1] * 100)} %</i></div>`).join('')}
         ${who ? `<div class="cb-row"><span>${VILLAGERS[who].name} attend</span><i>${ico(['item', id])}</i></div>` : ''}</div>
+        ${st === 3 && (G.ensureCounter().streak || 0) >= 1 ? `<p class="cb-streak">Série de boissons parfaites : <b>${G.ensureCounter().streak + 1}</b>${G.ensureCounter().streak + 1 > 1 ? ` · pourboire ×${(1 + 0.1 * Math.min(5, G.ensureCounter().streak)).toFixed(1).replace('.', ',')}` : ''}</p>` : st < 3 && (G.ensureCounter().streak || 0) >= 2 ? `<p class="cb-streak lost">Série de ${G.ensureCounter().streak} parfaites interrompue</p>` : ''}
         <div class="cb-acts">${who ? '<button class="btn gold" id="cbkeep">Au stock</button><button class="btn green" id="cbserve">Servir</button>' : '<button class="btn green" id="cbkeep">Ranger au stock</button>'}</div></div>`;
     o.appendChild(res);
     sfx(st === 3 ? 'golden' : 'harvest');

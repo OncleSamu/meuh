@@ -295,3 +295,38 @@
 .contest-card > .btn {
     margin-left: auto;
 }
+/* 1.43 : le combat en plusieurs tirages */
+.fight-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 4px 0;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+.fight-bar .pulls {
+    display: flex;
+    gap: 4px;
+}
+.fight-bar .pulls i {
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    background: #fff;
+}
+.fight-bar .pulls i.on {
+    background: #6cc04a;
+}
+.fight-bar .line-t {
+    color: #2f7d1f;
+}
+.fight-bar .line-t.tight {
+    color: #c8453a;
+    animation: shake 0.4s;
+}
+.fight-bar small {
+    font-size: 0.75rem;
+    opacity: 0.75;
+}

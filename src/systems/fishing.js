@@ -304,6 +304,24 @@ function startReel() {
     f.t0 = now();
     f.speed = F.speed;
     f.fight = F.fight || 'calm';
+    // 1.43 : les gros poissons se battent plus longtemps (1, 2 ou 3 arrêts dans la zone ; deux ratés, la ligne casse)
+    f.need = fightStops(f.id);
+    f.got = 0;
+    f.miss = 0;
+    f.allPerfect = true;
+    sfx('reel');
+}
+export const fightStops = id => {
+    const F = FISH[id];
+    if (!F || F.junk || F.small || F.w[1] < 1) return 1;
+    return F.w[1] >= 8 || id === 'goldfish' ? 3 : 2;
+};
+// un nouveau tirage : la zone change de place, le poisson se débat un peu plus vite
+function nextPull() {
+    const f = fishing;
+    f.center = f.width / 2 + Math.random() * (1 - f.width);
+    f.t0 = now();
+    f.speed *= 1.12;
     sfx('reel');
 }
 
@@ -318,6 +336,25 @@ function stopReel(at) {
     const f = fishing,
         F = FISH[f.id];
     const d = Math.abs(reelPos() - zoneCenter());
+    if (d > f.width / 2 && (f.need || 1) > 1 && (f.miss || 0) < 1) {
+        // un raté : la ligne se tend, mais tient encore
+        f.miss = (f.miss || 0) + 1;
+        f.allPerfect = false;
+        toast('La ligne se tend ! Encore un raté et elle casse.', ['ui', 'rod']);
+        sfx('error');
+        buzz(30);
+        nextPull();
+        return false;
+    }
+    if (d <= f.width / 2 && (f.got || 0) + 1 < (f.need || 1)) {
+        f.got = (f.got || 0) + 1;
+        if (d > f.width * 0.2) f.allPerfect = false;
+        float(at, [`Tirage ${f.got} / ${f.need}`], '', -20);
+        sfx('pop');
+        buzz(12);
+        nextPull();
+        return true;
+    }
     f.phase = 'idle';
     if (d > f.width / 2) {
         toast(
@@ -330,7 +367,7 @@ function stopReel(at) {
         burst(at, 'water', 8);
         return false;
     }
-    const perfect = d <= f.width * 0.2;
+    const perfect = d <= f.width * 0.2 && f.allPerfect !== false;
     return landFish(f.id, weighOf(f.id, f.spot, perfect), at, perfect);
 }
 
@@ -347,6 +384,7 @@ export function sizeOf(id, w) {
 export function landFish(id, w, at, perfect) {
     const F = FISH[id],
         p = state.pond;
+    const before = bestOf(id); // 1.43 : le record de l'espèce avant cette prise
     state.inventory[id]++;
     state.stats.fish = (state.stats.fish || 0) + 1;
     collect('f_' + id, w);
@@ -366,7 +404,12 @@ export function landFish(id, w, at, perfect) {
         toast('Un poisson doré ! Une prise de légende', ['item', 'goldfish']);
         emit('confetti');
     } else if (size && size.id === 'trophy') toast(`${F.name} de ${kg(w)} : un trophée !`, ['ui', 'medalG']);
-    fishing.last = { id, w, perfect, size: size && size.id };
+    const record = !F.junk && before > 0 && w > before;
+    if (record) {
+        toast(`Nouveau record : ${F.name.toLowerCase()} de ${kg(w)} (avant : ${kg(before)}) !`, ['ui', 'medalG']);
+        sfx('golden');
+    }
+    fishing.last = { id, w, perfect, size: size && size.id, record };
     if (!F.junk) {
         logStep(id, at);
         marcelCatch(id, w, perfect, 1);
