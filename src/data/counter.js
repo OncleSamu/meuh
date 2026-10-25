@@ -167,6 +167,7 @@ export const FAVORITE = {
     hugues: 'barleyLatte',
     agnes: 'milkTea',
     duval: 'viennois',
+    octave: 'blackTea',
 };
 
 // le prix des décors du salon

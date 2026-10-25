@@ -1,5 +1,5 @@
 // 1.37 : les douze recettes du château.
-import { C, E, F, FC, G, GD, L, P, R, SHADOW, items, sub, bottle, wineBottle } from './kit.js';
+import { C, E, F, FC, G, GD, L, P, R, SHADOW, items, bottle, wineBottle } from './kit.js';
 import { plate, bowl, jar, steamF } from './items2.js';
 
 const WINE = '#7a1f2b';

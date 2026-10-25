@@ -45,6 +45,7 @@ import './v135animals.js';
 import './v135items.js';
 import './v135dishes.js';
 import './v137dishes.js';
+import './v137chateau.js';
 import './v117drinks.js';
 import './v117redraw.js';
 import './v118decos.js';

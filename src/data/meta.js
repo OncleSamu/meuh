@@ -355,4 +355,5 @@ export const STORY_MAPS = [
     { id: 'station', name: 'La station', openChapter: 14, party: 'salonHall' },
     { id: 'alpine', name: "L'alpage", openChapter: 8, party: 'refuge' },
     { id: 'domaine', name: 'Le domaine', openChapter: 10, strict: true, party: 'crayere' },
+    { id: 'chateau', name: 'Le château', openChapter: 18, party: 'harvestFest' },
 ];

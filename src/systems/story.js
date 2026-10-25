@@ -170,7 +170,7 @@ export function applyProjectReward(pid) {
     if (pid === 'washhouse') ensureStall();
     if (pid === 'bandstand') state.prestige.rubans += 5;
     if (pid === 'ferry') ensureIsland();
-    if (pid === 'carnival' || pid === 'salonHall' || pid === 'beerfest') state.prestige.rubans += 5;
+    if (pid === 'carnival' || pid === 'salonHall' || pid === 'beerfest' || pid === 'harvestFest') state.prestige.rubans += 5;
     if (pid === 'brewhall') tip('brew');
     if (pid === 'brewhall' || pid === 'fermenters' || pid === 'beerfest' || pid === 'barrelcellar') ensureBrew();
 }
@@ -180,6 +180,7 @@ const MAP_TEASE = {
     port: 'au bout de la route, un petit port',
     alpine: 'là-haut, les alpages',
     domaine: 'sur les coteaux, un vieux domaine',
+    chateau: 'au-delà du domaine, un vieux château',
     abbey: 'derrière le port, une vieille abbaye',
     island: 'depuis le port, une île tiède',
     station: 'au bout du chemin des vergers, une station de recherche',

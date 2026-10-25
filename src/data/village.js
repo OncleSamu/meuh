@@ -218,6 +218,13 @@ export const VILLAGERS = {
         ch: 17,
         likes: ['barley', 'wheat', 'apple', 'raspberry', 'cookies', 'cider', 'maltBlond', 'bread'],
     },
+    octave: {
+        id: 'octave',
+        name: 'Octave',
+        role: 'L’œnologue du château',
+        ch: 19,
+        likes: ['grape', 'cheese', 'bread', 'redWine', 'whiteWine', 'champagne', 'cognac', 'winePears'],
+    },
     duval: {
         id: 'duval',
         name: 'Maître Duval',
@@ -354,13 +361,27 @@ export const CHAPTERS = [
         map: 'abbey',
         intro: 'Les cuves tournent ! Un cellier pour faire vieillir vos bières, une étiqueterie, et toute la vallée attend la grande fête de la bière.',
     },
+    {
+        n: 19,
+        name: 'Le château de Margaux',
+        lvl: 55,
+        map: 'chateau',
+        intro: 'Au-delà du domaine, un vieux château dort au milieu de ses vignes envahies. Margaux rêve de le rendre à la vallée, et l’œnologue Octave est venu goûter ce que vous faites. Rénovez, replantez, rouvrez le chai.',
+    },
+    {
+        n: 20,
+        name: 'Les grands crus',
+        lvl: 58,
+        map: 'chateau',
+        intro: 'Le château revit ! Une salle de dégustation, une boutique, et la fête des vendanges : Octave veut faire de votre cave la plus belle de la vallée.',
+    },
 ];
 
 // 1.4 : les chapitres forment une seule histoire, jouée dans cet ordre (numéros 1 à 16 à l'écran)
 // 1.16 : récompenses des chantiers à l'échelle des 50 niveaux
 // expérience d'un chantier : au moins l'ancienne valeur, sinon une part de ce que coûte le niveau du chapitre
 export const STORY_REWARD = { xpFrac: 0.03, chapterCoins: lvl => 500 + lvl * lvl * 8, chapterRuban: 5 };
-export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12];
+export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12, 19, 20];
 export const chapterNum = n => CHAPTER_ORDER.indexOf(n) + 1;
 export const chapterAfter = n => CHAPTER_ORDER[CHAPTER_ORDER.indexOf(n) - 1] || 0;
 
@@ -1597,5 +1618,87 @@ Object.assign(PROJECTS, {
         x: 50,
         y: 76,
         map: 'abbey',
+    },
+});
+
+// ---------------- 1.37 : le château et ses vignes ----------------
+Object.assign(PROJECTS, {
+    chateauRoof: {
+        id: 'chateauRoof',
+        ch: 19,
+        name: 'La toiture du château',
+        vid: 'margaux',
+        need: { beam: 60, stone: 200, plank: 60, nail: 60 },
+        before: 'Le toit fuit de partout depuis ma grand-mère. Avant les vignes et les bouteilles, il faut que la pluie reste dehors.',
+        after: 'Le château est hors d’eau. Les hirondelles ont déjà repris leurs places sous la corniche.',
+        reward: 'Le château est hors d’eau',
+        x: 50,
+        y: 30,
+        map: 'chateau',
+    },
+    chateauVines: {
+        id: 'chateauVines',
+        ch: 19,
+        name: 'Les vignes du château',
+        vid: 'margaux',
+        need: { grape: 120, plank: 40, nail: 40, tools: 10 },
+        before: 'Mes vieux ceps ont tenu bon, mais il faut replanter les rangs, tendre les fils, soigner la terre. On y arrivera à deux.',
+        after: 'Les rangs sont droits, les fils tendus. Au printemps, ces vignes donneront leurs premiers raisins du château.',
+        reward: 'Les vignes du château sont replantées',
+        x: 20,
+        y: 62,
+        map: 'chateau',
+    },
+    chateauChai: {
+        id: 'chateauChai',
+        ch: 19,
+        name: 'Le chai du château',
+        vid: 'octave',
+        need: { beam: 40, stone: 120, redWine: 6, whiteWine: 4 },
+        before: 'Un vin se juge à la cave autant qu’au verre. Rouvrez le chai, j’y ferai goûter vos lots un par un et j’y mettrai mon nom.',
+        after: 'Le chai est rouvert. À la cave, vous pouvez mettre un lot en cuvée du château : il y sera goûté, noté et classé à sa sortie.',
+        reward: 'La cuvée du château : classement des lots à la cave',
+        x: 78,
+        y: 58,
+        map: 'chateau',
+    },
+    tastingRoom: {
+        id: 'tastingRoom',
+        ch: 20,
+        name: 'La salle de dégustation',
+        vid: 'octave',
+        need: { cloth: 30, paint: 15, redWine: 8, cheese: 20 },
+        before: 'Un grand cru, ça se goûte devant des témoins. Des nappes, des verres, du fromage : je m’occupe du reste, et des estimations.',
+        after: 'La salle est prête. Vous pouvez maintenant vendre un lot de la cave en primeur, avant même qu’il soit sorti.',
+        reward: 'La vente en primeur',
+        x: 24,
+        y: 34,
+        map: 'chateau',
+    },
+    chateauShop: {
+        id: 'chateauShop',
+        ch: 20,
+        name: 'La boutique du château',
+        vid: 'margaux',
+        need: { crate: 30, plank: 50, roseWine: 6, jam: 10 },
+        before: 'Les gens viendront de loin voir le château. Autant qu’ils repartent avec une bouteille sous le bras.',
+        after: 'La boutique est ouverte. Des visiteurs passent chaque jour, achètent vos bouteilles et cherchent les bons accords.',
+        reward: 'Le tourisme du vin : visiteurs et accords mets et vins',
+        x: 56,
+        y: 74,
+        map: 'chateau',
+    },
+    harvestFest: {
+        id: 'harvestFest',
+        ch: 20,
+        name: 'La fête des vendanges',
+        vid: 'margaux',
+        need: { redWine: 12, whiteWine: 8, cheese: 24, bread: 60 },
+        before: 'Il est temps de lever la plus grande tablée de la vallée. Les vendanges du château, ça se fête, et Octave ouvrira le concours.',
+        after: 'Quelle tablée ! Le concours des vins du château est ouvert chaque mois, et 5 rubans pour vous remercier.',
+        reward: 'Le concours des vins (chaque mois) et 5 rubans',
+        x: 82,
+        y: 22,
+        map: 'chateau',
     },
 });
