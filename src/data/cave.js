@@ -81,6 +81,15 @@ export const CAVE_ITEMS = {
     sheepTomme: 'cheese',
     ham: 'charcuterie',
     driedBeef: 'charcuterie',
+    // 1.34 : huit produits de plus (les fromages et les salaisons)
+    truffleBrie: 'cheese',
+    pepperCheese: 'cheese',
+    munster: 'cheese',
+    cantal: 'cheese',
+    valencay: 'cheese',
+    alpineFlowerCheese: 'cheese',
+    drySausage: 'charcuterie',
+    coppa: 'charcuterie',
     beer: 'beer', // un lot de bière garde sa recette (bid) et son fût (k)
 };
 

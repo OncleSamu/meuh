@@ -1,5 +1,5 @@
 import { FISH } from './meta.js';
-import { NEW_DRINKS } from './counter.js';
+import { NEW_DRINKS, NEW_DRINKS_134 } from './counter.js';
 
 // Les grands défis (1.1, 17 défis depuis la 1.18) : un objectif de deux semaines après le niveau 50, tiré au hasard.
 // Chaque défi a 4 étapes. Sortes d'étapes :
@@ -481,7 +481,7 @@ export const DEFIS = {
         steps: [
             { kind: 'count', name: 'Les clients', stat: 'clients', n: 12, icon: ['villager', 'paul'], text: 'Servir {n} clients au comptoir' },
             { kind: 'count', name: 'Les trois étoiles', stat: 'perfectDrinks', n: 6, icon: ['ui', 'star'], text: 'Réussir {n} boissons à 3 étoiles' },
-            { kind: 'give', name: 'La carte des boissons', pool: NEW_DRINKS.map(d => d[0]), k: 2, n: 6, q: 1 },
+            { kind: 'give', name: 'La carte des boissons', pool: [...NEW_DRINKS, ...NEW_DRINKS_134].map(d => d[0]), k: 2, n: 6, q: 1 },
             { kind: 'count', name: 'Le service', stat: 'drinks', n: 30, icon: ['item', 'espresso'], text: 'Préparer {n} boissons' },
         ],
     },

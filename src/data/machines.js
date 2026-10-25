@@ -1,11 +1,12 @@
 import { LV_MACH, LV_REC } from './levels14.js';
 import { LV18_MACH, LV18_REC } from './levels18.js';
-import { NEW_DRINKS } from './counter.js';
+import { NEW_DRINKS, NEW_DRINKS_134 } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
 import { MARMITE, RECIPES_130 } from './v130.js';
 import { RECIPES_131 } from './v131.js';
 import { RECIPES_132 } from './v132.js';
 import { RECIPES_133 } from './v133.js';
+import { RECIPES_134 } from './v134.js';
 import { ITEMS } from './items.js';
 import { ANIMALS } from './animals.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
@@ -3403,7 +3404,8 @@ Object.assign(RECIPES, {
 });
 
 // ---------------- 1.17 : le comptoir, une recette par boisson ----------------
-for (const [id, , ing, lvl, time] of NEW_DRINKS) RECIPES[id] = { id, machine: 'counter', ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
+for (const [id, , ing, lvl, time] of [...NEW_DRINKS, ...NEW_DRINKS_134])
+    RECIPES[id] = { id, machine: 'counter', ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 
 // ---------------- 1.8 : une machine par niveau, toujours avec ses recettes ----------------
 // lv17 : le niveau d'avant, pour qu'une ancienne partie garde ce qu'elle avait déjà ouvert
@@ -3417,6 +3419,7 @@ for (const [id, , machine, ing, time, lvl] of RECIPES_130) RECIPES[id] = { id, m
 for (const [id, , machine, ing, time, lvl] of RECIPES_131) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 for (const [id, , machine, ing, time, lvl] of RECIPES_132) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 for (const [id, , machine, ing, time, lvl] of RECIPES_133) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
+for (const [id, , machine, ing, time, lvl] of RECIPES_134) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 // une recette ne s'ouvre jamais avant sa machine
 for (const r of Object.values(RECIPES)) {
     const m = MACHINES[r.machine];

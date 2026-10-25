@@ -43,6 +43,14 @@ export const BREW = {
     chai: { col: '#c98f56', st: [temp(95), steep(0.55, 0.75, 7), pour(0.8, MILK, 'le lait')] },
     barleyCoffee: { col: '#6a3d1e', st: [temp(95), steep(0.55, 0.78)] },
     barleyLatte: { col: '#c89b6a', st: [temp(95), steep(0.55, 0.78), pour(0.8, MILK, 'le lait')] },
+    // ---- 1.34 : sept boissons de plus ----
+    chicoryCoffee: { col: '#5a3a22', st: [temp(95), steep(0.55, 0.78)] },
+    mandarinTea: { col: '#f09a3a', st: [temp(90), steep(0.45, 0.65)] },
+    hempTisane: { col: '#9ab25a', st: [temp(90), steep(0.45, 0.68)] },
+    hibiscusTea: { col: '#c8283e', st: [temp(95), steep(0.5, 0.7)] },
+    macchiato: { col: '#8a5a33', st: [grind(4, 38), extract(0.32, 0.04), pour(0.5, CREAM, 'une touche de mousse', 0.05)] },
+    frappe: { col: '#b88858', st: [grind(4, 44), extract(0.4), ['whisk', { turns: 5, dur: 7 }], pour(0.8, MILK, 'le lait')] },
+    spicedCoffee: { col: '#6a3a1e', st: [grind(4, 40), extract(0.35), pour(0.75, CREAM, 'la crème')] },
     // ---- cafés ----
     espresso: { col: '#3a1f10', st: [grind(5, 34), extract(0.3, 0.035, '#3a1f10')] },
     cafeLatte: { col: '#c08b52', st: [grind(4, 40), extract(0.3), pour(0.8, MILK, 'le lait')] },
@@ -87,6 +95,17 @@ export const NEW_DRINKS = [
     ['islandCoffee', 'Café des îles', { coffee: 1, rum: 1, cream: 1 }, 46, 300, 'coffee'],
     ['chestnutCoffee', 'Café marron', { coffee: 1, chestnutCream: 1, cream: 1 }, 47, 300, 'coffee'],
     ['icedCaramel', 'Café glacé caramel', { coffee: 1, milk: 1, caramel: 1 }, 49, 300, 'coffee'],
+];
+
+// 1.34 : sept boissons de plus (les cafés après la brûlerie, l'hibiscus avec l'île) ; elles dépendent des cultures des 1.30 à 1.32
+export const NEW_DRINKS_134 = [
+    ['hempTisane', 'Tisane de chanvre', { hemp: 2, honey: 1 }, 33, 180],
+    ['mandarinTea', 'Thé à la mandarine', { tea: 1, mandarin: 1, honey: 1 }, 34, 180],
+    ['chicoryCoffee', 'Café de chicorée', { chicory: 3 }, 37, 120],
+    ['macchiato', 'Macchiato', { coffee: 1, milk: 1 }, 43, 240, 'coffee'],
+    ['frappe', 'Café frappé', { coffee: 1, milk: 1, sugar: 1 }, 45, 260, 'coffee'],
+    ['spicedCoffee', 'Café épicé', { coffee: 1, ginger: 1, honey: 1 }, 47, 280, 'coffee'],
+    ['hibiscusTea', 'Thé à l’hibiscus', { hibiscus: 2, honey: 1 }, 47, 200, 'island'],
 ];
 
 // Les produits existants qui passent du salon de thé et de la brûlerie au comptoir

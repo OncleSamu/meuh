@@ -20,7 +20,7 @@ test('toutes les recettes de l’île ont des ingrédients et une machine connus
     }
     for (const p of Object.values(PROJECTS)) for (const k of Object.keys(p.need)) assert.ok(ITEMS[k], `${p.id} : ${k}`);
     const isl = Object.values(RECIPES).filter(r => ITEMS[r.id].island);
-    assert.equal(isl.length, 55);
+    assert.equal(isl.length, 59); // 1.34 : trois cafés et le thé à l'hibiscus de plus
 });
 
 test('l’île se débloque par le bac, après l’abbaye (une seule histoire)', () => {

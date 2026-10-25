@@ -702,7 +702,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'L’atelier de boissons',
                 b: [
-                    '34 boissons. Chacune se prépare en 2 à 3 gestes et reçoit une note de 1 à 3 étoiles (qualité normale, argent, or).',
+                    '41 boissons. Chacune se prépare en 2 à 3 gestes et reçoit une note de 1 à 3 étoiles (qualité normale, argent, or).',
                     'Les cafés s’ouvrent avec la brûlerie de l’île.',
                     'Le stock sert aux commandes, au train et aux quêtes.',
                 ],
@@ -738,6 +738,10 @@ export const GUIDE_PAGES = [
             {
                 h: 'Quoi mettre en cave dès le niveau 20',
                 t: 'Le cidre s’ouvre au niveau 20 avec la cave : 3 pommes et du sucre au pressoir (niveau 15). Le fromage suit au niveau 21.',
+            },
+            {
+                h: 'Huit produits de plus (1.34)',
+                t: 'Brie truffé, fromage au poivre, munster, cantal, valençay et fromage aux fleurs d’alpage rejoignent les fromages ; saucisson sec et coppa, les salaisons. Mêmes rangs, mêmes soins, mêmes chances que les autres.',
             },
             {
                 h: 'Prendre soin',

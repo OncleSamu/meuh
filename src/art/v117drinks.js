@@ -199,3 +199,5 @@ const DRINKS = () => ({
 
 let drinks = null;
 Object.keys(DRINKS()).forEach(k => (items[k] = () => (drinks = drinks || DRINKS())[k]));
+
+export { tea, slice, espresso, mug, glassMug };

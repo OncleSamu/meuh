@@ -1146,3 +1146,30 @@ Object.assign(CARNET, {
     mahiTacos:
         'Les tacos de mahi-mahi, avec l’avocat et le citron vert. On les mange à deux mains, en se tachant, en riant. C’est la seule recette où l’on a le droit de se salir.',
 });
+
+// ---------------- 1.34 : le comptoir et la cave ----------------
+Object.assign(CARNET, {
+    hempTisane:
+        'La tisane de chanvre sent l’herbe coupée et le calme. On la boit le soir, sur le banc, après avoir tout rangé. Papi Lucien la trouvait « un peu verte ». Il en a repris tous les soirs.',
+    mandarinTea:
+        'Le thé à la mandarine, avec une cuillère de miel, c’est la tasse des premiers froids. Les enfants viennent se coller contre le poêle, le nez dans la vapeur orangée.',
+    chicoryCoffee:
+        'Le café de chicorée, noir, amer et rond. On en buvait quand le vrai café était trop cher, ou trop loin. Ça me rappelle les matins de ma grand-mère, et sa cafetière émaillée.',
+    macchiato:
+        'Un macchiato, c’est un expresso avec une toute petite nuée de lait posée dessus. Gaston dit que c’est « juste pour tacher ». Il en commande deux, pour bien tacher.',
+    frappe: 'Le café frappé, bien froid, avec un nuage de lait. On le boit à la paille, en été, les pieds dans une bassine d’eau. Ma voisine prétend que ça rafraîchit les idées aussi.',
+    spicedCoffee:
+        'Le café épicé, avec un peu de gingembre et du miel. Il réchauffe les mains et le dos. Papi Lucien disait qu’il le sentait jusque dans les bottes.',
+    hibiscusTea:
+        'Le thé à l’hibiscus est d’un rouge profond, acide et doux à la fois. On le sert dans la plus belle tasse. Même les gens pressés s’arrêtent un instant pour le regarder.',
+    munster:
+        'Le munster a une croûte orangée et une odeur qui annonce la couleur. On dit qu’on l’entend arriver avant de le voir. On le mange avec des pommes de terre chaudes et du cumin.',
+    cantal: 'Le cantal est un grand fromage de montagne à la pâte ferme, un peu piquante quand il vieillit. On le coupe en gros morceaux, avec du pain de campagne. On ne chipote pas.',
+    valencay:
+        'Le valençay est une petite pyramide de chèvre couverte de cendre. Il paraît qu’il a perdu sa pointe un jour, pour contenter un empereur. Moi, je le prends tel quel, avec un verre de blanc.',
+    drySausage:
+        'Le saucisson sec pend dans la cave, la fleur blanche sur le boyau, ficelé comme un cadeau. Ton père en coupe de fines rondelles. Il dit toujours « juste une ». Il dit ça depuis quarante ans.',
+    coppa: 'La coppa est un morceau de cou de porc séché longtemps, marbré de gras fin. On la tranche très mince, comme du papier. On croit qu’on n’en veut pas beaucoup. On en veut beaucoup.',
+    alpineFlowerCheese:
+        'Le fromage aux fleurs d’alpage est pressé avec des fleurs séchées de la montagne : lavande, génépi, un peu de ciel. Chaque tranche ressemble à un pré en été. On le garde pour les grands jours.',
+});

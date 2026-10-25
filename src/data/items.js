@@ -1,10 +1,11 @@
 import { LV_ITEM } from './levels14.js';
-import { NEW_DRINKS, COFFEE_GATED } from './counter.js';
+import { NEW_DRINKS, NEW_DRINKS_134, COFFEE_GATED } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
 import { CROPS_130, RECIPES_130 } from './v130.js';
 import { TREES_131, RECIPES_131 } from './v131.js';
 import { CROPS_132, RECIPES_132 } from './v132.js';
 import { FISH_ITEMS_133, RECIPES_133 } from './v133.js';
+import { RECIPES_134 } from './v134.js';
 // Tous les produits du jeu : cultures, arbres, produits animaux, plats, matériaux.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -2891,6 +2892,18 @@ for (const [id, name, , ing] of RECIPES_132) {
 // ---------------- 1.33 : dix poissons et leurs plats ----------------
 for (const [id, name, type, sell, sea] of FISH_ITEMS_133) ITEMS[id] = sea ? { id, name, type, sell, sea: true } : { id, name, type, sell };
 for (const [id, name, , ing] of RECIPES_133) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}
+
+// ---------------- 1.34 : sept boissons et six produits de cave ----------------
+for (const [id, name, ing, , , tag] of NEW_DRINKS_134) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+    if (tag === 'island' || tag === 'coffee') ITEMS[id].island = true;
+    if (tag === 'coffee') ITEMS[id].needProject = 'roasting';
+}
+for (const [id, name, , ing] of RECIPES_134) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
 }
