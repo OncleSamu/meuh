@@ -53,7 +53,7 @@ import { caveBonus } from './buildings.js';
 import { DAYS_PER_SEASON } from '../data/world.js';
 import { VINTAGES, LABEL_COUNT } from '../data/cave.js';
 import { domStepSum } from './estate.js';
-import { classMult, settleOnExit, settlePrimeur, makeCuvee, sellPrimeur, primeurQuote, enterWineContest, serveVisitor } from './chateau.js';
+import { repStars, classMult, settleOnExit, settlePrimeur, makeCuvee, sellPrimeur, primeurQuote, enterWineContest, serveVisitor } from './chateau.js';
 import { takeQ } from './defis.js';
 
 // 1.15 : millésimes. L'année de jeu donne à chaque vin une qualité (0 à 3), la même pour tout le monde.
@@ -94,7 +94,10 @@ export const caveSlots = () =>
     (state.cave.gear.vault ? 2 : 0) +
     (cellarOpen() ? 2 : 0) +
     caveBonus() +
-    domStepSum('annex', 'shelf');
+    domStepSum('annex', 'shelf') +
+    // 1.38 : la réputation du château donne de la place (une case à 3 étoiles, une autre à 5)
+    (repStars() >= 3 ? 1 : 0) +
+    (repStars() >= 5 ? 1 : 0);
 export const caveStep = id => (CAVE_ITEMS[id] === 'cider' && projectDone('cidery') ? 4 * CAVE_H : caveFam(id).step);
 export const rankName = lot =>
     lot.bad ? (lot.id === 'beer' ? 'Tournée' : 'Tourné') : caveFam(lot.id).ranks[lot.rank] + (lot.q ? ` · ${QUALITY[lot.q].name}` : '');
@@ -113,7 +116,7 @@ export const lotUnit = lot =>
             classMult(lot),
     );
 // la taille des lots grandit avec les étagères : 8, 12, 16 puis 20
-export const caveLotMax = () => CAVE_LOT_MAX + CAVE_LOT_GROW * Math.min(3, Math.floor(state.cave.shelves / 2));
+export const caveLotMax = () => CAVE_LOT_MAX + CAVE_LOT_GROW * Math.min(3, Math.floor(state.cave.shelves / 2)) + (repStars() >= 2 ? 4 : 0); // 1.38 : 24 au plus avec un château à 2 étoiles
 export const lotValue = lot => lotUnit(lot) * lot.n;
 
 // 1.37 : le château (voir chateau.js)

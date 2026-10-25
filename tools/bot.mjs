@@ -414,6 +414,14 @@ function cave() {
         const o = G.lotOdds(lot);
         if (lot.bad || lot.rank >= 3 || (lot.rank >= 2 && o.good < 0.45)) tag('cave', () => G.takeOut(i));
     });
+    // 1.38 : le château (cuvées classées et visiteurs de la boutique)
+    if (G.chateauOpen()) {
+        c.slots.forEach((lot, i) => lot && !lot.cuv && G.cuveeLot(i));
+        if (G.shopOpen())
+            G.ensureChateau()
+                .vis.slice()
+                .forEach(v => G.haveWine(v) && tag('cave', () => G.guestServe(v.id, G.havePair(v) ? 1 : 0)));
+    }
     const a = c.auction;
     (c.orders || []).slice().forEach(o => G.caveOrderLot(o) && tag('cave', () => G.deliverCaveOrder(o.id)));
     c.reserve.slice().forEach(l => {

@@ -113,7 +113,8 @@ export function makeOrder() {
     if (vid === 'paul' && projectDone('bakery')) mult *= 1.2;
     if (projectDone('townhall')) mult *= 1.1;
     mult *= (1 + rank('loyal') * 0.1) * (1 + state.upgrades.price * 0.04);
-    const gold = round5(value * mult * bonus);
+    // 1.38 : +3 % par niveau au-delà de 50 (pièces seulement)
+    const gold = round5(value * mult * bonus * (1 + 0.03 * Math.max(0, state.level - 50)));
     return {
         items,
         gold,

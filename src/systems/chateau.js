@@ -12,7 +12,7 @@ import { tip } from './tips.js';
 import { earn, addXp } from './player.js';
 import { addPhoto } from './style.js';
 import { qual, clampQuality } from './farm.js';
-import { unitPrice } from './market.js';
+import { stallBase } from './stall.js';
 
 export { newChateau };
 export function ensureChateau() {
@@ -166,6 +166,8 @@ export function visitorTick() {
 // le stock de la ferme seulement : jamais le coffre-fort, qui est une autre liste
 export const haveWine = v => (state.inventory[v.wine] || 0) >= v.n;
 export const havePair = v => (state.inventory[v.pair] || 0) >= 1;
+// 1.38 : les visiteurs paient sur la vraie valeur du vin (comme l'étal), pas sur le prix du grossiste
+const bottlePrice = (id, q) => Math.max(1, Math.floor(stallBase(id) * QUALITY[q].mult));
 export const visitorPrice = (v, pair) => {
     const o = qual(v.wine);
     // les bouteilles ordinaires partent d'abord
@@ -173,7 +175,7 @@ export const visitorPrice = (v, pair) => {
     let sum = 0,
         left = v.n;
     const take = Math.min(plain, left);
-    sum += take * unitPrice(v.wine, 0, 1);
+    sum += take * bottlePrice(v.wine, 0);
     left -= take;
     for (const [r, k] of [
         [1, 's'],
@@ -182,7 +184,7 @@ export const visitorPrice = (v, pair) => {
         [4, 'd'],
     ]) {
         const t = Math.min(o[k] || 0, left);
-        sum += t * unitPrice(v.wine, r, 1);
+        sum += t * bottlePrice(v.wine, r);
         left -= t;
     }
     const mult = TOURISM.base + TOURISM.bonus * repStars() + (pair ? TOURISM.pairBonus : 0);

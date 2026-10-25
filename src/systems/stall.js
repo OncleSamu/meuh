@@ -22,7 +22,7 @@ import { makeNeighborReq, reqReady, reqPay, noteServed } from './neighbordish.js
 import { tip } from './tips.js';
 
 // ---------------- l'étal ----------------
-// On y met jusqu'à 10 exemplaires d'un produit au prix choisi. Plus c'est cher, plus
+// On y met jusqu'à 10 exemplaires (16 en fin de partie) d'un produit au prix choisi. Plus c'est cher, plus
 // le client met de temps à venir. Le grossiste (vente immédiate) paie beaucoup moins.
 export const STALL_LEVELS = [8, 16, 26, 36];
 export const stallSlots = () => 4 + STALL_LEVELS.filter(l => state.level >= l).length + extraStall();
@@ -32,7 +32,9 @@ export const stallWait = ratio => 4 + 14 * Math.pow(ratio, 3);
 export const stallUnit = (id, ratio) => Math.max(1, Math.round(stallBase(id) * ratio));
 export const stallMood = ratio =>
     ratio <= 0.8 ? 'Bon marché : vendu vite' : ratio <= 1.1 ? 'Prix juste' : ratio <= 1.3 ? 'Un peu cher : patience' : 'Très cher : les clients hésitent';
-export const stallMax = id => Math.min(STALL_MAX_QTY, sellableQty(id));
+// 1.38 : l'étal suit la ferme (10 unités, 12 au niveau 40, 16 au niveau 55)
+export const stallCap = () => STALL_MAX_QTY + (state.level >= 40 ? 2 : 0) + (state.level >= 55 ? 4 : 0);
+export const stallMax = id => Math.min(stallCap(), sellableQty(id));
 
 export function ensureStall() {
     if (!state.stall || !Array.isArray(state.stall.slots)) state.stall = { slots: [] };

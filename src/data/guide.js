@@ -807,7 +807,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'La réputation',
-                t: 'Les points des classements donnent jusqu’à cinq étoiles au château. Plus d’étoiles : plus de visiteurs, une file plus longue et des vins plus chers à servir (le champagne dès 2 étoiles). Elle se garde d’une ferme à l’autre.',
+                t: 'Les points des classements donnent jusqu’à cinq étoiles au château. Plus d’étoiles : plus de visiteurs, une file plus longue et des vins plus chers à servir (le champagne dès 2 étoiles). À 2 étoiles, les lots de cave montent à 24 ; à 3 puis 5 étoiles, la cave gagne une case. Elle se garde d’une ferme à l’autre.',
             },
             {
                 h: 'La vente en primeur',
@@ -815,7 +815,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'La boutique et les accords',
-                t: 'Des visiteurs achètent vos bouteilles du stock (jamais celles du coffre-fort), 50 % plus cher, et plus encore avec les étoiles. Offrez le plat qui va avec leur vin : bœuf bourguignon pour le rouge, sandre au vin blanc pour le blanc… l’accord paie 50 % de plus.',
+                t: 'Des visiteurs achètent vos bouteilles du stock (jamais celles du coffre-fort) 1,5 fois leur valeur, et plus encore avec les étoiles : bien plus que le grossiste. Offrez le plat qui va avec leur vin : bœuf bourguignon pour le rouge, sandre au vin blanc pour le blanc… l’accord paie 50 % de plus.',
             },
             {
                 h: 'Le concours des vins',
@@ -1127,7 +1127,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'L’étal',
-                t: 'Vous fixez le prix : plus il est haut, plus le client tarde. 4 places, puis une de plus aux niveaux 8, 16, 26 et 36 (et jusqu’à 3 de plus avec la maison et le domaine).',
+                t: 'Vous fixez le prix : plus il est haut, plus le client tarde. 4 places, puis une de plus aux niveaux 8, 16, 26 et 36 (et jusqu’à 3 de plus avec la maison et le domaine). Une place prend 10 exemplaires, 12 dès le niveau 40, 16 dès le niveau 55.',
             },
             { h: 'Le produit du jour et la réserve', t: 'Un produit du jour paie plus. La réserve met de côté ce que demandent commandes et défis.' },
             {
