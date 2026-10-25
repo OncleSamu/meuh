@@ -1,7 +1,7 @@
 // Les grandes écuries (1.23) : boxes, forme, soins, aptitudes et plafonds, randonnée.
 // Les mini-jeux d'entraînement (1.23.1 et 1.23.2) et les concours (1.24) viendront s'y brancher.
 
-export const HARAS_LVL = 44;
+export const HARAS_LVL = 45;
 
 // les quatre disciplines ; le gène donne le plafond de l'aptitude : 40 + 12 × le gène (gène 5 → 100)
 export const DISCIPLINES = [
@@ -224,7 +224,7 @@ export const COAT = {
 export const STUD = {
     champDiv: 3, // il faut avoir gagné en division Élite (ou au-dessus)
     max: 3, // reproducteurs au pré
-    income: 2500, // par jour et par reproducteur, × (1 + niveau / 50) ; 1.24.3 : 450 ne valait pas la peine
+    income: 2500, // par jour et par reproducteur, × (1 + niveau / 60) ; 1.24.3 : 450 ne valait pas la peine
     incomeWin: 0.1, // +10 % par victoire en concours, jusqu'au double
     incomeWinMax: 1,
     incomeDays: 7, // on cumule au plus une semaine d'absence

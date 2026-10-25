@@ -20,10 +20,10 @@ const start = () => {
     state.orchard.slots.forEach(x => (x.tree = null));
 };
 
-test('le vin de table : objet, recette au pressoir niveau 31, cave et dessin', () => {
+test('le vin de table : objet, recette au pressoir (au niveau du raisin), cave et dessin', () => {
     assert.ok(ITEMS.tableWine && RECIPES.tableWine);
     assert.equal(RECIPES.tableWine.machine, 'press');
-    assert.equal(RECIPES.tableWine.lvl, 31);
+    assert.equal(RECIPES.tableWine.lvl, ITEMS.grape.reqLvl);
     assert.equal(CAVE_ITEMS.tableWine, 'wine');
     assert.ok(SPR.item('tableWine').includes('<svg'));
 });

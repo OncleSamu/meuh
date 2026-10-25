@@ -99,7 +99,7 @@ test('20 bêtes par pré, achat d’un pré, déménagement', () => {
 });
 
 test('vendre la ferme repart avec un pré et un verger fermé', () => {
-    state.level = 50;
+    state.level = 60;
     state.money = 1e9;
     G.doPrestige('', 'none');
     assert.equal(state.pastures.length, 1);

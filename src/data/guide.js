@@ -2,6 +2,18 @@
 // Une page : { id, cat, name, icon, lvl, go, intro, secs: [{ h, t | b }], tips, see }
 //   lvl : niveau d'ouverture (la page se lit toujours, mais le bouton « Y aller » attend) ; go : où mène « Y aller » (voir GUIDE_GO)
 //   secs : sections (h : titre ; t : un paragraphe ; b : une liste) ; tips : « À retenir » ; see : pages liées
+import { ITEMS } from './items.js';
+import { ANIMALS } from './animals.js';
+import { MACHINES } from './machines.js';
+import { CHAPTERS } from './village.js';
+import { HARAS_LVL } from './haras.js';
+import { MAX_LEVEL, HOUSE } from './progress.js';
+import { LEAGUES } from './commerce.js';
+
+// 1.36 : les niveaux cités dans les textes viennent des données (ils ne peuvent plus se démentir)
+const lv = id => (ITEMS[id] || ANIMALS[id] || MACHINES[id]).reqLvl;
+const chLvl = n => CHAPTERS.find(c => c.n === n).lvl;
+
 export const GUIDE_CATS = [
     { id: 'base', name: 'Les bases', icon: ['ui', 'info'] },
     { id: 'farm', name: 'La ferme', icon: ['item', 'wheat'] },
@@ -177,9 +189,9 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les grandes étapes',
-                t: 'Verger 10, serre 15, cave 20, hameau et commis 25, port 30, abbaye et brasserie 35, île 38, génétique 40, Salon 43, alpage 45, et le niveau 50 pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.',
+                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, abbaye et brasserie 35, île 38, génétique 40, Salon 43, Haras ${HARAS_LVL}, alpage ${chLvl(9)}, et le niveau ${MAX_LEVEL} pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
             },
-            { h: 'Après le niveau 50', t: 'L’expérience donne des étoiles de renommée : voir « Renommée et Ferme légendaire ».' },
+            { h: `Après le niveau ${MAX_LEVEL}`, t: 'L’expérience donne des étoiles de renommée : voir « Renommée et Ferme légendaire ».' },
         ],
         see: ['skills', 'legend'],
     },
@@ -314,7 +326,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Quatorze cultures de plus (1.30)',
-                t: 'Navet (niveau 8), fève (10), panais (14), échalote (17), brocoli (22), chou-fleur (24), avoine (25), chanvre (27), chicorée (28), pois chiche (29), butternut (30), mûre (33), cassis (36) et endive (37). Chacune a son sol préféré, ses saisons et ses recettes : farines, soupes, tartes, confitures, liqueurs, toile et corde de chanvre. L’avoine entre aussi dans la ration des chevaux du haras.',
+                t: `Navet (niveau ${lv('turnip')}), fève (${lv('favaBean')}), panais (${lv('parsnip')}), échalote (${lv('shallot')}), brocoli (${lv('broccoli')}), chou-fleur (${lv('cauliflower')}), avoine (${lv('oat')}), chanvre (${lv('hemp')}), chicorée (${lv('chicory')}), pois chiche (${lv('chickpea')}), butternut (${lv('butternut')}), mûre (${lv('blackberry')}), cassis (${lv('blackcurrant')}) et endive (${lv('endive')}). Chacune a son sol préféré, ses saisons et ses recettes : farines, soupes, tartes, confitures, liqueurs, toile et corde de chanvre. L’avoine entre aussi dans la ration des chevaux du haras.`,
             },
             {
                 h: 'Replanter vite',
@@ -383,7 +395,7 @@ export const GUIDE_PAGES = [
                 b: [
                     '6 à 12 parcelles (en plus avec le Chantier de la ferme), sans arrosage, toute l’année.',
                     'Les cultures y poussent plus vite et donnent de plus belles récoltes, surtout hors saison.',
-                    'Certaines cultures ne poussent qu’en serre : cacao, vanille, menthe (niveau 24), poivre noir (35), orchidée (41).',
+                    `Certaines cultures ne poussent qu’en serre : cacao, vanille, menthe (niveau ${lv('mint')}), poivre noir (${lv('peppercorn')}), orchidée (${lv('orchid')}).`,
                 ],
             },
             { h: 'Comment s’en servir', t: 'Construisez-la dans la ferme, puis semez dedans comme au champ. Le bouton Récolter la couvre aussi.' },
@@ -410,7 +422,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Sept arbres de plus (1.31)',
-                t: 'Prunier (quetsches, niveau 26), mandarinier (30), pamplemoussier (31), grenadier (35) et pistachier (36) poussent à la ferme ; le fruit du dragon (40) et l’anacardier, qui donne la noix de cajou (41), ne poussent qu’aux îles. L’ancien « Prunier » s’appelle maintenant Mirabellier. Chaque fruit a ses recettes : jus, marmelades, sorbets, tartes, eaux-de-vie, huiles, nougat.',
+                t: `Prunier (quetsches, niveau ${lv('plum')}), mandarinier (${lv('mandarin')}), pamplemoussier (${lv('grapefruit')}), grenadier (${lv('pomegranate')}) et pistachier (${lv('pistachio')}) poussent à la ferme ; le fruit du dragon (${lv('dragonfruit')}) et l’anacardier, qui donne la noix de cajou (${lv('cashew')}), ne poussent qu’aux îles. L’ancien « Prunier » s’appelle maintenant Mirabellier. Chaque fruit a ses recettes : jus, marmelades, sorbets, tartes, eaux-de-vie, huiles, nougat.`,
             },
             {
                 h: 'Maturité et saisons',
@@ -530,7 +542,11 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les espèces',
-                t: 'Poule 2, canard 4, mouton 7, lapin 11, oie 12, caille 14, vache 18, dinde et ruche d’élevage 21, chèvre 24, cheval et brebis laitière 27, cochon 31, ânesse 41, bufflonne 42, paon 43, alpaga 49. Nouveaux en 1.35 (niveaux provisoires) : pigeon 5, pintade 33, chèvre mohair 35, faisane 37, autruche 39, yack 46.',
+                t:
+                    Object.values(ANIMALS)
+                        .sort((a, b) => a.reqLvl - b.reqLvl)
+                        .map((a, k) => `${k ? a.name.toLowerCase() : a.name} ${a.reqLvl}`)
+                        .join(', ') + '.',
             },
             {
                 h: 'La fiche d’une bête',
@@ -578,7 +594,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Comment ça marche',
                 b: [
-                    'Après la bergerie d’altitude (chapitre 9, « Les estives », niveau 45), 4 bêtes adultes peuvent monter à l’alpage (8 avec le téléphérique). Seules les vaches, chèvres, moutons et bufflonnes montent.',
+                    `Après la bergerie d’altitude (chapitre 9, « Les estives », niveau ${chLvl(9)}), 4 bêtes adultes peuvent monter à l’alpage (8 avec le téléphérique). Seules les vaches, chèvres, moutons, bufflonnes et yacks montent.`,
                     'Le séjour dure 1 h 30 (45 minutes avec le téléphérique). Au retour : du lait d’alpage (6 par bête, 2 par mouton) et 6 laines par mouton.',
                     'Les bêtes revenues produisent ensuite 20 % plus vite.',
                     'Une bête en transhumance ne peut pas être vendue.',
@@ -599,7 +615,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Le bâtiment',
                 b: [
-                    'Au niveau 44, construisez les écuries (onglet Animaux, volet Écuries) : 4 boxes, puis 8 et 12 avec deux agrandissements.',
+                    `Au niveau ${HARAS_LVL}, construisez les écuries (onglet Animaux, volet Écuries) : 4 boxes, puis 8 et 12 avec deux agrandissements.`,
                     'Un cheval logé quitte les prés (il ne compte plus dans leur place) mais donne toujours son crin : ramassez-le depuis sa fiche.',
                     'Chaque box est une petite carte (nom, forme, aptitudes) : touchez-la pour ouvrir la fiche complète, la flèche du coin la replie.',
                 ],
@@ -629,7 +645,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'La sellerie et l’équipement',
                 b: [
-                    'La sellerie de Jules (au Marché, niveau 44) fabrique neuf objets : fers en fer (+3 galop et saut) ou en argent (+6), selles de dressage, d’obstacle (+6) et de course (+8 galop), bride (+3 dressage et +3 présentation), tapis (+2 présentation), couverture d’hiver et brosse en crin.',
+                    `La sellerie de Jules (au Marché, niveau ${lv('saddlery')}) fabrique neuf objets : fers en fer (+3 galop et saut) ou en argent (+6), selles de dressage, d’obstacle (+6) et de course (+8 galop), bride (+3 dressage et +3 présentation), tapis (+2 présentation), couverture d’hiver et brosse en crin.`,
                     'Dans la fiche d’un cheval, « Équipement » : un objet par emplacement, il quitte votre stock. Les bonus d’aptitude et de présentation comptent pour la note de concours, pas pour l’entraînement. La couverture fait remonter la forme en 20 minutes au lieu de 30 ; la brosse rend plus souvent une pastille de forme quand on brosse.',
                 ],
             },
@@ -665,7 +681,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Les machines',
                 b: [
-                    'Elles s’achètent au magasin, du four à pain (niveau 2) à la cuverie (niveau 48). Une machine s’ouvre au plus par niveau, toujours avec au moins une recette faisable.',
+                    `Elles s’achètent au magasin, du four à pain (niveau 2) à la cuverie (niveau ${lv('winery')}). Une machine s’ouvre au plus par niveau, toujours avec au moins une recette faisable.`,
                     'Chaque machine a une file d’attente : ajoutez des lots, ils s’enchaînent. La file s’allonge avec la maison, le Chantier de la ferme et le domaine.',
                     'Le bouton Boucle relance la dernière recette tant qu’il y a les ingrédients.',
                 ],
@@ -1169,7 +1185,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Les ligues',
                 b: [
-                    'Bronze (niveau 4), argent (17), or (29), diamant (44).',
+                    `Bronze (niveau 4), argent (17), or (29), diamant (${LEAGUES.find(l => l.id === 'diamond').lvl}).`,
                     'Première du classement : vous montez, avec des récompenses plus grosses et des rivales plus fortes.',
                     'Dernière : vous redescendez d’une ligue.',
                 ],
@@ -1238,7 +1254,7 @@ export const GUIDE_PAGES = [
                     'Niveau 23, étage : +1 place dans la file de chaque machine.',
                     'Niveau 32, belle demeure : +1 place à l’étal.',
                     'Niveau 42, grande ferme : toutes les commandes paient 10 % de plus.',
-                    'Niveau 47, le manoir : +80 places dans la grange et 1 place de plus à l’étal.',
+                    `Niveau ${HOUSE[HOUSE.length - 1].lvl}, le manoir : +80 places dans la grange et 1 place de plus à l’étal.`,
                 ],
             },
             {
@@ -1474,7 +1490,7 @@ export const GUIDE_PAGES = [
         icon: ['ui', 'trophy'],
         lvl: 50,
         go: 'sheet:progress',
-        intro: 'Au niveau 50, le jeu change : défis, renommée, Ferme légendaire et prestige.',
+        intro: `Au niveau ${MAX_LEVEL}, le jeu change : défis, renommée, Ferme légendaire et prestige.`,
         secs: [
             {
                 h: 'Les grands défis',
@@ -1482,11 +1498,11 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'La renommée',
-                t: 'Au niveau 50, l’expérience donne des étoiles de renommée : une étoile tous les 250 000 points, avec pièces et matériaux, et un ruban toutes les cinq.',
+                t: `Au niveau ${MAX_LEVEL}, l’expérience donne des étoiles de renommée : une étoile tous les 250 000 points, avec pièces et matériaux, et un ruban toutes les cinq.`,
             },
             {
                 h: 'La Ferme légendaire',
-                t: 'Cinq objectifs dans la section Légende du livre : le niveau 50, les 6 chapitres du village et du hameau terminés, la maison au niveau 5, la ligue diamant, dix produits maîtrisés à l’or.',
+                t: `Cinq objectifs dans la section Légende du livre : le niveau ${MAX_LEVEL}, les 6 chapitres du village et du hameau terminés, la maison au niveau 5, la ligue diamant, dix produits maîtrisés à l’or.`,
             },
             {
                 h: 'Vendre la ferme',

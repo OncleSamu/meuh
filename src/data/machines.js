@@ -1,5 +1,6 @@
 import { LV_MACH, LV_REC } from './levels14.js';
 import { LV18_MACH, LV18_REC } from './levels18.js';
+import { LV60_ITEM, LV60_ANIMAL, LV60_MACH, LV60_REC } from './levels60.js';
 import { NEW_DRINKS, NEW_DRINKS_134 } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
 import { MARMITE, RECIPES_130 } from './v130.js';
@@ -3471,3 +3472,11 @@ Object.assign(RECIPES, {
         }
     }
 }
+
+// ---------------- 1.36 : 60 niveaux ----------------
+// Les niveaux sont calculés par tools/levels60.mjs. lv135 garde le niveau d'avant, pour qu'une ancienne partie
+// garde ce qu'elle avait déjà ouvert (state.lvKeep, voir migrateLevels60).
+for (const [id, l] of Object.entries(LV60_ITEM)) if (ITEMS[id]) [ITEMS[id].lv135, ITEMS[id].reqLvl] = [ITEMS[id].reqLvl, l];
+for (const [id, l] of Object.entries(LV60_ANIMAL)) if (ANIMALS[id]) [ANIMALS[id].lv135, ANIMALS[id].reqLvl] = [ANIMALS[id].reqLvl, l];
+for (const [id, l] of Object.entries(LV60_MACH)) if (MACHINES[id]) [MACHINES[id].lv135, MACHINES[id].reqLvl] = [MACHINES[id].reqLvl, l];
+for (const [id, l] of Object.entries(LV60_REC)) if (RECIPES[id]) [RECIPES[id].lv135, RECIPES[id].lvl, RECIPES[id].base] = [RECIPES[id].lvl, l, l];

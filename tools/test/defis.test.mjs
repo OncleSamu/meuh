@@ -42,7 +42,7 @@ test('au niveau 50, un défi arrive ; un défi ne revient pas avant le 4e tirage
     setView({ started: true, tab: 'farm' });
     tick(2);
     assert.equal(G.curDefi(), null, 'rien avant le niveau 50');
-    state.level = 50;
+    state.level = 60;
     tick(2);
     const d = G.curDefi();
     assert.ok(d && DEFIS[d.id], 'un défi en cours');

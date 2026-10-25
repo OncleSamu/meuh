@@ -24,7 +24,7 @@ import { projectDone, storyOk, syncStory, chapterDone } from './story.js';
 import { newDay, weatherTick, season, weather } from './world.js';
 import { marketTick } from './market.js';
 import { syncEvent, eventActive, eventIcon } from './events.js';
-import { speedMult, checkNewAchievements, migrateLevels14 } from './player.js';
+import { speedMult, checkNewAchievements, migrateLevels14, migrateLevels60 } from './player.js';
 import { handTick, handOffline } from './home.js';
 import { incidentTick } from './incidents.js';
 import { merchantTick } from './merchant.js';
@@ -94,6 +94,13 @@ export function normalizeState() {
                 if (was !== undefined && was <= state.level && now18 > state.level) state.lvKeep[d.id] = true;
             }
         state.lv18 = true;
+    }
+    // 1.36 : les 50 niveaux passent à 60 ; les chapitres déjà commencés restent ouverts
+    if (!state.lv136) {
+        state.story.keep = state.story.keep || {};
+        for (const c of CHAPTERS) if (state.story.seen[c.n] && !chapterDone(c.n)) state.story.keep[c.n] = true;
+        migrateLevels60();
+        state.lv136 = true;
     }
     ensureVillagers();
     ensureGhPlots();

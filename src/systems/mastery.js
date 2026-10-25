@@ -1,4 +1,4 @@
-// Maîtrise des produits, renommée après le niveau 50, ligues du concours et Ferme légendaire.
+// Maîtrise des produits, renommée après le niveau 60, ligues du concours et Ferme légendaire.
 import { state } from '../core/state.js';
 import { view } from '../core/view.js';
 import { fmt } from '../core/format.js';

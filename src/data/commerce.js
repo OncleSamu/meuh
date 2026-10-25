@@ -111,7 +111,7 @@ export const LEAGUES = [
         name: 'Diamant',
         f: 1.75,
         pay: 3,
-        lvl: 44,
+        lvl: 45,
     },
 ];
 

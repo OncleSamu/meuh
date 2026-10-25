@@ -1,0 +1,117 @@
+// 1.36 : soixante niveaux. Tout est réparti, rien ne se perd, les anciennes parties gardent ce qu'elles avaient ouvert.
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import './helpers.mjs';
+import * as G from '../../src/systems/index.js';
+import { state, scaleLvl } from '../../src/core/state.js';
+import { ITEMS } from '../../src/data/items.js';
+import { MACHINES, RECIPES } from '../../src/data/machines.js';
+import { ANIMALS } from '../../src/data/animals.js';
+import { MAX_LEVEL, PRESTIGE_LVL } from '../../src/data/progress.js';
+import { CHAPTERS } from '../../src/data/village.js';
+import { HARAS_LVL } from '../../src/data/haras.js';
+import { LV60_ITEM, LV60_ANIMAL, LV60_MACH, LV60_REC } from '../../src/data/levels60.js';
+
+test('1.36 : soixante niveaux, les grandes étapes à leur place', () => {
+    assert.equal(MAX_LEVEL, 60);
+    assert.equal(PRESTIGE_LVL, 60);
+    assert.equal(HARAS_LVL, 45);
+    assert.deepEqual(
+        [9, 10, 11, 12].map(n => CHAPTERS.find(c => c.n === n).lvl),
+        [50, 52, 53, 54],
+    );
+    assert.equal(CHAPTERS.find(c => c.n === 16).lvl, 43, 'le Salon ne bouge pas');
+});
+
+test('1.36 : le début de partie (niveaux 1 à 20) ne bouge pas', () => {
+    for (const t of [LV60_ITEM, LV60_ANIMAL, LV60_MACH, LV60_REC]) for (const [id, l] of Object.entries(t)) assert.ok(l > 20, `${id} : ${l}`);
+    for (const t of [ITEMS, ANIMALS, MACHINES])
+        for (const d of Object.values(t)) if (d.lv135 !== undefined) assert.ok(d.lv135 > 20 && d.reqLvl >= d.lv135, d.id);
+    for (const r of Object.values(RECIPES)) if (r.lv135 !== undefined) assert.ok(r.lv135 > 20 && r.lvl >= r.lv135, r.id);
+});
+
+test('1.36 : chaque niveau de 2 à 60 ouvre quelque chose, aucune recette au-delà du 60', () => {
+    for (let l = 2; l <= MAX_LEVEL; l++) assert.ok(G.unlocksAt(l).length > 1, `niveau ${l} vide`);
+    for (const r of Object.values(RECIPES)) assert.ok(r.lvl <= MAX_LEVEL, `${r.id} : ${r.lvl}`);
+    for (const m of Object.values(MACHINES)) assert.ok(m.reqLvl <= MAX_LEVEL, m.id);
+});
+
+test('1.36 : un rythme à peu près égal (recettes, plantes, animaux, machines)', () => {
+    const per = (vals, from, to) => vals.filter(l => l >= from && l <= to).length;
+    const rec = Object.values(RECIPES).map(r => r.lvl);
+    for (let l = 21; l <= MAX_LEVEL; l++) assert.ok(per(rec, l, l) <= 20, `niveau ${l} : ${per(rec, l, l)} recettes`);
+    const plants = Object.values(ITEMS)
+        .filter(i => (i.type === 'crop' || i.type === 'tree') && i.reqLvl > 1)
+        .map(i => i.reqLvl);
+    for (const [a, b] of [
+        [21, 30],
+        [31, 40],
+        [41, 50],
+        [51, 60],
+    ])
+        assert.ok(per(plants, a, b) >= 9, `plantes ${a}-${b}`);
+    const an = Object.values(ANIMALS).map(a => a.reqLvl);
+    for (const [a, b] of [
+        [11, 20],
+        [21, 30],
+        [31, 40],
+        [41, 50],
+        [51, 60],
+    ])
+        assert.ok(per(an, a, b) >= 3, `animaux ${a}-${b}`);
+    const mach = Object.values(MACHINES).map(m => m.reqLvl);
+    assert.ok(per(mach, 51, 60) >= 2, 'machines 51-60');
+    assert.equal(new Set(mach).size, mach.length, 'une machine par niveau');
+});
+
+test('1.36 : les niveaux 1 à 49 de l’expérience ne changent pas, 50 à 59 prolongent la courbe', () => {
+    for (let l = 1; l < 50; l++) assert.equal(G.getXpReq(l), G.getXpReq50(l));
+    for (let l = 50; l < 60; l++) assert.ok(G.getXpReq(l) > G.getXpReq(l - 1), `niveau ${l}`);
+    state.level = 50;
+    assert.ok(Math.abs(scaleLvl() - 40) < 1e-9, 'les gains du niveau 50 sont ceux d’avant');
+});
+
+const asOld = (level, extra = {}) => {
+    G.loadGame();
+    Object.assign(state, { level, xp: 0, lv136: false, lvKeep: {}, ...extra });
+    G.normalizeState();
+};
+
+test('1.36 : une partie du niveau 20 ou 44 garde ce qu’elle avait déjà ouvert', () => {
+    for (const lv of [20, 30, 44, 46]) {
+        asOld(lv);
+        assert.equal(state.level, lv, 'le niveau ne bouge pas');
+        assert.ok(state.lv136);
+        for (const [o, key] of [
+            [ITEMS, 'reqLvl'],
+            [ANIMALS, 'reqLvl'],
+            [MACHINES, 'reqLvl'],
+        ])
+            for (const d of Object.values(o))
+                if (d.lv135 !== undefined && d.lv135 <= lv) assert.ok(d[key] <= lv || state.lvKeep[d.id], `${d.id} (niveau ${lv}) refermé`);
+        for (const r of Object.values(RECIPES))
+            if (r.lv135 !== undefined && r.lv135 <= lv) assert.ok(r.lvl <= lv || state.lvKeep[r.id], `${r.id} (niveau ${lv}) refermée`);
+    }
+});
+
+test('1.36 : une partie du niveau 50 passe au suivant, les étoiles redeviennent de l’expérience', () => {
+    asOld(50, { xp: 1000, renown: 0 });
+    assert.equal(state.level, 50);
+    assert.equal(state.xp, 1000);
+    asOld(50, { xp: 10, renown: 3 });
+    assert.ok(state.level > 50 && state.level <= 60, 'niveau ' + state.level);
+    assert.equal(state.renown, 0);
+    asOld(50, { xp: 0, renown: 400 });
+    assert.equal(state.level, 60);
+    assert.ok(state.renown > 0 && state.renown < 400);
+    assert.ok(state.stats.maxLevel >= 50);
+});
+
+test('1.36 : un chapitre commencé avant le déplacement reste ouvert', () => {
+    G.loadGame();
+    state.story.seen[9] = true;
+    state.lv136 = false;
+    state.level = 46;
+    G.normalizeState();
+    assert.ok(state.story.keep[9]);
+});

@@ -1,3 +1,4 @@
+import { MAX_LEVEL } from './progress.js';
 import { FISH_133 } from './v133.js';
 // Données qui contenaient autrefois du code : textes à trous, icônes, conditions.
 // Les trous : {n} = nombre formaté, {s} = « s » si pluriel, {x} = valeur du rang (compétences).
@@ -326,7 +327,7 @@ export const TREASURES = [
 
 // ---------------- Ferme légendaire ----------------
 export const LEGEND_GOALS = [
-    { id: 'level', name: 'Atteindre le niveau 50' },
+    { id: 'level', name: `Atteindre le niveau ${MAX_LEVEL}` },
     { id: 'chapters', name: 'Terminer les 6 chapitres du village et du hameau' },
     { id: 'house', name: 'Agrandir la maison au niveau 5' },
     { id: 'league', name: 'Monter en ligue diamant au concours' },

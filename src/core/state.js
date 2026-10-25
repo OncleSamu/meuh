@@ -20,6 +20,7 @@ export function newState() {
     return {
         version: SAVE_VERSION,
         lv14: true, // échelle des 50 niveaux
+        lv136: true, // échelle des 60 niveaux
         lv18: true, // machines et recettes aux niveaux de la 1.8
         lvKeep: {}, // ce qu'une ancienne partie avait déjà ouvert (posé à la conversion)
         moved131: false,
@@ -205,6 +206,7 @@ export function fromSave(parsed) {
     // une sauvegarde d'avant la 1.4 est convertie aux 50 niveaux (normalizeState)
     if (!parsed.lv14) s.lv14 = false;
     if (!parsed.lv18) s.lv18 = false;
+    if (!parsed.lv136) s.lv136 = false;
     return s;
 }
 

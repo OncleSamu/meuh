@@ -8,6 +8,7 @@ export const BALANCE = {
     xpA: 614,
     xpP: 1.7,
     xpK: 1.18, // 1.4 : la courbe des 50 niveaux est un peu plus longue que celle des 40
+    xpTail: 1, // 1.36 : les niveaux 50 à 59 prolongent la courbe (réglé avec le robot : environ 5 heures de plus)
     cropXp: 0.06,
     animalXp: 0.08,
     craftXp: 0.25,
@@ -25,7 +26,7 @@ export const BALANCE = {
     rareDrop: 0.012,
 };
 
-export const MAX_LEVEL = 50;
+export const MAX_LEVEL = 60;
 
 export const RENOWN_XP = 250000;
 
@@ -129,7 +130,7 @@ export const HOUSE = [
         },
     },
     {
-        lvl: 47,
+        lvl: 56,
         name: 'Le manoir',
         bonus: '+80 places dans la grange et 1 place de plus à l’étal',
         cost: {
@@ -176,7 +177,7 @@ export const FARMHAND = [
         },
     },
     {
-        lvl: 47,
+        lvl: 57,
         plots: 36,
         every: 10,
         cost: {
@@ -186,13 +187,13 @@ export const FARMHAND = [
     },
 ];
 
-export const PRESTIGE_LVL = 50;
+export const PRESTIGE_LVL = 60;
 
 export const CHALLENGE_BONUS = 3;
 
 export const ALBUM_MAX = 60;
 
-export const ALBUM_LEVELS = [5, 10, 20, 30, 40, 50];
+export const ALBUM_LEVELS = [5, 10, 20, 30, 40, 50, 60];
 
 export const BOOK_QUARTERS = [0.25, 0.5, 0.75, 1];
 
