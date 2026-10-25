@@ -213,6 +213,25 @@ export const SoundEngine = (() => {
             case 'cow':
                 tone(160, t, 0.5, { type: 'sawtooth', vol: 0.05, glide: 120 });
                 break;
+            case 'pigeon':
+                tone(300, t, 0.14, { type: 'sine', vol: 0.07, glide: 340 });
+                tone(320, t + 0.17, 0.2, { type: 'sine', vol: 0.07, glide: 280 });
+                break;
+            case 'guinea':
+                [0, 0.07, 0.14, 0.21].forEach(d => tone(1250, t + d, 0.05, { type: 'square', vol: 0.035, glide: 1500 }));
+                break;
+            case 'pheasant':
+                tone(700, t, 0.1, { type: 'sawtooth', vol: 0.04, glide: 1100 });
+                tone(1100, t + 0.14, 0.08, { type: 'square', vol: 0.04, glide: 900 });
+                break;
+            case 'ostrich':
+                tone(90, t, 0.4, { type: 'sine', vol: 0.12, glide: 70 });
+                tone(110, t + 0.45, 0.3, { type: 'sine', vol: 0.1, glide: 80 });
+                break;
+            case 'yak':
+                tone(120, t, 0.35, { type: 'sawtooth', vol: 0.05, glide: 90 });
+                tone(100, t + 0.2, 0.3, { type: 'sawtooth', vol: 0.04, glide: 80 });
+                break;
             case 'bark':
                 tone(520, t, 0.07, { type: 'square', vol: 0.05, glide: 300 });
                 tone(560, t + 0.13, 0.08, { type: 'square', vol: 0.05, glide: 320 });
@@ -246,6 +265,7 @@ export const SoundEngine = (() => {
                 tone(1500, t + 0.08, 0.05, { vol: 0.04, glide: 2000 });
                 break;
             case 'goat':
+            case 'mohairGoat':
                 [0, 0.06, 0.12, 0.18, 0.24].forEach((d, i) => tone(i % 2 ? 340 : 380, t + d, 0.09, { type: 'sawtooth', vol: 0.035 }));
                 break;
             case 'pig':

@@ -81,6 +81,9 @@ export const CAVE_ITEMS = {
     sheepTomme: 'cheese',
     ham: 'charcuterie',
     driedBeef: 'charcuterie',
+    // 1.35 : le yack
+    yakCheese: 'cheese',
+    yakTomme: 'cheese',
     // 1.34 : huit produits de plus (les fromages et les salaisons)
     truffleBrie: 'cheese',
     pepperCheese: 'cheese',

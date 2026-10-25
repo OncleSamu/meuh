@@ -362,9 +362,9 @@ export function sellAnimal(i, at) {
     state.stats.animalsSold = (state.stats.animalsSold || 0) + 1;
     sfx('coin');
     buzz(12);
-    toast(`${a.name} est vendu${a.type === 'cow' || a.type === 'goat' || a.type === 'chicken' || a.type === 'ewe' ? 'e' : ''} : ${fmt(price)} pièces`, [
-        'animal',
-        a.type,
-    ]);
+    toast(
+        `${a.name} est vendu${a.type === 'cow' || a.type === 'goat' || a.type === 'chicken' || a.type === 'ewe' || a.type === 'guinea' || a.type === 'ostrich' || a.type === 'mohairGoat' ? 'e' : ''} : ${fmt(price)} pièces`,
+        ['animal', a.type],
+    );
     return price;
 }

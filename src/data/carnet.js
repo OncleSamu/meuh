@@ -1173,3 +1173,79 @@ Object.assign(CARNET, {
     alpineFlowerCheese:
         'Le fromage aux fleurs d’alpage est pressé avec des fleurs séchées de la montagne : lavande, génépi, un peu de ciel. Chaque tranche ressemble à un pré en été. On le garde pour les grands jours.',
 });
+
+// ---------------- 1.35 : les nouveaux animaux ----------------
+Object.assign(CARNET, {
+    poachedPigeonEggs:
+        'Les œufs de pigeon pochés sont minuscules et il en faut trois pour faire un vrai déjeuner. Papi Lucien les mangeait sur du pain grillé en prétendant que c’étaient des œufs de colombes de la paix. Il y a pire comme prétexte.',
+    squabPeas:
+        'Le pigeonneau rôti aux petits pois, c’est le plat du dimanche chez ma grand-mère, avec la nappe brodée. Le pigeonneau tient dans la main, et pourtant toute la famille le partageait. On appelait ça la leçon de générosité.',
+    pigeonPastilla:
+        'La pastilla de pigeon, sucrée et salée, saupoudrée de sucre glace et de cannelle. Une voisine voyageuse m’a dit qu’on la mangeait avec les doigts. Je lui ai fait confiance, j’ai fait du ménage après.',
+    pigeonPie:
+        'Le pigeon en croûte arrive doré à table, avec une cheminée au sommet pour la vapeur. Ton père dit toujours qu’il faut le regarder avant de le couper. Il le regarde dix minutes. Je coupe.',
+    smokedSquab:
+        'Les pigeonneaux fumés pendent près de la cheminée avec les jambons. On dirait des petites cloches de bois. Le chat les regarde longtemps, sans jamais y toucher. Quelle éducation.',
+    pigeonTerrine:
+        'La terrine de pigeon se garde au frais, dans son bocal, avec une feuille de laurier. On la sert à l’apéritif, avec des cornichons. Les premières bouchées sont silencieuses, les secondes sont des compliments.',
+    guineaOmelette:
+        'L’omelette aux œufs de pintade est petite, ferme, d’un jaune profond. La pintade pond en cachette, et il faut chercher dans les orties. Chaque œuf trouvé est une victoire.',
+    guineaMimosa:
+        'Les œufs de pintade mimosa, avec un nuage de jaune émietté dessus. Ma tante Berthe appelait ça « les œufs en fleurs ». Elle en mettait partout, même sur la table de Noël.',
+    guineaCider:
+        'La pintade rôtie au cidre, avec des pommes qui fondent. Elle est un peu sèche, la pintade, si on l’oublie. Alors on l’arrose, on la surveille, on lui parle. Elle ne répond pas, mais elle comprend.',
+    guineaCabbage:
+        'Le chou farci à la pintade est le plat qu’on prépare un jour de pluie, quand tout le monde est de mauvaise humeur. Une heure plus tard, tout le monde sourit. C’est le chou, je crois.',
+    smokedGuinea:
+        'La pintade fumée a un parfum de bois et de grande cuisine d’autrefois. On la découpe en fines lamelles, sans trop en dire. Chez nous, les secrets se mangent.',
+    guineaRillettes:
+        'Les rillettes de pintade, étalées sur du pain grillé, un soir d’été, dans le jardin. Papi Lucien disait : « Il n’y a pas meilleure musique. » Il parlait du bruit de la cuillère dans le bocal.',
+    pheasantScramble:
+        'Les œufs brouillés de faisan, avec des champignons et un peu de crème. Un chasseur de passage m’en a offert six, en rougissant. Je les ai cuisinés avec soin. Il est revenu le lendemain.',
+    pickledPheasantEggs:
+        'Les œufs de faisan marinés dans leur bocal sont de petites boules brunes qui font peur aux enfants. Une fois qu’ils y ont goûté, ils en redemandent. Il faut juste savoir attendre.',
+    pheasantApples:
+        'Le faisan rôti aux pommes est le plat des grandes occasions de l’automne. On met les pommes tout autour, comme une couronne. Le faisan, lui, a l’air content de poser.',
+    pheasantPate:
+        'Le pâté de faisan en croûte se tranche au couteau bien aiguisé, comme un gâteau. On y trouve toujours une petite surprise : une noisette, une olive, un grain de poivre. Papi Lucien comptait les surprises.',
+    smokedPheasant:
+        'Le faisan fumé garde une plume au bout de la queue, pour qu’on se souvienne de son élégance. Je l’épingle près de la porte de la cave. Les visiteurs demandent s’il est vivant.',
+    pheasantTerrine:
+        'La terrine de faisan est dense, parfumée au vin rouge, avec un petit goût de forêt. On la mange à la fin de l’automne, quand les feuilles tombent dans l’assiette. Elles sont bienvenues.',
+    yakCheese:
+        'Le fromage de yack est tendre, un peu fumé, avec un goût de grand air. Un voyageur m’a raconté qu’on le séchait au soleil, là-haut, avec les drapeaux de prière. J’ai mis un petit drapeau sur le mien, par politesse.',
+    yakTomme:
+        'La tomme de yack vieillit dans la cave à côté des autres, sans se plaindre. Elle a une croûte grise et un cœur couleur de beurre. Quand on la coupe, on respire la montagne.',
+    yakYogurt:
+        'Le yaourt de yack est épais et un peu acidulé. Avec un filet de miel, c’est un dessert de montagne. Ton petit cousin a dit qu’il avait mangé un nuage. Je n’ai pas démenti.',
+    yakStew:
+        'Le ragoût de yack mijote des heures dans le gros faitout, avec des carottes et des pommes de terre. Les soirs d’hiver, il tient chaud aux mains, aux cœurs et aux conversations.',
+    yakMomos:
+        'Les momos au yack sont de petits chaussons plissés vapeur, que l’on mange du bout des doigts. J’ai mis trois heures à apprendre le pli. Ton grand-père a dit qu’il y avait de l’art là-dedans.',
+    driedYak:
+        'Le yack séché est une viande dure comme du cuir, qu’on mâche longtemps, doucement, en regardant au loin. C’est une nourriture de marcheurs. Ça ne se mange pas pressé.',
+    giantOmelette:
+        'L’omelette géante est faite avec un seul œuf d’autruche, ce qui laisse rêveur. Toute la famille peut en manger et il en reste. On l’a servie à quatorze, un dimanche. Le chat a eu sa part.',
+    giantPavlova:
+        'La pavlova géante, avec un seul blanc d’œuf d’autruche, ressemble à un nuage tombé du ciel. On la décore de myrtilles, qui font des petites taches bleues. On n’ose pas la couper.',
+    ostrichQuiche:
+        'La quiche d’autruche est légère, haute et dorée. On l’a servie pour la fête du village, et la cuisinière de la mairie m’a demandé la recette. Je lui ai donné la moitié. L’autre moitié reste mon secret.',
+    grilledOstrich:
+        'Le filet d’autruche grillé est maigre, rouge, sans prétention. Papi Lucien l’a pris pour du bœuf. Il a demandé de quelle vache il s’agissait. J’ai dit : « Une grande. »',
+    ostrichCarpaccio:
+        'Le carpaccio d’autruche, en tranches fines comme du papier, avec de l’huile et du citron. Le cuisinier de passage a dit qu’il n’avait jamais vu ça. Je lui ai promis qu’il le reverrait.',
+    driedOstrich:
+        'L’autruche séchée se découpe en lanières, comme le bœuf, et se glisse dans la poche. On la mâche pendant les longues marches. L’autruche, elle, n’a jamais marché si loin.',
+    mohairYarn:
+        'Le fil de mohair est doux et gonflé, avec un petit halo de poils. Ma tante Berthe disait que le mohair ne se tricote pas, il se caresse. Elle avait raison, elle avait toujours raison, c’était fatigant.',
+    dyedMohair:
+        'Le mohair teint est d’un rose si vif qu’on dirait des bonbons. Les voisines en voulaient toutes. J’en ai gardé deux pelotes pour moi, parce qu’il faut bien.',
+    mohairPlush:
+        'La peluche en mohair est un petit ours tout doux. Je l’ai faite pour le petit dernier du village. Il l’a serrée si fort qu’il a fallu le déshabiller pour la lui reprendre au bain.',
+    mohairScarf:
+        'L’écharpe en mohair est légère comme l’air mais chaude comme un feu de cheminée. Elle fait deux fois le tour du cou, avec la frange qui chatouille. Les enfants disent qu’on dirait un nuage rose.',
+    mohairSweater:
+        'Le pull en mohair gratte un tout petit peu au début, puis plus du tout. On l’enfile les matins d’hiver, devant la fenêtre givrée. Il sent la chèvre, c’est un compliment.',
+    mohairPlaid:
+        'Le plaid en mohair se plie en quatre sur le fauteuil. Quand on s’y glisse, on a l’impression que le monde est devenu plus petit et plus gentil. C’est exactement ce qu’on lui demande.',
+});

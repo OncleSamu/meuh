@@ -89,7 +89,25 @@ const DESSERTS = [
     'walnutCake',
     'saffronBrioche',
 ];
-const ANIMAL_GOODS = ['milk', 'egg', 'wool', 'goatMilk', 'angora', 'gooseEgg', 'buffaloMilk', 'donkeyMilk', 'alpacaWool', 'turkeyEgg', 'quailEgg'];
+const ANIMAL_GOODS = [
+    'milk',
+    'egg',
+    'wool',
+    'goatMilk',
+    'angora',
+    'gooseEgg',
+    'buffaloMilk',
+    'donkeyMilk',
+    'alpacaWool',
+    'turkeyEgg',
+    'quailEgg',
+    'pigeonEgg',
+    'guineaEgg',
+    'pheasantEgg',
+    'ostrichEgg',
+    'yakMilk',
+    'mohair',
+];
 const FRUITS = [
     'apple',
     'cherry',

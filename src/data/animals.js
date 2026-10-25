@@ -1,4 +1,5 @@
 import { LV_ANIMAL } from './levels14.js';
+import { ANIMALS_135 } from './v135.js';
 // Les animaux : prix, production, croissance des petits, noms.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -160,6 +161,10 @@ export const ANIMALS = {
     },
 };
 
+// 1.35 : six animaux de plus (voir v135.js)
+for (const [id, name, prodId, cost, time, reqLvl, xp, extra] of ANIMALS_135)
+    ANIMALS[id] = { id, name, prodId, cost, time, reqLvl, xp, ...(extra ? { extra } : {}) };
+
 // 1.3.2 : un second produit, pour le saloir, de temps en temps au ramassage (le gène « rendement » aide un peu)
 export const EXTRA_DROP = { chance: 0.1, gene: 0.5 };
 Object.entries({ pig: 'lard', duck: 'magret', goose: 'gooseLeg', turkey: 'turkeyFillet', cow: 'beef', rabbit: 'rabbitSaddle' }).forEach(
@@ -184,6 +189,7 @@ export const GROW = {
     turkey: 900,
     ewe: 800,
     quail: 300,
+    ...Object.fromEntries(ANIMALS_135.map(a => [a[0], a[8]])),
 };
 
 export const NAMES = {
@@ -203,6 +209,7 @@ export const NAMES = {
     donkey: ['Cadichon', 'Grisette', 'Hi-Han', 'Pâquerette', 'Bourrique', 'Anatole'],
     ewe: ['Roquette', 'Bergère', 'Brebisette', 'Lainette', 'Marjolaine', 'Pâquerette'],
     quail: ['Caillette', 'Grain-de-blé', 'Mouchetée', 'Pistou', 'Noisette', 'Roucoule'],
+    ...Object.fromEntries(ANIMALS_135.map(a => [a[0], a[9]])),
     turkey: ['Glouglou', 'Dindonnette', 'Gobble', 'Plumette', 'Caroline', 'Barnabé'],
 };
 
@@ -214,7 +221,7 @@ export const STAR_ANIMAL_SPEED = 1.5;
 
 export const PEACOCK_CHARM = 15;
 
-export const TRANS_KINDS = ['cow', 'goat', 'sheep', 'buffalo'];
+export const TRANS_KINDS = ['cow', 'goat', 'sheep', 'buffalo', 'yak'];
 
 export const TRANS_TIME = 5400000;
 

@@ -2,6 +2,7 @@
 import { CROPS_130 } from './v130.js';
 import { TREES_131 } from './v131.js';
 import { CROPS_132 } from './v132.js';
+import { ANIMALS_135 } from './v135.js';
 
 // ---------------- les caractères ----------------
 // Chaque caractère va de 0 à 5. Les plantes ont des saveurs et des qualités de culture,
@@ -62,7 +63,7 @@ export const FINISH_SEASON = { hiver: 1, printemps: 5, ete: 3, automne: 2 };
 export const FEATURES = {
     horns: { name: 'Cornes', list: ['Naturelles', 'Sans cornes', 'Longues', 'En lyre'], species: ['cow', 'goat', 'buffalo', 'sheep'] },
     ears: { name: 'Oreilles', list: ['Naturelles', 'Tombantes'], species: ['rabbit', 'pig', 'goat'] },
-    coat: { name: 'Toison', list: ['Naturelle', 'Longue', 'Frisée'], species: ['sheep', 'alpaca', 'horse', 'donkey', 'ewe'] },
+    coat: { name: 'Toison', list: ['Naturelle', 'Longue', 'Frisée'], species: ['sheep', 'alpaca', 'horse', 'donkey', 'ewe', 'mohairGoat', 'yak'] },
 };
 export const featuresOf = type => Object.keys(FEATURES).filter(k => FEATURES[k].species.includes(type));
 
@@ -221,6 +222,7 @@ const A = {
     turkey: '2222222',
     ewe: '3422223',
     quail: '2222232',
+    ...Object.fromEntries(ANIMALS_135.map(a => [a[0], a[10]])),
 };
 export const ANIMAL_BASE = Object.fromEntries(Object.entries(A).map(([id, s]) => [id, [...s].map(Number)]));
 

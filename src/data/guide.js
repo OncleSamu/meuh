@@ -518,7 +518,7 @@ export const GUIDE_PAGES = [
         icon: ['animal', 'chicken'],
         lvl: 2,
         go: 'animals',
-        intro: '17 espèces, chacune avec son produit : un appui pour ramasser, un repas pour la faire produire.',
+        intro: '23 espèces, chacune avec son produit : un appui pour ramasser, un repas pour la faire produire.',
         secs: [
             {
                 h: 'Les gestes',
@@ -530,7 +530,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les espèces',
-                t: 'Poule 2, canard 4, mouton 7, lapin 11, oie 12, caille 14, vache 18, dinde et ruche d’élevage 21, chèvre 24, cheval et brebis laitière 27, cochon 31, ânesse 41, bufflonne 42, paon 43, alpaga 49.',
+                t: 'Poule 2, canard 4, mouton 7, lapin 11, oie 12, caille 14, vache 18, dinde et ruche d’élevage 21, chèvre 24, cheval et brebis laitière 27, cochon 31, ânesse 41, bufflonne 42, paon 43, alpaga 49. Nouveaux en 1.35 (niveaux provisoires) : pigeon 5, pintade 33, chèvre mohair 35, faisane 37, autruche 39, yack 46.',
             },
             {
                 h: 'La fiche d’une bête',
@@ -539,7 +539,7 @@ export const GUIDE_PAGES = [
             { h: 'Animal d’exception', t: 'Rare : 50 % plus rapide.' },
             {
                 h: 'Seconds produits',
-                t: 'Environ une fois sur dix au ramassage, certaines bêtes donnent en plus un produit pour le saloir : lard du cochon, magret du canard, cuisse de l’oie, filet de la dinde, bœuf de la vache, râble du lapin.',
+                t: 'Environ une fois sur dix au ramassage, certaines bêtes donnent en plus un produit pour le saloir : lard du cochon, magret du canard, cuisse de l’oie, filet de la dinde, bœuf de la vache, râble du lapin, pigeonneau, pintade, faisan, viande de yack, autruche. Le yack monte en transhumance comme les autres bêtes de montagne.',
             },
         ],
         see: ['pastures', 'transhumance', 'labanimals'],

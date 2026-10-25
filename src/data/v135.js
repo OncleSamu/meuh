@@ -1,0 +1,133 @@
+// 1.35 : six animaux de plus (pigeon, pintade, chèvre angora, faisan, autruche, yack), onze produits et trente-six recettes.
+// Niveaux provisoires (échelle de 50), à étaler sur 60 niveaux en 1.36.
+
+// id, nom, produit principal, prix, durée de production (s), niveau, xp, second produit (viande), croissance du petit (s), prénoms, gènes de base
+export const ANIMALS_135 = [
+    [
+        'pigeon',
+        'Pigeon',
+        'pigeonEgg',
+        2500,
+        300,
+        16,
+        5,
+        'squab',
+        300,
+        ['Colombin', 'Roucoulette', 'Plume-grise', 'Gris-Perle', 'Voyageur', 'Tourterelle'],
+        '2222322',
+    ],
+    [
+        'guinea',
+        'Pintade',
+        'guineaEgg',
+        5000,
+        420,
+        33,
+        7,
+        'guineaFowl',
+        500,
+        ['Pintadine', 'Perlette', 'Caquette', 'Mouchetée', 'Tapette', 'Clochette'],
+        '2223222',
+    ],
+    [
+        'mohairGoat',
+        'Chèvre angora',
+        'mohair',
+        9000,
+        1100,
+        35,
+        18,
+        null,
+        1100,
+        ['Frisette', 'Mohair', 'Boucle d’or', 'Nuagette', 'Soyeuse', 'Angorine'],
+        '2522223',
+    ],
+    [
+        'pheasant',
+        'Faisan',
+        'pheasantEgg',
+        7500,
+        480,
+        37,
+        8,
+        'pheasant',
+        600,
+        ['Colvert-doré', 'Chasseur', 'Cuivré', 'Plumeau', 'Fastueux', 'Perdrix'],
+        '2322222',
+    ],
+    [
+        'ostrich',
+        'Autruche',
+        'ostrichEgg',
+        16000,
+        1500,
+        39,
+        24,
+        'ostrichMeat',
+        1500,
+        ['Gigantine', 'Dune', 'Long-cou', 'Tornade', 'Sahara', 'Bouboule'],
+        '3222213',
+    ],
+    ['yak', 'Yack', 'yakMilk', 14000, 1300, 46, 21, 'yakMeat', 1400, ['Himalaya', 'Everest', 'Tibet', 'Lhassa', 'Karakoram', 'Bouddha'], '3232213'],
+];
+
+// id, nom, prix
+export const PRODUCTS_135 = [
+    ['pigeonEgg', 'Œuf de pigeon', 70],
+    ['squab', 'Pigeonneau', 220],
+    ['guineaEgg', 'Œuf de pintade', 110],
+    ['guineaFowl', 'Pintade', 380],
+    ['mohair', 'Mohair', 320],
+    ['pheasantEgg', 'Œuf de faisan', 130],
+    ['pheasant', 'Faisan', 450],
+    ['yakMilk', 'Lait de yack', 380],
+    ['yakMeat', 'Viande de yack', 520],
+    ['ostrichEgg', 'Œuf d’autruche', 700],
+    ['ostrichMeat', 'Viande d’autruche', 600],
+];
+
+// id, nom, machine, ingrédients, temps (s), niveau de départ (relevé au chargement jusqu'à celui des ingrédients)
+export const RECIPES_135 = [
+    // le pigeon
+    ['poachedPigeonEggs', 'Œufs de pigeon pochés', 'kitchen', { pigeonEgg: 3, butter: 1 }, 350, 16],
+    ['squabPeas', 'Pigeonneau rôti aux petits pois', 'stove', { squab: 1, peas: 2, butter: 1 }, 390, 17],
+    ['pigeonPastilla', 'Pastilla de pigeon', 'kitchen', { squab: 1, pigeonEgg: 1, onion: 1, flour: 1 }, 170, 17],
+    ['pigeonPie', 'Pigeon en croûte', 'pastry', { squab: 1, pigeonEgg: 1, flour: 1, mushroom: 1 }, 110, 18],
+    ['smokedSquab', 'Pigeonneau fumé', 'smokehouse', { squab: 2 }, 210, 17],
+    ['pigeonTerrine', 'Terrine de pigeon', 'cannery', { squab: 2, onion: 1, redWine: 1 }, 410, 31],
+    // la pintade
+    ['guineaOmelette', 'Omelette aux œufs de pintade', 'kitchen', { guineaEgg: 3, butter: 1 }, 290, 33],
+    ['guineaMimosa', 'Œufs de pintade mimosa', 'deli', { guineaEgg: 2, cream: 1 }, 160, 33],
+    ['guineaCider', 'Pintade rôtie au cidre', 'stove', { guineaFowl: 1, cider: 1, apple: 1 }, 270, 33],
+    ['guineaCabbage', 'Chou farci à la pintade', 'stove', { guineaFowl: 1, cabbage: 1, guineaEgg: 1, lard: 1 }, 470, 34],
+    ['smokedGuinea', 'Pintade fumée', 'smokehouse', { guineaFowl: 2 }, 190, 33],
+    ['guineaRillettes', 'Rillettes de pintade', 'cannery', { guineaFowl: 2, butter: 1 }, 400, 33],
+    // le faisan
+    ['pheasantScramble', 'Œufs brouillés de faisan', 'kitchen', { pheasantEgg: 3, cream: 1, mushroom: 1 }, 190, 37],
+    ['pickledPheasantEggs', 'Œufs de faisan marinés', 'cannery', { pheasantEgg: 3, whiteWine: 1 }, 350, 37],
+    ['pheasantApples', 'Faisan rôti aux pommes', 'stove', { pheasant: 1, apple: 2, butter: 1 }, 310, 37],
+    ['pheasantPate', 'Pâté de faisan en croûte', 'pastry', { pheasant: 1, pheasantEgg: 1, flour: 1, mushroom: 1 }, 150, 38],
+    ['smokedPheasant', 'Faisan fumé', 'smokehouse', { pheasant: 2 }, 200, 37],
+    ['pheasantTerrine', 'Terrine de faisan', 'cannery', { pheasant: 2, redWine: 1, onion: 1 }, 510, 38],
+    // le yack
+    ['yakCheese', 'Fromage de yack', 'alpineDairy', { yakMilk: 3 }, 230, 46],
+    ['yakTomme', 'Tomme de yack', 'alpineDairy', { yakMilk: 2, milk: 1 }, 210, 46],
+    ['yakYogurt', 'Yaourt de yack', 'dairy', { yakMilk: 1, honey: 1 }, 100, 46],
+    ['yakStew', 'Ragoût de yack', 'stove', { yakMeat: 1, carrot: 2, potato: 2 }, 140, 46],
+    ['yakMomos', 'Momos au yack', 'kitchen', { yakMeat: 1, flour: 2, onion: 1 }, 130, 46],
+    ['driedYak', 'Yack séché', 'saloir', { yakMeat: 2 }, 210, 46],
+    // l'autruche
+    ['giantOmelette', 'Omelette géante', 'kitchen', { ostrichEgg: 1, butter: 1, mushroom: 2 }, 360, 39],
+    ['giantPavlova', 'Pavlova géante', 'pastry', { ostrichEgg: 1, sugar: 2, cream: 1, blueberry: 2 }, 400, 39],
+    ['ostrichQuiche', 'Quiche d’autruche', 'kitchen', { ostrichEgg: 1, cream: 1, flour: 1, lard: 1 }, 520, 39],
+    ['grilledOstrich', 'Filet d’autruche grillé', 'stove', { ostrichMeat: 1, butter: 1, garlic: 1 }, 330, 39],
+    ['ostrichCarpaccio', 'Carpaccio d’autruche', 'deli', { ostrichMeat: 1, oliveOil: 1, lemon: 1 }, 470, 39],
+    ['driedOstrich', 'Autruche séchée', 'saloir', { ostrichMeat: 2 }, 260, 39],
+    // la chèvre angora
+    ['mohairYarn', 'Fil de mohair', 'loom', { mohair: 2 }, 160, 35],
+    ['dyedMohair', 'Mohair teint', 'dyeworks', { mohair: 1, redDye: 1 }, 110, 35],
+    ['mohairPlush', 'Peluche en mohair', 'tailor', { mohair: 2, cloth: 1 }, 230, 35],
+    ['mohairScarf', 'Écharpe en mohair', 'tailor', { mohairYarn: 2 }, 440, 35],
+    ['mohairSweater', 'Pull en mohair', 'tailor', { mohairYarn: 3 }, 600, 35],
+    ['mohairPlaid', 'Plaid en mohair', 'tailor', { mohairYarn: 4, cloth: 1 }, 600, 36],
+];
