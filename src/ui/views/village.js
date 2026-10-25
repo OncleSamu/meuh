@@ -292,10 +292,10 @@ function raceLine(list) {
         me = list[k].score;
     if (k > 0) {
         const r = list[k - 1];
-        return `<p class="race-line">${ico(['ui', 'podium'])}À <b>${fmt(r.score - me + 1)}</b> points de ${r.owner} (${r.name})</p>`;
+        return `<p class="race-line">${ico(['ui', 'podium'])}<span>À <b>${fmt(r.score - me + 1)}</b> points de ${r.owner} (${r.name})</span></p>`;
     }
     const r = list[1];
-    return r ? `<p class="race-line lead">${ico(['ui', 'cupGold'])}Vous menez de <b>${fmt(me - r.score)}</b> points devant ${r.owner}</p>` : '';
+    return r ? `<p class="race-line lead">${ico(['ui', 'cupGold'])}<span>Vous menez de <b>${fmt(me - r.score)}</b> points devant ${r.owner}</span></p>` : '';
 }
 function feedHtml(c) {
     const f = (c.feed || []).slice(-3).reverse();
