@@ -1,7 +1,6 @@
 // Le château de Margaux (1.37) : ses six chantiers, la carte, l'œnologue Octave.
-import { BLD, KINDS, C, E, HL, L, P, R, items, ui, people } from './kit.js';
+import { BLD, KINDS, C, E, HL, L, P, R, people } from './kit.js';
 
-const sub = (kind, id, x, y, s) => `<g transform="translate(${x} ${y}) scale(${s / 64})">${(kind === 'ui' ? ui : items)[id]()}</g>`;
 import { bust, face } from './people.js';
 import { house2 } from './buildings2.js';
 import { MAP_BG } from './maps.js';
@@ -72,11 +71,10 @@ const CH_BLD = {
         cfg: { w: 56, h: 30, wall: '#fff3d6', roof: '#8e2c22', sign: ['item', 'redWine'] },
         st: {
             roof: 'hip',
-            tex: 'timber',
+            tex: 'stone',
             door: 'arch',
-            wins: [24, 74],
-            props: ({ x0, x1 }) =>
-                R(x1 - 4, 76, 14, 3, 1, '#a8693a', 1.4) + L(`M${x1} 79 L${x1} 86 M${x1 + 8} 79 L${x1 + 8} 86`, 1.6) + sub('item', 'redWine', x1 - 2, 62, 12),
+            wins: [26, 74],
+            props: ({ x1 }) => BARREL(x1 + 4, 86, 0.8),
         },
     },
     chateauShop: {
@@ -116,18 +114,24 @@ for (const [id, d] of Object.entries(CH_BLD)) {
     KINDS['h2_' + id] = s => house2(BLD[id], s);
 }
 
-// ======================= la carte : un parc, des rangs de vigne, une allée de gravier =======================
-const rows = (x, y, n, dx) => Array.from({ length: n }, (_, k) => `<path d="M${x + k * dx} ${y} L${x + k * dx + 6} ${y + 20}"/>`).join('');
+// ======================= la carte : parc, vignes en rangs, allée de gravier bordée de cyprès =======================
 MAP_BG.chateau = `<svg class="vmap-bg" viewBox="0 0 160 110" preserveAspectRatio="none" aria-hidden="true">
-    <rect width="160" height="110" fill="#bfe6fb"/>
-    <path d="M0 30 Q40 12 80 24 Q120 36 160 16 L160 110 L0 110Z" fill="#b7d97a"/>
-    <path d="M0 56 Q50 40 100 52 Q130 58 160 46 L160 110 L0 110Z" fill="#9bd96f"/>
-    <g stroke="#5e8f2e" stroke-width="1.8" stroke-linecap="round" fill="none" opacity=".8">${rows(8, 60, 7, 5)}${rows(8, 84, 7, 5)}</g>
-    <g fill="#7b3f9e" opacity=".85">${Array.from({ length: 7 }, (_, k) => `<circle cx="${12 + k * 5}" cy="76" r="1.1"/><circle cx="${12 + k * 5}" cy="100" r="1.1"/>`).join('')}</g>
-    <path d="M80 110 Q80 84 80 62 M80 62 Q56 56 36 40 M80 62 Q108 58 126 74" stroke="#f2d6a2" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <circle cx="80" cy="62" r="6" fill="#7ab8e8" stroke="#d8ccb0" stroke-width="2"/>
-    <g fill="#3f8f2e"><circle cx="150" cy="40" r="6"/><circle cx="6" cy="36" r="5"/><circle cx="146" cy="96" r="5"/></g>
-    <g fill="#9ad06a"><circle cx="150" cy="38" r="3"/><circle cx="6" cy="34" r="2.6"/></g>
+    <rect width="160" height="110" fill="#cfeaf8"/>
+    <path d="M0 22 Q30 8 60 18 Q95 28 125 14 Q145 8 160 14 L160 40 L0 40Z" fill="#a9cf8a"/>
+    <path d="M0 30 Q40 18 80 28 Q120 38 160 24 L160 110 L0 110Z" fill="#b9dd86"/>
+    <path d="M0 52 Q50 40 100 52 Q135 60 160 48 L160 110 L0 110Z" fill="#a4d870"/>
+    <path d="M0 80 Q50 70 100 82 Q135 88 160 78 L160 110 L0 110Z" fill="#94cf63"/>
+    <rect x="4" y="62" width="44" height="34" rx="6" fill="#c89868"/>
+    <g stroke="#4f8f2e" stroke-width="2" stroke-linecap="round" fill="none"><path d="M8 70.0 Q24 64.0 42 72.0"/><path d="M8 74.6 Q24 68.6 42 76.6"/><path d="M8 79.2 Q24 73.2 42 81.2"/><path d="M8 83.8 Q24 77.8 42 85.8"/><path d="M8 88.4 Q24 82.4 42 90.4"/><path d="M8 93.0 Q24 87.0 42 95.0"/></g>
+    <g fill="#7b3f9e"><circle cx="11" cy="71.0" r=".9"/><circle cx="16" cy="71.0" r=".9"/><circle cx="21" cy="71.0" r=".9"/><circle cx="26" cy="71.0" r=".9"/><circle cx="31" cy="71.0" r=".9"/><circle cx="36" cy="71.0" r=".9"/><circle cx="11" cy="75.6" r=".9"/><circle cx="16" cy="75.6" r=".9"/><circle cx="21" cy="75.6" r=".9"/><circle cx="26" cy="75.6" r=".9"/><circle cx="31" cy="75.6" r=".9"/><circle cx="36" cy="75.6" r=".9"/><circle cx="11" cy="80.2" r=".9"/><circle cx="16" cy="80.2" r=".9"/><circle cx="21" cy="80.2" r=".9"/><circle cx="26" cy="80.2" r=".9"/><circle cx="31" cy="80.2" r=".9"/><circle cx="36" cy="80.2" r=".9"/><circle cx="11" cy="84.8" r=".9"/><circle cx="16" cy="84.8" r=".9"/><circle cx="21" cy="84.8" r=".9"/><circle cx="26" cy="84.8" r=".9"/><circle cx="31" cy="84.8" r=".9"/><circle cx="36" cy="84.8" r=".9"/><circle cx="11" cy="89.4" r=".9"/><circle cx="16" cy="89.4" r=".9"/><circle cx="21" cy="89.4" r=".9"/><circle cx="26" cy="89.4" r=".9"/><circle cx="31" cy="89.4" r=".9"/><circle cx="36" cy="89.4" r=".9"/><circle cx="11" cy="94.0" r=".9"/><circle cx="16" cy="94.0" r=".9"/><circle cx="21" cy="94.0" r=".9"/><circle cx="26" cy="94.0" r=".9"/><circle cx="31" cy="94.0" r=".9"/><circle cx="36" cy="94.0" r=".9"/></g>
+    <path d="M70 84 Q50 82 38 76 M72 70 Q90 68 108 62 M66 80 Q40 52 30 44 M76 52 Q100 38 118 28" stroke="#f0dcae" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M70 110 Q70 92 66 80 Q62 66 78 52 Q84 46 80 38" stroke="#f0dcae" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M70 110 Q70 92 66 80 Q62 66 78 52 Q84 46 80 38" stroke="#fff3d0" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="1 5" opacity=".8"/>
+    <path d="M2 100 L158 100" stroke="#b8b0a0" stroke-width="2" stroke-dasharray="5 1.4" opacity=".7"/>
+    <ellipse cx="140" cy="92" rx="12" ry="6" fill="#7ab8e8"/><ellipse cx="140" cy="91" rx="9" ry="3.6" fill="#a8d6f4"/>
+    <ellipse cx="60" cy="92" rx="2.2" ry="6" fill="#2f7a3a"/><ellipse cx="59.3" cy="90.5" rx="0.9" ry="3.5" fill="#4a9a4a"/><ellipse cx="76" cy="96" rx="2.2" ry="6" fill="#2f7a3a"/><ellipse cx="75.3" cy="94.5" rx="0.9" ry="3.5" fill="#4a9a4a"/><ellipse cx="58" cy="70" rx="2.2" ry="6" fill="#2f7a3a"/><ellipse cx="57.3" cy="68.5" rx="0.9" ry="3.5" fill="#4a9a4a"/><ellipse cx="82" cy="70" rx="2.2" ry="6" fill="#2f7a3a"/><ellipse cx="81.3" cy="68.5" rx="0.9" ry="3.5" fill="#4a9a4a"/><circle cx="8" cy="27.2" r="6" fill="#2f7a3a" opacity=".35"/><circle cx="8" cy="26" r="6" fill="#3f9a3f"/><circle cx="6.2" cy="24.2" r="3.0" fill="#6cc04a"/><circle cx="152" cy="31.2" r="6" fill="#2f7a3a" opacity=".35"/><circle cx="152" cy="30" r="6" fill="#3f9a3f"/><circle cx="150.2" cy="28.2" r="3.0" fill="#6cc04a"/><circle cx="150" cy="65.2" r="5" fill="#2f7a3a" opacity=".35"/><circle cx="150" cy="64" r="5" fill="#3f9a3f"/><circle cx="148.5" cy="62.5" r="2.5" fill="#6cc04a"/><circle cx="6" cy="53.2" r="5" fill="#2f7a3a" opacity=".35"/><circle cx="6" cy="52" r="5" fill="#3f9a3f"/><circle cx="4.5" cy="50.5" r="2.5" fill="#6cc04a"/><circle cx="112" cy="49.2" r="4.5" fill="#2f7a3a" opacity=".35"/><circle cx="112" cy="48" r="4.5" fill="#3f9a3f"/><circle cx="110.65" cy="46.65" r="2.25" fill="#6cc04a"/><circle cx="96" cy="101.2" r="4.5" fill="#2f7a3a" opacity=".35"/><circle cx="96" cy="100" r="4.5" fill="#3f9a3f"/><circle cx="94.65" cy="98.65" r="2.25" fill="#6cc04a"/><circle cx="30" cy="103.2" r="4.5" fill="#2f7a3a" opacity=".35"/><circle cx="30" cy="102" r="4.5" fill="#3f9a3f"/><circle cx="28.65" cy="100.65" r="2.25" fill="#6cc04a"/>
+    <g fill="#e8364b"><circle cx="58" cy="44" r="1.1"/><circle cx="64" cy="46" r="1.1"/><circle cx="96" cy="46" r="1.1"/></g>
+    <g fill="#ffd23f"><circle cx="61" cy="45" r="1.1"/><circle cx="100" cy="44" r="1.1"/></g>
 </svg>`;
 
 // ======================= Octave =======================
