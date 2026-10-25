@@ -662,3 +662,19 @@
 .aim-card {
     margin: 6px 0;
 }
+.defi-offer .offer-row .card-main {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+}
+.defi-offer .offer-row > .btn {
+    width: auto;
+    flex: none;
+    margin: 0;
+}
+.defi-offer .offer-row > .ico {
+    flex: none;
+}
+.defi-card.offer .card-head .card-main {
+    text-align: left;
+}
