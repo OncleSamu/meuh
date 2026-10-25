@@ -10,6 +10,7 @@ import { HOT_MULT, STALL_MAX_QTY, RARE } from '../data/commerce.js';
 import { RIVALS, NEIGHBOR_LVL, NEIGHBOR_HEARTS } from '../data/village.js';
 import { BALANCE } from '../data/progress.js';
 import { extraStall } from './home.js';
+import { cupHas } from './cup.js';
 import { masteryMult } from './mastery.js';
 import { priceMult, earn, addXp } from './player.js';
 import { eventSellMult, sellableQty, sellBatch, rememberSale } from './market.js';
@@ -26,14 +27,15 @@ import { tip } from './tips.js';
 // le client met de temps à venir. Le grossiste (vente immédiate) paie beaucoup moins.
 export const STALL_LEVELS = [8, 16, 26, 36];
 export const stallSlots = () => 4 + STALL_LEVELS.filter(l => state.level >= l).length + extraStall();
-export const stallBase = id => ITEMS[id].sell * masteryMult(id) * priceMult() * (state.market.hot === id ? HOT_MULT : 1) * eventSellMult();
+export const stallBase = id =>
+    ITEMS[id].sell * masteryMult(id) * priceMult() * (state.market.hot === id ? HOT_MULT : 1) * eventSellMult() * (cupHas(5) ? 1.05 : 1);
 // délai moyen avant qu'un client achète, en minutes, selon le prix (1 = valeur normale)
 export const stallWait = ratio => 4 + 14 * Math.pow(ratio, 3);
 export const stallUnit = (id, ratio) => Math.max(1, Math.round(stallBase(id) * ratio));
 export const stallMood = ratio =>
     ratio <= 0.8 ? 'Bon marché : vendu vite' : ratio <= 1.1 ? 'Prix juste' : ratio <= 1.3 ? 'Un peu cher : patience' : 'Très cher : les clients hésitent';
 // 1.38 : l'étal suit la ferme (10 unités, 12 au niveau 40, 16 au niveau 55)
-export const stallCap = () => STALL_MAX_QTY + (state.level >= 40 ? 2 : 0) + (state.level >= 55 ? 4 : 0);
+export const stallCap = () => STALL_MAX_QTY + (state.level >= 40 ? 2 : 0) + (state.level >= 55 ? 4 : 0) + (cupHas(1) ? 2 : 0);
 export const stallMax = id => Math.min(stallCap(), sellableQty(id));
 
 export function ensureStall() {

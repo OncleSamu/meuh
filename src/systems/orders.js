@@ -30,6 +30,7 @@ import { tip } from './tips.js';
 import { eventActive, eventProgress } from './events.js';
 import { defiWanted } from './defis.js';
 import { fishOrderOk } from './fishing.js';
+import { cupHas } from './cup.js';
 
 // Ce que la ferme sait produire en ce moment (ingrédients compris)
 export function questPool() {
@@ -55,7 +56,8 @@ export function questPool() {
     return Object.values(ITEMS).filter(i => i.type !== 'fish' && can(i.id));
 }
 
-export const orderSlots = () => Math.min(ORDER_MAX + extraOrders(), 3 + Math.floor(scaleLvl() / 2) + (projectDone('bakery') ? 1 : 0) + extraOrders());
+export const orderSlots = () =>
+    Math.min(ORDER_MAX + extraOrders(), 3 + Math.floor(scaleLvl() / 2) + (projectDone('bakery') ? 1 : 0) + extraOrders()) + (cupHas(3) ? 1 : 0);
 export const xpBonus = () => (projectDone('school') ? 1.1 : 1);
 
 // Quantité qui donne à peu près la valeur visée, bornée
@@ -114,7 +116,7 @@ export function makeOrder() {
     if (projectDone('townhall')) mult *= 1.1;
     mult *= (1 + rank('loyal') * 0.1) * (1 + state.upgrades.price * 0.04);
     // 1.38 : +3 % par niveau au-delà de 50 (pièces seulement)
-    const gold = round5(value * mult * bonus * (1 + 0.03 * Math.max(0, state.level - 50)));
+    const gold = round5(value * mult * bonus * (1 + 0.03 * Math.max(0, state.level - 50)) * (cupHas(5) ? 1.05 : 1));
     return {
         items,
         gold,

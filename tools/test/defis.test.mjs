@@ -44,6 +44,11 @@ test('au niveau 50, un défi arrive ; un défi ne revient pas avant le 4e tirage
     assert.equal(G.curDefi(), null, 'rien avant le niveau 50');
     state.level = 60;
     tick(2);
+    // 1.40 : trois défis proposés, on en choisit un
+    const offer = G.defiOffer();
+    assert.equal(offer.length, 3);
+    assert.equal(new Set(offer).size, 3);
+    assert.ok(G.pickDefi(offer[0]));
     const d = G.curDefi();
     assert.ok(d && DEFIS[d.id], 'un défi en cours');
     assert.equal(d.steps.length, 4);
@@ -52,6 +57,7 @@ test('au niveau 50, un défi arrive ; un défi ne revient pas avant le 4e tirage
     for (let k = 0; k < 30; k++) {
         clock.t = G.curDefi().end + 1000;
         tick(1);
+        assert.ok(G.pickDefi(G.defiOffer()[0]));
         const id = G.curDefi().id;
         assert.ok(!seen.slice(-DEFI.noRepeat).includes(id), `${id} trop tôt (${seen.slice(-3)})`);
         seen.push(id);
@@ -72,11 +78,12 @@ test('livrer, compter, et la médaille d’or tombe à la 4e étape', () => {
     assert.ok(state.money > before);
     assert.equal(state.defis.trophies.chateau.best, 3);
     assert.ok(state.decorInv.castleTower >= 1, 'décoration unique');
-    // le défi suivant arrive à la date prévue, pas avant
+    // 1.40 : médaille gagnée, les trois défis suivants sont proposés tout de suite ; on garde le défi tant qu'on n'a pas choisi
     tick(5);
     assert.equal(G.curDefi().id, 'chateau');
-    clock.t = d.end + 1000;
-    tick(1);
+    assert.equal(G.defiOffer().length, 3);
+    assert.ok(!G.defiOffer().includes('chateau'));
+    assert.ok(G.pickDefi(G.defiOffer()[1]));
     assert.notEqual(G.curDefi().id, 'chateau');
 });
 

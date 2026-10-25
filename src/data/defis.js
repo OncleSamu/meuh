@@ -24,7 +24,12 @@ export const DEFI = {
         { name: 'Bronze', coins: 30000, star: 0.25, rubans: 0, color: '#c8803a' },
         { name: 'Argent', coins: 60000, star: 0.5, rubans: 1, color: '#b9c2cc' },
         { name: 'Or', coins: 120000, star: 1, rubans: 2, color: '#f2c14e' },
+        // 1.40 : platine (les 4 étapes, tout livré en or ou mieux) et diamant (platine en moins de 7 jours)
+        { name: 'Platine', coins: 200000, star: 1.5, rubans: 3, color: '#b8aee0' },
+        { name: 'Diamant', coins: 300000, star: 2, rubans: 4, color: '#7fd3f5' },
     ],
+    diamondDays: 7,
+    offer: 3, // 1.40 : on choisit son défi parmi trois
 };
 
 const ENTREES = [

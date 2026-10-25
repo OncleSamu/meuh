@@ -50,6 +50,7 @@ import { clampQuality } from './farm.js';
 import { BARRELS } from '../data/abbey.js';
 import { beerOf, beerValue, beerStock, ensureBrew, barrelOk, cellarOpen, takeFromBarrel, cellarTick, beerQual, beerPutQuality } from './brewery.js';
 import { caveBonus } from './buildings.js';
+import { cupHas } from './cup.js';
 import { DAYS_PER_SEASON } from '../data/world.js';
 import { VINTAGES, LABEL_COUNT } from '../data/cave.js';
 import { domStepSum } from './estate.js';
@@ -98,7 +99,7 @@ export const caveSlots = () =>
     // 1.38 : la réputation du château donne de la place (une case à 3 étoiles, une autre à 5)
     (repStars() >= 3 ? 1 : 0) +
     (repStars() >= 5 ? 1 : 0);
-export const caveStep = id => (CAVE_ITEMS[id] === 'cider' && projectDone('cidery') ? 4 * CAVE_H : caveFam(id).step);
+export const caveStep = id => (CAVE_ITEMS[id] === 'cider' && projectDone('cidery') ? 4 * CAVE_H : caveFam(id).step) * (cupHas(2) ? 0.9 : 1);
 export const rankName = lot =>
     lot.bad ? (lot.id === 'beer' ? 'Tournée' : 'Tourné') : caveFam(lot.id).ranks[lot.rank] + (lot.q ? ` · ${QUALITY[lot.q].name}` : '');
 // 1.6.3 : un lot peut être une bière (id 'beer', sa recette bid et son fût k)

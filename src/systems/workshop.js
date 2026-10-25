@@ -23,6 +23,7 @@ import { collect } from './book.js';
 import { takeIngredients } from './genetics.js';
 import { qtyName } from '../core/format.js';
 import { mTimeMult, mExtraYield } from './buildings.js';
+import { cupHas } from './cup.js';
 
 // les machines de cuisine (le compteur « plats cuisinés »)
 export const COOKING = ['kitchen', 'stove', 'deli', 'fishmonger'];
@@ -128,7 +129,7 @@ export function toggleLoop(i) {
 // 1.37.1 : un deuxième poste de travail (acheté une fois par machine) fait tourner deux lots à la fois :
 // le lot de tête (progress) et le suivant de la file (progress2).
 export const LANE2_LVL = 15;
-export const lane2Cost = type => Math.round(((MACHINES[type].cost || 6000) * 6 + 30000) / 1000) * 1000;
+export const lane2Cost = type => Math.round((((MACHINES[type].cost || 6000) * 6 + 30000) * (cupHas(4) ? 0.5 : 1)) / 1000) * 1000;
 export const lane2Open = () => state.level >= LANE2_LVL;
 export function buyLane2(i, at) {
     const m = state.machines[i];

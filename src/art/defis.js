@@ -14,6 +14,9 @@ Object.assign(ui, {
     cupNone: () => cup('#e8dcc2', '#cbbd9d').replace(/fill="#e8dcc2"/g, 'fill="#e8dcc2" stroke-dasharray="4 3"'),
     cupBronze: () => cup('#d08a45', '#a8693a') + C(32, 22, 6, '#e8a35f', 1.6),
     cupSilver: () => cup('#cfd6de', '#9aa3ad') + C(32, 22, 6, '#eef2f5', 1.6),
+    // 1.40 : platine (une étoile pâle) et diamant (une pierre taillée)
+    cupPlat: () => cup('#e6e0f5', '#b8aee0') + P('M32 15 L34 20 L39 20 L35 23 L37 28 L32 25 L27 28 L29 23 L25 20 L30 20Z', '#ffffff', 1.4),
+    cupDiamond: () => cup('#bfefff', '#7fd3f5') + P('M32 14 L39 21 L32 30 L25 21Z', '#ffffff', 1.4) + L('M25 21 L39 21 M32 14 L30 21 L32 30 L34 21Z', 0.9),
     cupGold: () => cup('#f2c14e', '#d99a2b') + P('M32 15 L34 20 L39 20 L35 23 L37 28 L32 25 L27 28 L29 23 L25 20 L30 20Z', '#fff6c8', 1.4),
 
     // le banquet : une table dressée

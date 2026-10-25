@@ -24,6 +24,7 @@ import { netOpen, boatOpen, transOpen } from './port.js';
 import { breedOpen, plantLabOpen, labOpen, animalGain, flavorGain, varieties, varName } from './genetics.js';
 import { addPhoto } from './style.js';
 import { tip } from './tips.js';
+import { cupOnMedal } from './cup.js';
 
 const DAY = 24 * 3600 * 1000;
 
@@ -116,9 +117,30 @@ export function drawDefi() {
     return pool[Math.floor(Math.random() * pool.length)];
 }
 
+// 1.40 : trois défis proposés, on choisit
+export function drawOffer() {
+    const D = ensureDefis();
+    const ids = Object.keys(DEFIS).filter(defiEligible);
+    let pool = ids.filter(id => !D.recent.includes(id));
+    if (pool.length < DEFI.offer) pool = [...pool, ...ids.filter(id => !pool.includes(id) && id !== D.recent[D.recent.length - 1])];
+    const out = shuffle(pool).slice(0, DEFI.offer);
+    return out.length ? out : ['chateau'];
+}
+export const defiOffer = () => (state.defis && state.defis.offer) || null;
+export function pickDefi(id) {
+    const D = ensureDefis();
+    // un défi déjà médaillé peut laisser sa place tout de suite
+    if ((D.cur && !D.cur.awarded) || !D.offer || !D.offer.includes(id)) return false;
+    D.cur = null;
+    D.offer = null;
+    startDefi(id);
+    return true;
+}
+
 export function startDefi(id = drawDefi(), t = now()) {
     const D = ensureDefis();
-    D.cur = { id, start: t, end: t + DEFI.days * DAY, steps: DEFIS[id].steps.map(buildStep), awarded: 0 };
+    D.cur = { id, start: t, end: t + DEFI.days * DAY, steps: DEFIS[id].steps.map(buildStep), awarded: 0, mixed: false, aimGold: !!D.aimGold };
+    D.offer = null;
     D.recent.push(id);
     while (D.recent.length > DEFI.noRepeat) D.recent.shift();
     D.next = 0;
@@ -177,7 +199,11 @@ export const medalOf = n => (n >= 4 ? 3 : n === 3 ? 2 : n === 2 ? 1 : 0);
 export const defiLeft = (d = curDefi()) => (d ? Math.max(0, d.end - now()) : 0);
 
 // peut-on livrer quelque chose pour cette étape ?
-export const canGive = st => st.kind === 'give' && !st.done && st.items.some(x => x.got < x.n && haveQ(x.id, st.q) > 0);
+export const canGive = st => {
+    const d = curDefi();
+    const q = d ? giveQ(d, st) : st.q;
+    return st.kind === 'give' && !st.done && st.items.some(x => x.got < x.n && haveQ(x.id, q) > 0);
+};
 export const animalCandidates = () => state.animals.filter(a => a.g).map(a => ({ a, score: animalGain(a) }));
 export const varietyCandidates = () => (state.genetics ? varieties().map(v => ({ v, score: Math.round(flavorGain(v.g) * 10) / 10 })) : []);
 export const beerCandidates = () =>
@@ -210,25 +236,47 @@ function finishStep(st, at) {
         buzz(30);
         burst(at, 'sparkle', 16);
     }
-    if (stepsDone() >= 4) award(3);
+    if (stepsDone() >= 4) award(bestMedal(curDefi()));
 }
+
+// les 4 étapes faites : or ; tout livré en or ou mieux : platine ; et en moins de 7 jours : diamant
+export function bestMedal(d) {
+    if (!d || d.mixed) return 3;
+    return now() - d.start <= DEFI.diamondDays * DAY ? 5 : 4;
+}
+// viser le platine : on ne livre que de l'or ou mieux (réglage gardé d'un défi à l'autre)
+export function toggleAimGold() {
+    const D = ensureDefis();
+    D.aimGold = !D.aimGold;
+    if (D.cur) D.cur.aimGold = D.aimGold;
+    return D.aimGold;
+}
+const giveQ = (d, st) => (d.aimGold ? Math.max(st.q || 0, 2) : st.q || 0);
 
 export function giveDefi(k, at) {
     const d = curDefi();
     const st = d && d.steps[k];
     if (!st || st.kind !== 'give' || st.done) return false;
     let gave = 0;
+    const q = giveQ(d, st);
     st.items.forEach(x => {
-        const n = Math.min(x.n - x.got, haveQ(x.id, st.q));
+        const n = Math.min(x.n - x.got, haveQ(x.id, q));
         if (n > 0) {
-            takeQ(x.id, n, st.q);
+            takeQ(x.id, n, q);
             x.got += n;
             gave += n;
         }
     });
+    if (gave && q < 2) d.mixed = true;
     if (!gave) {
         toast(
-            st.q === 2 ? 'Il faut des produits de qualité or' : st.q === 1 ? 'Il faut des produits de qualité argent ou or' : 'Rien à livrer pour le moment',
+            q === 2
+                ? d.aimGold && st.q < 2
+                    ? 'Vous visez le platine : il faut des produits en or ou mieux'
+                    : 'Il faut des produits de qualité or'
+                : q === 1
+                  ? 'Il faut des produits de qualité argent ou or'
+                  : 'Rien à livrer pour le moment',
             ['ui', 'trophy'],
         );
         return false;
@@ -267,16 +315,17 @@ function award(medal) {
         def = DEFIS[d.id],
         k = defiScale();
     const t = (D.trophies[d.id] = D.trophies[d.id] || { best: 0, n: 0, gold: 0 });
-    const firstGold = medal === 3 && !t.gold;
+    const firstGold = medal >= 3 && !t.gold;
     t.best = Math.max(t.best, medal);
     t.n++;
-    if (medal === 3) t.gold++;
+    if (medal >= 3) t.gold++;
     const coins = Math.round(M.coins * k);
     earn(coins);
     addXp(Math.round(RENOWN_XP * M.star));
     state.prestige.rubans += M.rubans;
     if (firstGold) state.decorInv[def.deco] = (state.decorInv[def.deco] || 0) + 1;
     state.stats.defis = (state.stats.defis || 0) + 1;
+    cupOnMedal(medal, d.id);
     addPhoto('ui', 'trophy', def.name, `Médaille ${M.name.toLowerCase()}`);
     if (!view.started) return;
     emit('celebrate', {
@@ -299,10 +348,14 @@ function endDefi(t) {
     if (!d.awarded) {
         const m = medalOf(stepsDone(d));
         if (m) award(m);
-        else if (view.started) toast(`Le grand défi « ${DEFIS[d.id].name} » est terminé. Le prochain arrive !`, ['ui', 'trophy']);
+        else {
+            cupOnMedal(0, d.id);
+            if (view.started) toast(`Le grand défi « ${DEFIS[d.id].name} » est terminé : choisissez le prochain !`, ['ui', 'trophy']);
+        }
     }
     D.cur = null;
-    startDefi(drawDefi(), t);
+    if (!D.offer) D.offer = drawOffer();
+    void t;
 }
 
 // une seconde de jeu : les compteurs avancent, le défi se termine à sa date
@@ -311,11 +364,18 @@ export function defiTick() {
     const D = ensureDefis();
     const t = now();
     if (!D.cur) {
-        startDefi(drawDefi(), t);
+        if (D.offer) return false;
+        D.offer = drawOffer();
+        if (view.started) tip('defis');
         return true;
     }
     const d = D.cur;
     let changed = false;
+    // 1.40 : médaille gagnée avant la date : les trois défis suivants sont déjà proposés
+    if (d.awarded && !D.offer) {
+        D.offer = drawOffer();
+        changed = true;
+    }
     if (!d.awarded)
         d.steps.forEach(st => {
             if (st.kind === 'count' && !st.done && stepCount(st) >= st.n) {

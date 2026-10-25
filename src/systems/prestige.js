@@ -61,6 +61,7 @@ export function doPrestige(challenge, theme) {
         farmhand: state.farmhand,
         mastery: state.mastery,
         renown: state.renown,
+        cup: state.cup, // 1.40 : la Coupe de la vallée (points, rangs, mécénat) se garde
         league: state.league,
         legend: state.legend,
         style: state.style,
