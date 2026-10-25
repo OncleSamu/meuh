@@ -90,3 +90,17 @@ test('comptoir : presque chaque boisson a sa propre suite de gestes', () => {
     const plain = Object.values(BREW).filter(b => b.st.map(s => s[0]).join('+') === 'temp+steep').length;
     assert.ok(plain <= 6, `${plain} boissons font seulement température et infusion`);
 });
+
+test('chevaux : un record par discipline, le meilleur seulement', () => {
+    G.loadGame();
+    state.animals.push({ uid: 'h1', type: 'horse', name: 'Éclair' });
+    let r = G.saveHorseRecord('h1', 'galop', 0.6, { t: 50, path: [0, 10] });
+    assert.ok(r.isNew && !r.prev);
+    r = G.saveHorseRecord('h1', 'galop', 0.5, { t: 55 });
+    assert.ok(!r.isNew);
+    assert.equal(G.horseRecord('h1', 'galop').s, 0.6);
+    r = G.saveHorseRecord('h1', 'galop', 0.8, { t: 44, path: [0, 12] });
+    assert.ok(r.isNew && r.prev.s === 0.6);
+    assert.deepEqual(G.horseRecord('h1', 'galop').path, [0, 12]);
+    assert.equal(G.horseRecord('h1', 'saut'), null);
+});
