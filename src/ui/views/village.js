@@ -286,6 +286,22 @@ export function merchantCard() {
 }
 
 // ---------------- concours de la semaine ----------------
+// 1.39 : l'écart avec la ferme juste devant (ou juste derrière), et ce que les rivales viennent de faire
+function raceLine(list) {
+    const k = list.findIndex(x => x.me),
+        me = list[k].score;
+    if (k > 0) {
+        const r = list[k - 1];
+        return `<p class="race-line">${ico(['ui', 'podium'])}À <b>${fmt(r.score - me + 1)}</b> points de ${r.owner} (${r.name})</p>`;
+    }
+    const r = list[1];
+    return r ? `<p class="race-line lead">${ico(['ui', 'cupGold'])}Vous menez de <b>${fmt(me - r.score)}</b> points devant ${r.owner}</p>` : '';
+}
+function feedHtml(c) {
+    const f = (c.feed || []).slice(-3).reverse();
+    if (!f.length) return '';
+    return `<ul class="race-feed">${f.map(e => `<li><small>il y a ${formatDuration(Math.max(60, Math.round((now() - e.t) / 60000) * 60))}</small>${G.rivalEventText(e)}</li>`).join('')}</ul>`;
+}
 function contestCard() {
     if (!G.contestOpen())
         return card({
@@ -330,6 +346,7 @@ function contestCard() {
                 })
                 .join('')}</div>
         <ol class="ranking">${list.map((x, k) => `<li class="${x.me ? 'me' : ''}"><b>${k + 1}</b><span>${x.name}</span><em>${fmt(x.score)}</em></li>`).join('')}</ol>
+        ${raceLine(list)}${feedHtml(c)}
         <div class="score-parts">${me.parts.map(([n, v]) => `<span>${n} <b>${fmt(v)}</b></span>`).join('')}</div></div>`;
 }
 

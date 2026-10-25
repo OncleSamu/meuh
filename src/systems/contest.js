@@ -17,6 +17,7 @@ import { wallCharm } from './wall.js';
 import { showCharm } from './show.js';
 import { leagueOf, leagueName, leagueAfterContest } from './mastery.js';
 import { tip } from './tips.js';
+import { advanceRivals, rivalBase, rivalEventText, RIVAL_CFG } from './rivals.js';
 import { record } from './book.js';
 import { earn, addXp } from './player.js';
 
@@ -59,17 +60,21 @@ export const tierReward = c => ({
     xp: Math.round(200 + lv40(c.lvl) * 40),
 });
 
-function rivalScore(r, c, frac) {
-    const noise = 0.9 + ((Math.sin((c.start / 864e5 + 1) * (r.f * 97.3)) + 1) / 2) * 0.2;
-    return Math.round(contestTarget(c.lvl) * r.f * LEAGUES[c.league || 0].f * noise * Math.pow(Math.max(0, frac), 0.85));
+// 1.39 : les rivales viennent du moteur des rivales (rivals.js) : calées sur vous, par séances, et elles réagissent
+function ensureRivals(c) {
+    if (c.base0 === undefined) {
+        c.base0 = rivalBase(contestTarget(c.lvl));
+        c.win = contestWindow(c);
+    }
 }
-
-export function contestRanking(at) {
+export function contestRanking(at = now()) {
     const c = state.contest;
-    const frac = contestFrac(c, at);
-    const list = RIVALS.map(r => ({ name: r.name, score: rivalScore(r, c, frac) }));
-    list.push({ name: 'Votre ferme', score: myContestScore().total, me: true });
-    return list.sort((a, b) => b.score - a.score);
+    ensureRivals(c);
+    const me = myContestScore().total;
+    advanceRivals(c, Math.min(at, c.end), me);
+    const list = RIVALS.map((r, k) => ({ name: r.name, owner: r.owner, score: c.riv[k].s }));
+    list.push({ name: 'Votre ferme', score: me, me: true });
+    return list.sort((a, b) => b.score - a.score || (a.me ? -1 : b.me ? 1 : 0));
 }
 
 export function contestTick() {
@@ -79,12 +84,20 @@ export function contestTick() {
     if (c && t < c.end) {
         // les paliers suivent votre niveau pendant la semaine
         if (state.level > c.lvl) c.lvl = state.level;
-        return false;
+        ensureRivals(c);
+        const ev = advanceRivals(c, t, myContestScore().total);
+        // une rivale vous double : on le dit (seulement si c'est tout récent, pas après une longue absence)
+        const pass = ev.filter(e => e.kind === 'pass' && t - e.t < 10 * 60e3).pop();
+        if (pass && view.started) toast(rivalEventText(pass), ['ui', 'podium']);
+        return ev.length > 0;
     }
     if (c && c.end) {
         // résultats du concours qui vient de se terminer
         const list = contestRanking(c.end);
-        contestReward(list.findIndex(x => x.me) + 1, list.find(x => x.me).score, c.league || 0);
+        const mine = list.find(x => x.me).score;
+        contestReward(list.findIndex(x => x.me) + 1, mine, c.league || 0);
+        // votre score entre dans la moyenne qui règle les rivales (une inscription tardive compte pour une semaine entière)
+        state.contestHist = [...(state.contestHist || []), Math.round(mine / contestWindow(c))].slice(-RIVAL_CFG.hist);
     }
     const end = weekStart().getTime() + WEEK_MS;
     state.contest = {
@@ -96,6 +109,7 @@ export function contestTick() {
         base: contestSnapshot(),
         tiers: [false, false, false],
     };
+    ensureRivals(state.contest);
     if (c && view.started) toast('Un nouveau concours de la semaine commence !', ['ui', 'podium']);
     if (view.started) tip('contest');
     return true;

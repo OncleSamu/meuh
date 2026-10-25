@@ -1227,10 +1227,19 @@ export const GUIDE_PAGES = [
                 t: 'Trois paliers rapportent chacun des pièces et de l’expérience au fil de la semaine. Le classement contre les fermes voisines tombe le lundi : la première place paie le plus, puis de moins en moins.',
             },
             {
+                h: 'Les fermes rivales',
+                b: [
+                    'Elles se calent sur vous : leur but de la semaine suit la moyenne de vos trois derniers concours. Hortense est la plus douce, Firmin la plus coriace (10 % au-dessus de votre moyenne).',
+                    'Elles jouent par séances, chacune à ses heures : Hortense tôt le matin, Firmin le soir. Certains jours elles ne font rien, d’autres elles font un gros coup.',
+                    'Dans les deux derniers jours, une rivale juste derrière vous donne un coup de collier ; une rivale très loin derrière lâche un peu.',
+                    'La carte du concours dit à combien de points est la ferme devant vous, et ce que les rivales viennent de faire.',
+                ],
+            },
+            {
                 h: 'Les ligues',
                 b: [
                     `Bronze (niveau 4), argent (17), or (29), diamant (${LEAGUES.find(l => l.id === 'diamond').lvl}).`,
-                    'Première du classement : vous montez, avec des récompenses plus grosses et des rivales plus fortes.',
+                    'Première du classement : vous montez, avec des récompenses plus grosses et des rivales un peu plus fortes (6 % par ligue).',
                     'Dernière : vous redescendez d’une ligue.',
                 ],
             },

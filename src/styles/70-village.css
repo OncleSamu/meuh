@@ -1184,3 +1184,35 @@ html.season-printemps .field {
         opacity: 0;
     }
 }
+/* 1.39 : la course au concours de la semaine */
+.race-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 6px 0 2px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+.race-line .ico {
+    width: 20px;
+    height: 20px;
+}
+.race-line.lead {
+    color: #2f7d1f;
+}
+.race-feed {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 10px;
+    font-size: 0.78rem;
+}
+.race-feed li + li {
+    margin-top: 3px;
+}
+.race-feed small {
+    display: block;
+    opacity: 0.65;
+    font-size: 0.7rem;
+}

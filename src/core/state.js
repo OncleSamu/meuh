@@ -146,6 +146,7 @@ export function newState() {
         merchant: { status: 'away', arriveAt: 0, expiresAt: 0, stock: [] },
         contest: null,
         lastContest: null,
+        contestHist: [], // 1.39 : vos derniers scores au concours (les rivales s'y calent)
         tips: {},
         stall: { slots: [] },
         locked: {},
