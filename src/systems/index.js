@@ -4,6 +4,7 @@ export * from './barn.js';
 export * from './book.js';
 export * from './brewery.js';
 export * from './cave.js';
+export * from './chateau.js';
 export * from './contest.js';
 export * from './events.js';
 export * from './farm.js';

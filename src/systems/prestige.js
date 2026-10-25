@@ -10,6 +10,7 @@ import { PRESTIGE_LVL, CHALLENGE_BONUS } from '../data/progress.js';
 import { ensureVillagers } from './village.js';
 import { addPhoto } from './style.js';
 import { ensureQuests } from './orders.js';
+import { newChateau } from './chateau.js';
 
 export const rubansGain = () => Math.floor(Math.sqrt(state.stats.earnedRun / 25000));
 export const canPrestige = () => state.level >= PRESTIGE_LVL && rubansGain() >= 1;
@@ -79,6 +80,8 @@ export function doPrestige(challenge, theme) {
             uid: state.cave.uid,
             legends: state.cave.legends || {},
         },
+        // le château garde sa réputation, ses classements et ses médailles ; visiteurs et primeurs repartent avec la ferme
+        chateau: { ...newChateau(), rep: (state.chateau || {}).rep || 0, classes: (state.chateau || {}).classes, medals: (state.chateau || {}).medals },
         // le coffre garde sa taille ; ce qu'il contient part avec la ferme
         vault: { lvl: (state.vault && state.vault.lvl) || 0, slots: [] },
         contest: state.contest,

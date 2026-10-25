@@ -33,6 +33,7 @@ import { boatTick, transTick, ensureFarmSeason, netReady } from './port.js';
 import { ensureHoliday } from './holidays.js';
 import { contestTick } from './contest.js';
 import { caveOpen, caveTick, auctionTick, caveCareCount, caveOrderTick } from './cave.js';
+import { ensureChateau, visitorTick } from './chateau.js';
 import { tip } from './tips.js';
 import { trimDayEarn, syncBook } from './book.js';
 import { ensureOrchard, orchardTick, orchardOffline } from './orchard.js';
@@ -109,6 +110,7 @@ export function normalizeState() {
     ensureOrchard();
     ensureIsland();
     ensureGenetics();
+    ensureChateau();
     if (brewOpen()) ensureBrew();
     ensureDefis();
     ensureNight();
@@ -253,6 +255,7 @@ function tickCave() {
     tip('cave');
     const sum = caveTick();
     const sale = auctionTick();
+    if (visitorTick()) return true;
     if (caveOrderTick()) return true;
     return sale || sum.up.length + sum.bad.length + sum.rot.length > 0;
 }

@@ -53,6 +53,8 @@ import { caveBonus } from './buildings.js';
 import { DAYS_PER_SEASON } from '../data/world.js';
 import { VINTAGES, LABEL_COUNT } from '../data/cave.js';
 import { domStepSum } from './estate.js';
+import { classMult, settleOnExit, settlePrimeur, makeCuvee, sellPrimeur, primeurQuote, enterWineContest, serveVisitor } from './chateau.js';
+import { takeQ } from './defis.js';
 
 // 1.15 : millésimes. L'année de jeu donne à chaque vin une qualité (0 à 3), la même pour tout le monde.
 export const gameYear = () => Math.floor((state.day - 1) / (DAYS_PER_SEASON * 4)) + 1;
@@ -102,10 +104,24 @@ export const lotName = lot => lot.name || (isBeerLot(lot) ? (beerOf(lot.bid) || 
 export const lotIcon = lot => (isBeerLot(lot) ? ['ui', 'beer'] : ['item', lot.id]);
 const baseUnit = lot => (isBeerLot(lot) ? beerValue(lot.bid) * (BARRELS[lot.k] || BARRELS.oak).mult : ITEMS[lot.id].sell);
 export const lotUnit = lot =>
-    Math.round(baseUnit(lot) * CAVE_MULT[lot.rank] * QUALITY[lot.q || 0].mult * (vintageOf(lot) ? vintageOf(lot).mult : 1) * (lot.bad ? CAVE_TURNED : 1));
+    Math.round(
+        baseUnit(lot) *
+            CAVE_MULT[lot.rank] *
+            QUALITY[lot.q || 0].mult *
+            (vintageOf(lot) ? vintageOf(lot).mult : 1) *
+            (lot.bad ? CAVE_TURNED : 1) *
+            classMult(lot),
+    );
 // la taille des lots grandit avec les étagères : 8, 12, 16 puis 20
 export const caveLotMax = () => CAVE_LOT_MAX + CAVE_LOT_GROW * Math.min(3, Math.floor(state.cave.shelves / 2));
 export const lotValue = lot => lotUnit(lot) * lot.n;
+
+// 1.37 : le château (voir chateau.js)
+export const cuveeLot = i => makeCuvee(i);
+export const primeurAsk = (i, r) => primeurQuote(state.cave.slots[i], r, lotValue);
+export const primeurDo = (i, r, at) => sellPrimeur(i, r, lotValue, at);
+export const contestDo = (uid, at) => enterWineContest(uid, lotValue, at);
+export const guestServe = (id, pair, at) => serveVisitor(id, pair, takeQ, at);
 setVaultLotUnit(lotUnit);
 const caveUid = () => (state.cave.uid = (state.cave.uid || 0) + 1);
 
@@ -226,6 +242,7 @@ function stepLot(i, t, sum) {
     lot.tasted = 0;
     if (r < o.rot) {
         c.slots[i] = null;
+        if (lot.pr) settlePrimeur(lot, null, lotValue);
         state.inventory.fertilizer = (state.inventory.fertilizer || 0) + lot.n;
         sum.rot.push(lot);
         state.stats.caveRot = (state.stats.caveRot || 0) + 1;
@@ -397,6 +414,7 @@ export function takeOut(i, at) {
     if (lot.name) kept.name = lot.name;
     if (lot.ls) kept.ls = lot.ls;
     if (isBeerLot(lot)) Object.assign(kept, { bid: lot.bid, k: lot.k });
+    settleOnExit(lot, kept, lotValue, at);
     c.reserve.push(kept);
     state.stats.caveLots = (state.stats.caveLots || 0) + 1;
     if (!lot.bad) record('lot', lotValue(lot));
