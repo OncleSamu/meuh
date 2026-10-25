@@ -1229,7 +1229,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Les fermes rivales',
                 b: [
-                    'Elles se calent sur vous : leur but de la semaine suit la moyenne de vos trois derniers concours. Hortense est la plus douce, Firmin la plus coriace (10 % au-dessus de votre moyenne).',
+                    'Elles se calent sur vous : leur but de la semaine suit la moyenne de vos trois derniers concours. Hortense est la plus douce, Firmin la plus coriace (5 % au-dessus de votre moyenne). Chacune a sa forme de la semaine, à 15 % près.',
                     'Elles jouent par séances, chacune à ses heures : Hortense tôt le matin, Firmin le soir. Certains jours elles ne font rien, d’autres elles font un gros coup.',
                     'Dans les deux derniers jours, une rivale juste derrière vous donne un coup de collier ; une rivale très loin derrière lâche un peu.',
                     'La carte du concours dit à combien de points est la ferme devant vous, et ce que les rivales viennent de faire.',

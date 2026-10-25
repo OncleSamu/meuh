@@ -8,10 +8,10 @@ import { RIVALS } from '../data/village.js';
 
 // caractère de chaque ferme (même ordre que RIVALS) : force et heures de travail
 export const RIVAL_STYLE = [
-    { f: 0.8, hours: [7, 12, 18] }, // Hortense, les Tilleuls : tôt le matin, régulière
-    { f: 0.92, hours: [9, 20] }, // Bastien, Bellevue
+    { f: 0.75, hours: [7, 12, 18] }, // Hortense, les Tilleuls : tôt le matin, régulière
+    { f: 0.9, hours: [9, 20] }, // Bastien, Bellevue
     { f: 1, hours: [8, 14, 21] }, // Yvette, les Trois Chênes
-    { f: 1.1, hours: [19, 22] }, // Firmin, le Moulin Rouge : le soir, par gros paquets
+    { f: 1.05, hours: [19, 22] }, // Firmin, le Moulin Rouge : le soir, par gros paquets
 ];
 export const RIVAL_CFG = {
     leagueBump: 0.06, // +6 % par ligue
@@ -19,11 +19,12 @@ export const RIVAL_CFG = {
     floor: 0.2, // au moins 20 % de la cible
     hist: 3, // la moyenne des 3 derniers concours
     rushMs: 48 * 3600 * 1000, // les deux derniers jours
-    rush: 1.35, // coup de collier quand elles sont juste derrière
+    rush: 1.25, // coup de collier quand elles sont juste derrière
     near: 0.12, // « juste derrière » : à moins de 12 % de votre score
     giveUp: 0.6, // elles lâchent quand elles ont plus de 40 % de retard
     offDay: 0.1, // une journée sans rien faire
     bigOdds: 0.06, // un gros coup (×2,2)
+    form: 0.15, // la forme de la semaine : ±15 %
 };
 
 function seedRand(seed) {
@@ -53,8 +54,10 @@ export function rivalSessions(c, k) {
             if (t > c.start && t <= c.end) list.push({ t, w, big });
         }
     }
+    // la forme de la semaine : de 85 % à 115 % de son niveau habituel
+    const form = 1 - RIVAL_CFG.form + 2 * RIVAL_CFG.form * rnd();
     const sum = list.reduce((a, x) => a + x.w, 0) || 1;
-    list.forEach(x => (x.w /= sum));
+    list.forEach(x => (x.w = (x.w / sum) * form));
     return list;
 }
 

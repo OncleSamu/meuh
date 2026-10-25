@@ -29,8 +29,8 @@ test('les rivales se calent sur vos derniers concours', () => {
     const list = G.contestRanking(c.end);
     const firmin = list.find(x => x.name === RIVALS[3].name).score,
         hortense = list.find(x => x.name === RIVALS[0].name).score;
-    assert.ok(Math.abs(firmin - 2200) <= 8, `Firmin ${firmin}`);
-    assert.ok(Math.abs(hortense - 1600) <= 8, `Hortense ${hortense}`);
+    assert.ok(firmin >= 2000 * 1.05 * 0.85 - 8 && firmin <= 2000 * 1.05 * 1.15 + 8, `Firmin ${firmin}`);
+    assert.ok(hortense >= 2000 * 0.75 * 0.85 - 8 && hortense <= 2000 * 0.75 * 1.15 + 8, `Hortense ${hortense}`);
 });
 
 test('elles jouent par séances : le score monte par paliers, pas en continu', () => {
@@ -56,7 +56,8 @@ test('coup de collier en fin de semaine quand une rivale est juste derrière', (
     const c = start([2000]);
     c.base0 = 2000;
     c.win = 1;
-    const alone = G.rivalGoal(c, 2);
+    G.advanceRivals(c, c.end, 0);
+    const alone = c.riv[2].s;
     const me = { total: Math.round(alone * 1.05) };
     c.riv = null;
     G.advanceRivals(c, c.end - 2 * DAY, me.total);
