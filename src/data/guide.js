@@ -789,6 +789,46 @@ export const GUIDE_PAGES = [
         see: ['brewery', 'orchard'],
     },
     {
+        id: 'chateau',
+        cat: 'craft',
+        name: 'Le château de Margaux',
+        icon: ['ui', 'star'],
+        lvl: chLvl(19),
+        go: 'machines/cave',
+        intro: 'La grande étape du niveau ' + chLvl(19) + ' : un château, ses vignes et l’œnologue Octave. Le vin gagne un sommet : la cuvée classée.',
+        secs: [
+            {
+                h: 'L’histoire',
+                t: `Deux chapitres sur la carte « Le château » (onglet Village) : la toiture, les vignes et le chai au niveau ${chLvl(19)}, puis la salle de dégustation, la boutique et la fête des vendanges au niveau ${chLvl(20)}. Chaque chantier ouvre une nouveauté.`,
+            },
+            {
+                h: 'La cuvée du château',
+                t: 'Quand le chai est rouvert, un lot de vin ou de champagne en cave a un bouton « En cuvée » (gratuit). À sa sortie, Octave le goûte et le classe selon son rang de cave et sa qualité : cru du château (rang 2), grand cru, premier grand cru, cru d’exception (légendaire en diamant). Chaque classement ajoute de la valeur et des points de réputation.',
+            },
+            {
+                h: 'La réputation',
+                t: 'Les points des classements donnent jusqu’à cinq étoiles au château. Plus d’étoiles : plus de visiteurs, une file plus longue et des vins plus chers à servir (le champagne dès 2 étoiles). Elle se garde d’une ferme à l’autre.',
+            },
+            {
+                h: 'La vente en primeur',
+                t: 'Avec la salle de dégustation, vendez un lot qui vieillit avant qu’il soit prêt : on vous paie 35 % de sa valeur au rang promis, tout de suite (au plus 400 000 pièces). Le lot reste en cave. Promesse tenue, l’acheteur ajoute 12 % ; manquée, vous rendez ce qui dépasse 35 % de la valeur réelle. Trois primeurs au plus à la fois, un par lot.',
+            },
+            {
+                h: 'La boutique et les accords',
+                t: 'Des visiteurs achètent vos bouteilles du stock (jamais celles du coffre-fort), 50 % plus cher, et plus encore avec les étoiles. Offrez le plat qui va avec leur vin : bœuf bourguignon pour le rouge, sandre au vin blanc pour le blanc… l’accord paie 50 % de plus.',
+            },
+            {
+                h: 'Le concours des vins',
+                t: 'Une fois par mois, présentez une cuvée classée de la réserve : bronze, argent ou or, avec des rubans, des pièces et un lot qui vaut plus. Une seule médaille par mois.',
+            },
+        ],
+        tips: [
+            'Mettez en cuvée les lots que vous avez soignés : un rang 3 ou 4 en or ou plus est classé plus haut.',
+            'Le primeur est un pari : ne promettez que ce que votre lot peut tenir.',
+        ],
+        see: ['cave', 'domaine'],
+    },
+    {
         id: 'brewery',
         cat: 'craft',
         name: 'La brasserie',
@@ -1132,7 +1172,7 @@ export const GUIDE_PAGES = [
                 h: 'L’histoire',
                 b: [
                     'Chaque chapitre est un chantier : on y livre des produits, des pièces et des matériaux, et chaque chapitre rapporte de l’expérience et des pièces (un ruban dès le chapitre 5).',
-                    'Un chapitre fini ouvre des bâtiments, des machines, des cultures ou des villageois. Les grandes étapes (hameau, port, abbaye, île, station, alpage) ouvrent une nouvelle carte.',
+                    'Un chapitre fini ouvre des bâtiments, des machines, des cultures ou des villageois. Les grandes étapes (hameau, port, abbaye, île, station, alpage, domaine, château) ouvrent une nouvelle carte.',
                     'Un chantier ne demande jamais un produit que vous n’avez pas encore pu débloquer.',
                 ],
             },

@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { clock } from './helpers.mjs';
-import { state } from '../../src/core/state.js';
+import { state, fromSave } from '../../src/core/state.js';
 import { setView } from '../../src/core/view.js';
 import * as G from '../../src/systems/index.js';
 import { ITEMS } from '../../src/data/items.js';
@@ -254,4 +254,20 @@ test('1.37 : une ancienne sauvegarde reçoit le château sans rien perdre', () =
     G.normalizeState();
     assert.ok(state.chateau && state.chateau.rep === 0 && state.chateau.classes.length === 5);
     assert.equal(G.chateauOpen(), false);
+});
+
+test('1.37 : le château survit à une sauvegarde et un rechargement', () => {
+    ready();
+    state.chateau.rep = 9;
+    state.chateau.classes[3] = 2;
+    state.chateau.vis = [{ id: 4, wine: 'redWine', n: 1, pair: 'cheese', until: clock.t + 1e6 }];
+    state.cave.reserve = [lot(4, 0, { uid: 31, cl: 3, md: 2 })];
+    const json = JSON.parse(JSON.stringify(state));
+    G.loadGame();
+    const back = fromSave(json);
+    assert.equal(back.chateau.rep, 9);
+    assert.equal(back.chateau.classes[3], 2);
+    assert.equal(back.chateau.vis.length, 1);
+    assert.equal(back.cave.reserve[0].cl, 3);
+    assert.equal(back.cave.reserve[0].md, 2);
 });

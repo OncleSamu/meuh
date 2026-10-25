@@ -10,7 +10,7 @@ import { PRESTIGE_LVL, CHALLENGE_BONUS } from '../data/progress.js';
 import { ensureVillagers } from './village.js';
 import { addPhoto } from './style.js';
 import { ensureQuests } from './orders.js';
-import { newChateau } from './chateau.js';
+import { newChateau } from '../data/chateau.js';
 
 export const rubansGain = () => Math.floor(Math.sqrt(state.stats.earnedRun / 25000));
 export const canPrestige = () => state.level >= PRESTIGE_LVL && rubansGain() >= 1;

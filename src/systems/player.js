@@ -206,7 +206,7 @@ export function unlocksAt(lvl) {
         if (c.lvl === lvl && c.n > 1)
             add(
                 ['ui', 'village'],
-                `${{ hamlet: 'Hameau', port: 'Port', abbey: 'Abbaye', alpine: 'Alpage', domaine: 'Domaine', island: 'Île', station: 'Station' }[c.map] || 'Village'} : chapitre ${chapterNum(c.n)}, « ${c.name} » (après le chapitre ${chapterNum(chapterAfter(c.n))})`,
+                `${{ hamlet: 'Hameau', port: 'Port', abbey: 'Abbaye', alpine: 'Alpage', domaine: 'Domaine', island: 'Île', station: 'Station', chateau: 'Château' }[c.map] || 'Village'} : chapitre ${chapterNum(c.n)}, « ${c.name} » (après le chapitre ${chapterNum(chapterAfter(c.n))})`,
             );
     });
     Object.values(UPGRADES).forEach(u => u.reqLvl === lvl && add(['ui', u.id], `${u.name} (au magasin)`));
@@ -233,6 +233,11 @@ export function unlocksAt(lvl) {
         big(
             ['ui', 'hEcuries'],
             'Grande étape : le Grand Haras. Écuries et mini-jeux (galop, endurance, dressage, saut), concours de la semaine, élevage et lignées (onglet Animaux)',
+        );
+    if (lvl === CHAPTERS.find(c => c.n === 19).lvl)
+        big(
+            ['ui', 'star'],
+            'Grande étape : le château et ses vignes. Deux chapitres avec Margaux et l’œnologue Octave, cuvées classées, vente en primeur, boutique et visiteurs, concours des vins (onglet Village, puis Atelier | Cave)',
         );
     if (lvl === CAVE_LVL) add(['ui', 'cave'], 'La cave : affinez fromages et cidres, et vendez-les aux enchères (onglet Atelier, puis Cave)');
     if (lvl === CHAPTERS[0].lvl) add(['ui', 'village'], 'Rénovez le village : premier chapitre (onglet Village)');

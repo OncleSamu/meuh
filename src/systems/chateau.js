@@ -6,26 +6,15 @@ import { toast, sfx, burst } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { QUALITY } from '../data/farm.js';
 import { CAVE_ITEMS } from '../data/cave.js';
-import { CHATEAU_CLASSES, REP_TIERS, REP_MAX, PRIMEUR, TOURISM, PAIRINGS, CONTEST } from '../data/chateau.js';
+import { newChateau, CHATEAU_CLASSES, REP_TIERS, REP_MAX, PRIMEUR, TOURISM, PAIRINGS, CONTEST } from '../data/chateau.js';
 import { projectDone } from './story.js';
+import { tip } from './tips.js';
 import { earn, addXp } from './player.js';
 import { addPhoto } from './style.js';
 import { qual, clampQuality } from './farm.js';
 import { unitPrice } from './market.js';
 
-export const newChateau = () => ({
-    rep: 0, // points de réputation (gardés d'une ferme à l'autre)
-    classes: [0, 0, 0, 0, 0], // lots sortis de la cave pour chaque classement
-    medals: [0, 0, 0, 0],
-    primeur: { won: 0, lost: 0, bonus: 0, refunded: 0 },
-    vis: [], // les visiteurs de la boutique
-    nextVisit: 0,
-    uid: 0,
-    served: 0,
-    pairs: 0,
-    contest: { month: '', medal: 0 },
-});
-
+export { newChateau };
 export function ensureChateau() {
     const c = (state.chateau = state.chateau || newChateau());
     const n = newChateau();
@@ -144,7 +133,10 @@ export const queueMax = () => TOURISM.queue + repStars();
 export const visitorWines = () => TOURISM.wines.filter(([, s]) => s <= repStars()).map(([id]) => id);
 
 export function visitorTick() {
+    if (chateauOpen()) tip('chateau');
+    if (primeurOpen()) tip('primeur');
     if (!shopOpen()) return false;
+    tip('visitors');
     const c = ensureChateau(),
         t = now();
     const before = c.vis.length;

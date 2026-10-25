@@ -22,7 +22,7 @@ export const TOURISM = {
     stay: 8 * 3600 * 1000,
     queue: 2, // + une place par étoile
     bonus: 0.12, // par étoile, sur le prix de la bouteille
-    base: 1.25,
+    base: 1.5,
     pairBonus: 0.5, // un bon accord paie 50 % de plus
     wines: [
         // id, étoiles demandées
@@ -54,3 +54,17 @@ export const CONTEST = {
         { id: 'gold', name: 'Médaille d’or', rubans: 4, mult: 1.1, prize: 0.15 },
     ],
 };
+
+// l'état du château dans la sauvegarde (state.chateau). rep : points de réputation, gardés d'une ferme à l'autre
+export const newChateau = () => ({
+    rep: 0, // points de réputation (gardés d'une ferme à l'autre)
+    classes: [0, 0, 0, 0, 0], // lots sortis de la cave pour chaque classement
+    medals: [0, 0, 0, 0],
+    primeur: { won: 0, lost: 0, bonus: 0, refunded: 0 },
+    vis: [], // les visiteurs de la boutique
+    nextVisit: 0,
+    uid: 0,
+    served: 0,
+    pairs: 0,
+    contest: { month: '', medal: 0 },
+});

@@ -473,3 +473,36 @@
     margin-left: 6px;
     vertical-align: middle;
 }
+
+/* 1.37 : le château de Margaux */
+.chateau-card .stars-row {
+    display: flex;
+    gap: 2px;
+}
+.chateau-card .ico.sm,
+.cs-cuvee .ico.sm {
+    width: 20px;
+    height: 20px;
+}
+.chateau-card .ico.dim {
+    opacity: 0.25;
+    filter: grayscale(1);
+}
+.chateau-card .chip {
+    margin: 2px 2px 2px 0;
+}
+.chateau-card .list {
+    margin-top: 6px;
+}
+.guest-row .card-sub {
+    font-size: 0.85em;
+}
+.cs-cuvee {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+    font-size: 0.85em;
+    color: #8a5a00;
+    padding: 2px 0;
+}

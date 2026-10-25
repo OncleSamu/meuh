@@ -47,6 +47,21 @@ export const TIPS = {
         title: 'Un vin, un millésime',
         text: 'Chaque vin garde l’année de sa mise en cave. Une année froide vaut moins ; une grande année, ou l’année du siècle, vieillit mieux et vaut bien plus. Touchez la bouteille pour la voir en grand et nommer votre cuvée.',
     },
+    chateau: {
+        icon: ['ui', 'star'],
+        title: 'Le château de Margaux',
+        text: 'Au-delà du domaine, Margaux rouvre son château avec l’œnologue Octave (onglet Village, carte « Le château »). Quand le chai est rouvert, mettez un vin ou un champagne « en cuvée » à la cave : à sa sortie, Octave le classe (cru, grand cru, premier grand cru, cru d’exception) et sa valeur monte.',
+    },
+    primeur: {
+        icon: ['ui', 'coin'],
+        title: 'La vente en primeur',
+        text: 'Avec la salle de dégustation, vous pouvez vendre un lot de la cave avant qu’il soit prêt : on vous paie une part de sa valeur promise tout de suite. Promesse tenue, l’acheteur ajoute un bonus ; manquée, vous rendez ce qui dépasse. Le lot ne quitte jamais la cave.',
+    },
+    visitors: {
+        icon: ['item', 'whiteWine'],
+        title: 'Des visiteurs au château',
+        text: 'La boutique du château accueille des visiteurs qui achètent vos bouteilles (jamais celles du coffre-fort). Offrez le plat qui va avec le vin : l’accord paie 50 % de plus. Plus le château a d’étoiles, plus il en vient.',
+    },
     abbey: {
         icon: ['ui', 'beer'],
         title: 'Une abbaye et sa brasserie',

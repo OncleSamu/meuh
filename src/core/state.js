@@ -3,6 +3,7 @@
 import { ITEMS } from '../data/items.js';
 import { GRID } from '../data/farm.js';
 import { now } from './clock.js';
+import { newChateau } from '../data/chateau.js';
 
 export const SAVE_KEY = 'meuhSave';
 export const BACKUP_KEY = SAVE_KEY + '_secours';
@@ -165,6 +166,7 @@ export function newState() {
         trans: { returnAt: 0 },
         fseason: null,
         farmTheme: 'none',
+        chateau: newChateau(),
         cave: { slots: [], shelves: 0, gear: {}, temp: 50, hum: 50, climAt: 0, reserve: [], cote: 0, auction: null, lastSale: null, uid: 0 },
         vault: { lvl: 0, slots: [] },
         holiday: null,
