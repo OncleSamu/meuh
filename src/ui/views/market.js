@@ -51,6 +51,13 @@ const shopCard = (icon, title, sub, side, locked, req) =>
         locked,
     });
 
+// 1.37.1 : le stock de graines ou de pousses, avec sa revente (40 % du prix)
+const stockChip = id => {
+    const n = state.seeds[id] || 0;
+    if (!n) return '';
+    return `<button class="chip meta stock sell-seed" data-act="sellSeeds" data-id="${id}" title="Revendre le stock">${n} en stock · revendre ${fmt(G.seedBackPrice(id) * n)}${COIN()}</button>`;
+};
+
 // ---------------- catégories du magasin ----------------
 function seeds() {
     const sm = G.speedMult();
@@ -73,28 +80,20 @@ function seeds() {
                           meta(['ui', 'coin'], `${G.sellPrice(i.id)} la récolte`),
                           season,
                           soil ? meta(['ui', SOILS[soil].icon], SOILS[soil].name.toLowerCase()) : '',
-                          state.seeds[i.id] ? meta(null, `${state.seeds[i.id]} en stock`, 'stock') : '',
+                          stockChip(i.id),
                           i.ghOnly ? meta(['ui', 'greenhouse'], 'serre seulement') : '',
                       ].join('')
                     : [
                           meta(['ui', 'clock'], `adulte en ${formatDuration(i.time / sm)}, puis 1 fruit / ${formatDuration(i.time / sm / 2)}`),
                           meta(['ui', 'coin'], `${G.sellPrice(i.id)} le fruit`),
                           meta(['item', 'apple'], 'se plante au verger'),
-                          state.seeds[i.id] ? meta(null, `${state.seeds[i.id]} en stock`, 'stock') : '',
+                          stockChip(i.id),
                       ].join('');
             const btns =
                 i.type === 'crop'
                     ? buyBtn('seed', i.id, 1, i.cost, locked) + buyBtn('seed', i.id, 10, i.cost, locked)
                     : buyBtn('seed', i.id, 1, i.cost, locked);
-            const have = state.seeds[i.id] || 0;
-            const back = have
-                ? btn(`Vendre${have > 1 ? ` ×${have}` : ''} · ${fmt(G.seedBackPrice(i.id) * have)}${COIN()}`, {
-                      act: 'sellSeeds',
-                      data: { id: i.id },
-                      size: 'sm',
-                  })
-                : '';
-            return shopCard(art('seed', i.id), i.seedName, `<span class="metas">${sub}</span>`, btns + back, locked, !lvOk(i) ? i.reqLvl : G.storyLockText(i));
+            return shopCard(art('seed', i.id), i.seedName, `<span class="metas">${sub}</span>`, btns, locked, !lvOk(i) ? i.reqLvl : G.storyLockText(i));
         })
         .join('');
 }

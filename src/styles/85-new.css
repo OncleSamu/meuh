@@ -588,6 +588,16 @@
 .card.shop .metas .chip {
     font-size: 0.74rem;
     padding: 1px 7px 1px 3px;
+    white-space: normal;
+    max-width: 100%;
+}
+.card.shop .metas .sell-seed {
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--ink);
+    cursor: pointer;
+    white-space: nowrap;
 }
 .bq-head {
     display: flex;

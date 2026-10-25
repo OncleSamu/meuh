@@ -506,3 +506,16 @@
     color: #8a5a00;
     padding: 2px 0;
 }
+.guest-row {
+    flex-wrap: wrap;
+}
+.guest-row .card-main {
+    flex: 1 1 170px;
+}
+.guest-row .card-side.col {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-left: auto;
+}

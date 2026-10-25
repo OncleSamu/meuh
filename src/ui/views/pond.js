@@ -45,7 +45,7 @@ function contestResult() {
     return `<div class="card pond-banner contest">${ico(['ui', c.rank === 1 ? 'medalG' : c.rank === 2 ? 'medalS' : c.rank === 3 ? 'medalB' : 'trophy'], 'ico big')}<div class="card-main">
         <div class="card-title">Concours de pêche : ${c.rank === 1 ? 'vous gagnez !' : `vous êtes ${c.rank}e`}</div>
         <div class="card-sub">${cap(G.heaviest(c.id))} du week-end.</div>
-        <ol class="podium-list">${list.map(x => `<li class="${x.me ? 'me' : ''}">${x.name} <b>${G.kgText(x.w)}</b></li>`).join('')}</ol>
+        <ol class="podium-list">${list.map((x, k) => `<li class="${x.me ? 'me' : ''}"><i>${k + 1}.</i><span>${x.name}</span><b>${G.kgText(x.w)}</b></li>`).join('')}</ol>
         <div class="card-sub">${pz.coins ? coins(pz.coins) : ''}${pz.rubans ? ` · ${pz.rubans} ruban${pz.rubans > 1 ? 's' : ''}` : ''} · ${pz.xp} XP</div></div>
         ${btn('Récupérer', { act: 'pondContest', kind: 'gold', size: 'sm' })}</div>`;
 }
@@ -141,7 +141,7 @@ function contestCard() {
     return `<div class="card contest-card on">${ico(['item', c.id], 'ico big')}<div class="card-main">
         <div class="card-title">Concours : ${G.heaviest(c.id)}</div>
         <div class="card-sub">Fin du concours dans ${timer(G.weekendEnd())}. Votre meilleure prise compte.</div>
-        <ol class="podium-list">${list.map(x => `<li class="${x.me ? 'me' : ''}">${x.name} <b>${x.w ? G.kgText(x.w) : '—'}</b></li>`).join('')}</ol></div>
+        <ol class="podium-list">${list.map((x, k) => `<li class="${x.me ? 'me' : ''}"><i>${k + 1}.</i><span>${x.name}</span><b>${x.w ? G.kgText(x.w) : '—'}</b></li>`).join('')}</ol></div>
         ${btn('Y aller', { act: 'pondGo', data: { id: c.id }, kind: 'blue', size: 'sm' })}</div>`;
 }
 

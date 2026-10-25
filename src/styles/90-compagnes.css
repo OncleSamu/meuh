@@ -70,6 +70,18 @@
 .cp-mamie {
     border-top: 2px dashed rgba(58, 38, 24, 0.25);
     padding-top: 8px;
+    flex-wrap: wrap;
+}
+.cp-mamie:first-child {
+    border-top: 0;
+    padding-top: 0;
+}
+.cp-mamie .card-main {
+    flex: 1 1 190px;
+}
+.cp-mamie > .btn,
+.cp-mamie > .chip {
+    margin-left: auto;
 }
 .cp-prog {
     display: flex;
