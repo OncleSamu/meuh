@@ -285,3 +285,13 @@
 .pond-card .pond {
     height: 118px;
 }
+/* le concours du week-end : le bouton passe sous le classement quand la place manque */
+.contest-card {
+    flex-wrap: wrap;
+}
+.contest-card .card-main {
+    flex: 1 1 190px;
+}
+.contest-card > .btn {
+    margin-left: auto;
+}

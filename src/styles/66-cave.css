@@ -519,3 +519,10 @@
     gap: 6px;
     margin-left: auto;
 }
+.guest-row .card-side.col {
+    width: 100%;
+}
+.guest-row .card-side.col .btn {
+    flex: 1 1 auto;
+    min-width: 0;
+}

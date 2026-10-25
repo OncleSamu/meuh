@@ -641,3 +641,18 @@
     min-height: 96px;
     background: rgba(251, 236, 201, 0.92);
 }
+/* téléphones étroits : les boutons d'achat passent sous la carte du magasin */
+@media (max-width: 360px) {
+    .card.shop {
+        flex-wrap: wrap;
+    }
+    .card.shop .card-main {
+        flex: 1 1 60%;
+    }
+    .card.shop .card-side {
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
