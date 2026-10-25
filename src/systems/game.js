@@ -307,7 +307,8 @@ export function offlineProgress() {
         if (hand.zone.has(gi)) return;
         if (plot.itemId && !plot.isReady && plot.isWatered && !plot.pest) {
             const timeReq = ITEMS[plot.itemId].time / sm;
-            plot.growProgress += elapsed;
+            // 1.37.2 : même vitesse qu'en jeu (saison, sol, décorations, maîtrise, variété, compagnes)
+            plot.growProgress += elapsed * plotRate(plot, gi);
             if (plot.growProgress >= timeReq) {
                 plot.isReady = true;
                 plot.growProgress = timeReq;

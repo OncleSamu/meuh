@@ -115,16 +115,17 @@ function start() {
             gap = Math.floor((t - lastRun) / 1000);
         if (t < lastRun) lastRun = t; // l'horloge du téléphone a reculé
         if (gap < 1) return;
-        if (gap >= 3) {
+        if (gap <= 300) {
+            // quelques secondes ou minutes manquées : on les rejoue une par une, comme si l'écran était resté allumé
+            lastRun += gap * 1000; // le reste de la seconde se reporte
+            for (let k = 0; k < gap; k++) G.gameTick();
+        } else {
+            // plus long : le calcul d'absence (comme à l'ouverture du jeu)
             lastRun = t;
             state.lastSaved = t - gap * 1000;
             const back = G.offlineProgress();
             if (back && back.lines.length && back.elapsed >= 300) pushMoment('offline', back);
-            else if (!back) for (let k = 0; k < gap; k++) G.gameTick();
             state.lastSaved = t;
-        } else {
-            lastRun += gap * 1000; // le reste de la seconde se reporte
-            for (let k = 0; k < gap; k++) G.gameTick();
         }
         updateScene();
         refresh();
