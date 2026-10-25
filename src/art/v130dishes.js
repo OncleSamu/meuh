@@ -1,5 +1,5 @@
 // 1.30 : les plats, conserves, farines et ouvrages des nouvelles cultures (64 dessins) et la marmite.
-import { C, E, F, FC, FE, L, P, R, SHADOW, badge, bolt, bottle, items, machines, sack, soap, sub, tart } from './kit.js';
+import { C, E, F, FC, FE, L, P, R, SHADOW, badge, bolt, bottle, items, machines, leaf, sack, soap, sub, tart } from './kit.js';
 import { bowl, coupe, cup, jar, juiceB, oil, plate, scoop, steamF, tray } from './items2.js';
 
 const dots = (list, r = 2.4) => list.map(([x, y, c]) => C(x, y, r, c, 1.4)).join('');
@@ -33,11 +33,6 @@ const D = {
             ],
             2,
         ),
-    favaGoatSalad: () =>
-        onPlate([
-            ['favaBean', 6, 12, 30],
-            ['goatCheese', 28, 16, 26],
-        ]),
     favaFlour: () => sack('#e8e4b8', 'favaBean'),
     favaBread: withBadge('bread', 'favaBean'),
     canFavaBeans: () => pot('#a8cc6a', '#8a8a90', 'favaBean'),
@@ -63,8 +58,6 @@ const D = {
     // ---- le brocoli
     broccoliSoup: () => bowl('#9fcf6a') + steamF + sub('broccoli', 22, 12, 20),
     broccoliQuiche: withBadge('spinachQuiche', 'broccoli'),
-    broccoliPasta: () => bowl('#f2d98a') + sub('broccoli', 10, 14, 24) + sub('broccoli', 30, 14, 24),
-    // ---- le chou-fleur
     cauliflowerGratin: () => tray('#e8c870') + sub('cauliflower', 16, 14, 32),
     piccalilli: () => pot('#f0c838', '#2f6a8a', 'cauliflower'),
     cauliflowerPie: withBadge('pie', 'cauliflower'),
@@ -72,16 +65,6 @@ const D = {
     roastedChicory: () => pot('#6a4a2e', '#a8693a', 'chicory'),
     chicoryMilk: () => cup('#d8b890') + sub('chicory', 40, 2, 20),
     chicoryCake: withBadge('walnutCake', 'chicory'),
-    frisee: () =>
-        onPlate(
-            [
-                ['chicory', 6, 10, 34],
-                ['egg', 34, 20, 20],
-            ],
-            FC(20, 40, 2, '#d8896a') + FC(30, 42, 2, '#d8896a') + FC(40, 41, 2, '#d8896a'),
-        ),
-    // ---- l'endive
-    endiveHam: () => tray('#f6e8b0') + sub('endive', 6, 12, 28) + sub('endive', 30, 12, 28) + sub('ham', 18, 20, 20),
     endiveTart: withBadge('tatin', 'endive'),
     endiveSalad: () =>
         onPlate([
@@ -93,15 +76,6 @@ const D = {
     oatFlakes: () => sack('#efe0b8', 'oat'),
     oatFlour: () => sack('#d8c8a0', 'oat'),
     porridge: () => bowl('#e8d8b0') + steamF + FC(32, 31, 3.4, '#e8a548') + FC(26, 32, 1.4, '#c9a96e') + FC(38, 32, 1.4, '#c9a96e'),
-    oatCookies: () =>
-        plate(46) +
-        [
-            [22, 40],
-            [34, 38],
-            [28, 46],
-        ]
-            .map(([x, y]) => C(x, y, 7, '#c89a58', 1.8) + FC(x - 2, y - 1, 1, '#7a5a2a') + FC(x + 2, y + 2, 1, '#7a5a2a'))
-            .join(''),
     oatBread: withBadge('bread', 'oat'),
     oatGalette: () => plate(46) + P('M12 38 L52 38 L48 50 L16 50Z', '#d8b068', 2) + L('M16 42 L48 42', 1.2, '#b08a48') + sub('oat', 22, 14, 22),
     // ---- le pois chiche
@@ -272,6 +246,158 @@ const D = {
         R(50, 20, 8, 8, 2, '#c0c4c8', 1.8) +
         C(10, 22, 3.4, '#c0c4c8', 1.6),
 };
+
+// une rondelle de chèvre frais
+const chevre = (x, y, r = 5.4) =>
+    E(x, y, r, r * 0.62, '#fffaf0', 0, 1.8) + FE(x - r * 0.3, y - r * 0.15, r * 0.35, r * 0.18, '#fff', 0.8) + FC(x + r * 0.25, y + r * 0.05, 0.7, '#d8cfae');
+// des biscuits à l'avoine : même forme que les cookies du jeu, des flocons clairs à la place des pépites
+const oatCookie = (x, y, r, flat) => {
+    const flakes = [
+        [-0.45, -0.25],
+        [0.2, -0.45],
+        [0.45, 0.15],
+        [-0.15, 0.35],
+        [-0.05, -0.02],
+    ];
+    if (flat)
+        return (
+            E(x, y + r * 0.24, r, r * 0.42, '#a8702f', 0, 2.2) +
+            E(x, y, r, r * 0.4, '#d9a050', 0, 2.2) +
+            flakes.map(([a, b], k) => E(x + a * r, y + b * r * 0.4, 2.6, 1.3, '#f2dca0', k * 30, 0.8)).join('') +
+            FC(x - r * 0.5, y - r * 0.12, r * 0.08, '#fff', 0.5)
+        );
+    return (
+        C(x, y, r, '#d9a050', 2.4) +
+        L(`M${x - r * 0.8} ${y + r * 0.45} Q${x} ${y + r * 1.05} ${x + r * 0.8} ${y + r * 0.45}`, 1.4, '#a8702f') +
+        flakes.map(([a, b], k) => E(x + a * r, y + b * r, 2.8, 1.5, '#f2dca0', k * 35, 0.9)).join('') +
+        L(`M${x - r * 0.72} ${y - r * 0.15} Q${x - r * 0.58} ${y - r * 0.62} ${x - r * 0.18} ${y - r * 0.76}`, 1.6, 'rgba(255,255,255,.7)')
+    );
+};
+// une feuille de frisée : un petit bouquet frisé
+const curl = (x, y, c) =>
+    C(x, y, 4.4, c, 1.4) + FC(x - 1.4, y - 1.2, 1.6, '#c8e07a', 0.9) + L(`M${x - 3} ${y + 1} Q${x} ${y - 3} ${x + 3} ${y + 1}`, 1, 'rgba(255,255,255,.4)');
+// un lardon
+const lardon = (x, y, r = 0) =>
+    `<g transform="rotate(${r} ${x} ${y})">${R(x - 4, y - 2, 8, 4, 1.4, '#d8896a', 1.2)}${L(`M${x - 2} ${y} L${x + 2} ${y}`, 1, '#f6c8b0')}</g>`;
+// un rouleau d'endive dans sa tranche de jambon
+const endiveRoll = (x, y, rot = 0) =>
+    `<g transform="rotate(${rot} ${x} ${y})">` +
+    E(x - 10, y, 4, 4.4, '#f6f0c8', 0, 1.6) +
+    FC(x - 11, y - 1, 1.2, '#e4e8a0') +
+    R(x - 8, y - 5, 17, 10, 4.4, '#e88a8a', 1.8) +
+    L(`M${x - 4} ${y - 5} L${x - 4} ${y + 5} M${x + 3} ${y - 5} L${x + 3} ${y + 5}`, 1.2, '#f6c8c8') +
+    FE(x, y - 2.6, 6, 1.2, '#fff', 0.45) +
+    `</g>`;
+
+const D2 = {
+    // la salade de fèves : un grand bol de feuilles, de fèves vertes et de chèvre en rondelles
+    favaGoatSalad: () =>
+        bowl('#bfe08a', 31) +
+        [
+            [18, 26, -30],
+            [28, 22, 10],
+            [40, 23, -10],
+            [47, 27, 30],
+            [34, 28, 0],
+        ]
+            .map(([x, y, r]) => leaf(x, y + 6, 11, r - 90, '#6cb04a', 0.5))
+            .join('') +
+        [
+            [20, 27],
+            [26, 24],
+            [31, 27],
+            [37, 24],
+            [43, 27],
+            [24, 29],
+            [34, 22],
+            [40, 29],
+        ]
+            .map(([x, y]) => E(x, y, 3.2, 2.3, '#9bd05a', 20, 1.4) + FC(x - 0.8, y - 0.6, 0.7, '#d8f0a0'))
+            .join('') +
+        chevre(24, 25) +
+        chevre(38, 26) +
+        chevre(31, 21, 4.6) +
+        L('M16 29 Q32 33 48 29', 1.2, '#e8c048'),
+    // les pâtes : un nid de tagliatelles crémeuses sur l'assiette, couronné de fleurettes
+    broccoliPasta: () =>
+        plate(46) +
+        E(32, 42, 21, 8, '#f2d98a', 0, 1.8) +
+        ['M13 42 Q21 35 29 42 Q37 49 51 41', 'M15 46 Q25 40 33 46 Q42 50 49 45', 'M17 38 Q25 33 33 38 Q41 43 47 37', 'M20 42 Q28 38 36 43']
+            .map(d => L(d, 2, '#c9a548'))
+            .join('') +
+        [
+            [18, 42],
+            [27, 46],
+            [39, 46],
+            [46, 41],
+        ]
+            .map(([x, y]) => FE(x, y, 4, 1.4, '#fff6dc', 0.75))
+            .join('') +
+        sub('broccoli', 14, 27, 20) +
+        sub('broccoli', 36, 28, 20) +
+        sub('broccoli', 25, 23, 22) +
+        dots(
+            [
+                [22, 45, '#5fa040'],
+                [44, 44, '#5fa040'],
+            ],
+            1.4,
+        ),
+    // la frisée : un nid de salade frisée sur l'assiette, lardons dorés, œuf poché
+    frisee: () =>
+        plate(46) +
+        [
+            [16, 44],
+            [24, 40],
+            [32, 38],
+            [40, 40],
+            [48, 44],
+            [20, 47],
+            [30, 46],
+            [41, 47],
+            [26, 43],
+            [37, 43],
+        ]
+            .map(([x, y], k) => curl(x, y, k % 2 ? '#8fc040' : '#6cb04a'))
+            .join('') +
+        lardon(20, 41, -20) +
+        lardon(40, 44, 25) +
+        lardon(30, 47, 5) +
+        lardon(46, 41, -10) +
+        E(31, 35, 9, 5.4, '#fff', 0, 1.6) +
+        FC(31, 34, 3.6, '#ffc83a') +
+        FC(30, 33, 1, '#fff', 0.8),
+    // les endives : un plat à gratin de quatre rouleaux de jambon, nappés de fromage fondu
+    endiveHam: () =>
+        SHADOW(32, 58, 28, 3) +
+        R(4, 30, 56, 26, 8, '#fbf7ee') +
+        R(8, 33, 48, 20, 6, '#e8b848', 1.6) +
+        endiveRoll(24, 38, -6) +
+        endiveRoll(40, 38, 6) +
+        endiveRoll(24, 48, 4) +
+        endiveRoll(40, 48, -4) +
+        [
+            [16, 44],
+            [32, 41],
+            [48, 44],
+            [32, 51],
+            [12, 36],
+        ]
+            .map(([x, y]) => FE(x, y, 4.6, 2, '#ffe9a0', 0.9))
+            .join('') +
+        FE(15, 36, 4, 1.2, '#fff', 0.5) +
+        L('M20 24 Q16 20 20 15 M32 24 Q28 19 32 13 M44 24 Q40 20 44 15', 1.8, 'rgba(255,255,255,.95)'),
+    // les cookies à l'avoine : comme ceux du jeu, des flocons clairs dessus
+    oatCookies: () =>
+        SHADOW(32, 58, 24, 3) +
+        oatCookie(32, 50, 19, true) +
+        oatCookie(31, 43, 17, true) +
+        oatCookie(36, 28, 14, false) +
+        FC(14, 56, 1.2, '#c78a42') +
+        FC(50, 57, 1, '#c78a42') +
+        FC(47, 54, 0.8, '#c78a42'),
+};
+Object.assign(D, D2);
 
 // la marmite : un gros faitout en fonte sur son foyer, la vapeur qui monte
 machines.marmite = () =>
