@@ -625,6 +625,7 @@ for (let k = 0; k < total; k++) {
     G.gameTick();
     if (t % 5 === 0) step();
     if (!levels[state.level]) levels[state.level] = t;
+    if (process.argv.includes('--progress') && t % 3600 === 0) process.stderr.write(`${t / 3600} h : niveau ${state.level}\n`);
     if (contestLog && t % 3600 === 0) {
         const p = contestPts();
         contestLog.push([state.level, Math.round(p - cp0), G.charmScore()]);
@@ -667,7 +668,8 @@ if (saveAt > 0) {
 if (process.argv.includes('--json')) console.log(JSON.stringify(out));
 else {
     console.log('niveau atteint :', out.level, '· pièces :', out.money);
-    for (const [l, sec] of Object.entries(levels)) if (+l % 5 === 0 || +l === out.level) console.log(`  niveau ${String(l).padStart(2)} à ${fmtH(sec)}`);
+    for (const [l, sec] of Object.entries(levels))
+        if (+l % 5 === 0 || +l === out.level || process.argv.includes('--all')) console.log(`  niveau ${String(l).padStart(2)} à ${fmtH(sec)}`);
     const tot = Object.values(xpBy).reduce((a, b) => a + b, 0) || 1;
     console.log(
         'expérience :',

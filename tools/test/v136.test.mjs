@@ -64,11 +64,14 @@ test('1.36 : un rythme à peu près égal (recettes, plantes, animaux, machines)
     assert.equal(new Set(mach).size, mach.length, 'une machine par niveau');
 });
 
-test('1.36 : les niveaux 1 à 49 de l’expérience ne changent pas, 50 à 59 prolongent la courbe', () => {
-    for (let l = 1; l < 50; l++) assert.equal(G.getXpReq(l), G.getXpReq50(l));
-    for (let l = 50; l < 60; l++) assert.ok(G.getXpReq(l) > G.getXpReq(l - 1), `niveau ${l}`);
-    state.level = 50;
-    assert.ok(Math.abs(scaleLvl() - 40) < 1e-9, 'les gains du niveau 50 sont ceux d’avant');
+test('1.36 : la courbe d’expérience s’étire sur 60 niveaux, les gains gardent l’échelle d’avant', () => {
+    for (let l = 2; l < 60; l++) assert.ok(G.getXpReq(l) >= G.getXpReq(l - 1), `niveau ${l}`);
+    const total = G.xpToReach(60);
+    assert.ok(total > G.xpToReach(50, G.getXpReq50) && total < G.xpToReach(50, G.getXpReq50) * 1.4, `total ${total}`);
+    state.level = 60;
+    assert.ok(Math.abs(scaleLvl() - 40) < 1e-9, 'le niveau 60 vaut l’ancien niveau 50');
+    state.level = 1;
+    assert.equal(scaleLvl(), 1);
 });
 
 const asOld = (level, extra = {}) => {
@@ -77,30 +80,28 @@ const asOld = (level, extra = {}) => {
     G.normalizeState();
 };
 
-test('1.36 : une partie du niveau 20 ou 44 garde ce qu’elle avait déjà ouvert', () => {
+test('1.36 : une partie des niveaux 20 à 46 garde son expérience totale et tout ce qu’elle avait ouvert', () => {
     for (const lv of [20, 30, 44, 46]) {
-        asOld(lv);
-        assert.equal(state.level, lv, 'le niveau ne bouge pas');
+        asOld(lv, { xp: 100 });
+        const was = G.xpToReach(lv, G.getXpReq50) + 100;
         assert.ok(state.lv136);
-        for (const [o, key] of [
-            [ITEMS, 'reqLvl'],
-            [ANIMALS, 'reqLvl'],
-            [MACHINES, 'reqLvl'],
-        ])
+        assert.ok(state.level >= lv && state.level <= 60, `niveau ${state.level}`);
+        assert.ok(Math.abs(G.xpToReach(state.level) + state.xp - was) <= 10, 'expérience totale gardée');
+        for (const o of [ITEMS, ANIMALS, MACHINES])
             for (const d of Object.values(o))
-                if (d.lv135 !== undefined && d.lv135 <= lv) assert.ok(d[key] <= lv || state.lvKeep[d.id], `${d.id} (niveau ${lv}) refermé`);
+                if (d.lv135 !== undefined && d.lv135 <= lv) assert.ok(d.reqLvl <= state.level || state.lvKeep[d.id], `${d.id} (niveau ${lv}) refermé`);
         for (const r of Object.values(RECIPES))
-            if (r.lv135 !== undefined && r.lv135 <= lv) assert.ok(r.lvl <= lv || state.lvKeep[r.id], `${r.id} (niveau ${lv}) refermée`);
+            if (r.lv135 !== undefined && r.lv135 <= lv) assert.ok(r.lvl <= state.level || state.lvKeep[r.id], `${r.id} (niveau ${lv}) refermée`);
     }
 });
 
-test('1.36 : une partie du niveau 50 passe au suivant, les étoiles redeviennent de l’expérience', () => {
-    asOld(50, { xp: 1000, renown: 0 });
-    assert.equal(state.level, 50);
-    assert.equal(state.xp, 1000);
-    asOld(50, { xp: 10, renown: 3 });
+test('1.36 : une partie du niveau 50 monte, les étoiles redeviennent de l’expérience', () => {
+    asOld(50, { xp: 10, renown: 0 });
     assert.ok(state.level > 50 && state.level <= 60, 'niveau ' + state.level);
     assert.equal(state.renown, 0);
+    asOld(50, { xp: 10, renown: 3 });
+    const a = state.level;
+    assert.ok(a > 50);
     asOld(50, { xp: 0, renown: 400 });
     assert.equal(state.level, 60);
     assert.ok(state.renown > 0 && state.renown < 400);

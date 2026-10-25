@@ -183,7 +183,8 @@ export const setState = s => (state = s);
 // 1.4 : le jeu passe de 40 à 50 niveaux ; les gains et les tailles de commandes gardent l'échelle des 40 niveaux
 // 1.4 : ce qu'une ancienne partie avait déjà débloqué reste ouvert (state.lvKeep, posé à la conversion)
 export const lvOk = (d, lvl = d.reqLvl) => state.level >= (lvl || 1) || !!(state.lvKeep && state.lvKeep[d.id]);
-export const scaleLvl = () => 1 + ((state.level - 1) * 39) / 49;
+// 1.36 : les gains gardent l'échelle des 50 niveaux : le niveau 60 vaut l'ancien niveau 50
+export const scaleLvl = () => 1 + ((state.level - 1) * 39) / 59;
 
 // champs remis à zéro à chaque chargement (états passagers)
 const TRANSIENT_KEYS = ['crow', 'egg'];

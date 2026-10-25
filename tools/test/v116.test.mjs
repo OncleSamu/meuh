@@ -16,7 +16,7 @@ test("l'expérience d'un chantier grandit avec le niveau du chapitre", () => {
     const first = G.projectXp(PROJECTS.station);
     const last = G.projectXp(Object.values(PROJECTS).find(p => p.ch === 12));
     assert.ok(first >= 300);
-    assert.ok(last > 5000, `chantier du dernier chapitre : ${last}`);
+    assert.ok(last > 4000, `chantier du dernier chapitre : ${last}`);
     for (const p of Object.values(PROJECTS)) assert.ok(G.projectXp(p) >= 150 + G.chapterNum(p.ch) * 150);
 });
 

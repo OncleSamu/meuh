@@ -75,9 +75,16 @@ export const getXpReq50 = lvl => {
     }
     return REQ50[lvl];
 };
-// 1.36 : 60 niveaux. Les niveaux 1 à 49 ne changent pas (le début de partie dure autant) ; les niveaux 50 à 59 prolongent la
-// même courbe, réglée (xpTail) avec le robot pour environ 5 heures de jeu de plus
-export const getXpReq = lvl => (lvl < 50 ? getXpReq50(lvl) : Math.round((getXpReq50(lvl) * BALANCE.xpTail) / 10) * 10);
+// 1.36 : 60 niveaux. La même forme de courbe, étirée sur 60 niveaux (×39/59) et réglée (xpK60) avec le robot :
+// environ 5 heures de jeu de plus qu'avec les 50 niveaux pour atteindre le maximum
+const REQ = [];
+export const getXpReq = lvl => {
+    if (REQ[lvl] === undefined) {
+        const cum = L => BALANCE.xpK60 * cumOld(1 + ((L - 1) * 39) / 59);
+        REQ[lvl] = Math.round((cum(lvl + 1) - cum(lvl)) / 10) * 10;
+    }
+    return REQ[lvl];
+};
 // expérience totale pour atteindre un niveau
 export const xpToReach = (L, req = getXpReq) => {
     let s = 0;
@@ -110,26 +117,24 @@ export function migrateLevels14() {
 export function migrateLevels60() {
     const OLD_MAX = 50;
     const before = Math.min(state.level, OLD_MAX);
-    // les niveaux d'avant ne changent pas ; au niveau maximum d'avant, les étoiles de renommée redeviennent de l'expérience
-    if (state.level >= OLD_MAX) {
-        let total = state.xp + (state.renown || 0) * RENOWN_XP;
-        state.level = OLD_MAX;
-        state.renown = 0;
-        while (state.level < MAX_LEVEL && total >= getXpReq(state.level)) {
-            total -= getXpReq(state.level);
-            state.level++;
-        }
-        if (state.level >= MAX_LEVEL) {
-            state.renown = Math.floor(total / RENOWN_XP);
-            total -= state.renown * RENOWN_XP;
-        }
-        state.xp = total;
+    const prevMax = state.stats.maxLevel || 1;
+    // au niveau maximum d'avant, les étoiles de renommée redeviennent de l'expérience
+    let total = xpToReach(before, getXpReq50) + state.xp + (state.level >= OLD_MAX ? (state.renown || 0) * RENOWN_XP : 0);
+    let L = 1;
+    while (L < MAX_LEVEL && xpToReach(L + 1) <= total) L++;
+    total -= xpToReach(L);
+    state.level = L;
+    state.renown = 0;
+    if (L >= MAX_LEVEL) {
+        state.renown = Math.floor(total / RENOWN_XP);
+        total -= state.renown * RENOWN_XP;
     }
+    state.xp = total;
     state.lvKeep = state.lvKeep || {};
     for (const o of [ITEMS, ANIMALS, MACHINES, DECOS, UPGRADES])
         for (const d of Object.values(o)) if (d.lv135 !== undefined && d.lv135 <= before && d.reqLvl > state.level) state.lvKeep[d.id] = true;
     for (const r of Object.values(RECIPES)) if (r.lv135 !== undefined && r.lv135 <= before && r.lvl > state.level) state.lvKeep[r.id] = true;
-    state.stats.maxLevel = Math.max(state.level, state.stats.maxLevel || 1);
+    state.stats.maxLevel = Math.max(state.level, prevMax >= OLD_MAX ? OLD_MAX : 1);
 }
 
 export function addXp(amount, at) {

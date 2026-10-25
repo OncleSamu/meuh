@@ -31,7 +31,7 @@ test('l’île se débloque par le bac, après l’abbaye (une seule histoire)',
     G.loadGame();
     setView({ started: true, tab: 'farm' });
     // l'ancien niveau 31 passe à l'échelle des 50 niveaux, sans rien perdre
-    assert.ok(state.level >= 37 && state.level <= 40, 'niveau converti : ' + state.level);
+    assert.ok(state.level >= 37 && state.level <= 60, 'niveau converti : ' + state.level);
     assert.ok(G.chapterOpen(6), 'le chapitre commencé reste ouvert');
     // 1.6 : l'abbaye vient entre le port et l'île
     assert.equal(G.chapterAfter(13), 18);
