@@ -8,7 +8,7 @@ import * as G from '../../systems/index.js';
 import { byId, blocks, esc, actions, QUIET } from '../dom.js';
 import { confirmTap } from '../confirm.js';
 import { ico, art } from '../icons.js';
-import { btn, hint, hearts, bar, timer, lines, segmented } from '../kit.js';
+import { btn, hearts, bar, timer, lines, segmented, tip15 } from '../kit.js';
 import { defineView, defineLive, ui, currentPath, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { STUD } from '../../data/haras.js';
@@ -267,7 +267,7 @@ function renderAnimals(el) {
         ['meadow', mode === 'stable' ? stableHtml(k) : meadowHtml(G.pastureLoad(k))],
         [
             'hint',
-            hint(
+            tip15(
                 mode === 'stable'
                     ? 'Touchez une bête pour ramasser sa production ou la nourrir. Restez appuyé pour ouvrir sa fiche : câlin, nom et pré.'
                     : 'Touchez une bête pour ramasser ou la nourrir (un sac = une production). Restez appuyé pour ouvrir sa fiche : câlin, nom et pré.',

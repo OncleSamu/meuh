@@ -8,8 +8,9 @@ import { SPOTS, SPOT_IDS, BAITS, WORMS, FLY_CRAFT, TRAPS, SIZES, SALMON_RUN, PON
 import * as G from '../../systems/index.js';
 import { byId, blocks, actions, run, $ } from '../dom.js';
 import { ico, art } from '../icons.js';
-import { btn, timer, hint, coins } from '../kit.js';
+import { btn, timer, coins, tip15 } from '../kit.js';
 import { defineSheet, closeSheet } from '../sheets.js';
+import { foldWrap } from '../fold.js';
 import { defineView, currentPath, viewEl, go } from '../app.js';
 
 const MEDAL = { small: 'medalB', nice: 'medalS', trophy: 'medalG' };
@@ -216,6 +217,47 @@ function netCard() {
     </div>`;
 }
 
+// 1.38 : les cartes de l'étang se replient ; elles se déplient quand il y a quelque chose à faire
+function foldMarcel() {
+    if (!G.marcelOpen()) return null;
+    const m = G.ensureMarcel();
+    return foldWrap(
+        'marcel',
+        ['villager', 'marcel'],
+        'Le défi de Marcel',
+        m.claimed ? 'Réussi, à demain' : `${m.got} / ${m.need}`,
+        marcelCard(),
+        m.done && !m.claimed,
+    );
+}
+function foldTraps() {
+    if (state.level < TRAPS.lvl) return null;
+    const ready = G.trapsReady(),
+        idle = state.pond.traps.filter(t => !t.start).length;
+    const sum = ready ? `${ready} pleine${ready > 1 ? 's' : ''} !` : idle ? `${idle} à poser` : `${state.pond.traps.length} en place`;
+    return foldWrap('traps', ['ui', 'trap'], 'Les nasses', sum, trapsCard(), ready > 0 || idle > 0);
+}
+function foldContest() {
+    const html = contestCard();
+    if (!html) return null;
+    const c = state.pond.contest;
+    const rk = c && c.best ? G.contestRank(c) : 0;
+    return foldWrap('fishContest', ['ui', 'trophy'], 'Concours de pêche', rk ? `Vous : ${rk}${rk === 1 ? 'er' : 'e'}` : 'Pas encore de prise', html);
+}
+function foldNet() {
+    const html = netCard();
+    if (!html) return null;
+    const n = state.net;
+    return foldWrap(
+        'net',
+        ['ui', 'net'],
+        'Pêche en mer',
+        !n.until ? 'Filet à poser' : G.netReady() ? 'Filet plein !' : 'Filet en mer',
+        html,
+        !n.until || G.netReady(),
+    );
+}
+
 function renderPond(el) {
     G.ensurePond();
     blocks(el, [
@@ -225,12 +267,12 @@ function renderPond(el) {
         ['spots', spotsRow()],
         ['bait', baitRow()],
         ['rod', rodCard()],
-        ['marcel', marcelCard()],
-        ['traps', trapsCard()],
-        ['contest', contestCard()],
-        ['gear', gearCard()],
-        ['net', netCard()],
-        ['hint', hint('L’étang : la canne pour les gros poissons et les records, les nasses pour les poissons de tous les jours.')],
+        ['marcel', foldMarcel()],
+        ['traps', foldTraps()],
+        ['contest', foldContest()],
+        ['gear', foldWrap('gear', ['ui', 'rod'], 'Le matériel', G.rodNow().name, gearCard())],
+        ['net', foldNet()],
+        ['hint', tip15('L’étang : la canne pour les gros poissons et les records, les nasses pour les poissons de tous les jours.')],
     ]);
     if (G.fishing.phase !== 'idle') fishLoop();
 }

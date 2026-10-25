@@ -6,6 +6,7 @@ import { ORCHARD_LOG } from '../../data/orchard.js';
 import * as G from '../../systems/index.js';
 import { actions } from '../dom.js';
 import { defineSheet } from '../sheets.js';
+import { foldWrap } from '../fold.js';
 import { ico, art } from '../icons.js';
 import { btn } from '../kit.js';
 
@@ -120,7 +121,26 @@ function basketCard() {
     return `<div class="card basket-card${G.basketResultReady() ? ' on' : ''}"><div class="nature-head">${ico(['ui', 'basket'], 'ico big')}<div class="card-main"><div class="card-title">Le concours du plus beau panier</div></div></div>${body}</div>`;
 }
 export function lifeCards() {
-    return bloomCard() + frostCard() + harvestCard() + feteCard() + vendCard() + basketCard();
+    // 1.38 : le concours du panier se replie (il se déplie quand le résultat est là)
+    const basket = basketCard();
+    const c = basket && state.orchard.contest;
+    return (
+        bloomCard() +
+        frostCard() +
+        harvestCard() +
+        feteCard() +
+        vendCard() +
+        (basket
+            ? foldWrap(
+                  'basket',
+                  ['ui', 'basket'],
+                  'Concours du plus beau panier',
+                  G.basketResultReady() ? 'Résultat à voir !' : c ? `Vous : ${c.score} pts` : 'Chaque week-end',
+                  basket,
+                  G.basketResultReady(),
+              )
+            : '')
+    );
 }
 
 // ---- le carnet ----

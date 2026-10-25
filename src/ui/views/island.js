@@ -9,7 +9,7 @@ import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, esc } from '../dom.js';
 import { genWrap } from '../genlook.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, hint, section } from '../kit.js';
+import { btn, bar, section, tip15 } from '../kit.js';
 import { defineView, defineLive, ui, go } from '../app.js';
 import { defineSheet, closeSheet } from '../sheets.js';
 import { burstAt } from '../fx.js';
@@ -99,7 +99,7 @@ function renderIsland(el) {
         ],
         [
             'hint',
-            hint(
+            tip15(
                 'Sur l’île, tout est de saison et les pluies tropicales arrosent pour vous. « Replanter » remet sur chaque parcelle vide sa dernière culture. Restez appuyé sur un arbre pour sa fiche.',
             ),
         ],

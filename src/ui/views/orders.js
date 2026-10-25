@@ -8,12 +8,12 @@ import { PLANT_TRAITS } from '../../data/genetics.js';
 import { blocks, actions, esc } from '../dom.js';
 import { ITEMS } from '../../data/items.js';
 import { ico, art, SPR } from '../icons.js';
-import { btn, bar, timer, hint } from '../kit.js';
+import { btn, bar, timer, tip15 } from '../kit.js';
 import { defineView } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { itemLine, rewardHtml } from './common.js';
 import { confirmTap } from '../confirm.js';
-import { foldCard, toggleFold } from '../fold.js';
+import { foldCard, foldWrap, toggleFold } from '../fold.js';
 import { defiCard } from './defis.js';
 import { rareCard, holidayCard, contractCard, farmSeasonCard, neighborsCard } from './village.js';
 
@@ -277,26 +277,69 @@ function delivery(kind) {
         </div></div>`;
 }
 
+// 1.38 : le train, l'avion-cargo, la montgolfière et le bateau dans une seule carte repliable.
+// Ce qui est là (à charger) se montre en entier, le reste en une ligne avec son compte à rebours.
+function defiFold() {
+    const html = defiCard();
+    const d = G.curDefi();
+    if (!html || !d || !G.defiOpen()) return html;
+    const n = G.stepsDone(d);
+    return foldWrap(
+        'defi',
+        ['ui', 'cupGold'],
+        'Grand défi',
+        d.awarded ? 'Médaille gagnée' : `${n} étape${n > 1 ? 's' : ''} sur 4 · ${formatDuration(G.defiLeft(d) / 1000)}`,
+        html,
+        G.defiReady() > 0,
+    );
+}
+function eventFold() {
+    const html = eventCard();
+    if (!G.eventActive()) return html;
+    const e = state.event,
+        done = e.goals.filter(x => x.prog >= x.target).length;
+    return foldWrap(
+        'event',
+        G.eventIcon(e.season),
+        EVENTS[e.season].name,
+        `${done} objectif${done > 1 ? 's' : ''} sur ${e.goals.length} · ${formatDuration(G.eventEndsIn())}`,
+        html,
+        G.eventReady() > 0,
+    );
+}
+
+function deliveriesCard() {
+    const parts = [
+        ['Train', train()],
+        ['Avion-cargo', cargoCard()],
+        ['Montgolfière', delivery('balloon')],
+        ['Bateau', delivery('boat')],
+    ].filter(([, h]) => h);
+    if (!parts.length) return null;
+    const away = h => /class="card (away|locked)/.test(h);
+    const here = parts.filter(([, h]) => !away(h));
+    const sum = here.length ? `${here.map(([n]) => n).join(' · ')} ${here.length > 1 ? 'attendent' : 'attend'}` : 'Rien à charger pour l’instant';
+    const body = [...here, ...parts.filter(([, h]) => away(h))].map(([, h]) => h).join('');
+    return foldCard('deliveries', ['ui', 'trainIcon'], 'Livraisons', sum, body, here.length > 0);
+}
+
 function renderOrders(el) {
     blocks(el, [
         ['agenda', agendaCard()],
-        ['defi', defiCard()],
-        ['event', eventCard()],
+        ['defi', defiFold()],
+        ['event', eventFold()],
         ['express', express()],
         ['chef', chefCard()],
         ['board', boardCard()],
-        ['train', train()],
-        ['cargo', cargoCard()],
+        ['deliveries', deliveriesCard()],
         ['armand', armandCard()],
-        ['balloon', delivery('balloon')],
-        ['boat', delivery('boat')],
         // 1.9 : venus du volet Village
         ['rare', rareCard()],
         ['holiday', holidayCard()],
         ['contract', contractCard()],
         ['fseason', farmSeasonCard()],
         ['neighbors', neighborsCard()],
-        ['hint', hint('Touchez une ligne rouge pour aller produire ce qui manque.')],
+        ['hint', tip15('Touchez une ligne rouge pour aller produire ce qui manque.')],
     ]);
 }
 defineView('village/orders', renderOrders);
@@ -308,7 +351,7 @@ export function setupOrders() {
         pin: (el, d) => G.togglePin(+d.i),
         express: el => G.deliverExpress(el),
         loadHold: (el, d) => G.loadHold(+d.i, el),
-        foldToggle: (el, d) => toggleFold(d.id),
+        foldToggle: (el, d) => toggleFold(d.id, d.ready === '1'),
         agendaToggle: () => {
             try {
                 localStorage.setItem('meuhAgenda', agendaOpen() ? '0' : '1');

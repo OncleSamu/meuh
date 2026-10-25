@@ -307,3 +307,23 @@
 .vtiers .pick-chip {
     white-space: nowrap;
 }
+/* 1.38 : une carte repliée dans une autre perd son cadre */
+.fold-card .fold-body > .card {
+    margin: 0;
+    padding: 4px 0 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+}
+.fold-card .fold-body > .card + .card {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px dashed rgba(58, 38, 24, 0.2);
+    border-radius: 0;
+}
+/* le titre de la carte repliée est déjà dans la ligne du haut */
+.fold-card.wrap1 .fold-body > .card > .card-head > .card-main > .card-title:first-child,
+.fold-card.wrap1 .fold-body > .card > .nature-head > .card-main > .card-title:first-child,
+.fold-card.wrap1 .fold-body > .card > .card-main > .card-title:first-child {
+    display: none;
+}

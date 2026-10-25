@@ -10,7 +10,7 @@ import { SEASONS } from '../../data/world.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc, QUIET } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
-import { btn, card, chip, hint, section, empty, toggle, pips, timer, hearts } from '../kit.js';
+import { btn, card, chip, section, empty, toggle, pips, timer, hearts, tip15 } from '../kit.js';
 import { defineView, ui } from '../app.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 import { pinBar } from './common.js';
@@ -389,7 +389,7 @@ function renderSell(el) {
         ['goods', goodsGrid()],
         [
             'hint',
-            hint(
+            tip15(
                 'Le grossiste achète tout de suite, mais bien moins cher que vos clients de l’étal. Graines, nourriture, matériaux et produits verrouillés ne sont jamais vendus.',
             ),
         ],

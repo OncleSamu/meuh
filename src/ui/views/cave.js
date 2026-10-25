@@ -16,6 +16,7 @@ import { ico, art, qStar } from '../icons.js';
 import { QUALITY } from '../../data/farm.js';
 import { btn, bar, timer, card, section, empty } from '../kit.js';
 import { defineView, defineLive } from '../app.js';
+import { foldWrap } from '../fold.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 import { askBuy } from '../sheets/askbuy.js';
 import { chateauCard, classTag, lotChateauTag, primeurTag, lotChateauActions, reserveChateauActions } from './chateau.js';
@@ -242,6 +243,22 @@ function climHtml() {
     return `<div class="clim-mini${ok ? ' ok' : ''}">${ico(['ui', 'hygro'])}<span>${ok ? 'Climat idéal' : 'Le climat revient dans la bonne zone'} · ${Math.round(c.temp)}° · ${Math.round(c.hum)} % d’humidité</span><small>réglé par l’hygromètre</small></div>`;
 }
 
+// 1.38 : les places libres tiennent sur une seule ligne au lieu d'une grande case chacune
+function freeRow(slots) {
+    const free = slots.map((l, i) => (l ? -1 : i)).filter(i => i >= 0);
+    if (!free.length) return '';
+    return `<button class="cave-slot empty free-row" data-act="open" data-sheet="cavePut" data-slot="${free[0]}"><b>+</b><span>Mettre en cave · ${free.length} place${free.length > 1 ? 's' : ''} libre${free.length > 1 ? 's' : ''}</span></button>`;
+}
+
+function chateauFold() {
+    const html = chateauCard();
+    if (!html) return null;
+    const c = G.ensureChateau();
+    const serve = G.shopOpen() ? c.vis.filter(v => G.haveWine(v)).length : 0;
+    const sum = `${G.repStars()} étoile${G.repStars() > 1 ? 's' : ''}${G.shopOpen() ? ` · ${c.vis.length} visiteur${c.vis.length > 1 ? 's' : ''}${serve ? `, ${serve} à servir` : ''}` : ''}`;
+    return foldWrap('chateau', ['ui', 'star'], 'Le château de Margaux', sum, html, serve > 0);
+}
+
 function renderCave(el) {
     if (!G.caveOpen()) return blocks(el, [['lock', empty('La cave s’ouvre au niveau 20.')]]);
     G.ensureCave();
@@ -256,11 +273,11 @@ function renderCave(el) {
             ${needCare ? btn(`Tout soigner (${needCare})`, { act: 'careAll', kind: 'gold', wide: true, icon: ['ui', 'sparkle'] }) : ''}
             ${climHtml()}</div>`,
         ],
-        ['chateau', chateauCard()],
+        ['chateau', chateauFold()],
         ['orders', ordersHtml()],
         [
             'slots',
-            `<div class="cave-grid">${c.slots.map(lotCard).join('')}${
+            `<div class="cave-grid">${c.slots.map((l, i) => (l ? lotCard(l, i) : '')).join('')}${freeRow(c.slots)}${
                 nextShelf !== undefined
                     ? `<button class="cave-slot locked" data-act="buyShelf"${state.money < nextShelf ? ' disabled' : ''}>${ico(['ui', 'shelf'])}<span>Étagère : +2 places${c.shelves % 2 ? ', lots plus grands' : ''}</span><b>${fmt(nextShelf)}${COIN()}</b></button>`
                     : ''

@@ -1,4 +1,5 @@
 // La boîte à composants : boutons, cartes, barres, puces, minuteries… toujours le même dessin partout.
+import { state } from '../core/state.js';
 import { fmt } from '../core/format.js';
 import { ico, art } from './icons.js';
 
@@ -46,6 +47,8 @@ export const section = (title, extra = '') => `<h3 class="section-title"><span>$
 
 export const empty = text => `<p class="empty">${text}</p>`;
 export const hint = text => `<p class="hint">${text}</p>`;
+// 1.38 : une astuce de bas de page, qui disparaît à partir du niveau 15 (tout est dans le Guide du fermier)
+export const tip15 = text => (state.level >= 15 ? '' : hint(text));
 export const dot = n => (n ? `<span class="dot">${n > 9 ? '9+' : n}</span>` : '');
 
 // coût en pièces et matériaux : parts = [{ icon, n, ok }]

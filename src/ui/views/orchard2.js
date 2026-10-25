@@ -6,6 +6,7 @@ import { GRAFTS, GRAFT_IDS, CARE, PICKER, MATURE } from '../../data/orchard.js';
 import * as G from '../../systems/index.js';
 import { actions, anchorEl } from '../dom.js';
 import { closeSheet } from '../sheets.js';
+import { foldWrap } from '../fold.js';
 import { ico } from '../icons.js';
 import { btn, lines } from '../kit.js';
 import { seasonLine, remLine } from './orchard3.js';
@@ -120,8 +121,26 @@ function pickerCard() {
     return `<div class="card picker-card"><div class="nature-head">${ico(['villager', 'picker'], 'ico big')}<div class="card-main"><div class="card-title">Le cueilleur</div><div class="card-sub">${sub}</div></div></div>
         ${nxt ? `<div class="worker-up"><span>${lvl ? `Niveau ${lvl + 1} : plus vite (${formatDuration(PICKER.every[lvl + 1] / 1000)})` : 'Embaucher le cueilleur'}</span>${btn(`<span class="cost">${costOf(nxt)}</span>`, { act: 'upgradePicker', kind: G.hasCost(nxt) ? 'green' : '', size: 'sm', title: lvl ? 'Améliorer' : 'Embaucher' })}</div>` : ''}</div>`;
 }
+// 1.38 : Odile, la pépinière et le cueilleur se replient sur une ligne
 export function orchardCards() {
-    return odileCard() + nurseryCard() + pickerCard();
+    const g = G.ensureOdile(),
+        lvl = G.pickerOpen() ? G.pickerLvl() : 0,
+        stock = GRAFT_IDS.reduce((a, id) => a + G.graftStock(id), 0);
+    return [
+        g &&
+            foldWrap(
+                'odile',
+                ['villager', 'odile'],
+                'Odile, l’arboricultrice',
+                g.claimed ? 'Défi réussi, à demain' : `${G.odileProgress(g)} / ${g.need}`,
+                odileCard(),
+                g.done && !g.claimed,
+            ),
+        G.nurseryOpen() && foldWrap('nursery', ['ui', 'nursery'], 'La pépinière', `${stock} greffon${stock > 1 ? 's' : ''} en stock`, nurseryCard()),
+        G.pickerOpen() && foldWrap('picker', ['villager', 'picker'], 'Le cueilleur', lvl ? `Niveau ${lvl}` : 'À embaucher', pickerCard()),
+    ]
+        .filter(Boolean)
+        .join('');
 }
 
 export function setupOrchard2() {

@@ -12,7 +12,7 @@ import * as G from '../../systems/index.js';
 import { byId, blocks, actions, run } from '../dom.js';
 import { ico, art, COIN } from '../icons.js';
 import { genWrap } from '../genlook.js';
-import { btn, toggle, hint, bar } from '../kit.js';
+import { btn, bar, tip15 } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
 import { reduceMotion } from '../fx.js';
 import { pinBar } from './common.js';
@@ -308,9 +308,7 @@ export function renderFarm(el) {
         ['gh', state.greenhouse.built ? GH_BOX : null],
         ['comp', compCard()],
         ['yard', farmyardHtml()],
-        ['replant', toggle('Replanter automatiquement après la récolte', state.settings.autoReplant, 'setting', { key: 'autoReplant' })],
-        ['seeder', state.upgrades.seeder ? toggle('Semoir : planter toute la rangée', state.settings.seeder !== false, 'setting', { key: 'seeder' }) : null],
-        ['hint', hint('Astuce : gardez le doigt appuyé et glissez sur les parcelles pour labourer, planter, arroser ou récolter d’un seul geste.')],
+        ['hint', tip15('Astuce : gardez le doigt appuyé et glissez sur les parcelles pour labourer, planter, arroser ou récolter d’un seul geste.')],
     ]);
     renderPlots();
     renderGreenhouse();

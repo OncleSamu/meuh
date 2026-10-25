@@ -20,7 +20,7 @@ export const TIPS = {
     companions: {
         icon: ['ui', 'cpCarnet'],
         title: 'Les cultures compagnes',
-        text: 'Certaines cultures s’entraident quand elles poussent côte à côte (une feuille verte entre deux parcelles), d’autres se gênent (une feuille fanée). Chaque association découverte entre dans le carnet du potager, sous le champ. Alternez vos rangées : le semoir et Théo suivent.',
+        text: 'Certaines cultures s’entraident quand elles poussent côte à côte (une feuille verte entre deux parcelles), d’autres se gênent (une feuille fanée). Chaque association découverte entre dans le carnet du potager (Menu › Carnets). Alternez vos rangées : le semoir et Théo suivent.',
     },
     show: {
         icon: ['ui', 'hCup2'],

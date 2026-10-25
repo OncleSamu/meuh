@@ -7,7 +7,7 @@ import { QUALITY } from '../../data/farm.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, byId } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
-import { btn, bar, hint, empty, timer, toggle } from '../kit.js';
+import { btn, bar, empty, timer, toggle, tip15 } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
 import { defineSheet } from '../sheets.js';
 import { pinBar } from './common.js';
@@ -35,6 +35,31 @@ function tile(m, i) {
     </div>`;
 }
 
+// 1.38 : un filtre en haut de l'atelier ; les machines prêtes passent devant, les machines oubliées depuis 7 jours derrière
+const WEEK = 7 * 864e5;
+const mState = m => (G.outCount(m) > 0 ? 'ready' : G.machineBusy(m) ? 'busy' : 'idle');
+const MFILTERS = [
+    ['all', 'Toutes'],
+    ['ready', 'Prêtes'],
+    ['busy', 'En marche'],
+    ['idle', 'À l’arrêt'],
+];
+function machineList() {
+    const f = ui.sel.mfilter || 'all',
+        rank = { ready: 0, busy: 1, idle: 2 },
+        t = now();
+    return state.machines
+        .map((m, i) => [m, i])
+        .filter(([m]) => f === 'all' || mState(m) === f)
+        .sort(([a, i], [b, j]) => rank[mState(a)] - rank[mState(b)] || (t - (a.used || 0) > WEEK) - (t - (b.used || 0) > WEEK) || i - j);
+}
+function machineFilter() {
+    if (state.machines.length < 6) return '';
+    const f = ui.sel.mfilter || 'all';
+    const n = k => (k === 'all' ? state.machines.length : state.machines.filter(m => mState(m) === k).length);
+    return `<div class="chips-row mfilter">${MFILTERS.map(([k, label]) => `<button class="pick-chip${f === k ? ' on' : ''}" data-act="mfilter" data-f="${k}">${label} · ${n(k)}</button>`).join('')}</div>`;
+}
+
 function renderWorkshop(el) {
     const any = state.machines.some(m => G.outCount(m) > 0);
     blocks(el, [
@@ -46,10 +71,12 @@ function renderWorkshop(el) {
         [
             'grid',
             state.machines.length
-                ? `<div class="mgrid">${state.machines.map(tile).join('')}</div>`
+                ? `${machineFilter()}<div class="mgrid">${machineList()
+                      .map(([m, i]) => tile(m, i))
+                      .join('')}</div>`
                 : empty('Aucune machine pour le moment. Le moulin s’achète au marché dès le niveau 3.'),
         ],
-        ['hint', hint('Touchez une machine pour choisir ses recettes. Chacune enchaîne plusieurs lots, même différents.')],
+        ['hint', tip15('Touchez une machine pour choisir ses recettes. Chacune enchaîne plusieurs lots, même différents.')],
     ]);
 }
 defineView('machines/workshop', renderWorkshop);
@@ -182,6 +209,7 @@ export function setupWorkshop() {
         cancelQueued: (el, d) => G.cancelQueued(+d.i, +d.k),
         toggleLoop: (el, d) => G.toggleLoop(+d.i),
         recipeFilter: (el, d) => (ui.sel.recipeFilter = d.f),
+        mfilter: (el, d) => (ui.sel.mfilter = d.f),
         toggleBest: () => (state.genetics.bestFirst = !state.genetics.bestFirst),
     });
 }

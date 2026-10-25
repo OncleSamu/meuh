@@ -3,6 +3,7 @@
 // et des produits finis qui s'accumulent jusqu'à la récupération.
 import { state, lvOk } from '../core/state.js';
 import { viewShown } from '../core/view.js';
+import { now } from '../core/clock.js';
 import { emit, toast, sfx, buzz, burst, float, squish, anchor } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { MACHINES, LEGACY_RECIPE, RECIPES } from '../data/machines.js';
@@ -90,6 +91,7 @@ export function ensureRecipeMoves() {
 // une recette en file, avec la qualité promise par ses ingrédients
 function pushJob(m, id, q) {
     m.queue.push(id);
+    m.used = now(); // 1.38 : la dernière fois qu'on s'en est servi (tri de l'atelier)
     m.qq = m.qq || [];
     while (m.qq.length < m.queue.length - 1) m.qq.push(0);
     m.qq.push(q || 0);

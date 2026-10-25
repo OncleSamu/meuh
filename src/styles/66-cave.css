@@ -526,3 +526,12 @@
     flex: 1 1 auto;
     min-width: 0;
 }
+.cave-slot.free-row {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    min-height: 54px;
+    gap: 8px;
+}
+.cave-slot.free-row b {
+    font-size: 1.4rem;
+}

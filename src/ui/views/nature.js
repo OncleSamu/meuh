@@ -6,8 +6,9 @@ import { ITEMS } from '../../data/items.js';
 import * as G from '../../systems/index.js';
 import { byId, blocks, actions, run } from '../dom.js';
 import { ico, art } from '../icons.js';
-import { btn, timer, hint } from '../kit.js';
+import { btn, timer, tip15 } from '../kit.js';
 import { defineSheet } from '../sheets.js';
+import { foldWrap } from '../fold.js';
 import { defineView } from '../app.js';
 
 const costOf = c =>
@@ -172,11 +173,23 @@ function renderNature(el) {
         ],
         [
             'hint',
-            hint(
+            tip15(
                 'Le bois et la pierre construisent et améliorent les bâtiments ; les lingots, le chêne massif et les pierres précieuses ouvrent les derniers niveaux.',
             ),
         ],
-        ['gaspard', gaspardCard()],
+        [
+            'gaspard',
+            (g =>
+                g &&
+                foldWrap(
+                    'gaspard',
+                    ['villager', 'gaspard'],
+                    'Gaspard, le bûcheron',
+                    g.claimed ? 'Défi réussi, à demain' : `${G.gaspardProgress(g)} / ${g.need}`,
+                    gaspardCard(),
+                    g.done && !g.claimed,
+                ))(G.ensureGaspard()),
+        ],
         ['ups', upgradesCard()],
         [
             'forest',
