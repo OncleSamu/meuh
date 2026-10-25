@@ -12,13 +12,12 @@ import { earn, addXp } from './player.js';
 import { addPhoto } from './style.js';
 import { qual, clampQuality } from './farm.js';
 import { unitPrice } from './market.js';
-import { collect } from './book.js';
 
 export const newChateau = () => ({
     rep: 0, // points de réputation (gardés d'une ferme à l'autre)
     classes: [0, 0, 0, 0, 0], // lots sortis de la cave pour chaque classement
     medals: [0, 0, 0, 0],
-    primeur: { won: 0, lost: 0, bonus: 0 },
+    primeur: { won: 0, lost: 0, bonus: 0, refunded: 0 },
     vis: [], // les visiteurs de la boutique
     nextVisit: 0,
     uid: 0,
@@ -87,7 +86,6 @@ export function settleOnExit(lot, kept, valueFn, at) {
             c.classes[cl]++;
             const before = repStars();
             c.rep += CHATEAU_CLASSES[cl].stars;
-            collect(`cl_${lot.id}_${cl}`);
             toast(`${className(cl)} ! ${CHATEAU_CLASSES[cl].stars} point${CHATEAU_CLASSES[cl].stars > 1 ? 's' : ''} de réputation`, ['ui', 'star']);
             if (repStars() > before) toast(`Le château gagne une étoile (${repStars()} sur ${REP_MAX})`, ['ui', 'star']);
             if (cl >= 4) addPhoto('ui', 'star', 'Un cru d’exception', 'Classé par Octave');
@@ -134,6 +132,7 @@ export function settlePrimeur(lot, at, valueFn) {
     const owed = Math.min(p.paid, state.money, Math.max(0, p.paid - Math.round(actual * PRIMEUR.frac)));
     state.money -= owed;
     c.primeur.lost++;
+    c.primeur.refunded = (c.primeur.refunded || 0) + owed;
     toast(owed ? `Primeur manqué : ${owed} pièces rendues à l’acheteur` : 'Primeur manqué, mais rien à rendre', ['ui', 'coin']);
     return -owed;
 }

@@ -23,6 +23,7 @@ import { setupCompanions } from './ui/views/companions.js';
 import { setupAnimals, wanderAnimals } from './ui/views/animals.js';
 import { setupWorkshop } from './ui/views/workshop.js';
 import { setupCave } from './ui/views/cave.js';
+import { setupChateau } from './ui/views/chateau.js';
 import { setupBrewery } from './ui/views/brewery.js';
 import { setupCounter } from './ui/views/counter.js';
 import { setupOrders } from './ui/views/orders.js';
@@ -70,6 +71,7 @@ function start() {
     setupAnimals();
     setupWorkshop();
     setupCave();
+    setupChateau();
     setupBrewery();
     setupCounter();
     setupOrders();

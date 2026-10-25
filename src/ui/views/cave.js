@@ -18,6 +18,7 @@ import { btn, bar, timer, card, section, empty } from '../kit.js';
 import { defineView, defineLive } from '../app.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 import { askBuy } from '../sheets/askbuy.js';
+import { chateauCard, classTag, lotChateauTag, primeurTag, lotChateauActions, reserveChateauActions } from './chateau.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const findIcon = k => AUCTION_FINDS[k].icon;
@@ -68,6 +69,7 @@ function lotCard(lot, i) {
     return `<div class="cave-slot${lot.bad ? ' bad' : ''} r${lot.rank}${lot.flash ? ' flash' : ''}" data-anchor="lot:${i}">
         <div class="cs-top">${lotIco(lot, 'ico cs-ico')}<div class="cs-main"><div class="cs-name">${G.lotName(lot)} <small>×${lot.n}</small>${bottleTools(lot)}</div>
         <div class="cs-rank">${G.rankName(lot)}${lotSub(lot)}</div><div class="cs-stars">${stars}</div></div></div>
+        ${lotChateauTag(lot)}${primeurTag(lot)}
         <div class="cs-value">${fmt(G.lotValue(lot))}${COIN()}</div>
         ${
             lot.bad
@@ -79,6 +81,7 @@ function lotCard(lot, i) {
             ${need ? btn(fam.care, { act: 'careLot', data: { i }, kind: 'gold', size: 'sm', icon: ['ui', fam.careIcon] }) : ''}
             ${!lot.bad && lot.n >= 2 && !lot.tasted ? btn('Goûter', { act: 'tasteLot', data: { i }, size: 'sm', icon: ['ui', 'taste'] }) : ''}
             ${bk && state.inventory[bk] > 0 && !lot.boost ? btn('+15 %', { act: 'boostLot', data: { i }, size: 'sm', icon: ['item', bk], title: ITEMS[bk].name }) : ''}
+            ${lotChateauActions(lot, i)}
             ${btn('Sortir', { act: 'takeOut', data: { i }, size: 'sm', kind: lot.bad || lot.rank >= 4 ? 'green' : '' })}
         </div>
         ${lot.boost ? `<span class="cs-boost">${ico(['item', bk || 'ferment'])}${lot.boost}</span>` : ''}
@@ -95,9 +98,10 @@ function reserveHtml() {
         `<div class="list">${c.reserve
             .map(
                 l => `<div class="card reserve-row${l.bad ? ' bad' : ''}">${lotIco(l, 'ico big')}<div class="card-main"><div class="card-title">${G.lotName(l)} ×${l.n}${bottleTools(l)}</div>
-        <div class="card-sub">${G.rankName(l)} · vaut ${fmt(G.lotValue(l))}${COIN()}</div></div>
+        <div class="card-sub">${G.rankName(l)}${classTag(l)} · vaut ${fmt(G.lotValue(l))}${COIN()}</div></div>
         <div class="card-side col">${btn(`Négociant ${fmt(G.lotValue(l) * NEGOCIANT)}${COIN()}`, { act: 'negociant', data: { uid: l.uid }, size: 'sm' })}
         ${btn('Aux enchères', { act: 'deposit', data: { uid: l.uid }, size: 'sm', kind: 'gold', icon: ['ui', 'gavel'], disabled: !canDep })}
+        ${reserveChateauActions(l)}
         ${G.vaultOpen() ? btn('Au coffre', { act: 'vaultLot', data: { uid: l.uid }, size: 'sm', icon: ['ui', 'vault'] }) : ''}</div></div>`,
             )
             .join('')}</div>`
@@ -252,6 +256,7 @@ function renderCave(el) {
             ${needCare ? btn(`Tout soigner (${needCare})`, { act: 'careAll', kind: 'gold', wide: true, icon: ['ui', 'sparkle'] }) : ''}
             ${climHtml()}</div>`,
         ],
+        ['chateau', chateauCard()],
         ['orders', ordersHtml()],
         [
             'slots',
