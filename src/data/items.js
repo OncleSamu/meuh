@@ -7,6 +7,7 @@ import { CROPS_132, RECIPES_132 } from './v132.js';
 import { FISH_ITEMS_133, RECIPES_133 } from './v133.js';
 import { RECIPES_134 } from './v134.js';
 import { PRODUCTS_135, RECIPES_135 } from './v135.js';
+import { RECIPES_137 } from './v137.js';
 // Tous les produits du jeu : cultures, arbres, produits animaux, plats, matériaux.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -2912,6 +2913,12 @@ for (const [id, name, , ing] of RECIPES_134) {
 // ---------------- 1.35 : onze produits d'animaux et leurs plats ----------------
 for (const [id, name, sell] of PRODUCTS_135) ITEMS[id] = { id, name, type: 'product', sell };
 for (const [id, name, , ing] of RECIPES_135) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}
+
+// ---------------- 1.37 : douze recettes du château ----------------
+for (const [id, name, , ing] of RECIPES_137) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
 }

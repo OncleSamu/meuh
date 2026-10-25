@@ -81,6 +81,10 @@ export const CAVE_ITEMS = {
     sheepTomme: 'cheese',
     ham: 'charcuterie',
     driedBeef: 'charcuterie',
+    // 1.37 : le château
+    cognac: 'cider',
+    marcBrandy: 'cider',
+    strawWine: 'wine',
     // 1.35 : le yack
     yakCheese: 'cheese',
     yakTomme: 'cheese',

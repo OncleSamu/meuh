@@ -1249,3 +1249,29 @@ Object.assign(CARNET, {
     mohairPlaid:
         'Le plaid en mohair se plie en quatre sur le fauteuil. Quand on s’y glisse, on a l’impression que le monde est devenu plus petit et plus gentil. C’est exactement ce qu’on lui demande.',
 });
+
+// ---------------- 1.37 : le château et ses vignes ----------------
+Object.assign(CARNET, {
+    guineaWine:
+        'La pintade au vin, ma grand-mère la mijotait le dimanche avec les champignons du matin. Elle disait que le vin ne se boit pas seulement : il se donne aussi aux bêtes, pour les remercier. Mon grand-père, lui, remerciait la bouteille.',
+    beefBourguignon:
+        'Le bœuf bourguignon, ça se prépare la veille, et ça se mange le lendemain. Ça ne se discute pas. Papi Lucien soulevait le couvercle toutes les dix minutes « pour vérifier » et il en était à moitié vide quand les invités arrivaient.',
+    eggsMeurette:
+        'Les œufs en meurette, c’est des œufs pochés dans une sauce au vin rouge, avec des lardons et du pain frotté à l’ail. Une voisine de Bourgogne m’a dit que c’était un plat de pauvres. Elle en a repris trois fois.',
+    winePears:
+        'Les poires au vin, on les laisse tremper toute la nuit et elles en ressortent rouges jusqu’au cœur, comme des enfants qui ont couru l’hiver. On les sert tièdes. Papi Lucien buvait le sirop après, « pour ne pas gaspiller ».',
+    candiedGrapes:
+        'Les raisins confits, c’est la patience dans un bocal. On les cuit tout doucement dans le sucre, sans jamais les brusquer. Ma grand-mère disait que c’était le seul sujet sur lequel elle n’avait jamais perdu son calme.',
+    grapeJelly:
+        'La gelée de raisin se fait à la fin des vendanges avec les grappes trop petites pour le pressoir. Elle brille comme un vitrail. On l’étale sur du pain et on regarde la lumière à travers la tartine, comme des enfants.',
+    zanderWine:
+        'Le sandre au vin blanc, c’est le poisson du lac et la bouteille de la cave réunis dans la même poêle. Papi Lucien disait qu’ils se connaissaient depuis toujours et qu’il fallait juste les présenter.',
+    marcBrandy:
+        'Le marc, on le distille avec ce qui reste du pressoir : les peaux, les pépins, les rafles. Rien ne se perd à la ferme. Même les restes finissent par avoir du caractère. Ça réchauffe, et ça réveille aussi les souvenirs.',
+    cognac: 'Le cognac dort des années dans le chêne et il en ressort couleur de vieux cuivre. On ne le boit pas vite. On le réchauffe dans la paume, on le respire, et on se tait. C’est le seul moment où Papi Lucien se taisait.',
+    kir: 'Le kir, c’est Papi Lucien qui l’a fait connaître à la ferme : une larme de cassis dans le vin blanc. Il prétendait que c’était pour les grandes occasions. Il y avait une grande occasion presque tous les jeudis.',
+    strawWine:
+        'Le vin de paille se fait avec des raisins couchés sur la paille pendant des semaines, jusqu’à ce qu’ils soient presque des raisins secs. Il en sort si peu qu’on le sert dans de petits verres. On a le droit de ne pas le partager.',
+    mulledWine:
+        'Le vin chaud sent l’orange, le miel et le feu de cheminée. Ma grand-mère en préparait une grande marmite pour la veillée, et les voisins arrivaient comme par hasard, juste au bon moment. Ils étaient toujours là au bon moment.',
+});
