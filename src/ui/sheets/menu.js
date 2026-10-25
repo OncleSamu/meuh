@@ -12,7 +12,8 @@ import { ico, art, qStar } from '../icons.js';
 import { btn, navRow, lines, line, bar, dot } from '../kit.js';
 import { go } from '../app.js';
 import { toast } from '../../core/bus.js';
-import { defineSheet, openSheet, closeSheet, sheetOpts } from '../sheets.js';
+import { defineSheet, openSheet, closeSheet, closeAll, sheetOpts } from '../sheets.js';
+import { produce } from '../navigate.js';
 import { vaultCard } from './vault.js';
 
 const COIN = () => ico(['ui', 'coin']);
@@ -88,7 +89,12 @@ defineSheet('levels', {
             [
                 'list',
                 `<div class="lines${L <= state.level ? ' got' : ''}">${G.unlocksAt(L)
-                    .map(u => line(u.icon, u.name, u.big ? 'big' : ''))
+                    // 1.42 : chaque ligne mène là où ça se passe
+                    .map(u =>
+                        u.go
+                            ? `<button class="line lv-go${u.big ? ' big' : ''}" data-act="lvGo" data-to="${u.go}">${ico(u.icon)}<div>${u.name}</div><b class="lv-arrow">›</b></button>`
+                            : line(u.icon, u.name, u.big ? 'big' : ''),
+                    )
                     .join('')}</div>`,
             ],
         ];
@@ -201,6 +207,12 @@ const lvTop = () => {
 
 export function setupMenu() {
     actions({
+        lvGo: (el, d) => {
+            const to = d.to;
+            closeAll();
+            if (to.startsWith('produce:')) return produce(to.slice(8));
+            go(to);
+        },
         lvStep: (el, d) => {
             const o = sheetOpts('levels');
             o.l = Math.max(1, Math.min(MAX_LEVEL, o.l + +d.d));

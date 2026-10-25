@@ -130,3 +130,13 @@ test('la mine : chaque profondeur garde ses pierres quand on change', () => {
     assert.ok(G.setDepth('gallery'));
     assert.equal(JSON.stringify(state.mine), gal, 'la galerie aussi');
 });
+
+test('fiche des niveaux : chaque ligne mène quelque part', () => {
+    G.loadGame();
+    const ok = /^(sheet:[a-z]+|produce:[A-Za-z]+|(farm|animals|machines|village|market)(\/[a-z]+)?(#[a-z]+)?)$/;
+    for (let l = 1; l <= 60; l++)
+        for (const u of G.unlocksAt(l)) {
+            assert.ok(u.go, `niveau ${l} : ${u.name}`);
+            assert.match(u.go, ok, `niveau ${l} : ${u.go}`);
+        }
+});

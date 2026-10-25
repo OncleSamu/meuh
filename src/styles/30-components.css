@@ -772,3 +772,18 @@ textarea {
     background: linear-gradient(#ffe48a, var(--gold));
     box-shadow: 0 0 0 3px #fff inset;
 }
+/* 1.42 : les lignes de la fiche des niveaux mènent quelque part */
+button.line.lv-go {
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+button.line.lv-go > div {
+    flex: 1;
+}
+.lv-arrow {
+    margin-left: 6px;
+    opacity: 0.55;
+}

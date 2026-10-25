@@ -172,7 +172,7 @@ export function xpToLevel(L) {
 
 // Ce que débloque un niveau : [{ icon: [sorte, id], name }]
 export function unlocksAt(lvl) {
-    if (lvl === 1) return [{ icon: ['seed', 'wheat'], name: 'Graines de blé, le champ et le magasin' }];
+    if (lvl === 1) return [{ icon: ['seed', 'wheat'], name: 'Graines de blé, le champ et le magasin', go: 'market/shop#seeds' }];
     const list = [{ icon: ['ui', 'skillbook'], name: '1 point de compétence à placer dans Progrès' }];
     const add = (icon, name) => list.push({ icon, name });
     // les grandes étapes, en tête de liste
@@ -292,7 +292,81 @@ export function unlocksAt(lvl) {
         add(['ui', 'ribbon'], 'Vendre la ferme : repartez de zéro avec des rubans, des bonus pour toujours (Progrès)');
         add(['ui', 'cupGold'], 'Les grands défis : un défi de deux semaines, des médailles et des décorations uniques (volet Commandes)');
     }
-    return list;
+    return list.map(u => ({ ...u, go: unlockGo(u) }));
+}
+
+// 1.42 : où mène chaque ligne de la fiche des niveaux (un toucher y emmène)
+const UNLOCK_GO = [
+    ['amélioration du domaine', 'sheet:domaine'],
+    ['point de compétence', 'sheet:progress'],
+    ['Graines de blé, le champ', 'market/shop#seeds'],
+    ['nouvelle recette', null], // voir plus bas : la machine de la recette
+    ['avion-cargo', 'village/orders'],
+    ['Armand', 'village/orders'],
+    ['coffre-fort', 'sheet:vault'],
+    ['marché des voisins', 'market/shop#neighbors'],
+    ['cultures compagnes', 'sheet:companions'],
+    ['Grand Haras', 'animals/haras'],
+    ['château et ses vignes', 'machines/cave'],
+    ['La cave : affinez', 'machines/cave'],
+    ['Grande étape : la cave', 'machines/cave'],
+    ['bières en fût', 'machines/cave'],
+    ['Rénovez le village', 'village/village'],
+    ['chapitre', 'village/village'],
+    ['imprévus', 'farm/field'],
+    ['chien de ferme', 'market/shop#decos'],
+    ['La forêt', 'farm/nature'],
+    ['La mine', 'farm/nature'],
+    ['(Ferme | Nature)', 'farm/nature'],
+    ['(Ferme | Verger)', 'farm/orchard'],
+    ['(Ferme | Pêche)', 'farm/pond'],
+    ['Serre', 'farm/field'],
+    ['la serre', 'farm/field'],
+    ['Contrats de saison', 'village/orders'],
+    ['Événements rares', 'village/orders'],
+    ['Personnalisation', 'sheet:house'],
+    ['Maîtrise des produits', 'sheet:book'],
+    ['histoires de Mamie', 'sheet:book'],
+    ['Les fêtes', 'village/orders'],
+    ['corbeaux', 'farm/field'],
+    ['concours de la semaine', 'village/village'],
+    ['Concours : la ligue', 'village/village'],
+    ['fermes voisines', 'village/orders'],
+    ['place de plus à l’étal', 'market/sell'],
+    ['La nuit', 'farm/field'],
+    ['Le verger', 'farm/orchard'],
+    ['le verger', 'farm/orchard'],
+    ['marché de nuit', 'market/shop'],
+    ['le domaine', 'sheet:domaine'],
+    ['le hameau', 'village/village'],
+    ['le port', 'village/village'],
+    ['abbaye', 'machines/brew'],
+    ['La brasserie', 'machines/brew'],
+    ['île aux Alizés', 'farm/island'],
+    ['génétique', 'machines/lab'],
+    ['Salon de l’agriculture', 'machines/lab'],
+    ['alpage', 'animals'],
+    ['grands défis, renommée', 'village/orders'],
+    ['Les grands défis', 'village/orders'],
+    ['étoiles de renommée', 'sheet:progress'],
+    ['Ferme légendaire', 'sheet:book'],
+    ['Vendre la ferme', 'sheet:prestige'],
+    ['Maison de la ferme', 'sheet:house'],
+    ['Commis de ferme', 'sheet:house'],
+];
+const plain = t => String(t).replace(/[\u00a0\u202f]/g, ' ');
+export function unlockGo(u) {
+    if (u.go) return u.go;
+    const [kind, id] = u.icon || [];
+    const name = plain(u.name);
+    if (kind === 'seed') return ITEMS[id] && ITEMS[id].island ? 'farm/island' : 'market/shop#seeds';
+    if (kind === 'animal') return 'market/shop#animals';
+    if (kind === 'machine') return (state.machines || []).some(m => m.type === id) ? 'machines/workshop' : 'market/shop#machines';
+    if (kind === 'item' && /nouvelles? recettes?/.test(name)) return 'produce:' + id;
+    if (name.includes('(au magasin)')) return 'market/shop#gear';
+    if (kind === 'ui' && DECOS[id] && name.startsWith('Décoration')) return 'market/shop#decos';
+    const hit = UNLOCK_GO.find(([k, g]) => g && name.includes(plain(k)));
+    return hit ? hit[1] : null;
 }
 
 // ---------------- équipement de la ferme ----------------
