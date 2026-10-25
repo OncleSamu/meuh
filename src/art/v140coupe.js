@@ -77,23 +77,6 @@ const CUP_BLD = {
             noFlowers: true,
         },
     },
-    opera: {
-        cfg: { w: 62, h: 32, wall: '#f3e2c0', roof: '#4f8a72', sign: ['ui', 'star'] },
-        st: {
-            roof: 'mansard',
-            tex: 'stone',
-            door: 'arch',
-            warch: true,
-            wins: [17, 30, 59, 72],
-            nosign: true,
-            top: ({ y0, rh }) =>
-                L(`M50 ${y0 - rh} L50 ${y0 - rh - 10}`, 2) +
-                P(`M44 ${y0 - rh - 9} Q50 ${y0 - rh - 22} 56 ${y0 - rh - 9} Q50 ${y0 - rh - 13} 44 ${y0 - rh - 9}Z`, GOLD, 1.6) +
-                L(`M47.5 ${y0 - rh - 10} L47.5 ${y0 - rh - 15} M50 ${y0 - rh - 10} L50 ${y0 - rh - 17} M52.5 ${y0 - rh - 10} L52.5 ${y0 - rh - 15}`, 0.9),
-            front: ({ x0, x1 }) => R(x0 + 2, 76, x1 - x0 - 4, 3, 1, '#e8364b', 1.4),
-            noFlowers: true,
-        },
-    },
     baths: {
         cfg: { w: 60, h: 22, wall: '#e9d8bf', roof: '#c2603c', sign: ['ui', 'star'] },
         st: {
@@ -114,6 +97,55 @@ for (const [id, d] of Object.entries(CUP_BLD)) {
     BLD[id] = { ...d.cfg, st: d.st, kind: 'h2_' + id };
     KINDS['h2_' + id] = s => house2(BLD[id], s);
 }
+
+// l'opéra : façade à arcades, loggia à colonnes jumelées, deux pavillons et leurs statues dorées, coupole verte et lyre d'Apollon
+BLD.opera = { w: 84, h: 40, wall: '#f3e2c0', roof: '#4f8a72', kind: 'opera' };
+KINDS.opera = s => {
+    const site = s === 1;
+    const CREAM = '#f3e2c0',
+        COPPER = '#5d9e84',
+        GLASS = '#3f5f8a';
+    let o = SHADOW(50, 88, 44, 3);
+    // la coupole, derrière
+    o += R(37, 38, 26, 10, 1.5, CREAM, 2);
+    o += P('M34 39 Q50 14 66 39Z', COPPER, 2) + L('M42 38 Q46 24 50 21 M58 38 Q54 24 50 21 M50 21 L50 38', 1.2, '#3f7a62') + HL(42, 31, 2, 5, -25, 0.45);
+    o += R(47.5, 14, 5, 7, 1, COPPER, 1.6);
+    o += P('M45 13 Q50 2 55 13 Q50 9 45 13Z', GOLD, 1.6) + L('M48 12 L48 7 M50 12 L50 5 M52 12 L52 7', 0.9);
+    // les deux pavillons et leurs statues dorées
+    for (const x of [8, 80]) {
+        o += R(x, 44, 12, 38, 1.5, CREAM, 2) + R(x - 1, 42, 14, 4, 1, '#e8d2a8', 1.8);
+        o += R(x + 3, 52, 6, 9, 3, GLASS, 1.4) + R(x + 3, 66, 6, 12, 3, '#7a2a2a', 1.4);
+        const cx = x + 6;
+        o +=
+            P(`M${cx - 3} 42 L${cx + 3} 42 L${cx + 2} 34 L${cx - 2} 34Z`, GOLD, 1.4) +
+            C(cx, 32, 2.2, GOLD, 1.2) +
+            P(
+                `M${cx - 2} 36 Q${cx - 8} 31 ${cx - 6} 27 Q${cx - 3} 31 ${cx - 1} 34Z M${cx + 2} 36 Q${cx + 8} 31 ${cx + 6} 27 Q${cx + 3} 31 ${cx + 1} 34Z`,
+                GOLD,
+                1.2,
+            );
+    }
+    // le corps central
+    o += R(20, 48, 60, 34, 1.5, CREAM, 2);
+    o += R(19, 46, 62, 4, 1, GOLD, 1.8) + L('M24 48 L76 48', 0.8, '#b8862a');
+    // la loggia : vitrage sombre et colonnes jumelées
+    o += R(22, 52, 56, 12, 1, GLASS, 1.6);
+    for (const x of [24, 33, 42, 54, 63, 72]) o += R(x, 51, 2.6, 13, 0.8, '#fbf6ea', 1.2) + R(x + 3, 51, 2.6, 13, 0.8, '#fbf6ea', 1.2);
+    o += R(20, 64, 60, 3, 1, '#e8d2a8', 1.6);
+    // le rez-de-chaussée : cinq arcades
+    for (const x of [23, 34, 45, 56, 67]) o += P(`M${x} 82 L${x} 72 Q${x + 5} 66 ${x + 10} 72 L${x + 10} 82Z`, '#7a2a2a', 1.6) + FC(x + 5, 70, 1, GOLD);
+    // les marches et le tapis rouge
+    o += R(16, 82, 68, 3, 1, '#e8dcc0', 1.6) + R(12, 85, 76, 3, 1, '#d8ccb0', 1.6) + R(46, 82, 8, 6, 0.5, '#e8364b', 1.2);
+    // deux lanternes
+    o += [3, 97].map(x => L(`M${x} 88 L${x} 74`, 1.8) + R(x - 2.2, 70, 4.4, 5, 1, GOLD, 1.2)).join('');
+    if (site)
+        o +=
+            L('M18 88 L18 22 M82 88 L82 22 M50 88 L50 8', 3, '#d9a066') +
+            L('M14 60 L86 60 M14 40 L86 40 M24 24 L76 24', 3.2, '#a8693a') +
+            L('M18 60 L50 24 L82 60', 1.6, '#d9a066') +
+            R(70, 76, 10, 8, 1.5, '#5aa9e6', 1.8);
+    return o;
+};
 
 // le grand pont de pierre : trois arches au-dessus de la rivière, des lanternes
 BLD.bigBridge = { w: 84, h: 20, wall: STONE, roof: STONE, kind: 'bigBridge' };
