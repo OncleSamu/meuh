@@ -2,6 +2,7 @@ import { LV_ITEM } from './levels14.js';
 import { NEW_DRINKS, COFFEE_GATED } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
 import { CROPS_130, RECIPES_130 } from './v130.js';
+import { TREES_131, RECIPES_131 } from './v131.js';
 // Tous les produits du jeu : cultures, arbres, produits animaux, plats, matériaux.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -2444,7 +2445,7 @@ Object.assign(ITEMS, {
         seasons: ['ete', 'automne'],
     },
     pear: { id: 'pear', name: 'Poire', seedName: 'Poirier', type: 'tree', cost: 700, sell: 160, time: 1000, reqLvl: 13, xp: 4 },
-    mirabelle: { id: 'mirabelle', name: 'Mirabelles', seedName: 'Prunier', type: 'tree', cost: 1100, sell: 190, time: 1150, reqLvl: 18, xp: 6 },
+    mirabelle: { id: 'mirabelle', name: 'Mirabelles', seedName: 'Mirabellier', type: 'tree', cost: 1100, sell: 190, time: 1150, reqLvl: 18, xp: 6 },
     apricot: { id: 'apricot', name: 'Abricot', seedName: 'Abricotier', type: 'tree', cost: 1500, sell: 230, time: 1250, reqLvl: 21, xp: 7 },
     fig: { id: 'fig', name: 'Figue', seedName: 'Figuier', type: 'tree', cost: 2200, sell: 270, time: 1350, reqLvl: 25, xp: 9 },
     walnut: { id: 'walnut', name: 'Noix', seedName: 'Noyer', type: 'tree', cost: 3500, sell: 300, time: 1500, reqLvl: 27, xp: 10 },
@@ -2863,6 +2864,16 @@ for (const [id, name, , ing] of SERRE_RECIPES) {
 for (const [id, name, seedName, reqLvl, seasons, cost, sell, time, xp] of CROPS_130)
     ITEMS[id] = { id, name, seedName, type: 'crop', cost, sell, time, reqLvl, xp, seasons };
 for (const [id, name, , ing] of RECIPES_130) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}
+
+// ---------------- 1.31 : sept arbres et leurs plats ----------------
+for (const [id, name, seedName, reqLvl, cost, sell, time, xp, , island] of TREES_131) {
+    ITEMS[id] = { id, name, seedName, type: 'tree', cost, sell, time, reqLvl, xp };
+    if (island) ITEMS[id].island = true;
+}
+for (const [id, name, , ing] of RECIPES_131) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
 }

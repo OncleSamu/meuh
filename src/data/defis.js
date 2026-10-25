@@ -90,7 +90,27 @@ const DESSERTS = [
     'saffronBrioche',
 ];
 const ANIMAL_GOODS = ['milk', 'egg', 'wool', 'goatMilk', 'angora', 'gooseEgg', 'buffaloMilk', 'donkeyMilk', 'alpacaWool', 'turkeyEgg', 'quailEgg'];
-const FRUITS = ['apple', 'cherry', 'peach', 'orange', 'kiwi', 'kaki', 'olive', 'grape', 'pear', 'mirabelle', 'apricot', 'fig', 'lemon', 'quince'];
+const FRUITS = [
+    'apple',
+    'cherry',
+    'peach',
+    'orange',
+    'kiwi',
+    'kaki',
+    'olive',
+    'grape',
+    'pear',
+    'mirabelle',
+    'apricot',
+    'fig',
+    'lemon',
+    'quince',
+    'plum',
+    'mandarin',
+    'grapefruit',
+    'pomegranate',
+    'pistachio',
+];
 const FRUIT_GOODS = [
     'jam',
     'cherryPie',
@@ -123,6 +143,8 @@ const ISLE_RAW = [
     'avocado',
     'guava',
     'lychee',
+    'dragonfruit',
+    'cashew',
     'pineapple',
     'passionFruit',
     'sweetPotato',

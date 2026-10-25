@@ -409,6 +409,10 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'Sept arbres de plus (1.31)',
+                t: 'Prunier (quetsches, niveau 26), mandarinier (30), pamplemoussier (31), grenadier (35) et pistachier (36) poussent à la ferme ; le fruit du dragon (40) et l’anacardier, qui donne la noix de cajou (41), ne poussent qu’aux îles. L’ancien « Prunier » s’appelle maintenant Mirabellier. Chaque fruit a ses recettes : jus, marmelades, sorbets, tartes, eaux-de-vie, huiles, nougat.',
+            },
+            {
                 h: 'Maturité et saisons',
                 t: 'Chaque arbre compte ses fruits donnés (jusqu’à 75) : plus il est mûr (1 à 3 étoiles), plus ses fruits sont souvent argent ou or. Chaque espèce a sa saison où elle donne 30 % plus vite (10 % plus lent dehors).',
             },

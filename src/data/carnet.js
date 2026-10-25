@@ -944,3 +944,66 @@ Object.assign(CARNET, {
     hempLead:
         'Une longe en chanvre, souple et solide. Jules la tresse lui-même, en parlant à ses chevaux. Il prétend qu’ils comprennent. Je crois qu’il a raison.',
 });
+
+// ---------------- 1.31 : les nouveaux arbres ----------------
+Object.assign(CARNET, {
+    plumTart:
+        'Les quetsches, il faut attendre qu’elles soient bien ridées pour la tarte, sinon elles sont aigres. Papi Lucien les goûtait « pour vérifier » jusqu’à ce qu’il n’en reste plus pour la tarte.',
+    plumJam:
+        'La confiture de prunes, on la fait dans la grande bassine en cuivre, avec toute la famille autour pour dénoyauter. Ton oncle disait qu’il avait « la main pour ça ». Il avait surtout un seau pour les noyaux.',
+    driedPlums:
+        'Les prunes séchées, on les met dans un bocal avec un peu de thé tiède. Ça les gonfle et ça les parfume. Ma mère disait que c’était le seul remède connu contre la mauvaise humeur.',
+    plumBrandy:
+        'L’eau-de-vie de quetsche brûle la gorge et réchauffe le cœur. On en servait un doigt aux invités qui s’attardaient. Ils ne s’attardaient jamais très longtemps debout.',
+    magretPlums:
+        'Un magret aux quetsches, c’est le plat du dimanche des jours de fête. Ton père a voulu le trancher lui-même. Je l’ai laissé faire, et j’ai ressorti une deuxième assiette.',
+    mandarinJuice:
+        'Le jus de mandarine, on le presse juste avant de le boire, sinon il perd son éclat. Les enfants le buvaient en faisant la grimace aux pépins. Moi aussi, un peu.',
+    mandarinMarmalade:
+        'La marmelade de mandarine est plus douce que celle d’orange, et plus rapide à faire. Papi Lucien la mettait sur du pain grillé, puis sur sa moustache. Il n’a jamais compris comment.',
+    mandarinCake:
+        'Le gâteau à la mandarine sent l’hiver et les marchés de Noël. Ton grand-père en volait une part pendant que je regardais ailleurs. Je regardais ailleurs exprès.',
+    chocMandarins:
+        'Les mandarines confites au chocolat, on les offre à Noël dans une jolie boîte. Ou bien on les mange avant, dans la cuisine, en cachette. Chez nous, c’était la deuxième solution.',
+    grapefruitJuice:
+        'Le pamplemousse, c’est amer, c’est acide, c’est rose, et on l’aime ou on ne l’aime pas. Papi Lucien l’aimait avec du sucre, ce qui, dit-il, « n’est plus vraiment aimer le pamplemousse ».',
+    grapefruitMarmalade:
+        'La marmelade de pamplemousse est un peu amère, et c’est tant mieux. La vie aussi, parfois, et ça n’empêche pas de la tartiner sur du pain frais.',
+    grapefruitSorbet:
+        'Un sorbet au pamplemousse, c’est ce qu’on sert au milieu d’un grand repas pour « faire le trou ». Ton grand-père disait que le trou, chez lui, était toujours très profond.',
+    grapefruitTart:
+        'La tarte au pamplemousse est fine, acidulée, un peu osée. J’en ai fait pour une voisine très stricte. Elle a pris un deuxième morceau et n’a jamais voulu le reconnaître.',
+    pomegranateJuice:
+        'Éplucher une grenade, c’est tout un art : on la coupe, on la tape avec une cuillère, et les graines tombent. Ton cousin a fini avec du rouge jusqu’aux oreilles. On dirait qu’il en est fier.',
+    grenadine:
+        'La grenadine, on la servait aux enfants dans un grand verre d’eau fraîche, avec une paille. Ils croyaient boire du sirop magique. Ils avaient raison.',
+    magretPomegranate:
+        'Les graines de grenade sur le magret, c’est joli comme un vitrail. Ton père a dit qu’il n’osait plus manger. Quelques secondes plus tard, il avait fini.',
+    pomegranateSorbet:
+        'Le sorbet à la grenade est rouge profond, presque violet. On le sert dans de petites coupes, comme pour un anniversaire de dignitaire. Ou de cousine.',
+    roastedPistachios:
+        'Les pistaches grillées, on les ouvre avec l’ongle, une par une. Papi Lucien en faisait une pile de coques sur la table, comme une muraille. On l’a laissé gagner à chaque partie.',
+    pistachioOil:
+        'L’huile de pistache est verte et rare, un filet suffit pour une salade. Je la garde dans le placard du haut, derrière les confitures. Pas pour la cacher. Pour qu’elle dure.',
+    pistachioIce:
+        'La glace à la pistache, la vraie, n’est pas vert fluo mais d’un petit vert doux, presque beige. Ton père, enfant, trouvait que « ce n’est pas assez vert ». Il a changé d’avis.',
+    pistachioNougat:
+        'Le nougat aux pistaches, on le coupe en petits cubes avec un grand couteau. Ça colle, ça croque, et on en retrouve des morceaux dans les poches pendant des mois.',
+    pistachioFinancier:
+        'Les financiers aux pistaches ont la forme d’un petit lingot, comme le gâteau des banquiers. Papi Lucien disait qu’il mangeait ses économies, un par un.',
+    dragonJuice:
+        'Un fruit du dragon, c’est rose dehors, blanc dedans, avec des petits points noirs. Ton cousin a cru que c’était périmé. Je lui ai expliqué que non. Il a goûté, puis redemandé.',
+    dragonSmoothie:
+        'Le smoothie dragon et mangue est d’un rose qui tire l’œil de tous les voisins. Ils passent devant la fenêtre en ralentissant. Je leur en sers un, évidemment.',
+    dragonSorbet: 'Le sorbet au fruit du dragon est d’une couleur impossible, presque trop belle pour être mangée. Ça ne m’a jamais retenue, ni les enfants.',
+    exoticTartlet:
+        'Une tartelette exotique, avec des tranches de fruit du dragon en rosace. Ton père a dit qu’elle ressemblait à un bijou. Il l’a mangée en trois bouchées, comme tous les bijoux.',
+    roastedCashews:
+        'Les noix de cajou grillées, il ne faut jamais les manger crues : la coque brûle les doigts. Ma voisine l’a appris à ses dépens. Elle m’en parle encore.',
+    cashewButter:
+        'Le beurre de cajou, doux, un peu sucré, qui colle au palais. Papi Lucien le mangeait à la cuillère devant la télévision. Ce n’était pas très élégant, mais il avait raison.',
+    cashewRice:
+        'Le riz sauté aux noix de cajou, c’est un plat de passage, de ceux qu’on prépare quand on rentre tard. Ton père l’appelle « le dîner de secours ». Il est toujours excellent.',
+    cashewBrittle:
+        'Le croquant de cajou est un caramel dur plein de noix, qu’on casse au marteau. Papi Lucien en cassait toujours un peu plus que nécessaire, pour avoir des morceaux à goûter.',
+});

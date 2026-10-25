@@ -3,6 +3,7 @@ import { LV18_MACH, LV18_REC } from './levels18.js';
 import { NEW_DRINKS } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
 import { MARMITE, RECIPES_130 } from './v130.js';
+import { RECIPES_131 } from './v131.js';
 import { ITEMS } from './items.js';
 import { ANIMALS } from './animals.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
@@ -3411,6 +3412,7 @@ for (const [id, , machine, ing, time, lvl, xp] of SERRE_RECIPES) RECIPES[id] = {
 // 1.30 : la marmite et les soixante-quatre recettes des nouvelles cultures
 MACHINES.marmite = { id: 'marmite', name: MARMITE.name, cost: MARMITE.cost, reqLvl: MARMITE.reqLvl, desc: MARMITE.desc };
 for (const [id, , machine, ing, time, lvl] of RECIPES_130) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
+for (const [id, , machine, ing, time, lvl] of RECIPES_131) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 // une recette ne s'ouvre jamais avant sa machine
 for (const r of Object.values(RECIPES)) {
     const m = MACHINES[r.machine];
