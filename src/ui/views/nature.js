@@ -7,6 +7,7 @@ import * as G from '../../systems/index.js';
 import { byId, blocks, actions, run } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, timer, hint } from '../kit.js';
+import { defineSheet } from '../sheets.js';
 import { defineView } from '../app.js';
 
 const costOf = c =>
@@ -145,7 +146,7 @@ function upgradesCard() {
         ${btn(can ? 'À améliorer !' : 'Ouvrir', { act: 'openUpgrades', kind: can ? 'green' : '', size: 'sm' })}</div></div>`;
 }
 
-function logCard() {
+export function logCard() {
     if (!G.natLogOpen()) return '';
     const tiles = NAT_LOG_IDS.map(id => {
         const n = (state.nat && state.nat.log[id]) || 0,
@@ -156,8 +157,10 @@ function logCard() {
             <div class="log-art">${ico(['item', id])}${st ? `<span class="medal">${ico(['ui', ['medalB', 'medalS', 'medalG'][st - 1]])}</span>` : ''}</div>
             <b>${ITEMS[id].name}</b><small>${fmt(n)}${nxt ? ` / ${nxt}` : ' · complet'}</small>${can ? `<small>${fmt(NAT_LOG.coins[state.nat.logClaimed[id] || 0])} pièces</small>` : ''}</button>`;
     }).join('');
-    return `<div class="card log-card"><div class="nature-head">${ico(['item', 'ruby'])}<div class="card-main"><div class="card-title">Carnet du bûcheron et du mineur</div><div class="card-sub">Chaque palier rapporte des pièces (25, 100 et 400 ramassés).</div></div></div><div class="log-grid">${tiles}</div></div>`;
+    return `<div class="card log-card"><div class="nature-head">${ico(['item', 'ruby'])}<div class="card-main"><div class="card-title">Récoltes de la forêt et de la mine</div><div class="card-sub">Chaque palier rapporte des pièces (25, 100 et 400 ramassés).</div></div></div><div class="log-grid">${tiles}</div></div>`;
 }
+
+defineSheet('natLog', { title: 'Carnet du bûcheron et du mineur', render: () => logCard() });
 
 function renderNature(el) {
     G.ensureNature();
@@ -195,7 +198,6 @@ function renderNature(el) {
                 workerRow('miner'),
             ),
         ],
-        ['log', logCard()],
     ]);
 }
 defineView('farm/nature', renderNature);

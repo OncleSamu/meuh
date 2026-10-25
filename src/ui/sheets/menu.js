@@ -5,6 +5,7 @@ import { ITEMS } from '../../data/items.js';
 import { DAYS_PER_SEASON, WEATHER } from '../../data/world.js';
 import { RARE } from '../../data/commerce.js';
 import { MAX_LEVEL } from '../../data/progress.js';
+import { NAT_LOG_IDS } from '../../data/nature.js';
 import * as G from '../../systems/index.js';
 import { actions } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
@@ -15,6 +16,22 @@ import { defineSheet, openSheet, closeSheet, sheetOpts } from '../sheets.js';
 import { vaultCard } from './vault.js';
 
 const COIN = () => ico(['ui', 'coin']);
+
+// ---------------- les carnets ----------------
+const natReady = () => G.natLogOpen() && NAT_LOG_IDS.some(id => G.natLogCan(id));
+const carnetsReady = () => (G.logReady() ? 1 : 0) + (G.tierReady() ? 1 : 0) + (natReady() ? 1 : 0);
+defineSheet('carnets', {
+    title: 'Carnets',
+    render() {
+        const row = (t, sheet, icon, sub, n) => navRow(t, 'open', { sheet }, icon, n ? dot(n) : '›', sub);
+        return `<div class="menu-grid">
+            ${G.pondOpen() ? row('Carnet de pêche', 'fishLog', ['ui', 'book'], 'Records de poids et médailles de taille') : ''}
+            ${G.natLogOpen() ? row('Carnet du bûcheron et du mineur', 'natLog', ['item', 'ruby'], 'Paliers de bois, pierres et minerais', natReady() ? 1 : 0) : ''}
+            ${G.compOpen() ? row('Carnet du potager', 'companions', ['ui', 'flowers'], `${G.seenCount()} associations découvertes`, G.tierReady() ? 1 : 0) : ''}
+            ${G.logOpen() ? row('Carnet du verger', 'orchardLog', ['ui', 'orchardBook'], 'Une page par espèce, des médailles de fruits', G.logReady() ? 1 : 0) : ''}
+        </div>`;
+    },
+});
 
 // ---------------- le menu ----------------
 defineSheet('menu', {
@@ -27,6 +44,7 @@ defineSheet('menu', {
         return `<div class="menu-grid">
             ${navRow('Progrès', 'open', { sheet: 'progress' }, ['ui', 'skillbook'], badge(pts), `${pts ? `${pts} point${pts > 1 ? 's' : ''} de compétence à placer · ` : ''}Compétences, prestige et défis`)}
             ${navRow('Livre de la ferme', 'open', { sheet: 'book' }, ['ui', 'book'], badge(book), 'Collection, maîtrise, exploits, légende, album et histoires de Mamie')}
+            ${navRow('Carnets', 'open', { sheet: 'carnets' }, ['ui', 'book'], badge(carnetsReady()), 'Pêche, forêt et mine, potager, verger')}
             ${state.level >= 58 || G.caveLegends().length ? navRow('Salle des trophées', 'open', { sheet: 'trophies' }, ['ui', 'cupGold'], '›', 'Médailles des défis et lots légendaires') : ''}
             ${state.genetics && G.geneticsOpen() ? navRow('Mes créations', 'open', { sheet: 'creations' }, ['ui', 'flowers'], '›', 'Vos variétés et vos races fixées') : ''}
             ${navRow('Les niveaux', 'open', { sheet: 'levels' }, ['ui', 'star'], '›', `Niveau ${state.level}${state.level < MAX_LEVEL ? ` sur ${MAX_LEVEL}` : ''}`)}

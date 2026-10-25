@@ -119,13 +119,8 @@ function basketCard() {
         body = `<div class="card-sub">Chaque week-end : le plus beau panier de la saison contre les fermes voisines.${G.basketResultReady() ? '' : ' Rendez-vous samedi.'}</div>`;
     return `<div class="card basket-card${G.basketResultReady() ? ' on' : ''}"><div class="nature-head">${ico(['ui', 'basket'], 'ico big')}<div class="card-main"><div class="card-title">Le concours du plus beau panier</div></div></div>${body}</div>`;
 }
-function logCard() {
-    if (!G.logOpen()) return '';
-    return `<div class="card log-card${G.logReady() ? ' on' : ''}"><div class="nature-head">${ico(['ui', 'orchardBook'], 'ico big')}<div class="card-main"><div class="card-title">Le carnet du verger</div>
-        <div class="card-sub">Une page par espèce, des médailles à 100, 500 et 2 000 fruits.</div></div>${btn(G.logReady() ? 'À réclamer !' : 'Ouvrir', { act: 'open', data: { sheet: 'orchardLog' }, kind: G.logReady() ? 'green' : '', size: 'sm' })}</div></div>`;
-}
 export function lifeCards() {
-    return bloomCard() + frostCard() + harvestCard() + feteCard() + vendCard() + basketCard() + logCard();
+    return bloomCard() + frostCard() + harvestCard() + feteCard() + vendCard() + basketCard();
 }
 
 // ---- le carnet ----

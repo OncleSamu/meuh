@@ -1,7 +1,6 @@
 // Ferme | L'île : plantations tropicales (jamais à arroser) et verger des îles.
 import { state } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
-import { now } from '../../core/clock.js';
 import { on } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
 import { ISLAND } from '../../data/island.js';
@@ -10,7 +9,7 @@ import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, esc } from '../dom.js';
 import { genWrap } from '../genlook.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, hint, timer, section } from '../kit.js';
+import { btn, bar, hint, section } from '../kit.js';
 import { defineView, defineLive, ui, go } from '../app.js';
 import { defineSheet, closeSheet } from '../sheets.js';
 import { burstAt } from '../fx.js';

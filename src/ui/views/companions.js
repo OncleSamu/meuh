@@ -13,26 +13,10 @@ const FX_ICON = { p: 'cpPousse', q: 'cpQualite', r: 'cpRecolte', n: 'cpNuisibles
 const side = l => (l === '*' ? `<i class="cp-any">+</i>` : ico(['item', l[0]]));
 const pics = a => side(a.a) + side(a.b) + (a.c ? side(a.c) : '');
 
-// les associations actives dans le champ et la serre, pour la carte
-function activeNow() {
-    const n = { good: 0, bad: 0 };
-    const seen = new Set();
-    G.allPlots().forEach(([, i]) =>
-        G.plotAssocs(i).forEach(a => {
-            if (seen.has(a.id)) return;
-            seen.add(a.id);
-            n[isBad(a) ? 'bad' : 'good']++;
-        }),
-    );
-    return n;
-}
-
 export function compCard() {
     if (!G.compOpen()) return null;
     const d = G.mamieDefi();
     const a = d && ASSOCS.find(x => x.id === d.id);
-    const n = activeNow();
-    const ready = G.tierReady();
     const mamie = a
         ? `<div class="cp-mamie"><span class="cp-av">${art('villager', 'odette')}</span><div class="card-main"><div class="card-title">Le conseil de Mamie</div>
             <div class="card-sub">« Essaie donc l’association “${esc(a.name.toLowerCase())}” : tu verras la différence ! »</div>
@@ -40,10 +24,7 @@ export function compCard() {
             <small>Récoltez ${d.need} parcelles qui profitent de cette association.</small></div>
             ${d.claimed ? `<span class="chip">${ico(['ui', 'check'])}Fait</span>` : btn('Récompense', { act: 'claimMamie', kind: 'green', size: 'sm', disabled: !d.done })}</div>`
         : '';
-    return `<div class="card cp-card"><div class="cp-head"><span class="cp-book">${art('ui', 'cpCarnet')}</span><div class="card-main">
-        <div class="card-title">Le carnet du potager</div>
-        <div class="card-sub">${G.seenCount()}/${ASSOCS.length} associations découvertes · au champ : ${n.good} bonne${n.good > 1 ? 's' : ''}${n.bad ? `, ${n.bad} mauvaise${n.bad > 1 ? 's' : ''}` : ''}</div></div>
-        ${btn(ready ? 'Récompense !' : 'Ouvrir', { act: 'open', data: { sheet: 'companions' }, kind: ready ? 'green' : '', size: 'sm' })}</div>${mamie}</div>`;
+    return mamie ? `<div class="card cp-card">${mamie}</div>` : null;
 }
 
 defineSheet('companions', {

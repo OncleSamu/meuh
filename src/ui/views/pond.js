@@ -9,6 +9,7 @@ import * as G from '../../systems/index.js';
 import { byId, blocks, actions, run, $ } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, timer, hint, coins } from '../kit.js';
+import { defineSheet, closeSheet } from '../sheets.js';
 import { defineView, currentPath, viewEl, go } from '../app.js';
 
 const MEDAL = { small: 'medalB', nice: 'medalS', trophy: 'medalG' };
@@ -186,10 +187,12 @@ function logCard() {
                 <b>${fname(id)}</b><small>×${fmt(n)}${best ? ` · ${G.kgText(best)}` : ''}</small><small>${FISH[id].hint}</small></button>`;
         })
         .join('');
-    return `<div class="card log-card"><div class="nature-head">${ico(['ui', 'book'])}<div class="card-main"><div class="card-title">Le carnet de pêche · ${got}/${ids.length}</div>
+    return `<div class="card log-card"><div class="nature-head">${ico(['ui', 'book'])}<div class="card-main"><div class="card-title">${got}/${ids.length} espèces</div>
         <div class="card-sub">Record de poids et médaille de taille (bronze : petite prise, argent : belle prise, or : trophée). Une récompense à la 10e et à la 50e prise de chaque espèce. Touchez un poisson pour aller le pêcher.</div></div></div>
         <div class="log-grid">${tiles}</div></div>`;
 }
+
+defineSheet('fishLog', { title: 'Le carnet de pêche', render: () => logCard() });
 
 // ---------------- le matériel ----------------
 function gearCard() {
@@ -225,7 +228,6 @@ function renderPond(el) {
         ['marcel', marcelCard()],
         ['traps', trapsCard()],
         ['contest', contestCard()],
-        ['log', logCard()],
         ['gear', gearCard()],
         ['net', netCard()],
         ['hint', hint('L’étang : la canne pour les gros poissons et les records, les nasses pour les poissons de tous les jours.')],
@@ -292,7 +294,10 @@ export function setupPond() {
         pondSpot: (el, d) => G.setSpot(d.id),
         pondBait: (el, d) => G.setBait(d.id || null),
         pondFlies: el => G.craftFlies(el),
-        pondGo: (el, d) => goFish(d.id),
+        pondGo: (el, d) => {
+            closeSheet();
+            goFish(d.id);
+        },
         pondMarcel: el => G.claimMarcel(el),
         pondRun: el => G.claimRun(el),
         pondContest: el => G.claimContest(el),
