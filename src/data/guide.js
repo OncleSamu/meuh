@@ -452,7 +452,7 @@ export const GUIDE_PAGES = [
                 h: 'Les parcelles et le verger',
                 b: [
                     '6 parcelles offertes, jusqu’à 18. Jamais d’arrosage, toujours de saison.',
-                    'Ananas, patate douce, fruit de la passion, manioc, gingembre, fleur de tiaré.',
+                    'Ananas, patate douce, fruit de la passion, manioc, gingembre, fleur de tiaré, puis (1.32) taro, curcuma, arachide, haricot rouge, piment des îles, aloe vera, hibiscus et patchouli : quatorze cultures, trente-trois recettes de plus.',
                     'Un verger des îles : 4 places jusqu’à 12, pas d’hiver. Bananier, cocotier, manguier, papayer, citronnier vert, avocatier, goyavier, caféier, litchi.',
                 ],
             },

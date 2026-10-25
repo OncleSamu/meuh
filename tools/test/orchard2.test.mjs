@@ -79,6 +79,9 @@ test('un arbre mûr donne plus de fruits que le même arbre jeune', () => {
     start();
     const a = plant().t,
         b = plant().t;
+    // un arbre « remarquable » (jumeau, doré) tiré au hasard à la plantation fausserait la comparaison
+    delete a.rem;
+    delete b.rem;
     a.mat = 0;
     b.mat = MATURE.at;
     let fa = 0,

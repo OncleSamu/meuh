@@ -23,6 +23,8 @@ import { balloon2 } from './misc2.js';
 import './v130.js';
 import './v130dishes.js';
 import './v131trees.js';
+import './v132crops.js';
+import './v132dishes.js';
 import './v131.js';
 import './v132.js';
 import './v133.js';

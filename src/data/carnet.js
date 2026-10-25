@@ -1007,3 +1007,72 @@ Object.assign(CARNET, {
     cashewBrittle:
         'Le croquant de cajou est un caramel dur plein de noix, qu’on casse au marteau. Papi Lucien en cassait toujours un peu plus que nécessaire, pour avoir des morceaux à goûter.',
 });
+
+// ---------------- 1.32 : les nouvelles cultures de l'île ----------------
+Object.assign(CARNET, {
+    taroChips:
+        'Les chips de taro sont violettes, fines, un peu sucrées. Ton père en a goûté une et a demandé si on avait « fait fondre un bonbon ». Il a vidé le bol.',
+    taroCoconut:
+        'Le taro au lait de coco, c’est le plat qu’on m’a appris sur l’île, assise sur un tronc, les pieds dans le sable. Papi Lucien disait que le sable donnait le goût. Il avait peut-être raison.',
+    taroFritters:
+        'Des beignets de taro, dorés dehors, tendres dedans. Ils disparaissent aussi vite qu’on les sort de l’huile. Je les compte, par principe. Je me trompe toujours.',
+    taroCake:
+        'Le gâteau de taro est d’un beau violet pâle. Ma voisine a cru que j’avais mis du colorant. J’ai juste mis du taro. Elle m’a demandé la recette en secret.',
+    turmericPowder:
+        'La poudre de curcuma colore tout : les doigts, le plan de travail, la nappe, le chat de la voisine. On en garde un peu pour les grands jours, et pour les taches qui s’expliquent mal.',
+    goldenMilk:
+        'Le lait d’or, avec un peu de miel et de poivre. On le boit chaud, le soir, en regardant les étoiles. Ton grand-père disait que ça soignait tout, sauf l’ennui. Mais l’ennui n’existait pas chez nous.',
+    yellowRice:
+        'Le riz jaune au curcuma est beau comme un petit soleil dans l’assiette. Les enfants le mangent sans discuter. C’est la seule recette dont je puisse dire ça.',
+    pickledTurmeric:
+        'Le curcuma mariné pique, parfume et teinte le bocal en jaune pour des années. On le reconnaît de loin dans la cave. C’est mon bocal-phare.',
+    roastedPeanuts:
+        'Les cacahuètes grillées, on les mange en regardant le feu. Papi Lucien faisait des piles de coques sur la table, puis disait que c’était le vent. Il n’y avait pas de vent.',
+    peanutOil:
+        'L’huile d’arachide chauffe bien et ne fume pas. Pour les beignets, c’est la meilleure. Je ne dis pas ça pour faire plaisir à l’huile : je dis ça pour les beignets.',
+    peanutButter:
+        'Le beurre de cacahuète colle au palais, à la cuillère, au couteau, aux doigts. Ton petit cousin l’a trouvé « meilleur que du chocolat ». Il avait déjà du chocolat sur le menton.',
+    peanutBrittle:
+        'Le croquant aux cacahuètes, on le casse en morceaux irréguliers avec le marteau de la cuisine. Ça fait un bruit de chantier. C’est ce qui annonce le goûter.',
+    chocPeanuts:
+        'Les cacahuètes enrobées de chocolat, on les offre dans de petits sachets. On en mange trois en route. Puis le sachet est à moitié vide. Puis on en refait.',
+    redBeanRice:
+        'Les haricots rouges au riz, c’est un plat modeste qui nourrit beaucoup de monde. Ton grand-père disait que c’était la cuisine des gens qui ont de la patience. Il n’en avait pas, mais il en mangeait.',
+    canRedBeans:
+        'Les haricots rouges en conserve, on les ouvre un jeudi soir de flemme, avec du riz et un peu d’oignon. C’est simple, c’est bon, et ça rend les jeudis meilleurs.',
+    redBeanPaste:
+        'La pâte de haricots rouges sucrée m’a été apprise par une dame japonaise, à l’arrêt d’un train. Elle m’a donné une cuillère, j’ai dit merci. Je n’ai jamais oublié la recette.',
+    dorayaki:
+        'Les dorayaki sont deux petits pancakes qui tiennent une confiture de haricots rouges comme un secret. Papi Lucien a cru qu’il s’agissait de pâté. Il a goûté, il a rougi, il en a repris.',
+    chiliPowder:
+        'La poudre de piment des îles, il suffit d’une pincée. Une de plus, et les larmes arrivent. Papi Lucien en mettait deux pour faire croire qu’il était courageux. Il pleurait discrètement dans son mouchoir.',
+    rougail:
+        'Le rougail de tomate, on le pile au mortier avec l’oignon, le piment et un peu de gingembre. On l’étale sur du riz blanc. Les voisins viennent exprès à l’heure du repas.',
+    hotSauce:
+        'La sauce pimentée, on la sert dans un petit pot, avec une petite cuillère, et une consigne : « Doucement ». Personne n’écoute jamais. Ensuite tout le monde demande de l’eau.',
+    spicedRum:
+        'Le rhum épicé au piment réchauffe l’hiver et les voix. On le sert en tout petit verre, accompagné d’un grand verre d’eau. Les invités prennent surtout le grand verre.',
+    aloeGel:
+        'Le gel d’aloe vera, frais, vert, froid sur la peau. Après un coup de soleil à la plage, c’est le meilleur geste du monde. Papi Lucien en a eu un par saison, et une plante par coup.',
+    aloeSoap:
+        'Le savon à l’aloe vera est doux comme du beurre et sent le matin. Je le garde pour les peaux fragiles. Surtout les nôtres, après les travaux de la ferme.',
+    soothingCream:
+        'La crème apaisante, au creux de la main, sur les mains gercées d’hiver. Ton père a dit qu’elle sentait trop bon pour un homme. Il en a repris trois fois.',
+    aloeLimeJuice:
+        'Le jus d’aloe vera et citron vert est frais, un peu gluant, et très bon pour les gens qui croient aux bienfaits. Je crois aux bienfaits. Et aussi au sucre, que je rajoute en cachette.',
+    driedHibiscus:
+        'Les fleurs d’hibiscus séchées font le plus beau thé rouge du monde. Il suffit de les laisser tremper cinq minutes, et la tasse devient rubis. Ton grand-père a dit que c’était de la magie. C’est de la botanique.',
+    bissap: 'Le bissap, c’est la boisson rouge qu’on boit très froide, sucrée, un peu acide. Un voisin sénégalais m’en a servi un jour de grande chaleur. J’ai bu le pichet entier. Il m’a donné la recette en riant.',
+    hibiscusJam:
+        'La confiture d’hibiscus est d’un rouge sombre, presque violet, et acidulée comme un bonbon. Je la mets sur du pain frais, avec une pointe de beurre. C’est le goûter de ceux qui aiment les surprises.',
+    hibiscusSorbet:
+        'Le sorbet à l’hibiscus a une couleur qui fait lever les têtes. Papi Lucien a demandé si c’était de la betterave. On lui a dit non. Il a répondu « dommage », puis il a repris une cuillère.',
+    patchouliEssence:
+        'L’huile essentielle de patchouli, il en faut une goutte. Une seule. La première fois, j’en ai mis dix : toute la maison a senti l’île pendant une semaine. Les voisins aussi.',
+    patchouliPerfume:
+        'L’eau de parfum au patchouli sent la terre mouillée, le bois et un peu le voyage. Ton grand-père disait qu’elle sentait « les années soixante-dix ». Je ne sais pas ce que c’est, mais ça me plaît.',
+    patchouliCandle:
+        'La bougie au patchouli, on l’allume le soir, quand la maison est calme. Elle parfume l’entrée, le salon et le chat. Le chat n’a pas donné son avis.',
+    patchouliSachet:
+        'Les sachets de patchouli, on les glisse dans les armoires, entre les draps. Ça éloigne les mites et ça parfume le linge. Ma tante Berthe en mettait partout, jusque dans les chaussures.',
+});
