@@ -100,29 +100,27 @@ PLANTS.rye = [
         ryeEar(49, 30, 22, 13),
 ];
 PLANTS.lingonberry = [
-    () =>
-        SHADOW(32, 58, 20, 3) +
+    // le produit : une petite boîte d'écorce de bouleau, pleine de grosses airelles luisantes
+    () => {
+        let o = SHADOW(32, 58, 24, 3);
         [
-            [22, 46],
-            [30, 44],
-            [38, 46],
-            [46, 48],
-            [26, 51],
-            [34, 51],
-            [42, 52],
-            [18, 51],
-            [30, 38],
-            [38, 39],
-            [24, 41],
-        ]
-            .map(([x, y], k) => berryRed(x, y, 3.1, k % 4 ? '#c8283a' : '#a81e30'))
-            .join('') +
-        linLeaf(48, 40, 50) +
-        linLeaf(52, 46, 90) +
-        stem('M14 24 Q26 18 36 22', '#6b4a2a', 1.4) +
-        linLeaf(20, 22, -40) +
-        linLeaf(28, 20, 10) +
-        berryRed(34, 24, 2.8),
+            [24, 20],
+            [32, 17],
+            [40, 20],
+            [20, 27],
+            [28, 25],
+            [36, 25],
+            [44, 27],
+            [15, 33],
+            [23, 33],
+            [32, 32],
+            [41, 33],
+            [49, 33],
+        ].forEach(([x, y], k) => (o += berryRed(x, y, 4.6, k % 3 ? '#c8283a' : '#a81e30')));
+        o += R(9, 36, 46, 19, 4, '#e8dcc4', 2.2) + R(7, 33, 50, 6, 2.5, '#f2e8d2', 2);
+        o += [14, 22, 30, 38, 46].map(x => L(`M${x} 43 L${x + 3} 43 M${x + 2} 49 L${x + 6} 49`, 1.6, '#5a4a3a')).join('');
+        return o + linLeaf(55, 30, 60) + linLeaf(8, 30, -60);
+    },
     () =>
         mound() +
         stem('M32 56 L32 42', '#6b4a2a', 1.4) +
@@ -130,32 +128,35 @@ PLANTS.lingonberry = [
         linLeaf(32, 44, 50) +
         linLeaf(32, 46, -10, '#3f8a4a') +
         linLeaf(32, 42, 10, '#3f8a4a'),
+    // la plante mûre : un petit coussin dense de feuilles luisantes, couvert de baies
     () => {
-        let o = mound() + stem('M20 56 Q24 44 18 36 M32 56 L32 34 M44 56 Q40 44 46 36', '#6b4a2a', 1.4);
+        let o = mound() + P('M7 57 Q6 34 32 28 Q58 34 57 57Z', '#2f6a3a', 2.2) + HL(22, 38, 7, 3, -20, 0.25);
         [
-            [18, 38],
-            [24, 42],
-            [14, 44],
-            [32, 34],
-            [27, 38],
-            [38, 38],
-            [46, 38],
-            [42, 44],
-            [50, 44],
-            [32, 44],
-            [24, 50],
-            [40, 50],
-        ].forEach(([x, y], k) => (o += linLeaf(x, y, ((k * 47) % 140) - 70, k % 3 ? '#2f6a3a' : '#3f8a4a')));
+            [14, 46, -70],
+            [22, 40, -30],
+            [32, 36, 0],
+            [42, 40, 30],
+            [50, 46, 70],
+            [18, 52, -50],
+            [30, 48, 10],
+            [40, 50, -20],
+            [48, 54, 40],
+            [26, 56, -10],
+        ].forEach(([x, y, a], k) => (o += linLeaf(x, y, a, k % 2 ? '#3f8a4a' : '#468f4e')));
         [
-            [18, 32],
-            [30, 30],
-            [44, 32],
-            [24, 44],
-            [38, 42],
-            [47, 46],
-            [14, 46],
-            [32, 40],
-        ].forEach(([x, y], k) => (o += berryRed(x, y, 2.5, k % 3 ? '#c8283a' : '#d9364b')));
+            [16, 44],
+            [25, 38],
+            [35, 34],
+            [44, 40],
+            [51, 48],
+            [21, 50],
+            [31, 44],
+            [40, 48],
+            [27, 54],
+            [46, 54],
+            [12, 53],
+            [36, 54],
+        ].forEach(([x, y], k) => (o += berryRed(x, y, 3.5, k % 3 ? '#c8283a' : '#d9364b')));
         return o;
     },
 ];
@@ -314,13 +315,23 @@ items.spruce = () =>
         .join('') +
     cone(24, 44, 1.5) +
     cone(40, 48, 1.3);
-items.rowan = () =>
-    SHADOW(32, 58, 22, 3) +
-    rowanLeaf(14, 36, -50) +
-    rowanLeaf(50, 38, 50) +
-    rowanBerries(32, 14, 2.1) +
-    rowanBerries(18, 44, 1.2, '#d9364b', '#e0452a') +
-    rowanBerries(46, 46, 1.1);
+// un corymbe : des baies serrées en dôme aplati, tenues par un éventail de queues
+const rowanCorymb = (x, y, s = 1) => {
+    let o = L(`M${x} ${y - 9 * s} L${x - 12 * s} ${y + 1 * s} M${x} ${y - 9 * s} L${x + 12 * s} ${y + 1 * s} M${x} ${y - 9 * s} L${x} ${y}`, 1.4, '#6b4a2a');
+    const rows = [5, 4, 3, 2, 1];
+    const cols = ['#e8452a', '#f26a2a', '#d9362a'];
+    let k = 0;
+    rows.forEach((n, r) => {
+        for (let i = 0; i < n; i++) {
+            const bx = x + (i - (n - 1) / 2) * 6.6 * s,
+                by = y + r * 5.6 * s;
+            o += C(bx, by, 3.5 * s, cols[k++ % 3], 1.3) + FC(bx - 1 * s, by - 1.2 * s, 0.8 * s, '#fff', 0.7);
+        }
+    });
+    return o;
+};
+const bigRowanLeaf = (x, y, a) => `<g transform="translate(${x} ${y}) scale(1.45)">${rowanLeaf(0, 0, a)}</g>`;
+items.rowan = () => SHADOW(32, 58, 22, 3) + bigRowanLeaf(22, 57, -42) + bigRowanLeaf(42, 57, 42) + rowanCorymb(32, 18, 1.15);
 
 // ======================= les cultures : l'enregistrement =======================
 Object.entries(PLANTS).forEach(([id, [icon, young, ready]]) => {
