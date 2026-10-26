@@ -13,7 +13,7 @@ import { ANIMALS_135, PRODUCTS_135, RECIPES_135 } from '../../src/data/v135.js';
 import { SPR } from '../../src/art/index.js';
 
 test('1.35 : 23 animaux, onze produits, 36 recettes', () => {
-    assert.equal(Object.keys(ANIMALS).length, 23);
+    assert.equal(Object.keys(ANIMALS).length, 26); // 1.49 : les trois bêtes de l'oasis
     assert.equal(ANIMALS_135.length, 6);
     assert.equal(PRODUCTS_135.length, 11);
     assert.equal(RECIPES_135.length, 36);

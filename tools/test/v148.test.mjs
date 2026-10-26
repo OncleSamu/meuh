@@ -203,11 +203,11 @@ test('la bière blanche : coriandre et bigarade ne se battent pas, deux étoiles
 });
 
 test('le chapitre 21 : trois chantiers à l’oasis, Idris, la carte, la palmeraie donne trois palmiers', () => {
-    assert.equal(CHAPTER_ORDER.at(-1), 21);
+    assert.equal(CHAPTER_ORDER[CHAPTER_ORDER.indexOf(20) + 1], 21);
     assert.equal(CHAPTERS[20].lvl, OASIS.lvl);
-    const mine = Object.values(PROJECTS).filter(p => p.map === 'oasis');
+    const mine = Object.values(PROJECTS).filter(p => p.ch === 21);
     assert.equal(mine.length, 3);
-    assert.ok(STORY_MAPS.some(m => m.id === 'oasis' && m.party === 'oasisGrove'));
+    assert.ok(STORY_MAPS.some(m => m.id === 'oasis'));
     assert.ok(MAP_BG.oasis && VILLAGERS.idris && SPR.villager('idris').includes('<svg'));
     for (const p of mine) assert.ok(SPR.building(p.id, 2).length > 200, p.id);
     oasis();

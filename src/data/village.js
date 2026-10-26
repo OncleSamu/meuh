@@ -232,6 +232,13 @@ export const VILLAGERS = {
         ch: 21,
         likes: ['date', 'cumin', 'mintTea', 'fig', 'pomegranate', 'almond', 'honey', 'bread'],
     },
+    yasmine: {
+        id: 'yasmine',
+        name: 'Yasmine',
+        role: 'L’herboriste du souk',
+        ch: 22,
+        likes: ['coriander', 'sesame', 'mint', 'saffron', 'bitterOrange', 'jujube', 'lavender', 'honey'],
+    },
     duval: {
         id: 'duval',
         name: 'Maître Duval',
@@ -389,13 +396,20 @@ export const CHAPTERS = [
         map: 'oasis',
         intro: 'Un caravanier est arrivé au port avec un dromadaire fatigué : la source de son oasis s’est tarie. Idris a besoin de vous pour la faire couler de nouveau, et pour y planter la palmeraie.',
     },
+    {
+        n: 22,
+        name: 'Le souk de l’oasis',
+        lvl: 59,
+        map: 'oasis',
+        intro: 'L’eau coule, les palmes font de l’ombre : il est temps que l’oasis revive. Yasmine l’herboriste veut rouvrir le souk, et Idris rêve de repartir en caravane.',
+    },
 ];
 
 // 1.4 : les chapitres forment une seule histoire, jouée dans cet ordre (numéros 1 à 16 à l'écran)
 // 1.16 : récompenses des chantiers à l'échelle des 50 niveaux
 // expérience d'un chantier : au moins l'ancienne valeur, sinon une part de ce que coûte le niveau du chapitre
 export const STORY_REWARD = { xpFrac: 0.03, chapterCoins: lvl => 500 + lvl * lvl * 8, chapterRuban: 5 };
-export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12, 19, 20, 21];
+export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12, 19, 20, 21, 22];
 export const chapterNum = n => CHAPTER_ORDER.indexOf(n) + 1;
 export const chapterAfter = n => CHAPTER_ORDER[CHAPTER_ORDER.indexOf(n) - 1] || 0;
 
@@ -1756,6 +1770,49 @@ Object.assign(PROJECTS, {
         reward: 'Trois palmiers dattiers offerts et 5 rubans',
         x: 52,
         y: 24,
+        map: 'oasis',
+    },
+});
+
+// ---------------- 1.49 : chapitre 22 « Le souk de l'oasis » ----------------
+Object.assign(PROJECTS, {
+    oasisPen: {
+        id: 'oasisPen',
+        ch: 22,
+        name: 'L’enclos de la palmeraie',
+        vid: 'idris',
+        need: { plank: 80, beam: 40, stone: 60, date: 30 },
+        before: 'Une oasis sans bêtes, c’est un jardin qui s’ennuie. Une palissade en palmes, un abreuvoir à l’ombre, et je vous fais venir des dromadaires, des zébus et des moutons de chez nous.',
+        after: 'L’enclos est prêt, à l’oasis. Dromadaires, zébus et moutons barbarins vous attendent au marché ; ils ne vivent que là, et boivent à la citerne.',
+        reward: 'L’enclos de la palmeraie et ses trois bêtes',
+        x: 18,
+        y: 40,
+        map: 'oasis',
+    },
+    caravanserai: {
+        id: 'caravanserai',
+        ch: 22,
+        name: 'Le caravansérail',
+        vid: 'idris',
+        need: { stone: 200, beam: 60, cloth: 40, cumin: 40 },
+        before: 'Mes ancêtres traversaient le désert de caravansérail en caravansérail. Rebâtissons celui-ci, et trois dromadaires porteront vos produits jusqu’au souk de la ville.',
+        after: 'Les bâts sont prêts. Chargez trois dromadaires, et la caravane revient six heures plus tard avec bien plus que le grossiste ne vous aurait donné.',
+        reward: 'Les caravanes : vendre au souk de la ville',
+        x: 82,
+        y: 30,
+        map: 'oasis',
+    },
+    soukStalls: {
+        id: 'soukStalls',
+        ch: 22,
+        name: 'Les étals du souk',
+        vid: 'yasmine',
+        need: { plank: 60, cloth: 40, coriander: 40, camelMilk: 10, barbaryWool: 10 },
+        before: 'Un souk, c’est des épices qui sentent jusqu’à la porte, des tapis pendus, du thé qui fume. Aidez-moi à monter les étals, et toute l’oasis viendra.',
+        after: 'Le souk est ouvert ! Les marchands de la ville connaissent maintenant vos produits : la caravane rapporte 15 % de plus, et l’oasis vous offre 5 rubans.',
+        reward: 'La caravane rapporte 15 % de plus, et 5 rubans',
+        x: 40,
+        y: 76,
         map: 'oasis',
     },
 });

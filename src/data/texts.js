@@ -117,6 +117,31 @@ export const TIPS = {
         title: 'Le chadouf',
         text: 'Trois fois par jour, le chadouf remonte l’eau du puits : touche quand le seau plonge, il remonte plein. Au lavoir du village, on avait une pompe à bras qui grinçait si fort qu’on l’entendait depuis l’église. Le curé disait que c’était la seule à chanter juste.',
     },
+    dromedary: {
+        icon: ['animal', 'dromedary'],
+        title: 'Le dromadaire',
+        text: 'Une bosse, pas deux : c’est un dromadaire. Il boit très peu, donne un lait doux et une laine chaude, et c’est lui qui porte les caravanes. Ton grand-père en a vu un au cirque Pinder en 1958 ; il a juré qu’il lui avait fait un clin d’œil.',
+    },
+    zebu: {
+        icon: ['animal', 'zebu'],
+        title: 'Le zébu',
+        text: 'Le zébu porte sa bosse sur les épaules et ne craint ni la chaleur ni les mouches. Son lait fait un beurre clarifié qui se garde des mois. Et il sait tourner la noria : attelé, il remonte l’eau du puits, mais ne donne plus de lait.',
+    },
+    barbarySheep: {
+        icon: ['animal', 'barbarySheep'],
+        title: 'Le mouton barbarin',
+        text: 'Le mouton barbarin garde ses réserves dans sa grosse queue, comme le dromadaire dans sa bosse. Il ne craint pas le soleil de midi, et sa laine fait les plus beaux tapis. Ma cousine Odile avait un tapis berbère : quarante ans qu’on marche dessus, il n’a pas bougé d’un fil.',
+    },
+    caravan: {
+        icon: ['ui', 'oaCaravane'],
+        title: 'La caravane',
+        text: 'Trois dromadaires, dix-huit charges, six heures de route : au souk de la ville, on paie bien mieux que le grossiste, et on rapporte parfois du safran. Ton arrière-grand-père allait vendre ses veaux à la foire de Saint-Flour à pied, avec son chien. Trois jours aller, trois jours retour.',
+    },
+    sandstorm: {
+        icon: ['ui', 'oaTempete'],
+        title: 'La tempête de sable',
+        text: 'Le vent a soufflé du désert : quelques cases sont ensablées. Touche-les pour les dégager ; en attendant, elles ne poussent plus. Les cases à l’ombre des palmiers ne craignent rien. Encore une bonne raison de planter des palmiers.',
+    },
     oasisDry: {
         icon: ['ui', 'drop'],
         title: 'La citerne est vide',

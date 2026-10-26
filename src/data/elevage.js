@@ -35,6 +35,15 @@ export const PASSERS = [
         likes: ['yield', 'speed'],
     },
     { id: 'ecole', name: 'Une ferme pédagogique', icon: ['ui', 'heart'], types: null, likes: ['appetite', 'robust'], gentle: true },
+    // 1.49 : les acheteurs de l'oasis
+    { id: 'idris', name: 'Idris, pour ses caravanes', icon: ['villager', 'idris'], types: ['dromedary', 'zebu'], likes: ['robust', 'appetite'] },
+    {
+        id: 'tapis',
+        name: 'Une coopérative de tapis',
+        icon: ['item', 'barbaryWool'],
+        types: ['barbarySheep', 'sheep', 'dromedary', 'alpaca'],
+        likes: ['soft', 'yield'],
+    },
 ];
 
 // la réputation de l'élevage : cinq paliers, +5 % aux prix de la foire par palier
@@ -99,6 +108,9 @@ export const COMICE_CAT = {
     pheasant: 'Les faisans',
     ostrich: 'Les autruches',
     yak: 'Les yacks',
+    dromedary: 'Les dromadaires',
+    zebu: 'Les zébus',
+    barbarySheep: 'Les moutons barbarins',
 };
 
 // ---------------- 1.46 : le carnet des robes ----------------
@@ -227,5 +239,37 @@ export const PAIRS = [
         name: 'Les cochons retournent le pré',
         why: 'ils fouillent la terre avec leur groin : les moutons trouvent moins d’herbe',
         mamie: 'Un cochon dans un pré, c’est une charrue qui ne s’arrête jamais. Les moutons regardaient leur herbe disparaître avec des yeux tout tristes.',
+    },
+    // 1.49 : les bêtes de l'enclos de la palmeraie
+    {
+        id: 'zebuCamel',
+        a: 'zebu',
+        b: 'dromedary',
+        on: 'dromedary',
+        f: 0.08,
+        name: 'Le zébu montre le chemin',
+        why: 'il boit le premier et mène les autres à l’abreuvoir : le dromadaire produit plus vite',
+        mamie: 'Idris dit qu’un dromadaire ne suit personne, sauf un zébu qui sait où est l’eau. Ton grand-père, c’était pareil : il ne suivait personne, sauf l’odeur de la tarte aux pommes.',
+    },
+    {
+        id: 'sheepZebu',
+        a: 'barbarySheep',
+        b: 'zebu',
+        on: 'barbarySheep',
+        f: 0.08,
+        name: 'Les moutons derrière le zébu',
+        why: 'ils broutent ras ce que le grand zébu laisse : plus de laine',
+        mamie: 'Le zébu arrache les grandes touffes, les moutons finissent le travail. On dirait Gaston et Marcel au buffet du mariage : l’un attaque, l’autre nettoie.',
+    },
+    {
+        id: 'camelSheep',
+        a: 'dromedary',
+        b: 'barbarySheep',
+        on: 'barbarySheep',
+        f: -0.08,
+        bad: true,
+        name: 'Bousculade à l’abreuvoir',
+        why: 'le dromadaire pousse les moutons pour boire le premier : les moutons produisent moins',
+        mamie: 'Un dromadaire qui a soif ne fait pas la queue. Les moutons, eux, attendent poliment, et repartent avec le fond du seau.',
     },
 ];

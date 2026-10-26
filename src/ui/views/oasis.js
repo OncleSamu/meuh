@@ -4,12 +4,13 @@ import { state } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { on, sfx, buzz, toast } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
-import { OASIS } from '../../data/oasis.js';
+import { OASIS, PEN, CARAVAN } from '../../data/oasis.js';
+import { stableTile, birthRow, assocRow } from './animals.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, esc, byId } from '../dom.js';
 import { genWrap } from '../genlook.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, section, segmented, costRow } from '../kit.js';
+import { btn, bar, section, segmented, costRow, timer } from '../kit.js';
 import { defineView, defineLive, ui, go, refresh } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { burstAt, reduceMotion } from '../fx.js';
@@ -112,6 +113,9 @@ function cellHtml(k, nextLocked) {
     const thirsty = state.oasis.dry && G.cellNeed(k) > 0;
     const cls = `oa-cell${shade ? ' shade' : ''}${thirsty ? ' thirsty' : ''}`;
     const mark = `${shade ? `<i class="oa-shade" title="À l’ombre">${ico(['ui', 'oaOmbre'])}</i>` : ''}${thirsty ? `<i class="oa-thirst">${ico(['ui', 'drop'])}</i>` : ''}`;
+    // 1.49 : ensablée par la tempête : un appui la dégage
+    if (p.sand)
+        return `<button class="${cls} sand" data-act="clearSand" data-k="${k}" data-anchor="${anc}"><span class="oa-art">${sl.tree ? treeArt(sl.tree) : art('plant', `${p.id}:${cropStage(p)}`)}</span><span class="oa-sand"></span><small class="oa-sand-txt">Dégager</small></button>`;
     const t = sl.tree;
     if (t) {
         const st = G.treeStage(t);
@@ -153,8 +157,85 @@ function renderOasis(el) {
         ],
         ['h1', section('La palmeraie', `<small class="o-count small">${plots.filter(p => p.open).length} cases</small>`)],
         ['grid', `<div class="oa-grid">${plots.map((p, k) => cellHtml(k, next)).join('')}</div>`],
+        ['h2', section(PEN.name, G.enclosOpen() ? `<small class="o-count small">${G.penBeasts().length}/${G.enclosCap()}</small>` : '')],
+        ['pen', penHtml()],
+        ['caravan', caravanHtml()],
     ]);
 }
+
+// ---------------- 1.49 : l'enclos de la palmeraie ----------------
+function penHtml() {
+    if (!G.enclosOpen())
+        return `<div class="card oa-pen-closed"><span class="oa-up-art">${art('ui', 'oaEnclos')}</span><div class="card-main"><div class="card-sub">${
+            state.level < 59
+                ? 'Au niveau 59, Idris bâtit un enclos à l’ombre des palmes, pour des dromadaires, des zébus et des moutons barbarins.'
+                : 'Bâtissez l’enclos avec Idris : chapitre « Le souk de l’oasis », Village, carte « L’oasis ».'
+        }</div></div></div>`;
+    const list = G.penBeasts();
+    const mf = G.maxFood();
+    const idx = list.map(a => state.animals.indexOf(a));
+    const shade = G.penShadeSlots();
+    const hot = G.isHot();
+    const zebu = G.noriaZebu();
+    const tiles = idx.length
+        ? `<div class="stable oa-stable">${idx
+              .sort((x, y) => (state.animals[x].type < state.animals[y].type ? -1 : state.animals[x].type > state.animals[y].type ? 1 : x - y))
+              .map(i => stableTile(state.animals[i], i, mf))
+              .join('')}</div>`
+        : `<p class="empty">L’enclos est vide. Dromadaires, zébus et moutons barbarins vous attendent au marché.</p>`;
+    const noria = G.noriaBuilt()
+        ? `<div class="line">${ico(['ui', 'oaNoria'])}<div>${zebu ? `La noria tourne : ${esc(zebu.name)} donne +${PEN.noria.lph} L/h à la source.` : 'La noria attend un zébu : attelez-en un depuis sa fiche (appui long).'}</div></div>`
+        : `<div class="line">${ico(['ui', 'oaNoria'])}<div>La noria : un zébu y tourne la roue, la source donne +${PEN.noria.lph} L/h (mais il ne fait plus de lait). ${costRow(G.costParts(PEN.noria.cost))}</div>${btn('Monter', { act: 'buildNoria', size: 'sm', kind: G.hasCost(PEN.noria.cost) ? 'green' : '', disabled: !G.hasCost(PEN.noria.cost) })}</div>`;
+    const big = state.oasis.penBig
+        ? ''
+        : `<div class="line">${ico(['ui', 'oaEnclos'])}<div>Agrandir la palissade : ${PEN.cap[1]} places. ${costRow(G.costParts(PEN.upCost))}</div>${btn('Agrandir', { act: 'penUp', size: 'sm', kind: G.hasCost(PEN.upCost) ? 'green' : '', disabled: !G.hasCost(PEN.upCost) })}</div>`;
+    return `<div class="card oa-pen">
+        <div class="oa-flow"><span class="chip">${ico(['ui', 'drop'])}−${String(Math.round(G.penDrink() * 10) / 10).replace('.', ',')} L/h</span><span class="chip ok">${ico(['ui', 'oaOmbre'])}${shade} à l’ombre</span>${hot ? `<span class="chip bad">${ico(['ui', 'oaMidi'])}Midi : moitié moins vite au soleil</span>` : ''}</div>
+        <div class="actions wrap">${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'] })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'] })}${btn('Acheter', { act: 'go', data: { path: 'market/shop#animals' }, size: 'sm', icon: ['ui', 'coin'] })}</div>
+        ${birthRow(PEN.key)}${assocRow(PEN.key)}${tiles}${noria}${big}
+        <p class="card-sub">Chaque palmier dattier adulte abrite ${PEN.shadePerPalm} bêtes du soleil de midi. Le mouton barbarin ne craint pas la chaleur.</p>
+    </div>`;
+}
+
+// ---------------- 1.49 : la caravane ----------------
+function caravanHtml() {
+    if (!G.enclosOpen()) return '';
+    if (!G.caravanOpen())
+        return `<div class="card oa-pen-closed"><span class="oa-up-art">${art('ui', 'oaCaravane')}</span><div class="card-main"><div class="card-title">La caravane</div><div class="card-sub">Rebâtissez le caravansérail avec Idris : trois dromadaires porteront vos produits au souk de la ville.</div></div></div>`;
+    const c = G.caravanState();
+    if (c.out) {
+        const back = G.caravanBack();
+        return `<div class="card oa-caravan"><span class="oa-up-art">${art('ui', 'oaCaravane')}</span><div class="card-main"><div class="card-title">La caravane ${back ? 'est rentrée !' : 'est en route'}</div>
+            <div class="card-sub">${back ? `Elle rapporte ${fmt(c.out.value)} pièces du souk.` : `Retour dans ${timer(c.out.back)} avec environ ${fmt(c.out.value)} pièces.`}</div>
+            ${back ? btn('Accueillir la caravane', { act: 'caravanClaim', kind: 'gold', icon: ['ui', 'coin'] }) : ''}</div></div>`;
+    }
+    const loads = G.caravanLoads(),
+        camels = G.caravanCamels().length;
+    const chips = Object.entries(c.load)
+        .map(([id, n]) => `<button class="pick-chip on" data-act="caravanDel" data-id="${id}">${ico(['item', id])}<span>${n * CARAVAN.perLoad}</span></button>`)
+        .join('');
+    return `<div class="card oa-caravan"><span class="oa-up-art">${art('ui', 'oaCaravane')}</span><div class="card-main"><div class="card-title">La caravane · ${loads}/${CARAVAN.loads} charges</div>
+        <div class="card-sub">Une charge = ${CARAVAN.perLoad} produits. Le souk paie ${String(Math.round(G.caravanMult() * 100) / 100).replace('.', ',')} fois le prix du grossiste ; retour en 6 heures. ${camels < CARAVAN.camels ? `Il faut ${CARAVAN.camels} dromadaires adultes (vous en avez ${camels}).` : ''}</div>
+        ${chips ? `<div class="chips-row">${chips}</div>` : ''}
+        ${loads ? `<div class="card-sub">Valeur au souk : <b>${fmt(G.caravanValue())}</b> pièces</div>` : ''}
+        <div class="actions wrap">${btn('Charger', { act: 'open', data: { sheet: 'caravanLoad' }, size: 'sm', icon: ['ui', 'plus'], disabled: loads >= CARAVAN.loads })}${btn('Partir', { act: 'caravanSend', kind: loads && camels >= CARAVAN.camels ? 'green' : '', size: 'sm', icon: ['ui', 'oaCaravane'], disabled: !loads || camels < CARAVAN.camels })}</div></div></div>`;
+}
+defineSheet('caravanLoad', {
+    title: 'Charger la caravane',
+    render() {
+        const goods = G.caravanGoods()
+            .map(id => [id, G.sellPrice(id)])
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 60);
+        if (!goods.length) return `<p class="empty">Il faut au moins ${CARAVAN.perLoad} produits d’une même sorte dans la grange.</p>`;
+        return `<p class="card-sub center">${G.caravanLoads()}/${CARAVAN.loads} charges. Touchez un produit pour en charger ${CARAVAN.perLoad}.</p><div class="pick-grid trees">${goods
+            .map(
+                ([id, p]) =>
+                    `<button class="pick-cell" data-act="caravanAdd" data-id="${id}"><span class="pc-art">${art('item', id)}</span><b>${ITEMS[id].name}</b><small>${fmt(Math.round(p * CARAVAN.perLoad * G.caravanMult()))}${ico(['ui', 'coin'])} la charge</small><span class="pc-cost">${state.inventory[id]} en grange</span></button>`,
+            )
+            .join('')}</div>`;
+    },
+});
 
 // ---------------- planter sur une case ----------------
 const shortDur = sec => (sec < 90 ? `${Math.round(sec)} s` : sec < 5400 ? `${Math.round(sec / 60)} min` : `${Math.round(sec / 360) / 10} h`);
@@ -354,6 +435,13 @@ export function setupOasis() {
         replantOasis: el => G.replantOasis(el),
         chadouf: () => openChadouf(),
         oaTank: el => G.upgradeTank(el),
+        clearSand: (el, d) => G.clearSand(+d.k, el),
+        buildNoria: el => G.buildNoria(el),
+        penUp: el => G.enclosUpgrade(el),
+        caravanAdd: (el, d) => G.caravanAdd(d.id),
+        caravanDel: (el, d) => G.caravanRemove(d.id),
+        caravanSend: el => G.caravanSend(el),
+        caravanClaim: el => G.caravanClaim(el),
         oaSpring: el => G.upgradeSpring(el),
     });
     const onLong = el => openSheet('tree', { k: +el.dataset.k, z: 'oasis' });

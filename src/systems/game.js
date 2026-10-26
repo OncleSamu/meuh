@@ -47,7 +47,7 @@ import { studTick } from './stud.js';
 import { nmarketTick } from './nmarket.js';
 import { specialTick } from './neighborspecial.js';
 import { ensureIsland, islandTick, islandOffline } from './island.js';
-import { ensureOasis, oasisTick, oasisOffline } from './oasis.js';
+import { ensureOasis, oasisTick, oasisOffline, sandstormTick } from './oasis.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
 import { ensureNight, nightTick } from './night.js';
@@ -269,6 +269,7 @@ function tickFarm() {
     if (lifeTick()) changed = true;
     if (islandTick()) changed = true;
     if (oasisTick()) changed = true;
+    if (sandstormTick()) changed = true;
     if (wellTick()) changed = true;
     if (honeyTick(1)) changed = true;
     if (crowTick()) changed = true;

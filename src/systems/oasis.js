@@ -8,9 +8,10 @@ import { now } from '../core/clock.js';
 import { fmt, s, dateKey } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { OASIS } from '../data/oasis.js';
+import { OASIS, PEN, CARAVAN, STORM } from '../data/oasis.js';
+import { ANIMALS } from '../data/animals.js';
 import { BALANCE } from '../data/progress.js';
-import { speedMult, addXp, spend, rank, rollYield } from './player.js';
+import { speedMult, addXp, spend, rank, rollYield, earn } from './player.js';
 import { hour, weather } from './world.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
@@ -23,6 +24,9 @@ import { takeVarSeed, harvestVariety, varExtra, varGrowth, varThirst } from './g
 import { slotsOf, plantTree, pickTree, treeStage, groundFull, advanceTree } from './orchard.js';
 import { compSpeed, plotFx, compHarvest, OASIS_BASE } from './companions.js';
 import { hasCost, payCost } from './home.js';
+import { inPasture, enclosOpen, isOasisBeast, pastureFree } from './pastures.js';
+import { sellPrice } from './market.js';
+import { isAdult } from './animals.js';
 
 const COIN = ['ui', 'coin'];
 const DROP = ['ui', 'drop'];
@@ -83,7 +87,8 @@ export const tankNext = () => {
     return t + 1 < OASIS.tank.length ? { cap: OASIS.tank[t + 1], cost: OASIS.tankCost[t] } : null;
 };
 // litres par heure à la source
-export const springRate = () => OASIS.spring + OASIS.springUps.reduce((a, [id, , l]) => a + (state.oasis && state.oasis.ups[id] ? l : 0), 0);
+export const springRate = () =>
+    OASIS.spring + OASIS.springUps.reduce((a, [id, , l]) => a + (state.oasis && state.oasis.ups[id] ? l : 0), 0) + (noriaZebu() ? PEN.noria.lph : 0);
 export const springUpNext = () => OASIS.springUps.find(([id]) => !(state.oasis && state.oasis.ups[id])) || null;
 
 export function upgradeTank(at) {
@@ -143,6 +148,7 @@ function thirst(k, palm, v, heat) {
 }
 export function cellNeed(k, heat = isHot() ? OASIS.heatMult : 1) {
     const p = oasisPlots()[k];
+    if (p && p.sand) return 0; // ensablée : elle attend qu'on la dégage
     if (p && p.id && !p.ready) return (OASIS.drink.crop / 3600) * thirst(k, false, p.v, heat);
     const t = (slotsOf('oasis')[k] || {}).tree;
     if (!t) return 0;
@@ -160,10 +166,13 @@ function step(dt, heat) {
     const O = state.oasis;
     O.water = Math.min(tankCap(), O.water + (springRate() * dt) / 3600);
     const needs = O.plots.map((p, k) => (p.open ? cellNeed(k, heat) * dt : 0));
-    const total = needs.reduce((a, b) => a + b, 0);
+    // 1.49 : les bêtes de l'enclos boivent à la même citerne
+    const beasts = (penDrink() * dt) / 3600;
+    const total = needs.reduce((a, b) => a + b, 0) + beasts;
     const f = total > 0 ? Math.min(1, O.water / total) : 1;
     O.water = Math.max(0, O.water - total * f);
     O.dry = total > 0 && f < 1;
+    O.penF = beasts > 0 ? f : 1;
     let crops = 0,
         fruits = 0;
     O.plots.forEach((p, k) => {
@@ -407,3 +416,173 @@ export function replantOasis(at) {
 }
 
 export const oasisReady = () => oasisPlots().filter(p => p.ready).length;
+
+// ================= 1.49 : l'enclos de la palmeraie =================
+export const penBeasts = () => (enclosOpen() ? inPasture(PEN.key) : []);
+export const noriaBuilt = () => !!(state.oasis && state.oasis.noria);
+export const noriaZebu = () => (noriaBuilt() ? penBeasts().find(a => a.noria && a.type === 'zebu' && isAdult(a)) || null : null);
+// litres par heure que boivent les bêtes adultes de l'enclos
+export const penDrink = () => penBeasts().reduce((s2, a) => s2 + (isAdult(a) ? ANIMALS[a.type].drink || 0 : 0), 0);
+// les palmiers dattiers adultes de l'oasis abritent chacun quelques bêtes
+export const adultPalms = () => slotsOf('oasis').filter(sl => sl.tree && sl.tree.id === OASIS.palm && ['adult', 'old'].includes(treeStage(sl.tree))).length;
+export const penShadeSlots = () => adultPalms() * PEN.shadePerPalm;
+export function penShaded(a) {
+    const list = penBeasts().filter(b => isAdult(b) && !b.noria);
+    const i = list.indexOf(a);
+    return i >= 0 && i < penShadeSlots();
+}
+// la vitesse d'une bête de l'oasis : l'eau, la chaleur de midi au soleil, la noria
+export function oasisBeastMult(a) {
+    if (!a || !isOasisBeast(a.type)) return 1;
+    if (a.noria || a.trip) return 0;
+    let m = state.oasis && typeof state.oasis.penF === 'number' ? state.oasis.penF : 1;
+    if (isHot() && !PEN.heatProof.includes(a.type) && !penShaded(a)) m *= PEN.heatMult;
+    return m;
+}
+export function buildNoria(at) {
+    if (!enclosOpen() || noriaBuilt() || !hasCost(PEN.noria.cost)) return false;
+    payCost(PEN.noria.cost);
+    state.oasis.noria = true;
+    sfx('level');
+    burst(at, 'water', 12);
+    toast('La noria est montée : attelez un zébu, et la source donne 8 litres de plus par heure', ['ui', 'oaNoria']);
+    changed('oasis');
+    return true;
+}
+// atteler (ou dételer) un zébu : un seul à la fois ; attelé, il ne donne plus de lait
+export function toggleNoria(uid) {
+    const a = state.animals.find(x => x.uid === uid);
+    if (!a || a.type !== 'zebu' || !noriaBuilt() || !isAdult(a)) return false;
+    if (a.noria) a.noria = false;
+    else {
+        penBeasts().forEach(b => (b.noria = false));
+        a.noria = true;
+    }
+    toast(a.noria ? `${a.name} tourne la noria : +${PEN.noria.lph} L/h à la source` : `${a.name} retourne brouter`, ['ui', 'oaNoria']);
+    changed('animals');
+    return true;
+}
+export function enclosUpgrade(at) {
+    if (!enclosOpen() || state.oasis.penBig || !hasCost(PEN.upCost)) return false;
+    payCost(PEN.upCost);
+    state.oasis.penBig = true;
+    sfx('level');
+    burst(at, 'sparkle', 12);
+    toast(`${PEN.name} s’agrandit : ${PEN.cap[1]} places`, ['ui', 'oaEnclos']);
+    changed('animals');
+    return true;
+}
+export const penFree = () => pastureFree(PEN.key);
+
+// ================= 1.49 : les caravanes =================
+export const caravanOpen = () => projectDone(CARAVAN.project);
+export const caravanCamels = () => penBeasts().filter(a => a.type === 'dromedary' && isAdult(a) && !a.noria && !a.sick && !a.trip);
+const ensureCaravan = () => (state.oasis.caravan ||= { load: {}, out: null, trips: 0 });
+export const caravanState = () => (state.oasis ? ensureCaravan() : { load: {}, out: null, trips: 0 });
+export const caravanLoads = () => Object.values(caravanState().load).reduce((a, n) => a + n, 0);
+export const caravanMult = () => CARAVAN.mult * (1 + (projectDone('soukStalls') ? CARAVAN.soukBonus : 0));
+// ce que rapportera la caravane chargée
+export const caravanValue = (load = caravanState().load) =>
+    Math.round(Object.entries(load).reduce((a, [id, n]) => a + n * CARAVAN.perLoad * sellPrice(id) * caravanMult(), 0) / 10) * 10;
+// les produits qu'on peut charger : ceux de la grange, par 10
+export const caravanGoods = () =>
+    Object.keys(state.inventory).filter(
+        id => ITEMS[id] && !['material', 'rare', 'seed'].includes(ITEMS[id].type) && ITEMS[id].sell > 0 && freeStock(id) >= CARAVAN.perLoad,
+    );
+const freeStock = id => (state.inventory[id] || 0) - (caravanState().load[id] || 0) * CARAVAN.perLoad;
+export function caravanAdd(id, n = 1) {
+    const c = ensureCaravan();
+    if (c.out || !caravanOpen()) return false;
+    let k = 0;
+    while (k < n && caravanLoads() < CARAVAN.loads && freeStock(id) >= CARAVAN.perLoad) {
+        c.load[id] = (c.load[id] || 0) + 1;
+        k++;
+    }
+    if (k) changed('oasis');
+    return k > 0;
+}
+export function caravanRemove(id) {
+    const c = ensureCaravan();
+    if (c.out || !c.load[id]) return false;
+    if (!--c.load[id]) delete c.load[id];
+    changed('oasis');
+    return true;
+}
+export function caravanSend(at) {
+    const c = ensureCaravan();
+    if (c.out || !caravanOpen() || !caravanLoads() || caravanCamels().length < CARAVAN.camels) return false;
+    for (const [id, n] of Object.entries(c.load)) {
+        if ((state.inventory[id] || 0) < n * CARAVAN.perLoad) return false;
+    }
+    for (const [id, n] of Object.entries(c.load)) state.inventory[id] -= n * CARAVAN.perLoad;
+    const camels = caravanCamels()
+        .slice(0, CARAVAN.camels)
+        .map(a => a.uid);
+    camels.forEach(uid => (state.animals.find(a => a.uid === uid).trip = true));
+    c.out = { load: c.load, value: caravanValue(), back: now() + CARAVAN.time, camels };
+    c.load = {};
+    sfx('buy');
+    burst(at, 'sparkle', 10);
+    toast(`La caravane part au souk de la ville : retour dans 6 heures`, ['ui', 'oaCaravane']);
+    tip('caravan');
+    changed('oasis');
+    return true;
+}
+export const caravanBack = () => !!(state.oasis && state.oasis.caravan && state.oasis.caravan.out && now() >= state.oasis.caravan.out.back);
+export function caravanClaim(at) {
+    const c = ensureCaravan();
+    if (!c.out || now() < c.out.back) return false;
+    const { value, camels } = c.out;
+    earn(value, at);
+    let spice = 0;
+    if (Math.random() < CARAVAN.spice.chance) {
+        spice = CARAVAN.spice.min + Math.floor(Math.random() * (CARAVAN.spice.max - CARAVAN.spice.min + 1));
+        state.inventory[CARAVAN.spice.id] = (state.inventory[CARAVAN.spice.id] || 0) + spice;
+    }
+    state.animals.forEach(a => camels.includes(a.uid) && delete a.trip);
+    c.out = null;
+    c.trips++;
+    state.stats.caravans = (state.stats.caravans || 0) + 1;
+    addXp(200 + 20 * Math.min(60, state.level), at);
+    sfx('level');
+    toast(`La caravane est rentrée : ${fmt(value)} pièces${spice ? ` et ${spice} pistils de safran du souk` : ''}`, ['ui', 'oaCaravane']);
+    changed('oasis');
+    return { value, spice };
+}
+
+// ================= 1.49 : la tempête de sable =================
+// tous les 30 à 60 heures, quelques cases au soleil s'ensablent : la plante attend qu'on la dégage d'un appui
+export function sandstormTick() {
+    if (!state.oasis || !oasisOpen() || state.level < PEN_LVL) return false;
+    const O = state.oasis,
+        t = now();
+    if (!O.stormAt) O.stormAt = t + STORM.every[0] + Math.random() * (STORM.every[1] - STORM.every[0]);
+    if (t < O.stormAt) return false;
+    O.stormAt = t + STORM.every[0] + Math.random() * (STORM.every[1] - STORM.every[0]);
+    const sunny = O.plots.map((p, k) => k).filter(k => O.plots[k].open && !isShaded(k) && !O.plots[k].sand && (O.plots[k].id || slotsOf('oasis')[k].tree));
+    const n = Math.min(sunny.length, STORM.cells[0] + Math.floor(Math.random() * (STORM.cells[1] - STORM.cells[0] + 1)));
+    for (let j = 0; j < n; j++) {
+        const k = sunny.splice(Math.floor(Math.random() * sunny.length), 1)[0];
+        O.plots[k].sand = true;
+    }
+    // une caravane en route prend une heure de retard
+    if (O.caravan && O.caravan.out) O.caravan.out.back += CARAVAN.stormDelay;
+    state.stats.storms = (state.stats.storms || 0) + 1;
+    if (n) {
+        toast(`Tempête de sable sur l’oasis : ${n} case${s(n)} ensablée${s(n)}, à dégager`, ['ui', 'oaTempete']);
+        tip('sandstorm');
+    }
+    changed('oasis');
+    return true;
+}
+export function clearSand(k, at) {
+    const p = oasisPlots()[k];
+    if (!p || !p.sand) return false;
+    p.sand = false;
+    sfx('pop');
+    burst(at, 'dirt', 8, -4);
+    state.stats.sandCleared = (state.stats.sandCleared || 0) + 1;
+    changed('oasis');
+    return true;
+}
+const PEN_LVL = 59;

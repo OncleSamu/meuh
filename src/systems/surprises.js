@@ -1,6 +1,7 @@
 // Événements rares (foire aux bestiaux, critique gastronomique, nuée de papillons), contrats de saison,
 // histoires des villageois, animaux d'exception et charme du paon.
 import { herdFull, placeAnimal } from './pastures.js';
+import { storyOk } from './story.js';
 import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -77,7 +78,7 @@ export function startRare(force) {
     if (type === 'fair') {
         // parmi les animaux les plus précieux déjà disponibles
         const pool = Object.values(ANIMALS)
-            .filter(a => lvOk(a))
+            .filter(a => lvOk(a) && storyOk(a))
             .sort((a, b) => b.cost - a.cost)
             .slice(0, 5);
         r.offers = pool
@@ -114,7 +115,7 @@ export function buyStarAnimal(k, at) {
         o = r.offers && r.offers[k];
     if (!rareActive('fair') || !o || o.sold) return false;
     if (challengeOn('noAnimals')) return false;
-    if (herdFull()) {
+    if (herdFull(o.id)) {
         toast('Tous vos prés sont pleins : achetez un nouveau pré dans l’onglet Animaux', ['ui', 'flowers']);
         sfx('error');
         return false;

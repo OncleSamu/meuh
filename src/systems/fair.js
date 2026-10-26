@@ -277,7 +277,7 @@ export function neighborBeasts() {
 export function buyNeighborBeast(k, at) {
     const o = neighborBeasts().find(x => x.k === k);
     if (!o || o.sold) return false;
-    if (herdFull()) {
+    if (herdFull(o.a.type)) {
         toast('Tous vos prés sont pleins', ['ui', 'flowers']);
         sfx('error');
         return false;

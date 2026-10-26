@@ -48,3 +48,71 @@ export const OASIS_TREES = [
     ['bitterOrange', 'Bigarade', 'Oranger amer', 58, 5500, 360, 1700, 12, '04300'],
 ];
 export const OASIS_IDS = [...OASIS_CROPS, ...OASIS_TREES].map(r => r[0]);
+
+// ---------------- 1.49 : l'enclos de la palmeraie, ses bêtes, les caravanes, la tempête ----------------
+// id, nom, produit, prix, production (s), niveau, xp, second produit, croissance du petit (s), prénoms, gènes de base, boit (L/h)
+export const OASIS_BEASTS = [
+    [
+        'dromedary',
+        'Dromadaire',
+        'camelMilk',
+        30000,
+        1500,
+        59,
+        24,
+        'camelWool',
+        1500,
+        ['Sahel', 'Tamara', 'Bachir', 'Dune', 'Mirage', 'Zéphyrine'],
+        '3222244',
+        0.4,
+    ],
+    ['zebu', 'Zébu', 'zebuMilk', 22000, 1300, 59, 22, null, 1500, ['Bosco', 'Perle', 'Ganga', 'Nandi', 'Mousson', 'Safran'], '3222234', 2],
+    [
+        'barbarySheep',
+        'Mouton barbarin',
+        'barbaryWool',
+        12000,
+        1200,
+        59,
+        20,
+        null,
+        900,
+        ['Barbarin', 'Kebir', 'Tafilalt', 'Laineux', 'Grosse-Queue', 'Nomade'],
+        '2422233',
+        0.5,
+    ],
+];
+export const OASIS_BEAST_IDS = OASIS_BEASTS.map(b => b[0]);
+// id, nom, vente
+export const OASIS_PRODUCTS = [
+    ['camelMilk', 'Lait de chamelle', 420],
+    ['zebuMilk', 'Lait de zébu', 360],
+    ['camelWool', 'Laine de dromadaire', 520],
+    ['barbaryWool', 'Laine barbarine', 380],
+];
+export const PEN = {
+    key: 99, // le numéro de « pré » de l'enclos (les prés de la ferme vont de 0 à 19)
+    project: 'oasisPen',
+    name: 'L’enclos de la palmeraie',
+    cap: [12, 20], // places, puis la palissade agrandie
+    upCost: { coins: 250000, plank: 80, beam: 40 },
+    shadePerPalm: 3, // bêtes abritées par palmier dattier adulte de l'oasis
+    heatMult: 0.5, // au soleil de midi à 16 h : moitié moins vite (sauf le mouton barbarin)
+    heatProof: ['barbarySheep'],
+    noria: { lph: 8, cost: { coins: 120000, beam: 60, plank: 40, tools: 20 } }, // un zébu attelé : +8 L/h, pas de lait
+};
+export const CARAVAN = {
+    project: 'caravanserai',
+    camels: 3, // dromadaires adultes, pas à la noria
+    loads: 18, // charges ; une charge = 10 produits d'une même sorte
+    perLoad: 10,
+    time: 6 * 3600 * 1000,
+    mult: 2.4, // × le prix du grossiste
+    soukBonus: 0.15, // + 15 % une fois les étals du souk ouverts
+    spice: { chance: 0.35, id: 'saffron', min: 3, max: 6 }, // une épice rare au retour
+    stormDelay: 3600 * 1000,
+};
+export const STORM = {
+    every: [30 * 3600 * 1000, 60 * 3600 * 1000], // une tempête tous les 30 à 60 heures réelles
+    cells: [2, 4], // cases ensablées (jamais à l'ombre)
+};

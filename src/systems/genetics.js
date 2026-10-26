@@ -39,7 +39,7 @@ import { RIVALS } from '../data/village.js';
 import { spend, earn, addXp } from './player.js';
 import { projectDone, storyOk } from './story.js';
 import { isAdult, newAnimal } from './animals.js';
-import { placeAnimal, herdFull } from './pastures.js';
+import { placeAnimal, herdFull, fullText } from './pastures.js';
 import { unitPrice } from './market.js';
 import { qual } from './farm.js';
 import { QX } from '../data/farm.js';
@@ -880,8 +880,8 @@ export function startBreed(ua, ub, at) {
     const a = animalByUid(ua),
         b = animalByUid(ub);
     if (!breedOpen() || G.breeds.length >= breedSlots() || !breedable(a, b) || breeding(ua) || breeding(ub)) return false;
-    if (herdFull()) {
-        toast('Tous vos prés sont pleins : il faut une place pour le petit', ['ui', 'flowers']);
+    if (herdFull(a.type)) {
+        toast(`${fullText(a.type)} : il faut une place pour le petit`, ['ui', 'flowers']);
         sfx('error');
         return false;
     }
@@ -926,7 +926,7 @@ export function breedTick() {
     if (!G || !G.breeds || !G.breeds.length) return false;
     let ch = false;
     for (const c of [...G.breeds]) {
-        if (now() < c.until || herdFull()) continue;
+        if (now() < c.until || herdFull(c.type)) continue;
         G.breeds.splice(G.breeds.indexOf(c), 1);
         ch = true;
         const a = animalByUid(c.a),
@@ -934,7 +934,7 @@ export function breedTick() {
         if (!a || !b) continue;
         const n = Math.random() < GX.twins + animalFertile(a, b) ? 2 : 1;
         const born = [];
-        for (let j = 0; j < n && !herdFull(); j++) born.push(birth(a, b, c.type));
+        for (let j = 0; j < n && !herdFull(c.type); j++) born.push(birth(a, b, c.type));
         if (!born.length) continue;
         const [baby] = born;
         const e = c.type === 'chicken' || c.type === 'cow' || c.type === 'goat' ? 'e' : '';
@@ -1005,7 +1005,7 @@ export const racePrice = r => Math.round(ANIMALS[r.type].cost * GX.babyPriceMult
 export function buyRaceBaby(rid, at) {
     const r = state.genetics.races[rid];
     if (!r || !seedbankOpen()) return false;
-    if (herdFull()) {
+    if (herdFull(r.type)) {
         toast('Tous vos prés sont pleins', ['ui', 'flowers']);
         sfx('error');
         return false;

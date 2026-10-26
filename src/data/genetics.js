@@ -2,7 +2,7 @@
 import { CROPS_130 } from './v130.js';
 import { TREES_131 } from './v131.js';
 import { CROPS_132 } from './v132.js';
-import { OASIS_CROPS, OASIS_TREES } from './oasis.js';
+import { OASIS_CROPS, OASIS_TREES, OASIS_BEASTS } from './oasis.js';
 import { ANIMALS_135 } from './v135.js';
 
 // ---------------- les caractères ----------------
@@ -81,9 +81,13 @@ export const FINISH_SEASON = { hiver: 1, printemps: 5, ete: 3, automne: 2 };
 // les traits des animaux (1.2) : cornes, oreilles, toison ; seulement pour les espèces où ils se voient.
 // L'indice 0 est l'allure naturelle de l'espèce. Comme les autres apparences, jamais choisis.
 export const FEATURES = {
-    horns: { name: 'Cornes', list: ['Naturelles', 'Sans cornes', 'Longues', 'En lyre'], species: ['cow', 'goat', 'buffalo', 'sheep'] },
+    horns: { name: 'Cornes', list: ['Naturelles', 'Sans cornes', 'Longues', 'En lyre'], species: ['cow', 'goat', 'buffalo', 'sheep', 'zebu', 'barbarySheep'] },
     ears: { name: 'Oreilles', list: ['Naturelles', 'Tombantes'], species: ['rabbit', 'pig', 'goat'] },
-    coat: { name: 'Toison', list: ['Naturelle', 'Longue', 'Frisée'], species: ['sheep', 'alpaca', 'horse', 'donkey', 'ewe', 'mohairGoat', 'yak'] },
+    coat: {
+        name: 'Toison',
+        list: ['Naturelle', 'Longue', 'Frisée'],
+        species: ['sheep', 'alpaca', 'horse', 'donkey', 'ewe', 'mohairGoat', 'yak', 'dromedary', 'barbarySheep'],
+    },
 };
 export const featuresOf = type => Object.keys(FEATURES).filter(k => FEATURES[k].species.includes(type));
 
@@ -244,6 +248,7 @@ const A = {
     ewe: '3422223',
     quail: '2222232',
     ...Object.fromEntries(ANIMALS_135.map(a => [a[0], a[10]])),
+    ...Object.fromEntries(OASIS_BEASTS.map(a => [a[0], a[10]])),
 };
 export const ANIMAL_BASE = Object.fromEntries(Object.entries(A).map(([id, s]) => [id, [...s].map(Number)]));
 

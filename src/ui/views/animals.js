@@ -181,7 +181,7 @@ const meadowHtml = n =>
     `<div class="meadow${n > 14 ? ' crowd' : ''}" id="pasture" style="height:${Math.min(1000, Math.max(380, 160 + n * 42))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${state.animals.length ? 'Ce pré est vide : déplacez-y des bêtes depuis leur fiche.' : 'Votre pâturage est vide. Achetez une poule au marché pour commencer.'}</div>`}</div>`;
 
 // une bête de l'étable
-function stableTile(a, i, mf) {
+export function stableTile(a, i, mf) {
     const d = ANIMALS[a.type],
         adult = G.isAdult(a);
     const tag = a.sick
@@ -220,8 +220,8 @@ function stableHtml(k) {
 }
 
 // 1.45 : l'interrupteur des naissances du pré regardé (éteint par défaut), et quand arrive le prochain petit
-function birthRow(k) {
-    if (!G.birthsOpen() || !state.pastures[k]) return '';
+export function birthRow(k) {
+    if (!G.birthsOpen() || !G.penOf(k)) return '';
     const on = G.birthsOn(k);
     const pairs = Object.keys(G.birthPairs(k));
     const next = G.nextBirthIn(k);
@@ -236,7 +236,7 @@ function birthRow(k) {
 }
 
 // 1.46 : les associations actives dans le pré regardé
-function assocRow(k) {
+export function assocRow(k) {
     const list = G.pastureAssocs(k);
     if (!list.length) return '';
     return `<button class="assoc-row" data-act="open" data-sheet="herdbook" data-tab="pairs">${list
@@ -353,6 +353,17 @@ defineSheet('animal', {
             ]);
         info.push([['item', 'feed'], `Mangeoire : ${a.food} / ${G.maxFood()} repas`]);
         if (a.produced) info.push([['ui', 'basket'], G.producedText(a)]);
+        // 1.49 : une bête de l'oasis
+        if (ANIMALS[a.type].oasis) {
+            info.push([
+                ['ui', 'oaEnclos'],
+                `Vit dans l’enclos de la palmeraie, à l’oasis ; boit ${String(ANIMALS[a.type].drink).replace('.', ',')} L par heure à la citerne`,
+            ]);
+            if (a.noria) info.push([['ui', 'oaNoria'], `Tourne la noria : +8 L/h à la source, mais pas de lait`]);
+            else if (a.trip) info.push([['ui', 'oaCaravane'], 'Parti en caravane au souk de la ville']);
+            else if (adult && G.isHot() && !G.penShaded(a) && a.type !== 'barbarySheep')
+                info.push([['ui', 'oaMidi'], 'Au soleil de midi : il produit deux fois moins vite']);
+        }
         // 1.45 : né au pré, de quels parents (au labo, la fiche des gènes le dit déjà)
         if (a.born === 'pre' && a.parents && !(state.genetics && G.geneticsOpen() && a.g))
             info.push([
@@ -367,8 +378,9 @@ defineSheet('animal', {
             ${a.sick ? `<div class="line sick">${ico(['ui', 'sick'])}<div>${esc(a.name)} est malade et ne produit plus.</div>${btn(`Soigner · ${G.cureCost()}${ico(['ui', 'coin'])}`, { act: 'cure', data: { i }, kind: 'green', size: 'sm' })}</div>` : ''}
             ${lines(info)}
             <div class="row-btns">${btn(a.love >= 5 ? 'Affection au maximum' : petted ? 'Déjà câliné aujourd’hui' : 'Faire un câlin', { act: 'pet', data: { i }, kind: 'gold', disabled: petted || a.love >= 5, icon: ['ui', 'heart'] })}${btn('Nourrir', { act: 'feedOne', data: { i }, icon: ['item', 'feed'] })}</div>
+            ${a.type === 'zebu' && adult && G.noriaBuilt() ? `<div class="row-btns">${btn(a.noria ? 'Dételer de la noria' : 'Atteler à la noria', { act: 'noriaToggle', data: { uid: a.uid }, kind: a.noria ? '' : 'gold', icon: ['ui', 'oaNoria'] })}</div>` : ''}
             ${
-                state.pastures.length > 1
+                state.pastures.length > 1 && !ANIMALS[a.type].oasis
                     ? `<div class="set-sub">Son pré</div><div class="chips-row pas-move">${state.pastures
                           .map((p, k) => {
                               const here = (a.p || 0) === k,
@@ -398,10 +410,15 @@ defineSheet('animal', {
 });
 
 // appui long : la fiche de la bête (un appui court ramasse ou nourrit)
-const setupLongPress = () => longPress(byId('view-animals'), '.critter[data-i], .st-tile[data-i]', el => openSheet('animal', { i: +el.dataset.i }));
+const setupLongPress = () => {
+    longPress(byId('view-animals'), '.critter[data-i], .st-tile[data-i]', el => openSheet('animal', { i: +el.dataset.i }));
+    // 1.49 : les bêtes de l'enclos, dans la vue de l'oasis
+    longPress(byId('view-farm'), '.st-tile[data-i]', el => openSheet('animal', { i: +el.dataset.i }));
+};
 
 export function setupAnimals() {
     actions({
+        noriaToggle: (el, d) => G.toggleNoria(d.uid),
         animalMode: (el, d) => (ui.sel.animalMode = d.v),
         sellAnimal: (el, d) => {
             const a = state.animals[+d.i];

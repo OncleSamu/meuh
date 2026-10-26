@@ -9,13 +9,13 @@ import { toast, sfx, changed } from '../core/bus.js';
 import { GROW, BIRTHS } from '../data/animals.js';
 import { isAdult, newAnimal } from './animals.js';
 import { isAway } from './port.js';
-import { inPasture, pastureFree } from './pastures.js';
+import { inPasture, pastureFree, penOf, penKeys } from './pastures.js';
 import { crossGenomes, lineSnap, breeding, animalBase } from './genetics.js';
 import { addXp } from './player.js';
 import { tip } from './tips.js';
 
 export const birthsOpen = () => state.level >= BIRTHS.lvl;
-export const birthsOn = k => !!(state.pastures[k] && state.pastures[k].births);
+export const birthsOn = k => !!(penOf(k) && penOf(k).births);
 // le temps entre deux naissances d'une espèce dans un pré (en heures réelles) : plus long pour les grosses bêtes
 export const birthHours = type => Math.min(BIRTHS.maxH, BIRTHS.minH + (GROW[type] || 600) / BIRTHS.growDiv);
 const canParent = a => isAdult(a) && !a.sick && !isAway(a) && !a.box && !breeding(a.uid);
@@ -32,7 +32,7 @@ export function birthPairs(k) {
 }
 
 export function toggleBirths(k) {
-    const p = state.pastures[k];
+    const p = penOf(k);
     if (!p || !birthsOpen()) return false;
     p.births = !p.births;
     // le compte à rebours repart de zéro à chaque allumage
@@ -50,7 +50,7 @@ export function toggleBirths(k) {
 // dans combien de temps (ms) la prochaine naissance possible du pré, ou null
 export function nextBirthIn(k) {
     if (!birthsOn(k)) return null;
-    const p = state.pastures[k],
+    const p = penOf(k),
         t = now();
     const waits = Object.keys(birthPairs(k)).map(type => (p.nb && p.nb[type] ? Math.max(0, p.nb[type] - t) : birthHours(type) * 3600000));
     return waits.length ? Math.min(...waits) : null;
@@ -99,8 +99,9 @@ export function birthsTick(max = BIRTHS.catchUp) {
     if (!birthsOpen() || !Array.isArray(state.pastures)) return [];
     const t = now(),
         born = [];
-    state.pastures.forEach((p, k) => {
-        if (!p.births) return;
+    penKeys().forEach(k => {
+        const p = penOf(k);
+        if (!p || !p.births) return;
         p.nb = p.nb || {};
         const pairs = birthPairs(k);
         // une espèce qui n'a plus de couple repart de zéro le jour où elle en retrouve un

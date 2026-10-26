@@ -1,5 +1,6 @@
 import { LV_ANIMAL } from './levels14.js';
 import { ANIMALS_135 } from './v135.js';
+import { OASIS_BEASTS } from './oasis.js';
 // Les animaux : prix, production, croissance des petits, noms.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -165,6 +166,10 @@ export const ANIMALS = {
 for (const [id, name, prodId, cost, time, reqLvl, xp, extra] of ANIMALS_135)
     ANIMALS[id] = { id, name, prodId, cost, time, reqLvl, xp, ...(extra ? { extra } : {}) };
 
+// 1.49 : les bêtes de l'oasis (elles ne vivent que dans l'enclos de la palmeraie)
+for (const [id, name, prodId, cost, time, reqLvl, xp, extra, , , , drink] of OASIS_BEASTS)
+    ANIMALS[id] = { id, name, prodId, cost, time, reqLvl, xp, oasis: true, drink, needProject: 'oasisPen', ...(extra ? { extra } : {}) };
+
 // 1.3.2 : un second produit, pour le saloir, de temps en temps au ramassage (le gène « rendement » aide un peu)
 export const EXTRA_DROP = { chance: 0.1, gene: 0.5 };
 Object.entries({ pig: 'lard', duck: 'magret', goose: 'gooseLeg', turkey: 'turkeyFillet', cow: 'beef', rabbit: 'rabbitSaddle' }).forEach(
@@ -190,6 +195,7 @@ export const GROW = {
     ewe: 800,
     quail: 300,
     ...Object.fromEntries(ANIMALS_135.map(a => [a[0], a[8]])),
+    ...Object.fromEntries(OASIS_BEASTS.map(a => [a[0], a[8]])),
 };
 
 export const NAMES = {
@@ -210,6 +216,7 @@ export const NAMES = {
     ewe: ['Roquette', 'Bergère', 'Brebisette', 'Lainette', 'Marjolaine', 'Pâquerette'],
     quail: ['Caillette', 'Grain-de-blé', 'Mouchetée', 'Pistou', 'Noisette', 'Roucoule'],
     ...Object.fromEntries(ANIMALS_135.map(a => [a[0], a[9]])),
+    ...Object.fromEntries(OASIS_BEASTS.map(a => [a[0], a[9]])),
     turkey: ['Glouglou', 'Dindonnette', 'Gobble', 'Plumette', 'Caroline', 'Barnabé'],
 };
 

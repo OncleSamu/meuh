@@ -3,7 +3,7 @@
 //   lvl : niveau d'ouverture (la page se lit toujours, mais le bouton « Y aller » attend) ; go : où mène « Y aller » (voir GUIDE_GO)
 //   secs : sections (h : titre ; t : un paragraphe ; b : une liste) ; tips : « À retenir » ; see : pages liées
 import { ITEMS } from './items.js';
-import { OASIS } from './oasis.js';
+import { OASIS, PEN, CARAVAN } from './oasis.js';
 import { ANIMALS, BIRTHS } from './animals.js';
 import { FAIR, REPUTATION, REP_BONUS, COMICE, ROBEBOOK, ASSOC_LVL } from './elevage.js';
 import { ANIMAL_TRAITS } from './genetics.js';
@@ -530,6 +530,25 @@ export const GUIDE_PAGES = [
             {
                 h: 'Le chadouf',
                 t: `Après le chantier du chadouf : ${OASIS.chadouf.perDay} fois par jour, remontez ${OASIS.chadouf.scoops} seaux en touchant quand le seau plonge dans l’eau. Jusqu’à ${OASIS.chadouf.max} litres.`,
+            },
+            {
+                h: 'L’enclos de la palmeraie (niveau 59)',
+                b: [
+                    `Après le chantier de l’enclos (chapitre « Le souk de l’oasis ») : ${PEN.cap[0]} places, ${PEN.cap[1]} avec la palissade agrandie.`,
+                    'Seulement les bêtes de l’oasis : le dromadaire (lait de chamelle, et parfois de la laine), le zébu (lait de zébu) et le mouton barbarin (laine barbarine). Elles ne vont pas dans les prés de la ferme.',
+                    'Elles boivent à la citerne ; sans eau, elles ne produisent plus. À midi, au soleil, elles produisent moitié moins vite, sauf le mouton barbarin.',
+                    `Chaque palmier dattier adulte abrite ${PEN.shadePerPalm} bêtes du soleil.`,
+                    `La noria : un zébu attelé (depuis sa fiche) donne +${PEN.noria.lph} L/h à la source, mais plus de lait.`,
+                    'Naissances, câlins, foire, Comice, carnet des robes et associations marchent comme au pré.',
+                ],
+            },
+            {
+                h: 'La caravane',
+                t: `Après le caravansérail : ${CARAVAN.camels} dromadaires adultes emportent jusqu’à ${CARAVAN.loads} charges de ${CARAVAN.perLoad} produits au souk de la ville. Retour en 6 heures, avec ${String(CARAVAN.mult).replace('.', ',')} fois le prix du grossiste (15 % de plus une fois les étals du souk ouverts), et parfois du safran. Les dromadaires partis ne produisent pas.`,
+            },
+            {
+                h: 'La tempête de sable',
+                t: 'Tous les deux jours environ, le vent ensable quelques cases au soleil : elles ne poussent plus jusqu’à ce qu’on les touche pour les dégager. Les cases à l’ombre des palmiers ne craignent rien, et une caravane en route prend une heure de retard.',
             },
             {
                 h: 'Ailleurs dans la ferme',

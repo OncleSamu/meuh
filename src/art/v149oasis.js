@@ -1,6 +1,7 @@
 // 1.49 : les bêtes de l'oasis (le dromadaire, le zébu), leurs produits, l'enclos de la palmeraie, la noria,
 // la caravane, le souk, la tempête de sable, et Yasmine l'herboriste. Animaux : cadre 80 × 80, ombre vers y = 72.
-import { C, E, F, FC, FE, HL, L, P, R, SHADOW, animals, items, ui, people } from './kit.js';
+import { C, E, F, FC, FE, HL, L, P, R, SHADOW, animals, items, ui, people, BLD, KINDS } from './kit.js';
+import { house2 } from './buildings2.js';
 import { leg, eye } from './animals.js';
 import { milkB } from './items2.js';
 import { bust, face } from './people.js';
@@ -322,5 +323,59 @@ people.yasmine = () =>
     L('M17 22 C24 16 40 16 47 22', 1.2, '#e8c060') +
     FC(48, 33, 2.2, '#e8c060') +
     P('M28.2 36.2 Q32 40 35.8 36.2 Q32 37.4 28.2 36.2Z', '#b5523f', 1.2);
+
+// ======================= le chapitre 22 : les chantiers =======================
+const ADOBE = '#e2c08a';
+const OA2 = {
+    oasisPen: {
+        cfg: { w: 30, h: 16, wall: ADOBE, roof: '#c8945e', sign: ['item', 'camelMilk'] },
+        st: {
+            roof: 'flat',
+            door: 'plain',
+            wins: [],
+            props: ({ x0, x1, ruin }) =>
+                [x0 - 18, x0 - 12, x0 - 6, x1 + 6, x1 + 12, x1 + 18]
+                    .map(x => L(`M${x} 86 L${x} 74`, 3.2) + L(`M${x} 86 L${x} 74`, 1.6, ruin ? '#a89a88' : '#c8a46a'))
+                    .join('') + L(`M${x0 - 20} 78 L${x0} 78 M${x1} 78 L${x1 + 20} 78`, 1.8, '#8b5a2b'),
+            noFlowers: true,
+        },
+    },
+    caravanserai: {
+        cfg: { w: 64, h: 28, wall: '#e8cc98', roof: '#c8945e', sign: ['ui', 'oaCaravane'] },
+        st: {
+            roof: 'flat',
+            door: 'arch',
+            wins: [28, 64],
+            ww: 8,
+            wh: 9,
+            warch: true,
+            top: ({ x0, x1, y0, ruin, g }) =>
+                ruin
+                    ? ''
+                    : [x0 + 4, x1 - 4]
+                          .map(
+                              x =>
+                                  R(x - 4, y0 - 10, 8, 10, 1, g('#e8cc98'), 1.8) +
+                                  P(`M${x - 4} ${y0 - 10} Q${x} ${y0 - 16} ${x + 4} ${y0 - 10}Z`, g('#c8945e'), 1.6),
+                          )
+                          .join(''),
+            noFlowers: true,
+        },
+    },
+    soukStalls: {
+        cfg: { w: 54, h: 26, wall: ADOBE, roof: '#2f4a8a', sign: ['item', 'cumin'] },
+        st: {
+            shop: 'l',
+            awn: '#e8a03a',
+            goods: (x, y) => [3, 9, 15].map((d, k) => C(x + d + 2, y + 8, 3, ['#e8701a', '#c8302a', '#d9b030'][k], 1.1)).join(''),
+            hang: 'r',
+            roof: 'flat',
+        },
+    },
+};
+for (const [id, d] of Object.entries(OA2)) {
+    BLD[id] = { ...d.cfg, st: d.st, kind: 'h2_' + id };
+    KINDS['h2_' + id] = st => house2(BLD[id], st);
+}
 
 export const OASIS_ANIMALS_ART = ['dromedary', 'zebu', 'barbarySheep'];

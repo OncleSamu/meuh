@@ -171,9 +171,10 @@ export function applyProjectReward(pid) {
     if (pid === 'washhouse') ensureStall();
     if (pid === 'bandstand') state.prestige.rubans += 5;
     if (pid === 'ferry') ensureIsland();
-    if (pid === 'oasisWell') ensureOasis();
+    if (pid === 'oasisWell' || pid === 'oasisPen') ensureOasis();
     if (pid === 'oasisGrove') state.seeds.date = (state.seeds.date || 0) + 3;
-    if (pid === 'carnival' || pid === 'salonHall' || pid === 'beerfest' || pid === 'harvestFest' || pid === 'oasisGrove') state.prestige.rubans += 5;
+    if (pid === 'carnival' || pid === 'salonHall' || pid === 'beerfest' || pid === 'harvestFest' || pid === 'oasisGrove' || pid === 'soukStalls')
+        state.prestige.rubans += 5;
     if (pid === 'brewhall') tip('brew');
     if (pid === 'brewhall' || pid === 'fermenters' || pid === 'beerfest' || pid === 'barrelcellar') ensureBrew();
 }

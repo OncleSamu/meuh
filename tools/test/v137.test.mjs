@@ -60,7 +60,7 @@ test('1.37 : douze recettes du château, leurs dessins et leurs anecdotes', () =
 });
 
 test('1.37 : deux chapitres à la fin de l’histoire, Octave, ce que demande un chantier est ouvert avant', () => {
-    assert.deepEqual(CHAPTER_ORDER.slice(-3, -1), [19, 20]); // 1.48 : le chapitre 21 (l'oasis) vient après
+    assert.deepEqual(CHAPTER_ORDER.slice(CHAPTER_ORDER.indexOf(19), CHAPTER_ORDER.indexOf(19) + 2), [19, 20]); // 1.48 et 1.49 : l'oasis vient après
     assert.equal(CHAPTERS[18].lvl, 55);
     assert.ok(CHAPTERS[19].lvl >= CHAPTERS[18].lvl);
     assert.ok(VILLAGERS.octave && SPR.villager('octave').includes('<svg'));

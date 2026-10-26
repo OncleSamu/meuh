@@ -208,9 +208,11 @@ export const SoundEngine = (() => {
                 break;
             case 'sheep':
             case 'ewe':
+            case 'barbarySheep':
                 tone(420, t, 0.35, { type: 'sawtooth', vol: 0.04, glide: 380 });
                 break;
             case 'cow':
+            case 'zebu':
                 tone(160, t, 0.5, { type: 'sawtooth', vol: 0.05, glide: 120 });
                 break;
             case 'pigeon':
@@ -227,6 +229,10 @@ export const SoundEngine = (() => {
             case 'ostrich':
                 tone(90, t, 0.4, { type: 'sine', vol: 0.12, glide: 70 });
                 tone(110, t + 0.45, 0.3, { type: 'sine', vol: 0.1, glide: 80 });
+                break;
+            case 'dromedary':
+                tone(140, t, 0.3, { type: 'sawtooth', vol: 0.05, glide: 200 });
+                tone(180, t + 0.25, 0.35, { type: 'sawtooth', vol: 0.045, glide: 110 });
                 break;
             case 'yak':
                 tone(120, t, 0.35, { type: 'sawtooth', vol: 0.05, glide: 90 });
