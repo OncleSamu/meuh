@@ -154,7 +154,7 @@ function goalCard() {
         if (!chef && !salonOk) return '';
         return `<div class="card lab-card goal-card"><div class="card-head">${ico(['ui', 'search'], 'ico big')}<div class="card-main"><div class="card-title">Un projet de sélection</div>
             <div class="card-sub">Choisissez un but : le labo propose les bons parents et montre les jeunes plants qui s’en approchent.</div></div></div>
-            <div class="row-btns wrap">${chef ? btn('Viser la commande du chef', { act: 'aimGoal', data: { from: 'chef' }, kind: 'gold', size: 'sm' }) : ''}${salonOk ? btn(`Viser le Salon : ${crit.name.toLowerCase()}`, { act: 'aimGoal', data: { from: 'salon' }, kind: 'gold', size: 'sm' }) : ''}</div></div>`;
+            <div class="row-btns wrap">${chef ? btn('Viser la commande du chef', { act: 'aimGoal', data: { from: 'chef' }, kind: 'gold', size: 'sm' }) : ''}${salonOk ? btn(`Viser le concours du potager : ${crit.name.toLowerCase()}`, { act: 'aimGoal', data: { from: 'salon' }, kind: 'gold', size: 'sm' }) : ''}</div></div>`;
     }
     const need = Object.entries(goal.need)
         .map(([k, n]) => {

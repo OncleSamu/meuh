@@ -339,9 +339,12 @@ html.calm .gp-4 {
 .badge.gold {
     background: var(--gold);
 }
-.pick-grid.animals .pc-art {
+/* 1.47.1 : les plantes du tiroir de croisement à la même taille que les bêtes (elles remplissaient toute la case) */
+.pick-grid .pc-art {
+    display: block;
     width: 56px;
     height: 56px;
+    margin: 0 auto;
 }
 .pick-grid .pc-art > .gl,
 .pick-grid .pc-art > svg {
