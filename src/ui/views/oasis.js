@@ -218,7 +218,7 @@ function caravanHtml() {
         .map(([id, n]) => `<button class="pick-chip on" data-act="caravanDel" data-id="${id}">${ico(['item', id])}<span>${n * CARAVAN.perLoad}</span></button>`)
         .join('');
     return `<div class="card oa-caravan"><span class="oa-up-art">${art('ui', 'oaCaravane')}</span><div class="card-main"><div class="card-title">La caravane · ${loads}/${CARAVAN.loads} charges</div>
-        <div class="card-sub">Une charge = ${CARAVAN.perLoad} produits. Le souk paie ${String(Math.round(G.caravanMult() * 100) / 100).replace('.', ',')} fois le prix du grossiste ; retour en 6 heures. ${camels < CARAVAN.camels ? `Il faut ${CARAVAN.camels} dromadaires adultes (vous en avez ${camels}).` : ''}</div>
+        <div class="card-sub">Une charge = ${CARAVAN.perLoad} produits. Le souk paie ${String(Math.round(G.caravanMult() * 100) / 100).replace('.', ',')} fois le prix du grossiste pour les produits de l’oasis, ${String(Math.round(G.caravanMult('wheat') * 100) / 100).replace('.', ',')} fois pour le reste ; retour en 6 heures. ${camels < CARAVAN.camels ? `Il faut ${CARAVAN.camels} dromadaires adultes (vous en avez ${camels}).` : ''}</div>
         ${chips ? `<div class="chips-row">${chips}</div>` : ''}
         ${loads ? `<div class="card-sub">Valeur au souk : <b>${fmt(G.caravanValue())}</b> pièces</div>` : ''}
         <div class="actions wrap">${btn('Charger', { act: 'open', data: { sheet: 'caravanLoad' }, size: 'sm', icon: ['ui', 'plus'], disabled: loads >= CARAVAN.loads })}${btn('Partir', { act: 'caravanSend', kind: loads && camels >= CARAVAN.camels ? 'green' : '', size: 'sm', icon: ['ui', 'oaCaravane'], disabled: !loads || camels < CARAVAN.camels })}</div></div></div>`;
@@ -234,7 +234,7 @@ defineSheet('caravanLoad', {
         return `<p class="card-sub center">${G.caravanLoads()}/${CARAVAN.loads} charges. Touchez un produit pour en charger ${CARAVAN.perLoad}.</p><div class="pick-grid trees">${goods
             .map(
                 ([id, p]) =>
-                    `<button class="pick-cell" data-act="caravanAdd" data-id="${id}"><span class="pc-art">${art('item', id)}</span><b>${ITEMS[id].name}</b><small>${fmt(Math.round(p * CARAVAN.perLoad * G.caravanMult()))}${ico(['ui', 'coin'])} la charge</small><span class="pc-cost">${state.inventory[id]} en grange</span></button>`,
+                    `<button class="pick-cell" data-act="caravanAdd" data-id="${id}"><span class="pc-art">${art('item', id)}</span><b>${ITEMS[id].name}</b><small>${fmt(Math.round(p * CARAVAN.perLoad * G.caravanMult(id)))}${ico(['ui', 'coin'])} la charge</small><span class="pc-cost">${state.inventory[id]} en grange</span></button>`,
             )
             .join('')}</div>`;
     },

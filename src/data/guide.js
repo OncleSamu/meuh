@@ -545,7 +545,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'La caravane',
-                t: `Après le caravansérail : ${CARAVAN.camels} dromadaires adultes emportent jusqu’à ${CARAVAN.loads} charges de ${CARAVAN.perLoad} produits au souk de la ville. Retour en 6 heures, avec ${String(CARAVAN.mult).replace('.', ',')} fois le prix du grossiste (15 % de plus une fois les étals du souk ouverts), et parfois du safran. Les dromadaires partis ne produisent pas.`,
+                t: `Après le caravansérail : ${CARAVAN.camels} dromadaires adultes emportent jusqu’à ${CARAVAN.loads} charges de ${CARAVAN.perLoad} produits au souk de la ville. Retour en 6 heures, avec ${String(CARAVAN.mult).replace('.', ',')} fois le prix du grossiste pour les produits de l’oasis (plantes, laines, laits, recettes, épices) et ${String(CARAVAN.otherMult).replace('.', ',')} fois pour tout le reste (15 % de plus une fois les étals du souk ouverts), et parfois du safran. Les dromadaires partis ne produisent pas.`,
             },
             {
                 h: 'La tempête de sable',

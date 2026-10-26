@@ -211,3 +211,12 @@ test('contrôle : les trois bêtes ont leurs dessins, gènes, prénoms, Comice, 
     }
     for (const t of ['caravan', 'sandstorm']) assert.ok(TIPS[t], t);
 });
+
+test('1.51.1 : la caravane paie plein tarif l’oasis, un tarif modeste le reste', () => {
+    oasis();
+    assert.equal(G.caravanMult('cumin'), CARAVAN.mult);
+    assert.equal(G.caravanMult('camelMilk'), CARAVAN.mult);
+    assert.equal(G.caravanMult('saffron'), CARAVAN.mult);
+    assert.equal(G.caravanMult('wheat'), CARAVAN.otherMult);
+    assert.ok(CARAVAN.otherMult < CARAVAN.mult / 1.5);
+});

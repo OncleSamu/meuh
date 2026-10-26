@@ -8,7 +8,8 @@ import { now } from '../core/clock.js';
 import { fmt, s, dateKey } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { OASIS, PEN, CARAVAN, STORM } from '../data/oasis.js';
+import { OASIS, PEN, CARAVAN, STORM, OASIS_IDS, OASIS_PRODUCTS } from '../data/oasis.js';
+import { RECIPES_150 } from '../data/v150.js';
 import { ANIMALS } from '../data/animals.js';
 import { BALANCE } from '../data/progress.js';
 import { speedMult, addXp, spend, rank, rollYield, earn } from './player.js';
@@ -480,10 +481,14 @@ export const caravanCamels = () => penBeasts().filter(a => a.type === 'dromedary
 const ensureCaravan = () => (state.oasis.caravan ||= { load: {}, out: null, trips: 0 });
 export const caravanState = () => (state.oasis ? ensureCaravan() : { load: {}, out: null, trips: 0 });
 export const caravanLoads = () => Object.values(caravanState().load).reduce((a, n) => a + n, 0);
-export const caravanMult = () => CARAVAN.mult * (1 + (projectDone('soukStalls') ? CARAVAN.soukBonus : 0));
+// les produits de l'oasis : plantes, laines et laits, recettes des trois machines, épices rares
+const OASIS_GOODS = new Set([...OASIS_IDS, ...OASIS_PRODUCTS.map(p => p[0]), ...RECIPES_150.map(r => r[0]), CARAVAN.spice.id]);
+export const isOasisGood = id => OASIS_GOODS.has(id);
+// le prix de la caravane : × le grossiste ; sans produit, le tarif de l'oasis
+export const caravanMult = id => (id && !isOasisGood(id) ? CARAVAN.otherMult : CARAVAN.mult) * (1 + (projectDone('soukStalls') ? CARAVAN.soukBonus : 0));
 // ce que rapportera la caravane chargée
 export const caravanValue = (load = caravanState().load) =>
-    Math.round(Object.entries(load).reduce((a, [id, n]) => a + n * CARAVAN.perLoad * sellPrice(id) * caravanMult(), 0) / 10) * 10;
+    Math.round(Object.entries(load).reduce((a, [id, n]) => a + n * CARAVAN.perLoad * sellPrice(id) * caravanMult(id), 0) / 10) * 10;
 // les produits qu'on peut charger : ceux de la grange, par 10
 export const caravanGoods = () =>
     Object.keys(state.inventory).filter(

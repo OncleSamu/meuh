@@ -107,7 +107,8 @@ export const CARAVAN = {
     loads: 18, // charges ; une charge = 10 produits d'une même sorte
     perLoad: 10,
     time: 6 * 3600 * 1000,
-    mult: 2.4, // × le prix du grossiste
+    mult: 2.4, // × le prix du grossiste, pour les produits de l'oasis (plantes, laines, laits, recettes, épices)
+    otherMult: 1.3, // × le prix du grossiste, pour tout le reste (1.51.1 : la caravane ne remplace plus le marché)
     soukBonus: 0.15, // + 15 % une fois les étals du souk ouverts
     spice: { chance: 0.35, id: 'saffron', min: 3, max: 6 }, // une épice rare au retour
     stormDelay: 3600 * 1000,
