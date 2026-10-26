@@ -147,7 +147,8 @@ defineLive('gh', k => growPct(state.greenhouse.plots[k]));
 // ---------------- la serre ----------------
 function greenhouseHtml() {
     const g = state.greenhouse;
-    if (g.built) return null;
+    // 1.44 : la serre ne s'annonce que trois niveaux avant (le champ d'un débutant reste dégagé)
+    if (g.built || state.level < GH.lvl - 3) return null;
     const locked = state.level < GH.lvl;
     const can = G.canBuildGreenhouse();
     const mats = Object.entries(MAT.greenhouse || {})

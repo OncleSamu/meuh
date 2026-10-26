@@ -70,3 +70,10 @@ test('une vieille ferme (6.2) se recharge à l’identique une fois mise à jour
     writeSave();
     assert.equal(store.getItem(SAVE_KEY), once);
 });
+
+test('la grange : la peinture ne monte qu’à partir du troisième agrandissement', () => {
+    assert.equal(G.barnUpCost(0).paint, 1);
+    assert.equal(G.barnUpCost(1).paint, 1);
+    assert.equal(G.barnUpCost(2).paint, 2);
+    assert.equal(G.barnUpCost(5).paint, 5);
+});

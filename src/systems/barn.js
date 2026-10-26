@@ -13,7 +13,8 @@ import { barnBonus } from './buildings.js';
 
 export const inBarn = id => BARN_TYPES.includes(ITEMS[id].type);
 export const barnCapAt = l => (l < BARN_CAPS.length ? BARN_CAPS[l] : 550 + (l - BARN_CAPS.length + 1) * 100);
-export const barnUpCost = l => ({ coins: Math.round((500 * Math.pow(1.6, l)) / 50) * 50, plank: 2 + l, nail: 2 + l, paint: 1 + l });
+// 1.44 : la peinture, la plus rare, ne monte qu'à partir du troisième agrandissement (la grange de 70 places bloquait vers le niveau 6)
+export const barnUpCost = l => ({ coins: Math.round((500 * Math.pow(1.6, l)) / 50) * 50, plank: 2 + l, nail: 2 + l, paint: Math.max(1, l) });
 
 export function barnUsed() {
     let n = 0;
