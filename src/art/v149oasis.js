@@ -18,6 +18,7 @@ animals.dromedary = (o = {}) => {
         curly = o.coat === 2;
     const tuft = (pts, r = 3) => pts.map(([x, y]) => C(x, y, r, DRD, 1.4)).join('');
     return (
+        `<g transform="translate(-4 0)">` +
         SHADOW(38, 74, 24, 3.4) +
         // les pattes, longues et fines, genoux marqués
         leg('M23 44 L22 58 L23 71', DRD) +
@@ -58,24 +59,30 @@ animals.dromedary = (o = {}) => {
                   .join('')
             : '') +
         // le cou en S et la tête
-        P('M53 28 Q61 24 62 16 Q63 10 68 9 L72 13 Q68 17 68 22 Q66 34 57 38Z', DR) +
+        P('M53 28 Q61 24 62 19 Q63 15 66 14 L71 18 Q68 22 68 27 Q66 34 57 38Z', DR) +
         (long
             ? tuft(
                   [
-                      [58, 34],
-                      [61, 28],
-                      [63, 21],
+                      [59, 27],
+                      [62, 21],
+                      [64, 15],
                   ],
                   2.6,
               )
             : '') +
-        P('M64 9 Q66 3 72 4 Q78 5 78 10 Q78 15 72 15 Q66 15 64 11Z', DR) +
-        FE(76, 11, 2.6, 2.2, DRL, 0.9) +
-        L('M75.5 13 Q77 14 78 12.5', 1.1) +
-        FC(77, 9.4, 0.9, O) +
-        P('M66 6 L65 1.5 L68 4Z', DRD, 1.4) +
-        eye(70, 8) +
-        L('M68.2 6.6 Q70 5.4 72 6.4', 1, O)
+        // la tête : crâne arrondi, long museau, lèvre du bas qui pend, paupière lourde, petite oreille ronde
+        `<g transform="translate(-2 5) translate(64 10) scale(1.25) translate(-64 -10)">` +
+        E(64.6, 4.6, 1.9, 2.8, DRD, -30, 1.4) +
+        P('M63 10 Q62.5 3 69.5 2.6 Q75 2.6 77.4 6.4 Q80.2 9.6 79.4 13.4 Q78.6 16.6 75 16.2 Q72.6 18.4 69.4 16.4 Q63.6 15.4 63 10Z', DR) +
+        FE(76, 11.6, 3.6, 3.4, DRL, 0.9) +
+        P('M71.6 15.6 Q73.6 19.6 77 16.4 Q74.4 16.8 71.6 15.6Z', DRL, 1.3) +
+        L('M73 15.4 Q76 15 78.8 14', 1) +
+        L('M77.6 9 Q78.8 10 78.4 11.6', 1.1) +
+        eye(69.6, 7.4) +
+        P('M66.8 6.8 Q69.6 4.2 72.4 6.8 Q69.6 5.8 66.8 6.8Z', DR, 1.2) +
+        L('M67.4 8.2 L66.4 9.2 M69 8.9 L68.6 10.1', 0.8) +
+        HL(67, 4.6, 2.4, 1, -15, 0.5) +
+        `</g></g>`
     );
 };
 
@@ -124,6 +131,66 @@ animals.zebu = (o = {}) => {
     );
 };
 
+// ======================= le mouton barbarin =======================
+// toison crème, tête et pattes fauves, la grosse queue plate qui pend ; coat 1 = longue, 2 = frisée ; horns 1 sans, 2 longues, 3 en lyre
+const MB = '#f4ead6',
+    MBD = '#d8c8a8',
+    MBH = '#b8743a',
+    MBHD = '#8a5226';
+animals.barbarySheep = (o = {}) => {
+    const long = o.coat === 1,
+        curly = o.coat === 2;
+    const h = o.horns || 0;
+    const horn = d => L(d, 4) + L(d, 1.9, '#e8d6aa');
+    const horns =
+        h === 1
+            ? ''
+            : h === 2
+              ? horn('M58 30 Q50 24 52 16 Q56 12 60 16')
+              : h === 3
+                ? horn('M58 30 Q52 22 56 16 Q62 12 64 20 M66 28 Q72 22 74 16')
+                : horn('M58 30 Q52 28 52 22 Q53 17 58 18 Q61 20 59 24');
+    const fleece = [
+        [22, 40],
+        [30, 36],
+        [38, 35],
+        [46, 37],
+        [52, 42],
+        [20, 50],
+        [30, 52],
+        [42, 52],
+        [50, 50],
+        [36, 44],
+    ];
+    return (
+        SHADOW(40, 74, 24, 3.4) +
+        leg('M26 56 L26 71', MBH) +
+        leg('M33 58 L33 71', MBH) +
+        leg('M46 58 L46 71', MBH) +
+        leg('M52 56 L52 71', MBH) +
+        L('M23 71 L29 71 M30 71 L36 71 M43 71 L49 71 M49 71 L55 71', 3, O) +
+        // la grosse queue : un coussin de gras qui pend derrière
+        P('M18 42 Q8 44 8 56 Q8 64 15 64 Q21 62 20 54 Q20 48 22 46Z', MBD, 2.2) +
+        F('M10 56 Q12 62 16 62 Q14 58 12 54Z', '#fff', 0.5) +
+        // le corps laineux : un nuage de boucles, contour d'un seul tenant
+        fleece.map(([x, y]) => C(x, y + (long ? 3 : 0), 7.4, MB, 2.4)).join('') +
+        fleece.map(([x, y]) => FC(x, y + (long ? 3 : 0), 6.2, MB)).join('') +
+        (long ? L('M18 60 Q22 66 26 62 Q30 67 34 62 Q38 67 42 62 Q46 67 50 61', 2, MBD) : '') +
+        (curly ? fleece.map(([x, y]) => C(x, y, 2.2, 'none', 1)).join('') : '') +
+        HL(30, 36, 6, 2, -10, 0.5) +
+        // la tête fauve, longue, oreilles tombantes
+        horns +
+        P('M54 32 Q60 24 68 28 Q76 34 74 42 Q72 48 66 46 Q58 44 56 38Z', MBH, 2.2) +
+        FE(70, 42, 4.4, 3.2, MBHD, 0.6) +
+        FC(72.6, 41.2, 0.9, O) +
+        L('M70 44.6 Q72 45.6 74 44.4', 1) +
+        P('M58 32 Q50 34 50 42 Q55 40 59 36Z', MBHD, 1.6) +
+        C(61, 28, 3, MB, 1.6) +
+        C(65, 26.5, 3, MB, 1.6) +
+        eye(65, 34)
+    );
+};
+
 // ======================= les produits =======================
 const yarn2 = (c, d) =>
     SHADOW(30, 58, 22, 3) +
@@ -136,6 +203,7 @@ Object.assign(items, {
     camelMilk: () => milkB('#c8945e', '#f6ead6', 'dromedary', '#fffaf0', 'jug'),
     zebuMilk: () => milkB('#8e877e', '#efece6', 'zebu', '#fffdf6'),
     camelWool: () => yarn2('#c8945e', '#8a5a2e'),
+    barbaryWool: () => yarn2('#f4ead6', '#b8a07a'),
 });
 
 // ======================= l'oasis, suite =======================
@@ -255,4 +323,4 @@ people.yasmine = () =>
     FC(48, 33, 2.2, '#e8c060') +
     P('M28.2 36.2 Q32 40 35.8 36.2 Q32 37.4 28.2 36.2Z', '#b5523f', 1.2);
 
-export const OASIS_ANIMALS_ART = ['dromedary', 'zebu'];
+export const OASIS_ANIMALS_ART = ['dromedary', 'zebu', 'barbarySheep'];
