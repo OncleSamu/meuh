@@ -28,6 +28,7 @@ import { setupCave } from './ui/views/cave.js';
 import { setupChateau } from './ui/views/chateau.js';
 import { setupCup } from './ui/views/cup.js';
 import { setupComice } from './ui/views/comice.js';
+import { setupHerdbook } from './ui/sheets/herdbook.js';
 import { setupBrewery } from './ui/views/brewery.js';
 import { setupCounter } from './ui/views/counter.js';
 import { setupOrders } from './ui/views/orders.js';
@@ -78,6 +79,7 @@ function start() {
     setupChateau();
     setupCup();
     setupComice();
+    setupHerdbook();
     setupBrewery();
     setupCounter();
     setupOrders();

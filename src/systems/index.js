@@ -42,6 +42,7 @@ export * from './pastures.js';
 export * from './births.js';
 export * from './fair.js';
 export * from './comice.js';
+export * from './herdbook.js';
 export * from './player.js';
 export * from './port.js';
 export * from './prestige.js';

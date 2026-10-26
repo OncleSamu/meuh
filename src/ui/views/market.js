@@ -20,6 +20,7 @@ import { NMARKET } from '../../data/commerce.js';
 import { RIVALS } from '../../data/village.js';
 import { PASSERS, REPUTATION } from '../../data/elevage.js';
 import { renameBtn } from '../sheets/rename.js';
+import { genWrap, animalKey, looksText } from '../genlook.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const matChips = m =>
@@ -326,7 +327,7 @@ function beastOffer(k) {
     if (!o) return '';
     const a = o.a;
     const genes = o.traits.map(t => `${G.ANIMAL_TRAIT_NAME(t)} ${G.animalTrait(a, t)} (+${G.animalTrait(a, t) - G.animalBase(a, t)})`).join(', ');
-    return `<div class="nb-beast${o.sold ? ' sold' : ''}"><span class="offer-art">${art('animal', a.type)}</span><div class="card-main"><b>${esc(a.name)}, ${ANIMALS[a.type].name.toLowerCase()}</b><small>Bête de choix du jour : ${genes}</small></div>${
+    return `<div class="nb-beast${o.sold ? ' sold' : ''}"><span class="offer-art">${genWrap(art('animal', animalKey(a.type, a.g)), a.g)}</span><div class="card-main"><b>${esc(a.name)}, ${ANIMALS[a.type].name.toLowerCase()}</b><small>Bête de choix du jour : ${genes}${o.look ? ` · robe ${esc(looksText(a.g).replace(/^Normale, /, ''))}` : ''}</small></div>${
         o.sold
             ? '<small>Vendue</small>'
             : btn(`${fmt(o.price)}${COIN()}`, {

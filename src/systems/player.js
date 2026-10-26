@@ -5,7 +5,7 @@ import { fmt, dateKey, fill } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { ANIMALS, BIRTHS } from '../data/animals.js';
-import { FAIR, COMICE } from '../data/elevage.js';
+import { FAIR, COMICE, ASSOC_LVL } from '../data/elevage.js';
 import { MACHINES, RECIPES } from '../data/machines.js';
 import { UPGRADES, DECOS, DOG, GH, STYLE_LVL, ORCHARD, CROW_LVL } from '../data/farm.js';
 import { NIGHT } from '../data/night.js';
@@ -244,6 +244,8 @@ export function unlocksAt(lvl) {
     if (lvl === CHAPTERS[0].lvl) add(['ui', 'village'], 'Rénovez le village : premier chapitre (onglet Village)');
     if (lvl === INCIDENT_LVL) add(['ui', 'pest'], 'Des imprévus surviennent à la ferme : réagissez vite !');
     if (lvl === DOG.reqLvl) add(['ui', 'dog'], 'Un chien de ferme à adopter');
+    if (lvl === ASSOC_LVL)
+        add(['ui', 'cpCarnet'], 'Les associations au pré : certaines espèces s’entraident dans un même pré, d’autres se gênent (Animaux | Prés, carnet)');
     if (lvl === COMICE.lvl) add(['ui', 'ribbon'], 'Le Comice agricole : chaque semaine, présentez vos plus belles bêtes (Animaux | Comice)');
     if (lvl === FAIR.lvl) {
         add(['ui', 'hEcusson'], 'La foire aux bestiaux : des acheteurs pour vos bêtes, la réputation de votre élevage (Marché | Vendre, Bêtes)');
@@ -251,6 +253,8 @@ export function unlocksAt(lvl) {
     }
     if (lvl === BIRTHS.lvl)
         add(['ui', 'heart'], 'Les naissances au pré : allumez-les pré par pré, deux bêtes de la même espèce auront parfois un petit (Animaux | Prés)');
+    if (lvl === BIRTHS.lvl)
+        add(['ui', 'cpCarnet'], 'Le carnet des robes : chaque couleur et chaque motif de vos bêtes, espèce par espèce (Animaux | Prés, carnet)');
     if (lvl === NATURE.forest.lvl) add(['item', 'wood'], 'La forêt : coupez du bois (Ferme | Nature)');
     if (lvl === NATURE.mine.lvl) add(['item', 'stone'], 'La mine : cassez des rochers (Ferme | Nature)');
     ORCHARD_UNLOCKS_2.forEach(([l, t]) => l === lvl && add(['item', 'apple'], `${t} (Ferme | Verger)`));
@@ -316,6 +320,8 @@ const UNLOCK_GO = [
     ['cultures compagnes', 'sheet:companions'],
     ['Grand Haras', 'animals/haras'],
     ['naissances au pré', 'animals/pasture'],
+    ['associations au pré', 'animals/pasture'],
+    ['carnet des robes', 'animals/pasture'],
     ['foire aux bestiaux', 'market/sell#beasts'],
     ['bêtes de choix des voisins', 'market/shop#neighbors'],
     ['château et ses vignes', 'machines/cave'],

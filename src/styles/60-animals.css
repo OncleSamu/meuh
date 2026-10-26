@@ -551,3 +551,134 @@ html.calm .critter {
     width: 20px;
     height: 20px;
 }
+
+/* 1.46 : le carnet de l'élevage */
+.assoc-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 6px 0 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+}
+.assoc-row .chip,
+.hb-pair .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+.assoc-row .chip .ico {
+    width: 18px;
+    height: 18px;
+}
+.chip.bad {
+    background: #f7d3cd;
+}
+.chip.ok {
+    background: #d8f0c4;
+}
+.hb-types {
+    flex-wrap: wrap;
+}
+.hb-types .pick-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+.hb-types .pick-chip small {
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+.hb-sub {
+    margin: 12px 0 6px;
+    font-weight: 900;
+}
+.hb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 6px;
+}
+.hb-robe {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    border: 2px dashed rgba(58, 38, 24, 0.3);
+    border-radius: 12px;
+    padding: 4px;
+    min-width: 0;
+}
+.hb-robe.got {
+    border-style: solid;
+    border-color: var(--ink);
+    background: var(--paper-l);
+}
+.hb-art {
+    width: 52px;
+    height: 52px;
+}
+.hb-art > svg,
+.hb-art > .gl {
+    width: 100%;
+    height: 100%;
+}
+.hb-robe:not(.got) .hb-art {
+    opacity: 0.25;
+    filter: grayscale(1) brightness(0.4);
+}
+.hb-robe small {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.1;
+}
+.hb-note {
+    margin-top: 10px;
+}
+.hb-pair {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+.hb-pair.good {
+    border-color: #3f8f2e;
+}
+.hb-pair.bad {
+    border-color: #c8453a;
+}
+.hb-duo {
+    display: flex;
+    align-items: center;
+    flex: none;
+}
+.hb-duo span {
+    width: 38px;
+    height: 38px;
+}
+.hb-duo svg {
+    width: 100%;
+    height: 100%;
+}
+.hb-pair:not(.good):not(.bad) .hb-duo span {
+    opacity: 0.45;
+    filter: grayscale(1);
+}
+.hb-duo b {
+    font-weight: 900;
+}
+.hb-mamie {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    margin: 6px 0 0;
+    font-size: 0.78rem;
+    font-style: italic;
+}
+.hb-mamie .ico {
+    width: 24px;
+    height: 24px;
+    flex: none;
+}

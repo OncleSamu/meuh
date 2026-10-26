@@ -57,6 +57,7 @@ import { pondTick, trapsReady } from './fishing.js';
 import { birthsTick, birthsTip } from './births.js';
 import { fairTick } from './fair.js';
 import { comiceTick } from './comice.js';
+import { herdbookTick } from './herdbook.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -303,6 +304,7 @@ function tickDeliveries() {
         birthsTip();
         if (fairTick()) changed = true;
         if (comiceTick()) changed = true;
+        if (herdbookTick()) changed = true;
     }
     if (nmarketTick()) changed = true;
     if (specialTick()) changed = true;

@@ -102,6 +102,16 @@ export const TIPS = {
         title: 'Le verger',
         text: 'Un arbre grandit, puis laisse tomber ses fruits à son pied : viens les ramasser avant qu’ils ne pourrissent. Après une centaine de fruits il vieillit, puis meurt : il donne alors du bois, et tu replantes.',
     },
+    robebook: {
+        icon: ['ui', 'cpCarnet'],
+        title: 'Le carnet des robes',
+        text: 'Une nouvelle robe entre au carnet ! Chaque espèce a 11 couleurs et 8 motifs à trouver. Beaucoup de bêtes en cachent une dans leurs gènes : elle sort quand deux parents porteurs ont un petit. Les plus rares (givrée, étincelante, auréolée…) ne naissent qu’au labo. Une espèce complète rapporte un ruban. Ma tante Lucienne tricotait un carré de laine pour chaque agneau né à la ferme, de la couleur de sa toison. Sa couverture n’a jamais été finie : il manquait toujours le mouton noir.',
+    },
+    assoc: {
+        icon: ['ui', 'cpCarnet'],
+        title: 'Les associations au pré',
+        text: 'Certaines bêtes s’entendent bien quand elles partagent un pré, d’autres se gênent. Les associations que tu découvres s’inscrivent au carnet de l’élevage, avec leur effet sur la production. Range bien tes bêtes : ça compte autant que bien les nourrir.',
+    },
     comice: {
         icon: ['ui', 'ribbon'],
         title: 'Le Comice agricole',

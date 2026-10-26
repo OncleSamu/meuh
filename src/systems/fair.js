@@ -252,8 +252,19 @@ function choiceBeast(k) {
         ];
     }
     const pts = picked.reduce((s, tr) => s + Math.max(0, animalTrait(a, tr) - animalBase(a, tr)), 0);
-    const price = Math.round((ANIMALS[type].cost * (NBEASTS.price + NBEASTS.perPoint * pts)) / 50) * 50;
-    return { k, a, price, traits: picked, sold: false };
+    // 1.46 : souvent, une robe visible (couleur ou motif), le moyen d'en avoir une avant les naissances
+    let look = false;
+    if (Math.random() < NBEASTS.lookChance) {
+        const kind = Math.random() < 0.6 ? 'color' : 'pattern';
+        const v = pickRand(kind === 'color' ? NBEASTS.colors : NBEASTS.patterns);
+        a.g.l[kind] = [
+            [v, 1],
+            [v, 1],
+        ];
+        look = true;
+    }
+    const price = Math.round((ANIMALS[type].cost * (NBEASTS.price + NBEASTS.perPoint * pts) * (look ? NBEASTS.lookMult : 1)) / 50) * 50;
+    return { k, a, price, traits: picked, look, sold: false };
 }
 export function neighborBeasts() {
     if (!fairOpen()) return [];

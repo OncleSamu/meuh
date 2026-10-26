@@ -4,7 +4,7 @@
 //   secs : sections (h : titre ; t : un paragraphe ; b : une liste) ; tips : « À retenir » ; see : pages liées
 import { ITEMS } from './items.js';
 import { ANIMALS, BIRTHS } from './animals.js';
-import { FAIR, REPUTATION, REP_BONUS, COMICE } from './elevage.js';
+import { FAIR, REPUTATION, REP_BONUS, COMICE, ROBEBOOK, ASSOC_LVL } from './elevage.js';
 import { ANIMAL_TRAITS } from './genetics.js';
 import { MACHINES, RECIPES } from './machines.js';
 import { CHAPTERS } from './village.js';
@@ -647,6 +647,14 @@ export const GUIDE_PAGES = [
                     `La présentation : brossez la bête ${COMICE.brushTime} secondes, de la tête vers la queue. Une fois par jour ; le meilleur brossage de la semaine compte.`,
                     'Les quatre fermes voisines concourent aussi, avec une note qui grandit avec votre niveau. Résultats à la fin de la semaine.',
                     'Premier prix : un ruban (deux la première fois pour une espèce), des pièces et la plaque « Primée » sur la bête, dont le prix double à la foire. Deuxième et troisième : des pièces.',
+                ],
+            },
+            {
+                h: 'Le carnet de l’élevage (Animaux › Prés, bouton Carnet)',
+                b: [
+                    `Les robes (niveau ${ROBEBOOK.lvl}) : pour chaque espèce, 11 couleurs et 8 motifs à trouver. Une robe s’inscrit dès qu’une de vos bêtes la porte, avec des pièces ; une espèce complète rapporte ${ROBEBOOK.rubans} ruban.`,
+                    'Beaucoup de bêtes cachent une robe dans leurs gènes : elle apparaît quand deux parents porteurs ont un petit au pré. Les bêtes de choix des voisins en montrent souvent une. Les raretés (givrée, moussue, étincelante, vernie, fleurie, auréolée) ne naissent qu’au labo.',
+                    `Les associations (niveau ${ASSOC_LVL}) : deux espèces dans un même pré s’entraident ou se gênent (une production plus rapide ou plus lente). Le pré montre celles qui jouent, et le carnet les garde avec une anecdote de Mamie.`,
                 ],
             },
             {

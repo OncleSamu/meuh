@@ -15,6 +15,7 @@ import { wildAnimal, animalSpeedGene, animalYieldGene, animalQuality, animalSave
 import { addQuality, ascend } from './farm.js';
 import { wishAnimals } from './night.js';
 import { troughBonus } from './buildings.js';
+import { assocMult } from './herdbook.js';
 
 export const maxFood = () => MAX_FOOD + rank('trough') * 2 + troughBonus();
 export const isAdult = a => a.adult !== false;
@@ -24,7 +25,8 @@ export const animalMult = a =>
     starAnimalMult(a) *
     alpineMult(a) *
     themeAnimalMult() *
-    (a ? animalSpeedGene(a) : 1);
+    (a ? animalSpeedGene(a) : 1) *
+    assocMult(a);
 export const animalTime = a => ANIMALS[a.type].time / (speedMult() * animalMult(a) * masterySpeed(ANIMALS[a.type].prodId));
 export const growLeft = a => Math.max(0, (GROW[a.type] - (a.age || 0)) / (rank('nursery') ? 2 : 1) / speedMult());
 export const growPct = a => Math.min(1, (a.age || 0) / GROW[a.type]);

@@ -235,6 +235,18 @@ function birthRow(k) {
     return `<button class="row toggle birth-row" data-act="toggleBirths" data-k="${k}" role="switch" aria-checked="${on}"><span class="row-main"><span>${ico(['ui', 'heart'])}Naissances</span><small>${sub}</small></span><span class="switch${on ? ' on' : ''}"><i></i></span></button>`;
 }
 
+// 1.46 : les associations actives dans le pré regardé
+function assocRow(k) {
+    const list = G.pastureAssocs(k);
+    if (!list.length) return '';
+    return `<button class="assoc-row" data-act="open" data-sheet="herdbook" data-tab="pairs">${list
+        .map(
+            P =>
+                `<span class="chip ${P.bad ? 'bad' : 'ok'}">${ico(['animal', P.a])}${ico(['animal', P.b])}${P.f > 0 ? '+' : '−'}${Math.round(Math.abs(P.f) * 100)} %</span>`,
+        )
+        .join('')}</button>`;
+}
+
 // les prés : une pastille par pré, et le bouton pour en acheter un
 function pastureBar(mode, cur) {
     const chips = state.pastures
@@ -251,7 +263,7 @@ function pastureBar(mode, cur) {
         ? `<button class="pas-chip add${G.herdFull() ? ' urge' : ''}" data-act="buyPasture">${ico(['ui', 'plus'])}<span>Nouveau pré</span><small>${fmt(G.pastureCost())}${ico(['ui', 'coin'])}</small></button>`
         : '';
     const ren = typeof cur === 'number' && state.pastures[cur] ? `<span class="pas-ren">${renameBtn('pasture', cur, 'Renommer ce pré')}</span>` : '';
-    return `<div class="pas-bar">${all}${chips}${ren}${add}</div>${typeof cur === 'number' ? birthRow(cur) : ''}`;
+    return `<div class="pas-bar">${all}${chips}${ren}${add}</div>${typeof cur === 'number' ? birthRow(cur) + assocRow(cur) : ''}`;
 }
 
 function renderAnimals(el) {
@@ -263,7 +275,7 @@ function renderAnimals(el) {
     blocks(el, [
         [
             'top',
-            `<div class="view-top end"><div class="actions">${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'], anchor: 'btn:feed' })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'], anchor: 'btn:collect' })}</div></div>`,
+            `<div class="view-top end"><div class="actions">${G.robebookOpen() ? btn('Carnet', { act: 'open', data: { sheet: 'herdbook' }, size: 'sm', icon: ['ui', 'cpCarnet'] }) : ''}${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'], anchor: 'btn:feed' })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'], anchor: 'btn:collect' })}</div></div>`,
         ],
         ['pin', pinBar()],
         [
