@@ -1,13 +1,12 @@
 // 1.51 : le Grand Nord. Le seigle, l'airelle, le chicoutai, l'argousier, l'épicéa, le sorbier ;
 // le poêle, la réserve de bois, le fendage, le froid ; Tuomas l'éleveur et Ingrid la boulangère.
-import { C, E, F, FC, FE, G, GD, GL, HL, L, P, R, SHADOW, leaf, mound, stem, items, ui, people, youngExtra, readyExtra, BLD, KINDS } from './kit.js';
+import { C, E, F, FC, FE, HL, L, P, R, SHADOW, leaf, mound, stem, items, ui, people, youngExtra, readyExtra, BLD, KINDS } from './kit.js';
 import { house2 } from './buildings2.js';
 import { MAP_BG } from './maps.js';
 import { bust, face } from './people.js';
 import { fruitExtra, treeArt, canopy } from './plants.js';
 
-const SNOW = '#f2f7fb',
-    SNOW_D = '#cfe0ec';
+const SNOW = '#f2f7fb';
 
 // ======================= le seigle =======================
 // un épi : des grains par paires le long de l'axe, de longues barbes qui filent vers le haut
