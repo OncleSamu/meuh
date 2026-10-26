@@ -3,6 +3,7 @@
 //   lvl : niveau d'ouverture (la page se lit toujours, mais le bouton « Y aller » attend) ; go : où mène « Y aller » (voir GUIDE_GO)
 //   secs : sections (h : titre ; t : un paragraphe ; b : une liste) ; tips : « À retenir » ; see : pages liées
 import { ITEMS } from './items.js';
+import { OASIS } from './oasis.js';
 import { ANIMALS, BIRTHS } from './animals.js';
 import { FAIR, REPUTATION, REP_BONUS, COMICE, ROBEBOOK, ASSOC_LVL } from './elevage.js';
 import { ANIMAL_TRAITS } from './genetics.js';
@@ -469,7 +470,7 @@ export const GUIDE_PAGES = [
         name: 'L’île',
         icon: ['item', 'pineapple'],
         lvl: 38,
-        go: 'farm/island',
+        go: 'farm/island#isle',
         intro: 'Une île tropicale où tout pousse sans arrosage et en toute saison.',
         secs: [
             { h: 'Comment l’ouvrir', t: 'Au niveau 38, une fois l’abbaye rénovée, réparez le bac de Tiago (Village › Village, carte « L’île »).' },
@@ -486,7 +487,60 @@ export const GUIDE_PAGES = [
                 t: 'La paillote, le four des îles, la brûlerie et la rhumerie ouvrent de nouvelles machines et de nouvelles recettes.',
             },
         ],
-        see: ['village', 'workshop'],
+        see: ['village', 'workshop', 'oasis'],
+    },
+    {
+        id: 'oasis',
+        cat: 'farm',
+        name: 'L’oasis',
+        icon: ['ui', 'oaOasis'],
+        lvl: OASIS.lvl,
+        go: 'farm/island#oasis',
+        intro: 'Dans le volet Voyages, à côté de l’île : une oasis où tout pousse, à condition d’avoir de l’eau.',
+        secs: [
+            {
+                h: 'Comment l’ouvrir',
+                t: `Au niveau ${OASIS.lvl}, après le château, rouvrez le puits d’Idris (chapitre « La source d’Idris », Village › Village, carte « L’oasis »).`,
+            },
+            {
+                h: 'Les cases',
+                b: [
+                    `${OASIS.cellsBase} cases offertes, jusqu’à ${OASIS.cells}. Sur chaque case, une culture ou un arbre.`,
+                    'Cultures : cumin, coriandre, sésame. Arbres : palmier dattier, jujubier, oranger amer.',
+                    'Tout est de saison, et les variétés du labo se sèment aussi à l’oasis.',
+                ],
+            },
+            {
+                h: 'L’eau',
+                b: [
+                    `La citerne : ${OASIS.tank[0]} litres, puis ${OASIS.tank[1]} et ${OASIS.tank[2]} en l’agrandissant.`,
+                    `La source la remplit de ${OASIS.spring} litres par heure, même jeu fermé ; le puits plus profond (+${OASIS.springUps[0][2]}) et les galeries souterraines (+${OASIS.springUps[1][2]}) en donnent plus.`,
+                    `Tant qu’elle pousse, une culture boit ${OASIS.drink.crop} litres par heure, un arbre ${OASIS.drink.tree}, un palmier dattier ${String(OASIS.drink.palm).replace('.', ',')}. Une culture mûre, ou un arbre au sol plein, ne boit plus.`,
+                    'Sans eau, rien ne meurt : tout attend que la citerne se remplisse.',
+                    'Une variété qui résiste à la soif (labo) boit moins.',
+                ],
+            },
+            {
+                h: 'La chaleur et l’ombre',
+                b: [
+                    `De ${OASIS.heat[0]} h à ${OASIS.heat[1]} h (heure de la ferme), une plante au soleil boit deux fois plus.`,
+                    'Un palmier dattier adulte fait de l’ombre aux huit cases autour de lui : elles boivent un tiers de moins et ne craignent pas midi.',
+                ],
+            },
+            {
+                h: 'Le chadouf',
+                t: `Après le chantier du chadouf : ${OASIS.chadouf.perDay} fois par jour, remontez ${OASIS.chadouf.scoops} seaux en touchant quand le seau plonge dans l’eau. Jusqu’à ${OASIS.chadouf.max} litres.`,
+            },
+            {
+                h: 'Ailleurs dans la ferme',
+                b: [
+                    'Cumin, coriandre et sésame ont leurs cultures compagnes, à l’oasis aussi.',
+                    'À la brasserie, coriandre et oranger amer font la vraie bière blanche : deux étoiles de plus.',
+                    'Les six plantes se croisent au labo, entrent aux carnets, aux commandes et au marché des voisins.',
+                ],
+            },
+        ],
+        see: ['island', 'companions', 'brewery', 'labplants'],
     },
     {
         id: 'night',

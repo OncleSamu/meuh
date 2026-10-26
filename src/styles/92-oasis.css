@@ -1,0 +1,264 @@
+/* ---------------- Ferme | Voyages | L'oasis (1.48) ---------------- */
+.voy-body {
+    margin-top: 10px;
+}
+
+/* la citerne */
+.oa-water {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: linear-gradient(#e9f6ff, #fbefd2);
+}
+.oa-water.dry {
+    background: linear-gradient(#fff1d8, #f6dcb0);
+}
+.oa-tank {
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
+}
+.oa-tank svg,
+.oa-up-art svg {
+    width: 100%;
+    height: 100%;
+}
+.oa-water .card-main {
+    flex: 1;
+    min-width: 0;
+}
+.oa-water .bar.oa-bar {
+    height: 12px;
+    margin: 5px 0 6px;
+}
+.oa-water .bar.oa-bar i {
+    background: linear-gradient(#7cc4f2, #3f86c6);
+}
+.oa-flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+.oa-flow .chip {
+    font-size: 0.72rem;
+}
+.oa-dry {
+    margin: 0 0 6px;
+    font-weight: 800;
+    color: #b8501e;
+}
+
+/* la palmeraie : du sable, 4 colonnes */
+.oa-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+    margin: 8px 0 14px;
+    padding: 10px;
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    background: #d6aa68;
+    box-shadow:
+        inset 0 0 0 5px #e8c690,
+        0 5px 0 rgba(58, 38, 24, 0.5);
+}
+.oa-cell {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    aspect-ratio: 1;
+    padding: 0;
+    font: inherit;
+    color: var(--ink);
+    border: 2.5px solid var(--ink);
+    border-radius: 11px;
+    background: #f0d6a0;
+    box-shadow: 0 4px 0 rgba(58, 38, 24, 0.5);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+.oa-cell.void {
+    display: none;
+}
+.oa-cell.shade {
+    background: #cfae78;
+    box-shadow:
+        inset 0 0 0 3px rgba(70, 100, 40, 0.18),
+        0 4px 0 rgba(58, 38, 24, 0.5);
+}
+.oa-cell.locked {
+    background: rgba(255, 255, 255, 0.2);
+    border-style: dashed;
+    box-shadow: none;
+}
+.oa-cell.locked.can {
+    background: rgba(242, 193, 78, 0.45);
+}
+.oa-cell .lock-ico {
+    width: 28px;
+    height: 28px;
+}
+.oa-cell .price-chip {
+    position: absolute;
+    bottom: 3px;
+    font-size: 0.62rem;
+}
+.oa-cell.empty .o-plus {
+    position: static;
+    width: 28px;
+    height: 28px;
+}
+.oa-cell.empty small {
+    position: absolute;
+    bottom: 3px;
+    font-size: 0.58rem;
+    font-weight: 800;
+}
+.oa-art {
+    width: 92%;
+    height: 92%;
+    display: block;
+}
+.oa-art svg,
+.oa-art .genlook {
+    width: 100%;
+    height: 100%;
+}
+.oa-cell .bar.oa-pbar {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 4px;
+    height: 6px;
+}
+.oa-cell.ready,
+.oa-cell.tree .o-tag.ready {
+    animation: oa-pop 1.6s ease-in-out infinite;
+}
+@keyframes oa-pop {
+    50% {
+        transform: translateY(-2px);
+    }
+}
+html.calm .oa-cell.ready,
+html.calm .oa-cell.tree .o-tag.ready {
+    animation: none;
+}
+.oa-cell .o-tag {
+    position: absolute;
+    top: -6px;
+    right: -4px;
+    z-index: 2;
+}
+.oa-shade,
+.oa-thirst {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    font-style: normal;
+}
+.oa-shade .ico,
+.oa-thirst .ico {
+    width: 16px;
+    height: 16px;
+}
+.oa-thirst {
+    left: auto;
+    right: 2px;
+    top: auto;
+    bottom: 10px;
+    animation: oa-blink 1.2s ease-in-out infinite;
+}
+@keyframes oa-blink {
+    50% {
+        opacity: 0.35;
+    }
+}
+html.calm .oa-thirst {
+    animation: none;
+}
+.oa-cell.thirsty .oa-art {
+    filter: saturate(0.6) brightness(0.95);
+}
+.oa-cell.tree.dead .oa-art {
+    filter: grayscale(0.4);
+}
+
+/* améliorer l'eau */
+.oa-up {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.oa-up-art {
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+}
+.oa-up .card-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+}
+
+/* le chadouf */
+.oa-chad {
+    background: linear-gradient(#cfe6f2 0 38%, #f0d6a0 38%);
+}
+.oa-chad-art {
+    width: min(70vw, 300px);
+    height: min(70vw, 300px);
+    margin: 0 auto;
+}
+.oa-chad-art svg {
+    width: 100%;
+    height: 100%;
+}
+.oa-chad-line {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 800;
+}
+.oa-chad-tag {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translateX(-50%);
+    padding: 4px 12px;
+    border: 2.5px solid var(--ink);
+    border-radius: 20px;
+    background: #fff;
+    font-family: var(--display);
+    pointer-events: none;
+    animation: oa-tag 0.7s ease-out forwards;
+}
+.oa-chad-tag.good {
+    background: #bfe6ff;
+}
+.oa-chad-tag.bad {
+    background: #f6c8b8;
+}
+@keyframes oa-tag {
+    to {
+        transform: translate(-50%, -30px);
+        opacity: 0;
+    }
+}
+
+/* l'oasis encore fermée */
+.oa-closed {
+    background: linear-gradient(rgba(255, 255, 255, 0.4), transparent 60px), linear-gradient(#e6f4ff, #f3dcae);
+}
+.oa-closed .ic-art {
+    width: 110px;
+    height: 110px;
+}

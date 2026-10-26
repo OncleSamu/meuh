@@ -40,6 +40,15 @@ export const PAIRS = {
     '1-3': -1, // acide et épicé
     '1-4': -1, // acide et umami
 };
+// 1.48 : les grandes recettes de brasseur : ces ingrédients ensemble valent deux étoiles de plus, et ne se battent jamais
+export const CLASSICS = [
+    {
+        id: 'witbier',
+        ings: ['coriander', 'bitterOrange'],
+        name: 'la bière blanche',
+        text: 'Coriandre et écorce d’orange amère : la vraie recette de la bière blanche.',
+    },
+];
 
 // les fûts (à la cave depuis 1.6.3) : chacun donne sa note et multiplie la valeur de la bière
 // CELLAR ne sert plus qu'à vider les fûts des anciennes sauvegardes

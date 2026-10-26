@@ -28,8 +28,12 @@ export function produce(id) {
         go('village/village');
         return toast(G.storyLockText(it), ['ui', 'village']);
     }
+    if (it.oasis && (it.type === 'tree' || it.type === 'crop')) {
+        go(G.oasisOpen() ? 'farm/island#oasis' : 'village/village');
+        return toast(G.oasisOpen() ? `${it.name} : à cultiver à l’oasis` : 'Rouvrez d’abord le puits d’Idris pour rejoindre l’oasis', ['item', id]);
+    }
     if (it.island && (it.type === 'tree' || it.type === 'crop')) {
-        go(G.islandOpen() ? 'farm/island' : 'village/village');
+        go(G.islandOpen() ? 'farm/island#isle' : 'village/village');
         return toast(G.islandOpen() ? `${it.name} : à cultiver sur l’île` : 'Réparez d’abord le bac de Tiago pour rejoindre l’île', ['item', id]);
     }
     if (it.type === 'tree') {

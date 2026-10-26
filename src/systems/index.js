@@ -27,6 +27,7 @@ export * from './neighborspecial.js';
 export * from './home.js';
 export * from './incidents.js';
 export * from './island.js';
+export * from './oasis.js';
 export * from './market.js';
 export * from './mastery.js';
 export * from './merchant.js';

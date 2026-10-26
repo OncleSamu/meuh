@@ -27,10 +27,14 @@ import { MATURE, GRAFTS, CARE, TREE_SEASON, SEASON_IN, SEASON_OUT, BLOOM, REMARK
 
 const COIN = ['ui', 'coin'];
 
-// deux vergers : celui de la ferme ('farm') et celui de l'île ('island')
-export const slotsOf = (z = 'farm') => (z === 'island' ? (state.island && state.island.orchard) || [] : state.orchard.slots);
+// trois vergers : celui de la ferme ('farm'), celui de l'île ('island') et les arbres de l'oasis ('oasis', 1.48)
+export const slotsOf = (z = 'farm') =>
+    z === 'island' ? (state.island && state.island.orchard) || [] : z === 'oasis' ? (state.oasis && state.oasis.orchard) || [] : state.orchard.slots;
+// sous les tropiques et à l'oasis : pas d'hiver
 export const isIslandTree = id => !!ITEMS[id].island;
-export const treeList = (z = 'farm') => Object.values(ITEMS).filter(i => i.type === 'tree' && !!i.island === (z === 'island'));
+export const treeZone = d => (d.oasis ? 'oasis' : d.island ? 'island' : 'farm');
+export const ZONE_WHERE = { farm: 'au verger', island: 'sur l’île', oasis: 'à l’oasis' };
+export const treeList = (z = 'farm') => Object.values(ITEMS).filter(i => i.type === 'tree' && treeZone(i) === z);
 export const orchardOpen = () => state.level >= ORCHARD.lvl || state.orchard.slots.some(x => x.open);
 export const openSlots = z => slotsOf(z).filter(x => x.open).length;
 export const slotCost = (z = 'farm') =>
@@ -176,8 +180,11 @@ export function plantTree(k, id, at, z = 'farm') {
     const slot = slotsOf(z)[k],
         d = ITEMS[id];
     if (!slot || !slot.open || slot.tree || !d || d.type !== 'tree') return false;
-    if (!!d.island !== (z === 'island')) {
-        toast(d.island ? `Le ${d.seedName.toLowerCase()} ne pousse que sur l’île` : 'Cet arbre préfère le verger de la ferme', ['item', id]);
+    if (treeZone(d) !== z) {
+        toast(treeZone(d) !== 'farm' ? `Le ${d.seedName.toLowerCase()} ne pousse que ${ZONE_WHERE[treeZone(d)]}` : 'Cet arbre préfère le verger de la ferme', [
+            'item',
+            id,
+        ]);
         sfx('error');
         return false;
     }
@@ -239,14 +246,15 @@ export function pickTree(k, at, quiet, z = 'farm') {
     const qty = t.ground + basketBonus(t.ground);
     state.inventory[t.id] += qty;
     state.stats.harvested += qty;
-    state.stats[z === 'island' ? 'islandHarvest' : 'orchardFruits'] = (state.stats[z === 'island' ? 'islandHarvest' : 'orchardFruits'] || 0) + qty;
+    const sk = z === 'island' ? 'islandHarvest' : z === 'oasis' ? 'oasisHarvest' : 'orchardFruits';
+    state.stats[sk] = (state.stats[sk] || 0) + qty;
     addMastery(t.id, qty);
     collect('o_' + t.id);
     const got = [0, 0, 0, 0, 0];
     for (let j = 0; j < qty; j++) got[ascend(t.id, rollTreeQuality(t.id, t))]++;
     const silver = got[1],
         gold = got[2] + got[3] + got[4];
-    if (z !== 'island' && silver + gold) state.stats.orchardQual = (state.stats.orchardQual || 0) + silver + gold;
+    if (z === 'farm' && silver + gold) state.stats.orchardQual = (state.stats.orchardQual || 0) + silver + gold;
     for (let r = 1; r <= 4; r++) if (got[r]) addQuality(t.id, r, got[r]);
     if (gold) {
         state.stats.goldQ += gold;
@@ -320,8 +328,13 @@ export function plantCutting(k, ci, at, z = 'farm') {
     const slot = slotsOf(z)[k],
         c = (state.orchard.cuttings || [])[ci];
     if (!slot || !slot.open || slot.tree || !c) return false;
-    if (!!ITEMS[c.id].island !== (z === 'island')) {
-        toast(ITEMS[c.id].island ? 'Cette bouture ne pousse que sur l’île' : 'Cette bouture préfère le verger de la ferme', ['item', 'cutting']);
+    if (treeZone(ITEMS[c.id]) !== z) {
+        toast(
+            treeZone(ITEMS[c.id]) !== 'farm'
+                ? `Cette bouture ne pousse que ${ZONE_WHERE[treeZone(ITEMS[c.id])]}`
+                : 'Cette bouture préfère le verger de la ferme',
+            ['item', 'cutting'],
+        );
         return false;
     }
     state.orchard.cuttings.splice(ci, 1);
@@ -449,11 +462,13 @@ export function advanceTree(t, dt) {
     return { fell, rot };
 }
 
-const allSlots = () => [...state.orchard.slots, ...slotsOf('island')];
+// les arbres de l'oasis avancent avec l'eau (oasis.js) : orchardTick ne s'en occupe pas
+const tickSlots = () => [...state.orchard.slots, ...slotsOf('island')];
+const allSlots = () => [...tickSlots(), ...slotsOf('oasis')];
 
 export function orchardTick() {
     let ch = false;
-    for (const slot of allSlots()) {
+    for (const slot of tickSlots()) {
         const t = slot.tree;
         if (!t) continue;
         const before = treeStage(t);
@@ -462,7 +477,7 @@ export function orchardTick() {
         if (r.fell || r.rot || before !== after) ch = true;
         if (r.fell) emit('ripe', 'orchard');
         if (before !== 'dead' && after === 'dead')
-            toast(`Un ${ITEMS[t.id].seedName.toLowerCase()} est mort de vieillesse : débitez-le en bois ${ITEMS[t.id].island ? 'sur l’île' : 'au verger'}`, [
+            toast(`Un ${ITEMS[t.id].seedName.toLowerCase()} est mort de vieillesse : débitez-le en bois ${ZONE_WHERE[treeZone(ITEMS[t.id])]}`, [
                 'item',
                 'wood',
             ]);
@@ -480,7 +495,7 @@ export function orchardOffline(elapsed) {
     while (left > 0) {
         const dt = every > 0 ? Math.min(every, left) : left;
         left -= dt;
-        for (const slot of allSlots()) {
+        for (const slot of tickSlots()) {
             if (!slot.tree) continue;
             const was = treeStage(slot.tree);
             fell += advanceTree(slot.tree, dt).fell;

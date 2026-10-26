@@ -105,9 +105,11 @@ function storyCard() {
           ? '<div class="card-title">L’abbaye brasse de nouveau !</div><div class="card-sub">Malterie, salle de brassage, cuves, cellier, étiqueterie et fête de la bière : Frère Hugues et Agnès lèvent leur chope à votre santé.</div>'
           : m === 'island'
             ? '<div class="card-title">L’île est en fête !</div><div class="card-sub">Bac, paillote, four, brûlerie, rhumerie et carnaval : Tiago et Maëva vous remercient.</div>'
-            : m === 'station'
-              ? '<div class="card-title">La station est au complet !</div><div class="card-sub">Serre, étable, laboratoire, conservatoire, ruche et salle du Salon : Agathe et Victor vous remercient.</div>'
-              : '<div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port, alpage et domaine : merci, citoyen d’honneur. Tout le canton vous adore.</div>';
+            : m === 'oasis'
+              ? '<div class="card-title">L’oasis a retrouvé sa source !</div><div class="card-sub">Puits, chadouf et palmeraie : Idris vous remercie, et l’eau coule de nouveau sous les palmes.</div>'
+              : m === 'station'
+                ? '<div class="card-title">La station est au complet !</div><div class="card-sub">Serre, étable, laboratoire, conservatoire, ruche et salle du Salon : Agathe et Victor vous remercient.</div>'
+                : '<div class="card-title">Toute la vallée est rénovée !</div><div class="card-sub">Village, hameau, port, alpage et domaine : merci, citoyen d’honneur. Tout le canton vous adore.</div>';
     return `<div class="card story-card"><div class="chapter-head">${top}</div>${switcher}
         <div class="vmap ${M.id}${party ? ' party' : ''}">${MAP_BG[M.id]}${party ? '<div class="bunting"></div>' : ''}${blds}</div>${projectDetail(sel)}</div>`;
 }

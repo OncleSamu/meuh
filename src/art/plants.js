@@ -398,7 +398,10 @@ function fruitOf(id) {
     return (x, y) => C(x, y, 4.6, col, 2) + FC(x - 1.5, y - 1.5, 1.4, '#fff', 0.6);
 }
 
+// 1.48 : des arbres dessinés à part (le palmier dattier), stades 1 à 3
+export const treeArt = {};
 export const tree = (id, stage) => {
+    if (treeArt[id] && stage > 0 && stage < 4) return treeArt[id](stage);
     if (PALM_IDS.includes(id) && stage > 0 && stage < 4) return palmTree(id, stage);
     if (stage === 0) return mound() + stem('M32 56 L32 34', '#8b5a2b', 2.5) + leaf(32, 42, 13, -150, G) + leaf(32, 38, 13, -30, G) + leaf(32, 35, 12, -95, GL);
     if (stage === 1) return treeBase();

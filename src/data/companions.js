@@ -76,6 +76,10 @@ export const ASSOCS = [
     A('butternutMais', 'Butternut et maïs', 'butternut', 'corn', 'r', { why: 'Le maïs abrite la courge, qui garde la terre fraîche.' }),
     A('chanvre', 'Le chanvre, ami de tous', 'hemp', '*', 'p', { to: 'b', why: 'Ses racines profondes ameublissent la terre de ses voisines.' }),
     A('faveEchalote', 'Fève et échalote', 'favaBean', 'shallot', 'mp', { why: 'L’échalote freine la fève.' }),
+    // 1.48 : les cultures de l'oasis
+    A('sesameCumin', 'Sésame et cumin', 'sesame', 'cumin', 'q', { why: 'Le sésame, haut et clair, garde le cumin à l’abri du vent de sable.' }),
+    A('coriandreSesame', 'Coriandre et sésame', 'coriander', 'sesame', 'r', { why: 'Les fleurs de coriandre attirent les abeilles sur le sésame.' }),
+    A('cuminCoriandre', 'Cumin et coriandre', 'cumin', 'coriander', 'mq', { why: 'Deux cousines de la même famille : elles s’échangent leurs maladies.' }),
 ];
 export const ASSOC = Object.fromEntries(ASSOCS.map(a => [a.id, a]));
 export const isBad = a => a.fx[0] === 'm';

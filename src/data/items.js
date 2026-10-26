@@ -4,6 +4,7 @@ import { SERRE_RECIPES } from './serre.js';
 import { CROPS_130, RECIPES_130 } from './v130.js';
 import { TREES_131, RECIPES_131 } from './v131.js';
 import { CROPS_132, RECIPES_132 } from './v132.js';
+import { OASIS_CROPS, OASIS_TREES } from './oasis.js';
 import { FISH_ITEMS_133, RECIPES_133 } from './v133.js';
 import { RECIPES_134 } from './v134.js';
 import { PRODUCTS_135, RECIPES_135 } from './v135.js';
@@ -2890,6 +2891,12 @@ for (const [id, name, , ing] of RECIPES_132) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
 }
+
+// ---------------- 1.48 : les plantes de l'oasis (island : elles ne poussent pas à la ferme ; oasis : seulement à l'oasis) ----------------
+for (const [id, name, seedName, reqLvl, cost, sell, time, xp] of OASIS_CROPS)
+    ITEMS[id] = { id, name, seedName, type: 'crop', cost, sell, time, reqLvl, xp, island: true, oasis: true, needProject: 'oasisWell' };
+for (const [id, name, seedName, reqLvl, cost, sell, time, xp] of OASIS_TREES)
+    ITEMS[id] = { id, name, seedName, type: 'tree', cost, sell, time, reqLvl, xp, island: true, oasis: true, needProject: 'oasisWell' };
 
 // ---------------- 1.33 : dix poissons et leurs plats ----------------
 for (const [id, name, type, sell, sea] of FISH_ITEMS_133) ITEMS[id] = sea ? { id, name, type, sell, sea: true } : { id, name, type, sell };

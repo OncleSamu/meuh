@@ -36,12 +36,22 @@ export function todoList() {
     // l'île : cultures prêtes, fruits au pied des arbres
     if (state.island && G.islandOpen()) {
         const r = G.islandReady();
-        add('farm/island', ['item', 'pineapple'], `${r} récolte${s(r)} sur l’île`, r);
+        add('farm/island#isle', ['item', 'pineapple'], `${r} récolte${s(r)} sur l’île`, r);
         const isl = G.slotsOf('island').filter(x => x.tree && x.tree.ground > 0);
         const fr = isl.reduce((a, x) => a + x.tree.ground, 0);
-        if (fr) add('farm/island', ['item', isl[0].tree.id], `${fr} fruit${s(fr)} sur l’île`, isl.length, { urgent: isl.some(x => G.groundFull(x.tree)) });
+        if (fr) add('farm/island#isle', ['item', isl[0].tree.id], `${fr} fruit${s(fr)} sur l’île`, isl.length, { urgent: isl.some(x => G.groundFull(x.tree)) });
         const dd = G.deadTrees('island');
-        add('farm/island', ['item', 'wood'], `${dd} arbre${s(dd)} mort${s(dd)} sur l’île`, dd);
+        add('farm/island#isle', ['item', 'wood'], `${dd} arbre${s(dd)} mort${s(dd)} sur l’île`, dd);
+    }
+    // 1.48 : l'oasis : récoltes, fruits, citerne vide, chadouf
+    if (state.oasis && G.oasisOpen()) {
+        const r = G.oasisToPick();
+        add('farm/island#oasis', ['ui', 'oaOasis'], `${r} récolte${s(r)} à l’oasis`, r);
+        const dd = G.deadTrees('oasis');
+        add('farm/island#oasis', ['item', 'wood'], `${dd} arbre${s(dd)} mort${s(dd)} à l’oasis`, dd);
+        if (state.oasis.dry) add('farm/island#oasis', ['ui', 'drop'], 'La citerne est vide : l’oasis a soif', 1, { urgent: true });
+        else if (G.chadoufOpen() && G.chadoufLeft() && G.oasisWater() < G.tankCap() * 0.3)
+            add('farm/island#oasis', ['ui', 'oaChadouf'], 'Le chadouf vous attend', 1);
     }
     // le verger : un arbre au sol plein compte comme une tâche
     if (state.orchard) {

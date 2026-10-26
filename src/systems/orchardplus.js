@@ -142,7 +142,7 @@ export function upgradePicker(at) {
 // ramasse tout ce qui est au sol ; renvoie le nombre de fruits
 export function autoPick() {
     let n = 0;
-    for (const z of ['farm', 'island'])
+    for (const z of ['farm', 'island', 'oasis'])
         slotsOf(z).forEach((slot, k) => {
             if (!slot.tree || !slot.tree.ground) return;
             const r = pickTree(k, null, true, z);
@@ -175,7 +175,7 @@ const dayKey = (t = now()) => {
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
 };
 // fruits « de choix » : argent ou or, tous arbres confondus
-export const choiceCount = () => [...treeList('farm'), ...treeList('island')].reduce((a, d) => a + qual(d.id).s + qual(d.id).g, 0);
+export const choiceCount = () => [...treeList('farm'), ...treeList('island'), ...treeList('oasis')].reduce((a, d) => a + qual(d.id).s + qual(d.id).g, 0);
 function newOdile(day) {
     const roll = Math.random(),
         lvl = state.level;
@@ -234,7 +234,7 @@ export function claimOdile(at) {
     if (g.kind === 'choice') {
         // elle emporte les fruits : argent d'abord
         let left = g.need;
-        for (const d of [...treeList('farm'), ...treeList('island')]) {
+        for (const d of [...treeList('farm'), ...treeList('island'), ...treeList('oasis')]) {
             const q = qual(d.id);
             for (const key of ['s', 'g']) {
                 const take = Math.min(left, q[key], state.inventory[d.id] || 0);

@@ -6,6 +6,7 @@ import { dateKey, pickRand } from '../core/format.js';
 import { emit, toast, sfx, buzz } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { COLS } from '../data/farm.js';
+import { OASIS } from '../data/oasis.js';
 import { ASSOCS, ASSOC, COMP_LVL, COMP_FX, COMP_CAP, COMP_TIERS, MAMIE, isBad } from '../data/companions.js';
 import { earn, addXp } from './player.js';
 import { tip } from './tips.js';
@@ -22,7 +23,14 @@ export const assocLvl = a => Math.max(COMP_LVL, lvOfList(a.a), a.b === '*' ? 0 :
 
 // ---------------- la géométrie : les voisines d'une parcelle (champ : 6 colonnes, serre : 4) ----------------
 const GH_COLS = 4;
-const zoneOf = i => (i >= 1000 ? { list: state.greenhouse.plots, cols: GH_COLS, k: i - 1000, base: 1000 } : { list: state.grid, cols: COLS, k: i, base: 0 });
+// 1.48 : les cases de l'oasis (indices à partir de 2000, 4 colonnes)
+export const OASIS_BASE = 2000;
+const zoneOf = i =>
+    i >= OASIS_BASE
+        ? { list: (state.oasis && state.oasis.plots) || [], cols: OASIS.cols, k: i - OASIS_BASE, base: OASIS_BASE, oasis: true }
+        : i >= 1000
+          ? { list: state.greenhouse.plots, cols: GH_COLS, k: i - 1000, base: 1000 }
+          : { list: state.grid, cols: COLS, k: i, base: 0 };
 export function compNeighbors(i) {
     const { list, cols, k, base } = zoneOf(i);
     const out = [];
@@ -36,8 +44,13 @@ export function compNeighbors(i) {
 }
 // la culture d'une parcelle (ou celle qu'on vient d'y récolter : « Tout récolter » ne casse pas les associations)
 export function cropAt(i) {
-    const { list, k } = zoneOf(i);
+    const { list, k, oasis } = zoneOf(i);
     const p = list[k];
+    if (oasis) {
+        if (!p || !p.open) return null;
+        if (p.id) return p.id;
+        return p.lastCrop && now() - (p.lastAt || 0) < 4000 ? p.lastCrop : null;
+    }
     if (!p || p.isUnlocked === false) return null;
     if (p.itemId && ITEMS[p.itemId] && ITEMS[p.itemId].type === 'crop') return p.itemId;
     if (p.lastCrop && now() - (p.lastAt || 0) < 4000) return p.lastCrop;

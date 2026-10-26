@@ -16,6 +16,7 @@ import { addXp, earn, getXpReq } from './player.js';
 import { ensureQuests } from './orders.js';
 import { ensureStall } from './stall.js';
 import { ensureIsland } from './island.js';
+import { ensureOasis } from './oasis.js';
 import { ensureBrew } from './brewery.js';
 import { pluralFr } from '../core/format.js';
 
@@ -170,7 +171,9 @@ export function applyProjectReward(pid) {
     if (pid === 'washhouse') ensureStall();
     if (pid === 'bandstand') state.prestige.rubans += 5;
     if (pid === 'ferry') ensureIsland();
-    if (pid === 'carnival' || pid === 'salonHall' || pid === 'beerfest' || pid === 'harvestFest') state.prestige.rubans += 5;
+    if (pid === 'oasisWell') ensureOasis();
+    if (pid === 'oasisGrove') state.seeds.date = (state.seeds.date || 0) + 3;
+    if (pid === 'carnival' || pid === 'salonHall' || pid === 'beerfest' || pid === 'harvestFest' || pid === 'oasisGrove') state.prestige.rubans += 5;
     if (pid === 'brewhall') tip('brew');
     if (pid === 'brewhall' || pid === 'fermenters' || pid === 'beerfest' || pid === 'barrelcellar') ensureBrew();
 }
@@ -184,6 +187,7 @@ const MAP_TEASE = {
     abbey: 'derrière le port, une vieille abbaye',
     island: 'depuis le port, une île tiède',
     station: 'au bout du chemin des vergers, une station de recherche',
+    oasis: 'par-delà la mer, une oasis qui a soif',
 };
 
 // la suite de l'histoire, après une rénovation

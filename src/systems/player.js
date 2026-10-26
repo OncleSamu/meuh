@@ -181,7 +181,10 @@ export function unlocksAt(lvl) {
     Object.values(ITEMS).forEach(x => {
         if (x.reqLvl !== lvl || x.exotic) return;
         if (x.type === 'crop' || x.type === 'tree')
-            add(['seed', x.id], x.seedName + (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : x.island ? ' (sur l’île)' : ''));
+            add(
+                ['seed', x.id],
+                x.seedName + (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : x.oasis ? ' (à l’oasis)' : x.island ? ' (sur l’île)' : ''),
+            );
         else add(['item', x.id], `${x.name} (au magasin)`);
     });
     Object.values(ANIMALS).forEach(x => x.reqLvl === lvl && add(['animal', x.id], x.name));
@@ -358,7 +361,8 @@ const UNLOCK_GO = [
     ['le port', 'village/village'],
     ['abbaye', 'machines/brew'],
     ['La brasserie', 'machines/brew'],
-    ['île aux Alizés', 'farm/island'],
+    ['île aux Alizés', 'farm/island#isle'],
+    ['oasis', 'farm/island#oasis'],
     ['génétique', 'machines/lab'],
     ['grand hall du Comice', 'animals/comice'],
     ['Comice agricole', 'animals/comice'],
@@ -376,7 +380,7 @@ export function unlockGo(u) {
     if (u.go) return u.go;
     const [kind, id] = u.icon || [];
     const name = plain(u.name);
-    if (kind === 'seed') return ITEMS[id] && ITEMS[id].island ? 'farm/island' : 'market/shop#seeds';
+    if (kind === 'seed') return ITEMS[id] && ITEMS[id].oasis ? 'farm/island#oasis' : ITEMS[id] && ITEMS[id].island ? 'farm/island#isle' : 'market/shop#seeds';
     if (kind === 'animal') return 'market/shop#animals';
     if (kind === 'machine') return (state.machines || []).some(m => m.type === id) ? 'machines/workshop' : 'market/shop#machines';
     if (kind === 'item' && /nouvelles? recettes?/.test(name)) return 'produce:' + id;

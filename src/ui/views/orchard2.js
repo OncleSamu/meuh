@@ -15,7 +15,7 @@ const costOf = c =>
     G.costParts(c)
         .map(x => `<span class="${x.ok ? 'ok' : 'short'}">${ico(x.icon)}${fmt(x.n)}</span>`)
         .join('');
-const anchorOf = (z, k) => `${z === 'island' ? 'itree' : 'tree'}:${k}`;
+const anchorOf = (z, k) => `${z === 'island' ? 'itree' : z === 'oasis' ? 'otree' : 'tree'}:${k}`;
 
 // ---- la fiche d'un arbre ----
 export function stars(t) {
@@ -69,7 +69,7 @@ export function cuttingsHtml(k, z) {
     if (!list.length) return '';
     return `<div class="cuttings"><div class="card-sub center">Boutures : elles gardent le greffon et un tiers de la maturité</div><div class="pick-grid trees">${list
         .map((c, ci) => {
-            const ok = !!ITEMS[c.id].island === (z === 'island');
+            const ok = G.treeZone(ITEMS[c.id]) === z;
             const g = c.g && GRAFTS[c.g];
             return `<button class="pick-cell${ok ? '' : ' short'}" data-act="plantCutting" data-k="${k}" data-z="${z}" data-ci="${ci}">
                 <span class="pc-art">${ico(['item', 'cutting'], 'ico big')}</span><b>${ITEMS[c.id].seedName}</b>

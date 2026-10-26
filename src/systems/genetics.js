@@ -610,6 +610,11 @@ export const varGrowth = vid => {
     const v = state.genetics && state.genetics.vars[vid];
     return v ? (1 + (traitOf(v.g, 'speed') - 2) * GX.geneSpeed) / (1 + traitOf(v.g, 'late') * FX.lateTime) : 1;
 };
+// 1.48 : à l'oasis, une plante qui résiste à la soif boit moins (15 % par point au-dessus de 2)
+export const varThirst = vid => {
+    const v = vid && state.genetics && state.genetics.vars[vid];
+    return v ? Math.max(0.4, Math.min(1.3, 1 - (traitOf(v.g, 'drought') - 2) * 0.15)) : 1;
+};
 export const varHardy = vid => {
     const v = state.genetics && state.genetics.vars[vid];
     return v ? 1 + Math.max(0, traitOf(v.g, 'hardy') - 2) * GX.geneHardy : 1;

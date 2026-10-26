@@ -40,6 +40,7 @@ export function newState() {
         pastures: [],
         orchard: null,
         island: null,
+        oasis: null, // 1.48 : l'oasis (cases, citerne, source, chadouf)
         genetics: null,
         brew: null, // 1.6 : la brasserie de l'abbaye
         cargo: null, // 1.8 : l'avion-cargo

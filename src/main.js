@@ -17,6 +17,7 @@ import { setupNature } from './ui/views/nature.js';
 import { setupPond } from './ui/views/pond.js';
 import { setupOrchard } from './ui/views/orchard.js';
 import { setupIsland } from './ui/views/island.js';
+import { setupOasis } from './ui/views/oasis.js';
 import { setupLab } from './ui/views/lab.js';
 import { setupHaras } from './ui/views/haras.js';
 import { setupShow } from './ui/views/show.js';
@@ -68,6 +69,7 @@ function start() {
     setupPond();
     setupOrchard();
     setupIsland();
+    setupOasis();
     setupLab();
     setupHaras();
     setupShow();

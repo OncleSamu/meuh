@@ -47,6 +47,7 @@ import { studTick } from './stud.js';
 import { nmarketTick } from './nmarket.js';
 import { specialTick } from './neighborspecial.js';
 import { ensureIsland, islandTick, islandOffline } from './island.js';
+import { ensureOasis, oasisTick, oasisOffline } from './oasis.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
 import { ensureNight, nightTick } from './night.js';
@@ -164,6 +165,7 @@ export function normalizeState() {
     ensurePastures();
     ensureOrchard();
     ensureIsland();
+    ensureOasis();
     ensureGenetics();
     ensureChateau();
     if (brewOpen()) ensureBrew();
@@ -266,6 +268,7 @@ function tickFarm() {
     if (pickerTick()) changed = true;
     if (lifeTick()) changed = true;
     if (islandTick()) changed = true;
+    if (oasisTick()) changed = true;
     if (wellTick()) changed = true;
     if (honeyTick(1)) changed = true;
     if (crowTick()) changed = true;
@@ -364,6 +367,7 @@ export function offlineProgress() {
     pickerAfterOffline();
     lifeAfterOffline();
     const isl = islandOffline(elapsed);
+    const oas = oasisOffline(elapsed);
     // le commis travaille pendant votre absence
     const hand = handOffline(elapsed);
     state.grid.forEach((plot, gi) => {
@@ -412,6 +416,7 @@ export function offlineProgress() {
     const add = (cond, icon, text) => cond && lines.push([icon, text]);
     add(crops, ['item', 'wheat'], `${crops} culture${s(crops)} prête${s(crops)} à récolter`);
     add(isl, ['item', 'pineapple'], `${isl} culture${s(isl)} prête${s(isl)} sur l’île`);
+    add(oas.crops + oas.fruits, ['ui', 'oaOasis'], `${oas.crops + oas.fruits} récolte${s(oas.crops + oas.fruits)} à faire à l’oasis`);
     add(orch.fell, ['item', 'apple'], `${orch.fell} fruit${s(orch.fell)} tombé${s(orch.fell)} au verger`);
     add(orch.picked, ['villager', 'picker'], `Le cueilleur a ramassé ${orch.picked} fruit${s(orch.picked)} au verger`);
     add(orch.dead, ['item', 'wood'], `${orch.dead} arbre${s(orch.dead)} mort${s(orch.dead)} de vieillesse au verger`);

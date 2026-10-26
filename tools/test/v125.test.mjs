@@ -24,10 +24,10 @@ const plant = (i, id) => {
 };
 
 test('1.25 : 49 associations bien formées, cultures existantes', () => {
-    assert.equal(ASSOCS.length, 49);
+    assert.equal(ASSOCS.length, 52); // 1.48 : trois de plus pour les cultures de l'oasis
     for (const a of ASSOCS) {
         for (const id of [...a.a, ...(a.b === '*' ? [] : a.b), ...(a.c || [])]) assert.ok(ITEMS[id] && ITEMS[id].type === 'crop', `${a.id} : ${id}`);
-        assert.ok(G.assocLvl(a) >= COMP_LVL && G.assocLvl(a) <= 50, a.id);
+        assert.ok(G.assocLvl(a) >= COMP_LVL && G.assocLvl(a) <= 60, a.id);
     }
     assert.equal(new Set(ASSOCS.map(a => a.id)).size, ASSOCS.length);
 });

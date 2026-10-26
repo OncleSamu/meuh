@@ -5,6 +5,7 @@ import { now } from '../../core/clock.js';
 import { on } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
 import { ORCHARD, treeWood } from '../../data/farm.js';
+import { OASIS } from '../../data/oasis.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, QUIET, byId } from '../dom.js';
 import { longPress } from '../longpress.js';
@@ -43,7 +44,7 @@ const groundHtml = t =>
         .join('');
 
 // zone : 'farm' (le verger de la ferme) ou 'island' (le verger de l'île)
-const anchorOf = (z, k) => `${z === 'island' ? 'itree' : 'tree'}:${k}`;
+export const anchorOf = (z, k) => `${z === 'island' ? 'itree' : z === 'oasis' ? 'otree' : 'tree'}:${k}`;
 const treeAt = (z, k) => (G.slotsOf(z)[k] || {}).tree;
 
 defineLive('tree', arg => {
@@ -177,7 +178,13 @@ defineSheet('tree', {
             ['ui', 'calendar'],
             `${t.drops} fruit${t.drops > 1 ? 's donnés' : ' donné'}${G.lifeMax(t) === Infinity ? ' : il ne vieillit jamais' : ` sur une vie d’environ ${Math.round(G.lifeMax(t))}`}`,
         ]);
-        if (d.island) info.push([['ui', 'w_sun'], 'Sous les tropiques : pas d’hiver, il produit toute l’année']);
+        if (d.oasis) {
+            info.push([
+                ['ui', 'drop'],
+                `À l’oasis : il boit ${String(d.id === 'date' ? OASIS.drink.palm : OASIS.drink.tree).replace('.', ',')} litres par heure (sauf sol plein), et attend s’il n’y a plus d’eau`,
+            ]);
+            if (d.id === 'date') info.push([['ui', 'oaOmbre'], 'Adulte, il fait de l’ombre aux huit cases autour de lui']);
+        } else if (d.island) info.push([['ui', 'w_sun'], 'Sous les tropiques : pas d’hiver, il produit toute l’année']);
         else if (G.season().id === 'hiver') info.push([['ui', 'w_snow'], 'L’hiver, il dort à moitié']);
         else if (G.season().id === 'automne') info.push([['ui', 'w_cloudy'], 'L’automne, il produit 20 % plus vite']);
         const fellWood = st === 'dead' ? treeWood(d) : st === 'young' ? 0 : Math.round(treeWood(d) * ORCHARD.felledWood * life);

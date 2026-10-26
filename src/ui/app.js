@@ -42,7 +42,7 @@ export const TABS = [
             ['orchard', 'Verger', ['item', 'apple'], () => (state.orchard && state.orchard.slots.some(x => x.open) ? 1 : ORCHARD.lvl)],
             ['nature', 'Nature', ['item', 'wood'], () => NATURE.forest.lvl],
             ['pond', 'Pêche', ['ui', 'rod'], () => NATURE.pond.lvl],
-            ['island', 'Île', ['item', 'pineapple'], () => ISLAND.lvl],
+            ['island', 'Voyages', ['ui', 'oaVoyages'], () => ISLAND.lvl],
         ],
     },
     {
@@ -209,7 +209,12 @@ function renderSubnav() {
         return;
     }
     el.hidden = false;
-    const help = currentPath() === 'market/sell' && ui.sel.sell === 'beasts' && G.fairOpen() ? 'elevage' : HELP[currentPath()];
+    const help =
+        currentPath() === 'market/sell' && ui.sel.sell === 'beasts' && G.fairOpen()
+            ? 'elevage'
+            : currentPath() === 'farm/island' && ui.sel.island === 'oasis'
+              ? 'oasis'
+              : HELP[currentPath()];
     patch(
         el,
         `<div class="subnav-row">` +

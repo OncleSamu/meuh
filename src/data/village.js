@@ -225,6 +225,13 @@ export const VILLAGERS = {
         ch: 19,
         likes: ['grape', 'cheese', 'bread', 'redWine', 'whiteWine', 'champagne', 'cognac', 'winePears'],
     },
+    idris: {
+        id: 'idris',
+        name: 'Idris',
+        role: 'Le caravanier de l’oasis',
+        ch: 21,
+        likes: ['date', 'cumin', 'mintTea', 'fig', 'pomegranate', 'almond', 'honey', 'bread'],
+    },
     duval: {
         id: 'duval',
         name: 'Maître Duval',
@@ -375,13 +382,20 @@ export const CHAPTERS = [
         map: 'chateau',
         intro: 'Le château revit ! Une salle de dégustation, une boutique, et la fête des vendanges : Octave veut faire de votre cave la plus belle de la vallée.',
     },
+    {
+        n: 21,
+        name: 'La source d’Idris',
+        lvl: 58,
+        map: 'oasis',
+        intro: 'Un caravanier est arrivé au port avec un dromadaire fatigué : la source de son oasis s’est tarie. Idris a besoin de vous pour la faire couler de nouveau, et pour y planter la palmeraie.',
+    },
 ];
 
 // 1.4 : les chapitres forment une seule histoire, jouée dans cet ordre (numéros 1 à 16 à l'écran)
 // 1.16 : récompenses des chantiers à l'échelle des 50 niveaux
 // expérience d'un chantier : au moins l'ancienne valeur, sinon une part de ce que coûte le niveau du chapitre
 export const STORY_REWARD = { xpFrac: 0.03, chapterCoins: lvl => 500 + lvl * lvl * 8, chapterRuban: 5 };
-export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12, 19, 20];
+export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12, 19, 20, 21];
 export const chapterNum = n => CHAPTER_ORDER.indexOf(n) + 1;
 export const chapterAfter = n => CHAPTER_ORDER[CHAPTER_ORDER.indexOf(n) - 1] || 0;
 
@@ -1700,5 +1714,48 @@ Object.assign(PROJECTS, {
         x: 82,
         y: 22,
         map: 'chateau',
+    },
+});
+
+// ---------------- 1.48 : l'oasis, chapitre 21 « La source d'Idris » ----------------
+Object.assign(PROJECTS, {
+    oasisWell: {
+        id: 'oasisWell',
+        ch: 21,
+        name: 'Le puits d’Idris',
+        vid: 'idris',
+        need: { stone: 150, beam: 30, plank: 40, tools: 15 },
+        before: 'Là-bas, l’eau dort sous le sable. Mon grand-père savait où creuser ; moi, je sais où il a creusé. Aidez-moi à rouvrir le puits, et la source coulera de nouveau.',
+        after: 'L’eau remonte ! La source remplit une citerne, et l’oasis s’ouvre dans l’onglet Ferme, volet Voyages. Là-bas, chaque goutte compte.',
+        reward: 'L’oasis : cases, citerne et source (Ferme › Voyages)',
+        x: 26,
+        y: 62,
+        map: 'oasis',
+    },
+    oasisShadoof: {
+        id: 'oasisShadoof',
+        ch: 21,
+        name: 'Le chadouf',
+        vid: 'idris',
+        need: { beam: 40, stone: 60, cloth: 20, cumin: 20 },
+        before: 'Quand la source ne suit pas, on va chercher l’eau soi-même. Une longue perche, une pierre au bout, un seau de l’autre côté : ça s’appelle un chadouf, et ça a fait pousser des jardins pendant des milliers d’années.',
+        after: 'Le chadouf se balance au-dessus du puits. Trois fois par jour, remontez quelques seaux pour remplir la citerne : en rythme, c’est bien plus facile.',
+        reward: 'Le chadouf : de l’eau à la main, trois fois par jour',
+        x: 72,
+        y: 50,
+        map: 'oasis',
+    },
+    oasisGrove: {
+        id: 'oasisGrove',
+        ch: 21,
+        name: 'La palmeraie',
+        vid: 'idris',
+        need: { date: 20, sesame: 30, coriander: 30, jujube: 10 },
+        before: 'Une oasis, c’est trois étages : les palmiers en haut, les arbres fruitiers dessous, les cultures au pied. Les palmes font l’ombre, et l’ombre garde l’eau. Plantons-la ensemble.',
+        after: 'La palmeraie est plantée, et les dattes sèchent au soleil. Je vous laisse trois jeunes palmiers pour agrandir l’ombre, et 5 rubans de la part de toute l’oasis.',
+        reward: 'Trois palmiers dattiers offerts et 5 rubans',
+        x: 52,
+        y: 24,
+        map: 'oasis',
     },
 });

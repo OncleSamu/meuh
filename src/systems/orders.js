@@ -2,6 +2,7 @@
 // C'est le vrai cœur de l'économie.
 import { livingTrees } from './orchard.js';
 import { islandOpen } from './island.js';
+import { oasisOpen } from './oasis.js';
 import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -43,7 +44,7 @@ export function questPool() {
         else if (i.sea) ok = netOpen() && id !== 'lobster';
         else if (id === 'alpineMilk') ok = transOpen();
         else if (id === 'honey') ok = state.grid.some(p => p.deco === 'hive');
-        else if (i.type === 'crop') ok = lvOk(i) && storyOk(i) && !i.ghOnly && (!i.island || islandOpen());
+        else if (i.type === 'crop') ok = lvOk(i) && storyOk(i) && !i.ghOnly && (i.oasis ? oasisOpen() : !i.island || islandOpen());
         else if (i.type === 'tree') ok = livingTrees(i.id) > 0;
         else if (i.type === 'product') ok = state.animals.some(a => ANIMALS[a.type].prodId === i.id);
         else if (i.type === 'fish') ok = fishOrderOk(id);
@@ -207,6 +208,7 @@ export function sourceOf(id) {
     if (it.sea) return 'Pêche en mer';
     if (id === 'alpineMilk') return 'Transhumance';
     if (it.ghOnly) return 'Serre';
+    if (it.oasis) return 'Oasis';
     if (it.island) return it.type === 'tree' ? 'Verger de l’île' : 'Île';
     if (it.type === 'crop') return isInSeason(id) ? 'Champ (de saison)' : 'Champ';
     if (it.type === 'tree') return 'Arbre fruitier';

@@ -1,8 +1,10 @@
 // 1.48 : l'oasis. Le palmier dattier, le jujubier, l'oranger amer, le cumin, la coriandre, le sésame ;
 // la citerne, la source, le chadouf, les galeries (foggara), l'ombre et la chaleur ; Idris le caravanier.
-import { C, E, F, FC, FE, G, GD, GL, HL, L, P, R, SHADOW, leaf, mound, stem, items, ui, people, youngExtra, readyExtra } from './kit.js';
+import { C, E, F, FC, FE, G, GD, GL, HL, L, P, R, SHADOW, leaf, mound, stem, items, ui, people, youngExtra, readyExtra, BLD, KINDS } from './kit.js';
+import { house2 } from './buildings2.js';
+import { MAP_BG } from './maps.js';
 import { bust, face } from './people.js';
-import { fruitExtra } from './plants.js';
+import { fruitExtra, treeArt } from './plants.js';
 
 // ======================= le palmier dattier =======================
 // une palme pennée : une nervure courbée et des folioles en dents de scie
@@ -101,8 +103,12 @@ const bigaradeHalf = (x, y, s = 1) =>
     `<g transform="translate(${x} ${y}) scale(${s})">` +
     C(0, 0, 12, '#e2681a', 2.2) +
     C(0, 0, 9.5, '#f4c070', 1) +
-    [0, 45, 90, 135].map(a => `<path d="M0 0 L${9 * Math.cos((a * Math.PI) / 180)} ${9 * Math.sin((a * Math.PI) / 180)}" stroke="#e89a3a" stroke-width="1"/>`).join('') +
-    [0, 45, 90, 135].map(a => `<path d="M0 0 L${-9 * Math.cos((a * Math.PI) / 180)} ${-9 * Math.sin((a * Math.PI) / 180)}" stroke="#e89a3a" stroke-width="1"/>`).join('') +
+    [0, 45, 90, 135]
+        .map(a => `<path d="M0 0 L${9 * Math.cos((a * Math.PI) / 180)} ${9 * Math.sin((a * Math.PI) / 180)}" stroke="#e89a3a" stroke-width="1"/>`)
+        .join('') +
+    [0, 45, 90, 135]
+        .map(a => `<path d="M0 0 L${-9 * Math.cos((a * Math.PI) / 180)} ${-9 * Math.sin((a * Math.PI) / 180)}" stroke="#e89a3a" stroke-width="1"/>`)
+        .join('') +
     FC(0, 0, 1.4, '#fff8e0') +
     `</g>`;
 // la fleur d'oranger : cinq pétales blancs, cœur jaune
@@ -128,7 +134,10 @@ const umbel = (x, y, r, c = '#fff', rays = 6) => {
 };
 // des feuilles en fils (cumin, aneth)
 const thread = (x, y, len, a, c = GD) =>
-    `<g transform="translate(${x} ${y}) rotate(${a})">` + L(`M0 0 Q${len * 0.5} -2 ${len} 1`, 1.2, c) + L(`M${len * 0.4} -1 L${len * 0.55} -4 M${len * 0.65} 0 L${len * 0.8} 3`, 0.9, c) + `</g>`;
+    `<g transform="translate(${x} ${y}) rotate(${a})">` +
+    L(`M0 0 Q${len * 0.5} -2 ${len} 1`, 1.2, c) +
+    L(`M${len * 0.4} -1 L${len * 0.55} -4 M${len * 0.65} 0 L${len * 0.8} 3`, 0.9, c) +
+    `</g>`;
 
 // ======================= la coriandre =======================
 // une feuille ronde et dentelée
@@ -147,7 +156,10 @@ const sesPod = (x, y, rot, s = 1, c = '#8aaa4a') =>
     L('M0 -6 L0 6', 0.8, 'rgba(58,38,24,.5)') +
     `</g>`;
 const sesFlower = (x, y, rot = 0) =>
-    `<g transform="translate(${x} ${y}) rotate(${rot})">` + P('M-3 -4 Q0 -6 3 -4 L3.5 3 Q0 5 -3.5 3Z', '#fbeef4', 1.2) + F('M-2 2 Q0 3.6 2 2 Q0 1 -2 2Z', '#d88aa8') + `</g>`;
+    `<g transform="translate(${x} ${y}) rotate(${rot})">` +
+    P('M-3 -4 Q0 -6 3 -4 L3.5 3 Q0 5 -3.5 3Z', '#fbeef4', 1.2) +
+    F('M-2 2 Q0 3.6 2 2 Q0 1 -2 2Z', '#d88aa8') +
+    `</g>`;
 
 // ======================= les plantes : produit, jeune pousse, plante mûre =======================
 const PLANTS = {};
@@ -198,7 +210,12 @@ PLANTS.coriander = [
         coriSeed(48, 50) +
         coriSeed(53, 54) +
         coriSeed(45, 55),
-    () => mound() + coriLeaf(24, 50, 0.9) + coriLeaf(40, 50, 0.9, '#5fa83f') + coriLeaf(32, 46, 1, '#5fa83f') + L('M32 56 L32 50 M27 56 L25 52 M37 56 L39 52', 1.2, GD),
+    () =>
+        mound() +
+        coriLeaf(24, 50, 0.9) +
+        coriLeaf(40, 50, 0.9, '#5fa83f') +
+        coriLeaf(32, 46, 1, '#5fa83f') +
+        L('M32 56 L32 50 M27 56 L25 52 M37 56 L39 52', 1.2, GD),
     () =>
         mound() +
         stem('M26 50 Q22 34 20 22', '#6b9a3a', 1.2) +
@@ -242,7 +259,12 @@ PLANTS.sesame = [
         P('M-6 12 Q-8 -6 0 -14 Q8 -6 6 12 Q0 15 -6 12Z', '#a8864a', 2) +
         P('M-2 10 Q-3 -4 0 -10 Q3 -4 2 10Z', '#f6e8c4', 1) +
         `</g>`,
-    () => mound() + stem('M32 56 L32 42', GD, 1.6) + leaf(32, 44, 14, -150, '#5fa83f', 0.4) + leaf(32, 44, 14, -30, '#5fa83f', 0.4) + leaf(32, 42, 10, -90, GL, 0.4),
+    () =>
+        mound() +
+        stem('M32 56 L32 42', GD, 1.6) +
+        leaf(32, 44, 14, -150, '#5fa83f', 0.4) +
+        leaf(32, 44, 14, -30, '#5fa83f', 0.4) +
+        leaf(32, 42, 10, -90, GL, 0.4),
     () =>
         mound() +
         stem('M32 56 L32 8', '#6b8a3a', 1.8) +
@@ -283,6 +305,7 @@ const fruitOnTree = {
 };
 
 Object.assign(fruitExtra, fruitOnTree);
+treeArt.date = datePalm;
 
 // ======================= l'eau =======================
 const water = '#5aa9e6',
@@ -301,7 +324,10 @@ const cistern = size => {
         E(32, y, w / 2, 5, '#c8945e', 0, 2.4) +
         E(32, y + 0.5, w / 2 - 3, 3.4, water, 0, 1.2) +
         FE(26, y - 0.5, 4, 1, '#fff', 0.6) +
-        (size === 3 ? L(`M${x + 4} ${y - 2} L${x + 4} ${y - 14} L${x + w - 4} ${y - 14} L${x + w - 4} ${y - 2}`, 2.2, '#8b5a2b') + P(`M${x} ${y - 13} L32 ${y - 22} L${x + w} ${y - 13}Z`, '#e8c38c', 2) : '')
+        (size === 3
+            ? L(`M${x + 4} ${y - 2} L${x + 4} ${y - 14} L${x + w - 4} ${y - 14} L${x + w - 4} ${y - 2}`, 2.2, '#8b5a2b') +
+              P(`M${x} ${y - 13} L32 ${y - 22} L${x + w} ${y - 13}Z`, '#e8c38c', 2)
+            : '')
     );
 };
 const iconCistern = () =>
@@ -349,7 +375,11 @@ export const chadouf = (tilt = 0) => {
         FE(cx - 3, cy + 1.6, 1.6, 1, '#fff', 0.45) +
         // la corde et le seau
         L(`M${bx} ${by} L${bx} ${Math.min(by + 14, 46)}`, 1.1) +
-        P(`M${bx - 4} ${Math.min(by + 14, 46)} L${bx + 4} ${Math.min(by + 14, 46)} L${bx + 3} ${Math.min(by + 21, 53)} L${bx - 3} ${Math.min(by + 21, 53)}Z`, '#8b5a2b', 1.6) +
+        P(
+            `M${bx - 4} ${Math.min(by + 14, 46)} L${bx + 4} ${Math.min(by + 14, 46)} L${bx + 3} ${Math.min(by + 21, 53)} L${bx - 3} ${Math.min(by + 21, 53)}Z`,
+            '#8b5a2b',
+            1.6,
+        ) +
         (tilt < 0.5 ? E(bx, Math.min(by + 14, 46), 3.4, 1, water, 0, 0.8) : '')
     );
 };
@@ -362,7 +392,9 @@ const iconFoggara = () =>
     [12, 28, 44, 58]
         .map(
             (x, k) =>
-                L(`M${x} ${41 + (k % 2)} L${x} 52`, 1.2, '#a8784a') + E(x, 40 + (k % 2), 4.4, 2.2, '#d6a874', 0, 1.8) + E(x, 39.6 + (k % 2), 2, 0.9, '#5e3a1e', 0, 0),
+                L(`M${x} ${41 + (k % 2)} L${x} 52`, 1.2, '#a8784a') +
+                E(x, 40 + (k % 2), 4.4, 2.2, '#d6a874', 0, 1.8) +
+                E(x, 39.6 + (k % 2), 2, 0.9, '#5e3a1e', 0, 0),
         )
         .join('') +
     C(18, 18, 6, '#ffd23f', 2) +
@@ -435,7 +467,10 @@ const darkFace = o => face(o).replaceAll('#f6cfa6', DARK).replaceAll('#e9b48a', 
 people.idris = () =>
     bust(
         '#f2ead8',
-        P('M24 46 L32 60 L40 46', 'none') + L('M32 50 L32 66', 1.4, '#c8b088') + P('M8 66 C9 56 14 50 22 47 L26 66Z', '#3a5a9a', 2) + P('M56 66 C55 56 50 50 42 47 L38 66Z', '#3a5a9a', 2),
+        P('M24 46 L32 60 L40 46', 'none') +
+            L('M32 50 L32 66', 1.4, '#c8b088') +
+            P('M8 66 C9 56 14 50 22 47 L26 66Z', '#3a5a9a', 2) +
+            P('M56 66 C55 56 50 50 42 47 L38 66Z', '#3a5a9a', 2),
     ).replaceAll('#f6cfa6', DARK) +
     darkFace() +
     // la barbe courte
@@ -456,3 +491,94 @@ Object.entries(PLANTS).forEach(([id, [icon, young, ready]]) => {
 export const OASIS_CROPS = Object.keys(PLANTS);
 export const OASIS_TREES = ['date', 'jujube', 'bitterOrange'];
 export { datePalm, fruitOnTree as OASIS_FRUIT, palm as palmFrond };
+
+// ======================= le chapitre 21 : les chantiers et la carte =======================
+const ADOBE = '#e2c08a';
+// un petit palmier pour les décors (coordonnées de la carte des bâtiments, base au sol)
+const miniPalm = (x, y, s = 1) =>
+    `<g transform="translate(${x} ${y}) scale(${s})">` +
+    L('M0 0 Q-1 -12 1 -24', 3.4) +
+    L('M0 0 Q-1 -12 1 -24', 1.6, '#a8834e') +
+    palm(1, -24, 14, -165, '#5f9a3a', -0.4) +
+    palm(1, -24, 14, -15, '#7cc04a', 0.4) +
+    palm(1, -24, 11, -120, '#7cc04a', -0.3) +
+    palm(1, -24, 11, -60, '#5f9a3a', 0.3) +
+    `</g>`;
+const OA_BLD = {
+    oasisWell: {
+        cfg: { w: 46, h: 22, wall: ADOBE, roof: '#c8945e', sign: ['ui', 'drop'] },
+        st: {
+            roof: 'flat',
+            door: 'arch',
+            wins: [],
+            props: ({ x1 }) =>
+                R(x1 + 2, 74, 16, 12, 3, '#c8b098', 1.8) +
+                E(x1 + 10, 74, 8, 2.4, '#3f6a8a', 0, 1.6) +
+                L(`M${x1 + 4} 74 L${x1 + 4} 62 L${x1 + 16} 62 L${x1 + 16} 74`, 1.8, '#8b5a2b'),
+            noFlowers: true,
+        },
+    },
+    oasisShadoof: {
+        cfg: { w: 34, h: 18, wall: ADOBE, roof: '#b8844e', sign: ['ui', 'drop'] },
+        st: {
+            roof: 'flat',
+            door: 'plain',
+            wins: [],
+            props: ({ x0, ruin }) => (ruin ? '' : `<g transform="translate(${x0 - 30} 30) scale(.9)">${chadouf(0)}</g>`),
+            noFlowers: true,
+        },
+    },
+    oasisGrove: {
+        cfg: { w: 40, h: 20, wall: '#f0dcae', roof: '#c8945e', sign: ['item', 'date'] },
+        st: {
+            roof: 'flat',
+            door: 'arch',
+            wins: [],
+            back: ({ x0, x1, ruin }) => (ruin ? '' : miniPalm(x0 - 2, 86, 1.1) + miniPalm(x1 + 4, 86, 1.25) + miniPalm(50, 66, 0.9)),
+            noFlowers: true,
+        },
+    },
+};
+for (const [id, d] of Object.entries(OA_BLD)) {
+    BLD[id] = { ...d.cfg, st: d.st, kind: 'h2_' + id };
+    KINDS['h2_' + id] = st => house2(BLD[id], st);
+}
+
+// la carte : le ciel blanc de chaleur, les dunes, la palmeraie autour de l'eau
+const mpalm = (x, y, s) =>
+    `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 Q-1 -8 1 -16" stroke="#8a6a3e" stroke-width="2.2" fill="none" stroke-linecap="round"/>` +
+    [-160, -120, -60, -20, -90]
+        .map(
+            (a, k) =>
+                `<path d="M1 -16 q${7 * Math.cos((a * Math.PI) / 180)} ${7 * Math.sin((a * Math.PI) / 180) - 2} ${11 * Math.cos((a * Math.PI) / 180)} ${11 * Math.sin((a * Math.PI) / 180) + 3}" stroke="${k % 2 ? '#4f9a3a' : '#6cb04a'}" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+        )
+        .join('') +
+    `</g>`;
+MAP_BG.oasis = `<svg class="vmap-bg" viewBox="0 0 160 110" preserveAspectRatio="none" aria-hidden="true">
+    <rect width="160" height="110" fill="#f6e7c4"/>
+    <rect width="160" height="34" fill="#cfe6f2"/>
+    <circle cx="136" cy="12" r="7" fill="#ffe08a"/>
+    <path d="M0 30 Q30 18 60 28 Q90 36 120 24 Q145 16 160 22 L160 110 L0 110Z" fill="#ecd29c"/>
+    <path d="M0 48 Q40 36 80 46 Q120 56 160 42 L160 110 L0 110Z" fill="#e8c88a"/>
+    <path d="M0 76 Q50 64 100 78 Q135 86 160 72 L160 110 L0 110Z" fill="#e2bc7a"/>
+    <path d="M20 40 Q32 34 44 40" stroke="#d6b070" stroke-width="1.2" fill="none"/>
+    <path d="M108 64 Q122 58 136 64" stroke="#d2aa68" stroke-width="1.2" fill="none"/>
+    <ellipse cx="82" cy="70" rx="22" ry="8" fill="#a8cf7a"/>
+    <ellipse cx="82" cy="70" rx="15" ry="5" fill="#5aa9e6"/><ellipse cx="78" cy="69" rx="6" ry="1.4" fill="#bfe3fa"/>
+    <path d="M70 110 Q72 92 80 80 M40 70 Q60 72 66 70 M98 70 Q110 60 120 52" stroke="#f3e2b8" stroke-width="5" fill="none" stroke-linecap="round"/>
+    ${[
+        [58, 68, 0.9],
+        [104, 70, 1],
+        [66, 82, 0.8],
+        [98, 84, 0.85],
+        [12, 60, 0.7],
+        [148, 58, 0.75],
+        [140, 96, 0.8],
+        [16, 98, 0.85],
+        [122, 36, 0.55],
+        [36, 34, 0.5],
+    ]
+        .map(([x, y, sc]) => mpalm(x, y, sc))
+        .join('')}
+    <path d="M2 100 L158 100" stroke="#c8a46a" stroke-width="1.6" stroke-dasharray="4 2" opacity=".6"/>
+</svg>`;

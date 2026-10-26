@@ -6,7 +6,7 @@ import { view } from '../core/view.js';
 import { toast, sfx, buzz, burst, float, emit } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { FLAVORS } from '../data/genetics.js';
-import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, PAIRS, BARRELS, CELLAR, BEER_BOOK, DEMAND, BEER_ORDERS } from '../data/abbey.js';
+import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, PAIRS, CLASSICS, BARRELS, CELLAR, BEER_BOOK, DEMAND, BEER_ORDERS } from '../data/abbey.js';
 import { VILLAGERS } from '../data/village.js';
 import { addFriendship } from './village.js';
 import { projectDone } from './story.js';
@@ -182,6 +182,13 @@ export function brewHarmony(malt, hop, ings) {
     }
     // plusieurs ingrédients : un vrai mélange, ou une dispute
     const tops = ings.map(([id]) => noteOf(ingFlavor(id)));
+    // 1.48 : une grande recette de brasseur (les variétés du labo comptent pour leur espèce)
+    const bases = ings.map(([id]) => (VAR(id) ? VAR(id).base : id));
+    const classic = CLASSICS.find(c => c.ings.every(id => bases.includes(id)));
+    if (classic) {
+        reasons.push(classic.text);
+        return { stars: Math.max(0, Math.min(3, score + 2)), reasons, classic: classic.id };
+    }
     let clash = false;
     for (let x = 0; x < tops.length; x++)
         for (let y = x + 1; y < tops.length; y++) if ((PAIRS[`${Math.min(tops[x], tops[y])}-${Math.max(tops[x], tops[y])}`] || 0) < 0) clash = true;

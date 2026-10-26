@@ -102,6 +102,26 @@ export const TIPS = {
         title: 'Le verger',
         text: 'Un arbre grandit, puis laisse tomber ses fruits à son pied : viens les ramasser avant qu’ils ne pourrissent. Après une centaine de fruits il vieillit, puis meurt : il donne alors du bois, et tu replantes.',
     },
+    oasis: {
+        icon: ['ui', 'oaOasis'],
+        title: 'L’oasis',
+        text: 'À l’oasis, tout pousse, à condition d’avoir de l’eau. La source remplit la citerne jour et nuit, et chaque plante boit en poussant. Sans eau, rien ne meurt : tout attend. Ta grand-tante Simone avait fait le tour du Sahara en 2 CV. Elle disait que dans le désert, on ne compte pas les kilomètres, on compte les puits.',
+    },
+    oasisShade: {
+        icon: ['ui', 'oaOmbre'],
+        title: 'L’ombre des palmiers',
+        text: 'Un palmier dattier adulte fait de l’ombre aux huit cases autour de lui : elles boivent un tiers de moins, et la chaleur de midi ne les touche plus. Les anciens plantaient l’oasis sur trois étages : les palmiers en haut, les arbres fruitiers dessous, les légumes au pied. Chacun garde l’eau de l’autre. Ton grand-père faisait pareil avec son vieux noyer : sous ses branches, les salades ne montaient jamais en graine, même en août.',
+    },
+    chadouf: {
+        icon: ['ui', 'oaChadouf'],
+        title: 'Le chadouf',
+        text: 'Trois fois par jour, le chadouf remonte l’eau du puits : touche quand le seau plonge, il remonte plein. Au lavoir du village, on avait une pompe à bras qui grinçait si fort qu’on l’entendait depuis l’église. Le curé disait que c’était la seule à chanter juste.',
+    },
+    oasisDry: {
+        icon: ['ui', 'drop'],
+        title: 'La citerne est vide',
+        text: 'L’oasis a soif : les plantes attendent l’eau sans mourir. La source remplira la citerne peu à peu ; pour aller plus vite, le chadouf, une citerne plus grande ou un puits plus profond. Et plus de palmiers : à l’ombre, on boit moins.',
+    },
     robebook: {
         icon: ['ui', 'cpCarnet'],
         title: 'Le carnet des robes',
