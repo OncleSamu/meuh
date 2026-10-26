@@ -5,6 +5,7 @@
 import { ITEMS } from './items.js';
 import { ANIMALS, BIRTHS } from './animals.js';
 import { FAIR, REPUTATION, REP_BONUS, COMICE } from './elevage.js';
+import { ANIMAL_TRAITS } from './genetics.js';
 import { MACHINES, RECIPES } from './machines.js';
 import { CHAPTERS } from './village.js';
 import { HARAS_LVL } from './haras.js';
@@ -608,10 +609,22 @@ export const GUIDE_PAGES = [
         cat: 'animals',
         name: 'L’élevage : foire, Comice, réputation',
         icon: ['ui', 'hEcusson'],
-        lvl: FAIR.lvl,
+        lvl: BIRTHS.lvl,
         go: 'market/sell#beasts',
         intro: 'Faire naître ses bêtes, les améliorer, puis les vendre à des acheteurs exigeants.',
         secs: [
+            {
+                h: 'Les gènes des bêtes (fiche de la bête)',
+                b: [
+                    ...ANIMAL_TRAITS.filter(t => !t.extra).map(t => `${t.name} : ${t.hint}.`),
+                    'Plus rares, d’autres gènes apparaissent parfois : ' +
+                        ANIMAL_TRAITS.filter(t => t.extra && !t.species)
+                            .map(t => `${t.name.toLowerCase()} (${t.hint})`)
+                            .join(', ') +
+                        '.',
+                    'Chaque espèce a sa moyenne (pastilles jaunes) ; ce qu’une bête a en plus s’affiche en vert. Les petits héritent des gènes de leurs parents, la foire en demande, et le Comice les note sur 50.',
+                ],
+            },
             {
                 h: 'La foire aux bestiaux (Marché › Vendre › Bêtes)',
                 b: [

@@ -634,3 +634,16 @@ html.calm .spk {
 html.calm .spk {
     opacity: 0.9;
 }
+
+/* 1.45.1 : chaque gène avec ce qu'il fait */
+.tr.tr-explain {
+    grid-template-columns: 22px 1fr auto auto;
+    row-gap: 1px;
+}
+.tr-hint {
+    grid-column: 2 / -1;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    line-height: 1.25;
+}

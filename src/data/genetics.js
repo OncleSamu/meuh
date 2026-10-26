@@ -27,13 +27,14 @@ export const PLANT_TRAITS = [
     { id: 'calibre', name: 'Calibre', icon: ['ui', 'yield'], extra: true, hint: 'parfois une unité de plus, mais un peu moins de qualité' },
 ];
 export const ANIMAL_TRAITS = [
-    { id: 'rich', name: 'Richesse', icon: ['item', 'cream'], flavor: true },
-    { id: 'soft', name: 'Douceur', icon: ['ui', 'heart'], flavor: true },
-    { id: 'aroma', name: 'Arôme', icon: ['item', 'lavender'], flavor: true },
-    { id: 'yield', name: 'Rendement', icon: ['ui', 'basket'] },
-    { id: 'speed', name: 'Vitesse', icon: ['ui', 'clock'] },
-    { id: 'appetite', name: 'Petit appétit', icon: ['item', 'feed'] },
-    { id: 'robust', name: 'Robustesse', icon: ['ui', 'thermo'] },
+    // 1.45.1 : ce que fait chaque gène, en clair (fiche de la bête et guide)
+    { id: 'rich', name: 'Richesse', icon: ['item', 'cream'], flavor: true, hint: 'avec la douceur et l’arôme, des produits plus souvent en qualité argent ou or' },
+    { id: 'soft', name: 'Douceur', icon: ['ui', 'heart'], flavor: true, hint: 'avec la richesse et l’arôme, des produits plus souvent en qualité argent ou or' },
+    { id: 'aroma', name: 'Arôme', icon: ['item', 'lavender'], flavor: true, hint: 'avec la richesse et la douceur, des produits plus souvent en qualité argent ou or' },
+    { id: 'yield', name: 'Rendement', icon: ['ui', 'basket'], hint: 'parfois un produit de plus à la collecte (+5 % par point au-dessus de 2)' },
+    { id: 'speed', name: 'Vitesse', icon: ['ui', 'clock'], hint: 'produit plus vite (+5 % par point au-dessus de 2)' },
+    { id: 'appetite', name: 'Petit appétit', icon: ['item', 'feed'], hint: 'des repas offerts (7 % par point au-dessus de 2)' },
+    { id: 'robust', name: 'Robustesse', icon: ['ui', 'thermo'], hint: 'à 4 ou plus, presque jamais malade' },
     { id: 'fertile', name: 'Fécondité', icon: ['ui', 'remTwin'], extra: true, hint: 'plus de jumeaux à l’étable de sélection' },
     { id: 'health', name: 'Santé', icon: ['ui', 'sick'], extra: true, hint: 'tombe moins souvent malade' },
     { id: 'docile', name: 'Docilité', icon: ['ui', 'hand'], extra: true, hint: 'l’amitié rend la bête encore plus productive' },

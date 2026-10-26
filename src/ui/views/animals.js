@@ -296,15 +296,22 @@ function renderAnimals(el) {
 defineView('animals/pasture', renderAnimals);
 
 // ---------------- les gènes d'une bête (station de recherche) ----------------
+// 1.45.1 : avant le labo, les gènes se lisent quand même (la foire et le Comice les demandent), avec ce qu'ils font
+function simpleGenes(a) {
+    if (!a.g || !G.birthsOpen() || G.BIRTHS_SKIP.includes(a.type)) return '';
+    return `<div class="gene-box"><div class="set-sub">Ses gènes ${btn('?', { act: 'open', data: { sheet: 'guide', page: 'elevage' }, size: 'sm', kind: 'ghost', title: 'Les gènes des bêtes' })}</div>
+        <p class="card-sub">Pastilles jaunes : la moyenne de l’espèce ; en vert, ce que ${esc(a.name)} a en plus. Ses petits en héritent.</p>
+        ${animalTraits(a, true)}</div>`;
+}
 function geneBlock(a) {
-    if (!state.genetics || !G.geneticsOpen() || !a.g) return '';
+    if (!state.genetics || !G.geneticsOpen() || !a.g) return simpleGenes(a);
     const race = a.race && state.genetics.races[a.race];
     const can = G.canFixRace(a);
     return `<div class="gene-box"><div class="set-sub">Ses gènes${race ? ` · race « ${esc(race.name)} »` : a.gen ? ` · génération ${a.gen}` : ''}</div>
         <p class="card-sub">${[G.coatText(a.g), looksText(a.g), featuresText(a.type, a.g)].filter(Boolean).join(', ')}${a.parents ? ` · ${a.type === 'horse' ? 'issu' : a.born === 'pre' ? 'née au pré,' : 'fille'} de ${a.parents.map(esc).join(' et ')}` : ''}${a.type === 'horse' && G.isRetired(a) ? ' · reproducteur à la retraite' : ''}</p>
         ${G.geneEffects(a).length ? `<p class="card-sub gene-fx">${ico(['ui', race ? 'ribbon' : 'star'])}${race ? 'Ce que lui donne sa race' : 'Ce que lui donnent ses gènes'} : ${G.geneEffects(a).join(', ')}.</p>` : ''}
         ${a.lin ? lineageHtml({ lin: a.lin, me: G.lineSnap(a) }) : ''}
-        ${animalTraits(a)}
+        ${animalTraits(a, true)}
         <div class="row-btns wrap">${G.labOpen() && !a.analyzed ? btn(`Analyser · ${fmt(G.analyzeCost())}${ico(['ui', 'coin'])}`, { act: 'analyze', data: { id: a.uid }, size: 'sm', icon: ['ui', 'search'] }) : ''}${G.breedOpen() && G.isAdult(a) && !G.breeding(a.uid) ? btn('Choisir pour l’élevage', { act: 'breedWith', data: { id: a.uid }, size: 'sm', icon: ['ui', 'heart'] }) : ''}</div>
         ${can ? `<div class="rename"><input type="text" maxlength="22" id="race-name" placeholder="Nom de la race">${btn('Fixer la race', { act: 'fixRace', data: { id: a.uid }, kind: 'gold', size: 'sm' })}</div>` : ''}
     </div>`;

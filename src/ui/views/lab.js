@@ -32,7 +32,7 @@ const parentArt = p => {
 };
 
 // une jauge de caractère : 5 points, ceux gagnés sur l'espèce en couleur ; les versions cachées en « ? »
-function traitRow(t, g, base, analyzed) {
+function traitRow(t, g, base, analyzed, explain) {
     const p = g.t[t.id];
     if (!p) return '';
     const v = G.express(p);
@@ -40,16 +40,17 @@ function traitRow(t, g, base, analyzed) {
     if (t.extra && !v && !(analyzed && (p[0][0] || p[1][0]))) return '';
     const pips = Array.from({ length: 5 }, (_, k) => `<i class="${k < v ? (k >= base ? 'on up' : 'on') : ''}"></i>`).join('');
     const hid = analyzed ? `<small class="tr-al">${p[0][0]}${p[0][1] ? '' : 'r'} · ${p[1][0]}${p[1][1] ? '' : 'r'}</small>` : '<small class="tr-al">?</small>';
-    return `<div class="tr" title="${t.name}${t.hint ? ' : ' + t.hint : ''}">${ico(t.icon)}<span class="tr-name">${t.name}</span><span class="tr-pips">${pips}</span>${hid}</div>`;
+    return `<div class="tr${explain ? ' tr-explain' : ''}" title="${t.name}${t.hint ? ' : ' + t.hint : ''}">${ico(t.icon)}<span class="tr-name">${t.name}</span><span class="tr-pips">${pips}</span>${explain && !analyzed ? '' : hid}${explain && t.hint ? `<small class="tr-hint">${t.hint}</small>` : ''}</div>`;
 }
 export function plantTraits(g, analyzed, keys) {
     const base = FLAVORS[g.form] || [0, 0, 0, 0, 0];
     const list = PLANT_TRAITS.filter(t => !keys || keys.includes(t.id));
     return `<div class="traits">${list.map(t => traitRow(t, g, t.flavor ? base[G.FLAVOR_IDS.indexOf(t.id)] : t.extra ? extraBase(t.id, g.form) : 2, analyzed)).join('')}</div>`;
 }
-export function animalTraits(a) {
+// explain (1.45.1) : chaque gène avec ce qu'il fait, sans les allèles cachés (la fiche de la bête avant le labo)
+export function animalTraits(a, explain = false) {
     const base = ANIMAL_BASE[a.type] || [];
-    return `<div class="traits">${ANIMAL_TRAITS.map((t, j) => traitRow(t, a.g, t.extra ? extraBase(t.id, a.type) : base[j] || 2, a.analyzed)).join('')}</div>`;
+    return `<div class="traits">${ANIMAL_TRAITS.map((t, j) => traitRow(t, a.g, t.extra ? extraBase(t.id, a.type) : base[j] || 2, a.analyzed, explain)).join('')}</div>`;
 }
 // 1.7 : les cinq saveurs en petites barres, lisibles d'un coup d'œil
 export function flavorMini(g) {
