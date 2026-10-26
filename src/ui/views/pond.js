@@ -47,7 +47,7 @@ function contestResult() {
         <div class="card-title">Concours de pêche : ${c.rank === 1 ? 'vous gagnez !' : `vous êtes ${c.rank}e`}</div>
         <div class="card-sub">${cap(G.heaviest(c.id))} du week-end.</div>
         <ol class="podium-list">${list.map((x, k) => `<li class="${x.me ? 'me' : ''}"><i>${k + 1}.</i><span>${x.name}</span><b>${G.kgText(x.w)}</b></li>`).join('')}</ol>
-        <div class="card-sub">${pz.coins ? coins(pz.coins) : ''}${pz.rubans ? ` · ${pz.rubans} ruban${pz.rubans > 1 ? 's' : ''}` : ''} · ${pz.xp} XP</div></div>
+        <div class="card-sub">${pz.coins ? coins(pz.coins) : ''}${pz.rubans ? ` · ${pz.rubans} ruban${pz.rubans > 1 ? 's' : ''}` : ''} · ${fmt(pz.xp)}${ico(['ui', 'xp'])}</div></div>
         ${btn('Récupérer', { act: 'pondContest', kind: 'gold', size: 'sm' })}</div>`;
 }
 
@@ -136,7 +136,7 @@ function marcelCard() {
     return `<div class="card marcel-card"><div class="avatar sm">${art('villager', 'marcel')}</div><div class="card-main">
         <div class="card-title">Le défi de Marcel</div>
         <div class="card-sub">« ${G.marcelText(m)}. »</div>
-        <div class="card-sub">${m.claimed ? 'Réussi ! Un nouveau défi demain.' : `${m.got}/${m.need} · ${coins(r.coins)} · ${r.xp} XP${m.flies ? ` · ${ico(['ui', 'fly'])} mouches` : ''}`}</div></div>
+        <div class="card-sub">${m.claimed ? 'Réussi ! Un nouveau défi demain.' : `${m.got}/${m.need} · ${coins(r.coins)} · ${fmt(r.xp)}${ico(['ui', 'xp'])}${m.flies ? ` · ${ico(['ui', 'fly'])} mouches` : ''}`}</div></div>
         ${m.done && !m.claimed ? btn('Récupérer', { act: 'pondMarcel', kind: 'gold', size: 'sm' }) : goId && !m.claimed ? btn('Y aller', { act: 'pondGo', data: { id: goId }, kind: 'blue', size: 'sm' }) : ''}</div>`;
 }
 

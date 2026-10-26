@@ -178,6 +178,28 @@ function renderTabs() {
     );
 }
 
+// 1.44 : la page du Guide du fermier de chaque écran (le bouton « ? » au bout des onglets)
+const HELP = {
+    'farm/field': 'field',
+    'farm/orchard': 'orchard',
+    'farm/nature': 'forest',
+    'farm/pond': 'pond',
+    'farm/island': 'island',
+    'animals/pasture': 'animals',
+    'animals/haras': 'haras',
+    'animals/show': 'haras',
+    'animals/stud': 'haras',
+    'machines/workshop': 'workshop',
+    'machines/counter': 'counter',
+    'machines/cave': 'cave',
+    'machines/brew': 'brewery',
+    'machines/lab': 'labplants',
+    'village/orders': 'orders',
+    'village/village': 'village',
+    'market/shop': 'market',
+    'market/sell': 'market',
+};
+
 function renderSubnav() {
     const t = tabDef(ui.tab);
     const el = byId('subnav');
@@ -186,22 +208,28 @@ function renderSubnav() {
         return;
     }
     el.hidden = false;
+    const help = HELP[currentPath()];
     patch(
         el,
-        segmented(
-            t.subs.map(([id, label, icon]) => {
-                const locked = subLocked(t.id, id);
-                return [
-                    id,
-                    locked ? `${label} · niv. ${subLockLvl(t.id, id)}` : label,
-                    locked ? ['ui', 'lock'] : icon,
-                    locked ? 0 : ui.counts[`${t.id}/${id}`] || 0,
-                    locked,
-                ];
-            }),
-            ui.sub[t.id],
-            'sub',
-        ),
+        `<div class="subnav-row">` +
+            segmented(
+                t.subs.map(([id, label, icon]) => {
+                    const locked = subLocked(t.id, id);
+                    return [
+                        id,
+                        locked ? `${label} · niv. ${subLockLvl(t.id, id)}` : label,
+                        locked ? ['ui', 'lock'] : icon,
+                        locked ? 0 : ui.counts[`${t.id}/${id}`] || 0,
+                        locked,
+                    ];
+                }),
+                ui.sub[t.id],
+                'sub',
+            ) +
+            (help
+                ? `<button class="sub-help" data-act="open" data-sheet="guide" data-page="${help}" title="Aide de cet écran" aria-label="Aide de cet écran">?</button>`
+                : '') +
+            '</div>',
     );
 }
 

@@ -4,7 +4,7 @@
 //   secs : sections (h : titre ; t : un paragraphe ; b : une liste) ; tips : « À retenir » ; see : pages liées
 import { ITEMS } from './items.js';
 import { ANIMALS } from './animals.js';
-import { MACHINES } from './machines.js';
+import { MACHINES, RECIPES } from './machines.js';
 import { CHAPTERS } from './village.js';
 import { HARAS_LVL } from './haras.js';
 import { MAX_LEVEL, HOUSE } from './progress.js';
@@ -13,6 +13,11 @@ import { LEAGUES } from './commerce.js';
 // 1.36 : les niveaux cités dans les textes viennent des données (ils ne peuvent plus se démentir)
 const lv = id => (ITEMS[id] || ANIMALS[id] || MACHINES[id]).reqLvl;
 const chLvl = n => CHAPTERS.find(c => c.n === n).lvl;
+// 1.44 : les nombres cités aussi (ils avaient vieilli)
+const nCrops = Object.values(ITEMS).filter(x => x.type === 'crop' && !x.island && !x.exotic).length;
+const nAnimals = Object.keys(ANIMALS).length;
+const nMachines = Object.keys(MACHINES).length;
+const nRecipes = Math.floor(Object.keys(RECIPES).length / 50) * 50;
 
 export const GUIDE_CATS = [
     { id: 'base', name: 'Les bases', icon: ['ui', 'info'] },
@@ -326,7 +331,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les graines',
-                t: '65 cultures hors île, chacune ouverte à son niveau (blé 1, carotte 2, tomate 4, maïs 6…). Certaines demandent un chantier (houblon, génépi) ou ne poussent qu’en serre (cacao, vanille, menthe, poivre noir, orchidée). Le safran ne se trouve que chez le marchand ambulant.',
+                t: `${nCrops} cultures hors île, chacune ouverte à son niveau (blé 1, carotte 2, tomate 4, maïs 6…). Certaines demandent un chantier (houblon, génépi) ou ne poussent qu’en serre (cacao, vanille, menthe, poivre noir, orchidée). Le safran ne se trouve que chez le marchand ambulant.`,
             },
             {
                 h: 'Quatorze cultures de plus (1.30)',
@@ -534,7 +539,7 @@ export const GUIDE_PAGES = [
         icon: ['animal', 'chicken'],
         lvl: 2,
         go: 'animals',
-        intro: '23 espèces, chacune avec son produit : un appui pour ramasser, un repas pour la faire produire.',
+        intro: `${nAnimals} espèces, chacune avec son produit : un appui pour ramasser, un repas pour la faire produire.`,
         secs: [
             {
                 h: 'Les gestes',
@@ -680,7 +685,7 @@ export const GUIDE_PAGES = [
         icon: ['machine', 'bakery'],
         lvl: 3,
         go: 'machines/workshop',
-        intro: 'Transformer vaut mieux que vendre brut : 40 machines et plus de 550 recettes.',
+        intro: `Transformer vaut mieux que vendre brut : ${nMachines} machines et plus de ${nRecipes} recettes.`,
         secs: [
             {
                 h: 'Les machines',
