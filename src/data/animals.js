@@ -229,3 +229,15 @@ export const ALPINE_SPEED = 1.2;
 
 // 1.4 : 50 niveaux
 for (const [id, l] of Object.entries(LV_ANIMAL)) if (ANIMALS[id]) [ANIMALS[id].lvOld, ANIMALS[id].reqLvl] = [ANIMALS[id].reqLvl || 1, l];
+
+// 1.45 : les naissances au pré (L'Élevage)
+export const BIRTHS = {
+    lvl: 8,
+    minH: 3, // heures réelles entre deux naissances d'une espèce dans un pré : 3 h + croissance / 150, au plus 12 h
+    maxH: 12,
+    growDiv: 150,
+    regress: 0.5, // chance qu'un bon gène redescende d'un point vers la moyenne de l'espèce
+    xp: 15,
+    catchUp: 4, // au plus 4 petits d'une espèce par pré au retour d'une longue absence
+    skip: ['horse', 'bees'], // le haras a ses poulains, les ruches vivent à part
+};

@@ -851,7 +851,7 @@ export function previewBatch(rid) {
 }
 
 // ---------------- les bêtes ----------------
-const animalBase = (a, k) => (EXTRA_ANIMAL.includes(k) ? extraBase(k, a.type) : (ANIMAL_BASE[a.type] || [])[CORE_ANIMAL.indexOf(k)] || 2);
+export const animalBase = (a, k) => (EXTRA_ANIMAL.includes(k) ? extraBase(k, a.type) : (ANIMAL_BASE[a.type] || [])[CORE_ANIMAL.indexOf(k)] || 2);
 export const animalTrait = (a, k) => (a && a.g && a.g.t[k] ? traitOf(a.g, k) : animalBase(a, k));
 export const animalSpeedGene = a => 1 + (animalTrait(a, 'speed') - 2) * 0.05;
 export const animalYieldGene = a => Math.max(0, animalTrait(a, 'yield') - 2) * 0.05;

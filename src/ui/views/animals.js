@@ -219,6 +219,22 @@ function stableHtml(k) {
         .join('');
 }
 
+// 1.45 : l'interrupteur des naissances du pré regardé (éteint par défaut), et quand arrive le prochain petit
+function birthRow(k) {
+    if (!G.birthsOpen() || !state.pastures[k]) return '';
+    const on = G.birthsOn(k);
+    const pairs = Object.keys(G.birthPairs(k));
+    const next = G.nextBirthIn(k);
+    const sub = !on
+        ? 'Éteintes : aucun petit ne naîtra dans ce pré'
+        : !pairs.length
+          ? 'Il faut deux adultes de la même espèce'
+          : G.pastureFree(k) <= 0
+            ? 'Le pré est plein : plus de place pour un petit'
+            : `Prochain petit dans ${timer(Date.now() + next)}`;
+    return `<button class="row toggle birth-row" data-act="toggleBirths" data-k="${k}" role="switch" aria-checked="${on}"><span class="row-main"><span>${ico(['ui', 'heart'])}Naissances</span><small>${sub}</small></span><span class="switch${on ? ' on' : ''}"><i></i></span></button>`;
+}
+
 // les prés : une pastille par pré, et le bouton pour en acheter un
 function pastureBar(mode, cur) {
     const chips = state.pastures
@@ -235,7 +251,7 @@ function pastureBar(mode, cur) {
         ? `<button class="pas-chip add${G.herdFull() ? ' urge' : ''}" data-act="buyPasture">${ico(['ui', 'plus'])}<span>Nouveau pré</span><small>${fmt(G.pastureCost())}${ico(['ui', 'coin'])}</small></button>`
         : '';
     const ren = typeof cur === 'number' && state.pastures[cur] ? `<span class="pas-ren">${renameBtn('pasture', cur, 'Renommer ce pré')}</span>` : '';
-    return `<div class="pas-bar">${all}${chips}${ren}${add}</div>`;
+    return `<div class="pas-bar">${all}${chips}${ren}${add}</div>${typeof cur === 'number' ? birthRow(cur) : ''}`;
 }
 
 function renderAnimals(el) {
@@ -285,7 +301,7 @@ function geneBlock(a) {
     const race = a.race && state.genetics.races[a.race];
     const can = G.canFixRace(a);
     return `<div class="gene-box"><div class="set-sub">Ses gènes${race ? ` · race « ${esc(race.name)} »` : a.gen ? ` · génération ${a.gen}` : ''}</div>
-        <p class="card-sub">${[G.coatText(a.g), looksText(a.g), featuresText(a.type, a.g)].filter(Boolean).join(', ')}${a.parents ? ` · ${a.type === 'horse' ? 'issu' : 'fille'} de ${a.parents.map(esc).join(' et ')}` : ''}${a.type === 'horse' && G.isRetired(a) ? ' · reproducteur à la retraite' : ''}</p>
+        <p class="card-sub">${[G.coatText(a.g), looksText(a.g), featuresText(a.type, a.g)].filter(Boolean).join(', ')}${a.parents ? ` · ${a.type === 'horse' ? 'issu' : a.born === 'pre' ? 'née au pré,' : 'fille'} de ${a.parents.map(esc).join(' et ')}` : ''}${a.type === 'horse' && G.isRetired(a) ? ' · reproducteur à la retraite' : ''}</p>
         ${G.geneEffects(a).length ? `<p class="card-sub gene-fx">${ico(['ui', race ? 'ribbon' : 'star'])}${race ? 'Ce que lui donne sa race' : 'Ce que lui donnent ses gènes'} : ${G.geneEffects(a).join(', ')}.</p>` : ''}
         ${a.lin ? lineageHtml({ lin: a.lin, me: G.lineSnap(a) }) : ''}
         ${animalTraits(a)}
@@ -295,6 +311,7 @@ function geneBlock(a) {
 }
 
 // ---------------- la fiche d'un animal ----------------
+const FEM_KIND = ['cow', 'goat', 'chicken', 'ewe', 'guinea', 'ostrich', 'mohairGoat', 'quail'];
 defineSheet('animal', {
     cls: 'animal-sheet',
     title: o => {
@@ -317,6 +334,12 @@ defineSheet('animal', {
             ]);
         info.push([['item', 'feed'], `Mangeoire : ${a.food} / ${G.maxFood()} repas`]);
         if (a.produced) info.push([['ui', 'basket'], G.producedText(a)]);
+        // 1.45 : né au pré, de quels parents (au labo, la fiche des gènes le dit déjà)
+        if (a.born === 'pre' && a.parents && !(state.genetics && G.geneticsOpen() && a.g))
+            info.push([
+                ['ui', 'heart'],
+                `Né${FEM_KIND.includes(a.type) ? 'e' : ''} au pré, de ${a.parents.map(esc).join(' et ')}${a.race ? '' : ' (sans papiers)'}`,
+            ]);
         const petted = a.petDay === state.day;
         return `<div class="animal-card">
             <div class="animal-art${adult ? '' : ' baby'}" data-anchor="animalArt">${bodyOf(a)}</div>
@@ -368,6 +391,7 @@ export function setupAnimals() {
             G.fixRace(d.id, input ? input.value : '', el);
         },
         pickPasture: (el, d) => (ui.sel.pasture = d.k === 'all' ? 'all' : +d.k),
+        toggleBirths: (el, d) => G.toggleBirths(+d.k),
         buyPasture: el =>
             askBuy(
                 {

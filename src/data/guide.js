@@ -3,7 +3,7 @@
 //   lvl : niveau d'ouverture (la page se lit toujours, mais le bouton « Y aller » attend) ; go : où mène « Y aller » (voir GUIDE_GO)
 //   secs : sections (h : titre ; t : un paragraphe ; b : une liste) ; tips : « À retenir » ; see : pages liées
 import { ITEMS } from './items.js';
-import { ANIMALS } from './animals.js';
+import { ANIMALS, BIRTHS } from './animals.js';
 import { MACHINES, RECIPES } from './machines.js';
 import { CHAPTERS } from './village.js';
 import { HARAS_LVL } from './haras.js';
@@ -589,6 +589,15 @@ export const GUIDE_PAGES = [
                 ],
             },
             { h: 'L’étable', t: 'Elle présente tout le troupeau en fiches : pratique pour comparer, soigner et vendre.' },
+            {
+                h: `Les naissances au pré (niveau ${BIRTHS.lvl})`,
+                b: [
+                    'Chaque pré a son interrupteur « Naissances », éteint au départ : allumez-le dans les prés où vous voulez des petits.',
+                    `Deux adultes en forme de la même espèce y ont parfois un petit, même jeu fermé : toutes les ${BIRTHS.minH} heures pour les petites bêtes, jusqu’à ${BIRTHS.maxH} heures pour les grosses. Il faut une place libre dans le pré.`,
+                    'Le petit hérite de ses parents, mais la nature ramène souvent un bon gène vers la moyenne, sans mutation. Deux parents de la même race fixée lui transmettent leur race.',
+                    'Chevaux et abeilles n’ont pas de naissances au pré : les poulains naissent au haras et au labo.',
+                ],
+            },
             { h: 'Le charme', t: 'Les paons ajoutent du charme au concours de la semaine.' },
         ],
         see: ['animals', 'contest'],

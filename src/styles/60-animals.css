@@ -540,3 +540,14 @@ html.calm .critter {
 .meadow.crowd .food-meter {
     display: none;
 }
+
+/* 1.45 : l'interrupteur des naissances du pré */
+.birth-row .row-main > span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.birth-row .row-main .ico {
+    width: 20px;
+    height: 20px;
+}

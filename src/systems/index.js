@@ -39,6 +39,7 @@ export * from './wall.js';
 export * from './orchard.js';
 export * from './orders.js';
 export * from './pastures.js';
+export * from './births.js';
 export * from './player.js';
 export * from './port.js';
 export * from './prestige.js';

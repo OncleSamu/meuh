@@ -102,6 +102,11 @@ export const TIPS = {
         title: 'Le verger',
         text: 'Un arbre grandit, puis laisse tomber ses fruits à son pied : viens les ramasser avant qu’ils ne pourrissent. Après une centaine de fruits il vieillit, puis meurt : il donne alors du bois, et tu replantes.',
     },
+    births: {
+        icon: ['ui', 'heart'],
+        title: 'Des petits au pré',
+        text: 'Deux bêtes de la même espèce dans un pré peuvent maintenant avoir un petit. Allume les naissances avec le bouton « Naissances », au-dessus du pré : elles sont éteintes tant que tu ne l’as pas décidé. Ma mère disait qu’un veau né au printemps porte bonheur à toute la ferme. On l’appelait du nom de la fleur la plus proche de l’étable : c’est comme ça qu’on a eu trois Pâquerette de suite.',
+    },
     pasture: {
         icon: ['ui', 'flowers'],
         title: 'Un pré tout plein',

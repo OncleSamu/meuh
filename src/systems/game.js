@@ -54,6 +54,7 @@ import { brewOpen, ensureBrew, brewTick } from './brewery.js';
 import { cargoTick, cargoHere, cargoLeave } from './cargo.js';
 import { armandTick, armandHere, armandLeave, armandPending } from './armand.js';
 import { pondTick, trapsReady } from './fishing.js';
+import { birthsTick, birthsTip } from './births.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -294,6 +295,11 @@ function tickDeliveries() {
     if (contestTick()) changed = true;
     if (showTick()) changed = true;
     if (studTick()) changed = true;
+    // 1.45 : les naissances au pré (vérifiées toutes les 10 secondes)
+    if ((state.stats.playSec || 0) % 10 === 0) {
+        if (birthsTick().length) changed = true;
+        birthsTip();
+    }
     if (nmarketTick()) changed = true;
     if (specialTick()) changed = true;
     if (syncStory()) changed = true;
@@ -368,6 +374,7 @@ export function offlineProgress() {
         }
     });
     const pasture = animalsOffline(elapsed);
+    const babies = birthsTick(); // 1.45 : les naissances au pré pendant l'absence
     let artisan = 0;
     state.machines.forEach(m => (artisan += advanceMachine(m, elapsed)));
     const totalMin = state.gameTimeMinutes + elapsed * GAME_MIN_PER_SEC;
@@ -405,6 +412,11 @@ export function offlineProgress() {
     add(pasture.products, ['item', 'egg'], `${pasture.products} produit${s(pasture.products)} à ramasser au pâturage`);
     add(artisan, ['machine', 'bakery'], `${artisan} produit${s(artisan)} terminé${s(artisan)} à l’atelier`);
     add(hand.crops, ['villager', 'theo'], `Théo, votre commis, a récolté ${hand.crops} produit${s(hand.crops)}`);
+    add(
+        babies.length,
+        ['animal', babies.length ? babies[0].type : 'chicken'],
+        `${babies.length} petit${s(babies.length)} ${babies.length > 1 ? 'sont nés' : 'est né'} au pré`,
+    );
     add(pasture.hungry, ['item', 'feed'], `${pasture.hungry} ${pasture.hungry > 1 ? 'animaux ont' : 'animal a'} faim`);
     add(ready, ['ui', 'scroll'], `${ready} commande${s(ready)} prête${s(ready)} à livrer`);
     add(sold, ['ui', 'stall'], `${sold} vente${s(sold)} à encaisser à l’étal`);
