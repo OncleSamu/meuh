@@ -1,4 +1,4 @@
-// Animaux | Écuries (1.23) : les boxes, la forme, les soins, l'entraînement et la randonnée de vos chevaux.
+// Animaux | Haras › Écuries (1.23) : les boxes, la forme, les soins, l'entraînement et la randonnée de vos chevaux.
 import { state } from '../../core/state.js';
 import { emit } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
@@ -7,8 +7,10 @@ import * as G from '../../systems/index.js';
 import { blocks, actions, esc } from '../dom.js';
 import { genWrap } from '../genlook.js';
 import { ico, art } from '../icons.js';
-import { btn, hint, section, hearts, costRow, timer } from '../kit.js';
-import { defineView } from '../app.js';
+import { btn, hint, section, hearts, costRow, timer, segmented } from '../kit.js';
+import { defineView, ui } from '../app.js';
+import { renderShow } from './show.js';
+import { renderStud } from './stud.js';
 import { openHorseGame } from '../horsegame.js';
 import { stableSvg, boxSvg } from '../../art/v123haras.js';
 
@@ -196,10 +198,34 @@ function renderHaras(el) {
         ],
     ]);
 }
-defineView('animals/haras', renderHaras);
+// 1.44.2 : écuries, concours et élevage dans un seul volet, avec trois petits choix en tête (le dernier ouvert est gardé)
+const HZ_PICKS = [
+    ['stables', 'Écuries', ['ui', 'hEcuries'], renderHaras],
+    ['show', 'Concours', ['ui', 'hCup2'], renderShow],
+    ['stud', 'Élevage', ['ui', 'hEcusson'], renderStud],
+];
+function renderHarasHub(el) {
+    const cur = HZ_PICKS.find(p => p[0] === ui.sel.haras) || HZ_PICKS[0];
+    const pick = segmented(
+        HZ_PICKS.map(([id, name, icon]) => [id, name, icon]),
+        cur[0],
+        'hzPick',
+    );
+    blocks(el, [
+        ['hzpick', pick],
+        ['hzbody-' + cur[0], '<div class="hz-body"></div>'],
+    ]);
+    cur[3](el.querySelector('.hz-body'));
+}
+defineView('animals/haras', renderHarasHub);
 
 export function setupHaras() {
     actions({
+        hzPick: (el, d) => {
+            ui.sel.haras = d.v;
+            const v = document.getElementById('view-animals');
+            if (v) v.scrollTop = 0;
+        },
         upStable: el => G.upgradeStable(el),
         haOpen: (el, d) => {
             if (openCards.has(d.uid)) openCards.delete(d.uid);

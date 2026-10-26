@@ -5,7 +5,7 @@ export const TIPS = {
     haras: {
         icon: ['ui', 'hEcuries'],
         title: 'Les grandes écuries',
-        text: 'Logez vos chevaux en boxes (onglet Animaux, volet Écuries). Brossez-les, nourrissez-les, puis entraînez-les : chaque séance coûte une pastille de forme, qui remonte toutes les 30 minutes. Chaque aptitude monte jusqu’à un plafond que fixe un gène du cheval : croisez au labo pour viser plus haut.',
+        text: 'Logez vos chevaux en boxes (onglet Animaux, volet Haras, Écuries). Brossez-les, nourrissez-les, puis entraînez-les : chaque séance coûte une pastille de forme, qui remonte toutes les 30 minutes. Chaque aptitude monte jusqu’à un plafond que fixe un gène du cheval : croisez au labo pour viser plus haut.',
     },
     vault: {
         icon: ['ui', 'vault'],
@@ -30,7 +30,7 @@ export const TIPS = {
     stud: {
         icon: ['ui', 'hEcusson'],
         title: 'Un champion !',
-        text: 'Votre cheval a gagné en division Élite. Il peut maintenant prendre sa retraite (Animaux, volet Élevage) : il rapportera des saillies chaque jour et ses poulains naîtront avec un peu de son talent. Trois champions de suite dans une famille : une lignée célèbre !',
+        text: 'Votre cheval a gagné en division Élite. Il peut maintenant prendre sa retraite (Animaux, volet Haras, Élevage) : il rapportera des saillies chaque jour et ses poulains naîtront avec un peu de son talent. Trois champions de suite dans une famille : une lignée célèbre !',
     },
     frost: {
         icon: ['item', 'apple'],

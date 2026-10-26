@@ -1,4 +1,4 @@
-// Animaux | Concours (1.24) : le concours de la semaine, le Grand Prix du mois, les divisions, les résultats.
+// Animaux | Haras › Concours (1.24) : le concours de la semaine, le Grand Prix du mois, les divisions, les résultats.
 import { fmt } from '../../core/format.js';
 import { emit } from '../../core/bus.js';
 import { DISC, SHOW, HARAS_LVL, DISCIPLINES } from '../../data/haras.js';
@@ -7,7 +7,6 @@ import * as G from '../../systems/index.js';
 import { blocks, actions, esc } from '../dom.js';
 import { ico } from '../icons.js';
 import { btn, hint, section, timer } from '../kit.js';
-import { defineView } from '../app.js';
 import { openHorseGame } from '../horsegame.js';
 import { animalArt } from '../genlook.js';
 
@@ -136,7 +135,7 @@ function renderShow(el) {
         return blocks(el, [
             [
                 'closed',
-                '<div class="card island-closed"><div class="card-title">Les concours</div><p class="card-sub">Construisez d’abord les grandes écuries (onglet Écuries).</p></div>',
+                '<div class="card island-closed"><div class="card-title">Les concours</div><p class="card-sub">Construisez d’abord les grandes écuries (choix Écuries, en haut).</p></div>',
             ],
         ]);
     G.tidyHaras();
@@ -162,7 +161,7 @@ function renderShow(el) {
         ],
     ]);
 }
-defineView('animals/show', renderShow);
+export { renderShow }; // 1.44.2 : dans le volet Haras (voir haras.js)
 
 const horseOf = d => G.horseByUid(d.uid);
 export function setupShow() {

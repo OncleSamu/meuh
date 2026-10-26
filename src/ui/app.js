@@ -51,9 +51,7 @@ export const TABS = [
         lock: () => ANIMALS.chicken.reqLvl,
         subs: [
             ['pasture', 'Prés', ['animal', 'cow']],
-            ['haras', 'Écuries', ['ui', 'hEcuries'], () => HARAS_LVL],
-            ['show', 'Concours', ['ui', 'hCup2'], () => HARAS_LVL],
-            ['stud', 'Élevage', ['ui', 'hEcusson'], () => HARAS_LVL],
+            ['haras', 'Haras', ['ui', 'hEcuries'], () => HARAS_LVL],
         ],
     },
     {
@@ -110,6 +108,8 @@ export function go(path, opts = {}) {
         openSheet(path.slice(6), opts);
         return;
     }
+    // 1.44.2 : concours et élevage sont dans le volet Haras
+    if (path === 'animals/show' || path === 'animals/stud') path = 'animals/haras#' + path.split('/')[1];
     // « market/shop#neighbors » : ouvre le volet sur un rayon (ui.sel[volet])
     const [path0, hash] = path.split('#');
     const [tab, sub0] = path0.split('/');
@@ -187,8 +187,6 @@ const HELP = {
     'farm/island': 'island',
     'animals/pasture': 'animals',
     'animals/haras': 'haras',
-    'animals/show': 'haras',
-    'animals/stud': 'haras',
     'machines/workshop': 'workshop',
     'machines/counter': 'counter',
     'machines/cave': 'cave',

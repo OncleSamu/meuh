@@ -110,7 +110,7 @@ export const GUIDE_PAGES = [
                 h: 'Les cinq onglets',
                 b: [
                     'Ferme : le champ, la serre, le verger, la nature (forêt et mine), la pêche et l’île.',
-                    'Animaux : les prés, l’étable, la transhumance.',
+                    'Animaux : les prés (l’étable, la transhumance) et le haras (écuries, concours, élevage).',
                     'Atelier : les machines, le comptoir, la cave, la brasserie et le labo.',
                     'Village : les commandes (tableau, train, cargo, Armand…) et le village (chapitres, villageois, concours, domaine).',
                     'Marché : le magasin pour acheter, le grossiste et l’étal pour vendre.',
@@ -626,7 +626,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Le bâtiment',
                 b: [
-                    `Au niveau ${HARAS_LVL}, construisez les écuries (onglet Animaux, volet Écuries) : 4 boxes, puis 8 et 12 avec deux agrandissements.`,
+                    `Au niveau ${HARAS_LVL}, construisez les écuries (onglet Animaux, volet Haras, Écuries) : 4 boxes, puis 8 et 12 avec deux agrandissements.`,
                     'Un cheval logé quitte les prés (il ne compte plus dans leur place) mais donne toujours son crin : ramassez-le depuis sa fiche.',
                     'Chaque box est une petite carte (nom, forme, aptitudes) : touchez-la pour ouvrir la fiche complète, la flèche du coin la replie.',
                 ],
@@ -664,7 +664,7 @@ export const GUIDE_PAGES = [
                 h: 'L’élevage : robes, poulains et retraite',
                 b: [
                     'Chaque cheval a des gènes de robe (bai, alezan, noir, gris, palomino, isabelle, crème, rouan, aubère, louvet, bai brun) et de marques (étoile, liste, belle face, balzanes, pie, appaloosa, raie de mulet, crins lavés). Ils viennent des deux parents : certains sont dominants (le gris l’emporte sur tout), d’autres récessifs (la belle face, les crins lavés), et il peut y avoir une surprise. L’apparence fantaisiste des gènes du jeu (couleur, motif, finition) se pose par-dessus la robe.',
-                    'Un poulain naît à l’étable de sélection, avec le dessin d’un poulain puis d’un jeune avant d’être adulte. Onglet Animaux, « Élevage » : votre nom d’élevage (le crayon le change), la collection des robes et des marques déjà vues, les descendants et l’arbre de famille.',
+                    'Un poulain naît à l’étable de sélection, avec le dessin d’un poulain puis d’un jeune avant d’être adulte. Onglet Animaux, volet Haras, « Élevage » : votre nom d’élevage (le crayon le change), la collection des robes et des marques déjà vues, les descendants et l’arbre de famille.',
                     'Un cheval qui a gagné en division Élite peut prendre sa retraite (3 reproducteurs au plus) : il quitte son box pour le pré, rapporte des saillies chaque jour (plus il a gagné de concours, plus elles valent ; jusqu’à une semaine cumulée) et ses poulains naissent avec 10 points dans sa spécialité. Trois champions de suite dans une même famille : « Lignée célèbre » et un ruban. À chaque naissance, une fiche présente le poulain (robe, parents, talent) et vous laisse choisir son nom.',
                 ],
             },

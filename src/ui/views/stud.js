@@ -1,11 +1,10 @@
-// Animaux | Élevage (1.24.2) : le nom d'élevage, les reproducteurs à la retraite, la collection de robes, les poulains et l'arbre de famille.
+// Animaux | Haras › Élevage (1.24.2) : le nom d'élevage, les reproducteurs à la retraite, la collection de robes, les poulains et l'arbre de famille.
 import { fmt } from '../../core/format.js';
 import { COAT, STUD, DISC, HARAS_LVL } from '../../data/haras.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc } from '../dom.js';
 import { ico } from '../icons.js';
 import { btn, section } from '../kit.js';
-import { defineView } from '../app.js';
 import { animalArt, lineageHtml } from '../genlook.js';
 import { renameBtn } from '../sheets/rename.js';
 import { emit } from '../../core/bus.js';
@@ -83,7 +82,7 @@ function renderStud(el) {
         return blocks(el, [
             [
                 'closed',
-                `<div class="card island-closed"><div class="card-title">L’élevage</div><p class="card-sub">${G.harasOpen() ? 'Construisez d’abord les grandes écuries (onglet Écuries).' : `S’ouvre au niveau ${HARAS_LVL}.`}</p></div>`,
+                `<div class="card island-closed"><div class="card-title">L’élevage</div><p class="card-sub">${G.harasOpen() ? 'Construisez d’abord les grandes écuries (choix Écuries, en haut).' : `S’ouvre au niveau ${HARAS_LVL}.`}</p></div>`,
             ],
         ]);
     G.tidyHaras();
@@ -112,7 +111,7 @@ function renderStud(el) {
             : [['fn', '<div class="card"><small>Croisez deux chevaux à l’étable de sélection (onglet Labo) pour avoir des poulains.</small></div>']]),
     ]);
 }
-defineView('animals/stud', renderStud);
+export { renderStud }; // 1.44.2 : dans le volet Haras (voir haras.js)
 
 export function setupStud() {
     actions({
