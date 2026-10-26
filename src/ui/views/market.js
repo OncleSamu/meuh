@@ -10,7 +10,7 @@ import { SEASONS } from '../../data/world.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc, QUIET } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
-import { btn, card, chip, section, empty, toggle, pips, timer, hearts, tip15 } from '../kit.js';
+import { btn, card, chip, section, empty, toggle, pips, timer, hearts, tip15, segmented, bar } from '../kit.js';
 import { defineView, ui } from '../app.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 import { pinBar } from './common.js';
@@ -18,6 +18,8 @@ import { askBuy } from '../sheets/askbuy.js';
 import { merchantCard } from './village.js';
 import { NMARKET } from '../../data/commerce.js';
 import { RIVALS } from '../../data/village.js';
+import { PASSERS, REPUTATION } from '../../data/elevage.js';
+import { renameBtn } from '../sheets/rename.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const matChips = m =>
@@ -299,6 +301,7 @@ function neighborsList() {
                 <div class="card-head"><div class="avatar sm">${art('villager', r.avatar)}</div><div class="card-main"><div class="card-title">${r.owner}</div><div class="card-sub">${r.name} · ${NMARKET.specs[st.k]}</div>${hearts(h)}</div>
                 <small class="nm-price${h >= 3 ? ' good' : ''}">${h >= 5 ? 'Prix d’ami' : h >= 3 ? 'Bons prix' : 'Prix normal'}</small></div>
                 <div class="offers">${offers || '<small>Rien à vendre pour l’instant : débloquez ses produits.</small>'}</div>
+                ${beastOffer(st.k)}
                 <div class="nm-loyal"><small>Fidélité</small><i><u style="width:${Math.round(G.loyaltyPct(st.k) * 100)}%"></u></i></div></div>`;
         })
         .join('');
@@ -315,6 +318,25 @@ function neighborsList() {
         .join('');
     const askHead = `<div class="card nm-askhead"><span class="offer-art">${art('ui', 'nmDemande')}</span><div class="card-main"><div class="card-title">Demande d’achat</div><div class="card-sub">L’étal à l’envers : vous fixez votre prix, un voisin livre d’autant plus vite. ${m.asks.length}/${G.askSlots()} demandes.</div></div>${btn('Demander', { act: 'open', data: { sheet: 'nmAsk' }, kind: 'gold', size: 'sm', disabled: m.asks.length >= G.askSlots() })}</div>`;
     return head + stalls + askHead + asks;
+}
+
+// 1.45 : la bête de choix du jour de chaque voisin
+function beastOffer(k) {
+    const o = G.neighborBeasts().find(x => x.k === k);
+    if (!o) return '';
+    const a = o.a;
+    const genes = o.traits.map(t => `${G.ANIMAL_TRAIT_NAME(t)} ${G.animalTrait(a, t)} (+${G.animalTrait(a, t) - G.animalBase(a, t)})`).join(', ');
+    return `<div class="nb-beast${o.sold ? ' sold' : ''}"><span class="offer-art">${art('animal', a.type)}</span><div class="card-main"><b>${esc(a.name)}, ${ANIMALS[a.type].name.toLowerCase()}</b><small>Bête de choix du jour : ${genes}</small></div>${
+        o.sold
+            ? '<small>Vendue</small>'
+            : btn(`${fmt(o.price)}${COIN()}`, {
+                  act: 'nbBuy',
+                  data: { k },
+                  kind: state.money >= o.price ? 'green' : '',
+                  size: 'sm',
+                  disabled: state.money < o.price,
+              })
+    }</div>`;
 }
 
 const CATS = [
@@ -449,8 +471,70 @@ function goodsGrid() {
         .join('')}</div>${more ? `<button class="shop-fold" data-act="sellMore">Voir les ${sorted.length - GOODS_PAGE} autres produits</button>` : ''}`;
 }
 
+// ---------------- 1.45 : la foire aux bestiaux ----------------
+const buyerAvatar = b =>
+    b.who.kind === 'passer'
+        ? art(...(PASSERS.find(p => p.id === b.who.id) || { icon: ['ui', 'coin'] }).icon)
+        : b.who.kind === 'villager'
+          ? art('villager', b.who.id)
+          : art('villager', RIVALS[b.who.id].avatar);
+function repCard() {
+    const nx = G.elevRepNext(),
+        R = REPUTATION[G.elevRepTier()];
+    return `<div class="card fair-rep"><span class="offer-art">${art('ui', 'hEcusson')}</span><div class="card-main">
+        <div class="card-title">Élevage « ${esc(G.studName())} » ${renameBtn('stud', 'stud', 'Renommer l’élevage')}</div>
+        <div class="card-sub">${G.elevRepName()}${G.elevRepBonus() ? ` · +${Math.round(G.elevRepBonus() * 100)} % à la foire` : ''}</div>
+        ${nx ? `${bar((G.elevRepPts() - R.pts) / (nx.pts - R.pts))}<small class="card-sub">${fmt(G.elevRepPts())} / ${fmt(nx.pts)} points pour « ${nx.name} »</small>` : '<small class="card-sub">La plus haute réputation !</small>'}</div></div>`;
+}
+function buyerCard(b) {
+    const d = ANIMALS[b.type];
+    const m = G.buyerMatches(b);
+    const ready = m.length >= b.count;
+    const pick = m.slice(0, b.count);
+    const reqs = [`<span class="req ok">${ico(['ui', 'check'])}${b.count > 1 ? 'adultes' : 'adulte'}</span>`]
+        .concat(
+            b.reqs.map(
+                r => `<span class="req ${G.reqMet(b, r) ? 'ok' : 'no'}">${ico(['ui', G.reqMet(b, r) ? 'check' : 'lock'])}${G.reqText(r, b.type)}</span>`,
+            ),
+        )
+        .join('');
+    const name = d.name.toLowerCase();
+    const wants = `${b.count} ${b.count > 1 ? (name.endsWith('s') || name.endsWith('x') ? name : name + 's') : name}`;
+    return `<div class="card fair-buyer${ready ? ' ready' : ''}"><div class="card-head"><span class="avatar sm">${buyerAvatar(b)}</span>
+        <div class="card-main"><div class="card-title">${esc(G.buyerName(b))}</div><div class="card-sub">Veut ${wants} · repart dans ${timer(b.until)}</div></div>
+        <b class="fair-price">${fmt(G.buyerPrice(b))}${COIN()}</b></div>
+        <div class="fair-reqs">${reqs}</div>
+        <div class="fair-match">${
+            ready
+                ? `<span class="fair-pick">${pick.map(a => `<span class="fair-mini" title="${esc(a.name)}">${art('animal', a.type)}</span>`).join('')}</span><small>${pick.map(a => esc(a.name)).join(', ')}</small>${btn('Vendre', { act: 'fairSell', data: { id: b.id }, kind: 'gold', size: 'sm' })}`
+                : `<small>${m.length ? `${m.length} sur ${b.count} conviennent` : 'Aucune de vos bêtes ne convient encore'}</small>${btn('Renvoyer', { act: 'fairDismiss', data: { id: b.id }, kind: 'ghost', size: 'sm' })}`
+        }</div></div>`;
+}
+function fairHtml() {
+    G.fairTick();
+    const e = G.ensureElevage();
+    const list = e.buyers.length
+        ? e.buyers.map(buyerCard).join('')
+        : empty(state.animals.length ? 'Aucun acheteur pour l’instant.' : 'Les acheteurs viendront quand vous aurez des bêtes.');
+    return `${repCard()}${list}<p class="card-sub center fair-foot">${e.buyers.length < G.fairSlots() ? `Prochain acheteur dans ${timer(e.next)}` : `${G.fairSlots()} acheteurs au plus`} · chacun reste un jour</p>`;
+}
+
 function renderSell(el) {
+    const tab = G.fairOpen() && ui.sel.sell === 'beasts' ? 'beasts' : 'goods';
+    if (tab === 'beasts')
+        return blocks(el, [
+            ['pin', pinBar()],
+            ['selltab', sellTabs(tab)],
+            ['fair', fairHtml()],
+            [
+                'hint',
+                tip15(
+                    'La foire achète vos bêtes adultes. Le jeu propose d’abord les moins précieuses qui conviennent : vos meilleures restent pour l’élevage.',
+                ),
+            ],
+        ]);
     blocks(el, [
+        ['selltab', sellTabs(tab)],
         ['pin', pinBar()],
         ['stall', stallCard()],
         ['whole', section('Grossiste', btn('Tout vendre', { act: 'sellAll', kind: 'gold', size: 'sm', icon: ['ui', 'coin'], anchor: 'btn:sellAll' }))],
@@ -475,6 +559,17 @@ function renderSell(el) {
     ]);
 }
 defineView('market/sell', renderSell);
+const sellTabs = tab =>
+    G.fairOpen()
+        ? segmented(
+              [
+                  ['goods', 'Produits', ['ui', 'coin']],
+                  ['beasts', 'Bêtes', ['animal', 'cow'], G.fairReadyCount()],
+              ],
+              tab,
+              'sellTab',
+          )
+        : '';
 
 // ---------------- 1.26 : la demande d'achat ----------------
 const ASK_MULTS = [1.2, 1.5, 2, 2.5];
@@ -548,6 +643,10 @@ export function setupMarket() {
             ui.sel.sellMore = false;
         },
         sellMore: () => (ui.sel.sellMore = true),
+        sellTab: (el, d) => (ui.sel.sell = d.v),
+        fairSell: (el, d) => G.sellToBuyer(d.id, el),
+        fairDismiss: (el, d) => G.dismissBuyer(d.id),
+        nbBuy: (el, d) => G.buyNeighborBeast(+d.k, el),
         shopOwned: (el, d) => (ui.sel['own_' + d.id] = !ui.sel['own_' + d.id]),
         nmBuy: (el, d) => G.buyOffer(+d.k, +d.n, el),
         nmCollect: (el, d) => G.collectAsk(+d.n, el),

@@ -55,6 +55,7 @@ import { cargoTick, cargoHere, cargoLeave } from './cargo.js';
 import { armandTick, armandHere, armandLeave, armandPending } from './armand.js';
 import { pondTick, trapsReady } from './fishing.js';
 import { birthsTick, birthsTip } from './births.js';
+import { fairTick } from './fair.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -299,6 +300,7 @@ function tickDeliveries() {
     if ((state.stats.playSec || 0) % 10 === 0) {
         if (birthsTick().length) changed = true;
         birthsTip();
+        if (fairTick()) changed = true;
     }
     if (nmarketTick()) changed = true;
     if (specialTick()) changed = true;

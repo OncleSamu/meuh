@@ -72,6 +72,9 @@ export function todoList() {
     const idle = state.machines.filter(m => !G.machineBusy(m) && G.recipesOf(m.type).some(r => G.recipeUnlocked(r.id) && G.canCook(r.id))).length;
     add('machines/workshop', ['machine', 'mill'], `${idle} à l’arrêt`, idle);
     // 1.43 : des clients attendent au comptoir
+    // 1.45 : un acheteur de la foire dont on peut remplir la demande
+    const fr = G.fairReadyCount();
+    add('market/sell#beasts', ['ui', 'hEcusson'], `${fr} acheteur${s(fr)} à la foire`, fr);
     const cw = G.counterWaiting();
     add('machines/counter', ['machine', 'counter'], `${cw} client${s(cw)} au comptoir`, cw);
     if (G.holidayReady()) push('village/orders', ['ui', HOLIDAYS[state.holiday.id].deco], `${HOLIDAYS[state.holiday.id].name} : panier à remplir`, 1);

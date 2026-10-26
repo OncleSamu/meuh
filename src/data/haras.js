@@ -231,6 +231,6 @@ export const STUD = {
     foalPts: 10, // points d'aptitude offerts au poulain dans la spécialité du parent
     famous: 3, // champions de suite dans une lignée (1.24.3 : 3 au lieu de 4)
     famousRibbons: 1,
-    defaultName: 'Haras des Quatre Vents',
+    defaultName: 'Les Quatre Vents', // 1.45 : le nom de tout l'élevage (avant : « Haras des Quatre Vents »)
     stages: [0.5], // le poulain devient jeune à la moitié de sa croissance
 };

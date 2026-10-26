@@ -206,7 +206,7 @@ function renderSubnav() {
         return;
     }
     el.hidden = false;
-    const help = HELP[currentPath()];
+    const help = currentPath() === 'market/sell' && ui.sel.sell === 'beasts' && G.fairOpen() ? 'elevage' : HELP[currentPath()];
     patch(
         el,
         `<div class="subnav-row">` +

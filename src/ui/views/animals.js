@@ -364,7 +364,15 @@ defineSheet('animal', {
             <div class="row-btns">${
                 G.animalSellBlock(a)
                     ? `<p class="card-sub center">${G.animalSellBlock(a)} : impossible de la vendre pour l’instant.</p>`
-                    : btn(`Vendre · ${fmt(G.animalSalePrice(a))}${ico(['ui', 'coin'])}`, { act: 'sellAnimal', data: { i }, kind: 'red', size: 'sm' })
+                    : btn(`${G.fairOpen() ? 'Vendre au maquignon' : 'Vendre'} · ${fmt(G.animalSalePrice(a))}${ico(['ui', 'coin'])}`, {
+                          act: 'sellAnimal',
+                          data: { i },
+                          kind: 'red',
+                          size: 'sm',
+                      }) +
+                      (G.fairOpen() && !G.BIRTHS_SKIP.includes(a.type)
+                          ? btn('Voir les acheteurs', { act: 'go', data: { path: 'market/sell#beasts' }, kind: 'gold', size: 'sm' })
+                          : '')
             }</div>
         </div>`;
     },

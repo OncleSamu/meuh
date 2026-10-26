@@ -5,6 +5,7 @@ import { fmt, dateKey, fill } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { ANIMALS, BIRTHS } from '../data/animals.js';
+import { FAIR } from '../data/elevage.js';
 import { MACHINES, RECIPES } from '../data/machines.js';
 import { UPGRADES, DECOS, DOG, GH, STYLE_LVL, ORCHARD, CROW_LVL } from '../data/farm.js';
 import { NIGHT } from '../data/night.js';
@@ -243,6 +244,10 @@ export function unlocksAt(lvl) {
     if (lvl === CHAPTERS[0].lvl) add(['ui', 'village'], 'Rénovez le village : premier chapitre (onglet Village)');
     if (lvl === INCIDENT_LVL) add(['ui', 'pest'], 'Des imprévus surviennent à la ferme : réagissez vite !');
     if (lvl === DOG.reqLvl) add(['ui', 'dog'], 'Un chien de ferme à adopter');
+    if (lvl === FAIR.lvl) {
+        add(['ui', 'hEcusson'], 'La foire aux bestiaux : des acheteurs pour vos bêtes, la réputation de votre élevage (Marché | Vendre, Bêtes)');
+        add(['animal', 'cow'], 'Les bêtes de choix des voisins, avec un bon gène (Marché | Acheter, rayon Voisins)');
+    }
     if (lvl === BIRTHS.lvl)
         add(['ui', 'heart'], 'Les naissances au pré : allumez-les pré par pré, deux bêtes de la même espèce auront parfois un petit (Animaux | Prés)');
     if (lvl === NATURE.forest.lvl) add(['item', 'wood'], 'La forêt : coupez du bois (Ferme | Nature)');
@@ -310,6 +315,8 @@ const UNLOCK_GO = [
     ['cultures compagnes', 'sheet:companions'],
     ['Grand Haras', 'animals/haras'],
     ['naissances au pré', 'animals/pasture'],
+    ['foire aux bestiaux', 'market/sell#beasts'],
+    ['bêtes de choix des voisins', 'market/shop#neighbors'],
     ['château et ses vignes', 'machines/cave'],
     ['La cave : affinez', 'machines/cave'],
     ['Grande étape : la cave', 'machines/cave'],

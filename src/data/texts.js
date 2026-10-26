@@ -102,6 +102,11 @@ export const TIPS = {
         title: 'Le verger',
         text: 'Un arbre grandit, puis laisse tomber ses fruits à son pied : viens les ramasser avant qu’ils ne pourrissent. Après une centaine de fruits il vieillit, puis meurt : il donne alors du bois, et tu replantes.',
     },
+    fair: {
+        icon: ['ui', 'hEcusson'],
+        title: 'La foire aux bestiaux',
+        text: 'Des acheteurs passent avec une demande précise : une espèce, combien de bêtes, et parfois un bon gène ou une jolie robe. Va voir dans Marché, Vendre, Bêtes : le jeu coche ce que tes bêtes remplissent. Plus la demande est exigeante, plus elle paie, et chaque vente fait la réputation de ton élevage. Papi Lucien allait à la foire de Lessay tous les ans avec sa plus belle génisse. Il en revenait toujours sans la génisse, mais avec une vache de plus. Je n’ai jamais compris son calcul.',
+    },
     births: {
         icon: ['ui', 'heart'],
         title: 'Des petits au pré',

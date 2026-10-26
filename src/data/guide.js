@@ -4,6 +4,7 @@
 //   secs : sections (h : titre ; t : un paragraphe ; b : une liste) ; tips : « À retenir » ; see : pages liées
 import { ITEMS } from './items.js';
 import { ANIMALS, BIRTHS } from './animals.js';
+import { FAIR, REPUTATION, REP_BONUS } from './elevage.js';
 import { MACHINES, RECIPES } from './machines.js';
 import { CHAPTERS } from './village.js';
 import { HARAS_LVL } from './haras.js';
@@ -601,6 +602,40 @@ export const GUIDE_PAGES = [
             { h: 'Le charme', t: 'Les paons ajoutent du charme au concours de la semaine.' },
         ],
         see: ['animals', 'contest'],
+    },
+    {
+        id: 'elevage',
+        cat: 'animals',
+        name: 'L’élevage : foire, voisins, réputation',
+        icon: ['ui', 'hEcusson'],
+        lvl: FAIR.lvl,
+        go: 'market/sell#beasts',
+        intro: 'Faire naître ses bêtes, les améliorer, puis les vendre à des acheteurs exigeants.',
+        secs: [
+            {
+                h: 'La foire aux bestiaux (Marché › Vendre › Bêtes)',
+                b: [
+                    'Des acheteurs passent avec une demande : une espèce, une à trois bêtes adultes, et parfois une exigence (un bon gène, une robe originale, une race fixée).',
+                    'Le jeu coche ce que vos bêtes remplissent et propose d’abord les moins précieuses qui conviennent : vos meilleures restent pour l’élevage.',
+                    `Le prix : ${FAIR.base} × le prix de l’espèce par bête, × ${String(FAIR.perReq).replace('.', ',')} par exigence de gène ou d’apparence, × ${FAIR.race} pour une race fixée. Le maquignon (le bouton Vendre de la fiche) paie seulement la moitié du prix.`,
+                    `Un nouvel acheteur toutes les ${FAIR.every / 3600000} heures, ${FAIR.slots.map(([l, n]) => `${n} au niveau ${l}`).join(', ')} ; chacun reste un jour. Renvoyer un acheteur fait venir le suivant plus tôt.`,
+                ],
+            },
+            {
+                h: 'Les bêtes des voisins (Marché › Acheter › Voisins)',
+                t: 'Chaque ferme voisine propose une bête de choix par jour, avec un gène au-dessus de la moyenne (deux avec trois cœurs d’amitié). Mise au pré avec les naissances allumées, elle transmet ses bons gènes aux petits : c’est le moyen d’améliorer son troupeau avant le labo.',
+            },
+            {
+                h: 'La réputation de l’élevage',
+                b: [
+                    'Chaque vente à la foire rapporte des points, plus pour une demande exigeante ou une race fixée.',
+                    `Cinq paliers (${REPUTATION.map(r => r.name.toLowerCase()).join(', ')}) : chacun ajoute ${Math.round(REP_BONUS * 100)} % aux prix de la foire, et les acheteurs deviennent plus exigeants.`,
+                    'Le nom de l’élevage est celui du haras : touchez le crayon pour le changer.',
+                ],
+            },
+        ],
+        tips: ['Allumez les naissances dans un pré où vivent vos meilleures bêtes, et vendez à la foire celles qui ne servent pas à l’élevage.'],
+        see: ['pastures', 'labanimals', 'nmarket'],
     },
     {
         id: 'transhumance',

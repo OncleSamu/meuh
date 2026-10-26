@@ -100,3 +100,81 @@ test('avant le niveau 8, rien', () => {
     state.level = BIRTHS.lvl - 1;
     assert.equal(G.toggleBirths(0), false);
 });
+
+// ---------------- la foire aux bestiaux ----------------
+import { FAIR, REPUTATION } from '../../src/data/elevage.js';
+import { ANIMALS } from '../../src/data/animals.js';
+
+test('la foire se remplit à l’ouverture, puis un acheteur toutes les 3 heures', () => {
+    farm(['cow', 'cow', 'chicken']);
+    G.fairTick();
+    assert.equal(state.elevage.buyers.length, G.fairSlots());
+    state.elevage.buyers.shift();
+    G.fairTick();
+    assert.equal(state.elevage.buyers.length, G.fairSlots() - 1);
+    clock.t += FAIR.every + 1000;
+    G.fairTick();
+    assert.equal(state.elevage.buyers.length, G.fairSlots());
+    // chacun reste un jour
+    clock.t += FAIR.stay + 1000;
+    G.fairTick();
+    assert.ok(state.elevage.buyers.every(b => b.until > clock.t));
+});
+
+test('le prix : 0,8 × l’espèce, × 1,4 par exigence de gène, × 2 la race, plus la réputation', () => {
+    farm(['cow']);
+    G.ensureElevage();
+    const b = { who: { kind: 'passer', id: 'jura' }, type: 'cow', count: 2, reqs: [{ k: 'gene', trait: 'rich', min: 4 }, { k: 'race' }] };
+    assert.equal(G.buyerPrice(b), Math.round((ANIMALS.cow.cost * 0.8 * 1.4 * 2 * 2) / 5) * 5);
+    state.elevage.rep = REPUTATION[2].pts;
+    assert.equal(G.buyerPrice(b), Math.round((ANIMALS.cow.cost * 0.8 * 1.4 * 2 * 1.1 * 2) / 5) * 5);
+});
+
+test('vendre : les bêtes qui conviennent partent (les moins précieuses d’abord), pièces et réputation', () => {
+    farm(['cow', 'cow', 'cow']);
+    const [a, b, c] = state.animals;
+    const rich = v => [
+        [v, 1],
+        [v, 1],
+    ];
+    a.g.t.rich = rich(5);
+    b.g.t.rich = rich(4);
+    c.g.t.rich = rich(2);
+    const e = G.ensureElevage();
+    e.buyers = [
+        { id: 'x', who: { kind: 'passer', id: 'jura' }, type: 'cow', count: 1, reqs: [{ k: 'gene', trait: 'rich', min: 4 }], until: clock.t + FAIR.stay },
+    ];
+    assert.deepEqual(
+        G.buyerMatches(e.buyers[0]).map(x => x.name),
+        [b.name, a.name],
+    );
+    const m0 = state.money;
+    const price = G.sellToBuyer('x');
+    assert.ok(price > 0 && state.money === m0 + price);
+    assert.ok(!state.animals.includes(b) && state.animals.includes(a) && state.animals.includes(c));
+    assert.ok(G.elevRepPts() >= 2);
+    assert.equal(state.elevage.buyers.length, 0);
+});
+
+test('une demande impossible ne vend rien', () => {
+    farm(['goat']);
+    const e = G.ensureElevage();
+    e.buyers = [{ id: 'y', who: { kind: 'neighbor', id: 1 }, type: 'goat', count: 2, reqs: [], until: clock.t + FAIR.stay }];
+    assert.equal(G.sellToBuyer('y'), false);
+    assert.equal(state.animals.length, 1);
+});
+
+test('les voisins : une bête de choix par ferme et par jour, avec un bon gène', () => {
+    farm(['cow']);
+    state.money = 10_000_000;
+    const list = G.neighborBeasts();
+    assert.equal(list.length, 4);
+    for (const o of list) assert.ok(o.traits.every(t => G.animalTrait(o.a, t) > G.animalBase(o.a, t)));
+    const n0 = state.animals.length;
+    assert.ok(G.buyNeighborBeast(list[0].k));
+    assert.equal(state.animals.length, n0 + 1);
+    assert.equal(G.buyNeighborBeast(list[0].k), false);
+    // le lendemain, de nouvelles bêtes
+    clock.t += 24 * H;
+    assert.ok(G.neighborBeasts().every(o => !o.sold));
+});
