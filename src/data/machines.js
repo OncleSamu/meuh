@@ -10,6 +10,7 @@ import { RECIPES_133 } from './v133.js';
 import { RECIPES_134 } from './v134.js';
 import { RECIPES_135 } from './v135.js';
 import { RECIPES_137 } from './v137.js';
+import { RECIPES_150, MACHINES_150 } from './v150.js';
 import { ITEMS } from './items.js';
 import { ANIMALS } from './animals.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
@@ -3482,3 +3483,12 @@ for (const [id, l] of Object.entries(LV60_ITEM)) if (ITEMS[id]) [ITEMS[id].lv135
 for (const [id, l] of Object.entries(LV60_ANIMAL)) if (ANIMALS[id]) [ANIMALS[id].lv135, ANIMALS[id].reqLvl] = [ANIMALS[id].reqLvl, l];
 for (const [id, l] of Object.entries(LV60_MACH)) if (MACHINES[id]) [MACHINES[id].lv135, MACHINES[id].reqLvl] = [MACHINES[id].reqLvl, l];
 for (const [id, l] of Object.entries(LV60_REC)) if (RECIPES[id]) [RECIPES[id].lv135, RECIPES[id].lvl, RECIPES[id].base] = [RECIPES[id].lvl, l, l];
+
+// ---------------- 1.50 : la cuisine de l'oasis (après le puits d'Idris) ----------------
+const DESC_150 = {
+    earthOven: 'Galettes et pains cuits contre l’argile',
+    tajine: 'Tajines, couscous et soupes mijotés',
+    orientalSweets: 'Pâtisseries au miel, aux amandes et à la fleur d’oranger',
+};
+for (const [id, name, reqLvl, cost] of MACHINES_150) MACHINES[id] = { id, name, cost, reqLvl, needProject: 'oasisWell', desc: DESC_150[id] };
+for (const [id, , machine, ing, time, lvl] of RECIPES_150) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };

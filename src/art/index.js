@@ -61,6 +61,7 @@ import './v126voisins.js';
 import './v129coffre.js';
 import './v148oasis.js';
 import './v149oasis.js';
+import './v150oasis.js';
 
 export const SPR = {
     farmhouse(l, roof) {

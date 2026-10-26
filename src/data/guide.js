@@ -551,6 +551,13 @@ export const GUIDE_PAGES = [
                 t: 'Tous les deux jours environ, le vent ensable quelques cases au soleil : elles ne poussent plus jusqu’à ce qu’on les touche pour les dégager. Les cases à l’ombre des palmiers ne craignent rien, et une caravane en route prend une heure de retard.',
             },
             {
+                h: 'La cuisine de l’oasis (1.50)',
+                b: [
+                    'Trois machines, après le puits d’Idris : le four en terre (niveau 58 : kesra, msemen, pains), le tajine (59 : tajines, couscous, harira, chakchouka, keftas) et la confiserie orientale (60 : cornes de gazelle, baklava, makrout, loukoums…).',
+                    'Dans les machines que vous avez déjà : semoule et ras el-hanout au moulin, harissa à la marmite, citrons confits à la poterie, pâte de dattes, sirop de jujube et confiture de bigarades à la sucrerie, huile de sésame et tahini à l’huilerie, eau de fleur d’oranger à l’alambic, fromage de chamelle, smen et lben à la fromagerie, tapis berbère et couverture de caravane au métier à tisser.',
+                ],
+            },
+            {
                 h: 'Ailleurs dans la ferme',
                 b: [
                     'Cumin, coriandre et sésame ont leurs cultures compagnes, à l’oasis aussi.',

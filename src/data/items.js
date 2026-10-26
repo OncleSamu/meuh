@@ -5,6 +5,7 @@ import { CROPS_130, RECIPES_130 } from './v130.js';
 import { TREES_131, RECIPES_131 } from './v131.js';
 import { CROPS_132, RECIPES_132 } from './v132.js';
 import { OASIS_CROPS, OASIS_TREES, OASIS_PRODUCTS } from './oasis.js';
+import { RECIPES_150 } from './v150.js';
 import { FISH_ITEMS_133, RECIPES_133 } from './v133.js';
 import { RECIPES_134 } from './v134.js';
 import { PRODUCTS_135, RECIPES_135 } from './v135.js';
@@ -2944,3 +2945,9 @@ Object.assign(ITEMS, {
     winterBlanket: { id: 'winterBlanket', name: 'Couverture d’hiver', type: 'artisan', sell: 1220 },
     hairBrush: { id: 'hairBrush', name: 'Brosse en crin', type: 'artisan', sell: 2360 },
 });
+
+// 1.50 : la cuisine de l'oasis (le prix suit les ingrédients, comme ailleurs)
+for (const [id, name, , ing] of RECIPES_150) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}

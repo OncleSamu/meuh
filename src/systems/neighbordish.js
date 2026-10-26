@@ -26,9 +26,26 @@ const FIRMIN = [
     'confectionery',
     'chocolatier',
     'malthouse',
+    'earthOven',
+    'orientalSweets',
 ];
 const BASTIEN = ['dairy', 'alpineDairy', 'icecream', 'tailor', 'soapworks', 'dyeworks'];
-const HORTENSE = ['kitchen', 'marmite', 'stove', 'deli', 'press', 'juiceBar', 'dryer', 'cannery', 'still', 'winery', 'brewery', 'rumDistillery', 'perfumery'];
+const HORTENSE = [
+    'tajine',
+    'kitchen',
+    'marmite',
+    'stove',
+    'deli',
+    'press',
+    'juiceBar',
+    'dryer',
+    'cannery',
+    'still',
+    'winery',
+    'brewery',
+    'rumDistillery',
+    'perfumery',
+];
 const YVETTE = ['fishmonger', 'smokehouse', 'saloir'];
 const MEATS = new Set(
     Object.values(ANIMALS)

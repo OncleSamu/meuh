@@ -1,5 +1,6 @@
 // 1.36 : soixante niveaux. Tout est réparti, rien ne se perd, les anciennes parties gardent ce qu'elles avaient ouvert.
 import test from 'node:test';
+import { RECIPES_150 } from '../../src/data/v150.js';
 import assert from 'node:assert/strict';
 import './helpers.mjs';
 import * as G from '../../src/systems/index.js';
@@ -38,7 +39,11 @@ test('1.36 : chaque niveau de 2 à 60 ouvre quelque chose, aucune recette au-del
 
 test('1.36 : un rythme à peu près égal (recettes, plantes, animaux, machines)', () => {
     const per = (vals, from, to) => vals.filter(l => l >= from && l <= to).length;
-    const rec = Object.values(RECIPES).map(r => r.lvl);
+    // 1.50 : la cuisine de l'oasis arrive d'un bloc avec son voyage (chapitres 21 et 22) : hors du compte par niveau
+    const oasis = new Set(RECIPES_150.map(r => r[0]));
+    const rec = Object.values(RECIPES)
+        .filter(r => !oasis.has(r.id))
+        .map(r => r.lvl);
     for (let l = 21; l <= MAX_LEVEL; l++) assert.ok(per(rec, l, l) <= 20, `niveau ${l} : ${per(rec, l, l)} recettes`);
     const plants = Object.values(ITEMS)
         .filter(i => (i.type === 'crop' || i.type === 'tree') && i.reqLvl > 1)

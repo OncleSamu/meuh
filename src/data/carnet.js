@@ -1275,3 +1275,74 @@ Object.assign(CARNET, {
     mulledWine:
         'Le vin chaud sent l’orange, le miel et le feu de cheminée. Ma grand-mère en préparait une grande marmite pour la veillée, et les voisins arrivaient comme par hasard, juste au bon moment. Ils étaient toujours là au bon moment.',
 });
+
+// ---------------- 1.50 : la cuisine de l'oasis ----------------
+Object.assign(CARNET, {
+    semolina:
+        'La semoule, c’est du blé dur moulu gros, ni farine ni grain. Idris la roule entre ses paumes avec un peu d’eau, et elle devient couscous. Moi, la première fois, elle est devenue colle.',
+    rasElHanout:
+        'Ras el-hanout veut dire « la tête de la boutique » : le meilleur mélange de l’épicier. Yasmine en met vingt-sept épices, et elle refuse de dire lesquelles. Je l’ai vue sourire quand j’ai deviné le cumin.',
+    harissa:
+        'La harissa, c’est du piment, de l’ail, du cumin et de l’huile d’olive écrasés ensemble. Papi Lucien en a mis une cuillère entière sur sa première tartine. Il a pleuré, puis il en a repris, « pour comprendre ».',
+    preservedLemon:
+        'Les citrons confits passent un mois dans le sel, en jarre, et en ressortent tendres comme des bonbons. Il ne faut pas les ouvrir avant. Ta grand-tante Simone soulevait le couvercle tous les deux jours, et ses citrons n’ont jamais été prêts.',
+    datePaste:
+        'La pâte de dattes, c’est juste des dattes écrasées, sans rien d’autre : elles sont déjà assez sucrées. On en fourre les gâteaux. Gaston en mange à la cuillère en disant qu’il « vérifie la qualité ».',
+    jujubeSyrup:
+        'Le sirop de jujube est rouge sombre et sent la pomme cuite. Yasmine dit qu’il calme la toux et qu’il fait dormir. Chez nous, il faisait surtout dormir Marcel, qui en mettait dans son thé du soir.',
+    bitterMarmalade:
+        'La confiture de bigarades est amère, et c’est tout son charme. Les Anglais en mettent sur leurs tartines depuis des siècles. Ta grand-tante Simone disait qu’une confiture qui ne pique pas un peu, c’est de la compote qui se donne des airs.',
+    sesameOil:
+        'L’huile de sésame sent les graines grillées. Trois gouttes suffisent à parfumer tout un plat. La première bouteille, je l’ai utilisée pour frire des beignets ; toute la maison a senti la fête foraine pendant une semaine.',
+    tahini: 'Le tahini, c’est la crème de sésame, épaisse et un peu amère. Seul, il ne paie pas de mine ; avec du sucre, il devient halva ; avec des pois chiches, il devient houmous. Un ingrédient modeste qui rend service à tout le monde, comme Marcel.',
+    orangeBlossomWater:
+        'L’eau de fleur d’oranger se distille au printemps, quand les orangers amers fleurissent. Une cuillère dans une pâte à crêpes, et la cuisine sent le jardin d’un palais. Ma mère en mettait une goutte derrière les oreilles, le dimanche.',
+    camelCheese:
+        'Le fromage de chamelle est blanc, frais et un peu salé. Le lait de chamelle caille mal, alors il faut de la patience. Idris dit que c’est comme le dromadaire lui-même : il fait tout, mais à son rythme.',
+    smen: 'Le smen, c’est du beurre clarifié qu’on laisse vieillir en pot, parfois des années. Il sent fort, presque le fromage. Dans les familles d’Idris, on en enterre un pot à la naissance d’une fille, et on l’ouvre à son mariage.',
+    lben: 'Le lben, c’est du lait fermenté, aigrelet et frais, qu’on boit avec le couscous. Papi Lucien a cru que le lait avait tourné et l’a donné au chat. Le chat, lui, a tout compris.',
+    berberRug:
+        'Un tapis berbère raconte une histoire : chaque losange, chaque zigzag a un sens. Celui de ma cousine Odile a quarante ans et on marche dessus tous les jours. Il a vu passer trois chiens, deux déménagements et un baptême.',
+    caravanBlanket:
+        'La couverture de caravane se pose sur le dos du dromadaire, sous la charge. Elle est épaisse, rayée, et elle sent un peu la bête. Le soir, au bivouac, on s’enroule dedans, et le désert devient chaud comme une cuisine.',
+    kesra: 'La kesra est une galette de semoule cuite à sec, contre la paroi du four. Elle se déchire à la main, jamais au couteau. Idris dit qu’un couteau sur le pain, ça porte malheur ; Gaston dit que ça fait surtout des miettes.',
+    cuminBread:
+        'Le pain plat au cumin se mange tiède, avec un filet d’huile d’olive. Le cumin chauffé sent la terre après l’orage. Ton grand-père, qui n’aimait « rien d’étranger », en a mangé quatre en disant qu’ils étaient ratés.',
+    msemen: 'Le msemen, c’est une crêpe feuilletée pliée en carré, cuite à la poêle avec du beurre. On la plie, on l’étale, on la replie. La première fois, j’ai fait un carré de colle ; la troisième fois, Yasmine a applaudi.',
+    sesameBread:
+        'Le pain au sésame a une croûte qui craque et des graines partout, sur la table, dans les poches, dans le chat. On en retrouve encore une semaine après. C’est le pain qui laisse des souvenirs.',
+    dateBread:
+        'Le pain aux dattes est doux sans sucre ajouté : les dattes s’en chargent. On le sert au petit déjeuner avec du lben. Marcel le trouve « trop bon pour être sain » et en reprend pour vérifier.',
+    batbout:
+        'Le batbout est un petit pain moelleux qui gonfle comme une poche dans le four. On l’ouvre et on le garnit de ce qu’on veut. Les enfants y mettent de la confiture ; Gaston y met de la harissa, et le regrette à chaque fois.',
+    lemonTajine:
+        'Le tajine de pintade au citron confit mijote doucement sous son couvercle pointu, qui renvoie la vapeur dans le plat. Rien ne sèche, tout fond. Ma voisine dit que c’est le seul plat qui sent bon depuis le jardin.',
+    vegTajine:
+        'Le tajine de légumes, c’est ce qu’il y a dans le potager, rangé en étoile, et le ras el-hanout qui fait le reste. Idris le pose au milieu de la table, et on mange tous dans le même plat. On se parle plus, comme ça.',
+    couscous:
+        'Le couscous du vendredi, chez Idris, c’est tout un cérémonial : la semoule cuit trois fois à la vapeur, au-dessus du bouillon. Il faut toute la matinée. Papi Lucien appelait ça « la messe des légumes ».',
+    chakchouka:
+        'La chakchouka, ce sont des œufs pochés dans une sauce de tomates et de poivrons, servis dans la poêle. On trempe le pain dedans. Ta grand-tante Simone en faisait au réchaud, dans la 2 CV, au milieu du désert.',
+    harira: 'La harira est une soupe de tomates, de lentilles et de pois chiches, avec plein de coriandre. On la sert le soir pendant le ramadan, pour rompre le jeûne. Elle tient au corps comme une couverture.',
+    keftas: 'Les keftas sont des boulettes de viande au cumin et à la coriandre, grillées sur des brochettes. On les mange avec les doigts, dans du pain. Gaston en a fait griller trente pour quatre personnes ; il n’en est pas resté une.',
+    dateTajine:
+        'Le tajine aux dattes et aux amandes est sucré-salé : la viande fond, les dattes caramélisent, le smen relève le tout. Marcel a dit que c’était bizarre, de la viande sucrée. Il a saucé le plat jusqu’à le faire briller.',
+    camelCouscous:
+        'Le couscous au lait de chamelle, c’est le repas des caravaniers : de la semoule, du lait, des dattes, et c’est tout. Idris dit que ça suffit pour marcher deux jours. Moi, ça me suffit pour faire la sieste.',
+    gazelleHorns:
+        'Les cornes de gazelle sont de petits croissants de pâte fine fourrés d’amandes et de fleur d’oranger. Il faut les manier comme des oiseaux, sinon elles cassent. Les miennes avaient la forme de cornes de vache, mais elles étaient bonnes.',
+    halva: 'La halva se coupe en tranches, elle s’effrite en fils, elle fond sur la langue. Du tahini et du sucre, rien d’autre. Mon père en rapportait de la foire, enveloppée dans du papier gras, et on la partageait au millimètre.',
+    makrout:
+        'Le makrout est un losange de semoule fourré à la pâte de dattes, frit puis trempé dans le miel. Ça colle aux doigts, ça colle aux dents, ça colle au cœur. Yasmine dit qu’on en compte un par invité, puis trois.',
+    baklava:
+        'Le baklava, c’est des feuilles de pâte fines comme du papier à cigarette, des pistaches et du miel. Il en faut quarante couches. La première fois, j’en ai fait six, et Papi Lucien a dit « c’est très bien, ça se mange plus vite ».',
+    chebakia:
+        'La chebakia est une fleur de pâte frite, plongée dans le miel et couverte de sésame. On en fait des montagnes pour les fêtes. Il faut un an de pratique pour réussir les pétales ; il faut une seconde pour en manger une.',
+    nougat: 'Le nougat aux amandes se coupe au couteau chaud, en tranches blanches pleines d’amandes. Dans le Sud, on en fait aussi à Montélimar, avec du miel de lavande. Idris dit que le sien est meilleur. Je n’ai pas voulu me fâcher.',
+    stuffedDates:
+        'Les dattes fourrées, on les ouvre, on retire le noyau, on met une amande à la place. C’est tout, et c’est parfait. On les offre avec le thé à la menthe à tous ceux qui passent la porte.',
+    loukoum:
+        'Les loukoums tremblent quand on pose l’assiette, parfumés à la fleur d’oranger et roulés dans le sucre glace. On en a toujours sur le menton. Ma tante Berthe en cachait une boîte dans sa table de nuit, « pour les insomnies ».',
+    honeyJujubes:
+        'Les jujubes au miel, ce sont des petits fruits rouges confits dans le miel, qu’on garde tout l’hiver. Yasmine en donne un aux enfants enrhumés. Les enfants du village sont étrangement souvent enrhumés quand elle passe.',
+});
