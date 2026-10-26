@@ -20,6 +20,9 @@ const COIN = () => ico(['ui', 'coin']);
 
 // ---------------- les carnets ----------------
 const natReady = () => G.natLogOpen() && NAT_LOG_IDS.some(id => G.natLogCan(id));
+// 1.46.1 : le carnet de l'élevage rejoint les autres carnets
+const BOOK_ROBES = () => G.BOOK_TYPES.reduce((n, t) => n + G.robeCount(t), 0);
+const BOOK_PAIRS = () => Object.keys((state.herdbook && state.herdbook.pairs) || {}).length;
 const carnetsReady = () => (G.logReady() ? 1 : 0) + (G.tierReady() ? 1 : 0) + (natReady() ? 1 : 0);
 defineSheet('carnets', {
     title: 'Carnets',
@@ -30,6 +33,7 @@ defineSheet('carnets', {
             ${G.natLogOpen() ? row('Carnet du bûcheron et du mineur', 'natLog', ['item', 'ruby'], 'Paliers de bois, pierres et minerais', natReady() ? 1 : 0) : ''}
             ${G.compOpen() ? row('Carnet du potager', 'companions', ['ui', 'flowers'], `${G.seenCount()} associations découvertes`, G.tierReady() ? 1 : 0) : ''}
             ${G.logOpen() ? row('Carnet du verger', 'orchardLog', ['ui', 'orchardBook'], 'Une page par espèce, des médailles de fruits', G.logReady() ? 1 : 0) : ''}
+            ${G.robebookOpen() ? row('Carnet de l’élevage', 'herdbook', ['ui', 'cpCarnet'], `${BOOK_ROBES()} robes trouvées${G.assocOpen() ? ` · ${BOOK_PAIRS()} associations au pré` : ''}`) : ''}
         </div>`;
     },
 });
@@ -46,7 +50,7 @@ defineSheet('menu', {
             ${navRow('Progrès', 'open', { sheet: 'progress' }, ['ui', 'skillbook'], badge(pts), `${pts ? `${pts} point${pts > 1 ? 's' : ''} de compétence à placer · ` : ''}Compétences, prestige et défis`)}
             ${navRow('Livre de la ferme', 'open', { sheet: 'book' }, ['ui', 'book'], badge(book), 'Collection, maîtrise, exploits, légende, album et histoires de Mamie')}
             ${G.defiOpen() ? navRow('La Coupe de la vallée', 'open', { sheet: 'cup' }, ['ui', 'cupRank' + G.cupRank()], '›', `${G.cupRankName()} · ${fmt(G.cupPts())} points`) : ''}
-            ${navRow('Carnets', 'open', { sheet: 'carnets' }, ['ui', 'book'], badge(carnetsReady()), 'Pêche, forêt et mine, potager, verger')}
+            ${navRow('Carnets', 'open', { sheet: 'carnets' }, ['ui', 'book'], badge(carnetsReady()), `Pêche, forêt et mine, potager, verger${G.robebookOpen() ? ', élevage' : ''}`)}
             ${state.level >= 58 || G.caveLegends().length ? navRow('Salle des trophées', 'open', { sheet: 'trophies' }, ['ui', 'cupGold'], '›', 'Médailles des défis et lots légendaires') : ''}
             ${state.genetics && G.geneticsOpen() ? navRow('Mes créations', 'open', { sheet: 'creations' }, ['ui', 'flowers'], '›', 'Vos variétés et vos races fixées') : ''}
             ${navRow('Les niveaux', 'open', { sheet: 'levels' }, ['ui', 'star'], '›', `Niveau ${state.level}${state.level < MAX_LEVEL ? ` sur ${MAX_LEVEL}` : ''}`)}
