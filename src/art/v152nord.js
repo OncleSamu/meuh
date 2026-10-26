@@ -15,39 +15,41 @@ animals.reindeer = (o = {}) => {
     const body = o.coat === 1 ? '#d9cfbf' : o.coat === 2 ? '#7a6652' : RN;
     const dark = o.coat === 1 ? '#b3a590' : o.coat === 2 ? '#54463a' : RND;
     const h = o.horns || 0;
-    const beam = (d, w = 3.2) => L(d, w + 1.6, O) + L(d, w, '#dcc9a0');
+    const beam = (d, w = 3) => L(d, w + 1.6, O) + L(d, w, '#dcc9a0');
     const antlers =
         h === 1
-            ? FC(60, 14, 1.6, '#c9b690') + FC(66, 14, 1.6, '#c9b690')
-            : beam(`M61 15 Q${h === 2 ? '54 9 56 3' : '56 9 58 3'}`) +
-              beam(`M65 14 Q${h === 2 ? '72 7 68 3' : '70 8 67 2'}`) +
-              beam(h === 2 ? 'M56.5 8 Q51 7 50 3 M56 5 Q60 5 61 2' : 'M57 7 Q53 6 52 3', 2.4) +
-              beam(h === 2 ? 'M70 6 Q75 6 76 2 M69.5 4 Q66 4 65 2' : 'M69 7 Q73 6 74 3', 2.4);
+            ? FC(59, 13, 1.6, '#c9b690') + FC(64, 12, 1.6, '#c9b690')
+            : beam(`M60 14 Q${h === 2 ? '50 10 51 2' : '53 10 54 4'}`) +
+              beam(`M64 12 Q${h === 2 ? '72 8 70 1' : '70 8 69 3'}`) +
+              beam(h === 2 ? 'M54 8 Q49 8 47 4 M52 5 Q57 5 58 2 M51 3 Q49 1 47 1' : 'M55 8 Q51 7 50 5', 2.2) +
+              beam(h === 2 ? 'M70 6 Q75 6 77 2 M71 3 Q67 3 66 1 M70 1 Q73 0 74 -1' : 'M69 7 Q73 6 74 4', 2.2);
     return (
-        SHADOW(38, 74, 24, 3.2) +
-        leg('M24 52 L23 70', dark) +
-        leg('M32 54 L32 70', dark) +
-        leg('M50 54 L50 70', dark) +
-        leg('M58 52 L59 70', dark) +
-        L('M20 71 L27 71 M29 71 L36 71 M47 71 L54 71 M56 71 L63 71', 3.4, O) +
+        SHADOW(38, 74, 26, 3) +
+        // quatre longues pattes fines : les postérieures coudées au jarret
+        leg('M23 47 Q18 58 21 70', dark) +
+        leg('M30 49 L30 70', dark) +
+        leg('M51 49 L51 70', dark) +
+        leg('M58 47 Q60 58 58 70', dark) +
+        L('M18 71 L24 71 M27 71 L33 71 M48 71 L54 71 M55 71 L61 71', 3, O) +
         // la queue : une petite touffe claire
-        P('M14 40 Q9 40 10 46 Q14 48 16 44Z', RNL, 1.6) +
-        // le corps, la croupe claire, le ventre pâle
-        P('M15 44 Q13 32 26 31 L46 30 Q60 30 60 42 Q60 56 46 57 L26 57 Q15 56 15 44Z', body) +
-        F('M17 50 Q32 58 50 56 Q58 52 59 46 Q48 54 34 54 Q22 54 17 50Z', RNL, 0.75) +
-        F('M20 36 Q32 31 46 33 Q34 35 20 36Z', dark, 0.4) +
-        HL(30, 37, 7, 2.4, -6, 0.4) +
-        // le cou et la collerette crème, la tête
-        P('M48 34 Q54 24 58 20 L67 25 Q65 36 60 46 Q54 48 48 42Z', body) +
-        P('M49 38 Q56 33 60 28 Q64 38 62 46 Q57 52 50 47 Q46 43 49 38Z', RNL, 1.8) +
+        P('M13 33 Q8 34 9 39 Q13 40 15 36Z', RNL, 1.6) +
+        // le corps long, le dos qui descend vers la croupe, le ventre qui remonte
+        P('M14 36 Q16 30 28 31 L46 30 Q56 30 58 38 Q60 46 52 50 Q40 52 30 49 Q20 50 15 44Z', body) +
+        F('M18 44 Q28 50 40 50 Q50 50 56 45 Q46 48 34 47 Q24 47 18 44Z', RNL, 0.8) +
+        F('M18 34 Q30 30 44 32 Q32 33 18 34Z', dark, 0.45) +
+        HL(30, 36, 7, 2, -6, 0.4) +
+        // le long cou et la collerette crème
+        P('M46 32 Q52 22 58 15 L67 19 Q64 30 60 42 Q54 46 48 40Z', body) +
+        P('M50 36 Q57 30 61 24 Q65 34 62 43 Q56 48 50 43Z', RNL, 1.8) +
         antlers +
-        P('M56 17 Q57 11 62 11 L66 14 Q66 18 64 20Z', body, 1.8) +
-        E(59.5, 14.5, 1.8, 3, dark, -35, 1.3) +
-        P('M60 18 Q60 13 66 14 Q73 15 76 20 Q78 25 75 28 Q71 30 66 27 Q61 25 60 18Z', body) +
-        FE(73, 24.4, 3.7, 3.4, '#3a2e26', 0.95) +
-        FC(75, 23.4, 0.9, '#c8a98c') +
-        eye(66, 19.6) +
-        HL(66, 16.4, 2.6, 1, -10, 0.45)
+        P('M54 12 Q55 6 60 7 L63 11 Q63 14 61 16Z', body, 1.8) +
+        E(57, 10.5, 1.6, 2.8, dark, -35, 1.3) +
+        // la tête longue et fine, le museau sombre
+        P('M59 12 Q60 8 66 9 Q73 11 77 17 Q79 21 76 23 Q71 24 67 21 Q60 19 59 12Z', body) +
+        FE(75, 19.6, 3.2, 2.8, '#3a2e26', 0.95) +
+        FC(76.4, 18.8, 0.8, '#c8a98c') +
+        eye(65, 13.4) +
+        HL(66, 10.8, 2.4, 0.9, -10, 0.45)
     );
 };
 
