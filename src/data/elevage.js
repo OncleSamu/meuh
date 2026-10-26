@@ -52,3 +52,46 @@ export const NBEASTS = {
     price: 2.2, // × le prix de l'espèce, +0,6 par point de gène au-dessus de la moyenne
     perPoint: 0.6,
 };
+
+// ---------------- le Comice agricole (remplace le Salon de l'agriculture) ----------------
+export const COMICE = {
+    lvl: 22,
+    week: 7 * 24 * 3600 * 1000, // une édition par semaine (du lundi au dimanche)
+    cats: 3, // catégories d'animaux (+1 avec le grand hall, l'ancien chantier du Salon)
+    // la note sur 100
+    w: { genes: 50, beauty: 20, hearts: 15, show: 15 },
+    genesFull: 8, // points de gènes au-dessus de la moyenne pour la note pleine
+    beautyFull: 4,
+    // les fermes voisines : une note qui grandit avec le niveau, selon le style de chacune
+    rivalBase: 22,
+    rivalPerLvl: 0.9,
+    rivalSpread: 8,
+    prizes: [0, 12000, 6000, 3000], // pièces par place (× le niveau, × 2 avec le grand hall)
+    rep: [0, 6, 3, 1],
+    brushTime: 10, // secondes de présentation
+};
+// les noms des catégories
+export const COMICE_CAT = {
+    chicken: 'Les poules',
+    duck: 'Les canards',
+    sheep: 'Les moutons',
+    rabbit: 'Les lapins',
+    cow: 'Les vaches',
+    goat: 'Les chèvres',
+    pig: 'Les cochons',
+    goose: 'Les oies',
+    peacock: 'Les paons',
+    alpaca: 'Les alpagas',
+    buffalo: 'Les bufflonnes',
+    donkey: 'Les ânes',
+    turkey: 'Les dindes',
+    ewe: 'Les brebis laitières',
+    quail: 'Les cailles',
+    pigeon: 'Les pigeons',
+    guinea: 'Les pintades',
+    mohairGoat: 'Les chèvres angoras',
+    pheasant: 'Les faisans',
+    ostrich: 'Les autruches',
+    yak: 'Les yacks',
+    potager: 'Le potager',
+};

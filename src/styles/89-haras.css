@@ -774,3 +774,146 @@
     width: min(240px, 100%);
     background: #fff;
 }
+
+/* 1.45 : le Comice agricole */
+.comice-head .card-head,
+.comice-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.comice-head .offer-art,
+.comice-cat .offer-art {
+    width: 46px;
+    height: 46px;
+    flex: none;
+}
+.comice-cat .card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.comice-cat.lead {
+    border-color: #c9952a;
+    box-shadow: 0 4px 0 rgba(201, 149, 42, 0.45);
+}
+.comice-note {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-variant-numeric: tabular-nums;
+}
+.comice-note b {
+    font-size: 1.5rem;
+    font-weight: 900;
+    line-height: 1;
+}
+.comice-note small {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--ink-soft);
+    white-space: nowrap;
+}
+.comice-rank {
+    margin-top: 8px;
+}
+.comice-pick .offer-art {
+    width: 40px;
+    height: 40px;
+    flex: none;
+}
+.comice-pick.on {
+    background: #fff1c2;
+}
+.comice-score {
+    font-size: 1.2rem;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+.comice-last p {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0 0;
+}
+.comice-last .ico,
+.comice-palm .ico {
+    width: 20px;
+    height: 20px;
+}
+/* le brossage */
+.hg-stage.cmb-stage {
+    aspect-ratio: auto;
+    min-height: 420px;
+}
+.cmb-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    touch-action: none;
+    background: radial-gradient(circle at 50% 35%, #fff8e0, #f3dfb0);
+}
+.cmb-beast {
+    width: 62%;
+    margin-top: 8%;
+    pointer-events: none;
+}
+.cmb-beast svg,
+.cmb-beast .gl {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.cmb-sparks {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+.cmb-spark {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 10px 4px #fff6c8;
+    animation: cmbspark 0.7s ease-out forwards;
+}
+@keyframes cmbspark {
+    to {
+        transform: translateY(-24px) scale(0.3);
+        opacity: 0;
+    }
+}
+.cmb-panel {
+    width: 100%;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.cmb-gauge {
+    height: 18px;
+    border-radius: 9px;
+    border: 2.5px solid var(--ink);
+    background: #efe6d3;
+    overflow: hidden;
+}
+.cmb-gauge i {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #ffe07a, #f5c542);
+    transition: width 0.1s;
+}
+.cmb-line {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 900;
+}
+.cmb-help {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+}

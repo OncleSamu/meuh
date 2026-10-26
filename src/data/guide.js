@@ -4,7 +4,7 @@
 //   secs : sections (h : titre ; t : un paragraphe ; b : une liste) ; tips : « À retenir » ; see : pages liées
 import { ITEMS } from './items.js';
 import { ANIMALS, BIRTHS } from './animals.js';
-import { FAIR, REPUTATION, REP_BONUS } from './elevage.js';
+import { FAIR, REPUTATION, REP_BONUS, COMICE } from './elevage.js';
 import { MACHINES, RECIPES } from './machines.js';
 import { CHAPTERS } from './village.js';
 import { HARAS_LVL } from './haras.js';
@@ -200,7 +200,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les grandes étapes',
-                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, abbaye et brasserie 35, île 38, génétique 40, Salon 43, Haras ${HARAS_LVL}, alpage ${chLvl(9)}, et le niveau ${MAX_LEVEL} pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
+                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, abbaye et brasserie 35, île 38, génétique 40, grand hall du Comice 43, Haras ${HARAS_LVL}, alpage ${chLvl(9)}, et le niveau ${MAX_LEVEL} pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
             },
             { h: `Après le niveau ${MAX_LEVEL}`, t: 'L’expérience donne des étoiles de renommée : voir « Renommée et Ferme légendaire ».' },
         ],
@@ -606,7 +606,7 @@ export const GUIDE_PAGES = [
     {
         id: 'elevage',
         cat: 'animals',
-        name: 'L’élevage : foire, voisins, réputation',
+        name: 'L’élevage : foire, Comice, réputation',
         icon: ['ui', 'hEcusson'],
         lvl: FAIR.lvl,
         go: 'market/sell#beasts',
@@ -626,9 +626,19 @@ export const GUIDE_PAGES = [
                 t: 'Chaque ferme voisine propose une bête de choix par jour, avec un gène au-dessus de la moyenne (deux avec trois cœurs d’amitié). Mise au pré avec les naissances allumées, elle transmet ses bons gènes aux petits : c’est le moyen d’améliorer son troupeau avant le labo.',
             },
             {
+                h: `Le Comice agricole (niveau ${COMICE.lvl}, Animaux › Comice)`,
+                b: [
+                    `Chaque semaine, ${COMICE.cats} catégories tirées parmi vos espèces (une de plus avec le grand hall), et le potager quand vous avez des variétés au labo.`,
+                    `Une bête par catégorie. La note sur 100 : gènes au-dessus de la moyenne de l’espèce ${COMICE.w.genes}, beauté (robe, motifs, cornes, toison) ${COMICE.w.beauty}, cœurs ${COMICE.w.hearts}, présentation ${COMICE.w.show}.`,
+                    `La présentation : brossez la bête ${COMICE.brushTime} secondes, de la tête vers la queue. Une fois par jour ; le meilleur brossage de la semaine compte.`,
+                    'Les quatre fermes voisines concourent aussi, avec une note qui grandit avec votre niveau. Résultats à la fin de la semaine.',
+                    'Premier prix : un ruban (deux la première fois pour une espèce), des pièces et la plaque « Primée » sur la bête, dont le prix double à la foire. Deuxième et troisième : des pièces.',
+                ],
+            },
+            {
                 h: 'La réputation de l’élevage',
                 b: [
-                    'Chaque vente à la foire rapporte des points, plus pour une demande exigeante ou une race fixée.',
+                    'Chaque vente à la foire rapporte des points, plus pour une demande exigeante ou une race fixée ; une place sur le podium du Comice aussi.',
                     `Cinq paliers (${REPUTATION.map(r => r.name.toLowerCase()).join(', ')}) : chacun ajoute ${Math.round(REP_BONUS * 100)} % aux prix de la foire, et les acheteurs deviennent plus exigeants.`,
                     'Le nom de l’élevage est celui du haras : touchez le crayon pour le changer.',
                 ],
@@ -1550,7 +1560,7 @@ export const GUIDE_PAGES = [
                 b: [
                     'Les mutations peuvent donner de nouvelles couleurs (rose, orange vif, argentée, cuivrée, dégradée), de nouveaux motifs (damier, zébrures, mouchetée fine, marbrée) et la taille naine ; le gros fruit n’existe que chez les plantes.',
                     'Une finition rare, une seule par création : givrée, moussue, étincelante, vernie ou fleurie. La saison en favorise une.',
-                    'Ces apparences ne changent pas la valeur, mais elles comptent pour « La plus belle robe » et « La plus belle géante » du Salon.',
+                    'Ces apparences ne changent pas la valeur, mais elles comptent pour la beauté au Comice agricole.',
                     'Sept caractères de plantes (repousse, maturation lente, anti-nuisibles, graine généreuse, calibre, chance, terre d’accueil) et cinq de bêtes (fécondité, santé, curiosité, docilité, sociabilité) valent 0 au départ ; ils n’apparaissent dans la fiche que s’ils sont présents. La tomate et quelques autres repoussent déjà.',
                 ],
             },
@@ -1564,11 +1574,11 @@ export const GUIDE_PAGES = [
     {
         id: 'labanimals',
         cat: 'lab',
-        name: 'L’élevage et le Salon',
+        name: 'L’étable de sélection',
         icon: ['ui', 'nursery'],
         lvl: 40,
         go: 'machines/lab',
-        intro: 'Choisir ses reproducteurs pour des petits aux traits rares, puis les présenter au Salon.',
+        intro: 'Choisir ses reproducteurs pour des petits aux traits rares, puis les présenter au Comice et les vendre à la foire.',
         secs: [
             {
                 h: 'L’étable de sélection',
@@ -1581,8 +1591,8 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
-                h: 'Le Salon de l’agriculture (niveau 43)',
-                t: 'Un critère par période (fruit le plus sucré, légume le plus épicé, lait le plus riche, toison la plus douce, plus belle robe…). Présentez votre meilleure plante ou bête face à des rivales dont le score grandit avec votre niveau. Le premier prix rapporte un ruban, deux la première fois qu’on gagne un critère.',
+                h: 'Le grand hall du Comice (niveau 43)',
+                t: 'Le chantier de l’ancien Salon de l’agriculture ouvre le grand hall : le Comice agricole a une catégorie de bêtes de plus, et ses prix sont doublés. Le potager du Comice reprend les critères du Salon (fruit le plus sucré, légume le plus épicé…) : visez-le depuis le labo des plantes.',
             },
         ],
         see: ['labplants', 'animals', 'legend'],

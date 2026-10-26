@@ -122,18 +122,15 @@ test('élevage : un petit naît avec les gènes de ses parents ; une race se fix
     assert.equal(Object.keys(state.genetics.races).length, 1);
 });
 
-test('le Salon et la commande du chef', () => {
+test('le grand hall du Comice (l’ancien Salon) et la commande du chef', () => {
     state.level = 44;
     for (const id of ['seedbank', 'selectHive', 'salonHall']) assert.ok(build(id), id);
-    tick(2);
-    assert.ok(state.genetics.salon && state.genetics.salon.crit);
-    const c = G.salonCandidates();
-    if (c.length) assert.ok(G.enterSalon(c[0].id));
+    tick(12);
+    // 1.45 : plus de Salon tous les deux jours ; le Comice prend le relais, avec le potager quand on a des variétés
+    assert.ok(G.comiceHall());
+    assert.ok(state.comice && state.comice.cats.length);
+    if (G.varieties().length) assert.ok(G.salonCrit() && G.salonCrit().kind === 'plant');
     assert.ok(state.genetics.chef);
-    // le Salon se termine et paie
-    clock.t = state.genetics.salon.end + 1000;
-    tick(2);
-    assert.ok(state.genetics.salon.k > 0);
 });
 
 test('vendre la ferme garde les créations', () => {

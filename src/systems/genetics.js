@@ -465,7 +465,7 @@ function checkGoal() {
     const G = state.genetics,
         o = G.goal;
     if (!o) return false;
-    const gone = o.from === 'chef' ? !G.chef || G.chef.base !== o.base : !G.salon || G.salon.crit !== o.crit;
+    const gone = o.from === 'chef' ? !G.chef || G.chef.base !== o.base : !salonCrit() || salonCrit().id !== o.crit;
     if (gone) G.goal = null;
     return gone;
 }
@@ -1086,7 +1086,11 @@ export function ensureSalon() {
     G.salon = { k, crit: crit.id, end: (k + 1) * SALON_PERIOD, rivals, entry: null, paid: false };
     return true;
 }
-export const salonCrit = () => SALON_CRITERIA.find(c => c.id === (state.genetics.salon || {}).crit);
+// 1.45 : le critère du potager au Comice (l'ancien critère du Salon)
+export const salonCrit = () => {
+    const c = state.comice && Array.isArray(state.comice.cats) && state.comice.cats.find(x => x.id === 'potager');
+    return c ? SALON_CRITERIA.find(x => x.id === c.crit) : null;
+};
 
 // la note d'une création pour le critère du Salon
 export function salonScore(crit, target) {
@@ -1150,8 +1154,10 @@ export function salonTick() {
     if (G.salon && !G.salon.paid && now() >= G.salon.end) {
         if (G.salon.entry) awardSalon(G.salon);
         else G.salon.paid = true;
+        return true;
     }
-    return ensureSalon();
+    // 1.45 : plus de nouveau Salon, le Comice agricole le remplace (comice.js)
+    return false;
 }
 
 // ---------------- la seconde de jeu ----------------

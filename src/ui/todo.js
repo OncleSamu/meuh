@@ -73,6 +73,8 @@ export function todoList() {
     add('machines/workshop', ['machine', 'mill'], `${idle} à l’arrêt`, idle);
     // 1.43 : des clients attendent au comptoir
     // 1.45 : un acheteur de la foire dont on peut remplir la demande
+    const cm = G.comiceTodo();
+    add('animals/comice', ['ui', 'ribbon'], `Comice : ${cm} catégorie${s(cm)} à préparer`, cm);
     const fr = G.fairReadyCount();
     add('market/sell#beasts', ['ui', 'hEcusson'], `${fr} acheteur${s(fr)} à la foire`, fr);
     const cw = G.counterWaiting();

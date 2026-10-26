@@ -102,6 +102,21 @@ export const TIPS = {
         title: 'Le verger',
         text: 'Un arbre grandit, puis laisse tomber ses fruits à son pied : viens les ramasser avant qu’ils ne pourrissent. Après une centaine de fruits il vieillit, puis meurt : il donne alors du bois, et tu replantes.',
     },
+    comice: {
+        icon: ['ui', 'ribbon'],
+        title: 'Le Comice agricole',
+        text: 'Chaque semaine, le Comice ouvre trois catégories tirées parmi tes espèces. Inscris ta plus belle bête dans chacune : la note compte ses gènes, sa beauté, ses cœurs et sa présentation. Brosse-la une fois par jour dans le sens du poil pour gagner des points. Résultats le dimanche soir, contre les quatre fermes voisines. Au comice de 1962, ma vache Violette a mangé la cocarde du gagnant pendant la remise des prix. Le jury nous a donné un prix spécial « pour l’appétit ». Il est encore dans le tiroir de la commode.',
+    },
+    nbeast: {
+        icon: ['ui', 'nmEtal'],
+        title: 'Les bêtes de choix des voisins',
+        text: 'Chaque ferme voisine vend maintenant une bête de choix par jour, avec un gène au-dessus de la moyenne. Mets-la au pré avec les tiennes et allume les naissances : ses petits pourront en hériter. Quand j’étais jeune, on échangeait les coqs entre fermes pour « rafraîchir le sang ». Le coq des Tilleuls est resté chez nous douze ans. Il chantait à quatre heures, comme chez lui : Hortense l’avait bien dressé.',
+    },
+    reputation: {
+        icon: ['ui', 'hEcusson'],
+        title: 'Un élevage qui se fait un nom',
+        text: 'Ton élevage monte d’un palier : les prix de la foire augmentent, et les acheteurs viendront plus exigeants, mais plus riches. Papi Lucien disait qu’une réputation se gagne en dix ans et se perd en une foire. Il n’a jamais vendu une bête malade, même quand on avait besoin d’argent. Les marchands le savaient, et ils payaient plus cher chez nous.',
+    },
     fair: {
         icon: ['ui', 'hEcusson'],
         title: 'La foire aux bestiaux',

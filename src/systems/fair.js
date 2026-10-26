@@ -7,7 +7,7 @@ import { fmt, pickRand, dateKey } from '../core/format.js';
 import { toast, sfx, buzz, burst, float, changed } from '../core/bus.js';
 import { ANIMALS, BIRTHS } from '../data/animals.js';
 import { RIVALS, VILLAGERS } from '../data/village.js';
-import { FAIR, PASSERS, REPUTATION, REP_BONUS, NBEASTS } from '../data/elevage.js';
+import { FAIR, PASSERS, REPUTATION, REP_BONUS, NBEASTS, COMICE } from '../data/elevage.js';
 import { ANIMAL_TRAITS } from '../data/genetics.js';
 import { isAdult, newAnimal, collectAnimal } from './animals.js';
 import { isAway } from './port.js';
@@ -48,6 +48,7 @@ export function addElevRep(n, why) {
     if (elevRepTier() > before && view.started) {
         toast(`Votre élevage devient « ${elevRepName()} » : +${Math.round(elevRepBonus() * 100)} % à la foire`, ['ui', 'hEcusson']);
         sfx('level');
+        tip('reputation');
     }
     return why;
 }
@@ -107,6 +108,8 @@ export function makeBuyer() {
     }
     // une race fixée : seulement quand le labo est ouvert (et pas toujours)
     if (labOpen() && Math.random() < 0.2) reqs.push({ k: 'race' });
+    // une bête primée au Comice (dès qu'on en a une)
+    if (state.level >= COMICE.lvl && state.animals.some(a => a.prize && a.type === type) && Math.random() < 0.3) reqs.push({ k: 'prize' });
     return { who, type, count, reqs, until: now() + FAIR.stay, id: 'b' + now() + Math.floor(Math.random() * 1000) };
 }
 
@@ -170,7 +173,9 @@ export function sellToBuyer(id, at) {
         sfx('error');
         return false;
     }
-    const price = buyerPrice(b);
+    // la plaque « Primée au Comice » : le prix d'une bête primée double, même si l'acheteur ne le demandait pas
+    const per = buyerPrice(b) / b.count;
+    const price = buyerPrice(b) + (b.reqs.some(r => r.k === 'prize') ? 0 : Math.round((sold.filter(a => a.prize).length * per) / 5) * 5);
     sold.forEach(a => {
         if (a.stack > 0) collectAnimal(a);
         const i = state.animals.indexOf(a);
@@ -255,6 +260,7 @@ export function neighborBeasts() {
     const e = ensureElevage();
     const day = dateKey(today());
     if (e.beasts.day !== day) e.beasts = { day, list: RIVALS.map((_, k) => choiceBeast(k)).filter(Boolean) };
+    if (view.started && e.beasts.list.length) tip('nbeast');
     return e.beasts.list;
 }
 export function buyNeighborBeast(k, at) {

@@ -5,7 +5,7 @@ import { fmt, dateKey, fill } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { ANIMALS, BIRTHS } from '../data/animals.js';
-import { FAIR } from '../data/elevage.js';
+import { FAIR, COMICE } from '../data/elevage.js';
 import { MACHINES, RECIPES } from '../data/machines.js';
 import { UPGRADES, DECOS, DOG, GH, STYLE_LVL, ORCHARD, CROW_LVL } from '../data/farm.js';
 import { NIGHT } from '../data/night.js';
@@ -244,6 +244,7 @@ export function unlocksAt(lvl) {
     if (lvl === CHAPTERS[0].lvl) add(['ui', 'village'], 'Rénovez le village : premier chapitre (onglet Village)');
     if (lvl === INCIDENT_LVL) add(['ui', 'pest'], 'Des imprévus surviennent à la ferme : réagissez vite !');
     if (lvl === DOG.reqLvl) add(['ui', 'dog'], 'Un chien de ferme à adopter');
+    if (lvl === COMICE.lvl) add(['ui', 'ribbon'], 'Le Comice agricole : chaque semaine, présentez vos plus belles bêtes (Animaux | Comice)');
     if (lvl === FAIR.lvl) {
         add(['ui', 'hEcusson'], 'La foire aux bestiaux : des acheteurs pour vos bêtes, la réputation de votre élevage (Marché | Vendre, Bêtes)');
         add(['animal', 'cow'], 'Les bêtes de choix des voisins, avec un bon gène (Marché | Acheter, rayon Voisins)');
@@ -290,7 +291,7 @@ export function unlocksAt(lvl) {
     if (lvl === CHAPTERS[17].lvl) add(['ui', 'barrel'], 'Les bières en fût, à la cave (après « Le cellier à fûts »)');
     if (lvl === ISLAND.lvl) big(['item', 'coconut'], 'Grande étape : l’île aux Alizés (cultures et verger tropicaux)');
     if (lvl === GENETICS.lvl) big(['ui', 'search'], 'Grande étape : la station de recherche et la génétique');
-    if (lvl === CHAPTERS[15].lvl) big(['ui', 'trophy'], 'Grande étape : le Salon de l’agriculture');
+    if (lvl === CHAPTERS[15].lvl) big(['ui', 'trophy'], 'Grande étape : le grand hall du Comice (une catégorie de plus, des prix doublés)');
     if (lvl === CHAPTERS[8].lvl) big(['ui', 'mountain'], 'Grande étape : l’alpage et la transhumance');
     if (lvl === MAX_LEVEL) {
         big(['ui', 'cupGold'], 'Grande étape : grands défis, renommée, prestige et Ferme légendaire');
@@ -354,7 +355,8 @@ const UNLOCK_GO = [
     ['La brasserie', 'machines/brew'],
     ['île aux Alizés', 'farm/island'],
     ['génétique', 'machines/lab'],
-    ['Salon de l’agriculture', 'machines/lab'],
+    ['grand hall du Comice', 'animals/comice'],
+    ['Comice agricole', 'animals/comice'],
     ['alpage', 'animals'],
     ['grands défis, renommée', 'village/orders'],
     ['Les grands défis', 'village/orders'],

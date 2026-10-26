@@ -137,6 +137,9 @@ test('vendre : les bêtes qui conviennent partent (les moins précieuses d’abo
         [v, 1],
         [v, 1],
     ];
+    // mêmes gènes partout (sauf la richesse), pour que l'ordre ne dépende pas du hasard
+    b.g = JSON.parse(JSON.stringify(a.g));
+    c.g = JSON.parse(JSON.stringify(a.g));
     a.g.t.rich = rich(5);
     b.g.t.rich = rich(4);
     c.g.t.rich = rich(2);
@@ -177,4 +180,72 @@ test('les voisins : une bête de choix par ferme et par jour, avec un bon gène'
     // le lendemain, de nouvelles bêtes
     clock.t += 24 * H;
     assert.ok(G.neighborBeasts().every(o => !o.sold));
+});
+
+// ---------------- le Comice agricole ----------------
+import { COMICE } from '../../src/data/elevage.js';
+
+test('le Comice : trois catégories parmi nos espèces, une inscription, le brossage une fois par jour', () => {
+    farm(['cow', 'cow', 'goat', 'chicken', 'sheep', 'duck']);
+    state.level = COMICE.lvl;
+    G.comiceTick();
+    const c = state.comice;
+    assert.equal(c.cats.filter(x => x.id !== 'potager').length, COMICE.cats);
+    for (const cat of c.cats) assert.equal(cat.rivals.length, 4);
+    const cat = c.cats[0];
+    const [best] = G.comiceCandidates(cat.id);
+    assert.ok(G.comiceEnter(cat.id, best.id));
+    const s0 = G.catScore(cat);
+    assert.ok(G.comiceBrush(cat.id, 1));
+    assert.equal(G.catScore(cat), s0 + COMICE.w.show);
+    assert.equal(G.comiceBrush(cat.id, 1), false); // une fois par jour
+    clock.t += 24 * H;
+    assert.ok(G.canBrush(cat));
+});
+
+test('la note : gènes, beauté, cœurs, présentation, sur 100', () => {
+    farm(['cow']);
+    const [a] = state.animals;
+    const base = G.animalScore(a).score;
+    a.love = 5;
+    assert.equal(G.animalScore(a).score, base + COMICE.w.hearts);
+    assert.ok(G.animalScore(a, 1).score <= 100);
+});
+
+test('la fin de semaine : premier prix, ruban, pièces et plaque « Primée » ; une nouvelle édition', () => {
+    farm(['cow', 'cow', 'goat', 'chicken']);
+    state.level = COMICE.lvl;
+    G.comiceTick();
+    const c = state.comice;
+    const cat = c.cats[0];
+    const [best] = G.comiceCandidates(cat.id);
+    G.comiceEnter(cat.id, best.id);
+    best.a.love = 5; // une note jamais nulle
+    cat.rivals.forEach(r => (r.score = 1)); // des rivales faciles
+    const rub = state.prestige.rubans,
+        m = state.money,
+        wk = c.wk;
+    clock.t = G.comiceEnd() + 1000;
+    G.comiceTick();
+    assert.equal(state.prestige.rubans, rub + 2); // la première victoire de l'espèce compte double
+    assert.ok(state.money > m);
+    assert.equal(state.animals.find(a => a.uid === best.id).prize, 1);
+    assert.equal(c.wins[cat.id], 1);
+    assert.equal(c.wk, wk + 1);
+    assert.ok(c.cats.every(x => !x.entry));
+    assert.ok(G.elevRepPts() >= COMICE.rep[1]);
+});
+
+test('une bête primée vaut le double à la foire', () => {
+    farm(['cow', 'cow']);
+    const [a, b] = state.animals;
+    b.g = JSON.parse(JSON.stringify(a.g));
+    a.prize = 1;
+    const e = G.ensureElevage();
+    const buyer = { id: 'p', who: { kind: 'passer', id: 'jura' }, type: 'cow', count: 2, reqs: [], until: clock.t + FAIR.stay };
+    e.buyers = [buyer];
+    const base = G.buyerPrice(buyer);
+    const m0 = state.money;
+    G.sellToBuyer('p');
+    assert.equal(state.money - m0, base + Math.round(base / 2 / 5) * 5);
 });
