@@ -114,6 +114,7 @@ export const GUIDE_PAGES = [
                     'Atelier : les machines, le comptoir, la cave, la brasserie et le labo.',
                     'Village : les commandes (tableau, train, cargo, Armand…) et le village (chapitres, villageois, concours, domaine).',
                     'Marché : le magasin pour acheter, le grossiste et l’étal pour vendre.',
+                    'Le « ? » au bout des onglets du haut ouvre la page du guide de l’écran où vous êtes.',
                 ],
             },
             {
@@ -218,7 +219,8 @@ export const GUIDE_PAGES = [
                 b: [
                     'Automatique toutes les 5 secondes, sur l’appareil uniquement.',
                     'Export et import par code : pour changer de téléphone ou garder une copie.',
-                    'Trois copies de secours automatiques, restaurables en un geste.',
+                    'Trois copies de secours automatiques, restaurables en un geste. Si la sauvegarde s’abîme (coupure, téléphone plein), le jeu repart tout seul de la plus récente et vous prévient.',
+                    'Les Réglages indiquent la date de votre dernier export : un code gardé ailleurs reste la meilleure protection.',
                     'Tout effacer repart de zéro (à utiliser avec précaution).',
                 ],
             },
