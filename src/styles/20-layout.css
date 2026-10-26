@@ -431,6 +431,10 @@ body.wide #tabs {
 }
 .sub-help {
     flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0 1px;
     width: 28px;
     height: 28px;
     border-radius: 50%;
