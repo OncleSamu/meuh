@@ -17,72 +17,72 @@ animals.dromedary = (o = {}) => {
     const long = o.coat === 1,
         curly = o.coat === 2;
     const tuft = (pts, r = 3) => pts.map(([x, y]) => C(x, y, r, DRD, 1.4)).join('');
+    const thin = (d, c) => L(d, 5.4) + L(d, 2.8, c);
     return (
-        `<g transform="translate(-4 0)">` +
-        SHADOW(38, 74, 24, 3.4) +
-        // les pattes, longues et fines, genoux marqués
-        leg('M23 44 L22 58 L23 71', DRD) +
-        leg('M30 46 L30 59 L29 71', DRD) +
-        leg('M46 46 L47 59 L46 71', DRD) +
-        leg('M53 44 L55 58 L54 71', DRD) +
-        FC(22, 58, 2.2, DRD) +
-        FC(55, 58, 2.2, DRD) +
-        L('M20 71 L26 71 M26 71 L32 71 M43 71 L49 71 M51 71 L57 71', 3, O) +
-        // la queue
-        L('M13 32 Q9 38 11 46', 2.6) +
-        P('M9 44 Q11 50 14 46Z', DRD, 1.4) +
-        // le corps et la bosse
-        P('M15 36 Q13 26 23 22 Q29 8 39 8 Q49 8 53 22 Q61 24 61 34 Q61 46 49 48 L23 48 Q15 46 15 36Z', DR) +
-        F('M19 42 Q31 48 49 46 Q57 42 59 36 Q51 44 35 44 Q23 44 19 42Z', DRD, 0.5) +
-        HL(33, 14, 7, 3, -15, 0.45) +
+        SHADOW(38, 74, 22, 3.2) +
+        // quatre longues pattes fines, les genoux calleux
+        thin('M22 44 L21 58 L22 70', '#a8783e') +
+        thin('M31 45 L32 58 L31 70', DRD) +
+        thin('M47 44 L46 58 L47 70', '#a8783e') +
+        thin('M56 43 L57 58 L56 70', DRD) +
+        FC(21, 58, 1.8, '#8a5a2e') +
+        FC(32, 58, 1.8, '#8a5a2e') +
+        FC(46, 58, 1.8, '#8a5a2e') +
+        FC(57, 58, 1.8, '#8a5a2e') +
+        L('M19 71 L25 71 M29 71 L34 71 M44 71 L50 71 M54 71 L59 71', 3, O) +
+        // la queue fine et sa touffe
+        L('M17 33 Q13 38 14 46', 2.4) +
+        P('M12 44 Q13 50 16 46Z', DRD, 1.3) +
+        // le corps haut perché et la grande bosse
+        // le long cou : il part du poitrail, descend un peu vers l'avant puis remonte jusqu'à la tête (dessiné sous le corps)
+        P('M50 28 Q59 28 61 32 Q62 26 62 18 L71 18 Q73 32 68 40 Q63 48 54 44Z', DR) +
+        P('M18 38 Q15 30 22 29 Q26 28 27 24 C27 9 49 8 50 24 Q51 28 55 29 Q60 31 60 37 Q60 45 51 46 L25 46 Q18 45 18 38Z', DR) +
+        F('M21 42 Q34 47 51 44 Q58 41 59 36 Q52 43 38 43 Q26 43 21 42Z', DRD, 0.45) +
+        HL(34, 15, 4.4, 2.2, -30, 0.45) +
         (long
             ? tuft(
                   [
-                      [31, 10],
-                      [37, 7],
-                      [43, 8],
-                      [47, 12],
+                      [31, 14],
+                      [36, 9],
+                      [42, 9.5],
+                      [46, 15],
                   ],
-                  3.4,
+                  3.2,
               )
             : '') +
         (curly
             ? [
-                  [27, 26],
-                  [35, 20],
-                  [43, 20],
-                  [49, 28],
-                  [31, 36],
-                  [43, 36],
+                  [33, 18],
+                  [40, 15],
+                  [44, 22],
+                  [26, 36],
+                  [37, 34],
+                  [49, 36],
               ]
                   .map(([x, y]) => C(x, y, 2.6, 'none', 1.1))
                   .join('')
             : '') +
-        // le cou en S et la tête
-        P('M53 28 Q61 24 62 19 Q63 15 66 14 L71 18 Q68 22 68 27 Q66 34 57 38Z', DR) +
+        F('M58 41 Q63 44 67 38 Q66 42 62 44Z', DRD, 0.5) +
         (long
             ? tuft(
                   [
-                      [59, 27],
-                      [62, 21],
-                      [64, 15],
+                      [63, 22],
+                      [63.6, 28],
                   ],
-                  2.6,
+                  2.4,
               )
             : '') +
-        // la tête : crâne arrondi, long museau, lèvre du bas qui pend, paupière lourde, petite oreille ronde
-        `<g transform="translate(-2 5) translate(64 10) scale(1.25) translate(-64 -10)">` +
-        E(64.6, 4.6, 1.9, 2.8, DRD, -30, 1.4) +
-        P('M63 10 Q62.5 3 69.5 2.6 Q75 2.6 77.4 6.4 Q80.2 9.6 79.4 13.4 Q78.6 16.6 75 16.2 Q72.6 18.4 69.4 16.4 Q63.6 15.4 63 10Z', DR) +
-        FE(76, 11.6, 3.6, 3.4, DRL, 0.9) +
-        P('M71.6 15.6 Q73.6 19.6 77 16.4 Q74.4 16.8 71.6 15.6Z', DRL, 1.3) +
-        L('M73 15.4 Q76 15 78.8 14', 1) +
-        L('M77.6 9 Q78.8 10 78.4 11.6', 1.1) +
-        eye(69.6, 7.4) +
-        P('M66.8 6.8 Q69.6 4.2 72.4 6.8 Q69.6 5.8 66.8 6.8Z', DR, 1.2) +
-        L('M67.4 8.2 L66.4 9.2 M69 8.9 L68.6 10.1', 0.8) +
-        HL(67, 4.6, 2.4, 1, -15, 0.5) +
-        `</g></g>`
+        // la tête allongée, tenue à l'horizontale : petite oreille, paupière lourde, museau long, lèvre qui pend
+        E(64, 11.4, 1.7, 2.4, DRD, -25, 1.3) +
+        P('M61.5 17 Q61 10.5 67.5 10.5 Q73.5 10.5 76.8 14 Q79.6 17 78.4 20.4 Q77 22.6 73 22 Q70.6 24.2 67.6 22.4 Q62 21.6 61.5 17Z', DR) +
+        FE(75, 17.6, 3.6, 3.4, DRL, 0.9) +
+        P('M70 21.8 Q72.6 25.4 75.4 22.2 Q72.6 22.8 70 21.8Z', DRL, 1.2) +
+        L('M71.4 21.6 Q74.6 21.2 78 20', 1) +
+        L('M76.4 14.6 Q77.8 15.6 77.4 17.2', 1.1) +
+        eye(67, 15) +
+        P('M64.4 14.4 Q67 12 69.6 14.4 Q67 13.4 64.4 14.4Z', DR, 1.1) +
+        L('M64.8 15.8 L63.8 16.8 M66.4 16.6 L66 17.8', 0.8) +
+        HL(66, 12.4, 2.6, 1, -10, 0.5)
     );
 };
 
