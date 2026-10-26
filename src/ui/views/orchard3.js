@@ -8,7 +8,8 @@ import { actions } from '../dom.js';
 import { defineSheet } from '../sheets.js';
 import { foldWrap } from '../fold.js';
 import { ico, art } from '../icons.js';
-import { btn } from '../kit.js';
+import { btn, segmented } from '../kit.js';
+import { plantRobesTab } from '../sheets/herdbook.js';
 
 const SEASON_NAME = { printemps: 'printemps', ete: 'été', automne: 'automne', hiver: 'hiver' };
 const bar = (n, need) =>
@@ -147,7 +148,24 @@ export function lifeCards() {
 const MEDALS = ['bronze', 'argent', 'or'];
 defineSheet('orchardLog', {
     title: 'Le carnet du verger',
-    render() {
+    // 1.47 : deux onglets : les fruits ramassés et les variétés du labo
+    render(o) {
+        const tabs = G.plantLabOpen()
+            ? segmented(
+                  [
+                      ['fruits', 'Les fruits', ['item', 'apple']],
+                      ['vars', 'Les variétés', ['ui', 'flowers']],
+                  ],
+                  o.tab === 'vars' ? 'vars' : 'fruits',
+                  'pbTab',
+              )
+            : '';
+        if (tabs && o.tab === 'vars') return tabs + plantRobesTab('tree', o);
+        return tabs + fruitsTab();
+    },
+});
+function fruitsTab() {
+    {
         const ids = G.logIds();
         if (!ids.length) return '<p class="empty">Ramassez des fruits : chaque espèce aura sa page.</p>';
         const rem = state.stats.remarkable || 0;
@@ -166,8 +184,8 @@ defineSheet('orchardLog', {
             .join(
                 '',
             )}</div>${rem ? `<p class="card-sub center">${ico(['ui', 'remGold'])} ${rem} arbre${rem > 1 ? 's' : ''} remarquable${rem > 1 ? 's' : ''} découvert${rem > 1 ? 's' : ''}</p>` : ''}`;
-    },
-});
+    }
+}
 
 export function setupOrchard3() {
     actions({

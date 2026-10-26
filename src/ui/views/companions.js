@@ -5,7 +5,8 @@ import { ASSOCS, COMP_LVL, FX_TEXT, isBad } from '../../data/companions.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { ico, art } from '../icons.js';
-import { btn } from '../kit.js';
+import { btn, segmented } from '../kit.js';
+import { plantRobesTab } from '../sheets/herdbook.js';
 import { defineSheet } from '../sheets.js';
 
 const FX_ICON = { p: 'cpPousse', q: 'cpQualite', r: 'cpRecolte', n: 'cpNuisibles', t: 'cpTrio', mp: 'cpMalus', mq: 'cpMalus', mn: 'cpMalus' };
@@ -29,7 +30,24 @@ export function compCard() {
 
 defineSheet('companions', {
     title: 'Le carnet du potager',
-    render() {
+    // 1.47 : deux onglets, comme le carnet de l'élevage : les associations et les variétés du labo
+    render(o) {
+        const tabs = G.plantLabOpen()
+            ? segmented(
+                  [
+                      ['assoc', 'Les associations', ['ui', 'cpCarnet']],
+                      ['vars', 'Les variétés', ['ui', 'flowers']],
+                  ],
+                  o.tab === 'vars' ? 'vars' : 'assoc',
+                  'pbTab',
+              )
+            : '';
+        if (tabs && o.tab === 'vars') return tabs + plantRobesTab('crop', o);
+        return tabs + assocTab();
+    },
+});
+function assocTab() {
+    {
         const c = G.ensureComp();
         const t = G.compNextTier();
         const head = `<p class="card-sub center">Des cultures voisines (gauche, droite, dessus, dessous) s’aident ou se gênent. Une association se découvre en récoltant une parcelle qui en profite… ou qui en souffre.</p>
@@ -45,8 +63,8 @@ defineSheet('companions', {
             head +
             `<div class="cp-list">${rows}</div><p class="card-sub center">Légumineuses : petits pois, haricots, lentilles, soja. Céréales : blé, maïs, orge, riz, sarrasin. Alliacées : ail, oignon, poireau. Ouvert dès le niveau ${COMP_LVL}, dans le champ et dans la serre ; les bonus d’une parcelle sont plafonnés.</p>`
         );
-    },
-});
+    }
+}
 
 export function setupCompanions() {
     actions({

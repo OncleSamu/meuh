@@ -193,6 +193,7 @@ test('le Comice : trois catégories parmi nos espèces, une inscription, le bros
     assert.equal(c.cats.filter(x => x.id !== 'potager').length, COMICE.cats);
     for (const cat of c.cats) assert.equal(cat.rivals.length, 4);
     const cat = c.cats[0];
+    cat.jury = 'genes'; // le jury ne regarde pas la présentation : le brossage compte tel quel
     const [best] = G.comiceCandidates(cat.id);
     assert.ok(G.comiceEnter(cat.id, best.id));
     const s0 = G.catScore(cat);

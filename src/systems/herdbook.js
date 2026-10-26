@@ -5,6 +5,7 @@ import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { toast, sfx, changed } from '../core/bus.js';
 import { ANIMALS, BIRTHS } from '../data/animals.js';
+import { ITEMS } from '../data/items.js';
 import { LOOKS } from '../data/genetics.js';
 import { ROBEBOOK, ASSOC_LVL, PAIRS } from '../data/elevage.js';
 import { looksOf } from './genetics.js';
@@ -163,5 +164,78 @@ export function herdbookTick() {
     if (!robebookOpen()) return false;
     const a = scanRobes().length;
     const b = scanAssocs().length;
-    return !!(a || b);
+    const c = scanPlantRobes().length;
+    return !!(a || b || c);
+}
+
+// ---------------- 1.47 : les variétés du labo dans les carnets du potager et du verger ----------------
+// pour chaque culture ou arbre qui a eu une variété : 11 couleurs et 8 motifs ; les raretés (tailles, finitions, auréole) toutes plantes
+export const PLANT_SIZES = [0, 2, 3, 4, 5, 6]; // Petite, Grosse, Géante, Fine, Naine, Gros fruit (pas « Normale »)
+export const PLANT_RARE = [...PLANT_SIZES.map(i => 's' + i), ...LOOKS.finish.map((_, i) => 'f' + i).slice(1), 'halo'];
+const plantBook = () => {
+    const h = ensureHerdbook();
+    h.plants = h.plants || {}; // { base: { c: [], p: [] } }
+    h.prare = h.prare || [];
+    h.pdone = h.pdone || {};
+    return h;
+};
+export const plantBookTypes = kind =>
+    Object.keys((state.herdbook && state.herdbook.plants) || {}).filter(
+        id => ITEMS[id] && (kind === 'tree' ? ITEMS[id].type === 'tree' : ITEMS[id].type === 'crop'),
+    );
+export const plantRobeCount = base => {
+    const r = state.herdbook && state.herdbook.plants && state.herdbook.plants[base];
+    return r ? r.c.length + r.p.length : 0;
+};
+export const hasPlantRobe = (base, kind, i) =>
+    !!(state.herdbook && state.herdbook.plants && state.herdbook.plants[base] && state.herdbook.plants[base][kind].includes(i));
+export const hasPlantRare = id => !!(state.herdbook && state.herdbook.prare && state.herdbook.prare.includes(id));
+
+export function scanPlantRobes() {
+    if (!state.genetics || !state.genetics.vars) return [];
+    const h = plantBook();
+    const found = [];
+    for (const v of Object.values(state.genetics.vars)) {
+        if (!v.g || !v.g.l || !ITEMS[v.base]) continue;
+        const l = looksOf(v.g);
+        const r = (h.plants[v.base] ||= { c: [], p: [] });
+        if (l.color && !r.c.includes(l.color)) {
+            r.c.push(l.color);
+            found.push({ base: v.base, kind: 'c', i: l.color });
+        }
+        if (l.pattern && !r.p.includes(l.pattern)) {
+            r.p.push(l.pattern);
+            found.push({ base: v.base, kind: 'p', i: l.pattern });
+        }
+        const rares = [l.size !== 1 && PLANT_SIZES.includes(l.size) ? 's' + l.size : null, l.finish ? 'f' + l.finish : null, l.halo ? 'halo' : null].filter(
+            Boolean,
+        );
+        for (const x of rares)
+            if (!h.prare.includes(x)) {
+                h.prare.push(x);
+                found.push({ base: v.base, kind: 'rare', i: x });
+            }
+    }
+    if (!found.length) return found;
+    const coins = found.length * (ROBEBOOK.plantCoin + scaleLvl() * 20);
+    earn(coins, null);
+    addXp((ROBEBOOK.xp + scaleLvl()) * found.length);
+    const complete = [...new Set(found.map(f => f.base))].filter(b => !h.pdone[b] && plantRobeCount(b) >= robeTotal());
+    complete.forEach(b => {
+        h.pdone[b] = now();
+        state.prestige.rubans += ROBEBOOK.rubans;
+    });
+    if (view.started) {
+        const f = found[0];
+        const book = ITEMS[f.base].type === 'tree' ? 'du verger' : 'du potager';
+        toast(
+            found.length > 1
+                ? `Carnet ${book} : ${found.length} nouvelles variétés de couleur ou de forme (+${coins} pièces)`
+                : `Carnet ${book} : ${ITEMS[f.base].name.toLowerCase()} ${f.kind === 'rare' ? 'rare' : robeName(f.kind, f.i)} (+${coins} pièces)`,
+            ['item', f.base],
+        );
+        if (complete.length) toast(`Toutes les couleurs et tous les motifs : ${ITEMS[complete[0]].name.toLowerCase()} complète, un ruban !`, ['ui', 'ribbon']);
+    }
+    changed('lab');
+    return found;
 }

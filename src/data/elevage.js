@@ -108,6 +108,7 @@ export const ROBEBOOK = {
     coin: 0.25, // pièces par robe trouvée : × le prix de l'espèce
     xp: 40,
     rubans: 1, // une espèce complète
+    plantCoin: 300, // 1.47 : pièces par couleur ou motif de variété (+20 par niveau)
 };
 
 // ---------------- 1.46 : les associations au pré ----------------

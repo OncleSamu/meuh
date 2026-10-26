@@ -7,7 +7,9 @@ import { RARE } from '../../data/commerce.js';
 import { MAX_LEVEL } from '../../data/progress.js';
 import { NAT_LOG_IDS } from '../../data/nature.js';
 import * as G from '../../systems/index.js';
-import { actions } from '../dom.js';
+import { actions, esc } from '../dom.js';
+import { genWrap, looksText } from '../genlook.js';
+import { flavorMini } from '../views/lab.js';
 import { ico, art, qStar } from '../icons.js';
 import { btn, navRow, lines, line, bar, dot } from '../kit.js';
 import { go } from '../app.js';
@@ -157,9 +159,19 @@ defineSheet('barn', {
             const qrow = nq
                 ? `<div class="barn-q"><span class="qchip big">&nbsp;×${nplain} ${nplain > 1 ? 'normaux' : 'normal'}</span>${tiers.map(([r, f, n]) => (qq[f] ? `<span class="qchip big">${qStar(r)}${qq[f]} ${n}</span>` : '')).join('')}</div>`
                 : '';
+            // 1.47 : les variétés du labo dans ce stock (elles partent en dernier)
+            const vars = state.genetics ? G.varieties().filter(v => v.base === sel && (state.genetics.stock[v.id] || 0) > 0) : [];
+            const vrow = vars.length
+                ? `<div class="barn-vars"><div class="set-sub">Dont vos variétés</div>${vars
+                      .map(
+                          v =>
+                              `<button class="row barn-var" data-act="open" data-sheet="variety" data-id="${v.id}"><span class="offer-art">${genWrap(art('item', sel), v.g)}</span><span class="row-main"><span>${esc(G.varName(v))} ×${state.genetics.stock[v.id]}</span><small>${[looksText(v.g).replace(/^Normale(, )?/, ''), v.fixed ? 'variété fixée' : `génération ${v.gen || 1}`].filter(Boolean).join(' · ')}</small></span>${flavorMini(v.g)}</button>`,
+                      )
+                      .join('')}</div>`
+                : '';
             item = `<div class="card barn-item"><div class="card-head">${ico(['item', sel], 'ico big')}<div class="card-main"><div class="card-title">${it.name} ×${state.inventory[sel]}</div>
                 <div class="card-sub">${keep ? `${keep} gardé${keep > 1 ? 's' : ''} pour les commandes · ` : ''}${G.isLocked(sel) ? 'verrouillé : jamais vendu' : `surplus : ${surplus}`}</div></div></div>
-                ${qrow}<div class="row-btns">${btn(G.isLocked(sel) ? 'Déverrouiller' : 'Verrouiller', { act: 'lock', data: { id: sel }, size: 'sm', icon: ['ui', 'lock'] })}
+                ${qrow}${vrow}<div class="row-btns">${btn(G.isLocked(sel) ? 'Déverrouiller' : 'Verrouiller', { act: 'lock', data: { id: sel }, size: 'sm', icon: ['ui', 'lock'] })}
                 ${surplus && !G.challengeOn('noMarket') ? btn(`Grossiste +${fmt(r.gain)}${COIN()}`, { act: 'barnSell', data: { id: sel }, kind: 'gold', size: 'sm' }) : ''}
                 ${surplus && it.sell ? btn('À l’étal', { act: 'barnStall', data: { id: sel }, kind: 'green', size: 'sm' }) : ''}
                 ${G.vaultOpen() ? btn('Au coffre', { act: 'vaultAdd', data: { id: sel }, size: 'sm', icon: ['ui', 'vault'] }) : ''}

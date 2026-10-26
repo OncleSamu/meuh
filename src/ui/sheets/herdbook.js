@@ -1,6 +1,7 @@
 // 1.46 : le carnet de l'élevage (Animaux | Prés) : les robes de chaque espèce, les raretés, les associations au pré.
 import { state, lvOk } from '../../core/state.js';
 import { ANIMALS } from '../../data/animals.js';
+import { ITEMS } from '../../data/items.js';
 import { LOOKS } from '../../data/genetics.js';
 import { PAIRS, ASSOC_LVL, ROBEBOOK, COMICE_CAT } from '../../data/elevage.js';
 import * as G from '../../systems/index.js';
@@ -76,10 +77,59 @@ defineSheet('herdbook', {
         ) + (o.tab === 'pairs' ? pairsTab() : robesTab(o)),
 });
 
+// ---------------- 1.47 : les variétés du labo (carnets du potager et du verger) ----------------
+const plantLook = (base, { c = 0, p = 0, s = 1, f = 0, halo = false }) =>
+    genWrap(art('item', base), { t: {}, form: base, l: { size: pair(s), color: pair(c), pattern: pair(p), finish: pair(f) }, halo });
+const SIZE_NAMES = ['Petite', 'Normale', 'Grosse', 'Géante', 'Fine', 'Naine', 'Gros fruit'];
+export function plantRobesTab(kind, o) {
+    if (!G.plantLabOpen()) return '<p class="empty">Les variétés se créent au labo des plantes (station de recherche, niveau 40).</p>';
+    const bases = G.plantBookTypes(kind);
+    if (!bases.length)
+        return `<p class="empty">Créez une variété ${kind === 'tree' ? 'd’arbre fruitier' : 'de culture'} au labo : sa page s’ouvrira ici, avec toutes les couleurs et tous les motifs à obtenir.</p>`;
+    const cur = bases.includes(o.base) ? o.base : bases[0];
+    const chips = `<div class="chips-row hb-types">${bases
+        .map(
+            b =>
+                `<button class="pick-chip${b === cur ? ' on' : ''}" data-act="pbBase" data-b="${b}">${ico(['item', b])}<small>${G.plantRobeCount(b)}/${G.robeTotal()}</small>${state.herdbook.pdone && state.herdbook.pdone[b] ? ico(['ui', 'ribbon']) : ''}</button>`,
+        )
+        .join('')}</div>`;
+    const cell = (k, i, name) => {
+        const got = G.hasPlantRobe(cur, k, i);
+        return `<div class="hb-robe${got ? ' got' : ''}"><span class="hb-art">${got ? plantLook(cur, k === 'c' ? { c: i } : { p: i }) : art('item', cur)}</span><small>${got ? name : '?'}</small></div>`;
+    };
+    const rare = G.PLANT_RARE.map(id => {
+        const got = G.hasPlantRare(id);
+        const f = id === 'halo' ? { halo: true } : id[0] === 's' ? { s: +id.slice(1) } : { f: +id.slice(1) };
+        const name = id === 'halo' ? 'Auréolée' : id[0] === 's' ? SIZE_NAMES[+id.slice(1)] : LOOKS.finish[+id.slice(1)];
+        return `<div class="hb-robe${got ? ' got' : ''}"><span class="hb-art">${got ? plantLook(cur, f) : art('item', cur)}</span><small>${got ? name : '?'}</small></div>`;
+    }).join('');
+    // les variétés qui existent encore pour cette plante
+    const vars = G.varieties().filter(v => v.base === cur);
+    return `${chips}<div class="card hb-head"><div class="card-title">${ITEMS[cur].name} · ${G.plantRobeCount(cur)} sur ${G.robeTotal()}</div>
+        <div class="card-sub">Chaque couleur et chaque motif obtenus au labo rapportent des pièces ; tous ensemble, un ruban.${vars.length ? ` Vos variétés : ${vars.map(v => esc(G.varName(v))).join(', ')}.` : ''}</div></div>
+        <h4 class="hb-sub">Les couleurs</h4><div class="hb-grid">${G.ROBE_COLORS.map(i => cell('c', i, LOOKS.color[i])).join('')}</div>
+        <h4 class="hb-sub">Les motifs</h4><div class="hb-grid">${G.ROBE_PATTERNS.map(i => cell('p', i, LOOKS.pattern[i])).join('')}</div>
+        <h4 class="hb-sub">Les raretés (toutes ${kind === 'tree' ? 'les plantes' : 'les plantes'})</h4><div class="hb-grid">${rare}</div>
+        <p class="card-sub hb-note">Les couleurs et les motifs viennent des croisements et des mutations au labo ; la ruche de sélection donne plus de mutations.</p>`;
+}
+
 export function setupHerdbook() {
     const o = () => sheetOpts('herdbook');
     actions({
         hbTab: (el, d) => (o().tab = d.v),
         hbType: (el, d) => (o().type = d.t),
+        // les onglets des carnets du potager et du verger
+        pbTab: (el, d) => {
+            for (const id of ['companions', 'orchardLog']) {
+                const s = sheetOpts(id);
+                if (s) s.tab = d.v;
+            }
+        },
+        pbBase: (el, d) => {
+            for (const id of ['companions', 'orchardLog']) {
+                const s = sheetOpts(id);
+                if (s) s.base = d.b;
+            }
+        },
     });
 }

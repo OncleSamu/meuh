@@ -107,3 +107,28 @@ test('les bêtes de choix des voisins : souvent une robe visible, plus chère', 
     }
     assert.ok(looks > 30, String(looks));
 });
+
+// ---------------- 1.47 : les variétés dans les carnets du potager et du verger ----------------
+test('une variété colorée entre au carnet du potager (ou du verger pour un arbre)', () => {
+    farm([], 45);
+    G.ensureGenetics();
+    const g = G.wildPlant('carrot');
+    g.l.color = [
+        [6, 1],
+        [6, 1],
+    ];
+    const t = G.wildPlant('apple');
+    t.l.pattern = [
+        [2, 1],
+        [2, 1],
+    ];
+    state.genetics.vars = { v1: { id: 'v1', base: 'carrot', g, gen: 1 }, v2: { id: 'v2', base: 'apple', g: t, gen: 1 } };
+    const m = state.money;
+    const f = G.scanPlantRobes();
+    assert.equal(f.length, 2);
+    assert.ok(state.money > m);
+    assert.ok(G.hasPlantRobe('carrot', 'c', 6) && G.hasPlantRobe('apple', 'p', 2));
+    assert.deepEqual(G.plantBookTypes('crop'), ['carrot']);
+    assert.deepEqual(G.plantBookTypes('tree'), ['apple']);
+    assert.equal(G.scanPlantRobes().length, 0);
+});

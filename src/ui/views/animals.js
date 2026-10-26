@@ -275,7 +275,7 @@ function renderAnimals(el) {
     blocks(el, [
         [
             'top',
-            `<div class="view-top end"><div class="actions">${G.robebookOpen() ? btn('Carnet', { act: 'open', data: { sheet: 'herdbook' }, size: 'sm', icon: ['ui', 'cpCarnet'] }) : ''}${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'], anchor: 'btn:feed' })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'], anchor: 'btn:collect' })}</div></div>`,
+            `<div class="view-top end"><div class="actions">${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'], anchor: 'btn:feed' })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'], anchor: 'btn:collect' })}</div></div>`,
         ],
         ['pin', pinBar()],
         [

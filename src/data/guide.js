@@ -650,7 +650,7 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
-                h: 'Le carnet de l’élevage (Animaux › Prés, bouton Carnet)',
+                h: 'Le carnet de l’élevage (Menu › Carnets)',
                 b: [
                     `Les robes (niveau ${ROBEBOOK.lvl}) : pour chaque espèce, 11 couleurs et 8 motifs à trouver. Une robe s’inscrit dès qu’une de vos bêtes la porte, avec des pièces ; une espèce complète rapporte ${ROBEBOOK.rubans} ruban.`,
                     'Beaucoup de bêtes cachent une robe dans leurs gènes : elle apparaît quand deux parents porteurs ont un petit au pré. Les bêtes de choix des voisins en montrent souvent une. Les raretés (givrée, moussue, étincelante, vernie, fleurie, auréolée) ne naissent qu’au labo.',
