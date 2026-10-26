@@ -174,7 +174,7 @@ export function applyProjectReward(pid) {
     if (pid === 'ferry') ensureIsland();
     if (pid === 'oasisWell' || pid === 'oasisPen') ensureOasis();
     if (pid === 'oasisGrove') state.seeds.date = (state.seeds.date || 0) + 3;
-    if (pid === 'northStove') ensureNord();
+    if (pid === 'northStove' || pid === 'northStable') ensureNord();
     if (pid === 'northGreenhouse') state.seeds.spruce = (state.seeds.spruce || 0) + 3;
     if (
         pid === 'carnival' ||

@@ -364,6 +364,16 @@ defineSheet('animal', {
             else if (adult && G.isHot() && !G.penShaded(a) && a.type !== 'barbarySheep')
                 info.push([['ui', 'oaMidi'], 'Au soleil de midi : il produit deux fois moins vite']);
         }
+        // 1.52 : une bête du Grand Nord
+        if (ANIMALS[a.type].nord) {
+            info.push([['ui', 'noPoeleOn'], 'Vit dans l’étable de rondins, au Grand Nord']);
+            if (adult && ANIMALS[a.type].cold && G.isFrost())
+                info.push(
+                    G.nordSheltered(a)
+                        ? [['ui', 'noChaleur'], 'À l’abri d’un poêle allumé : nuit de gel sans souci']
+                        : [['ui', 'noFroid'], 'Nuit de gel, hors d’un poêle allumé : il produit deux fois moins vite'],
+                );
+        }
         // 1.45 : né au pré, de quels parents (au labo, la fiche des gènes le dit déjà)
         if (a.born === 'pre' && a.parents && !(state.genetics && G.geneticsOpen() && a.g))
             info.push([
@@ -380,7 +390,7 @@ defineSheet('animal', {
             <div class="row-btns">${btn(a.love >= 5 ? 'Affection au maximum' : petted ? 'Déjà câliné aujourd’hui' : 'Faire un câlin', { act: 'pet', data: { i }, kind: 'gold', disabled: petted || a.love >= 5, icon: ['ui', 'heart'] })}${btn('Nourrir', { act: 'feedOne', data: { i }, icon: ['item', 'feed'] })}</div>
             ${a.type === 'zebu' && adult && G.noriaBuilt() ? `<div class="row-btns">${btn(a.noria ? 'Dételer de la noria' : 'Atteler à la noria', { act: 'noriaToggle', data: { uid: a.uid }, kind: a.noria ? '' : 'gold', icon: ['ui', 'oaNoria'] })}</div>` : ''}
             ${
-                state.pastures.length > 1 && !ANIMALS[a.type].oasis
+                state.pastures.length > 1 && !ANIMALS[a.type].oasis && !ANIMALS[a.type].nord
                     ? `<div class="set-sub">Son pré</div><div class="chips-row pas-move">${state.pastures
                           .map((p, k) => {
                               const here = (a.p || 0) === k,

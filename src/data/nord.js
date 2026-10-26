@@ -46,3 +46,28 @@ export const NORD_TREES = [
     ['rowan', 'Baies de sorbier', 'Sorbier', 60, 4800, 330, 1600, 12, '21200'],
 ];
 export const NORD_IDS = [...NORD_CROPS, ...NORD_TREES].map(r => r[0]);
+
+// ================= 1.52 : l'étable de rondins et les bêtes du Nord =================
+// id, nom, produit, prix, production (s), niveau, xp, second produit, croissance du petit (s), prénoms, gènes de base, craint le gel (1) ou non (0)
+export const NORD_BEASTS = [
+    ['reindeer', 'Renne', 'reindeerMilk', 30000, 1500, 60, 24, 'antler', 1500, ['Tonttu', 'Aurore', 'Komet', 'Rudolf', 'Vaara', 'Lumi'], '3222244', 1],
+    ['muskox', 'Bœuf musqué', 'qiviut', 26000, 1300, 60, 22, null, 1500, ['Ukko', 'Bjorn', 'Sisu', 'Taiga', 'Mammouth', 'Hiver'], '2332234', 0],
+    ['ptarmigan', 'Lagopède', 'ptarmiganEgg', 9000, 600, 60, 16, null, 400, ['Neigeuse', 'Poudrette', 'Blanchon', 'Tundra', 'Duvet', 'Perdrix'], '3222232', 1],
+];
+export const NORD_BEAST_IDS = NORD_BEASTS.map(b => b[0]);
+// id, nom, vente
+export const NORD_PRODUCTS = [
+    ['reindeerMilk', 'Lait de renne', 440],
+    ['antler', 'Bois de renne', 700],
+    ['qiviut', 'Qiviut', 520],
+    ['ptarmiganEgg', 'Œuf de lagopède', 150],
+];
+export const BARN = {
+    key: 98, // le numéro de « pré » de l'étable (les prés de la ferme vont de 0 à 19, l'enclos de l'oasis est le 99)
+    project: 'northStable',
+    name: 'L’étable de rondins',
+    cap: [12, 20], // places, puis l'étable agrandie
+    upCost: { coins: 250000, plank: 80, beam: 40 },
+    shelterPerStove: 3, // bêtes à l'abri par poêle allumé
+    coldMult: 0.5, // une bête au froid (nuit de gel, hors d'un poêle) produit deux fois moins vite
+};

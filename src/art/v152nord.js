@@ -1,19 +1,20 @@
 // 1.52 : les bêtes du Grand Nord (le renne, le bœuf musqué, le lagopède) et leurs produits.
 // Animaux : cadre 80 × 80, ombre vers y = 72, tournés vers la droite.
-import { C, E, F, FC, FE, HL, L, P, SHADOW, animals, items } from './kit.js';
+import { C, E, F, FC, FE, HL, L, P, SHADOW, animals, items, BLD, KINDS } from './kit.js';
+import { house2 } from './buildings2.js';
 import { leg, eye } from './animals.js';
 import { milkB } from './items2.js';
 
 const O = '#3a2618';
 
 // ======================= le renne =======================
-// pelage brun-gris, collerette crème, bois branchus ; coat 1 = clair (presque blanc), 2 = sombre ; horns 1 = bois tombés, 2 = grands bois
+// pelage brun-gris, collerette crème, bois branchus ; horns 1 = bois tombés, 2 = grands bois
 const RN = '#a58f78',
     RND = '#7c6850',
     RNL = '#ece3d2';
 animals.reindeer = (o = {}) => {
-    const body = o.coat === 1 ? '#d9cfbf' : o.coat === 2 ? '#7a6652' : RN;
-    const dark = o.coat === 1 ? '#b3a590' : o.coat === 2 ? '#54463a' : RND;
+    const body = RN,
+        dark = RND;
     const h = o.horns || 0;
     const beam = (d, w = 3) => L(d, w + 1.6, O) + L(d, w, '#dcc9a0');
     const antlers =
@@ -54,14 +55,13 @@ animals.reindeer = (o = {}) => {
 };
 
 // ======================= le bœuf musqué =======================
-// brun presque noir, la jupe de longs poils qui tombe jusqu'aux sabots, la selle pâle, les cornes qui descendent puis se relèvent ;
-// coat 1 = clair, 2 = très sombre ; horns 1 = courtes, 2 = grandes
+// brun presque noir, la jupe de longs poils qui tombe jusqu'aux sabots, la selle pâle, les cornes qui descendent puis se relèvent ; horns 1 = courtes, 2 = grandes
 const MX = '#4e3a2b',
     MXD = '#2e2118',
     MXL = '#d2bf93';
 animals.muskox = (o = {}) => {
-    const body = o.coat === 1 ? '#6e5640' : o.coat === 2 ? '#2e2118' : MX;
-    const dark = o.coat === 2 ? '#1c140e' : MXD;
+    const body = MX,
+        dark = MXD;
     const h = o.horns || 0;
     const horn = d => L(d, 4.6, O) + L(d, 2.4, '#efe1bd');
     const horns =
@@ -109,9 +109,10 @@ animals.muskox = (o = {}) => {
 };
 
 // ======================= le lagopède =======================
-// la perdrix des neiges : ronde, pattes emplumées, sourcil rouge ; coat 0 = robe blanche d'hiver, 1 = robe brune d'été (queue noire dans les deux)
+// la perdrix des neiges : ronde, pattes emplumées, sourcil rouge ; robe blanche d'hiver ou brune d'été selon la vraie saison (o.summer force l'une ou l'autre)
 animals.ptarmigan = (o = {}) => {
-    const summer = o.coat === 1;
+    const m = new Date().getMonth();
+    const summer = o.summer !== undefined ? !!o.summer : m >= 3 && m <= 8;
     const b = summer ? '#a9824f' : '#fbfcfd',
         bd = summer ? '#7a5a34' : '#d6e0ea',
         bl = summer ? '#c7a674' : '#ffffff';
@@ -195,3 +196,38 @@ Object.assign(items, {
     ptarmiganEgg: eggLagopede,
 });
 export const NORD_BEASTS_ART = ['reindeer', 'muskox', 'ptarmigan'];
+
+// ======================= le chapitre 24 : l'étable de rondins =======================
+const NB2 = {
+    northStable: {
+        cfg: { w: 46, h: 20, wall: '#9a6a3e', roof: '#e8f0f6', sign: ['item', 'reindeerMilk'] },
+        st: {
+            roof: 'gable',
+            tex: 'planks',
+            snow: true,
+            door: 'plain',
+            wins: [12, 36],
+            // des bois de renne cloués au pignon, une botte de foin devant
+            props: ({ x0, x1, ruin }) =>
+                ruin
+                    ? ''
+                    : L(
+                          `M${(x0 + x1) / 2 - 6} 52 Q${(x0 + x1) / 2 - 10} 46 ${(x0 + x1) / 2 - 9} 41 M${(x0 + x1) / 2 - 9} 46 L${(x0 + x1) / 2 - 13} 44`,
+                          1.8,
+                          '#dcc9a0',
+                      ) +
+                      L(
+                          `M${(x0 + x1) / 2 + 6} 52 Q${(x0 + x1) / 2 + 10} 46 ${(x0 + x1) / 2 + 9} 41 M${(x0 + x1) / 2 + 9} 46 L${(x0 + x1) / 2 + 13} 44`,
+                          1.8,
+                          '#dcc9a0',
+                      ) +
+                      E(x1 + 8, 82, 7, 5, '#d9b84a', 0, 1.8) +
+                      L(`M${x1 + 3} 80 L${x1 + 13} 84 M${x1 + 3} 84 L${x1 + 13} 80`, 1, '#a88a2a'),
+            noFlowers: true,
+        },
+    },
+};
+for (const [id, d] of Object.entries(NB2)) {
+    BLD[id] = { ...d.cfg, st: d.st, kind: 'h2_' + id };
+    KINDS['h2_' + id] = st => house2(BLD[id], st);
+}

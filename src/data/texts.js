@@ -132,6 +132,21 @@ export const TIPS = {
         title: 'Le mouton barbarin',
         text: 'Le mouton barbarin garde ses réserves dans sa grosse queue, comme le dromadaire dans sa bosse. Il ne craint pas le soleil de midi, et sa laine fait les plus beaux tapis. Ma cousine Odile avait un tapis berbère : quarante ans qu’on marche dessus, il n’a pas bougé d’un fil.',
     },
+    reindeer: {
+        icon: ['animal', 'reindeer'],
+        title: 'Le renne',
+        text: 'Le renne donne un lait gras et riche, et perd ses bois chaque année : un second produit, le bois de renne. Il craint un peu le gel : la nuit, hors d’un poêle allumé, il produit deux fois moins vite. Ton grand-père a vu des rennes une seule fois, sur une carte de Noël. Il a trouvé qu’ils avaient l’air fatigués.',
+    },
+    muskox: {
+        icon: ['animal', 'muskox'],
+        title: 'Le bœuf musqué',
+        text: 'Sous sa longue jupe de poils, le bœuf musqué cache le qiviut : la laine la plus chaude du monde. Il ne craint pas le gel du tout. Mamie Odette avait un manteau qui lui ressemblait : lourd, informe, et on ne l’a jamais vue avoir froid.',
+    },
+    ptarmigan: {
+        icon: ['animal', 'ptarmigan'],
+        title: 'Le lagopède',
+        text: 'La perdrix des neiges change de robe avec la saison : blanche l’hiver, brune l’été. Elle pond de petits œufs mouchetés, et préfère rester près d’un poêle quand il gèle. Ma tante Colette faisait pareil : blanche en hiver sous ses écharpes, et bronzée dès avril.',
+    },
     caravan: {
         icon: ['ui', 'oaCaravane'],
         title: 'La caravane',

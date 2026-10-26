@@ -44,6 +44,15 @@ export const PASSERS = [
         types: ['barbarySheep', 'sheep', 'dromedary', 'alpaca'],
         likes: ['soft', 'yield'],
     },
+    // 1.52 : les acheteurs du Grand Nord
+    {
+        id: 'tuomas',
+        name: 'Tuomas, éleveur de rennes',
+        icon: ['villager', 'tuomas'],
+        types: ['reindeer', 'muskox', 'ptarmigan'],
+        likes: ['robust', 'appetite'],
+    },
+    { id: 'qiviut', name: 'Une coopérative de laine du Nord', icon: ['item', 'qiviut'], types: ['muskox', 'sheep', 'alpaca', 'yak'], likes: ['soft', 'yield'] },
 ];
 
 // la réputation de l'élevage : cinq paliers, +5 % aux prix de la foire par palier
@@ -111,6 +120,9 @@ export const COMICE_CAT = {
     dromedary: 'Les dromadaires',
     zebu: 'Les zébus',
     barbarySheep: 'Les moutons barbarins',
+    reindeer: 'Les rennes',
+    muskox: 'Les bœufs musqués',
+    ptarmigan: 'Les lagopèdes',
 };
 
 // ---------------- 1.46 : le carnet des robes ----------------
@@ -271,5 +283,37 @@ export const PAIRS = [
         name: 'Bousculade à l’abreuvoir',
         why: 'le dromadaire pousse les moutons pour boire le premier : les moutons produisent moins',
         mamie: 'Un dromadaire qui a soif ne fait pas la queue. Les moutons, eux, attendent poliment, et repartent avec le fond du seau.',
+    },
+    // 1.52 : les bêtes de l'étable du Grand Nord
+    {
+        id: 'muskoxReindeer',
+        a: 'muskox',
+        b: 'reindeer',
+        on: 'reindeer',
+        f: 0.08,
+        name: 'Le bœuf piétine la neige',
+        why: 'il dégage le sol à grands coups de sabots : le renne trouve les lichens, et donne plus de lait',
+        mamie: 'Un renne gratte la neige pour trouver à manger. Un bœuf musqué, lui, la piétine comme un déménageur. Ton grand-père déneigeait pareil : les voisins suivaient derrière en le remerciant.',
+    },
+    {
+        id: 'reindeerPtarmigan',
+        a: 'reindeer',
+        b: 'ptarmigan',
+        on: 'ptarmigan',
+        f: 0.08,
+        name: 'Le lagopède suit le renne',
+        why: 'il picore dans les traces du renne, à l’abri du vent : plus d’œufs',
+        mamie: 'Le lagopède marche dans les pas du renne, comme le chat de la voisine marchait dans les pas du facteur. Il n’a jamais rien distribué, mais il a toujours trouvé à manger.',
+    },
+    {
+        id: 'muskoxPtarmigan',
+        a: 'muskox',
+        b: 'ptarmigan',
+        on: 'ptarmigan',
+        f: -0.08,
+        bad: true,
+        name: 'Le bœuf gêne le lagopède',
+        why: 'il occupe tout le coin du poêle : le lagopède dort mal et pond moins',
+        mamie: 'Tu mets un gros bonhomme sur le seul fauteuil près du feu, et plus personne ne sait où s’asseoir. Chez nous, c’était l’oncle Raymond.',
     },
 ];

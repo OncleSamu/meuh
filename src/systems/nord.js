@@ -8,7 +8,10 @@ import { now } from '../core/clock.js';
 import { fmt, s, dateKey } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { NORD } from '../data/nord.js';
+import { NORD, BARN } from '../data/nord.js';
+import { ANIMALS } from '../data/animals.js';
+import { isAdult } from './animals.js';
+import { inPasture, nordBarnOpen, nordBarnCap } from './pastures.js';
 import { BALANCE } from '../data/progress.js';
 import { speedMult, addXp, spend, rank, rollYield } from './player.js';
 import { hour, weather } from './world.js';
@@ -209,8 +212,10 @@ function step(dt, cold) {
     const lit = new Set(stoveKeys().filter(k => N.stoves[k].fuel > 0));
     const mults = N.plots.map((p, k) => (p.open && cellGrowing(k) ? cellMult(k, cold) : 0));
     // un poêle ne brûle que s'il y a une case à réchauffer autour de lui
+    // la nuit de gel, les premiers poêles allumés abritent aussi les bêtes frileuses de l'étable (3 par poêle)
+    const sheltering = isFrost() ? new Set([...lit].sort((x, y) => x - y).slice(0, Math.ceil(coldBeasts().length / BARN.shelterPerStove))) : new Set();
     for (const k of lit) {
-        const warms = nordNeighbors(k, stoveRadius()).some(j => cellGrowing(j));
+        const warms = sheltering.has(k) || nordNeighbors(k, stoveRadius()).some(j => cellGrowing(j));
         if (warms) N.stoves[k].fuel = Math.max(0, N.stoves[k].fuel - (dt / 3600) * stoveBurn());
     }
     let crops = 0,
@@ -452,3 +457,30 @@ export function replantNord(at) {
     return n;
 }
 export const nordReady = () => nordPlots().filter(p => p.ready).length;
+
+// ================= 1.52 : l'étable de rondins =================
+export const nordBeasts = () => (nordBarnOpen() ? inPasture(BARN.key) : []);
+// les bêtes adultes qui craignent le gel (pas le bœuf musqué)
+const coldBeasts = () => nordBeasts().filter(a => isAdult(a) && ANIMALS[a.type].cold);
+export const nordLitStoves = () => stoveKeys().filter(stoveLit).length;
+export const nordShelterSlots = () => nordLitStoves() * BARN.shelterPerStove;
+export function nordSheltered(a) {
+    const i = coldBeasts().indexOf(a);
+    return i >= 0 && i < nordShelterSlots();
+}
+// la vitesse d'une bête du Nord : la nuit de gel, hors d'un poêle, deux fois moins vite
+export function nordBeastMult(a) {
+    if (!a || !ANIMALS[a.type] || !ANIMALS[a.type].nord || !ANIMALS[a.type].cold || !isAdult(a)) return 1;
+    return isFrost() && !nordSheltered(a) ? BARN.coldMult : 1;
+}
+export function upNordBarn(at) {
+    if (!nordBarnOpen() || state.nord.barnBig || !hasCost(BARN.upCost)) return false;
+    payCost(BARN.upCost);
+    state.nord.barnBig = true;
+    sfx('level');
+    burst(at, 'sparkle', 12);
+    toast(`${BARN.name} s’agrandit : ${BARN.cap[1]} places`, ['ui', 'noPoeleOn']);
+    changed('animals');
+    return true;
+}
+export const nordBarnFree = () => nordBarnCap() - nordBeasts().length;

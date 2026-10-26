@@ -5,6 +5,7 @@ import { CROPS_130, RECIPES_130 } from './v130.js';
 import { TREES_131, RECIPES_131 } from './v131.js';
 import { CROPS_132, RECIPES_132 } from './v132.js';
 import { OASIS_CROPS, OASIS_TREES, OASIS_PRODUCTS } from './oasis.js';
+import { NORD_PRODUCTS } from './nord.js';
 import { NORD_CROPS, NORD_TREES } from './nord.js';
 import { RECIPES_150 } from './v150.js';
 import { FISH_ITEMS_133, RECIPES_133 } from './v133.js';
@@ -2901,6 +2902,8 @@ for (const [id, name, seedName, reqLvl, cost, sell, time, xp] of OASIS_TREES)
     ITEMS[id] = { id, name, seedName, type: 'tree', cost, sell, time, reqLvl, xp, island: true, oasis: true, needProject: 'oasisWell' };
 // 1.49 : les produits des bêtes de l'oasis
 for (const [id, name, sell] of OASIS_PRODUCTS) ITEMS[id] = { id, name, type: 'product', sell, needProject: 'oasisPen' };
+// 1.52 : les produits des bêtes du Grand Nord
+for (const [id, name, sell] of NORD_PRODUCTS) ITEMS[id] = { id, name, type: 'product', sell, needProject: 'northStable' };
 
 // ---------------- 1.51 : les plantes du Grand Nord (island : elles ne poussent pas à la ferme ; nord : seulement au Grand Nord) ----------------
 for (const [id, name, seedName, reqLvl, cost, sell, time, xp] of NORD_CROPS)

@@ -4,7 +4,8 @@ import { state } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { on, sfx, buzz, toast } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
-import { NORD } from '../../data/nord.js';
+import { NORD, BARN } from '../../data/nord.js';
+import { stableTile, birthRow, assocRow } from './animals.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, esc, byId } from '../dom.js';
 import { genWrap } from '../genlook.js';
@@ -132,7 +133,38 @@ export function renderNord(el) {
         ],
         ['h1', section('Le champ de neige', `<small class="o-count small">${plots.filter(p => p.open).length} cases</small>`)],
         ['grid', `<div class="oa-grid no-grid">${plots.map((p, k) => cellHtml(k, next)).join('')}</div>`],
+        ['h2', section(BARN.name, G.nordBarnOpen() ? `<small class="o-count small">${G.nordBeasts().length}/${G.nordBarnCap()}</small>` : '')],
+        ['barn', barnHtml()],
     ]);
+}
+
+// ---------------- 1.52 : l'étable de rondins ----------------
+function barnHtml() {
+    if (!G.nordBarnOpen())
+        return `<div class="card oa-pen-closed"><span class="oa-up-art">${art('ui', 'noPoeleOn')}</span><div class="card-main"><div class="card-sub">${
+            !G.chapterOpen(24)
+                ? `Finissez d’abord le chapitre ${G.chapterNum(23)} : Ingrid, la boulangère du village, attend le poêle de Tuomas.`
+                : 'Bâtissez l’étable avec Ingrid : chapitre « Les aurores d’Ingrid », Village, carte « Le Grand Nord ». Rennes, bœufs musqués et lagopèdes y vivront.'
+        }</div></div></div>`;
+    const list = G.nordBeasts();
+    const mf = G.maxFood();
+    const idx = list.map(a => state.animals.indexOf(a));
+    const frost = G.isFrost();
+    const tiles = idx.length
+        ? `<div class="stable oa-stable">${idx
+              .sort((x, y) => (state.animals[x].type < state.animals[y].type ? -1 : state.animals[x].type > state.animals[y].type ? 1 : x - y))
+              .map(i => stableTile(state.animals[i], i, mf))
+              .join('')}</div>`
+        : `<p class="empty">L’étable est vide. Rennes, bœufs musqués et lagopèdes vous attendent au marché.</p>`;
+    const big = state.nord.barnBig
+        ? ''
+        : `<div class="line">${ico(['ui', 'noPoeleOn'])}<div>Agrandir l’étable : ${BARN.cap[1]} places. ${costRow(G.costParts(BARN.upCost))}</div>${btn('Agrandir', { act: 'barnUp', size: 'sm', kind: G.hasCost(BARN.upCost) ? 'green' : '', disabled: !G.hasCost(BARN.upCost) })}</div>`;
+    return `<div class="card oa-pen">
+        <div class="oa-flow"><span class="chip ok">${ico(['ui', 'noChaleur'])}${G.nordShelterSlots()} à l’abri</span>${frost ? `<span class="chip bad">${ico(['ui', 'noFroid'])}Nuit de gel : moitié moins vite hors d’un poêle</span>` : ''}</div>
+        <div class="actions wrap">${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'] })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'] })}${btn('Acheter', { act: 'go', data: { path: 'market/shop#animals' }, size: 'sm', icon: ['ui', 'coin'] })}</div>
+        ${birthRow(BARN.key)}${assocRow(BARN.key)}${tiles}${big}
+        <p class="card-sub">Chaque poêle allumé abrite ${BARN.shelterPerStove} bêtes la nuit de gel (il brûle alors une bûche par heure). Le bœuf musqué ne craint pas le froid.</p>
+    </div>`;
 }
 
 // ---------------- planter sur une case (ou y poser un poêle) ----------------
@@ -351,6 +383,7 @@ export function setupNord() {
             }
         },
         upNord: (el, d) => G.upgradeNord(d.id, el),
+        barnUp: el => G.upNordBarn(el),
         chop: () => openChop(),
     });
     const onLong = el => openSheet('tree', { k: +el.dataset.k, z: 'nord' });

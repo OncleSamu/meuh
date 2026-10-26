@@ -612,6 +612,15 @@ export const GUIDE_PAGES = [
                 t: `Après la réserve de bois de Tuomas, le billot vous attend trois fois par jour : touchez quand le trait passe au milieu de la zone, ${NORD.chop.swings} coups, jusqu’à ${NORD.chop.max} bûches.`,
             },
             {
+                h: 'L’étable de rondins',
+                b: [
+                    'Après le chantier d’Ingrid (chapitre « Les aurores d’Ingrid »), l’étable accueille 12 bêtes, puis 20 : renne, bœuf musqué et lagopède. Elles ne vivent que là, et ne se mêlent ni aux bêtes de la ferme ni à celles de l’oasis.',
+                    'Le renne donne du lait et, de temps en temps, un bois ; le bœuf musqué du qiviut, la laine la plus chaude ; le lagopède de petits œufs, en robe blanche l’hiver et brune l’été (selon la vraie saison).',
+                    'La nuit de gel, hors d’un poêle allumé, le renne et le lagopède produisent deux fois moins vite. Chaque poêle allumé en abrite 3 (et brûle alors une bûche par heure). Le bœuf musqué ne craint pas le froid.',
+                    'Les trois bêtes ont leurs gènes au labo, leurs associations, leurs acheteurs à la foire et leur place au Comice.',
+                ],
+            },
+            {
                 h: 'Le labo et la brasserie',
                 t: 'Les six plantes ont leurs gènes et leurs variétés comme les autres. Seigle et pousses d’épicéa ensemble donnent la sahti, une grande recette de brasseur : deux étoiles de plus.',
             },

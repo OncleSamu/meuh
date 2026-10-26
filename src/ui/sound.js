@@ -230,6 +230,16 @@ export const SoundEngine = (() => {
                 tone(90, t, 0.4, { type: 'sine', vol: 0.12, glide: 70 });
                 tone(110, t + 0.45, 0.3, { type: 'sine', vol: 0.1, glide: 80 });
                 break;
+            case 'reindeer':
+                tone(240, t, 0.2, { type: 'sawtooth', vol: 0.04, glide: 200 });
+                tone(200, t + 0.2, 0.2, { type: 'sawtooth', vol: 0.035, glide: 170 });
+                break;
+            case 'muskox':
+                tone(110, t, 0.45, { type: 'sawtooth', vol: 0.05, glide: 85 });
+                break;
+            case 'ptarmigan':
+                [0, 0.06, 0.12].forEach(d => tone(600, t + d, 0.05, { type: 'square', vol: 0.035, glide: 750 }));
+                break;
             case 'dromedary':
                 tone(140, t, 0.3, { type: 'sawtooth', vol: 0.05, glide: 200 });
                 tone(180, t + 0.25, 0.35, { type: 'sawtooth', vol: 0.045, glide: 110 });

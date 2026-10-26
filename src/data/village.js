@@ -246,6 +246,13 @@ export const VILLAGERS = {
         ch: 23,
         likes: ['rye', 'lingonberry', 'cloudberry', 'bread', 'cheese', 'butter', 'honey', 'milk'],
     },
+    ingrid: {
+        id: 'ingrid',
+        name: 'Ingrid',
+        role: 'La boulangère du village du Nord',
+        ch: 24,
+        likes: ['rye', 'cloudberry', 'lingonberry', 'bread', 'butter', 'cheese', 'honey', 'milk'],
+    },
     duval: {
         id: 'duval',
         name: 'Maître Duval',
@@ -417,13 +424,20 @@ export const CHAPTERS = [
         map: 'nord',
         intro: 'Un éleveur de rennes est arrivé en traîneau : son village du Grand Nord n’a plus de bois pour l’hiver. Tuomas a besoin de vous pour rallumer le premier poêle, rentrer le bois, et planter la serre de rondins.',
     },
+    {
+        n: 24,
+        name: 'Les aurores d’Ingrid',
+        lvl: 60,
+        map: 'nord',
+        intro: 'Le poêle ronfle, le bois est rentré : le village du Nord respire. Ingrid, la boulangère, rouvre le four commun, et les bêtes du Nord cherchent une étable de rondins bien chauffée.',
+    },
 ];
 
 // 1.4 : les chapitres forment une seule histoire, jouée dans cet ordre (numéros 1 à 16 à l'écran)
 // 1.16 : récompenses des chantiers à l'échelle des 50 niveaux
 // expérience d'un chantier : au moins l'ancienne valeur, sinon une part de ce que coûte le niveau du chapitre
 export const STORY_REWARD = { xpFrac: 0.03, chapterCoins: lvl => 500 + lvl * lvl * 8, chapterRuban: 5 };
-export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12, 19, 20, 21, 22, 23];
+export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12, 19, 20, 21, 22, 23, 24];
 export const chapterNum = n => CHAPTER_ORDER.indexOf(n) + 1;
 export const chapterAfter = n => CHAPTER_ORDER[CHAPTER_ORDER.indexOf(n) - 1] || 0;
 
@@ -1870,6 +1884,23 @@ Object.assign(PROJECTS, {
         reward: 'Trois épicéas offerts et 5 rubans',
         x: 50,
         y: 26,
+        map: 'nord',
+    },
+});
+
+// ---------------- 1.52 : le Grand Nord, chapitre 24 « Les aurores d'Ingrid » ----------------
+Object.assign(PROJECTS, {
+    northStable: {
+        id: 'northStable',
+        ch: 24,
+        name: 'L’étable de rondins',
+        vid: 'ingrid',
+        need: { plank: 100, beam: 60, wood: 150, nail: 40, feed: 60 },
+        before: 'Mon cousin Tuomas dit que ses rennes ont passé trois hivers dehors. Une grande étable de rondins, des poêles tout autour, du foin à plein : et on aura du lait, des bois, et même la laine du bœuf musqué.',
+        after: 'L’étable est debout, au Grand Nord. Rennes, bœufs musqués et lagopèdes vous attendent au marché ; les poêles allumés en abritent trois chacun, la nuit de gel.',
+        reward: 'L’étable de rondins et ses trois bêtes',
+        x: 24,
+        y: 46,
         map: 'nord',
     },
 });
