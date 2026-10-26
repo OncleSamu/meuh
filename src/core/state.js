@@ -41,6 +41,7 @@ export function newState() {
         orchard: null,
         island: null,
         oasis: null, // 1.48 : l'oasis (cases, citerne, source, chadouf)
+        nord: null, // 1.51 : le Grand Nord (cases, poêles, bois)
         genetics: null,
         brew: null, // 1.6 : la brasserie de l'abbaye
         cargo: null, // 1.8 : l'avion-cargo

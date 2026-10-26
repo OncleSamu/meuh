@@ -44,7 +44,7 @@ const groundHtml = t =>
         .join('');
 
 // zone : 'farm' (le verger de la ferme) ou 'island' (le verger de l'île)
-export const anchorOf = (z, k) => `${z === 'island' ? 'itree' : z === 'oasis' ? 'otree' : 'tree'}:${k}`;
+export const anchorOf = (z, k) => `${z === 'island' ? 'itree' : z === 'oasis' ? 'otree' : z === 'nord' ? 'ntree' : 'tree'}:${k}`;
 const treeAt = (z, k) => (G.slotsOf(z)[k] || {}).tree;
 
 defineLive('tree', arg => {
@@ -178,7 +178,12 @@ defineSheet('tree', {
             ['ui', 'calendar'],
             `${t.drops} fruit${t.drops > 1 ? 's donnés' : ' donné'}${G.lifeMax(t) === Infinity ? ' : il ne vieillit jamais' : ` sur une vie d’environ ${Math.round(G.lifeMax(t))}`}`,
         ]);
-        if (d.oasis) {
+        if (d.nord) {
+            info.push([
+                ['ui', 'noChaleur'],
+                'Au Grand Nord : il pousse à plein régime près d’un poêle allumé ; ailleurs il va au tiers de sa vitesse, et dort la nuit de gel',
+            ]);
+        } else if (d.oasis) {
             info.push([
                 ['ui', 'drop'],
                 `À l’oasis : il boit ${String(d.id === 'date' ? OASIS.drink.palm : OASIS.drink.tree).replace('.', ',')} litres par heure (sauf sol plein), et attend s’il n’y a plus d’eau`,

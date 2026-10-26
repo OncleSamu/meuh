@@ -349,7 +349,7 @@ defineSheet('variety', {
         const stab = G.stability(v.g);
         const island = ITEMS[v.base].island;
         const lines = [
-            `${ico(['item', v.base])}Pousse comme : <b>${ITEMS[v.base].name.toLowerCase()}</b>${ITEMS[v.base].oasis ? ' (à l’oasis)' : island ? ' (sur l’île)' : ''}`,
+            `${ico(['item', v.base])}Pousse comme : <b>${ITEMS[v.base].name.toLowerCase()}</b>${ITEMS[v.base].nord ? ' (au Grand Nord)' : ITEMS[v.base].oasis ? ' (à l’oasis)' : island ? ' (sur l’île)' : ''}`,
             `${ico(['ui', 'star'])}Apparence : ${looksText(v.g)}${v.mut ? ' · mutation' : ''}`,
             `${ico(['ui', 'packet'])}${seeds} graine${seeds > 1 ? 's' : ''} · ${ico(['item', v.base])}${stock} en stock · se vend ×${String(Math.round(G.varietyMult(v) * 100) / 100).replace('.', ',')}`,
             ...(G.preferOf(v.base) === v.id
@@ -529,7 +529,10 @@ export function setupLab() {
             if (!v) return;
             state.genetics.tool = v.id;
             closeSheet('variety');
-            if (ITEMS[v.base].oasis) {
+            if (ITEMS[v.base].nord) {
+                ui.sel.nrVar = v.id;
+                go('farm/island#nord');
+            } else if (ITEMS[v.base].oasis) {
                 ui.sel.oaVar = v.id;
                 go('farm/island#oasis');
             } else if (ITEMS[v.base].island) {

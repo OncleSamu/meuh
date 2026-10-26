@@ -239,6 +239,13 @@ export const VILLAGERS = {
         ch: 22,
         likes: ['coriander', 'sesame', 'mint', 'saffron', 'bitterOrange', 'jujube', 'lavender', 'honey'],
     },
+    tuomas: {
+        id: 'tuomas',
+        name: 'Tuomas',
+        role: 'L’éleveur de rennes du Grand Nord',
+        ch: 23,
+        likes: ['rye', 'lingonberry', 'cloudberry', 'bread', 'cheese', 'butter', 'honey', 'milk'],
+    },
     duval: {
         id: 'duval',
         name: 'Maître Duval',
@@ -403,13 +410,20 @@ export const CHAPTERS = [
         map: 'oasis',
         intro: 'L’eau coule, les palmes font de l’ombre : il est temps que l’oasis revive. Yasmine l’herboriste veut rouvrir le souk, et Idris rêve de repartir en caravane.',
     },
+    {
+        n: 23,
+        name: 'Le poêle de Tuomas',
+        lvl: 60,
+        map: 'nord',
+        intro: 'Un éleveur de rennes est arrivé en traîneau : son village du Grand Nord n’a plus de bois pour l’hiver. Tuomas a besoin de vous pour rallumer le premier poêle, rentrer le bois, et planter la serre de rondins.',
+    },
 ];
 
 // 1.4 : les chapitres forment une seule histoire, jouée dans cet ordre (numéros 1 à 16 à l'écran)
 // 1.16 : récompenses des chantiers à l'échelle des 50 niveaux
 // expérience d'un chantier : au moins l'ancienne valeur, sinon une part de ce que coûte le niveau du chapitre
 export const STORY_REWARD = { xpFrac: 0.03, chapterCoins: lvl => 500 + lvl * lvl * 8, chapterRuban: 5 };
-export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12, 19, 20, 21, 22];
+export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12, 19, 20, 21, 22, 23];
 export const chapterNum = n => CHAPTER_ORDER.indexOf(n) + 1;
 export const chapterAfter = n => CHAPTER_ORDER[CHAPTER_ORDER.indexOf(n) - 1] || 0;
 
@@ -1814,5 +1828,48 @@ Object.assign(PROJECTS, {
         x: 40,
         y: 76,
         map: 'oasis',
+    },
+});
+
+// ---------------- 1.51 : le Grand Nord, chapitre 23 « Le poêle de Tuomas » ----------------
+Object.assign(PROJECTS, {
+    northStove: {
+        id: 'northStove',
+        ch: 23,
+        name: 'Le premier poêle',
+        vid: 'tuomas',
+        need: { stone: 120, plank: 50, tools: 20, wood: 80 },
+        before: 'Là-haut, le froid ne pardonne pas : sans feu, rien ne pousse, et la nuit gèle tout. Un bon poêle en fonte, des pierres autour, du bois qui crépite : ça tient une maison, et un jardin entier.',
+        after: 'Le poêle ronfle ! Le Grand Nord s’ouvre dans l’onglet Ferme, volet Voyages. Là-bas, chaque bûche compte : placez vos poêles pour réchauffer vos cultures.',
+        reward: 'Le Grand Nord : cases, poêles et bois (Ferme › Voyages)',
+        x: 30,
+        y: 58,
+        map: 'nord',
+    },
+    northWood: {
+        id: 'northWood',
+        ch: 23,
+        name: 'La réserve de bois',
+        vid: 'tuomas',
+        need: { wood: 200, beam: 40, plank: 40, nail: 30 },
+        before: 'Un hiver du Nord, ça se compte en stères. Une grande réserve à l’abri de la neige, une hache, un billot : et on fend de quoi tenir jusqu’au printemps.',
+        after: 'La réserve est pleine et le billot attend. Trois fois par jour, fendez quelques bûches : en rythme, ça va bien plus vite.',
+        reward: 'Fendre le bois : des bûches à la main, trois fois par jour',
+        x: 70,
+        y: 52,
+        map: 'nord',
+    },
+    northGreenhouse: {
+        id: 'northGreenhouse',
+        ch: 23,
+        name: 'La serre de rondins',
+        vid: 'tuomas',
+        need: { beam: 50, plank: 60, cloth: 20, rye: 30, lingonberry: 30 },
+        before: 'Des rondins, de la vitre, un poêle au milieu : même en plein hiver, on y fait mûrir des baies. Apportez-moi du seigle et des airelles pour la première récolte.',
+        after: 'La serre de rondins est debout, et les baies rougissent derrière les vitres. Je vous laisse trois jeunes épicéas pour abriter vos cases, et 5 rubans de la part de tout le village.',
+        reward: 'Trois épicéas offerts et 5 rubans',
+        x: 50,
+        y: 26,
+        map: 'nord',
     },
 });

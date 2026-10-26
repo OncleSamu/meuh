@@ -17,6 +17,8 @@ import { burstAt, reduceMotion } from '../fx.js';
 import { longPress } from '../longpress.js';
 import { askBuy } from '../sheets/askbuy.js';
 import { renderIsland } from './island.js';
+import { renderNord } from './nord.js';
+import { NORD } from '../../data/nord.js';
 import { treeArt, anchorOf } from './orchard.js';
 import { cuttingsHtml } from './orchard2.js';
 import { svg } from '../../art/kit.js';
@@ -26,12 +28,13 @@ import { chadouf } from '../../art/v148oasis.js';
 const PICKS = [
     ['isle', 'L’île', ['item', 'pineapple']],
     ['oasis', 'L’oasis', ['ui', 'oaOasis']],
+    ['nord', 'Le Nord', ['ui', 'noNord']],
 ];
 function renderVoyages(el) {
-    const cur = ui.sel.island === 'oasis' ? 'oasis' : 'isle';
-    const lockOasis = !G.oasisLvlOk();
+    const cur = ui.sel.island === 'oasis' || ui.sel.island === 'nord' ? ui.sel.island : 'isle';
+    const locked = id => (id === 'oasis' && !G.oasisLvlOk()) || (id === 'nord' && !G.nordLvlOk());
     const pick = segmented(
-        PICKS.map(([id, name, icon]) => [id, name, id === 'oasis' && lockOasis ? ['ui', 'lock'] : icon, 0, id === 'oasis' && lockOasis]),
+        PICKS.map(([id, name, icon]) => [id, name, locked(id) ? ['ui', 'lock'] : icon, 0, locked(id)]),
         cur,
         'voyPick',
     );
@@ -39,7 +42,7 @@ function renderVoyages(el) {
         ['vpick', pick],
         ['vbody-' + cur, '<div class="voy-body"></div>'],
     ]);
-    (cur === 'oasis' ? renderOasis : renderIsland)(el.querySelector('.voy-body'));
+    (cur === 'oasis' ? renderOasis : cur === 'nord' ? renderNord : renderIsland)(el.querySelector('.voy-body'));
 }
 defineView('farm/island', renderVoyages);
 
@@ -391,6 +394,10 @@ export function setupOasis() {
         voyPick: (el, d) => {
             if (d.v === 'oasis' && !G.oasisLvlOk()) {
                 toast(`L’oasis s’ouvre au niveau ${OASIS.lvl}`, ['ui', 'lock']);
+                return;
+            }
+            if (d.v === 'nord' && !G.nordLvlOk()) {
+                toast(`Le Grand Nord s’ouvre au niveau ${NORD.lvl}`, ['ui', 'lock']);
                 return;
             }
             ui.sel.island = d.v;

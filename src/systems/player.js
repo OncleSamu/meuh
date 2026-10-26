@@ -183,7 +183,16 @@ export function unlocksAt(lvl) {
         if (x.type === 'crop' || x.type === 'tree')
             add(
                 ['seed', x.id],
-                x.seedName + (x.needProject ? ` (après « ${PROJECTS[x.needProject].name} »)` : x.oasis ? ' (à l’oasis)' : x.island ? ' (sur l’île)' : ''),
+                x.seedName +
+                    (x.needProject
+                        ? ` (après « ${PROJECTS[x.needProject].name} »)`
+                        : x.nord
+                          ? ' (au Grand Nord)'
+                          : x.oasis
+                            ? ' (à l’oasis)'
+                            : x.island
+                              ? ' (sur l’île)'
+                              : ''),
             );
         else add(['item', x.id], `${x.name} (au magasin)`);
     });
@@ -363,6 +372,7 @@ const UNLOCK_GO = [
     ['La brasserie', 'machines/brew'],
     ['île aux Alizés', 'farm/island#isle'],
     ['oasis', 'farm/island#oasis'],
+    ['Grand Nord', 'farm/island#nord'],
     ['génétique', 'machines/lab'],
     ['grand hall du Comice', 'animals/comice'],
     ['Comice agricole', 'animals/comice'],
@@ -380,7 +390,14 @@ export function unlockGo(u) {
     if (u.go) return u.go;
     const [kind, id] = u.icon || [];
     const name = plain(u.name);
-    if (kind === 'seed') return ITEMS[id] && ITEMS[id].oasis ? 'farm/island#oasis' : ITEMS[id] && ITEMS[id].island ? 'farm/island#isle' : 'market/shop#seeds';
+    if (kind === 'seed')
+        return ITEMS[id] && ITEMS[id].nord
+            ? 'farm/island#nord'
+            : ITEMS[id] && ITEMS[id].oasis
+              ? 'farm/island#oasis'
+              : ITEMS[id] && ITEMS[id].island
+                ? 'farm/island#isle'
+                : 'market/shop#seeds';
     if (kind === 'animal') return 'market/shop#animals';
     if (kind === 'machine') return (state.machines || []).some(m => m.type === id) ? 'machines/workshop' : 'market/shop#machines';
     if (kind === 'item' && /nouvelles? recettes?/.test(name)) return 'produce:' + id;

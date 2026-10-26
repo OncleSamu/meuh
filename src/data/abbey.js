@@ -48,6 +48,12 @@ export const CLASSICS = [
         name: 'la bière blanche',
         text: 'Coriandre et écorce d’orange amère : la vraie recette de la bière blanche.',
     },
+    {
+        id: 'sahti',
+        ings: ['rye', 'spruce'],
+        name: 'la sahti',
+        text: 'Seigle et pousses d’épicéa : la sahti, la bière de ferme des pays du Nord.',
+    },
 ];
 
 // les fûts (à la cave depuis 1.6.3) : chacun donne sa note et multiplie la valeur de la bière

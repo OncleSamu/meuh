@@ -214,7 +214,9 @@ function renderSubnav() {
             ? 'elevage'
             : currentPath() === 'farm/island' && ui.sel.island === 'oasis'
               ? 'oasis'
-              : HELP[currentPath()];
+              : currentPath() === 'farm/island' && ui.sel.island === 'nord'
+                ? 'nord'
+                : HELP[currentPath()];
     patch(
         el,
         `<div class="subnav-row">` +

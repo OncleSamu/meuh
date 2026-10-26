@@ -210,9 +210,11 @@ export function doPlotAction(i, action, at) {
             if (!v) return;
             if (ITEMS[v.base].island) {
                 toast(
-                    ITEMS[v.base].oasis
-                        ? 'Cette variété pousse à l’oasis : semez-la sur une case de l’oasis'
-                        : 'Cette variété pousse sur l’île : semez-la dans les plantations de l’île',
+                    ITEMS[v.base].nord
+                        ? 'Cette variété pousse au Grand Nord : semez-la sur une case du Grand Nord'
+                        : ITEMS[v.base].oasis
+                          ? 'Cette variété pousse à l’oasis : semez-la sur une case de l’oasis'
+                          : 'Cette variété pousse sur l’île : semez-la dans les plantations de l’île',
                     ['item', v.base],
                 );
                 return;
@@ -289,7 +291,7 @@ export function doPlotAction(i, action, at) {
 export function plantSeed(plot, id) {
     const d = ITEMS[id];
     if (d.island) {
-        toast(`${d.seedName} : cette culture ne pousse que ${d.oasis ? 'à l’oasis' : 'sur l’île'}`, ['item', id]);
+        toast(`${d.seedName} : cette culture ne pousse que ${d.nord ? 'au Grand Nord' : d.oasis ? 'à l’oasis' : 'sur l’île'}`, ['item', id]);
         return false;
     }
     // des graines reçues en cadeau se plantent même avant le niveau de la culture

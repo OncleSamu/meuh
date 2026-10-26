@@ -4,6 +4,7 @@
 //   secs : sections (h : titre ; t : un paragraphe ; b : une liste) ; tips : « À retenir » ; see : pages liées
 import { ITEMS } from './items.js';
 import { OASIS, PEN, CARAVAN } from './oasis.js';
+import { NORD } from './nord.js';
 import { ANIMALS, BIRTHS } from './animals.js';
 import { FAIR, REPUTATION, REP_BONUS, COMICE, ROBEBOOK, ASSOC_LVL } from './elevage.js';
 import { ANIMAL_TRAITS } from './genetics.js';
@@ -567,6 +568,55 @@ export const GUIDE_PAGES = [
             },
         ],
         see: ['island', 'companions', 'brewery', 'labplants'],
+    },
+    {
+        id: 'nord',
+        cat: 'farm',
+        name: 'Le Grand Nord',
+        icon: ['ui', 'noNord'],
+        lvl: NORD.lvl,
+        go: 'farm/island#nord',
+        intro: 'Dans le volet Voyages, après l’île et l’oasis : un champ de neige où tout pousse, à condition d’avoir chaud.',
+        secs: [
+            {
+                h: 'Comment l’ouvrir',
+                t: `Au niveau ${NORD.lvl}, après le souk de l’oasis, rallumez le poêle de Tuomas (chapitre « Le poêle de Tuomas », Village › Village, carte « Le Grand Nord »).`,
+            },
+            {
+                h: 'Les cases',
+                b: [
+                    `${NORD.cellsBase} cases offertes, jusqu’à ${NORD.cells}. Sur chaque case, une culture, un arbre ou un poêle.`,
+                    'Cultures : seigle, airelle rouge, chicoutai. Arbres : argousier, épicéa, sorbier.',
+                    'Les variétés du labo se sèment aussi au Grand Nord ; une variété rustique résiste mieux au froid.',
+                ],
+            },
+            {
+                h: 'Le froid',
+                b: [
+                    `Hors de portée d’un poêle allumé, une plante pousse au tiers de sa vitesse le jour, et pas du tout la nuit de gel (de ${NORD.frost[0]} h à ${NORD.frost[1]} h). Elle ne meurt jamais : elle attend le feu.`,
+                    'Un flocon sur une case veut dire : elle pousse, mais hors de portée d’un poêle allumé.',
+                    'Jeu fermé, les poêles continuent de brûler et les plantes d’avancer (au plus trois jours).',
+                ],
+            },
+            {
+                h: 'Les poêles',
+                b: [
+                    'Posez un poêle sur une case libre : il réchauffe les huit cases autour de lui, à vitesse normale, même la nuit.',
+                    `Il brûle ${NORD.stove.woodHours} bûche par heure, mais seulement s’il y a une case à réchauffer autour de lui. Il garde ${NORD.stove.fuelCap[0]} heures de feu (${NORD.stove.fuelCap[1]} avec la caisse à bûches).`,
+                    'Le bois vient de la forêt, de la grange, et du billot. « Nourrir » vide la grange dans tous les poêles d’un appui.',
+                    'Améliorations : le poêle en fonte (chauffe à deux pas), l’isolation de rondins (un quart de bois en moins), la caisse à bûches.',
+                ],
+            },
+            {
+                h: 'Fendre le bois',
+                t: `Après la réserve de bois de Tuomas, le billot vous attend trois fois par jour : touchez quand le trait passe au milieu de la zone, ${NORD.chop.swings} coups, jusqu’à ${NORD.chop.max} bûches.`,
+            },
+            {
+                h: 'Le labo et la brasserie',
+                t: 'Les six plantes ont leurs gènes et leurs variétés comme les autres. Seigle et pousses d’épicéa ensemble donnent la sahti, une grande recette de brasseur : deux étoiles de plus.',
+            },
+        ],
+        see: ['oasis', 'island', 'labplants'],
     },
     {
         id: 'night',

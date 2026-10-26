@@ -147,6 +147,26 @@ export const TIPS = {
         title: 'La citerne est vide',
         text: 'L’oasis a soif : les plantes attendent l’eau sans mourir. La source remplira la citerne peu à peu ; pour aller plus vite, le chadouf, une citerne plus grande ou un puits plus profond. Et plus de palmiers : à l’ombre, on boit moins.',
     },
+    nord: {
+        icon: ['ui', 'noNord'],
+        title: 'Le Grand Nord',
+        text: 'Au Grand Nord, le froid décide de tout. Une plante hors de portée d’un poêle pousse au tiers de sa vitesse le jour, et pas du tout la nuit de gel ; elle ne meurt jamais, elle attend le feu. Posez vos poêles au milieu de vos cases : chacun réchauffe celles qui l’entourent. Ma cousine Hélène avait épousé un Finlandais. Elle écrivait que là-bas, on ne demande pas « quel temps fait-il ? » mais « as-tu assez de bois ? ».',
+    },
+    nordStove: {
+        icon: ['ui', 'noPoeleOn'],
+        title: 'Le poêle',
+        text: 'Un poêle chauffe les huit cases autour de lui, et brûle une bûche par heure, mais seulement s’il y a de quoi réchauffer. Ajoutez du bois d’un appui. Ton grand-père bourrait le poêle de la cuisine jusqu’à la gueule, puis ouvrait la fenêtre parce qu’il avait trop chaud. Il appelait ça « équilibrer ».',
+    },
+    chop: {
+        icon: ['ui', 'noFendre'],
+        title: 'Fendre le bois',
+        text: 'Trois fois par jour, fendez des bûches au billot : touchez quand le trait passe au milieu de la zone, et la bûche s’ouvre net. Papi Lucien disait que le bois bien fendu chauffe deux fois : une fois en le fendant, une fois en le brûlant. Il le disait surtout quand c’était mon tour.',
+    },
+    nordCold: {
+        icon: ['ui', 'noFroid'],
+        title: 'La nuit de gel',
+        text: 'De 21 h à 7 h, hors de portée d’un poêle allumé, plus rien ne pousse : tout dort jusqu’au matin. Un poêle plus loin, plus de bois, ou une variété rustique du labo : c’est à vous de choisir où mettre le feu. Chez nous, on rentrait les géraniums dans la cuisine à la Toussaint, et on leur parlait pour qu’ils tiennent.',
+    },
     robebook: {
         icon: ['ui', 'cpCarnet'],
         title: 'Le carnet des robes',

@@ -3,6 +3,7 @@ import { CROPS_130 } from './v130.js';
 import { TREES_131 } from './v131.js';
 import { CROPS_132 } from './v132.js';
 import { OASIS_CROPS, OASIS_TREES, OASIS_BEASTS } from './oasis.js';
+import { NORD_CROPS, NORD_TREES } from './nord.js';
 import { ANIMALS_135 } from './v135.js';
 
 // ---------------- les caractères ----------------
@@ -98,6 +99,7 @@ const F = {
     ...Object.fromEntries(TREES_131.map(t => [t[0], t[10]])), // 1.31 : les sept nouveaux arbres
     ...Object.fromEntries(CROPS_132.map(c => [c[0], c[8]])), // 1.32 : les huit cultures de l'île
     ...Object.fromEntries([...OASIS_CROPS, ...OASIS_TREES].map(c => [c[0], c[8]])), // 1.48 : les six plantes de l'oasis
+    ...Object.fromEntries([...NORD_CROPS, ...NORD_TREES].map(c => [c[0], c[8]])), // 1.51 : les six plantes du Grand Nord
     wheat: '10101',
     carrot: '30000',
     tomato: '23003',

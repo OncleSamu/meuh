@@ -80,6 +80,12 @@ export const ASSOCS = [
     A('sesameCumin', 'Sésame et cumin', 'sesame', 'cumin', 'q', { why: 'Le sésame, haut et clair, garde le cumin à l’abri du vent de sable.' }),
     A('coriandreSesame', 'Coriandre et sésame', 'coriander', 'sesame', 'r', { why: 'Les fleurs de coriandre attirent les abeilles sur le sésame.' }),
     A('cuminCoriandre', 'Cumin et coriandre', 'cumin', 'coriander', 'mq', { why: 'Deux cousines de la même famille : elles s’échangent leurs maladies.' }),
+    // 1.51 : les cultures du Grand Nord
+    A('seigleAirelle', 'Seigle et airelle', 'rye', 'lingonberry', 'q', { why: 'Le seigle, haut et serré, coupe le vent glacé qui brûle l’airelle.' }),
+    A('chicoutaiAirelle', 'Chicoutai et airelle', 'cloudberry', 'lingonberry', 'r', {
+        why: 'Dans la tourbière, elles poussent côte à côte et se tiennent chaud.',
+    }),
+    A('seigleChicoutai', 'Seigle et chicoutai', 'rye', 'cloudberry', 'mp', { why: 'Le seigle étouffe la petite plante basse du chicoutai.' }),
 ];
 export const ASSOC = Object.fromEntries(ASSOCS.map(a => [a.id, a]));
 export const isBad = a => a.fx[0] === 'm';

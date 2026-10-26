@@ -29,11 +29,17 @@ const COIN = ['ui', 'coin'];
 
 // trois vergers : celui de la ferme ('farm'), celui de l'île ('island') et les arbres de l'oasis ('oasis', 1.48)
 export const slotsOf = (z = 'farm') =>
-    z === 'island' ? (state.island && state.island.orchard) || [] : z === 'oasis' ? (state.oasis && state.oasis.orchard) || [] : state.orchard.slots;
+    z === 'island'
+        ? (state.island && state.island.orchard) || []
+        : z === 'oasis'
+          ? (state.oasis && state.oasis.orchard) || []
+          : z === 'nord'
+            ? (state.nord && state.nord.orchard) || []
+            : state.orchard.slots;
 // sous les tropiques et à l'oasis : pas d'hiver
 export const isIslandTree = id => !!ITEMS[id].island;
-export const treeZone = d => (d.oasis ? 'oasis' : d.island ? 'island' : 'farm');
-export const ZONE_WHERE = { farm: 'au verger', island: 'sur l’île', oasis: 'à l’oasis' };
+export const treeZone = d => (d.nord ? 'nord' : d.oasis ? 'oasis' : d.island ? 'island' : 'farm');
+export const ZONE_WHERE = { farm: 'au verger', island: 'sur l’île', oasis: 'à l’oasis', nord: 'au Grand Nord' };
 export const treeList = (z = 'farm') => Object.values(ITEMS).filter(i => i.type === 'tree' && treeZone(i) === z);
 export const orchardOpen = () => state.level >= ORCHARD.lvl || state.orchard.slots.some(x => x.open);
 export const openSlots = z => slotsOf(z).filter(x => x.open).length;
@@ -246,7 +252,7 @@ export function pickTree(k, at, quiet, z = 'farm') {
     const qty = t.ground + basketBonus(t.ground);
     state.inventory[t.id] += qty;
     state.stats.harvested += qty;
-    const sk = z === 'island' ? 'islandHarvest' : z === 'oasis' ? 'oasisHarvest' : 'orchardFruits';
+    const sk = z === 'island' ? 'islandHarvest' : z === 'oasis' ? 'oasisHarvest' : z === 'nord' ? 'nordHarvest' : 'orchardFruits';
     state.stats[sk] = (state.stats[sk] || 0) + qty;
     addMastery(t.id, qty);
     collect('o_' + t.id);
@@ -464,7 +470,7 @@ export function advanceTree(t, dt) {
 
 // les arbres de l'oasis avancent avec l'eau (oasis.js) : orchardTick ne s'en occupe pas
 const tickSlots = () => [...state.orchard.slots, ...slotsOf('island')];
-const allSlots = () => [...tickSlots(), ...slotsOf('oasis')];
+const allSlots = () => [...tickSlots(), ...slotsOf('oasis'), ...slotsOf('nord')];
 
 export function orchardTick() {
     let ch = false;

@@ -17,6 +17,7 @@ import { hasMachine } from './workshop.js';
 import { storyOk } from './story.js';
 import { islandOpen } from './island.js';
 import { oasisOpen } from './oasis.js';
+import { nordOpen } from './nord.js';
 import { caveOpen, hallOpen } from './cave.js';
 import { pondOpen, fishOrderOk } from './fishing.js';
 import { depthOpen } from './nature.js';
@@ -68,7 +69,7 @@ export function canGet(id) {
     if (id === 'lobster') return netOpen();
     if (i.type === 'fish') return fishOrderOk(id);
     if (i.type === 'ore' || i.type === 'gem') return Object.values(DEPTHS).some(d => depthOpen(d.id) && [...d.ores, ...d.gems].some(([x]) => x === id));
-    if (i.type === 'tree') return lvOk(i) && storyOk(i) && (i.oasis ? oasisOpen() : !i.island || islandOpen());
+    if (i.type === 'tree') return lvOk(i) && storyOk(i) && (i.nord ? nordOpen() : i.oasis ? oasisOpen() : !i.island || islandOpen());
     if (!poolMemo || poolMemo.t !== now()) poolMemo = { t: now(), ids: new Set(questPool().map(x => x.id)) };
     return poolMemo.ids.has(id);
 }

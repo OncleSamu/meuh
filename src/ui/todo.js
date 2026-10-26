@@ -53,6 +53,18 @@ export function todoList() {
         else if (G.chadoufOpen() && G.chadoufLeft() && G.oasisWater() < G.tankCap() * 0.3)
             add('farm/island#oasis', ['ui', 'oaChadouf'], 'Le chadouf vous attend', 1);
     }
+    // 1.51 : le Grand Nord : récoltes, fruits, poêles à nourrir, bois à fendre
+    if (state.nord && G.nordOpen()) {
+        const r = G.nordToPick();
+        add('farm/island#nord', ['ui', 'noNord'], `${r} récolte${s(r)} au Grand Nord`, r);
+        const dd = G.deadTrees('nord');
+        add('farm/island#nord', ['item', 'wood'], `${dd} arbre${s(dd)} mort${s(dd)} au Grand Nord`, dd);
+        if (G.nordChilly()) {
+            const out = G.stoveKeys().filter(k => !G.stoveLit(k)).length;
+            if (out) add('farm/island#nord', ['ui', 'noPoele'], `${out} poêle${s(out)} éteint${s(out)} au Grand Nord`, out, { urgent: true });
+        }
+        if (G.chopOpen() && G.chopLeft() && (state.inventory.wood || 0) < 40) add('farm/island#nord', ['ui', 'noFendre'], 'Du bois à fendre', 1);
+    }
     // le verger : un arbre au sol plein compte comme une tâche
     if (state.orchard) {
         const trees = state.orchard.slots.filter(x => x.tree);

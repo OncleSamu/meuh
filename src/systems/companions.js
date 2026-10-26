@@ -7,6 +7,7 @@ import { emit, toast, sfx, buzz } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { COLS } from '../data/farm.js';
 import { OASIS } from '../data/oasis.js';
+import { NORD } from '../data/nord.js';
 import { ASSOCS, ASSOC, COMP_LVL, COMP_FX, COMP_CAP, COMP_TIERS, MAMIE, isBad } from '../data/companions.js';
 import { earn, addXp } from './player.js';
 import { tip } from './tips.js';
@@ -25,12 +26,16 @@ export const assocLvl = a => Math.max(COMP_LVL, lvOfList(a.a), a.b === '*' ? 0 :
 const GH_COLS = 4;
 // 1.48 : les cases de l'oasis (indices à partir de 2000, 4 colonnes)
 export const OASIS_BASE = 2000;
+// 1.51 : les cases du Grand Nord (indices à partir de 3000, 4 colonnes)
+export const NORD_BASE = 3000;
 const zoneOf = i =>
-    i >= OASIS_BASE
-        ? { list: (state.oasis && state.oasis.plots) || [], cols: OASIS.cols, k: i - OASIS_BASE, base: OASIS_BASE, oasis: true }
-        : i >= 1000
-          ? { list: state.greenhouse.plots, cols: GH_COLS, k: i - 1000, base: 1000 }
-          : { list: state.grid, cols: COLS, k: i, base: 0 };
+    i >= NORD_BASE
+        ? { list: (state.nord && state.nord.plots) || [], cols: NORD.cols, k: i - NORD_BASE, base: NORD_BASE, oasis: true }
+        : i >= OASIS_BASE
+          ? { list: (state.oasis && state.oasis.plots) || [], cols: OASIS.cols, k: i - OASIS_BASE, base: OASIS_BASE, oasis: true }
+          : i >= 1000
+            ? { list: state.greenhouse.plots, cols: GH_COLS, k: i - 1000, base: 1000 }
+            : { list: state.grid, cols: COLS, k: i, base: 0 };
 export function compNeighbors(i) {
     const { list, cols, k, base } = zoneOf(i);
     const out = [];

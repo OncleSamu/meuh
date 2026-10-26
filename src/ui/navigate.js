@@ -28,6 +28,10 @@ export function produce(id) {
         go('village/village');
         return toast(G.storyLockText(it), ['ui', 'village']);
     }
+    if (it.nord && (it.type === 'tree' || it.type === 'crop')) {
+        go(G.nordOpen() ? 'farm/island#nord' : 'village/village');
+        return toast(G.nordOpen() ? `${it.name} : à cultiver au Grand Nord` : 'Rallumez d’abord le poêle de Tuomas pour rejoindre le Grand Nord', ['item', id]);
+    }
     if (it.oasis && (it.type === 'tree' || it.type === 'crop')) {
         go(G.oasisOpen() ? 'farm/island#oasis' : 'village/village');
         return toast(G.oasisOpen() ? `${it.name} : à cultiver à l’oasis` : 'Rouvrez d’abord le puits d’Idris pour rejoindre l’oasis', ['item', id]);
