@@ -641,7 +641,8 @@ export const GUIDE_PAGES = [
             {
                 h: `Le Comice agricole (niveau ${COMICE.lvl}, Animaux › Comice)`,
                 b: [
-                    `Chaque semaine, ${COMICE.cats} catégories tirées parmi vos espèces (une de plus avec le grand hall), et le potager quand vous avez des variétés au labo.`,
+                    `Chaque semaine, ${COMICE.cats} catégories tirées parmi vos espèces (une de plus avec le grand hall). Les variétés ont leur propre concours, au labo : le concours du potager.`,
+                    'Dans chaque catégorie, le jury regarde surtout une chose (les gènes, la beauté, l’affection ou la présentation) : elle compte une fois et demie.',
                     `Une bête par catégorie. La note sur 100 : gènes au-dessus de la moyenne de l’espèce ${COMICE.w.genes}, beauté (robe, motifs, cornes, toison) ${COMICE.w.beauty}, cœurs ${COMICE.w.hearts}, présentation ${COMICE.w.show}.`,
                     `La présentation : brossez la bête ${COMICE.brushTime} secondes, de la tête vers la queue. Une fois par jour ; le meilleur brossage de la semaine compte.`,
                     'Les quatre fermes voisines concourent aussi, avec une note qui grandit avec votre niveau. Résultats à la fin de la semaine.',
@@ -1605,7 +1606,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Le grand hall du Comice (niveau 43)',
-                t: 'Le chantier de l’ancien Salon de l’agriculture ouvre le grand hall : le Comice agricole a une catégorie de bêtes de plus, et ses prix sont doublés. Le potager du Comice reprend les critères du Salon (fruit le plus sucré, légume le plus épicé…) : visez-le depuis le labo des plantes.',
+                t: 'Le chantier de l’ancien Salon de l’agriculture ouvre le grand hall : le Comice agricole a une catégorie de bêtes de plus, et ses prix sont doublés. Les variétés, elles, ont le concours du potager au labo (un critère tous les deux jours : fruit le plus sucré, légume le plus épicé…).',
             },
         ],
         see: ['labplants', 'animals', 'legend'],

@@ -28,9 +28,27 @@ export const PLANT_TRAITS = [
 ];
 export const ANIMAL_TRAITS = [
     // 1.45.1 : ce que fait chaque gène, en clair (fiche de la bête et guide)
-    { id: 'rich', name: 'Richesse', icon: ['item', 'cream'], flavor: true, hint: 'avec la douceur et l’arôme, des produits plus souvent en qualité argent ou or' },
-    { id: 'soft', name: 'Douceur', icon: ['ui', 'heart'], flavor: true, hint: 'avec la richesse et l’arôme, des produits plus souvent en qualité argent ou or' },
-    { id: 'aroma', name: 'Arôme', icon: ['item', 'lavender'], flavor: true, hint: 'avec la richesse et la douceur, des produits plus souvent en qualité argent ou or' },
+    {
+        id: 'rich',
+        name: 'Richesse',
+        icon: ['item', 'cream'],
+        flavor: true,
+        hint: 'avec la douceur et l’arôme, des produits plus souvent en qualité argent ou or',
+    },
+    {
+        id: 'soft',
+        name: 'Douceur',
+        icon: ['ui', 'heart'],
+        flavor: true,
+        hint: 'avec la richesse et l’arôme, des produits plus souvent en qualité argent ou or',
+    },
+    {
+        id: 'aroma',
+        name: 'Arôme',
+        icon: ['item', 'lavender'],
+        flavor: true,
+        hint: 'avec la richesse et la douceur, des produits plus souvent en qualité argent ou or',
+    },
     { id: 'yield', name: 'Rendement', icon: ['ui', 'basket'], hint: 'parfois un produit de plus à la collecte (+5 % par point au-dessus de 2)' },
     { id: 'speed', name: 'Vitesse', icon: ['ui', 'clock'], hint: 'produit plus vite (+5 % par point au-dessus de 2)' },
     { id: 'appetite', name: 'Petit appétit', icon: ['item', 'feed'], hint: 'des repas offerts (7 % par point au-dessus de 2)' },

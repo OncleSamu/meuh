@@ -69,6 +69,7 @@ export const COMICE = {
     prizes: [0, 12000, 6000, 3000], // pièces par place (× le niveau, × 2 avec le grand hall)
     rep: [0, 6, 3, 1],
     brushTime: 10, // secondes de présentation
+    jury: 1.5, // ce que le jury regarde surtout compte une fois et demie (1.45.2)
 };
 // les noms des catégories
 export const COMICE_CAT = {
@@ -93,5 +94,4 @@ export const COMICE_CAT = {
     pheasant: 'Les faisans',
     ostrich: 'Les autruches',
     yak: 'Les yacks',
-    potager: 'Le potager',
 };

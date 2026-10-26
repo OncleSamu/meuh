@@ -3,7 +3,6 @@ import { state } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
 import { sfx, buzz } from '../../core/bus.js';
 import { COMICE, COMICE_CAT } from '../../data/elevage.js';
-import { SALON_CRITERIA } from '../../data/genetics.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc } from '../dom.js';
 import { ico, art } from '../icons.js';
@@ -13,7 +12,6 @@ import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { genWrap, animalKey } from '../genlook.js';
 import { reduceMotion } from '../fx.js';
 
-const catIcon = cat => (cat.id === 'potager' ? (SALON_CRITERIA.find(x => x.id === cat.crit) || { icon: ['item', 'carrot'] }).icon : ['animal', cat.id]);
 const PARTS = [
     ['genes', 'Gènes'],
     ['beauty', 'Beauté'],
@@ -21,36 +19,52 @@ const PARTS = [
     ['show', 'Présentation'],
 ];
 const partsLine = p => PARTS.map(([k, n]) => `${n} ${p[k]}/${COMICE.w[k]}`).join(' · ');
+// les robes des bêtes rivales (une teinte douce par bête)
+const HUES = [
+    '',
+    'sepia(.5) saturate(1.5) hue-rotate(-15deg)',
+    'brightness(1.12) saturate(.6)',
+    'sepia(.35) hue-rotate(10deg)',
+    'grayscale(.4) brightness(1.05)',
+    'sepia(.6) saturate(2) hue-rotate(-30deg) brightness(.92)',
+];
+const beastArt = a => genWrap(art('animal', animalKey(a.type, a.g)), a.g);
+const MEDAL = ['', 'medalG', 'medalS', 'medalB'];
+
+// les quatre barres de la note, celle du jury en avant
+function partBars(parts, jury) {
+    return `<div class="cm-bars">${PARTS.map(
+        ([k, n]) =>
+            `<div class="cm-bar${k === jury ? ' jury' : ''}"><span>${n}</span><i><u style="width:${Math.round(((parts ? parts[k] : 0) / COMICE.w[k]) * 100)}%"></u></i><b>${parts ? parts[k] : 0}</b></div>`,
+    ).join('')}</div>`;
+}
 
 function catCard(cat) {
     const score = G.catScore(cat),
         rank = G.catRank(cat);
     const entry = cat.entry ? G.comiceCandidates(cat.id).find(x => x.id === cat.entry) : null;
     const rows = [
-        ...cat.rivals.map(r => ({ name: G.rivalName(r.k), score: r.score })),
-        ...(score ? [{ name: entry ? `${entry.name} (vous)` : 'Vous', score, me: true }] : []),
+        ...cat.rivals.map(r => ({ who: G.rivalName(r.k), name: r.name, hue: r.hue, score: r.score })),
+        ...(score ? [{ who: 'Votre élevage', name: entry ? entry.name : '', score, me: true, a: entry && entry.a }] : []),
     ]
         .sort((a, b) => b.score - a.score || (a.me ? -1 : 1))
-        .map((r, k) => `<li class="${r.me ? 'me' : ''}"><b>${k + 1}</b><span>${esc(r.name)}</span><em>${r.score}</em></li>`)
+        .map(
+            (r, k) =>
+                `<li class="${r.me ? 'me' : ''}"><b>${k < 3 ? ico(['ui', MEDAL[k + 1]]) : k + 1}</b><span class="cm-mini" ${r.me ? '' : `style="filter:${HUES[r.hue || 0] || 'none'}"`}>${r.me && r.a ? beastArt(r.a) : art('animal', cat.id)}</span><span class="cm-who"><b>${esc(r.name || '')}</b><small>${esc(r.who)}</small></span><em>${r.score}</em></li>`,
+        )
         .join('');
-    const brushed = cat.id !== 'potager' && cat.entry && !G.canBrush(cat);
-    return `<div class="card comice-cat${rank === 1 ? ' lead' : ''}"><div class="card-head"><span class="offer-art">${art(...catIcon(cat))}</span>
-        <div class="card-main"><div class="card-title">${G.catName(cat)}</div>
-        <div class="card-sub">${entry ? `${esc(entry.name)}${entry.parts ? ` · ${partsLine(entry.parts)}` : ''}` : 'Personne d’inscrit'}</div></div>
-        <div class="comice-note"><b>${score || '—'}</b><small>${rank ? `${rank}${rank === 1 ? 're' : 'e'} place` : ''}</small></div></div>
-        <div class="row-btns">${btn(cat.entry ? 'Changer' : 'Inscrire', { act: 'comicePick', data: { cat: cat.id }, kind: cat.entry ? '' : 'gold', size: 'sm', disabled: !G.comiceCandidates(cat.id).length })}${
-            cat.id === 'potager'
-                ? ''
-                : btn(brushed ? 'Brossée aujourd’hui' : 'Brosser', {
-                      act: 'comiceBrush',
-                      data: { cat: cat.id },
-                      kind: G.canBrush(cat) ? 'green' : '',
-                      size: 'sm',
-                      disabled: !G.canBrush(cat),
-                      icon: ['ui', 'hBrosse'],
-                  })
-        }</div>
-        <ol class="ranking comice-rank">${rows}</ol></div>`;
+    const can = G.canBrush(cat);
+    const stage = entry
+        ? `<div class="cm-entrant">${beastArt(entry.a)}${rank && rank <= 3 ? `<span class="cm-medal">${ico(['ui', MEDAL[rank]])}</span>` : ''}<b>${esc(entry.name)}</b></div>`
+        : `<button class="cm-entrant empty" data-act="comicePick" data-cat="${cat.id}" ${G.comiceCandidates(cat.id).length ? '' : 'disabled'}>${art('animal', cat.id)}<b>Choisir</b></button>`;
+    return `<div class="card comice-cat${rank === 1 ? ' lead' : ''}">
+        <div class="cm-title"><span class="card-title">${G.catName(cat)}</span><span class="cm-jury">${ico(['ui', 'star'])}Le jury regarde surtout ${G.JURY[cat.jury] || ''}</span></div>
+        <div class="cm-body">${stage}<div class="cm-side"><div class="comice-note"><b>${score || '—'}</b><small>${rank ? `${rank}${rank === 1 ? 're' : 'e'} place pour l’instant` : 'sur 100'}</small></div>${partBars(entry && entry.parts, cat.jury)}</div></div>
+        <div class="row-btns">${btn(cat.entry ? 'Changer de bête' : 'Inscrire', { act: 'comicePick', data: { cat: cat.id }, kind: cat.entry ? '' : 'gold', size: 'sm', disabled: !G.comiceCandidates(cat.id).length })}${btn(
+            cat.entry && !can ? 'Brossée aujourd’hui' : 'Brosser',
+            { act: 'comiceBrush', data: { cat: cat.id }, kind: can ? 'green' : '', size: 'sm', disabled: !can, icon: ['ui', 'hBrosse'] },
+        )}</div>
+        <ol class="cm-rank">${rows}</ol></div>`;
 }
 
 function renderComice(el) {
@@ -63,8 +77,11 @@ function renderComice(el) {
         ]);
     G.comiceTick();
     const c = G.ensureComice();
-    const head = `<div class="card comice-head"><span class="offer-art">${art('ui', 'ribbon')}</span><div class="card-main"><div class="card-title">Comice de la semaine</div>
-        <div class="card-sub">Résultats dans ${timer(G.comiceEnd())}${G.comiceHall() ? ' · grand hall : prix doublés' : ''}</div></div></div>`;
+    const inLice = c.cats.map(cat => cat.entry && state.animals.find(a => a.uid === cat.entry)).filter(Boolean);
+    const head = `<div class="card comice-head"><div class="cm-bunting"></div>
+        <div class="cm-headrow"><span class="offer-art">${art('ui', 'ribbon')}</span><div class="card-main"><div class="card-title">Le Comice de la semaine</div>
+        <div class="card-sub">Résultats dans ${timer(G.comiceEnd())}${G.comiceHall() ? ' · grand hall : prix doublés' : ''}</div></div></div>
+        <div class="cm-lice">${inLice.length ? inLice.map(a => `<span class="cm-lice-b">${beastArt(a)}<small>${esc(a.name)}</small></span>`).join('') : '<small>Aucune bête en lice : inscrivez-en une dans chaque catégorie.</small>'}</div></div>`;
     const cats = c.cats.length
         ? c.cats.map(catCard).join('')
         : empty('Il faut des bêtes adultes pour concourir : le Comice tire ses catégories parmi vos espèces.');
@@ -72,10 +89,14 @@ function renderComice(el) {
         c.last && c.last.lines.length
             ? `<div class="card comice-last"><div class="card-title">La semaine dernière</div>${c.last.lines.map(([i, t]) => `<p class="card-sub">${ico(i)} ${t}</p>`).join('')}</div>`
             : '';
-    const wins = Object.entries(c.wins || {});
-    const palm = wins.length
-        ? `<div class="card comice-palm"><div class="card-title">Le palmarès de l’élevage</div><div class="chips-row wrap">${wins
-              .map(([id, n]) => `<span class="pick-chip">${ico(id === 'potager' ? ['item', 'carrot'] : ['animal', id])}${COMICE_CAT[id] || id} ×${n}</span>`)
+    // le palmarès : toutes les espèces de l'élevage, gagnées ou à gagner
+    const types = [...new Set([...G.comiceTypes(), ...Object.keys(c.wins || {})])].filter(t => COMICE_CAT[t]);
+    const palm = types.length
+        ? `<div class="card comice-palm"><div class="card-title">Le palmarès de l’élevage</div><p class="card-sub">${Object.keys(c.wins || {}).length} espèce${Object.keys(c.wins || {}).length > 1 ? 's' : ''} primée${Object.keys(c.wins || {}).length > 1 ? 's' : ''} sur ${types.length}</p><div class="cm-palm">${types
+              .map(
+                  t =>
+                      `<span class="cm-cup${c.wins[t] ? ' won' : ''}">${art('animal', t)}${c.wins[t] ? `<i>${ico(['ui', 'ribbon'])}×${c.wins[t]}</i>` : '<i>—</i>'}</span>`,
+              )
               .join('')}</div></div>`
         : '';
     blocks(el, [
@@ -86,14 +107,14 @@ function renderComice(el) {
         [
             'hint',
             hint(
-                `La note sur 100 : gènes au-dessus de la moyenne de l’espèce ${COMICE.w.genes}, beauté (robe, motifs, cornes…) ${COMICE.w.beauty}, cœurs ${COMICE.w.hearts}, présentation ${COMICE.w.show} (le brossage, une fois par jour). Premier prix : un ruban, des pièces et la plaque « Primée » : son prix double à la foire.`,
+                `La note sur 100 : gènes au-dessus de la moyenne de l’espèce ${COMICE.w.genes}, beauté (robe, motifs, cornes…) ${COMICE.w.beauty}, cœurs ${COMICE.w.hearts}, présentation ${COMICE.w.show} (le brossage, une fois par jour). Ce que le jury regarde surtout compte une fois et demie. Premier prix : un ruban, des pièces et la plaque « Primée » : son prix double à la foire.`,
             ),
         ],
     ]);
 }
 defineView('animals/comice', renderComice);
 
-// ---------------- inscrire une bête (ou une variété) ----------------
+// ---------------- inscrire une bête ----------------
 defineSheet('comicePick', {
     title: o => `Inscrire : ${G.catName(G.catOf(o.cat) || { id: o.cat })}`,
     render(o) {
@@ -105,7 +126,7 @@ defineSheet('comicePick', {
             .slice(0, 30)
             .map(
                 x =>
-                    `<button class="row comice-pick${cat.entry === x.id ? ' on' : ''}" data-act="comiceIn" data-cat="${o.cat}" data-who="${x.id}">${x.a ? `<span class="offer-art">${genWrap(art('animal', animalKey(x.a.type, x.a.g)), x.a.g)}</span>` : ''}<span class="row-main"><span>${esc(x.name)}</span><small>${x.parts ? partsLine(x.parts) : 'Note du critère'}</small></span><b class="comice-score">${x.score}</b></button>`,
+                    `<button class="row comice-pick${cat.entry === x.id ? ' on' : ''}" data-act="comiceIn" data-cat="${o.cat}" data-who="${x.id}"><span class="offer-art">${beastArt(x.a)}</span><span class="row-main"><span>${esc(x.name)}</span><small>${partsLine(x.parts)}</small></span><b class="comice-score">${x.score}</b></button>`,
             )
             .join('')}</div><p class="card-sub center">Les meilleurs d’abord. La présentation compte seulement après le brossage.</p>`;
     },

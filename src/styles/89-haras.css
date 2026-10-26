@@ -917,3 +917,279 @@
     font-weight: 700;
     color: var(--ink-soft);
 }
+
+/* 1.45.2 : un Comice plus vivant */
+.comice-head {
+    position: relative;
+    overflow: hidden;
+    padding-top: 22px;
+    display: block;
+}
+.cm-bunting {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 16px;
+    background:
+        linear-gradient(135deg, transparent 50%, var(--paper-l) 50%) 0 0 / 22px 16px,
+        linear-gradient(225deg, transparent 50%, var(--paper-l) 50%) 0 0 / 22px 16px,
+        repeating-linear-gradient(90deg, #c8453a 0 22px, #3f6fb5 22px 44px, #f5c542 44px 66px, #3f8f2e 66px 88px);
+    border-bottom: 2px solid var(--ink);
+}
+.cm-headrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.cm-lice {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+.cm-lice small {
+    color: var(--ink-soft);
+    font-weight: 700;
+}
+.cm-lice-b {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 64px;
+}
+.cm-lice-b > svg,
+.cm-lice-b > .gl {
+    width: 52px;
+    height: 52px;
+}
+.cm-lice-b small {
+    font-size: 0.68rem;
+    max-width: 64px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cm-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 8px;
+}
+.cm-jury {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    background: #fff1c2;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    padding: 1px 8px;
+}
+.cm-jury .ico {
+    width: 14px;
+    height: 14px;
+}
+.cm-body {
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    gap: 10px;
+    align-items: center;
+    margin: 8px 0;
+}
+.cm-entrant {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: radial-gradient(circle at 50% 40%, #fff8e0, #ecd9a8);
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    padding: 6px 4px;
+    font: inherit;
+    color: var(--ink);
+}
+.cm-entrant > svg,
+.cm-entrant > .gl {
+    width: 84px;
+    height: 84px;
+}
+.cm-entrant b {
+    font-size: 0.8rem;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cm-entrant.empty {
+    border-style: dashed;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+}
+.cm-entrant.empty > svg {
+    opacity: 0.3;
+    filter: grayscale(1);
+}
+.cm-medal {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+}
+.cm-medal .ico {
+    width: 26px;
+    height: 26px;
+}
+.cm-side {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+.cm-side .comice-note {
+    align-items: flex-start;
+    flex-direction: row;
+    gap: 8px;
+    align-items: baseline;
+}
+.cm-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.cm-bar {
+    display: grid;
+    grid-template-columns: 82px 1fr 22px;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+.cm-bar i {
+    height: 8px;
+    border-radius: 4px;
+    border: 1.6px solid var(--ink);
+    background: #efe6d3;
+    overflow: hidden;
+}
+.cm-bar u {
+    display: block;
+    height: 100%;
+    background: var(--leaf, #6cc04a);
+}
+.cm-bar.jury span {
+    color: #b0761a;
+}
+.cm-bar.jury u {
+    background: #f5c542;
+}
+.cm-bar b {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+.cm-rank {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.cm-rank li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    padding: 2px 8px;
+}
+.cm-rank li.me {
+    background: #fff1c2;
+}
+.cm-rank li > b {
+    width: 22px;
+    display: flex;
+    justify-content: center;
+    font-weight: 900;
+}
+.cm-rank li > b .ico {
+    width: 20px;
+    height: 20px;
+}
+.cm-mini {
+    width: 34px;
+    height: 34px;
+    flex: none;
+}
+.cm-mini svg,
+.cm-mini .gl {
+    width: 100%;
+    height: 100%;
+}
+.cm-who {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    line-height: 1.15;
+}
+.cm-who b {
+    font-size: 0.85rem;
+}
+.cm-who small {
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cm-rank em {
+    font-style: normal;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+.cm-palm {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(62px, 1fr));
+    gap: 6px;
+    margin-top: 6px;
+}
+.cm-cup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px dashed rgba(58, 38, 24, 0.35);
+    border-radius: 12px;
+    padding: 4px;
+}
+.cm-cup > svg {
+    width: 40px;
+    height: 40px;
+    opacity: 0.35;
+    filter: grayscale(1);
+}
+.cm-cup.won {
+    border-style: solid;
+    border-color: var(--ink);
+    background: #fff1c2;
+}
+.cm-cup.won > svg {
+    opacity: 1;
+    filter: none;
+}
+.cm-cup i {
+    font-style: normal;
+    font-size: 0.72rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+.cm-cup i .ico {
+    width: 14px;
+    height: 14px;
+}

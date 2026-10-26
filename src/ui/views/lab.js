@@ -1,4 +1,4 @@
-// Atelier | Labo : croiser des plantes, élever des animaux, suivre ses variétés, fixer et nommer ses créations, le Salon.
+// Atelier | Labo : croiser des plantes, élever des animaux, suivre ses variétés, fixer et nommer ses créations, le concours du potager.
 // Lisible avant tout : des icônes et des jauges, jamais de tableau de génétique.
 import { state } from '../../core/state.js';
 import { now } from '../../core/clock.js';
@@ -148,7 +148,7 @@ function goalCard() {
     if (!G.plantLabOpen()) return '';
     const goal = G.goalOf();
     const crit = G.salonCrit();
-    const salonOk = crit && crit.kind === 'plant' && G.FLAVOR_IDS.includes(crit.trait);
+    const salonOk = G.potagerOpen() && crit && crit.kind === 'plant' && G.FLAVOR_IDS.includes(crit.trait);
     const chef = state.genetics.chef && state.genetics.chef.base;
     if (!goal) {
         if (!chef && !salonOk) return '';
@@ -166,8 +166,8 @@ function goalCard() {
     let todo = '';
     if (plan && plan.done) {
         const v = G.variety(plan.done);
-        todo = `<p class="card-sub">« ${esc(G.varName(v))} » atteint le but ! ${goal.from === 'chef' ? 'Semez-la et récoltez-en assez pour le chef.' : 'Inscrivez-la au Comice (onglet Animaux).'}</p>
-            <div class="row-btns">${btn('Voir la variété', { act: 'open', data: { sheet: 'variety', id: v.id }, kind: 'green', size: 'sm' })}${goal.from === 'salon' ? btn('Inscrire', { act: 'comiceIn', data: { cat: 'potager', who: v.id }, kind: 'gold', size: 'sm' }) : ''}</div>`;
+        todo = `<p class="card-sub">« ${esc(G.varName(v))} » atteint le but ! ${goal.from === 'chef' ? 'Semez-la et récoltez-en assez pour le chef.' : 'Inscrivez-la au concours du potager.'}</p>
+            <div class="row-btns">${btn('Voir la variété', { act: 'open', data: { sheet: 'variety', id: v.id }, kind: 'green', size: 'sm' })}${goal.from === 'salon' ? btn('Inscrire', { act: 'enterSalon', data: { id: v.id }, kind: 'gold', size: 'sm' }) : ''}</div>`;
     } else if (plan) {
         const t = plan.trait && PLANT_TRAITS.find(x => x.id === plan.trait);
         const why = plan.self
@@ -177,7 +177,7 @@ function goalCard() {
         todo = `<p class="card-sub">${why}</p><div class="lab-pair small">${parentSlotStatic(plan.a)}<span class="lab-x">×</span>${parentSlotStatic(plan.b)}</div>
             ${busy ? `<p class="card-sub center">${ico(['ui', 'clock'])} Ce croisement pousse déjà : attendez sa portée.</p>` : btn(G.crossFree() ? `Lancer ce croisement · ${fmt(G.crossCost())}${ico(['ui', 'coin'])}` : 'Les pollinisations sont occupées', { act: 'planCross', kind: 'green', wide: true, disabled: !G.crossFree() })}`;
     }
-    return `<div class="card lab-card goal-card on"><div class="card-head">${ico(['ui', 'search'], 'ico big')}<div class="card-main"><div class="card-title">${goal.from === 'chef' ? 'Pour le chef' : 'Pour le Comice'}${goal.base ? ` : ${ITEMS[goal.base].name.toLowerCase()}` : ''}</div>
+    return `<div class="card lab-card goal-card on"><div class="card-head">${ico(['ui', 'search'], 'ico big')}<div class="card-main"><div class="card-title">${goal.from === 'chef' ? 'Pour le chef' : 'Pour le concours du potager'}${goal.base ? ` : ${ITEMS[goal.base].name.toLowerCase()}` : ''}</div>
         <div class="lab-ranges">${need}</div></div>${btn('', { act: 'aimGoal', data: { from: '' }, icon: ['ui', 'cross'], kind: 'ghost', size: 'sm', title: 'Abandonner ce but' })}</div>${todo}</div>`;
 }
 
@@ -241,12 +241,21 @@ function varietiesBlock() {
     return `<div class="v-grid">${list.map(varTile).join('')}</div>`;
 }
 
-// 1.45 : le Salon de l'agriculture est devenu le Comice agricole (onglet Animaux) : une carte qui y mène
+// ---------------- 1.45.2 : le concours du potager (l'ancien Salon, pour les variétés) ----------------
 function salonCard() {
-    if (!G.comiceOpen()) return '';
+    if (!G.potagerOpen()) return '';
+    const s = state.genetics.salon;
     const crit = G.salonCrit();
-    return `<button class="card salon-card" data-act="go" data-path="animals/comice"><div class="card-head">${ico(['ui', 'ribbon'], 'ico big')}<div class="card-main"><div class="card-title">Le Comice agricole</div>
-        <div class="card-sub">${crit ? `Cette semaine, le potager : ${crit.name.toLowerCase()}. Inscrivez-y votre meilleure variété.` : 'Présentez vos plus belles bêtes chaque semaine (onglet Animaux, volet Comice).'}</div></div></div></button>`;
+    if (!s || !crit) return '';
+    const rows = [...s.rivals, ...(s.entry ? [{ name: `${s.entry.name} (vous)`, score: s.entry.score, you: true }] : [])]
+        .sort((a, b) => b.score - a.score)
+        .map((r, k) => `<li class="${r.you ? 'me' : ''}"><b>${k + 1}</b><span>${esc(r.name)}</span><em>${String(r.score).replace('.', ',')}</em></li>`)
+        .join('');
+    return `<div class="card salon-card"><div class="card-head">${ico(crit.icon, 'ico big')}<div class="card-main"><div class="card-title">Le concours du potager</div>
+        <div class="card-sub">${crit.name} · se termine dans ${timer(s.end)}</div></div></div>
+        <ol class="ranking">${rows}</ol>
+        <p class="card-sub">Présentez votre meilleure variété. Premier prix : ${GX.salonRuban} ruban (${GX.salonFirstRuban} la première fois pour ce critère) et des pièces.</p>
+        ${btn(s.entry ? 'Changer de variété' : 'Inscrire une variété', { act: 'open', data: { sheet: 'salonPick' }, kind: s.entry ? '' : 'gold', wide: true })}</div>`;
 }
 
 function renderLab(el) {
@@ -430,7 +439,7 @@ defineSheet('creations', {
 
 // ---------------- inscrire au Salon ----------------
 defineSheet('salonPick', {
-    title: 'Inscrire au Salon',
+    title: 'Inscrire au concours du potager',
     render() {
         const crit = G.salonCrit();
         const list = G.salonCandidates().sort((a, b) => b.score - a.score);
@@ -533,7 +542,7 @@ export function setupLab() {
         },
     });
     on('salonResult', ({ rank, coins, rub }) => {
-        const txt = rank === 1 ? 'Premier prix au Salon !' : `${rank}e place au Salon`;
+        const txt = rank === 1 ? 'Premier prix au concours du potager !' : `${rank}e place au concours du potager`;
         toast(`${txt} ${fmt(coins)} pièces${rub ? ` et ${rub} ruban${rub > 1 ? 's' : ''}` : ''}`, ['ui', 'trophy']);
     });
 }

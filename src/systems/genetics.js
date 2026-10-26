@@ -35,6 +35,7 @@ import {
     FINISH_SEASON,
 } from '../data/genetics.js';
 import { RARE } from '../data/commerce.js';
+import { RIVALS } from '../data/village.js';
 import { spend, earn, addXp } from './player.js';
 import { projectDone, storyOk } from './story.js';
 import { isAdult, newAnimal } from './animals.js';
@@ -465,7 +466,7 @@ function checkGoal() {
     const G = state.genetics,
         o = G.goal;
     if (!o) return false;
-    const gone = o.from === 'chef' ? !G.chef || G.chef.base !== o.base : !salonCrit() || salonCrit().id !== o.crit;
+    const gone = o.from === 'chef' ? !G.chef || G.chef.base !== o.base : !G.salon || G.salon.crit !== o.crit;
     if (gone) G.goal = null;
     return gone;
 }
@@ -1069,28 +1070,28 @@ export function deliverChef(vid, at) {
 
 // ---------------- le Salon de l'agriculture ----------------
 const salonSeed = t => Math.floor(t / SALON_PERIOD);
+// 1.45.2 : l'ancien Salon devient le concours du potager (variétés seulement), ouvert avec le labo des plantes ;
+// les bêtes, elles, vont au Comice agricole (comice.js)
+const PLANT_CRITS = SALON_CRITERIA.filter(c => c.kind === 'plant');
+export const potagerOpen = () => plantLabOpen();
 export function ensureSalon() {
-    if (!salonOpen()) return false;
+    if (!potagerOpen()) return false;
     const G = state.genetics;
     const t = now();
     const k = salonSeed(t);
     if (G.salon && G.salon.k === k) return false;
     // l'ancien Salon se termine : on remet les prix
     if (G.salon && G.salon.entry && !G.salon.paid) awardSalon(G.salon);
-    const crit = SALON_CRITERIA[k % SALON_CRITERIA.length];
+    const crit = PLANT_CRITS[k % PLANT_CRITS.length];
     const lvlBoost = Math.min(1.2, (state.level - GX.lvl) * 0.08);
-    const rivals = ['La ferme des Peupliers', 'Le domaine Bellerive', 'Les Jardins du Moulin'].map((name, j) => ({
-        name,
+    const rivals = RIVALS.slice(0, 3).map((r, j) => ({
+        name: `${r.owner} · ${r.name}`,
         score: Math.round((2.8 + j * 0.6 + lvlBoost + Math.random() * 0.8) * 10) / 10,
     }));
     G.salon = { k, crit: crit.id, end: (k + 1) * SALON_PERIOD, rivals, entry: null, paid: false };
     return true;
 }
-// 1.45 : le critère du potager au Comice (l'ancien critère du Salon)
-export const salonCrit = () => {
-    const c = state.comice && Array.isArray(state.comice.cats) && state.comice.cats.find(x => x.id === 'potager');
-    return c ? SALON_CRITERIA.find(x => x.id === c.crit) : null;
-};
+export const salonCrit = () => SALON_CRITERIA.find(c => c.id === ((state.genetics && state.genetics.salon) || {}).crit);
 
 // la note d'une création pour le critère du Salon
 export function salonScore(crit, target) {
@@ -1130,7 +1131,7 @@ export function enterSalon(id) {
     if (!c) return false;
     G.salon.entry = c;
     sfx('pop');
-    toast(`${c.name} est inscrit au Salon (note ${String(c.score).replace('.', ',')})`, ['ui', 'trophy']);
+    toast(`${c.name} est inscrite au concours du potager (note ${String(c.score).replace('.', ',')})`, ['ui', 'trophy']);
     return true;
 }
 export const salonRank = s => (s.entry ? 1 + s.rivals.filter(r => r.score > s.entry.score).length : 0);
@@ -1150,14 +1151,12 @@ function awardSalon(s) {
 }
 export function salonTick() {
     const G = state.genetics;
-    if (!G || !salonOpen()) return false;
+    if (!G || !potagerOpen()) return false;
     if (G.salon && !G.salon.paid && now() >= G.salon.end) {
         if (G.salon.entry) awardSalon(G.salon);
         else G.salon.paid = true;
-        return true;
     }
-    // 1.45 : plus de nouveau Salon, le Comice agricole le remplace (comice.js)
-    return false;
+    return ensureSalon();
 }
 
 // ---------------- la seconde de jeu ----------------

@@ -105,7 +105,7 @@ export const TIPS = {
     comice: {
         icon: ['ui', 'ribbon'],
         title: 'Le Comice agricole',
-        text: 'Chaque semaine, le Comice ouvre trois catégories tirées parmi tes espèces. Inscris ta plus belle bête dans chacune : la note compte ses gènes, sa beauté, ses cœurs et sa présentation. Brosse-la une fois par jour dans le sens du poil pour gagner des points. Résultats le dimanche soir, contre les quatre fermes voisines. Au comice de 1962, ma vache Violette a mangé la cocarde du gagnant pendant la remise des prix. Le jury nous a donné un prix spécial « pour l’appétit ». Il est encore dans le tiroir de la commode.',
+        text: 'Chaque semaine, le Comice ouvre trois catégories tirées parmi tes espèces. Inscris ta plus belle bête dans chacune : la note compte ses gènes, sa beauté, ses cœurs et sa présentation, et le jury de chaque catégorie regarde surtout l’une des quatre. Brosse-la une fois par jour dans le sens du poil pour gagner des points. Résultats le dimanche soir, contre les quatre fermes voisines. Au comice de 1962, ma vache Violette a mangé la cocarde du gagnant pendant la remise des prix. Le jury nous a donné un prix spécial « pour l’appétit ». Il est encore dans le tiroir de la commode.',
     },
     nbeast: {
         icon: ['ui', 'nmEtal'],
