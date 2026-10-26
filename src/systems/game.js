@@ -1,5 +1,6 @@
 // La partie : chargement et remise en ordre de l'état, outil en main, la seconde de jeu et l'absence.
-import { state, setState, newState, fromSave, fillGrid, readSave, lvOk } from '../core/state.js';
+import { state, setState, newState, fromSave, fillGrid, readSave, lvOk, getStore, SAVE_KEY, BROKEN_KEY } from '../core/state.js';
+import { readBackups } from './savecodes.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { s, fmt, formatDuration } from '../core/format.js';
@@ -59,21 +60,71 @@ import { pondTick, trapsReady } from './fishing.js';
 export function loadGame() {
     const saved = readSave();
     let fresh = !saved;
+    loadIssue = null;
     if (saved) {
         try {
-            setState(fromSave(saved));
+            applySave(saved);
         } catch (e) {
-            console.error('Sauvegarde illisible, nouvelle partie.', e);
-            setState(newState());
-            fresh = true;
+            // 1.44 : une sauvegarde abîmée n'est plus remplacée par une ferme neuve : on la met de côté
+            // et on repart de la plus récente copie de secours lisible
+            console.error('Sauvegarde illisible.', e);
+            keepBroken();
+            fresh = !restoreFromBackups();
         }
-    } else setState(newState());
+    } else if (hasRawSave()) {
+        keepBroken();
+        fresh = !restoreFromBackups();
+    } else {
+        setState(newState());
+        finishLoad();
+    }
+    return fresh;
+}
+
+// ce qui s'est passé au chargement : { restored: date de la copie } ou { lost: true }
+export let loadIssue = null;
+
+function applySave(sv) {
+    if (!sv || typeof sv !== 'object' || !Array.isArray(sv.grid) || !Number.isFinite(sv.money) || !Number.isFinite(sv.level || 1))
+        throw new Error('sauvegarde incomplète');
+    setState(fromSave(sv));
+    finishLoad();
+}
+function finishLoad() {
     fillGrid();
     state.stats.maxLevel = Math.max(state.stats.maxLevel, state.level);
     state.stats.maxPlots = Math.max(state.stats.maxPlots, state.unlockedPlots);
     if (!isToolValid(state.selectedTool)) state.selectedTool = 'hand';
     normalizeState();
-    return fresh;
+}
+function hasRawSave() {
+    try {
+        return !!(getStore() && getStore().getItem(SAVE_KEY));
+    } catch {
+        return false;
+    }
+}
+function keepBroken() {
+    try {
+        const raw = getStore().getItem(SAVE_KEY);
+        if (raw) getStore().setItem(BROKEN_KEY, raw);
+    } catch {
+        // stockage indisponible
+    }
+}
+function restoreFromBackups() {
+    for (const b of readBackups())
+        try {
+            applySave(JSON.parse(b.data));
+            loadIssue = { restored: b.at };
+            return true;
+        } catch {
+            // copie illisible : la suivante
+        }
+    setState(newState());
+    finishLoad();
+    loadIssue = { lost: true };
+    return false;
 }
 
 // Complète les données que chaque système attend (anciennes sauvegardes, nouvelle partie)

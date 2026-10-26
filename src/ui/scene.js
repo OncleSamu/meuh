@@ -19,6 +19,8 @@ export const mix = (a, b, t) =>
         .join('');
 
 let lastBody = '';
+let lastSky = '',
+    fadeUntil = 0;
 
 export function updateScene() {
     const h = state.gameTimeMinutes / 60;
@@ -30,8 +32,18 @@ export function updateScene() {
     const scene = byId('scene');
     const g = weather().gray;
     const tint = c => (g > 0 ? mix(c, '#7d8894', g) : g < 0 ? mix(c, '#ffb46b', -g) : c);
-    scene.style.setProperty('--sky-top', tint(mix(t0, t1, t)));
-    scene.style.setProperty('--sky-bot', tint(mix(b0, b1, t)));
+    // 1.44 : le ciel ne se repeint que s'il a changé ; un fondu seulement pour un vrai saut (la météo),
+    // sinon le fondu tournerait sans arrêt et repeindrait tout l'écran à chaque image
+    const top = tint(mix(t0, t1, t)),
+        bot = tint(mix(b0, b1, t));
+    if (top + bot !== lastSky) {
+        const jump = lastSky && Math.max(...hex(top).map((v, k) => Math.abs(v - hex(lastSky.slice(0, 7))[k]))) > 12;
+        if (jump) fadeUntil = Date.now() + 1300;
+        scene.classList.toggle('sky-fade', Date.now() < fadeUntil);
+        scene.style.setProperty('--sky-top', top);
+        scene.style.setProperty('--sky-bot', bot);
+        lastSky = top + bot;
+    }
     const meta = document.querySelector('meta[name=theme-color]');
     if (meta) meta.setAttribute('content', mix(t0, t1, t));
 

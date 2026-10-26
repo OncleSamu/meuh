@@ -5,6 +5,9 @@
     pointer-events: none;
     overflow: hidden;
     background: linear-gradient(to bottom, var(--sky-top), var(--sky-bot) 70%);
+}
+
+#scene.sky-fade {
     transition:
         --sky-top 1.2s linear,
         --sky-bot 1.2s linear;
@@ -50,7 +53,9 @@
     width: 130px;
     height: 44px;
     opacity: 0.92;
+    left: 0;
     animation: drift linear infinite;
+    will-change: transform;
 }
 
 .cloud::before,
@@ -91,14 +96,14 @@
     top: 20%;
     animation-duration: 130s;
     animation-delay: -70s;
-    transform: scale(0.7);
+    scale: 0.7;
 }
 
 .cloud.c3 {
     top: 4%;
     animation-duration: 160s;
     animation-delay: -120s;
-    transform: scale(0.55);
+    scale: 0.55;
     opacity: 0.8;
 }
 
@@ -336,10 +341,10 @@ html.calm #weather .flutter {
 
 @keyframes drift {
     from {
-        left: -160px;
+        transform: translateX(-160px);
     }
     to {
-        left: 110%;
+        transform: translateX(110vw);
     }
 }
 
@@ -365,4 +370,18 @@ html.calm #weather .flutter {
     to {
         background-position: 200px -200px;
     }
+}
+
+/* 1.44 : les couches de météo invisibles ne s'animent pas (la batterie) */
+#weather > div {
+    animation-play-state: paused;
+}
+html.w-rain #weather .rain,
+html.w-storm #weather .rain,
+html.w-snow #weather .snow,
+html.w-heat #weather .heat,
+html.season-automne #weather .leaves,
+html.season-printemps #weather .petals,
+html.butterflies #weather .flutter {
+    animation-play-state: running;
 }

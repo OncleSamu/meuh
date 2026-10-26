@@ -8,6 +8,16 @@ import * as G from '../systems/index.js';
 
 const s = n => (n > 1 ? 's' : '');
 
+// 1.44 : le livre de la ferme est long à parcourir ; on le recompte au plus toutes les 3 secondes,
+// ou tout de suite quand une récompense du livre vient d'être prise
+let bookCache = null;
+function bookCounts() {
+    const key = JSON.stringify(state.bookTiers || {}).length + ':' + (state.bookQuarters || []).filter(Boolean).length;
+    const t = Date.now();
+    if (!bookCache || bookCache.key !== key || t - bookCache.t > 3000) bookCache = { key, t, pages: G.bookClaimable(), quarters: G.quartersClaimable() };
+    return bookCache;
+}
+
 export function todoList() {
     const list = [];
     const add = (go, icon, text, n = 1, extra = {}) => n > 0 && list.push({ go, icon, text, n, ...extra });
@@ -65,7 +75,7 @@ export function todoList() {
     const cw = G.counterWaiting();
     add('machines/counter', ['machine', 'counter'], `${cw} client${s(cw)} au comptoir`, cw);
     if (G.holidayReady()) push('village/orders', ['ui', HOLIDAYS[state.holiday.id].deco], `${HOLIDAYS[state.holiday.id].name} : panier à remplir`, 1);
-    const bq = G.quartersClaimable();
+    const bq = bookCounts().quarters;
     if (bq) push('sheet:book', ['ui', 'book'], 'Récompense du livre', bq);
     if (G.brewOpen() && state.brew) {
         const vr = state.brew.vats.filter(v => G.vatReady(v) && !v.loop).length;
@@ -178,7 +188,7 @@ export function todoList() {
     add('sheet:progress', ['ui', 'skillbook'], `${pts} point${s(pts)} de compétence`, pts);
     const ach = G.claimableCount();
     add('sheet:book', ['ui', 'trophy'], `${ach} succès à réclamer`, ach);
-    add('sheet:book', ['ui', 'book'], 'Page du livre complète', G.bookClaimable());
+    add('sheet:book', ['ui', 'book'], 'Page du livre complète', bookCounts().pages);
     if (G.legendReady()) add('sheet:book', ['ui', 'goldCow'], 'Ferme légendaire !');
     return list;
 }

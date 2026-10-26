@@ -1,7 +1,7 @@
 // Les réglages : son, confort, écran et installation, sauvegarde (export, import, copies de secours).
 import { state } from '../../core/state.js';
 import { dateKey } from '../../core/format.js';
-import { today } from '../../core/clock.js';
+import { today, now } from '../../core/clock.js';
 import { toast, emit } from '../../core/bus.js';
 import * as G from '../../systems/index.js';
 import { actions, esc, QUIET } from '../dom.js';
@@ -58,7 +58,14 @@ function mainPage() {
         ),
         group(
             'Sauvegarde',
-            navRow('Exporter ma ferme', 'setPage', { p: 'export' }, ['ui', 'share']) +
+            navRow(
+                'Exporter ma ferme',
+                'setPage',
+                { p: 'export' },
+                ['ui', 'share'],
+                '›',
+                s.lastExport ? `Dernier export ${G.backupAgo(s.lastExport)}` : 'Jamais exportée : un code gardé ailleurs protège votre ferme',
+            ) +
                 navRow('Importer une ferme', 'setPage', { p: 'import' }, ['ui', 'download']) +
                 '<div class="set-sub">Copies de secours (touchez deux fois pour revenir en arrière)</div>' +
                 (backups.length
@@ -222,7 +229,11 @@ export function setupSettings() {
             }
             toast('Code copié : collez-le où vous voulez le garder', ['ui', 'check']);
         },
-        shareExport: () => navigator.share({ title: 'Ma ferme dans Meuh', text: o().code }).catch(() => {}),
+        shareExport: () =>
+            navigator
+                .share({ title: 'Ma ferme dans Meuh', text: o().code })
+                .then(() => (state.settings.lastExport = now()))
+                .catch(() => {}),
         downloadExport: () => {
             const blob = new Blob([JSON.stringify(state)], { type: 'application/json' });
             const a = document.createElement('a');
@@ -232,6 +243,7 @@ export function setupSettings() {
             a.click();
             a.remove();
             setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+            state.settings.lastExport = now();
         },
         importText: (el, d) => {
             preview(o(), d.value);

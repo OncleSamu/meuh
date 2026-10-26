@@ -1,5 +1,5 @@
 // La coque de l'application : en-tête, onglets, volets, barre d'outils, rafraîchissement et sauvegarde.
-import { state, writeSave } from '../core/state.js';
+import { state, writeSave, getStore, BACKUP_KEY } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view, setView } from '../core/view.js';
 import { fmt, fmtK, formatDuration } from '../core/format.js';
@@ -267,9 +267,23 @@ export function saveNow() {
     clearTimeout(saveTimer);
     saveTimer = null;
     if (noSave) return;
-    writeSave();
+    // 1.44 : plus de place sur l'appareil ? on libère les copies de secours et on réessaie, puis on prévient (une fois)
+    if (!writeSave() && getStore()) {
+        try {
+            getStore().removeItem(BACKUP_KEY);
+        } catch {
+            // rien à libérer
+        }
+        if (!writeSave() && !saveWarned) {
+            saveWarned = true;
+            toast({ text: 'Plus de place sur l’appareil : la ferme ne se sauvegarde plus. Exportez-la depuis les Réglages.', icon: ['ui', 'download'] });
+        }
+        return;
+    }
+    saveWarned = false;
     G.pushBackup();
 }
+let saveWarned = false;
 
 // ---------------- messages ----------------
 function toast({ text, icon }) {

@@ -105,7 +105,32 @@ function start() {
     setView({ started: true, hidden: document.hidden });
     updateScene();
     refresh();
+    // 1.44 : la sauvegarde était abîmée
+    if (G.loadIssue && G.loadIssue.restored)
+        pushMoment('notice', {
+            icon: ['ui', 'download'],
+            title: 'Ferme restaurée',
+            text: [
+                `La sauvegarde de cet appareil était abîmée. Votre ferme a été reprise depuis sa copie de secours (${G.backupAgo(G.loadIssue.restored)}).`,
+                'Les dernières minutes de jeu ont pu être perdues.',
+            ],
+        });
+    else if (G.loadIssue && G.loadIssue.lost)
+        pushMoment('notice', {
+            icon: ['ui', 'download'],
+            title: 'Sauvegarde illisible',
+            text: [
+                'La sauvegarde de cet appareil était abîmée et aucune copie de secours n’a pu la remplacer : une nouvelle ferme commence.',
+                'Si vous avez exporté votre ferme, importez-la depuis les Réglages.',
+            ],
+        });
     if (away && away.lines.length && away.elapsed >= 300) pushMoment('offline', away);
+    // 1.44 : demande au navigateur de ne pas effacer la ferme quand le téléphone manque de place
+    try {
+        if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+    } catch {
+        // indisponible
+    }
     const daily = G.dailyDue();
     if (daily) pushMoment('daily', daily);
     // la seconde de jeu
@@ -129,17 +154,21 @@ function start() {
             if (back && back.lines.length && back.elapsed >= 300) pushMoment('offline', back);
             state.lastSaved = t;
         }
-        updateScene();
-        refresh();
-        updateNight();
+        // 1.44 : écran caché, le jeu avance mais ne se redessine pas (la batterie) ; tout se remet à jour au retour
+        if (!document.hidden) {
+            updateScene();
+            refresh();
+            updateNight();
+        }
         remindTick();
     };
     setInterval(secondOfGame, 1000);
     document.addEventListener('visibilitychange', () => !document.hidden && secondOfGame());
     setInterval(saveNow, 5000);
-    setInterval(wanderAnimals, 1600);
-    setInterval(wanderDog, 2200);
-    setInterval(tutoTick, 250);
+    const shown = fn => () => !document.hidden && fn();
+    setInterval(shown(wanderAnimals), 1600);
+    setInterval(shown(wanderDog), 2200);
+    setInterval(shown(tutoTick), 250);
     addEventListener('resize', () => {
         updateScene();
         tutoTick();

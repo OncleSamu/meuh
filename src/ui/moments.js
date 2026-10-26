@@ -37,6 +37,11 @@ const BUILD = {
         ok: 'Continuer',
         party: true,
     }),
+    // 1.44 : un message important sans fête (sauvegarde restaurée…)
+    notice: c => ({
+        html: `<div class="burst"><div class="burst-art">${art(c.icon[0], c.icon[1])}</div></div><h2>${c.title}</h2>${(c.text || []).map(t => `<p>${t}</p>`).join('')}`,
+        ok: 'Compris',
+    }),
     friend: ({ vid, h, r }) => {
         const v = VILLAGERS[vid];
         return {

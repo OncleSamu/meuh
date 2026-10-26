@@ -7,6 +7,7 @@ import { newChateau } from '../data/chateau.js';
 
 export const SAVE_KEY = 'meuhSave';
 export const BACKUP_KEY = SAVE_KEY + '_secours';
+export const BROKEN_KEY = SAVE_KEY + '_abimee'; // 1.44 : une sauvegarde illisible, gardée de côté
 export const SAVE_VERSION = 2;
 
 export function newState() {
