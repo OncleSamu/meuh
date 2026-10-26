@@ -132,3 +132,12 @@ test('une variété colorée entre au carnet du potager (ou du verger pour un ar
     assert.deepEqual(G.plantBookTypes('tree'), ['apple']);
     assert.equal(G.scanPlantRobes().length, 0);
 });
+
+test('le concours du potager remplace tout de suite un ancien Salon sur un critère de bête', () => {
+    farm([], 45);
+    G.ensureGenetics();
+    state.projects.pollination = { done: true };
+    state.genetics.salon = { k: Math.floor(clock.t / (2 * 24 * 3600 * 1000)), crit: 'coat', end: clock.t + 1e8, rivals: [], entry: null, paid: false };
+    G.ensureSalon();
+    assert.equal(G.salonCrit().kind, 'plant');
+});

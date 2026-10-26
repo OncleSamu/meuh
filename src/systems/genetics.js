@@ -1079,9 +1079,11 @@ export function ensureSalon() {
     const G = state.genetics;
     const t = now();
     const k = salonSeed(t);
-    if (G.salon && G.salon.k === k) return false;
+    // 1.47.2 : un ancien Salon sur un critère de bête (cornes, robe, lait…) est remplacé tout de suite par un critère de plante
+    const animalCrit = G.salon && !PLANT_CRITS.some(c => c.id === G.salon.crit);
+    if (G.salon && G.salon.k === k && !animalCrit) return false;
     // l'ancien Salon se termine : on remet les prix
-    if (G.salon && G.salon.entry && !G.salon.paid) awardSalon(G.salon);
+    if (G.salon && G.salon.entry && !G.salon.paid && !animalCrit) awardSalon(G.salon);
     const crit = PLANT_CRITS[k % PLANT_CRITS.length];
     const lvlBoost = Math.min(1.2, (state.level - GX.lvl) * 0.08);
     const rivals = RIVALS.slice(0, 3).map((r, j) => ({
