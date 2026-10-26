@@ -100,26 +100,35 @@ PLANTS.rye = [
         ryeEar(49, 30, 22, 13),
 ];
 PLANTS.lingonberry = [
-    // le produit : une petite boîte d'écorce de bouleau, pleine de grosses airelles luisantes
+    // le produit : un tas de grosses airelles luisantes, avec quelques feuilles
     () => {
         let o = SHADOW(32, 58, 24, 3);
         [
-            [24, 20],
-            [32, 17],
-            [40, 20],
-            [20, 27],
-            [28, 25],
-            [36, 25],
-            [44, 27],
-            [15, 33],
-            [23, 33],
-            [32, 32],
-            [41, 33],
-            [49, 33],
-        ].forEach(([x, y], k) => (o += berryRed(x, y, 4.6, k % 3 ? '#c8283a' : '#a81e30')));
-        o += R(9, 36, 46, 19, 4, '#e8dcc4', 2.2) + R(7, 33, 50, 6, 2.5, '#f2e8d2', 2);
-        o += [14, 22, 30, 38, 46].map(x => L(`M${x} 43 L${x + 3} 43 M${x + 2} 49 L${x + 6} 49`, 1.6, '#5a4a3a')).join('');
-        return o + linLeaf(55, 30, 60) + linLeaf(8, 30, -60);
+            [28, 24],
+            [36, 24],
+            [24, 31],
+            [32, 31],
+            [40, 31],
+            [20, 38],
+            [28, 38],
+            [36, 38],
+            [44, 38],
+            [15, 46],
+            [23, 46],
+            [32, 46],
+            [41, 46],
+            [49, 46],
+        ].forEach(([x, y], k) => (o += berryRed(x, y, 4.8, k % 3 ? '#c8283a' : '#a81e30')));
+        const lf = (x, y, a, sc = 1.5) => `<g transform="translate(${x} ${y}) scale(${sc})">${linLeaf(0, 0, a)}</g>`;
+        return (
+            o +
+            lf(12, 54, -70) +
+            lf(52, 54, 70) +
+            lf(30, 18, -20, 1.3) +
+            lf(38, 17, 25, 1.3) +
+            berryRed(44, 54, 4.2, '#d9364b') +
+            berryRed(20, 55, 4, '#a81e30')
+        );
     },
     () =>
         mound() +
