@@ -259,8 +259,20 @@ html.calm .oa-thirst {
     background: linear-gradient(rgba(255, 255, 255, 0.4), transparent 60px), linear-gradient(#e6f4ff, #f3dcae);
 }
 .oa-closed .ic-art {
-    width: 110px;
-    height: 110px;
+    flex: none;
+    align-self: center;
+    width: 84px;
+    height: 84px;
+    margin: 4px auto 0;
+    border: 2.5px solid var(--ink);
+    border-radius: 50%;
+    background: #fff7e0;
+    overflow: hidden;
+}
+.oa-closed .ic-art > * {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 /* 1.49 : une case ensablée par la tempête */
