@@ -22,6 +22,7 @@ const look = (type, { c = 0, p = 0, f = 0, halo = false }) =>
 function robesTab(o) {
     const types = G.BOOK_TYPES.filter(t => lvOk(ANIMALS[t]));
     const cur = types.includes(o.type) ? o.type : types.find(t => G.robeCount(t)) || types[0];
+    if (!cur) return '<p class="empty">Le carnet s’ouvre avec vos premières bêtes.</p>';
     const chips = `<div class="chips-row hb-types">${types
         .map(
             t =>

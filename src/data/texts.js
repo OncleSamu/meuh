@@ -260,22 +260,22 @@ export const TIPS = {
     machine: {
         icon: ['ui', 'gear'],
         title: 'Ta première machine',
-        text: "Touche « Produire » pour choisir une recette. Une machine enchaîne jusqu'à 4 lots, même différents : remplis-la avant de partir !",
+        text: 'Touche « Produire » pour choisir une recette. Une machine enchaîne jusqu’à 4 lots, même différents : remplis-la avant de partir !',
     },
     village: {
         icon: ['ui', 'village'],
         title: 'Le village a besoin de toi',
-        text: "Dans l'onglet Village, volet « Village », les habitants veulent rénover leurs bâtiments. Apporte-leur des produits : chaque chantier terminé débloque une surprise.",
+        text: 'Dans l’onglet Village, volet « Village », les habitants veulent rénover leurs bâtiments. Apporte-leur des produits : chaque chantier terminé débloque une surprise.',
     },
     barn: {
         icon: ['ui', 'barn'],
         title: 'La grange se remplit',
-        text: "Quand elle est pleine, tu ne peux plus rien récolter. Livre des commandes, vends le surplus au marché, ou agrandis-la en touchant le compteur en haut de l'écran.",
+        text: 'Quand elle est pleine, tu ne peux plus rien récolter. Livre des commandes, vends le surplus au marché, ou agrandis-la en touchant le compteur en haut de l’écran.',
     },
     rare: {
         icon: ['item', 'plank'],
         title: 'Un matériau rare !',
-        text: "Planches, clous et pots de peinture servent à agrandir la grange. On en trouve un peu partout : en récoltant, à l'atelier, dans les livraisons…",
+        text: 'Planches, clous et pots de peinture servent à agrandir la grange. On en trouve un peu partout : en récoltant, à l’atelier, dans les livraisons…',
     },
     contest: {
         icon: ['ui', 'podium'],
@@ -284,13 +284,13 @@ export const TIPS = {
     },
     fete: {
         icon: ['ui', 'trophy'],
-        title: "C'est la fête !",
-        text: "Chaque saison a sa fête, pendant une vingtaine de minutes. Remplis ses trois objectifs dans l'onglet Village pour remporter un trophée.",
+        title: 'C’est la fête !',
+        text: 'Chaque saison a sa fête, pendant une vingtaine de minutes. Remplis ses trois objectifs dans l’onglet Village pour remporter un trophée.',
     },
     soil: {
         icon: ['ui', 'soilWet'],
         title: 'Le bon sol',
-        text: "Les parcelles n'ont pas toutes le même sol : humide, sec ou ombragé. Une culture plantée dans le sol qu'elle aime pousse plus vite et donne plus souvent de belles récoltes.",
+        text: 'Les parcelles n’ont pas toutes le même sol : humide, sec ou ombragé. Une culture plantée dans le sol qu’elle aime pousse plus vite et donne plus souvent de belles récoltes.',
     },
     train: {
         icon: ['ui', 'trainIcon'],
@@ -300,7 +300,7 @@ export const TIPS = {
     balloon: {
         icon: ['ui', 'balloon'],
         title: 'Une montgolfière !',
-        text: "Les clients de l'auberge passent une grosse commande, très bien payée, avec deux matériaux rares. Elle repart au bout d'une heure.",
+        text: 'Les clients de l’auberge passent une grosse commande, très bien payée, avec deux matériaux rares. Elle repart au bout d’une heure.',
     },
     merchant: {
         icon: ['ui', 'merchant'],
@@ -314,8 +314,8 @@ export const TIPS = {
     },
     stall: {
         icon: ['ui', 'stall'],
-        title: "L'étal de la ferme",
-        text: "Ici, vous fixez le prix. Au prix normal, un client passe en un quart d'heure environ ; moins cher, il vient plus vite. Le grossiste, plus bas, achète tout de suite mais paie bien moins.",
+        title: 'L’étal de la ferme',
+        text: 'Ici, vous fixez le prix. Au prix normal, un client passe en un quart d’heure environ ; moins cher, il vient plus vite. Le grossiste, plus bas, achète tout de suite mais paie bien moins.',
     },
     neighbors: {
         icon: ['ui', 'heart'],
@@ -350,7 +350,7 @@ export const TIPS = {
     mastery: {
         icon: ['ui', 'medalB'],
         title: 'Première maîtrise !',
-        text: 'Plus tu produis un même produit, plus tu le maîtrises : bronze, argent puis or. Chaque étoile augmente son prix. Retrouve tout dans le Livre de la ferme (onglet Progrès).',
+        text: 'Plus tu produis un même produit, plus tu le maîtrises : bronze, argent puis or. Chaque étoile augmente son prix. Retrouve tout dans le Livre de la ferme (onglet Maîtrise).',
     },
     hamlet: {
         icon: ['villager', 'jules'],
@@ -364,13 +364,13 @@ export const TIPS = {
     },
     storm: {
         icon: ['ui', 'w_storm'],
-        title: "Gare à l'orage",
-        text: "Pendant l'orage, tout pousse plus vite, mais la foudre peut brûler une culture. Un paratonnerre, posé n'importe où dans le champ, protège tout le champ.",
+        title: 'Gare à l’orage',
+        text: 'Pendant l’orage, tout pousse plus vite, mais la foudre peut brûler une culture. Un paratonnerre, posé n’importe où dans le champ, protège tout le champ.',
     },
     album: {
         icon: ['ui', 'camera'],
         title: 'Ton premier souvenir',
-        text: "À chaque grand moment, une photo rejoint l'album du Livre de la ferme (onglet Progrès). Tu peux la regarder et la partager.",
+        text: 'À chaque grand moment, une photo rejoint l’album du Livre de la ferme (onglet Album). Tu peux la regarder et la partager.',
     },
     rareEvent: {
         icon: ['ui', 'fair'],

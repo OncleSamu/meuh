@@ -211,3 +211,8 @@ small {
             0 0 0 6px rgba(232, 54, 75, 0.25);
     }
 }
+.ico > img {
+    width: 100%;
+    height: 100%;
+    display: block;
+}

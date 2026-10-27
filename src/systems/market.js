@@ -65,10 +65,16 @@ export function sellBatch(id, n, apply) {
         [1, take.s],
         [0, take.n],
     ];
+    // 1.59 : le même calcul que unitPrice, dans le même ordre, mais les facteurs fixes ne sont lus qu'une fois
+    const base = ITEMS[id].sell * masteryMult(id) * marketMult() * priceMult(),
+        hot = state.market.hot === id ? HOT_MULT : 1,
+        ev = eventSellMult(),
+        floor = demandFloor(id),
+        drop = dropPer(id);
     for (const [ql, cnt] of seq)
         for (let k = 0; k < cnt; k++) {
-            gain += unitPrice(id, ql, f);
-            f = Math.max(Math.min(f, demandFloor(id)), f - dropPer(id));
+            gain += Math.max(1, Math.floor(base * QUALITY[ql].mult * f * hot * ev));
+            f = Math.max(Math.min(f, floor), f - drop);
         }
     const sold = take.d + take.p + take.g + take.s + take.n;
     if (apply) {

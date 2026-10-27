@@ -457,12 +457,12 @@ function goodsGrid() {
                 [2, 'g'],
                 [1, 's'],
             ]
-                .map(([r, f]) => (q[f] ? `<span class="qchip">${qStar(r)}${q[f]}</span>` : ''))
+                .map(([r, f]) => (q[f] ? `<span class="qchip">${qStar(r)}${fmt(q[f])}</span>` : ''))
                 .join('');
             return `<div class="goods${k === hot ? ' hot' : ''}" data-anchor="goods:${k}">
                 ${k === hot ? '<span class="hot-tag">+50 %</span>' : ''}
                 <span class="goods-art">${art('item', k)}</span>
-                <b class="goods-name">${it.name} <small>×${n}</small></b>
+                <b class="goods-name">${it.name} <small>×${fmt(n)}</small></b>
                 ${qs ? `<span class="qrow">${qs}</span>` : ''}
                 ${G.isLocked(k) ? `<span class="reserved">${ico(['ui', 'lock'])} verrouillé</span>` : keep ? `<span class="reserved">${keep} gardé${keep > 1 ? 's' : ''}</span>` : ''}
                 <span class="unit">${COIN()}${fmt(G.unitPrice(k, 0))} ${trend}</span>

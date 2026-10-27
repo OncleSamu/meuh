@@ -220,7 +220,7 @@ function stableHtml(k) {
     return state.pastures
         .map((p, j) =>
             G.pastureLoad(j)
-                ? `<h3 class="section-title st-head"><span>${esc(p.name)}</span>${renameBtn('pasture', j, 'Renommer ce pré')}<small>${G.pastureLoad(j)}/20</small></h3><div class="stable">${group(j)}</div>`
+                ? `<h3 class="section-title st-head"><span>${esc(p.name)}</span>${renameBtn('pasture', j, 'Renommer ce pré')}<small>${G.pastureLoad(j)}/${G.penCap()}</small></h3><div class="stable">${group(j)}</div>`
                 : '',
         )
         .join('');
@@ -259,7 +259,7 @@ function pastureBar(mode, cur) {
     const chips = state.pastures
         .map((p, k) => {
             const n = G.pastureLoad(k);
-            return `<button class="pas-chip${cur === k ? ' on' : ''}${n >= 20 ? ' full' : ''}" data-act="pickPasture" data-k="${k}"><span>${esc(p.name)}</span><small>${n}/20</small></button>`;
+            return `<button class="pas-chip${cur === k ? ' on' : ''}${n >= G.penCap() ? ' full' : ''}" data-act="pickPasture" data-k="${k}"><span>${esc(p.name)}</span><small>${n}/${G.penCap()}</small></button>`;
         })
         .join('');
     const all =
@@ -430,7 +430,7 @@ defineSheet('animal', {
                           .map((p, k) => {
                               const here = (a.p || 0) === k,
                                   full = !here && G.pastureFree(k) <= 0;
-                              return `<button class="pick-chip${here ? ' on' : ''}" data-act="moveAnimal" data-i="${i}" data-k="${k}" ${full ? 'disabled' : ''}><span>${esc(p.name)}</span><small>${G.pastureLoad(k)}/20</small></button>`;
+                              return `<button class="pick-chip${here ? ' on' : ''}" data-act="moveAnimal" data-i="${i}" data-k="${k}" ${full ? 'disabled' : ''}><span>${esc(p.name)}</span><small>${G.pastureLoad(k)}/${G.penCap()}</small></button>`;
                           })
                           .join('')}</div>`
                     : ''

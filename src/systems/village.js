@@ -17,9 +17,18 @@ export function ensureVillagers() {
 
 export const heartsOf = id => (state.villagers[id] && state.villagers[id].hearts) || 0;
 
+// 1.59 : la recette qu'apprend chaque villageois à chaque cœur, rangée une fois
+let TEACH = null;
+const teacherRecipe = (vid, h) => {
+    if (!TEACH) {
+        TEACH = new Map();
+        for (const r of Object.values(RECIPES)) if (r.teacher && !TEACH.has(r.teacher + ':' + r.hearts)) TEACH.set(r.teacher + ':' + r.hearts, r);
+    }
+    return TEACH.get(vid + ':' + h);
+};
 export function heartReward(vid, h) {
     const v = VILLAGERS[vid];
-    const recipe = Object.values(RECIPES).find(r => r.teacher === vid && r.hearts === h);
+    const recipe = teacherRecipe(vid, h);
     const crop = v.likes.find(id => ITEMS[id].type === 'crop') || 'wheat';
     if (h === 1) return { coins: 200, seeds: [crop, 5], recipe: recipe && recipe.id };
     if (h === 2) return recipe ? { coins: 300, recipe: recipe.id } : { coins: 600, feed: 10 };

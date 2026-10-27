@@ -108,7 +108,7 @@ function renderStud(el) {
         ['fs', section('Poulains et descendants')],
         ...(foals.length
             ? foals.map(a => ['f' + a.uid, foalCard(a)])
-            : [['fn', '<div class="card"><small>Croisez deux chevaux à l’étable de sélection (onglet Labo) pour avoir des poulains.</small></div>']]),
+            : [['fn', '<div class="card"><small>Croisez deux chevaux à l’étable de sélection (Atelier, volet Labo) pour avoir des poulains.</small></div>']]),
     ]);
 }
 export { renderStud }; // 1.44.2 : dans le volet Haras (voir haras.js)

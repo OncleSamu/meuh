@@ -145,15 +145,15 @@ export const EVENTS = {
     printemps: {
         name: 'Chasse aux œufs',
         icon: ['item', 'paintedEgg'],
-        effect: "Des œufs décorés se cachent dans le champ : touchez-les avant qu'ils ne disparaissent.",
+        effect: 'Des œufs décorés se cachent dans le champ : touchez-les avant qu’ils ne disparaissent.',
     },
     ete: {
-        name: "Fête de l'été",
+        name: 'Fête de l’été',
         icon: ['ui', 's_summer'],
         effect: 'Le marché est en fête : toutes les ventes rapportent 25 % de plus.',
     },
     automne: {
-        name: "Foire d'automne",
+        name: 'Foire d’automne',
         icon: ['ui', 'trophy'],
         effect: 'Le concours récompense les récoltes de qualité or : présentez vos plus belles.',
     },

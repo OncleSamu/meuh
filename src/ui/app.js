@@ -1,4 +1,5 @@
 // La coque de l'application : en-tête, onglets, volets, barre d'outils, rafraîchissement et sauvegarde.
+import { frenchSpaces } from './typo.js';
 import { state, writeSave, getStore, BACKUP_KEY } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view, setView } from '../core/view.js';
@@ -278,7 +279,8 @@ export const defineLive = (kind, fn) => (LIVE[kind] = fn);
 export function live() {
     const t = now();
     $$('[data-until]').forEach(el => {
-        const txt = formatDuration(Math.max(0, (+el.dataset.until - t) / 1000));
+        // déjà mis en forme (espaces insécables) : la typographie n'a pas à le réécrire chaque seconde
+        const txt = frenchSpaces(formatDuration(Math.max(0, (+el.dataset.until - t) / 1000)));
         if (el.textContent !== txt) el.textContent = txt;
     });
     $$('[data-live]').forEach(el => {

@@ -425,7 +425,8 @@ export function offlineProgress() {
     const ready = state.quests.filter(checkQuestReady).length;
 
     const lines = [];
-    const add = (cond, icon, text) => cond && lines.push([icon, text]);
+    // 1.59 : « 36 437 fruits », pas « 36437 fruits »
+    const add = (cond, icon, text) => cond && lines.push([icon, text.replace(/\d{4,}/g, n => Number(n).toLocaleString('fr-FR'))]);
     add(crops, ['item', 'wheat'], `${crops} culture${s(crops)} prête${s(crops)} à récolter`);
     add(isl, ['item', 'pineapple'], `${isl} culture${s(isl)} prête${s(isl)} sur l’île`);
     add(oas.crops + oas.fruits, ['ui', 'oaOasis'], `${oas.crops + oas.fruits} récolte${s(oas.crops + oas.fruits)} à faire à l’oasis`);

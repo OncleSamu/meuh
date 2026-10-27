@@ -45,7 +45,7 @@ export const MACHINES = {
         name: 'Fumoir',
         cost: 5000,
         reqLvl: 13,
-        desc: "Poissons fumés et plats de l'étang",
+        desc: 'Poissons fumés et plats de l’étang',
     },
     press: {
         id: 'press',
@@ -185,7 +185,7 @@ export const MACHINES = {
     },
     alpineDairy: {
         id: 'alpineDairy',
-        name: "Fromagerie d'alpage",
+        name: 'Fromagerie d’alpage',
         cost: 50000,
         reqLvl: 40,
         needProject: 'alpinedairy',

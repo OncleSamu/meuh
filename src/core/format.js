@@ -2,6 +2,9 @@
 
 export function fmt(n) {
     n = Math.floor(n);
+    if (!Number.isFinite(n)) return '∞';
+    // 1.59 : au-delà de mille milliards, les milliards restent groupés (« 12 400 Md »), jamais en écriture scientifique
+    if (n >= 1e12) return n >= 1e21 ? '∞' : Math.round(n / 1e9).toLocaleString('fr-FR') + ' Md';
     if (n >= 1e9)
         return (
             (n / 1e9)
@@ -35,8 +38,9 @@ export function formatDuration(s) {
         m = Math.floor((s % 3600) / 60),
         r = s % 60;
     if (h >= 48) return `${Math.floor(h / 24)} j ${h % 24} h`;
-    if (h > 0) return `${h} h ${String(m).padStart(2, '0')}`;
-    if (m > 0) return `${m} min ${String(r).padStart(2, '0')}`;
+    // 1.59 : pas de « 45 min 00 » ni de « 2 h 00 » : une durée ronde s'écrit ronde
+    if (h > 0) return m ? `${h} h ${String(m).padStart(2, '0')}` : `${h} h`;
+    if (m > 0) return r ? `${m} min ${String(r).padStart(2, '0')}` : `${m} min`;
     return `${r} s`;
 }
 

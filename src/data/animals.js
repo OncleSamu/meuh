@@ -80,7 +80,7 @@ export const ANIMALS = {
     },
     bees: {
         id: 'bees',
-        name: "Ruche d'élevage",
+        name: 'Ruche d’élevage',
         prodId: 'wax',
         cost: 6000,
         time: 900,

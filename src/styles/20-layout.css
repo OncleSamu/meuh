@@ -457,3 +457,18 @@ body.wide #tabs {
         flex: 3.8 1 0;
     }
 }
+/* 1.59 : sur un petit téléphone, les noms des onglets tiennent en entier (« Production », « Concours ») */
+@media (max-width: 400px) {
+    .seg > button {
+        gap: 4px;
+        padding: 5px 4px;
+        font-size: 0.84rem;
+    }
+    .seg > button .ico {
+        width: 21px;
+        height: 21px;
+    }
+    .subnav-row .seg.n5 > button.on {
+        flex: 4.6 1 0;
+    }
+}

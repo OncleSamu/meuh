@@ -101,7 +101,7 @@ export const HOUSE = [
     {
         lvl: 23,
         name: 'Maison à étage',
-        bonus: "+1 place dans la file d'attente de chaque machine",
+        bonus: '+1 place dans la file d’attente de chaque machine',
         cost: {
             coins: 60000,
             beam: 12,
@@ -112,7 +112,7 @@ export const HOUSE = [
     {
         lvl: 32,
         name: 'Belle demeure',
-        bonus: "+1 place à l'étal",
+        bonus: '+1 place à l’étal',
         cost: {
             coins: 200000,
             beam: 20,

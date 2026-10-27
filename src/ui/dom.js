@@ -63,6 +63,8 @@ export function setupActions() {
     document.addEventListener('click', e => {
         const el = e.target.closest('[data-act]');
         if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true') return;
+        // 1.59 : un second appui sur une fenêtre qui se ferme ne fait plus rien (ses options n'existent plus)
+        if (el.closest('.sheet-wrap.out')) return e.preventDefault();
         e.preventDefault();
         run(el.dataset.act, el, el.dataset);
     });

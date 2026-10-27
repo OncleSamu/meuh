@@ -28,7 +28,7 @@ export const RECIPES_150 = [
     // le tajine
     ['lemonTajine', 'Tajine de pintade au citron confit', 'tajine', { guineaFowl: 1, preservedLemon: 1, olive: 2, citron: 1 }, 600, 59],
     ['vegTajine', 'Tajine de légumes', 'tajine', { carrot: 2, zucchini: 1, rasElHanout: 1, argan: 1 }, 480, 59],
-    ['couscous', 'Couscous aux légumes', 'tajine', { semolina: 1, sorghum: 1, carrot: 1, zucchini: 1, chickpea: 1, citron: 1 }, 540, 59],
+    ['couscous', 'Couscous au sorgho', 'tajine', { semolina: 1, sorghum: 1, carrot: 1, zucchini: 1, chickpea: 1, citron: 1 }, 540, 59],
     ['chakchouka', 'Chakchouka', 'tajine', { tomato: 2, pepper: 2, egg: 2, cumin: 1 }, 420, 59],
     ['harira', 'Harira', 'tajine', { tomato: 2, lentil: 1, chickpea: 1, coriander: 1, tamarind: 1 }, 480, 59],
     ['keftas', 'Keftas au cumin', 'tajine', { beef: 1, cumin: 1, onion: 1, coriander: 1, tamarind: 1 }, 420, 59],

@@ -47,6 +47,18 @@
     width: 32px;
     height: 32px;
 }
+.cseat {
+    position: relative;
+}
+/* le client renvoyé : la croix va dans le coin, les deux boutons restent sur une ligne */
+.cseat .cs-name {
+    padding-right: 38px;
+}
+.cs-acts .btn[data-act='seatAway'] {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
 .cs-acts {
     display: flex;
     gap: 6px;

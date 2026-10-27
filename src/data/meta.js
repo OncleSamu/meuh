@@ -8,19 +8,19 @@ export const ACHIEVEMENTS = [
     { id: 'harvested', name: 'Main verte', desc: 'Récolter {n} cultures', icon: ['item', 'wheat'], tiers: [50, 500, 5000] },
     { id: 'earned', name: 'Bas de laine', desc: 'Gagner {n} pièces au total', icon: ['ui', 'coin'], tiers: [5000, 100000, 2000000] },
     { id: 'collected', name: 'Ami des bêtes', desc: 'Ramasser {n} produits animaux', icon: ['item', 'egg'], tiers: [20, 250, 2500] },
-    { id: 'crafted', name: 'Artisan', desc: "Fabriquer {n} produits à l'atelier", icon: ['item', 'bread'], tiers: [10, 150, 1500] },
+    { id: 'crafted', name: 'Artisan', desc: 'Fabriquer {n} produits à l’atelier', icon: ['item', 'bread'], tiers: [10, 150, 1500] },
     { id: 'orders', name: 'Serviable', desc: 'Livrer {n} commandes du village', icon: ['ui', 'scroll'], tiers: [5, 50, 300] },
     { id: 'trucks', name: 'Routier', desc: 'Remplir {n} trains complets', icon: ['ui', 'trainIcon'], tiers: [3, 25, 150] },
     { id: 'wagons', name: 'Chef de gare', desc: 'Charger {n} wagons', icon: ['ui', 'trainIcon'], tiers: [10, 80, 400] },
     { id: 'projects', name: 'Bâtisseur', desc: 'Rénover {n} bâtiment{s} du village', icon: ['ui', 'village'], tiers: [1, 4, 8] },
     { id: 'pests', name: 'Garde champêtre', desc: 'Chasser {n} invasions de pucerons', icon: ['ui', 'pest'], tiers: [1, 10, 50] },
     { id: 'crows', name: 'Épouvanteur', desc: 'Chasser {n} corbeaux', icon: ['ui', 'crow'], tiers: [5, 40, 200] },
-    { id: 'golden', name: "Doigts d'or", desc: 'Faire {n} récolte{s} dorée{s}', icon: ['ui', 'star'], tiers: [1, 10, 50] },
+    { id: 'golden', name: 'Doigts d’or', desc: 'Faire {n} récolte{s} dorée{s}', icon: ['ui', 'star'], tiers: [1, 10, 50] },
     { id: 'maxLevel', name: 'Expérience', desc: 'Atteindre le niveau {n}', icon: ['ui', 'xp'], tiers: [10, 30, 50] },
     { id: 'maxPlots', name: 'Grand domaine', desc: 'Posséder {n} parcelles', icon: ['ui', 'barn'], tiers: [18, 30, 48] },
     { id: 'prestiges', name: 'Renaissance', desc: 'Vendre la ferme {n} fois', icon: ['ui', 'ribbon'], tiers: [1, 3, 10] },
     { id: 'cooked', name: 'Cordon bleu', desc: 'Cuisiner {n} plats', icon: ['item', 'pie'], tiers: [5, 50, 400] },
-    { id: 'hearts', name: 'Âme du village', desc: "Gagner {n} cœurs d'amitié", icon: ['ui', 'heart'], tiers: [5, 15, 30] },
+    { id: 'hearts', name: 'Âme du village', desc: 'Gagner {n} cœurs d’amitié', icon: ['ui', 'heart'], tiers: [5, 15, 30] },
     { id: 'goldQ', name: 'Qualité supérieure', desc: 'Récolter {n} cultures de qualité or', icon: ['ui', 'star'], tiers: [5, 50, 500] },
     { id: 'eventsDone', name: 'Esprit de fête', desc: 'Remporter {n} trophée{s} de fête', icon: ['ui', 'trophy'], tiers: [1, 4, 12] },
     { id: 'contracts', name: 'Habitué des concours', desc: 'Ouvrir {n} coffre{s} du concours de la semaine', icon: ['ui', 'chest'], tiers: [1, 5, 20] },
@@ -43,8 +43,8 @@ export const SKILLS = {
         list: [
             { id: 'green', name: 'Main verte', max: 3, icon: ['item', 'carrot'], desc: 'Les cultures poussent {x} % plus vite', per: 5 },
             { id: 'bounty', name: 'Récolte généreuse', max: 3, icon: ['ui', 'basket'], desc: '+{x} % de chances de double récolte', per: 4 },
-            { id: 'expert', name: "Œil d'expert", max: 2, icon: ['star', 2], desc: '+{x} % de chances de qualité argent ou or', per: 5 },
-            { id: 'midas', name: "Toucher d'or", max: 1, cap: true, icon: ['ui', 'star'], desc: 'Les récoltes dorées sont 60 % plus fréquentes' },
+            { id: 'expert', name: 'Œil d’expert', max: 2, icon: ['star', 2], desc: '+{x} % de chances de qualité argent ou or', per: 5 },
+            { id: 'midas', name: 'Toucher d’or', max: 1, cap: true, icon: ['ui', 'star'], desc: 'Les récoltes dorées sont 60 % plus fréquentes' },
         ],
     },
     elev: {
@@ -78,8 +78,8 @@ export const SKILLS = {
 
 // ---------------- Défis de prestige ----------------
 export const CHALLENGES = {
-    noAnimals: { name: 'Sans animaux', desc: "Impossible d'acheter des animaux", icon: ['animal', 'chicken'] },
-    winter: { name: 'Hiver éternel', desc: "La saison reste bloquée sur l'hiver", icon: ['ui', 's_winter'] },
+    noAnimals: { name: 'Sans animaux', desc: 'Impossible d’acheter des animaux', icon: ['animal', 'chicken'] },
+    winter: { name: 'Hiver éternel', desc: 'La saison reste bloquée sur l’hiver', icon: ['ui', 's_winter'] },
     smallField: { name: 'Petit lopin', desc: 'Le champ ne dépasse pas 12 parcelles', icon: ['ui', 'lock'] },
     noMarket: { name: 'Marché fermé', desc: 'Pas de vente au marché : seuls les commandes et les trains rapportent', icon: ['ui', 'crate'] },
 };
@@ -97,7 +97,7 @@ export const FISH = {
         zone: 0.34,
         speed: 1,
         odds: 30,
-        hint: "Toute l'année",
+        hint: 'Toute l’année',
         spots: ['bank', 'reeds'],
         bait: ['worm'],
         fight: 'calm',
@@ -110,7 +110,7 @@ export const FISH = {
         zone: 0.36,
         speed: 1.1,
         odds: 30,
-        hint: "Toute l'année, sur la berge",
+        hint: 'Toute l’année, sur la berge',
         spots: ['bank'],
         bait: ['worm'],
         fight: 'calm',
@@ -230,7 +230,7 @@ export const FISH = {
         speed: 1.6,
         odds: 5,
         when: { weather: ['rain', 'storm'] },
-        hint: "Par temps de pluie ou d'orage, roseaux et ponton",
+        hint: 'Par temps de pluie ou d’orage, roseaux et ponton',
         spots: ['reeds', 'pier'],
         bait: ['live'],
         fight: 'pull',
@@ -273,7 +273,7 @@ export const FISH = {
         bait: ['live'],
         fight: 'pull',
     },
-    goldfish: { name: 'Poisson doré', sell: 2000, w: [0.2, 0.6], zone: 0.1, speed: 2.1, odds: 1.2, hint: "Très rare, n'importe où", fight: 'dart' },
+    goldfish: { name: 'Poisson doré', sell: 2000, w: [0.2, 0.6], zone: 0.1, speed: 2.1, odds: 1.2, hint: 'Très rare, n’importe où', fight: 'dart' },
     boot: { name: 'Vieille botte', sell: 1, w: [0.8, 1.2], zone: 0.45, speed: 0.8, odds: 3, hint: 'On en pêche toujours une…', junk: true, fight: 'calm' },
 };
 
@@ -284,7 +284,7 @@ Object.assign(FISH, FISH_133);
 // 1.18 : le Grand livre. icon : [genre, id] ; abs : paliers en nombre (pages qui grandissent avec la partie) ;
 // machines : les machines dont les recettes forment la page ; dyn : la page n'entre pas dans le total du livre.
 export const BOOK_PAGES = [
-    { id: 'garden', name: "Potager d'or", icon: ['item', 'carrot'] },
+    { id: 'garden', name: 'Potager d’or', icon: ['item', 'carrot'] },
     { id: 'orchard', name: 'Verger', icon: ['item', 'apple'] },
     { id: 'varieties', name: 'Variétés du labo', icon: ['item', 'strawberry'], abs: [1, 3, 6, 10], dyn: true, unit: 'variété fixée' },
     { id: 'fish', name: 'Poissons', icon: ['item', 'perch'] },
@@ -315,7 +315,7 @@ export const BOOK_PAGES = [
 export const TREASURES = [
     { key: 't_fossil', icon: ['item', 'fossil'], name: 'Fossile', hint: 'Caché dans les rochers de la mine' },
     { key: 't_amethyst', icon: ['item', 'amethyst'], name: 'Améthyste', hint: 'Caché dans les rochers de la mine' },
-    { key: 't_nugget', icon: ['item', 'nugget'], name: "Pépite d'or", hint: 'Caché dans les rochers de la mine' },
+    { key: 't_nugget', icon: ['item', 'nugget'], name: 'Pépite d’or', hint: 'Caché dans les rochers de la mine' },
     { key: 't_quartz', icon: ['item', 'quartz'], name: 'Quartz', hint: 'Dans la galerie et la grotte de la mine' },
     { key: 't_ruby', icon: ['item', 'ruby'], name: 'Rubis', hint: 'Au fond de la grotte, surtout dans les veines' },
     { key: 't_sapphire', icon: ['item', 'sapphire'], name: 'Saphir', hint: 'Au fond de la grotte, surtout dans les veines' },
@@ -351,9 +351,9 @@ export const STORY_MAPS = [
     { id: 'hamlet', name: 'Le hameau', openChapter: 4, party: 'bandstand' },
     { id: 'port', name: 'Le port', openChapter: 6, party: 'shipyard' },
     { id: 'abbey', name: 'L’abbaye', openChapter: 16, party: 'beerfest' },
-    { id: 'island', name: "L'île", openChapter: 12, party: 'carnival' },
+    { id: 'island', name: 'L’île', openChapter: 12, party: 'carnival' },
     { id: 'station', name: 'La station', openChapter: 14, party: 'salonHall' },
-    { id: 'alpine', name: "L'alpage", openChapter: 8, party: 'refuge' },
+    { id: 'alpine', name: 'L’alpage', openChapter: 8, party: 'refuge' },
     { id: 'domaine', name: 'Le domaine', openChapter: 10, strict: true, party: 'crayere' },
     { id: 'chateau', name: 'Le château', openChapter: 18, party: 'harvestFest' },
     { id: 'oasis', name: 'L’oasis', openChapter: 20, party: 'soukStalls' },

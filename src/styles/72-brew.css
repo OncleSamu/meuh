@@ -375,11 +375,15 @@
 }
 .bv-btns {
     display: flex;
+    flex-wrap: wrap;
     gap: 4px;
     width: 100%;
 }
 .bv-btns .btn {
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
 }
 .bb-low {
     color: var(--red);
@@ -399,4 +403,9 @@
 }
 .bb-again {
     margin-top: 6px;
+}
+
+/* 1.59 : le bouton Brasser ne touche plus l'aperçu de la bière */
+.brew-compose > .brew-preview + .btn {
+    margin-top: 10px;
 }

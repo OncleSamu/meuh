@@ -100,7 +100,7 @@ const D = {
         L('M30 26 L34 20', 1.6, '#8a5a2a') +
         herb(32, 24, 0, 0.9),
     candiedGrapes: () =>
-        jar('#6a2c78', '#e8c078') +
+        jar('#6a2c78', '#e8c078', '') +
         bunch(32, 34, '#5a2a78', 0.9) +
         dots(
             [
@@ -109,7 +109,7 @@ const D = {
             ],
             1.2,
         ),
-    grapeJelly: () => jar('#8a3a9a', '#f4ead0') + F('M18 30 L46 30 L46 48 L18 48Z', '#b068c0', 0.35) + bunch(32, 38, '#7b3f9e', 0.7),
+    grapeJelly: () => jar('#8a3a9a', '#f4ead0', '') + F('M18 30 L46 30 L46 48 L18 48Z', '#b068c0', 0.35) + bunch(32, 38, '#7b3f9e', 0.7),
     zanderWine: () =>
         plate() +
         E(32, 38, 22, 10, '#f2e6a8', 2) +

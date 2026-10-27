@@ -128,7 +128,7 @@ export const ITEMS = {
     onion: {
         id: 'onion',
         name: 'Oignon',
-        seedName: "Bulbes d'oignon",
+        seedName: 'Bulbes d’oignon',
         type: 'crop',
         cost: 14,
         sell: 40,
@@ -164,7 +164,7 @@ export const ITEMS = {
     eggplant: {
         id: 'eggplant',
         name: 'Aubergine',
-        seedName: "Graines d'aubergine",
+        seedName: 'Graines d’aubergine',
         type: 'crop',
         cost: 45,
         sell: 140,
@@ -379,7 +379,7 @@ export const ITEMS = {
     },
     nugget: {
         id: 'nugget',
-        name: "Pépite d'or",
+        name: 'Pépite d’or',
         type: 'gem',
         sell: 800,
     },
@@ -455,7 +455,7 @@ export const ITEMS = {
     },
     gingerbread: {
         id: 'gingerbread',
-        name: "Pain d'épices",
+        name: 'Pain d’épices',
         type: 'artisan',
         sell: 520,
     },
@@ -696,7 +696,7 @@ export const ITEMS = {
     },
     orangeJuice: {
         id: 'orangeJuice',
-        name: "Jus d'orange",
+        name: 'Jus d’orange',
         type: 'artisan',
         sell: 575,
     },
@@ -810,7 +810,7 @@ export const ITEMS = {
     },
     candyApple: {
         id: 'candyApple',
-        name: "Pommes d'amour",
+        name: 'Pommes d’amour',
         type: 'artisan',
         sell: 1375,
     },
@@ -898,7 +898,7 @@ export const ITEMS = {
     pineapple: {
         id: 'pineapple',
         name: 'Ananas',
-        seedName: "Bouture d'ananas",
+        seedName: 'Bouture d’ananas',
         type: 'crop',
         cost: 80,
         sell: 260,
@@ -935,7 +935,7 @@ export const ITEMS = {
     garlic: {
         id: 'garlic',
         name: 'Ail',
-        seedName: "Gousses d'ail",
+        seedName: 'Gousses d’ail',
         type: 'crop',
         cost: 30,
         sell: 85,
@@ -1040,13 +1040,13 @@ export const ITEMS = {
     },
     gooseEgg: {
         id: 'gooseEgg',
-        name: "Œuf d'oie",
+        name: 'Œuf d’oie',
         type: 'product',
         sell: 160,
     },
     wax: {
         id: 'wax',
-        name: "Cire d'abeille",
+        name: 'Cire d’abeille',
         type: 'product',
         sell: 260,
     },
@@ -1104,7 +1104,7 @@ export const ITEMS = {
     },
     oliveOil: {
         id: 'oliveOil',
-        name: "Huile d'olive",
+        name: 'Huile d’olive',
         type: 'artisan',
         sell: 1370,
     },
@@ -1152,7 +1152,7 @@ export const ITEMS = {
     },
     garlicPasta: {
         id: 'garlicPasta',
-        name: "Pâtes à l'ail",
+        name: 'Pâtes à l’ail',
         type: 'artisan',
         sell: 2110,
     },
@@ -1248,7 +1248,7 @@ export const ITEMS = {
     },
     garlicSoup: {
         id: 'garlicSoup',
-        name: "Soupe à l'ail",
+        name: 'Soupe à l’ail',
         type: 'artisan',
         sell: 375,
     },
@@ -1320,7 +1320,7 @@ export const ITEMS = {
     },
     garlicBread: {
         id: 'garlicBread',
-        name: "Pain à l'ail",
+        name: 'Pain à l’ail',
         type: 'artisan',
         sell: 2040,
     },
@@ -1356,7 +1356,7 @@ export const ITEMS = {
     },
     oliveSoap: {
         id: 'oliveSoap',
-        name: "Savon à l'huile d'olive",
+        name: 'Savon à l’huile d’olive',
         type: 'artisan',
         sell: 1925,
     },
@@ -1404,7 +1404,7 @@ export const ITEMS = {
     },
     summerPunch: {
         id: 'summerPunch',
-        name: "Punch de l'été",
+        name: 'Punch de l’été',
         type: 'artisan',
         sell: 1890,
     },
@@ -1428,7 +1428,7 @@ export const ITEMS = {
     },
     alpacaWool: {
         id: 'alpacaWool',
-        name: "Laine d'alpaga",
+        name: 'Laine d’alpaga',
         type: 'product',
         sell: 520,
     },
@@ -1440,13 +1440,13 @@ export const ITEMS = {
     },
     donkeyMilk: {
         id: 'donkeyMilk',
-        name: "Lait d'ânesse",
+        name: 'Lait d’ânesse',
         type: 'product',
         sell: 480,
     },
     alpacaYarn: {
         id: 'alpacaYarn',
-        name: "Pelote d'alpaga",
+        name: 'Pelote d’alpaga',
         type: 'artisan',
         sell: 1375,
     },
@@ -1476,13 +1476,13 @@ export const ITEMS = {
     },
     donkeySoap: {
         id: 'donkeySoap',
-        name: "Savon au lait d'ânesse",
+        name: 'Savon au lait d’ânesse',
         type: 'artisan',
         sell: 2525,
     },
     donkeyCream: {
         id: 'donkeyCream',
-        name: "Crème au lait d'ânesse",
+        name: 'Crème au lait d’ânesse',
         type: 'artisan',
         sell: 1640,
     },
@@ -1523,7 +1523,7 @@ export const ITEMS = {
     },
     alpineMilk: {
         id: 'alpineMilk',
-        name: "Lait d'alpage",
+        name: 'Lait d’alpage',
         type: 'product',
         sell: 250,
     },
@@ -1875,7 +1875,7 @@ export const ITEMS = {
     },
     summerPerfume: {
         id: 'summerPerfume',
-        name: "Parfum d'été",
+        name: 'Parfum d’été',
         type: 'artisan',
         sell: 715,
     },
@@ -2080,7 +2080,7 @@ export const ITEMS = {
     },
     pineappleJuice: {
         id: 'pineappleJuice',
-        name: "Jus d'ananas",
+        name: 'Jus d’ananas',
         type: 'artisan',
         sell: 1080,
         island: true,
@@ -2157,7 +2157,7 @@ export const ITEMS = {
     },
     pineappleCake: {
         id: 'pineappleCake',
-        name: "Gâteau renversé à l'ananas",
+        name: 'Gâteau renversé à l’ananas',
         type: 'artisan',
         sell: 2075,
         island: true,
@@ -2548,31 +2548,31 @@ Object.assign(ITEMS, {
 
 // ---------------- 1.3.3 : recettes de complément (chaque ingrédient sert à 3 recettes au moins) ----------------
 Object.assign(ITEMS, {
-    pondFry: { id: 'pondFry', name: "Friture de l'étang", type: 'artisan', sell: 360 },
+    pondFry: { id: 'pondFry', name: 'Friture de l’étang', type: 'artisan', sell: 360 },
     perchMeuniere: { id: 'perchMeuniere', name: 'Perche meunière', type: 'artisan', sell: 1355 },
     pikeQuenelles: { id: 'pikeQuenelles', name: 'Quenelles de brochet', type: 'artisan', sell: 1240 },
-    pondRillettes: { id: 'pondRillettes', name: "Rillettes de l'étang", type: 'artisan', sell: 1275 },
+    pondRillettes: { id: 'pondRillettes', name: 'Rillettes de l’étang', type: 'artisan', sell: 1275 },
     stuffedCarp: { id: 'stuffedCarp', name: 'Carpe farcie', type: 'artisan', sell: 840 },
     eelMatelote: { id: 'eelMatelote', name: 'Matelote d’anguille au cidre', type: 'artisan', sell: 1415 },
     smokedCatfish: { id: 'smokedCatfish', name: 'Silure fumé', type: 'artisan', sell: 840 },
     catfishBeurreBlanc: { id: 'catfishBeurreBlanc', name: 'Silure au beurre blanc', type: 'artisan', sell: 2285 },
     smokedPike: { id: 'smokedPike', name: 'Brochet fumé', type: 'artisan', sell: 570 },
     goldfishBowl: { id: 'goldfishBowl', name: 'Bocal du poisson doré', type: 'artisan', sell: 2815 },
-    goldScalePendant: { id: 'goldScalePendant', name: "Pendentif écaille d'or", type: 'artisan', sell: 3850 },
+    goldScalePendant: { id: 'goldScalePendant', name: 'Pendentif écaille d’or', type: 'artisan', sell: 3850 },
     goldfishMobile: { id: 'goldfishMobile', name: 'Mobile du poisson doré', type: 'artisan', sell: 2980 },
     grilledSardines: { id: 'grilledSardines', name: 'Sardines grillées', type: 'artisan', sell: 785 },
     pissaladiere: { id: 'pissaladiere', name: 'Pissaladière', type: 'artisan', sell: 865 },
     mackerelWine: { id: 'mackerelWine', name: 'Maquereaux marinés au cidre', type: 'artisan', sell: 1125 },
     seabassTartare: { id: 'seabassTartare', name: 'Tartare de bar', type: 'artisan', sell: 1415 },
-    lobsterArmoricaine: { id: 'lobsterArmoricaine', name: "Homard à l'armoricaine", type: 'artisan', sell: 1270 },
+    lobsterArmoricaine: { id: 'lobsterArmoricaine', name: 'Homard à l’armoricaine', type: 'artisan', sell: 1270 },
     lobsterBisque: { id: 'lobsterBisque', name: 'Bisque de homard', type: 'artisan', sell: 1185 },
     radishButter: { id: 'radishButter', name: 'Radis beurre', type: 'artisan', sell: 1345 },
     peasFrench: { id: 'peasFrench', name: 'Petits pois à la française', type: 'artisan', sell: 1615 },
-    eggplantCaviar: { id: 'eggplantCaviar', name: "Caviar d'aubergine", type: 'artisan', sell: 2635 },
+    eggplantCaviar: { id: 'eggplantCaviar', name: 'Caviar d’aubergine', type: 'artisan', sell: 2635 },
     popcorn: { id: 'popcorn', name: 'Pop-corn caramel', type: 'artisan', sell: 360 },
     beetSyrup: { id: 'beetSyrup', name: 'Sirop de betterave', type: 'artisan', sell: 125 },
     soySauce: { id: 'soySauce', name: 'Sauce soja', type: 'artisan', sell: 450 },
-    marmalade: { id: 'marmalade', name: "Marmelade d'oranges", type: 'artisan', sell: 695 },
+    marmalade: { id: 'marmalade', name: 'Marmelade d’oranges', type: 'artisan', sell: 695 },
     kiwiJam: { id: 'kiwiJam', name: 'Confiture de kiwi', type: 'artisan', sell: 615 },
     kiwiSorbet: { id: 'kiwiSorbet', name: 'Sorbet au kiwi', type: 'artisan', sell: 615 },
     kiwiJuice: { id: 'kiwiJuice', name: 'Jus de kiwi', type: 'artisan', sell: 485 },
@@ -2598,12 +2598,12 @@ Object.assign(ITEMS, {
     genepiChoc: { id: 'genepiChoc', name: 'Chocolat au génépi', type: 'artisan', sell: 1540 },
     tiarePerfume: { id: 'tiarePerfume', name: 'Parfum de tiaré', type: 'artisan', sell: 515 },
     tiareCrown: { id: 'tiareCrown', name: 'Couronne de tiaré', type: 'artisan', sell: 675 },
-    goosePasta: { id: 'goosePasta', name: "Pâtes aux œufs d'oie", type: 'artisan', sell: 515 },
+    goosePasta: { id: 'goosePasta', name: 'Pâtes aux œufs d’oie', type: 'artisan', sell: 515 },
     cremeAnglaise: { id: 'cremeAnglaise', name: 'Crème anglaise', type: 'artisan', sell: 1390 },
     truffleTagliatelle: { id: 'truffleTagliatelle', name: 'Tagliatelles aux truffes', type: 'artisan', sell: 2790 },
     burrata: { id: 'burrata', name: 'Burrata', type: 'artisan', sell: 1090 },
     ricotta: { id: 'ricotta', name: 'Ricotta', type: 'artisan', sell: 540 },
-    donkeyShampoo: { id: 'donkeyShampoo', name: "Shampoing au lait d'ânesse", type: 'artisan', sell: 1065 },
+    donkeyShampoo: { id: 'donkeyShampoo', name: 'Shampoing au lait d’ânesse', type: 'artisan', sell: 1065 },
     cottonThread: { id: 'cottonThread', name: 'Fil de coton', type: 'artisan', sell: 305 },
     teaTowel: { id: 'teaTowel', name: 'Torchon brodé', type: 'artisan', sell: 475 },
     linseedOil: { id: 'linseedOil', name: 'Huile de lin', type: 'artisan', sell: 180 },
@@ -2956,7 +2956,7 @@ Object.assign(ITEMS, {
     bridle: { id: 'bridle', name: 'Bride', type: 'artisan', sell: 2015 },
     saddlePad: { id: 'saddlePad', name: 'Tapis de selle', type: 'artisan', sell: 1075 },
     winterBlanket: { id: 'winterBlanket', name: 'Couverture d’hiver', type: 'artisan', sell: 1220 },
-    hairBrush: { id: 'hairBrush', name: 'Brosse en crin', type: 'artisan', sell: 2360 },
+    hairBrush: { id: 'hairBrush', name: 'Brosse de pansage', type: 'artisan', sell: 2360 },
 });
 
 // 1.50 : la cuisine de l'oasis (le prix suit les ingrédients, comme ailleurs)

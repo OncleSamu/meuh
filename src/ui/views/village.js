@@ -17,7 +17,7 @@ import { STORY_MAPS } from '../../data/meta.js';
 import { MAP_BG } from '../../art/maps.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions } from '../dom.js';
-import { ico, art, SPR } from '../icons.js';
+import { ico, art, SPR, artImg } from '../icons.js';
 import { btn, bar, timer, hint, hearts, card } from '../kit.js';
 import { defineView, ui } from '../app.js';
 import { itemLine, rewardHtml } from './common.js';
@@ -383,7 +383,7 @@ function villagersHtml() {
             return `<div class="card villager-card">
                 <div class="avatar">${art('villager', id)}</div>
                 <div class="card-main"><div class="card-title">${v.name}</div><div class="card-sub">${v.role}</div>${hearts(h)}${h < 5 ? bar(G.heartProgress(id), 'pink') : ''}
-                <div class="likes"><span class="card-sub">Aime :</span>${v.likes.map(x => `<i class="ico${state.inventory[x] > 0 ? '' : ' dim'}" title="${ITEMS[x].name}">${art('item', x)}</i>`).join('')}</div>
+                <div class="likes"><span class="card-sub">Aime :</span>${v.likes.map(x => `<i class="ico${state.inventory[x] > 0 ? '' : ' dim'}" title="${ITEMS[x].name}">${artImg('item', x)}</i>`).join('')}</div>
                 <div class="card-sub">${G.nextRewardText(id)}</div>${villagerStory(id)}
                 ${open ? `<div class="gift-row">${can.length ? can.map(x => btn(`${state.inventory[x]}`, { act: 'gift', data: { v: id, id: x }, size: 'sm', icon: ['item', x] })).join('') : '<span class="card-sub">Vous n’avez rien qu’il ou elle aime en stock.</span>'}</div>` : ''}</div>
                 <div class="card-side">${btn(gifted ? 'Offert' : open ? 'Fermer' : 'Offrir', { act: 'toggleGift', data: { v: id }, kind: gifted ? '' : 'gold', size: 'sm', disabled: gifted })}</div></div>`;

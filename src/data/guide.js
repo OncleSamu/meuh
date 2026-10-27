@@ -295,7 +295,7 @@ export const GUIDE_PAGES = [
                 h: 'Le carnet du potager',
                 b: [
                     '49 associations (40 bonnes, 9 mauvaises), de plus en plus nombreuses avec les niveaux. Chacune se découvre la première fois qu’on récolte une parcelle qui en profite… ou qui en souffre.',
-                    'Récompenses à 5, 10, 20 et 30 associations (pièces, compost, graines de safran), et un ruban quand le carnet est complet. Le carnet s’ouvre depuis le menu, onglet Carnets.',
+                    'Récompenses à 5, 10, 20 et 30 associations (pièces, compost, graines de safran), et un ruban quand le carnet est complet. Le carnet s’ouvre depuis le menu, rubrique Carnets.',
                 ],
             },
             {
@@ -1750,7 +1750,7 @@ export const GUIDE_PAGES = [
                 h: 'Fixer une variété',
                 b: [
                     'Une variété se fixe à partir de la 3e génération, avec le laboratoire (qui analyse aussi les gènes).',
-                    'Une variété fixée donne ses graines : une récolte en rend une une fois sur deux.',
+                    'Une variété fixée donne ses graines : une récolte en rend une, une fois sur deux.',
                     'Les gènes comptent : vitesse de pousse, résistance au froid et à la sécheresse, rendement, saveur.',
                     'Une variété savoureuse améliore les plats (argent, or) et la revente.',
                 ],

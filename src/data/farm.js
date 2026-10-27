@@ -309,7 +309,7 @@ export const DECOS = {
     },
     cheeseWheel: {
         id: 'cheeseWheel',
-        name: "Meule d'or",
+        name: 'Meule d’or',
         desc: 'Trophée de la saison des fromages : +30 de charme au concours',
         cost: 0,
         reqLvl: 1,

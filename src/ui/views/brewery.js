@@ -223,6 +223,7 @@ const brewables = () =>
 defineSheet('brewPick', {
     title: 'Un ingrédient',
     render(o) {
+        if (!state.brew || !state.brew.draft) return '';
         const used = state.brew.draft.ings.map(([id]) => id);
         const list = brewables();
         const vars = G.brewVarieties();

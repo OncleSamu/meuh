@@ -597,7 +597,8 @@
     font-weight: 800;
     color: var(--ink);
     cursor: pointer;
-    white-space: nowrap;
+    white-space: normal;
+    text-align: left;
 }
 .bq-head {
     display: flex;

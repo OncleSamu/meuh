@@ -10,7 +10,7 @@ export const INCIDENTS = {
         name: 'Un corbeau !',
         icon: 'crow',
         time: 0,
-        text: "Touchez-le avant qu'il ne mange la récolte.",
+        text: 'Touchez-le avant qu’il ne mange la récolte.',
     },
     aphids: {
         name: 'Pucerons !',

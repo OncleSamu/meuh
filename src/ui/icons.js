@@ -33,6 +33,19 @@ export function art(kind, id) {
     return s;
 }
 
+// 1.59 : le même dessin en image (un seul nœud au lieu de dizaines) : pour les longues rangées d'icônes
+const imgCache = new Map();
+export function artImg(kind, id) {
+    const key = kind + ':' + id;
+    let s = imgCache.get(key);
+    if (s === undefined) {
+        const svg = art(kind, id);
+        s = svg ? `<img class="spr" src="data:image/svg+xml,${encodeURIComponent(svg)}" alt="" draggable="false">` : '';
+        imgCache.set(key, s);
+    }
+    return s;
+}
+
 const STAR = 'M10 1l2.6 5.6 6.1.7-4.5 4.2 1.2 6L10 14.5 4.6 17.5l1.2-6L1.3 7.3l6.1-.7z';
 const GEM = 'M5.5 2.5h9l4 5.5L10 18.5 1.5 8z';
 // l'étoile du rang ; le diamant est une pierre taillée

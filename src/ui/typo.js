@@ -4,11 +4,28 @@
 const NB = '\u00a0';
 const RE = /([^\s\u00a0]) ([?!:;»])/g;
 const RE_OPEN = /(«) /g;
+// 1.59 : une durée ne se coupe jamais en fin de ligne (« 1 h 11 », « 49 min 09 », « 5 j 7 h »)
+const RE_DUR = /(\d) (h|min|s|j|ms)(?= |$|[^\p{L}])/gu;
+const RE_DUR2 = /(\d\u00a0(?:h|min|j)) (\d)/g;
+// « 1 / 3 », « 40 / 40 » : un compte ne se coupe pas
+const RE_FRAC = /(\d) \/ (\d)/g;
+// un grand nombre se lit par groupes de trois chiffres (« 13 113 », « 1 299 138 »)
+const RE_BIG = /(^|[^\p{L}\d,.\u202f])(\d{5,})(?![\d,.])/gu;
+// 1.59 : l'apostrophe typographique, même dans les textes gardés par une vieille sauvegarde (« L'école »)
+const RE_APOS = /([A-Za-zÀ-ÿœŒ])'(?=[A-Za-zÀ-ÿœŒ])/g;
 
 export function frenchSpaces(s) {
     const t = String(s);
-    if (!t.includes(' ')) return t;
-    return t.replace(RE, `$1${NB}$2`).replace(RE_OPEN, `$1${NB}`).replace(RE, `$1${NB}$2`);
+    const a0 = t.includes("'") ? t.replace(RE_APOS, '$1’') : t;
+    const a = /\d{5}/.test(a0) ? a0.replace(RE_BIG, (m, p, n) => p + Number(n).toLocaleString('fr-FR')) : a0;
+    if (!a.includes(' ')) return a;
+    return a
+        .replace(RE, `$1${NB}$2`)
+        .replace(RE_OPEN, `$1${NB}`)
+        .replace(RE, `$1${NB}$2`)
+        .replace(RE_DUR, `$1${NB}$2`)
+        .replace(RE_DUR2, `$1${NB}$2`)
+        .replace(RE_FRAC, `$1${NB}/${NB}$2`);
 }
 
 const SKIP = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT']);

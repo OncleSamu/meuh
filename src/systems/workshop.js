@@ -27,7 +27,13 @@ import { cupHas } from './cup.js';
 
 // les machines de cuisine (le compteur « plats cuisinés »)
 export const COOKING = ['kitchen', 'stove', 'deli', 'fishmonger'];
-export const recipesOf = type => Object.values(RECIPES).filter(r => r.machine === type);
+// 1.59 : la liste des recettes d'une machine, rangée une fois (elle était refaite des milliers de fois par seconde)
+const byMachine = new Map();
+export const recipesOf = type => {
+    let l = byMachine.get(type);
+    if (!l) byMachine.set(type, (l = Object.values(RECIPES).filter(r => r.machine === type)));
+    return l;
+};
 
 export const recipeUnlocked = id => {
     const r = RECIPES[id];

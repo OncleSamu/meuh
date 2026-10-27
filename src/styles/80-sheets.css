@@ -1256,3 +1256,11 @@ svg.chart .bar:hover path {
 .guide-tips p {
     margin: 4px 0 0;
 }
+
+/* 1.59 : les sujets du guide ne se touchent plus */
+.guide-page + .guide-page,
+.guide-item + .guide-item,
+.set-title + .guide-page,
+.set-title + .guide-item {
+    margin-top: 8px;
+}

@@ -429,9 +429,10 @@ button.card {
 /* ---------------- titres, aides, vides ---------------- */
 .section-title {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px 8px;
     margin: 6px 2px 0;
     font-size: 1.02rem;
     font-weight: 900;
@@ -792,4 +793,52 @@ button.line.lv-go > div {
 }
 .chips-row.wrap.center {
     justify-content: center;
+}
+
+/* 1.59 : l'audit. Des boutons d'une même rangée ne se touchent jamais, des blocs empilés non plus ; rien ne sort de sa boîte. */
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+:where(.block, .sheet-body, .card, .defi-offer, .guide-list)
+    > :is(.card, .cseat, .hint, .seg, .offer-row, .btn, .stable, .pick-grid, .chips-row, .empty, .guide-page)
+    + :is(.card, .cseat, .hint, .seg, .offer-row, .btn, .stable, .pick-grid, .chips-row, .empty, .guide-page) {
+    margin-top: 10px;
+}
+.chip {
+    max-width: 100%;
+}
+.chip.meta {
+    white-space: normal;
+}
+.chip > .ico {
+    flex-shrink: 0;
+}
+.trophy-slot {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+/* un mot trop long (« Pamplemoussier ») se coupe plutôt que de sortir de sa case */
+body {
+    overflow-wrap: break-word;
+}
+.pick-cell b,
+.pick-cell small {
+    overflow-wrap: anywhere;
+    hyphens: auto;
+}
+.timer {
+    white-space: nowrap;
+}
+/* une carte trop étroite pour son texte et son bouton : le bouton passe dessous, à droite, plutôt que d'écraser le texte */
+.card:has(> .card-main):has(> .card-side) {
+    flex-wrap: wrap;
+}
+.card > .card-main {
+    flex: 1 1 140px;
+}
+.card > .card-side {
+    margin-left: auto;
 }
