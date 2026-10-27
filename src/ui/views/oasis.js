@@ -5,7 +5,7 @@ import { fmt, formatDuration } from '../../core/format.js';
 import { on, sfx, buzz, toast } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
 import { OASIS, PEN, CARAVAN } from '../../data/oasis.js';
-import { stableTile, birthRow, assocRow } from './animals.js';
+import { penMeadowHtml, renderPenCritters, birthRow, assocRow } from './animals.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, esc, byId } from '../dom.js';
 import { genWrap } from '../genlook.js';
@@ -170,9 +170,11 @@ function renderOasis(el) {
             ),
         ],
         ['h2', section(PEN.name, G.enclosOpen() ? `<small class="o-count small">${G.penBeasts().length}/${G.enclosCap()}</small>` : '')],
+        ['pasture', G.enclosOpen() ? penMeadowHtml(PEN.key, 'desert') : ''],
         ['pen', penHtml()],
         ['caravan', caravanHtml()],
     ]);
+    renderPenCritters();
 }
 
 // ---------------- 1.49 : l'enclos de la palmeraie ----------------
@@ -183,18 +185,9 @@ function penHtml() {
                 ? 'Au niveau 61, Idris bâtit un enclos à l’ombre des palmes, pour des dromadaires, des zébus et des moutons barbarins.'
                 : 'Bâtissez l’enclos avec Idris : chapitre « Le souk de l’oasis », Village, carte « L’oasis ».'
         }</div></div></div>`;
-    const list = G.penBeasts();
-    const mf = G.maxFood();
-    const idx = list.map(a => state.animals.indexOf(a));
     const shade = G.penShadeSlots();
     const hot = G.isHot();
     const zebu = G.noriaZebu();
-    const tiles = idx.length
-        ? `<div class="stable oa-stable">${idx
-              .sort((x, y) => (state.animals[x].type < state.animals[y].type ? -1 : state.animals[x].type > state.animals[y].type ? 1 : x - y))
-              .map(i => stableTile(state.animals[i], i, mf))
-              .join('')}</div>`
-        : `<p class="empty">L’enclos est vide. Dromadaires, zébus et moutons barbarins vous attendent au marché.</p>`;
     const noria = G.noriaBuilt()
         ? `<div class="line">${ico(['ui', 'oaNoria'])}<div>${zebu ? `La noria tourne : ${esc(zebu.name)} donne +${PEN.noria.lph} L/h à la source.` : 'La noria attend un zébu : attelez-en un depuis sa fiche (appui long).'}</div></div>`
         : `<div class="line">${ico(['ui', 'oaNoria'])}<div>La noria : un zébu y tourne la roue, la source donne +${PEN.noria.lph} L/h (mais il ne fait plus de lait). ${costRow(G.costParts(PEN.noria.cost))}</div>${btn('Monter', { act: 'buildNoria', size: 'sm', kind: G.hasCost(PEN.noria.cost) ? 'green' : '', disabled: !G.hasCost(PEN.noria.cost) })}</div>`;
@@ -204,7 +197,7 @@ function penHtml() {
     return `<div class="card oa-pen">
         <div class="oa-flow"><span class="chip">${ico(['ui', 'drop'])}−${String(Math.round(G.penDrink() * 10) / 10).replace('.', ',')} L/h</span><span class="chip ok">${ico(['ui', 'oaOmbre'])}${shade} à l’ombre</span>${hot ? `<span class="chip bad">${ico(['ui', 'oaMidi'])}Midi : moitié moins vite au soleil</span>` : ''}</div>
         <div class="actions wrap">${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'] })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'] })}${btn('Acheter', { act: 'go', data: { path: 'market/shop#animals' }, size: 'sm', icon: ['ui', 'coin'] })}</div>
-        ${birthRow(PEN.key)}${assocRow(PEN.key)}${tiles}${noria}${big}
+        ${birthRow(PEN.key)}${assocRow(PEN.key)}${noria}${big}
         <p class="card-sub">Chaque sorgho debout abrite ${PEN.shadePerCrop} bêtes du soleil de midi. Le mouton barbarin ne craint pas la chaleur.</p>
     </div>`;
 }
