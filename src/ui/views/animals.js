@@ -20,6 +20,8 @@ import { longPress } from '../longpress.js';
 import { renameBtn } from '../sheets/rename.js';
 import { askBuy } from '../sheets/askbuy.js';
 import { PASTURE } from '../../data/farm.js';
+import { PEN } from '../../data/oasis.js';
+import { BARN } from '../../data/nord.js';
 
 let els = [];
 
@@ -55,9 +57,13 @@ const babyBody = a =>
 const bodyOf = a => genWrap(G.isAdult(a) ? art('animal', animalKey(a.type, a.g)) : babyBody(a), a.g);
 
 // le pré regardé : un numéro, ou 'all' (l'étable de tout le troupeau)
+// 1.57 : l'enclos de la palmeraie et l'étable du Grand Nord sont des prés comme les autres (avec leur pré et leur étable)
+const isPen = k => k === PEN.key || k === BARN.key;
+const openPens = () => G.penKeys().filter(isPen);
+const penCapOf = k => (k === PEN.key ? G.enclosCap() : G.nordBarnCap());
 const shownPasture = () => {
     const k = ui.sel.pasture;
-    return k === 'all' || (typeof k === 'number' && k < state.pastures.length) ? k : 0;
+    return k === 'all' || (typeof k === 'number' && (k < state.pastures.length || openPens().includes(k))) ? k : 0;
 };
 const meadowPasture = () => (shownPasture() === 'all' ? 0 : shownPasture());
 const herdIdx = k => state.animals.map((a, i) => i).filter(i => (state.animals[i].p || 0) === k);
@@ -177,8 +183,17 @@ function transCard() {
 }
 
 // le pré grandit avec le troupeau pour que chacun ait sa place
-const meadowHtml = n =>
-    `<div class="meadow${n > 14 ? ' crowd' : ''}" id="pasture" style="height:${Math.min(1000, Math.max(380, 160 + n * 42))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${state.animals.length ? 'Ce pré est vide : déplacez-y des bêtes depuis leur fiche.' : 'Votre pâturage est vide. Achetez une poule au marché pour commencer.'}</div>`}</div>`;
+const meadowHtml = (n, k) => {
+    const theme = k === PEN.key ? ' desert' : k === BARN.key ? ' snow' : '';
+    const empty = isPen(k)
+        ? k === PEN.key
+            ? 'L’enclos est vide. Dromadaires, zébus et moutons barbarins vous attendent au marché.'
+            : 'L’étable est vide. Rennes, bœufs musqués et lagopèdes vous attendent au marché.'
+        : state.animals.length
+          ? 'Ce pré est vide : déplacez-y des bêtes depuis leur fiche.'
+          : 'Votre pâturage est vide. Achetez une poule au marché pour commencer.';
+    return `<div class="meadow${n > 14 ? ' crowd' : ''}${theme}" id="pasture" style="height:${Math.min(1000, Math.max(380, 160 + n * 42))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${empty}</div>`}</div>`;
+};
 
 // une bête de l'étable
 export function stableTile(a, i, mf) {
@@ -209,14 +224,23 @@ function stableHtml(k) {
             .sort((x, y) => (x[0].type < y[0].type ? -1 : x[0].type > y[0].type ? 1 : x[1] - y[1]));
         return order.map(([a, i]) => stableTile(a, i, mf)).join('');
     };
-    if (k !== 'all') return `<div class="stable">${group(k) || '<p class="empty">Ce pré est vide.</p>'}</div>`;
-    return state.pastures
-        .map((p, j) =>
-            G.pastureLoad(j)
-                ? `<h3 class="section-title st-head"><span>${esc(p.name)}</span>${renameBtn('pasture', j, 'Renommer ce pré')}<small>${G.pastureLoad(j)}/20</small></h3><div class="stable">${group(j)}</div>`
-                : '',
+    if (k !== 'all') return `<div class="stable">${group(k) || `<p class="empty">${isPen(k) ? 'Cet abri est vide.' : 'Ce pré est vide.'}</p>`}</div>`;
+    const pens = openPens()
+        .filter(j => G.pastureLoad(j))
+        .map(
+            j =>
+                `<h3 class="section-title st-head"><span>${esc(G.penOf(j).name)}</span><small>${G.pastureLoad(j)}/${penCapOf(j)}</small></h3><div class="stable">${group(j)}</div>`,
         )
         .join('');
+    return (
+        state.pastures
+            .map((p, j) =>
+                G.pastureLoad(j)
+                    ? `<h3 class="section-title st-head"><span>${esc(p.name)}</span>${renameBtn('pasture', j, 'Renommer ce pré')}<small>${G.pastureLoad(j)}/20</small></h3><div class="stable">${group(j)}</div>`
+                    : '',
+            )
+            .join('') + pens
+    );
 }
 
 // 1.45 : l'interrupteur des naissances du pré regardé (éteint par défaut), et quand arrive le prochain petit
@@ -255,15 +279,22 @@ function pastureBar(mode, cur) {
             return `<button class="pas-chip${cur === k ? ' on' : ''}${n >= 20 ? ' full' : ''}" data-act="pickPasture" data-k="${k}"><span>${esc(p.name)}</span><small>${n}/20</small></button>`;
         })
         .join('');
+    const pens = openPens()
+        .map(k => {
+            const n = G.pastureLoad(k),
+                cap = penCapOf(k);
+            return `<button class="pas-chip pen${cur === k ? ' on' : ''}${n >= cap ? ' full' : ''}" data-act="pickPasture" data-k="${k}">${ico(['ui', k === PEN.key ? 'oaOasis' : 'noFroid'])}<span>${esc(G.penOf(k).name)}</span><small>${n}/${cap}</small></button>`;
+        })
+        .join('');
     const all =
-        mode === 'stable' && state.pastures.length > 1
+        mode === 'stable' && (state.pastures.length > 1 || pens)
             ? `<button class="pas-chip${cur === 'all' ? ' on' : ''}" data-act="pickPasture" data-k="all"><span>Tous les prés</span><small>${state.animals.filter(a => !a.box).length}</small></button>`
             : '';
     const add = G.canAddPasture()
         ? `<button class="pas-chip add${G.herdFull() ? ' urge' : ''}" data-act="buyPasture">${ico(['ui', 'plus'])}<span>Nouveau pré</span><small>${fmt(G.pastureCost())}${ico(['ui', 'coin'])}</small></button>`
         : '';
     const ren = typeof cur === 'number' && state.pastures[cur] ? `<span class="pas-ren">${renameBtn('pasture', cur, 'Renommer ce pré')}</span>` : '';
-    return `<div class="pas-bar">${all}${chips}${ren}${add}</div>${typeof cur === 'number' ? birthRow(cur) + assocRow(cur) : ''}`;
+    return `<div class="pas-bar">${all}${chips}${pens}${ren}${add}</div>${typeof cur === 'number' ? birthRow(cur) + assocRow(cur) : ''}`;
 }
 
 function renderAnimals(el) {
@@ -271,7 +302,7 @@ function renderAnimals(el) {
     const mode = n > 0 ? ui.sel.animalMode || (n > 16 ? 'stable' : 'meadow') : 'meadow';
     let k = shownPasture();
     if (mode === 'meadow' && k === 'all') k = 0;
-    if (mode === 'stable' && ui.sel.pasture === undefined && state.pastures.length > 1) k = 'all';
+    if (mode === 'stable' && ui.sel.pasture === undefined && (state.pastures.length > 1 || openPens().length)) k = 'all';
     blocks(el, [
         [
             'top',
@@ -291,8 +322,8 @@ function renderAnimals(el) {
                   )
                 : '',
         ],
-        ['pastures', n || state.pastures.length > 1 ? pastureBar(mode, k) : ''],
-        ['meadow', mode === 'stable' ? stableHtml(k) : meadowHtml(G.pastureLoad(k))],
+        ['pastures', n || state.pastures.length > 1 || openPens().length ? pastureBar(mode, k) : ''],
+        ['meadow', mode === 'stable' ? stableHtml(k) : meadowHtml(G.pastureLoad(k), k)],
         [
             'hint',
             tip15(
