@@ -3,7 +3,7 @@
 // Le poêle brûle du bois de la ferme, une heure de feu par bûche. Rien ne meurt : tout attend le feu.
 
 export const NORD = {
-    lvl: 60,
+    lvl: 62,
     project: 'northStove', // le chantier qui ouvre le Grand Nord
     cols: 4,
     cells: 20, // cases en tout (4 × 5)

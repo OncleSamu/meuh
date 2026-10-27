@@ -13,16 +13,17 @@ import { NORD_IDS, NORD_PRODUCTS } from '../../src/data/nord.js';
 import { PROJECTS } from '../../src/data/village.js';
 import { SPR } from '../../src/art/index.js';
 
-test('trois machines au niveau 60, chacune après son chantier du Nord', () => {
-    for (const [id, , lvl, , project] of MACHINES_153) {
-        assert.equal(MACHINES[id].reqLvl, lvl);
+test('trois machines aux niveaux 62 à 64, chacune après son chantier du Nord', () => {
+    for (const [id, , , , project] of MACHINES_153) {
+        assert.ok(MACHINES[id].reqLvl >= 62 && MACHINES[id].reqLvl <= 64);
+        assert.equal(MACHINES[id].reqLvl, { tiledStove: 62, taigaPot: 63, berryKettle: 64 }[id]);
         assert.equal(MACHINES[id].needProject, project);
         assert.ok(PROJECTS[project].map === 'nord', project);
         assert.ok(SPR.machine(id).length > 300, id);
     }
 });
 
-test('quarante-deux recettes : dessin, anecdote de Mamie, ingrédients connus, prix, niveau 60', () => {
+test('quarante-deux recettes : dessin, anecdote de Mamie, ingrédients connus, prix, niveau 62 à 64', () => {
     assert.equal(RECIPES_153.length, 42);
     for (const [id, name, machine, ing] of RECIPES_153) {
         assert.ok(RECIPES[id] && RECIPES[id].machine === machine && MACHINES[machine], id);
@@ -30,7 +31,7 @@ test('quarante-deux recettes : dessin, anecdote de Mamie, ingrédients connus, p
         assert.ok(SPR.item(id).length > 300, `${id} : dessin`);
         assert.ok(CARNET[id] && CARNET[id].length > 80, `${id} : anecdote`);
         for (const k of Object.keys(ing)) assert.ok(ITEMS[k], `${id} : ${k}`);
-        assert.equal(RECIPES[id].lvl, 60, id);
+        assert.ok(RECIPES[id].lvl >= MACHINES[machine].reqLvl && RECIPES[id].lvl <= 64, id);
     }
 });
 

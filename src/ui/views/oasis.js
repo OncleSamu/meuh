@@ -170,8 +170,8 @@ function renderOasis(el) {
 function penHtml() {
     if (!G.enclosOpen())
         return `<div class="card oa-pen-closed"><span class="oa-up-art">${art('ui', 'oaEnclos')}</span><div class="card-main"><div class="card-sub">${
-            state.level < 59
-                ? 'Au niveau 59, Idris bâtit un enclos à l’ombre des palmes, pour des dromadaires, des zébus et des moutons barbarins.'
+            state.level < 61
+                ? 'Au niveau 61, Idris bâtit un enclos à l’ombre des palmes, pour des dromadaires, des zébus et des moutons barbarins.'
                 : 'Bâtissez l’enclos avec Idris : chapitre « Le souk de l’oasis », Village, carte « L’oasis ».'
         }</div></div></div>`;
     const list = G.penBeasts();

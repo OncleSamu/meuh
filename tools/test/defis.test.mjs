@@ -42,7 +42,7 @@ test('au niveau 50, un défi arrive ; un défi ne revient pas avant le 4e tirage
     setView({ started: true, tab: 'farm' });
     tick(2);
     assert.equal(G.curDefi(), null, 'rien avant le niveau 50');
-    state.level = 60;
+    state.level = 64;
     tick(2);
     // 1.40 : trois défis proposés, on en choisit un
     const offer = G.defiOffer();

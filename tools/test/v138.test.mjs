@@ -11,7 +11,7 @@ import { REP_TIERS } from '../../src/data/chateau.js';
 const start = () => {
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 60;
+    state.level = 64;
     G.ensureCave();
     G.ensureChateau();
 };
@@ -42,6 +42,6 @@ test("l'étal prend plus d'exemplaires en fin de partie", () => {
     assert.equal(G.stallCap(), 10);
     state.level = 45;
     assert.equal(G.stallCap(), 12);
-    state.level = 60;
+    state.level = 64;
     assert.equal(G.stallCap(), 16);
 });

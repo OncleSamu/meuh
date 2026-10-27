@@ -13,7 +13,7 @@ import { SPR } from '../../src/art/index.js';
 const start = () => {
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 60;
+    state.level = 64;
     state.money = 1e9;
     state.bld = null;
     state.barn.lvl = 12;

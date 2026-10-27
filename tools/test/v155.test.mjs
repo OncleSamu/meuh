@@ -11,14 +11,13 @@ import { SPR } from '../../src/art/index.js';
 test('1.55 : huit boissons du Grand Nord, chacune avec ses gestes, son dessin et son anecdote', () => {
     assert.equal(NEW_DRINKS_155.length, 8);
     const combos = new Set();
-    for (const [id, name, ing, lvl] of NEW_DRINKS_155) {
+    for (const [id, name, ing] of NEW_DRINKS_155) {
         assert.ok(BREW[id] && BREW[id].st.length >= 3, `${id} : gestes`);
         combos.add(BREW[id].st.map(s => s[0]).join('>'));
         assert.equal(ITEMS[id].name, name);
         assert.ok(ITEMS[id].sell > 0);
         assert.equal(RECIPES[id].machine, 'counter');
-        assert.equal(RECIPES[id].lvl, lvl);
-        assert.ok(lvl === 60);
+        assert.ok(RECIPES[id].lvl >= 62 && RECIPES[id].lvl <= 64);
         assert.ok(SPR.item(id).length > 300, `${id} : dessin`);
         assert.ok(CARNET[id] && CARNET[id].length > 80, `${id} : anecdote`);
         assert.ok(PROJECTS[ITEMS[id].needProject], id);
@@ -43,7 +42,7 @@ const nordFarm = () => {
     setStore(memStore());
     G.loadGame();
     setView({ started: true, tab: 'farm' });
-    state.level = 60;
+    state.level = 64;
     for (const id of ['northStove', 'northStable']) state.projects[id] = { given: {}, done: true };
     G.ensureNord();
     G.ensurePastures();

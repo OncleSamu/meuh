@@ -19,7 +19,7 @@ function nord({ barn = true } = {}) {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 60;
+    state.level = 64;
     state.money = 100_000_000;
     state.gameTimeMinutes = 12 * 60;
     state.projects.northStove = { given: {}, done: true };
@@ -122,7 +122,7 @@ test('contrôle : les trois bêtes et quatre produits ont dessins, gènes, prén
     assert.equal(NORD_BEAST_IDS.length, 3);
     for (const id of NORD_BEAST_IDS) {
         const d = ANIMALS[id];
-        assert.ok(d && d.nord && d.reqLvl === 60, id);
+        assert.ok(d && d.nord && d.reqLvl === 63, id);
         assert.ok(ITEMS[d.prodId] && SPR.item(d.prodId).length > 300, `produit ${id}`);
         if (d.extra) assert.ok(ITEMS[d.extra], `second produit ${id}`);
         assert.ok(SPR.animal(id).length > 500, `dessin ${id}`);

@@ -118,7 +118,7 @@ test('la malterie et l’orge', () => {
 
 test('vendre la ferme garde les recettes et le livre, pas les bouteilles', () => {
     const n = Object.keys(state.brew.beers).length;
-    state.level = 60;
+    state.level = 64;
     state.stats.earnedRun = 1e6;
     assert.ok(G.doPrestige('', 'none'));
     assert.equal(Object.keys(state.brew.beers).length, n);

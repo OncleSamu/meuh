@@ -12,13 +12,13 @@ import { RECIPES_150, MACHINES_150 } from '../../src/data/v150.js';
 import { OASIS_IDS, OASIS_PRODUCTS } from '../../src/data/oasis.js';
 import { SPR } from '../../src/art/index.js';
 
-test('trois machines, aux niveaux 58, 59 et 60, après le puits d’Idris', () => {
+test('trois machines, aux niveaux 59, 60 et 61, après le puits d’Idris', () => {
     assert.deepEqual(
         MACHINES_150.map(m => [m[0], MACHINES[m[0]].reqLvl]),
         [
-            ['earthOven', 58],
-            ['tajine', 59],
-            ['orientalSweets', 60],
+            ['earthOven', 59],
+            ['tajine', 60],
+            ['orientalSweets', 61],
         ],
     );
     for (const [id] of MACHINES_150) {
@@ -35,7 +35,7 @@ test('trente-huit recettes : dessin, anecdote de Mamie, ingrédients connus, pri
         assert.ok(SPR.item(id).length > 300, `${id} : dessin`);
         assert.ok(CARNET[id], `${id} : anecdote`);
         for (const k of Object.keys(ing)) assert.ok(ITEMS[k], `${id} : ${k}`);
-        assert.ok(RECIPES[id].lvl >= 58 && RECIPES[id].lvl <= 60, `${id} : niveau ${RECIPES[id].lvl}`);
+        assert.ok(RECIPES[id].lvl >= 59 && RECIPES[id].lvl <= 61, `${id} : niveau ${RECIPES[id].lvl}`);
     }
 });
 

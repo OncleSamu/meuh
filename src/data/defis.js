@@ -1,7 +1,7 @@
 import { FISH } from './meta.js';
 import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155 } from './counter.js';
 
-// Les grands défis (1.1, 17 défis depuis la 1.18) : un objectif de deux semaines après le niveau 60, tiré au hasard.
+// Les grands défis (1.1, 17 défis depuis la 1.18) : un objectif de deux semaines après le niveau 64, tiré au hasard.
 // Chaque défi a 4 étapes. Sortes d'étapes :
 //   give    : livrer des produits, k tirés dans la liste (q : 0 tout, 1 argent ou mieux, 2 or), n chacun
 //   count   : réussir une action (un compteur de state.stats qui avance pendant le défi)
@@ -12,7 +12,7 @@ import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155 } from './co
 // une partie du jeu fermée (needs) ou des produits qu'on ne sait pas encore faire.
 
 export const DEFI = {
-    lvl: 60,
+    lvl: 64,
     days: 14,
     noRepeat: 3, // un défi joué ne revient qu'au 4e tirage après lui
     perStar: 0.08, // +8 % de quantités par étoile de renommée

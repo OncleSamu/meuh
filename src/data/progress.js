@@ -8,6 +8,7 @@ export const BALANCE = {
     xpA: 614,
     xpP: 1.7,
     xpK: 1.18, // 1.4 : la courbe des 50 niveaux est un peu plus longue que celle des 40
+    xp64: { from: 50, first: 127700, step: 2000 }, // 1.56 : de 50 à 63, la courbe monte doucement (réglée avec le robot : environ 42 h pour le niveau 64)
     xpK60: 1.42, // 1.36 : la courbe des 60 niveaux (réglée avec le robot : environ 5 heures de plus que les 50 niveaux)
     cropXp: 0.06,
     animalXp: 0.08,
@@ -26,7 +27,8 @@ export const BALANCE = {
     rareDrop: 0.012,
 };
 
-export const MAX_LEVEL = 60;
+export const MAX_LEVEL = 64; // 1.56 : 64 niveaux
+export const MAX_LEVEL_60 = 60; // le maximum de la 1.36 à la 1.55 (pour convertir les anciennes parties)
 
 export const RENOWN_XP = 250000;
 
@@ -187,13 +189,13 @@ export const FARMHAND = [
     },
 ];
 
-export const PRESTIGE_LVL = 60;
+export const PRESTIGE_LVL = 64;
 
 export const CHALLENGE_BONUS = 3;
 
 export const ALBUM_MAX = 60;
 
-export const ALBUM_LEVELS = [5, 10, 20, 30, 40, 50, 60];
+export const ALBUM_LEVELS = [5, 10, 20, 30, 40, 50, 60, 64];
 
 export const BOOK_QUARTERS = [0.25, 0.5, 0.75, 1];
 

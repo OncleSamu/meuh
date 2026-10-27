@@ -17,7 +17,7 @@ import { SPR } from '../../src/art/index.js';
 const ready = () => {
     G.loadGame();
     setView({ started: true, tab: 'farm' });
-    state.level = 60;
+    state.level = 64;
     state.money = 1e7;
     G.ensureCave();
     G.ensureChateau();
@@ -51,8 +51,8 @@ test('1.37 : douze recettes du château, leurs dessins et leurs anecdotes', () =
         assert.ok(SPR.has.items[id], `${id} : dessin`);
         assert.ok(CARNET[id], `${id} : anecdote`);
         assert.ok(G.dishOwner(id) >= 0, `${id} : un voisin`);
-        assert.ok(lvl >= 55 && lvl <= 60 && RECIPES[id].lvl === lvl, `${id} : niveau`);
-        assert.ok(lvl >= MACHINES[machine].reqLvl, `${id} : machine`);
+        assert.ok(lvl >= 55 && lvl <= 60 && RECIPES[id].lvl >= 50 && RECIPES[id].lvl <= lvl, `${id} : niveau`); // 1.56 : certaines passent plus tôt
+        assert.ok(RECIPES[id].lvl >= MACHINES[machine].reqLvl, `${id} : machine`);
         for (const k of Object.keys(ing)) assert.ok(ITEMS[k] && lvl >= (RECIPES[k] ? RECIPES[k].lvl : 0), `${id} : ${k} avant`);
     }
     assert.equal(CAVE_ITEMS.cognac, 'cider');
@@ -239,7 +239,7 @@ test('1.37 : la nouvelle ferme garde réputation et médailles, pas les visiteur
     state.chateau.rep = 20;
     state.chateau.medals[3] = 2;
     state.chateau.vis = [{ id: 1, wine: 'redWine', n: 1, pair: 'cheese', until: clock.t + 1e6 }];
-    state.level = 60;
+    state.level = 64;
     state.stats.earnedRun = 1e10;
     assert.ok(G.doPrestige());
     assert.equal(state.chateau.rep, 20);

@@ -1,4 +1,4 @@
-// Les grands défis (1.1) : après le niveau 60, un défi de 14 jours tiré au hasard parmi dix-sept, 4 étapes, une médaille.
+// Les grands défis (1.1) : après le niveau 64, un défi de 14 jours tiré au hasard parmi dix-sept, 4 étapes, une médaille.
 import { state, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';

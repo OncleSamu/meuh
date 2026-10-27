@@ -11,14 +11,13 @@ import { SPR } from '../../src/art/index.js';
 test('1.54 : huit boissons de l’oasis, chacune avec ses gestes, son dessin et son anecdote', () => {
     assert.equal(NEW_DRINKS_154.length, 8);
     const combos = new Set();
-    for (const [id, name, ing, lvl] of NEW_DRINKS_154) {
+    for (const [id, name, ing] of NEW_DRINKS_154) {
         assert.ok(BREW[id] && BREW[id].st.length >= 3, `${id} : gestes`);
         combos.add(BREW[id].st.map(s => s[0]).join('>'));
         assert.equal(ITEMS[id].name, name);
         assert.ok(ITEMS[id].sell > 0);
         assert.equal(RECIPES[id].machine, 'counter');
-        assert.equal(RECIPES[id].lvl, lvl);
-        assert.ok(lvl >= 58 && lvl <= 60);
+        assert.ok(RECIPES[id].lvl >= 59 && RECIPES[id].lvl <= 64);
         assert.ok(SPR.item(id).length > 300, `${id} : dessin`);
         assert.ok(CARNET[id] && CARNET[id].length > 80, `${id} : anecdote`);
         assert.ok(PROJECTS[ITEMS[id].needProject], id);

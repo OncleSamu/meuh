@@ -19,7 +19,7 @@ function nord({ open = true } = {}) {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 60;
+    state.level = 64;
     state.money = 10_000_000;
     state.gameTimeMinutes = 12 * 60; // midi : pas de gel
     state.inventory.stone = 100;
@@ -137,7 +137,7 @@ test('six plantes branchées : dessin, goûts, nom, niveau', () => {
     for (const id of NORD_IDS) {
         const d = ITEMS[id];
         assert.ok(d && d.nord && d.island && d.needProject === 'northStove', id);
-        assert.equal(d.reqLvl, 60, id);
+        assert.ok(d.reqLvl >= 62 && d.reqLvl <= 63, id);
         assert.ok(FLAVORS[id], `${id} : goûts`);
         assert.ok(SPR.item(id).length > 300, `${id} : dessin`);
     }

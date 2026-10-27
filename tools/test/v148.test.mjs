@@ -22,7 +22,7 @@ function oasis({ open = true, water } = {}) {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 58;
+    state.level = 64;
     state.money = 10_000_000;
     state.gameTimeMinutes = 8 * 60; // le matin : pas de chaleur
     if (open) state.projects.oasisWell = { given: {}, done: true };
@@ -226,7 +226,7 @@ test('contrôle : les six plantes ont leurs dessins, leurs saveurs, leur place e
     assert.deepEqual(trees.sort(), ['bitterOrange', 'date', 'jujube']);
     for (const id of OASIS_IDS) {
         const d = ITEMS[id];
-        assert.ok(d && d.oasis && d.island && d.reqLvl === OASIS.lvl, id);
+        assert.ok(d && d.oasis && d.island && d.reqLvl >= OASIS.lvl && d.reqLvl <= 60, id);
         assert.ok(FLAVORS[id] && FLAVORS[id].length === 5, `saveurs ${id}`);
         assert.ok(items[id], `dessin du produit ${id}`);
         if (d.type === 'crop') assert.ok(youngExtra[id] && readyExtra[id], `dessins de la plante ${id}`);

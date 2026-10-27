@@ -1,5 +1,6 @@
 import { LV_MACH, LV_REC } from './levels14.js';
 import { LV18_MACH, LV18_REC } from './levels18.js';
+import { applyLevels64 } from './levels64.js';
 import { LV60_ITEM, LV60_ANIMAL, LV60_MACH, LV60_REC } from './levels60.js';
 import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155 } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
@@ -3502,3 +3503,7 @@ const DESC_153 = {
 };
 for (const [id, name, reqLvl, cost, needProject] of MACHINES_153) MACHINES[id] = { id, name, cost, reqLvl, needProject, desc: DESC_153[id] };
 for (const [id, , machine, ing, time, lvl] of RECIPES_153) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
+
+// ---------------- 1.56 : 64 niveaux ----------------
+// l'oasis sur les niveaux 59 à 61, le Grand Nord sur 62 à 64 (voir levels64.js)
+applyLevels64({ ITEMS, ANIMALS, MACHINES, RECIPES });

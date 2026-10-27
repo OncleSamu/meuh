@@ -10,7 +10,7 @@ import { RECIPES } from '../../src/data/machines.js';
 const start = () => {
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 60;
+    state.level = 64;
     state.money = 1e9;
     state.machines.push(G.newMachine('mill'));
     const i = state.machines.length - 1;

@@ -3,7 +3,7 @@
 // de midi à 16 h, une plante au soleil boit deux fois plus ; à côté d'un palmier dattier, elle est à l'ombre.
 
 export const OASIS = {
-    lvl: 58,
+    lvl: 59,
     project: 'oasisWell', // le chantier qui ouvre l'oasis
     cols: 4,
     cells: 20, // cases en tout (4 × 5)

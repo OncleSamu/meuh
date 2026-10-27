@@ -597,4 +597,4 @@ export function clearSand(k, at) {
     changed('oasis');
     return true;
 }
-const PEN_LVL = 59;
+const PEN_LVL = 61;

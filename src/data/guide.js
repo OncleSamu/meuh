@@ -203,7 +203,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les grandes étapes',
-                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, abbaye et brasserie 35, île 38, génétique 40, grand hall du Comice 43, Haras ${HARAS_LVL}, alpage ${chLvl(9)}, et le niveau ${MAX_LEVEL} pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
+                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, abbaye et brasserie 35, île 38, génétique 40, grand hall du Comice 43, Haras ${HARAS_LVL}, alpage ${chLvl(9)}, oasis ${chLvl(21)}, Grand Nord ${chLvl(23)}, et le niveau ${MAX_LEVEL} pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
             },
             { h: `Après le niveau ${MAX_LEVEL}`, t: 'L’expérience donne des étoiles de renommée : voir « Renommée et Ferme légendaire ».' },
         ],
@@ -533,7 +533,7 @@ export const GUIDE_PAGES = [
                 t: `Après le chantier du chadouf : ${OASIS.chadouf.perDay} fois par jour, remontez ${OASIS.chadouf.scoops} seaux en touchant quand le seau plonge dans l’eau. Jusqu’à ${OASIS.chadouf.max} litres.`,
             },
             {
-                h: 'L’enclos de la palmeraie (niveau 59)',
+                h: 'L’enclos de la palmeraie (niveau 61)',
                 b: [
                     `Après le chantier de l’enclos (chapitre « Le souk de l’oasis ») : ${PEN.cap[0]} places, ${PEN.cap[1]} avec la palissade agrandie.`,
                     'Seulement les bêtes de l’oasis : le dromadaire (lait de chamelle, et parfois de la laine), le zébu (lait de zébu) et le mouton barbarin (laine barbarine). Elles ne vont pas dans les prés de la ferme.',
@@ -554,7 +554,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'La cuisine de l’oasis (1.50)',
                 b: [
-                    'Trois machines, après le puits d’Idris : le four en terre (niveau 58 : kesra, msemen, pains), le tajine (59 : tajines, couscous, harira, chakchouka, keftas) et la confiserie orientale (60 : cornes de gazelle, baklava, makrout, loukoums…).',
+                    'Trois machines, après le puits d’Idris : le four en terre (niveau 59 : kesra, msemen, pains), le tajine (60 : tajines, couscous, harira, chakchouka, keftas) et la confiserie orientale (61 : cornes de gazelle, baklava, makrout, loukoums…).',
                     'Dans les machines que vous avez déjà : semoule et ras el-hanout au moulin, harissa à la marmite, citrons confits à la poterie, pâte de dattes, sirop de jujube et confiture de bigarades à la sucrerie, huile de sésame et tahini à l’huilerie, eau de fleur d’oranger à l’alambic, fromage de chamelle, smen et lben à la fromagerie, tapis berbère et couverture de caravane au métier à tisser.',
                 ],
             },
@@ -634,7 +634,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'La cuisine du Nord (1.53)',
                 b: [
-                    'Trois machines au niveau 60 : le poêle-four (après le poêle de Tuomas : pain de seigle noir, tarte de Carélie, pulla, pâtisseries aux airelles et au chicoutai), le chaudron de la taïga (après l’étable : soupes de saumon et de champignons, bouillie de seigle, kalakukko) et la sucrerie de baies (après la serre de rondins : confitures, gelées, pastilles, bonbons à l’épicéa).',
+                    'Trois machines, une par niveau de 62 à 64 : le poêle-four (62, après le poêle de Tuomas : pain de seigle noir, tarte de Carélie, pulla, pâtisseries aux airelles et au chicoutai), le chaudron de la taïga (63, après l’étable : soupes de saumon et de champignons, bouillie de seigle, kalakukko) et la sucrerie de baies (64, après la serre de rondins : confitures, gelées, pastilles, bonbons à l’épicéa).',
                     'Dans les machines que vous avez déjà : farine de seigle au moulin, huile d’argousier à la huilerie, fromage de renne et lait fermenté à la fromagerie d’alpage, liqueur de chicoutai et eau-de-vie de sorbier à l’alambic, écharpe et bonnet en qiviut au métier à tisser, bois de renne gravé à la scierie, gravlax à la poissonnerie, glace au chicoutai au glacier.',
                     'La cardamome que rapporte le traîneau parfume la pulla, les biscuits de seigle et la crème de chicoutai.',
                 ],
@@ -965,8 +965,8 @@ export const GUIDE_PAGES = [
                 b: [
                     '57 boissons. Chacune se prépare en 2 à 4 gestes, et la règle de chacun s’affiche avant de commencer : température, infusion, mouture, extraction, service, fouet, mousse (cœur, feuille ou tulipe, en 12 secondes), presser un agrume, remuer sans déborder, secouer le shaker, attraper les glaçons, doser une goutte, verser de haut (le verre va et vient : on ne verse que lorsqu’il passe sous le jet). Note de 1 à 3 étoiles (qualité normale, argent, or).',
                     'Les cafés s’ouvrent avec la brûlerie de l’île.',
-                    'Huit boissons de l’oasis (niveau 58 à 60) : thé du désert, thé à la datte, tisane de jujube, thé à la bigarade, café de noyaux de datte ; et, après l’enclos de la palmeraie, lait de sésame glacé, lait de dromadaire aux dattes et lait safrané. Elles s’ouvrent avec le puits d’Idris.',
-                    'Huit boissons du Grand Nord (niveau 60) : café de seigle, thé aux pousses d’épicéa, tisane d’airelles, infusion de chicoutai, argousier chaud, thé glacé au sorbier, kvas de seigle ; et, avec le traîneau, lait de renne à la cardamome. Elles s’ouvrent avec le poêle de Tuomas.',
+                    'Huit boissons de l’oasis (niveaux 59 à 61) : thé du désert, thé à la datte, tisane de jujube, thé à la bigarade, café de noyaux de datte ; et, après l’enclos de la palmeraie, lait de sésame glacé, lait de dromadaire aux dattes et lait safrané. Elles s’ouvrent avec le puits d’Idris.',
+                    'Huit boissons du Grand Nord (niveaux 62 à 64) : café de seigle, thé aux pousses d’épicéa, tisane d’airelles, infusion de chicoutai, argousier chaud, thé glacé au sorbier, kvas de seigle ; et, avec le traîneau, lait de renne à la cardamome. Elles s’ouvrent avec le poêle de Tuomas.',
                     'Le stock sert aux commandes, au train et aux quêtes.',
                 ],
             },

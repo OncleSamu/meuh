@@ -23,6 +23,7 @@ export function newState() {
         version: SAVE_VERSION,
         lv14: true, // échelle des 50 niveaux
         lv136: true, // échelle des 60 niveaux
+        lv156: true, // échelle des 64 niveaux
         lv18: true, // machines et recettes aux niveaux de la 1.8
         lvKeep: {}, // ce qu'une ancienne partie avait déjà ouvert (posé à la conversion)
         moved131: false,
@@ -190,8 +191,11 @@ export const setState = s => (state = s);
 // 1.4 : le jeu passe de 40 à 50 niveaux ; les gains et les tailles de commandes gardent l'échelle des 40 niveaux
 // 1.4 : ce qu'une ancienne partie avait déjà débloqué reste ouvert (state.lvKeep, posé à la conversion)
 export const lvOk = (d, lvl = d.reqLvl) => state.level >= (lvl || 1) || !!(state.lvKeep && state.lvKeep[d.id]);
-// 1.36 : les gains gardent l'échelle des 50 niveaux : le niveau 60 vaut l'ancien niveau 50
-export const scaleLvl = () => 1 + ((state.level - 1) * 39) / 59;
+// 1.36 : les gains gardent l'échelle des 50 niveaux : jusqu'au 57, la même pente ; de 58 à 64, elle s'adoucit (1.56)
+export const scaleLvl = () => {
+    const L = state.level;
+    return L <= 57 ? 1 + ((L - 1) * 39) / 59 : 1 + (56 * 39) / 59 + ((L - 57) * 2.6) / 7;
+};
 
 // champs remis à zéro à chaque chargement (états passagers)
 const TRANSIENT_KEYS = ['crow', 'egg'];
@@ -215,6 +219,7 @@ export function fromSave(parsed) {
     if (!parsed.lv14) s.lv14 = false;
     if (!parsed.lv18) s.lv18 = false;
     if (!parsed.lv136) s.lv136 = false;
+    if (!parsed.lv156) s.lv156 = false;
     return s;
 }
 

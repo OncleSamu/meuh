@@ -10,7 +10,7 @@ import { BREW } from '../../src/data/counter.js';
 const fight = id => {
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 60;
+    state.level = 64;
     G.ensurePond();
     const f = G.fishing;
     Object.assign(f, {
@@ -74,7 +74,7 @@ test('un nouveau record est signalé', () => {
 
 test('comptoir : la série de boissons parfaites fait monter le pourboire', () => {
     G.loadGame();
-    state.level = 60;
+    state.level = 64;
     const C = G.ensureCounter();
     C.streak = 0;
     assert.equal(G.streakMult(), 1);

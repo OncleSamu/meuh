@@ -16,17 +16,17 @@ test('pluriel des noms de produits', () => {
     assert.equal(qtyName(5, 'Oignon'), '5 oignons');
 });
 
-test('chaque recette et chaque chantier peut être fait au plus tard au niveau 60', () => {
+test('chaque recette et chaque chantier peut être fait au plus tard au niveau 64', () => {
     const ok = new Set(
         Object.values(ITEMS)
-            .filter(i => i.type !== 'artisan' && (i.reqLvl || 0) <= 60)
+            .filter(i => i.type !== 'artisan' && (i.reqLvl || 0) <= 64)
             .map(i => i.id),
     );
     let grew = true;
     while (grew) {
         grew = false;
         for (const r of Object.values(RECIPES))
-            if (!ok.has(r.id) && MACHINES[r.machine] && MACHINES[r.machine].reqLvl <= 60 && Object.keys(r.ing).every(k => ok.has(k))) {
+            if (!ok.has(r.id) && MACHINES[r.machine] && MACHINES[r.machine].reqLvl <= 64 && Object.keys(r.ing).every(k => ok.has(k))) {
                 ok.add(r.id);
                 grew = true;
             }
