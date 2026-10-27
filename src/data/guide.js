@@ -963,9 +963,10 @@ export const GUIDE_PAGES = [
             {
                 h: 'L’atelier de boissons',
                 b: [
-                    '49 boissons. Chacune se prépare en 2 à 4 gestes, et la règle de chacun s’affiche avant de commencer : température, infusion, mouture, extraction, service, fouet, mousse (cœur, feuille ou tulipe, en 12 secondes), presser un agrume, remuer sans déborder, secouer le shaker, attraper les glaçons, doser une goutte, verser de haut (le verre va et vient : on ne verse que lorsqu’il passe sous le jet). Note de 1 à 3 étoiles (qualité normale, argent, or).',
+                    '57 boissons. Chacune se prépare en 2 à 4 gestes, et la règle de chacun s’affiche avant de commencer : température, infusion, mouture, extraction, service, fouet, mousse (cœur, feuille ou tulipe, en 12 secondes), presser un agrume, remuer sans déborder, secouer le shaker, attraper les glaçons, doser une goutte, verser de haut (le verre va et vient : on ne verse que lorsqu’il passe sous le jet). Note de 1 à 3 étoiles (qualité normale, argent, or).',
                     'Les cafés s’ouvrent avec la brûlerie de l’île.',
                     'Huit boissons de l’oasis (niveau 58 à 60) : thé du désert, thé à la datte, tisane de jujube, thé à la bigarade, café de noyaux de datte ; et, après l’enclos de la palmeraie, lait de sésame glacé, lait de dromadaire aux dattes et lait safrané. Elles s’ouvrent avec le puits d’Idris.',
+                    'Huit boissons du Grand Nord (niveau 60) : café de seigle, thé aux pousses d’épicéa, tisane d’airelles, infusion de chicoutai, argousier chaud, thé glacé au sorbier, kvas de seigle ; et, avec le traîneau, lait de renne à la cardamome. Elles s’ouvrent avec le poêle de Tuomas.',
                     'Le stock sert aux commandes, au train et aux quêtes.',
                 ],
             },

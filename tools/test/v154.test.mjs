@@ -32,9 +32,9 @@ test('1.54 : le lait attend l’enclos de la palmeraie, le reste le puits d’Id
     for (const id of ['desertTea', 'dateTea', 'jujubeTisane', 'bitterOrangeTea', 'dateCoffee']) assert.equal(ITEMS[id].needProject, 'oasisWell', id);
 });
 
-test('1.54 : le thé versé de haut sert à trois boissons, avec des réglages qui leur sont propres', () => {
+test('1.54 : le thé versé de haut sert à quatre boissons (trois de l’oasis, une du Nord), avec des réglages qui leur sont propres', () => {
     const hp = Object.entries(BREW).filter(([, d]) => d.st.some(s => s[0] === 'highpour'));
-    assert.deepEqual(hp.map(h => h[0]).sort(), ['dateCoffee', 'desertTea', 'saffronMilk']);
+    assert.deepEqual(hp.map(h => h[0]).sort(), ['cloudberryInfusion', 'dateCoffee', 'desertTea', 'saffronMilk']);
     for (const [, d] of hp) {
         const p = d.st.find(s => s[0] === 'highpour')[1];
         assert.ok(p.w > 0 && p.w < 0.5 && p.dur >= 6 && p.speed > 0);

@@ -87,6 +87,15 @@ export const BREW = {
     dateCoffee: { col: '#4a2a14', st: [grind(5, 36), temp(95), highpour('#4a2a14', 1.3, 0.16, 8)] },
     bitterOrangeTea: { col: '#e8913a', st: [temp(90), steep(0.45, 0.65), squeeze('la bigarade', '#e2681a', 24), drop('le miel', '#e8b04a', 0.25)] },
     sesameMilk: { col: '#e8d8b0', st: [grind(4, 40), ['whisk', { turns: 5, dur: 7 }], ice(4), pour(0.8, '#e8d8b0', 'le lait de sésame')] },
+    // ---- 1.55 : les boissons du Grand Nord ----
+    ryeCoffee: { col: '#5a3a22', st: [grind(5, 38), temp(95), stir(2, '#5a3a22')] },
+    spruceTea: { col: '#9ab25a', st: [temp(85, 3), steep(0.45, 0.65, 7), drop('le miel', '#d9a441', 0.3)] },
+    lingonTisane: { col: '#a8283e', st: [temp(95), steep(0.5, 0.7, 7), stir(3, '#a8283e'), drop('le sucre', '#fff6e0', 0.25)] },
+    cloudberryInfusion: { col: '#f0b040', st: [temp(90), steep(0.4, 0.6), highpour('#f0b040', 1.1, 0.18)] },
+    buckthornHot: { col: '#f08a1a', st: [squeeze('l’argousier', '#f08a1a', 24), temp(75, 3), stir(3, '#f08a1a')] },
+    rowanTea: { col: '#c8402a', st: [temp(95), steep(0.55, 0.75, 7), ice(4), pour(0.8, '#c8402a', 'le thé de sorbier')] },
+    ryeKvas: { col: '#8a5a2e', st: [grind(4, 42), shake(6), ice(3), pour(0.8, '#8a5a2e', 'le kvas')] },
+    cardamomMilk: { col: '#e6d2a6', st: [temp(70, 3), ['whisk', { turns: 4, dur: 6 }], drop('la cardamome', '#b8a060', 0.25), pour(0.8, MILK, 'le lait')] },
     saffronMilk: {
         col: '#f0b640',
         st: [temp(75, 2.5), drop('le safran', '#f08a1a', 0.2, 0.05), ['whisk', { turns: 4, dur: 6 }], highpour('#f0b640', 0.9, 0.22)],
@@ -145,6 +154,18 @@ export const NEW_DRINKS_154 = [
     ['sesameMilk', 'Lait de sésame glacé', { sesame: 2, zebuMilk: 1, sugar: 1 }, 59, 240, 'pen'],
     ['camelDate', 'Lait de dromadaire aux dattes', { camelMilk: 2, date: 1 }, 60, 240, 'pen'],
     ['saffronMilk', 'Lait safrané', { camelMilk: 1, saffron: 1, honey: 1 }, 60, 260, 'pen'],
+];
+
+// 1.55 : huit boissons du Grand Nord (niveau 60) ; le lait de renne à la cardamome attend le traîneau
+export const NEW_DRINKS_155 = [
+    ['ryeCoffee', 'Café de seigle', { rye: 3 }, 60, 140],
+    ['spruceTea', 'Thé aux pousses d’épicéa', { tea: 1, spruce: 2, honey: 1 }, 60, 200],
+    ['lingonTisane', 'Tisane d’airelles', { lingonberry: 3, sugar: 1 }, 60, 200],
+    ['cloudberryInfusion', 'Infusion de chicoutai', { cloudberry: 2, honey: 1 }, 60, 200],
+    ['buckthornHot', 'Argousier chaud', { seaBuckthorn: 3, honey: 1 }, 60, 200],
+    ['rowanTea', 'Thé glacé au sorbier', { tea: 1, rowan: 2, sugar: 1 }, 60, 220],
+    ['ryeKvas', 'Kvas de seigle', { rye: 2, lingonberry: 1, sugar: 1 }, 60, 220],
+    ['cardamomMilk', 'Lait de renne à la cardamome', { reindeerMilk: 2, cardamom: 1, honey: 1 }, 60, 240, 'sled'],
 ];
 
 // Les produits existants qui passent du salon de thé et de la brûlerie au comptoir

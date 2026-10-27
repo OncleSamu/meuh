@@ -1452,3 +1452,23 @@ Object.assign(CARNET, {
     saffronMilk:
         'Le lait safrané est doré comme un coucher de soleil sur les dunes. Trois filaments de safran, pas un de plus : il faut les doser à la goutte. Le jour où on en met quatre, Idris fait une drôle de tête.',
 });
+
+// 1.55 : les boissons du Grand Nord
+Object.assign(CARNET, {
+    ryeCoffee:
+        'Le café de seigle, c’est du grain grillé et moulu, noir comme la nuit polaire. Tuomas le boit sans rien dedans, debout devant le poêle. Il dit que le vrai café existe, mais qu’il est loin, et que le seigle, lui, ne gèle jamais.',
+    spruceTea:
+        'Le thé aux pousses d’épicéa sent la forêt après la neige. Les pousses sont tendres, un peu citronnées, et le miel arrondit tout. Ingrid dit que c’est la seule tisane où l’on boit un sapin sans lui faire de mal.',
+    lingonTisane:
+        'La tisane d’airelles est rouge sombre, acidulée, vive. On la boit après la neige, quand les doigts ne répondent plus. Une cuillère de sucre, pas plus : l’airelle aime qu’on lui tienne tête.',
+    cloudberryInfusion:
+        'Le chicoutai, c’est l’or du Nord, et son infusion a la couleur d’une aurore. On la verse de haut dans les verres, comme pour la montrer. Elle sent un peu la framboise, un peu l’abricot, et beaucoup la tourbière.',
+    buckthornHot:
+        'L’argousier chaud, c’est des baies orange pressées avec du miel, réchauffées sans bouillir. Acide, vitaminé, orange vif : une tasse et on a chaud jusqu’aux oreilles. Les petits font la grimace, puis en redemandent.',
+    rowanTea:
+        'Le thé glacé au sorbier, on le sert dehors, avec la glace du marché d’Ingrid. Les baies rouges lui donnent une pointe amère qu’on apprend à aimer. Dans le Nord, un thé glacé a de l’avance : ici, il est déjà froid dès qu’on le verse.',
+    ryeKvas:
+        'Le kvas de seigle est une boisson de pain : le seigle fermenté, un peu d’airelle, du sucre. Pétillant, légèrement acide, il se boit bien frais et se partage au traîneau. Mamie Odette dit que c’est de la bière qui aurait fait des études.',
+    cardamomMilk:
+        'Le lait de renne à la cardamome vient du traîneau : sans lui, pas d’épice. Chaud, épais, un peu sucré, il sent les pains de Noël. On le boit à petites gorgées, avec une couverture sur les genoux.',
+});

@@ -1,5 +1,5 @@
 import { LV_ITEM } from './levels14.js';
-import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, COFFEE_GATED } from './counter.js';
+import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155, COFFEE_GATED } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
 import { CROPS_130, RECIPES_130 } from './v130.js';
 import { TREES_131, RECIPES_131 } from './v131.js';
@@ -2975,4 +2975,10 @@ for (const [id, name, , ing] of RECIPES_153) {
 for (const [id, name, ing, , , tag] of NEW_DRINKS_154) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5, needProject: tag === 'pen' ? 'oasisPen' : 'oasisWell' };
+}
+
+// 1.55 : les boissons du Grand Nord ; elles attendent le poêle de Tuomas, et le lait de renne le traîneau
+for (const [id, name, ing, , , tag] of NEW_DRINKS_155) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5, needProject: tag === 'sled' ? 'northSled' : 'northStove' };
 }

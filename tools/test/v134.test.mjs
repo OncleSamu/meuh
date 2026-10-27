@@ -11,7 +11,7 @@ import { SPR } from '../../src/art/index.js';
 
 test('1.34 : le comptoir passe à 41 boissons, chacune avec un geste et un dessin', () => {
     assert.equal(NEW_DRINKS_134.length, 7);
-    assert.equal(Object.values(RECIPES).filter(r => r.machine === 'counter').length, 49);
+    assert.equal(Object.values(RECIPES).filter(r => r.machine === 'counter').length, 57);
     for (const [id, name] of NEW_DRINKS_134) {
         assert.ok(BREW[id] && BREW[id].st.length >= 2, `${id} : geste`);
         assert.equal(ITEMS[id].name, name);
