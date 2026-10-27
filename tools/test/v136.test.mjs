@@ -69,8 +69,8 @@ test('1.56 : la courbe d’expérience monte doucement de 50 à 63, les gains ga
     for (let l = 2; l < 64; l++) assert.ok(G.getXpReq(l) >= G.getXpReq(l - 1), `niveau ${l}`);
     const to50 = G.xpToReach(50);
     const total = G.xpToReach(64);
-    // de 50 à 63 : environ 1,97 million (le robot règle le détail), contre 1,61 million de 50 à 59 avant
-    assert.ok(total - to50 > 1.9e6 && total - to50 < 2.05e6, `de 50 à 64 : ${total - to50}`);
+    // de 50 à 63 : environ 2,15 million (réglé avec le robot : 42 h pour le niveau 64), contre 1,61 million de 50 à 59 avant
+    assert.ok(total - to50 > 2.05e6 && total - to50 < 2.25e6, `de 50 à 64 : ${total - to50}`);
     assert.ok(G.getXpReq(63) < G.getXpReq60(60), 'le dernier niveau coûte moins que l’ancien 60');
     state.level = 57;
     const at57 = scaleLvl();
@@ -131,11 +131,11 @@ const asOld60 = (level, extra = {}) => {
     G.normalizeState();
 };
 
-test('1.56 : une partie du niveau 60 garde son expérience totale, et se range entre 60 et 64', () => {
+test('1.56 : une partie du niveau 60 garde son expérience totale, et se range entre 60 et 63', () => {
     const was = G.xpToReach(60, G.getXpReq60) + 1000;
     asOld60(60, { xp: 1000 });
     assert.ok(state.lv156);
-    assert.ok(state.level >= 61 && state.level <= 63, `niveau ${state.level}`);
+    assert.ok(state.level >= 60 && state.level <= 63, `niveau ${state.level}`);
     assert.ok(Math.abs(G.xpToReach(state.level) + state.xp - was) <= 10, 'expérience totale gardée');
 });
 

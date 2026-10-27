@@ -23,7 +23,21 @@ import { pluralFr } from '../core/format.js';
 
 export const projState = id => state.projects[id] || (state.projects[id] = { given: {}, done: false });
 export const projectDone = id => !!(state.projects[id] && state.projects[id].done);
-export const chapterProjects = n => Object.values(PROJECTS).filter(p => p.ch === n);
+// 1.56 : les chantiers par chapitre et par produit demandé, rangés une fois (le robot passait 60 % de son temps à les chercher)
+let byChapter = null,
+    byItem = null;
+const index = () => {
+    byChapter = {};
+    byItem = {};
+    for (const p of Object.values(PROJECTS)) {
+        (byChapter[p.ch] = byChapter[p.ch] || []).push(p);
+        for (const item of Object.keys(p.need)) (byItem[item] = byItem[item] || []).push(p);
+    }
+};
+export const chapterProjects = n => {
+    if (!byChapter) index();
+    return byChapter[n] || [];
+};
 export const chapterDone = n => chapterProjects(n).every(p => projectDone(p.id));
 // un chapitre déjà ouvert avant la 1.4 le reste (state.story.keep, posé à la conversion)
 export const chapterKept = n => !!(state.story.keep && state.story.keep[n]);
@@ -60,8 +74,9 @@ export function currentChapter(map) {
 
 // Produits encore attendus par les chantiers ouverts (pour la réserve du marché)
 export function projectsNeed(item) {
+    if (!byItem) index();
     let n = 0;
-    for (const p of Object.values(PROJECTS)) if (p.need[item] && projectOpen(p.id)) n += projectLeft(p.id, item);
+    for (const p of byItem[item] || []) if (projectOpen(p.id)) n += projectLeft(p.id, item);
     return n;
 }
 
