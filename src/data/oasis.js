@@ -48,7 +48,16 @@ export const OASIS_TREES = [
     ['date', 'Datte', 'Palmier dattier', 58, 6000, 380, 1800, 13, '50000'],
     ['jujube', 'Jujube', 'Jujubier', 58, 5000, 340, 1600, 12, '32000'],
     ['bitterOrange', 'Bigarade', 'Oranger amer', 58, 5500, 360, 1700, 12, '04300'],
+    // 1.58 : les six arbres du verger de l'oasis
+    ['tamarind', 'Gousses de tamarin', 'Tamarinier', 59, 5200, 350, 1700, 12, '32000'],
+    ['carob', 'Caroubes', 'Caroubier', 59, 5000, 330, 1600, 12, '40100'],
+    ['argan', 'Fruits d’argan', 'Arganier', 60, 6500, 420, 2000, 14, '10102'],
+    ['mulberry', 'Mûres blanches', 'Mûrier blanc', 60, 5000, 340, 1500, 12, '50000'],
+    ['pricklyPear', 'Figues de Barbarie', 'Figuier de Barbarie', 61, 5500, 360, 1600, 12, '41000'],
+    ['citron', 'Cédrats', 'Cédratier', 61, 5800, 380, 1800, 13, '03200'],
 ];
+// 1.58 : le verger de l'oasis, à part des cases (comme celui des îles) : 4 places, jusqu'à 12 ; chaque arbre boit dans la citerne
+export const OASIS_GROVE = { base: 4, max: 12, cost: 2000000, mult: 1.35 };
 export const OASIS_IDS = [...OASIS_CROPS, ...OASIS_TREES].map(r => r[0]);
 
 // ---------------- 1.49 : l'enclos de la palmeraie, ses bêtes, les caravanes, la tempête ----------------

@@ -38,6 +38,18 @@ export const LV64_ITEM = {
     seaBuckthorn: 63,
     spruce: 63,
     rowan: 63,
+    tamarind: 59,
+    carob: 59,
+    argan: 60,
+    mulberry: 60,
+    pricklyPear: 61,
+    citron: 61,
+    crabapple: 62,
+    birdCherry: 62,
+    cembro: 63,
+    juniper: 63,
+    elderberry: 64,
+    aronia: 64,
 };
 export const LV64_ANIMAL = { dromedary: 61, zebu: 61, barbarySheep: 61, reindeer: 63, muskox: 63, ptarmigan: 63 };
 export const LV64_MACH = { earthOven: 59, tajine: 60, orientalSweets: 61, tiledStove: 62, taigaPot: 63, berryKettle: 64 };

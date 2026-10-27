@@ -35,11 +35,15 @@ test('quarante-deux recettes : dessin, anecdote de Mamie, ingrédients connus, p
     }
 });
 
+const NEW_158 = ['crabapple', 'birdCherry', 'cembro', 'juniper', 'elderberry', 'aronia']; // 1.58 : un usage chacun suffit (brasserie, voisins, traîneau)
 test('chaque plante et chaque produit du Nord sert au moins trois fois ; jamais plus de 20 recettes dans une machine touchée', () => {
     const uses = {};
     for (const r of Object.values(RECIPES)) for (const k of Object.keys(r.ing)) uses[k] = (uses[k] || 0) + 1;
     for (const id of [...NORD_IDS.filter(i => i !== 'spruce' || true), ...NORD_PRODUCTS.map(p => p[0]), 'cardamom'])
-        assert.ok((uses[id] || 0) >= 3 || (id === 'rye' && uses.ryeFlour >= 3) || (['ptarmiganEgg'].includes(id) && uses[id] >= 3), `${id} : ${uses[id] || 0}`);
+        assert.ok(
+            (uses[id] || 0) >= (NEW_158.includes(id) ? 1 : 3) || (id === 'rye' && uses.ryeFlour >= 3) || (['ptarmiganEgg'].includes(id) && uses[id] >= 3),
+            `${id} : ${uses[id] || 0}`,
+        );
     const count = {};
     for (const r of Object.values(RECIPES)) count[r.machine] = (count[r.machine] || 0) + 1;
     for (const m of new Set(RECIPES_153.map(r => r[2])))

@@ -44,7 +44,16 @@ export const NORD_TREES = [
     ['seaBuckthorn', 'Baies d’argousier', 'Argousier', 60, 5000, 360, 1700, 12, '03100'],
     ['spruce', 'Pousses d’épicéa', 'Épicéa', 60, 5500, 340, 1800, 12, '01300'],
     ['rowan', 'Baies de sorbier', 'Sorbier', 60, 4800, 330, 1600, 12, '21200'],
+    // 1.58 : les six arbres du verger du Grand Nord
+    ['crabapple', 'Pommettes', 'Pommettier', 62, 4800, 330, 1600, 12, '24000'],
+    ['birdCherry', 'Baies de merisier', 'Merisier à grappes', 62, 4800, 330, 1600, 12, '20200'],
+    ['cembro', 'Pignons de cembro', 'Pin cembro', 63, 5800, 400, 2000, 14, '10001'],
+    ['juniper', 'Baies de genièvre', 'Genévrier', 63, 5200, 360, 1800, 12, '01220'],
+    ['elderberry', 'Baies de sureau', 'Sureau noir', 64, 5000, 350, 1500, 12, '30100'],
+    ['aronia', 'Baies d’aronia', 'Aronia', 64, 5200, 360, 1600, 12, '11200'],
 ];
+// 1.58 : le verger du Grand Nord : 4 places, jusqu'à 12 ; la nuit de gel les arbres poussent deux fois moins vite, sans poêle
+export const NORD_GROVE = { base: 4, max: 12, cost: 2000000, mult: 1.35, frost: 0.5, offline: 0.8 };
 export const NORD_IDS = [...NORD_CROPS, ...NORD_TREES].map(r => r[0]);
 
 // ================= 1.52 : l'étable de rondins et les bêtes du Nord =================

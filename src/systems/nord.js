@@ -8,7 +8,7 @@ import { now } from '../core/clock.js';
 import { fmt, s, dateKey } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { NORD, BARN, SLED, WEATHER, NORD_IDS, NORD_PRODUCTS } from '../data/nord.js';
+import { NORD, NORD_GROVE, BARN, SLED, WEATHER, NORD_IDS, NORD_PRODUCTS } from '../data/nord.js';
 import { ANIMALS } from '../data/animals.js';
 import { isAdult } from './animals.js';
 import { inPasture, nordBarnOpen, nordBarnCap } from './pastures.js';
@@ -27,7 +27,7 @@ import { addQuality, ascend } from './farm.js';
 import { eventProgress } from './events.js';
 import { tip } from './tips.js';
 import { takeVarSeed, harvestVariety, varExtra, varGrowth, varCold } from './genetics.js';
-import { slotsOf, plantTree, pickTree, treeStage, groundFull, advanceTree } from './orchard.js';
+import { slotsOf, pickTree, treeStage, groundFull, advanceTree } from './orchard.js';
 import { compSpeed, plotFx, compHarvest, NORD_BASE } from './companions.js';
 import { hasCost, payCost } from './home.js';
 
@@ -57,6 +57,18 @@ export function ensureNord() {
     if (nordOpen()) for (let k = 0; k < NORD.cellsBase; k++) N.plots[k].open = true;
     // une case ouverte l'est pour les cultures comme pour les arbres
     N.plots.forEach((p, k) => (N.orchard[k].open = !!p.open));
+    // 1.58 : le verger du Grand Nord ; les arbres plantés dans les cases y déménagent
+    if (!Array.isArray(N.grove)) N.grove = [];
+    while (N.grove.length < NORD_GROVE.max) N.grove.push({ open: false, tree: null });
+    if (nordOpen()) for (let k = 0; k < NORD_GROVE.base; k++) N.grove[k].open = true;
+    N.orchard.forEach(sl => {
+        if (!sl.tree) return;
+        const g = N.grove.find(x => x.open && !x.tree) || N.grove.find(x => !x.tree);
+        if (!g) return;
+        g.open = true;
+        g.tree = sl.tree;
+        sl.tree = null;
+    });
     for (const k of Object.keys(N.stoves)) if (!N.plots[+k] || !N.plots[+k].open) delete N.stoves[k];
     return N;
 }
@@ -241,6 +253,11 @@ function step(dt, cold) {
         const t = N.orchard[k].tree;
         if (t) fruits += advanceTree(t, dt * m).fell;
     });
+    // 1.58 : les arbres du verger sont rustiques : sans poêle, deux fois moins vite la nuit de gel ; l'aurore les accélère aussi
+    const gm = (cold === undefined ? (isFrost() ? NORD_GROVE.frost : 1) : NORD_GROVE.offline) * aur;
+    N.grove.forEach(sl => {
+        if (sl.tree) fruits += advanceTree(sl.tree, dt * gm).fell;
+    });
     return { crops, fruits };
 }
 
@@ -357,16 +374,6 @@ export function plantNordVar(k, vid, at) {
     changed('nord');
     return true;
 }
-// un arbre sur une case : le verger du Nord (orchard.js, zone 'nord')
-export function plantNordTree(k, id, at) {
-    const p = nordPlots()[k];
-    if (!p || !p.open || p.id || stoveAt(k)) return false;
-    if (!plantTree(k, id, at, 'nord')) return false;
-    tip('nord');
-    changed('nord');
-    return true;
-}
-
 // ---------------- récolter ----------------
 function rollNordQuality(k) {
     let x = 0.08 + 0.15 + 0.05;
@@ -432,6 +439,11 @@ export function harvestAllNord(at) {
         const r = pickTree(k, at, true, 'nord');
         if (r) add(r, k);
     });
+    slotsOf('nordV').forEach((sl, k) => {
+        if (!sl.tree || !sl.tree.ground) return;
+        const r = pickTree(k, at, true, 'nordV');
+        if (r) add(r, 40 + k);
+    });
     if (!n) {
         if (!barnBlocked(true)) toast('Rien à récolter au Grand Nord');
         squish(at);
@@ -452,7 +464,10 @@ export function harvestAllNord(at) {
     );
     return n;
 }
-export const nordToPick = () => nordPlots().filter(p => p.ready).length + slotsOf('nord').filter(sl => sl.tree && sl.tree.ground).length;
+export const nordToPick = () =>
+    nordPlots().filter(p => p.ready).length +
+    slotsOf('nord').filter(sl => sl.tree && sl.tree.ground).length +
+    slotsOf('nordV').filter(sl => sl.tree && sl.tree.ground).length;
 
 export function replantNord(at) {
     let n = 0;

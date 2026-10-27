@@ -506,8 +506,8 @@ export const GUIDE_PAGES = [
             {
                 h: 'Les cases',
                 b: [
-                    `${OASIS.cellsBase} cases offertes, jusqu’à ${OASIS.cells}. Sur chaque case, une culture ou un arbre.`,
-                    'Cultures : cumin, coriandre, sésame, sorgho. Arbres : palmier dattier, jujubier, oranger amer.',
+                    `${OASIS.cellsBase} cases offertes, jusqu’à ${OASIS.cells}. Sur chaque case, une culture.`,
+                    'Cultures : cumin, coriandre, sésame, sorgho.',
                     'Tout est de saison, et les variétés du labo se sèment aussi à l’oasis.',
                 ],
             },
@@ -548,8 +548,17 @@ export const GUIDE_PAGES = [
                 t: `Après le caravansérail : ${CARAVAN.camels} dromadaires adultes emportent jusqu’à ${CARAVAN.loads} charges de ${CARAVAN.perLoad} produits au souk de la ville. Retour en 6 heures, avec ${String(CARAVAN.mult).replace('.', ',')} fois le prix du grossiste pour les produits de l’oasis (plantes, laines, laits, recettes, épices) et ${String(CARAVAN.otherMult).replace('.', ',')} fois pour tout le reste (15 % de plus une fois les étals du souk ouverts), et parfois du safran. Les dromadaires partis ne produisent pas.`,
             },
             {
+                h: 'Le verger de l’oasis',
+                b: [
+                    'Un verger à part, comme celui des îles : 4 places jusqu’à 12 (2 millions la cinquième, puis un tiers de plus à chaque place).',
+                    'Neuf arbres : dattier, jujubier, oranger amer, tamarinier, caroubier, arganier, mûrier blanc, figuier de Barbarie et cédratier.',
+                    'Chaque arbre boit 4 L/h à la citerne tant qu’il pousse ou porte des fruits, le double aux heures chaudes. Sans eau, il attend.',
+                    'Les arbres plantés dans les cases avant la 1.58 ont déménagé au verger.',
+                ],
+            },
+            {
                 h: 'La tempête de sable',
-                t: 'Tous les deux jours environ, le vent ensable quelques cases au soleil : elles ne poussent plus jusqu’à ce qu’on les touche pour les dégager. Les cases à l’ombre des palmiers ne craignent rien, et une caravane en route prend une heure de retard.',
+                t: 'Tous les deux jours environ, le vent ensable quelques cases au soleil : elles ne poussent plus jusqu’à ce qu’on les touche pour les dégager. Les cases à l’ombre d’un sorgho ne craignent rien, et une caravane en route prend une heure de retard.',
             },
             {
                 h: 'La cuisine de l’oasis (1.50)',
@@ -585,9 +594,18 @@ export const GUIDE_PAGES = [
             {
                 h: 'Les cases',
                 b: [
-                    `${NORD.cellsBase} cases offertes, jusqu’à ${NORD.cells}. Sur chaque case, une culture, un arbre ou un poêle.`,
-                    'Cultures : seigle, airelle rouge, chicoutai. Arbres : argousier, épicéa, sorbier.',
+                    `${NORD.cellsBase} cases offertes, jusqu’à ${NORD.cells}. Sur chaque case, une culture ou un poêle.`,
+                    'Cultures : seigle, airelle rouge, chicoutai.',
                     'Les variétés du labo se sèment aussi au Grand Nord ; une variété rustique résiste mieux au froid.',
+                ],
+            },
+            {
+                h: 'Le verger du Grand Nord',
+                b: [
+                    'Un verger à part, comme celui des îles : 4 places jusqu’à 12 (2 millions la cinquième, puis un tiers de plus à chaque place).',
+                    'Neuf arbres : argousier, épicéa, sorbier, pommettier, merisier à grappes, pin cembro, genévrier, sureau noir et aronia.',
+                    'Ils sont rustiques : pas besoin de poêle. La nuit de gel ils poussent deux fois moins vite, l’aurore les accélère.',
+                    'Les arbres plantés dans les cases avant la 1.58 ont déménagé au verger.',
                 ],
             },
             {

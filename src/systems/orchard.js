@@ -10,6 +10,8 @@ import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../c
 import { ITEMS } from '../data/items.js';
 import { ORCHARD, treeWood } from '../data/farm.js';
 import { ISLAND } from '../data/island.js';
+import { OASIS_GROVE } from '../data/oasis.js';
+import { NORD_GROVE } from '../data/nord.js';
 import { DAYS_PER_SEASON } from '../data/world.js';
 import { BALANCE } from '../data/progress.js';
 import { speedMult, addXp, spend, rank, rollYield } from './player.js';
@@ -26,6 +28,7 @@ import { orchardLife, orchardRate, ladderBonus, basketBonus } from './buildings.
 import { MATURE, GRAFTS, CARE, TREE_SEASON, SEASON_IN, SEASON_OUT, BLOOM, REMARK } from '../data/orchard.js';
 
 const COIN = ['ui', 'coin'];
+const GROVE = { oasisV: OASIS_GROVE, nordV: NORD_GROVE };
 
 // trois vergers : celui de la ferme ('farm'), celui de l'île ('island') et les arbres de l'oasis ('oasis', 1.48)
 export const slotsOf = (z = 'farm') =>
@@ -35,18 +38,34 @@ export const slotsOf = (z = 'farm') =>
           ? (state.oasis && state.oasis.orchard) || []
           : z === 'nord'
             ? (state.nord && state.nord.orchard) || []
-            : state.orchard.slots;
+            : z === 'oasisV'
+              ? (state.oasis && state.oasis.grove) || []
+              : z === 'nordV'
+                ? (state.nord && state.nord.grove) || []
+                : state.orchard.slots;
 // sous les tropiques et à l'oasis : pas d'hiver
 export const isIslandTree = id => !!ITEMS[id].island;
-export const treeZone = d => (d.nord ? 'nord' : d.oasis ? 'oasis' : d.island ? 'island' : 'farm');
-export const ZONE_WHERE = { farm: 'au verger', island: 'sur l’île', oasis: 'à l’oasis', nord: 'au Grand Nord' };
+// 1.58 : les arbres de l'oasis et du Nord vivent dans leur verger ('oasisV', 'nordV'), à part des cases ('oasis', 'nord' : anciens plants)
+export const treeZone = d =>
+    d.nord && d.type === 'tree' ? 'nordV' : d.oasis && d.type === 'tree' ? 'oasisV' : d.nord ? 'nord' : d.oasis ? 'oasis' : d.island ? 'island' : 'farm';
+export const GROVE_ZONES = ['oasisV', 'nordV'];
+export const ZONE_WHERE = {
+    farm: 'au verger',
+    island: 'sur l’île',
+    oasis: 'à l’oasis',
+    nord: 'au Grand Nord',
+    oasisV: 'au verger de l’oasis',
+    nordV: 'au verger du Grand Nord',
+};
 export const treeList = (z = 'farm') => Object.values(ITEMS).filter(i => i.type === 'tree' && treeZone(i) === z);
 export const orchardOpen = () => state.level >= ORCHARD.lvl || state.orchard.slots.some(x => x.open);
 export const openSlots = z => slotsOf(z).filter(x => x.open).length;
 export const slotCost = (z = 'farm') =>
     z === 'island'
         ? Math.floor(ISLAND.slotCost * Math.pow(ISLAND.slotMult, Math.max(0, openSlots(z) - ISLAND.slotsBase)))
-        : Math.floor(ORCHARD.cost * Math.pow(ORCHARD.mult, Math.max(0, openSlots(z) - ORCHARD.base)));
+        : GROVE[z]
+          ? Math.floor(GROVE[z].cost * Math.pow(GROVE[z].mult, Math.max(0, openSlots(z) - GROVE[z].base)))
+          : Math.floor(ORCHARD.cost * Math.pow(ORCHARD.mult, Math.max(0, openSlots(z) - ORCHARD.base)));
 export const treeUnlocked = d => (lvOk(d) && storyOk(d)) || state.seeds[d.id] > 0;
 
 // 1.12 : maturité, greffon et soins
@@ -224,6 +243,8 @@ export function plantTree(k, id, at, z = 'farm') {
     burst(at, 'leaf', 5);
     buzz(8);
     tip('orchard');
+    if (z === 'oasisV') tip('oasisGrove');
+    if (z === 'nordV') tip('nordGrove');
     changed('orchard');
     return true;
 }
@@ -252,7 +273,8 @@ export function pickTree(k, at, quiet, z = 'farm') {
     const qty = t.ground + basketBonus(t.ground);
     state.inventory[t.id] += qty;
     state.stats.harvested += qty;
-    const sk = z === 'island' ? 'islandHarvest' : z === 'oasis' ? 'oasisHarvest' : z === 'nord' ? 'nordHarvest' : 'orchardFruits';
+    const sk =
+        z === 'island' ? 'islandHarvest' : z === 'oasis' || z === 'oasisV' ? 'oasisHarvest' : z === 'nord' || z === 'nordV' ? 'nordHarvest' : 'orchardFruits';
     state.stats[sk] = (state.stats[sk] || 0) + qty;
     addMastery(t.id, qty);
     collect('o_' + t.id);
@@ -470,7 +492,7 @@ export function advanceTree(t, dt) {
 
 // les arbres de l'oasis avancent avec l'eau (oasis.js) : orchardTick ne s'en occupe pas
 const tickSlots = () => [...state.orchard.slots, ...slotsOf('island')];
-const allSlots = () => [...tickSlots(), ...slotsOf('oasis'), ...slotsOf('nord')];
+const allSlots = () => [...tickSlots(), ...slotsOf('oasis'), ...slotsOf('nord'), ...slotsOf('oasisV'), ...slotsOf('nordV')];
 
 export function orchardTick() {
     let ch = false;

@@ -8,7 +8,7 @@ import { now } from '../core/clock.js';
 import { fmt, s, dateKey } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { OASIS, PEN, CARAVAN, STORM, OASIS_IDS, OASIS_PRODUCTS } from '../data/oasis.js';
+import { OASIS, OASIS_GROVE, PEN, CARAVAN, STORM, OASIS_IDS, OASIS_PRODUCTS } from '../data/oasis.js';
 import { RECIPES_150 } from '../data/v150.js';
 import { NEW_DRINKS_154 } from '../data/counter.js';
 import { ANIMALS } from '../data/animals.js';
@@ -23,7 +23,7 @@ import { addQuality, ascend } from './farm.js';
 import { eventProgress } from './events.js';
 import { tip } from './tips.js';
 import { takeVarSeed, harvestVariety, varExtra, varGrowth, varThirst } from './genetics.js';
-import { slotsOf, plantTree, pickTree, treeStage, groundFull, advanceTree } from './orchard.js';
+import { slotsOf, pickTree, treeStage, groundFull, advanceTree } from './orchard.js';
 import { compSpeed, plotFx, compHarvest, OASIS_BASE } from './companions.js';
 import { hasCost, payCost } from './home.js';
 import { inPasture, enclosOpen, isOasisBeast, pastureFree } from './pastures.js';
@@ -57,6 +57,18 @@ export function ensureOasis() {
     if (oasisOpen()) for (let k = 0; k < OASIS.cellsBase; k++) O.plots[k].open = true;
     // une case ouverte l'est pour les cultures comme pour les arbres
     O.plots.forEach((p, k) => (O.orchard[k].open = !!p.open));
+    // 1.58 : le verger de l'oasis ; les arbres plantés dans les cases y déménagent
+    if (!Array.isArray(O.grove)) O.grove = [];
+    while (O.grove.length < OASIS_GROVE.max) O.grove.push({ open: false, tree: null });
+    if (oasisOpen()) for (let k = 0; k < OASIS_GROVE.base; k++) O.grove[k].open = true;
+    O.orchard.forEach(sl => {
+        if (!sl.tree) return;
+        const g = O.grove.find(x => x.open && !x.tree) || O.grove.find(x => !x.tree);
+        if (!g) return;
+        g.open = true;
+        g.tree = sl.tree;
+        sl.tree = null;
+    });
     O.water = Math.min(O.water, tankCap());
     return O;
 }
@@ -159,8 +171,16 @@ export function cellNeed(k, heat = isHot() ? OASIS.heatMult : 1) {
     if (st === 'dead' || (st !== 'young' && groundFull(t))) return 0;
     return (OASIS.drink.tree / 3600) * thirst(k, t.v, heat);
 }
+// 1.58 : un arbre du verger boit comme les autres, en plein soleil (pas d'ombre au verger)
+export function groveNeed(t, heat = isHot() ? OASIS.heatMult : 1) {
+    if (!t) return 0;
+    const st = treeStage(t);
+    if (st === 'dead' || (st !== 'young' && groundFull(t))) return 0;
+    return (OASIS.drink.tree / 3600) * heat * varThirst(t.v);
+}
 // litres par heure que boit toute l'oasis en ce moment
-export const oasisDrink = () => oasisPlots().reduce((a, p, k) => a + (p.open ? cellNeed(k) : 0), 0) * 3600;
+export const oasisDrink = () =>
+    (oasisPlots().reduce((a, p, k) => a + (p.open ? cellNeed(k) : 0), 0) + slotsOf('oasisV').reduce((a, sl) => a + groveNeed(sl.tree), 0)) * 3600;
 export const isThirsty = k => cellNeed(k) > 0 && oasisWater() < 0.01;
 
 // avance l'oasis de dt secondes ; renvoie ce qui est arrivé
@@ -168,9 +188,10 @@ function step(dt, heat) {
     const O = state.oasis;
     O.water = Math.min(tankCap(), O.water + (springRate() * dt) / 3600);
     const needs = O.plots.map((p, k) => (p.open ? cellNeed(k, heat) * dt : 0));
+    const groveNeeds = O.grove.map(sl => groveNeed(sl.tree, heat) * dt);
     // 1.49 : les bêtes de l'enclos boivent à la même citerne
     const beasts = (penDrink() * dt) / 3600;
-    const total = needs.reduce((a, b) => a + b, 0) + beasts;
+    const total = needs.reduce((a, b) => a + b, 0) + groveNeeds.reduce((a, b) => a + b, 0) + beasts;
     const f = total > 0 ? Math.min(1, O.water / total) : 1;
     O.water = Math.max(0, O.water - total * f);
     O.dry = total > 0 && f < 1;
@@ -190,6 +211,9 @@ function step(dt, heat) {
         }
         const t = O.orchard[k].tree;
         if (t && f > 0) fruits += advanceTree(t, dt * f).fell;
+    });
+    O.grove.forEach((sl, k) => {
+        if (sl.tree && groveNeeds[k] && f > 0) fruits += advanceTree(sl.tree, dt * f).fell;
     });
     return { crops, fruits };
 }
@@ -306,15 +330,6 @@ export function plantOasisVar(k, vid, at) {
     changed('oasis');
     return true;
 }
-// un arbre sur une case : le verger de l'oasis (orchard.js, zone 'oasis')
-export function plantOasisTree(k, id, at) {
-    const p = oasisPlots()[k];
-    if (!p || !p.open || p.id) return false;
-    if (!plantTree(k, id, at, 'oasis')) return false;
-    changed('oasis');
-    return true;
-}
-
 // ---------------- récolter ----------------
 function rollOasisQuality(k) {
     let x = 0.08 + 0.15 + 0.05;
@@ -380,6 +395,11 @@ export function harvestAllOasis(at) {
         const r = pickTree(k, at, true, 'oasis');
         if (r) add(r, k);
     });
+    slotsOf('oasisV').forEach((sl, k) => {
+        if (!sl.tree || !sl.tree.ground) return;
+        const r = pickTree(k, at, true, 'oasisV');
+        if (r) add(r, 40 + k);
+    });
     if (!n) {
         if (!barnBlocked(true)) toast('Rien à récolter à l’oasis');
         squish(at);
@@ -400,7 +420,10 @@ export function harvestAllOasis(at) {
     );
     return n;
 }
-export const oasisToPick = () => oasisPlots().filter(p => p.ready).length + slotsOf('oasis').filter(sl => sl.tree && sl.tree.ground).length;
+export const oasisToPick = () =>
+    oasisPlots().filter(p => p.ready).length +
+    slotsOf('oasis').filter(sl => sl.tree && sl.tree.ground).length +
+    slotsOf('oasisV').filter(sl => sl.tree && sl.tree.ground).length;
 
 export function replantOasis(at) {
     let n = 0;

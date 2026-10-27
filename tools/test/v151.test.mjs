@@ -132,12 +132,12 @@ test('fendre le bois : trois fois par jour, bûches selon les coups', () => {
     assert.equal(G.chopLeft(), NORD.chop.perDay - 1);
 });
 
-test('six plantes branchées : dessin, goûts, nom, niveau', () => {
-    assert.equal(NORD_IDS.length, 6);
+test('douze plantes branchées : dessin, goûts, nom, niveau', () => {
+    assert.equal(NORD_IDS.length, 12);
     for (const id of NORD_IDS) {
         const d = ITEMS[id];
         assert.ok(d && d.nord && d.island && d.needProject === 'northStove', id);
-        assert.ok(d.reqLvl >= 62 && d.reqLvl <= 63, id);
+        assert.ok(d.reqLvl >= 62 && d.reqLvl <= 64, id);
         assert.ok(FLAVORS[id], `${id} : goûts`);
         assert.ok(SPR.item(id).length > 300, `${id} : dessin`);
     }
@@ -145,15 +145,16 @@ test('six plantes branchées : dessin, goûts, nom, niveau', () => {
 
 test('trois cultures et trois arbres', () => {
     assert.equal(NORD_IDS.filter(id => ITEMS[id].type === 'crop').length, 3);
-    assert.equal(NORD_IDS.filter(id => ITEMS[id].type === 'tree').length, 3);
+    assert.equal(NORD_IDS.filter(id => ITEMS[id].type === 'tree').length, 9);
 });
 
-test('un arbre du Grand Nord se plante sur une case libre', () => {
+test('un arbre du Grand Nord se plante au verger du Nord, pas sur une case', () => {
     nord();
-    state.seeds.spruce = 1;
-    assert.ok(G.plantNordTree(7, 'spruce'));
-    assert.ok(G.slotsOf('nord')[7].tree);
-    assert.equal(G.canStove(7), false);
+    state.seeds.spruce = 2;
+    assert.ok(G.plantTree(0, 'spruce', null, 'nordV'));
+    assert.ok(G.slotsOf('nordV')[0].tree);
+    assert.equal(G.plantTree(7, 'spruce', null, 'nord'), false);
+    assert.equal(G.canStove(7), true);
 });
 
 test('chapitre 23, Tuomas, trois chantiers, carte du Nord', () => {

@@ -15,7 +15,7 @@ test('1.31 : 7 arbres (5 à la ferme, 2 aux îles) et 30 recettes', () => {
     assert.equal(TREES_131.length, 7);
     assert.equal(RECIPES_131.length, 30);
     assert.equal(IDS.filter(id => ITEMS[id].island).length, 2);
-    assert.equal(Object.values(ITEMS).filter(i => i.type === 'tree').length, 40); // 1.51 : les trois arbres du Grand Nord
+    assert.equal(Object.values(ITEMS).filter(i => i.type === 'tree').length, 52); // 1.58 : six arbres de plus à l’oasis et six au Grand Nord
     assert.equal(ITEMS.mirabelle.seedName, 'Mirabellier');
 });
 

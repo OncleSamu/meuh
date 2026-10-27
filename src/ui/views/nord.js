@@ -10,14 +10,13 @@ import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, esc, byId } from '../dom.js';
 import { genWrap } from '../genlook.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, section, costRow, timer } from '../kit.js';
+import { btn, bar, hint, section, costRow, timer } from '../kit.js';
 import { defineLive, ui, go, refresh } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { burstAt } from '../fx.js';
 import { longPress } from '../longpress.js';
 import { askBuy } from '../sheets/askbuy.js';
-import { treeArt, anchorOf } from './orchard.js';
-import { cuttingsHtml } from './orchard2.js';
+import { treeArt, anchorOf, spot } from './orchard.js';
 
 defineLive('nocell', k => {
     const p = G.nordPlots()[+k];
@@ -124,6 +123,8 @@ export function renderNord(el) {
     }
     const plots = G.nordPlots();
     const next = plots.findIndex(x => !x.open);
+    const groveSlots = G.slotsOf('nordV'),
+        groveNext = groveSlots.findIndex(x => !x.open);
     const pick = G.nordToPick(),
         empty = plots.filter((p, k) => p.open && !p.id && p.last && !G.slotsOf('nord')[k].tree && !G.stoveAt(k)).length;
     const dead = G.deadTrees('nord');
@@ -135,6 +136,9 @@ export function renderNord(el) {
         ],
         ['h1', section('Le champ de neige', `<small class="o-count small">${plots.filter(p => p.open).length} cases</small>`)],
         ['grid', `<div class="oa-grid no-grid">${plots.map((p, k) => cellHtml(k, next)).join('')}</div>`],
+        ['hv', section('Le verger du Grand Nord', `<small class="o-count small">${G.treeCountText('nordV')}</small>`)],
+        ['verger', `<div class="orchard island">${groveSlots.map((sl, k) => spot(sl, k, groveNext, 'nordV')).join('')}</div>`],
+        ['hvt', hint('Les arbres du verger sont rustiques : pas besoin de poêle. La nuit de gel ils poussent deux fois moins vite, l’aurore les accélère.')],
         ['h2', section(BARN.name, G.nordBarnOpen() ? `<small class="o-count small">${G.nordBeasts().length}/${G.nordBarnCap()}</small>` : '')],
         ['barn', barnHtml()],
         ['sled', sledHtml()],
@@ -252,18 +256,7 @@ defineSheet('plantNord', {
                 </button>`;
             })
             .join('');
-        const trees = G.treeList('nord')
-            .sort((a, b) => a.reqLvl - b.reqLvl)
-            .map(d => {
-                const open = G.treeUnlocked(d),
-                    stock = state.seeds[d.id] || 0;
-                return `<button class="pick-cell${open ? '' : ' locked'}" data-act="plantNordTree" data-k="${k}" data-id="${d.id}" ${open ? '' : 'disabled'}>
-                    <span class="pc-art">${art('plant', `${d.id}:2`)}</span><b>${d.seedName}</b>
-                    ${open ? `<small>${ico(['item', d.id])}${fmt(G.sellPrice(d.id))}${ico(['ui', 'coin'])}</small><span class="pc-cost">${stock > 0 ? `${stock} en stock` : `${fmt(d.cost)}${ico(['ui', 'coin'])}`}</span>` : `<small class="lock-txt">${ico(['ui', 'lock'])}Niveau ${d.reqLvl}</small>`}
-                </button>`;
-            })
-            .join('');
-        return `${head}${stoveCard}${varHtml}${section('Cultures')}<div class="pick-grid trees">${crops}</div>${section('Arbres')}${cuttingsHtml(k, 'nord')}<div class="pick-grid trees">${trees}</div>`;
+        return `${head}${stoveCard}${varHtml}${section('Cultures')}<div class="pick-grid trees">${crops}</div>`;
     },
 });
 
@@ -416,9 +409,6 @@ export function setupNord() {
         },
         plantNordVar: (el, d) => {
             if (G.plantNordVar(+d.k, d.id, anchorEl(`no:${d.k}`) || el)) closeSheet('plantNord');
-        },
-        plantNordTree: (el, d) => {
-            if (G.plantNordTree(+d.k, d.id, anchorEl(`no:${d.k}`) || el)) closeSheet('plantNord');
         },
         harvestNord: el => G.harvestAllNord(el),
         replantNord: el => G.replantNord(el),

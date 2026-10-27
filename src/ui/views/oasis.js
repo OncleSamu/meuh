@@ -10,7 +10,7 @@ import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, esc, byId } from '../dom.js';
 import { genWrap } from '../genlook.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, section, segmented, costRow, timer } from '../kit.js';
+import { btn, bar, hint, section, segmented, costRow, timer } from '../kit.js';
 import { defineView, defineLive, ui, go, refresh } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { burstAt, reduceMotion } from '../fx.js';
@@ -19,8 +19,7 @@ import { askBuy } from '../sheets/askbuy.js';
 import { renderIsland } from './island.js';
 import { renderNord } from './nord.js';
 import { NORD } from '../../data/nord.js';
-import { treeArt, anchorOf } from './orchard.js';
-import { cuttingsHtml } from './orchard2.js';
+import { treeArt, anchorOf, spot } from './orchard.js';
 import { svg } from '../../art/kit.js';
 import { chadouf } from '../../art/v148oasis.js';
 
@@ -152,6 +151,8 @@ function renderOasis(el) {
     const pick = G.oasisToPick(),
         empty = plots.filter((p, k) => p.open && !p.id && p.last && !G.slotsOf('oasis')[k].tree).length;
     const dead = G.deadTrees('oasis');
+    const groveSlots = G.slotsOf('oasisV'),
+        groveNext = groveSlots.findIndex(x => !x.open);
     blocks(el, [
         ['water', waterCard()],
         [
@@ -160,6 +161,14 @@ function renderOasis(el) {
         ],
         ['h1', section('La palmeraie', `<small class="o-count small">${plots.filter(p => p.open).length} cases</small>`)],
         ['grid', `<div class="oa-grid">${plots.map((p, k) => cellHtml(k, next)).join('')}</div>`],
+        ['hv', section('Le verger de l’oasis', `<small class="o-count small">${G.treeCountText('oasisV')}</small>`)],
+        ['verger', `<div class="orchard island">${groveSlots.map((sl, k) => spot(sl, k, groveNext, 'oasisV')).join('')}</div>`],
+        [
+            'hvt',
+            hint(
+                `Chaque arbre du verger boit ${OASIS.drink.tree} L/h à la citerne tant qu’il pousse ou porte des fruits (le double aux heures chaudes). Sans eau, il attend sans mourir.`,
+            ),
+        ],
         ['h2', section(PEN.name, G.enclosOpen() ? `<small class="o-count small">${G.penBeasts().length}/${G.enclosCap()}</small>` : '')],
         ['pen', penHtml()],
         ['caravan', caravanHtml()],
@@ -281,19 +290,7 @@ defineSheet('plantOasis', {
                 </button>`;
             })
             .join('');
-        const trees = G.treeList('oasis')
-            .sort((a, b) => a.reqLvl - b.reqLvl)
-            .map(d => {
-                const open = G.treeUnlocked(d),
-                    stock = state.seeds[d.id] || 0;
-                const L = OASIS.drink.tree;
-                return `<button class="pick-cell${open ? '' : ' locked'}" data-act="plantOasisTree" data-k="${k}" data-id="${d.id}" ${open ? '' : 'disabled'}>
-                    <span class="pc-art">${art('plant', `${d.id}:2`)}</span><b>${d.seedName}</b>
-                    ${open ? `<small>${ico(['item', d.id])}${fmt(G.sellPrice(d.id))}${ico(['ui', 'coin'])}</small><small>${ico(['ui', 'drop'])}${lph(L)}</small><span class="pc-cost">${stock > 0 ? `${stock} en stock` : `${fmt(d.cost)}${ico(['ui', 'coin'])}`}</span>` : `<small class="lock-txt">${ico(['ui', 'lock'])}Niveau ${d.reqLvl}</small>`}
-                </button>`;
-            })
-            .join('');
-        return `${head}${varHtml}${section('Cultures')}<div class="pick-grid trees">${crops}</div>${section('Arbres')}${cuttingsHtml(k, 'oasis')}<div class="pick-grid trees">${trees}</div>`;
+        return `${head}${varHtml}${section('Cultures')}<div class="pick-grid trees">${crops}</div>`;
     },
 });
 
@@ -444,9 +441,6 @@ export function setupOasis() {
         },
         plantOasisVar: (el, d) => {
             if (G.plantOasisVar(+d.k, d.id, anchorEl(`oa:${d.k}`) || el)) closeSheet('plantOasis');
-        },
-        plantOasisTree: (el, d) => {
-            if (G.plantOasisTree(+d.k, d.id, anchorEl(`oa:${d.k}`) || el)) closeSheet('plantOasis');
         },
         harvestOasis: el => G.harvestAllOasis(el),
         replantOasis: el => G.replantOasis(el),

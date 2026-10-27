@@ -46,7 +46,7 @@ function sorghumAt(k, f = 1) {
 }
 // un palmier dattier adulte sur la case k (un arbre ordinaire : il ne fait plus d'ombre)
 function palmAt(k) {
-    const sl = G.slotsOf('oasis')[k];
+    const sl = G.slotsOf('oasisV')[k];
     sl.tree = { id: 'date', age: ITEMS.date.time, drops: 0, ground: 0, prog: 0, gq: 0 };
     return sl.tree;
 }
@@ -120,16 +120,24 @@ test('la chaleur de midi double la soif au soleil ; l’ombre d’un sorgho la r
     assert.equal(G.isShaded(5), false);
 });
 
-test('une case porte une culture ou un arbre, pas les deux', () => {
+test('un arbre de l’oasis se plante au verger de l’oasis, pas ailleurs', () => {
     oasis({ water: 100 });
-    assert.ok(G.plantOasis(1, 'coriander', null, true));
-    assert.equal(G.plantOasisTree(1, 'jujube', null), false);
-    assert.ok(G.plantOasisTree(2, 'jujube', null));
-    assert.equal(G.plantOasis(2, 'cumin', null, true), false);
-    // un arbre de l'oasis ne pousse pas au verger, ni sur l'île
-    assert.equal(G.plantTree(0, 'date', null, 'farm'), false);
-    assert.equal(G.plantTree(0, 'date', null, 'island'), false);
+    state.seeds.jujube = 2;
+    assert.ok(G.plantTree(0, 'jujube', null, 'oasisV'));
+    assert.equal(G.plantTree(1, 'jujube', null, 'farm'), false);
+    assert.equal(G.plantTree(1, 'jujube', null, 'island'), false);
+    assert.equal(G.plantTree(1, 'jujube', null, 'oasis'), false);
+    assert.equal(G.plantTree(0, 'jujube', null, 'oasisV'), false); // la place est prise
+    assert.equal(G.slotsOf('oasisV').filter(x => x.open).length, 4);
     assert.equal(G.plantIsland(0, 'cumin', null, true), false);
+});
+
+test('les anciens plants des cases déménagent au verger', () => {
+    const O = oasis({ water: 100 });
+    O.orchard[2].tree = { id: 'jujube', age: 5, drops: 0, ground: 0, prog: 0, gq: 0 };
+    G.ensureOasis();
+    assert.equal(O.orchard[2].tree, null);
+    assert.equal(G.slotsOf('oasisV').filter(x => x.tree && x.tree.id === 'jujube').length, 1);
 });
 
 test('les arbres de l’oasis avancent avec l’eau, pas avec le verger', () => {
@@ -232,14 +240,14 @@ test('le chapitre 21 : trois chantiers à l’oasis, Idris, la carte, la palmera
 });
 
 // ---------------- le contrôle : chaque plante est branchée partout ----------------
-test('contrôle : les sept plantes ont leurs dessins, leurs saveurs, leur place et leurs listes', () => {
+test('contrôle : les treize plantes ont leurs dessins, leurs saveurs, leur place et leurs listes', () => {
     oasis();
-    assert.equal(OASIS_IDS.length, 7);
-    const trees = G.treeList('oasis').map(d => d.id);
-    assert.deepEqual(trees.sort(), ['bitterOrange', 'date', 'jujube']);
+    assert.equal(OASIS_IDS.length, 13);
+    const trees = G.treeList('oasisV').map(d => d.id);
+    assert.deepEqual(trees.sort(), ['argan', 'bitterOrange', 'carob', 'citron', 'date', 'jujube', 'mulberry', 'pricklyPear', 'tamarind']);
     for (const id of OASIS_IDS) {
         const d = ITEMS[id];
-        assert.ok(d && d.oasis && d.island && d.reqLvl >= OASIS.lvl && d.reqLvl <= 60, id);
+        assert.ok(d && d.oasis && d.island && d.reqLvl >= OASIS.lvl && d.reqLvl <= 61, id);
         assert.ok(FLAVORS[id] && FLAVORS[id].length === 5, `saveurs ${id}`);
         assert.ok(items[id], `dessin du produit ${id}`);
         if (d.type === 'crop') assert.ok(youngExtra[id] && readyExtra[id], `dessins de la plante ${id}`);

@@ -44,7 +44,7 @@ const groundHtml = t =>
         .join('');
 
 // zone : 'farm' (le verger de la ferme) ou 'island' (le verger de l'île)
-export const anchorOf = (z, k) => `${z === 'island' ? 'itree' : z === 'oasis' ? 'otree' : z === 'nord' ? 'ntree' : 'tree'}:${k}`;
+export const anchorOf = (z, k) => `${{ island: 'itree', oasis: 'otree', nord: 'ntree', oasisV: 'otreev', nordV: 'ntreev' }[z] || 'tree'}:${k}`;
 const treeAt = (z, k) => (G.slotsOf(z)[k] || {}).tree;
 
 defineLive('tree', arg => {
@@ -215,8 +215,15 @@ export function setupOrchard() {
             const z = d.z || 'farm';
             return askBuy(
                 {
-                    title: z === 'island' ? 'Agrandir le verger des îles' : 'Agrandir le verger',
-                    icon: z === 'island' ? ['item', 'coconut'] : ['item', 'apple'],
+                    title:
+                        z === 'island'
+                            ? 'Agrandir le verger des îles'
+                            : z === 'oasisV'
+                              ? 'Agrandir le verger de l’oasis'
+                              : z === 'nordV'
+                                ? 'Agrandir le verger du Nord'
+                                : 'Agrandir le verger',
+                    icon: z === 'island' ? ['item', 'coconut'] : z === 'oasisV' ? ['item', 'date'] : z === 'nordV' ? ['item', 'spruce'] : ['item', 'apple'],
                     text: 'Une place de plus pour planter un arbre.',
                     cost: G.slotCost(z),
                     run: at => G.buySlot(at, z),

@@ -112,6 +112,11 @@ export const TIPS = {
         title: 'L’ombre du sorgho',
         text: 'Le sorgho monte plus haut qu’un homme. Dès qu’il a poussé de moitié, il fait de l’ombre aux huit cases autour de lui : elles boivent un tiers de moins, et la chaleur de midi ne les touche plus. Il abrite aussi deux bêtes de l’enclos du soleil. Mais on le récolte : plus de sorgho debout, plus d’ombre. Ton grand-père faisait pareil avec ses tournesols : les salades à leur pied ne montaient jamais en graine, même en août.',
     },
+    oasisGrove: {
+        icon: ['item', 'date'],
+        title: 'Le verger de l’oasis',
+        text: 'Les arbres de l’oasis ont leur verger à eux, à l’écart des cases : chacun boit quatre litres à l’heure, et attend patiemment quand la citerne est vide. Tante Simone ramenait toujours un noyau de datte de ses voyages. Elle prétendait que dans une valise, ça ne prenait pas de place et que ça poussait tout seul. Le noyau, lui, ne poussait jamais.',
+    },
     chadouf: {
         icon: ['ui', 'oaChadouf'],
         title: 'Le chadouf',
@@ -206,6 +211,11 @@ export const TIPS = {
         icon: ['ui', 'noFroid'],
         title: 'La nuit de gel',
         text: 'De 21 h à 7 h, hors de portée d’un poêle allumé, plus rien ne pousse : tout dort jusqu’au matin. Un poêle plus loin, plus de bois, ou une variété rustique du labo : c’est à vous de choisir où mettre le feu. Chez nous, on rentrait les géraniums dans la cuisine à la Toussaint, et on leur parlait pour qu’ils tiennent.',
+    },
+    nordGrove: {
+        icon: ['item', 'spruce'],
+        title: 'Le verger du Grand Nord',
+        text: 'Les arbres du Nord sont rustiques : ils n’ont pas besoin de poêle. La nuit de gel ils dorment à moitié, et l’aurore les réveille. Papi Lucien disait qu’un arbre qui a connu l’hiver ne se plaint plus jamais du vent. Il disait ça en rentrant du bois, les joues rouges, en se plaignant du vent.',
     },
     robebook: {
         icon: ['ui', 'cpCarnet'],
