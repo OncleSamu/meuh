@@ -485,6 +485,7 @@ html.calm .gp-4 {
 }
 .lab-run {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
@@ -492,6 +493,10 @@ html.calm .gp-4 {
     padding: 6px 8px;
     background: #f6ead0;
     border-radius: 12px;
+}
+.lab-run > button {
+    flex: 1 1 150px;
+    min-width: 0;
 }
 .lab-run > .card-sub {
     flex: 1;
