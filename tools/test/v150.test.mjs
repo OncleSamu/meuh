@@ -54,3 +54,23 @@ test('les voisins demandent aussi la cuisine de l’oasis', () => {
     assert.ok(G.dishOwner('kesra') >= 0 && G.dishOwner('halva') >= 0 && G.dishOwner('harira') >= 0);
     assert.ok(state);
 });
+
+test('1.58 : chaque fruit des nouveaux arbres (oasis et Nord) sert dans au moins trois recettes', () => {
+    const uses = {};
+    for (const r of Object.values(RECIPES)) for (const k of Object.keys(r.ing)) uses[k] = (uses[k] || 0) + 1;
+    for (const id of [
+        'tamarind',
+        'carob',
+        'argan',
+        'mulberry',
+        'pricklyPear',
+        'citron',
+        'crabapple',
+        'birdCherry',
+        'cembro',
+        'juniper',
+        'elderberry',
+        'aronia',
+    ])
+        assert.ok(uses[id] >= 3, `${id} : ${uses[id] || 0}`);
+});
