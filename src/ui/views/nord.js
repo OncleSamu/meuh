@@ -5,7 +5,7 @@ import { fmt, formatDuration } from '../../core/format.js';
 import { on, sfx, buzz, toast } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
 import { NORD, BARN, SLED } from '../../data/nord.js';
-import { penMeadowHtml, renderPenCritters, birthRow, assocRow } from './animals.js';
+import { penModeBar, penBodyHtml, renderPenCritters, birthRow, assocRow } from './animals.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, esc, byId } from '../dom.js';
 import { genWrap } from '../genlook.js';
@@ -140,7 +140,8 @@ export function renderNord(el) {
         ['verger', `<div class="orchard island">${groveSlots.map((sl, k) => spot(sl, k, groveNext, 'nordV')).join('')}</div>`],
         ['hvt', hint('Les arbres du verger sont rustiques : pas besoin de poêle. La nuit de gel ils poussent deux fois moins vite, l’aurore les accélère.')],
         ['h2', section(BARN.name, G.nordBarnOpen() ? `<small class="o-count small">${G.nordBeasts().length}/${G.nordBarnCap()}</small>` : '')],
-        ['pasture', G.nordBarnOpen() ? penMeadowHtml(BARN.key, 'snow') : ''],
+        ['pmode', G.nordBarnOpen() ? penModeBar(BARN.key) : ''],
+        ['pasture', G.nordBarnOpen() ? penBodyHtml(BARN.key, 'snow') : ''],
         ['barn', barnHtml()],
         ['sled', sledHtml()],
     ]);

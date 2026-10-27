@@ -5,7 +5,7 @@ import { fmt, formatDuration } from '../../core/format.js';
 import { on, sfx, buzz, toast } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
 import { OASIS, PEN, CARAVAN } from '../../data/oasis.js';
-import { penMeadowHtml, renderPenCritters, birthRow, assocRow } from './animals.js';
+import { penModeBar, penBodyHtml, renderPenCritters, birthRow, assocRow } from './animals.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, esc, byId } from '../dom.js';
 import { genWrap } from '../genlook.js';
@@ -170,7 +170,8 @@ function renderOasis(el) {
             ),
         ],
         ['h2', section(PEN.name, G.enclosOpen() ? `<small class="o-count small">${G.penBeasts().length}/${G.enclosCap()}</small>` : '')],
-        ['pasture', G.enclosOpen() ? penMeadowHtml(PEN.key, 'desert') : ''],
+        ['pmode', G.enclosOpen() ? penModeBar(PEN.key) : ''],
+        ['pasture', G.enclosOpen() ? penBodyHtml(PEN.key, 'desert') : ''],
         ['pen', penHtml()],
         ['caravan', caravanHtml()],
     ]);

@@ -318,6 +318,24 @@ export const penMeadowHtml = (k, theme) => {
     const n = G.pastureLoad(k);
     return `<div class="meadow pen-meadow ${theme}" id="pasture-pen" data-pen="${k}" style="height:${Math.min(700, Math.max(260, 140 + n * 36))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${k === 99 ? 'L’enclos est vide. Dromadaires, zébus et moutons barbarins vous attendent au marché.' : 'L’étable est vide. Rennes, bœufs musqués et lagopèdes vous attendent au marché.'}</div>`}</div>`;
 };
+// 1.58.4 : comme dans Animaux, on choisit le pré (les bêtes se promènent) ou l'étable (la liste)
+export const penModeBar = k =>
+    G.pastureLoad(k)
+        ? segmented(
+              [
+                  ['meadow', 'Le pré', ['ui', 'flowers']],
+                  ['stable', 'L’étable', ['ui', 'barn']],
+              ],
+              ui.sel.penMode || 'meadow',
+              'penMode',
+          )
+        : '';
+export function penBodyHtml(k, theme) {
+    if ((ui.sel.penMode || 'meadow') !== 'stable' || !G.pastureLoad(k)) return penMeadowHtml(k, theme);
+    const mf = G.maxFood();
+    const idx = herdIdx(k).sort((x, y) => (state.animals[x].type < state.animals[y].type ? -1 : state.animals[x].type > state.animals[y].type ? 1 : x - y));
+    return `<div class="stable oa-stable">${idx.map(i => stableTile(state.animals[i], i, mf)).join('')}</div>`;
+}
 export function renderPenCritters() {
     const m = byId('pasture-pen');
     if (m) renderCritters(m, +m.dataset.pen, pen);
@@ -447,6 +465,7 @@ export function setupAnimals() {
     actions({
         noriaToggle: (el, d) => G.toggleNoria(d.uid),
         animalMode: (el, d) => (ui.sel.animalMode = d.v),
+        penMode: (el, d) => (ui.sel.penMode = d.v),
         sellAnimal: (el, d) => {
             const a = state.animals[+d.i];
             if (!a || !confirmTap('sell' + a.uid, el, `Toucher encore pour vendre ${a.name}`)) return QUIET;
