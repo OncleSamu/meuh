@@ -82,15 +82,19 @@ test('les bêtes boivent à la citerne ; sans eau, elles ne produisent plus', ()
     OASIS.spring = spring;
 });
 
-test('à midi, au soleil, moitié moins vite ; à l’ombre d’un palmier ou pour le barbarin, rien ne change', () => {
+test('à midi, au soleil, moitié moins vite ; à l’ombre d’un sorgho ou pour le barbarin, rien ne change', () => {
     oasis();
     const d = beast('dromedary'),
         s = beast('barbarySheep');
     state.gameTimeMinutes = 13 * 60;
     assert.equal(G.oasisBeastMult(d), PEN.heatMult);
     assert.equal(G.oasisBeastMult(s), 1);
-    G.slotsOf('oasis')[0].tree = { id: 'date', age: ITEMS.date.time, drops: 0, ground: 0, prog: 0, gq: 0 };
-    assert.equal(G.penShadeSlots(), PEN.shadePerPalm);
+    // un palmier dattier adulte n'abrite plus personne
+    G.slotsOf('oasis')[1].tree = { id: 'date', age: ITEMS.date.time, drops: 0, ground: 0, prog: 0, gq: 0 };
+    assert.equal(G.penShadeSlots(), 0);
+    assert.ok(G.plantOasis(0, 'sorghum', null, true));
+    G.oasisPlots()[0].prog = ITEMS.sorghum.time; // debout, mûr
+    assert.equal(G.penShadeSlots(), PEN.shadePerCrop);
     assert.equal(G.oasisBeastMult(d), 1);
 });
 

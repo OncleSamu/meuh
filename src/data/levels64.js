@@ -27,6 +27,7 @@ export const LV64_ITEM = {
     cumin: 59,
     coriander: 59,
     sesame: 59,
+    sorghum: 59,
     date: 59,
     jujube: 59,
     bitterOrange: 59,

@@ -1,7 +1,7 @@
 // L'oasis (1.48) : une grille de cases où l'on plante cultures et arbres de l'oasis, et la citerne qui les fait boire.
 // Une case k : state.oasis.plots[k] (culture : { open, id, prog, ready, last, v }) et state.oasis.orchard[k] (arbre : { open, tree }).
 // L'eau : la source remplit la citerne (même jeu fermé), le chadouf aussi ; chaque plante boit en poussant, deux fois plus
-// au soleil de midi à 16 h ; une case voisine d'un palmier dattier adulte est à l'ombre (un tiers de moins, pas de chaleur).
+// au soleil de midi à 16 h ; une case voisine d'un sorgho bien levé est à l'ombre (un tiers de moins, pas de chaleur).
 // Sans eau, rien ne meurt : tout attend.
 import { state, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
@@ -120,7 +120,8 @@ export function upgradeSpring(at) {
 
 // ---------------- la chaleur et l'ombre ----------------
 export const isHot = (h = hour()) => h >= OASIS.heat[0] && h < OASIS.heat[1];
-const shadePalm = t => t && t.id === OASIS.palm && (treeStage(t) === 'adult' || treeStage(t) === 'old');
+// 1.58 : le sorgho fait l'ombre, plus le palmier dattier : debout (levé de moitié ou mûr), tant qu'on ne l'a pas récolté
+const shadeCrop = p => !!p && p.id === OASIS.shadeCrop && !p.sand && (p.ready || p.prog >= ITEMS[p.id].time * OASIS.shadeFrom);
 // les huit voisines d'une case
 export function cellNeighbors(k) {
     const c = OASIS.cols,
@@ -137,27 +138,26 @@ export function cellNeighbors(k) {
         }
     return out;
 }
-export const isShaded = k => cellNeighbors(k).some(j => shadePalm((slotsOf('oasis')[j] || {}).tree));
+export const isShaded = k => cellNeighbors(k).some(j => shadeCrop(oasisPlots()[j]));
 
 // ---------------- ce que boit une case (litres par seconde) ----------------
 export const cropGrowTime = id => ITEMS[id].time / speedMult();
 export const oasisRate = id => OASIS.rate * (1 + rank('green') * 0.05) * Math.max(0.9, weather().crop) * masterySpeed(id);
 const cropStep = (p, k) => oasisRate(p.id) * (p.v ? varGrowth(p.v) : 1) * compSpeed(OASIS_BASE + k);
 // le facteur de soif : l'ombre, la chaleur (heat : 1 hors des heures chaudes), la variété
-function thirst(k, palm, v, heat) {
-    const f = isShaded(k) ? OASIS.shade : palm ? 1 : heat;
+function thirst(k, v, heat) {
+    const f = isShaded(k) ? OASIS.shade : heat;
     return f * varThirst(v);
 }
 export function cellNeed(k, heat = isHot() ? OASIS.heatMult : 1) {
     const p = oasisPlots()[k];
     if (p && p.sand) return 0; // ensablée : elle attend qu'on la dégage
-    if (p && p.id && !p.ready) return (OASIS.drink.crop / 3600) * thirst(k, false, p.v, heat);
+    if (p && p.id && !p.ready) return (OASIS.drink.crop / 3600) * thirst(k, p.v, heat);
     const t = (slotsOf('oasis')[k] || {}).tree;
     if (!t) return 0;
     const st = treeStage(t);
     if (st === 'dead' || (st !== 'young' && groundFull(t))) return 0;
-    const palm = t.id === OASIS.palm;
-    return ((palm ? OASIS.drink.palm : OASIS.drink.tree) / 3600) * thirst(k, palm, t.v, heat);
+    return (OASIS.drink.tree / 3600) * thirst(k, t.v, heat);
 }
 // litres par heure que boit toute l'oasis en ce moment
 export const oasisDrink = () => oasisPlots().reduce((a, p, k) => a + (p.open ? cellNeed(k) : 0), 0) * 3600;
@@ -287,6 +287,7 @@ export function plantOasis(k, id, at, quiet) {
         burst(at, 'dirt', 6, 6);
         buzz(6);
         tip('oasis');
+        if (id === OASIS.shadeCrop) tip('oasisShade');
     }
     changed('oasis');
     return true;
@@ -310,7 +311,6 @@ export function plantOasisTree(k, id, at) {
     const p = oasisPlots()[k];
     if (!p || !p.open || p.id) return false;
     if (!plantTree(k, id, at, 'oasis')) return false;
-    if (id === OASIS.palm) tip('oasisShade');
     changed('oasis');
     return true;
 }
@@ -425,9 +425,9 @@ export const noriaBuilt = () => !!(state.oasis && state.oasis.noria);
 export const noriaZebu = () => (noriaBuilt() ? penBeasts().find(a => a.noria && a.type === 'zebu' && isAdult(a)) || null : null);
 // litres par heure que boivent les bêtes adultes de l'enclos
 export const penDrink = () => penBeasts().reduce((s2, a) => s2 + (isAdult(a) ? ANIMALS[a.type].drink || 0 : 0), 0);
-// les palmiers dattiers adultes de l'oasis abritent chacun quelques bêtes
-export const adultPalms = () => slotsOf('oasis').filter(sl => sl.tree && sl.tree.id === OASIS.palm && ['adult', 'old'].includes(treeStage(sl.tree))).length;
-export const penShadeSlots = () => adultPalms() * PEN.shadePerPalm;
+// les sorghos debout abritent chacun quelques bêtes du soleil de midi
+export const standingShade = () => oasisPlots().filter(p => p.open && shadeCrop(p)).length;
+export const penShadeSlots = () => standingShade() * PEN.shadePerCrop;
 export function penShaded(a) {
     const list = penBeasts().filter(b => isAdult(b) && !b.noria);
     const i = list.indexOf(a);

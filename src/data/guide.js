@@ -507,7 +507,7 @@ export const GUIDE_PAGES = [
                 h: 'Les cases',
                 b: [
                     `${OASIS.cellsBase} cases offertes, jusqu’à ${OASIS.cells}. Sur chaque case, une culture ou un arbre.`,
-                    'Cultures : cumin, coriandre, sésame. Arbres : palmier dattier, jujubier, oranger amer.',
+                    'Cultures : cumin, coriandre, sésame, sorgho. Arbres : palmier dattier, jujubier, oranger amer.',
                     'Tout est de saison, et les variétés du labo se sèment aussi à l’oasis.',
                 ],
             },
@@ -516,7 +516,7 @@ export const GUIDE_PAGES = [
                 b: [
                     `La citerne : ${OASIS.tank[0]} litres, puis ${OASIS.tank[1]} et ${OASIS.tank[2]} en l’agrandissant.`,
                     `La source la remplit de ${OASIS.spring} litres par heure, même jeu fermé ; le puits plus profond (+${OASIS.springUps[0][2]}) et les galeries souterraines (+${OASIS.springUps[1][2]}) en donnent plus.`,
-                    `Tant qu’elle pousse, une culture boit ${OASIS.drink.crop} litres par heure, un arbre ${OASIS.drink.tree}, un palmier dattier ${String(OASIS.drink.palm).replace('.', ',')}. Une culture mûre, ou un arbre au sol plein, ne boit plus.`,
+                    `Tant qu’elle pousse, une culture boit ${OASIS.drink.crop} litres par heure, un arbre ${OASIS.drink.tree}. Une culture mûre, ou un arbre au sol plein, ne boit plus.`,
                     'Sans eau, rien ne meurt : tout attend que la citerne se remplisse.',
                     'Une variété qui résiste à la soif (labo) boit moins.',
                 ],
@@ -525,7 +525,7 @@ export const GUIDE_PAGES = [
                 h: 'La chaleur et l’ombre',
                 b: [
                     `De ${OASIS.heat[0]} h à ${OASIS.heat[1]} h (heure de la ferme), une plante au soleil boit deux fois plus.`,
-                    'Un palmier dattier adulte fait de l’ombre aux huit cases autour de lui : elles boivent un tiers de moins et ne craignent pas midi.',
+                    'Le sorgho fait de l’ombre aux huit cases autour de lui dès qu’il a poussé de moitié, jusqu’à la récolte : elles boivent un tiers de moins et ne craignent pas midi.',
                 ],
             },
             {
@@ -538,7 +538,7 @@ export const GUIDE_PAGES = [
                     `Après le chantier de l’enclos (chapitre « Le souk de l’oasis ») : ${PEN.cap[0]} places, ${PEN.cap[1]} avec la palissade agrandie.`,
                     'Seulement les bêtes de l’oasis : le dromadaire (lait de chamelle, et parfois de la laine), le zébu (lait de zébu) et le mouton barbarin (laine barbarine). Elles ne vont pas dans les prés de la ferme.',
                     'Elles boivent à la citerne ; sans eau, elles ne produisent plus. À midi, au soleil, elles produisent moitié moins vite, sauf le mouton barbarin.',
-                    `Chaque palmier dattier adulte abrite ${PEN.shadePerPalm} bêtes du soleil.`,
+                    `Chaque sorgho debout abrite ${PEN.shadePerCrop} bêtes du soleil.`,
                     `La noria : un zébu attelé (depuis sa fiche) donne +${PEN.noria.lph} L/h à la source, mais plus de lait.`,
                     'Naissances, câlins, foire, Comice, carnet des robes et associations marchent comme au pré.',
                 ],

@@ -1,6 +1,6 @@
 // L'oasis (1.48) : une contrée où tout pousse, à condition d'avoir de l'eau. Ouverte par le chapitre 21, « La source d'Idris ».
 // La citerne se remplit à la source (même jeu fermé) et au chadouf ; chaque plante boit en poussant ;
-// de midi à 16 h, une plante au soleil boit deux fois plus ; à côté d'un palmier dattier, elle est à l'ombre.
+// de midi à 16 h, une plante au soleil boit deux fois plus ; à côté d'un sorgho bien levé, elle est à l'ombre.
 
 export const OASIS = {
     lvl: 59,
@@ -25,7 +25,7 @@ export const OASIS = {
         ['foggara', 'Les galeries souterraines', 20, { coins: 220000, stone: 200, beam: 40 }],
     ],
     // ce que boit chaque plante qui pousse (ou qui porte des fruits), en litres par heure ; une plante mûre ne boit plus
-    drink: { crop: 3, tree: 4, palm: 1.5 },
+    drink: { crop: 3, tree: 4 },
     heat: [12, 16], // les heures chaudes (heure de la ferme)
     heatMult: 2,
     shade: 2 / 3, // à l'ombre : un tiers de moins, et pas de chaleur
@@ -33,7 +33,8 @@ export const OASIS = {
     offlineMax: 3 * 24 * 3600, // au plus trois jours rattrapés
     // le chadouf : trois fois par jour (jour réel), un geste de rythme
     chadouf: { perDay: 3, max: 40, scoops: 5, perScoop: 8 },
-    palm: 'date', // l'arbre qui donne l'ombre
+    shadeCrop: 'sorghum', // la haute culture qui donne l'ombre (1.58 : plus le palmier dattier)
+    shadeFrom: 0.5, // elle fait de l'ombre dès qu'elle a poussé de moitié, jusqu'à la récolte
 };
 
 // les six plantes : id, nom, graine, niveau, prix, vente, pousse (s), xp, saveurs [sucré, acide, amer, épicé, umami]
@@ -41,6 +42,7 @@ export const OASIS_CROPS = [
     ['cumin', 'Cumin', 'Graines de cumin', 58, 110, 340, 720, 11, '00140'],
     ['coriander', 'Coriandre', 'Graines de coriandre', 58, 90, 300, 600, 10, '02031'],
     ['sesame', 'Sésame', 'Graines de sésame', 58, 100, 320, 660, 10, '10102'],
+    ['sorghum', 'Sorgho', 'Graines de sorgho', 58, 110, 330, 780, 11, '10010'],
 ];
 export const OASIS_TREES = [
     ['date', 'Datte', 'Palmier dattier', 58, 6000, 380, 1800, 13, '50000'],
@@ -96,7 +98,7 @@ export const PEN = {
     name: 'L’enclos de la palmeraie',
     cap: [12, 20], // places, puis la palissade agrandie
     upCost: { coins: 250000, plank: 80, beam: 40 },
-    shadePerPalm: 3, // bêtes abritées par palmier dattier adulte de l'oasis
+    shadePerCrop: 2, // bêtes abritées par sorgho debout (1.58)
     heatMult: 0.5, // au soleil de midi à 16 h : moitié moins vite (sauf le mouton barbarin)
     heatProof: ['barbarySheep'],
     noria: { lph: 8, cost: { coins: 120000, beam: 60, plank: 40, tools: 20 } }, // un zébu attelé : +8 L/h, pas de lait

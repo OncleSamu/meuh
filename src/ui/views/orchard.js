@@ -186,9 +186,8 @@ defineSheet('tree', {
         } else if (d.oasis) {
             info.push([
                 ['ui', 'drop'],
-                `À l’oasis : il boit ${String(d.id === 'date' ? OASIS.drink.palm : OASIS.drink.tree).replace('.', ',')} litres par heure (sauf sol plein), et attend s’il n’y a plus d’eau`,
+                `À l’oasis : il boit ${String(OASIS.drink.tree).replace('.', ',')} litres par heure (sauf sol plein), et attend s’il n’y a plus d’eau`,
             ]);
-            if (d.id === 'date') info.push([['ui', 'oaOmbre'], 'Adulte, il fait de l’ombre aux huit cases autour de lui']);
         } else if (d.island) info.push([['ui', 'w_sun'], 'Sous les tropiques : pas d’hiver, il produit toute l’année']);
         else if (G.season().id === 'hiver') info.push([['ui', 'w_snow'], 'L’hiver, il dort à moitié']);
         else if (G.season().id === 'automne') info.push([['ui', 'w_cloudy'], 'L’automne, il produit 20 % plus vite']);

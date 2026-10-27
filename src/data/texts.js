@@ -109,8 +109,8 @@ export const TIPS = {
     },
     oasisShade: {
         icon: ['ui', 'oaOmbre'],
-        title: 'L’ombre des palmiers',
-        text: 'Un palmier dattier adulte fait de l’ombre aux huit cases autour de lui : elles boivent un tiers de moins, et la chaleur de midi ne les touche plus. Les anciens plantaient l’oasis sur trois étages : les palmiers en haut, les arbres fruitiers dessous, les légumes au pied. Chacun garde l’eau de l’autre. Ton grand-père faisait pareil avec son vieux noyer : sous ses branches, les salades ne montaient jamais en graine, même en août.',
+        title: 'L’ombre du sorgho',
+        text: 'Le sorgho monte plus haut qu’un homme. Dès qu’il a poussé de moitié, il fait de l’ombre aux huit cases autour de lui : elles boivent un tiers de moins, et la chaleur de midi ne les touche plus. Il abrite aussi deux bêtes de l’enclos du soleil. Mais on le récolte : plus de sorgho debout, plus d’ombre. Ton grand-père faisait pareil avec ses tournesols : les salades à leur pied ne montaient jamais en graine, même en août.',
     },
     chadouf: {
         icon: ['ui', 'oaChadouf'],
@@ -180,7 +180,7 @@ export const TIPS = {
     sandstorm: {
         icon: ['ui', 'oaTempete'],
         title: 'La tempête de sable',
-        text: 'Le vent a soufflé du désert : quelques cases sont ensablées. Touche-les pour les dégager ; en attendant, elles ne poussent plus. Les cases à l’ombre des palmiers ne craignent rien. Encore une bonne raison de planter des palmiers.',
+        text: 'Le vent a soufflé du désert : quelques cases sont ensablées. Touche-les pour les dégager ; en attendant, elles ne poussent plus. Les cases à l’ombre d’un sorgho ne craignent rien. Encore une bonne raison d’en planter.',
     },
     oasisDry: {
         icon: ['ui', 'drop'],

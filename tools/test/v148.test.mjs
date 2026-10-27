@@ -36,7 +36,15 @@ const run = (sec, hot = false) => {
         G.oasisTick();
     }
 };
-// un palmier dattier adulte sur la case k
+// 1.58 : un sorgho planté sur la case k, levé d'une part f de sa pousse (1 : mûr)
+function sorghumAt(k, f = 1) {
+    assert.ok(G.plantOasis(k, 'sorghum', null, true));
+    const p = G.oasisPlots()[k];
+    p.prog = ITEMS.sorghum.time * f;
+    p.ready = f >= 1;
+    return p;
+}
+// un palmier dattier adulte sur la case k (un arbre ordinaire : il ne fait plus d'ombre)
 function palmAt(k) {
     const sl = G.slotsOf('oasis')[k];
     sl.tree = { id: 'date', age: ITEMS.date.time, drops: 0, ground: 0, prog: 0, gq: 0 };
@@ -90,21 +98,26 @@ test('sans eau, rien ne pousse et rien ne meurt ; la source remplit la citerne',
     assert.ok(O.water <= G.tankCap());
 });
 
-test('la chaleur de midi double la soif au soleil ; l’ombre d’un palmier la retire et boit un tiers de moins', () => {
+test('la chaleur de midi double la soif au soleil ; l’ombre d’un sorgho la retire et boit un tiers de moins', () => {
     oasis({ water: 100 });
     G.plantOasis(5, 'cumin', null, true);
     const cool = G.cellNeed(5, 1),
         hot = G.cellNeed(5, OASIS.heatMult);
     assert.ok(Math.abs(hot / cool - 2) < 1e-9);
-    palmAt(0); // la case 0 touche la case 5 (en diagonale, 4 colonnes)
+    // un palmier dattier, même adulte, ne fait plus d'ombre
+    palmAt(1);
+    assert.equal(G.isShaded(5), false);
+    G.slotsOf('oasis')[1].tree = null;
+    sorghumAt(0, 0.3); // un jeune sorgho ne fait pas encore d'ombre
+    assert.equal(G.isShaded(5), false);
+    G.oasisPlots()[0].prog = ITEMS.sorghum.time * OASIS.shadeFrom; // levé de moitié : la case 0 touche la case 5 (en diagonale, 4 colonnes)
     assert.ok(G.isShaded(5));
     assert.ok(Math.abs(G.cellNeed(5, OASIS.heatMult) / cool - OASIS.shade) < 1e-9);
-    // un jeune palmier ne fait pas encore d'ombre
-    G.slotsOf('oasis')[0].tree.age = 0;
-    assert.equal(G.isShaded(5), false);
     // la case 7 n'est pas voisine de la case 0
-    palmAt(0);
     assert.equal(G.isShaded(7), false);
+    // récolté, il n'y a plus d'ombre
+    Object.assign(G.oasisPlots()[0], { id: null, prog: 0, ready: false });
+    assert.equal(G.isShaded(5), false);
 });
 
 test('une case porte une culture ou un arbre, pas les deux', () => {
@@ -219,9 +232,9 @@ test('le chapitre 21 : trois chantiers à l’oasis, Idris, la carte, la palmera
 });
 
 // ---------------- le contrôle : chaque plante est branchée partout ----------------
-test('contrôle : les six plantes ont leurs dessins, leurs saveurs, leur place et leurs listes', () => {
+test('contrôle : les sept plantes ont leurs dessins, leurs saveurs, leur place et leurs listes', () => {
     oasis();
-    assert.equal(OASIS_IDS.length, 6);
+    assert.equal(OASIS_IDS.length, 7);
     const trees = G.treeList('oasis').map(d => d.id);
     assert.deepEqual(trees.sort(), ['bitterOrange', 'date', 'jujube']);
     for (const id of OASIS_IDS) {

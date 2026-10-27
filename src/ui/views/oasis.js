@@ -1,5 +1,5 @@
 // Ferme | Voyages : l'île et l'oasis (1.48), deux choix en tête comme au haras.
-// L'oasis : une grille de cases (cultures et arbres), la citerne, la source, le chadouf, l'ombre des palmiers.
+// L'oasis : une grille de cases (cultures et arbres), la citerne, la source, le chadouf, l'ombre du sorgho.
 import { state } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { on, sfx, buzz, toast } from '../../core/bus.js';
@@ -196,7 +196,7 @@ function penHtml() {
         <div class="oa-flow"><span class="chip">${ico(['ui', 'drop'])}−${String(Math.round(G.penDrink() * 10) / 10).replace('.', ',')} L/h</span><span class="chip ok">${ico(['ui', 'oaOmbre'])}${shade} à l’ombre</span>${hot ? `<span class="chip bad">${ico(['ui', 'oaMidi'])}Midi : moitié moins vite au soleil</span>` : ''}</div>
         <div class="actions wrap">${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'] })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'] })}${btn('Acheter', { act: 'go', data: { path: 'market/shop#animals' }, size: 'sm', icon: ['ui', 'coin'] })}</div>
         ${birthRow(PEN.key)}${assocRow(PEN.key)}${tiles}${noria}${big}
-        <p class="card-sub">Chaque palmier dattier adulte abrite ${PEN.shadePerPalm} bêtes du soleil de midi. Le mouton barbarin ne craint pas la chaleur.</p>
+        <p class="card-sub">Chaque sorgho debout abrite ${PEN.shadePerCrop} bêtes du soleil de midi. Le mouton barbarin ne craint pas la chaleur.</p>
     </div>`;
 }
 
@@ -260,7 +260,7 @@ defineSheet('plantOasis', {
         const vars = state.genetics
             ? G.varieties().filter(v => ITEMS[v.base].oasis && ITEMS[v.base].type === 'crop' && (state.genetics.seeds[v.id] || 0) > 0)
             : [];
-        const head = `<p class="card-sub center">${shade ? `${ico(['ui', 'oaOmbre'])}Cette case est à l’ombre d’un palmier : elle boit un tiers de moins et ne craint pas midi.` : `${ico(['ui', 'oaMidi'])}Cette case est au soleil : de midi à 16 h, elle boit deux fois plus. Un palmier dattier voisin lui ferait de l’ombre.`}</p>`;
+        const head = `<p class="card-sub center">${shade ? `${ico(['ui', 'oaOmbre'])}Cette case est à l’ombre d’un sorgho : elle boit un tiers de moins et ne craint pas midi.` : `${ico(['ui', 'oaMidi'])}Cette case est au soleil : de midi à 16 h, elle boit deux fois plus. Un sorgho voisin lui ferait de l’ombre.`}</p>`;
         const varHtml = vars.length
             ? `${section('Mes variétés')}<div class="pick-grid trees">${vars
                   .map(
@@ -277,7 +277,7 @@ defineSheet('plantOasis', {
                 const t = G.cropGrowTime(d.id) / (G.oasisRate(d.id) || 1);
                 return `<button class="pick-cell${open ? '' : ' locked'}" data-act="plantOasis" data-k="${k}" data-id="${d.id}" ${open ? '' : 'disabled'}>
                     <span class="pc-art">${art('plant', `${d.id}:2`)}</span><b>${d.name}</b>
-                    ${open ? `<small>${fmt(G.sellPrice(d.id))}${ico(['ui', 'coin'])} · ${shortDur(t)}</small><small>${ico(['ui', 'drop'])}${lph(OASIS.drink.crop)}</small><span class="pc-cost">${stock > 0 ? `${stock} en stock` : `${fmt(d.cost)}${ico(['ui', 'coin'])}`}</span>` : `<small class="lock-txt">${ico(['ui', 'lock'])}Niveau ${d.reqLvl}</small>`}
+                    ${open ? `<small>${fmt(G.sellPrice(d.id))}${ico(['ui', 'coin'])} · ${shortDur(t)}</small><small>${ico(['ui', 'drop'])}${lph(OASIS.drink.crop)}${d.id === OASIS.shadeCrop ? ' · ombre' : ''}</small><span class="pc-cost">${stock > 0 ? `${stock} en stock` : `${fmt(d.cost)}${ico(['ui', 'coin'])}`}</span>` : `<small class="lock-txt">${ico(['ui', 'lock'])}Niveau ${d.reqLvl}</small>`}
                 </button>`;
             })
             .join('');
@@ -286,10 +286,10 @@ defineSheet('plantOasis', {
             .map(d => {
                 const open = G.treeUnlocked(d),
                     stock = state.seeds[d.id] || 0;
-                const L = d.id === OASIS.palm ? OASIS.drink.palm : OASIS.drink.tree;
+                const L = OASIS.drink.tree;
                 return `<button class="pick-cell${open ? '' : ' locked'}" data-act="plantOasisTree" data-k="${k}" data-id="${d.id}" ${open ? '' : 'disabled'}>
                     <span class="pc-art">${art('plant', `${d.id}:2`)}</span><b>${d.seedName}</b>
-                    ${open ? `<small>${ico(['item', d.id])}${fmt(G.sellPrice(d.id))}${ico(['ui', 'coin'])}</small><small>${ico(['ui', 'drop'])}${lph(L)}${d.id === OASIS.palm ? ' · ombre' : ''}</small><span class="pc-cost">${stock > 0 ? `${stock} en stock` : `${fmt(d.cost)}${ico(['ui', 'coin'])}`}</span>` : `<small class="lock-txt">${ico(['ui', 'lock'])}Niveau ${d.reqLvl}</small>`}
+                    ${open ? `<small>${ico(['item', d.id])}${fmt(G.sellPrice(d.id))}${ico(['ui', 'coin'])}</small><small>${ico(['ui', 'drop'])}${lph(L)}</small><span class="pc-cost">${stock > 0 ? `${stock} en stock` : `${fmt(d.cost)}${ico(['ui', 'coin'])}`}</span>` : `<small class="lock-txt">${ico(['ui', 'lock'])}Niveau ${d.reqLvl}</small>`}
                 </button>`;
             })
             .join('');
@@ -317,7 +317,7 @@ defineSheet('oasisWater', {
         return `<div class="card oa-up"><span class="oa-up-art">${art('ui', 'oaSource')}</span><div class="card-main"><div class="card-title">La source : ${G.springRate()} L par heure</div>
             <div class="card-sub">Elle coule jour et nuit, même jeu fermé. En ce moment, l’oasis boit ${fmt(Math.round(G.oasisDrink()))} L par heure.</div></div></div>
             ${tankCard}${springCard}
-            <p class="card-sub center">Tant qu’elle pousse, une culture boit ${lph(OASIS.drink.crop)}, un arbre ${lph(OASIS.drink.tree)}, un palmier dattier ${lph(OASIS.drink.palm)} ; une plante mûre ne boit plus. À l’ombre, un tiers de moins ; au soleil de midi à 16 h, deux fois plus. Une variété qui résiste à la soif boit moins.</p>`;
+            <p class="card-sub center">Tant qu’elle pousse, une culture boit ${lph(OASIS.drink.crop)}, un arbre ${lph(OASIS.drink.tree)} ; une plante mûre ne boit plus. À l’ombre, un tiers de moins ; au soleil de midi à 16 h, deux fois plus. Une variété qui résiste à la soif boit moins.</p>`;
     },
 });
 
