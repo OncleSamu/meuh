@@ -57,7 +57,7 @@ export const CUP_WORKS = [
         id: 'opera',
         name: 'L’opéra',
         pts: 16,
-        cost: { coins: 1.2e9, goldIngot: 300, silverIngot: 300, ruby: 80 },
+        cost: { coins: 800e6, goldIngot: 200, silverIngot: 200, ruby: 60 },
         mamie: 'J’ai chanté une fois sur une scène, à la fête du village. Le coq a chanté plus juste, mais on m’a applaudie quand même.',
     },
 ];

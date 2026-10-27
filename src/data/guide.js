@@ -1797,7 +1797,7 @@ export const GUIDE_PAGES = [
                 b: [
                     'La vraie ligne d’arrivée : six rangs, de « Ferme du canton » (0 point) à « Ferme du monde » (110 points). Menu › La Coupe de la vallée.',
                     'Les médailles rapportent des points : bronze 1, argent 2, or 4, platine 7, diamant 10. Chaque défi gagné en or bâtit son monument dans le domaine des légendes ; les dix-sept en or dressent la grande statue dorée (+10).',
-                    'Le mécénat : six grands travaux pour la vallée (pont, thermes, cathédrale, observatoire, musée, opéra), de 50 millions à 1,2 milliard de pièces plus des matériaux, pour 6 à 16 points.',
+                    'Le mécénat : six grands travaux pour la vallée (pont, thermes, cathédrale, observatoire, musée, opéra), de 50 à 800 millions de pièces plus des matériaux, pour 6 à 16 points.',
                     'Chaque rang donne un bonus permanent : étal plus grand, cave plus rapide, une commande de plus, deuxième poste à moitié prix, puis +5 % à l’étal et aux commandes.',
                     'Les quatre fermes rivales gagnent leurs médailles à votre rythme moyen : le classement de la Coupe montre qui mène.',
                     'Tout se garde quand on vend la ferme.',
