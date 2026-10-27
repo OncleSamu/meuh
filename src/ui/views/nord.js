@@ -210,7 +210,6 @@ function barnHtml() {
         : `<div class="line">${ico(['ui', 'noPoeleOn'])}<div>Agrandir l’étable : ${BARN.cap[1]} places. ${costRow(G.costParts(BARN.upCost))}</div>${btn('Agrandir', { act: 'barnUp', size: 'sm', kind: G.hasCost(BARN.upCost) ? 'green' : '', disabled: !G.hasCost(BARN.upCost) })}</div>`;
     return `<div class="card oa-pen">
         <div class="oa-flow"><span class="chip ok">${ico(['ui', 'noChaleur'])}${G.nordShelterSlots()} à l’abri</span>${frost ? `<span class="chip bad">${ico(['ui', 'noFroid'])}Nuit de gel : moitié moins vite hors d’un poêle</span>` : ''}</div>
-        <div class="actions wrap">${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'] })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'] })}${btn('Acheter', { act: 'go', data: { path: 'market/shop#animals' }, size: 'sm', icon: ['ui', 'coin'] })}</div>
         ${birthRow(BARN.key)}${assocRow(BARN.key)}${big}
         <p class="card-sub">Chaque poêle allumé abrite ${BARN.shelterPerStove} bêtes la nuit de gel (il brûle alors une bûche par heure). Le bœuf musqué ne craint pas le froid.</p>
     </div>`;

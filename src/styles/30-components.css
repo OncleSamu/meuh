@@ -147,6 +147,9 @@
 }
 .row-btns > .btn {
     flex: 1 1 auto;
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
 }
 
 /* ---------------- pastilles ---------------- */
