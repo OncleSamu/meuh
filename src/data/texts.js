@@ -132,6 +132,11 @@ export const TIPS = {
         title: 'Le mouton barbarin',
         text: 'Le mouton barbarin garde ses réserves dans sa grosse queue, comme le dromadaire dans sa bosse. Il ne craint pas le soleil de midi, et sa laine fait les plus beaux tapis. Ma cousine Odile avait un tapis berbère : quarante ans qu’on marche dessus, il n’a pas bougé d’un fil.',
     },
+    sled: {
+        icon: ['ui', 'noTraineau'],
+        title: 'Le traîneau',
+        text: 'Quatre rennes adultes, dix-huit charges, huit heures de route : la grande ville du Sud paie bien mieux que le grossiste les produits du Nord, et on rapporte parfois de la cardamome. Mon arrière-grand-oncle faisait la route en traîneau chaque hiver, avec des harengs. Il racontait qu’en ville, personne ne voulait croire qu’on pouvait vendre du poisson congelé.',
+    },
     reindeer: {
         icon: ['animal', 'reindeer'],
         title: 'Le renne',

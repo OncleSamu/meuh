@@ -71,3 +71,18 @@ export const BARN = {
     shelterPerStove: 3, // bêtes à l'abri par poêle allumé
     coldMult: 0.5, // une bête au froid (nuit de gel, hors d'un poêle) produit deux fois moins vite
 };
+
+// ================= 1.52.1 : le traîneau =================
+export const SLED = {
+    project: 'northSled',
+    iceProject: 'northIce', // le marché de glace : +15 %
+    reindeer: 4, // rennes adultes à l'attelage
+    loads: 18, // charges ; une charge = 10 produits d'une même sorte
+    perLoad: 10,
+    time: 8 * 3600 * 1000,
+    mult: 2.6, // × le prix du grossiste, pour les produits du Nord
+    otherMult: 1.3, // × le prix du grossiste, pour tout le reste
+    iceBonus: 0.15,
+    spice: { chance: 0.35, id: 'cardamom', min: 3, max: 6 }, // une épice rare au retour
+    blizzardDelay: 3600 * 1000,
+};

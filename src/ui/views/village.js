@@ -106,7 +106,7 @@ function storyCard() {
           : m === 'island'
             ? '<div class="card-title">L’île est en fête !</div><div class="card-sub">Bac, paillote, four, brûlerie, rhumerie et carnaval : Tiago et Maëva vous remercient.</div>'
             : m === 'nord'
-              ? '<div class="card-title">Le Grand Nord est au chaud !</div><div class="card-sub">Poêle, réserve de bois et serre de rondins : Tuomas vous remercie, et la fumée monte de chaque cheminée.</div>'
+              ? '<div class="card-title">Le Grand Nord est au chaud !</div><div class="card-sub">Poêle, réserve de bois, serre, étable, relais des traîneaux et marché de glace : Tuomas et Ingrid vous remercient, et la fumée monte de chaque cheminée.</div>'
               : m === 'oasis'
                 ? '<div class="card-title">Le souk de l’oasis est ouvert !</div><div class="card-sub">Puits, chadouf, palmeraie, enclos, caravansérail et étals : Idris et Yasmine vous remercient, et la caravane repart au souk.</div>'
                 : m === 'station'

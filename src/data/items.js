@@ -2904,6 +2904,8 @@ for (const [id, name, seedName, reqLvl, cost, sell, time, xp] of OASIS_TREES)
 for (const [id, name, sell] of OASIS_PRODUCTS) ITEMS[id] = { id, name, type: 'product', sell, needProject: 'oasisPen' };
 // 1.52 : les produits des bêtes du Grand Nord
 for (const [id, name, sell] of NORD_PRODUCTS) ITEMS[id] = { id, name, type: 'product', sell, needProject: 'northStable' };
+// 1.52.1 : l'épice rare que rapporte le traîneau
+ITEMS.cardamom = { id: 'cardamom', name: 'Cardamome', type: 'product', sell: 420, needProject: 'northSled' };
 
 // ---------------- 1.51 : les plantes du Grand Nord (island : elles ne poussent pas à la ferme ; nord : seulement au Grand Nord) ----------------
 for (const [id, name, seedName, reqLvl, cost, sell, time, xp] of NORD_CROPS)

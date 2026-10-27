@@ -8,12 +8,13 @@ import { now } from '../core/clock.js';
 import { fmt, s, dateKey } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { NORD, BARN } from '../data/nord.js';
+import { NORD, BARN, SLED, NORD_IDS, NORD_PRODUCTS } from '../data/nord.js';
 import { ANIMALS } from '../data/animals.js';
 import { isAdult } from './animals.js';
 import { inPasture, nordBarnOpen, nordBarnCap } from './pastures.js';
 import { BALANCE } from '../data/progress.js';
-import { speedMult, addXp, spend, rank, rollYield } from './player.js';
+import { speedMult, addXp, spend, rank, rollYield, earn } from './player.js';
+import { sellPrice } from './market.js';
 import { hour, weather } from './world.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
@@ -42,6 +43,7 @@ export const nordCellCost = () => Math.floor(NORD.cellCost * Math.pow(NORD.cellM
 
 export function ensureNord() {
     if (!state.nord || !Array.isArray(state.nord.plots)) state.nord = { plots: [], orchard: [], stoves: {}, ups: {}, chop: {} };
+    if (!state.nord.sled) state.nord.sled = { load: {}, out: null, trips: 0 };
     const N = state.nord;
     if (!Array.isArray(N.orchard)) N.orchard = [];
     if (!N.stoves || typeof N.stoves !== 'object') N.stoves = {};
@@ -470,6 +472,7 @@ export function nordSheltered(a) {
 }
 // la vitesse d'une bête du Nord : la nuit de gel, hors d'un poêle, deux fois moins vite
 export function nordBeastMult(a) {
+    if (a && a.trip && ANIMALS[a.type] && ANIMALS[a.type].nord) return 0;
     if (!a || !ANIMALS[a.type] || !ANIMALS[a.type].nord || !ANIMALS[a.type].cold || !isAdult(a)) return 1;
     return isFrost() && !nordSheltered(a) ? BARN.coldMult : 1;
 }
@@ -484,3 +487,78 @@ export function upNordBarn(at) {
     return true;
 }
 export const nordBarnFree = () => nordBarnCap() - nordBeasts().length;
+
+// ================= 1.52.1 : le traîneau =================
+export const sledOpen = () => projectDone(SLED.project);
+const ensureSled = () => (state.nord.sled ||= { load: {}, out: null, trips: 0 });
+export const sledState = () => (state.nord ? ensureSled() : { load: {}, out: null, trips: 0 });
+export const sledReindeer = () => nordBeasts().filter(a => a.type === 'reindeer' && isAdult(a) && !a.sick && !a.trip);
+export const sledLoads = () => Object.values(sledState().load).reduce((a, n) => a + n, 0);
+// les produits du Nord : plantes, produits des bêtes, cardamome
+const NORD_GOODS = new Set([...NORD_IDS, ...NORD_PRODUCTS.map(p => p[0]), SLED.spice.id]);
+export const isNordGood = id => NORD_GOODS.has(id);
+export const sledMult = id => (id && !isNordGood(id) ? SLED.otherMult : SLED.mult) * (1 + (projectDone(SLED.iceProject) ? SLED.iceBonus : 0));
+export const sledValue = (load = sledState().load) =>
+    Math.round(Object.entries(load).reduce((a, [id, n]) => a + n * SLED.perLoad * sellPrice(id) * sledMult(id), 0) / 10) * 10;
+const sledFree = id => (state.inventory[id] || 0) - (sledState().load[id] || 0) * SLED.perLoad;
+export const sledGoods = () =>
+    Object.keys(state.inventory).filter(
+        id => ITEMS[id] && !['material', 'rare', 'seed'].includes(ITEMS[id].type) && ITEMS[id].sell > 0 && sledFree(id) >= SLED.perLoad,
+    );
+export function sledAdd(id, n = 1) {
+    const c = ensureSled();
+    if (c.out || !sledOpen()) return false;
+    let k = 0;
+    while (k < n && sledLoads() < SLED.loads && sledFree(id) >= SLED.perLoad) {
+        c.load[id] = (c.load[id] || 0) + 1;
+        k++;
+    }
+    if (k) changed('nord');
+    return k > 0;
+}
+export function sledRemove(id) {
+    const c = ensureSled();
+    if (c.out || !c.load[id]) return false;
+    if (!--c.load[id]) delete c.load[id];
+    changed('nord');
+    return true;
+}
+export function sledSend(at) {
+    const c = ensureSled();
+    if (c.out || !sledOpen() || !sledLoads() || sledReindeer().length < SLED.reindeer) return false;
+    for (const [id, n] of Object.entries(c.load)) if ((state.inventory[id] || 0) < n * SLED.perLoad) return false;
+    for (const [id, n] of Object.entries(c.load)) state.inventory[id] -= n * SLED.perLoad;
+    const team = sledReindeer()
+        .slice(0, SLED.reindeer)
+        .map(a => a.uid);
+    team.forEach(uid => (state.animals.find(a => a.uid === uid).trip = true));
+    c.out = { load: c.load, value: sledValue(), back: now() + SLED.time, team };
+    c.load = {};
+    sfx('buy');
+    burst(at, 'sparkle', 10);
+    toast('Le traîneau part pour la grande ville du Sud : retour dans 8 heures', ['ui', 'noTraineau']);
+    tip('sled');
+    changed('nord');
+    return true;
+}
+export const sledBack = () => !!(state.nord && state.nord.sled && state.nord.sled.out && now() >= state.nord.sled.out.back);
+export function sledClaim(at) {
+    const c = ensureSled();
+    if (!c.out || now() < c.out.back) return false;
+    const { value, team } = c.out;
+    earn(value, at);
+    let spice = 0;
+    if (Math.random() < SLED.spice.chance) {
+        spice = SLED.spice.min + Math.floor(Math.random() * (SLED.spice.max - SLED.spice.min + 1));
+        state.inventory[SLED.spice.id] = (state.inventory[SLED.spice.id] || 0) + spice;
+    }
+    state.animals.forEach(a => team.includes(a.uid) && delete a.trip);
+    c.out = null;
+    c.trips++;
+    state.stats.sleds = (state.stats.sleds || 0) + 1;
+    addXp(220 + 20 * Math.min(60, state.level), at);
+    sfx('level');
+    toast(`Le traîneau est rentré : ${fmt(value)} pièces${spice ? ` et ${spice} gousses de cardamome` : ''}`, ['ui', 'noTraineau']);
+    changed('nord');
+    return { value, spice };
+}

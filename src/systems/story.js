@@ -183,7 +183,8 @@ export function applyProjectReward(pid) {
         pid === 'harvestFest' ||
         pid === 'oasisGrove' ||
         pid === 'soukStalls' ||
-        pid === 'northGreenhouse'
+        pid === 'northGreenhouse' ||
+        pid === 'northIce'
     )
         state.prestige.rubans += 5;
     if (pid === 'brewhall') tip('brew');

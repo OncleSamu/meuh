@@ -4,7 +4,7 @@
 //   secs : sections (h : titre ; t : un paragraphe ; b : une liste) ; tips : « À retenir » ; see : pages liées
 import { ITEMS } from './items.js';
 import { OASIS, PEN, CARAVAN } from './oasis.js';
-import { NORD } from './nord.js';
+import { NORD, SLED } from './nord.js';
 import { ANIMALS, BIRTHS } from './animals.js';
 import { FAIR, REPUTATION, REP_BONUS, COMICE, ROBEBOOK, ASSOC_LVL } from './elevage.js';
 import { ANIMAL_TRAITS } from './genetics.js';
@@ -619,6 +619,10 @@ export const GUIDE_PAGES = [
                     'La nuit de gel, hors d’un poêle allumé, le renne et le lagopède produisent deux fois moins vite. Chaque poêle allumé en abrite 3 (et brûle alors une bûche par heure). Le bœuf musqué ne craint pas le froid.',
                     'Les trois bêtes ont leurs gènes au labo, leurs associations, leurs acheteurs à la foire et leur place au Comice.',
                 ],
+            },
+            {
+                h: 'Le traîneau',
+                t: `Après le relais des traîneaux (chapitre 24) : ${SLED.reindeer} rennes adultes de l’étable emportent jusqu’à ${SLED.loads} charges de ${SLED.perLoad} produits dans la grande ville du Sud. Retour en 8 heures, avec ${String(SLED.mult).replace('.', ',')} fois le prix du grossiste pour les produits du Nord (plantes, produits des bêtes) et ${String(SLED.otherMult).replace('.', ',')} fois pour le reste, 15 % de plus avec le marché de glace, et parfois de la cardamome. Les rennes partis ne produisent pas.`,
             },
             {
                 h: 'Le labo et la brasserie',

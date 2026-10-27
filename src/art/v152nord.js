@@ -189,9 +189,26 @@ const antlerItem = () =>
     L('M14 52 Q15 36 22 24', 1.4, '#b89c6c') +
     E(14, 54, 6.4, 3.2, '#b89c6c', 0, 1.8) +
     HL(22, 22, 3, 1.2, -50, 0.6);
+// la cardamome : des gousses vert pâle côtelées, quelques graines noires
+const pod = (x, y, rot) =>
+    `<g transform="translate(${x} ${y}) rotate(${rot})">` +
+    P('M0 -15 Q9 -9 8 2 Q6 13 0 17 Q-6 13 -8 2 Q-9 -9 0 -15Z', '#a8c870', 2) +
+    L('M0 -13 Q2 0 0 15 M-4 -10 Q-5 0 -3 11 M4 -10 Q5 0 3 11', 1, '#7a9a48') +
+    HL(-3, -6, 2, 5, 10, 0.5) +
+    `</g>`;
+const cardamomItem = () =>
+    SHADOW(32, 58, 22, 3) +
+    pod(20, 40, -35) +
+    pod(44, 40, 35) +
+    pod(32, 32, 0) +
+    FC(24, 54, 2, '#2a2622') +
+    FC(30, 56, 1.8, '#2a2622') +
+    FC(38, 55, 2, '#2a2622') +
+    FC(44, 54, 1.6, '#2a2622');
 Object.assign(items, {
     reindeerMilk: () => milkB('#8a7a68', '#f4efe4', 'reindeer', '#fffdf4', 'jug'),
     antler: antlerItem,
+    cardamom: () => cardamomItem(),
     qiviut: () => yarn3('#6a5444', '#3e2e22'),
     ptarmiganEgg: eggLagopede,
 });
@@ -228,6 +245,58 @@ const NB2 = {
     },
 };
 for (const [id, d] of Object.entries(NB2)) {
+    BLD[id] = { ...d.cfg, st: d.st, kind: 'h2_' + id };
+    KINDS['h2_' + id] = st => house2(BLD[id], st);
+}
+
+// ======================= 1.52.1 : le relais des traîneaux et le marché de glace =======================
+const ICE = '#bfe4f2',
+    ICED = '#7fb8d4';
+// un traîneau de bois (pour le relais) : deux patins relevés, une caisse, des brancards
+const sledProp = (x, y, k = 1) =>
+    `<g transform="translate(${x} ${y}) scale(${k})">` +
+    L('M-12 8 Q-16 8 -16 4 M-12 8 L12 8 Q16 8 16 4', 3, '#5e3a1e') +
+    P('M-11 -2 L11 -2 L9 6 L-9 6Z', '#a8693a', 1.6) +
+    L('M-11 -2 L-17 -6 M11 -2 L17 -6', 1.6, '#5e3a1e') +
+    `</g>`;
+const iceBlock = (x, y, w, h) =>
+    P(`M${x} ${y} L${x + w} ${y} L${x + w} ${y + h} L${x} ${y + h}Z`, ICE, 1.6) +
+    F(`M${x + 1.5} ${y + 1.5} L${x + w * 0.45} ${y + 1.5} L${x + 1.5} ${y + h * 0.6}Z`, '#fff', 0.7) +
+    L(`M${x + w * 0.6} ${y + 2} L${x + w * 0.4} ${y + h - 2}`, 0.8, ICED);
+const NB3 = {
+    northSled: {
+        cfg: { w: 40, h: 18, wall: '#9a6a3e', roof: '#e8f0f6', sign: ['ui', 'noTraineau'] },
+        st: {
+            roof: 'chalet',
+            tex: 'planks',
+            snow: true,
+            door: 'plain',
+            wins: [10],
+            props: ({ x1, ruin }) => (ruin ? '' : sledProp(x1 + 12, 80, 0.9)),
+            noFlowers: true,
+        },
+    },
+    northIce: {
+        cfg: { w: 42, h: 17, wall: '#c9a06a', roof: '#dfeaf2', sign: ['item', 'cloudberry'] },
+        st: {
+            roof: 'gable',
+            tex: 'planks',
+            snow: true,
+            door: 'plain',
+            wins: [],
+            // des blocs de glace et un auvent d'étal
+            props: ({ x0, x1, ruin }) =>
+                ruin
+                    ? ''
+                    : iceBlock(x0 - 14, 74, 9, 10) +
+                      iceBlock(x0 - 14, 64, 9, 10) +
+                      iceBlock(x1 + 6, 76, 10, 8) +
+                      L(`M${x0 - 16} 64 L${x0 - 16} 86`, 2, '#5e3a1e'),
+            noFlowers: true,
+        },
+    },
+};
+for (const [id, d] of Object.entries(NB3)) {
     BLD[id] = { ...d.cfg, st: d.st, kind: 'h2_' + id };
     KINDS['h2_' + id] = st => house2(BLD[id], st);
 }

@@ -4,13 +4,13 @@ import { state } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { on, sfx, buzz, toast } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
-import { NORD, BARN } from '../../data/nord.js';
+import { NORD, BARN, SLED } from '../../data/nord.js';
 import { stableTile, birthRow, assocRow } from './animals.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, esc, byId } from '../dom.js';
 import { genWrap } from '../genlook.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, section, costRow } from '../kit.js';
+import { btn, bar, section, costRow, timer } from '../kit.js';
 import { defineLive, ui, go, refresh } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { burstAt } from '../fx.js';
@@ -135,8 +135,50 @@ export function renderNord(el) {
         ['grid', `<div class="oa-grid no-grid">${plots.map((p, k) => cellHtml(k, next)).join('')}</div>`],
         ['h2', section(BARN.name, G.nordBarnOpen() ? `<small class="o-count small">${G.nordBeasts().length}/${G.nordBarnCap()}</small>` : '')],
         ['barn', barnHtml()],
+        ['sled', sledHtml()],
     ]);
 }
+
+// ---------------- 1.52.1 : le traîneau ----------------
+function sledHtml() {
+    if (!G.nordBarnOpen()) return '';
+    if (!G.sledOpen())
+        return `<div class="card oa-pen-closed"><span class="oa-up-art">${art('ui', 'noTraineau')}</span><div class="card-main"><div class="card-title">Le traîneau</div><div class="card-sub">Ouvrez le relais des traîneaux avec Tuomas : quatre rennes porteront vos produits jusqu’à la grande ville du Sud.</div></div></div>`;
+    const c = G.sledState();
+    if (c.out) {
+        const back = G.sledBack();
+        return `<div class="card oa-caravan"><span class="oa-up-art">${art('ui', 'noTraineau')}</span><div class="card-main"><div class="card-title">Le traîneau ${back ? 'est rentré !' : 'est en route'}</div>
+            <div class="card-sub">${back ? `Il rapporte ${fmt(c.out.value)} pièces de la grande ville.` : `Retour dans ${timer(c.out.back)} avec environ ${fmt(c.out.value)} pièces.`}</div>
+            ${back ? btn('Accueillir le traîneau', { act: 'sledClaim', kind: 'gold', icon: ['ui', 'coin'] }) : ''}</div></div>`;
+    }
+    const loads = G.sledLoads(),
+        team = G.sledReindeer().length;
+    const fmtMult = m => String(Math.round(m * 100) / 100).replace('.', ',');
+    const chips = Object.entries(c.load)
+        .map(([id, n]) => `<button class="pick-chip on" data-act="sledDel" data-id="${id}">${ico(['item', id])}<span>${n * SLED.perLoad}</span></button>`)
+        .join('');
+    return `<div class="card oa-caravan"><span class="oa-up-art">${art('ui', 'noTraineau')}</span><div class="card-main"><div class="card-title">Le traîneau · ${loads}/${SLED.loads} charges</div>
+        <div class="card-sub">Une charge = ${SLED.perLoad} produits. La ville paie ${fmtMult(G.sledMult())} fois le prix du grossiste pour les produits du Nord, ${fmtMult(G.sledMult('wheat'))} fois pour le reste ; retour en 8 heures. ${team < SLED.reindeer ? `Il faut ${SLED.reindeer} rennes adultes (vous en avez ${team}).` : ''}</div>
+        ${chips ? `<div class="chips-row">${chips}</div>` : ''}
+        ${loads ? `<div class="card-sub">Valeur en ville : <b>${fmt(G.sledValue())}</b> pièces</div>` : ''}
+        <div class="actions wrap">${btn('Charger', { act: 'open', data: { sheet: 'sledLoad' }, size: 'sm', icon: ['ui', 'plus'], disabled: loads >= SLED.loads })}${btn('Partir', { act: 'sledSend', kind: loads && team >= SLED.reindeer ? 'green' : '', size: 'sm', icon: ['ui', 'noTraineau'], disabled: !loads || team < SLED.reindeer })}</div></div></div>`;
+}
+defineSheet('sledLoad', {
+    title: 'Charger le traîneau',
+    render() {
+        const goods = G.sledGoods()
+            .map(id => [id, G.sellPrice(id)])
+            .sort((a, b) => b[1] * G.sledMult(b[0]) - a[1] * G.sledMult(a[0]))
+            .slice(0, 60);
+        if (!goods.length) return `<p class="empty">Il faut au moins ${SLED.perLoad} produits d’une même sorte dans la grange.</p>`;
+        return `<p class="card-sub center">${G.sledLoads()}/${SLED.loads} charges. Touchez un produit pour en charger ${SLED.perLoad}.</p><div class="pick-grid trees">${goods
+            .map(
+                ([id, p]) =>
+                    `<button class="pick-cell" data-act="sledAdd" data-id="${id}"><span class="pc-art">${art('item', id)}</span><b>${ITEMS[id].name}</b><small>${fmt(Math.round(p * SLED.perLoad * G.sledMult(id)))}${ico(['ui', 'coin'])} la charge</small><span class="pc-cost">${state.inventory[id]} en grange</span></button>`,
+            )
+            .join('')}</div>`;
+    },
+});
 
 // ---------------- 1.52 : l'étable de rondins ----------------
 function barnHtml() {
@@ -384,6 +426,10 @@ export function setupNord() {
         },
         upNord: (el, d) => G.upgradeNord(d.id, el),
         barnUp: el => G.upNordBarn(el),
+        sledAdd: (el, d) => G.sledAdd(d.id),
+        sledDel: (el, d) => G.sledRemove(d.id),
+        sledSend: el => G.sledSend(el),
+        sledClaim: el => G.sledClaim(el),
         chop: () => openChop(),
     });
     const onLong = el => openSheet('tree', { k: +el.dataset.k, z: 'nord' });
