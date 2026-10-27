@@ -197,6 +197,8 @@ function penHtml() {
         : `<div class="line">${ico(['ui', 'oaEnclos'])}<div>Agrandir la palissade : ${PEN.cap[1]} places. ${costRow(G.costParts(PEN.upCost))}</div>${btn('Agrandir', { act: 'penUp', size: 'sm', kind: G.hasCost(PEN.upCost) ? 'green' : '', disabled: !G.hasCost(PEN.upCost) })}</div>`;
     return `<div class="card oa-pen">
         <div class="oa-flow"><span class="chip">${ico(['ui', 'drop'])}−${String(Math.round(G.penDrink() * 10) / 10).replace('.', ',')} L/h</span><span class="chip ok">${ico(['ui', 'oaOmbre'])}${shade} à l’ombre</span>${hot ? `<span class="chip bad">${ico(['ui', 'oaMidi'])}Midi : moitié moins vite au soleil</span>` : ''}</div>
+        
+        <div class="actions wrap">${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'] })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'] })}</div>
         ${birthRow(PEN.key)}${assocRow(PEN.key)}${noria}${big}
         <p class="card-sub">Chaque sorgho debout abrite ${PEN.shadePerCrop} bêtes du soleil de midi. Le mouton barbarin ne craint pas la chaleur.</p>
     </div>`;
