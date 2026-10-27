@@ -214,24 +214,34 @@ function caravanHtml() {
     }
     const loads = G.caravanLoads(),
         camels = G.caravanCamels().length;
-    const chips = Object.entries(c.load)
-        .map(([id, n]) => `<button class="pick-chip on" data-act="caravanDel" data-id="${id}">${ico(['item', id])}<span>${n * CARAVAN.perLoad}</span></button>`)
-        .join('');
     return `<div class="card oa-caravan"><span class="oa-up-art">${art('ui', 'oaCaravane')}</span><div class="card-main"><div class="card-title">La caravane · ${loads}/${CARAVAN.loads} charges</div>
         <div class="card-sub">Une charge = ${CARAVAN.perLoad} produits. Le souk paie ${String(Math.round(G.caravanMult() * 100) / 100).replace('.', ',')} fois le prix du grossiste pour les produits de l’oasis, ${String(Math.round(G.caravanMult('wheat') * 100) / 100).replace('.', ',')} fois pour le reste ; retour en 6 heures. ${camels < CARAVAN.camels ? `Il faut ${CARAVAN.camels} dromadaires adultes (vous en avez ${camels}).` : ''}</div>
-        ${chips ? `<div class="chips-row">${chips}</div>` : ''}
         ${loads ? `<div class="card-sub">Valeur au souk : <b>${fmt(G.caravanValue())}</b> pièces</div>` : ''}
-        <div class="actions wrap">${btn('Charger', { act: 'open', data: { sheet: 'caravanLoad' }, size: 'sm', icon: ['ui', 'plus'], disabled: loads >= CARAVAN.loads })}${btn('Partir', { act: 'caravanSend', kind: loads && camels >= CARAVAN.camels ? 'green' : '', size: 'sm', icon: ['ui', 'oaCaravane'], disabled: !loads || camels < CARAVAN.camels })}</div></div></div>`;
+        <div class="actions wrap">${btn(loads ? 'Charger, décharger' : 'Charger', { act: 'open', data: { sheet: 'caravanLoad' }, size: 'sm', icon: ['ui', 'plus'] })}${btn('Partir', { act: 'caravanSend', kind: loads && camels >= CARAVAN.camels ? 'green' : '', size: 'sm', icon: ['ui', 'oaCaravane'], disabled: !loads || camels < CARAVAN.camels })}</div></div></div>`;
 }
 defineSheet('caravanLoad', {
-    title: 'Charger la caravane',
+    title: 'Le chargement de la caravane',
     render() {
+        const c = G.caravanState();
+        // ce qui est déjà chargé : on le décharge d'un toucher, ici même
+        const loaded = Object.entries(c.load || {});
+        const chips = loaded
+            .map(
+                ([id, n]) =>
+                    `<button class="pick-chip on" data-act="caravanDel" data-id="${id}">${ico(['item', id])}<span>${n * CARAVAN.perLoad}</span></button>`,
+            )
+            .join('');
         const goods = G.caravanGoods()
             .map(id => [id, G.sellPrice(id)])
             .sort((a, b) => b[1] - a[1])
             .slice(0, 60);
-        if (!goods.length) return `<p class="empty">Il faut au moins ${CARAVAN.perLoad} produits d’une même sorte dans la grange.</p>`;
-        return `<p class="card-sub center">${G.caravanLoads()}/${CARAVAN.loads} charges. Touchez un produit pour en charger ${CARAVAN.perLoad}.</p><div class="pick-grid trees">${goods
+        const head = `<p class="card-sub center">${G.caravanLoads()}/${CARAVAN.loads} charges. Touchez un produit pour en charger ${CARAVAN.perLoad}.</p>`;
+        const on = loaded.length
+            ? `<p class="card-sub center">Sur la caravane : touchez pour décharger.</p><div class="chips-row wrap center">${chips}</div>`
+            : '';
+        if (!goods.length)
+            return `${head}${on}${loaded.length ? '' : `<p class="empty">Il faut au moins ${CARAVAN.perLoad} produits d’une même sorte dans la grange.</p>`}`;
+        return `${head}${on}<div class="pick-grid trees">${goods
             .map(
                 ([id, p]) =>
                     `<button class="pick-cell" data-act="caravanAdd" data-id="${id}"><span class="pc-art">${art('item', id)}</span><b>${ITEMS[id].name}</b><small>${fmt(Math.round(p * CARAVAN.perLoad * G.caravanMult(id)))}${ico(['ui', 'coin'])} la charge</small><span class="pc-cost">${state.inventory[id]} en grange</span></button>`,
