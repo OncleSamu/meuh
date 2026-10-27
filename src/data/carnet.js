@@ -1432,3 +1432,23 @@ Object.assign(CARNET, {
     buckthornHoney:
         'L’argousier au miel, c’est des baies orange conservées dans un miel clair, qui prend leur couleur et leur acidité. Une cuillère dans le thé chaud, et on a quinze ans de moins. Du moins, pendant la tasse.',
 });
+
+// 1.54 : les boissons de l'oasis
+Object.assign(CARNET, {
+    desertTea:
+        'Le thé du désert se sert en trois verres. Le premier est amer comme la vie, le deuxième doux comme l’amour, le troisième léger comme la mort : c’est ce qu’on dit là-bas. Et on le verse de très haut, pour la mousse et pour le panache.',
+    dateTea:
+        'Le thé à la datte, c’est un thé noir où l’on a laissé fondre deux dattes. Pas besoin de sucre. Idris en boit un à chaque pause, à l’ombre du palmier, et il prétend que ça fait pousser les dattes plus vite.',
+    jujubeTisane:
+        'La tisane de jujube est rouge, douce, un peu acidulée. On la boit le soir pour bien dormir. Mamie Odette en met une cuillère de miel et jure qu’elle ne rêve plus que de jardins.',
+    bitterOrangeTea:
+        'La bigarade est trop amère pour se manger, mais un trait de son jus dans le thé, avec du miel, c’est tout un parfum d’orangeraie. On la presse sans pitié : plus elle est pressée, plus elle se tait.',
+    dateCoffee:
+        'Les noyaux de datte, grillés et moulus, font un café sans café. Une pincée de coriandre, et ça sent le feu de camp du désert. Je ne dis pas que c’est le meilleur, je dis qu’on y revient.',
+    sesameMilk:
+        'Le lait de sésame glacé, c’est des graines moulues, fouettées avec du lait de zébu et beaucoup de glaçons. Un goût de noisette, blanc comme une dune, avec un petit sable de graines au fond du verre.',
+    camelDate:
+        'Le lait de dromadaire aux dattes se boit tiède, à la fin de la caravane. On dit qu’une tasse suffit pour traverser une journée de sable. Les dromadaires, eux, n’en demandent jamais : ils ont déjà tout compris.',
+    saffronMilk:
+        'Le lait safrané est doré comme un coucher de soleil sur les dunes. Trois filaments de safran, pas un de plus : il faut les doser à la goutte. Le jour où on en met quatre, Idris fait une drôle de tête.',
+});

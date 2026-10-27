@@ -963,8 +963,9 @@ export const GUIDE_PAGES = [
             {
                 h: 'L’atelier de boissons',
                 b: [
-                    '41 boissons. Chacune se prépare en 2 à 4 gestes, et la règle de chacun s’affiche avant de commencer : température, infusion, mouture, extraction, service, fouet, mousse (cœur, feuille ou tulipe, en 12 secondes), presser un agrume, remuer sans déborder, secouer le shaker, attraper les glaçons, doser une goutte. Note de 1 à 3 étoiles (qualité normale, argent, or).',
+                    '49 boissons. Chacune se prépare en 2 à 4 gestes, et la règle de chacun s’affiche avant de commencer : température, infusion, mouture, extraction, service, fouet, mousse (cœur, feuille ou tulipe, en 12 secondes), presser un agrume, remuer sans déborder, secouer le shaker, attraper les glaçons, doser une goutte, verser de haut (le verre va et vient : on ne verse que lorsqu’il passe sous le jet). Note de 1 à 3 étoiles (qualité normale, argent, or).',
                     'Les cafés s’ouvrent avec la brûlerie de l’île.',
+                    'Huit boissons de l’oasis (niveau 58 à 60) : thé du désert, thé à la datte, tisane de jujube, thé à la bigarade, café de noyaux de datte ; et, après l’enclos de la palmeraie, lait de sésame glacé, lait de dromadaire aux dattes et lait safrané. Elles s’ouvrent avec le puits d’Idris.',
                     'Le stock sert aux commandes, au train et aux quêtes.',
                 ],
             },

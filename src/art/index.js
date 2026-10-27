@@ -65,6 +65,7 @@ import './v150oasis.js';
 import './v151nord.js';
 import './v152nord.js';
 import './v153nord.js';
+import './v154drinks.js';
 import './v1502trees.js';
 
 export const SPR = {

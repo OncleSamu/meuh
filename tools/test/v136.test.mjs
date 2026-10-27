@@ -1,6 +1,7 @@
 // 1.36 : soixante niveaux. Tout est réparti, rien ne se perd, les anciennes parties gardent ce qu'elles avaient ouvert.
 import test from 'node:test';
 import { RECIPES_153 } from '../../src/data/v153.js';
+import { NEW_DRINKS_154 } from '../../src/data/counter.js';
 import { RECIPES_150 } from '../../src/data/v150.js';
 import assert from 'node:assert/strict';
 import './helpers.mjs';
@@ -42,7 +43,7 @@ test('1.36 : un rythme à peu près égal (recettes, plantes, animaux, machines)
     const per = (vals, from, to) => vals.filter(l => l >= from && l <= to).length;
     // 1.50 : la cuisine de l'oasis arrive d'un bloc avec son voyage (chapitres 21 et 22) : hors du compte par niveau
     // 1.53 : celle du Grand Nord aussi (chapitres 23 et 24)
-    const oasis = new Set([...RECIPES_150.map(r => r[0]), ...RECIPES_153.map(r => r[0])]);
+    const oasis = new Set([...RECIPES_150.map(r => r[0]), ...RECIPES_153.map(r => r[0]), ...NEW_DRINKS_154.map(r => r[0])]);
     const rec = Object.values(RECIPES)
         .filter(r => !oasis.has(r.id))
         .map(r => r.lvl);

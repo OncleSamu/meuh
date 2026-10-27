@@ -1,7 +1,7 @@
 import { LV_MACH, LV_REC } from './levels14.js';
 import { LV18_MACH, LV18_REC } from './levels18.js';
 import { LV60_ITEM, LV60_ANIMAL, LV60_MACH, LV60_REC } from './levels60.js';
-import { NEW_DRINKS, NEW_DRINKS_134 } from './counter.js';
+import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154 } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
 import { MARMITE, RECIPES_130 } from './v130.js';
 import { RECIPES_131 } from './v131.js';
@@ -3409,7 +3409,7 @@ Object.assign(RECIPES, {
 });
 
 // ---------------- 1.17 : le comptoir, une recette par boisson ----------------
-for (const [id, , ing, lvl, time] of [...NEW_DRINKS, ...NEW_DRINKS_134])
+for (const [id, , ing, lvl, time] of [...NEW_DRINKS, ...NEW_DRINKS_134, ...NEW_DRINKS_154])
     RECIPES[id] = { id, machine: 'counter', ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 
 // ---------------- 1.8 : une machine par niveau, toujours avec ses recettes ----------------

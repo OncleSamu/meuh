@@ -34,6 +34,7 @@ const LBL = {
     shake: 'Shaker',
     ice: 'Glaçons',
     drop: 'Dosage',
+    highpour: 'Versé de haut',
 };
 // 1.43 : la règle de chaque geste, montrée avant de commencer
 const HOW = {
@@ -49,6 +50,7 @@ const HOW = {
     shake: 'Secouez : glissez le doigt de haut en bas, en rythme.',
     ice: 'Touchez les glaçons qui tombent pour les mettre dans le verre.',
     drop: 'Maintenez pour doser, lâchez dans la zone verte. Ça coule vite !',
+    highpour: 'Maintenez pour verser, mais seulement quand le verre passe sous le jet.',
 };
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -605,6 +607,63 @@ const STEP = {
                 raf = requestAnimationFrame(loop);
             };
             raf = requestAnimationFrame(loop);
+        });
+    },
+    // 1.54 : le thé versé de haut : le verre va et vient, on ne verse que lorsqu'il passe sous le jet
+    async highpour(p, c) {
+        c.hint('Versez de haut : maintenez quand le verre passe sous le jet');
+        const st = c.stage;
+        st.innerHTML = `<svg class="cb-layer" viewBox="0 0 300 300" style="pointer-events:none"><path d="M120 38 L180 38 L170 74 L130 74Z" fill="#d8dde2" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/><rect id="cbhs" x="146" y="74" width="8" height="0" rx="3" fill="${p.c}" opacity=".9"/><g id="cbhg"><path d="M-34 232 L34 232 L28 292 L-28 292Z" fill="#fff8e8" fill-opacity=".55" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/><rect id="cbhf" x="-27" y="292" width="54" height="0" fill="${p.c}"/></g></svg><div class="cb-bar"><i id="cbhb" style="width:0"></i></div><div class="cb-read" id="cbht">Maintenez pour verser (${p.dur} s)</div>`;
+        const layer = { c: p.c, h: 0 };
+        c.layers.push(layer);
+        return new Promise(res => {
+            let v = 0,
+                spill = 0,
+                on = false,
+                last = 0,
+                t0 = null,
+                raf,
+                done = false,
+                off;
+            const stop = () => {
+                if (done) return;
+                done = true;
+                cancelAnimationFrame(raf);
+                off();
+                res(clamp(v * (1 - 0.6 * clamp(spill / 0.6)) + 0.1 * (v > 0.9 ? 1 : 0)));
+            };
+            const loop = t => {
+                if (!c.alive()) return void ((done = true), off && off());
+                const dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
+                last = t;
+                if (t0 == null) t0 = t;
+                const el = t0 == null ? 0 : (t - t0) / 1000;
+                const gx = Math.sin((t / 1000) * 2.1 * p.speed) * 95;
+                st.querySelector('#cbhg').setAttribute('transform', `translate(${150 + gx} -40)`);
+                const under = Math.abs(gx) <= p.w * 150;
+                const s = st.querySelector('#cbhs');
+                s.setAttribute('height', on ? 130 : 0);
+                s.setAttribute('x', 146);
+                if (on) {
+                    if (under) v = Math.min(1, v + dt * 0.33);
+                    else spill += dt;
+                    st.querySelector('#cbhf').setAttribute('y', 292 - 60 * v);
+                    st.querySelector('#cbhf').setAttribute('height', 60 * v);
+                    st.querySelector('#cbhb').style.width = v * 100 + '%';
+                    layer.h = 0.5 * v;
+                    c.cup(null);
+                    const tx = st.querySelector('#cbht');
+                    if (tx) tx.textContent = under ? 'Dans le verre' : 'À côté !';
+                }
+                if (v >= 1 || el > p.dur) stop();
+                if (!done) raf = requestAnimationFrame(loop);
+            };
+            raf = requestAnimationFrame(loop);
+            off = hold(
+                st,
+                () => (on = true),
+                () => (on = false),
+            );
         });
     },
     // 1.43 : une goutte de sirop, dosée au plus juste (ça coule vite)

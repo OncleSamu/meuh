@@ -30,6 +30,8 @@ const shake = (n = 6, dur = 5) => ['shake', { n, dur }];
 const ice = (n = 4, speed = 120) => ['ice', { n, speed, every: 650 }];
 const drop = (label, c, t = 0.3, w = 0.07) => ['drop', { label, c, t, w }];
 const foam = shape => ['foam', { shape, dur: 12 }];
+// 1.54 : le thé versé de haut, au rythme d'un verre qui va et vient (w = largeur du jet, speed = vitesse du verre, dur = secondes)
+const highpour = (c, speed = 1, w = 0.2, dur = 9) => ['highpour', { c, speed, w, dur }];
 
 export const BREW = {
     // ---- thés et infusions déjà au jeu ----
@@ -77,6 +79,18 @@ export const BREW = {
     coconutCoffee: { col: '#8a5a33', st: [grind(4, 42), extract(0.4), shake(5), pour(0.8, '#fff6e0', 'le lait de coco')] },
     islandCoffee: { col: '#3b1f12', st: [grind(4, 40), extract(0.35), drop('le rhum', '#b8642a', 0.25), pour(0.75, CREAM, 'la crème')] },
     chestnutCoffee: { col: '#a0673a', st: [grind(4, 40), extract(0.35), foam('tulip')] },
+    // ---- 1.54 : les boissons de l'oasis ----
+    desertTea: { col: '#9ccf62', st: [temp(95), steep(0.55, 0.75, 7), highpour('#9ccf62', 1, 0.2)] },
+    dateTea: { col: '#b0703a', st: [temp(90), steep(0.45, 0.65), stir(3, '#b0703a')] },
+    camelDate: { col: '#e6c89a', st: [temp(70, 3), ['whisk', { turns: 4, dur: 6 }], drop('les dattes', '#7a3a1e', 0.3)] },
+    jujubeTisane: { col: '#c0452a', st: [temp(95), steep(0.5, 0.72, 7), drop('le miel', '#e8b04a', 0.28), stir(2, '#c0452a')] },
+    dateCoffee: { col: '#4a2a14', st: [grind(5, 36), temp(95), highpour('#4a2a14', 1.3, 0.16, 8)] },
+    bitterOrangeTea: { col: '#e8913a', st: [temp(90), steep(0.45, 0.65), squeeze('la bigarade', '#e2681a', 24), drop('le miel', '#e8b04a', 0.25)] },
+    sesameMilk: { col: '#e8d8b0', st: [grind(4, 40), ['whisk', { turns: 5, dur: 7 }], ice(4), pour(0.8, '#e8d8b0', 'le lait de sésame')] },
+    saffronMilk: {
+        col: '#f0b640',
+        st: [temp(75, 2.5), drop('le safran', '#f08a1a', 0.2, 0.05), ['whisk', { turns: 4, dur: 6 }], highpour('#f0b640', 0.9, 0.22)],
+    },
 };
 
 // Les nouveaux produits (les autres existent déjà dans items.js) : nom, recette, niveau, durée de référence
@@ -119,6 +133,18 @@ export const NEW_DRINKS_134 = [
     ['frappe', 'Café frappé', { coffee: 1, milk: 1, sugar: 1 }, 45, 260, 'coffee'],
     ['spicedCoffee', 'Café épicé', { coffee: 1, ginger: 1, honey: 1 }, 47, 280, 'coffee'],
     ['hibiscusTea', 'Thé à l’hibiscus', { hibiscus: 2, honey: 1 }, 47, 200, 'island'],
+];
+
+// 1.54 : huit boissons de l'oasis (le niveau suit les cultures de l'oasis, le lait attend l'enclos de la palmeraie)
+export const NEW_DRINKS_154 = [
+    ['desertTea', 'Thé du désert', { tea: 2, mint: 2, sugar: 1 }, 58, 220, 'oasis'],
+    ['dateTea', 'Thé à la datte', { tea: 1, date: 2 }, 58, 200, 'oasis'],
+    ['jujubeTisane', 'Tisane de jujube', { jujube: 2, honey: 1 }, 58, 200, 'oasis'],
+    ['bitterOrangeTea', 'Thé à la bigarade', { tea: 1, bitterOrange: 1, honey: 1 }, 59, 220, 'oasis'],
+    ['dateCoffee', 'Café de noyaux de datte', { date: 2, coriander: 1 }, 59, 200, 'oasis'],
+    ['sesameMilk', 'Lait de sésame glacé', { sesame: 2, zebuMilk: 1, sugar: 1 }, 59, 240, 'pen'],
+    ['camelDate', 'Lait de dromadaire aux dattes', { camelMilk: 2, date: 1 }, 60, 240, 'pen'],
+    ['saffronMilk', 'Lait safrané', { camelMilk: 1, saffron: 1, honey: 1 }, 60, 260, 'pen'],
 ];
 
 // Les produits existants qui passent du salon de thé et de la brûlerie au comptoir
