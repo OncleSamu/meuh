@@ -666,19 +666,22 @@ html.season-automne .meadow {
     position: absolute;
     left: 50%;
     /* sous le bâtiment, sans le cacher */
-    top: calc(100% - 12px);
+    top: calc(100% - 7px);
     transform: translateX(-50%);
     /* un nom long passe sur deux lignes plutôt que de sortir de la carte */
     width: max-content;
-    max-width: 96px;
+    max-width: 72px;
     text-align: center;
-    line-height: 1.15;
-    padding: 1px 5px;
+    line-height: 1.1;
+    padding: 0 4px;
     font-family: var(--display);
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     background: var(--paper-l);
     border: 1.5px solid var(--ink);
-    border-radius: 7px;
+    border-radius: 6px;
+    /* le texte reste petit même quand le téléphone agrandit les polices : la carte passe avant */
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
     z-index: 2;
 }
 
