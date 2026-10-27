@@ -787,3 +787,6 @@ button.line.lv-go > div {
     margin-left: 6px;
     opacity: 0.55;
 }
+.chips-row.wrap.center {
+    justify-content: center;
+}
