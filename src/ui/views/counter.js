@@ -77,15 +77,21 @@ function salonHtml() {
 }
 
 // ---------------- l'atelier ----------------
+// Famille d'une boisson : café (on moud), thé (du thé dans la recette), sinon tisane, lait ou kvas.
+function drinkKind(r) {
+    if (BREW[r.id].st.some(x => x[0] === 'grind')) return 'coffee';
+    return r.ing.tea > 0 ? 'tea' : 'other';
+}
 function atelierHtml() {
     const kind = ui.sel.counterKind || 'all';
     const list = G.counterRecipes()
-        .filter(r => kind === 'all' || (kind === 'tea' ? !BREW[r.id].st.some(x => x[0] === 'grind') : BREW[r.id].st.some(x => x[0] === 'grind')))
+        .filter(r => kind === 'all' || drinkKind(r) === kind)
         .sort((a, b) => G.recipeUnlocked(b.id) - G.recipeUnlocked(a.id) || a.lvl - b.lvl);
     const filters = [
         ['all', 'Toutes'],
         ['tea', 'Thés'],
         ['coffee', 'Cafés'],
+        ['other', 'Tisanes, laits…'],
     ];
     const tiles = list
         .map(r => {

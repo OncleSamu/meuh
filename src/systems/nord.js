@@ -22,6 +22,7 @@ import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
 import { projectDone, storyOk } from './story.js';
 import { collect, record } from './book.js';
+import { addPhoto } from './style.js';
 import { addQuality, ascend } from './farm.js';
 import { eventProgress } from './events.js';
 import { tip } from './tips.js';
@@ -616,6 +617,8 @@ export function nordWeatherTick() {
         state.stats.auroras = (state.stats.auroras || 0) + 1;
         toast('Aurore boréale ! Pendant une heure, tout pousse plus vite', ['ui', 'noAurore']);
         tip('aurora');
+        // la première aurore finit dans l'album (une seule fois : l'album garde 60 photos)
+        if (state.stats.auroras === 1) addPhoto('ui', 'noAurore', 'Une aurore boréale', 'Dans le ciel du Grand Nord');
         changedAny = true;
     }
     if (changedAny) changed('nord');

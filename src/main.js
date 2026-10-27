@@ -7,6 +7,7 @@ import * as G from './systems/index.js';
 import { actions } from './ui/dom.js';
 import { setupApp, refresh, saveNow, tabEl } from './ui/app.js';
 import { setupSound } from './ui/sound.js';
+import { setupTypo } from './ui/typo.js';
 import { setupFx } from './ui/fx.js';
 import { setupSheets } from './ui/sheets.js';
 import { setupMoments, pushMoment, closeMoment } from './ui/moments.js';
@@ -63,6 +64,7 @@ function start() {
     setupFx({ sfx: name => emit('sfx', name), tabEl });
     setupSheets();
     setupApp();
+    setupTypo();
     setupMoments(refresh);
     setupToolbar();
     setupFarm();

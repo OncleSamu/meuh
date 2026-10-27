@@ -1588,7 +1588,7 @@ export const GUIDE_PAGES = [
             { h: 'Le mur du salon', t: 'Accrochez votre plus gros poisson : +20 points de charme.' },
             {
                 h: 'Photos et carte postale',
-                t: 'Les grands moments (niveaux, chapitres, amis pour la vie, concours gagné, nouvelle ferme) prennent une photo dans l’album de la ferme, 60 au plus, qui se partage. La carte postale (menu) dessine votre ferme du moment, à envoyer.',
+                t: 'Les grands moments (niveaux, chapitres, amis pour la vie, concours gagné, nouvelle ferme, première aurore boréale) prennent une photo dans l’album de la ferme, 60 au plus, qui se partage. La carte postale (menu) dessine votre ferme du moment, à envoyer.',
             },
         ],
         see: ['contest', 'house'],

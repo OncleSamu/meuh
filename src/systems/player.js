@@ -185,6 +185,12 @@ export function addXp(amount, at) {
     for (let l = start + 1; l <= state.level; l++) {
         emit('levelUp', l);
         if (ALBUM_LEVELS.includes(l)) addPhoto('ui', 'star', `Niveau ${l}`, 'Un cap pour la ferme');
+        // un mot de Mamie aux deux grands paliers de la fin (une seule fois par partie)
+        const mot = LEVEL_TIPS[l];
+        if (mot && !state.tips[mot] && state.tutorial.done) {
+            state.tips[mot] = true;
+            emit('tip', mot);
+        }
     }
     state.stats.maxLevel = Math.max(state.stats.maxLevel, state.level);
     if (state.level > start) ensureQuests();
@@ -412,6 +418,7 @@ const UNLOCK_GO = [
     ['Maison de la ferme', 'sheet:house'],
     ['Commis de ferme', 'sheet:house'],
 ];
+const LEVEL_TIPS = { 61: 'lvl61', 64: 'lvl64' };
 const plain = t => String(t).replace(/[\u00a0\u202f]/g, ' ');
 export function unlockGo(u) {
     if (u.go) return u.go;

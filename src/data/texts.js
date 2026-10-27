@@ -137,6 +137,16 @@ export const TIPS = {
         title: 'Le blizzard',
         text: 'Quelques cases hors des poêles disparaissent sous la neige : un appui les dégage. Pendant six heures, les poêles brûlent deux fois plus, et le traîneau en route prend une heure de retard. Ton grand-père disait qu’un bon blizzard, c’est le bon Dieu qui secoue sa couette. Il en parlait surtout en juillet.',
     },
+    lvl61: {
+        icon: ['animal', 'dromedary'],
+        title: 'Le souk est ouvert',
+        text: 'Niveau 61 : les bêtes du désert sont à vous, et la caravane peut partir au souk. Là-bas, on marchande avant de payer, même le sel. Ma tante Simone achetait son pain en discutant vingt minutes ; le boulanger disait que ça faisait partie du prix.',
+    },
+    lvl64: {
+        icon: ['ui', 'star'],
+        title: 'Le dernier niveau',
+        text: 'Niveau 64, ma petite fleur ! Plus rien à gravir : le prestige et les grands défis vous attendent, et chaque point d’expérience en plus devient une étoile de renommée. Ton grand-père aurait dit qu’on est au sommet de la meule de foin. Il en tombait chaque année.',
+    },
     aurora: {
         icon: ['ui', 'noAurore'],
         title: 'L’aurore boréale',
