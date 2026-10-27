@@ -17,7 +17,7 @@ import { wishAnimals } from './night.js';
 import { troughBonus } from './buildings.js';
 import { assocMult } from './herdbook.js';
 import { oasisBeastMult } from './oasis.js';
-import { nordBeastMult } from './nord.js';
+import { nordBeastMult, nordBeastMultOffline } from './nord.js';
 
 export const maxFood = () => MAX_FOOD + rank('trough') * 2 + troughBonus();
 export const isAdult = a => a.adult !== false;
@@ -304,7 +304,9 @@ export function animalsOffline(elapsed) {
     let products = 0,
         hungry = 0;
     state.animals.forEach(anim => {
-        const timeReq = animalTime(anim);
+        // jeu fermé : la nuit de gel compte pour sa part de la journée, quelle que soit l'heure du retour
+        const cur = nordBeastMult(anim);
+        const timeReq = animalTime(anim) * (cur ? cur / nordBeastMultOffline(anim) : 1);
         let t = elapsed;
         autoFeed(anim);
         while (isAdult(anim) && !anim.sick && !isAway(anim) && anim.food > 0 && anim.stack < MAX_STACK) {

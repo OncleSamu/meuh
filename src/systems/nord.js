@@ -16,6 +16,7 @@ import { BALANCE } from '../data/progress.js';
 import { speedMult, addXp, spend, rank, rollYield, earn } from './player.js';
 import { sellPrice } from './market.js';
 import { RECIPES_153 } from '../data/v153.js';
+import { NEW_DRINKS_155 } from '../data/counter.js';
 import { hour, weather } from './world.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
@@ -255,6 +256,11 @@ export function nordTick() {
 // jeu fermé : les poêles brûlent, les plantes avancent (la vitesse moyenne d'une journée hors poêle)
 export function nordOffline(elapsed) {
     if (!state.nord || !nordOpen()) return { crops: 0, fruits: 0 };
+    // le blizzard et l'aurore n'arrivent pas à votre retour pour un temps passé loin : on repart d'un ciel calme
+    const N = state.nord,
+        t = now();
+    if (N.stormAt && N.stormAt < t) N.stormAt = t + span(WEATHER.blizzard.every);
+    if (N.auroraAt && N.auroraAt < t) N.auroraAt = t + span(WEATHER.aurora.every);
     let left = Math.min(elapsed, NORD.offlineMax),
         crops = 0,
         fruits = 0;
@@ -479,6 +485,13 @@ export function nordBeastMult(a) {
     if (!a || !ANIMALS[a.type] || !ANIMALS[a.type].nord || !ANIMALS[a.type].cold || !isAdult(a)) return 1;
     return isFrost() && !nordSheltered(a) ? BARN.coldMult : 1;
 }
+// jeu fermé : la moyenne d'une journée (la nuit de gel dure NORD.frost, le reste du temps la bête va à pleine vitesse)
+export function nordBeastMultOffline(a) {
+    if (!a || !ANIMALS[a.type] || !ANIMALS[a.type].nord || !ANIMALS[a.type].cold || !isAdult(a)) return 1;
+    if (nordSheltered(a)) return 1;
+    const frostShare = (24 - NORD.frost[0] + NORD.frost[1]) / 24;
+    return 1 - (1 - BARN.coldMult) * frostShare;
+}
 export function upNordBarn(at) {
     if (!nordBarnOpen() || state.nord.barnBig || !hasCost(BARN.upCost)) return false;
     payCost(BARN.upCost);
@@ -498,7 +511,7 @@ export const sledState = () => (state.nord ? ensureSled() : { load: {}, out: nul
 export const sledReindeer = () => nordBeasts().filter(a => a.type === 'reindeer' && isAdult(a) && !a.sick && !a.trip);
 export const sledLoads = () => Object.values(sledState().load).reduce((a, n) => a + n, 0);
 // les produits du Nord : plantes, produits des bêtes, cardamome
-const NORD_GOODS = new Set([...NORD_IDS, ...NORD_PRODUCTS.map(p => p[0]), ...RECIPES_153.map(r => r[0]), SLED.spice.id]);
+const NORD_GOODS = new Set([...NORD_IDS, ...NORD_PRODUCTS.map(p => p[0]), ...RECIPES_153.map(r => r[0]), ...NEW_DRINKS_155.map(r => r[0]), SLED.spice.id]);
 export const isNordGood = id => NORD_GOODS.has(id);
 export const sledMult = id => (id && !isNordGood(id) ? SLED.otherMult : SLED.mult) * (1 + (projectDone(SLED.iceProject) ? SLED.iceBonus : 0));
 export const sledValue = (load = sledState().load) =>

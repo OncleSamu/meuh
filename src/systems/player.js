@@ -173,6 +173,7 @@ export function xpToLevel(L) {
 
 // Ce que débloque un niveau : [{ icon: [sorte, id], name }]
 export function unlocksAt(lvl) {
+    if (!(lvl >= 1)) return [];
     if (lvl === 1) return [{ icon: ['seed', 'wheat'], name: 'Graines de blé, le champ et le magasin', go: 'market/shop#seeds' }];
     const list = [{ icon: ['ui', 'skillbook'], name: '1 point de compétence à placer dans Progrès' }];
     const add = (icon, name) => list.push({ icon, name });

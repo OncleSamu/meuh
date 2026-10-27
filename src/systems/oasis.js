@@ -10,6 +10,7 @@ import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../c
 import { ITEMS } from '../data/items.js';
 import { OASIS, PEN, CARAVAN, STORM, OASIS_IDS, OASIS_PRODUCTS } from '../data/oasis.js';
 import { RECIPES_150 } from '../data/v150.js';
+import { NEW_DRINKS_154 } from '../data/counter.js';
 import { ANIMALS } from '../data/animals.js';
 import { BALANCE } from '../data/progress.js';
 import { speedMult, addXp, spend, rank, rollYield, earn } from './player.js';
@@ -482,7 +483,13 @@ const ensureCaravan = () => (state.oasis.caravan ||= { load: {}, out: null, trip
 export const caravanState = () => (state.oasis ? ensureCaravan() : { load: {}, out: null, trips: 0 });
 export const caravanLoads = () => Object.values(caravanState().load).reduce((a, n) => a + n, 0);
 // les produits de l'oasis : plantes, laines et laits, recettes des trois machines, épices rares
-const OASIS_GOODS = new Set([...OASIS_IDS, ...OASIS_PRODUCTS.map(p => p[0]), ...RECIPES_150.map(r => r[0]), CARAVAN.spice.id]);
+const OASIS_GOODS = new Set([
+    ...OASIS_IDS,
+    ...OASIS_PRODUCTS.map(p => p[0]),
+    ...RECIPES_150.map(r => r[0]),
+    ...NEW_DRINKS_154.map(r => r[0]),
+    CARAVAN.spice.id,
+]);
 export const isOasisGood = id => OASIS_GOODS.has(id);
 // le prix de la caravane : × le grossiste ; sans produit, le tarif de l'oasis
 export const caravanMult = id => (id && !isOasisGood(id) ? CARAVAN.otherMult : CARAVAN.mult) * (1 + (projectDone('soukStalls') ? CARAVAN.soukBonus : 0));
