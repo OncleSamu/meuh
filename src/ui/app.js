@@ -61,7 +61,8 @@ export const TABS = [
         id: 'machines',
         name: 'Atelier',
         icon: ['machine', 'bakery'],
-        lock: () => MACHINES.mill.reqLvl,
+        // 1.59.2 : l'atelier s'ouvre avec la première machine (le four à pain, au niveau 2), pas avec le moulin
+        lock: () => Math.min(...Object.values(MACHINES).map(m => m.reqLvl || 1)),
         subs: [
             ['workshop', 'Production', ['machine', 'mill']],
             ['counter', 'Comptoir', ['machine', 'counter'], () => MACHINES.counter.reqLvl],
