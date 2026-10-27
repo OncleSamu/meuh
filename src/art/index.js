@@ -131,3 +131,4 @@ export const SPR = {
 // un dessin par sorte : villager, item, animal, machine, seed, et ui par défaut
 const KIND = { villager: SPR.villager, item: SPR.item, animal: SPR.animal, machine: SPR.machine, seed: SPR.seed };
 export const sprite = (kind, id) => (KIND[kind] || SPR.ui)(id);
+import './v1591cheese.js';
