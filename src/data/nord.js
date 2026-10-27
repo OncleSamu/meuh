@@ -86,3 +86,18 @@ export const SLED = {
     spice: { chance: 0.35, id: 'cardamom', min: 3, max: 6 }, // une épice rare au retour
     blizzardDelay: 3600 * 1000,
 };
+
+// ================= 1.52.2 : le blizzard et l'aurore boréale =================
+export const WEATHER = {
+    blizzard: {
+        every: [30 * 3600 * 1000, 60 * 3600 * 1000], // un blizzard tous les 30 à 60 heures réelles
+        cells: [2, 4], // cases ensevelies (jamais près d'un poêle allumé)
+        last: 6 * 3600 * 1000, // les poêles brûlent deux fois plus pendant 6 heures
+        burn: 2,
+    },
+    aurora: {
+        every: [16 * 3600 * 1000, 48 * 3600 * 1000], // une aurore environ une nuit sur trois
+        last: 3600 * 1000, // une heure
+        mult: 1.5, // tout pousse une fois et demie plus vite, même hors d'un poêle
+    },
+};

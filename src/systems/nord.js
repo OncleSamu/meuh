@@ -8,7 +8,7 @@ import { now } from '../core/clock.js';
 import { fmt, s, dateKey } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { NORD, BARN, SLED, NORD_IDS, NORD_PRODUCTS } from '../data/nord.js';
+import { NORD, BARN, SLED, WEATHER, NORD_IDS, NORD_PRODUCTS } from '../data/nord.js';
 import { ANIMALS } from '../data/animals.js';
 import { isAdult } from './animals.js';
 import { inPasture, nordBarnOpen, nordBarnCap } from './pastures.js';
@@ -197,7 +197,7 @@ export function cellMult(k, cold) {
     const p = nordPlots()[k];
     const t = (slotsOf('nord')[k] || {}).tree;
     const v = (p && p.id && !p.ready ? p.v : t && t.v) || null;
-    if (cold === undefined && isFrost()) return 0;
+    if (cold === undefined && isFrost() && !auroraOn()) return 0;
     return Math.min(1, (cold === undefined ? NORD.cold : cold) * varCold(v));
 }
 export const isChilly = k => cellGrowing(k) && !isWarm(k);
@@ -212,13 +212,14 @@ const cropStep = (p, k) => nordRate(p.id) * (p.v ? varGrowth(p.v) : 1) * compSpe
 function step(dt, cold) {
     const N = state.nord;
     const lit = new Set(stoveKeys().filter(k => N.stoves[k].fuel > 0));
-    const mults = N.plots.map((p, k) => (p.open && cellGrowing(k) ? cellMult(k, cold) : 0));
+    const aur = auroraOn() ? WEATHER.aurora.mult : 1;
+    const mults = N.plots.map((p, k) => (p.open && !p.snow && cellGrowing(k) ? cellMult(k, cold) * aur : 0));
     // un poêle ne brûle que s'il y a une case à réchauffer autour de lui
     // la nuit de gel, les premiers poêles allumés abritent aussi les bêtes frileuses de l'étable (3 par poêle)
     const sheltering = isFrost() ? new Set([...lit].sort((x, y) => x - y).slice(0, Math.ceil(coldBeasts().length / BARN.shelterPerStove))) : new Set();
     for (const k of lit) {
         const warms = sheltering.has(k) || nordNeighbors(k, stoveRadius()).some(j => cellGrowing(j));
-        if (warms) N.stoves[k].fuel = Math.max(0, N.stoves[k].fuel - (dt / 3600) * stoveBurn());
+        if (warms) N.stoves[k].fuel = Math.max(0, N.stoves[k].fuel - (dt / 3600) * stoveBurn() * (blizzardOn() ? WEATHER.blizzard.burn : 1));
     }
     let crops = 0,
         fruits = 0;
@@ -243,10 +244,11 @@ function step(dt, cold) {
 export function nordTick() {
     if (!state.nord || !nordOpen()) return false;
     const fuel = Math.floor(nordFuel() * 10);
+    const w = nordWeatherTick();
     const r = step(1);
     if (r.crops || r.fruits) emit('ripe', 'nord');
     if (isFrost() && nordChilly()) tip('nordCold');
-    return !!(r.crops || r.fruits || fuel !== Math.floor(nordFuel() * 10));
+    return !!(w || r.crops || r.fruits || fuel !== Math.floor(nordFuel() * 10));
 }
 
 // jeu fermé : les poêles brûlent, les plantes avancent (la vitesse moyenne d'une journée hors poêle)
@@ -368,7 +370,7 @@ function rollNordQuality(k) {
 }
 export function harvestNord(k, at, quiet) {
     const p = nordPlots()[k];
-    if (!p || !p.ready) return null;
+    if (!p || !p.ready || p.snow) return null;
     if (barnBlocked()) return null;
     const d = ITEMS[p.id];
     const fx = plotFx(NORD_BASE + k);
@@ -561,4 +563,57 @@ export function sledClaim(at) {
     toast(`Le traîneau est rentré : ${fmt(value)} pièces${spice ? ` et ${spice} gousses de cardamome` : ''}`, ['ui', 'noTraineau']);
     changed('nord');
     return { value, spice };
+}
+
+// ================= 1.52.2 : le blizzard et l'aurore boréale =================
+export const blizzardOn = () => !!(state.nord && state.nord.blizzard && state.nord.blizzard.until > now());
+export const auroraOn = () => !!(state.nord && state.nord.aurora && state.nord.aurora.until > now());
+export const snowedCells = () => nordPlots().filter(p => p.snow).length;
+const span = ([a, b]) => a + Math.random() * (b - a);
+// le blizzard : quelques cases au froid disparaissent sous la neige (un appui les dégage), les poêles brûlent deux fois plus, le traîneau est retardé
+// l'aurore : la nuit de gel, pendant une heure, tout pousse une fois et demie plus vite, même hors d'un poêle
+export function nordWeatherTick() {
+    if (!state.nord || !nordOpen() || !nordBarnOpen()) return false;
+    const N = state.nord,
+        t = now();
+    let changedAny = false;
+    if (!N.stormAt) N.stormAt = t + span(WEATHER.blizzard.every);
+    if (t >= N.stormAt) {
+        N.stormAt = t + span(WEATHER.blizzard.every);
+        const open = N.plots
+            .map((p, k) => k)
+            .filter(k => N.plots[k].open && !N.plots[k].snow && !isWarm(k) && !stoveAt(k) && (N.plots[k].id || slotsOf('nord')[k].tree));
+        const n = Math.min(open.length, WEATHER.blizzard.cells[0] + Math.floor(Math.random() * (WEATHER.blizzard.cells[1] - WEATHER.blizzard.cells[0] + 1)));
+        for (let j = 0; j < n; j++) N.plots[open.splice(Math.floor(Math.random() * open.length), 1)[0]].snow = true;
+        N.blizzard = { until: t + WEATHER.blizzard.last };
+        if (N.sled && N.sled.out) N.sled.out.back += SLED.blizzardDelay;
+        state.stats.blizzards = (state.stats.blizzards || 0) + 1;
+        toast(n ? `Blizzard sur le Grand Nord : ${n} case${s(n)} sous la neige, à dégager` : 'Blizzard sur le Grand Nord : les poêles brûlent deux fois plus', [
+            'ui',
+            'noBlizzard',
+        ]);
+        tip('blizzard');
+        changedAny = true;
+    }
+    if (!N.auroraAt) N.auroraAt = t + span(WEATHER.aurora.every);
+    if (t >= N.auroraAt && isFrost() && !auroraOn()) {
+        N.auroraAt = t + span(WEATHER.aurora.every);
+        N.aurora = { until: t + WEATHER.aurora.last };
+        state.stats.auroras = (state.stats.auroras || 0) + 1;
+        toast('Aurore boréale ! Pendant une heure, tout pousse plus vite', ['ui', 'noAurore']);
+        tip('aurora');
+        changedAny = true;
+    }
+    if (changedAny) changed('nord');
+    return changedAny;
+}
+export function clearSnow(k, at) {
+    const p = nordPlots()[k];
+    if (!p || !p.snow) return false;
+    p.snow = false;
+    sfx('pop');
+    burst(at, 'dirt', 8, -4);
+    state.stats.snowCleared = (state.stats.snowCleared || 0) + 1;
+    changed('nord');
+    return true;
 }

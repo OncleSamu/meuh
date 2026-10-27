@@ -132,6 +132,16 @@ export const TIPS = {
         title: 'Le mouton barbarin',
         text: 'Le mouton barbarin garde ses réserves dans sa grosse queue, comme le dromadaire dans sa bosse. Il ne craint pas le soleil de midi, et sa laine fait les plus beaux tapis. Ma cousine Odile avait un tapis berbère : quarante ans qu’on marche dessus, il n’a pas bougé d’un fil.',
     },
+    blizzard: {
+        icon: ['ui', 'noBlizzard'],
+        title: 'Le blizzard',
+        text: 'Quelques cases hors des poêles disparaissent sous la neige : un appui les dégage. Pendant six heures, les poêles brûlent deux fois plus, et le traîneau en route prend une heure de retard. Ton grand-père disait qu’un bon blizzard, c’est le bon Dieu qui secoue sa couette. Il en parlait surtout en juillet.',
+    },
+    aurora: {
+        icon: ['ui', 'noAurore'],
+        title: 'L’aurore boréale',
+        text: 'Les nuits de gel, le ciel s’illumine parfois : pendant une heure, tout pousse une fois et demie plus vite, même loin des poêles. Mamie Odette dit avoir vu un ciel pareil une fois, au-dessus de Clermont-Ferrand, le soir du feu d’artifice de 1989. Elle précise que c’étaient peut-être les fusées.',
+    },
     sled: {
         icon: ['ui', 'noTraineau'],
         title: 'Le traîneau',

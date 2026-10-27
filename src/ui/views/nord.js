@@ -65,7 +65,7 @@ function heatCard() {
         <span class="oa-tank">${art('ui', G.nordFuel() > 0 ? 'noPoeleOn' : 'noPoele')}</span>
         <div class="card-main">
             <div class="card-title">Les poêles · <span class="oa-l">${hours(G.nordFuel())}</span> de feu</div>
-            <div class="oa-flow"><span class="chip">${ico(['ui', 'noPoele'])}${stoves} poêle${stoves > 1 ? 's' : ''}</span><span class="chip${wood < 10 ? ' bad' : ' ok'}">${ico(['item', 'wood'])}${fmt(wood)} bûches</span>${frost ? `<span class="chip bad">${ico(['ui', 'noFroid'])}Nuit de gel : hors poêle, tout dort</span>` : ''}</div>
+            <div class="oa-flow"><span class="chip">${ico(['ui', 'noPoele'])}${stoves} poêle${stoves > 1 ? 's' : ''}</span><span class="chip${wood < 10 ? ' bad' : ' ok'}">${ico(['item', 'wood'])}${fmt(wood)} bûches</span>${G.auroraOn() ? `<span class="chip ok">${ico(['ui', 'noAurore'])}Aurore boréale : tout pousse × 1,5</span>` : frost ? `<span class="chip bad">${ico(['ui', 'noFroid'])}Nuit de gel : hors poêle, tout dort</span>` : ''}${G.blizzardOn() ? `<span class="chip bad">${ico(['ui', 'noBlizzard'])}Blizzard : les poêles brûlent deux fois plus</span>` : ''}</div>
             ${!stoves ? '<p class="card-sub oa-dry">Posez un poêle sur une case libre : il réchauffe les cases autour de lui.</p>' : chilly ? `<p class="card-sub oa-dry">${chilly} case${chilly > 1 ? 's' : ''} hors de portée d’un poêle allumé : ça pousse au ralenti.</p>` : ''}
             <div class="actions wrap">${feed}${chop}${btn('Améliorer', { act: 'open', data: { sheet: 'nordUps' }, size: 'sm', icon: ['ui', 'noPoeleOn'] })}</div>
         </div>
@@ -93,6 +93,8 @@ function cellHtml(k, nextLocked) {
     const cls = `oa-cell no-cell${warm ? ' warm' : ''}${chilly ? ' chilly' : ''}`;
     const mark = `${warm ? `<i class="oa-shade" title="Au chaud">${ico(['ui', 'noChaleur'])}</i>` : ''}${chilly ? `<i class="oa-thirst no-flake">${ico(['ui', 'noFroid'])}</i>` : ''}`;
     const t = sl.tree;
+    if (p.snow)
+        return `<button class="${cls} snowed" data-act="clearSnow" data-k="${k}" data-anchor="${anc}"><span class="oa-art">${t ? treeArt(t) : art('plant', `${p.id}:${cropStage(p)}`)}</span><span class="no-drift"></span><small class="no-drift-txt">Dégager</small></button>`;
     if (t) {
         const stg = G.treeStage(t);
         const full = stg !== 'dead' && G.groundFull(t);
@@ -426,6 +428,7 @@ export function setupNord() {
         },
         upNord: (el, d) => G.upgradeNord(d.id, el),
         barnUp: el => G.upNordBarn(el),
+        clearSnow: (el, d) => G.clearSnow(+d.k, el),
         sledAdd: (el, d) => G.sledAdd(d.id),
         sledDel: (el, d) => G.sledRemove(d.id),
         sledSend: el => G.sledSend(el),

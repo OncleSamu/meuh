@@ -73,3 +73,76 @@ test('chapitre 24 : trois chantiers, le dernier fait la fête, dessins et cardam
     assert.ok(ITEMS.cardamom && SPR.item('cardamom').length > 300);
     assert.ok(TIPS.sled);
 });
+
+// ---------------- 1.52.2 : le blizzard et l'aurore ----------------
+import { WEATHER } from '../../src/data/nord.js';
+
+function weather() {
+    nord();
+    state.inventory.wood = 200;
+    state.inventory.stone = 200;
+    state.inventory.plank = 200;
+    state.inventory.tools = 30;
+    state.gameTimeMinutes = 12 * 60;
+    G.buildStove(0);
+    G.feedStove(0);
+    state.seeds.rye = 10;
+    for (const k of [1, 4, 5, 6, 7]) G.plantNord(k, 'rye');
+}
+
+test('le blizzard ensevelit des cases hors des poêles, jamais celles qu’un poêle chauffe, et un appui les dégage', () => {
+    weather();
+    state.nord.stormAt = clock.t - 1;
+    assert.ok(G.nordWeatherTick());
+    assert.ok(G.blizzardOn());
+    const snowed = state.nord.plots.map((p, k) => (p.snow ? k : -1)).filter(k => k >= 0);
+    assert.ok(snowed.length >= 1 && snowed.length <= WEATHER.blizzard.cells[1]);
+    for (const k of snowed) assert.equal(G.isWarm(k), false);
+    for (const k of [1, 4, 5]) assert.ok(!state.nord.plots[k].snow, `case chauffée ${k}`);
+    const k = snowed[0];
+    const p0 = state.nord.plots[k].prog;
+    for (let i = 0; i < 30; i++) G.nordTick();
+    assert.equal(state.nord.plots[k].prog, p0, 'une case sous la neige ne pousse pas');
+    assert.ok(G.clearSnow(k, null));
+    assert.equal(G.snowedCells(), snowed.length - 1);
+});
+
+test('pendant le blizzard les poêles brûlent deux fois plus, et le traîneau prend une heure de retard', () => {
+    weather();
+    const f0 = state.nord.stoves[0].fuel;
+    for (let i = 0; i < 360; i++) G.nordTick();
+    const calm = f0 - state.nord.stoves[0].fuel;
+    state.nord.stoves[0].fuel = f0;
+    state.projects.northSled = { given: {}, done: true };
+    state.nord.sled = { load: {}, out: { load: {}, value: 1, back: clock.t + 1000, team: [] }, trips: 0 };
+    state.nord.stormAt = clock.t - 1;
+    G.nordWeatherTick();
+    assert.equal(state.nord.sled.out.back, clock.t + 1000 + SLED.blizzardDelay);
+    for (const p of state.nord.plots) p.snow = false;
+    for (const p of state.nord.plots) if (p.id) Object.assign(p, { prog: 0, ready: false });
+    state.nord.stoves[0].fuel = f0;
+    for (let i = 0; i < 360; i++) G.nordTick();
+    const storm = f0 - state.nord.stoves[0].fuel;
+    assert.ok(storm > calm * 1.5, `${storm} vs ${calm}`);
+});
+
+test('l’aurore : la nuit de gel, tout pousse, même hors d’un poêle, une fois et demie plus vite', () => {
+    weather();
+    state.gameTimeMinutes = 23 * 60;
+    assert.equal(G.cellMult(7), 0);
+    state.nord.auroraAt = clock.t - 1;
+    assert.ok(G.nordWeatherTick());
+    assert.ok(G.auroraOn());
+    assert.ok(G.cellMult(7) > 0);
+    const p0 = state.nord.plots[7].prog,
+        w0 = state.nord.plots[4].prog;
+    for (let i = 0; i < 60; i++) G.nordTick();
+    assert.ok(state.nord.plots[7].prog > p0, 'hors poêle ça pousse');
+    assert.ok(state.nord.plots[4].prog - w0 > 60 * 1.3, 'au chaud, une fois et demie');
+    // elle ne se lève pas le jour
+    weather();
+    state.gameTimeMinutes = 12 * 60;
+    state.nord.auroraAt = clock.t - 1;
+    G.nordWeatherTick();
+    assert.equal(G.auroraOn(), false);
+});

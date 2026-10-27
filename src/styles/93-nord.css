@@ -114,3 +114,22 @@ html.calm .no-cell.stove.lit {
     border-radius: 3px;
     background: var(--ink);
 }
+
+/* 1.52.2 : une case ensevelie par le blizzard */
+.oa-cell.snowed .oa-art {
+    filter: saturate(0.5) brightness(1.1);
+}
+.no-drift {
+    position: absolute;
+    inset: 28% 0 0;
+    border-radius: 40% 40% 9px 9px / 30% 30% 9px 9px;
+    background: linear-gradient(#ffffff, #d6e4f0);
+    box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.6);
+}
+.no-drift-txt {
+    position: absolute;
+    bottom: 6px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: #4a6a86;
+}

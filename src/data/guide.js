@@ -621,6 +621,13 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'Le blizzard et l’aurore',
+                b: [
+                    'Un blizzard passe tous les 30 à 60 heures environ (après l’étable) : quelques cases hors des poêles disparaissent sous la neige, un appui les dégage. Pendant six heures, les poêles brûlent deux fois plus, et le traîneau en route prend une heure de retard. Les cases qu’un poêle chauffe sont protégées.',
+                    'Les nuits de gel, une aurore boréale se lève de temps en temps : pendant une heure, tout pousse une fois et demie plus vite, même loin des poêles.',
+                ],
+            },
+            {
                 h: 'Le traîneau',
                 t: `Après le relais des traîneaux (chapitre 24) : ${SLED.reindeer} rennes adultes de l’étable emportent jusqu’à ${SLED.loads} charges de ${SLED.perLoad} produits dans la grande ville du Sud. Retour en 8 heures, avec ${String(SLED.mult).replace('.', ',')} fois le prix du grossiste pour les produits du Nord (plantes, produits des bêtes) et ${String(SLED.otherMult).replace('.', ',')} fois pour le reste, 15 % de plus avec le marché de glace, et parfois de la cardamome. Les rennes partis ne produisent pas.`,
             },
