@@ -11,6 +11,7 @@ import { RECIPES_134 } from './v134.js';
 import { RECIPES_135 } from './v135.js';
 import { RECIPES_137 } from './v137.js';
 import { RECIPES_150, MACHINES_150 } from './v150.js';
+import { RECIPES_153, MACHINES_153 } from './v153.js';
 import { ITEMS } from './items.js';
 import { ANIMALS } from './animals.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
@@ -3492,3 +3493,12 @@ const DESC_150 = {
 };
 for (const [id, name, reqLvl, cost] of MACHINES_150) MACHINES[id] = { id, name, cost, reqLvl, needProject: 'oasisWell', desc: DESC_150[id] };
 for (const [id, , machine, ing, time, lvl] of RECIPES_150) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
+
+// ---------------- 1.53 : la cuisine du Grand Nord ----------------
+const DESC_153 = {
+    tiledStove: 'Pains de seigle et pâtisseries cuits dans un poêle de faïence',
+    taigaPot: 'Soupes et plats mijotés au-dessus du feu de la taïga',
+    berryKettle: 'Confitures, gelées et pâtes de baies',
+};
+for (const [id, name, reqLvl, cost, needProject] of MACHINES_153) MACHINES[id] = { id, name, cost, reqLvl, needProject, desc: DESC_153[id] };
+for (const [id, , machine, ing, time, lvl] of RECIPES_153) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };

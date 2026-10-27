@@ -632,6 +632,14 @@ export const GUIDE_PAGES = [
                 t: `Après le relais des traîneaux (chapitre 24) : ${SLED.reindeer} rennes adultes de l’étable emportent jusqu’à ${SLED.loads} charges de ${SLED.perLoad} produits dans la grande ville du Sud. Retour en 8 heures, avec ${String(SLED.mult).replace('.', ',')} fois le prix du grossiste pour les produits du Nord (plantes, produits des bêtes) et ${String(SLED.otherMult).replace('.', ',')} fois pour le reste, 15 % de plus avec le marché de glace, et parfois de la cardamome. Les rennes partis ne produisent pas.`,
             },
             {
+                h: 'La cuisine du Nord (1.53)',
+                b: [
+                    'Trois machines au niveau 60 : le poêle-four (après le poêle de Tuomas : pain de seigle noir, tarte de Carélie, pulla, pâtisseries aux airelles et au chicoutai), le chaudron de la taïga (après l’étable : soupes de saumon et de champignons, bouillie de seigle, kalakukko) et la sucrerie de baies (après la serre de rondins : confitures, gelées, pastilles, bonbons à l’épicéa).',
+                    'Dans les machines que vous avez déjà : farine de seigle au moulin, huile d’argousier à la huilerie, fromage de renne et lait fermenté à la fromagerie d’alpage, liqueur de chicoutai et eau-de-vie de sorbier à l’alambic, écharpe et bonnet en qiviut au métier à tisser, bois de renne gravé à la scierie, gravlax à la poissonnerie, glace au chicoutai au glacier.',
+                    'La cardamome que rapporte le traîneau parfume la pulla, les biscuits de seigle et la crème de chicoutai.',
+                ],
+            },
+            {
                 h: 'Le labo et la brasserie',
                 t: 'Les six plantes ont leurs gènes et leurs variétés comme les autres. Seigle et pousses d’épicéa ensemble donnent la sahti, une grande recette de brasseur : deux étoiles de plus.',
             },

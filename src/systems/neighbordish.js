@@ -28,10 +28,13 @@ const FIRMIN = [
     'malthouse',
     'earthOven',
     'orientalSweets',
+    'tiledStove',
 ];
 const BASTIEN = ['dairy', 'alpineDairy', 'icecream', 'tailor', 'soapworks', 'dyeworks'];
 const HORTENSE = [
     'tajine',
+    'taigaPot',
+    'berryKettle',
     'kitchen',
     'marmite',
     'stove',

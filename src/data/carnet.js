@@ -1346,3 +1346,89 @@ Object.assign(CARNET, {
     honeyJujubes:
         'Les jujubes au miel, ce sont des petits fruits rouges confits dans le miel, qu’on garde tout l’hiver. Yasmine en donne un aux enfants enrhumés. Les enfants du village sont étrangement souvent enrhumés quand elle passe.',
 });
+
+// ---------------- 1.53 : la cuisine du Grand Nord ----------------
+Object.assign(CARNET, {
+    ryeFlour:
+        'La farine de seigle est grise, lourde, et sent la cave et la terre. Elle ne fait pas de pain léger : elle fait du pain qui tient au corps. Mon grand-père disait que le blé nourrit, mais que le seigle réchauffe.',
+    seaBuckthornOil:
+        'L’huile d’argousier est orange vif, presque rouge, et tache tout ce qu’elle touche. Tuomas dit qu’en hiver, une cuillère le matin vaut un poêle. Ma tante Colette en a mis sur une tartine : elle a gardé les doigts orange jusqu’à Pâques.',
+    reindeerCheese:
+        'Le fromage de renne est ferme, blanc, un peu salé. Il se garde bien et se coupe en tranches qui font un petit bruit sous la dent, comme un pas dans la neige fraîche. Tuomas en emporte toujours un morceau dans sa poche, par prudence.',
+    grilledCheese:
+        'Le fromage grillé, on le passe au feu jusqu’à ce qu’il soit tacheté de brun, puis on pose dessus une cuillère de chicoutai. Salé, sucré, chaud, froid, tout y est. Ingrid dit que c’est le seul dessert qui sert aussi de plat.',
+    reindeerKefir:
+        'Le lait fermenté de renne est épais, acidulé, presque piquant. On le boit à jeun, en grimaçant un peu, et on se sent fort pour la journée. Mamie Odette dit que ça ressemble à son yaourt de 1974, mais en plus courageux.',
+    cloudberryLiqueur:
+        'La liqueur de chicoutai est dorée, douce, avec un petit goût de miel et de forêt. On la sert dans de minuscules verres, pour les grandes occasions : un mariage, un baptême, ou le retour du soleil.',
+    rowanSpirit:
+        'L’eau-de-vie de sorbier est claire, sèche, un peu amère, avec un parfum de baies qu’on n’a pas mangées. Mon oncle Raymond dit qu’un petit verre chasse le rhume. Il dit la même chose du pastis.',
+    qiviutScarf:
+        'Le qiviut est cinq fois plus chaud que la laine de mouton, et se laisse tisser en une écharpe qui ne pèse rien. On ne la porte pas pour avoir chaud : on la porte pour oublier qu’on a eu froid.',
+    qiviutHat:
+        'Un bonnet en qiviut ne gratte jamais, ne rétrécit jamais, et ne se perd pas : il est trop précieux pour qu’on l’oublie. Ma cousine Odile en a eu un pour ses quarante ans, et elle le porte aussi l’été.',
+    qiviutBlanket:
+        'Sous une couverture en qiviut, on dort bien, même quand le blizzard secoue les volets. Ingrid dit qu’elle en a une qui a plus de cent ans, et qu’elle n’a jamais connu son âge à la chaleur.',
+    antlerCarving:
+        'Le bois de renne se grave à la pointe fine : des spirales, des flocons, parfois un petit renne. Chaque bois est unique, comme une empreinte. Tuomas les accroche au-dessus de sa porte, pour qu’on sache qu’il est chez lui.',
+    antlerKnife:
+        'Le manche en bois de renne ne glisse pas, même mouillé, même gelé. Tuomas coupe tout avec le sien : le pain, la corde, la viande, et une fois, une conversation un peu longue.',
+    antlerPendant:
+        'Un pendentif taillé dans un bois de renne, avec une petite pépite au centre : on le porte contre la peau, et il se réchauffe vite. Ma tante Colette dit que ça ne fait pas de miracle, mais que ça tient compagnie.',
+    spruceSyrup:
+        'Le sirop d’épicéa se fait avec les pousses tendres du printemps, vert pâle, au goût de résine sucrée. En cuillère, il soigne la gorge ; sur des crêpes, il soigne tout le reste.',
+    gravlax:
+        'Le gravlax, c’est du saumon cru, enterré sous du sucre, du sel et des branches d’épicéa pendant trois jours. Il en sort rose, ferme et parfumé. Autrefois, on l’enterrait vraiment : d’où son nom, qui veut dire « saumon de la tombe ».',
+    cloudberryIce:
+        'La glace au chicoutai est jaune pâle, onctueuse, un peu acide. On la mange dehors, quand il gèle : Ingrid dit que la glace n’a jamais la même saveur au chaud. Elle n’a pas tort, mais ses doigts bleus la contredisent.',
+    ptarmiganPasta:
+        'Les pâtes aux œufs de lagopède sont d’un jaune pâle, presque ivoire, avec de petits points bruns. Elles sont fines comme des cheveux d’ange et ne collent jamais. Chaque œuf pèse trois fois rien, alors il en faut beaucoup.',
+    ryeBread:
+        'Le pain de seigle noir est dense, humide, un peu aigre. Une tranche suffit pour une marche de deux heures. Tuomas le coupe en tranches si fines qu’on voit à travers, puis en mange cinq.',
+    karelianPie:
+        'La tarte de Carélie est une petite barque de seigle remplie de riz au lait, qu’on badigeonne de beurre à l’œuf. On la mange chaude, avec du beurre dessus : oui, encore du beurre. Ingrid dit que c’est la seule recette où trop de beurre n’existe pas.',
+    pulla: 'La pulla est une brioche tressée, parfumée à la cardamome, saupoudrée de sucre en grains. On la sert avec le café, toujours, à toute heure. Chez Ingrid, l’odeur sort par la cheminée : les voisins arrivent avant la fin de la cuisson.',
+    seedRye:
+        'Le pain de seigle aux graines croque sous la dent : tournesol, lin, un peu de sésame. Il rassasie, il craque, et il fait des miettes partout. Mamie Odette trouve que c’est un pain qui se venge de ceux qui le mangent trop vite.',
+    nordicFlat:
+        'Le pain plat nordique est fin, mou, un peu élastique. On l’enroule autour d’un morceau de fromage, ou on le plie en quatre pour essuyer l’assiette. Mon père disait que le meilleur pain, c’est celui qu’on peut manger sans s’asseoir.',
+    lingonPastry:
+        'La pâtisserie aux airelles est un carré de pâte feuilletée, des baies rouges au centre, un peu de sucre glace. L’acide des airelles réveille le beurre : c’est un équilibre qu’on ne sait pas expliquer, mais qu’on sait reconnaître.',
+    cloudberryTart:
+        'La tarte au chicoutai est orange doré, lisse, brillante. Les baies fondent sous la dent, un peu aigres, un peu miel. Tuomas dit que c’est de l’or qui se mange. Ingrid dit que c’est plus cher.',
+    ryeCookies:
+        'Les biscuits de seigle au miel sont bruns, un peu durs, très parfumés. Ils se gardent des semaines et se trempent dans tout : le lait, le café, la soupe. Ma tante Colette en a cassé une dent, et elle ne regrette rien.',
+    eggPie: 'La tourte aux œufs de lagopède est dorée, ronde, avec une petite cheminée au centre. Chaque part cache un œuf entier, moucheté de brun. On la mange tiède, avec du beurre. Mamie Odette a trouvé ça « trop sérieux pour un dimanche ». Elle en a repris deux fois.',
+    salmonSoup:
+        'La soupe de saumon est crémeuse, parfumée à l’aneth et au poivre. Pommes de terre, oignons, gros morceaux de poisson. On la mange en hiver, avec du pain de seigle, devant un poêle. Il n’y a pas d’autre façon officielle.',
+    mushroomSoup:
+        'La soupe de champignons des bois sent la forêt, l’humus et le beurre noisette. On y met les cèpes, les girolles, ce qu’on a trouvé. Ma tante Colette y a mis un jour quelque chose qu’elle n’avait pas vérifié : on ne parle plus de ce jour-là.',
+    ryePorridge:
+        'La bouillie de seigle est grise, épaisse, tiède, avec une noix de beurre et quelques baies rouges. C’est le petit-déjeuner de ceux qui ont une longue journée devant eux. Mamie Odette trouve que ça ressemble à du ciment, mais du bon.',
+    lingonSoup:
+        'La soupe d’airelles est rouge vif, acidulée, servie chaude ou froide. On la mange en entrée, pour le goût, ou en dessert, pour la couleur. Ingrid dit que c’est la seule soupe qu’on peut servir à un enfant en l’appelant « confiture liquide ».',
+    lingonStew:
+        'Le ragoût de bœuf aux airelles est brun, mijoté longtemps, avec de petites baies rouges qui éclatent dans la sauce. Ça se mange avec des pommes de terre. Le goût sucré-acide surprend, puis on en redemande. Mon grand-père prétendait qu’il préférait la sauce aux myrtilles, mais il se resservait toujours.',
+    nordicOmelette:
+        'L’omelette du Nord est épaisse, dorée, avec des champignons et un œuf de lagopède par personne. On la mange avec une tranche de pain noir et une cuillère de crème. Ingrid la prépare pour les gens qui ont froid et qui ne le disent pas.',
+    kalakukko:
+        'Le kalakukko, c’est un pain de seigle farci de poisson et de lard, cuit des heures dans le four doux. On le coupe comme un gâteau. À l’intérieur, tout a fondu ensemble : le pain mange le poisson, le poisson parfume le pain. Un seul morceau fait un repas.',
+    butterPotatoes:
+        'Les pommes de terre au beurre sont petites, jaunes, bouillies avec la peau, puis roulées dans une noix de beurre fondu. C’est simple, c’est bon, et ça n’a jamais déçu personne. Ma cousine Odile en mange avec un seul couvert : la main.',
+    cloudberryJam:
+        'La confiture de chicoutai est dorée, un peu grumeleuse, parfumée comme un pollen d’été. On en met sur les crêpes, le fromage, le porridge, tout. Chaque pot est un petit coffre au trésor, gardé pour l’hiver.',
+    lingonJelly:
+        'La gelée d’airelles est rouge sombre, translucide, acidulée. Elle accompagne la viande et le pain de seigle. Mon père en mettait sur ses frites, et on lui a pardonné.',
+    buckthornLozenges:
+        'Les pastilles d’argousier sont orange, acidulées, un peu collantes. On les suce quand il fait froid, pour se réchauffer la gorge et le moral. Tuomas en garde un petit tube dans la poche de son manteau, à côté du couteau.',
+    rowanJelly:
+        'La gelée de sorbier est rouge brique, un peu amère, très parfumée. Elle se sert avec le gibier, mais aussi avec le fromage de renne. Il faut avoir gelé les baies avant, sinon elles sont trop dures. Ma tante Colette l’a appris à ses dépens.',
+    cloudberryCream:
+        'La crème de chicoutai est une mousse jaune, légère, parfumée à la cardamome. On la sert en petites coupes, avec une baie entière dessus, comme une cerise. Tuomas a goûté une fois et n’a plus rien dit pendant dix minutes. C’est le plus beau compliment.',
+    berryPaste:
+        'La pâte de baies est dense, sucrée, un peu acide, qui se coupe en petits cubes. On la mange en grignotant, au coin du feu, sans se rendre compte qu’on en est à son quinzième morceau. Ma cousine Odile a battu un record : vingt-trois.',
+    spruceCandy:
+        'Les bonbons à l’épicéa sont verts, parfumés, un peu résineux. Ils se glissent dans la poche pour la gorge, et dans la bouche pour la forêt. Mamie Odette dit qu’ils ont le goût d’un sapin de Noël, mais en plus aimable.',
+    buckthornHoney:
+        'L’argousier au miel, c’est des baies orange conservées dans un miel clair, qui prend leur couleur et leur acidité. Une cuillère dans le thé chaud, et on a quinze ans de moins. Du moins, pendant la tasse.',
+});

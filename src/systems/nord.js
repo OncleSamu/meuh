@@ -15,6 +15,7 @@ import { inPasture, nordBarnOpen, nordBarnCap } from './pastures.js';
 import { BALANCE } from '../data/progress.js';
 import { speedMult, addXp, spend, rank, rollYield, earn } from './player.js';
 import { sellPrice } from './market.js';
+import { RECIPES_153 } from '../data/v153.js';
 import { hour, weather } from './world.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
@@ -497,7 +498,7 @@ export const sledState = () => (state.nord ? ensureSled() : { load: {}, out: nul
 export const sledReindeer = () => nordBeasts().filter(a => a.type === 'reindeer' && isAdult(a) && !a.sick && !a.trip);
 export const sledLoads = () => Object.values(sledState().load).reduce((a, n) => a + n, 0);
 // les produits du Nord : plantes, produits des bêtes, cardamome
-const NORD_GOODS = new Set([...NORD_IDS, ...NORD_PRODUCTS.map(p => p[0]), SLED.spice.id]);
+const NORD_GOODS = new Set([...NORD_IDS, ...NORD_PRODUCTS.map(p => p[0]), ...RECIPES_153.map(r => r[0]), SLED.spice.id]);
 export const isNordGood = id => NORD_GOODS.has(id);
 export const sledMult = id => (id && !isNordGood(id) ? SLED.otherMult : SLED.mult) * (1 + (projectDone(SLED.iceProject) ? SLED.iceBonus : 0));
 export const sledValue = (load = sledState().load) =>

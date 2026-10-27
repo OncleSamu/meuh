@@ -94,7 +94,11 @@ test('1.8 : une machine par niveau, avec au moins une recette faisable et ses ma
         return Math.min(Math.max(it.reqLvl || 1, it.needProject ? projLvl(it.needProject) : 0), prodBy[id] || 99);
     };
     const seen = {};
+    // 1.53 : les trois machines du Grand Nord arrivent d'un bloc au dernier niveau, avec leur contrée
+    const { MACHINES_153 } = await import('../../src/data/v153.js');
+    const block = new Set(MACHINES_153.map(m => m[0]));
     for (const m of Object.values(MACHINES)) {
+        if (block.has(m.id)) continue;
         assert.ok(!seen[m.reqLvl], `niveau ${m.reqLvl} : ${seen[m.reqLvl]} et ${m.id}`);
         seen[m.reqLvl] = m.id;
         const rs = Object.values(RECIPES).filter(r => r.machine === m.id);

@@ -8,6 +8,7 @@ import { OASIS_CROPS, OASIS_TREES, OASIS_PRODUCTS } from './oasis.js';
 import { NORD_PRODUCTS } from './nord.js';
 import { NORD_CROPS, NORD_TREES } from './nord.js';
 import { RECIPES_150 } from './v150.js';
+import { RECIPES_153 } from './v153.js';
 import { FISH_ITEMS_133, RECIPES_133 } from './v133.js';
 import { RECIPES_134 } from './v134.js';
 import { PRODUCTS_135, RECIPES_135 } from './v135.js';
@@ -2960,6 +2961,12 @@ Object.assign(ITEMS, {
 
 // 1.50 : la cuisine de l'oasis (le prix suit les ingrédients, comme ailleurs)
 for (const [id, name, , ing] of RECIPES_150) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}
+
+// 1.53 : la cuisine du Grand Nord (le prix suit les ingrédients ; les recettes entre elles dans l'ordre de la liste)
+for (const [id, name, , ing] of RECIPES_153) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
 }
