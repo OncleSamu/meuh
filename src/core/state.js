@@ -44,6 +44,7 @@ export function newState() {
         oasis: null, // 1.48 : l'oasis (cases, citerne, source, chadouf)
         nord: null, // 1.51 : le Grand Nord (cases, poêles, bois)
         genetics: null,
+        cepage: null, // 1.62 : les vins de cépage
         brew: null, // 1.6 : la brasserie de l'abbaye
         cargo: null, // 1.8 : l'avion-cargo
         domaine: {}, // 1.20 : paliers du domaine par branche { barn: n, … }

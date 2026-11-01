@@ -26,7 +26,7 @@ import { addPhoto } from './style.js';
 import { addQuality, ascend } from './farm.js';
 import { eventProgress } from './events.js';
 import { tip } from './tips.js';
-import { takeVarSeed, harvestVariety, varExtra, varGrowth, varCold } from './genetics.js';
+import { takeVarSeed, harvestVariety, varRank, varExtra, varGrowth, varCold } from './genetics.js';
 import { slotsOf, pickTree, treeStage, groundFull, advanceTree } from './orchard.js';
 import { compSpeed, plotFx, compHarvest, NORD_BASE } from './companions.js';
 import { hasCost, payCost } from './home.js';
@@ -375,13 +375,12 @@ export function plantNordVar(k, vid, at) {
     return true;
 }
 // ---------------- récolter ----------------
-function rollNordQuality(k) {
+function rollNordQuality(k, vid) {
     let x = 0.08 + 0.15 + 0.05;
     x += rank('expert') * 0.05;
     x += Math.min(0.1, state.prestige.rubans * 0.01);
     x += plotFx(NORD_BASE + k).quality;
-    const r = Math.random();
-    return r < x * 0.35 ? 2 : r < x ? 1 : 0;
+    return varRank(vid, x);
 }
 export function harvestNord(k, at, quiet) {
     const p = nordPlots()[k];
@@ -392,11 +391,11 @@ export function harvestNord(k, at, quiet) {
     const qty = rollYield('crop') + (p.v ? varExtra(p.v) : 0) + (Math.random() < fx.extra ? 1 : 0);
     compHarvest(NORD_BASE + k);
     state.inventory[d.id] += qty;
-    if (p.v) harvestVariety(p.v, qty);
     state.stats.harvested += qty;
     state.stats.nordHarvest = (state.stats.nordHarvest || 0) + qty;
     addMastery(d.id, qty);
-    const q = ascend(d.id, rollNordQuality(k));
+    const q = ascend(d.id, rollNordQuality(k, p.v));
+    if (p.v) harvestVariety(p.v, qty, q);
     if (q) addQuality(d.id, q, qty);
     if (q >= 2) {
         state.stats.goldQ += qty;

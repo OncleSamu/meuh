@@ -20,7 +20,8 @@ import { masterySpeed, addMastery } from './mastery.js';
 import { clampAllQuality, addQuality } from './farm.js';
 import { inBarn, barnBlocked, rollRare } from './barn.js';
 import { collect } from './book.js';
-import { takeIngredients } from './genetics.js';
+import { takeIngredients, varName } from './genetics.js';
+import { isCepRecipe, cepVarOk, cepFruit, addCepage } from './cepage.js';
 import { qtyName } from '../core/format.js';
 import { mTimeMult, mExtraYield } from './buildings.js';
 import { cupHas } from './cup.js';
@@ -98,23 +99,35 @@ export function ensureRecipeMoves() {
 }
 
 // une recette en file, avec la qualité promise par ses ingrédients
-function pushJob(m, id, q) {
+function pushJob(m, id, q, vid = null) {
     m.queue.push(id);
     m.used = now(); // 1.38 : la dernière fois qu'on s'en est servi (tri de l'atelier)
     m.qq = m.qq || [];
     while (m.qq.length < m.queue.length - 1) m.qq.push(0);
     m.qq.push(q || 0);
+    // 1.62 : un vin de cépage garde sa variété jusqu'à la sortie
+    if (vid || m.qv) {
+        m.qv = m.qv || [];
+        while (m.qv.length < m.queue.length - 1) m.qv.push(null);
+        m.qv.push(vid);
+    }
 }
+// 1.62 : le cépage choisi à la machine, s'il convient à cette recette et qu'il y a assez de ses fruits
+const cepPick = (m, id) => (m.cep && isCepRecipe(id) && cepVarOk(id, m.cep) ? m.cep : null);
+const takeFor = (m, id) => {
+    const vid = cepPick(m, id);
+    return vid ? { q: takeIngredients(id, { [cepFruit(id)]: vid }), vid } : { q: takeIngredients(id), vid: null };
+};
 
 // Production en boucle : la machine relance sa dernière recette tant qu'il y a les ingrédients
 export function loopRefill(m) {
     if (!m.loop || !m.last || m.queue.length >= machineSlots(m.type)) return false;
     const r = RECIPES[m.last];
     if (!r || !recipeUnlocked(r.id) || !canCook(r.id)) return false;
-    const q = takeIngredients(r.id);
+    const t = takeFor(m, r.id);
     if (!m.queue.length) m.progress = 0;
     if (m.queue.length < 2) m.progress2 = 0;
-    pushJob(m, r.id, q);
+    pushJob(m, r.id, t.q, t.vid);
     return true;
 }
 
@@ -164,9 +177,17 @@ const laneB = m => !!m.lane2 && m.queue.length > 1;
 function finishJob(m, k) {
     const id = m.queue.splice(k, 1)[0];
     const q = (m.qq || []).splice(k, 1)[0] || 0;
-    m.out[id] = (m.out[id] || 0) + 1 + (Math.random() < 0.04 * skill('doubleBatch') ? 1 : 0);
+    const vid = m.qv ? m.qv.splice(k, 1)[0] : null;
+    if (m.qv && !m.qv.some(Boolean)) delete m.qv;
+    const n = 1 + (Math.random() < 0.04 * skill('doubleBatch') ? 1 : 0);
+    m.out[id] = (m.out[id] || 0) + n;
+    // 1.62 : les lots de cépage (leur variété et leur rang), mis à part à la récupération
+    if (vid) {
+        m.outv = m.outv || {};
+        (m.outv[id] = m.outv[id] || []).push({ vid, q, n });
+    }
     // la qualité du lot (de meilleurs ingrédients) suit le produit jusqu'à la récupération
-    if (q) {
+    if (q && !vid) {
         m.outq = m.outq || {};
         const o = (m.outq[id] = m.outq[id] || { s: 0, g: 0 });
         const key = ['s', 's', 'g', 'p', 'd'][q];
@@ -244,7 +265,8 @@ export function queueRecipe(i, id, at) {
         emit('shake', at);
         return false;
     }
-    let q = takeIngredients(id);
+    const t = takeFor(m, id);
+    let q = t.q;
     // 1.14 : le bois fruitier parfume le fumoir : un lot sur quatre sort en argent
     if (m.type === 'smokehouse' && !q && state.inventory.fruitWood > 0 && Math.random() < 0.25) {
         state.inventory.fruitWood--;
@@ -254,7 +276,8 @@ export function queueRecipe(i, id, at) {
     clampAllQuality();
     if (!m.queue.length) m.progress = 0;
     if (m.queue.length < 2) m.progress2 = 0;
-    pushJob(m, id, q);
+    pushJob(m, id, q, t.vid);
+    if (t.vid) toast(`${ITEMS[id].name} de cépage : ${varName(state.genetics.vars[t.vid])}`, ['item', id]);
     m.last = id;
     sfx('machine');
     buzz(8);
@@ -268,7 +291,10 @@ export function cancelQueued(i, k) {
     if (!m || k < 1 || !m.queue[k]) return false;
     const id = m.queue.splice(k, 1)[0];
     if (m.qq) m.qq.splice(k, 1);
+    const vid = m.qv ? m.qv.splice(k, 1)[0] : null;
     if (k === 1) m.progress2 = 0;
+    // les fruits d'une variété lui sont rendus (en produits normaux)
+    if (vid && state.genetics && state.genetics.vars[vid]) state.genetics.stock[vid] = (state.genetics.stock[vid] || 0) + (RECIPES[id].ing[cepFruit(id)] || 0);
     Object.entries(RECIPES[id].ing).forEach(([key, n]) => (state.inventory[key] += n));
     sfx('click');
     toast(`${ITEMS[id].name} retiré de la file, ingrédients rendus`, ['item', id]);
@@ -309,6 +335,18 @@ export function collectMachine(i, at, quiet) {
                     addQuality(id, r, per[j++]);
                 }
             delete m.outq[id];
+        }
+        // 1.62 : les lots de cépage quittent la grange pour le stock des cuvées de cépage
+        const ov = m.outv && m.outv[id];
+        if (ov) {
+            let j = per.length;
+            for (const b of ov)
+                for (let g = 0; g < b.n && j > 0; g++) {
+                    const x = per[--j];
+                    state.inventory[id] -= x;
+                    addCepage(id, b.vid, x, b.q);
+                }
+            delete m.outv[id];
         }
         state.stats.crafted += qty;
         if (COOKING.includes(m.type)) state.stats.cooked += qty;
@@ -353,7 +391,8 @@ export function restartAllMachines(at) {
     state.machines.forEach((m, i) => {
         const id = m.last;
         if (machineBusy(m) || !id || !RECIPES[id] || !recipeUnlocked(id) || !canCook(id)) return;
-        pushJob(m, id, takeIngredients(id));
+        const t = takeFor(m, id);
+        pushJob(m, id, t.q, t.vid);
         m.progress = 0;
         burst(anchor('machine', i), 'smoke', 5, -20);
         n++;

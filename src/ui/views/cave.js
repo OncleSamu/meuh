@@ -235,6 +235,28 @@ function ordersHtml() {
     );
 }
 
+// ---------------- 1.62 : les vins de cépage en bouteilles ----------------
+function cepageHtml() {
+    const list = G.cepBottles();
+    if (!list.length) return '';
+    const free = state.cave.slots.findIndex(l => !l);
+    return (
+        section('Vins de cépage') +
+        `<div class="list">${list
+            .map(e => {
+                const r = G.cepRanks(e.id);
+                const chips = [4, 3, 2, 1]
+                    .filter(k => r[k])
+                    .map(k => `<span class="qchip">${qStar(k)}${r[k]} ${QUALITY[k].name}</span>`)
+                    .join('');
+                return `<div class="card cep-bottle"><div class="card-art">${art('item', e.item)}</div><div class="card-main"><div class="card-title">${G.cepName(e)}</div>
+                    <div class="card-sub">×${G.cepCount(e.id)} · valeur ×${String(e.mult).replace('.', ',')} grâce à la variété</div>${chips ? `<span class="var-ranks">${chips}</span>` : ''}</div>
+                    <div class="card-side">${free >= 0 ? btn('En cave', { act: 'open', data: { sheet: 'cavePut', slot: free, id: 'cep:' + e.id }, kind: 'green', size: 'sm' }) : ''}${btn(`Vendre ${fmt(G.cepValue(e.id))}${COIN()}`, { act: 'sellCep', data: { id: e.id }, kind: 'gold', size: 'sm' })}</div></div>`;
+            })
+            .join('')}</div>`
+    );
+}
+
 // le climat : deux jauges, ou une petite ligne quand l'hygromètre s'en occupe
 function climHtml() {
     const c = state.cave;
@@ -275,6 +297,7 @@ function renderCave(el) {
         ],
         ['chateau', chateauFold()],
         ['orders', ordersHtml()],
+        ['cepage', cepageHtml()],
         [
             'slots',
             `<div class="cave-grid">${c.slots.map((l, i) => (l ? lotCard(l, i) : '')).join('')}${freeRow(c.slots)}${
@@ -294,15 +317,17 @@ defineView('machines/cave', renderCave);
 
 // ---------------- mettre en cave ----------------
 // o.id : un produit, ou 'beer:<bid>' pour une bière de la brasserie (qui choisit aussi son fût, o.k)
-const putList = () => [...G.caveCandidates(), ...G.caveBeers().map(b => 'beer:' + b.id)];
+// 1.62 : 'cep:<cid>' pour une cuvée de cépage
+const putList = () => [...G.cepBottles().map(e => 'cep:' + e.id), ...G.caveCandidates(), ...G.caveBeers().map(b => 'beer:' + b.id)];
 const putBid = o => (o.id && o.id.startsWith('beer:') ? o.id.slice(5) : null);
-const putHave = o => (putBid(o) ? G.beerStock(putBid(o)) : state.inventory[o.id] || 0);
+const putCep = o => (o.id && o.id.startsWith('cep:') ? o.id.slice(4) : null);
+const putHave = o => (putBid(o) ? G.beerStock(putBid(o)) : putCep(o) ? G.cepCount(putCep(o)) : state.inventory[o.id] || 0);
 const barrelCanPay = k => (BARRELS[k].item ? G.barrelOk(k) : state.money >= BARRELS[k].cost);
 defineSheet('cavePut', {
     title: 'Mettre en cave',
     open(o) {
         const list = putList();
-        o.id = list[0] || null;
+        o.id = o.id && list.includes(o.id) ? o.id : list[0] || null;
         o.k = 'oak';
         o.n = o.id ? Math.min(G.caveLotMax(), putHave(o)) : 1;
     },
@@ -314,9 +339,15 @@ defineSheet('cavePut', {
         const max = Math.min(G.caveLotMax(), putHave(o));
         o.n = Math.max(1, Math.min(o.n, max));
         const bid = putBid(o),
-            beer = bid && G.beerOf(bid);
+            beer = bid && G.beerOf(bid),
+            cid = putCep(o),
+            cep = cid && G.ensureCepage().list[cid];
         const cells = list
             .map(id => {
+                if (id.startsWith('cep:')) {
+                    const e = G.ensureCepage().list[id.slice(4)];
+                    return `<button class="pick-cell${o.id === id ? ' on' : ''}" data-act="cavePick" data-id="${id}">${ico(['item', e.item], 'ico big')}<b>${G.cepName(e)}</b><small>×${G.cepCount(e.id)} · cépage</small></button>`;
+                }
                 if (id.startsWith('beer:')) {
                     const b = G.beerOf(id.slice(5));
                     return `<button class="pick-cell${o.id === id ? ' on' : ''}" data-act="cavePick" data-id="${id}"><span class="pc-art">${beerSvg(b)}</span><b>${b.name}</b><small>×${G.beerStock(b.id)} · bière</small></button>`;
@@ -333,12 +364,12 @@ defineSheet('cavePut', {
                   )
                   .join('')}</div>`
             : '';
-        const unit = beer ? beer.value * BARRELS[o.k].mult : ITEMS[o.id].sell;
-        const step = G.caveStep(beer ? 'beer' : o.id);
-        const lq = beer ? G.beerPutQuality(bid, o.n) : o.id ? G.putQuality(o.id, o.n) : 0;
+        const unit = beer ? beer.value * BARRELS[o.k].mult : cep ? ITEMS[cep.item].sell * cep.mult : ITEMS[o.id].sell;
+        const step = G.caveStep(beer ? 'beer' : cep ? cep.item : o.id);
+        const lq = beer ? G.beerPutQuality(bid, o.n) : cep ? G.cepPutQuality(cid, o.n) : o.id ? G.putQuality(o.id, o.n) : 0;
         return `<div class="pick-grid">${cells}</div>${kinds}
            ${lq ? `<p class="card-sub center cave-q">${qStar(lq)} Lot en ${QUALITY[lq].name} : il gardera sa qualité (vaut ×${String(QUALITY[lq].mult).replace('.', ',')}) et vieillit un peu mieux.</p>` : ''}
-           <div class="stepper big">${btn('', { act: 'caveQty', data: { d: -1 }, icon: ['ui', 'minus'], disabled: o.n <= 1, title: 'Moins' })}<span><b>${o.n}</b> × ${beer ? 'bouteille' + (o.n > 1 ? 's' : '') : ITEMS[o.id].name.toLowerCase()}</span>${btn('', { act: 'caveQty', data: { d: 1 }, icon: ['ui', 'plus'], disabled: o.n >= max, title: 'Plus' })}</div>
+           <div class="stepper big">${btn('', { act: 'caveQty', data: { d: -1 }, icon: ['ui', 'minus'], disabled: o.n <= 1, title: 'Moins' })}<span><b>${o.n}</b> × ${beer || cep ? 'bouteille' + (o.n > 1 ? 's' : '') : ITEMS[o.id].name.toLowerCase()}</span>${btn('', { act: 'caveQty', data: { d: 1 }, icon: ['ui', 'plus'], disabled: o.n >= max, title: 'Plus' })}</div>
            <p class="card-sub center">Une étape toutes les ${formatDuration(step / 1000)}, un soin par étape. Valeur jeune : ${fmt(unit * o.n)}${COIN()}, légendaire : ${fmt(unit * o.n * CAVE_MULT[4])}${COIN()}</p>`;
     },
     foot: o =>
@@ -385,9 +416,12 @@ export function setupCave() {
         putInCave: el => {
             const o = put(),
                 bid = putBid(o);
-            if (bid ? G.putBeerInCave(+o.slot, bid, o.n, o.k, el) : G.putInCave(+o.slot, o.id, o.n, el)) closeSheet('cavePut');
+            const cid = putCep(o);
+            if (bid ? G.putBeerInCave(+o.slot, bid, o.n, o.k, el) : cid ? G.putCepageInCave(+o.slot, cid, o.n, el) : G.putInCave(+o.slot, o.id, o.n, el))
+                closeSheet('cavePut');
         },
         caveOrder: (el, d) => G.deliverCaveOrder(d.id, el),
+        sellCep: (el, d) => G.sellCepage(d.id, G.cepCount(d.id), el),
         caveOrderDrop: (el, d) => G.dismissCaveOrder(d.id),
     });
 }

@@ -15,7 +15,7 @@ import { btn, hint, timer, section, bar, empty } from '../kit.js';
 import { defineView, ui, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { confirmTap } from '../confirm.js';
-import { genWrap, looksText, animalArt, lineageHtml } from '../genlook.js';
+import { genWrap, looksText, animalArt, lineageHtml, varRankChips } from '../genlook.js';
 import { renameBtn } from '../sheets/rename.js';
 import { NOTE_COL } from '../../data/abbey.js';
 import { chefCard } from './orders.js';
@@ -351,7 +351,7 @@ defineSheet('variety', {
         const lines = [
             `${ico(['item', v.base])}Pousse comme : <b>${ITEMS[v.base].name.toLowerCase()}</b>${ITEMS[v.base].nord ? ' (au Grand Nord)' : ITEMS[v.base].oasis ? ' (à l’oasis)' : island ? ' (sur l’île)' : ''}`,
             `${ico(['ui', 'star'])}Apparence : ${looksText(v.g)}${v.mut ? ' · mutation' : ''}`,
-            `${ico(['ui', 'packet'])}${seeds} graine${seeds > 1 ? 's' : ''} · ${ico(['item', v.base])}${stock} en stock · se vend ×${String(Math.round(G.varietyMult(v) * 100) / 100).replace('.', ',')}`,
+            `${ico(['ui', 'packet'])}${seeds} graine${seeds > 1 ? 's' : ''} · ${ico(['item', v.base])}${stock} en stock · se vend ×${String(Math.round(G.varietyMult(v) * 100) / 100).replace('.', ',')}${varRankChips(v.id)}`,
             ...(G.preferOf(v.base) === v.id
                 ? [`${ico(['ui', 'star'])}Semée par défaut à la place de l’espèce${v.fixed && G.seedbankOpen() ? ' (graines rachetées toutes seules)' : ''}`]
                 : []),
@@ -377,9 +377,7 @@ defineSheet('variety', {
             G.labOpen() && !v.analyzed
                 ? btn(`Analyser · ${fmt(G.analyzeCost())}${ico(['ui', 'coin'])}`, { act: 'analyze', data: { id: v.id }, icon: ['ui', 'search'] })
                 : '',
-            stock
-                ? btn(`Vendre ${stock} · ${fmt(G.varietyPrice(v) * stock)}${ico(['ui', 'coin'])}`, { act: 'sellVariety', data: { id: v.id }, kind: 'gold' })
-                : '',
+            stock ? btn(`Vendre ${stock} · ${fmt(G.varietyValue(v))}${ico(['ui', 'coin'])}`, { act: 'sellVariety', data: { id: v.id }, kind: 'gold' }) : '',
             v.fixed && G.seedbankOpen()
                 ? btn(`5 graines · ${fmt(G.seedPrice(v) * 5)}${ico(['ui', 'coin'])}`, { act: 'buyVarSeeds', data: { id: v.id }, kind: 'green' })
                 : '',

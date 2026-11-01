@@ -1017,6 +1017,10 @@ export const GUIDE_PAGES = [
                 t: 'Onglet Atelier, puis Cave. À chaque étape de l’affinage, un lot peut bien vieillir (sa valeur grimpe), mal vieillir (il tourne) ou se perdre. Un lot entièrement en argent, en or, en platine ou en diamant garde sa qualité : il vieillit un peu mieux et se vend plus cher (un vin légendaire en or est le meilleur de la cave).',
             },
             {
+                h: 'Les vins de cépage',
+                t: 'Au pressoir ou à la cuverie, choisissez une de vos variétés de raisin ou de pomme au-dessus des recettes : le vin ou le cidre garde son nom, son goût (sa valeur) et son rang. Ses bouteilles attendent dans la cave, rubrique « Vins de cépage », pour être vendues ou mises en cave. Au château, une cuvée de cépage en platine gagne un cran de classement, et le concours des vins lui donne une médaille de mieux.',
+            },
+            {
                 h: 'Quoi mettre en cave dès le niveau 20',
                 t: 'Le cidre s’ouvre au niveau 20 avec la cave : 3 pommes et du sucre au pressoir (niveau 15). Le fromage suit au niveau 21.',
             },
@@ -1753,6 +1757,8 @@ export const GUIDE_PAGES = [
                     'Une variété fixée donne ses graines : une récolte en rend une, une fois sur deux.',
                     'Les gènes comptent : vitesse de pousse, résistance au froid et à la sécheresse, rendement, saveur.',
                     'Une variété savoureuse améliore les plats (argent, or) et la revente.',
+                    'Ses récoltes gardent leur rang (argent, or, platine, diamant) : la grange l’affiche sous la variété, et une variété en platine donne des plats, des bières et des vins de cépage encore meilleurs.',
+                    'Maturation lente, Calibre et Chance jouent aussi au verger, à l’île, à l’oasis et au Grand Nord.',
                 ],
             },
             {

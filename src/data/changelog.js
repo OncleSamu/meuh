@@ -1,6 +1,22 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.62',
+        title: 'Les cépages',
+        date: '1er novembre 2026',
+        items: [
+            'Chaque variété garde le rang de ses récoltes, affiché dans la grange et au labo',
+            "Au marché, l'espèce part avant les variétés",
+            "Une variété vendue l'est au prix de son rang",
+            "À l'atelier, au comptoir et à la brasserie, une variété apporte son goût et le vrai rang de ses unités",
+            "Maturation lente, Calibre et Chance jouent au verger, à l'île, à l'oasis et au Grand Nord",
+            'Vins de cépage : au pressoir ou à la cuverie, on choisit sa variété de raisin ou de pomme',
+            'Ses bouteilles se vendent ou vont en cave',
+            'Au château, une cuvée de cépage en platine gagne un cran de classement',
+            'Deux mots de Mamie',
+        ],
+    },
+    {
         v: '1.61.2',
         title: 'Sans notifications',
         date: '1er novembre 2026',

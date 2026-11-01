@@ -5,7 +5,7 @@ import { ITEMS } from '../../data/items.js';
 import { MACHINES, RECIPES } from '../../data/machines.js';
 import { QUALITY } from '../../data/farm.js';
 import * as G from '../../systems/index.js';
-import { blocks, actions, byId } from '../dom.js';
+import { blocks, actions, byId, esc } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
 import { btn, bar, empty, timer, toggle, tip15 } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
@@ -104,6 +104,20 @@ function lane2Row(m, i) {
         ${btn(`${fmt(c)}${ico(['ui', 'coin'])}`, { act: 'buyLane2', data: { i }, kind: state.money >= c ? 'gold' : '', size: 'sm' })}</div>`;
 }
 
+// 1.62 : choisir le cépage (une variété de raisin ou de pomme) pour les vins et les cidres de cette machine
+function cepRow(m, i) {
+    const fruits = G.machineCepFruits(m.type);
+    if (!fruits.length) return '';
+    const vars = G.cepVarieties(fruits);
+    if (!vars.length) return '';
+    if (m.cep && !vars.some(v => v.id === m.cep)) m.cep = null;
+    const chip = (vid, label, sub) =>
+        `<button class="pick-chip${(m.cep || null) === vid ? ' on' : ''}" data-act="setCep" data-i="${i}" data-v="${vid || ''}">${label}${sub ? `<small>${sub}</small>` : ''}</button>`;
+    return `<div class="card cep-card"><div class="card-title">${ico(['item', fruits[0]])}Cépage</div>
+        <div class="card-sub">Faites le vin ou le cidre d’une seule de vos variétés : il garde son nom, son goût et son rang jusqu’en cave.</div>
+        <div class="chips-row">${chip(null, 'Sans cépage')}${vars.map(v => chip(v.id, esc(G.varName(v)), `×${G.varRanks(v.id).reduce((a, b) => a + b, 0)}`)).join('')}</div></div>`;
+}
+
 defineSheet('machine', {
     cls: 'machine-sheet',
     title: o => {
@@ -132,13 +146,16 @@ defineSheet('machine', {
                             `<span class="ing${state.inventory[k] >= n ? ' ok' : ''}">${ico(['item', k])}${Math.min(state.inventory[k], n)}/${n}</span>`,
                     )
                     .join('');
-                const pv = ok && state.genetics && state.genetics.bestFirst ? G.previewBatch(r.id) : null;
+                // 1.62 : le cépage choisi à la machine fait ce vin-là
+                const cep = ok && m.cep && G.isCepRecipe(r.id) && G.cepVarOk(r.id, m.cep) ? m.cep : null;
+                const pick = cep ? { [G.cepFruit(r.id)]: cep } : null;
+                const pv = ok && state.genetics && (state.genetics.bestFirst || pick) ? G.previewBatch(r.id, pick) : null;
                 const qb = pv && pv.q ? `<span class="rt-q" title="Sortira en ${QUALITY[pv.q].name}">${qStar(pv.q)}</span>` : '';
                 const qtxt = pv && pv.q ? `<small class="rt-qtxt">sortira en ${QUALITY[pv.q].name}</small>` : '';
                 const price = it.sell ? `${fmt(G.sellPrice(r.id))}${ico(['ui', 'coin'])}` : r.outQty ? `${r.outQty} sacs` : 'pour les chantiers';
                 return `<button class="rtile${open ? (ok ? ' ok' : ' short') : ' locked'}${wanted.has(r.id) ? ' wanted' : ''}${o.focus === r.id ? ' focus' : ''}" data-act="queue" data-i="${i}" data-id="${r.id}" data-anchor="recipe:${r.id}">
                     <span class="rt-art">${art('item', r.id)}${r.outQty ? `<em>×${r.outQty}</em>` : ''}${teacherBadge(r)}${qb}</span>
-                    <b>${it.name}</b>
+                    <b>${it.name}</b>${cep ? `<small class="rt-cep">« ${esc(G.varName(state.genetics.vars[cep]))} »</small>` : ''}
                     ${open ? `<span class="ings">${ings}</span>${qtxt}<small>${ico(['ui', 'clock'])}${formatDuration(G.recipeTime(r.id))} · ${price}</small>` : `<small class="lock-txt">${ico(['ui', 'lock'])}${G.recipeLockText(r)}</small>`}
                 </button>`;
             })
@@ -159,6 +176,7 @@ defineSheet('machine', {
                 `<div class="row-btns">${ready.length ? btn(`Récupérer ${ready.map(([id, n]) => `${ico(['item', id])}×${n * (RECIPES[id].outQty || 1)}`).join(' ')}`, { act: 'collectMachine', data: { i }, kind: 'gold' }) : ''}
                 ${btn(m.loop ? 'En boucle' : 'Boucle', { act: 'toggleLoop', data: { i }, icon: ['ui', 'loop'], cls: m.loop ? 'on' : '', title: 'Relancer automatiquement la dernière recette' })}</div>`,
             ],
+            ['cep', cepRow(m, i)],
             ['lane2', lane2Row(m, i)],
             ['up', bldRow('m', m.type)],
             [
@@ -186,6 +204,8 @@ defineSheet('machine', {
         ];
     },
     open(o) {
+        const mm = state.machines[o.i];
+        if (mm && G.cepVarieties(G.machineCepFruits(mm.type)).length && G.machineCepFruits(mm.type).length) G.tip('cepageMachine');
         if (o.focus) {
             ui.sel.recipeFilter = 'all';
             setTimeout(() => {
@@ -213,6 +233,10 @@ export function setupWorkshop() {
         cancelQueued: (el, d) => G.cancelQueued(+d.i, +d.k),
         toggleLoop: (el, d) => G.toggleLoop(+d.i),
         recipeFilter: (el, d) => (ui.sel.recipeFilter = d.f),
+        setCep: (el, d) => {
+            const m = state.machines[+d.i];
+            if (m) m.cep = d.v || null;
+        },
         mfilter: (el, d) => (ui.sel.mfilter = d.f),
         toggleBest: () => (state.genetics.bestFirst = !state.genetics.bestFirst),
     });

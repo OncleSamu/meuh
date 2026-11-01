@@ -14,7 +14,7 @@ import { earn, addXp } from './player.js';
 import { clampQuality, qual } from './farm.js';
 import { QUALITY, QX } from '../data/farm.js';
 import { vatBonus } from './buildings.js';
-import { varietyMult, varName, traitOf, FLAVOR_IDS, clampVarieties, scoreTier } from './genetics.js';
+import { varietyMult, varName, traitOf, FLAVOR_IDS, clampVarieties, scoreTier, takeVarUnits, varRanks, plainRanks, QK } from './genetics.js';
 import { domStepSum } from './estate.js';
 
 // ---------------- ouverture ----------------
@@ -52,19 +52,24 @@ const TIERS = [
 const bestOn = () => !!(state.genetics && state.genetics.bestFirst);
 // retire n unités d'un ingrédient ; avec « meilleurs ingrédients d'abord », les plus hauts rangs partent en premier.
 // Renvoie les points de qualité pris (0 à 4 par unité), pour le rang de la bière.
+// 1.62 : une variété apporte toujours le vrai rang de ses propres unités (ses meilleures d'abord) ;
+// l'espèce seule ne prend que les unités qui ne sont d'aucune variété.
 function ingTake(id, n, best = false) {
     const v = VAR(id);
     const base = v ? v.base : id;
     let points = 0;
-    if (v) state.genetics.stock[id] -= n;
-    if (best && bestOn() && state.quality[base]) {
-        const q = qual(base);
+    if (v) {
+        const got = takeVarUnits(id, n, true);
+        if (best) points = got.reduce((a, c, r) => a + c * r, 0);
+    } else if (best && bestOn() && state.quality[base]) {
+        const q = qual(base),
+            free = plainRanks(base);
         let left = n;
-        for (const [pts, f] of TIERS) {
-            const t = Math.min(left, q[f]);
-            q[f] -= t;
+        for (const r of [4, 3, 2, 1]) {
+            const t = Math.min(left, free[r]);
+            q[QK[r]] -= t;
             left -= t;
-            points += t * pts;
+            points += t * r;
         }
     }
     state.inventory[base] -= n;
@@ -73,20 +78,19 @@ function ingTake(id, n, best = false) {
 }
 // le rang qu'aurait un brassin avec le stock actuel, sans rien prendre
 export function brewQuality(cost, ings) {
-    if (!bestOn()) return 0;
     let points = 0,
         units = 0;
     for (const [id] of ings) {
         const n = cost[id] || 0;
-        const base = VAR(id) ? VAR(id).base : id;
-        const q = state.quality[base];
-        let left = n;
         units += n;
-        if (q)
-            for (const [pts, f] of TIERS) {
-                const t = Math.min(left, q[f] || 0);
+        const v = VAR(id);
+        let left = n;
+        const have = v ? varRanks(id) : bestOn() ? plainRanks(id) : null;
+        if (have)
+            for (const r of [4, 3, 2, 1]) {
+                const t = Math.min(left, have[r]);
                 left -= t;
-                points += t * pts;
+                points += t * r;
             }
     }
     return units ? scoreTier(points / units) : 0;

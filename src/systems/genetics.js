@@ -41,8 +41,8 @@ import { projectDone, storyOk } from './story.js';
 import { isAdult, newAnimal } from './animals.js';
 import { placeAnimal, herdFull, fullText } from './pastures.js';
 import { unitPrice } from './market.js';
-import { qual } from './farm.js';
-import { QX } from '../data/farm.js';
+import { qual, clampQuality } from './farm.js';
+import { QX, QUALITY } from '../data/farm.js';
 import { tip } from './tips.js';
 import { domStepSum } from './estate.js';
 import { season } from './world.js';
@@ -77,6 +77,8 @@ export function ensureGenetics() {
     G.vars = G.vars || {};
     G.seeds = G.seeds || {};
     G.stock = G.stock || {};
+    // 1.62 : le rang des produits de chaque variété (une ancienne partie part de produits normaux)
+    G.q = G.q || {};
     G.races = G.races || {};
     if (G.bestFirst === undefined) G.bestFirst = true;
     // 1.7 : plusieurs croisements et élevages à la fois, des portées, un but, des variétés semées par défaut
@@ -646,6 +648,12 @@ export const varPestGuard = vid => Math.random() < varTrait(vid, 'pest') * FX.pe
 export const varQuality = vid => varTrait(vid, 'late') * FX.lateQ - varTrait(vid, 'calibre') * FX.calibreQ;
 export const animalPestGuard = a => Math.random() < animalTrait(a, 'health') * FX.health;
 export const varLuck = vid => varTrait(vid, 'luck') * FX.luck;
+// 1.62 : verger et contrées : Maturation lente et Calibre jouent sur la qualité, la Chance donne parfois de l'or
+export function varRank(vid, x, r = Math.random()) {
+    if (vid) x += varQuality(vid);
+    if (vid && Math.random() < varLuck(vid) * 4) return 2;
+    return r < x * 0.35 ? 2 : r < x ? 1 : 0;
+}
 // part du bonus de bon sol accordée à une variété sur un mauvais sol (0 à 0,75)
 export const varSoilShare = vid => Math.min(1, varTrait(vid, 'soilfit') * FX.soilfit);
 // bonus de vitesse de la docilité (par cœur) et de la sociabilité (selon les voisines de la même espèce, plafonné)
@@ -703,15 +711,95 @@ export function preferSeed(base) {
 }
 
 // une récolte de variété : ses produits gardent leur nom, et parfois une graine tombe
-export function harvestVariety(vid, qty) {
+// 1.62 : rank = le rang de toute la récolte (0 à 4), ou un tableau [normal, argent, or, platine, diamant] (verger)
+export function harvestVariety(vid, qty, rank = 0) {
     const G = state.genetics;
     const v = G.vars[vid];
     if (!v) return;
     G.stock[vid] = (G.stock[vid] || 0) + qty;
+    const vq = varQual(vid);
+    if (Array.isArray(rank)) for (let r = 1; r <= 4; r++) vq[QK[r]] += rank[r] || 0;
+    else if (rank > 0) vq[QK[rank]] += qty;
     if (Math.random() < GX.seedDrop + varTrait(vid, 'seedy') * FX.seedy) G.seeds[vid] = (G.seeds[vid] || 0) + 1;
 }
 
-// les produits de variété font partie du stock de l'espèce : quand le stock baisse, ils partent en dernier
+// ---------------- 1.62 : le rang des produits d'une variété ----------------
+// genetics.q[vid] = { s, g, p, d } : combien de ses produits sont en argent, or, platine, diamant (le reste est normal).
+// Ils font partie des rangs de l'espèce (state.quality) comme ses produits font partie du stock de l'espèce.
+export const QK = [null, 's', 'g', 'p', 'd'];
+export function varQual(vid) {
+    const G = state.genetics;
+    G.q = G.q || {};
+    const q = (G.q[vid] = G.q[vid] || { s: 0, g: 0, p: 0, d: 0 });
+    for (let r = 1; r <= 4; r++) q[QK[r]] = Math.max(0, q[QK[r]] || 0);
+    return q;
+}
+export const varRanked = vid => [1, 2, 3, 4].reduce((a, r) => a + varQual(vid)[QK[r]], 0);
+// combien d'unités de la variété à chaque rang : [normal, argent, or, platine, diamant]
+export function varRanks(vid) {
+    const G = state.genetics,
+        q = varQual(vid);
+    const out = [0, q.s, q.g, q.p, q.d];
+    out[0] = Math.max(0, (G.stock[vid] || 0) - varRanked(vid));
+    return out;
+}
+const varsOfBase = base =>
+    Object.keys(state.genetics.stock).filter(vid => state.genetics.vars[vid] && state.genetics.vars[vid].base === base && state.genetics.stock[vid] > 0);
+// les unités de l'espèce qui ne sont d'aucune variété, à chaque rang
+export function plainRanks(base) {
+    const G = state.genetics,
+        inv = state.inventory[base] || 0,
+        q = state.quality[base] || {};
+    const out = [0, q.s || 0, q.g || 0, q.p || 0, q.d || 0];
+    out[0] = Math.max(0, inv - out[1] - out[2] - out[3] - out[4]);
+    if (G) for (const vid of varsOfBase(base)) varRanks(vid).forEach((n, r) => (out[r] = Math.max(0, out[r] - n)));
+    return out;
+}
+// retire n unités d'une variété (les plus hauts rangs d'abord si best, sinon les plus bas), de son stock, de ses rangs
+// et de ceux de l'espèce ; renvoie [normal, argent, or, platine, diamant] pris. Le stock de l'espèce est laissé à l'appelant.
+export function takeVarUnits(vid, n, best = false) {
+    const G = state.genetics,
+        v = G.vars[vid];
+    const got = [0, 0, 0, 0, 0];
+    if (!v) return got;
+    const have = varRanks(vid),
+        vq = varQual(vid);
+    const order = best ? [4, 3, 2, 1, 0] : [0, 1, 2, 3, 4];
+    for (const r of order) {
+        const t = Math.min(n, have[r]);
+        if (!t) continue;
+        n -= t;
+        got[r] += t;
+        G.stock[vid] -= t;
+        if (r) {
+            vq[QK[r]] -= t;
+            const bq = state.quality[v.base];
+            if (bq) bq[QK[r]] = Math.max(0, (bq[QK[r]] || 0) - t);
+        }
+    }
+    return got;
+}
+
+// des unités de variétés d'une espèce sont parties (vendues avec l'espèce) : got = [normal, argent, or, platine, diamant].
+// Les moins bonnes variétés d'abord ; l'espèce a déjà perdu ces unités et ces rangs.
+export function dropVarRanks(base, got) {
+    const G = state.genetics;
+    const list = varsOfBase(base).sort((x, y) => flavorGain(G.vars[x].g) - flavorGain(G.vars[y].g));
+    for (let r = 0; r <= 4; r++) {
+        let left = got[r] || 0;
+        for (const vid of list) {
+            if (left <= 0) break;
+            const t = Math.min(left, varRanks(vid)[r]);
+            if (!t) continue;
+            G.stock[vid] -= t;
+            if (r) varQual(vid)[QK[r]] -= t;
+            left -= t;
+        }
+    }
+}
+
+// les produits de variété font partie du stock de l'espèce : quand le stock baisse, ils partent en dernier.
+// 1.62 : même chose pour les rangs : une variété ne garde pas plus d'unités d'un rang que l'espèce n'en a.
 export function clampVarieties() {
     const G = state.genetics;
     if (!G) return;
@@ -720,19 +808,53 @@ export function clampVarieties() {
         const v = G.vars[vid];
         if (!v || n <= 0) {
             delete G.stock[vid];
+            if (G.q) delete G.q[vid];
             continue;
         }
         (by[v.base] = by[v.base] || []).push(vid);
     }
+    if (G.q) for (const vid of Object.keys(G.q)) if (!(G.stock[vid] > 0)) delete G.q[vid];
     for (const [base, list] of Object.entries(by)) {
-        let over = list.reduce((a, vid) => a + G.stock[vid], 0) - (state.inventory[base] || 0);
+        clampQuality(base);
         // les moins bonnes d'abord
         list.sort((x, y) => flavorGain(G.vars[x].g) - flavorGain(G.vars[y].g));
+        let over = list.reduce((a, vid) => a + G.stock[vid], 0) - (state.inventory[base] || 0);
         for (const vid of list) {
             if (over <= 0) break;
             const d = Math.min(over, G.stock[vid]);
             G.stock[vid] -= d;
             over -= d;
+        }
+        // une variété n'a pas plus d'unités classées que de produits (les plus bas rangs partent d'abord)
+        for (const vid of list) {
+            const vq = varQual(vid);
+            let x = varRanked(vid) - Math.max(0, G.stock[vid]);
+            for (let r = 1; r <= 4 && x > 0; r++) {
+                const d = Math.min(x, vq[QK[r]]);
+                vq[QK[r]] -= d;
+                x -= d;
+            }
+        }
+        const bq = state.quality[base] || {};
+        // chaque rang : pas plus que l'espèce
+        for (let r = 1; r <= 4; r++) {
+            let o = list.reduce((a, vid) => a + varQual(vid)[QK[r]], 0) - (bq[QK[r]] || 0);
+            for (const vid of list) {
+                if (o <= 0) break;
+                const vq = varQual(vid),
+                    d = Math.min(o, vq[QK[r]]);
+                vq[QK[r]] -= d;
+                o -= d;
+            }
+        }
+        // les unités normales : pas plus que les normales de l'espèce
+        const baseNormal = Math.max(0, (state.inventory[base] || 0) - [1, 2, 3, 4].reduce((a, r) => a + (bq[QK[r]] || 0), 0));
+        let o = list.reduce((a, vid) => a + varRanks(vid)[0], 0) - baseNormal;
+        for (const vid of list) {
+            if (o <= 0) break;
+            const d = Math.min(o, varRanks(vid)[0]);
+            G.stock[vid] -= d;
+            o -= d;
         }
     }
 }
@@ -740,14 +862,17 @@ export function clampVarieties() {
 // revendre des produits de variété, à prix d'or selon leur goût
 export const varietyMult = v => Math.min(GX.varietySellCap, 1 + flavorGain(v.g) / GX.varietySellDiv + (v.g.halo ? 0.3 : 0));
 export const varietyPrice = v => Math.round(unitPrice(v.base) * varietyMult(v));
+// 1.62 : ce que rapporte tout le stock d'une variété, chaque unité au prix de son rang
+export const varietyValue = v => varRanks(v.id).reduce((a, c, r) => a + Math.round(varietyPrice(v) * QUALITY[r].mult) * c, 0);
 export function sellVariety(id, n, at) {
     clampVarieties();
     const G = state.genetics,
         v = G.vars[id];
     n = Math.min(n, G.stock[id] || 0, state.inventory[v ? v.base : ''] || 0);
     if (!v || n <= 0) return 0;
-    const gain = varietyPrice(v) * n;
-    G.stock[id] -= n;
+    // 1.62 : chaque unité au prix de son rang ; les plus basses partent d'abord
+    const got = takeVarUnits(id, n, false);
+    const gain = got.reduce((a, c, r) => a + Math.round(varietyPrice(v) * QUALITY[r].mult) * c, 0);
     state.inventory[v.base] -= n;
     state.income.market += gain;
     earn(gain, at);
@@ -775,89 +900,88 @@ export function recipeTaste(rid) {
         .map(x => x[0]);
 }
 
-// prend les ingrédients d'une recette (les meilleurs d'abord, si le réglage est actif) ; renvoie la qualité du lot (0, 1, 2)
-export function takeIngredients(rid) {
+// 1.62 : ce qu'apporte une unité de variété : son goût, et son rang par-dessus (moitié du goût, plafonné au diamant)
+export const varUnitPts = (r, gain) => (r ? Math.min(4, r + gain / 2) : gain);
+// le plan des ingrédients d'une recette, sans rien prendre. Avec « meilleurs ingrédients d'abord » : les unités de variété
+// qui apportent le plus, puis les plus hauts rangs de l'espèce. pick = { espèce: variété } impose une variété (vins de cépage).
+// Renvoie { takes: [[espèce, variété|null, rang, n]], points, units, q, vars: { variété: n } }
+export function planIngredients(rid, pick = null) {
     const r = RECIPES[rid];
     const G = state.genetics;
-    let points = 0,
-        units = 0;
-    const best = G && G.bestFirst;
-    const taste = best ? recipeTaste(rid) : [];
+    const best = !!(G && G.bestFirst);
+    const taste = recipeTaste(rid);
+    const out = { takes: [], points: 0, units: 0, q: 0, vars: {} };
+    if (!r) return out;
     if (G) clampVarieties();
     for (const [k, n] of Object.entries(r.ing)) {
-        units += n;
+        out.units += n;
         let left = n;
-        if (best && FLAVORS[k] && G) {
-            // variétés : celles qui ont le plus du goût recherché
-            const list = Object.keys(G.stock)
-                .filter(vid => G.vars[vid] && G.vars[vid].base === k && G.stock[vid] > 0)
-                .map(vid => [vid, Math.min(QX.varCap, flavorGain(G.vars[vid].g, taste.length ? taste : FLAVOR_IDS))])
-                .sort((x, y) => y[1] - x[1]);
-            for (const [vid, gain] of list) {
+        const forced = pick && pick[k] && G && G.vars[pick[k]] ? pick[k] : null;
+        if (G && FLAVORS[k] && (best || forced)) {
+            const cands = [];
+            for (const vid of forced ? [forced] : varsOfBase(k)) {
+                const gain = Math.min(QX.varCap, flavorGain(G.vars[vid].g, taste.length ? taste : FLAVOR_IDS));
+                varRanks(vid).forEach((c, rk) => c > 0 && cands.push([vid, rk, c, varUnitPts(rk, gain)]));
+            }
+            cands.sort((x, y) => y[3] - x[3]);
+            for (const [vid, rk, c, pts] of cands) {
                 if (left <= 0) break;
-                const d = Math.min(left, G.stock[vid]);
-                G.stock[vid] -= d;
-                left -= d;
-                points += d * gain;
-            }
-        }
-        if (best && left > 0 && state.quality[k]) {
-            const q = qual(k);
-            for (const [pts, f] of TIER_ORDER) {
-                const t = Math.min(left, q[f]);
-                q[f] -= t;
+                const t = Math.min(left, c);
                 left -= t;
-                points += t * pts;
+                out.points += t * pts;
+                out.takes.push([k, vid, rk, t]);
+                out.vars[vid] = (out.vars[vid] || 0) + t;
             }
         }
-        state.inventory[k] -= n;
+        if (best && left > 0) {
+            const free = plainRanks(k);
+            for (const rk of [4, 3, 2, 1]) {
+                const t = Math.min(left, free[rk]);
+                if (!t) continue;
+                left -= t;
+                out.points += t * rk;
+                out.takes.push([k, null, rk, t]);
+            }
+        }
     }
-    return scoreTier(units ? points / units : 0);
+    out.q = scoreTier(out.units ? out.points / out.units : 0);
+    return out;
 }
 
-// du plus haut rang au plus bas : [points d'un ingrédient, champ de state.quality]
-const TIER_ORDER = [
-    [4, 'd'],
-    [3, 'p'],
-    [2, 'g'],
-    [1, 's'],
-];
+// prend les ingrédients d'une recette ; renvoie la qualité du lot (0 à 4)
+export function takeIngredients(rid, pick = null) {
+    return takeIngredientsFull(rid, pick).q;
+}
+// la même chose, avec les variétés utilisées (pour un vin de cépage)
+export function takeIngredientsFull(rid, pick = null) {
+    const r = RECIPES[rid];
+    const pl = planIngredients(rid, pick);
+    for (const [k, vid, rk, t] of pl.takes) {
+        if (vid) {
+            // les unités de ce rang précis
+            const G = state.genetics,
+                vq = varQual(vid);
+            G.stock[vid] -= t;
+            if (rk) {
+                vq[QK[rk]] -= t;
+                qual(k)[QK[rk]] -= t;
+            }
+        } else qual(k)[QK[rk]] -= t;
+    }
+    for (const [k, n] of Object.entries(r.ing)) state.inventory[k] -= n;
+    return { q: pl.q, vars: pl.vars };
+}
+
 export const scoreTier = score => (score >= QX.diamScore ? 4 : score >= QX.platScore ? 3 : score >= GX.goldScore ? 2 : score >= GX.silverScore ? 1 : 0);
 
 // ce que donnerait un lot lancé maintenant, sans rien prendre : { q, d, p, g, s } (rang du lot, unités d'ingrédients de chaque qualité utilisées)
-export function previewBatch(rid) {
-    const r = RECIPES[rid];
-    const G = state.genetics;
+export function previewBatch(rid, pick = null) {
     const out = { q: 0, d: 0, p: 0, g: 0, s: 0 };
-    if (!r || !G || !G.bestFirst) return out;
-    const taste = recipeTaste(rid);
-    let points = 0,
-        units = 0;
-    for (const [k, n] of Object.entries(r.ing)) {
-        units += n;
-        let left = n;
-        if (FLAVORS[k]) {
-            const list = Object.keys(G.stock)
-                .filter(vid => G.vars[vid] && G.vars[vid].base === k && G.stock[vid] > 0)
-                .map(vid => [G.stock[vid], Math.min(QX.varCap, flavorGain(G.vars[vid].g, taste.length ? taste : FLAVOR_IDS))])
-                .sort((x, y) => y[1] - x[1]);
-            for (const [have, gain] of list) {
-                const d = Math.min(left, have);
-                left -= d;
-                points += d * gain;
-            }
-        }
-        const q = state.quality[k];
-        if (left > 0 && q) {
-            for (const [pts, f] of TIER_ORDER) {
-                const t = Math.min(left, q[f] || 0);
-                left -= t;
-                points += t * pts;
-                out[f] += t;
-            }
-        }
-    }
-    out.q = scoreTier(units ? points / units : 0);
+    const G = state.genetics;
+    if (!RECIPES[rid] || !G || (!G.bestFirst && !pick)) return out;
+    const pl = planIngredients(rid, pick);
+    for (const [, , rk, t] of pl.takes) if (rk) out[QK[rk]] += t;
+    out.q = pl.q;
     return out;
 }
 
@@ -1063,7 +1187,7 @@ export function deliverChef(vid, at) {
         v = G.vars[vid];
     clampVarieties();
     if (!c || !c.base || !v || !chefMatches(v) || (G.stock[vid] || 0) < c.qty) return false;
-    G.stock[vid] -= c.qty;
+    takeVarUnits(vid, c.qty, false);
     state.inventory[v.base] -= c.qty;
     earn(c.gold, at);
     state.income.orders += c.gold;

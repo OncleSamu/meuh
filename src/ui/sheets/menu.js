@@ -10,6 +10,7 @@ import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { genWrap, looksText } from '../genlook.js';
 import { flavorMini } from '../views/lab.js';
+import { varRankChips } from '../genlook.js';
 import { ico, art, qStar } from '../icons.js';
 import { btn, navRow, lines, line, bar, dot } from '../kit.js';
 import { go } from '../app.js';
@@ -165,7 +166,7 @@ defineSheet('barn', {
                 ? `<div class="barn-vars"><div class="set-sub">Dont vos variétés</div>${vars
                       .map(
                           v =>
-                              `<button class="row barn-var" data-act="open" data-sheet="variety" data-id="${v.id}"><span class="offer-art">${genWrap(art('item', sel), v.g)}</span><span class="row-main"><span>${esc(G.varName(v))} ×${state.genetics.stock[v.id]}</span><small>${[looksText(v.g).replace(/^Normale(, )?/, ''), v.fixed ? 'variété fixée' : `génération ${v.gen || 1}`].filter(Boolean).join(' · ')}</small></span>${flavorMini(v.g)}</button>`,
+                              `<button class="row barn-var" data-act="open" data-sheet="variety" data-id="${v.id}"><span class="offer-art">${genWrap(art('item', sel), v.g)}</span><span class="row-main"><span>${esc(G.varName(v))} ×${state.genetics.stock[v.id]}</span><small>${[looksText(v.g).replace(/^Normale(, )?/, ''), v.fixed ? 'variété fixée' : `génération ${v.gen || 1}`].filter(Boolean).join(' · ')}</small>${varRankChips(v.id)}</span>${flavorMini(v.g)}</button>`,
                       )
                       .join('')}</div>`
                 : '';

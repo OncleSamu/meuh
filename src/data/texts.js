@@ -117,6 +117,16 @@ export const TIPS = {
         title: 'Le niveau t’attend',
         text: 'Tu as assez d’expérience pour monter, mais chaque niveau demande d’abord d’essayer ce qu’il vient d’ouvrir : une ou deux petites choses, en haut du champ. Rien n’est perdu : l’expérience continue de s’amasser. Mon instituteur disait qu’on ne passe pas en classe supérieure sans avoir ouvert ses livres. Il ne vérifiait jamais, mais on avait peur.',
     },
+    cepage: {
+        icon: ['item', 'redWine'],
+        title: 'Un vin de cépage',
+        text: 'Un vin fait d’une seule de tes variétés garde son nom jusqu’en cave. Au château, Octave le classe un cran plus haut si ses raisins étaient en platine, et le jury du concours lui donne une médaille de mieux. Ton grand-père avait planté une rangée de vigne rien qu’à lui, au bout du verger. Il appelait son vin « la Réserve d’Odette ». Je n’en ai jamais bu une goutte : il disait qu’il fallait attendre qu’il soit prêt.',
+    },
+    cepageMachine: {
+        icon: ['item', 'grape'],
+        title: 'Choisir son cépage',
+        text: 'Tes variétés de raisin et de pomme peuvent faire leur propre vin, ou leur propre cidre. Dans la machine, choisis le cépage au-dessus des recettes : le lot prend ses fruits, garde son rang, et sort avec son nom. On le retrouve dans la cave, prêt à vieillir.',
+    },
     skills161: {
         icon: ['ui', 'skillbook'],
         title: 'De nouvelles compétences',

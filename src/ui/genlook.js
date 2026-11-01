@@ -1,7 +1,7 @@
 // L'apparence d'une création : le dessin de l'espèce, modifié par ses gènes (taille, couleur, motif, auréole).
 // Jamais choisie par le joueur : elle découle des gènes. Le motif est posé par-dessus, découpé à la forme du dessin.
 import * as G from '../systems/index.js';
-import { art } from './icons.js';
+import { art, qStar } from './icons.js';
 import { FEATURES, featuresOf } from '../data/genetics.js';
 
 const SIZE = [
@@ -216,3 +216,11 @@ export function lineageHtml(self) {
         <div class="ln-row one">${lineNode(self.me, true)}</div>
     </div>`;
 }
+
+// 1.62 : les rangs des produits d'une variété (argent, or, platine, diamant)
+const QN = ['', 'argent', 'or', 'platine', 'diamant'];
+export const varRankChips = vid => {
+    const r = G.varRanks(vid);
+    const chips = [4, 3, 2, 1].filter(k => r[k]).map(k => `<span class="qchip">${qStar(k)}${r[k]} ${QN[k]}</span>`);
+    return chips.length ? `<span class="var-ranks">${chips.join('')}</span>` : '';
+};

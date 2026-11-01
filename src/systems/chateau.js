@@ -44,9 +44,11 @@ export const repNext = () => REP_TIERS[repStars() + 1];
 
 // ---------------- classement ----------------
 // rang de cave 2 : cru du château ; chaque rang de plus monte d'un cran, et une qualité au moins égale au rang en gagne un autre
+// 1.62 : une grande cuvée de cépage (un vin de sa variété en platine ou mieux) gagne encore un cran
+export const grandCepage = lot => !!(lot && lot.cep && (lot.q || 0) >= 3);
 export function classOf(lot) {
     if (!lot || lot.bad || lot.rank < 2) return 0;
-    return Math.min(4, lot.rank - 1 + ((lot.q || 0) >= lot.rank ? 1 : 0));
+    return Math.min(4, lot.rank - 1 + ((lot.q || 0) >= lot.rank ? 1 : 0) + (grandCepage(lot) ? 1 : 0));
 }
 export const classMult = lot =>
     (lot && lot.cl && CHATEAU_CLASSES[lot.cl] ? CHATEAU_CLASSES[lot.cl].mult : 1) * (lot && lot.md ? CONTEST.medals[lot.md].mult : 1);
@@ -225,21 +227,24 @@ export const monthKey = () => {
 };
 export const wineContestDone = () => ensureChateau().contest.month === monthKey();
 export const wineMedalOf = cl => (cl >= 3 ? 3 : cl);
+// 1.62 : le jury aime les vins de cépage : une médaille de mieux (jusqu'à l'or), et un ruban de plus
+export const lotMedal = lot => Math.min(3, wineMedalOf(lot.cl) + (lot.cep ? 1 : 0));
 export const wineContestLots = () => state.cave.reserve.filter(l => l.cl && !l.md && l.id !== 'beer');
 export function enterWineContest(uid, valueFn, at) {
     const c = ensureChateau();
     const lot = state.cave.reserve.find(l => l.uid === uid);
     if (!wineContestOpen() || wineContestDone() || !lot || !lot.cl || lot.md) return false;
-    const m = wineMedalOf(lot.cl);
+    const m = lotMedal(lot);
     lot.md = m;
     c.contest = { month: monthKey(), medal: m };
     c.medals[m]++;
     const def = CONTEST.medals[m];
     const prize = Math.round(valueFn(lot) * def.prize);
-    state.prestige.rubans += def.rubans;
+    const rub = def.rubans + (lot.cep ? 1 : 0);
+    state.prestige.rubans += rub;
     earn(prize, at);
     sfx('level');
-    toast(`${def.name} ! ${def.rubans} ruban${def.rubans > 1 ? 's' : ''} et ${prize} pièces`, ['ui', 'trophy']);
+    toast(`${def.name}${lot.cep ? ' et prix du cépage' : ''} ! ${rub} ruban${rub > 1 ? 's' : ''} et ${prize} pièces`, ['ui', 'trophy']);
     addPhoto('ui', 'trophy', def.name, 'Concours des vins du château');
     return true;
 }

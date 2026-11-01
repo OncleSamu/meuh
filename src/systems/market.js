@@ -21,6 +21,7 @@ import { isLocked } from './stall.js';
 import { challengeOn } from './prestige.js';
 import { hasMachine, newMachine } from './workshop.js';
 import { newAnimal } from './animals.js';
+import { plainRanks, dropVarRanks } from './genetics.js';
 import { tip } from './tips.js';
 import { defiNeed } from './defis.js';
 
@@ -59,22 +60,24 @@ export function sellBatch(id, n, apply) {
     let left = Math.min(n, inv),
         f = demand(id),
         gain = 0;
-    const take = { d: Math.min(q.d, left) };
-    left -= take.d;
-    take.p = Math.min(q.p, left);
-    left -= take.p;
-    take.g = Math.min(q.g, left);
-    left -= take.g;
-    take.s = Math.min(q.s, left);
-    left -= take.s;
-    take.n = left;
-    const seq = [
-        [4, take.d],
-        [3, take.p],
-        [2, take.g],
-        [1, take.s],
-        [0, take.n],
-    ];
+    // 1.62 : d'abord les unités qui ne sont d'aucune variété (les plus hauts rangs d'abord), les variétés en dernier
+    const plain = state.genetics ? plainRanks(id) : [Math.max(0, inv - q.s - q.g - q.p - q.d), q.s, q.g, q.p, q.d];
+    const all = [Math.max(0, inv - q.s - q.g - q.p - q.d), q.s, q.g, q.p, q.d];
+    const seq = [],
+        fromVar = [0, 0, 0, 0, 0];
+    for (const r of [4, 3, 2, 1, 0]) {
+        const t = Math.min(left, plain[r]);
+        left -= t;
+        seq.push([r, t]);
+    }
+    for (const r of [4, 3, 2, 1, 0]) {
+        const t = Math.min(left, Math.max(0, all[r] - plain[r]));
+        left -= t;
+        fromVar[r] = t;
+        seq.push([r, t]);
+    }
+    const tot = r => seq.reduce((a, [x, c]) => (x === r ? a + c : a), 0);
+    const take = { d: tot(4), p: tot(3), g: tot(2), s: tot(1), n: tot(0) };
     // 1.59 : le même calcul que unitPrice, dans le même ordre, mais les facteurs fixes ne sont lus qu'une fois
     const base = ITEMS[id].sell * masteryMult(id) * marketMult() * priceMult(),
         hot = state.market.hot === id ? HOT_MULT : 1,
@@ -94,6 +97,7 @@ export function sellBatch(id, n, apply) {
         q.g -= take.g;
         q.s -= take.s;
         state.inventory[id] -= sold;
+        if (state.genetics && fromVar.some(Boolean)) dropVarRanks(id, fromVar);
         state.income.market += gain;
         state.sold[id] = (state.sold[id] || 0) + gain;
         state.market.f[id] = f;

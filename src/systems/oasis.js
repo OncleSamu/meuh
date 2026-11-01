@@ -22,7 +22,7 @@ import { collect, record } from './book.js';
 import { addQuality, ascend } from './farm.js';
 import { eventProgress } from './events.js';
 import { tip } from './tips.js';
-import { takeVarSeed, harvestVariety, varExtra, varGrowth, varThirst } from './genetics.js';
+import { takeVarSeed, harvestVariety, varRank, varExtra, varGrowth, varThirst } from './genetics.js';
 import { slotsOf, pickTree, treeStage, groundFull, advanceTree } from './orchard.js';
 import { compSpeed, plotFx, compHarvest, OASIS_BASE } from './companions.js';
 import { hasCost, payCost } from './home.js';
@@ -334,13 +334,12 @@ export function plantOasisVar(k, vid, at) {
     return true;
 }
 // ---------------- récolter ----------------
-function rollOasisQuality(k) {
+function rollOasisQuality(k, vid) {
     let x = 0.08 + 0.15 + 0.05;
     x += rank('expert') * 0.05;
     x += Math.min(0.1, state.prestige.rubans * 0.01);
     x += plotFx(OASIS_BASE + k).quality;
-    const r = Math.random();
-    return r < x * 0.35 ? 2 : r < x ? 1 : 0;
+    return varRank(vid, x);
 }
 export function harvestOasis(k, at, quiet) {
     const p = oasisPlots()[k];
@@ -351,11 +350,11 @@ export function harvestOasis(k, at, quiet) {
     const qty = rollYield('crop') + (p.v ? varExtra(p.v) : 0) + (Math.random() < fx.extra ? 1 : 0);
     compHarvest(OASIS_BASE + k);
     state.inventory[d.id] += qty;
-    if (p.v) harvestVariety(p.v, qty);
     state.stats.harvested += qty;
     state.stats.oasisHarvest = (state.stats.oasisHarvest || 0) + qty;
     addMastery(d.id, qty);
-    const q = ascend(d.id, rollOasisQuality(k));
+    const q = ascend(d.id, rollOasisQuality(k, p.v));
+    if (p.v) harvestVariety(p.v, qty, q);
     if (q) addQuality(d.id, q, qty);
     if (q >= 2) {
         state.stats.goldQ += qty;

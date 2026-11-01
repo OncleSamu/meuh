@@ -19,7 +19,7 @@ import { cropRate, season, weather, dayInSeason } from './world.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
 import { storyOk } from './story.js';
-import { preferSeed, harvestVariety } from './genetics.js';
+import { preferSeed, harvestVariety, varRank, varExtra } from './genetics.js';
 import { collect, record } from './book.js';
 import { addQuality, ascend } from './farm.js';
 import { eventProgress } from './events.js';
@@ -258,10 +258,9 @@ function rollTreeQuality(id, t) {
     x += rank('goldFruit') * 0.12;
     x += Math.min(0.1, state.prestige.rubans * 0.01);
     if (season().id === 'hiver' && !ITEMS[id].island) x -= 0.1;
-    const r = Math.random();
     if (g && g.gold && Math.random() < g.gold) return 2;
     if (t && remOf(t) && remOf(t).gold && Math.random() < remOf(t).gold) return 2;
-    return r < x * 0.35 ? 2 : r < x ? 1 : 0;
+    return varRank(t && t.v, x);
 }
 
 // ramasser les fruits au pied d'un arbre ; renvoie { id, qty } ou null
@@ -271,7 +270,8 @@ export function pickTree(k, at, quiet, z = 'farm') {
     if (!t || !t.ground) return null;
     if (barnBlocked(quiet)) return null;
     const d = ITEMS[t.id];
-    const qty = t.ground + basketBonus(t.ground);
+    // 1.62 : une variété d'arbre donne aussi ses fruits en plus (rendement, calibre)
+    const qty = t.ground + basketBonus(t.ground) + (t.v ? varExtra(t.v) : 0);
     state.inventory[t.id] += qty;
     state.stats.harvested += qty;
     const sk =
@@ -289,7 +289,7 @@ export function pickTree(k, at, quiet, z = 'farm') {
         state.stats.goldQ += gold;
         collect('g_' + t.id);
     }
-    if (t.v) harvestVariety(t.v, qty);
+    if (t.v) harvestVariety(t.v, qty, got);
     eventProgress('harvest', t.id, qty);
     pickHooks.forEach(fn => fn(t, qty, silver, gold));
     t.ground = 0;

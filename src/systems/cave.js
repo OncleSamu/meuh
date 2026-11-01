@@ -56,6 +56,7 @@ import { VINTAGES, LABEL_COUNT } from '../data/cave.js';
 import { domStepSum } from './estate.js';
 import { repStars, classMult, settleOnExit, settlePrimeur, makeCuvee, sellPrimeur, primeurQuote, enterWineContest, serveVisitor } from './chateau.js';
 import { takeQ } from './defis.js';
+import { ensureCepage, cepCount, cepPutQuality, cepRanks } from './cepage.js';
 
 // 1.15 : millésimes. L'année de jeu donne à chaque vin une qualité (0 à 3), la même pour tout le monde.
 export const gameYear = () => Math.floor((state.day - 1) / (DAYS_PER_SEASON * 4)) + 1;
@@ -104,9 +105,11 @@ export const rankName = lot =>
     lot.bad ? (lot.id === 'beer' ? 'Tournée' : 'Tourné') : caveFam(lot.id).ranks[lot.rank] + (lot.q ? ` · ${QUALITY[lot.q].name}` : '');
 // 1.6.3 : un lot peut être une bière (id 'beer', sa recette bid et son fût k)
 export const isBeerLot = lot => lot.id === 'beer';
-export const lotName = lot => lot.name || (isBeerLot(lot) ? (beerOf(lot.bid) || { name: 'Bière' }).name : ITEMS[lot.id].name);
+export const lotName = lot =>
+    lot.name || (isBeerLot(lot) ? (beerOf(lot.bid) || { name: 'Bière' }).name : lot.cep ? `${ITEMS[lot.id].name} « ${lot.cep.name} »` : ITEMS[lot.id].name);
 export const lotIcon = lot => (isBeerLot(lot) ? ['ui', 'beer'] : ['item', lot.id]);
-const baseUnit = lot => (isBeerLot(lot) ? beerValue(lot.bid) * (BARRELS[lot.k] || BARRELS.oak).mult : ITEMS[lot.id].sell);
+// 1.62 : un vin de cépage vaut le goût de sa variété (comme ses fruits)
+const baseUnit = lot => (isBeerLot(lot) ? beerValue(lot.bid) * (BARRELS[lot.k] || BARRELS.oak).mult : ITEMS[lot.id].sell * (lot.cep ? lot.cep.mult || 1 : 1));
 export const lotUnit = lot =>
     Math.round(
         baseUnit(lot) *
@@ -383,6 +386,46 @@ export function putInCave(slot, id, n, at) {
     return true;
 }
 
+// 1.62 : un vin de cépage en cave : il garde le nom et le goût de sa variété, et son rang
+export function putCepageInCave(slot, cid, n, at) {
+    const c = state.cave,
+        e = ensureCepage().list[cid];
+    n = Math.max(1, Math.min(n, caveLotMax(), cepCount(cid)));
+    if (!e || c.slots[slot] || !(cepCount(cid) >= n)) return false;
+    c.seen[e.item] = true;
+    const lq = cepPutQuality(cid, n);
+    // le lot prend les bouteilles de son rang d'abord, puis les meilleures
+    const s = cepRanks(cid);
+    let left = n;
+    for (const r of [lq, 4, 3, 2, 1, 0]) {
+        const t = Math.min(left, s[r]);
+        s[r] -= t;
+        left -= t;
+    }
+    const t = now();
+    c.slots[slot] = {
+        uid: caveUid(),
+        id: e.item,
+        n,
+        rank: 0,
+        bad: false,
+        next: t + caveStep(e.item),
+        care: t,
+        boost: 0,
+        put: t,
+        q: lq,
+        cep: { vid: e.vid, name: e.name, mult: e.mult },
+    };
+    if (isVinous(e.item)) {
+        const y = gameYear();
+        Object.assign(c.slots[slot], { vy: y, vq: vintageQ(y) });
+    }
+    sfx('pop');
+    burst(at, 'sparkle', 8);
+    tip('cepage');
+    return true;
+}
+
 export function tasteLot(i, at) {
     const lot = state.cave.slots[i];
     if (!lot || lot.n < 2 || lot.bad || lot.tasted) return false;
@@ -416,6 +459,7 @@ export function takeOut(i, at) {
     if (lot.q) kept.q = lot.q;
     if (lot.vy) Object.assign(kept, { vy: lot.vy, vq: lot.vq });
     if (lot.name) kept.name = lot.name;
+    if (lot.cep) kept.cep = lot.cep;
     if (lot.ls) kept.ls = lot.ls;
     if (isBeerLot(lot)) Object.assign(kept, { bid: lot.bid, k: lot.k });
     settleOnExit(lot, kept, lotValue, at);

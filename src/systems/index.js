@@ -67,3 +67,4 @@ export * from './estate.js';
 export * from './timeline.js';
 export * from './fishing.js';
 export * from './goals.js';
+export * from './cepage.js';

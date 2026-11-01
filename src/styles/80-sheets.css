@@ -1363,3 +1363,24 @@ button.short.link {
 .skill-branches .pick-chip.locked {
     opacity: 0.6;
 }
+
+/* 1.62 : le cépage à la machine, les bouteilles de cépage */
+.cep-card .card-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.cep-card .chips-row {
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+.cep-card .pick-chip small {
+    margin-left: 4px;
+    opacity: 0.7;
+}
+.rtile .rt-cep {
+    display: block;
+    font-weight: 700;
+    color: #7a2f4a;
+    overflow-wrap: anywhere;
+}

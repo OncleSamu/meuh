@@ -630,11 +630,11 @@ export function harvestPlot(plot) {
     plot.lastCrop = d.id;
     plot.lastAt = now();
     state.inventory[plot.itemId] += qty;
-    if (vid) harvestVariety(vid, qty);
     state.stats.harvested += qty;
     addMastery(d.id, qty);
     const quality = ascend(d.id, rollQuality(plot));
     addQuality(d.id, quality, qty);
+    if (vid) harvestVariety(vid, qty, quality);
     if (quality >= 2) {
         state.stats.goldQ += qty;
         collect('g_' + d.id);

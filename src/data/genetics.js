@@ -25,7 +25,7 @@ export const PLANT_TRAITS = [
     { id: 'late', name: 'Maturation lente', icon: ['ui', 'star'], extra: true, hint: 'plus longue à pousser, plus souvent en argent ou en or' },
     { id: 'pest', name: 'Anti-nuisibles', icon: ['ui', 'pest'], extra: true, hint: 'moins de pucerons et de corbeaux' },
     { id: 'seedy', name: 'Graine généreuse', icon: ['ui', 'packet'], extra: true, hint: 'plus de graines à la récolte' },
-    { id: 'luck', name: 'Chance', icon: ['ui', 'wishStar'], extra: true, hint: 'plus de récoltes dorées' },
+    { id: 'luck', name: 'Chance', icon: ['ui', 'wishStar'], extra: true, hint: 'plus de récoltes dorées, et des fruits en or au verger' },
     { id: 'soilfit', name: 'Terre d’accueil', icon: ['ui', 'soilWet'], extra: true, hint: 'profite du bonus de bon sol sur n’importe quel sol' },
     { id: 'calibre', name: 'Calibre', icon: ['ui', 'yield'], extra: true, hint: 'parfois une unité de plus, mais un peu moins de qualité' },
 ];
