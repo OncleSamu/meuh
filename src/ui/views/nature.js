@@ -231,13 +231,25 @@ export function setupNature() {
         claimNatLog: (el, d) => G.claimNatLog(d.id, el),
     });
     // un coup de hache au premier contact, sans attendre le « clic »
+    // 1.60 : au doigt, le coup part au relâché, et seulement si le doigt n'a pas glissé (sinon, on fait défiler la page)
+    let touch = null;
     const down = e => {
         const slot = e.target.closest('[data-res]');
-        if (slot && !slot.disabled) {
-            e.preventDefault();
-            run('hit', slot, slot.dataset);
+        if (!slot || slot.disabled) return;
+        if (e.pointerType === 'touch') {
+            touch = { slot, x: e.clientX, y: e.clientY };
+            return;
         }
+        e.preventDefault();
+        run('hit', slot, slot.dataset);
     };
-    byId('view-farm').addEventListener('pointerdown', down);
-    byId('view-aside').addEventListener('pointerdown', down);
+    const up = e => {
+        const t = touch;
+        touch = null;
+        if (!t || e.type !== 'pointerup' || Math.hypot(e.clientX - t.x, e.clientY - t.y) > 10 || !t.slot.isConnected || t.slot.disabled) return;
+        run('hit', t.slot, t.slot.dataset);
+    };
+    for (const id of ['view-farm', 'view-aside']) byId(id).addEventListener('pointerdown', down);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
 }

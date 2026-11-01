@@ -13,6 +13,7 @@ import { SoundEngine } from '../sound.js';
 import { confirmTap } from '../confirm.js';
 import { updateScene } from '../scene.js';
 import { installState, installApp, remindOn, toggleRemind } from '../pwa.js';
+import { CHANGELOG } from '../../data/changelog.js';
 
 export const VERSION = '{{VERSION}}';
 const TEXT_SIZES = ['Normale', 'Grande', 'Très grande'];
@@ -84,7 +85,8 @@ function mainPage() {
         ),
         group(
             'Aide',
-            navRow('Revoir le tutoriel', 'replayTuto') +
+            navRow('Mises à jour', 'setPage', { p: 'updates' }, ['ui', 'scroll'], '›', `Version ${VERSION} : ce que chaque version a apporté`) +
+                navRow('Revoir le tutoriel', 'replayTuto') +
                 (state.dog.owned
                     ? `<div class="rename"><input type="text" maxlength="16" value="${esc(state.dog.name)}" id="rename-dog" aria-label="Nom du chien">${btn('Renommer le chien', { act: 'renameDog', size: 'sm' })}</div>`
                     : ''),
@@ -128,11 +130,20 @@ function installPage() {
     );
 }
 
+// 1.60 : toutes les mises à jour depuis le début ; la plus récente est ouverte
+function updatesPage() {
+    return `<div class="updates">${CHANGELOG.map(
+        (c, k) =>
+            `<details class="upd card"${k === 0 ? ' open' : ''}><summary><b>${esc(c.v)}</b>${c.title ? ` · ${esc(c.title)}` : ''}${c.date ? `<small>${esc(c.date)}</small>` : ''}</summary>${c.text ? `<p>${esc(c.text)}</p>` : ''}</details>`,
+    ).join('')}</div>`;
+}
+
 const PAGES = {
     main: ['Réglages', mainPage],
     export: ['Exporter ma ferme', exportPage],
     import: ['Importer une ferme', importPage],
     install: ['Installer l’appli', installPage],
+    updates: ['Mises à jour', updatesPage],
 };
 
 defineSheet('settings', {

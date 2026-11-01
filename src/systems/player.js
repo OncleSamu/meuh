@@ -87,8 +87,12 @@ export const getXpReq60 = lvl => {
     return REQ60[lvl];
 };
 // 1.56 : 64 niveaux. Jusqu'au 49, la courbe des 60 niveaux ; de 50 à 63, une pente douce (127 000 puis environ 2 000 de plus par niveau)
+// 1.60 : les premiers niveaux allaient trop vite ; du 2 au 14, il faut plus d'expérience (× 2,2 au niveau 2, de moins en moins jusqu'au 15)
+export const earlySlow = lvl => (lvl >= 2 && lvl < BALANCE.slowTo ? 1 + (BALANCE.slowMax - 1) * ((BALANCE.slowTo - lvl) / (BALANCE.slowTo - 2)) : 1);
 export const getXpReq = lvl =>
-    lvl < BALANCE.xp64.from ? getXpReq60(lvl) : Math.round((BALANCE.xp64.first + (lvl - BALANCE.xp64.from) * BALANCE.xp64.step) / 10) * 10;
+    lvl < BALANCE.xp64.from
+        ? Math.round((getXpReq60(lvl) * earlySlow(lvl)) / 10) * 10
+        : Math.round((BALANCE.xp64.first + (lvl - BALANCE.xp64.from) * BALANCE.xp64.step) / 10) * 10;
 // expérience totale pour atteindre un niveau
 export const xpToReach = (L, req = getXpReq) => {
     let s = 0;

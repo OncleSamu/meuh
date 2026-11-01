@@ -616,6 +616,8 @@ html.season-automne .meadow {
 .vmap {
     position: relative;
     aspect-ratio: 16 / 11;
+    /* 1.60 : les étiquettes grandissent avec la carte (sur ordinateur, elles restaient minuscules) */
+    container-type: inline-size;
     border: 2.5px solid var(--ink);
     border-radius: 14px;
     overflow: hidden;
@@ -670,14 +672,14 @@ html.season-automne .meadow {
     transform: translateX(-50%);
     /* un nom long passe sur deux lignes plutôt que de sortir de la carte */
     width: max-content;
-    max-width: 82px;
+    max-width: max(82px, 25cqi);
     overflow-wrap: normal;
     hyphens: manual;
     text-align: center;
     line-height: 1.1;
     padding: 0 4px;
     font-family: var(--display);
-    font-size: 0.6rem;
+    font-size: clamp(0.6rem, 2.3cqi, 0.95rem);
     background: var(--paper-l);
     border: 1.5px solid var(--ink);
     border-radius: 6px;

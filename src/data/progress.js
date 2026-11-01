@@ -3,6 +3,8 @@
 
 export const BALANCE = {
     xpBase: 300,
+    slowMax: 2.2, // 1.60 : × 2,2 d'expérience au niveau 2…
+    slowTo: 15, // … jusqu'à revenir à × 1 au niveau 15
     xpGrowth: 1.52,
     xpKnee: 10,
     xpA: 614,

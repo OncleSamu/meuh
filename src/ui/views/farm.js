@@ -381,6 +381,10 @@ function scootDog() {
 
 // ---------------- les gestes sur le champ ----------------
 let drag = null;
+// le doigt posé sur une parcelle, en attendant de savoir s'il défile ou s'il plante
+let pending = null;
+const HOLD = 180,
+    SLOP = 9;
 function plotEl(i) {
     return i >= 1000 ? ghEls[i - 1000] : plotEls[i];
 }
@@ -429,13 +433,23 @@ export function setupFarm() {
             ),
         dog: el => G.handleDog(el),
     });
+    // 1.60 : au doigt, on ne plante pas au premier contact : un glissement fait défiler la page,
+    // un appui bref agit sur la parcelle, un doigt posé un instant puis glissé plante (ou récolte) en chaîne
+    const startPlot = i => {
+        const a = press(i);
+        if (G.DRAG_ACTIONS.includes(a)) drag = { mode: a, done: new Set([i]) };
+    };
     const down = e => {
         const el = e.target.closest('.plot[data-i]');
         if (el) {
-            e.preventDefault();
             const i = +el.dataset.i;
-            const a = press(i);
-            if (G.DRAG_ACTIONS.includes(a)) drag = { mode: a, done: new Set([i]) };
+            if (e.pointerType === 'touch') {
+                clearTimeout(pending && pending.timer);
+                pending = { i, x: e.clientX, y: e.clientY, timer: setTimeout(() => pending && pending.i === i && ((pending = null), startPlot(i)), HOLD) };
+                return;
+            }
+            e.preventDefault();
+            startPlot(i);
             return;
         }
         if (e.target.closest('#dog')) {
@@ -461,6 +475,11 @@ export function setupFarm() {
     const viewEl = byId('view-farm');
     viewEl.addEventListener('pointerdown', down);
     window.addEventListener('pointermove', e => {
+        // le doigt part avant la fin de l'appui : c'est un défilement, pas une plantation
+        if (pending && Math.hypot(e.clientX - pending.x, e.clientY - pending.y) > SLOP) {
+            clearTimeout(pending.timer);
+            pending = null;
+        }
         if (!drag) return;
         const t = document.elementFromPoint(e.clientX, e.clientY);
         const el = t && t.closest && t.closest('.plot[data-i]');
@@ -471,6 +490,21 @@ export function setupFarm() {
         if (G.plotAction(G.getPlot(i), state.selectedTool, i) === drag.mode) run('plot', el, { i, a: drag.mode });
     });
     const end = e => {
+        // un appui bref, sans glisser : on agit sur la parcelle
+        if (pending) {
+            clearTimeout(pending.timer);
+            const i = pending.i;
+            pending = null;
+            if (e.type === 'pointerup') {
+                startPlot(i);
+                drag = null;
+                if (buyPress !== null && buyPress === i) {
+                    buyPress = null;
+                    askPlot(i);
+                }
+                return;
+            }
+        }
         drag = null;
         if (buyPress === null) return;
         const i = buyPress;

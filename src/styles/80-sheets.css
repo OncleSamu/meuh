@@ -1264,3 +1264,44 @@ svg.chart .bar:hover path {
 .set-title + .guide-item {
     margin-top: 8px;
 }
+
+/* 1.60 : Réglages › Mises à jour */
+.updates {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.upd.card {
+    display: block;
+    padding: 8px 12px;
+}
+.upd summary {
+    position: relative;
+    padding-right: 20px;
+    cursor: pointer;
+    font-weight: 800;
+    list-style: none;
+}
+.upd summary::-webkit-details-marker {
+    display: none;
+}
+.upd summary::after {
+    content: '▾';
+    position: absolute;
+    right: 0;
+    top: 0;
+    opacity: 0.6;
+}
+.upd[open] summary::after {
+    content: '▴';
+}
+.upd summary small {
+    display: block;
+    font-weight: 700;
+    opacity: 0.65;
+}
+.upd p {
+    margin: 6px 0 2px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}

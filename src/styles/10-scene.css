@@ -156,22 +156,25 @@
 
 .rain {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cg stroke='%23dbeeff' stroke-width='1.6' stroke-linecap='round' opacity='.75'%3E%3Cpath d='M10 4l-3 12M48 30l-3 12M78 10l-3 12M28 58l-3 12M66 66l-3 12'/%3E%3C/g%3E%3C/svg%3E");
-    animation: rain 0.5s linear infinite;
+    /* 1.60 : le décalage d'une boucle tombe juste sur un motif entier : plus de saut */
+    animation: rain 2s linear infinite;
 }
 
 .rain.r2 {
     background-size: 130px 130px;
-    animation-duration: 0.8s;
+    animation-name: rain2;
+    animation-duration: 3.2s;
 }
 
 .snow {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='10' cy='14' r='2.6'/%3E%3Ccircle cx='60' cy='40' r='2'/%3E%3Ccircle cx='100' cy='12' r='3'/%3E%3Ccircle cx='34' cy='80' r='2.4'/%3E%3Ccircle cx='86' cy='96' r='2'/%3E%3C/g%3E%3C/svg%3E");
-    animation: snow 7s linear infinite;
+    animation: snow 21s linear infinite;
 }
 
 .snow.s2 {
     background-size: 180px 180px;
-    animation-duration: 11s;
+    animation-name: snow2;
+    animation-duration: 33s;
     opacity: 0.7;
 }
 
@@ -350,13 +353,23 @@ html.calm #weather .flutter {
 
 @keyframes rain {
     to {
-        background-position: -24px 90px;
+        background-position: -90px 360px;
+    }
+}
+@keyframes rain2 {
+    to {
+        background-position: -130px 520px;
     }
 }
 
 @keyframes snow {
     to {
-        background-position: 40px 120px;
+        background-position: 120px 360px;
+    }
+}
+@keyframes snow2 {
+    to {
+        background-position: 180px 540px;
     }
 }
 
