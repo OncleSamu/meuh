@@ -634,6 +634,7 @@ export const MAT = {
     machine: {
         deli: { wood: 8, stone: 6 },
         crepery: { wood: 12, stone: 8 },
+        pizzeria: { wood: 14, stone: 10 },
         saddlery: { wood: 30, stone: 20 },
         malthouse: { wood: 20, stone: 20 },
         marmite: { wood: 10, stone: 8 },

@@ -12,6 +12,7 @@ import { RECIPES_134 } from './v134.js';
 import { RECIPES_135 } from './v135.js';
 import { RECIPES_137 } from './v137.js';
 import { RECIPES_150, MACHINES_150 } from './v150.js';
+import { RECIPES_161, PIZZERIA } from './v161.js';
 import { RECIPES_153, MACHINES_153 } from './v153.js';
 import { ITEMS } from './items.js';
 import { ANIMALS } from './animals.js';
@@ -31,7 +32,7 @@ export const MACHINES = {
         name: 'Four à pain',
         cost: 1000,
         reqLvl: 4,
-        desc: 'Pains, viennoiseries, tartes salées et pizzas',
+        desc: 'Pains, viennoiseries et tartes salées',
     },
     kitchen: {
         id: 'kitchen',
@@ -3450,6 +3451,13 @@ Object.assign(RECIPES, {
     winterBlanket: { id: 'winterBlanket', machine: 'saddlery', ing: { cloth: 3, wool: 2 }, time: 2400, lvl: 44, base: 44, xp: 26 },
     hairBrush: { id: 'hairBrush', machine: 'saddlery', ing: { hardwood: 1, horsehair: 3 }, time: 1200, lvl: 44, base: 44, xp: 16 },
 });
+
+// ---------------- 1.61 : la pizzeria ----------------
+MACHINES.pizzeria = { ...PIZZERIA };
+RECIPES.pizza.machine = 'pizzeria';
+RECIPES.pizza.ing = { flour: 2, tomato: 2, cheese: 1, basil: 1 };
+RECIPES.pizza.lvl = RECIPES.pizza.base = PIZZERIA.reqLvl;
+for (const [id, , ing, time, lvl] of RECIPES_161) RECIPES[id] = { id, machine: 'pizzeria', ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 
 // ---------------- 1.24.7 : une recette ne s'ouvre jamais avant ses ingrédients ----------------
 // (la pizza demandait du fromage d'un niveau plus loin, la crêpe au calvados du calvados…) ; on relève la recette

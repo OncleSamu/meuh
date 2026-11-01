@@ -1472,3 +1472,21 @@ Object.assign(CARNET, {
     cardamomMilk:
         'Le lait de renne à la cardamome vient du traîneau : sans lui, pas d’épice. Chaud, épais, un peu sucré, il sent les pains de Noël. On le boit à petites gorgées, avec une couverture sur les genoux.',
 });
+
+// 1.61 : la pizzeria
+Object.assign(CARNET, {
+    pizzaVeggie:
+        'La pizza du potager, c’est ce qui reste au champ en fin d’été : poivron, courgette, aubergine, tout en tranches. Ton grand-père disait qu’une pizza sans jambon, c’était une tarte. Il en reprenait deux parts.',
+    pizzaReine:
+        'La reine, jambon et champignons, c’est la pizza du dimanche soir. Les champignons, on les ramassait le matin même ; le jambon venait du cochon de l’hiver. Une reine, oui, mais une reine de chez nous.',
+    calzone:
+        'La calzone, c’est une pizza pliée en deux comme une lettre. On ne sait pas ce qu’il y a dedans avant de l’ouvrir : du jambon, du fromage, un œuf qui coule. Ton grand-père l’appelait la pizza à surprise, et il trichait en regardant par le bord.',
+    pizzaGoatHoney:
+        'La chèvre-miel, c’est l’idée de ton grand-père, celle qui a fait fuir les cousins d’Italie. Une base de crème, des rondelles de chèvre, un filet de miel et des noix. Ils avaient tort de partir : c’est devenue la plus demandée du village.',
+    pizzaHawaii:
+        'L’hawaïenne, avec de l’ananas, fait se disputer toutes les tablées. Tiago en ramène de l’île et la défend comme un drapeau. Moi, je ne dis rien : je mange ma part, et je prends celle de ceux qui râlent.',
+    pizzaFourCheese:
+        'La quatre fromages, c’est un tour du pays en une part : la tomme qui file, le chèvre qui pique, le bleu qui a du caractère, le comté qui chante. Il faut de la crème et pas de tomate, sinon ils ne s’entendent plus. Une pizza de patience : il faut avoir fait tous les fromages avant.',
+    pizzaSavoyarde:
+        'La savoyarde, c’est une tartiflette qui aurait pris l’avion pour l’Italie. Pommes de terre, lardons, crème et une moitié de reblochon par-dessus. On la mange quand il neige, et elle tient au corps jusqu’au printemps.',
+});

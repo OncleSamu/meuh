@@ -1,6 +1,6 @@
 // Le commerce : magasin, matériaux de construction, marché, prix et annulation d'une vente.
 import { herdFull, placeAnimal, isOasisBeast, isNordBeast, fullText } from './pastures.js';
-import { state, scaleLvl, lvOk } from '../core/state.js';
+import { state, scaleLvl, lvOk, skill } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { fmt } from '../core/format.js';
@@ -28,7 +28,9 @@ const COIN = ['ui', 'coin'];
 
 // ---------------- les prix ----------------
 export const marketMult = () => Math.max(BALANCE.marketEnd, BALANCE.marketStart - BALANCE.marketSlope * (scaleLvl() - 1));
-export const sellPrice = id => Math.floor(ITEMS[id].sell * masteryMult(id) * marketMult() * priceMult());
+// 1.61 : « Fait maison » : les produits de l'atelier se vendent plus cher
+export const craftMult = id => (ITEMS[id].type === 'artisan' ? 1 + 0.04 * skill('chefPrice') : 1);
+export const sellPrice = id => Math.floor(ITEMS[id].sell * masteryMult(id) * marketMult() * priceMult() * craftMult(id));
 export const demand = id => (state.market.f[id] === undefined ? 1 : state.market.f[id]);
 export const dropPer = id => 0.0075 * (1 + Math.log10(ITEMS[id].sell)) * (rank('trader') ? 0.5 : 1) * dropMult(id);
 export const eventSellMult = () => (eventActive('ete') ? 1.25 : 1);
@@ -36,7 +38,15 @@ export const unitPrice = (id, q = 0, f = demand(id)) =>
     Math.max(
         1,
         Math.floor(
-            ITEMS[id].sell * masteryMult(id) * marketMult() * priceMult() * QUALITY[q].mult * f * (state.market.hot === id ? HOT_MULT : 1) * eventSellMult(),
+            ITEMS[id].sell *
+                masteryMult(id) *
+                marketMult() *
+                priceMult() *
+                QUALITY[q].mult *
+                f *
+                (state.market.hot === id ? HOT_MULT : 1) *
+                eventSellMult() *
+                craftMult(id),
         ),
     );
 export const sellableKeys = () => Object.keys(ITEMS).filter(k => ITEMS[k].sell && state.inventory[k] > 0);
@@ -69,11 +79,12 @@ export function sellBatch(id, n, apply) {
     const base = ITEMS[id].sell * masteryMult(id) * marketMult() * priceMult(),
         hot = state.market.hot === id ? HOT_MULT : 1,
         ev = eventSellMult(),
+        cm = craftMult(id),
         floor = demandFloor(id),
         drop = dropPer(id);
     for (const [ql, cnt] of seq)
         for (let k = 0; k < cnt; k++) {
-            gain += Math.max(1, Math.floor(base * QUALITY[ql].mult * f * hot * ev));
+            gain += Math.max(1, Math.floor(base * QUALITY[ql].mult * f * hot * ev * cm));
             f = Math.max(Math.min(f, floor), f - drop);
         }
     const sold = take.d + take.p + take.g + take.s + take.n;

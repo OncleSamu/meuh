@@ -19,6 +19,7 @@ const FIRMIN = [
     'pastry',
     'pastaworks',
     'crepery',
+    'pizzeria',
     'islandBakery',
     'sugarmill',
     'oilmill',

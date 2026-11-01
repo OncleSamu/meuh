@@ -116,7 +116,7 @@ export const stoveAt = k => (state.nord && state.nord.stoves[k]) || null;
 export const stoveKeys = () => Object.keys((state.nord && state.nord.stoves) || {}).map(Number);
 export const stoveRadius = () => (nordUp('iron') ? 2 : NORD.stove.radius);
 export const stoveCap = () => NORD.stove.fuelCap[nordUp('logbox') ? 1 : 0];
-export const stoveBurn = () => (nordUp('insulation') ? NORD.insulation : 1);
+export const stoveBurn = () => (nordUp('insulation') ? NORD.insulation : 1) * (1 - 0.12 * rank('stoker'));
 export const stoveLit = k => !!(stoveAt(k) && stoveAt(k).fuel > 0);
 export const stoveCost = () => NORD.stove.cost;
 export const nordUpNext = () => NORD.ups.find(([id]) => !nordUp(id)) || null;
@@ -531,7 +531,7 @@ const NORD_GOODS = new Set([...NORD_IDS, ...NORD_PRODUCTS.map(p => p[0]), ...REC
 export const isNordGood = id => NORD_GOODS.has(id);
 export const sledMult = id => (id && !isNordGood(id) ? SLED.otherMult : SLED.mult) * (1 + (projectDone(SLED.iceProject) ? SLED.iceBonus : 0));
 export const sledValue = (load = sledState().load) =>
-    Math.round(Object.entries(load).reduce((a, [id, n]) => a + n * SLED.perLoad * sellPrice(id) * sledMult(id), 0) / 10) * 10;
+    Math.round((Object.entries(load).reduce((a, [id, n]) => a + n * SLED.perLoad * sellPrice(id) * sledMult(id), 0) * (1 + 0.1 * rank('caravaner'))) / 10) * 10;
 const sledFree = id => (state.inventory[id] || 0) - (sledState().load[id] || 0) * SLED.perLoad;
 export const sledGoods = () =>
     Object.keys(state.inventory).filter(

@@ -16,12 +16,12 @@ function skills() {
     const b = ui.sel.branch || 'agri',
         pts = G.skillPoints();
     return `<div class="card skills-card"><div class="card-head">${ico(['ui', 'skillbook'], 'ico big')}<div class="card-main"><div class="card-title">${pts ? `${pts} point${pts > 1 ? 's' : ''} à placer` : 'Aucun point à placer'}</div>
-        <div class="card-sub">Vous gagnez un point à chaque niveau. Les compétences repartent à zéro si vous vendez la ferme.</div></div></div>
-        <div class="seg">${Object.entries(SKILLS)
-            .map(
-                ([id, br]) =>
-                    `<button class="${id === b ? 'on' : ''}" data-act="branch" data-b="${id}">${ico(br.icon)}<span>${br.name}</span><small>${G.branchSpent(id)}</small></button>`,
-            )
+        <div class="card-sub">Un point à chaque niveau, huit branches qui s’ouvrent au fil du jeu : il y a plus de rangs que de points, à vous de choisir. Les compétences repartent à zéro si vous vendez la ferme.</div></div></div>
+        <div class="chips-row wrap skill-branches">${Object.entries(SKILLS)
+            .map(([id, br]) => {
+                const locked = state.level < (br.lvl || 1);
+                return `<button class="pick-chip${id === b ? ' on' : ''}${locked ? ' locked' : ''}" data-act="branch" data-b="${id}">${ico(locked ? ['ui', 'lock'] : br.icon)}<span>${br.name}</span><small>${locked ? `niv. ${br.lvl}` : `${G.branchSpent(id)}/${br.list.reduce((a, k) => a + k.max, 0)}`}</small></button>`;
+            })
             .join('')}</div>
         <div class="tree">${SKILLS[b].list
             .map((sk, k) => {

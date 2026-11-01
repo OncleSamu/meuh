@@ -23,6 +23,7 @@ import { INCIDENT_LVL, RARE_EVENT_LVL } from '../data/surprises.js';
 import { CONTRACT_LVL, CONTEST_LVL, LEAGUES, CARGO, ARMAND, NMARKET, VAULT } from '../data/commerce.js';
 import { DOMAINE_LVL } from '../data/domaine.js';
 import { DAILY_REWARDS, HOLIDAY_LVL } from '../data/world.js';
+import { levelGate } from './goals.js';
 import { BALANCE, MAX_LEVEL, MAX_LEVEL_60, RENOWN_XP, ACH_REWARDS, MEDALS, CAP_REQ, MASTERY_LVL, HOUSE, FARMHAND, ALBUM_LEVELS } from '../data/progress.js';
 import { ACHIEVEMENTS, SKILLS } from '../data/meta.js';
 import { trackDayEarn, record } from './book.js';
@@ -173,9 +174,14 @@ export function addXp(amount, at) {
     if (amount <= 0) return;
     state.xp += amount;
     if (at !== undefined) emit('float', { at, parts: [`+${fmt(amount)}`, ['ui', 'xp']], cls: 'xp', dy: 0, dx: 18 });
+    checkLevel();
+}
+
+// 1.61 : le passage de niveau attend que les objectifs du niveau soient faits (l'expérience, elle, continue de monter)
+export function checkLevel() {
     const start = state.level;
     let req = getXpReq(state.level);
-    while (state.level < MAX_LEVEL && state.xp >= req) {
+    while (state.level < MAX_LEVEL && state.xp >= req && levelGate()) {
         state.xp -= req;
         state.level++;
         req = getXpReq(state.level);
@@ -537,6 +543,7 @@ export const skillDesc = (sk, r) => fill(sk.desc, 0, r * (sk.per || 0));
 
 export function skillReq(b, k) {
     const sk = SKILLS[b].list[k];
+    if (state.level < (SKILLS[b].lvl || 1)) return `Cette branche s’ouvre au niveau ${SKILLS[b].lvl}`;
     if (k > 0 && rank(SKILLS[b].list[k - 1].id) < 1) return `Apprenez d’abord « ${SKILLS[b].list[k - 1].name} »`;
     if (sk.cap && branchSpent(b) < CAP_REQ) return `Placez ${CAP_REQ} points en ${SKILLS[b].name.toLowerCase()} pour le débloquer`;
     return null;

@@ -1,5 +1,5 @@
 // La maison de la ferme et Théo, le commis ; coûts en pièces et matériaux.
-import { state, lvOk } from '../core/state.js';
+import { state, lvOk, skill } from '../core/state.js';
 import { emit, toast, sfx, buzz, burst } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { MACHINE_SLOTS } from '../data/machines.js';
@@ -43,8 +43,8 @@ export const houseCanUp = () => {
     return !!n && state.level >= n.lvl && hasCost(n.cost);
 };
 // bonus cumulés de la maison et des chantiers
-export const extraOrders = () => (houseLvl() >= 2 ? 1 : 0) + (projectDone('hall') ? 1 : 0) + domStepSum('trade', 'orders');
-export const machineSlots = type => MACHINE_SLOTS + (houseLvl() >= 3 ? 1 : 0) + domStepSum('kitchen') + (type ? mSlotsBonus(type) : 0);
+export const extraOrders = () => (houseLvl() >= 2 ? 1 : 0) + (projectDone('hall') ? 1 : 0) + domStepSum('trade', 'orders') + skill('notice');
+export const machineSlots = type => MACHINE_SLOTS + (houseLvl() >= 3 ? 1 : 0) + domStepSum('kitchen') + skill('bigQueue') + (type ? mSlotsBonus(type) : 0);
 export const extraStall = () => (houseLvl() >= 4 ? 1 : 0) + (houseLvl() >= 6 ? 1 : 0) + (projectDone('washhouse') ? 1 : 0) + domStepSum('trade', 'stall');
 export const houseBarn = () => (houseLvl() >= 1 ? 40 : 0) + (houseLvl() >= 6 ? 80 : 0) + domStepSum('barn');
 export const housePay = () => (houseLvl() >= 5 ? 1.1 : 1);

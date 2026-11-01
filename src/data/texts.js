@@ -112,6 +112,16 @@ export const TIPS = {
         title: 'L’ombre du sorgho',
         text: 'Le sorgho monte plus haut qu’un homme. Dès qu’il a poussé de moitié, il fait de l’ombre aux huit cases autour de lui : elles boivent un tiers de moins, et la chaleur de midi ne les touche plus. Il abrite aussi deux bêtes de l’enclos du soleil. Mais on le récolte : plus de sorgho debout, plus d’ombre. Ton grand-père faisait pareil avec ses tournesols : les salades à leur pied ne montaient jamais en graine, même en août.',
     },
+    levelGoals: {
+        icon: ['ui', 'star'],
+        title: 'Le niveau t’attend',
+        text: 'Tu as assez d’expérience pour monter, mais chaque niveau demande d’abord d’essayer ce qu’il vient d’ouvrir : une ou deux petites choses, en haut du champ. Rien n’est perdu : l’expérience continue de s’amasser. Mon instituteur disait qu’on ne passe pas en classe supérieure sans avoir ouvert ses livres. Il ne vérifiait jamais, mais on avait peur.',
+    },
+    skills161: {
+        icon: ['ui', 'skillbook'],
+        title: 'De nouvelles compétences',
+        text: 'Les compétences ont grandi : huit branches maintenant, une pour chaque partie de la ferme (atelier, verger, nature, contrées, village…). Tes points te sont rendus : replace-les dans Menu › Progrès. Quand j’ai appris à tricoter, ma mère m’a fait défaire trois écharpes. La quatrième, je la porte encore.',
+    },
     oasisGrove: {
         icon: ['item', 'date'],
         title: 'Le verger de l’oasis',

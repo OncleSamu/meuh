@@ -1305,3 +1305,56 @@ svg.chart .bar:hover path {
     font-size: 0.85rem;
     line-height: 1.4;
 }
+
+/* 1.60 : ce qu'il faut pour une recette */
+.rneeds {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.rneed {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    background: var(--paper-l);
+}
+.rneed.ok {
+    opacity: 0.75;
+}
+.rneed-art {
+    width: 40px;
+    height: 40px;
+    flex: none;
+}
+.rneed .row-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.rneed .row-main small {
+    opacity: 0.75;
+}
+button.short.link {
+    font: inherit;
+    font-size: 0.75rem;
+    color: var(--red);
+    text-align: left;
+    text-decoration: underline;
+    padding: 0;
+}
+
+/* 1.61 : les huit branches de compétences */
+.skill-branches {
+    margin: 8px 0;
+}
+.skill-branches .pick-chip small {
+    margin-left: 4px;
+    opacity: 0.7;
+}
+.skill-branches .pick-chip.locked {
+    opacity: 0.6;
+}

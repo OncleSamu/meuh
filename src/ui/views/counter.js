@@ -13,6 +13,7 @@ import { ico, art } from '../icons.js';
 import { btn, bar, hint, segmented, section, hearts, costRow } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
 import { openBrew } from '../brew.js';
+import { openSheet } from '../sheets.js';
 
 const tab = () => ui.sel.counterTab || 'salon';
 const COIN = () => ico(['ui', 'coin']);
@@ -60,7 +61,7 @@ function seatCard(s, i) {
                 ${have ? btn(`Du stock ×${have}`, { act: 'seatStock', data: { i }, kind: 'green', size: 'sm' }) : ''}
                 ${btn('', { act: 'seatAway', data: { i }, size: 'sm', icon: ['ui', 'cross'], kind: 'ghost', title: 'Renvoyer' })}
             </div>
-            ${ok || have ? '' : `<small class="short">${G.canCook(s.drink) ? 'Le comptoir se repose…' : `Il manque ${G.missingFor(s.drink).join(', ')}`}</small>`}
+            ${ok || have ? '' : G.canCook(s.drink) ? '<small class="short">Le comptoir se repose…</small>' : `<button class="short link" data-act="needs" data-id="${s.drink}">Il manque ${G.missingFor(s.drink).join(', ')} ›</button>`}
         </div></div>`;
 }
 function salonHtml() {
@@ -167,9 +168,10 @@ export function setupCounter() {
         counterKind: (el, d) => (ui.sel.counterKind = d.f),
         brewStock: (el, d) => {
             if (!G.recipeUnlocked(d.id)) return toast(G.recipeLockText(RECIPES[d.id]), ['ui', 'lock']);
+            if (!G.canCook(d.id)) return openSheet('needs', { id: d.id });
             openBrew(d.id, null);
         },
-        seatBrew: (el, d) => openBrew(d.id, d.vid),
+        seatBrew: (el, d) => (G.canCook(d.id) ? openBrew(d.id, d.vid) : openSheet('needs', { id: d.id })),
         seatStock: (el, d) => G.counterServe(+d.i, el),
         seatAway: (el, d) => G.counterSendAway(+d.i),
         upSalon: () => G.upgradeSalon(),

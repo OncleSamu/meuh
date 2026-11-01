@@ -1,6 +1,6 @@
 // L'histoire : rénover le village, puis le hameau, le port, l'alpage et le domaine, chapitre par chapitre.
 // Chaque bâtiment demande une liste de produits, débloque quelque chose et fait avancer l'histoire.
-import { state } from '../core/state.js';
+import { state, skill } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
@@ -163,7 +163,7 @@ export function finishProject(pid, at) {
     applyProjectReward(pid);
     addPhoto('building', pid, p.name, 'Rénovation terminée');
     addFriendship(p.vid, 6, at);
-    const xp = projectXp(p);
+    const xp = Math.round(projectXp(p) * (1 + 0.1 * skill('builder')));
     addXp(xp, at);
     const bonus = chapterDone(p.ch) ? chapterBonus(p.ch, at) : null;
     emit('story', { pid, next: storyNextText(p), xp, bonus });

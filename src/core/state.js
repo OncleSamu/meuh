@@ -127,6 +127,9 @@ export function newState() {
         egg: null,
         tutorial: { step: 0, done: false },
         skills: {},
+        skills161: false, // 1.61 : compétences refondues (points rendus une fois)
+        skillsRefund: false,
+        lvGoals: null, // 1.61 : les objectifs du niveau en cours
         forest: [],
         mine: [],
         collection: {},
@@ -190,6 +193,8 @@ export let state = newState();
 export const setState = s => (state = s);
 // 1.4 : le jeu passe de 40 à 50 niveaux ; les gains et les tailles de commandes gardent l'échelle des 40 niveaux
 // 1.4 : ce qu'une ancienne partie avait déjà débloqué reste ouvert (state.lvKeep, posé à la conversion)
+// 1.61 : le rang d'une compétence (lu par tous les systèmes)
+export const skill = id => (state.skills && state.skills[id]) || 0;
 export const lvOk = (d, lvl = d.reqLvl) => state.level >= (lvl || 1) || !!(state.lvKeep && state.lvKeep[d.id]);
 // 1.36 : les gains gardent l'échelle des 50 niveaux : jusqu'au 57, la même pente ; de 58 à 64, elle s'adoucit (1.56)
 export const scaleLvl = () => {

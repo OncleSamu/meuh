@@ -36,34 +36,38 @@ export const ACHIEVEMENTS = [
 
 // ---------------- Compétences ----------------
 // desc : {x} = rang × per
+// 1.61 : huit branches (une par grande partie du jeu), 67 rangs pour 63 points : on choisit. Chaque branche s'ouvre à son niveau.
 export const SKILLS = {
     agri: {
         name: 'Agriculture',
         icon: ['item', 'wheat'],
+        lvl: 2,
         list: [
-            { id: 'green', name: 'Main verte', max: 3, icon: ['item', 'carrot'], desc: 'Les cultures poussent {x} % plus vite', per: 5 },
-            { id: 'bounty', name: 'Récolte généreuse', max: 3, icon: ['ui', 'basket'], desc: '+{x} % de chances de double récolte', per: 4 },
-            { id: 'expert', name: 'Œil d’expert', max: 2, icon: ['star', 2], desc: '+{x} % de chances de qualité argent ou or', per: 5 },
-            { id: 'midas', name: 'Toucher d’or', max: 1, cap: true, icon: ['ui', 'star'], desc: 'Les récoltes dorées sont 60 % plus fréquentes' },
+            { id: 'green', name: 'Main verte', max: 3, icon: ['item', 'carrot'], desc: 'Les cultures poussent {x} % plus vite', per: 5 },
+            { id: 'bounty', name: 'Récolte généreuse', max: 3, icon: ['ui', 'basket'], desc: '+{x} % de chances de double récolte', per: 4 },
+            { id: 'expert', name: 'Œil d’expert', max: 2, icon: ['star', 2], desc: '+{x} % de chances de qualité argent ou or', per: 5 },
+            { id: 'midas', name: 'Toucher d’or', max: 1, cap: true, icon: ['ui', 'star'], desc: 'Les récoltes dorées sont 60 % plus fréquentes' },
         ],
     },
     elev: {
         name: 'Élevage',
         icon: ['animal', 'cow'],
+        lvl: 2,
         list: [
-            { id: 'fed', name: 'Bien nourris', max: 3, icon: ['item', 'feed'], desc: 'Les animaux produisent {x} % plus vite', per: 8 },
+            { id: 'fed', name: 'Bien nourris', max: 3, icon: ['item', 'feed'], desc: 'Les animaux produisent {x} % plus vite', per: 8 },
             { id: 'trough', name: 'Grande mangeoire', max: 2, icon: ['animal', 'pig'], desc: 'La mangeoire contient {x} repas de plus', per: 2 },
-            { id: 'pasture', name: 'Pâturage fertile', max: 3, icon: ['item', 'egg'], desc: '+{x} % de chances de double production', per: 5 },
+            { id: 'pasture', name: 'Pâturage fertile', max: 3, icon: ['item', 'egg'], desc: '+{x} % de chances de double production', per: 5 },
             { id: 'nursery', name: 'Pouponnière', max: 1, cap: true, icon: ['ui', 'chick'], desc: 'Les bébés animaux grandissent deux fois plus vite' },
         ],
     },
     comm: {
         name: 'Commerce',
         icon: ['ui', 'coin'],
+        lvl: 2,
         list: [
-            { id: 'gab', name: 'Bagou', max: 3, icon: ['ui', 'price'], desc: 'Tout se vend {x} % plus cher', per: 4 },
-            { id: 'loyal', name: 'Client fidèle', max: 2, icon: ['ui', 'heart'], desc: 'Les commandes du village rapportent {x} % de plus', per: 10 },
-            { id: 'logistics', name: 'Logisticien', max: 2, icon: ['ui', 'trainIcon'], desc: 'Les trains paient {x} % de plus', per: 10 },
+            { id: 'gab', name: 'Bagou', max: 3, icon: ['ui', 'price'], desc: 'Tout se vend {x} % plus cher', per: 4 },
+            { id: 'loyal', name: 'Client fidèle', max: 2, icon: ['ui', 'heart'], desc: 'Les commandes du village rapportent {x} % de plus', per: 10 },
+            { id: 'logistics', name: 'Logisticien', max: 2, icon: ['ui', 'trainIcon'], desc: 'Les trains paient {x} % de plus', per: 10 },
             {
                 id: 'trader',
                 name: 'Marchand avisé',
@@ -72,6 +76,75 @@ export const SKILLS = {
                 icon: ['ui', 'crate'],
                 desc: 'Les prix baissent deux fois moins vite quand vous vendez beaucoup',
             },
+        ],
+    },
+    craft: {
+        name: 'Atelier',
+        icon: ['machine', 'bakery'],
+        lvl: 3,
+        list: [
+            { id: 'quickHands', name: 'Mains agiles', max: 3, icon: ['ui', 'clock'], desc: 'Les machines travaillent {x} % plus vite', per: 5 },
+            { id: 'doubleBatch', name: 'Fournée généreuse', max: 2, icon: ['machine', 'bakery'], desc: '{x} % de chances qu’un lot sorte en double', per: 4 },
+            { id: 'chefPrice', name: 'Fait maison', max: 2, icon: ['item', 'bread'], desc: 'Les produits de l’atelier se vendent {x} % plus cher', per: 4 },
+            { id: 'bigQueue', name: 'Grand atelier', max: 1, cap: true, icon: ['ui', 'gear'], desc: 'Une place de plus dans la file de chaque machine' },
+        ],
+    },
+    orch: {
+        name: 'Verger',
+        icon: ['item', 'apple'],
+        lvl: 10,
+        list: [
+            { id: 'treeFast', name: 'Arboriculteur', max: 3, icon: ['item', 'apple'], desc: 'Les arbres donnent leurs fruits {x} % plus vite', per: 5 },
+            { id: 'treeBasket', name: 'Panier plein', max: 2, icon: ['ui', 'basket'], desc: '{x} % de chances d’un fruit de plus en ramassant', per: 10 },
+            { id: 'treeLife', name: 'Vieux arbres', max: 2, icon: ['item', 'wood'], desc: 'Les arbres vivent {x} % plus longtemps', per: 15 },
+            {
+                id: 'goldFruit',
+                name: 'Fruits de concours',
+                max: 1,
+                cap: true,
+                icon: ['ui', 'star'],
+                desc: 'Les fruits d’argent et d’or sont bien plus fréquents',
+            },
+        ],
+    },
+    nat: {
+        name: 'Nature',
+        icon: ['item', 'wood'],
+        lvl: 4,
+        list: [
+            {
+                id: 'lumber',
+                name: 'Bras solides',
+                max: 3,
+                icon: ['item', 'wood'],
+                desc: '{x} % de chances d’une prise en plus (bois, pierre, minerai)',
+                per: 10,
+            },
+            { id: 'regrow', name: 'Forêt vivante', max: 2, icon: ['ui', 'clock'], desc: 'Arbres et roches repoussent {x} % plus vite', per: 10 },
+            { id: 'gemEye', name: 'Œil du mineur', max: 2, icon: ['item', 'ruby'], desc: '+{x} % de chances de trouver une pierre précieuse', per: 4 },
+            { id: 'prospector', name: 'Prospecteur', max: 1, cap: true, icon: ['item', 'emerald'], desc: 'Chaque veine donne une pierre précieuse de plus' },
+        ],
+    },
+    voy: {
+        name: 'Contrées',
+        icon: ['ui', 'oaVoyages'],
+        lvl: 35,
+        list: [
+            { id: 'tropic', name: 'Main tropicale', max: 3, icon: ['item', 'pineapple'], desc: 'Les plantations de l’île poussent {x} % plus vite', per: 6 },
+            { id: 'dowser', name: 'Sourcier', max: 2, icon: ['ui', 'drop'], desc: 'La source de l’oasis donne {x} L/h de plus', per: 4 },
+            { id: 'stoker', name: 'Poêlier', max: 2, icon: ['item', 'wood'], desc: 'Les poêles du Grand Nord brûlent {x} % de bois en moins', per: 12 },
+            { id: 'caravaner', name: 'Caravanier', max: 1, cap: true, icon: ['ui', 'oaCaravane'], desc: 'La caravane et le traîneau rapportent 10 % de plus' },
+        ],
+    },
+    vil: {
+        name: 'Village',
+        icon: ['villager', 'odette'],
+        lvl: 6,
+        list: [
+            { id: 'builder', name: 'Bâtisseur', max: 3, icon: ['ui', 'village'], desc: 'Les chantiers rapportent {x} % d’expérience en plus', per: 10 },
+            { id: 'friendly', name: 'Bon voisin', max: 2, icon: ['ui', 'heart'], desc: 'L’amitié des villageois monte {x} % plus vite', per: 15 },
+            { id: 'horseTrader', name: 'Maquignon', max: 2, icon: ['animal', 'cow'], desc: 'Les acheteurs de la foire paient {x} % de plus', per: 10 },
+            { id: 'notice', name: 'Grand tableau', max: 1, cap: true, icon: ['ui', 'scroll'], desc: 'Une commande de plus au tableau du village' },
         ],
     },
 };

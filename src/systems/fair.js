@@ -1,6 +1,6 @@
 // L'Élevage (1.45) : la foire aux bestiaux (des acheteurs avec une demande précise), les bêtes de choix des voisins,
 // et la réputation de l'élevage. Le nom de l'élevage est celui du haras (stud.js).
-import { state, scaleLvl, lvOk } from '../core/state.js';
+import { state, scaleLvl, lvOk, skill } from '../core/state.js';
 import { now, today } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { fmt, pickRand, dateKey } from '../core/format.js';
@@ -118,7 +118,7 @@ export function buyerPrice(b) {
     let per = ANIMALS[b.type].cost * FAIR.base * Math.pow(FAIR.perReq, n);
     if (b.reqs.some(r => r.k === 'race')) per *= FAIR.race;
     if (b.reqs.some(r => r.k === 'prize')) per *= FAIR.prize;
-    per *= 1 + elevRepBonus();
+    per *= 1 + elevRepBonus() + 0.1 * skill('horseTrader');
     return Math.round((per * b.count) / 5) * 5;
 }
 

@@ -132,3 +132,4 @@ export const SPR = {
 const KIND = { villager: SPR.villager, item: SPR.item, animal: SPR.animal, machine: SPR.machine, seed: SPR.seed };
 export const sprite = (kind, id) => (KIND[kind] || SPR.ui)(id);
 import './v1591cheese.js';
+import './v160wax.js';

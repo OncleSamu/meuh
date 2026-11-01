@@ -245,6 +245,17 @@ const moonSvg = `<i class="ico"><svg viewBox="0 0 64 64" class="spr"><path d="M4
 // objectif du moment
 function nextGoal() {
     if (!state.tutorial.done) return null;
+    // 1.61 : les objectifs du niveau d'abord
+    const todo = G.levelGoals().find(g => !G.goalDone(g));
+    if (todo) {
+        const ready = state.xp >= G.getXpReq(state.level);
+        return {
+            icon: G.lvGoalIcon(todo),
+            text: `${ready ? `Niveau ${state.level + 1} prêt ! ` : 'Objectif du niveau : '}${G.lvGoalText(todo)}`,
+            go: 'sheet:goals',
+            urgent: ready,
+        };
+    }
     const ready = Object.values(PROJECTS).find(p => G.projectOpen(p.id) && G.projectComplete(p.id));
     if (ready) return { icon: ['ui', 'village'], text: `Terminez la rénovation : ${ready.name.toLowerCase()}`, go: 'village/village' };
     const open = Object.values(PROJECTS).find(p => G.projectOpen(p.id));
@@ -271,7 +282,7 @@ function nextGoal() {
 function goalHtml() {
     const g = nextGoal();
     if (!g) return '';
-    return `<button class="goal-line" data-act="go" data-path="${g.go}"${g.sec ? ` data-sec="${g.sec}"` : ''}>${g.icon[0] === 'building' ? `<i class="ico">${art('building', g.icon[1])}</i>` : ico(g.icon)}<span>${g.text}</span><b>›</b></button>`;
+    return `<button class="goal-line${g.urgent ? ' urgent' : ''}" data-act="go" data-path="${g.go}"${g.sec ? ` data-sec="${g.sec}"` : ''}>${g.icon[0] === 'building' ? `<i class="ico">${art('building', g.icon[1])}</i>` : ico(g.icon)}<span>${g.text}</span><b>›</b></button>`;
 }
 
 // ce qui attend, en puces qu'on fait défiler du doigt

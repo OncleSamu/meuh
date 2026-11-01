@@ -1,5 +1,5 @@
 // Le village : amitié des villageois, cadeaux et présence au village.
-import { state } from '../core/state.js';
+import { state, skill } from '../core/state.js';
 import { fmt } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
@@ -74,6 +74,8 @@ export function heartProgress(vid) {
 export function addFriendship(vid, pts, at) {
     const v = state.villagers[vid];
     if (!v) return;
+    // 1.61 : « Bon voisin » : l'amitié monte plus vite
+    pts = Math.round(pts * (1 + 0.15 * skill('friendly')));
     v.pts += pts;
     if (at) float(at, [`+${pts}`, ['ui', 'heart']], '', -40);
     while (v.hearts < 5 && v.pts >= HEART_POINTS[v.hearts]) {

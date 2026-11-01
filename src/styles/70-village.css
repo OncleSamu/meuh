@@ -1223,3 +1223,12 @@ html.season-printemps .field {
     opacity: 0.65;
     font-size: 0.7rem;
 }
+/* 1.61 : le niveau suivant attend ses objectifs */
+.goal-line.urgent {
+    background: linear-gradient(#fff6cf, #ffe38a);
+    border-color: var(--gold-d);
+    animation: pulse 1.6s ease-in-out infinite;
+}
+html.calm .goal-line.urgent {
+    animation: none;
+}

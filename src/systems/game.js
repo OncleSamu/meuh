@@ -25,7 +25,7 @@ import { projectDone, storyOk, syncStory, chapterDone } from './story.js';
 import { newDay, weatherTick, season, weather } from './world.js';
 import { marketTick } from './market.js';
 import { syncEvent, eventActive, eventIcon } from './events.js';
-import { speedMult, checkNewAchievements, migrateLevels14, migrateLevels60, migrateLevels64 } from './player.js';
+import { speedMult, checkLevel, getXpReq, checkNewAchievements, migrateLevels14, migrateLevels60, migrateLevels64 } from './player.js';
 import { handTick, handOffline } from './home.js';
 import { incidentTick } from './incidents.js';
 import { merchantTick } from './merchant.js';
@@ -135,6 +135,12 @@ function restoreFromBackups() {
 
 // Complète les données que chaque système attend (anciennes sauvegardes, nouvelle partie)
 export function normalizeState() {
+    // 1.61 : les compétences sont refondues (huit branches) : les points déjà placés reviennent, à replacer
+    if (!state.skills161) {
+        if (state.skills && Object.values(state.skills).some(r => r > 0)) state.skillsRefund = true;
+        state.skills = {};
+        state.skills161 = true;
+    }
     // 1.4 : passage aux 50 niveaux (les chapitres déjà ouverts le restent)
     if (!state.lv14) {
         state.story.keep = {};
@@ -351,6 +357,16 @@ const SYSTEMS = [tickClock, tickWorld, tickFarm, animalsTick, workshopTick, () =
 // renvoie vrai si quelque chose de visible a changé
 export function gameTick() {
     let changed = false;
+    // 1.61 : les objectifs du niveau faits, le niveau suivant passe
+    if (state.xp >= getXpReq(state.level)) {
+        checkLevel();
+        if (state.xp >= getXpReq(state.level) && state.level < MAX_LEVEL && state.tutorial.done) tip('levelGoals');
+    }
+    // 1.61 : Mamie annonce les nouvelles compétences à ceux qui en avaient placé
+    if (state.skillsRefund && state.tutorial.done) {
+        state.skillsRefund = false;
+        tip('skills161');
+    }
     for (const sys of SYSTEMS) if (safe(sys)) changed = true;
     return changed;
 }

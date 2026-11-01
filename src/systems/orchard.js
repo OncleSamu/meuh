@@ -255,6 +255,7 @@ function rollTreeQuality(id, t) {
     let x = 0.08 + 0.15 + (t ? MATURE.quality * maturity(t) : 0);
     if (state.weather === 'sun' || state.weather === 'rain') x += 0.05;
     x += rank('expert') * 0.05;
+    x += rank('goldFruit') * 0.12;
     x += Math.min(0.1, state.prestige.rubans * 0.01);
     if (season().id === 'hiver' && !ITEMS[id].island) x -= 0.1;
     const r = Math.random();

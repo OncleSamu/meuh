@@ -8,6 +8,7 @@ import { OASIS_CROPS, OASIS_TREES, OASIS_PRODUCTS } from './oasis.js';
 import { NORD_PRODUCTS } from './nord.js';
 import { NORD_CROPS, NORD_TREES } from './nord.js';
 import { RECIPES_150 } from './v150.js';
+import { RECIPES_161 } from './v161.js';
 import { RECIPES_153 } from './v153.js';
 import { FISH_ITEMS_133, RECIPES_133 } from './v133.js';
 import { RECIPES_134 } from './v134.js';
@@ -2958,6 +2959,13 @@ Object.assign(ITEMS, {
     winterBlanket: { id: 'winterBlanket', name: 'Couverture d’hiver', type: 'artisan', sell: 1220 },
     hairBrush: { id: 'hairBrush', name: 'Brosse de pansage', type: 'artisan', sell: 2360 },
 });
+
+// 1.61 : les pizzas de la pizzeria (le prix suit les ingrédients) ; la pizza du four à pain devient la margherita
+ITEMS.pizza.name = 'Pizza margherita';
+for (const [id, name, ing] of RECIPES_161) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}
 
 // 1.50 : la cuisine de l'oasis (le prix suit les ingrédients, comme ailleurs)
 for (const [id, name, , ing] of RECIPES_150) {

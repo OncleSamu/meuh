@@ -9,7 +9,7 @@ import { blocks, actions, byId } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
 import { btn, bar, empty, timer, toggle, tip15 } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
-import { defineSheet } from '../sheets.js';
+import { defineSheet, openSheet } from '../sheets.js';
 import { pinBar } from './common.js';
 import { now } from '../../core/clock.js';
 import { bldRow } from '../sheets/upgrades.js';
@@ -135,7 +135,7 @@ defineSheet('machine', {
                 const pv = ok && state.genetics && state.genetics.bestFirst ? G.previewBatch(r.id) : null;
                 const qb = pv && pv.q ? `<span class="rt-q" title="Sortira en ${QUALITY[pv.q].name}">${qStar(pv.q)}</span>` : '';
                 const qtxt = pv && pv.q ? `<small class="rt-qtxt">sortira en ${QUALITY[pv.q].name}</small>` : '';
-                const price = it.sell ? `${fmt(G.sellPrice(r.id))}${ico(['ui', 'coin'])}` : `${r.outQty} sacs`;
+                const price = it.sell ? `${fmt(G.sellPrice(r.id))}${ico(['ui', 'coin'])}` : r.outQty ? `${r.outQty} sacs` : 'pour les chantiers';
                 return `<button class="rtile${open ? (ok ? ' ok' : ' short') : ' locked'}${wanted.has(r.id) ? ' wanted' : ''}${o.focus === r.id ? ' focus' : ''}" data-act="queue" data-i="${i}" data-id="${r.id}" data-anchor="recipe:${r.id}">
                     <span class="rt-art">${art('item', r.id)}${r.outQty ? `<em>×${r.outQty}</em>` : ''}${teacherBadge(r)}${qb}</span>
                     <b>${it.name}</b>
@@ -204,7 +204,11 @@ export function setupWorkshop() {
         },
         collectMachines: el => G.collectAllMachines(el),
         restartMachines: el => G.restartAllMachines(el),
-        queue: (el, d) => G.queueRecipe(+d.i, d.id, el),
+        queue: (el, d) => {
+            // 1.60 : une recette ouverte dont il manque un ingrédient : la liste de ce qu'il faut, avec où le trouver
+            if (G.recipeUnlocked(d.id) && !G.canCook(d.id)) return openSheet('needs', { id: d.id });
+            return G.queueRecipe(+d.i, d.id, el);
+        },
         buyLane2: (el, d) => G.buyLane2(+d.i, el),
         cancelQueued: (el, d) => G.cancelQueued(+d.i, +d.k),
         toggleLoop: (el, d) => G.toggleLoop(+d.i),

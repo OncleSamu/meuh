@@ -1,7 +1,7 @@
 // L'atelier : chaque machine a plusieurs recettes. Une machine a une file de production
 // (le premier lot est en cours, les suivants attendent, ingrédients déjà payés)
 // et des produits finis qui s'accumulent jusqu'à la récupération.
-import { state, lvOk } from '../core/state.js';
+import { state, lvOk, skill } from '../core/state.js';
 import { viewShown } from '../core/view.js';
 import { now } from '../core/clock.js';
 import { emit, toast, sfx, buzz, burst, float, squish, anchor } from '../core/bus.js';
@@ -55,7 +55,9 @@ export const machineBusy = m => m.queue.length > 0;
 export const outCount = m => Object.values(m.out).reduce((a, b) => a + b, 0);
 export const machineOutput = m => Object.keys(m.out).find(k => m.out[k] > 0) || m.queue[0] || null;
 // durée réelle d'une recette : vitesse générale, moulin du hameau, maîtrise
-export const recipeTime = id => (RECIPES[id].time / (speedMult() * machineBoost(RECIPES[id].machine) * masterySpeed(id))) * mTimeMult(RECIPES[id].machine);
+export const recipeTime = id =>
+    (RECIPES[id].time / (speedMult() * machineBoost(RECIPES[id].machine) * masterySpeed(id) * (1 + 0.05 * skill('quickHands')))) *
+    mTimeMult(RECIPES[id].machine);
 export const machinePct = m => (m.queue.length ? Math.min(1, m.progress / recipeTime(m.queue[0])) : 0);
 export const machinePct2 = m => (m.lane2 && m.queue.length > 1 ? Math.min(1, (m.progress2 || 0) / recipeTime(m.queue[1])) : 0);
 export const machineLeft = m => (m.queue.length ? Math.max(0, recipeTime(m.queue[0]) - m.progress) : 0);
@@ -162,7 +164,7 @@ const laneB = m => !!m.lane2 && m.queue.length > 1;
 function finishJob(m, k) {
     const id = m.queue.splice(k, 1)[0];
     const q = (m.qq || []).splice(k, 1)[0] || 0;
-    m.out[id] = (m.out[id] || 0) + 1;
+    m.out[id] = (m.out[id] || 0) + 1 + (Math.random() < 0.04 * skill('doubleBatch') ? 1 : 0);
     // la qualité du lot (de meilleurs ingrédients) suit le produit jusqu'à la récupération
     if (q) {
         m.outq = m.outq || {};

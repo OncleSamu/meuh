@@ -7,7 +7,10 @@ import { MACHINES, RECIPES } from '../data/machines.js';
 import * as G from '../systems/index.js';
 import { actions } from './dom.js';
 import { go, ui } from './app.js';
-import { closeAll, openSheet } from './sheets.js';
+import { closeAll, openSheet, defineSheet } from './sheets.js';
+import { ico, art } from './icons.js';
+import { btn } from './kit.js';
+import { fmt } from '../core/format.js';
 import { goFish } from './views/pond.js';
 
 export function produce(id) {
@@ -86,4 +89,63 @@ export function produce(id) {
     openSheet('machine', { i: k, focus: id });
 }
 
-export const setupNavigate = () => actions({ produce: (el, d) => produce(d.id) });
+// 1.60 : ce qu'il faut pour une recette : chaque ingrédient, combien on en a, d'où il vient, et un bouton qui y mène
+defineSheet('needs', {
+    title: o => `${ico(['item', o.id])}${ITEMS[o.id].name}`,
+    render(o) {
+        const r = RECIPES[o.id];
+        if (!r) return '';
+        const rows = Object.entries(r.ing)
+            .map(([k, n]) => {
+                const have = state.inventory[k] || 0,
+                    ok = have >= n;
+                const src = G.sourceOf(k);
+                return `<div class="rneed${ok ? ' ok' : ''}"><span class="rneed-art">${art('item', k)}</span>
+                    <span class="row-main"><b>${ITEMS[k].name}</b><small>${fmt(Math.min(have, n))} / ${n}${src ? ` · ${src}` : ''}</small></span>
+                    ${ok ? `<span class="chip ok">${ico(['ui', 'check'])}en stock</span>` : btn('Y aller', { act: 'produce', data: { id: k }, kind: 'gold', size: 'sm' })}</div>`;
+            })
+            .join('');
+        const miss = Object.entries(r.ing).filter(([k, n]) => (state.inventory[k] || 0) < n).length;
+        return `<p class="card-sub">${miss ? `Il manque ${miss > 1 ? `${miss} ingrédients` : 'un ingrédient'}. Touchez « Y aller » : le jeu vous mène là où il se fait.` : 'Tout est en stock : la recette est prête à lancer.'}</p><div class="rneeds">${rows}</div>`;
+    },
+});
+
+// 1.61 : les objectifs du niveau, chacun avec son bouton qui y mène
+export function goalGo(kind, id) {
+    if (kind === 'machine') {
+        closeAll();
+        return go('market/shop#machines');
+    }
+    if (kind === 'animal') {
+        closeAll();
+        return go('market/shop#animals');
+    }
+    if (kind === 'orders') {
+        closeAll();
+        return go('village/orders');
+    }
+    return produce(id);
+}
+defineSheet('goals', {
+    title: () => `${ico(['ui', 'star'])}Objectifs du niveau ${state.level}`,
+    render() {
+        const list = G.levelGoals();
+        const ready = state.xp >= G.getXpReq(state.level);
+        const rows = list
+            .map(g => {
+                const done = G.goalDone(g);
+                return `<div class="rneed${done ? ' ok' : ''}"><span class="rneed-art">${art(...G.lvGoalIcon(g))}</span>
+                    <span class="row-main"><b>${G.lvGoalText(g)}</b></span>
+                    ${done ? `<span class="chip ok">${ico(['ui', 'check'])}fait</span>` : btn('Y aller', { act: 'goalGo', data: { k: g.kind, id: g.id || '' }, kind: 'gold', size: 'sm' })}</div>`;
+            })
+            .join('');
+        return `<p class="card-sub">${
+            ready
+                ? `Vous avez assez d’expérience pour le niveau ${state.level + 1} : il passe dès que ces objectifs sont faits.`
+                : `Chaque niveau demande d’essayer ce qu’il vient d’ouvrir. Faits, ils laissent passer le niveau ${state.level + 1} dès que l’expérience est là.`
+        }</p><div class="rneeds">${rows || '<p class="empty">Aucun objectif pour ce niveau.</p>'}</div>`;
+    },
+});
+
+export const setupNavigate = () =>
+    actions({ produce: (el, d) => produce(d.id), needs: (el, d) => openSheet('needs', { id: d.id }), goalGo: (el, d) => goalGo(d.k, d.id) });

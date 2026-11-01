@@ -1,5 +1,5 @@
 // 1.11 : les améliorations de bâtiments (voir data/buildings.js). state.bld = { b: { barn: 0… }, m: { mill: 0… } }
-import { state } from '../core/state.js';
+import { state, skill } from '../core/state.js';
 import { toast, sfx, buzz, burst, emit } from '../core/bus.js';
 import { MACHINES } from '../data/machines.js';
 import { BUILDINGS, BLD_IDS, BLD_MAX, TIER_LVL, tierCost } from '../data/buildings.js';
@@ -71,12 +71,12 @@ export const barnBonus = () => [0, 60, 140, 260][bldLvl('barn')];
 export const penBonus = () => 4 * bldLvl('pens');
 export const troughBonus = () => (bldLvl('pens') >= 2 ? 2 : 0);
 export const caveBonus = () => 2 * bldLvl('cave') * (bldLvl('cave') === 3 ? 1 : 1);
-export const orchardLife = base => base * (1 + 0.1 * bldLvl('orchard'));
-export const orchardRate = () => 1 - 0.06 * Math.max(0, bldLvl('orchard') - 1);
+export const orchardLife = base => base * (1 + 0.1 * bldLvl('orchard')) * (1 + 0.15 * skill('treeLife'));
+export const orchardRate = () => (1 - 0.06 * Math.max(0, bldLvl('orchard') - 1)) / (1 + 0.05 * skill('treeFast'));
 export const ladderBonus = () => 2 * bldLvl('ladder');
 export const basketBonus = qty => {
     const l = bldLvl('basket');
-    return l ? Math.floor(qty / [0, 8, 6, 4][l]) : 0;
+    return (l ? Math.floor(qty / [0, 8, 6, 4][l]) : 0) + (Math.random() < 0.1 * skill('treeBasket') ? 1 : 0);
 };
 export const vatBonus = () => bldLvl('brewery');
 export const labPenBonus = () => bldLvl('labPens');

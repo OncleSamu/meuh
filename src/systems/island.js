@@ -25,7 +25,7 @@ export const islandCropOk = d => (lvOk(d) && storyOk(d)) || state.seeds[d.id] > 
 export const islandPlots = () => (state.island ? state.island.plots : []);
 const openPlots = () => islandPlots().filter(p => p.open).length;
 export const islandPlotCost = () => Math.floor(ISLAND.plotCost * Math.pow(ISLAND.plotMult, Math.max(0, openPlots() - ISLAND.plotsBase)));
-export const islandRate = id => ISLAND.rate * (1 + rank('green') * 0.05) * Math.max(0.9, weather().crop) * masterySpeed(id);
+export const islandRate = id => ISLAND.rate * (1 + rank('green') * 0.05 + rank('tropic') * 0.06) * Math.max(0.9, weather().crop) * masterySpeed(id);
 export const islandGrowTime = id => ITEMS[id].time / speedMult();
 export const islandPct = p => (p.ready ? 1 : p.id ? Math.min(1, p.prog / islandGrowTime(p.id)) : 0);
 export const islandLeft = p => (p.id && !p.ready ? Math.max(0, (islandGrowTime(p.id) - p.prog) / islandRate(p.id)) : 0);

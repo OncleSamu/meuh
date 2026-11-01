@@ -1,5 +1,5 @@
 // La nature : forêt et mine (la pêche est dans fishing.js).
-import { state } from '../core/state.js';
+import { state, skill } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
 import { NATURE, TOOL_MAX, DEPTHS, MINE_GEAR, VEIN_HITS, SPECIES, FOREST_SLOTS, MINE_SLOTS, FORAGE, TOOL_HEADS } from '../data/nature.js';
@@ -179,7 +179,8 @@ export function hitSlot(kind, k, at) {
     // ressource obtenue
     const tl = toolLvl(kind),
         bonus = Math.random() < state.upgrades.yield * 0.1 ? 2 : 0;
-    const stoneQty = 2 + Math.floor(Math.random() * 2) + (sl.big ? 3 : 0) + tl + bonus;
+    // 1.61 : « Bras solides » : une prise de plus, parfois
+    const stoneQty = 2 + Math.floor(Math.random() * 2) + (sl.big ? 3 : 0) + tl + bonus + (Math.random() < 0.1 * skill('lumber') ? 1 : 0);
     state.stats[kind === 'forest' ? 'chopped' : 'mined']++;
     if (kind === 'mine' && ensureNat().depth !== 'quarry') state.stats.deepMined = (state.stats.deepMined || 0) + 1;
     let xp = kind === 'forest' ? 4 : 6;
@@ -212,9 +213,9 @@ export function hitSlot(kind, k, at) {
             xp += 3;
         }
         // une pierre précieuse : une veine en donne toujours une
-        if (sl.gem || Math.random() < (sl.big ? 0.4 : 0.11)) {
+        if (sl.gem || Math.random() < (sl.big ? 0.4 : 0.11) + 0.04 * skill('gemEye')) {
             const g = pick(d.gems);
-            give(g, 1, at, 'gold', -56, 250);
+            give(g, 1 + (sl.gem ? skill('prospector') : 0), at, 'gold', -56, 250);
             sfx('golden');
             burst(at, 'sparkle', 12);
             xp += 4;
@@ -224,7 +225,7 @@ export function hitSlot(kind, k, at) {
     if (sl.gem && kind === 'mine') state.stats.veins = (state.stats.veins || 0) + 1;
     addXp(xp, at);
     gaspardHit(kind, sl);
-    sl.until = now() + ((sl.big ? 1.6 : 1) * N.regrow * 1000) / speedMult();
+    sl.until = now() + ((sl.big ? 1.6 : 1) * N.regrow * 1000) / speedMult() / (1 + 0.1 * skill('regrow'));
     reroll(kind, sl);
     return 'done';
 }

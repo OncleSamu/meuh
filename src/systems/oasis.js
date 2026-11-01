@@ -102,7 +102,10 @@ export const tankNext = () => {
 };
 // litres par heure à la source
 export const springRate = () =>
-    OASIS.spring + OASIS.springUps.reduce((a, [id, , l]) => a + (state.oasis && state.oasis.ups[id] ? l : 0), 0) + (noriaZebu() ? PEN.noria.lph : 0);
+    OASIS.spring +
+    OASIS.springUps.reduce((a, [id, , l]) => a + (state.oasis && state.oasis.ups[id] ? l : 0), 0) +
+    (noriaZebu() ? PEN.noria.lph : 0) +
+    4 * rank('dowser');
 export const springUpNext = () => OASIS.springUps.find(([id]) => !(state.oasis && state.oasis.ups[id])) || null;
 
 export function upgradeTank(at) {
@@ -518,7 +521,9 @@ export const isOasisGood = id => OASIS_GOODS.has(id);
 export const caravanMult = id => (id && !isOasisGood(id) ? CARAVAN.otherMult : CARAVAN.mult) * (1 + (projectDone('soukStalls') ? CARAVAN.soukBonus : 0));
 // ce que rapportera la caravane chargée
 export const caravanValue = (load = caravanState().load) =>
-    Math.round(Object.entries(load).reduce((a, [id, n]) => a + n * CARAVAN.perLoad * sellPrice(id) * caravanMult(id), 0) / 10) * 10;
+    Math.round(
+        (Object.entries(load).reduce((a, [id, n]) => a + n * CARAVAN.perLoad * sellPrice(id) * caravanMult(id), 0) * (1 + 0.1 * rank('caravaner'))) / 10,
+    ) * 10;
 // les produits qu'on peut charger : ceux de la grange, par 10
 export const caravanGoods = () =>
     Object.keys(state.inventory).filter(
