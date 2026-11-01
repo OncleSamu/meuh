@@ -27,6 +27,10 @@ function setup() {
             (ui.sel.q = ui.sel.q || {})[d.k] = d.value;
             firstPage(d.k);
         },
+        filtSel: (el, d) => {
+            (ui.sel.filt = ui.sel.filt || {})[d.k] = d.value;
+            firstPage(d.k);
+        },
         clearSearch: (el, d) => {
             if (ui.sel.q) ui.sel.q[d.k] = '';
             firstPage(d.k);
@@ -103,4 +107,13 @@ export const filterChips = (key, opts, cur) => {
                 `<button class="pick-chip${cur === id ? ' on' : ''}" data-act="filtList" data-k="${key}" data-f="${esc(id)}">${esc(name)}<small>${n}</small></button>`,
         )
         .join('')}</div>`;
+};
+
+// 1.64.3 : un tri en liste déroulante quand il y a trop de puces (une espèce par puce, ça faisait trois lignes)
+export const filterSelect = (key, opts, cur, label) => {
+    setup();
+    return `<label class="list-sel"><span>${esc(label)}</span><select data-input="filtSel" data-k="${key}">${opts
+        .filter(o => o[2] > 0 || o[0] === cur)
+        .map(([id, name, n]) => `<option value="${esc(id)}"${cur === id ? ' selected' : ''}>${esc(name)} (${n})</option>`)
+        .join('')}</select></label>`;
 };

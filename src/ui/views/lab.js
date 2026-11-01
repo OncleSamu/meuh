@@ -19,7 +19,7 @@ import { genWrap, looksText, animalArt, lineageHtml, varRankChips } from '../gen
 import { renameBtn } from '../sheets/rename.js';
 import { NOTE_COL } from '../../data/abbey.js';
 import { chefCard } from './orders.js';
-import { page, filterOf, filterChips, searchBox, queryOf, matchQ } from '../pager.js';
+import { page, filterOf, filterChips, filterSelect, searchBox, queryOf, matchQ } from '../pager.js';
 
 const pct = x => `${Math.round(x * 100)} %`;
 
@@ -242,7 +242,8 @@ function byBase(key, all, baseOf = v => v.base, nameOf = b => ITEMS[b].name) {
     const cur = ui.sel.filt && ui.sel.filt[key];
     const f = cur && opts.some(o => o[0] === cur) ? cur : 'all';
     const list = f === 'all' ? all : f === 'fixed' ? all.filter(v => v.fixed) : all.filter(v => baseOf(v) === f);
-    return { f, list, chips: filterChips(key, opts, f) };
+    // 1.64.3 : au-delà de quelques espèces, une liste déroulante plutôt que des lignes de puces
+    return { f, list, chips: opts.length <= 5 ? filterChips(key, opts, f) : filterSelect(key, opts, f, 'Espèce') };
 }
 
 // ---------------- mes variétés ----------------
@@ -260,11 +261,18 @@ function varietiesBlock() {
     const all = G.varieties().sort((a, b) => (goal ? G.goalScore(b.g) - G.goalScore(a.g) : 0) || b.fixed - a.fixed || b.born - a.born);
     if (!all.length) return G.plantLabOpen() ? empty('Aucune variété pour le moment : faites votre premier croisement !') : '';
     // 1.64 : par espèce, et par paquets de 12
-    const { f, list, chips } = byBase('labVars', all);
+    const { f, list } = byBase('labVars', all);
     const q = queryOf('labVars');
     const found = list.filter(v => matchQ(q, G.varName(v), ITEMS[v.base].name));
     const pg = page('labVars:' + f, found, 20);
-    return `${chips}${found.length ? '' : empty('Aucune variété de ce nom.')}${pg.top}<div class="v-grid">${pg.items.map(varTile).join('')}</div>${pg.more}`;
+    return `${found.length ? '' : empty('Aucune variété de ce nom.')}${pg.top}<div class="v-grid">${pg.items.map(varTile).join('')}</div>${pg.more}`;
+}
+// la recherche et le tri par espèce, dans leur propre bloc (ils gardent le clavier et la liste déroulante pendant qu'on s'en sert)
+function varToolsBlock() {
+    const all = G.varieties();
+    if (!all.length) return '';
+    const { chips } = byBase('labVars', all);
+    return (all.length > 20 ? searchBox('labVars', 'Chercher une variété') : '') + chips;
 }
 
 // ---------------- 1.45.2 : le concours du potager (l'ancien Salon, pour les variétés) ----------------
@@ -307,7 +315,7 @@ function renderLab(el) {
                         : ''),
             ),
         ],
-        ['varSearch', G.varieties().length > 20 ? searchBox('labVars', 'Chercher une variété') : ''],
+        ['varSearch', varToolsBlock()],
         ['vars', varietiesBlock()],
         ['salon', salonCard()],
         [
@@ -348,7 +356,31 @@ defineSheet('parentPick', {
                 .join(' ');
             return `<button class="pick-cell" data-act="setParent" data-kind="plant" data-slot="${o.slot}" data-id="${p}"><span class="pc-art">${parentArt(p)}</span><b>${v ? esc(G.varName(v)) : ITEMS[p].name}</b><small>${fl || '—'}</small></button>`;
         };
-        return `${vars.length ? `${section('Mes variétés')}<div class="pick-grid">${vars.map(cell).join('')}</div>` : ''}${section('Espèces')}<div class="pick-grid">${wild.map(cell).join('')}</div>`;
+        // 1.64.3 : une longue liste : une recherche (variété ou espèce), le tri des variétés par espèce, et des pages
+        const q = queryOf('pp');
+        const vObjs = vars.map(p => G.variety(p));
+        const { f, list: vList, chips } = byBase('pp', vObjs);
+        const vf = vList.filter(v => matchQ(q, G.varName(v), ITEMS[v.base].name));
+        const wf = wild.filter(p => matchQ(q, ITEMS[p].name) && (f === 'all' || f === 'fixed' || p === f));
+        const vpg = page('pp:v:' + f, vf, 18),
+            wpg = page('pp:w:' + f, wf, 18);
+        return [
+            ['tools', (list.length > 24 ? searchBox('pp', 'Chercher une plante') : '') + chips],
+            [
+                'vars',
+                vf.length
+                    ? `${section('Mes variétés', `<small>${vf.length}</small>`)}${vpg.top}<div class="pick-grid">${vpg.items.map(v => cell(v.id)).join('')}</div>${vpg.more}`
+                    : '',
+            ],
+            [
+                'wild',
+                wf.length
+                    ? `${section('Espèces', `<small>${wf.length}</small>`)}${wpg.top}<div class="pick-grid">${wpg.items.map(cell).join('')}</div>${wpg.more}`
+                    : vf.length
+                      ? ''
+                      : empty('Rien ne correspond à cette recherche.'),
+            ],
+        ];
     },
 });
 
@@ -485,10 +517,10 @@ defineSheet('creations', {
         const many = allVars.length + allRaces.length > 15;
         return [
             ['kind', kindChips],
-            ['search', many ? searchBox('crea', 'Chercher une création') : ''],
+            ['search', (many ? searchBox('crea', 'Chercher une création') : '') + (vb ? vb.chips : rb ? rb.chips : '')],
             [
                 'list',
-                `${vb ? section('Variétés', `<small>${allVars.length}</small>`) + vb.chips + vpg.top + `<div class="list">${vHtml}</div>${vpg.more}` : ''}${rb ? section('Races', `<small>${allRaces.length}</small>`) + rb.chips + rpg.top + `<div class="list">${rHtml}</div>${rpg.more}` : ''}
+                `${vb ? section('Variétés', `<small>${allVars.length}</small>`) + vpg.top + `<div class="list">${vHtml}</div>${vpg.more}` : ''}${rb ? section('Races', `<small>${allRaces.length}</small>`) + rpg.top + `<div class="list">${rHtml}</div>${rpg.more}` : ''}
             ${G.seedbankOpen() ? '' : hint('Avec le conservatoire des semences (carte « La station »), vous pourrez racheter graines et petits de vos créations.')}`,
             ],
         ];

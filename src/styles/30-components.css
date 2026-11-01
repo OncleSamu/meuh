@@ -936,3 +936,30 @@ body {
 .pager small {
     order: 2;
 }
+
+/* 1.64.3 : le tri en liste déroulante */
+.list-sel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-weight: 800;
+}
+.list-sel span {
+    flex: none;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: rgba(255, 248, 230, 0.85);
+}
+.list-sel select {
+    flex: 1;
+    min-width: 0;
+    min-height: 42px;
+    padding: 6px 12px;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    background: #fff8e6;
+    font: inherit;
+    font-weight: 800;
+    color: var(--ink);
+}

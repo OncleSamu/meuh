@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.64.3',
+        title: 'Le tri du labo',
+        date: '1er novembre 2026',
+        items: [
+            'Au labo et dans Mes créations, le tri par espèce passe en liste déroulante au lieu de plusieurs lignes de puces',
+            'La fenêtre « Choisir une plante » des croisements a une recherche, le même tri et des pages',
+        ],
+    },
+    {
         v: '1.64.2',
         title: 'Aller directement à une page',
         date: '1er novembre 2026',

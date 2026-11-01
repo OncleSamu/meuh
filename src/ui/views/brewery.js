@@ -226,7 +226,7 @@ function renderBrew(el) {
         ['orders', ordersHtml()],
         ['compose', composerHtml()],
         ['beersHead', section('Mes bières', G.myBeers().length ? `<small>${G.myBeers().length}</small>` : '')],
-        ['beerSearch', G.myBeers().length > 20 ? searchBox('beers', 'Chercher une bière ou un ingrédient') : ''],
+        ['beerSearch', G.myBeers().length > 20 ? searchBox('beers', 'Bière ou ingrédient') : ''],
         ['beers', beersHtml()],
         ['cellar', cellarHtml()],
         ['book', bookHtml()],
