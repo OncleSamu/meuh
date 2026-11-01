@@ -231,7 +231,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Les réglages',
                 b: [
-                    'Musique, sons, vibrations, rappels en arrière-plan.',
+                    'Musique, sons, vibrations, confort de jeu.',
                     'Replanter après la récolte ; confirmer les gros achats (une fenêtre de confirmation avant un achat important).',
                     'Animations réduites, taille du texte, contraste renforcé, plein écran, lucioles.',
                     'Installer l’appli : elle fonctionne sans connexion, comme une vraie application.',

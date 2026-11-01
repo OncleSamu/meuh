@@ -1,4 +1,4 @@
-// Personnalisation de la ferme (clôture, allées, toit, grange), album de souvenirs et rappels.
+// Personnalisation de la ferme (clôture, allées, toit, grange), album de souvenirs.
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -8,7 +8,6 @@ import { ALBUM_MAX } from '../data/progress.js';
 import { spend } from './player.js';
 import { season } from './world.js';
 import { tip } from './tips.js';
-import { machineBusy, outCount } from './workshop.js';
 
 // ---------------- personnalisation ----------------
 export const styleCost = k => 1500 + k * 1500;
@@ -51,19 +50,3 @@ export function addPhoto(kind, id, title, sub) {
 
 export const PHOTO_BG = { printemps: '#d8f0c0', ete: '#fff1b8', automne: '#f7d9b0', hiver: '#e4eff6' };
 export const photoDate = ph => new Date(ph.at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-
-// ---------------- rappels quand le jeu est en arrière-plan ----------------
-// [clé, texte] : chaque clé n'est rappelée qu'une fois par absence
-export function reminders() {
-    const out = [];
-    const planted = state.grid.filter(p => p.isUnlocked && p.itemId);
-    if (planted.length && planted.every(p => p.isReady)) out.push(['crops', 'Toutes vos cultures sont prêtes à récolter.']);
-    if (state.truck.status === 'here') out.push(['train:' + state.truck.expiresAt, 'Le train de marchandises est en gare.']);
-    if (state.balloon.status === 'here') out.push(['balloon:' + state.balloon.expiresAt, 'Une montgolfière attend dans le pré.']);
-    if (state.machines.length && state.machines.every(m => !machineBusy(m)) && state.machines.some(m => outCount(m)))
-        out.push(['machines', 'Vos machines ont fini : l’atelier attend.']);
-    const sold = state.stall.slots.filter(sl => sl && sl.sold).length;
-    if (sold && sold === state.stall.slots.filter(Boolean).length) out.push(['stall', 'Tout est vendu à l’étal : venez encaisser.']);
-    if (state.merchant.status === 'here') out.push(['merchant:' + state.merchant.expiresAt, 'Zéphyr, le marchand ambulant, est au village.']);
-    return out;
-}

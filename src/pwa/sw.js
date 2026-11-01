@@ -1,4 +1,4 @@
-// Service worker de Meuh : le jeu marche hors-ligne et affiche les rappels.
+// Service worker de Meuh : le jeu marche hors-ligne.
 // La version change à chaque mise en ligne (remplacée par build.py --pwa).
 const VERSION = '{{BUILD}}';
 const CACHE = 'meuh-' + VERSION;
@@ -62,17 +62,6 @@ self.addEventListener('fetch', e => {
                 return r;
             })
             .catch(() => caches.match(req, { ignoreSearch: true })),
-    );
-});
-
-// toucher un rappel ramène dans le jeu
-self.addEventListener('notificationclick', e => {
-    e.notification.close();
-    e.waitUntil(
-        self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
-            for (const c of list) if ('focus' in c) return c.focus();
-            return self.clients.openWindow('./');
-        }),
     );
 });
 

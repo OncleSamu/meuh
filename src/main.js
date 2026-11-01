@@ -51,7 +51,7 @@ import { setupNight, updateNight } from './ui/night.js';
 import { setupAskBuy } from './ui/sheets/askbuy.js';
 import { setupNavigate } from './ui/navigate.js';
 import { setupTutorial, tutoTick } from './ui/tutorial.js';
-import { setupPwa, remindTick } from './ui/pwa.js';
+import { setupPwa } from './ui/pwa.js';
 
 function start() {
     G.loadGame();
@@ -170,7 +170,6 @@ function start() {
             refresh();
             updateNight();
         }
-        remindTick();
     };
     setInterval(secondOfGame, 1000);
     document.addEventListener('visibilitychange', () => !document.hidden && secondOfGame());

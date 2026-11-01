@@ -1,7 +1,5 @@
-// L'appli installable : service worker (hors-ligne, mise à jour), installation et rappels.
-import { state } from '../core/state.js';
+// L'appli installable : service worker (hors-ligne, mise à jour), installation.
 import { toast } from '../core/bus.js';
-import * as G from '../systems/index.js';
 import { saveNow } from './app.js';
 import { ico } from './icons.js';
 
@@ -57,52 +55,6 @@ function registerWorker() {
             document.addEventListener('visibilitychange', () => !document.hidden && reg.update().catch(() => {}));
         })
         .catch(() => {});
-}
-
-// ---------------- rappels quand le jeu est en arrière-plan ----------------
-export const remindOn = () => !!state.settings.remind && typeof Notification !== 'undefined' && Notification.permission === 'granted';
-
-export function toggleRemind(done) {
-    if (typeof Notification === 'undefined') {
-        toast('Votre navigateur ne permet pas les rappels', ['ui', 'clock']);
-        return;
-    }
-    if (state.settings.remind) {
-        state.settings.remind = false;
-        return;
-    }
-    Notification.requestPermission().then(p => {
-        state.settings.remind = p === 'granted';
-        toast(
-            p === 'granted'
-                ? 'Rappels activés : Meuh vous prévient quand le jeu est en arrière-plan'
-                : 'Rappels refusés par le navigateur : vous pouvez les autoriser dans ses réglages',
-            ['ui', 'clock'],
-        );
-        done();
-    });
-}
-
-let notified = {};
-export function remindTick() {
-    if (!document.hidden) {
-        notified = {};
-        return;
-    }
-    if (!remindOn()) return;
-    for (const [key, text] of G.reminders()) {
-        if (notified[key]) continue;
-        notified[key] = true;
-        const opts = { body: text, tag: 'meuh-' + key.split(':')[0], icon: 'icons/icon-192.png', badge: 'icons/badge-96.png' };
-        // dans l'appli installée, c'est le service worker qui affiche le rappel (obligatoire sur Android)
-        if (workerReg) workerReg.showNotification('Meuh', opts).catch(() => {});
-        else
-            try {
-                new Notification('Meuh', { body: text, tag: opts.tag });
-            } catch {
-                // rappel impossible
-            }
-    }
 }
 
 export function setupPwa() {

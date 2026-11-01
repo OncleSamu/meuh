@@ -12,7 +12,7 @@ import { defineSheet, sheetOpts, closeAll } from '../sheets.js';
 import { SoundEngine } from '../sound.js';
 import { confirmTap } from '../confirm.js';
 import { updateScene } from '../scene.js';
-import { installState, installApp, remindOn, toggleRemind } from '../pwa.js';
+import { installState, installApp } from '../pwa.js';
 import { CHANGELOG } from '../../data/changelog.js';
 
 export const VERSION = '{{VERSION}}';
@@ -41,7 +41,6 @@ function mainPage() {
             toggle('Replanter après la récolte', s.autoReplant, 'setting', { key: 'autoReplant' }) +
                 (state.upgrades.seeder ? toggle('Semoir : planter toute la rangée', s.seeder !== false, 'setting', { key: 'seeder' }) : '') +
                 toggle('Confirmer les gros achats', s.confirmBuy !== false, 'setting', { key: 'confirmBuy' }, 'Parcelles, verger, prés, serre, machines') +
-                toggle('Rappels en arrière-plan', remindOn(), 'remind', null, 'Train en gare, cultures prêtes…') +
                 toggle('Animations réduites', s.calm, 'setting', { key: 'calm' }) +
                 toggle('Lucioles la nuit', s.fireflies !== false, 'setting', { key: 'fireflies' }, 'Pur décor : vos récoltes de nuit remplissent le bocal') +
                 navRow('Taille du texte', 'textSize', null, null, `<b>${TEXT_SIZES[s.textSize] || TEXT_SIZES[0]}</b>`) +
@@ -213,7 +212,6 @@ export function setupSettings() {
             state.settings.bigText = state.settings.textSize > 0;
             updateScene();
         },
-        remind: () => toggleRemind(refresh),
         fullscreen: () => {
             if (document.fullscreenElement) document.exitFullscreen();
             else document.documentElement.requestFullscreen().catch(() => toast('Le plein écran n’est pas disponible ici'));

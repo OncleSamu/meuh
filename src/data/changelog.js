@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.61.2',
+        title: 'Sans notifications',
+        date: '1er novembre 2026',
+        items: [
+            'Les rappels en arrière-plan sont retirés',
+            "Sur téléphone, le système endort le jeu dès qu'on le quitte",
+            'Le réglage « Rappels en arrière-plan » disparaît',
+        ],
+    },
+    {
         v: '1.61.1',
         title: 'Notes de version',
         date: '1er novembre 2026',
