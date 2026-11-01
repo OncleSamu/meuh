@@ -145,6 +145,20 @@ export const ARMAND = {
     bonus: 0.6,
     xp: 0.35,
     mats: 3,
+    // 1.66 : la table de négociation. Chaque demande coûte de l'humeur ; la chance d'un « oui » est l'humeur moins ce coût.
+    talk: {
+        mood: 50, // humeur de départ
+        fidMood: 10, // + par point de fidélité pour ce produit
+        goldMood: 10, // + si la moitié de la commande au moins est en stock en or ou mieux
+        rounds: 3, // au troisième tour, sa réponse est définitive
+        counterMin: 30, // en dessous, il ne fait plus de contre-proposition : il s'en va
+        relance: 10, // relancer après une contre-proposition coûte encore un peu
+        asks: {
+            up10: { pm: 0.1, cost: 15 },
+            up25: { pm: 0.25, cost: 30 },
+            more: { qty: 1.5, cost: 5 },
+        },
+    },
 };
 
 // ---------------- 1.26 : le marché des voisines (Marché › Acheter › Voisines) ----------------

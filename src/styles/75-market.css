@@ -582,3 +582,133 @@ button.bgood {
 .fair-foot {
     margin-top: 10px;
 }
+
+/* 1.66 : la table de négociation d'Armand */
+.hold.talk {
+    background: #fff4cf;
+}
+.hold.off {
+    opacity: 0.7;
+}
+.at-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.at-head .ico.huge {
+    flex: none;
+    width: 64px;
+    height: 64px;
+}
+.at-bubble {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    background: #fffaf0;
+    font-weight: 700;
+}
+.at-bubble::before {
+    content: '';
+    position: absolute;
+    left: -9px;
+    top: 18px;
+    width: 14px;
+    height: 14px;
+    background: #fffaf0;
+    border-left: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    transform: rotate(45deg);
+}
+.at-offer {
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    background: var(--paper-l);
+}
+.at-offer.counter {
+    background: #fff1c2;
+}
+.at-offer > small {
+    font-weight: 800;
+    opacity: 0.7;
+}
+.at-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0;
+    font-size: 1.05rem;
+}
+.at-price {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 4px 10px;
+    font-weight: 700;
+}
+.at-price b {
+    font-size: 1.2rem;
+}
+.at-price em.up {
+    font-style: normal;
+    color: #2f7d1e;
+    font-weight: 900;
+}
+.at-mood {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 4px 10px;
+    margin-bottom: 10px;
+}
+.at-mood i {
+    height: 12px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: #f3e6c8;
+    overflow: hidden;
+}
+.at-mood i u {
+    display: block;
+    height: 100%;
+    background: #6fbf4a;
+}
+.at-mood.mood-mid i u {
+    background: #f2b33d;
+}
+.at-mood.mood-lo i u {
+    background: #e0583a;
+}
+.at-mood small {
+    grid-column: 1 / -1;
+    opacity: 0.7;
+    font-weight: 700;
+}
+.at-asks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 10px 0;
+}
+.at-ask {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    background: #fff8e6;
+    font: inherit;
+    color: var(--ink);
+    text-align: left;
+}
+.at-ask small {
+    opacity: 0.75;
+    font-weight: 700;
+}

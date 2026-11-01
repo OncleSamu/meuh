@@ -54,6 +54,9 @@ test('Armand : produit phare, commande, livraison, fidélité', () => {
         assert.ok(G.setFlagship(id));
         const o = G.armandOrder();
         assert.equal(o.id, id);
+        // 1.66 : la commande se discute d'abord
+        assert.equal(G.deliverArmand(null, 0, 1), false);
+        assert.equal(G.armandTalk(0, 'yes'), 'yes');
         state.inventory[id] = 10;
         const m = state.money;
         assert.ok(G.deliverArmand(null, 0, 4));
@@ -86,6 +89,7 @@ test('Armand : on peut changer de produit avant la première livraison, pas apr�
         assert.ok(G.setFlagship('apple'));
         assert.ok(G.setFlagship('milk'));
         assert.equal(G.armandOrder().id, 'milk');
+        G.armandTalk(0, 'yes');
         state.inventory.milk = 5;
         assert.ok(G.deliverArmand(null, 0, 2));
         assert.equal(G.setFlagship('apple'), false);
@@ -193,6 +197,7 @@ test('Domaine : annexes, cargo, quai et Suite d’Armand', () => {
         assert.ok(G.setFlagship('apple', 0));
         assert.equal(G.setFlagship('apple', 1), false, 'pas deux fois le même produit');
         assert.ok(G.setFlagship('milk', 1));
+        G.armandTalk(0, 'yes');
         state.inventory.apple = 7;
         assert.ok(G.deliverArmand(null, 0, 7));
         // il repart : sa commande entamée est gardée pour la visite suivante

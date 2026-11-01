@@ -9,7 +9,7 @@ import { toast, sfx, buzz, burst } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { ARMAND, RARE } from '../data/commerce.js';
 import { earn, addXp } from './player.js';
-import { clampQuality } from './farm.js';
+import { clampQuality, qual } from './farm.js';
 import { giveRare } from './barn.js';
 import { stayOf, domStepSum } from './estate.js';
 import { masteryKnown, masteryStars, masteryMult, masteryExtra } from './mastery.js';
@@ -51,7 +51,7 @@ export const armandOrder = (slot = 0) => {
 export const armandPending = () => {
     for (let i = 0; i < armandSlots(); i++) {
         const o = armandOrder(i);
-        if (o && o.got < o.qty) return true;
+        if (o && o.got < o.qty && !armandOff(o)) return true;
     }
     return false;
 };
@@ -65,13 +65,15 @@ export const armandCandidates = () => masteryKnown().filter(id => masteryStars(i
 
 export const armandQty = id => Math.max(ARMAND.min, Math.min(ARMAND.max, Math.round(armandRaw(id) / 5) * 5));
 export const armandRate = id => ARMAND.pay * masteryMult(id) * (1 + ARMAND.fidPay * armandFid(id)) * (1 + domStepSum('armand', 'pay'));
-export const armandPay = (o, n) => round5(ITEMS[o.id].sell * n * armandRate(o.id));
+// 1.66 : le prix négocié (pm) multiplie le prix d'Armand
+export const armandPay = (o, n) => round5(ITEMS[o.id].sell * n * armandRate(o.id) * (o.pm || 1));
 export const armandTotal = o => (o ? armandPay(o, o.qty) : 0);
 export const armandBonus = o => round5(armandTotal(o) * ARMAND.bonus);
 export const armandBonusXp = o => Math.round(armandBonus(o) * ARMAND.xp);
 
 // un produit devenu trop cher pour le budget du niveau (ancienne sauvegarde) ne donne pas de commande
-const makeOrder = id => (armandRaw(id) < ARMAND.min ? null : { id, qty: armandQty(id), got: 0, done: false });
+// 1.66 : une nouvelle commande commence « à discuter » (deal : 'talk', puis 'ok' conclue, ou 'off' retirée pour la semaine)
+const makeOrder = id => (armandRaw(id) < ARMAND.min ? null : { id, qty: armandQty(id), got: 0, done: false, deal: 'talk', pm: 1, round: 0 });
 
 // à chaque seconde (et au retour) : une nouvelle visite au début de chaque semaine
 export function armandTick() {
@@ -82,7 +84,7 @@ export function armandTick() {
         if (a.k === k && !V.here()) a.gone = k;
         if (!a.orders.some(Boolean)) return false;
         // il repart : sans la Suite, les commandes disparaissent ; avec elle, seules les commandes finies s'effacent
-        const next = a.orders.map(o => (keepOn() && o && !o.done ? o : null));
+        const next = a.orders.map(o => (keepOn() && o && !o.done && !armandOff(o) ? o : null));
         const changed = next.some((o, i) => o !== a.orders[i]);
         a.orders = next;
         return changed;
@@ -92,7 +94,7 @@ export function armandTick() {
     a.orders = a.flags.map((id, i) => {
         if (!id || !ITEMS[id]) return null;
         const old = a.orders[i];
-        return keepOn() && old && old.id === id && !old.done ? old : makeOrder(id);
+        return keepOn() && old && old.id === id && !old.done && !armandOff(old) ? old : makeOrder(id);
     });
     if (view.started && !view.hidden) {
         toast('Armand, du Grand Hôtel, est de passage : trois jours pour le servir !', ['villager', 'armand']);
@@ -120,7 +122,7 @@ export function setFlagship(id, slot = 0) {
 export function deliverArmand(at, slot = 0, n) {
     const a = state.armand;
     const o = a && armandHere() && a.k === cycle() && armandOrder(slot);
-    if (!o || o.done) return false;
+    if (!o || o.done || !armandDealt(o)) return false;
     const can = Math.min(state.inventory[o.id] || 0, o.qty - o.got, n || Infinity);
     if (can <= 0) return false;
     state.inventory[o.id] -= can;
@@ -139,11 +141,131 @@ export function deliverArmand(at, slot = 0, n) {
         earn(bonus, at);
         addXp(armandBonusXp(o), at);
         for (let j = 0; j < ARMAND.mats; j++) giveRare(pickRand(RARE), 2, at);
-        a.fid[o.id] = Math.min(ARMAND.fidMax, armandFid(o.id) + 1);
+        // 1.66 : une commande réduite (« moins de quantité ») ne fait pas gagner de fidélité
+        if (!o.half) a.fid[o.id] = Math.min(ARMAND.fidMax, armandFid(o.id) + 1);
         state.stats.armands = (state.stats.armands || 0) + 1;
         state.income.trucks += bonus;
         sfx('level');
         toast('Commande d’Armand complète ! Le Grand Hôtel vous récompense', ['villager', 'armand']);
     }
     return true;
+}
+
+// ---------------- 1.66 : la table de négociation ----------------
+// une commande d'avant la 1.66 (sans deal) est conclue
+export const armandDealt = o => !!o && (!o.deal || o.deal === 'ok');
+export const armandTalking = o => !!o && o.deal === 'talk';
+export const armandOff = o => !!o && o.deal === 'off';
+const T = ARMAND.talk;
+const pickLine = list => list[Math.floor(Math.random() * list.length)];
+const LINES = {
+    hello: [
+        'Bonjour ! J’ai une belle commande pour vous. Qu’en dites-vous ?',
+        'Ah, vous voilà ! Le Grand Hôtel a faim, et j’ai pensé à vous.',
+        'Je passe vite : voici ce qu’il me faudrait cette semaine.',
+    ],
+    yes: ['Marché conclu ! Vous êtes dur en affaires, j’aime ça.', 'Soit. Pour vous, je fais un effort.', 'D’accord, d’accord… Mais que ce soit excellent !'],
+    yesMore: ['Plus ? Parfait, mes clients en redemandent.', 'Va pour la grosse commande !'],
+    yesLess: ['Moins ? Bon… je ferai avec.', 'Entendu, on réduit.'],
+    counter: ['C’est trop. Je vous propose plutôt ceci.', 'Coupons la poire en deux, voulez-vous ?', 'Hmm… je peux monter un peu, pas plus.'],
+    leave: [
+        'Tant pis, je reviendrai la semaine prochaine.',
+        'Non, vraiment, c’est trop. À la semaine prochaine.',
+        'Vous exagérez ! Je vais voir ailleurs cette semaine.',
+    ],
+    refuse: ['Dommage ! À la semaine prochaine, alors.'],
+};
+// son humeur de départ : la fidélité, et la qualité du stock (il sent l'or)
+function startMood(o) {
+    const q = qual(o.id);
+    const gold = (q.g || 0) + (q.p || 0) + (q.d || 0);
+    return Math.min(100, T.mood + T.fidMood * armandFid(o.id) + (gold * 2 >= o.qty ? T.goldMood : 0));
+}
+export const armandMood = (slot = 0) => {
+    const o = armandOrder(slot);
+    if (!armandTalking(o)) return 0;
+    if (o.mood === undefined) o.mood = startMood(o);
+    return o.mood;
+};
+export const armandSay = (slot = 0) => {
+    const o = armandOrder(slot);
+    if (!o) return '';
+    if (!o.say) o.say = pickLine(LINES.hello);
+    return o.say;
+};
+export const armandRoundsLeft = (slot = 0) => {
+    const o = armandOrder(slot);
+    return o ? Math.max(0, T.rounds - (o.round || 0)) : 0;
+};
+// la chance d'un « oui » à une demande (affichée en mots, pas en chiffres)
+export function armandChance(slot, ask) {
+    const o = armandOrder(slot),
+        a = T.asks[ask];
+    if (!armandTalking(o) || !a) return 0;
+    const extra = o.counter ? T.relance : 0;
+    return Math.max(0.05, Math.min(0.95, (armandMood(slot) - a.cost - extra) / 100));
+}
+function conclude(o, said) {
+    o.deal = 'ok';
+    o.say = said;
+    delete o.counter;
+    state.stats.armandDeals = (state.stats.armandDeals || 0) + 1;
+    if (o.pm > 1) state.stats.armandBest = Math.max(state.stats.armandBest || 0, Math.round((o.pm - 1) * 100));
+}
+const capQty = q => Math.max(ARMAND.min, Math.min(ARMAND.max, Math.round(q / 5) * 5));
+// ask : 'yes' (accepter l'offre ou la contre-proposition), 'up10', 'up25', 'more', 'less', 'no'
+export function armandTalk(slot, ask) {
+    const o = armandOrder(slot);
+    if (!armandHere() || !armandTalking(o)) return false;
+    armandMood(slot);
+    if (ask === 'yes') {
+        if (o.counter) {
+            o.pm = o.counter.pm;
+            o.qty = o.counter.qty;
+        }
+        conclude(o, pickLine(LINES.yes));
+        sfx('ok');
+        return 'yes';
+    }
+    if (ask === 'no') {
+        o.deal = 'off';
+        o.say = pickLine(LINES.refuse);
+        sfx('click');
+        return 'off';
+    }
+    if (ask === 'less') {
+        if (o.counter) o.pm = o.counter.pm;
+        o.qty = capQty(o.qty * 0.5);
+        o.half = true;
+        conclude(o, pickLine(LINES.yesLess));
+        sfx('ok');
+        return 'yes';
+    }
+    const a = T.asks[ask];
+    if (!a) return false;
+    const chance = armandChance(slot, ask);
+    const base = o.counter || { pm: o.pm, qty: o.qty };
+    o.round = (o.round || 0) + 1;
+    o.mood -= a.cost + (o.counter ? T.relance : 0);
+    const want = { pm: Math.round((base.pm + (a.pm || 0)) * 100) / 100, qty: a.qty ? capQty(base.qty * a.qty) : base.qty };
+    if (Math.random() < chance) {
+        o.pm = want.pm;
+        o.qty = want.qty;
+        conclude(o, pickLine(a.qty ? LINES.yesMore : LINES.yes));
+        sfx('coin');
+        return 'yes';
+    }
+    // il refuse : une contre-proposition à mi-chemin, tant qu'il est de bonne humeur et qu'il reste des tours
+    if (o.mood >= T.counterMin && o.round < T.rounds) {
+        o.counter = { pm: Math.round(((base.pm + want.pm) / 2) * 100) / 100, qty: a.qty ? capQty((base.qty + want.qty) / 2) : base.qty };
+        o.say = pickLine(LINES.counter);
+        sfx('click');
+        return 'counter';
+    }
+    // il s'en va : la commande est retirée pour la semaine ; vexé après deux demandes, il perd un peu de fidélité
+    o.deal = 'off';
+    o.say = pickLine(LINES.leave);
+    if (o.round >= 2) state.armand.fid[o.id] = Math.max(0, armandFid(o.id) - 1);
+    sfx('error');
+    return 'off';
 }

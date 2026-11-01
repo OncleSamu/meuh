@@ -223,6 +223,12 @@ function armandCard() {
         if (!here || !o)
             return `<div class="hold">${f ? ico(['item', f], 'ico big') : ico(['ui', 'star'], 'ico big')}<div class="hold-main"><b>${f ? ITEMS[f].name : 'Place libre'}</b>
                 <small>${f ? `fidélité ${fidStars(f)}` : 'Choisissez un produit phare'}</small></div>${pick}</div>`;
+        // 1.66 : une commande à discuter, ou retirée pour la semaine
+        if (G.armandTalking(o))
+            return `<div class="hold talk">${ico(['item', o.id], 'ico big')}<div class="hold-main"><b>${ITEMS[o.id].name} · ${fmt(o.qty)}</b><small>Armand propose ${fmt(G.armandPay(o, 1))} pièces l’unité · à discuter</small></div>
+                ${btn('Négocier', { act: 'open', data: { sheet: 'armandTalk', slot: i }, kind: 'gold', size: 'sm' })}</div>`;
+        if (G.armandOff(o))
+            return `<div class="hold off">${ico(['item', o.id], 'ico big')}<div class="hold-main"><b>${ITEMS[o.id].name}</b><small>Pas de commande cette semaine : « ${esc(o.say || '')} »</small></div></div>`;
         const have = state.inventory[o.id] || 0,
             n = Math.min(have, o.qty - o.got);
         return `<div class="hold${o.done ? ' full' : ''}"><button class="hold-item" data-act="produce" data-id="${o.id}" aria-label="Aller produire">${ico(['item', o.id], 'ico big')}</button>
@@ -238,6 +244,56 @@ function armandCard() {
     return `<div class="card armand-card${here ? ' here' : ' away'}"><div class="card-head">${portrait}<div class="card-main"><div class="card-title">Armand, chef du Grand Hôtel</div>
         <div class="card-sub">${sub}</div></div>${when}</div><div class="holds">${rows}</div></div>`;
 }
+// ---------------- 1.66 : la table de négociation ----------------
+const MOODS = [
+    [75, 'Excellente', 'mood-hi'],
+    [55, 'Bonne', 'mood-ok'],
+    [35, 'Mitigée', 'mood-mid'],
+    [0, 'Mauvaise', 'mood-lo'],
+];
+const chanceWord = c => (c >= 0.7 ? 'il dira sûrement oui' : c >= 0.45 ? 'ça peut passer' : c >= 0.25 ? 'risqué' : 'très risqué');
+defineSheet('armandTalk', {
+    cls: 'armand-sheet',
+    title: () => 'À la table d’Armand',
+    open() {
+        G.tip('armandTalk');
+    },
+    render(op) {
+        const slot = +(op && op.slot) || 0;
+        const o = G.armandOrder(slot);
+        if (!o) return '<p class="empty">Armand est reparti.</p>';
+        const say = G.armandSay(slot);
+        const talking = G.armandTalking(o);
+        const mood = G.armandMood(slot);
+        const [, mName, mCls] = MOODS.find(m => mood >= m[0]) || MOODS[3];
+        const deal = o.counter ? { ...o, pm: o.counter.pm, qty: o.counter.qty } : o;
+        const unit = G.armandPay(deal, 1),
+            total = G.armandPay(deal, deal.qty);
+        const base = G.armandPay({ id: o.id }, 1);
+        const diff = unit > base ? ` <em class="up">+${Math.round((unit / base - 1) * 100)} %</em>` : '';
+        const head = `<div class="at-head">${ico(['villager', 'armand'], 'ico huge')}<div class="at-bubble">${esc(say)}</div></div>`;
+        const offer = `<div class="at-offer${o.counter ? ' counter' : ''}"><small>${talking ? (o.counter ? 'Sa contre-proposition' : 'Son offre') : G.armandDealt(o) ? 'Marché conclu' : 'Pas de commande cette semaine'}</small>
+            <div class="at-line">${ico(['item', o.id], 'ico big')}<b>${fmt(deal.qty)} × ${ITEMS[o.id].name.toLowerCase()}</b></div>
+            <div class="at-price"><span>${fmt(unit)}${ico(['ui', 'coin'])} l’unité${diff}</span><b>${fmt(total)}${ico(['ui', 'coin'])}</b></div></div>`;
+        if (!talking) return `${head}${offer}${btn('Retour aux commandes', { act: 'armandClose', kind: G.armandDealt(o) ? 'green' : '', wide: true })}`;
+        const ask = (k, label, sub) => {
+            const c = G.armandChance(slot, k);
+            return `<button class="at-ask" data-act="armandAsk" data-slot="${slot}" data-a="${k}"><b>${label}</b><small>${sub}${c ? ` · ${chanceWord(c)}` : ''}</small></button>`;
+        };
+        const left = G.armandRoundsLeft(slot);
+        return `${head}${offer}
+            <div class="at-mood ${mCls}"><span>Humeur : <b>${mName}</b></span><i><u style="width:${Math.max(4, Math.min(100, mood))}%"></u></i><small>${left} demande${left > 1 ? 's' : ''} possible${left > 1 ? 's' : ''}</small></div>
+            ${btn(o.counter ? 'Accepter sa proposition' : 'D’accord', { act: 'armandAsk', data: { slot, a: 'yes' }, kind: 'green', wide: true, size: 'lg' })}
+            ${
+                left
+                    ? `<div class="at-asks">${ask('up10', 'Un peu plus cher', '+10 %')}${ask('up25', 'Bien plus cher', '+25 %')}${ask('more', 'Plus de quantité', '× 1,5')}<button class="at-ask" data-act="armandAsk" data-slot="${slot}" data-a="less"><b>Moins de quantité</b><small>× 0,5 · sans fidélité gagnée</small></button></div>`
+                    : ''
+            }
+            ${btn('Refuser cette semaine', { act: 'armandAsk', data: { slot, a: 'no' }, kind: 'ghost', size: 'sm', wide: true })}
+            <p class="hint">Son humeur dépend de sa fidélité pour ce produit et de la qualité de votre stock (il sent l’or). Chaque demande l’agace un peu : trop gourmand, il repart pour la semaine.</p>`;
+    },
+});
+
 defineSheet('armandPick', {
     cls: 'armand-sheet',
     title: () => 'Produit phare d’Armand',
@@ -360,6 +416,8 @@ export function setupOrders() {
             }
         },
         armandGive: (el, d) => G.deliverArmand(el, +d.slot || 0),
+        armandAsk: (el, d) => G.armandTalk(+d.slot || 0, d.a),
+        armandClose: () => closeSheet('armandTalk'),
         armandPick: (el, d) => openSheet('armandPick', { slot: +d.slot || 0 }),
         armandSet: (el, d) => G.setFlagship(d.id, +d.slot || 0) && closeSheet('armandPick'),
         chef: (el, d) => G.deliverChef(d.id, el),

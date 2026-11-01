@@ -117,6 +117,11 @@ export const TIPS = {
         title: 'Le niveau t’attend',
         text: 'Tu as assez d’expérience pour monter, mais chaque niveau demande d’abord d’essayer ce qu’il vient d’ouvrir : une ou deux petites choses, en haut du champ. Rien n’est perdu : l’expérience continue de s’amasser. Mon instituteur disait qu’on ne passe pas en classe supérieure sans avoir ouvert ses livres. Il ne vérifiait jamais, mais on avait peur.',
     },
+    armandTalk: {
+        icon: ['villager', 'armand'],
+        title: 'Marchander avec Armand',
+        text: 'Armand fait d’abord une offre : tu peux dire oui, demander plus cher, proposer plus ou moins de quantité. Regarde son humeur : un chef content cède volontiers, un chef agacé repart pour la semaine. Ton grand-père vendait ses veaux à la foire en tapant dans la main du marchand. Il disait qu’on ne gagne pas en criant fort, mais en sachant quand se taire.',
+    },
     cepage: {
         icon: ['item', 'redWine'],
         title: 'Un vin de cépage',

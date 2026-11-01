@@ -118,7 +118,8 @@ export function todoList() {
     if (G.armandHere()) {
         const slots = Array.from({ length: G.armandSlots() }, (_, i) => G.armandOrder(i));
         if (slots.some(o => !o) && G.armandCandidates().length) push('village/orders', ['villager', 'armand'], 'Armand cherche un produit phare', 1);
-        else if (slots.some(o => o && !o.done && (state.inventory[o.id] || 0) > 0))
+        else if (slots.some(o => G.armandTalking(o))) push('village/orders', ['villager', 'armand'], 'Armand attend votre réponse', 1);
+        else if (slots.some(o => o && !o.done && G.armandDealt(o) && (state.inventory[o.id] || 0) > 0))
             push('village/orders', ['villager', 'armand'], 'Armand attend sa commande', 1);
     }
     // 1.8 : l'avion-cargo

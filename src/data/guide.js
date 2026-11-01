@@ -1343,6 +1343,16 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'Marchander',
+                b: [
+                    'À chaque visite, Armand fait d’abord une offre : touchez « Négocier » pour lui répondre. Rien ne se livre avant d’être d’accord.',
+                    'D’accord : son prix. Un peu plus cher (+10 %) ou bien plus cher (+25 %) : il accepte, fait une contre-proposition à mi-chemin, ou repart pour la semaine.',
+                    'Plus de quantité (× 1,5) : il accepte souvent. Moins de quantité (× 0,5) : toujours, mais sans fidélité gagnée à la fin.',
+                    'Son humeur monte avec sa fidélité pour ce produit et quand votre stock est en or ou mieux ; chaque demande l’agace un peu. Trois demandes au plus.',
+                    'Vexé après deux demandes, il perd un point de fidélité. Être raisonnable rapporte en moyenne 5 à 10 % de plus.',
+                ],
+            },
+            {
                 h: 'La commande',
                 b: [
                     'De 10 à 1 200 unités. Le total est borné par votre niveau (puis relevé par la maîtrise et la fidélité) : un produit trop cher pour votre niveau ne peut pas être choisi.',
