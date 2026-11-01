@@ -9,7 +9,8 @@ import { VILLAGERS } from '../../data/village.js';
 import { BREW, CLIENT, DECORS, DECOR_COST, DECOR_PATIENCE } from '../../data/counter.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions } from '../dom.js';
-import { ico, art } from '../icons.js';
+import { ico, art, qStar } from '../icons.js';
+import { QUALITY } from '../../data/farm.js';
 import { btn, bar, hint, segmented, section, hearts, costRow } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
 import { openBrew } from '../brew.js';
@@ -37,9 +38,10 @@ function closedCard() {
     </div>`;
 }
 
+// 1.63.2 : le meilleur rang en stock (0 normal à 4 diamant) : c'est celui qui part d'abord chez un client
 const stockQ = id => {
-    const q = state.quality[id] || { s: 0, g: 0 };
-    return q.g + (q.p || 0) + (q.d || 0) > 0 ? 3 : q.s > 0 ? 2 : 1;
+    const q = state.quality[id] || {};
+    return q.d > 0 ? 4 : q.p > 0 ? 3 : q.g > 0 ? 2 : q.s > 0 ? 1 : 0;
 };
 
 // ---------------- le salon ----------------
@@ -58,7 +60,7 @@ function seatCard(s, i) {
             <small>${fmt(price)} ${COIN()} à 1 étoile, plus avec une belle note</small>
             <div class="cs-acts">
                 ${btn('Préparer', { act: 'seatBrew', data: { id: s.drink, vid: s.vid }, kind: 'gold', size: 'sm', disabled: !ok, icon: ['ui', 'clock'] })}
-                ${have ? btn(`Du stock ×${have}`, { act: 'seatStock', data: { i }, kind: 'green', size: 'sm' }) : ''}
+                ${have ? btn(`Du stock ×${have}${stockQ(s.drink) ? ` ${qStar(stockQ(s.drink))}` : ''}`, { act: 'seatStock', data: { i }, kind: 'green', size: 'sm' }) : ''}
                 ${btn('', { act: 'seatAway', data: { i }, size: 'sm', icon: ['ui', 'cross'], kind: 'ghost', title: 'Renvoyer' })}
             </div>
             ${ok || have ? '' : G.canCook(s.drink) ? '<small class="short">Le comptoir se repose…</small>' : `<button class="short link" data-act="needs" data-id="${s.drink}">Il manque ${G.missingFor(s.drink).join(', ')} ›</button>`}
@@ -102,16 +104,18 @@ function atelierHtml() {
                 .map(([k, n]) => `<span class="ing${state.inventory[k] >= n ? ' ok' : ''}">${ico(['item', k])}${Math.min(state.inventory[k], n)}/${n}</span>`)
                 .join('');
             const n = state.inventory[r.id] || 0;
+            // ce que les ingrédients promettent (avant la note du mini-jeu, qui peut monter jusqu'à l'or)
+            const pv = ok && state.genetics && state.genetics.bestFirst ? G.previewBatch(r.id) : null;
             return `<button class="rtile${open ? (ok ? ' ok' : ' short') : ' locked'}" data-act="brewStock" data-id="${r.id}">
-                <span class="rt-art">${art('item', r.id)}${n ? `<em>×${n}</em>` : ''}</span>
+                <span class="rt-art">${art('item', r.id)}${n ? `<em>×${n}</em>` : ''}${pv && pv.q ? `<span class="rt-q" title="Au moins en ${QUALITY[pv.q].name}">${qStar(pv.q)}</span>` : ''}</span>
                 <b>${ITEMS[r.id].name}</b>
-                ${open ? `<span class="ings">${ings}</span><small>${fmt(ITEMS[r.id].sell)}${COIN()}${n ? ` · en stock ${'★'.repeat(stockQ(r.id))}` : ''}</small>` : `<small class="lock-txt">${ico(['ui', 'lock'])}${G.recipeLockText(r)}</small>`}
+                ${open ? `<span class="ings">${ings}</span>${pv && pv.q ? `<small class="rt-qtxt">au moins en ${QUALITY[pv.q].name}</small>` : ''}<small>${fmt(ITEMS[r.id].sell)}${COIN()}</small>${n && stockQ(r.id) ? `<small>en stock jusqu’en ${QUALITY[stockQ(r.id)].name}</small>` : ''}` : `<small class="lock-txt">${ico(['ui', 'lock'])}${G.recipeLockText(r)}</small>`}
             </button>`;
         })
         .join('');
     return `<div class="chips-row">${filters.map(([k, t]) => `<button class="pick-chip${kind === k ? ' on' : ''}" data-act="counterKind" data-f="${k}">${t}</button>`).join('')}</div>
         <div class="recipe-grid">${tiles}</div>
-        ${hint('Chaque boisson se prépare au doigt : plus la note est belle, meilleure est la qualité (argent, or), et le stock sert aux commandes, au train et aux quêtes.')}`;
+        ${hint('Chaque boisson se prépare au doigt : plus la note est belle, meilleure est la qualité (argent, or). Des ingrédients en platine ou en diamant donnent une boisson en platine ou en diamant, payée plus cher par les clients.')}`;
 }
 
 // ---------------- le bâtiment ----------------

@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.63.2',
+        title: 'Le comptoir et le platine',
+        date: '1er novembre 2026',
+        items: [
+            'Les recettes du comptoir annoncent le rang que promettent les ingrédients et le meilleur rang en stock',
+            "Le bouton « Du stock » d'un client montre le rang qui sera servi",
+        ],
+    },
+    {
         v: '1.63.1',
         title: 'Les carnets au bon moment',
         date: '1er novembre 2026',
