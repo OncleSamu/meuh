@@ -44,7 +44,7 @@ defineSheet('stats', {
                     <rect x="${i * bw}" y="0" width="${bw}" height="${H + 22}" fill="transparent"/>
                     <path d="M${x} ${H} V${H - h + 4} q0 -4 4 -4 H${x + bw - pad - 4} q4 0 4 4 V${H}Z" fill="#3f8f2e"/>
                     ${i === imax && v ? `<text x="${x + (bw - pad) / 2}" y="${H - h - 5}" text-anchor="middle" class="lbl">${fmt(v)}</text>` : ''}
-                    <text x="${x + (bw - pad) / 2}" y="${H + 15}" text-anchor="middle" class="ax">J${day}</text></g>`;
+                    <text x="${x + (bw - pad) / 2}" y="${H + 15}" text-anchor="middle" class="ax">${day === state.day ? 'Auj.' : `J−${state.day - day}`}</text></g>`;
                 })
                 .join(
                     '',

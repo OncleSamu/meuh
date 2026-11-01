@@ -1018,7 +1018,11 @@ export function takeIngredientsFull(rid, pick = null) {
             }
         } else qual(k)[QK[rk]] -= t;
     }
-    for (const [k, n] of Object.entries(r.ing)) state.inventory[k] -= n;
+    // 1.65 : les rangs ne dépassent jamais le stock, même sans recalage derrière (production en boucle)
+    for (const [k, n] of Object.entries(r.ing)) {
+        state.inventory[k] -= n;
+        clampQuality(k);
+    }
     return { q: pl.q, vars: pl.vars };
 }
 

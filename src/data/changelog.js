@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.65',
+        title: 'Audit des nouveautés',
+        date: '1er novembre 2026',
+        items: [
+            'Une recette en boucle recale les rangs de ses ingrédients',
+            "Les jours du graphique des statistiques s'affichent en relatif",
+            'Les comptes à droite des titres restent lisibles sur le décor sombre',
+            'Un test de 4 000 gestes au hasard garde les stocks, rangs, variétés, races, coffre et cépages cohérents',
+        ],
+    },
+    {
         v: '1.64.3',
         title: 'Le tri du labo',
         date: '1er novembre 2026',

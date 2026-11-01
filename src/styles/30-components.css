@@ -443,6 +443,14 @@ button.card {
     border: 2px solid var(--ink);
     border-radius: 999px;
 }
+/* 1.65 : le compte à droite d'un titre (« 260 », « 66 / 137 ») reste lisible sur le décor sombre des vues (nuit, brasserie) */
+.section-title > small {
+    padding: 1px 9px;
+    border-radius: 999px;
+    background: rgba(255, 248, 230, 0.88);
+    color: var(--ink);
+    font-weight: 800;
+}
 .hint {
     font-size: 0.8rem;
     padding: 7px 11px;
