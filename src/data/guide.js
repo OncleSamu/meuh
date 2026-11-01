@@ -1130,6 +1130,15 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'L’hydromel (niveau 42)',
+                b: [
+                    'Choisissez « Hydromel » : 6 pots de miel à la place du malt, pas de houblon, et un ingrédient de plus que pour une bière (4 au plus).',
+                    'Le miel toutes fleurs va avec tout, sans éclat ; chaque miel de fleur (lavande, châtaignier, oranger…) aime certains goûts.',
+                    'Les classiques donnent une étoile de plus : pomme (cyser), raisin (pyment), fruits rouges (mélomel), herbes et épices (métheglin).',
+                    'Il fermente plus lentement (15 min, puis 5 par ingrédient), se range dans « Mes boissons », a ses commandes et vieillit en fût à la cave. Chaque miel brassé ajoute une page au livre.',
+                ],
+            },
+            {
                 h: 'Commandes et fût',
                 t: 'Frère Hugues, Agnès et des habitués demandent une bière précise. Après le cellier à fûts, vos bières vieillissent en fût à la cave. Le livre des bières donne une récompense toutes les 10 pages.',
             },

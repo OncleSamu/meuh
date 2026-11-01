@@ -6,7 +6,7 @@ const out = new Map();
 const MONTHS = 'janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre';
 // ce qui ne regarde que l'atelier de fabrication, pas le joueur
 const DROP =
-    /robot|\bbranche (?:git|[\w-]*\d)|sur (?:la|une) branche|grosse-maj|codée|non publiée|validation finale|planches? de contact|documents à jour|catalogue/i;
+    /robot|\bbranche (?:git|[\w-]*\d)|sur (?:la|une) branche|grosse-maj|codée|non publiée|validation finale|planches? de contact|documents à jour|catalogue|^\s*plan\s*:/i;
 const clean = t => {
     const u = t
         .replace(/\*([^*]+)\*/g, '$1')

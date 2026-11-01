@@ -350,7 +350,7 @@ defineSheet('cavePut', {
                 }
                 if (id.startsWith('beer:')) {
                     const b = G.beerOf(id.slice(5));
-                    return `<button class="pick-cell${o.id === id ? ' on' : ''}" data-act="cavePick" data-id="${id}"><span class="pc-art">${beerSvg(b)}</span><b>${b.name}</b><small>×${G.beerStock(b.id)} · bière</small></button>`;
+                    return `<button class="pick-cell${o.id === id ? ' on' : ''}" data-act="cavePick" data-id="${id}"><span class="pc-art">${beerSvg(b)}</span><b>${b.name}</b><small>×${G.beerStock(b.id)} · ${b.mead ? 'hydromel' : 'bière'}</small></button>`;
                 }
                 return `<button class="pick-cell${o.id === id ? ' on' : ''}" data-act="cavePick" data-id="${id}">${ico(['item', id], 'ico big')}<b>${ITEMS[id].name}</b><small>×${state.inventory[id]} · ${G.caveFam(id).name.toLowerCase()}</small></button>`;
             })

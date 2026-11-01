@@ -1,6 +1,23 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.68',
+        title: "L'hydromel à la brasserie",
+        date: '1er novembre 2026',
+        items: [
+            "Au niveau 42, la brasserie fait aussi de l'hydromel",
+            'Le miel toutes fleurs va avec tout, chaque miel de fleur aime certains goûts',
+            'Classiques : cyser, pyment, mélomel, métheglin',
+            'Nom automatique, rang selon le miel et les fruits',
+            'Un cruchon de grès à la couleur du miel',
+            '« Mes boissons » avec filtres Bières / Hydromels',
+            "Commandes d'hydromel",
+            'Il vieillit en fût à la cave comme une bière',
+            'Une page du livre par miel brassé',
+            'Objectif du niveau 42, guide et histoire de Mamie',
+        ],
+    },
+    {
         v: '1.67',
         title: 'Les miels de fleurs',
         date: '1er novembre 2026',
@@ -13,7 +30,6 @@ export const CHANGELOG = [
             "Un miel de fleur fait partie du stock de miel, vaut jusqu'à × 1,8, se vend depuis la grange",
             'Onglet Miels dans le carnet du potager, une histoire de Mamie par miel',
             "Dessins prêts pour les miels de litchi, d'avocatier, d'arganier et de sapin",
-            'Plan : Plan Miels de fleurs',
         ],
     },
     {
@@ -27,7 +43,6 @@ export const CHANGELOG = [
             'Trois demandes au plus',
             'Être raisonnable rapporte en moyenne 5 à 10 % de plus',
             'Un mot de Mamie, une page « Marchander » dans le guide',
-            'Plan : Plan Armand marchande',
         ],
     },
     {

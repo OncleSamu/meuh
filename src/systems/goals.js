@@ -8,6 +8,7 @@ import { ITEMS } from '../data/items.js';
 import { ANIMALS } from '../data/animals.js';
 import { MACHINES, RECIPES } from '../data/machines.js';
 import { MAX_LEVEL } from '../data/progress.js';
+import { MEAD } from '../data/abbey.js';
 
 // lu directement dans l'état (pas d'import des autres systèmes : goals.js est chargé par player.js)
 const projectDone = id => !!(state.projects[id] && state.projects[id].done);
@@ -29,6 +30,8 @@ export function makeGoals(L) {
     if (L < GOALS_FROM || L >= MAX_LEVEL) return [];
     const out = [];
     const push = g => out.length < 2 && !out.some(x => x.kind === g.kind && x.id === g.id) && out.push(g);
+    // 1.68 : l'hydromel s'ouvre à la brasserie
+    if (L === MEAD.lvl && projectDone('brewhall')) push({ kind: 'mead', n: 1 });
     // une machine du niveau, et une de ses recettes
     const mach = Object.values(MACHINES).find(m => m.reqLvl === L && reachable({ ...m, reqLvl: m.reqLvl }) && m.id !== 'counter');
     if (mach) {
@@ -51,7 +54,8 @@ export function makeGoals(L) {
     if (rec) push({ kind: 'make', id: rec.id, n: 1 });
     if (!out.length) push({ kind: 'orders', n: 2 });
     // le point de départ de chaque compteur
-    for (const g of out) g.base = g.kind === 'make' ? masteryCount(g.id) : g.kind === 'orders' ? state.stats.orders || 0 : 0;
+    for (const g of out)
+        g.base = g.kind === 'make' ? masteryCount(g.id) : g.kind === 'orders' ? state.stats.orders || 0 : g.kind === 'mead' ? state.stats.meads || 0 : 0;
     return out;
 }
 
@@ -66,6 +70,7 @@ export function goalProgress(g) {
     if (g.kind === 'animal') return [state.animals.some(a => a.type === g.id) ? 1 : 0, 1];
     if (g.kind === 'tree') return [treesOf(g.id) > 0 ? 1 : 0, 1];
     if (g.kind === 'orders') return [Math.min(g.n, (state.stats.orders || 0) - g.base), g.n];
+    if (g.kind === 'mead') return [Math.max(0, Math.min(g.n, (state.stats.meads || 0) - g.base)), g.n];
     return [Math.max(0, Math.min(g.n, masteryCount(g.id) - g.base)), g.n];
 }
 export const goalDone = g => {
@@ -83,8 +88,17 @@ export function lvGoalText(g) {
     if (g.kind === 'animal') return `Avoir un animal : ${ANIMALS[g.id].name.toLowerCase()}`;
     if (g.kind === 'tree') return `Planter : ${ITEMS[g.id].seedName.toLowerCase()}`;
     if (g.kind === 'orders') return `Livrer ${g.n} commandes du village${cnt}`;
+    if (g.kind === 'mead') return 'Mettre en bouteille un hydromel à la brasserie';
     const d = ITEMS[g.id];
     return `${d.type === 'crop' || d.type === 'tree' ? 'Récolter' : RECIPES[g.id] ? 'Préparer' : 'Produire'} ${g.n > 1 ? g.n + ' × ' : ''}${d.name.toLowerCase()}${cnt}`;
 }
 export const lvGoalIcon = g =>
-    g.kind === 'machine' ? ['machine', g.id] : g.kind === 'animal' ? ['animal', g.id] : g.kind === 'orders' ? ['ui', 'scroll'] : ['item', g.id];
+    g.kind === 'machine'
+        ? ['machine', g.id]
+        : g.kind === 'animal'
+          ? ['animal', g.id]
+          : g.kind === 'orders'
+            ? ['ui', 'scroll']
+            : g.kind === 'mead'
+              ? ['item', 'mead']
+              : ['item', g.id];

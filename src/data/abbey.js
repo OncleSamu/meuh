@@ -90,3 +90,53 @@ export const BEER_ORDERS = {
     hearts: 2,
     who: ['hugues', 'agnes', 'gaston', 'marcel', 'margaux', 'tiago'],
 };
+
+// ---------------- 1.68 : l'hydromel ----------------
+// Un deuxième type de boisson à la brasserie : du miel à la place du malt, pas de houblon, jusqu'à 4 ingrédients.
+// La base s'écrit 'mead:<miel>' (miel : 'all' pour toutes fleurs, ou un miel de fleur) dans le champ « malt » de la recette.
+export const MEAD = {
+    lvl: 42, // comme l'hydromel ordinaire de la brasserie artisanale
+    honeyPerBrew: 6, // pots de miel par brassin
+    baseTime: 900, // il fermente plus lentement : 15 min, puis +5 par ingrédient
+    perIng: 300,
+    maxSlots: 4,
+};
+// le goût de chaque miel (sucré, acide, amer, épicé, umami) et ce qu'il aime, comme les malts.
+// Le toutes fleurs n'aime rien en particulier : les miels de fleurs font les grands hydromels.
+const HB = (taste, likes, text) => ({ taste, likes, text });
+export const MEAD_BASES = {
+    all: HB([2, 0, 0, 0, 0], [], 'va avec tout, sans éclat'),
+    lavender: HB([1, 1, 1, 0, 0], [1], 'aime l’acidulé : citron, fruits rouges'),
+    sunflower: HB([2, 0, 0, 0, 1], [0, 4], 'aime le doux et le rond'),
+    buckwheat: HB([1, 0, 2, 0, 1], [2, 3], 'aime l’amer et les épices'),
+    mint: HB([1, 1, 1, 0, 0], [1], 'aime les fruits frais et acidulés'),
+    raspberry: HB([2, 1, 0, 0, 0], [1], 'aime l’acidulé'),
+    blueberry: HB([2, 0, 1, 0, 0], [0], 'aime les fruits bien sucrés'),
+    cotton: HB([2, 0, 0, 0, 0], [0], 'aime le très doux'),
+    basil: HB([1, 0, 1, 1, 0], [3, 4], 'aime l’épicé et le terreux'),
+    apple: HB([2, 1, 0, 0, 0], [0], 'aime le doux des fruits du verger'),
+    pear: HB([2, 1, 0, 0, 0], [0], 'aime le doux : poire, pomme, coing'),
+    plum: HB([2, 0, 1, 0, 0], [0, 3], 'aime le fruité et les épices'),
+    cherry: HB([2, 1, 0, 0, 0], [1], 'aime l’acidulé des fruits rouges'),
+    lemon: HB([1, 2, 0, 0, 0], [0, 3], 'aime le sucré et l’épicé'),
+    orange: HB([2, 1, 0, 0, 0], [3], 'aime les épices : cannelle, vanille, gingembre'),
+    chestnut: HB([1, 0, 2, 0, 1], [2, 4], 'aime l’amer et le terreux : noix, cacao, champignon'),
+    almond: HB([2, 0, 1, 0, 0], [0], 'aime le doux et le gourmand'),
+};
+// les grands classiques de l'hydromel : un de ces ingrédients suffit, et une étoile de plus
+export const MEAD_CLASSICS = [
+    { id: 'cyser', name: 'Cyser', any: ['apple'], text: 'Avec de la pomme : un cyser, l’hydromel des vergers normands.' },
+    { id: 'pyment', name: 'Pyment', any: ['grape'], text: 'Avec du raisin : un pyment, l’hydromel des Romains.' },
+    {
+        id: 'melomel',
+        name: 'Mélomel',
+        any: ['raspberry', 'strawberry', 'cherry', 'blackcurrant', 'blueberry', 'blackberry', 'mulberry'],
+        text: 'Avec des fruits rouges : un mélomel, rouge et fruité.',
+    },
+    {
+        id: 'metheglin',
+        name: 'Métheglin',
+        any: ['mint', 'basil', 'vanilla', 'saffron', 'coriander', 'cumin', 'juniper', 'lavender', 'ginger', 'peppercorn', 'hibiscus'],
+        text: 'Avec des herbes ou des épices : un métheglin, l’hydromel des moines.',
+    },
+];

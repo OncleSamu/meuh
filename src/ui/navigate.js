@@ -124,6 +124,10 @@ export function goalGo(kind, id) {
         closeAll();
         return go('village/orders');
     }
+    if (kind === 'mead') {
+        closeAll();
+        return go('machines/brew');
+    }
     return produce(id);
 }
 defineSheet('goals', {

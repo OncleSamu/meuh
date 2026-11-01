@@ -1,4 +1,5 @@
 // L'abbaye (1.6) : l'orge, les malts, la malterie, les bâtiments, la carte, Frère Hugues et Agnès, et les bières.
+import { meadSvg } from './v168mead.js';
 import {
     BLD,
     KINDS,
@@ -135,6 +136,8 @@ ui.vat = () =>
 // ======================= une bouteille de bière =======================
 // la couleur du malt, l'étiquette crème avec l'ingrédient principal, la capsule et les étoiles d'accord
 export function beerSvg(b) {
+    // 1.68 : un hydromel se dessine en cruchon de grès
+    if (b && (b.mead || String(b.malt || '').startsWith('mead:'))) return meadSvg({ ...b, honey: b.honey || String(b.malt).slice(5) });
     const c = (MALTS[b.malt] || MALTS.maltBlond).color;
     // 1.7 : une variété du labo se dessine avec le produit de son espèce
     const base = id => (b.bases && b.bases[id]) || id;

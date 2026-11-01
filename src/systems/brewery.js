@@ -6,7 +6,24 @@ import { view } from '../core/view.js';
 import { toast, sfx, buzz, burst, float, emit } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { FLAVORS } from '../data/genetics.js';
-import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, PAIRS, CLASSICS, BARRELS, CELLAR, BEER_BOOK, DEMAND, BEER_ORDERS } from '../data/abbey.js';
+import {
+    ABBEY,
+    MALTS,
+    MALT_IDS,
+    HOP_DOSES,
+    NOTES,
+    PAIRS,
+    CLASSICS,
+    BARRELS,
+    CELLAR,
+    BEER_BOOK,
+    DEMAND,
+    BEER_ORDERS,
+    MEAD,
+    MEAD_BASES,
+    MEAD_CLASSICS,
+} from '../data/abbey.js';
+import { HONEYS, HONEY_COL } from '../data/honey.js';
 import { VILLAGERS } from '../data/village.js';
 import { addFriendship } from './village.js';
 import { projectDone } from './story.js';
@@ -14,13 +31,36 @@ import { earn, addXp } from './player.js';
 import { clampQuality, qual } from './farm.js';
 import { QUALITY, QX } from '../data/farm.js';
 import { vatBonus } from './buildings.js';
-import { varietyMult, varName, traitOf, FLAVOR_IDS, clampVarieties, scoreTier, takeVarUnits, varRanks, plainRanks, QK } from './genetics.js';
+import { varName, traitOf, FLAVOR_IDS, clampVarieties, scoreTier, takeVarUnits, varRanks, plainRanks, QK, vdef, vdefMult } from './genetics.js';
+import { honeyProd } from './honey.js';
 import { domStepSum } from './estate.js';
+import { tip } from './tips.js';
+
+// ---------------- 1.68 : la base d'une boisson : un malt, ou un miel (hydromel) ----------------
+export const isMead = malt => typeof malt === 'string' && malt.startsWith('mead:');
+export const meadHoney = malt => (isMead(malt) ? malt.slice(5) : null);
+export const meadOpen = () => brewOpen() && state.level >= MEAD.lvl;
+// la fiche d'une base : nom, couleur, goût, préférences
+export function baseOf(malt) {
+    if (!isMead(malt)) return MALTS[malt] || MALTS.maltBlond;
+    const h = meadHoney(malt),
+        b = MEAD_BASES[h] || MEAD_BASES.all;
+    return { name: 'Hydromel', color: HONEY_COL[h] || HONEY_COL.all, taste: b.taste, likes: b.likes, text: b.text, mead: true, honey: h };
+}
+// « de lavande », « d'oranger », ou rien pour le toutes fleurs
+const honeyDe = h => (HONEYS[h] ? ' ' + HONEYS[h].name.replace(/^Miel /, '') : '');
+// le miel d'un brassin : le miel ordinaire (toutes fleurs) ou un miel de fleur (genetics.rv)
+const baseItem = malt => (isMead(malt) ? (meadHoney(malt) === 'all' ? 'honey' : honeyProd(meadHoney(malt))) : malt);
+export const meadHoneys = () => ['all', ...Object.keys(HONEYS).filter(k => state.genetics && (state.genetics.stock['H' + k] || 0) > 0)];
 
 // ---------------- ouverture ----------------
 export const brewOpen = () => projectDone('brewhall');
 export const cellarOpen = () => projectDone('barrelcellar');
-export const brewSlots = () => (projectDone('labelshop') ? 3 : projectDone('fermenters') ? 2 : 1);
+export const brewSlots = (malt = null) => {
+    const n = projectDone('labelshop') ? 3 : projectDone('fermenters') ? 2 : 1;
+    // 1.68 : un hydromel prend un ingrédient de plus (4 au plus)
+    return isMead(malt) ? Math.min(MEAD.maxSlots, n + 1) : n;
+};
 export const vatCount = () =>
     Object.entries(ABBEY.vats).reduce((a, [p, n]) => a + (projectDone(p) ? n : 0), 0) + (brewOpen() ? vatBonus() + domStepSum('annex', 'vat') : 0);
 // ce qu'on peut mettre dans une bière : toutes les cultures et tous les fruits
@@ -29,13 +69,14 @@ export const BREWABLE = Object.values(ITEMS)
     .map(i => i.id);
 
 // ---------------- 1.7 : un ingrédient peut être une variété du labo (son identifiant « v12 ») ----------------
-const VAR = id => (state.genetics && state.genetics.vars[id]) || null;
+// 1.68 : aussi un miel de fleur (sa base), lu dans le registre commun
+const VAR = id => (state.genetics && (state.genetics.vars[id] || vdef(id))) || null;
 export const ingBase = id => (VAR(id) ? VAR(id).base : id);
 // le goût d'un ingrédient : celui de l'espèce, ou celui que la variété exprime vraiment
-export const ingFlavor = id => (VAR(id) ? FLAVOR_IDS.map(k => traitOf(VAR(id).g, k)) : FLAVORS[id] || [0, 0, 0, 0, 0]);
+export const ingFlavor = id => (VAR(id) && VAR(id).g ? FLAVOR_IDS.map(k => traitOf(VAR(id).g, k)) : FLAVORS[id] || [0, 0, 0, 0, 0]);
 export const ingName = id => (VAR(id) ? varName(VAR(id)) : ITEMS[id] ? ITEMS[id].name : 'variété perdue');
 const ingLow = id => (VAR(id) ? varName(VAR(id)) : ITEMS[id] ? ITEMS[id].name.toLowerCase() : 'variété perdue');
-const ingValue = id => (VAR(id) ? (ITEMS[VAR(id).base].sell || 0) * varietyMult(VAR(id)) : (ITEMS[id] && ITEMS[id].sell) || 0);
+const ingValue = id => (VAR(id) ? (ITEMS[VAR(id).base].sell || 0) * vdefMult(VAR(id)) : (ITEMS[id] && ITEMS[id].sell) || 0);
 // combien on en a : pour une variété, ses produits (qui font partie du stock de l'espèce)
 export function ingHave(id) {
     const v = VAR(id);
@@ -77,10 +118,12 @@ function ingTake(id, n, best = false) {
     return points;
 }
 // le rang qu'aurait un brassin avec le stock actuel, sans rien prendre
-export function brewQuality(cost, ings) {
+export function brewQuality(cost, ings, malt = null) {
     let points = 0,
         units = 0;
-    for (const [id] of ings) {
+    // 1.68 : le rang d'un hydromel compte aussi celui de son miel
+    const base = isMead(malt) ? baseItem(malt) : null;
+    for (const [id] of base ? [...ings, [base]] : ings) {
         const n = cost[id] || 0;
         units += n;
         const v = VAR(id);
@@ -133,6 +176,7 @@ export function ensureBrew() {
     B.barrels = B.barrels || [];
     B.draft = B.draft || { malt: 'maltBlond', hop: 1, ings: [] };
     B.draft.ings = B.draft.ings.filter(([id]) => BREWABLE.includes(id) || (VAR(id) && BREWABLE.includes(VAR(id).base)));
+    if (isMead(B.draft.malt) && !meadOpen()) B.draft.malt = B.draft.beerMalt || 'maltBlond';
     fixAgedNames(B);
     B.demand = B.demand || {};
     B.orders = B.orders || [];
@@ -147,8 +191,8 @@ const det = k => (k === 0 ? 'le ' : 'l’') + NOTES[k];
 const cap = t => t[0].toUpperCase() + t.slice(1);
 // profil d'une recette : malt + houblon + ingrédients dosés
 export function brewProfile(malt, hop, ings) {
-    const p = [...MALTS[malt].taste];
-    p[2] += hop;
+    const p = [...baseOf(malt).taste];
+    p[2] += isMead(malt) ? 0 : hop;
     for (const [id, d] of ings) ingFlavor(id).forEach((v, k) => (p[k] += v * d));
     return p;
 }
@@ -169,12 +213,16 @@ export function brewHarmony(malt, hop, ings) {
         if (pair < 0) reasons.push(`${cap(det(a))} et ${det(b)} se battent.`);
         score += pair;
     } else reasons.push(`Une seule note domine : ${NOTES[a]}.`);
-    // le malt aime certaines notes
-    if (MALTS[malt].likes.includes(a)) {
+    // le malt (ou le miel) aime certaines notes
+    const bd = baseOf(malt);
+    const who = bd.mead ? `L’hydromel${honeyDe(bd.honey)}` : `Une ${bd.name.toLowerCase()}`;
+    if (!bd.likes.length) reasons.push(`${who} ${bd.text}.`);
+    else if (bd.likes.includes(a)) {
         score += 1;
-        reasons.push(`Une ${MALTS[malt].name.toLowerCase()} ${MALTS[malt].text}.`);
-    } else reasons.push(`Une ${MALTS[malt].name.toLowerCase()} ${MALTS[malt].text} : essayez un autre malt.`);
+        reasons.push(`${who} ${bd.text}.`);
+    } else reasons.push(`${who} ${bd.text} : essayez ${bd.mead ? 'un autre miel' : 'un autre malt'}.`);
     // le houblon : trop fort pour une bière douce, bienvenu dans une bière amère ou épicée
+    if (bd.mead) hop = 0; // pas de houblon dans un hydromel
     if (hop === 3 && a === 0) {
         score -= 1;
         reasons.push('Trop de houblon pour une bière douce.');
@@ -188,10 +236,16 @@ export function brewHarmony(malt, hop, ings) {
     const tops = ings.map(([id]) => noteOf(ingFlavor(id)));
     // 1.48 : une grande recette de brasseur (les variétés du labo comptent pour leur espèce)
     const bases = ings.map(([id]) => (VAR(id) ? VAR(id).base : id));
-    const classic = CLASSICS.find(c => c.ings.every(id => bases.includes(id)));
-    if (classic) {
+    // 1.68 : les classiques de l'hydromel (cyser, pyment, mélomel, métheglin) : un de leurs ingrédients suffit
+    const classic = bd.mead ? MEAD_CLASSICS.find(c => c.any.some(id => bases.includes(id))) : CLASSICS.find(c => c.ings.every(id => bases.includes(id)));
+    if (classic && !bd.mead) {
         reasons.push(classic.text);
         return { stars: Math.max(0, Math.min(3, score + 2)), reasons, classic: classic.id };
+    }
+    // 1.68 : un classique de l'hydromel aide (+1), mais le mélange compte encore
+    if (classic) {
+        reasons.push(classic.text);
+        score += 1;
     }
     let clash = false;
     for (let x = 0; x < tops.length; x++)
@@ -203,18 +257,24 @@ export function brewHarmony(malt, hop, ings) {
         score += 1;
         reasons.push('Un beau mélange, riche et équilibré.');
     }
-    return { stars: Math.max(0, Math.min(3, score)), reasons };
+    return { stars: Math.max(0, Math.min(3, score)), reasons, ...(classic ? { classic: classic.id } : {}) };
 }
 // la couleur : celle du malt, teintée par l'ingrédient principal
 export function brewColor(malt) {
-    return MALTS[malt].color;
+    return baseOf(malt).color;
 }
 
 // ---------------- le nom proposé ----------------
 const low = id => ingLow(id);
 export function brewName(malt, ings) {
     const list = [...ings].sort((x, y) => y[1] - x[1]).map(([id]) => low(id));
-    const what = list.length === 1 ? list[0] : list.length === 2 ? `${list[0]}-${list[1]}` : `${list[0]}, ${list[1]} et ${list[2]}`;
+    const what = list.length === 1 ? list[0] : list.length === 2 ? `${list[0]}-${list[1]}` : `${list.slice(0, -1).join(', ')} et ${list[list.length - 1]}`;
+    if (isMead(malt)) {
+        // « Cyser de châtaignier pomme-noix », « Hydromel de lavande framboise-citron »
+        const bases = ings.map(([id]) => (VAR(id) ? VAR(id).base : id));
+        const c = MEAD_CLASSICS.find(x => x.any.some(id => bases.includes(id)));
+        return `${c ? c.name : 'Hydromel'}${honeyDe(meadHoney(malt))} ${what}`;
+    }
     return `${MALTS[malt].name} ${what}`;
 }
 const sigOf = (malt, hop, ings) =>
@@ -225,32 +285,35 @@ const sigOf = (malt, hop, ings) =>
 
 // ---------------- ce que coûte un brassin ----------------
 export function brewCost(malt, hop, ings) {
-    const c = { [malt]: ABBEY.maltPerBrew, hop: hop * ABBEY.hopPerDose };
+    const c = isMead(malt) ? { [baseItem(malt)]: MEAD.honeyPerBrew } : { [malt]: ABBEY.maltPerBrew, hop: hop * ABBEY.hopPerDose };
     for (const [id, d] of ings) c[id] = (c[id] || 0) + d * ABBEY.ingPerDose;
     return c;
 }
-export const brewTime = ings => ABBEY.baseTime + ABBEY.perIng * ings.length;
+export const brewTime = (ings, malt = null) => (isMead(malt) ? MEAD.baseTime + MEAD.perIng * ings.length : ABBEY.baseTime + ABBEY.perIng * ings.length);
 // valeur d'une bouteille
 export function brewValue(malt, hop, ings, stars) {
     const cost = Object.entries(brewCost(malt, hop, ings)).reduce((a, [id, n]) => a + ingValue(id) * n, 0);
-    return Math.round((((ABBEY.price * cost + 0.1 * brewTime(ings)) / ABBEY.bottles) * ABBEY.harmony[stars]) / 5) * 5;
+    return Math.round((((ABBEY.price * cost + 0.1 * brewTime(ings, malt)) / ABBEY.bottles) * ABBEY.harmony[stars]) / 5) * 5;
 }
 // tout ce qu'il faut pour brasser la recette en cours
 export function brewPreview(d = ensureBrew().draft) {
-    const ings = d.ings.filter(([id]) => id).slice(0, brewSlots());
-    const h = brewHarmony(d.malt, d.hop, ings);
-    const cost = brewCost(d.malt, d.hop, ings);
+    const ings = d.ings.filter(([id]) => id).slice(0, brewSlots(d.malt));
+    const hop = isMead(d.malt) ? 0 : d.hop;
+    const h = brewHarmony(d.malt, hop, ings);
+    const cost = brewCost(d.malt, hop, ings);
     const miss = Object.entries(cost).filter(([id, n]) => ingHave(id) < n);
-    const sig = sigOf(d.malt, d.hop, ings);
+    const sig = sigOf(d.malt, hop, ings);
     const known = ensureBrew().sig[sig];
     return {
         ings,
-        profile: brewProfile(d.malt, d.hop, ings),
+        hop,
+        mead: isMead(d.malt),
+        profile: brewProfile(d.malt, hop, ings),
         harmony: h,
         cost,
         miss,
-        time: brewTime(ings),
-        value: ings.length ? brewValue(d.malt, d.hop, ings, h.stars) : 0,
+        time: brewTime(ings, d.malt),
+        value: ings.length ? brewValue(d.malt, hop, ings, h.stars) : 0,
         name: known ? state.brew.beers[known].name : ings.length ? brewName(d.malt, ings) : '',
         known,
         // une recette jamais brassée garde ses étoiles secrètes : on les découvre en goûtant
@@ -258,7 +321,7 @@ export function brewPreview(d = ensureBrew().draft) {
         hints: brewHints(d.malt, ings),
         color: brewColor(d.malt),
         bases: basesOf(ings),
-        q: brewQuality(cost, ings),
+        q: brewQuality(cost, ings, d.malt),
         freeVat: ensureBrew().vats.findIndex(v => !v),
     };
 }
@@ -270,7 +333,8 @@ export function brewHints(malt, ings) {
     for (const [id, d] of ings) ingFlavor(id).forEach((v, k) => (ip[k] += v * d));
     const order = ip.map((v, k) => [v, k]).sort((x, y) => y[0] - x[0]);
     const notes = order[1][0] >= order[0][0] * 0.3 && order[1][0] > 0 ? `${NOTES[order[0][1]]} et ${NOTES[order[1][1]]}` : NOTES[order[0][1]];
-    return [`Notes principales : ${notes}.`, `Une ${MALTS[malt].name.toLowerCase()} ${MALTS[malt].text}.`];
+    const bd = baseOf(malt);
+    return [`Notes principales : ${notes}.`, `${bd.mead ? `L’hydromel${honeyDe(bd.honey)}` : `Une ${bd.name.toLowerCase()}`} ${bd.text}.`];
 }
 // la note qui domine les ingrédients d'une bière (pour les commandes)
 export function beerNote(b) {
@@ -286,13 +350,35 @@ export function setDraftMalt(m) {
     ensureBrew().draft.malt = m;
     return true;
 }
+// 1.68 : bière ou hydromel ; le miel de l'hydromel
+export function setDraftKind(kind) {
+    const d = ensureBrew().draft;
+    if (kind === 'mead') {
+        if (!meadOpen()) return false;
+        if (!isMead(d.malt)) {
+            d.beerMalt = d.malt;
+            d.malt = d.meadMalt || 'mead:all';
+        }
+    } else if (isMead(d.malt)) {
+        d.meadMalt = d.malt;
+        d.malt = d.beerMalt || 'maltBlond';
+    }
+    d.ings = d.ings.slice(0, brewSlots(d.malt));
+    return true;
+}
+export function setDraftHoney(h) {
+    const d = ensureBrew().draft;
+    if (!meadOpen() || !MEAD_BASES[h]) return false;
+    d.malt = 'mead:' + h;
+    return true;
+}
 export function setDraftHop(n) {
     ensureBrew().draft.hop = Math.max(1, Math.min(HOP_DOSES.length, n));
     return true;
 }
 export function setDraftIng(slot, id) {
     const d = ensureBrew().draft;
-    if (slot >= brewSlots()) return false;
+    if (slot >= brewSlots(d.malt)) return false;
     if (id && !BREWABLE.includes(id) && !(VAR(id) && BREWABLE.includes(VAR(id).base))) return false;
     // un même ingrédient une seule fois
     if (id && d.ings.some(([x], k) => x === id && k !== slot)) return false;
@@ -322,7 +408,8 @@ export function startBrew(at, d = ensureBrew().draft, quiet = false) {
     }
     let points = 0,
         units = 0;
-    const isIng = id => pv.ings.some(x => x[0] === id);
+    const mb = pv.mead ? baseItem(d.malt) : null;
+    const isIng = id => id === mb || pv.ings.some(x => x[0] === id);
     for (const [id, n] of Object.entries(pv.cost)) {
         const pts = ingTake(id, n, isIng(id));
         if (isIng(id)) {
@@ -332,7 +419,7 @@ export function startBrew(at, d = ensureBrew().draft, quiet = false) {
     }
     const q = units ? scoreTier(points / units) : 0;
     // une bière déjà connue garde son nom ; une nouvelle entre dans « Mes bières »
-    const sig = sigOf(d.malt, d.hop, pv.ings);
+    const sig = sigOf(d.malt, pv.hop, pv.ings);
     let bid = B.sig[sig];
     if (!bid) {
         bid = 'b' + B.next++;
@@ -341,7 +428,7 @@ export function startBrew(at, d = ensureBrew().draft, quiet = false) {
             id: bid,
             name: pv.name,
             malt: d.malt,
-            hop: d.hop,
+            hop: pv.hop,
             ings: pv.ings.map(x => [...x]),
             stars: pv.harmony.stars,
             value: pv.value,
@@ -350,6 +437,7 @@ export function startBrew(at, d = ensureBrew().draft, quiet = false) {
             made: 0,
             day: state.day,
         };
+        if (pv.mead) Object.assign(B.beers[bid], { mead: true, honey: meadHoney(d.malt) });
     }
     B.vats[pv.freeVat] = { bid, until: now() + pv.time * 1000, n: ABBEY.bottles, loop: !!d.loop, q };
     if (quiet) return bid;
@@ -386,8 +474,14 @@ export function collectVat(i, at) {
     if (v.q) B.q[v.bid][QX.keys[v.q]] += v.n;
     beer.made += v.n;
     state.stats.beers = (state.stats.beers || 0) + v.n;
+    if (beer.mead) state.stats.meads = (state.stats.meads || 0) + v.n;
     // le livre des bières : une page par ingrédient
     let newPages = 0;
+    // 1.68 : un hydromel ouvre aussi la page de son miel
+    if (isMead(beer.malt) && !B.book['H' + meadHoney(beer.malt)]) {
+        B.book['H' + meadHoney(beer.malt)] = true;
+        newPages++;
+    }
     for (const [id0] of beer.ings) {
         const id = ingBase(id0);
         if (ITEMS[id] && !B.book[id]) {
@@ -395,9 +489,9 @@ export function collectVat(i, at) {
             newPages++;
         }
     }
-    addXp(Math.round(((brewTime(beer.ings) * 3.8) / 60) * (0.8 + beer.stars * 0.2)), at);
+    addXp(Math.round(((brewTime(beer.ings, beer.malt) * 3.8) / 60) * (0.8 + beer.stars * 0.2)), at);
     if (at) float(at, [`+${v.n}`, ['ui', 'beer']], '', -20);
-    if (newPages) toast(`Livre des bières : ${Object.keys(B.book).length} / ${BREWABLE.length} ingrédients`, ['ui', 'beer']);
+    if (newPages) toast(`Livre des bières : ${Object.keys(B.book).length} / ${bookTotal()} pages`, ['ui', 'beer']);
     sfx('pop');
     emit('brew', beer.id);
     return true;
@@ -458,6 +552,9 @@ export function renameBeer(bid, name) {
 }
 
 // ---------------- le livre des bières ----------------
+// 1.68 : une page par ingrédient, et une par miel brassé en hydromel
+export const BOOK_HONEYS = ['all', ...Object.keys(HONEYS)];
+export const bookTotal = () => BREWABLE.length + (meadOpen() ? BOOK_HONEYS.length : 0);
 export const beerBookPages = () => Object.keys(ensureBrew().book).length;
 export const beerBookClaimable = () => Math.floor(beerBookPages() / BEER_BOOK.every) > ensureBrew().bookClaimed;
 export function claimBeerBook(at) {
@@ -465,7 +562,7 @@ export function claimBeerBook(at) {
     if (!beerBookClaimable()) return false;
     B.bookClaimed++;
     earn(BEER_BOOK.coins * B.bookClaimed, at);
-    if (beerBookPages() >= BREWABLE.length && !B.bookDone) {
+    if (beerBookPages() >= bookTotal() && !B.bookDone) {
         B.bookDone = true;
         state.prestige.rubans += BEER_BOOK.rubans;
         toast(`Livre des bières complet ! +${BEER_BOOK.rubans} rubans`, ['ui', 'ribbon']);
@@ -557,15 +654,18 @@ export function newBeerOrder() {
     const min = slots >= 2 ? pickR([1, 2, 2, 3]) : pickR([1, 1, 2]);
     // une demande réalisable : une note qu'au moins un ingrédient débloqué peut donner
     const note = pickR([0, 0, 1, 2, 3, 4]);
-    const malt = Math.random() < 0.6 ? pickR(MALT_IDS) : null;
+    // 1.68 : une commande sur trois demande un hydromel
+    const mead = meadOpen() && Math.random() < 1 / 3;
+    const malt = !mead && Math.random() < 0.6 ? pickR(MALT_IDS) : null;
     const qty = BEER_ORDERS.qty[0] + Math.floor(Math.random() * (BEER_ORDERS.qty[1] - BEER_ORDERS.qty[0] + 1));
     const o = { id: 'o' + B.next++, vid: pickR(who), malt, note, min, qty };
+    if (mead) o.mead = true;
     B.orders.push(o);
     return o;
 }
 export const beerOrderText = o =>
-    `${o.qty} bouteilles d’une ${o.malt ? MALTS[o.malt].name.toLowerCase() : 'bière'} plutôt ${['sucrée', 'acide', 'amère', 'épicée', 'umami'][o.note]}, ${o.min} étoile${o.min > 1 ? 's' : ''} au moins`;
-export const beerFits = (o, b) => (!o.malt || b.malt === o.malt) && b.stars >= o.min && beerNote(b) === o.note;
+    `${o.qty} bouteilles ${o.mead ? 'd’un hydromel' : `d’une ${o.malt ? MALTS[o.malt].name.toLowerCase() : 'bière'}`} plutôt ${['sucrée', 'acide', 'amère', 'épicée', 'umami'][o.note]}, ${o.min} étoile${o.min > 1 ? 's' : ''} au moins`;
+export const beerFits = (o, b) => !!o.mead === isMead(b.malt) && (!o.malt || b.malt === o.malt) && b.stars >= o.min && beerNote(b) === o.note;
 export const beerOrderMatches = o => myBeers().filter(b => beerFits(o, b) && beerStock(b.id) >= o.qty);
 export const beerOrderPay = (o, bid) => Math.round((beerValue(bid) * o.qty * BEER_ORDERS.pay) / 10) * 10;
 export function deliverBeerOrder(oid, bid, at) {
@@ -599,6 +699,7 @@ export const beerOrdersReady = () => (state.brew && state.brew.orders ? state.br
 
 export function brewTick() {
     if (!brewOpen()) return false;
+    if (meadOpen()) tip('mead');
     const B = ensureBrew();
     let ch = false;
     if (B.orders.length < BEER_ORDERS.max && now() >= B.nextOrder) {

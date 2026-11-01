@@ -122,6 +122,11 @@ export const TIPS = {
         title: 'Un miel de fleur',
         text: 'Les abeilles butinent ce qui est en fleur autour d’elles. Si une fleur domine (la moitié au moins, et quatre parcelles), le miel prend son nom : lavande, tournesol, châtaignier… Il vaut plus cher, se range au coffre et sert dans toutes les recettes au miel. Touche une ruche pour savoir ce qu’elle prépare. Ma mère mettait ses ruches au bout du champ de sarrasin : son miel était presque noir, et les voisins disaient qu’il soignait la toux. Ils toussaient beaucoup, les voisins.',
     },
+    mead: {
+        icon: ['item', 'mead'],
+        title: 'L’hydromel de l’abbaye',
+        text: 'À la brasserie, choisis « Hydromel » : du miel à la place du malt, pas de houblon, et jusqu’à quatre ingrédients. Le toutes fleurs va avec tout, sans éclat ; un miel de fleur aime certains goûts, et fait les grands hydromels. La pomme donne un cyser, le raisin un pyment, les fruits rouges un mélomel, les herbes un métheglin. Il descend à la cave comme une bière. Frère Hugues dit que les moines en buvaient avant la bière. Il dit aussi qu’il en goûte chaque cruchon, par devoir.',
+    },
     armandTalk: {
         icon: ['villager', 'armand'],
         title: 'Marchander avec Armand',

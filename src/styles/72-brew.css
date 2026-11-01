@@ -97,6 +97,15 @@
 .brew-malt b {
     font-size: 0.8rem;
 }
+/* 1.68 : les miels de l'hydromel, sur trois colonnes (noms plus longs) */
+.brew-malts.honeys {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.brew-malts.honeys b {
+    text-align: center;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+}
 .brew-malt small {
     display: flex;
     align-items: center;

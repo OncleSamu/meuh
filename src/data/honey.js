@@ -106,3 +106,24 @@ export const HONEY_RULE = {
 };
 // la fleur d'une plante → son miel
 export const HONEY_OF = Object.fromEntries(Object.entries(HONEYS).map(([k, h]) => [h.flower, k]));
+
+// 1.68 : la couleur de chaque miel (le cruchon d'hydromel en prend la teinte) ; 'all' : toutes fleurs
+export const HONEY_COL = {
+    all: '#f2a516',
+    lavender: '#f2c94e',
+    sunflower: '#f7b80f',
+    buckwheat: '#6b3a1a',
+    mint: '#c9a43a',
+    raspberry: '#e39a4a',
+    blueberry: '#9a5a2a',
+    cotton: '#f2e2b8',
+    basil: '#e2b048',
+    apple: '#f0b44a',
+    pear: '#f0cc78',
+    plum: '#d48a36',
+    cherry: '#e39a2e',
+    lemon: '#f3d878',
+    orange: '#f2a020',
+    chestnut: '#8a4416',
+    almond: '#f1d394',
+};
