@@ -7,7 +7,7 @@ export const CHANGELOG = [
         items: [
             'La récompense des exploits suit le niveau',
             'Paliers corrigés pour Bâtisseur, Âme du village et Expérience',
-            'Douze exploits de plus : Brasseur, Hydromelier, Conteur, Fin connaisseur, Généticien, Naisseur, Grand voyageur',
+            'Douze exploits de plus, pour tout ce qui est arrivé depuis la cave',
             'Tri En cours / Terminés et pages dans le livre de la ferme',
             "Les noms des fêtes ne se coupent plus au milieu d'un mot",
         ],
