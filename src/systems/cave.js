@@ -422,7 +422,7 @@ export function putCepageInCave(slot, cid, n, at) {
     }
     sfx('pop');
     burst(at, 'sparkle', 8);
-    tip('cepage');
+    tip(e.race ? 'raceCheese' : 'cepage');
     return true;
 }
 

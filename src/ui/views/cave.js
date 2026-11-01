@@ -241,7 +241,7 @@ function cepageHtml() {
     if (!list.length) return '';
     const free = state.cave.slots.findIndex(l => !l);
     return (
-        section('Vins de cépage') +
+        section(list.every(e => e.race) ? 'Fromages de race' : list.some(e => e.race) ? 'Cépages et fromages de race' : 'Vins de cépage') +
         `<div class="list">${list
             .map(e => {
                 const r = G.cepRanks(e.id);
@@ -250,7 +250,7 @@ function cepageHtml() {
                     .map(k => `<span class="qchip">${qStar(k)}${r[k]} ${QUALITY[k].name}</span>`)
                     .join('');
                 return `<div class="card cep-bottle"><div class="card-art">${art('item', e.item)}</div><div class="card-main"><div class="card-title">${G.cepName(e)}</div>
-                    <div class="card-sub">×${G.cepCount(e.id)} · valeur ×${String(e.mult).replace('.', ',')} grâce à la variété</div>${chips ? `<span class="var-ranks">${chips}</span>` : ''}</div>
+                    <div class="card-sub">×${G.cepCount(e.id)} · valeur ×${String(e.mult).replace('.', ',')} grâce à la ${e.race ? 'race' : 'variété'}</div>${chips ? `<span class="var-ranks">${chips}</span>` : ''}</div>
                     <div class="card-side">${free >= 0 ? btn('En cave', { act: 'open', data: { sheet: 'cavePut', slot: free, id: 'cep:' + e.id }, kind: 'green', size: 'sm' }) : ''}${btn(`Vendre ${fmt(G.cepValue(e.id))}${COIN()}`, { act: 'sellCep', data: { id: e.id }, kind: 'gold', size: 'sm' })}</div></div>`;
             })
             .join('')}</div>`

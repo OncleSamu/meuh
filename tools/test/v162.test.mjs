@@ -186,3 +186,85 @@ test('1.62 : vendre ses bouteilles de cépage : les plus basses d’abord', () =
     assert.equal(gain, 2 * G.cepPrice(e.id, 0));
     assert.deepEqual(G.cepRanks(e.id), [0, 0, 0, 0, 1]);
 });
+
+// ---------------- 1.63 : le coffre et les variétés, les fromages de race ----------------
+test('1.63 : une variété au coffre garde son nom et son rang, et revient telle quelle', () => {
+    farm();
+    state.level = 64;
+    makeVar('vA', 'carrot');
+    state.inventory.carrot = 0;
+    state.quality.carrot = { s: 0, g: 0, p: 0, d: 0 };
+    harvest('vA', 3, 3);
+    state.inventory.carrot += 5; // des carottes ordinaires
+    G.ensureVault();
+    assert.equal(G.vaultStock('carrot', 3), 0, 'les carottes ordinaires n’ont pas de platine');
+    assert.equal(G.vaultStock('carrot', 3, 'vA'), 3);
+    assert.ok(G.vaultPut('carrot', 3, 2, 'vA'));
+    const k = G.vaultList().findIndex(s => s && s.v === 'vA');
+    const s = G.vaultList()[k];
+    assert.equal(G.vaultSlotName(s), 'Carotte « Test vA »');
+    assert.ok(G.vaultSlotValue(s) > 0);
+    assert.deepEqual(G.varRanks('vA'), [0, 0, 0, 1, 0]);
+    assert.equal(state.inventory.carrot, 6);
+    // une vente au marché ne touche pas au coffre
+    G.sellBatch('carrot', 6, true);
+    assert.equal(G.vaultList()[k].n, 2);
+    G.vaultTake(k, 2);
+    assert.deepEqual(G.varRanks('vA'), [0, 0, 0, 2, 0]);
+    assert.equal(total('carrot', 'p'), 2);
+});
+
+test('1.63 : le lait d’une race fixée garde sa race, et fait un fromage de race', () => {
+    farm();
+    state.level = 64;
+    const G2 = state.genetics;
+    const g = G.wildAnimal('cow');
+    for (const t of ['rich', 'soft', 'aroma'])
+        if (g.t[t])
+            g.t[t] = [
+                [5, 1],
+                [5, 1],
+            ];
+    G2.races.r1 = { id: 'r1', name: 'Normande des Prés', type: 'cow', g };
+    const rv = G.raceProd('r1', 'milk');
+    state.inventory.milk = 0;
+    state.quality.milk = { s: 0, g: 0, p: 0, d: 0 };
+    state.inventory.milk += 6;
+    G.addQuality('milk', 2, 6);
+    G.harvestVariety(rv, 6, 2);
+    state.inventory.milk += 4; // du lait ordinaire
+    assert.ok(G.raceMult(G.vdef(rv)) > 1);
+    // la laiterie : on choisit la race
+    assert.equal(G.cepFruit('cheese'), 'milk');
+    assert.ok(G.machineCepRace('dairy'));
+    assert.ok(G.cepVarieties(['milk']).some(v => v.id === rv));
+    state.machines.push(G.newMachine('dairy'));
+    const i = state.machines.length - 1,
+        m = state.machines[i];
+    m.cep = rv;
+    const cheese0 = state.inventory.cheese || 0;
+    assert.ok(G.queueRecipe(i, 'cheese'));
+    assert.equal(
+        G.varRanks(rv).reduce((a, b) => a + b, 0),
+        4,
+        'deux laits de race pris',
+    );
+    G.advanceMachine(m, 1e7);
+    G.collectMachine(i);
+    assert.equal(state.inventory.cheese || 0, cheese0, 'le fromage de race a son propre stock');
+    const e = G.cepBottles().find(x => x.race);
+    assert.ok(e);
+    assert.equal(G.cepName(e), 'Fromage « Normande des Prés »');
+    assert.ok(G.cepRanks(e.id)[2] >= 1, 'en or');
+    // un fromage ordinaire ne prend jamais le lait de race
+    m.cep = null;
+    assert.ok(G.queueRecipe(i, 'cheese'));
+    assert.equal(
+        G.varRanks(rv).reduce((a, b) => a + b, 0),
+        4,
+    );
+    // en cave : le nom de la race
+    G.ensureCave();
+    assert.ok(G.putCepageInCave(0, e.id, 1));
+    assert.equal(G.lotName(state.cave.slots[0]), 'Fromage « Normande des Prés »');
+});

@@ -113,9 +113,14 @@ function cepRow(m, i) {
     if (m.cep && !vars.some(v => v.id === m.cep)) m.cep = null;
     const chip = (vid, label, sub) =>
         `<button class="pick-chip${(m.cep || null) === vid ? ' on' : ''}" data-act="setCep" data-i="${i}" data-v="${vid || ''}">${label}${sub ? `<small>${sub}</small>` : ''}</button>`;
-    return `<div class="card cep-card"><div class="card-title">${ico(['item', fruits[0]])}Cépage</div>
-        <div class="card-sub">Faites le vin ou le cidre d’une seule de vos variétés : il garde son nom, son goût et son rang jusqu’en cave.</div>
-        <div class="chips-row">${chip(null, 'Sans cépage')}${vars.map(v => chip(v.id, esc(G.varName(v)), `×${G.varRanks(v.id).reduce((a, b) => a + b, 0)}`)).join('')}</div></div>`;
+    const race = G.machineCepRace(m.type);
+    return `<div class="card cep-card"><div class="card-title">${ico(['item', fruits[0]])}${race ? 'Race' : 'Cépage'}</div>
+        <div class="card-sub">${
+            race
+                ? 'Faites le fromage du lait d’une seule de vos races : il garde son nom, sa valeur et son rang jusqu’en cave.'
+                : 'Faites le vin ou le cidre d’une seule de vos variétés : il garde son nom, son goût et son rang jusqu’en cave.'
+        }</div>
+        <div class="chips-row">${chip(null, race ? 'Lait ordinaire' : 'Sans cépage')}${vars.map(v => chip(v.id, esc(G.varName(v)), `×${G.varRanks(v.id).reduce((a, b) => a + b, 0)}`)).join('')}</div></div>`;
 }
 
 defineSheet('machine', {
@@ -155,7 +160,7 @@ defineSheet('machine', {
                 const price = it.sell ? `${fmt(G.sellPrice(r.id))}${ico(['ui', 'coin'])}` : r.outQty ? `${r.outQty} sacs` : 'pour les chantiers';
                 return `<button class="rtile${open ? (ok ? ' ok' : ' short') : ' locked'}${wanted.has(r.id) ? ' wanted' : ''}${o.focus === r.id ? ' focus' : ''}" data-act="queue" data-i="${i}" data-id="${r.id}" data-anchor="recipe:${r.id}">
                     <span class="rt-art">${art('item', r.id)}${r.outQty ? `<em>×${r.outQty}</em>` : ''}${teacherBadge(r)}${qb}</span>
-                    <b>${it.name}</b>${cep ? `<small class="rt-cep">« ${esc(G.varName(state.genetics.vars[cep]))} »</small>` : ''}
+                    <b>${it.name}</b>${cep ? `<small class="rt-cep">« ${esc(G.varName(G.vdef(cep)))} »</small>` : ''}
                     ${open ? `<span class="ings">${ings}</span>${qtxt}<small>${ico(['ui', 'clock'])}${formatDuration(G.recipeTime(r.id))} · ${price}</small>` : `<small class="lock-txt">${ico(['ui', 'lock'])}${G.recipeLockText(r)}</small>`}
                 </button>`;
             })
@@ -187,7 +192,7 @@ defineSheet('machine', {
                           state.genetics.bestFirst,
                           'toggleBest',
                           null,
-                          'Variétés savoureuses et produits argent ou or : le plat sort en argent ou en or',
+                          'Variétés savoureuses et produits de qualité : le plat sort en argent, or, platine ou diamant',
                       )
                     : '',
             ],
@@ -205,7 +210,8 @@ defineSheet('machine', {
     },
     open(o) {
         const mm = state.machines[o.i];
-        if (mm && G.cepVarieties(G.machineCepFruits(mm.type)).length && G.machineCepFruits(mm.type).length) G.tip('cepageMachine');
+        if (mm && G.machineCepFruits(mm.type).length && G.cepVarieties(G.machineCepFruits(mm.type)).length)
+            G.tip(G.machineCepRace(mm.type) ? 'raceCheese' : 'cepageMachine');
         if (o.focus) {
             ui.sel.recipeFilter = 'all';
             setTimeout(() => {

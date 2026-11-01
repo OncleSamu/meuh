@@ -1,6 +1,7 @@
 // 1.62 : les vins de cépage. Au pressoir ou à la cuverie, on choisit sa variété de raisin (ou de pomme pour le cidre) :
 // le vin garde son nom, son goût et son rang jusqu'en cave et au château.
 // Les bouteilles ont leur propre stock (comme les bières), à part de la grange : les commandes ne les prennent jamais.
+// 1.63 : les fromages de race, de la même façon : à la laiterie, on choisit le lait d'une de ses races fixées.
 // state.cepage = { next, list: { cid: { id, item, vid, name, mult } }, sig: { 'item|vid': cid }, stock: { cid: [normal, argent, or, platine, diamant] } }
 import { state } from '../core/state.js';
 import { toast, sfx } from '../core/bus.js';
@@ -9,12 +10,16 @@ import { ITEMS } from '../data/items.js';
 import { RECIPES } from '../data/machines.js';
 import { CAVE_ITEMS } from '../data/cave.js';
 import { QUALITY } from '../data/farm.js';
-import { varRanks, varName, varietyMult } from './genetics.js';
+import { varRanks, varName, varietyMult, vdef, raceMult } from './genetics.js';
+import { ANIMALS } from '../data/animals.js';
 import { sellPrice } from './market.js';
 import { earn } from './player.js';
 
 export const CEP_FRUITS = ['grape', 'apple'];
 const FAMS = ['wine', 'cider', 'champagne'];
+// les laits (et autres produits) des bêtes, pour les fromages de race
+const MILKS = [...new Set(Object.values(ANIMALS).map(a => a.prodId))];
+export const isMilk = id => MILKS.includes(id);
 
 export function ensureCepage() {
     const c = (state.cepage = state.cepage || {});
@@ -28,19 +33,28 @@ export function ensureCepage() {
 // une recette de vin ou de cidre faite directement du fruit
 export const cepFruit = rid => {
     const r = RECIPES[rid];
-    return r && FAMS.includes(CAVE_ITEMS[rid]) ? CEP_FRUITS.find(f => r.ing[f]) || null : null;
+    if (!r) return null;
+    if (FAMS.includes(CAVE_ITEMS[rid])) return CEP_FRUITS.find(f => r.ing[f]) || null;
+    if (CAVE_ITEMS[rid] === 'cheese') return Object.keys(r.ing).find(isMilk) || null;
+    return null;
 };
 export const isCepRecipe = rid => !!cepFruit(rid);
 // les variétés dont on a assez de fruits pour cette recette
 const varUnits = vid => varRanks(vid).reduce((a, b) => a + b, 0);
 export const cepVarOk = (rid, vid) => {
     const f = cepFruit(rid),
-        v = state.genetics && state.genetics.vars[vid];
+        v = vdef(vid);
     return !!(f && v && v.base === f && varUnits(vid) >= RECIPES[rid].ing[f]);
 };
 // les variétés de fruits à cépage qu'on a en stock (pour le choix à la machine)
 export const cepVarieties = fruits =>
-    state.genetics ? Object.values(state.genetics.vars).filter(v => fruits.includes(v.base) && varUnits(v.id) > 0 && (state.inventory[v.base] || 0) > 0) : [];
+    state.genetics
+        ? [...Object.values(state.genetics.vars), ...Object.values(state.genetics.rv || {})].filter(
+              v => fruits.includes(v.base) && varUnits(v.id) > 0 && (state.inventory[v.base] || 0) > 0,
+          )
+        : [];
+// une machine à fromages de race (et pas de cépage)
+export const machineCepRace = type => machineCepFruits(type).some(isMilk);
 export const machineCepFruits = type => [
     ...new Set(
         Object.values(RECIPES)
@@ -54,10 +68,11 @@ export function cepOf(item, vid) {
     const c = ensureCepage(),
         key = `${item}|${vid}`;
     if (c.sig[key] && c.list[c.sig[key]]) return c.list[c.sig[key]];
-    const v = state.genetics.vars[vid];
+    const v = vdef(vid);
     const cid = 'c' + c.next++;
     c.sig[key] = cid;
-    c.list[cid] = { id: cid, item, vid, name: varName(v), mult: Math.round(varietyMult(v) * 100) / 100 };
+    c.list[cid] = { id: cid, item, vid, name: varName(v), mult: Math.round((v.kind === 'race' ? raceMult(v) : varietyMult(v)) * 100) / 100 };
+    if (v.kind === 'race') c.list[cid].race = 1;
     return c.list[cid];
 }
 export const cepName = e => `${ITEMS[e.item].name} « ${e.name} »`;
@@ -72,7 +87,7 @@ export const cepBottles = () =>
         .sort((a, b) => cepValue(b.id) - cepValue(a.id));
 
 export function addCepage(item, vid, qty, rank = 0) {
-    if (!(qty > 0) || !state.genetics || !state.genetics.vars[vid]) return null;
+    if (!(qty > 0) || !vdef(vid)) return null;
     const e = cepOf(item, vid);
     cepRanks(e.id)[Math.max(0, Math.min(4, rank | 0))] += qty;
     return e;

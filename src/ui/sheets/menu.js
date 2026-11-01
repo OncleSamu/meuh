@@ -162,14 +162,23 @@ defineSheet('barn', {
                 : '';
             // 1.47 : les variétés du labo dans ce stock (elles partent en dernier)
             const vars = state.genetics ? G.varieties().filter(v => v.base === sel && (state.genetics.stock[v.id] || 0) > 0) : [];
-            const vrow = vars.length
-                ? `<div class="barn-vars"><div class="set-sub">Dont vos variétés</div>${vars
-                      .map(
-                          v =>
-                              `<button class="row barn-var" data-act="open" data-sheet="variety" data-id="${v.id}"><span class="offer-art">${genWrap(art('item', sel), v.g)}</span><span class="row-main"><span>${esc(G.varName(v))} ×${state.genetics.stock[v.id]}</span><small>${[looksText(v.g).replace(/^Normale(, )?/, ''), v.fixed ? 'variété fixée' : `génération ${v.gen || 1}`].filter(Boolean).join(' · ')}</small>${varRankChips(v.id)}</span>${flavorMini(v.g)}</button>`,
-                      )
-                      .join('')}</div>`
-                : '';
+            // 1.63 : les produits des races fixées (le lait d'une race…)
+            const races = state.genetics ? Object.values(state.genetics.rv || {}).filter(v => v.base === sel && (state.genetics.stock[v.id] || 0) > 0) : [];
+            const rrow = races
+                .map(
+                    v =>
+                        `<div class="row barn-var"><span class="offer-art">${art('item', sel)}</span><span class="row-main"><span>${esc(G.varName(v))} ×${state.genetics.stock[v.id]}</span><small>race fixée · vaut ×${String(Math.round(G.raceMult(v) * 100) / 100).replace('.', ',')}</small>${varRankChips(v.id)}</span></div>`,
+                )
+                .join('');
+            const vrow =
+                vars.length || races.length
+                    ? `<div class="barn-vars"><div class="set-sub">${vars.length && races.length ? 'Dont vos variétés et vos races' : races.length ? 'Dont vos races' : 'Dont vos variétés'}</div>${rrow}${vars
+                          .map(
+                              v =>
+                                  `<button class="row barn-var" data-act="open" data-sheet="variety" data-id="${v.id}"><span class="offer-art">${genWrap(art('item', sel), v.g)}</span><span class="row-main"><span>${esc(G.varName(v))} ×${state.genetics.stock[v.id]}</span><small>${[looksText(v.g).replace(/^Normale(, )?/, ''), v.fixed ? 'variété fixée' : `génération ${v.gen || 1}`].filter(Boolean).join(' · ')}</small>${varRankChips(v.id)}</span>${flavorMini(v.g)}</button>`,
+                          )
+                          .join('')}</div>`
+                    : '';
             item = `<div class="card barn-item"><div class="card-head">${ico(['item', sel], 'ico big')}<div class="card-main"><div class="card-title">${it.name} ×${state.inventory[sel]}</div>
                 <div class="card-sub">${keep ? `${keep} gardé${keep > 1 ? 's' : ''} pour les commandes · ` : ''}${G.isLocked(sel) ? 'verrouillé : jamais vendu' : `surplus : ${surplus}`}</div></div></div>
                 ${qrow}${vrow}<div class="row-btns">${btn(G.isLocked(sel) ? 'Déverrouiller' : 'Verrouiller', { act: 'lock', data: { id: sel }, size: 'sm', icon: ['ui', 'lock'] })}

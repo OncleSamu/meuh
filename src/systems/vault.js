@@ -11,6 +11,7 @@ import { tip } from './tips.js';
 import { inBarn, barnSpace } from './barn.js';
 import { qual, qCount, clampQuality } from './farm.js';
 import { unitPrice } from './market.js';
+import { plainRanks, varRanks, vdef, varName, vdefMult, takeVarRank, giveVarRank, clampVarieties } from './genetics.js';
 
 export const vaultOpen = () => state.level >= VAULT.lvl;
 export const vaultLvl = () => (state.vault && state.vault.lvl) || 0;
@@ -32,7 +33,12 @@ let lotUnitFn = null;
 // la cave donne la valeur d'un lot ; elle s'enregistre ici pour éviter une boucle d'imports
 export const setVaultLotUnit = fn => (lotUnitFn = fn);
 const vaultLotUnit = lot => (lotUnitFn ? lotUnitFn(lot) : 0);
-export const vaultSlotValue = s => (!s ? 0 : s.kind === 'lot' ? vaultLotUnit(s.lot) * s.lot.n : unitPrice(s.id, s.q || 0, 1) * s.n);
+// 1.63 : une variété ou une race au coffre vaut son goût (ou ses gènes) en plus
+export const vaultSlotValue = s =>
+    !s ? 0 : s.kind === 'lot' ? vaultLotUnit(s.lot) * s.lot.n : Math.round(unitPrice(s.id, s.q || 0, 1) * (s.v ? s.vm || 1 : 1)) * s.n;
+// « Carotte Sorcière » plutôt que « Carotte « Carotte Sorcière » »
+export const vaultSlotName = s =>
+    !s.v ? ITEMS[s.id].name : s.vn.toLowerCase().includes(ITEMS[s.id].name.split(' ')[0].toLowerCase()) ? s.vn : `${ITEMS[s.id].name} « ${s.vn} »`;
 export const vaultTotal = () => vaultList().reduce((a, s) => a + vaultSlotValue(s), 0);
 
 // ---------------- agrandir ----------------
@@ -56,25 +62,35 @@ export function upgradeVault() {
 // ---------------- les produits ----------------
 // ce qu'on peut mettre au coffre : les produits de la grange en stock
 export const vaultCanPut = id => !!ITEMS[id] && inBarn(id) && (state.inventory[id] || 0) > 0;
-// combien d'unités du stock sont de ce rang (0 : normal)
-export function vaultStock(id, q) {
+// combien d'unités du stock sont de ce rang (0 : normal) ; v : celles d'une variété ou d'une race (1.63).
+// Sans v : les unités qui ne sont d'aucune variété, pour ne pas lui en prendre.
+export function vaultStock(id, q, v = null) {
     clampQuality(id);
+    if (state.genetics) clampVarieties();
+    if (v) return vdef(v) && vdef(v).base === id ? Math.min(state.inventory[id] || 0, varRanks(v)[q] || 0) : 0;
+    if (state.genetics) return plainRanks(id)[q] || 0;
     const inv = state.inventory[id] || 0;
     if (!q) return Math.max(0, inv - qCount(qual(id)));
     return Math.min(inv, qual(id)[QX.keys[q]] || 0);
 }
+// les variétés et races de ce produit qu'on peut ranger
+export const vaultVars = id =>
+    state.genetics
+        ? [...Object.values(state.genetics.vars), ...Object.values(state.genetics.rv || {})].filter(v => v.base === id && (state.genetics.stock[v.id] || 0) > 0)
+        : [];
 // le coffre peut-il encore prendre ce produit à ce rang ? (un emplacement existant avec de la place, ou un emplacement libre)
-export function vaultRoom(id, q) {
+const sameSlot = (s, id, q, v) => s && s.kind === 'item' && s.id === id && (s.q || 0) === q && (s.v || null) === (v || null);
+export function vaultRoom(id, q, v = null) {
     let room = vaultFree() >= 0 ? VAULT.stack : 0;
-    for (const s of vaultList()) if (s && s.kind === 'item' && s.id === id && (s.q || 0) === q) room = Math.max(room, VAULT.stack - s.n);
+    for (const s of vaultList()) if (sameSlot(s, id, q, v)) room = Math.max(room, VAULT.stack - s.n);
     return room;
 }
-export function vaultPut(id, q, n) {
+export function vaultPut(id, q, n, v = null) {
     ensureVault();
     q = q | 0;
     n = Math.floor(n);
-    if (!vaultOpen() || !vaultCanPut(id) || n < 1 || n > vaultStock(id, q)) return false;
-    const st = vaultList().find(s => s && s.kind === 'item' && s.id === id && (s.q || 0) === q && s.n < VAULT.stack);
+    if (!vaultOpen() || !vaultCanPut(id) || n < 1 || n > vaultStock(id, q, v)) return false;
+    const st = vaultList().find(s => sameSlot(s, id, q, v) && s.n < VAULT.stack);
     if (st) {
         n = Math.min(n, VAULT.stack - st.n);
         st.n += n;
@@ -87,9 +103,12 @@ export function vaultPut(id, q, n) {
         }
         n = Math.min(n, VAULT.stack);
         state.vault.slots[k] = { kind: 'item', id, q, n };
+        // 1.63 : une variété ou une race garde son nom et sa valeur au coffre, même si elle disparaît un jour
+        if (v) Object.assign(state.vault.slots[k], { v, vn: varName(vdef(v)), vm: Math.round(vdefMult(vdef(v)) * 100) / 100 });
     }
+    if (v) takeVarRank(v, q, n);
+    else if (q) qual(id)[QX.keys[q]] -= n;
     state.inventory[id] -= n;
-    if (q) qual(id)[QX.keys[q]] -= n;
     clampQuality(id);
     sfx('load');
     return n;
@@ -134,6 +153,7 @@ export function vaultTake(i, n) {
         const o = qual(s.id);
         o[QX.keys[s.q]] += n;
     }
+    if (s.v) giveVarRank(s.v, s.q || 0, n);
     s.n -= n;
     if (s.n <= 0) state.vault.slots[i] = null;
     sfx('pop');

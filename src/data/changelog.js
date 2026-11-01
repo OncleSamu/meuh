@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.63',
+        title: 'Le coffre des créations et les fromages de race',
+        date: '1er novembre 2026',
+        items: [
+            "Une variété du labo ou le produit d'une race fixée se range au coffre avec son nom, ses couleurs et son rang",
+            "Le lait d'une bête de race fixée garde sa race, affichée dans la grange avec son rang",
+            'À la laiterie, on choisit la race au-dessus des recettes',
+            'Il se vend ou va en cave',
+            'Un fromage ordinaire ne prend jamais le lait de race',
+            'Un mot de Mamie',
+        ],
+    },
+    {
         v: '1.62.1',
         title: 'Bêtes des voisins',
         date: '1er novembre 2026',

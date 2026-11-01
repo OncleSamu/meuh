@@ -173,6 +173,7 @@ export const GUIDE_PAGES = [
                 b: [
                     'Dans la grange, touchez un produit puis « Au coffre » : choisissez la qualité (normal, argent, or, platine, diamant) et la quantité. Le produit garde sa qualité.',
                     'Depuis la cave, la réserve a un bouton « Au coffre » pour garder un lot : un grand cru, un champagne légendaire en diamant.',
+                    'Une variété du labo ou le produit d’une race fixée se range aussi, avec son nom, ses couleurs et son rang : choisissez-la en haut de la fenêtre.',
                     'Ce qui est au coffre ne se vend pas, ne part pas dans une commande ou une recette, et ne prend pas de place dans la grange. « Reprendre » le rend (il faut de la place dans la grange).',
                     '6 emplacements au départ, 4 agrandissements de 4 emplacements (20 000, 80 000, 320 000 puis 1 280 000 pièces). Un emplacement garde jusqu’à 99 unités d’un même produit et d’une même qualité.',
                     'Une nouvelle ferme (prestige) vide le coffre, mais il garde sa taille.',
@@ -1018,7 +1019,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les vins de cépage',
-                t: 'Au pressoir ou à la cuverie, choisissez une de vos variétés de raisin ou de pomme au-dessus des recettes : le vin ou le cidre garde son nom, son goût (sa valeur) et son rang. Ses bouteilles attendent dans la cave, rubrique « Vins de cépage », pour être vendues ou mises en cave. Au château, une cuvée de cépage en platine gagne un cran de classement, et le concours des vins lui donne une médaille de mieux.',
+                t: 'Au pressoir ou à la cuverie, choisissez une de vos variétés de raisin ou de pomme au-dessus des recettes : le vin ou le cidre garde son nom, son goût (sa valeur) et son rang. Ses bouteilles attendent dans la cave, rubrique « Vins de cépage », pour être vendues ou mises en cave. Au château, une cuvée de cépage en platine gagne un cran de classement, et le concours des vins lui donne une médaille de mieux. À la laiterie, le lait d’une race fixée fait de même un fromage de race, qui porte son nom et vaut ses bons gènes.',
             },
             {
                 h: 'Quoi mettre en cave dès le niveau 20',

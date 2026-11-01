@@ -20,7 +20,7 @@ import { masterySpeed, addMastery } from './mastery.js';
 import { clampAllQuality, addQuality } from './farm.js';
 import { inBarn, barnBlocked, rollRare } from './barn.js';
 import { collect } from './book.js';
-import { takeIngredients, varName } from './genetics.js';
+import { takeIngredients, varName, vdef } from './genetics.js';
 import { isCepRecipe, cepVarOk, cepFruit, addCepage } from './cepage.js';
 import { qtyName } from '../core/format.js';
 import { mTimeMult, mExtraYield } from './buildings.js';
@@ -277,7 +277,7 @@ export function queueRecipe(i, id, at) {
     if (!m.queue.length) m.progress = 0;
     if (m.queue.length < 2) m.progress2 = 0;
     pushJob(m, id, q, t.vid);
-    if (t.vid) toast(`${ITEMS[id].name} de cépage : ${varName(state.genetics.vars[t.vid])}`, ['item', id]);
+    if (t.vid) toast(`${ITEMS[id].name} ${vdef(t.vid).kind === 'race' ? 'de race' : 'de cépage'} : ${varName(vdef(t.vid))}`, ['item', id]);
     m.last = id;
     sfx('machine');
     buzz(8);
@@ -294,7 +294,7 @@ export function cancelQueued(i, k) {
     const vid = m.qv ? m.qv.splice(k, 1)[0] : null;
     if (k === 1) m.progress2 = 0;
     // les fruits d'une variété lui sont rendus (en produits normaux)
-    if (vid && state.genetics && state.genetics.vars[vid]) state.genetics.stock[vid] = (state.genetics.stock[vid] || 0) + (RECIPES[id].ing[cepFruit(id)] || 0);
+    if (vid && vdef(vid)) state.genetics.stock[vid] = (state.genetics.stock[vid] || 0) + (RECIPES[id].ing[cepFruit(id)] || 0);
     Object.entries(RECIPES[id].ing).forEach(([key, n]) => (state.inventory[key] += n));
     sfx('click');
     toast(`${ITEMS[id].name} retiré de la file, ingrédients rendus`, ['item', id]);

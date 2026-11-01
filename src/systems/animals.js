@@ -11,7 +11,18 @@ import { alpineMult, themeAnimalMult, isAway } from './port.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
 import { fmt } from '../core/format.js';
-import { wildAnimal, animalSpeedGene, animalYieldGene, animalQuality, animalSaves, animalCurious, animalDocile, animalSocial } from './genetics.js';
+import {
+    harvestVariety,
+    raceProd,
+    wildAnimal,
+    animalSpeedGene,
+    animalYieldGene,
+    animalQuality,
+    animalSaves,
+    animalCurious,
+    animalDocile,
+    animalSocial,
+} from './genetics.js';
 import { addQuality, ascend } from './farm.js';
 import { wishAnimals } from './night.js';
 import { troughBonus } from './buildings.js';
@@ -93,6 +104,8 @@ export function collectAnimal(a) {
     // de bons gènes donnent des produits de qualité
     const q = ascend(d.prodId, animalQuality(a));
     if (q) addQuality(d.prodId, q, qty);
+    // 1.63 : le lait d'une race fixée garde sa race (pour les fromages de race)
+    if (a.race && state.genetics && state.genetics.races[a.race]) harvestVariety(raceProd(a.race, d.prodId), qty, q);
     a.produced = (a.produced || 0) + qty;
     state.stats.collected += qty;
     addMastery(d.prodId, qty);

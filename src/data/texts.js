@@ -122,6 +122,11 @@ export const TIPS = {
         title: 'Un vin de cépage',
         text: 'Un vin fait d’une seule de tes variétés garde son nom jusqu’en cave. Au château, Octave le classe un cran plus haut si ses raisins étaient en platine, et le jury du concours lui donne une médaille de mieux. Ton grand-père avait planté une rangée de vigne rien qu’à lui, au bout du verger. Il appelait son vin « la Réserve d’Odette ». Je n’en ai jamais bu une goutte : il disait qu’il fallait attendre qu’il soit prêt.',
     },
+    raceCheese: {
+        icon: ['item', 'cheese'],
+        title: 'Un fromage de race',
+        text: 'Le lait de tes races fixées garde leur nom. À la laiterie, choisis la race au-dessus des recettes : le fromage porte son nom, vaut ses bons gènes et garde son rang jusqu’en cave. Chez nous, on disait « le fromage de la Marguerite » : c’était la vache, pas la fermière. La fermière, elle, n’a jamais eu de fromage à son nom.',
+    },
     cepageMachine: {
         icon: ['item', 'grape'],
         title: 'Choisir son cépage',
