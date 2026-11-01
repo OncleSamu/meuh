@@ -58,8 +58,10 @@ export function makeGoals(L) {
     if (rec) push({ kind: 'make', id: rec.id, n: 1 });
     if (!out.length) push({ kind: 'orders', n: 2 });
     // le point de départ de chaque compteur
-    for (const g of out)
+    for (const g of out) {
+        if (g.kind === 'make') g.mbase = (state.made && state.made[g.id]) || 0;
         g.base = g.kind === 'make' ? masteryCount(g.id) : g.kind === 'orders' ? state.stats.orders || 0 : g.kind === 'mead' ? state.stats.meads || 0 : 0;
+    }
     return out;
 }
 
@@ -76,6 +78,12 @@ export function goalProgress(g) {
     if (g.kind === 'orders') return [Math.min(g.n, (state.stats.orders || 0) - g.base), g.n];
     if (g.kind === 'hive') return [(state.apiary && state.apiary[g.id] && state.apiary[g.id].hives) > 0 ? 1 : 0, 1];
     if (g.kind === 'mead') return [Math.max(0, Math.min(g.n, (state.stats.meads || 0) - g.base)), g.n];
+    // 1.71.1 : un produit sans prix de vente n'a pas de maîtrise : on compte ce qui a été fabriqué depuis l'objectif,
+    // et pour les anciens objectifs (avant ce compteur), le stock suffit
+    if (ITEMS[g.id] && !ITEMS[g.id].sell) {
+        const made = ((state.made && state.made[g.id]) || 0) - (g.mbase || 0);
+        return [Math.max(0, Math.min(g.n, Math.max(made, state.inventory[g.id] || 0))), g.n];
+    }
     return [Math.max(0, Math.min(g.n, masteryCount(g.id) - g.base)), g.n];
 }
 export const goalDone = g => {

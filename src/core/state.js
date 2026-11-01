@@ -184,6 +184,10 @@ export function newState() {
         bookQuarters: [],
         bookTiers: {},
         qmade: {},
+        // 1.69 : les ruchers des contrées ; 1.70 : les histoires à deux ; 1.71.1 : ce qu'on fabrique (objectifs)
+        apiary: {},
+        duos: {},
+        made: {},
         crow: null,
         daily: { last: '', streak: 0 },
     };
@@ -217,6 +221,9 @@ export function fromSave(parsed) {
         else if (def && typeof def === 'object') s[k] = { ...def, ...(v && typeof v === 'object' ? v : {}) };
         else s[k] = v;
     }
+    // 1.71.1 : les parties ajoutées sans valeur de départ ici (comice, foire, livre généalogique, ruchers, duos…)
+    // étaient perdues au chargement : on garde tout ce que la sauvegarde contient
+    for (const k of Object.keys(parsed)) if (!(k in base) && !TRANSIENT_KEYS.includes(k)) s[k] = parsed[k];
     // les objets apparus depuis la sauvegarde (nouveaux produits, nouvelles graines) commencent à zéro
     for (const id of Object.keys(base.inventory)) if (typeof s.inventory[id] !== 'number') s.inventory[id] = 0;
     for (const id of Object.keys(base.seeds)) if (typeof s.seeds[id] !== 'number') s.seeds[id] = 0;

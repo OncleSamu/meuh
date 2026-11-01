@@ -56,6 +56,9 @@ export const masteryKnown = () =>
 
 export function addMastery(id, qty) {
     farmSeasonAdd(id, qty);
+    // 1.71.1 : ce qu'on fabrique est compté même sans prix de vente (nourriture, planches, clous…), pour les objectifs de niveau
+    state.made = state.made || {};
+    state.made[id] = (state.made[id] || 0) + qty;
     if (!ITEMS[id] || !ITEMS[id].sell) return;
     const before = masteryStars(id),
         beforeX = masteryExtra(id);

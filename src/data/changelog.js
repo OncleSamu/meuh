@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.71.1',
+        title: 'Correctifs',
+        date: '1er novembre 2026',
+        items: [
+            'Un objectif de niveau « préparer » se valide aussi pour un produit sans prix de vente',
+            'Les ruchers des contrées, les histoires à deux, le comice',
+        ],
+    },
+    {
         v: '1.71',
         title: 'Les exploits à jour',
         date: '1er novembre 2026',
