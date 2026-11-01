@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.71',
+        title: 'Les exploits à jour',
+        date: '1er novembre 2026',
+        items: [
+            'La récompense des exploits suit le niveau',
+            'Paliers corrigés pour Bâtisseur, Âme du village et Expérience',
+            'Douze exploits de plus : Brasseur, Hydromelier, Conteur, Fin connaisseur, Généticien, Naisseur, Grand voyageur',
+            'Tri En cours / Terminés et pages dans le livre de la ferme',
+            "Les noms des fêtes ne se coupent plus au milieu d'un mot",
+        ],
+    },
+    {
         v: '1.70',
         title: 'Les villageois',
         date: '1er novembre 2026',

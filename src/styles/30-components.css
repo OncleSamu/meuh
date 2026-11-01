@@ -826,7 +826,13 @@ button.line.lv-go > div {
 }
 .trophy-slot {
     min-width: 0;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
+}
+/* 1.71 : les noms des fêtes passent à la ligne entre les mots, pas au milieu */
+.trophy-slot small {
+    text-align: center;
+    font-size: 0.68rem;
+    hyphens: auto;
 }
 /* un mot trop long (« Pamplemoussier ») se coupe plutôt que de sortir de sa case */
 body {

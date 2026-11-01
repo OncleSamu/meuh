@@ -499,7 +499,29 @@ export function claimDaily(at) {
 
 // ---------------- succès ----------------
 export const achClaimed = a => state.achievements[a.id] || 0;
-export const achClaimable = a => achClaimed(a) < 3 && (state.stats[a.id] || 0) >= a.tiers[achClaimed(a)];
+// 1.71 : quelques succès comptent une valeur calculée (produits adorés trouvés, miels différents, récoltes des contrées)
+const ACH_CALC = {
+    lovesFound: () => Object.values(state.villagers || {}).filter(v => v && v.love).length,
+    honeyKinds: () => Object.keys(state.stats.honeyKinds || {}).length,
+    landHarvest: () => (state.stats.islandHarvest || 0) + (state.stats.oasisHarvest || 0) + (state.stats.nordHarvest || 0),
+};
+export const achValue = a => (a.calc && ACH_CALC[a.id] ? ACH_CALC[a.id]() : state.stats[a.id] || 0);
+export const achClaimable = a => achClaimed(a) < 3 && achValue(a) >= a.tiers[achClaimed(a)];
+// 1.71 : la récompense suit le niveau (jamais moins qu'avant) : pièces ~ niveau², expérience en part du niveau en cours
+const ACH_SCALE = [
+    { coins: 20, xp: 0.03, ruban: 0 },
+    { coins: 120, xp: 0.1, ruban: 1 },
+    { coins: 600, xp: 0.25, ruban: 2 },
+];
+export function achReward(tier, lvl = state.level) {
+    const base = ACH_REWARDS[tier],
+        k = ACH_SCALE[tier];
+    return {
+        coins: Math.max(base.coins, Math.round((k.coins * lvl * lvl) / 100) * 100),
+        xp: Math.max(base.xp, Math.round((k.xp * getXpReq(Math.min(lvl, MAX_LEVEL - 1))) / 10) * 10),
+        ruban: k.ruban,
+    };
+}
 export const claimableCount = () => ACHIEVEMENTS.filter(achClaimable).length;
 export const achDesc = (a, n) => fill(a.desc, n);
 
@@ -507,7 +529,7 @@ export function claimAchievement(id, at) {
     const a = ACHIEVEMENTS.find(x => x.id === id);
     if (!a || !achClaimable(a)) return false;
     const tier = achClaimed(a),
-        r = ACH_REWARDS[tier];
+        r = achReward(tier);
     state.achievements[id] = tier + 1;
     sfx('level');
     buzz(25);
@@ -515,8 +537,8 @@ export function claimAchievement(id, at) {
     earn(r.coins, at);
     addXp(r.xp, at);
     if (r.ruban) {
-        state.prestige.rubans++;
-        float(at, ['+1', ['ui', 'ribbon']], '', -50);
+        state.prestige.rubans += r.ruban;
+        float(at, [`+${r.ruban}`, ['ui', 'ribbon']], '', -50);
     }
     toast(`Succès « ${a.name} » : médaille ${['de bronze', 'd’argent', 'd’or'][tier]} !`, ['ui', MEDALS[tier]]);
     return true;

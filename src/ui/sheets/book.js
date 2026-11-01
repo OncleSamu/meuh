@@ -3,14 +3,14 @@ import { state } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { SEASONS, EVENTS } from '../../data/world.js';
-import { ACH_REWARDS, MEDALS, MAX_LEVEL, BOOK_QUARTERS, MASTERY_NAMES, MASTERY_EXTRA_NAMES as EXTRA_NAMES } from '../../data/progress.js';
+import { MEDALS, MAX_LEVEL, BOOK_QUARTERS, MASTERY_NAMES, MASTERY_EXTRA_NAMES as EXTRA_NAMES } from '../../data/progress.js';
 import { ACHIEVEMENTS } from '../../data/meta.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { ico, art, qStar, SPR } from '../icons.js';
 import { btn, bar, segmented, empty } from '../kit.js';
 import { defineSheet, sheetOpts } from '../sheets.js';
-import { page as pager, searchBox, queryOf, matchQ } from '../pager.js';
+import { page as pager, searchBox, queryOf, matchQ, filterOf, filterChips } from '../pager.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const medals = n => `<span class="medals">${MEDALS.map((m, k) => `<i class="ico">${art('ui', k < n ? m : 'medalOff')}</i>`).join('')}</span>`;
@@ -174,22 +174,34 @@ function exploits() {
         const n = state.trophies[sv.id] || 0;
         return `<div class="trophy-slot${n ? '' : ' empty'}"><span class="t-ico">${art('ui', 'trophy')}<span class="t-season">${art('ui', sv.icon)}</span></span><small>${EVENTS[sv.id].name}</small><b>${n ? '×' + n : '—'}</b></div>`;
     }).join('')}</div>`;
-    const achs = ACHIEVEMENTS.map(a => {
-        const done = G.achClaimed(a),
-            val = state.stats[a.id] || 0;
-        const max = done >= 3,
-            target = a.tiers[Math.min(done, 2)];
-        const can = G.achClaimable(a);
-        const r = ACH_REWARDS[Math.min(done, 2)];
-        return `<div class="card ach${can ? ' can' : ''}">${ico(a.icon, 'ico big')}
+    // 1.71 : 39 succès : à réclamer d'abord, par filtre et par pages
+    const can0 = ACHIEVEMENTS.filter(G.achClaimable),
+        todo = ACHIEVEMENTS.filter(a => G.achClaimed(a) < 3 && !G.achClaimable(a)),
+        full = ACHIEVEMENTS.filter(a => G.achClaimed(a) >= 3);
+    const opts = [
+        ['todo', 'En cours', can0.length + todo.length],
+        ['done', 'Terminés', full.length],
+    ];
+    const f = filterOf('achs', opts);
+    const pg = pager('achs:' + f, f === 'done' ? full : [...can0, ...todo], 12);
+    const achs = pg.items
+        .map(a => {
+            const done = G.achClaimed(a),
+                val = G.achValue(a);
+            const max = done >= 3,
+                target = a.tiers[Math.min(done, 2)];
+            const can = G.achClaimable(a);
+            const r = G.achReward(Math.min(done, 2));
+            return `<div class="card ach${can ? ' can' : ''}">${ico(a.icon, 'ico big')}
             <div class="card-main"><div class="card-title">${a.name}${medals(done)}</div>
             <div class="card-sub">${max ? 'Tous les paliers sont atteints.' : G.achDesc(a, target)}</div>
             ${max ? '' : `${bar(val / target)}<div class="card-sub">${fmt(Math.min(val, target))} / ${fmt(target)}</div>`}</div>
-            ${max ? '' : `<div class="card-side col"><span class="reward">${fmt(r.coins)}${COIN()}</span>${r.ruban ? `<span class="reward">+1${ico(['ui', 'ribbon'])}</span>` : ''}${btn('Réclamer', { act: 'claimAch', data: { id: a.id }, kind: can ? 'gold' : '', size: 'sm', disabled: !can })}</div>`}</div>`;
-    }).join('');
+            ${max ? '' : `<div class="card-side col"><span class="reward">${fmt(r.coins)}${COIN()}</span>${r.ruban ? `<span class="reward">+${r.ruban}${ico(['ui', 'ribbon'])}</span>` : ''}${btn('Réclamer', { act: 'claimAch', data: { id: a.id }, kind: can ? 'gold' : '', size: 'sm', disabled: !can })}</div>`}</div>`;
+        })
+        .join('');
     return [
         ['shelf', shelf],
-        ['achs', `<div class="list">${achs}</div>`],
+        ['achs', `${filterChips('achs', opts, f)}${pg.top}<div class="list">${achs || empty('Rien ici pour le moment.')}</div>${pg.more}`],
     ];
 }
 

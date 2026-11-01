@@ -1767,7 +1767,7 @@ export const GUIDE_PAGES = [
                 b: [
                     'Collection : l’étagère de 17 pages (potager, verger, poissons, plats, fromagerie, boissons, bières, cuvées, mines et gemmes, races…). Chaque page donne des récompenses à 25, 50, 75 et 100 % (un ruban au complet).',
                     'Maîtrise : les étoiles de chaque produit.',
-                    'Exploits : les succès, avec pièces, expérience et parfois un ruban.',
+                    'Exploits : 39 succès en trois médailles (bronze, argent, or). La récompense suit votre niveau : des pièces, une part du niveau en expérience, et des rubans en argent (1) et en or (2). Tri En cours / Terminés ; ceux à réclamer passent en premier.',
                     'Légende : le chemin vers la Ferme légendaire.',
                     'Album : les photos de vos grands moments.',
                 ],
