@@ -15,7 +15,9 @@ const RE_BIG = /(^|[^\p{L}\d,.\u202f])(\d{5,})(?![\d,.])/gu;
 const RE_APOS = /([A-Za-zÀ-ÿœŒ])'(?=[A-Za-zÀ-ÿœŒ])/g;
 
 export function frenchSpaces(s) {
-    const t = String(s);
+    // 1.64 : filet de sécurité : jamais de nombre à rallonge (« 8898.71186440678 ») à l'écran
+    const t0 = String(s);
+    const t = /\d\.\d{4,}/.test(t0) ? t0.replace(/(\d+)\.(\d{4,})/g, (m, i, d) => String(Math.round(Number(i + '.' + d)))) : t0;
     const a0 = t.includes("'") ? t.replace(RE_APOS, '$1’') : t;
     const a = /\d{5}/.test(a0) ? a0.replace(RE_BIG, (m, p, n) => p + Number(n).toLocaleString('fr-FR')) : a0;
     if (!a.includes(' ')) return a;

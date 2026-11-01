@@ -8,6 +8,7 @@ import { ico, art } from '../icons.js';
 import { btn, segmented } from '../kit.js';
 import { plantRobesTab } from '../sheets/herdbook.js';
 import { defineSheet } from '../sheets.js';
+import { page, filterOf, filterChips } from '../pager.js';
 
 const FX_ICON = { p: 'cpPousse', q: 'cpQualite', r: 'cpRecolte', n: 'cpNuisibles', t: 'cpTrio', mp: 'cpMalus', mq: 'cpMalus', mn: 'cpMalus' };
 // les dessins d'une association : une culture (ou la première d'une famille) de chaque côté
@@ -35,8 +36,8 @@ defineSheet('companions', {
         const tabs = G.plantLabOpen()
             ? segmented(
                   [
-                      ['assoc', 'Les associations', ['ui', 'cpCarnet']],
-                      ['vars', 'Les variétés', ['ui', 'flowers']],
+                      ['assoc', 'Associations', ['ui', 'cpCarnet']],
+                      ['vars', 'Variétés', ['ui', 'flowers']],
                   ],
                   o.tab === 'vars' ? 'vars' : 'assoc',
                   'pbTab',
@@ -52,16 +53,30 @@ function assocTab() {
         const t = G.compNextTier();
         const head = `<p class="card-sub center">Des cultures voisines (gauche, droite, dessus, dessous) s’aident ou se gênent. Une association se découvre en récoltant une parcelle qui en profite… ou qui en souffre.</p>
             <div class="cp-tier">${t ? `<span>Prochaine récompense à <b>${t.n}</b> associations : ${fmt(t.coins)}${ico(['ui', 'coin'])}${t.fert ? ` · ${t.fert}${ico(['item', 'fertilizer'])}` : ''}${t.seeds ? ` · ${t.seeds}${ico(['seed', 'saffron'])}` : ''}${t.ruban ? ` · ${t.ruban}${ico(['ui', 'ribbon'])}` : ''}</span>${btn('Réclamer', { act: 'claimComp', kind: 'green', size: 'sm', disabled: !G.tierReady() })}` : `<span>Carnet complet : bravo !</span>`}</div>`;
-        const rows = ASSOCS.map(a => {
-            const seen = !!c.seen[a.id],
-                lv = G.assocLvl(a);
-            if (!seen)
-                return `<div class="cp-row unseen"><span class="cp-pics">?</span><div class="cp-txt"><b>Association à découvrir</b><small>${state.level >= lv ? 'Possible dès maintenant' : `Niveau ${lv}`}</small></div></div>`;
-            return `<div class="cp-row${isBad(a) ? ' bad' : ''}"><span class="cp-pics">${pics(a)}</span><div class="cp-txt"><b>${esc(a.name)}</b><small>${FX_TEXT[a.fx]}${a.to === 'b' ? ' (pour la voisine)' : ''} · ${esc(a.why)}</small></div><i class="cp-fx">${art('ui', FX_ICON[a.fx])}</i></div>`;
-        }).join('');
+        // 1.64 : 49 associations : par filtre (bonus, gênes, à découvrir) et par paquets
+        const good = ASSOCS.filter(a => c.seen[a.id] && !isBad(a)),
+            bad = ASSOCS.filter(a => c.seen[a.id] && isBad(a)),
+            todo = ASSOCS.filter(a => !c.seen[a.id]);
+        const opts = [
+            ['good', 'Elles s’aident', good.length],
+            ['bad', 'Elles se gênent', bad.length],
+            ['todo', 'À découvrir', todo.length],
+        ];
+        const f = filterOf('assoc', opts);
+        const pg = page('assoc:' + f, f === 'good' ? good : f === 'bad' ? bad : todo, 15);
+        const rows = pg.items
+            .map(a => {
+                const seen = !!c.seen[a.id],
+                    lv = G.assocLvl(a);
+                if (!seen)
+                    return `<div class="cp-row unseen"><span class="cp-pics">?</span><div class="cp-txt"><b>Association à découvrir</b><small>${state.level >= lv ? 'Possible dès maintenant' : `Niveau ${lv}`}</small></div></div>`;
+                return `<div class="cp-row${isBad(a) ? ' bad' : ''}"><span class="cp-pics">${pics(a)}</span><div class="cp-txt"><b>${esc(a.name)}</b><small>${FX_TEXT[a.fx]}${a.to === 'b' ? ' (pour la voisine)' : ''} · ${esc(a.why)}</small></div><i class="cp-fx">${art('ui', FX_ICON[a.fx])}</i></div>`;
+            })
+            .join('');
         return (
             head +
-            `<div class="cp-list">${rows}</div><p class="card-sub center">Légumineuses : petits pois, haricots, lentilles, soja. Céréales : blé, maïs, orge, riz, sarrasin. Alliacées : ail, oignon, poireau. Ouvert dès le niveau ${COMP_LVL}, dans le champ et dans la serre ; les bonus d’une parcelle sont plafonnés.</p>`
+            filterChips('assoc', opts, f) +
+            `<div class="cp-list">${rows}</div>${pg.more}<p class="card-sub center">Légumineuses : petits pois, haricots, lentilles, soja. Céréales : blé, maïs, orge, riz, sarrasin. Alliacées : ail, oignon, poireau. Ouvert dès le niveau ${COMP_LVL}, dans le champ et dans la serre ; les bonus d’une parcelle sont plafonnés.</p>`
         );
     }
 }

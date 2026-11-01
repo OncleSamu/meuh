@@ -372,10 +372,10 @@ html.calm .gp-4 {
     justify-items: center;
 }
 .ln-row.four {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 .ln-row.two {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .ln-row.one {
     grid-template-columns: 1fr;
@@ -654,4 +654,22 @@ html.calm .spk {
     font-weight: 700;
     color: var(--ink-soft);
     line-height: 1.25;
+}
+
+/* 1.64 : des créations compactes : petit dessin, boutons côte à côte */
+.crea-card .crea-art {
+    width: 48px;
+    height: 48px;
+}
+.crea-card > .card-side.col {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+/* 1.64 : dans les petites cases (listes, tiroirs, choix), une géante reste dans sa case :
+   les tailles sont resserrées (géante 100 %, normale 85 %, naine 69 %) au lieu de déborder */
+:is(.v-art, .ln-art, .hb-art, .pc-art, .seed.var, .ico, .offer-art, .crea-art, .vs-art, .lp-art, .var-art) > .gl {
+    transform: scale(calc(0.85 + (var(--gsx, 1) - 1) * 0.5), calc(0.85 + (var(--gsy, 1) - 1) * 0.5));
 }

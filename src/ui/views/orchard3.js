@@ -154,7 +154,7 @@ defineSheet('orchardLog', {
             ? segmented(
                   [
                       ['fruits', 'Les fruits', ['item', 'apple']],
-                      ['vars', 'Les variétés', ['ui', 'flowers']],
+                      ['vars', 'Variétés', ['ui', 'flowers']],
                   ],
                   o.tab === 'vars' ? 'vars' : 'fruits',
                   'pbTab',

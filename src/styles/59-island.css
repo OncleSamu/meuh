@@ -10,7 +10,7 @@
     padding: 14px 10px 12px;
 }
 .isle .plots {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
 }
 .isle .plot {

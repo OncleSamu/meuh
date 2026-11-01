@@ -109,7 +109,7 @@
 }
 .bk-ladder {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 5px;
     margin-top: 8px;
 }
@@ -265,4 +265,21 @@ button.entry {
 }
 .bk-odette small {
     color: #7a5a3a;
+}
+
+/* 1.64 : les cases de l'échelle et les noms longs restent dans la page */
+.bk-ladder > div {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.bk-ladder .btn {
+    max-width: 100%;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-size: 0.72rem;
+}
+.book-grid .entry b {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    hyphens: auto;
 }

@@ -26,7 +26,7 @@
 
 .plots {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 7px;
     /* 1.60 : le champ laisse défiler la page de haut en bas */
     touch-action: pan-y;
@@ -280,7 +280,7 @@ html.season-hiver .plot.grass {
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;
     max-width: 276px;
     margin: 0 auto;

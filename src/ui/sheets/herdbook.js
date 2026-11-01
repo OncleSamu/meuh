@@ -70,8 +70,8 @@ defineSheet('herdbook', {
     render: o =>
         segmented(
             [
-                ['robes', 'Les robes', ['ui', 'cpCarnet']],
-                ['pairs', 'Les associations', ['ui', 'heart']],
+                ['robes', 'Robes', ['ui', 'cpCarnet']],
+                ['pairs', 'Associations', ['ui', 'heart']],
             ],
             o.tab,
             'hbTab',

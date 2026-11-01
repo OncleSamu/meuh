@@ -138,7 +138,7 @@
 }
 .defi-rewards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 6px;
     margin-bottom: 10px;
 }
@@ -170,7 +170,7 @@
 /* salle des trophées */
 .trophy-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
 }
 .trophy {

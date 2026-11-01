@@ -13,6 +13,7 @@ import { QUALITY } from '../../data/farm.js';
 import { btn, bar, timer, section, empty } from '../kit.js';
 import { defineView, defineLive, ui, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
+import { page, filterOf, filterChips } from '../pager.js';
 import { renameBtn } from '../sheets/rename.js';
 import { beerSvg } from '../../art/abbey.js';
 import { genWrap } from '../genlook.js';
@@ -121,11 +122,25 @@ function composerHtml() {
 
 // ---------------- mes bières ----------------
 function beersHtml() {
-    const list = G.myBeers();
-    if (!list.length) return section('Mes bières') + empty('Vos bières apparaîtront ici, avec leur nom.');
+    const all = G.myBeers();
+    if (!all.length) return section('Mes bières') + empty('Vos bières apparaîtront ici, avec leur nom.');
+    // 1.64 : une longue liste : filtres (en stock, les meilleures, toutes) et « Voir plus »
+    const inStock = all.filter(b => G.beerStock(b.id) > 0),
+        top = all.filter(b => b.stars >= 3);
+    const opts = [
+        ['stock', 'En stock', inStock.length],
+        ['top', '3 étoiles', top.length],
+        ['all', 'Toutes', all.length],
+    ];
+    const f = filterOf('beers', opts);
+    const list = (f === 'stock' ? inStock : f === 'top' ? top : [...all]).sort(
+        (a, b) => G.beerStock(b.id) - G.beerStock(a.id) || b.stars - a.stars || b.value - a.value,
+    );
+    const pg = page('beers:' + f, list, 10);
     return (
-        section('Mes bières', `<small>${list.length}</small>`) +
-        `<div class="list">${list
+        section('Mes bières', `<small>${all.length}</small>`) +
+        filterChips('beers', opts, f) +
+        `<div class="list">${pg.items
             .map(b => {
                 const n = G.beerStock(b.id);
                 const bq = n ? G.beerQual(b.id) : null;
@@ -151,7 +166,7 @@ function beersHtml() {
                 const again = b.aged ? '' : btn('Rebrasser', { act: 'rebrew', data: { id: b.id }, kind: 'green', size: 'sm', icon: ['ui', 'loop'] });
                 return `<div class="card brew-beer${n ? '' : ' none'}"><div class="card-art">${beerSvg(b)}</div><div class="card-main"><div class="card-title">${b.name} ${renameBtn('beer', b.id, 'Renommer la bière')}</div><div class="card-sub">${sub}</div>${again ? `<div class="bb-again">${again}</div>` : ''}</div><div class="card-side">${side}</div></div>`;
             })
-            .join('')}</div>`
+            .join('')}</div>${pg.more}`
     );
 }
 

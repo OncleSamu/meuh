@@ -19,6 +19,7 @@ import { genWrap, looksText, animalArt, lineageHtml, varRankChips } from '../gen
 import { renameBtn } from '../sheets/rename.js';
 import { NOTE_COL } from '../../data/abbey.js';
 import { chefCard } from './orders.js';
+import { page, filterOf, filterChips } from '../pager.js';
 
 const pct = x => `${Math.round(x * 100)} %`;
 
@@ -224,6 +225,26 @@ function breedCard() {
         ${btn(`Faire naître · ${fmt(G.breedCost())}${ico(['ui', 'coin'])}`, { act: 'startBreed', kind: ready ? 'green' : '', wide: true, disabled: !ready })}</div>`;
 }
 
+// ---------------- 1.64 : trier une longue liste de créations par espèce ----------------
+// les puces : toutes, les fixées (s'il y en a et pas toutes), puis une par espèce (les plus nombreuses d'abord)
+function byBase(key, all, baseOf = v => v.base, nameOf = b => ITEMS[b].name) {
+    const counts = {};
+    all.forEach(v => (counts[baseOf(v)] = (counts[baseOf(v)] || 0) + 1));
+    const fixed = all.filter(v => v.fixed).length;
+    const opts = [
+        ['all', 'Toutes', all.length],
+        ...(fixed && fixed < all.length ? [['fixed', 'Fixées', fixed]] : []),
+        ...Object.entries(counts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([b, n]) => [b, nameOf(b), n]),
+    ];
+    if (opts.length <= 2 && all.length <= 12) return { f: 'all', list: all, chips: '' };
+    const cur = ui.sel.filt && ui.sel.filt[key];
+    const f = cur && opts.some(o => o[0] === cur) ? cur : 'all';
+    const list = f === 'all' ? all : f === 'fixed' ? all.filter(v => v.fixed) : all.filter(v => baseOf(v) === f);
+    return { f, list, chips: filterChips(key, opts, f) };
+}
+
 // ---------------- mes variétés ----------------
 function varTile(v) {
     const seeds = state.genetics.seeds[v.id] || 0,
@@ -236,9 +257,12 @@ function varTile(v) {
 }
 function varietiesBlock() {
     const goal = G.goalOf();
-    const list = G.varieties().sort((a, b) => (goal ? G.goalScore(b.g) - G.goalScore(a.g) : 0) || b.fixed - a.fixed || b.born - a.born);
-    if (!list.length) return G.plantLabOpen() ? empty('Aucune variété pour le moment : faites votre premier croisement !') : '';
-    return `<div class="v-grid">${list.map(varTile).join('')}</div>`;
+    const all = G.varieties().sort((a, b) => (goal ? G.goalScore(b.g) - G.goalScore(a.g) : 0) || b.fixed - a.fixed || b.born - a.born);
+    if (!all.length) return G.plantLabOpen() ? empty('Aucune variété pour le moment : faites votre premier croisement !') : '';
+    // 1.64 : par espèce, et par paquets de 12
+    const { f, list, chips } = byBase('labVars', all);
+    const pg = page('labVars:' + f, list, 12);
+    return `${chips}<div class="v-grid">${pg.items.map(varTile).join('')}</div>${pg.more}`;
 }
 
 // ---------------- 1.45.2 : le concours du potager (l'ancien Salon, pour les variétés) ----------------
@@ -413,13 +437,35 @@ defineSheet('variety', {
 defineSheet('creations', {
     title: 'Mes créations',
     render() {
-        const vars = G.fixedVarieties(),
-            races = Object.values(state.genetics.races);
-        if (!vars.length && !races.length) return empty('Fixez une variété ou une race au laboratoire : elle apparaîtra ici, avec le nom que vous lui donnez.');
+        const allVars = G.fixedVarieties(),
+            allRaces = Object.values(state.genetics.races);
+        if (!allVars.length && !allRaces.length)
+            return empty('Fixez une variété ou une race au laboratoire : elle apparaîtra ici, avec le nom que vous lui donnez.');
+        // 1.64 : des cartes courtes (le détail des goûts est dans la fiche), par espèce et par paquets
+        const kOpts = [
+            ['v', 'Variétés', allVars.length],
+            ['r', 'Races', allRaces.length],
+        ];
+        const kind = allVars.length && allRaces.length ? filterOf('creaKind', kOpts) : allVars.length ? 'v' : 'r';
+        const kindChips = allVars.length && allRaces.length ? filterChips('creaKind', kOpts, kind) : '';
+        const vb = kind === 'v' ? byBase('creaVars', allVars) : null;
+        const rb =
+            kind === 'r'
+                ? byBase(
+                      'creaRaces',
+                      allRaces,
+                      r => r.type,
+                      t => ANIMALS[t].name,
+                  )
+                : null;
+        const vpg = vb ? page('creaVars:' + vb.f, vb.list, 10) : { items: [], more: '' };
+        const rpg = rb ? page('creaRaces:' + rb.f, rb.list, 10) : { items: [], more: '' };
+        const vars = vpg.items,
+            races = rpg.items;
         const vHtml = vars
             .map(
                 v => `<div class="card crea-card"><span class="crea-art">${varArt(v)}</span><div class="card-main"><div class="card-title">${esc(v.name)}${renameBtn('variety', v.id, 'Renommer la variété')}</div>
-                <div class="card-sub">${ITEMS[v.base].name} · ${looksText(v.g)}</div>${plantTraits(v.g, true, G.FLAVOR_IDS)}</div>
+                <div class="card-sub">${ITEMS[v.base].name} · ${looksText(v.g)}</div>${flavorMini(v.g)}</div>
                 <div class="card-side col">${G.seedbankOpen() ? btn(`5 graines · ${fmt(G.seedPrice(v) * 5)}${ico(['ui', 'coin'])}`, { act: 'buyVarSeeds', data: { id: v.id }, size: 'sm', kind: 'green' }) : ''}${btn('Fiche', { act: 'open', data: { sheet: 'variety', id: v.id }, size: 'sm' })}</div></div>`,
             )
             .join('');
@@ -430,7 +476,7 @@ defineSheet('creations', {
                 <div class="card-side col">${G.seedbankOpen() ? btn(`Un petit · ${fmt(G.racePrice(r))}${ico(['ui', 'coin'])}`, { act: 'buyRaceBaby', data: { id: r.id }, size: 'sm', kind: 'green' }) : ''}</div></div>`,
             )
             .join('');
-        return `${vars.length ? section('Variétés') + `<div class="list">${vHtml}</div>` : ''}${races.length ? section('Races') + `<div class="list">${rHtml}</div>` : ''}
+        return `${kindChips}${vb ? section('Variétés', `<small>${allVars.length}</small>`) + vb.chips + `<div class="list">${vHtml}</div>${vpg.more}` : ''}${rb ? section('Races', `<small>${allRaces.length}</small>`) + rb.chips + `<div class="list">${rHtml}</div>${rpg.more}` : ''}
             ${G.seedbankOpen() ? '' : hint('Avec le conservatoire des semences (carte « La station »), vous pourrez racheter graines et petits de vos créations.')}`;
     },
 });

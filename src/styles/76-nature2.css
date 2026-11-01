@@ -1,7 +1,7 @@
 /* Nature 1.11 : profondeurs de la mine, ouvriers, charbonnière, Gaspard, carnet */
 .depth-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 6px;
     margin: 6px 0 4px;
 }

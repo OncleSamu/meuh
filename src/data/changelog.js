@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.64',
+        title: 'Les longues listes',
+        date: '1er novembre 2026',
+        items: [],
+    },
+    {
         v: '1.63.2',
         title: 'Le comptoir et le platine',
         date: '1er novembre 2026',

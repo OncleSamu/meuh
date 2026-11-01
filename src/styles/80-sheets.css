@@ -132,7 +132,7 @@ html.season-hiver #hills .tree-top {
 
 .trophy-shelf {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;
     padding: 10px 8px 8px;
     text-align: center;
@@ -259,7 +259,7 @@ html.season-hiver #hills .tree-top {
 
 .book-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
     margin-bottom: 12px;
 }
@@ -303,7 +303,7 @@ html.season-hiver #hills .tree-top {
 
 .tiles {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 6px;
     margin-bottom: 14px;
 }
@@ -420,7 +420,7 @@ svg.chart .bar:hover path {
 
 .seed-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 10px 8px;
     max-height: 58dvh;
     overflow-y: auto;

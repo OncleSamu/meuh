@@ -2,6 +2,7 @@
 // finitions et auréole) et les associations au pré (deux espèces dans un même pré s'entraident ou se gênent).
 import { state, scaleLvl } from '../core/state.js';
 import { now } from '../core/clock.js';
+import { fmt } from '../core/format.js';
 import { view } from '../core/view.js';
 import { toast, sfx, changed } from '../core/bus.js';
 import { ANIMALS, BIRTHS } from '../data/animals.js';
@@ -86,7 +87,7 @@ export function scanRobes() {
         toast(
             found.length > 1
                 ? `Carnet des robes : ${found.length} nouvelles robes (+${coins} pièces)`
-                : `Carnet des robes : ${ANIMALS[f.type].name.toLowerCase()} ${robeName(f.kind, f.i)} (+${coins} pièces)`,
+                : `Carnet des robes : ${ANIMALS[f.type].name.toLowerCase()} ${robeName(f.kind, f.i)} (+${fmt(coins)} pièces)`,
             ['ui', 'cpCarnet'],
         );
         if (complete.length) {
@@ -217,7 +218,8 @@ export function scanPlantRobes() {
             }
     }
     if (!found.length) return found;
-    const coins = found.length * (ROBEBOOK.plantCoin + scaleLvl() * 20);
+    // 1.64 : un compte rond (le niveau d'échelle n'est pas entier)
+    const coins = Math.round((found.length * (ROBEBOOK.plantCoin + scaleLvl() * 20)) / 10) * 10;
     earn(coins, null);
     addXp((ROBEBOOK.xp + scaleLvl()) * found.length);
     const complete = [...new Set(found.map(f => f.base))].filter(b => !h.pdone[b] && plantRobeCount(b) >= robeTotal());
@@ -230,8 +232,8 @@ export function scanPlantRobes() {
         const book = ITEMS[f.base].type === 'tree' ? 'du verger' : 'du potager';
         toast(
             found.length > 1
-                ? `Carnet ${book} : ${found.length} nouvelles variétés de couleur ou de forme (+${coins} pièces)`
-                : `Carnet ${book} : ${ITEMS[f.base].name.toLowerCase()} ${f.kind === 'rare' ? 'rare' : robeName(f.kind, f.i)} (+${coins} pièces)`,
+                ? `Carnet ${book} : ${found.length} nouvelles variétés de couleur ou de forme (+${fmt(coins)} pièces)`
+                : `Carnet ${book} : ${ITEMS[f.base].name.toLowerCase()} ${f.kind === 'rare' ? 'rare' : robeName(f.kind, f.i)} (+${fmt(coins)} pièces)`,
             ['item', f.base],
         );
         if (complete.length) toast(`Toutes les couleurs et tous les motifs : ${ITEMS[complete[0]].name.toLowerCase()} complète, un ruban !`, ['ui', 'ribbon']);

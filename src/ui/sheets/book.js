@@ -10,6 +10,7 @@ import { actions, esc } from '../dom.js';
 import { ico, art, qStar, SPR } from '../icons.js';
 import { btn, bar, segmented, empty } from '../kit.js';
 import { defineSheet, sheetOpts } from '../sheets.js';
+import { page as pager } from '../pager.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const medals = n => `<span class="medals">${MEDALS.map((m, k) => `<i class="ico">${art('ui', k < n ? m : 'medalOff')}</i>`).join('')}</span>`;
@@ -81,7 +82,11 @@ function pageView(page) {
     // les entrées encore inconnues : les 9 premières seulement, le reste est compté
     let shownUnknown = 0,
         hidden = 0;
-    const grid = list
+    // 1.64 : une page qui se remplit (260 bières…) : les trouvées par paquets de 24, puis les inconnues
+    const found = list.filter(e => G.isFound(e)),
+        pg = pager('book:' + page.id, found, 24);
+    const shown = [...pg.items, ...(pg.more ? [] : list.filter(e => !G.isFound(e)))];
+    const grid = shown
         .map(e => {
             const f = G.isFound(e),
                 c = state.collection[e.key];
@@ -105,7 +110,7 @@ function pageView(page) {
             return `<button class="entry" data-act="open" data-sheet="bookEntry" data-key="${e.key}"><span class="entry-ico">${art(e.icon[0], e.icon[1])}${f && e.star && e.kind !== 'variety' ? qStar(2, 'entry-star') : ''}</span><b>${esc(e.name)}</b>${starsOf(bs)}<small>${sub}</small>${dots(e)}</button>`;
         })
         .join('');
-    return `<button class="bk-back" data-act="bookBack">‹ Toutes les pages</button>${head}${empty}<div class="book-grid">${grid}</div>${hidden ? `<p class="card-sub center">… et ${hidden} autre${hidden > 1 ? 's' : ''} à découvrir.</p>` : ''}`;
+    return `<button class="bk-back" data-act="bookBack">‹ Toutes les pages</button>${head}${empty}<div class="book-grid">${grid}</div>${pg.more}${hidden ? `<p class="card-sub center">… et ${hidden} autre${hidden > 1 ? 's' : ''} à découvrir.</p>` : ''}`;
 }
 
 function collection(o) {
