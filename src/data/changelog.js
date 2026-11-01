@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.61',
+        title: 'Objectifs, compétences et pizzeria',
+        date: '1er novembre 2026',
+        text: '',
+    },
+    {
         v: '1.60',
         title: 'Retours de jeu',
         date: '1er novembre 2026',
