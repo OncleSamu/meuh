@@ -19,7 +19,7 @@ import { genWrap, looksText, animalArt, lineageHtml, varRankChips } from '../gen
 import { renameBtn } from '../sheets/rename.js';
 import { NOTE_COL } from '../../data/abbey.js';
 import { chefCard } from './orders.js';
-import { page, filterOf, filterChips } from '../pager.js';
+import { page, filterOf, filterChips, searchBox, queryOf, matchQ } from '../pager.js';
 
 const pct = x => `${Math.round(x * 100)} %`;
 
@@ -261,8 +261,10 @@ function varietiesBlock() {
     if (!all.length) return G.plantLabOpen() ? empty('Aucune variété pour le moment : faites votre premier croisement !') : '';
     // 1.64 : par espèce, et par paquets de 12
     const { f, list, chips } = byBase('labVars', all);
-    const pg = page('labVars:' + f, list, 12);
-    return `${chips}<div class="v-grid">${pg.items.map(varTile).join('')}</div>${pg.more}`;
+    const q = queryOf('labVars');
+    const found = list.filter(v => matchQ(q, G.varName(v), ITEMS[v.base].name));
+    const pg = page('labVars:' + f, found, 20);
+    return `${chips}${found.length ? '' : empty('Aucune variété de ce nom.')}<div class="v-grid">${pg.items.map(varTile).join('')}</div>${pg.more}`;
 }
 
 // ---------------- 1.45.2 : le concours du potager (l'ancien Salon, pour les variétés) ----------------
@@ -305,6 +307,7 @@ function renderLab(el) {
                         : ''),
             ),
         ],
+        ['varSearch', G.varieties().length > 20 ? searchBox('labVars', 'Chercher une variété') : ''],
         ['vars', varietiesBlock()],
         ['salon', salonCard()],
         [
@@ -458,8 +461,11 @@ defineSheet('creations', {
                       t => ANIMALS[t].name,
                   )
                 : null;
-        const vpg = vb ? page('creaVars:' + vb.f, vb.list, 10) : { items: [], more: '' };
-        const rpg = rb ? page('creaRaces:' + rb.f, rb.list, 10) : { items: [], more: '' };
+        const q = queryOf('crea');
+        const vl = vb ? vb.list.filter(v => matchQ(q, v.name, ITEMS[v.base].name)) : [];
+        const rl = rb ? rb.list.filter(r => matchQ(q, r.name, ANIMALS[r.type].name)) : [];
+        const vpg = vb ? page('creaVars:' + vb.f, vl, 15) : { items: [], more: '' };
+        const rpg = rb ? page('creaRaces:' + rb.f, rl, 15) : { items: [], more: '' };
         const vars = vpg.items,
             races = rpg.items;
         const vHtml = vars
@@ -472,12 +478,20 @@ defineSheet('creations', {
         const rHtml = races
             .map(
                 r => `<div class="card crea-card"><span class="crea-art">${animalArt(r.type, r.g)}</span><div class="card-main"><div class="card-title">${esc(r.name)}${renameBtn('race', r.id, 'Renommer la race')}</div>
-                <div class="card-sub">${ANIMALS[r.type].name} · ${looksText(r.g)}</div>${animalTraits({ type: r.type, g: r.g, analyzed: true })}</div>
+                <div class="card-sub">${ANIMALS[r.type].name} · ${looksText(r.g)} · +${G.animalGain({ type: r.type, g: r.g })} en gènes</div></div>
                 <div class="card-side col">${G.seedbankOpen() ? btn(`Un petit · ${fmt(G.racePrice(r))}${ico(['ui', 'coin'])}`, { act: 'buyRaceBaby', data: { id: r.id }, size: 'sm', kind: 'green' }) : ''}</div></div>`,
             )
             .join('');
-        return `${kindChips}${vb ? section('Variétés', `<small>${allVars.length}</small>`) + vb.chips + `<div class="list">${vHtml}</div>${vpg.more}` : ''}${rb ? section('Races', `<small>${allRaces.length}</small>`) + rb.chips + `<div class="list">${rHtml}</div>${rpg.more}` : ''}
-            ${G.seedbankOpen() ? '' : hint('Avec le conservatoire des semences (carte « La station »), vous pourrez racheter graines et petits de vos créations.')}`;
+        const many = allVars.length + allRaces.length > 15;
+        return [
+            ['kind', kindChips],
+            ['search', many ? searchBox('crea', 'Chercher une création') : ''],
+            [
+                'list',
+                `${vb ? section('Variétés', `<small>${allVars.length}</small>`) + vb.chips + `<div class="list">${vHtml}</div>${vpg.more}` : ''}${rb ? section('Races', `<small>${allRaces.length}</small>`) + rb.chips + `<div class="list">${rHtml}</div>${rpg.more}` : ''}
+            ${G.seedbankOpen() ? '' : hint('Avec le conservatoire des semences (carte « La station »), vous pourrez racheter graines et petits de vos créations.')}`,
+            ],
+        ];
     },
 });
 

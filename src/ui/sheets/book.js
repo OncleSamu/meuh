@@ -10,7 +10,7 @@ import { actions, esc } from '../dom.js';
 import { ico, art, qStar, SPR } from '../icons.js';
 import { btn, bar, segmented, empty } from '../kit.js';
 import { defineSheet, sheetOpts } from '../sheets.js';
-import { page as pager } from '../pager.js';
+import { page as pager, searchBox, queryOf, matchQ } from '../pager.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const medals = n => `<span class="medals">${MEDALS.map((m, k) => `<i class="ico">${art('ui', k < n ? m : 'medalOff')}</i>`).join('')}</span>`;
@@ -83,9 +83,12 @@ function pageView(page) {
     let shownUnknown = 0,
         hidden = 0;
     // 1.64 : une page qui se remplit (260 bières…) : les trouvées par paquets de 24, puis les inconnues
-    const found = list.filter(e => G.isFound(e)),
-        pg = pager('book:' + page.id, found, 24);
-    const shown = [...pg.items, ...(pg.more ? [] : list.filter(e => !G.isFound(e)))];
+    const q = queryOf('book:' + page.id);
+    const found = list.filter(e => G.isFound(e) && matchQ(q, e.name)),
+        pg = pager('book:' + page.id + ':p', found, 24);
+    // les inconnues seulement sur la dernière page, et pas pendant une recherche
+    const last = pg.cur === pg.pages - 1;
+    const shown = [...pg.items, ...(q || !last ? [] : list.filter(e => !G.isFound(e)))];
     const grid = shown
         .map(e => {
             const f = G.isFound(e),
@@ -115,8 +118,12 @@ function pageView(page) {
 
 function collection(o) {
     const page = G.BOOK.find(p => p.id === o.page);
+    const nFound = page ? page.entries().filter(e => G.isFound(e)).length : 0;
     return page
-        ? [['p', pageView(page)]]
+        ? [
+              ['ps', nFound > 24 ? searchBox('book:' + page.id, 'Chercher dans la page') : ''],
+              ['p', pageView(page)],
+          ]
         : [
               ['q', quarters()],
               ['shelf', shelf()],

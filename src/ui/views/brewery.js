@@ -7,13 +7,13 @@ import { ITEMS } from '../../data/items.js';
 import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, NOTE_COL, BARRELS, BEER_BOOK } from '../../data/abbey.js';
 import { VILLAGERS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
-import { blocks, actions } from '../dom.js';
+import { blocks, actions, esc } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
 import { QUALITY } from '../../data/farm.js';
 import { btn, bar, timer, section, empty } from '../kit.js';
 import { defineView, defineLive, ui, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
-import { page, filterOf, filterChips } from '../pager.js';
+import { page, filterOf, filterChips, searchBox, queryOf, matchQ } from '../pager.js';
 import { renameBtn } from '../sheets/rename.js';
 import { beerSvg } from '../../art/abbey.js';
 import { genWrap } from '../genlook.js';
@@ -123,7 +123,7 @@ function composerHtml() {
 // ---------------- mes bières ----------------
 function beersHtml() {
     const all = G.myBeers();
-    if (!all.length) return section('Mes bières') + empty('Vos bières apparaîtront ici, avec leur nom.');
+    if (!all.length) return empty('Vos bières apparaîtront ici, avec leur nom.');
     // 1.64 : une longue liste : filtres (en stock, les meilleures, toutes) et « Voir plus »
     const inStock = all.filter(b => G.beerStock(b.id) > 0),
         top = all.filter(b => b.stars >= 3);
@@ -133,13 +133,14 @@ function beersHtml() {
         ['all', 'Toutes', all.length],
     ];
     const f = filterOf('beers', opts);
-    const list = (f === 'stock' ? inStock : f === 'top' ? top : [...all]).sort(
-        (a, b) => G.beerStock(b.id) - G.beerStock(a.id) || b.stars - a.stars || b.value - a.value,
-    );
-    const pg = page('beers:' + f, list, 10);
+    const q = queryOf('beers');
+    const list = (f === 'stock' ? inStock : f === 'top' ? top : [...all])
+        .filter(b => matchQ(q, b.name, ...b.ings.map(x => G.ingName(x[0]))))
+        .sort((a, b) => G.beerStock(b.id) - G.beerStock(a.id) || b.stars - a.stars || b.value - a.value);
+    const pg = page('beers:' + f, list, 20);
     return (
-        section('Mes bières', `<small>${all.length}</small>`) +
         filterChips('beers', opts, f) +
+        (list.length ? '' : empty(`Aucune bière ne correspond à « ${esc(ui.sel.q.beers)} ».`)) +
         `<div class="list">${pg.items
             .map(b => {
                 const n = G.beerStock(b.id);
@@ -223,6 +224,8 @@ function renderBrew(el) {
         ['vats', vatsHtml()],
         ['orders', ordersHtml()],
         ['compose', composerHtml()],
+        ['beersHead', section('Mes bières', G.myBeers().length ? `<small>${G.myBeers().length}</small>` : '')],
+        ['beerSearch', G.myBeers().length > 20 ? searchBox('beers', 'Chercher une bière ou un ingrédient') : ''],
         ['beers', beersHtml()],
         ['cellar', cellarHtml()],
         ['book', bookHtml()],

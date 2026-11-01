@@ -280,6 +280,8 @@ button.entry {
 }
 .book-grid .entry b {
     max-width: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     hyphens: auto;
+    font-size: 0.86rem;
+    line-height: 1.15;
 }
