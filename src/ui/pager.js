@@ -13,10 +13,9 @@ function setup() {
         pageList: el => {
             const d = el.dataset;
             (ui.sel.pg = ui.sel.pg || {})[d.k] = +d.p;
-            // on revient en haut de la liste
-            const b = el.closest('.block') || el.closest('.sheet-body');
+            if (el.closest('.pager.top')) return;
             setTimeout(() => {
-                const top = b && b.isConnected ? b : document.querySelector(`[data-pgtop="${d.k}"]`);
+                const top = document.querySelector(`.pager.top[data-pgtop="${d.k.replace(/"/g, '')}"]`);
                 if (top) top.scrollIntoView({ block: 'start', behavior: 'smooth' });
             }, 0);
         },
@@ -54,14 +53,15 @@ export function searchBox(key, placeholder) {
     }</div>`;
 }
 
-// une page de la liste (step éléments) et la barre des pages : ‹ 1 … 4 5 6 … 26 ›
+// une page de la liste (step éléments) et la barre des pages, en haut et en bas de la liste.
+// 1.64.2 : tous les numéros tant qu'il y en a 15 au plus (on saute directement à la page 6), sinon 1 … 4 5 6 7 8 … 26
 export function page(key, list, step = 20) {
     setup();
     const pages = Math.max(1, Math.ceil(list.length / step));
     const cur = Math.max(0, Math.min(pages - 1, (ui.sel.pg && ui.sel.pg[key]) || 0));
     const items = list.slice(cur * step, cur * step + step);
-    if (pages <= 1) return { items, more: '', cur, pages };
-    const show = new Set([0, pages - 1, cur - 1, cur, cur + 1].filter(p => p >= 0 && p < pages));
+    if (pages <= 1) return { items, more: '', top: '', cur, pages };
+    const show = new Set(pages <= 15 ? [...Array(pages).keys()] : [0, pages - 1, cur - 2, cur - 1, cur, cur + 1, cur + 2].filter(p => p >= 0 && p < pages));
     const nums = [];
     let last = -1;
     for (const p of [...show].sort((a, b) => a - b)) {
@@ -73,11 +73,15 @@ export function page(key, list, step = 20) {
     }
     const arrow = (p, t, dis) =>
         `<button class="pg-n pg-arrow" data-act="pageList" data-k="${key}" data-p="${p}"${dis ? ' disabled' : ''} aria-label="${t}">${t === 'Précédente' ? '‹' : '›'}</button>`;
+    // tous les numéros visibles : pas besoin de flèches (elles reviennent quand on en cache)
+    const bar = pages <= 15 ? nums.join('') : `${arrow(cur - 1, 'Précédente', cur === 0)}${nums.join('')}${arrow(cur + 1, 'Suivante', cur === pages - 1)}`;
+    const count = `<small>${cur * step + 1} à ${Math.min(list.length, cur * step + step)} sur ${list.length}</small>`;
     return {
         items,
         cur,
         pages,
-        more: `<nav class="pager">${arrow(cur - 1, 'Précédente', cur === 0)}${nums.join('')}${arrow(cur + 1, 'Suivante', cur === pages - 1)}<small>${cur * step + 1} à ${Math.min(list.length, cur * step + step)} sur ${list.length}</small></nav>`,
+        top: `<nav class="pager top" data-pgtop="${key}">${bar}${count}</nav>`,
+        more: `<nav class="pager">${bar}</nav>`,
     };
 }
 

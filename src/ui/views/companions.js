@@ -76,7 +76,7 @@ function assocTab() {
         return (
             head +
             filterChips('assoc', opts, f) +
-            `<div class="cp-list">${rows}</div>${pg.more}<p class="card-sub center">Légumineuses : petits pois, haricots, lentilles, soja. Céréales : blé, maïs, orge, riz, sarrasin. Alliacées : ail, oignon, poireau. Ouvert dès le niveau ${COMP_LVL}, dans le champ et dans la serre ; les bonus d’une parcelle sont plafonnés.</p>`
+            `${pg.top}<div class="cp-list">${rows}</div>${pg.more}<p class="card-sub center">Légumineuses : petits pois, haricots, lentilles, soja. Céréales : blé, maïs, orge, riz, sarrasin. Alliacées : ail, oignon, poireau. Ouvert dès le niveau ${COMP_LVL}, dans le champ et dans la serre ; les bonus d’une parcelle sont plafonnés.</p>`
         );
     }
 }

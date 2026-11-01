@@ -889,9 +889,14 @@ body {
     margin: 12px 0 4px;
 }
 .pager .pg-n {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-width: 38px;
     height: 38px;
     padding: 0 8px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
     border: 2px solid var(--ink);
     border-radius: 12px;
     background: #fff8e6;
@@ -906,8 +911,11 @@ body {
     opacity: 0.35;
 }
 .pager .pg-arrow {
-    font-size: 1.3rem;
-    line-height: 1;
+    font-size: 1.4rem;
+    padding-bottom: 3px;
+}
+.pager.top {
+    margin: 4px 0 10px;
 }
 .pager .pg-gap {
     font-weight: 800;

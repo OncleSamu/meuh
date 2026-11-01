@@ -264,7 +264,7 @@ function varietiesBlock() {
     const q = queryOf('labVars');
     const found = list.filter(v => matchQ(q, G.varName(v), ITEMS[v.base].name));
     const pg = page('labVars:' + f, found, 20);
-    return `${chips}${found.length ? '' : empty('Aucune variété de ce nom.')}<div class="v-grid">${pg.items.map(varTile).join('')}</div>${pg.more}`;
+    return `${chips}${found.length ? '' : empty('Aucune variété de ce nom.')}${pg.top}<div class="v-grid">${pg.items.map(varTile).join('')}</div>${pg.more}`;
 }
 
 // ---------------- 1.45.2 : le concours du potager (l'ancien Salon, pour les variétés) ----------------
@@ -488,7 +488,7 @@ defineSheet('creations', {
             ['search', many ? searchBox('crea', 'Chercher une création') : ''],
             [
                 'list',
-                `${vb ? section('Variétés', `<small>${allVars.length}</small>`) + vb.chips + `<div class="list">${vHtml}</div>${vpg.more}` : ''}${rb ? section('Races', `<small>${allRaces.length}</small>`) + rb.chips + `<div class="list">${rHtml}</div>${rpg.more}` : ''}
+                `${vb ? section('Variétés', `<small>${allVars.length}</small>`) + vb.chips + vpg.top + `<div class="list">${vHtml}</div>${vpg.more}` : ''}${rb ? section('Races', `<small>${allRaces.length}</small>`) + rb.chips + rpg.top + `<div class="list">${rHtml}</div>${rpg.more}` : ''}
             ${G.seedbankOpen() ? '' : hint('Avec le conservatoire des semences (carte « La station »), vous pourrez racheter graines et petits de vos créations.')}`,
             ],
         ];

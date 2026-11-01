@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.64.2',
+        title: 'Aller directement à une page',
+        date: '1er novembre 2026',
+        items: [
+            'La barre des pages est aussi en haut de la liste, et ne bouge pas quand on la touche',
+            "Tous les numéros sont visibles jusqu'à 15 pages",
+            'Depuis la barre du bas, on remonte à celle du haut',
+            'Les chiffres sont centrés dans leurs cases',
+        ],
+    },
+    {
         v: '1.64.1',
         title: 'Des pages et une recherche',
         date: '1er novembre 2026',

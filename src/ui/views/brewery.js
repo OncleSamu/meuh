@@ -141,6 +141,7 @@ function beersHtml() {
     return (
         filterChips('beers', opts, f) +
         (list.length ? '' : empty(`Aucune bière ne correspond à « ${esc(ui.sel.q.beers)} ».`)) +
+        pg.top +
         `<div class="list">${pg.items
             .map(b => {
                 const n = G.beerStock(b.id);

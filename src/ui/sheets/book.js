@@ -113,7 +113,7 @@ function pageView(page) {
             return `<button class="entry" data-act="open" data-sheet="bookEntry" data-key="${e.key}"><span class="entry-ico">${art(e.icon[0], e.icon[1])}${f && e.star && e.kind !== 'variety' ? qStar(2, 'entry-star') : ''}</span><b>${esc(e.name)}</b>${starsOf(bs)}<small>${sub}</small>${dots(e)}</button>`;
         })
         .join('');
-    return `<button class="bk-back" data-act="bookBack">‹ Toutes les pages</button>${head}${empty}<div class="book-grid">${grid}</div>${pg.more}${hidden ? `<p class="card-sub center">… et ${hidden} autre${hidden > 1 ? 's' : ''} à découvrir.</p>` : ''}`;
+    return `<button class="bk-back" data-act="bookBack">‹ Toutes les pages</button>${head}${empty}${pg.top}<div class="book-grid">${grid}</div>${pg.more}${hidden ? `<p class="card-sub center">… et ${hidden} autre${hidden > 1 ? 's' : ''} à découvrir.</p>` : ''}`;
 }
 
 function collection(o) {
