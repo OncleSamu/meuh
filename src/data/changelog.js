@@ -1,6 +1,20 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.66',
+        title: 'Armand marchande',
+        date: '1er novembre 2026',
+        items: [
+            "À chaque visite, Armand fait d'abord une offre",
+            "On peut dire d'accord, demander plus cher, proposer plus ou moins de quantité, ou refuser",
+            'Il accepte, fait une contre-proposition à mi-chemin ou repart pour la semaine, selon son humeur',
+            'Trois demandes au plus',
+            'Être raisonnable rapporte en moyenne 5 à 10 % de plus',
+            'Un mot de Mamie, une page « Marchander » dans le guide',
+            'Plan : Plan Armand marchande',
+        ],
+    },
+    {
         v: '1.65',
         title: 'Audit des nouveautés',
         date: '1er novembre 2026',
