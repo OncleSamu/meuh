@@ -35,6 +35,7 @@ import { varName, traitOf, FLAVOR_IDS, clampVarieties, scoreTier, takeVarUnits, 
 import { honeyProd } from './honey.js';
 import { domStepSum } from './estate.js';
 import { tip } from './tips.js';
+import { talentFx } from './friends.js';
 
 // ---------------- 1.68 : la base d'une boisson : un malt, ou un miel (hydromel) ----------------
 export const isMead = malt => typeof malt === 'string' && malt.startsWith('mead:');
@@ -312,7 +313,8 @@ export function brewPreview(d = ensureBrew().draft) {
         harmony: h,
         cost,
         miss,
-        time: brewTime(ings, d.malt),
+        // 1.70 : le talent de Frère Hugues
+        time: Math.round(brewTime(ings, d.malt) * (1 - talentFx('brew'))),
         value: ings.length ? brewValue(d.malt, hop, ings, h.stars) : 0,
         name: known ? state.brew.beers[known].name : ings.length ? brewName(d.malt, ings) : '',
         known,

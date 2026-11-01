@@ -57,6 +57,7 @@ import { domStepSum } from './estate.js';
 import { repStars, classMult, settleOnExit, settlePrimeur, makeCuvee, sellPrimeur, primeurQuote, enterWineContest, serveVisitor } from './chateau.js';
 import { takeQ } from './defis.js';
 import { ensureCepage, cepCount, cepPutQuality, cepRanks } from './cepage.js';
+import { talentFx } from './friends.js';
 
 // 1.15 : millésimes. L'année de jeu donne à chaque vin une qualité (0 à 3), la même pour tout le monde.
 export const gameYear = () => Math.floor((state.day - 1) / (DAYS_PER_SEASON * 4)) + 1;
@@ -100,7 +101,9 @@ export const caveSlots = () =>
     // 1.38 : la réputation du château donne de la place (une case à 3 étoiles, une autre à 5)
     (repStars() >= 3 ? 1 : 0) +
     (repStars() >= 5 ? 1 : 0);
-export const caveStep = id => (CAVE_ITEMS[id] === 'cider' && projectDone('cidery') ? 4 * CAVE_H : caveFam(id).step) * (cupHas(2) ? 0.9 : 1);
+// 1.70 : le talent d'Octave
+export const caveStep = id =>
+    (CAVE_ITEMS[id] === 'cider' && projectDone('cidery') ? 4 * CAVE_H : caveFam(id).step) * (cupHas(2) ? 0.9 : 1) * (1 - talentFx('cave'));
 export const rankName = lot =>
     lot.bad ? (lot.id === 'beer' ? 'Tournée' : 'Tourné') : caveFam(lot.id).ranks[lot.rank] + (lot.q ? ` · ${QUALITY[lot.q].name}` : '');
 // 1.6.3 : un lot peut être une bière (id 'beer', sa recette bid et son fût k)

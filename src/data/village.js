@@ -1,5 +1,6 @@
 // Le village : villageois, amitié, chapitres, chantiers, histoires, voisins et rivaux.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
+import { STORIES_170 } from './friends.js';
 
 export const VILLAGERS = {
     odette: {
@@ -1947,3 +1948,6 @@ Object.assign(PROJECTS, {
         map: 'nord',
     },
 });
+
+// 1.70 : treize histoires de plus (src/data/friends.js)
+Object.assign(STORIES, STORIES_170);

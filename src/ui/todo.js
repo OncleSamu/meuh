@@ -4,6 +4,7 @@ import { state } from '../core/state.js';
 import { ANIMALS } from '../data/animals.js';
 import { HOLIDAYS } from '../data/world.js';
 import { RARE_EVENTS } from '../data/surprises.js';
+import { VILLAGERS } from '../data/village.js';
 import * as G from '../systems/index.js';
 
 const s = n => (n > 1 ? 's' : '');
@@ -216,8 +217,11 @@ export function todoList() {
     const fst = G.farmSeasonClaimable();
     if (fst) push('village/orders', ['ui', 'trophy'], `${fst} palier${s(fst)} de saison`, fst);
     if (G.contractReady()) push('village/orders', ['ui', 'calendar'], 'Contrat de saison prêt', 1);
-    const stories = G.storiesReady();
+    const stories = G.storiesReady() + G.DUOS.filter(d => G.duoReady(d)).length;
     if (stories) push('village/village', ['ui', 'scroll'], `${stories} histoire${s(stories)} à faire avancer`, stories);
+    // 1.70 : un anniversaire aujourd'hui (si on n'a pas encore offert)
+    const bd = G.presentVillagers().filter(v => G.isBirthday(v) && !G.giftedToday(v));
+    if (bd.length) push('village/village', ['ui', 'cake'], `Anniversaire de ${VILLAGERS[bd[0]].name}`, bd.length, { urgent: true });
     const neigh = G.neighborsReady();
     if (neigh) push('village/orders', ['ui', 'heart'], `${neigh} voisin${s(neigh)} à aider`, neigh);
     if (G.specialReady()) push('village/orders', ['ui', 'star'], 'Commande spéciale des voisins', 1);

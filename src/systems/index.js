@@ -30,6 +30,7 @@ export * from './island.js';
 export * from './oasis.js';
 export * from './nord.js';
 export * from './apiary.js';
+export * from './friends.js';
 export * from './market.js';
 export * from './mastery.js';
 export * from './merchant.js';

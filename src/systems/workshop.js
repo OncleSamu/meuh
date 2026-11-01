@@ -25,6 +25,7 @@ import { isCepRecipe, cepVarOk, cepFruit, addCepage } from './cepage.js';
 import { qtyName } from '../core/format.js';
 import { mTimeMult, mExtraYield } from './buildings.js';
 import { cupHas } from './cup.js';
+import { talentSpeed } from './friends.js';
 
 // les machines de cuisine (le compteur « plats cuisinés »)
 export const COOKING = ['kitchen', 'stove', 'deli', 'fishmonger'];
@@ -57,7 +58,8 @@ export const outCount = m => Object.values(m.out).reduce((a, b) => a + b, 0);
 export const machineOutput = m => Object.keys(m.out).find(k => m.out[k] > 0) || m.queue[0] || null;
 // durée réelle d'une recette : vitesse générale, moulin du hameau, maîtrise
 export const recipeTime = id =>
-    (RECIPES[id].time / (speedMult() * machineBoost(RECIPES[id].machine) * masterySpeed(id) * (1 + 0.05 * skill('quickHands')))) *
+    (RECIPES[id].time /
+        (speedMult() * machineBoost(RECIPES[id].machine) * masterySpeed(id) * (1 + 0.05 * skill('quickHands')) * talentSpeed(RECIPES[id].machine))) *
     mTimeMult(RECIPES[id].machine);
 export const machinePct = m => (m.queue.length ? Math.min(1, m.progress / recipeTime(m.queue[0])) : 0);
 export const machinePct2 = m => (m.lane2 && m.queue.length > 1 ? Math.min(1, (m.progress2 || 0) / recipeTime(m.queue[1])) : 0);

@@ -6,7 +6,7 @@ import { ITEMS } from '../../data/items.js';
 import { ANIMALS } from '../../data/animals.js';
 import { MACHINES, RECIPES } from '../../data/machines.js';
 import { DECOS } from '../../data/farm.js';
-import { VILLAGERS, PROJECTS, CHAPTERS, STORIES, RIVALS, NEIGHBOR_LVL } from '../../data/village.js';
+import { VILLAGERS, PROJECTS, CHAPTERS, RIVALS, NEIGHBOR_LVL } from '../../data/village.js';
 import { HOLIDAYS, GAME_MIN_PER_SEC } from '../../data/world.js';
 import { RARE_EVENTS } from '../../data/surprises.js';
 import { CONTEST_LVL, CONTRACT_LVL, NMARKET } from '../../data/commerce.js';
@@ -17,8 +17,8 @@ import { STORY_MAPS } from '../../data/meta.js';
 import { MAP_BG } from '../../art/maps.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions } from '../dom.js';
-import { ico, art, SPR, artImg } from '../icons.js';
-import { btn, bar, timer, hint, hearts, card } from '../kit.js';
+import { ico, art, SPR } from '../icons.js';
+import { btn, bar, timer, hearts, card } from '../kit.js';
 import { defineView, ui } from '../app.js';
 import { itemLine, rewardHtml } from './common.js';
 import { askBuy } from '../sheets/askbuy.js';
@@ -26,6 +26,7 @@ import { defineSheet, openSheet } from '../sheets.js';
 import { DOMAINE, DOMAINE_IDS, DOMAINE_LVL } from '../../data/domaine.js';
 import { costRow } from '../kit.js';
 import { domaineScene, domThumb } from '../../art/v1201domaine.js';
+import { villagersCard } from './villagers.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const head = (icon, title, sub, side = '') =>
@@ -354,51 +355,7 @@ function contestCard() {
         <div class="score-parts">${me.parts.map(([n, v]) => `<span>${n} <b>${fmt(v)}</b></span>`).join('')}</div></div>`;
 }
 
-// ---------------- les villageois ----------------
-function villagerStory(vid) {
-    if (!STORIES[vid] || G.heartsOf(vid) < 5) return '';
-    const S = STORIES[vid],
-        st = G.storyState(vid);
-    if (st.step >= S.steps.length)
-        return `<div class="vstory done"><b>${ico(['ui', 'check'])}${S.title}</b><span class="card-sub">Histoire terminée</span></div>`;
-    const [text, need] = S.steps[st.step];
-    const lines = Object.entries(need)
-        .map(([item, n]) => {
-            const g = st.given[item] || 0;
-            return `<span class="need${g >= n ? ' ok' : ''}"><button class="pgo" data-act="produce" data-id="${item}" aria-label="Produire">${ico(['item', item])}</button>${Math.min(g + (state.inventory[item] || 0), n)}/${n}</span>`;
-        })
-        .join('');
-    return `<div class="vstory"><b>${ico(['ui', 'scroll'])}${S.title} · étape ${st.step + 1} sur 3</b><span class="card-sub">« ${text} »</span>
-        <div class="needs">${lines}${btn('Apporter', { act: 'giveStory', data: { v: vid }, kind: G.villagerStoryReady(vid) ? 'gold' : '', size: 'sm' })}</div></div>`;
-}
-
-function villagersHtml() {
-    return `<div class="list">${G.presentVillagers()
-        .map(id => {
-            const v = VILLAGERS[id],
-                h = G.heartsOf(id);
-            const gifted = G.giftedToday(id),
-                open = ui.sel.gift === id,
-                can = G.giftable(id);
-            return `<div class="card villager-card">
-                <div class="avatar">${art('villager', id)}</div>
-                <div class="card-main"><div class="card-title">${v.name}</div><div class="card-sub">${v.role}</div>${hearts(h)}${h < 5 ? bar(G.heartProgress(id), 'pink') : ''}
-                <div class="likes"><span class="card-sub">Aime :</span>${v.likes.map(x => `<i class="ico${state.inventory[x] > 0 ? '' : ' dim'}" title="${ITEMS[x].name}">${artImg('item', x)}</i>`).join('')}</div>
-                <div class="card-sub">${G.nextRewardText(id)}</div>${villagerStory(id)}
-                ${open ? `<div class="gift-row">${can.length ? can.map(x => btn(`${state.inventory[x]}`, { act: 'gift', data: { v: id, id: x }, size: 'sm', icon: ['item', x] })).join('') : '<span class="card-sub">Vous n’avez rien qu’il ou elle aime en stock.</span>'}</div>` : ''}</div>
-                <div class="card-side">${btn(gifted ? 'Offert' : open ? 'Fermer' : 'Offrir', { act: 'toggleGift', data: { v: id }, kind: gifted ? '' : 'gold', size: 'sm', disabled: gifted })}</div></div>`;
-        })
-        .join('')}</div>`;
-}
-
-// 1.29.1 : les villageois se replient comme l'Agenda ; replié, on voit combien attendent un cadeau
-function villagersCard() {
-    const ids = G.presentVillagers(),
-        gift = ids.filter(id => !G.giftedToday(id) && G.giftable(id).length).length;
-    const sum = gift ? `${gift} cadeau${gift > 1 ? 'x' : ''} possible${gift > 1 ? 's' : ''}` : `${ids.length} villageois`;
-    const body = `${hint('Livrez leurs commandes et offrez-leur ce qu’ils aiment (un cadeau par jour) pour gagner leur amitié.')}${villagersHtml()}`;
-    return foldCard('villagers', ['ui', 'heart'], 'Les villageois', sum, body, gift > 0);
-}
+// ---------------- les villageois : 1.70, src/ui/views/villagers.js ----------------
 
 // ---------------- 1.20 : l'Amélioration du domaine ----------------
 function domaineCard() {

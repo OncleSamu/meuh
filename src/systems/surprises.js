@@ -26,6 +26,8 @@ import { dayInSeason } from './world.js';
 import { questPool } from './orders.js';
 import { heartsOf } from './village.js';
 import { villagerHere } from './home.js';
+import { DUO_STORIES, DUO_REWARD } from '../data/friends.js';
+import { duoState, duoOpen } from './friends.js';
 
 const rnd = ([a, b]) => a + Math.random() * (b - a);
 export const starAnimalMult = a => (a && a.star ? STAR_ANIMAL_SPEED : 1);
@@ -276,9 +278,56 @@ export function giveStory(vid, at) {
             state.prestige.rubans++;
             state.stats.stories = (state.stats.stories || 0) + 1;
             addPhoto('villager', vid, S.title, `L’histoire de ${VILLAGERS[vid].name}`);
-            emit('storyEnd', { vid, coins });
+            emit('storyEnd', { vid, coins, talent: true });
             sfx('level');
         } else toast(`${VILLAGERS[vid].name} : étape ${st.step} sur 3 réussie (+${fmt(coins)} pièces)`, ['villager', vid]);
+    }
+    return true;
+}
+
+// ---------------- 1.70 : les histoires à deux (les deux villageois à 5 cœurs) ----------------
+const duoNeed = key => DUO_STORIES[key].steps[duoState(key).step][1];
+export const duoLeftOf = (key, item) => Math.max(0, duoNeed(key)[item] - (duoState(key).given[item] || 0));
+export const duoStoryNeed = duoNeed;
+export const duoReady = d =>
+    duoOpen(d) && d.every(villagerHere) && Object.keys(duoNeed(d.join('-'))).every(k => (state.inventory[k] || 0) >= duoLeftOf(d.join('-'), k));
+export function giveDuoStory(d, at) {
+    const key = d.join('-');
+    if (!duoOpen(d) || !d.every(villagerHere)) return false;
+    const st = duoState(key),
+        need = duoNeed(key);
+    let any = false;
+    for (const item of Object.keys(need)) {
+        const n = Math.min(state.inventory[item] || 0, duoLeftOf(key, item));
+        if (n > 0) {
+            state.inventory[item] -= n;
+            clampQuality(item);
+            st.given[item] = (st.given[item] || 0) + n;
+            any = true;
+        }
+    }
+    if (!any) {
+        toast('Rien à apporter pour le moment', ['villager', d[0]]);
+        sfx('error');
+        return false;
+    }
+    sfx('load');
+    if (Object.keys(need).every(k => duoLeftOf(key, k) === 0)) {
+        const value = Object.entries(need).reduce((a, [k, n]) => a + (ITEMS[k].sell || 50) * n, 0);
+        const coins = round5(value * 3);
+        earn(coins, at);
+        addXp(Math.round(value * 0.35), at);
+        st.step++;
+        st.given = {};
+        if (at) burst(at, 'sparkle', 16);
+        const S = DUO_STORIES[key];
+        if (st.step >= S.steps.length) {
+            state.prestige.rubans += DUO_REWARD.rubans;
+            state.stats.stories = (state.stats.stories || 0) + 1;
+            addPhoto('villager', d[0], S.title, `${VILLAGERS[d[0]].name} et ${VILLAGERS[d[1]].name}`);
+            emit('duoEnd', { d, coins });
+            sfx('level');
+        } else toast(`${S.title} : étape ${st.step} sur 3 réussie (+${fmt(coins)} pièces)`, ['villager', d[0]]);
     }
     return true;
 }

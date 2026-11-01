@@ -21,6 +21,7 @@ import { pickItems, qtyFor, xpBonus, hasAll, payItems } from './orders.js';
 import { isAdult } from './animals.js';
 import { addPhoto } from './style.js';
 import { stayOf, domStepSum } from './estate.js';
+import { talentFx } from './friends.js';
 
 // ---------------- pêche en mer ----------------
 export const netOpen = () => projectDone('lighthouse');
@@ -75,7 +76,8 @@ export function haulNet(at) {
 
 // ---------------- cargo de livraison ----------------
 export const boatOpen = () => projectDone('quay');
-export const boatPay = () => BOAT_PAY * (projectDone('shipyard') ? 1.25 : 1);
+// 1.70 : le talent de Morgane
+export const boatPay = () => BOAT_PAY * (projectDone('shipyard') ? 1.25 : 1) * (1 + talentFx('boat'));
 export const boatAway = () => (BOAT_AWAY - (projectDone('shipyard') ? 60 * 60 * 1000 : 0)) * (1 - domStepSum('quay', 'fast'));
 
 export function boatTick() {

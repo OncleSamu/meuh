@@ -1,6 +1,21 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.70',
+        title: 'Les villageois',
+        date: '1er novembre 2026',
+        items: [
+            'Village › Les villageois en liste courte, avec les anniversaires qui viennent et un tri Tous / Cadeau possible / Histoire',
+            'Une fiche par villageois en quatre onglets',
+            'Chacun adore un produit à deviner, aime sa liste, le reste est « bof »',
+            'Un anniversaire par villageois, cadeau triple ce jour-là et un merci pour le produit adoré',
+            "À 5 cœurs, le talent de l'ami",
+            '13 histoires de plus',
+            '4 duos qui partagent les cadeaux, et 4 histoires à deux',
+            'Guide et histoires de Mamie à jour',
+        ],
+    },
+    {
         v: '1.69',
         title: 'Les ruchers des contrées',
         date: '1er novembre 2026',

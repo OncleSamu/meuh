@@ -1,0 +1,215 @@
+/* 1.70 : Village › Les villageois : une liste courte et une fiche à onglets */
+.vl-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+.vl-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border: 2px solid var(--ink);
+    border-radius: var(--r-sm, 10px);
+    background: var(--paper-l, #fff7e0);
+    cursor: pointer;
+}
+.vl-row .avatar.xs,
+.vl-bday .avatar.xs {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border: 2px solid var(--ink);
+    background: #fdf1d8;
+}
+.vl-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.vl-main b {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.vl-sub {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.vl-sub .hearts .ico {
+    width: 15px;
+    height: 15px;
+}
+.vl-flag .ico {
+    width: 18px;
+    height: 18px;
+}
+.vl-talent,
+.vl-done {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.7rem;
+    color: var(--ink-l, #7a5a3a);
+}
+.vl-talent .ico,
+.vl-done .ico {
+    width: 14px;
+    height: 14px;
+}
+.vl-bdays {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+    overflow-x: auto;
+}
+.vl-bdays > .ico {
+    width: 28px;
+    height: 28px;
+    flex: none;
+}
+.vl-bday {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 4px;
+    border: none;
+    background: none;
+    font: inherit;
+    color: var(--ink);
+}
+.vl-bday small {
+    font-size: 0.68rem;
+    white-space: nowrap;
+}
+.vl-bday.now small {
+    color: var(--red, #c8453a);
+    font-weight: 800;
+}
+/* la fiche */
+.sheet-title .avatar.xs {
+    width: 30px;
+    height: 30px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+.vf-body {
+    margin-top: 10px;
+}
+.vf-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+.vf-block .bar {
+    width: 70%;
+}
+.vf-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    margin-top: 6px;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    background: var(--paper-l, #fff7e0);
+}
+.vf-line.off {
+    opacity: 0.6;
+}
+.vf-line > .ico,
+.vf-line > .avatar.xs {
+    width: 32px;
+    height: 32px;
+    flex: none;
+}
+.vf-line div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.vf-line small {
+    font-size: 0.78rem;
+    color: var(--ink-l, #7a5a3a);
+}
+.vf-h {
+    margin: 12px 0 6px;
+    font-size: 0.85rem;
+}
+.vf-bday {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 800;
+    color: var(--red, #c8453a);
+}
+.vf-bday .ico {
+    width: 26px;
+    height: 26px;
+}
+.vf-love {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    background: #fde4ea;
+}
+.vf-love.off {
+    background: var(--paper-l, #fff7e0);
+}
+.vf-love > svg,
+.vf-love > .vf-q {
+    width: 40px;
+    height: 40px;
+    flex: none;
+}
+.vf-q {
+    display: grid;
+    place-items: center;
+    border: 2px dashed var(--ink);
+    border-radius: 50%;
+    font-weight: 900;
+    font-size: 1.2rem;
+}
+.vf-love div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.vf-love small {
+    font-size: 0.78rem;
+}
+.vf-likes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.vf-likes .ico {
+    width: 30px;
+    height: 30px;
+}
+.vf-likes .ico.dim {
+    opacity: 0.45;
+}
+.vstory.off {
+    opacity: 0.7;
+}
+.moment-avatar.duo {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}

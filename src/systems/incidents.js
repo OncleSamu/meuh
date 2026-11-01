@@ -18,6 +18,7 @@ import { addXp, spend, earn } from './player.js';
 import { rollRare } from './barn.js';
 import { owlHere } from './night.js';
 import { NIGHT } from '../data/night.js';
+import { talentFx } from './friends.js';
 
 export function scheduleIncident() {
     state.nextIncident = now() + INCIDENT_GAP[0] + Math.random() * (INCIDENT_GAP[1] - INCIDENT_GAP[0]);
@@ -144,7 +145,8 @@ export function treatPest(i, at) {
     return true;
 }
 
-export const cureCost = () => Math.round((40 + scaleLvl() * 15) / 5) * 5;
+// 1.70 : le talent de Victor
+export const cureCost = () => Math.round(((40 + scaleLvl() * 15) * (1 - talentFx('cure'))) / 5) * 5;
 
 export function cureAnimal(i, at) {
     const a = state.animals[i];

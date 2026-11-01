@@ -122,6 +122,21 @@ export const TIPS = {
         title: 'Un miel de fleur',
         text: 'Les abeilles butinent ce qui est en fleur autour d’elles. Si une fleur domine (la moitié au moins, et quatre parcelles), le miel prend son nom : lavande, tournesol, châtaignier… Il vaut plus cher, se range au coffre et sert dans toutes les recettes au miel. Touche une ruche pour savoir ce qu’elle prépare. Ma mère mettait ses ruches au bout du champ de sarrasin : son miel était presque noir, et les voisins disaient qu’il soignait la toux. Ils toussaient beaucoup, les voisins.',
     },
+    loves: {
+        icon: ['ui', 'heart'],
+        title: 'Son cadeau préféré',
+        text: 'Chaque villageois adore un produit, un seul, et il faut le deviner. Il compte cinq points d’amitié ! Ouvre sa fiche, onglet Cadeau : à deux cœurs, il te dit de quelle machine il sort. Ton grand-père m’a offert des chaussettes pendant dix ans. J’ai fini par lui dire que j’adorais les violettes. Il m’en a offert pendant quarante ans.',
+    },
+    birthday: {
+        icon: ['ui', 'cake'],
+        title: 'Un anniversaire',
+        text: 'Chaque villageois a son jour, marqué dans sa fiche. Ce jour-là, un cadeau compte triple, et son produit adoré lui fait tellement plaisir qu’il te remercie en pièces. Au village, on n’oublie jamais un anniversaire : on s’en souvient pendant des années, surtout quand on l’a oublié.',
+    },
+    talent: {
+        icon: ['ui', 'star'],
+        title: 'Le talent de l’ami',
+        text: 'À cinq cœurs, un villageois te prête son talent pour toujours : les machines de son métier vont plus vite et leurs produits se vendent mieux. Victor soigne moins cher, Morgane fait mieux payer les bateaux, Octave fait vieillir la cave plus vite. Finis son histoire, et son talent double. Un bon voisin, c’est une richesse, disait mon père. Il disait ça surtout quand il empruntait la charrette.',
+    },
     apiary: {
         icon: ['ui', 'apiaryIsland'],
         title: 'Le rucher des contrées',

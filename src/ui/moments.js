@@ -71,6 +71,21 @@ const BUILD = {
                     [['villager', vid], `« ${S.end} »`],
                     [['ui', 'coin'], `${fmt(coins)} pièces`],
                     [['ui', 'ribbon'], '1 ruban de concours'],
+                    // 1.70 : son talent double
+                    ...(G.TALENTS[vid] ? [[['ui', 'star'], `Talent doublé : ${G.talentText(vid).toLowerCase()}`]] : []),
+                ])}`,
+            ok: 'Merci !',
+            party: true,
+        };
+    },
+    duoEnd: ({ d, coins }) => {
+        const S = G.DUO_STORIES[d.join('-')];
+        return {
+            html: `<div class="moment-avatar duo">${art('villager', d[0])}${art('villager', d[1])}</div><h2>${S.title}</h2>
+                ${lines([
+                    [['villager', d[0]], `« ${S.end} »`],
+                    [['ui', 'coin'], `${fmt(coins)} pièces`],
+                    [['ui', 'ribbon'], '2 rubans de concours'],
                 ])}`,
             ok: 'Merci !',
             party: true,
@@ -194,6 +209,7 @@ export function setupMoments(onClose) {
     on('friend', f => pushMoment('friend', f));
     on('story', s => pushMoment('story', s));
     on('storyEnd', s => pushMoment('storyEnd', s));
+    on('duoEnd', s => pushMoment('duoEnd', s));
     on('contestResult', r => pushMoment('contest', r));
     on('tip', id => pushMoment('tip', id));
     on('foal', f => pushMoment('foal', f));

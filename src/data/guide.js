@@ -1481,9 +1481,18 @@ export const GUIDE_PAGES = [
                 h: 'Les villageois et l’amitié',
                 b: [
                     'Elle monte quand vous livrez leurs commandes, leur servez une boisson au comptoir ou leur faites un cadeau.',
-                    'La liste est une ligne repliable (comme l’Agenda) : repliée, elle annonce les cadeaux possibles ; touchez-la pour la déplier. Le choix est retenu.',
-                    'Un cadeau par villageois et par jour de jeu (environ 5 minutes réelles) : 1 point, 3 si c’est un produit fabriqué. Choisissez dans ce qu’il aime.',
-                    'Cinq cœurs en tout. Chaque cœur rapporte des pièces, parfois des graines ou une recette que le villageois vous apprend ; le cinquième fait de lui un ami pour la vie, avec une récompense et l’histoire qu’il raconte.',
+                    'La liste est une ligne repliable (comme l’Agenda) : les anniversaires qui viennent, un tri (tous, cadeau possible, histoire) et une ligne courte par villageois. Touchez-le pour sa fiche : Amitié, Cadeau, Goûts, Histoire.',
+                    'Un cadeau par villageois et par jour de jeu (environ 5 minutes réelles). Il aime certains produits : 1 point, 3 si c’est un produit fabriqué. Il en adore un seul, à deviner : 5 points (à 2 cœurs, sa fiche dit de quelle machine il sort). Le reste, c’est « bof » : rien.',
+                    'Chaque villageois a son anniversaire (sa fiche, et une ligne en haut de la liste) : ce jour-là, un cadeau compte triple, et son produit adoré lui vaut un merci en pièces.',
+                    'Cinq cœurs en tout. Chaque cœur rapporte des pièces, parfois des graines ou une recette que le villageois vous apprend ; le cinquième fait de lui un ami pour la vie.',
+                ],
+            },
+            {
+                h: 'Le talent de l’ami et les histoires (1.70)',
+                b: [
+                    'À 5 cœurs, chaque villageois prête son talent pour toujours : les machines de son métier vont 10 % plus vite et leurs produits se vendent 5 % plus cher (Victor : soins moins chers ; Morgane : bateaux mieux payés ; Hugues : cuves de l’abbaye plus rapides ; Octave : vieillissement plus rapide à la cave).',
+                    'Chaque villageois a son histoire (trois étapes, des produits à apporter). Finie, elle double son talent et rapporte un ruban.',
+                    'Quatre duos : Hugues et Agnès, Idris et Yasmine, Tuomas et Ingrid, Morgane et Yann. Un cadeau à l’un fait plaisir à l’autre (+1) ; les deux à 5 cœurs ouvrent une histoire à deux (deux rubans).',
                 ],
             },
             {
