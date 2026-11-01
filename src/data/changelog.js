@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.62.1',
+        title: 'Bêtes des voisins',
+        date: '1er novembre 2026',
+        items: [
+            'Une bête de choix des voisins promettait parfois un « bon gène » déjà au plus haut chez son espèce',
+            'Elle a toujours un vrai caractère au-dessus de la moyenne',
+        ],
+    },
+    {
         v: '1.62',
         title: 'Les cépages',
         date: '1er novembre 2026',

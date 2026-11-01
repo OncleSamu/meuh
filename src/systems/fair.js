@@ -243,7 +243,8 @@ function choiceBeast(k) {
     const n = nHearts(k) >= 3 ? 2 : 1;
     const picked = [];
     for (let j = 0; j < n; j++) {
-        const trait = pickRand(CORE_ANIMAL.filter(x => !picked.includes(x)));
+        // 1.62.1 : jamais un caractère déjà au plus haut chez l'espèce (le « bon gène » n'en serait pas un)
+        const trait = pickRand(CORE_ANIMAL.filter(x => !picked.includes(x) && animalBase({ type }, x) < 5));
         picked.push(trait);
         const v = Math.min(5, animalBase({ type }, trait) + 1 + (nHearts(k) >= 5 && j === 0 ? 1 : 0));
         a.g.t[trait] = [
