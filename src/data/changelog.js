@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.63.1',
+        title: 'Les carnets au bon moment',
+        date: '1er novembre 2026',
+        items: [
+            'Le menu montrait « Carnets » dès le niveau 1, sur une fenêtre vide',
+            "La ligne apparaît avec le premier carnet, et la fenêtre dit quand chacun s'ouvre",
+        ],
+    },
+    {
         v: '1.63',
         title: 'Le coffre des créations et les fromages de race',
         date: '1er novembre 2026',

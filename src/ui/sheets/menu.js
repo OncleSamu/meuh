@@ -26,11 +26,15 @@ const natReady = () => G.natLogOpen() && NAT_LOG_IDS.some(id => G.natLogCan(id))
 // 1.46.1 : le carnet de l'élevage rejoint les autres carnets
 const BOOK_ROBES = () => G.BOOK_TYPES.reduce((n, t) => n + G.robeCount(t), 0);
 const BOOK_PAIRS = () => Object.keys((state.herdbook && state.herdbook.pairs) || {}).length;
+// 1.63.1 : le premier carnet s'ouvre au niveau 8 (l'élevage) : avant, pas de ligne vide dans le menu
+const carnetsOpen = () => G.pondOpen() || G.natLogOpen() || G.compOpen() || G.logOpen() || G.robebookOpen();
 const carnetsReady = () => (G.logReady() ? 1 : 0) + (G.tierReady() ? 1 : 0) + (natReady() ? 1 : 0);
 defineSheet('carnets', {
     title: 'Carnets',
     render() {
         const row = (t, sheet, icon, sub, n) => navRow(t, 'open', { sheet }, icon, n ? dot(n) : '›', sub);
+        if (!carnetsOpen())
+            return '<p class="empty">Les carnets s’ouvrent au fil du jeu : l’élevage au niveau 8, la pêche et le potager au niveau 9, le verger, la forêt et la mine au niveau 20.</p>';
         return `<div class="menu-grid">
             ${G.pondOpen() ? row('Carnet de pêche', 'fishLog', ['ui', 'book'], 'Records de poids et médailles de taille') : ''}
             ${G.natLogOpen() ? row('Carnet du bûcheron et du mineur', 'natLog', ['item', 'ruby'], 'Paliers de bois, pierres et minerais', natReady() ? 1 : 0) : ''}
@@ -53,7 +57,7 @@ defineSheet('menu', {
             ${navRow('Progrès', 'open', { sheet: 'progress' }, ['ui', 'skillbook'], badge(pts), `${pts ? `${pts} point${pts > 1 ? 's' : ''} de compétence à placer · ` : ''}Compétences, prestige et défis`)}
             ${navRow('Livre de la ferme', 'open', { sheet: 'book' }, ['ui', 'book'], badge(book), 'Collection, maîtrise, exploits, légende, album et histoires de Mamie')}
             ${G.defiOpen() ? navRow('La Coupe de la vallée', 'open', { sheet: 'cup' }, ['ui', 'cupRank' + G.cupRank()], '›', `${G.cupRankName()} · ${fmt(G.cupPts())} points`) : ''}
-            ${navRow('Carnets', 'open', { sheet: 'carnets' }, ['ui', 'book'], badge(carnetsReady()), `Pêche, forêt et mine, potager, verger${G.robebookOpen() ? ', élevage' : ''}`)}
+            ${carnetsOpen() ? navRow('Carnets', 'open', { sheet: 'carnets' }, ['ui', 'book'], badge(carnetsReady()), `Pêche, forêt et mine, potager, verger${G.robebookOpen() ? ', élevage' : ''}`) : ''}
             ${state.level >= 58 || G.caveLegends().length ? navRow('Salle des trophées', 'open', { sheet: 'trophies' }, ['ui', 'cupGold'], '›', 'Médailles des défis et lots légendaires') : ''}
             ${state.genetics && G.geneticsOpen() ? navRow('Mes créations', 'open', { sheet: 'creations' }, ['ui', 'flowers'], '›', 'Vos variétés et vos races fixées') : ''}
             ${navRow('Les niveaux', 'open', { sheet: 'levels' }, ['ui', 'star'], '›', `Niveau ${state.level}${state.level < MAX_LEVEL ? ` sur ${MAX_LEVEL}` : ''}`)}
