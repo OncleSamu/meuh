@@ -137,41 +137,96 @@ items.chicoryCake = () =>
     L('M14 38 L50 38', 1.2, '#8b5a2b');
 
 // ---------------- les tartes et tourtes ----------------
-// tatin d'échalotes : ronde et caramel foncé, demi-échalotes roses
+// le plat de la tarte aux pommes (vue de côté, la garniture dessus) : couleur du plat, fond, garniture
+const pieDish = (dish, fill, top) =>
+    SHADOW(32, 54, 25, 3) +
+    P('M6 38 L58 38 L53 50 Q52 53 48 53 L16 53 Q12 53 11 50Z', dish) +
+    E(32, 38, 26, 9, '#e7a948') +
+    F('M10 38 C14 33 50 33 54 38 C50 42 14 42 10 38Z', fill) +
+    top +
+    E(32, 38, 26, 9, 'none') +
+    HL(18, 35, 4, 1.4, -8, 0.5);
+// tatin d'échalotes : retournée sur assiette, caramel ambré, demi-échalotes rosées et du thym
 items.shallotTatin = () =>
-    plateB() +
-    E(32, 42, 22, 8, '#8a4416') +
-    E(32, 39, 22, 8, '#b8601e') +
-    ring(7, 32, 39, 14, (x, y) => E(x, y, 3.4, 2.4, '#d892b0', 0, 1.2) + FE(x, y, 1.4, 1, '#f6d0e0')) +
-    E(32, 39, 3.4, 2.4, '#d892b0', 0, 1.2);
-// tarte fine aux endives : rectangle feuilleté, endives blondes caramélisées en long
+    SHADOW(32, 55, 26, 3) +
+    E(32, 50, 27, 7, '#ffffff') +
+    E(32, 49, 20, 4.5, '#eef3f6', 0, 1.4) +
+    P('M8 42 Q8 50 32 51 Q56 50 56 42 L56 36 Q32 30 8 36Z', '#8a3e16') +
+    E(32, 36, 24, 8, '#b85a1e') +
+    [
+        [18, 35],
+        [28, 33],
+        [38, 33],
+        [46, 36],
+        [24, 39],
+        [36, 39],
+    ]
+        .map(
+            ([x, y]) =>
+                E(x, y, 5, 3.4, '#c87a9a', -10, 1.4) +
+                L(`M${x - 3} ${y} Q${x} ${y - 2} ${x + 3} ${y}`, 0.9, '#f2c0d4') +
+                FE(x - 1.5, y - 1.2, 1.6, 0.8, '#ffd88a', 0.8),
+        )
+        .join('') +
+    L('M44 30 L50 26 M46 29 L47 26 M48 28 L50 29', 1.2, '#4f7d33') +
+    E(32, 36, 24, 8, 'none', 0, 2);
+// tarte aux navets et à l'oignon : plat bleu, crème, rondelles de navet blanc-violet en éventail, lardons
+items.turnipBaconTart = () =>
+    pieDish(
+        '#5a7fae',
+        '#f4e6c0',
+        [
+            [17, 38, -20],
+            [25, 36.5, -10],
+            [32, 36, 0],
+            [39, 36.5, 10],
+            [47, 38, 20],
+        ]
+            .map(([x, y, r]) => E(x, y, 3.8, 2.4, '#fffaf2', r, 1.2) + F(`M${x - 4} ${y - 1} Q${x} ${y - 4} ${x + 4} ${y - 1}`, '#b884d0', 0.85))
+            .join('') +
+            [
+                [21, 40.5],
+                [32, 40.5],
+                [43, 40.5],
+            ]
+                .map(([x, y]) => R(x - 2.2, y - 1.3, 4.4, 2.6, 1, '#e88a7a', 1))
+                .join(''),
+    );
+// tarte au butternut : plat vert, garniture orange sous un croisillon doré, feuilles de sauge
+items.butternutTart = () =>
+    pieDish(
+        '#4f8f3a',
+        '#f08a2a',
+        L('M14 36 L30 44 M24 33 L44 43 M36 32 L52 40 M50 34 L34 43 M40 32 L20 43 M28 32 L13 40', 2.4, '#f6d48a') +
+            E(46, 34, 4, 1.8, '#8aa86a', 20, 1.1) +
+            E(19, 34, 4, 1.8, '#8aa86a', -20, 1.1),
+    );
+// tarte aux quetsches : plat brun, demi-quetsches serrées en rangs, sucre glace
+items.plumTart = () =>
+    pieDish(
+        '#7a4a2a',
+        '#6a2a7a',
+        [
+            [14, 37],
+            [21, 35],
+            [28, 34],
+            [36, 34],
+            [43, 35],
+            [50, 37],
+            [18, 40],
+            [26, 39],
+            [34, 39],
+            [42, 39.5],
+        ]
+            .map(([x, y]) => E(x, y, 3.6, 2.2, '#8a3aa0', -25, 1) + FE(x + 0.8, y + 0.2, 1.6, 1, '#f2c94e', 1, -25))
+            .join('') + [20, 30, 40, 46].map(x => FC(x, 36.5, 0.7, '#fff')).join(''),
+    );
 items.endiveTart = () =>
     SHADOW(32, 55, 27, 3) +
     R(6, 32, 52, 20, 3, '#e3b064') +
     R(9, 34, 46, 15, 2, '#f2d48a', 1.4) +
     [13, 21, 29, 37, 45].map(x => P(`M${x} 46 Q${x + 4} 34 ${x + 8} 46Z`, '#f6eab0', 1.4) + L(`M${x + 4} 37 L${x + 4} 45`, 1, '#c9a64a')).join('') +
     L('M10 47 L54 47', 1.6, '#a8601e');
-// tarte aux navets et à l'oignon : rectangulaire, rondelles blanc-violet et lardons
-items.turnipBaconTart = () =>
-    SHADOW(32, 55, 27, 3) +
-    R(6, 30, 52, 22, 3, '#d9913d') +
-    R(9, 33, 46, 16, 2, '#f2e2b0', 1.4) +
-    [
-        [15, 39],
-        [27, 42],
-        [39, 39],
-        [49, 43],
-    ]
-        .map(([x, y]) => C(x, y, 4.6, '#fff', 1.2) + F(`M${x - 4.6} ${y} A4.6 4.6 0 0 1 ${x + 4.6} ${y}Z`, '#b884d0', 0.7))
-        .join('') +
-    [
-        [21, 46],
-        [34, 47],
-        [45, 36],
-    ]
-        .map(([x, y]) => R(x - 2.5, y - 1.5, 5, 3, 1, '#e88a8a', 1))
-        .join('');
-// tourte au chou-fleur : haute et dorée, un couvercle bombé, une cheminée et un bouquet
 items.cauliflowerPie = () =>
     SHADOW(32, 58, 24, 3) +
     P('M10 44 L54 44 L50 56 L14 56Z', '#c98a3e') +
@@ -202,30 +257,6 @@ items.broccoliQuiche = () =>
     ]
         .map(([x, y]) => R(x - 2.5, y - 1.5, 5, 3, 1, '#f49a7a', 1))
         .join('');
-// tarte au butternut : des croissants de courge en rosace sur pâte claire
-items.butternutTart = () =>
-    SHADOW(32, 55, 25, 3) +
-    P('M6 38 L58 38 L53 50 Q52 53 48 53 L16 53 Q12 53 11 50Z', '#e8c27a') +
-    E(32, 38, 26, 9, '#f2d79a') +
-    E(32, 38, 21, 6.5, '#fbe8b0', 0, 1.6) +
-    ring(8, 32, 38, 13, (x, y, k) => E(x, y, 4.6, 2.4, k % 2 ? '#f2a03a' : '#e88a2a', (360 / 8) * k, 1.2)) +
-    C(32, 38, 3, '#6cc04a', 1.2);
-// tarte aux pruneaux et quetsches : rectangulaire, demi-quetsches violettes à cœur jaune
-items.plumTart = () =>
-    SHADOW(32, 55, 27, 3) +
-    R(6, 30, 52, 22, 3, '#d9913d') +
-    [
-        [13, 37],
-        [25, 37],
-        [37, 37],
-        [49, 37],
-        [19, 45],
-        [31, 45],
-        [43, 45],
-    ]
-        .map(([x, y]) => E(x, y, 5, 3.6, '#7a3a9a', 0, 1.2) + FE(x + 1, y, 2.4, 1.8, '#f2c94e'))
-        .join('');
-// tartelettes au cassis : trois petites tartelettes, baies noires et feuille
 items.blackcurrantTart = () =>
     SHADOW(32, 56, 26, 3) +
     [
