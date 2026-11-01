@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.72',
+        title: 'Des dessins à part',
+        date: '2 novembre 2026',
+        items: [
+            'Audit des 1 058 dessins de produits',
+            "43 produits qui n'avaient que la pastille d'ingrédient pour se distinguer ont maintenant leur propre dessin",
+            "Les pains aux fèves, d'avoine, au chanvre et la fougasse",
+            'Des gâteaux et des tartes',
+            'Des thés et cafés, des eaux-de-vie et des sauces',
+            "La semoule, des sorbets, la laine, des terrines, le lavaret, l'autruche et quelques plats",
+        ],
+    },
+    {
         v: '1.71.1',
         title: 'Correctifs',
         date: '1er novembre 2026',
