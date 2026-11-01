@@ -1618,7 +1618,7 @@ export const GUIDE_PAGES = [
                 h: 'Ruches et miels de fleurs',
                 b: [
                     'Une ruche posée dans le champ fait du miel avec ce qui pousse autour (ses 8 voisines) ; la ruche d’élevage, au pré, butine tout le champ, la serre et, au printemps, les arbres du verger.',
-                    'Si une fleur fait au moins la moitié de ce qui fleurit, avec au moins 4 parcelles, le miel prend son nom : lavande, tournesol, sarrasin, menthe, pommier, cerisier, citronnier, oranger, châtaignier, amandier. Sinon : miel toutes fleurs.',
+                    'Si une fleur fait au moins la moitié de ce qui fleurit, avec au moins 4 parcelles, le miel prend son nom : lavande, tournesol, sarrasin, menthe, framboisier, myrtille, coton, basilic, pommier, poirier, prunier, cerisier, citronnier, oranger, châtaignier, amandier. Sinon : miel toutes fleurs.',
                     'Une culture compte comme en fleur à partir de la moitié de sa pousse. Touchez une ruche (ou la fiche de la ruche d’élevage) pour savoir ce qu’elle prépare et ce qu’il manque.',
                     'Un miel de fleur fait partie du stock de miel : toutes les recettes au miel l’acceptent. Il vaut plus cher (jusqu’à × 1,8), se vend depuis la grange, se range au coffre ; le carnet du potager garde la liste de vos miels.',
                 ],

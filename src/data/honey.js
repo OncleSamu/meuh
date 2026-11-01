@@ -62,6 +62,43 @@ export const HONEYS = {
         mult: 1.6,
         mamie: 'Le miel d’amandier vient des fleurs les plus précoces de l’année, en plein hiver encore. Il est léger, et il sent le gâteau.',
     },
+    // la suite : six miels de plus à la ferme
+    raspberry: {
+        flower: 'raspberry',
+        name: 'Miel de framboisier',
+        mult: 1.5,
+        mamie: 'Le miel de framboisier est fruité, très doux. Les abeilles adorent les framboisiers : elles y passent leurs journées, et nous, nos après-midi à cueillir.',
+    },
+    blueberry: {
+        flower: 'blueberry',
+        name: 'Miel de myrtille',
+        mult: 1.5,
+        mamie: 'Le miel de myrtille est sombre, presque confit. On le trouve dans les montagnes, là où les myrtilles couvrent tout. Il tache un peu les doigts, comme les myrtilles.',
+    },
+    cotton: {
+        flower: 'cotton',
+        name: 'Miel de coton',
+        mult: 1.3,
+        mamie: 'Le miel de coton est tout blanc et cristallise en quelques jours. Il devient crémeux comme du beurre : on l’étale à la cuillère.',
+    },
+    basil: {
+        flower: 'basil',
+        name: 'Miel de basilic',
+        mult: 1.4,
+        mamie: 'Le miel de basilic est rare : il faut laisser le basilic fleurir, et personne n’y pense. Il a un goût d’été et de tomates mûres.',
+    },
+    pear: {
+        flower: 'pear',
+        name: 'Miel de poirier',
+        mult: 1.3,
+        mamie: 'Le miel de poirier est léger et un peu acidulé. Les poiriers fleurissent tôt, avant les feuilles : un nuage blanc au bout du verger.',
+    },
+    plum: {
+        flower: 'plum',
+        name: 'Miel de prunier',
+        mult: 1.3,
+        mamie: 'Le miel de prunier sent l’amande et le printemps. Les fleurs de prunier sont si petites qu’on se demande comment les abeilles s’y retrouvent.',
+    },
 };
 export const HONEY_RULE = {
     share: 0.5, // la fleur fait au moins la moitié de ce qui fleurit
