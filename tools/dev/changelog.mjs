@@ -5,14 +5,16 @@ const src = fs.readFileSync(process.argv[2] || '.tmp/docs/feuille.md', 'utf8').s
 const out = new Map();
 const MONTHS = 'janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre';
 // ce qui ne regarde que l'atelier de fabrication, pas le joueur
-const DROP = /robot|branche|grosse-maj|codée|non publiée|validation finale|planches? de contact|documents à jour|catalogue/i;
+const DROP =
+    /robot|\bbranche (?:git|[\w-]*\d)|sur (?:la|une) branche|grosse-maj|codée|non publiée|validation finale|planches? de contact|documents à jour|catalogue/i;
 const clean = t => {
     const u = t
         .replace(/\*([^*]+)\*/g, '$1')
         .replace(/`/g, '')
         .replace(/[;,.]?\s*(?:\d+ )?tests?(?: de contrôle)?(?: verts| ajoutés?| automatiques?)?(?: \([^)]*\))?(?=[.;]|$)/gi, '')
         .replace(/\s*Détail dans « [^»]+ »\.?/g, '')
-        .replace(/\s*Rapport\s*:\s*[^.]+\.?/g, '')
+        .replace(/\s*Rapport\s*:\s*.+$/g, '')
+        .replace(/\s*\d+ tests\.?/g, '')
         .replace(/\s*\((?:détail dans |voir )?« Plan [^»]+ »[^)]*\)/gi, '')
         .replace(/,?\s*à la demande de Samuel,?/gi, '')
         .replace(/\s*\(?voir « (?:Plan|Rapport)[^»]+ »\)?\.?/gi, '');
@@ -41,6 +43,30 @@ for (const line of src) {
     const key = v.trim();
     if (!out.has(key) || out.get(key).text.length < text.length)
         out.set(key, { v: key, title, date: dm ? `${dm[1] === '1' ? '1er' : dm[1]} ${dm[2]} ${dm[3]}` : '', text });
+}
+// 1.61.1 : des tirets courts plutôt qu'un paragraphe : une ligne par changement, sans les précisions entre parenthèses
+const short = x => {
+    if (x.length <= 110) return x;
+    const c = x.indexOf(' : ');
+    if (c > 25 && c < 110) return x.slice(0, c);
+    const k = x.lastIndexOf(', ', 110);
+    return k > 40 ? x.slice(0, k) : x;
+};
+const bullets = t =>
+    t
+        .replace(/\s*\((?:[^()]|\([^()]*\))*\)/g, '')
+        .split(/\s*;\s*|(?<=[.!])\s+(?=[A-ZÀ-Ü«])/)
+        .map(x =>
+            x
+                .replace(/[.;,:\s]+$/, '')
+                .replace(/^\p{Ll}/u, c => c.toUpperCase())
+                .trim(),
+        )
+        .map(short)
+        .filter(x => x.length > 3 && !/^[\d.\s]+$|^Rapport/.test(x));
+for (const c of out.values()) {
+    c.items = bullets(c.text);
+    delete c.text;
 }
 const num = v => (v.match(/\d+/g) || []).slice(0, 3).map(Number).concat([0, 0, 0]).slice(0, 3);
 const list = [...out.values()].sort((a, b) => {

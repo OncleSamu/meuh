@@ -134,7 +134,7 @@ function installPage() {
 function updatesPage() {
     return `<div class="updates">${CHANGELOG.map(
         (c, k) =>
-            `<details class="upd card"${k === 0 ? ' open' : ''}><summary><b>${esc(c.v)}</b>${c.title ? ` · ${esc(c.title)}` : ''}${c.date ? `<small>${esc(c.date)}</small>` : ''}</summary>${c.text ? `<p>${esc(c.text)}</p>` : ''}</details>`,
+            `<details class="upd card"${k === 0 ? ' open' : ''}><summary><b>${esc(c.v)}</b>${c.title ? ` · ${esc(c.title)}` : ''}${c.date ? `<small>${esc(c.date)}</small>` : ''}</summary>${c.items.length ? `<ul class="upd-list">${c.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</details>`,
     ).join('')}</div>`;
 }
 
