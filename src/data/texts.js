@@ -122,6 +122,11 @@ export const TIPS = {
         title: 'Un miel de fleur',
         text: 'Les abeilles butinent ce qui est en fleur autour d’elles. Si une fleur domine (la moitié au moins, et quatre parcelles), le miel prend son nom : lavande, tournesol, châtaignier… Il vaut plus cher, se range au coffre et sert dans toutes les recettes au miel. Touche une ruche pour savoir ce qu’elle prépare. Ma mère mettait ses ruches au bout du champ de sarrasin : son miel était presque noir, et les voisins disaient qu’il soignait la toux. Ils toussaient beaucoup, les voisins.',
     },
+    apiary: {
+        icon: ['ui', 'apiaryIsland'],
+        title: 'Le rucher des contrées',
+        text: 'Le rucher d’une contrée ne butine que chez elle : ses parcelles en fleur et les arbres qui portent. Comme à la ferme, si une fleur fait la moitié de ce qui fleurit, le miel prend son nom. À l’oasis, les ruches boivent à la citerne ; au Grand Nord, les abeilles ne sortent qu’aux beaux jours, ou près d’un poêle. Mon cousin Marcel avait des ruches en Corse. Il disait que ses abeilles faisaient la sieste, comme lui.',
+    },
     mead: {
         icon: ['item', 'mead'],
         title: 'L’hydromel de l’abbaye',

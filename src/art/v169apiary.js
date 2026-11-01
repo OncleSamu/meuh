@@ -53,7 +53,8 @@ items.honey_coriander = () => pot('#d08a2a', '#f0b860', '#e8d0a0', '#9a6a3a', co
 items.honey_lingonberry = () => pot('#b8582a', '#e08a50', '#e8505a', '#fff', lingonberry());
 
 // ---------------- les ruchers ----------------
-const bees = pts => pts.map(([x, y]) => E(x, y, 2.2, 1.6, '#ffd23f', 0, 1) + L(`M${x} ${y - 1.4} L${x} ${y + 1.4}`, 1) + FE(x - 1, y - 2.2, 1.6, 1, '#fff', 0.85)).join('');
+const bees = pts =>
+    pts.map(([x, y]) => E(x, y, 2.2, 1.6, '#ffd23f', 0, 1) + L(`M${x} ${y - 1.4} L${x} ${y + 1.4}`, 1) + FE(x - 1, y - 2.2, 1.6, 1, '#fff', 0.85)).join('');
 // île : deux ruches tressées en palme sur un petit pilotis de bambou, un toit de palmes
 ui.apiaryIsland = () =>
     SHADOW(32, 60, 24, 3) +

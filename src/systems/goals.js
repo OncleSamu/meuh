@@ -9,6 +9,8 @@ import { ANIMALS } from '../data/animals.js';
 import { MACHINES, RECIPES } from '../data/machines.js';
 import { MAX_LEVEL } from '../data/progress.js';
 import { MEAD } from '../data/abbey.js';
+import { APIARY } from '../data/apiary.js';
+const LAND_PROJECT = { island: 'ferry', oasis: 'oasisWell', nord: 'northStove' };
 
 // lu directement dans l'état (pas d'import des autres systèmes : goals.js est chargé par player.js)
 const projectDone = id => !!(state.projects[id] && state.projects[id].done);
@@ -32,6 +34,8 @@ export function makeGoals(L) {
     const push = g => out.length < 2 && !out.some(x => x.kind === g.kind && x.id === g.id) && out.push(g);
     // 1.68 : l'hydromel s'ouvre à la brasserie
     if (L === MEAD.lvl && projectDone('brewhall')) push({ kind: 'mead', n: 1 });
+    // 1.69 : le rucher d'une contrée déjà ouverte
+    for (const [land, a] of Object.entries(APIARY)) if (L === a.lvl && projectDone(LAND_PROJECT[land])) push({ kind: 'hive', id: land });
     // une machine du niveau, et une de ses recettes
     const mach = Object.values(MACHINES).find(m => m.reqLvl === L && reachable({ ...m, reqLvl: m.reqLvl }) && m.id !== 'counter');
     if (mach) {
@@ -70,6 +74,7 @@ export function goalProgress(g) {
     if (g.kind === 'animal') return [state.animals.some(a => a.type === g.id) ? 1 : 0, 1];
     if (g.kind === 'tree') return [treesOf(g.id) > 0 ? 1 : 0, 1];
     if (g.kind === 'orders') return [Math.min(g.n, (state.stats.orders || 0) - g.base), g.n];
+    if (g.kind === 'hive') return [(state.apiary && state.apiary[g.id] && state.apiary[g.id].hives) > 0 ? 1 : 0, 1];
     if (g.kind === 'mead') return [Math.max(0, Math.min(g.n, (state.stats.meads || 0) - g.base)), g.n];
     return [Math.max(0, Math.min(g.n, masteryCount(g.id) - g.base)), g.n];
 }
@@ -89,6 +94,7 @@ export function lvGoalText(g) {
     if (g.kind === 'tree') return `Planter : ${ITEMS[g.id].seedName.toLowerCase()}`;
     if (g.kind === 'orders') return `Livrer ${g.n} commandes du village${cnt}`;
     if (g.kind === 'mead') return 'Mettre en bouteille un hydromel à la brasserie';
+    if (g.kind === 'hive') return `Poser une ruche : ${APIARY[g.id].name.toLowerCase()}`;
     const d = ITEMS[g.id];
     return `${d.type === 'crop' || d.type === 'tree' ? 'Récolter' : RECIPES[g.id] ? 'Préparer' : 'Produire'} ${g.n > 1 ? g.n + ' × ' : ''}${d.name.toLowerCase()}${cnt}`;
 }
@@ -101,4 +107,6 @@ export const lvGoalIcon = g =>
             ? ['ui', 'scroll']
             : g.kind === 'mead'
               ? ['item', 'mead']
-              : ['item', g.id];
+              : g.kind === 'hive'
+                ? ['ui', APIARY[g.id].icon]
+                : ['item', g.id];

@@ -34,10 +34,11 @@ function tally(plots, trees = []) {
     return { total, by };
 }
 // le miel que donne ce mélange : { kind (ou null : toutes fleurs), share, flower, n, need }
-function judge({ total, by }) {
+// 1.69 : land : la contrée du rucher (null : la ferme) ; un miel ne vient que de sa contrée
+export function judge({ total, by }, land = null) {
     let best = null,
         n = 0;
-    for (const [id, c] of Object.entries(by)) if (HONEY_OF[id] && c > n) [best, n] = [id, c];
+    for (const [id, c] of Object.entries(by)) if (HONEY_OF[id] && (HONEYS[HONEY_OF[id]].land || null) === land && c > n) [best, n] = [id, c];
     const share = total ? n / total : 0;
     const ok = best && share >= HONEY_RULE.share && n >= HONEY_RULE.min;
     // ce qu'il manque pour y arriver : des parcelles de cette fleur (assez pour 4, et pour la moitié)

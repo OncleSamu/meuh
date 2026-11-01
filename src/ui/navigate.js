@@ -124,6 +124,10 @@ export function goalGo(kind, id) {
         closeAll();
         return go('village/orders');
     }
+    if (kind === 'hive') {
+        closeAll();
+        return go('farm/island#' + (id === 'island' ? 'isle' : id));
+    }
     if (kind === 'mead') {
         closeAll();
         return go('machines/brew');

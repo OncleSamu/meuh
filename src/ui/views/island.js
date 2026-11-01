@@ -15,6 +15,7 @@ import { defineSheet, closeSheet } from '../sheets.js';
 import { burstAt } from '../fx.js';
 import { spot } from './orchard.js';
 import { askBuy } from '../sheets/askbuy.js';
+import { apiaryHtml } from './apiary.js';
 
 defineLive('isle', k => G.islandPct(G.islandPlots()[+k] || {}));
 
@@ -97,6 +98,7 @@ export function renderIsland(el) {
                 )
                 .join('')}</div>`,
         ],
+        ['apiary', apiaryHtml('island')],
         [
             'hint',
             tip15(

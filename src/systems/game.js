@@ -49,6 +49,7 @@ import { specialTick } from './neighborspecial.js';
 import { ensureIsland, islandTick, islandOffline } from './island.js';
 import { ensureOasis, oasisTick, oasisOffline, sandstormTick } from './oasis.js';
 import { ensureNord, nordTick, nordOffline } from './nord.js';
+import { apiaryTick } from './apiary.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
 import { ensureNight, nightTick } from './night.js';
@@ -288,6 +289,7 @@ function tickFarm() {
     if (sandstormTick()) changed = true;
     if (wellTick()) changed = true;
     if (honeyTick(1)) changed = true;
+    if (apiaryTick(1)) changed = true;
     if (crowTick()) changed = true;
     if (handTick()) changed = true;
     if (dogTick()) changed = true;
@@ -396,6 +398,8 @@ export function offlineProgress() {
     const isl = islandOffline(elapsed);
     const oas = oasisOffline(elapsed);
     const nor = nordOffline(elapsed);
+    // 1.69 : les ruchers des contrées (avant que les contrées n'aient tout bu : une approximation douce)
+    apiaryTick(Math.min(elapsed, 12 * 3600));
     // le commis travaille pendant votre absence
     const hand = handOffline(elapsed);
     state.grid.forEach((plot, gi) => {

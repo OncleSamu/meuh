@@ -65,6 +65,16 @@ export function todoList() {
         }
         if (G.chopOpen() && G.chopLeft() && (state.inventory.wood || 0) < 40) add('farm/island#nord', ['ui', 'noFendre'], 'Du bois à fendre', 1);
     }
+    // 1.69 : les ruchers des contrées
+    for (const [land, where, name] of [
+        ['island', 'isle', 'sur l’île'],
+        ['oasis', 'oasis', 'à l’oasis'],
+        ['nord', 'nord', 'au Grand Nord'],
+    ])
+        if (G.apiaryOpen(land) && G.apiaryHives(land)) {
+            const j = Math.floor(G.apiaryOf(land).honey);
+            add('farm/island#' + where, ['ui', G.APIARY[land].icon], `${j} pot${s(j)} de miel ${name}`, j, { urgent: j >= G.apiaryCap(land) });
+        }
     // le verger : un arbre au sol plein compte comme une tâche
     if (state.orchard) {
         const trees = state.orchard.slots.filter(x => x.tree);

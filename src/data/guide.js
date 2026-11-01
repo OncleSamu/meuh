@@ -485,6 +485,10 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'Le rucher de l’île',
+                t: 'Sous le verger, posez jusqu’à 3 ruches. Elles butinent les parcelles en fleur et les arbres qui portent, toute l’année. Si le litchi, l’avocatier ou le tiaré fait la moitié de ce qui fleurit (avec 4 parcelles ou arbres au moins), le miel prend son nom.',
+            },
+            {
                 h: 'Les machines des îles',
                 t: 'La paillote, le four des îles, la brûlerie et la rhumerie ouvrent de nouvelles machines et de nouvelles recettes.',
             },
@@ -500,6 +504,10 @@ export const GUIDE_PAGES = [
         go: 'farm/island#oasis',
         intro: 'Dans le volet Voyages, à côté de l’île : une oasis où tout pousse, à condition d’avoir de l’eau.',
         secs: [
+            {
+                h: 'Le rucher de l’oasis',
+                t: 'Jusqu’à 3 ruches, qui boivent 2 L/h chacune à la citerne : sans eau, les abeilles s’arrêtent. Un verger d’arganiers donne le miel d’arganier, le plus rare ; un carré de coriandre, le miel de coriandre.',
+            },
             {
                 h: 'Comment l’ouvrir',
                 t: `Au niveau ${OASIS.lvl}, après le château, rouvrez le puits d’Idris (chapitre « La source d’Idris », Village › Village, carte « L’oasis »).`,
@@ -588,6 +596,10 @@ export const GUIDE_PAGES = [
         go: 'farm/island#nord',
         intro: 'Dans le volet Voyages, après l’île et l’oasis : un champ de neige où tout pousse, à condition d’avoir chaud.',
         secs: [
+            {
+                h: 'Le rucher du Grand Nord',
+                t: 'Jusqu’à 3 ruches. Les abeilles sortent au printemps et en été ; le reste de l’année, seulement si un poêle est allumé au champ de neige. Les épicéas donnent le miel de sapin (un miellat), les airelles le miel d’airelle.',
+            },
             {
                 h: 'Comment l’ouvrir',
                 t: `Au niveau ${NORD.lvl}, après le souk de l’oasis, rallumez le poêle de Tuomas (chapitre « Le poêle de Tuomas », Village › Village, carte « Le Grand Nord »).`,
@@ -1630,6 +1642,7 @@ export const GUIDE_PAGES = [
                     'Si une fleur fait au moins la moitié de ce qui fleurit, avec au moins 4 parcelles, le miel prend son nom : lavande, tournesol, sarrasin, menthe, framboisier, myrtille, coton, basilic, pommier, poirier, prunier, cerisier, citronnier, oranger, châtaignier, amandier. Sinon : miel toutes fleurs.',
                     'Une culture compte comme en fleur à partir de la moitié de sa pousse. Touchez une ruche (ou la fiche de la ruche d’élevage) pour savoir ce qu’elle prépare et ce qu’il manque.',
                     'Un miel de fleur fait partie du stock de miel : toutes les recettes au miel l’acceptent. Il vaut plus cher (jusqu’à × 1,8), se vend depuis la grange, se range au coffre ; le carnet du potager garde la liste de vos miels.',
+                    'Les contrées ont leur rucher (1 à 3 ruches), qui ne butine que la contrée : litchi, avocatier et tiaré sur l’île ; arganier et coriandre à l’oasis ; sapin (le miellat des épicéas) et airelle au Grand Nord. Ce sont les miels les plus chers (jusqu’à × 2,2).',
                 ],
             },
             {

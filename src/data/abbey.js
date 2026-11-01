@@ -122,6 +122,14 @@ export const MEAD_BASES = {
     orange: HB([2, 1, 0, 0, 0], [3], 'aime les épices : cannelle, vanille, gingembre'),
     chestnut: HB([1, 0, 2, 0, 1], [2, 4], 'aime l’amer et le terreux : noix, cacao, champignon'),
     almond: HB([2, 0, 1, 0, 0], [0], 'aime le doux et le gourmand'),
+    // 1.69 : les miels des contrées
+    lychee: HB([2, 1, 0, 0, 0], [1], 'aime l’acidulé et les fleurs : framboise, citron, rose'),
+    avocado: HB([1, 0, 1, 0, 2], [4, 2], 'aime le rond et le terreux : noix, cacao, champignon'),
+    tiare: HB([2, 0, 0, 1, 0], [0, 3], 'aime le doux et la vanille : coco, ananas, épices'),
+    argan: HB([1, 0, 1, 1, 1], [3, 4], 'aime les épices et le grillé : amande, sésame, cumin'),
+    coriander: HB([1, 1, 0, 2, 0], [3, 1], 'aime l’épicé et l’agrume'),
+    fir: HB([1, 0, 2, 1, 0], [2, 3], 'aime l’amer et la résine : genièvre, épicéa, airelle'),
+    lingonberry: HB([1, 2, 0, 0, 0], [1, 0], 'aime l’acidulé des baies du Nord'),
 };
 // les grands classiques de l'hydromel : un de ces ingrédients suffit, et une étoile de plus
 export const MEAD_CLASSICS = [

@@ -48,13 +48,14 @@ defineSheet('companions', {
         return tabs + assocTab();
     },
 });
+const LAND_DE = { island: 'de l’île', oasis: 'de l’oasis', nord: 'du Grand Nord' };
 function honeyTab() {
     const got = state.stats.honeyKinds || {};
     const rows = Object.entries(G.HONEYS)
         .map(([k, h]) =>
             got[k]
                 ? `<div class="cp-row"><span class="cp-pics">${art('item', 'honey_' + k)}</span><div class="cp-txt"><b>${esc(h.name)} · ${fmt(got[k])} pots</b><small>${esc(h.mamie || '')}</small></div></div>`
-                : `<div class="cp-row unseen"><span class="cp-pics">?</span><div class="cp-txt"><b>Miel à découvrir</b><small>${ITEMS[h.flower].type === 'tree' ? `Des ${esc(G.flowerName(h.flower))} au verger : ils fleurissent au printemps` : `Entourez une ruche de ${esc(G.flowerName(h.flower))} en fleur`}</small></div></div>`,
+                : `<div class="cp-row unseen"><span class="cp-pics">?</span><div class="cp-txt"><b>Miel à découvrir</b><small>${h.land ? `Au rucher ${LAND_DE[h.land]}, avec assez de ${esc(G.flowerName(h.flower))} en fleur` : ITEMS[h.flower].type === 'tree' ? `Des ${esc(G.flowerName(h.flower))} au verger : ils fleurissent au printemps` : `Entourez une ruche de ${esc(G.flowerName(h.flower))} en fleur`}</small></div></div>`,
         )
         .join('');
     return `<p class="card-sub center">Quand une fleur fait au moins la moitié de ce qui fleurit autour des ruches (et quatre parcelles), le miel prend son nom. Touchez une ruche pour savoir ce qu’elle prépare.</p><div class="cp-list">${rows}</div>`;

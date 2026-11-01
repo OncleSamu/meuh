@@ -19,6 +19,7 @@ import { askBuy } from '../sheets/askbuy.js';
 import { renderIsland } from './island.js';
 import { renderNord } from './nord.js';
 import { NORD } from '../../data/nord.js';
+import { apiaryHtml } from './apiary.js';
 import { treeArt, anchorOf, spot } from './orchard.js';
 import { svg } from '../../art/kit.js';
 import { chadouf } from '../../art/v148oasis.js';
@@ -169,6 +170,7 @@ function renderOasis(el) {
                 `Chaque arbre du verger boit ${OASIS.drink.tree} L/h à la citerne tant qu’il pousse ou porte des fruits (le double aux heures chaudes). Sans eau, il attend sans mourir.`,
             ),
         ],
+        ['apiary', apiaryHtml('oasis')],
         ['h2', section(PEN.name, G.enclosOpen() ? `<small class="o-count small">${G.penBeasts().length}/${G.enclosCap()}</small>` : '')],
         ['pmode', G.enclosOpen() ? penModeBar(PEN.key) : ''],
         ['pasture', G.enclosOpen() ? penBodyHtml(PEN.key, 'desert') : ''],

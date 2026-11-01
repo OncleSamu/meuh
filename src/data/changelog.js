@@ -1,6 +1,20 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.69',
+        title: 'Les ruchers des contrées',
+        date: '1er novembre 2026',
+        items: [
+            "Un rucher sur l'île, à l'oasis et au Grand Nord, de 1 à 3 ruches qui ne butinent que leur contrée",
+            'Sept miels de plus, les plus chers',
+            "Sur l'île les abeilles travaillent toute l'année",
+            "À l'oasis elles boivent à la citerne",
+            "Au Grand Nord elles sortent au printemps et en été, ou près d'un poêle allumé",
+            "Chaque nouveau miel a son goût pour l'hydromel et sa page au livre",
+            'Guide, carnet, objectifs des niveaux 38, 59 et 62 et histoire de Mamie à jour',
+        ],
+    },
+    {
         v: '1.68',
         title: "L'hydromel à la brasserie",
         date: '1er novembre 2026',

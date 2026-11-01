@@ -16,6 +16,7 @@ import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { burstAt } from '../fx.js';
 import { longPress } from '../longpress.js';
 import { askBuy } from '../sheets/askbuy.js';
+import { apiaryHtml } from './apiary.js';
 import { treeArt, anchorOf, spot } from './orchard.js';
 
 defineLive('nocell', k => {
@@ -139,6 +140,7 @@ export function renderNord(el) {
         ['hv', section('Le verger du Grand Nord', `<small class="o-count small">${G.treeCountText('nordV')}</small>`)],
         ['verger', `<div class="orchard island">${groveSlots.map((sl, k) => spot(sl, k, groveNext, 'nordV')).join('')}</div>`],
         ['hvt', hint('Les arbres du verger sont rustiques : pas besoin de poêle. La nuit de gel ils poussent deux fois moins vite, l’aurore les accélère.')],
+        ['apiary', apiaryHtml('nord')],
         ['h2', section(BARN.name, G.nordBarnOpen() ? `<small class="o-count small">${G.nordBeasts().length}/${G.nordBarnCap()}</small>` : '')],
         ['pmode', G.nordBarnOpen() ? penModeBar(BARN.key) : ''],
         ['pasture', G.nordBarnOpen() ? penBodyHtml(BARN.key, 'snow') : ''],
