@@ -6,7 +6,9 @@ export const CHANGELOG = [
         date: '1er novembre 2026',
         items: [
             'Un objectif de niveau « préparer » se valide aussi pour un produit sans prix de vente',
-            'Les ruchers des contrées, les histoires à deux, le comice',
+            "Relancer le jeu n'efface plus les ruchers des contrées",
+            'Ni les histoires à deux',
+            'Ni le comice, la foire et le livre généalogique',
         ],
     },
     {
