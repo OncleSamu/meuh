@@ -1,6 +1,22 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.67',
+        title: 'Les miels de fleurs',
+        date: '1er novembre 2026',
+        items: [
+            'Les abeilles butinent ce qui est en fleur',
+            "Une ruche du champ ses 8 voisines, la ruche d'élevage tout le champ, la serre et le verger",
+            'Si une fleur fait la moitié de ce qui fleurit, avec 4 parcelles au moins, le miel prend son nom',
+            '16 miels : lavande, tournesol, sarrasin, menthe, framboisier, myrtille, coton, basilic, pommier, poirier',
+            "Une ruche dit ce qu'elle prépare et ce qu'il manque",
+            "Un miel de fleur fait partie du stock de miel, vaut jusqu'à × 1,8, se vend depuis la grange",
+            'Onglet Miels dans le carnet du potager, une histoire de Mamie par miel',
+            "Dessins prêts pour les miels de litchi, d'avocatier, d'arganier et de sapin",
+            'Plan : Plan Miels de fleurs',
+        ],
+    },
+    {
         v: '1.66',
         title: 'Armand marchande',
         date: '1er novembre 2026',
