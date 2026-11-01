@@ -729,3 +729,15 @@ html .meadow.snow {
     align-items: center;
     gap: 4px;
 }
+
+/* 1.67 : une ligne de miel ou de race dans la grange, avec son bouton Vendre */
+.barn-var {
+    flex-wrap: wrap;
+}
+.barn-var > .row-main {
+    flex: 1 1 140px;
+    min-width: 0;
+}
+.barn-var > .btn {
+    margin-left: auto;
+}

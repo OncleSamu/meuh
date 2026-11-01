@@ -33,8 +33,8 @@ const mk = (id, base) => {
 const cg = G.wildAnimal('cow');
 Gn.races.r1 = { id: 'r1', name: 'Race', type: 'cow', g: cg };
 const rv = G.raceProd('r1', 'milk');
-const bases = ['carrot', 'grape', 'tomato', 'apple', 'milk'];
-const vids = [...Object.keys(Gn.vars), rv];
+const bases = ['carrot', 'grape', 'tomato', 'apple', 'milk', 'honey'];
+const vids = [...Object.keys(Gn.vars), rv, G.honeyProd('lavender'), G.honeyProd('chestnut')];
 for (const t of ['winery', 'press', 'dairy', 'kitchen']) state.machines.push(G.newMachine(t));
 let seed = 12345;
 const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;

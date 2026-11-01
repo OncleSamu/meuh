@@ -29,6 +29,7 @@ import { troughBonus } from './buildings.js';
 import { assocMult } from './herdbook.js';
 import { oasisBeastMult } from './oasis.js';
 import { nordBeastMult, nordBeastMultOffline } from './nord.js';
+import { pastureHoney, addHoney } from './honey.js';
 
 export const maxFood = () => MAX_FOOD + rank('trough') * 2 + troughBonus();
 export const isAdult = a => a.adult !== false;
@@ -112,7 +113,11 @@ export function collectAnimal(a) {
     // une bête qui a fait la transhumance donne aussi du lait d'alpage
     if (a.alpine && (a.type === 'cow' || a.type === 'goat' || a.type === 'buffalo')) state.inventory.alpineMilk += Math.ceil(qty / 2);
     // la ruche d'élevage donne aussi un peu de miel
-    if (a.type === 'bees') state.inventory.honey += Math.ceil(qty / 2);
+    if (a.type === 'bees') {
+        state.inventory.honey += Math.ceil(qty / 2);
+        // 1.67 : les ruches du pré butinent tout le champ : la fleur qui domine donne son nom au miel
+        addHoney(pastureHoney().kind, Math.ceil(qty / 2));
+    }
     // 1.3.2 : de temps en temps, un produit pour le saloir
     let extra = 0;
     if (d.extra) {

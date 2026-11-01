@@ -387,6 +387,11 @@ defineSheet('animal', {
                 `${p.name} toutes les ${formatDuration(G.animalTime(a))}${a.love ? ` (+${a.love * 4} % grâce à l’affection)` : ''}`,
             ]);
         info.push([['item', 'feed'], `Mangeoire : ${a.food} / ${G.maxFood()} repas`]);
+        // 1.67 : la ruche d'élevage butine tout le champ : quel miel elle prépare
+        if (a.type === 'bees') {
+            const j = G.pastureHoney();
+            info.push([['item', j.kind ? 'honey_' + j.kind : 'honey'], `Miel : ${G.honeyForecast(j)}`]);
+        }
         if (a.produced) info.push([['ui', 'basket'], G.producedText(a)]);
         // 1.49 : une bête de l'oasis
         if (ANIMALS[a.type].oasis) {

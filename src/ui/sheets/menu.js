@@ -171,12 +171,12 @@ defineSheet('barn', {
             const rrow = races
                 .map(
                     v =>
-                        `<div class="row barn-var"><span class="offer-art">${art('item', sel)}</span><span class="row-main"><span>${esc(G.varName(v))} ×${state.genetics.stock[v.id]}</span><small>race fixée · vaut ×${String(Math.round(G.raceMult(v) * 100) / 100).replace('.', ',')}</small>${varRankChips(v.id)}</span></div>`,
+                        `<div class="row barn-var"><span class="offer-art">${art('item', v.kind === 'honey' ? 'honey_' + v.honey : sel)}</span><span class="row-main"><span>${esc(G.varName(v))} ×${state.genetics.stock[v.id]}</span><small>${v.kind === 'honey' ? 'miel de fleur' : 'race fixée'} · vaut ×${String(Math.round(G.vdefMult(v) * 100) / 100).replace('.', ',')}</small>${varRankChips(v.id)}</span>${btn(`Vendre ${fmt(G.varietyValue(v))}${COIN()}`, { act: 'sellVariety', data: { id: v.id }, kind: 'gold', size: 'sm' })}</div>`,
                 )
                 .join('');
             const vrow =
                 vars.length || races.length
-                    ? `<div class="barn-vars"><div class="set-sub">${vars.length && races.length ? 'Dont vos variétés et vos races' : races.length ? 'Dont vos races' : 'Dont vos variétés'}</div>${rrow}${vars
+                    ? `<div class="barn-vars"><div class="set-sub">${vars.length ? (races.length ? 'Dont vos variétés et vos races' : 'Dont vos variétés') : races.every(v => v.kind === 'honey') ? 'Dont vos miels de fleurs' : 'Dont vos races'}</div>${rrow}${vars
                           .map(
                               v =>
                                   `<button class="row barn-var" data-act="open" data-sheet="variety" data-id="${v.id}"><span class="offer-art">${genWrap(art('item', sel), v.g)}</span><span class="row-main"><span>${esc(G.varName(v))} ×${state.genetics.stock[v.id]}</span><small>${[looksText(v.g).replace(/^Normale(, )?/, ''), v.fixed ? 'variété fixée' : `génération ${v.gen || 1}`].filter(Boolean).join(' · ')}</small>${varRankChips(v.id)}</span>${flavorMini(v.g)}</button>`,

@@ -182,3 +182,9 @@
     width: 100%;
     height: 100%;
 }
+
+/* 1.67 : un pot de miel dans le carnet */
+.cp-pics > svg {
+    width: 40px;
+    height: 40px;
+}

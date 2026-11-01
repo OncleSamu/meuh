@@ -43,6 +43,7 @@ import { placeAnimal, herdFull, fullText } from './pastures.js';
 import { unitPrice } from './market.js';
 import { qual, clampQuality } from './farm.js';
 import { QX, QUALITY } from '../data/farm.js';
+import { HONEYS } from '../data/honey.js';
 import { tip } from './tips.js';
 import { domStepSum } from './estate.js';
 import { season } from './world.js';
@@ -301,7 +302,8 @@ export const varieties = () => Object.values(state.genetics.vars);
 export const variety = id => state.genetics.vars[id];
 export const openVarieties = () => varieties().filter(v => !v.fixed);
 export const fixedVarieties = () => varieties().filter(v => v.fixed);
-export const varName = v => (v && v.kind === 'race' ? raceProdName(v) : v.name || v.auto);
+export const varName = v =>
+    v && v.kind === 'race' ? raceProdName(v) : v && v.kind === 'honey' ? (HONEYS[v.honey] || { name: 'Miel' }).name : v.name || v.auto;
 // 1.63 : les produits d'une race fixée (son lait…) se suivent comme ceux d'une variété : genetics.rv[id] = { id, kind: 'race', race, base }
 // Ils partagent le stock et les rangs des variétés (genetics.stock, genetics.q) ; vdef lit l'un ou l'autre registre.
 export const vdef = id => (state.genetics && (state.genetics.vars[id] || (state.genetics.rv && state.genetics.rv[id]))) || null;
@@ -325,7 +327,7 @@ export const raceMult = v => {
 };
 const gainOf = (id, keys) => {
     const v = vdef(id);
-    return v && v.kind !== 'race' ? flavorGain(v.g, keys) : 0;
+    return v && v.g ? flavorGain(v.g, keys) : 0;
 };
 
 // un nom tout trouvé pour un hybride : le début d'une espèce et la fin de l'autre (Fraipiment)
@@ -826,7 +828,7 @@ export function giveVarRank(vid, r, n) {
     if (r) varQual(vid)[QK[r]] += n;
     return true;
 }
-export const vdefMult = v => (!v ? 1 : v.kind === 'race' ? raceMult(v) : varietyMult(v));
+export const vdefMult = v => (!v ? 1 : v.kind === 'race' ? raceMult(v) : v.kind === 'honey' ? (HONEYS[v.honey] || { mult: 1 }).mult : varietyMult(v));
 
 // des unités de variétés d'une espèce sont parties (vendues avec l'espèce) : got = [normal, argent, or, platine, diamant].
 // Les moins bonnes variétés d'abord ; l'espèce a déjà perdu ces unités et ces rangs.
@@ -911,21 +913,23 @@ export function clampVarieties() {
 export const varietyMult = v => Math.min(GX.varietySellCap, 1 + flavorGain(v.g) / GX.varietySellDiv + (v.g.halo ? 0.3 : 0));
 export const varietyPrice = v => Math.round(unitPrice(v.base) * varietyMult(v));
 // 1.62 : ce que rapporte tout le stock d'une variété, chaque unité au prix de son rang
-export const varietyValue = v => varRanks(v.id).reduce((a, c, r) => a + Math.round(varietyPrice(v) * QUALITY[r].mult) * c, 0);
+export const varietyValue = v => varRanks(v.id).reduce((a, c, r) => a + Math.round(sortPrice(v) * QUALITY[r].mult) * c, 0);
+// 1.67 : le prix d'une unité d'une variété (son goût), d'une race (ses gènes) ou d'un miel de fleur
+export const sortPrice = v => (v && v.g && v.kind !== 'race' ? varietyPrice(v) : Math.round(unitPrice(v.base) * vdefMult(v)));
 export function sellVariety(id, n, at) {
     clampVarieties();
     const G = state.genetics,
-        v = G.vars[id];
+        v = vdef(id);
     n = Math.min(n, G.stock[id] || 0, state.inventory[v ? v.base : ''] || 0);
     if (!v || n <= 0) return 0;
     // 1.62 : chaque unité au prix de son rang ; les plus basses partent d'abord
     const got = takeVarUnits(id, n, false);
-    const gain = got.reduce((a, c, r) => a + Math.round(varietyPrice(v) * QUALITY[r].mult) * c, 0);
+    const gain = got.reduce((a, c, r) => a + Math.round(sortPrice(v) * QUALITY[r].mult) * c, 0);
     state.inventory[v.base] -= n;
     state.income.market += gain;
     earn(gain, at);
     sfx('coin');
-    toast(`${n} ${varName(v)} vendu${n > 1 ? 's' : ''} : ${fmt(gain)} pièces`, ['item', v.base]);
+    toast(`${n} × ${varName(v).toLowerCase()} : ${fmt(gain)} pièces`, ['item', v.kind === 'honey' ? 'honey_' + v.honey : v.base]);
     return gain;
 }
 
@@ -969,7 +973,7 @@ export function planIngredients(rid, pick = null) {
         if (G && (best || forced)) {
             const cands = [];
             // les produits de race ne servent que choisis (fromage de race) : on les garde pour ça
-            for (const vid of forced ? [forced] : varsOfBase(k).filter(x => vdef(x).kind !== 'race')) {
+            for (const vid of forced ? [forced] : varsOfBase(k).filter(x => !vdef(x).kind || vdef(x).kind === 'plant')) {
                 const gain = Math.min(QX.varCap, gainOf(vid, taste.length ? taste : FLAVOR_IDS));
                 varRanks(vid).forEach((c, rk) => c > 0 && cands.push([vid, rk, c, varUnitPts(rk, gain)]));
             }

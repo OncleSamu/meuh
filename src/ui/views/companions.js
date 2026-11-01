@@ -3,6 +3,7 @@ import { state } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
 import { ASSOCS, COMP_LVL, FX_TEXT, isBad } from '../../data/companions.js';
 import * as G from '../../systems/index.js';
+import { ITEMS } from '../../data/items.js';
 import { actions, esc } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, segmented } from '../kit.js';
@@ -33,20 +34,31 @@ defineSheet('companions', {
     title: 'Le carnet du potager',
     // 1.47 : deux onglets, comme le carnet de l'élevage : les associations et les variétés du labo
     render(o) {
-        const tabs = G.plantLabOpen()
-            ? segmented(
-                  [
-                      ['assoc', 'Associations', ['ui', 'cpCarnet']],
-                      ['vars', 'Variétés', ['ui', 'flowers']],
-                  ],
-                  o.tab === 'vars' ? 'vars' : 'assoc',
-                  'pbTab',
-              )
-            : '';
-        if (tabs && o.tab === 'vars') return tabs + plantRobesTab('crop', o);
+        // 1.67 : un troisième onglet, les miels de fleurs récoltés
+        const honey = G.honeyLog().length > 0;
+        const list = [
+            ['assoc', honey ? 'Voisines' : 'Associations', honey ? null : ['ui', 'cpCarnet']],
+            ...(G.plantLabOpen() ? [['vars', 'Variétés', honey ? null : ['ui', 'flowers']]] : []),
+            ...(honey ? [['honey', 'Miels', null]] : []),
+        ];
+        const cur = list.some(t => t[0] === o.tab) ? o.tab : 'assoc';
+        const tabs = list.length > 1 ? segmented(list, cur, 'pbTab') : '';
+        if (cur === 'vars') return tabs + plantRobesTab('crop', o);
+        if (cur === 'honey') return tabs + honeyTab();
         return tabs + assocTab();
     },
 });
+function honeyTab() {
+    const got = state.stats.honeyKinds || {};
+    const rows = Object.entries(G.HONEYS)
+        .map(([k, h]) =>
+            got[k]
+                ? `<div class="cp-row"><span class="cp-pics">${art('item', 'honey_' + k)}</span><div class="cp-txt"><b>${esc(h.name)} · ${fmt(got[k])} pots</b><small>${esc(h.mamie || '')}</small></div></div>`
+                : `<div class="cp-row unseen"><span class="cp-pics">?</span><div class="cp-txt"><b>Miel à découvrir</b><small>${ITEMS[h.flower].type === 'tree' ? `Des ${esc(G.flowerName(h.flower))} au verger : ils fleurissent au printemps` : `Entourez une ruche de ${esc(G.flowerName(h.flower))} en fleur`}</small></div></div>`,
+        )
+        .join('');
+    return `<p class="card-sub center">Quand une fleur fait au moins la moitié de ce qui fleurit autour des ruches (et quatre parcelles), le miel prend son nom. Touchez une ruche pour savoir ce qu’elle prépare.</p><div class="cp-list">${rows}</div>`;
+}
 function assocTab() {
     {
         const c = G.ensureComp();

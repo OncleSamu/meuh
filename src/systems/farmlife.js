@@ -13,6 +13,7 @@ import { selectTool } from './game.js';
 import { formatDuration, pickRand } from '../core/format.js';
 import { barnBlocked } from './barn.js';
 import { butterflyGolden } from './surprises.js';
+import { hiveHoney, addHoney, honeyForecast, HONEYS } from './honey.js';
 
 // ---------------- le corbeau ----------------
 // Le corbeau est un imprévu (voir incidents) : ici, seulement son compte à rebours.
@@ -314,12 +315,21 @@ export function handleHive(i, at) {
         const r = honeyRate(i);
         if (!r) toast('Les abeilles ont besoin de fleurs : plantez des cultures ou un parterre autour de la ruche', ['ui', 'hive']);
         else float(at, [['item', 'honey'], formatDuration((1 - (p.honey || 0)) / (r * speedMult()))], '', -24);
+        // 1.67 : ce que donnera la ruche
+        if (r) {
+            const j = hiveHoney(i, neighbors(i));
+            toast(honeyForecast(j), ['item', j.kind ? 'honey_' + j.kind : 'honey']);
+        }
         sfx('click');
         return false;
     }
     if (barnBlocked()) return false;
     p.honey -= jars;
     state.inventory.honey += jars;
+    // 1.67 : la fleur qui domine autour de la ruche donne son nom au miel
+    const hk = hiveHoney(i, neighbors(i)).kind;
+    addHoney(hk, jars);
+    if (hk) toast(`${HONEYS[hk].name} ×${jars}`, ['item', 'honey_' + hk]);
     state.stats.honey += jars;
     eventProgress('harvest', 'honey', jars);
     sfx('harvest');

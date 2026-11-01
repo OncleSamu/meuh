@@ -117,6 +117,11 @@ export const TIPS = {
         title: 'Le niveau t’attend',
         text: 'Tu as assez d’expérience pour monter, mais chaque niveau demande d’abord d’essayer ce qu’il vient d’ouvrir : une ou deux petites choses, en haut du champ. Rien n’est perdu : l’expérience continue de s’amasser. Mon instituteur disait qu’on ne passe pas en classe supérieure sans avoir ouvert ses livres. Il ne vérifiait jamais, mais on avait peur.',
     },
+    honeyKinds: {
+        icon: ['item', 'honey_lavender'],
+        title: 'Un miel de fleur',
+        text: 'Les abeilles butinent ce qui est en fleur autour d’elles. Si une fleur domine (la moitié au moins, et quatre parcelles), le miel prend son nom : lavande, tournesol, châtaignier… Il vaut plus cher, se range au coffre et sert dans toutes les recettes au miel. Touche une ruche pour savoir ce qu’elle prépare. Ma mère mettait ses ruches au bout du champ de sarrasin : son miel était presque noir, et les voisins disaient qu’il soignait la toux. Ils toussaient beaucoup, les voisins.',
+    },
     armandTalk: {
         icon: ['villager', 'armand'],
         title: 'Marchander avec Armand',
