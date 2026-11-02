@@ -1438,3 +1438,33 @@ button.short.link {
     top: -6px;
     right: -4px;
 }
+
+/* 1.74.1 : exploits plus serrés */
+.card.ach {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+.card.ach .card-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 6px;
+}
+.ach-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 3px;
+}
+.ach-bar .bar {
+    flex: 1;
+    margin: 0;
+}
+.ach-bar small {
+    white-space: nowrap;
+    font-size: 0.72rem;
+    color: var(--ink-soft, inherit);
+}
+.card.ach .card-side.col {
+    gap: 3px;
+}

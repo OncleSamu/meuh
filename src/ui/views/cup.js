@@ -8,6 +8,7 @@ import { actions } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, bar, section, costRow } from '../kit.js';
 import { defineSheet } from '../sheets.js';
+import { innerTabs } from '../innertabs.js';
 import { MAP_BG } from '../../art/maps.js';
 import { LEGEND_SPOTS } from '../../art/v140coupe.js';
 
@@ -65,7 +66,24 @@ defineSheet('cup', {
             (r, i) =>
                 `<div class="cup-rank${i <= k ? ' on' : ''}">${ico(['ui', 'cupRank' + i])}<div class="card-main"><b>${r.name}</b><small>${r.pts} points${r.bonus ? ` · ${r.bonus}` : ''}</small></div>${i <= k ? ico(['ui', 'check']) : ''}</div>`,
         ).join('');
-        return `${head}${section('Le classement')}${ranking}${section('Le domaine des légendes')}${legend}${section('Le mécénat')}<div class="list">${works}</div>${section('Les rangs')}<div class="list">${ranks}</div>`;
+        // 1.74.1 : trois onglets au lieu d'une feuille de cinq écrans
+        const canW = CUP_WORKS.filter(w => !G.workDone(w.id) && G.workCan(w.id)).length;
+        const T = innerTabs(
+            'cup',
+            [
+                ['rank', 'Rang', null, 0],
+                ['ranking', 'Classement', null, 0],
+                ['works', 'Mécénat', null, canW],
+            ],
+            'rank',
+        );
+        const body =
+            T.cur === 'works'
+                ? `<p class="card-sub">Financez un grand chantier : des points de Coupe et un monument sur le domaine des légendes.</p><div class="list">${works}</div>`
+                : T.cur === 'ranking'
+                  ? `${ranking}${section('Le domaine des légendes')}${legend}`
+                  : `${head}<div class="list">${ranks}</div>`;
+        return `${T.html}${body}`;
     },
 });
 

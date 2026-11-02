@@ -195,7 +195,7 @@ function exploits() {
             return `<div class="card ach${can ? ' can' : ''}">${ico(a.icon, 'ico big')}
             <div class="card-main"><div class="card-title">${a.name}${medals(done)}</div>
             <div class="card-sub">${max ? 'Tous les paliers sont atteints.' : G.achDesc(a, target)}</div>
-            ${max ? '' : `${bar(val / target)}<div class="card-sub">${fmt(Math.min(val, target))} / ${fmt(target)}</div>`}</div>
+            ${max ? '' : `<div class="ach-bar">${bar(val / target)}<small>${fmt(Math.min(val, target))} / ${fmt(target)}</small></div>`}</div>
             ${max ? '' : `<div class="card-side col"><span class="reward">${fmt(r.coins)}${COIN()}</span>${r.ruban ? `<span class="reward">+${r.ruban}${ico(['ui', 'ribbon'])}</span>` : ''}${btn('Réclamer', { act: 'claimAch', data: { id: a.id }, kind: can ? 'gold' : '', size: 'sm', disabled: !can })}</div>`}</div>`;
         })
         .join('');

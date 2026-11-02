@@ -6,8 +6,9 @@ import { STYLES, STYLE_LVL, STYLE_CHARM } from '../../data/farm.js';
 import * as G from '../../systems/index.js';
 import { actions } from '../dom.js';
 import { ico, art, SPR } from '../icons.js';
-import { btn, costRow, section } from '../kit.js';
+import { btn, costRow } from '../kit.js';
 import { defineSheet } from '../sheets.js';
+import { innerTabs } from '../innertabs.js';
 import { updateScene } from '../scene.js';
 
 const houseArt = l => (G.roofColor() ? SPR.farmhouse(l, G.roofColor()) : art('house', l));
@@ -79,12 +80,25 @@ defineSheet('house', {
             ? `<div class="card house-up"><div class="card-title">Prochaine étape : ${n.name}</div><div class="card-sub">${n.bonus}.</div>${costRow(G.costParts(n.cost))}
                 ${state.level < n.lvl ? btn(`Niveau ${n.lvl}`, { wide: true, disabled: true, icon: ['ui', 'lock'] }) : btn('Agrandir la maison', { act: 'upgradeHouse', kind: G.hasCost(n.cost) ? 'gold' : '', wide: true, disabled: !G.hasCost(n.cost) })}</div>`
             : '<p class="card-sub center">Votre maison est au plus haut niveau. Bravo !</p>';
+        // 1.74.1 : quatre onglets
+        const T = innerTabs(
+            'house',
+            [
+                ['home', 'Maison', null, n && state.level >= n.lvl && G.hasCost(n.cost) ? 1 : 0],
+                ['hand', 'Commis', null, 0],
+                ['wall', 'Salon', null, 0],
+                ['styles', 'Style', null, 0],
+            ],
+            'home',
+        );
+        const t = T.cur;
         return [
-            ['art', `<div class="house-art">${houseArt(l)}</div><div class="card-title center">${HOUSE[l].name}</div>`],
-            ['levels', `<div class="hlevels">${levels}</div>${up}`],
-            ['hand', section('Le commis') + hand()],
-            ['wall', section('Le mur du salon') + wall()],
-            ['styles', section('Personnaliser la ferme') + styles()],
+            ['tabs', T.html],
+            ['art', t === 'home' ? `<div class="house-art">${houseArt(l)}</div><div class="card-title center">${HOUSE[l].name}</div>` : ''],
+            ['levels', t === 'home' ? `${up}<div class="hlevels">${levels}</div>` : ''],
+            ['hand', t === 'hand' ? hand() : ''],
+            ['wall', t === 'wall' ? wall() : ''],
+            ['styles', t === 'styles' ? styles() : ''],
         ];
     },
 });

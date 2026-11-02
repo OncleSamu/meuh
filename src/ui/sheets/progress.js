@@ -7,16 +7,17 @@ import { FARM_THEMES } from '../../data/port.js';
 import * as G from '../../systems/index.js';
 import { actions } from '../dom.js';
 import { ico } from '../icons.js';
-import { btn, card, pips, section } from '../kit.js';
+import { btn, card, pips } from '../kit.js';
 import { defineSheet, closeAll, sheetOpts } from '../sheets.js';
 import { confirmTap } from '../confirm.js';
 import { ui } from '../app.js';
+import { innerTabs } from '../innertabs.js';
 
 function skills() {
     const b = ui.sel.branch || 'agri',
         pts = G.skillPoints();
     return `<div class="card skills-card"><div class="card-head">${ico(['ui', 'skillbook'], 'ico big')}<div class="card-main"><div class="card-title">${pts ? `${pts} point${pts > 1 ? 's' : ''} à placer` : 'Aucun point à placer'}</div>
-        <div class="card-sub">Un point à chaque niveau, huit branches qui s’ouvrent au fil du jeu : il y a plus de rangs que de points, à vous de choisir. Les compétences repartent à zéro si vous vendez la ferme.</div></div></div>
+        <div class="card-sub">Un point par niveau, plus de rangs que de points : choisissez. Remis à zéro si vous vendez la ferme.</div></div></div>
         <div class="chips-row wrap skill-branches">${Object.entries(SKILLS)
             .map(([id, br]) => {
                 const locked = state.level < (br.lvl || 1);
@@ -63,10 +64,22 @@ function prestigeCard() {
 
 defineSheet('progress', {
     title: 'Progrès',
-    render: () => [
-        ['skills', section('Compétences') + skills()],
-        ['prestige', section('Prestige') + `<div class="list">${challengeCard()}${prestigeCard()}</div>`],
-    ],
+    // 1.74.1 : deux onglets
+    render: () => {
+        const T = innerTabs(
+            'progress',
+            [
+                ['skills', 'Compétences', null, G.skillPoints() ? 1 : 0],
+                ['prestige', 'Prestige', null, 0],
+            ],
+            'skills',
+        );
+        return [
+            ['tabs', T.html],
+            ['skills', T.cur === 'skills' ? skills() : ''],
+            ['prestige', T.cur === 'prestige' ? `<div class="list">${prestigeCard()}${challengeCard()}</div>` : ''],
+        ];
+    },
 });
 
 // ---------------- vendre la ferme ----------------

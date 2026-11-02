@@ -15,7 +15,7 @@ export function setupInnerTabs() {
         innerTab: (el, d) => {
             const key = el.closest('.inner-tabs').dataset.key;
             ui.sel['it:' + key] = d.v;
-            const v = el.closest('.view');
+            const v = el.closest('.view') || el.closest('.sheet-body');
             if (v) v.scrollTop = 0;
         },
     });
