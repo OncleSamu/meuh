@@ -1158,7 +1158,7 @@ export const GUIDE_PAGES = [
                     'Les étoiles d’une recette restent secrètes jusqu’au premier brassin (on voit des indices).',
                     'Plus vous vendez une même bière, plus son prix baisse, puis il remonte avec le temps.',
                     '« Rebrasser » refait la dernière recette ; les cuves peuvent tourner en boucle, même pendant votre absence (tant qu’il reste des ingrédients).',
-                    'Qualité : avec « Meilleurs ingrédients d’abord » (atelier), un brassin fait d’ingrédients en argent, en or, en platine ou en diamant donne des bouteilles de ce rang (même score que les plats). Elles se vendent plus cher et gardent leur rang en cave.',
+                    'Qualité : avec « Meilleurs ingrédients d’abord » (atelier), un brassin fait d’ingrédients en argent, en or, en platine ou en diamant donne des bouteilles de ce rang (même score que les plats). Elles se vendent plus cher, gardent leur rang en cave, et une commande de bière les paie selon leur rang (les meilleures partent en premier).',
                 ],
             },
             {
@@ -1521,7 +1521,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Le talent de l’ami et les histoires (1.70)',
                 b: [
-                    'À 5 cœurs, chaque villageois prête son talent pour toujours : les machines de son métier vont 10 % plus vite et leurs produits se vendent 5 % plus cher (Victor : soins moins chers ; Morgane : bateaux mieux payés ; Hugues : cuves de l’abbaye plus rapides ; Octave : vieillissement plus rapide à la cave).',
+                    'À 5 cœurs, chaque villageois prête son talent pour toujours : les machines de son métier vont 10 % plus vite et leurs produits se vendent 5 % plus cher (Victor : soins moins chers ; Morgane : bateaux mieux payés ; Hugues : cuves de l’abbaye plus rapides ; Octave : vieillissement plus rapide à la cave ; Inès : en plus de la poterie, les clients du comptoir paient 10 % de plus). Depuis la 1.75.3, Odette connaît aussi la crêperie, Gaston la pizzeria, Paul la fabrique de pâtes et Margaux le moulin à huile.',
                     'Chaque villageois a son histoire (trois étapes, des produits à apporter). Finie, elle double son talent et rapporte un ruban.',
                     'Quatre duos : Hugues et Agnès, Idris et Yasmine, Tuomas et Ingrid, Morgane et Yann. Un cadeau à l’un fait plaisir à l’autre (+1) ; les deux à 5 cœurs ouvrent une histoire à deux (deux rubans).',
                 ],

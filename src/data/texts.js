@@ -137,6 +137,12 @@ export const TIPS = {
         title: 'Le talent de l’ami',
         text: 'À cinq cœurs, un villageois te prête son talent pour toujours : les machines de son métier vont plus vite et leurs produits se vendent mieux. Victor soigne moins cher, Morgane fait mieux payer les bateaux, Octave fait vieillir la cave plus vite. Finis son histoire, et son talent double. Un bon voisin, c’est une richesse, disait mon père. Il disait ça surtout quand il empruntait la charrette.',
     },
+    // 1.75.3
+    beerRank: {
+        icon: ['ui', 'beer'],
+        title: 'Des commandes payées au rang',
+        text: 'Les clients de la brasserie paient maintenant tes bouteilles selon leur rang : une bouteille en or vaut bien plus qu’une ordinaire, et ce sont les meilleures qui partent en premier. Ton grand-oncle Hugues disait qu’une bonne bière se reconnaît à la mousse et au sourire de celui qui la boit.',
+    },
     // 1.75
     theme: {
         icon: ['ui', 'gear'],

@@ -51,21 +51,22 @@ export const YEAR_DAYS = 48;
 // m : machines de son métier (plus rapides, produits mieux vendus) ; fx : un effet à part
 export const TALENT = { speed: 0.1, price: 0.05, fx: 0.1 };
 export const TALENTS = {
-    odette: { m: ['pastry', 'confectionery'] },
-    gaston: { m: ['kitchen', 'stove'] },
+    // 1.75.3 : la crêperie, la pizzeria, la fabrique de pâtes, le moulin à huile et le comptoir ont leur talent
+    odette: { m: ['pastry', 'confectionery', 'crepery'] },
+    gaston: { m: ['kitchen', 'stove', 'pizzeria'] },
     lucie: { m: ['icecream', 'chocolatier'] },
-    paul: { m: ['bakery', 'mill'] },
+    paul: { m: ['bakery', 'mill', 'pastaworks'] },
     rose: { m: ['perfumery', 'soapworks'] },
     marcel: { m: ['smokehouse', 'saloir'] },
     gaspard: { m: ['sawmill', 'forge'] },
     odile: { m: ['press', 'dryer'] },
     jules: { m: ['saddlery'] },
-    ines: { m: ['pottery'] },
+    ines: { m: ['pottery'], fx: 'counter', text: 'les clients du comptoir paient plus' },
     morgane: { fx: 'boat', text: 'les bateaux du port paient plus' },
     yann: { m: ['fishmonger', 'cannery'] },
     bruno: { m: ['alpineDairy', 'loom'] },
     lea: { m: ['tailor', 'marmite'] },
-    margaux: { m: ['winery'] },
+    margaux: { m: ['winery', 'oilmill'] },
     anselme: { m: ['dairy', 'deli'] },
     maeva: { m: ['islandBakery', 'juiceBar'] },
     tiago: { m: ['rumDistillery', 'sugarmill'] },

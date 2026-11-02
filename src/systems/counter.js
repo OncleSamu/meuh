@@ -21,6 +21,7 @@ import { rollRare } from './barn.js';
 import { sellPrice } from './market.js';
 import { mExtraYield } from './buildings.js';
 import { domStepSum } from './estate.js';
+import { talentFx } from './friends.js';
 
 const DAY = 86400000;
 // le jour du téléphone (minuit à l'heure locale)
@@ -250,7 +251,8 @@ function serve(seat, id, tier, stars, at) {
     if (!s) return;
     const hearts = heartsOf(s.vid);
     const base = sellPrice(id);
-    const price = Math.round(base * CLIENT.premium * CLIENT.star[tier] * (1 + CLIENT.heart * hearts));
+    // 1.75.3 : le talent d'Inès
+    const price = Math.round(base * CLIENT.premium * CLIENT.star[tier] * (1 + CLIENT.heart * hearts) * (1 + talentFx('counter')));
     earn(price, at);
     state.income.counter = (state.income.counter || 0) + price;
     let tip = 0;

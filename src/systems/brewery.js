@@ -670,7 +670,19 @@ export const beerOrderText = o =>
     `${o.qty} bouteilles ${o.mead ? 'd’un hydromel' : `d’une ${o.malt ? MALTS[o.malt].name.toLowerCase() : 'bière'}`} plutôt ${['sucrée', 'acide', 'amère', 'épicée', 'umami'][o.note]}, ${o.min} étoile${o.min > 1 ? 's' : ''} au moins`;
 export const beerFits = (o, b) => !!o.mead === isMead(b.malt) && (!o.malt || b.malt === o.malt) && b.stars >= o.min && beerNote(b) === o.note;
 export const beerOrderMatches = o => myBeers().filter(b => beerFits(o, b) && beerStock(b.id) >= o.qty);
-export const beerOrderPay = (o, bid) => Math.round((beerValue(bid) * o.qty * BEER_ORDERS.pay) / 10) * 10;
+// 1.75.3 : les meilleures bouteilles partent en premier, et chacune est payée selon son rang
+function orderRanks(bid, n) {
+    const q = { ...beerQual(bid) },
+        out = [];
+    for (const [r, f] of TIERS) {
+        const t = Math.min(n - out.length, q[f]);
+        for (let k = 0; k < t; k++) out.push([r, f]);
+    }
+    while (out.length < n) out.push([0, null]);
+    return out;
+}
+export const beerOrderPay = (o, bid) =>
+    Math.round((beerValue(bid) * BEER_ORDERS.pay * orderRanks(bid, o.qty).reduce((a, [r]) => a + QUALITY[r].mult, 0)) / 10) * 10;
 export function deliverBeerOrder(oid, bid, at) {
     const B = ensureBrew();
     const k = B.orders.findIndex(o => o.id === oid);
@@ -678,10 +690,14 @@ export function deliverBeerOrder(oid, bid, at) {
     const o = B.orders[k];
     const b = beerOf(bid || (beerOrderMatches(o)[0] || {}).id);
     if (!b || !beerFits(o, b) || beerStock(b.id) < o.qty) return false;
+    const pay = beerOrderPay(o, b.id);
+    const q = beerQual(b.id);
+    for (const [, f] of orderRanks(b.id, o.qty)) if (f) q[f]--;
     B.stock[b.id] -= o.qty;
     beerQual(b.id);
-    earn(beerOrderPay(o, b.id), at);
-    state.income.brew = (state.income.brew || 0) + beerOrderPay(o, b.id);
+    earn(pay, at);
+    state.income.brew = (state.income.brew || 0) + pay;
+    tip('beerRank');
     addXp(BEER_ORDERS.xp + 20 * o.min, at);
     addFriendship(o.vid, BEER_ORDERS.hearts, at);
     state.stats.beerOrders = (state.stats.beerOrders || 0) + 1;

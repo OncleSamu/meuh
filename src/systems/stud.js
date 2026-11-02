@@ -132,6 +132,7 @@ export const marksAll = () => Object.keys(COAT.marks).length;
 
 // ---------------- la naissance d'un poulain ----------------
 export function studBorn(baby, a, b) {
+    state.stats.foals = (state.stats.foals || 0) + 1;
     baby.sire = a.uid;
     baby.dam = b.uid;
     // la lignée de champions : une génération de plus que le meilleur parent champion

@@ -62,8 +62,12 @@ export const talentFx = fx => TALENT.fx * fxLvl(fx);
 export function talentText(vid) {
     const t = TALENTS[vid];
     const k = Math.max(1, talentLevel(vid));
-    if (t.fx) return `${t.text[0].toUpperCase() + t.text.slice(1)} (${Math.round(TALENT.fx * k * 100)} %)`;
-    return `${t.m.length > 1 ? 'Ses machines' : 'Sa machine'} : ${Math.round(TALENT.speed * k * 100)} % plus rapide${t.m.length > 1 ? 's' : ''}, produits ${Math.round(TALENT.price * k * 100)} % plus chers`;
+    const fx = t.fx ? `${t.text} (${Math.round(TALENT.fx * k * 100)} %)` : '';
+    const m = t.m
+        ? `${t.m.length > 1 ? 'ses machines' : 'sa machine'} : ${Math.round(TALENT.speed * k * 100)} % plus rapide${t.m.length > 1 ? 's' : ''}, produits ${Math.round(TALENT.price * k * 100)} % plus chers`
+        : '';
+    const s = [m, fx].filter(Boolean).join(' ; ');
+    return s[0].toUpperCase() + s.slice(1);
 }
 export const talentsOn = () => Object.keys(TALENTS).filter(vid => talentLevel(vid) > 0).length;
 

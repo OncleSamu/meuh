@@ -15,9 +15,9 @@ function farm(lvl) {
     state.level = lvl;
 }
 
-test('1.71 : 39 exploits, des paliers croissants, des ids uniques', () => {
-    assert.equal(ACHIEVEMENTS.length, 39);
-    assert.equal(new Set(ACHIEVEMENTS.map(a => a.id)).size, 39);
+test('1.71 (1.75.3) : 43 exploits, des paliers croissants, des ids uniques', () => {
+    assert.equal(ACHIEVEMENTS.length, 43);
+    assert.equal(new Set(ACHIEVEMENTS.map(a => a.id)).size, 43);
     for (const a of ACHIEVEMENTS) assert.ok(a.tiers[0] < a.tiers[1] && a.tiers[1] < a.tiers[2], a.id);
 });
 

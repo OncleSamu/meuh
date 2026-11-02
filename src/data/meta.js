@@ -50,6 +50,11 @@ export const ACHIEVEMENTS = [
     { id: 'drinks', name: 'Barman', desc: 'Servir {n} boisson{s} au comptoir', icon: ['machine', 'counter'], tiers: [20, 400, 4000] },
     { id: 'boats', name: 'Armateur', desc: 'Charger {n} navire{s} au port', icon: ['ui', 'boat'], tiers: [3, 40, 250] },
     { id: 'armandDeals', name: 'Fin négociateur', desc: 'Conclure {n} marché{s} avec Armand', icon: ['villager', 'armand'], tiers: [1, 15, 80] },
+    // 1.75.3
+    { id: 'beerOrders', name: 'Tavernier', desc: 'Livrer {n} commande{s} de bière', icon: ['ui', 'beer'], tiers: [5, 30, 100] },
+    { id: 'showWins', name: 'Cavalier', desc: 'Gagner {n} concours au haras', icon: ['ui', 'hCup2'], tiers: [1, 10, 40], calc: true },
+    { id: 'foals', name: 'Naisseur', desc: 'Faire naître {n} poulain{s} au haras', icon: ['animal', 'horse'], tiers: [1, 10, 30] },
+    { id: 'fixedVars', name: 'Obtenteur', desc: 'Fixer {n} variété{s} au labo', icon: ['ui', 'flowers'], tiers: [1, 5, 15], calc: true },
     {
         id: 'honeyKinds',
         name: 'Les miels',

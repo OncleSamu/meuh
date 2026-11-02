@@ -503,6 +503,8 @@ export const achClaimed = a => state.achievements[a.id] || 0;
 const ACH_CALC = {
     lovesFound: () => Object.values(state.villagers || {}).filter(v => v && v.love).length,
     honeyKinds: () => Object.keys(state.stats.honeyKinds || {}).length,
+    showWins: () => (state.show && state.show.wins) || 0,
+    fixedVars: () => (state.genetics ? Object.values(state.genetics.vars).filter(v => v && v.fixed).length : 0),
     landHarvest: () => (state.stats.islandHarvest || 0) + (state.stats.oasisHarvest || 0) + (state.stats.nordHarvest || 0),
 };
 export const achValue = a => (a.calc && ACH_CALC[a.id] ? ACH_CALC[a.id]() : state.stats[a.id] || 0);

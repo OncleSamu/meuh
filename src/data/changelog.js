@@ -1,6 +1,20 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.75.3',
+        title: 'Talents et exploits',
+        date: '2 novembre 2026',
+        items: [
+            'Odette connaît la crêperie',
+            'Gaston la pizzeria',
+            'Paul la fabrique de pâtes',
+            'Margaux le moulin à huile',
+            'Inès fait payer plus au comptoir',
+            'Les commandes de bière paient selon le rang des bouteilles',
+            'Quatre exploits : Tavernier, Cavalier, Naisseur, Obtenteur',
+        ],
+    },
+    {
         v: '1.75.2',
         title: "Retouches de l'audit",
         date: '2 novembre 2026',
