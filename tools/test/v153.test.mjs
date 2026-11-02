@@ -8,7 +8,7 @@ import * as G from '../../src/systems/index.js';
 import { ITEMS } from '../../src/data/items.js';
 import { MACHINES, RECIPES } from '../../src/data/machines.js';
 import { CARNET } from '../../src/data/carnet.js';
-import { RECIPES_153, MACHINES_153 } from '../../src/data/v153.js';
+import { RECIPES_153, MACHINES_153 } from '../../src/data/ajouts/nord-cuisine.js';
 import { NORD_IDS, NORD_PRODUCTS } from '../../src/data/nord.js';
 import { PROJECTS } from '../../src/data/village.js';
 import { SPR } from '../../src/art/index.js';

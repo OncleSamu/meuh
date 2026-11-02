@@ -7,7 +7,7 @@ import { CARNET } from '../../src/data/carnet.js';
 import { FISH } from '../../src/data/meta.js';
 import { SPOTS, BAITS } from '../../src/data/fishing.js';
 import { SEA_CATCH } from '../../src/data/nature.js';
-import { FISH_ITEMS_133, RECIPES_133 } from '../../src/data/v133.js';
+import { FISH_ITEMS_133, RECIPES_133 } from '../../src/data/ajouts/poissons.js';
 import { SPR } from '../../src/art/index.js';
 
 test('1.33 : dix poissons, 34 recettes, un lagon et un appât de plus', () => {

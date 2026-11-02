@@ -1,5 +1,5 @@
 import { MAX_LEVEL } from './progress.js';
-import { FISH_133 } from './v133.js';
+import { FISH_133 } from './ajouts/poissons.js';
 // Données qui contenaient autrefois du code : textes à trous, icônes, conditions.
 // Les trous : {n} = nombre formaté, {s} = « s » si pluriel, {x} = valeur du rang (compétences).
 

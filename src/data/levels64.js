@@ -1,8 +1,8 @@
 // 1.56 : 64 niveaux. Les niveaux 58 à 60 portaient à eux seuls l'oasis et le Grand Nord : ils sont répartis sur 58 à 64.
 // Tout ce qui existait avant garde son niveau. lv155 garde le niveau d'avant, pour qu'une ancienne partie garde ce qu'elle
 // avait déjà ouvert (state.lvKeep, voir migrateLevels64).
-import { RECIPES_150 } from './v150.js';
-import { RECIPES_153 } from './v153.js';
+import { RECIPES_150 } from './ajouts/oasis-cuisine.js';
+import { RECIPES_153 } from './ajouts/nord-cuisine.js';
 import { NEW_DRINKS_154, NEW_DRINKS_155 } from './counter.js';
 
 // les chantiers et leur chapitre (chapitres 21 à 24 : voir village.js) ; une machine ou un produit ne s'ouvre pas avant eux

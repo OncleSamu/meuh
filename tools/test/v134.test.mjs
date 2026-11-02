@@ -6,7 +6,7 @@ import { RECIPES } from '../../src/data/machines.js';
 import { CAVE_ITEMS } from '../../src/data/cave.js';
 import { BREW, NEW_DRINKS, NEW_DRINKS_134 } from '../../src/data/counter.js';
 import { CARNET } from '../../src/data/carnet.js';
-import { RECIPES_134 } from '../../src/data/v134.js';
+import { RECIPES_134 } from '../../src/data/ajouts/cave.js';
 import { SPR } from '../../src/art/index.js';
 
 test('1.34 : le comptoir passe à 41 boissons, chacune avec un geste et un dessin', () => {

@@ -95,7 +95,7 @@ test('1.8 : une machine par niveau, avec au moins une recette faisable et ses ma
     };
     const seen = {};
     // 1.53 : les trois machines du Grand Nord arrivent d'un bloc au dernier niveau, avec leur contrée
-    const { MACHINES_153 } = await import('../../src/data/v153.js');
+    const { MACHINES_153 } = await import('../../src/data/ajouts/nord-cuisine.js');
     const block = new Set(MACHINES_153.map(m => m[0]));
     for (const m of Object.values(MACHINES)) {
         if (block.has(m.id)) continue;

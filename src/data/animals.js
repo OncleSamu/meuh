@@ -1,5 +1,5 @@
 import { LV_ANIMAL } from './levels14.js';
-import { ANIMALS_135 } from './v135.js';
+import { ANIMALS_135 } from './ajouts/animaux.js';
 import { OASIS_BEASTS } from './oasis.js';
 import { NORD_BEASTS } from './nord.js';
 // Les animaux : prix, production, croissance des petits, noms.

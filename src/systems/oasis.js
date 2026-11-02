@@ -9,7 +9,7 @@ import { fmt, s, dateKey } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { OASIS, OASIS_GROVE, PEN, CARAVAN, STORM, OASIS_IDS, OASIS_PRODUCTS } from '../data/oasis.js';
-import { RECIPES_150 } from '../data/v150.js';
+import { RECIPES_150 } from '../data/ajouts/oasis-cuisine.js';
 import { NEW_DRINKS_154 } from '../data/counter.js';
 import { ANIMALS } from '../data/animals.js';
 import { BALANCE } from '../data/progress.js';

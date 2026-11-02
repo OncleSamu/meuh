@@ -9,7 +9,7 @@ import { ANIMALS, GROW, NAMES } from '../../src/data/animals.js';
 import { ANIMAL_BASE, FEATURES } from '../../src/data/genetics.js';
 import { CARNET } from '../../src/data/carnet.js';
 import { CAVE_ITEMS } from '../../src/data/cave.js';
-import { ANIMALS_135, PRODUCTS_135, RECIPES_135 } from '../../src/data/v135.js';
+import { ANIMALS_135, PRODUCTS_135, RECIPES_135 } from '../../src/data/ajouts/animaux.js';
 import { SPR } from '../../src/art/index.js';
 
 test('1.35 : 23 animaux, onze produits, 36 recettes', () => {

@@ -1,11 +1,11 @@
 // La génétique (bêta 4) : saveurs et caractères de chaque espèce, réglages du labo, de l'étable de sélection et du Salon.
-import { CROPS_130 } from './v130.js';
-import { TREES_131 } from './v131.js';
-import { CROPS_132 } from './v132.js';
+import { CROPS_130 } from './ajouts/cultures.js';
+import { TREES_131 } from './ajouts/arbres.js';
+import { CROPS_132 } from './ajouts/ile.js';
 import { OASIS_CROPS, OASIS_TREES, OASIS_BEASTS } from './oasis.js';
 import { NORD_BEASTS } from './nord.js';
 import { NORD_CROPS, NORD_TREES } from './nord.js';
-import { ANIMALS_135 } from './v135.js';
+import { ANIMALS_135 } from './ajouts/animaux.js';
 
 // ---------------- les caractères ----------------
 // Chaque caractère va de 0 à 5. Les plantes ont des saveurs et des qualités de culture,

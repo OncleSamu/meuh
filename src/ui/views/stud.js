@@ -9,7 +9,7 @@ import { animalArt, lineageHtml } from '../genlook.js';
 import { renameBtn } from '../sheets/rename.js';
 import { emit } from '../../core/bus.js';
 import { closeMoment } from '../moments.js';
-import { horseR, ROBES } from '../../art/v1242robes.js';
+import { horseR, ROBES } from '../../art/haras/robes.js';
 import { svg } from '../../art/kit.js';
 
 let sel = null; // le cheval dont on regarde l'arbre

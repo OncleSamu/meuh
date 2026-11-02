@@ -22,7 +22,7 @@ import { NORD } from '../../data/nord.js';
 import { apiaryHtml } from './apiary.js';
 import { treeArt, anchorOf, spot } from './orchard.js';
 import { svg } from '../../art/kit.js';
-import { chadouf } from '../../art/v148oasis.js';
+import { chadouf } from '../../art/oasis/oasis.js';
 
 // ---------------- le volet Voyages ----------------
 const PICKS = [

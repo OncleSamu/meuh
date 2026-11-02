@@ -15,7 +15,7 @@ import { inPasture, nordBarnOpen, nordBarnCap } from './pastures.js';
 import { BALANCE } from '../data/progress.js';
 import { speedMult, addXp, spend, rank, rollYield, earn } from './player.js';
 import { sellPrice } from './market.js';
-import { RECIPES_153 } from '../data/v153.js';
+import { RECIPES_153 } from '../data/ajouts/nord-cuisine.js';
 import { NEW_DRINKS_155 } from '../data/counter.js';
 import { hour, weather } from './world.js';
 import { masterySpeed, addMastery } from './mastery.js';

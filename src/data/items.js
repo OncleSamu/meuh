@@ -1,19 +1,19 @@
 import { LV_ITEM } from './levels14.js';
 import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155, COFFEE_GATED } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
-import { CROPS_130, RECIPES_130 } from './v130.js';
-import { TREES_131, RECIPES_131 } from './v131.js';
-import { CROPS_132, RECIPES_132 } from './v132.js';
+import { CROPS_130, RECIPES_130 } from './ajouts/cultures.js';
+import { TREES_131, RECIPES_131 } from './ajouts/arbres.js';
+import { CROPS_132, RECIPES_132 } from './ajouts/ile.js';
 import { OASIS_CROPS, OASIS_TREES, OASIS_PRODUCTS } from './oasis.js';
 import { NORD_PRODUCTS } from './nord.js';
 import { NORD_CROPS, NORD_TREES } from './nord.js';
-import { RECIPES_150 } from './v150.js';
-import { RECIPES_161 } from './v161.js';
-import { RECIPES_153 } from './v153.js';
-import { FISH_ITEMS_133, RECIPES_133 } from './v133.js';
-import { RECIPES_134 } from './v134.js';
-import { PRODUCTS_135, RECIPES_135 } from './v135.js';
-import { RECIPES_137 } from './v137.js';
+import { RECIPES_150 } from './ajouts/oasis-cuisine.js';
+import { RECIPES_161 } from './ajouts/pizzeria.js';
+import { RECIPES_153 } from './ajouts/nord-cuisine.js';
+import { FISH_ITEMS_133, RECIPES_133 } from './ajouts/poissons.js';
+import { RECIPES_134 } from './ajouts/cave.js';
+import { PRODUCTS_135, RECIPES_135 } from './ajouts/animaux.js';
+import { RECIPES_137 } from './ajouts/chateau.js';
 // Tous les produits du jeu : cultures, arbres, produits animaux, plats, matériaux.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 

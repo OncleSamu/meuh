@@ -10,7 +10,7 @@ import { btn, bar, section, costRow } from '../kit.js';
 import { defineSheet } from '../sheets.js';
 import { innerTabs } from '../innertabs.js';
 import { MAP_BG } from '../../art/maps.js';
-import { LEGEND_SPOTS } from '../../art/v140coupe.js';
+import { LEGEND_SPOTS } from '../../art/village/coupe.js';
 
 // où se posent les grands travaux sur la carte (en % de la carte)
 const WORK_POS = { bigBridge: [50, 8], cathedral: [8, 30], observatory: [92, 30], museum: [10, 80], opera: [90, 80], baths: [50, 90] };

@@ -25,7 +25,7 @@ import { askBuy } from '../sheets/askbuy.js';
 import { defineSheet, openSheet } from '../sheets.js';
 import { DOMAINE, DOMAINE_IDS, DOMAINE_LVL } from '../../data/domaine.js';
 import { costRow } from '../kit.js';
-import { domaineScene, domThumb } from '../../art/v1201domaine.js';
+import { domaineScene, domThumb } from '../../art/village/domaine.js';
 import { villagersCard } from './villagers.js';
 import { innerTabs } from '../innertabs.js';
 

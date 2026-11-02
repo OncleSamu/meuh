@@ -12,7 +12,8 @@ Jouer : https://onclesamu.github.io/meuh/
 | `src/data` | Le contenu du jeu par domaine : cultures, animaux, machines et recettes, village, cave, fêtes, textes |
 | `src/core` | L'état de la partie et sa sauvegarde, l'horloge, le bus d'événements, les formats |
 | `src/systems` | Toutes les règles du jeu, sans affichage (testables dans node) |
-| `src/art` | Les dessins vectoriels, par famille |
+| `src/art` | Les dessins vectoriels : la base (kit, objets, bêtes, bâtiments, plantes) puis un dossier par coin du jeu (`champ`, `verger`, `nature`, `peche`, `animaux`, `cuisine`, `comptoir`, `ile`, `oasis`, `nord`, `haras`, `village`, `miel`) et `retouches` (dessins refaits, chargés en dernier). L'ordre des imports de `art/index.js` compte : un dessin chargé plus tard remplace le précédent |
+| `src/data/ajouts` | Les cultures, arbres, poissons, bêtes et recettes ajoutés par vagues (cultures, arbres, île, poissons, cave, animaux, château, cuisines de l'oasis et du Nord, pizzeria) |
 | `src/ui` | L'interface : navigation, vues (un fichier par écran), fenêtres du bas, moments, effets, sons, tutoriel |
 | `src/styles` | Les styles, par couche (base, scène, mise en page, composants, puis un fichier par écran) |
 | `src/pwa` | Manifeste, icônes et service worker |
@@ -37,3 +38,4 @@ npm run bot -- 60        # un robot joue 60 h simulées et affiche le rythme des
 - L'interface est déclarative : chaque bouton porte `data-act` et ses données ; `refresh()` redessine seulement ce qui a changé.
 - Nouvelle donnée dans l'état : l'ajouter dans `newState()` (`src/core/state.js`) ; le chargement complète les anciennes sauvegardes.
 - Textes : espaces insécables de la typographie française dans les chaînes.
+- Performances : ne pas recalculer à chaque seconde ce qui change rarement (le livre est recompté toutes les 10 s) ; une animation sans fin doit rester en `transform` ou `opacity`.

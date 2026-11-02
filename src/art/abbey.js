@@ -1,5 +1,5 @@
 // L'abbaye (1.6) : l'orge, les malts, la malterie, les bâtiments, la carte, Frère Hugues et Agnès, et les bières.
-import { meadSvg } from './v168mead.js';
+import { meadSvg } from './miel/hydromel.js';
 import {
     BLD,
     KINDS,

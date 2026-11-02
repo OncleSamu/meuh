@@ -1,5 +1,5 @@
 // La nature : forêt, mine, étang et poissons, pêche en mer.
-import { SEA_CATCH_133 } from './v133.js';
+import { SEA_CATCH_133 } from './ajouts/poissons.js';
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
 export const NATURE = {

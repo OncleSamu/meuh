@@ -1,4 +1,4 @@
-import { CROPS_130 } from './v130.js';
+import { CROPS_130 } from './ajouts/cultures.js';
 import { LV_DECO, LV_UPG } from './levels14.js';
 // Le champ, la serre, les sols, la qualité, les décorations, le chien, les engins et les styles.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).

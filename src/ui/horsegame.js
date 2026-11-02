@@ -1,10 +1,10 @@
 // Les mini-jeux du haras (1.23.2 et 1.23.3) : le galop, le saut, le dressage et le raid, en plein écran. La règle est dans systems/horsegames.js.
 import * as G from '../systems/index.js';
 import { GALOP, SAUT, DISC, DRESSAGE, RAID } from '../data/haras.js';
-import { horsePose, OBST, obstFault, MG } from '../art/v1232mg.js';
-import { endurancePose, topHorse, GAIT, TERRAIN, TCOL } from '../art/v1233mg.js';
+import { horsePose, OBST, obstFault, MG } from '../art/haras/minijeux.js';
+import { endurancePose, topHorse, GAIT, TERRAIN, TCOL } from '../art/haras/dressage.js';
 import { tintHex } from './genlook.js';
-import { ROBES } from '../art/v1242robes.js';
+import { ROBES } from '../art/haras/robes.js';
 import { sfx, buzz } from '../core/bus.js';
 import { refresh } from './app.js';
 import { reduceMotion } from './fx.js';

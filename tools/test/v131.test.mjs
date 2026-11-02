@@ -6,7 +6,7 @@ import { MACHINES, RECIPES } from '../../src/data/machines.js';
 import { FLAVORS } from '../../src/data/genetics.js';
 import { TREE_SEASON } from '../../src/data/orchard.js';
 import { CARNET } from '../../src/data/carnet.js';
-import { TREES_131, RECIPES_131 } from '../../src/data/v131.js';
+import { TREES_131, RECIPES_131 } from '../../src/data/ajouts/arbres.js';
 import { SPR } from '../../src/art/index.js';
 
 const IDS = TREES_131.map(t => t[0]);

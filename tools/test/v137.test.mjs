@@ -11,7 +11,7 @@ import { CARNET } from '../../src/data/carnet.js';
 import { CAVE_ITEMS } from '../../src/data/cave.js';
 import { CHAPTERS, CHAPTER_ORDER, PROJECTS, VILLAGERS } from '../../src/data/village.js';
 import { CHATEAU_CLASSES, PRIMEUR, TOURISM, PAIRINGS } from '../../src/data/chateau.js';
-import { RECIPES_137 } from '../../src/data/v137.js';
+import { RECIPES_137 } from '../../src/data/ajouts/chateau.js';
 import { SPR } from '../../src/art/index.js';
 
 const ready = () => {

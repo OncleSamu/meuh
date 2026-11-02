@@ -7,7 +7,7 @@ import { SOILS } from '../../src/data/farm.js';
 import { FLAVORS } from '../../src/data/genetics.js';
 import { ASSOCS } from '../../src/data/companions.js';
 import { CARNET } from '../../src/data/carnet.js';
-import { CROPS_130, RECIPES_130 } from '../../src/data/v130.js';
+import { CROPS_130, RECIPES_130 } from '../../src/data/ajouts/cultures.js';
 import { RATION } from '../../src/data/haras.js';
 import { NMARKET } from '../../src/data/commerce.js';
 import { SPR } from '../../src/art/index.js';

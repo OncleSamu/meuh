@@ -8,7 +8,7 @@ import * as G from '../../src/systems/index.js';
 import { ITEMS } from '../../src/data/items.js';
 import { MACHINES, RECIPES } from '../../src/data/machines.js';
 import { CARNET } from '../../src/data/carnet.js';
-import { RECIPES_150, MACHINES_150 } from '../../src/data/v150.js';
+import { RECIPES_150, MACHINES_150 } from '../../src/data/ajouts/oasis-cuisine.js';
 import { OASIS_IDS, OASIS_PRODUCTS } from '../../src/data/oasis.js';
 import { SPR } from '../../src/art/index.js';
 

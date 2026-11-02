@@ -12,7 +12,7 @@ import { defineView, ui } from '../app.js';
 import { renderShow } from './show.js';
 import { renderStud } from './stud.js';
 import { openHorseGame } from '../horsegame.js';
-import { stableSvg, boxSvg } from '../../art/v123haras.js';
+import { stableSvg, boxSvg } from '../../art/haras/ecuries.js';
 
 // la tenue du cheval selon sa spécialité
 const OUTFIT = { galop: 'horseSrace', dressage: 'horseSdress', saut: 'horseSjump', endurance: 'horseS' };

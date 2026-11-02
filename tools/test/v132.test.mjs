@@ -5,7 +5,7 @@ import { ITEMS } from '../../src/data/items.js';
 import { MACHINES, RECIPES } from '../../src/data/machines.js';
 import { FLAVORS } from '../../src/data/genetics.js';
 import { CARNET } from '../../src/data/carnet.js';
-import { CROPS_132, RECIPES_132 } from '../../src/data/v132.js';
+import { CROPS_132, RECIPES_132 } from '../../src/data/ajouts/ile.js';
 import { SPR } from '../../src/art/index.js';
 
 const IDS = CROPS_132.map(c => c[0]);
