@@ -14,6 +14,7 @@ import { confirmTap } from '../confirm.js';
 import { updateScene } from '../scene.js';
 import { installState, installApp } from '../pwa.js';
 import { CHANGELOG } from '../../data/changelog.js';
+import { innerTabs } from '../innertabs.js';
 
 export const VERSION = '{{VERSION}}';
 const TEXT_SIZES = ['Normale', 'Grande', 'Très grande'];
@@ -27,82 +28,117 @@ function mainPage() {
     const s = set(state);
     const inst = installState();
     const backups = G.readBackups();
-    return [
-        group(
-            'Son et sensations',
-            toggle('Musique', s.music, 'setting', { key: 'music' }, 'Une ambiance par saison') +
-                slider('Volume de la musique', 'musicVol', 'volume') +
-                toggle('Effets sonores', s.sfx, 'setting', { key: 'sfx' }) +
-                slider('Volume des effets', 'sfxVol', 'volume') +
-                toggle('Vibrations', s.haptics, 'setting', { key: 'haptics' }),
-        ),
-        group(
-            'Confort',
-            toggle('Replanter après la récolte', s.autoReplant, 'setting', { key: 'autoReplant' }) +
-                (state.upgrades.seeder ? toggle('Semoir : planter toute la rangée', s.seeder !== false, 'setting', { key: 'seeder' }) : '') +
-                toggle('Confirmer les gros achats', s.confirmBuy !== false, 'setting', { key: 'confirmBuy' }, 'Parcelles, verger, prés, serre, machines') +
-                toggle('Animations réduites', s.calm, 'setting', { key: 'calm' }) +
-                toggle('Lucioles la nuit', s.fireflies !== false, 'setting', { key: 'fireflies' }, 'Pur décor : vos récoltes de nuit remplissent le bocal') +
-                navRow('Taille du texte', 'textSize', null, null, `<b>${TEXT_SIZES[s.textSize] || TEXT_SIZES[0]}</b>`) +
-                toggle('Contraste renforcé', !!s.contrast, 'setting', { key: 'contrast' }) +
-                (s.hints && Object.keys(s.hints).length
-                    ? navRow(
-                          'Réafficher les astuces',
-                          'hintsReset',
-                          null,
-                          ['ui', 'info'],
-                          '›',
-                          `${Object.keys(s.hints).length} astuce${Object.keys(s.hints).length > 1 ? 's' : ''} masquée${Object.keys(s.hints).length > 1 ? 's' : ''}`,
-                      )
-                    : '') +
-                (matchMedia('(hover: hover)').matches
-                    ? '<p class="card-sub">Au clavier : 1 à 5 pour les onglets, A pour arroser, R pour récolter ou ramasser, N pour nourrir, V pour tout vendre, Échap pour fermer.</p>'
-                    : ''),
-        ),
-        group(
-            'Écran',
-            (document.documentElement.requestFullscreen ? navRow('Plein écran', 'fullscreen') : '') +
-                (inst.standalone
-                    ? '<p class="card-sub">Le jeu est installé sur cet appareil.</p>'
-                    : navRow('Installer l’appli', 'install', null, null, '›', inst.hint)),
-        ),
-        group(
-            'Sauvegarde',
-            navRow(
-                'Exporter ma ferme',
-                'setPage',
-                { p: 'export' },
-                ['ui', 'share'],
-                '›',
-                s.lastExport ? `Dernier export ${G.backupAgo(s.lastExport)}` : 'Jamais exportée : un code gardé ailleurs protège votre ferme',
-            ) +
-                navRow('Importer une ferme', 'setPage', { p: 'import' }, ['ui', 'download']) +
-                '<div class="set-sub">Copies de secours (touchez deux fois pour revenir en arrière)</div>' +
-                (backups.length
-                    ? backups
-                          .map((b, k) => {
-                              let sum = '';
-                              try {
-                                  sum = G.saveSummary(JSON.parse(b.data));
-                              } catch {
-                                  sum = '';
-                              }
-                              return navRow(`Copie ${G.backupAgo(b.at)}`, 'restore', { k }, null, '›', sum);
-                          })
-                          .join('')
-                    : '<p class="card-sub">Une copie de votre ferme est gardée automatiquement toutes les 10 minutes de jeu.</p>'),
-        ),
-        group(
-            'Aide',
-            navRow('Mises à jour', 'setPage', { p: 'updates' }, ['ui', 'scroll'], '›', `Version ${VERSION} : ce que chaque version a apporté`) +
-                navRow('Revoir le tutoriel', 'replayTuto') +
-                (state.dog.owned
-                    ? `<div class="rename"><input type="text" maxlength="16" value="${esc(state.dog.name)}" id="rename-dog" aria-label="Nom du chien">${btn('Renommer le chien', { act: 'renameDog', size: 'sm' })}</div>`
-                    : ''),
-        ),
-        btn('Recommencer à zéro', { act: 'resetGame', kind: 'red', wide: true }),
-        `<p class="card-sub center set-foot">Meuh ${VERSION} · fait avec amour, sans serveur ni compte : votre ferme reste sur votre appareil.</p>`,
-    ].join('');
+    // 1.74.2 : quatre onglets au lieu d'une longue page
+    const T = innerTabs(
+        'settings',
+        [
+            ['sound', 'Son', null, 0],
+            ['comfort', 'Confort', null, 0],
+            ['save', 'Copies', null, 0],
+            ['help', 'Aide', null, 0],
+        ],
+        'sound',
+    );
+    const t = T.cur;
+    const parts =
+        t === 'sound'
+            ? [
+                  group(
+                      'Son et sensations',
+                      toggle('Musique', s.music, 'setting', { key: 'music' }, 'Une ambiance par saison') +
+                          slider('Volume de la musique', 'musicVol', 'volume') +
+                          toggle('Effets sonores', s.sfx, 'setting', { key: 'sfx' }) +
+                          slider('Volume des effets', 'sfxVol', 'volume') +
+                          toggle('Vibrations', s.haptics, 'setting', { key: 'haptics' }),
+                  ),
+              ]
+            : t === 'comfort'
+              ? [
+                    group(
+                        'Confort',
+                        toggle('Replanter après la récolte', s.autoReplant, 'setting', { key: 'autoReplant' }) +
+                            (state.upgrades.seeder ? toggle('Semoir : planter toute la rangée', s.seeder !== false, 'setting', { key: 'seeder' }) : '') +
+                            toggle(
+                                'Confirmer les gros achats',
+                                s.confirmBuy !== false,
+                                'setting',
+                                { key: 'confirmBuy' },
+                                'Parcelles, verger, prés, serre, machines',
+                            ) +
+                            toggle('Animations réduites', s.calm, 'setting', { key: 'calm' }) +
+                            toggle(
+                                'Lucioles la nuit',
+                                s.fireflies !== false,
+                                'setting',
+                                { key: 'fireflies' },
+                                'Pur décor : vos récoltes de nuit remplissent le bocal',
+                            ) +
+                            navRow('Taille du texte', 'textSize', null, null, `<b>${TEXT_SIZES[s.textSize] || TEXT_SIZES[0]}</b>`) +
+                            toggle('Contraste renforcé', !!s.contrast, 'setting', { key: 'contrast' }) +
+                            (s.hints && Object.keys(s.hints).length
+                                ? navRow(
+                                      'Réafficher les astuces',
+                                      'hintsReset',
+                                      null,
+                                      ['ui', 'info'],
+                                      '›',
+                                      `${Object.keys(s.hints).length} astuce${Object.keys(s.hints).length > 1 ? 's' : ''} masquée${Object.keys(s.hints).length > 1 ? 's' : ''}`,
+                                  )
+                                : '') +
+                            (matchMedia('(hover: hover)').matches
+                                ? '<p class="card-sub">Au clavier : 1 à 5 pour les onglets, A pour arroser, R pour récolter ou ramasser, N pour nourrir, V pour tout vendre, Échap pour fermer.</p>'
+                                : ''),
+                    ),
+                    group(
+                        'Écran',
+                        (document.documentElement.requestFullscreen ? navRow('Plein écran', 'fullscreen') : '') +
+                            (inst.standalone
+                                ? '<p class="card-sub">Le jeu est installé sur cet appareil.</p>'
+                                : navRow('Installer l’appli', 'install', null, null, '›', inst.hint)),
+                    ),
+                ]
+              : t === 'save'
+                ? [
+                      group(
+                          'Sauvegarde',
+                          navRow(
+                              'Exporter ma ferme',
+                              'setPage',
+                              { p: 'export' },
+                              ['ui', 'share'],
+                              '›',
+                              s.lastExport ? `Dernier export ${G.backupAgo(s.lastExport)}` : 'Jamais exportée : un code gardé ailleurs protège votre ferme',
+                          ) +
+                              navRow('Importer une ferme', 'setPage', { p: 'import' }, ['ui', 'download']) +
+                              '<div class="set-sub">Copies de secours (touchez deux fois pour revenir en arrière)</div>' +
+                              (backups.length
+                                  ? backups
+                                        .map((b, k) => {
+                                            let sum = '';
+                                            try {
+                                                sum = G.saveSummary(JSON.parse(b.data));
+                                            } catch {
+                                                sum = '';
+                                            }
+                                            return navRow(`Copie ${G.backupAgo(b.at)}`, 'restore', { k }, null, '›', sum);
+                                        })
+                                        .join('')
+                                  : '<p class="card-sub">Une copie de votre ferme est gardée automatiquement toutes les 10 minutes de jeu.</p>'),
+                      ),
+                  ]
+                : [
+                      group(
+                          'Aide',
+                          navRow('Mises à jour', 'setPage', { p: 'updates' }, ['ui', 'scroll'], '›', `Version ${VERSION} : ce que chaque version a apporté`) +
+                              navRow('Revoir le tutoriel', 'replayTuto') +
+                              (state.dog.owned
+                                  ? `<div class="rename"><input type="text" maxlength="16" value="${esc(state.dog.name)}" id="rename-dog" aria-label="Nom du chien">${btn('Renommer le chien', { act: 'renameDog', size: 'sm' })}</div>`
+                                  : ''),
+                      ),
+                      btn('Recommencer à zéro', { act: 'resetGame', kind: 'red', wide: true }),
+                      `<p class="card-sub center set-foot">Meuh ${VERSION} · fait avec amour, sans serveur ni compte : votre ferme reste sur votre appareil.</p>`,
+                  ];
+    return T.html + parts.join('');
 }
 
 function exportPage(o) {

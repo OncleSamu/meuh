@@ -19,13 +19,29 @@ import { btn, line, empty } from '../kit.js';
 import { defineSheet, sheetOpts, closeSheet } from '../sheets.js';
 import { go } from '../app.js';
 import { photoArt } from './book.js';
+import { innerTabs } from '../innertabs.js';
 
 // ---------------- statistiques ----------------
 defineSheet('stats', {
     title: 'Statistiques',
     render(o) {
         const d = G.statsData();
-        const tiles = `<div class="tiles">${d.tiles.map(([l, v]) => `<div class="tile"><b>${v}</b><span>${l}</span></div>`).join('')}</div>`;
+        // 1.74.2 : trois onglets ; la ferme rangée par coin
+        const T = innerTabs(
+            'stats',
+            [
+                ['farm', 'Ma ferme', null, 0],
+                ['coins', 'Pièces', null, 0],
+                ['rec', 'Records', null, 0],
+            ],
+            'farm',
+        );
+        const tiles = d.groups
+            .map(
+                ([t, l]) =>
+                    `<div class="chart-title">${t}</div><div class="tiles">${l.map(([lb, v, i]) => `<div class="tile">${ico(i)}<b>${v}</b><span>${lb}</span></div>`).join('')}</div>`,
+            )
+            .join('');
         const vals = d.perDay.map(x => x.v);
         const max = Math.max(1, ...vals),
             imax = vals.indexOf(Math.max(...vals));
@@ -55,7 +71,7 @@ defineSheet('stats', {
             ? d.top
                   .map(
                       ([id, v]) =>
-                          `<div class="hbar">${ico(['item', id])}<span class="hname">${ITEMS[id].name}</span><div class="htrack"><i style="width:${Math.max(2, (v / tmax) * 100)}%"></i></div><span class="hval">${fmt(v)}</span></div>`,
+                          `<div class="hbar top">${ico(['item', id])}<div class="hmain"><span class="hname">${ITEMS[id].name}</span><div class="htrack"><i style="width:${Math.max(2, (v / tmax) * 100)}%"></i></div></div><span class="hval">${fmt(v)}</span></div>`,
                   )
                   .join('')
             : '<p class="card-sub">Vendez au marché pour voir ce qui rapporte le plus.</p>';
@@ -72,22 +88,23 @@ defineSheet('stats', {
                   )
                   .join('');
         const r = state.records || {};
-        const recs = Object.entries(RECORDS)
-            .map(([k, def]) => `<div class="rec-row">${ico(def.icon)}<span>${def.name}</span><b>${r[k] ? G.recordText(k, r[k]) : '—'}</b></div>`)
-            .join('');
+        const recs =
+            Object.entries(RECORDS)
+                .map(([k, def]) => `<div class="rec-row">${ico(def.icon)}<span>${def.name}</span><b>${r[k] ? G.recordText(k, r[k]) : '—'}</b></div>`)
+                .join('') +
+            (max > 1 ? `<div class="rec-row">${ico(['ui', 'coin'])}<span>Meilleure journée (10 derniers jours)</span><b>${fmt(max)} pièces</b></div>` : '');
         const block = (t, h) => `<div class="chart-block"><div class="chart-title">${t}</div>${h}</div>`;
+        const t = T.cur;
         return [
-            ['tiles', tiles],
-            ['days', block('Pièces gagnées par jour de jeu', chart)],
-            ['top', block('Ce qui rapporte le plus à la vente', top)],
+            ['tabs', T.html],
+            ['tiles', t === 'farm' ? tiles : ''],
+            ['days', t === 'coins' ? block('Pièces gagnées par jour de jeu', chart) : ''],
             [
                 'src',
-                block(
-                    'D’où viennent vos pièces',
-                    src + '<p class="card-sub">« Autres » regroupe les succès, cadeaux, trouvailles du chien, fêtes et contrats.</p>',
-                ),
+                t === 'coins' ? block('D’où viennent vos pièces', src + '<p class="card-sub">« Autres » : succès, cadeaux, chien, fêtes et contrats.</p>') : '',
             ],
-            ['rec', block('Records personnels', recs)],
+            ['top', t === 'coins' ? block('Ce qui rapporte le plus à la vente', top) : ''],
+            ['rec', t === 'rec' ? `<div class="list">${recs}</div>` : ''],
         ];
     },
 });

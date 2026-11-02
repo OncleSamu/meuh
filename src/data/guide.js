@@ -135,7 +135,7 @@ export const GUIDE_PAGES = [
                 b: [
                     'Chaque volet garde son nom ; quand ils ne tiennent pas, la bande défile (un fondu montre qu’il en reste).',
                     'Un point doré sur un onglet : il y a quelque chose à faire. Une pastille rouge chiffrée : ça presse (grange pleine, citerne vide, poêle éteint, anniversaire…).',
-                    'Les pages longues ont leurs onglets : Brasserie, Cave, Comice, Labo et Village ; et dans le menu, la Coupe, la Maison et Progrès.',
+                    'Les pages longues ont leurs onglets : Brasserie, Cave, Comice, Labo et Village ; et dans le menu, la Coupe, la Maison, Progrès et Statistiques (toute la ferme en chiffres, rangée par coin : champ, bêtes, atelier, nature, village).',
                     'Les listes longues vont par pages : graines du marché par 15, boissons par 10. À l’étal, plus de 3 ventes finies se résument en une ligne à encaisser.',
                     'À la brasserie, une phrase dit ce qui bloque (cuves pleines, il manque…) ; « Tout mettre en bouteille » vide les cuves prêtes d’un coup.',
                     'Une astuce grise se ferme d’un « Compris » ; Réglages › Réafficher les astuces les fait revenir.',

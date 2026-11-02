@@ -1468,3 +1468,25 @@ button.short.link {
 .card.ach .card-side.col {
     gap: 3px;
 }
+
+/* 1.74.2 : statistiques par coin */
+.sheet .tiles {
+    margin-bottom: 12px;
+}
+.tile .ico {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 2px;
+}
+.hbar.top {
+    grid-template-columns: auto 1fr auto;
+}
+.hbar.top .hmain {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.hbar.top .htrack {
+    height: 8px;
+}

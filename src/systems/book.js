@@ -293,7 +293,7 @@ export function statsData() {
     const top = Object.entries(state.sold)
         .filter(([, v]) => v > 0)
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 6);
+        .slice(0, 8);
     // origine des pièces
     const inc = state.income,
         known = inc.market + (inc.stall || 0) + inc.orders + inc.trucks + (inc.cave || 0);
@@ -305,7 +305,68 @@ export function statsData() {
         ['Cave et enchères', inc.cave || 0],
         ['Autres', Math.max(0, (S.earned || 0) - known)],
     ];
-    return { tiles, perDay, top, sources };
+    // 1.74.2 : toute la ferme, rangée par coin (seuls les chiffres non nuls)
+    const n = k => S[k] || 0;
+    const GR = [
+        [
+            'La ferme',
+            [
+                ['Temps de jeu', S.playSec ? fmtTime(S.playSec) : 0, ['ui', 'clock']],
+                ['Jour de la ferme', state.day, ['ui', 'calendar']],
+                ['Pièces gagnées', n('earned'), ['ui', 'coin']],
+                ['Ventes de fermes', n('prestiges'), ['ui', 'ribbon']],
+            ],
+        ],
+        [
+            'Champ et verger',
+            [
+                ['Cultures récoltées', n('harvested'), ['item', 'wheat']],
+                ['Fruits du verger', n('orchardFruits'), ['item', 'apple']],
+                ['Récoltes des contrées', n('islandHarvest'), ['item', 'coconut']],
+                ['Gestes de Théo', n('handWork'), ['ui', 'basket']],
+            ],
+        ],
+        [
+            'Animaux',
+            [
+                ['Produits des bêtes', n('collected'), ['item', 'egg']],
+                ['Croisements', n('crosses'), ['ui', 'heart']],
+                ['Concours gagnés', n('contestWins'), ['ui', 'podium']],
+            ],
+        ],
+        [
+            'Atelier',
+            [
+                ['Produits fabriqués', n('crafted'), ['ui', 'gear']],
+                ['Plats cuisinés', n('cooked'), ['item', 'soup']],
+                ['Boissons brassées', n('beers'), ['ui', 'beer']],
+                ['Lots de cave', n('caveLots'), ['ui', 'cave']],
+                ['Créations', n('creations'), ['ui', 'star']],
+            ],
+        ],
+        [
+            'Nature',
+            [
+                ['Poissons pêchés', n('fish'), ['item', 'carp']],
+                ['Bois coupé', n('chopped'), ['item', 'wood']],
+                ['Pierres minées', n('mined'), ['item', 'stone']],
+                ['Pots de miel', n('honey'), ['item', 'honey']],
+            ],
+        ],
+        [
+            'Village et voyages',
+            [
+                ['Commandes livrées', n('orders'), ['ui', 'scroll']],
+                ['Trains complets', n('trucks'), ['ui', 'trainIcon']],
+                ['Bateaux', n('boats'), ['ui', 'boat']],
+                ['Montgolfières', n('balloons'), ['ui', 'balloon']],
+                ['Cœurs d’amitié', n('hearts'), ['ui', 'heart']],
+                ['Chantiers', n('projects'), ['ui', 'crate']],
+            ],
+        ],
+    ];
+    const groups = GR.map(([t, l]) => [t, l.filter(x => x[1]).map(([a, v, i]) => [a, typeof v === 'number' ? fmt(v) : v, i])]).filter(g => g[1].length);
+    return { tiles, groups, perDay, top, sources };
 }
 
 // ---------------- records personnels ----------------

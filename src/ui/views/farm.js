@@ -157,7 +157,7 @@ function greenhouseHtml() {
     return `<div class="card gh-card${locked ? ' locked' : ''}">
         <div class="card-art">${art('ui', 'greenhouse')}</div>
         <div class="card-main"><div class="card-title">Serre</div>
-        <div class="card-sub">Toujours de saison, arrosage automatique, pousse plus vite, plus belles récoltes (surtout hors saison) et à l’abri des corbeaux.${locked ? ` Constructible au niveau ${GH.lvl}.` : ''}</div>
+        <div class="card-sub">Toujours de saison, arrosée toute seule, plus rapide, plus belle (surtout hors saison), sans corbeaux.${locked ? ` Constructible au niveau ${GH.lvl}.` : ''}</div>
         ${locked ? '' : `<div class="cost">${COIN()}${fmt(GH.cost)} ${mats}</div>`}</div>
         ${locked ? '' : `<div class="card-side">${btn('Construire', { act: 'buildGreenhouse', kind: can ? 'green' : '', disabled: !can, anchor: 'gh:build' })}</div>`}
     </div>`;
