@@ -137,6 +137,12 @@ export const TIPS = {
         title: 'Le talent de l’ami',
         text: 'À cinq cœurs, un villageois te prête son talent pour toujours : les machines de son métier vont plus vite et leurs produits se vendent mieux. Victor soigne moins cher, Morgane fait mieux payer les bateaux, Octave fait vieillir la cave plus vite. Finis son histoire, et son talent double. Un bon voisin, c’est une richesse, disait mon père. Il disait ça surtout quand il empruntait la charrette.',
     },
+    // 1.76
+    salonBook: {
+        icon: ['ui', 'decoSign'],
+        title: 'Le carnet du salon',
+        text: 'Ton salon de thé a maintenant son portrait, et il se fait beau à chaque décor. Regarde le carnet : chaque villageois a sa boisson préférée, mais il faut la lui servir une fois pour la connaître. Moi, c’est la tisane à la lavande, tu le sais bien.',
+    },
     // 1.75.3
     beerRank: {
         icon: ['ui', 'beer'],

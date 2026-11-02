@@ -1031,7 +1031,11 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Le bâtiment',
-                t: '4 niveaux de salon (2 à 5 places) et 5 décors qui rendent les clients plus patients. Le domaine ajoute un siège de plus (branche « Annexes des métiers »).',
+                b: [
+                    '4 niveaux de salon (2 à 5 places) et 5 décors (+10 % de patience chacun). Le salon dessiné grandit avec son niveau et montre chaque décor posé. Le domaine ajoute un siège de plus (branche « Annexes des métiers »).',
+                    'Le carnet du salon compte les clients servis et les boissons parfaites ; la boisson préférée de chaque villageois s’y révèle quand vous la lui avez servie.',
+                    'Onglet Recettes : « Prêtes » montre ce que vous pouvez préparer tout de suite ; une boisson qu’un client attend passe en tête, et son bouton doré la lui sert directement.',
+                ],
             },
         ],
         see: ['workshop', 'domaine'],

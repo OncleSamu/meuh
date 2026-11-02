@@ -230,7 +230,10 @@ defineView('machines/counter', renderCounter);
 
 export function setupCounter() {
     actions({
-        counterTab: (el, d) => (ui.sel.counterTab = d.v),
+        counterTab: (el, d) => {
+            ui.sel.counterTab = d.v;
+            if (d.v === 'bat') G.tip('salonBook');
+        },
         counterKind: (el, d) => (ui.sel.counterKind = d.f),
         brewStock: (el, d) => {
             if (!G.recipeUnlocked(d.id)) return toast(G.recipeLockText(RECIPES[d.id]), ['ui', 'lock']);

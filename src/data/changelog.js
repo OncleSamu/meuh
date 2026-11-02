@@ -1,6 +1,20 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.76',
+        title: 'Le salon du comptoir',
+        date: '2 novembre 2026',
+        items: [
+            'Recettes en lignes, 15 par page',
+            'Filtre Prêtes',
+            'Recherche',
+            'Les boissons attendues passent en tête',
+            'Le salon dessiné grandit et montre ses décors',
+            'Décors en cartes',
+            'Carnet du salon et boissons préférées à découvrir',
+        ],
+    },
+    {
         v: '1.75.3',
         title: 'Talents et exploits',
         date: '2 novembre 2026',
