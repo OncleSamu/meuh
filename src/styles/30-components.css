@@ -1038,3 +1038,13 @@ body {
     flex: none;
     margin-left: 1px;
 }
+/* 1.74.6 : le chiffre bien au centre de la pastille */
+.seg > button .dot:not(.soft),
+.subnav-row.strip .seg > button span.dot:not(.soft),
+.subnav-row.strip .seg.n5 > button:not(.on) span.dot:not(.soft) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
