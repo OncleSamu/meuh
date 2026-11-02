@@ -138,4 +138,5 @@ import './miel/miels.js';
 import './miel/ruchers.js';
 import './village/amis.js';
 import './village/salon.js';
+import './animaux/ration.js';
 import './retouches/produits-uniques.js';

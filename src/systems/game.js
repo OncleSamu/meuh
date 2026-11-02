@@ -216,6 +216,7 @@ export function isToolValid(t) {
         t === 'shovel' ||
         (t === 'var' && !!state.genetics && !!state.genetics.tool && state.genetics.seeds[state.genetics.tool] > 0) ||
         t === 'feed' ||
+        (t === 'ration' && state.level >= 6) ||
         (t === 'fert' && state.level >= 4) ||
         (state.seeds[t] !== undefined && ITEMS[t].type === 'crop' && !ITEMS[t].island && ((lvOk(ITEMS[t]) && storyOk(ITEMS[t])) || state.seeds[t] > 0))
     );

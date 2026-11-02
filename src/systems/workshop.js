@@ -26,6 +26,7 @@ import { qtyName } from '../core/format.js';
 import { mTimeMult, mExtraYield } from './buildings.js';
 import { cupHas } from './cup.js';
 import { talentSpeed } from './friends.js';
+import { tip } from './tips.js';
 
 // les machines de cuisine (le compteur « plats cuisinés »)
 export const COOKING = ['kitchen', 'stove', 'deli', 'fishmonger'];
@@ -354,6 +355,7 @@ export function collectMachine(i, at, quiet) {
         if (COOKING.includes(m.type)) state.stats.cooked += qty;
         collect('k_' + id);
         addMastery(id, qty);
+        if (id === 'ration') tip('meatRation');
         eventProgress('craft', id, qty);
         xp += r.xp * n;
         total += qty;

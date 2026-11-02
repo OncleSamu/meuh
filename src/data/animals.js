@@ -176,7 +176,8 @@ for (const [id, name, prodId, cost, time, reqLvl, xp, extra, , , , cold] of NORD
     ANIMALS[id] = { id, name, prodId, cost, time, reqLvl, xp, nord: true, cold: !!cold, needProject: 'northStable', ...(extra ? { extra } : {}) };
 
 // 1.3.2 : un second produit, pour le saloir, de temps en temps au ramassage (le gène « rendement » aide un peu)
-export const EXTRA_DROP = { chance: 0.1, gene: 0.5 };
+// 1.81 : 15 % (au lieu de 10 %) ; la ration d'engraissement ajoute 35 % pendant 2 h ; la compétence « Bon éleveur » 5 % par rang
+export const EXTRA_DROP = { chance: 0.15, gene: 0.5, ration: 0.35, rationHours: 2, skill: 0.05 };
 Object.entries({ pig: 'lard', duck: 'magret', goose: 'gooseLeg', turkey: 'turkeyFillet', cow: 'beef', rabbit: 'rabbitSaddle' }).forEach(
     ([a, id]) => (ANIMALS[a].extra = id),
 );

@@ -52,6 +52,7 @@ function renderToolbar() {
             ${tool('shovel', ['ui', 'shovel'], 'Pelle')}
             ${tool('feed', ['item', 'feed'], 'Nourriture', `<span class="badge blue">${state.inventory.feed}</span>`)}
             ${state.level >= 4 ? tool('fert', ['item', 'fertilizer'], 'Compost', `<span class="badge blue">${state.inventory.fertilizer}</span>`) : ''}
+            ${state.level >= 6 && p === 'animals/pasture' ? tool('ration', ['item', 'ration'], 'Ration d’engraissement', `<span class="badge blue">${state.inventory.ration || 0}</span>`) : ''}
             ${seedButton()}
         </div>`,
     );

@@ -741,3 +741,21 @@ html .meadow.snow {
 .barn-var > .btn {
     margin-left: auto;
 }
+
+/* 1.81 : la ration d'engraissement en cours */
+.st-ration {
+    position: absolute;
+    top: -8px;
+    left: -6px;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    padding: 1px;
+    background: #ffe9a8;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+}
+.st-ration .ico {
+    width: 100%;
+    height: 100%;
+}

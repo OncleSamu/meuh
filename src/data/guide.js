@@ -781,7 +781,7 @@ export const GUIDE_PAGES = [
             { h: 'Animal d’exception', t: 'Rare : 50 % plus rapide.' },
             {
                 h: 'Seconds produits',
-                t: 'Environ une fois sur dix au ramassage, certaines bêtes donnent en plus un produit pour le saloir : lard du cochon, magret du canard, cuisse de l’oie, filet de la dinde, bœuf de la vache, râble du lapin, pigeonneau, pintade, faisan, viande de yack, autruche. Le yack monte en transhumance comme les autres bêtes de montagne.',
+                t: 'Au ramassage, certaines bêtes donnent parfois en plus un produit pour le saloir : lard du cochon, magret du canard, cuisse de l’oie, filet de la dinde, bœuf de la vache, râble du lapin, pigeonneau, pintade, faisan, viande de yack, autruche. Une chance sur six et demie par produit (1.81), plus avec le gène « rendement », la compétence « Bon éleveur » (+5 % par rang) et surtout la ration d’engraissement : faite au moulin (2 maïs et 1 betterave pour 3 rations), elle se donne à une bête avec l’outil du bas (au pré) et ajoute 35 % pendant 2 heures. La viande sort de la même qualité que le produit ramassé avec elle. Le yack monte en transhumance comme les autres bêtes de montagne.',
             },
         ],
         see: ['pastures', 'transhumance', 'labanimals'],
@@ -1213,6 +1213,10 @@ export const GUIDE_PAGES = [
                 t: 'Œufs, lait, laine… sortent normaux tant que la bête est ordinaire. La qualité vient de l’élevage au labo : une bête née de bons croisements, avec les caractères « riche », « doux » et « arôme » au-dessus de la normale, donne de l’argent et de l’or. Plus elle les dépasse, plus c’est souvent.',
             },
             {
+                h: 'La viande (1.81)',
+                t: 'La viande et les autres seconds produits (laine de dromadaire, bois de renne…) sortent de la même qualité que le produit ramassé avec eux : une vache qui donne du lait en or donne aussi du bœuf en or. Il faut donc des bêtes de bonne race (labo).',
+            },
+            {
                 h: 'À la pêche (1.80)',
                 t: 'À la canne, la taille fait la qualité : une petite prise est normale, une belle prise en argent, un trophée en or. Un ferrage « Parfait ! » la monte d’un rang (une belle prise parfaite sort en or). Le poisson doré sort toujours en or. Dans les nasses et le filet de mer, un peu d’argent et d’or au hasard, un peu plus avec un appât dans la nasse.',
             },
@@ -1263,6 +1267,10 @@ export const GUIDE_PAGES = [
             {
                 h: 'Au pré',
                 t: 'Il faut des bêtes de bonne race pour avoir de l’or (labo), puis la maîtrise du produit (œuf, lait…) pour monter une partie de cet or en platine et en diamant.',
+            },
+            {
+                h: 'La viande',
+                t: 'Elle suit le produit principal de la bête : quand le lait, les œufs ou la laine montent en platine ou en diamant par leur maîtrise, la viande ramassée avec eux aussi.',
             },
             {
                 h: 'À la pêche',

@@ -3,6 +3,7 @@
 
 export const CARNET = {
     // ---------------- le moulin ----------------
+    ration: 'Ton arrière-grand-père gardait un seau de maïs concassé et de betterave pour les bêtes de foire. Il disait qu’une vache bien nourrie se voit de loin, et il avait raison : la sienne gagnait toujours le prix du plus beau poitrail.',
     feed: 'Les poules de ma mère avaient droit à la meilleure farine. Elle disait qu’une poule contente pond le dimanche. Je n’ai jamais su si c’était vrai, mais on avait des œufs le dimanche.',
     flour: 'Le meunier d’avant s’appelait Firmin. Il avait de la farine jusque dans les sourcils, même à la messe. Les enfants l’appelaient « le fantôme du moulin ».',
     sugar: 'Pendant la guerre, ma grand-mère gardait le sucre sous clé. La clé, elle la portait autour du cou. Je n’ai goûté un vrai morceau de sucre qu’à huit ans.',

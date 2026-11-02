@@ -137,6 +137,12 @@ export const TIPS = {
         title: 'Le talent de l’ami',
         text: 'À cinq cœurs, un villageois te prête son talent pour toujours : les machines de son métier vont plus vite et leurs produits se vendent mieux. Victor soigne moins cher, Morgane fait mieux payer les bateaux, Octave fait vieillir la cave plus vite. Finis son histoire, et son talent double. Un bon voisin, c’est une richesse, disait mon père. Il disait ça surtout quand il empruntait la charrette.',
     },
+    // 1.81
+    meatRation: {
+        icon: ['item', 'ration'],
+        title: 'La ration d’engraissement',
+        text: 'Le moulin sait faire une ration d’engraissement : deux épis de maïs et une betterave pour trois seaux. Prends-la dans la barre du bas, au pré, et donne-la à une bête : pendant deux heures, elle donnera bien plus souvent de la viande au ramassage. Et une bête de bonne race donne de la viande de qualité, comme son lait ou ses œufs.',
+    },
     // 1.80
     fishQuality: {
         icon: ['ui', 'medalG'],

@@ -200,8 +200,10 @@ export function stableTile(a, i, mf) {
             : G.isAway(a)
               ? `<span class="st-tag">${ico(['ui', 'mountain'])}</span>`
               : '';
+    // 1.81 : une bête qui a sa ration d'engraissement
+    const ration = G.meatRationOn(a) ? `<span class="st-ration" title="Ration d’engraissement">${ico(['item', 'ration'])}</span>` : '';
     return `<button class="st-tile${a.stack > 0 ? ' ready' : ''}${a.sick ? ' sick' : ''}${G.isAway(a) ? ' away' : ''}" data-act="animal" data-i="${i}" data-anchor="animal:${i}">
-        ${tag}<span class="st-art${adult ? '' : ' baby'}">${bodyOf(a)}</span>
+        ${tag}${ration}<span class="st-art${adult ? '' : ' baby'}">${bodyOf(a)}</span>
         <b>${a.star ? ico(['ui', 'star']) : ''}${a.race ? ico(['ui', 'ribbon']) : ''}${esc(a.name)}</b>
         <span class="food-meter">${Array.from({ length: mf }, (_, k) => `<i class="${k < a.food ? 'on' : ''}"></i>`).join('')}</span>
         ${adult ? bar(0, 'cbar', `prod:${i}`) : bar(0, 'gbar', `grow:${i}`)}</button>`;

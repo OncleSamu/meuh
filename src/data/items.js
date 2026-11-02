@@ -484,6 +484,13 @@ export const ITEMS = {
         type: 'misc',
         cost: 2,
     },
+    // 1.81 : la ration d'engraissement (moulin) : donnée à une bête, sa viande tombe bien plus souvent pendant 2 h
+    ration: {
+        id: 'ration',
+        name: 'Ration d’engraissement',
+        type: 'misc',
+        reqLvl: 6,
+    },
     fertilizer: {
         id: 'fertilizer',
         name: 'Compost',

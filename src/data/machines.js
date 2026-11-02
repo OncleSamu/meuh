@@ -393,6 +393,19 @@ export const RECIPES = {
         lvl: 18,
         base: 8,
     },
+    ration: {
+        id: 'ration',
+        machine: 'mill',
+        ing: {
+            corn: 2,
+            beet: 1,
+        },
+        time: 90,
+        lvl: 6,
+        outQty: 3,
+        xp: 3,
+        base: 4,
+    },
     feed: {
         id: 'feed',
         machine: 'mill',

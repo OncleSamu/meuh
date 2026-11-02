@@ -118,13 +118,15 @@ export function collectAnimal(a) {
         // 1.67 : les ruches du pré butinent tout le champ : la fleur qui domine donne son nom au miel
         addHoney(pastureHoney().kind, Math.ceil(qty / 2));
     }
-    // 1.3.2 : de temps en temps, un produit pour le saloir
+    // 1.3.2 : de temps en temps, un produit pour le saloir.
+    // 1.81 : plus souvent (ration d'engraissement, « Bon éleveur ») et de la même qualité que le produit ramassé
     let extra = 0;
     if (d.extra) {
-        const ch = EXTRA_DROP.chance + EXTRA_DROP.gene * animalYieldGene(a);
+        const ch = EXTRA_DROP.chance + EXTRA_DROP.gene * animalYieldGene(a) + (meatRationOn(a) ? EXTRA_DROP.ration : 0) + EXTRA_DROP.skill * rank('meaty');
         for (let k = 0; k < a.stack; k++) if (Math.random() < ch) extra++;
         if (extra) {
             state.inventory[d.extra] = (state.inventory[d.extra] || 0) + extra;
+            if (q) addQuality(d.extra, q, extra);
             addMastery(d.extra, extra);
         }
     }
@@ -135,11 +137,39 @@ export function collectAnimal(a) {
     return { qty, xp, extra, extraId: d.extra };
 }
 
+// 1.81 : la ration d'engraissement, à la main (outil du bas) : 2 h de viande bien plus fréquente
+export const meatRationOn = a => !!a && (a.ration || 0) > Date.now();
+export const meatRationLeftMs = a => Math.max(0, (a && a.ration ? a.ration : 0) - Date.now());
+export function giveMeatRation(a, at) {
+    const d = ANIMALS[a.type];
+    if (!d.extra) {
+        toast(`${d.name} : pas de viande ni de second produit à espérer`, ['item', 'ration']);
+        sfx('error');
+        return false;
+    }
+    if ((state.inventory.ration || 0) <= 0) {
+        toast('Plus de ration : le moulin en fait avec du maïs et une betterave', ['item', 'ration']);
+        sfx('error');
+        return false;
+    }
+    state.inventory.ration--;
+    a.ration = Math.max(Date.now(), a.ration || 0) + EXTRA_DROP.rationHours * 3600000;
+    sfx('feed');
+    burst(at, 'crumbs', 9, 10);
+    buzz(8);
+    float(at, ['+2 h', ['item', 'ration']], '', -30);
+    return true;
+}
+
 // Un appui sur une bête : ramasser sa production, sinon la nourrir (un repas).
 // Avec l'outil nourriture en main, on nourrit toujours. La fiche s'ouvre par un appui long (interface).
 export function tapAnimal(i, at) {
     const a = state.animals[i],
         d = ANIMALS[a.type];
+    if (state.selectedTool === 'ration') {
+        if (giveMeatRation(a, at)) squish(at);
+        return true;
+    }
     if (a.stack > 0 && state.selectedTool !== 'feed') {
         if (barnBlocked()) return;
         const r = collectAnimal(a);
