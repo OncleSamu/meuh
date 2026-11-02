@@ -2,6 +2,7 @@
 import { state } from '../core/state.js';
 import { on } from '../core/bus.js';
 import { season, isNight } from '../systems/world.js';
+import { tip } from '../systems/tips.js';
 
 export const SoundEngine = (() => {
     let ctx = null,
@@ -469,7 +470,10 @@ export const SoundEngine = (() => {
             if (!init()) return;
             if (ctx.state === 'suspended') ctx.resume();
             if (state.settings.music) startMusic();
-            if (state.settings.ambience !== false) startAmb();
+            if (state.settings.ambience !== false && !ambTimer) {
+                startAmb();
+                tip('ambience');
+            }
         },
         setAmbience(on) {
             if (!ctx) return;

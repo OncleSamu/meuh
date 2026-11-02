@@ -18,7 +18,7 @@ import { innerTabs } from '../innertabs.js';
 
 export const VERSION = '{{VERSION}}';
 const TEXT_SIZES = ['Normale', 'Grande', 'Très grande'];
-const THEMES = { auto: 'Comme le téléphone', light: 'Clair', dark: 'Sombre' };
+const THEMES = { light: 'Clair', dark: 'Sombre', auto: 'Comme le téléphone' };
 const set = state => state.settings;
 
 const group = (title, rows) => `<div class="set-group"><div class="set-title">${title}</div>${rows}</div>`;
@@ -76,7 +76,7 @@ function mainPage() {
                                 { key: 'fireflies' },
                                 'Pur décor : vos récoltes de nuit remplissent le bocal',
                             ) +
-                            navRow('Thème', 'theme', null, null, `<b>${THEMES[s.theme || 'auto']}</b>`) +
+                            navRow('Thème', 'theme', null, null, `<b>${THEMES[s.theme || 'light']}</b>`) +
                             navRow('Taille du texte', 'textSize', null, null, `<b>${TEXT_SIZES[s.textSize] || TEXT_SIZES[0]}</b>`) +
                             toggle('Contraste renforcé', !!s.contrast, 'setting', { key: 'contrast' }) +
                             (s.hints && Object.keys(s.hints).length
@@ -199,6 +199,7 @@ defineSheet('settings', {
     cls: 'settings-sheet',
     open(o) {
         o.page = 'main';
+        G.tip('theme');
     },
     title: o => (o.page === 'main' ? 'Réglages' : `<button class="back" data-act="setPage" data-p="main">${ico(['ui', 'back'])}</button>${PAGES[o.page][0]}`),
     render: o => PAGES[o.page][1](o),
@@ -259,8 +260,8 @@ export function setupSettings() {
             return QUIET;
         },
         theme: () => {
-            const order = ['auto', 'light', 'dark'];
-            state.settings.theme = order[(order.indexOf(state.settings.theme || 'auto') + 1) % 3];
+            const order = ['light', 'dark', 'auto'];
+            state.settings.theme = order[(order.indexOf(state.settings.theme || 'light') + 1) % 3];
             updateScene();
         },
         textSize: () => {

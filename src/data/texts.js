@@ -137,6 +137,17 @@ export const TIPS = {
         title: 'Le talent de l’ami',
         text: 'À cinq cœurs, un villageois te prête son talent pour toujours : les machines de son métier vont plus vite et leurs produits se vendent mieux. Victor soigne moins cher, Morgane fait mieux payer les bateaux, Octave fait vieillir la cave plus vite. Finis son histoire, et son talent double. Un bon voisin, c’est une richesse, disait mon père. Il disait ça surtout quand il empruntait la charrette.',
     },
+    // 1.75
+    theme: {
+        icon: ['ui', 'gear'],
+        title: 'Le thème sombre',
+        text: 'Le soir, l’écran tout clair fatigue les yeux. Dans les Réglages, onglet Confort, « Thème » passe le jeu en sombre, ou le laisse suivre ton téléphone. Moi, à la veillée, je baisse toujours la lampe : on voit mieux les étoiles.',
+    },
+    ambience: {
+        icon: ['ui', 'flowers'],
+        title: 'Les bruits de la ferme',
+        text: 'Écoute : les oiseaux au printemps, les grillons les nuits d’été, la pluie sur le toit, les vagues de l’île et le vent du Grand Nord. Si ça te dérange, Réglages, onglet Son, « Ambiance ». Ton grand-père s’endormait au bruit de la pluie, et moi au bruit de ton grand-père.',
+    },
     apiary: {
         icon: ['ui', 'apiaryIsland'],
         title: 'Le rucher des contrées',

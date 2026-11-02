@@ -7,10 +7,10 @@ import { rareActive } from '../systems/surprises.js';
 import { holidayNow } from '../systems/holidays.js';
 import { byId } from './dom.js';
 
-// 1.75 : « auto » suit le réglage du téléphone
+// 1.75 : clair par défaut ; « auto » suit le réglage du téléphone
 const darkMq = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: dark)') : null;
 export const darkOn = () => {
-    const t = state.settings.theme || 'auto';
+    const t = state.settings.theme || 'light';
     return t === 'dark' || (t === 'auto' && !!(darkMq && darkMq.matches));
 };
 if (darkMq && darkMq.addEventListener) darkMq.addEventListener('change', () => updateScene());

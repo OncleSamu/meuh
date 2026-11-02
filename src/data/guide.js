@@ -142,6 +142,15 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'Confort (1.75)',
+                b: [
+                    'Réglages › Confort › Thème : Clair, Sombre, ou comme le téléphone. Le décor garde ses couleurs, les cartes et les fenêtres passent en sombre.',
+                    'Réglages › Son › Ambiance : oiseaux, grillons, pluie, vagues de l’île, vent du Grand Nord, clochettes de l’oasis, selon l’endroit, la saison et l’heure. Elle a son propre volume.',
+                    'Un court glissement accompagne le changement de volet ; « Animations réduites » le supprime.',
+                    'Le jeu s’ouvre deux fois plus vite, surtout après une longue absence.',
+                ],
+            },
+            {
                 h: 'Les cartes repliables',
                 t: 'Beaucoup de cartes tiennent sur une ligne fine : un toucher les déplie. Elles se déplient toutes seules quand quelque chose y est prêt (une nasse pleine, un train à charger, un visiteur à servir) et se replient quand il n’y a rien à faire. Le train, l’avion-cargo, la montgolfière et le bateau sont réunis dans la carte « Livraisons ». Le tiroir des graines s’ouvre sur les graines de saison, avec les dernières semées en haut ; l’atelier a un filtre (prêtes, en marche, à l’arrêt).',
             },
