@@ -180,7 +180,7 @@ function trapsCard() {
             : '';
     const ready = G.trapsReady();
     return `<div class="card traps-card"><div class="nature-head">${ico(['ui', 'trap'])}<div class="card-main"><div class="card-title">Les nasses</div>
-        <div class="card-sub">Posées dans un coin de pêche, elles attrapent 2 à 4 poissons toutes les 2 heures, même quand le jeu est fermé. Elles prennent le coin et l’appât choisis plus haut.</div></div>
+        <div class="card-sub">2 à 4 poissons toutes les 2 h, même jeu fermé, au coin et à l’appât choisis.</div></div>
         ${ready > 1 ? btn('Tout relever', { act: 'pondHaulAll', kind: 'gold', size: 'sm' }) : ''}</div>
         ${rows}${buy}</div>`;
 }
@@ -201,7 +201,7 @@ function logCard() {
         })
         .join('');
     return `<div class="card log-card"><div class="nature-head">${ico(['ui', 'book'])}<div class="card-main"><div class="card-title">${got}/${ids.length} espèces</div>
-        <div class="card-sub">Record de poids et médaille de taille (bronze : petite prise, argent : belle prise, or : trophée). Une récompense à la 10e et à la 50e prise de chaque espèce. Touchez un poisson pour aller le pêcher.</div></div></div>
+        <div class="card-sub">Record de poids et médaille de taille. Une récompense à la 10e et à la 50e prise. Touchez un poisson pour aller le pêcher.</div></div></div>
         <div class="log-grid">${tiles}</div></div>`;
 }
 

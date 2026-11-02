@@ -20,7 +20,7 @@ export function apiaryHtml(land) {
     if (!n)
         return (
             head +
-            `<div class="card ap-card"><div class="card-head"><span class="oa-up-art">${art('ui', A.icon)}</span><div class="card-main"><div class="card-sub">${A.rule} Les abeilles butinent les parcelles et le verger de la contrée : si une fleur domine, le miel prend son nom.</div><div class="ap-kinds">${kinds}</div></div></div>${buy}</div>`
+            `<div class="card ap-card"><div class="card-head"><span class="oa-up-art">${art('ui', A.icon)}</span><div class="card-main"><div class="card-sub">${A.rule} Si une fleur domine la contrée, le miel prend son nom.</div><div class="ap-kinds">${kinds}</div></div></div>${buy}</div>`
         );
     const r = G.apiaryOf(land);
     const jars = Math.floor(r.honey);

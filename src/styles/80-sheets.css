@@ -1490,3 +1490,28 @@ button.short.link {
 .hbar.top .htrack {
     height: 8px;
 }
+
+/* 1.74.3 : un seul style de titre dans les fiches (petites capitales) */
+.chart-title,
+.sheet .section-title {
+    margin: 12px 2px 6px;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+}
+.sheet .section-title > span {
+    padding: 0;
+    background: none;
+    border: 0;
+}
+.sheet .section-title > small {
+    background: none;
+    padding: 0;
+}
+.chart-block > .chart-title:first-child,
+.sheet-body > .section-title:first-child {
+    margin-top: 2px;
+}

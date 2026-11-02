@@ -414,7 +414,7 @@ defineSheet('domaine', {
     cls: 'domaine-sheet',
     title: () => 'Le domaine',
     render: () =>
-        `${domaineScene(state.domaine)}<p class="card-sub">Chaque palier améliore votre ferme pour toujours : de la place, des files plus longues, des visiteurs qui restent. Aucun bonus de production : seulement du confort.</p>${DOMAINE_IDS.map(branchHtml).join('')}`,
+        `${domaineScene(state.domaine)}<p class="card-sub">Chaque palier ajoute du confort pour toujours : de la place, des files plus longues, des visiteurs qui restent.</p>${DOMAINE_IDS.map(branchHtml).join('')}`,
 });
 
 function renderVillage(el) {

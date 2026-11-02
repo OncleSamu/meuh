@@ -41,7 +41,7 @@ defineSheet('cup', {
         const head = `<div class="cup-head">${art('ui', 'cupRank' + k)}<div class="card-main"><div class="card-title">${R.name}</div>
             <div class="card-sub">${fmt(pts)} point${pts > 1 ? 's' : ''}${nx ? ` · encore ${fmt(nx.pts - pts)} pour « ${nx.name} »` : ' · le plus haut rang !'}</div>
             ${nx ? bar((pts - R.pts) / (nx.pts - R.pts)) : ''}</div></div>
-            <p class="card-sub">Les grands défis rapportent des points (bronze 1, argent 2, or 4, platine 7, diamant 10), le mécénat aussi. Chaque rang donne un bonus permanent, gardé d’une ferme à l’autre.</p>`;
+            <p class="card-sub">Points : grands défis (bronze 1 à diamant 10) et mécénat. Chaque rang donne un bonus gardé pour toujours.</p>`;
         const ranking = `<ol class="ranking cup-ranking">${G.cupRanking()
             .map(
                 (x, i) =>
