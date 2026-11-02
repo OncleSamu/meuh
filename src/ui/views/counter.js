@@ -6,7 +6,8 @@ import { ITEMS } from '../../data/items.js';
 import { MACHINES, RECIPES } from '../../data/machines.js';
 import { toast } from '../../core/bus.js';
 import { VILLAGERS } from '../../data/village.js';
-import { BREW, CLIENT, DECORS, DECOR_COST, DECOR_PATIENCE } from '../../data/counter.js';
+import { BREW, CLIENT, DECORS, DECOR_COST, DECOR_PATIENCE, SALON, FAVORITE } from '../../data/counter.js';
+import { salonScene } from '../../art/village/salon.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
@@ -15,6 +16,7 @@ import { btn, bar, hint, segmented, section, hearts, costRow } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
 import { openBrew } from '../brew.js';
 import { openSheet } from '../sheets.js';
+import { page, searchBox, queryOf, matchQ } from '../pager.js';
 
 const tab = () => ui.sel.counterTab || 'salon';
 const COIN = () => ico(['ui', 'coin']);
@@ -85,64 +87,124 @@ function drinkKind(r) {
     if (BREW[r.id].st.some(x => x[0] === 'grind')) return 'coffee';
     return r.ing.tea > 0 ? 'tea' : 'other';
 }
-function atelierHtml() {
-    const kind = ui.sel.counterKind || 'all';
-    const list = G.counterRecipes()
-        .filter(r => kind === 'all' || drinkKind(r) === kind)
-        .sort((a, b) => G.recipeUnlocked(b.id) - G.recipeUnlocked(a.id) || a.lvl - b.lvl);
+// 1.76 : des lignes compactes par pages de 15, un filtre « Prêtes » ouvert d'abord, les boissons attendues en tête
+function atelierBlocks() {
+    const all = G.counterRecipes();
+    const ready = r => G.recipeUnlocked(r.id) && G.canCook(r.id);
+    const waiting = {};
+    G.counterSeats().forEach(s => (waiting[s.drink] = waiting[s.drink] || s.vid));
     const filters = [
-        ['all', 'Toutes'],
-        ['tea', 'Thés'],
-        ['coffee', 'Cafés'],
-        ['other', 'Tisanes, laits…'],
+        ['ready', 'Prêtes', all.filter(ready).length],
+        ['all', 'Toutes', all.length],
+        ['tea', 'Thés', all.filter(r => drinkKind(r) === 'tea').length],
+        ['coffee', 'Cafés', all.filter(r => drinkKind(r) === 'coffee').length],
+        ['other', 'Tisanes, laits', all.filter(r => drinkKind(r) === 'other').length],
     ];
-    const tiles = list
+    let kind = ui.sel.counterKind || (filters[0][2] ? 'ready' : 'all');
+    if (kind === 'ready' && !filters[0][2]) kind = 'all';
+    const q = queryOf('counterR');
+    const list = all
+        .filter(r => (kind === 'all' ? true : kind === 'ready' ? ready(r) : drinkKind(r) === kind))
+        .filter(r => matchQ(q, ITEMS[r.id].name, ...Object.keys(r.ing).map(k => (ITEMS[k] ? ITEMS[k].name : k))))
+        .sort((a, b) => !!waiting[b.id] - !!waiting[a.id] || G.recipeUnlocked(b.id) - G.recipeUnlocked(a.id) || ready(b) - ready(a) || a.lvl - b.lvl);
+    const pg = page('counterR:' + kind, list, 15);
+    const rows = pg.items
         .map(r => {
             const open = G.recipeUnlocked(r.id),
-                ok = open && G.canCook(r.id);
+                ok = open && G.canCook(r.id),
+                n = state.inventory[r.id] || 0,
+                who = waiting[r.id];
+            if (!open)
+                return `<div class="srow drow locked"><span class="srow-art">${art('item', r.id)}</span><div class="srow-main"><b>${ITEMS[r.id].name}</b><small>${ico(['ui', 'lock'])}${G.recipeLockText(r)}</small></div></div>`;
             const ings = Object.entries(r.ing)
-                .map(([k, n]) => `<span class="ing${state.inventory[k] >= n ? ' ok' : ''}">${ico(['item', k])}${Math.min(state.inventory[k], n)}/${n}</span>`)
+                .map(
+                    ([k, m]) =>
+                        `<span class="${state.inventory[k] >= m ? 'in' : 'miss'}">${ico(['item', k])}${Math.min(state.inventory[k] || 0, m)}/${m}</span>`,
+                )
                 .join('');
-            const n = state.inventory[r.id] || 0;
-            // ce que les ingrédients promettent (avant la note du mini-jeu, qui peut monter jusqu'à l'or)
             const pv = ok && state.genetics && state.genetics.bestFirst ? G.previewBatch(r.id) : null;
-            return `<button class="rtile${open ? (ok ? ' ok' : ' short') : ' locked'}" data-act="brewStock" data-id="${r.id}">
-                <span class="rt-art">${art('item', r.id)}${n ? `<em>×${n}</em>` : ''}${pv && pv.q ? `<span class="rt-q" title="Au moins en ${QUALITY[pv.q].name}">${qStar(pv.q)}</span>` : ''}</span>
-                <b>${ITEMS[r.id].name}</b>
-                ${open ? `<span class="ings">${ings}</span>${pv && pv.q ? `<small class="rt-qtxt">au moins en ${QUALITY[pv.q].name}</small>` : ''}<small>${fmt(ITEMS[r.id].sell)}${COIN()}</small>${n && stockQ(r.id) ? `<small>en stock jusqu’en ${QUALITY[stockQ(r.id)].name}</small>` : ''}` : `<small class="lock-txt">${ico(['ui', 'lock'])}${G.recipeLockText(r)}</small>`}
-            </button>`;
+            const sq = n ? stockQ(r.id) : 0;
+            return `<div class="srow drow${ok ? ' ok' : ' short'}${who ? ' wanted' : ''}">
+                <span class="srow-art">${art('item', r.id)}${n ? `<em>×${n}</em>` : ''}</span>
+                <div class="srow-main"><b>${ITEMS[r.id].name}</b>${who ? `<span class="want">${ico(['villager', who])}${VILLAGERS[who].name.split(' ').pop()} l’attend</span>` : ''}
+                    <small>${ings}</small>
+                    <small>${fmt(ITEMS[r.id].sell)}${COIN()}${pv && pv.q ? ` · au moins ${qStar(pv.q)}` : ''}${sq ? ` · stock jusqu’en ${QUALITY[sq].name}` : ''}</small></div>
+                <div class="srow-btns">${btn(ok ? 'Préparer' : 'Il manque', who && ok ? { act: 'seatBrew', data: { id: r.id, vid: who }, kind: 'gold', size: 'sm' } : { act: 'brewStock', data: { id: r.id }, kind: ok ? 'green' : '', size: 'sm' })}</div>
+            </div>`;
         })
         .join('');
-    return `<div class="chips-row">${filters.map(([k, t]) => `<button class="pick-chip${kind === k ? ' on' : ''}" data-act="counterKind" data-f="${k}">${t}</button>`).join('')}</div>
-        <div class="recipe-grid">${tiles}</div>
-        ${hint('Chaque boisson se prépare au doigt : plus la note est belle, meilleure est la qualité (argent, or). Des ingrédients en platine ou en diamant donnent une boisson en platine ou en diamant, payée plus cher par les clients.')}`;
+    return [
+        [
+            'filters',
+            `<div class="chips-row wrap">${filters
+                .filter(f => f[2] || f[0] === kind)
+                .map(([k, t, c]) => `<button class="pick-chip${kind === k ? ' on' : ''}" data-act="counterKind" data-f="${k}">${t}<small>${c}</small></button>`)
+                .join('')}</div>`,
+        ],
+        ['search', all.length > 20 ? searchBox('counterR', 'Boisson ou ingrédient') : ''],
+        ['list', `${pg.top}<div class="drows">${rows || '<p class="empty">Aucune boisson ici.</p>'}</div>${pg.more}`],
+        [
+            'hint',
+            hint(
+                'Chaque boisson se prépare au doigt : plus la note est belle, meilleure est la qualité. Des ingrédients en platine ou en diamant donnent une boisson de ce rang.',
+            ),
+        ],
+    ];
 }
 
 // ---------------- le bâtiment ----------------
+// 1.76 : le salon dessiné (il grandit et se décore), ses quatre niveaux, les décors en cartes, le carnet du salon
+const DECOR_ICON = { plant: 'decoPlant', lamp: 'decoLamp', rug: 'decoRug', garland: 'decoGarland', sign: 'decoSign' };
 function batHtml() {
     const C = G.ensureCounter(),
-        d = G.salonDef(),
         n = G.salonNext();
     const up = n
-        ? `<div class="card"><div class="card-main"><div class="card-title">Agrandir le salon</div>
-            <div class="card-sub">${n.seats} places, un client toutes les ${n.every} s environ</div>
-            ${costRow(G.costParts(n.cost))}</div>
-            <div class="card-side">${btn('Agrandir', { act: 'upSalon', kind: 'green', disabled: !G.salonCanUp() })}</div></div>`
-        : '<div class="card"><div class="card-main"><div class="card-sub">Le salon est au maximum.</div></div></div>';
+        ? `<div class="salon-up">${costRow(G.costParts(n.cost))}${btn(`Agrandir : ${n.seats} places`, { act: 'upSalon', kind: 'green', size: 'sm', disabled: !G.salonCanUp() })}</div>`
+        : '';
+    const levels = SALON.map(
+        (l, k) =>
+            `<div class="hlvl${k <= C.lvl ? ' on' : ''}"><b>${k + 1}</b><span>${l.seats} places · un client toutes les ${l.every} s</span>${k <= C.lvl ? ico(['ui', 'check']) : ''}</div>`,
+    ).join('');
     const decors = Object.entries(DECORS)
+        .map(([k, name]) => {
+            const own = !!C.decor[k];
+            return `<div class="deco-card${own ? ' own' : ''}"><span class="dc-art">${art('ui', DECOR_ICON[k])}</span><b>${name}</b><small>+${Math.round(DECOR_PATIENCE * 100)} % de patience</small>${
+                own
+                    ? `<span class="chip ok">${ico(['ui', 'check'])}posé</span>`
+                    : btn(`${fmt(DECOR_COST[k])}${COIN()}`, {
+                          act: 'buyDecor',
+                          data: { id: k },
+                          kind: state.money >= DECOR_COST[k] ? 'gold' : '',
+                          size: 'sm',
+                          disabled: state.money < DECOR_COST[k],
+                      })
+            }</div>`;
+        })
+        .join('');
+    const favs = C.favs || {};
+    const fav = Object.keys(FAVORITE)
+        .filter(v => VILLAGERS[v])
         .map(
-            ([k, name]) =>
-                `<button class="pick-chip${C.decor[k] ? ' on' : ''}" data-act="buyDecor" data-id="${k}" ${C.decor[k] ? 'disabled' : ''}>${name}${C.decor[k] ? '' : ` · ${fmt(DECOR_COST[k])}`}</button>`,
+            v =>
+                `<span class="fav${favs[v] ? ' on' : ''}" title="${VILLAGERS[v].name}${favs[v] ? ` : ${ITEMS[FAVORITE[v]].name}` : ''}"><i>${art('villager', v)}</i>${favs[v] ? `<em>${art('item', FAVORITE[v])}</em>` : '<em class="q">?</em>'}</span>`,
         )
         .join('');
-    return `<div class="card"><div class="card-art">${art('machine', 'counter')}</div><div class="card-main">
-        <div class="card-title">Salon · niveau ${C.lvl + 1}</div>
-        <div class="card-sub">${d.seats} places · un client toutes les ${d.every} s</div>
-        <div class="card-sub">Patience : +${Math.round(DECOR_PATIENCE * 100 * G.decorCount())} % grâce aux décors</div></div></div>
-        ${up}
-        ${section('Décors')}
-        <div class="chips-row wrap">${decors}</div>
-        ${hint(`Chaque décor posé rend les clients plus patients (+${Math.round(DECOR_PATIENCE * 100)} % chacun).`)}`;
+    const nf = Object.keys(favs).length;
+    return `<div class="salon-art">${salonScene(C.lvl, C.decor)}</div>
+        <div class="card salon-lv"><div class="card-title">Salon niveau ${C.lvl + 1} · patience +${Math.round(DECOR_PATIENCE * 100 * G.decorCount())} %</div>
+        <div class="hlevels">${levels}</div>${up}</div>
+        ${section('Décors', `<small>${G.decorCount()} / ${Object.keys(DECORS).length}</small>`)}
+        <div class="deco-grid">${decors}</div>
+        ${section('Le carnet du salon')}
+        <div class="card salon-book"><div class="tiles">${[
+            [fmt(C.total || 0), 'clients servis'],
+            [fmt(C.bestStreak || 0), 'meilleure série parfaite'],
+            [fmt(state.stats.perfectDrinks || 0), 'boissons parfaites'],
+        ]
+            .map(([v, l]) => `<div class="tile"><b>${v}</b><span>${l}</span></div>`)
+            .join('')}</div>
+        <div class="card-sub">Boissons préférées découvertes : ${nf} / ${Object.keys(FAVORITE).length}. Servez à chacun sa préférée pour la révéler.</div>
+        <div class="fav-grid">${fav}</div></div>`;
 }
 
 function renderCounter(el) {
@@ -161,7 +223,7 @@ function renderCounter(el) {
                 'counterTab',
             ),
         ],
-        ['body', t === 'salon' ? salonHtml() : t === 'atelier' ? atelierHtml() : batHtml()],
+        ...(t === 'atelier' ? atelierBlocks() : [['body', t === 'salon' ? salonHtml() : batHtml()]]),
     ]);
 }
 defineView('machines/counter', renderCounter);

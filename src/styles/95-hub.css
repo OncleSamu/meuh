@@ -210,3 +210,167 @@
     font-weight: 700;
     color: var(--ink-l, #7a5a3a);
 }
+
+/* 1.76 : Comptoir › Recettes en lignes */
+.drows .srow.drow {
+    margin-top: 6px;
+}
+.drow .srow-art {
+    position: relative;
+}
+.drow .srow-art em {
+    position: absolute;
+    right: -6px;
+    bottom: -4px;
+    padding: 0 4px;
+    font-style: normal;
+    font-size: 0.62rem;
+    font-weight: 900;
+    background: var(--paper-l, #fff7e0);
+    border: 1.5px solid var(--ink);
+    border-radius: 8px;
+}
+.drow.short > .srow-main > b {
+    color: #b0402f;
+}
+.drow.locked {
+    opacity: 0.6;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+.drow.locked .srow-art {
+    width: 28px;
+    height: 28px;
+}
+.drow.wanted {
+    box-shadow: 0 0 0 3px rgba(242, 193, 78, 0.85);
+}
+.drow .want {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    align-self: flex-start;
+    padding: 0 7px 0 2px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    background: #ffe9a8;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+}
+.drow .want .ico {
+    width: 16px;
+    height: 16px;
+}
+.drow small .miss {
+    color: #b0402f;
+    font-weight: 800;
+}
+
+/* 1.76 : Comptoir › Bâtiment */
+.salon-art svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 0 4px 0 var(--wood-d);
+}
+.salon-art + .card-sub {
+    margin: 8px 0 4px;
+}
+.deco-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 8px;
+}
+.deco-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 4px;
+    text-align: center;
+    background: var(--paper-l, #fff7e0);
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+}
+.deco-card.own {
+    background: #e8f6d8;
+}
+.deco-card .dc-art svg {
+    width: 52px;
+    height: 52px;
+}
+.deco-card b {
+    font-size: 0.82rem;
+}
+.deco-card small {
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+}
+.fav-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px 4px;
+    margin-top: 6px;
+}
+.fav {
+    position: relative;
+    display: block;
+    aspect-ratio: 1;
+    background: var(--paper-l, #fff7e0);
+    border: 2px solid rgba(58, 38, 24, 0.35);
+    border-radius: 50%;
+}
+.fav.on {
+    border-color: var(--ink);
+}
+.fav i svg {
+    width: 100%;
+    height: 100%;
+}
+.fav em {
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    width: 18px;
+    height: 18px;
+    font-style: normal;
+    background: #fff;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+}
+.fav em svg {
+    width: 100%;
+    height: 100%;
+}
+.fav em.q {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: var(--ink-soft);
+}
+.card.salon-book {
+    display: block;
+    padding: 10px;
+}
+.card.salon-book .tiles {
+    margin-bottom: 6px;
+}
+.card.salon-lv {
+    display: block;
+    padding: 10px;
+    margin-top: 10px;
+}
+.card.salon-lv .hlevels {
+    margin: 8px 0 0;
+}
+.salon-up {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+}

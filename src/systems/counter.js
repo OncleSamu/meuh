@@ -263,6 +263,8 @@ function serve(seat, id, tier, stars, at) {
         state.income.counter += tip;
     }
     const fav = FAVORITE[s.vid] === id;
+    // 1.76 : le carnet du salon retient les boissons préférées découvertes
+    if (fav) (C.favs = C.favs || {})[s.vid] = true;
     addFriendship(s.vid, (stars === 3 ? 4 : stars === 2 ? 3 : 2) + (fav ? 3 : 0), at);
     C.seats.splice(seat, 1);
     C.served++;

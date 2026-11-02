@@ -137,4 +137,5 @@ import './cuisine/pizzeria.js';
 import './miel/miels.js';
 import './miel/ruchers.js';
 import './village/amis.js';
+import './village/salon.js';
 import './retouches/produits-uniques.js';
