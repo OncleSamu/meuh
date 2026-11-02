@@ -53,7 +53,7 @@ import { apiaryTick } from './apiary.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
 import { ensureNight, nightTick } from './night.js';
-import { brewOpen, ensureBrew, brewTick } from './brewery.js';
+import { brewOpen, ensureBrew, brewTick, brewOffline } from './brewery.js';
 import { cargoTick, cargoHere, cargoLeave } from './cargo.js';
 import { armandTick, armandHere, armandLeave, armandPending } from './armand.js';
 import { pondTick, trapsReady } from './fishing.js';
@@ -415,6 +415,8 @@ export function offlineProgress() {
             }
         }
     });
+    // 1.75.2 : les cuves en boucle enchaînent leurs tournées
+    const brews = brewOffline();
     const pasture = animalsOffline(elapsed);
     const babies = birthsTick(); // 1.45 : les naissances au pré pendant l'absence
     let artisan = 0;
@@ -456,6 +458,7 @@ export function offlineProgress() {
     add(orch.dead, ['item', 'wood'], `${orch.dead} arbre${s(orch.dead)} mort${s(orch.dead)} de vieillesse au verger`);
     add(pasture.products, ['item', 'egg'], `${pasture.products} produit${s(pasture.products)} à ramasser au pâturage`);
     add(artisan, ['machine', 'bakery'], `${artisan} produit${s(artisan)} terminé${s(artisan)} à l’atelier`);
+    add(brews, ['ui', 'beer'], `${brews} tournée${s(brews)} de bière mise${s(brews)} en bouteille`);
     add(hand.crops, ['villager', 'theo'], `Théo, votre commis, a récolté ${hand.crops} produit${s(hand.crops)}`);
     add(
         babies.length,

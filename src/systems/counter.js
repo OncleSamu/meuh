@@ -61,7 +61,8 @@ export const salonLvl = () => ensureCounter().lvl;
 export const salonDef = () => ({ ...SALON[salonLvl()], seats: SALON[salonLvl()].seats + domStepSum('annex', 'seat') });
 export const salonNext = () => SALON[salonLvl() + 1] || null;
 export const decorCount = () => Object.values(ensureCounter().decor).filter(Boolean).length;
-export const patienceMax = () => CLIENT.patience * (1 + DECOR_PATIENCE * Math.min(3, decorCount()));
+// 1.75.2 : chacun des cinq décors compte (ils s'arrêtaient à trois)
+export const patienceMax = () => CLIENT.patience * (1 + DECOR_PATIENCE * decorCount());
 export const dailyLeft = () => {
     const C = ensureCounter();
     return Math.max(0, CLIENT.daily(C.lvl) - (C.day === dayNum() ? C.served : 0));
@@ -251,11 +252,13 @@ function serve(seat, id, tier, stars, at) {
     const base = sellPrice(id);
     const price = Math.round(base * CLIENT.premium * CLIENT.star[tier] * (1 + CLIENT.heart * hearts));
     earn(price, at);
+    state.income.counter = (state.income.counter || 0) + price;
     let tip = 0;
     if (stars === 3 && C.tips < CLIENT.tipMax) {
         tip = Math.max(1, Math.round(price * CLIENT.tipRate * streakMult()));
         C.tips++;
         earn(tip, at);
+        state.income.counter += tip;
     }
     const fav = FAVORITE[s.vid] === id;
     addFriendship(s.vid, (stars === 3 ? 4 : stars === 2 ? 3 : 2) + (fav ? 3 : 0), at);

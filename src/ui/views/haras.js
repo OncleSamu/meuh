@@ -207,7 +207,8 @@ const HZ_PICKS = [
 function renderHarasHub(el) {
     const cur = HZ_PICKS.find(p => p[0] === ui.sel.haras) || HZ_PICKS[0];
     const pick = segmented(
-        HZ_PICKS.map(([id, name, icon]) => [id, name, icon]),
+        // 1.75.2 : sans icônes, les trois noms tiennent en entier sur un téléphone
+        HZ_PICKS.map(([id, name]) => [id, name]),
         cur[0],
         'hzPick',
     );

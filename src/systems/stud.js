@@ -110,6 +110,7 @@ export function studTick() {
         s.day = d;
         if (sum) {
             earn(sum, null);
+            state.income.haras = (state.income.haras || 0) + sum;
             s.earned += sum;
             toast(`Saillies de l’élevage « ${s.name} » : +${fmt(sum)} pièces`, ['ui', 'hSaillie']);
             ch = true;

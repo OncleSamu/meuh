@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.75.2',
+        title: "Retouches de l'audit",
+        date: '2 novembre 2026',
+        items: [
+            'Les cinq décors du comptoir comptent',
+            'Idris, Yasmine, Tuomas et Ingrid ont leur boisson préférée',
+            "Les cuves en boucle tournent pendant l'absence",
+            "Le labo dit d'avance quand il y a trop de variétés en cours",
+            'Onglets du haras en entier',
+            'Brasserie, comptoir et haras ont leur ligne dans les statistiques',
+        ],
+    },
+    {
         v: '1.75.1',
         title: 'Correctif',
         date: '2 novembre 2026',

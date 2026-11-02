@@ -200,7 +200,7 @@ export const DECORS = {
     garland: 'Guirlande',
     sign: 'Enseigne',
 };
-export const DECOR_PATIENCE = 0.1; // par décor posé, jusqu'à trois
+export const DECOR_PATIENCE = 0.1; // par décor posé (les cinq comptent depuis la 1.75.2)
 
 // Le goût de chaque villageois (sa boisson préférée) : les cœurs du jeu s'ajoutent à ceux des cadeaux
 export const FAVORITE = {
@@ -228,6 +228,11 @@ export const FAVORITE = {
     agnes: 'milkTea',
     duval: 'viennois',
     octave: 'blackTea',
+    // 1.75.2 : les villageois de l'oasis et du Grand Nord
+    idris: 'desertTea',
+    yasmine: 'dateTea',
+    tuomas: 'ryeCoffee',
+    ingrid: 'cloudberryInfusion',
 };
 
 // le prix des décors du salon

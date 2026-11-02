@@ -296,13 +296,17 @@ export function statsData() {
         .slice(0, 8);
     // origine des pièces
     const inc = state.income,
-        known = inc.market + (inc.stall || 0) + inc.orders + inc.trucks + (inc.cave || 0);
+        known = inc.market + (inc.stall || 0) + inc.orders + inc.trucks + (inc.cave || 0) + (inc.brew || 0) + (inc.counter || 0) + (inc.haras || 0);
     const sources = [
         ['Étal', inc.stall || 0],
         ['Grossiste', inc.market],
         ['Commandes', inc.orders],
         ['Trains', inc.trucks],
         ['Cave et enchères', inc.cave || 0],
+        // 1.75.2
+        ['Brasserie', inc.brew || 0],
+        ['Comptoir', inc.counter || 0],
+        ['Haras', inc.haras || 0],
         ['Autres', Math.max(0, (S.earned || 0) - known)],
     ];
     // 1.74.2 : toute la ferme, rangée par coin (seuls les chiffres non nuls)

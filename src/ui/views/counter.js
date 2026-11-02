@@ -138,11 +138,11 @@ function batHtml() {
     return `<div class="card"><div class="card-art">${art('machine', 'counter')}</div><div class="card-main">
         <div class="card-title">Salon · niveau ${C.lvl + 1}</div>
         <div class="card-sub">${d.seats} places · un client toutes les ${d.every} s</div>
-        <div class="card-sub">Patience : +${Math.round(DECOR_PATIENCE * 100 * Math.min(3, G.decorCount()))} % grâce aux décors</div></div></div>
+        <div class="card-sub">Patience : +${Math.round(DECOR_PATIENCE * 100 * G.decorCount())} % grâce aux décors</div></div></div>
         ${up}
         ${section('Décors')}
         <div class="chips-row wrap">${decors}</div>
-        ${hint(`Chaque décor posé rend les clients plus patients (+${Math.round(DECOR_PATIENCE * 100)} %, jusqu’à 3 décors).`)}`;
+        ${hint(`Chaque décor posé rend les clients plus patients (+${Math.round(DECOR_PATIENCE * 100)} % chacun).`)}`;
 }
 
 function renderCounter(el) {

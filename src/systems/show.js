@@ -217,7 +217,10 @@ function settle(e, kind, shared = null) {
         jules: played === 0,
         seen: false,
     };
-    if (coins) earn(coins, null);
+    if (coins) {
+        earn(coins, null);
+        state.income.haras = (state.income.haras || 0) + coins;
+    }
     if (rosette) s.rose[e.div] += crush ? 2 : 1;
     if (place === 1) {
         s.cups++;

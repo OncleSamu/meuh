@@ -535,6 +535,7 @@ export function sellBeer(bid, n, at) {
         B.demand[bid] = { n: demandNow(bid) + 1, t: now() };
     }
     earn(coins, at);
+    state.income.brew = (state.income.brew || 0) + coins;
     state.stats.beersSold = (state.stats.beersSold || 0) + n;
     if (at) float(at, [`+${coins}`, ['ui', 'coin']], '', -20);
     sfx('coin');
@@ -680,6 +681,7 @@ export function deliverBeerOrder(oid, bid, at) {
     B.stock[b.id] -= o.qty;
     beerQual(b.id);
     earn(beerOrderPay(o, b.id), at);
+    state.income.brew = (state.income.brew || 0) + beerOrderPay(o, b.id);
     addXp(BEER_ORDERS.xp + 20 * o.min, at);
     addFriendship(o.vid, BEER_ORDERS.hearts, at);
     state.stats.beerOrders = (state.stats.beerOrders || 0) + 1;
@@ -698,6 +700,31 @@ export function dismissBeerOrder(oid) {
     return true;
 }
 export const beerOrdersReady = () => (state.brew && state.brew.orders ? state.brew.orders.filter(o => beerOrderMatches(o).length).length : 0);
+
+// 1.75.2 : pendant l'absence, une cuve en boucle enchaîne ses tournées (chacune repart à la fin de la précédente)
+export function brewOffline(t = now()) {
+    if (!brewOpen()) return 0;
+    const B = ensureBrew();
+    let n = 0;
+    for (let i = 0; i < B.vats.length; i++) {
+        let g = 0;
+        while (g++ < 60) {
+            const v = B.vats[i];
+            if (!v || !v.loop || v.until > t) break;
+            const bid = v.bid,
+                end = v.until;
+            collectVat(i);
+            n++;
+            const r = recipeOf(bid);
+            const j = B.vats.findIndex(x => !x);
+            if (!r || j < 0 || !startBrew(null, { ...r, loop: true }, true)) break;
+            const nv = B.vats[j];
+            nv.until = end + (nv.until - t);
+            if (j !== i) break;
+        }
+    }
+    return n;
+}
 
 export function brewTick() {
     if (!brewOpen()) return false;

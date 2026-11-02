@@ -120,7 +120,17 @@ function crossCard() {
     return `<div class="card lab-card">${head}${running}
         <div class="lab-pair">${parentSlot('a', sel.a, 'plant')}<span class="lab-x">×</span>${parentSlot('b', sel.b, 'plant')}</div>
         ${preview}
-        ${btn(`Polliniser · ${fmt(G.crossCost())}${ico(['ui', 'coin'])}`, { act: 'startCross', kind: ready ? 'green' : '', wide: true, disabled: !ready })}</div>`;
+        ${
+            // 1.75.2 : on dit d'avance pourquoi le croisement est impossible
+            G.openVarieties().length >= GX.maxVarieties
+                ? `<p class="state-line">Déjà ${GX.maxVarieties} variétés en cours : fixez-en ou jetez-en (onglet Variétés) avant d’en créer d’autres.</p>`
+                : btn(`Polliniser · ${fmt(G.crossCost())}${ico(['ui', 'coin'])}`, {
+                      act: 'startCross',
+                      kind: ready ? 'green' : '',
+                      wide: true,
+                      disabled: !ready,
+                  })
+        }</div>`;
 }
 
 // ---------------- 1.7 : la portée ----------------
