@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.78',
+        title: "Juste ce qu'il faut de petits",
+        date: '2 novembre 2026',
+        items: ["Sous l'interrupteur des naissances, un nombre de petits voulus", "Une fois atteint, les naissances du pré s'éteignent seules"],
+    },
+    {
         v: '1.77.1',
         title: 'Guide de la qualité',
         date: '2 novembre 2026',

@@ -137,6 +137,12 @@ export const TIPS = {
         title: 'Le talent de l’ami',
         text: 'À cinq cœurs, un villageois te prête son talent pour toujours : les machines de son métier vont plus vite et leurs produits se vendent mieux. Victor soigne moins cher, Morgane fait mieux payer les bateaux, Octave fait vieillir la cave plus vite. Finis son histoire, et son talent double. Un bon voisin, c’est une richesse, disait mon père. Il disait ça surtout quand il empruntait la charrette.',
     },
+    // 1.78
+    birthLimit: {
+        icon: ['ui', 'heart'],
+        title: 'Juste ce qu’il faut de petits',
+        text: 'Sous l’interrupteur des naissances, choisis combien de petits tu veux dans ce pré. Le compte atteint, les naissances s’arrêtent toutes seules : plus de pré qui déborde pendant que tu dors. Ta tante Lucette avait dit « deux lapins, pas plus ». Elle en a eu quarante.',
+    },
     // 1.77
     legend177: {
         icon: ['ui', 'goldCow'],

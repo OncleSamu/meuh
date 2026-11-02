@@ -35,8 +35,12 @@ export function toggleBirths(k) {
     const p = penOf(k);
     if (!p || !birthsOpen()) return false;
     p.births = !p.births;
-    // le compte à rebours repart de zéro à chaque allumage
+    // le compte à rebours repart de zéro à chaque allumage ; 1.78 : le nombre de petits voulus aussi
     p.nb = {};
+    if (p.births) {
+        p.left = p.limit || 0;
+        tip('birthLimit');
+    }
     toast(
         p.births
             ? `Naissances allumées dans ${p.name.replace(/^Le /, 'le ')} : deux bêtes de la même espèce y auront parfois un petit`
@@ -46,6 +50,19 @@ export function toggleBirths(k) {
     changed('animals');
     return true;
 }
+
+// 1.78 : combien de petits on veut dans ce pré avant que les naissances s'éteignent seules (0 : sans limite)
+export const BIRTH_LIMITS = [1, 3, 5, 10, 0];
+export function setBirthLimit(k, n) {
+    const p = penOf(k);
+    if (!p || !BIRTH_LIMITS.includes(n)) return false;
+    p.limit = n;
+    p.left = n;
+    changed('animals');
+    return true;
+}
+export const birthLimit = k => (penOf(k) && penOf(k).limit) || 0;
+export const birthsLeft = k => (penOf(k) && penOf(k).limit ? penOf(k).left || 0 : null);
 
 // dans combien de temps (ms) la prochaine naissance possible du pré, ou null
 export function nextBirthIn(k) {
@@ -98,7 +115,8 @@ function bornInPasture(k, type, list) {
 export function birthsTick(max = BIRTHS.catchUp) {
     if (!birthsOpen() || !Array.isArray(state.pastures)) return [];
     const t = now(),
-        born = [];
+        born = [],
+        stopped = [];
     penKeys().forEach(k => {
         const p = penOf(k);
         if (!p || !p.births) return;
@@ -109,15 +127,26 @@ export function birthsTick(max = BIRTHS.catchUp) {
         for (const type in pairs) {
             if (!p.nb[type]) p.nb[type] = t + birthHours(type) * 3600000;
             let n = 0;
-            while (t >= p.nb[type] && n < max && pastureFree(k) > 0) {
+            while (t >= p.nb[type] && n < max && pastureFree(k) > 0 && p.births && (!p.limit || p.left > 0)) {
                 born.push(bornInPasture(k, type, pairs[type]));
                 p.nb[type] += birthHours(type) * 3600000;
                 n++;
+                // 1.78 : le nombre voulu est atteint, les naissances s'éteignent
+                if (p.limit) {
+                    p.left = Math.max(0, (p.left || 0) - 1);
+                    if (!p.left) {
+                        p.births = false;
+                        p.nb = {};
+                        stopped.push(p.name);
+                    }
+                }
             }
+            if (!p.births) break;
             // pré plein ou trop de retard : la prochaine attend son tour normal
             if (t >= p.nb[type]) p.nb[type] = t + birthHours(type) * 3600000;
         }
     });
+    if (stopped.length && view.started) toast(`${stopped.join(', ')} : le nombre de petits voulu est atteint, naissances éteintes`, ['ui', 'heart']);
     if (born.length && view.started) {
         const [x] = born;
         toast(

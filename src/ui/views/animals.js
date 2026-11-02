@@ -239,7 +239,16 @@ export function birthRow(k) {
           : G.pastureFree(k) <= 0
             ? 'Le pré est plein : plus de place pour un petit'
             : `Prochain petit dans ${timer(Date.now() + next)}`;
-    return `<button class="row toggle birth-row" data-act="toggleBirths" data-k="${k}" role="switch" aria-checked="${on}"><span class="row-main"><span>${ico(['ui', 'heart'])}Naissances</span><small>${sub}</small></span><span class="switch${on ? ' on' : ''}"><i></i></span></button>`;
+    // 1.78 : combien de petits avant de s'éteindre seules
+    const left = G.birthsLeft(k),
+        lim = G.birthLimit(k);
+    const more = on && left != null ? ` · encore ${left} petit${left > 1 ? 's' : ''}` : '';
+    const limits = on
+        ? `<div class="chips-row wrap birth-limit"><small>Nombre de petits :</small>${G.BIRTH_LIMITS.map(
+              n => `<button class="pick-chip${lim === n ? ' on' : ''}" data-act="birthLimit" data-k="${k}" data-n="${n}">${n || 'Sans limite'}</button>`,
+          ).join('')}</div>`
+        : '';
+    return `<button class="row toggle birth-row" data-act="toggleBirths" data-k="${k}" role="switch" aria-checked="${on}"><span class="row-main"><span>${ico(['ui', 'heart'])}Naissances</span><small>${sub}${more}</small></span><span class="switch${on ? ' on' : ''}"><i></i></span></button>${limits}`;
 }
 
 // 1.46 : les associations actives dans le pré regardé
@@ -488,6 +497,7 @@ export function setupAnimals() {
         },
         pickPasture: (el, d) => (ui.sel.pasture = d.k === 'all' ? 'all' : +d.k),
         toggleBirths: (el, d) => G.toggleBirths(+d.k),
+        birthLimit: (el, d) => G.setBirthLimit(+d.k, +d.n),
         buyPasture: el =>
             askBuy(
                 {
