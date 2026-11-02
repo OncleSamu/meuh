@@ -250,7 +250,7 @@ export function neighborsCard() {
     return foldCard('neighbors', ['ui', 'heart'], 'Fermes voisines', sum, neighborsBody(), ready > 0 || special);
 }
 
-function neighborsBody() {
+export function neighborsBody() {
     return `<div class="neighbors-card">
         ${specialBlock()}
         <p class="card-sub">Vos rivaux du concours sont aussi vos voisins. Aidez-les : ils paient bien, et leur amitié rapporte des cadeaux.</p>

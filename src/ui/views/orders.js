@@ -1,5 +1,6 @@
 // Village | Commandes : fête de saison, tableau des commandes, acheteur pressé, train, montgolfière, cargo.
 import { state, scaleLvl } from '../../core/state.js';
+import { now } from '../../core/clock.js';
 import { fmt, formatDuration, qtyName } from '../../core/format.js';
 import { EVENTS } from '../../data/world.js';
 import { VILLAGERS } from '../../data/village.js';
@@ -8,14 +9,16 @@ import { PLANT_TRAITS } from '../../data/genetics.js';
 import { blocks, actions, esc } from '../dom.js';
 import { ITEMS } from '../../data/items.js';
 import { ico, art, SPR } from '../icons.js';
-import { btn, bar, timer, tip15 } from '../kit.js';
-import { defineView } from '../app.js';
+import { btn, bar, timer, tip15, segmented } from '../kit.js';
+import { defineView, ui } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { itemLine, rewardHtml } from './common.js';
 import { confirmTap } from '../confirm.js';
-import { foldCard, foldWrap, toggleFold } from '../fold.js';
+import { toggleFold } from '../fold.js';
 import { defiCard } from './defis.js';
-import { rareCard, holidayCard, contractCard, farmSeasonCard, neighborsCard } from './village.js';
+import { rareCard, holidayCard, contractCard, farmSeasonCard, neighborsBody } from './village.js';
+import { HOLIDAYS } from '../../data/world.js';
+import { RARE_EVENTS } from '../../data/surprises.js';
 
 // ---------------- la fête de saison ----------------
 function eventCard() {
@@ -51,16 +54,7 @@ function eventCard() {
 }
 
 // ---------------- le tableau des commandes ----------------
-// 1.27.1 : les commandes des villageois, repliables comme l'Agenda
-function boardCard() {
-    G.ensureQuests();
-    const open = state.quests.filter(q => G.isOpen(q)),
-        ready = open.filter(q => G.checkQuestReady(q)).length;
-    const sum = ready ? `${ready} prête${ready > 1 ? 's' : ''} sur ${open.length}` : `${open.length} commande${open.length > 1 ? 's' : ''} · aucune prête`;
-    return foldCard('board', ['ui', 'scroll'], 'Villageois', sum, board(), ready > 0);
-}
-
-function board() {
+function boardHtml() {
     G.ensureQuests();
     const qs = state.quests;
     const tickets = qs
@@ -333,69 +327,228 @@ function delivery(kind) {
         </div></div>`;
 }
 
-// 1.38 : le train, l'avion-cargo, la montgolfière et le bateau dans une seule carte repliable.
-// Ce qui est là (à charger) se montre en entier, le reste en une ligne avec son compte à rebours.
-function defiFold() {
-    const html = defiCard();
-    const d = G.curDefi();
-    if (!html || !d || !G.defiOpen()) return html;
-    const n = G.stepsDone(d);
-    return foldWrap(
-        'defi',
-        ['ui', 'cupGold'],
-        'Grand défi',
-        d.awarded ? 'Médaille gagnée' : `${n} étape${n > 1 ? 's' : ''} sur 4 · ${formatDuration(G.defiLeft(d) / 1000)}`,
-        html,
-        G.defiReady() > 0,
-    );
+// ---------------- 1.73 : le tableau des commandes en trois volets ----------------
+// À livrer (le tableau des villageois, puis une ligne par demande), Transports, Événements.
+// Chaque ligne dit en un mot où on en est ; la toucher ouvre la carte complète en fiche. Ce qui est prêt remonte.
+const left = at => formatDuration(Math.max(0, (at - now()) / 1000));
+const has = (id, n) => (state.inventory[id] || 0) >= n;
+const ROWS = [
+    // ---- à livrer ----
+    {
+        id: 'express',
+        grp: 'give',
+        on: () => !!(state.incident && state.incident.type === 'express'),
+        icon: () => ['ui', 'express'],
+        title: () => 'Acheteur pressé',
+        sub: () => `Prix triple · repart dans ${left(state.incident.until)}`,
+        ready: () => G.hasAll(state.incident.items),
+        html: express,
+        urgent: true,
+    },
+    {
+        id: 'chef',
+        grp: 'give',
+        on: () => !!chefCard(),
+        icon: () => ['villager', 'gaston'],
+        title: () => 'Le chef cherche un goût',
+        sub: () => `${ITEMS[state.genetics.chef.base].name} · une variété précise`,
+        ready: () => G.varieties().some(v => G.chefMatches(v) && (state.genetics.stock[v.id] || 0) >= state.genetics.chef.qty),
+        html: chefCard,
+    },
+    {
+        id: 'armand',
+        grp: 'give',
+        on: () => G.armandOpen(),
+        icon: () => ['villager', 'armand'],
+        title: () => 'Armand, chef du Grand Hôtel',
+        sub: () => (G.armandHere() ? `En cuisine · repart dans ${left(G.armandLeave())}` : `Revient dans ${left(G.armandArrive())}`),
+        ready: () =>
+            G.armandHere() &&
+            Array.from({ length: G.armandSlots() }, (_, i) => G.armandOrder(i)).some(
+                o => o && (G.armandTalking(o) || (!o.done && !G.armandOff(o) && G.armandDealt(o) && has(o.id, 1))),
+            ),
+        html: armandCard,
+    },
+    {
+        id: 'neighbors',
+        grp: 'give',
+        on: () => state.level >= 6,
+        icon: () => ['ui', 'heart'],
+        title: () => 'Fermes voisines',
+        sub: () =>
+            G.specialReady()
+                ? 'Commande spéciale prête'
+                : G.neighborsReady()
+                  ? `${G.neighborsReady()} voisin${G.neighborsReady() > 1 ? 's' : ''} à aider`
+                  : 'Rien à livrer pour l’instant',
+        ready: () => G.neighborsReady() > 0 || !!G.specialReady(),
+        html: () => (G.ensureNeighbors(), `<div class="card">${neighborsBody()}</div>`),
+    },
+    {
+        id: 'contract',
+        grp: 'give',
+        on: () => !!contractCard() && !state.contract.done,
+        icon: () => ['ui', 'calendar'],
+        title: () => 'Contrat de saison',
+        sub: () => `${fmt(state.contract.given)} / ${fmt(state.contract.qty)} ${ITEMS[state.contract.item].name.toLowerCase()}`,
+        ready: () => !!G.contractReady(),
+        html: contractCard,
+    },
+    // ---- transports ----
+    {
+        id: 'train',
+        grp: 'ship',
+        on: () => G.trainOpen(),
+        icon: () => ['ui', 'trainIcon'],
+        title: () => 'Train de marchandises',
+        sub: () =>
+            state.truck.status === 'here'
+                ? `${state.truck.slots.filter(s => s.loaded).length} / ${state.truck.slots.length} wagons · part dans ${left(state.truck.expiresAt)}`
+                : `Revient dans ${left(state.truck.arriveAt)}`,
+        ready: () => state.truck.status === 'here' && state.truck.slots.some(s => !s.loaded && has(s.id, s.qty)),
+        here: () => state.truck.status === 'here',
+        html: train,
+    },
+    {
+        id: 'cargo',
+        grp: 'ship',
+        on: () => G.cargoOpen(),
+        icon: () => ['ui', 'plane'],
+        title: () => 'Avion-cargo',
+        sub: () => {
+            const c = state.cargo;
+            if (!G.cargoHere() || !c || !c.holds.length) return `Atterrit dans ${left(G.cargoArrive())}`;
+            const full = c.holds.filter(h => h.got >= h.qty).length;
+            return c.done ? 'Soutes pleines, merci !' : `${full} / ${c.holds.length} soutes pleines · repart dans ${left(G.cargoLeave())}`;
+        },
+        ready: () => G.cargoHere() && !!state.cargo && !state.cargo.done && state.cargo.holds.some(h => h.got < h.qty && has(h.id, 1)),
+        here: () => G.cargoHere() && !!state.cargo && !state.cargo.done,
+        html: cargoCard,
+    },
+    ...['balloon', 'boat'].map(k => ({
+        id: k,
+        grp: 'ship',
+        on: () => (k === 'boat' ? G.boatOpen() : G.balloonOpen()),
+        icon: () => ['ui', k],
+        title: () => (k === 'boat' ? 'Bateau de livraison' : 'Montgolfière'),
+        sub: () => {
+            const b = state[k];
+            return b.status === 'here' ? `Attend sa cargaison · repart dans ${left(b.expiresAt)}` : `Revient dans ${left(b.arriveAt)}`;
+        },
+        ready: () => state[k].status === 'here' && G.hasAll(state[k].items),
+        here: () => state[k].status === 'here',
+        html: () => delivery(k),
+    })),
+    // ---- événements ----
+    {
+        id: 'event',
+        grp: 'event',
+        on: () => true,
+        icon: () => G.eventIcon(G.eventActive() ? state.event.season : G.nextFete().season.id),
+        title: () => EVENTS[G.eventActive() ? state.event.season : G.nextFete().season.id].name,
+        sub: () => {
+            if (!G.eventActive()) return `Prochaine fête dans ${formatDuration(G.nextFete().secs)}`;
+            const e = state.event;
+            return `${e.goals.filter(x => x.prog >= x.target).length} / ${e.goals.length} objectifs · ${formatDuration(G.eventEndsIn())}`;
+        },
+        ready: () => G.eventReady() > 0,
+        here: () => G.eventActive(),
+        html: eventCard,
+    },
+    {
+        id: 'defi',
+        grp: 'event',
+        on: () => !!defiCard(),
+        icon: () => ['ui', 'cupGold'],
+        title: () => 'Grand défi',
+        sub: () => {
+            const d = G.curDefi();
+            return !d || !G.defiOpen()
+                ? 'Choisissez votre grand défi'
+                : d.awarded
+                  ? 'Médaille gagnée'
+                  : `${G.stepsDone(d)} étape${G.stepsDone(d) > 1 ? 's' : ''} sur 4 · ${formatDuration(G.defiLeft(d) / 1000)}`;
+        },
+        ready: () => G.defiReady() > 0,
+        here: () => true,
+        html: defiCard,
+    },
+    {
+        id: 'holiday',
+        grp: 'event',
+        on: () => !!holidayCard(),
+        icon: () => HOLIDAYS[state.holiday.id].icon,
+        title: () => HOLIDAYS[state.holiday.id].name,
+        sub: () => (state.holiday.done ? 'Panier rempli, merci !' : 'Un panier à remplir'),
+        ready: () => !!G.holidayReady(),
+        here: () => !state.holiday.done,
+        html: holidayCard,
+    },
+    {
+        id: 'fseason',
+        grp: 'event',
+        on: () => !!farmSeasonCard(),
+        icon: () => ['item', G.farmSeasonTheme().icon],
+        title: () => G.farmSeasonTheme().name,
+        sub: () => `${fmt(state.fseason.pts)} points · ${formatDuration(G.farmSeasonEndsIn())}`,
+        ready: () => G.farmSeasonClaimable() > 0,
+        here: () => true,
+        html: farmSeasonCard,
+    },
+    {
+        id: 'rare',
+        grp: 'event',
+        on: () => !!rareCard(),
+        icon: () => ['ui', RARE_EVENTS[state.rare.type].icon],
+        title: () => RARE_EVENTS[state.rare.type].name,
+        sub: () => `En ce moment · ${left(state.rare.until)}`,
+        ready: () => false,
+        here: () => true,
+        html: rareCard,
+    },
+];
+const GROUPS = [
+    ['give', 'À livrer'],
+    ['ship', 'Transports'],
+    ['event', 'Événements'],
+];
+const rowsOf = grp => ROWS.filter(r => r.grp === grp && r.on());
+const readyOf = grp => rowsOf(grp).filter(r => r.ready()).length + (grp === 'give' ? boardReady() : 0);
+const boardReady = () => (G.ensureQuests(), state.quests.filter(q => G.isOpen(q) && G.checkQuestReady(q)).length);
+function rowHtml(r) {
+    const ready = r.ready(),
+        live = ready || (r.here ? r.here() : true);
+    return `<button class="hub-row${ready ? ' ready' : ''}${live ? '' : ' away'}${r.urgent && ready ? ' urgent' : ''}" data-act="hubOpen" data-id="${r.id}">
+        <span class="hub-ico">${ico(r.icon(), 'ico big')}</span><span class="hub-main"><b>${r.title()}</b><small>${r.sub()}</small></span>
+        ${ready ? `<span class="hub-go">${ico(['ui', 'check'])}Prêt</span>` : '<span class="hub-chev">›</span>'}</button>`;
 }
-function eventFold() {
-    const html = eventCard();
-    if (!G.eventActive()) return html;
-    const e = state.event,
-        done = e.goals.filter(x => x.prog >= x.target).length;
-    return foldWrap(
-        'event',
-        G.eventIcon(e.season),
-        EVENTS[e.season].name,
-        `${done} objectif${done > 1 ? 's' : ''} sur ${e.goals.length} · ${formatDuration(G.eventEndsIn())}`,
-        html,
-        G.eventReady() > 0,
-    );
+function hubList(grp) {
+    // ce qui est prêt d'abord, puis ce qui est là, puis ce qui reviendra
+    const list = rowsOf(grp).sort((a, b) => b.ready() - a.ready() || (b.here ? b.here() : 1) - (a.here ? a.here() : 1));
+    return list.length ? `<div class="hub-list">${list.map(rowHtml).join('')}</div>` : '';
 }
-
-function deliveriesCard() {
-    const parts = [
-        ['Train', train()],
-        ['Avion-cargo', cargoCard()],
-        ['Montgolfière', delivery('balloon')],
-        ['Bateau', delivery('boat')],
-    ].filter(([, h]) => h);
-    if (!parts.length) return null;
-    const away = h => /class="card (away|locked)/.test(h);
-    const here = parts.filter(([, h]) => !away(h));
-    const sum = here.length ? `${here.map(([n]) => n).join(' · ')} ${here.length > 1 ? 'attendent' : 'attend'}` : 'Rien à charger pour l’instant';
-    const body = [...here, ...parts.filter(([, h]) => away(h))].map(([, h]) => h).join('');
-    return foldCard('deliveries', ['ui', 'trainIcon'], 'Livraisons', sum, body, here.length > 0);
-}
-
+defineSheet('hub', {
+    title: o => {
+        const r = ROWS.find(x => x.id === o.id);
+        return r && r.on() ? r.title() : 'Commandes';
+    },
+    render: o => {
+        const r = ROWS.find(x => x.id === o.id);
+        return (r && r.on() && r.html()) || '<p class="empty">Plus rien ici pour le moment.</p>';
+    },
+});
 function renderOrders(el) {
+    const tabs = GROUPS.map(([id, name]) => [id, name, null, readyOf(id)]);
+    const want = ui.sel.ordersTab;
+    // sans choix : le premier volet où quelque chose est prêt
+    const cur = GROUPS.some(g => g[0] === want) ? want : (GROUPS.find(g => readyOf(g[0])) || GROUPS[0])[0];
+    const board = `<div class="card hub-board"><div class="hub-board-head">${ico(['ui', 'scroll'])}<b>Commandes du village</b><small>${boardReady() ? `${boardReady()} prête${boardReady() > 1 ? 's' : ''}` : 'aucune prête'}</small></div>${boardHtml()}</div>`;
     blocks(el, [
         ['agenda', agendaCard()],
-        ['defi', defiFold()],
-        ['event', eventFold()],
-        ['express', express()],
-        ['chef', chefCard()],
-        ['board', boardCard()],
-        ['deliveries', deliveriesCard()],
-        ['armand', armandCard()],
-        // 1.9 : venus du volet Village
-        ['rare', rareCard()],
-        ['holiday', holidayCard()],
-        ['contract', contractCard()],
-        ['fseason', farmSeasonCard()],
-        ['neighbors', neighborsCard()],
-        ['hint', tip15('Touchez une ligne rouge pour aller produire ce qui manque.')],
+        ['tabs', `<div class="hub-tabs">${segmented(tabs, cur, 'ordersTab')}</div>`],
+        ['board', cur === 'give' ? board : ''],
+        ['list', hubList(cur)],
+        ['hint', cur === 'give' ? tip15('Touchez une ligne pour l’ouvrir ; une ligne rouge dans une commande mène à ce qui manque.') : ''],
     ]);
 }
 defineView('village/orders', renderOrders);
@@ -427,5 +580,7 @@ export function setupOrders() {
         claimGoal: (el, d) => G.claimGoal(+d.k, el),
         giveGoal: (el, d) => G.contributeGoal(+d.k, el),
         claimEvent: el => G.claimEvent(el),
+        hubOpen: (el, d) => openSheet('hub', { id: d.id }),
+        ordersTab: (el, d) => (ui.sel.ordersTab = d.v),
     });
 }

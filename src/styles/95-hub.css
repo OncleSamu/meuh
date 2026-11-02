@@ -1,0 +1,88 @@
+/* 1.73 : le tableau des commandes en trois volets : une ligne par demande */
+.hub-tabs .seg {
+    margin: 0;
+}
+.hub-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.hub-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    border: 2.5px solid var(--ink);
+    border-radius: var(--r, 14px);
+    background: var(--paper-l, #fff7e0);
+    box-shadow: 0 3px 0 rgba(58, 38, 24, 0.25);
+    font: inherit;
+    color: var(--ink);
+    text-align: left;
+}
+.hub-row.ready {
+    background: #e8f6d8;
+    border-color: #3f8f2e;
+}
+.hub-row.urgent {
+    background: #fff0d0;
+    border-color: #e0a020;
+}
+.hub-row.away {
+    opacity: 0.72;
+    box-shadow: none;
+}
+.hub-ico .ico {
+    width: 40px;
+    height: 40px;
+}
+.hub-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.hub-main b {
+    font-size: 0.95rem;
+}
+.hub-main small {
+    font-size: 0.78rem;
+    color: var(--ink-l, #7a5a3a);
+}
+.hub-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #3f8f2e;
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.78rem;
+}
+.hub-go .ico {
+    width: 14px;
+    height: 14px;
+}
+.hub-chev {
+    font-size: 1.4rem;
+    font-weight: 800;
+    opacity: 0.5;
+}
+.hub-board-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.hub-board-head .ico {
+    width: 24px;
+    height: 24px;
+}
+.hub-board-head small {
+    margin-left: auto;
+    font-size: 0.78rem;
+    color: var(--ink-l, #7a5a3a);
+}
