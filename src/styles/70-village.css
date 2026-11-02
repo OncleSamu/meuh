@@ -1265,3 +1265,8 @@ html.calm .goal-line.urgent {
     overflow: hidden;
     min-height: 2.3em;
 }
+
+/* 1.74.8 : la locomotive tire ses wagons (l'avant vers la droite, la cabine contre le premier wagon) */
+.train-row .loco > svg {
+    transform: scaleX(-1);
+}

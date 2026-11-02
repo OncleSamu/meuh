@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.74.8',
+        title: 'La locomotive dans le bon sens',
+        date: '2 novembre 2026',
+        items: ['Au tableau des transports, la locomotive tire ses wagons, cabine contre le premier wagon'],
+    },
+    {
         v: '1.74.7',
         title: 'Dernières retouches',
         date: '2 novembre 2026',
