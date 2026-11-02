@@ -31,7 +31,9 @@ const page = src('index.html')
     .replace('/*JS*/', () => code.replace(/<\/script/g, '<\\/script'))
     .replace('<title>Meuh</title>', `<title>Meuh ${version}</title>`);
 
-const out = publish ? root : path.join(root, 'dist');
+// --out <dossier> : le site construit ailleurs (tools/pages.mjs le pousse sur la branche gh-pages)
+const outArg = process.argv.indexOf('--out');
+const out = outArg > 0 ? path.resolve(process.argv[outArg + 1]) : publish ? root : path.join(root, 'dist');
 fs.mkdirSync(path.join(out, 'icons'), { recursive: true });
 const pwa = p => src(path.join('pwa', p));
 fs.writeFileSync(path.join(out, 'index.html'), page.replace('<!--PWA-->', pwa('head.html').trim()));
@@ -41,5 +43,15 @@ fs.copyFileSync(path.join(root, 'src/pwa/manifest.webmanifest'), path.join(out, 
 for (const f of fs.readdirSync(path.join(root, 'src/pwa/icons'))) fs.copyFileSync(path.join(root, 'src/pwa/icons', f), path.join(out, 'icons', f));
 fs.writeFileSync(path.join(out, '.nojekyll'), '');
 // le fichier seul, à ouvrir sans serveur
-if (!publish) fs.writeFileSync(path.join(out, `Meuh ${version}.html`), page.replace('<!--PWA-->\n', '').replace('<!--PWA-->', ''));
+if (!publish && outArg < 0) fs.writeFileSync(path.join(out, `Meuh ${version}.html`), page.replace('<!--PWA-->\n', '').replace('<!--PWA-->', ''));
+// 1.75 : dist garde les trois dernières versions du fichier seul (il en gardait 160, 270 Mo)
+if (!publish && outArg < 0) {
+    const old = fs
+        .readdirSync(out)
+        .filter(f => /^Meuh .*\.html$/.test(f))
+        .map(f => [f, fs.statSync(path.join(out, f)).mtimeMs])
+        .sort((a, b) => b[1] - a[1])
+        .slice(3);
+    for (const [f] of old) fs.rmSync(path.join(out, f));
+}
 console.log(`${out} · ${(page.length / 1024).toFixed(0)} ko · ${buildId}`);
