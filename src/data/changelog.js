@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.74.4',
+        title: 'Correctif',
+        date: '2 novembre 2026',
+        items: ['La bande des volets ne revient plus toute seule au volet ouvert quand on la fait défiler'],
+    },
+    {
         v: '1.74.3',
         title: 'Plus clair',
         date: '2 novembre 2026',

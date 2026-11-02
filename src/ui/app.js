@@ -204,6 +204,7 @@ const HELP = {
     'market/sell': 'market',
 };
 
+let centered = '';
 function renderSubnav() {
     const t = tabDef(ui.tab);
     const el = byId('subnav');
@@ -243,8 +244,16 @@ function renderSubnav() {
                 : '') +
             '</div>',
     );
+    // 1.74.4 : on ne recentre que quand le volet change, pas à chaque rafraîchissement (on peut faire défiler la bande)
+    const key = `${t.id}/${ui.sub[t.id]}`;
     const on = el.querySelector('.strip .seg > button.on');
-    if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+    if (on && centered !== key) {
+        centered = key;
+        const seg0 = on.parentElement;
+        const r = on.getBoundingClientRect(),
+            r0 = seg0.getBoundingClientRect();
+        seg0.scrollLeft = Math.max(0, seg0.scrollLeft + r.left - r0.left - (r0.width - r.width) / 2);
+    }
     // un fondu sur le bord où d'autres volets attendent
     const seg = el.querySelector('.strip > .seg');
     if (seg) {
