@@ -63,9 +63,29 @@ export function produce(id) {
         go('farm/field');
         return toast('Le miel vient des ruches posées dans le champ', ['item', 'honey']);
     }
+    // 1.79.1 : la cardamome revient avec le traîneau du Grand Nord
+    if (id === 'cardamom') {
+        go(G.nordOpen() ? 'farm/island#nord' : 'village/village#story');
+        return toast(
+            G.nordOpen() ? 'La cardamome revient parfois avec le traîneau du Grand Nord' : 'Rallumez d’abord le poêle de Tuomas pour rejoindre le Grand Nord',
+            ['item', id],
+        );
+    }
     if (it.type === 'product') {
-        const a = Object.values(ANIMALS).find(x => x.prodId === id);
+        // 1.79.1 : les viandes et seconds produits (magret, bœuf, laine de dromadaire…) viennent aussi d'une bête, de temps en temps
+        const extra = Object.values(ANIMALS).find(x => x.extra === id);
+        const a = Object.values(ANIMALS).find(x => x.prodId === id) || extra;
+        if (!a) return toast(`${it.name} : ${G.sourceOf(id) || 'introuvable pour l’instant'}`, ['item', id]);
         const owned = G.animalCount(a.id) > 0;
+        if (extra && extra === a) {
+            go(owned ? (a.oasis ? 'farm/island#oasis' : a.nord ? 'farm/island#nord' : 'animals') : 'market/shop');
+            return toast(
+                owned
+                    ? `${it.name} : de temps en temps en ramassant les produits de vos ${a.name.toLowerCase()}s`
+                    : `${it.name} vient des ${a.name.toLowerCase()}s, de temps en temps au ramassage : il vous en faut un (marché)`,
+                ['animal', a.id],
+            );
+        }
         go(owned ? 'animals' : 'market/shop');
         return toast(owned ? `${a.name} : nourrissez-les pour obtenir ${it.name.toLowerCase()}` : `Il vous faut un animal : ${a.name.toLowerCase()} (marché)`, [
             'animal',

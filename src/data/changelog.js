@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.79.1',
+        title: 'Correctif',
+        date: '3 novembre 2026',
+        items: ["« Produire » sur une viande ou un second produit mène à la bonne bête et dit d'où il vient", 'La cardamome mène au Grand Nord'],
+    },
+    {
         v: '1.79',
         title: "La réserve d'expérience",
         date: '3 novembre 2026',

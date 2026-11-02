@@ -217,7 +217,11 @@ export function sourceOf(id) {
     if (it.type === 'fish') return 'Pêche';
     if (it.type === 'product') {
         const a = Object.values(ANIMALS).find(x => x.prodId === id);
-        return a ? a.name : '';
+        if (a) return a.name;
+        // 1.79.1 : un second produit (viande, laine…), de temps en temps au ramassage
+        const b = Object.values(ANIMALS).find(x => x.extra === id);
+        if (b) return `${b.name} (au ramassage, parfois)`;
+        return id === 'cardamom' ? 'Traîneau du Grand Nord' : '';
     }
     const r = RECIPES[id];
     return r && MACHINES[r.machine] ? MACHINES[r.machine].name : '';
