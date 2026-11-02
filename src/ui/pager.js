@@ -65,7 +65,7 @@ export function page(key, list, step = 20) {
     const cur = Math.max(0, Math.min(pages - 1, (ui.sel.pg && ui.sel.pg[key]) || 0));
     const items = list.slice(cur * step, cur * step + step);
     if (pages <= 1) return { items, more: '', top: '', cur, pages };
-    const show = new Set(pages <= 15 ? [...Array(pages).keys()] : [0, pages - 1, cur - 2, cur - 1, cur, cur + 1, cur + 2].filter(p => p >= 0 && p < pages));
+    const show = new Set(pages <= 7 ? [...Array(pages).keys()] : [0, pages - 1, cur - 2, cur - 1, cur, cur + 1, cur + 2].filter(p => p >= 0 && p < pages));
     const nums = [];
     let last = -1;
     for (const p of [...show].sort((a, b) => a - b)) {
@@ -78,7 +78,7 @@ export function page(key, list, step = 20) {
     const arrow = (p, t, dis) =>
         `<button class="pg-n pg-arrow" data-act="pageList" data-k="${key}" data-p="${p}"${dis ? ' disabled' : ''} aria-label="${t}">${t === 'Précédente' ? '‹' : '›'}</button>`;
     // tous les numéros visibles : pas besoin de flèches (elles reviennent quand on en cache)
-    const bar = pages <= 15 ? nums.join('') : `${arrow(cur - 1, 'Précédente', cur === 0)}${nums.join('')}${arrow(cur + 1, 'Suivante', cur === pages - 1)}`;
+    const bar = pages <= 7 ? nums.join('') : `${arrow(cur - 1, 'Précédente', cur === 0)}${nums.join('')}${arrow(cur + 1, 'Suivante', cur === pages - 1)}`;
     const count = `<small>${cur * step + 1} à ${Math.min(list.length, cur * step + step)} sur ${list.length}</small>`;
     return {
         items,

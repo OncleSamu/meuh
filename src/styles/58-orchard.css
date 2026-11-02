@@ -324,3 +324,33 @@ html.calm .o-spot.adult .o-tree > svg {
         min-height: 110px;
     }
 }
+
+/* 1.74.7 : un grand verger sur téléphone : quatre arbres par rangée */
+@media (max-width: 559px) {
+    .orchard.dense {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px 4px;
+        padding: 10px 6px 12px;
+    }
+    .orchard.dense .o-spot {
+        min-height: 104px;
+        padding: 2px 0 4px;
+    }
+    .orchard.dense .o-tree {
+        width: 64px;
+        height: 64px;
+    }
+    .orchard.dense .o-spot.dead {
+        min-height: 92px;
+    }
+    .orchard.dense .o-spot b {
+        padding: 0 5px;
+        font-size: 0.64rem;
+        border-width: 1.5px;
+    }
+    .orchard.dense .o-spot small {
+        font-size: 0.62rem;
+        text-align: center;
+        line-height: 1.15;
+    }
+}

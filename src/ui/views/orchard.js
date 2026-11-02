@@ -104,7 +104,7 @@ function renderOrchard(el) {
                 anchor: 'btn:pickTrees',
             })}${dead > 1 ? btn(`Débiter les morts (${dead})`, { act: 'fellDead', size: 'sm', icon: ['item', 'wood'] }) : ''}</div></div>`,
         ],
-        ['orchard', `<div class="orchard">${slots.map((sl, k) => spot(sl, k, nextLocked)).join('')}</div>`],
+        ['orchard', `<div class="orchard${slots.length >= 12 ? ' dense' : ''}">${slots.map((sl, k) => spot(sl, k, nextLocked)).join('')}</div>`],
         ['cards', `<div class="orchard-cards">${lifeCards()}${orchardCards()}</div>`],
         [
             'hint',

@@ -199,9 +199,10 @@ function exploits() {
             ${max ? '' : `<div class="card-side col"><span class="reward">${fmt(r.coins)}${COIN()}</span>${r.ruban ? `<span class="reward">+${r.ruban}${ico(['ui', 'ribbon'])}</span>` : ''}${btn('Réclamer', { act: 'claimAch', data: { id: a.id }, kind: can ? 'gold' : '', size: 'sm', disabled: !can })}</div>`}</div>`;
         })
         .join('');
+    // 1.74.7 : les succès d'abord, l'étagère des trophées de saison en bas
     return [
-        ['shelf', shelf],
         ['achs', `${filterChips('achs', opts, f)}${pg.top}<div class="list">${achs || empty('Rien ici pour le moment.')}</div>${pg.more}`],
+        ['shelf', `<div class="set-title">Trophées des fêtes</div>${shelf}`],
     ];
 }
 

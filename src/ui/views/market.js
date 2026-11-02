@@ -441,7 +441,7 @@ const FAMS = [
     ['fish', 'Pêche', t => t === 'fish'],
     ['other', 'Mine et forêt', t => ['gem', 'ore', 'ingot', 'material', 'junk'].includes(t)],
 ];
-const GOODS_PAGE = 24;
+const GOODS_PAGE = 15;
 function goodsGrid() {
     G.clampAllQuality();
     const all = G.sellableKeys();
@@ -454,13 +454,14 @@ function goodsGrid() {
     const sorted = all
         .filter(k => ok(ITEMS[k].type))
         .sort((a, b) => (b === hot) - (a === hot) || G.unitPrice(b, 0) * state.inventory[b] - G.unitPrice(a, 0) * state.inventory[a]);
-    const more = !ui.sel.sellMore && sorted.length > GOODS_PAGE;
-    const keys = more ? sorted.slice(0, GOODS_PAGE) : sorted;
+    // 1.74.7 : par pages de 15, comme les graines
+    const pg = page('sell:' + f, sorted, GOODS_PAGE);
+    const keys = pg.items;
     const chips =
         all.length > 12
             ? `<div class="chips-row sell-fams">${fams.map(([id, label, n]) => `<button class="pick-chip${id === f ? ' on' : ''}" data-act="sellF" data-f="${id}">${label} · ${n}</button>`).join('')}</div>`
             : '';
-    return `${chips}<div class="goods-grid">${keys
+    return `${chips}${pg.top}<div class="goods-grid">${keys
         .map(k => {
             const it = ITEMS[k],
                 n = state.inventory[k],
@@ -488,7 +489,7 @@ function goodsGrid() {
                 <span class="goods-btns">${btn(`+${fmt(one.gain)}`, { act: 'sell', data: { id: k, n: 1 }, size: 'sm' })}${btn(all.sold ? fmt(all.gain) : 'Gardé', { act: 'sell', data: { id: k, n: 0 }, kind: 'gold', size: 'sm', disabled: !all.sold })}</span>
             </div>`;
         })
-        .join('')}</div>${more ? `<button class="shop-fold" data-act="sellMore">Voir les ${sorted.length - GOODS_PAGE} autres produits</button>` : ''}`;
+        .join('')}</div>${pg.more}`;
 }
 
 // ---------------- 1.45 : la foire aux bestiaux ----------------
@@ -652,11 +653,7 @@ export function setupMarket() {
     actions({
         shopCat: (el, d) => (ui.sel.shop = d.c),
         seedShop: (el, d) => (ui.sel.seedShop = d.f),
-        sellF: (el, d) => {
-            ui.sel.sellF = d.f;
-            ui.sel.sellMore = false;
-        },
-        sellMore: () => (ui.sel.sellMore = true),
+        sellF: (el, d) => (ui.sel.sellF = d.f),
         sellTab: (el, d) => (ui.sel.sell = d.v),
         fairSell: (el, d) => G.sellToBuyer(d.id, el),
         fairDismiss: (el, d) => G.dismissBuyer(d.id),
