@@ -327,7 +327,7 @@
 
 .sslot.sold {
     background: #fff1b8;
-    animation: pulseCard 1.6s ease-in-out infinite;
+    animation: pulseCard 1.6s ease-in-out 3;
 }
 
 .sx {

@@ -16,9 +16,16 @@ export const barnCapAt = l => (l < BARN_CAPS.length ? BARN_CAPS[l] : 550 + (l - 
 // 1.44 : la peinture, la plus rare, ne monte qu'à partir du troisième agrandissement (la grange de 70 places bloquait vers le niveau 6)
 export const barnUpCost = l => ({ coins: Math.round((500 * Math.pow(1.6, l)) / 50) * 50, plank: 2 + l, nail: 2 + l, paint: Math.max(1, l) });
 
+// 1.75 : la liste des produits rangés en grange, faite une fois ; les stocks à zéro sont sautés tout de suite
+let BARN_IDS = null;
 export function barnUsed() {
+    if (!BARN_IDS) BARN_IDS = new Set(Object.keys(ITEMS).filter(inBarn));
     let n = 0;
-    for (const id in state.inventory) if (ITEMS[id] && inBarn(id)) n += state.inventory[id] || 0;
+    const inv = state.inventory;
+    for (const id in inv) {
+        const v = inv[id];
+        if (v && BARN_IDS.has(id)) n += v;
+    }
     return n;
 }
 

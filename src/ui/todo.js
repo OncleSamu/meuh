@@ -15,7 +15,7 @@ let bookCache = null;
 function bookCounts() {
     const key = JSON.stringify(state.bookTiers || {}).length + ':' + (state.bookQuarters || []).filter(Boolean).length;
     const t = Date.now();
-    if (!bookCache || bookCache.key !== key || t - bookCache.t > 3000) bookCache = { key, t, pages: G.bookClaimable(), quarters: G.quartersClaimable() };
+    if (!bookCache || bookCache.key !== key || t - bookCache.t > 10000) bookCache = { key, t, pages: G.bookClaimable(), quarters: G.quartersClaimable() };
     return bookCache;
 }
 

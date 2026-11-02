@@ -63,8 +63,16 @@ export function cropAt(i) {
 }
 const has = (l, id) => l === '*' || l.includes(id);
 // les associations de deux cultures voisines, vues depuis `me` : celles dont `me` profite (ou souffre)
+// 1.75 : ne dépend que des deux cultures et du niveau : retenu une fois calculé (le rattrapage hors-ligne en demandait des milliers)
+const PAIRS = new Map();
 export function pairAssocs(me, other) {
     if (!me || !other || me === other) return [];
+    const key = `${me}|${other}|${state.level}`;
+    let r = PAIRS.get(key);
+    if (!r) PAIRS.set(key, (r = pairAssocsRaw(me, other)));
+    return r;
+}
+function pairAssocsRaw(me, other) {
     return ASSOCS.filter(a => {
         if (a.fx === 't' || state.level < assocLvl(a)) return false;
         const ab = has(a.a, me) && has(a.b, other),

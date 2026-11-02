@@ -433,7 +433,7 @@ html.season-automne .meadow {
     box-shadow:
         0 5px 0 var(--wood-d),
         0 0 0 3px rgba(232, 54, 75, 0.6);
-    animation: pulseCard 1.6s ease-in-out infinite;
+    animation: pulseCard 1.6s ease-in-out 3;
 }
 
 .olines,
@@ -858,7 +858,11 @@ html.season-automne .meadow {
 
 .todo-chip.urgent {
     background: #ffd2c8;
-    animation: pulseCard 1.4s ease-in-out infinite;
+    animation: pulseCard 1.4s ease-in-out 3;
+    /* 1.75 : trois battements puis un liseré fixe (une pulsation sans fin redessinait la bande à chaque image) */
+    box-shadow:
+        0 2px 0 var(--wood-d),
+        0 0 0 3px rgba(232, 54, 75, 0.35);
 }
 
 .oline span small {

@@ -14,7 +14,7 @@ import { addPhoto } from './style.js';
 import { ensureQuests } from './orders.js';
 import { ensureStall } from './stall.js';
 import { resetPlot, harvestPlot, plotRate } from './farm.js';
-import { barnBlocked } from './barn.js';
+import { barnBlocked, barnSpace } from './barn.js';
 import { mSlotsBonus } from './buildings.js';
 
 // ---------------- coûts en pièces et matériaux ----------------
@@ -149,6 +149,8 @@ export function handTick() {
 export function handOffline(elapsed) {
     const zone = handZone();
     let crops = 0;
+    // 1.75 : la place en grange, comptée une fois puis tenue à jour (la recompter à chaque récolte coûtait cher)
+    let space = barnSpace();
     for (const i of zone) {
         const p = state.grid[i];
         if (p.pest) continue;
@@ -161,18 +163,20 @@ export function handOffline(elapsed) {
             p.isWatered = true;
             const req = ITEMS[p.itemId].time / speedMult();
             if (!p.isReady) {
-                const need = (req - p.growProgress) / plotRate(p, i);
+                const rate = plotRate(p, i);
+                const need = (req - p.growProgress) / rate;
                 if (t < need) {
-                    p.growProgress += t * plotRate(p, i);
+                    p.growProgress += t * rate;
                     break;
                 }
                 t -= need;
                 p.isReady = true;
                 p.growProgress = req;
             }
-            if (ITEMS[p.itemId].type !== 'crop' || barnBlocked(true)) break;
+            if (ITEMS[p.itemId].type !== 'crop' || space <= 0) break;
             const r = harvestPlot(p);
             crops += r.qty;
+            space -= r.qty;
             addXp(r.item.xp);
         }
     }

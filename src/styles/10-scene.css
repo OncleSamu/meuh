@@ -398,3 +398,24 @@ html.season-printemps #weather .petals,
 html.butterflies #weather .flutter {
     animation-play-state: running;
 }
+
+/* 1.75 : les couches de météo éteintes ne sont plus dessinées du tout (elles restaient composées à l'écran, invisibles) */
+#weather > div {
+    visibility: hidden;
+    transition:
+        opacity 1.5s,
+        visibility 0s 1.5s;
+}
+html.w-rain #weather .rain,
+html.w-storm #weather .rain,
+html.w-snow #weather .snow,
+html.w-heat #weather .heat,
+html.w-rainbow #weather .rainbow,
+html.season-automne #weather .leaves,
+html.season-printemps #weather .petals,
+html.butterflies #weather .flutter {
+    visibility: visible;
+    transition:
+        opacity 1.5s,
+        visibility 0s;
+}
