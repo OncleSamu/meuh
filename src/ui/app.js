@@ -167,7 +167,9 @@ function renderHud() {
     const req = G.xpNeed();
     const p = Math.min(1, state.xp / req);
     // 1.73 : au niveau maximum, la barre dit la renommée en mots (la jauge montre l'avancée vers l'étoile suivante)
-    const xpText = state.level >= MAX_LEVEL ? `Renommée ${state.renown || 0}` : `${fmtK(state.xp)} / ${fmtK(req)}`;
+    // 1.79 : la réserve pleine se voit (objectifs du niveau à faire)
+    const full = G.xpReserveFull();
+    const xpText = state.level >= MAX_LEVEL ? `Renommée ${state.renown || 0}` : full ? 'Réserve pleine' : `${fmtK(state.xp)} / ${fmtK(req)}`;
     const used = G.barnUsed(),
         cap = G.barnCap();
     const menuN = ui.counts.menu || 0;
@@ -175,7 +177,7 @@ function renderHud() {
         byId('hud'),
         `<button class="lvl${state.legend ? ' legend' : ''}" data-act="open" data-sheet="levels" aria-label="Niveau ${state.level}${state.level >= MAX_LEVEL ? `, renommée ${state.renown || 0}, ${Math.floor(p * 100)} % vers l’étoile suivante` : ''}, voir les niveaux" title="${state.level >= MAX_LEVEL ? `Renommée : ${state.renown || 0} étoile(s), ${Math.floor(p * 100)} % vers la suivante` : ''}">
             <span class="lvl-star">${ico(['ui', 'star'])}<b${state.level > 9 ? ' class="two"' : ''}>${state.level}</b></span>
-            <span class="xp-bar${state.level >= MAX_LEVEL ? ' renown' : ''}"><i style="width:${(p * 100).toFixed(1)}%"></i><small>${xpText}</small></span>
+            <span class="xp-bar${state.level >= MAX_LEVEL ? ' renown' : ''}${full ? ' full' : ''}"><i style="width:${(p * 100).toFixed(1)}%"></i><small>${xpText}</small></span>
         </button>
         <span class="pill coins" id="coin-pill">${ico(['ui', 'coin'])}<b id="ui-money"></b></span>
         <button class="pill barn${used >= cap ? ' full' : used >= cap * 0.85 ? ' near' : ''}" id="barn-pill" data-act="open" data-sheet="barn" aria-label="Grange">${ico(['ui', 'barn'])}<b>${used >= 1e4 || cap >= 1e4 ? `${fmt(used)}/${fmt(cap)}` : `${used}/${cap}`}</b></button>

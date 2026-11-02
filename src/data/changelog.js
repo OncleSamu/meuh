@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.79',
+        title: "La réserve d'expérience",
+        date: '3 novembre 2026',
+        items: [
+            "Objectifs du niveau pas faits, l'expérience se garde jusqu'à un quart du niveau suivant",
+            'La barre devient dorée « Réserve pleine »',
+            'Le guide explique les objectifs du niveau',
+        ],
+    },
+    {
         v: '1.78.1',
         title: 'Correctif',
         date: '2 novembre 2026',

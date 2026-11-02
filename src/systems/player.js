@@ -29,6 +29,7 @@ import { ACHIEVEMENTS, SKILLS } from '../data/meta.js';
 import { trackDayEarn, record } from './book.js';
 import { renownStar } from './mastery.js';
 import { addPhoto } from './style.js';
+import { tip } from './tips.js';
 import { ensureQuests } from './orders.js';
 import { STALL_LEVELS } from './stall.js';
 
@@ -177,6 +178,10 @@ export function addXp(amount, at) {
     checkLevel();
 }
 
+// 1.79 : la réserve d'expérience quand les objectifs du niveau ne sont pas faits : la barre pleine, plus 25 % du niveau suivant
+export const XP_RESERVE = 0.25;
+export const xpCap = (lvl = state.level) => getXpReq(lvl) + Math.floor(XP_RESERVE * getXpReq(lvl + 1));
+export const xpReserveFull = () => state.level < MAX_LEVEL && state.xp >= xpCap();
 // 1.61 : le passage de niveau attend que les objectifs du niveau soient faits (l'expérience, elle, continue de monter)
 export function checkLevel() {
     const start = state.level;
@@ -185,6 +190,11 @@ export function checkLevel() {
         state.xp -= req;
         state.level++;
         req = getXpReq(state.level);
+    }
+    // 1.79 : objectifs pas faits, la réserve d'expérience s'arrête à 25 % du niveau suivant
+    if (state.level < MAX_LEVEL && state.xp > xpCap()) {
+        state.xp = xpCap();
+        if (state.tutorial.done) tip('xpReserve');
     }
     // au niveau maximum, l'expérience se change en étoiles de renommée
     if (state.level >= MAX_LEVEL)

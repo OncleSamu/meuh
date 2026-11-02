@@ -216,6 +216,10 @@ export const GUIDE_PAGES = [
                 t: 'Presque tout rapporte de l’expérience : récolter, fabriquer, livrer, rénover le village, pêcher, aider un villageois. Les commandes et les chantiers sont les plus généreux.',
             },
             {
+                h: 'Les objectifs du niveau et la réserve',
+                t: 'Chaque niveau a quelques objectifs (la bannière au-dessus du champ, ou Menu › Les niveaux). La barre pleine, le niveau suivant attend qu’ils soient faits. En attendant, l’expérience se met de côté jusqu’à un quart du niveau suivant (la barre devient dorée : « Réserve pleine ») ; au-delà, elle ne se garde pas. Les objectifs faits, vous passez de niveau avec cette avance.',
+            },
+            {
                 h: 'Ce que donne un niveau',
                 b: [
                     'Un point de compétence à placer dans Progrès.',

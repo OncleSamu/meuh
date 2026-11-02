@@ -582,3 +582,13 @@ html.calm .view.enter-f {
         animation: none;
     }
 }
+
+/* 1.79 : la réserve d'expérience pleine (objectifs du niveau à faire) */
+.xp-bar.full {
+    box-shadow:
+        inset 0 3px 0 rgba(0, 0, 0, 0.18),
+        0 0 0 2px var(--gold);
+}
+.xp-bar.full > i {
+    background: linear-gradient(#ffe48a 0 22%, var(--gold) 22%, #e0a92a);
+}

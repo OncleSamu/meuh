@@ -251,7 +251,7 @@ function nextGoal() {
         const ready = state.xp >= G.getXpReq(state.level);
         return {
             icon: G.lvGoalIcon(todo),
-            text: `${ready ? `Niveau ${state.level + 1} prêt ! ` : 'Objectif du niveau : '}${G.lvGoalText(todo)}`,
+            text: `${G.xpReserveFull() ? 'Réserve d’expérience pleine ! ' : ready ? `Niveau ${state.level + 1} prêt ! ` : 'Objectif du niveau : '}${G.lvGoalText(todo)}`,
             go: 'sheet:goals',
             urgent: ready,
         };

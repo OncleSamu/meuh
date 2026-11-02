@@ -137,6 +137,12 @@ export const TIPS = {
         title: 'Le talent de l’ami',
         text: 'À cinq cœurs, un villageois te prête son talent pour toujours : les machines de son métier vont plus vite et leurs produits se vendent mieux. Victor soigne moins cher, Morgane fait mieux payer les bateaux, Octave fait vieillir la cave plus vite. Finis son histoire, et son talent double. Un bon voisin, c’est une richesse, disait mon père. Il disait ça surtout quand il empruntait la charrette.',
     },
+    // 1.79
+    xpReserve: {
+        icon: ['ui', 'xp'],
+        title: 'La réserve d’expérience est pleine',
+        text: 'Ta barre d’expérience est pleine et tu as mis un quart du niveau suivant de côté : c’est le maximum. Termine les objectifs du niveau (touche la bannière au-dessus du champ) et tu passeras au suivant avec cette avance. Le reste, tant que les objectifs attendent, ne se garde pas. Comme disait ton grand-père : on ne remplit pas un seau percé.',
+    },
     // 1.78
     birthLimit: {
         icon: ['ui', 'heart'],
