@@ -541,3 +541,44 @@ body.wide #tabs {
     padding-left: 8px;
     letter-spacing: -0.01em;
 }
+
+/* 1.75 : les transitions entre volets et onglets (aucune en « Animations réduites ») */
+.view.enter-r {
+    animation: enterR 0.18s ease-out;
+}
+.view.enter-l {
+    animation: enterL 0.18s ease-out;
+}
+.view.enter-f {
+    animation: enterF 0.16s ease-out;
+}
+@keyframes enterR {
+    from {
+        opacity: 0.4;
+        transform: translateX(22px);
+    }
+}
+@keyframes enterL {
+    from {
+        opacity: 0.4;
+        transform: translateX(-22px);
+    }
+}
+@keyframes enterF {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+html.calm .view.enter-r,
+html.calm .view.enter-l,
+html.calm .view.enter-f {
+    animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    .view.enter-r,
+    .view.enter-l,
+    .view.enter-f {
+        animation: none;
+    }
+}

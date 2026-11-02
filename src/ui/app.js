@@ -138,6 +138,10 @@ export function go(path, opts = {}) {
         byId('view-farm').scrollTop = 0;
         return;
     }
+    // 1.75 : un court glissement entre les volets (vers la gauche ou la droite selon leur ordre), un fondu entre les onglets
+    const subs = tabDef(tab).subs || [];
+    const idx = s => subs.findIndex(x => x[0] === s);
+    const dir = ui.tab !== tab ? 'f' : idx(sub || ui.sub[tab]) > idx(ui.sub[tab]) ? 'r' : 'l';
     ui.tab = tab;
     if (sub) ui.sub[tab] = sub;
     state.settings.lastView = currentPath();
@@ -147,6 +151,15 @@ export function go(path, opts = {}) {
         if (v) v.scrollTop = 0;
     }
     refresh();
+    if (changed && !state.settings.calm) {
+        const el = viewEl(currentPath());
+        if (el) {
+            el.classList.remove('enter-f', 'enter-r', 'enter-l');
+            void el.offsetWidth;
+            el.classList.add('enter-' + dir);
+            setTimeout(() => el.classList.remove('enter-' + dir), 260);
+        }
+    }
 }
 
 // ---------------- en-tête ----------------
