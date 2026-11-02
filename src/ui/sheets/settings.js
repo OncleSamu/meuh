@@ -77,6 +77,16 @@ function mainPage() {
                                 'Pur décor : vos récoltes de nuit remplissent le bocal',
                             ) +
                             navRow('Thème', 'theme', null, null, `<b>${THEMES[s.theme || 'light']}</b>`) +
+                            (G.birthsOpen()
+                                ? navRow(
+                                      'Naissances au pré',
+                                      'birthLimit',
+                                      null,
+                                      null,
+                                      `<b>${G.birthLimit() ? `${G.birthLimit()} petit${G.birthLimit() > 1 ? 's' : ''}` : 'Sans limite'}</b>`,
+                                      'Après ce nombre de petits, les naissances d’un pré s’éteignent seules',
+                                  )
+                                : '') +
                             navRow('Taille du texte', 'textSize', null, null, `<b>${TEXT_SIZES[s.textSize] || TEXT_SIZES[0]}</b>`) +
                             toggle('Contraste renforcé', !!s.contrast, 'setting', { key: 'contrast' }) +
                             (s.hints && Object.keys(s.hints).length
@@ -258,6 +268,10 @@ export function setupSettings() {
             SoundEngine.unlock();
             SoundEngine.setVolumes();
             return QUIET;
+        },
+        birthLimit: () => {
+            const L = G.BIRTH_LIMITS;
+            G.setBirthLimit(L[(L.indexOf(G.birthLimit()) + 1) % L.length]);
         },
         theme: () => {
             const order = ['light', 'dark', 'auto'];

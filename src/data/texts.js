@@ -141,7 +141,7 @@ export const TIPS = {
     birthLimit: {
         icon: ['ui', 'heart'],
         title: 'Juste ce qu’il faut de petits',
-        text: 'Sous l’interrupteur des naissances, choisis combien de petits tu veux dans ce pré. Le compte atteint, les naissances s’arrêtent toutes seules : plus de pré qui déborde pendant que tu dors. Ta tante Lucette avait dit « deux lapins, pas plus ». Elle en a eu quarante.',
+        text: 'Dans les Réglages, onglet Confort, « Naissances au pré » : choisis combien de petits tu veux par pré. Le compte atteint, les naissances s’arrêtent toutes seules : plus de pré qui déborde pendant que tu dors. Ta tante Lucette avait dit « deux lapins, pas plus ». Elle en a eu quarante.',
     },
     // 1.77
     legend177: {

@@ -374,22 +374,3 @@
     gap: 8px;
     margin-top: 8px;
 }
-
-/* 1.78 : le nombre de petits voulus, sous l'interrupteur des naissances */
-.birth-limit {
-    align-items: center;
-    margin-top: 6px;
-    padding: 6px 8px;
-    background: var(--paper-l, #fff7e0);
-    border: 2px solid var(--ink);
-    border-radius: 12px;
-}
-.birth-limit > small {
-    font-weight: 800;
-    font-size: 0.74rem;
-    margin-right: 2px;
-}
-.birth-limit .pick-chip {
-    padding: 3px 10px;
-    min-height: 0;
-}

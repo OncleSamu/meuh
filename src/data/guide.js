@@ -804,7 +804,7 @@ export const GUIDE_PAGES = [
                 h: `Les naissances au pré (niveau ${BIRTHS.lvl})`,
                 b: [
                     'Chaque pré a son interrupteur « Naissances », éteint au départ : allumez-le dans les prés où vous voulez des petits.',
-                    'Allumées, elles proposent un « Nombre de petits » (1, 3, 5, 10 ou sans limite) : une fois ce nombre atteint, les naissances du pré s’éteignent seules ; les rallumer repart pour le même nombre.',
+                    'Réglages › Confort › « Naissances au pré » : 1, 3, 5, 10 petits ou sans limite. Une fois ce nombre atteint dans un pré, ses naissances s’éteignent seules ; les rallumer repart pour le même nombre.',
                     `Deux adultes en forme de la même espèce y ont parfois un petit, même jeu fermé : toutes les ${BIRTHS.minH} heures pour les petites bêtes, jusqu’à ${BIRTHS.maxH} heures pour les grosses. Il faut une place libre dans le pré.`,
                     'Le petit hérite de ses parents, mais la nature ramène souvent un bon gène vers la moyenne, sans mutation. Deux parents de la même race fixée lui transmettent leur race.',
                     'Chevaux et abeilles n’ont pas de naissances au pré : les poulains naissent au haras et au labo.',

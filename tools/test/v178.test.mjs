@@ -24,7 +24,7 @@ function farm(n) {
 test('1.78 : 3 petits voulus, puis les naissances s’éteignent', () => {
     const p = farm(2);
     G.toggleBirths(0);
-    assert.ok(G.setBirthLimit(0, 3));
+    assert.ok(G.setBirthLimit(3));
     assert.equal(G.birthsLeft(0), 3);
     G.birthsTick();
     let born = 0;
@@ -42,7 +42,7 @@ test('1.78 : 3 petits voulus, puis les naissances s’éteignent', () => {
 
 test('1.78 : sans limite par défaut, et une limite inconnue est refusée', () => {
     farm(2);
-    assert.equal(G.birthLimit(0), 0);
+    assert.equal(G.birthLimit(), 0);
     assert.equal(G.birthsLeft(0), null);
-    assert.equal(G.setBirthLimit(0, 7), false);
+    assert.equal(G.setBirthLimit(7), false);
 });

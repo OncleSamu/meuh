@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.78.1',
+        title: 'Correctif',
+        date: '2 novembre 2026',
+        items: ['Le nombre de petits passe dans Réglages › Confort › Naissances au pré', 'Un seul réglage pour tous les prés'],
+    },
+    {
         v: '1.78',
         title: "Juste ce qu'il faut de petits",
         date: '2 novembre 2026',

@@ -38,7 +38,7 @@ export function toggleBirths(k) {
     // le compte à rebours repart de zéro à chaque allumage ; 1.78 : le nombre de petits voulus aussi
     p.nb = {};
     if (p.births) {
-        p.left = p.limit || 0;
+        p.left = birthLimit();
         tip('birthLimit');
     }
     toast(
@@ -51,18 +51,22 @@ export function toggleBirths(k) {
     return true;
 }
 
-// 1.78 : combien de petits on veut dans ce pré avant que les naissances s'éteignent seules (0 : sans limite)
-export const BIRTH_LIMITS = [1, 3, 5, 10, 0];
-export function setBirthLimit(k, n) {
-    const p = penOf(k);
-    if (!p || !BIRTH_LIMITS.includes(n)) return false;
-    p.limit = n;
-    p.left = n;
+// 1.78 : combien de petits on veut par pré avant que ses naissances s'éteignent seules (0 : sans limite).
+// 1.78.1 : un seul réglage pour tous les prés (Réglages › Confort) ; chaque pré garde son propre compte.
+export const BIRTH_LIMITS = [0, 1, 3, 5, 10];
+export const birthLimit = () => (state.settings && state.settings.birthLimit) || 0;
+export function setBirthLimit(n) {
+    if (!BIRTH_LIMITS.includes(n)) return false;
+    state.settings.birthLimit = n;
+    // les prés déjà allumés repartent pour ce nombre
+    penKeys().forEach(k => {
+        const p = penOf(k);
+        if (p && p.births) p.left = n;
+    });
     changed('animals');
     return true;
 }
-export const birthLimit = k => (penOf(k) && penOf(k).limit) || 0;
-export const birthsLeft = k => (penOf(k) && penOf(k).limit ? penOf(k).left || 0 : null);
+export const birthsLeft = k => (birthLimit() && penOf(k) ? penOf(k).left || 0 : null);
 
 // dans combien de temps (ms) la prochaine naissance possible du pré, ou null
 export function nextBirthIn(k) {
@@ -127,12 +131,12 @@ export function birthsTick(max = BIRTHS.catchUp) {
         for (const type in pairs) {
             if (!p.nb[type]) p.nb[type] = t + birthHours(type) * 3600000;
             let n = 0;
-            while (t >= p.nb[type] && n < max && pastureFree(k) > 0 && p.births && (!p.limit || p.left > 0)) {
+            while (t >= p.nb[type] && n < max && pastureFree(k) > 0 && p.births && (!birthLimit() || p.left > 0)) {
                 born.push(bornInPasture(k, type, pairs[type]));
                 p.nb[type] += birthHours(type) * 3600000;
                 n++;
                 // 1.78 : le nombre voulu est atteint, les naissances s'éteignent
-                if (p.limit) {
+                if (birthLimit()) {
                     p.left = Math.max(0, (p.left || 0) - 1);
                     if (!p.left) {
                         p.births = false;
