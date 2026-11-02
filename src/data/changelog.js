@@ -1,6 +1,23 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.74',
+        title: "S'y retrouver",
+        date: '2 novembre 2026',
+        items: [
+            'Chaque volet garde son nom, dans une bande qui défile',
+            'Le menu en tuiles, en trois groupes',
+            'Un point doré pour ce qui est à faire, une pastille rouge seulement quand ça presse',
+            '« Renommée » au niveau 64, la grange garde son icône',
+            'Brasserie, Cave, Comice, Labo et Village en onglets',
+            "Sortir d'un coup les lots finis de la cave",
+            'Graines du marché sur une ligne, atelier sur trois colonnes, vente en lignes, un pré à la fois',
+            "Les astuces se ferment d'un « Compris »",
+            'La liste « à faire » ouvre le bon volet',
+            'La brasserie passe de 10 écrans à 3, la cave de 9 à 4, le village de 5 à 2',
+        ],
+    },
+    {
         v: '1.73',
         title: 'Le tableau des commandes',
         date: '2 novembre 2026',

@@ -127,7 +127,16 @@ export const GUIDE_PAGES = [
                     'L’étoile et la barre bleue : votre niveau et votre expérience.',
                     'Les pièces : la monnaie du jeu.',
                     'La grange : votre stock et sa place. Touchez-la pour tout voir.',
-                    'Le menu : progrès, livre de la ferme, carnets, niveaux, statistiques, succès, almanach, guide, réglages.',
+                    'Le menu ☰ : des tuiles en trois groupes, Ma ferme (progrès, niveaux, bonus, statistiques), Collections (livre, carnets, coupe, trophées, créations) et Aide et réglages (guide, almanach, réglages).',
+                ],
+            },
+            {
+                h: 'S’y retrouver (1.74)',
+                b: [
+                    'Chaque volet garde son nom ; quand ils ne tiennent pas, la bande défile (un fondu montre qu’il en reste).',
+                    'Un point doré sur un onglet : il y a quelque chose à faire. Une pastille rouge chiffrée : ça presse (grange pleine, citerne vide, poêle éteint, anniversaire…).',
+                    'Les pages longues ont leurs onglets : Brasserie, Cave, Comice, Labo et Village.',
+                    'Une astuce grise se ferme d’un « Compris » ; Réglages › Réafficher les astuces les fait revenir.',
                 ],
             },
             {
@@ -1476,7 +1485,10 @@ export const GUIDE_PAGES = [
         go: 'village/village',
         intro: 'Le village se reconstruit chapitre après chapitre ; ses habitants et ses voisins font la vie de la ferme.',
         secs: [
-            { h: 'Où le trouver', t: 'Onglet Village › sous-onglet Village : la carte de l’histoire, les villageois, les voisins, le concours et le domaine.' },
+            {
+                h: 'Où le trouver',
+                t: 'Onglet Village › sous-onglet Village, en trois onglets : Histoire (la carte, les chantiers et le domaine), Villageois et Concours.',
+            },
             {
                 h: 'L’histoire',
                 b: [
@@ -1489,7 +1501,7 @@ export const GUIDE_PAGES = [
                 h: 'Les villageois et l’amitié',
                 b: [
                     'Elle monte quand vous livrez leurs commandes, leur servez une boisson au comptoir ou leur faites un cadeau.',
-                    'La liste est une ligne repliable (comme l’Agenda) : les anniversaires qui viennent, un tri (tous, cadeau possible, histoire) et une ligne courte par villageois. Touchez-le pour sa fiche : Amitié, Cadeau, Goûts, Histoire.',
+                    'Onglet Villageois : les anniversaires qui viennent, un tri (tous, cadeau possible, histoire) et une ligne courte par villageois. Touchez-le pour sa fiche : Amitié, Cadeau, Goûts, Histoire.',
                     'Un cadeau par villageois et par jour de jeu (environ 5 minutes réelles). Il aime certains produits : 1 point, 3 si c’est un produit fabriqué. Il en adore un seul, à deviner : 5 points (à 2 cœurs, sa fiche dit de quelle machine il sort). Le reste, c’est « bof » : rien.',
                     'Chaque villageois a son anniversaire (sa fiche, et une ligne en haut de la liste) : ce jour-là, un cadeau compte triple, et son produit adoré lui vaut un merci en pièces.',
                     'Cinq cœurs en tout. Chaque cœur rapporte des pièces, parfois des graines ou une recette que le villageois vous apprend ; le cinquième fait de lui un ami pour la vie.',
