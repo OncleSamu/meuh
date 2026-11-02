@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.74.2',
+        title: 'Statistiques et réglages',
+        date: '2 novembre 2026',
+        items: [
+            'Statistiques en onglets',
+            '26 chiffres rangés par coin, avec icônes',
+            '8 produits qui rapportent le plus, noms en entier',
+            'Record de la meilleure journée',
+            'Réglages en onglets',
+            'Texte de la serre raccourci',
+        ],
+    },
+    {
         v: '1.74.1',
         title: 'Pages plus courtes',
         date: '2 novembre 2026',
