@@ -269,7 +269,7 @@ function renderBrew(el) {
         [
             ['make', 'Brasser', null, ready],
             ['mine', G.meadOpen() ? 'Boissons' : 'Bières', null, 0],
-            ['orders', 'Commandes', null, G.beerOrdersReady()],
+            ['orders', 'Clients', null, G.beerOrdersReady()],
             ['book', 'Livre', null, G.beerBookClaimable() ? 1 : 0],
         ],
         'make',

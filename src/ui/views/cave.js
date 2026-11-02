@@ -296,7 +296,7 @@ function renderCave(el) {
         [
             ['lots', 'Lots', null, needCare + finished],
             ['sales', 'Réserve', null, auction ? 1 : 0],
-            ['orders', 'Commandes', null, G.caveOrdersReady()],
+            ['orders', 'Clients', null, G.caveOrdersReady()],
             ['gear', 'Matériel', null, 0],
         ],
         'lots',
