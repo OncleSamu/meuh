@@ -198,3 +198,15 @@
     -webkit-mask-image: linear-gradient(to right, #000 86%, transparent);
     mask-image: linear-gradient(to right, #000 86%, transparent);
 }
+
+/* 1.74 : une phrase d'état à la place d'un gros bouton grisé */
+.state-line {
+    margin: 8px 0 0;
+    padding: 8px 10px;
+    border: 2px dashed rgba(58, 38, 24, 0.35);
+    border-radius: 12px;
+    text-align: center;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--ink-l, #7a5a3a);
+}

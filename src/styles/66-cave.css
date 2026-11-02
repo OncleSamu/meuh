@@ -678,3 +678,40 @@
 .defi-card.offer .card-head .card-main {
     text-align: left;
 }
+
+/* 1.74 : sur téléphone, des cartes de lot plus serrées (le nom sur toute la largeur, l'icône plus petite) */
+@media (max-width: 559px) {
+    .cave-grid {
+        gap: 8px;
+    }
+    .cave-slot {
+        min-height: 0;
+        padding: 8px;
+        gap: 4px;
+    }
+    .cs-ico {
+        width: 32px;
+        height: 32px;
+    }
+    .cs-top {
+        gap: 6px;
+        align-items: flex-start;
+    }
+    .cs-name {
+        font-size: 0.82rem;
+        line-height: 1.15;
+    }
+    .cs-rank {
+        font-size: 0.72rem;
+    }
+    .cs-value {
+        font-size: 0.95rem;
+    }
+    .cave-slot .card-sub {
+        font-size: 0.72rem;
+    }
+    .cs-actions .btn {
+        padding: 4px 6px;
+        min-height: 28px;
+    }
+}

@@ -61,7 +61,10 @@ defineLive('vat', i => {
 });
 function vatsHtml() {
     const B = state.brew;
-    return `<div class="brew-vats">${B.vats
+    // 1.74 : plusieurs cuves prêtes : un seul bouton pour tout mettre en bouteille
+    const nReady = B.vats.filter(v => G.vatReady(v)).length;
+    const all = nReady > 1 ? btn(`Tout mettre en bouteille (${nReady})`, { act: 'collectAllVats', kind: 'green', wide: true }) : '';
+    return `${all}<div class="brew-vats">${B.vats
         .map((v, i) => {
             if (!v) return `<div class="brew-vat empty">${ico(['ui', 'vat'])}<span>Cuve libre</span></div>`;
             const b = B.beers[v.bid];
@@ -149,7 +152,12 @@ function composerHtml() {
         }
         <div class="bc-row"><span class="bc-label">Ingrédients</span><div class="brew-slots">${slots}</div></div>${more}
         ${preview}
-        ${btn(pv.freeVat < 0 ? 'Toutes les cuves sont pleines' : 'Brasser', { act: 'brew', kind: 'green', wide: true, size: 'lg', disabled: !can, icon: mead ? ['item', 'mead'] : ['ui', 'beer'] })}</div>`;
+        ${
+            // 1.74 : quand on ne peut pas brasser, une phrase dit pourquoi (plus de gros bouton gris)
+            can
+                ? btn('Brasser', { act: 'brew', kind: 'green', wide: true, size: 'lg', icon: mead ? ['item', 'mead'] : ['ui', 'beer'] })
+                : `<p class="state-line">${pv.freeVat < 0 ? 'Toutes les cuves sont pleines : mettez une bière en bouteille.' : !pv.ings.length ? 'Choisissez au moins un ingrédient.' : `Il manque : ${pv.miss.map(([id, n]) => `${n - G.ingHave(id)} ${G.ingName(id).toLowerCase()}`).join(', ')}.`}</p>`
+        }</div>`;
 }
 
 // ---------------- mes bières ----------------
@@ -359,6 +367,7 @@ export function setupBrewery() {
         beerOrder: (el, d) => G.deliverBeerOrder(d.id, null, el),
         beerDrop: (el, d) => G.dismissBeerOrder(d.id),
         collectVat: (el, d) => G.collectVat(+d.i, el),
+        collectAllVats: el => state.brew.vats.forEach((v, i) => G.vatReady(v) && G.collectVat(i, el)),
         sellBeer: (el, d) => G.sellBeer(d.id, +d.n, el),
         claimBeerBook: el => G.claimBeerBook(el),
     });
