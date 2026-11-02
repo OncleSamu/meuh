@@ -1010,3 +1010,31 @@ body {
     min-width: 34px;
     height: 34px;
 }
+
+/* 1.74.5 : la pastille d'un onglet ne chevauche plus son nom : à côté du nom dans la bande des volets,
+   petite et dans le coin du bouton ailleurs */
+.seg > button .dot {
+    top: -7px;
+    right: -3px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-width: 1.5px;
+    border-radius: 8px;
+    font-size: 0.62rem;
+}
+.seg > button .dot.soft,
+.subnav-row .seg > button .dot.soft {
+    top: 5px;
+    right: 5px;
+    width: 8px;
+    min-width: 8px;
+    height: 8px;
+    padding: 0;
+}
+.subnav-row.strip .seg > button .dot,
+.subnav-row.strip .seg > button .dot.soft {
+    position: static;
+    flex: none;
+    margin-left: 1px;
+}

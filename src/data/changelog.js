@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.74.5',
+        title: 'Pastilles propres',
+        date: '2 novembre 2026',
+        items: [
+            'Dans la bande des volets, la pastille se range à côté du nom',
+            'Dans les onglets, elle est plus petite et posée sur le coin du bouton, sans cacher le nom',
+        ],
+    },
+    {
         v: '1.74.4',
         title: 'Correctif',
         date: '2 novembre 2026',
