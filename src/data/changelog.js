@@ -1,6 +1,24 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.74.1',
+        title: 'Pages plus courtes',
+        date: '2 novembre 2026',
+        items: [
+            'Coupe en onglets',
+            'Maison en onglets',
+            'Progrès en onglets',
+            'Exploits plus serrés',
+            'Graines par pages de 15',
+            'Boissons par pages de 10',
+            "L'étal résume les ventes finies",
+            "Phrase d'état à la brasserie",
+            "Tout mettre en bouteille d'un coup",
+            'Lots de cave serrés',
+            'Verger plus dense',
+        ],
+    },
+    {
         v: '1.74',
         title: "S'y retrouver",
         date: '2 novembre 2026',
