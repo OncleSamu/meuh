@@ -1213,6 +1213,10 @@ export const GUIDE_PAGES = [
                 t: 'Œufs, lait, laine… sortent normaux tant que la bête est ordinaire. La qualité vient de l’élevage au labo : une bête née de bons croisements, avec les caractères « riche », « doux » et « arôme » au-dessus de la normale, donne de l’argent et de l’or. Plus elle les dépasse, plus c’est souvent.',
             },
             {
+                h: 'À la pêche (1.80)',
+                t: 'À la canne, la taille fait la qualité : une petite prise est normale, une belle prise en argent, un trophée en or. Un ferrage « Parfait ! » la monte d’un rang (une belle prise parfaite sort en or). Le poisson doré sort toujours en or. Dans les nasses et le filet de mer, un peu d’argent et d’or au hasard, un peu plus avec un appât dans la nasse.',
+            },
+            {
                 h: 'À l’atelier (plats et produits fabriqués)',
                 t: 'Un plat prend la qualité de ses ingrédients. Allumez « Meilleurs ingrédients d’abord » (Atelier › Production, dès que le labo est ouvert) : le jeu prend vos plus beaux ingrédients. On fait la moyenne des ingrédients (argent 1 point, or 2, platine 3, diamant 4) : à partir de 1,2 le plat sort en argent, à partir de 1,8 en or. Une variété savoureuse ajoute des points. Une étoile sur la recette annonce le rang du lot avant de le lancer.',
             },
@@ -1261,6 +1265,10 @@ export const GUIDE_PAGES = [
                 t: 'Il faut des bêtes de bonne race pour avoir de l’or (labo), puis la maîtrise du produit (œuf, lait…) pour monter une partie de cet or en platine et en diamant.',
             },
             {
+                h: 'À la pêche',
+                t: 'Chaque poisson a sa maîtrise (1.80) : 30, 250 et 1 000 prises, puis 2 500 et 6 000. Maîtrisé en or, un poisson pris en or (trophée, belle prise parfaite, poisson doré) peut monter en platine, puis en diamant au rang platine. Les plats de poisson suivent alors leurs poissons, comme tous les plats.',
+            },
+            {
                 h: 'À l’atelier : les plats',
                 t: 'Un plat ne monte pas tout seul : il faut des ingrédients de ce rang, avec « Meilleurs ingrédients d’abord ». Moyenne de 2,5 : platine ; moyenne de 3,5 : diamant (les ingrédients sont presque tous en diamant). Exemple, la baguette en diamant : du blé en diamant (maîtrise du blé), puis 3 blés en diamant (ou 2 en diamant et 1 en platine) font une farine en diamant, puis 2 farines en diamant (ou 1 en diamant et 1 en platine) font la baguette. Un plat à plusieurs étages se prépare donc étage par étage.',
             },
@@ -1298,7 +1306,7 @@ export const GUIDE_PAGES = [
         secs: [
             {
                 h: 'Les rangs',
-                t: 'Bronze, argent, or, puis platine et diamant. Les seuils dépendent du type : cultures 300 / 2 500 / 10 000, puis 25 000 et 60 000 ; bêtes 200 / 1 500 / 6 000, puis 15 000 et 36 000 ; produits fabriqués 50 / 400 / 2 000, puis 5 000 et 12 000.',
+                t: 'Bronze, argent, or, puis platine et diamant. Les seuils dépendent du type : cultures 300 / 2 500 / 10 000, puis 25 000 et 60 000 ; bêtes 200 / 1 500 / 6 000, puis 15 000 et 36 000 ; produits fabriqués 50 / 400 / 2 000, puis 5 000 et 12 000 ; poissons (1.80) 30 / 250 / 1 000, puis 2 500 et 6 000.',
             },
             {
                 h: 'Les avantages',

@@ -9,9 +9,13 @@ import { fmt, qtyName, round5 } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly } from '../core/bus.js';
 import { NATURE } from '../data/nature.js';
 import { FISH } from '../data/meta.js';
+import { ITEMS } from '../data/items.js';
+import { tip } from './tips.js';
 import { RIVALS } from '../data/village.js';
 import { DAYS_PER_SEASON } from '../data/world.js';
-import { SPOTS, BAITS, BAIT_MULT, WORMS, FLY_CRAFT, RODS, TRAPS, MARCEL, SALMON_RUN, FISH_CONTEST, SIZES, LOG_STEPS } from '../data/fishing.js';
+import { SPOTS, BAITS, BAIT_MULT, WORMS, FLY_CRAFT, RODS, TRAPS, MARCEL, SALMON_RUN, FISH_CONTEST, SIZES, LOG_STEPS, FISH_QUALITY } from '../data/fishing.js';
+import { addQuality, ascend } from './farm.js';
+import { addMastery } from './mastery.js';
 import { spend, addXp, earn, rank } from './player.js';
 import { collect } from './book.js';
 import { season, isNight, dayInSeason } from './world.js';
@@ -40,6 +44,15 @@ export function ensurePond() {
     if (!p.wormsAt) p.wormsAt = now();
     if (typeof p.flies !== 'number') p.flies = 0;
     if (!Array.isArray(p.traps)) p.traps = [];
+    // 1.80 : la maîtrise des poissons part des prises déjà faites (le carnet les comptait)
+    if (!p.m180) {
+        p.m180 = true;
+        state.mastery = state.mastery || {};
+        for (const id of Object.keys(FISH)) {
+            const c = state.collection && state.collection['f_' + id];
+            if (c && c.n > (state.mastery[id] || 0) && !FISH[id].junk && ITEMS[id] && ITEMS[id].sell) state.mastery[id] = c.n;
+        }
+    }
     if (!p.log || typeof p.log !== 'object') p.log = {};
     if (!p.run || typeof p.run !== 'object') p.run = {};
     if (p.marcel === undefined) p.marcel = null;
@@ -386,6 +399,15 @@ export function landFish(id, w, at, perfect) {
         p = state.pond;
     const before = bestOf(id); // 1.43 : le record de l'espèce avant cette prise
     state.inventory[id]++;
+    // 1.80 : la qualité de la prise (taille, ferrage parfait, poisson doré), puis la maîtrise du poisson
+    let q = 0;
+    if (!F.junk) {
+        q = id === 'goldfish' ? 2 : Math.min(2, FISH_QUALITY.bySize[sizeOf(id, w).id] + (perfect ? 1 : 0));
+        q = ascend(id, q);
+        addQuality(id, q, 1);
+        addMastery(id, 1);
+        if (q && view.started) tip('fishQuality');
+    }
     state.stats.fish = (state.stats.fish || 0) + 1;
     collect('f_' + id, w);
     if (perfect) {
@@ -503,8 +525,18 @@ export function haulTrap(i, at) {
         const id = trapPick(t.spot, t.bait);
         got[id] = (got[id] || 0) + 1;
     }
+    // 1.80 : un peu d'argent et d'or au fond des nasses (plus avec un appât)
+    const [ps, pg] = t.bait ? FISH_QUALITY.trapBait : FISH_QUALITY.trap;
     for (const [id, q] of Object.entries(got)) {
         state.inventory[id] += q;
+        if (!FISH[id].junk) {
+            for (let k = 0; k < q; k++) {
+                const r = Math.random();
+                const rk = ascend(id, r < pg ? 2 : r < ps ? 1 : 0);
+                addQuality(id, rk, 1);
+            }
+            addMastery(id, q);
+        }
         state.stats.fish = (state.stats.fish || 0) + q;
         for (let k = 0; k < q; k++) collect('f_' + id);
         logStep(id, at);

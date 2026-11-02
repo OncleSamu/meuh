@@ -32,6 +32,7 @@ import { chapterDone } from './story.js';
 export function masteryKind(id) {
     const t = ITEMS[id].type;
     if (t === 'crop' || t === 'tree') return 'crop';
+    if (t === 'fish') return 'fish';
     if (RECIPES[id]) return 'craft';
     return 'animal';
 }

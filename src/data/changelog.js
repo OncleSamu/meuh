@@ -1,6 +1,20 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.80',
+        title: 'Des poissons en or',
+        date: '3 novembre 2026',
+        items: [
+            'À la canne, une belle prise sort en argent, un trophée en or',
+            "Un ferrage parfait monte d'un rang",
+            'Le poisson doré toujours en or',
+            "Un peu d'argent et d'or dans les nasses et le filet",
+            'Chaque poisson a sa maîtrise, partie des prises déjà faites',
+            'Platine et diamant par la maîtrise',
+            'Les plats de poisson suivent',
+        ],
+    },
+    {
         v: '1.79.1',
         title: 'Correctif',
         date: '3 novembre 2026',

@@ -17,6 +17,8 @@ import { tip } from './tips.js';
 import { barnBlocked, giveRare } from './barn.js';
 import { rank, addXp, earn } from './player.js';
 import { addMastery } from './mastery.js';
+import { addQuality, ascend } from './farm.js';
+import { FISH_QUALITY } from '../data/fishing.js';
 import { pickItems, qtyFor, xpBonus, hasAll, payItems } from './orders.js';
 import { isAdult } from './animals.js';
 import { addPhoto } from './style.js';
@@ -56,6 +58,12 @@ export function haulNet(at) {
     }
     Object.entries(got).forEach(([id, q]) => {
         state.inventory[id] += q;
+        // 1.80 : un peu d'argent et d'or dans le filet
+        const [ps, pg] = FISH_QUALITY.net;
+        for (let k = 0; k < q; k++) {
+            const r = Math.random();
+            addQuality(id, ascend(id, r < pg ? 2 : r < ps ? 1 : 0), 1);
+        }
         addMastery(id, q);
     });
     state.stats.fish = (state.stats.fish || 0) + n;

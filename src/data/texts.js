@@ -137,6 +137,12 @@ export const TIPS = {
         title: 'Le talent de l’ami',
         text: 'À cinq cœurs, un villageois te prête son talent pour toujours : les machines de son métier vont plus vite et leurs produits se vendent mieux. Victor soigne moins cher, Morgane fait mieux payer les bateaux, Octave fait vieillir la cave plus vite. Finis son histoire, et son talent double. Un bon voisin, c’est une richesse, disait mon père. Il disait ça surtout quand il empruntait la charrette.',
     },
+    // 1.80
+    fishQuality: {
+        icon: ['ui', 'medalG'],
+        title: 'Des poissons en or',
+        text: 'Tes poissons ont maintenant leur qualité : une belle prise sort en argent, un trophée en or, et un ferrage parfait fait monter d’un rang. À force de pêcher une espèce, tu la maîtrises, et ses prises en or peuvent même devenir platine ou diamant. Ton oncle Marcel jure qu’il a sorti une truite en diamant. Personne ne l’a jamais vue.',
+    },
     // 1.79
     xpReserve: {
         icon: ['ui', 'xp'],

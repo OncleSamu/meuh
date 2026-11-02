@@ -60,6 +60,8 @@ export const MASTERY_TIERS = {
     crop: [300, 2500, 10000],
     animal: [200, 1500, 6000],
     craft: [50, 400, 2000],
+    // 1.80 : les poissons de l'étang, de la rivière et du lagon (on en pêche moins vite)
+    fish: [30, 250, 1000],
 };
 
 export const MASTERY_NAMES = ['bronze', 'argent', 'or'];
@@ -69,6 +71,7 @@ export const MASTERY_EXTRA = {
     crop: [25000, 60000],
     animal: [15000, 36000],
     craft: [5000, 12000],
+    fish: [2500, 6000],
 };
 export const MASTERY_EXTRA_NAMES = ['platine', 'diamant'];
 export const MASTERY_EXTRA_REWARD = [300, 500]; // × le prix de vente

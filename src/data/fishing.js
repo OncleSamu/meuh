@@ -94,6 +94,9 @@ export const SIZES = [
     { id: 'nice', name: 'Belle prise', at: 0.45 },
     { id: 'trophy', name: 'Trophée', at: 0.8 },
 ];
+// 1.80 : la qualité d'un poisson. À la canne : la taille (petite, belle, trophée) et un ferrage parfait (+1 rang) ;
+// dans les nasses et le filet, un peu d'argent et d'or au hasard (plus avec un appât). Puis la maîtrise fait monter l'or.
+export const FISH_QUALITY = { bySize: { small: 0, nice: 1, trophy: 2 }, trap: [0.06, 0.01], trapBait: [0.15, 0.03], net: [0.1, 0.02] };
 // le carnet : récompenses à la 1re, 10e et 50e prise de chaque espèce
 export const LOG_STEPS = [1, 10, 50];
 
