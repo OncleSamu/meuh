@@ -1285,6 +1285,14 @@ export const GUIDE_PAGES = [
         intro: 'La meilleure source de pièces et d’expérience : le tableau des commandes du village.',
         secs: [
             {
+                h: 'Trois volets (1.73)',
+                b: [
+                    'À livrer : le tableau des villageois, puis l’acheteur pressé, le chef, Armand, les fermes voisines et le contrat de saison.',
+                    'Transports : le train, l’avion-cargo, la montgolfière et le bateau. Événements : la fête de saison, le grand défi, les fêtes, la saison et les événements rares.',
+                    'Une ligne par demande, avec où on en est ; ce qui est prêt passe en vert et remonte. Touchez une ligne pour l’ouvrir. Une pastille sur un volet dit que quelque chose y est prêt.',
+                ],
+            },
+            {
                 h: 'Le tableau',
                 b: [
                     'Des villageois demandent des produits ; livrez dès que vous avez tout.',

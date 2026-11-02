@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.73',
+        title: 'Le tableau des commandes',
+        date: '2 novembre 2026',
+        items: [
+            "Première étape de la grande mise à jour de l'interface",
+            'Village › Commandes en trois volets : À livrer, Transports, Événements',
+            'Une ligne par demande avec où on en est, ce qui est prêt en vert et en tête',
+            'Toucher une ligne ouvre la carte complète',
+            'Une pastille sur chaque volet où quelque chose est prêt',
+            'La page passe de 6 écrans à moins de 2',
+        ],
+    },
+    {
         v: '1.72',
         title: 'Des dessins à part',
         date: '2 novembre 2026',
