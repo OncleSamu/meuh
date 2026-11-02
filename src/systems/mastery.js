@@ -19,7 +19,9 @@ import {
     MASTERY_EXTRA_REWARD,
     MASTERY_EXTRA_FLOOR,
 } from '../data/progress.js';
-import { LEGEND_GOALS } from '../data/meta.js';
+import { LEGEND_GOALS, LEGEND_RUBANS } from '../data/meta.js';
+import { HOUSE } from '../data/progress.js';
+import { bookProgress } from './book.js';
 import { farmSeasonAdd } from './port.js';
 import { addPhoto } from './style.js';
 import { earn, getXpReq } from './player.js';
@@ -131,10 +133,38 @@ export function leagueAfterContest(place) {
 // ---------------- Ferme légendaire ----------------
 const LEGEND_CHECK = {
     level: () => [state.stats.maxLevel >= MAX_LEVEL, `${Math.min(state.level, MAX_LEVEL)} / ${MAX_LEVEL}`],
-    chapters: () => [chapterDone(6), `${CHAPTERS.filter(c => c.n <= 6 && chapterDone(c.n)).length} / 6`],
-    house: () => [(state.stats.houseMax || 0) >= 5, `${state.stats.houseMax || 0} / 5`],
+    chapters: () => {
+        const n = CHAPTERS.filter(c => chapterDone(c.n)).length;
+        return [n >= CHAPTERS.length, `${n} / ${CHAPTERS.length}`];
+    },
+    house: () => {
+        const top = HOUSE.length - 1,
+            h = Math.max(state.stats.houseMax || 0, (state.house && state.house.lvl) || 0);
+        return [h >= top, `${h} / ${top}`];
+    },
     league: () => [(state.stats.bestLeague || 0) >= 3, leagueName(state.stats.bestLeague || 0)],
-    mastery: () => [goldMasteries() >= 10, `${Math.min(10, goldMasteries())} / 10`],
+    cup: () => {
+        const p = (state.cup && state.cup.pts) || 0;
+        return [p >= 40, `${Math.min(p, 40)} / 40 points`];
+    },
+    book: () => {
+        const b = bookProgress(),
+            pc = Math.floor((b.found / b.total) * 100);
+        return [pc >= 75, `${pc} %`];
+    },
+    friends: () => {
+        const n = Object.values(state.villagers || {}).filter(v => v && v.hearts >= 5).length;
+        return [n >= 20, `${Math.min(n, 20)} / 20`];
+    },
+    cave: () => {
+        const n = Object.keys((state.cave && state.cave.legends) || {}).length;
+        return [n >= 1, n ? 'fait' : 'pas encore'];
+    },
+    haras: () => {
+        const ok = Object.values((state.show && state.show.best) || {}).some(d => d >= 3);
+        return [ok, ok ? 'fait' : 'pas encore'];
+    },
+    mastery: () => [goldMasteries() >= 25, `${Math.min(25, goldMasteries())} / 25`],
 };
 // [{ id, name, ok, v }]
 export const legendGoals = () =>
@@ -149,7 +179,7 @@ export function claimLegend(at) {
     state.legend = true;
     addPhoto('ui', 'goldCow', 'Ferme légendaire', 'Le grand jour');
     state.decorInv.goldCow = (state.decorInv.goldCow || 0) + 1;
-    state.prestige.rubans += 10;
+    state.prestige.rubans += LEGEND_RUBANS;
     burst(at, 'sparkle', 30);
     emit('celebrate', {
         icon: ['ui', 'goldCow'],
@@ -157,7 +187,7 @@ export function claimLegend(at) {
         sub: 'Tout le canton vient admirer votre ferme. Vous recevez :',
         lines: [
             [['ui', 'goldCow'], 'La vache dorée, à poser dans le champ (+100 de charme)'],
-            [['ui', 'ribbon'], '10 rubans de concours'],
+            [['ui', 'ribbon'], `${LEGEND_RUBANS} rubans de concours`],
             [['ui', 'star'], 'Le titre de Ferme légendaire, pour toujours'],
         ],
     });

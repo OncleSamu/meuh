@@ -431,13 +431,20 @@ export const TREASURES = [
 ];
 
 // ---------------- Ferme légendaire ----------------
+// 1.77 : dix exploits qui couvrent tout le jeu (ils étaient cinq, du temps du village et du hameau)
 export const LEGEND_GOALS = [
     { id: 'level', name: `Atteindre le niveau ${MAX_LEVEL}` },
-    { id: 'chapters', name: 'Terminer les 6 chapitres du village et du hameau' },
-    { id: 'house', name: 'Agrandir la maison au niveau 5' },
+    { id: 'chapters', name: 'Terminer tous les chapitres du village' },
+    { id: 'house', name: 'Agrandir la maison au plus haut niveau' },
     { id: 'league', name: 'Monter en ligue diamant au concours' },
-    { id: 'mastery', name: 'Maîtriser 10 produits en or' },
+    { id: 'cup', name: 'Coupe de la vallée : « Ferme nationale »' },
+    { id: 'book', name: 'Remplir le Livre de la ferme aux trois quarts' },
+    { id: 'friends', name: 'Vingt villageois à 5 cœurs' },
+    { id: 'cave', name: 'Sortir un lot légendaire de la cave' },
+    { id: 'haras', name: 'Gagner en division Élite au haras' },
+    { id: 'mastery', name: 'Maîtriser 25 produits en or' },
 ];
+export const LEGEND_RUBANS = 20;
 
 // ---------------- Records personnels ----------------
 export const RECORDS = {

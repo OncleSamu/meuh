@@ -4,7 +4,7 @@ import { fmt } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { SEASONS, EVENTS } from '../../data/world.js';
 import { MEDALS, MAX_LEVEL, BOOK_QUARTERS, MASTERY_NAMES, MASTERY_EXTRA_NAMES as EXTRA_NAMES } from '../../data/progress.js';
-import { ACHIEVEMENTS } from '../../data/meta.js';
+import { ACHIEVEMENTS, LEGEND_RUBANS } from '../../data/meta.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { ico, art, qStar, SPR } from '../icons.js';
@@ -213,7 +213,7 @@ function legend() {
     const r = state.renown || 0;
     return `<div class="card legend-card${done ? ' done' : ''}"><div class="legend-art">${art('ui', 'goldCow')}</div>
         <div class="card-title center">${done ? 'Votre ferme est légendaire' : 'Devenir une Ferme légendaire'}</div>
-        <p class="card-sub center">${done ? 'Le canton entier connaît votre nom. La vache dorée veille sur vos champs.' : 'Le grand but de Meuh. Réussissez ces cinq exploits pour recevoir la vache dorée, 10 rubans et le titre pour toujours.'}</p>
+        <p class="card-sub center">${done ? 'Le canton entier connaît votre nom. La vache dorée veille sur vos champs.' : `Le grand but de Meuh. Réussissez ces ${goals.length} exploits pour recevoir la vache dorée, ${LEGEND_RUBANS} rubans et le titre pour toujours. ${goals.filter(g => g.ok).length} / ${goals.length} réussis.`}</p>
         <div class="lgoals">${goals.map(g => `<div class="lgoal${g.ok ? ' ok' : ''}">${ico(['ui', g.ok ? 'check' : 'medalOff'])}<span>${g.name}</span><small>${g.v}</small></div>`).join('')}</div>
         ${done ? '' : btn('Devenir légendaire', { act: 'claimLegend', kind: G.legendReady() ? 'gold' : '', wide: true, disabled: !G.legendReady() })}
         <p class="card-sub center">Renommée : ${r} étoile${r > 1 ? 's' : ''}${state.level >= MAX_LEVEL ? '' : ` · au niveau ${MAX_LEVEL}, l’expérience se transforme en étoiles de renommée`}. Ligue actuelle : ${G.leagueName(G.leagueOf()).toLowerCase()}.</p></div>`;
@@ -284,7 +284,10 @@ defineSheet('book', {
 export function setupBook() {
     const o = () => sheetOpts('book');
     actions({
-        bookSec: (el, d) => (o().sec = d.v),
+        bookSec: (el, d) => {
+            o().sec = d.v;
+            if (d.v === 'legend') G.tip('legend177');
+        },
         bookPage: (el, d) => (o().page = d.p),
         bookBack: () => (o().page = null),
         bookTier: (el, d) => G.claimPageTier(d.p, +d.k, el),

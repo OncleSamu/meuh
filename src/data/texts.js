@@ -137,6 +137,12 @@ export const TIPS = {
         title: 'Le talent de l’ami',
         text: 'À cinq cœurs, un villageois te prête son talent pour toujours : les machines de son métier vont plus vite et leurs produits se vendent mieux. Victor soigne moins cher, Morgane fait mieux payer les bateaux, Octave fait vieillir la cave plus vite. Finis son histoire, et son talent double. Un bon voisin, c’est une richesse, disait mon père. Il disait ça surtout quand il empruntait la charrette.',
     },
+    // 1.77
+    legend177: {
+        icon: ['ui', 'goldCow'],
+        title: 'La légende a grandi',
+        text: 'Devenir une Ferme légendaire demande maintenant dix exploits, d’un bout à l’autre du pays : la Coupe, le haras, la cave, le livre, les amis du village… La vache dorée vaut le voyage, et elle vient avec vingt rubans. Ton grand-père disait qu’une légende, ça se construit une pierre après l’autre.',
+    },
     // 1.76
     salonBook: {
         icon: ['ui', 'decoSign'],

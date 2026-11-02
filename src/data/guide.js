@@ -1919,7 +1919,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'La Ferme légendaire',
-                t: `Cinq objectifs dans la section Légende du livre : le niveau ${MAX_LEVEL}, les 6 chapitres du village et du hameau terminés, la maison au niveau 5, la ligue diamant, dix produits maîtrisés à l’or.`,
+                t: `Dix exploits dans la section Légende du livre (depuis la 1.77) : le niveau ${MAX_LEVEL} ; tous les chapitres du village ; la maison au plus haut niveau ; la ligue diamant ; « Ferme nationale » à la Coupe de la vallée ; le Livre de la ferme aux trois quarts ; vingt villageois à 5 cœurs ; un lot légendaire sorti de la cave ; une victoire en division Élite au haras ; 25 produits maîtrisés en or. Récompense : la vache dorée, 20 rubans et le titre pour toujours. Une ferme déjà légendaire le reste.`,
             },
             {
                 h: 'Vendre la ferme',

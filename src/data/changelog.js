@@ -1,6 +1,24 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.77',
+        title: 'La légende a grandi',
+        date: '2 novembre 2026',
+        items: [
+            'La Ferme légendaire demande dix exploits',
+            'Tous les chapitres',
+            'La maison au plus haut',
+            'La Coupe',
+            'Le livre aux trois quarts',
+            'Vingt amis',
+            'La cave',
+            'Le haras',
+            '25 maîtrises en or',
+            '20 rubans au lieu de 10',
+            'Une ferme déjà légendaire le reste',
+        ],
+    },
+    {
         v: '1.76.1',
         title: 'Correctif',
         date: '2 novembre 2026',
