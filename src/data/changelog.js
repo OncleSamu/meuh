@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.74.7',
+        title: 'Dernières retouches',
+        date: '2 novembre 2026',
+        items: [
+            'Vendre par pages de 15',
+            'Au-delà de 7 pages, des flèches',
+            'Un grand verger à quatre arbres par rangée',
+            'Dans le livre, les exploits avant les trophées des fêtes',
+        ],
+    },
+    {
         v: '1.74.6',
         title: 'Correctif',
         date: '2 novembre 2026',
