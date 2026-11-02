@@ -310,3 +310,17 @@ html.calm .o-spot.adult .o-tree > svg {
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
+
+/* 1.74 : sur téléphone, le verger est plus dense (quatre arbres par rangée à partir de 12 places) */
+@media (max-width: 559px) {
+    .o-spot {
+        min-height: 128px;
+    }
+    .o-tree {
+        width: 80px;
+        height: 80px;
+    }
+    .o-spot.dead {
+        min-height: 110px;
+    }
+}

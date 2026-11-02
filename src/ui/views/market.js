@@ -21,6 +21,7 @@ import { RIVALS } from '../../data/village.js';
 import { PASSERS, REPUTATION } from '../../data/elevage.js';
 import { renameBtn } from '../sheets/rename.js';
 import { genWrap, animalKey, looksText } from '../genlook.js';
+import { page } from '../pager.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const matChips = m =>
@@ -149,7 +150,10 @@ function seeds() {
                 lvl: i.reqLvl,
             };
         });
-    return head + tidy(rows);
+    // 1.74 : 15 graines par page (une catégorie peut en compter 80)
+    const open2 = rows.filter(r => !r.locked);
+    const pg = page('seeds:' + tab, open2, 15);
+    return head + pg.top + tidy([...pg.items, ...(pg.cur >= pg.pages - 1 ? rows.filter(r => r.locked) : [])]) + pg.more;
 }
 
 function animals() {
@@ -385,7 +389,7 @@ function stallCard() {
     const later = G.STALL_LEVELS.filter(l => state.level < l);
     const free = slots.map((x, k) => (x ? -1 : k)).filter(k => k >= 0);
     return `<div class="card stall-card">
-        <div class="card-head">${ico(['ui', 'stall'], 'ico big')}<div class="card-main"><div class="card-title">L’étal de la ferme</div><div class="card-sub">Vous choisissez le prix : les passants achètent, mais il faut attendre qu’ils viennent.</div></div>
+        <div class="card-head">${ico(['ui', 'stall'], 'ico big')}<div class="card-main"><div class="card-title">L’étal de la ferme</div><div class="card-sub">${sold ? `${sold} vente${sold > 1 ? 's' : ''} à encaisser : ${fmt(slots.reduce((a, x) => a + (x && x.sold ? x.qty * x.price : 0), 0))}${COIN()}` : 'Vous fixez le prix, les passants achètent peu à peu.'}</div></div>
         ${sold ? btn('Tout encaisser', { act: 'collectStalls', kind: 'gold', size: 'sm' }) : ''}</div>
         <div class="stall-slots">${slots
             .map((sl, k) => {
@@ -394,8 +398,11 @@ function stallCard() {
                     return k === free[0]
                         ? `<button class="sslot empty free-row" data-act="open" data-sheet="stall" data-k="${k}"><b>+</b><span>Vendre · ${free.length} place${free.length > 1 ? 's' : ''} libre${free.length > 1 ? 's' : ''}</span></button>`
                         : '';
+                // 1.74 : au-delà de trois, les ventes faites sont résumées en tête de l'étal (« Tout encaisser »)
                 if (sl.sold)
-                    return `<button class="sslot sold" data-act="collectStall" data-k="${k}">${ico(['ui', 'coin'])}<b>${fmt(sl.qty * sl.price)}</b><span>Encaisser</span></button>`;
+                    return sold > 3
+                        ? ''
+                        : `<button class="sslot sold" data-act="collectStall" data-k="${k}">${ico(['ui', 'coin'])}<b>${fmt(sl.qty * sl.price)}</b><span>Encaisser</span></button>`;
                 return `<div class="sslot listed">${ico(['item', sl.id])}<b>×${sl.qty}</b><span>${fmt(sl.price)}${COIN()} l’unité</span><small>client ≈ ${timer(sl.sellAt)}</small><button class="sx" data-act="cancelStall" data-k="${k}" aria-label="Retirer">×</button></div>`;
             })
             .join('')}</div>

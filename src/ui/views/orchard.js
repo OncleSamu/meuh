@@ -81,7 +81,7 @@ export function spot(sl, k, nextLocked, z = 'farm') {
     return `<button class="o-spot ${st}${t.ground ? ' has-fruit' : ''}" data-act="tree" data-k="${k}" data-z="${z}" data-anchor="${anc}">
         ${tag}<span class="o-tree">${treeArt(t)}${groundHtml(t)}</span>
         <b>${ITEMS[t.id].seedName}</b>
-        ${st === 'dead' ? '<small>Touchez pour le débiter</small>' : bar(0, `o-bar ${st}${full ? ' full' : ''}`, `tree:${z}-${k}`)}
+        ${st === 'dead' ? '' : bar(0, `o-bar ${st}${full ? ' full' : ''}`, `tree:${z}-${k}`)}
         ${st === 'dead' ? '' : `<small class="o-when">${full ? 'Sol plein : ramassez !' : `${st === 'young' ? 'Adulte' : 'Fruit'} dans ${timer(now() + left * 1000)}`}</small>`}
     </button>`;
 }

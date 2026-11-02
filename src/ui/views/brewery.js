@@ -173,7 +173,7 @@ function beersHtml() {
     const list = (f === 'stock' ? inStock : f === 'top' ? top : f === 'mead' ? meads : f === 'beer' ? all.filter(b => !b.mead) : [...all])
         .filter(b => matchQ(q, b.name, ...b.ings.map(x => G.ingName(x[0]))))
         .sort((a, b) => G.beerStock(b.id) - G.beerStock(a.id) || b.stars - a.stars || b.value - a.value);
-    const pg = page('beers:' + f, list, 20);
+    const pg = page('beers:' + f, list, 10);
     return (
         filterChips('beers', opts, f) +
         (list.length ? '' : empty(`Aucune bière ne correspond à « ${esc(ui.sel.q.beers)} ».`)) +
