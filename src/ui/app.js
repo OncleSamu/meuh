@@ -421,6 +421,14 @@ export function setupApp() {
     actions({
         go: (el, d) => go(d.path, { ...d }), // une copie : le dataset du bouton transforme tout en texte
         sub: (el, d) => go(`${ui.tab}/${d.v}`),
+        // 1.73 : les astuces grises se ferment d'un « Compris »
+        hintHide: (el, d) => {
+            state.settings.hints = state.settings.hints || {};
+            state.settings.hints[d.h] = 1;
+        },
+        hintsReset: () => {
+            state.settings.hints = {};
+        },
         open: (el, d) => openSheet(d.sheet, { ...d }),
         // sur téléphone, le « clic » qui suit le geste d'ouverture tombe sur le fond de la fenêtre qui vient de s'ouvrir : on l'ignore
         sheetClose: el => {

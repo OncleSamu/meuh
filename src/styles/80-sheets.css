@@ -1396,12 +1396,12 @@ button.short.link {
 .mgroup:first-child {
     margin-top: 0;
 }
-.mtiles {
+.menu-tiles {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
 }
-.mtile {
+.menu-tile {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1417,23 +1417,23 @@ button.short.link {
     color: var(--ink);
     text-align: center;
 }
-.mtile.hot {
+.menu-tile.hot {
     background: #fff0c8;
 }
-.mtile .ico.big {
+.menu-tile .ico.big {
     width: 34px;
     height: 34px;
 }
-.mtile b {
+.menu-tile b {
     font-size: 0.82rem;
     line-height: 1.1;
 }
-.mtile small {
+.menu-tile small {
     font-size: 0.68rem;
     color: var(--ink-l, #7a5a3a);
     line-height: 1.1;
 }
-.mtile .dot {
+.menu-tile .dot {
     position: absolute;
     top: -6px;
     right: -4px;

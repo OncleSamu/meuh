@@ -411,7 +411,7 @@ export function setupOasis() {
         goOasisMap: () => {
             ui.sel.map = 'oasis';
             ui.sel.proj = OASIS.project;
-            go('village/village');
+            go('village/village#story');
         },
         buyOasisCell: el =>
             askBuy(

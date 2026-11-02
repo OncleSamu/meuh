@@ -171,7 +171,7 @@ export function setupIsland() {
         goFerry: () => {
             ui.sel.map = 'island';
             ui.sel.proj = ISLAND.project;
-            go('village/village');
+            go('village/village#story');
         },
     });
     on('islandFx', ({ k, delay }) => {

@@ -657,3 +657,117 @@
         justify-content: flex-end;
     }
 }
+
+/* 1.73 : l'atelier sur trois colonnes sur téléphone : des vignettes plus petites, la barre de progression reste */
+@media (max-width: 559px) {
+    .mgrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+    }
+    .mgrid .mtile {
+        border-radius: 14px;
+    }
+    .mgrid .mtile-main {
+        padding: 6px 4px;
+    }
+    .mgrid .m-art {
+        width: 46px;
+        height: 46px;
+    }
+    .mgrid .m-name {
+        font-size: 0.74rem;
+        line-height: 1.1;
+        overflow-wrap: anywhere;
+    }
+    .mgrid .m-now {
+        font-size: 0.66rem;
+    }
+    .mgrid .m-now .ico {
+        width: 14px;
+        height: 14px;
+    }
+    .mgrid .m-time,
+    .mgrid .m-idle {
+        font-size: 0.66rem;
+    }
+    .mgrid .m-collect {
+        padding: 4px 3px;
+        font-size: 0.68rem;
+        gap: 2px;
+    }
+    .mgrid .m-collect .ico {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+/* 1.73 : vendre, sur téléphone : une ligne par produit (dessin, nom et rangs, prix, deux boutons) */
+@media (max-width: 559px) {
+    .goods-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 6px;
+    }
+    .goods-grid .goods {
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr) auto;
+        grid-template-areas:
+            'art name btns'
+            'art meta btns';
+        align-items: center;
+        column-gap: 8px;
+        row-gap: 1px;
+        padding: 6px 8px;
+        text-align: left;
+    }
+    .goods-grid .goods-art {
+        grid-area: art;
+        width: 40px;
+        height: 40px;
+    }
+    .goods-grid .goods-name {
+        grid-area: name;
+        font-size: 0.86rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .goods-grid .goods-meta {
+        grid-area: meta;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 2px 6px;
+        font-size: 0.72rem;
+    }
+    .goods-grid .unit {
+        font-size: 0.74rem;
+    }
+    .goods-grid .goods-btns {
+        grid-area: btns;
+        flex-direction: column;
+        gap: 3px;
+    }
+    .goods-grid .goods-btns .btn {
+        min-width: 74px;
+        min-height: 26px;
+        padding: 2px 8px;
+    }
+    .goods-grid .hot-tag {
+        top: -6px;
+        left: 4px;
+    }
+}
+
+/* hors téléphone, la ligne des rangs et du prix reste centrée sous le nom */
+.goods-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+@media (max-width: 559px) {
+    .goods-grid .goods-meta {
+        flex-direction: row;
+        align-items: center;
+    }
+}

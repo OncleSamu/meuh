@@ -35,7 +35,7 @@ function rowHtml(vid) {
         <div class="vl-main"><b>${v.name}${flags(vid)}</b><span class="vl-sub">${hearts(h)}${G.talentLevel(vid) ? `<small class="vl-talent">${ico(['ui', 'star'])}talent</small>` : ''}</span></div>
         ${gifted ? `<small class="vl-done">${ico(['ui', 'check'])}offert</small>` : btn('Offrir', { act: 'villager', data: { v: vid, t: 'gift' }, kind: can ? 'gold' : '', size: 'sm' })}</div>`;
 }
-export function villagersCard() {
+export function villagersCard(flat = false) {
     const ids = G.presentVillagers();
     const gift = ids.filter(id => !G.giftedToday(id) && G.giftable(id).length).length;
     const bdays = G.nextBirthdays(ids, 6);
@@ -67,6 +67,8 @@ export function villagersCard() {
         pg.top +
         (pg.items.length ? `<div class="vl-list">${pg.items.map(rowHtml).join('')}</div>` : empty('Personne ici pour le moment.')) +
         pg.more;
+    // 1.73 : dans son onglet du village, la liste est déjà ouverte
+    if (flat) return `<div class="card vl-card">${body}</div>`;
     return foldCard('villagers', ['ui', 'heart'], 'Les villageois', sum, body, gift > 0 || today > 0);
 }
 

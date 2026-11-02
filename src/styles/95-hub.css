@@ -86,3 +86,115 @@
     font-size: 0.78rem;
     color: var(--ink-l, #7a5a3a);
 }
+
+/* 1.73 : les onglets internes d'une page (Brasserie, Cave, Comice, Labo) */
+.inner-tabs .seg {
+    margin: 0;
+}
+.inner-tabs .seg > button {
+    font-size: 0.8rem;
+    padding: 5px 3px;
+}
+.inner-tabs .seg > button span {
+    white-space: nowrap;
+}
+.inner-tabs.strip .seg {
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.inner-tabs.strip .seg::-webkit-scrollbar {
+    display: none;
+}
+.inner-tabs.strip .seg > button {
+    flex: 1 0 auto;
+    padding: 5px 10px;
+}
+.inner-tabs.strip .seg > button span {
+    overflow: visible;
+}
+
+/* 1.73 : une graine du marché sur une ligne */
+.srow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    margin-top: 6px;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    background: var(--paper-l, #fff7e0);
+}
+.srow-art {
+    width: 38px;
+    height: 38px;
+    flex: none;
+}
+.srow-art svg {
+    width: 100%;
+    height: 100%;
+}
+.srow-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+.srow-main > b {
+    font-size: 0.88rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.srow-main small {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 3px;
+    font-size: 0.72rem;
+    color: var(--ink-l, #7a5a3a);
+}
+.srow-main small .ico {
+    width: 13px;
+    height: 13px;
+}
+.srow-main small .in {
+    color: #3f8f2e;
+    font-weight: 800;
+}
+.srow-main small .st {
+    color: var(--ink);
+}
+.srow-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: none;
+}
+.srow-btns .btn {
+    min-width: 78px;
+    padding: 3px 8px;
+    min-height: 28px;
+}
+
+/* 1.73 : « Compris » au bout d'une astuce */
+.hint .hint-x {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 8px;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    background: transparent;
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: inherit;
+    opacity: 0.8;
+    vertical-align: baseline;
+}
+
+/* 1.73 : la bande « à faire » du champ montre qu'elle continue à droite */
+.todo {
+    -webkit-mask-image: linear-gradient(to right, #000 86%, transparent);
+    mask-image: linear-gradient(to right, #000 86%, transparent);
+}

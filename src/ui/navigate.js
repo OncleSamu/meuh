@@ -28,19 +28,19 @@ export function produce(id) {
         );
     }
     if (it.type === 'crop' && !G.storyOk(it)) {
-        go('village/village');
+        go('village/village#story');
         return toast(G.storyLockText(it), ['ui', 'village']);
     }
     if (it.nord && (it.type === 'tree' || it.type === 'crop')) {
-        go(G.nordOpen() ? 'farm/island#nord' : 'village/village');
+        go(G.nordOpen() ? 'farm/island#nord' : 'village/village#story');
         return toast(G.nordOpen() ? `${it.name} : à cultiver au Grand Nord` : 'Rallumez d’abord le poêle de Tuomas pour rejoindre le Grand Nord', ['item', id]);
     }
     if (it.oasis && (it.type === 'tree' || it.type === 'crop')) {
-        go(G.oasisOpen() ? 'farm/island#oasis' : 'village/village');
+        go(G.oasisOpen() ? 'farm/island#oasis' : 'village/village#story');
         return toast(G.oasisOpen() ? `${it.name} : à cultiver à l’oasis` : 'Rouvrez d’abord le puits d’Idris pour rejoindre l’oasis', ['item', id]);
     }
     if (it.island && (it.type === 'tree' || it.type === 'crop')) {
-        go(G.islandOpen() ? 'farm/island#isle' : 'village/village');
+        go(G.islandOpen() ? 'farm/island#isle' : 'village/village#story');
         return toast(G.islandOpen() ? `${it.name} : à cultiver sur l’île` : 'Réparez d’abord le bac de Tiago pour rejoindre l’île', ['item', id]);
     }
     if (it.type === 'tree') {

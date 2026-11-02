@@ -20,6 +20,7 @@ import { foldWrap } from '../fold.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 import { askBuy } from '../sheets/askbuy.js';
 import { chateauCard, classTag, lotChateauTag, primeurTag, lotChateauActions, reserveChateauActions } from './chateau.js';
+import { innerTabs } from '../innertabs.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const findIcon = k => AUCTION_FINDS[k].icon;
@@ -287,29 +288,52 @@ function renderCave(el) {
     const c = state.cave;
     const needCare = c.slots.filter(l => l && G.careNeeded(l)).length;
     const nextShelf = CAVE_SHELVES[c.shelves];
+    // 1.73 : quatre onglets au lieu d'une page de neuf écrans
+    const finished = c.slots.filter(l => l && (l.bad || l.rank >= 4)).length;
+    const auction = c.auction && c.auction.lots && !c.auction.over;
+    const T = innerTabs(
+        'cave',
+        [
+            ['lots', 'Lots', null, needCare + finished],
+            ['sales', 'Réserve', null, auction ? 1 : 0],
+            ['orders', 'Commandes', null, G.caveOrdersReady()],
+            ['gear', 'Matériel', null, 0],
+        ],
+        'lots',
+    );
+    const t = T.cur;
     blocks(el, [
+        ['tabs', T.html],
         [
             'clim',
-            `<div class="card cave-clim"><div class="card-head">${ico(['ui', 'cave'], 'ico big')}<div class="card-main"><div class="card-title">La cave</div>
-            <div class="card-sub">Cote de la cave : <b>${Math.round(c.cote)}</b> / 100 · lots de ${G.caveLotMax()} au plus${G.climOk() ? '' : ' · le climat abîme vos lots'}</div></div></div>
+            t === 'lots'
+                ? `<div class="card cave-clim"><div class="card-head">${ico(['ui', 'cave'], 'ico big')}<div class="card-main"><div class="card-title">La cave</div>
+            <div class="card-sub">Cote de la cave : <b>${Math.round(c.cote)}</b> / 100 · lots de ${G.caveLotMax()} au plus${G.climOk() ? '' : ' · le climat abîme vos lots'}</div></div></div>
             ${needCare ? btn(`Tout soigner (${needCare})`, { act: 'careAll', kind: 'gold', wide: true, icon: ['ui', 'sparkle'] }) : ''}
-            ${climHtml()}</div>`,
+            ${finished ? btn(`Sortir les lots finis (${finished})`, { act: 'takeOutDone', kind: 'green', wide: true }) : ''}
+            ${climHtml()}</div>`
+                : '',
         ],
-        ['chateau', chateauFold()],
-        ['orders', ordersHtml()],
-        ['cepage', cepageHtml()],
+        ['cepage', t === 'sales' ? cepageHtml() : ''],
         [
             'slots',
-            `<div class="cave-grid">${c.slots.map((l, i) => (l ? lotCard(l, i) : '')).join('')}${freeRow(c.slots)}${
-                nextShelf !== undefined
-                    ? `<button class="cave-slot locked" data-act="buyShelf"${state.money < nextShelf ? ' disabled' : ''}>${ico(['ui', 'shelf'])}<span>Étagère : +2 places${c.shelves % 2 ? ', lots plus grands' : ''}</span><b>${fmt(nextShelf)}${COIN()}</b></button>`
-                    : ''
-            }</div>`,
+            t === 'lots'
+                ? `<div class="cave-grid">${c.slots.map((l, i) => (l ? lotCard(l, i) : '')).join('')}${freeRow(c.slots)}${
+                      nextShelf !== undefined
+                          ? `<button class="cave-slot locked" data-act="buyShelf"${state.money < nextShelf ? ' disabled' : ''}>${ico(['ui', 'shelf'])}<span>Étagère : +2 places${c.shelves % 2 ? ', lots plus grands' : ''}</span><b>${fmt(nextShelf)}${COIN()}</b></button>`
+                          : ''
+                  }</div>`
+                : '',
         ],
-        ['reserve', reserveHtml()],
-        ['sale', saleHtml()],
-        ['legends', legendsHtml()],
-        ['gear', gearHtml()],
+        ['sale', t === 'sales' ? saleHtml() : ''],
+        [
+            'reserve',
+            t === 'sales' ? reserveHtml() || empty('La réserve est vide : sortez un lot de la cave pour le vendre, l’envoyer aux enchères ou au coffre.') : '',
+        ],
+        ['chateau', t === 'sales' ? chateauFold() : ''],
+        ['legends', t === 'sales' ? legendsHtml() : ''],
+        ['orders', t === 'orders' ? ordersHtml() || empty('Pas de commande pour le moment : les habitués de la cave passent régulièrement.') : ''],
+        ['gear', t === 'gear' ? gearHtml() : ''],
     ]);
     c.slots.forEach(l => l && (l.flash = 0));
 }
@@ -393,6 +417,8 @@ export function setupCave() {
         cycleLabel: (el, d) => G.cycleLabel(d.uid),
         tasteLot: (el, d) => G.tasteLot(+d.i, el),
         boostLot: (el, d) => G.boostLot(+d.i),
+        // 1.73 : sortir d'un coup les lots tournés ou légendaires
+        takeOutDone: el => state.cave.slots.forEach((l, i) => l && (l.bad || l.rank >= 4) && G.takeOut(i, el)),
         takeOut: (el, d) => G.takeOut(+d.i, el),
         negociant: (el, d) => G.sellNegociant(+d.uid, el),
         deposit: (el, d) => G.depositLot(+d.uid),

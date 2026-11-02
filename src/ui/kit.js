@@ -46,7 +46,17 @@ export const pips = (n, max) => `<span class="pips">${Array.from({ length: max }
 export const section = (title, extra = '') => `<h3 class="section-title"><span>${title}</span>${extra}</h3>`;
 
 export const empty = text => `<p class="empty">${text}</p>`;
-export const hint = text => `<p class="hint">${text}</p>`;
+// 1.73 : une astuce grise se ferme d'un « Compris » (elle reste dans le Guide du fermier) ; Réglages › Réafficher les astuces
+const hkey = t => {
+    let h = 5381;
+    for (let i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0;
+    return h.toString(36);
+};
+export const hintHidden = text => !!(state.settings && state.settings.hints && state.settings.hints[hkey(text)]);
+export const hint = text =>
+    hintHidden(text)
+        ? ''
+        : `<p class="hint">${text}<button class="hint-x" data-act="hintHide" data-h="${hkey(text)}" aria-label="Masquer cette astuce">Compris</button></p>`;
 // 1.38 : une astuce de bas de page, qui disparaît à partir du niveau 15 (tout est dans le Guide du fermier)
 export const tip15 = text => (state.level >= 15 ? '' : hint(text));
 export const dot = n => (n ? `<span class="dot">${n > 9 ? '9+' : n}</span>` : '');

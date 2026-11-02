@@ -257,7 +257,7 @@ function nextGoal() {
         };
     }
     const ready = Object.values(PROJECTS).find(p => G.projectOpen(p.id) && G.projectComplete(p.id));
-    if (ready) return { icon: ['ui', 'village'], text: `Terminez la rénovation : ${ready.name.toLowerCase()}`, go: 'village/village' };
+    if (ready) return { icon: ['ui', 'village'], text: `Terminez la rénovation : ${ready.name.toLowerCase()}`, go: 'village/village#story' };
     const open = Object.values(PROJECTS).find(p => G.projectOpen(p.id));
     if (open) {
         const tot = Object.values(open.need).reduce((a, b) => a + b, 0),
@@ -265,7 +265,7 @@ function nextGoal() {
         return {
             icon: ['building', open.id],
             text: `Prochain but : rénover ${open.name.toLowerCase()} (${Math.floor((got / tot) * 100)} %)`,
-            go: 'village/village',
+            go: 'village/village#story',
         };
     }
     const c = G.currentChapter();
@@ -300,7 +300,7 @@ function eventBanner() {
     if (!G.eventActive()) return '';
     const e = state.event,
         ready = G.eventReady();
-    return `<button class="event-banner" data-act="go" data-path="village/orders">${ico(G.eventIcon(e.season))}<span>${EVENTS[e.season].name}</span><small>${formatDuration(G.eventEndsIn())}</small>${ready ? `<span class="dot">${ready}</span>` : ''}</button>`;
+    return `<button class="event-banner" data-act="go" data-path="village/orders#event">${ico(G.eventIcon(e.season))}<span>${EVENTS[e.season].name}</span><small>${formatDuration(G.eventEndsIn())}</small>${ready ? `<span class="dot">${ready}</span>` : ''}</button>`;
 }
 
 const FIELD = `<div class="field"><div class="fence"></div>

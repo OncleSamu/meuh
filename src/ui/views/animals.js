@@ -278,7 +278,8 @@ function renderAnimals(el) {
     const mode = n > 0 ? ui.sel.animalMode || (n > 16 ? 'stable' : 'meadow') : 'meadow';
     let k = shownPasture();
     if (mode === 'meadow' && k === 'all') k = 0;
-    if (mode === 'stable' && ui.sel.pasture === undefined && state.pastures.length > 1) k = 'all';
+    // 1.73 : l'étable montre un pré à la fois (le premier par défaut) ; « Tous les prés » reste à un toucher
+    if (mode === 'stable' && ui.sel.pasture === undefined) k = 0;
     blocks(el, [
         [
             'top',

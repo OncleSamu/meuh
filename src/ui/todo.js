@@ -112,7 +112,7 @@ export function todoList() {
     add('market/sell#beasts', ['ui', 'hEcusson'], `${fr} acheteur${s(fr)} à la foire`, fr);
     const cw = G.counterWaiting();
     add('machines/counter', ['machine', 'counter'], `${cw} client${s(cw)} au comptoir`, cw);
-    if (G.holidayReady()) push('village/orders', ['ui', HOLIDAYS[state.holiday.id].deco], `${HOLIDAYS[state.holiday.id].name} : panier à remplir`, 1);
+    if (G.holidayReady()) push('village/orders#event', ['ui', HOLIDAYS[state.holiday.id].deco], `${HOLIDAYS[state.holiday.id].name} : panier à remplir`, 1);
     const bq = bookCounts().quarters;
     if (bq) push('sheet:book', ['ui', 'book'], 'Récompense du livre', bq);
     if (G.brewOpen() && state.brew) {
@@ -124,18 +124,18 @@ export function todoList() {
     }
     // 1.20 : le domaine
     if (G.domaineOpen() && G.domReady())
-        push('village/village', ['ui', 'house'], `${G.domReady()} chantier${s(G.domReady())} du domaine à lancer`, G.domReady());
+        push('village/village#story', ['ui', 'house'], `${G.domReady()} chantier${s(G.domReady())} du domaine à lancer`, G.domReady());
     // 1.19.1 : Armand
     if (G.armandHere()) {
         const slots = Array.from({ length: G.armandSlots() }, (_, i) => G.armandOrder(i));
-        if (slots.some(o => !o) && G.armandCandidates().length) push('village/orders', ['villager', 'armand'], 'Armand cherche un produit phare', 1);
-        else if (slots.some(o => G.armandTalking(o))) push('village/orders', ['villager', 'armand'], 'Armand attend votre réponse', 1);
+        if (slots.some(o => !o) && G.armandCandidates().length) push('village/orders#give', ['villager', 'armand'], 'Armand cherche un produit phare', 1);
+        else if (slots.some(o => G.armandTalking(o))) push('village/orders#give', ['villager', 'armand'], 'Armand attend votre réponse', 1);
         else if (slots.some(o => o && !o.done && G.armandDealt(o) && (state.inventory[o.id] || 0) > 0))
-            push('village/orders', ['villager', 'armand'], 'Armand attend sa commande', 1);
+            push('village/orders#give', ['villager', 'armand'], 'Armand attend sa commande', 1);
     }
     // 1.8 : l'avion-cargo
     const cg = G.cargoReady();
-    if (cg) push('village/orders', ['ui', 'plane'], `${cg} soute${s(cg)} de l’avion-cargo à charger`, cg);
+    if (cg) push('village/orders#ship', ['ui', 'plane'], `${cg} soute${s(cg)} de l’avion-cargo à charger`, cg);
     // 1.7 : le labo
     if (state.genetics && G.geneticsOpen()) {
         const lt = state.genetics.litters.length + (G.crossReady() ? 1 : 0);
@@ -168,32 +168,32 @@ export function todoList() {
     if (G.barnSpace() <= 0) list.unshift({ go: 'sheet:barn', icon: ['ui', 'barn'], text: 'Grange pleine', n: 0, urgent: true });
 
     const orders = state.quests.filter(G.checkQuestReady).length;
-    add('village/orders', ['ui', 'scroll'], `${orders} commande${s(orders)} prête${s(orders)}`, orders);
-    if (state.truck.status === 'here') add('village/orders', ['ui', 'trainIcon'], 'Le train est en gare');
+    add('village/orders#give', ['ui', 'scroll'], `${orders} commande${s(orders)} prête${s(orders)}`, orders);
+    if (state.truck.status === 'here') add('village/orders#ship', ['ui', 'trainIcon'], 'Le train est en gare');
     if (state.balloon.status === 'here') {
         const ok = G.hasAll(state.balloon.items);
-        push('village/orders', ['ui', 'balloon'], ok ? 'Montgolfière prête' : 'Une montgolfière attend', ok ? 1 : 0);
+        push('village/orders#ship', ['ui', 'balloon'], ok ? 'Montgolfière prête' : 'Une montgolfière attend', ok ? 1 : 0);
     }
     const proj = G.storyClaimable();
-    if (proj) push('village/village', ['ui', 'village'], `${proj} chantier${s(proj)} à terminer`, proj);
+    if (proj) push('village/village#story', ['ui', 'village'], `${proj} chantier${s(proj)} à terminer`, proj);
     const asks = G.asksReady();
     add('market/shop#neighbors', ['ui', 'nmCaisse'], `${asks} livraison${s(asks)} des voisins`, asks);
     if (state.merchant.status === 'here') push('market/shop', ['ui', 'merchant'], 'Le marchand est là', 0);
     const dr = G.defiReady();
-    if (dr) push('village/orders', ['ui', 'cupGold'], `Grand défi : ${dr} étape${s(dr)} à faire avancer`, dr);
+    if (dr) push('village/orders#event', ['ui', 'cupGold'], `Grand défi : ${dr} étape${s(dr)} à faire avancer`, dr);
     const goals = G.eventReady();
-    add('village/orders', G.eventIcon(G.season().id), `${goals} objectif${s(goals)} de fête`, goals);
+    add('village/orders#event', G.eventIcon(G.season().id), `${goals} objectif${s(goals)} de fête`, goals);
     const tiers = G.contestClaimable();
-    if (tiers) push('village/village', ['ui', 'podium'], `${tiers} palier${s(tiers)} du concours`, tiers);
+    if (tiers) push('village/village#contest', ['ui', 'podium'], `${tiers} palier${s(tiers)} du concours`, tiers);
 
     const sold = G.stallSoldCount();
     add('market/sell', ['ui', 'stall'], `${sold} vente${s(sold)} à encaisser`, sold);
     if (state.rare.type && G.rareActive(state.rare.type) && state.rare.type !== 'butterflies')
-        push('village/orders', ['ui', RARE_EVENTS[state.rare.type].icon], RARE_EVENTS[state.rare.type].name, 1, { urgent: true });
+        push('village/orders#event', ['ui', RARE_EVENTS[state.rare.type].icon], RARE_EVENTS[state.rare.type].name, 1, { urgent: true });
     if (G.rareActive('butterflies')) list.unshift({ go: 'farm/field', icon: ['ui', 'butterfly'], text: 'Papillons : récoltes dorées !', n: 0 });
     if (state.boat.status === 'here') {
         const ok = G.hasAll(state.boat.items);
-        push('village/orders', ['ui', 'boat'], ok ? 'Cargo prêt à charger' : 'Un cargo au port', ok ? 1 : 0);
+        push('village/orders#ship', ['ui', 'boat'], ok ? 'Cargo prêt à charger' : 'Un cargo au port', ok ? 1 : 0);
     }
     if (G.netReady()) push('farm/pond', ['ui', 'net'], 'Filet de pêche plein', 1);
     const traps = G.trapsReady();
@@ -215,16 +215,16 @@ export function todoList() {
     if (G.runReady()) push('farm/pond', ['item', 'salmon'], 'Défi de la remontée réussi', 1);
     if (G.contestResultReady()) push('farm/pond', ['ui', 'trophy'], 'Résultats du concours de pêche', 1);
     const fst = G.farmSeasonClaimable();
-    if (fst) push('village/orders', ['ui', 'trophy'], `${fst} palier${s(fst)} de saison`, fst);
-    if (G.contractReady()) push('village/orders', ['ui', 'calendar'], 'Contrat de saison prêt', 1);
+    if (fst) push('village/orders#event', ['ui', 'trophy'], `${fst} palier${s(fst)} de saison`, fst);
+    if (G.contractReady()) push('village/orders#give', ['ui', 'calendar'], 'Contrat de saison prêt', 1);
     const stories = G.storiesReady() + G.DUOS.filter(d => G.duoReady(d)).length;
-    if (stories) push('village/village', ['ui', 'scroll'], `${stories} histoire${s(stories)} à faire avancer`, stories);
+    if (stories) push('village/village#people', ['ui', 'scroll'], `${stories} histoire${s(stories)} à faire avancer`, stories);
     // 1.70 : un anniversaire aujourd'hui (si on n'a pas encore offert)
     const bd = G.presentVillagers().filter(v => G.isBirthday(v) && !G.giftedToday(v));
-    if (bd.length) push('village/village', ['ui', 'cake'], `Anniversaire de ${VILLAGERS[bd[0]].name}`, bd.length, { urgent: true });
+    if (bd.length) push('village/village#people', ['ui', 'cake'], `Anniversaire de ${VILLAGERS[bd[0]].name}`, bd.length, { urgent: true });
     const neigh = G.neighborsReady();
-    if (neigh) push('village/orders', ['ui', 'heart'], `${neigh} voisin${s(neigh)} à aider`, neigh);
-    if (G.specialReady()) push('village/orders', ['ui', 'star'], 'Commande spéciale des voisins', 1);
+    if (neigh) push('village/orders#give', ['ui', 'heart'], `${neigh} voisin${s(neigh)} à aider`, neigh);
+    if (G.specialReady()) push('village/orders#give', ['ui', 'star'], 'Commande spéciale des voisins', 1);
 
     const pts = G.skillPoints();
     add('sheet:progress', ['ui', 'skillbook'], `${pts} point${s(pts)} de compétence`, pts);

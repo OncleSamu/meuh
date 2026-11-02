@@ -54,10 +54,10 @@ defineSheet('menu', {
             book = G.bookAllClaimable() + G.quartersClaimable();
         // 1.73 : une grille de tuiles en trois groupes, qui tient sur un écran
         const tile = (name, sheet, icon, n = 0, sub = '') =>
-            `<button class="mtile${n ? ' hot' : ''}" data-act="open" data-sheet="${sheet}" aria-label="${name}">${ico(icon, 'ico big')}<b>${name}</b>${sub ? `<small>${sub}</small>` : ''}${n ? dot(n) : ''}</button>`;
+            `<button class="menu-tile${n ? ' hot' : ''}" data-act="open" data-sheet="${sheet}" aria-label="${name}">${ico(icon, 'ico big')}<b>${name}</b>${sub ? `<small>${sub}</small>` : ''}${n ? dot(n) : ''}</button>`;
         const group = (title, tiles) => {
             const t = tiles.filter(Boolean);
-            return t.length ? `<h4 class="mgroup">${title}</h4><div class="mtiles">${t.join('')}</div>` : '';
+            return t.length ? `<h4 class="mgroup">${title}</h4><div class="menu-tiles">${t.join('')}</div>` : '';
         };
         return (
             group('Ma ferme', [

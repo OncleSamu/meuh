@@ -11,6 +11,7 @@ import { defineView, refresh } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { genWrap, animalKey } from '../genlook.js';
 import { reduceMotion } from '../fx.js';
+import { innerTabs } from '../innertabs.js';
 
 const PARTS = [
     ['genes', 'Gènes'],
@@ -99,16 +100,30 @@ function renderComice(el) {
               )
               .join('')}</div></div>`
         : '';
+    // 1.73 : une catégorie à la fois (des pastilles d'espèces), le palmarès à part
+    const T = c.cats.length
+        ? innerTabs(
+              'comice',
+              [...c.cats.map(cat => [cat.id, G.catName(cat), ['animal', cat.id], cat.entry ? 0 : 1]), ['palm', 'Palmarès', ['ui', 'ribbon'], 0]],
+              (c.cats.find(cat => !cat.entry) || c.cats[0]).id,
+              true,
+          )
+        : null;
+    const t = T ? T.cur : null;
+    const one = T && t !== 'palm' ? catCard(c.cats.find(cat => cat.id === t)) : '';
     blocks(el, [
         ['head', head],
-        ['cats', cats],
-        ['last', last],
-        ['palm', palm],
+        ['tabs', T ? T.html : ''],
+        ['cats', T ? one : cats],
+        ['last', !T || t === 'palm' ? last : ''],
+        ['palm', !T || t === 'palm' ? palm : ''],
         [
             'hint',
-            hint(
-                `La note sur 100 : gènes au-dessus de la moyenne de l’espèce ${COMICE.w.genes}, beauté (robe, motifs, cornes…) ${COMICE.w.beauty}, cœurs ${COMICE.w.hearts}, présentation ${COMICE.w.show} (le brossage, une fois par jour). Ce que le jury regarde surtout compte une fois et demie. Premier prix : un ruban, des pièces et la plaque « Primée » : son prix double à la foire.`,
-            ),
+            T && t !== 'palm'
+                ? ''
+                : hint(
+                      `La note sur 100 : gènes au-dessus de la moyenne de l’espèce ${COMICE.w.genes}, beauté (robe, motifs, cornes…) ${COMICE.w.beauty}, cœurs ${COMICE.w.hearts}, présentation ${COMICE.w.show} (le brossage, une fois par jour). Ce que le jury regarde surtout compte une fois et demie. Premier prix : un ruban, des pièces et la plaque « Primée » : son prix double à la foire.`,
+                  ),
         ],
     ]);
 }

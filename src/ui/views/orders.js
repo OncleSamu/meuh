@@ -539,6 +539,11 @@ defineSheet('hub', {
 });
 function renderOrders(el) {
     const tabs = GROUPS.map(([id, name]) => [id, name, null, readyOf(id)]);
+    // un lien « village/orders#ship » (liste des choses à faire) ouvre directement le bon volet
+    if (ui.sel.orders && GROUPS.some(g => g[0] === ui.sel.orders)) {
+        ui.sel.ordersTab = ui.sel.orders;
+        ui.sel.orders = null;
+    }
     const want = ui.sel.ordersTab;
     // sans choix : le premier volet où quelque chose est prêt
     const cur = GROUPS.some(g => g[0] === want) ? want : (GROUPS.find(g => readyOf(g[0])) || GROUPS[0])[0];

@@ -20,6 +20,7 @@ import { renameBtn } from '../sheets/rename.js';
 import { NOTE_COL } from '../../data/abbey.js';
 import { chefCard } from './orders.js';
 import { page, filterOf, filterChips, filterSelect, searchBox, queryOf, matchQ } from '../pager.js';
+import { innerTabs } from '../innertabs.js';
 
 const pct = x => `${Math.round(x * 100)} %`;
 
@@ -299,30 +300,47 @@ function renderLab(el) {
         return;
     }
     const junk = G.plantLabOpen() ? G.junkVarieties().length : 0;
+    // 1.73 : trois onglets : croiser (et les portées), mes variétés, le concours
+    const litters = littersHtml();
+    const T = innerTabs(
+        'lab',
+        [
+            ['cross', 'Croiser', null, litters ? 1 : 0],
+            ['vars', 'Variétés', null, 0],
+            ['salon', 'Concours', null, 0],
+        ],
+        'cross',
+    );
+    const t = T.cur;
     blocks(el, [
-        ['litters', littersHtml()],
-        ['goal', goalCard()],
-        ['chef', chefCard()],
-        ['cross', crossCard()],
-        ['breed', breedCard()],
+        ['tabs', T.html],
+        ['litters', t === 'cross' ? litters : ''],
+        ['goal', t === 'cross' ? goalCard() : ''],
+        ['chef', t === 'cross' ? chefCard() : ''],
+        ['cross', t === 'cross' ? crossCard() : ''],
+        ['breed', t === 'cross' ? breedCard() : ''],
         [
             'h1',
-            section(
-                'Mes variétés',
-                (junk ? btn(`Composter ${junk} sans intérêt`, { act: 'compostJunk', size: 'sm', kind: 'ghost' }) : '') +
-                    (G.fixedVarieties().length || Object.keys(state.genetics.races).length
-                        ? btn('Mes créations', { act: 'open', data: { sheet: 'creations' }, size: 'sm', icon: ['ui', 'trophy'] })
-                        : ''),
-            ),
+            t === 'vars'
+                ? section(
+                      'Mes variétés',
+                      (junk ? btn(`Composter ${junk} sans intérêt`, { act: 'compostJunk', size: 'sm', kind: 'ghost' }) : '') +
+                          (G.fixedVarieties().length || Object.keys(state.genetics.races).length
+                              ? btn('Mes créations', { act: 'open', data: { sheet: 'creations' }, size: 'sm', icon: ['ui', 'trophy'] })
+                              : ''),
+                  )
+                : '',
         ],
-        ['varSearch', varToolsBlock()],
-        ['vars', varietiesBlock()],
-        ['salon', salonCard()],
+        ['varSearch', t === 'vars' ? varToolsBlock() : ''],
+        ['vars', t === 'vars' ? varietiesBlock() : ''],
+        ['salon', t === 'salon' ? salonCard() || '<p class="empty">Le concours du potager s’ouvre avec vos premières variétés.</p>' : ''],
         [
             'hint',
-            hint(
-                'Une variété se sème comme son espèce (graines dans la barre du champ, ou plantations de l’île), ou à sa place si vous la semez par défaut. Elle garde son goût dans les plats et dans les bières. Pour la fixer : recroisez-la avec elle-même jusqu’à ce que tous ses gènes soient identiques par paires, puis nommez-la au laboratoire.',
-            ),
+            t === 'vars'
+                ? hint(
+                      'Une variété se sème comme son espèce (graines dans la barre du champ, ou plantations de l’île), ou à sa place si vous la semez par défaut. Elle garde son goût dans les plats et dans les bières. Pour la fixer : recroisez-la avec elle-même jusqu’à ce que tous ses gènes soient identiques par paires, puis nommez-la au laboratoire.',
+                  )
+                : '',
         ],
     ]);
 }
@@ -553,7 +571,7 @@ export function setupLab() {
         goStation: () => {
             ui.sel.map = 'station';
             ui.sel.proj = 'pollination';
-            go('village/village');
+            go('village/village#story');
         },
         pickParent: (el, d) => openSheet('parentPick', { kind: d.kind, slot: d.slot }),
         setParent: (el, d) => {

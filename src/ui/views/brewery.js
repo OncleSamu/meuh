@@ -17,6 +17,7 @@ import { page, filterOf, filterChips, searchBox, queryOf, matchQ } from '../page
 import { renameBtn } from '../sheets/rename.js';
 import { beerSvg } from '../../art/abbey.js';
 import { genWrap } from '../genlook.js';
+import { innerTabs } from '../innertabs.js';
 import { HONEYS, HONEY_COL } from '../../data/honey.js';
 
 const cap = t => t[0].toUpperCase() + t.slice(1);
@@ -259,19 +260,40 @@ function bookHtml() {
 function renderBrew(el) {
     if (!G.brewOpen()) return blocks(el, [['closed', closedCard()]]);
     G.ensureBrew();
+    // 1.73 : quatre onglets au lieu d'une page de dix écrans
+    const B = state.brew;
+    const ready = B.vats.filter(v => G.vatReady(v)).length;
+    const n = G.myBeers().length;
+    const T = innerTabs(
+        'brew',
+        [
+            ['make', 'Brasser', null, ready],
+            ['mine', G.meadOpen() ? 'Boissons' : 'Bières', null, 0],
+            ['orders', 'Commandes', null, G.beerOrdersReady()],
+            ['book', 'Livre', null, G.beerBookClaimable() ? 1 : 0],
+        ],
+        'make',
+    );
+    const t = T.cur;
     blocks(el, [
+        ['tabs', T.html],
         [
             'head',
-            `<div class="card"><div class="card-head">${ico(['ui', 'beer'], 'ico big')}<div class="card-main"><div class="card-title">La brasserie de l’abbaye</div><div class="card-sub">${state.brew.vats.length} cuve${state.brew.vats.length > 1 ? 's' : ''} · jusqu’à ${G.brewSlots()} ingrédient${G.brewSlots() > 1 ? 's' : ''} par bière${G.meadOpen() ? `, ${G.brewSlots('mead:all')} par hydromel` : ''}</div></div></div></div>`,
+            t === 'make'
+                ? `<div class="card"><div class="card-head">${ico(['ui', 'beer'], 'ico big')}<div class="card-main"><div class="card-title">La brasserie de l’abbaye</div><div class="card-sub">${B.vats.length} cuve${B.vats.length > 1 ? 's' : ''} · jusqu’à ${G.brewSlots()} ingrédient${G.brewSlots() > 1 ? 's' : ''} par bière${G.meadOpen() ? `, ${G.brewSlots('mead:all')} par hydromel` : ''}</div></div></div></div>`
+                : '',
         ],
-        ['vats', vatsHtml()],
-        ['orders', ordersHtml()],
-        ['compose', composerHtml()],
-        ['beersHead', section(G.meadOpen() ? 'Mes boissons' : 'Mes bières', G.myBeers().length ? `<small>${G.myBeers().length}</small>` : '')],
-        ['beerSearch', G.myBeers().length > 20 ? searchBox('beers', G.meadOpen() ? 'Boisson ou ingrédient' : 'Bière ou ingrédient') : ''],
-        ['beers', beersHtml()],
-        ['cellar', cellarHtml()],
-        ['book', bookHtml()],
+        ['vats', t === 'make' ? vatsHtml() : ''],
+        ['compose', t === 'make' ? composerHtml() : ''],
+        ['beersHead', t === 'mine' ? section(G.meadOpen() ? 'Mes boissons' : 'Mes bières', n ? `<small>${n}</small>` : '') : ''],
+        ['beerSearch', t === 'mine' && n > 20 ? searchBox('beers', G.meadOpen() ? 'Boisson ou ingrédient' : 'Bière ou ingrédient') : ''],
+        ['beers', t === 'mine' ? beersHtml() : ''],
+        ['cellar', t === 'mine' ? cellarHtml() : ''],
+        [
+            'orders',
+            t === 'orders' ? ordersHtml() || empty('Pas de commande de bière pour le moment : Frère Hugues, Agnès et les habitués passent régulièrement.') : '',
+        ],
+        ['book', t === 'book' ? bookHtml() : ''],
     ]);
 }
 defineView('machines/brew', renderBrew);
@@ -317,7 +339,7 @@ export function setupBrewery() {
         goAbbey: () => {
             ui.sel.map = 'abbey';
             ui.sel.proj = 'malthouse';
-            go('village/village');
+            go('village/village#story');
         },
         brewMalt: (el, d) => G.setDraftMalt(d.m),
         brewHop: (el, d) => G.setDraftHop(+d.n),

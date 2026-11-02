@@ -375,7 +375,7 @@ export function setupNord() {
         goNordMap: () => {
             ui.sel.map = 'nord';
             ui.sel.proj = NORD.project;
-            go('village/village');
+            go('village/village#story');
         },
         buyNordCell: el =>
             askBuy(

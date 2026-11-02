@@ -131,6 +131,18 @@ function seeds() {
                 i.type === 'crop'
                     ? buyBtn('seed', i.id, 1, i.cost, locked) + buyBtn('seed', i.id, 10, i.cost, locked)
                     : buyBtn('seed', i.id, 1, i.cost, locked);
+            // 1.73 : une culture tient sur une ligne (durée, gain, sol, saison, stock), deux fois moins haute qu'une carte
+            if (i.type === 'crop' && !locked) {
+                const st = state.seeds[i.id] || 0;
+                const inS = !i.seasons || G.isInSeason(i.id);
+                return {
+                    html: `<div class="srow"><span class="srow-art">${art('seed', i.id)}</span><div class="srow-main"><b>${i.seedName}</b>
+                        <small>${ico(['ui', 'clock'])}${formatDuration(i.time / sm)} · ${ico(['ui', 'coin'])}${fmt(G.sellPrice(i.id))}${soil ? ` · ${ico(['ui', SOILS[soil].icon])}` : ''}${i.seasons ? ` · <span class="${inS ? 'in' : 'out'}">${ico(['ui', SEASONS.find(sv => sv.id === i.seasons[0]).icon])}${inS ? 'de saison' : 'hors saison'}</span>` : ''}${st ? ` · <b class="st">${fmt(st)} en stock</b>` : ''}${i.ghOnly ? ' · serre' : ''}</small></div>
+                        <div class="srow-btns">${btns}</div></div>`,
+                    locked,
+                    lvl: i.reqLvl,
+                };
+            }
             return {
                 html: shopCard(art('seed', i.id), i.seedName, `<span class="metas">${sub}</span>`, btns, locked, !lvOk(i) ? i.reqLvl : G.storyLockText(i)),
                 locked,
@@ -463,9 +475,9 @@ function goodsGrid() {
                 ${k === hot ? '<span class="hot-tag">+50 %</span>' : ''}
                 <span class="goods-art">${art('item', k)}</span>
                 <b class="goods-name">${it.name} <small>×${fmt(n)}</small></b>
-                ${qs ? `<span class="qrow">${qs}</span>` : ''}
+                <span class="goods-meta">${qs ? `<span class="qrow">${qs}</span>` : ''}
                 ${G.isLocked(k) ? `<span class="reserved">${ico(['ui', 'lock'])} verrouillé</span>` : keep ? `<span class="reserved">${keep} gardé${keep > 1 ? 's' : ''}</span>` : ''}
-                <span class="unit">${COIN()}${fmt(G.unitPrice(k, 0))} ${trend}</span>
+                <span class="unit">${COIN()}${fmt(G.unitPrice(k, 0))} ${trend}</span></span>
                 <span class="goods-btns">${btn(`+${fmt(one.gain)}`, { act: 'sell', data: { id: k, n: 1 }, size: 'sm' })}${btn(all.sold ? fmt(all.gain) : 'Gardé', { act: 'sell', data: { id: k, n: 0 }, kind: 'gold', size: 'sm', disabled: !all.sold })}</span>
             </div>`;
         })

@@ -45,6 +45,16 @@ function mainPage() {
                 toggle('Lucioles la nuit', s.fireflies !== false, 'setting', { key: 'fireflies' }, 'Pur décor : vos récoltes de nuit remplissent le bocal') +
                 navRow('Taille du texte', 'textSize', null, null, `<b>${TEXT_SIZES[s.textSize] || TEXT_SIZES[0]}</b>`) +
                 toggle('Contraste renforcé', !!s.contrast, 'setting', { key: 'contrast' }) +
+                (s.hints && Object.keys(s.hints).length
+                    ? navRow(
+                          'Réafficher les astuces',
+                          'hintsReset',
+                          null,
+                          ['ui', 'info'],
+                          '›',
+                          `${Object.keys(s.hints).length} astuce${Object.keys(s.hints).length > 1 ? 's' : ''} masquée${Object.keys(s.hints).length > 1 ? 's' : ''}`,
+                      )
+                    : '') +
                 (matchMedia('(hover: hover)').matches
                     ? '<p class="card-sub">Au clavier : 1 à 5 pour les onglets, A pour arroser, R pour récolter ou ramasser, N pour nourrir, V pour tout vendre, Échap pour fermer.</p>'
                     : ''),

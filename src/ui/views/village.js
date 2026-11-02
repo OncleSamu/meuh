@@ -27,6 +27,7 @@ import { DOMAINE, DOMAINE_IDS, DOMAINE_LVL } from '../../data/domaine.js';
 import { costRow } from '../kit.js';
 import { domaineScene, domThumb } from '../../art/v1201domaine.js';
 import { villagersCard } from './villagers.js';
+import { innerTabs } from '../innertabs.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const head = (icon, title, sub, side = '') =>
@@ -417,12 +418,30 @@ defineSheet('domaine', {
 });
 
 function renderVillage(el) {
+    // 1.73 : trois onglets : l'histoire et les chantiers, les villageois, le concours
+    const ids = G.presentVillagers();
+    const gift = ids.filter(id => !G.giftedToday(id) && G.giftable(id).length).length + (G.storiesReady ? G.storiesReady() : 0);
+    if (['story', 'people', 'contest'].includes(ui.sel.village)) {
+        ui.sel['it:village'] = ui.sel.village;
+        ui.sel.village = null;
+    }
+    const T = innerTabs(
+        'village',
+        [
+            ['story', 'Histoire', null, 0],
+            ['people', 'Villageois', null, gift],
+            ['contest', 'Concours', null, 0],
+        ],
+        'story',
+    );
+    const t = T.cur;
     blocks(el, [
+        ['tabs', T.html],
         // 1.9 : tout ce qu'on livre est dans Commandes, le marchand au Marché ; ici, le village et ses habitants
-        ['story', storyCard()],
-        ['domaine', domaineCard()],
-        ['contest', contestCard()],
-        ['villagers', villagersCard()],
+        ['story', t === 'story' ? storyCard() : ''],
+        ['domaine', t === 'story' ? domaineCard() : ''],
+        ['contest', t === 'contest' ? contestCard() : ''],
+        ['villagers', t === 'people' ? villagersCard(true) : ''],
     ]);
 }
 defineView('village/village', renderVillage);
