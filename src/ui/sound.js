@@ -1,7 +1,7 @@
 // Le son : effets synthétisés et musique générative (une ambiance par saison).
 import { state } from '../core/state.js';
 import { on } from '../core/bus.js';
-import { season } from '../systems/world.js';
+import { season, isNight } from '../systems/world.js';
 
 export const SoundEngine = (() => {
     let ctx = null,
@@ -86,7 +86,7 @@ export const SoundEngine = (() => {
         EIGHTH = 60 / s.bpm / 2;
         melIdx = Math.min(melIdx, PENTA.length - 1);
     }
-    const vol = k => (state.settings[k] === undefined ? 0.8 : state.settings[k]);
+    const vol = k => (state.settings[k] === undefined ? (k === 'ambVol' ? 0.6 : 0.8) : state.settings[k]);
 
     function init() {
         if (ctx) return true;
@@ -324,6 +324,133 @@ export const SoundEngine = (() => {
             step++;
         }
     }
+    // ---------------- 1.75 : l'ambiance (synthétisée, comme la musique) ----------------
+    // des « nappes » de bruit filtré qui montent et descendent (pluie, vent, vagues) et de petits sons posés au hasard
+    // (oiseaux le jour, grillons les nuits d'été, chouette, mouettes à l'île, clochettes à l'oasis)
+    let ambBus = null,
+        ambTimer = null,
+        ambNoise = null,
+        placeOf = () => 'farm';
+    const beds = {};
+    function bed(id, { type = 'lowpass', freq = 600, q = 0.7, lfo = 0, lfoDepth = 0 }) {
+        if (beds[id]) return beds[id];
+        const s = ctx.createBufferSource();
+        s.buffer = ambNoise;
+        s.loop = true;
+        const f = ctx.createBiquadFilter();
+        f.type = type;
+        f.frequency.value = freq;
+        f.Q.value = q;
+        const g = ctx.createGain();
+        g.gain.value = 0;
+        s.connect(f);
+        f.connect(g);
+        g.connect(ambBus);
+        if (lfo) {
+            // le souffle qui va et vient (vent, vagues)
+            const o = ctx.createOscillator(),
+                og = ctx.createGain();
+            o.frequency.value = lfo;
+            og.gain.value = lfoDepth;
+            o.connect(og);
+            og.connect(f.frequency);
+            o.start();
+        }
+        s.start();
+        return (beds[id] = g);
+    }
+    const BEDS = {
+        rain: { type: 'bandpass', freq: 2600, q: 0.5 },
+        wind: { type: 'lowpass', freq: 380, q: 1.4, lfo: 0.09, lfoDepth: 220 },
+        sea: { type: 'lowpass', freq: 520, q: 0.8, lfo: 0.11, lfoDepth: 300 },
+        brook: { type: 'bandpass', freq: 1500, q: 1.2, lfo: 0.7, lfoDepth: 400 },
+    };
+    function chirp(t) {
+        const f = 2600 + Math.random() * 1600,
+            n = 2 + Math.floor(Math.random() * 3);
+        for (let k = 0; k < n; k++) tone(f * (1 + Math.random() * 0.12), t + k * 0.11, 0.07, { vol: 0.11, glide: f * 1.35, bus: ambBus });
+    }
+    function cricket(t) {
+        for (let k = 0; k < 6; k++) tone(4400, t + k * 0.045, 0.025, { type: 'triangle', vol: 0.035, bus: ambBus });
+    }
+    function owl(t) {
+        tone(410, t, 0.35, { vol: 0.12, attack: 0.08, glide: 380, bus: ambBus });
+        tone(400, t + 0.55, 0.5, { vol: 0.1, attack: 0.1, glide: 360, bus: ambBus });
+    }
+    function gull(t) {
+        tone(1500, t, 0.22, { type: 'triangle', vol: 0.07, glide: 1100, bus: ambBus });
+        tone(1450, t + 0.28, 0.18, { type: 'triangle', vol: 0.055, glide: 1050, bus: ambBus });
+    }
+    function bell(t) {
+        const f = 1300 + Math.random() * 400;
+        tone(f, t, 0.9, { vol: 0.05, attack: 0.004, bus: ambBus });
+        tone(f * 2.7, t, 0.4, { vol: 0.015, attack: 0.004, bus: ambBus });
+    }
+    // ce que l'on entend ici et maintenant
+    function ambMix() {
+        const place = placeOf();
+        const w = state.weather,
+            s = season().id,
+            night = isNight();
+        const wet = w === 'rain' || w === 'storm';
+        const mix = { rain: wet ? (w === 'storm' ? 0.6 : 0.42) : 0, wind: 0.04, sea: 0, brook: 0, ev: [] };
+        if (place === 'nord') {
+            mix.wind = 0.13;
+            if (!night) mix.ev.push([bell, 0.01]);
+        } else if (place === 'isle') {
+            mix.sea = 0.11;
+            if (!night) mix.ev.push([gull, 0.035]);
+        } else if (place === 'oasis') {
+            mix.wind = 0.07;
+            if (!night) mix.ev.push([bell, 0.03]);
+        } else {
+            if (place === 'pond') mix.brook = 0.1;
+            if (w === 'snow' || s === 'hiver') mix.wind = Math.max(mix.wind, 0.16);
+            if (!wet && !night && s !== 'hiver') mix.ev.push([chirp, s === 'printemps' ? 0.09 : 0.05]);
+            if (night && s === 'ete') mix.ev.push([cricket, 0.35]);
+            if (night) mix.ev.push([owl, 0.008]);
+        }
+        return mix;
+    }
+    function ambTick() {
+        const m = ambMix();
+        for (const [id, o] of Object.entries(BEDS)) {
+            const target = m[id] || 0;
+            if (!target && !beds[id]) continue;
+            bed(id, o).gain.setTargetAtTime(target, ctx.currentTime, 1.2);
+        }
+        for (const [fn, p] of m.ev) if (Math.random() < p) fn(ctx.currentTime + Math.random() * 0.2);
+    }
+    function startAmb() {
+        if (!ctx || ambTimer) return;
+        if (!ambBus) {
+            ambBus = ctx.createGain();
+            ambBus.gain.value = 0;
+            ambBus.connect(master);
+            ambNoise = ctx.createBuffer(1, ctx.sampleRate * 3, ctx.sampleRate);
+            const d = ambNoise.getChannelData(0);
+            // un bruit « rose » (plus doux que le blanc) : la pluie et le vent sonnent moins comme une radio mal réglée
+            let b0 = 0,
+                b1 = 0,
+                b2 = 0;
+            for (let i = 0; i < d.length; i++) {
+                const x = Math.random() * 2 - 1;
+                b0 = 0.997 * b0 + x * 0.029591;
+                b1 = 0.985 * b1 + x * 0.032534;
+                b2 = 0.95 * b2 + x * 0.048056;
+                d[i] = (b0 + b1 + b2 + x * 0.05) * 2.2;
+            }
+        }
+        ambBus.gain.setTargetAtTime(vol('ambVol'), ctx.currentTime, 0.8);
+        ambTick();
+        ambTimer = setInterval(ambTick, 400);
+    }
+    function stopAmb() {
+        if (!ctx || !ambBus) return;
+        ambBus.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
+        clearInterval(ambTimer);
+        ambTimer = null;
+    }
     function startMusic() {
         if (!ctx || timer) return;
         nextT = ctx.currentTime + 0.15;
@@ -342,6 +469,15 @@ export const SoundEngine = (() => {
             if (!init()) return;
             if (ctx.state === 'suspended') ctx.resume();
             if (state.settings.music) startMusic();
+            if (state.settings.ambience !== false) startAmb();
+        },
+        setAmbience(on) {
+            if (!ctx) return;
+            on ? startAmb() : stopAmb();
+        },
+        // l'endroit où l'on est (farm, pond, isle, oasis, nord), donné par l'interface
+        setPlace(fn) {
+            placeOf = fn;
         },
         play,
         setMusic(on) {
@@ -356,6 +492,7 @@ export const SoundEngine = (() => {
             if (!ctx) return;
             sfxBus.gain.value = state.settings.sfx ? vol('sfxVol') : 0;
             if (timer) musicBus.gain.setTargetAtTime(vol('musicVol'), ctx.currentTime, 0.1);
+            if (ambTimer) ambBus.gain.setTargetAtTime(vol('ambVol'), ctx.currentTime, 0.1);
         },
         suspend() {
             if (ctx && ctx.state === 'running') ctx.suspend();

@@ -12,6 +12,8 @@
 
 :root {
     --ink: #3a2618;
+    /* 1.75 : le trait des contours (égal à l'encre en clair, reste sombre en thème sombre) */
+    --line: #3a2618;
     --ink-soft: rgba(58, 38, 24, 0.68);
     --wood: #a8693a;
     --wood-d: #7a4a2a;

@@ -7,6 +7,14 @@ import { rareActive } from '../systems/surprises.js';
 import { holidayNow } from '../systems/holidays.js';
 import { byId } from './dom.js';
 
+// 1.75 : « auto » suit le réglage du téléphone
+const darkMq = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: dark)') : null;
+export const darkOn = () => {
+    const t = state.settings.theme || 'auto';
+    return t === 'dark' || (t === 'auto' && !!(darkMq && darkMq.matches));
+};
+if (darkMq && darkMq.addEventListener) darkMq.addEventListener('change', () => updateScene());
+
 const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
 export const mix = (a, b, t) =>
     '#' +
@@ -85,6 +93,8 @@ export function updateScene() {
         `ts-${state.settings.textSize || 0}`,
         state.settings.contrast ? 'contrast' : '',
         state.settings.calm ? 'calm' : '',
+        // 1.75 : le thème sombre de l'interface (réglage, ou celui du téléphone)
+        darkOn() ? 'dark' : '',
         h < 5.5 || h >= 20.5 ? 'night' : '',
     ]
         .filter(Boolean)

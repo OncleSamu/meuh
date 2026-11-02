@@ -1,0 +1,28 @@
+/* 1.75 : le thème sombre de l'interface. Les règles transformées sont fabriquées par tools/dark.mjs
+   à partir des styles clairs ; ici, les couleurs de base et les retouches à la main. */
+html.dark {
+    --ink: #f2e4c8;
+    --ink-soft: rgba(242, 228, 200, 0.7);
+    --ink-l: rgba(242, 228, 200, 0.5);
+    --wood-l: #6b4a2c;
+    --wood-ll: #3b2b1f;
+    --paper: #2a1f17;
+    --paper-l: #33261c;
+    --line: #120b06;
+    color-scheme: dark;
+}
+
+/* l'onglet choisi : un brun plus clair que la barre (en sombre, le papier est plus foncé que le bois) */
+html.dark .seg > button.on {
+    background: linear-gradient(#6a4f36, #553d27);
+    color: var(--ink);
+}
+/* les bandeaux dorés (produit du jour) : un or sombre, le texte reste lisible */
+html.dark .card.banner.hot,
+html.dark .card.banner.fair {
+    background: linear-gradient(#5b4620, #3f3017);
+}
+html.dark .btn:disabled {
+    background: #3a2c21;
+    color: rgba(242, 228, 200, 0.45);
+}

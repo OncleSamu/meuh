@@ -4,6 +4,7 @@
 import fs from 'fs';
 import path from 'path';
 import { build } from 'esbuild';
+import { gameCss } from './css.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const src = p => fs.readFileSync(path.join(root, 'src', p), 'utf8');
@@ -21,14 +22,8 @@ const js = await build({
 });
 const code = js.outputFiles[0].text.replace(/\{\{VERSION\}\}/g, version);
 
-// les feuilles de style, dans l'ordre de leur numéro
-const cssDir = path.join(root, 'src/styles');
-const css = fs
-    .readdirSync(cssDir)
-    .filter(f => f.endsWith('.css'))
-    .sort()
-    .map(f => fs.readFileSync(path.join(cssDir, f), 'utf8'))
-    .join('\n');
+// les feuilles de style, dans l'ordre de leur numéro, puis le thème sombre (1.75)
+const css = gameCss(root);
 const cssMin = (await build({ stdin: { contents: css, loader: 'css' }, minify: true, write: false, target: ['safari14', 'chrome90'] })).outputFiles[0].text;
 
 const page = src('index.html')

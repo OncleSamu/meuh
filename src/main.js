@@ -5,8 +5,8 @@ import { setView } from './core/view.js';
 import { emit } from './core/bus.js';
 import * as G from './systems/index.js';
 import { actions } from './ui/dom.js';
-import { setupApp, refresh, saveNow, tabEl } from './ui/app.js';
-import { setupSound } from './ui/sound.js';
+import { setupApp, refresh, saveNow, tabEl, ui, currentPath } from './ui/app.js';
+import { setupSound, SoundEngine } from './ui/sound.js';
 import { setupTypo } from './ui/typo.js';
 import { setupFx } from './ui/fx.js';
 import { setupSheets } from './ui/sheets.js';
@@ -64,6 +64,12 @@ function start() {
     G.checkNewAchievements();
 
     setupSound();
+    // 1.75 : l'ambiance suit l'endroit où l'on est
+    SoundEngine.setPlace(() => {
+        const p = currentPath();
+        if (p === 'farm/island') return ui.sel.island === 'oasis' ? 'oasis' : ui.sel.island === 'nord' ? 'nord' : 'isle';
+        return p === 'farm/pond' ? 'pond' : 'farm';
+    });
     setupFx({ sfx: name => emit('sfx', name), tabEl });
     setupSheets();
     setupApp();

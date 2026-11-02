@@ -18,11 +18,12 @@ import { innerTabs } from '../innertabs.js';
 
 export const VERSION = '{{VERSION}}';
 const TEXT_SIZES = ['Normale', 'Grande', 'Très grande'];
+const THEMES = { auto: 'Comme le téléphone', light: 'Clair', dark: 'Sombre' };
 const set = state => state.settings;
 
 const group = (title, rows) => `<div class="set-group"><div class="set-title">${title}</div>${rows}</div>`;
 const slider = (label, key, act) =>
-    `<label class="row slider"><span class="row-main"><span>${label}</span></span><input type="range" min="0" max="100" step="5" value="${Math.round(state.settings[key] * 100)}" data-input="${act}" data-key="${key}"></label>`;
+    `<label class="row slider"><span class="row-main"><span>${label}</span></span><input type="range" min="0" max="100" step="5" value="${Math.round((state.settings[key] === undefined ? (key === 'ambVol' ? 0.6 : 0.8) : state.settings[key]) * 100)}" data-input="${act}" data-key="${key}"></label>`;
 
 function mainPage() {
     const s = set(state);
@@ -49,6 +50,8 @@ function mainPage() {
                           slider('Volume de la musique', 'musicVol', 'volume') +
                           toggle('Effets sonores', s.sfx, 'setting', { key: 'sfx' }) +
                           slider('Volume des effets', 'sfxVol', 'volume') +
+                          toggle('Ambiance', s.ambience !== false, 'setting', { key: 'ambience' }, 'Oiseaux, pluie, vent, vagues, selon l’endroit et l’heure') +
+                          slider('Volume de l’ambiance', 'ambVol', 'volume') +
                           toggle('Vibrations', s.haptics, 'setting', { key: 'haptics' }),
                   ),
               ]
@@ -73,6 +76,7 @@ function mainPage() {
                                 { key: 'fireflies' },
                                 'Pur décor : vos récoltes de nuit remplissent le bocal',
                             ) +
+                            navRow('Thème', 'theme', null, null, `<b>${THEMES[s.theme || 'auto']}</b>`) +
                             navRow('Taille du texte', 'textSize', null, null, `<b>${TEXT_SIZES[s.textSize] || TEXT_SIZES[0]}</b>`) +
                             toggle('Contraste renforcé', !!s.contrast, 'setting', { key: 'contrast' }) +
                             (s.hints && Object.keys(s.hints).length
@@ -238,9 +242,10 @@ export function setupSettings() {
         setting: (el, d) => {
             const s = state.settings;
             // confirmBuy est actif quand il manque (anciennes sauvegardes)
-            s[d.key] = d.key === 'confirmBuy' || d.key === 'fireflies' || d.key === 'seeder' ? s[d.key] === false : !s[d.key];
+            s[d.key] = d.key === 'confirmBuy' || d.key === 'fireflies' || d.key === 'seeder' || d.key === 'ambience' ? s[d.key] === false : !s[d.key];
             SoundEngine.unlock();
             if (d.key === 'music') SoundEngine.setMusic(s.music);
+            if (d.key === 'ambience') SoundEngine.setAmbience(s.ambience !== false);
             if (d.key === 'sfx') {
                 SoundEngine.setSfx(s.sfx);
                 emit('sfx', 'click');
@@ -252,6 +257,11 @@ export function setupSettings() {
             SoundEngine.unlock();
             SoundEngine.setVolumes();
             return QUIET;
+        },
+        theme: () => {
+            const order = ['auto', 'light', 'dark'];
+            state.settings.theme = order[(order.indexOf(state.settings.theme || 'auto') + 1) % 3];
+            updateScene();
         },
         textSize: () => {
             state.settings.textSize = ((state.settings.textSize || 0) + 1) % 3;
