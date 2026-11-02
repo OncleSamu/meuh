@@ -208,7 +208,7 @@
 }
 .view.on {
     display: block;
-    animation: fadeUp 0.2s ease-out;
+    /* 1.75.1 : l'animation d'entrée est posée par go() (enter-f, enter-r, enter-l) ; l'ancien fondu la rejouait une deuxième fois */
 }
 .view > .block + .block {
     margin-top: 10px;

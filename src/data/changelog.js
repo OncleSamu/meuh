@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.75.1',
+        title: 'Correctif',
+        date: '2 novembre 2026',
+        items: ["En changeant de page, l'écran ne s'anime plus deux fois de suite"],
+    },
+    {
         v: '1.75',
         title: 'Confort et vitesse',
         date: '2 novembre 2026',
