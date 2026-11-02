@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.77.1',
+        title: 'Guide de la qualité',
+        date: '2 novembre 2026',
+        items: [
+            'Deux pages au guide',
+            'Argent et or',
+            'Platine et diamant',
+            'Coin par coin : champ, contrées, verger, pré, atelier, comptoir, brasserie, vins et cave',
+            "L'exemple de la baguette en diamant",
+        ],
+    },
+    {
         v: '1.77',
         title: 'La légende a grandi',
         date: '2 novembre 2026',

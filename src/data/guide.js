@@ -1181,6 +1181,107 @@ export const GUIDE_PAGES = [
         ],
         see: ['cave', 'village'],
     },
+    // 1.77.1 : comment obtenir chaque qualité, coin par coin
+    {
+        id: 'qualityAG',
+        cat: 'grow',
+        name: 'La qualité : argent et or',
+        icon: ['ui', 'medalG'],
+        lvl: 3,
+        go: 'machines/workshop',
+        intro: 'Chaque produit peut sortir normal, en argent (×1,25 le prix) ou en or (×1,6). Voici, coin par coin, ce qui fait monter la qualité.',
+        secs: [
+            {
+                h: 'Au champ et en serre',
+                t: 'Chaque récolte tire sa qualité. Les chances montent avec : une culture de saison, la serre (encore plus hors saison), le soleil ou la pluie, l’engrais posé sur la parcelle (le plus fort), un sol qui convient à la culture, les cultures compagnes bien voisines, des fleurs ou un banc de chêne à côté, la compétence « Œil d’expert », vos rubans (jusqu’à +10 %) et les variétés savoureuses du labo. Environ un tiers des belles récoltes sont en or, les autres en argent. Un vœu d’étoile filante donne de l’or à coup sûr pendant quelque temps.',
+            },
+            {
+                h: 'À l’île, à l’oasis et au Grand Nord',
+                t: 'Mêmes règles, avec une base un peu meilleure qu’au champ : « Œil d’expert », rubans, variétés, et à l’oasis et au Nord les cultures compagnes.',
+            },
+            {
+                h: 'Au verger',
+                t: 'Un arbre donne de plus beaux fruits en mûrissant (jusqu’à +15 % de chances quand il est mûr). Aident aussi : le soleil ou la pluie, « Œil d’expert », « Fruits de concours », les rubans et les variétés d’arbres. L’hiver fait un peu baisser la qualité (sauf aux îles). Un greffon doré ou un arbre doré remarquable donnent un fruit sur quatre en or.',
+            },
+            {
+                h: 'Au pré (produits des bêtes)',
+                t: 'Œufs, lait, laine… sortent normaux tant que la bête est ordinaire. La qualité vient de l’élevage au labo : une bête née de bons croisements, avec les caractères « riche », « doux » et « arôme » au-dessus de la normale, donne de l’argent et de l’or. Plus elle les dépasse, plus c’est souvent.',
+            },
+            {
+                h: 'À l’atelier (plats et produits fabriqués)',
+                t: 'Un plat prend la qualité de ses ingrédients. Allumez « Meilleurs ingrédients d’abord » (Atelier › Production, dès que le labo est ouvert) : le jeu prend vos plus beaux ingrédients. On fait la moyenne des ingrédients (argent 1 point, or 2, platine 3, diamant 4) : à partir de 1,2 le plat sort en argent, à partir de 1,8 en or. Une variété savoureuse ajoute des points. Une étoile sur la recette annonce le rang du lot avant de le lancer.',
+            },
+            {
+                h: 'Au comptoir',
+                t: 'La boisson prend la note du mini-jeu : deux étoiles donnent de l’argent, trois étoiles de l’or. Si les ingrédients sont meilleurs que la note, c’est leur rang qui compte.',
+            },
+            {
+                h: 'À la brasserie',
+                t: 'Comme à l’atelier : avec « Meilleurs ingrédients d’abord », un brassin fait d’ingrédients en argent ou en or donne des bouteilles de ce rang (pour un hydromel, le miel compte aussi). Elles se vendent plus cher et les commandes les paient selon leur rang.',
+            },
+            {
+                h: 'À la cave',
+                t: 'Un lot garde le rang que toutes ses unités partagent : six fromages en or font un lot en or ; cinq en or et un normal, un lot normal. Un lot de qualité vieillit un peu mieux et se vend plus cher. Mettez donc en cave des produits du même rang.',
+            },
+            {
+                h: 'Où le voir',
+                t: 'La grange : touchez un produit pour voir combien sont normaux, en argent, en or. Le Livre de la ferme : la fiche d’un produit compte ceux faits en argent et en or.',
+            },
+        ],
+        see: ['qualityPD', 'mastery', 'labplants', 'labanimals'],
+    },
+    {
+        id: 'qualityPD',
+        cat: 'grow',
+        name: 'La qualité : platine et diamant',
+        icon: ['item', 'sapphire'],
+        lvl: 20,
+        go: 'machines/workshop',
+        intro: 'Au-dessus de l’or : le platine (×2,1 le prix) et le diamant (×2,8). Rien ne sort en platine ou en diamant tout seul : il faut une maîtrise, ou des ingrédients de ce rang.',
+        secs: [
+            {
+                h: 'La règle de base : la maîtrise',
+                t: 'Quand un produit est maîtrisé en or (cultures : 10 000 ; bêtes : 6 000), chacune de ses récoltes en or a une chance de monter en platine : 15 %, puis 20 % au rang platine de la maîtrise, puis 25 % au rang diamant. À partir du rang platine (cultures : 25 000 ; bêtes : 15 000), environ une montée sur huit devient du diamant, puis une sur cinq au rang diamant (cultures : 60 000 ; bêtes : 36 000).',
+            },
+            {
+                h: 'Au champ, à l’île, à l’oasis et au Grand Nord',
+                t: 'D’abord beaucoup d’or (voir « argent et or »), puis la maîtrise de la culture fait monter une partie de cet or en platine, et plus tard en diamant. Une culture que vous faites beaucoup est donc la plus facile à monter.',
+            },
+            {
+                h: 'Au verger',
+                t: 'Même règle avec la maîtrise du fruit : les fruits en or d’un arbre mûr (ou d’un greffon doré) montent en platine puis en diamant.',
+            },
+            {
+                h: 'Au pré',
+                t: 'Il faut des bêtes de bonne race pour avoir de l’or (labo), puis la maîtrise du produit (œuf, lait…) pour monter une partie de cet or en platine et en diamant.',
+            },
+            {
+                h: 'À l’atelier : les plats',
+                t: 'Un plat ne monte pas tout seul : il faut des ingrédients de ce rang, avec « Meilleurs ingrédients d’abord ». Moyenne de 2,5 : platine ; moyenne de 3,5 : diamant (les ingrédients sont presque tous en diamant). Exemple, la baguette en diamant : du blé en diamant (maîtrise du blé), puis 3 blés en diamant (ou 2 en diamant et 1 en platine) font une farine en diamant, puis 2 farines en diamant (ou 1 en diamant et 1 en platine) font la baguette. Un plat à plusieurs étages se prépare donc étage par étage.',
+            },
+            {
+                h: 'Le raccourci du labo',
+                t: 'Une variété savoureuse ajoute à ses unités la moitié de son goût, jusqu’à +1,2 point : un blé de variété en or vaut presque un platine, et un blé de variété en platine compte comme un diamant. Ses récoltes gardent aussi leur rang dans la grange. Avec une bonne variété, viser le platine au champ suffit pour des plats en diamant.',
+            },
+            {
+                h: 'Au comptoir',
+                t: 'Trois étoiles au mini-jeu donnent de l’or au plus. Le platine et le diamant viennent seulement des ingrédients : thé, lait, miel… de ce rang, avec « Meilleurs ingrédients d’abord ». Les clients paient le diamant 60 % de plus qu’une boisson normale.',
+            },
+            {
+                h: 'À la brasserie et pour l’hydromel',
+                t: 'Même règle que les plats : des ingrédients (et, pour l’hydromel, du miel) en platine ou en diamant donnent des bouteilles de ce rang. Elles gardent leur rang en cave et les commandes les paient ×2,1 ou ×2,8.',
+            },
+            {
+                h: 'Les vins et la cave',
+                t: 'Le vin se fait à l’atelier comme un plat : du raisin en platine ou en diamant donne du vin de ce rang (un cépage du labo aide beaucoup). En cave, un lot entièrement en diamant reste en diamant ; c’est ainsi qu’on obtient les plus grands crus (« cru d’exception » au chai) et les lots qui valent le plus.',
+            },
+            {
+                h: 'Où le voir',
+                t: 'Dans la grange, les rangs platine et diamant apparaissent sous le produit dès que vous en avez. Dans le Livre de la ferme, la fiche d’un produit ajoute « En platine » et « En diamant » dès le premier, et sa vignette gagne un point de plus.',
+            },
+        ],
+        see: ['qualityAG', 'mastery', 'labplants'],
+    },
     {
         id: 'mastery',
         cat: 'craft',
