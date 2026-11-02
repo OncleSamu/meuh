@@ -993,3 +993,20 @@ body {
     top: 2px;
     right: 14px;
 }
+
+/* 1.74.3 : une bande de pastilles qui défile se fond à droite ; la pagination tient sur une ligne */
+.chips-row:not(.wrap) {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent);
+    padding-right: 22px;
+}
+.pager.top::after {
+    content: none;
+}
+.pager.top {
+    margin: 2px 0 8px;
+}
+.pager .pg-n {
+    min-width: 34px;
+    height: 34px;
+}

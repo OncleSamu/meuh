@@ -133,7 +133,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'S’y retrouver (1.74)',
                 b: [
-                    'Chaque volet garde son nom ; quand ils ne tiennent pas, la bande défile (un fondu montre qu’il en reste).',
+                    'Chaque volet garde son nom ; quand ils ne tiennent pas, la bande défile (un fondu montre qu’il en reste). Les offres de Zéphyr et les familles du grossiste défilent de la même façon.',
                     'Un point doré sur un onglet : il y a quelque chose à faire. Une pastille rouge chiffrée : ça presse (grange pleine, citerne vide, poêle éteint, anniversaire…).',
                     'Les pages longues ont leurs onglets : Brasserie, Cave, Comice, Labo et Village ; et dans le menu, la Coupe, la Maison, Progrès et Statistiques (toute la ferme en chiffres, rangée par coin : champ, bêtes, atelier, nature, village).',
                     'Les listes longues vont par pages : graines du marché par 15, boissons par 10. À l’étal, plus de 3 ventes finies se résument en une ligne à encaisser.',

@@ -1,6 +1,20 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.74.3',
+        title: 'Plus clair',
+        date: '2 novembre 2026',
+        items: [
+            'Un seul style de titre dans les fiches',
+            'Textes raccourcis',
+            "La mer n'a plus l'air d'un bouton",
+            'Zéphyr sur une bande qui défile',
+            "L'étal plus court",
+            'Pagination sur une ligne',
+            'Les bandes de pastilles se fondent à droite',
+        ],
+    },
+    {
         v: '1.74.2',
         title: 'Statistiques et réglages',
         date: '2 novembre 2026',

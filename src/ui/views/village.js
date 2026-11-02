@@ -282,11 +282,13 @@ export function merchantCard() {
             cls: 'away',
         });
     return `<div class="card merchant-card">
-        <div class="card-head"><div class="avatar sm">${art('villager', 'merchant')}</div><div class="card-main"><div class="card-title">Zéphyr, marchand ambulant</div><div class="card-sub">« Des merveilles venues de loin ! » · repart dans ${timer(m.expiresAt, 'b')}</div></div></div>
-        <div class="offers">${m.stock
+        <div class="card-head"><div class="avatar sm">${art('villager', 'merchant')}</div><div class="card-main"><div class="card-title">Zéphyr, marchand ambulant</div><div class="card-sub">Repart dans ${timer(m.expiresAt, 'b')} · ${m.stock.filter(o => !o.sold).length} offre${m.stock.filter(o => !o.sold).length > 1 ? 's' : ''}</div></div></div>
+        <div class="offers strip">${m.stock
+            .map((o, k) => [o, k])
+            .sort((a, b) => !!a[0].sold - !!b[0].sold)
             .map(
-                (o, k) =>
-                    `<div class="offer${o.sold ? ' sold' : ''}"><span class="offer-art">${art(...G.offerIcon(o))}</span><b>${o.qty > 1 ? o.qty + ' × ' : ''}${G.offerName(o)}</b>${o.sold ? '<small>Vendu</small>' : btn(`${fmt(o.price)}${COIN()}`, { act: 'buyMerchant', data: { k }, kind: state.money >= o.price ? 'green' : '', size: 'sm', disabled: state.money < o.price })}</div>`,
+                ([o, k]) =>
+                    `<div class="offer${o.sold ? ' sold' : ''}" title="${G.offerName(o)}"><span class="offer-art">${art(...G.offerIcon(o))}</span><b>${o.qty > 1 ? o.qty + ' × ' : ''}${G.offerName(o)}</b>${o.sold ? '<small>Vendu</small>' : btn(`${fmt(o.price)}${COIN()}`, { act: 'buyMerchant', data: { k }, kind: state.money >= o.price ? 'green' : '', size: 'sm', disabled: state.money < o.price })}</div>`,
             )
             .join('')}</div></div>`;
 }
