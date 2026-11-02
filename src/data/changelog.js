@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.76.1',
+        title: 'Correctif',
+        date: '2 novembre 2026',
+        items: ["La pluie et l'orage sont nettement plus doux dans l'ambiance"],
+    },
+    {
         v: '1.76',
         title: 'Le salon du comptoir',
         date: '2 novembre 2026',

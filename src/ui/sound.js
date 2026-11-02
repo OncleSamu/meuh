@@ -361,7 +361,7 @@ export const SoundEngine = (() => {
         return (beds[id] = g);
     }
     const BEDS = {
-        rain: { type: 'bandpass', freq: 2600, q: 0.5 },
+        rain: { type: 'bandpass', freq: 1900, q: 0.45 },
         wind: { type: 'lowpass', freq: 380, q: 1.4, lfo: 0.09, lfoDepth: 220 },
         sea: { type: 'lowpass', freq: 520, q: 0.8, lfo: 0.11, lfoDepth: 300 },
         brook: { type: 'bandpass', freq: 1500, q: 1.2, lfo: 0.7, lfoDepth: 400 },
@@ -394,7 +394,7 @@ export const SoundEngine = (() => {
             s = season().id,
             night = isNight();
         const wet = w === 'rain' || w === 'storm';
-        const mix = { rain: wet ? (w === 'storm' ? 0.6 : 0.42) : 0, wind: 0.04, sea: 0, brook: 0, ev: [] };
+        const mix = { rain: wet ? (w === 'storm' ? 0.22 : 0.15) : 0, wind: 0.04, sea: 0, brook: 0, ev: [] };
         if (place === 'nord') {
             mix.wind = 0.13;
             if (!night) mix.ev.push([bell, 0.01]);
