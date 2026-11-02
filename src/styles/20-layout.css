@@ -168,12 +168,14 @@
         padding-left: 10px;
     }
 }
+/* 1.73 : la grange garde son icône, même sur un petit téléphone (on voit tout de suite ce que dit ce chiffre) */
 @media (max-width: 360px) {
     .pill.barn .ico {
-        display: none;
+        width: 18px;
+        height: 18px;
     }
-    .pill.barn {
-        padding-left: 8px;
+    .pill.barn b {
+        font-size: 0.7rem;
     }
 }
 
@@ -471,4 +473,71 @@ body.wide #tabs {
     .subnav-row .seg.n5 > button.on {
         flex: 4.6 1 0;
     }
+}
+
+/* 1.73 : la bande des volets : chaque volet garde son icône et son nom ; elle défile si elle ne tient pas */
+.subnav-row.strip > .seg {
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+}
+.subnav-row.strip > .seg::-webkit-scrollbar {
+    display: none;
+}
+.subnav-row.strip .seg > button,
+.subnav-row.strip .seg.n4 > button,
+.subnav-row.strip .seg.n5 > button,
+.subnav-row.strip .seg.n5 > button.on {
+    flex: 1 0 auto;
+    flex-direction: row;
+    gap: 5px;
+    min-height: 40px;
+    padding: 5px 10px;
+    font-size: 0.86rem;
+    scroll-snap-align: center;
+}
+.subnav-row.strip .seg > button span,
+.subnav-row.strip .seg.n5 > button:not(.on) span {
+    display: inline;
+    white-space: nowrap;
+    overflow: visible;
+}
+.subnav-row.strip .seg > button .ico {
+    width: 22px;
+    height: 22px;
+}
+.subnav-row.strip .seg > button small {
+    margin-left: 3px;
+    font-size: 0.7rem;
+}
+.subnav-row.strip .seg > button .dot {
+    top: -2px;
+    right: 0;
+}
+.subnav-row.strip > .seg.more-r {
+    -webkit-mask-image: linear-gradient(to right, #000 82%, transparent);
+    mask-image: linear-gradient(to right, #000 82%, transparent);
+}
+.subnav-row.strip > .seg.more-l {
+    -webkit-mask-image: linear-gradient(to left, #000 82%, transparent);
+    mask-image: linear-gradient(to left, #000 82%, transparent);
+}
+.subnav-row.strip > .seg.more-l.more-r {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+}
+/* le point doré d'un volet : dans le coin, sans mordre sur le nom */
+.subnav-row .seg > button .dot.soft {
+    top: 3px;
+    right: 3px;
+    width: 10px;
+    min-width: 10px;
+    height: 10px;
+    border-width: 1.5px;
+}
+/* 1.73 : « Renommée 14 » au niveau maximum : un peu plus petit pour tenir dans la jauge */
+.xp-bar.renown > small {
+    font-size: 0.6rem;
+    padding-left: 8px;
+    letter-spacing: -0.01em;
 }

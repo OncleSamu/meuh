@@ -19,7 +19,7 @@ import { MAX_LEVEL } from '../data/progress.js';
 import * as G from '../systems/index.js';
 import { $$, byId, patch, setupActions, afterAction, actions } from './dom.js';
 import { ico, parts } from './icons.js';
-import { segmented, dot } from './kit.js';
+import { segmented, dot, tabDot } from './kit.js';
 import { render as renderSheets, openSheet, anySheet, closeSheet } from './sheets.js';
 import { momentShown, closeMoment } from './moments.js';
 import { todoList, todoCounts } from './todo.js';
@@ -153,7 +153,8 @@ export function go(path, opts = {}) {
 function renderHud() {
     const req = G.xpNeed();
     const p = Math.min(1, state.xp / req);
-    const xpText = state.level >= MAX_LEVEL ? `★ ${state.renown || 0} · ${Math.floor(p * 100)} %` : `${fmtK(state.xp)} / ${fmtK(req)}`;
+    // 1.73 : au niveau maximum, la barre dit la renommée en mots (la jauge montre l'avancée vers l'étoile suivante)
+    const xpText = state.level >= MAX_LEVEL ? `Renommée ${state.renown || 0}` : `${fmtK(state.xp)} / ${fmtK(req)}`;
     const used = G.barnUsed(),
         cap = G.barnCap();
     const menuN = ui.counts.menu || 0;
@@ -161,7 +162,7 @@ function renderHud() {
         byId('hud'),
         `<button class="lvl${state.legend ? ' legend' : ''}" data-act="open" data-sheet="levels" aria-label="Niveau ${state.level}${state.level >= MAX_LEVEL ? `, renommée ${state.renown || 0}, ${Math.floor(p * 100)} % vers l’étoile suivante` : ''}, voir les niveaux" title="${state.level >= MAX_LEVEL ? `Renommée : ${state.renown || 0} étoile(s), ${Math.floor(p * 100)} % vers la suivante` : ''}">
             <span class="lvl-star">${ico(['ui', 'star'])}<b${state.level > 9 ? ' class="two"' : ''}>${state.level}</b></span>
-            <span class="xp-bar"><i style="width:${(p * 100).toFixed(1)}%"></i><small>${xpText}</small></span>
+            <span class="xp-bar${state.level >= MAX_LEVEL ? ' renown' : ''}"><i style="width:${(p * 100).toFixed(1)}%"></i><small>${xpText}</small></span>
         </button>
         <span class="pill coins" id="coin-pill">${ico(['ui', 'coin'])}<b id="ui-money"></b></span>
         <button class="pill barn${used >= cap ? ' full' : used >= cap * 0.85 ? ' near' : ''}" id="barn-pill" data-act="open" data-sheet="barn" aria-label="Grange">${ico(['ui', 'barn'])}<b>${used >= 1e4 || cap >= 1e4 ? `${fmt(used)}/${fmt(cap)}` : `${used}/${cap}`}</b></button>
@@ -177,7 +178,7 @@ function renderTabs() {
             const locked = tabLocked(t.id),
                 n = ui.counts[t.id] || 0;
             return `<button class="tab${ui.tab === t.id ? ' on' : ''}${locked ? ' locked' : ''}" data-act="go" data-path="${t.id}" data-tab="${t.id}" aria-label="${t.name}">
-                <span class="tab-ico">${ico(locked ? ['ui', 'lock'] : t.icon)}</span><span class="tab-name">${t.name}</span>${locked ? '' : dot(n)}</button>`;
+                <span class="tab-ico">${ico(locked ? ['ui', 'lock'] : t.icon)}</span><span class="tab-name">${t.name}</span>${locked ? '' : tabDot(n, ui.counts['!' + t.id] || 0)}</button>`;
         }).join(''),
     );
 }
@@ -219,17 +220,18 @@ function renderSubnav() {
               : currentPath() === 'farm/island' && ui.sel.island === 'nord'
                 ? 'nord'
                 : HELP[currentPath()];
+    // 1.73 : chaque volet garde son nom ; s'ils ne tiennent pas, la bande défile et le volet ouvert se centre
     patch(
         el,
-        `<div class="subnav-row">` +
+        `<div class="subnav-row${t.subs.length > 2 ? ' strip' : ''}">` +
             segmented(
                 t.subs.map(([id, label, icon]) => {
                     const locked = subLocked(t.id, id);
                     return [
                         id,
-                        locked ? `${label} · niv. ${subLockLvl(t.id, id)}` : label,
+                        locked ? `${label} <small>niv. ${subLockLvl(t.id, id)}</small>` : label,
                         locked ? ['ui', 'lock'] : icon,
-                        locked ? 0 : ui.counts[`${t.id}/${id}`] || 0,
+                        locked ? 0 : tabDot(ui.counts[`${t.id}/${id}`] || 0, ui.counts[`!${t.id}/${id}`] || 0),
                         locked,
                     ];
                 }),
@@ -241,6 +243,21 @@ function renderSubnav() {
                 : '') +
             '</div>',
     );
+    const on = el.querySelector('.strip .seg > button.on');
+    if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+    // un fondu sur le bord où d'autres volets attendent
+    const seg = el.querySelector('.strip > .seg');
+    if (seg) {
+        const edges = () => {
+            seg.classList.toggle('more-r', seg.scrollLeft + seg.clientWidth < seg.scrollWidth - 4);
+            seg.classList.toggle('more-l', seg.scrollLeft > 4);
+        };
+        edges();
+        if (!seg.dataset.edges) {
+            seg.dataset.edges = '1';
+            seg.addEventListener('scroll', edges, { passive: true });
+        }
+    }
 }
 
 // grand écran : la nature s'affiche à droite, le champ restant à gauche

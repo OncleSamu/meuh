@@ -245,6 +245,11 @@ export function todoCounts(list) {
         c[tab] = (c[tab] || 0) + n;
         const path = t.go.split('#')[0];
         if (path.includes('/')) c[path] = (c[path] || 0) + n;
+        // 1.73 : ce qui presse (citerne vide, grange pleine, anniversaire…) compte à part : pastille rouge chiffrée
+        if (t.urgent) {
+            c['!' + tab] = (c['!' + tab] || 0) + 1;
+            if (path.includes('/')) c['!' + path] = (c['!' + path] || 0) + 1;
+        }
     }
     // la maison et la grange s'ouvrent depuis la ferme : pas dans le menu
     return c;

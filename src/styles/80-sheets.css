@@ -1384,3 +1384,57 @@ button.short.link {
     color: #7a2f4a;
     overflow-wrap: anywhere;
 }
+
+/* 1.73 : le menu en tuiles, en trois groupes */
+.mgroup {
+    margin: 10px 2px 6px;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-l, #7a5a3a);
+}
+.mgroup:first-child {
+    margin-top: 0;
+}
+.mtiles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+.mtile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-height: 88px;
+    padding: 8px 4px;
+    border: 2.5px solid var(--ink);
+    border-radius: var(--r, 14px);
+    background: var(--paper-l, #fff7e0);
+    box-shadow: 0 3px 0 rgba(58, 38, 24, 0.3);
+    font: inherit;
+    color: var(--ink);
+    text-align: center;
+}
+.mtile.hot {
+    background: #fff0c8;
+}
+.mtile .ico.big {
+    width: 34px;
+    height: 34px;
+}
+.mtile b {
+    font-size: 0.82rem;
+    line-height: 1.1;
+}
+.mtile small {
+    font-size: 0.68rem;
+    color: var(--ink-l, #7a5a3a);
+    line-height: 1.1;
+}
+.mtile .dot {
+    position: absolute;
+    top: -6px;
+    right: -4px;
+}

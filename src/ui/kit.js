@@ -50,6 +50,8 @@ export const hint = text => `<p class="hint">${text}</p>`;
 // 1.38 : une astuce de bas de page, qui disparaît à partir du niveau 15 (tout est dans le Guide du fermier)
 export const tip15 = text => (state.level >= 15 ? '' : hint(text));
 export const dot = n => (n ? `<span class="dot">${n > 9 ? '9+' : n}</span>` : '');
+// 1.73 : une pastille d'onglet : rouge et chiffrée si quelque chose presse, sinon un simple point doré (« il y a à faire »)
+export const tabDot = (n, urgent) => (urgent ? dot(urgent) : n ? '<span class="dot soft" aria-label="à faire"></span>' : '');
 
 // coût en pièces et matériaux : parts = [{ icon, n, ok }]
 export const costRow = list => `<span class="cost">${list.map(c => `<span class="${c.ok ? 'ok' : 'short'}">${ico(c.icon)}${fmt(c.n)}</span>`).join('')}</span>`;
@@ -59,7 +61,7 @@ export const segmented = (items, current, act) =>
     `<div class="seg n${items.length}" role="tablist">${items
         .map(
             ([id, label, icon, badge, locked]) =>
-                `<button role="tab" class="${id === current ? 'on' : ''}${locked ? ' locked' : ''}" data-act="${act}" data-v="${id}" title="${label.replace(/"/g, '')}" aria-label="${label.replace(/"/g, '')}" aria-selected="${id === current}">${icon ? ico(icon) : ''}<span>${label}</span>${dot(badge)}</button>`,
+                `<button role="tab" class="${id === current ? 'on' : ''}${locked ? ' locked' : ''}" data-act="${act}" data-v="${id}" title="${label.replace(/<[^>]+>|"/g, '')}" aria-label="${label.replace(/<[^>]+>|"/g, '')}" aria-selected="${id === current}">${icon ? ico(icon) : ''}<span>${label}</span>${typeof badge === 'string' ? badge : dot(badge)}</button>`,
         )
         .join('')}</div>`;
 

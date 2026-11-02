@@ -52,21 +52,33 @@ defineSheet('menu', {
     render() {
         const pts = G.skillPoints(),
             book = G.bookAllClaimable() + G.quartersClaimable();
-        const badge = n => (n ? dot(n) : '›');
-        return `<div class="menu-grid">
-            ${navRow('Progrès', 'open', { sheet: 'progress' }, ['ui', 'skillbook'], badge(pts), `${pts ? `${pts} point${pts > 1 ? 's' : ''} de compétence à placer · ` : ''}Compétences, prestige et défis`)}
-            ${navRow('Livre de la ferme', 'open', { sheet: 'book' }, ['ui', 'book'], badge(book), 'Collection, maîtrise, exploits, légende, album et histoires de Mamie')}
-            ${G.defiOpen() ? navRow('La Coupe de la vallée', 'open', { sheet: 'cup' }, ['ui', 'cupRank' + G.cupRank()], '›', `${G.cupRankName()} · ${fmt(G.cupPts())} points`) : ''}
-            ${carnetsOpen() ? navRow('Carnets', 'open', { sheet: 'carnets' }, ['ui', 'book'], badge(carnetsReady()), `Pêche, forêt et mine, potager, verger${G.robebookOpen() ? ', élevage' : ''}`) : ''}
-            ${state.level >= 58 || G.caveLegends().length ? navRow('Salle des trophées', 'open', { sheet: 'trophies' }, ['ui', 'cupGold'], '›', 'Médailles des défis et lots légendaires') : ''}
-            ${state.genetics && G.geneticsOpen() ? navRow('Mes créations', 'open', { sheet: 'creations' }, ['ui', 'flowers'], '›', 'Vos variétés et vos races fixées') : ''}
-            ${navRow('Les niveaux', 'open', { sheet: 'levels' }, ['ui', 'star'], '›', `Niveau ${state.level}${state.level < MAX_LEVEL ? ` sur ${MAX_LEVEL}` : ''}`)}
-            ${navRow('Statistiques', 'open', { sheet: 'stats' }, ['ui', 'chart'], '›', 'Gains, ventes et records')}
-            ${navRow('Mes bonus', 'open', { sheet: 'bonus' }, ['ui', 'upgrade'], '›', 'Tous vos bonus permanents')}
-            ${navRow('Almanach', 'open', { sheet: 'almanac' }, ['ui', G.season().icon], '›', 'Saison et météo')}
-            ${navRow('Guide du fermier', 'open', { sheet: 'guide' }, ['ui', 'info'], '›', 'Chercher un produit ou un sujet')}
-            ${navRow('Réglages', 'open', { sheet: 'settings' }, ['ui', 'gear'], '›', 'Son, confort, sauvegarde, installation')}
-        </div>`;
+        // 1.73 : une grille de tuiles en trois groupes, qui tient sur un écran
+        const tile = (name, sheet, icon, n = 0, sub = '') =>
+            `<button class="mtile${n ? ' hot' : ''}" data-act="open" data-sheet="${sheet}" aria-label="${name}">${ico(icon, 'ico big')}<b>${name}</b>${sub ? `<small>${sub}</small>` : ''}${n ? dot(n) : ''}</button>`;
+        const group = (title, tiles) => {
+            const t = tiles.filter(Boolean);
+            return t.length ? `<h4 class="mgroup">${title}</h4><div class="mtiles">${t.join('')}</div>` : '';
+        };
+        return (
+            group('Ma ferme', [
+                tile('Progrès', 'progress', ['ui', 'skillbook'], pts, pts ? `${pts} point${pts > 1 ? 's' : ''}` : 'Compétences'),
+                tile('Niveaux', 'levels', ['ui', 'star'], 0, `Niveau ${state.level}`),
+                tile('Mes bonus', 'bonus', ['ui', 'upgrade']),
+                tile('Statistiques', 'stats', ['ui', 'chart']),
+            ]) +
+            group('Collections', [
+                tile('Livre de la ferme', 'book', ['ui', 'book'], book),
+                carnetsOpen() ? tile('Carnets', 'carnets', ['ui', 'cpCarnet'], carnetsReady()) : '',
+                G.defiOpen() ? tile('La Coupe', 'cup', ['ui', 'cupRank' + G.cupRank()], 0, G.cupRankName()) : '',
+                state.level >= 58 || G.caveLegends().length ? tile('Trophées', 'trophies', ['ui', 'cupGold']) : '',
+                state.genetics && G.geneticsOpen() ? tile('Mes créations', 'creations', ['ui', 'flowers']) : '',
+            ]) +
+            group('Aide et réglages', [
+                tile('Guide', 'guide', ['ui', 'info']),
+                tile('Almanach', 'almanac', ['ui', G.season().icon], 0, G.season().name),
+                tile('Réglages', 'settings', ['ui', 'gear']),
+            ])
+        );
     },
 });
 
