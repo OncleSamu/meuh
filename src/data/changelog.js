@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.87',
+        title: 'Les rangs dans les fiches des variétés et des bières',
+        date: '3 novembre 2026',
+        items: [
+            "La fiche d'une variété du labo compte ses récoltes",
+            "La fiche d'une bière ou d'un hydromel compte ses bouteilles brassées par rang",
+            'Les compteurs partent de zéro pour ce qui existait déjà',
+            'La page « Bières maison » du livre devient « Bières et hydromels »',
+        ],
+    },
+    {
         v: '1.86.1',
         title: 'Un  ?  pour la maîtrise',
         date: '3 novembre 2026',

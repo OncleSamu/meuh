@@ -279,7 +279,18 @@ export function entryInfo(key) {
     } else if (e.kind === 'beer') {
         const b = beerOf(e.id);
         info.stars = b ? b.stars : 0;
-        info.counters = [['Brassées', b ? b.made : 0]];
+        const bq = (b && b.qmade) || {};
+        info.counters = [
+            ['Brassées', b ? b.made : 0],
+            ['En argent', bq.s || 0],
+            ['En or', bq.g || 0],
+            ...(bq.p || bq.d
+                ? [
+                      ['En platine', bq.p || 0],
+                      ['En diamant', bq.d || 0],
+                  ]
+                : []),
+        ];
         if (b) {
             info.lines.push(['Prix de la bouteille', `${fmt(beerPrice(b.id))} pièces`]);
             if (b.note) info.lines.push(['Dégustation', b.note]);
@@ -287,6 +298,18 @@ export function entryInfo(key) {
     } else if (e.kind === 'variety') {
         const v = state.genetics && state.genetics.vars[e.id];
         if (v) {
+            const h = v.harv || {};
+            info.counters = [
+                ['Récoltées', h.n || 0],
+                ['En argent', h.s || 0],
+                ['En or', h.g || 0],
+                ...(h.p || h.d
+                    ? [
+                          ['En platine', h.p || 0],
+                          ['En diamant', h.d || 0],
+                      ]
+                    : []),
+            ];
             info.lines.push(['État', v.fixed ? 'Fixée' : 'Pas encore fixée']);
             info.lines.push(['Gain de saveur', `+${(Math.round(flavorGain(v.g) * 10) / 10).toString().replace('.', ',')}`]);
             info.lines.push(['Stabilité', `${Math.round(stability(v.g) * 100)} %`]);

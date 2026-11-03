@@ -745,6 +745,11 @@ export function harvestVariety(vid, qty, rank = 0) {
     const v = vdef(vid);
     if (!v) return;
     G.stock[vid] = (G.stock[vid] || 0) + qty;
+    // 1.87 : le total récolté de la variété, par rang (pour sa fiche du livre)
+    const h = (v.harv = v.harv || { n: 0, s: 0, g: 0, p: 0, d: 0 });
+    h.n += qty;
+    if (Array.isArray(rank)) for (let r = 1; r <= 4; r++) h[QK[r]] += rank[r] || 0;
+    else if (rank > 0) h[QK[rank]] += qty;
     const vq = varQual(vid);
     if (Array.isArray(rank)) for (let r = 1; r <= 4; r++) vq[QK[r]] += rank[r] || 0;
     else if (rank > 0) vq[QK[rank]] += qty;

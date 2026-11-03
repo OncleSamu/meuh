@@ -415,7 +415,7 @@ export const BOOK_PAGES = [
     { id: 'cheese', name: 'Fromagerie', icon: ['item', 'camembert'], machines: ['dairy', 'alpineDairy'] },
     { id: 'counter', name: 'Boissons du comptoir', icon: ['item', 'cappuccino'], machines: ['counter'] },
     { id: 'drinks', name: 'Jus et alcools', icon: ['item', 'juice'], machines: ['press', 'juiceBar', 'still', 'rumDistillery', 'brewery', 'winery'] },
-    { id: 'beers', name: 'Bières maison', icon: ['ui', 'beer'], abs: [2, 5, 10, 20], dyn: true, unit: 'bière' },
+    { id: 'beers', name: 'Bières et hydromels', icon: ['ui', 'beer'], abs: [2, 5, 10, 20], dyn: true, unit: 'bière' },
     { id: 'vintages', name: 'Cuvées et millésimes', icon: ['item', 'champagne'] },
     {
         id: 'crafts',

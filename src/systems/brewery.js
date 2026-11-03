@@ -474,6 +474,11 @@ export function collectVat(i, at) {
     beerQual(v.bid);
     B.stock[v.bid] = (B.stock[v.bid] || 0) + v.n;
     if (v.q) B.q[v.bid][QX.keys[v.q]] += v.n;
+    // 1.87 : combien de bouteilles de cette bière ont été brassées à chaque rang (pour sa fiche du livre)
+    if (v.q) {
+        beer.qmade = beer.qmade || { s: 0, g: 0, p: 0, d: 0 };
+        beer.qmade[QX.keys[v.q]] = (beer.qmade[QX.keys[v.q]] || 0) + v.n;
+    }
     beer.made += v.n;
     state.stats.beers = (state.stats.beers || 0) + v.n;
     if (beer.mead) state.stats.meads = (state.stats.meads || 0) + v.n;
