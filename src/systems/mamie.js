@@ -88,11 +88,17 @@ export function mamieDish(t = now()) {
     // pas deux semaines de suite le même plat, s'il y a le choix
     if (list.length > 1) list = list.filter(id => id !== m.id);
     m.w = w;
+    m.n = 0;
     m.id = list[hash(w) % list.length];
     tip('mamieDish');
     return m.id;
 }
 
+// combien de ce plat ont été faits cette semaine
+export const mamieMade = () => (mamieDish() && state.mamie.n) || 0;
+export const mamieAdd = (id, qty) => {
+    if (isMamieDish(id)) state.mamie.n = (state.mamie.n || 0) + qty;
+};
 export const isMamieDish = id => !!id && mamieDish() === id;
 export const mamiePriceMult = id => (isMamieDish(id) ? MAMIE_PRICE : 1);
 export const mamieMasteryMult = id => (isMamieDish(id) ? MAMIE_MASTERY : 1);

@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.83.1',
+        title: 'Mamie compte',
+        date: '3 novembre 2026',
+        items: ['La carte du plat de la semaine dit combien tu en as fait cette semaine, remis à zéro chaque lundi'],
+    },
+    {
         v: '1.83',
         title: 'Le plat de la semaine de Mamie',
         date: '3 novembre 2026',

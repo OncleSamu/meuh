@@ -100,7 +100,7 @@ function mamieCard() {
         <span class="md-av">${art('villager', 'odette')}</span>
         <span class="md-art">${art('item', id)}</span>
         <span class="card-main"><span class="card-title">Plat de la semaine : ${esc(ITEMS[id].name)}</span>
-        <small class="card-sub">« Fais-moi donc ça cette semaine ! » · ${fmt(G.sellPrice(id))}${ico(['ui', 'coin'])} (+50 %), maîtrise ×2 · encore ${days} jour${days > 1 ? 's' : ''}</small></span>
+        <small class="card-sub">« Fais-moi donc ça cette semaine ! » · ${fmt(G.sellPrice(id))}${ico(['ui', 'coin'])} (+50 %), maîtrise ×2 · encore ${days} jour${days > 1 ? 's' : ''}<br>${G.mamieMade() ? `« Tu m’en as déjà fait <b>${fmt(G.mamieMade())}</b> ! »` : '« Tu ne m’en as pas encore fait… »'}</small></span>
     </button>`;
 }
 

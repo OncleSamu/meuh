@@ -51,6 +51,19 @@ test('1.83 : +50 % sur le prix, maîtrise double', () => {
     assert.equal(state.mastery[id], 3);
 });
 
+test('1.83.1 : Mamie compte les plats faits cette semaine, et repart à zéro le lundi', () => {
+    farm();
+    const id = G.mamieDish();
+    assert.equal(G.mamieMade(), 0);
+    G.addMastery(id, 3);
+    G.addMastery(id, 2);
+    assert.equal(G.mamieMade(), 5);
+    G.addMastery('egg', 4);
+    assert.equal(G.mamieMade(), 5);
+    G.mamieDish(G.mamieWeekEnd() + 3600000);
+    assert.equal(state.mamie.n, 0);
+});
+
 test('1.83 : le lundi suivant, un autre plat', () => {
     farm();
     const id = G.mamieDish();
