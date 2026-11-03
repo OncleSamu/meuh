@@ -225,6 +225,16 @@ button.entry {
 .bk-cnt .g {
     background: #ffe08a;
 }
+.bk-cnt .p {
+    background: #c4f2ea;
+}
+.bk-cnt .d {
+    background: #e2d2ff;
+}
+/* 1.82 : cinq compteurs (pêchés ou fabriqués, argent, or, platine, diamant) tiennent sur un téléphone */
+.bk-cnt small {
+    overflow-wrap: anywhere;
+}
 .bk-line {
     display: flex;
     justify-content: space-between;

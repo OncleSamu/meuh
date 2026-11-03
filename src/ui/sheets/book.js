@@ -32,7 +32,7 @@ function quarters() {
 
 const pct = q => `${Math.round(q * 100)} %`;
 const dots = e => {
-    if (!(e.kind === 'item' && e.id)) return '';
+    if (!((e.kind === 'item' || (e.kind === 'fish' && e.fish)) && e.id)) return '';
     const q = state.qmade[e.id] || { s: 0, g: 0 };
     return `<span class="bk-dots"><i class="b"></i><i class="${q.s ? 's' : ''}"></i><i class="${q.g ? 'g' : ''}"></i>${q.p || q.d ? `<i class="${q.p ? 'p' : ''}"></i><i class="${q.d ? 'd' : ''}"></i>` : ''}</span>`;
 };
@@ -99,7 +99,7 @@ function pageView(page) {
             }
             if (!f) return `<div class="entry unknown"><span class="entry-ico">${art(e.icon[0], e.icon[1])}</span><b>???</b><small>${e.hint}</small></div>`;
             const sub = e.fish
-                ? `Record : ${((c && c.best) || 0).toString().replace('.', ',')} kg`
+                ? `Record : ${(Math.round(((c && c.best) || 0) * 100) / 100).toString().replace('.', ',')} kg`
                 : e.kind === 'beer'
                   ? ''
                   : e.kind === 'variety'
@@ -141,7 +141,7 @@ defineSheet('bookEntry', {
         if (!i) return empty('Cette page n’existe plus.');
         const e = i.e;
         const cnt = i.counters
-            ? `<div class="bk-cnt">${i.counters.map((c, k) => `<div class="${k === 1 ? 's' : k === 2 ? 'g' : ''}"><b>${fmt(c[1])}</b><small>${c[0].toUpperCase()}</small></div>`).join('')}</div>`
+            ? `<div class="bk-cnt">${i.counters.map((c, k) => `<div class="${['', 's', 'g', 'p', 'd'][k] || ''}"><b>${fmt(c[1])}</b><small>${c[0].toUpperCase()}</small></div>`).join('')}</div>`
             : '';
         const lines = i.lines.map(([l, v]) => `<div class="bk-line"><span>${l}</span><span>${esc(String(v))}</span></div>`).join('');
         const mamie = i.anecdote
@@ -259,6 +259,7 @@ defineSheet('book', {
     title: 'Livre de la ferme',
     open(o) {
         G.syncBook();
+        G.tip('bookHerd');
         if (!o.sec) o.sec = G.claimableCount() ? 'exploits' : G.legendReady() ? 'legend' : 'collection';
     },
     render(o) {

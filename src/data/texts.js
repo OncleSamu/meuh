@@ -143,6 +143,11 @@ export const TIPS = {
         title: 'La ration d’engraissement',
         text: 'Le moulin sait faire une ration d’engraissement : deux épis de maïs et une betterave pour trois seaux (le magasin en vend aussi, plus cher). Prends-la dans la barre du bas, au pré, et donne-la à une bête : pendant deux heures, elle donnera bien plus souvent de la viande au ramassage. Et une bête de bonne race donne de la viande de qualité, comme son lait ou ses œufs.',
     },
+    bookHerd: {
+        icon: ['ui', 'book'],
+        title: 'Une page Élevage dans le livre',
+        text: 'Le livre de la ferme a une nouvelle page : l’élevage. Tous les produits de tes bêtes y entrent au premier ramassage, avec leurs pastilles de qualité. Et touche une entrée (ou un poisson) pour voir combien tu en as eu en argent, or, platine et diamant.',
+    },
     secondProducts: {
         icon: ['item', 'chickenMeat'],
         title: 'Un second produit pour chaque bête',

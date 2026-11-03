@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.82',
+        title: "L'élevage dans le livre",
+        date: '3 novembre 2026',
+        items: [
+            'Nouvelle page « Élevage » dans le livre de la ferme, chacun entre au premier ramassage',
+            'Les poissons ont leurs pastilles de qualité et, dans leur fiche, les prises en argent, or',
+            'Les fiches montrent platine et diamant en couleur',
+            "Le record d'un poisson arrondi au centième",
+            'Astuce de Mamie et guide',
+        ],
+    },
+    {
         v: '1.81.3',
         title: 'Le pré allégé',
         date: '3 novembre 2026',

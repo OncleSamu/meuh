@@ -42,6 +42,28 @@ const recipeEntries = pid =>
                   ? `Plat de fête : ${EVENTS[r.fete].name}`
                   : `${MACHINES[r.machine].name}, niveau ${r.lvl}`,
         }));
+// 1.82 : la page Élevage : le produit de chaque bête et son second produit (pas le compost)
+const herdEntries = () => {
+    const seen = new Set(),
+        out = [];
+    for (const a of Object.values(ANIMALS))
+        for (const [id, second] of [
+            [a.prodId, false],
+            [a.extra, true],
+        ]) {
+            if (!id || !ITEMS[id] || id === 'fertilizer' || seen.has(id)) continue;
+            seen.add(id);
+            out.push({
+                key: 'a_' + id,
+                kind: 'item',
+                id,
+                icon: ['item', id],
+                name: ITEMS[id].name,
+                hint: second ? `${a.name} : au ramassage, parfois` : `${a.name} : au ramassage`,
+            });
+        }
+    return out;
+};
 const WINES = Object.keys(CAVE_ITEMS).filter(id => ['wine', 'champagne'].includes(CAVE_ITEMS[id]));
 const ENTRIES = {
     garden: () =>
@@ -71,6 +93,7 @@ const ENTRIES = {
                   star: !!v.fixed,
               }))
             : [],
+    herd: herdEntries,
     fish: () => Object.entries(FISH).map(([id, f]) => ({ key: 'f_' + id, kind: 'fish', id, icon: ['item', id], name: f.name, hint: f.hint, fish: !f.junk })),
     beers: () =>
         state.brew && state.brew.beers
@@ -142,7 +165,7 @@ export function collect(key, weight) {
         c.n++;
         if (weight && weight > (c.best || 0)) {
             c.best = weight;
-            if (view.started) toast(`Nouveau record : ${weight.toString().replace('.', ',')} kg !`, ['ui', 'trophy']);
+            if (view.started) toast(`Nouveau record : ${(Math.round(weight * 100) / 100).toString().replace('.', ',')} kg !`, ['ui', 'trophy']);
         }
         return;
     }
@@ -229,8 +252,28 @@ export function entryInfo(key) {
             info.locked = !carnetOpen(e.id);
         }
     } else if (e.kind === 'fish') {
-        info.counters = [['Pêchés', c.n]];
-        if (c.best) info.lines.push(['Record', `${c.best.toString().replace('.', ',')} kg`]);
+        // 1.82 : les prises par qualité, comme pour les produits
+        const q = state.qmade[e.id] || { s: 0, g: 0 };
+        info.counters = [
+            ['Pêchés', c.n],
+            ...(e.fish
+                ? [
+                      ['En argent', q.s],
+                      ['En or', q.g],
+                      ...(q.p || q.d
+                          ? [
+                                ['En platine', q.p || 0],
+                                ['En diamant', q.d || 0],
+                            ]
+                          : []),
+                  ]
+                : []),
+        ];
+        if (e.fish && ITEMS[e.id]) {
+            const sv = masteryStars(e.id);
+            info.lines.push(['Maîtrise', sv ? `${MASTERY_NAMES[sv - 1]}${masteryExtra(e.id) ? ` · rang ${extraName(e.id)}` : ''}` : 'pas encore']);
+        }
+        if (c.best) info.lines.push(['Record', `${(Math.round(c.best * 100) / 100).toString().replace('.', ',')} kg`]);
         if (day) info.lines.push(['Première prise', day]);
         if (e.hint) info.lines.push(['Où', e.hint]);
     } else if (e.kind === 'beer') {

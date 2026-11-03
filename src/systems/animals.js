@@ -10,6 +10,7 @@ import { starAnimalMult } from './surprises.js';
 import { alpineMult, themeAnimalMult, isAway } from './port.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { tip } from './tips.js';
+import { collect } from './book.js';
 import { EXTRAS_181 } from '../data/ajouts/seconds.js';
 // 1.81 : les seconds produits nouveaux (Mamie en parle au premier)
 const NEW_EXTRAS = new Set(Object.values(EXTRAS_181));
@@ -106,6 +107,8 @@ export function collectAnimal(a) {
     // vœu d'étoile filante : le double pendant 10 minutes
     if (wishAnimals()) qty *= 2;
     state.inventory[d.prodId] += qty;
+    // 1.82 : la page Élevage du livre
+    collect('a_' + d.prodId);
     // de bons gènes donnent des produits de qualité
     const q = ascend(d.prodId, animalQuality(a));
     if (q) addQuality(d.prodId, q, qty);
@@ -131,6 +134,7 @@ export function collectAnimal(a) {
         if (extra) {
             state.inventory[d.extra] = (state.inventory[d.extra] || 0) + extra;
             if (NEW_EXTRAS.has(d.extra)) tip('secondProducts');
+            if (d.extra !== 'fertilizer') collect('a_' + d.extra);
             // le compost (cheval, ânesse) n'a ni qualité ni maîtrise
             if (d.extra !== 'fertilizer') {
                 if (q) addQuality(d.extra, q, extra);

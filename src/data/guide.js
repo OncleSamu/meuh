@@ -1922,7 +1922,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Les cinq sections',
                 b: [
-                    'Collection : l’étagère de 17 pages (potager, verger, poissons, plats, fromagerie, boissons, bières, cuvées, mines et gemmes, races…). Chaque page donne des récompenses à 25, 50, 75 et 100 % (un ruban au complet).',
+                    'Collection : l’étagère de 18 pages (potager, verger, poissons, élevage, plats, fromagerie, boissons, bières, cuvées, mines et gemmes, races…). Chaque page donne des récompenses à 25, 50, 75 et 100 % (un ruban au complet).',
                     'Maîtrise : les étoiles de chaque produit.',
                     'Exploits : 39 succès en trois médailles (bronze, argent, or). La récompense suit votre niveau : des pièces, une part du niveau en expérience, et des rubans en argent (1) et en or (2). Tri En cours / Terminés ; ceux à réclamer passent en premier.',
                     'Légende : le chemin vers la Ferme légendaire.',
@@ -1931,7 +1931,11 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les fiches',
-                t: 'Chaque entrée de la collection a sa fiche : combien vous en avez fabriqué, en argent et en or, sa maîtrise, la première fois, et l’anecdote de Mamie Odette.',
+                t: 'Chaque entrée de la collection a sa fiche : combien vous en avez fabriqué, en argent, en or, en platine et en diamant, sa maîtrise, la première fois, et l’anecdote de Mamie Odette. Les poissons aussi (prises par qualité, maîtrise). Sous chaque entrée, les pastilles montrent les qualités déjà obtenues.',
+            },
+            {
+                h: 'La page Élevage (1.82)',
+                t: 'Les produits de toutes vos bêtes : œufs, lait, laine, cire, crin… et leurs seconds produits (viandes, petit-lait, corne, toison royale, gelée royale). Chacun entre au premier ramassage.',
             },
         ],
         see: ['mastery', 'legend', 'decor'],
