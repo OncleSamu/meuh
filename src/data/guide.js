@@ -1330,7 +1330,7 @@ export const GUIDE_PAGES = [
                     'Qualité : à la maîtrise or, vos récoltes, produits d’élevage et fruits en or peuvent sortir en platine ; à la maîtrise platine, en diamant.',
                 ],
             },
-            { h: 'Où la voir', t: 'Dans le Livre de la ferme (Maîtrise) et dans la fiche de chaque produit.' },
+            { h: 'Où la voir', t: 'Dans la fiche de chaque produit du Livre de la ferme : les étoiles et la barre jusqu’à la suivante.' },
             { h: 'Armand', t: 'Armand ne commande que des produits où vous avez au moins une étoile.' },
         ],
         tips: ['Produire en boucle un même produit n’est jamais puni : la maîtrise compense la baisse de demande.'],

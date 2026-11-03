@@ -478,7 +478,7 @@ export const TIPS = {
     mastery: {
         icon: ['ui', 'medalB'],
         title: 'Première maîtrise !',
-        text: 'Plus tu produis un même produit, plus tu le maîtrises : bronze, argent puis or. Chaque étoile augmente son prix. Retrouve tout dans le Livre de la ferme (onglet Maîtrise).',
+        text: 'Plus tu produis un même produit, plus tu le maîtrises : bronze, argent puis or. Chaque étoile augmente son prix. Retrouve la barre de progression dans la fiche de chaque produit, dans le Livre de la ferme.',
     },
     hamlet: {
         icon: ['villager', 'jules'],

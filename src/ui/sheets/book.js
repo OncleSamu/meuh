@@ -106,9 +106,11 @@ function pageView(page) {
                     ? e.star
                         ? 'Fixée'
                         : 'Pas fixée'
-                    : c
-                      ? `×${fmt(c.n)}`
-                      : '';
+                    : e.kind === 'item' && e.id && G.masteryCount(e.id)
+                      ? `×${fmt(G.masteryCount(e.id))}`
+                      : c
+                        ? `×${fmt(c.n)}`
+                        : '';
             const bs = e.kind === 'beer' && state.brew && state.brew.beers[e.id] ? state.brew.beers[e.id].stars : 0;
             return `<button class="entry" data-act="open" data-sheet="bookEntry" data-key="${e.key}"><span class="entry-ico">${art(e.icon[0], e.icon[1])}${f && e.star && e.kind !== 'variety' ? qStar(2, 'entry-star') : ''}</span><b>${esc(e.name)}</b>${starsOf(bs)}<small>${sub}</small>${dots(e)}</button>`;
         })
@@ -143,29 +145,32 @@ defineSheet('bookEntry', {
         const cnt = i.counters
             ? `<div class="bk-cnt">${i.counters.map((c, k) => `<div class="${['', 's', 'g', 'p', 'd'][k] || ''}"><b>${fmt(c[1])}</b><small>${c[0].toUpperCase()}</small></div>`).join('')}</div>`
             : '';
-        const lines = i.lines.map(([l, v]) => `<div class="bk-line"><span>${l}</span><span>${esc(String(v))}</span></div>`).join('');
+        const withMast = i.found && e.id && ITEMS[e.id] && ITEMS[e.id].sell && (e.kind === 'item' || (e.kind === 'fish' && e.fish));
+        const lines = i.lines
+            .filter(l => !(withMast && l[0] === 'Maîtrise'))
+            .map(([l, v]) => `<div class="bk-line"><span>${l}</span><span>${esc(String(v))}</span></div>`)
+            .join('');
         const mamie = i.anecdote
             ? `<div class="bk-odette">${art('villager', 'odette')}<p>${i.locked ? esc(i.anecdote) : `« ${esc(i.anecdote)} »`}<br><small>Page de Mamie Odette</small></p></div>`
             : '';
-        return `<div class="bk-fiche">${art(e.icon[0], e.icon[1])}<h3>${esc(e.name)}</h3>${starsOf(i.stars)}${i.found ? '' : `<p class="card-sub">${e.hint}</p>`}${cnt}${lines}${mamie}</div>`;
+        return `<div class="bk-fiche">${art(e.icon[0], e.icon[1])}<h3>${esc(e.name)}</h3>${starsOf(i.stars)}${i.found ? '' : `<p class="card-sub">${e.hint}</p>`}${cnt}${withMast ? masteryBlock(e.id) : ''}${lines}${mamie}</div>`;
     },
 });
 
-// ---------------- maîtrise ----------------
-function mastery() {
-    const known = G.masteryKnown();
-    if (!known.length) return '<p class="empty">Produisez pour commencer à maîtriser vos produits.</p>';
-    const gold = G.goldMasteries();
-    return `<p class="card-sub center">Chaque étoile : +5 % sur le prix du produit. L’or le rend aussi 15 % plus rapide à produire. Au-delà, les rangs platine et diamant font moins baisser la demande au marché. ${gold} produit${gold > 1 ? 's' : ''} en or.</p>
-        <div class="list">${known
-            .map(id => {
-                const sv = G.masteryStars(id),
-                    t = G.nextTier(id),
-                    n = G.masteryCount(id);
-                return `<div class="mrow">${ico(['item', id], 'ico big')}<div class="card-main"><div class="pname">${ITEMS[id].name}${medals(sv)}</div>
-                ${sv >= 3 ? (G.nextExtra(id) ? `${bar(n / G.nextExtra(id))}<div class="card-sub">${fmt(n)} / ${fmt(G.nextExtra(id))} pour le rang ${EXTRA_NAMES[G.masteryExtra(id)]}${G.masteryExtra(id) ? ` · rang ${EXTRA_NAMES[G.masteryExtra(id) - 1]} atteint` : ''}</div>` : `<div class="card-sub">Rang diamant · ${fmt(n)} produits</div>`) : `${bar(n / t)}<div class="card-sub">${fmt(n)} / ${fmt(t)} pour l’étoile ${MASTERY_NAMES[sv]}</div>`}</div></div>`;
-            })
-            .join('')}</div>`;
+// ---------------- maîtrise (1.86 : dans la fiche de chaque produit) ----------------
+function masteryBlock(id) {
+    const sv = G.masteryStars(id),
+        n = G.masteryCount(id),
+        t = G.nextTier(id),
+        x = G.nextExtra(id);
+    const next =
+        sv >= 3
+            ? x
+                ? `${bar(n / x)}<div class="card-sub">${fmt(n)} / ${fmt(x)} pour le rang ${EXTRA_NAMES[G.masteryExtra(id)]}${G.masteryExtra(id) ? ` · rang ${EXTRA_NAMES[G.masteryExtra(id) - 1]} atteint` : ''}</div>`
+                : `<div class="card-sub">Rang diamant atteint · ${fmt(n)} produits</div>`
+            : `${bar(n / t)}<div class="card-sub">${fmt(n)} / ${fmt(t)} pour l’étoile ${MASTERY_NAMES[sv]}</div>`;
+    return `<div class="bk-mast"><div class="pname">Maîtrise ${medals(sv)}</div>${next}
+        <small class="card-sub">Chaque étoile : +5 % sur le prix. L’or rend aussi la production 15 % plus rapide ; platine et diamant font moins baisser la demande au marché.</small></div>`;
 }
 
 // ---------------- exploits : trophées et succès ----------------
@@ -246,7 +251,6 @@ function album() {
 
 const SECTIONS = [
     ['collection', 'Collection', ['ui', 'book']],
-    ['mastery', 'Maîtrise', ['ui', 'medalG']],
     ['exploits', 'Exploits', ['ui', 'trophy']],
     ['legend', 'Légende', ['ui', 'goldCow']],
     ['album', 'Album', ['ui', 'camera']],
@@ -268,16 +272,7 @@ defineSheet('book', {
             o.sec,
             'bookSec',
         );
-        const body =
-            o.sec === 'collection'
-                ? collection(o)
-                : o.sec === 'mastery'
-                  ? [['m', mastery()]]
-                  : o.sec === 'exploits'
-                    ? exploits()
-                    : o.sec === 'legend'
-                      ? [['l', legend()]]
-                      : [['a', album()]];
+        const body = o.sec === 'collection' ? collection(o) : o.sec === 'exploits' ? exploits() : o.sec === 'legend' ? [['l', legend()]] : [['a', album()]];
         return [['seg', `<div class="book-seg">${seg}</div>`], ...body.map(([k, h]) => [o.sec + k, h])];
     },
 });

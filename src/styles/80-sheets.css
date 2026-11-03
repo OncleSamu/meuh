@@ -1616,3 +1616,20 @@ button.short.link {
     gap: 6px;
     flex-wrap: wrap;
 }
+
+/* 1.86 : la maîtrise dans la fiche d'un produit */
+.bk-mast {
+    margin: 10px 0;
+    padding: 10px;
+    background: #fff7e0;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    text-align: left;
+}
+.bk-mast .pname {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-weight: 800;
+}

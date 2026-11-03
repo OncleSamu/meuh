@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.86',
+        title: 'La maîtrise dans le livre',
+        date: '3 novembre 2026',
+        items: [
+            "L'onglet Maîtrise disparaît",
+            "La fiche de chaque produit montre maintenant ses étoiles, la barre et ce qu'il faut pour la suivante",
+            "Le ×N sous chaque produit dans la liste de la page est le nombre d'exemplaires fabriqués",
+        ],
+    },
+    {
         v: '1.85.1',
         title: 'Carte de Mamie plus légère',
         date: '3 novembre 2026',
