@@ -370,7 +370,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Replanter vite',
-                t: 'Dans les réglages, « Replanter après la récolte » ressème tout seul la même culture. Le semoir (niveau 16) sème toute une rangée d’un geste ; la moissonneuse (niveau 24) donne parfois un produit de plus sur une rangée entière d’une même culture.',
+                t: 'Dans les réglages, « Replanter après la récolte » ressème tout seul la même culture. Le semoir (niveau 16) sème toute une rangée d’un geste ; la moissonneuse (niveau 24) donne parfois un produit de plus sur une rangée entière d’une même culture. Le Plan du champ (niveau 28) enregistre la disposition de vos cultures (1 emplacement, puis 3, puis 6) : le bouton « Plans », en haut du champ, replante tout d’un clic sur les parcelles vides et labourées (graines payées comme d’habitude, rien n’est remplacé, la serre est comprise).',
             },
         ],
         tips: ['Une culture « de saison » pousse plus vite : regardez le magasin pour la saison de chaque graine.'],
@@ -989,7 +989,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Le plat de la semaine (1.83)',
-                t: 'Dès le niveau 10, Mamie Odette choisit chaque lundi quelque chose à préparer parmi ce que ta ferme sait déjà faire : un plat, un pain, une pâtisserie, une glace, un fromage, une conserve, un jus, un thé ou un café du comptoir, un alcool, un vin, ou même une de tes bières. Jamais un fruit, un légume, une viande, ni de la farine, de l’huile ou du sucre. Toujours rapide à préparer (10 minutes au plus, sauf les bières), pour que tu puisses en faire beaucoup. Tu ne le vends pas au marché : tu le livres à Mamie, dans Village › Commandes › À livrer. Elle le paie tout de suite 50 % plus cher (sans faire baisser les prix du marché), jusqu’à 50 pièces par semaine, et compte ce que tu lui as donné. Chaque exemplaire fabriqué compte aussi double pour sa maîtrise (pas pour les bières). Son dessin apparaît sur la recette. Elle change le lundi à minuit ; jamais deux semaines de suite le même plat.',
+                t: 'Dès le niveau 10, Mamie Odette choisit chaque lundi quelque chose à préparer parmi ce que ta ferme sait déjà faire : un plat, un pain, une pâtisserie, une glace, un fromage, une conserve, un jus, un thé ou un café du comptoir, un alcool, un vin, ou même une de tes bières. Jamais un fruit, un légume, une viande, ni de la farine, de l’huile ou du sucre. Toujours rapide à préparer (10 minutes au plus, sauf les bières), pour que tu puisses en faire beaucoup. Tu ne le vends pas au marché : tu le livres à Mamie, dans Village › Commandes › À livrer. Elle le paie tout de suite plus cher (sans faire baisser les prix du marché) : +50 % pour les 50 premiers de la semaine, puis +30 % jusqu’à 100, +20 % jusqu’à 200, +10 % au-delà, et compte ce que tu lui as donné. Chaque exemplaire fabriqué compte aussi double pour sa maîtrise (pas pour les bières). Son dessin apparaît sur la recette. Elle change le lundi à minuit ; jamais deux semaines de suite le même plat.',
             },
             {
                 h: 'La marmite',
@@ -1591,7 +1591,7 @@ export const GUIDE_PAGES = [
             { h: 'Le produit du jour et la réserve', t: 'Un produit du jour paie plus. La réserve met de côté ce que demandent commandes et défis.' },
             {
                 h: 'Les améliorations',
-                t: 'Engrais magique (niveau 6), négociation (11), mangeoire automatique (14), semoir (16), abondance (17), moissonneuse (24).',
+                t: 'Engrais magique (niveau 6), négociation (11), mangeoire automatique (14), semoir (16), abondance (17), moissonneuse (24), plan du champ (28).',
             },
         ],
         tips: ['Le marché est volontairement moins rentable que les commandes : vendez-y le surplus.'],

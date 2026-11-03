@@ -64,17 +64,22 @@ test('1.83.4 : on livre le plat à Mamie : +50 %, payé tout de suite, compté, 
     const coins = state.money,
         base = G.sellPrice(id);
     assert.equal(G.mamieStock(), 80);
-    assert.equal(G.mamieRoom(), G.MAMIE_CAP);
+    assert.equal(G.mamieNowBonus(), 1.5);
     assert.ok(G.deliverMamie(null, 10));
     assert.equal(state.inventory[id], 70);
     assert.equal(G.mamieMade(), 10);
     const gain = state.money - coins;
     assert.ok(gain >= Math.floor(base * 1.5) * 10 - 10 && gain <= base * 1.5 * 10 + 10, `${gain} pour 10 à ${base}`);
-    assert.ok(G.deliverMamie(null, 500));
-    assert.equal(G.mamieMade(), G.MAMIE_CAP);
-    assert.equal(state.inventory[id], 80 - G.MAMIE_CAP);
-    assert.equal(G.mamieRoom(), 0);
-    assert.ok(!G.deliverMamie(null, 1));
+    // le bonus baisse : +50 % jusqu'à 50, +30 % jusqu'à 100, +20 % jusqu'à 200, +10 % ensuite
+    assert.equal(G.mamieBonusAt(49), 1.5);
+    assert.equal(G.mamieBonusAt(50), 1.3);
+    assert.equal(G.mamieBonusAt(100), 1.2);
+    assert.equal(G.mamieBonusAt(200), 1.1);
+    state.inventory[id] = 300;
+    assert.ok(G.deliverMamie(null, 300));
+    assert.equal(G.mamieMade(), 310);
+    assert.equal(G.mamieNowBonus(), 1.1);
+    assert.equal(state.inventory[id], 0);
     G.mamieDish(G.mamieWeekEnd() + 3600000);
     assert.equal(state.mamie.n, 0);
 });

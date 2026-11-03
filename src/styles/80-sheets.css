@@ -1561,3 +1561,58 @@ button.short.link {
     gap: 6px;
     margin-top: 6px;
 }
+
+/* 1.85 : les plans du champ */
+.plan-slot {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.plan-slot.empty {
+    flex-direction: row;
+    align-items: center;
+}
+.plan-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 3px;
+    max-width: 240px;
+    margin: 6px 0;
+    padding: 6px;
+    background: #7a5230;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+}
+.plan-grid .pg-c {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    background: #5e3f24;
+    display: block;
+}
+.plan-grid .pg-c.on {
+    background: #8b5e34;
+}
+.plan-grid .pg-c.off {
+    background: transparent;
+}
+.plan-grid .pg-c .ico,
+.plan-grid .pg-c svg {
+    width: 100%;
+    height: 100%;
+}
+.plan-gh {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
+    font-size: 12px;
+}
+.plan-gh .ico {
+    width: 18px;
+    height: 18px;
+}
+.plan-btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}

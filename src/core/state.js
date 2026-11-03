@@ -57,12 +57,13 @@ export function newState() {
         counter: null, // 1.17 : le comptoir (salon, décors, clients)
         show: null, // 1.24 : les concours du haras (division, rosettes, inscription, résultats)
         compan: null, // 1.25 : les cultures compagnes (carnet du potager, conseil de Mamie)
+        plans: null, // 1.85 : les plans du champ (disposition des cultures à replanter d'un clic)
         mamie: null, // 1.83 : le plat de la semaine de Mamie (semaine, plat)
         nmarket: null, // 1.26 : le marché des voisines (étals, demandes d'achat, fidélité)
         haras: null, // 1.23 : les grandes écuries (niveau, fiches des chevaux logés)
         machines: [],
         quests: [],
-        upgrades: { speed: 0, price: 0, yield: 0, feeder: 0, seeder: 0, harvester: 0 },
+        upgrades: { speed: 0, price: 0, yield: 0, feeder: 0, seeder: 0, harvester: 0, plan: 0 },
         tools: { axe: 0, pick: 0 },
         settings: {
             music: true,

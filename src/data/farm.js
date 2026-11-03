@@ -67,6 +67,15 @@ export const UPGRADES = {
         maxLvl: 1,
         reqLvl: 19,
     },
+    plan: {
+        id: 'plan',
+        name: 'Plan du champ',
+        desc: 'Enregistrez la disposition de vos cultures et replantez tout d’un clic. Un emplacement, puis 3, puis 6',
+        baseCost: 30000,
+        mult: 4,
+        maxLvl: 3,
+        reqLvl: 28,
+    },
 };
 
 export const GH = {

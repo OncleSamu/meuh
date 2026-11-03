@@ -2,10 +2,10 @@
 // Chaque lundi, elle choisit quelque chose de cuisiné ou de brassé (plat, pain, pâtisserie, glace, fromage, conserve, jus, thé, café,
 // alcool, vin, et une de tes bières), rapide à faire, parmi ce que la ferme sait déjà préparer.
 // 1.83.4 : on ne la vend pas au marché, on la LIVRE à Mamie (Village › Commandes › À livrer) : elle paie tout de suite +50 %,
-// sans que ça fasse baisser les prix du marché, jusqu'à MAMIE_CAP pièces par semaine. Les plats comptent aussi double pour leur maîtrise.
+// sans que ça fasse baisser les prix du marché, avec un bonus qui baisse quand on lui en donne beaucoup dans la semaine. Les plats comptent aussi double pour leur maîtrise.
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
-import { toast, sfx, buzz, burst } from '../core/bus.js';
+import { sfx, buzz, burst } from '../core/bus.js';
 import { earn, addXp } from './player.js';
 import { sellBatch } from './market.js';
 import { sellBeer, ensureBrew, beerDealPrice } from './brewery.js';
@@ -15,11 +15,17 @@ import { hasMachine, recipeUnlocked } from './workshop.js';
 import { tip } from './tips.js';
 
 const BEER = 'beer:';
-export const MAMIE_PRICE = 1.5;
+// le bonus de Mamie selon ce qu'on lui a déjà donné cette semaine : +50 % jusqu'à 50, puis +30 %, +20 % après 100, +10 % après 200
+export const MAMIE_TIERS = [
+    [50, 0.5],
+    [100, 0.3],
+    [200, 0.2],
+    [Infinity, 0.1],
+];
+export const MAMIE_PRICE = 1 + MAMIE_TIERS[0][1];
+export const mamieBonusAt = c => 1 + MAMIE_TIERS.find(([lim]) => c < lim)[1];
 export const MAMIE_MASTERY = 2;
 export const MAMIE_LVL = 10;
-// ce qu'elle prend au plus chaque semaine
-export const MAMIE_CAP = 50;
 // 10 minutes au plus : on peut en faire beaucoup dans la semaine
 export const MAMIE_MAX_TIME = 600;
 // ce qui se mange et se boit (ni farine, ni huile, ni sucre, ni malt, ni planches, ni tissu, ni bijoux…) ; les bières ont leur propre système
@@ -122,7 +128,12 @@ export const mamieMade = () => (mamieDish() && state.mamie.n) || 0;
 export const isMamieDish = id => !!id && mamieDish() === id;
 export const mamieMasteryMult = id => (isMamieDish(id) ? MAMIE_MASTERY : 1);
 export const isMamieBeer = bid => mamieDish() === BEER + bid;
-export const mamieRoom = () => (mamieDish() ? Math.max(0, MAMIE_CAP - (state.mamie.n || 0)) : 0);
+// le bonus de la prochaine pièce
+export const mamieNowBonus = () => mamieBonusAt(mamieMade());
+const dealerOf = () => {
+    const n0 = mamieMade();
+    return { multAt: k => mamieBonusAt(n0 + k) };
+};
 // combien on a de son plat sous la main
 export function mamieStock() {
     const id = mamieDish();
@@ -132,20 +143,22 @@ export function mamieStock() {
 // ce qu'elle paierait pour n pièces (les meilleures d'abord), sans rien prendre
 export function mamiePay(n) {
     const id = mamieDish();
-    n = Math.min(n, mamieRoom(), mamieStock());
+    n = Math.min(n, mamieStock());
     if (!id || n <= 0) return 0;
     if (isBeer(id)) return dealBeer(id.slice(BEER.length), n, false);
-    return sellBatch(id, n, false, { mult: MAMIE_PRICE }).gain;
+    return sellBatch(id, n, false, dealerOf()).gain;
 }
 // bière : même barème que sellBeer (les plus hauts rangs d'abord), sans rien prendre
 function dealBeer(bid, n, apply, at) {
-    if (apply) return sellBeer(bid, n, at, { mult: MAMIE_PRICE }) || 0;
+    if (apply) return sellBeer(bid, n, at, dealerOf()) || 0;
     const B = ensureBrew(),
         q = B.q[bid] || {};
     // la valeur d'une bouteille de chaque rang : on prend les plus hauts d'abord
     let left = n,
         coins = 0;
-    const per = r => beerDealPrice(bid, r, MAMIE_PRICE);
+    const d = dealerOf();
+    let idx = 0;
+    const per = r => beerDealPrice(bid, r, d.multAt(idx++));
     for (const [r, f] of [
         [4, 'd'],
         [3, 'p'],
@@ -154,19 +167,20 @@ function dealBeer(bid, n, apply, at) {
     ]) {
         const t = Math.min(left, q[f] || 0);
         left -= t;
-        coins += t * per(r);
+        for (let k = 0; k < t; k++) coins += per(r);
     }
-    return coins + left * per(0);
+    for (let k = 0; k < left; k++) coins += per(0);
+    return coins;
 }
 // donne n pièces de son plat à Mamie : elles partent, elle paie tout de suite
 export function deliverMamie(at, n = Infinity) {
     const id = mamieDish();
-    n = Math.min(n, mamieRoom(), mamieStock());
+    n = Math.min(n, mamieStock());
     if (!id || n <= 0) return false;
     let gold;
     if (isBeer(id)) gold = dealBeer(id.slice(BEER.length), n, true, at);
     else {
-        const r = sellBatch(id, n, true, { mult: MAMIE_PRICE });
+        const r = sellBatch(id, n, true, dealerOf());
         gold = r.gain;
         n = r.sold;
         earn(gold, at);
@@ -177,7 +191,6 @@ export function deliverMamie(at, n = Infinity) {
     sfx('coin');
     buzz(10);
     if (at) burst(at, 'crumbs', 8);
-    if (state.mamie.n >= MAMIE_CAP) toast('Mamie en a assez pour la semaine : « À lundi, mon grand ! »', ['villager', 'odette']);
     return true;
 }
 // ce qu'il faut pour afficher le plat de la semaine : nom, dessin, et où aller

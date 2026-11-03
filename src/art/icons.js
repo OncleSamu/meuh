@@ -830,6 +830,23 @@ Object.assign(ui, {
 });
 
 Object.assign(ui, {
+    // 1.85 : le plan du champ : un papier cloué sur une planche, avec la disposition des cultures
+    plan: () =>
+        SHADOW(32, 60, 26, 3) +
+        R(10, 8, 44, 50, 4, '#a8693a') +
+        R(14, 14, 36, 40, 2, '#f8ecc8') +
+        [0, 1, 2]
+            .map(r =>
+                [0, 1, 2]
+                    .map(c => {
+                        const col = ['#e2412f', '#f2c14e', '#3f8f2e'][(r + c) % 3];
+                        return R(17 + c * 11, 18 + r * 12, 9, 10, 2, '#7a5230', 1.6) + C(21.5 + c * 11, 23 + r * 12, 3, col, 1.6);
+                    })
+                    .join(''),
+            )
+            .join('') +
+        R(24, 4, 16, 8, 3, '#8a8f98') +
+        C(32, 8, 2, '#3a2618'),
     seeder: () =>
         SHADOW(32, 60, 28, 3) +
         R(8, 26, 48, 16, 4, '#3f8f2e') +

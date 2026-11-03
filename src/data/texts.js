@@ -146,7 +146,7 @@ export const TIPS = {
     mamieDish: {
         icon: ['villager', 'odette'],
         title: 'Le plat de la semaine de Mamie',
-        text: 'Chaque lundi, Mamie Odette choisit quelque chose à préparer : un plat, un pain, une boisson, un vin, ou une de tes bières. Fais-le toute la semaine, puis apporte-le-lui : elle te le paie tout de suite 50 % plus cher, sans toucher aux prix du marché (jusqu’à 50 pièces par semaine). Il compte aussi double pour sa maîtrise. Tu la trouves dans Village | Commandes | À livrer.',
+        text: 'Chaque lundi, Mamie Odette choisit quelque chose à préparer : un plat, un pain, une boisson, un vin, ou une de tes bières. Fais-le toute la semaine, puis apporte-le-lui : elle te le paie tout de suite 50 % plus cher, sans toucher aux prix du marché (+50 % pour les 50 premiers de la semaine, puis +30 % jusqu’à 100, +20 % jusqu’à 200, +10 % ensuite). Il compte aussi double pour sa maîtrise. Tu la trouves dans Village | Commandes | À livrer.',
     },
     bookHerd: {
         icon: ['ui', 'book'],
@@ -559,6 +559,11 @@ export const TIPS = {
         icon: ['ui', 'jackLantern'],
         title: 'Une fête aux vraies dates',
         text: 'C’est la fête ! Une recette spéciale est ouverte à l’atelier, et le village attend un panier (volet Village) contre une décoration unique.',
+    },
+    plans: {
+        icon: ['ui', 'plan'],
+        title: 'Les plans du champ',
+        text: 'Plantez votre disposition, puis enregistrez-la dans un plan (bouton Plans, en haut du champ). Plus tard, « Replanter » sème tout au même endroit sur les parcelles vides et labourées. Les graines se paient comme d’habitude, et rien n’est remplacé. Chaque niveau de l’amélioration ajoute des emplacements : 1, 3, puis 6.',
     },
     seeder: {
         icon: ['ui', 'seeder'],

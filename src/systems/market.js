@@ -55,7 +55,7 @@ export const unitPrice = (id, q = 0, f = demand(id)) =>
 export const sellableKeys = () => Object.keys(ITEMS).filter(k => ITEMS[k].sell && state.inventory[k] > 0);
 
 // Vend n unités (or d'abord, puis argent, puis ordinaire) ; sans apply, calcule seulement
-// 1.83.4 : dealer = { mult } : un acheteur à qui l'on livre (Mamie) : le prix du jour sans l'effet de la demande ni du produit du jour,
+// 1.83.4 : dealer = { mult } (ou { multAt(k) } : le coefficient de la k-ième pièce) : un acheteur à qui l'on livre (Mamie) : le prix du jour sans l'effet de la demande ni du produit du jour,
 // multiplié par mult, payé tout de suite ; il ne fait pas baisser la demande du marché
 export function sellBatch(id, n, apply, dealer) {
     clampQuality(id);
@@ -89,9 +89,11 @@ export function sellBatch(id, n, apply, dealer) {
         cm = craftMult(id),
         floor = demandFloor(id),
         drop = dropPer(id);
+    let idx = 0;
     for (const [ql, cnt] of seq)
         for (let k = 0; k < cnt; k++) {
-            gain += Math.max(1, Math.floor(base * QUALITY[ql].mult * f * hot * ev * cm));
+            const evk = dealer && dealer.multAt ? dealer.multAt(idx++) : ev;
+            gain += Math.max(1, Math.floor(base * QUALITY[ql].mult * f * hot * evk * cm));
             if (!dealer) f = Math.max(Math.min(f, floor), f - drop);
         }
     const sold = take.d + take.p + take.g + take.s + take.n;

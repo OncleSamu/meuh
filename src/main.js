@@ -50,6 +50,7 @@ import { setupBook } from './ui/sheets/book.js';
 import { setupInfo } from './ui/sheets/info.js';
 import { setupSettings } from './ui/sheets/settings.js';
 import { setupRename } from './ui/sheets/rename.js';
+import { setupPlans } from './ui/sheets/plans.js';
 import { setupNight, updateNight } from './ui/night.js';
 import { setupAskBuy } from './ui/sheets/askbuy.js';
 import { setupNavigate } from './ui/navigate.js';
@@ -113,6 +114,7 @@ function start() {
     setupInfo();
     setupSettings();
     setupRename();
+    setupPlans();
     setupNight();
     setupAskBuy();
     setupNavigate();

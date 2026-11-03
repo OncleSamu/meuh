@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.85',
+        title: 'Plans du champ',
+        date: '3 novembre 2026',
+        items: [
+            'Nouvelle amélioration « Plan du champ »',
+            'Bouton « Plans » en haut du champ',
+            "Rien n'est remplacé, rien n'est labouré, les graines se paient comme d'habitude et le résumé dit ce qui manque",
+            'Nouvelle icône, conseil de Mamie, guide, liste des niveaux',
+            'Mamie 1.84 : bonus dégressif au lieu du plafond',
+        ],
+    },
+    {
         v: '1.84',
         title: 'Mamie se livre',
         date: '3 novembre 2026',
@@ -8,7 +20,7 @@ export const CHANGELOG = [
             "Le plat de la semaine quitte l'atelier et passe dans Village › Commandes › À livrer",
             'On le donne à Mamie, elle paie tout de suite 50 % de plus, sans faire baisser les prix du marché',
             'Le marché ne donne plus de bonus',
-            'Plafond choisi : 50 pièces par semaine',
+            "Pas de plafond : +50 % pour les 50 premières de la semaine, puis +30 % jusqu'à 100, +20 % jusqu'à 200",
             "Son compteur devient « Tu m'en as déjà donné X »",
             'Marche aussi avec les bières',
             'La maîtrise ×2 reste à la fabrication',

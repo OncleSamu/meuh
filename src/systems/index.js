@@ -56,6 +56,7 @@ export * from './story.js';
 export * from './style.js';
 export * from './surprises.js';
 export * from './mamie.js';
+export * from './plans.js';
 export * from './tips.js';
 export * from './village.js';
 export * from './workshop.js';

@@ -210,23 +210,22 @@ function mamieCard() {
     if (!d) return '';
     const days = Math.max(1, Math.ceil(G.mamieLeftMs() / 86400000)),
         have = G.mamieStock(),
-        room = G.mamieRoom(),
-        can = Math.min(have, room),
+        can = have,
         made = G.mamieMade();
     const mi = state.machines.findIndex(x => x.type === d.machine);
-    const unit = d.beer ? G.beerDealPrice(d.id.slice(5), 0, G.MAMIE_PRICE) : G.sellPrice(d.id) * G.MAMIE_PRICE;
+    const bonus = G.mamieNowBonus(),
+        pct = Math.round((bonus - 1) * 100);
+    const unit = d.beer ? G.beerDealPrice(d.id.slice(5), 0, bonus) : G.sellPrice(d.id) * bonus;
     const act = !can
-        ? room
-            ? d.beer
-                ? btn('Brasser', { act: 'go', data: { path: 'machines/brew' }, size: 'sm' })
-                : btn('Produire', { act: 'mamieGo', data: { id: d.id, i: mi }, size: 'sm' })
-            : ''
+        ? d.beer
+            ? btn('Brasser', { act: 'go', data: { path: 'machines/brew' }, size: 'sm' })
+            : btn('Produire', { act: 'mamieGo', data: { id: d.id, i: mi }, size: 'sm' })
         : `<div class="md-btns">${btn(`Donner ${fmt(Math.min(can, 1))}`, { act: 'mamieGive', data: { n: 1 }, size: 'sm' })}${can > 1 ? btn(`Donner ${fmt(can)}`, { act: 'mamieGive', data: { n: can }, kind: 'green', size: 'sm' }) : ''}</div>`;
     return `<div class="card mamie-dish">
         <span class="md-av">${art('villager', 'odette')}</span>
         <span class="md-art">${art(d.icon[0], d.icon[1])}</span>
         <span class="card-main"><span class="card-title">${esc(d.name)}</span>
-        <small class="card-sub">« Apporte-moi ça cette semaine ! » · environ ${fmt(Math.round(unit))}${ico(['ui', 'coin'])} pièce (+50 %), payé tout de suite · encore ${days} jour${days > 1 ? 's' : ''}<br>${made ? `« Tu m’en as déjà donné <b>${fmt(made)}</b> ! »` : '« Tu ne m’en as pas encore donné… »'} · ${fmt(have)} en stock · pas plus de ${fmt(G.MAMIE_CAP)} par semaine${room ? '' : ' (c’est fait !)'}</small>${act}</span>
+        <small class="card-sub">« Apporte-moi ça cette semaine ! » · environ ${fmt(Math.round(unit))}${ico(['ui', 'coin'])} pièce (+${pct} %), payé tout de suite · encore ${days} jour${days > 1 ? 's' : ''}<br>${made ? `« Tu m’en as déjà donné <b>${fmt(made)}</b> ! »` : '« Tu ne m’en as pas encore donné… »'} · ${fmt(have)} en stock · bonus : +50 % jusqu’à 50, puis +30 % jusqu’à 100, +20 % jusqu’à 200, +10 % ensuite</small>${act}</span>
     </div>`;
 }
 const portrait = ico(['villager', 'armand'], 'ico big');
@@ -401,7 +400,7 @@ const ROWS = [
         icon: () => ['villager', 'odette'],
         title: () => 'Le plat de la semaine de Mamie',
         sub: () => `${G.mamieInfo().name} · encore ${Math.max(1, Math.ceil(G.mamieLeftMs() / 86400000))} j`,
-        ready: () => G.mamieStock() > 0 && G.mamieRoom() > 0,
+        ready: () => G.mamieStock() > 0,
         html: mamieCard,
     },
     {

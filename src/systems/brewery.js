@@ -532,8 +532,11 @@ export function sellBeer(bid, n, at, dealer) {
         for (let k = 0; k < t; k++) ranks.push(r);
     }
     while (left-- > 0) ranks.push(0);
+    let idx = 0;
     for (const r of ranks) {
-        coins += dealer ? beerDealPrice(bid, r, dealer.mult) : Math.max(5, Math.round((beerPrice(bid) * QUALITY[r].mult) / 5) * 5);
+        coins += dealer
+            ? beerDealPrice(bid, r, dealer.multAt ? dealer.multAt(idx++) : dealer.mult)
+            : Math.max(5, Math.round((beerPrice(bid) * QUALITY[r].mult) / 5) * 5);
         if (!dealer) B.demand[bid] = { n: demandNow(bid) + 1, t: now() };
     }
     earn(coins, at);

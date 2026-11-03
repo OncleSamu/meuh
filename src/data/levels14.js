@@ -141,7 +141,7 @@ export const LV_DECO = {
     miniMill: 19,
     flowerArch: 24,
 };
-export const LV_UPG = { speed: 6, price: 11, feeder: 14, seeder: 16, yield: 17, harvester: 24 };
+export const LV_UPG = { speed: 6, price: 11, feeder: 14, seeder: 16, yield: 17, harvester: 24, plan: 28 };
 export const LV_REC = {
     feed: 3,
     flour: 4,

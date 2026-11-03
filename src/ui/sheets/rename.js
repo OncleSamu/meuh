@@ -16,6 +16,7 @@ const WHAT = {
     lot: { title: 'Nommer la cuvée', get: id => G.findLot(id), name: o => o.name || '', set: (id, n) => G.renameLot(id, n) },
     beer: { title: 'Renommer la bière', get: id => G.beerOf(id), name: o => o.name, set: (id, n) => G.renameBeer(id, n) },
     stud: { title: 'Nom d’élevage', get: () => state.haras && state.haras.stud, name: o => o.name, set: (id, n) => G.setStudName(n) },
+    plan: { title: 'Nommer le plan', get: id => G.planAt(+id), name: o => o.name, set: (id, n) => G.renamePlan(+id, n) },
     race: { title: 'Renommer la race', get: id => state.genetics && state.genetics.races[id], name: o => o.name, set: (id, n) => G.renameRace(id, n) },
 };
 
