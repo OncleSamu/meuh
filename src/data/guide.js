@@ -781,7 +781,7 @@ export const GUIDE_PAGES = [
             { h: 'Animal d’exception', t: 'Rare : 50 % plus rapide.' },
             {
                 h: 'Seconds produits',
-                t: 'Au ramassage, certaines bêtes donnent parfois en plus un produit pour le saloir : lard du cochon, magret du canard, cuisse de l’oie, filet de la dinde, bœuf de la vache, râble du lapin, pigeonneau, pintade, faisan, viande de yack, autruche. Une chance sur six et demie par produit (1.81), plus avec le gène « rendement », la compétence « Bon éleveur » (+5 % par rang) et surtout la ration d’engraissement : faite au moulin (2 maïs et 1 betterave pour 3 rations), elle se donne à une bête avec l’outil du bas (au pré) et ajoute 35 % pendant 2 heures. La viande sort de la même qualité que le produit ramassé avec elle. Le yack monte en transhumance comme les autres bêtes de montagne.',
+                t: 'Au ramassage, chaque bête donne parfois en plus un second produit. De la viande pour la plupart : lard du cochon, magret du canard, cuisse de l’oie, filet de la dinde, bœuf de la vache, râble du lapin, pigeonneau, pintade, faisan, yack, autruche, et depuis la 1.81 poulet fermier, caille, gigot d’agneau (mouton), chevreau (chèvre), veau (bufflonne), bœuf de zébu, agneau barbarin, bœuf musqué et lagopède. D’autres donnent autre chose : petit-lait (brebis), corne (chèvre angora), toison royale (alpaga), gelée royale (ruche), compost (cheval, ânesse), plume de paon en plus (paon). Chacun a au moins trois recettes à l’atelier. Une chance sur six et demie par produit (1.81), plus avec le gène « rendement », la compétence « Bon éleveur » (+5 % par rang) et surtout la ration d’engraissement : faite au moulin (2 maïs et 1 betterave pour 3 rations), elle se donne à une bête avec l’outil du bas (au pré) et ajoute 35 % pendant 2 heures. La viande sort de la même qualité que le produit ramassé avec elle. Le yack monte en transhumance comme les autres bêtes de montagne.',
             },
         ],
         see: ['pastures', 'transhumance', 'labanimals'],
@@ -1270,7 +1270,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'La viande',
-                t: 'Elle suit le produit principal de la bête : quand le lait, les œufs ou la laine montent en platine ou en diamant par leur maîtrise, la viande ramassée avec eux aussi.',
+                t: 'Elle suit le produit principal de la bête : quand le lait, les œufs ou la laine montent en platine ou en diamant par leur maîtrise, la viande ramassée avec eux aussi. Pareil pour le petit-lait, la corne, la toison royale et la gelée royale (le compost n’a pas de qualité).',
             },
             {
                 h: 'À la pêche',

@@ -1,6 +1,22 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.81',
+        title: 'Un second produit pour chaque bête',
+        date: '3 novembre 2026',
+        items: [
+            'Toutes les bêtes donnent parfois un second produit au ramassage, 15 % de chances au lieu de 10 %',
+            'Viandes nouvelles et autres',
+            "39 recettes, trois par produit, l'oasis et le Nord dans leurs ateliers",
+            "Ration d'engraissement au moulin, dans la barre du bas, +35 % pendant 2 h",
+            'Compétence « Bon éleveur »',
+            'Le second produit sort de la qualité du produit ramassé',
+            'Yvette ne vend que les viandes',
+            '52 dessins',
+            'Astuces et guide',
+        ],
+    },
+    {
         v: '1.80',
         title: 'Des poissons en or',
         date: '3 novembre 2026',

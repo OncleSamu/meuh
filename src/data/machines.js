@@ -10,6 +10,7 @@ import { RECIPES_132 } from './ajouts/ile.js';
 import { RECIPES_133 } from './ajouts/poissons.js';
 import { RECIPES_134 } from './ajouts/cave.js';
 import { RECIPES_135 } from './ajouts/animaux.js';
+import { RECIPES_181 } from './ajouts/seconds.js';
 import { RECIPES_137 } from './ajouts/chateau.js';
 import { RECIPES_150, MACHINES_150 } from './ajouts/oasis-cuisine.js';
 import { RECIPES_161, PIZZERIA } from './ajouts/pizzeria.js';
@@ -3528,3 +3529,23 @@ for (const [id, , machine, ing, time, lvl] of RECIPES_153) RECIPES[id] = { id, m
 // ---------------- 1.56 : 64 niveaux ----------------
 // l'oasis sur les niveaux 59 à 61, le Grand Nord sur 62 à 64 (voir levels64.js)
 applyLevels64({ ITEMS, ANIMALS, MACHINES, RECIPES });
+
+// 1.81 : les plats des seconds produits, ajoutés une fois les niveaux répartis ; ils ne s'ouvrent ni avant leur machine,
+// ni avant leurs ingrédients
+{
+    const mine = new Set(RECIPES_181.map(r => r[0]));
+    for (const [id, , machine, ing, time, lvl] of RECIPES_181) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
+    const by = {};
+    for (const a of Object.values(ANIMALS)) for (const k of [a.prodId, a.extra]) if (k) by[k] = Math.min(by[k] ?? 99, a.reqLvl);
+    const lvOf = k => (RECIPES[k] ? RECIPES[k].lvl : Math.max((ITEMS[k] && ITEMS[k].reqLvl) || 0, by[k] || 0));
+    // au plus 20 recettes par niveau (22 à partir du 59, 24 aux deux derniers où vivent bœuf musqué et lagopède) : un plat passe au niveau libre suivant
+    const count = {};
+    for (const r of Object.values(RECIPES)) if (!mine.has(r.id)) count[r.lvl] = (count[r.lvl] || 0) + 1;
+    for (const [id] of RECIPES_181) {
+        const r = RECIPES[id];
+        let l = Math.max(r.lvl, MACHINES[r.machine].reqLvl, ...Object.keys(r.ing).map(lvOf));
+        while (l < 64 && (count[l] || 0) >= (l >= 63 ? 24 : l >= 59 ? 22 : 20)) l++;
+        count[l] = (count[l] || 0) + 1;
+        r.lvl = r.base = l;
+    }
+}

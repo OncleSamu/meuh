@@ -9,6 +9,10 @@ import { rank, speedMult, rollYield, addXp, earn } from './player.js';
 import { starAnimalMult } from './surprises.js';
 import { alpineMult, themeAnimalMult, isAway } from './port.js';
 import { masterySpeed, addMastery } from './mastery.js';
+import { tip } from './tips.js';
+import { EXTRAS_181 } from '../data/ajouts/seconds.js';
+// 1.81 : les seconds produits nouveaux (Mamie en parle au premier)
+const NEW_EXTRAS = new Set(Object.values(EXTRAS_181));
 import { barnBlocked, rollRare } from './barn.js';
 import { fmt } from '../core/format.js';
 import {
@@ -126,8 +130,12 @@ export function collectAnimal(a) {
         for (let k = 0; k < a.stack; k++) if (Math.random() < ch) extra++;
         if (extra) {
             state.inventory[d.extra] = (state.inventory[d.extra] || 0) + extra;
-            if (q) addQuality(d.extra, q, extra);
-            addMastery(d.extra, extra);
+            if (NEW_EXTRAS.has(d.extra)) tip('secondProducts');
+            // le compost (cheval, ânesse) n'a ni qualité ni maîtrise
+            if (d.extra !== 'fertilizer') {
+                if (q) addQuality(d.extra, q, extra);
+                addMastery(d.extra, extra);
+            }
         }
     }
     // 1.22 : une bête curieuse trouve parfois un petit trésor

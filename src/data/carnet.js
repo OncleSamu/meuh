@@ -1491,3 +1491,84 @@ Object.assign(CARNET, {
     pizzaSavoyarde:
         'La savoyarde, c’est une tartiflette qui aurait pris l’avion pour l’Italie. Pommes de terre, lardons, crème et une moitié de reblochon par-dessus. On la mange quand il neige, et elle tient au corps jusqu’au printemps.',
 });
+
+// ---------------- 1.81 : les plats des seconds produits ----------------
+Object.assign(CARNET, {
+    chickenCream:
+        'Le poulet à la crème et aux champignons, c’est le plat du dimanche de ma mère. Elle le mettait sur le feu avant la messe et tout le village savait, en sortant, chez qui il fallait passer.',
+    chickenBasque:
+        'Le poulet basquaise vient de l’autre bout du pays, là où les poivrons sèchent sur les façades. Odette l’a appris d’une cousine de Bayonne ; elle met toujours un poivron de plus que la recette.',
+    smokedChicken:
+        'Le poulet fumé, Gaston le fait au bois de hêtre, tout doucement. Il dit que la fumée travaille pendant qu’on fait la sieste. C’est la seule recette où il a le droit de dormir.',
+    quailGrapes:
+        'Les cailles aux raisins, c’est le plat des vendanges. On les sert le dernier soir, quand les paniers sont rangés et que tout le monde a les mains violettes.',
+    quailHoney:
+        'Les cailles rôties au miel caramélisent dans le four. Ton grand-père les mangeait avec les doigts et léchait le miel jusqu’aux coudes. Je faisais semblant de ne rien voir.',
+    quailTerrine:
+        'La terrine de caille se prépare la veille, avec une échalote et un peu de lard. Elle repose une nuit au frais. Le lendemain, on la coupe en tranches épaisses comme un livre de messe.',
+    lambGarlic:
+        'Le gigot de Pâques se pique de gousses d’ail et cuit avec les premiers petits pois. Marcel le découpe à table, debout, avec le couteau de son père. C’est le seul jour où il fait un discours.',
+    navarin:
+        'Le navarin, c’est l’agneau qui mijote avec les navets et les carottes du printemps. Son nom vient du navet, pas d’une bataille, même si Marcel soutient le contraire depuis quarante ans.',
+    lambLasagna:
+        'Les lasagnes d’agneau, c’est Paul qui les a inventées un soir où il restait du gigot. Il a dit que c’était un accident. Depuis, on lui demande des accidents toutes les semaines.',
+    brousse:
+        'La brousse se fait avec le petit-lait qui reste après le fromage, chauffé avec un peu de lait de brebis. Elle est légère comme un nuage. Dans le Sud, on la mange avec du miel et des figues.',
+    wheyBread:
+        'Le pain au petit-lait a la mie plus tendre et la croûte plus dorée. Les boulangers d’avant gardaient le petit-lait des fromagers rien que pour ça. Rien ne se perdait.',
+    wheySoap:
+        'Le savon au petit-lait est doux comme une joue de bébé. Ma grand-mère se lavait le visage avec, et elle n’a jamais eu une ride avant soixante-dix ans. Enfin, c’est ce qu’elle disait.',
+    kidMint:
+        'Le chevreau rôti à la menthe se mange au printemps, avec des pommes de terre nouvelles. La menthe vient du coin du jardin où elle pousse toute seule, malgré tout ce qu’on fait pour l’arrêter.',
+    kidOlives:
+        'Le chevreau aux olives mijote longtemps, avec des tomates. C’est un plat de Provence que Margaux a rapporté avec son huile. Elle dit qu’il faut des olives noires, ridées, pas les jolies.',
+    kidPie: 'La tourte au chevreau, on la cuit pour les grandes tablées. Une pâte en dessous, une pâte au-dessus, et trois fentes pour que la vapeur s’échappe. Si elle ne s’échappe pas, la tourte gonfle comme un chapeau.',
+    hornComb:
+        'Le peigne en corne ne fait pas d’électricité dans les cheveux. Ma mère avait le même depuis ses vingt ans, poli par l’usage comme un galet. Il est dans mon tiroir, je n’ai jamais osé m’en servir.',
+    hornCardigan:
+        'Le gilet à boutons de corne, c’est celui de ton grand-père, couleur mousse. Les boutons ont survécu à trois gilets. On les découd, on les recoud, ils sont éternels.',
+    hornKnife:
+        'Le couteau à manche de corne tient bien en main, même mouillé. Les bergers en avaient tous un dans la poche, pour le pain, le fromage et le reste. Le mien ne coupe plus, mais je le garde.',
+    royalShawl:
+        'Le châle royal se tisse avec la toison la plus fine de l’alpaga, la première de l’année. Il est si léger qu’on peut le passer dans une bague. Ingrid dit qu’au Nord on l’offre aux mariées.',
+    royalYarn:
+        'La pelote royale, c’est la toison filée tout doucement, sans tirer. Elle brille un peu à la lumière, comme du lait. Les tricoteuses du village se la passent comme un trésor.',
+    royalDyed:
+        'La toison royale teinte en rouge, c’était la couleur des grandes fêtes. On la gardait pour les écharpes de Noël. Un seul brin suffisait à faire sourire quelqu’un.',
+    blanquette:
+        'La blanquette de veau, c’est la sauce blanche, les carottes et les champignons. Ma mère disait qu’on ne la fait jamais bouillir, sinon elle se fâche. Je ne l’ai jamais vue se fâcher, parce que je surveillais.',
+    ossobuco:
+        'L’osso buco, c’est le jarret de veau avec l’os au milieu, et la moelle dedans. Paul dit qu’en Italie on la mange avec une petite cuillère. Marcel, lui, se sert du manche de la fourchette.',
+    vitello:
+        'Le vitello tonnato, c’est du veau froid avec une sauce au thon. Ça paraît bizarre, et puis on y goûte et on en reprend. Paul en fait tous les étés pour la fête du village.',
+    royalCream:
+        'La crème à la gelée royale, c’est la nourriture des reines des abeilles mise dans un petit pot. Ta grand-tante Simone en mettait tous les soirs. Elle disait que si ça marchait pour les reines, ça marcherait pour elle.',
+    royalSoap:
+        'Le savon à la gelée royale sent le miel et la ruche en été. On ne le garde pas dans la salle de bains : on le met dans l’armoire, entre les draps.',
+    royalCandy:
+        'Les bonbons à la gelée royale, c’est ce que les apiculteurs donnent aux enfants qui ont été sages près des ruches. Moi, je n’ai pas toujours été sage, mais j’en ai eu quand même.',
+    zebuTajine:
+        'Le tajine de zébu aux pruneaux et aux amandes est sucré-salé, comme tout ce qu’on aime dans l’oasis. Idris le laisse mijoter tout l’après-midi, pendant la sieste des chameaux.',
+    zebuSkewers:
+        'Les brochettes de zébu au cumin grillent contre l’argile du four. Yasmine dit qu’on les mange avec du pain chaud et un verre de thé. Gaston en a mangé sept, il a dû s’allonger.',
+    couscousRoyal:
+        'Le couscous royal, c’est la semoule, les légumes, les pois chiches et la viande, tout dans le même plat. On l’appelle royal parce qu’il y a de tout, et qu’on mange comme des rois.',
+    mechoui:
+        'Le méchoui, c’est l’agneau rôti tout doucement, des heures entières, jusqu’à ce que la viande se détache avec les doigts. Dans l’oasis, on le partage assis par terre, sur un grand tapis.',
+    lambApricot:
+        'Le tajine d’agneau aux abricots, Yasmine le fait quand les abricots sont mûrs. Elle dit que l’abricot doit fondre, pas rester entier. Marcel dit que c’est de la confiture avec de la viande, et il en reprend.',
+    pastilla:
+        'La pastilla, c’est une tourte feuilletée, salée dedans et sucrée dessus, avec de la cannelle. La première fois, ton grand-père a cru que c’était un dessert. Il a été très surpris, puis très content.',
+    tundraStew:
+        'Le ragoût de la toundra mijote avec du seigle et des baies de genièvre. Tuomas dit qu’il réchauffe jusqu’aux orteils. Au Grand Nord, c’est le plat des soirs où il fait moins trente.',
+    juniperRoast:
+        'Le rôti au genièvre se cuit dans le poêle de faïence, avec beaucoup de beurre. Ingrid dit que le genièvre, c’est le poivre des gens du Nord. Ça pique un peu et ça sent la forêt.',
+    nordPie:
+        'La tourte du Grand Nord, c’est de la viande de bœuf musqué et des airelles sous une pâte dorée. On l’emporte en traîneau, enveloppée dans un torchon. Elle est encore tiède en arrivant.',
+    ptarmiganLingon:
+        'Le lagopède aux airelles est le plat de fête des Lapons. L’oiseau est blanc l’hiver, brun l’été, et rôti toute l’année. Les airelles, c’est pour la couleur sur la table.',
+    ptarmiganSoup:
+        'La soupe de lagopède se fait avec des pommes de terre et de la crème. Tuomas la sert dans des bols en bois. Il dit qu’une soupe qui ne fume pas n’est pas une soupe.',
+    ptarmiganCloudberry:
+        'Le lagopède à la chicoutai, c’est l’oiseau du Nord avec la baie la plus rare du Nord. Ingrid dit que la chicoutai se cueille à genoux dans les marais, une à une. Ça vaut bien un plat de fête.',
+});

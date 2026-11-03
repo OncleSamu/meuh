@@ -13,6 +13,7 @@ import { RECIPES_153 } from './ajouts/nord-cuisine.js';
 import { FISH_ITEMS_133, RECIPES_133 } from './ajouts/poissons.js';
 import { RECIPES_134 } from './ajouts/cave.js';
 import { PRODUCTS_135, RECIPES_135 } from './ajouts/animaux.js';
+import { PRODUCTS_181, RECIPES_181 } from './ajouts/seconds.js';
 import { RECIPES_137 } from './ajouts/chateau.js';
 // Tous les produits du jeu : cultures, arbres, produits animaux, plats, matériaux.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
@@ -2996,4 +2997,11 @@ for (const [id, name, ing, , , tag] of NEW_DRINKS_154) {
 for (const [id, name, ing, , , tag] of NEW_DRINKS_155) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5, needProject: tag === 'sled' ? 'northSled' : 'northStove' };
+}
+
+// ---------------- 1.81 : les seconds produits des bêtes et leurs plats ----------------
+for (const [id, name, sell, needProject] of PRODUCTS_181) ITEMS[id] = { id, name, type: 'product', sell, ...(needProject ? { needProject } : {}) };
+for (const [id, name, , ing] of RECIPES_181) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
 }

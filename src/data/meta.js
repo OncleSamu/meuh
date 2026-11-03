@@ -90,7 +90,14 @@ export const SKILLS = {
             { id: 'trough', name: 'Grande mangeoire', max: 2, icon: ['animal', 'pig'], desc: 'La mangeoire contient {x} repas de plus', per: 2 },
             { id: 'pasture', name: 'Pâturage fertile', max: 3, icon: ['item', 'egg'], desc: '+{x} % de chances de double production', per: 5 },
             // 1.81
-            { id: 'meaty', name: 'Bon éleveur', max: 2, icon: ['item', 'beef'], desc: '+{x} % de chances de viande au ramassage', per: 5 },
+            {
+                id: 'meaty',
+                name: 'Bon éleveur',
+                max: 2,
+                icon: ['item', 'beef'],
+                desc: '+{x} % de chances de second produit (viande, corne, toison…) au ramassage',
+                per: 5,
+            },
             { id: 'nursery', name: 'Pouponnière', max: 1, cap: true, icon: ['ui', 'chick'], desc: 'Les bébés animaux grandissent deux fois plus vite' },
         ],
     },

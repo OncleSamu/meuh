@@ -143,6 +143,11 @@ export const TIPS = {
         title: 'La ration d’engraissement',
         text: 'Le moulin sait faire une ration d’engraissement : deux épis de maïs et une betterave pour trois seaux. Prends-la dans la barre du bas, au pré, et donne-la à une bête : pendant deux heures, elle donnera bien plus souvent de la viande au ramassage. Et une bête de bonne race donne de la viande de qualité, comme son lait ou ses œufs.',
     },
+    secondProducts: {
+        icon: ['item', 'chickenMeat'],
+        title: 'Un second produit pour chaque bête',
+        text: 'Maintenant, toutes tes bêtes donnent parfois un second produit au ramassage : un poulet fermier, un gigot, du veau, une corne, du petit-lait, de la gelée royale, une toison royale… et le cheval te laisse du compost. Chacun a au moins trois recettes à l’atelier. Ta ration d’engraissement marche pour tous.',
+    },
     // 1.80
     fishQuality: {
         icon: ['ui', 'medalG'],

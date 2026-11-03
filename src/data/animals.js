@@ -1,5 +1,6 @@
 import { LV_ANIMAL } from './levels14.js';
 import { ANIMALS_135 } from './ajouts/animaux.js';
+import { EXTRAS_181 } from './ajouts/seconds.js';
 import { OASIS_BEASTS } from './oasis.js';
 import { NORD_BEASTS } from './nord.js';
 // Les animaux : prix, production, croissance des petits, noms.
@@ -181,6 +182,8 @@ export const EXTRA_DROP = { chance: 0.15, gene: 0.5, ration: 0.35, rationHours: 
 Object.entries({ pig: 'lard', duck: 'magret', goose: 'gooseLeg', turkey: 'turkeyFillet', cow: 'beef', rabbit: 'rabbitSaddle' }).forEach(
     ([a, id]) => (ANIMALS[a].extra = id),
 );
+// 1.81 : toutes les bêtes ont maintenant un second produit (viande, petit-lait, corne, toison royale, gelée royale, compost…)
+Object.entries(EXTRAS_181).forEach(([a, id]) => (ANIMALS[a].extra = id));
 
 export const GROW = {
     chicken: 150,

@@ -6,6 +6,7 @@ import { round5 } from '../core/format.js';
 import { emit, toast, sfx, buzz, float } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { ANIMALS } from '../data/animals.js';
+import { NOT_MEAT_181 } from '../data/ajouts/seconds.js';
 import { RECIPES } from '../data/machines.js';
 import { RIVALS, NEIGHBOR_HEARTS } from '../data/village.js';
 import { NMARKET } from '../data/commerce.js';
@@ -33,7 +34,7 @@ export function specialtyOf(k) {
             .map(a => a.prodId);
     if (k === 2) {
         const meats = Object.values(ANIMALS)
-            .filter(a => lvOk(a) && a.extra && ITEMS[a.extra])
+            .filter(a => lvOk(a) && a.extra && ITEMS[a.extra] && !NOT_MEAT_181.has(a.extra))
             .map(a => a.extra);
         const fish = all.filter(i => i.type === 'fish' && i.id !== 'goldfish' && fishOrderOk(i.id)).map(i => i.id);
         const sea = netOpen() ? all.filter(i => i.sea && i.id !== 'lobster').map(i => i.id) : [];

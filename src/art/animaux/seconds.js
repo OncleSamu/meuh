@@ -1,6 +1,6 @@
 // 1.81 : les seconds produits des bêtes (viandes, petit-lait, corne, toison royale, gelée royale) et leurs trente-neuf plats.
 import { items, P, C, E, R, L, F, FC, FE, HL, SHADOW, G, GD, sub, shirt } from '../kit.js';
-import { plate, bowl, jar, steamF, woodBoard, yarn } from '../items2.js';
+import { plate, bowl, steamF, woodBoard, yarn } from '../items2.js';
 
 const PAPER = '#f3e7cf';
 const paper = () => SHADOW(32, 57, 26, 3) + P('M6 44 L50 36 L58 48 L14 56Z', PAPER, 2) + L('M12 46 L48 40', 1, 'rgba(58,38,24,.2)');
