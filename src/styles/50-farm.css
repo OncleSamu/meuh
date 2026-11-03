@@ -172,7 +172,8 @@
     width: 26px;
     height: 26px;
     padding: 3px;
-    z-index: 3;
+    /* 1.81.3 : au-dessus de la décoration du coin */
+    z-index: 4;
     background: #fff;
     border: 2px solid var(--ink);
     border-radius: 50%;

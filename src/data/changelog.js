@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.81.3',
+        title: 'Le pré allégé',
+        date: '3 novembre 2026',
+        items: ['Ni pelle ni graines dans la barre du pré', 'La goutte « à arroser » passe au-dessus de la décoration du coin de la parcelle'],
+    },
+    {
         v: '1.81.2',
         title: 'Chaque outil à sa place',
         date: '3 novembre 2026',

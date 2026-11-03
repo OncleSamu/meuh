@@ -35,8 +35,8 @@ function seedButton() {
     return `<button class="tool seeds-btn${isSeed(t) || deco ? ' on' : ''}" data-act="open" data-sheet="seeds" aria-label="Choisir une graine">${isSeed(t) ? art('seed', t) : deco ? art('ui', deco) : art('ui', 'packet')}${badge}</button>`;
 }
 
-const tool = (id, icon, label, badge = '') =>
-    `<button class="tool${state.selectedTool === id ? ' on' : ''}" data-act="tool" data-t="${id}" aria-label="${label}">${art(icon[0], icon[1])}${badge}</button>`;
+const tool = (id, icon, label, badge = '', on = state.selectedTool === id) =>
+    `<button class="tool${on ? ' on' : ''}" data-act="tool" data-t="${id}" aria-label="${label}">${art(icon[0], icon[1])}${badge}</button>`;
 
 function renderToolbar() {
     const el = byId('toolbar');
@@ -46,18 +46,19 @@ function renderToolbar() {
     document.body.classList.toggle('with-toolbar', show);
     if (!show) return;
     // 1.81.2 : chaque outil là où il sert : la nourriture et la ration au pré, le compost au champ
+    // 1.81.3 : ni pelle ni graines au pré (elles n'y font rien) ; la graine choisie reste en main pour le retour au champ
     const pasture = p === 'animals/pasture';
     const here = { feed: pasture, ration: pasture, fert: !pasture };
     if (here[state.selectedTool] === false) state.selectedTool = 'hand';
     patch(
         el,
         `<div class="tools">
-            ${tool('hand', ['ui', 'hand'], 'Main')}
-            ${tool('shovel', ['ui', 'shovel'], 'Pelle')}
+            ${pasture ? tool('hand', ['ui', 'hand'], 'Main', '', state.selectedTool !== 'feed' && state.selectedTool !== 'ration') : tool('hand', ['ui', 'hand'], 'Main')}
+            ${pasture ? '' : tool('shovel', ['ui', 'shovel'], 'Pelle')}
             ${pasture ? tool('feed', ['item', 'feed'], 'Nourriture', `<span class="badge blue">${state.inventory.feed}</span>`) : ''}
             ${state.level >= 4 && !pasture ? tool('fert', ['item', 'fertilizer'], 'Compost', `<span class="badge blue">${state.inventory.fertilizer}</span>`) : ''}
             ${state.level >= 6 && pasture ? tool('ration', ['item', 'ration'], 'Ration d’engraissement', `<span class="badge blue">${state.inventory.ration || 0}</span>`) : ''}
-            ${seedButton()}
+            ${pasture ? '' : seedButton()}
         </div>`,
     );
 }
