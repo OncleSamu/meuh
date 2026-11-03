@@ -1,4 +1,4 @@
-// 1.85 : les plans du champ (main-d'œuvre : un quart du prix de la graine par parcelle semée, même avec des graines en stock). On enregistre la disposition de ses cultures, et un clic replante tout au même endroit.
+// 1.85 : les plans du champ (main-d'œuvre : 50 pièces par replantage, +10 tous les 5 niveaux après le 28). On enregistre la disposition de ses cultures, et un clic replante tout au même endroit.
 // Une amélioration de ferme (Plan du champ) ouvre 1 emplacement, puis 3, puis 6. Les graines se paient comme d'habitude
 // (en stock d'abord, achetées sinon) ; un plan ne remplace jamais ce qui pousse déjà, et ne laboure pas.
 import { state, lvOk } from '../core/state.js';
@@ -57,15 +57,15 @@ export function clearPlan(k) {
     return true;
 }
 
-export const PLAN_FEE = 0.25;
-export const planFee = id => Math.max(2, Math.round(((ITEMS[id] && ITEMS[id].cost) || 0) * PLAN_FEE));
+// la main-d'œuvre d'un replantage : 50 pièces au niveau 28, 10 de plus tous les 5 niveaux
+export const planFee = () => 50 + 10 * Math.max(0, Math.floor((state.level - 28) / 5));
 
-// peut-on semer cette culture maintenant (graines en stock ou de quoi les acheter, plus la main-d'œuvre) ?
+// peut-on semer cette culture maintenant (graines en stock, ou de quoi les acheter) avec cet argent ?
 function canSow(id, money = state.money, stock = state.seeds[id] || 0) {
     const d = ITEMS[id];
     if (!d || d.island) return false;
     if ((!lvOk(d) || !storyOk(d)) && !(stock > 0)) return false;
-    return money >= planFee(id) + (stock > 0 ? 0 : d.type === 'crop' && !d.exotic ? d.cost : Infinity);
+    return stock > 0 || (d.type === 'crop' && !d.exotic && money >= d.cost);
 }
 
 // ce que le plan ferait aujourd'hui : { sow, busy, plow, lack: { culture: n } }
@@ -74,7 +74,7 @@ export function planPreview(k) {
     const r = { sow: 0, busy: 0, plow: 0, lack: {}, total: 0, fee: 0, seeds: 0 };
     if (!pl) return r;
     const seeds = { ...state.seeds };
-    let money = state.money;
+    let money = state.money - planFee();
     for (const key of Object.keys(pl.c).sort((a, b) => a - b)) {
         const i = +key,
             id = pl.c[key],
@@ -97,9 +97,6 @@ export function planPreview(k) {
             r.lack[id] = (r.lack[id] || 0) + 1;
             continue;
         }
-        const f = planFee(id);
-        money -= f;
-        r.fee += f;
         if (seeds[id] > 0) seeds[id]--;
         else {
             money -= d.cost;
@@ -107,6 +104,8 @@ export function planPreview(k) {
         }
         r.sow++;
     }
+    if (r.sow) r.fee = planFee();
+    if (state.money < planFee()) r.noFee = true;
     return r;
 }
 
@@ -116,6 +115,13 @@ export function applyPlan(k, at) {
     if (!pl) return null;
     const out = { sow: 0, busy: 0, plow: 0, lack: {}, spent: 0, fee: 0 };
     const before = state.money;
+    if (state.money < planFee()) {
+        toast(`Il faut ${planFee()} pièces de main-d’œuvre pour replanter`, ['ui', 'coin']);
+        sfx('error');
+        return null;
+    }
+    state.money -= planFee();
+    out.fee = planFee();
     for (const key of Object.keys(pl.c).sort((a, b) => a - b)) {
         const i = +key,
             id = pl.c[key],
@@ -137,8 +143,6 @@ export function applyPlan(k, at) {
             out.lack[id] = (out.lack[id] || 0) + 1;
             continue;
         }
-        state.money -= planFee(id);
-        out.fee += planFee(id);
         if (state.seeds[id] > 0) state.seeds[id]--;
         else state.money -= d.cost;
         resetPlot(p, id);
@@ -151,7 +155,9 @@ export function applyPlan(k, at) {
         emit('plotFx', { i, kind: 'sparkle', delay: out.sow * 30 });
         out.sow++;
     }
+    if (!out.sow) state.money += out.fee;
     out.spent = Math.max(0, before - state.money);
+    if (!out.sow) out.fee = 0;
     if (out.sow) {
         sfx('plant');
         buzz(15);

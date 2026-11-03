@@ -62,7 +62,7 @@ test('1.85 : enregistrer puis replanter tout d’un clic, sans rien remplacer', 
     assert.equal(state.grid[2].itemId, 'tomato');
     assert.equal(state.grid[1].itemId, 'wheat', 'rien remplacé');
     assert.ok(state.money < money, 'les graines sont payées');
-    assert.ok(out.fee > 0 && out.fee === G.planFee('carrot') + G.planFee('tomato'), 'la main-d’œuvre');
+    assert.ok(out.fee === 50, 'la main-d’œuvre');
 });
 
 test('1.85 : les graines en stock partent d’abord ; sans graines ni pièces, on le dit', () => {
@@ -73,7 +73,7 @@ test('1.85 : les graines en stock partent d’abord ; sans graines ni pièces, o
     state.grid[0].itemId = null;
     state.grid[1].itemId = null;
     state.seeds.carrot = 1;
-    state.money = G.planFee('carrot');
+    state.money = G.planFee();
     const r = G.applyPlan(0);
     assert.equal(r.sow, 1);
     assert.equal(state.seeds.carrot, 0);
@@ -81,6 +81,27 @@ test('1.85 : les graines en stock partent d’abord ; sans graines ni pièces, o
     assert.equal(state.money, 0, 'seule la main-d’œuvre est payée');
     assert.equal(state.grid[0].itemId, 'carrot');
     assert.equal(state.grid[1].itemId, null);
+});
+
+test('1.85 : la main-d’œuvre : 50 pièces, +10 tous les 5 niveaux ; sans elle, rien ne se sème', () => {
+    farm(28);
+    assert.equal(G.planFee(), 50);
+    state.level = 32;
+    assert.equal(G.planFee(), 50);
+    state.level = 33;
+    assert.equal(G.planFee(), 60);
+    state.level = 43;
+    assert.equal(G.planFee(), 80);
+    state.level = 30;
+    sow(0, 'carrot');
+    G.savePlan(0);
+    state.grid[0].itemId = null;
+    state.seeds.carrot = 1;
+    state.money = 49;
+    assert.equal(G.applyPlan(0), null);
+    assert.equal(state.grid[0].itemId, null);
+    assert.equal(state.money, 49);
+    assert.ok(G.planPreview(0).noFee);
 });
 
 test('1.85 : une parcelle non labourée est signalée, pas semée', () => {
