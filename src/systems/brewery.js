@@ -36,7 +36,6 @@ import { honeyProd } from './honey.js';
 import { domStepSum } from './estate.js';
 import { tip } from './tips.js';
 import { talentFx } from './friends.js';
-import { mamieBeerMult, mamieAddBeer } from './mamie.js';
 
 // ---------------- 1.68 : la base d'une boisson : un malt, ou un miel (hydromel) ----------------
 export const isMead = malt => typeof malt === 'string' && malt.startsWith('mead:');
@@ -476,7 +475,6 @@ export function collectVat(i, at) {
     B.stock[v.bid] = (B.stock[v.bid] || 0) + v.n;
     if (v.q) B.q[v.bid][QX.keys[v.q]] += v.n;
     beer.made += v.n;
-    mamieAddBeer(v.bid, v.n);
     state.stats.beers = (state.stats.beers || 0) + v.n;
     if (beer.mead) state.stats.meads = (state.stats.meads || 0) + v.n;
     // le livre des bières : une page par ingrédient
@@ -513,9 +511,10 @@ const demandNow = bid => {
     return d ? d.n * Math.pow(0.5, (now() - d.t) / 1000 / DEMAND.half) : 0;
 };
 export const demandMult = bid => Math.max(DEMAND.floor, 1 - DEMAND.per * demandNow(bid));
-// 1.83.2 : la bière du plat de la semaine de Mamie se vend 50 % plus cher
-export const beerPrice = bid => Math.max(5, Math.round((beerValue(bid) * demandMult(bid) * mamieBeerMult(bid)) / 5) * 5);
-export function sellBeer(bid, n, at) {
+export const beerPrice = bid => Math.max(5, Math.round((beerValue(bid) * demandMult(bid)) / 5) * 5);
+// 1.83.4 : dealer = { mult } : on la livre à Mamie : valeur de la bière (sans la baisse de demande) × mult, payée tout de suite
+export const beerDealPrice = (bid, r, mult) => Math.max(5, Math.round((beerValue(bid) * QUALITY[r].mult * mult) / 5) * 5);
+export function sellBeer(bid, n, at, dealer) {
     const B = ensureBrew();
     const have = B.stock[bid] || 0;
     n = Math.min(have, n);
@@ -534,15 +533,17 @@ export function sellBeer(bid, n, at) {
     }
     while (left-- > 0) ranks.push(0);
     for (const r of ranks) {
-        coins += Math.max(5, Math.round((beerPrice(bid) * QUALITY[r].mult) / 5) * 5);
-        B.demand[bid] = { n: demandNow(bid) + 1, t: now() };
+        coins += dealer ? beerDealPrice(bid, r, dealer.mult) : Math.max(5, Math.round((beerPrice(bid) * QUALITY[r].mult) / 5) * 5);
+        if (!dealer) B.demand[bid] = { n: demandNow(bid) + 1, t: now() };
     }
     earn(coins, at);
-    state.income.brew = (state.income.brew || 0) + coins;
-    state.stats.beersSold = (state.stats.beersSold || 0) + n;
+    if (!dealer) {
+        state.income.brew = (state.income.brew || 0) + coins;
+        state.stats.beersSold = (state.stats.beersSold || 0) + n;
+    }
     if (at) float(at, [`+${coins}`, ['ui', 'coin']], '', -20);
     sfx('coin');
-    return true;
+    return dealer ? coins : true;
 }
 const cleanName = name =>
     String(name || '')
@@ -641,7 +642,6 @@ export function takeFromBarrel(slot, at) {
     }
     B.stock[bid] = (B.stock[bid] || 0) + b.n;
     B.beers[bid].made += b.n;
-    mamieAddBeer(bid, b.n);
     B.barrels[slot] = null;
     addXp(20 * b.stage * b.n, at);
     sfx('pop');

@@ -1556,3 +1556,8 @@ button.short.link {
 .mamie-dish .card-sub {
     display: block;
 }
+.mamie-dish .md-btns {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+}

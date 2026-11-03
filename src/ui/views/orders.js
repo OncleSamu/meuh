@@ -204,6 +204,31 @@ function agendaCard() {
 }
 
 // ---------------- 1.19.1 : Armand, chef du Grand Hôtel ----------------
+// 1.83.4 : le plat de la semaine : on le livre à Mamie, qui paie tout de suite (+50 %)
+function mamieCard() {
+    const d = G.mamieInfo();
+    if (!d) return '';
+    const days = Math.max(1, Math.ceil(G.mamieLeftMs() / 86400000)),
+        have = G.mamieStock(),
+        room = G.mamieRoom(),
+        can = Math.min(have, room),
+        made = G.mamieMade();
+    const mi = state.machines.findIndex(x => x.type === d.machine);
+    const unit = d.beer ? G.beerDealPrice(d.id.slice(5), 0, G.MAMIE_PRICE) : G.sellPrice(d.id) * G.MAMIE_PRICE;
+    const act = !can
+        ? room
+            ? d.beer
+                ? btn('Brasser', { act: 'go', data: { path: 'machines/brew' }, size: 'sm' })
+                : btn('Produire', { act: 'mamieGo', data: { id: d.id, i: mi }, size: 'sm' })
+            : ''
+        : `<div class="md-btns">${btn(`Donner ${fmt(Math.min(can, 1))}`, { act: 'mamieGive', data: { n: 1 }, size: 'sm' })}${can > 1 ? btn(`Donner ${fmt(can)}`, { act: 'mamieGive', data: { n: can }, kind: 'green', size: 'sm' }) : ''}</div>`;
+    return `<div class="card mamie-dish">
+        <span class="md-av">${art('villager', 'odette')}</span>
+        <span class="md-art">${art(d.icon[0], d.icon[1])}</span>
+        <span class="card-main"><span class="card-title">${esc(d.name)}</span>
+        <small class="card-sub">« Apporte-moi ça cette semaine ! » · environ ${fmt(Math.round(unit))}${ico(['ui', 'coin'])} pièce (+50 %), payé tout de suite · encore ${days} jour${days > 1 ? 's' : ''}<br>${made ? `« Tu m’en as déjà donné <b>${fmt(made)}</b> ! »` : '« Tu ne m’en as pas encore donné… »'} · ${fmt(have)} en stock · pas plus de ${fmt(G.MAMIE_CAP)} par semaine${room ? '' : ' (c’est fait !)'}</small>${act}</span>
+    </div>`;
+}
 const portrait = ico(['villager', 'armand'], 'ico big');
 function armandCard() {
     if (!G.armandOpen()) return null;
@@ -368,6 +393,16 @@ const ROWS = [
                 o => o && (G.armandTalking(o) || (!o.done && !G.armandOff(o) && G.armandDealt(o) && has(o.id, 1))),
             ),
         html: armandCard,
+    },
+    {
+        id: 'mamie',
+        grp: 'give',
+        on: () => !!G.mamieInfo(),
+        icon: () => ['villager', 'odette'],
+        title: () => 'Le plat de la semaine de Mamie',
+        sub: () => `${G.mamieInfo().name} · encore ${Math.max(1, Math.ceil(G.mamieLeftMs() / 86400000))} j`,
+        ready: () => G.mamieStock() > 0 && G.mamieRoom() > 0,
+        html: mamieCard,
     },
     {
         id: 'neighbors',
@@ -573,6 +608,8 @@ export function setupOrders() {
                 /* tant pis : le choix n'est pas retenu */
             }
         },
+        mamieGive: (el, d) => G.deliverMamie(el, +d.n || 1),
+        mamieGo: (el, d) => +d.i >= 0 && openSheet('machine', { i: +d.i, focus: d.id }),
         armandGive: (el, d) => G.deliverArmand(el, +d.slot || 0),
         armandAsk: (el, d) => G.armandTalk(+d.slot || 0, d.a),
         armandClose: () => closeSheet('armandTalk'),

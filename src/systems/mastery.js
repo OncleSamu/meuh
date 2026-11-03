@@ -26,7 +26,7 @@ import { farmSeasonAdd } from './port.js';
 import { addPhoto } from './style.js';
 import { earn, getXpReq } from './player.js';
 import { tip } from './tips.js';
-import { mamieMasteryMult, mamieAdd } from './mamie.js';
+import { mamieMasteryMult } from './mamie.js';
 import { chapterDone } from './story.js';
 
 // ---------------- maîtrise ----------------
@@ -66,8 +66,7 @@ export function addMastery(id, qty) {
     if (!ITEMS[id] || !ITEMS[id].sell) return;
     const before = masteryStars(id),
         beforeX = masteryExtra(id);
-    // 1.83 : le plat de la semaine de Mamie compte double (et Mamie compte ce qu'on lui a fait)
-    mamieAdd(id, qty);
+    // 1.83 : le plat de la semaine de Mamie compte double pour la maîtrise
     state.mastery[id] = masteryCount(id) + qty * mamieMasteryMult(id);
     const after = masteryStars(id),
         afterX = masteryExtra(id);

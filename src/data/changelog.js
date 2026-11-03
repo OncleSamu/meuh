@@ -1,6 +1,21 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.84',
+        title: 'Mamie se livre',
+        date: '3 novembre 2026',
+        items: [
+            "Le plat de la semaine quitte l'atelier et passe dans Village › Commandes › À livrer",
+            'On le donne à Mamie, elle paie tout de suite 50 % de plus, sans faire baisser les prix du marché',
+            'Le marché ne donne plus de bonus',
+            'Plafond choisi : 50 pièces par semaine',
+            "Son compteur devient « Tu m'en as déjà donné X »",
+            'Marche aussi avec les bières',
+            'La maîtrise ×2 reste à la fabrication',
+            'Textes, guide et liste des niveaux mis à jour',
+        ],
+    },
+    {
         v: '1.83.3',
         title: 'La liste des niveaux',
         date: '3 novembre 2026',

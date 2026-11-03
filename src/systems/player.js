@@ -292,8 +292,8 @@ export function unlocksAt(lvl) {
     if (lvl === MAMIE_LVL)
         list.push({
             icon: ['villager', 'odette'],
-            name: 'Le plat de la semaine de Mamie : chaque lundi, un plat, une boisson ou une de vos bières à +50 % (Atelier | Production, en haut)',
-            go: 'machines/workshop',
+            name: 'Le plat de la semaine de Mamie : chaque lundi, un plat, une boisson ou une de vos bières, à lui livrer : elle paie +50 % tout de suite (Village | Commandes)',
+            go: 'village/orders',
         });
     if (lvl === VAULT.lvl) add(['ui', 'vault'], 'Le coffre-fort de la grange : gardez vos plus beaux produits et vos grands crus à l’abri (Grange)');
     if (lvl === NMARKET.lvl)

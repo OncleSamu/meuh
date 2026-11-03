@@ -25,7 +25,6 @@ import { plainRanks, dropVarRanks } from './genetics.js';
 import { tip } from './tips.js';
 import { defiNeed } from './defis.js';
 import { talentPrice } from './friends.js';
-import { mamiePriceMult } from './mamie.js';
 
 const COIN = ['ui', 'coin'];
 
@@ -33,8 +32,7 @@ const COIN = ['ui', 'coin'];
 export const marketMult = () => Math.max(BALANCE.marketEnd, BALANCE.marketStart - BALANCE.marketSlope * (scaleLvl() - 1));
 // 1.61 : « Fait maison » : les produits de l'atelier se vendent plus cher
 // 1.70 : le talent de l'ami (les produits de sa machine se vendent plus cher)
-// 1.83 : le plat de la semaine de Mamie se vend 50 % plus cher
-export const craftMult = id => (ITEMS[id].type === 'artisan' ? 1 + 0.04 * skill('chefPrice') : 1) * talentPrice(id) * mamiePriceMult(id);
+export const craftMult = id => (ITEMS[id].type === 'artisan' ? 1 + 0.04 * skill('chefPrice') : 1) * talentPrice(id);
 export const sellPrice = id => Math.floor(ITEMS[id].sell * masteryMult(id) * marketMult() * priceMult() * craftMult(id));
 export const demand = id => (state.market.f[id] === undefined ? 1 : state.market.f[id]);
 export const dropPer = id => 0.0075 * (1 + Math.log10(ITEMS[id].sell)) * (rank('trader') ? 0.5 : 1) * dropMult(id);
@@ -57,12 +55,14 @@ export const unitPrice = (id, q = 0, f = demand(id)) =>
 export const sellableKeys = () => Object.keys(ITEMS).filter(k => ITEMS[k].sell && state.inventory[k] > 0);
 
 // Vend n unités (or d'abord, puis argent, puis ordinaire) ; sans apply, calcule seulement
-export function sellBatch(id, n, apply) {
+// 1.83.4 : dealer = { mult } : un acheteur à qui l'on livre (Mamie) : le prix du jour sans l'effet de la demande ni du produit du jour,
+// multiplié par mult, payé tout de suite ; il ne fait pas baisser la demande du marché
+export function sellBatch(id, n, apply, dealer) {
     clampQuality(id);
     const q = qual(id),
         inv = state.inventory[id];
     let left = Math.min(n, inv),
-        f = demand(id),
+        f = dealer ? 1 : demand(id),
         gain = 0;
     // 1.62 : d'abord les unités qui ne sont d'aucune variété (les plus hauts rangs d'abord), les variétés en dernier
     const plain = state.genetics ? plainRanks(id) : [Math.max(0, inv - q.s - q.g - q.p - q.d), q.s, q.g, q.p, q.d];
@@ -84,15 +84,15 @@ export function sellBatch(id, n, apply) {
     const take = { d: tot(4), p: tot(3), g: tot(2), s: tot(1), n: tot(0) };
     // 1.59 : le même calcul que unitPrice, dans le même ordre, mais les facteurs fixes ne sont lus qu'une fois
     const base = ITEMS[id].sell * masteryMult(id) * marketMult() * priceMult(),
-        hot = state.market.hot === id ? HOT_MULT : 1,
-        ev = eventSellMult(),
+        hot = !dealer && state.market.hot === id ? HOT_MULT : 1,
+        ev = dealer ? dealer.mult : eventSellMult(),
         cm = craftMult(id),
         floor = demandFloor(id),
         drop = dropPer(id);
     for (const [ql, cnt] of seq)
         for (let k = 0; k < cnt; k++) {
             gain += Math.max(1, Math.floor(base * QUALITY[ql].mult * f * hot * ev * cm));
-            f = Math.max(Math.min(f, floor), f - drop);
+            if (!dealer) f = Math.max(Math.min(f, floor), f - drop);
         }
     const sold = take.d + take.p + take.g + take.s + take.n;
     if (apply) {
@@ -102,10 +102,12 @@ export function sellBatch(id, n, apply) {
         q.s -= take.s;
         state.inventory[id] -= sold;
         if (state.genetics && fromVar.some(Boolean)) dropVarRanks(id, fromVar);
-        state.income.market += gain;
-        state.sold[id] = (state.sold[id] || 0) + gain;
-        state.market.f[id] = f;
-        eventProgress('sell', null, gain);
+        if (!dealer) {
+            state.income.market += gain;
+            state.sold[id] = (state.sold[id] || 0) + gain;
+            state.market.f[id] = f;
+            eventProgress('sell', null, gain);
+        }
     }
     return { gain, sold, take };
 }

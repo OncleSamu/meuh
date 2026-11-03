@@ -18,7 +18,7 @@ function farm(lvl = 40) {
 
 test('1.83.3 : la liste des niveaux parle du plat de Mamie au niveau 10', () => {
     farm();
-    assert.ok(G.unlocksAt(10).some(u => /plat de la semaine/.test(u.name) && u.go === 'machines/workshop'));
+    assert.ok(G.unlocksAt(10).some(u => /plat de la semaine/.test(u.name) && u.go === 'village/orders'));
     assert.ok(!G.unlocksAt(11).some(u => /plat de la semaine/.test(u.name)));
 });
 
@@ -40,13 +40,12 @@ test('1.83 : un plat fini et rapide, d’une machine achetée, qui ne bouge pas 
     assert.ok(!G.isMamieDish('egg'));
 });
 
-test('1.83 : +50 % sur le prix, maîtrise double', () => {
+test('1.83.4 : la maîtrise compte double ; le marché ne donne plus de bonus', () => {
     farm();
     const id = G.mamieDish();
-    const withBonus = G.sellPrice(id);
+    const withDish = G.sellPrice(id);
     state.mamie.id = G.mamieChoices().find(x => x !== id);
-    const without = G.sellPrice(id);
-    assert.ok(withBonus > without * 1.45 && withBonus < without * 1.55, `${withBonus} contre ${without}`);
+    assert.equal(G.sellPrice(id), withDish, 'la vente au marché est la même');
     state.mamie.id = id;
     state.mastery[id] = 0;
     G.addMastery(id, 3);
@@ -57,15 +56,25 @@ test('1.83 : +50 % sur le prix, maîtrise double', () => {
     assert.equal(state.mastery[id], 3);
 });
 
-test('1.83.1 : Mamie compte les plats faits cette semaine, et repart à zéro le lundi', () => {
+test('1.83.4 : on livre le plat à Mamie : +50 %, payé tout de suite, compté, plafonné', () => {
     farm();
     const id = G.mamieDish();
     assert.equal(G.mamieMade(), 0);
-    G.addMastery(id, 3);
-    G.addMastery(id, 2);
-    assert.equal(G.mamieMade(), 5);
-    G.addMastery('egg', 4);
-    assert.equal(G.mamieMade(), 5);
+    state.inventory[id] = 80;
+    const coins = state.money,
+        base = G.sellPrice(id);
+    assert.equal(G.mamieStock(), 80);
+    assert.equal(G.mamieRoom(), G.MAMIE_CAP);
+    assert.ok(G.deliverMamie(null, 10));
+    assert.equal(state.inventory[id], 70);
+    assert.equal(G.mamieMade(), 10);
+    const gain = state.money - coins;
+    assert.ok(gain >= Math.floor(base * 1.5) * 10 - 10 && gain <= base * 1.5 * 10 + 10, `${gain} pour 10 à ${base}`);
+    assert.ok(G.deliverMamie(null, 500));
+    assert.equal(G.mamieMade(), G.MAMIE_CAP);
+    assert.equal(state.inventory[id], 80 - G.MAMIE_CAP);
+    assert.equal(G.mamieRoom(), 0);
+    assert.ok(!G.deliverMamie(null, 1));
     G.mamieDish(G.mamieWeekEnd() + 3600000);
     assert.equal(state.mamie.n, 0);
 });
@@ -87,13 +96,14 @@ test('1.83.2 : boissons, vins et bières peuvent être le plat de la semaine', (
     state.brew = { beers: { b1: { id: 'b1', name: 'Ma blonde', value: 100, made: 4 } }, stock: {}, demand: {}, vats: [], q: {} };
     assert.ok(G.mamieChoices().includes('beer:b1'));
     state.mamie = { w: G.mamieWeek(), id: 'beer:b1', n: 0 };
-    const withBonus = G.beerPrice('b1');
-    state.mamie.id = 'baguette';
-    const without = G.beerPrice('b1');
-    assert.ok(withBonus >= without * 1.45 && withBonus <= without * 1.55, `${withBonus} / ${without}`);
-    state.mamie.id = 'beer:b1';
-    G.mamieAddBeer('b1', 6);
+    const market = G.beerPrice('b1');
+    state.brew.stock.b1 = 8;
+    assert.equal(G.mamieStock(), 8);
+    const coins = state.money;
+    assert.ok(G.deliverMamie(null, 6));
     assert.equal(G.mamieMade(), 6);
+    assert.equal(state.brew.stock.b1, 2);
+    assert.ok(state.money - coins >= market * 1.4 * 6, `${state.money - coins} contre ${market}`);
     assert.equal(G.mamieInfo().name, 'Ma blonde');
 });
 
