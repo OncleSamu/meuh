@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.83',
+        title: 'Le plat de la semaine de Mamie',
+        date: '3 novembre 2026',
+        items: [
+            'Chaque lundi, Mamie Odette choisit un plat cuisiné, fini et rapide à faire',
+            'Toute la semaine il se vend 50 % plus cher et chaque plat compte double pour sa maîtrise',
+            'Jamais deux semaines de suite le même',
+            "Carte en haut de l'atelier, Mamie sur la recette",
+            'Dès le niveau 10',
+            'Astuce et guide',
+        ],
+    },
+    {
         v: '1.82',
         title: "L'élevage dans le livre",
         date: '3 novembre 2026',

@@ -67,6 +67,7 @@ function renderWorkshop(el) {
             'top',
             `<div class="view-top end"><div class="actions">${btn('Relancer', { act: 'restartMachines', size: 'sm', icon: ['ui', 'loop'] })}${btn('Tout récupérer', { act: 'collectMachines', kind: any ? 'gold' : '', size: 'sm', icon: ['ui', 'basket'], disabled: !any })}</div></div>`,
         ],
+        ['mamie', mamieCard()],
         ['pin', pinBar()],
         [
             'grid',
@@ -82,7 +83,26 @@ function renderWorkshop(el) {
 defineView('machines/workshop', renderWorkshop);
 
 // ---------------- le tiroir d'une machine ----------------
-const teacherBadge = r => (r.teacher ? `<span class="rt-who">${art('villager', r.teacher)}</span>` : '');
+const teacherBadge = r =>
+    r.teacher
+        ? `<span class="rt-who">${art('villager', r.teacher)}</span>`
+        : G.isMamieDish(r.id)
+          ? `<span class="rt-who">${art('villager', 'odette')}</span>`
+          : '';
+
+// 1.83 : le plat de la semaine de Mamie, en haut de l'atelier
+function mamieCard() {
+    const id = G.mamieDish();
+    if (!id) return '';
+    const days = Math.max(1, Math.ceil(G.mamieLeftMs() / 86400000));
+    const m = state.machines.findIndex(x => x.type === RECIPES[id].machine);
+    return `<button class="card mamie-dish" data-act="mamieGo" data-id="${id}" data-i="${m}">
+        <span class="md-av">${art('villager', 'odette')}</span>
+        <span class="md-art">${art('item', id)}</span>
+        <span class="card-main"><span class="card-title">Plat de la semaine : ${esc(ITEMS[id].name)}</span>
+        <small class="card-sub">« Fais-moi donc ça cette semaine ! » · ${fmt(G.sellPrice(id))}${ico(['ui', 'coin'])} (+50 %), maîtrise ×2 · encore ${days} jour${days > 1 ? 's' : ''}</small></span>
+    </button>`;
+}
 
 function queueSlots(m, i) {
     return `<div class="mslots">${Array.from({ length: G.machineSlots(m.type) }, (_, k) => {
@@ -234,6 +254,11 @@ export function setupWorkshop() {
             // 1.60 : une recette ouverte dont il manque un ingrédient : la liste de ce qu'il faut, avec où le trouver
             if (G.recipeUnlocked(d.id) && !G.canCook(d.id)) return openSheet('needs', { id: d.id });
             return G.queueRecipe(+d.i, d.id, el);
+        },
+        mamieGo: (el, d) => {
+            if (+d.i >= 0) {
+                openSheet('machine', { i: +d.i, focus: d.id });
+            }
         },
         buyLane2: (el, d) => G.buyLane2(+d.i, el),
         cancelQueued: (el, d) => G.cancelQueued(+d.i, +d.k),

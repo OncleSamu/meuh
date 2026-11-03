@@ -143,6 +143,11 @@ export const TIPS = {
         title: 'La ration d’engraissement',
         text: 'Le moulin sait faire une ration d’engraissement : deux épis de maïs et une betterave pour trois seaux (le magasin en vend aussi, plus cher). Prends-la dans la barre du bas, au pré, et donne-la à une bête : pendant deux heures, elle donnera bien plus souvent de la viande au ramassage. Et une bête de bonne race donne de la viande de qualité, comme son lait ou ses œufs.',
     },
+    mamieDish: {
+        icon: ['villager', 'odette'],
+        title: 'Le plat de la semaine de Mamie',
+        text: 'Chaque lundi, Mamie Odette choisit un plat à cuisiner. Toute la semaine, il se vend 50 % plus cher et chaque plat compte double pour sa maîtrise. Elle prend toujours un plat rapide, pour que tu puisses en faire des tas. Touche la carte pour aller à la bonne machine.',
+    },
     bookHerd: {
         icon: ['ui', 'book'],
         title: 'Une page Élevage dans le livre',

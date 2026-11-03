@@ -988,6 +988,10 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'Le plat de la semaine (1.83)',
+                t: 'Dès le niveau 10, Mamie Odette choisit chaque lundi un plat cuisiné parmi ceux que ta ferme sait déjà faire : un vrai plat (ni un fruit, ni une viande, ni une confiture), toujours rapide à préparer, pour que tu puisses en faire beaucoup. Toute la semaine, il se vend 50 % plus cher, et chaque plat compte double pour sa maîtrise. La carte est en haut de l’atelier, et son dessin de Mamie apparaît sur la recette. Elle change le lundi à minuit ; jamais deux semaines de suite le même plat.',
+            },
+            {
                 h: 'La marmite',
                 t: 'Dès le niveau 8, la marmite fait mijoter soupes, veloutés, purées et gratins : soupe de navets, purée de panais, velouté de brocoli, gratin de chou-fleur, velouté de butternut. Elle décharge la cuisine et le fourneau.',
             },
