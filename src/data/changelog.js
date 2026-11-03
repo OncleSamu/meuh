@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.81.2',
+        title: 'Chaque outil à sa place',
+        date: '3 novembre 2026',
+        items: [
+            "Dans la barre du bas, la nourriture et la ration n'apparaissent qu'au pré, le compost qu'au champ",
+            "Un outil choisi qui n'a rien à faire sur la page revient à la main",
+        ],
+    },
+    {
         v: '1.81.1',
         title: 'La ration au magasin',
         date: '3 novembre 2026',

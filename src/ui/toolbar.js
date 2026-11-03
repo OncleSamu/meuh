@@ -45,14 +45,18 @@ function renderToolbar() {
     el.hidden = !show;
     document.body.classList.toggle('with-toolbar', show);
     if (!show) return;
+    // 1.81.2 : chaque outil là où il sert : la nourriture et la ration au pré, le compost au champ
+    const pasture = p === 'animals/pasture';
+    const here = { feed: pasture, ration: pasture, fert: !pasture };
+    if (here[state.selectedTool] === false) state.selectedTool = 'hand';
     patch(
         el,
         `<div class="tools">
             ${tool('hand', ['ui', 'hand'], 'Main')}
             ${tool('shovel', ['ui', 'shovel'], 'Pelle')}
-            ${tool('feed', ['item', 'feed'], 'Nourriture', `<span class="badge blue">${state.inventory.feed}</span>`)}
-            ${state.level >= 4 ? tool('fert', ['item', 'fertilizer'], 'Compost', `<span class="badge blue">${state.inventory.fertilizer}</span>`) : ''}
-            ${state.level >= 6 && p === 'animals/pasture' ? tool('ration', ['item', 'ration'], 'Ration d’engraissement', `<span class="badge blue">${state.inventory.ration || 0}</span>`) : ''}
+            ${pasture ? tool('feed', ['item', 'feed'], 'Nourriture', `<span class="badge blue">${state.inventory.feed}</span>`) : ''}
+            ${state.level >= 4 && !pasture ? tool('fert', ['item', 'fertilizer'], 'Compost', `<span class="badge blue">${state.inventory.fertilizer}</span>`) : ''}
+            ${state.level >= 6 && pasture ? tool('ration', ['item', 'ration'], 'Ration d’engraissement', `<span class="badge blue">${state.inventory.ration || 0}</span>`) : ''}
             ${seedButton()}
         </div>`,
     );
