@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.85.1',
+        title: 'Carte de Mamie plus légère',
+        date: '3 novembre 2026',
+        items: ['La ligne qui rappelait les paliers du bonus disparaît de la carte', 'La carte garde le bonus du moment'],
+    },
+    {
         v: '1.85',
         title: 'Plans du champ',
         date: '3 novembre 2026',

@@ -225,7 +225,7 @@ function mamieCard() {
         <span class="md-av">${art('villager', 'odette')}</span>
         <span class="md-art">${art(d.icon[0], d.icon[1])}</span>
         <span class="card-main"><span class="card-title">${esc(d.name)}</span>
-        <small class="card-sub">« Apporte-moi ça cette semaine ! » · environ ${fmt(Math.round(unit))}${ico(['ui', 'coin'])} pièce (+${pct} %), payé tout de suite · encore ${days} jour${days > 1 ? 's' : ''}<br>${made ? `« Tu m’en as déjà donné <b>${fmt(made)}</b> ! »` : '« Tu ne m’en as pas encore donné… »'} · ${fmt(have)} en stock · bonus : +50 % jusqu’à 50, puis +30 % jusqu’à 100, +20 % jusqu’à 200, +10 % ensuite</small>${act}</span>
+        <small class="card-sub">« Apporte-moi ça cette semaine ! » · environ ${fmt(Math.round(unit))}${ico(['ui', 'coin'])} pièce (+${pct} %), payé tout de suite · encore ${days} jour${days > 1 ? 's' : ''}<br>${made ? `« Tu m’en as déjà donné <b>${fmt(made)}</b> ! »` : '« Tu ne m’en as pas encore donné… »'} · ${fmt(have)} en stock</small>${act}</span>
     </div>`;
 }
 const portrait = ico(['villager', 'armand'], 'ico big');
