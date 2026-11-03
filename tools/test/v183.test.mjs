@@ -16,6 +16,12 @@ function farm(lvl = 40) {
     for (const t of ['kitchen', 'stove', 'marmite', 'pastry', 'deli', 'bakery']) if (!G.hasMachine(t)) state.machines.push(G.newMachine(t));
 }
 
+test('1.83.3 : la liste des niveaux parle du plat de Mamie au niveau 10', () => {
+    farm();
+    assert.ok(G.unlocksAt(10).some(u => /plat de la semaine/.test(u.name) && u.go === 'machines/workshop'));
+    assert.ok(!G.unlocksAt(11).some(u => /plat de la semaine/.test(u.name)));
+});
+
 test('1.83 : pas de plat de la semaine avant le niveau 10', () => {
     farm(5);
     assert.equal(G.mamieDish(), null);

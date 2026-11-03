@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.83.3',
+        title: 'La liste des niveaux',
+        date: '3 novembre 2026',
+        items: ['Le niveau 10 annonce le plat de la semaine de Mamie', 'Le reste de la liste se met à jour tout seul'],
+    },
+    {
         v: '1.83.2',
         title: "Le plat de la semaine s'élargit",
         date: '3 novembre 2026',

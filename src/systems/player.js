@@ -30,6 +30,7 @@ import { trackDayEarn, record } from './book.js';
 import { renownStar } from './mastery.js';
 import { addPhoto } from './style.js';
 import { tip } from './tips.js';
+import { MAMIE_LVL } from './mamie.js';
 import { ensureQuests } from './orders.js';
 import { STALL_LEVELS } from './stall.js';
 
@@ -287,6 +288,13 @@ export function unlocksAt(lvl) {
             ['ui', 'house'],
             'L’amélioration du domaine : grange, cuisines, aide au champ, commerce, annexes, Armand, cargo, quai et réception (onglet Village)',
         );
+    // 1.83.3 : le plat de la semaine de Mamie
+    if (lvl === MAMIE_LVL)
+        list.push({
+            icon: ['villager', 'odette'],
+            name: 'Le plat de la semaine de Mamie : chaque lundi, un plat, une boisson ou une de vos bières à +50 % (Atelier | Production, en haut)',
+            go: 'machines/workshop',
+        });
     if (lvl === VAULT.lvl) add(['ui', 'vault'], 'Le coffre-fort de la grange : gardez vos plus beaux produits et vos grands crus à l’abri (Grange)');
     if (lvl === NMARKET.lvl)
         add(['ui', 'nmEtal'], 'Le marché des voisins : leurs étals et la demande d’achat, meilleurs avec l’amitié (Marché | Acheter, rayon Voisins)');
