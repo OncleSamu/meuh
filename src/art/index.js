@@ -139,4 +139,5 @@ import './miel/ruchers.js';
 import './village/amis.js';
 import './village/salon.js';
 import './animaux/ration.js';
+import './animaux/seconds.js';
 import './retouches/produits-uniques.js';
