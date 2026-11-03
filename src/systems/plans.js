@@ -1,4 +1,4 @@
-// 1.85 : les plans du champ. On enregistre la disposition de ses cultures, et un clic replante tout au même endroit.
+// 1.85 : les plans du champ (main-d'œuvre : un quart du prix de la graine par parcelle semée, même avec des graines en stock). On enregistre la disposition de ses cultures, et un clic replante tout au même endroit.
 // Une amélioration de ferme (Plan du champ) ouvre 1 emplacement, puis 3, puis 6. Les graines se paient comme d'habitude
 // (en stock d'abord, achetées sinon) ; un plan ne remplace jamais ce qui pousse déjà, et ne laboure pas.
 import { state, lvOk } from '../core/state.js';
@@ -57,18 +57,21 @@ export function clearPlan(k) {
     return true;
 }
 
-// peut-on semer cette culture maintenant (graines en stock, ou de quoi les acheter) ?
-function canSow(id) {
+export const PLAN_FEE = 0.25;
+export const planFee = id => Math.max(2, Math.round(((ITEMS[id] && ITEMS[id].cost) || 0) * PLAN_FEE));
+
+// peut-on semer cette culture maintenant (graines en stock ou de quoi les acheter, plus la main-d'œuvre) ?
+function canSow(id, money = state.money, stock = state.seeds[id] || 0) {
     const d = ITEMS[id];
     if (!d || d.island) return false;
-    if ((!lvOk(d) || !storyOk(d)) && !(state.seeds[id] > 0)) return false;
-    return state.seeds[id] > 0 || (d.type === 'crop' && !d.exotic && state.money >= d.cost);
+    if ((!lvOk(d) || !storyOk(d)) && !(stock > 0)) return false;
+    return money >= planFee(id) + (stock > 0 ? 0 : d.type === 'crop' && !d.exotic ? d.cost : Infinity);
 }
 
 // ce que le plan ferait aujourd'hui : { sow, busy, plow, lack: { culture: n } }
 export function planPreview(k) {
     const pl = planAt(k);
-    const r = { sow: 0, busy: 0, plow: 0, lack: {}, total: 0 };
+    const r = { sow: 0, busy: 0, plow: 0, lack: {}, total: 0, fee: 0, seeds: 0 };
     if (!pl) return r;
     const seeds = { ...state.seeds };
     let money = state.money;
@@ -90,12 +93,17 @@ export function planPreview(k) {
             r.busy++;
             continue;
         }
-        const ok = (lvOk(d) && storyOk(d)) || seeds[id] > 0;
-        if (ok && seeds[id] > 0) seeds[id]--;
-        else if (ok && d.type === 'crop' && !d.exotic && money >= d.cost) money -= d.cost;
-        else {
+        if (!canSow(id, money, seeds[id] || 0)) {
             r.lack[id] = (r.lack[id] || 0) + 1;
             continue;
+        }
+        const f = planFee(id);
+        money -= f;
+        r.fee += f;
+        if (seeds[id] > 0) seeds[id]--;
+        else {
+            money -= d.cost;
+            r.seeds += d.cost;
         }
         r.sow++;
     }
@@ -106,7 +114,7 @@ export function planPreview(k) {
 export function applyPlan(k, at) {
     const pl = planAt(k);
     if (!pl) return null;
-    const out = { sow: 0, busy: 0, plow: 0, lack: {}, spent: 0 };
+    const out = { sow: 0, busy: 0, plow: 0, lack: {}, spent: 0, fee: 0 };
     const before = state.money;
     for (const key of Object.keys(pl.c).sort((a, b) => a - b)) {
         const i = +key,
@@ -129,6 +137,8 @@ export function applyPlan(k, at) {
             out.lack[id] = (out.lack[id] || 0) + 1;
             continue;
         }
+        state.money -= planFee(id);
+        out.fee += planFee(id);
         if (state.seeds[id] > 0) state.seeds[id]--;
         else state.money -= d.cost;
         resetPlot(p, id);
@@ -153,6 +163,7 @@ export function applyPlan(k, at) {
         out.busy ? `${out.busy} déjà occupée${s(out.busy)}` : '',
         out.plow ? `${out.plow} à labourer` : '',
         lack ? `${lack} sans graines ni pièces` : '',
+        out.fee ? `main-d’œuvre ${out.fee} pièces` : '',
     ].filter(Boolean);
     toast(
         out.sow

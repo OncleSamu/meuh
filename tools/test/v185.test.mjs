@@ -62,6 +62,7 @@ test('1.85 : enregistrer puis replanter tout d’un clic, sans rien remplacer', 
     assert.equal(state.grid[2].itemId, 'tomato');
     assert.equal(state.grid[1].itemId, 'wheat', 'rien remplacé');
     assert.ok(state.money < money, 'les graines sont payées');
+    assert.ok(out.fee > 0 && out.fee === G.planFee('carrot') + G.planFee('tomato'), 'la main-d’œuvre');
 });
 
 test('1.85 : les graines en stock partent d’abord ; sans graines ni pièces, on le dit', () => {
@@ -72,11 +73,12 @@ test('1.85 : les graines en stock partent d’abord ; sans graines ni pièces, o
     state.grid[0].itemId = null;
     state.grid[1].itemId = null;
     state.seeds.carrot = 1;
-    state.money = 0;
+    state.money = G.planFee('carrot');
     const r = G.applyPlan(0);
     assert.equal(r.sow, 1);
     assert.equal(state.seeds.carrot, 0);
     assert.equal(r.lack.carrot, 1);
+    assert.equal(state.money, 0, 'seule la main-d’œuvre est payée');
     assert.equal(state.grid[0].itemId, 'carrot');
     assert.equal(state.grid[1].itemId, null);
 });

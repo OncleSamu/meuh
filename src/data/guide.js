@@ -370,7 +370,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Replanter vite',
-                t: 'Dans les réglages, « Replanter après la récolte » ressème tout seul la même culture. Le semoir (niveau 16) sème toute une rangée d’un geste ; la moissonneuse (niveau 24) donne parfois un produit de plus sur une rangée entière d’une même culture. Le Plan du champ (niveau 28) enregistre la disposition de vos cultures (1 emplacement, puis 3, puis 6) : le bouton « Plans », en haut du champ, replante tout d’un clic sur les parcelles vides et labourées (graines payées comme d’habitude, rien n’est remplacé, la serre est comprise).',
+                t: 'Dans les réglages, « Replanter après la récolte » ressème tout seul la même culture. Le semoir (niveau 16) sème toute une rangée d’un geste ; la moissonneuse (niveau 24) donne parfois un produit de plus sur une rangée entière d’une même culture. Le Plan du champ (niveau 28) enregistre la disposition de vos cultures (1 emplacement, puis 3, puis 6) : le bouton « Plans », en haut du champ, replante tout d’un clic sur les parcelles vides et labourées (graines payées comme d’habitude plus une main-d’œuvre d’un quart du prix de la graine par parcelle, rien n’est remplacé, la serre est comprise).',
             },
         ],
         tips: ['Une culture « de saison » pousse plus vite : regardez le magasin pour la saison de chaque graine.'],

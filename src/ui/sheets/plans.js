@@ -34,7 +34,7 @@ function slot(k) {
         .map(([id, n]) => `${n} ${ITEMS[id].name.toLowerCase()}`)
         .join(', ');
     const sub = [
-        `${r.sow} à semer`,
+        `${r.sow} à semer${r.fee ? ` · main-d’œuvre ${fmt(r.fee)}${ico(['ui', 'coin'])}` : ''}`,
         r.busy ? `${r.busy} occupée${s(r.busy)}` : '',
         r.plow ? `${r.plow} à labourer` : '',
         lack ? `<b class="bad">manque de quoi semer : ${esc(lack)}</b>` : '',
@@ -52,7 +52,7 @@ defineSheet('plans', {
     render() {
         if (!G.planOpen()) return empty('Achetez le Plan du champ au magasin (Améliorations).');
         G.tip('plans');
-        return `<p class="card-sub">Un plan se souvient de la place de chaque culture. « Replanter » sème sur les parcelles vides et labourées : il ne remplace rien et ne laboure pas. Les graines se paient comme d’habitude.</p>
+        return `<p class="card-sub">Un plan se souvient de la place de chaque culture. « Replanter » sème sur les parcelles vides et labourées : il ne remplace rien et ne laboure pas. Les graines se paient comme d’habitude, plus une petite main-d’œuvre : un quart du prix de la graine par parcelle, même avec des graines en stock.</p>
             ${Array.from({ length: G.planSlots() }, (_, k) => slot(k)).join('')}`;
     },
 });

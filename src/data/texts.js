@@ -563,7 +563,7 @@ export const TIPS = {
     plans: {
         icon: ['ui', 'plan'],
         title: 'Les plans du champ',
-        text: 'Plantez votre disposition, puis enregistrez-la dans un plan (bouton Plans, en haut du champ). Plus tard, « Replanter » sème tout au même endroit sur les parcelles vides et labourées. Les graines se paient comme d’habitude, et rien n’est remplacé. Chaque niveau de l’amélioration ajoute des emplacements : 1, 3, puis 6.',
+        text: 'Plantez votre disposition, puis enregistrez-la dans un plan (bouton Plans, en haut du champ). Plus tard, « Replanter » sème tout au même endroit sur les parcelles vides et labourées. Les graines se paient comme d’habitude, plus une petite main-d’œuvre (un quart du prix de la graine par parcelle), et rien n’est remplacé. Chaque niveau de l’amélioration ajoute des emplacements : 1, 3, puis 6.',
     },
     seeder: {
         icon: ['ui', 'seeder'],
