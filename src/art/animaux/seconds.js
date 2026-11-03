@@ -14,6 +14,21 @@ const bird = (x, y, s, skin, sk2, extra = '') =>
     F('M-14 -10 Q0 -15 16 -10 Q4 -6 -14 -4Z', '#fff', 0.4) +
     extra +
     `</g>`;
+// un poulet entier prêt à rôtir : corps dodu, pilons dressés et ficelés (et l'étiquette rouge s'il est fermier)
+const chicken = (skin, dark, tips, tag = false) =>
+    P('M10 38 Q4 36 6 31 Q10 30 14 34Z', dark, 1.8) +
+    P('M10 40 Q10 24 30 23 Q48 23 52 36 Q54 48 34 50 Q12 51 10 40Z', skin, 2.2) +
+    F('M16 30 Q28 24 42 28 Q30 30 18 34Z', '#fff', 0.45) +
+    L('M16 44 Q24 46 30 42', 1.4, dark) +
+    FE(22, 38, 1, 0.8, dark) +
+    FE(30, 34, 1, 0.8, dark) +
+    FE(38, 42, 1, 0.8, dark) +
+    P('M36 36 Q34 26 44 22 Q50 22 50 28 Q48 34 40 38Z', skin, 2) +
+    P('M42 40 Q44 30 52 28 Q58 28 57 34 Q54 40 46 42Z', skin, 2) +
+    R(46, 17, 4, 7, 2, tips, 1.6) +
+    R(53, 23, 4, 7, 2, tips, 1.6) +
+    L('M45 22 Q50 26 56 26', 1.4, '#c8453a') +
+    (tag ? L('M56 26 L58 32', 1.2, '#c8453a') + C(58, 35, 3.4, '#c8453a', 1.4) + FC(58, 35, 1.4, '#ffd23f') : '');
 // une pièce de viande crue sur son papier
 const meat = (c, c2, seed) =>
     paper() +
@@ -119,7 +134,7 @@ const steam = L('M24 18 Q20 14 24 10 M32 20 Q28 15 32 10 M40 18 Q36 14 40 10', 1
 
 const RAW = {
     // ---------------- les produits ----------------
-    chickenMeat: () => paper() + bird(32, 38, 1, '#f6d6b4', '#ecc29a'),
+    chickenMeat: () => paper() + chicken('#f4d48e', '#e8b868', '#fbf3e2', true),
     quailMeat: () => paper() + bird(22, 40, 0.5, '#efc0a0', '#e0a888') + bird(42, 36, 0.55, '#f2c8a8', '#e4b090'),
     lambLeg: () =>
         paper() +
@@ -206,7 +221,7 @@ const RAW = {
         ),
     smokedChicken: () =>
         woodBoard() +
-        bird(32, 36, 0.9, '#b8662a', '#8a4a1e', F('M-16 -8 Q0 -14 14 -8', '#f2c06a', 0.5)) +
+        `<g transform="translate(0 -4)">${chicken('#b8662a', '#8a4a1e', '#f6eedc')}</g>` +
         L('M14 14 Q10 10 14 6 M22 12 Q18 8 22 4', 1.8, 'rgba(160,160,160,.7)'),
 
     // ---------------- caille ----------------
