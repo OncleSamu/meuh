@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.83.2',
+        title: "Le plat de la semaine s'élargit",
+        date: '3 novembre 2026',
+        items: [
+            'Mamie peut aussi choisir un pain, une pâtisserie, une glace, un chocolat, un fromage, une conserve, un jus',
+            "La baguette, le pain, les pâtes et le reste ne sont plus écartés parce qu'ils servent d'ingrédient",
+            'Jamais de fruit, légume, viande, farine, huile ni sucre',
+            '10 minutes au plus',
+            'Carte, astuce et guide mis à jour',
+        ],
+    },
+    {
         v: '1.83.1',
         title: 'Mamie compte',
         date: '3 novembre 2026',

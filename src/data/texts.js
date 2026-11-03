@@ -146,7 +146,7 @@ export const TIPS = {
     mamieDish: {
         icon: ['villager', 'odette'],
         title: 'Le plat de la semaine de Mamie',
-        text: 'Chaque lundi, Mamie Odette choisit un plat à cuisiner. Toute la semaine, il se vend 50 % plus cher et chaque plat compte double pour sa maîtrise. Elle prend toujours un plat rapide, pour que tu puisses en faire des tas. Touche la carte pour aller à la bonne machine.',
+        text: 'Chaque lundi, Mamie Odette choisit quelque chose à préparer : un plat, un pain, une boisson, un vin, ou une de tes bières. Toute la semaine, il se vend 50 % plus cher et compte double pour sa maîtrise. Elle prend toujours quelque chose de rapide, pour que tu puisses en faire des tas. Touche la carte pour aller à la bonne machine.',
     },
     bookHerd: {
         icon: ['ui', 'book'],

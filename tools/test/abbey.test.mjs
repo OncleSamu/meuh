@@ -56,6 +56,8 @@ test('composer et brasser une bière à un ingrédient', () => {
     // renommer, vendre
     assert.ok(G.renameBeer(bid, 'La Rouge du cloître'));
     assert.equal(G.beerOf(bid).name, 'La Rouge du cloître');
+    // 1.83.2 : Mamie n'a pas choisi cette bière cette semaine (sinon +50 %)
+    state.mamie = { w: G.mamieWeek(), id: 'baguette', n: 0 };
     const m = state.money;
     assert.ok(G.sellBeer(bid, 2));
     assert.ok(state.money > m + G.beerOf(bid).value * 1.9 && state.money <= m + G.beerOf(bid).value * 2, 'deux bouteilles, la seconde un peu moins chère');

@@ -36,6 +36,7 @@ import { honeyProd } from './honey.js';
 import { domStepSum } from './estate.js';
 import { tip } from './tips.js';
 import { talentFx } from './friends.js';
+import { mamieBeerMult, mamieAddBeer } from './mamie.js';
 
 // ---------------- 1.68 : la base d'une boisson : un malt, ou un miel (hydromel) ----------------
 export const isMead = malt => typeof malt === 'string' && malt.startsWith('mead:');
@@ -475,6 +476,7 @@ export function collectVat(i, at) {
     B.stock[v.bid] = (B.stock[v.bid] || 0) + v.n;
     if (v.q) B.q[v.bid][QX.keys[v.q]] += v.n;
     beer.made += v.n;
+    mamieAddBeer(v.bid, v.n);
     state.stats.beers = (state.stats.beers || 0) + v.n;
     if (beer.mead) state.stats.meads = (state.stats.meads || 0) + v.n;
     // le livre des bières : une page par ingrédient
@@ -511,7 +513,8 @@ const demandNow = bid => {
     return d ? d.n * Math.pow(0.5, (now() - d.t) / 1000 / DEMAND.half) : 0;
 };
 export const demandMult = bid => Math.max(DEMAND.floor, 1 - DEMAND.per * demandNow(bid));
-export const beerPrice = bid => Math.max(5, Math.round((beerValue(bid) * demandMult(bid)) / 5) * 5);
+// 1.83.2 : la bière du plat de la semaine de Mamie se vend 50 % plus cher
+export const beerPrice = bid => Math.max(5, Math.round((beerValue(bid) * demandMult(bid) * mamieBeerMult(bid)) / 5) * 5);
 export function sellBeer(bid, n, at) {
     const B = ensureBrew();
     const have = B.stock[bid] || 0;
@@ -638,6 +641,7 @@ export function takeFromBarrel(slot, at) {
     }
     B.stock[bid] = (B.stock[bid] || 0) + b.n;
     B.beers[bid].made += b.n;
+    mamieAddBeer(bid, b.n);
     B.barrels[slot] = null;
     addXp(20 * b.stage * b.n, at);
     sfx('pop');

@@ -92,15 +92,19 @@ const teacherBadge = r =>
 
 // 1.83 : le plat de la semaine de Mamie, en haut de l'atelier
 function mamieCard() {
-    const id = G.mamieDish();
-    if (!id) return '';
+    const d = G.mamieInfo();
+    if (!d) return '';
     const days = Math.max(1, Math.ceil(G.mamieLeftMs() / 86400000));
-    const m = state.machines.findIndex(x => x.type === RECIPES[id].machine);
-    return `<button class="card mamie-dish" data-act="mamieGo" data-id="${id}" data-i="${m}">
+    const mi = state.machines.findIndex(x => x.type === d.machine);
+    const price = d.beer
+        ? `${fmt(G.beerPrice(d.id.slice(5)))}${ico(['ui', 'coin'])} la bouteille (+50 %)`
+        : `${fmt(G.sellPrice(d.id))}${ico(['ui', 'coin'])} (+50 %), maîtrise ×2`;
+    const act = d.beer ? 'data-act="go" data-path="machines/brew"' : `data-act="mamieGo" data-id="${d.id}" data-i="${mi}"`;
+    return `<button class="card mamie-dish" ${act}>
         <span class="md-av">${art('villager', 'odette')}</span>
-        <span class="md-art">${art('item', id)}</span>
-        <span class="card-main"><span class="card-title">Plat de la semaine : ${esc(ITEMS[id].name)}</span>
-        <small class="card-sub">« Fais-moi donc ça cette semaine ! » · ${fmt(G.sellPrice(id))}${ico(['ui', 'coin'])} (+50 %), maîtrise ×2 · encore ${days} jour${days > 1 ? 's' : ''}<br>${G.mamieMade() ? `« Tu m’en as déjà fait <b>${fmt(G.mamieMade())}</b> ! »` : '« Tu ne m’en as pas encore fait… »'}</small></span>
+        <span class="md-art">${art(d.icon[0], d.icon[1])}</span>
+        <span class="card-main"><span class="card-title">Plat de la semaine : ${esc(d.name)}</span>
+        <small class="card-sub">« Fais-moi donc ça cette semaine ! » · ${price} · encore ${days} jour${days > 1 ? 's' : ''}<br>${G.mamieMade() ? `« Tu m’en as déjà fait <b>${fmt(G.mamieMade())}</b> ! »` : '« Tu ne m’en as pas encore fait… »'}</small></span>
     </button>`;
 }
 
