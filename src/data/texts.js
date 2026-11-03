@@ -141,7 +141,7 @@ export const TIPS = {
     meatRation: {
         icon: ['item', 'ration'],
         title: 'La ration d’engraissement',
-        text: 'Le moulin sait faire une ration d’engraissement : deux épis de maïs et une betterave pour trois seaux. Prends-la dans la barre du bas, au pré, et donne-la à une bête : pendant deux heures, elle donnera bien plus souvent de la viande au ramassage. Et une bête de bonne race donne de la viande de qualité, comme son lait ou ses œufs.',
+        text: 'Le moulin sait faire une ration d’engraissement : deux épis de maïs et une betterave pour trois seaux (le magasin en vend aussi, plus cher). Prends-la dans la barre du bas, au pré, et donne-la à une bête : pendant deux heures, elle donnera bien plus souvent de la viande au ramassage. Et une bête de bonne race donne de la viande de qualité, comme son lait ou ses œufs.',
     },
     secondProducts: {
         icon: ['item', 'chickenMeat'],

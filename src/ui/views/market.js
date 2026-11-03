@@ -226,6 +226,17 @@ function gear() {
         cpLocked,
         cp.reqLvl,
     );
+    // 1.81.1 : la ration d'engraissement (aussi au moulin, moins chère)
+    const ra = ITEMS.ration,
+        raLocked = !lvOk(ra);
+    html += shopCard(
+        art('item', 'ration'),
+        'Ration d’engraissement',
+        `À donner à une bête depuis la barre du bas, au pré : bien plus de seconds produits pendant 2 h. Le moulin en fait trois avec 2 maïs et 1 betterave. En stock : ${state.inventory.ration || 0}`,
+        buyBtn('ration', 'ration', 1, ra.cost, raLocked) + buyBtn('ration', 'ration', 10, ra.cost, raLocked),
+        raLocked,
+        ra.reqLvl,
+    );
     const done = [];
     const rows = Object.keys(UPGRADES)
         .map(k => {

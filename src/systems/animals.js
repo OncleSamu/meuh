@@ -156,7 +156,7 @@ export function giveMeatRation(a, at) {
         return false;
     }
     if ((state.inventory.ration || 0) <= 0) {
-        toast('Plus de ration : le moulin en fait avec du maïs et une betterave', ['item', 'ration']);
+        toast('Plus de ration : le moulin en fait avec du maïs et une betterave, le magasin en vend', ['item', 'ration']);
         sfx('error');
         return false;
     }

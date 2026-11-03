@@ -331,6 +331,7 @@ export function buy(type, id, qty = 1, at) {
     payMats(mc);
     if (type === 'feed') state.inventory.feed += qty;
     else if (type === 'compost') state.inventory.fertilizer += qty;
+    else if (type === 'ration') state.inventory.ration = (state.inventory.ration || 0) + qty;
     else if (type === 'seed') state.seeds[id] += qty;
     else if (type === 'animal') {
         const a = newAnimal(id);

@@ -491,6 +491,8 @@ export const ITEMS = {
         name: 'Ration d’engraissement',
         type: 'misc',
         reqLvl: 6,
+        // 1.81.1 : aussi au magasin, plus cher qu'au moulin
+        cost: 120,
     },
     fertilizer: {
         id: 'fertilizer',

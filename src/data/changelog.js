@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.81.1',
+        title: 'La ration au magasin',
+        date: '3 novembre 2026',
+        items: ["La ration d'engraissement s'achète aussi au magasin, onglet Équipement", 'Le moulin reste moins cher'],
+    },
+    {
         v: '1.81',
         title: 'Un second produit pour chaque bête',
         date: '3 novembre 2026',

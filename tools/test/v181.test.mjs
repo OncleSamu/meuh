@@ -40,6 +40,15 @@ test('1.81 : la ration se fait au moulin, se donne à une bête à viande et dur
     assert.equal(G.giveMeatRation(hen), false);
 });
 
+test('1.81.1 : la ration s’achète au magasin', () => {
+    farm();
+    state.money = 10000;
+    state.inventory.ration = 0;
+    assert.ok(G.buy('ration', 'ration', 10));
+    assert.equal(state.inventory.ration, 10);
+    assert.equal(state.money, 10000 - 1200);
+});
+
 test('1.81 : chaque bête a un second produit, chacun a au moins trois recettes', () => {
     for (const a of Object.values(ANIMALS)) assert.ok(a.extra && ITEMS[a.extra], `${a.id} sans second produit`);
     for (const [id] of PRODUCTS_181) {
