@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.86.1',
+        title: 'Un  ?  pour la maîtrise',
+        date: '3 novembre 2026',
+        items: ["Dans la fiche d'un produit, le paragraphe d'explication est remplacé par un petit « ? » qui ouvre la page du guide sur la maîtrise"],
+    },
+    {
         v: '1.86',
         title: 'La maîtrise dans le livre',
         date: '3 novembre 2026',

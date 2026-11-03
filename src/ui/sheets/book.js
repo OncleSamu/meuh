@@ -169,8 +169,7 @@ function masteryBlock(id) {
                 ? `${bar(n / x)}<div class="card-sub">${fmt(n)} / ${fmt(x)} pour le rang ${EXTRA_NAMES[G.masteryExtra(id)]}${G.masteryExtra(id) ? ` · rang ${EXTRA_NAMES[G.masteryExtra(id) - 1]} atteint` : ''}</div>`
                 : `<div class="card-sub">Rang diamant atteint · ${fmt(n)} produits</div>`
             : `${bar(n / t)}<div class="card-sub">${fmt(n)} / ${fmt(t)} pour l’étoile ${MASTERY_NAMES[sv]}</div>`;
-    return `<div class="bk-mast"><div class="pname">Maîtrise ${medals(sv)}</div>${next}
-        <small class="card-sub">Chaque étoile : +5 % sur le prix. L’or rend aussi la production 15 % plus rapide ; platine et diamant font moins baisser la demande au marché.</small></div>`;
+    return `<div class="bk-mast"><div class="pname"><span>Maîtrise ${medals(sv)}</span>${btn('?', { act: 'open', data: { sheet: 'guide', page: 'mastery' }, size: 'sm', kind: 'ghost', title: 'Comment marche la maîtrise ?' })}</div>${next}</div>`;
 }
 
 // ---------------- exploits : trophées et succès ----------------
