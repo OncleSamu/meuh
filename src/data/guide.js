@@ -843,7 +843,7 @@ export const GUIDE_PAGES = [
                 h: 'La foire aux bestiaux (Marché › Vendre › Bêtes)',
                 b: [
                     'Des acheteurs passent avec une demande : une espèce, une à trois bêtes adultes, et parfois une exigence (un bon gène, une robe originale, une race fixée).',
-                    'Le jeu coche ce que vos bêtes remplissent et propose d’abord les moins précieuses qui conviennent : vos meilleures restent pour l’élevage.',
+                    'Le jeu coche ce que vos bêtes remplissent et propose d’abord les moins précieuses qui conviennent. Vous pouvez choisir vous-même les bêtes à vendre (bouton « Choisir ») pour garder celles que vous aimez.',
                     `Le prix : ${FAIR.base} × le prix de l’espèce par bête, × ${String(FAIR.perReq).replace('.', ',')} par exigence de gène ou d’apparence, × ${FAIR.race} pour une race fixée. Le maquignon (le bouton Vendre de la fiche) paie seulement la moitié du prix.`,
                     `Un nouvel acheteur toutes les ${FAIR.every / 3600000} heures, ${FAIR.slots.map(([l, n]) => `${n} au niveau ${l}`).join(', ')} ; chacun reste un jour. Renvoyer un acheteur fait venir le suivant plus tôt.`,
                 ],

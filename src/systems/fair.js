@@ -154,6 +154,32 @@ export function buyerMatches(b) {
         .sort((x, y) => animalGain(x) - animalGain(y) + (x.race ? 1 : 0) - (y.race ? 1 : 0) + (x.love || 0) * 0.01 - (y.love || 0) * 0.01);
 }
 export const buyerReady = b => buyerMatches(b).length >= b.count;
+
+// 1.88 : on choisit les bêtes à vendre ; sans choix, le jeu propose les moins précieuses (comme avant)
+export function buyerPicked(b) {
+    const m = buyerMatches(b);
+    const chosen = (b.pick || []).map(uid => m.find(a => a.uid === uid)).filter(Boolean);
+    return b.pick ? chosen.slice(0, b.count) : m.slice(0, b.count);
+}
+export const buyerHandPicked = b => !!b.pick;
+// touche une bête dans la liste : la choisit, ou la retire du choix (si c'est complet, la plus ancienne choisie cède sa place)
+export function toggleBuyerPick(id, uid) {
+    const b = ensureElevage().buyers.find(x => x.id === id);
+    if (!b || !buyerMatches(b).some(a => a.uid === uid)) return false;
+    let pick = buyerPicked(b).map(a => a.uid);
+    if (pick.includes(uid)) pick = pick.filter(u => u !== uid);
+    else {
+        pick.push(uid);
+        if (pick.length > b.count) pick = pick.slice(pick.length - b.count);
+    }
+    b.pick = pick;
+    return true;
+}
+export function resetBuyerPick(id) {
+    const b = ensureElevage().buyers.find(x => x.id === id);
+    if (b) delete b.pick;
+}
+
 export const fairReadyCount = () => (fairOpen() && state.elevage ? state.elevage.buyers.filter(buyerReady).length : 0);
 
 export const buyerName = b =>
@@ -167,9 +193,12 @@ export function sellToBuyer(id, at) {
     const e = ensureElevage();
     const b = e.buyers.find(x => x.id === id);
     if (!b) return false;
-    const sold = buyerMatches(b).slice(0, b.count);
+    const sold = buyerPicked(b);
     if (sold.length < b.count) {
-        toast('Il vous manque des bêtes qui conviennent', ['animal', b.type]);
+        toast(buyerHandPicked(b) ? `Choisissez ${b.count} bête${b.count > 1 ? 's' : ''} pour cet acheteur` : 'Il vous manque des bêtes qui conviennent', [
+            'animal',
+            b.type,
+        ]);
         sfx('error');
         return false;
     }

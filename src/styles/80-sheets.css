@@ -1633,3 +1633,61 @@ button.short.link {
     gap: 8px;
     font-weight: 800;
 }
+
+/* 1.88 : choisir les bêtes à vendre à la foire */
+.fp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 8px 0;
+}
+.fp-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 6px 10px;
+    text-align: left;
+    background: #fffaf0;
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    cursor: pointer;
+}
+.fp-row.on {
+    background: #e5f6d0;
+}
+.fp-ico {
+    flex: none;
+    width: 40px;
+    height: 40px;
+}
+.fp-ico svg {
+    width: 100%;
+    height: 100%;
+}
+.fp-name {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.fp-tags {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.fp-tags .ico {
+    width: 16px;
+    height: 16px;
+}
+.fp-love {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 800;
+}
+.fp-check {
+    flex: none;
+    width: 24px;
+    height: 24px;
+}

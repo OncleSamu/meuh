@@ -522,7 +522,7 @@ function buyerCard(b) {
     const d = ANIMALS[b.type];
     const m = G.buyerMatches(b);
     const ready = m.length >= b.count;
-    const pick = m.slice(0, b.count);
+    const pick = G.buyerPicked(b);
     const reqs = [`<span class="req ok">${ico(['ui', 'check'])}${b.count > 1 ? 'adultes' : 'adulte'}</span>`]
         .concat(
             b.reqs.map(
@@ -538,10 +538,32 @@ function buyerCard(b) {
         <div class="fair-reqs">${reqs}</div>
         <div class="fair-match">${
             ready
-                ? `<span class="fair-pick">${pick.map(a => `<span class="fair-mini" title="${esc(a.name)}">${art('animal', a.type)}</span>`).join('')}</span><small>${pick.map(a => esc(a.name)).join(', ')}</small>${btn('Vendre', { act: 'fairSell', data: { id: b.id }, kind: 'gold', size: 'sm' })}`
+                ? `<span class="fair-pick">${pick.map(a => `<span class="fair-mini" title="${esc(a.name)}">${art('animal', a.type)}</span>`).join('')}</span><small>${pick.map(a => esc(a.name)).join(', ')}</small>${m.length > b.count || G.buyerHandPicked(b) ? btn('Choisir', { act: 'open', data: { sheet: 'fairPick', id: b.id }, size: 'sm', icon: ['ui', 'heart'] }) : ''}${btn('Vendre', { act: 'fairSell', data: { id: b.id }, kind: 'gold', size: 'sm', disabled: pick.length < b.count })}`
                 : `<small>${m.length ? `${m.length} sur ${b.count} conviennent` : 'Aucune de vos bêtes ne convient encore'}</small>${btn('Renvoyer', { act: 'fairDismiss', data: { id: b.id }, kind: 'ghost', size: 'sm' })}`
         }</div></div>`;
 }
+// 1.88 : les bêtes qu'on veut vendre à cet acheteur : on les choisit parmi celles qui conviennent
+const beastTags = a =>
+    `${a.star ? ico(['ui', 'star']) : ''}${a.race ? ico(['ui', 'ribbon']) : ''}${a.prize ? ico(['ui', 'trophy']) : ''}${a.love ? `<span class="fp-love">${ico(['ui', 'heart'])}${a.love}</span>` : ''}`;
+defineSheet('fairPick', {
+    title: () => 'Choisir les bêtes à vendre',
+    render(o) {
+        const b = state.elevage && state.elevage.buyers.find(x => x.id === o.id);
+        if (!b) return empty('Cet acheteur est reparti.');
+        const m = G.buyerMatches(b),
+            chosen = G.buyerPicked(b).map(a => a.uid);
+        const rows = m
+            .map(
+                a => `<button class="fp-row${chosen.includes(a.uid) ? ' on' : ''}" data-act="fairToggle" data-id="${b.id}" data-uid="${a.uid}">
+                <span class="fp-ico">${art('animal', a.type)}</span><span class="fp-name"><b>${esc(a.name)}</b><span class="fp-tags">${beastTags(a)}</span></span>
+                <span class="fp-check">${chosen.includes(a.uid) ? ico(['ui', 'check']) : ''}</span></button>`,
+            )
+            .join('');
+        return `<p class="card-sub">${esc(G.buyerName(b))} veut <b>${b.count}</b> bête${b.count > 1 ? 's' : ''} : ${chosen.length} / ${b.count} choisie${chosen.length > 1 ? 's' : ''}. Touchez une bête pour la proposer ou la garder. Sans choix, le jeu propose les moins précieuses.</p>
+            <div class="fp-list">${rows}</div>
+            <div class="row-btns">${G.buyerHandPicked(b) ? btn('Proposition du jeu', { act: 'fairAuto', data: { id: b.id }, kind: 'ghost', size: 'sm' }) : ''}${btn('Terminé', { act: 'fairDone', kind: chosen.length >= b.count ? 'green' : '', size: 'sm' })}</div>`;
+    },
+});
 function fairHtml() {
     G.fairTick();
     const e = G.ensureElevage();
@@ -561,7 +583,7 @@ function renderSell(el) {
             [
                 'hint',
                 tip15(
-                    'La foire achète vos bêtes adultes. Le jeu propose d’abord les moins précieuses qui conviennent : vos meilleures restent pour l’élevage.',
+                    'La foire achète vos bêtes adultes. Le jeu propose d’abord les moins précieuses qui conviennent, mais touchez « Choisir » pour garder celles que vous aimez et vendre les autres.',
                 ),
             ],
         ]);
@@ -667,6 +689,9 @@ export function setupMarket() {
         sellF: (el, d) => (ui.sel.sellF = d.f),
         sellTab: (el, d) => (ui.sel.sell = d.v),
         fairSell: (el, d) => G.sellToBuyer(d.id, el),
+        fairToggle: (el, d) => G.toggleBuyerPick(d.id, d.uid),
+        fairAuto: (el, d) => G.resetBuyerPick(d.id),
+        fairDone: () => closeSheet('fairPick'),
         fairDismiss: (el, d) => G.dismissBuyer(d.id),
         nbBuy: (el, d) => G.buyNeighborBeast(+d.k, el),
         shopOwned: (el, d) => (ui.sel['own_' + d.id] = !ui.sel['own_' + d.id]),

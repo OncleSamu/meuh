@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.88',
+        title: 'On choisit les bêtes à vendre',
+        date: '4 novembre 2026',
+        items: [
+            'À la foire, chaque acheteur a un bouton « Choisir »',
+            'Sans choix, le jeu propose toujours les moins précieuses',
+            '« Vendre » attend que le choix soit complet',
+            'Guide et conseil mis à jour',
+        ],
+    },
+    {
         v: '1.87.1',
         title: 'Objectifs de niveau : le stock ne suffit plus',
         date: '4 novembre 2026',
