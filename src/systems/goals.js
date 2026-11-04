@@ -82,7 +82,8 @@ export function goalProgress(g) {
     // et pour les anciens objectifs (avant ce compteur), le stock suffit
     if (ITEMS[g.id] && !ITEMS[g.id].sell) {
         const made = ((state.made && state.made[g.id]) || 0) - (g.mbase || 0);
-        return [Math.max(0, Math.min(g.n, Math.max(made, state.inventory[g.id] || 0))), g.n];
+        // 1.87.1 : un objectif récent ne compte que ce qui a été fabriqué (avoir déjà des clous en stock ne le valide plus)
+        return [Math.max(0, Math.min(g.n, g.mbase === undefined ? Math.max(made, state.inventory[g.id] || 0) : made)), g.n];
     }
     return [Math.max(0, Math.min(g.n, masteryCount(g.id) - g.base)), g.n];
 }

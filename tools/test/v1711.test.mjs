@@ -15,6 +15,11 @@ test('1.71.1 : préparer de la nourriture valide l’objectif, même sans maîtr
     assert.equal(G.goalDone(g), false);
     G.addMastery('feed', 3);
     assert.ok(G.goalDone(g));
+    // 1.87.1 : un objectif récent ne se valide pas avec un stock reçu ailleurs (clous, planches…)
+    const fresh = { kind: 'make', id: 'plank', n: 1, base: 0, mbase: 0 };
+    state.inventory.plank = 5;
+    assert.equal(G.goalDone(fresh), false);
+    state.inventory.plank = 0;
     // un ancien objectif (sans compteur) : le stock suffit
     const old = { kind: 'make', id: 'plank', n: 1, base: 0 };
     state.inventory.plank = 2;

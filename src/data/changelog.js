@@ -1,6 +1,12 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.87.1',
+        title: 'Objectifs de niveau : le stock ne suffit plus',
+        date: '4 novembre 2026',
+        items: ['Pour un objectif « préparer » un produit sans prix de vente', "Maintenant seul compte ce qu'on fabrique depuis le début de l'objectif"],
+    },
+    {
         v: '1.87',
         title: 'Les rangs dans les fiches des variétés et des bières',
         date: '3 novembre 2026',
