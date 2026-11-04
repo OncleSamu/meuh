@@ -120,7 +120,7 @@ export const TIPS = {
     honeyKinds: {
         icon: ['item', 'honey_lavender'],
         title: 'Un miel de fleur',
-        text: 'Les abeilles butinent ce qui est en fleur autour d’elles. Si une fleur domine (la moitié au moins, et quatre parcelles), le miel prend son nom : lavande, tournesol, châtaignier… Il vaut plus cher, se range au coffre et sert dans toutes les recettes au miel. Touche une ruche pour savoir ce qu’elle prépare. Ma mère mettait ses ruches au bout du champ de sarrasin : son miel était presque noir, et les voisins disaient qu’il soignait la toux. Ils toussaient beaucoup, les voisins.',
+        text: 'Les abeilles butinent ce qui est en fleur autour d’elles. Si une fleur domine (la moitié au moins, et quatre parcelles), le miel prend son nom : lavande, tournesol, châtaignier… Il vaut plus cher, se range au coffre et sert dans toutes les recettes au miel. Touche une ruche pour savoir ce qu’elle prépare. Ma mère mettait ses ruches au bout du champ de sarrasin : son miel était presque noir, et les voisins disaient qu’il soignait la toux. Ils toussaient beaucoup, les voisins. Pas besoin de miel ? Dis aux abeilles de se reposer : dans Réglages › Confort pour les ruches du champ, avec le bouton « Au repos » sur le rucher d’une contrée, et dans la fiche de la ruche d’élevage au pré.',
     },
     loves: {
         icon: ['ui', 'heart'],

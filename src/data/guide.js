@@ -1808,6 +1808,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Ruches et miels de fleurs',
                 b: [
+                    'On peut dire aux abeilles de ne pas faire de miel : Réglages › Confort (« Abeilles du champ au repos ») pour les ruches du champ, le bouton « Au repos » sur le rucher de chaque contrée, et le bouton « Au repos : pas de miel » dans la fiche de la ruche d’élevage. Le miel déjà en pot reste à récolter.',
                     'Une ruche posée dans le champ fait du miel avec ce qui pousse autour (ses 8 voisines) ; la ruche d’élevage, au pré, butine tout le champ, la serre et, au printemps, les arbres du verger.',
                     'Si une fleur fait au moins la moitié de ce qui fleurit, avec au moins 4 parcelles, le miel prend son nom : lavande, tournesol, sarrasin, menthe, framboisier, myrtille, coton, basilic, pommier, poirier, prunier, cerisier, citronnier, oranger, châtaignier, amandier. Sinon : miel toutes fleurs.',
                     'Une culture compte comme en fleur à partir de la moitié de sa pousse. Touchez une ruche (ou la fiche de la ruche d’élevage) pour savoir ce qu’elle prépare et ce qu’il manque.',

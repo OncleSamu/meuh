@@ -299,6 +299,8 @@ export const honeyRate = i => {
 
 export function honeyTick(dt) {
     let changed = false;
+    // 1.89 : les abeilles au repos (réglages) ne font plus de miel
+    if (state.settings.hiveRest) return false;
     state.grid.forEach((p, i) => {
         if (p.deco !== 'hive' || !p.isUnlocked) return;
         const before = Math.floor(p.honey || 0);
@@ -312,6 +314,11 @@ export function handleHive(i, at) {
     const p = state.grid[i];
     const jars = Math.floor(p.honey || 0);
     if (jars < 1) {
+        if (state.settings.hiveRest) {
+            toast('Les abeilles se reposent : vous leur avez demandé de ne pas faire de miel (Réglages › Confort)', ['ui', 'hive']);
+            sfx('click');
+            return false;
+        }
         const r = honeyRate(i);
         if (!r) toast('Les abeilles ont besoin de fleurs : plantez des cultures ou un parterre autour de la ruche', ['ui', 'hive']);
         else float(at, [['item', 'honey'], formatDuration((1 - (p.honey || 0)) / (r * speedMult()))], '', -24);

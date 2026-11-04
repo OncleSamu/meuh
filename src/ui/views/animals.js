@@ -434,6 +434,7 @@ defineSheet('animal', {
             ${a.sick ? `<div class="line sick">${ico(['ui', 'sick'])}<div>${esc(a.name)} est malade et ne produit plus.</div>${btn(`Soigner · ${G.cureCost()}${ico(['ui', 'coin'])}`, { act: 'cure', data: { i }, kind: 'green', size: 'sm' })}</div>` : ''}
             ${lines(info)}
             <div class="row-btns">${btn(a.love >= 5 ? 'Affection au maximum' : petted ? 'Déjà câliné aujourd’hui' : 'Faire un câlin', { act: 'pet', data: { i }, kind: 'gold', disabled: petted || a.love >= 5, icon: ['ui', 'heart'] })}${btn('Nourrir', { act: 'feedOne', data: { i }, icon: ['item', 'feed'] })}</div>
+            ${a.type === 'bees' && adult ? `<div class="row-btns">${btn(a.rest ? 'Remettre au travail' : 'Au repos : pas de miel', { act: 'beeRest', data: { uid: a.uid }, kind: a.rest ? 'gold' : '', icon: ['item', 'honey'] })}</div>` : ''}
             ${a.type === 'zebu' && adult && G.noriaBuilt() ? `<div class="row-btns">${btn(a.noria ? 'Dételer de la noria' : 'Atteler à la noria', { act: 'noriaToggle', data: { uid: a.uid }, kind: a.noria ? '' : 'gold', icon: ['ui', 'oaNoria'] })}</div>` : ''}
             ${
                 state.pastures.length > 1 && !ANIMALS[a.type].oasis && !ANIMALS[a.type].nord
@@ -475,6 +476,7 @@ const setupLongPress = () => {
 export function setupAnimals() {
     actions({
         noriaToggle: (el, d) => G.toggleNoria(d.uid),
+        beeRest: (el, d) => G.toggleBeeRest(d.uid),
         animalMode: (el, d) => (ui.sel.animalMode = d.v),
         penMode: (el, d) => (ui.sel.penMode = d.v),
         sellAnimal: (el, d) => {

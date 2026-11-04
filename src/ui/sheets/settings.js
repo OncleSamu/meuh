@@ -60,6 +60,9 @@ function mainPage() {
                     group(
                         'Confort',
                         toggle('Replanter après la récolte', s.autoReplant, 'setting', { key: 'autoReplant' }) +
+                            (state.grid.some(p => p.deco === 'hive')
+                                ? toggle('Abeilles du champ au repos', s.hiveRest, 'setting', { key: 'hiveRest' }, 'Les ruches du champ ne font plus de miel')
+                                : '') +
                             (state.upgrades.seeder ? toggle('Semoir : planter toute la rangée', s.seeder !== false, 'setting', { key: 'seeder' }) : '') +
                             toggle(
                                 'Confirmer les gros achats',

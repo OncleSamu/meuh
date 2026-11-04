@@ -33,7 +33,7 @@ export function apiaryHtml(land) {
     return (
         head +
         `<div class="card ap-card"><div class="card-head"><span class="oa-up-art">${art('ui', A.icon)}</span><div class="card-main"><div class="card-title">${fmt(jars)} / ${cap} pots</div>${status}${bar(r.honey / cap, 'thin')}<div class="ap-kinds">${kinds}</div></div>
-        ${btn('Récolter', { act: 'harvestApiary', data: { land }, kind: jars ? 'green' : '', size: 'sm', icon: ['item', 'honey'], disabled: !jars })}</div>${buy}</div>`
+        ${btn(r.rest ? 'Réveiller' : 'Au repos', { act: 'hiveRest', data: { land }, kind: 'ghost', size: 'sm', title: r.rest ? 'Remettre les abeilles au travail' : 'Dire aux abeilles de ne pas faire de miel' })}${btn('Récolter', { act: 'harvestApiary', data: { land }, kind: jars ? 'green' : '', size: 'sm', icon: ['item', 'honey'], disabled: !jars })}</div>${buy}</div>`
     );
 }
 
@@ -41,5 +41,6 @@ export function setupApiary() {
     actions({
         buyHive: (el, d) => G.buyHive(d.land, el),
         harvestApiary: (el, d) => G.harvestApiary(d.land, el),
+        hiveRest: (el, d) => G.toggleHiveRest(d.land),
     });
 }

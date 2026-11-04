@@ -53,7 +53,15 @@ export const growLeft = a => Math.max(0, (GROW[a.type] - (a.age || 0)) / (rank('
 export const growPct = a => Math.min(1, (a.age || 0) / GROW[a.type]);
 export const prodPct = a => Math.min(1, (a.prodProgress || 0) / animalTime(a));
 // une bête qui travaille : adulte, en forme, nourrie et pas encore pleine
-export const isBusy = a => isAdult(a) && !a.sick && !isAway(a) && a.food > 0 && a.stack < MAX_STACK;
+// 1.89 : des abeilles à qui l'on a dit de ne pas faire de miel
+export const isResting = a => a.type === 'bees' && !!a.rest;
+export const isBusy = a => isAdult(a) && !a.sick && !isAway(a) && !isResting(a) && a.food > 0 && a.stack < MAX_STACK;
+export function toggleBeeRest(uid) {
+    const a = state.animals.find(x => x.uid === uid);
+    if (!a || a.type !== 'bees') return false;
+    a.rest = !a.rest;
+    return true;
+}
 export const animalCount = type => state.animals.filter(a => a.type === type).length;
 
 export function pickName(type) {
@@ -346,7 +354,7 @@ export function animalsTick() {
     let changed = false;
     state.animals.forEach(anim => {
         autoFeed(anim);
-        if (!isAdult(anim) || anim.sick || isAway(anim) || anim.food <= 0 || anim.stack >= MAX_STACK) return;
+        if (!isAdult(anim) || anim.sick || isAway(anim) || isResting(anim) || anim.food <= 0 || anim.stack >= MAX_STACK) return;
         anim.prodProgress++;
         if (anim.prodProgress < animalTime(anim)) return;
         anim.prodProgress = 0;
@@ -369,7 +377,7 @@ export function animalsOffline(elapsed) {
         const timeReq = animalTime(anim) * (cur ? cur / nordBeastMultOffline(anim) : 1);
         let t = elapsed;
         autoFeed(anim);
-        while (isAdult(anim) && !anim.sick && !isAway(anim) && anim.food > 0 && anim.stack < MAX_STACK) {
+        while (isAdult(anim) && !anim.sick && !isAway(anim) && !isResting(anim) && anim.food > 0 && anim.stack < MAX_STACK) {
             const need = timeReq - anim.prodProgress;
             if (t >= need) {
                 t -= need;
@@ -383,7 +391,7 @@ export function animalsOffline(elapsed) {
                 break;
             }
         }
-        if (isAdult(anim) && anim.food === 0 && anim.stack < MAX_STACK) hungry++;
+        if (isAdult(anim) && !isResting(anim) && anim.food === 0 && anim.stack < MAX_STACK) hungry++;
     });
     return { products, hungry };
 }

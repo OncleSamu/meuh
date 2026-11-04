@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.89',
+        title: 'Abeilles au repos',
+        date: '4 novembre 2026',
+        items: [
+            'On peut dire aux abeilles de ne pas faire de miel',
+            'Ruches du champ : réglage « Abeilles du champ au repos »',
+            'Ruchers des contrées : bouton « Au repos » / « Réveiller » sur chaque rucher',
+            "Ruche d'élevage au pré : bouton « Au repos : pas de miel » dans sa fiche",
+            'Le miel déjà en pot reste récoltable',
+            'Conseil, guide et',
+        ],
+    },
+    {
         v: '1.88',
         title: 'On choisit les bêtes à vendre',
         date: '4 novembre 2026',

@@ -27,6 +27,13 @@ const PLOTS = { island: islandPlots, oasis: oasisPlots, nord: nordPlots };
 const ZONES = { island: ['island'], oasis: ['oasis', 'oasisV'], nord: ['nord', 'nordV'] };
 
 export const apiaryOpen = land => !!(APIARY[land] && OPEN[land]() && state.level >= APIARY[land].lvl);
+// 1.89 : mettre les ruches d'une contrée au repos (ou les remettre au travail)
+export function toggleHiveRest(land) {
+    const r = apiaryOf(land);
+    if (!r.hives) return false;
+    r.rest = !r.rest;
+    return true;
+}
 export function apiaryOf(land) {
     const A = (state.apiary = state.apiary || {});
     const r = (A[land] = A[land] || { hives: 0, honey: 0 });
@@ -60,6 +67,8 @@ export const apiaryJudge = land => judge(landBloom(land), land);
 // pourquoi les abeilles ne travaillent pas (ou null)
 export function apiaryIdle(land) {
     if (!apiaryHives(land)) return 'Pas encore de ruche';
+    // 1.89 : on peut dire aux abeilles de ne pas produire
+    if (apiaryOf(land).rest) return 'Les abeilles se reposent : vous leur avez demandé de ne pas faire de miel';
     if (land === 'oasis' && !(state.oasis && state.oasis.water >= 0.01)) return 'La citerne est vide : les abeilles ont soif';
     if (land === 'nord' && !['printemps', 'ete'].includes(season().id) && !stoveKeys().some(stoveLit))
         return 'Trop froid : les abeilles attendent le printemps, ou un poêle allumé au champ de neige';
