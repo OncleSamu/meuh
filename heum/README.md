@@ -2,6 +2,8 @@
 
 Le troisième monde de la ferme : un îlot cultivable dans les terres mortes. Le joueur pilote la **Contamination** pour faire muter ses cultures sans perdre ses récoltes.
 
+**Décision (8 novembre 2026)** : Heum est un jeu complet et indépendant, pour le joueur qui a fini Meuh et veut recommencer une toute nouvelle partie. Aucun lien de jeu entre les deux (pas de bonus partagé, pas d'objet qui passe d'un monde à l'autre). Le seul lien, à terme : un portail dans Meuh, visible en fin de partie, qui ouvre Heum (et un portail retour). Chaque monde garde sa sauvegarde. Heum doit donc tenir seul : sa propre progression jusqu'au niveau 64, une histoire, une fin.
+
 Heum vit à part dans ce dossier : il ne touche pas au code de Meuh, et Meuh n'a aucun lien vers lui pour l'instant.
 
 - Jouer : https://onclesamu.github.io/meuh/heum/ (adresse non liée depuis Meuh)
