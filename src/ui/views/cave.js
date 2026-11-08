@@ -53,7 +53,7 @@ function gauge(kind, label, icon) {
 
 const oddsBar = o =>
     `<div class="odds"><span class="g" style="flex:${o.good + o.stay}"></span><span class="b" style="flex:${o.bad}"></span><span class="r" style="flex:${o.rot}"></span></div>
-     <div class="odds-txt"><span>${o.good ? `${Math.round(o.good * 100)} % mieux` : `${Math.round(o.stay * 100)} % stable`}</span><span>${Math.round(o.bad * 100)} % tourne</span><span>${Math.round(o.rot * 100)} % perdu</span></div>`;
+     <div class="odds-txt"><span>${o.good ? `${Math.round(o.good * 100)} % mieux` : `${Math.round(o.stay * 100)} % stable`}${o.good && o.stay > 0.005 ? ` · ${Math.round(o.stay * 100)} % sans effet` : ''}</span><span>${Math.round(o.bad * 100)} % tourne</span><span>${Math.round(o.rot * 100)} % perdu</span></div>`;
 
 defineLive('lot', i => {
     const lot = state.cave.slots[i];

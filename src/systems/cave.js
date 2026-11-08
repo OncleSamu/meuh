@@ -28,6 +28,7 @@ import {
     CAVE_NUDGE,
     CAVE_SHELVES,
     CAVE_GEAR,
+    CAVE_GEAR_FX,
     AUCTION_SMALL_EVERY,
     AUCTION_BIG_HOUR,
     AUCTION_SMALL_LIVE,
@@ -120,10 +121,15 @@ export const lotUnit = lot =>
             QUALITY[lot.q || 0].mult *
             (vintageOf(lot) ? vintageOf(lot).mult : 1) *
             (lot.bad ? CAVE_TURNED : 1) *
-            classMult(lot),
+            classMult(lot) *
+            (state.cave.gear.ledger ? CAVE_GEAR_FX.ledger : 1), // 1.97 : le registre des millésimes
     );
 // la taille des lots grandit avec les étagères : 8, 12, 16 puis 20
-export const caveLotMax = () => CAVE_LOT_MAX + CAVE_LOT_GROW * Math.min(3, Math.floor(state.cave.shelves / 2)) + (repStars() >= 2 ? 4 : 0); // 1.38 : 24 au plus avec un château à 2 étoiles
+export const caveLotMax = () =>
+    CAVE_LOT_MAX +
+    CAVE_LOT_GROW * Math.min(3, Math.floor(state.cave.shelves / 2)) +
+    (repStars() >= 2 ? 4 : 0) +
+    (state.cave.gear.crates ? CAVE_GEAR_FX.crates : 0); // 1.97 : caisses ; 1.38 : 24 au plus avec un château à 2 étoiles
 export const lotValue = lot => lotUnit(lot) * lot.n;
 
 // 1.37 : le château (voir chateau.js)
@@ -161,7 +167,8 @@ function migrateCellar() {
 export function careLevel(lot) {
     const step = caveStep(lot.id),
         start = lot.next - step;
-    return lot.care >= start ? 1 : lot.care >= start - step ? 0.6 : 0.3;
+    const lv = lot.care >= start ? 1 : lot.care >= start - step ? 0.6 : 0.3;
+    return state.cave.gear.aide ? Math.max(lv, CAVE_GEAR_FX.aideCare) : lv; // 1.97 : l'aide de cave
 }
 export const careNeeded = lot => !lot.bad && lot.care < lot.next - caveStep(lot.id);
 export const caveCareCount = () => (caveOpen() ? state.cave.slots.filter(l => l && careNeeded(l)).length : 0);
@@ -227,18 +234,23 @@ function famBonus(lot) {
     return b;
 }
 
+// 1.97 : sas d'aération et sonde de maturation
+const airMul = () => (state.cave.gear.airlock ? CAVE_GEAR_FX.airlock : 1);
+const probeMul = () => (state.cave.gear.probe ? 1 - CAVE_GEAR_FX.probe : 1);
+
 // chances de la prochaine étape : { good, bad, rot, stay }
 export function lotOdds(lot, c = careLevel(lot), f = climFit()) {
     const champ = CAVE_ITEMS[lot.id] === 'champagne';
     const riskMul = (1.6 - 0.8 * c) * (1.5 - 0.5 * f);
     if (lot.rank >= 4) {
-        const rot = Math.min(0.6, CAVE_LEGEND_RISK.rot * riskMul + (champ && c < 0.3 ? 0.12 : 0)),
-            bad = Math.min(0.6, CAVE_LEGEND_RISK.bad * riskMul);
+        const rot = Math.min(0.6, CAVE_LEGEND_RISK.rot * riskMul + (champ && c < 0.3 ? 0.12 : 0)) * airMul(),
+            bad = Math.min(0.6, CAVE_LEGEND_RISK.bad * riskMul) * probeMul();
         return { good: 0, bad, rot, stay: Math.max(0, 1 - rot - bad) };
     }
     const good = Math.max(0.05, Math.min(0.95, CAVE_GOOD[lot.rank] + 0.14 * (c - 0.6) + 0.12 * (f - 0.7) + famBonus(lot)));
-    const rot = Math.min(1 - good, CAVE_ROT[lot.rank] * riskMul + (champ && c < 0.3 ? 0.12 : 0));
-    return { good, bad: Math.max(0, 1 - good - rot), rot, stay: 0 };
+    const rot = Math.min(1 - good, CAVE_ROT[lot.rank] * riskMul + (champ && c < 0.3 ? 0.12 : 0)) * airMul();
+    const bad = Math.max(0, 1 - good - rot) * probeMul();
+    return { good, bad, rot, stay: Math.max(0, 1 - good - rot - bad) };
 }
 
 // une étape : bien vieillir, tourner ou se perdre

@@ -1080,6 +1080,7 @@ export const GUIDE_PAGES = [
                     'Un soin par étape suffit (retourner, soutirer, ouiller, remuer, rouler) ; « Tout soigner » les fait d’un geste.',
                     'Gardez le climat (température et humidité) entre 35 et 65, ou installez l’hygromètre qui le règle seul.',
                     'Plus d’étagères : plus de places (+2 chacune) et des lots plus grands ; voûte, ferments et levures.',
+                    'Onglet Matériel : aide de cave (soin jamais sous « correct »), caisses capitonnées (lots plus gros), sas d’aération (moins de lots perdus), sonde de maturation (40 % des mauvaises étapes sans effet) et registre des millésimes (+6 % de valeur).',
                 ],
             },
             {

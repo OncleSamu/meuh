@@ -142,7 +142,45 @@ export const CAVE_GEAR = {
         },
         icon: 'vault',
     },
+    // 1.97 : cinq équipements qui changent vraiment la cave
+    aide: {
+        name: 'Aide de cave',
+        desc: 'Un apprenti retourne vos lots entre deux visites : le soin ne tombe jamais sous « correct » (60 %), même en votre absence. Soigner vous-même reste le mieux',
+        cost: 20000,
+        mats: { beam: 10 },
+        icon: 'turn',
+    },
+    crates: {
+        name: 'Caisses capitonnées',
+        desc: 'Des lots plus gros : +4 bouteilles ou meules par lot, donc plus de valeur par place',
+        cost: 15000,
+        mats: { plank: 40 },
+        icon: 'cave',
+    },
+    airlock: {
+        name: 'Sas d’aération',
+        desc: 'Moins de moisissures : 35 % de lots perdus en moins à chaque étape',
+        cost: 25000,
+        mats: { stone: 40, ironIngot: 6 },
+        icon: 'thermo',
+    },
+    probe: {
+        name: 'Sonde de maturation',
+        desc: 'Quand une étape tournerait mal, 40 % des fois il ne se passe rien : le lot reste comme il était',
+        cost: 45000,
+        mats: { copperIngot: 8 },
+        icon: 'hygro',
+    },
+    ledger: {
+        name: 'Registre des millésimes',
+        desc: 'Des lots mieux présentés : +6 % sur la valeur de tout ce qui sort de la cave (ventes, enchères, commandes)',
+        cost: 60000,
+        mats: { plank: 30, ironIngot: 10 },
+        icon: 'trophy',
+    },
 };
+// 1.97 : les effets de ces équipements
+export const CAVE_GEAR_FX = { aideCare: 0.6, crates: 4, airlock: 0.65, probe: 0.4, ledger: 1.06 };
 
 export const AUCTION_SMALL_EVERY = 14400000;
 

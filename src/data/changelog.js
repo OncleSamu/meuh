@@ -1,6 +1,20 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.97',
+        title: 'Le matériel de la cave sert enfin',
+        date: '8 novembre 2026',
+        items: [
+            'Aide de cave : le soin ne tombe jamais sous 60 %, même en votre absence',
+            'Caisses capitonnées : +4 bouteilles ou meules par lot',
+            "Sas d'aération : 35 % de lots perdus en moins",
+            'Sonde de maturation : 40 % des mauvaises étapes sans effet',
+            'Registre des millésimes : +6 % sur la valeur des lots',
+            'Prix de 15 000 à 60 000 pièces, avec planches, pierres, lingots de fer ou de cuivre',
+            'Les anciens équipements ne changent pas',
+        ],
+    },
+    {
         v: '1.96',
         title: "Podium, défis éclair, bilan de l'année",
         date: '8 novembre 2026',
@@ -51,7 +65,6 @@ export const CHANGELOG = [
             'Résumé en tête',
             'Le journal commence à la 1.93 : les anciennes parties gardent leur total',
             "Constat : les 17 grands défis ne couvrent pas le haras, les ruchers et l'hydromel, l'oasis, le Grand Nord",
-            'Test v193',
         ],
     },
     {
@@ -67,7 +80,6 @@ export const CHANGELOG = [
             'Trois grandes recettes de bière de plus',
             "Les autres points de l'audit 1.75 étaient déjà réglés",
             'Outil tools/dev/audit.mjs',
-            'Test v192',
         ],
     },
     {
