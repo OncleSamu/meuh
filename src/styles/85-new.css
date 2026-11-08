@@ -857,3 +857,62 @@
 .camp-h {
     margin: 6px 4px 0;
 }
+
+/* 1.100 : la Maison */
+/* la carte ne déborde jamais */
+.camp-card {
+    min-width: 0;
+}
+.camp-card .card-main {
+    min-width: 0;
+}
+.maison-label {
+    display: inline-flex;
+    max-width: 100%;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 2px solid;
+    border-radius: 12px;
+    font-size: 0.95em;
+}
+.maison-label .ico {
+    width: 34px;
+    height: 34px;
+}
+.maison-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 6px;
+    margin: 6px 0;
+}
+.maison-sel {
+    min-width: 0;
+    width: 100%;
+    font: inherit;
+    padding: 6px;
+    border-radius: 8px;
+    border: 2px solid #d9c9a8;
+    background: #fffaf0;
+}
+.maison-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 4px 0 8px;
+}
+.maison-emb,
+.maison-pal {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 2px solid #d9c9a8;
+    background: #fffaf0;
+    padding: 2px;
+    font-weight: bold;
+}
+.maison-emb.on,
+.maison-pal.on {
+    border-color: #e2412f;
+    box-shadow: 0 0 0 2px #e2412f55;
+}

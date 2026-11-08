@@ -2049,6 +2049,14 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'La Maison, votre marque',
+                b: [
+                    'Quand le camping est bâti : fondez la Maison (2 millions de pièces, planches, pierres, poutres). Donnez-lui un nom, un emblème et des couleurs. Village › Commandes › La Maison.',
+                    'À l’atelier, composez des coffrets de trois produits de la ferme (15 minutes chacun). Un coffret vaut 1,3 fois ses produits, plus s’ils sont de trois sortes différentes (frais, mer, fabriqué), plus en argent ou en or, plus avec la réputation. Les coffrets ont leur propre vitrine : les commandes n’y touchent jamais.',
+                    'Vendez-les à vos clients : voisins, campeurs, souk, château, vitrine du village. Chaque vente fait monter la réputation, qui ouvre de nouveaux clients (qui paient mieux mais exigent une belle qualité) et de nouveaux emblèmes. Un client revient 3 heures après un achat.',
+                ],
+            },
+            {
                 h: 'La Coupe de la vallée',
                 b: [
                     'Les saisons de la ferme (Village › Commandes) suivent un thème de quatre semaines, douze en tout. Les défis du thème sont proposés en priorité et leurs médailles comptent double pour la Coupe. Chaque saison finie est classée face aux quatre fermes rivales et laisse un trophée daté dans le livre, onglet Défis, avec « Votre année à la ferme ». Sous le grand défi, un défi éclair (une seule étape, trois jours) donne des pièces et de l’expérience entre deux grands défis.',

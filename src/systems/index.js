@@ -1,6 +1,7 @@
 // Toutes les règles du jeu, pour l'interface, le robot et les tests.
 export * from './camping.js';
 export * from './residents.js';
+export * from './maison.js';
 export * from './animals.js';
 export * from './barn.js';
 export * from './book.js';

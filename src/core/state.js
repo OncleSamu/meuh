@@ -154,6 +154,7 @@ export function newState() {
         incident: null,
         nextIncident: 0,
         camping: null,
+        maison: null,
         merchant: { status: 'away', arriveAt: 0, expiresAt: 0, stock: [] },
         contest: null,
         lastContest: null,

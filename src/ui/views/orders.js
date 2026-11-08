@@ -1,5 +1,6 @@
 // Village | Commandes : fête de saison, tableau des commandes, acheteur pressé, train, montgolfière, cargo.
 import { campingCard } from './camping.js';
+import { maisonCard } from './maison.js';
 import { state, scaleLvl } from '../../core/state.js';
 import { now } from '../../core/clock.js';
 import { fmt, formatDuration, qtyName } from '../../core/format.js';
@@ -359,6 +360,16 @@ const left = at => formatDuration(Math.max(0, (at - now()) / 1000));
 const has = (id, n) => (state.inventory[id] || 0) >= n;
 const ROWS = [
     // ---- à livrer ----
+    {
+        id: 'maison',
+        grp: 'give',
+        on: () => !!maisonCard(),
+        icon: () => ['ui', 'heart'],
+        title: () => (G.maisonBuilt() ? G.brandName() : 'La Maison'),
+        sub: () => (G.maisonBuilt() ? `Palier ${G.maisonTier() + 1}${G.maisonReady() ? ` · ${G.maisonReady()} à faire ou vendre` : ''}` : 'Votre propre marque'),
+        ready: () => G.maisonReady() > 0,
+        html: maisonCard,
+    },
     {
         id: 'camping',
         grp: 'give',
