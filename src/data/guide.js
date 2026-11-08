@@ -2048,6 +2048,14 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'Le gîte et la table d’hôtes',
+                b: [
+                    'Dès le niveau 35 : un gîte de trois chambres à bâtir (600 000 pièces, planches, pierres, poutres), puis jusqu’à huit chambres. Village › Commandes › Le gîte.',
+                    'Toutes les 5 à 9 heures, un voyageur au visage tiré au hasard s’installe pour 12 à 36 heures. Il veut un plat, et un dessert s’il reste plus d’une journée : servez-les avant son départ.',
+                    'Tout servi : cinq étoiles et un pourboire. Rien servi : une étoile et moins de pièces. Rien n’est jamais perdu. Une bonne réputation (moyenne des vingt derniers avis) fait arriver les clients plus vite.',
+                ],
+            },
+            {
                 h: 'Les crises de la vallée',
                 b: [
                     'Dès le niveau 30, tous les 3 à 5 jours : sécheresse (cultures −40 %), épidémie des bêtes (production −40 %) ou marché en berne (prix −20 %). L’alerte arrive 12 heures avant, la crise dure 24 heures.',

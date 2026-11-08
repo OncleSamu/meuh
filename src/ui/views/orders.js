@@ -18,6 +18,7 @@ import { toggleFold } from '../fold.js';
 import { defiCard } from './defis.js';
 import { commercesCard } from './commerces.js';
 import { crisesCard } from './crises.js';
+import { giteCard } from './gite.js';
 import { rareCard, holidayCard, contractCard, farmSeasonCard, neighborsBody } from './village.js';
 import { HOLIDAYS } from '../../data/world.js';
 import { RARE_EVENTS } from '../../data/surprises.js';
@@ -373,6 +374,17 @@ const ROWS = [
         ready: () => G.commercesReady() > 0,
         here: () => true,
         html: commercesCard,
+    },
+    {
+        id: 'gite',
+        grp: 'give',
+        on: () => !!giteCard(),
+        icon: () => ['ui', 'heart'],
+        title: () => 'Le gîte',
+        sub: () => (G.giteBuilt() ? `${G.giteGuests().length}/${G.giteRooms()} chambres${G.giteReady() ? ` · ${G.giteReady()} à servir` : ''}` : 'Chambres et table d’hôtes'),
+        ready: () => G.giteReady() > 0,
+        here: () => true,
+        html: giteCard,
     },
     {
         id: 'express',
