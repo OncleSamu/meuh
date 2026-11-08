@@ -4,6 +4,7 @@ import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { toast, sfx, buzz, burst, float, emit } from '../core/bus.js';
+import { farmSeasonAdd } from './port.js';
 import { ITEMS } from '../data/items.js';
 import { FLAVORS } from '../data/genetics.js';
 import {
@@ -499,6 +500,7 @@ export function collectVat(i, at) {
     }
     beer.made += v.n;
     state.stats.beers = (state.stats.beers || 0) + v.n;
+    farmSeasonAdd(beer.mead ? 'mead' : 'beer', v.n); // 1.95 : compte pour la saison de la ferme
     if (beer.mead) state.stats.meads = (state.stats.meads || 0) + v.n;
     // le livre des bières : une page par ingrédient
     let newPages = 0;

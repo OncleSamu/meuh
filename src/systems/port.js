@@ -10,7 +10,7 @@ import { DECOS } from '../data/farm.js';
 import { TRANS_KINDS, TRANS_TIME, ALPINE_SPEED } from '../data/animals.js';
 import { SEA_NET_TIME, SEA_CATCH } from '../data/nature.js';
 import { RARE } from '../data/commerce.js';
-import { BOAT_STAY, BOAT_AWAY, BOAT_PAY, FARM_SEASON_MS, FARM_SEASON_TIERS, FARM_SEASONS } from '../data/port.js';
+import { BOAT_STAY, BOAT_AWAY, BOAT_PAY, FARM_SEASON_MS, FARM_SEASON_TIERS, FARM_SEASONS, FARM_SEASON_DEFIS } from '../data/port.js';
 import { BALANCE } from '../data/progress.js';
 import { projectDone } from './story.js';
 import { tip } from './tips.js';
@@ -198,10 +198,27 @@ export const farmSeasonKey = () => Math.floor(now() / FARM_SEASON_MS);
 export const farmSeasonTheme = () => FARM_SEASONS.at(farmSeasonKey() % FARM_SEASONS.length);
 export const farmSeasonEndsIn = () => ((farmSeasonKey() + 1) * FARM_SEASON_MS - now()) / 1000;
 
+// 1.95 : chaque saison finie laisse un trophée daté (thème, points, paliers) dans l'onglet Défis du livre
+export const FSEASON_LOG_MAX = 48;
+export const farmSeasonLog = () => state.fseasonLog || [];
+function logFarmSeason() {
+    const sn = state.fseason;
+    if (!sn || !(sn.pts > 0)) return;
+    const th = FARM_SEASONS.at(sn.key % FARM_SEASONS.length);
+    state.fseasonLog = [
+        ...(state.fseasonLog || []),
+        { key: sn.key, id: th.id, pts: Math.round(sn.pts), tiers: sn.got.filter(Boolean).length, at: (sn.key + 1) * FARM_SEASON_MS },
+    ].slice(-FSEASON_LOG_MAX);
+}
+// les grands défis de la saison en cours
+export const farmSeasonDefis = () => (farmSeasonOpen() ? FARM_SEASON_DEFIS[farmSeasonTheme().id] || [] : []);
+export const defiThemed = id => farmSeasonDefis().includes(id);
+
 export function ensureFarmSeason() {
     if (!farmSeasonOpen()) return false;
     const key = farmSeasonKey();
     if (state.fseason && state.fseason.key === key) return false;
+    logFarmSeason();
     state.fseason = { key, pts: 0, got: [false, false, false, false, false] };
     if (view.started) {
         toast(`Nouvelle saison de la ferme : ${farmSeasonTheme().name.toLowerCase()}`, ['ui', 'trophy']);

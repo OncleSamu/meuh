@@ -2041,6 +2041,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'La Coupe de la vallée',
                 b: [
+                    'Les saisons de la ferme (Village › Commandes) suivent un thème de quatre semaines, douze en tout. Les défis du thème sont proposés en priorité et leurs médailles comptent double pour la Coupe. Chaque saison finie laisse un trophée daté dans le livre, onglet Défis.',
                     'La vraie ligne d’arrivée : six rangs, de « Ferme du canton » (0 point) à « Ferme du monde » (110 points). Menu › La Coupe de la vallée.',
                     'Les médailles rapportent des points : bronze 1, argent 2, or 4, platine 7, diamant 10. Chaque défi gagné en or bâtit son monument dans le domaine des légendes ; tous les défis en or dressent la grande statue dorée (+10).',
                     'Le mécénat : six grands travaux pour la vallée (pont, thermes, cathédrale, observatoire, musée, opéra), de 50 à 800 millions de pièces plus des matériaux, pour 6 à 16 points.',

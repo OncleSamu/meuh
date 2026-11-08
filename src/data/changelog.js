@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.95',
+        title: 'Saisons de la ferme à thèmes',
+        date: '8 novembre 2026',
+        items: [
+            'Les saisons de la ferme passent de 4 à 12 thèmes, soit une année de 48 semaines',
+            'Les produits de chaque thème suivent les recettes des machines',
+            'Chaque saison a ses grands défis',
+            "Chaque saison finie laisse un trophée daté dans l'onglet Défis du livre",
+            'Le dernier palier donne un fanion décoratif',
+            "La bière et l'hydromel brassés, et le miel des ruchers des contrées, comptent pour les saisons",
+        ],
+    },
+    {
         v: '1.94',
         title: 'Les grands défis à jour',
         date: '8 novembre 2026',

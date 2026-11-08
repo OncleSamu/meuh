@@ -32,6 +32,7 @@ import { breedOpen, plantLabOpen, labOpen, animalGain, flavorGain, varieties, va
 import { addPhoto } from './style.js';
 import { tip } from './tips.js';
 import { cupOnMedal } from './cup.js';
+import { defiThemed } from './port.js';
 
 const DAY = 24 * 3600 * 1000;
 
@@ -147,7 +148,10 @@ export function drawOffer() {
     const ids = Object.keys(DEFIS).filter(defiEligible);
     let pool = ids.filter(id => !D.recent.includes(id));
     if (pool.length < DEFI.offer) pool = [...pool, ...ids.filter(id => !pool.includes(id) && id !== D.recent[D.recent.length - 1])];
+    // 1.95 : la saison de la ferme met ses défis en avant (un au moins, s'il peut sortir)
+    const themed = shuffle(pool.filter(defiThemed));
     const out = shuffle(pool).slice(0, DEFI.offer);
+    if (themed.length && !out.some(defiThemed)) out[out.length - 1] = themed[0];
     return out.length ? out : ['chateau'];
 }
 export const defiOffer = () => (state.defis && state.defis.offer) || null;

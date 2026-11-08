@@ -533,7 +533,7 @@ export const TIPS = {
     farmSeason: {
         icon: ['ui', 'trophy'],
         title: 'Les saisons de la ferme',
-        text: 'Toutes les 4 semaines, un nouveau thème. Chaque produit du thème rapporte des points : 5 paliers, et une décoration unique au bout.',
+        text: 'Toutes les 4 semaines, un nouveau thème (douze en tout, pour une année). Chaque produit du thème rapporte des points : 5 paliers, et une décoration unique au bout. Les grands défis du thème comptent double pour la Coupe.',
     },
     cave: {
         icon: ['ui', 'cave'],

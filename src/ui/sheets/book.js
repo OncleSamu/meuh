@@ -6,6 +6,7 @@ import { SEASONS, EVENTS } from '../../data/world.js';
 import { MEDALS, MAX_LEVEL, BOOK_QUARTERS, MASTERY_NAMES, MASTERY_EXTRA_NAMES as EXTRA_NAMES } from '../../data/progress.js';
 import { ACHIEVEMENTS, LEGEND_RUBANS } from '../../data/meta.js';
 import { DEFI, DEFIS } from '../../data/defis.js';
+import { FARM_SEASONS } from '../../data/port.js';
 import { VILLAGERS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
@@ -258,6 +259,22 @@ const runText = h => {
     const res = h.medal ? `${DEFI.medals[h.medal - 1].name}` : `Sans médaille (${h.steps} étape${h.steps > 1 ? 's' : ''} sur 4)`;
     return `<li class="run${h.medal ? ' won' : ''}">${ico(['ui', CUPS[h.medal || 0]])}<span><b>${res}</b> · ${days} jour${days > 1 ? 's' : ''}</span><small>${dayText(h.at)}</small></li>`;
 };
+// 1.95 : les trophées des saisons de la ferme (une ligne par saison finie, datée)
+const FS_BY_ID = Object.fromEntries(FARM_SEASONS.map(s => [s.id, s]));
+function seasonTrophies() {
+    const log = G.farmSeasonLog();
+    if (!log.length) return '';
+    const rows = log
+        .slice()
+        .reverse()
+        .map(r => {
+            const th = FS_BY_ID[r.id];
+            if (!th) return '';
+            return `<li class="run${r.tiers >= 5 ? ' won' : ''}">${ico(['ui', r.tiers >= 5 ? th.deco : 'cupNone'])}<span><b>${th.name}</b> · ${r.tiers} palier${r.tiers > 1 ? 's' : ''} sur 5 · ${fmt(r.pts)} points</span><small>${dayText(r.at)}</small></li>`;
+        })
+        .join('');
+    return `<div class="card defi-sheet" style="margin-bottom:10px"><div class="card-main"><div class="card-title">Saisons de la ferme</div><div class="card-sub">${log.length} saison${log.length > 1 ? 's' : ''} terminée${log.length > 1 ? 's' : ''}</div><ul class="runs">${rows}</ul></div></div>`;
+}
 function defisPage() {
     const T = (state.defis && state.defis.trophies) || {};
     const cur = G.curDefi();
@@ -284,7 +301,7 @@ function defisPage() {
                 ${before > 0 && !runs.length ? `<div class="card-sub">Parties jouées avant le journal : ${before}</div>` : ''}</div></div>`;
         })
         .join('');
-    return `${top}<div class="list">${sheets}</div>`;
+    return `${top}${seasonTrophies()}<div class="list">${sheets}</div>`;
 }
 
 const SECTIONS = [

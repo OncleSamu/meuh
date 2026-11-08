@@ -13,6 +13,7 @@ import { CONTEST_LVL, CONTRACT_LVL, NMARKET } from '../../data/commerce.js';
 import { foldCard } from '../fold.js';
 import { now } from '../../core/clock.js';
 import { FARM_SEASON_TIERS } from '../../data/port.js';
+import { DEFIS } from '../../data/defis.js';
 import { STORY_MAPS } from '../../data/meta.js';
 import { MAP_BG } from '../../art/maps.js';
 import * as G from '../../systems/index.js';
@@ -200,6 +201,15 @@ export function contractCard() {
 }
 
 // ---------------- saison de la ferme ----------------
+// 1.95 : les grands défis du thème (proposés en priorité, double points pour la Coupe)
+const seasonDefiLine = () => {
+    const names = G.farmSeasonDefis()
+        .filter(id => DEFIS[id])
+        .map(id => DEFIS[id].name);
+    return G.defiOpen() && names.length
+        ? `<div class="card-sub center">Grands défis de la saison : ${names.join(', ')}. Double points pour la Coupe de la vallée.</div>`
+        : '';
+};
 export function farmSeasonCard() {
     if (!G.farmSeasonOpen()) return null;
     G.ensureFarmSeason();
@@ -207,7 +217,10 @@ export function farmSeasonCard() {
         th = G.farmSeasonTheme(),
         top = FARM_SEASON_TIERS.at(-1);
     return `<div class="card fseason-card">${head(['item', th.icon], th.name, `Chaque produit du thème rapporte des points (3 pour un produit d’atelier). Au dernier palier : ${DECOS[th.deco].name.toLowerCase()} et 1 ruban.`, pill(['ui', 'clock'], formatDuration(G.farmSeasonEndsIn())))}
-        <div class="season-items">${th.items.map(id => ico(['item', id])).join('')}</div>${bar(sv.pts / top)}
+        <div class="season-items">${th.items
+            .slice(0, 14)
+            .map(id => ico(['item', id]))
+            .join('')}</div>${bar(sv.pts / top)}
         <div class="tiers-row">${FARM_SEASON_TIERS.map((t, k) =>
             sv.got[k]
                 ? `<span class="stier done">${ico(['ui', 'check'])}</span>`
@@ -219,7 +232,7 @@ export function farmSeasonCard() {
                         size: 'sm',
                     })
                   : `<span class="stier">${fmt(t)}</span>`,
-        ).join('')}</div><div class="card-sub center">${fmt(sv.pts)} points</div></div>`;
+        ).join('')}</div><div class="card-sub center">${fmt(sv.pts)} points</div>${seasonDefiLine()}</div>`;
 }
 
 // ---------------- voisins ----------------

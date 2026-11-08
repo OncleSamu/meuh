@@ -5,6 +5,7 @@
 // state.apiary[land] = { hives, honey } (honey : pots en réserve, avec leur fraction).
 import { state } from '../core/state.js';
 import { fmt } from '../core/format.js';
+import { farmSeasonAdd } from './port.js';
 import { toast, sfx, buzz, burst, float, fly, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { APIARY, APIARY_LANDS, APIARY_RUN } from '../data/apiary.js';
@@ -140,6 +141,7 @@ export function harvestApiary(land, at) {
     addHoney(kind, jars);
     state.stats.honey = (state.stats.honey || 0) + jars;
     state.stats.apiaryHoney = (state.stats.apiaryHoney || 0) + jars;
+    farmSeasonAdd('honey', jars); // 1.95 : compte pour la saison de la ferme
     eventProgress('harvest', 'honey', jars);
     addXp(jars * APIARY_RUN.xp, at);
     sfx('harvest');

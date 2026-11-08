@@ -204,3 +204,36 @@ Object.assign(ui, {
         L('M52 58 L60 40', 2.4, '#8a5320') +
         HL(16, 22, 8, 1.6, 20, 0.4),
 });
+
+// 1.95 : les huit fanions des saisons de la ferme (un mât, une flamme de la couleur du thème, son emblème) : dessins provisoires
+const banner = (cloth, trim, emblem) => () =>
+    SHADOW(32, 60, 16, 3) +
+    R(30, 6, 4, 52, 1.6, '#8a5a2a', 2) +
+    FC(32, 6, 3.4, '#e8b83a') +
+    P('M34 10 L58 10 L52 22 L58 34 L34 34Z', cloth, 2.4) +
+    L('M36 13 L54 13', 1.4, trim) +
+    emblem +
+    R(22, 54, 20, 6, 2, '#8f8574', 2);
+Object.assign(ui, {
+    // chevaux : un fer à cheval
+    bannerHaras: banner('#2f6fb0', '#9ec6ea', L('M39 30 Q37 20 45 19 Q53 20 51 30', 2.6, '#f5d36b')),
+    // brasserie : une feuille de houblon
+    bannerBrasserie: banner('#6f9a3a', '#c8e08a', P('M45 16 Q53 22 45 32 Q37 22 45 16Z', '#e8d27a', 1.6)),
+    // oasis : un palmier
+    bannerOasis: banner('#d9a02f', '#f5d98a', L('M45 32 L45 20 M45 20 Q39 18 37 22 M45 20 Q51 18 53 22 M45 20 Q40 15 38 16 M45 20 Q50 15 52 16', 2, '#2f6f3f')),
+    // Grand Nord : un flocon
+    bannerNord: banner('#5b8fb8', '#dff0fa', L('M45 15 L45 31 M38 19 L52 27 M38 27 L52 19', 2, '#fff')),
+    // miel : une goutte dorée sur fond d'ambre
+    bannerMiel: banner('#c0812a', '#f5d36b', P('M45 15 Q52 24 48 29 Q45 32 42 29 Q38 24 45 15Z', '#ffd23f', 1.6)),
+    // mine : un diamant
+    bannerMine: banner('#5e5548', '#a8a090', P('M39 20 L45 15 L51 20 L45 32Z', '#7fd3f5', 1.8)),
+    // textile : une pelote
+    bannerTextile: banner('#a8395f', '#f0a8c0', C(45, 24, 8, '#f8d6e2', 1.8) + L('M39 21 Q45 27 51 21 M40 27 Q45 22 50 28', 1.2, '#a8395f')),
+    // parfums : une fleur
+    bannerParfums: banner(
+        '#8e62b8',
+        '#d6bff0',
+        [0, 72, 144, 216, 288].map(a => `<g transform="translate(45 24) rotate(${a})">${E(0, -5, 3.2, 5, '#f4e6ff', 1.2, 0)}</g>`).join('') +
+            FC(45, 24, 2.4, '#ffd23f'),
+    ),
+});

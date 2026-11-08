@@ -10,6 +10,7 @@ import { CUP_POINTS, STATUE_POINTS, CUP_RANKS, CUP_WORKS, CUP_RIVALS } from '../
 import { RIVAL_STYLE } from './rivals.js';
 import { hasCost, payCost } from './home.js';
 import { addPhoto } from './style.js';
+import { defiThemed } from './port.js';
 
 export function ensureCup() {
     if (!state.cup || typeof state.cup !== 'object') state.cup = {};
@@ -51,8 +52,10 @@ function addPts(n, why, at) {
 // une médaille de grand défi (0 si aucune) : vos points, puis ceux des rivales, calées sur votre rythme
 export function cupOnMedal(medal, defiId) {
     const c = ensureCup();
-    const n = CUP_POINTS[medal] || 0;
-    c.hist = [...c.hist, n].slice(-CUP_RIVALS.hist);
+    const base = CUP_POINTS[medal] || 0;
+    // 1.95 : un défi du thème de la saison de la ferme compte double
+    const n = base * (defiThemed(defiId) ? 2 : 1);
+    c.hist = [...c.hist, base].slice(-CUP_RIVALS.hist);
     if (n) addPts(n, `${['', 'bronze', 'argent', 'or', 'platine', 'diamant'][medal]} · ${DEFIS[defiId] ? DEFIS[defiId].name : 'grand défi'}`);
     const avg = c.hist.length ? c.hist.reduce((a, b) => a + b, 0) / c.hist.length : CUP_RIVALS.firstPts;
     c.riv = c.riv.map((p, k) => {
