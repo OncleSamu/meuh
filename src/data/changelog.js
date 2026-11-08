@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.93',
+        title: 'Les grands défis dans le livre',
+        date: '8 novembre 2026',
+        items: [
+            'Livre de la ferme : un onglet Défis, une feuille par défi joué',
+            'Chaque partie y laisse sa trace : médaille, durée, date',
+            'Les défis terminés sans médaille y figurent aussi',
+        ],
+    },
+    {
         v: '1.92',
         title: 'Grande revue',
         date: '8 novembre 2026',
