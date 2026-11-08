@@ -8,6 +8,29 @@ import { actions } from '../dom.js';
 import { ico } from '../icons.js';
 import { btn } from '../kit.js';
 
+const hearts = n => `<span class="fid">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => `<i class="${n >= i ? 'on' : ''}">♥</i>`).join('')}</span>`;
+function askCard(a, i) {
+    const ok = G.resCanAccept();
+    return `<div class="card camp-card"><div class="card-head">${ico(['villager', a.look], 'ico big')}<div class="card-main"><div class="card-title">${a.name} ${a.from}</div><div class="card-sub">${a.job.charAt(0).toUpperCase() + a.job.slice(1)} · voudrait s’installer dans une cabane</div></div></div>
+        <div class="od-foot">${btn(`Accueillir · ${fmt(G.resCabinCost())}${ico(['ui', 'coin'])}`, { act: 'campAccept', data: { i }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}${btn('Pas cette fois', { act: 'campDecline', data: { i }, size: 'sm' })}</div></div>`;
+}
+function residentCard(r, i) {
+    const h = G.resHearts(r);
+    const o = r.order;
+    const order = o
+        ? `<div class="od-line">${ico(['item', o.item])}<span><b>${o.n} × ${ITEMS[o.item].name}</b><small>${fmt(G.resOrderValue(r))} pièces</small></span>${btn('Livrer', { act: 'campDeliver', data: { i }, kind: G.resCanDeliver(r) ? 'green' : '', size: 'sm', disabled: !G.resCanDeliver(r) })}</div>`
+        : '<p class="card-sub">Sa prochaine commande arrive bientôt.</p>';
+    const gifts = r.likes
+        .concat(r.seen ? [r.loved] : [])
+        .filter((id, k, a) => a.indexOf(id) === k)
+        .map(id => btn(`${ico(['item', id])}${id === r.loved ? ' ♥' : ''}`, { act: 'campGift', data: { i, id }, kind: G.resCanGift(r, id) ? 'green' : '', size: 'sm', disabled: !G.resCanGift(r, id) }))
+        .join('');
+    const story = r.stories.length ? `<p class="camp-story">${r.stories[r.stories.length - 1]}</p>` : '';
+    const sure = G.resConfirming(r);
+    return `<div class="card camp-card"><div class="card-head">${ico(['villager', r.look], 'ico big')}<div class="card-main"><div class="card-title">${r.name} ${r.from}</div><div class="card-sub">${r.job.charAt(0).toUpperCase() + r.job.slice(1)} ${hearts(h)}</div></div></div>
+        ${order}<div class="od-line"><span><b>Un petit cadeau</b><small>${G.resGiftReady(r) ? 'Ce qu’il aime : un cadeau toutes les 6 h' : 'Revenez plus tard'}${r.seen ? '' : ' · son préféré se révèle à 6 cœurs'}</small></span></div><div class="od-foot">${gifts}</div>
+        ${story}<div class="od-foot">${btn(sure ? 'Sûr ? Appuyez encore' : 'Faire partir', { act: 'campLeave', data: { i }, size: 'sm' })}</div></div>`;
+}
 const COIN = () => ico(['ui', 'coin']);
 const costHtml = c =>
     Object.entries(c)
@@ -39,7 +62,9 @@ export function campingCard() {
         .map(([id, u]) => `<div class="od-line"><span><b>${u.name}</b><small>${u.desc}</small></span>${btn(costHtml(u.cost), { act: 'campUp', data: { id }, kind: G.upCan(id) ? 'green' : '', size: 'sm', disabled: !G.upCan(id) })}</div>`)
         .join('');
     return `<div class="camps"><div class="card camp-card"><div class="card-head">${ico(['ui', 'heart'], 'ico big')}<div class="card-main"><div class="card-title">Le camping · ${G.campPitches()} emplacements</div><div class="card-sub">${gs.length} campeur${gs.length > 1 ? 's' : ''} sur place · ${G.campFree()} libre${G.campFree() > 1 ? 's' : ''}</div></div></div>${shop}${pitch}</div>
+        ${G.campAsks().map(askCard).join('')}
         ${gs.length ? gs.map(guestCard).join('') : '<p class="card-sub">Un campeur arrive bientôt.</p>'}
+        ${G.campRes().length ? `<div class="card-title camp-h">Résidents (${G.campRes().length}/12)</div>${G.campRes().map(residentCard).join('')}` : ''}
         ${ups ? `<div class="card camp-card"><div class="card-title">Améliorations</div>${ups}</div>` : ''}
         <p class="card-sub">Vendez-leur ce qu’ils cherchent avant leur départ : tout vendu, ils sont ravis et laissent un pourboire. Rien n’est jamais perdu.</p></div>`;
 }
@@ -50,5 +75,10 @@ export function setupCamping() {
         campUp: (_, d) => G.buyUp(d.id),
         campTill: el => G.collectTill(el),
         campSell: (el, d) => G.sellTo(+d.g, +d.i, el),
+        campAccept: (el, d) => G.resAccept(+d.i, el),
+        campDecline: (_, d) => G.resDecline(+d.i),
+        campDeliver: (el, d) => G.resDeliver(+d.i, el),
+        campGift: (el, d) => G.resGift(+d.i, d.id, el),
+        campLeave: (_, d) => G.resLeave(+d.i),
     });
 }

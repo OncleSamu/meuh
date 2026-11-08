@@ -365,8 +365,8 @@ const ROWS = [
         on: () => !!campingCard(),
         icon: () => ['ui', 'heart'],
         title: () => 'Le camping',
-        sub: () => (G.campBuilt() ? `${G.campGuests().length}/${G.campPitches()} emplacements${G.campReady() ? ` · ${G.campReady()} à servir` : ''}` : 'Des campeurs de passage'),
-        ready: () => G.campReady() > 0,
+        sub: () => (G.campBuilt() ? `${G.campGuests().length}/${G.campPitches()} emplacements · ${G.campRes().length} résident${G.campRes().length > 1 ? 's' : ''}${G.campReady() + G.residentReady() ? ` · ${G.campReady() + G.residentReady()} à servir` : ''}` : 'Des campeurs de passage'),
+        ready: () => G.campReady() + G.residentReady() > 0,
         html: campingCard,
     },
     {

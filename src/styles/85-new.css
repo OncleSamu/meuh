@@ -837,3 +837,23 @@
     flex-wrap: wrap;
     margin-top: 6px;
 }
+.camp-card .fid {
+    white-space: nowrap;
+    margin-left: 4px;
+    font-size: 0.8em;
+}
+.camp-card .fid i {
+    font-style: normal;
+    color: #d9c9a8;
+}
+.camp-card .fid i.on {
+    color: #e2412f;
+}
+.camp-story {
+    font-style: italic;
+    margin: 8px 0 2px;
+    line-height: 1.35;
+}
+.camp-h {
+    margin: 6px 4px 0;
+}

@@ -61,7 +61,7 @@ function pool(kind) {
     }
     return memo[kind];
 }
-function pickWant(kind, taken, r) {
+export function pickWant(kind, taken, r) {
     const all = pool(kind).filter(id => !taken.includes(id));
     const ok = all.filter(canGet);
     const l = ok.length ? ok : all;
@@ -83,13 +83,14 @@ export function newGuest(t = now(), seed) {
             wants.push({ item: id, done: false });
         }
     }
-    const used = c.guests.map(g => g.name);
+    const used = [...c.guests, ...(c.res || []), ...(c.asks || [])].map(g => g.name);
     const names = FIRST_NAMES.filter(n => !used.includes(n));
     const g = {
         look: randomId(seed, woman ? { female: true } : { male: true }),
         name: names[Math.floor(r() * names.length)] || FIRST_NAMES[0],
         from: ORIGINS[Math.floor(r() * ORIGINS.length)],
         profile: pid,
+        woman,
         arrive: t,
         leave: t + stay,
         wants,
@@ -118,11 +119,16 @@ export const guestMood = g => {
     return n === g.wants.length ? 2 : n > 0 ? 1 : 0; // 0 déçu, 1 content, 2 ravi
 };
 export const MOODS = ['Déçu', 'Content', 'Ravi'];
+var leaveHook;
+export function setLeaveHook(f) {
+    leaveHook = f;
+}
 function leave(g, at) {
     const mood = guestMood(g);
     const tip = mood === 2 ? Math.round(g.wants.reduce((a, w) => a + priceOf(w.item), 0) * tipRate()) : 0;
     const c = state.camping;
-    c.past.unshift({ name: g.name, look: g.look, from: g.from, profile: g.profile, mood });
+    c.past.unshift({ name: g.name, look: g.look, from: g.from, profile: g.profile, woman: g.woman, mood });
+    if (mood === 2 && leaveHook) leaveHook(g);
     c.past.length = Math.min(c.past.length, CAMPING.keep);
     c.guests = c.guests.filter(x => x !== g);
     if (tip) earn(tip, at);

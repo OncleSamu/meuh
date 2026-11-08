@@ -1,5 +1,6 @@
 // La partie : chargement et remise en ordre de l'état, outil en main, la seconde de jeu et l'absence.
 import { campTick } from './camping.js';
+import { residentTick } from './residents.js';
 import { state, setState, newState, fromSave, fillGrid, readSave, lvOk, getStore, SAVE_KEY, BROKEN_KEY } from '../core/state.js';
 import { readBackups } from './savecodes.js';
 import { now } from '../core/clock.js';
@@ -286,6 +287,7 @@ function tickFarm() {
     if (pickerTick()) changed = true;
     if (lifeTick()) changed = true;
     if (campTick()) changed = true;
+    if (residentTick()) changed = true;
     if (islandTick()) changed = true;
     if (oasisTick()) changed = true;
     if (nordTick()) changed = true;
