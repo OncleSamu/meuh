@@ -52,6 +52,7 @@ import { ensureNord, nordTick, nordOffline } from './nord.js';
 import { apiaryTick } from './apiary.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
+import { commerceTick } from './commerces.js';
 import { ensureNight, nightTick } from './night.js';
 import { brewOpen, ensureBrew, brewTick, brewOffline } from './brewery.js';
 import { cargoTick, cargoHere, cargoLeave } from './cargo.js';
@@ -317,6 +318,7 @@ function tickDeliveries() {
     if (armandTick()) changed = true;
     if (pondTick()) changed = true;
     if (defiTick()) changed = true;
+    if (commerceTick()) changed = true;
     if (nightTick()) changed = true;
     if (contestTick()) changed = true;
     if (showTick()) changed = true;

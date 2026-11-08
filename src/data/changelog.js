@@ -1,15 +1,24 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.98',
+        title: "La fabrique d'habitants et les commerces du village",
+        date: '8 novembre 2026',
+        items: [
+            "Fabrique d'habitants : 12 traits (teint, coiffure, barbe, nez, yeux, lunettes, chapeau…) pour des millions de visages",
+            'Huit commerces à reprendre dès le niveau 30 : boulangerie, forge, tissage, poterie, fromagerie, confiserie, charcuterie, poissonnerie',
+            "Chaque artisan a son visage et passe une commande permanente, payée 1,5 fois la valeur du produit, qui n'expire jamais",
+            'Cinq niveaux de confiance : commandes plus grosses et mieux payées',
+            'Village › Commandes › Commerces du village',
+        ],
+    },
+    {
         v: '1.97',
         title: 'Le matériel de la cave sert enfin',
         date: '8 novembre 2026',
         items: [
-            'Aide de cave : le soin ne tombe jamais sous 60 %, même en votre absence',
-            'Caisses capitonnées : +4 bouteilles ou meules par lot',
-            "Sas d'aération : 35 % de lots perdus en moins",
-            'Sonde de maturation : 40 % des mauvaises étapes sans effet',
-            'Registre des millésimes : +6 % sur la valeur des lots',
+            "L'onglet Matériel n'avait que deux achats",
+            "Cinq équipements s'ajoutent",
             'Prix de 15 000 à 60 000 pièces, avec planches, pierres, lingots de fer ou de cuivre',
             'Les anciens équipements ne changent pas',
         ],
@@ -28,6 +37,7 @@ export const CHANGELOG = [
             'Un souvenir à 5, 15 et 30 réussis',
             'Un défi éclair non fini disparaît',
             "Correctif de la 1.94 : le souk et le grand hiver s'ouvrent bien avec l'oasis et le Grand Nord",
+            'Rien côté prestige',
         ],
     },
     {
@@ -41,6 +51,7 @@ export const CHANGELOG = [
             "Chaque saison finie laisse un trophée daté dans l'onglet Défis du livre",
             'Le dernier palier donne un fanion décoratif',
             "La bière et l'hydromel brassés, et le miel des ruchers des contrées, comptent pour les saisons",
+            "Rien n'est ajouté côté prestige",
         ],
     },
     {

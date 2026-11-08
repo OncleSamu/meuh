@@ -2040,6 +2040,14 @@ export const GUIDE_PAGES = [
                 t: 'Un défi de deux semaines en quatre étapes, à choisir parmi trois proposés (vingt-quatre en tout). Bronze à 2 étapes, argent à 3, or à 4 ; platine si tout est livré en or ou mieux (réglage « Viser le platine » dans la fiche du défi), diamant si le platine est fini en moins de 7 jours. Une médaille gagnée avant la date : le défi suivant peut commencer tout de suite. Il se trouve dans Village › Commandes.',
             },
             {
+                h: 'Les commerces du village',
+                b: [
+                    'Dès le niveau 30, des artisans cherchent quelqu’un pour reprendre leur commerce (boulangerie, forge, tissage, poterie, fromagerie, confiserie, charcuterie, poissonnerie) : pièces et matériaux, une seule fois.',
+                    'Chaque artisan a son visage, tiré au hasard (« Changer d’allure » en tire un autre), et passe une commande permanente de son métier : elle n’expire jamais et paie 1,5 fois la valeur du produit.',
+                    'Plus vous le servez, plus il vous fait confiance (cinq niveaux) : commandes plus grosses et mieux payées. « Une autre » change de produit.',
+                ],
+            },
+            {
                 h: 'La Coupe de la vallée',
                 b: [
                     'Les saisons de la ferme (Village › Commandes) suivent un thème de quatre semaines, douze en tout. Les défis du thème sont proposés en priorité et leurs médailles comptent double pour la Coupe. Chaque saison finie est classée face aux quatre fermes rivales et laisse un trophée daté dans le livre, onglet Défis, avec « Votre année à la ferme ». Sous le grand défi, un défi éclair (une seule étape, trois jours) donne des pièces et de l’expérience entre deux grands défis.',

@@ -39,6 +39,7 @@ import { setupBrewery } from './ui/views/brewery.js';
 import { setupCounter } from './ui/views/counter.js';
 import { setupOrders } from './ui/views/orders.js';
 import { setupDefis } from './ui/views/defis.js';
+import { setupCommerces } from './ui/views/commerces.js';
 import { setupVillage } from './ui/views/village.js';
 import { setupMarket } from './ui/views/market.js';
 import { setupMenu } from './ui/sheets/menu.js';
@@ -103,6 +104,7 @@ function start() {
     setupCounter();
     setupOrders();
     setupDefis();
+    setupCommerces();
     setupVillage();
     setupMarket();
     setupMenu();

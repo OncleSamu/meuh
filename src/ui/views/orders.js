@@ -16,6 +16,7 @@ import { itemLine, rewardHtml } from './common.js';
 import { confirmTap } from '../confirm.js';
 import { toggleFold } from '../fold.js';
 import { defiCard } from './defis.js';
+import { commercesCard } from './commerces.js';
 import { rareCard, holidayCard, contractCard, farmSeasonCard, neighborsBody } from './village.js';
 import { HOLIDAYS } from '../../data/world.js';
 import { RARE_EVENTS } from '../../data/surprises.js';
@@ -358,6 +359,20 @@ const left = at => formatDuration(Math.max(0, (at - now()) / 1000));
 const has = (id, n) => (state.inventory[id] || 0) >= n;
 const ROWS = [
     // ---- à livrer ----
+    {
+        id: 'commerces',
+        grp: 'give',
+        on: () => !!commercesCard(),
+        icon: () => ['machine', 'bakery'],
+        title: () => 'Commerces du village',
+        sub: () => {
+            const n = Object.keys(state.commerces || {}).length;
+            return n ? `${n} commerce${n > 1 ? 's' : ''} repris${G.commercesReady() ? ` · ${G.commercesReady()} à livrer` : ''}` : 'Reprendre un métier';
+        },
+        ready: () => G.commercesReady() > 0,
+        here: () => true,
+        html: commercesCard,
+    },
     {
         id: 'express',
         grp: 'give',
