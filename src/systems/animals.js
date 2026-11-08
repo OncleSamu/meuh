@@ -3,7 +3,6 @@ import { state, scaleLvl } from '../core/state.js';
 import { viewShown } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish } from '../core/bus.js';
 import { ANIMALS, GROW, NAMES, MAX_STACK, MAX_FOOD, EXTRA_DROP } from '../data/animals.js';
-import { crisisMult } from './crises.js';
 import { ITEMS } from '../data/items.js';
 import { BALANCE } from '../data/progress.js';
 import { rank, speedMult, rollYield, addXp, earn } from './player.js';
@@ -49,7 +48,7 @@ export const animalMult = a =>
     assocMult(a) *
     oasisBeastMult(a) *
     nordBeastMult(a);
-export const animalTime = a => ANIMALS[a.type].time / (speedMult() * animalMult(a) * masterySpeed(ANIMALS[a.type].prodId) * crisisMult('animal'));
+export const animalTime = a => ANIMALS[a.type].time / (speedMult() * animalMult(a) * masterySpeed(ANIMALS[a.type].prodId));
 export const growLeft = a => Math.max(0, (GROW[a.type] - (a.age || 0)) / (rank('nursery') ? 2 : 1) / speedMult());
 export const growPct = a => Math.min(1, (a.age || 0) / GROW[a.type]);
 export const prodPct = a => Math.min(1, (a.prodProgress || 0) / animalTime(a));

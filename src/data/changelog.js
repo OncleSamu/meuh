@@ -1,2186 +1,1996 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
- {
-  "v": "1.99",
-  "title": "Les crises de la vallée",
-  "date": "8 novembre 2026",
-  "items": [
-   "Dès le niveau 30, tous les 3 à 5 jours, une crise tirée parmi trois, jamais la même deux fois de suite",
-   "Alerte 12 h avant, crise de 24 h",
-   "Rien n'est jamais perdu",
-   "« Se préparer » ramène l'effet à −15 %, −15 % et −5 %",
-   "À la fin, la vallée rend 1,5 fois la somme avec de l'expérience",
-   "Dans Village › Commandes › Événements, pastille quand on peut encore se préparer"
-  ]
- },
- {
-  "v": "1.98",
-  "title": "La fabrique d'habitants et les commerces du village",
-  "date": "8 novembre 2026",
-  "items": [
-   "Un visage se décrit par 12 traits codés dans un identifiant",
-   "Les chapeaux, lunettes et barbes sont rares",
-   "Huit commerces à reprendre dès le niveau 30",
-   "La suivante arrive 4 h après",
-   "« Une autre » change de produit",
-   "Dans Village › Commandes › Commerces du village",
-   "Servira aussi aux clients du gîte"
-  ]
- },
- {
-  "v": "1.97",
-  "title": "Le matériel de la cave sert enfin",
-  "date": "8 novembre 2026",
-  "items": [
-   "L'onglet Matériel n'avait que deux achats",
-   "Cinq équipements s'ajoutent",
-   "Prix de 15 000 à 60 000 pièces, avec planches, pierres, lingots de fer ou de cuivre",
-   "Les anciens équipements ne changent pas"
-  ]
- },
- {
-  "v": "1.96",
-  "title": "Podium, défis éclair, bilan de l'année",
-  "date": "8 novembre 2026",
-  "items": [
-   "Chaque saison de la ferme finie est classée face aux quatre fermes rivales",
-   "Les trois premiers rangent un souvenir dans l'album",
-   "Le livre montre le dernier podium, le rang et le record de chaque saison",
-   "La carte de la saison rappelle le record du thème",
-   "« Votre année à la ferme » résume les douze dernières saisons",
-   "Défi éclair : sous le grand défi, un bouton le lance",
-   "Un souvenir à 5, 15 et 30 réussis",
-   "Un défi éclair non fini disparaît",
-   "Correctif de la 1.94 : le souk et le grand hiver s'ouvrent bien avec l'oasis et le Grand Nord"
-  ]
- },
- {
-  "v": "1.95",
-  "title": "Saisons de la ferme à thèmes",
-  "date": "8 novembre 2026",
-  "items": [
-   "Les saisons de la ferme passent de 4 à 12 thèmes, soit une année de 48 semaines",
-   "Les produits de chaque thème suivent les recettes des machines",
-   "Chaque saison a ses grands défis",
-   "Chaque saison finie laisse un trophée daté dans l'onglet Défis du livre",
-   "Le dernier palier donne un fanion décoratif",
-   "La bière et l'hydromel brassés, et le miel des ruchers des contrées, comptent pour les saisons",
-   "Rien n'est ajouté côté prestige"
-  ]
- },
- {
-  "v": "1.94",
-  "title": "Les grands défis à jour",
-  "date": "8 novembre 2026",
-  "items": [
-   "Sept nouveaux grands défis pour les parties du jeu qui n'en avaient pas",
-   "Chacun a son villageois, sa décoration unique en or et son monument dans le domaine des légendes",
-   "Les listes de produits se complètent avec les recettes des machines et un produit compte dès qu'on sait le fabriquer",
-   "Le miel des ruchers des contrées compte pour les commandes",
-   "Les cultures de serre y entrent quand la serre est bâtie",
-   "Les défis ne sortent que si leur partie du jeu est ouverte, avec une étape de remplacement quand il le faut"
-  ]
- },
- {
-  "v": "1.93",
-  "title": "Les grands défis dans le livre",
-  "date": "8 novembre 2026",
-  "items": [
-   "Nouvel onglet « Défis » dans le livre de la ferme, une feuille par défi avec la meilleure médaille",
-   "Résumé en tête",
-   "Le journal commence à la 1.93 : les anciennes parties gardent leur total",
-   "Constat : les 17 grands défis ne couvrent pas le haras, les ruchers et l'hydromel, l'oasis, le Grand Nord"
-  ]
- },
- {
-  "v": "1.92",
-  "title": "Revue complète",
-  "date": "8 novembre 2026",
-  "items": [
-   "Audit en fin de partie",
-   "Chargement 1,6 s avec un processeur ralenti 4 fois, changements d'onglet immédiats",
-   "Partie neuve simulée",
-   "Corrigé : enchère sans preneur, cartes repliables dont le résumé était coupé sur petit écran",
-   "Pigeon en croûte, pâté de faisan et tourte au chevreau passent à la boulangerie",
-   "Trois grandes recettes de bière de plus",
-   "Les autres points de l'audit 1.75 étaient déjà réglés",
-   "Outil tools/dev/audit.mjs"
-  ]
- },
- {
-  "v": "1.91",
-  "title": "Produits d'atelier à la brasserie",
-  "date": "8 novembre 2026",
-  "items": [
-   "On peut brasser des produits d'atelier en plus des cultures",
-   "Ils n'apparaissent dans le sélecteur que si on en a en stock, n'ont pas de page au livre des bières",
-   "Conseil, guide et"
-  ]
- },
- {
-  "v": "1.90",
-  "title": "Petits correctifs",
-  "date": "8 novembre 2026",
-  "items": [
-   "Nasses retirables pour les poser ailleurs",
-   "Amélioration de la serre enfin effective",
-   "Livre : le potager ne liste plus les arbres",
-   "Carte du marché aux bêtes qui ne gonfle plus avec les noms longs",
-   "Pastille « +50 % » du produit du jour refaite",
-   "Liste du niveau 14 : mentionne l'amélioration des machines",
-   "Guide des appâts : où trouver chacun",
-   "Étiquettes recentrées"
-  ]
- },
- {
-  "v": "1.89",
-  "title": "Abeilles au repos",
-  "date": "4 novembre 2026",
-  "items": [
-   "On peut dire aux abeilles de ne pas faire de miel",
-   "Ruches du champ : réglage « Abeilles du champ au repos »",
-   "Ruchers des contrées : bouton « Au repos » / « Réveiller » sur chaque rucher",
-   "Ruche d'élevage au pré : bouton « Au repos : pas de miel » dans sa fiche",
-   "Le miel déjà en pot reste récoltable",
-   "Conseil, guide et"
-  ]
- },
- {
-  "v": "1.88",
-  "title": "On choisit les bêtes à vendre",
-  "date": "4 novembre 2026",
-  "items": [
-   "À la foire, chaque acheteur a un bouton « Choisir »",
-   "Sans choix, le jeu propose toujours les moins précieuses",
-   "« Vendre » attend que le choix soit complet",
-   "Guide et conseil mis à jour"
-  ]
- },
- {
-  "v": "1.87.1",
-  "title": "Objectifs de niveau : le stock ne suffit plus",
-  "date": "4 novembre 2026",
-  "items": [
-   "Pour un objectif « préparer » un produit sans prix de vente",
-   "Maintenant seul compte ce qu'on fabrique depuis le début de l'objectif"
-  ]
- },
- {
-  "v": "1.87",
-  "title": "Les rangs dans les fiches des variétés et des bières",
-  "date": "3 novembre 2026",
-  "items": [
-   "La fiche d'une variété du labo compte ses récoltes",
-   "La fiche d'une bière ou d'un hydromel compte ses bouteilles brassées par rang",
-   "Les compteurs partent de zéro pour ce qui existait déjà",
-   "La page « Bières maison » du livre devient « Bières et hydromels »"
-  ]
- },
- {
-  "v": "1.86.1",
-  "title": "Un  ?  pour la maîtrise",
-  "date": "3 novembre 2026",
-  "items": [
-   "Dans la fiche d'un produit, le paragraphe d'explication est remplacé par un petit « ? » qui ouvre la page du guide sur la maîtrise"
-  ]
- },
- {
-  "v": "1.86",
-  "title": "La maîtrise dans le livre",
-  "date": "3 novembre 2026",
-  "items": [
-   "L'onglet Maîtrise disparaît",
-   "La fiche de chaque produit montre maintenant ses étoiles, la barre et ce qu'il faut pour la suivante",
-   "Le ×N sous chaque produit dans la liste de la page est le nombre d'exemplaires fabriqués"
-  ]
- },
- {
-  "v": "1.85.1",
-  "title": "Carte de Mamie plus légère",
-  "date": "3 novembre 2026",
-  "items": [
-   "La ligne qui rappelait les paliers du bonus disparaît de la carte",
-   "La carte garde le bonus du moment"
-  ]
- },
- {
-  "v": "1.85",
-  "title": "Plans du champ",
-  "date": "3 novembre 2026",
-  "items": [
-   "Nouvelle amélioration « Plan du champ »",
-   "Bouton « Plans » en haut du champ",
-   "Rien n'est remplacé, rien n'est labouré, les graines se paient comme d'habitude et le résumé dit ce qui manque",
-   "Nouvelle icône, conseil de Mamie, guide, liste des niveaux",
-   "Mamie 1.84 : bonus dégressif au lieu du plafond"
-  ]
- },
- {
-  "v": "1.84",
-  "title": "Mamie se livre",
-  "date": "3 novembre 2026",
-  "items": [
-   "Le plat de la semaine quitte l'atelier et passe dans Village › Commandes › À livrer",
-   "On le donne à Mamie, elle paie tout de suite 50 % de plus, sans faire baisser les prix du marché",
-   "Le marché ne donne plus de bonus",
-   "Pas de plafond : +50 % pour les 50 premières de la semaine, puis +30 % jusqu'à 100, +20 % jusqu'à 200",
-   "Son compteur devient « Tu m'en as déjà donné X »",
-   "Marche aussi avec les bières",
-   "La maîtrise ×2 reste à la fabrication",
-   "Textes, guide et liste des niveaux mis à jour"
-  ]
- },
- {
-  "v": "1.83.3",
-  "title": "La liste des niveaux",
-  "date": "3 novembre 2026",
-  "items": [
-   "Le niveau 10 annonce le plat de la semaine de Mamie",
-   "Le reste de la liste se met à jour tout seul"
-  ]
- },
- {
-  "v": "1.83.2",
-  "title": "Le plat de la semaine s'élargit",
-  "date": "3 novembre 2026",
-  "items": [
-   "Mamie peut aussi choisir un pain, une pâtisserie, une glace, un chocolat, un fromage, une conserve, un jus",
-   "La baguette, le pain, les pâtes et le reste ne sont plus écartés parce qu'ils servent d'ingrédient",
-   "Jamais de fruit, légume, viande, farine, huile ni sucre",
-   "10 minutes au plus",
-   "Carte, astuce et guide mis à jour"
-  ]
- },
- {
-  "v": "1.83.1",
-  "title": "Mamie compte",
-  "date": "3 novembre 2026",
-  "items": [
-   "La carte du plat de la semaine dit combien tu en as fait cette semaine, remis à zéro chaque lundi"
-  ]
- },
- {
-  "v": "1.83",
-  "title": "Le plat de la semaine de Mamie",
-  "date": "3 novembre 2026",
-  "items": [
-   "Chaque lundi, Mamie Odette choisit un plat cuisiné, fini et rapide à faire",
-   "Toute la semaine il se vend 50 % plus cher et chaque plat compte double pour sa maîtrise",
-   "Jamais deux semaines de suite le même",
-   "Carte en haut de l'atelier, Mamie sur la recette",
-   "Dès le niveau 10",
-   "Astuce et guide"
-  ]
- },
- {
-  "v": "1.82",
-  "title": "L'élevage dans le livre",
-  "date": "3 novembre 2026",
-  "items": [
-   "Nouvelle page « Élevage » dans le livre de la ferme, chacun entre au premier ramassage",
-   "Les poissons ont leurs pastilles de qualité et, dans leur fiche, les prises en argent, or",
-   "Les fiches montrent platine et diamant en couleur",
-   "Le record d'un poisson arrondi au centième",
-   "Astuce de Mamie et guide"
-  ]
- },
- {
-  "v": "1.81.3",
-  "title": "Le pré allégé",
-  "date": "3 novembre 2026",
-  "items": [
-   "Ni pelle ni graines dans la barre du pré",
-   "La goutte « à arroser » passe au-dessus de la décoration du coin de la parcelle"
-  ]
- },
- {
-  "v": "1.81.2",
-  "title": "Chaque outil à sa place",
-  "date": "3 novembre 2026",
-  "items": [
-   "Dans la barre du bas, la nourriture et la ration n'apparaissent qu'au pré, le compost qu'au champ",
-   "Un outil choisi qui n'a rien à faire sur la page revient à la main"
-  ]
- },
- {
-  "v": "1.81.1",
-  "title": "La ration au magasin",
-  "date": "3 novembre 2026",
-  "items": [
-   "La ration d'engraissement s'achète aussi au magasin, onglet Équipement",
-   "Le moulin reste moins cher"
-  ]
- },
- {
-  "v": "1.81",
-  "title": "Un second produit pour chaque bête",
-  "date": "3 novembre 2026",
-  "items": [
-   "Toutes les bêtes donnent parfois un second produit au ramassage, 15 % de chances au lieu de 10 %",
-   "Viandes nouvelles et autres",
-   "39 recettes, trois par produit, l'oasis et le Nord dans leurs ateliers",
-   "Ration d'engraissement au moulin, dans la barre du bas, +35 % pendant 2 h",
-   "Compétence « Bon éleveur »",
-   "Le second produit sort de la qualité du produit ramassé",
-   "Yvette ne vend que les viandes",
-   "52 dessins",
-   "Astuces et guide"
-  ]
- },
- {
-  "v": "1.80",
-  "title": "Des poissons en or",
-  "date": "3 novembre 2026",
-  "items": [
-   "À la canne, une belle prise sort en argent, un trophée en or",
-   "Un ferrage parfait monte d'un rang",
-   "Le poisson doré toujours en or",
-   "Un peu d'argent et d'or dans les nasses et le filet",
-   "Chaque poisson a sa maîtrise, partie des prises déjà faites",
-   "Platine et diamant par la maîtrise",
-   "Les plats de poisson suivent"
-  ]
- },
- {
-  "v": "1.79.1",
-  "title": "Correctif",
-  "date": "3 novembre 2026",
-  "items": [
-   "« Produire » sur une viande ou un second produit mène à la bonne bête et dit d'où il vient",
-   "La cardamome mène au Grand Nord"
-  ]
- },
- {
-  "v": "1.79",
-  "title": "La réserve d'expérience",
-  "date": "3 novembre 2026",
-  "items": [
-   "Objectifs du niveau pas faits, l'expérience se garde jusqu'à un quart du niveau suivant",
-   "La barre devient dorée « Réserve pleine »",
-   "Le guide explique les objectifs du niveau"
-  ]
- },
- {
-  "v": "1.78.1",
-  "title": "Correctif",
-  "date": "2 novembre 2026",
-  "items": [
-   "Le nombre de petits passe dans Réglages › Confort › Naissances au pré",
-   "Un seul réglage pour tous les prés"
-  ]
- },
- {
-  "v": "1.78",
-  "title": "Juste ce qu'il faut de petits",
-  "date": "2 novembre 2026",
-  "items": [
-   "Sous l'interrupteur des naissances, un nombre de petits voulus",
-   "Une fois atteint, les naissances du pré s'éteignent seules"
-  ]
- },
- {
-  "v": "1.77.1",
-  "title": "Guide de la qualité",
-  "date": "2 novembre 2026",
-  "items": [
-   "Deux pages au guide",
-   "Argent et or",
-   "Platine et diamant",
-   "Coin par coin : champ, contrées, verger, pré, atelier, comptoir, brasserie, vins et cave",
-   "L'exemple de la baguette en diamant"
-  ]
- },
- {
-  "v": "1.77",
-  "title": "La légende a grandi",
-  "date": "2 novembre 2026",
-  "items": [
-   "La Ferme légendaire demande dix exploits",
-   "Tous les chapitres",
-   "La maison au plus haut",
-   "La Coupe",
-   "Le livre aux trois quarts",
-   "Vingt amis",
-   "La cave",
-   "Le haras",
-   "25 maîtrises en or",
-   "20 rubans au lieu de 10",
-   "Une ferme déjà légendaire le reste"
-  ]
- },
- {
-  "v": "1.76.1",
-  "title": "Correctif",
-  "date": "2 novembre 2026",
-  "items": [
-   "La pluie et l'orage sont nettement plus doux dans l'ambiance"
-  ]
- },
- {
-  "v": "1.76",
-  "title": "Le salon du comptoir",
-  "date": "2 novembre 2026",
-  "items": [
-   "Recettes en lignes, 15 par page",
-   "Filtre Prêtes",
-   "Recherche",
-   "Les boissons attendues passent en tête",
-   "Le salon dessiné grandit et montre ses décors",
-   "Décors en cartes",
-   "Carnet du salon et boissons préférées à découvrir"
-  ]
- },
- {
-  "v": "1.75.3",
-  "title": "Talents et exploits",
-  "date": "2 novembre 2026",
-  "items": [
-   "Odette connaît la crêperie",
-   "Gaston la pizzeria",
-   "Paul la fabrique de pâtes",
-   "Margaux le moulin à huile",
-   "Inès fait payer plus au comptoir",
-   "Les commandes de bière paient selon le rang des bouteilles",
-   "Quatre exploits : Tavernier, Cavalier, Naisseur, Obtenteur"
-  ]
- },
- {
-  "v": "1.75.2",
-  "title": "Retouches de l'audit",
-  "date": "2 novembre 2026",
-  "items": [
-   "Les cinq décors du comptoir comptent",
-   "Idris, Yasmine, Tuomas et Ingrid ont leur boisson préférée",
-   "Les cuves en boucle tournent pendant l'absence",
-   "Le labo dit d'avance quand il y a trop de variétés en cours",
-   "Onglets du haras en entier",
-   "Brasserie, comptoir et haras ont leur ligne dans les statistiques"
-  ]
- },
- {
-  "v": "1.75.1",
-  "title": "Correctif",
-  "date": "2 novembre 2026",
-  "items": [
-   "En changeant de page, l'écran ne s'anime plus deux fois de suite"
-  ]
- },
- {
-  "v": "1.75",
-  "title": "Confort et vitesse",
-  "date": "2 novembre 2026",
-  "items": [
-   "Le jeu s'ouvre deux fois plus vite",
-   "Moins de calculs chaque seconde",
-   "Thème sombre",
-   "Sons d'ambiance selon l'endroit et l'heure",
-   "Un glissement entre les volets",
-   "Code rangé par coin du jeu"
-  ]
- },
- {
-  "v": "1.74.8",
-  "title": "La locomotive dans le bon sens",
-  "date": "2 novembre 2026",
-  "items": [
-   "Au tableau des transports, la locomotive tire ses wagons, cabine contre le premier wagon"
-  ]
- },
- {
-  "v": "1.74.7",
-  "title": "Dernières retouches",
-  "date": "2 novembre 2026",
-  "items": [
-   "Vendre par pages de 15",
-   "Au-delà de 7 pages, des flèches",
-   "Un grand verger à quatre arbres par rangée",
-   "Dans le livre, les exploits avant les trophées des fêtes"
-  ]
- },
- {
-  "v": "1.74.6",
-  "title": "Correctif",
-  "date": "2 novembre 2026",
-  "items": [
-   "Le chiffre de la pastille rouge est bien centré dans la bande des volets"
-  ]
- },
- {
-  "v": "1.74.5",
-  "title": "Pastilles propres",
-  "date": "2 novembre 2026",
-  "items": [
-   "Dans la bande des volets, la pastille se range à côté du nom",
-   "Dans les onglets, elle est plus petite et posée sur le coin du bouton, sans cacher le nom"
-  ]
- },
- {
-  "v": "1.74.4",
-  "title": "Correctif",
-  "date": "2 novembre 2026",
-  "items": [
-   "La bande des volets ne revient plus toute seule au volet ouvert quand on la fait défiler"
-  ]
- },
- {
-  "v": "1.74.3",
-  "title": "Plus clair",
-  "date": "2 novembre 2026",
-  "items": [
-   "Un seul style de titre dans les fiches",
-   "Textes raccourcis",
-   "La mer n'a plus l'air d'un bouton",
-   "Zéphyr sur une bande qui défile",
-   "L'étal plus court",
-   "Pagination sur une ligne",
-   "Les bandes de pastilles se fondent à droite"
-  ]
- },
- {
-  "v": "1.74.2",
-  "title": "Statistiques et réglages",
-  "date": "2 novembre 2026",
-  "items": [
-   "Statistiques en onglets",
-   "26 chiffres rangés par coin, avec icônes",
-   "8 produits qui rapportent le plus, noms en entier",
-   "Record de la meilleure journée",
-   "Réglages en onglets",
-   "Texte de la serre raccourci"
-  ]
- },
- {
-  "v": "1.74.1",
-  "title": "Pages plus courtes",
-  "date": "2 novembre 2026",
-  "items": [
-   "Coupe en onglets",
-   "Maison en onglets",
-   "Progrès en onglets",
-   "Exploits plus serrés",
-   "Graines par pages de 15",
-   "Boissons par pages de 10",
-   "L'étal résume les ventes finies",
-   "Phrase d'état à la brasserie",
-   "Tout mettre en bouteille d'un coup",
-   "Lots de cave serrés",
-   "Verger plus dense"
-  ]
- },
- {
-  "v": "1.74",
-  "title": "S'y retrouver",
-  "date": "2 novembre 2026",
-  "items": [
-   "Chaque volet garde son nom, dans une bande qui défile",
-   "Le menu en tuiles, en trois groupes",
-   "Un point doré pour ce qui est à faire, une pastille rouge seulement quand ça presse",
-   "« Renommée » au niveau 64, la grange garde son icône",
-   "Brasserie, Cave, Comice, Labo et Village en onglets",
-   "Sortir d'un coup les lots finis de la cave",
-   "Graines du marché sur une ligne, atelier sur trois colonnes, vente en lignes, un pré à la fois",
-   "Les astuces se ferment d'un « Compris »",
-   "La liste « à faire » ouvre le bon volet",
-   "La brasserie passe de 10 écrans à 3, la cave de 9 à 4, le village de 5 à 2"
-  ]
- },
- {
-  "v": "1.73",
-  "title": "Le tableau des commandes",
-  "date": "2 novembre 2026",
-  "items": [
-   "Première étape de la grande mise à jour de l'interface",
-   "Village › Commandes en trois volets : À livrer, Transports, Événements",
-   "Une ligne par demande avec où on en est, ce qui est prêt en vert et en tête",
-   "Toucher une ligne ouvre la carte complète",
-   "Une pastille sur chaque volet où quelque chose est prêt",
-   "La page passe de 6 écrans à moins de 2"
-  ]
- },
- {
-  "v": "1.72",
-  "title": "Des dessins à part",
-  "date": "2 novembre 2026",
-  "items": [
-   "Audit des 1 058 dessins de produits",
-   "43 produits qui n'avaient que la pastille d'ingrédient pour se distinguer ont maintenant leur propre dessin",
-   "Les pains aux fèves, d'avoine, au chanvre et la fougasse",
-   "Des gâteaux et des tartes",
-   "Des thés et cafés, des eaux-de-vie et des sauces",
-   "La semoule, des sorbets, la laine, des terrines, le lavaret, l'autruche et quelques plats"
-  ]
- },
- {
-  "v": "1.71.1",
-  "title": "Correctifs",
-  "date": "1er novembre 2026",
-  "items": [
-   "Un objectif de niveau « préparer » se valide aussi pour un produit sans prix de vente",
-   "Relancer le jeu n'efface plus les ruchers des contrées",
-   "Ni les histoires à deux",
-   "Ni le comice, la foire et le livre généalogique"
-  ]
- },
- {
-  "v": "1.71",
-  "title": "Les exploits à jour",
-  "date": "1er novembre 2026",
-  "items": [
-   "La récompense des exploits suit le niveau",
-   "Paliers corrigés pour Bâtisseur, Âme du village et Expérience",
-   "Douze exploits de plus, pour tout ce qui est arrivé depuis la cave",
-   "Tri En cours / Terminés et pages dans le livre de la ferme",
-   "Les noms des fêtes ne se coupent plus au milieu d'un mot"
-  ]
- },
- {
-  "v": "1.70",
-  "title": "Les villageois",
-  "date": "1er novembre 2026",
-  "items": [
-   "Village › Les villageois en liste courte, avec les anniversaires qui viennent et un tri Tous / Cadeau possible / Histoire",
-   "Une fiche par villageois en quatre onglets",
-   "Chacun adore un produit à deviner, aime sa liste, le reste est « bof »",
-   "Un anniversaire par villageois, cadeau triple ce jour-là et un merci pour le produit adoré",
-   "À 5 cœurs, le talent de l'ami",
-   "13 histoires de plus",
-   "4 duos qui partagent les cadeaux, et 4 histoires à deux",
-   "Guide et histoires de Mamie à jour"
-  ]
- },
- {
-  "v": "1.69",
-  "title": "Les ruchers des contrées",
-  "date": "1er novembre 2026",
-  "items": [
-   "Un rucher sur l'île, à l'oasis et au Grand Nord, de 1 à 3 ruches qui ne butinent que leur contrée",
-   "Sept miels de plus, les plus chers",
-   "Sur l'île les abeilles travaillent toute l'année",
-   "À l'oasis elles boivent à la citerne",
-   "Au Grand Nord elles sortent au printemps et en été, ou près d'un poêle allumé",
-   "Chaque nouveau miel a son goût pour l'hydromel et sa page au livre",
-   "Guide, carnet, objectifs des niveaux 38, 59 et 62 et histoire de Mamie à jour"
-  ]
- },
- {
-  "v": "1.68",
-  "title": "L'hydromel à la brasserie",
-  "date": "1er novembre 2026",
-  "items": [
-   "Au niveau 42, la brasserie fait aussi de l'hydromel",
-   "Le miel toutes fleurs va avec tout, chaque miel de fleur aime certains goûts",
-   "Classiques : cyser, pyment, mélomel, métheglin",
-   "Nom automatique, rang selon le miel et les fruits",
-   "Un cruchon de grès à la couleur du miel",
-   "« Mes boissons » avec filtres Bières / Hydromels",
-   "Commandes d'hydromel",
-   "Il vieillit en fût à la cave comme une bière",
-   "Une page du livre par miel brassé",
-   "Objectif du niveau 42, guide et histoire de Mamie"
-  ]
- },
- {
-  "v": "1.67",
-  "title": "Les miels de fleurs",
-  "date": "1er novembre 2026",
-  "items": [
-   "Les abeilles butinent ce qui est en fleur",
-   "Une ruche du champ ses 8 voisines, la ruche d'élevage tout le champ, la serre et le verger",
-   "Si une fleur fait la moitié de ce qui fleurit, avec 4 parcelles au moins, le miel prend son nom",
-   "16 miels : lavande, tournesol, sarrasin, menthe, framboisier, myrtille, coton, basilic, pommier, poirier",
-   "Une ruche dit ce qu'elle prépare et ce qu'il manque",
-   "Un miel de fleur fait partie du stock de miel, vaut jusqu'à × 1,8, se vend depuis la grange",
-   "Onglet Miels dans le carnet du potager, une histoire de Mamie par miel",
-   "Dessins prêts pour les miels de litchi, d'avocatier, d'arganier et de sapin"
-  ]
- },
- {
-  "v": "1.66",
-  "title": "Armand marchande",
-  "date": "1er novembre 2026",
-  "items": [
-   "À chaque visite, Armand fait d'abord une offre",
-   "On peut dire d'accord, demander plus cher, proposer plus ou moins de quantité, ou refuser",
-   "Il accepte, fait une contre-proposition à mi-chemin ou repart pour la semaine, selon son humeur",
-   "Trois demandes au plus",
-   "Être raisonnable rapporte en moyenne 5 à 10 % de plus",
-   "Un mot de Mamie, une page « Marchander » dans le guide"
-  ]
- },
- {
-  "v": "1.65",
-  "title": "Audit des nouveautés",
-  "date": "1er novembre 2026",
-  "items": [
-   "Une recette en boucle recale les rangs de ses ingrédients",
-   "Les jours du graphique des statistiques s'affichent en relatif",
-   "Les comptes à droite des titres restent lisibles sur le décor sombre",
-   "Un test de 4 000 gestes au hasard garde les stocks, rangs, variétés, races, coffre et cépages cohérents"
-  ]
- },
- {
-  "v": "1.64.3",
-  "title": "Le tri du labo",
-  "date": "1er novembre 2026",
-  "items": [
-   "Au labo et dans Mes créations, le tri par espèce passe en liste déroulante au lieu de plusieurs lignes de puces",
-   "La fenêtre « Choisir une plante » des croisements a une recherche, le même tri et des pages"
-  ]
- },
- {
-  "v": "1.64.2",
-  "title": "Aller directement à une page",
-  "date": "1er novembre 2026",
-  "items": [
-   "La barre des pages est aussi en haut de la liste, et ne bouge pas quand on la touche",
-   "Tous les numéros sont visibles jusqu'à 15 pages",
-   "Depuis la barre du bas, on remonte à celle du haut",
-   "Les chiffres sont centrés dans leurs cases"
-  ]
- },
- {
-  "v": "1.64.1",
-  "title": "Des pages et une recherche",
-  "date": "1er novembre 2026",
-  "items": [
-   "« Voir plus » remplacé par des pages numérotées",
-   "Une recherche par nom dans Mes bières, les variétés du labo, Mes créations et les pages du livre",
-   "Les races de Mes créations en cartes courtes"
-  ]
- },
- {
-  "v": "1.64",
-  "title": "Les longues listes",
-  "date": "1er novembre 2026",
-  "items": []
- },
- {
-  "v": "1.63.2",
-  "title": "Le comptoir et le platine",
-  "date": "1er novembre 2026",
-  "items": [
-   "Les recettes du comptoir annoncent le rang que promettent les ingrédients et le meilleur rang en stock",
-   "Le bouton « Du stock » d'un client montre le rang qui sera servi"
-  ]
- },
- {
-  "v": "1.63.1",
-  "title": "Les carnets au bon moment",
-  "date": "1er novembre 2026",
-  "items": [
-   "Le menu montrait « Carnets » dès le niveau 1, sur une fenêtre vide",
-   "La ligne apparaît avec le premier carnet, et la fenêtre dit quand chacun s'ouvre"
-  ]
- },
- {
-  "v": "1.63",
-  "title": "Le coffre des créations et les fromages de race",
-  "date": "1er novembre 2026",
-  "items": [
-   "Une variété du labo ou le produit d'une race fixée se range au coffre avec son nom, ses couleurs et son rang",
-   "Le lait d'une bête de race fixée garde sa race, affichée dans la grange avec son rang",
-   "À la laiterie, on choisit la race au-dessus des recettes",
-   "Il se vend ou va en cave",
-   "Un fromage ordinaire ne prend jamais le lait de race",
-   "Un mot de Mamie"
-  ]
- },
- {
-  "v": "1.62.1",
-  "title": "Bêtes des voisins",
-  "date": "1er novembre 2026",
-  "items": [
-   "Une bête de choix des voisins promettait parfois un « bon gène » déjà au plus haut chez son espèce",
-   "Elle a toujours un vrai caractère au-dessus de la moyenne"
-  ]
- },
- {
-  "v": "1.62",
-  "title": "Les cépages",
-  "date": "1er novembre 2026",
-  "items": [
-   "Chaque variété garde le rang de ses récoltes, affiché dans la grange et au labo",
-   "Au marché, l'espèce part avant les variétés",
-   "Une variété vendue l'est au prix de son rang",
-   "À l'atelier, au comptoir et à la brasserie, une variété apporte son goût et le vrai rang de ses unités",
-   "Maturation lente, Calibre et Chance jouent au verger, à l'île, à l'oasis et au Grand Nord",
-   "Vins de cépage : au pressoir ou à la cuverie, on choisit sa variété de raisin ou de pomme",
-   "Ses bouteilles se vendent ou vont en cave",
-   "Au château, une cuvée de cépage en platine gagne un cran de classement",
-   "Deux mots de Mamie"
-  ]
- },
- {
-  "v": "1.61.2",
-  "title": "Sans notifications",
-  "date": "1er novembre 2026",
-  "items": [
-   "Les rappels en arrière-plan sont retirés",
-   "Sur téléphone, le système endort le jeu dès qu'on le quitte",
-   "Le réglage « Rappels en arrière-plan » disparaît"
-  ]
- },
- {
-  "v": "1.61.1",
-  "title": "Notes de version",
-  "date": "1er novembre 2026",
-  "items": [
-   "Réglages › Mises à jour affichait la 1.61 sans son texte",
-   "Elle s'affiche en entier, comme la 1.20 qui manquait aussi",
-   "Chaque version se lit maintenant en tirets courts, un par changement"
-  ]
- },
- {
-  "v": "1.61",
-  "title": "Objectifs, compétences et pizzeria",
-  "date": "1er novembre 2026",
-  "items": [
-   "Chaque niveau demande d'essayer ce qu'il vient d'ouvrir",
-   "Les compétences refaites : huit branches et 66 rangs, points rendus aux anciennes parties",
-   "Une recette qu'on ne peut pas lancer ouvre la liste de ses ingrédients",
-   "La pizzeria : la margherita quitte le four à pain",
-   "Cire d'abeille et pizzas redessinées"
-  ]
- },
- {
-  "v": "1.60",
-  "title": "Retours de jeu",
-  "date": "1er novembre 2026",
-  "items": [
-   "La neige et la pluie de fond bouclent sans saut",
-   "Au doigt, le champ laisse défiler la page",
-   "Sur ordinateur, les noms des bâtiments des cartes du Village grandissent avec la carte",
-   "Les niveaux 2 à 14 demandent plus d'expérience",
-   "Réglages › Mises à jour : toutes les versions du jeu, de la plus récente à la plus ancienne"
-  ]
- },
- {
-  "v": "1.59.2",
-  "title": "L'atelier au niveau 2",
-  "date": "27 octobre 2026",
-  "items": [
-   "L'onglet Atelier s'ouvrait au niveau 3 alors que le four à pain se débloque au niveau 2",
-   "Il s'ouvre maintenant avec la première machine"
-  ]
- },
- {
-  "v": "1.59.1",
-  "title": "Les fromages ont chacun leur identité",
-  "date": "27 octobre 2026",
-  "items": [
-   "Beaufort, comté, tomme de montagne, tomme de brebis, munster, cantal, fromage aux fleurs d'alpage"
-  ]
- },
- {
-  "v": "1.59",
-  "title": "L'audit complet",
-  "date": "27 octobre 2026",
-  "items": [
-   "Corrigé : boutons et cartes collés, textes qui sortaient, onglets tronqués, cartes à bouton large",
-   "90 apostrophes, durées et comptes insécables, durées rondes, grands nombres groupés",
-   "Trois dessins cassés, erreur d'un second appui sur une fenêtre qui se ferme",
-   "Écran rafraîchi 5 à 10 fois plus vite en fin de partie, Village deux fois plus rapide à ouvrir"
-  ]
- },
- {
-  "v": "1.58.7",
-  "title": "Nourrir et Ramasser reviennent",
-  "date": "27 octobre 2026",
-  "items": [
-   "Sous les prés de l'oasis et du Grand Nord, seul le bouton Acheter est retiré"
-  ]
- },
- {
-  "v": "1.58.6",
-  "title": "Boutons trop longs et cartes d'enclos",
-  "date": "27 octobre 2026",
-  "items": [
-   "Les boutons longs des rangées de boutons passent à la ligne au lieu de dépasser",
-   "Sous les prés de l'oasis et du Grand Nord, plus de boutons Nourrir, Ramasser, Acheter"
-  ]
- },
- {
-  "v": "1.58.5",
-  "title": "Labo : le bouton qui dépassait",
-  "date": "27 octobre 2026",
-  "items": [
-   "Dans « Croiser des plantes », le bouton « Découvrir la portée » passe à la ligne au lieu de dépasser de la carte sur téléphone"
-  ]
- },
- {
-  "v": "1.58.4",
-  "title": "Pré ou liste",
-  "date": "27 octobre 2026",
-  "items": [
-   "Sous les vergers de l'oasis et du Grand Nord, un choix « Le pré / L'étable » comme dans Animaux"
-  ]
- },
- {
-  "v": "1.58.3",
-  "title": "Le pré sous le verger",
-  "date": "27 octobre 2026",
-  "items": [
-   "L'enclos de la palmeraie et l'étable de rondins ne figurent plus dans l'onglet Animaux",
-   "Leurs bêtes se promènent maintenant dans un pré placé sous leur verger, dans les vues oasis et Grand Nord"
-  ]
- },
- {
-  "v": "1.58.2",
-  "title": "Goûts des villageois",
-  "date": "27 octobre 2026",
-  "items": [
-   "Idris aime le tamarin et la figue de Barbarie, Tuomas le genièvre, Ingrid l'aronia"
-  ]
- },
- {
-  "v": "1.58.1",
-  "title": "Trois recettes par fruit",
-  "date": "27 octobre 2026",
-  "items": [
-   "Chacun des 12 nouveaux fruits entre maintenant dans trois recettes existantes"
-  ]
- },
- {
-  "v": "1.58",
-  "title": "Les vergers de l'oasis et du Grand Nord",
-  "date": "27 octobre 2026",
-  "items": [
-   "Deux vergers à part, comme celui des îles, neuf arbres chacun",
-   "Argousier, épicéa, sorbier + pommettier, merisier à grappes, pin cembro, genévrier, sureau noir",
-   "Oasis : chaque arbre boit 4 L/h à la citerne",
-   "Nord : rustiques, deux fois moins vite la nuit de gel sans poêle, l'aurore les accélère",
-   "Les arbres déjà plantés dans les cases déménagent au verger",
-   "Le dattier ne fait plus d'ombre : c'est le sorgho",
-   "Chaque nouveau fruit entre dans une recette existante",
-   "Deux mots de Mamie",
-   "Guide à jour"
-  ]
- },
- {
-  "v": "1.57.4",
-  "title": "Le pré et l'étable des bêtes de l'oasis et du Nord",
-  "date": "27 octobre 2026",
-  "items": [
-   "L'onglet Animaux montre maintenant l'enclos de la palmeraie et l'étable de rondins comme des prés à part entière : une pastille par abri, le pré où elles se promènent, l'étable en fiches, les naissances et les associations",
-   "Les sections du Voyages restent"
-  ]
- },
- {
-  "v": "1.57.3",
-  "title": "Traîneau et caravane pleins",
-  "date": "27 octobre 2026",
-  "items": [
-   "Les produits chargés ne s'alignent plus en rangée qui dépasse de l'écran sur la carte du traîneau et de la caravane",
-   "Ils se déchargent d'un toucher dans la fiche de chargement, qui reste ouverte même quand le traîneau est plein"
-  ]
- },
- {
-  "v": "1.57.2",
-  "title": "L'opéra moins cher",
-  "date": "27 octobre 2026",
-  "items": [
-   "Le dernier grand travail du mécénat passe de 1,2 milliard à 800 millions de pièces, 200 lingots d'or",
-   "Toujours 16 points"
-  ]
- },
- {
-  "v": "1.57.1",
-  "title": "Carte du Village plus lisible",
-  "date": "27 octobre 2026",
-  "items": [
-   "Les noms des bâtiments sur les cartes du Village sont plus petits et ne grossissent plus avec la taille des polices du téléphone",
-   "Ils cachent moins les dessins"
-  ]
- },
- {
-  "v": "1.57",
-  "title": "Finitions et audit de la 1.56",
-  "date": "27 octobre 2026",
-  "items": [
-   "Audit de la 1.56",
-   "Le filtre du comptoir passe à trois familles",
-   "Les espaces avant « : ? !",
-   "» et dans les guillemets deviennent insécables à l'affichage",
-   "La première aurore boréale prend une photo dans l'album",
-   "Mamie dit un mot aux niveaux 61 et 64",
-   "Plan du Grand Nord mis à jour"
-  ]
- },
- {
-  "v": "1.56",
-  "title": "64 niveaux",
-  "date": "27 octobre 2026",
-  "items": [
-   "Le maximum passe de 60 à 64",
-   "L'oasis passe aux niveaux 59 à 61, le Grand Nord aux niveaux 62 à 64, une machine par niveau",
-   "De 59 à 64, 19 à 22 recettes par niveau",
-   "25 recettes de fin de partie passent plus tôt",
-   "Anciennes parties : expérience totale gardée, tout ce qui était ouvert le reste",
-   "Détail : « Plan Étalement 64 »"
-  ]
- },
- {
-  "v": "1.55.1",
-  "title": "Audit des 1.51 à 1.55",
-  "date": "27 octobre 2026",
-  "items": [
-   "Blizzard et aurore ne tombent plus d'un coup au retour d'une absence",
-   "Les bêtes frileuses comptent la nuit de gel pour sa part de la journée hors-ligne",
-   "Les boissons de l'oasis et du Nord sont payées plein tarif par la caravane et le traîneau",
-   "« ce que débloque un niveau » blindé"
-  ]
- },
- {
-  "v": "1.55",
-  "title": "Les boissons du Grand Nord",
-  "date": "27 octobre 2026",
-  "items": [
-   "Le comptoir passe à 57 boissons",
-   "Huit nouvelles au niveau 60",
-   "Chacune a sa combinaison de gestes",
-   "Le versé de haut sert à l'infusion de chicoutai",
-   "Anecdotes, défis, guide"
-  ]
- },
- {
-  "v": "1.54",
-  "title": "Les boissons de l'oasis",
-  "date": "27 octobre 2026",
-  "items": [
-   "Le comptoir passe à 49 boissons",
-   "Huit nouvelles, niveaux 58 à 60",
-   "Un nouveau geste, le thé versé de haut",
-   "Chaque boisson a sa combinaison de gestes",
-   "Anecdotes de Mamie, défis, guide",
-   "À venir : boissons du Grand Nord si Samuel le veut"
-  ]
- },
- {
-  "v": "1.53",
-  "title": "La cuisine du Grand Nord",
-  "date": "27 octobre 2026",
-  "items": [
-   "Trois machines d'un bloc au niveau 60, chacune après son chantier du Nord et 42 recettes",
-   "Dessins validés sur planche, une anecdote de Mamie par plat, voisins, traîneau ×2,6 pour ces plats",
-   "À venir : boissons du comptoir de l'oasis"
-  ]
- },
- {
-  "v": "1.52.1 et 1.52.2",
-  "title": "Le traîneau, le blizzard et l'aurore",
-  "date": "27 octobre 2026",
-  "items": [
-   "Chapitre 24 complété par le relais des traîneaux et le marché de glace",
-   "Le traîneau : 4 rennes adultes, 18 charges de 10, 8 heures",
-   "Le blizzard et l'aurore boréale",
-   "À venir : 1.53"
-  ]
- },
- {
-  "v": "1.52",
-  "title": "L'étable de rondins",
-  "date": "27 octobre 2026",
-  "items": [
-   "Chapitre 24 « Les aurores d'Ingrid »",
-   "L'étable de rondins accueille 12 bêtes, puis 20 : renne, bœuf musqué, lagopède",
-   "La nuit de gel, renne et lagopède produisent deux fois moins vite hors d'un poêle allumé",
-   "Le bœuf musqué ne craint pas le froid",
-   "Gènes, naissances, 3 associations, foire, Comice, carnet des robes, bulles de Mamie",
-   "À venir : 1.52.1, 1.52.2, 1.53"
-  ]
- },
- {
-  "v": "1.51.1",
-  "title": "",
-  "date": "27 octobre 2026",
-  "items": [
-   "La caravane de l'oasis est rééquilibrée",
-   "Une caravane pleine de produits quelconques ne remplace plus le marché"
-  ]
- },
- {
-  "v": "1.51",
-  "title": "Le Grand Nord",
-  "date": "27 octobre 2026",
-  "items": [
-   "Une troisième contrée dans Voyages, ouverte au niveau 60",
-   "Ici ce n'est pas l'eau qui manque mais la chaleur",
-   "Un poêle chauffe les huit cases autour de lui et brûle une bûche par heure",
-   "Améliorations : poêle en fonte, isolation, caisse à bûches",
-   "Fendre le bois. 6 plantes, 3 associations, la sahti en brasserie, gènes de froid",
-   "À venir : 1.52, 1.53",
-   "À régler : l'étalement du Nord au-delà du niveau 60"
-  ]
- },
- {
-  "v": "1.50.3",
-  "title": "",
-  "date": "26 octobre 2026",
-  "items": [
-   "Le terrain de la palmeraie n'est plus un carré jaune"
-  ]
- },
- {
-  "v": "1.50.2",
-  "title": "",
-  "date": "26 octobre 2026",
-  "items": [
-   "Les fruits sur l'arbre qui n'étaient que des ronds sont redessinés"
-  ]
- },
- {
-  "v": "1.50.1",
-  "title": "",
-  "date": "26 octobre 2026",
-  "items": [
-   "Dans l'oasis encore fermée, le portrait d'Idris était trop grand et débordait sur le titre",
-   "Il est maintenant dans un petit médaillon rond, centré"
-  ]
- },
- {
-  "v": "1.50",
-  "title": "La cuisine de l'oasis",
-  "date": "26 octobre 2026",
-  "items": [
-   "Trois machines après le puits d'Idris, le four en terre, le tajine et la confiserie orientale",
-   "Chaque plante et chaque produit de l'oasis sert au moins une fois",
-   "Amande, pistache, miel, olive, citron, pois chiche, lentille et safran reviennent",
-   "Une anecdote de Mamie par recette",
-   "Les voisins les demandent",
-   "La cuisine de l'oasis arrive d'un bloc avec son voyage"
-  ]
- },
- {
-  "v": "1.49",
-  "title": "L'enclos et les caravanes",
-  "date": "26 octobre 2026",
-  "items": [
-   "Chapitre 22 « Le souk de l'oasis » avec Yasmine l'herboriste",
-   "L'enclos, rangé dans l'oasis",
-   "Elles boivent à la citerne, produisent moitié moins vite au soleil de midi",
-   "La noria : un zébu attelé donne 8 L/h de plus à la source, mais plus de lait",
-   "Les caravanes : 3 dromadaires, 18 charges de 10 produits, 6 heures, 2,4 fois le grossiste, parfois du safran",
-   "La tempête de sable ensable des cases au soleil tous les deux jours environ",
-   "Branchements : naissances, câlins, foire, Comice, carnet des robes, trois associations"
-  ]
- },
- {
-  "v": "1.48",
-  "title": "L'oasis",
-  "date": "26 octobre 2026",
-  "items": [
-   "Le volet « Île » de l'onglet Ferme devient « Voyages », avec deux choix en tête : L'île et L'oasis",
-   "Chapitre 21 « La source d'Idris » : Idris le caravanier, trois chantiers, une carte du désert",
-   "L'oasis : jusqu'à 20 cases, une culture ou un arbre sur chacune",
-   "Six plantes",
-   "La vraie mécanique de l'eau : une citerne remplie par la source et par le chadouf",
-   "Chaque plante boit en poussant, deux fois plus au soleil de midi à 16 h",
-   "Un palmier dattier adulte fait de l'ombre aux huit cases autour",
-   "Sans eau, rien ne meurt",
-   "Branchements : génétique, carnets, brasserie, cultures compagnes, commandes, marché des voisins, guide"
-  ]
- },
- {
-  "v": "1.47.2",
-  "title": "",
-  "date": "26 octobre 2026",
-  "items": [
-   "Un Salon commencé avant la 1.45.2 sur un critère de bête restait affiché jusqu'à sa fin",
-   "Il est remplacé tout de suite par un critère de plante"
-  ]
- },
- {
-  "v": "1.47.1",
-  "title": "",
-  "date": "26 octobre 2026",
-  "items": [
-   "Dans le tiroir « Choisir une plante » du labo, les dessins des plantes remplissaient toute la case",
-   "Le bouton « Viser le Salon » devient « Viser le concours du potager »"
-  ]
- },
- {
-  "v": "1.47",
-  "title": "",
-  "date": "26 octobre 2026",
-  "items": [
-   "Le carnet du potager et le carnet du verger ont deux onglets, comme celui de l'élevage",
-   "Dans la grange, toucher un produit montre « Dont vos variétés »",
-   "Le bouton « Carnet » quitte l'onglet Animaux"
-  ]
- },
- {
-  "v": "1.46.1",
-  "title": "",
-  "date": "26 octobre 2026",
-  "items": [
-   "Le carnet de l'élevage est aussi dans Menu › Carnets, avec les carnets de pêche, du bûcheron"
-  ]
- },
- {
-  "v": "1.46",
-  "title": "Le carnet de l'élevage",
-  "date": "26 octobre 2026",
-  "items": [
-   "Bouton « Carnet » dans Animaux › Prés",
-   "Les robes : pour chaque espèce, 11 couleurs et 8 motifs",
-   "Une robe s'inscrit dès qu'une bête la porte, une espèce complète rapporte un ruban",
-   "Les raretés toutes espèces confondues",
-   "Constat : aucune bête achetée ne montre de robe",
-   "Elles sortent par les naissances au pré, et les bêtes de choix des voisins en montrent maintenant une sur deux environ",
-   "Les associations au pré : 11 couples d'espèces dans un même pré, 8 qui s'entraident et 3 qui se gênent",
-   "Le pré affiche celles qui jouent, le carnet les garde avec une anecdote de Mamie chacune"
-  ]
- },
- {
-  "v": "1.45.2",
-  "title": "",
-  "date": "26 octobre 2026",
-  "items": [
-   "Le Comice ne garde que les bêtes",
-   "Les variétés retrouvent leur concours au labo, « le concours du potager »",
-   "Le Comice prend vie : chaque catégorie a son jury, qui regarde surtout les gènes, la beauté",
-   "Votre bête en grand avec une médaille, la note en quatre barres",
-   "Chaque ferme voisine présente une vraie bête",
-   "Podium à médailles",
-   "Bêtes en lice dans l'en-tête, guirlande de fanions",
-   "Palmarès de toutes vos espèces, primées ou à primer"
-  ]
- },
- {
-  "v": "1.45.1",
-  "title": "",
-  "date": "26 octobre 2026",
-  "items": [
-   "La fiche d'une bête montre ses gènes dès le niveau 8, chacun avec ce qu'il fait",
-   "La moyenne de l'espèce en jaune, le surplus en vert",
-   "Un « ? » vers la page « L'élevage » du guide, qui liste tous les gènes"
-  ]
- },
- {
-  "v": "1.45",
-  "title": "L'Élevage",
-  "date": "26 octobre 2026",
-  "items": [
-   "Naissances au pré : un interrupteur par pré, éteint par défaut",
-   "Deux adultes de la même espèce ont un petit toutes les 3 à 12 h, même jeu fermé",
-   "La nature ramène souvent un bon gène vers la moyenne, sans mutation",
-   "Deux parents de même race la transmettent",
-   "Foire aux bestiaux : 3 à 5 acheteurs avec une espèce, un nombre et des exigences",
-   "Prix 0,8 × l'espèce × 1,4 par exigence × 2 race",
-   "Le jeu propose d'abord les bêtes les moins précieuses",
-   "La vente de la fiche devient « Vendre au maquignon »",
-   "Bêtes des voisins : une bête de choix par ferme et par jour, avec un bon gène",
-   "Comice agricole : remplace le Salon",
-   "3 catégories par semaine parmi vos espèces et le potager",
-   "Note sur 100",
-   "Contre les quatre fermes voisines",
-   "Premier prix : ruban, pièces, plaque « Primée »",
-   "Réputation de l'élevage : cinq paliers, +5 % à la foire chacun",
-   "Nom par défaut de l'élevage : « Les Quatre Vents »",
-   "Anecdotes de Mamie, guide"
-  ]
- },
- {
-  "v": "1.44.1 et 1.44.2",
-  "title": "",
-  "date": "26 octobre 2026",
-  "items": [
-   "Le « ? » des onglets bien centré",
-   "Dans l'onglet Animaux, les volets Écuries, Concours et Élevage sont réunis en un seul volet « Haras »",
-   "Textes du guide et des bulles de Mamie mis à jour"
-  ]
- },
- {
-  "v": "1.44",
-  "title": "Améliorations sans nouveau gameplay",
-  "date": "26 octobre 2026",
-  "items": [
-   "Fluidité et batterie : le ciel ne refait plus un fondu chaque seconde",
-   "Mesuré sur une partie niveau 60 : script divisé par 2, recalcul des styles par 3, mise en page quasi nulle",
-   "Sauvegarde : une sauvegarde abîmée n'est plus remplacée par une ferme neuve : elle est gardée de côté et le jeu repart tout seul de la plus récente copie de secours, avec un message",
-   "Téléphone plein : les copies de secours sont libérées et un message prévient",
-   "Le navigateur est prié de ne pas effacer la ferme",
-   "Réglages : date du dernier export",
-   "Clarté : un « ? » au bout des onglets du haut ouvre la page du guide de chaque écran",
-   "Les nombres du guide sont calculés",
-   "L'expérience s'affiche en icône à la pêche"
-  ]
- },
- {
-  "v": "1.43",
-  "title": "Les mini-jeux",
-  "date": "26 octobre 2026",
-  "items": [
-   "Comptoir : cinq nouveaux gestes répartis sur 30 boissons, mousse en trois motifs avec un temps limité",
-   "Pêche : les poissons moyens demandent 2 tirages, les gros et légendaires 3, avec un raté toléré",
-   "Record de poids affiché et « Nouveau record ! »",
-   "Chevaux : un record par discipline et par cheval, et au galop un fantôme doré de votre meilleur passage",
-   "Aide « ? » à la pêche, guide mis à jour"
-  ]
- },
- {
-  "v": "1.42",
-  "title": "Les niveaux mènent quelque part",
-  "date": "25 octobre 2026",
-  "items": [
-   "Dans Menu › Les niveaux, chaque ligne se touche et emmène là où ça se passe"
-  ]
- },
- {
-  "v": "1.41",
-  "title": "Marché plus court et mine corrigée",
-  "date": "25 octobre 2026",
-  "items": [
-   "Acheter : les graines en onglets",
-   "Dans chaque rayon, seulement les deux prochains objets bloqués, le reste résumé sur une ligne",
-   "Machines possédées et améliorations au maximum repliées sur une ligne",
-   "Vendre : les places libres de l'étal sur une seule case",
-   "Le grossiste par familles, les plus belles valeurs d'abord, 24 à la fois avec « Voir les autres »",
-   "Au niveau 60, chaque page passe d'environ 6 000 à 2 200 pixels",
-   "Bug : changer de profondeur dans la mine faisait réapparaître et changer toutes les pierres",
-   "Chaque profondeur garde maintenant ses pierres et leurs temps de repousse"
-  ]
- },
- {
-  "v": "1.40",
-  "title": "La Coupe de la vallée",
-  "date": "25 octobre 2026",
-  "items": [
-   "La vraie ligne d'arrivée",
-   "Grands défis : on choisit parmi trois défis proposés",
-   "Deux médailles de plus, platine et diamant",
-   "Une médaille gagnée avant la date ouvre tout de suite le choix du suivant",
-   "Coupe : points par médaille",
-   "Six rangs, chacun avec un bonus permanent",
-   "Classement contre les quatre fermes rivales, qui gagnent leurs médailles à votre rythme moyen",
-   "Domaine des légendes : une carte où chaque défi gagné en or pose son monument",
-   "Les 17 en or dressent la grande statue dorée",
-   "Mécénat : six grands travaux, une anecdote de Mamie chacun",
-   "Tout se garde au prestige"
-  ]
- },
- {
-  "v": "1.39",
-  "title": "Des rivales qui se battent",
-  "date": "25 octobre 2026",
-  "items": [
-   "Nouveau moteur des fermes rivales au concours de la semaine",
-   "Leur but suit la moyenne de vos 3 derniers concours, multipliée par leur caractère et +6 % par ligue",
-   "Elles jouent par séances à leurs heures et, dans les deux derniers jours",
-   "La carte du concours donne l'écart avec la ferme devant et le fil des rivales",
-   "Simulation : semaine normale 6 % de victoires, +10 % d'effort 36 %, +20 % 84 %",
-   "Une semaine à -20 % finit dernière une fois sur trois",
-   "Concours de pêche : les rivales pêchent par 3 à 5 sorties pendant le week-end"
-  ]
- },
- {
-  "v": "1.38",
-  "title": "Confort et équilibre",
-  "date": "25 octobre 2026",
-  "items": [
-   "Désencombrement : cartes repliables qui se déplient d'elles-mêmes quand quelque chose est prêt",
-   "Carte « Livraisons »",
-   "Filtre de l'atelier et machines prêtes en premier",
-   "Places libres de la cave sur une ligne",
-   "Tiroir « Que planter ? » en onglets avec les 6 dernières graines en haut",
-   "Astuces de bas de page cachées dès le niveau 15",
-   "Interrupteurs « replanter » et « semoir » seulement dans les réglages"
-  ]
- },
- {
-  "v": "1.37.2",
-  "title": "Audit",
-  "date": "25 octobre 2026",
-  "items": [
-   "En-tête qui tient sur les téléphones étroits",
-   "Cultures qui poussent à la vraie vitesse pendant l'absence",
-   "Arrière-plan rejoué seconde par seconde jusqu'à 5 minutes",
-   "Pré vide et marché de nuit lisibles",
-   "Classement du concours de pêche, boutique du château, conseil de Mamie et magasin remis en page",
-   "Revente des graines en étiquette"
-  ]
- },
- {
-  "v": "1.37.1",
-  "title": "Retours de Samuel",
-  "date": "25 octobre 2026",
-  "items": [
-   "En-tête compact au niveau 60",
-   "Plantations de l'île au même dessin que les parcelles du champ",
-   "Les carnets quittent leurs pages pour le menu, onglet « Carnets »",
-   "Deuxième poste par machine pour faire tourner deux lots à la fois",
-   "Revente des graines et pousses d'arbre en stock",
-   "Le jeu suit l'heure réelle"
-  ]
- },
- {
-  "v": "1.37",
-  "title": "Le château et ses vignes",
-  "date": "",
-  "items": [
-   "— *publiée le 25 octobre 2026*",
-   "Cuvée du château classée, vente en primeur, boutique avec visiteurs et accords mets et vins",
-   "12 recettes",
-   "Réputation de 0 à 5 étoiles gardée au prestige"
-  ]
- },
- {
-  "v": "1.36",
-  "title": "60 niveaux",
-  "date": "",
-  "items": [
-   "En dernier : le niveau maximum passe à 60, l'alpage à 50, le Grand Haras à 45",
-   "Machines, plantes, animaux et recettes étalés sur 60 niveaux",
-   "5 heures de jeu de plus qu'aujourd'hui pour atteindre le maximum"
-  ]
- },
- {
-  "v": "1.35",
-  "title": "Nouveaux animaux",
-  "date": "",
-  "items": [
-   "Pigeon, pintade, chèvre angora, faisan, autruche, yack",
-   "11 produits, 36 recettes",
-   "Le yack rejoint la transhumance"
-  ]
- },
- {
-  "v": "1.34",
-  "title": "Cave et comptoir",
-  "date": "",
-  "items": [
-   "7 boissons, 8 produits en cave"
-  ]
- },
- {
-  "v": "1.33",
-  "title": "Poissons et lagon",
-  "date": "",
-  "items": [
-   "Le volet Étang devient « Pêche »",
-   "Goujon, lavaret, thon, calmar, raie, dorade, poulpe, langouste, vivaneau, mahi-mahi",
-   "Un 4e coin de pêche, le lagon, ouvert avec l'île",
-   "34 recettes"
-  ]
- },
- {
-  "v": "1.32",
-  "title": "Cultures de l'île",
-  "date": "",
-  "items": [
-   "Taro, curcuma, aloe vera, hibiscus, patchouli, arachide, haricot rouge, piment des îles, 33 recettes"
-  ]
- },
- {
-  "v": "1.31",
-  "title": "Nouveaux arbres",
-  "date": "",
-  "items": []
- },
- {
-  "v": "1.30",
-  "title": "Nouvelles cultures",
-  "date": "",
-  "items": []
- },
- {
-  "v": "1.29.1",
-  "title": "",
-  "date": "22 octobre 2026",
-  "items": [
-   "Les villageois de la page Village se replient comme l'Agenda"
-  ]
- },
- {
-  "v": "1.29",
-  "title": "Le coffre-fort de la grange",
-  "date": "22 octobre 2026",
-  "items": [
-   "Dès le niveau 15, un coffre pour garder ce qu'on collectionne ou réserve pour plus tard. 6 emplacements",
-   "On y range un produit en choisissant sa qualité et sa quantité depuis la fiche du produit dans la grange",
-   "Un emplacement garde 99 unités d'un produit à une qualité",
-   "Au coffre, rien ne se vend, ne part en commande ou en recette, et rien ne prend de place dans la grange",
-   "« Reprendre » rend le produit avec sa qualité",
-   "Une nouvelle ferme vide le coffre mais il garde sa taille"
-  ]
- },
- {
-  "v": "1.28.1",
-  "title": "La bière a une qualité",
-  "date": "",
-  "items": [
-   "Un brassin prend le rang du score moyen de ses ingrédients",
-   "Les bouteilles gardent leur rang en stock, se vendent plus cher et entrent en cave avec leur rang"
-  ]
- },
- {
-  "v": "1.28",
-  "title": "Platine et diamant",
-  "date": "22 octobre 2026",
-  "items": [
-   "Deux qualités de plus après l'or",
-   "Une unité en or d'une récolte, d'un produit d'élevage",
-   "Un plat prend le rang du score moyen de ses ingrédients",
-   "Une variété savoureuse seule plafonne à 2,4",
-   "La vente prend le plus haut rang d'abord",
-   "« or ou mieux » accepte platine et diamant dans les commandes, chez les voisins et dans les défis",
-   "Un lot de cave tout en argent, en or, en platine ou en diamant garde son rang à la sortie",
-   "Grange, atelier, marché, Grand livre et cave affichent les rangs",
-   "L'étoile du diamant est une pierre taillée"
-  ]
- },
- {
-  "v": "1.27.2",
-  "title": "La qualité en stock se voit",
-  "date": "22 octobre 2026",
-  "items": [
-   "Dans la grange, la fiche d'un produit montre combien d'unités sont normales, en argent ou en or",
-   "À l'atelier, chaque recette faisable annonce la qualité que donnerait le lot avec le stock actuel"
-  ]
- },
- {
-  "v": "1.27.1",
-  "title": "Cartes repliables dans Village | Commandes",
-  "date": "",
-  "items": [
-   "« Villageois » et « Fermes voisines » se replient comme l'Agenda en une ligne fine",
-   "Un toucher déplie",
-   "Le choix est retenu sur l'appareil",
-   "Sans choix : les fermes voisines sont repliées"
-  ]
- },
- {
-  "v": "1.27",
-  "title": "Des demandes de voisins plus riches",
-  "date": "22 octobre 2026",
-  "items": [
-   "De 0 à 2 cœurs, un plat par demande",
-   "À partir de 3 cœurs, deux plats, tous différents et de la spécialité du voisin",
-   "Un plat peut être exigé en argent ou mieux, ou en or",
-   "L'étoile s'affiche sur la ligne, et à la livraison les plats ordinaires partent d'abord, puis l'argent",
-   "La commande spéciale de la semaine",
-   "Récompense pièces ×2,5, 3 matériaux rares, expérience et 2 points d'amitié",
-   "Elle disparaît lundi",
-   "Encadré doré en haut de la carte des fermes voisines",
-   "Ligne dans « À faire »",
-   "Aussi : les textes des voisins au masculin, les lignes « à produire » à la même taille que les autres"
-  ]
- },
- {
-  "v": "1.26.3",
-  "title": "Les voisins demandent leurs plats",
-  "date": "",
-  "items": [
-   "Les demandes des fermes voisines ne sont plus un produit au hasard mais un plat de leur spécialité",
-   "Jamais deux fois le même d'affilée",
-   "Tant que la ferme n'a pas les ateliers, ils demandent des produits bruts de leur spécialité",
-   "La spécialité s'affiche sous leur nom",
-   "Les plats de fête, outils, bijoux, selles"
-  ]
- },
- {
-  "v": "1.26",
-  "title": "Le marché des voisins",
-  "date": "21 octobre 2026",
-  "items": [
-   "Dès le niveau 12, Marché | Acheter, rayon Voisins",
-   "Les quatre fermes voisines tiennent un étal renouvelé toutes les 4 heures",
-   "Avec les cœurs : de 2 à 6 offres, plus de quantité, prix de 2,4 à 1,6 fois la valeur",
-   "À 5 cœurs, un coup de cœur en qualité or",
-   "La demande d'achat, l'étal à l'envers",
-   "2 à 4 demandes",
-   "Chaque achat remplit la fidélité du voisin",
-   "Livraisons dans « À faire », page du guide, bulle de Mamie",
-   "Aussi : la vérification des recettes au chargement lisait mal les viandes. 1.26.1 : « voisins » au masculin. 1.26.2 : le mur du salon en petites vignettes"
-  ]
- },
- {
-  "v": "1.25",
-  "title": "Les cultures compagnes",
-  "date": "21 octobre 2026",
-  "items": [
-   "Des cultures voisines s'entraident ou se gênent",
-   "Malus pousse −10 %, qualité −8 ou nuisibles ×1,5",
-   "Plafonds par parcelle",
-   "La lavande et le sarrasin aident toutes leurs voisines, l'engrais vert fait pousser la céréale",
-   "Une feuille verte ou fanée s'affiche entre deux parcelles, un insigne pour les trois sœurs",
-   "Le carnet du potager : chaque association se découvre à la récolte",
-   "Récompenses à 5, 10, 20 et 30 et un ruban au carnet complet",
-   "Le conseil de Mamie : un défi par jour",
-   "Page du guide, bulle de Mamie, niveau 9 annoncé"
-  ]
- },
- {
-  "v": "1.24.7",
-  "title": "Recettes dans l'ordre",
-  "date": "",
-  "items": [
-   "Onze recettes s'ouvraient avant un de leurs ingrédients",
-   "Elles s'ouvrent maintenant au niveau de leur ingrédient le plus tardif, calculé au chargement",
-   "Un test le vérifie pour toutes les recettes"
-  ]
- },
- {
-  "v": "1.24.6",
-  "title": "Tout à jour et chapitres débloqués",
-  "date": "21 octobre 2026",
-  "items": [
-   "Ces quatre recettes s'ouvrent maintenant au niveau du chapitre",
-   "Un test vérifie que plus aucun chantier ne demande un produit d'un niveau supérieur",
-   "Plus aucun chapitre n'a plus de 2 ou 3 niveaux d'écart, le temps de réunir les produits"
-  ]
- },
- {
-  "v": "1.24.5",
-  "title": "",
-  "date": "",
-  "items": [
-   "Couleur fantaisiste visible dans les mini-jeux",
-   "Victoire écrasante = 2 rosettes",
-   "Anciens chevaux gardés bais",
-   "Fers dessinés sous les sabots",
-   "Effet de l'aptitude réglé avec un joueur simulé"
-  ]
- },
- {
-  "v": "1.24.4",
-  "title": "",
-  "date": "",
-  "items": [
-   "Trois chevaux différents par semaine au concours",
-   "Cartes des écuries repliables",
-   "L'aptitude rend le mini-jeu plus facile",
-   "Séances de 3 à 8 points",
-   "Lignée célèbre à 3 champions",
-   "Fiche de naissance"
-  ]
- },
- {
-  "v": "1.24.3",
-  "title": "Audit des chevaux",
-  "date": "",
-  "items": [
-   "Pastilles de forme qui débordaient sur téléphone, collection et arbre de famille retouchés",
-   "Brossage toutes les 2 heures réelles",
-   "Robes dans les mini-jeux, tenue d'endurance au galop du raid, chronomètre coupé, poulains coupés",
-   "Division « Prestige », fourchette des rivales, saillies revalorisées",
-   "Version affichée à jour"
-  ]
- },
- {
-  "v": "1.24.2",
-  "title": "L'élevage",
-  "date": "21 octobre 2026",
-  "items": [
-   "Volet Animaux › Élevage",
-   "Chaque cheval a une robe et des marques héritées par gènes dominants ou récessifs",
-   "L'apparence fantaisiste du labo se pose par-dessus",
-   "Poulain, jeune, puis adulte",
-   "Retraite d'un champion Élite : saillies chaque jour, ses poulains naissent avec 10 points dans sa spécialité",
-   "Livre généalogique : nom d'élevage, collection des robes et marques, descendants, arbre de famille",
-   "Lignée célèbre : un ruban",
-   "Un générateur de chevaux a servi à valider les règles"
-  ]
- },
- {
-  "v": "1.24.1",
-  "title": "La sellerie de Jules",
-  "date": "",
-  "items": [
-   "Neuf objets d'équipement, bonus de concours"
-  ]
- },
- {
-  "v": "1.24",
-  "title": "Les concours",
-  "date": "21 octobre 2026",
-  "items": [
-   "Concours de la semaine, cinq divisions, Grand Prix du mois, Jules, rosettes, coupes, décorations, Agenda"
-  ]
- },
- {
-  "v": "1.23.3",
-  "title": "Mini-jeux du dressage et du raid",
-  "date": "",
-  "items": []
- },
- {
-  "v": "1.23.2",
-  "title": "Mini-jeux du galop et du saut",
-  "date": "",
-  "items": []
- },
- {
-  "v": "1.23.1",
-  "title": "",
-  "date": "",
-  "items": [
-   "Le volet Écuries rejoint l'onglet Animaux"
-  ]
- },
- {
-  "v": "1.23",
-  "title": "Les grandes écuries",
-  "date": "21 octobre 2026",
-  "items": [
-   "Première version du Grand Haras",
-   "Niveau 44, Animaux › Écuries : 4, 8 puis 12 boxes",
-   "Forme",
-   "Quatre aptitudes plafonnées par un gène",
-   "Soins, ration, randonnée",
-   "Nouveau cheval de sport dessiné"
-  ]
- },
- {
-  "v": "1.22",
-  "title": "La génétique s'étoffe",
-  "date": "20 octobre 2026",
-  "items": [
-   "16 apparences et 8 caractères discrets de plus. 1.22.1 à 1.22.5"
-  ]
- },
- {
-  "v": "1.21",
-  "title": "Le Guide du fermier complet",
-  "date": "20 octobre 2026",
-  "items": [
-   "43 pages en 11 rubriques, recherche, « Y aller ». 1.21.1 à 1.21.3"
-  ]
- },
- {
-  "v": "1.20 à 1.20.2",
-  "title": "Le domaine",
-  "date": "20 octobre 2026",
-  "items": [
-   "9 branches de 5 paliers, vue d'ensemble avec ses bâtiments"
-  ]
- },
- {
-  "v": "1.19.2",
-  "title": "L'Agenda",
-  "date": "20 octobre 2026",
-  "items": [
-   "Ce qui est là et ce qui arrive, avec les comptes à rebours"
-  ]
- },
- {
-  "v": "1.19.1",
-  "title": "Armand, chef du Grand Hôtel",
-  "date": "19 octobre 2026",
-  "items": [
-   "Une visite par semaine, produit phare, commandes énormes à prix fixe, fidélité"
-  ]
- },
- {
-  "v": "1.19",
-  "title": "La maîtrise étendue",
-  "date": "19 octobre 2026",
-  "items": [
-   "Platine et diamant après l'or"
-  ]
- },
- {
-  "v": "1.18.9",
-  "title": "",
-  "date": "",
-  "items": [
-   "La fenêtre « Agrandir » ne se referme plus aussitôt sur téléphone"
-  ]
- },
- {
-  "v": "1.18.6 à 1.18.8",
-  "title": "La serre",
-  "date": "",
-  "items": [
-   "Vitres à petits carreaux, 6 à 12 parcelles, pousse ×1,6, primeurs",
-   "Menthe, poivre noir et orchidée, 9 nouveaux produits"
-  ]
- },
- {
-  "v": "1.18.5",
-  "title": "",
-  "date": "",
-  "items": [
-   "La truite est pêchable"
-  ]
- },
- {
-  "v": "1.18.4",
-  "title": "Audit UX",
-  "date": "",
-  "items": []
- },
- {
-  "v": "1.18.3",
-  "title": "",
-  "date": "",
-  "items": [
-   "Le jeu en ligne prend d'abord la dernière version à chaque ouverture"
-  ]
- },
- {
-  "v": "1.18.2",
-  "title": "",
-  "date": "",
-  "items": [
-   "Les histoires de Mamie Odette vivent dans les fiches du Grand livre"
-  ]
- },
- {
-  "v": "1.18.1",
-  "title": "Le Grand livre",
-  "date": "",
-  "items": [
-   "Étagère de 17 pages, quatre paliers par page, une fiche par entrée"
-  ]
- },
- {
-  "v": "1.18",
-  "title": "Grands défis",
-  "date": "19 octobre 2026",
-  "items": [
-   "17 grands défis avec 5 nouvelles décorations"
-  ]
- },
- {
-  "v": "1.17.1 à 1.17.4",
-  "title": "",
-  "date": "",
-  "items": [
-   "Le comptoir ne garde que des boissons",
-   "Jour des clients à l'heure locale"
-  ]
- },
- {
-  "v": "1.17",
-  "title": "Le Comptoir",
-  "date": "19 octobre 2026",
-  "items": [
-   "Mini-jeu par boisson, 33 boissons dont 25 nouvelles, clients du village, salon à agrandir et à décorer"
-  ]
- },
- {
-  "v": "1.16",
-  "title": "Les chapitres à 50 niveaux",
-  "date": "18 octobre 2026",
-  "items": [
-   "L'expérience d'un chantier suit le niveau de son chapitre",
-   "Finir un chapitre rapporte des pièces et, dès le chapitre 5, un ruban",
-   "15 chantiers plus légers"
-  ]
- },
- {
-  "v": "1.15.5",
-  "title": "",
-  "date": "",
-  "items": [
-   "Bouton Semer",
-   "Restes de l'audit réglés"
-  ]
- },
- {
-  "v": "1.15.4",
-  "title": "grande revue",
-  "date": "",
-  "items": []
- },
- {
-  "v": "1.15.3",
-  "title": "",
-  "date": "",
-  "items": [
-   "Toucher une bouteille de vin en cave l'affiche en grand"
-  ]
- },
- {
-  "v": "1.15.2",
-  "title": "",
-  "date": "",
-  "items": [
-   "La fenêtre des niveaux ouverte depuis un bouton n'est plus vide"
-  ]
- },
- {
-  "v": "1.15.1",
-  "title": "Bouteilles personnalisées",
-  "date": "",
-  "items": [
-   "Millésime sur l'étiquette, capsule selon l'année, quatre styles d'étiquette, nom de cuvée"
-  ]
- },
- {
-  "v": "1.15",
-  "title": "Le vin",
-  "date": "18 octobre 2026",
-  "items": [
-   "Vin de table dès le niveau 31",
-   "Millésimes",
-   "Cépages créés au labo",
-   "Vendanges et fête du vin avec Margaux"
-  ]
- },
- {
-  "v": "1.14.1",
-  "title": "Nouveau logo",
-  "date": "18 octobre 2026",
-  "items": [
-   "Une tête de vache, icône ronde d'Android, petite icône de notification blanche"
-  ]
- },
- {
-  "v": "1.14",
-  "title": "Les restes",
-  "date": "18 octobre 2026",
-  "items": [
-   "Bois fruitier au fumoir",
-   "Cloche de cuivre, banc de chêne, lanterne de fer",
-   "Cuves de brasserie et enclos du laboratoire au Chantier",
-   "Le manoir",
-   "Le mur du salon"
-  ]
- },
- {
-  "v": "1.13",
-  "title": "Le verger vivant",
-  "date": "18 octobre 2026",
-  "items": [
-   "Saisons des espèces, floraison et ruches, gelée et torches, grande cueillette, fête du cidre, carnet du verger"
-  ]
- },
- {
-  "v": "1.12",
-  "title": "Le verger",
-  "date": "18 octobre 2026",
-  "items": [
-   "Maturité, boutures, greffons rares et de pépinière, soins, échelle et grand panier, cueilleur"
-  ]
- },
- {
-  "v": "1.11",
-  "title": "La nature",
-  "date": "18 octobre 2026",
-  "items": [
-   "Mine à trois profondeurs, forêt à quatre essences, cueillette de saison, charbonnière, forge et scierie",
-   "19 nouveaux matériaux, 23 recettes, 7 bijoux"
-  ]
- },
- {
-  "v": "1.10",
-  "title": "La pêche",
-  "date": "18 octobre 2026",
-  "items": [
-   "L'étang a son volet",
-   "Trois coins, appâts, canne plus vivante, nasses qui pêchent seules toutes les 2 heures",
-   "7 poissons et 13 recettes"
-  ]
- },
- {
-  "v": "1.9",
-  "title": "",
-  "date": "18 octobre 2026",
-  "items": [
-   "La décoration se pose dans un coin de parcelle sans la gâcher",
-   "Lucioles en simple décor",
-   "Le chien se pousse",
-   "Tout ce qu'on livre dans Commandes, le marchand au Marché"
-  ]
- },
- {
-  "v": "1.8.2",
-  "title": "",
-  "date": "",
-  "items": [
-   "Vendre une bête depuis sa fiche"
-  ]
- },
- {
-  "v": "1.8.1",
-  "title": "",
-  "date": "",
-  "items": [
-   "Les nouveaux dessins de la lavande, des biscuits et des salades sont branchés"
-  ]
- },
- {
-  "v": "1.8",
-  "title": "",
-  "date": "18 octobre 2026",
-  "items": [
-   "Une machine par niveau, toujours avec ses recettes et jamais avant la pierre",
-   "Plus de machines offertes au retour",
-   "L'avion-cargo toutes les 48 heures",
-   "Toucher un produit du train pour aller le produire",
-   "Temps du jeu et temps réel clarifiés",
-   "Lavande, biscuits et salades redessinés"
-  ]
- },
- {
-  "v": "1.7",
-  "title": "La génétique repensée",
-  "date": "14 octobre 2026",
-  "items": [
-   "Portées de jeunes plants, deux pollinisations, projets de sélection, variétés dans les bières"
-  ]
- },
- {
-  "v": "1.6.3",
-  "title": "",
-  "date": "",
-  "items": [
-   "La cave repensée : les bières y vieillissent en fût, un soin par étape, hygromètre qui règle le climat seul"
-  ]
- },
- {
-  "v": "1.6.2",
-  "title": "",
-  "date": "",
-  "items": [
-   "Brasserie améliorée : rebrasser et cuves en boucle, étoiles secrètes avant le premier brassin"
-  ]
- },
- {
-  "v": "1.6.1",
-  "title": "",
-  "date": "",
-  "items": [
-   "Fenêtres de l'abbaye corrigées",
-   "Cacao, houblon, riz, soja, sarrasin, café vert et noisette redessinés"
-  ]
- },
- {
-  "v": "1.6",
-  "title": "L'abbaye",
-  "date": "14 octobre 2026",
-  "items": [
-   "Nouvelle étape clé au niveau 35, carte et deux chapitres, Frère Hugues et Agnès",
-   "L'orge et la malterie",
-   "Composer ses bières, leur accord et leur nom",
-   "Le cellier à fûts",
-   "Le livre des bières",
-   "L'île passe au niveau 38"
-  ]
- },
- {
-  "v": "1.5",
-  "title": "",
-  "date": "14 octobre 2026",
-  "items": [
-   "Épinards, concombre, rhubarbe, framboises, sarrasin, piment d'Espelette",
-   "Citronnier, noisetier, cognassier, amandier",
-   "La caille",
-   "La crêperie",
-   "37 recettes"
-  ]
- },
- {
-  "v": "1.4.2",
-  "title": "",
-  "date": "",
-  "items": [
-   "Ligues du concours vérifiées et remises à l'échelle des 50 niveaux",
-   "En jouant 1 h à 1 h 30 par jour, on peut monter jusqu'en diamant"
-  ]
- },
- {
-  "v": "1.4.1",
-  "title": "",
-  "date": "",
-  "items": [
-   "Un chantier ne demande plus rien qui ne soit débloqué au moins un niveau avant son chapitre"
-  ]
- },
- {
-  "v": "1.4",
-  "title": "50 niveaux",
-  "date": "13 octobre 2026",
-  "items": [
-   "Une grande étape par palier",
-   "Chaque niveau ouvre quelque chose",
-   "Les 16 chapitres en une seule histoire",
-   "Anciennes parties converties sans perte",
-   "Fenêtre des niveaux à taille fixe"
-  ]
- },
- {
-  "v": "1.3",
-  "title": "nouveaux produits",
-  "date": "13 octobre 2026",
-  "items": [
-   "8 cultures, 6 arbres, la brebis laitière, le saloir et les seconds produits des bêtes, 7 machines",
-   "Chaque ingrédient sert à 3 recettes au moins, 20 recettes au plus par machine"
-  ]
- },
- {
-  "v": "1.2",
-  "title": "",
-  "date": "13 octobre 2026",
-  "items": [
-   "La ferme la nuit",
-   "Le carnet de Mamie Odette",
-   "Cornes, oreilles et toison selon les gènes, lignée sur deux générations",
-   "Renommer prés, variétés et races",
-   "Verger rééquilibré"
-  ]
- },
- {
-  "v": "1.1",
-  "title": "Les grands défis",
-  "date": "13 octobre 2026",
-  "items": [
-   "Un défi de deux semaines tiré au hasard parmi 12, 4 étapes, médailles, salle des trophées"
-  ]
- },
- {
-  "v": "1.0 bêta 4",
-  "title": "La génétique",
-  "date": "",
-  "items": [
-   "Agathe et Victor, labo : croisements, variétés, plats d'argent et d'or, races, « Mes créations », chef"
-  ]
- },
- {
-  "v": "1.0 bêta 3",
-  "title": "L'Île",
-  "date": "",
-  "items": [
-   "Tiago et Maëva, plantations tropicales, verger des îles, 15 produits, 4 machines, 41 recettes"
-  ]
- },
- {
-  "v": "1.0 bêta 2",
-  "title": "les Prés et le Verger",
-  "date": "",
-  "items": [
-   "20 bêtes par pré, prés à acheter, déménagement",
-   "Verger avec arbres qui vivent, fruits au sol, bois",
-   "Kiwi et kaki"
-  ]
- },
- {
-  "v": "1.0 bêta 2.1",
-  "title": "",
-  "date": "",
-  "items": [
-   "Fiche d'un animal au doigt",
-   "Un appui ramasse ou nourrit, un appui long ouvre la fiche",
-   "Étable dès le premier animal"
-  ]
- },
- {
-  "v": "1.0",
-  "title": "sortie officielle",
-  "date": "12 octobre 2026",
-  "items": [
-   "Audit complet du code, du gameplay et des graphismes, tout corrigé"
-  ]
- },
- {
-  "v": "1.0 bêta",
-  "title": "la refonte totale",
-  "date": "12 octobre 2026",
-  "items": [
-   "Code réécrit en modules, interface à 5 onglets avec menu, fiches en fenêtres du bas, étable",
-   "Sauvegardes 6.2 reprises"
-  ]
- }
+    {
+        v: '1.98',
+        title: "La fabrique d'habitants et les commerces du village",
+        date: '8 novembre 2026',
+        items: [
+            "Fabrique d'habitants : 12 traits (teint, coiffure, barbe, nez, yeux, lunettes, chapeau…) pour des millions de visages",
+            'Huit commerces à reprendre dès le niveau 30 : boulangerie, forge, tissage, poterie, fromagerie, confiserie, charcuterie, poissonnerie',
+            "Chaque artisan a son visage et passe une commande permanente, payée 1,5 fois la valeur du produit, qui n'expire jamais",
+            'Cinq niveaux de confiance : commandes plus grosses et mieux payées',
+            'Village › Commandes › Commerces du village',
+        ],
+    },
+    {
+        v: '1.97',
+        title: 'Le matériel de la cave sert enfin',
+        date: '8 novembre 2026',
+        items: [
+            "L'onglet Matériel n'avait que deux achats",
+            "Cinq équipements s'ajoutent",
+            'Prix de 15 000 à 60 000 pièces, avec planches, pierres, lingots de fer ou de cuivre',
+            'Les anciens équipements ne changent pas',
+        ],
+    },
+    {
+        v: '1.96',
+        title: "Podium, défis éclair, bilan de l'année",
+        date: '8 novembre 2026',
+        items: [
+            'Chaque saison de la ferme finie est classée face aux quatre fermes rivales',
+            "Les trois premiers rangent un souvenir dans l'album",
+            'Le livre montre le dernier podium, le rang et le record de chaque saison',
+            'La carte de la saison rappelle le record du thème',
+            '« Votre année à la ferme » résume les douze dernières saisons',
+            'Défi éclair : sous le grand défi, un bouton le lance',
+            'Un souvenir à 5, 15 et 30 réussis',
+            'Un défi éclair non fini disparaît',
+            "Correctif de la 1.94 : le souk et le grand hiver s'ouvrent bien avec l'oasis et le Grand Nord",
+            'Rien côté prestige',
+        ],
+    },
+    {
+        v: '1.95',
+        title: 'Saisons de la ferme à thèmes',
+        date: '8 novembre 2026',
+        items: [
+            'Les saisons de la ferme passent de 4 à 12 thèmes, soit une année de 48 semaines',
+            'Les produits de chaque thème suivent les recettes des machines',
+            'Chaque saison a ses grands défis',
+            "Chaque saison finie laisse un trophée daté dans l'onglet Défis du livre",
+            'Le dernier palier donne un fanion décoratif',
+            "La bière et l'hydromel brassés, et le miel des ruchers des contrées, comptent pour les saisons",
+            "Rien n'est ajouté côté prestige",
+        ],
+    },
+    {
+        v: '1.94',
+        title: 'Les grands défis à jour',
+        date: '8 novembre 2026',
+        items: [
+            "Sept nouveaux grands défis pour les parties du jeu qui n'en avaient pas",
+            'Chacun a son villageois, sa décoration unique en or et son monument dans le domaine des légendes',
+            "Les listes de produits se complètent avec les recettes des machines et un produit compte dès qu'on sait le fabriquer",
+            'Le miel des ruchers des contrées compte pour les commandes',
+            'Les cultures de serre y entrent quand la serre est bâtie',
+            'Les défis ne sortent que si leur partie du jeu est ouverte, avec une étape de remplacement quand il le faut',
+        ],
+    },
+    {
+        v: '1.93',
+        title: 'Les grands défis dans le livre',
+        date: '8 novembre 2026',
+        items: [
+            'Nouvel onglet « Défis » dans le livre de la ferme, une feuille par défi avec la meilleure médaille',
+            'Résumé en tête',
+            'Le journal commence à la 1.93 : les anciennes parties gardent leur total',
+            "Constat : les 17 grands défis ne couvrent pas le haras, les ruchers et l'hydromel, l'oasis, le Grand Nord",
+        ],
+    },
+    {
+        v: '1.92',
+        title: 'Revue complète',
+        date: '8 novembre 2026',
+        items: [
+            'Audit en fin de partie',
+            "Chargement 1,6 s avec un processeur ralenti 4 fois, changements d'onglet immédiats",
+            'Partie neuve simulée',
+            'Corrigé : enchère sans preneur, cartes repliables dont le résumé était coupé sur petit écran',
+            'Pigeon en croûte, pâté de faisan et tourte au chevreau passent à la boulangerie',
+            'Trois grandes recettes de bière de plus',
+            "Les autres points de l'audit 1.75 étaient déjà réglés",
+            'Outil tools/dev/audit.mjs',
+        ],
+    },
+    {
+        v: '1.91',
+        title: "Produits d'atelier à la brasserie",
+        date: '8 novembre 2026',
+        items: [
+            "On peut brasser des produits d'atelier en plus des cultures",
+            "Ils n'apparaissent dans le sélecteur que si on en a en stock, n'ont pas de page au livre des bières",
+            'Conseil, guide et',
+        ],
+    },
+    {
+        v: '1.90',
+        title: 'Petits correctifs',
+        date: '8 novembre 2026',
+        items: [
+            'Nasses retirables pour les poser ailleurs',
+            'Amélioration de la serre enfin effective',
+            'Livre : le potager ne liste plus les arbres',
+            'Carte du marché aux bêtes qui ne gonfle plus avec les noms longs',
+            'Pastille « +50 % » du produit du jour refaite',
+            "Liste du niveau 14 : mentionne l'amélioration des machines",
+            'Guide des appâts : où trouver chacun',
+            'Étiquettes recentrées',
+        ],
+    },
+    {
+        v: '1.89',
+        title: 'Abeilles au repos',
+        date: '4 novembre 2026',
+        items: [
+            'On peut dire aux abeilles de ne pas faire de miel',
+            'Ruches du champ : réglage « Abeilles du champ au repos »',
+            'Ruchers des contrées : bouton « Au repos » / « Réveiller » sur chaque rucher',
+            "Ruche d'élevage au pré : bouton « Au repos : pas de miel » dans sa fiche",
+            'Le miel déjà en pot reste récoltable',
+            'Conseil, guide et',
+        ],
+    },
+    {
+        v: '1.88',
+        title: 'On choisit les bêtes à vendre',
+        date: '4 novembre 2026',
+        items: [
+            'À la foire, chaque acheteur a un bouton « Choisir »',
+            'Sans choix, le jeu propose toujours les moins précieuses',
+            '« Vendre » attend que le choix soit complet',
+            'Guide et conseil mis à jour',
+        ],
+    },
+    {
+        v: '1.87.1',
+        title: 'Objectifs de niveau : le stock ne suffit plus',
+        date: '4 novembre 2026',
+        items: ['Pour un objectif « préparer » un produit sans prix de vente', "Maintenant seul compte ce qu'on fabrique depuis le début de l'objectif"],
+    },
+    {
+        v: '1.87',
+        title: 'Les rangs dans les fiches des variétés et des bières',
+        date: '3 novembre 2026',
+        items: [
+            "La fiche d'une variété du labo compte ses récoltes",
+            "La fiche d'une bière ou d'un hydromel compte ses bouteilles brassées par rang",
+            'Les compteurs partent de zéro pour ce qui existait déjà',
+            'La page « Bières maison » du livre devient « Bières et hydromels »',
+        ],
+    },
+    {
+        v: '1.86.1',
+        title: 'Un  ?  pour la maîtrise',
+        date: '3 novembre 2026',
+        items: ["Dans la fiche d'un produit, le paragraphe d'explication est remplacé par un petit « ? » qui ouvre la page du guide sur la maîtrise"],
+    },
+    {
+        v: '1.86',
+        title: 'La maîtrise dans le livre',
+        date: '3 novembre 2026',
+        items: [
+            "L'onglet Maîtrise disparaît",
+            "La fiche de chaque produit montre maintenant ses étoiles, la barre et ce qu'il faut pour la suivante",
+            "Le ×N sous chaque produit dans la liste de la page est le nombre d'exemplaires fabriqués",
+        ],
+    },
+    {
+        v: '1.85.1',
+        title: 'Carte de Mamie plus légère',
+        date: '3 novembre 2026',
+        items: ['La ligne qui rappelait les paliers du bonus disparaît de la carte', 'La carte garde le bonus du moment'],
+    },
+    {
+        v: '1.85',
+        title: 'Plans du champ',
+        date: '3 novembre 2026',
+        items: [
+            'Nouvelle amélioration « Plan du champ »',
+            'Bouton « Plans » en haut du champ',
+            "Rien n'est remplacé, rien n'est labouré, les graines se paient comme d'habitude et le résumé dit ce qui manque",
+            'Nouvelle icône, conseil de Mamie, guide, liste des niveaux',
+            'Mamie 1.84 : bonus dégressif au lieu du plafond',
+        ],
+    },
+    {
+        v: '1.84',
+        title: 'Mamie se livre',
+        date: '3 novembre 2026',
+        items: [
+            "Le plat de la semaine quitte l'atelier et passe dans Village › Commandes › À livrer",
+            'On le donne à Mamie, elle paie tout de suite 50 % de plus, sans faire baisser les prix du marché',
+            'Le marché ne donne plus de bonus',
+            "Pas de plafond : +50 % pour les 50 premières de la semaine, puis +30 % jusqu'à 100, +20 % jusqu'à 200",
+            "Son compteur devient « Tu m'en as déjà donné X »",
+            'Marche aussi avec les bières',
+            'La maîtrise ×2 reste à la fabrication',
+            'Textes, guide et liste des niveaux mis à jour',
+        ],
+    },
+    {
+        v: '1.83.3',
+        title: 'La liste des niveaux',
+        date: '3 novembre 2026',
+        items: ['Le niveau 10 annonce le plat de la semaine de Mamie', 'Le reste de la liste se met à jour tout seul'],
+    },
+    {
+        v: '1.83.2',
+        title: "Le plat de la semaine s'élargit",
+        date: '3 novembre 2026',
+        items: [
+            'Mamie peut aussi choisir un pain, une pâtisserie, une glace, un chocolat, un fromage, une conserve, un jus',
+            "La baguette, le pain, les pâtes et le reste ne sont plus écartés parce qu'ils servent d'ingrédient",
+            'Jamais de fruit, légume, viande, farine, huile ni sucre',
+            '10 minutes au plus',
+            'Carte, astuce et guide mis à jour',
+        ],
+    },
+    {
+        v: '1.83.1',
+        title: 'Mamie compte',
+        date: '3 novembre 2026',
+        items: ['La carte du plat de la semaine dit combien tu en as fait cette semaine, remis à zéro chaque lundi'],
+    },
+    {
+        v: '1.83',
+        title: 'Le plat de la semaine de Mamie',
+        date: '3 novembre 2026',
+        items: [
+            'Chaque lundi, Mamie Odette choisit un plat cuisiné, fini et rapide à faire',
+            'Toute la semaine il se vend 50 % plus cher et chaque plat compte double pour sa maîtrise',
+            'Jamais deux semaines de suite le même',
+            "Carte en haut de l'atelier, Mamie sur la recette",
+            'Dès le niveau 10',
+            'Astuce et guide',
+        ],
+    },
+    {
+        v: '1.82',
+        title: "L'élevage dans le livre",
+        date: '3 novembre 2026',
+        items: [
+            'Nouvelle page « Élevage » dans le livre de la ferme, chacun entre au premier ramassage',
+            'Les poissons ont leurs pastilles de qualité et, dans leur fiche, les prises en argent, or',
+            'Les fiches montrent platine et diamant en couleur',
+            "Le record d'un poisson arrondi au centième",
+            'Astuce de Mamie et guide',
+        ],
+    },
+    {
+        v: '1.81.3',
+        title: 'Le pré allégé',
+        date: '3 novembre 2026',
+        items: ['Ni pelle ni graines dans la barre du pré', 'La goutte « à arroser » passe au-dessus de la décoration du coin de la parcelle'],
+    },
+    {
+        v: '1.81.2',
+        title: 'Chaque outil à sa place',
+        date: '3 novembre 2026',
+        items: [
+            "Dans la barre du bas, la nourriture et la ration n'apparaissent qu'au pré, le compost qu'au champ",
+            "Un outil choisi qui n'a rien à faire sur la page revient à la main",
+        ],
+    },
+    {
+        v: '1.81.1',
+        title: 'La ration au magasin',
+        date: '3 novembre 2026',
+        items: ["La ration d'engraissement s'achète aussi au magasin, onglet Équipement", 'Le moulin reste moins cher'],
+    },
+    {
+        v: '1.81',
+        title: 'Un second produit pour chaque bête',
+        date: '3 novembre 2026',
+        items: [
+            'Toutes les bêtes donnent parfois un second produit au ramassage, 15 % de chances au lieu de 10 %',
+            'Viandes nouvelles et autres',
+            "39 recettes, trois par produit, l'oasis et le Nord dans leurs ateliers",
+            "Ration d'engraissement au moulin, dans la barre du bas, +35 % pendant 2 h",
+            'Compétence « Bon éleveur »',
+            'Le second produit sort de la qualité du produit ramassé',
+            'Yvette ne vend que les viandes',
+            '52 dessins',
+            'Astuces et guide',
+        ],
+    },
+    {
+        v: '1.80',
+        title: 'Des poissons en or',
+        date: '3 novembre 2026',
+        items: [
+            'À la canne, une belle prise sort en argent, un trophée en or',
+            "Un ferrage parfait monte d'un rang",
+            'Le poisson doré toujours en or',
+            "Un peu d'argent et d'or dans les nasses et le filet",
+            'Chaque poisson a sa maîtrise, partie des prises déjà faites',
+            'Platine et diamant par la maîtrise',
+            'Les plats de poisson suivent',
+        ],
+    },
+    {
+        v: '1.79.1',
+        title: 'Correctif',
+        date: '3 novembre 2026',
+        items: ["« Produire » sur une viande ou un second produit mène à la bonne bête et dit d'où il vient", 'La cardamome mène au Grand Nord'],
+    },
+    {
+        v: '1.79',
+        title: "La réserve d'expérience",
+        date: '3 novembre 2026',
+        items: [
+            "Objectifs du niveau pas faits, l'expérience se garde jusqu'à un quart du niveau suivant",
+            'La barre devient dorée « Réserve pleine »',
+            'Le guide explique les objectifs du niveau',
+        ],
+    },
+    {
+        v: '1.78.1',
+        title: 'Correctif',
+        date: '2 novembre 2026',
+        items: ['Le nombre de petits passe dans Réglages › Confort › Naissances au pré', 'Un seul réglage pour tous les prés'],
+    },
+    {
+        v: '1.78',
+        title: "Juste ce qu'il faut de petits",
+        date: '2 novembre 2026',
+        items: ["Sous l'interrupteur des naissances, un nombre de petits voulus", "Une fois atteint, les naissances du pré s'éteignent seules"],
+    },
+    {
+        v: '1.77.1',
+        title: 'Guide de la qualité',
+        date: '2 novembre 2026',
+        items: [
+            'Deux pages au guide',
+            'Argent et or',
+            'Platine et diamant',
+            'Coin par coin : champ, contrées, verger, pré, atelier, comptoir, brasserie, vins et cave',
+            "L'exemple de la baguette en diamant",
+        ],
+    },
+    {
+        v: '1.77',
+        title: 'La légende a grandi',
+        date: '2 novembre 2026',
+        items: [
+            'La Ferme légendaire demande dix exploits',
+            'Tous les chapitres',
+            'La maison au plus haut',
+            'La Coupe',
+            'Le livre aux trois quarts',
+            'Vingt amis',
+            'La cave',
+            'Le haras',
+            '25 maîtrises en or',
+            '20 rubans au lieu de 10',
+            'Une ferme déjà légendaire le reste',
+        ],
+    },
+    {
+        v: '1.76.1',
+        title: 'Correctif',
+        date: '2 novembre 2026',
+        items: ["La pluie et l'orage sont nettement plus doux dans l'ambiance"],
+    },
+    {
+        v: '1.76',
+        title: 'Le salon du comptoir',
+        date: '2 novembre 2026',
+        items: [
+            'Recettes en lignes, 15 par page',
+            'Filtre Prêtes',
+            'Recherche',
+            'Les boissons attendues passent en tête',
+            'Le salon dessiné grandit et montre ses décors',
+            'Décors en cartes',
+            'Carnet du salon et boissons préférées à découvrir',
+        ],
+    },
+    {
+        v: '1.75.3',
+        title: 'Talents et exploits',
+        date: '2 novembre 2026',
+        items: [
+            'Odette connaît la crêperie',
+            'Gaston la pizzeria',
+            'Paul la fabrique de pâtes',
+            'Margaux le moulin à huile',
+            'Inès fait payer plus au comptoir',
+            'Les commandes de bière paient selon le rang des bouteilles',
+            'Quatre exploits : Tavernier, Cavalier, Naisseur, Obtenteur',
+        ],
+    },
+    {
+        v: '1.75.2',
+        title: "Retouches de l'audit",
+        date: '2 novembre 2026',
+        items: [
+            'Les cinq décors du comptoir comptent',
+            'Idris, Yasmine, Tuomas et Ingrid ont leur boisson préférée',
+            "Les cuves en boucle tournent pendant l'absence",
+            "Le labo dit d'avance quand il y a trop de variétés en cours",
+            'Onglets du haras en entier',
+            'Brasserie, comptoir et haras ont leur ligne dans les statistiques',
+        ],
+    },
+    {
+        v: '1.75.1',
+        title: 'Correctif',
+        date: '2 novembre 2026',
+        items: ["En changeant de page, l'écran ne s'anime plus deux fois de suite"],
+    },
+    {
+        v: '1.75',
+        title: 'Confort et vitesse',
+        date: '2 novembre 2026',
+        items: [
+            "Le jeu s'ouvre deux fois plus vite",
+            'Moins de calculs chaque seconde',
+            'Thème sombre',
+            "Sons d'ambiance selon l'endroit et l'heure",
+            'Un glissement entre les volets',
+            'Code rangé par coin du jeu',
+        ],
+    },
+    {
+        v: '1.74.8',
+        title: 'La locomotive dans le bon sens',
+        date: '2 novembre 2026',
+        items: ['Au tableau des transports, la locomotive tire ses wagons, cabine contre le premier wagon'],
+    },
+    {
+        v: '1.74.7',
+        title: 'Dernières retouches',
+        date: '2 novembre 2026',
+        items: [
+            'Vendre par pages de 15',
+            'Au-delà de 7 pages, des flèches',
+            'Un grand verger à quatre arbres par rangée',
+            'Dans le livre, les exploits avant les trophées des fêtes',
+        ],
+    },
+    {
+        v: '1.74.6',
+        title: 'Correctif',
+        date: '2 novembre 2026',
+        items: ['Le chiffre de la pastille rouge est bien centré dans la bande des volets'],
+    },
+    {
+        v: '1.74.5',
+        title: 'Pastilles propres',
+        date: '2 novembre 2026',
+        items: [
+            'Dans la bande des volets, la pastille se range à côté du nom',
+            'Dans les onglets, elle est plus petite et posée sur le coin du bouton, sans cacher le nom',
+        ],
+    },
+    {
+        v: '1.74.4',
+        title: 'Correctif',
+        date: '2 novembre 2026',
+        items: ['La bande des volets ne revient plus toute seule au volet ouvert quand on la fait défiler'],
+    },
+    {
+        v: '1.74.3',
+        title: 'Plus clair',
+        date: '2 novembre 2026',
+        items: [
+            'Un seul style de titre dans les fiches',
+            'Textes raccourcis',
+            "La mer n'a plus l'air d'un bouton",
+            'Zéphyr sur une bande qui défile',
+            "L'étal plus court",
+            'Pagination sur une ligne',
+            'Les bandes de pastilles se fondent à droite',
+        ],
+    },
+    {
+        v: '1.74.2',
+        title: 'Statistiques et réglages',
+        date: '2 novembre 2026',
+        items: [
+            'Statistiques en onglets',
+            '26 chiffres rangés par coin, avec icônes',
+            '8 produits qui rapportent le plus, noms en entier',
+            'Record de la meilleure journée',
+            'Réglages en onglets',
+            'Texte de la serre raccourci',
+        ],
+    },
+    {
+        v: '1.74.1',
+        title: 'Pages plus courtes',
+        date: '2 novembre 2026',
+        items: [
+            'Coupe en onglets',
+            'Maison en onglets',
+            'Progrès en onglets',
+            'Exploits plus serrés',
+            'Graines par pages de 15',
+            'Boissons par pages de 10',
+            "L'étal résume les ventes finies",
+            "Phrase d'état à la brasserie",
+            "Tout mettre en bouteille d'un coup",
+            'Lots de cave serrés',
+            'Verger plus dense',
+        ],
+    },
+    {
+        v: '1.74',
+        title: "S'y retrouver",
+        date: '2 novembre 2026',
+        items: [
+            'Chaque volet garde son nom, dans une bande qui défile',
+            'Le menu en tuiles, en trois groupes',
+            'Un point doré pour ce qui est à faire, une pastille rouge seulement quand ça presse',
+            '« Renommée » au niveau 64, la grange garde son icône',
+            'Brasserie, Cave, Comice, Labo et Village en onglets',
+            "Sortir d'un coup les lots finis de la cave",
+            'Graines du marché sur une ligne, atelier sur trois colonnes, vente en lignes, un pré à la fois',
+            "Les astuces se ferment d'un « Compris »",
+            'La liste « à faire » ouvre le bon volet',
+            'La brasserie passe de 10 écrans à 3, la cave de 9 à 4, le village de 5 à 2',
+        ],
+    },
+    {
+        v: '1.73',
+        title: 'Le tableau des commandes',
+        date: '2 novembre 2026',
+        items: [
+            "Première étape de la grande mise à jour de l'interface",
+            'Village › Commandes en trois volets : À livrer, Transports, Événements',
+            'Une ligne par demande avec où on en est, ce qui est prêt en vert et en tête',
+            'Toucher une ligne ouvre la carte complète',
+            'Une pastille sur chaque volet où quelque chose est prêt',
+            'La page passe de 6 écrans à moins de 2',
+        ],
+    },
+    {
+        v: '1.72',
+        title: 'Des dessins à part',
+        date: '2 novembre 2026',
+        items: [
+            'Audit des 1 058 dessins de produits',
+            "43 produits qui n'avaient que la pastille d'ingrédient pour se distinguer ont maintenant leur propre dessin",
+            "Les pains aux fèves, d'avoine, au chanvre et la fougasse",
+            'Des gâteaux et des tartes',
+            'Des thés et cafés, des eaux-de-vie et des sauces',
+            "La semoule, des sorbets, la laine, des terrines, le lavaret, l'autruche et quelques plats",
+        ],
+    },
+    {
+        v: '1.71.1',
+        title: 'Correctifs',
+        date: '1er novembre 2026',
+        items: [
+            'Un objectif de niveau « préparer » se valide aussi pour un produit sans prix de vente',
+            "Relancer le jeu n'efface plus les ruchers des contrées",
+            'Ni les histoires à deux',
+            'Ni le comice, la foire et le livre généalogique',
+        ],
+    },
+    {
+        v: '1.71',
+        title: 'Les exploits à jour',
+        date: '1er novembre 2026',
+        items: [
+            'La récompense des exploits suit le niveau',
+            'Paliers corrigés pour Bâtisseur, Âme du village et Expérience',
+            'Douze exploits de plus, pour tout ce qui est arrivé depuis la cave',
+            'Tri En cours / Terminés et pages dans le livre de la ferme',
+            "Les noms des fêtes ne se coupent plus au milieu d'un mot",
+        ],
+    },
+    {
+        v: '1.70',
+        title: 'Les villageois',
+        date: '1er novembre 2026',
+        items: [
+            'Village › Les villageois en liste courte, avec les anniversaires qui viennent et un tri Tous / Cadeau possible / Histoire',
+            'Une fiche par villageois en quatre onglets',
+            'Chacun adore un produit à deviner, aime sa liste, le reste est « bof »',
+            'Un anniversaire par villageois, cadeau triple ce jour-là et un merci pour le produit adoré',
+            "À 5 cœurs, le talent de l'ami",
+            '13 histoires de plus',
+            '4 duos qui partagent les cadeaux, et 4 histoires à deux',
+            'Guide et histoires de Mamie à jour',
+        ],
+    },
+    {
+        v: '1.69',
+        title: 'Les ruchers des contrées',
+        date: '1er novembre 2026',
+        items: [
+            "Un rucher sur l'île, à l'oasis et au Grand Nord, de 1 à 3 ruches qui ne butinent que leur contrée",
+            'Sept miels de plus, les plus chers',
+            "Sur l'île les abeilles travaillent toute l'année",
+            "À l'oasis elles boivent à la citerne",
+            "Au Grand Nord elles sortent au printemps et en été, ou près d'un poêle allumé",
+            "Chaque nouveau miel a son goût pour l'hydromel et sa page au livre",
+            'Guide, carnet, objectifs des niveaux 38, 59 et 62 et histoire de Mamie à jour',
+        ],
+    },
+    {
+        v: '1.68',
+        title: "L'hydromel à la brasserie",
+        date: '1er novembre 2026',
+        items: [
+            "Au niveau 42, la brasserie fait aussi de l'hydromel",
+            'Le miel toutes fleurs va avec tout, chaque miel de fleur aime certains goûts',
+            'Classiques : cyser, pyment, mélomel, métheglin',
+            'Nom automatique, rang selon le miel et les fruits',
+            'Un cruchon de grès à la couleur du miel',
+            '« Mes boissons » avec filtres Bières / Hydromels',
+            "Commandes d'hydromel",
+            'Il vieillit en fût à la cave comme une bière',
+            'Une page du livre par miel brassé',
+            'Objectif du niveau 42, guide et histoire de Mamie',
+        ],
+    },
+    {
+        v: '1.67',
+        title: 'Les miels de fleurs',
+        date: '1er novembre 2026',
+        items: [
+            'Les abeilles butinent ce qui est en fleur',
+            "Une ruche du champ ses 8 voisines, la ruche d'élevage tout le champ, la serre et le verger",
+            'Si une fleur fait la moitié de ce qui fleurit, avec 4 parcelles au moins, le miel prend son nom',
+            '16 miels : lavande, tournesol, sarrasin, menthe, framboisier, myrtille, coton, basilic, pommier, poirier',
+            "Une ruche dit ce qu'elle prépare et ce qu'il manque",
+            "Un miel de fleur fait partie du stock de miel, vaut jusqu'à × 1,8, se vend depuis la grange",
+            'Onglet Miels dans le carnet du potager, une histoire de Mamie par miel',
+            "Dessins prêts pour les miels de litchi, d'avocatier, d'arganier et de sapin",
+        ],
+    },
+    {
+        v: '1.66',
+        title: 'Armand marchande',
+        date: '1er novembre 2026',
+        items: [
+            "À chaque visite, Armand fait d'abord une offre",
+            "On peut dire d'accord, demander plus cher, proposer plus ou moins de quantité, ou refuser",
+            'Il accepte, fait une contre-proposition à mi-chemin ou repart pour la semaine, selon son humeur',
+            'Trois demandes au plus',
+            'Être raisonnable rapporte en moyenne 5 à 10 % de plus',
+            'Un mot de Mamie, une page « Marchander » dans le guide',
+        ],
+    },
+    {
+        v: '1.65',
+        title: 'Audit des nouveautés',
+        date: '1er novembre 2026',
+        items: [
+            'Une recette en boucle recale les rangs de ses ingrédients',
+            "Les jours du graphique des statistiques s'affichent en relatif",
+            'Les comptes à droite des titres restent lisibles sur le décor sombre',
+            'Un test de 4 000 gestes au hasard garde les stocks, rangs, variétés, races, coffre et cépages cohérents',
+        ],
+    },
+    {
+        v: '1.64.3',
+        title: 'Le tri du labo',
+        date: '1er novembre 2026',
+        items: [
+            'Au labo et dans Mes créations, le tri par espèce passe en liste déroulante au lieu de plusieurs lignes de puces',
+            'La fenêtre « Choisir une plante » des croisements a une recherche, le même tri et des pages',
+        ],
+    },
+    {
+        v: '1.64.2',
+        title: 'Aller directement à une page',
+        date: '1er novembre 2026',
+        items: [
+            'La barre des pages est aussi en haut de la liste, et ne bouge pas quand on la touche',
+            "Tous les numéros sont visibles jusqu'à 15 pages",
+            'Depuis la barre du bas, on remonte à celle du haut',
+            'Les chiffres sont centrés dans leurs cases',
+        ],
+    },
+    {
+        v: '1.64.1',
+        title: 'Des pages et une recherche',
+        date: '1er novembre 2026',
+        items: [
+            '« Voir plus » remplacé par des pages numérotées',
+            'Une recherche par nom dans Mes bières, les variétés du labo, Mes créations et les pages du livre',
+            'Les races de Mes créations en cartes courtes',
+        ],
+    },
+    {
+        v: '1.64',
+        title: 'Les longues listes',
+        date: '1er novembre 2026',
+        items: [],
+    },
+    {
+        v: '1.63.2',
+        title: 'Le comptoir et le platine',
+        date: '1er novembre 2026',
+        items: [
+            'Les recettes du comptoir annoncent le rang que promettent les ingrédients et le meilleur rang en stock',
+            "Le bouton « Du stock » d'un client montre le rang qui sera servi",
+        ],
+    },
+    {
+        v: '1.63.1',
+        title: 'Les carnets au bon moment',
+        date: '1er novembre 2026',
+        items: [
+            'Le menu montrait « Carnets » dès le niveau 1, sur une fenêtre vide',
+            "La ligne apparaît avec le premier carnet, et la fenêtre dit quand chacun s'ouvre",
+        ],
+    },
+    {
+        v: '1.63',
+        title: 'Le coffre des créations et les fromages de race',
+        date: '1er novembre 2026',
+        items: [
+            "Une variété du labo ou le produit d'une race fixée se range au coffre avec son nom, ses couleurs et son rang",
+            "Le lait d'une bête de race fixée garde sa race, affichée dans la grange avec son rang",
+            'À la laiterie, on choisit la race au-dessus des recettes',
+            'Il se vend ou va en cave',
+            'Un fromage ordinaire ne prend jamais le lait de race',
+            'Un mot de Mamie',
+        ],
+    },
+    {
+        v: '1.62.1',
+        title: 'Bêtes des voisins',
+        date: '1er novembre 2026',
+        items: [
+            'Une bête de choix des voisins promettait parfois un « bon gène » déjà au plus haut chez son espèce',
+            'Elle a toujours un vrai caractère au-dessus de la moyenne',
+        ],
+    },
+    {
+        v: '1.62',
+        title: 'Les cépages',
+        date: '1er novembre 2026',
+        items: [
+            'Chaque variété garde le rang de ses récoltes, affiché dans la grange et au labo',
+            "Au marché, l'espèce part avant les variétés",
+            "Une variété vendue l'est au prix de son rang",
+            "À l'atelier, au comptoir et à la brasserie, une variété apporte son goût et le vrai rang de ses unités",
+            "Maturation lente, Calibre et Chance jouent au verger, à l'île, à l'oasis et au Grand Nord",
+            'Vins de cépage : au pressoir ou à la cuverie, on choisit sa variété de raisin ou de pomme',
+            'Ses bouteilles se vendent ou vont en cave',
+            'Au château, une cuvée de cépage en platine gagne un cran de classement',
+            'Deux mots de Mamie',
+        ],
+    },
+    {
+        v: '1.61.2',
+        title: 'Sans notifications',
+        date: '1er novembre 2026',
+        items: [
+            'Les rappels en arrière-plan sont retirés',
+            "Sur téléphone, le système endort le jeu dès qu'on le quitte",
+            'Le réglage « Rappels en arrière-plan » disparaît',
+        ],
+    },
+    {
+        v: '1.61.1',
+        title: 'Notes de version',
+        date: '1er novembre 2026',
+        items: [
+            'Réglages › Mises à jour affichait la 1.61 sans son texte',
+            "Elle s'affiche en entier, comme la 1.20 qui manquait aussi",
+            'Chaque version se lit maintenant en tirets courts, un par changement',
+        ],
+    },
+    {
+        v: '1.61',
+        title: 'Objectifs, compétences et pizzeria',
+        date: '1er novembre 2026',
+        items: [
+            "Chaque niveau demande d'essayer ce qu'il vient d'ouvrir",
+            'Les compétences refaites : huit branches et 66 rangs, points rendus aux anciennes parties',
+            "Une recette qu'on ne peut pas lancer ouvre la liste de ses ingrédients",
+            'La pizzeria : la margherita quitte le four à pain',
+            "Cire d'abeille et pizzas redessinées",
+        ],
+    },
+    {
+        v: '1.60',
+        title: 'Retours de jeu',
+        date: '1er novembre 2026',
+        items: [
+            'La neige et la pluie de fond bouclent sans saut',
+            'Au doigt, le champ laisse défiler la page',
+            'Sur ordinateur, les noms des bâtiments des cartes du Village grandissent avec la carte',
+            "Les niveaux 2 à 14 demandent plus d'expérience",
+            'Réglages › Mises à jour : toutes les versions du jeu, de la plus récente à la plus ancienne',
+        ],
+    },
+    {
+        v: '1.59.2',
+        title: "L'atelier au niveau 2",
+        date: '27 octobre 2026',
+        items: ["L'onglet Atelier s'ouvrait au niveau 3 alors que le four à pain se débloque au niveau 2", "Il s'ouvre maintenant avec la première machine"],
+    },
+    {
+        v: '1.59.1',
+        title: 'Les fromages ont chacun leur identité',
+        date: '27 octobre 2026',
+        items: ["Beaufort, comté, tomme de montagne, tomme de brebis, munster, cantal, fromage aux fleurs d'alpage"],
+    },
+    {
+        v: '1.59',
+        title: "L'audit complet",
+        date: '27 octobre 2026',
+        items: [
+            'Corrigé : boutons et cartes collés, textes qui sortaient, onglets tronqués, cartes à bouton large',
+            '90 apostrophes, durées et comptes insécables, durées rondes, grands nombres groupés',
+            "Trois dessins cassés, erreur d'un second appui sur une fenêtre qui se ferme",
+            'Écran rafraîchi 5 à 10 fois plus vite en fin de partie, Village deux fois plus rapide à ouvrir',
+        ],
+    },
+    {
+        v: '1.58.7',
+        title: 'Nourrir et Ramasser reviennent',
+        date: '27 octobre 2026',
+        items: ["Sous les prés de l'oasis et du Grand Nord, seul le bouton Acheter est retiré"],
+    },
+    {
+        v: '1.58.6',
+        title: "Boutons trop longs et cartes d'enclos",
+        date: '27 octobre 2026',
+        items: [
+            'Les boutons longs des rangées de boutons passent à la ligne au lieu de dépasser',
+            "Sous les prés de l'oasis et du Grand Nord, plus de boutons Nourrir, Ramasser, Acheter",
+        ],
+    },
+    {
+        v: '1.58.5',
+        title: 'Labo : le bouton qui dépassait',
+        date: '27 octobre 2026',
+        items: ['Dans « Croiser des plantes », le bouton « Découvrir la portée » passe à la ligne au lieu de dépasser de la carte sur téléphone'],
+    },
+    {
+        v: '1.58.4',
+        title: 'Pré ou liste',
+        date: '27 octobre 2026',
+        items: ["Sous les vergers de l'oasis et du Grand Nord, un choix « Le pré / L'étable » comme dans Animaux"],
+    },
+    {
+        v: '1.58.3',
+        title: 'Le pré sous le verger',
+        date: '27 octobre 2026',
+        items: [
+            "L'enclos de la palmeraie et l'étable de rondins ne figurent plus dans l'onglet Animaux",
+            'Leurs bêtes se promènent maintenant dans un pré placé sous leur verger, dans les vues oasis et Grand Nord',
+        ],
+    },
+    {
+        v: '1.58.2',
+        title: 'Goûts des villageois',
+        date: '27 octobre 2026',
+        items: ["Idris aime le tamarin et la figue de Barbarie, Tuomas le genièvre, Ingrid l'aronia"],
+    },
+    {
+        v: '1.58.1',
+        title: 'Trois recettes par fruit',
+        date: '27 octobre 2026',
+        items: ['Chacun des 12 nouveaux fruits entre maintenant dans trois recettes existantes'],
+    },
+    {
+        v: '1.58',
+        title: "Les vergers de l'oasis et du Grand Nord",
+        date: '27 octobre 2026',
+        items: [
+            'Deux vergers à part, comme celui des îles, neuf arbres chacun',
+            'Argousier, épicéa, sorbier + pommettier, merisier à grappes, pin cembro, genévrier, sureau noir',
+            'Oasis : chaque arbre boit 4 L/h à la citerne',
+            "Nord : rustiques, deux fois moins vite la nuit de gel sans poêle, l'aurore les accélère",
+            'Les arbres déjà plantés dans les cases déménagent au verger',
+            "Le dattier ne fait plus d'ombre : c'est le sorgho",
+            'Chaque nouveau fruit entre dans une recette existante',
+            'Deux mots de Mamie',
+            'Guide à jour',
+        ],
+    },
+    {
+        v: '1.57.4',
+        title: "Le pré et l'étable des bêtes de l'oasis et du Nord",
+        date: '27 octobre 2026',
+        items: [
+            "L'onglet Animaux montre maintenant l'enclos de la palmeraie et l'étable de rondins comme des prés à part entière : une pastille par abri, le pré où elles se promènent, l'étable en fiches, les naissances et les associations",
+            'Les sections du Voyages restent',
+        ],
+    },
+    {
+        v: '1.57.3',
+        title: 'Traîneau et caravane pleins',
+        date: '27 octobre 2026',
+        items: [
+            "Les produits chargés ne s'alignent plus en rangée qui dépasse de l'écran sur la carte du traîneau et de la caravane",
+            "Ils se déchargent d'un toucher dans la fiche de chargement, qui reste ouverte même quand le traîneau est plein",
+        ],
+    },
+    {
+        v: '1.57.2',
+        title: "L'opéra moins cher",
+        date: '27 octobre 2026',
+        items: ["Le dernier grand travail du mécénat passe de 1,2 milliard à 800 millions de pièces, 200 lingots d'or", 'Toujours 16 points'],
+    },
+    {
+        v: '1.57.1',
+        title: 'Carte du Village plus lisible',
+        date: '27 octobre 2026',
+        items: [
+            'Les noms des bâtiments sur les cartes du Village sont plus petits et ne grossissent plus avec la taille des polices du téléphone',
+            'Ils cachent moins les dessins',
+        ],
+    },
+    {
+        v: '1.57',
+        title: 'Finitions et audit de la 1.56',
+        date: '27 octobre 2026',
+        items: [
+            'Audit de la 1.56',
+            'Le filtre du comptoir passe à trois familles',
+            'Les espaces avant « : ? !',
+            "» et dans les guillemets deviennent insécables à l'affichage",
+            "La première aurore boréale prend une photo dans l'album",
+            'Mamie dit un mot aux niveaux 61 et 64',
+            'Plan du Grand Nord mis à jour',
+        ],
+    },
+    {
+        v: '1.56',
+        title: '64 niveaux',
+        date: '27 octobre 2026',
+        items: [
+            'Le maximum passe de 60 à 64',
+            "L'oasis passe aux niveaux 59 à 61, le Grand Nord aux niveaux 62 à 64, une machine par niveau",
+            'De 59 à 64, 19 à 22 recettes par niveau',
+            '25 recettes de fin de partie passent plus tôt',
+            'Anciennes parties : expérience totale gardée, tout ce qui était ouvert le reste',
+            'Détail : « Plan Étalement 64 »',
+        ],
+    },
+    {
+        v: '1.55.1',
+        title: 'Audit des 1.51 à 1.55',
+        date: '27 octobre 2026',
+        items: [
+            "Blizzard et aurore ne tombent plus d'un coup au retour d'une absence",
+            'Les bêtes frileuses comptent la nuit de gel pour sa part de la journée hors-ligne',
+            "Les boissons de l'oasis et du Nord sont payées plein tarif par la caravane et le traîneau",
+            '« ce que débloque un niveau » blindé',
+        ],
+    },
+    {
+        v: '1.55',
+        title: 'Les boissons du Grand Nord',
+        date: '27 octobre 2026',
+        items: [
+            'Le comptoir passe à 57 boissons',
+            'Huit nouvelles au niveau 60',
+            'Chacune a sa combinaison de gestes',
+            "Le versé de haut sert à l'infusion de chicoutai",
+            'Anecdotes, défis, guide',
+        ],
+    },
+    {
+        v: '1.54',
+        title: "Les boissons de l'oasis",
+        date: '27 octobre 2026',
+        items: [
+            'Le comptoir passe à 49 boissons',
+            'Huit nouvelles, niveaux 58 à 60',
+            'Un nouveau geste, le thé versé de haut',
+            'Chaque boisson a sa combinaison de gestes',
+            'Anecdotes de Mamie, défis, guide',
+            'À venir : boissons du Grand Nord si Samuel le veut',
+        ],
+    },
+    {
+        v: '1.53',
+        title: 'La cuisine du Grand Nord',
+        date: '27 octobre 2026',
+        items: [
+            "Trois machines d'un bloc au niveau 60, chacune après son chantier du Nord et 42 recettes",
+            'Dessins validés sur planche, une anecdote de Mamie par plat, voisins, traîneau ×2,6 pour ces plats',
+            "À venir : boissons du comptoir de l'oasis",
+        ],
+    },
+    {
+        v: '1.52.1 et 1.52.2',
+        title: "Le traîneau, le blizzard et l'aurore",
+        date: '27 octobre 2026',
+        items: [
+            'Chapitre 24 complété par le relais des traîneaux et le marché de glace',
+            'Le traîneau : 4 rennes adultes, 18 charges de 10, 8 heures',
+            "Le blizzard et l'aurore boréale",
+            'À venir : 1.53',
+        ],
+    },
+    {
+        v: '1.52',
+        title: "L'étable de rondins",
+        date: '27 octobre 2026',
+        items: [
+            "Chapitre 24 « Les aurores d'Ingrid »",
+            "L'étable de rondins accueille 12 bêtes, puis 20 : renne, bœuf musqué, lagopède",
+            "La nuit de gel, renne et lagopède produisent deux fois moins vite hors d'un poêle allumé",
+            'Le bœuf musqué ne craint pas le froid',
+            'Gènes, naissances, 3 associations, foire, Comice, carnet des robes, bulles de Mamie',
+            'À venir : 1.52.1, 1.52.2, 1.53',
+        ],
+    },
+    {
+        v: '1.51.1',
+        title: '',
+        date: '27 octobre 2026',
+        items: ["La caravane de l'oasis est rééquilibrée", 'Une caravane pleine de produits quelconques ne remplace plus le marché'],
+    },
+    {
+        v: '1.51',
+        title: 'Le Grand Nord',
+        date: '27 octobre 2026',
+        items: [
+            'Une troisième contrée dans Voyages, ouverte au niveau 60',
+            "Ici ce n'est pas l'eau qui manque mais la chaleur",
+            'Un poêle chauffe les huit cases autour de lui et brûle une bûche par heure',
+            'Améliorations : poêle en fonte, isolation, caisse à bûches',
+            'Fendre le bois. 6 plantes, 3 associations, la sahti en brasserie, gènes de froid',
+            'À venir : 1.52, 1.53',
+            "À régler : l'étalement du Nord au-delà du niveau 60",
+        ],
+    },
+    {
+        v: '1.50.3',
+        title: '',
+        date: '26 octobre 2026',
+        items: ["Le terrain de la palmeraie n'est plus un carré jaune"],
+    },
+    {
+        v: '1.50.2',
+        title: '',
+        date: '26 octobre 2026',
+        items: ["Les fruits sur l'arbre qui n'étaient que des ronds sont redessinés"],
+    },
+    {
+        v: '1.50.1',
+        title: '',
+        date: '26 octobre 2026',
+        items: [
+            "Dans l'oasis encore fermée, le portrait d'Idris était trop grand et débordait sur le titre",
+            'Il est maintenant dans un petit médaillon rond, centré',
+        ],
+    },
+    {
+        v: '1.50',
+        title: "La cuisine de l'oasis",
+        date: '26 octobre 2026',
+        items: [
+            "Trois machines après le puits d'Idris, le four en terre, le tajine et la confiserie orientale",
+            "Chaque plante et chaque produit de l'oasis sert au moins une fois",
+            'Amande, pistache, miel, olive, citron, pois chiche, lentille et safran reviennent',
+            'Une anecdote de Mamie par recette',
+            'Les voisins les demandent',
+            "La cuisine de l'oasis arrive d'un bloc avec son voyage",
+        ],
+    },
+    {
+        v: '1.49',
+        title: "L'enclos et les caravanes",
+        date: '26 octobre 2026',
+        items: [
+            "Chapitre 22 « Le souk de l'oasis » avec Yasmine l'herboriste",
+            "L'enclos, rangé dans l'oasis",
+            'Elles boivent à la citerne, produisent moitié moins vite au soleil de midi',
+            'La noria : un zébu attelé donne 8 L/h de plus à la source, mais plus de lait',
+            'Les caravanes : 3 dromadaires, 18 charges de 10 produits, 6 heures, 2,4 fois le grossiste, parfois du safran',
+            'La tempête de sable ensable des cases au soleil tous les deux jours environ',
+            'Branchements : naissances, câlins, foire, Comice, carnet des robes, trois associations',
+        ],
+    },
+    {
+        v: '1.48',
+        title: "L'oasis",
+        date: '26 octobre 2026',
+        items: [
+            "Le volet « Île » de l'onglet Ferme devient « Voyages », avec deux choix en tête : L'île et L'oasis",
+            "Chapitre 21 « La source d'Idris » : Idris le caravanier, trois chantiers, une carte du désert",
+            "L'oasis : jusqu'à 20 cases, une culture ou un arbre sur chacune",
+            'Six plantes',
+            "La vraie mécanique de l'eau : une citerne remplie par la source et par le chadouf",
+            'Chaque plante boit en poussant, deux fois plus au soleil de midi à 16 h',
+            "Un palmier dattier adulte fait de l'ombre aux huit cases autour",
+            'Sans eau, rien ne meurt',
+            'Branchements : génétique, carnets, brasserie, cultures compagnes, commandes, marché des voisins, guide',
+        ],
+    },
+    {
+        v: '1.47.2',
+        title: '',
+        date: '26 octobre 2026',
+        items: [
+            "Un Salon commencé avant la 1.45.2 sur un critère de bête restait affiché jusqu'à sa fin",
+            'Il est remplacé tout de suite par un critère de plante',
+        ],
+    },
+    {
+        v: '1.47.1',
+        title: '',
+        date: '26 octobre 2026',
+        items: [
+            'Dans le tiroir « Choisir une plante » du labo, les dessins des plantes remplissaient toute la case',
+            'Le bouton « Viser le Salon » devient « Viser le concours du potager »',
+        ],
+    },
+    {
+        v: '1.47',
+        title: '',
+        date: '26 octobre 2026',
+        items: [
+            "Le carnet du potager et le carnet du verger ont deux onglets, comme celui de l'élevage",
+            'Dans la grange, toucher un produit montre « Dont vos variétés »',
+            "Le bouton « Carnet » quitte l'onglet Animaux",
+        ],
+    },
+    {
+        v: '1.46.1',
+        title: '',
+        date: '26 octobre 2026',
+        items: ["Le carnet de l'élevage est aussi dans Menu › Carnets, avec les carnets de pêche, du bûcheron"],
+    },
+    {
+        v: '1.46',
+        title: "Le carnet de l'élevage",
+        date: '26 octobre 2026',
+        items: [
+            'Bouton « Carnet » dans Animaux › Prés',
+            'Les robes : pour chaque espèce, 11 couleurs et 8 motifs',
+            "Une robe s'inscrit dès qu'une bête la porte, une espèce complète rapporte un ruban",
+            'Les raretés toutes espèces confondues',
+            'Constat : aucune bête achetée ne montre de robe',
+            'Elles sortent par les naissances au pré, et les bêtes de choix des voisins en montrent maintenant une sur deux environ',
+            "Les associations au pré : 11 couples d'espèces dans un même pré, 8 qui s'entraident et 3 qui se gênent",
+            'Le pré affiche celles qui jouent, le carnet les garde avec une anecdote de Mamie chacune',
+        ],
+    },
+    {
+        v: '1.45.2',
+        title: '',
+        date: '26 octobre 2026',
+        items: [
+            'Le Comice ne garde que les bêtes',
+            'Les variétés retrouvent leur concours au labo, « le concours du potager »',
+            'Le Comice prend vie : chaque catégorie a son jury, qui regarde surtout les gènes, la beauté',
+            'Votre bête en grand avec une médaille, la note en quatre barres',
+            'Chaque ferme voisine présente une vraie bête',
+            'Podium à médailles',
+            "Bêtes en lice dans l'en-tête, guirlande de fanions",
+            'Palmarès de toutes vos espèces, primées ou à primer',
+        ],
+    },
+    {
+        v: '1.45.1',
+        title: '',
+        date: '26 octobre 2026',
+        items: [
+            "La fiche d'une bête montre ses gènes dès le niveau 8, chacun avec ce qu'il fait",
+            "La moyenne de l'espèce en jaune, le surplus en vert",
+            "Un « ? » vers la page « L'élevage » du guide, qui liste tous les gènes",
+        ],
+    },
+    {
+        v: '1.45',
+        title: "L'Élevage",
+        date: '26 octobre 2026',
+        items: [
+            'Naissances au pré : un interrupteur par pré, éteint par défaut',
+            'Deux adultes de la même espèce ont un petit toutes les 3 à 12 h, même jeu fermé',
+            'La nature ramène souvent un bon gène vers la moyenne, sans mutation',
+            'Deux parents de même race la transmettent',
+            'Foire aux bestiaux : 3 à 5 acheteurs avec une espèce, un nombre et des exigences',
+            "Prix 0,8 × l'espèce × 1,4 par exigence × 2 race",
+            "Le jeu propose d'abord les bêtes les moins précieuses",
+            'La vente de la fiche devient « Vendre au maquignon »',
+            'Bêtes des voisins : une bête de choix par ferme et par jour, avec un bon gène',
+            'Comice agricole : remplace le Salon',
+            '3 catégories par semaine parmi vos espèces et le potager',
+            'Note sur 100',
+            'Contre les quatre fermes voisines',
+            'Premier prix : ruban, pièces, plaque « Primée »',
+            "Réputation de l'élevage : cinq paliers, +5 % à la foire chacun",
+            "Nom par défaut de l'élevage : « Les Quatre Vents »",
+            'Anecdotes de Mamie, guide',
+        ],
+    },
+    {
+        v: '1.44.1 et 1.44.2',
+        title: '',
+        date: '26 octobre 2026',
+        items: [
+            'Le « ? » des onglets bien centré',
+            "Dans l'onglet Animaux, les volets Écuries, Concours et Élevage sont réunis en un seul volet « Haras »",
+            'Textes du guide et des bulles de Mamie mis à jour',
+        ],
+    },
+    {
+        v: '1.44',
+        title: 'Améliorations sans nouveau gameplay',
+        date: '26 octobre 2026',
+        items: [
+            'Fluidité et batterie : le ciel ne refait plus un fondu chaque seconde',
+            'Mesuré sur une partie niveau 60 : script divisé par 2, recalcul des styles par 3, mise en page quasi nulle',
+            "Sauvegarde : une sauvegarde abîmée n'est plus remplacée par une ferme neuve : elle est gardée de côté et le jeu repart tout seul de la plus récente copie de secours, avec un message",
+            'Téléphone plein : les copies de secours sont libérées et un message prévient',
+            'Le navigateur est prié de ne pas effacer la ferme',
+            'Réglages : date du dernier export',
+            'Clarté : un « ? » au bout des onglets du haut ouvre la page du guide de chaque écran',
+            'Les nombres du guide sont calculés',
+            "L'expérience s'affiche en icône à la pêche",
+        ],
+    },
+    {
+        v: '1.43',
+        title: 'Les mini-jeux',
+        date: '26 octobre 2026',
+        items: [
+            'Comptoir : cinq nouveaux gestes répartis sur 30 boissons, mousse en trois motifs avec un temps limité',
+            'Pêche : les poissons moyens demandent 2 tirages, les gros et légendaires 3, avec un raté toléré',
+            'Record de poids affiché et « Nouveau record ! »',
+            'Chevaux : un record par discipline et par cheval, et au galop un fantôme doré de votre meilleur passage',
+            'Aide « ? » à la pêche, guide mis à jour',
+        ],
+    },
+    {
+        v: '1.42',
+        title: 'Les niveaux mènent quelque part',
+        date: '25 octobre 2026',
+        items: ['Dans Menu › Les niveaux, chaque ligne se touche et emmène là où ça se passe'],
+    },
+    {
+        v: '1.41',
+        title: 'Marché plus court et mine corrigée',
+        date: '25 octobre 2026',
+        items: [
+            'Acheter : les graines en onglets',
+            'Dans chaque rayon, seulement les deux prochains objets bloqués, le reste résumé sur une ligne',
+            'Machines possédées et améliorations au maximum repliées sur une ligne',
+            "Vendre : les places libres de l'étal sur une seule case",
+            "Le grossiste par familles, les plus belles valeurs d'abord, 24 à la fois avec « Voir les autres »",
+            "Au niveau 60, chaque page passe d'environ 6 000 à 2 200 pixels",
+            'Bug : changer de profondeur dans la mine faisait réapparaître et changer toutes les pierres',
+            'Chaque profondeur garde maintenant ses pierres et leurs temps de repousse',
+        ],
+    },
+    {
+        v: '1.40',
+        title: 'La Coupe de la vallée',
+        date: '25 octobre 2026',
+        items: [
+            "La vraie ligne d'arrivée",
+            'Grands défis : on choisit parmi trois défis proposés',
+            'Deux médailles de plus, platine et diamant',
+            'Une médaille gagnée avant la date ouvre tout de suite le choix du suivant',
+            'Coupe : points par médaille',
+            'Six rangs, chacun avec un bonus permanent',
+            'Classement contre les quatre fermes rivales, qui gagnent leurs médailles à votre rythme moyen',
+            'Domaine des légendes : une carte où chaque défi gagné en or pose son monument',
+            'Les 17 en or dressent la grande statue dorée',
+            'Mécénat : six grands travaux, une anecdote de Mamie chacun',
+            'Tout se garde au prestige',
+        ],
+    },
+    {
+        v: '1.39',
+        title: 'Des rivales qui se battent',
+        date: '25 octobre 2026',
+        items: [
+            'Nouveau moteur des fermes rivales au concours de la semaine',
+            'Leur but suit la moyenne de vos 3 derniers concours, multipliée par leur caractère et +6 % par ligue',
+            'Elles jouent par séances à leurs heures et, dans les deux derniers jours',
+            "La carte du concours donne l'écart avec la ferme devant et le fil des rivales",
+            "Simulation : semaine normale 6 % de victoires, +10 % d'effort 36 %, +20 % 84 %",
+            'Une semaine à -20 % finit dernière une fois sur trois',
+            'Concours de pêche : les rivales pêchent par 3 à 5 sorties pendant le week-end',
+        ],
+    },
+    {
+        v: '1.38',
+        title: 'Confort et équilibre',
+        date: '25 octobre 2026',
+        items: [
+            "Désencombrement : cartes repliables qui se déplient d'elles-mêmes quand quelque chose est prêt",
+            'Carte « Livraisons »',
+            "Filtre de l'atelier et machines prêtes en premier",
+            'Places libres de la cave sur une ligne',
+            'Tiroir « Que planter ? » en onglets avec les 6 dernières graines en haut',
+            'Astuces de bas de page cachées dès le niveau 15',
+            'Interrupteurs « replanter » et « semoir » seulement dans les réglages',
+        ],
+    },
+    {
+        v: '1.37.2',
+        title: 'Audit',
+        date: '25 octobre 2026',
+        items: [
+            'En-tête qui tient sur les téléphones étroits',
+            "Cultures qui poussent à la vraie vitesse pendant l'absence",
+            "Arrière-plan rejoué seconde par seconde jusqu'à 5 minutes",
+            'Pré vide et marché de nuit lisibles',
+            'Classement du concours de pêche, boutique du château, conseil de Mamie et magasin remis en page',
+            'Revente des graines en étiquette',
+        ],
+    },
+    {
+        v: '1.37.1',
+        title: 'Retours de Samuel',
+        date: '25 octobre 2026',
+        items: [
+            'En-tête compact au niveau 60',
+            "Plantations de l'île au même dessin que les parcelles du champ",
+            'Les carnets quittent leurs pages pour le menu, onglet « Carnets »',
+            'Deuxième poste par machine pour faire tourner deux lots à la fois',
+            "Revente des graines et pousses d'arbre en stock",
+            "Le jeu suit l'heure réelle",
+        ],
+    },
+    {
+        v: '1.37',
+        title: 'Le château et ses vignes',
+        date: '',
+        items: [
+            '— *publiée le 25 octobre 2026*',
+            'Cuvée du château classée, vente en primeur, boutique avec visiteurs et accords mets et vins',
+            '12 recettes',
+            'Réputation de 0 à 5 étoiles gardée au prestige',
+        ],
+    },
+    {
+        v: '1.36',
+        title: '60 niveaux',
+        date: '',
+        items: [
+            "En dernier : le niveau maximum passe à 60, l'alpage à 50, le Grand Haras à 45",
+            'Machines, plantes, animaux et recettes étalés sur 60 niveaux',
+            "5 heures de jeu de plus qu'aujourd'hui pour atteindre le maximum",
+        ],
+    },
+    {
+        v: '1.35',
+        title: 'Nouveaux animaux',
+        date: '',
+        items: ['Pigeon, pintade, chèvre angora, faisan, autruche, yack', '11 produits, 36 recettes', 'Le yack rejoint la transhumance'],
+    },
+    {
+        v: '1.34',
+        title: 'Cave et comptoir',
+        date: '',
+        items: ['7 boissons, 8 produits en cave'],
+    },
+    {
+        v: '1.33',
+        title: 'Poissons et lagon',
+        date: '',
+        items: [
+            'Le volet Étang devient « Pêche »',
+            'Goujon, lavaret, thon, calmar, raie, dorade, poulpe, langouste, vivaneau, mahi-mahi',
+            "Un 4e coin de pêche, le lagon, ouvert avec l'île",
+            '34 recettes',
+        ],
+    },
+    {
+        v: '1.32',
+        title: "Cultures de l'île",
+        date: '',
+        items: ['Taro, curcuma, aloe vera, hibiscus, patchouli, arachide, haricot rouge, piment des îles, 33 recettes'],
+    },
+    {
+        v: '1.31',
+        title: 'Nouveaux arbres',
+        date: '',
+        items: [],
+    },
+    {
+        v: '1.30',
+        title: 'Nouvelles cultures',
+        date: '',
+        items: [],
+    },
+    {
+        v: '1.29.1',
+        title: '',
+        date: '22 octobre 2026',
+        items: ["Les villageois de la page Village se replient comme l'Agenda"],
+    },
+    {
+        v: '1.29',
+        title: 'Le coffre-fort de la grange',
+        date: '22 octobre 2026',
+        items: [
+            "Dès le niveau 15, un coffre pour garder ce qu'on collectionne ou réserve pour plus tard. 6 emplacements",
+            'On y range un produit en choisissant sa qualité et sa quantité depuis la fiche du produit dans la grange',
+            "Un emplacement garde 99 unités d'un produit à une qualité",
+            'Au coffre, rien ne se vend, ne part en commande ou en recette, et rien ne prend de place dans la grange',
+            '« Reprendre » rend le produit avec sa qualité',
+            'Une nouvelle ferme vide le coffre mais il garde sa taille',
+        ],
+    },
+    {
+        v: '1.28.1',
+        title: 'La bière a une qualité',
+        date: '',
+        items: [
+            'Un brassin prend le rang du score moyen de ses ingrédients',
+            'Les bouteilles gardent leur rang en stock, se vendent plus cher et entrent en cave avec leur rang',
+        ],
+    },
+    {
+        v: '1.28',
+        title: 'Platine et diamant',
+        date: '22 octobre 2026',
+        items: [
+            "Deux qualités de plus après l'or",
+            "Une unité en or d'une récolte, d'un produit d'élevage",
+            'Un plat prend le rang du score moyen de ses ingrédients',
+            'Une variété savoureuse seule plafonne à 2,4',
+            "La vente prend le plus haut rang d'abord",
+            '« or ou mieux » accepte platine et diamant dans les commandes, chez les voisins et dans les défis',
+            'Un lot de cave tout en argent, en or, en platine ou en diamant garde son rang à la sortie',
+            'Grange, atelier, marché, Grand livre et cave affichent les rangs',
+            "L'étoile du diamant est une pierre taillée",
+        ],
+    },
+    {
+        v: '1.27.2',
+        title: 'La qualité en stock se voit',
+        date: '22 octobre 2026',
+        items: [
+            "Dans la grange, la fiche d'un produit montre combien d'unités sont normales, en argent ou en or",
+            "À l'atelier, chaque recette faisable annonce la qualité que donnerait le lot avec le stock actuel",
+        ],
+    },
+    {
+        v: '1.27.1',
+        title: 'Cartes repliables dans Village | Commandes',
+        date: '',
+        items: [
+            "« Villageois » et « Fermes voisines » se replient comme l'Agenda en une ligne fine",
+            'Un toucher déplie',
+            "Le choix est retenu sur l'appareil",
+            'Sans choix : les fermes voisines sont repliées',
+        ],
+    },
+    {
+        v: '1.27',
+        title: 'Des demandes de voisins plus riches',
+        date: '22 octobre 2026',
+        items: [
+            'De 0 à 2 cœurs, un plat par demande',
+            'À partir de 3 cœurs, deux plats, tous différents et de la spécialité du voisin',
+            'Un plat peut être exigé en argent ou mieux, ou en or',
+            "L'étoile s'affiche sur la ligne, et à la livraison les plats ordinaires partent d'abord, puis l'argent",
+            'La commande spéciale de la semaine',
+            "Récompense pièces ×2,5, 3 matériaux rares, expérience et 2 points d'amitié",
+            'Elle disparaît lundi',
+            'Encadré doré en haut de la carte des fermes voisines',
+            'Ligne dans « À faire »',
+            'Aussi : les textes des voisins au masculin, les lignes « à produire » à la même taille que les autres',
+        ],
+    },
+    {
+        v: '1.26.3',
+        title: 'Les voisins demandent leurs plats',
+        date: '',
+        items: [
+            'Les demandes des fermes voisines ne sont plus un produit au hasard mais un plat de leur spécialité',
+            "Jamais deux fois le même d'affilée",
+            "Tant que la ferme n'a pas les ateliers, ils demandent des produits bruts de leur spécialité",
+            "La spécialité s'affiche sous leur nom",
+            'Les plats de fête, outils, bijoux, selles',
+        ],
+    },
+    {
+        v: '1.26',
+        title: 'Le marché des voisins',
+        date: '21 octobre 2026',
+        items: [
+            'Dès le niveau 12, Marché | Acheter, rayon Voisins',
+            'Les quatre fermes voisines tiennent un étal renouvelé toutes les 4 heures',
+            'Avec les cœurs : de 2 à 6 offres, plus de quantité, prix de 2,4 à 1,6 fois la valeur',
+            'À 5 cœurs, un coup de cœur en qualité or',
+            "La demande d'achat, l'étal à l'envers",
+            '2 à 4 demandes',
+            'Chaque achat remplit la fidélité du voisin',
+            'Livraisons dans « À faire », page du guide, bulle de Mamie',
+            'Aussi : la vérification des recettes au chargement lisait mal les viandes. 1.26.1 : « voisins » au masculin. 1.26.2 : le mur du salon en petites vignettes',
+        ],
+    },
+    {
+        v: '1.25',
+        title: 'Les cultures compagnes',
+        date: '21 octobre 2026',
+        items: [
+            "Des cultures voisines s'entraident ou se gênent",
+            'Malus pousse −10 %, qualité −8 ou nuisibles ×1,5',
+            'Plafonds par parcelle',
+            "La lavande et le sarrasin aident toutes leurs voisines, l'engrais vert fait pousser la céréale",
+            "Une feuille verte ou fanée s'affiche entre deux parcelles, un insigne pour les trois sœurs",
+            'Le carnet du potager : chaque association se découvre à la récolte',
+            'Récompenses à 5, 10, 20 et 30 et un ruban au carnet complet',
+            'Le conseil de Mamie : un défi par jour',
+            'Page du guide, bulle de Mamie, niveau 9 annoncé',
+        ],
+    },
+    {
+        v: '1.24.7',
+        title: "Recettes dans l'ordre",
+        date: '',
+        items: [
+            "Onze recettes s'ouvraient avant un de leurs ingrédients",
+            "Elles s'ouvrent maintenant au niveau de leur ingrédient le plus tardif, calculé au chargement",
+            'Un test le vérifie pour toutes les recettes',
+        ],
+    },
+    {
+        v: '1.24.6',
+        title: 'Tout à jour et chapitres débloqués',
+        date: '21 octobre 2026',
+        items: [
+            "Ces quatre recettes s'ouvrent maintenant au niveau du chapitre",
+            "Un test vérifie que plus aucun chantier ne demande un produit d'un niveau supérieur",
+            "Plus aucun chapitre n'a plus de 2 ou 3 niveaux d'écart, le temps de réunir les produits",
+        ],
+    },
+    {
+        v: '1.24.5',
+        title: '',
+        date: '',
+        items: [
+            'Couleur fantaisiste visible dans les mini-jeux',
+            'Victoire écrasante = 2 rosettes',
+            'Anciens chevaux gardés bais',
+            'Fers dessinés sous les sabots',
+            "Effet de l'aptitude réglé avec un joueur simulé",
+        ],
+    },
+    {
+        v: '1.24.4',
+        title: '',
+        date: '',
+        items: [
+            'Trois chevaux différents par semaine au concours',
+            'Cartes des écuries repliables',
+            "L'aptitude rend le mini-jeu plus facile",
+            'Séances de 3 à 8 points',
+            'Lignée célèbre à 3 champions',
+            'Fiche de naissance',
+        ],
+    },
+    {
+        v: '1.24.3',
+        title: 'Audit des chevaux',
+        date: '',
+        items: [
+            'Pastilles de forme qui débordaient sur téléphone, collection et arbre de famille retouchés',
+            'Brossage toutes les 2 heures réelles',
+            "Robes dans les mini-jeux, tenue d'endurance au galop du raid, chronomètre coupé, poulains coupés",
+            'Division « Prestige », fourchette des rivales, saillies revalorisées',
+            'Version affichée à jour',
+        ],
+    },
+    {
+        v: '1.24.2',
+        title: "L'élevage",
+        date: '21 octobre 2026',
+        items: [
+            'Volet Animaux › Élevage',
+            'Chaque cheval a une robe et des marques héritées par gènes dominants ou récessifs',
+            "L'apparence fantaisiste du labo se pose par-dessus",
+            'Poulain, jeune, puis adulte',
+            "Retraite d'un champion Élite : saillies chaque jour, ses poulains naissent avec 10 points dans sa spécialité",
+            "Livre généalogique : nom d'élevage, collection des robes et marques, descendants, arbre de famille",
+            'Lignée célèbre : un ruban',
+            'Un générateur de chevaux a servi à valider les règles',
+        ],
+    },
+    {
+        v: '1.24.1',
+        title: 'La sellerie de Jules',
+        date: '',
+        items: ["Neuf objets d'équipement, bonus de concours"],
+    },
+    {
+        v: '1.24',
+        title: 'Les concours',
+        date: '21 octobre 2026',
+        items: ['Concours de la semaine, cinq divisions, Grand Prix du mois, Jules, rosettes, coupes, décorations, Agenda'],
+    },
+    {
+        v: '1.23.3',
+        title: 'Mini-jeux du dressage et du raid',
+        date: '',
+        items: [],
+    },
+    {
+        v: '1.23.2',
+        title: 'Mini-jeux du galop et du saut',
+        date: '',
+        items: [],
+    },
+    {
+        v: '1.23.1',
+        title: '',
+        date: '',
+        items: ["Le volet Écuries rejoint l'onglet Animaux"],
+    },
+    {
+        v: '1.23',
+        title: 'Les grandes écuries',
+        date: '21 octobre 2026',
+        items: [
+            'Première version du Grand Haras',
+            'Niveau 44, Animaux › Écuries : 4, 8 puis 12 boxes',
+            'Forme',
+            'Quatre aptitudes plafonnées par un gène',
+            'Soins, ration, randonnée',
+            'Nouveau cheval de sport dessiné',
+        ],
+    },
+    {
+        v: '1.22',
+        title: "La génétique s'étoffe",
+        date: '20 octobre 2026',
+        items: ['16 apparences et 8 caractères discrets de plus. 1.22.1 à 1.22.5'],
+    },
+    {
+        v: '1.21',
+        title: 'Le Guide du fermier complet',
+        date: '20 octobre 2026',
+        items: ['43 pages en 11 rubriques, recherche, « Y aller ». 1.21.1 à 1.21.3'],
+    },
+    {
+        v: '1.20 à 1.20.2',
+        title: 'Le domaine',
+        date: '20 octobre 2026',
+        items: ["9 branches de 5 paliers, vue d'ensemble avec ses bâtiments"],
+    },
+    {
+        v: '1.19.2',
+        title: "L'Agenda",
+        date: '20 octobre 2026',
+        items: ['Ce qui est là et ce qui arrive, avec les comptes à rebours'],
+    },
+    {
+        v: '1.19.1',
+        title: 'Armand, chef du Grand Hôtel',
+        date: '19 octobre 2026',
+        items: ['Une visite par semaine, produit phare, commandes énormes à prix fixe, fidélité'],
+    },
+    {
+        v: '1.19',
+        title: 'La maîtrise étendue',
+        date: '19 octobre 2026',
+        items: ["Platine et diamant après l'or"],
+    },
+    {
+        v: '1.18.9',
+        title: '',
+        date: '',
+        items: ['La fenêtre « Agrandir » ne se referme plus aussitôt sur téléphone'],
+    },
+    {
+        v: '1.18.6 à 1.18.8',
+        title: 'La serre',
+        date: '',
+        items: ['Vitres à petits carreaux, 6 à 12 parcelles, pousse ×1,6, primeurs', 'Menthe, poivre noir et orchidée, 9 nouveaux produits'],
+    },
+    {
+        v: '1.18.5',
+        title: '',
+        date: '',
+        items: ['La truite est pêchable'],
+    },
+    {
+        v: '1.18.4',
+        title: 'Audit UX',
+        date: '',
+        items: [],
+    },
+    {
+        v: '1.18.3',
+        title: '',
+        date: '',
+        items: ["Le jeu en ligne prend d'abord la dernière version à chaque ouverture"],
+    },
+    {
+        v: '1.18.2',
+        title: '',
+        date: '',
+        items: ['Les histoires de Mamie Odette vivent dans les fiches du Grand livre'],
+    },
+    {
+        v: '1.18.1',
+        title: 'Le Grand livre',
+        date: '',
+        items: ['Étagère de 17 pages, quatre paliers par page, une fiche par entrée'],
+    },
+    {
+        v: '1.18',
+        title: 'Grands défis',
+        date: '19 octobre 2026',
+        items: ['17 grands défis avec 5 nouvelles décorations'],
+    },
+    {
+        v: '1.17.1 à 1.17.4',
+        title: '',
+        date: '',
+        items: ['Le comptoir ne garde que des boissons', "Jour des clients à l'heure locale"],
+    },
+    {
+        v: '1.17',
+        title: 'Le Comptoir',
+        date: '19 octobre 2026',
+        items: ['Mini-jeu par boisson, 33 boissons dont 25 nouvelles, clients du village, salon à agrandir et à décorer'],
+    },
+    {
+        v: '1.16',
+        title: 'Les chapitres à 50 niveaux',
+        date: '18 octobre 2026',
+        items: [
+            "L'expérience d'un chantier suit le niveau de son chapitre",
+            'Finir un chapitre rapporte des pièces et, dès le chapitre 5, un ruban',
+            '15 chantiers plus légers',
+        ],
+    },
+    {
+        v: '1.15.5',
+        title: '',
+        date: '',
+        items: ['Bouton Semer', "Restes de l'audit réglés"],
+    },
+    {
+        v: '1.15.4',
+        title: 'grande revue',
+        date: '',
+        items: [],
+    },
+    {
+        v: '1.15.3',
+        title: '',
+        date: '',
+        items: ["Toucher une bouteille de vin en cave l'affiche en grand"],
+    },
+    {
+        v: '1.15.2',
+        title: '',
+        date: '',
+        items: ["La fenêtre des niveaux ouverte depuis un bouton n'est plus vide"],
+    },
+    {
+        v: '1.15.1',
+        title: 'Bouteilles personnalisées',
+        date: '',
+        items: ["Millésime sur l'étiquette, capsule selon l'année, quatre styles d'étiquette, nom de cuvée"],
+    },
+    {
+        v: '1.15',
+        title: 'Le vin',
+        date: '18 octobre 2026',
+        items: ['Vin de table dès le niveau 31', 'Millésimes', 'Cépages créés au labo', 'Vendanges et fête du vin avec Margaux'],
+    },
+    {
+        v: '1.14.1',
+        title: 'Nouveau logo',
+        date: '18 octobre 2026',
+        items: ["Une tête de vache, icône ronde d'Android, petite icône de notification blanche"],
+    },
+    {
+        v: '1.14',
+        title: 'Les restes',
+        date: '18 octobre 2026',
+        items: [
+            'Bois fruitier au fumoir',
+            'Cloche de cuivre, banc de chêne, lanterne de fer',
+            'Cuves de brasserie et enclos du laboratoire au Chantier',
+            'Le manoir',
+            'Le mur du salon',
+        ],
+    },
+    {
+        v: '1.13',
+        title: 'Le verger vivant',
+        date: '18 octobre 2026',
+        items: ['Saisons des espèces, floraison et ruches, gelée et torches, grande cueillette, fête du cidre, carnet du verger'],
+    },
+    {
+        v: '1.12',
+        title: 'Le verger',
+        date: '18 octobre 2026',
+        items: ['Maturité, boutures, greffons rares et de pépinière, soins, échelle et grand panier, cueilleur'],
+    },
+    {
+        v: '1.11',
+        title: 'La nature',
+        date: '18 octobre 2026',
+        items: [
+            'Mine à trois profondeurs, forêt à quatre essences, cueillette de saison, charbonnière, forge et scierie',
+            '19 nouveaux matériaux, 23 recettes, 7 bijoux',
+        ],
+    },
+    {
+        v: '1.10',
+        title: 'La pêche',
+        date: '18 octobre 2026',
+        items: ["L'étang a son volet", 'Trois coins, appâts, canne plus vivante, nasses qui pêchent seules toutes les 2 heures', '7 poissons et 13 recettes'],
+    },
+    {
+        v: '1.9',
+        title: '',
+        date: '18 octobre 2026',
+        items: [
+            'La décoration se pose dans un coin de parcelle sans la gâcher',
+            'Lucioles en simple décor',
+            'Le chien se pousse',
+            "Tout ce qu'on livre dans Commandes, le marchand au Marché",
+        ],
+    },
+    {
+        v: '1.8.2',
+        title: '',
+        date: '',
+        items: ['Vendre une bête depuis sa fiche'],
+    },
+    {
+        v: '1.8.1',
+        title: '',
+        date: '',
+        items: ['Les nouveaux dessins de la lavande, des biscuits et des salades sont branchés'],
+    },
+    {
+        v: '1.8',
+        title: '',
+        date: '18 octobre 2026',
+        items: [
+            'Une machine par niveau, toujours avec ses recettes et jamais avant la pierre',
+            'Plus de machines offertes au retour',
+            "L'avion-cargo toutes les 48 heures",
+            'Toucher un produit du train pour aller le produire',
+            'Temps du jeu et temps réel clarifiés',
+            'Lavande, biscuits et salades redessinés',
+        ],
+    },
+    {
+        v: '1.7',
+        title: 'La génétique repensée',
+        date: '14 octobre 2026',
+        items: ['Portées de jeunes plants, deux pollinisations, projets de sélection, variétés dans les bières'],
+    },
+    {
+        v: '1.6.3',
+        title: '',
+        date: '',
+        items: ['La cave repensée : les bières y vieillissent en fût, un soin par étape, hygromètre qui règle le climat seul'],
+    },
+    {
+        v: '1.6.2',
+        title: '',
+        date: '',
+        items: ['Brasserie améliorée : rebrasser et cuves en boucle, étoiles secrètes avant le premier brassin'],
+    },
+    {
+        v: '1.6.1',
+        title: '',
+        date: '',
+        items: ["Fenêtres de l'abbaye corrigées", 'Cacao, houblon, riz, soja, sarrasin, café vert et noisette redessinés'],
+    },
+    {
+        v: '1.6',
+        title: "L'abbaye",
+        date: '14 octobre 2026',
+        items: [
+            'Nouvelle étape clé au niveau 35, carte et deux chapitres, Frère Hugues et Agnès',
+            "L'orge et la malterie",
+            'Composer ses bières, leur accord et leur nom',
+            'Le cellier à fûts',
+            'Le livre des bières',
+            "L'île passe au niveau 38",
+        ],
+    },
+    {
+        v: '1.5',
+        title: '',
+        date: '14 octobre 2026',
+        items: [
+            "Épinards, concombre, rhubarbe, framboises, sarrasin, piment d'Espelette",
+            'Citronnier, noisetier, cognassier, amandier',
+            'La caille',
+            'La crêperie',
+            '37 recettes',
+        ],
+    },
+    {
+        v: '1.4.2',
+        title: '',
+        date: '',
+        items: ["Ligues du concours vérifiées et remises à l'échelle des 50 niveaux", "En jouant 1 h à 1 h 30 par jour, on peut monter jusqu'en diamant"],
+    },
+    {
+        v: '1.4.1',
+        title: '',
+        date: '',
+        items: ['Un chantier ne demande plus rien qui ne soit débloqué au moins un niveau avant son chapitre'],
+    },
+    {
+        v: '1.4',
+        title: '50 niveaux',
+        date: '13 octobre 2026',
+        items: [
+            'Une grande étape par palier',
+            'Chaque niveau ouvre quelque chose',
+            'Les 16 chapitres en une seule histoire',
+            'Anciennes parties converties sans perte',
+            'Fenêtre des niveaux à taille fixe',
+        ],
+    },
+    {
+        v: '1.3',
+        title: 'nouveaux produits',
+        date: '13 octobre 2026',
+        items: [
+            '8 cultures, 6 arbres, la brebis laitière, le saloir et les seconds produits des bêtes, 7 machines',
+            'Chaque ingrédient sert à 3 recettes au moins, 20 recettes au plus par machine',
+        ],
+    },
+    {
+        v: '1.2',
+        title: '',
+        date: '13 octobre 2026',
+        items: [
+            'La ferme la nuit',
+            'Le carnet de Mamie Odette',
+            'Cornes, oreilles et toison selon les gènes, lignée sur deux générations',
+            'Renommer prés, variétés et races',
+            'Verger rééquilibré',
+        ],
+    },
+    {
+        v: '1.1',
+        title: 'Les grands défis',
+        date: '13 octobre 2026',
+        items: ['Un défi de deux semaines tiré au hasard parmi 12, 4 étapes, médailles, salle des trophées'],
+    },
+    {
+        v: '1.0 bêta 4',
+        title: 'La génétique',
+        date: '',
+        items: ["Agathe et Victor, labo : croisements, variétés, plats d'argent et d'or, races, « Mes créations », chef"],
+    },
+    {
+        v: '1.0 bêta 3',
+        title: "L'Île",
+        date: '',
+        items: ['Tiago et Maëva, plantations tropicales, verger des îles, 15 produits, 4 machines, 41 recettes'],
+    },
+    {
+        v: '1.0 bêta 2',
+        title: 'les Prés et le Verger',
+        date: '',
+        items: ['20 bêtes par pré, prés à acheter, déménagement', 'Verger avec arbres qui vivent, fruits au sol, bois', 'Kiwi et kaki'],
+    },
+    {
+        v: '1.0 bêta 2.1',
+        title: '',
+        date: '',
+        items: ["Fiche d'un animal au doigt", 'Un appui ramasse ou nourrit, un appui long ouvre la fiche', 'Étable dès le premier animal'],
+    },
+    {
+        v: '1.0',
+        title: 'sortie officielle',
+        date: '12 octobre 2026',
+        items: ['Audit complet du code, du gameplay et des graphismes, tout corrigé'],
+    },
+    {
+        v: '1.0 bêta',
+        title: 'la refonte totale',
+        date: '12 octobre 2026',
+        items: ['Code réécrit en modules, interface à 5 onglets avec menu, fiches en fenêtres du bas, étable', 'Sauvegardes 6.2 reprises'],
+    },
 ];

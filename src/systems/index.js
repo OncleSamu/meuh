@@ -63,7 +63,6 @@ export * from './workshop.js';
 export * from './world.js';
 export * from './defis.js';
 export * from './commerces.js';
-export * from './crises.js';
 export * from './night.js';
 export * from './carnet.js';
 export * from './counter.js';
