@@ -110,7 +110,11 @@ function orderCount() {
 }
 
 export function makeOrder() {
-    const vid = pickRand(presentVillagers());
+    // 1.101 : chacun son tour : on évite de redonner une commande à un villageois qui en a déjà une sur le tableau
+    const present = presentVillagers();
+    const busy = new Set((state.quests || []).map(q => q && q.vid).filter(Boolean));
+    const free = present.filter(v => !busy.has(v));
+    const vid = pickRand(free.length ? free : present);
     const its = pickItems(orderCount(), VILLAGERS[vid].likes);
     if (!its.length) return null;
     const target = 30 + scaleLvl() * 22;
