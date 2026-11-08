@@ -2,11 +2,11 @@
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { toast, sfx } from '../core/bus.js';
-import { ANIMALS, CHARGE } from '../data/world.js';
-import { spend, give, addXp, lvlOk } from './player.js';
+import { ANIMALS, CHARGE, PURGE } from '../data/world.js';
+import { spend, give, take, have, takeAll, hasAll, addXp, lvlOk } from './player.js';
 import { addCont } from './contamination.js';
 
-const NAMES = { hen: ['Cocotte', 'Grisette', 'Pépite', 'Rouille'], goat: ['Biquette', 'Ferraille', 'Noisette'] };
+const NAMES = { hen: ['Cocotte', 'Grisette', 'Pépite', 'Rouille'], goat: ['Biquette', 'Ferraille', 'Noisette'], pig: ['Gros-Bidon', 'Tonneau'] };
 export const countOf = type => state.animals.filter(a => a.type === type).length;
 export const canBuy = type => countOf(type) < ANIMALS[type].max;
 
@@ -42,7 +42,10 @@ export function animalTick(dt) {
         while (a.wait >= d.every) {
             a.wait -= d.every;
             const p = prodOf(a);
-            if (p && a.stock.length < 3) a.stock.push(p);
+            if (!p || a.stock.length >= 3) continue;
+            // le cochon mange un déchet du stock pour faire son engrais
+            if (d.eats && !take(d.eats, 1)) continue;
+            a.stock.push(p);
         }
         // la chèvre nettoie
         if (d.clean) {
@@ -65,3 +68,30 @@ export function collectAnimal(k) {
     return n;
 }
 export const animalLeft = a => Math.max(0, ANIMALS[a.type].every - (a.wait || 0));
+
+// V2 : l'étable filtrée vide la Charge d'une bête (on la construit une fois)
+export function buildStable() {
+    if (state.stableBuilt || !lvlOk(PURGE.lvl, 'L’étable filtrée')) return false;
+    if (!spend(PURGE.build)) {
+        toast(`Il faut ${PURGE.build} pièces`);
+        sfx('error');
+        return false;
+    }
+    state.stableBuilt = true;
+    sfx('build');
+    return true;
+}
+export function purge(k) {
+    const a = state.animals[k];
+    if (!a || !state.stableBuilt || a.charge <= 0) return false;
+    if (!hasAll(PURGE.cost)) {
+        toast('Il faut 1 électronique pour lancer les filtres');
+        sfx('error');
+        return false;
+    }
+    takeAll(PURGE.cost);
+    a.charge = 0;
+    sfx('collect');
+    return true;
+}
+export const hungry = a => !!ANIMALS[a.type].eats && !have(ANIMALS[a.type].eats);

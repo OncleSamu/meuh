@@ -284,3 +284,120 @@
 .convoy {
     background: linear-gradient(#fff4cc, var(--paper));
 }
+/* V2 */
+.gear-tag {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    font-size: 10px;
+    font-weight: 900;
+    color: var(--ink);
+    background: var(--tc);
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    padding: 0 4px 0 1px;
+}
+.gear-tag .ico {
+    width: 16px;
+    height: 16px;
+}
+.sheet-panel h4 {
+    margin: 4px 0 0;
+    font-size: 15px;
+}
+.pick.stable {
+    background: #f1ffc8;
+    border-radius: 10px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+.tag,
+.hot-tag {
+    white-space: nowrap;
+    font-size: 10.5px;
+    background: #9ccf3a;
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    padding: 0 4px;
+    display: inline;
+    vertical-align: 1px;
+}
+.hot-tag {
+    background: #e68a2e;
+    color: var(--ink);
+}
+.event {
+    background: linear-gradient(#e9f2c8, var(--paper));
+}
+.ev-opts {
+    display: grid;
+    gap: 6px;
+}
+.ev-opt {
+    font: inherit;
+    text-align: left;
+    background: #efe3c4;
+    border: 2.5px solid var(--ink);
+    border-radius: 12px;
+    padding: 6px 10px;
+    box-shadow: var(--shadow);
+    color: var(--ink);
+}
+.ev-opt b {
+    display: block;
+    font-size: 14px;
+}
+.ev-opt small {
+    font-size: 12px;
+    color: #6b5b48;
+}
+.ev-opt[disabled] {
+    opacity: 0.5;
+}
+.ev-opt:active {
+    transform: translateY(2px);
+}
+.note.hot {
+    background: #ffe2c2;
+    border: 2px dashed #e68a2e;
+    border-radius: 10px;
+    padding: 6px 8px;
+}
+.need .ok {
+    color: #3f7a12;
+}
+.floor.f2 .room:nth-child(2) {
+    background: #4f7a52;
+}
+.floor.f2 .room:nth-child(3) {
+    background: #3f5a72;
+}
+.floor.f2 .room:nth-child(4) {
+    background: #7a5a3a;
+}
+.contract {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.contract b {
+    display: block;
+    font-size: 16px;
+}
+.contract small {
+    display: block;
+    font-size: 12.5px;
+}
+.contract .reward {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: 900;
+    font-size: 14px;
+}
+.armored {
+    background: linear-gradient(#dfe4d8, var(--paper));
+}

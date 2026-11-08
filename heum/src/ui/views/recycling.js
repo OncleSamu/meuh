@@ -14,7 +14,7 @@ function wreckCard() {
     );
 }
 function scrapRow() {
-    const ids = ['scrap', ...SCRAP_TYPES, 'fertilizer', 'waste'];
+    const ids = ['scrap', ...SCRAP_TYPES, 'fertilizer', 'waste', ...(state.level >= 9 ? ['veil', 'conc'] : [])];
     return card(
         `<h3>Ferraille et matériaux</h3><div class="chips">${ids.map(id => `<span class="chip${H.have(id) ? '' : ' none'}" title="${H.nameOf(id)}">${ico(id)}<b>${H.have(id)}</b></span>`).join('')}</div>`,
     );

@@ -3,21 +3,27 @@ import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { rnd, pick } from '../core/rand.js';
 import { toast, sfx, emit } from '../core/bus.js';
-import { CROPS, plotCost } from '../data/crops.js';
-import { CONT } from '../data/world.js';
-import { spend, give, addXp, lvlOk } from './player.js';
-import { tier, addCont } from './contamination.js';
+import { CROPS, MUTANTS, plotCost, cropDef, GEAR } from '../data/crops.js';
+import { CONT, tierOf } from '../data/world.js';
+import { spend, give, take, have, addXp, lvlOk, nameOf } from './player.js';
+import { addCont } from './contamination.js';
 
-export const cropReady = p => !!p.crop && !p.rebel && now() >= p.at + CROPS[p.crop].t * 1000;
-export const cropLeft = p => (p.crop ? Math.max(0, (p.at + CROPS[p.crop].t * 1000 - now()) / 1000) : 0);
+export const cropReady = p => !!p.crop && !p.rebel && now() >= p.at + cropDef(p.crop).t * 1000;
+export const cropLeft = p => (p.crop ? Math.max(0, (p.at + cropDef(p.crop).t * 1000 - now()) / 1000) : 0);
+// V2 : la Contamination propre à une parcelle (jauge de la ferme + son équipement)
+export const plotCont = p => Math.max(0, Math.min(100, state.cont + (p.gear && GEAR[p.gear] ? GEAR[p.gear].mod : 0)));
+export const plotTier = p => tierOf(plotCont(p));
+// les graines stables : les mutants fixés au labo
+export const stableOpen = () => Object.keys(state.fixed || {}).filter(id => cropDef(id));
 export const cropsOpen = () => Object.entries(CROPS).filter(([, c]) => c.lvl <= state.level);
 export const openCount = () => state.plots.filter(p => p.open).length;
 export const nextPlotCost = () => plotCost(openCount());
 
 export function plant(i, id) {
     const p = state.plots[i],
-        c = CROPS[id];
+        c = cropDef(id);
     if (!p || !p.open || p.crop || p.rebel || !c) return false;
+    if (c.stable && !(state.fixed || {})[id]) return false;
     if (!lvlOk(c.lvl, c.name)) return false;
     if (!spend(c.seed)) {
         toast(`Il faut ${c.seed} pièces pour semer`);
@@ -31,8 +37,10 @@ export function plant(i, id) {
 
 // ce que donne une récolte selon le palier ; renvoie { got: [[id, n]], rebel, waste }
 export function harvestRoll(id, t) {
-    const c = CROPS[id];
+    const c = cropDef(id);
     if (t === 'crit') return { got: [['waste', 1]], waste: true };
+    // une graine stable donne toujours son mutant, sans Rebelle
+    if (c.stable) return { got: [[id, c.yield]], mutant: true, stable: true };
     const ch = CONT.mutChance[t] || 0;
     if (c.mut && ch && rnd() < ch) {
         const got =
@@ -50,12 +58,16 @@ export function harvestRoll(id, t) {
 export function harvest(i) {
     const p = state.plots[i];
     if (!p || !cropReady(p)) return null;
-    const c = CROPS[p.crop];
-    const r = harvestRoll(p.crop, tier().id);
+    const c = cropDef(p.crop);
+    const r = harvestRoll(p.crop, plotTier(p).id);
     for (const [id, n] of r.got) give(id, n);
+    // le chou-éponge absorbe la Contamination
+    const clean = r.got.reduce((a, [id, n]) => a + (MUTANTS[id] && MUTANTS[id].clean ? MUTANTS[id].clean * n : 0), 0);
+    if (clean) addCont(-clean);
+    r.clean = clean;
     state.stats.harvests++;
     if (r.mutant) state.stats.mutants++;
-    addXp(c.seed + 2 + (r.mutant ? 10 : 0));
+    addXp(Math.min(40, c.seed) + 2 + (r.mutant && !r.stable ? 10 : 0));
     Object.assign(p, { crop: null, at: 0, rebel: !!r.rebel });
     sfx(r.mutant ? 'mutant' : r.waste ? 'waste' : 'harvest');
     emit('harvest', { i, ...r });
@@ -104,4 +116,21 @@ export function rebelTick(dt) {
     Object.assign(state.plots[j], { crop: null, at: 0, rebel: true });
     toast('Un Rebelle a gagné une parcelle voisine !');
     sfx('error');
+}
+
+// V2 : poser ou retirer l'équipement d'une parcelle (voile, concentrateur) ; il revient au stock quand on l'enlève
+export function setGear(i, g) {
+    const p = state.plots[i];
+    if (!p || !p.open) return false;
+    if (g && !GEAR[g]) return false;
+    if (g && !have(g)) {
+        toast(`Pas de ${nameOf(g).toLowerCase()} : l’Établi en fabrique`);
+        sfx('error');
+        return false;
+    }
+    if (p.gear) give(p.gear, 1);
+    if (g) take(g, 1);
+    p.gear = g || null;
+    sfx('build');
+    return true;
 }

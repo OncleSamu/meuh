@@ -7,3 +7,4 @@ export * from './recycling.js';
 export * from './bunker.js';
 export * from './caravans.js';
 export * from './game.js';
+export * from './events.js';

@@ -1,7 +1,7 @@
 // Heum — l'onglet Ménagerie : des bêtes à rôle et leur Charge toxique.
 import { state } from '../../core/state.js';
 import * as H from '../../systems/index.js';
-import { ANIMALS } from '../../data/world.js';
+import { ANIMALS, PURGE } from '../../data/world.js';
 import { ico, btn, card, head, bar, timer } from '../kit.js';
 import { floatAt } from '../fx.js';
 
@@ -22,8 +22,20 @@ function animalCard(a, k) {
                       ? '<small class="next">Panier plein</small>'
                       : ''
             }</div>
-            ${btn('Ramasser', 'collectAnimal', { k }, { disabled: !a.stock.length, kind: 'go' })}
+            ${H.hungry(a) ? `<p class="note warn">${ico('waste')} Plus de déchet radioactif au stock : il attend.</p>` : ''}
+            <div class="row">${btn('Ramasser', 'collectAnimal', { k }, { disabled: !a.stock.length, kind: 'go' })}${
+                state.stableBuilt && a.charge > 0
+                    ? btn('Purger (1 électronique)', 'purge', { k }, { icon: 'stable', size: 'sm', disabled: !H.have('elec') })
+                    : ''
+            }</div>
         </div></div>`,
+    );
+}
+// V2 : l'étable filtrée
+function stableCard() {
+    if (state.level < PURGE.lvl || state.stableBuilt) return '';
+    return card(
+        `${head('L’étable filtrée', 'stable', 'Elle vide la Charge toxique d’une bête d’un coup (1 électronique par purge).')}<div class="row">${btn(`Construire · ${PURGE.build}`, 'buildStable', {}, { icon: 'coin', kind: 'go', disabled: state.money < PURGE.build })}</div>`,
     );
 }
 function shop() {
@@ -43,9 +55,15 @@ function shop() {
 }
 export function render() {
     const list = state.animals.map(animalCard).join('');
-    return `${list || card(`<p class="empty-msg">${ico('hen', 'ico huge')}La Ménagerie est vide. Une poule sentinelle, pour commencer ?</p>`)}${shop()}`;
+    return `${stableCard()}${list || card(`<p class="empty-msg">${ico('hen', 'ico huge')}La Ménagerie est vide. Une poule sentinelle, pour commencer ?</p>`)}${shop()}`;
 }
 export const actions = {
+    purge(el, d) {
+        if (H.purge(+d.k)) floatAt(el, 'Charge vidée');
+    },
+    buildStable() {
+        H.buildStable();
+    },
     collectAnimal(el, d) {
         const n = H.collectAnimal(+d.k);
         if (n) floatAt(el, `+${n}`);
