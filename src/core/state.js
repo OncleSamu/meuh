@@ -153,7 +153,6 @@ export function newState() {
         story: { seen: {} },
         incident: null,
         nextIncident: 0,
-        gite: null,
         crisis: null,
         nextCrisis: 0,
         lastCrisis: '',

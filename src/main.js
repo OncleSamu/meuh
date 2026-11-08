@@ -41,7 +41,6 @@ import { setupOrders } from './ui/views/orders.js';
 import { setupDefis } from './ui/views/defis.js';
 import { setupCommerces } from './ui/views/commerces.js';
 import { setupCrises } from './ui/views/crises.js';
-import { setupGite } from './ui/views/gite.js';
 import { setupVillage } from './ui/views/village.js';
 import { setupMarket } from './ui/views/market.js';
 import { setupMenu } from './ui/sheets/menu.js';
@@ -108,7 +107,6 @@ function start() {
     setupDefis();
     setupCommerces();
     setupCrises();
-    setupGite();
     setupVillage();
     setupMarket();
     setupMenu();

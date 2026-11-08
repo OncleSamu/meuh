@@ -1,20 +1,6 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
-  "v": "1.100",
-  "title": "Le gîte et la table d'hôtes",
-  "date": "8 novembre 2026",
-  "items": [
-   "Dès le niveau 35, un gîte à bâtir, trois chambres au départ, jusqu'à huit",
-   "Toutes les 5 à 9 h, un voyageur au visage tiré au hasard arrive pour 12 à 36 h",
-   "Tout servi : cinq étoiles, pourboire de 25 %",
-   "Moitié : trois étoiles",
-   "Rien : une étoile et seulement la chambre",
-   "Les avis font la réputation",
-   "Dans Village › Commandes › Le gîte"
-  ]
- },
- {
   "v": "1.99",
   "title": "Les crises de la vallée",
   "date": "8 novembre 2026",
