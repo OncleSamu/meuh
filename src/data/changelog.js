@@ -1,6 +1,22 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.96',
+        title: "Podium, défis éclair, bilan de l'année",
+        date: '8 novembre 2026',
+        items: [
+            'Chaque saison de la ferme finie est classée face aux quatre fermes rivales',
+            "Les trois premiers rangent un souvenir dans l'album",
+            'Le livre montre le dernier podium, le rang et le record de chaque saison',
+            'La carte de la saison rappelle le record du thème',
+            '« Votre année à la ferme » résume les douze dernières saisons',
+            'Défi éclair : sous le grand défi, un bouton le lance',
+            'Un souvenir à 5, 15 et 30 réussis',
+            'Un défi éclair non fini disparaît',
+            "Correctif de la 1.94 : le souk et le grand hiver s'ouvrent bien avec l'oasis et le Grand Nord",
+        ],
+    },
+    {
         v: '1.95',
         title: 'Saisons de la ferme à thèmes',
         date: '8 novembre 2026',

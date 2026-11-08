@@ -8,7 +8,7 @@ import { ITEMS } from '../data/items.js';
 import { DECOS } from '../data/farm.js';
 import { VILLAGERS } from '../data/village.js';
 import { RENOWN_XP } from '../data/progress.js';
-import { DEFI, DEFIS } from '../data/defis.js';
+import { DEFI, DEFIS, MINI } from '../data/defis.js';
 import { earn, addXp } from './player.js';
 import { clampQuality, qual, qCount } from './farm.js';
 import { questPool } from './orders.js';
@@ -65,6 +65,8 @@ const PARTS = {
     cannery: () => hasMachine('cannery'),
     perfumery: () => hasMachine('perfumery'),
     // 1.94 : les parties du jeu qui ont leurs grands défis
+    oasis: () => oasisOpen(),
+    nord: () => nordOpen(),
     stud: () => harasOpen(),
     apiary: () => ['island', 'oasis', 'nord'].some(apiaryOpen),
     mead: () => meadOpen(),
@@ -73,6 +75,7 @@ const PARTS = {
     nmarket: () => nmarketOpen(),
     italian: () => hasMachine('pizzeria') || hasMachine('pastaworks'),
 };
+export const partKnown = k => !k || k in PARTS;
 export const partOk = k => !k || (PARTS[k] ? PARTS[k]() : true);
 
 // un produit qu'on peut se procurer maintenant (ou avec ses arbres, ou les matériaux)
@@ -399,10 +402,61 @@ function endDefi(t) {
 }
 
 // une seconde de jeu : les compteurs avancent, le défi se termine à sa date
+// ---------------- défis éclair (1.96) : une étape à compter, trois jours ----------------
+export const curMini = () => (state.defis && state.defis.mini) || null;
+export const miniList = () => MINI.list.filter(m => partOk(m.open));
+export const miniCount = m => Math.max(0, Math.min(m.n, (state.stats[m.stat] || 0) - m.base));
+export const miniDone = m => !!m && miniCount(m) >= m.n;
+export const miniLog = () => (state.defis && state.defis.miniLog) || [];
+export function startMini(t = now()) {
+    if (!defiOpen()) return false;
+    const D = ensureDefis();
+    if (D.mini) return false;
+    const list = miniList();
+    const pool = list.filter(m => m.id !== D.miniLast);
+    const m = shuffle(pool.length ? pool : list)[0];
+    if (!m) return false;
+    D.mini = {
+        id: m.id,
+        stat: m.stat,
+        n: m.n <= 1 ? m.n : Math.round(m.n * Math.max(1, defiScale())),
+        base: state.stats[m.stat] || 0,
+        start: t,
+        end: t + MINI.days * DAY,
+        text: m.text,
+        icon: m.icon,
+    };
+    D.miniLast = m.id;
+    if (view.started) toast('Défi éclair lancé : trois jours !', ['ui', 'trophy']);
+    return true;
+}
+export function claimMini(at) {
+    const D = ensureDefis();
+    const m = D.mini;
+    if (!miniDone(m)) return false;
+    earn(Math.round(DEFI.stepCoins * defiScale() * MINI.coins), at);
+    addXp(Math.round(DEFI.stepXp * defiScale() * MINI.coins), at);
+    D.miniLog = [...(D.miniLog || []), { id: m.id, at: now(), days: Math.max(1, Math.ceil((now() - m.start) / DAY)) }].slice(-100);
+    D.mini = null;
+    const n = D.miniLog.length;
+    if (MINI.milestones.includes(n)) addPhoto('ui', 'cupGold', 'Défis éclair', `${n} réussis`);
+    if (view.started) {
+        toast(`Défi éclair réussi ! (${n})`, ['ui', 'trophy']);
+        sfx('golden');
+        burst(at, 'sparkle', 12);
+    }
+    return true;
+}
+
 export function defiTick() {
     if (!defiOpen()) return false;
     const D = ensureDefis();
     const t = now();
+    // 1.96 : un défi éclair qui n'a pas été fini à temps disparaît
+    if (D.mini && t >= D.mini.end && !miniDone(D.mini)) {
+        D.mini = null;
+        if (view.started) toast('Le défi éclair est terminé sans réussite', ['ui', 'clock']);
+    }
     if (!D.cur) {
         if (D.offer) return false;
         D.offer = drawOffer();

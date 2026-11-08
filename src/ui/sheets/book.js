@@ -261,6 +261,7 @@ const runText = h => {
 };
 // 1.95 : les trophées des saisons de la ferme (une ligne par saison finie, datée)
 const FS_BY_ID = Object.fromEntries(FARM_SEASONS.map(s => [s.id, s]));
+const ORD = ['', '1re', '2e', '3e', '4e', '5e'];
 function seasonTrophies() {
     const log = G.farmSeasonLog();
     if (!log.length) return '';
@@ -270,10 +271,23 @@ function seasonTrophies() {
         .map(r => {
             const th = FS_BY_ID[r.id];
             if (!th) return '';
-            return `<li class="run${r.tiers >= 5 ? ' won' : ''}">${ico(['ui', r.tiers >= 5 ? th.deco : 'cupNone'])}<span><b>${th.name}</b> · ${r.tiers} palier${r.tiers > 1 ? 's' : ''} sur 5 · ${fmt(r.pts)} points</span><small>${dayText(r.at)}</small></li>`;
+            const cup = r.rank ? ['cupNone', 'cupGold', 'cupSilver', 'cupBronze'][r.rank <= 3 ? r.rank : 0] : r.tiers >= 5 ? th.deco : 'cupNone';
+            return `<li class="run${r.rank === 1 || r.tiers >= 5 ? ' won' : ''}">${ico(['ui', cup])}<span><b>${th.name}</b> · ${r.tiers} palier${r.tiers > 1 ? 's' : ''} sur 5 · ${fmt(r.pts)} points${r.rank ? ` · ${ORD[r.rank]} sur 5` : ''}${r.record ? ' · record' : ''}</span><small>${dayText(r.at)}</small></li>`;
         })
         .join('');
-    return `<div class="card defi-sheet" style="margin-bottom:10px"><div class="card-main"><div class="card-title">Saisons de la ferme</div><div class="card-sub">${log.length} saison${log.length > 1 ? 's' : ''} terminée${log.length > 1 ? 's' : ''}</div><ul class="runs">${rows}</ul></div></div>`;
+    const pod = G.lastPodium();
+    const podium = pod
+        ? `<div class="card-sub"><b>Dernier podium</b> (${FS_BY_ID[pod.rec.id] ? FS_BY_ID[pod.rec.id].name.toLowerCase() : ''})</div><ul class="runs">${pod.rows.map((x, k) => `<li class="run${x.me ? ' won' : ''}"><b>${k + 1}.</b><span>${x.me ? '<b>Votre ferme</b>' : `${x.name}`}</span><small>${fmt(x.pts)}</small></li>`).join('')}</ul>`
+        : '';
+    return `<div class="card defi-sheet" style="margin-bottom:10px"><div class="card-main"><div class="card-title">Saisons de la ferme</div><div class="card-sub">${log.length} saison${log.length > 1 ? 's' : ''} terminée${log.length > 1 ? 's' : ''}</div>${podium}<ul class="runs">${rows}</ul></div></div>`;
+}
+// 1.96 : « Votre année à la ferme » : les douze dernières saisons d'un coup d'œil
+function yearCard() {
+    const y = G.yearReview();
+    if (!y) return '';
+    return `<div class="card book-quarters" style="margin-bottom:10px"><div class="bq-head"><b>Votre année à la ferme</b><span>${y.seasons} saison${y.seasons > 1 ? 's' : ''}</span></div>
+        <div class="card-sub">${y.tiers} palier${y.tiers > 1 ? 's' : ''} de saison · podiums : ${y.podium[0]} en or, ${y.podium[1]} en argent, ${y.podium[2]} en bronze${y.topTheme ? ` · thème phare : ${y.topTheme.name.toLowerCase().replace('la saison ', '')}` : ''}</div>
+        <div class="card-sub">${y.runs} grand${y.runs > 1 ? 's' : ''} défi${y.runs > 1 ? 's' : ''} joué${y.runs > 1 ? 's' : ''}, ${y.medals} médaille${y.medals > 1 ? 's' : ''} dont ${y.golds} en or ou mieux · ${y.minis} défi${y.minis > 1 ? 's' : ''} éclair</div></div>`;
 }
 function defisPage() {
     const T = (state.defis && state.defis.trophies) || {};
@@ -301,7 +315,7 @@ function defisPage() {
                 ${before > 0 && !runs.length ? `<div class="card-sub">Parties jouées avant le journal : ${before}</div>` : ''}</div></div>`;
         })
         .join('');
-    return `${top}${seasonTrophies()}<div class="list">${sheets}</div>`;
+    return `${top}${yearCard()}${seasonTrophies()}<div class="list">${sheets}</div>`;
 }
 
 const SECTIONS = [

@@ -55,7 +55,7 @@ function stepRow(st, k, full) {
 }
 
 // ---------------- la carte du volet Commandes ----------------
-export function defiCard() {
+function mainCard() {
     if (state.level < DEFI.lvl - 2) return null;
     if (!G.defiOpen())
         return `<div class="card locked defi-card">${ico(['ui', 'cupGold'], 'ico big')}<div class="card-main"><div class="card-title">Les grands défis</div><div class="card-sub">Au niveau ${DEFI.lvl}, un villageois vous confiera un grand défi de deux semaines : médailles, rubans et décorations uniques.</div></div></div>`;
@@ -68,6 +68,23 @@ export function defiCard() {
         return `<div class="card defi-card won">${head}<p class="card-sub center">${ico(['ui', CUPS[d.awarded]], 'ico big')} Médaille ${DEFI.medals[d.awarded - 1].name.toLowerCase()} ! Choisissez dès maintenant le prochain défi.</p>${offerList()}</div>`;
     return `<div class="card defi-card">${head}${medalRow(n)}<div class="defi-steps">${d.steps.map((st, k) => stepRow(st, k, false)).join('')}</div>
         ${btn('Voir le défi', { act: 'open', data: { sheet: 'defi' }, size: 'sm', wide: true })}</div>`;
+}
+
+// 1.96 : le défi éclair, sous le grand défi
+function miniCard() {
+    if (!G.defiOpen()) return '';
+    const m = G.curMini();
+    if (!m) {
+        if (!G.miniList().length) return '';
+        return `<div class="card defi-card mini">${ico(['ui', 'star'], 'ico big')}<div class="card-main"><div class="card-title">Défi éclair</div><div class="card-sub">Une seule étape, trois jours. ${G.miniLog().length ? `${G.miniLog().length} réussi${G.miniLog().length > 1 ? 's' : ''}.` : 'Des pièces et de l’expérience, sans toucher au grand défi.'}</div></div>${btn('Lancer', { act: 'startMini', kind: 'gold', size: 'sm' })}</div>`;
+    }
+    const done = G.miniDone(m);
+    return `<div class="card defi-card mini${done ? ' won' : ''}"><div class="card-head">${ico(m.icon, 'ico big')}<div class="card-main"><div class="card-title">Défi éclair</div><div class="card-sub">${m.text.replace('{n}', fmt(m.n))}</div></div><span class="timer-pill">${ico(['ui', 'clock'])}${timer(m.end)}</span></div>${bar(G.miniCount(m) / m.n)}
+        <div class="defi-side"><small class="defi-num">${fmt(G.miniCount(m))} / ${fmt(m.n)}</small>${done ? btn('Récupérer', { act: 'claimMini', kind: 'gold', size: 'sm' }) : ''}</div></div>`;
+}
+export function defiCard() {
+    const c = mainCard();
+    return c ? c + miniCard() : c;
 }
 
 // 1.40 : on choisit son grand défi parmi trois
@@ -211,5 +228,7 @@ export function setupDefis() {
         presentDefi: (el, d) => G.presentDefi(+d.k, d.id, el) && closeSheet('defiPick'),
         pickDefi: (el, d) => G.pickDefi(d.id),
         aimGold: () => G.toggleAimGold(),
+        startMini: () => G.startMini(),
+        claimMini: el => G.claimMini(el),
     });
 }

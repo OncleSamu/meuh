@@ -742,3 +742,30 @@ export const DEFIS = {
         ],
     },
 };
+
+// 1.96 : les défis éclair : une seule étape à compter, trois jours, entre deux grands défis
+export const MINI = {
+    days: 3,
+    coins: 0.5, // la moitié d'une étape de grand défi
+    milestones: [5, 15, 30], // un souvenir dans l'album à chaque palier
+    list: [
+        { id: 'clients', stat: 'clients', n: 10, open: 'counter', icon: ['villager', 'paul'], text: 'Servir {n} clients au comptoir' },
+        { id: 'drinks', stat: 'drinks', n: 25, open: 'counter', icon: ['item', 'espresso'], text: 'Préparer {n} boissons' },
+        { id: 'fish', stat: 'fish', n: 30, open: 'pond', icon: ['item', 'perch'], text: 'Pêcher {n} poissons' },
+        { id: 'sea', stat: 'seaHauls', n: 6, open: 'net', icon: ['item', 'sardine'], text: 'Remonter {n} filets en mer' },
+        { id: 'wagons', stat: 'wagons', n: 15, open: 'train', icon: ['ui', 'trainIcon'], text: 'Charger {n} wagons' },
+        { id: 'births', stat: 'births', n: 2, open: 'breed', icon: ['ui', 'heart'], text: 'Faire naître {n} petits à l’étable de sélection' },
+        { id: 'foals', stat: 'foals', n: 1, open: 'stud', icon: ['item', 'horseshoe'], text: 'Faire naître {n} poulain au haras' },
+        { id: 'trained', stat: 'trained', n: 6, open: 'stud', icon: ['ui', 'star'], text: 'Réussir {n} séances de dressage' },
+        { id: 'honey', stat: 'apiaryHoney', n: 12, open: 'apiary', icon: ['item', 'honey'], text: 'Récolter {n} pots dans les ruchers des contrées' },
+        { id: 'mine', stat: 'deepMined', n: 30, open: 'gallery', icon: ['item', 'ironOre'], text: 'Casser {n} blocs en galerie ou en grotte' },
+        { id: 'island', stat: 'islandHarvest', n: 40, open: 'island', icon: ['item', 'banana'], text: 'Récolter {n} produits sur l’île' },
+        { id: 'oasis', stat: 'oasisHarvest', n: 40, open: 'oasis', icon: ['item', 'date'], text: 'Récolter {n} produits à l’oasis' },
+        { id: 'nord', stat: 'nordHarvest', n: 40, open: 'nord', icon: ['item', 'lingonberry'], text: 'Récolter {n} produits au Grand Nord' },
+        { id: 'help', stat: 'neighborHelps', n: 4, open: 'nmarket', icon: ['ui', 'heart'], text: 'Rendre {n} services aux voisins' },
+        { id: 'stall', stat: 'stallSales', n: 12, open: 'nmarket', icon: ['ui', 'basket'], text: 'Vendre {n} fois à l’étal de la ferme' },
+        { id: 'beers', stat: 'beers', n: 12, open: 'brew', icon: ['ui', 'beer'], text: 'Brasser {n} bouteilles' },
+        { id: 'lots', stat: 'caveLots', n: 4, open: 'cave', icon: ['ui', 'cave'], text: 'Sortir {n} lots de la cave' },
+        { id: 'gold', stat: 'goldDishes', n: 8, open: null, icon: ['ui', 'star'], text: 'Sortir {n} produits en or de l’atelier' },
+    ],
+};

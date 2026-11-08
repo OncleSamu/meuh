@@ -206,9 +206,14 @@ const seasonDefiLine = () => {
     const names = G.farmSeasonDefis()
         .filter(id => DEFIS[id])
         .map(id => DEFIS[id].name);
-    return G.defiOpen() && names.length
-        ? `<div class="card-sub center">Grands défis de la saison : ${names.join(', ')}. Double points pour la Coupe de la vallée.</div>`
-        : '';
+    const rec = G.seasonRecords()[G.farmSeasonTheme().id];
+    const line = rec ? `<div class="card-sub center">Votre record sur ce thème : ${fmt(rec)} points.</div>` : '';
+    return (
+        line +
+        (G.defiOpen() && names.length
+            ? `<div class="card-sub center">Grands défis de la saison : ${names.join(', ')}. Double points pour la Coupe de la vallée.</div>`
+            : '')
+    );
 };
 export function farmSeasonCard() {
     if (!G.farmSeasonOpen()) return null;

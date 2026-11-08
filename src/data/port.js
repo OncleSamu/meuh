@@ -164,3 +164,7 @@ export const FARM_THEMES = {
         desc: 'Le filet de pêche rapporte deux fois plus',
     },
 };
+
+// 1.96 : le podium de fin de saison : la force de chaque ferme rivale (comme à la Coupe), et la part du joueur
+export const SEASON_RIVAL_F = [0.75, 0.9, 1, 1.05];
+export const SEASON_RIVAL_BASE = 2500; // points d'une saison moyenne quand on n'a pas encore d'historique

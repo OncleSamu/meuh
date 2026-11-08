@@ -10,7 +10,18 @@ import { DECOS } from '../data/farm.js';
 import { TRANS_KINDS, TRANS_TIME, ALPINE_SPEED } from '../data/animals.js';
 import { SEA_NET_TIME, SEA_CATCH } from '../data/nature.js';
 import { RARE } from '../data/commerce.js';
-import { BOAT_STAY, BOAT_AWAY, BOAT_PAY, FARM_SEASON_MS, FARM_SEASON_TIERS, FARM_SEASONS, FARM_SEASON_DEFIS } from '../data/port.js';
+import { RIVALS } from '../data/village.js';
+import {
+    BOAT_STAY,
+    BOAT_AWAY,
+    BOAT_PAY,
+    FARM_SEASON_MS,
+    FARM_SEASON_TIERS,
+    FARM_SEASONS,
+    FARM_SEASON_DEFIS,
+    SEASON_RIVAL_F,
+    SEASON_RIVAL_BASE,
+} from '../data/port.js';
 import { BALANCE } from '../data/progress.js';
 import { projectDone } from './story.js';
 import { tip } from './tips.js';
@@ -201,14 +212,59 @@ export const farmSeasonEndsIn = () => ((farmSeasonKey() + 1) * FARM_SEASON_MS - 
 // 1.95 : chaque saison finie laisse un trophée daté (thème, points, paliers) dans l'onglet Défis du livre
 export const FSEASON_LOG_MAX = 48;
 export const farmSeasonLog = () => state.fseasonLog || [];
+// un nombre « au hasard » qui ne change pas pour une saison et une ferme données (le podium ne bouge plus une fois joué)
+const seeded = (key, k) => {
+    const x = Math.sin(key * 12.9898 + k * 78.233) * 43758.5453;
+    return x - Math.floor(x);
+};
 function logFarmSeason() {
     const sn = state.fseason;
     if (!sn || !(sn.pts > 0)) return;
     const th = FARM_SEASONS.at(sn.key % FARM_SEASONS.length);
-    state.fseasonLog = [
-        ...(state.fseasonLog || []),
-        { key: sn.key, id: th.id, pts: Math.round(sn.pts), tiers: sn.got.filter(Boolean).length, at: (sn.key + 1) * FARM_SEASON_MS },
-    ].slice(-FSEASON_LOG_MAX);
+    const past = (state.fseasonLog || []).slice(-3).map(r => r.pts);
+    const avg = past.length ? past.reduce((a, b) => a + b, 0) / past.length : SEASON_RIVAL_BASE;
+    const pts = Math.round(sn.pts);
+    // 1.96 : le podium face aux quatre fermes rivales (leur force suit votre rythme des dernières saisons)
+    const riv = SEASON_RIVAL_F.map((f, k) => Math.round(Math.max(avg, 300) * f * (0.7 + 0.6 * seeded(sn.key, k))));
+    const rank = 1 + riv.filter(p => p > pts).length;
+    const best = Math.max(0, ...(state.fseasonLog || []).filter(r => r.id === th.id).map(r => r.pts));
+    const rec = { key: sn.key, id: th.id, pts, tiers: sn.got.filter(Boolean).length, at: (sn.key + 1) * FARM_SEASON_MS, riv, rank, record: pts > best };
+    state.fseasonLog = [...(state.fseasonLog || []), rec].slice(-FSEASON_LOG_MAX);
+    if (rank <= 3) addPhoto('ui', th.deco, th.name, ['', 'Première place', 'Deuxième place', 'Troisième place'][rank]);
+    if (view.started) toast(`${th.name} : ${rank === 1 ? 'première' : rank + 'e'} place sur 5${rec.record && best ? ' (record !)' : ''}`, ['ui', 'trophy']);
+}
+// le dernier podium : les cinq fermes classées
+export function lastPodium() {
+    const r = (state.fseasonLog || []).at(-1);
+    if (!r || !r.riv) return null;
+    const rows = [{ name: 'Votre ferme', pts: r.pts, me: true }, ...r.riv.map((p, k) => ({ name: RIVALS[k].name, pts: p, owner: RIVALS[k].owner }))];
+    return { rec: r, rows: rows.sort((a, b) => b.pts - a.pts) };
+}
+// les records : la meilleure saison de chaque thème
+export const seasonRecords = () => {
+    const best = {};
+    (state.fseasonLog || []).forEach(r => (best[r.id] = Math.max(best[r.id] || 0, r.pts)));
+    return best;
+};
+// 1.96 : « votre année à la ferme » : les douze dernières saisons (48 semaines) et les médailles de l'année
+export function yearReview() {
+    const log = (state.fseasonLog || []).slice(-12);
+    if (!log.length) return null;
+    const since = now() - 12 * FARM_SEASON_MS;
+    const runs = ((state.defis && state.defis.history) || []).filter(h => h.at >= since);
+    const byTheme = {};
+    log.forEach(r => (byTheme[r.id] = (byTheme[r.id] || 0) + r.pts));
+    const top = Object.entries(byTheme).sort((a, b) => b[1] - a[1])[0];
+    return {
+        seasons: log.length,
+        tiers: log.reduce((a, r) => a + r.tiers, 0),
+        podium: [1, 2, 3].map(k => log.filter(r => r.rank === k).length),
+        topTheme: top ? FARM_SEASONS.find(s => s.id === top[0]) : null,
+        medals: runs.filter(h => h.medal).length,
+        golds: runs.filter(h => h.medal >= 3).length,
+        runs: runs.length,
+        minis: state.defis && state.defis.miniLog ? state.defis.miniLog.filter(m => m.at >= since).length : 0,
+    };
 }
 // les grands défis de la saison en cours
 export const farmSeasonDefis = () => (farmSeasonOpen() ? FARM_SEASON_DEFIS[farmSeasonTheme().id] || [] : []);
