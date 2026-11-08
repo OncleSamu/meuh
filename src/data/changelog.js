@@ -1,6 +1,21 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.90',
+        title: 'Petits correctifs',
+        date: '8 novembre 2026',
+        items: [
+            'Nasses retirables pour les poser ailleurs',
+            'Amélioration de la serre enfin effective',
+            'Livre : le potager ne liste plus les arbres',
+            'Carte du marché aux bêtes qui ne gonfle plus avec les noms longs',
+            'Pastille « +50 % » du produit du jour refaite',
+            "Liste du niveau 14 : mentionne l'amélioration des machines",
+            'Guide des appâts : où trouver chacun',
+            'Étiquettes recentrées',
+        ],
+    },
+    {
         v: '1.89',
         title: 'Abeilles au repos',
         date: '4 novembre 2026',
