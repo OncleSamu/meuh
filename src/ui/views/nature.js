@@ -185,7 +185,7 @@ function renderNature(el) {
                     'gaspard',
                     ['villager', 'gaspard'],
                     'Gaspard, le bûcheron',
-                    g.claimed ? 'Défi réussi, à demain' : `${G.gaspardProgress(g)} / ${g.need}`,
+                    g.claimed ? 'Réussi, à demain' : `${G.gaspardProgress(g)} / ${g.need}`,
                     gaspardCard(),
                     g.done && !g.claimed,
                 ))(G.ensureGaspard()),

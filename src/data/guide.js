@@ -1166,6 +1166,10 @@ export const GUIDE_PAGES = [
                 t: 'L’accord (0 à 3 étoiles) se lit avant de brasser, avec ses raisons ; il fait le prix. Trois étoiles demandent un mélange réussi.',
             },
             {
+                h: 'Les grandes recettes',
+                t: 'Cinq mélanges valent deux étoiles de plus et ne se battent jamais : coriandre et oranger amer (la blanche), seigle et épicéa (la sahti), café et chocolat noir (la stout), cerise et framboise (la bière aux fruits rouges), citrouille et vanille (la bière de citrouille).',
+            },
+            {
                 h: 'Mes bières',
                 b: [
                     'Chaque nouvelle recette reçoit un nom, que vous changez avec le crayon.',

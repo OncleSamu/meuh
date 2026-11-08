@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.92',
+        title: 'Grande revue',
+        date: '8 novembre 2026',
+        items: [
+            'Cartes repliables : le résumé ne se coupe plus sur petit écran',
+            'Salle des ventes : une enchère sans acheteur survit à la sauvegarde',
+            'Statistiques : le haras, la brasserie, le comptoir et le labo',
+            'Pigeon en croûte, pâté de faisan et tourte au chevreau cuisent à la boulangerie',
+            'Trois grandes recettes de bière : stout, fruits rouges, citrouille',
+        ],
+    },
+    {
         v: '1.91',
         title: "Produits d'atelier à la brasserie",
         date: '8 novembre 2026',

@@ -135,7 +135,7 @@ export function lifeCards() {
             ? foldWrap(
                   'basket',
                   ['ui', 'basket'],
-                  'Concours du plus beau panier',
+                  'Plus beau panier',
                   G.basketResultReady() ? 'Résultat à voir !' : c ? `Vous : ${c.score} pts` : 'Chaque week-end',
                   basket,
                   G.basketResultReady(),

@@ -92,7 +92,7 @@ export const RECIPES_135 = [
     ['poachedPigeonEggs', 'Œufs de pigeon pochés', 'kitchen', { pigeonEgg: 3, butter: 1 }, 350, 16],
     ['squabPeas', 'Pigeonneau rôti aux petits pois', 'stove', { squab: 1, peas: 2, butter: 1 }, 390, 17],
     ['pigeonPastilla', 'Pastilla de pigeon', 'kitchen', { squab: 1, pigeonEgg: 1, onion: 1, flour: 1 }, 170, 17],
-    ['pigeonPie', 'Pigeon en croûte', 'pastry', { squab: 1, pigeonEgg: 1, flour: 1, mushroom: 1 }, 110, 18],
+    ['pigeonPie', 'Pigeon en croûte', 'bakery', { squab: 1, pigeonEgg: 1, flour: 1, mushroom: 1 }, 110, 18],
     ['smokedSquab', 'Pigeonneau fumé', 'smokehouse', { squab: 2 }, 210, 17],
     ['pigeonTerrine', 'Terrine de pigeon', 'cannery', { squab: 2, onion: 1, redWine: 1 }, 410, 31],
     // la pintade
@@ -106,7 +106,7 @@ export const RECIPES_135 = [
     ['pheasantScramble', 'Œufs brouillés de faisan', 'kitchen', { pheasantEgg: 3, cream: 1, mushroom: 1 }, 190, 37],
     ['pickledPheasantEggs', 'Œufs de faisan marinés', 'cannery', { pheasantEgg: 3, whiteWine: 1 }, 350, 37],
     ['pheasantApples', 'Faisan rôti aux pommes', 'stove', { pheasant: 1, apple: 2, butter: 1 }, 310, 37],
-    ['pheasantPate', 'Pâté de faisan en croûte', 'pastry', { pheasant: 1, pheasantEgg: 1, flour: 1, mushroom: 1 }, 150, 38],
+    ['pheasantPate', 'Pâté de faisan en croûte', 'bakery', { pheasant: 1, pheasantEgg: 1, flour: 1, mushroom: 1 }, 150, 38],
     ['smokedPheasant', 'Faisan fumé', 'smokehouse', { pheasant: 2 }, 200, 37],
     ['pheasantTerrine', 'Terrine de faisan', 'cannery', { pheasant: 2, redWine: 1, onion: 1 }, 510, 38],
     // le yack

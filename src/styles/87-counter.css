@@ -459,6 +459,19 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+/* 1.92 : sur petit écran, le titre et le résumé d'une carte repliable passent à la ligne au lieu d'être coupés */
+.fold-card .agenda-bar b {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+.fold-card .agenda-sum {
+    flex: 1 1 5em;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    text-align: right;
+    line-height: 1.2;
+}
 .agenda-chev {
     flex: none;
     font-style: normal;

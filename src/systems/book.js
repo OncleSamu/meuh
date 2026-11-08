@@ -405,6 +405,11 @@ export function statsData() {
                 ['Produits des bêtes', n('collected'), ['item', 'egg']],
                 ['Croisements', n('crosses'), ['ui', 'heart']],
                 ['Concours gagnés', n('contestWins'), ['ui', 'podium']],
+                // 1.92 : le haras
+                ['Concours du haras', (state.show && state.show.wins) || 0, ['ui', 'hCup2']],
+                ['Poulains nés', n('foals'), ['animal', 'horse']],
+                ['Entraînements', n('trained'), ['ui', 'gear']],
+                ['Balades', n('randos'), ['ui', 'clock']],
             ],
         ],
         [
@@ -415,6 +420,11 @@ export function statsData() {
                 ['Boissons brassées', n('beers'), ['ui', 'beer']],
                 ['Lots de cave', n('caveLots'), ['ui', 'cave']],
                 ['Créations', n('creations'), ['ui', 'star']],
+                // 1.92 : la brasserie, le comptoir et le labo
+                ['Commandes de bière', n('beerOrders'), ['ui', 'beer']],
+                ['Boissons servies', n('drinks'), ['ui', 'beer']],
+                ['Clients du comptoir', n('clients'), ['ui', 'heart']],
+                ['Variétés fixées', state.genetics ? Object.values(state.genetics.vars || {}).filter(v => v && v.fixed).length : 0, ['ui', 'flowers']],
             ],
         ],
         [

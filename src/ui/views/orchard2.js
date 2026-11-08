@@ -133,7 +133,7 @@ export function orchardCards() {
                 'odile',
                 ['villager', 'odile'],
                 'Odile, l’arboricultrice',
-                g.claimed ? 'Défi réussi, à demain' : `${G.odileProgress(g)} / ${g.need}`,
+                g.claimed ? 'Réussi, à demain' : `${G.odileProgress(g)} / ${g.need}`,
                 odileCard(),
                 g.done && !g.claimed,
             ),

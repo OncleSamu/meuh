@@ -62,7 +62,7 @@ export const RECIPES_181 = [
     // le chevreau
     ['kidMint', 'Chevreau rôti à la menthe', 'stove', { kidMeat: 1, mint: 1, potato: 2 }, 320, 24],
     ['kidOlives', 'Chevreau aux olives', 'marmite', { kidMeat: 1, olive: 2, tomato: 1 }, 340, 24],
-    ['kidPie', 'Tourte au chevreau', 'pastry', { kidMeat: 1, flour: 2, butter: 1 }, 300, 24],
+    ['kidPie', 'Tourte au chevreau', 'bakery', { kidMeat: 1, flour: 2, butter: 1 }, 300, 24],
     // la corne
     ['hornComb', 'Peigne en corne', 'jewelry', { goatHorn: 1, nugget: 1 }, 420, 35],
     ['hornCardigan', 'Gilet à boutons de corne', 'tailor', { goatHorn: 1, wool: 3 }, 480, 35],

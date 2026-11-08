@@ -662,7 +662,7 @@ function auctionStep(a, t) {
         const ask = Math.round((l.price * step) / 10) * 10;
         const can = l.npcs.filter(n => n.who !== l.leader && n.max >= ask);
         if (!can.length) {
-            l.next = Infinity;
+            l.next = Number.MAX_SAFE_INTEGER; // pas Infinity : il deviendrait null à la sauvegarde
             return;
         }
         // les plus motivés enchérissent plus souvent

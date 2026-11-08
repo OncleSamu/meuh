@@ -54,6 +54,25 @@ export const CLASSICS = [
         name: 'la sahti',
         text: 'Seigle et pousses d’épicéa : la sahti, la bière de ferme des pays du Nord.',
     },
+    // 1.92 : trois grandes recettes de plus (le café et le chocolat noir se brassent depuis la 1.91)
+    {
+        id: 'stout',
+        ings: ['coffee', 'darkChoc'],
+        name: 'la stout',
+        text: 'Café et chocolat noir : la stout, noire, torréfiée et gourmande.',
+    },
+    {
+        id: 'kriek',
+        ings: ['cherry', 'raspberry'],
+        name: 'la bière aux fruits rouges',
+        text: 'Cerise et framboise : la bière rouge des brasseurs de fruits.',
+    },
+    {
+        id: 'pumpkinAle',
+        ings: ['pumpkin', 'vanilla'],
+        name: 'la bière de citrouille',
+        text: 'Citrouille et vanille : la bière d’automne, douce et ronde.',
+    },
 ];
 
 // les fûts (à la cave depuis 1.6.3) : chacun donne sa note et multiplie la valeur de la bière
