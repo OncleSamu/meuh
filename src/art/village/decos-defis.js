@@ -109,3 +109,98 @@ Object.assign(ui, {
 function FE2(x, y) {
     return E(x, y, 15, 9.5, '#5a3b6e', 0, 0) + F(`M${x - 15} ${y} Q${x} ${y - 14} ${x + 15} ${y}`, '#ffd23f', 0.15);
 }
+
+// 1.94 : les sept décorations des nouveaux grands défis (dessins provisoires, à valider)
+Object.assign(ui, {
+    // la rosette du concours : cocarde rouge, fer à cheval doré, deux rubans
+    horseRosette: () =>
+        SHADOW(32, 60, 20, 3) +
+        P('M22 34 L14 58 L24 52 L30 58 L34 38Z', '#2f6fb0', 2) +
+        P('M42 34 L50 58 L40 52 L34 58 L30 38Z', '#e2412f', 2) +
+        C(32, 26, 20, '#e2412f', 2.4) +
+        C(32, 26, 15, '#f5d36b', 2) +
+        C(32, 26, 11, '#fff3d6', 1.6) +
+        L('M24 30 Q22 18 32 17 Q42 18 40 30', 3.2, '#8f8574') +
+        L('M24 30 L22 33 M40 30 L42 33', 3.2, '#8f8574') +
+        HL(22, 14, 6, 1.6, -30, 0.5),
+
+    // la ruche dorée : ruche de paille en spirale, petite abeille, pot de miel
+    goldenHive: () =>
+        SHADOW(32, 60, 24, 3) +
+        R(10, 52, 44, 6, 2, '#8a5a2a', 2) +
+        P('M14 52 Q10 30 22 18 Q32 8 42 18 Q54 30 50 52Z', '#e8b83a', 2.4) +
+        L('M13 46 Q32 52 51 46 M14 38 Q32 44 50 38 M17 30 Q32 35 47 30 M22 22 Q32 26 42 22', 1.6, '#b8861f') +
+        E(32, 44, 6, 7, '#3a2618', 2, 0) +
+        P('M52 20 Q58 14 62 20 Q58 26 52 20Z', '#fff', 1.2) +
+        E(54, 21, 3, 2.4, '#f5d36b', 1.2, 0) +
+        HL(22, 20, 6, 1.6, -40, 0.5),
+
+    // la lanterne du souk : lanterne orientale ajourée, anneau, petite flamme
+    souqLantern: () =>
+        SHADOW(32, 60, 16, 3) +
+        L('M32 2 L32 12', 2.2) +
+        C(32, 6, 3.4, 'none', 2) +
+        P('M22 14 L42 14 L38 20 L26 20Z', '#c88a2a', 2) +
+        P('M26 20 Q14 34 26 52 L38 52 Q50 34 38 20Z', '#b0392f', 2.4) +
+        F('M32 24 Q42 36 36 48 Q32 52 28 48 Q22 36 32 24Z', '#ffd23f', 0.9) +
+        L('M32 20 L32 52 M22 36 L42 36', 1.3, '#822a22') +
+        P('M24 52 L40 52 L38 58 L26 58Z', '#c88a2a', 2) +
+        HL(24, 28, 6, 1.6, 15, 0.5),
+
+    // le traîneau du Grand Nord : traîneau de bois, patins relevés, paquet cadeau et branche de sapin
+    northSled: () =>
+        SHADOW(32, 60, 26, 3) +
+        L('M6 50 Q4 44 10 44 L52 44 Q60 44 58 52 Q56 56 48 56 L12 56', 3.6) +
+        L('M6 50 Q4 44 10 44 L52 44 Q60 44 58 52 Q56 56 48 56 L12 56', 1.8, '#d6a65a') +
+        P('M12 28 L52 28 L50 44 L14 44Z', '#a8693a', 2.4) +
+        L('M16 34 L48 34', 1.2, '#8a5320') +
+        R(20, 14, 14, 14, 2, '#2f6fb0', 2) +
+        L('M27 14 L27 28 M20 21 L34 21', 1.8, '#f5d36b') +
+        P('M42 28 L46 14 L50 28Z', '#2f6f3f', 2) +
+        P('M40 28 L46 8 L52 28Z', '#3f8a4f', 2) +
+        HL(24, 16, 4, 1.4, -10, 0.5),
+
+    // l'orchidée de la serre : pot de terre cuite, tige arquée, fleurs roses
+    orchidPot: () => {
+        const flower = (x, y, r) =>
+            [0, 72, 144, 216, 288].map(a => `<g transform="translate(${x} ${y}) rotate(${a})">${E(0, -r, r * 0.7, r, '#f08ac0', 1.6, 0)}</g>`).join('') +
+            FC(x, y, r * 0.45, '#ffd23f');
+        return (
+            SHADOW(32, 60, 18, 3) +
+            P('M20 40 L44 40 L40 58 L24 58Z', '#c0713a', 2.4) +
+            R(18, 36, 28, 6, 2, '#d98a4a', 2) +
+            L('M32 36 Q30 22 38 12', 2.6, '#2f6f3f') +
+            P('M32 34 Q16 32 12 22 Q24 22 32 34Z', '#3f8a4f', 1.8) +
+            P('M32 34 Q48 32 52 24 Q40 24 32 34Z', '#3f8a4f', 1.8) +
+            flower(38, 12, 5) +
+            flower(28, 20, 4) +
+            flower(46, 20, 4)
+        );
+    },
+
+    // le banc des voisins : banc de bois, deux petits coussins, pot de fleurs
+    neighborBench: () =>
+        SHADOW(32, 60, 26, 3) +
+        R(8, 30, 48, 7, 2, '#c0813c', 2.2) +
+        R(8, 16, 48, 7, 2, '#c0813c', 2.2) +
+        L('M12 23 L12 30 M52 23 L52 30', 2.2, '#8a5320') +
+        L('M12 37 L10 56 M52 37 L54 56', 3, '#8a5320') +
+        R(16, 26, 12, 5, 2, '#e2412f', 1.6) +
+        R(34, 26, 12, 5, 2, '#2f6fb0', 1.6) +
+        P('M56 56 L62 56 L61 48 L57 48Z', '#c0713a', 1.6) +
+        FC(59, 44, 3, '#f08ac0') +
+        HL(14, 18, 8, 1.6, 0, 0.5),
+
+    // le four à pizza : dôme de briques, bouche enflammée, pelle
+    pizzaOven: () =>
+        SHADOW(32, 60, 26, 3) +
+        R(8, 48, 48, 10, 2, '#8f8574', 2.2) +
+        P('M10 48 Q10 14 32 12 Q54 14 54 48Z', '#c0603a', 2.4) +
+        L('M14 38 L50 38 M12 28 L52 28 M20 20 L44 20 M24 38 L24 48 M40 38 L40 48 M32 28 L32 38', 1.1, '#8a3a22') +
+        P('M22 48 Q22 32 32 32 Q42 32 42 48Z', '#2a1a12', 2) +
+        F('M26 48 Q26 38 32 36 Q38 38 38 48Z', '#ff9a4a', 0.95) +
+        F('M29 48 Q29 42 32 40 Q35 42 35 48Z', '#ffd23f', 0.95) +
+        R(26, 4, 12, 6, 2, '#8f8574', 1.8) +
+        L('M52 58 L60 40', 2.4, '#8a5320') +
+        HL(16, 22, 8, 1.6, 20, 0.4),
+});

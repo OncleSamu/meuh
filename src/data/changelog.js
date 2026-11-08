@@ -1,25 +1,44 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.94',
+        title: 'Les grands défis à jour',
+        date: '8 novembre 2026',
+        items: [
+            "Sept nouveaux grands défis pour les parties du jeu qui n'en avaient pas",
+            'Chacun a son villageois, sa décoration unique en or et son monument dans le domaine des légendes',
+            "Les listes de produits se complètent avec les recettes des machines et un produit compte dès qu'on sait le fabriquer",
+            'Le miel des ruchers des contrées compte pour les commandes',
+            'Les cultures de serre y entrent quand la serre est bâtie',
+            'Les défis ne sortent que si leur partie du jeu est ouverte, avec une étape de remplacement quand il le faut',
+        ],
+    },
+    {
         v: '1.93',
         title: 'Les grands défis dans le livre',
         date: '8 novembre 2026',
         items: [
-            'Livre de la ferme : un onglet Défis, une feuille par défi joué',
-            'Chaque partie y laisse sa trace : médaille, durée, date',
-            'Les défis terminés sans médaille y figurent aussi',
+            'Nouvel onglet « Défis » dans le livre de la ferme, une feuille par défi avec la meilleure médaille',
+            'Résumé en tête',
+            'Le journal commence à la 1.93 : les anciennes parties gardent leur total',
+            "Constat : les 17 grands défis ne couvrent pas le haras, les ruchers et l'hydromel, l'oasis, le Grand Nord",
+            'Test v193',
         ],
     },
     {
         v: '1.92',
-        title: 'Grande revue',
+        title: 'Revue complète',
         date: '8 novembre 2026',
         items: [
-            'Cartes repliables : le résumé ne se coupe plus sur petit écran',
-            'Salle des ventes : une enchère sans acheteur survit à la sauvegarde',
-            'Statistiques : le haras, la brasserie, le comptoir et le labo',
-            'Pigeon en croûte, pâté de faisan et tourte au chevreau cuisent à la boulangerie',
-            'Trois grandes recettes de bière : stout, fruits rouges, citrouille',
+            'Audit en fin de partie',
+            "Chargement 1,6 s avec un processeur ralenti 4 fois, changements d'onglet immédiats",
+            'Partie neuve simulée',
+            'Corrigé : enchère sans preneur, cartes repliables dont le résumé était coupé sur petit écran',
+            'Pigeon en croûte, pâté de faisan et tourte au chevreau passent à la boulangerie',
+            'Trois grandes recettes de bière de plus',
+            "Les autres points de l'audit 1.75 étaient déjà réglés",
+            'Outil tools/dev/audit.mjs',
+            'Test v192',
         ],
     },
     {

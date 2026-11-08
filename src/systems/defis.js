@@ -1,4 +1,4 @@
-// Les grands défis (1.1) : après le niveau 64, un défi de 14 jours tiré au hasard parmi dix-sept, 4 étapes, une médaille.
+// Les grands défis (1.1) : après le niveau 64, un défi de 14 jours tiré au hasard parmi vingt-quatre, 4 étapes, une médaille.
 import { state, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -13,10 +13,15 @@ import { earn, addXp } from './player.js';
 import { clampQuality, qual, qCount } from './farm.js';
 import { questPool } from './orders.js';
 import { trainOpen } from './orders.js';
-import { hasMachine } from './workshop.js';
+import { hasMachine, recipeUnlocked } from './workshop.js';
+import { RECIPES } from '../data/machines.js';
 import { storyOk } from './story.js';
 import { islandOpen } from './island.js';
-import { oasisOpen } from './oasis.js';
+import { oasisOpen, caravanOpen } from './oasis.js';
+import { apiaryOpen } from './apiary.js';
+import { harasOpen } from './haras.js';
+import { nmarketOpen } from './nmarket.js';
+import { meadOpen } from './brewery.js';
 import { nordOpen } from './nord.js';
 import { caveOpen, hallOpen } from './cave.js';
 import { pondOpen, fishOrderOk } from './fishing.js';
@@ -58,8 +63,16 @@ const PARTS = {
     wine: () => hasMachine('winery'),
     cannery: () => hasMachine('cannery'),
     perfumery: () => hasMachine('perfumery'),
+    // 1.94 : les parties du jeu qui ont leurs grands défis
+    stud: () => harasOpen(),
+    apiary: () => ['island', 'oasis', 'nord'].some(apiaryOpen),
+    mead: () => meadOpen(),
+    caravan: () => caravanOpen(),
+    greenhouse: () => !!(state.greenhouse && state.greenhouse.built),
+    nmarket: () => nmarketOpen(),
+    italian: () => hasMachine('pizzeria') || hasMachine('pastaworks'),
 };
-const partOk = k => !k || (PARTS[k] ? PARTS[k]() : true);
+export const partOk = k => !k || (PARTS[k] ? PARTS[k]() : true);
 
 // un produit qu'on peut se procurer maintenant (ou avec ses arbres, ou les matériaux)
 let poolMemo = null;
@@ -72,7 +85,15 @@ export function canGet(id) {
     if (i.type === 'ore' || i.type === 'gem') return Object.values(DEPTHS).some(d => depthOpen(d.id) && [...d.ores, ...d.gems].some(([x]) => x === id));
     if (i.type === 'tree') return lvOk(i) && storyOk(i) && (i.nord ? nordOpen() : i.oasis ? oasisOpen() : !i.island || islandOpen());
     if (!poolMemo || poolMemo.t !== now()) poolMemo = { t: now(), ids: new Set(questPool().map(x => x.id)) };
-    return poolMemo.ids.has(id);
+    if (poolMemo.ids.has(id)) return true;
+    return i.type === 'artisan' && makeable(id, 0);
+}
+
+// 1.94 : un produit qu'on sait faire (machine, recette apprise, ingrédients, y compris les arbres à planter) : machine, recette apprise, ingrédients
+function makeable(id, depth) {
+    const r = RECIPES[id];
+    if (!r || depth > 4 || r.fete || r.holiday || !hasMachine(r.machine) || !recipeUnlocked(id)) return false;
+    return Object.keys(r.ing).every(k => canGet(k) || (ITEMS[k] && ITEMS[k].type === 'artisan' && makeable(k, depth + 1)));
 }
 
 // l'étape réellement jouée (remplacée si elle demande une partie fermée)

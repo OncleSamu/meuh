@@ -1,7 +1,9 @@
 import { FISH } from './meta.js';
+import { RECIPES } from './machines.js';
+import { ITEMS } from './items.js';
 import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155 } from './counter.js';
 
-// Les grands défis (1.1, 17 défis depuis la 1.18) : un objectif de deux semaines après le niveau 64, tiré au hasard.
+// Les grands défis (1.1, 24 défis depuis la 1.94) : un objectif de deux semaines après le niveau 64, tiré au hasard.
 // Chaque défi a 4 étapes. Sortes d'étapes :
 //   give    : livrer des produits, k tirés dans la liste (q : 0 tout, 1 argent ou mieux, 2 or), n chacun
 //   count   : réussir une action (un compteur de state.stats qui avance pendant le défi)
@@ -32,6 +34,13 @@ export const DEFI = {
     offer: 3, // 1.40 : on choisit son défi parmi trois
 };
 
+// 1.94 : les listes de produits se complètent toutes seules avec les recettes des machines (le contenu futur y entre sans y toucher)
+const fromMachines = (...ms) =>
+    Object.values(RECIPES)
+        .filter(r => ms.includes(r.machine) && ITEMS[r.id] && ITEMS[r.id].sell)
+        .map(r => r.id);
+const merge = (...lists) => [...new Set(lists.flat())];
+
 const ENTREES = [
     'soup',
     'salad',
@@ -50,7 +59,7 @@ const ENTREES = [
     'spinachQuiche',
     'pissaladiere',
 ];
-const PLATS = [
+const PLATS_BASE = [
     'lasagna',
     'risotto',
     'gratin',
@@ -72,7 +81,7 @@ const PLATS = [
     'saffronRisotto',
     'garlicBread',
 ];
-const DESSERTS = [
+const DESSERTS_BASE = [
     'pie',
     'cherryPie',
     'strawberryCake',
@@ -94,7 +103,7 @@ const DESSERTS = [
     'walnutCake',
     'saffronBrioche',
 ];
-const ANIMAL_GOODS = [
+const ANIMAL_BASE = [
     'milk',
     'egg',
     'wool',
@@ -204,7 +213,7 @@ const ISLE_GOODS = [
 const ISLE_FINE = ['rum', 'arrangedRum', 'coconutPunch', 'coffee', 'cafeLatte', 'tiramisu', 'islandCoffee', 'coconutCoffee'];
 const CHEESES = ['cheese', 'camembert', 'bleu', 'goatCheese', 'mozzarella', 'roquefort', 'truffleBrie', 'burrata', 'sheepTomme'];
 const FINISH = ['forgeLantern', 'weathervane', 'paintedVase', 'vase', 'horseshoe', 'teaSet'];
-const FISH_DISH = [
+const FISH_BASE = [
     'bouillabaisse',
     'grilledFish',
     'grilledMackerel',
@@ -220,6 +229,16 @@ const FISH_DISH = [
     'crayfishGratin',
     'paella',
 ];
+const PLATS = merge(PLATS_BASE, fromMachines('pizzeria', 'pastaworks', 'tajine', 'taigaPot'));
+const DESSERTS = merge(DESSERTS_BASE, fromMachines('icecream', 'orientalSweets'), [
+    'cloudberryTart',
+    'lingonPastry',
+    'birchGingerbread',
+    'dateBread',
+    'honeyIce',
+]);
+const ANIMAL_GOODS = merge(ANIMAL_BASE, ['camelMilk', 'reindeerMilk', 'ptarmiganEgg', 'camelWool', 'sheepMilk']);
+const FISH_DISH = merge(FISH_BASE, fromMachines('fishmonger'));
 const CANS = ['cannedSardines', 'mackerelRillettes', 'cannedShrimp', 'pondRillettes', 'mackerelWine', 'lobsterBisque'];
 const ALP_CHEESE = ['beaufort', 'tomme', 'reblochon', 'comte'];
 const ALP_DISH = ['raclette', 'fondue', 'tartiflette'];
@@ -254,6 +273,47 @@ const MINE_INGOTS = ['ironIngot', 'copperIngot', 'silverIngot', 'goldIngot'];
 const PUB_DISH = ['pizza', 'tartiflette', 'potee', 'choucroute', 'cassoulet', 'garlicBread'];
 const WINES = ['redWine', 'whiteWine', 'roseWine', 'tableWine'];
 const BUBBLES = ['champagne', 'champagneRose'];
+
+// 1.94 : les pools des nouveaux défis
+const HORSE_GOODS = ['horsehair', 'horseshoe', 'horsehairBrush'];
+const OAT_GOODS = ['oat', 'oatFlakes', 'oatFlour', 'oatBread', 'oatCookies', 'oatGalette', 'porridge'];
+const HONEY_GOODS = ['honey', 'honeyPot', 'honeyIce', 'candle', 'wax', 'waxBalm', 'honeyJujubes', 'buckthornHoney', 'quailHoney', 'yogurt'];
+const HONEY_SWEET = ['honeyIce', 'honeyJujubes', 'parsnipCake', 'pizzaGoatHoney', 'birchGingerbread', 'honeyPot'];
+const OASIS_RAW = ['date', 'jujube', 'cumin', 'sesame', 'camelMilk', 'camelWool', 'semolina'];
+const OASIS_DISH = [
+    'lemonTajine',
+    'vegTajine',
+    'couscous',
+    'keftas',
+    'dateTajine',
+    'camelCouscous',
+    'stuffedDates',
+    'loukoum',
+    'zebuTajine',
+    'couscousRoyal',
+    'mechoui',
+    'dateTea',
+];
+const NORD_RAW = ['rye', 'lingonberry', 'cloudberry', 'seaBuckthorn', 'birchSap', 'spruce', 'reindeerMilk', 'ptarmiganEgg'];
+const NORD_DISH = [
+    'lingonStew',
+    'lingonPastry',
+    'cloudberryTart',
+    'ryeBread',
+    'ryePorridge',
+    'lingonSoup',
+    'reindeerCheese',
+    'ptarmiganPasta',
+    'cloudberryJam',
+    'ryeKvas',
+];
+const GH_VEG = ['tomato', 'lettuce', 'pepper', 'basil', 'cucumber', 'mint'];
+const GH_GOODS = ['peeledTomatoes', 'taboule', 'mintTea', 'mintIce', 'pepperCheese', 'pepperSaucisson', 'pepperMagret', 'kidMint'];
+const ORCHIDS = ['orchid', 'orchidPerfume', 'orchidSoap', 'orchidDried'];
+const NEIGHBOR_GOODS = ['jam', 'cheese', 'bread', 'honey', 'juice', 'cider', 'drySausage', 'pie'];
+const PASTAS = fromMachines('pastaworks');
+const PIZZAS = fromMachines('pizzeria');
+const ITALIAN_SWEET = merge(['tiramisu'], fromMachines('icecream'));
 
 export const DEFIS = {
     banquet: {
@@ -563,6 +623,122 @@ export const DEFIS = {
             { kind: 'give', name: 'Les bulles', pool: BUBBLES, k: 1, n: 4, q: 1 },
             { kind: 'count', name: 'Les cuvées baptisées', stat: 'cuvees', n: 2, icon: ['ui', 'cave'], text: 'Sortir {n} cuvées baptisées de la cave' },
             { kind: 'count', name: 'Les millésimes', stat: 'vintageTop', n: 3, icon: ['ui', 'star'], text: 'Sortir {n} vins d’un millésime exceptionnel' },
+        ],
+    },
+    haras: {
+        name: 'Le grand concours équestre',
+        who: 'lea',
+        icon: ['item', 'horseshoe'],
+        deco: 'horseRosette',
+        open: 'stud',
+        intro: 'Les cavaliers de toute la vallée arrivent au haras ! Montrons-leur de belles bêtes bien dressées.',
+        steps: [
+            { kind: 'give', name: 'Le crin et le fer', pool: HORSE_GOODS, k: 2, n: 8, q: 0 },
+            { kind: 'count', name: 'Les poulains', stat: 'foals', n: 1, icon: ['ui', 'heart'], text: 'Faire naître {n} poulain au haras' },
+            { kind: 'count', name: 'Les dressages', stat: 'trained', n: 8, icon: ['ui', 'star'], text: 'Réussir {n} séances de dressage' },
+            { kind: 'give', name: 'L’avoine du concours', pool: OAT_GOODS, k: 2, n: 10, q: 1 },
+        ],
+    },
+    miel: {
+        name: 'La route du miel',
+        who: 'maeva',
+        icon: ['item', 'honey'],
+        deco: 'goldenHive',
+        open: 'apiary',
+        intro: 'Les abeilles ont bien travaillé. Il faut des pots pleins, des bougies, et de quoi trinquer !',
+        steps: [
+            { kind: 'count', name: 'La miellée', stat: 'apiaryHoney', n: 16, icon: ['item', 'honey'], text: 'Récolter {n} pots dans les ruchers des contrées' },
+            { kind: 'give', name: 'Les pots et la cire', pool: HONEY_GOODS, k: 3, n: 8, q: 0 },
+            {
+                kind: 'count',
+                name: 'L’hydromel',
+                stat: 'meads',
+                n: 6,
+                icon: ['ui', 'beer'],
+                text: 'Brasser {n} bouteilles d’hydromel',
+                needs: 'mead',
+                alt: { kind: 'give', name: 'Les gourmandises', pool: HONEY_SWEET, k: 2, n: 6, q: 0 },
+            },
+            { kind: 'give', name: 'Les douceurs au miel', pool: HONEY_SWEET, k: 1, n: 5, q: 1 },
+        ],
+    },
+    souk: {
+        name: 'La caravane du souk',
+        who: 'idris',
+        icon: ['item', 'date'],
+        deco: 'souqLantern',
+        open: 'oasis',
+        intro: 'Les chameaux sont chargés et le souk vous attend. Que la caravane soit belle !',
+        steps: [
+            { kind: 'count', name: 'Les récoltes', stat: 'oasisHarvest', n: 50, icon: ['item', 'date'], text: 'Récolter {n} produits à l’oasis' },
+            {
+                kind: 'count',
+                name: 'Les caravanes',
+                stat: 'caravans',
+                n: 2,
+                icon: ['item', 'camelMilk'],
+                text: 'Envoyer {n} caravanes',
+                needs: 'caravan',
+                alt: { kind: 'give', name: 'Les épices', pool: OASIS_RAW, k: 2, n: 20, q: 0 },
+            },
+            { kind: 'give', name: 'Les trésors du désert', pool: OASIS_RAW, k: 3, n: 20, q: 0 },
+            { kind: 'give', name: 'La table du caravanier', pool: OASIS_DISH, k: 2, n: 5, q: 1 },
+        ],
+    },
+    hiver: {
+        name: 'Le grand hiver du Nord',
+        who: 'tuomas',
+        icon: ['item', 'lingonberry'],
+        deco: 'northSled',
+        open: 'nord',
+        intro: 'La neige tient jusqu’au printemps. Ici on prépare, on partage, on fait chauffer le poêle !',
+        steps: [
+            { kind: 'count', name: 'Les récoltes', stat: 'nordHarvest', n: 50, icon: ['item', 'lingonberry'], text: 'Récolter {n} produits au Grand Nord' },
+            { kind: 'count', name: 'Les traîneaux', stat: 'sleds', n: 3, icon: ['animal', 'reindeer'], text: 'Mener {n} traîneaux' },
+            { kind: 'give', name: 'Les provisions', pool: NORD_RAW, k: 3, n: 20, q: 0 },
+            { kind: 'give', name: 'La table du poêle', pool: NORD_DISH, k: 2, n: 5, q: 1 },
+        ],
+    },
+    serre: {
+        name: 'La serre en fête',
+        who: 'yasmine',
+        icon: ['item', 'orchid'],
+        deco: 'orchidPot',
+        open: 'greenhouse',
+        intro: 'Sous verre, c’est l’été toute l’année. Remplissons la serre de couleurs et de saveurs !',
+        steps: [
+            { kind: 'give', name: 'La récolte sous verre', pool: GH_VEG, k: 3, n: 25, q: 0 },
+            { kind: 'give', name: 'Les herbes et les piments', pool: GH_GOODS, k: 2, n: 6, q: 0 },
+            { kind: 'give', name: 'Les orchidées', pool: ORCHIDS, k: 1, n: 6, q: 0 },
+            { kind: 'give', name: 'La récolte d’or', pool: GH_VEG, k: 1, n: 12, q: 2 },
+        ],
+    },
+    voisins: {
+        name: 'La fête des voisins',
+        who: 'ines',
+        icon: ['ui', 'heart'],
+        deco: 'neighborBench',
+        open: 'nmarket',
+        intro: 'Un bon voisin, c’est un trésor ! Rendons service, échangeons, et trinquons ensemble.',
+        steps: [
+            { kind: 'count', name: 'Les coups de main', stat: 'neighborHelps', n: 6, icon: ['ui', 'heart'], text: 'Rendre {n} services aux voisins' },
+            { kind: 'count', name: 'Le marché des voisins', stat: 'neighborBuys', n: 5, icon: ['ui', 'coin'], text: 'Faire {n} achats au marché des voisins' },
+            { kind: 'count', name: 'L’étal', stat: 'stallSales', n: 15, icon: ['ui', 'basket'], text: 'Vendre {n} fois à l’étal de la ferme' },
+            { kind: 'give', name: 'Le panier de bienvenue', pool: NEIGHBOR_GOODS, k: 3, n: 8, q: 1 },
+        ],
+    },
+    tablee: {
+        name: 'La grande tablée italienne',
+        who: 'gaston',
+        icon: ['item', 'pizza'],
+        deco: 'pizzaOven',
+        open: 'italian',
+        intro: 'Des pâtes, des pizzas, de la bonne humeur : on met les couverts pour tout le village !',
+        steps: [
+            { kind: 'give', name: 'Les pâtes', pool: PASTAS, k: 2, n: 8, q: 0 },
+            { kind: 'give', name: 'Les pizzas', pool: PIZZAS, k: 2, n: 6, q: 1 },
+            { kind: 'give', name: 'Les douceurs', pool: ITALIAN_SWEET, k: 2, n: 6, q: 0 },
+            { kind: 'give', name: 'La pizza d’honneur', pool: PIZZAS, k: 1, n: 3, q: 2 },
         ],
     },
 };

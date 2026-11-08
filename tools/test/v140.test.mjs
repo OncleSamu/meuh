@@ -104,7 +104,7 @@ test('les fermes rivales de la Coupe gagnent leurs médailles à votre rythme', 
     assert.ok(firmin >= hortense * 0.8, `${firmin} / ${hortense}`);
 });
 
-test('la statue dorée : les 17 défis en or', () => {
+test('la statue dorée : tous les défis en or', () => {
     start();
     state.defis = { cur: null, recent: [], trophies: {}, next: 0 };
     Object.keys(DEFIS).forEach(id => (state.defis.trophies[id] = { best: 3, n: 1, gold: 1 }));

@@ -44,8 +44,14 @@ export function questPool() {
         if (!i || i.exotic || depth > 4) ok = false;
         else if (i.sea) ok = netOpen() && id !== 'lobster';
         else if (id === 'alpineMilk') ok = transOpen();
-        else if (id === 'honey') ok = state.grid.some(p => p.deco === 'hive');
-        else if (i.type === 'crop') ok = lvOk(i) && storyOk(i) && !i.ghOnly && (i.nord ? nordOpen() : i.oasis ? oasisOpen() : !i.island || islandOpen());
+        else if (id === 'honey')
+            ok = state.grid.some(p => p.deco === 'hive') || Object.values(state.apiary || {}).some(a => a && a.hives > 0); // 1.94 : les ruchers des contrées aussi
+        else if (i.type === 'crop')
+            ok =
+                lvOk(i) &&
+                storyOk(i) &&
+                (!i.ghOnly || !!(state.greenhouse && state.greenhouse.built)) &&
+                (i.nord ? nordOpen() : i.oasis ? oasisOpen() : !i.island || islandOpen());
         else if (i.type === 'tree') ok = livingTrees(i.id) > 0;
         else if (i.type === 'product') ok = state.animals.some(a => ANIMALS[a.type].prodId === i.id);
         else if (i.type === 'fish') ok = fishOrderOk(id);

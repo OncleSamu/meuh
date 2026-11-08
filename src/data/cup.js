@@ -4,7 +4,7 @@
 
 // points par médaille : aucune, bronze, argent, or, platine, diamant
 export const CUP_POINTS = [0, 1, 2, 4, 7, 10];
-// la grande statue dorée : les 17 grands défis gagnés en or au moins une fois
+// la grande statue dorée : tous les grands défis gagnés en or au moins une fois
 export const STATUE_POINTS = 10;
 
 export const CUP_RANKS = [

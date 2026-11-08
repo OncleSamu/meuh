@@ -62,7 +62,7 @@ export function cupOnMedal(medal, defiId) {
     checkStatue();
 }
 
-// la grande statue : les 17 grands défis gagnés au moins une fois en or
+// la grande statue : tous les grands défis gagnés au moins une fois en or
 export const statueProgress = () => {
     const T = (state.defis && state.defis.trophies) || {};
     return Object.keys(DEFIS).filter(id => T[id] && T[id].best >= 3).length;

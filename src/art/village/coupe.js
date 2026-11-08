@@ -1,3 +1,4 @@
+import { DEFIS } from '../../data/defis.js';
 // La Coupe de la vallée (1.40) : les grands travaux du mécénat, la carte du domaine des légendes,
 // les blasons des six rangs, le socle des monuments et la grande statue dorée de Meuh.
 import { BLD, KINDS, C, E, FC, HL, L, P, R, SHADOW, ui, goldCowArt } from '../kit.js';
@@ -232,8 +233,8 @@ for (let k = 0; k < 6; k++) ui['cupRank' + k] = crest(k);
 
 // ======================= la carte du domaine des légendes =======================
 // un grand parc : une allée en anneau autour de la place de la statue, la rivière en haut pour le pont
-const ring = Array.from({ length: 17 }, (_, i) => {
-    const a = -Math.PI / 2 + (i * 2 * Math.PI) / 17;
+const ring = Array.from({ length: Object.keys(DEFIS).length }, (_, i) => {
+    const a = -Math.PI / 2 + (i * 2 * Math.PI) / Object.keys(DEFIS).length;
     return [80 + Math.cos(a) * 52, 64 + Math.sin(a) * 30];
 });
 const hedge = (x, y) =>
