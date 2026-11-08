@@ -916,3 +916,41 @@
     border-color: #e2412f;
     box-shadow: 0 0 0 2px #e2412f55;
 }
+
+/* 1.100 : la fête de la vallée, le bilan et le générique */
+.fete-scene {
+    text-align: center;
+    padding: 12px 6px;
+}
+.fete-scene p {
+    margin: 12px 0;
+    font-size: 1.05em;
+    line-height: 1.45;
+}
+.credits h3 {
+    text-align: center;
+    margin: 20px 0 8px;
+}
+.credits .center,
+.center {
+    text-align: center;
+}
+.credit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0;
+}
+.credit small {
+    display: block;
+    opacity: 0.7;
+}
+.credit-av {
+    width: 44px;
+    height: 44px;
+    flex: none;
+}
+.credit-av svg {
+    width: 100%;
+    height: 100%;
+}

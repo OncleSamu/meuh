@@ -2,6 +2,7 @@
 export * from './camping.js';
 export * from './residents.js';
 export * from './maison.js';
+export * from './fete.js';
 export * from './animals.js';
 export * from './barn.js';
 export * from './book.js';

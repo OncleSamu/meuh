@@ -2057,6 +2057,13 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'La fête de la vallée',
+                b: [
+                    'Le dernier chapitre. Quand le camping est bâti, cinq buts : accueillir 25 campeurs, en renvoyer 10 ravis, installer 5 résidents, mener un résident à dix cœurs, vendre 10 coffrets de la Maison. Village › Commandes › La fête de la vallée.',
+                    'Une fois les buts atteints, dressez la grande table (3 millions de pièces, planches, outils) : la vallée fait la fête. Ensuite, le bilan de toute votre partie et le générique, avec les visages des habitants, des résidents et des campeurs de passage, restent à relire quand vous voulez. Le jeu continue normalement.',
+                ],
+            },
+            {
                 h: 'La Coupe de la vallée',
                 b: [
                     'Les saisons de la ferme (Village › Commandes) suivent un thème de quatre semaines, douze en tout. Les défis du thème sont proposés en priorité et leurs médailles comptent double pour la Coupe. Chaque saison finie est classée face aux quatre fermes rivales et laisse un trophée daté dans le livre, onglet Défis, avec « Votre année à la ferme ». Sous le grand défi, un défi éclair (une seule étape, trois jours) donne des pièces et de l’expérience entre deux grands défis.',
