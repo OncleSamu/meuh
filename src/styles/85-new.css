@@ -808,3 +808,32 @@
 .runs .run:not(.won) {
     opacity: 0.75;
 }
+
+/* 1.100 : le camping de la vallée */
+.camps {
+    display: grid;
+    gap: 10px;
+}
+.camp-card .card-head {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.camp-card .od-line {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 8px 0 4px;
+}
+.camp-card .od-line > span {
+    flex: 1;
+}
+.camp-card .od-line small {
+    display: block;
+}
+.camp-card .od-foot {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}

@@ -2040,6 +2040,14 @@ export const GUIDE_PAGES = [
                 t: 'Un défi de deux semaines en quatre étapes, à choisir parmi trois proposés (vingt-quatre en tout). Bronze à 2 étapes, argent à 3, or à 4 ; platine si tout est livré en or ou mieux (réglage « Viser le platine » dans la fiche du défi), diamant si le platine est fini en moins de 7 jours. Une médaille gagnée avant la date : le défi suivant peut commencer tout de suite. Il se trouve dans Village › Commandes.',
             },
             {
+                h: 'Le camping de la vallée',
+                b: [
+                    'Dès le niveau 57 : un camping à aménager (1,5 million de pièces, planches, pierres, poutres), avec 3 emplacements, puis jusqu’à 12. Village › Commandes › Le camping.',
+                    'Toutes les 3 à 6 heures, un campeur au visage tiré au hasard plante sa tente pour 10 à 30 heures. Randonneur, famille, gourmet, pêcheur, artiste ou couple : chacun cherche 2 ou 3 produits, que vous lui vendez deux fois leur valeur.',
+                    'Tout vendu : le campeur est ravi et laisse un pourboire. Rien vendu : il repart déçu, sans rien de perdu. Cinq améliorations : point d’eau, sanitaires, salle commune, terrain de jeux et épicerie (une caisse qui se remplit même hors ligne).',
+                ],
+            },
+            {
                 h: 'La Coupe de la vallée',
                 b: [
                     'Les saisons de la ferme (Village › Commandes) suivent un thème de quatre semaines, douze en tout. Les défis du thème sont proposés en priorité et leurs médailles comptent double pour la Coupe. Chaque saison finie est classée face aux quatre fermes rivales et laisse un trophée daté dans le livre, onglet Défis, avec « Votre année à la ferme ». Sous le grand défi, un défi éclair (une seule étape, trois jours) donne des pièces et de l’expérience entre deux grands défis.',
