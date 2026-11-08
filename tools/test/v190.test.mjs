@@ -47,3 +47,17 @@ test('1.90 : on peut retirer une nasse en cours, l’appât revient', () => {
     assert.equal(p.worms, Math.min(p.worms, w + 1));
     assert.ok(!G.pullTrap(0), 'une nasse vide ne se retire pas');
 });
+
+test('1.91 : un produit d’atelier se brasse (caramel, café) et pèse peu dans le prix', () => {
+    farm();
+    state.inventory.caramel = 10;
+    state.inventory.coffee = 10;
+    assert.ok(G.isBrewable('caramel') && G.isBrewable('coffee') && !G.isBrewable('wheat_nope'));
+    assert.ok(!G.BREWABLE.includes('caramel'), 'hors du livre des bières');
+    assert.deepEqual(G.ingFlavor('coffee'), [0, 1, 5, 0, 1]);
+    assert.equal(G.ingHave('caramel'), 10);
+    const d = G.ensureBrew().draft;
+    assert.ok(G.setDraftIng(0, 'caramel'), 'acceptée dans la recette');
+    assert.equal(d.ings[0][0], 'caramel');
+    assert.ok(G.brewValue(d.malt, d.hop, d.ings, 0) < 1000, 'prix raisonnable');
+});

@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
     {
+        v: '1.91',
+        title: "Produits d'atelier à la brasserie",
+        date: '8 novembre 2026',
+        items: [
+            "On peut brasser des produits d'atelier en plus des cultures",
+            "Ils n'apparaissent dans le sélecteur que si on en a en stock, n'ont pas de page au livre des bières",
+            'Conseil, guide et',
+        ],
+    },
+    {
         v: '1.90',
         title: 'Petits correctifs',
         date: '8 novembre 2026',

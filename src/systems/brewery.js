@@ -69,15 +69,33 @@ export const BREWABLE = Object.values(ITEMS)
     .filter(i => (i.type === 'crop' || i.type === 'tree') && FLAVORS[i.id] && i.id !== 'hop')
     .map(i => i.id);
 
+// 1.91 : des produits d'atelier se brassent aussi (caramel, chocolat, café, cidre, piment en poudre, sucre).
+// Ils ne figurent pas au livre des bières (BREWABLE) mais se choisissent comme les cultures, et ne comptent que si on en a en stock.
+export const BREW_EXTRA = {
+    caramel: [3, 0, 2, 0, 1],
+    sugar: [5, 0, 0, 0, 0],
+    brownSugar: [4, 0, 1, 0, 1],
+    darkChoc: [1, 0, 5, 0, 1],
+    coffee: [0, 1, 5, 0, 1],
+    cider: [2, 4, 0, 0, 0],
+    espelettePowder: [0, 0, 0, 5, 1],
+};
+export const isBrewable = id => BREWABLE.includes(id) || id in BREW_EXTRA;
+
 // ---------------- 1.7 : un ingrédient peut être une variété du labo (son identifiant « v12 ») ----------------
 // 1.68 : aussi un miel de fleur (sa base), lu dans le registre commun
 const VAR = id => (state.genetics && (state.genetics.vars[id] || vdef(id))) || null;
 export const ingBase = id => (VAR(id) ? VAR(id).base : id);
 // le goût d'un ingrédient : celui de l'espèce, ou celui que la variété exprime vraiment
-export const ingFlavor = id => (VAR(id) && VAR(id).g ? FLAVOR_IDS.map(k => traitOf(VAR(id).g, k)) : FLAVORS[id] || [0, 0, 0, 0, 0]);
+export const ingFlavor = id => (VAR(id) && VAR(id).g ? FLAVOR_IDS.map(k => traitOf(VAR(id).g, k)) : FLAVORS[id] || BREW_EXTRA[id] || [0, 0, 0, 0, 0]);
 export const ingName = id => (VAR(id) ? varName(VAR(id)) : ITEMS[id] ? ITEMS[id].name : 'variété perdue');
 const ingLow = id => (VAR(id) ? varName(VAR(id)) : ITEMS[id] ? ITEMS[id].name.toLowerCase() : 'variété perdue');
-const ingValue = id => (VAR(id) ? (ITEMS[VAR(id).base].sell || 0) * vdefMult(VAR(id)) : (ITEMS[id] && ITEMS[id].sell) || 0);
+const ingValue = id =>
+    id in BREW_EXTRA
+        ? Math.round(((ITEMS[id] && ITEMS[id].sell) || 0) * 0.2)
+        : VAR(id)
+          ? (ITEMS[VAR(id).base].sell || 0) * vdefMult(VAR(id))
+          : (ITEMS[id] && ITEMS[id].sell) || 0;
 // combien on en a : pour une variété, ses produits (qui font partie du stock de l'espèce)
 export function ingHave(id) {
     const v = VAR(id);
@@ -176,7 +194,7 @@ export function ensureBrew() {
     B.vats = B.vats || [];
     B.barrels = B.barrels || [];
     B.draft = B.draft || { malt: 'maltBlond', hop: 1, ings: [] };
-    B.draft.ings = B.draft.ings.filter(([id]) => BREWABLE.includes(id) || (VAR(id) && BREWABLE.includes(VAR(id).base)));
+    B.draft.ings = B.draft.ings.filter(([id]) => isBrewable(id) || (VAR(id) && BREWABLE.includes(VAR(id).base)));
     if (isMead(B.draft.malt) && !meadOpen()) B.draft.malt = B.draft.beerMalt || 'maltBlond';
     fixAgedNames(B);
     B.demand = B.demand || {};
@@ -381,7 +399,7 @@ export function setDraftHop(n) {
 export function setDraftIng(slot, id) {
     const d = ensureBrew().draft;
     if (slot >= brewSlots(d.malt)) return false;
-    if (id && !BREWABLE.includes(id) && !(VAR(id) && BREWABLE.includes(VAR(id).base))) return false;
+    if (id && !isBrewable(id) && !(VAR(id) && BREWABLE.includes(VAR(id).base))) return false;
     // un même ingrédient une seule fois
     if (id && d.ings.some(([x], k) => x === id && k !== slot)) return false;
     while (d.ings.length <= slot) d.ings.push([null, 1]);

@@ -308,9 +308,9 @@ defineView('machines/brew', renderBrew);
 
 // ---------------- choisir un ingrédient ----------------
 const brewables = () =>
-    G.BREWABLE.filter(id => (state.inventory[id] || 0) > 0 || (lvOk(ITEMS[id]) && G.storyOk(ITEMS[id]) && !ITEMS[id].exotic)).sort(
-        (a, b) => (state.inventory[b] || 0) - (state.inventory[a] || 0) || ITEMS[a].name.localeCompare(ITEMS[b].name),
-    );
+    [...G.BREWABLE, ...Object.keys(G.BREW_EXTRA).filter(id => (state.inventory[id] || 0) > 0)]
+        .filter(id => (state.inventory[id] || 0) > 0 || (lvOk(ITEMS[id]) && G.storyOk(ITEMS[id]) && !ITEMS[id].exotic))
+        .sort((a, b) => (state.inventory[b] || 0) - (state.inventory[a] || 0) || ITEMS[a].name.localeCompare(ITEMS[b].name));
 defineSheet('brewPick', {
     title: 'Un ingrédient',
     render(o) {

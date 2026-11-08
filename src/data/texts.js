@@ -70,7 +70,7 @@ export const TIPS = {
     brew: {
         icon: ['ui', 'beer'],
         title: 'Inventer sa bière',
-        text: 'Un malt donne la couleur, le houblon l’amertume, et chaque fruit ou légume son goût. Regardez l’accord avant de brasser : certains mariages valent beaucoup plus cher. La première fois, la bière reçoit un nom : touchez le crayon pour le changer.',
+        text: 'Un malt donne la couleur, le houblon l’amertume, et chaque fruit ou légume son goût. Regardez l’accord avant de brasser : certains mariages valent beaucoup plus cher. La première fois, la bière reçoit un nom : touchez le crayon pour le changer. Et l’atelier sert aussi : un caramel dans une brune, du café ou du chocolat dans une noire, une pointe d’Espelette… tout ce qui est au stock se brasse.',
     },
     station: {
         icon: ['ui', 'flowers'],

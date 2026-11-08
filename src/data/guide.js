@@ -1158,6 +1158,7 @@ export const GUIDE_PAGES = [
                     'Un malt (blond, ambré, brun ou noir, grillé à la malterie avec l’orge).',
                     'Une dose de houblon : légère, moyenne ou forte.',
                     '1 à 3 ingrédients de la ferme, chacun dosé de 1 à 3. Chaque culture ou fruit a son goût.',
+                    'Les produits d’atelier se brassent aussi, dès qu’on en a en stock : caramel (sucré, un peu amer), sucre, cassonade, chocolat noir et café (amers), cidre (acide), piment d’Espelette en poudre (épicé). Ils n’ont pas de page au livre des bières.',
                 ],
             },
             {
