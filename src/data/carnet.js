@@ -1,3 +1,4 @@
+import { CARNET_100 } from './ajouts/dernieres.js';
 // Le carnet de Mamie Odette (1.2) : une anecdote par recette, débloquée à la maîtrise bronze de la recette.
 // Mamie Odette parle à son petit-enfant, le joueur. Ton grand-père, c'est Papi Lucien.
 
@@ -1473,6 +1474,9 @@ Object.assign(CARNET, {
     cardamomMilk:
         'Le lait de renne à la cardamome vient du traîneau : sans lui, pas d’épice. Chaud, épais, un peu sucré, il sent les pains de Noël. On le boit à petites gorgées, avec une couverture sur les genoux.',
 });
+
+// 1.100 : les dernières recettes
+Object.assign(CARNET, CARNET_100);
 
 // 1.61 : la pizzeria
 Object.assign(CARNET, {

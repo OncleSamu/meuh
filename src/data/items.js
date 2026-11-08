@@ -9,6 +9,7 @@ import { NORD_PRODUCTS } from './nord.js';
 import { NORD_CROPS, NORD_TREES } from './nord.js';
 import { RECIPES_150 } from './ajouts/oasis-cuisine.js';
 import { RECIPES_161 } from './ajouts/pizzeria.js';
+import { RECIPES_100 } from './ajouts/dernieres.js';
 import { RECIPES_153 } from './ajouts/nord-cuisine.js';
 import { FISH_ITEMS_133, RECIPES_133 } from './ajouts/poissons.js';
 import { RECIPES_134 } from './ajouts/cave.js';
@@ -2973,6 +2974,12 @@ Object.assign(ITEMS, {
 // 1.61 : les pizzas de la pizzeria (le prix suit les ingrédients) ; la pizza du four à pain devient la margherita
 ITEMS.pizza.name = 'Pizza margherita';
 for (const [id, name, ing] of RECIPES_161) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}
+
+// 1.100 : les dernières recettes (le prix suit les ingrédients)
+for (const [id, name, , ing] of RECIPES_100) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
 }

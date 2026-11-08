@@ -15,6 +15,7 @@ import { RECIPES_137 } from './ajouts/chateau.js';
 import { RECIPES_150, MACHINES_150 } from './ajouts/oasis-cuisine.js';
 import { RECIPES_161, PIZZERIA } from './ajouts/pizzeria.js';
 import { RECIPES_153, MACHINES_153 } from './ajouts/nord-cuisine.js';
+import { RECIPES_100 } from './ajouts/dernieres.js';
 import { ITEMS } from './items.js';
 import { ANIMALS } from './animals.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
@@ -3525,6 +3526,7 @@ const DESC_153 = {
 };
 for (const [id, name, reqLvl, cost, needProject] of MACHINES_153) MACHINES[id] = { id, name, cost, reqLvl, needProject, desc: DESC_153[id] };
 for (const [id, , machine, ing, time, lvl] of RECIPES_153) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
+for (const [id, , machine, ing, time, lvl] of RECIPES_100) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 
 // ---------------- 1.56 : 64 niveaux ----------------
 // l'oasis sur les niveaux 59 à 61, le Grand Nord sur 62 à 64 (voir levels64.js)

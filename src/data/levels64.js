@@ -20,7 +20,7 @@ export const GATE_LVL = {
 export const OASIS_RANGE = [59, 61];
 export const NORD_RANGE = [62, 64];
 export const CAP = 20; // recettes par niveau au plus
-export const CAP_LATE = 22; // à partir du 59 (l'oasis et le Nord arrivent avec leurs bêtes, leurs plantes et leur machine)
+export const CAP_LATE = 24; // à partir du 59 (l’oasis et le Nord arrivent avec leurs bêtes, leurs plantes et leur machine) ; 1.100 : 22 → 24, pour les dernières recettes
 
 export const LV64_ITEM = {
     // l'oasis : les cultures et les arbres de la palmeraie (le chantier de la palmeraie les demande, dans le même chapitre)

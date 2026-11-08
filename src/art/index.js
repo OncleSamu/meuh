@@ -135,6 +135,7 @@ export const sprite = (kind, id) => (KIND[kind] || SPR.ui)(id);
 import './retouches/fromages.js';
 import './miel/cire.js';
 import './cuisine/pizzeria.js';
+import './cuisine/dernieres.js';
 import './miel/miels.js';
 import './miel/ruchers.js';
 import './village/amis.js';

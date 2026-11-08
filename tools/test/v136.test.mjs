@@ -40,7 +40,7 @@ test('1.36 : un rythme à peu près égal (recettes, plantes, animaux, machines)
     const per = (vals, from, to) => vals.filter(l => l >= from && l <= to).length;
     const rec = Object.values(RECIPES).map(r => r.lvl);
     // 1.56 : l'oasis et le Nord sont répartis sur 59 à 64 (au plus 22 recettes par niveau)
-    for (let l = 21; l <= MAX_LEVEL; l++) assert.ok(per(rec, l, l) <= (l >= 63 ? 24 : l >= 59 ? 22 : 20), `niveau ${l} : ${per(rec, l, l)} recettes`);
+    for (let l = 21; l <= MAX_LEVEL; l++) assert.ok(per(rec, l, l) <= (l >= 63 ? 28 : l >= 59 ? 24 : 20), `niveau ${l} : ${per(rec, l, l)} recettes`);
     const plants = Object.values(ITEMS)
         .filter(i => (i.type === 'crop' || i.type === 'tree') && i.reqLvl > 1)
         .map(i => i.reqLvl);
@@ -155,11 +155,12 @@ test('1.56 : ce que la partie avait ouvert reste ouvert (l’oasis du niveau 58,
     for (const id of ['tiledStove', 'berryKettle']) assert.ok(lvOk(MACHINES[id]), id);
 });
 
-test('1.56 : chaque niveau de 58 à 64 ouvre quelque chose, jamais plus de 22 recettes', () => {
+test('1.56 : chaque niveau de 58 à 64 ouvre quelque chose, jamais plus de 24 recettes (28 aux deux derniers niveaux)', () => {
     for (let l = 50; l <= MAX_LEVEL; l++) {
         assert.ok(G.unlocksAt(l).length > 1, `niveau ${l}`);
         // 1.81 : 24 aux niveaux 63 et 64 (les plats du bœuf musqué et du lagopède ne peuvent pas s'ouvrir plus tôt)
-        assert.ok(Object.values(RECIPES).filter(r => r.lvl === l).length <= (l >= 63 ? 24 : 22), `niveau ${l}`);
+        // 1.100 : 28 aux deux derniers niveaux et 24 de 59 à 62 : les dernières recettes (four en terre, bouilloire à baies, laines du désert) ne peuvent pas s'ouvrir plus tôt
+        assert.ok(Object.values(RECIPES).filter(r => r.lvl === l).length <= (l >= 63 ? 28 : l >= 59 ? 24 : 22), `niveau ${l}`);
     }
     for (const r of Object.values(RECIPES)) assert.ok(r.lvl >= MACHINES[r.machine].reqLvl, `${r.id} avant sa machine`);
 });
