@@ -63,3 +63,11 @@ Heum vit à part dans ce dossier : il ne touche pas au code de Meuh, et Meuh n'a
 - **Journal du Bunker** : niveaux, KO, incidents, arrivées.
 - Sauvegarde passée en version 3 (migration automatique : les anciennes parties reçoivent leurs habitants).
 - Pas encore : le troisième étage et les salles fusionnées (reportés), les naissances (abandonnées).
+
+## Ce qu'ajoute la 0.5 (le monde)
+
+- **24 parcelles** (au lieu de 9). Prix doux jusqu'à la douzième, puis ×1,3 à chaque nouvelle : la dernière coûte près de 400 000 pièces, c'est le grand puits d'argent de la partie.
+- **Trois cultures de plus** : topinambour (niveau 15), betterave (18), piment (22), chacune avec son mutant (topinambour de verre, betterave sanguine, piment de cendre) et sa graine stable à fixer chez Victor. Chaque culture rapporte plus par minute que la précédente.
+- **Usure des machines** : chaque travail rendu use la machine d'un point ; à 10 elle tombe en panne jusqu'à réparation (2 métaux et 1 électronique). L'atelier de Firmin ralentit l'usure d'un quart.
+- **Le silo** : chaque produit (récoltes, conserves, œufs…) se stocke jusqu'à 80 unités ; le silo passe à 200 (niveau 16) puis 500 (niveau 20), contre pièces et matériaux. Les matériaux ne sont pas limités. Sauvegarde passée en version 4 (migration automatique).
+- Reporté à la suite : espèces rares et expéditions de capture, robots, silo plombé (protection contre la charge).

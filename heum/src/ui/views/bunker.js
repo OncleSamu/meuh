@@ -107,7 +107,7 @@ function labCard() {
             ? `<div class="row">${btn(`Récupérer la graine : ${H.nameOf(j.id)}`, 'collectFix', {}, { kind: 'go', icon: 'seedBag' })}</div>`
             : `<p class="lab">${ico(j.id)} ${H.nameOf(j.id)} · ${timer(H.labLeft())}</p>${prog(H.labLeft(), FIX.t)}`;
     else
-        body = ['rutabagaGlow', 'squashShell', 'kaleSponge', 'berryFire']
+        body = Object.keys(MUTANTS)
             .filter(id => !fixed.includes(id))
             .map(
                 id =>

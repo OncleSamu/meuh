@@ -108,7 +108,7 @@ export function buyPlot() {
 }
 
 // les Rebelles ne bougent que pendant qu'on joue (hors ligne, rien ne se propage)
-const near = i => [i - 3, i + 3, i % 3 ? i - 1 : -1, i % 3 < 2 ? i + 1 : -1].filter(j => j >= 0 && j < 9);
+const near = i => [i - 3, i + 3, i % 3 ? i - 1 : -1, i % 3 < 2 ? i + 1 : -1].filter(j => j >= 0 && j < state.plots.length);
 export function rebelTick(dt) {
     const rebels = state.plots.map((p, i) => (p.rebel ? i : -1)).filter(i => i >= 0);
     if (!rebels.length) {

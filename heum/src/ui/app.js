@@ -96,7 +96,7 @@ const SHELL = {
     },
     menu(el, d, first = false) {
         openSheet(
-            'Heum 0.4',
+            'Heum 0.5',
             `<p>Heum est le troisième monde de la ferme : un îlot cultivable dans les terres mortes. Vous pilotez la <b>Contamination</b> pour faire muter vos cultures sans perdre vos récoltes.</p>
             <ul class="perks"><li>${ico('gauge')}Saine (0-30 %), Mutagène (30-60 %), Instable (60-85 %), Critique (85 % et plus).</li>
             <li>${ico('rutabagaGlow')}Le palier au moment de la récolte décide : mutant, Rebelle ou déchet.</li>

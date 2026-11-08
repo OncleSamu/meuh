@@ -3,10 +3,10 @@ import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { rnd, between } from '../core/rand.js';
 import { toast, sfx } from '../core/bus.js';
-import { MACHINES, WRECK, SCRAP_TYPES, CONT } from '../data/world.js';
-import { give, takeAll, hasAll, addXp, lvlOk, nameOf, mixCharge } from './player.js';
+import { MACHINES, WRECK, SCRAP_TYPES, CONT, WEAR, SILO } from '../data/world.js';
+import { give, takeAll, hasAll, addXp, lvlOk, nameOf, mixCharge, spend } from './player.js';
 import { addCont } from './contamination.js';
-import { genMult, wreckSpeed } from './bunker.js';
+import { genMult, wreckSpeed, power } from './bunker.js';
 
 export function wreckTick(dt) {
     const w = state.wreck;
@@ -41,10 +41,48 @@ export const recipeOf = (m, rid) => MACHINES[m].recipes.find(r => r.id === rid);
 export const jobOf = m => state.machines[m] || null;
 export const jobDone = m => !!jobOf(m) && now() >= jobOf(m).end;
 export const jobLeft = m => (jobOf(m) ? Math.max(0, (jobOf(m).end - now()) / 1000) : 0);
+// 0.5 : l'usure
+export const wearOf = m => (state.wear && state.wear[m]) || 0;
+export const broken = m => wearOf(m) >= WEAR.max;
+export function repair(m) {
+    if (!MACHINES[m] || !wearOf(m)) return false;
+    if (!hasAll(WEAR.repair)) {
+        toast('Il manque de quoi réparer');
+        sfx('error');
+        return false;
+    }
+    takeAll(WEAR.repair);
+    state.wear[m] = 0;
+    addXp(3);
+    sfx('build');
+    return true;
+}
+// le silo : 80, puis 200, puis 500 unités de chaque produit
+export const siloUp = () => SILO.ups[state.silo || 0] || null;
+export function upgradeSilo() {
+    const u = siloUp();
+    if (!u || !lvlOk(u.lvl, 'Le silo')) return false;
+    if (!hasAll(u.need) || state.money < u.money) {
+        toast('Il manque de quoi agrandir');
+        sfx('error');
+        return false;
+    }
+    spend(u.money);
+    takeAll(u.need);
+    state.silo = (state.silo || 0) + 1;
+    addXp(20);
+    sfx('build');
+    return true;
+}
 export function startJob(m, rid) {
     const d = MACHINES[m],
         r = d && recipeOf(m, rid);
     if (!r || !lvlOk(d.lvl, d.name) || (r.lvl && !lvlOk(r.lvl, r.name))) return false;
+    if (broken(m)) {
+        toast(`${d.name} est usé : il faut le réparer`);
+        sfx('error');
+        return false;
+    }
     if (jobOf(m)) {
         toast(`${d.name} est déjà occupé`);
         return false;
@@ -81,6 +119,8 @@ export function collectJob(m) {
     const r = recipeOf(m, jobOf(m).r);
     const jobCharge = jobOf(m).charge || 0;
     delete state.machines[m];
+    state.wear = state.wear || {};
+    state.wear[m] = Math.min(WEAR.max, wearOf(m) + 1 - 0.25 * power('shop'));
     let got = {};
     if (r.out === 'sorted') got = sortScrap();
     else if (r.out === 'purify') addCont(-CONT.purifier);

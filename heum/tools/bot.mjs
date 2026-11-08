@@ -30,6 +30,8 @@ for (let s = 0, k = 0; s < hours * 3600; s += STEP, k++) {
     while (state.level >= 6 && state.cont < target && H.have('fertilizer')) H.spreadFertilizer();
     if (strat !== 'crit' && state.cont >= 58 && state.level >= 3 && H.have('elec') && !H.jobOf('purifier')) H.startJob('purifier', 'purify');
     for (const m of Object.keys(state.machines)) if (H.jobDone(m)) H.collectJob(m);
+    for (const m of ['sorter', 'purifier', 'reactor', 'bench']) if (H.broken(m) && H.have('metal') >= 2 && H.have('elec') >= 1) H.repair(m);
+    if (H.siloUp() && state.level >= H.siloUp().lvl && H.hasAll(H.siloUp().need)) H.upgradeSilo();
     if (!H.jobOf('sorter') && H.have('scrap') >= 5) H.startJob('sorter', 'sort');
     if (state.level >= 6 && !H.jobOf('reactor')) {
         if (H.have('fertilizer') < 3) H.startJob('reactor', 'fert');

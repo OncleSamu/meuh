@@ -3,7 +3,7 @@ import { now } from './clock.js';
 import { RESIDENTS } from '../data/world.js';
 
 export const SAVE_KEY = 'heumSave';
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 // 0.4 : les habitants présents selon le nombre d'étages creusés
 export function newResidents(floors) {
@@ -27,13 +27,15 @@ export function freshState() {
         money: 60,
         // la Contamination de la ferme, de 0 à 100
         cont: 8,
-        plots: Array.from({ length: 9 }, (_, i) => ({ open: i < 4, crop: null, at: 0, rebel: false })),
+        plots: Array.from({ length: 24 }, (_, i) => ({ open: i < 4, crop: null, at: 0, rebel: false })),
         inv: { rutabaga: 4 },
         animals: [],
         wreck: { charges: 8, at: t },
         machines: {},
         bunker: { food: 6, at: t, res: newResidents(1), incident: null },
         journal: [],
+        wear: {}, // 0.5 : l'usure de chaque machine
+        silo: 0, // 0.5 : le niveau du silo
         caravan: { seed: Math.floor(Math.random() * 1e6) },
         seen: {},
         charge: {}, // 0.3 : la charge toxique moyenne de chaque produit en stock
@@ -60,6 +62,13 @@ export const isLocked = () => locked;
 // les migrations : de la version n à n + 1
 const MIGRATIONS = {
     1: s => ({ ...s, v: 2, charge: s.charge || {} }),
+    3: s => ({
+        ...s,
+        v: 4,
+        plots: [...s.plots, ...Array.from({ length: Math.max(0, 24 - s.plots.length) }, () => ({ open: false, crop: null, at: 0, rebel: false }))],
+        wear: {},
+        silo: 0,
+    }),
     2: s => ({ ...s, v: 3, journal: [], bunker: { ...s.bunker, res: newResidents((s.bunker && s.bunker.floors) || 1), incident: null } }),
 };
 export function migrate(s) {

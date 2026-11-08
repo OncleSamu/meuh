@@ -1,6 +1,6 @@
 // Service worker de Heum : le jeu marche hors-ligne.
 // La version change à chaque mise en ligne (remplacée par build.py --pwa).
-const VERSION = '0.4-20261108091616';
+const VERSION = '0.5-20261108093506';
 const CACHE = 'heum-' + VERSION;
 const FILES = [
     './',

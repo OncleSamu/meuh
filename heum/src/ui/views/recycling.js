@@ -1,7 +1,7 @@
 // Heum — l'onglet Recyclage : l'épave à fouiller et les machines.
 import { state } from '../../core/state.js';
 import * as H from '../../systems/index.js';
-import { MACHINES, WRECK, SCRAP_TYPES } from '../../data/world.js';
+import { MACHINES, WRECK, SCRAP_TYPES, WEAR, SILO } from '../../data/world.js';
 import { ico, btn, card, head, bar, timer, prog } from '../kit.js';
 import { floatAt, floatItems } from '../fx.js';
 
@@ -27,6 +27,19 @@ function machineCard(m) {
     const d = MACHINES[m];
     if (state.level < d.lvl) return card(`${head(d.name, m, d.text)}<p class="note">${ico('lock')} S’ouvre au niveau ${d.lvl}.</p>`, 'locked');
     const job = H.jobOf(m);
+    const wear = H.wearOf(m);
+    const wearRow = `<div class="lab">Usure ${Math.floor(wear)} / ${WEAR.max}${H.broken(m) ? ' · en panne' : ''}</div>${bar(wear / WEAR.max, wear >= WEAR.max - 2 ? '#d2412f' : '#a65e3a')}${
+        wear >= 1
+            ? `<div class="row">${btn(
+                  `Réparer (${Object.entries(WEAR.repair)
+                      .map(([id, n]) => `${n} ${H.nameOf(id).toLowerCase()}`)
+                      .join(', ')})`,
+                  'repair',
+                  { m },
+                  { size: 'sm', disabled: !H.hasAll(WEAR.repair) },
+              )}</div>`
+            : ''
+    }`;
     let body;
     if (job) {
         const r = H.recipeOf(m, job.r),
@@ -42,12 +55,30 @@ function machineCard(m) {
                     `<div class="recipe"><div><b>${r.name}</b><span class="need">${need(r)}</span></div>${btn('Lancer', 'startJob', { m, r: r.id }, { disabled: !H.hasAll(r.in) })}</div>`,
             )
             .join('');
-    return card(`${head(d.name, m, d.text)}${body}`);
+    return card(`${head(d.name, m, d.text)}${body}${wearRow}`);
+}
+function siloCard() {
+    const u = H.siloUp();
+    if (!u && H.siloLevel() === 0) return '';
+    const need = u
+        ? Object.entries(u.need)
+              .map(([id, n]) => `<span class="${H.have(id) >= n ? 'ok' : 'short'}">${ico(id)}${H.have(id)}/${n}</span>`)
+              .join('') + `<span class="${state.money >= u.money ? 'ok' : 'short'}">${ico('coin')}${u.money}</span>`
+        : '';
+    return card(
+        `${head('Le silo', 'silo', `Chaque produit se stocke jusqu’à ${H.siloCap()} unités ; au-delà, la récolte est perdue.`)}${u ? (state.level >= u.lvl ? `<div class="need">${need}</div><div class="row">${btn(`Agrandir (${SILO.caps[H.siloLevel() + 1]})`, 'upgradeSilo', {}, { kind: 'go', icon: 'shovel', disabled: !H.hasAll(u.need) || state.money < u.money })}</div>` : `<p class="note">${ico('lock')} Agrandissement au niveau ${u.lvl}.</p>`) : '<p class="hint">Silo au maximum.</p>'}`,
+    );
 }
 export function render() {
-    return `${wreckCard()}${scrapRow()}${Object.keys(MACHINES).map(machineCard).join('')}`;
+    return `${wreckCard()}${scrapRow()}${siloCard()}${Object.keys(MACHINES).map(machineCard).join('')}`;
 }
 export const actions = {
+    repair(el, d) {
+        H.repair(d.m);
+    },
+    upgradeSilo() {
+        H.upgradeSilo();
+    },
     search(el) {
         const n = H.search();
         if (n) floatItems(el, [['scrap', n]]);

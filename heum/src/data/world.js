@@ -100,6 +100,15 @@ export const CHECK = {
 // ce qui n'a pas de charge : matériaux, équipement
 export const NO_CHARGE = ['scrap', 'metal', 'plastic', 'elec', 'compo', 'fertilizer', 'veil', 'conc', 'waste'];
 export const SCRAP_TYPES = ['metal', 'plastic', 'elec', 'compo'];
+// 0.5 : l'usure des machines (chaque travail rendu use un peu ; l'atelier de Firmin l'adoucit) et le silo
+export const WEAR = { max: 10, repair: { metal: 2, elec: 1 } };
+export const SILO = {
+    caps: [80, 200, 500],
+    ups: [
+        { lvl: 16, money: 800, need: { metal: 10, compo: 4 } },
+        { lvl: 20, money: 8000, need: { metal: 30, compo: 12, elec: 10 } },
+    ],
+};
 export const WRECK = { max: 12, every: 120, find: [1, 3] };
 
 // le Recyclage
@@ -293,4 +302,9 @@ export const UNLOCKS = {
     11: 'Chou-kale, cochon, étable filtrée',
     12: 'Convoi blindé et concentrateur',
     13: 'Mûres et conserves explosives',
+    15: 'Topinambour',
+    16: 'Silo : agrandir le stock des produits',
+    18: 'Betterave',
+    20: 'Grand silo',
+    22: 'Piment',
 };
