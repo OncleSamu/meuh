@@ -369,7 +369,7 @@ const D = {
         ]
             .map(([x, y, c]) => R(x - 5, y - 1, 10, 10, 2, c, 1.6) + FC(x - 2, y + 2, 0.8, '#fff') + FC(x + 2, y + 5, 0.8, '#fff'))
             .join(''),
-    honeyJujubes: () => jar('#e8a03a', '#a83a22', sub('jujube', 22, 33, 20)) + FC(26, 50, 2.6, '#a83a22') + FC(38, 52, 2.6, '#a83a22'),
+    honeyJujubes: () => jar('#e8a03a', '#a83a22', sub('jujube', 22, 31, 20)),
 };
 Object.assign(items, D);
 

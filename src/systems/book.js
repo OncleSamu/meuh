@@ -66,16 +66,19 @@ const herdEntries = () => {
 };
 const WINES = Object.keys(CAVE_ITEMS).filter(id => ['wine', 'champagne'].includes(CAVE_ITEMS[id]));
 const ENTRIES = {
+    // 1.90 : le potager ne compte que les cultures ; les arbres (pommes, poires…) sont au verger
     garden: () =>
-        seedList().map(i => ({
-            key: 'g_' + i.id,
-            kind: 'item',
-            id: i.id,
-            icon: ['item', i.id],
-            name: i.name,
-            hint: 'Récoltez-en une de qualité or',
-            star: true,
-        })),
+        seedList()
+            .filter(i => i.type === 'crop')
+            .map(i => ({
+                key: 'g_' + i.id,
+                kind: 'item',
+                id: i.id,
+                icon: ['item', i.id],
+                name: i.name,
+                hint: 'Récoltez-en une de qualité or',
+                star: true,
+            })),
     orchard: () =>
         Object.values(ITEMS)
             .filter(i => i.type === 'tree')

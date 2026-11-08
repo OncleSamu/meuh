@@ -119,8 +119,8 @@ const REC = () => ({
             .map(([x, y]) => C(x, y, 5, '#c8504a', 1.8) + FC(x - 1.5, y - 1, 1, FAT) + FC(x + 1.5, y + 1.5, 0.8, FAT) + FC(x + 1, y - 2, 0.8, FAT))
             .join(''),
     driedMagret: woodBoard() + [14, 24, 34, 44].map((x, k) => slice(x, 40 - (k % 2) * 3, -20 + k * 6, '#a8423a', FAT, 9)).join(''),
-    duckConfit: jar('#f2e6c0', '#c8453a', sub('magret', 22, 34, 20)),
-    gooseConfit: jar('#f6e8c8', '#3f6fb5', sub('gooseLeg', 22, 34, 20)),
+    duckConfit: jar('#f2e6c0', '#c8453a', sub('magret', 21, 26, 22)),
+    gooseConfit: jar('#f6e8c8', '#3f6fb5', sub('gooseLeg', 21, 26, 22)),
     gooseRillettes:
         SHADOW(32, 58, 20, 3) +
         P('M14 26 L50 26 L48 54 Q48 57 44 57 L20 57 Q16 57 16 54Z', '#f2e6d0') +

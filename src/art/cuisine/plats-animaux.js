@@ -82,7 +82,7 @@ const D = {
         `<g transform="translate(18 38) scale(.6)">${roast(0, 0, 1, '#a8702a', '#7a4a1a')}</g>` +
         `<g transform="translate(44 38) scale(.6)">${roast(0, 0, 1, '#a8702a', '#7a4a1a')}</g>` +
         smokeW(32),
-    pigeonTerrine: () => jar('#d89080', '#8a5a2a', sub('squab', 22, 33, 20)),
+    pigeonTerrine: () => jar('#d89080', '#8a5a2a', sub('squab', 21, 29, 22)),
     // ================= la pintade =================
     guineaOmelette: () =>
         plate() +
@@ -142,7 +142,7 @@ const D = {
         mush(24, 30) +
         mush(40, 29) +
         herb(33, 24),
-    pickledPheasantEggs: () => jar('#e8d890', '#8a5a2a', egg(26, 38, '#a89860', 1.4) + egg(36, 41, '#a89860', 1.2)),
+    pickledPheasantEggs: () => jar('#e8d890', '#8a5a2a', egg(28, 41, '#a89860', 0.95) + egg(36, 42, '#a89860', 0.85)),
     pheasantApples: () => plate() + roast(32, 36, 0.95, '#c8742a', '#8a4a1a') + apple(11, 44) + apple(53, 44) + apple(53, 34, 4) + herb(32, 24),
     pheasantPate: () =>
         plate() +
@@ -200,7 +200,7 @@ const D = {
                     1.2,
                 ),
         }),
-    yakYogurt: () => jar('#fffaf0', '#c8a878', sub('yakMilk', 22, 33, 20)) + L('M44 8 L52 -2', 3) + L('M44 8 L52 -2', 1.4, '#e8d8b8'),
+    yakYogurt: () => jar('#fffaf0', '#c8a878', sub('yakMilk', 22, 31, 20)) + L('M44 8 L52 -2', 3) + L('M44 8 L52 -2', 1.4, '#e8d8b8'),
     yakStew: () =>
         bowl('#8a4a2a') +
         steamF +

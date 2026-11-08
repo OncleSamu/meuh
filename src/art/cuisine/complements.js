@@ -65,7 +65,7 @@ const ART = () => ({
         P('M10 44 Q12 36 32 36 Q52 36 54 44 Q32 50 10 44Z', '#e88a5a') +
         [20, 32, 44].map(x => E(x, 40, 6.5, 3.6, '#f6ead0', -8, 1.8) + FE(x - 2, 38.6, 2.4, 0.9, '#fff', 0.7)).join('') +
         leaf(30, 34, 5, -40, '#4caf50', 0.5),
-    pondRillettes: jar('#e8d8b0', '#3f6fb5', fishMini(32, 42, 0.7, '#8fa06a')),
+    pondRillettes: jar('#e8d8b0', '#3f6fb5', fishMini(30, 41, 0.52, '#8fa06a')),
     stuffedCarp:
         plate(46) +
         fishMini(32, 39, 1.4, '#b8a060', '#e8d8a0') +
@@ -131,7 +131,7 @@ const ART = () => ({
         R(11, 34, 42, 11, 2, '#e8c88a', 1.6) +
         L('M13 36 L51 44 M13 44 L51 36 M24 34 L40 45 M40 34 L24 45', 1.6, '#6b4a3a') +
         [18, 30, 44, 24, 38].map((x, k) => FC(x, k < 3 ? 37 : 42, 1.6, '#3a2618')).join(''),
-    mackerelWine: jar('#f2e6b0', '#3f6fb5', fishMini(32, 42, 0.7, '#4f7a9a', '#dfe6ec') + FC(26, 38, 1.6, '#f08a24') + FC(38, 46, 1.6, '#f08a24')),
+    mackerelWine: jar('#f2e6b0', '#3f6fb5', fishMini(30, 41, 0.52, '#4f7a9a', '#dfe6ec') + FC(25, 36, 1.2, '#f08a24') + FC(37, 46, 1.2, '#f08a24')),
     seabassTartare:
         plate(46) +
         P('M18 42 L18 32 Q32 28 46 32 L46 42 Q32 46 18 42Z', '#f2d6c8') +

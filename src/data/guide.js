@@ -1399,7 +1399,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les appâts',
-                t: 'Un appât multiplie par 5 les chances des poissons qu’il vise : ver de terre (la boîte se remplit seule), maïs (niveau 11), mouche (niveau 13), vif (au ponton), crevette (au lagon). L’écran montre ce qui mord ici et maintenant, avec les chances.',
+                t: 'Un appât multiplie par 5 les chances des poissons qu’il vise. L’écran montre ce qui mord ici et maintenant, avec les chances. Où trouver chacun : le ver de terre (niveau 9) se remplit tout seul dans la boîte à vers (un toutes les 3 minutes, 20 au plus) ; le maïs (niveau 11) vient de votre stock : un épi par prise, à récolter au champ ; la mouche (niveau 13) se fabrique au bord de l’étang avec le bouton « +4 mouches » (une plume de canard et une pelote de laine), et les défis de Marcel en donnent parfois ; le vif (ponton réparé) est une ablette de votre stock, que vous pêchez à la canne ; la crevette (niveau 38, bac de Tiago réparé) vient aussi de votre stock : celles du filet de pêche en mer. Une nasse peut aussi recevoir un appât à la pose.',
             },
             {
                 h: 'Le mini-jeu',
@@ -1407,7 +1407,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les nasses',
-                t: 'Deux nasses dès le niveau 12, quatre dès le niveau 14 (une de plus avec le domaine). Posées dans un coin, avec ou sans appât, elles attrapent 2 à 4 poissons communs toutes les 2 heures, même jeu fermé. Relevez-les d’un appui.',
+                t: 'Deux nasses dès le niveau 12, quatre dès le niveau 14 (une de plus avec le domaine). Posées dans un coin, avec ou sans appât, elles attrapent 2 à 4 poissons communs toutes les 2 heures, même jeu fermé. Relevez-les d’un appui. Une nasse en cours peut être retirée (bouton « Retirer ») pour la poser ailleurs : l’appât revient, mais la prise en cours est perdue.',
             },
             {
                 h: 'Défis et concours',

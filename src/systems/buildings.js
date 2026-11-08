@@ -83,11 +83,23 @@ export const labPenBonus = () => bldLvl('labPens');
 export const trapBonus = () => bldLvl('traps');
 export const ghExtraPlots = () => bldLvl('greenhouse');
 // les parcelles libres de la serre
+// 1.90 : les parcelles libres de l'amélioration s'ajoutent à celles qu'on a achetées (avant, elles se confondaient avec elles :
+// avec 1 parcelle achetée, l'amélioration « +1 parcelle libre » ne donnait rien)
+export function ghPaid() {
+    const g = state.greenhouse;
+    if (typeof g.paid !== 'number') {
+        // anciennes sauvegardes : ce qui dépasse les parcelles libres déjà comptées avait été acheté
+        const extra = g.plots.filter(p => p.isUnlocked).length - GH.basePlots;
+        g.paid = Math.max(0, extra > ghExtraPlots() ? extra : extra - ghExtraPlots());
+    }
+    return g.paid;
+}
 export function ghExtra() {
     const g = state.greenhouse;
     if (!g || !g.built) return;
+    const want = Math.min(g.plots.length, GH.basePlots + ghPaid() + ghExtraPlots());
     g.plots.forEach((p, k) => {
-        if (k < GH.basePlots + ghExtraPlots()) p.isUnlocked = true;
+        if (k < want) p.isUnlocked = true;
     });
 }
 // la machine : une place de plus dans la file par niveau, 8 % de temps en moins, un lot de bonus une fois sur cinq au niveau 3

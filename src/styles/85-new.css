@@ -752,9 +752,15 @@
         min-height: 26px;
         padding: 2px 8px;
     }
+    /* 1.90 : une petite pastille posée sur le coin (avant, elle s'étirait sur toute la largeur et cachait le nom) */
     .goods-grid .hot-tag {
-        top: -6px;
-        left: 4px;
+        top: -11px;
+        right: auto;
+        left: 14px;
+        width: auto;
+        padding: 1px 9px;
+        line-height: 1.25;
+        box-shadow: 0 2px 0 rgba(58, 38, 24, 0.35);
     }
 }
 

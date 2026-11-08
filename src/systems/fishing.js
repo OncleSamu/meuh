@@ -113,6 +113,26 @@ function takeBait(id) {
     else state.inventory[b.have]--;
     return true;
 }
+// rend un appât à la réserve (nasse retirée)
+function giveBackBait(id) {
+    const b = BAITS[id],
+        p = state.pond;
+    if (!b) return;
+    if (b.have === 'worms') p.worms = Math.min(WORMS.max, p.worms + 1);
+    else if (b.have === 'flies') p.flies++;
+    else state.inventory[b.have] = (state.inventory[b.have] || 0) + 1;
+}
+// retire une nasse en cours pour la reposer ailleurs : l'appât revient, la pêche en cours est perdue
+export function pullTrap(i, at) {
+    ensurePond();
+    const t = state.pond.traps[i];
+    if (!t || !t.start || trapReady(t)) return false;
+    if (t.bait) giveBackBait(t.bait);
+    Object.assign(t, { bait: null, start: 0 });
+    sfx('click');
+    if (at) burst(at, 'water', 6);
+    return true;
+}
 export function setSpot(id) {
     ensurePond();
     if (!spotOpen(id)) {

@@ -32,7 +32,7 @@ import {
     preferSeed,
 } from './genetics.js';
 import { wishGold, fireflyHarvest } from './night.js';
-import { ghExtra } from './buildings.js';
+import { ghExtra, ghPaid } from './buildings.js';
 import { compSpeed, plotFx, compHarvest } from './companions.js';
 
 const COIN = ['ui', 'coin'];
@@ -457,7 +457,7 @@ export function ensureGhPlots() {
 }
 
 export const ghUnlocked = () => state.greenhouse.plots.filter(p => p.isUnlocked).length;
-export const ghCost = () => Math.floor(GH.plotCost * Math.pow(GH.plotMult, ghUnlocked() - GH.basePlots));
+export const ghCost = () => Math.floor(GH.plotCost * Math.pow(GH.plotMult, ghPaid()));
 export const canBuildGreenhouse = () => !state.greenhouse.built && state.level >= GH.lvl && state.money >= GH.cost && hasMats(MAT.greenhouse);
 
 export function buildGreenhouse(at) {
@@ -497,6 +497,7 @@ export function buyGhPlot(at) {
     spend(cost);
     payMats(MAT.ghPlot);
     p.isUnlocked = true;
+    state.greenhouse.paid = ghPaid() + 1;
     sfx('buy');
     burst(at, 'sparkle', 10);
     buzz(15);

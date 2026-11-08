@@ -542,8 +542,13 @@ button.bgood {
     flex-wrap: wrap;
 }
 .fair-match small {
-    flex: 1;
+    /* 1.90 : les noms sur leur propre ligne, sur une seule ligne : la carte ne gonfle plus avec 3 bêtes */
+    order: 3;
+    flex: 1 1 100%;
     min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     color: var(--ink-soft);
     font-weight: 700;
 }

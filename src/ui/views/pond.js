@@ -169,7 +169,7 @@ function trapsCard() {
             if (G.trapReady(t))
                 return `<div class="trap ready">${ico(['ui', 'trap'])}<span>${SPOTS[t.spot].name}${t.bait ? ` · ${BAITS[t.bait].name.toLowerCase()}` : ''} : pleine !</span>${btn('Relever', { act: 'pondHaul', data: { i }, kind: 'gold', size: 'sm' })}</div>`;
             if (t.start)
-                return `<div class="trap">${ico(['ui', 'trap'])}<span>${SPOTS[t.spot].name}${t.bait ? ` · ${BAITS[t.bait].name.toLowerCase()}` : ''} · encore ${timer(t.start + TRAPS.every)}</span></div>`;
+                return `<div class="trap">${ico(['ui', 'trap'])}<span>${SPOTS[t.spot].name}${t.bait ? ` · ${BAITS[t.bait].name.toLowerCase()}` : ''} · encore ${timer(t.start + TRAPS.every)}</span>${btn('Retirer', { act: 'pondPullTrap', data: { i }, size: 'sm', title: 'Retire la nasse pour la poser ailleurs (la prise en cours est perdue, l’appât revient)' })}</div>`;
             return `<div class="trap idle">${ico(['ui', 'trap'])}<span>Nasse vide</span>${btn(`Poser à ${SPOTS[p.spot].name.replace(/^L[ae] |^Les /, m => m.toLowerCase())}${p.bait && G.baitCount(p.bait) && p.bait !== 'fly' ? ' + ' + BAITS[p.bait].name.toLowerCase().replace(' (une ablette)', '') : ''}`, { act: 'pondSetTrap', data: { i }, kind: 'blue', size: 'sm' })}</div>`;
         })
         .join('');
@@ -359,6 +359,7 @@ export function setupPond() {
         pondBuyTrap: el => G.buyTrap(el),
         pondSetTrap: (el, d) => G.setTrap(+d.i, state.pond.spot, state.pond.bait === 'fly' ? null : state.pond.bait, el),
         pondHaul: (el, d) => G.haulTrap(+d.i, el),
+        pondPullTrap: (el, d) => G.pullTrap(+d.i, el),
         pondHaulAll: el => G.haulAllTraps(el),
         pondRod: el => G.buyRod(el),
         castNet: el => G.castNet(el),
