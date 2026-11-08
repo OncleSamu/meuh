@@ -6,6 +6,7 @@ import { view } from '../core/view.js';
 import { fmt } from '../core/format.js';
 import { emit, toast, sfx, buzz, float, squish } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
+import { crisisMult } from './crises.js';
 import { ANIMALS } from '../data/animals.js';
 import { MACHINES } from '../data/machines.js';
 import { DECOS, MAT, QUALITY } from '../data/farm.js';
@@ -29,7 +30,7 @@ import { talentPrice } from './friends.js';
 const COIN = ['ui', 'coin'];
 
 // ---------------- les prix ----------------
-export const marketMult = () => Math.max(BALANCE.marketEnd, BALANCE.marketStart - BALANCE.marketSlope * (scaleLvl() - 1));
+export const marketMult = () => Math.max(BALANCE.marketEnd, BALANCE.marketStart - BALANCE.marketSlope * (scaleLvl() - 1)) * crisisMult('market');
 // 1.61 : « Fait maison » : les produits de l'atelier se vendent plus cher
 // 1.70 : le talent de l'ami (les produits de sa machine se vendent plus cher)
 export const craftMult = id => (ITEMS[id].type === 'artisan' ? 1 + 0.04 * skill('chefPrice') : 1) * talentPrice(id);

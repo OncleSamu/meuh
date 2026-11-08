@@ -17,6 +17,7 @@ import { confirmTap } from '../confirm.js';
 import { toggleFold } from '../fold.js';
 import { defiCard } from './defis.js';
 import { commercesCard } from './commerces.js';
+import { crisesCard } from './crises.js';
 import { rareCard, holidayCard, contractCard, farmSeasonCard, neighborsBody } from './village.js';
 import { HOLIDAYS } from '../../data/world.js';
 import { RARE_EVENTS } from '../../data/surprises.js';
@@ -489,6 +490,16 @@ const ROWS = [
         html: () => delivery(k),
     })),
     // ---- événements ----
+    {
+        id: 'crisis',
+        grp: 'event',
+        on: () => !!crisesCard(),
+        icon: () => (state.crisis ? ['ui', G.crisisIcon()] : ['ui', 'w_heat']),
+        title: () => (state.crisis ? G.crisisName() : 'La vallée'),
+        sub: () => (state.crisis ? (G.crisisPhase() === 'warn' ? `Alerte · commence dans ${left(state.crisis.start)}` : `En cours · ${left(state.crisis.end)}`) : 'Tout est calme'),
+        ready: () => G.crisisReady() > 0,
+        html: crisesCard,
+    },
     {
         id: 'event',
         grp: 'event',

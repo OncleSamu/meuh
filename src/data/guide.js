@@ -2048,6 +2048,13 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'Les crises de la vallée',
+                b: [
+                    'Dès le niveau 30, tous les 3 à 5 jours : sécheresse (cultures −40 %), épidémie des bêtes (production −40 %) ou marché en berne (prix −20 %). L’alerte arrive 12 heures avant, la crise dure 24 heures.',
+                    'Rien n’est jamais perdu : ni récolte, ni bête. Se préparer (Village › Commandes › Événements, 3 000 pièces par niveau) réduit l’effet de moitié environ, et la vallée vous rend une fois et demie la somme avec de l’expérience quand tout est passé.',
+                ],
+            },
+            {
                 h: 'La Coupe de la vallée',
                 b: [
                     'Les saisons de la ferme (Village › Commandes) suivent un thème de quatre semaines, douze en tout. Les défis du thème sont proposés en priorité et leurs médailles comptent double pour la Coupe. Chaque saison finie est classée face aux quatre fermes rivales et laisse un trophée daté dans le livre, onglet Défis, avec « Votre année à la ferme ». Sous le grand défi, un défi éclair (une seule étape, trois jours) donne des pièces et de l’expérience entre deux grands défis.',

@@ -5,6 +5,7 @@ import { ITEMS } from '../data/items.js';
 import { SEASONS, DAYS_PER_SEASON, WEATHER, WEATHER_ODDS } from '../data/world.js';
 import { rank } from './player.js';
 import { themeCropMult } from './port.js';
+import { crisisMult } from './crises.js';
 import { hasRod, stormTick } from './farmlife.js';
 
 export const seasonOfDay = d => (state.challenge === 'winter' ? SEASONS[3] : SEASONS[Math.floor((d - 1) / DAYS_PER_SEASON) % 4]);
@@ -38,7 +39,7 @@ export function cropRate(id) {
     else f = isInSeason(id) ? 1.3 : sid === 'hiver' ? 0.6 : 1;
     // les champignons aiment la nuit (1.2)
     if (id === 'mushroom' && isNight()) f *= 1.3;
-    return f * weather().crop * (1 + rank('green') * 0.05) * themeCropMult(id);
+    return f * weather().crop * (1 + rank('green') * 0.05) * themeCropMult(id) * crisisMult('crop');
 }
 
 export function seasonCrops(sid = season().id) {
