@@ -145,21 +145,47 @@ export const MACHINES = {
 export const BUNKER = {
     foodMax: 30,
     eatEvery: 600, // un vivre toutes les 10 minutes pour tout l'étage
+    // chaque salle a une statistique qui commande son efficacité (Mains, Esprit ou Résistance)
     rooms: [
-        { id: 'kitchen', name: 'Cuisine', who: 'Armand', text: 'Armand cuisine : vos conserves se vendent 20 % plus cher.' },
-        { id: 'gen', name: 'Générateur', who: 'Lison', text: 'L’énergie fait tourner le Recyclage 25 % plus vite.' },
-        { id: 'dorm', name: 'Dortoir', who: 'Basile', text: 'Basile fouille l’épave : elle se regarnit deux fois plus vite.' },
+        { id: 'kitchen', name: 'Cuisine', stat: 'esprit', text: 'Les conserves se vendent plus cher (jusqu’à +20 %).' },
+        { id: 'gen', name: 'Générateur', stat: 'mains', text: 'L’énergie accélère le Recyclage (jusqu’à +25 %).' },
+        { id: 'dorm', name: 'Fouille', stat: 'resist', text: 'L’épave se regarnit plus vite : deux fois plus avec un habitant normal.' },
+        { id: 'care', name: 'Infirmerie', stat: 'esprit', text: 'Soigne plus vite les habitants KO.' },
     ],
     canBonus: 0.2,
     genBonus: 0.25,
     // V2 : le deuxième étage
     dig: { lvl: 10, money: 600, need: { metal: 15, compo: 6 } },
     rooms2: [
-        { id: 'lab', name: 'Labo', who: 'Victor', text: 'Victor fixe vos mutants en graines stables.' },
-        { id: 'shop', name: 'Atelier', who: 'Firmin', text: 'Firmin règle les machines : 15 % plus rapides encore.' },
-        { id: 'maps', name: 'Salle des cartes', who: 'Odette', text: 'Odette prépare les expéditions dans les terres mortes.' },
+        { id: 'lab', name: 'Labo', stat: 'esprit', text: 'Fixe vos mutants en graines stables, plus vite avec un bon Esprit.' },
+        { id: 'shop', name: 'Atelier', stat: 'mains', text: 'Règle les machines : jusqu’à 15 % plus rapides encore.' },
+        { id: 'maps', name: 'Salle des cartes', stat: 'resist', text: 'Prépare les expéditions, plus vite avec une bonne Résistance.' },
     ],
     shopBonus: 0.15,
+};
+// 0.4 : les habitants. Statistiques de départ ; la salle où ils travaillent leur fait gagner un point dans sa statistique à chaque niveau.
+export const STATS = { mains: 'Mains', esprit: 'Esprit', resist: 'Résistance' };
+export const RESIDENTS = [
+    { id: 'armand', name: 'Armand', floor: 1, room: 'kitchen', mains: 1, esprit: 3, resist: 2 },
+    { id: 'lison', name: 'Lison', floor: 1, room: 'gen', mains: 3, esprit: 1, resist: 2 },
+    { id: 'basile', name: 'Basile', floor: 1, room: 'dorm', mains: 2, esprit: 1, resist: 3 },
+    { id: 'victor', name: 'Victor', floor: 2, room: 'lab', mains: 1, esprit: 3, resist: 1 },
+    { id: 'firmin', name: 'Firmin', floor: 2, room: 'shop', mains: 3, esprit: 1, resist: 2 },
+    { id: 'odette', name: 'Odette', floor: 2, room: 'maps', mains: 2, esprit: 2, resist: 3 },
+];
+export const HABITANTS = {
+    maxLvl: 6,
+    xpEvery: 30, // une seconde de travail sur 30 compte
+    xpPerLvl: 120, // × le niveau actuel
+    statCap: 5,
+    ko: { from: 55, base: 0.0012, heal: 1200 }, // risque de KO par seconde dès l'Instable, soin en secondes (divisé par l'efficacité de l'infirmerie)
+    incidentEvery: 2400, // un incident en moyenne toutes les 40 minutes de jeu
+    incidents: {
+        panne: { name: 'Panne de courant', cost: { elec: 1 }, text: 'Un court-circuit. Il faut 1 électronique.' },
+        infiltration: { name: 'Infiltration d’air', cost: { plastic: 1 }, text: 'L’air de surface entre. Il faut 1 plastique.' },
+        rongeurs: { name: 'Rongeurs', cost: { scrap: 2 }, text: 'Ils rongent les câbles. Il faut 2 ferrailles.' },
+    },
+    journalMax: 40,
 };
 // V2 : les expéditions d'Odette (elles continuent hors ligne et laissent un rapport)
 export const EXPEDITIONS = [

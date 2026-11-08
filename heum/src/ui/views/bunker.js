@@ -1,20 +1,25 @@
 // Heum — l'onglet Bunker : la coupe de l'étage, les vivres et l'air pur.
 import { state } from '../../core/state.js';
 import * as H from '../../systems/index.js';
-import { BUNKER, EXPEDITIONS } from '../../data/world.js';
+import { BUNKER, EXPEDITIONS, HABITANTS, STATS } from '../../data/world.js';
 import { CROPS, MUTANTS } from '../../data/crops.js';
 import { GOODS } from '../../data/world.js';
 import { ico, btn, card, head, bar, timer, prog } from '../kit.js';
 import { FIX } from '../../data/crops.js';
-import { openSheet } from '../sheet.js';
+import { openSheet, closeSheet } from '../sheet.js';
 import { dur } from '../../core/format.js';
 import { floatAt } from '../fx.js';
 import { art } from '../../art/index.js';
 
-const WHO = { Armand: 'armand', Lison: 'lison', Basile: 'basile', Victor: 'victor', Firmin: 'firmin', Odette: 'odette' };
+const pct = r => `${Math.round(H.power(r) * 100)} %`;
 function coupe() {
-    const fed = H.bunkerFed();
-    const room = r => `<div class="room ${fed ? 'on' : 'off'}"><span class="who">${art(WHO[r.who])}</span><b>${r.name}</b><small>${r.who}</small></div>`;
+    const inc = H.incident();
+    const room = r => {
+        const w = H.workerOf(r.id);
+        const st = !w ? 'off' : H.isKo(w) ? 'ko' : H.power(r.id) > 0 ? 'on' : 'off';
+        const flag = inc && inc.room === r.id ? `<i class="flag">${ico('elec')}</i>` : '';
+        return `<div class="room ${st}">${flag}<span class="who">${w ? art(w.id) : ''}</span><b>${r.name}</b><small>${w ? (H.isKo(w) ? `${H.resName(w.id)} · KO` : H.resName(w.id)) : 'vide'}</small></div>`;
+    };
     const floor2 =
         H.floors() >= 2
             ? `<div class="floor f2"><span class="lvl-tag">−2</span>${BUNKER.rooms2.map(room).join('')}</div><div class="floor locked"><span class="lvl-tag">−3</span><p>${ico('lock')} Troisième étage : plus tard</p></div>`
@@ -36,7 +41,49 @@ function statusCard() {
         ${coupe()}
         <div class="lab">Vivres ${b.food} / ${BUNKER.foodMax}${b.food ? ` · un repas dans ${timer(H.eatEvery() - (b.clock || 0))}` : ''}</div>${bar(b.food / BUNKER.foodMax, '#d7a640')}
         <div class="lab">Air pur ${air} %</div>${bar(air / 100, air > 40 ? '#5fa6c9' : '#d2412f')}
-        <ul class="perks">${[...BUNKER.rooms, ...(H.floors() >= 2 ? BUNKER.rooms2 : [])].map(r => `<li class="${fed ? 'on' : ''}">${ico(WHO[r.who])}${r.text}</li>`).join('')}</ul>`,
+        <ul class="perks">${H.roomsOpen()
+            .map(
+                r =>
+                    `<li class="${H.power(r.id) > 0 ? 'on' : ''}">${H.workerOf(r.id) ? ico(H.workerOf(r.id).id) : ico('lock')}<span><b>${r.name} · ${H.workerOf(r.id) ? pct(r.id) : 'vide'}</b> · ${r.text} <small>(${STATS[r.stat]})</small></span></li>`,
+            )
+            .join('')}</ul>`,
+    );
+}
+// 0.4 : les habitants, les incidents, le journal
+function incidentCard() {
+    const i = H.incident();
+    if (!i) return '';
+    const d = HABITANTS.incidents[i.kind];
+    const need = Object.entries(d.cost)
+        .map(([id, n]) => `<span class="${H.have(id) >= n ? 'ok' : 'short'}">${ico(id)}${H.have(id)}/${n}</span>`)
+        .join('');
+    return card(
+        `${head(d.name, 'elec', `${H.roomDef(i.room).name} à l’arrêt. ${d.text}`)}<div class="need">${need}</div><div class="row">${btn('Régler', 'fixIncident', {}, { kind: 'go', icon: 'shovel', disabled: !H.hasAll(d.cost) })}</div>`,
+    );
+}
+function residentsCard() {
+    const rows = H.residents()
+        .map(r => {
+            const d = r.room && H.roomDef(r.room);
+            const stats = Object.entries(STATS)
+                .map(([k, n]) => `<span class="chip${d && d.stat === k ? ' mut' : ''}">${n} <b>${r[k]}</b></span>`)
+                .join('');
+            const state2 = H.isKo(r) ? `KO · ${timer((r.ko - Date.now()) / 1000)}` : d ? `travaille : ${d.name}` : 'se repose';
+            return `<div class="pick res">${ico(r.id, 'ico big')}<div><b>${H.resName(r.id)} · niv. ${r.lvl}</b><small>${state2}</small><div class="chips">${stats}</div>${r.lvl < HABITANTS.maxLvl ? bar(r.xp / (HABITANTS.xpPerLvl * r.lvl), '#6fa86a') : ''}</div>${btn('Affecter', 'assignSheet', { id: r.id }, { size: 'sm' })}</div>`;
+        })
+        .join('');
+    return card(
+        `${head('Les habitants', 'tabBunker', 'Ils gagnent un niveau en travaillant, et un point dans la statistique de leur salle. Au-delà de 55 % de Contamination, ils peuvent tomber KO (jamais pire) : l’infirmerie les remet sur pied.')}${rows}`,
+    );
+}
+function journalCard() {
+    const j = state.journal || [];
+    if (!j.length) return '';
+    return card(
+        `${head('Journal du Bunker', '', 'Ce qui s’est passé en bas.')}<ul class="journal">${j
+            .slice(0, 8)
+            .map(e => `<li><small>${new Date(e.t).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</small> ${e.text}</li>`)
+            .join('')}</ul>`,
     );
 }
 // V2 : creuser, le labo de Victor, la salle des cartes d'Odette
@@ -103,8 +150,26 @@ function deliverCard() {
         `${head('Livrer des vivres', '', 'Récoltes, œufs, lait et conserves nourrissent l’étage.')}${rows || '<p class="hint">Rien à livrer pour l’instant.</p>'}`,
     );
 }
-export const render = () => statusCard() + digCard() + labCard() + expeCard() + deliverCard();
+export const render = () => incidentCard() + statusCard() + residentsCard() + journalCard() + digCard() + labCard() + expeCard() + deliverCard();
 export const actions = {
+    fixIncident() {
+        H.fixIncident();
+    },
+    assignSheet(el, d) {
+        const r = H.residents().find(x => x.id === d.id);
+        if (!r) return;
+        const rows = H.roomsOpen()
+            .map(room => {
+                const w = H.workerOf(room.id);
+                return `<div class="pick">${w ? ico(w.id, 'ico big') : ico('lock', 'ico big')}<div><b>${room.name}</b><small>${STATS[room.stat]} · ${w ? (w === r ? 'ici actuellement' : `${H.resName(w.id)} (échange)`) : 'libre'}</small></div>${btn(w === r ? 'Ici' : 'Y aller', 'assign', { id: r.id, room: room.id }, { size: 'sm', disabled: w === r })}</div>`;
+            })
+            .join('');
+        openSheet(H.resName(r.id), `${rows}<div class="row">${btn('Au repos', 'assign', { id: r.id, room: '' })}</div>`);
+    },
+    assign(el, d) {
+        H.assign(d.id, d.room);
+        closeSheet();
+    },
     dig() {
         H.dig();
     },

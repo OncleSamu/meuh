@@ -1,9 +1,23 @@
 // Heum — l'état de la partie : un seul objet, sauvegardé tel quel dans le téléphone (clé « heumSave », séparée de Meuh).
 import { now } from './clock.js';
+import { RESIDENTS } from '../data/world.js';
 
 export const SAVE_KEY = 'heumSave';
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
+// 0.4 : les habitants présents selon le nombre d'étages creusés
+export function newResidents(floors) {
+    return RESIDENTS.filter(r => r.floor <= floors).map(r => ({
+        id: r.id,
+        mains: r.mains,
+        esprit: r.esprit,
+        resist: r.resist,
+        lvl: 1,
+        xp: 0,
+        room: r.room,
+        ko: 0,
+    }));
+}
 export function freshState() {
     const t = now();
     return {
@@ -18,7 +32,8 @@ export function freshState() {
         animals: [],
         wreck: { charges: 8, at: t },
         machines: {},
-        bunker: { food: 6, at: t },
+        bunker: { food: 6, at: t, res: newResidents(1), incident: null },
+        journal: [],
         caravan: { seed: Math.floor(Math.random() * 1e6) },
         seen: {},
         charge: {}, // 0.3 : la charge toxique moyenne de chaque produit en stock
@@ -45,6 +60,7 @@ export const isLocked = () => locked;
 // les migrations : de la version n à n + 1
 const MIGRATIONS = {
     1: s => ({ ...s, v: 2, charge: s.charge || {} }),
+    2: s => ({ ...s, v: 3, journal: [], bunker: { ...s.bunker, res: newResidents((s.bunker && s.bunker.floors) || 1), incident: null } }),
 };
 export function migrate(s) {
     if (!s || typeof s !== 'object' || typeof s.v !== 'number') return null;

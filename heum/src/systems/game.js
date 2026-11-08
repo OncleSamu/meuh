@@ -7,7 +7,7 @@ import { contDecay } from './contamination.js';
 import { rebelTick } from './plots.js';
 import { animalTick } from './menagerie.js';
 import { wreckTick } from './recycling.js';
-import { bunkerTick } from './bunker.js';
+import { bunkerTick, exposure, maybeIncident } from './bunker.js';
 
 // en jeu : tout avance, la jauge redescend, les Rebelles s'agitent
 export function tick(dt) {
@@ -16,6 +16,8 @@ export function tick(dt) {
     animalTick(dt);
     wreckTick(dt);
     bunkerTick(dt);
+    exposure(dt);
+    maybeIncident(dt);
     rebelTick(Math.min(dt, 5));
 }
 // absent : tout avance sauf la jauge et les Rebelles

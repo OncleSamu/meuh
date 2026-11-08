@@ -1,7 +1,7 @@
 // Heum — les règles de la V2.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { state, setStore, freshState, setState } from '../../src/core/state.js';
+import { newResidents, state, setStore, freshState, setState } from '../../src/core/state.js';
 import { setClock } from '../../src/core/clock.js';
 import { setRand } from '../../src/core/rand.js';
 import * as H from '../../src/systems/index.js';
@@ -108,6 +108,7 @@ test('V2 : l’étable filtrée vide la Charge', () => {
 test('V2 : l’expédition rapporte du matériel, même hors ligne', () => {
     fresh();
     state.bunker.floors = 2;
+    state.bunker.res = newResidents(2);
     assert.ok(H.sendExpe('ditch'));
     assert.ok(!H.sendExpe('city'), 'une à la fois');
     wait(901);

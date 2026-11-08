@@ -52,3 +52,14 @@ Heum vit à part dans ce dossier : il ne touche pas au code de Meuh, et Meuh n'a
 - **Charge des produits** : chaque récolte garde la charge de la jauge de sa parcelle ; les animaux et les produits transformés la transmettent ; les contrôles sanitaires des régions la lisent.
 - **Équilibrage** : baisse de la jauge 1 point / 4 min, déchet 8 pièces, coût de l'arrachage, Rebelles 25 %, échelle de valeur des cultures.
 - **Outil** : `node heum/tools/bot.mjs [heures] [passage] [mut|crit]`, robot joueur pour mesurer le rythme (12 h en jeu continu : niveau 27, 228 mutants ; stratégie Critique : ruineuse).
+
+## Ce qu'ajoute la 0.4 (les habitants)
+
+- **Six habitants nommés**, trois statistiques chacun : Mains, Esprit, Résistance. Armand, Lison et Basile au premier étage ; Victor, Firmin et Odette arrivent en creusant le deuxième.
+- **Affectation libre** : on tape un habitant, on choisit sa salle (une personne par salle ; deux habitants qui se croisent échangent leur place). Le rendement d'une salle dépend de la statistique qui la commande (0,1 + 0,3 × la stat : 2 → 70 %, 3 → 100 %, 5 → 160 %). Cuisine, Générateur, Fouille de l'épave, Infirmerie, puis Labo, Atelier et Salle des cartes.
+- **Niveaux** : en travaillant (vivres, pas d'incident, pas KO), un habitant monte jusqu'au niveau 6 et gagne un point dans la statistique de sa salle (plafond 5). Cela continue hors ligne.
+- **KO, jamais la mort** : au-delà de 55 % de Contamination, un habitant peut s'évanouir (moins si sa Résistance est haute) ; il est remis sur pied avec le temps, plus vite avec quelqu'un à l'infirmerie. Seulement en jeu, jamais hors ligne.
+- **Incidents** (panne, infiltration d'air, rongeurs) : un à la fois, en jeu seulement, la salle s'arrête jusqu'à ce qu'on la répare avec 1 électronique, 1 plastique ou 2 ferrailles.
+- **Journal du Bunker** : niveaux, KO, incidents, arrivées.
+- Sauvegarde passée en version 3 (migration automatique : les anciennes parties reçoivent leurs habitants).
+- Pas encore : le troisième étage et les salles fusionnées (reportés), les naissances (abandonnées).

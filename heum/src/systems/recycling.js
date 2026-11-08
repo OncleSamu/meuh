@@ -6,7 +6,7 @@ import { toast, sfx } from '../core/bus.js';
 import { MACHINES, WRECK, SCRAP_TYPES, CONT } from '../data/world.js';
 import { give, takeAll, hasAll, addXp, lvlOk, nameOf, mixCharge } from './player.js';
 import { addCont } from './contamination.js';
-import { bunkerFed, genMult } from './bunker.js';
+import { genMult, wreckSpeed } from './bunker.js';
 
 export function wreckTick(dt) {
     const w = state.wreck;
@@ -14,14 +14,14 @@ export function wreckTick(dt) {
         w.clock = 0;
         return;
     }
-    const every = WRECK.every / (bunkerFed() ? 2 : 1);
+    const every = WRECK.every / wreckSpeed();
     w.clock = (w.clock || 0) + dt;
     while (w.clock >= every && w.charges < WRECK.max) {
         w.clock -= every;
         w.charges++;
     }
 }
-export const wreckLeft = () => (state.wreck.charges >= WRECK.max ? 0 : WRECK.every / (bunkerFed() ? 2 : 1) - (state.wreck.clock || 0));
+export const wreckLeft = () => (state.wreck.charges >= WRECK.max ? 0 : WRECK.every / wreckSpeed() - (state.wreck.clock || 0));
 export function search() {
     const w = state.wreck;
     if (w.charges <= 0) {
