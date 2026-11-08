@@ -1,5 +1,4 @@
 // API des dessins : chaque fonction renvoie un <svg> prêt à insérer.
-import { habitantArt } from './habitants.js';
 import { featuresOf } from '../data/genetics.js';
 import { ITEMS } from '../data/items.js';
 import { items, animals, machines, ui, people, svg } from './kit.js';
@@ -107,7 +106,7 @@ export const SPR = {
         return svg(ui[id]());
     },
     villager(id) {
-        return svg(people[id] ? people[id]() : habitantArt(id), '0 0 64 64', 'villager');
+        return svg(people[id](), '0 0 64 64', 'villager');
     },
     truck() {
         return svg(truck(), '0 0 120 64', 'truck-spr');

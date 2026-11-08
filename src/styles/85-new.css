@@ -808,38 +808,3 @@
 .runs .run:not(.won) {
     opacity: 0.75;
 }
-
-/* 1.98 : les commerces du village */
-.commerces {
-    display: grid;
-    gap: 10px;
-}
-.commerce-card .card-head {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-.commerce-card .fid {
-    white-space: nowrap;
-    margin-left: 4px;
-}
-.commerce-card .fid i {
-    font-style: normal;
-    color: #d9c9a8;
-}
-.commerce-card .fid i.on {
-    color: #e2412f;
-}
-.commerce-card .od-line {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin: 8px 0 4px;
-}
-.commerce-card .od-foot {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 6px;
-}
-.commerce-card .od-line small { display: block; }
