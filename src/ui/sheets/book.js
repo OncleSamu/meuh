@@ -5,6 +5,8 @@ import { ITEMS } from '../../data/items.js';
 import { SEASONS, EVENTS } from '../../data/world.js';
 import { MEDALS, MAX_LEVEL, BOOK_QUARTERS, MASTERY_NAMES, MASTERY_EXTRA_NAMES as EXTRA_NAMES } from '../../data/progress.js';
 import { ACHIEVEMENTS, LEGEND_RUBANS } from '../../data/meta.js';
+import { DEFI, DEFIS } from '../../data/defis.js';
+import { VILLAGERS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { ico, art, qStar, SPR } from '../icons.js';
@@ -248,10 +250,48 @@ function album() {
             .join('')}</div>`;
 }
 
+// ---------------- grands défis (1.93) : une feuille par défi joué, avec ses résultats ----------------
+const CUPS = ['cupNone', 'cupBronze', 'cupSilver', 'cupGold', 'cupPlat', 'cupDiamond'];
+const dayText = at => new Date(at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+const runText = h => {
+    const days = Math.max(1, Math.ceil((h.at - h.start) / 86400000));
+    const res = h.medal ? `${DEFI.medals[h.medal - 1].name}` : `Sans médaille (${h.steps} étape${h.steps > 1 ? 's' : ''} sur 4)`;
+    return `<li class="run${h.medal ? ' won' : ''}">${ico(['ui', CUPS[h.medal || 0]])}<span><b>${res}</b> · ${days} jour${days > 1 ? 's' : ''}</span><small>${dayText(h.at)}</small></li>`;
+};
+function defisPage() {
+    const T = (state.defis && state.defis.trophies) || {};
+    const cur = G.curDefi();
+    if (!G.defiOpen())
+        return `<p class="empty">Les grands défis commencent au niveau ${DEFI.lvl}. Chaque défi joué ouvrira ici sa feuille, avec ses résultats.</p>`;
+    const H = (state.defis && state.defis.history) || [];
+    const count = m => H.filter(h => h.medal === m).length;
+    const top = `<div class="card book-quarters"><div class="bq-head"><b>${Object.values(T).filter(t => t.n).length} défi${Object.values(T).filter(t => t.n).length > 1 ? 's' : ''} joué${Object.values(T).filter(t => t.n).length > 1 ? 's' : ''} sur ${Object.keys(DEFIS).length}</b><span>${H.length} partie${H.length > 1 ? 's' : ''}</span></div>
+        <div class="card-sub">${DEFI.medals.map((m, k) => `${m.name} ${count(k + 1)}`).join(' · ')}${count(0) ? ` · sans médaille ${count(0)}` : ''}</div></div>`;
+    const sheets = Object.entries(DEFIS)
+        .map(([id, def]) => {
+            const t = T[id];
+            const runs = G.defiHistory(id);
+            if (!t && !runs.length)
+                return `<div class="card ach"><div class="ico big">${ico(['ui', 'lock'])}</div><div class="card-main"><div class="card-title">???</div><div class="card-sub">Pas encore joué : la feuille s’ouvrira à la première partie.</div></div></div>`;
+            const best = (t && t.best) || Math.max(0, ...runs.map(r => r.medal));
+            const before = Math.max(0, ((t && t.n) || 0) - runs.filter(r => r.medal).length);
+            const mine = cur && cur.id === id;
+            const shown = runs.slice(-5).reverse();
+            return `<div class="card ach defi-sheet${mine ? ' can' : ''}">${ico(['ui', CUPS[best]], 'ico big')}<div class="card-main"><div class="card-title">${def.name}${mine ? ' · en cours' : ''}</div>
+                <div class="card-sub">${VILLAGERS[def.who].name} · ${(t && t.n) || runs.length} partie${((t && t.n) || runs.length) > 1 ? 's' : ''}${best ? ` · meilleure : ${DEFI.medals[best - 1].name.toLowerCase()}` : ''}${t && t.gold > 1 ? ` · ${t.gold} fois en or ou mieux` : ''}</div>
+                ${shown.length ? `<ul class="runs">${shown.map(runText).join('')}</ul>` : ''}
+                ${runs.length > 5 ? `<div class="card-sub">+ ${runs.length - 5} partie${runs.length - 5 > 1 ? 's' : ''} plus ancienne${runs.length - 5 > 1 ? 's' : ''}</div>` : ''}
+                ${before > 0 && !runs.length ? `<div class="card-sub">Parties jouées avant le journal : ${before}</div>` : ''}</div></div>`;
+        })
+        .join('');
+    return `${top}<div class="list">${sheets}</div>`;
+}
+
 const SECTIONS = [
     ['collection', 'Collection', ['ui', 'book']],
     ['exploits', 'Exploits', ['ui', 'trophy']],
     ['legend', 'Légende', ['ui', 'goldCow']],
+    ['defis', 'Défis', ['ui', 'cupGold']],
     ['album', 'Album', ['ui', 'camera']],
 ];
 const badge = id =>
@@ -271,7 +311,16 @@ defineSheet('book', {
             o.sec,
             'bookSec',
         );
-        const body = o.sec === 'collection' ? collection(o) : o.sec === 'exploits' ? exploits() : o.sec === 'legend' ? [['l', legend()]] : [['a', album()]];
+        const body =
+            o.sec === 'collection'
+                ? collection(o)
+                : o.sec === 'exploits'
+                  ? exploits()
+                  : o.sec === 'legend'
+                    ? [['l', legend()]]
+                    : o.sec === 'defis'
+                      ? [['d', defisPage()]]
+                      : [['a', album()]];
         return [['seg', `<div class="book-seg">${seg}</div>`], ...body.map(([k, h]) => [o.sec + k, h])];
     },
 });

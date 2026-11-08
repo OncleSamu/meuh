@@ -777,3 +777,34 @@
         align-items: center;
     }
 }
+
+/* 1.93 : les feuilles des grands défis dans le livre */
+.runs {
+    list-style: none;
+    margin: 6px 0 2px;
+    padding: 0;
+    font-size: 13px;
+}
+.runs .run {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 0;
+    border-top: 1px dashed rgba(58, 38, 24, 0.25);
+}
+.runs .run .ico {
+    flex: none;
+    width: 20px;
+    height: 20px;
+}
+.runs .run span {
+    flex: 1;
+    min-width: 0;
+}
+.runs .run small {
+    flex: none;
+    opacity: 0.7;
+}
+.runs .run:not(.won) {
+    opacity: 0.75;
+}

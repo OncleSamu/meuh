@@ -31,7 +31,8 @@ import { cupOnMedal } from './cup.js';
 const DAY = 24 * 3600 * 1000;
 
 export function ensureDefis() {
-    if (!state.defis) state.defis = { cur: null, recent: [], trophies: {}, next: 0 };
+    if (!state.defis) state.defis = { cur: null, recent: [], trophies: {}, next: 0, history: [] };
+    if (!state.defis.history) state.defis.history = []; // 1.93 : le journal des parties
     return state.defis;
 }
 export const defiOpen = () => state.level >= DEFI.lvl;
@@ -307,12 +308,23 @@ export function presentDefi(k, ref, at) {
     return true;
 }
 
+// ---------------- le journal des parties (1.93) ----------------
+// une ligne par défi terminé, avec médaille ou sans : de quoi remplir les feuilles du livre
+const HISTORY_MAX = 200;
+function logRun(d, medal) {
+    const D = ensureDefis();
+    D.history.push({ id: d.id, medal, steps: stepsDone(d), start: d.start, at: now(), platinum: medal >= 4 && !d.mixed });
+    if (D.history.length > HISTORY_MAX) D.history.splice(0, D.history.length - HISTORY_MAX);
+}
+export const defiHistory = id => ensureDefis().history.filter(h => h.id === id);
+
 // ---------------- médailles ----------------
 function award(medal) {
     const D = ensureDefis(),
         d = D.cur;
     if (!d || d.awarded || !medal) return;
     d.awarded = medal;
+    logRun(d, medal);
     const M = DEFI.medals[medal - 1],
         def = DEFIS[d.id],
         k = defiScale();
@@ -352,6 +364,7 @@ function endDefi(t) {
         if (m) award(m);
         else {
             cupOnMedal(0, d.id);
+            logRun(d, 0);
             if (view.started) toast(`Le grand défi « ${DEFIS[d.id].name} » est terminé : choisissez le prochain !`, ['ui', 'trophy']);
         }
     }
