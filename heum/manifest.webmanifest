@@ -1,0 +1,19 @@
+{
+    "name": "Heum",
+    "short_name": "Heum",
+    "description": "Une ferme dans les terres mortes : pilotez la Contamination.",
+    "id": "./",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#5a4e3c",
+    "theme_color": "#5a4e3c",
+    "lang": "fr",
+    "categories": ["games"],
+    "icons": [
+        { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+        { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+        { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    ]
+}

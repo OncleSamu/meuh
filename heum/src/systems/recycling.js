@@ -4,7 +4,7 @@ import { now } from '../core/clock.js';
 import { rnd, between } from '../core/rand.js';
 import { toast, sfx } from '../core/bus.js';
 import { MACHINES, WRECK, SCRAP_TYPES, CONT } from '../data/world.js';
-import { give, takeAll, hasAll, addXp, lvlOk, nameOf } from './player.js';
+import { give, takeAll, hasAll, addXp, lvlOk, nameOf, mixCharge } from './player.js';
 import { addCont } from './contamination.js';
 import { bunkerFed, genMult } from './bunker.js';
 
@@ -58,9 +58,10 @@ export function startJob(m, rid) {
         sfx('error');
         return false;
     }
+    const charge = mixCharge(r.in);
     takeAll(r.in);
     const t = now();
-    state.machines[m] = { r: rid, start: t, end: t + (r.t * 1000) / genMult() };
+    state.machines[m] = { r: rid, start: t, end: t + (r.t * 1000) / genMult(), charge };
     sfx('machine');
     return true;
 }
@@ -78,12 +79,14 @@ function sortScrap() {
 export function collectJob(m) {
     if (!jobDone(m)) return null;
     const r = recipeOf(m, jobOf(m).r);
+    const jobCharge = jobOf(m).charge || 0;
     delete state.machines[m];
     let got = {};
     if (r.out === 'sorted') got = sortScrap();
     else if (r.out === 'purify') addCont(-CONT.purifier);
     else got = { [r.out]: 1 };
-    for (const [id, n] of Object.entries(got)) give(id, n);
+    const ch = jobCharge;
+    for (const [id, n] of Object.entries(got)) give(id, n, ch);
     addXp(3);
     sfx('collect');
     return got;

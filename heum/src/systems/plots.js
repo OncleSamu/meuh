@@ -6,6 +6,7 @@ import { toast, sfx, emit } from '../core/bus.js';
 import { CROPS, MUTANTS, plotCost, cropDef, GEAR } from '../data/crops.js';
 import { CONT, tierOf } from '../data/world.js';
 import { spend, give, take, have, addXp, lvlOk, nameOf } from './player.js';
+import { CONT as CONTD } from '../data/world.js';
 import { addCont } from './contamination.js';
 
 export const cropReady = p => !!p.crop && !p.rebel && now() >= p.at + cropDef(p.crop).t * 1000;
@@ -60,7 +61,8 @@ export function harvest(i) {
     if (!p || !cropReady(p)) return null;
     const c = cropDef(p.crop);
     const r = harvestRoll(p.crop, plotTier(p).id);
-    for (const [id, n] of r.got) give(id, n);
+    const ch = Math.round(plotCont(p));
+    for (const [id, n] of r.got) give(id, n, id === 'waste' ? 100 : ch);
     // le chou-éponge absorbe la Contamination
     const clean = r.got.reduce((a, [id, n]) => a + (MUTANTS[id] && MUTANTS[id].clean ? MUTANTS[id].clean * n : 0), 0);
     if (clean) addCont(-clean);
@@ -78,6 +80,13 @@ export function harvest(i) {
 export function uproot(i) {
     const p = state.plots[i];
     if (!p || !p.rebel) return false;
+    // 0.3 : un outil (1 métal) ou, à défaut, 15 pièces de main-d'œuvre
+    if (have('metal') >= 1) take('metal', 1);
+    else if (!spend(CONTD.uprootMoney)) {
+        toast(`Pour arracher un Rebelle : 1 métal ou ${CONTD.uprootMoney} pièces`);
+        sfx('error');
+        return false;
+    }
     p.rebel = false;
     addXp(2);
     sfx('uproot');

@@ -401,3 +401,12 @@
 .armored {
     background: linear-gradient(#dfe4d8, var(--paper));
 }
+
+.warm-tag {
+    font-size: 10.5px;
+    background: #e9dcbd;
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    padding: 0 4px;
+    white-space: nowrap;
+}

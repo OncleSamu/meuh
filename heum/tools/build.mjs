@@ -32,6 +32,11 @@ const page = fs
     .replace('/*JS*/', () => js.outputFiles[0].text.replace(/<\/script/g, '<\\/script'))
     .replace('<title>Heum</title>', `<title>Heum ${version}</title>`);
 const out = publish ? root : path.join(root, 'dist');
-fs.mkdirSync(out, { recursive: true });
-fs.writeFileSync(path.join(out, 'index.html'), page);
-console.log(`${path.join(out, 'index.html')} · ${(page.length / 1024).toFixed(0)} ko · Heum ${version}`);
+fs.mkdirSync(path.join(out, 'icons'), { recursive: true });
+const pwa = p => fs.readFileSync(path.join(root, 'src/pwa', p), 'utf8');
+fs.writeFileSync(path.join(out, 'index.html'), page.replace('<!--PWA-->', pwa('head.html').trim()));
+const buildId = version + '-' + new Date().toISOString().replace(/\D/g, '').slice(0, 14);
+fs.writeFileSync(path.join(out, 'sw.js'), pwa('sw.js').replace('{{BUILD}}', buildId));
+fs.copyFileSync(path.join(root, 'src/pwa/manifest.webmanifest'), path.join(out, 'manifest.webmanifest'));
+for (const f of fs.readdirSync(path.join(root, 'src/pwa/icons'))) fs.copyFileSync(path.join(root, 'src/pwa/icons', f), path.join(out, 'icons', f));
+console.log(`${path.join(out, 'index.html')} · ${(page.length / 1024).toFixed(0)} ko · Heum ${version} · ${buildId}`);

@@ -118,7 +118,7 @@ export function collectExpe() {
         const m = ids[Math.floor(rnd() * ids.length)];
         got[m] = (got[m] || 0) + 1;
     }
-    for (const [id, n] of Object.entries(got)) give(id, n);
+    for (const [id, n] of Object.entries(got)) give(id, n, MUTANTS[id] ? 60 : undefined);
     let money = 0;
     if (e.money) earn((money = between(...e.money)));
     state.expe = null;

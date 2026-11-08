@@ -7,6 +7,7 @@ import { ico, btn, bar, money } from './kit.js';
 import { dur } from '../core/format.js';
 import { openSheet, closeSheet, sheetOpen } from './sheet.js';
 import { toast } from './fx.js';
+import { exportSave, pickImport } from './savebox.js';
 import { view as plots, gaugeBar } from './views/plots.js';
 import { view as animals } from './views/menagerie.js';
 import { view as recycle } from './views/recycling.js';
@@ -73,7 +74,10 @@ function timers() {
 let prev = now();
 function loop() {
     const t = now();
-    H.tick((t - prev) / 1000);
+    const dt = (t - prev) / 1000;
+    // un grand écart = le jeu était suspendu (téléphone verrouillé) : on rattrape sans toucher à la jauge
+    if (dt > 10) H.away(dt);
+    else H.tick(dt);
     prev = t;
     if (sig() !== last && !sheetOpen()) render();
     else timers();
@@ -92,14 +96,20 @@ const SHELL = {
     },
     menu(el, d, first = false) {
         openSheet(
-            'Heum · V2',
+            'Heum 0.3',
             `<p>Heum est le troisième monde de la ferme : un îlot cultivable dans les terres mortes. Vous pilotez la <b>Contamination</b> pour faire muter vos cultures sans perdre vos récoltes.</p>
             <ul class="perks"><li>${ico('gauge')}Saine (0-30 %), Mutagène (30-60 %), Instable (60-85 %), Critique (85 % et plus).</li>
             <li>${ico('rutabagaGlow')}Le palier au moment de la récolte décide : mutant, Rebelle ou déchet.</li>
             <li>${ico('hen')}Hors ligne, rien ne se propage et rien ne se perd.</li></ul>
             ${first ? '' : `<p class="hint">Récoltes : ${state.stats.harvests} · mutants : ${state.stats.mutants} · ventes : ${state.stats.sold}</p>`}
-            ${first ? btn('C’est parti', 'close', {}, { kind: 'go' }) : btn('Recommencer la partie', 'reset', {}, { kind: 'danger', size: 'sm' })}`,
+            ${first ? btn('C’est parti', 'close', {}, { kind: 'go' }) : `<h4>Sauvegarde</h4><div class="row">${btn('Exporter', 'saveExport', {}, { size: 'sm' })}${btn('Reprendre un fichier', 'saveImport', {}, { size: 'sm' })}</div><div class="row">${btn('Recommencer la partie', 'reset', {}, { kind: 'danger', size: 'sm' })}</div>`}`,
         );
+    },
+    saveExport() {
+        exportSave();
+    },
+    saveImport() {
+        pickImport(() => render());
     },
     reset() {
         openSheet(
@@ -137,7 +147,13 @@ export function setupApp() {
     setInterval(save, 5000);
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) save();
-        else prev = now();
+        else {
+            // au retour, le temps passé en arrière-plan compte (sans la jauge)
+            const gone = H.catchUp();
+            prev = now();
+            if (gone > 60) toast(`Pendant votre absence (${dur(gone)}), la ferme a tourné sans vous : rien n’est perdu.`);
+            render();
+        }
     });
     if (!state.seen.intro) {
         state.seen.intro = 1;

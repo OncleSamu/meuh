@@ -1,27 +1,28 @@
 // Heum — les cultures des Parcelles et leurs variantes mutantes.
+// 0.3 : chaque culture débloquée rapporte plus par minute et par parcelle que la précédente (rutabaga 6, lentilles 7, sorgho 8, courge 10, panais 11, kale 12, mûres 14).
 // t : secondes de pousse ; seed : prix du semis ; sell : prix de vente d'une unité ; mut : la variante mutante.
 export const CROPS = {
     rutabaga: { name: 'Rutabaga', lvl: 1, t: 60, seed: 4, sell: 5, yield: 2, mut: 'rutabagaGlow', food: 1 },
-    lentil: { name: 'Lentilles', lvl: 1, t: 120, seed: 7, sell: 8, yield: 2, mut: null, food: 1 },
-    sorghum: { name: 'Sorgho', lvl: 2, t: 180, seed: 10, sell: 11, yield: 2, mut: null, food: 1 },
-    squash: { name: 'Courge', lvl: 6, t: 300, seed: 22, sell: 20, yield: 2, mut: 'squashShell', food: 2 },
-    parsnip: { name: 'Panais', lvl: 7, t: 240, seed: 16, sell: 15, yield: 2, mut: null, food: 1 },
+    lentil: { name: 'Lentilles', lvl: 1, t: 120, seed: 8, sell: 11, yield: 2, mut: null, food: 1 },
+    sorghum: { name: 'Sorgho', lvl: 2, t: 180, seed: 12, sell: 18, yield: 2, mut: null, food: 1 },
+    squash: { name: 'Courge', lvl: 6, t: 300, seed: 24, sell: 37, yield: 2, mut: 'squashShell', food: 2 },
+    parsnip: { name: 'Panais', lvl: 7, t: 240, seed: 18, sell: 31, yield: 2, mut: null, food: 1 },
     // V2
-    kale: { name: 'Chou-kale', lvl: 11, t: 240, seed: 18, sell: 16, yield: 2, mut: 'kaleSponge', food: 1 },
-    blackberry: { name: 'Mûres', lvl: 13, t: 360, seed: 26, sell: 24, yield: 2, mut: 'berryFire', food: 1 },
+    kale: { name: 'Chou-kale', lvl: 11, t: 240, seed: 20, sell: 34, yield: 2, mut: 'kaleSponge', food: 1 },
+    blackberry: { name: 'Mûres', lvl: 13, t: 360, seed: 28, sell: 56, yield: 2, mut: 'berryFire', food: 1 },
 };
 export const MUTANTS = {
     rutabagaGlow: { name: 'Rutabaga lumineux', of: 'rutabaga', sell: 20, role: 'Rend de l’énergie : il nourrit le bunker trois fois mieux.', food: 3 },
-    squashShell: { name: 'Courge carapace', of: 'squash', sell: 80, role: 'Très résistante, elle se vend cher.', food: 4 },
+    squashShell: { name: 'Courge carapace', of: 'squash', sell: 140, role: 'Très résistante, elle se vend cher.', food: 4 },
     kaleSponge: {
         name: 'Chou-éponge',
         of: 'kale',
-        sell: 50,
+        sell: 100,
         role: 'Il absorbe la Contamination : chaque récolte fait baisser la jauge de 8.',
         food: 2,
         clean: 8,
     },
-    berryFire: { name: 'Mûre ardente', of: 'blackberry', sell: 90, role: 'Ingrédient des conserves explosives, que réclame le convoi blindé.', food: 1 },
+    berryFire: { name: 'Mûre ardente', of: 'blackberry', sell: 190, role: 'Ingrédient des conserves explosives, que réclame le convoi blindé.', food: 1 },
 };
 // V2 : un mutant fixé au labo de Victor se sème en graine stable : il pousse toujours mutant, sans jamais tourner Rebelle
 export const STABLE = {

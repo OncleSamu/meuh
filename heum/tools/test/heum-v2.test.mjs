@@ -116,19 +116,28 @@ test('V2 : l’expédition rapporte du matériel, même hors ligne', () => {
     assert.ok(state.inv.scrap >= 4);
 });
 
-test('V2 : le contrôle sanitaire', () => {
+test('0.3 : le contrôle sanitaire lit la charge réelle du produit', () => {
     fresh();
     const sel = id => {
         let k = 0;
         while (H.convoy().id !== id && k++ < 10) wait(3600);
     };
+    state.inv.lentil = 2;
+    state.charge.lentil = 10;
+    state.inv.rutabagaGlow = 2;
+    state.charge.rutabagaGlow = 70;
     sel('filtre');
-    assert.equal(H.checkMult('rutabagaGlow'), 0.5);
-    assert.equal(H.checkMult('rutabaga'), 1);
+    assert.equal(H.checkMult('lentil'), 1.25, 'propre, région propre');
+    assert.equal(H.checkMult('rutabagaGlow'), 0.3, 'chaud, région propre');
     sel('antennes');
-    assert.equal(H.checkMult('eggMut'), 1.3);
+    assert.equal(H.checkMult('rutabagaGlow'), 1.4, 'chaud, région chaude');
+    assert.equal(H.checkMult('lentil'), 0.7, 'propre, région chaude');
+    sel('forge');
+    assert.equal(H.checkMult('rutabagaGlow'), 1, 'région qui ne regarde pas');
+    assert.equal(H.checkMult('metal'), 1);
     state.level = 9;
-    assert.equal(H.checkMult('eggMut'), 1, 'pas encore de contrôle');
+    sel('filtre');
+    assert.equal(H.checkMult('rutabagaGlow'), 1, 'pas encore de contrôle');
 });
 
 test('V2 : le convoi blindé, livré au compte exact', () => {

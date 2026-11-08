@@ -41,3 +41,14 @@ Heum vit à part dans ce dossier : il ne touche pas au code de Meuh, et Meuh n'a
 - Niveau 11 : chou-kale (mutant : chou-éponge, chaque récolte baisse la jauge de 8), cochon (change un déchet radioactif en engrais toxique), étable filtrée (purge la Charge d'une bête pour 1 électronique).
 - Convoi blindé (niveau 12) : un gros contrat au compte exact en six heures, payé 2,5 fois ; manqué, un autre le remplace sans pénalité.
 - Niveau 13 : mûres (mutant : mûre ardente) et conserves explosives.
+
+## Ce qu'ajoute la 0.3 (fondations et cœur)
+
+**Direction décidée** : Heum est un jeu à part, sans lien avec le code de Meuh ; seul un portail (en fin de partie dans Meuh, et retour) les reliera. But : « l'Arche », collectionner des graines mutantes fixées ; titre « Gardien de l'Arche » au niveau 64. Compter 40 à 60 h de jeu actif. Habitants allégés (3 stats, pas de naissances).
+
+- **Sauvegarde solide** : version de format et migrations, copie de secours (`heumSave.bak`), refus d'écraser une sauvegarde illisible, export / import en fichier depuis le menu.
+- **Appli installable** : manifeste, icônes, service worker hors ligne (préfixe `heum-`).
+- **Hors ligne** : la jauge de contamination est figée quand on n'est pas là (pas de baisse, pas de Rebelles). Le temps de fond (onglet caché) est rattrapé au retour.
+- **Charge des produits** : chaque récolte garde la charge de la jauge de sa parcelle ; les animaux et les produits transformés la transmettent ; les contrôles sanitaires des régions la lisent.
+- **Équilibrage** : baisse de la jauge 1 point / 4 min, déchet 8 pièces, coût de l'arrachage, Rebelles 25 %, échelle de valeur des cultures.
+- **Outil** : `node heum/tools/bot.mjs [heures] [passage] [mut|crit]`, robot joueur pour mesurer le rythme (12 h en jeu continu : niveau 27, 228 mutants ; stratégie Critique : ruineuse).

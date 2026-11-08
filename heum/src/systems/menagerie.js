@@ -61,7 +61,7 @@ export function collectAnimal(k) {
     const a = state.animals[k];
     if (!a || !a.stock.length) return 0;
     const n = a.stock.length;
-    for (const id of a.stock) give(id, 1);
+    for (const id of a.stock) give(id, 1, Math.round(a.charge));
     addXp(n * 2);
     a.stock = [];
     sfx('collect');

@@ -74,8 +74,8 @@ test('la jauge redescend seule ; l’Épurateur la baisse de 15', () => {
     fresh();
     state.level = 3;
     state.cont = 50;
-    H.tick(240);
-    assert.equal(state.cont, 48);
+    H.tick(480);
+    assert.equal(state.cont, 48, 'un point toutes les 4 minutes');
     state.inv.elec = 1;
     assert.ok(H.startJob('purifier', 'purify'));
     wait(40);

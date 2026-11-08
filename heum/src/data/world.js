@@ -7,12 +7,13 @@ export const TIERS = [
 ];
 export const tierOf = c => [...TIERS].reverse().find(t => c >= t.from);
 export const CONT = {
-    decayEvery: 120, // la jauge redescend d'un point toutes les 2 minutes, toute seule
+    decayEvery: 240, // la jauge redescend d'un point toutes les 4 minutes en jeu ; hors ligne elle reste où elle est
     fertilizer: 10, // un bidon d'engrais toxique : +10
     purifier: 15, // un passage de l'Épurateur : −15
     mutLvl: 6, // le niveau où la mutation s'ouvre (l'engrais toxique)
-    mutChance: { mut: 0.25, unst: 0.45 },
-    rebelChance: 0.15,
+    mutChance: { mut: 0.25, unst: 0.35 },
+    rebelChance: 0.25,
+    uprootMoney: 15, // arracher un Rebelle : 1 métal, ou 15 pièces à défaut
     rebelEvery: 90, // un Rebelle contamine une parcelle voisine toutes les 90 s, seulement quand on joue
     rebelPush: 1, // et fait monter la jauge d'un point par minute
 };
@@ -67,20 +68,37 @@ export const GOODS = {
     plastic: { name: 'Plastique', sell: 3 },
     elec: { name: 'Électronique', sell: 8 },
     compo: { name: 'Composite', sell: 6 },
-    waste: { name: 'Déchet radioactif', sell: 30 },
+    waste: { name: 'Déchet radioactif', sell: 8 },
     fertilizer: { name: 'Engrais toxique', sell: 0 },
     canRuta: { name: 'Conserve de rutabaga', sell: 26, food: 4 },
-    flour: { name: 'Farine de sorgho', sell: 40, food: 4 },
-    soup: { name: 'Soupe de lentilles', sell: 38, food: 4 },
-    canGlow: { name: 'Conserve lumineuse', sell: 75, food: 6 },
-    shellOil: { name: 'Huile de carapace', sell: 120, food: 2 },
-    canBoom: { name: 'Conserve explosive', sell: 160 },
+    flour: { name: 'Farine de sorgho', sell: 54, food: 4 },
+    soup: { name: 'Soupe de lentilles', sell: 70, food: 4 },
+    canGlow: { name: 'Conserve lumineuse', sell: 90, food: 6 },
+    shellOil: { name: 'Huile de carapace', sell: 220, food: 2 },
+    canBoom: { name: 'Conserve explosive', sell: 420 },
     veil: { name: 'Voile', sell: 0 },
     conc: { name: 'Concentrateur', sell: 0 },
 };
-// V2 : le contrôle sanitaire. Un produit « chaud » sort de la mutation ou du nucléaire.
-export const HOT = ['rutabagaGlow', 'squashShell', 'kaleSponge', 'berryFire', 'eggMut', 'milkMut', 'waste', 'canGlow', 'canBoom', 'shellOil'];
-export const CHECK = { lvl: 10, cleanMult: 0.5, hotMult: 1.3 };
+// 0.3 : le contrôle sanitaire lit la CHARGE réelle du produit (0 à 100), fixée par la jauge de sa parcelle au moment de la récolte.
+// Une région « propre » aime le propre ; une région « chaude » paie le très chaud ; les autres ne regardent pas.
+export const CHECK = {
+    lvl: 10,
+    // [charge maximale, multiplicateur]
+    clean: [
+        [20, 1.25],
+        [40, 1],
+        [60, 0.6],
+        [100, 0.3],
+    ],
+    hot: [
+        [29, 0.7],
+        [59, 1],
+        [79, 1.4],
+        [100, 1.6],
+    ],
+};
+// ce qui n'a pas de charge : matériaux, équipement
+export const NO_CHARGE = ['scrap', 'metal', 'plastic', 'elec', 'compo', 'fertilizer', 'veil', 'conc', 'waste'];
 export const SCRAP_TYPES = ['metal', 'plastic', 'elec', 'compo'];
 export const WRECK = { max: 12, every: 120, find: [1, 3] };
 
@@ -204,7 +222,7 @@ export const EVENTS = [
         opts: [
             { label: 'Les laisser polliniser', cont: 12, get: { xp: 15 } },
             { label: 'Enfumer', cost: { compo: 1 }, cont: -8 },
-            { label: 'Les attirer au loin', cost: { rutabaga: 4 } },
+            { label: 'Les attirer au loin', cost: { rutabaga: 4 }, cont: -4, get: { xp: 10 } },
         ],
     },
     {

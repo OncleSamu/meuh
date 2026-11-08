@@ -1,7 +1,7 @@
 // Heum — l'onglet Caravanes : le convoi du moment, la radio, la vente et le troc.
 import { state } from '../../core/state.js';
 import * as H from '../../systems/index.js';
-import { CARAVAN, TRADES, CHECK } from '../../data/world.js';
+import { CARAVAN, TRADES } from '../../data/world.js';
 import { now } from '../../core/clock.js';
 import { ico, btn, card, head, timer } from '../kit.js';
 import { floatAt } from '../fx.js';
@@ -20,9 +20,18 @@ function checkNote(r) {
     if (!H.checkOn() || !r.check) return '';
     const t =
         r.check === 'clean'
-            ? `région propre : les produits chauds (mutants, déchets…) sont payés ${Math.round(CHECK.cleanMult * 100)} %`
-            : `région chaude : les produits chauds sont payés ${Math.round((CHECK.hotMult - 1) * 100)} % de plus`;
+            ? 'région propre : un produit peu chargé (moins de 20 %) se vend 25 % de plus, un produit chaud (plus de 60 %) à 30 % seulement'
+            : 'région chaude : un produit très chargé (plus de 80 %) se vend 60 % de plus, un produit propre à 70 %';
     return `<p class="note ${r.check === 'clean' ? 'warn' : 'hot'}">${ico('waste')} Contrôle sanitaire, ${t}.</p>`;
+}
+// la charge du lot en stock, et ce que le convoi en fait
+function chargeTag(id) {
+    const h = H.heat(id);
+    if (!h || !H.checkOn()) return '';
+    const m = H.checkMult(id);
+    const label = { hot: 'chaud', clean: 'propre', warm: 'tiède' }[h];
+    const eff = m === 1 ? '' : m > 1 ? ` ×${m}` : ` ×${m}`;
+    return ` · <span class="${h === 'hot' ? 'hot-tag' : h === 'clean' ? 'tag' : 'warm-tag'}">${label} ${H.chargeOf(id)} %${eff}</span>`;
 }
 function armoredCard() {
     if (!H.armoredOpen())
@@ -53,7 +62,7 @@ function sellCard() {
         .map(id => {
             const p = H.priceOf(id),
                 n = H.have(id);
-            return `<div class="pick${H.wanted(id) ? ' wanted' : ''}">${ico(id, 'ico big')}<div><b>${H.nameOf(id)}</b><small>${n} en stock · ${p} pièces${H.wanted(id) ? ' · réclamé !' : ''}${H.checkOn() && H.isHot(id) ? ' · <span class="hot-tag">chaud</span>' : ''}</small></div><span class="btns">${btn('1', 'sell', { id, n: 1 }, { size: 'sm' })}${btn(`Tout · ${fmt(p * n)}`, 'sell', { id, n: 999 }, { size: 'sm', kind: 'go' })}</span></div>`;
+            return `<div class="pick${H.wanted(id) ? ' wanted' : ''}">${ico(id, 'ico big')}<div><b>${H.nameOf(id)}</b><small>${n} en stock · ${p} pièces${H.wanted(id) ? ' · réclamé !' : ''}${chargeTag(id)}</small></div><span class="btns">${btn('1', 'sell', { id, n: 1 }, { size: 'sm' })}${btn(`Tout · ${fmt(p * n)}`, 'sell', { id, n: 999 }, { size: 'sm', kind: 'go' })}</span></div>`;
         })
         .join('');
     return card(`${head('Marchands ambulants', '', 'Ils achètent tout, au prix du jour.')}${rows || '<p class="hint">Rien à vendre : allez récolter !</p>'}`);

@@ -2,9 +2,9 @@
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { toast, sfx } from '../core/bus.js';
-import { REGIONS, CARAVAN, TRADES, HOT, CHECK, ARMORED } from '../data/world.js';
+import { REGIONS, CARAVAN, TRADES, CHECK, ARMORED } from '../data/world.js';
 import { pick } from '../core/rand.js';
-import { have, take, give, earn, baseSell, takeAll, hasAll, lvlOk, addXp } from './player.js';
+import { have, take, give, earn, baseSell, takeAll, hasAll, lvlOk, addXp, carries, chargeOf } from './player.js';
 import { canMult } from './bunker.js';
 
 const slot = () => Math.floor(now() / 1000 / CARAVAN.every);
@@ -13,14 +13,18 @@ export const convoy = () => regionAt(slot());
 export const convoyLeft = () => CARAVAN.every - ((now() / 1000) % CARAVAN.every);
 export const upcoming = (n = 3) => Array.from({ length: n }, (_, k) => ({ region: regionAt(slot() + k + 1), in: convoyLeft() + k * CARAVAN.every }));
 const CANS = ['canRuta', 'canGlow', 'soup', 'flour', 'shellOil', 'canBoom'];
-// V2 : le contrôle sanitaire. Une région propre paie moitié prix les produits chauds ; une région « chaude » les paie 30 % de plus.
-export const isHot = id => HOT.includes(id);
+// 0.3 : le contrôle sanitaire lit la charge réelle du produit en stock (mélange de ses récoltes).
+// Région « propre » : le propre se vend mieux, le chaud très mal. Région « chaude » : l'inverse. Les autres ne regardent pas.
 export const checkOn = () => state.level >= CHECK.lvl;
 export function checkMult(id) {
     const c = convoy().check;
-    if (!checkOn() || !c || !isHot(id)) return 1;
-    return c === 'clean' ? CHECK.cleanMult : CHECK.hotMult;
+    if (!checkOn() || !c || !carries(id)) return 1;
+    const ch = chargeOf(id);
+    const row = CHECK[c].find(([max]) => ch <= max);
+    return row ? row[1] : 1;
 }
+// pour l'affichage : propre, tiède ou chaud
+export const heat = id => (!carries(id) ? null : chargeOf(id) >= 60 ? 'hot' : chargeOf(id) <= 25 ? 'clean' : 'warm');
 export const wanted = id => convoy().wants.includes(id);
 export function priceOf(id) {
     let p = baseSell(id);
