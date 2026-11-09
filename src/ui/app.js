@@ -71,6 +71,7 @@ export const TABS = [
             ['cave', 'Cave', ['ui', 'cave'], () => CAVE_LVL],
             ['brew', 'Brasserie', ['ui', 'beer'], () => ABBEY.lvl],
             ['lab', 'Labo', ['ui', 'flowers'], () => GENETICS.lvl],
+            ['maison', 'Maison', ['ui', 'heart'], () => CAMPING.lvl],
         ],
     },
     {
@@ -216,6 +217,7 @@ const HELP = {
     'machines/cave': 'cave',
     'machines/brew': 'brewery',
     'machines/lab': 'labplants',
+    'machines/maison': 'legend',
     'village/orders': 'orders',
     'village/village': 'village',
     'market/shop': 'market',

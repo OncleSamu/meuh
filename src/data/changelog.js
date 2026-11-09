@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.101.1",
+  "title": "La Maison s'installe dans l'Atelier",
+  "date": "9 novembre 2026",
+  "items": [
+   "La Maison a son propre volet dans l'Atelier, à côté de la Cave et de la Brasserie",
+   "L'étal de la carte du camping y mène",
+   "Les recettes de paquets sont dans le Livre de la ferme, sous Collection, « Mes paquets »"
+  ]
+ },
+ {
   "v": "1.101",
   "title": "Le camping prend vie, la Maison emballe",
   "date": "9 novembre 2026",

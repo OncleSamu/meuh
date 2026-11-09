@@ -127,6 +127,7 @@ function pageView(page) {
 }
 
 function collection(o) {
+    if (o.page === 'paquets') return [['pk', paquetsPage()]];
     const page = G.BOOK.find(p => p.id === o.page);
     const nFound = page ? page.entries().filter(e => G.isFound(e)).length : 0;
     return page
@@ -137,6 +138,7 @@ function collection(o) {
         : [
               ['q', quarters()],
               ['shelf', shelf()],
+              ['pkt', paquetsTile()],
           ];
 }
 
@@ -324,10 +326,15 @@ function defisPage() {
 }
 
 // 1.101 : la page des paquets de la Maison : toutes les recettes de paquets que l'on a composées, nommées par le joueur
+function paquetsTile() {
+    if (!G.maisonBuilt()) return '';
+    const n = G.recipes().length;
+    return `<button class="card ach pk-tile" data-act="bookPage" data-p="paquets">${ico(['ui', 'heart'], 'ico big')}<div class="card-main"><div class="card-title">Mes paquets</div><div class="card-sub">${n ? `${n} recette${n > 1 ? 's' : ''} de paquets, avec leur nom` : 'Les paquets que vous composez à la Maison'}</div></div><span class="hub-chev">›</span></button>`;
+}
 function paquetsPage() {
-    if (!G.maisonBuilt()) return empty('Fondez la Maison (camping, volet Ferme) pour composer vos premiers paquets.');
+    const back = `<button class="bk-back" data-act="bookBack">‹ Toutes les pages</button>`;
     const list = G.recipes().slice().reverse();
-    if (!list.length) return empty('Aucun paquet pour l’instant : composez-en un depuis la Maison, il viendra s’inscrire ici avec son nom.');
+    if (!list.length) return back + empty('Aucun paquet pour l’instant : composez-en un depuis la Maison (Atelier), il viendra s’inscrire ici avec son nom.');
     const rows = list
         .map(r => {
             const ok = G.canRemake(r);
@@ -338,7 +345,7 @@ function paquetsPage() {
                 <div class="od-foot">${btn('Refaire', { act: 'pkRemake', data: { id: r.id }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}${btn('Oublier', { act: 'pkDrop', data: { id: r.id }, size: 'sm' })}</div></div></div>`;
         })
         .join('');
-    return `<p class="card-sub">Chaque paquet que vous composez garde sa recette : le nom que vous lui avez donné, sa boîte, son contenu. « Refaire » le relance à l’atelier de la Maison.</p><div class="list">${rows}</div>`;
+    return `${back}<p class="card-sub">Chaque paquet que vous composez garde sa recette : le nom que vous lui avez donné, sa boîte, son contenu. « Refaire » le relance à l’atelier de la Maison.</p><div class="list">${rows}</div>`;
 }
 
 const SECTIONS = [
@@ -346,10 +353,8 @@ const SECTIONS = [
     ['exploits', 'Exploits', ['ui', 'trophy']],
     ['legend', 'Légende', ['ui', 'goldCow']],
     ['defis', 'Défis', ['ui', 'cupGold']],
-    ['paquets', 'Paquets', ['ui', 'heart']],
     ['album', 'Album', ['ui', 'camera']],
 ];
-const sections = () => SECTIONS.filter(x => x[0] !== 'paquets' || G.maisonBuilt());
 const badge = id =>
     id === 'collection' ? G.bookClaimable() + G.quartersClaimable() : id === 'exploits' ? G.claimableCount() : id === 'legend' ? (G.legendReady() ? 1 : 0) : 0;
 
@@ -363,7 +368,7 @@ defineSheet('book', {
     },
     render(o) {
         const seg = segmented(
-            sections().map(([id, name, icon]) => [id, name, icon, badge(id)]),
+            SECTIONS.map(([id, name, icon]) => [id, name, icon, badge(id)]),
             o.sec,
             'bookSec',
         );
@@ -376,9 +381,7 @@ defineSheet('book', {
                     ? [['l', legend()]]
                     : o.sec === 'defis'
                       ? [['d', defisPage()]]
-                      : o.sec === 'paquets'
-                        ? [['p', paquetsPage()]]
-                        : [['a', album()]];
+                      : [['a', album()]];
         return [['seg', `<div class="book-seg">${seg}</div>`], ...body.map(([k, h]) => [o.sec + k, h])];
     },
 });

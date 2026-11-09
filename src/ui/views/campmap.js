@@ -9,7 +9,7 @@ import * as G from '../../systems/index.js';
 import { blocks, actions, esc } from '../dom.js';
 import { ico } from '../icons.js';
 import { btn } from '../kit.js';
-import { defineView } from '../app.js';
+import { defineView, go } from '../app.js';
 import { defineSheet, openSheet, sheetOpts } from '../sheets.js';
 import { SPRITES, TENT_COLORS, CABIN_COLORS, sceneBg } from '../../art/camping.js';
 import { campingCard, askCard, residentCard, guestCard, upsHtml } from './camping.js';
@@ -144,6 +144,6 @@ defineSheet('campups', {
 export function setupCampMap() {
     actions({
         campOne: (el, d) => openSheet('campone', { kind: d.kind, i: +d.i }),
-        campHub: (el, d) => openSheet('hub', { id: d.id }),
+        campHub: (el, d) => (d.id === 'maison' ? go('machines/maison') : openSheet('hub', { id: d.id })),
     });
 }

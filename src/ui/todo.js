@@ -198,7 +198,7 @@ export function todoList() {
     // 1.101 : le camping est dans Ferme › Camping
     const campN = G.campReady() + G.residentReady();
     if (campN) push('farm/camping', ['ui', 'heart'], `${campN} à servir au camping`, campN);
-    if (G.maisonReady()) push('farm/camping', ['ui', 'heart'], 'La Maison a des paquets à faire ou à vendre', G.maisonReady());
+    if (G.maisonReady()) push('machines/maison', ['ui', 'heart'], 'La Maison a des paquets à faire ou à vendre', G.maisonReady());
     if (G.canValleeFete()) push('farm/camping', ['ui', 'heart'], 'Tout est prêt pour la fête de la vallée', 1);
     if (G.netReady()) push('farm/pond', ['ui', 'net'], 'Filet de pêche plein', 1);
     const traps = G.trapsReady();

@@ -9,8 +9,11 @@ import { ico } from '../icons.js';
 import { btn } from '../kit.js';
 import { renameBtn } from '../sheets/rename.js';
 import { QUALITY } from '../../data/farm.js';
+import { CAMPING } from '../../data/camping.js';
 import { pkHtml } from '../paquets.js';
 import { setupPaquet } from '../sheets/paquet.js';
+import { blocks } from '../dom.js';
+import { defineView } from '../app.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const costHtml = c =>
@@ -64,10 +67,15 @@ export function maisonCard() {
         <div class="od-line"><span><b>Couleurs</b></span></div><div class="maison-row">${pals}</div></div>
         <div class="card camp-card">${work}</div>
         ${m.stock.length ? `<div class="card camp-card"><div class="card-title">Sur l’étagère (${m.stock.length}/${MAISON.stock})</div><div class="pk-shelf">${m.stock.map(coffretRow).join('')}</div></div>` : ''}
-        ${G.recipes().length ? `<div class="card camp-card"><div class="card-title">Vos recettes de paquets</div>${G.recipes().slice().reverse().slice(0, 4).map(recipeRow).join('')}<p class="card-sub">Toutes vos recettes sont dans le Livre de la ferme, page « Paquets ».</p></div>` : ''}
+        ${G.recipes().length ? `<div class="card camp-card"><div class="card-title">Vos recettes de paquets</div>${G.recipes().slice().reverse().slice(0, 4).map(recipeRow).join('')}<p class="card-sub">Toutes vos recettes sont dans le Livre de la ferme, Collection › Mes paquets.</p></div>` : ''}
         <div class="card camp-card"><div class="card-title">Vos clients</div>${clients}</div>
         <p class="card-sub">Un paquet vaut 1,3 fois ses produits, plus si les trois sont de genres différents, de belle qualité (jusqu’au diamant), dans une belle boîte, ou si la réputation est haute. Chaque vente fait monter la réputation, qui ouvre de nouveaux clients et emblèmes.</p></div>`;
 }
+// 1.101 : la Maison est un volet de l'Atelier (elle ne dépend pas que du camping : voisins, souk, château, vitrine)
+defineView('machines/maison', el => {
+    if (!G.campOpen()) return blocks(el, [['m', `<div class="card"><p class="card-sub">La Maison, votre marque, s’ouvre au niveau ${CAMPING.lvl}, avec le camping de la vallée.</p></div>`]]);
+    blocks(el, [['m', maisonCard() || '<div class="card"><p class="card-sub">Aménagez d’abord le camping de la vallée (Ferme › Camping) : la Maison se fonde ensuite ici.</p></div>']]);
+});
 export function setupMaison() {
     setupPaquet();
     actions({
