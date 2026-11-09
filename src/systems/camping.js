@@ -34,6 +34,7 @@ export function buyUp(id) {
     state.camping.up[id] = 1;
     state.camping.tillAt = now();
     sfx('level');
+    toast(`${CAMP_UPGRADES[id].name} : aménagé !`, ['ui', 'heart']);
     return true;
 }
 export const pitchCost = () => (state.camping && state.camping.pitches < CAMPING.maxPitches ? CAMPING.pitchCost(state.camping.pitches + 1) : 0);

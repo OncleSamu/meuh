@@ -49,7 +49,7 @@ export function guestCard(g, gi) {
 export function upsHtml() {
     const ups = Object.entries(CAMP_UPGRADES)
         .filter(([id]) => !G.campUp(id))
-        .map(([id, u]) => `<div class="od-line"><span><b>${u.name}</b><small>${u.desc}</small></span>${btn(costHtml(u.cost), { act: 'campUp', data: { id }, kind: G.upCan(id) ? 'green' : '', size: 'sm' })}</div>`)
+        .map(([id, u]) => `<div class="od-line"><span><b>${u.name}</b><small>${u.desc}</small></span>${btn(costHtml(u.cost), { act: 'campUp', data: { id }, kind: G.upCan(id) ? 'green' : '', size: 'sm', disabled: !G.upCan(id) })}</div>`)
         .join('');
     return ups || '<p class="card-sub">Tous les aménagements sont faits : le camping est complet.</p>';
 }
