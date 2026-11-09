@@ -13,7 +13,7 @@ import { blocks, actions, esc } from '../dom.js';
 import { ITEMS } from '../../data/items.js';
 import { ico, art, SPR } from '../icons.js';
 import { btn, bar, timer, tip15, segmented } from '../kit.js';
-import { defineView, ui } from '../app.js';
+import { defineView, ui, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { itemLine, rewardHtml } from './common.js';
 import { confirmTap } from '../confirm.js';
@@ -141,15 +141,19 @@ function train() {
         return `<div class="card away">${ico(['ui', 'trainIcon'], 'ico big')}<div class="card-main"><div class="card-title">Train de marchandises</div><div class="card-sub">Prochain passage dans ${timer(t.arriveAt, 'b')}</div></div></div>`;
     const wagons = t.slots
         .map((sl, k) => {
-            const have = state.inventory[sl.id],
+            const have = sl.pk ? G.pkHave(sl.pk) : state.inventory[sl.id] || 0,
                 ok = have >= sl.qty;
+            // 1.104.1 : un wagon de paquets de la Maison
+            const goBtn = sl.pk
+                ? `<button class="wagon-load go" data-act="pkGoShelf" aria-label="${esc(G.pkReqTxt(sl.pk))}">${ico(['ui', 'maison'])}<b>×${sl.qty}</b></button>`
+                : `<button class="wagon-load go" data-act="produce" data-id="${sl.id}" aria-label="Aller produire">${ico(['item', sl.id])}<b>×${sl.qty}</b></button>`;
             return `<div class="wagon${sl.loaded ? ' loaded' : ''}" data-anchor="wagon:${k}">
-                ${sl.loaded ? `<div class="wagon-load"><div class="crate">${art('ui', 'crate')}</div></div>` : `<button class="wagon-load go" data-act="produce" data-id="${sl.id}" aria-label="Aller produire">${ico(['item', sl.id])}<b>×${sl.qty}</b></button>`}
+                ${sl.loaded ? `<div class="wagon-load"><div class="crate">${art('ui', 'crate')}</div></div>` : goBtn}
                 <div class="wagon-spr">${SPR.wagon(WAGON_COLORS[k])}</div>
                 <div class="wagon-info">${
                     sl.loaded
                         ? ico(['ui', 'check'])
-                        : `<span class="slot-have${ok ? ' ok' : ''}">${have} en stock</span><span class="wagon-rew">${fmt(sl.gold)}${ico(['ui', 'coin'])}${sl.mat ? ico(['item', sl.mat]) : ''}</span>
+                        : `${sl.pk ? `<span class="slot-have">${esc(G.pkReqTxt(sl.pk))}</span>` : ''}<span class="slot-have${ok ? ' ok' : ''}">${have} en stock</span><span class="wagon-rew">${fmt(sl.gold)}${ico(['ui', 'coin'])}${sl.mat ? ico(['item', sl.mat]) : ''}</span>
                     ${btn('Charger', { act: 'loadWagon', data: { k }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}`
                 }</div></div>`;
         })
@@ -169,12 +173,15 @@ function cargoCard() {
         return `<div class="card away">${ico(['ui', 'plane'], 'ico big')}<div class="card-main"><div class="card-title">Avion-cargo</div><div class="card-sub">Prochain atterrissage dans ${timer(G.cargoArrive(), 'b')} · il vient toutes les 48 heures et reste 24 heures, même jeu fermé</div></div></div>`;
     const holds = c.holds
         .map((h, i) => {
-            const have = state.inventory[h.id] || 0,
+            const have = G.holdHave(h),
                 left = h.qty - h.got,
                 full = left <= 0;
-            return `<div class="hold${full ? ' full' : ''}"><button class="hold-item" data-act="produce" data-id="${h.id}" aria-label="Aller produire">${ico(['item', h.id], 'ico big')}</button>
-                <div class="hold-main"><b>${ITEMS[h.id].name}</b>${bar(h.got / h.qty)}<small>${fmt(h.got)} / ${fmt(h.qty)}${full ? '' : ` · ${fmt(have)} en stock${have ? ` · ${fmt(G.holdPay(h, Math.min(have, left)))}${ico(['ui', 'coin'])}` : ''}`}</small></div>
-                ${full ? ico(['ui', 'check'], 'ico tick') : btn(have ? `Charger ${fmt(Math.min(have, left))}` : 'Produire', { act: have ? 'loadHold' : 'produce', data: have ? { i } : { id: h.id }, kind: have ? 'green' : '', size: 'sm' })}</div>`;
+            const head = h.pk
+                ? `<button class="hold-item" data-act="pkGoShelf" aria-label="Étagère de la Maison">${ico(['ui', 'maison'], 'ico big')}</button>`
+                : `<button class="hold-item" data-act="produce" data-id="${h.id}" aria-label="Aller produire">${ico(['item', h.id], 'ico big')}</button>`;
+            return `<div class="hold${full ? ' full' : ''}">${head}
+                <div class="hold-main"><b>${h.pk ? esc(G.pkReqTxt(h.pk)) : ITEMS[h.id].name}</b>${bar(h.got / h.qty)}<small>${fmt(h.got)} / ${fmt(h.qty)}${full ? '' : ` · ${fmt(have)} en stock${have ? ` · ${fmt(G.holdPay(h, Math.min(have, left)))}${ico(['ui', 'coin'])}` : ''}`}</small></div>
+                ${full ? ico(['ui', 'check'], 'ico tick') : btn(have ? `Charger ${fmt(Math.min(have, left))}` : h.pk ? 'Composer' : 'Produire', { act: have ? 'loadHold' : h.pk ? 'pkGoShelf' : 'produce', data: have ? { i } : { id: h.id }, kind: have ? 'green' : '', size: 'sm' })}</div>`;
         })
         .join('');
     return `<div class="card cargo-card here"><div class="card-head">${ico(['ui', 'plane'], 'ico big')}<div class="card-main"><div class="card-title">Avion-cargo</div>
@@ -475,7 +482,7 @@ const ROWS = [
             state.truck.status === 'here'
                 ? `${state.truck.slots.filter(s => s.loaded).length} / ${state.truck.slots.length} wagons · part dans ${left(state.truck.expiresAt)}`
                 : `Revient dans ${left(state.truck.arriveAt)}`,
-        ready: () => state.truck.status === 'here' && state.truck.slots.some(s => !s.loaded && has(s.id, s.qty)),
+        ready: () => state.truck.status === 'here' && state.truck.slots.some(s => !s.loaded && G.slotHave(s)),
         here: () => state.truck.status === 'here',
         html: train,
     },
@@ -491,7 +498,7 @@ const ROWS = [
             const full = c.holds.filter(h => h.got >= h.qty).length;
             return c.done ? 'Soutes pleines, merci !' : `${full} / ${c.holds.length} soutes pleines · repart dans ${left(G.cargoLeave())}`;
         },
-        ready: () => G.cargoHere() && !!state.cargo && !state.cargo.done && state.cargo.holds.some(h => h.got < h.qty && has(h.id, 1)),
+        ready: () => G.cargoHere() && !!state.cargo && !state.cargo.done && state.cargo.holds.some(h => h.got < h.qty && G.holdHave(h) >= 1),
         here: () => G.cargoHere() && !!state.cargo && !state.cargo.done,
         html: cargoCard,
     },
@@ -635,6 +642,7 @@ export function setupOrders() {
         pin: (el, d) => G.togglePin(+d.i),
         express: el => G.deliverExpress(el),
         loadHold: (el, d) => G.loadHold(+d.i, el),
+        pkGoShelf: () => go('machines/maison#atelier'),
         foldToggle: (el, d) => toggleFold(d.id, d.ready === '1'),
         agendaToggle: () => {
             try {

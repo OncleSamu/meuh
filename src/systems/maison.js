@@ -335,3 +335,38 @@ export function giftPaquet(vid, uid, at) {
     toast(`${VILLAGERS[vid].name} : « Quel joli paquet, merci ! » +${pts} d’amitié`, ['villager', vid]);
     return true;
 }
+
+// ---- 1.104.1 : les paquets dans les transports (train de marchandises, avion-cargo) ----
+// une demande : { kind, q } comme une commande de la Maison ; on charge les paquets de l'étagère qui conviennent, les moins chers d'abord
+export const pkTransportOk = () => !!M() && maisonTier() >= 1 && recipes().length > 0;
+export function pkReq() {
+    const kind = MAISON_ORDERS.kinds[Math.floor(Math.random() * MAISON_ORDERS.kinds.length)];
+    return { kind, q: Math.min(4, Math.floor(Math.random() * Math.min(3, maisonTier() + 1))) };
+}
+const KIND_SHORT = { frais: 'de produits frais', mer: 'de la mer', 'fabriqué': 'de l’atelier', mixte: 'de trois genres', any: '' };
+export const pkReqTxt = req => `Paquet${KIND_SHORT[req.kind] ? ' ' + KIND_SHORT[req.kind] : ''}${req.q ? `, ${QUALITY[req.q].name} ou mieux` : ''}`;
+// ce que vaut à peu près un paquet de ce genre (pour annoncer le prix) : la moyenne de vos recettes
+export function pkEstimate(req) {
+    const vals = recipes().map(r => coffretValue(r.items, Math.max(r.q, req.q), r.pack));
+    return Math.max(300, Math.round(vals.reduce((a, v) => a + v, 0) / Math.max(1, vals.length)));
+}
+const fitsReq = (c, req) => orderFits(c, { kind: req.kind, q: req.q });
+export const pkHave = req => (M() ? M().stock.filter(c => fitsReq(c, req)).length : 0);
+// retire n paquets qui conviennent (les moins chers) ; la réputation monte comme pour une vente
+export function pullPk(req, n) {
+    if (pkHave(req) < n) return 0;
+    const list = M()
+        .stock.filter(c => fitsReq(c, req))
+        .sort((a, b) => pkValue(a) - pkValue(b))
+        .slice(0, n);
+    M().stock = M().stock.filter(c => !list.includes(c));
+    list.forEach(c => {
+        const rc = recipeAt(c.rid);
+        if (rc) rc.sold++;
+    });
+    M().rep += 2 * n;
+    M().sold += n;
+    state.stats.coffretsSold = (state.stats.coffretsSold || 0) + n;
+    state.stats.coffretShipped = (state.stats.coffretShipped || 0) + n;
+    return n;
+}

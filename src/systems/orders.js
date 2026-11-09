@@ -1,6 +1,7 @@
 // Les commandes : tableau de commandes du village, train de marchandises (3 wagons) et montgolfière.
 // C'est le vrai cœur de l'économie.
 import { livingTrees } from './orchard.js';
+import { pkTransportOk, pkReq, pkEstimate, pkHave, pullPk } from './maison.js';
 import { islandOpen } from './island.js';
 import { oasisOpen } from './oasis.js';
 import { nordOpen } from './nord.js';
@@ -55,6 +56,8 @@ export function questPool() {
         else if (i.type === 'tree') ok = livingTrees(i.id) > 0;
         else if (i.type === 'product') ok = state.animals.some(a => ANIMALS[a.type].prodId === i.id);
         else if (i.type === 'fish') ok = fishOrderOk(id);
+        // 1.104.1 : les boîtes de la Maison (bois, lingots, tissu) : demandées dès qu'on a l'emballerie
+        else if (i.box) ok = hasMachine(RECIPES[id].machine) && recipeUnlocked(id);
         else if (i.type === 'artisan') {
             const r = RECIPES[id];
             ok = !!r && !r.fete && !r.holiday && hasMachine(r.machine) && recipeUnlocked(id) && Object.keys(r.ing).every(k => can(k, depth + 1));
@@ -240,6 +243,10 @@ export function sourceOf(id) {
 export const inProduction = id => state.machines.reduce((n, m) => n + m.queue.filter(q => q === id).length + (m.out[id] || 0), 0);
 
 // ---------------- le train de marchandises ----------------
+// 1.104.1 : un wagon de paquets (une chance sur trois quand la Maison a des recettes), payé 1,6 fois leur valeur
+const TRAIN_PK = 0.35,
+    TRAIN_PK_PAY = 1.6;
+export const slotHave = sl => (sl.pk ? pkHave(sl.pk) >= sl.qty : (state.inventory[sl.id] || 0) >= sl.qty);
 export const trainOpen = () => projectDone('station');
 // chaque cheval fait revenir le train 10 % plus tôt (30 % au plus)
 export const trainAway = () => TRAIN_AWAY * (1 - Math.min(0.3, 0.1 * state.animals.filter(a => a.type === 'horse' && isAdult(a)).length));
@@ -286,6 +293,13 @@ function makeTruck() {
             mat: Math.random() < 0.25 ? pickRand(RARE) : null,
         };
     });
+    // 1.104.1 : un wagon demande parfois des paquets de la Maison
+    if (pkTransportOk() && Math.random() < TRAIN_PK) {
+        const pk = pkReq();
+        const qty = 1 + Math.floor(Math.random() * 2);
+        const gold = round5(pkEstimate(pk) * qty * TRAIN_PK_PAY * mult);
+        slots[2] = { id: 'paquet', pk, qty, loaded: false, gold, xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus() * 2)), mat: Math.random() < 0.5 ? pickRand(RARE) : null };
+    }
     const sum = slots.reduce((a, sl) => a + sl.gold, 0);
     Object.assign(t, {
         status: 'here',
@@ -309,9 +323,12 @@ function truckLeave() {
 export function loadSlot(k, at) {
     const t = state.truck,
         sl = t.slots[k];
-    if (!sl || sl.loaded || state.inventory[sl.id] < sl.qty) return false;
-    state.inventory[sl.id] -= sl.qty;
-    clampQuality(sl.id);
+    if (!sl || sl.loaded || !slotHave(sl)) return false;
+    if (sl.pk) pullPk(sl.pk, sl.qty);
+    else {
+        state.inventory[sl.id] -= sl.qty;
+        clampQuality(sl.id);
+    }
     sl.loaded = true;
     state.stats.wagons = (state.stats.wagons || 0) + 1;
     sfx('load');
@@ -407,7 +424,7 @@ export function sendBalloon(at) {
 export function wantedItems() {
     const w = new Set();
     state.quests.forEach(q => isOpen(q) && q.items.forEach(x => state.inventory[x.id] < x.qty && w.add(x.id)));
-    if (state.truck.status === 'here') state.truck.slots.forEach(sl => !sl.loaded && state.inventory[sl.id] < sl.qty && w.add(sl.id));
+    if (state.truck.status === 'here') state.truck.slots.forEach(sl => !sl.pk && !sl.loaded && state.inventory[sl.id] < sl.qty && w.add(sl.id));
     if (state.balloon.status === 'here') state.balloon.items.forEach(x => state.inventory[x.id] < x.qty && w.add(x.id));
     if (state.incident && state.incident.type === 'express') state.incident.items.forEach(x => w.add(x.id));
     Object.values(PROJECTS).forEach(p => projectOpen(p.id) && Object.keys(p.need).forEach(id => projectLeft(p.id, id) > state.inventory[id] && w.add(id)));

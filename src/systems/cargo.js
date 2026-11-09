@@ -14,6 +14,7 @@ import { earn, addXp } from './player.js';
 import { clampQuality } from './farm.js';
 import { giveRare } from './barn.js';
 import { stayOf, domStepSum } from './estate.js';
+import { pkTransportOk, pkReq, pkEstimate, pkHave, pullPk } from './maison.js';
 
 export const holdCount = () => CARGO.holds + domStepSum('cargo', 'hold');
 export const cargoOpen = () => state.level >= CARGO.lvl;
@@ -44,13 +45,23 @@ function makeHolds() {
     take(made, holdCount() - out.length);
     take(pool, holdCount() - out.length);
     const value = CARGO.value(scaleLvl());
-    return out.map(it => ({
+    const holds = out.map(it => ({
         id: it.id,
         qty: Math.max(CARGO.min, Math.min(CARGO.max, Math.round((value * (0.8 + Math.random() * 0.4)) / Math.max(1, it.sell)))),
         got: 0,
     }));
+    // 1.104.1 : une soute demande parfois des paquets de la Maison
+    if (pkTransportOk() && Math.random() < CARGO_PK && holds.length) {
+        const pk = pkReq();
+        holds[holds.length - 1] = { id: 'paquet', pk, qty: 2 + Math.floor(Math.random() * 3), got: 0, est: Math.round(pkEstimate(pk) * CARGO_PK_PAY) };
+    }
+    return holds;
 }
-export const holdPay = (h, n) => round5(ITEMS[h.id].sell * n * CARGO.pay);
+const CARGO_PK = 0.5,
+    CARGO_PK_PAY = 1.6;
+const haveFor = h => (h.pk ? pkHave(h.pk) : state.inventory[h.id] || 0);
+export const holdHave = h => haveFor(h);
+export const holdPay = (h, n) => round5((h.pk ? h.est : ITEMS[h.id].sell) * n * CARGO.pay);
 export const cargoTotal = () => (state.cargo && state.cargo.holds ? state.cargo.holds.reduce((a, h) => a + holdPay(h, h.qty), 0) : 0);
 export const cargoBonus = () => round5(cargoTotal() * (CARGO.bonus + domStepSum('cargo', 'bonus')));
 export const cargoBonusXp = () => Math.round(cargoBonus() * CARGO.xp);
@@ -83,10 +94,13 @@ export function loadHold(i, at, n) {
     const c = state.cargo;
     const h = c && cargoHere() && c.holds[i];
     if (!h || c.done) return false;
-    const can = Math.min(state.inventory[h.id] || 0, h.qty - h.got, n || Infinity);
+    const can = Math.min(haveFor(h), h.qty - h.got, n || Infinity);
     if (can <= 0) return false;
-    state.inventory[h.id] -= can;
-    clampQuality(h.id);
+    if (h.pk) pullPk(h.pk, can);
+    else {
+        state.inventory[h.id] -= can;
+        clampQuality(h.id);
+    }
     h.got += can;
     const gold = holdPay(h, can);
     earn(gold, at);
@@ -109,4 +123,4 @@ export function loadHold(i, at, n) {
     return true;
 }
 export const cargoReady = () =>
-    cargoHere() && state.cargo && !state.cargo.done ? state.cargo.holds.filter(h => h.got < h.qty && (state.inventory[h.id] || 0) > 0).length : 0;
+    cargoHere() && state.cargo && !state.cargo.done ? state.cargo.holds.filter(h => h.got < h.qty && haveFor(h) > 0).length : 0;
