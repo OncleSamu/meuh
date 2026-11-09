@@ -69,6 +69,7 @@ export const boxStock = id => (PACK[id] && PACK[id].item ? state.inventory[PACK[
 export const packCan = id => !!PACK[id] && boxStock(id) >= 1;
 // la plus belle boîte qui convient : la plus spécialisée d'abord (un panier pour des fruits), la plus haute en palier ensuite
 export function autoPack(items) {
+    if (!items.length) return 'carton'; // 1.104.5 : rien de choisi, la boîte de carton
     const ok = PACKS.filter(p => packOpen(p.id) && packFits(p.id, items) && packCan(p.id));
     const spec = p => (p.fits === '*' ? 99 : p.fits.length);
     ok.sort((a, b) => spec(a) - spec(b) || b.tier - a.tier);
@@ -196,7 +197,8 @@ export const offerFor = (cof, c, g) => {
     return Math.round(pkValue(cof) * c.pay * (g && g.star != null ? STARS.pay : 1));
 };
 // 1.103.2 : l'expérience d'une vente de paquet
-export const pkXp = pay => Math.round(MAISON.xp + pay * MAISON.xpPay);
+// 1.104.5 : le socle grandit avec la valeur (un paquet sans valeur ne rapporte presque rien) ; au niveau 60, un paquet de 1 200 pièces touche le socle entier
+export const pkXp = pay => Math.round(MAISON.xp * Math.min(1, pay / Math.max(1, state.level * MAISON.xpRef)) + pay * MAISON.xpPay);
 function takeCoffret(cof, at, pay, rep) {
     M().stock = M().stock.filter(x => x !== cof);
     earn(pay, at);
@@ -300,6 +302,8 @@ export function skipOrder(oi) {
 export const bestPkFor = o => M().stock.filter(c => orderFits(c, o)).sort((a, b) => pkValue(a) - pkValue(b))[0] || null;
 export function maisonTick() {
     if (!M()) return false;
+    // 1.104.5 : les paquets d'avant la 1.101 n'avaient pas de boîte enregistrée
+    M().stock.forEach(c => c.pack || (c.pack = 'carton'));
     let changed = ordersTick();
     // plusieurs paquets peuvent s'être finis hors ligne
     for (let k = 0; k < 10 && M().work && now() >= M().work.ready && M().stock.length < MAISON.stock; k++) {
@@ -358,6 +362,7 @@ export const pkHave = req => (M() ? M().stock.filter(c => fitsReq(c, req)).lengt
 // retire n paquets qui conviennent (les moins chers) ; la réputation monte comme pour une vente
 export function pullPk(req, n) {
     if (pkHave(req) < n) return 0;
+    // 1.104.5 : renvoie la valeur des paquets chargés (le transport paie selon elle)
     const list = M()
         .stock.filter(c => fitsReq(c, req))
         .sort((a, b) => pkValue(a) - pkValue(b))
@@ -371,5 +376,5 @@ export function pullPk(req, n) {
     M().sold += n;
     state.stats.coffretsSold = (state.stats.coffretsSold || 0) + n;
     state.stats.coffretShipped = (state.stats.coffretShipped || 0) + n;
-    return n;
+    return list.reduce((a, c) => a + pkValue(c), 0);
 }

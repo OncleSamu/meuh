@@ -9,7 +9,7 @@ import * as G from '../../src/systems/index.js';
 import { FETE } from '../../src/data/fete.js';
 import { VILLAGERS } from '../../src/data/village.js';
 
-let T = Date.UTC(2026, 10, 8, 12);
+const T = Date.UTC(2026, 10, 8, 12);
 function farm(camp = true) {
     setClock(() => T);
     setStore(memStore());
@@ -58,7 +58,7 @@ test('fête : le bilan est figé le soir de la fête et compte la partie', () =>
     G.launchValleeFete();
     const b = state.fete.bilan;
     assert.equal(b.harvested, 1234);
-    assert.equal(b.guests, 999 > 0 ? state.stats.campGuests : 0);
+    assert.equal(b.guests, state.stats.campGuests);
     state.stats.harvested = 9999;
     assert.equal(state.fete.bilan.harvested, 1234);
     assert.ok(b.level === 60 && b.day >= 1);

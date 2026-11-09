@@ -298,7 +298,7 @@ function makeTruck() {
         const pk = pkReq();
         const qty = 1 + Math.floor(Math.random() * 2);
         const gold = round5(pkEstimate(pk) * qty * TRAIN_PK_PAY * mult);
-        slots[2] = { id: 'paquet', pk, qty, loaded: false, gold, xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus() * 2)), mat: Math.random() < 0.5 ? pickRand(RARE) : null };
+        slots[2] = { id: 'paquet', pk, qty, mult, loaded: false, gold, xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus() * 2)), mat: Math.random() < 0.5 ? pickRand(RARE) : null };
     }
     const sum = slots.reduce((a, sl) => a + sl.gold, 0);
     Object.assign(t, {
@@ -324,8 +324,12 @@ export function loadSlot(k, at) {
     const t = state.truck,
         sl = t.slots[k];
     if (!sl || sl.loaded || !slotHave(sl)) return false;
-    if (sl.pk) pullPk(sl.pk, sl.qty);
-    else {
+    if (sl.pk) {
+        // 1.104.5 : payé selon la valeur réelle des paquets chargés (le prix affiché n'est qu'une estimation)
+        const val = pullPk(sl.pk, sl.qty);
+        sl.gold = round5(val * TRAIN_PK_PAY * (sl.mult || 1));
+        sl.xp = Math.max(5, Math.round(sl.gold * BALANCE.truckXp * xpBonus() * 2));
+    } else {
         state.inventory[sl.id] -= sl.qty;
         clampQuality(sl.id);
     }

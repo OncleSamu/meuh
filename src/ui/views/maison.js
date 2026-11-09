@@ -163,12 +163,13 @@ defineSheet('pkOrder', {
 defineSheet('pkGuest', {
     title: 'Proposer un paquet',
     render(o) {
-        const g = G.campGuests()[+o.g];
+        const gk = o.n != null ? G.campGuests().findIndex(x => x.name === o.n) : +o.g;
+        const g = G.campGuests()[gk];
         if (!g || g.pk) return '<p class="empty">Ce campeur a déjà son paquet.</p>';
         const c = MAISON_CLIENTS.find(k => k.camp);
         const list = state.maison ? state.maison.stock.filter(x => G.canSellToGuest(x, g)) : [];
         return list.length
-            ? `${g.star != null ? '<p class="card-sub">Un campeur remarquable : un paquet d’argent au moins.</p>' : ''}${list.map(x => `<div class="pk-row">${pkHtml(x, 'sm')}<span class="pk-row-main"><b>${esc(x.name)}</b><small>${QUALITY[x.q].name} · ${fmt(G.offerFor(x, c, g))} pièces</small></span>${btn('Vendre', { act: 'pkGuestSell', data: { g: o.g, uid: x.uid }, kind: 'green', size: 'sm' })}</div>`).join('')}`
+            ? `${g.star != null ? '<p class="card-sub">Un campeur remarquable : un paquet d’argent au moins.</p>' : ''}${list.map(x => `<div class="pk-row">${pkHtml(x, 'sm')}<span class="pk-row-main"><b>${esc(x.name)}</b><small>${QUALITY[x.q].name} · ${fmt(G.offerFor(x, c, g))} pièces</small></span>${btn('Vendre', { act: 'pkGuestSell', data: { g: gk, uid: x.uid }, kind: 'green', size: 'sm' })}</div>`).join('')}`
             : '<p class="empty">Aucun paquet ne lui convient sur l’étagère.</p>';
     },
 });

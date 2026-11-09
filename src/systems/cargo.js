@@ -96,13 +96,15 @@ export function loadHold(i, at, n) {
     if (!h || c.done) return false;
     const can = Math.min(haveFor(h), h.qty - h.got, n || Infinity);
     if (can <= 0) return false;
-    if (h.pk) pullPk(h.pk, can);
+    let val = 0;
+    if (h.pk) val = pullPk(h.pk, can);
     else {
         state.inventory[h.id] -= can;
         clampQuality(h.id);
     }
     h.got += can;
-    const gold = holdPay(h, can);
+    // 1.104.5 : une soute de paquets paie selon la valeur réelle des paquets chargés
+    const gold = h.pk ? round5(val * CARGO_PK_PAY * CARGO.pay) : holdPay(h, can);
     earn(gold, at);
     addXp(Math.round(gold * CARGO.xp), at);
     state.income.trucks = (state.income.trucks || 0) + gold;

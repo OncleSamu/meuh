@@ -10,7 +10,7 @@ import { blocks, actions, esc } from '../dom.js';
 import { ico } from '../icons.js';
 import { btn, hint } from '../kit.js';
 import { defineView, go } from '../app.js';
-import { defineSheet, openSheet } from '../sheets.js';
+import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { SPRITES, TENT_COLORS, CABIN_COLORS, sceneBg } from '../../art/camping.js';
 import { campingCard, askCard, residentCard, guestCard, upsHtml } from './camping.js';
 import '../sheets/resfiche.js';
@@ -79,12 +79,14 @@ function sceneHtml() {
             // 1.104.4 : un campeur qui demande à rester lève une bulle « cabane »
             const bub = g.ask ? bubble(ico(['ui', 'house']), 'ready stay') : next ? bubble(ico(['item', next.item]), ready ? 'ready' : '') : bubble('✓');
             const star = g.star != null ? `<span class="cm-star">${ico(['ui', 'star'])}</span>` : g.visits > 1 ? `<span class="cm-visits">×${g.visits}</span>` : '';
-            out.push(spot(x, y, 20, SPRITES.tent(TENT_COLORS[(k + hash(g.name)) % TENT_COLORS.length]) + avatar(g.look) + bub + star, { act: 'campOne', data: { kind: 'guest', i }, cls: `tent${g.star != null ? ' star' : ''}`, label: g.name }));
+            out.push(spot(x, y, 20, SPRITES.tent(TENT_COLORS[(k + hash(g.name)) % TENT_COLORS.length]) + avatar(g.look) + bub + star, { act: 'campOne', data: { kind: 'guest', i, n: esc(g.name) }, cls: `tent${g.star != null ? ' star' : ''}`, label: g.name }));
         } else if (i < G.campPitches()) out.push(spot(x, y, 20, SPRITES.pitchOpen(), { cls: 'pitch static' }));
         else if (i === G.campPitches()) {
             out.push(
+                // 1.104.5 : on confirme l'achat dans une petite fenêtre (avant : acheté d'un seul appui, ou rien sans le dire)
                 spot(x, y, 20, SPRITES.pitchLocked() + bubble('+', 'plus'), {
-                    act: 'campPitch',
+                    act: 'open',
+                    data: { sheet: 'campPitchBuy' },
                     cls: `pitch buy${G.canAddPitch() ? ' can' : ''}`,
                     label: `Un emplacement de plus, ${fmt(G.pitchCost())} pièces`,
                 }),
@@ -115,7 +117,8 @@ function sceneHtml() {
     asks.forEach((a, i) => out.push(spot(ASKS[i][0], ASKS[i][1], 9, `<span class="cm-av big">${ico(['villager', a.look], 'ico')}</span>${bubble('?', 'ready')}`, { act: 'campOne', data: { kind: 'ask', i }, cls: 'ask', label: `${a.name} voudrait s’installer` })));
     const ev = G.campEvent();
     const ribbon = `<button class="cm-event" data-act="open" data-sheet="campevent">${ico(['ui', 'sparkle'])}Aujourd’hui · ${ev.name}</button>`;
-    return `${ribbon}<div class="cm-scene${night ? ' night' : ''}">${sceneBg()}${out.join('')}${night ? `<div class="cm-night"></div>${lights.join('')}` : ''}</div>`;
+    // 1.104.5 : la nuit assombrit le sol et les dessins, pas les bulles ni les visages
+    return `${ribbon}<div class="cm-scene${night ? ' night' : ''}">${sceneBg()}${night ? '<div class="cm-night"></div>' : ''}${out.join('')}${night ? lights.join('') : ''}</div>`;
 }
 
 const BONUS_TXT = {
@@ -159,9 +162,23 @@ defineSheet('campone', {
     title: o => (o.kind === 'guest' ? 'Un campeur' : o.kind === 'res' ? 'Un résident' : 'Un voyageur'),
     render(o) {
         const i = +o.i;
-        if (o.kind === 'guest') return G.campGuests()[i] ? guestCard(G.campGuests()[i], i) : '<p class="empty">Ce campeur est reparti.</p>';
+        if (o.kind === 'guest') {
+            // 1.104.5 : par son nom, pour ne jamais montrer un autre campeur
+            const k = o.n != null ? G.campGuests().findIndex(x => x.name === o.n) : i;
+            return k >= 0 && G.campGuests()[k] ? guestCard(G.campGuests()[k], k) : '<p class="empty">Ce campeur est reparti.</p>';
+        }
         if (o.kind === 'res') return G.campRes()[i] ? residentCard(G.campRes()[i], i) : '<p class="empty">Ce résident n’est plus là.</p>';
         return G.campAsks()[i] ? askCard(G.campAsks()[i], i) : '<p class="empty">Ce voyageur est reparti.</p>';
+    },
+});
+defineSheet('campPitchBuy', {
+    title: 'Un emplacement de plus',
+    render() {
+        const cost = G.pitchCost();
+        if (!cost) return '<p class="empty">Le camping a tous ses emplacements.</p>';
+        const ok = G.canAddPitch();
+        return `<div class="card camp-card"><p class="card-sub">Une tente de plus, donc un campeur de plus à la fois. Le camping en a ${G.campPitches()} sur ${CAMPING.maxPitches}.</p>
+            <div class="od-foot">${btn(`Acheter · ${fmt(cost)}${ico(['ui', 'coin'])}`, { act: 'campPitchOk', kind: ok ? 'green' : '', disabled: !ok })}</div>${ok ? '' : `<p class="card-sub">Il manque ${fmt(cost - state.money)} pièces.</p>`}</div>`;
     },
 });
 defineSheet('campevent', {
@@ -182,7 +199,8 @@ defineSheet('campups', {
 
 export function setupCampMap() {
     actions({
-        campOne: (el, d) => (d.kind === 'res' ? openSheet('resFiche', { i: +d.i, tab: 'friend' }) : openSheet('campone', { kind: d.kind, i: +d.i })),
+        campPitchOk: () => G.addPitch() && closeSheet('campPitchBuy'),
+        campOne: (el, d) => (d.kind === 'res' ? openSheet('resFiche', { i: +d.i, tab: 'friend' }) : openSheet('campone', { kind: d.kind, i: +d.i, n: d.n })),
         campHub: (el, d) => (d.id === 'maison' ? go('machines/maison') : openSheet('hub', { id: d.id })),
     });
 }

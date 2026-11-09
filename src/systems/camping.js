@@ -61,7 +61,9 @@ export const jobKey = r => {
 export const jobFx = r => JOB_FX[jobKey(r)] || null;
 export const resHeartsOf = r => RESIDENTS.hearts.filter(v => (r.fr || 0) >= v).length;
 // la somme d'un bonus de métier, pour tous les résidents, multiplié par leurs cœurs
-export const resBonus = k => (state.camping && state.camping.res ? state.camping.res.reduce((a, r) => a + ((jobFx(r) || {})[k] || 0) * resHeartsOf(r), 0) : 0);
+// 1.104.5 : chaque bonus est plafonné (à peu près deux résidents à cinq cœurs)
+export const RES_CAPS = { gap: 0.5, stay: 0.5, tip: 0.3, pay: 0.2, fish: 0.6, till: 0.6, xp: 1, order: 0.5, star: 0.2 };
+export const resBonus = k => Math.min(RES_CAPS[k] ?? Infinity, state.camping && state.camping.res ? state.camping.res.reduce((a, r) => a + ((jobFx(r) || {})[k] || 0) * resHeartsOf(r), 0) : 0);
 
 // ---- 1.102 : l'événement du jour ----
 const dayIndex = () => {

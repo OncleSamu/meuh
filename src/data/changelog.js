@@ -1,6 +1,21 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.104.5",
+  "title": "Corrections de l'audit",
+  "date": "10 novembre 2026",
+  "items": [
+   "Train et avion-cargo : un wagon ou une soute de paquets paie selon la valeur réelle des paquets chargés (le prix affiché est une estimation)",
+   "L'expérience d'un paquet grandit avec sa valeur : un paquet sans valeur ne rapporte presque rien",
+   "Le bois, la pierre et les matériaux bruts ne vont plus dans les paquets",
+   "Les bonus des métiers des résidents sont plafonnés",
+   "Camping : un nouvel emplacement s'achète dans une petite fenêtre, avec son prix et ce qui manque",
+   "Camping : la nuit assombrit les dessins, plus les bulles ni les visages",
+   "Composer un paquet : la boîte de carton par défaut, et une case vide mène à la grille des produits",
+   "Petites corrections : la fiche d'un campeur ne se trompe plus de campeur, les vieux paquets reçoivent leur boîte"
+  ]
+ },
+ {
   "v": "1.104.4",
   "title": "Rester au camping",
   "date": "9 novembre 2026",

@@ -1,5 +1,4 @@
 // 1.100 (étape 4) : la carte de la fête de la vallée (buts, grande table, puis bilan et générique).
-import { state } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
 import { FETE } from '../../data/fete.js';
 import * as G from '../../systems/index.js';

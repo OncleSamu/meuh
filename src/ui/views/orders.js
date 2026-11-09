@@ -153,7 +153,7 @@ function train() {
                 <div class="wagon-info">${
                     sl.loaded
                         ? ico(['ui', 'check'])
-                        : `<span class="slot-have${ok ? ' ok' : ''}">${have} en stock</span><span class="wagon-rew">${fmt(sl.gold)}${ico(['ui', 'coin'])}${sl.mat ? ico(['item', sl.mat]) : ''}</span>
+                        : `<span class="slot-have${ok ? ' ok' : ''}">${have} en stock</span><span class="wagon-rew">${sl.pk ? '≈ ' : ''}${fmt(sl.gold)}${ico(['ui', 'coin'])}${sl.mat ? ico(['item', sl.mat]) : ''}</span>
                     ${btn('Charger', { act: 'loadWagon', data: { k }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}`
                 }</div></div>`;
         })
@@ -180,7 +180,7 @@ function cargoCard() {
                 ? `<button class="hold-item" data-act="pkGoShelf" aria-label="Étagère de la Maison">${ico(['ui', 'maison'], 'ico big')}</button>`
                 : `<button class="hold-item" data-act="produce" data-id="${h.id}" aria-label="Aller produire">${ico(['item', h.id], 'ico big')}</button>`;
             return `<div class="hold${full ? ' full' : ''}">${head}
-                <div class="hold-main"><b>${h.pk ? esc(G.pkReqTxt(h.pk)) : ITEMS[h.id].name}</b>${bar(h.got / h.qty)}<small>${fmt(h.got)} / ${fmt(h.qty)}${full ? '' : ` · ${fmt(have)} en stock${have ? ` · ${fmt(G.holdPay(h, Math.min(have, left)))}${ico(['ui', 'coin'])}` : ''}`}</small></div>
+                <div class="hold-main"><b>${h.pk ? esc(G.pkReqTxt(h.pk)) : ITEMS[h.id].name}</b>${bar(h.got / h.qty)}<small>${fmt(h.got)} / ${fmt(h.qty)}${full ? '' : ` · ${fmt(have)} en stock${have ? ` · ${h.pk ? '≈ ' : ''}${fmt(G.holdPay(h, Math.min(have, left)))}${ico(['ui', 'coin'])}` : ''}`}</small></div>
                 ${full ? ico(['ui', 'check'], 'ico tick') : btn(have ? `Charger ${fmt(Math.min(have, left))}` : h.pk ? 'Composer' : 'Produire', { act: have ? 'loadHold' : h.pk ? 'pkGoShelf' : 'produce', data: have ? { i } : { id: h.id }, kind: have ? 'green' : '', size: 'sm' })}</div>`;
         })
         .join('');

@@ -54,7 +54,8 @@ test('train : un wagon de paquets se charge depuis l’étagère', () => {
     const m = state.money;
     assert.ok(G.loadSlot(2, null));
     assert.equal(state.maison.stock.length, 0);
-    assert.ok(state.money - m >= 5000);
+    assert.equal(state.money - m, state.truck.slots[2].gold); // 1.104.5 : payé selon la valeur réelle
+    assert.ok(state.truck.slots[2].gold > 0);
     assert.equal(G.wantedItems().has('paquet'), false);
 });
 

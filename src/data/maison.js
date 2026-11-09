@@ -15,6 +15,7 @@ export const MAISON = {
     // 1.103.2 : l'expérience d'une vente : un socle + une part du prix (à comparer aux commandes du village, 300 à 600 au niveau 60)
     xp: 700,
     xpPay: 0.15,
+    xpRef: 20, // 1.104.5 : le socle entier dès qu'un paquet vaut 20 pièces par niveau
     wait: 3 * 3600000, // un client revient 3 h après un achat
 };
 export const MAISON_CLIENTS = [

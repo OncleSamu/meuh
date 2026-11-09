@@ -41,6 +41,8 @@ export function itemKind(id) {
     if (SEA.has(id)) return 'mer';
     if (FIELD.has(id)) return 'champ';
     if (TREASURE.has(id)) return 'trésor';
+    // 1.104.5 : les matériaux bruts (bois, pierre, bois dur, chêne, résine, pierre taillée, sève) ne vont pas dans un paquet
+    if (i.type === 'material' || i.type === 'ingot') return null;
     if (FOOD.has(id)) return 'cuisine';
     if (i.type === 'artisan') return RECIPES[id] && CRAFT_MACHINES.has(RECIPES[id].machine) ? 'artisanat' : 'cuisine';
     return KIND_OF_TYPE[i.type] || null;

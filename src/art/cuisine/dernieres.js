@@ -1,5 +1,5 @@
 // 1.100 : les dernières recettes : plats à l'argile, pâtes de baies, friture, ablettes marinées, laines du désert.
-import { C, E, F, FC, FE, HL, L, P, R, SHADOW, leaf, sub, items } from '../kit.js';
+import { C, E, F, FC, FE, HL, L, P, R, SHADOW, leaf, items } from '../kit.js';
 import { plate, jar } from '../items2.js';
 
 const fish = (x, y, s, body, belly = '#f4f1ea', rot = 0) =>

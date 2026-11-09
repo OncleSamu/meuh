@@ -5,10 +5,8 @@ import { ANIMALS } from '../../data/animals.js';
 import { MACHINES } from '../../data/machines.js';
 import { VILLAGERS } from '../../data/village.js';
 import { items, animals, machines, people, ui as uiReg } from '../../art/kit.js';
-import * as G from '../../systems/index.js';
-import { actions, esc } from '../dom.js';
-import { section } from '../kit.js';
-import { defineSheet, closeSheet } from '../sheets.js';
+import { esc } from '../dom.js';
+import { defineSheet } from '../sheets.js';
 import { page, filterOf, filterChips, searchBox, queryOf, matchQ } from '../pager.js';
 import { emblemIco } from '../emblem.js';
 

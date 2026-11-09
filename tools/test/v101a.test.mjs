@@ -7,7 +7,7 @@ import { setView } from '../../src/core/view.js';
 import { setClock } from '../../src/core/clock.js';
 import * as G from '../../src/systems/index.js';
 import { MAISON } from '../../src/data/maison.js';
-import { PACKS, PACK } from '../../src/data/paquets.js';
+import { PACKS } from '../../src/data/paquets.js';
 import { PACK_SPRITES, packSprite } from '../../src/art/paquets.js';
 import { ITEMS } from '../../src/data/items.js';
 

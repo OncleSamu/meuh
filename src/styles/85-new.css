@@ -1661,3 +1661,15 @@ button.cm-spot:active {
 .cm-bub.stay {
     background: #fff2b0;
 }
+
+/* 1.104.5 : la nuit, les dessins s'assombrissent mais les bulles et les visages restent lisibles */
+.cm-scene.night .cm-night {
+    z-index: 0;
+}
+.cm-scene.night .cm-spot > svg,
+.cm-scene.night .cm-spot > .spr {
+    filter: brightness(0.62) saturate(0.85);
+}
+.cm-scene.night .cm-win rect {
+    filter: brightness(1.6);
+}
