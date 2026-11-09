@@ -76,7 +76,8 @@ function sceneHtml() {
             const k = Object.keys(PROFILES).indexOf(g.profile);
             const next = g.wants.find(w => !w.done);
             const ready = g.wants.some((w, j) => G.canSell(g, j));
-            const bub = next ? bubble(ico(['item', next.item]), ready ? 'ready' : '') : bubble('✓');
+            // 1.104.4 : un campeur qui demande à rester lève une bulle « cabane »
+            const bub = g.ask ? bubble(ico(['ui', 'house']), 'ready stay') : next ? bubble(ico(['item', next.item]), ready ? 'ready' : '') : bubble('✓');
             const star = g.star != null ? `<span class="cm-star">${ico(['ui', 'star'])}</span>` : g.visits > 1 ? `<span class="cm-visits">×${g.visits}</span>` : '';
             out.push(spot(x, y, 20, SPRITES.tent(TENT_COLORS[(k + hash(g.name)) % TENT_COLORS.length]) + avatar(g.look) + bub + star, { act: 'campOne', data: { kind: 'guest', i }, cls: `tent${g.star != null ? ' star' : ''}`, label: g.name }));
         } else if (i < G.campPitches()) out.push(spot(x, y, 20, SPRITES.pitchOpen(), { cls: 'pitch static' }));

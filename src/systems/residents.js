@@ -10,7 +10,7 @@ import { rng } from '../art/habitants.js';
 import { hasCost, payCost } from './home.js';
 import { earn, addXp } from './player.js';
 import { haveQ, takeQ } from './defis.js';
-import { pickWant, setLeaveHook, resBonus, jobFx } from './camping.js';
+import { pickWant, setLeaveHook, setRaviHook, leaveToStay, campGuests, resBonus, jobFx } from './camping.js';
 
 const C = () => state.camping;
 export const campRes = () => (C() ? C().res || [] : []);
@@ -19,22 +19,55 @@ export const resCabinCost = () => RESIDENTS.cabin(campRes().length + 1);
 export const resCanAccept = () => campRes().length < RESIDENTS.max && hasCost({ coins: resCabinCost() });
 export const resHearts = r => RESIDENTS.hearts.filter(v => r.fr >= v).length;
 
-// un campeur ravi qui part demande parfois à rester
-function onHappyLeave(g) {
+// 1.104.4 : un campeur ravi demande parfois à rester, pendant son séjour, depuis sa tente
+const askingCount = () => campGuests().filter(g => g.ask).length;
+function onRavi(g) {
     const c = C();
-    if (!c) return;
+    if (!c || g.star != null) return; // un campeur remarquable a d'autres projets
     c.res = c.res || [];
     c.asks = c.asks || [];
-    if (c.res.length + c.asks.length >= RESIDENTS.max || c.asks.length >= RESIDENTS.maxAsks) return;
+    if (c.res.length + c.asks.length + askingCount() >= RESIDENTS.max || c.asks.length + askingCount() >= RESIDENTS.maxAsks) return;
     if (Math.random() >= RESIDENTS.askChance) return;
-    const names = [...c.res, ...c.asks, ...c.guests.filter(x => x !== g)].map(x => x.name);
+    const names = [...c.res, ...c.asks].map(x => x.name);
     if (names.includes(g.name)) return;
     const jobs = JOBS[g.profile];
-    const job = jobs[Math.floor(Math.random() * jobs.length)][g.woman ? 1 : 0];
-    c.asks.push({ look: g.look, name: g.name, from: g.from, profile: g.profile, woman: !!g.woman, job });
-    if (view.started) toast(`${g.name} ${g.from} voudrait s’installer au camping`, ['ui', 'heart']);
+    g.ask = { job: jobs[Math.floor(Math.random() * jobs.length)][g.woman ? 1 : 0] };
+    if (view.started) toast(`${g.name} adore son séjour et voudrait rester au camping !`, ['ui', 'heart']);
+}
+setRaviHook(onRavi);
+// s'il repart sans réponse, sa demande l'attend au portail
+function onHappyLeave(g) {
+    const c = C();
+    if (!c || !g.ask) return;
+    c.asks = c.asks || [];
+    c.asks.push({ look: g.look, name: g.name, from: g.from, profile: g.profile, woman: !!g.woman, job: g.ask.job, tent: true });
 }
 setLeaveHook(onHappyLeave);
+// accueillir un campeur depuis sa tente : il range sa tente et s'installe dans une cabane
+export function resAcceptGuest(gi, at) {
+    const g = campGuests()[gi];
+    if (!g || !g.ask || !resCanAccept()) return false;
+    payCost({ coins: resCabinCost() });
+    const a = { look: g.look, name: g.name, from: g.from, profile: g.profile, woman: !!g.woman, job: g.ask.job };
+    g.ask = null;
+    leaveToStay(g, at);
+    const r = newResident(a);
+    C().res = C().res || [];
+    C().res.push(r);
+    resMakeOrder(r);
+    state.stats.campResidents = (state.stats.campResidents || 0) + 1;
+    addXp(RESIDENTS.xp, at);
+    sfx('level');
+    burst(at, 'sparkle', 14);
+    toast(`${r.name} range sa tente et s’installe dans une cabane du camping !`, ['ui', 'heart']);
+    return true;
+}
+export function resDeclineGuest(gi) {
+    const g = campGuests()[gi];
+    if (!g || !g.ask) return false;
+    g.ask = null;
+    return true;
+}
 
 export function newResident(a, seed = Math.floor(Math.random() * 1e9)) {
     const r = rng(seed);
@@ -194,4 +227,4 @@ export function residentTick() {
     for (const r of C().res) if (!r.order && now() >= (r.wait || 0)) (resMakeOrder(r), (changed = true));
     return changed;
 }
-export const residentReady = () => campRes().filter(r => resBasketReady(r) || resCanDeliver(r) || (resGiftReady(r) && r.likes.some(id => haveQ(id, 0) >= 1))).length + (campAsks().length && resCanAccept() ? 1 : 0);
+export const residentReady = () => campRes().filter(r => resBasketReady(r) || resCanDeliver(r) || (resGiftReady(r) && r.likes.some(id => haveQ(id, 0) >= 1))).length + ((campAsks().length || campGuests().some(g => g.ask)) && resCanAccept() ? 1 : 0);

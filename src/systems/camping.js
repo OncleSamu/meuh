@@ -156,6 +156,7 @@ export function sellTo(gi, i, at) {
     takeQ(w.item, 1, wantQ(w));
     w.done = true;
     earn(priceOf(w.item, g), at);
+    checkRavi(g);
     state.stats.campSales = (state.stats.campSales || 0) + 1;
     sfx('coin');
     burst(at, 'sparkle', 8);
@@ -171,7 +172,20 @@ var leaveHook;
 export function setLeaveHook(f) {
     leaveHook = f;
 }
-function leave(g, at) {
+// 1.104.4 : un campeur ravi demande parfois à rester, depuis sa tente (residents.js décide)
+// eslint-disable-next-line no-var -- var : même raison que leaveHook
+var raviHook;
+export function setRaviHook(f) {
+    raviHook = f;
+}
+function checkRavi(g) {
+    if (g.asked || guestMood(g) !== 2) return;
+    g.asked = true;
+    if (raviHook) raviHook(g);
+}
+// stay : il range sa tente pour s'installer dans une cabane (pas de demande au portail)
+export const leaveToStay = (g, at) => leave(g, at, true);
+function leave(g, at, stay = false) {
     const mood = guestMood(g);
     const loyal = Math.min(REGULARS.tipMax, ((g.visits || 1) - 1) * REGULARS.tip);
     const tip = mood === 2 ? Math.round(g.wants.reduce((a, w) => a + priceOf(w.item, g), 0) * (tipRate() + loyal + (g.star != null ? STARS.tip : 0))) : 0;
@@ -179,7 +193,7 @@ function leave(g, at) {
     c.visits = c.visits || {};
     c.visits[g.name] = g.visits || 1;
     if (g.star == null) c.past.unshift({ name: g.name, look: g.look, from: g.from, profile: g.profile, woman: g.woman, mood });
-    if (mood === 2 && leaveHook) leaveHook(g);
+    if (mood === 2 && leaveHook && !stay) leaveHook(g);
     c.past.length = Math.min(c.past.length, CAMPING.keep);
     c.guests = c.guests.filter(x => x !== g);
     if (tip) earn(tip, at);
@@ -188,7 +202,7 @@ function leave(g, at) {
     if (g.star != null && mood === 2) state.stats.campStars = (state.stats.campStars || 0) + 1;
     if ((g.visits || 1) > 1) state.stats.campRegulars = (state.stats.campRegulars || 0) + 1;
     if (mood === 2) state.stats.campHappy = (state.stats.campHappy || 0) + 1;
-    if (view.started) toast(`${g.name} repart ${MOODS[mood].toLowerCase()}${tip ? ` · pourboire ${tip}` : ''}`, ['ui', 'coin']);
+    if (view.started && !stay) toast(`${g.name} repart ${MOODS[mood].toLowerCase()}${tip ? ` · pourboire ${tip}` : ''}`, ['ui', 'coin']);
 }
 // ---- l'épicerie : une caisse qui se remplit hors ligne ----
 export const tillCap = () => CAMPING.tillHours * tillPerHour();
@@ -213,6 +227,7 @@ export function campTick() {
     const c = state.camping;
     if (!c) return false;
     let changed = false;
+    for (const g of c.guests) checkRavi(g);
     for (const g of c.guests.slice()) if (now() >= g.leave) (leave(g, null), (changed = true));
     tillTick();
     if (view.started && !view.hidden && campFree() > 0 && now() >= c.next) {

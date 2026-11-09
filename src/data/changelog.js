@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.104.4",
+  "title": "Rester au camping",
+  "date": "9 novembre 2026",
+  "items": [
+   "Un campeur ravi demande à rester pendant son séjour, depuis sa tente : une bulle « cabane » se lève, sa fiche vous pose la question",
+   "Accueilli, il range sa tente et s'installe dans une cabane ; sans réponse avant son départ, sa demande attend au portail"
+  ]
+ },
+ {
   "v": "1.104.3",
   "title": "Des genres qui ont du sens",
   "date": "9 novembre 2026",

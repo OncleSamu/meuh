@@ -10,6 +10,7 @@ import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { ico } from '../icons.js';
 import { btn, hint } from '../kit.js';
+import { closeSheet } from '../sheets.js';
 
 // 1.102 : ce que le métier d'un résident apporte au camping, et son panier
 export function jobHtml(r, i, vf) {
@@ -28,7 +29,7 @@ export function jobHtml(r, i, vf) {
 const hearts = n => `<span class="fid">${[1, 2, 3, 4, 5].map(i => `<i class="${n >= i ? 'on' : ''}">♥</i>`).join('')}</span>`;
 export function askCard(a, i) {
     const ok = G.resCanAccept();
-    return `<div class="card camp-card"><div class="card-head">${ico(['villager', a.look], 'ico big')}<div class="card-main"><div class="card-title">${a.name} ${a.from}</div><div class="card-sub">${a.job.charAt(0).toUpperCase() + a.job.slice(1)} · voudrait s’installer dans une cabane</div></div></div>
+    return `<div class="card camp-card"><div class="card-head">${ico(['villager', a.look], 'ico big')}<div class="card-main"><div class="card-title">${a.name} ${a.from}</div><div class="card-sub">${a.job.charAt(0).toUpperCase() + a.job.slice(1)} · ${a.tent ? 'a campé chez vous, a adoré, et voudrait revenir s’installer dans une cabane' : 'voudrait s’installer dans une cabane'}</div></div></div>
         <div class="od-foot">${btn(`Accueillir · ${fmt(G.resCabinCost())}${ico(['ui', 'coin'])}`, { act: 'campAccept', data: { i }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}${btn('Pas cette fois', { act: 'campDecline', data: { i }, size: 'sm' })}</div></div>`;
 }
 export function residentCard(r, i) {
@@ -60,6 +61,13 @@ function pkLine(g, gi) {
     const n = state.maison.stock.filter(c => G.canSellToGuest(c, g)).length;
     return `<div class="od-line">${ico(['ui', 'maison'])}<span><b>Un paquet de ${esc(G.brandName())}</b><small>${n ? `${n} paquet${n > 1 ? 's' : ''} lui convien${n > 1 ? 'nent' : 't'}` : g.star != null ? 'Il en veut un d’argent au moins' : 'Aucun paquet sur l’étagère'}</small></span>${btn('Proposer', { act: 'open', data: { sheet: 'pkGuest', g: gi }, kind: n ? 'green' : '', size: 'sm', disabled: !n })}</div>`;
 }
+// 1.104.4 : un campeur ravi demande à rester, depuis sa tente
+function stayHtml(g, gi) {
+    if (!g.ask) return '';
+    const ok = G.resCanAccept();
+    return `<div class="camp-stay"><b>« J’adore votre camping… je pourrais rester ? »</b><small>${g.name} voudrait ranger sa tente et s’installer pour de bon dans une cabane, comme ${esc(g.ask.job)}. Son métier aidera le camping.</small>
+        <div class="od-foot">${btn(`Accueillir · ${fmt(G.resCabinCost())}${ico(['ui', 'coin'])}`, { act: 'campStay', data: { g: gi }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}${btn('Pas cette fois', { act: 'campNoStay', data: { g: gi }, size: 'sm' })}</div></div>`;
+}
 export function guestCard(g, gi) {
     const left = formatDuration(Math.max(0, (g.leave - now()) / 1000));
     const wants = g.wants
@@ -68,7 +76,7 @@ export function guestCard(g, gi) {
                 `<div class="od-line">${ico(['item', w.item])}<span><b>${ITEMS[w.item].name}${w.q ? ` <em class="q-tag q${w.q}">${QUALITY[w.q].name} ou mieux</em>` : ''}</b><small>${w.done ? 'Vendu ✓' : `${fmt(G.priceOf(w.item, g))} pièces${G.eventBoosts(w.item) ? ' · ' + G.campEvent().name.toLowerCase() : ''}${G.canSell(g, i) ? '' : ' · pas en stock'}`}</small></span>${w.done ? '' : btn('Vendre', { act: 'campSell', data: { g: gi, i }, kind: G.canSell(g, i) ? 'green' : '', size: 'sm', disabled: !G.canSell(g, i) })}</div>`,
         )
         .join('');
-    return `<div class="card camp-card"><div class="card-head">${ico(['villager', g.look], 'ico big')}<div class="card-main"><div class="card-title">${g.star != null ? ico(['ui', 'star']) : ''}${g.name} ${g.from}</div><div class="card-sub">${G.guestTitle(g)} · repart dans ${left}</div></div></div>${g.say ? `<p class="camp-say">« ${g.say} »</p>` : ''}${wants}${pkLine(g, gi)}${g.star != null ? hint(`Campeur remarquable : produits d’argent au moins, payés ×${STARS.pay}, et un gros pourboire s’il repart ravi.`) : g.visits > 1 ? hint('Un habitué : son pourboire grandit à chaque séjour.') : ''}</div>`;
+    return `<div class="card camp-card"><div class="card-head">${ico(['villager', g.look], 'ico big')}<div class="card-main"><div class="card-title">${g.star != null ? ico(['ui', 'star']) : ''}${g.name} ${g.from}</div><div class="card-sub">${G.guestTitle(g)} · repart dans ${left}</div></div></div>${stayHtml(g, gi)}${g.say ? `<p class="camp-say">« ${g.say} »</p>` : ''}${wants}${pkLine(g, gi)}${g.star != null ? hint(`Campeur remarquable : produits d’argent au moins, payés ×${STARS.pay}, et un gros pourboire s’il repart ravi.`) : g.visits > 1 ? hint('Un habitué : son pourboire grandit à chaque séjour.') : ''}</div>`;
 }
 export function upsHtml() {
     const ups = Object.entries(CAMP_UPGRADES)
@@ -107,6 +115,8 @@ export function setupCamping() {
         campTill: el => G.collectTill(el),
         campSell: (el, d) => G.sellTo(+d.g, +d.i, el),
         campAccept: (el, d) => G.resAccept(+d.i, el),
+        campStay: (el, d) => G.resAcceptGuest(+d.g, el) && closeSheet('campone'),
+        campNoStay: (_, d) => G.resDeclineGuest(+d.g),
         campDecline: (_, d) => G.resDecline(+d.i),
         campDeliver: (el, d) => G.resDeliver(+d.i, el),
         campGift: (el, d) => G.resGift(+d.i, d.id, el),

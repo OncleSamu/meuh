@@ -1643,3 +1643,21 @@ button.cm-spot:active {
 .avatar.xs.pk-who svg {
     display: block;
 }
+
+/* 1.104.4 : la demande de rester, dans la fiche du campeur */
+.camp-stay {
+    margin: 4px 0 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: #fff2b0;
+    border: 2px solid var(--ink, #3a2618);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.camp-stay small {
+    color: var(--ink-soft, #6b5a44);
+}
+.cm-bub.stay {
+    background: #fff2b0;
+}

@@ -73,3 +73,37 @@ test('genres 1.104.3 : chaque produit est rangé selon son origine', async () =>
     assert.equal(normKind('frais'), 'champ');
     assert.equal(normKind('fabriqué'), 'cuisine');
 });
+
+test('résidents 1.104.4 : un campeur ravi demande à rester depuis sa tente ; on l’accueille, sa tente laisse la place', async () => {
+    const { RESIDENTS } = await import('../../src/data/campers.js');
+    farm();
+    const chance = RESIDENTS.askChance;
+    RESIDENTS.askChance = 1;
+    state.camping.guests = [];
+    state.camping.res = [];
+    state.camping.asks = [];
+    const g = G.newGuest(T, 3, { plain: true });
+    for (let i = 0; i < g.wants.length; i++) {
+        state.inventory[g.wants[i].item] = 5;
+        assert.ok(G.sellTo(0, i));
+    }
+    assert.ok(g.ask && g.ask.job, 'la demande est sur la tente');
+    assert.equal(G.campAsks().length, 0);
+    const m = state.money;
+    assert.ok(G.resAcceptGuest(0));
+    assert.equal(G.campGuests().length, 0);
+    assert.equal(G.campRes().length, 1);
+    assert.equal(G.campRes()[0].name, g.name);
+    assert.ok(state.money < m + 1e9);
+    // sans réponse avant son départ, la demande attend au portail
+    const h = G.newGuest(T, 4, { plain: true });
+    h.wants.forEach(w => (w.done = true));
+    G.campTick();
+    assert.ok(h.ask);
+    h.leave = T;
+    state.camping.next = T + 1e9;
+    G.campTick();
+    assert.equal(G.campAsks().length, 1);
+    assert.equal(G.campAsks()[0].tent, true);
+    RESIDENTS.askChance = chance;
+});

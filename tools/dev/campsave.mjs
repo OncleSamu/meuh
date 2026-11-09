@@ -57,6 +57,11 @@ state.camping.past.unshift({ name: old.name, look: old.look, from: old.from, pro
 state.camping.visits = { [old.name]: 2 };
 G.newGuest(T0 - 3600e3, 1200, { regular: old.name });
 G.newGuest(T0 - 1800e3, 1300, { star: 0 });
+// 1.104.4 : un campeur ravi qui demande à rester, depuis sa tente
+const stay = G.newGuest(T0 - 1200e3, 1400, { plain: true });
+stay.wants.forEach(w => (w.done = true));
+stay.asked = true;
+stay.ask = { job: 'boulanger' };
 // deux demandes de résidence
 for (let i = 0; i < 2; i++) {
     const g = G.newGuest(T0, 3000 + i);
