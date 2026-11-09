@@ -1625,3 +1625,21 @@ button.cm-spot:active {
 .maison-head .bar {
     margin-top: 6px;
 }
+
+/* 1.104.2 : le visage du villageois dans une commande de la Maison, centré dans son rond */
+.pk-order-who {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.avatar.xs.pk-who {
+    width: 30px;
+    height: 30px;
+    flex: none;
+    border: 2px solid var(--ink, #3a2618);
+    background: #fff8e6;
+    box-sizing: border-box;
+}
+.avatar.xs.pk-who svg {
+    display: block;
+}

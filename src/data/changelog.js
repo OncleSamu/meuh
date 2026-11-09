@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.104.2",
+  "title": "Un visage bien centré",
+  "date": "9 novembre 2026",
+  "items": [
+   "Le visage du villageois dans une commande de la Maison est bien centré dans son rond"
+  ]
+ },
+ {
   "v": "1.104.1",
   "title": "Des paquets en voyage",
   "date": "9 novembre 2026",

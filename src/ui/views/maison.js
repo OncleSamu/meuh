@@ -7,7 +7,7 @@ import { ITEMS } from '../../data/items.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { closeSheet, defineSheet } from '../sheets.js';
-import { ico } from '../icons.js';
+import { ico, art } from '../icons.js';
 import { btn, segmented, bar, hint } from '../kit.js';
 import { renameBtn } from '../sheets/rename.js';
 import { QUALITY } from '../../data/farm.js';
@@ -99,8 +99,8 @@ function orderRow(o, i) {
         o.kind === 'recipe'
             ? `<div class="pk-row">${pkHtml({ pack: o.pack || 'carton', items: o.items, q: o.q }, 'sm')}<span class="pk-row-main"><b>Voudrait « ${esc(o.name)} »</b><small>${o.items.map(id => ITEMS[id].name).join(', ')}${o.q ? ` · ${QUALITY[o.q].name} ou mieux` : ''}, ${esc(o.why)}. +${MAISON_ORDERS.friend} d’amitié.</small></span></div>`
             : `<p class="card-sub">Un paquet ${ORDER_KIND_TXT[o.kind]}${o.q ? `, <b>${QUALITY[o.q].name}</b> ou mieux` : ''}, ${esc(o.why)}.</p>`;
-    const who = o.vid ? `<span class="avatar xs">${ico(['villager', o.vid])}</span>` : '';
-    return `<div class="card camp-card pk-order"><div class="card-title">${who}${esc(o.who)}</div>${what}<div class="od-foot">${deliver}${redo}${pick}${btn('Passer', { act: 'pkSkip', data: { i }, size: 'sm' })}</div></div>`;
+    const who = o.vid ? `<span class="avatar xs pk-who">${art('villager', o.vid)}</span>` : '';
+    return `<div class="card camp-card pk-order"><div class="card-title${o.vid ? ' pk-order-who' : ''}">${who}${esc(o.who)}</div>${what}<div class="od-foot">${deliver}${redo}${pick}${btn('Passer', { act: 'pkSkip', data: { i }, size: 'sm' })}</div></div>`;
 }
 function ordersTab() {
     const os = G.orders();
