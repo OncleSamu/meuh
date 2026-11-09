@@ -35,7 +35,7 @@ function composeBtn() {
 }
 function recipeRow(r) {
     const ok = G.canRemake(r);
-    return `<div class="pk-row">${pkHtml(r, 'sm')}<span class="pk-row-main"><b>${esc(r.name)}</b><small>${r.items.map(i => ITEMS[i].name).join(', ')} · ${QUALITY[r.q].name}</small></span>${btn('Refaire', { act: 'pkRemake', data: { id: r.id }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}</div>`;
+    return `<div class="pk-row">${pkHtml(r, 'sm')}<span class="pk-row-main"><b>${esc(r.name)}</b><small>${r.items.map(i => ITEMS[i].name).join(', ')} · ${QUALITY[r.q].name}${G.packCan(r.pack) ? '' : ' · boîte à fabriquer'}</small></span>${btn('Refaire', { act: 'pkRemake', data: { id: r.id }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}</div>`;
 }
 function coffretRow(c) {
     const sells = G.clientsOpen()

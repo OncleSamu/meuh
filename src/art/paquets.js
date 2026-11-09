@@ -91,3 +91,30 @@ ui.maison = () => {
     const s = packSprite('ruban', { bg: '#f7eed9', fg: '#7a1f2b' });
     return inner(s.back) + inner(s.front);
 };
+
+// 1.104 : les boîtes comme produits (fabriquées à l'emballerie), vides, aux couleurs neutres
+import { items, machines, SHADOW } from './kit.js';
+import { BOX_OF } from '../data/ajouts/emballerie.js';
+const NEUTRAL = { bg: '#f7eed9', fg: '#7a1f2b' };
+for (const [pack, id] of Object.entries(BOX_OF))
+    items[id] = () => {
+        const s = packSprite(pack, NEUTRAL);
+        return inner(s.back) + inner(s.front);
+    };
+// l'emballerie : un établi, une cagette en cours, un rouleau de ruban et une pile de boîtes
+machines.emballerie = () =>
+    SHADOW(32, 61, 28, 3) +
+    R(6, 34, 52, 6, 2, '#b07a40', 2.2) +
+    L('M10 40 V58 M54 40 V58', 3.4, '#6b4220') +
+    L('M10 50 H54', 2, '#6b4220') +
+    R(38, 20, 18, 14, 2, '#d3a76b', 2) +
+    R(45, 20, 4, 14, 0, '#efe0b0', 1.2) +
+    R(40, 8, 14, 12, 2, '#c98a4b', 2) +
+    L('M40 13 H54', 1.4, '#9a6532') +
+    R(10, 24, 20, 10, 2, '#c98a4b', 2) +
+    R(10, 22, 20, 3, 1, '#9a6532', 1.6) +
+    C(24, 30, 1, '#e8e2d4', 0.8) +
+    C(16, 30, 1, '#e8e2d4', 0.8) +
+    E(33, 30, 4, 4, '#e2582f', 0, 1.8) +
+    C(33, 30, 1.4, '#fffaf0', 0) +
+    L('M36 31 Q40 36 36 40', 1.6, '#e2582f');

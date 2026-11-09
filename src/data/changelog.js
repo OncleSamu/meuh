@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.104",
+  "title": "L'emballerie",
+  "date": "9 novembre 2026",
+  "items": [
+   "Une nouvelle machine au niveau 58, l'emballerie : les boîtes de la Maison se fabriquent par trois, comme n'importe quelle recette",
+   "Neuf boîtes à fabriquer, de la cagette à l'écrin de velours ; les villageois et les transports peuvent aussi en demander",
+   "La boîte de carton reste gratuite et toujours là",
+   "Les belles boîtes rapportent plus (jusqu'à +40 % pour l'écrin), et leur valeur compte dans celle du paquet"
+  ]
+ },
+ {
   "v": "1.103.2",
   "title": "Des paquets rentables",
   "date": "9 novembre 2026",

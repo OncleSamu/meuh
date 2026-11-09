@@ -10,6 +10,7 @@ import { NORD_CROPS, NORD_TREES } from './nord.js';
 import { RECIPES_150 } from './ajouts/oasis-cuisine.js';
 import { RECIPES_161 } from './ajouts/pizzeria.js';
 import { RECIPES_100 } from './ajouts/dernieres.js';
+import { BOXES, BOX_OUT } from './ajouts/emballerie.js';
 import { RECIPES_153 } from './ajouts/nord-cuisine.js';
 import { FISH_ITEMS_133, RECIPES_133 } from './ajouts/poissons.js';
 import { RECIPES_134 } from './ajouts/cave.js';
@@ -3013,4 +3014,10 @@ for (const [id, name, sell, needProject] of PRODUCTS_181) ITEMS[id] = { id, name
 for (const [id, name, , ing] of RECIPES_181) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}
+
+// 1.104 : les boîtes de la Maison, fabriquées par trois à l'emballerie (le prix d'une boîte : le tiers de la recette, comme ailleurs)
+for (const [, id, name, ing] of BOXES) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', box: true, sell: Math.max(5, Math.ceil((cost * 1.37) / BOX_OUT / 5) * 5) };
 }

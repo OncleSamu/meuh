@@ -22,7 +22,7 @@ function view(o) {
     const best = full ? G.bestQ(items) : 0;
     const q = full ? (o.q != null && G.canHaveQ(items, o.q) ? o.q : best) : 0;
     const auto = G.autoPack(items);
-    const pack = o.pack && G.packOpen(o.pack) && G.packFits(o.pack, items) ? o.pack : auto;
+    const pack = o.pack && G.packOpen(o.pack) && G.packFits(o.pack, items) && G.packCan(o.pack) ? o.pack : auto;
     return { items, full, best, q, pack, name: o.name || G.nameIdeas(items)[0] };
 }
 defineSheet('paquet', {
@@ -53,8 +53,10 @@ defineSheet('paquet', {
         ).join('');
         const packs = PACKS.map(p => {
             const open = G.packOpen(p.id),
-                fits = G.packFits(p.id, v.items);
-            return `<button class="pk-pick${v.pack === p.id ? ' on' : ''}${open ? '' : ' locked'}${fits ? '' : ' nofit'}" data-act="pkPack" data-id="${p.id}"${open && fits ? '' : ' disabled'}>${pkHtml({ pack: p.id, items: [], q: 0 }, 'sm')}<b>${p.name}</b><small>${open ? (fits ? '' : 'ne va pas') : 'palier ' + (p.tier + 1)}</small></button>`;
+                fits = G.packFits(p.id, v.items),
+                n = G.boxStock(p.id);
+            const tag = !open ? 'palier ' + (p.tier + 1) : !fits ? 'ne va pas' : n === Infinity ? 'toujours là' : n ? `×${n}` : 'à fabriquer';
+            return `<button class="pk-pick${v.pack === p.id ? ' on' : ''}${open ? '' : ' locked'}${fits && n ? '' : ' nofit'}" data-act="pkPack" data-id="${p.id}"${open && fits && n ? '' : ' disabled'}>${pkHtml({ pack: p.id, items: [], q: 0 }, 'sm')}<b>${p.name}</b><small>${tag}</small></button>`;
         }).join('');
         const P = PACK[v.pack];
         const val = v.full ? G.coffretValue(v.items, v.q, v.pack) : 0;
@@ -64,7 +66,7 @@ defineSheet('paquet', {
                 <div class="card-sub">${v.full ? `Vaut ${fmt(val)} pièces · ${QUALITY[v.q].name}` : 'Choisissez trois produits dans la grille.'}</div></div></div>`],
             ['slots', `<div class="pk-slots">${slots}</div>`],
             ['q', section('Qualité') + `<div class="chips-row wrap">${qchips}</div>${hint('Toutes les unités du paquet auront au moins ce rang.')}`],
-            ['packs', section('La boîte') + `<div class="pk-picks">${packs}</div><p class="card-sub">${P.blurb}</p>`],
+            ['packs', section('La boîte') + `<div class="pk-picks">${packs}</div><p class="card-sub">${P.blurb}</p>${hint('Les boîtes se fabriquent par trois à l’emballerie (Atelier › Production). La boîte de carton est toujours là. Une belle boîte rapporte plus, et sa valeur compte dans celle du paquet.')}`],
             ['grid', section('Vos produits')],
             ['search', all.length > 24 ? searchBox('pk', 'Chercher un produit') : ''],
             ['chips', filterChips('pk', opts, cur)],
@@ -76,7 +78,7 @@ defineSheet('paquet', {
     foot: o => {
         const v = view(o);
         const ok = v.full && G.canMake(v.items, v.q, v.pack);
-        return btn(`Assembler · ${formatDuration(MAISON.time / 1000)}`, { act: 'pkMake', kind: ok ? 'green' : '', wide: true, size: 'lg', disabled: !ok });
+        return btn(`Assembler · ${formatDuration(G.workTime() / 1000)}`, { act: 'pkMake', kind: ok ? 'green' : '', wide: true, size: 'lg', disabled: !ok });
     },
 });
 

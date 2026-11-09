@@ -1,3 +1,4 @@
+import { CARNET_104 } from './ajouts/emballerie.js';
 import { CARNET_100 } from './ajouts/dernieres.js';
 // Le carnet de Mamie Odette (1.2) : une anecdote par recette, débloquée à la maîtrise bronze de la recette.
 // Mamie Odette parle à son petit-enfant, le joueur. Ton grand-père, c'est Papi Lucien.
@@ -1477,6 +1478,7 @@ Object.assign(CARNET, {
 
 // 1.100 : les dernières recettes
 Object.assign(CARNET, CARNET_100);
+Object.assign(CARNET, CARNET_104);
 
 // 1.61 : la pizzeria
 Object.assign(CARNET, {

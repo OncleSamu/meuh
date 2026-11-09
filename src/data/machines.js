@@ -16,6 +16,7 @@ import { RECIPES_150, MACHINES_150 } from './ajouts/oasis-cuisine.js';
 import { RECIPES_161, PIZZERIA } from './ajouts/pizzeria.js';
 import { RECIPES_153, MACHINES_153 } from './ajouts/nord-cuisine.js';
 import { RECIPES_100 } from './ajouts/dernieres.js';
+import { BOXES, BOX_OUT, EMBALLERIE } from './ajouts/emballerie.js';
 import { ITEMS } from './items.js';
 import { ANIMALS } from './animals.js';
 // Les machines de l'atelier et toutes les recettes (niveau, durée, expérience déjà calculés).
@@ -3551,3 +3552,7 @@ applyLevels64({ ITEMS, ANIMALS, MACHINES, RECIPES });
         r.lvl = r.base = l;
     }
 }
+
+// 1.104 : l'emballerie, les boîtes de la Maison par trois (ajoutée après la répartition des niveaux : de 58 à 62)
+MACHINES[EMBALLERIE.id] = { ...EMBALLERIE };
+for (const [, id, , ing, time, lvl] of BOXES) RECIPES[id] = { id, machine: EMBALLERIE.id, ing, time, lvl, base: lvl, outQty: BOX_OUT, xp: Math.round(time / 12) };

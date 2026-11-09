@@ -160,7 +160,7 @@ test('1.26.3 : chaque plat a un voisin (sauf fêtes, outils, bijoux, selles…)'
     for (const id of none) {
         const r = RCP[id];
         assert.ok(
-            r.fete || r.holiday || ['forge', 'sawmill', 'jewelry', 'saddlery', 'pottery', 'counter'].includes(r.machine),
+            r.fete || r.holiday || ['forge', 'sawmill', 'jewelry', 'saddlery', 'pottery', 'counter', 'emballerie'].includes(r.machine),
             `${id} (${r.machine}) sans voisin`,
         );
     }

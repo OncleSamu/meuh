@@ -24,6 +24,8 @@ function farm() {
     G.buildCamp();
     G.foundMaison();
     Object.assign(state.inventory, { apple: 50, pear: 50, egg: 50, carp: 50, perch: 50, cheese: 50, bread: 50, ruby: 4 });
+    // 1.104 : les boîtes se fabriquent à l'emballerie
+    for (const p of PACKS) if (p.item) state.inventory[p.item] = 20;
 }
 
 test('paquets : dix boîtes, chacune dessinée, avec un nom et un coût en matériaux', () => {
@@ -62,7 +64,8 @@ test('paquets : assembler prend les produits (plus de matériaux depuis la 1.103
     assert.equal(G.makeCoffret(['apple', 'carp', 'egg'], 0, null, { pack: 'cagette' }), false); // la cagette ne prend pas le poisson
     assert.ok(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'cagette', name: '  Panier gourmand de fruits ' }));
     assert.equal(state.inventory.apple, apples - 1);
-    assert.equal(state.inventory.plank, planks); // 1.103.2 : les boîtes sont gratuites
+    assert.equal(state.inventory.plank, planks); // 1.103.2 : plus de matériaux
+    assert.equal(state.inventory.boxCagette, 19); // 1.104 : une cagette de l'emballerie
     T += MAISON.time + 1;
     G.maisonTick();
     const c = state.maison.stock[0];
@@ -71,11 +74,11 @@ test('paquets : assembler prend les produits (plus de matériaux depuis la 1.103
     assert.ok(c.value > 0);
 });
 
-test('paquets : sans matériaux, on assemble quand même (1.103.2)', () => {
+test('paquets : sans boîte fabriquée, pas de cagette ; le carton est toujours là (1.104)', () => {
     farm();
-    state.inventory.plank = 0;
-    state.inventory.nail = 0;
-    assert.ok(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'cagette' }));
+    state.inventory.boxCagette = 0;
+    assert.equal(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'cagette' }), false);
+    assert.ok(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'carton' }));
 });
 
 test('paquets : la qualité va jusqu’au diamant et vaut de plus en plus', () => {

@@ -9,7 +9,7 @@ import { VILLAGERS } from '../data/village.js';
 import { LOVES, GIFT_PTS } from '../data/friends.js';
 import { QUALITY } from '../data/farm.js';
 import { STARS } from '../data/camping.js';
-import { PACKS, PACK, KIND_OF_TYPE, NAME_IDEAS, NAME_MAX, RECIPES_MAX } from '../data/paquets.js';
+import { PACKS, PACK, KIND_OF_TYPE, NAME_IDEAS, NAME_MAX, RECIPES_MAX, BOX_VALUE } from '../data/paquets.js';
 import { hasCost, payCost } from './home.js';
 import { earn, addXp } from './player.js';
 import { haveQ, takeQ } from './defis.js';
@@ -56,7 +56,7 @@ export function setPalette(i) {
 }
 // ---- l'atelier ----
 export const kindOf = id => (ITEMS[id] && KIND_OF_TYPE[ITEMS[id].type]) || 'autre';
-export const canPack = id => !!ITEMS[id] && !!ITEMS[id].sell && !!KIND_OF_TYPE[ITEMS[id].type];
+export const canPack = id => !!ITEMS[id] && !!ITEMS[id].sell && !ITEMS[id].box && !!KIND_OF_TYPE[ITEMS[id].type];
 export const stockable = () =>
     Object.values(ITEMS)
         .filter(i => canPack(i.id) && (state.inventory[i.id] || 0) > 0)
@@ -64,10 +64,12 @@ export const stockable = () =>
 // ---- les boîtes ----
 export const packOpen = id => !!PACK[id] && PACK[id].tier <= maisonTier();
 export const packFits = (id, items) => !!PACK[id] && (PACK[id].fits === '*' || items.every(x => PACK[id].fits.includes(kindOf(x))));
-export const packCan = id => !!PACK[id] && hasCost(PACK[id].cost);
+// 1.104 : il faut une boîte fabriquée à l'emballerie (le carton est toujours là)
+export const boxStock = id => (PACK[id] && PACK[id].item ? state.inventory[PACK[id].item] || 0 : Infinity);
+export const packCan = id => !!PACK[id] && boxStock(id) >= 1;
 // la plus belle boîte qui convient : la plus spécialisée d'abord (un panier pour des fruits), la plus haute en palier ensuite
 export function autoPack(items) {
-    const ok = PACKS.filter(p => packOpen(p.id) && packFits(p.id, items));
+    const ok = PACKS.filter(p => packOpen(p.id) && packFits(p.id, items) && packCan(p.id));
     const spec = p => (p.fits === '*' ? 99 : p.fits.length);
     ok.sort((a, b) => spec(a) - spec(b) || b.tier - a.tier);
     return ok.length ? ok[0].id : 'carton';
@@ -93,7 +95,9 @@ export function coffretMult(items, q, pack) {
     return MAISON.base + (kinds.size === 3 ? MAISON.variety : 0) + MAISON.repMult * maisonTier() + ((PACK[pack] && PACK[pack].bonus) || 0);
 }
 // 1.103 : chaque produit compte avec sa qualité, comme partout ailleurs ; un paquet ne fait jamais perdre de valeur
-export const coffretValue = (items, q, pack) => Math.round(items.reduce((a, id) => a + ITEMS[id].sell, 0) * ((QUALITY[q] && QUALITY[q].mult) || 1) * coffretMult(items, q, pack));
+// 1.104 : la boîte compte aussi, 1,5 fois sa valeur
+const boxValue = pack => (PACK[pack] && PACK[pack].item && ITEMS[PACK[pack].item] ? ITEMS[PACK[pack].item].sell * BOX_VALUE : 0);
+export const coffretValue = (items, q, pack) => Math.round(items.reduce((a, id) => a + ITEMS[id].sell, 0) * ((QUALITY[q] && QUALITY[q].mult) || 1) * coffretMult(items, q, pack) + boxValue(pack));
 export const pkValue = c => coffretValue(c.items, c.q, c.pack || 'carton');
 // ---- 1.103 : l'atelier va plus vite et lance plusieurs paquets à la suite ----
 export const workTime = () => MAISON.times[maisonTier()] || MAISON.time;
@@ -112,7 +116,7 @@ const cleanName = n => String(n || '').trim().replace(/\s+/g, ' ').slice(0, NAME
 export function makeCoffret(items, q = 0, at, opts = {}) {
     const pack = opts.pack || autoPack(items);
     if (!canMake(items, q, pack)) return false;
-    payCost(PACK[pack].cost);
+    if (PACK[pack].item) state.inventory[PACK[pack].item]--;
     items.forEach(id => takeQ(id, 1, q));
     const name = cleanName(opts.name) || nameIdeas(items)[0];
     const rid = noteRecipe(items, q, pack, name);

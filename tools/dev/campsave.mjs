@@ -21,6 +21,10 @@ state.barn.lvl = 60;
 for (const p of Object.values(PROJECTS)) state.projects[p.id] = { given: {}, done: true };
 for (const k of Object.keys(ITEMS)) state.inventory[k] = Math.max(state.inventory[k] || 0, 12);
 for (const k of ['plank', 'beam', 'nail', 'stone', 'paint', 'wood', 'tools', 'cloth', 'hempRope']) state.inventory[k] = 400;
+// 1.104 : quelques boîtes de l'emballerie, et l'emballerie elle-même
+for (const id of ['boxCagette', 'boxPanier', 'boxFilet', 'boxRuban', 'boxCaisse', 'boxTonnelet', 'boxMalle']) state.inventory[id] = 6;
+Object.assign(state.inventory, { hardwood: 40, flax: 30, linen: 6, lavender: 10, solidOak: 6, ironIngot: 10, copperIngot: 6, cloth: 400 });
+state.machines.push(G.newMachine('emballerie'));
 // des produits de toutes les qualités, pour composer un paquet argent, or, platine ou tout en diamant
 for (const id of ['apple', 'pear', 'strawberry', 'egg', 'cherry', 'carp', 'perch', 'cheese', 'bread']) {
     state.inventory[id] = 15;

@@ -19,7 +19,8 @@ test('aucune recette ne vaut moins que ses ingrédients', () => {
     for (const r of Object.values(RECIPES)) {
         const cost = Object.entries(r.ing).reduce((a, [k, q]) => a + (ITEMS[k].sell || 0) * q, 0);
         const out = ITEMS[r.id] && ITEMS[r.id].sell;
-        if (out && cost) assert.ok(out >= cost, `${r.id} : ${out} < ${cost}`);
+        // 1.104 : une recette qui en fait plusieurs (les boîtes, par trois) compte toute sa fournée
+        if (out && cost) assert.ok(out * (r.outQty || 1) >= cost, `${r.id} : ${out} < ${cost}`);
     }
 });
 
