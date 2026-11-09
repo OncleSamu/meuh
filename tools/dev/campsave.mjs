@@ -20,7 +20,12 @@ state.money = 30000000;
 state.barn.lvl = 60;
 for (const p of Object.values(PROJECTS)) state.projects[p.id] = { given: {}, done: true };
 for (const k of Object.keys(ITEMS)) state.inventory[k] = Math.max(state.inventory[k] || 0, 12);
-for (const k of ['plank', 'beam', 'nail', 'stone', 'paint', 'wood', 'tools']) state.inventory[k] = 400;
+for (const k of ['plank', 'beam', 'nail', 'stone', 'paint', 'wood', 'tools', 'cloth', 'hempRope']) state.inventory[k] = 400;
+// des produits de toutes les qualités, pour composer un paquet argent, or, platine ou tout en diamant
+for (const id of ['apple', 'pear', 'strawberry', 'egg', 'cherry', 'carp', 'perch', 'cheese', 'bread']) {
+    state.inventory[id] = 15;
+    state.quality[id] = { s: 4, g: 4, p: 3, d: 4 };
+}
 G.normalizeState();
 state.tutorial = { ...(state.tutorial || {}), done: true };
 state.tips = state.tips || {};
@@ -73,16 +78,19 @@ state.stats.campFriends = 1;
 // la Maison
 G.foundMaison();
 state.maison.name = 'Les Meuh du Val';
-state.maison.rep = 45;
+state.maison.rep = 120; // palier 4 : toutes les boîtes jusqu'à la tonnelle
 state.maison.stock = [];
 import('../../src/data/maison.js').then(() => {});
-const { MAISON } = await import('../../src/data/maison.js');
-const ids = Object.keys(ITEMS).filter(k => ITEMS[k].sell && MAISON.kinds[ITEMS[k].type]);
+const ids = Object.keys(ITEMS).filter(k => G.canPack(k) && ITEMS[k].type !== 'ore' && ITEMS[k].type !== 'ingot');
+const NAMES = ['Panier gourmand de fruits', 'Cagette du large', 'Coffret du terroir', 'Surprise de la vallée', 'Pêche du matin', 'Boîte de gourmandises'];
 for (let n = 0; n < 6; n++) {
     const items = [ids[(n * 7) % ids.length], ids[(n * 7 + 3) % ids.length], ids[(n * 7 + 5) % ids.length]];
-    const q = n % 3;
+    const q = n % 5;
+    const pack = G.autoPack(items);
     state.maison.n++;
-    state.maison.stock.push({ uid: state.maison.n, name: `Coffret ${ITEMS[items[0]].name} & ${ITEMS[items[1]].name}`, items, q, value: G.coffretValue(items, q), made: T0 });
+    state.maison.rn++;
+    state.maison.recipes.push({ id: state.maison.rn, name: NAMES[n], pack, items, q, made: 1 + n, sold: n });
+    state.maison.stock.push({ uid: state.maison.n, name: NAMES[n], items, q, pack, rid: state.maison.rn, value: G.coffretValue(items, q, pack), made: T0 });
 }
 state.stats.coffretsSold = 9; // il manque un coffret vendu pour la fête
 

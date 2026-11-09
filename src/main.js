@@ -40,6 +40,7 @@ import { setupCounter } from './ui/views/counter.js';
 import { setupOrders } from './ui/views/orders.js';
 import { setupDefis } from './ui/views/defis.js';
 import { setupCamping } from './ui/views/camping.js';
+import { setupCampMap } from './ui/views/campmap.js';
 import { setupMaison } from './ui/views/maison.js';
 import { setupFete } from './ui/views/fete.js';
 import './ui/sheets/fete.js';
@@ -108,6 +109,7 @@ function start() {
     setupOrders();
     setupDefis();
     setupCamping();
+    setupCampMap();
     setupMaison();
     setupFete();
     setupVillage();

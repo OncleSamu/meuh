@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.101",
+  "title": "Le camping prend vie, la Maison emballe",
+  "date": "9 novembre 2026",
+  "items": [
+   "Le camping a sa propre carte dans l'onglet Ferme, avec ses tentes, ses cabanes et ses aménagements",
+   "Touchez un campeur pour lui vendre ses produits, une cabane pour parler au résident",
+   "Composez des paquets avec n'importe quel produit de la ferme, dans dix boîtes dessinées",
+   "Chaque paquet porte le nom que vous lui donnez et garde sa recette",
+   "La qualité du paquet va jusqu'au diamant",
+   "Le Livre de la ferme a une page Paquets pour tous les refaire"
+  ]
+ },
+ {
   "v": "1.100",
   "title": "La grande mise à jour : le camping de la vallée",
   "date": "9 novembre 2026",

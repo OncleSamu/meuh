@@ -18,7 +18,7 @@ function farm() {
     state.tutorial.done = true;
     state.level = 60;
     state.money = 1e10;
-    for (const k of ['plank', 'stone', 'beam', 'tools']) state.inventory[k] = 1000;
+    for (const k of ['plank', 'stone', 'beam', 'tools', 'nail', 'paint', 'cloth', 'hempRope']) state.inventory[k] = 1000;
     G.buildCamp();
     Object.assign(state.inventory, { egg: 50, wheat: 50, carp: 50, cheese: 50, apple: 50 });
 }
@@ -37,7 +37,7 @@ test('maison : il faut le camping, puis la fonder une seule fois', () => {
     assert.equal(G.foundMaison(), false);
 });
 
-test('maison : un coffret vaut plus que ses produits, plus encore varié et de qualité', () => {
+test('maison : un paquet vaut plus que ses produits, plus encore varié et de qualité', () => {
     farm();
     G.foundMaison();
     const plain = IDS.reduce((a, id) => a + ITEMS[id].sell, 0);

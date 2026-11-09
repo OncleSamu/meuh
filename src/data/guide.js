@@ -2042,7 +2042,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Le camping de la vallée',
                 b: [
-                    'Dès le niveau 57 : un camping à aménager (1,5 million de pièces, planches, pierres, poutres), avec 3 emplacements, puis jusqu’à 12. Village › Commandes › Le camping.',
+                    'Dès le niveau 57 : un camping à aménager (1,5 million de pièces, planches, pierres, poutres), avec 3 emplacements, puis jusqu’à 12. Ferme › Camping : un vrai terrain, avec ses tentes, ses cabanes et ses aménagements. Touchez un campeur ou une cabane pour lui parler.',
                     'Toutes les 3 à 6 heures, un campeur au visage tiré au hasard plante sa tente pour 10 à 30 heures. Randonneur, famille, gourmet, pêcheur, artiste ou couple : chacun cherche 2 ou 3 produits, que vous lui vendez deux fois leur valeur.',
                     'Un campeur ravi demande parfois à s’installer. Vous l’accueillez dans une cabane (100 000 pièces par résident déjà installé, 12 au maximum) ou vous refusez. Il a un métier, une commande permanente payée 1,6 fois sa valeur, trois produits qu’il aime, un produit adoré qui se révèle à 6 cœurs, et une histoire à 3, 6 et 10 cœurs, tirée au hasard. Un cadeau toutes les 6 heures. Aucun bonus de jeu : seulement de l’affection. On peut le faire partir à tout moment (deux appuis).',
                     'Tout vendu : le campeur est ravi et laisse un pourboire. Rien vendu : il repart déçu, sans rien de perdu. Cinq améliorations : point d’eau, sanitaires, salle commune, terrain de jeux et épicerie (une caisse qui se remplit même hors ligne).',
@@ -2051,15 +2051,15 @@ export const GUIDE_PAGES = [
             {
                 h: 'La Maison, votre marque',
                 b: [
-                    'Quand le camping est bâti : fondez la Maison (2 millions de pièces, planches, pierres, poutres). Donnez-lui un nom, un emblème et des couleurs. Village › Commandes › La Maison.',
-                    'À l’atelier, composez des coffrets de trois produits de la ferme (15 minutes chacun). Un coffret vaut 1,3 fois ses produits, plus s’ils sont de trois sortes différentes (frais, mer, fabriqué), plus en argent ou en or, plus avec la réputation. Les coffrets ont leur propre vitrine : les commandes n’y touchent jamais.',
-                    'Vendez-les à vos clients : voisins, campeurs, souk, château, vitrine du village. Chaque vente fait monter la réputation, qui ouvre de nouveaux clients (qui paient mieux mais exigent une belle qualité) et de nouveaux emblèmes. Un client revient 3 heures après un achat.',
+                    'Quand le camping est bâti : fondez la Maison (2 millions de pièces, planches, pierres, poutres). Donnez-lui un nom, un emblème et des couleurs. Dans Ferme › Camping, c’est l’étal en bas à gauche.',
+                    'À l’atelier, composez des paquets de trois produits de la ferme, n’importe lesquels (15 minutes chacun), dans la boîte de votre choix : cagette, panier, filet, caisse, tonnelet, malle, cloche, écrin… Les boîtes s’ouvrent avec la réputation et demandent quelques matériaux. Vous nommez chaque paquet vous-même. Il vaut 1,3 fois ses produits, plus s’ils sont de trois genres différents, plus selon la qualité (argent, or, platine, diamant : celle du moins bon produit), plus avec la boîte et la réputation. Chaque paquet garde sa recette dans le Livre de la ferme, page « Paquets » : un geste pour le refaire. Les paquets ont leur propre étagère : les commandes n’y touchent jamais.',
+                    'Vendez-les à vos clients : voisins, campeurs, souk, château, vitrine du village. Chaque vente fait monter la réputation, qui ouvre de nouveaux clients (qui paient mieux mais exigent une belle qualité, jusqu’au platine pour la vitrine) et de nouveaux emblèmes. Un client revient 3 heures après un achat.',
                 ],
             },
             {
                 h: 'La fête de la vallée',
                 b: [
-                    'Le dernier chapitre. Quand le camping est bâti, cinq buts : accueillir 25 campeurs, en renvoyer 10 ravis, installer 5 résidents, mener un résident à dix cœurs, vendre 10 coffrets de la Maison. Village › Commandes › La fête de la vallée.',
+                    'Le dernier chapitre. Quand le camping est bâti, cinq buts : accueillir 25 campeurs, en renvoyer 10 ravis, installer 5 résidents, mener un résident à dix cœurs, vendre 10 paquets de la Maison. La grande tente en bas à droite de Ferme › Camping.',
                     'Une fois les buts atteints, dressez la grande table (3 millions de pièces, planches, outils) : la vallée fait la fête. Ensuite, le bilan de toute votre partie et le générique, avec les visages des habitants, des résidents et des campeurs de passage, restent à relire quand vous voulez. Le jeu continue normalement.',
                 ],
             },

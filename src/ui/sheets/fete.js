@@ -19,7 +19,7 @@ function bilanPage() {
         ${row('Chapitres de l’histoire terminés', b.chapters)}</div>
         <div class="card camp-card"><div class="card-title">Le camping et la Maison</div>
         ${row('Campeurs accueillis', fmt(b.guests))}${row('Campeurs repartis ravis', fmt(b.happy))}${row('Résidents installés', b.residents)}${row('Amis à dix cœurs', b.friends)}
-        ${row('Coffrets vendus', fmt(b.coffrets))}${brand}</div>`;
+        ${row('Paquets vendus', fmt(b.coffrets))}${brand}</div>`;
 }
 const face = (look, name, sub) => `<div class="credit"><span class="credit-av">${art('villager', look)}</span><span><b>${esc(name)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</span></div>`;
 function creditsPage() {

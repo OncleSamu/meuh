@@ -14,6 +14,11 @@ import { ico, art, qStar, SPR } from '../icons.js';
 import { btn, bar, segmented, empty } from '../kit.js';
 import { defineSheet, sheetOpts } from '../sheets.js';
 import { page as pager, searchBox, queryOf, matchQ, filterOf, filterChips } from '../pager.js';
+import { PACK } from '../../data/paquets.js';
+import { QUALITY } from '../../data/farm.js';
+import { pkHtml } from '../paquets.js';
+import { renameBtn } from './rename.js';
+import { confirmTap } from '../confirm.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const medals = n => `<span class="medals">${MEDALS.map((m, k) => `<i class="ico">${art('ui', k < n ? m : 'medalOff')}</i>`).join('')}</span>`;
@@ -318,13 +323,33 @@ function defisPage() {
     return `${top}${yearCard()}${seasonTrophies()}<div class="list">${sheets}</div>`;
 }
 
+// 1.101 : la page des paquets de la Maison : toutes les recettes de paquets que l'on a composées, nommées par le joueur
+function paquetsPage() {
+    if (!G.maisonBuilt()) return empty('Fondez la Maison (camping, volet Ferme) pour composer vos premiers paquets.');
+    const list = G.recipes().slice().reverse();
+    if (!list.length) return empty('Aucun paquet pour l’instant : composez-en un depuis la Maison, il viendra s’inscrire ici avec son nom.');
+    const rows = list
+        .map(r => {
+            const ok = G.canRemake(r);
+            return `<div class="card pk-book">${pkHtml(r)}<div class="card-main"><div class="card-title">${esc(r.name)} ${renameBtn('recette', r.id, 'Nommer le paquet')}</div>
+                <div class="card-sub">${PACK[r.pack] ? PACK[r.pack].name : ''} · ${QUALITY[r.q].name}</div>
+                <div class="card-sub">${r.items.map(i => `${ico(['item', i])} ${ITEMS[i].name}`).join(' · ')}</div>
+                <div class="card-sub">${r.made} fabriqué${r.made > 1 ? 's' : ''} · ${r.sold} vendu${r.sold > 1 ? 's' : ''} · <span class="nw">vaut ${fmt(G.coffretValue(r.items, r.q, r.pack))} ${COIN()}</span></div>
+                <div class="od-foot">${btn('Refaire', { act: 'pkRemake', data: { id: r.id }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}${btn('Oublier', { act: 'pkDrop', data: { id: r.id }, size: 'sm' })}</div></div></div>`;
+        })
+        .join('');
+    return `<p class="card-sub">Chaque paquet que vous composez garde sa recette : le nom que vous lui avez donné, sa boîte, son contenu. « Refaire » le relance à l’atelier de la Maison.</p><div class="list">${rows}</div>`;
+}
+
 const SECTIONS = [
     ['collection', 'Collection', ['ui', 'book']],
     ['exploits', 'Exploits', ['ui', 'trophy']],
     ['legend', 'Légende', ['ui', 'goldCow']],
     ['defis', 'Défis', ['ui', 'cupGold']],
+    ['paquets', 'Paquets', ['ui', 'heart']],
     ['album', 'Album', ['ui', 'camera']],
 ];
+const sections = () => SECTIONS.filter(x => x[0] !== 'paquets' || G.maisonBuilt());
 const badge = id =>
     id === 'collection' ? G.bookClaimable() + G.quartersClaimable() : id === 'exploits' ? G.claimableCount() : id === 'legend' ? (G.legendReady() ? 1 : 0) : 0;
 
@@ -338,7 +363,7 @@ defineSheet('book', {
     },
     render(o) {
         const seg = segmented(
-            SECTIONS.map(([id, name, icon]) => [id, name, icon, badge(id)]),
+            sections().map(([id, name, icon]) => [id, name, icon, badge(id)]),
             o.sec,
             'bookSec',
         );
@@ -351,7 +376,9 @@ defineSheet('book', {
                     ? [['l', legend()]]
                     : o.sec === 'defis'
                       ? [['d', defisPage()]]
-                      : [['a', album()]];
+                      : o.sec === 'paquets'
+                        ? [['p', paquetsPage()]]
+                        : [['a', album()]];
         return [['seg', `<div class="book-seg">${seg}</div>`], ...body.map(([k, h]) => [o.sec + k, h])];
     },
 });
@@ -370,5 +397,6 @@ export function setupBook() {
         quarter: (el, d) => G.claimQuarter(+d.k, el),
         claimAch: (el, d) => G.claimAchievement(d.id, el),
         claimLegend: el => G.claimLegend(el),
+        pkDrop: (el, d) => confirmTap('pkdrop' + d.id, el, 'Oublier ?') && G.dropRecipe(+d.id),
     });
 }

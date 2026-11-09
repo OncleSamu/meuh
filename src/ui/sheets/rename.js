@@ -3,7 +3,7 @@ import { state } from '../../core/state.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { btn, empty } from '../kit.js';
-import { defineSheet, closeSheet } from '../sheets.js';
+import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 
 const WHAT = {
     pasture: { title: 'Renommer le pré', get: id => state.pastures[+id], name: o => o.name, set: (id, n) => G.renamePasture(+id, n) },
@@ -18,6 +18,8 @@ const WHAT = {
     stud: { title: 'Nom d’élevage', get: () => state.haras && state.haras.stud, name: o => o.name, set: (id, n) => G.setStudName(n) },
     plan: { title: 'Nommer le plan', get: id => G.planAt(+id), name: o => o.name, set: (id, n) => G.renamePlan(+id, n) },
     maison: { title: 'Nommer la Maison', get: () => state.maison, name: o => o.name, set: (id, n) => G.renameBrand(id, n) },
+    paquet: { title: 'Nommer le paquet', max: 30, get: () => sheetOpts('paquet'), name: o => o.name || '', set: (id, n) => ((sheetOpts('paquet').name = String(n).trim().slice(0, 30)), !!String(n).trim()) },
+    recette: { title: 'Nommer le paquet', max: 30, get: id => G.recipeAt(+id), name: o => o.name, set: (id, n) => G.renameRecipe(id, n) },
     race: { title: 'Renommer la race', get: id => state.genetics && state.genetics.races[id], name: o => o.name, set: (id, n) => G.renameRace(id, n) },
 };
 
@@ -27,8 +29,8 @@ defineSheet('rename', {
         const W = WHAT[o.kind],
             x = W && W.get(o.id);
         if (!x) return empty('Introuvable.');
-        return `<p class="card-sub">Un nouveau nom, 22 lettres au plus. Il apparaîtra partout dans la ferme.</p>
-            <div class="rename big"><input type="text" maxlength="22" id="rename-any" value="${esc(W.name(x))}" aria-label="Nouveau nom">${btn('Renommer', { act: 'renameAny', data: { kind: o.kind, id: o.id }, kind: 'gold' })}</div>`;
+        return `<p class="card-sub">Un nouveau nom, ${W.max || 22} lettres au plus. Il apparaîtra partout dans la ferme.</p>
+            <div class="rename big"><input type="text" maxlength="${W.max || 22}" id="rename-any" value="${esc(W.name(x))}" aria-label="Nouveau nom">${btn('Renommer', { act: 'renameAny', data: { kind: o.kind, id: o.id }, kind: 'gold' })}</div>`;
     },
     focus: '#rename-any',
 });

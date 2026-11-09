@@ -9,12 +9,12 @@ import { ico } from '../icons.js';
 import { btn } from '../kit.js';
 
 const hearts = n => `<span class="fid">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => `<i class="${n >= i ? 'on' : ''}">♥</i>`).join('')}</span>`;
-function askCard(a, i) {
+export function askCard(a, i) {
     const ok = G.resCanAccept();
     return `<div class="card camp-card"><div class="card-head">${ico(['villager', a.look], 'ico big')}<div class="card-main"><div class="card-title">${a.name} ${a.from}</div><div class="card-sub">${a.job.charAt(0).toUpperCase() + a.job.slice(1)} · voudrait s’installer dans une cabane</div></div></div>
         <div class="od-foot">${btn(`Accueillir · ${fmt(G.resCabinCost())}${ico(['ui', 'coin'])}`, { act: 'campAccept', data: { i }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}${btn('Pas cette fois', { act: 'campDecline', data: { i }, size: 'sm' })}</div></div>`;
 }
-function residentCard(r, i) {
+export function residentCard(r, i) {
     const h = G.resHearts(r);
     const o = r.order;
     const order = o
@@ -36,7 +36,7 @@ const costHtml = c =>
     Object.entries(c)
         .map(([k, n]) => (k === 'coins' ? `${fmt(n)}${COIN()}` : `${ico(['item', k])}${n}`))
         .join(' ');
-function guestCard(g, gi) {
+export function guestCard(g, gi) {
     const left = formatDuration(Math.max(0, (g.leave - now()) / 1000));
     const wants = g.wants
         .map(
@@ -45,6 +45,13 @@ function guestCard(g, gi) {
         )
         .join('');
     return `<div class="card camp-card"><div class="card-head">${ico(['villager', g.look], 'ico big')}<div class="card-main"><div class="card-title">${g.name} ${g.from}</div><div class="card-sub">${PROFILES[g.profile].name} · repart dans ${left}</div></div></div>${wants}</div>`;
+}
+export function upsHtml() {
+    const ups = Object.entries(CAMP_UPGRADES)
+        .filter(([id]) => !G.campUp(id))
+        .map(([id, u]) => `<div class="od-line"><span><b>${u.name}</b><small>${u.desc}</small></span>${btn(costHtml(u.cost), { act: 'campUp', data: { id }, kind: G.upCan(id) ? 'green' : '', size: 'sm' })}</div>`)
+        .join('');
+    return ups || '<p class="card-sub">Tous les aménagements sont faits : le camping est complet.</p>';
 }
 export function campingCard() {
     if (!G.campOpen()) return null;

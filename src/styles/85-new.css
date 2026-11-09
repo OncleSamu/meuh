@@ -880,21 +880,6 @@
     width: 34px;
     height: 34px;
 }
-.maison-form {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 6px;
-    margin: 6px 0;
-}
-.maison-sel {
-    min-width: 0;
-    width: 100%;
-    font: inherit;
-    padding: 6px;
-    border-radius: 8px;
-    border: 2px solid #d9c9a8;
-    background: #fffaf0;
-}
 .maison-row {
     display: flex;
     flex-wrap: wrap;
@@ -953,4 +938,387 @@
 .credit-av svg {
     width: 100%;
     height: 100%;
+}
+
+/* 1.101 : les paquets de la Maison, dessinés en couches (arrière de la boîte, produits, façade) */
+.pk {
+    position: relative;
+    display: inline-block;
+    width: 84px;
+    aspect-ratio: 1;
+    flex: none;
+    border-radius: 14px;
+    isolation: isolate;
+}
+.pk.sm {
+    width: 56px;
+    border-radius: 10px;
+}
+.pk.lg {
+    width: 132px;
+}
+.pk.q1,
+.pk.q2,
+.pk.q3,
+.pk.q4 {
+    background: radial-gradient(circle at 50% 60%, color-mix(in srgb, var(--pq) 38%, transparent), transparent 70%);
+}
+.pk-back,
+.pk-front,
+.pk-in {
+    position: absolute;
+    inset: 0;
+    display: block;
+}
+.pk-back {
+    z-index: 1;
+}
+.pk-in {
+    z-index: 2;
+}
+.pk-front {
+    z-index: 3;
+}
+.pk-back svg,
+.pk-front svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.pk-it {
+    position: absolute;
+    width: 40%;
+    height: 40%;
+}
+.pk-it .ico,
+.pk-it svg {
+    width: 100%;
+    height: 100%;
+}
+.pk-it.i0 {
+    left: 7%;
+    top: 14%;
+    transform: rotate(-8deg);
+}
+.pk-it.i1 {
+    left: 30%;
+    top: 4%;
+}
+.pk-it.i2 {
+    left: 53%;
+    top: 14%;
+    transform: rotate(8deg);
+}
+.pk-tag {
+    position: absolute;
+    z-index: 4;
+    right: 12%;
+    bottom: 10%;
+    width: 26%;
+    height: 26%;
+    border-radius: 50%;
+    background: var(--pk-bg);
+    border: 2px solid var(--pk-fg);
+    display: grid;
+    place-items: center;
+    padding: 2px;
+    box-sizing: border-box;
+}
+.pk-tag .ico,
+.pk-tag svg {
+    width: 100%;
+    height: 100%;
+}
+.pk.sm .pk-tag {
+    border-width: 1.5px;
+    padding: 1px;
+}
+.pk-q {
+    position: absolute;
+    z-index: 5;
+    left: 4px;
+    top: 2px;
+    font-size: 12px;
+    line-height: 1;
+}
+.pk.sm .pk-q {
+    display: none;
+}
+.pk-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.pk-prev {
+    flex: none;
+}
+.pk-slots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 4px 0 8px;
+}
+.pk-slot {
+    width: 62px;
+    height: 62px;
+    border-radius: 14px;
+    border: 2px dashed #d9c9a8;
+    background: #fffaf0;
+    display: grid;
+    place-items: center;
+}
+.pk-slot.on {
+    border-style: solid;
+    border-color: #7a1f2b66;
+}
+.pk-slot > i:not(.ico) {
+    font-style: normal;
+    font-size: 26px;
+    opacity: 0.35;
+}
+.pk-slot .ico {
+    width: 44px;
+    height: 44px;
+}
+.pk-picks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    gap: 6px;
+    margin: 4px 0 6px;
+}
+.pk-pick {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 4px;
+    border-radius: 12px;
+    border: 2px solid #d9c9a8;
+    background: #fffaf0;
+    min-width: 0;
+}
+.pk-pick b {
+    font-size: 0.78em;
+    line-height: 1.15;
+    text-align: center;
+}
+.pk-pick small {
+    font-size: 0.7em;
+    opacity: 0.7;
+    min-height: 1em;
+}
+.pk-pick.on {
+    border-color: #e2412f;
+    box-shadow: 0 0 0 2px #e2412f55;
+}
+.pk-pick.locked,
+.pk-pick.nofit {
+    opacity: 0.45;
+}
+.pk-pick .cost,
+.cost .short {
+    color: #c2352a;
+}
+.pk-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+}
+.pk-row-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.pk-row-main small,
+.pk-shelf-main small {
+    opacity: 0.75;
+}
+.pk-shelf {
+    display: grid;
+    gap: 10px;
+}
+.pk-shelf-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px;
+    border-radius: 14px;
+    background: linear-gradient(#f3e3c4, #ead4a6);
+    border-bottom: 5px solid #b98744;
+}
+.pk-shelf-main {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: #3a2618;
+}
+.pk-shelf-main .od-foot {
+    flex-wrap: wrap;
+}
+.pk-book {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+.pk-book .card-main {
+    min-width: 0;
+}
+
+/* 1.101 : la carte du camping */
+.cm-scene {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 360 / 560;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 3px solid var(--ink, #3a2618);
+    box-shadow: 0 4px 0 rgba(58, 38, 24, 0.35);
+    background: #7cc65a;
+    margin-bottom: 10px;
+}
+.cm-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.cm-spot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: none;
+    display: block;
+    -webkit-tap-highlight-color: transparent;
+}
+.cm-spot .spr {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+button.cm-spot:active {
+    transform: translate(-50%, -50%) scale(0.95);
+}
+.cm-spot.deco {
+    pointer-events: none;
+}
+.cm-spot.ghost .spr {
+    filter: grayscale(1);
+    opacity: 0.42;
+}
+.cm-spot.ghost-soft .spr {
+    filter: grayscale(0.6);
+    opacity: 0.55;
+}
+.cm-spot.pitch.far {
+    opacity: 0.45;
+}
+.cm-spot.pitch.buy .spr {
+    opacity: 0.9;
+}
+.cm-spot.pitch.buy.can .cm-bub {
+    background: #7ed957;
+}
+.cm-av {
+    position: absolute;
+    left: 50%;
+    bottom: -4%;
+    width: 44%;
+    aspect-ratio: 1;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    border: 2px solid var(--ink, #3a2618);
+    background: #fffaf0;
+    overflow: hidden;
+    display: block;
+}
+.cm-av.big {
+    position: static;
+    width: 100%;
+    transform: none;
+}
+.cm-av .ico,
+.cm-av svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.cm-bub {
+    position: absolute;
+    right: -6%;
+    top: -12%;
+    width: 38%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #fffaf0;
+    border: 2px solid var(--ink, #3a2618);
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    font-size: 13px;
+    line-height: 1;
+    padding: 2px;
+    box-sizing: border-box;
+    color: #3a2618;
+}
+.cm-bub .ico,
+.cm-bub svg {
+    width: 100%;
+    height: 100%;
+}
+.cm-bub.ready {
+    background: #fff2b0;
+    animation: cmbob 1.2s ease-in-out infinite;
+}
+.cm-bub.plus {
+    background: #e8e2d4;
+    color: #5a4a30;
+    font-size: 16px;
+}
+.cm-flame {
+    transform-origin: 32px 46px;
+    animation: cmflame 0.9s ease-in-out infinite alternate;
+}
+@keyframes cmbob {
+    50% {
+        transform: translateY(-3px);
+    }
+}
+@keyframes cmflame {
+    from {
+        transform: scale(1, 0.92);
+    }
+    to {
+        transform: scale(0.94, 1.06);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cm-bub.ready,
+    .cm-flame {
+        animation: none;
+    }
+}
+.nw {
+    white-space: nowrap;
+}
+/* six onglets dans le livre de la ferme (1.101 : Paquets) */
+.book-seg .seg.n6 button {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.book-seg .seg.n6 button span {
+    font-size: 0.8em;
+}
+
+.maison-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
 }

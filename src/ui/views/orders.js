@@ -364,6 +364,7 @@ const ROWS = [
     {
         id: 'fete',
         grp: 'give',
+        hidden: true, // 1.101 : cette carte vit dans Ferme › Camping ; la ligne ne sert plus que d'accès aux tiroirs
         on: () => !!feteCard(),
         icon: () => ['ui', 'heart'],
         title: () => 'La fête de la vallée',
@@ -374,6 +375,7 @@ const ROWS = [
     {
         id: 'maison',
         grp: 'give',
+        hidden: true, // 1.101 : cette carte vit dans Ferme › Camping ; la ligne ne sert plus que d'accès aux tiroirs
         on: () => !!maisonCard(),
         icon: () => ['ui', 'heart'],
         title: () => (G.maisonBuilt() ? G.brandName() : 'La Maison'),
@@ -384,6 +386,7 @@ const ROWS = [
     {
         id: 'camping',
         grp: 'give',
+        hidden: true, // 1.101 : cette carte vit dans Ferme › Camping ; la ligne ne sert plus que d'accès aux tiroirs
         on: () => !!campingCard(),
         icon: () => ['ui', 'heart'],
         title: () => 'Le camping',
@@ -579,7 +582,7 @@ const GROUPS = [
     ['ship', 'Transports'],
     ['event', 'Événements'],
 ];
-const rowsOf = grp => ROWS.filter(r => r.grp === grp && r.on());
+const rowsOf = grp => ROWS.filter(r => r.grp === grp && !r.hidden && r.on());
 const readyOf = grp => rowsOf(grp).filter(r => r.ready()).length + (grp === 'give' ? boardReady() : 0);
 const boardReady = () => (G.ensureQuests(), state.quests.filter(q => G.isOpen(q) && G.checkQuestReady(q)).length);
 function rowHtml(r) {
