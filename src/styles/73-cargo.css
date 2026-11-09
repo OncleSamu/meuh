@@ -57,3 +57,26 @@ button.wagon-load.go {
     width: 13px;
     height: 13px;
 }
+
+/* 1.104.1 : le wagon de paquets, son étiquette posée sur la bulle (sans changer la hauteur du wagon) */
+button.wagon-load {
+    position: relative;
+}
+.wagon-tag {
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    z-index: 2;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-style: normal;
+    font-family: var(--body, system-ui, sans-serif);
+    font-size: 0.62rem;
+    font-weight: 800;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: #fff2b0;
+    border: 1.5px solid var(--ink, #3a2618);
+    color: #3a2618;
+}

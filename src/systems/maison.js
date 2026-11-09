@@ -345,6 +345,9 @@ export function pkReq() {
 }
 const KIND_SHORT = { frais: 'de produits frais', mer: 'de la mer', 'fabriqué': 'de l’atelier', mixte: 'de trois genres', any: '' };
 export const pkReqTxt = req => `Paquet${KIND_SHORT[req.kind] ? ' ' + KIND_SHORT[req.kind] : ''}${req.q ? `, ${QUALITY[req.q].name} ou mieux` : ''}`;
+// une étiquette courte pour le wagon : « frais · or+ » (rien pour « n'importe quel paquet »)
+const KIND_TAG = { frais: 'frais', mer: 'mer', 'fabriqué': 'atelier', mixte: '3 genres', any: '' };
+export const pkReqTag = req => [KIND_TAG[req.kind], req.q ? `${QUALITY[req.q].name}+` : ''].filter(Boolean).join(' · ');
 // ce que vaut à peu près un paquet de ce genre (pour annoncer le prix) : la moyenne de vos recettes
 export function pkEstimate(req) {
     const vals = recipes().map(r => coffretValue(r.items, Math.max(r.q, req.q), r.pack));

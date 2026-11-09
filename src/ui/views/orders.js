@@ -145,7 +145,7 @@ function train() {
                 ok = have >= sl.qty;
             // 1.104.1 : un wagon de paquets de la Maison
             const goBtn = sl.pk
-                ? `<button class="wagon-load go" data-act="pkGoShelf" aria-label="${esc(G.pkReqTxt(sl.pk))}">${ico(['ui', 'maison'])}<b>×${sl.qty}</b></button>`
+                ? `<button class="wagon-load go" data-act="pkGoShelf" aria-label="${esc(G.pkReqTxt(sl.pk))}">${ico(['ui', 'maison'])}<b>×${sl.qty}</b>${G.pkReqTag(sl.pk) ? `<i class="wagon-tag">${esc(G.pkReqTag(sl.pk))}</i>` : ''}</button>`
                 : `<button class="wagon-load go" data-act="produce" data-id="${sl.id}" aria-label="Aller produire">${ico(['item', sl.id])}<b>×${sl.qty}</b></button>`;
             return `<div class="wagon${sl.loaded ? ' loaded' : ''}" data-anchor="wagon:${k}">
                 ${sl.loaded ? `<div class="wagon-load"><div class="crate">${art('ui', 'crate')}</div></div>` : goBtn}
@@ -153,7 +153,7 @@ function train() {
                 <div class="wagon-info">${
                     sl.loaded
                         ? ico(['ui', 'check'])
-                        : `${sl.pk ? `<span class="slot-have">${esc(G.pkReqTxt(sl.pk))}</span>` : ''}<span class="slot-have${ok ? ' ok' : ''}">${have} en stock</span><span class="wagon-rew">${fmt(sl.gold)}${ico(['ui', 'coin'])}${sl.mat ? ico(['item', sl.mat]) : ''}</span>
+                        : `<span class="slot-have${ok ? ' ok' : ''}">${have} en stock</span><span class="wagon-rew">${fmt(sl.gold)}${ico(['ui', 'coin'])}${sl.mat ? ico(['item', sl.mat]) : ''}</span>
                     ${btn('Charger', { act: 'loadWagon', data: { k }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}`
                 }</div></div>`;
         })
