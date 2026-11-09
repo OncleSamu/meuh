@@ -23,7 +23,7 @@ function farm() {
     for (const k of ['plank', 'stone', 'beam', 'tools', 'nail', 'paint', 'cloth', 'hempRope']) state.inventory[k] = 1000;
     G.buildCamp();
     G.foundMaison();
-    Object.assign(state.inventory, { apple: 50, pear: 50, egg: 50, carp: 50, perch: 50, cheese: 50, bread: 50, ruby: 4 });
+    Object.assign(state.inventory, { apple: 50, pear: 50, strawberry: 50, egg: 50, carp: 50, perch: 50, cheese: 50, bread: 50, ruby: 4 });
     // 1.104 : les boîtes se fabriquent à l'emballerie
     for (const p of PACKS) if (p.item) state.inventory[p.item] = 20;
 }
@@ -43,9 +43,11 @@ test('paquets : n’importe quel produit qui se vend, et la boîte qui va avec l
     farm();
     assert.ok(G.canPack('apple') && G.canPack('carp') && G.canPack('cheese'));
     assert.equal(G.canPack('nope'), false);
-    assert.equal(G.kindOf('apple'), 'frais');
+    assert.equal(G.kindOf('apple'), 'champ'); // 1.104.3 : verger et champ
     assert.equal(G.kindOf('carp'), 'mer');
-    assert.equal(G.autoPack(['apple', 'pear', 'egg']), 'cagette'); // palier 1 : la cagette
+    assert.equal(G.kindOf('egg'), 'animaux');
+    assert.equal(G.autoPack(['apple', 'pear', 'strawberry']), 'cagette'); // palier 1 : la cagette
+    assert.equal(G.autoPack(['apple', 'pear', 'egg']), 'carton'); // la cagette ne prend pas les œufs
     assert.equal(G.autoPack(['apple', 'carp', 'cheese']), 'carton'); // trois genres : une boîte qui prend tout
     state.maison.rep = 20; // palier 2
     assert.equal(G.autoPack(['apple', 'pear', 'egg']), 'panier');
@@ -60,9 +62,9 @@ test('paquets : assembler prend les produits (plus de matériaux depuis la 1.103
     farm();
     const planks = state.inventory.plank;
     const apples = state.inventory.apple;
-    assert.equal(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'ecrin' }), false); // boîte pas encore ouverte
+    assert.equal(G.makeCoffret(['apple', 'pear', 'strawberry'], 0, null, { pack: 'ecrin' }), false); // boîte pas encore ouverte
     assert.equal(G.makeCoffret(['apple', 'carp', 'egg'], 0, null, { pack: 'cagette' }), false); // la cagette ne prend pas le poisson
-    assert.ok(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'cagette', name: '  Panier gourmand de fruits ' }));
+    assert.ok(G.makeCoffret(['apple', 'pear', 'strawberry'], 0, null, { pack: 'cagette', name: '  Panier gourmand de fruits ' }));
     assert.equal(state.inventory.apple, apples - 1);
     assert.equal(state.inventory.plank, planks); // 1.103.2 : plus de matériaux
     assert.equal(state.inventory.boxCagette, 19); // 1.104 : une cagette de l'emballerie
@@ -77,13 +79,13 @@ test('paquets : assembler prend les produits (plus de matériaux depuis la 1.103
 test('paquets : sans boîte fabriquée, pas de cagette ; le carton est toujours là (1.104)', () => {
     farm();
     state.inventory.boxCagette = 0;
-    assert.equal(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'cagette' }), false);
-    assert.ok(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'carton' }));
+    assert.equal(G.makeCoffret(['apple', 'pear', 'strawberry'], 0, null, { pack: 'cagette' }), false);
+    assert.ok(G.makeCoffret(['apple', 'pear', 'strawberry'], 0, null, { pack: 'carton' }));
 });
 
 test('paquets : la qualité va jusqu’au diamant et vaut de plus en plus', () => {
     farm();
-    const ids = ['apple', 'pear', 'egg'];
+    const ids = ['apple', 'pear', 'strawberry'];
     let last = 0;
     for (let q = 0; q <= 4; q++) {
         const v = G.coffretValue(ids, q, 'cagette');
@@ -98,7 +100,7 @@ test('paquets : la qualité va jusqu’au diamant et vaut de plus en plus', () =
 
 test('paquets : chaque paquet garde sa recette, qu’on peut renommer, refaire et oublier', () => {
     farm();
-    assert.ok(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'cagette', name: 'Mon panier' }));
+    assert.ok(G.makeCoffret(['apple', 'pear', 'strawberry'], 0, null, { pack: 'cagette', name: 'Mon panier' }));
     assert.equal(G.recipes().length, 1);
     const r = G.recipes()[0];
     assert.equal(r.name, 'Mon panier');

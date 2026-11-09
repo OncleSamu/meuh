@@ -65,3 +65,11 @@ test('avion-cargo : une soute de paquets, payée au chargement', () => {
     assert.equal(G.holdHave(state.cargo.holds[0]), 1);
     assert.ok(G.holdPay(state.cargo.holds[0], 1) > 0);
 });
+
+test('genres 1.104.3 : chaque produit est rangé selon son origine', async () => {
+    const { itemKind, normKind } = await import('../../src/data/paquets.js');
+    const want = { apple: 'champ', truffle: 'champ', cardamom: 'champ', egg: 'animaux', antler: 'animaux', wool: 'animaux', carp: 'mer', tuna: 'mer', shrimp: 'mer', cheese: 'cuisine', bread: 'cuisine', honeyPot: 'cuisine', cloth: 'artisanat', ruby: 'trésor', goldIngot: 'trésor' };
+    for (const [id, k] of Object.entries(want)) assert.equal(itemKind(id), k, id);
+    assert.equal(normKind('frais'), 'champ');
+    assert.equal(normKind('fabriqué'), 'cuisine');
+});

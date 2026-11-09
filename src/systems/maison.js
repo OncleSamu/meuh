@@ -9,7 +9,7 @@ import { VILLAGERS } from '../data/village.js';
 import { LOVES, GIFT_PTS } from '../data/friends.js';
 import { QUALITY } from '../data/farm.js';
 import { STARS } from '../data/camping.js';
-import { PACKS, PACK, KIND_OF_TYPE, NAME_IDEAS, NAME_MAX, RECIPES_MAX, BOX_VALUE } from '../data/paquets.js';
+import { PACKS, PACK, NAME_IDEAS, NAME_MAX, RECIPES_MAX, BOX_VALUE, itemKind, normKind } from '../data/paquets.js';
 import { hasCost, payCost } from './home.js';
 import { earn, addXp } from './player.js';
 import { haveQ, takeQ } from './defis.js';
@@ -55,8 +55,8 @@ export function setPalette(i) {
     return true;
 }
 // ---- l'atelier ----
-export const kindOf = id => (ITEMS[id] && KIND_OF_TYPE[ITEMS[id].type]) || 'autre';
-export const canPack = id => !!ITEMS[id] && !!ITEMS[id].sell && !ITEMS[id].box && !!KIND_OF_TYPE[ITEMS[id].type];
+export const kindOf = id => itemKind(id) || 'autre';
+export const canPack = id => !!ITEMS[id] && !!ITEMS[id].sell && !ITEMS[id].box && !!itemKind(id);
 export const stockable = () =>
     Object.values(ITEMS)
         .filter(i => canPack(i.id) && (state.inventory[i.id] || 0) > 0)
@@ -242,7 +242,7 @@ export function sellCoffret(uid, cid, at) {
 // ---- 1.103 : les commandes de paquets ----
 export const orders = () => (M() && M().orders) || [];
 export const orderFits = (cof, o) =>
-    !!cof && !!o && !o.due && cof.q >= o.q && (o.kind === 'recipe' ? cof.rid === o.rid || sameSet(cof.items, o.items || []) : o.kind === 'any' || (o.kind === 'mixte' ? new Set(cof.items.map(kindOf)).size === 3 : cof.items.every(id => kindOf(id) === o.kind)));
+    !!cof && !!o && !o.due && cof.q >= o.q && (o.kind === 'recipe' ? cof.rid === o.rid || sameSet(cof.items, o.items || []) : o.kind === 'any' || (o.kind === 'mixte' ? new Set(cof.items.map(kindOf)).size === 3 : cof.items.every(id => kindOf(id) === normKind(o.kind))));
 export const orderPay = (cof, o) => Math.round(pkValue(cof) * MAISON_ORDERS.pay * (1 + 0.1 * o.q));
 export const orderReady = o => !o.due && M().stock.some(c => orderFits(c, o));
 export function newOrder(seed = Math.random()) {
@@ -343,11 +343,11 @@ export function pkReq() {
     const kind = MAISON_ORDERS.kinds[Math.floor(Math.random() * MAISON_ORDERS.kinds.length)];
     return { kind, q: Math.min(4, Math.floor(Math.random() * Math.min(3, maisonTier() + 1))) };
 }
-const KIND_SHORT = { frais: 'de produits frais', mer: 'de la mer', 'fabriqué': 'de l’atelier', mixte: 'de trois genres', any: '' };
-export const pkReqTxt = req => `Paquet${KIND_SHORT[req.kind] ? ' ' + KIND_SHORT[req.kind] : ''}${req.q ? `, ${QUALITY[req.q].name} ou mieux` : ''}`;
+const KIND_SHORT = { champ: 'du verger et du champ', animaux: 'des animaux', mer: 'de la mer', cuisine: 'de la cuisine', artisanat: 'd’artisanat', mixte: 'de trois genres', any: '' };
+export const pkReqTxt = req => `Paquet${KIND_SHORT[normKind(req.kind)] ? ' ' + KIND_SHORT[normKind(req.kind)] : ''}${req.q ? `, ${QUALITY[req.q].name} ou mieux` : ''}`;
 // une étiquette courte pour le wagon : « frais · or+ » (rien pour « n'importe quel paquet »)
-const KIND_TAG = { frais: 'frais', mer: 'mer', 'fabriqué': 'atelier', mixte: '3 genres', any: '' };
-export const pkReqTag = req => [KIND_TAG[req.kind], req.q ? `${QUALITY[req.q].name}+` : ''].filter(Boolean).join(' · ');
+const KIND_TAG = { champ: 'verger', animaux: 'animaux', mer: 'mer', cuisine: 'cuisine', artisanat: 'artisanat', mixte: '3 genres', any: '' };
+export const pkReqTag = req => [KIND_TAG[normKind(req.kind)], req.q ? `${QUALITY[req.q].name}+` : ''].filter(Boolean).join(' · ');
 // ce que vaut à peu près un paquet de ce genre (pour annoncer le prix) : la moyenne de vos recettes
 export function pkEstimate(req) {
     const vals = recipes().map(r => coffretValue(r.items, Math.max(r.q, req.q), r.pack));

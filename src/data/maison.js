@@ -46,7 +46,7 @@ export const MAISON_ORDERS = {
     pay: 2.2, // payée 2,2 fois la valeur du paquet
     rep: 6,
     xp: 2.5, // × l'expérience d'une vente
-    kinds: ['frais', 'frais', 'mer', 'fabriqué', 'mixte', 'any'], // mixte : trois genres différents ; any : n'importe quel paquet
+    kinds: ['champ', 'champ', 'animaux', 'mer', 'cuisine', 'cuisine', 'artisanat', 'mixte', 'any'], // 1.104.3 : les six genres ; mixte : trois genres différents ; any : n'importe quel paquet
     // 1.103.1 : un villageois demande parfois un de vos paquets déjà créés (une de vos recettes)
     asks: 0.5, // une commande sur deux, quand on a des recettes
     friend: 4, // points d'amitié pour le villageois servi
@@ -54,7 +54,7 @@ export const MAISON_ORDERS = {
 // 1.103.1 : offrir un paquet à un villageois (le cadeau du jour) : des points de base, plus pour chaque produit qu'il aime
 export const PK_GIFT = { base: 3, like: 1, love: 5 };
 export const ASK_WHY = ['pour un repas de famille', 'pour un ami qui passe', 'pour se faire plaisir', 'pour l’anniversaire de sa sœur', 'pour un pique-nique', 'pour remercier un voisin', 'pour la fête du village', 'parce qu’on lui en a dit du bien'];
-export const ORDER_KIND_TXT = { frais: 'de produits frais', mer: 'de la mer', 'fabriqué': 'de bonnes choses de l’atelier', mixte: 'de trois genres différents', any: 'de votre choix' };
+export const ORDER_KIND_TXT = { champ: 'du verger et du champ', animaux: 'des animaux de la ferme', mer: 'de la mer', cuisine: 'de bonnes choses de la cuisine', artisanat: 'd’artisanat', mixte: 'de trois genres différents', any: 'de votre choix', frais: 'du verger et du champ', 'fabriqué': 'de bonnes choses de la cuisine' };
 export const ORDER_WHO = [
     ['Lucie', 'pour son mariage'],
     ['Le maire', 'pour les vœux de la mairie'],

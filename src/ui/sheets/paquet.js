@@ -4,7 +4,7 @@ import { state } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { QUALITY } from '../../data/farm.js';
-import { PACKS, PACK, KIND_NAMES } from '../../data/paquets.js';
+import { PACKS, PACK, KIND_NAMES, KINDS } from '../../data/paquets.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { ico } from '../icons.js';
@@ -35,7 +35,7 @@ defineSheet('paquet', {
     render(o) {
         const v = view(o);
         const all = G.stockable();
-        const kinds = ['frais', 'mer', 'fabriqué', 'trésor'];
+        const kinds = KINDS;
         const opts = [['all', 'Tout', all.length], ...kinds.map(k => [k, KIND_NAMES[k], all.filter(id => G.kindOf(id) === k).length])];
         const cur = filterOf('pk', opts);
         const q = queryOf('pk');

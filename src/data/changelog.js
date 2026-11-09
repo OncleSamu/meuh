@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.104.3",
+  "title": "Des genres qui ont du sens",
+  "date": "9 novembre 2026",
+  "items": [
+   "Les produits des paquets sont rangés en six genres : Verger et champ, Animaux, Mer, Cuisine, Artisanat, Trésors",
+   "Fini les bois de renne « frais » : les laines, plumes et bois vont avec les animaux, les poissons du large avec la mer, les savons et tissus avec l'artisanat",
+   "Les boîtes suivent : la cagette pour le verger et le champ, le panier aussi pour les œufs et le lait, la cloche pour les fromages"
+  ]
+ },
+ {
   "v": "1.104.2",
   "title": "Un visage bien centré",
   "date": "9 novembre 2026",
