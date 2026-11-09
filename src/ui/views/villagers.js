@@ -12,6 +12,7 @@ import { btn, bar, hint, hearts, segmented, empty } from '../kit.js';
 import { defineSheet, openSheet, sheetOpts } from '../sheets.js';
 import { foldCard } from '../fold.js';
 import { page, filterOf, filterChips, searchBox, queryOf, matchQ } from '../pager.js';
+import { setupResFiche, resHeartsHtml } from '../sheets/resfiche.js';
 
 const when = d => (d === 0 ? 'aujourd’hui' : d === 1 ? 'demain' : `dans ${d} jours`);
 const whenShort = d => (d === 0 ? 'aujourd’hui' : d === 1 ? 'demain' : `dans ${d} j`);
@@ -35,16 +36,31 @@ function rowHtml(vid) {
         <div class="vl-main"><b>${v.name}${flags(vid)}</b><span class="vl-sub">${hearts(h)}${G.talentLevel(vid) ? `<small class="vl-talent">${ico(['ui', 'star'])}talent</small>` : ''}</span></div>
         ${gifted ? `<small class="vl-done">${ico(['ui', 'check'])}offert</small>` : btn('Offrir', { act: 'villager', data: { v: vid, t: 'gift' }, kind: can ? 'gold' : '', size: 'sm' })}</div>`;
 }
+// 1.101.3 : les résidents du camping, dans la même liste que les villageois (même ligne, même fiche)
+const resCan = r => G.resGiftReady(r) && r.likes.some(id => (state.inventory[id] || 0) > 0);
+function resRow(r, i) {
+    const ready = G.resCanDeliver(r);
+    const flag = ready ? `<span class="vl-flag" title="Commande prête">${ico(['item', r.order.item])}</span>` : '';
+    return `<div class="vl-row" data-act="resOpen" data-i="${i}">
+        <div class="avatar xs">${art('villager', r.look)}</div>
+        <div class="vl-main"><b>${esc(r.name)}${flag}<small class="vl-job"> · ${esc(r.job)}</small></b><span class="vl-sub">${resHeartsHtml(r)}</span></div>
+        ${G.resGiftReady(r) ? btn('Offrir', { act: 'resOpen', data: { i, t: 'gift' }, kind: resCan(r) ? 'gold' : '', size: 'sm' }) : `<small class="vl-done">${ico(['ui', 'check'])}offert</small>`}</div>`;
+}
+const resBlock = () => {
+    const rs = G.campRes();
+    return rs.length ? `<h4 class="vf-h">Résidents du camping</h4><div class="vl-list">${rs.map(resRow).join('')}</div>` : '';
+};
 export function villagersCard(flat = false) {
     const ids = G.presentVillagers();
-    const gift = ids.filter(id => !G.giftedToday(id) && G.giftable(id).length).length;
+    const rsn = G.campRes().length;
+    const gift = ids.filter(id => !G.giftedToday(id) && G.giftable(id).length).length + G.campRes().filter(resCan).length;
     const bdays = G.nextBirthdays(ids, 6);
     const today = bdays.filter(([, d]) => d === 0).length;
     const sum = today
         ? `Anniversaire aujourd’hui !`
         : gift
           ? `${gift} cadeau${gift > 1 ? 'x' : ''} possible${gift > 1 ? 's' : ''}`
-          : `${ids.length} villageois`;
+          : `${ids.length} villageois${rsn ? ` et ${rsn} résident${rsn > 1 ? 's' : ''}` : ''}`;
     // les anniversaires qui viennent : une ligne de portraits
     const cal = bdays.length
         ? `<div class="vl-bdays">${ico(['ui', 'cake'])}${bdays
@@ -56,17 +72,18 @@ export function villagersCard(flat = false) {
               .join('')}</div>`
         : '';
     const story = ids.filter(storyOpen);
-    const opts = [['all', 'Tous', ids.length], ['gift', 'Cadeau possible', gift], ...(story.length ? [['story', 'Histoire', story.length]] : [])];
+    const opts = [['all', 'Tous', ids.length + rsn], ['gift', 'Cadeau possible', gift], ...(story.length ? [['story', 'Histoire', story.length]] : []), ...(rsn ? [['res', 'Résidents', rsn]] : [])];
     const f = filterOf('villagers', opts);
-    const list = f === 'gift' ? ids.filter(id => !G.giftedToday(id) && G.giftable(id).length) : f === 'story' ? story : ids;
+    const list = f === 'res' ? [] : f === 'gift' ? ids.filter(id => !G.giftedToday(id) && G.giftable(id).length) : f === 'story' ? story : ids;
     const pg = page('villagers:' + f, list, 14);
     const body =
         hint('Touchez un villageois pour sa fiche : cœurs, goûts, anniversaire, talent et histoire. Un cadeau par jour chacun.') +
         cal +
         filterChips('villagers', opts, f) +
         pg.top +
-        (pg.items.length ? `<div class="vl-list">${pg.items.map(rowHtml).join('')}</div>` : empty('Personne ici pour le moment.')) +
-        pg.more;
+        (pg.items.length ? `<div class="vl-list">${pg.items.map(rowHtml).join('')}</div>` : f === 'res' ? '' : empty('Personne ici pour le moment.')) +
+        pg.more +
+        (f === 'all' || f === 'res' ? resBlock() : f === 'gift' && G.campRes().some(resCan) ? `<h4 class="vf-h">Résidents du camping</h4><div class="vl-list">${G.campRes().map((r, i) => (resCan(r) ? resRow(r, i) : '')).join('')}</div>` : '');
     // 1.73 : dans son onglet du village, la liste est déjà ouverte
     if (flat) return `<div class="card vl-card">${body}</div>`;
     return foldCard('villagers', ['ui', 'heart'], 'Les villageois', sum, body, gift > 0 || today > 0);
@@ -186,7 +203,9 @@ defineSheet('villager', {
 });
 
 export function setupVillagers() {
+    setupResFiche();
     actions({
+        resOpen: (el, d) => openSheet('resFiche', { i: +d.i, tab: d.t || 'friend' }),
         villager: (el, d) => openSheet('villager', { vid: d.v, tab: d.t || 'friend' }),
         vfTab: (el, d) => {
             const s = sheetOpts('villager');

@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.101.3",
+  "title": "Les résidents rejoignent les villageois",
+  "date": "9 novembre 2026",
+  "items": [
+   "Les résidents du camping apparaissent dans Village, Villageois",
+   "Un filtre Résidents les regroupe",
+   "Leur fiche a les mêmes onglets : Amitié, Cadeau, Goûts, Histoire",
+   "Toucher une cabane sur la carte du camping ouvre cette fiche"
+  ]
+ },
+ {
   "v": "1.101.2",
   "title": "Un emblème parmi tous les dessins du jeu",
   "date": "9 novembre 2026",

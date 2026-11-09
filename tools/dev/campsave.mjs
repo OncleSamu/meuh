@@ -8,6 +8,7 @@ import * as G from '../../src/systems/index.js';
 import { ITEMS } from '../../src/data/items.js';
 import { PROJECTS } from '../../src/data/village.js';
 import { TIPS } from '../../src/data/texts.js';
+import { JOBS } from '../../src/data/campers.js';
 import { packSave } from '../../src/systems/savecodes.js';
 
 const T0 = Date.now();
@@ -56,7 +57,7 @@ for (let i = 0; i < 2; i++) {
 for (let i = 0; i < 5; i++) {
     const g = G.newGuest(T0, 4000 + i);
     state.camping.guests = state.camping.guests.filter(x => x !== g);
-    const r = G.newResident({ look: g.look, name: g.name, from: g.from, profile: g.profile, woman: !!g.woman, job: 'Habitant' }, 5000 + i);
+    const r = G.newResident({ look: g.look, name: g.name, from: g.from, profile: g.profile, woman: !!g.woman, job: JOBS[g.profile][0][g.woman ? 1 : 0] }, 5000 + i);
     state.camping.res.push(r);
     G.resMakeOrder(r);
 }
