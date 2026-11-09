@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.101.5",
+  "title": "Aménagements du camping",
+  "date": "9 novembre 2026",
+  "items": [
+   "Un aménagement du camping trop cher est grisé au lieu de rester cliquable sans rien faire",
+   "Un message confirme chaque aménagement acheté"
+  ]
+ },
+ {
   "v": "1.101.4",
   "title": "Cinq cœurs pour les résidents",
   "date": "9 novembre 2026",
