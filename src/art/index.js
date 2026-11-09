@@ -7,6 +7,8 @@ import { tree, sprout, youngPlant, readyPlant } from './plants.js';
 import { building, farmhouseArt } from './buildings.js';
 import { truck, loco, wagon } from './vehicles.js';
 import './items.js';
+import './camping.js';
+import './paquets.js';
 import './animals.js';
 import './people.js';
 import './machines.js';

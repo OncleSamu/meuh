@@ -45,7 +45,7 @@ export const TABS = [
             ['nature', 'Nature', ['item', 'wood'], () => NATURE.forest.lvl],
             ['pond', 'Pêche', ['ui', 'rod'], () => NATURE.pond.lvl],
             ['island', 'Voyages', ['ui', 'oaVoyages'], () => ISLAND.lvl],
-            ['camping', 'Camping', ['ui', 'heart'], () => CAMPING.lvl],
+            ['camping', 'Camping', ['ui', 'tent'], () => CAMPING.lvl],
         ],
     },
     {
@@ -71,7 +71,7 @@ export const TABS = [
             ['cave', 'Cave', ['ui', 'cave'], () => CAVE_LVL],
             ['brew', 'Brasserie', ['ui', 'beer'], () => ABBEY.lvl],
             ['lab', 'Labo', ['ui', 'flowers'], () => GENETICS.lvl],
-            ['maison', 'Maison', ['ui', 'heart'], () => CAMPING.lvl],
+            ['maison', 'Maison', ['ui', 'maison'], () => CAMPING.lvl],
         ],
     },
     {

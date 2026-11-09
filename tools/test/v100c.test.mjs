@@ -69,7 +69,6 @@ test('maison : vendre paie, fait monter la réputation, ouvre des clients et des
     G.foundMaison();
     assert.equal(G.maisonTier(), 0);
     assert.equal(G.clientsOpen().length, 1);
-    assert.equal(G.emblemsOpen(), 6);
     let guard = 0;
     while (G.maisonTier() < 1 && guard++ < 50) {
         G.makeCoffret(IDS, 0);
@@ -83,7 +82,6 @@ test('maison : vendre paie, fait monter la réputation, ouvre des clients et des
     }
     assert.equal(G.maisonTier(), 1);
     assert.equal(G.clientsOpen().length, 2);
-    assert.equal(G.emblemsOpen(), 12);
 });
 
 test('maison : un client attend après un achat, exige sa qualité, et n’est pas ouvert trop tôt', () => {
@@ -113,12 +111,15 @@ test('maison : nom, emblème et couleurs ; emblèmes verrouillés tant que la r�
     assert.equal(G.brandName(), 'Les Trois Prés');
     assert.equal(G.renameBrand(0, '   '), false);
     assert.ok(G.setEmblem(EMBLEMS[0]));
-    assert.equal(G.setEmblem(EMBLEMS[29]), false);
+    assert.ok(G.setEmblem(EMBLEMS[29])); // 1.101.2 : tous les dessins du jeu, sans attendre la réputation
+    assert.ok(G.setEmblem('animal:cow'));
+    assert.ok(G.setEmblem('ui:tent'));
+    assert.equal(G.setEmblem('nimportequoi'), false);
+    assert.equal(G.setEmblem('animal:'), false);
+    assert.ok(G.setEmblem(EMBLEMS[0]));
     assert.ok(G.setPalette(3));
     assert.equal(G.setPalette(99), false);
     assert.equal(state.maison.palette, 3);
-    state.maison.rep = 10000;
-    assert.ok(G.setEmblem(EMBLEMS[29]));
     assert.equal(EMBLEMS.length, 30);
     assert.equal(PALETTES.length, 8);
     for (const id of EMBLEMS) assert.ok(ITEMS[id], id);

@@ -1,6 +1,6 @@
 // 1.101 : les dix packagings de la Maison. Chaque boîte est dessinée en deux couches : l'arrière (l'intérieur, l'anse, le papier de soie)
 // et l'avant (la façade). Les produits se glissent entre les deux, si bien que le bas de chaque produit disparaît dans la boîte.
-import { svg, P, R, L, E, C, FE, HL, O } from './kit.js';
+import { svg, P, R, L, E, C, FE, HL, O, ui } from './kit.js';
 
 const W = '#c98a4b', WD = '#9a6532', WDD = '#6b4220', WL = '#e2ad6b';
 const nail = (x, y) => C(x, y, 1.1, '#e8e2d4', 0.9);
@@ -85,3 +85,9 @@ export const packSprite = (id, pal) => {
     return { back: svg(m.back), front: svg(m.front) };
 };
 export const PACK_SPRITES = Object.keys(MODELS);
+// l'icône de la Maison : un coffret à ruban
+const inner = s => s.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
+ui.maison = () => {
+    const s = packSprite('ruban', { bg: '#f7eed9', fg: '#7a1f2b' });
+    return inner(s.back) + inner(s.front);
+};

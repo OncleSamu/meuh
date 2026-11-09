@@ -5,12 +5,15 @@ import { MAISON, MAISON_CLIENTS, EMBLEMS, PALETTES } from '../../data/maison.js'
 import { ITEMS } from '../../data/items.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
+import { closeSheet } from '../sheets.js';
 import { ico } from '../icons.js';
 import { btn } from '../kit.js';
 import { renameBtn } from '../sheets/rename.js';
 import { QUALITY } from '../../data/farm.js';
 import { CAMPING } from '../../data/camping.js';
 import { pkHtml } from '../paquets.js';
+import { emblemIco } from '../emblem.js';
+import '../sheets/emblem.js';
 import { setupPaquet } from '../sheets/paquet.js';
 import { blocks } from '../dom.js';
 import { defineView } from '../app.js';
@@ -23,11 +26,11 @@ const costHtml = c =>
 const QN = ['toute qualité', 'argent ou mieux', 'or ou mieux', 'platine ou mieux', 'diamant'];
 function label(m, small) {
     const p = PALETTES[m.palette] || PALETTES[0];
-    return `<div class="maison-label${small ? ' sm' : ''}" style="background:${p.bg};color:${p.fg};border-color:${p.fg}">${ico(['item', m.emblem], 'ico')}<b>${esc(m.name)}</b></div>`;
+    return `<div class="maison-label${small ? ' sm' : ''}" style="background:${p.bg};color:${p.fg};border-color:${p.fg}">${emblemIco(m.emblem)}<b>${esc(m.name)}</b></div>`;
 }
 function composeBtn() {
     return `<div class="od-line"><span><b>Composer un paquet</b><small>Trois produits de la ferme, au choix, dans la boîte qui leur va. Vous lui donnez le nom que vous voulez.</small></span></div>
-        <div class="od-foot">${btn('Composer', { act: 'open', data: { sheet: 'paquet' }, kind: 'green', size: 'sm', icon: ['ui', 'heart'] })}</div>`;
+        <div class="od-foot">${btn('Composer', { act: 'open', data: { sheet: 'paquet' }, kind: 'green', size: 'sm', icon: ['ui', 'maison'] })}</div>`;
 }
 function recipeRow(r) {
     const ok = G.canRemake(r);
@@ -44,15 +47,16 @@ export function maisonCard() {
     if (!G.maisonOpen()) return null;
     if (!G.maisonBuilt()) {
         const ok = G.canFoundMaison();
-        return `<div class="card camp-card"><div class="card-head">${ico(['ui', 'heart'], 'ico big')}<div class="card-main"><div class="card-title">La Maison</div><div class="card-sub">Votre propre marque : un atelier où composer des paquets de trois produits à votre étiquette, pour les voisins, les campeurs, le souk, le château.</div></div></div>
+        return `<div class="card camp-card"><div class="card-head">${ico(['ui', 'maison'], 'ico big')}<div class="card-main"><div class="card-title">La Maison</div><div class="card-sub">Votre propre marque : un atelier où composer des paquets de trois produits à votre étiquette, pour les voisins, les campeurs, le souk, le château.</div></div></div>
             <div class="od-foot">${btn(`Fonder · ${costHtml(MAISON.cost)}`, { act: 'maisonFound', kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}</div></div>`;
     }
     const m = state.maison;
     const tier = G.maisonTier();
     const next = G.maisonNext();
-    const emblems = EMBLEMS.slice(0, G.emblemsOpen())
-        .map(id => `<button class="maison-emb${m.emblem === id ? ' on' : ''}" data-act="maisonEmblem" data-id="${id}" aria-label="${ITEMS[id].name}">${ico(['item', id])}</button>`)
-        .join('');
+    const quick = EMBLEMS.slice(0, 7).includes(m.emblem) ? EMBLEMS.slice(0, 7) : [m.emblem, ...EMBLEMS.slice(0, 6)];
+    const emblems =
+        quick.map(id => `<button class="maison-emb${m.emblem === id ? ' on' : ''}" data-act="maisonEmblem" data-id="${id}" aria-label="Emblème">${emblemIco(id)}</button>`).join('') +
+        `<button class="maison-emb more" data-act="open" data-sheet="emblem" aria-label="Tous les dessins du jeu">${ico(['ui', 'search'])}<small>Tous</small></button>`;
     const pals = PALETTES.map((p, i) => `<button class="maison-pal${m.palette === i ? ' on' : ''}" data-act="maisonPalette" data-i="${i}" style="background:${p.bg};color:${p.fg}" aria-label="${p.name}">A</button>`).join('');
     const work = m.work
         ? `<div class="pk-row">${pkHtml({ pack: m.work.pack || 'carton', items: m.work.items, q: m.work.q }, 'sm')}<span class="pk-row-main"><b>À l’atelier : ${esc(m.work.name || 'un paquet')}</b><small>${m.work.items.map(i => ITEMS[i].name).join(', ')} · prêt dans ${formatDuration(G.workLeft() / 1000)}</small></span></div>`
@@ -80,7 +84,7 @@ export function setupMaison() {
     setupPaquet();
     actions({
         maisonFound: el => G.foundMaison(el),
-        maisonEmblem: (_, d) => G.setEmblem(d.id),
+        maisonEmblem: (_, d) => G.setEmblem(d.id) && closeSheet('emblem'),
         maisonPalette: (_, d) => G.setPalette(+d.i),
         maisonSell: (el, d) => G.sellCoffret(+d.uid, d.id, el),
         pkRemake: (el, d) => G.remake(+d.id, el),

@@ -4,6 +4,7 @@ import { PALETTES } from '../data/maison.js';
 import { QUALITY } from '../data/farm.js';
 import { packSprite } from '../art/paquets.js';
 import { ico, qStar } from './icons.js';
+import { emblemIco } from './emblem.js';
 
 const palOf = () => PALETTES[(state.maison && state.maison.palette) || 0] || PALETTES[0];
 const cache = {};
@@ -19,5 +20,5 @@ export function pkHtml(c, size = '') {
         <span class="pk-back">${spr.back}</span>
         <span class="pk-in">${[0, 1, 2].map(i => `<span class="pk-it i${i}">${items[i] ? ico(['item', items[i]]) : ''}</span>`).join('')}</span>
         <span class="pk-front">${spr.front}</span>
-        <span class="pk-tag">${ico(['item', emb])}</span>${q ? `<span class="pk-q">${qStar(q)}</span>` : ''}</span>`;
+        <span class="pk-tag">${emblemIco(emb)}</span>${q ? `<span class="pk-q">${qStar(q)}</span>` : ''}</span>`;
 }

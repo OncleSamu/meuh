@@ -57,7 +57,7 @@ export function campingCard() {
     if (!G.campOpen()) return null;
     if (!G.campBuilt()) {
         const ok = G.canBuildCamp();
-        return `<div class="card camp-card"><div class="card-head">${ico(['ui', 'heart'], 'ico big')}<div class="card-main"><div class="card-title">Le camping de la vallée</div><div class="card-sub">${CAMPING.pitches} emplacements et un feu de camp : des campeurs de passage viennent planter leur tente et acheter vos produits.</div></div></div>
+        return `<div class="card camp-card"><div class="card-head">${ico(['ui', 'tent'], 'ico big')}<div class="card-main"><div class="card-title">Le camping de la vallée</div><div class="card-sub">${CAMPING.pitches} emplacements et un feu de camp : des campeurs de passage viennent planter leur tente et acheter vos produits.</div></div></div>
             <div class="od-foot">${btn(`Aménager · ${costHtml(CAMPING.cost)}`, { act: 'buildCamp', kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}</div></div>`;
     }
     const gs = G.campGuests();
@@ -68,7 +68,7 @@ export function campingCard() {
         .filter(([id]) => !G.campUp(id))
         .map(([id, u]) => `<div class="od-line"><span><b>${u.name}</b><small>${u.desc}</small></span>${btn(costHtml(u.cost), { act: 'campUp', data: { id }, kind: G.upCan(id) ? 'green' : '', size: 'sm', disabled: !G.upCan(id) })}</div>`)
         .join('');
-    return `<div class="camps"><div class="card camp-card"><div class="card-head">${ico(['ui', 'heart'], 'ico big')}<div class="card-main"><div class="card-title">Le camping · ${G.campPitches()} emplacements</div><div class="card-sub">${gs.length} campeur${gs.length > 1 ? 's' : ''} sur place · ${G.campFree()} libre${G.campFree() > 1 ? 's' : ''}</div></div></div>${shop}${pitch}</div>
+    return `<div class="camps"><div class="card camp-card"><div class="card-head">${ico(['ui', 'tent'], 'ico big')}<div class="card-main"><div class="card-title">Le camping · ${G.campPitches()} emplacements</div><div class="card-sub">${gs.length} campeur${gs.length > 1 ? 's' : ''} sur place · ${G.campFree()} libre${G.campFree() > 1 ? 's' : ''}</div></div></div>${shop}${pitch}</div>
         ${G.campAsks().map(askCard).join('')}
         ${gs.length ? gs.map(guestCard).join('') : '<p class="card-sub">Un campeur arrive bientôt.</p>'}
         ${G.campRes().length ? `<div class="card-title camp-h">Résidents (${G.campRes().length}/12)</div>${G.campRes().map(residentCard).join('')}` : ''}

@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.101.2",
+  "title": "Un emblème parmi tous les dessins du jeu",
+  "date": "9 novembre 2026",
+  "items": [
+   "L'emblème de la Maison se choisit parmi tous les dessins du jeu",
+   "Le camping a une tente pour icône et la Maison un coffret à ruban, au lieu du même cœur",
+   "Les bulles « ? » des voyageurs du camping ne sont plus étirées"
+  ]
+ },
+ {
   "v": "1.101.1",
   "title": "La Maison s'installe dans l'Atelier",
   "date": "9 novembre 2026",

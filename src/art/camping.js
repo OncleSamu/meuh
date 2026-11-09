@@ -1,5 +1,6 @@
 // 1.101 : le camping de la vallée, dessiné : le terrain, les tentes, les cabanes de résidents, les aménagements, le feu de camp.
-import { svg, P, R, L, E, C, FE, HL, O } from './kit.js';
+import { svg, P, R, L, E, C, FE, HL, O, ui } from './kit.js';
+const inner = s => s.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
 
 export const TENT_COLORS = ['#e2582f', '#3f8fd0', '#e0b030', '#4aa860', '#a864c8', '#e8789a'];
 export const CABIN_COLORS = ['#d9a66a', '#b9d08a', '#9ec4e0', '#e0b8a0', '#d4c28a'];
@@ -110,6 +111,8 @@ export const sign = () =>
     );
 export const flag = () => svg(L('M18 58 V8', 3.4) + P('M18 8 L50 18 L18 30Z', '#e2582f', 2.4));
 
+// les icônes des onglets : une tente pour le camping
+ui.tent = () => inner(tent('#e2582f'));
 export const SPRITES = { sign, tent, cabin, well, toilets, pavilion, swing, shop, stall, marquee, fire, tree, pitchOpen, pitchLocked, flag };
 
 // le décor de fond : herbe rayée, chemin de terre, lisière d'arbres

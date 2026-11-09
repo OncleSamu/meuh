@@ -377,7 +377,7 @@ const ROWS = [
         grp: 'give',
         hidden: true, // 1.101 : cette carte vit dans Ferme › Camping ; la ligne ne sert plus que d'accès aux tiroirs
         on: () => !!maisonCard(),
-        icon: () => ['ui', 'heart'],
+        icon: () => ['ui', 'maison'],
         title: () => (G.maisonBuilt() ? G.brandName() : 'La Maison'),
         sub: () => (G.maisonBuilt() ? `Palier ${G.maisonTier() + 1}${G.maisonReady() ? ` · ${G.maisonReady()} à faire ou vendre` : ''}` : 'Votre propre marque'),
         ready: () => G.maisonReady() > 0,
@@ -388,7 +388,7 @@ const ROWS = [
         grp: 'give',
         hidden: true, // 1.101 : cette carte vit dans Ferme › Camping ; la ligne ne sert plus que d'accès aux tiroirs
         on: () => !!campingCard(),
-        icon: () => ['ui', 'heart'],
+        icon: () => ['ui', 'tent'],
         title: () => 'Le camping',
         sub: () => (G.campBuilt() ? `${G.campGuests().length}/${G.campPitches()} emplacements · ${G.campRes().length} résident${G.campRes().length > 1 ? 's' : ''}${G.campReady() + G.residentReady() ? ` · ${G.campReady() + G.residentReady()} à servir` : ''}` : 'Des campeurs de passage'),
         ready: () => G.campReady() + G.residentReady() > 0,

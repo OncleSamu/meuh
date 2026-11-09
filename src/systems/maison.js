@@ -34,10 +34,11 @@ export function renameBrand(_, n) {
 // ---- la réputation ----
 export const maisonTier = () => (M() ? MAISON.rep.filter(v => M().rep >= v).length - 1 : 0);
 export const maisonNext = () => (M() ? MAISON.rep[maisonTier() + 1] : null);
-export const emblemsOpen = () => Math.min(EMBLEMS.length, 6 + 6 * maisonTier());
+// 1.101.2 : un emblème est un dessin du jeu, au choix : « genre:id » (ou un simple produit)
+export const emblemOk = e => /^(item|animal|machine|villager|ui):[\w-]+$/.test(String(e)) || !!ITEMS[e];
 export const clientsOpen = () => MAISON_CLIENTS.filter(c => c.tier <= maisonTier());
 export function setEmblem(id) {
-    if (!M() || EMBLEMS.indexOf(id) < 0 || EMBLEMS.indexOf(id) >= emblemsOpen()) return false;
+    if (!M() || !emblemOk(id)) return false;
     M().emblem = id;
     return true;
 }

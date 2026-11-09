@@ -329,7 +329,7 @@ function defisPage() {
 function paquetsTile() {
     if (!G.maisonBuilt()) return '';
     const n = G.recipes().length;
-    return `<button class="card ach pk-tile" data-act="bookPage" data-p="paquets">${ico(['ui', 'heart'], 'ico big')}<div class="card-main"><div class="card-title">Mes paquets</div><div class="card-sub">${n ? `${n} recette${n > 1 ? 's' : ''} de paquets, avec leur nom` : 'Les paquets que vous composez à la Maison'}</div></div><span class="hub-chev">›</span></button>`;
+    return `<button class="card ach pk-tile" data-act="bookPage" data-p="paquets">${ico(['ui', 'maison'], 'ico big')}<div class="card-main"><div class="card-title">Mes paquets</div><div class="card-sub">${n ? `${n} recette${n > 1 ? 's' : ''} de paquets, avec leur nom` : 'Les paquets que vous composez à la Maison'}</div></div><span class="hub-chev">›</span></button>`;
 }
 function paquetsPage() {
     const back = `<button class="bk-back" data-act="bookBack">‹ Toutes les pages</button>`;
