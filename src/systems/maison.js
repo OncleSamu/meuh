@@ -4,12 +4,14 @@ import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { toast, sfx, burst } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { MAISON, MAISON_CLIENTS, EMBLEMS, PALETTES } from '../data/maison.js';
+import { MAISON, MAISON_CLIENTS, EMBLEMS, PALETTES, MAISON_ORDERS, ORDER_WHO } from '../data/maison.js';
+import { QUALITY } from '../data/farm.js';
+import { STARS } from '../data/camping.js';
 import { PACKS, PACK, KIND_OF_TYPE, NAME_IDEAS, NAME_MAX, RECIPES_MAX } from '../data/paquets.js';
 import { hasCost, payCost } from './home.js';
 import { earn, addXp } from './player.js';
 import { haveQ, takeQ } from './defis.js';
-import { campBuilt } from './camping.js';
+import { campBuilt, campGuests } from './camping.js';
 
 const M = () => state.maison;
 export const maisonOpen = () => campBuilt();
@@ -83,12 +85,20 @@ function canHave(items, q) {
 }
 export function coffretMult(items, q, pack) {
     const kinds = new Set(items.map(kindOf));
-    return MAISON.base + (kinds.size === 3 ? MAISON.variety : 0) + MAISON.quality[q] + MAISON.repMult * maisonTier() + ((PACK[pack] && PACK[pack].bonus) || 0);
+    return MAISON.base + (kinds.size === 3 ? MAISON.variety : 0) + MAISON.repMult * maisonTier() + ((PACK[pack] && PACK[pack].bonus) || 0);
 }
-export const coffretValue = (items, q, pack) => Math.round(items.reduce((a, id) => a + ITEMS[id].sell, 0) * coffretMult(items, q, pack));
+// 1.103 : chaque produit compte avec sa qualité, comme partout ailleurs ; un paquet ne fait jamais perdre de valeur
+export const coffretValue = (items, q, pack) => Math.round(items.reduce((a, id) => a + ITEMS[id].sell, 0) * ((QUALITY[q] && QUALITY[q].mult) || 1) * coffretMult(items, q, pack));
+export const pkValue = c => coffretValue(c.items, c.q, c.pack || 'carton');
+// ---- 1.103 : l'atelier va plus vite et lance plusieurs paquets à la suite ----
+export const workTime = () => MAISON.times[maisonTier()] || MAISON.time;
+export const slotsMax = () => MAISON.slots[maisonTier()] || 1;
+export const queue = () => (M() && M().queue) || [];
+export const busyCount = () => (M() ? (M().work ? 1 : 0) + queue().length : 0);
+export const slotFree = () => !!M() && busyCount() < slotsMax();
 // trois produits (le même plusieurs fois est permis si on en a assez), une boîte qui leur va et dont on a les matériaux
 export function canMake(items, q, pack) {
-    if (!M() || M().work || M().stock.length >= MAISON.stock || items.length !== 3) return false;
+    if (!M() || !slotFree() || M().stock.length + busyCount() >= MAISON.stock || items.length !== 3) return false;
     if (items.some(id => !canPack(id))) return false;
     if (!packOpen(pack) || !packFits(pack, items) || !packCan(pack)) return false;
     return canHave(items, q);
@@ -101,7 +111,11 @@ export function makeCoffret(items, q = 0, at, opts = {}) {
     items.forEach(id => takeQ(id, 1, q));
     const name = cleanName(opts.name) || nameIdeas(items)[0];
     const rid = noteRecipe(items, q, pack, name);
-    M().work = { items: items.slice(), q, pack, name, rid, ready: now() + MAISON.time };
+    const job = { items: items.slice(), q, pack, name, rid };
+    if (M().work) {
+        M().queue = M().queue || [];
+        M().queue.push(job);
+    } else M().work = { ...job, ready: now() + workTime() };
     sfx('pop');
     burst(at, 'sparkle', 8);
     return true;
@@ -149,32 +163,38 @@ function finish() {
     const uid = M().n;
     const nm = w.name || `Coffret ${ITEMS[w.items[0]].name} & ${ITEMS[w.items[1]].name}`;
     const pack = w.pack || 'carton';
-    M().stock.push({ uid, name: nm, items: w.items, q: w.q, pack, rid: w.rid || 0, value: coffretValue(w.items, w.q, pack), made: now() });
+    M().stock.push({ uid, name: nm, items: w.items, q: w.q, pack, rid: w.rid || 0, value: coffretValue(w.items, w.q, pack), made: Math.min(now(), w.ready) });
     const rc = recipeAt(w.rid);
     if (rc) rc.made++;
-    M().work = null;
+    // le suivant de la file démarre là où le précédent s'est fini (rattrapage hors ligne)
+    const nx = M().queue && M().queue.shift();
+    M().work = nx ? { ...nx, ready: w.ready + workTime() } : null;
     M().made++;
     state.stats.coffrets = (state.stats.coffrets || 0) + 1;
     if (view.started) toast(`Un paquet est prêt : ${nm}`, ['ui', 'heart']);
 }
 // ---- la vente ----
-export const clientReady = c => now() >= ((M() && M().wait[c.id]) || 0);
-export const canSellTo = (cof, c) => !!cof && c.tier <= maisonTier() && clientReady(c) && cof.q >= c.minQ;
-export const offerFor = (cof, c) => Math.round(cof.value * c.pay);
-export function sellCoffret(uid, cid, at) {
-    const cof = M() && M().stock.find(x => x.uid === uid);
-    const c = MAISON_CLIENTS.find(x => x.id === cid);
-    if (!cof || !c || !canSellTo(cof, c)) return false;
+// 1.103 : « les campeurs », ce sont les vrais campeurs du camping : un paquet chacun par séjour
+export const camperFor = cof => {
+    const ok = campGuests().filter(g => !g.pk && (g.star == null || cof.q >= STARS.q));
+    return ok.find(g => g.star != null) || ok[0] || null;
+};
+export const pkBuyers = () => campGuests().filter(g => !g.pk).length;
+export const clientReady = c => (c.camp ? pkBuyers() > 0 : now() >= ((M() && M().wait[c.id]) || 0));
+export const canSellTo = (cof, c) => !!cof && c.tier <= maisonTier() && cof.q >= c.minQ && (c.camp ? !!camperFor(cof) : clientReady(c));
+export const offerFor = (cof, c, g) => {
+    if (c.camp) g = g || camperFor(cof);
+    return Math.round(pkValue(cof) * c.pay * (g && g.star != null ? STARS.pay : 1));
+};
+function takeCoffret(cof, at, pay, rep) {
     M().stock = M().stock.filter(x => x !== cof);
-    M().wait[c.id] = now() + MAISON.wait;
-    earn(offerFor(cof, c), at);
+    earn(pay, at);
     const before = maisonTier();
-    M().rep += 1 + (cof.q > c.minQ ? 1 : 0) + (new Set(cof.items.map(kindOf)).size === 3 ? 1 : 0);
+    M().rep += rep;
     M().sold++;
     const rc = recipeAt(cof.rid);
     if (rc) rc.sold++;
     state.stats.coffretsSold = (state.stats.coffretsSold || 0) + 1;
-    addXp(MAISON.xp, at);
     sfx('coin');
     burst(at, 'sparkle', 10);
     if (maisonTier() > before && view.started) {
@@ -182,15 +202,88 @@ export function sellCoffret(uid, cid, at) {
         const nc = MAISON_CLIENTS.find(x => x.tier === maisonTier());
         toast(`La réputation de ${M().name} grandit${nc ? ` : ${nc.name} s’intéresse à vous` : ''}`, ['ui', 'heart']);
     }
+}
+const repOf = (cof, minQ) => 1 + (cof.q > minQ ? 1 : 0) + (new Set(cof.items.map(kindOf)).size === 3 ? 1 : 0);
+// vendre à un campeur précis (depuis sa fiche au camping)
+export const canSellToGuest = (cof, g) => !!cof && !!g && !g.pk && maisonTier() >= 1 && (g.star == null || cof.q >= STARS.q);
+export function sellToGuest(uid, gi, at) {
+    const cof = M() && M().stock.find(x => x.uid === uid);
+    const g = campGuests()[gi];
+    const c = MAISON_CLIENTS.find(x => x.camp);
+    if (!cof || !canSellToGuest(cof, g)) return false;
+    const pay = offerFor(cof, c, g);
+    g.pk = 1;
+    takeCoffret(cof, at, pay, repOf(cof, 0) + (g.star != null ? 2 : 0));
+    addXp(MAISON.xp, at);
     return true;
 }
+export function sellCoffret(uid, cid, at) {
+    const cof = M() && M().stock.find(x => x.uid === uid);
+    const c = MAISON_CLIENTS.find(x => x.id === cid);
+    if (!cof || !c || !canSellTo(cof, c)) return false;
+    if (c.camp) return sellToGuest(uid, campGuests().indexOf(camperFor(cof)), at);
+    M().wait[c.id] = now() + MAISON.wait;
+    takeCoffret(cof, at, offerFor(cof, c), repOf(cof, c.minQ));
+    addXp(MAISON.xp, at);
+    return true;
+}
+// ---- 1.103 : les commandes de paquets ----
+export const orders = () => (M() && M().orders) || [];
+export const orderFits = (cof, o) => !!cof && !!o && !o.due && cof.q >= o.q && (o.kind === 'any' || (o.kind === 'mixte' ? new Set(cof.items.map(kindOf)).size === 3 : cof.items.every(id => kindOf(id) === o.kind)));
+export const orderPay = (cof, o) => Math.round(pkValue(cof) * MAISON_ORDERS.pay * (1 + 0.1 * o.q));
+export const orderReady = o => !o.due && M().stock.some(c => orderFits(c, o));
+export function newOrder(seed = Math.random()) {
+    let x = Math.floor(seed * 1e9) >>> 0;
+    const r = () => ((x = (x * 1103515245 + 12345) >>> 0) / 4294967296);
+    const used = orders().map(o => o.who);
+    const pool = ORDER_WHO.filter(w => !used.includes(w[0]));
+    const [who, why] = pool[Math.floor(r() * pool.length)] || ORDER_WHO[0];
+    const kind = MAISON_ORDERS.kinds[Math.floor(r() * MAISON_ORDERS.kinds.length)];
+    const q = Math.min(4, Math.floor(r() * (maisonTier() + 1)));
+    return { who, why, kind, q };
+}
+function ordersTick() {
+    const m = M();
+    if (!m.orders) m.orders = [];
+    let changed = false;
+    while (m.orders.length < MAISON_ORDERS.max) (m.orders.push(newOrder()), (changed = true));
+    m.orders.forEach((o, i) => {
+        if (o.due && now() >= o.due) {
+            m.orders[i] = newOrder();
+            changed = true;
+        }
+    });
+    return changed;
+}
+export function deliverOrder(oi, uid, at) {
+    const o = orders()[oi];
+    const cof = M() && M().stock.find(x => x.uid === uid);
+    if (!o || !orderFits(cof, o)) return false;
+    takeCoffret(cof, at, orderPay(cof, o), MAISON_ORDERS.rep);
+    addXp(MAISON.xp * MAISON_ORDERS.xp, at);
+    M().orders[oi] = { due: now() + MAISON_ORDERS.gap };
+    M().odone = (M().odone || 0) + 1;
+    state.stats.coffretOrders = (state.stats.coffretOrders || 0) + 1;
+    if (view.started) toast(`${o.who} est ravi${o.who.startsWith('La ') || o.who.startsWith('Madame') || o.who === 'Lucie' ? 'e' : ''} de son paquet !`, ['ui', 'heart']);
+    return true;
+}
+export function skipOrder(oi) {
+    const o = orders()[oi];
+    if (!o || o.due) return false;
+    M().orders[oi] = { due: now() + MAISON_ORDERS.skip };
+    return true;
+}
+// le meilleur paquet de l'étagère pour une commande (le moins cher qui convient, pour garder les beaux)
+export const bestPkFor = o => M().stock.filter(c => orderFits(c, o)).sort((a, b) => pkValue(a) - pkValue(b))[0] || null;
 export function maisonTick() {
     if (!M()) return false;
-    if (M().work && now() >= M().work.ready && M().stock.length < MAISON.stock) {
+    let changed = ordersTick();
+    // plusieurs paquets peuvent s'être finis hors ligne
+    for (let k = 0; k < 10 && M().work && now() >= M().work.ready && M().stock.length < MAISON.stock; k++) {
         finish();
-        return true;
+        changed = true;
     }
-    return false;
+    return changed;
 }
 export const maisonReady = () =>
-    !M() ? 0 : (M().work && now() >= M().work.ready ? 1 : 0) + M().stock.filter(c => clientsOpen().some(k => canSellTo(c, k))).length;
+    !M() ? 0 : M().stock.filter(c => clientsOpen().some(k => canSellTo(c, k))).length + orders().filter(o => !o.due && M().stock.some(c => orderFits(c, o))).length;

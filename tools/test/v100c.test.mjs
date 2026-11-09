@@ -77,8 +77,9 @@ test('maison : vendre paie, fait monter la réputation, ouvre des clients et des
         const cof = state.maison.stock[0];
         T += MAISON.wait + 1;
         const m = state.money;
+        const offer = G.offerFor(cof, MAISON_CLIENTS[0]);
         assert.ok(G.sellCoffret(cof.uid, 'neighbors'));
-        assert.equal(state.money - m, G.offerFor(cof, MAISON_CLIENTS[0]));
+        assert.equal(state.money - m, offer);
     }
     assert.equal(G.maisonTier(), 1);
     assert.equal(G.clientsOpen().length, 2);

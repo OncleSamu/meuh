@@ -3,19 +3,22 @@
 // Les coffrets sont de vrais objets, mais ils ont leur propre stock (comme les bouteilles de la cave), jamais pris par les commandes.
 export const MAISON = {
     cost: { coins: 2000000, plank: 100, stone: 60, beam: 20 },
-    time: 15 * 60000, // un coffret : 15 minutes à l'atelier
+    time: 15 * 60000, // un coffret : 15 minutes à l'atelier (au premier palier)
+    times: [15, 15, 12, 10, 8, 5].map(m => m * 60000), // 1.103 : l'atelier va plus vite avec la renommée
+    slots: [1, 2, 3, 4, 5, 6], // 1.103 : paquets lancés à la suite (l'atelier + la file d'attente), selon le palier
     stock: 30, // coffrets gardés au plus
-    base: 1.3, // un coffret vaut 1,3 fois ses trois produits…
-    variety: 0.1, // … +0,1 s'ils sont de trois sortes différentes
-    quality: [0, 0.1, 0.2, 0.3, 0.4], // … +0,1 si tous au moins en argent, +0,2 en or, +0,3 en platine, +0,4 en diamant
-    repMult: 0.03, // … +0,03 par palier de réputation
+    // 1.103 : chaque produit compte avec sa qualité (×1,25 en argent… ×2,8 en diamant), puis le paquet multiplie le tout :
+    base: 1.5, // ×1,5…
+    variety: 0.15, // … +0,15 s'ils sont de trois sortes différentes
+    repMult: 0.03, // … +0,03 par palier de réputation (+ le bonus de la boîte)
     rep: [0, 15, 40, 100, 250, 600], // points de réputation pour chaque palier (0 à 5)
     xp: 80,
     wait: 3 * 3600000, // un client revient 3 h après un achat
 };
 export const MAISON_CLIENTS = [
     { id: 'neighbors', name: 'Les voisins', tier: 0, pay: 1.0, minQ: 0, say: 'Un petit cadeau pour la fête des voisins' },
-    { id: 'campers', name: 'Les campeurs', tier: 1, pay: 1.15, minQ: 0, say: 'Un souvenir de la vallée à ramener' },
+    // 1.103 : les vrais campeurs du camping, un paquet chacun par séjour (un remarquable veut de l'argent au moins et paie plus)
+    { id: 'campers', name: 'Les campeurs', tier: 1, pay: 1.2, minQ: 0, camp: true, say: 'Un souvenir de la vallée, un paquet par campeur et par séjour' },
     { id: 'souk', name: 'Le souk de l’oasis', tier: 2, pay: 1.3, minQ: 1, say: 'Les marchands du souk veulent du beau' },
     { id: 'chateau', name: 'Le château', tier: 3, pay: 1.5, minQ: 1, say: 'Octave cherche un cadeau pour ses invités' },
     { id: 'vitrine', name: 'La vitrine du village', tier: 4, pay: 1.8, minQ: 3, say: 'Une vitrine aux couleurs de votre maison' },
@@ -31,4 +34,30 @@ export const PALETTES = [
     { name: 'Rose poudré', bg: '#fbe1e1', fg: '#a23b4a' },
     { name: 'Ardoise', bg: '#e1e5ea', fg: '#2f3b4a' },
     { name: 'Orange brûlé', bg: '#fde7cf', fg: '#a8480f' },
+];
+
+// 1.103 : les commandes de paquets. Trois à la fois ; une nouvelle arrive quelques heures après une livraison.
+export const MAISON_ORDERS = {
+    max: 3,
+    gap: 3 * 3600000, // une commande livrée est remplacée 3 h plus tard
+    skip: 1 * 3600000, // une commande passée, 1 h plus tard
+    pay: 2.2, // payée 2,2 fois la valeur du paquet
+    rep: 6,
+    xp: 3, // × MAISON.xp
+    kinds: ['frais', 'frais', 'mer', 'fabriqué', 'mixte', 'any'], // mixte : trois genres différents ; any : n'importe quel paquet
+};
+export const ORDER_KIND_TXT = { frais: 'de produits frais', mer: 'de la mer', 'fabriqué': 'de bonnes choses de l’atelier', mixte: 'de trois genres différents', any: 'de votre choix' };
+export const ORDER_WHO = [
+    ['Lucie', 'pour son mariage'],
+    ['Le maire', 'pour les vœux de la mairie'],
+    ['Madame Roux', 'pour l’anniversaire de sa mère'],
+    ['L’école du village', 'pour la kermesse'],
+    ['Le curé', 'pour la fête du saint patron'],
+    ['Un hôtel de la ville', 'pour ses chambres de luxe'],
+    ['Le club de pétanque', 'pour le grand tournoi'],
+    ['Joseph le notaire', 'pour ses meilleurs clients'],
+    ['La boulangère', 'pour la vitrine de Noël'],
+    ['Les jeunes mariés du moulin', 'pour leurs invités'],
+    ['Le médecin', 'pour remercier son infirmière'],
+    ['Une agence de voyages', 'pour ses clients étrangers'],
 ];

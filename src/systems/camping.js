@@ -92,7 +92,7 @@ export function pickWant(kind, taken, r) {
     return l.length ? l[Math.floor(r() * l.length)] : null;
 }
 export const starChance = () => STARS.chance + resBonus('star');
-// opts (tests) : { star: index dans STARS.who, regular: nom d'un ancien campeur }
+// opts (tests) : { star: index dans STARS.who, regular: nom d'un ancien campeur, plain: ni l'un ni l'autre }
 export function newGuest(t = now(), seed, opts = {}) {
     const c = state.camping;
     seed = seed ?? (Date.now() ^ (c.hosted * 7919) ^ Math.floor(Math.random() * 1e6)) >>> 0;
@@ -100,9 +100,9 @@ export function newGuest(t = now(), seed, opts = {}) {
     const used = [...c.guests, ...(c.res || []), ...(c.asks || [])].map(g => g.name);
     // un habitué qui revient, ou un campeur remarquable, ou un inconnu
     const olds = (c.past || []).filter(p => p.mood === 2 && !used.includes(p.name));
-    const back = opts.regular ? olds.find(p => p.name === opts.regular) : opts.star == null && olds.length && r() < REGULARS.chance ? olds[Math.floor(r() * olds.length)] : null;
+    const back = opts.regular ? olds.find(p => p.name === opts.regular) : !opts.plain && opts.star == null && olds.length && r() < REGULARS.chance ? olds[Math.floor(r() * olds.length)] : null;
     const starOk = !c.guests.some(g => g.star != null);
-    const star = back ? null : opts.star != null ? opts.star : starOk && r() < starChance() ? Math.floor(r() * STARS.who.length) : null;
+    const star = back ? null : opts.star != null ? opts.star : !opts.plain && starOk && r() < starChance() ? Math.floor(r() * STARS.who.length) : null;
     const pid = back ? back.profile : star != null ? STARS.who[star].profile : Object.keys(PROFILES)[Math.floor(r() * Object.keys(PROFILES).length)];
     const woman = back ? !!back.woman : r() < 0.5;
     const stay = (CAMPING.stay[0] + r() * (CAMPING.stay[1] - CAMPING.stay[0])) * mult('stay') * (1 + resBonus('stay'));
@@ -166,7 +166,8 @@ export const guestMood = g => {
     return n === g.wants.length ? 2 : n > 0 ? 1 : 0; // 0 déçu, 1 content, 2 ravi
 };
 export const MOODS = ['Déçu', 'Content', 'Ravi'];
-let leaveHook;
+// eslint-disable-next-line no-var -- var : les imports circulaires (residents.js) appellent setLeaveHook avant cette ligne
+var leaveHook;
 export function setLeaveHook(f) {
     leaveHook = f;
 }

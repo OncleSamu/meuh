@@ -23,7 +23,7 @@ function farm() {
     RESIDENTS.askChance = 1;
 }
 function happyLeave() {
-    const g = G.newGuest();
+    const g = G.newGuest(undefined, undefined, { plain: true });
     g.wants.forEach(w => (w.done = true));
     g.leave = T;
     state.camping.next = T + 1e9;
@@ -32,7 +32,7 @@ function happyLeave() {
 
 test('résidents : un campeur ravi demande à rester, pas un campeur déçu', () => {
     farm();
-    const b = G.newGuest();
+    const b = G.newGuest(undefined, undefined, { plain: true });
     b.leave = T;
     state.camping.next = T + 1e9;
     G.campTick();
@@ -121,7 +121,7 @@ test('résidents : le nom d’un résident n’est pas repris par un nouveau cam
     G.resAccept(0);
     const name = G.campRes()[0].name;
     for (let i = 0; i < 30; i++) {
-        const g = G.newGuest();
+        const g = G.newGuest(undefined, undefined, { plain: true });
         assert.notEqual(g.name, name);
         state.camping.guests.length = 0;
     }

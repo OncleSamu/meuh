@@ -1,12 +1,13 @@
 // 1.100 (étape 1) : la carte du camping de la vallée.
 import { fmt, formatDuration } from '../../core/format.js';
+import { state } from '../../core/state.js';
 import { now } from '../../core/clock.js';
 import { CAMPING, CAMP_UPGRADES, STARS } from '../../data/camping.js';
 import { QUALITY } from '../../data/farm.js';
 import { jobUnit } from '../../data/campers.js';
 import { ITEMS } from '../../data/items.js';
 import * as G from '../../systems/index.js';
-import { actions } from '../dom.js';
+import { actions, esc } from '../dom.js';
 import { ico } from '../icons.js';
 import { btn } from '../kit.js';
 
@@ -52,6 +53,13 @@ const costHtml = c =>
     Object.entries(c)
         .map(([k, n]) => (k === 'coins' ? `${fmt(n)}${COIN()}` : `${ico(['item', k])}${n}`))
         .join(' ');
+// 1.103 : chaque campeur achète un paquet de la Maison par séjour
+function pkLine(g, gi) {
+    if (!G.maisonBuilt() || G.maisonTier() < 1) return '';
+    if (g.pk) return `<div class="od-line">${ico(['ui', 'maison'])}<span><b>Un paquet de ${esc(G.brandName())}</b><small>Acheté ✓</small></span></div>`;
+    const n = state.maison.stock.filter(c => G.canSellToGuest(c, g)).length;
+    return `<div class="od-line">${ico(['ui', 'maison'])}<span><b>Un paquet de ${esc(G.brandName())}</b><small>${n ? `${n} paquet${n > 1 ? 's' : ''} lui convien${n > 1 ? 'nent' : 't'}` : g.star != null ? 'Il en veut un d’argent au moins' : 'Aucun paquet sur l’étagère'}</small></span>${btn('Proposer', { act: 'open', data: { sheet: 'pkGuest', g: gi }, kind: n ? 'green' : '', size: 'sm', disabled: !n })}</div>`;
+}
 export function guestCard(g, gi) {
     const left = formatDuration(Math.max(0, (g.leave - now()) / 1000));
     const wants = g.wants
@@ -60,7 +68,7 @@ export function guestCard(g, gi) {
                 `<div class="od-line">${ico(['item', w.item])}<span><b>${ITEMS[w.item].name}${w.q ? ` <em class="q-tag q${w.q}">${QUALITY[w.q].name} ou mieux</em>` : ''}</b><small>${w.done ? 'Vendu ✓' : `${fmt(G.priceOf(w.item, g))} pièces${G.eventBoosts(w.item) ? ' · ' + G.campEvent().name.toLowerCase() : ''}${G.canSell(g, i) ? '' : ' · pas en stock'}`}</small></span>${w.done ? '' : btn('Vendre', { act: 'campSell', data: { g: gi, i }, kind: G.canSell(g, i) ? 'green' : '', size: 'sm', disabled: !G.canSell(g, i) })}</div>`,
         )
         .join('');
-    return `<div class="card camp-card"><div class="card-head">${ico(['villager', g.look], 'ico big')}<div class="card-main"><div class="card-title">${g.star != null ? ico(['ui', 'star']) : ''}${g.name} ${g.from}</div><div class="card-sub">${G.guestTitle(g)} · repart dans ${left}</div></div></div>${g.say ? `<p class="camp-say">« ${g.say} »</p>` : ''}${wants}${g.star != null ? `<p class="card-sub">Campeur remarquable : produits d’argent au moins, payés ×${STARS.pay}, et un gros pourboire s’il repart ravi.</p>` : g.visits > 1 ? `<p class="card-sub">Un habitué : son pourboire grandit à chaque séjour.</p>` : ''}</div>`;
+    return `<div class="card camp-card"><div class="card-head">${ico(['villager', g.look], 'ico big')}<div class="card-main"><div class="card-title">${g.star != null ? ico(['ui', 'star']) : ''}${g.name} ${g.from}</div><div class="card-sub">${G.guestTitle(g)} · repart dans ${left}</div></div></div>${g.say ? `<p class="camp-say">« ${g.say} »</p>` : ''}${wants}${pkLine(g, gi)}${g.star != null ? `<p class="card-sub">Campeur remarquable : produits d’argent au moins, payés ×${STARS.pay}, et un gros pourboire s’il repart ravi.</p>` : g.visits > 1 ? `<p class="card-sub">Un habitué : son pourboire grandit à chaque séjour.</p>` : ''}</div>`;
 }
 export function upsHtml() {
     const ups = Object.entries(CAMP_UPGRADES)

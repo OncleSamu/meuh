@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.103",
+  "title": "La Maison prend son envol",
+  "date": "9 novembre 2026",
+  "items": [
+   "Un prix juste : chaque produit d'un paquet compte avec sa qualité, un paquet vaut toujours plus que ses produits",
+   "Des commandes de paquets : trois clients à la fois, une occasion, un genre, parfois une qualité, et une belle récompense",
+   "La renommée : un atelier plus rapide (jusqu'à 5 minutes) et jusqu'à 6 paquets lancés à la suite",
+   "Les campeurs achètent un paquet chacun par séjour, à proposer depuis leur fiche",
+   "La page de la Maison en quatre onglets : Atelier, Étagère, Commandes, Marque"
+  ]
+ },
+ {
   "v": "1.102",
   "title": "Un camping vivant",
   "date": "9 novembre 2026",

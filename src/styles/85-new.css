@@ -1569,3 +1569,59 @@ button.cm-spot:active {
         animation: none;
     }
 }
+
+/* 1.103 : la Maison prend son envol */
+.fame-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 4px;
+    border-bottom: 1px dashed rgba(58, 38, 24, 0.18);
+}
+.fame-row:last-child {
+    border-bottom: 0;
+}
+.fame-row > span:nth-child(2) {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.fame-row small {
+    color: var(--ink-soft, #6b5a44);
+}
+.fame-row > .ico {
+    width: 22px;
+    height: 22px;
+    flex: none;
+}
+.fame-n {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    border: 2px solid var(--ink, #3a2618);
+    background: #e8e2d4;
+}
+.fame-row.done .fame-n {
+    background: #ffd23f;
+}
+.fame-row.next .fame-n {
+    background: #fff2b0;
+    box-shadow: 0 0 0 3px rgba(255, 210, 63, 0.45);
+}
+.fame-row.off {
+    opacity: 0.6;
+}
+.pk-row.dim {
+    opacity: 0.6;
+}
+.pk-order .od-foot {
+    flex-wrap: wrap;
+}
+.maison-head .bar {
+    margin-top: 6px;
+}

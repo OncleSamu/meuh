@@ -49,7 +49,7 @@ test('camping : les campeurs arrivent, jamais plus que d’emplacements, visage 
 test('camping : vendre prend le produit et paie plus que sa valeur', () => {
     farm();
     G.buildCamp();
-    const g = G.newGuest();
+    const g = G.newGuest(undefined, undefined, { plain: true });
     const id = g.wants[0].item;
     assert.equal(G.sellTo(0, 0), false);
     state.inventory[id] = 1;
@@ -64,8 +64,8 @@ test('camping : vendre prend le produit et paie plus que sa valeur', () => {
 test('camping : tout vendu = ravi + pourboire ; rien vendu = déçu', () => {
     farm();
     G.buildCamp();
-    const a = G.newGuest();
-    const b = G.newGuest();
+    const a = G.newGuest(undefined, undefined, { plain: true });
+    const b = G.newGuest(undefined, undefined, { plain: true });
     a.wants.forEach(w => (w.done = true));
     assert.equal(G.guestMood(a), 2);
     assert.equal(G.guestMood(b), 0);
@@ -106,7 +106,7 @@ test('camping : les améliorations changent vraiment les chiffres', () => {
     farm();
     G.buildCamp();
     const gap = G.campGap()[0];
-    const id = G.newGuest().wants[0].item;
+    const id = G.newGuest(undefined, undefined, { plain: true }).wants[0].item;
     const p = G.priceOf(id);
     G.buyUp('play');
     G.buyUp('common');
