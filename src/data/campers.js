@@ -6,11 +6,13 @@ export const RESIDENTS = {
     askChance: 0.3, // un campeur ravi demande à rester une fois sur trois
     maxAsks: 3, // demandes en attente
     cabin: n => 100000 * n, // la cabane du n-ième résident
-    hearts: [3, 8, 15, 25, 38, 55, 75, 100, 130, 170], // points d'amitié cumulés pour 1 à 10 cœurs
+    hearts: [4, 12, 25, 42, 65], // points d'amitié cumulés pour 1 à 5 cœurs, comme les villageois
     gift: { like: 3, love: 8, other: 1, cool: 6 * 3600000 }, // points ; un cadeau toutes les 6 h
     order: { pay: 1.6, pts: 2, wait: 4 * 3600000, qty: 3 },
     xp: 100,
-    stories: [3, 6, 10], // cœurs qui débloquent une histoire
+    stories: [2, 4, 5], // cœurs qui débloquent une histoire
+    seen: 3, // cœurs à partir desquels le produit adoré se révèle
+    friend: 5, // cœurs d'un « ami » de la vallée
 };
 export const JOBS = {
     hiker: [['guide de randonnée', 'guide de randonnée'], ['cartographe', 'cartographe']],

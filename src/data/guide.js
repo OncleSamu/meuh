@@ -2044,7 +2044,7 @@ export const GUIDE_PAGES = [
                 b: [
                     'Dès le niveau 57 : un camping à aménager (1,5 million de pièces, planches, pierres, poutres), avec 3 emplacements, puis jusqu’à 12. Ferme › Camping : un vrai terrain, avec ses tentes, ses cabanes et ses aménagements. Touchez un campeur ou une cabane pour lui parler.',
                     'Toutes les 3 à 6 heures, un campeur au visage tiré au hasard plante sa tente pour 10 à 30 heures. Randonneur, famille, gourmet, pêcheur, artiste ou couple : chacun cherche 2 ou 3 produits, que vous lui vendez deux fois leur valeur.',
-                    'Un campeur ravi demande parfois à s’installer. Vous l’accueillez dans une cabane (100 000 pièces par résident déjà installé, 12 au maximum) ou vous refusez. Il apparaît aussi dans Village › Villageois (filtre « Résidents »), avec la même fiche : Amitié, Cadeau, Goûts, Histoire. Il a un métier, une commande permanente payée 1,6 fois sa valeur, trois produits qu’il aime, un produit adoré qui se révèle à 6 cœurs, et une histoire à 3, 6 et 10 cœurs, tirée au hasard. Un cadeau toutes les 6 heures. Aucun bonus de jeu : seulement de l’affection. On peut le faire partir à tout moment (deux appuis).',
+                    'Un campeur ravi demande parfois à s’installer. Vous l’accueillez dans une cabane (100 000 pièces par résident déjà installé, 12 au maximum) ou vous refusez. Il apparaît aussi dans Village › Villageois (filtre « Résidents »), avec la même fiche : Amitié, Cadeau, Goûts, Histoire. Il a un métier, une commande permanente payée 1,6 fois sa valeur, trois produits qu’il aime, un produit adoré qui se révèle à 3 cœurs, et une histoire à 2, 4 et 5 cœurs, tirée au hasard. Comme les villageois, ils ont cinq cœurs. Un cadeau toutes les 6 heures. Aucun bonus de jeu : seulement de l’affection. On peut le faire partir à tout moment (deux appuis).',
                     'Tout vendu : le campeur est ravi et laisse un pourboire. Rien vendu : il repart déçu, sans rien de perdu. Cinq améliorations : point d’eau, sanitaires, salle commune, terrain de jeux et épicerie (une caisse qui se remplit même hors ligne).',
                 ],
             },
@@ -2059,7 +2059,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'La fête de la vallée',
                 b: [
-                    'Le dernier chapitre. Quand le camping est bâti, cinq buts : accueillir 25 campeurs, en renvoyer 10 ravis, installer 5 résidents, mener un résident à dix cœurs, vendre 10 paquets de la Maison. La grande tente en bas à droite de Ferme › Camping.',
+                    'Le dernier chapitre. Quand le camping est bâti, cinq buts : accueillir 25 campeurs, en renvoyer 10 ravis, installer 5 résidents, mener un résident à cinq cœurs, vendre 10 paquets de la Maison. La grande tente en bas à droite de Ferme › Camping.',
                     'Une fois les buts atteints, dressez la grande table (3 millions de pièces, planches, outils) : la vallée fait la fête. Ensuite, le bilan de toute votre partie et le générique, avec les visages des habitants, des résidents et des campeurs de passage, restent à relire quand vous voulez. Le jeu continue normalement.',
                 ],
             },

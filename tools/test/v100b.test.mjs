@@ -70,13 +70,13 @@ test('résidents : les cadeaux font monter les cœurs, les histoires se débloqu
     assert.equal(G.resHearts(r), 0);
     assert.equal(r.seen, false);
     let guard = 0;
-    while (G.resHearts(r) < 10 && guard++ < 60) {
+    while (G.resHearts(r) < 5 && guard++ < 60) {
         T += RESIDENTS.gift.cool + 1;
         state.inventory[r.loved] = 1;
         assert.ok(G.resGift(0, r.loved));
         assert.equal(G.resGift(0, r.loved), false); // un cadeau toutes les 6 h
     }
-    assert.equal(G.resHearts(r), 10);
+    assert.equal(G.resHearts(r), 5);
     assert.equal(r.stories.length, 3);
     assert.equal(r.seen, true);
     for (const s of r.stories) {

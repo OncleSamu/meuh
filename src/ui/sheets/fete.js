@@ -18,7 +18,7 @@ function bilanPage() {
         ${row('Récoltes', fmt(b.harvested))}${row('Produits fabriqués', fmt(b.crafted))}${row('Commandes livrées', fmt(b.orders))}
         ${row('Chapitres de l’histoire terminés', b.chapters)}</div>
         <div class="card camp-card"><div class="card-title">Le camping et la Maison</div>
-        ${row('Campeurs accueillis', fmt(b.guests))}${row('Campeurs repartis ravis', fmt(b.happy))}${row('Résidents installés', b.residents)}${row('Amis à dix cœurs', b.friends)}
+        ${row('Campeurs accueillis', fmt(b.guests))}${row('Campeurs repartis ravis', fmt(b.happy))}${row('Résidents installés', b.residents)}${row('Amis à cinq cœurs', b.friends)}
         ${row('Paquets vendus', fmt(b.coffrets))}${brand}</div>`;
 }
 const face = (look, name, sub) => `<div class="credit"><span class="credit-av">${art('villager', look)}</span><span><b>${esc(name)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</span></div>`;

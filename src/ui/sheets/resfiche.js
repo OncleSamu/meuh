@@ -13,7 +13,7 @@ import { defineSheet, sheetOpts } from '../sheets.js';
 
 const res = i => G.campRes()[+i];
 // les cœurs d'un résident : dix, pour une amitié qui va plus loin que celle des villageois
-export const resHeartsHtml = r => hearts(G.resHearts(r), 10);
+export const resHeartsHtml = r => hearts(G.resHearts(r), RESIDENTS.hearts.length);
 const progress = r => {
     const h = G.resHearts(r),
         T = RESIDENTS.hearts;
@@ -29,7 +29,7 @@ function friendTab(r, i) {
         ? `<div class="vf-line">${ico(['item', o.item])}<div><b>Commande : ${o.n} × ${ITEMS[o.item].name}</b><small>${fmt(G.resOrderValue(r))} pièces. ${G.resCanDeliver(r) ? '' : 'Il vous manque des produits.'}</small></div>${btn('Livrer', { act: 'campDeliver', data: { i }, kind: G.resCanDeliver(r) ? 'green' : '', size: 'sm', disabled: !G.resCanDeliver(r) })}</div>`
         : '<div class="vf-line off">' + ico(['ui', 'clock']) + '<div><b>Prochaine commande bientôt</b><small>Il en passe une nouvelle toutes les quelques heures.</small></div></div>';
     const sure = G.resConfirming(r);
-    return `<div class="vf-block">${resHeartsHtml(r)}${h < 10 ? bar(progress(r), 'pink') : ''}<p class="card-sub">${h < 10 ? `${next - r.fr} point${next - r.fr > 1 ? 's' : ''} pour le cœur suivant. Une commande livrée ou un cadeau en donne.` : 'Une amitié au sommet.'}</p></div>
+    return `<div class="vf-block">${resHeartsHtml(r)}${h < RESIDENTS.hearts.length ? bar(progress(r), 'pink') : ''}<p class="card-sub">${h < RESIDENTS.hearts.length ? `${next - r.fr} point${next - r.fr > 1 ? 's' : ''} pour le cœur suivant. Une commande livrée ou un cadeau en donne.` : 'Une amitié au sommet.'}</p></div>
         <div class="vf-line">${ico(['ui', 'heart'])}<div><b>Venu ${esc(r.from)}</b><small>${esc(r.job[0].toUpperCase() + r.job.slice(1))} · ${PROFILES[r.profile] ? PROFILES[r.profile].name.toLowerCase() : 'voyageur'} · ${r.done} commande${r.done > 1 ? 's' : ''} livrée${r.done > 1 ? 's' : ''}</small></div></div>
         ${order}
         <p class="card-sub">Un résident ne donne aucun bonus : seulement de l’amitié, des histoires et le plaisir de sa compagnie.</p>
@@ -49,7 +49,7 @@ function giftTab(r, i) {
 function tasteTab(r) {
     const loved = r.seen
         ? `<div class="vf-love">${art('item', r.loved)}<div><b>Adore : ${ITEMS[r.loved].name}</b><small>+${RESIDENTS.gift.love} points.</small></div></div>`
-        : `<div class="vf-love off"><span class="vf-q">?</span><div><b>Adore : à découvrir</b><small>Il se révèle à 6 cœurs, ou en le lui offrant.</small></div></div>`;
+        : `<div class="vf-love off"><span class="vf-q">?</span><div><b>Adore : à découvrir</b><small>Il se révèle à ${RESIDENTS.seen} cœurs, ou en le lui offrant.</small></div></div>`;
     return `${loved}<h4 class="vf-h">Aime</h4><div class="vf-likes">${r.likes.filter(id => ITEMS[id]).map(id => `<i class="ico${(state.inventory[id] || 0) > 0 ? '' : ' dim'}" title="${ITEMS[id].name}">${art('item', id)}</i>`).join('')}</div><p class="card-sub">+${RESIDENTS.gift.like} points pour un produit aimé.</p>`;
 }
 function storyTab(r) {

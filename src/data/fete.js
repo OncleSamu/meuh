@@ -6,7 +6,7 @@ export const FETE = {
         { id: 'guests', name: 'Accueillir des campeurs', need: 25, stat: 'campGuests' },
         { id: 'happy', name: 'Renvoyer des campeurs ravis', need: 10, stat: 'campHappy' },
         { id: 'res', name: 'Installer des résidents', need: 5, stat: 'campResidents' },
-        { id: 'friend', name: 'Un résident à dix cœurs', need: 1, stat: 'campFriends' },
+        { id: 'friend', name: 'Un résident à cinq cœurs', need: 1, stat: 'campFriends' },
         { id: 'maison', name: 'Vendre des paquets de la Maison', need: 10, stat: 'coffretsSold' },
     ],
     title: 'La fête de la vallée',

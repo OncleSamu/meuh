@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.101.4",
+  "title": "Cinq cœurs pour les résidents",
+  "date": "9 novembre 2026",
+  "items": [
+   "Les résidents du camping ont cinq cœurs, comme les villageois",
+   "Leur produit adoré se révèle à trois cœurs et leurs histoires s'ouvrent à deux, quatre et cinq cœurs",
+   "Un résident à cinq cœurs compte pour la fête de la vallée",
+   "Les résidents déjà installés rattrapent leurs histoires"
+  ]
+ },
+ {
   "v": "1.101.3",
   "title": "Les résidents rejoignent les villageois",
   "date": "9 novembre 2026",

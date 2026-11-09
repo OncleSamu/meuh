@@ -63,7 +63,7 @@ for (let i = 0; i < 5; i++) {
 }
 // histoires et cœurs : on remonte par le système lui-même
 state.camping.res.forEach((r, i) => {
-    const total = [0, 3, 8, 15, 38][i];
+    const total = [0, 5, 14, 30, 70][i];
     r.fr = 0;
     r.fr = total;
     const hearts = G.resHearts(r);

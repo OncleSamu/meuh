@@ -8,7 +8,7 @@ import { actions } from '../dom.js';
 import { ico } from '../icons.js';
 import { btn } from '../kit.js';
 
-const hearts = n => `<span class="fid">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => `<i class="${n >= i ? 'on' : ''}">♥</i>`).join('')}</span>`;
+const hearts = n => `<span class="fid">${[1, 2, 3, 4, 5].map(i => `<i class="${n >= i ? 'on' : ''}">♥</i>`).join('')}</span>`;
 export function askCard(a, i) {
     const ok = G.resCanAccept();
     return `<div class="card camp-card"><div class="card-head">${ico(['villager', a.look], 'ico big')}<div class="card-main"><div class="card-title">${a.name} ${a.from}</div><div class="card-sub">${a.job.charAt(0).toUpperCase() + a.job.slice(1)} · voudrait s’installer dans une cabane</div></div></div>
@@ -28,7 +28,7 @@ export function residentCard(r, i) {
     const story = r.stories.length ? `<p class="camp-story">${r.stories[r.stories.length - 1]}</p>` : '';
     const sure = G.resConfirming(r);
     return `<div class="card camp-card"><div class="card-head">${ico(['villager', r.look], 'ico big')}<div class="card-main"><div class="card-title">${r.name} ${r.from}</div><div class="card-sub">${r.job.charAt(0).toUpperCase() + r.job.slice(1)} ${hearts(h)}</div></div></div>
-        ${order}<div class="od-line"><span><b>Un petit cadeau</b><small>${G.resGiftReady(r) ? 'Ce qu’il aime : un cadeau toutes les 6 h' : 'Revenez plus tard'}${r.seen ? '' : ' · son préféré se révèle à 6 cœurs'}</small></span></div><div class="od-foot">${gifts}</div>
+        ${order}<div class="od-line"><span><b>Un petit cadeau</b><small>${G.resGiftReady(r) ? 'Ce qu’il aime : un cadeau toutes les 6 h' : 'Revenez plus tard'}${r.seen ? '' : ' · son préféré se révèle à 3 cœurs'}</small></span></div><div class="od-foot">${gifts}</div>
         ${story}<div class="od-foot">${btn(sure ? 'Sûr ? Appuyez encore' : 'Faire partir', { act: 'campLeave', data: { i }, size: 'sm' })}</div></div>`;
 }
 const COIN = () => ico(['ui', 'coin']);

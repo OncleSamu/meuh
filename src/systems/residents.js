@@ -96,8 +96,11 @@ function addPts(r, n, at) {
         RESIDENTS.stories.forEach((need, k) => {
             if (h >= need && r.stories.length <= k) r.stories.push(resStory(r, k));
         });
-        if (h >= 6) r.seen = true; // le produit adoré se révèle à 6 cœurs
-        if (h >= 10) state.stats.campFriends = (state.stats.campFriends || 0) + 1;
+        if (h >= RESIDENTS.seen) r.seen = true; // le produit adoré se révèle
+        if (h >= RESIDENTS.friend && !r.friend) {
+            r.friend = 1;
+            state.stats.campFriends = (state.stats.campFriends || 0) + 1;
+        }
     }
 }
 export function resGift(i, id, at) {
@@ -148,9 +151,22 @@ export function resStory(r, tier, seed = Math.floor(Math.random() * 1e9)) {
             .replaceAll('{il}', pro.toLowerCase());
     return sub(pick(STORY_LINES[tier])) + ' ' + sub(pick(STORY_FLAVOR[r.profile]));
 }
+// la 1.101.4 passe les cœurs de 10 à 5 : les résidents déjà installés rattrapent les histoires, le produit adoré et l'amitié
+function catchUp(r) {
+    const h = resHearts(r);
+    RESIDENTS.stories.forEach((need, k) => {
+        if (h >= need && r.stories.length <= k) r.stories.push(resStory(r, k));
+    });
+    if (h >= RESIDENTS.seen) r.seen = true;
+    if (h >= RESIDENTS.friend && !r.friend) {
+        r.friend = 1;
+        state.stats.campFriends = (state.stats.campFriends || 0) + 1;
+    }
+}
 export function residentTick() {
     if (!C() || !C().res) return false;
     let changed = false;
+    for (const r of C().res) if (resHearts(r) >= RESIDENTS.seen && (!r.seen || (resHearts(r) >= RESIDENTS.friend && !r.friend) || r.stories.length < RESIDENTS.stories.filter(n => resHearts(r) >= n).length)) (catchUp(r), (changed = true));
     for (const r of C().res) if (!r.order && now() >= (r.wait || 0)) (resMakeOrder(r), (changed = true));
     return changed;
 }
