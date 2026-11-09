@@ -8,11 +8,13 @@ export const MAISON = {
     slots: [1, 2, 3, 4, 5, 6], // 1.103 : paquets lancés à la suite (l'atelier + la file d'attente), selon le palier
     stock: 30, // coffrets gardés au plus
     // 1.103 : chaque produit compte avec sa qualité (×1,25 en argent… ×2,8 en diamant), puis le paquet multiplie le tout :
-    base: 1.5, // ×1,5…
+    base: 2.2, // ×2,2 (1.103.2 : au-dessus des campeurs, qui paient ×2)…
     variety: 0.15, // … +0,15 s'ils sont de trois sortes différentes
     repMult: 0.03, // … +0,03 par palier de réputation (+ le bonus de la boîte)
     rep: [0, 15, 40, 100, 250, 600], // points de réputation pour chaque palier (0 à 5)
-    xp: 80,
+    // 1.103.2 : l'expérience d'une vente : un socle + une part du prix (à comparer aux commandes du village, 300 à 600 au niveau 60)
+    xp: 700,
+    xpPay: 0.15,
     wait: 3 * 3600000, // un client revient 3 h après un achat
 };
 export const MAISON_CLIENTS = [
@@ -43,7 +45,7 @@ export const MAISON_ORDERS = {
     skip: 1 * 3600000, // une commande passée, 1 h plus tard
     pay: 2.2, // payée 2,2 fois la valeur du paquet
     rep: 6,
-    xp: 3, // × MAISON.xp
+    xp: 2.5, // × l'expérience d'une vente
     kinds: ['frais', 'frais', 'mer', 'fabriqué', 'mixte', 'any'], // mixte : trois genres différents ; any : n'importe quel paquet
     // 1.103.1 : un villageois demande parfois un de vos paquets déjà créés (une de vos recettes)
     asks: 0.5, // une commande sur deux, quand on a des recettes

@@ -13,7 +13,7 @@ export const CAMPING = {
     xp: 120,
     keep: 12, // derniers campeurs gardés (pour l'étape 2 : ceux qui voudraient rester)
     tillHours: 8, // la caisse de l'épicerie se remplit au plus 8 h
-    tillRate: 400, // pièces par niveau et par heure et par emplacement
+    tillRate: 40, // pièces par niveau et par heure et par emplacement (1.103.2 : divisé par 10, la caisse écrasait tout le reste)
 };
 
 // Ce que cherche un campeur : des « envies », tirées parmi ce que vous savez produire.

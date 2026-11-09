@@ -54,7 +54,7 @@ test('paquets : n’importe quel produit qui se vend, et la boîte qui va avec l
     assert.equal(G.packOpen('ecrin'), true);
 });
 
-test('paquets : assembler prend les produits ET les matériaux de la boîte, et garde le nom du joueur', () => {
+test('paquets : assembler prend les produits (plus de matériaux depuis la 1.103.2) et garde le nom du joueur', () => {
     farm();
     const planks = state.inventory.plank;
     const apples = state.inventory.apple;
@@ -62,7 +62,7 @@ test('paquets : assembler prend les produits ET les matériaux de la boîte, et 
     assert.equal(G.makeCoffret(['apple', 'carp', 'egg'], 0, null, { pack: 'cagette' }), false); // la cagette ne prend pas le poisson
     assert.ok(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'cagette', name: '  Panier gourmand de fruits ' }));
     assert.equal(state.inventory.apple, apples - 1);
-    assert.equal(state.inventory.plank, planks - PACK.cagette.cost.plank);
+    assert.equal(state.inventory.plank, planks); // 1.103.2 : les boîtes sont gratuites
     T += MAISON.time + 1;
     G.maisonTick();
     const c = state.maison.stock[0];
@@ -71,11 +71,11 @@ test('paquets : assembler prend les produits ET les matériaux de la boîte, et 
     assert.ok(c.value > 0);
 });
 
-test('paquets : sans matériaux, pas de paquet', () => {
+test('paquets : sans matériaux, on assemble quand même (1.103.2)', () => {
     farm();
     state.inventory.plank = 0;
-    assert.equal(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'cagette' }), false);
-    assert.ok(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'carton' }) === false);
+    state.inventory.nail = 0;
+    assert.ok(G.makeCoffret(['apple', 'pear', 'egg'], 0, null, { pack: 'cagette' }));
 });
 
 test('paquets : la qualité va jusqu’au diamant et vaut de plus en plus', () => {

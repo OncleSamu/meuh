@@ -15,7 +15,6 @@ import { renameBtn } from './rename.js';
 import { page, filterOf, filterChips, searchBox, queryOf, matchQ } from '../pager.js';
 import { pkHtml } from '../paquets.js';
 
-const costHtml = c => Object.entries(c).map(([k, n]) => `<span class="${(state.inventory[k] || 0) >= n ? 'ok' : 'short'}">${ico(['item', k])}${n}</span>`).join(' ');
 const left = (o, id) => (state.inventory[id] || 0) - o.slots.filter(x => x === id).length;
 function view(o) {
     const items = o.slots.filter(Boolean);
@@ -65,7 +64,7 @@ defineSheet('paquet', {
                 <div class="card-sub">${v.full ? `Vaut ${fmt(val)} pièces · ${QUALITY[v.q].name}` : 'Choisissez trois produits dans la grille.'}</div></div></div>`],
             ['slots', `<div class="pk-slots">${slots}</div>`],
             ['q', section('Qualité') + `<div class="chips-row wrap">${qchips}</div>${hint('Toutes les unités du paquet auront au moins ce rang.')}`],
-            ['packs', section('La boîte') + `<div class="pk-picks">${packs}</div><p class="card-sub">${P.blurb} Matériaux : ${costHtml(P.cost)}</p>`],
+            ['packs', section('La boîte') + `<div class="pk-picks">${packs}</div><p class="card-sub">${P.blurb}</p>`],
             ['grid', section('Vos produits')],
             ['search', all.length > 24 ? searchBox('pk', 'Chercher un produit') : ''],
             ['chips', filterChips('pk', opts, cur)],

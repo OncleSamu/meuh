@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.103.2",
+  "title": "Des paquets rentables",
+  "date": "9 novembre 2026",
+  "items": [
+   "Un paquet vaut 2,2 fois ses produits (avant : 1,5) : même chez les voisins, il rapporte plus qu'une vente aux campeurs",
+   "Les boîtes ne demandent plus de matériaux",
+   "Beaucoup plus d'expérience : au moins 700 par paquet vendu, plus une part du prix, et deux fois et demie plus pour une commande",
+   "La caisse de l'épicerie du camping se remplit dix fois moins vite : elle écrasait tout le reste"
+  ]
+ },
+ {
   "v": "1.103.1",
   "title": "Des paquets pour les villageois",
   "date": "9 novembre 2026",

@@ -74,3 +74,14 @@ test('demande : rien à demander sans recette', () => {
     farm();
     for (let s = 0; s < 30; s++) assert.notEqual(G.newOrder(s / 30).kind, 'recipe');
 });
+
+test('équilibrage 1.103.2 : un paquet aux voisins vaut plus qu’aux campeurs, les ventes rapportent de l’expérience', async () => {
+    const { CAMPING } = await import('../../src/data/camping.js');
+    const { ITEMS } = await import('../../src/data/items.js');
+    farm();
+    const ids = ['apple', 'pear', 'strawberry'];
+    const raw = ids.reduce((a, id) => a + ITEMS[id].sell, 0);
+    assert.ok(G.coffretValue(ids, 0, 'carton') > raw * CAMPING.pay);
+    assert.ok(G.pkXp(1000) >= 700);
+    assert.equal(CAMPING.tillRate, 40);
+});

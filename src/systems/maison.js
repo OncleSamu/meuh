@@ -191,6 +191,8 @@ export const offerFor = (cof, c, g) => {
     if (c.camp) g = g || camperFor(cof);
     return Math.round(pkValue(cof) * c.pay * (g && g.star != null ? STARS.pay : 1));
 };
+// 1.103.2 : l'expérience d'une vente de paquet
+export const pkXp = pay => Math.round(MAISON.xp + pay * MAISON.xpPay);
 function takeCoffret(cof, at, pay, rep) {
     M().stock = M().stock.filter(x => x !== cof);
     earn(pay, at);
@@ -219,7 +221,7 @@ export function sellToGuest(uid, gi, at) {
     const pay = offerFor(cof, c, g);
     g.pk = 1;
     takeCoffret(cof, at, pay, repOf(cof, 0) + (g.star != null ? 2 : 0));
-    addXp(MAISON.xp, at);
+    addXp(pkXp(pay), at);
     return true;
 }
 export function sellCoffret(uid, cid, at) {
@@ -228,8 +230,9 @@ export function sellCoffret(uid, cid, at) {
     if (!cof || !c || !canSellTo(cof, c)) return false;
     if (c.camp) return sellToGuest(uid, campGuests().indexOf(camperFor(cof)), at);
     M().wait[c.id] = now() + MAISON.wait;
-    takeCoffret(cof, at, offerFor(cof, c), repOf(cof, c.minQ));
-    addXp(MAISON.xp, at);
+    const pay = offerFor(cof, c);
+    takeCoffret(cof, at, pay, repOf(cof, c.minQ));
+    addXp(pkXp(pay), at);
     return true;
 }
 // ---- 1.103 : les commandes de paquets ----
@@ -272,8 +275,9 @@ export function deliverOrder(oi, uid, at) {
     const o = orders()[oi];
     const cof = M() && M().stock.find(x => x.uid === uid);
     if (!o || !orderFits(cof, o)) return false;
-    takeCoffret(cof, at, orderPay(cof, o), MAISON_ORDERS.rep);
-    addXp(MAISON.xp * MAISON_ORDERS.xp, at);
+    const pay = orderPay(cof, o);
+    takeCoffret(cof, at, pay, MAISON_ORDERS.rep);
+    addXp(Math.round(pkXp(pay) * MAISON_ORDERS.xp), at);
     if (o.vid && state.villagers[o.vid]) addFriendship(o.vid, MAISON_ORDERS.friend, at);
     M().orders[oi] = { due: now() + MAISON_ORDERS.gap };
     M().odone = (M().odone || 0) + 1;

@@ -1,18 +1,18 @@
 // 1.101 : les packagings de la Maison. Dix boîtes dessinées, chacune faite pour un genre de contenu.
 // Un paquet = une boîte (le modèle) + trois produits de la ferme (n'importe quel produit qui se vend) + un nom choisi par le joueur.
-// Les matériaux de la boîte sont pris à chaque assemblage. Les modèles s'ouvrent avec la réputation de la Maison.
+// 1.103.2 : les boîtes ne coûtent plus de matériaux (elles faisaient perdre de l'argent). Les modèles s'ouvrent avec la réputation.
 export const KIND_NAMES = { frais: 'Frais', mer: 'Mer', 'fabriqué': 'Fabriqué', 'trésor': 'Trésors' };
 export const PACKS = [
-    { id: 'carton', name: 'Boîte de carton', tier: 0, fits: '*', cost: { plank: 1, nail: 2 }, bonus: 0, blurb: 'Simple et solide : elle accepte tout.' },
-    { id: 'cagette', name: 'Cagette de bois', tier: 0, fits: ['frais'], cost: { plank: 2, nail: 4 }, bonus: 0.03, blurb: 'Pour les fruits, les légumes et les produits frais.' },
-    { id: 'panier', name: 'Panier d’osier', tier: 1, fits: ['frais'], cost: { plank: 1, hempRope: 1 }, bonus: 0.06, blurb: 'Le panier du marché, anse au bras.' },
-    { id: 'filet', name: 'Filet de pêcheur', tier: 1, fits: ['mer'], cost: { hempRope: 2 }, bonus: 0.05, blurb: 'Pour les poissons et les produits de la mer.' },
-    { id: 'ruban', name: 'Coffret à ruban', tier: 2, fits: '*', cost: { plank: 2, cloth: 1, paint: 1 }, bonus: 0.05, blurb: 'Un papier de soie et un joli nœud.' },
-    { id: 'caisse', name: 'Caisse marine', tier: 2, fits: ['mer', 'fabriqué'], cost: { plank: 3, paint: 2, hempRope: 1 }, bonus: 0.07, blurb: 'Peinte en bleu, avec ses poignées de corde.' },
-    { id: 'tonnelet', name: 'Tonnelet', tier: 3, fits: ['fabriqué', 'frais'], cost: { plank: 4, nail: 4 }, bonus: 0.08, blurb: 'Cerclé de fer, pour les bonnes choses de la cave.' },
-    { id: 'malle', name: 'Malle de voyage', tier: 3, fits: '*', cost: { plank: 5, nail: 6, cloth: 1 }, bonus: 0.09, blurb: 'Sangles et serrure : elle accepte tout.' },
-    { id: 'cloche', name: 'Cloche de verre', tier: 4, fits: ['frais', 'fabriqué'], cost: { paint: 2, cloth: 2, plank: 2 }, bonus: 0.12, blurb: 'Un dôme de verre sur son plateau.' },
-    { id: 'ecrin', name: 'Écrin de velours', tier: 5, fits: '*', cost: { plank: 4, cloth: 4, paint: 3 }, bonus: 0.16, blurb: 'Le plus beau des écrins, pour les plus beaux produits.' },
+    { id: 'carton', name: 'Boîte de carton', tier: 0, fits: '*', cost: {}, bonus: 0, blurb: 'Simple et solide : elle accepte tout.' },
+    { id: 'cagette', name: 'Cagette de bois', tier: 0, fits: ['frais'], cost: {}, bonus: 0.03, blurb: 'Pour les fruits, les légumes et les produits frais.' },
+    { id: 'panier', name: 'Panier d’osier', tier: 1, fits: ['frais'], cost: {}, bonus: 0.06, blurb: 'Le panier du marché, anse au bras.' },
+    { id: 'filet', name: 'Filet de pêcheur', tier: 1, fits: ['mer'], cost: {}, bonus: 0.05, blurb: 'Pour les poissons et les produits de la mer.' },
+    { id: 'ruban', name: 'Coffret à ruban', tier: 2, fits: '*', cost: {}, bonus: 0.05, blurb: 'Un papier de soie et un joli nœud.' },
+    { id: 'caisse', name: 'Caisse marine', tier: 2, fits: ['mer', 'fabriqué'], cost: {}, bonus: 0.07, blurb: 'Peinte en bleu, avec ses poignées de corde.' },
+    { id: 'tonnelet', name: 'Tonnelet', tier: 3, fits: ['fabriqué', 'frais'], cost: {}, bonus: 0.08, blurb: 'Cerclé de fer, pour les bonnes choses de la cave.' },
+    { id: 'malle', name: 'Malle de voyage', tier: 3, fits: '*', cost: {}, bonus: 0.09, blurb: 'Sangles et serrure : elle accepte tout.' },
+    { id: 'cloche', name: 'Cloche de verre', tier: 4, fits: ['frais', 'fabriqué'], cost: {}, bonus: 0.12, blurb: 'Un dôme de verre sur son plateau.' },
+    { id: 'ecrin', name: 'Écrin de velours', tier: 5, fits: '*', cost: {}, bonus: 0.16, blurb: 'Le plus beau des écrins, pour les plus beaux produits.' },
 ];
 export const PACK = Object.fromEntries(PACKS.map(p => [p.id, p]));
 // de quel genre est un produit (pour la boîte qui lui va et pour « trois genres différents »)
