@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.104.1",
+  "title": "Des paquets en voyage",
+  "date": "9 novembre 2026",
+  "items": [
+   "Les villageois, le train et l'avion-cargo demandent maintenant les boîtes de l'emballerie",
+   "Le train de marchandises a parfois un wagon de paquets de la Maison, payé 1,6 fois leur valeur",
+   "L'avion-cargo a parfois une soute de paquets, chargés depuis l'étagère, les moins chers d'abord"
+  ]
+ },
+ {
   "v": "1.104",
   "title": "L'emballerie",
   "date": "9 novembre 2026",
