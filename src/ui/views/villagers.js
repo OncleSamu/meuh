@@ -9,10 +9,12 @@ import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, bar, hint, hearts, segmented, empty } from '../kit.js';
-import { defineSheet, openSheet, sheetOpts } from '../sheets.js';
+import { defineSheet, openSheet, sheetOpts, closeSheet } from '../sheets.js';
 import { foldCard } from '../fold.js';
 import { page, filterOf, filterChips, searchBox, queryOf, matchQ } from '../pager.js';
 import { setupResFiche, resHeartsHtml } from '../sheets/resfiche.js';
+import { pkHtml } from '../paquets.js';
+import { go } from '../app.js';
 
 const when = d => (d === 0 ? 'aujourd’hui' : d === 1 ? 'demain' : `dans ${d} jours`);
 const whenShort = d => (d === 0 ? 'aujourd’hui' : d === 1 ? 'demain' : `dans ${d} j`);
@@ -95,7 +97,7 @@ function friendTab(vid) {
     const d = G.daysToBirthday(vid);
     const p = G.partnerOf(vid);
     const tl = G.talentLevel(vid);
-    return `<div class="vf-block">${hearts(h)}${h < 5 ? bar(G.heartProgress(vid), 'pink') : ''}<p class="card-sub">${G.nextRewardText(vid)}</p></div>
+    return `<div class="vf-block">${hearts(h)}${h < 5 ? bar(G.heartProgress(vid), 'pink') : ''}<p class="card-sub">${G.nextRewardText(vid)}</p></div>${pkAsk(vid)}
         <div class="vf-line">${ico(['ui', 'cake'])}<div><b>Anniversaire : ${G.birthdayText(vid)}</b><small>${d === 0 ? 'C’est aujourd’hui ! Un cadeau compte triple.' : `${when(d)[0].toUpperCase() + when(d).slice(1)}. Ce jour-là, un cadeau compte triple.`}</small></div></div>
         <div class="vf-line${tl ? '' : ' off'}">${ico(['ui', 'star'])}<div><b>Talent${tl === 2 ? ' doublé' : ''}</b><small>${G.talentText(vid)}${tl ? '' : ' (à 5 cœurs, doublé quand son histoire est finie)'}.</small></div></div>
         ${p && G.villagerHere(p) ? `<div class="vf-line">${`<span class="avatar xs">${art('villager', p)}</span>`}<div><b>Duo avec ${VILLAGERS[p].name}</b><small>Un cadeau à l’un fait plaisir à l’autre. Les deux à 5 cœurs : une histoire à deux.</small></div></div>` : ''}`;
@@ -103,6 +105,22 @@ function friendTab(vid) {
 // un produit à offrir
 const giftCell = (vid, id, tag = '') =>
     `<button class="pick-cell" data-act="gift" data-v="${vid}" data-id="${id}"><span class="pc-art">${art('item', id)}</span><b>${ITEMS[id].name}</b><small>×${fmt(state.inventory[id])}${tag}</small></button>`;
+// 1.103.1 : un paquet de la Maison comme cadeau du jour
+function pkGifts(vid) {
+    if (!G.maisonBuilt() || !state.maison.stock.length) return '';
+    const cells = state.maison.stock
+        .slice()
+        .sort((a, b) => G.pkGiftPts(vid, b) - G.pkGiftPts(vid, a))
+        .map(c => `<button class="pick-cell" data-act="giftPk" data-v="${vid}" data-uid="${c.uid}"><span class="pc-art">${pkHtml(c, 'sm')}</span><b>${esc(c.name)}</b><small>+${G.pkGiftPts(vid, c)} d’amitié</small></button>`)
+        .join('');
+    return `<h4 class="vf-h">Un paquet de ${esc(G.brandName())}</h4><div class="pick-grid">${cells}</div>${hint('Un paquet fait toujours plaisir, d’autant plus qu’il contient ce qu’il ou elle aime (et encore plus son produit adoré).')}`;
+}
+// 1.103.1 : sa commande d'un de vos paquets, s'il en a passé une à la Maison
+function pkAsk(vid) {
+    const o = G.orders().find(x => x.vid === vid && !x.due);
+    if (!o) return '';
+    return `<div class="vf-line">${pkHtml({ pack: o.pack || 'carton', items: o.items, q: o.q }, 'sm')}<div><b>Voudrait « ${esc(o.name)} »</b><small>Une commande à la Maison, ${esc(o.why)}.</small></div>${btn('Voir', { act: 'pkAskGo', size: 'sm' })}</div>`;
+}
 function giftTab(vid) {
     if (G.giftedToday(vid)) return `<p class="card-sub center">Déjà un cadeau aujourd’hui. Revenez demain !</p>`;
     const liked = G.giftable(vid).filter(id => id !== G.LOVES[vid] || G.loveFound(vid));
@@ -119,7 +137,7 @@ function giftTab(vid) {
         .sort((a, b) => ITEMS[a].name.localeCompare(ITEMS[b].name));
     const pg = page('vgift:' + vid, others, 12);
     return `${G.isBirthday(vid) ? `<p class="vf-bday">${ico(['ui', 'cake'])}C’est son anniversaire : tout compte triple !</p>` : ''}
-        <h4 class="vf-h">Ce qu’il ou elle aime${love ? ' (et adore)' : ''}</h4>${top}
+        <h4 class="vf-h">Ce qu’il ou elle aime${love ? ' (et adore)' : ''}</h4>${top}${pkGifts(vid)}
         <h4 class="vf-h">Autre chose ?</h4><p class="card-sub">Peut-être son produit adoré… ou un « bof ». Les produits déjà essayés n’apparaissent plus.</p>
         ${others.length > 12 || q ? searchBox('vgift', 'Chercher un produit') : ''}${pg.top}<div class="pick-grid">${pg.items.map(id => giftCell(vid, id)).join('')}</div>${pg.more}`;
 }
@@ -212,5 +230,10 @@ export function setupVillagers() {
             if (s) s.tab = d.v;
         },
         giveDuo: (el, d) => G.giveDuoStory(d.k.split('-'), el),
+        giftPk: (el, d) => G.giftPaquet(d.v, +d.uid, el),
+        pkAskGo: () => {
+            closeSheet('villager');
+            go('machines/maison#orders');
+        },
     });
 }

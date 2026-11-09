@@ -11,7 +11,7 @@ import { VILLAGERS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { ico, art, qStar, SPR } from '../icons.js';
-import { btn, bar, segmented, empty } from '../kit.js';
+import { btn, bar, segmented, empty, hint } from '../kit.js';
 import { defineSheet, sheetOpts } from '../sheets.js';
 import { page as pager, searchBox, queryOf, matchQ, filterOf, filterChips } from '../pager.js';
 import { PACK } from '../../data/paquets.js';
@@ -345,7 +345,7 @@ function paquetsPage() {
                 <div class="od-foot">${btn('Refaire', { act: 'pkRemake', data: { id: r.id }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}${btn('Oublier', { act: 'pkDrop', data: { id: r.id }, size: 'sm' })}</div></div></div>`;
         })
         .join('');
-    return `${back}<p class="card-sub">Chaque paquet que vous composez garde sa recette : le nom que vous lui avez donné, sa boîte, son contenu. « Refaire » le relance à l’atelier de la Maison.</p><div class="list">${rows}</div>`;
+    return `${back}${hint('Chaque paquet que vous composez garde sa recette : le nom que vous lui avez donné, sa boîte, son contenu. « Refaire » le relance à l’atelier de la Maison.')}<div class="list">${rows}</div>`;
 }
 
 const SECTIONS = [

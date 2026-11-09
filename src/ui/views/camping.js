@@ -9,7 +9,7 @@ import { ITEMS } from '../../data/items.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { ico } from '../icons.js';
-import { btn } from '../kit.js';
+import { btn, hint } from '../kit.js';
 
 // 1.102 : ce que le métier d'un résident apporte au camping, et son panier
 export function jobHtml(r, i, vf) {
@@ -68,7 +68,7 @@ export function guestCard(g, gi) {
                 `<div class="od-line">${ico(['item', w.item])}<span><b>${ITEMS[w.item].name}${w.q ? ` <em class="q-tag q${w.q}">${QUALITY[w.q].name} ou mieux</em>` : ''}</b><small>${w.done ? 'Vendu ✓' : `${fmt(G.priceOf(w.item, g))} pièces${G.eventBoosts(w.item) ? ' · ' + G.campEvent().name.toLowerCase() : ''}${G.canSell(g, i) ? '' : ' · pas en stock'}`}</small></span>${w.done ? '' : btn('Vendre', { act: 'campSell', data: { g: gi, i }, kind: G.canSell(g, i) ? 'green' : '', size: 'sm', disabled: !G.canSell(g, i) })}</div>`,
         )
         .join('');
-    return `<div class="card camp-card"><div class="card-head">${ico(['villager', g.look], 'ico big')}<div class="card-main"><div class="card-title">${g.star != null ? ico(['ui', 'star']) : ''}${g.name} ${g.from}</div><div class="card-sub">${G.guestTitle(g)} · repart dans ${left}</div></div></div>${g.say ? `<p class="camp-say">« ${g.say} »</p>` : ''}${wants}${pkLine(g, gi)}${g.star != null ? `<p class="card-sub">Campeur remarquable : produits d’argent au moins, payés ×${STARS.pay}, et un gros pourboire s’il repart ravi.</p>` : g.visits > 1 ? `<p class="card-sub">Un habitué : son pourboire grandit à chaque séjour.</p>` : ''}</div>`;
+    return `<div class="card camp-card"><div class="card-head">${ico(['villager', g.look], 'ico big')}<div class="card-main"><div class="card-title">${g.star != null ? ico(['ui', 'star']) : ''}${g.name} ${g.from}</div><div class="card-sub">${G.guestTitle(g)} · repart dans ${left}</div></div></div>${g.say ? `<p class="camp-say">« ${g.say} »</p>` : ''}${wants}${pkLine(g, gi)}${g.star != null ? hint(`Campeur remarquable : produits d’argent au moins, payés ×${STARS.pay}, et un gros pourboire s’il repart ravi.`) : g.visits > 1 ? hint('Un habitué : son pourboire grandit à chaque séjour.') : ''}</div>`;
 }
 export function upsHtml() {
     const ups = Object.entries(CAMP_UPGRADES)
@@ -97,7 +97,7 @@ export function campingCard() {
         ${gs.length ? gs.map(guestCard).join('') : '<p class="card-sub">Un campeur arrive bientôt.</p>'}
         ${G.campRes().length ? `<div class="card-title camp-h">Résidents (${G.campRes().length}/12)</div>${G.campRes().map(residentCard).join('')}` : ''}
         ${ups ? `<div class="card camp-card"><div class="card-title">Améliorations</div>${ups}</div>` : ''}
-        <p class="card-sub">Vendez-leur ce qu’ils cherchent avant leur départ : tout vendu, ils sont ravis et laissent un pourboire. Rien n’est jamais perdu.</p></div>`;
+        ${hint('Vendez-leur ce qu’ils cherchent avant leur départ : tout vendu, ils sont ravis et laissent un pourboire. Rien n’est jamais perdu.')}</div>`;
 }
 export function setupCamping() {
     actions({

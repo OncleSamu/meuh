@@ -4,7 +4,9 @@ import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { toast, sfx, burst } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { MAISON, MAISON_CLIENTS, EMBLEMS, PALETTES, MAISON_ORDERS, ORDER_WHO } from '../data/maison.js';
+import { MAISON, MAISON_CLIENTS, PALETTES, MAISON_ORDERS, ORDER_WHO, PK_GIFT, ASK_WHY } from '../data/maison.js';
+import { VILLAGERS } from '../data/village.js';
+import { LOVES, GIFT_PTS } from '../data/friends.js';
 import { QUALITY } from '../data/farm.js';
 import { STARS } from '../data/camping.js';
 import { PACKS, PACK, KIND_OF_TYPE, NAME_IDEAS, NAME_MAX, RECIPES_MAX } from '../data/paquets.js';
@@ -12,6 +14,9 @@ import { hasCost, payCost } from './home.js';
 import { earn, addXp } from './player.js';
 import { haveQ, takeQ } from './defis.js';
 import { campBuilt, campGuests } from './camping.js';
+import { presentVillagers } from './home.js';
+import { addFriendship } from './village.js';
+import { isBirthday } from './friends.js';
 
 const M = () => state.maison;
 export const maisonOpen = () => campBuilt();
@@ -229,12 +234,20 @@ export function sellCoffret(uid, cid, at) {
 }
 // ---- 1.103 : les commandes de paquets ----
 export const orders = () => (M() && M().orders) || [];
-export const orderFits = (cof, o) => !!cof && !!o && !o.due && cof.q >= o.q && (o.kind === 'any' || (o.kind === 'mixte' ? new Set(cof.items.map(kindOf)).size === 3 : cof.items.every(id => kindOf(id) === o.kind)));
+export const orderFits = (cof, o) =>
+    !!cof && !!o && !o.due && cof.q >= o.q && (o.kind === 'recipe' ? cof.rid === o.rid || sameSet(cof.items, o.items || []) : o.kind === 'any' || (o.kind === 'mixte' ? new Set(cof.items.map(kindOf)).size === 3 : cof.items.every(id => kindOf(id) === o.kind)));
 export const orderPay = (cof, o) => Math.round(pkValue(cof) * MAISON_ORDERS.pay * (1 + 0.1 * o.q));
 export const orderReady = o => !o.due && M().stock.some(c => orderFits(c, o));
 export function newOrder(seed = Math.random()) {
     let x = Math.floor(seed * 1e9) >>> 0;
     const r = () => ((x = (x * 1103515245 + 12345) >>> 0) / 4294967296);
+    // 1.103.1 : un villageois demande un de vos paquets déjà créés
+    const vs = presentVillagers().filter(v => !orders().some(o => o.vid === v));
+    if (recipes().length && vs.length && r() < MAISON_ORDERS.asks) {
+        const rc = recipes()[Math.floor(r() * recipes().length)];
+        const vid = vs[Math.floor(r() * vs.length)];
+        return { who: VILLAGERS[vid].name, vid, why: ASK_WHY[Math.floor(r() * ASK_WHY.length)], kind: 'recipe', rid: rc.id, items: rc.items.slice(), name: rc.name, pack: rc.pack, q: rc.q };
+    }
     const used = orders().map(o => o.who);
     const pool = ORDER_WHO.filter(w => !used.includes(w[0]));
     const [who, why] = pool[Math.floor(r() * pool.length)] || ORDER_WHO[0];
@@ -261,10 +274,12 @@ export function deliverOrder(oi, uid, at) {
     if (!o || !orderFits(cof, o)) return false;
     takeCoffret(cof, at, orderPay(cof, o), MAISON_ORDERS.rep);
     addXp(MAISON.xp * MAISON_ORDERS.xp, at);
+    if (o.vid && state.villagers[o.vid]) addFriendship(o.vid, MAISON_ORDERS.friend, at);
     M().orders[oi] = { due: now() + MAISON_ORDERS.gap };
     M().odone = (M().odone || 0) + 1;
     state.stats.coffretOrders = (state.stats.coffretOrders || 0) + 1;
-    if (view.started) toast(`${o.who} est ravi${o.who.startsWith('La ') || o.who.startsWith('Madame') || o.who === 'Lucie' ? 'e' : ''} de son paquet !`, ['ui', 'heart']);
+    if (view.started && o.vid) toast(`« ${o.name} » livré à ${o.who} : +${MAISON_ORDERS.friend} d’amitié`, ['villager', o.vid]);
+    else if (view.started) toast(`${o.who} est ravi${o.who.startsWith('La ') || o.who.startsWith('Madame') || o.who === 'Lucie' ? 'e' : ''} de son paquet !`, ['ui', 'heart']);
     return true;
 }
 export function skipOrder(oi) {
@@ -287,3 +302,28 @@ export function maisonTick() {
 }
 export const maisonReady = () =>
     !M() ? 0 : M().stock.filter(c => clientsOpen().some(k => canSellTo(c, k))).length + orders().filter(o => !o.due && M().stock.some(c => orderFits(c, o))).length;
+
+// ---- 1.103.1 : offrir un paquet à un villageois (son cadeau du jour) ----
+export const pkGiftPts = (vid, cof) => {
+    if (!cof || !VILLAGERS[vid]) return 0;
+    const likes = VILLAGERS[vid].likes;
+    let pts = PK_GIFT.base;
+    cof.items.forEach(id => (pts += id === LOVES[vid] ? PK_GIFT.love : likes.includes(id) ? PK_GIFT.like : 0));
+    return pts * (isBirthday(vid) ? GIFT_PTS.birthday : 1);
+};
+export const pkGiftable = vid => !!M() && M().stock.length > 0 && !!state.villagers[vid] && state.villagers[vid].giftDay !== state.day;
+export function giftPaquet(vid, uid, at) {
+    const cof = M() && M().stock.find(x => x.uid === uid);
+    const v = state.villagers[vid];
+    if (!cof || !v || v.giftDay === state.day) return false;
+    const pts = pkGiftPts(vid, cof);
+    M().stock = M().stock.filter(x => x !== cof);
+    v.giftDay = state.day;
+    if (cof.items.includes(LOVES[vid])) v.love = true;
+    addFriendship(vid, pts, at);
+    state.stats.coffretGifts = (state.stats.coffretGifts || 0) + 1;
+    sfx('buy');
+    burst(at, 'sparkle', 14);
+    toast(`${VILLAGERS[vid].name} : « Quel joli paquet, merci ! » +${pts} d’amitié`, ['villager', vid]);
+    return true;
+}

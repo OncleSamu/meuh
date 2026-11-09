@@ -8,7 +8,7 @@ import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { closeSheet, defineSheet } from '../sheets.js';
 import { ico } from '../icons.js';
-import { btn, segmented, bar } from '../kit.js';
+import { btn, segmented, bar, hint } from '../kit.js';
 import { renameBtn } from '../sheets/rename.js';
 import { QUALITY } from '../../data/farm.js';
 import { CAMPING } from '../../data/camping.js';
@@ -30,7 +30,7 @@ function label(m, small) {
     return `<div class="maison-label${small ? ' sm' : ''}" style="background:${p.bg};color:${p.fg};border-color:${p.fg}">${emblemIco(m.emblem)}<b>${esc(m.name)}</b></div>`;
 }
 function composeBtn() {
-    return `<div class="od-line"><span><b>Composer un paquet</b><small>Trois produits de la ferme, au choix, dans la boîte qui leur va. Vous lui donnez le nom que vous voulez.</small></span></div>
+    return `${hint('Trois produits de la ferme, au choix, dans la boîte qui leur va. Vous lui donnez le nom que vous voulez.')}
         <div class="od-foot">${btn('Composer', { act: 'open', data: { sheet: 'paquet' }, kind: 'green', size: 'sm', icon: ['ui', 'maison'] })}</div>`;
 }
 function recipeRow(r) {
@@ -75,9 +75,9 @@ function atelierTab(m) {
               : G.stockable().length >= 1
                 ? composeBtn()
                 : '<p class="card-sub">Rien en stock pour composer un paquet.</p>';
-    const head = `<div class="card-title">L’atelier · ${G.busyCount()}/${G.slotsMax()}</div><p class="card-sub">Un paquet en ${G.workTime() / 60000} minutes${G.slotsMax() > 1 ? `, jusqu’à ${G.slotsMax()} à la suite` : ''}. La renommée fait aller l’atelier plus vite.</p>`;
+    const head = `<div class="card-title">L’atelier · ${G.busyCount()}/${G.slotsMax()}</div><p class="card-sub">${G.workTime() / 60000} min par paquet${G.slotsMax() > 1 ? ` · ${G.slotsMax()} à la suite` : ''}</p>${hint('La renommée fait aller l’atelier plus vite et permet de lancer plusieurs paquets à la suite (onglet Marque).')}`;
     const rec = G.recipes().length
-        ? `<div class="card camp-card"><div class="card-title">Vos recettes de paquets</div>${G.recipes().slice().reverse().slice(0, 5).map(recipeRow).join('')}<p class="card-sub">Toutes vos recettes sont dans le Livre de la ferme, Collection › Mes paquets.</p></div>`
+        ? `<div class="card camp-card"><div class="card-title">Vos recettes de paquets</div>${G.recipes().slice().reverse().slice(0, 5).map(recipeRow).join('')}${hint('Toutes vos recettes sont dans le Livre de la ferme, Collection › Mes paquets.')}</div>`
         : '';
     return `<div class="card camp-card">${head}${work}${wait}${compose}</div>${rec}`;
 }
@@ -92,12 +92,19 @@ function orderRow(o, i) {
     const deliver = best
         ? btn(`Livrer « ${esc(best.name)} » · ${fmt(G.orderPay(best, o))}${COIN()}`, { act: 'pkOrder', data: { i, uid: best.uid }, kind: 'green', size: 'sm' })
         : btn('Aucun paquet ne convient', { size: 'sm', disabled: true });
+    const rc = o.kind === 'recipe' ? G.recipeAt(o.rid) : null;
+    const redo = !best && rc ? btn('Refaire', { act: 'pkRemake', data: { id: rc.id }, kind: G.canRemake(rc) ? 'green' : '', size: 'sm', disabled: !G.canRemake(rc) }) : '';
     const pick = best && state.maison.stock.filter(c => G.orderFits(c, o)).length > 1 ? btn('Choisir', { act: 'open', data: { sheet: 'pkOrder', i }, size: 'sm' }) : '';
-    return `<div class="card camp-card pk-order"><div class="card-title">${esc(o.who)}</div><p class="card-sub">Un paquet ${ORDER_KIND_TXT[o.kind]}${o.q ? `, <b>${QUALITY[o.q].name}</b> ou mieux` : ''}, ${esc(o.why)}.</p><div class="od-foot">${deliver}${pick}${btn('Passer', { act: 'pkSkip', data: { i }, size: 'sm' })}</div></div>`;
+    const what =
+        o.kind === 'recipe'
+            ? `<div class="pk-row">${pkHtml({ pack: o.pack || 'carton', items: o.items, q: o.q }, 'sm')}<span class="pk-row-main"><b>Voudrait « ${esc(o.name)} »</b><small>${o.items.map(id => ITEMS[id].name).join(', ')}${o.q ? ` · ${QUALITY[o.q].name} ou mieux` : ''}, ${esc(o.why)}. +${MAISON_ORDERS.friend} d’amitié.</small></span></div>`
+            : `<p class="card-sub">Un paquet ${ORDER_KIND_TXT[o.kind]}${o.q ? `, <b>${QUALITY[o.q].name}</b> ou mieux` : ''}, ${esc(o.why)}.</p>`;
+    const who = o.vid ? `<span class="avatar xs">${ico(['villager', o.vid])}</span>` : '';
+    return `<div class="card camp-card pk-order"><div class="card-title">${who}${esc(o.who)}</div>${what}<div class="od-foot">${deliver}${redo}${pick}${btn('Passer', { act: 'pkSkip', data: { i }, size: 'sm' })}</div></div>`;
 }
 function ordersTab() {
     const os = G.orders();
-    return `${os.map(orderRow).join('')}<p class="card-sub">Une commande paie ${String(MAISON_ORDERS.pay).replace('.', ',')} fois la valeur du paquet (plus si elle demande une belle qualité), et rapporte ${MAISON_ORDERS.rep} points de réputation. Une nouvelle arrive ${MAISON_ORDERS.gap / 3600000} h après une livraison.</p>`;
+    return `${os.map(orderRow).join('')}${hint(`Une commande paie ${String(MAISON_ORDERS.pay).replace('.', ',')} fois la valeur du paquet (plus si elle demande une belle qualité), et rapporte ${MAISON_ORDERS.rep} points de réputation. Une nouvelle arrive ${MAISON_ORDERS.gap / 3600000} h après une livraison.`)}`;
 }
 function brandTab(m, tier) {
     const quick = EMBLEMS.slice(0, 7).includes(m.emblem) ? EMBLEMS.slice(0, 7) : [m.emblem, ...EMBLEMS.slice(0, 6)];
@@ -109,8 +116,8 @@ function brandTab(m, tier) {
     return `<div class="card camp-card"><div class="od-line"><span><b>Emblème</b></span></div><div class="maison-row">${emblems}</div>
         <div class="od-line"><span><b>Couleurs</b></span></div><div class="maison-row">${pals}</div></div>
         <div class="card camp-card"><div class="card-title">La renommée</div>${fameHtml(tier)}</div>
-        <div class="card camp-card"><div class="card-title">Vos clients</div>${clients}<p class="card-sub">Un client revient ${MAISON.wait / 3600000} h après un achat ; chaque campeur achète un paquet par séjour.</p></div>
-        <p class="card-sub">Un paquet vaut ses trois produits (avec leur qualité) ×${String(MAISON.base).replace('.', ',')}, plus si les trois sont de genres différents, dans une belle boîte, ou si la réputation est haute. Chaque vente fait monter la réputation.</p>`;
+        <div class="card camp-card"><div class="card-title">Vos clients</div>${clients}${hint(`Un client revient ${MAISON.wait / 3600000} h après un achat ; chaque campeur achète un paquet par séjour.`)}</div>
+        ${hint(`Un paquet vaut ses trois produits (avec leur qualité) ×${String(MAISON.base).replace('.', ',')}, plus si les trois sont de genres différents, dans une belle boîte, ou si la réputation est haute. Chaque vente fait monter la réputation.`)}`;
 }
 const TABS = [
     ['atelier', 'Atelier'],

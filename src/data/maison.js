@@ -45,7 +45,13 @@ export const MAISON_ORDERS = {
     rep: 6,
     xp: 3, // × MAISON.xp
     kinds: ['frais', 'frais', 'mer', 'fabriqué', 'mixte', 'any'], // mixte : trois genres différents ; any : n'importe quel paquet
+    // 1.103.1 : un villageois demande parfois un de vos paquets déjà créés (une de vos recettes)
+    asks: 0.5, // une commande sur deux, quand on a des recettes
+    friend: 4, // points d'amitié pour le villageois servi
 };
+// 1.103.1 : offrir un paquet à un villageois (le cadeau du jour) : des points de base, plus pour chaque produit qu'il aime
+export const PK_GIFT = { base: 3, like: 1, love: 5 };
+export const ASK_WHY = ['pour un repas de famille', 'pour un ami qui passe', 'pour se faire plaisir', 'pour l’anniversaire de sa sœur', 'pour un pique-nique', 'pour remercier un voisin', 'pour la fête du village', 'parce qu’on lui en a dit du bien'];
 export const ORDER_KIND_TXT = { frais: 'de produits frais', mer: 'de la mer', 'fabriqué': 'de bonnes choses de l’atelier', mixte: 'de trois genres différents', any: 'de votre choix' };
 export const ORDER_WHO = [
     ['Lucie', 'pour son mariage'],

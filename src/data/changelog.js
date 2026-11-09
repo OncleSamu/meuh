@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.103.1",
+  "title": "Des paquets pour les villageois",
+  "date": "9 novembre 2026",
+  "items": [
+   "Offrez un paquet de la Maison à un villageois : c'est son cadeau du jour, d'autant plus apprécié qu'il contient ce qu'il aime",
+   "Les villageois commandent vos propres paquets, par leur nom, dans Maison › Commandes ; livrés, ils rapportent de l'amitié",
+   "Les longues explications du camping et de la Maison deviennent des astuces qu'on ferme d'un « Compris »"
+  ]
+ },
+ {
   "v": "1.103",
   "title": "La Maison prend son envol",
   "date": "9 novembre 2026",

@@ -9,7 +9,7 @@ import * as G from '../../systems/index.js';
 import { jobHtml } from '../views/camping.js';
 import { actions, esc } from '../dom.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, hearts, segmented } from '../kit.js';
+import { btn, bar, hearts, segmented, hint } from '../kit.js';
 import { defineSheet, sheetOpts } from '../sheets.js';
 
 const res = i => G.campRes()[+i];
@@ -45,7 +45,7 @@ function giftTab(r, i) {
     const cell = id =>
         `<button class="pick-cell" data-act="campGift" data-i="${i}" data-id="${id}"${(state.inventory[id] || 0) < 1 ? ' disabled' : ''}><span class="pc-art">${art('item', id)}</span><b>${ITEMS[id].name}</b><small>×${fmt(state.inventory[id] || 0)} · ${id === r.loved ? 'adore' : 'aime'}</small></button>`;
     return `<h4 class="vf-h">Ce qu’il ou elle aime${r.seen ? ' (et adore)' : ''}</h4><div class="pick-grid">${ids.map(cell).join('')}</div>
-        <p class="card-sub">Un cadeau toutes les ${RESIDENTS.gift.cool / 3600000} h : +${RESIDENTS.gift.like} pour un produit aimé, +${RESIDENTS.gift.love} pour l’adoré.</p>`;
+        ${hint(`Un cadeau toutes les ${RESIDENTS.gift.cool / 3600000} h : +${RESIDENTS.gift.like} pour un produit aimé, +${RESIDENTS.gift.love} pour l’adoré.`)}`;
 }
 function tasteTab(r) {
     const loved = r.seen

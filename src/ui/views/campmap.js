@@ -8,7 +8,7 @@ import { state } from '../../core/state.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc } from '../dom.js';
 import { ico } from '../icons.js';
-import { btn } from '../kit.js';
+import { btn, hint } from '../kit.js';
 import { defineView, go } from '../app.js';
 import { defineSheet, openSheet } from '../sheets.js';
 import { SPRITES, TENT_COLORS, CABIN_COLORS, sceneBg } from '../../art/camping.js';
@@ -139,8 +139,8 @@ function infoHtml() {
         .map(([v, f]) => f(Math.round(v * 100)));
     const fx = bonus.length ? `<div class="od-line">${ico(['ui', 'star'])}<span><b>Grâce aux résidents</b><small>${bonus.join(' · ')}</small></span></div>` : '';
     return `<div class="card camp-card"><div class="card-title">Le camping · ${G.campGuests().length}/${G.campPitches()} emplacements · ${G.campRes().length}/12 résidents</div>
-        <div class="od-line">${ico(['ui', 'sparkle'])}<span><b>Aujourd’hui : ${ev.name}</b><small>${ev.txt}. Demain, autre chose.</small></span></div>${fx}
-        <p class="card-sub">Touchez un campeur pour lui vendre ce qu’il cherche, une cabane pour parler au résident, un voyageur au portail pour l’accueillir. Les terrains grisés avec un « + » sont à aménager.</p>
+        <div class="od-line">${ico(['ui', 'sparkle'])}<span><b>Aujourd’hui : ${ev.name}</b><small>${ev.txt}</small></span></div>${fx}
+        ${hint('Touchez un campeur pour lui vendre ce qu’il cherche, une cabane pour parler au résident, un voyageur au portail pour l’accueillir. Les terrains grisés avec un « + » sont à aménager.')}
         ${shop}${pitch}
         <div class="od-foot">${btn('Aménagements', { act: 'open', data: { sheet: 'campups' }, size: 'sm' })}${btn('Tout le camping', { act: 'campHub', data: { id: 'camping' }, size: 'sm' })}</div></div>`;
 }
