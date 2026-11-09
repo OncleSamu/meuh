@@ -1383,3 +1383,189 @@ button.cm-spot:active {
     font-weight: 600;
     opacity: 0.7;
 }
+
+/* 1.102 : un camping vivant */
+.cm-smoke circle {
+    animation: cmsmoke 3.2s ease-out infinite;
+    opacity: 0;
+}
+.cm-smoke circle:nth-child(2) {
+    animation-delay: 1.05s;
+}
+.cm-smoke circle:nth-child(3) {
+    animation-delay: 2.1s;
+}
+@keyframes cmsmoke {
+    0% {
+        opacity: 0;
+        transform: translate(0, 10px) scale(0.6);
+    }
+    30% {
+        opacity: 0.75;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(4px, -8px) scale(1.4);
+    }
+}
+.cm-smoke circle {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+.cm-spot.own .cm-swing {
+    transform-origin: 32px 14px;
+    animation: cmswing 2.4s ease-in-out infinite alternate;
+}
+.cm-spot.own .cm-swing.b {
+    animation-delay: -1.2s;
+}
+@keyframes cmswing {
+    from {
+        transform: rotate(-10deg);
+    }
+    to {
+        transform: rotate(10deg);
+    }
+}
+.cm-spot.tent .cm-av,
+.cm-spot.cabin .cm-av {
+    animation: cmbreath 3.4s ease-in-out infinite;
+}
+.cm-spot.tent:nth-child(odd) .cm-av {
+    animation-delay: -1.3s;
+}
+.cm-spot.cabin:nth-child(3n) .cm-av {
+    animation-delay: -2.2s;
+}
+@keyframes cmbreath {
+    0%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        transform: translateX(-50%) translateY(-2px);
+    }
+}
+.cm-star,
+.cm-visits {
+    position: absolute;
+    left: 4%;
+    bottom: 0;
+    width: 28%;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #fff2b0;
+    border: 2px solid var(--ink, #3a2618);
+    box-sizing: border-box;
+    padding: 2px;
+}
+.cm-star .ico,
+.cm-star svg {
+    width: 100%;
+    height: 100%;
+}
+.cm-visits {
+    background: #fffaf0;
+    font-size: 10px;
+    font-weight: 900;
+    color: #3a2618;
+}
+.cm-spot.tent.star .cm-av {
+    border-color: #e0a800;
+    box-shadow: 0 0 0 2px #ffd23f;
+}
+.cm-event {
+    display: flex;
+    margin: 0 auto 8px;
+    width: max-content;
+    max-width: 100%;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    font: 800 11px/1 system-ui, sans-serif;
+    color: #3a2618;
+    background: #fff2b0;
+    border: 2px solid var(--ink, #3a2618);
+    border-radius: 999px;
+    padding: 4px 9px 4px 6px;
+    box-shadow: 0 2px 0 rgba(58, 38, 24, 0.3);
+}
+.cm-event .ico {
+    width: 14px;
+    height: 14px;
+}
+.cm-night {
+    position: absolute;
+    inset: 0;
+    background: rgba(28, 38, 96, 0.5);
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 1;
+}
+.cm-glow {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+    mix-blend-mode: screen;
+}
+.cm-glow.win {
+    width: 12%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(255, 214, 110, 0.7) 0, rgba(255, 214, 110, 0.18) 45%, transparent 70%);
+}
+.cm-glow.fire {
+    width: 34%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, rgba(255, 160, 60, 0.75) 0, rgba(255, 140, 40, 0.25) 40%, transparent 70%);
+    animation: cmglow 1.6s ease-in-out infinite alternate;
+}
+@keyframes cmglow {
+    from {
+        opacity: 0.75;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.cm-scene.night .cm-win rect {
+    fill: #ffd86a;
+}
+.cm-scene.night .cm-bub,
+.cm-scene.night .cm-star,
+.cm-scene.night .cm-visits {
+    z-index: 3;
+}
+.camp-say {
+    margin: 2px 0 8px;
+    font-style: italic;
+    color: var(--ink-soft, #6b5a44);
+}
+.q-tag {
+    white-space: nowrap;
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: #e8e6e0;
+    margin-left: 4px;
+}
+.q-tag.q2 {
+    background: #ffe28a;
+}
+.od-line.on {
+    background: #fff6cc;
+    border-radius: 10px;
+}
+@media (prefers-reduced-motion: reduce) {
+    .cm-smoke circle,
+    .cm-spot.own .cm-swing,
+    .cm-spot .cm-av,
+    .cm-glow.fire {
+        animation: none;
+    }
+}

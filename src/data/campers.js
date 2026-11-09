@@ -1,6 +1,6 @@
 // 1.100 (étape 2) : les résidents du camping. Un campeur ravi peut demander à s'installer dans une cabane :
 // il a un métier, trois produits qu'il aime, un produit adoré, des cœurs à faire grandir et des histoires tirées au hasard.
-// Aucun bonus de jeu : seulement de l'affection et du plaisir.
+// 1.102 : chaque métier a un effet, qui grandit avec les cœurs (voir JOB_FX).
 export const RESIDENTS = {
     max: 12,
     askChance: 0.3, // un campeur ravi demande à rester une fois sur trois
@@ -22,6 +22,27 @@ export const JOBS = {
     artist: [['potier', 'potière'], ['peintre', 'peintre']],
     couple: [['aubergiste', 'aubergiste'], ['couturier', 'couturière']],
 };
+// 1.102 : l'effet de chaque métier, multiplié par le nombre de cœurs (0 à 5).
+// basket : un panier déposé chaque jour devant la cabane (autant de produits que de cœurs), tiré parmi ce kind de WANTS.
+// gap / stay / tip / pay / till / xp / order / fish / star : un bonus du camping, par cœur.
+export const JOB_FX = {
+    'guide de randonnée': { gap: 0.03, txt: c => `Les campeurs arrivent ${c} % plus vite` },
+    cartographe: { star: 0.02, txt: c => `Campeurs remarquables : +${c} points de chance` },
+    instituteur: { xp: 0.1, txt: c => `+${c} % d’expérience par campeur` },
+    fleuriste: { tip: 0.03, txt: c => `+${c} points de pourboire` },
+    boulanger: { basket: 'bread', txt: c => `Un panier de ${c} produit${c > 1 ? 's' : ''} de boulangerie par jour` },
+    fromager: { basket: 'cheese', txt: c => `Un panier de ${c} fromage${c > 1 ? 's' : ''} par jour` },
+    pêcheur: { basket: 'fish', txt: c => `Un panier de ${c} poisson${c > 1 ? 's' : ''} par jour` },
+    poissonnier: { fish: 0.06, txt: c => `Le poisson se vend ${c} % plus cher au camping` },
+    potier: { till: 0.06, txt: c => `L’épicerie rapporte ${c} % de plus` },
+    peintre: { pay: 0.02, txt: c => `Tout se vend ${c} % plus cher au camping` },
+    aubergiste: { stay: 0.05, txt: c => `Les campeurs restent ${c} % plus longtemps` },
+    couturier: { order: 0.05, txt: c => `Les commandes des résidents paient ${c} % de plus` },
+};
+// la valeur affichée par cœur (pour le texte) : un panier compte 1 produit par cœur
+export const jobUnit = fx => (fx.basket ? 1 : Math.round(100 * Object.entries(fx).find(([k]) => k !== 'txt')[1]));
+export const BASKET_EVERY = 24 * 3600000;
+
 // Les histoires : une par palier de cœurs, assemblées au hasard. {n} prénom, {from} origine, {job} métier,
 // {loved} le produit adoré, {like} un produit aimé, {Il}/{il} pronom.
 export const STORY_LINES = [

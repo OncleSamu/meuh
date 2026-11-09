@@ -25,7 +25,44 @@ export const WANTS = {
     sweet: { machines: ['pastry', 'icecream', 'orientalSweets', 'islandBakery', 'chocolatier', 'confectionery'] },
     drink: { machines: ['press', 'winery', 'brewery', 'juiceBar'] },
     cheese: { machines: ['dairy', 'alpineDairy'] },
+    bread: { machines: ['bakery', 'islandBakery', 'pastry', 'crepery'] }, // 1.102 : le panier du boulanger
 };
+// 1.102 : une petite phrase par profil, tirée à l'arrivée
+export const SAYINGS = {
+    hiker: ['Je monte au col demain, il me faut de quoi tenir.', 'Trois jours de marche, et enfin une ferme !', 'Vous n’auriez pas de quoi remplir un sac à dos ?'],
+    family: ['Les enfants ont faim, comme toujours.', 'On cherche de quoi faire un vrai goûter.', 'Premières vacances sous la tente, ils sont ravis !'],
+    gourmet: ['On m’a dit le plus grand bien de vos produits.', 'Je ne voyage que pour bien manger.', 'Surprenez-moi.'],
+    fisher: ['Ça mord bien, à la rivière ?', 'Le soir, je grille ce que j’ai pêché… ou ce que j’ai acheté.', 'Je ne repars jamais sans un bon poisson.'],
+    artist: ['La lumière ici est incroyable.', 'Il me faut de quoi tenir pendant que je peins.', 'Je reste tant que l’inspiration vient.'],
+    couple: ['Un week-end rien que pour nous deux.', 'On fête notre anniversaire de rencontre !', 'On cherche un coin calme et de bonnes choses.'],
+};
+// 1.102 : les campeurs remarquables. Leurs produits doivent être d'argent au moins ; ils paient plus et laissent un gros pourboire.
+export const STARS = {
+    chance: 0.1, // une arrivée sur dix (plus avec un cartographe)
+    q: 1, // qualité minimale : argent
+    pay: 1.5,
+    tip: 0.6,
+    xp: 3,
+    who: [
+        { name: 'Critique gastronomique', profile: 'gourmet', say: 'Mon article paraît la semaine prochaine. Pas de pression.' },
+        { name: 'Photographe', profile: 'artist', say: 'Je fais un reportage sur les campings de la vallée.' },
+        { name: 'Journaliste', profile: 'couple', say: 'Un papier sur les fermes qui accueillent, ça vous dit ?' },
+        { name: 'Alpiniste célèbre', profile: 'hiker', say: 'Je prépare une grande ascension : il me faut le meilleur.' },
+        { name: 'Champion de pêche', profile: 'fisher', say: 'Je ne mange que le meilleur poisson de la région.' },
+        { name: 'Auteur jeunesse', profile: 'family', say: 'J’écris un livre sur une ferme… peut-être la vôtre.' },
+    ],
+};
+// 1.102 : les habitués, des campeurs repartis ravis qui reviennent
+export const REGULARS = { chance: 0.3, tip: 0.1, tipMax: 0.5 };
+// 1.102 : un événement par jour au camping ; les produits de ces envies se vendent plus cher
+export const CAMP_EVENTS = [
+    { id: 'crepes', name: 'Soirée crêpes', kinds: ['sweet'], txt: 'Les douceurs se vendent 30 % plus cher' },
+    { id: 'peche', name: 'Concours de pêche', kinds: ['fish'], txt: 'Le poisson se vend 30 % plus cher' },
+    { id: 'marche', name: 'Marché fermier', kinds: ['fresh'], txt: 'Les produits frais se vendent 30 % plus cher' },
+    { id: 'degust', name: 'Dégustation', kinds: ['cheese', 'drink'], txt: 'Fromages et boissons se vendent 30 % plus cher' },
+    { id: 'banquet', name: 'Grand banquet', kinds: ['plat'], txt: 'Les plats se vendent 30 % plus cher' },
+];
+export const EVENT_BONUS = 1.3;
 export const PROFILES = {
     hiker: { name: 'Randonneur', wants: ['fresh', 'fresh', 'plat'] },
     family: { name: 'Famille', wants: ['fresh', 'sweet', 'plat'] },

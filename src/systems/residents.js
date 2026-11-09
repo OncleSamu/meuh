@@ -5,12 +5,12 @@ import { view } from '../core/view.js';
 import { toast, sfx, burst } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { PROFILES } from '../data/camping.js';
-import { RESIDENTS, JOBS, STORY_LINES, STORY_FLAVOR } from '../data/campers.js';
+import { RESIDENTS, JOBS, STORY_LINES, STORY_FLAVOR, BASKET_EVERY } from '../data/campers.js';
 import { rng } from '../art/habitants.js';
 import { hasCost, payCost } from './home.js';
 import { earn, addXp } from './player.js';
 import { haveQ, takeQ } from './defis.js';
-import { pickWant, setLeaveHook } from './camping.js';
+import { pickWant, setLeaveHook, resBonus, jobFx } from './camping.js';
 
 const C = () => state.camping;
 export const campRes = () => (C() ? C().res || [] : []);
@@ -121,7 +121,31 @@ export function resMakeOrder(r) {
     const id = ok[Math.floor(Math.random() * ok.length)];
     r.order = id ? { item: id, n: 1 + Math.floor(Math.random() * RESIDENTS.order.qty) } : null;
 }
-export const resOrderValue = r => (r.order ? Math.round(ITEMS[r.order.item].sell * r.order.n * RESIDENTS.order.pay) : 0);
+export const resOrderValue = r => (r.order ? Math.round(ITEMS[r.order.item].sell * r.order.n * RESIDENTS.order.pay * (1 + resBonus('order'))) : 0);
+// ---- 1.102 : le panier de cabane (boulanger, fromager, pêcheur) ----
+export const resBasketKind = r => (jobFx(r) || {}).basket || null;
+export const resBasketAt = r => (r.bk || 0) + BASKET_EVERY;
+export const resBasketReady = r => !!resBasketKind(r) && resHearts(r) >= 1 && now() >= resBasketAt(r);
+export function resBasket(i, at) {
+    const r = campRes()[i];
+    if (!r || !resBasketReady(r)) return null;
+    const n = resHearts(r);
+    const got = {};
+    const taken = [];
+    for (let k = 0; k < n; k++) {
+        const id = pickWant(resBasketKind(r), taken.length < 3 ? taken : [], Math.random);
+        if (!id) break;
+        taken.push(id);
+        got[id] = (got[id] || 0) + 1;
+    }
+    Object.entries(got).forEach(([id, m]) => (state.inventory[id] = (state.inventory[id] || 0) + m));
+    r.bk = now();
+    state.stats.campBaskets = (state.stats.campBaskets || 0) + 1;
+    sfx('coin');
+    burst(at, 'sparkle', 10);
+    if (view.started) toast(`Le panier de ${r.name} : ${Object.entries(got).map(([id, m]) => `${m} × ${ITEMS[id].name.toLowerCase()}`).join(', ')}`, ['ui', 'heart']);
+    return got;
+}
 export const resCanDeliver = r => !!r.order && haveQ(r.order.item, 0) >= r.order.n;
 export function resDeliver(i, at) {
     const r = campRes()[i];
@@ -170,4 +194,4 @@ export function residentTick() {
     for (const r of C().res) if (!r.order && now() >= (r.wait || 0)) (resMakeOrder(r), (changed = true));
     return changed;
 }
-export const residentReady = () => campRes().filter(r => resCanDeliver(r) || (resGiftReady(r) && r.likes.some(id => haveQ(id, 0) >= 1))).length + (campAsks().length && resCanAccept() ? 1 : 0);
+export const residentReady = () => campRes().filter(r => resBasketReady(r) || resCanDeliver(r) || (resGiftReady(r) && r.likes.some(id => haveQ(id, 0) >= 1))).length + (campAsks().length && resCanAccept() ? 1 : 0);

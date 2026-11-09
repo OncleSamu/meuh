@@ -1,13 +1,29 @@
 // 1.100 (étape 1) : la carte du camping de la vallée.
 import { fmt, formatDuration } from '../../core/format.js';
 import { now } from '../../core/clock.js';
-import { CAMPING, PROFILES, CAMP_UPGRADES } from '../../data/camping.js';
+import { CAMPING, CAMP_UPGRADES, STARS } from '../../data/camping.js';
+import { QUALITY } from '../../data/farm.js';
+import { jobUnit } from '../../data/campers.js';
 import { ITEMS } from '../../data/items.js';
 import * as G from '../../systems/index.js';
 import { actions } from '../dom.js';
 import { ico } from '../icons.js';
 import { btn } from '../kit.js';
 
+// 1.102 : ce que le métier d'un résident apporte au camping, et son panier
+export function jobHtml(r, i, vf) {
+    const fx = G.jobFx(r);
+    if (!fx) return '';
+    const h = G.resHearts(r);
+    const txt = h ? fx.txt(jobUnit(fx) * h) : `${fx.txt(jobUnit(fx))} par cœur, dès le premier cœur`;
+    let basket = '';
+    if (fx.basket && h) {
+        const ready = G.resBasketReady(r);
+        basket = btn(ready ? 'Ramasser' : formatDuration(Math.max(0, G.resBasketAt(r) - now()) / 1000), { act: 'campBasket', data: { i }, kind: ready ? 'green' : '', size: 'sm', disabled: !ready });
+    }
+    const icon = ico(['ui', fx.basket ? 'basket' : 'star']);
+    return vf ? `<div class="vf-line">${icon}<div><b>Son métier au camping</b><small>${txt}.</small></div>${basket}</div>` : `<div class="od-line">${icon}<span><b>Son métier au camping</b><small>${txt}</small></span>${basket}</div>`;
+}
 const hearts = n => `<span class="fid">${[1, 2, 3, 4, 5].map(i => `<i class="${n >= i ? 'on' : ''}">♥</i>`).join('')}</span>`;
 export function askCard(a, i) {
     const ok = G.resCanAccept();
@@ -28,7 +44,7 @@ export function residentCard(r, i) {
     const story = r.stories.length ? `<p class="camp-story">${r.stories[r.stories.length - 1]}</p>` : '';
     const sure = G.resConfirming(r);
     return `<div class="card camp-card"><div class="card-head">${ico(['villager', r.look], 'ico big')}<div class="card-main"><div class="card-title">${r.name} ${r.from}</div><div class="card-sub">${r.job.charAt(0).toUpperCase() + r.job.slice(1)} ${hearts(h)}</div></div></div>
-        ${order}<div class="od-line"><span><b>Un petit cadeau</b><small>${G.resGiftReady(r) ? 'Ce qu’il aime : un cadeau toutes les 6 h' : 'Revenez plus tard'}${r.seen ? '' : ' · son préféré se révèle à 3 cœurs'}</small></span></div><div class="od-foot">${gifts}</div>
+        ${jobHtml(r, i)}${order}<div class="od-line"><span><b>Un petit cadeau</b><small>${G.resGiftReady(r) ? 'Ce qu’il aime : un cadeau toutes les 6 h' : 'Revenez plus tard'}${r.seen ? '' : ' · son préféré se révèle à 3 cœurs'}</small></span></div><div class="od-foot">${gifts}</div>
         ${story}<div class="od-foot">${btn(sure ? 'Sûr ? Appuyez encore' : 'Faire partir', { act: 'campLeave', data: { i }, size: 'sm' })}</div></div>`;
 }
 const COIN = () => ico(['ui', 'coin']);
@@ -41,10 +57,10 @@ export function guestCard(g, gi) {
     const wants = g.wants
         .map(
             (w, i) =>
-                `<div class="od-line">${ico(['item', w.item])}<span><b>${ITEMS[w.item].name}</b><small>${w.done ? 'Vendu ✓' : `${fmt(G.priceOf(w.item))} pièces${G.canSell(g, i) ? '' : ' · pas en stock'}`}</small></span>${w.done ? '' : btn('Vendre', { act: 'campSell', data: { g: gi, i }, kind: G.canSell(g, i) ? 'green' : '', size: 'sm', disabled: !G.canSell(g, i) })}</div>`,
+                `<div class="od-line">${ico(['item', w.item])}<span><b>${ITEMS[w.item].name}${w.q ? ` <em class="q-tag q${w.q}">${QUALITY[w.q].name} ou mieux</em>` : ''}</b><small>${w.done ? 'Vendu ✓' : `${fmt(G.priceOf(w.item, g))} pièces${G.eventBoosts(w.item) ? ' · ' + G.campEvent().name.toLowerCase() : ''}${G.canSell(g, i) ? '' : ' · pas en stock'}`}</small></span>${w.done ? '' : btn('Vendre', { act: 'campSell', data: { g: gi, i }, kind: G.canSell(g, i) ? 'green' : '', size: 'sm', disabled: !G.canSell(g, i) })}</div>`,
         )
         .join('');
-    return `<div class="card camp-card"><div class="card-head">${ico(['villager', g.look], 'ico big')}<div class="card-main"><div class="card-title">${g.name} ${g.from}</div><div class="card-sub">${PROFILES[g.profile].name} · repart dans ${left}</div></div></div>${wants}</div>`;
+    return `<div class="card camp-card"><div class="card-head">${ico(['villager', g.look], 'ico big')}<div class="card-main"><div class="card-title">${g.star != null ? ico(['ui', 'star']) : ''}${g.name} ${g.from}</div><div class="card-sub">${G.guestTitle(g)} · repart dans ${left}</div></div></div>${g.say ? `<p class="camp-say">« ${g.say} »</p>` : ''}${wants}${g.star != null ? `<p class="card-sub">Campeur remarquable : produits d’argent au moins, payés ×${STARS.pay}, et un gros pourboire s’il repart ravi.</p>` : g.visits > 1 ? `<p class="card-sub">Un habitué : son pourboire grandit à chaque séjour.</p>` : ''}</div>`;
 }
 export function upsHtml() {
     const ups = Object.entries(CAMP_UPGRADES)
@@ -87,5 +103,6 @@ export function setupCamping() {
         campDeliver: (el, d) => G.resDeliver(+d.i, el),
         campGift: (el, d) => G.resGift(+d.i, d.id, el),
         campLeave: (_, d) => G.resLeave(+d.i),
+        campBasket: (el, d) => G.resBasket(+d.i, el),
     });
 }

@@ -4,7 +4,6 @@ const inner = s => s.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
 
 export const TENT_COLORS = ['#e2582f', '#3f8fd0', '#e0b030', '#4aa860', '#a864c8', '#e8789a'];
 export const CABIN_COLORS = ['#d9a66a', '#b9d08a', '#9ec4e0', '#e0b8a0', '#d4c28a'];
-const DARK = c => c; // les teintes sont déjà choisies pour rester lisibles avec le contour
 
 export const tent = (c = '#e2582f') =>
     svg(
@@ -23,8 +22,7 @@ export const cabin = (c = '#d9a66a') =>
             P('M6 30 L32 8 L58 30Z', '#b8433a', 2.6) +
             R(42, 10, 6, 11, 1, '#8a8f96', 2) +
             R(26, 38, 12, 18, 2, '#6b4220', 2) +
-            R(15, 36, 9, 9, 1.5, '#cfe9f5', 2) +
-            R(41, 36, 9, 9, 1.5, '#cfe9f5', 2) +
+            `<g class="cm-win">` + R(15, 36, 9, 9, 1.5, '#cfe9f5', 2) + R(41, 36, 9, 9, 1.5, '#cfe9f5', 2) + `</g>` +
             C(35, 48, 1, '#f1d27a', 0.8),
     );
 export const well = () =>
@@ -57,8 +55,8 @@ export const swing = () =>
         FE(32, 58, 25, 3, '#000', 0.16) +
             L('M10 58 L22 14 L42 14 L54 58', 3.6) +
             L('M22 14 H42', 4) +
-            L('M28 14 V40 M38 14 V40', 1.6) +
-            R(24, 40, 8, 4, 1.5, '#e2582f', 1.8) + R(34, 40, 8, 4, 1.5, '#3f8fd0', 1.8),
+            `<g class="cm-swing">` + L('M28 14 V40', 1.6) + R(24, 40, 8, 4, 1.5, '#e2582f', 1.8) + `</g>` +
+            `<g class="cm-swing b">` + L('M38 14 V40', 1.6) + R(34, 40, 8, 4, 1.5, '#3f8fd0', 1.8) + `</g>`,
     );
 export const shop = () =>
     svg(
@@ -89,7 +87,8 @@ export const fire = () =>
         FE(32, 56, 22, 4, '#000', 0.18) +
             L('M14 54 L50 46 M16 46 L48 54', 6, O) + L('M14 54 L50 46 M16 46 L48 54', 3.4, '#8b5a32') +
             `<g class="cm-flame">` + P('M32 46 Q18 38 28 22 Q30 30 34 24 Q36 14 40 26 Q46 38 32 46Z', '#f08a2a', 2.2) + P('M32 45 Q25 38 31 30 Q35 36 36 31 Q40 38 32 45Z', '#ffd84a', 0) + `</g>` +
-            C(10, 56, 3.4, '#a9a39a', 1.8) + C(54, 55, 3.4, '#a9a39a', 1.8),
+            C(10, 56, 3.4, '#a9a39a', 1.8) + C(54, 55, 3.4, '#a9a39a', 1.8) +
+            `<g class="cm-smoke"><circle cx="32" cy="16" r="4" fill="#e8e4dc"/><circle cx="35" cy="10" r="3" fill="#e8e4dc"/><circle cx="30" cy="5" r="2.4" fill="#e8e4dc"/></g>`,
     );
 export const tree = (c = '#4aa860') =>
     svg(

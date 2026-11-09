@@ -6,6 +6,7 @@ import { ITEMS } from '../../data/items.js';
 import { RESIDENTS } from '../../data/campers.js';
 import { PROFILES } from '../../data/camping.js';
 import * as G from '../../systems/index.js';
+import { jobHtml } from '../views/camping.js';
 import { actions, esc } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, bar, hearts, segmented } from '../kit.js';
@@ -32,7 +33,7 @@ function friendTab(r, i) {
     return `<div class="vf-block">${resHeartsHtml(r)}${h < RESIDENTS.hearts.length ? bar(progress(r), 'pink') : ''}<p class="card-sub">${h < RESIDENTS.hearts.length ? `${next - r.fr} point${next - r.fr > 1 ? 's' : ''} pour le cœur suivant. Une commande livrée ou un cadeau en donne.` : 'Une amitié au sommet.'}</p></div>
         <div class="vf-line">${ico(['ui', 'heart'])}<div><b>Venu ${esc(r.from)}</b><small>${esc(r.job[0].toUpperCase() + r.job.slice(1))} · ${PROFILES[r.profile] ? PROFILES[r.profile].name.toLowerCase() : 'voyageur'} · ${r.done} commande${r.done > 1 ? 's' : ''} livrée${r.done > 1 ? 's' : ''}</small></div></div>
         ${order}
-        <p class="card-sub">Un résident ne donne aucun bonus : seulement de l’amitié, des histoires et le plaisir de sa compagnie.</p>
+        ${jobHtml(r, i, true)}
         <div class="od-foot">${btn(sure ? 'Sûr ? Appuyez encore' : 'Faire partir', { act: 'campLeave', data: { i }, size: 'sm' })}</div>`;
 }
 function giftTab(r, i) {
@@ -71,7 +72,7 @@ defineSheet('resFiche', {
         const r = res(o.i);
         if (!r) return '<p class="empty">Ce résident n’est plus là.</p>';
         const tabs = [
-            ['friend', 'Amitié', null, G.resCanDeliver(r) ? 1 : 0],
+            ['friend', 'Amitié', null, G.resCanDeliver(r) || G.resBasketReady(r) ? 1 : 0],
             ['gift', 'Cadeau', null, G.resGiftReady(r) && r.likes.some(id => (state.inventory[id] || 0) > 0) ? 1 : 0],
             ['taste', 'Goûts', null],
             ['story', 'Histoire', null],

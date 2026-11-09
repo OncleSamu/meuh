@@ -1,6 +1,20 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.102",
+  "title": "Un camping vivant",
+  "date": "9 novembre 2026",
+  "items": [
+   "Chaque résident aide le camping grâce à son métier, d'autant plus qu'il a de cœurs",
+   "Le boulanger, le fromager et le pêcheur déposent un panier chaque jour devant leur cabane",
+   "Les habitués : un campeur reparti ravi revient, et son pourboire grandit à chaque séjour",
+   "Les campeurs remarquables : critique, photographe, journaliste… exigeants, mais généreux",
+   "Une soirée par jour au camping : un genre de produits s'y vend 30 % plus cher",
+   "La carte s'anime : feu qui fume, balançoire, nuit tombée avec les fenêtres allumées",
+   "Chaque campeur a sa petite phrase"
+  ]
+ },
+ {
   "v": "1.101.5",
   "title": "Aménagements du camping",
   "date": "9 novembre 2026",

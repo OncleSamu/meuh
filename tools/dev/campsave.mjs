@@ -8,7 +8,6 @@ import * as G from '../../src/systems/index.js';
 import { ITEMS } from '../../src/data/items.js';
 import { PROJECTS } from '../../src/data/village.js';
 import { TIPS } from '../../src/data/texts.js';
-import { JOBS } from '../../src/data/campers.js';
 import { packSave } from '../../src/systems/savecodes.js';
 
 const T0 = Date.now();
@@ -47,6 +46,13 @@ for (let i = 0; i < 3; i++) {
     state.camping.guests = state.camping.guests.filter(x => x !== g);
     state.camping.past.push({ name: g.name, look: g.look, from: g.from, profile: g.profile, woman: g.woman, mood: 2 - (i % 3) });
 }
+// 1.102 : un habitué qui revient et un campeur remarquable
+const old = G.newGuest(T0, 2100);
+state.camping.guests = state.camping.guests.filter(x => x !== old);
+state.camping.past.unshift({ name: old.name, look: old.look, from: old.from, profile: old.profile, woman: old.woman, mood: 2 });
+state.camping.visits = { [old.name]: 2 };
+G.newGuest(T0 - 3600e3, 1200, { regular: old.name });
+G.newGuest(T0 - 1800e3, 1300, { star: 0 });
 // deux demandes de résidence
 for (let i = 0; i < 2; i++) {
     const g = G.newGuest(T0, 3000 + i);
@@ -57,7 +63,7 @@ for (let i = 0; i < 2; i++) {
 for (let i = 0; i < 5; i++) {
     const g = G.newGuest(T0, 4000 + i);
     state.camping.guests = state.camping.guests.filter(x => x !== g);
-    const r = G.newResident({ look: g.look, name: g.name, from: g.from, profile: g.profile, woman: !!g.woman, job: JOBS[g.profile][0][g.woman ? 1 : 0] }, 5000 + i);
+    const r = G.newResident({ look: g.look, name: g.name, from: g.from, profile: g.profile, woman: !!g.woman, job: [['guide de randonnée', 'guide de randonnée'], ['boulanger', 'boulangère'], ['pêcheur', 'pêcheuse'], ['peintre', 'peintre'], ['fleuriste', 'fleuriste']][i][g.woman ? 1 : 0] }, 5000 + i);
     state.camping.res.push(r);
     G.resMakeOrder(r);
 }
