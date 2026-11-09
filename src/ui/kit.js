@@ -56,7 +56,8 @@ export const hintHidden = text => !!(state.settings && state.settings.hints && s
 export const hint = text =>
     hintHidden(text)
         ? ''
-        : `<p class="hint">${text}<button class="hint-x" data-act="hintHide" data-h="${hkey(text)}" aria-label="Masquer cette astuce">Compris</button></p>`;
+        : // 1.105 : toute l'astuce se touche pour la fermer (le petit bouton « Compris » était difficile à viser)
+          `<p class="hint" role="button" tabindex="0" data-act="hintHide" data-h="${hkey(text)}" aria-label="Masquer cette astuce">${text}<span class="hint-x">Compris</span></p>`;
 // 1.38 : une astuce de bas de page, qui disparaît à partir du niveau 15 (tout est dans le Guide du fermier)
 export const tip15 = text => (state.level >= 15 ? '' : hint(text));
 export const dot = n => (n ? `<span class="dot">${n > 9 ? '9+' : n}</span>` : '');

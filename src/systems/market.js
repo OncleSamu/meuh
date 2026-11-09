@@ -118,7 +118,8 @@ export function pickHot() {
     const pool = questPool().filter(i => i.sell);
     state.market.hot = pool.length ? pool[Math.floor(Math.random() * pool.length)].id : null;
     state.market.hotDay = state.day;
-    if (state.market.hot && view.started) toast(`Produit du jour au marché : ${ITEMS[state.market.hot].name.toLowerCase()} +50 %`, ['item', state.market.hot]);
+    // 1.105 : pas pendant le tutoriel (le message couvrait les onglets à la toute première seconde de jeu)
+    if (state.market.hot && view.started && state.tutorial.done) toast(`Produit du jour au marché : ${ITEMS[state.market.hot].name.toLowerCase()} +50 %`, ['item', state.market.hot]);
 }
 
 export function marketTick() {

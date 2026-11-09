@@ -53,6 +53,8 @@ function registerWorker() {
             });
             // cherche une nouvelle version à chaque retour sur le jeu
             document.addEventListener('visibilitychange', () => !document.hidden && reg.update().catch(() => {}));
+            // 1.105 : et toutes les 20 minutes quand le jeu reste ouvert (sinon il fallait fermer l'appli pour voir une mise à jour)
+            setInterval(() => !document.hidden && reg.update().catch(() => {}), 20 * 60000);
         })
         .catch(() => {});
 }

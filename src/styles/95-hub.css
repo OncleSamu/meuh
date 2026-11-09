@@ -374,3 +374,12 @@
     gap: 8px;
     margin-top: 8px;
 }
+
+/* 1.105 : toute l'astuce se touche pour la fermer */
+.hint[data-act] {
+    cursor: pointer;
+}
+.hint .hint-x {
+    padding: 3px 10px;
+    margin-top: 2px;
+}
