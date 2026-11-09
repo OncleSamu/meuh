@@ -1,6 +1,23 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.100",
+  "title": "La grande mise à jour : le camping de la vallée",
+  "date": "9 novembre 2026",
+  "items": [
+   "Dès le niveau 57, aménagez le camping : des campeurs au visage généré achètent vos produits",
+   "Cinq améliorations, dont une épicerie qui encaisse même hors ligne",
+   "Un campeur ravi peut s'installer dans une cabane et devenir résident",
+   "Chaque résident a un métier, une commande, des produits aimés, des cœurs et des histoires",
+   "Douze résidents au plus, et aucun bonus de jeu",
+   "Fondez la Maison, votre marque : un nom, un emblème, des couleurs",
+   "Composez des coffrets de trois produits pour cinq clients, avec six paliers de réputation",
+   "La fête de la vallée est le dernier chapitre, avec le bilan de la partie et le générique",
+   "Seize recettes de plus, 873 en tout : pizzas, plats à l'argile, pâtes de baies, laines du désert",
+   "Chaque produit de la ferme sert maintenant à trois recettes au moins"
+  ]
+ },
+ {
   "v": "1.98",
   "title": "Icônes de la cave et villageois variés",
   "date": "8 novembre 2026",
