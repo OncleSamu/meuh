@@ -4,7 +4,6 @@ import { state } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { QUALITY } from '../../data/farm.js';
-import { MAISON } from '../../data/maison.js';
 import { PACKS, PACK, KIND_NAMES } from '../../data/paquets.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
