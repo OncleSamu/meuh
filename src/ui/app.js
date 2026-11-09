@@ -45,7 +45,6 @@ export const TABS = [
             ['nature', 'Nature', ['item', 'wood'], () => NATURE.forest.lvl],
             ['pond', 'Pêche', ['ui', 'rod'], () => NATURE.pond.lvl],
             ['island', 'Voyages', ['ui', 'oaVoyages'], () => ISLAND.lvl],
-            ['camping', 'Camping', ['ui', 'tent'], () => CAMPING.lvl],
         ],
     },
     {
@@ -81,6 +80,8 @@ export const TABS = [
         subs: [
             ['orders', 'Commandes', ['ui', 'scroll']],
             ['village', 'Village', ['ui', 'village']],
+            // 1.103 : le camping, ce sont des gens (campeurs, résidents, la fête) : il rejoint le Village
+            ['camping', 'Camping', ['ui', 'tent'], () => CAMPING.lvl],
         ],
     },
     {
@@ -117,6 +118,8 @@ export function go(path, opts = {}) {
     }
     // 1.44.2 : concours et élevage sont dans le volet Haras
     if (path === 'animals/show' || path === 'animals/stud') path = 'animals/haras#' + path.split('/')[1];
+    // 1.103 : le camping est passé de la Ferme au Village
+    if (path === 'farm/camping') path = 'village/camping';
     // « market/shop#neighbors » : ouvre le volet sur un rayon (ui.sel[volet])
     const [path0, hash] = path.split('#');
     const [tab, sub0] = path0.split('/');
@@ -208,7 +211,7 @@ const HELP = {
     'farm/nature': 'forest',
     'farm/pond': 'pond',
     'farm/island': 'island',
-    'farm/camping': 'legend',
+    'village/camping': 'legend',
     'animals/pasture': 'animals',
     'animals/haras': 'haras',
     'animals/comice': 'elevage',

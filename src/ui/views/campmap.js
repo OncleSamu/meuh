@@ -152,7 +152,7 @@ function renderCamp(el) {
         ['info', infoHtml()],
     ]);
 }
-defineView('farm/camping', renderCamp);
+defineView('village/camping', renderCamp);
 
 defineSheet('campone', {
     title: o => (o.kind === 'guest' ? 'Un campeur' : o.kind === 'res' ? 'Un résident' : 'Un voyageur'),

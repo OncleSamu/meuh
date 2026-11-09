@@ -168,7 +168,7 @@ defineSheet('pkGuest', {
 // 1.101 : la Maison est un volet de l'Atelier (elle ne dépend pas que du camping : voisins, souk, château, vitrine)
 defineView('machines/maison', el => {
     if (!G.campOpen()) return blocks(el, [['m', `<div class="card"><p class="card-sub">La Maison, votre marque, s’ouvre au niveau ${CAMPING.lvl}, avec le camping de la vallée.</p></div>`]]);
-    blocks(el, [['m', maisonCard() || '<div class="card"><p class="card-sub">Aménagez d’abord le camping de la vallée (Ferme › Camping) : la Maison se fonde ensuite ici.</p></div>']]);
+    blocks(el, [['m', maisonCard() || '<div class="card"><p class="card-sub">Aménagez d’abord le camping de la vallée (Village › Camping) : la Maison se fonde ensuite ici.</p></div>']]);
 });
 export function setupMaison() {
     setupPaquet();

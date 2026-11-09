@@ -364,7 +364,7 @@ const ROWS = [
     {
         id: 'fete',
         grp: 'give',
-        hidden: true, // 1.101 : cette carte vit dans Ferme › Camping ; la ligne ne sert plus que d'accès aux tiroirs
+        hidden: true, // 1.101 : cette carte vit dans Village › Camping ; la ligne ne sert plus que d'accès aux tiroirs
         on: () => !!feteCard(),
         icon: () => ['ui', 'heart'],
         title: () => 'La fête de la vallée',
@@ -375,7 +375,7 @@ const ROWS = [
     {
         id: 'maison',
         grp: 'give',
-        hidden: true, // 1.101 : cette carte vit dans Ferme › Camping ; la ligne ne sert plus que d'accès aux tiroirs
+        hidden: true, // 1.101 : cette carte vit dans Village › Camping ; la ligne ne sert plus que d'accès aux tiroirs
         on: () => !!maisonCard(),
         icon: () => ['ui', 'maison'],
         title: () => (G.maisonBuilt() ? G.brandName() : 'La Maison'),
@@ -386,7 +386,7 @@ const ROWS = [
     {
         id: 'camping',
         grp: 'give',
-        hidden: true, // 1.101 : cette carte vit dans Ferme › Camping ; la ligne ne sert plus que d'accès aux tiroirs
+        hidden: true, // 1.101 : cette carte vit dans Village › Camping ; la ligne ne sert plus que d'accès aux tiroirs
         on: () => !!campingCard(),
         icon: () => ['ui', 'tent'],
         title: () => 'Le camping',

@@ -9,7 +9,8 @@ export const CHANGELOG = [
    "Des commandes de paquets : trois clients à la fois, une occasion, un genre, parfois une qualité, et une belle récompense",
    "La renommée : un atelier plus rapide (jusqu'à 5 minutes) et jusqu'à 6 paquets lancés à la suite",
    "Les campeurs achètent un paquet chacun par séjour, à proposer depuis leur fiche",
-   "La page de la Maison en quatre onglets : Atelier, Étagère, Commandes, Marque"
+   "La page de la Maison en quatre onglets : Atelier, Étagère, Commandes, Marque",
+   "Le camping déménage dans le Village : Village › Camping"
   ]
  },
  {
