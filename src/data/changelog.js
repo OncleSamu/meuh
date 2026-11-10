@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.107.3",
+  "title": "Ce qui manque au domaine",
+  "date": "10 novembre 2026",
+  "items": [
+   "Domaine : quand on ne peut pas construire, une ligne rouge dit ce qu'il manque (pièces et matériaux), et le bouton est plus nettement grisé"
+  ]
+ },
+ {
   "v": "1.107.2",
   "title": "Le relais de poste paie mieux",
   "date": "10 novembre 2026",

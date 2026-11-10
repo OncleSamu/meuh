@@ -1681,3 +1681,18 @@ button.cm-spot:active {
 .mslots .mslot {
     flex: none;
 }
+
+/* 1.107.3 : domaine, ce qui manque pour construire */
+.dom-miss {
+    color: var(--red);
+    font-weight: 700;
+}
+.branch-card .btn:disabled {
+    opacity: 0.55;
+}
+.branch-card .cost .short {
+    font-weight: 800;
+    background: rgba(200, 69, 58, 0.12);
+    border-radius: 6px;
+    padding: 0 4px;
+}

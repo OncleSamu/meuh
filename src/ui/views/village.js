@@ -387,6 +387,13 @@ function domaineCard() {
         <div class="od-foot">${btn('Ouvrir le domaine', { act: 'domaine', kind: ready ? 'green' : '', size: 'sm' })}</div></div>`;
 }
 const stepName = (b, k) => DOMAINE[b].steps[k][0];
+// 1.107.3 : ce qui manque pour construire, écrit en rouge sous le prix
+const missing = cost => {
+    const l = G.costParts(cost)
+        .filter(c => !c.ok)
+        .map(c => (c.name === 'Pièces' ? `${fmt(c.n - state.money)} pièces` : qtyName(c.n - (state.inventory[c.icon[1]] || 0), c.name)));
+    return l.length ? `<small class="dom-miss">Il manque ${l.join(', ')}</small>` : '';
+};
 // ce que la branche donne en tout, au palier atteint
 const domTotalText = b =>
     ({
@@ -426,7 +433,7 @@ function branchHtml(b) {
         ${l ? `<div class="card-sub">En tout : ${domTotalText(b)}</div>` : ''}
         ${
             next
-                ? `<div class="od-foot"><div class="card-main"><small>Palier ${l + 1} : ${stepName(b, l)}</small>${costRow(G.costParts(next))}</div>${btn('Construire', { act: 'buyDomaine', data: { b }, kind: G.domCan(b) ? 'green' : '', size: 'sm', disabled: !G.domCan(b) })}</div>`
+                ? `<div class="od-foot"><div class="card-main"><small>Palier ${l + 1} : ${stepName(b, l)}</small>${costRow(G.costParts(next))}${missing(next)}</div>${btn('Construire', { act: 'buyDomaine', data: { b }, kind: G.domCan(b) ? 'green' : '', size: 'sm', disabled: !G.domCan(b) })}</div>`
                 : '<div class="card-sub">Tout est construit.</div>'
         }</div>`;
 }
@@ -442,7 +449,7 @@ function workHtml(w) {
         ${l ? `<div class="card-sub">Aujourd’hui : ${W.steps[l - 1].toLowerCase()}</div>` : ''}
         ${
             next
-                ? `<div class="od-foot"><div class="card-main"><small>Niveau ${l + 1} : ${W.steps[l]}</small>${costRow(G.costParts(next))}</div>${btn('Construire', { act: 'buyWork', data: { w }, kind: G.gworkCan(w) ? 'green' : '', size: 'sm', disabled: !G.gworkCan(w) })}</div>`
+                ? `<div class="od-foot"><div class="card-main"><small>Niveau ${l + 1} : ${W.steps[l]}</small>${costRow(G.costParts(next))}${missing(next)}</div>${btn('Construire', { act: 'buyWork', data: { w }, kind: G.gworkCan(w) ? 'green' : '', size: 'sm', disabled: !G.gworkCan(w) })}</div>`
                 : '<div class="card-sub">Tout est construit.</div>'
         }</div>`;
 }
