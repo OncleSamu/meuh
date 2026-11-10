@@ -101,6 +101,7 @@ const need = () => {
     // 1.105 : les objectifs du niveau (depuis la 1.61, le niveau suivant les attend)
     G.levelGoals().forEach(g => {
         if (!G.goalDone(g) && g.kind === 'make') add(g.id, (state.inventory[g.id] || 0) + (g.n || 1));
+        if (!G.goalDone(g) && g.kind === 'mead') add('honey', 12);
     });
     // ingrédients des produits demandés, sur trois étages (flan coco → lait de coco → noix de coco)
     let level = Object.keys(n);
@@ -583,8 +584,11 @@ function abbey() {
     for (const b of Object.values(B.beers)) if (G.beerStock(b.id) && !keep.has(b.id) && G.demandMult(b.id) > 0.75) G.sellBeer(b.id, G.beerStock(b.id));
     // 1.105 : l'objectif « un hydromel » (niveau de l'hydromel)
     if (G.levelGoals().some(g => g.kind === 'mead' && !G.goalDone(g)) && G.meadOpen() && B.vats.some(v => !v)) {
-        B.draft = { malt: 'mead:all', hop: 1, ings: [] };
-        if (G.startBrew()) return;
+        const ing = G.BREWABLE.find(id => (state.inventory[id] || 0) >= 4);
+        if (ing) {
+            B.draft = { malt: 'mead:all', hop: 1, ings: [[ing, 1]] };
+            if (G.startBrew(null, B.draft, true)) return;
+        }
     }
     if (!B.vats.some(v => !v) || (state.inventory.hop || 0) < 2) return;
     const malts = MALT_IDS.filter(m => (state.inventory[m] || 0) >= 4);
