@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.105",
+  "title": "Le grand audit",
+  "date": "10 novembre 2026",
+  "items": [
+   "Objectifs de niveau : plus jamais de recette qui demande une pierre précieuse trouvée par chance, un poisson rare, ou un produit de serre quand on n'a pas de serre",
+   "L'emballerie n'est plus un objectif de niveau : elle ne sert qu'avec la Maison",
+   "Les astuces grises se ferment en les touchant n'importe où (le petit « Compris » était difficile à viser)",
+   "Le jeu vérifie les mises à jour toutes les 20 minutes : plus besoin de fermer l'appli pour les voir arriver",
+   "Début de partie : le message du produit du jour attend la fin du tutoriel"
+  ]
+ },
+ {
   "v": "1.104.5",
   "title": "Corrections de l'audit",
   "date": "10 novembre 2026",
