@@ -77,7 +77,7 @@ test('bibliothèque, charron et relais : l’expérience, le train et les comman
     G.buyWork('wheel');
     assert.equal(G.workFx('wheel'), 0.2);
     G.buyWork('post');
-    assert.equal(G.workFx('post'), 0.05);
+    assert.equal(G.workFx('post'), 0.1);
 });
 
 test('table d’hôtes : un plancher pour le renom (2, 4 puis 6 points), sans mécanique à jouer', () => {

@@ -212,8 +212,8 @@ export const WORKS = {
         name: 'Le relais de poste',
         mats: ['paint', 'nail'],
         desc: 'Les commandes du village paient plus',
-        fx: [0.05, 0.1, 0.15],
-        steps: ['Les commandes du village paient 5 % de plus', 'Les commandes du village paient 10 % de plus', 'Les commandes du village paient 15 % de plus'],
+        fx: [0.1, 0.2, 0.3],
+        steps: ['Les commandes du village paient 10 % de plus', 'Les commandes du village paient 20 % de plus', 'Les commandes du village paient 30 % de plus'],
     },
 };
 export const WORK_IDS = Object.keys(WORKS);

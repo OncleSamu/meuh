@@ -1885,7 +1885,7 @@ export const GUIDE_PAGES = [
                     'La tour de l’horloge : le renom baisse toutes les 5, 6 puis 8 heures (au lieu de 4).',
                     'La bibliothèque : +5, +10 puis +15 % d’expérience des commandes et des transports.',
                     'La remise du charron : le train paie 10, 20 puis 30 % de plus.',
-                    'Le relais de poste : les commandes du village paient 5, 10 puis 15 % de plus.',
+                    'Le relais de poste : les commandes du village paient 10, 20 puis 30 % de plus.',
                 ],
             },
         ],

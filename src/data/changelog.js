@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.107.2",
+  "title": "Le relais de poste paie mieux",
+  "date": "10 novembre 2026",
+  "items": [
+   "Le relais de poste du domaine fait payer les commandes du village 10, 20 puis 30 % de plus (au lieu de 5, 10 et 15 %)"
+  ]
+ },
+ {
   "v": "1.107.1",
   "title": "Les dépendances du domaine",
   "date": "10 novembre 2026",
