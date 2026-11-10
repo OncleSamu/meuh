@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.107.4",
+  "title": "Le bouton Construire du domaine",
+  "date": "10 novembre 2026",
+  "items": [
+   "Corrigé : depuis la 1.107.1, le bouton « Construire » des améliorations du domaine ne faisait plus rien"
+  ]
+ },
+ {
   "v": "1.107.3",
   "title": "Ce qui manque au domaine",
   "date": "10 novembre 2026",

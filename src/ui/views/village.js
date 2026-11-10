@@ -527,6 +527,21 @@ export function setupVillage() {
                 el,
             );
         },
+        buyDomaine: (el, d) => {
+            const b = d.b,
+                n = G.domLvl(b) + 1;
+            askBuy(
+                {
+                    title: DOMAINE[b].name,
+                    icon: ['ui', DOMAINE[b].icon[1]],
+                    text: `Palier ${n} : ${stepName(b, n - 1).toLowerCase()}.`,
+                    cost: G.domCost(b).coins,
+                    mats: Object.fromEntries(Object.entries(G.domCost(b)).filter(([k]) => k !== 'coins')),
+                    run: at => G.buyDomaine(b, at),
+                },
+                el,
+            );
+        },
         map: (el, d) => {
             ui.sel.map = d.m;
             ui.sel.proj = null;

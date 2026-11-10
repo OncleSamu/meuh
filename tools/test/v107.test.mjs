@@ -104,3 +104,12 @@ test('une ancienne sauvegarde sans grands travaux se charge', () => {
     assert.ok(G.buyWork('table'));
     assert.equal(G.workLvl('table'), 1);
 });
+
+test('domaine : les boutons « Construire » ont bien leur action (1.107.4)', async () => {
+    const { readFileSync } = await import('node:fs');
+    const src = readFileSync(new URL('../../src/ui/views/village.js', import.meta.url), 'utf8');
+    for (const act of ['buyDomaine', 'buyWork', 'domTab', 'domaine']) {
+        assert.ok(new RegExp(`act: '${act}'|data-act="${act}"|'${act}'\\)`).test(src), `bouton ${act}`);
+        assert.ok(new RegExp(`\\n {8}${act}: `).test(src), `action ${act}`);
+    }
+});
