@@ -20,7 +20,7 @@ export function domStepSum(b, key) {
 export const stayMult = () => 1 + domStepSum('guests');
 export const stayOf = (stay, every) => (every ? Math.min(stay * stayMult(), every - 3600000) : stay * stayMult());
 
-// 1.107 : les grands travaux (trois niveaux chacun) ; workFx : l'effet cumulé au niveau atteint (0 si rien n'est construit)
+// 1.107 : les dépendances du domaine (trois niveaux chacun) ; workFx : l'effet cumulé au niveau atteint (0 si rien n'est construit)
 export const worksOpen = () => state.level >= WORKS_LVL;
 export const workMax = () => 3;
 export const workLvl = w => (worksOpen() && state.works && state.works[w]) || 0;

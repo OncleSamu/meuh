@@ -383,7 +383,7 @@ function domaineCard() {
     if (!G.domaineOpen())
         return `<div class="card locked">${ico(['ui', 'lock'], 'ico big')}<div class="card-main"><div class="card-title">Amélioration du domaine</div><div class="card-sub">Au niveau ${DOMAINE_LVL}, faites grandir votre domaine : grange, cuisines, aide au champ, commerce, réception.</div></div></div>`;
     const ready = G.domReady();
-    return `<div class="card domaine-card"><div class="dom-banner">${domaineScene(state.domaine)}</div>${head(['ui', 'house'], 'Amélioration du domaine', `${G.domTotal()} / ${DOMAINE_IDS.length * G.domMax()} paliers${G.worksOpen() ? ` · ${G.worksTotal()} / ${WORK_IDS.length * G.workMax()} grands travaux` : ''}${G.tableDone() ? ' · la table d’hôtes a fini son service' : ''}`, ready ? `<span class="dot">${ready}</span>` : '')}
+    return `<div class="card domaine-card"><div class="dom-banner">${domaineScene(state.domaine)}</div>${head(['ui', 'house'], 'Amélioration du domaine', `${G.domTotal()} / ${DOMAINE_IDS.length * G.domMax()} paliers${G.worksOpen() ? ` · ${G.worksTotal()} / ${WORK_IDS.length * G.workMax()} dépendances` : ''}`, ready ? `<span class="dot">${ready}</span>` : '')}
         <div class="od-foot">${btn('Ouvrir le domaine', { act: 'domaine', kind: ready ? 'green' : '', size: 'sm' })}</div></div>`;
 }
 const stepName = (b, k) => DOMAINE[b].steps[k][0];
@@ -430,7 +430,7 @@ function branchHtml(b) {
                 : '<div class="card-sub">Tout est construit.</div>'
         }</div>`;
 }
-// 1.107 : les grands travaux
+// 1.107 : les dépendances du domaine
 function workHtml(w) {
     const W = WORKS[w],
         l = G.workLvl(w),
@@ -446,61 +446,23 @@ function workHtml(w) {
                 : '<div class="card-sub">Tout est construit.</div>'
         }</div>`;
 }
-// 1.107 : la table d'hôtes (menu de trois plats)
-function tableHtml() {
-    if (!G.tableOpen()) return `<p class="empty">Construisez la table d’hôtes dans les grands travaux pour y servir vos plats.</p>`;
-    const n = G.tableCovers();
-    const head = hint(`Un menu : trois plats différents de la cuisine, ${n} parts de chacun. Deux heures de service, puis du renom pour le domaine (le grossiste paie plus). Trois plats de trois machines différentes : un point de renom de plus.`);
-    if (G.tableBusy()) {
-        const t = state.table,
-            done = G.tableDone();
-        return `${head}<div class="card"><div class="card-main"><div class="card-title">${done ? 'Le service est fini' : 'Service en cours'}</div>
-            <div class="pk-slots">${t.menu.map(id => `<span class="pk-slot on">${ico(['item', id], 'ico big')}</span>`).join('')}</div>
-            <div class="card-sub">${t.menu.map(id => ITEMS[id].name).join(', ')} · ${t.n} couverts</div>
-            <div class="card-sub">${fmt(G.tablePay(t.menu, t.n))} pièces · renom +${G.tableRenom(t.menu)}${G.tableAccord(t.menu) ? ' (bel accord)' : ''}</div></div>
-            <div class="od-foot">${done ? btn('Encaisser', { act: 'tableCollect', kind: 'green' }) : `<span class="card-sub">Fin dans ${timer(t.end)}</span>`}</div></div>`;
-    }
-    const left = G.tableLeft();
-    const sel = (ui.sel.tableMenu || []).filter(id => (state.inventory[id] || 0) >= n);
-    ui.sel.tableMenu = sel;
-    const dishes = G.tableDishes();
-    const slots = [0, 1, 2]
-        .map(i => `<button class="pk-slot${sel[i] ? ' on' : ''}" data-act="tableDrop" data-i="${i}" aria-label="${sel[i] ? 'Retirer ' + ITEMS[sel[i]].name : 'Plat à choisir'}">${sel[i] ? ico(['item', sel[i]], 'ico big') : '+'}</button>`)
-        .join('');
-    const full = sel.length === 3;
-    const cells = dishes
-        .slice(0, 60)
-        .map(
-            id =>
-                `<button class="pick-cell${sel.includes(id) ? ' on' : ''}" data-act="tablePick" data-id="${id}"${full && !sel.includes(id) ? ' disabled' : ''}>${ico(['item', id], 'ico big')}<b>${ITEMS[id].name}</b><small>${fmt(state.inventory[id])} · ${MACHINES[RECIPES[id].machine] ? MACHINES[RECIPES[id].machine].name : ''}</small></button>`,
-        )
-        .join('');
-    return `${head}<div class="card"><div class="card-main"><div class="card-title">Le menu du jour</div>
-        <div class="card-sub">${left > 0 ? `${left} service${left > 1 ? 's' : ''} encore possible${left > 1 ? 's' : ''} aujourd’hui · ${n} couverts` : 'Plus de service aujourd’hui : la table rouvre demain.'}</div>
-        <div class="pk-slots">${slots}</div>
-        ${full ? `<div class="card-sub">${fmt(G.tablePay(sel))} pièces · renom +${G.tableRenom(sel)}${G.tableAccord(sel) ? ' (bel accord)' : ' · trois machines différentes : +1'}</div>` : ''}</div>
-        <div class="od-foot">${btn('Servir le menu', { act: 'tableServe', kind: G.tableCan(sel) ? 'green' : '', disabled: !G.tableCan(sel) })}</div></div>
-        ${left > 0 ? (dishes.length ? `<div class="pick-grid">${cells}</div>` : `<p class="empty">Aucun plat en ${n} exemplaires dans la grange.</p>`) : ''}`;
-}
 defineSheet('domaine', {
     cls: 'domaine-sheet',
     title: () => 'Le domaine',
     render: () => {
-        const tab = ui.sel.domTab === 'table' && !G.tableOpen() ? 'works' : ui.sel.domTab || 'dom';
+        const tab = ui.sel.domTab === 'works' ? 'works' : 'dom';
         const nb = DOMAINE_IDS.filter(G.domCan).length,
             nw = WORK_IDS.filter(G.gworkCan).length;
         const tabs = [
-            ['dom', 'Bâtiments', null, nb],
-            ['works', 'Travaux', null, nw, !G.worksOpen()],
+            ['dom', 'Améliorations', null, nb],
+            ['works', 'Dépendances', null, nw, !G.worksOpen()],
         ];
-        if (G.tableOpen()) tabs.push(['table', 'Table d’hôtes', null, G.tableDone() ? 1 : 0]);
         const spent = G.domSpent();
         let body;
-        if (tab === 'table') body = tableHtml();
-        else if (tab === 'works')
+        if (tab === 'works')
             body = G.worksOpen()
-                ? `${worksScene(state.works)}${hint('Six bâtiments d’apparat, trois niveaux chacun. Ils coûtent des dizaines de millions, et chacun rend un vrai service au domaine.')}${WORK_IDS.map(workHtml).join('')}`
-                : `<p class="empty">Les grands travaux s’ouvrent au niveau ${WORKS_LVL}.</p>`;
+                ? `${worksScene(state.works)}${hint('Six dépendances, trois niveaux chacune. Elles coûtent des dizaines de millions, et chacune rend un vrai service au domaine.')}${WORK_IDS.map(workHtml).join('')}`
+                : `<p class="empty">Les dépendances s’ouvrent au niveau ${WORKS_LVL}.</p>`;
         else
             body = `${domaineScene(state.domaine)}${hint('Chaque palier ajoute du confort pour toujours : de la place, des files plus longues, des visiteurs qui restent. Les paliers 6 à 8 sont les grands chantiers de la fin de partie.')}${DOMAINE_IDS.map(branchHtml).join('')}`;
         return `${segmented(tabs, tab, 'domTab')}${spent ? `<p class="card-sub center">${fmt(spent)} pièces investies dans le domaine</p>` : ''}${body}`;
@@ -554,36 +516,6 @@ export function setupVillage() {
                     cost: G.workCost(w).coins,
                     mats: Object.fromEntries(Object.entries(G.workCost(w)).filter(([k]) => k !== 'coins')),
                     run: at => G.buyWork(w, at),
-                },
-                el,
-            );
-        },
-        tablePick: (el, d) => {
-            const m = (ui.sel.tableMenu = ui.sel.tableMenu || []);
-            if (m.includes(d.id)) m.splice(m.indexOf(d.id), 1);
-            else if (m.length < 3) m.push(d.id);
-        },
-        tableDrop: (el, d) => {
-            const m = ui.sel.tableMenu || [];
-            if (m[+d.i]) m.splice(+d.i, 1);
-        },
-        tableServe: () => {
-            if (G.tableServe(ui.sel.tableMenu || [])) ui.sel.tableMenu = [];
-        },
-        tableCollect: el => {
-            G.tableCollect(el);
-        },
-        buyDomaine: (el, d) => {
-            const b = d.b,
-                n = G.domLvl(b) + 1;
-            askBuy(
-                {
-                    title: DOMAINE[b].name,
-                    icon: ['ui', DOMAINE[b].icon[1]],
-                    text: `Palier ${n} : ${stepName(b, n - 1).toLowerCase()}.`,
-                    cost: G.domCost(b).coins,
-                    mats: Object.fromEntries(Object.entries(G.domCost(b)).filter(([k]) => k !== 'coins')),
-                    run: at => G.buyDomaine(b, at),
                 },
                 el,
             );

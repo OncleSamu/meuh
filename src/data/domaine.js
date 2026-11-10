@@ -162,7 +162,7 @@ export const DOMAINE = {
 };
 export const DOMAINE_IDS = Object.keys(DOMAINE);
 
-// ---------------- 1.107 : les grands travaux ----------------
+// ---------------- 1.107 : les dépendances du domaine ----------------
 // Six bâtiments d'apparat, trois niveaux chacun, à des dizaines de millions de pièces : la vraie dépense de la fin de partie.
 // Chacun a un effet utile ; fx : la valeur cumulée au niveau 1, 2 et 3 (lue par workFx dans systems/estate.js).
 export const WORKS_LVL = 45;
@@ -176,9 +176,9 @@ export const WORKS = {
     table: {
         name: 'La table d’hôtes',
         mats: ['plank', 'paint'],
-        desc: 'Servez un menu de trois plats : il fait monter le renom du domaine',
-        fx: [1, 2, 3],
-        steps: ['1 service par jour, 6 couverts', '2 services par jour, 10 couverts', '3 services par jour, 16 couverts'],
+        desc: 'On y reçoit toute l’année : le renom du domaine ne retombe jamais à zéro',
+        fx: [2, 4, 6],
+        steps: ['Le renom ne descend jamais sous 2 %', 'Le renom ne descend jamais sous 4 %', 'Le renom ne descend jamais sous 6 %'],
     },
     pigeon: {
         name: 'Le pigeonnier',
@@ -217,5 +217,3 @@ export const WORKS = {
     },
 };
 export const WORK_IDS = Object.keys(WORKS);
-// la table d'hôtes : un menu de trois plats différents, servi en 2 heures
-export const TABLE = { dur: 2 * 3600000, covers: [6, 10, 16], pay: 1.5, xp: 0.3, renom: 1, accord: 1 };

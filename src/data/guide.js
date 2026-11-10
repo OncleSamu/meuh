@@ -1598,7 +1598,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Le renom du domaine',
-                t: `Quand la ferme fait parler d’elle, le grossiste paie tout plus cher : +1 % par point de renom, ${RENOM.max} % au plus. Un train qui part plein donne ${RENOM.train} points. Une bouteille de la cave vendue « Vieux » ou mieux au négociant, une vente réussie aux enchères, une commande de cave ou une commande de bière livrée donnent 1 point. Un menu servi à la table d’hôtes du domaine donne 1 ou 2 points ; le pigeonnier relève le plafond et la tour de l’horloge ralentit la baisse. Le renom baisse d’un point toutes les 4 heures : il se garde en jouant régulièrement le train, la cave et la brasserie. Il s’affiche en haut du grossiste.`,
+                t: `Quand la ferme fait parler d’elle, le grossiste paie tout plus cher : +1 % par point de renom, ${RENOM.max} % au plus. Un train qui part plein donne ${RENOM.train} points. Une bouteille de la cave vendue « Vieux » ou mieux au négociant, une vente réussie aux enchères, une commande de cave ou une commande de bière livrée donnent 1 point. Les dépendances du domaine le renforcent : le pigeonnier relève le plafond, la tour de l’horloge ralentit la baisse, la table d’hôtes l’empêche de retomber à zéro. Le renom baisse d’un point toutes les 4 heures : il se garde en jouant régulièrement le train, la cave et la brasserie. Il s’affiche en haut du grossiste.`,
             },
             { h: 'Le produit du jour et la réserve', t: 'Un produit du jour paie plus. La réserve met de côté ce que demandent commandes et défis.' },
             {
@@ -1848,11 +1848,11 @@ export const GUIDE_PAGES = [
         icon: ['ui', 'house'],
         lvl: 25,
         go: 'village/village',
-        intro: 'Le grand chantier du jeu, fait pour dépenser ses pièces jusqu’au bout : neuf branches de huit paliers, six grands travaux et une table d’hôtes.',
+        intro: 'Le grand chantier du jeu, fait pour dépenser ses pièces jusqu’au bout : neuf branches de huit paliers et six dépendances.',
         secs: [
             {
                 h: 'Où le trouver',
-                t: 'Village › sous-onglet Village, sous la carte de l’histoire (niveau 25). Trois volets : Bâtiments (les neuf branches), Travaux (les grands travaux, niveau 45) et Table d’hôtes (une fois construite).',
+                t: 'Village › sous-onglet Village, sous la carte de l’histoire (niveau 25). Deux volets : Améliorations (les neuf branches) et Dépendances (six bâtiments, niveau 45).',
             },
             {
                 h: 'Les neuf branches',
@@ -1877,10 +1877,10 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
-                h: 'Les grands travaux (niveau 45)',
+                h: 'Les dépendances (niveau 45)',
                 b: [
                     'Six bâtiments d’apparat, trois niveaux chacun : 15, 40 puis 100 millions de pièces.',
-                    'La table d’hôtes : 1, 2 puis 3 services par jour, de 6, 10 puis 16 couverts.',
+                    'La table d’hôtes : le renom du domaine ne descend jamais sous 2, 4 puis 6 %.',
                     'Le pigeonnier : le renom du domaine monte jusqu’à 14, 16 puis 18 % (au lieu de 12).',
                     'La tour de l’horloge : le renom baisse toutes les 5, 6 puis 8 heures (au lieu de 4).',
                     'La bibliothèque : +5, +10 puis +15 % d’expérience des commandes et des transports.',
@@ -1888,13 +1888,9 @@ export const GUIDE_PAGES = [
                     'Le relais de poste : les commandes du village paient 5, 10 puis 15 % de plus.',
                 ],
             },
-            {
-                h: 'La table d’hôtes',
-                t: 'Composez un menu de trois plats différents de la cuisine (pas d’artisanat), avec autant de parts de chacun que la table a de couverts. Le service dure 2 heures. Il rapporte 1,5 fois le prix des plats, de l’expérience, et surtout 1 point de renom du domaine : le grossiste paie alors tout plus cher (voir Le marché). Trois plats faits dans trois machines différentes forment un bel accord : 1 point de plus.',
-            },
         ],
         see: ['house', 'armand', 'cargo', 'trains', 'market'],
-        tips: ['Tout le domaine coûte plus de deux milliards de pièces : c’est fait pour durer.', 'Le pigeonnier, l’horloge et la table d’hôtes vont ensemble : plus de renom, plus longtemps.'],
+        tips: ['Tout le domaine coûte plus de deux milliards de pièces : c’est fait pour durer.', 'Le pigeonnier, l’horloge et la table d’hôtes vont ensemble : un renom plus haut, qui baisse moins vite et jamais jusqu’à zéro.'],
     },
     {
         id: 'skills',

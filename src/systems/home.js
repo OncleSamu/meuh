@@ -200,7 +200,7 @@ export const domCost = (b, n = domLvl(b) + 1) =>
 export const domCan = b => domaineOpen() && domLvl(b) < domMax() && hasCost(domCost(b));
 export const domReady = () => DOMAINE_IDS.filter(domCan).length + WORK_IDS.filter(gworkCan).length;
 export const domTotal = () => DOMAINE_IDS.reduce((a, b) => a + domLvl(b), 0);
-// 1.107 : les grands travaux
+// 1.107 : les dépendances du domaine
 export const workCost = (w, n = workLvl(w) + 1) =>
     n > workMax() ? null : { coins: WORKS_COINS[n - 1], [WORKS[w].mats[0]]: WORKS_MATS[n - 1][0], [WORKS[w].mats[1]]: WORKS_MATS[n - 1][1] };
 export const gworkCan = w => worksOpen() && workLvl(w) < workMax() && hasCost(workCost(w));

@@ -1,4 +1,4 @@
-// 1.107 : le domaine en grand. Huit paliers par branche, les grands travaux, la table d'hôtes.
+// 1.107 : le domaine en grand. Huit paliers par branche, les dépendances.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { memStore } from './helpers.mjs';
@@ -6,9 +6,7 @@ import { state, setStore } from '../../src/core/state.js';
 import { setView } from '../../src/core/view.js';
 import { setClock } from '../../src/core/clock.js';
 import * as G from '../../src/systems/index.js';
-import { ITEMS } from '../../src/data/items.js';
-import { RECIPES } from '../../src/data/machines.js';
-import { DOMAINE, DOMAINE_IDS, DOMAINE_COINS, DOMAINE_MATS, WORKS, WORK_IDS, WORKS_COINS, WORKS_LVL, TABLE } from '../../src/data/domaine.js';
+import { DOMAINE, DOMAINE_IDS, DOMAINE_COINS, DOMAINE_MATS, WORKS, WORK_IDS, WORKS_COINS, WORKS_LVL } from '../../src/data/domaine.js';
 
 let T = Date.UTC(2026, 10, 10, 12);
 function farm(lvl = 60) {
@@ -22,7 +20,6 @@ function farm(lvl = 60) {
     state.money = 1e11;
     for (const k of ['plank', 'paint', 'beam', 'nail', 'tools']) state.inventory[k] = 5000;
 }
-const dishes = () => Object.keys(ITEMS).filter(G.isDish);
 
 test('domaine : huit paliers par branche, chacun avec son effet et son coût', () => {
     assert.equal(DOMAINE_COINS.length, 8);
@@ -39,7 +36,7 @@ test('domaine : huit paliers par branche, chacun avec son effet et son coût', (
     assert.ok(G.domSpent() > 1.5e9);
 });
 
-test('grands travaux : fermés avant le niveau 45, trois niveaux, des dizaines de millions', () => {
+test('dépendances : fermés avant le niveau 45, trois niveaux, des dizaines de millions', () => {
     farm(WORKS_LVL - 1);
     assert.equal(G.worksOpen(), false);
     assert.equal(G.buyWork('pigeon'), false);
@@ -83,57 +80,27 @@ test('bibliothèque, charron et relais : l’expérience, le train et les comman
     assert.equal(G.workFx('post'), 0.05);
 });
 
-test('table d’hôtes : trois plats différents, deux heures, du renom ; un service par jour au niveau 1', () => {
+test('table d’hôtes : un plancher pour le renom (2, 4 puis 6 points), sans mécanique à jouer', () => {
     farm();
-    const d = dishes();
-    assert.ok(d.length > 100);
-    assert.ok(d.every(id => RECIPES[id]));
-    const menu = d.slice(0, 3);
-    for (const id of d.slice(0, 6)) state.inventory[id] = 40;
-    assert.equal(G.tableCan(menu), false); // pas encore construite
+    assert.equal(G.renomPts(), 0);
     G.buyWork('table');
-    assert.equal(G.tableCovers(), TABLE.covers[0]);
-    assert.equal(G.tableCan([menu[0], menu[0], menu[1]]), false);
-    assert.ok(G.tableServe(menu));
-    assert.equal(state.inventory[menu[0]], 40 - TABLE.covers[0]);
-    assert.equal(G.tableServe(d.slice(3, 6)), false); // un service à la fois
-    assert.equal(G.tableCollect(), false);
-    T += TABLE.dur + 1;
-    const m = state.money,
-        r = G.renomPts();
-    const got = G.tableCollect();
-    assert.ok(got);
-    assert.equal(state.money - m, got.pay);
-    assert.equal(G.renomPts() - r, got.renom);
-    assert.ok(got.renom >= 1 && got.renom <= 2);
-    // plus de service aujourd'hui, un nouveau demain
-    assert.equal(G.tableLeft(), 0);
-    assert.equal(G.tableServe(d.slice(3, 6)), false);
-    T += 24 * 3600000;
-    assert.equal(G.tableLeft(), 1);
-    assert.ok(G.tableServe(d.slice(3, 6)));
-});
-
-test('table d’hôtes : l’accord (trois machines différentes) donne un point de plus', () => {
-    farm();
-    const d = dishes();
-    const byM = {};
-    for (const id of d) (byM[RECIPES[id].machine] = byM[RECIPES[id].machine] || []).push(id);
-    const ms = Object.keys(byM);
-    assert.ok(ms.length >= 3);
-    const accord = [byM[ms[0]][0], byM[ms[1]][0], byM[ms[2]][0]];
-    const same = Object.values(byM).find(l => l.length >= 3).slice(0, 3);
-    assert.equal(G.tableRenom(accord), TABLE.renom + TABLE.accord);
-    assert.equal(G.tableRenom(same), TABLE.renom);
+    assert.equal(G.renomPts(), 2);
+    assert.equal(G.renomNext(), 0);
+    G.addRenom(3);
+    assert.equal(G.renomPts(), 5);
+    assert.ok(G.renomNext() > 0);
+    T += 100 * 3600000;
+    assert.equal(G.renomPts(), 2);
+    G.buyWork('table');
+    G.buyWork('table');
+    assert.equal(G.renomPts(), 6);
+    assert.equal(G.tableServe, undefined);
 });
 
 test('une ancienne sauvegarde sans grands travaux se charge', () => {
     farm();
     delete state.works;
-    delete state.table;
     assert.equal(G.workLvl('table'), 0);
-    assert.equal(G.tableOpen(), false);
-    assert.equal(G.tableLeft(), 0);
     assert.ok(G.buyWork('table'));
     assert.equal(G.workLvl('table'), 1);
 });

@@ -441,7 +441,7 @@ export function worksScene(levels) {
         const [x, y, s] = WSLOTS[w];
         return `<g transform="translate(${x} ${y}) scale(${s})">${workPiece(w, lv(w))}</g>`;
     });
-    return `<svg class="dom-scene works-scene" viewBox="0 0 360 200" role="img" aria-label="Les grands travaux">${bg}${tree(124, 96, 0.9)}${tree(250, 98, 0.9)}${tree(118, 190, 1)}${tree(254, 192, 1)}${parts.join('')}</svg>`;
+    return `<svg class="dom-scene works-scene" viewBox="0 0 360 200" role="img" aria-label="Les dépendances du domaine">${bg}${tree(124, 96, 0.9)}${tree(250, 98, 0.9)}${tree(118, 190, 1)}${tree(254, 192, 1)}${parts.join('')}</svg>`;
 }
 
 // ---------- la vue d'ensemble du domaine ----------

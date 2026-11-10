@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.107.1",
+  "title": "Les dépendances du domaine",
+  "date": "10 novembre 2026",
+  "items": [
+   "Les « grands travaux » du domaine s'appellent maintenant les dépendances ; les neuf branches s'appellent les améliorations",
+   "La table d'hôtes n'a plus de menu à servir : c'est un bâtiment comme les autres, qui empêche le renom du domaine de descendre sous 2, 4 puis 6 %"
+  ]
+ },
+ {
   "v": "1.107",
   "title": "Le domaine en grand",
   "date": "10 novembre 2026",

@@ -443,7 +443,7 @@ function banners() {
         html += card({
             icon: ['ui', 'star'],
             title: `Renom du domaine : +${rp} %`,
-            sub: `Le grossiste paie tout ${rp} % plus cher (trains pleins, cave, brasserie). Un point de moins dans ${fmtTime(G.renomNext() / 1000)}.`,
+            sub: `Le grossiste paie tout ${rp} % plus cher (trains pleins, cave, brasserie). ${G.renomNext() ? `Un point de moins dans ${fmtTime(G.renomNext() / 1000)}.` : 'Il ne baisse plus.'}`,
             cls: 'banner',
         });
     if (G.eventActive('ete'))
