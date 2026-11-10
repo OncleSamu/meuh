@@ -320,14 +320,129 @@ const site = (b, n) =>
     R(34, 40, 32, 14, 2, '#f7ecd8', 1.8) +
     L('M50 54 V62', 2) +
     `<text x="50" y="50" font-size="7.4" font-weight="700" text-anchor="middle" fill="${O}" font-family="sans-serif">${SITE_NAMES[b]}</text>` +
-    (n ? `<text x="50" y="33" font-size="8" font-weight="700" text-anchor="middle" fill="#6b4a1c" font-family="sans-serif">${n} / 5</text>` : '');
+    (n ? `<text x="50" y="33" font-size="8" font-weight="700" text-anchor="middle" fill="#6b4a1c" font-family="sans-serif">${n} / 8</text>` : '');
 
 // l'étape à dessiner : 0 chantier, 1 modeste (palier 2), 2 grande (palier 5)
 export const domStage = lvl => (lvl >= 5 ? 2 : lvl >= 2 ? 1 : 0);
-export const domPiece = (b, lvl) => (domStage(lvl) ? DOM_ART[b][domStage(lvl) - 1]() : site(b, lvl));
+// 1.107 : au palier 8, le bâtiment reçoit son oriflamme dorée
+const crown = () => L('M50 20 V4', 1.8) + P('M50 4 l13 4 l-13 5Z', '#f2c14e', 1.4) + STAR(50, 22, 4.2);
+const STAR = (x, y, r) =>
+    P(`M${x} ${y - r} L${x + r * 0.3} ${y - r * 0.3} L${x + r} ${y - r * 0.25} L${x + r * 0.45} ${y + r * 0.25} L${x + r * 0.6} ${y + r} L${x} ${y + r * 0.55} L${x - r * 0.6} ${y + r} L${x - r * 0.45} ${y + r * 0.25} L${x - r} ${y - r * 0.25} L${x - r * 0.3} ${y - r * 0.3}Z`, '#ffd23f', 1.2);
+export const domPiece = (b, lvl) => (domStage(lvl) ? DOM_ART[b][domStage(lvl) - 1]() + (lvl >= 8 ? crown() : '') : site(b, lvl));
 // la vignette d'une branche (cartes de la feuille du domaine)
 export const domThumb = (b, lvl) =>
     `<svg class="dom-thumb" viewBox="0 0 100 90" aria-hidden="true"><path d="M0 70 Q50 62 100 70 V90 H0Z" fill="#9bd96f"/>${domPiece(b, lvl)}</svg>`;
+
+// ---------- 1.107 : les grands travaux (un dessin qui s'enrichit à chaque niveau) ----------
+const WORK_SITE = { table: 'Table d’hôtes', pigeon: 'Pigeonnier', clock: 'Horloge', library: 'Bibliothèque', wheel: 'Charron', post: 'Relais' };
+const workSite = w =>
+    SHADOW(50, 78, 36, 4) +
+    E(50, 72, 34, 10, '#c9a36a', 0, 1.6) +
+    [20, 40, 60, 80].map(x => L(`M${x} 78 V60`, 2.4)).join('') +
+    L('M20 62 Q35 66 50 62 T80 62', 1.2, '#f5efe0') +
+    crate(30, 66, 8) +
+    R(28, 40, 44, 14, 2, '#f7ecd8', 1.8) +
+    L('M50 54 V62', 2) +
+    `<text x="50" y="50" font-size="6.6" font-weight="700" text-anchor="middle" fill="${O}" font-family="sans-serif">${WORK_SITE[w]}</text>`;
+export const WORK_ART = {
+    // une longue maison à tonnelle, des tables dehors
+    table: l =>
+        SHADOW(50, 87, 46, 3) +
+        R(18, 48, 50, 38, 2, CREAM, 2.2) +
+        gable(18, 68, 26, 48, '#b5533c') +
+        R(54, 22, 7, 14, 1, STONE, 1.8) +
+        smoke(58, 18) +
+        door(36, 64, 13, 22, '#7a4c26') +
+        win(23, 58, 8) +
+        win(54, 58, 8) +
+        R(70, 60, 24, 3, 1, WOOD, 1.5) +
+        L('M72 63 V86 M92 63 V86', 2) +
+        (l >= 2 ? L('M70 60 q6 6 12 0 q6 6 12 0', 1.4, GREEN) + FC(76, 63, 1.6, '#e8364b') + FC(88, 63, 1.6, '#ffd23f') : '') +
+        R(74, 74, 16, 3, 1, '#fff', 1.4) +
+        L('M77 77 V86 M87 77 V86', 1.6) +
+        (l >= 2 ? R(4, 76, 12, 3, 1, '#fff', 1.4) + L('M6 79 V86 M14 79 V86', 1.6) : '') +
+        (l >= 3 ? flag(18, 48, '#f2c14e') + C(43, 40, 4, '#fff7e0', 1.6) + STAR(43, 40, 3) : ''),
+    // une tour ronde de pierre, toit pointu, des pigeons
+    pigeon: l =>
+        SHADOW(50, 87, 26, 3) +
+        R(34, 40 - (l - 1) * 6, 32, 46 + (l - 1) * 6, 4, STONE, 2.2) +
+        L(`M34 ${58} H66 M34 ${72} H66`, 1, 'rgba(58,38,24,.35)') +
+        P(`M28 ${42 - (l - 1) * 6} Q50 ${6 - (l - 1) * 6} 72 ${42 - (l - 1) * 6}Z`, '#7a5a8c', 2.2) +
+        [42, 52].map(x => R(x, 50 - (l - 1) * 4, 6, 7, 3, '#4a3524', 1.2)).join('') +
+        door(44, 70, 12, 16, '#7a4c26') +
+        E(72, 36, 4, 2.6, '#f4f4f4', 0, 1.2) +
+        C(75.5, 34.5, 1.8, '#f4f4f4', 1.1) +
+        (l >= 2 ? E(24, 30, 4, 2.6, '#d9dde2', 0, 1.2) + C(20.5, 28.5, 1.8, '#d9dde2', 1.1) : '') +
+        (l >= 3 ? L(`M50 ${12} V${0}`, 1.6) + STAR(50, 2, 4) : ''),
+    // une tour carrée avec un cadran
+    clock: l =>
+        SHADOW(50, 87, 28, 3) +
+        R(36, 30 - (l - 1) * 5, 28, 56 + (l - 1) * 5, 2, '#f1d9a6', 2.2) +
+        P(`M31 ${32 - (l - 1) * 5} L50 ${10 - (l - 1) * 5} L69 ${32 - (l - 1) * 5}Z`, BLUE, 2.2) +
+        C(50, 46 - (l - 1) * 3, 9, '#fff7e0', 2) +
+        L(`M50 ${46 - (l - 1) * 3} v-6 M50 ${46 - (l - 1) * 3} l4 3`, 1.5) +
+        door(44, 68, 12, 18, '#7a4c26') +
+        (l >= 2 ? R(22, 62, 14, 24, 1.5, '#e9cf9c', 2) + P('M19 63 L29 54 L39 63Z', BLUE, 1.8) + win(25, 68, 7) : '') +
+        (l >= 3 ? R(64, 62, 14, 24, 1.5, '#e9cf9c', 2) + P('M61 63 L71 54 L81 63Z', BLUE, 1.8) + win(68, 68, 7) + C(50, 46 - 6, 10.5, 'none', 1.6) + L(`M50 0 V5`, 1.6) + STAR(50, 2, 3.6) : ''),
+    // une belle bâtisse à colonnes
+    library: l =>
+        SHADOW(50, 87, 46, 3) +
+        R(14, 46, 72, 40, 2, '#efe6d2', 2.2) +
+        P('M9 48 L50 24 L91 48Z', '#8a6b4a', 2.2) +
+        C(50, 38, 4.5, '#cfeaf7', 1.6) +
+        [22, 36, 58, 72].map(x => R(x, 50, 6, 34, 1.5, '#fff', 1.6)).join('') +
+        door(44, 62, 12, 24, '#5a3a22') +
+        R(10, 84, 80, 3, 1, STONED, 1.4) +
+        (l >= 2 ? win(29, 60, 6) + win(65, 60, 6) + R(2, 76, 9, 10, 1, '#a8693a', 1.4) + L('M4 78 v6 M7 78 v6', 0.9, '#f2c14e') : '') +
+        (l >= 3 ? flag(50, 24, '#f2c14e') + R(89, 76, 9, 10, 1, '#3f6fb5', 1.4) + L('M91 78 v6 M94 78 v6', 0.9, '#f2c14e') : ''),
+    // une remise ouverte, des roues contre le mur
+    wheel: l =>
+        SHADOW(50, 87, 44, 3) +
+        R(16, 48, 62, 38, 2, WOOD, 2.2) +
+        planks(16, 48, 78, 86) +
+        P('M10 50 L47 28 L84 50Z', '#6f4a2a', 2.2) +
+        R(30, 58, 30, 28, 1.5, '#3a2618', 2) +
+        C(45, 74, 9, 'none', 2.4) +
+        L('M45 65 V83 M36 74 H54 M39 68 L51 80 M51 68 L39 80', 1.2) +
+        C(45, 74, 2, '#f2c14e', 1.2) +
+        (l >= 2 ? C(86, 76, 8, 'none', 2.2) + L('M86 68 V84 M78 76 H94', 1.1) + R(4, 72, 10, 14, 1.5, '#c99a5b', 1.5) : '') +
+        (l >= 3 ? R(64, 58, 10, 9, 1.2, '#cfeaf7', 1.6) + flag(78, 50, RED) + STAR(47, 40, 4) : ''),
+    // une maison à porche, une boîte aux lettres, une diligence plus tard
+    post: l =>
+        SHADOW(50, 87, 44, 3) +
+        R(20, 46, 52, 40, 2, '#f7ecd8', 2.2) +
+        gable(20, 72, 24, 46, '#c8453a') +
+        door(40, 62, 13, 24, '#3f6fb5') +
+        win(25, 56, 8) +
+        win(59, 56, 8) +
+        R(34, 50, 25, 7, 1.5, '#f2c14e', 1.5) +
+        `<text x="46.5" y="55.6" font-size="5" font-weight="700" text-anchor="middle" fill="${O}" font-family="sans-serif">POSTE</text>` +
+        L('M82 86 V70', 2) +
+        R(77, 62, 11, 9, 2, '#f2c14e', 1.6) +
+        L('M79 66 h7', 1.1) +
+        (l >= 2 ? R(2, 66, 16, 12, 2, '#3f6fb5', 1.8) + C(6, 82, 4, 'none', 1.8) + C(15, 82, 4, 'none', 1.8) + win(6, 68, 5) : '') +
+        (l >= 3 ? flag(72, 46, '#f2c14e') + STAR(46, 36, 4) : ''),
+};
+export const workPiece = (w, lvl) => (lvl ? WORK_ART[w](lvl) : workSite(w));
+export const workThumb = (w, lvl) =>
+    `<svg class="dom-thumb" viewBox="0 0 100 90" aria-hidden="true"><path d="M0 70 Q50 62 100 70 V90 H0Z" fill="#9bd96f"/>${workPiece(w, lvl)}</svg>`;
+// la cour des grands travaux : les six bâtiments autour d'une place
+const WSLOTS = { pigeon: [14, 8, 0.8], clock: [140, 0, 0.86], library: [262, 10, 0.84], table: [8, 96, 0.92], wheel: [134, 104, 0.9], post: [262, 100, 0.9] };
+export function worksScene(levels) {
+    const lv = w => (levels && levels[w]) || 0;
+    const bg =
+        `<rect width="360" height="200" fill="#bfe6fb"/>` +
+        FE0(60, 16, 26, 7) +
+        FE0(300, 22, 24, 7) +
+        `<path d="M0 50 Q90 34 180 46 T360 40 V200 H0Z" fill="#b7d97a"/>` +
+        `<path d="M0 104 Q120 92 240 102 T360 98 V200 H0Z" fill="#9bd96f"/>` +
+        `<g stroke="#f2d6a2" stroke-width="9" fill="none" stroke-linecap="round"><path d="M0 188 H360 M180 188 V96 M60 96 H300"/></g>`;
+    const parts = Object.keys(WSLOTS).map(w => {
+        const [x, y, s] = WSLOTS[w];
+        return `<g transform="translate(${x} ${y}) scale(${s})">${workPiece(w, lv(w))}</g>`;
+    });
+    return `<svg class="dom-scene works-scene" viewBox="0 0 360 200" role="img" aria-label="Les grands travaux">${bg}${tree(124, 96, 0.9)}${tree(250, 98, 0.9)}${tree(118, 190, 1)}${tree(254, 192, 1)}${parts.join('')}</svg>`;
+}
 
 // ---------- la vue d'ensemble du domaine ----------
 const tree = (x, y, s = 1) =>

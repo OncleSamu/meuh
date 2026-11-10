@@ -143,17 +143,18 @@ test('Domaine : fermé avant le niveau 25, achat, effets cumulés et séjours bo
     assert.equal(G.extraOrders(), o + 1);
     G.buyDomaine('trade');
     assert.equal(G.extraStall(), s + 1);
-    // une branche se termine après 5 paliers, au prix prévu
+    // une branche se termine après 8 paliers (1.107), au prix prévu
+    state.money = 1e10;
     const m0 = state.money;
-    for (let k = 0; k < 5; k++) assert.ok(G.buyDomaine('guests'), 'palier ' + (k + 1));
+    for (let k = 0; k < 8; k++) assert.ok(G.buyDomaine('guests'), 'palier ' + (k + 1));
     assert.equal(G.buyDomaine('guests'), false);
     assert.equal(
         m0 - state.money,
         DOMAINE_COINS.reduce((a, b) => a + b, 0),
     );
     // le séjour double, mais ne couvre jamais tout l'intervalle
-    assert.equal(G.stayMult(), 2);
-    assert.equal(G.stayOf(3600000), 7200000);
+    assert.ok(Math.abs(G.stayMult() - 2.6) < 1e-9);
+    assert.equal(Math.round(G.stayOf(3600000)), 9360000);
     assert.equal(G.stayOf(24 * 3600000, 48 * 3600000), 47 * 3600000);
     assert.ok(MACHINE_SLOTS > 0);
 });
