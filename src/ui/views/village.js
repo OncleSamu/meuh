@@ -442,7 +442,7 @@ function workHtml(w) {
         ${l ? `<div class="card-sub">Aujourd’hui : ${W.steps[l - 1].toLowerCase()}</div>` : ''}
         ${
             next
-                ? `<div class="od-foot"><div class="card-main"><small>Niveau ${l + 1} : ${W.steps[l]}</small>${costRow(G.costParts(next))}</div>${btn('Construire', { act: 'buyWork', data: { w }, kind: G.workCan(w) ? 'green' : '', size: 'sm', disabled: !G.workCan(w) })}</div>`
+                ? `<div class="od-foot"><div class="card-main"><small>Niveau ${l + 1} : ${W.steps[l]}</small>${costRow(G.costParts(next))}</div>${btn('Construire', { act: 'buyWork', data: { w }, kind: G.gworkCan(w) ? 'green' : '', size: 'sm', disabled: !G.gworkCan(w) })}</div>`
                 : '<div class="card-sub">Tout est construit.</div>'
         }</div>`;
 }
@@ -488,10 +488,10 @@ defineSheet('domaine', {
     render: () => {
         const tab = ui.sel.domTab === 'table' && !G.tableOpen() ? 'works' : ui.sel.domTab || 'dom';
         const nb = DOMAINE_IDS.filter(G.domCan).length,
-            nw = WORK_IDS.filter(G.workCan).length;
+            nw = WORK_IDS.filter(G.gworkCan).length;
         const tabs = [
             ['dom', 'Bâtiments', null, nb],
-            ['works', 'Grands travaux', null, nw, !G.worksOpen()],
+            ['works', 'Travaux', null, nw, !G.worksOpen()],
         ];
         if (G.tableOpen()) tabs.push(['table', 'Table d’hôtes', null, G.tableDone() ? 1 : 0]);
         const spent = G.domSpent();

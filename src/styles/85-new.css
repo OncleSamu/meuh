@@ -1673,3 +1673,11 @@ button.cm-spot:active {
 .cm-scene.night .cm-win rect {
     filter: brightness(1.6);
 }
+
+/* 1.107 : une longue file de machine (domaine au palier 8) passe sur deux lignes au lieu de s'écraser */
+.mslots {
+    flex-wrap: wrap;
+}
+.mslots .mslot {
+    flex: none;
+}

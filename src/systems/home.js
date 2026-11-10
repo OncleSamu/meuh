@@ -198,19 +198,19 @@ export function upgradeHand(at) {
 export const domCost = (b, n = domLvl(b) + 1) =>
     n > domMax() ? null : { coins: DOMAINE_COINS[n - 1], [DOMAINE[b].mats[0]]: DOMAINE_MATS[n - 1][0], [DOMAINE[b].mats[1]]: DOMAINE_MATS[n - 1][1] };
 export const domCan = b => domaineOpen() && domLvl(b) < domMax() && hasCost(domCost(b));
-export const domReady = () => DOMAINE_IDS.filter(domCan).length + WORK_IDS.filter(workCan).length;
+export const domReady = () => DOMAINE_IDS.filter(domCan).length + WORK_IDS.filter(gworkCan).length;
 export const domTotal = () => DOMAINE_IDS.reduce((a, b) => a + domLvl(b), 0);
 // 1.107 : les grands travaux
 export const workCost = (w, n = workLvl(w) + 1) =>
     n > workMax() ? null : { coins: WORKS_COINS[n - 1], [WORKS[w].mats[0]]: WORKS_MATS[n - 1][0], [WORKS[w].mats[1]]: WORKS_MATS[n - 1][1] };
-export const workCan = w => worksOpen() && workLvl(w) < workMax() && hasCost(workCost(w));
+export const gworkCan = w => worksOpen() && workLvl(w) < workMax() && hasCost(workCost(w));
 export const worksTotal = () => WORK_IDS.reduce((a, w) => a + workLvl(w), 0);
 // tout ce que le domaine a coûté en pièces (pour l'afficher)
 export const domSpent = () =>
     DOMAINE_IDS.reduce((a, b) => a + DOMAINE_COINS.slice(0, domLvl(b)).reduce((x, y) => x + y, 0), 0) +
     WORK_IDS.reduce((a, w) => a + WORKS_COINS.slice(0, workLvl(w)).reduce((x, y) => x + y, 0), 0);
 export function buyWork(w, at) {
-    if (!WORKS[w] || !workCan(w)) return false;
+    if (!WORKS[w] || !gworkCan(w)) return false;
     payCost(workCost(w));
     state.works = state.works || {};
     state.works[w] = workLvl(w) + 1;

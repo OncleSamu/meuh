@@ -1,6 +1,20 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.107",
+  "title": "Le domaine en grand",
+  "date": "10 novembre 2026",
+  "items": [
+   "Le domaine passe de cinq à huit paliers par branche : les paliers 6, 7 et 8 coûtent 20, 45 et 100 millions de pièces",
+   "Nouveaux effets : jusqu'à 2 350 places de grange, 8 places de file, 5 soutes au cargo, des cuves, des étagères et des nasses en plus, des visiteurs qui restent 160 % plus longtemps",
+   "Nouveau : les grands travaux (niveau 45). Six bâtiments d'apparat à trois niveaux : pigeonnier, tour de l'horloge, bibliothèque, remise du charron, relais de poste et table d'hôtes",
+   "Le pigeonnier et l'horloge renforcent le renom du domaine, la bibliothèque donne de l'expérience, le charron fait mieux payer le train, le relais de poste les commandes",
+   "Nouveau : la table d'hôtes. Un menu de trois plats, servi en 2 heures, fait monter le renom du domaine ; trois machines différentes forment un bel accord",
+   "Le domaine s'ouvre en trois volets (Bâtiments, Travaux, Table d'hôtes) et affiche tout ce qu'on y a investi",
+   "Une longue file de machine passe sur deux lignes au lieu de s'écraser"
+  ]
+ },
+ {
   "v": "1.106",
   "title": "Le train, la cave et la brasserie comptent",
   "date": "10 novembre 2026",
