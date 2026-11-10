@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.106",
+  "title": "Le train, la cave et la brasserie comptent",
+  "date": "10 novembre 2026",
+  "items": [
+   "Le train grandit avec la ferme : un train plein rapporte environ 65 000 pièces au niveau 40 et plus de 300 000 au niveau 60 (avant : quelques milliers). L'expérience ne change pas",
+   "Aux hauts niveaux, le train préfère les produits de valeur : 60 par wagon au plus",
+   "L'avion-cargo suit la même règle : passé le niveau 45, ses soutes grossissent (plus d'un million de pièces pour un avion plein au niveau 60)",
+   "Nouveau : le renom du domaine. Un train plein (+2), une belle bouteille vendue, une commande de cave ou de bière livrée (+1) font monter les prix du grossiste de 1 % par point, 12 % au plus",
+   "Le renom baisse d'un point toutes les 4 heures : il s'affiche en haut du grossiste"
+  ]
+ },
+ {
   "v": "1.105",
   "title": "Le grand audit",
   "date": "10 novembre 2026",

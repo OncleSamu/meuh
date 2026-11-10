@@ -2,6 +2,7 @@
 // Une page : { id, cat, name, icon, lvl, go, intro, secs: [{ h, t | b }], tips, see }
 //   lvl : niveau d'ouverture (la page se lit toujours, mais le bouton « Y aller » attend) ; go : où mène « Y aller » (voir GUIDE_GO)
 //   secs : sections (h : titre ; t : un paragraphe ; b : une liste) ; tips : « À retenir » ; see : pages liées
+import { RENOM } from '../systems/renom.js';
 import { ITEMS } from './items.js';
 import { OASIS, PEN, CARAVAN } from './oasis.js';
 import { NORD, SLED } from './nord.js';
@@ -1475,7 +1476,7 @@ export const GUIDE_PAGES = [
         secs: [
             {
                 h: 'Le train (après la gare)',
-                t: 'Des wagons à remplir ; un bonus quand tout est chargé. Chaque cheval du haras le fait revenir plus tôt. Il reste environ 1 heure.',
+                t: 'Trois wagons à remplir, payés 2,4 fois le prix des produits, et un bonus de 50 % quand tout est chargé. Les wagons grandissent avec la ferme : quelques milliers de pièces au niveau 20, environ 65 000 au niveau 40, plus de 300 000 au niveau 60 pour un train plein. Aux hauts niveaux, il préfère les produits de valeur (60 par wagon au plus). Un train qui part plein fait monter le renom du domaine de 2 points (voir Le marché). Chaque cheval du haras le fait revenir plus tôt. Il reste environ 1 heure.',
             },
             { h: 'La montgolfière (après l’auberge)', t: 'De grosses commandes bien payées, qui partent après environ 1 heure.' },
             {
@@ -1503,6 +1504,7 @@ export const GUIDE_PAGES = [
                     'Six soutes (trois produits de la ferme, trois de l’atelier), jusqu’à dix avec le domaine.',
                     'Chargez petit à petit : chaque unité est payée tout de suite (2,2 fois son prix).',
                     'Avion plein : un gros bonus (+80 %) et des matériaux rares.',
+                    'Les soutes grandissent avec la ferme : passé le niveau 45, un avion plein dépasse le million de pièces au niveau 60.',
                     'Touchez un produit pour aller le produire.',
                 ],
             },
@@ -1593,6 +1595,10 @@ export const GUIDE_PAGES = [
             {
                 h: 'L’étal',
                 t: 'Vous fixez le prix : plus il est haut, plus le client tarde. 4 places, puis une de plus aux niveaux 8, 16, 26 et 36 (et jusqu’à 3 de plus avec la maison et le domaine). Une place prend 10 exemplaires, 12 dès le niveau 40, 16 dès le niveau 55.',
+            },
+            {
+                h: 'Le renom du domaine',
+                t: `Quand la ferme fait parler d’elle, le grossiste paie tout plus cher : +1 % par point de renom, ${RENOM.max} % au plus. Un train qui part plein donne ${RENOM.train} points. Une bouteille de la cave vendue « Vieux » ou mieux au négociant, une vente réussie aux enchères, une commande de cave ou une commande de bière livrée donnent 1 point. Le renom baisse d’un point toutes les 4 heures : il se garde en jouant régulièrement le train, la cave et la brasserie. Il s’affiche en haut du grossiste.`,
             },
             { h: 'Le produit du jour et la réserve', t: 'Un produit du jour paie plus. La réserve met de côté ce que demandent commandes et défis.' },
             {
