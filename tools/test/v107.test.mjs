@@ -113,3 +113,11 @@ test('domaine : les boutons « Construire » ont bien leur action (1.107.4)', as
         assert.ok(new RegExp(`\\n {8}${act}: `).test(src), `action ${act}`);
     }
 });
+
+test('brasserie : les feuilles de tri des ingrédients et des miels ont leurs actions (1.108)', async () => {
+    const { readFileSync } = await import('node:fs');
+    const src = readFileSync(new URL('../../src/ui/views/brewery.js', import.meta.url), 'utf8');
+    for (const act of ['brewPick', 'brewSet', 'brewHoneyPick', 'brewHoneySet'])
+        assert.ok(new RegExp(`\\n {8}${act}: `).test(src), `action ${act}`);
+    for (const sheet of ['brewPick', 'brewHoneyPick']) assert.ok(src.includes(`defineSheet('${sheet}'`), sheet);
+});

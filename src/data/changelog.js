@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.108",
+  "title": "Trier les ingrédients de la brasserie",
+  "date": "10 novembre 2026",
+  "items": [
+   "Brasserie : le choix d'un ingrédient (bière ou hydromel) a maintenant une recherche, des puces (en stock, fruits, légumes et céréales, ateliers, variétés) et un tri par stock, par nom ou par note de goût",
+   "Chaque ingrédient affiche ses notes de goût fortes (sucré, acide, amer, épicé, umami)",
+   "Hydromel : avec plus de six miels en stock, un bouton ouvre une feuille de tri des miels (recherche, tri, « Aime le sucré, l'acide… »)",
+   "Les ingrédients sont rangés par pages de 30 au lieu d'une seule très longue grille"
+  ]
+ },
+ {
   "v": "1.107.4",
   "title": "Le bouton Construire du domaine",
   "date": "10 novembre 2026",

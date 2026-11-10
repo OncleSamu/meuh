@@ -10,15 +10,16 @@ import * as G from '../../systems/index.js';
 import { blocks, actions, esc } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
 import { QUALITY } from '../../data/farm.js';
-import { btn, bar, timer, section, empty } from '../kit.js';
+import { btn, bar, timer, section, empty, hint } from '../kit.js';
 import { defineView, defineLive, ui, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
-import { page, filterOf, filterChips, searchBox, queryOf, matchQ } from '../pager.js';
+import { page, filterOf, filterChips, filterSelect, searchBox, queryOf, matchQ } from '../pager.js';
 import { renameBtn } from '../sheets/rename.js';
 import { beerSvg } from '../../art/abbey.js';
 import { genWrap } from '../genlook.js';
 import { innerTabs } from '../innertabs.js';
 import { HONEYS, HONEY_COL } from '../../data/honey.js';
+import { MEAD_BASES } from '../../data/abbey.js';
 
 const cap = t => t[0].toUpperCase() + t.slice(1);
 const COIN = () => ico(['ui', 'coin']);
@@ -103,6 +104,11 @@ function composerHtml() {
             return `<button class="brew-malt${d.malt === 'mead:' + h ? ' on' : ''}" data-act="brewHoney" data-h="${h}"><i class="swatch" style="background:${HONEY_COL[h]}"></i><b>${h === 'all' ? 'Toutes fleurs' : cap(HONEYS[h].name.replace(/^Miel d(e |’)/, ''))}</b><small>${ingIco(id)}${G.ingHave(id)}</small></button>`;
         })
         .join('');
+    const honeyCur = (() => {
+        const h = d.malt.startsWith('mead:') ? d.malt.slice(5) : 'all';
+        const id = h === 'all' ? 'honey' : 'H' + h;
+        return `<button class="brew-malt on" data-act="brewHoneyPick"><i class="swatch" style="background:${HONEY_COL[h] || HONEY_COL.all}"></i><b>${h === 'all' ? 'Toutes fleurs' : cap(HONEYS[h] ? HONEYS[h].name.replace(/^Miel d(e |’)/, '') : h)}</b><small>${ingIco(id)}${G.ingHave(id)}</small></button>`;
+    })();
     const malts = MALT_IDS.map(
         m =>
             `<button class="brew-malt${d.malt === m ? ' on' : ''}" data-act="brewMalt" data-m="${m}"><i class="swatch" style="background:${MALTS[m].color}"></i><b>${MALTS[m].name}</b><small>${ico(['item', m])}${state.inventory[m] || 0}</small></button>`,
@@ -146,7 +152,11 @@ function composerHtml() {
         ${kinds}
         ${
             mead
-                ? `<div class="bc-row"><span class="bc-label">Miel</span><div class="brew-malts honeys">${honeys}</div></div>`
+                ? `<div class="bc-row"><span class="bc-label">Miel</span>${
+                      G.meadHoneys().length > 6
+                          ? `<div class="brew-malts honeys">${honeyCur}<button class="brew-malt" data-act="brewHoneyPick"><b>Choisir un miel</b><small>${G.meadHoneys().length} en stock · trier, chercher</small></button></div>`
+                          : `<div class="brew-malts honeys">${honeys}</div>`
+                  }</div>`
                 : `<div class="bc-row"><span class="bc-label">Malt</span><div class="brew-malts">${malts}</div></div>
         <div class="bc-row"><span class="bc-label">Houblon</span><div class="seg n3 brew-hops">${hops}</div></div>`
         }
@@ -307,37 +317,115 @@ function renderBrew(el) {
 defineView('machines/brew', renderBrew);
 
 // ---------------- choisir un ingrédient ----------------
+// 1.108 : feuilles de tri. Une recherche, des puces (en stock, fruits, cultures, ateliers, variétés) et un tri (stock, nom, une note de goût).
+const NOTE_SORT = NOTES.map((n, k) => [`n${k}`, `${cap(n)} d’abord`]);
+const TRIS = [['stock', 'En stock d’abord'], ['name', 'Nom (A à Z)'], ...NOTE_SORT];
+const tri = (key, cur, count) =>
+    `<label class="list-sel"><span>Trier par</span><select data-input="filtSel" data-k="${key}">${TRIS.map(([id, n]) => `<option value="${id}"${cur === id ? ' selected' : ''}>${n}</option>`).join('')}</select></label>${count}`;
+const sortOf = key => {
+    const f = ui.sel.filt && ui.sel.filt[key];
+    return TRIS.some(x => x[0] === f) ? f : 'stock';
+};
+const noteLine = id =>
+    G.ingFlavor(id)
+        .map((v, k) => [v, k])
+        .filter(x => x[0] >= 3)
+        .map(([v, k]) => `${NOTES[k]} ${v}`)
+        .join(', ');
 const brewables = () =>
-    [...G.BREWABLE, ...Object.keys(G.BREW_EXTRA).filter(id => (state.inventory[id] || 0) > 0)]
-        .filter(id => (state.inventory[id] || 0) > 0 || (lvOk(ITEMS[id]) && G.storyOk(ITEMS[id]) && !ITEMS[id].exotic))
-        .sort((a, b) => (state.inventory[b] || 0) - (state.inventory[a] || 0) || ITEMS[a].name.localeCompare(ITEMS[b].name));
+    [...G.BREWABLE, ...Object.keys(G.BREW_EXTRA).filter(id => (state.inventory[id] || 0) > 0)].filter(
+        id => (state.inventory[id] || 0) > 0 || (lvOk(ITEMS[id]) && G.storyOk(ITEMS[id]) && !ITEMS[id].exotic),
+    );
+const pickCell = (id, o, used, label, small, extra = '') =>
+    `<button class="pick-cell${used.includes(id) ? ' locked' : ''}${(state.inventory[id] || 0) <= 0 && !extra ? ' short' : ''}" data-act="brewSet" data-id="${id}" data-s="${o.s}"${used.includes(id) ? ' disabled' : ''}>${ingIco(id, 'ico big')}<b>${label}</b><small>${small}</small></button>`;
 defineSheet('brewPick', {
-    title: 'Un ingrédient',
+    title: () => (G.isMead(state.brew && state.brew.draft && state.brew.draft.malt) ? 'Un ingrédient de l’hydromel' : 'Un ingrédient de la bière'),
     render(o) {
         if (!state.brew || !state.brew.draft) return '';
         const used = state.brew.draft.ings.map(([id]) => id);
-        const list = brewables();
+        const mead = G.isMead(state.brew.draft.malt);
+        const all = brewables();
         const vars = G.brewVarieties();
-        const top = id =>
-            G.ingFlavor(id)
-                .map((v, k) => [v, k])
-                .filter(x => x[0] >= 3)
-                .map(([v, k]) => `${NOTES[k]} ${v}`)
-                .join(', ');
-        const varHtml = vars.length
-            ? `${section('Mes variétés')}<p class="card-sub">Une variété garde son propre goût dans la bière.</p><div class="pick-grid">${vars
-                  .map(
-                      v =>
-                          `<button class="pick-cell${used.includes(v.id) ? ' locked' : ''}" data-act="brewSet" data-id="${v.id}" data-s="${o.s}"${used.includes(v.id) ? ' disabled' : ''}>${ingIco(v.id, 'ico big')}<b>${G.varName(v)}</b><small>×${G.ingHave(v.id)}${top(v.id) ? ` · ${top(v.id)}` : ''}</small></button>`,
-                  )
-                  .join('')}</div>${section('Espèces')}`
+        const q = queryOf('ing');
+        const fruit = id => ITEMS[id].type === 'tree';
+        const extra = id => id in G.BREW_EXTRA;
+        const stock = id => (state.inventory[id] || 0) > 0;
+        const opts = [
+            ['all', 'Tout', all.length + vars.length],
+            ['stock', 'En stock', all.filter(stock).length + vars.length],
+            ['fruit', 'Fruits', all.filter(fruit).length],
+            ['crop', 'Légumes et céréales', all.filter(id => !fruit(id) && !extra(id)).length],
+            ['extra', 'Ateliers', all.filter(extra).length],
+            ['vars', 'Mes variétés', vars.length],
+        ];
+        const f = filterOf('ing', opts);
+        const sort = sortOf('ingSort');
+        const keep = id => (f === 'all' || (f === 'stock' && stock(id)) || (f === 'fruit' && fruit(id)) || (f === 'crop' && !fruit(id) && !extra(id)) || (f === 'extra' && extra(id))) && matchQ(q, ITEMS[id].name);
+        const cmp = (flav, have, name) => (a, b) =>
+            (sort.startsWith('n') ? flav(b)[+sort[1]] - flav(a)[+sort[1]] : 0) ||
+            (sort === 'name' ? 0 : have(b) - have(a)) ||
+            name(a).localeCompare(name(b), 'fr');
+        const list = (f === 'vars' ? [] : all.filter(keep)).sort(cmp(G.ingFlavor, id => state.inventory[id] || 0, id => ITEMS[id].name));
+        const vlist = (f === 'all' || f === 'stock' || f === 'vars' ? vars : [])
+            .filter(v => matchQ(q, G.varName(v), ITEMS[v.base].name))
+            .sort(cmp(v => G.ingFlavor(v.id), v => G.ingHave(v.id), v => G.varName(v)));
+        const pg = page('ing:' + f + sort, list, 30);
+        const varHtml = vlist.length
+            ? `${section('Mes variétés')}<div class="pick-grid">${vlist
+                  .map(v => pickCell(v.id, o, used, G.varName(v), `×${G.ingHave(v.id)}${noteLine(v.id) ? ` · ${noteLine(v.id)}` : ''}`, 'v'))
+                  .join('')}</div>${list.length ? section('Espèces') : ''}`
             : '';
-        return `<p class="card-sub">Il en faut ${ABBEY.ingPerDose} par dose. Les pages déjà dans le livre des bières sont cochées.</p>${varHtml}<div class="pick-grid">${list
-            .map(
-                id =>
-                    `<button class="pick-cell${used.includes(id) ? ' locked' : ''}" data-act="brewSet" data-id="${id}" data-s="${o.s}"${used.includes(id) ? ' disabled' : ''}>${ico(['item', id], 'ico big')}<b>${ITEMS[id].name}</b><small>×${state.inventory[id] || 0}${state.brew.book[id] ? ' ✓' : ''}</small></button>`,
-            )
-            .join('')}</div>`;
+        const cells = pg.items
+            .map(id => pickCell(id, o, used, ITEMS[id].name, `×${state.inventory[id] || 0}${state.brew.book[id] ? ' ✓' : ''}${noteLine(id) ? ` · ${noteLine(id)}` : ''}`))
+            .join('');
+        return [
+            ['info', hint(mead ? 'Pour un hydromel, le miel donne la base : ajoutez-y un fruit sucré ou acidulé, ou des herbes. Il en faut ' + ABBEY.ingPerDose + ' par dose. Les pages déjà dans le livre sont cochées (✓).' : `Il en faut ${ABBEY.ingPerDose} par dose. Les pages déjà dans le livre des bières sont cochées (✓). Chaque ingrédient a des notes de goût : sucré, acide, amer, épicé, umami.`)],
+            ['search', searchBox('ing', 'Chercher un ingrédient')],
+            ['chips', filterChips('ing', opts, f)],
+            ['sort', `<div class="list-tools">${tri('ingSort', sort, '')}<small class="card-sub">${list.length + vlist.length} ingrédient${list.length + vlist.length > 1 ? 's' : ''}</small></div>`],
+            ['top', pg.top],
+            ['vars', varHtml],
+            ['cells', list.length ? `<div class="pick-grid">${cells}</div>` : vlist.length ? '' : empty(q ? `Aucun ingrédient ne correspond à « ${esc(ui.sel.q.ing)} ».` : 'Rien dans cette catégorie pour le moment.')],
+            ['more', pg.more],
+        ];
+    },
+});
+
+// 1.108 : le choix du miel d'un hydromel : une feuille de tri (recherche, ce qu'il aime, tri par stock ou par nom)
+const LIKES = NOTES.map((n, k) => [`l${k}`, `Aime le ${n}`, k]);
+defineSheet('brewHoneyPick', {
+    title: 'Un miel pour l’hydromel',
+    render() {
+        if (!state.brew || !state.brew.draft) return '';
+        const cur = state.brew.draft.malt;
+        const all = G.meadHoneys();
+        const q = queryOf('honey');
+        const name = h => (h === 'all' ? 'Toutes fleurs' : cap(HONEYS[h].name.replace(/^Miel d(e |’)/, '')));
+        const have = h => G.ingHave(h === 'all' ? 'honey' : 'H' + h);
+        const likes = h => (MEAD_BASES[h] ? MEAD_BASES[h].likes : []);
+        const opts = [['all', 'Tous', all.length], ...LIKES.map(([id, n, k]) => [id, n, all.filter(h => likes(h).includes(k)).length])];
+        const f = filterOf('honey', opts);
+        const sort = ui.sel.filt && ui.sel.filt.honeySort === 'name' ? 'name' : 'stock';
+        const list = all
+            .filter(h => (f === 'all' || likes(h).includes(+f.slice(1))) && matchQ(q, name(h), MEAD_BASES[h].text))
+            .sort((a, b) => (sort === 'name' ? 0 : have(b) - have(a)) || name(a).localeCompare(name(b), 'fr'));
+        return [
+            ['info', hint('Un miel de fleur donne un goût propre à l’hydromel. « Aime… » dit ce qui s’accorde le mieux avec lui. Toutes fleurs va avec tout, sans éclat.')],
+            ['search', all.length > 6 ? searchBox('honey', 'Chercher un miel') : ''],
+            ['chips', filterChips('honey', opts, f)],
+            ['sort', filterSelect('honeySort', [['stock', 'En stock d’abord', all.length], ['name', 'Nom (A à Z)', all.length]], sort, 'Trier par')],
+            [
+                'cells',
+                list.length
+                    ? `<div class="pick-grid">${list
+                          .map(
+                              h =>
+                                  `<button class="pick-cell${cur === 'mead:' + h ? ' locked' : ''}" data-act="brewHoneySet" data-h="${h}"><i class="swatch" style="background:${HONEY_COL[h]}"></i><b>${name(h)}</b><small>×${have(h)} · ${esc(MEAD_BASES[h].text)}</small></button>`,
+                          )
+                          .join('')}</div>`
+                    : empty('Aucun miel ne correspond.'),
+            ],
+        ];
     },
 });
 
@@ -353,6 +441,10 @@ export function setupBrewery() {
         brewHop: (el, d) => G.setDraftHop(+d.n),
         brewKind: (el, d) => G.setDraftKind(d.k),
         brewHoney: (el, d) => G.setDraftHoney(d.h),
+        brewHoneyPick: () => openSheet('brewHoneyPick', {}),
+        brewHoneySet: (el, d) => {
+            if (G.setDraftHoney(d.h)) closeSheet('brewHoneyPick');
+        },
         brewPick: (el, d) => openSheet('brewPick', { s: +d.s }),
         brewSet: (el, d) => {
             if (G.setDraftIng(+d.s, d.id)) closeSheet('brewPick');

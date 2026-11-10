@@ -1164,6 +1164,14 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'Trouver un ingrédient ou un miel',
+                b: [
+                    'Un ingrédient se choisit dans une feuille avec une recherche, des puces (en stock, fruits, légumes et céréales, ateliers, mes variétés) et un tri : en stock d’abord, par nom, ou par note de goût (sucré, acide, amer, épicé, umami d’abord).',
+                    'Chaque case rappelle les notes fortes de l’ingrédient (3 et plus) pour composer l’accord sans deviner.',
+                    'Pour un hydromel, avec plus de six miels en stock, un bouton « Choisir un miel » ouvre une feuille semblable : recherche, tri par stock ou par nom, et des puces « Aime le sucré, l’acide… » pour trouver le miel qui s’accorde avec ce qu’on veut y mettre.',
+                ],
+            },
+            {
                 h: 'L’accord',
                 t: 'L’accord (0 à 3 étoiles) se lit avant de brasser, avec ses raisons ; il fait le prix. Trois étoiles demandent un mélange réussi.',
             },
