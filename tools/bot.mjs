@@ -581,6 +581,11 @@ function abbey() {
         ),
     );
     for (const b of Object.values(B.beers)) if (G.beerStock(b.id) && !keep.has(b.id) && G.demandMult(b.id) > 0.75) G.sellBeer(b.id, G.beerStock(b.id));
+    // 1.105 : l'objectif « un hydromel » (niveau de l'hydromel)
+    if (G.levelGoals().some(g => g.kind === 'mead' && !G.goalDone(g)) && G.meadOpen() && B.vats.some(v => !v)) {
+        B.draft = { malt: 'mead:all', hop: 1, ings: [] };
+        if (G.startBrew()) return;
+    }
     if (!B.vats.some(v => !v) || (state.inventory.hop || 0) < 2) return;
     const malts = MALT_IDS.filter(m => (state.inventory[m] || 0) >= 4);
     if (!malts.length) return;
