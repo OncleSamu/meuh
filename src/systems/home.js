@@ -6,8 +6,8 @@ import { MACHINE_SLOTS } from '../data/machines.js';
 import { VILLAGERS } from '../data/village.js';
 import { FETE_END } from '../data/world.js';
 import { HOUSE, FARMHAND } from '../data/progress.js';
-import { DOMAINE, DOMAINE_IDS, DOMAINE_COINS, DOMAINE_MATS } from '../data/domaine.js';
-import { domaineOpen, domLvl, domMax, domStepSum } from './estate.js';
+import { DOMAINE, DOMAINE_IDS, DOMAINE_COINS, DOMAINE_MATS, WORKS, WORK_IDS, WORKS_COINS, WORKS_MATS } from '../data/domaine.js';
+import { domaineOpen, domLvl, domMax, domStepSum, worksOpen, workLvl, workMax } from './estate.js';
 import { spend, addXp, speedMult } from './player.js';
 import { chapterOpen, projectDone } from './story.js';
 import { addPhoto } from './style.js';
@@ -198,8 +198,30 @@ export function upgradeHand(at) {
 export const domCost = (b, n = domLvl(b) + 1) =>
     n > domMax() ? null : { coins: DOMAINE_COINS[n - 1], [DOMAINE[b].mats[0]]: DOMAINE_MATS[n - 1][0], [DOMAINE[b].mats[1]]: DOMAINE_MATS[n - 1][1] };
 export const domCan = b => domaineOpen() && domLvl(b) < domMax() && hasCost(domCost(b));
-export const domReady = () => DOMAINE_IDS.filter(domCan).length;
+export const domReady = () => DOMAINE_IDS.filter(domCan).length + WORK_IDS.filter(workCan).length;
 export const domTotal = () => DOMAINE_IDS.reduce((a, b) => a + domLvl(b), 0);
+// 1.107 : les grands travaux
+export const workCost = (w, n = workLvl(w) + 1) =>
+    n > workMax() ? null : { coins: WORKS_COINS[n - 1], [WORKS[w].mats[0]]: WORKS_MATS[n - 1][0], [WORKS[w].mats[1]]: WORKS_MATS[n - 1][1] };
+export const workCan = w => worksOpen() && workLvl(w) < workMax() && hasCost(workCost(w));
+export const worksTotal = () => WORK_IDS.reduce((a, w) => a + workLvl(w), 0);
+// tout ce que le domaine a coûté en pièces (pour l'afficher)
+export const domSpent = () =>
+    DOMAINE_IDS.reduce((a, b) => a + DOMAINE_COINS.slice(0, domLvl(b)).reduce((x, y) => x + y, 0), 0) +
+    WORK_IDS.reduce((a, w) => a + WORKS_COINS.slice(0, workLvl(w)).reduce((x, y) => x + y, 0), 0);
+export function buyWork(w, at) {
+    if (!WORKS[w] || !workCan(w)) return false;
+    payCost(workCost(w));
+    state.works = state.works || {};
+    state.works[w] = workLvl(w) + 1;
+    state.stats.works = worksTotal();
+    sfx('level');
+    buzz(30);
+    burst(at, 'sparkle', 18);
+    emit('confetti');
+    toast(`${WORKS[w].name} : ${WORKS[w].steps[workLvl(w) - 1].toLowerCase()}`, ['ui', 'house']);
+    return true;
+}
 export function buyDomaine(b, at) {
     if (!DOMAINE[b] || !domCan(b)) return false;
     payCost(domCost(b));

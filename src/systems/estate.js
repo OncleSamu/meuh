@@ -1,6 +1,6 @@
 // 1.20 : l'état du domaine, en lecture seule. Ce fichier n'importe presque rien : tous les systèmes peuvent le lire sans cycle.
 import { state } from '../core/state.js';
-import { DOMAINE, DOMAINE_LVL, DOMAINE_COINS } from '../data/domaine.js';
+import { DOMAINE, DOMAINE_LVL, DOMAINE_COINS, WORKS, WORKS_LVL } from '../data/domaine.js';
 
 export const domaineOpen = () => state.level >= DOMAINE_LVL;
 export const domMax = () => DOMAINE_COINS.length;
@@ -19,3 +19,9 @@ export function domStepSum(b, key) {
 // les visiteurs restent plus longtemps, sans jamais rester tout l'intervalle
 export const stayMult = () => 1 + domStepSum('guests');
 export const stayOf = (stay, every) => (every ? Math.min(stay * stayMult(), every - 3600000) : stay * stayMult());
+
+// 1.107 : les grands travaux (trois niveaux chacun) ; workFx : l'effet cumulé au niveau atteint (0 si rien n'est construit)
+export const worksOpen = () => state.level >= WORKS_LVL;
+export const workMax = () => 3;
+export const workLvl = w => (worksOpen() && state.works && state.works[w]) || 0;
+export const workFx = w => (workLvl(w) ? WORKS[w].fx[workLvl(w) - 1] : 0);

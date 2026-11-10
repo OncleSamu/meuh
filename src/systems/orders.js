@@ -21,7 +21,7 @@ import { netOpen, transOpen } from './port.js';
 import { storyOk, projectDone, projectOpen, projectLeft } from './story.js';
 import { hasMachine, recipeUnlocked } from './workshop.js';
 import { extraOrders, presentVillagers, housePay, studPay } from './home.js';
-import { stayOf } from './estate.js';
+import { stayOf, workFx } from './estate.js';
 import { masteryMult } from './mastery.js';
 import { heartsOf, addFriendship } from './village.js';
 import { rank, earn, addXp } from './player.js';
@@ -70,7 +70,7 @@ export function questPool() {
 
 export const orderSlots = () =>
     Math.min(ORDER_MAX + extraOrders(), 3 + Math.floor(scaleLvl() / 2) + (projectDone('bakery') ? 1 : 0) + extraOrders()) + (cupHas(3) ? 1 : 0);
-export const xpBonus = () => (projectDone('school') ? 1.1 : 1);
+export const xpBonus = () => (projectDone('school') ? 1.1 : 1) * (1 + workFx('library')); // 1.107 : la bibliothèque du domaine
 
 // Quantité qui donne à peu près la valeur visée, bornée
 export const qtyFor = (it, target, max = 12) => Math.max(1, Math.min(max, Math.round(target / it.sell)));
@@ -125,7 +125,7 @@ export function makeOrder() {
     const items = its.map(it => ({ id: it.id, qty: qtyFor(it, target * (0.6 + Math.random() * 0.8)) }));
     const value = items.reduce((a, x) => a + ITEMS[x.id].sell * x.qty, 0);
     // la maîtrise et la maison paient plus, sans changer l'expérience
-    const bonus = (items.reduce((a, x) => a + ITEMS[x.id].sell * masteryMult(x.id) * x.qty, 0) / value) * housePay();
+    const bonus = (items.reduce((a, x) => a + ITEMS[x.id].sell * masteryMult(x.id) * x.qty, 0) / value) * housePay() * (1 + workFx('post')); // 1.107 : le relais de poste
     let mult = BALANCE.orderPay * (0.95 + Math.random() * 0.15);
     if (heartsOf(vid) >= 5) mult *= BEST_FRIEND_BONUS;
     if (vid === 'paul' && projectDone('bakery')) mult *= 1.2;
@@ -294,7 +294,7 @@ function makeTruck() {
     // 1.106 : la taille d'un wagon suit la production de la ferme (voir wagonTarget) ; l'expérience reste celle d'avant
     const old = 60 + scaleLvl() * 30;
     const target = wagonTarget();
-    const mult = BALANCE.trainPay * (eventActive('hiver') ? 1.3 : 1) * (1 + rank('logistics') * 0.1) * studPay();
+    const mult = BALANCE.trainPay * (eventActive('hiver') ? 1.3 : 1) * (1 + rank('logistics') * 0.1) * studPay() * (1 + workFx('wheel')); // 1.107 : la remise du charron
     const slots = its.map(it => {
         const rnd = 0.8 + Math.random() * 0.5;
         const qty = qtyFor(it, target * rnd, wagonMax());
