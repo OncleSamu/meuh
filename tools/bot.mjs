@@ -98,6 +98,10 @@ const need = () => {
         if (maltStock < 8) add(MALT_IDS[(state.day || 0) % 4], 8);
         add('hop', Math.max(0, 12 - (state.inventory.hop || 0)));
     }
+    // 1.105 : les objectifs du niveau (depuis la 1.61, le niveau suivant les attend)
+    G.levelGoals().forEach(g => {
+        if (!G.goalDone(g) && g.kind === 'make') add(g.id, (state.inventory[g.id] || 0) + (g.n || 1));
+    });
     // ingrédients des produits demandés, sur trois étages (flan coco → lait de coco → noix de coco)
     let level = Object.keys(n);
     for (let d = 0; d < 3 && level.length; d++) {
@@ -609,7 +613,26 @@ function abbey() {
     G.startBrew();
 }
 
+// 1.105 : faire les objectifs du niveau qui ne se font pas tout seuls (machine, bête, arbre)
+function goals() {
+    G.levelGoals().forEach(g => {
+        if (G.goalDone(g)) return;
+        if (g.kind === 'machine' && state.money > MACHINES[g.id].cost && G.hasMats(G.matCost('machine', g.id))) G.buy('machine', g.id, 1);
+        if (g.kind === 'animal') {
+            if (G.herdFull() && state.money > G.pastureCost()) G.buyPasture();
+            if (state.money > ANIMALS[g.id].cost) G.buy('animal', g.id, 1);
+        }
+        if (g.kind === 'tree' && G.orchardOpen()) {
+            let j = G.slotsOf('farm').findIndex(x => x.open && !x.tree);
+            if (j < 0 && state.money > G.slotCost('farm') && G.buySlot(null, 'farm')) j = G.slotsOf('farm').findIndex(x => x.open && !x.tree);
+            // verger plein : on abat un arbre pour faire de la place
+            if (j < 0 && G.fellTree(0, null, 'farm', true)) j = G.slotsOf('farm').findIndex(x => x.open && !x.tree);
+            if (j >= 0 && state.money > ITEMS[g.id].cost) G.plantTree(j, g.id, null, 'farm');
+        }
+    });
+}
 function step() {
+    goals();
     abbey();
     cave();
     cargo();
@@ -636,7 +659,7 @@ for (let k = 0; k < total; k++) {
     G.gameTick();
     if (t % 5 === 0) step();
     if (!levels[state.level]) levels[state.level] = t;
-    if (process.argv.includes('--progress') && t % 3600 === 0) process.stderr.write(`${t / 3600} h : niveau ${state.level}\n`);
+    if (process.argv.includes('--progress') && t % 3600 === 0) process.stderr.write(`${t / 3600} h : niveau ${state.level} · ${G.levelGoals().filter(g => !G.goalDone(g)).map(G.lvGoalText).join(' ; ') || 'objectifs faits'} · ${Math.round(state.money)} pièces\n`);
     if (contestLog && t % 3600 === 0) {
         const p = contestPts();
         contestLog.push([state.level, Math.round(p - cp0), G.charmScore()]);

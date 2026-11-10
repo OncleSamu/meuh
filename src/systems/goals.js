@@ -26,7 +26,18 @@ export const GOALS_FROM = 2; // le niveau 1 est celui du tutoriel
 // ce qui se fait vraiment à ce niveau : pas d'objet exotique, pas de contrée pas encore ouverte
 const reachable = d => !!d && lvOk(d) && (!d.needProject || projectDone(d.needProject)) && !d.exotic;
 const owns = type => state.machines.some(m => m.type === type);
-const ingOk = r => Object.keys(r.ing).every(k => reachable(ITEMS[k]) || (RECIPES[k] && lvOk(RECIPES[k], RECIPES[k].lvl)));
+// 1.105 : pas de recette qui demande une pierre précieuse (fossile, pépite, améthyste… : elles se trouvent par chance à la mine)
+// 1.105 : on descend dans les ingrédients des ingrédients, et on écarte aussi ce qui ne pousse qu'en serre quand il n'y a pas de serre
+// (avant : « préparer une glace à la vanille » pouvait attendre une serre que rien n'annonçait)
+const hasGreenhouse = () => !!(state.greenhouse && state.greenhouse.plots && state.greenhouse.plots.length);
+function canGet(k, depth = 0) {
+    const d = ITEMS[k];
+    if (!d || d.type === 'gem') return false;
+    const r = RECIPES[k];
+    if (r) return lvOk(r, r.lvl) && (depth >= 3 || Object.keys(r.ing).every(x => canGet(x, depth + 1)));
+    return reachable(d) && (!d.ghOnly || hasGreenhouse());
+}
+const ingOk = r => Object.keys(r.ing).every(k => canGet(k));
 
 export function makeGoals(L) {
     if (L < GOALS_FROM || L >= MAX_LEVEL) return [];
