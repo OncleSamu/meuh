@@ -25,11 +25,13 @@ import { plainRanks, dropVarRanks } from './genetics.js';
 import { tip } from './tips.js';
 import { defiNeed } from './defis.js';
 import { talentPrice } from './friends.js';
+import { renomMult } from './renom.js';
 
 const COIN = ['ui', 'coin'];
 
 // ---------------- les prix ----------------
-export const marketMult = () => Math.max(BALANCE.marketEnd, BALANCE.marketStart - BALANCE.marketSlope * (scaleLvl() - 1));
+// 1.106 : le renom du domaine (trains pleins, cave, brasserie) relève tous les prix du grossiste
+export const marketMult = () => Math.max(BALANCE.marketEnd, BALANCE.marketStart - BALANCE.marketSlope * (scaleLvl() - 1)) * renomMult();
 // 1.61 : « Fait maison » : les produits de l'atelier se vendent plus cher
 // 1.70 : le talent de l'ami (les produits de sa machine se vendent plus cher)
 export const craftMult = id => (ITEMS[id].type === 'artisan' ? 1 + 0.04 * skill('chefPrice') : 1) * talentPrice(id);

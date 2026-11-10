@@ -15,6 +15,7 @@ import { clampQuality } from './farm.js';
 import { giveRare } from './barn.js';
 import { stayOf, domStepSum } from './estate.js';
 import { pkTransportOk, pkReq, pkEstimate, pkHave, pullPk } from './maison.js';
+import { wagonTarget } from './orders.js';
 
 export const holdCount = () => CARGO.holds + domStepSum('cargo', 'hold');
 export const cargoOpen = () => state.level >= CARGO.lvl;
@@ -41,10 +42,13 @@ function makeHolds() {
             if (left.length) out.push(pickWeighted(left));
         }
     };
+    // 1.106 : comme le train, une soute suit la production de la ferme (trois wagons par soute au moins),
+    // et les soutes de l'atelier préfèrent les produits de valeur (120 par soute au plus quand c'est possible)
+    const value = Math.max(CARGO.value(scaleLvl()), 3 * wagonTarget());
+    const fine = made.filter(i => i.sell >= value / 120);
     take(raw, 3);
-    take(made, holdCount() - out.length);
+    take(fine.length >= 6 ? fine : made, holdCount() - out.length);
     take(pool, holdCount() - out.length);
-    const value = CARGO.value(scaleLvl());
     const holds = out.map(it => ({
         id: it.id,
         qty: Math.max(CARGO.min, Math.min(CARGO.max, Math.round((value * (0.8 + Math.random() * 0.4)) / Math.max(1, it.sell)))),
@@ -64,7 +68,10 @@ export const holdHave = h => haveFor(h);
 export const holdPay = (h, n) => round5((h.pk ? h.est : ITEMS[h.id].sell) * n * CARGO.pay);
 export const cargoTotal = () => (state.cargo && state.cargo.holds ? state.cargo.holds.reduce((a, h) => a + holdPay(h, h.qty), 0) : 0);
 export const cargoBonus = () => round5(cargoTotal() * (CARGO.bonus + domStepSum('cargo', 'bonus')));
-export const cargoBonusXp = () => Math.round(cargoBonus() * CARGO.xp);
+// 1.106 : les soutes ont grossi, pas l'expérience : elle se compte sur la quantité qu'une soute demandait avant
+const xpScale = h => (h.pk ? 1 : Math.min(1, Math.max(CARGO.min, Math.min(CARGO.max, Math.round(CARGO.value(scaleLvl()) / Math.max(1, ITEMS[h.id].sell)))) / h.qty));
+export const cargoBonusXp = () =>
+    state.cargo && state.cargo.holds ? Math.round(state.cargo.holds.reduce((a, h) => a + holdPay(h, h.qty) * xpScale(h), 0) * (CARGO.bonus + domStepSum('cargo', 'bonus')) * CARGO.xp) : 0;
 export const cargoFull = () => !!(state.cargo && state.cargo.holds && state.cargo.holds.every(h => h.got >= h.qty));
 
 // à chaque seconde (et au retour) : un nouvel avion au début de chaque période
@@ -106,7 +113,8 @@ export function loadHold(i, at, n) {
     // 1.104.5 : une soute de paquets paie selon la valeur réelle des paquets chargés
     const gold = h.pk ? round5(val * CARGO_PK_PAY * CARGO.pay) : holdPay(h, can);
     earn(gold, at);
-    addXp(Math.round(gold * CARGO.xp), at);
+    // l'expérience reste à l'échelle d'avant la 1.106
+    addXp(Math.round(gold * CARGO.xp * xpScale(h)), at);
     state.income.trucks = (state.income.trucks || 0) + gold;
     sfx('load');
     buzz(10);

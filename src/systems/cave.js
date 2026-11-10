@@ -1,4 +1,5 @@
 // La cave (Atelier | Cave) : vieillissement par étapes, climat et soins, réserve, salle des ventes.
+import { addRenom, RENOM } from './renom.js';
 import { state, scaleLvl } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -526,6 +527,7 @@ export function sellNegociant(uid, at) {
     const gain = Math.round(lotValue(lot) * NEGOCIANT);
     earn(gain, at);
     state.income.cave = (state.income.cave || 0) + gain;
+    if (!lot.bad && lot.rank >= 2) addRenom(RENOM.cave, 'cave', at);
     sfx('coin');
     return true;
 }
@@ -701,6 +703,7 @@ function closeLot(a, l) {
             earn(l.price, null);
             state.income.cave = (state.income.cave || 0) + l.price;
             state.stats.auctionSold = (state.stats.auctionSold || 0) + 1;
+            addRenom(RENOM.cave, 'cave', false);
             record('auction', l.price);
             c.cote = Math.max(0, Math.min(100, c.cote + (l.lot.bad ? -3 : l.lot.rank * 2)));
             addXp(Math.round(l.price / 60));
@@ -841,6 +844,7 @@ export function deliverCaveOrder(oid, at) {
     if (l.n <= 0) c.reserve.splice(c.reserve.indexOf(l), 1);
     earn(pay, at);
     state.income.cave = (state.income.cave || 0) + pay;
+    addRenom(RENOM.cave, 'cave', at);
     addXp(CAVE_ORDERS.xp + 30 * o.min, at);
     addFriendship(o.vid, CAVE_ORDERS.hearts, at);
     c.cote = Math.min(100, c.cote + o.min);

@@ -1,7 +1,7 @@
 // Marché | Acheter (le magasin) et Marché | Vendre (l'étal et le grossiste).
 import { nightMarketCard } from '../night.js';
 import { state, lvOk } from '../../core/state.js';
-import { fmt, formatDuration } from '../../core/format.js';
+import { fmt, fmtTime, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { ANIMALS } from '../../data/animals.js';
 import { MACHINES } from '../../data/machines.js';
@@ -437,6 +437,14 @@ function banners() {
             title: `Produit du jour : ${ITEMS[hot].name}`,
             sub: `Vendu 50 % plus cher aujourd’hui${state.inventory[hot] ? '' : ', mais vous n’en avez pas en stock'}.`,
             cls: 'banner hot',
+        });
+    const rp = G.renomPts();
+    if (rp)
+        html += card({
+            icon: ['ui', 'star'],
+            title: `Renom du domaine : +${rp} %`,
+            sub: `Le grossiste paie tout ${rp} % plus cher. Un train plein, une belle bouteille ou une commande de bière le font monter (${G.RENOM.max} % au plus). Il baisse d’un point dans ${fmtTime(G.renomNext() / 1000)}.`,
+            cls: 'banner',
         });
     if (G.eventActive('ete'))
         html += card({ icon: ['ui', 's_summer'], title: 'Fête de l’été', sub: 'Toutes les ventes rapportent 25 % de plus.', cls: 'banner fair' });

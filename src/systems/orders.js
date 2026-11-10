@@ -1,5 +1,6 @@
 // Les commandes : tableau de commandes du village, train de marchandises (3 wagons) et montgolfière.
 // C'est le vrai cœur de l'économie.
+import { addRenom, RENOM } from './renom.js';
 import { livingTrees } from './orchard.js';
 import { pkTransportOk, pkReq, pkEstimate, pkHave, pullPk } from './maison.js';
 import { islandOpen } from './island.js';
@@ -246,6 +247,11 @@ export const inProduction = id => state.machines.reduce((n, m) => n + m.queue.fi
 // 1.104.1 : un wagon de paquets (une chance sur trois quand la Maison a des recettes), payé 1,6 fois leur valeur
 const TRAIN_PK = 0.35,
     TRAIN_PK_PAY = 1.6;
+// 1.106 : la valeur de marchandises demandée par wagon. Avant, elle grandissait en ligne droite (1 250 au niveau 60) alors que
+// la production de la ferme double tous les huit niveaux : un train plein ne pesait plus rien. Elle suit maintenant la production
+// (environ 600 au niveau 15, 5 000 au niveau 40, 30 000 au niveau 60), et un wagon peut demander jusqu'à 60 produits.
+export const wagonTarget = (L = state.level) => Math.max(60 + scaleLvl() * 30, L >= 15 ? 400 * Math.pow(1.09, L - 10) : 0);
+export const wagonMax = (L = state.level) => Math.round(Math.min(60, 20 + Math.max(0, L - 30) * 1.34));
 export const slotHave = sl => (sl.pk ? pkHave(sl.pk) >= sl.qty : (state.inventory[sl.id] || 0) >= sl.qty);
 export const trainOpen = () => projectDone('station');
 // chaque cheval fait revenir le train 10 % plus tôt (30 % au plus)
@@ -274,22 +280,32 @@ export function truckTick() {
 function makeTruck() {
     const t = state.truck,
         n = now();
-    const its = pickItems(3);
+    // 1.106 : aux hauts niveaux, le train préfère les produits de valeur (sinon il en faudrait des centaines par wagon)
+    const minSell = wagonTarget() / wagonMax() / 1.5;
+    const its = pickItems(9)
+        .map((it, k) => [it, k])
+        .sort((x, y) => (y[0].sell >= minSell) - (x[0].sell >= minSell) || x[1] - y[1])
+        .slice(0, 3)
+        .map(x => x[0]);
     if (its.length < 3) {
         t.arriveAt = n + 60000;
         return;
     }
-    const target = 60 + scaleLvl() * 30;
+    // 1.106 : la taille d'un wagon suit la production de la ferme (voir wagonTarget) ; l'expérience reste celle d'avant
+    const old = 60 + scaleLvl() * 30;
+    const target = wagonTarget();
     const mult = BALANCE.trainPay * (eventActive('hiver') ? 1.3 : 1) * (1 + rank('logistics') * 0.1) * studPay();
     const slots = its.map(it => {
-        const qty = qtyFor(it, target * (0.8 + Math.random() * 0.5), 20);
+        const rnd = 0.8 + Math.random() * 0.5;
+        const qty = qtyFor(it, target * rnd, wagonMax());
         const gold = round5(it.sell * qty * mult);
+        const goldOld = round5(it.sell * qtyFor(it, old * rnd, 20) * mult);
         return {
             id: it.id,
             qty,
             loaded: false,
             gold,
-            xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus())),
+            xp: Math.max(5, Math.round(goldOld * BALANCE.truckXp * xpBonus())),
             mat: Math.random() < 0.25 ? pickRand(RARE) : null,
         };
     });
@@ -301,12 +317,13 @@ function makeTruck() {
         slots[2] = { id: 'paquet', pk, qty, mult, loaded: false, gold, xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus() * 2)), mat: Math.random() < 0.5 ? pickRand(RARE) : null };
     }
     const sum = slots.reduce((a, sl) => a + sl.gold, 0);
+    const xpSum = slots.reduce((a, sl) => a + (sl.pk ? sl.xp / 2 : sl.xp), 0);
     Object.assign(t, {
         status: 'here',
         expiresAt: n + stayOf(TRAIN_STAY),
         slots,
         gold: round5(sum * 0.5),
-        xp: Math.round(sum * 0.5 * BALANCE.truckXp * xpBonus()),
+        xp: Math.round(xpSum * 0.5),
         justArrived: true,
     });
 }
@@ -357,6 +374,7 @@ export function sendTruck(at) {
     addXp(t.xp, at);
     giveRare(pickRand(RARE), 1, at);
     state.stats.trucks++;
+    addRenom(RENOM.train, 'train', at);
     state.income.trucks += t.gold;
     eventProgress('truck', null, 1);
     t.status = 'away';

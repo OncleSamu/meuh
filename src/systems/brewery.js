@@ -1,5 +1,6 @@
 // La brasserie de l'abbaye (1.6) : on compose ses bières (malt, houblon, 1 à 3 ingrédients), on les nomme,
 // on les vend. Depuis 1.6.3, le vieillissement en fût se fait à la cave (le cellier ne sert plus qu'aux anciennes sauvegardes).
+import { addRenom, RENOM } from './renom.js';
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -733,6 +734,7 @@ export function deliverBeerOrder(oid, bid, at) {
     addXp(BEER_ORDERS.xp + 20 * o.min, at);
     addFriendship(o.vid, BEER_ORDERS.hearts, at);
     state.stats.beerOrders = (state.stats.beerOrders || 0) + 1;
+    addRenom(RENOM.beer, 'beer', at);
     B.orders.splice(k, 1);
     B.nextOrder = Math.min(B.nextOrder || Infinity, now() + 5 * 60 * 1000);
     sfx('coin');
