@@ -10,6 +10,8 @@ import { MACHINES, RECIPES } from '../data/machines.js';
 import { MAX_LEVEL } from '../data/progress.js';
 import { MEAD } from '../data/abbey.js';
 import { APIARY } from '../data/apiary.js';
+import { FISH } from '../data/meta.js';
+import { NATURE } from '../data/nature.js';
 const LAND_PROJECT = { island: 'ferry', oasis: 'oasisWell', nord: 'northStove' };
 
 // lu directement dans l'état (pas d'import des autres systèmes : goals.js est chargé par player.js)
@@ -33,6 +35,8 @@ const hasGreenhouse = () => !!(state.greenhouse && state.greenhouse.plots && sta
 function canGet(k, depth = 0) {
     const d = ITEMS[k];
     if (!d || d.type === 'gem') return false;
+    // un poisson : seulement s'il se pêche couramment depuis la berge ou les roseaux (pas un esturgeon « très rare, au ponton, avec un vif »)
+    if (d.type === 'fish') return state.level >= NATURE.pond.lvl && !!FISH[k] && FISH[k].odds >= 10 && (FISH[k].spots || []).some(sp => sp === 'bank' || sp === 'reeds');
     const r = RECIPES[k];
     if (r) return lvOk(r, r.lvl) && (depth >= 3 || Object.keys(r.ing).every(x => canGet(x, depth + 1)));
     return reachable(d) && (!d.ghOnly || hasGreenhouse());
@@ -48,7 +52,7 @@ export function makeGoals(L) {
     // 1.69 : le rucher d'une contrée déjà ouverte
     for (const [land, a] of Object.entries(APIARY)) if (L === a.lvl && projectDone(LAND_PROJECT[land])) push({ kind: 'hive', id: land });
     // une machine du niveau, et une de ses recettes
-    const mach = Object.values(MACHINES).find(m => m.reqLvl === L && reachable({ ...m, reqLvl: m.reqLvl }) && m.id !== 'counter');
+    const mach = Object.values(MACHINES).find(m => m.reqLvl === L && reachable({ ...m, reqLvl: m.reqLvl }) && m.id !== 'counter' && m.id !== 'emballerie'); // 1.105 : l'emballerie ne sert qu'avec la Maison
     if (mach) {
         push({ kind: 'machine', id: mach.id });
         const r = Object.values(RECIPES).find(x => x.machine === mach.id && lvOk(x, x.lvl) && !x.teacher && !x.fete && !x.holiday && ingOk(x));
@@ -65,7 +69,7 @@ export function makeGoals(L) {
     const tree = Object.values(ITEMS).find(d => d.type === 'tree' && d.reqLvl === L && reachable(d) && !d.island && !d.oasis && !d.nord);
     if (tree) push({ kind: 'tree', id: tree.id });
     // une recette du niveau dans une machine qu'on a déjà
-    const rec = Object.values(RECIPES).find(x => x.lvl === L && owns(x.machine) && !x.teacher && !x.fete && !x.holiday && x.machine !== 'counter' && ingOk(x));
+    const rec = Object.values(RECIPES).find(x => x.lvl === L && owns(x.machine) && !x.teacher && !x.fete && !x.holiday && x.machine !== 'counter' && x.machine !== 'emballerie' && ingOk(x));
     if (rec) push({ kind: 'make', id: rec.id, n: 1 });
     if (!out.length) push({ kind: 'orders', n: 2 });
     // le point de départ de chaque compteur
