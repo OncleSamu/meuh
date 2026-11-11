@@ -18,6 +18,7 @@ import { toast } from '../../core/bus.js';
 import { defineSheet, openSheet, closeSheet, closeAll, sheetOpts } from '../sheets.js';
 import { produce } from '../navigate.js';
 import { vaultCard } from './vault.js';
+import { lv80 } from '../../data/lv80.js';
 
 const COIN = () => ico(['ui', 'coin']);
 
@@ -70,7 +71,7 @@ defineSheet('menu', {
                 tile('Livre de la ferme', 'book', ['ui', 'book'], book),
                 carnetsOpen() ? tile('Carnets', 'carnets', ['ui', 'cpCarnet'], carnetsReady()) : '',
                 G.defiOpen() ? tile('La Coupe', 'cup', ['ui', 'cupRank' + G.cupRank()], 0, G.cupRankName()) : '',
-                state.level >= 58 || G.caveLegends().length ? tile('Trophées', 'trophies', ['ui', 'cupGold']) : '',
+                state.level >= lv80(58) || G.caveLegends().length ? tile('Trophées', 'trophies', ['ui', 'cupGold']) : '',
                 state.genetics && G.geneticsOpen() ? tile('Mes créations', 'creations', ['ui', 'flowers']) : '',
             ]) +
             group('Aide et réglages', [

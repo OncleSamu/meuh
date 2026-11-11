@@ -24,6 +24,7 @@ import { projectDone } from './story.js';
 import { addFriendship } from './village.js';
 import { trapBonus } from './buildings.js';
 import { domStepSum } from './estate.js';
+import { ecoLvl } from '../core/state.js';
 
 export const pondOpen = () => state.level >= NATURE.pond.lvl;
 // les noms féminins, pour « une truite » ou « un brochet »
@@ -633,7 +634,7 @@ export function marcelText(m = ensureMarcel()) {
     if (m.kind === 'count') return `${qtyName(m.need, FISH[m.id].name)} aujourd’hui`;
     return `${fishArt(m.id) === 'une' ? 'Une' : 'Un'} ${low(m.id)} de plus de ${kg(m.min)}`;
 }
-export const marcelReward = () => ({ coins: round5(MARCEL.coins(state.level)), xp: MARCEL.xp(state.level) });
+export const marcelReward = () => ({ coins: round5(MARCEL.coins(ecoLvl())), xp: Math.round(MARCEL.xp(ecoLvl())) });
 function marcelCatch(id, w, perfect, q) {
     const m = state.pond && state.pond.marcel;
     if (!m || m.done || m.day !== dayKey()) return;
@@ -671,7 +672,7 @@ export function runState() {
     if (p.run.key !== key) p.run = { key, warned: p.run.warned ?? null, done: false, claimed: false };
     return p.run;
 }
-export const runReward = () => ({ coins: round5(MARCEL.coins(state.level) * 3), xp: MARCEL.xp(state.level) * 2 });
+export const runReward = () => ({ coins: round5(MARCEL.coins(ecoLvl()) * 3), xp: Math.round(MARCEL.xp(ecoLvl()) * 2) });
 function runCatch(id, w) {
     const r = runState();
     if (!r || r.done || id !== 'salmon' || w < SALMON_RUN.minKg) return;
@@ -774,7 +775,7 @@ function contestCatch(id, w) {
 }
 export const contestPrize = rank => {
     const pz = FISH_CONTEST.prize[rank - 1];
-    return { coins: pz ? round5(pz.coins(state.level)) : 0, rubans: pz ? pz.rubans : 0, xp: FISH_CONTEST.xp(state.level) };
+    return { coins: pz ? round5(pz.coins(ecoLvl())) : 0, rubans: pz ? pz.rubans : 0, xp: Math.round(FISH_CONTEST.xp(ecoLvl())) };
 };
 export const contestResultReady = () => !!(state.pond && state.pond.lastContest && !state.pond.lastContest.seen);
 export function claimContest(at) {

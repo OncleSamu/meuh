@@ -2,8 +2,9 @@
 // La citerne se remplit à la source (même jeu fermé) et au chadouf ; chaque plante boit en poussant ;
 // de midi à 16 h, une plante au soleil boit deux fois plus ; à côté d'un sorgho bien levé, elle est à l'ombre.
 
+import { lv80 } from './lv80.js';
 export const OASIS = {
-    lvl: 59,
+    lvl: lv80(59),
     project: 'oasisWell', // le chantier qui ouvre l'oasis
     cols: 4,
     cells: 20, // cases en tout (4 × 5)

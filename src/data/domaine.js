@@ -1,5 +1,6 @@
 // 1.20 : l'Amélioration du domaine. Neuf branches : un puits d'argent pour toute la partie.
 // 1.107 : huit paliers par branche (les paliers 6 à 8 coûtent des dizaines de millions), et les grands travaux (WORKS).
+import { lv80 } from './lv80.js';
 export const DOMAINE_LVL = 25;
 export const DOMAINE_COINS = [100000, 300000, 900000, 2700000, 8100000, 20000000, 45000000, 100000000]; // coût en pièces du palier 1 à 8
 export const DOMAINE_MATS = [
@@ -165,7 +166,7 @@ export const DOMAINE_IDS = Object.keys(DOMAINE);
 // ---------------- 1.107 : les dépendances du domaine ----------------
 // Six bâtiments d'apparat, trois niveaux chacun, à des dizaines de millions de pièces : la vraie dépense de la fin de partie.
 // Chacun a un effet utile ; fx : la valeur cumulée au niveau 1, 2 et 3 (lue par workFx dans systems/estate.js).
-export const WORKS_LVL = 45;
+export const WORKS_LVL = lv80(45);
 export const WORKS_COINS = [15000000, 40000000, 100000000];
 export const WORKS_MATS = [
     [20, 12],

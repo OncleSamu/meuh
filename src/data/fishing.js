@@ -2,6 +2,7 @@
 // pêchent seules, trois cannes, le carnet des records, les défis de Marcel et le concours du week-end.
 
 // les coins de pêche : lvl (niveau) ou project (chantier fini) pour les ouvrir
+import { lv80 } from './lv80.js';
 export const SPOTS = {
     bank: { name: 'La berge', lvl: 9, icon: 'spotBank', desc: 'Eau claire et peu profonde : gardons, ablettes, perches, truites.' },
     reeds: { name: 'Les roseaux', lvl: 11, icon: 'spotReeds', desc: 'Eau calme et herbes : carpes, tanches, anguilles la nuit, brochets.' },
@@ -16,7 +17,7 @@ export const SPOTS = {
     // 1.33 : le lagon de l'île, ouvert avec l'île (niveau 38 et bac de Tiago réparé)
     lagoon: {
         name: 'Le lagon',
-        lvl: 38,
+        lvl: lv80(38),
         project: 'ferry',
         icon: 'spotLagoon',
         desc: 'L’eau claire de l’île : poulpes, vivaneaux, mahi-mahi et, la nuit, des langoustes.',
@@ -34,7 +35,7 @@ export const BAITS = {
     fly: { name: 'Mouche', lvl: 13, have: 'flies', icon: ['ui', 'fly'], hint: 'Truites et saumons' },
     shrimp: {
         name: 'Crevette',
-        lvl: 38,
+        lvl: lv80(38),
         project: 'ferry',
         have: 'shrimp',
         icon: ['item', 'shrimp'],
@@ -109,5 +110,5 @@ export const POND_UNLOCKS = [
     [13, 'Les mouches (pour les truites et les saumons)'],
     [14, 'La canne en carbone, deux nasses de plus'],
     [20, 'La canne de compétition'],
-    [38, 'Le lagon de l’île et les crevettes comme appât (Ferme | Pêche)'],
+    [lv80(38), 'Le lagon de l’île et les crevettes comme appât (Ferme | Pêche)'],
 ];

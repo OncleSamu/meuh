@@ -19,6 +19,7 @@ import { earn } from './player.js';
 import { addElevRep } from './fair.js';
 import { addPhoto } from './style.js';
 import { tip } from './tips.js';
+import { ecoLvl } from '../core/state.js';
 
 export const comiceOpen = () => state.level >= COMICE.lvl;
 // le grand hall (l'ancien chantier du Salon) : une catégorie de plus et des prix doublés
@@ -64,7 +65,7 @@ export function animalScore(a, brush = 0, jury = null) {
 // la note des fermes voisines dans une catégorie : grandit avec le niveau, selon le style de chaque ferme
 // chaque ferme présente une vraie bête : un nom et une robe
 function rivalScores(type) {
-    const base = COMICE.rivalBase + state.level * COMICE.rivalPerLvl;
+    const base = COMICE.rivalBase + ecoLvl() * COMICE.rivalPerLvl;
     const mine = new Set(state.animals.map(a => a.name));
     const names = [...(NAMES[type] || ['Belle'])].filter(n => !mine.has(n)).sort(() => Math.random() - 0.5);
     return RIVALS.map((_, k) => ({

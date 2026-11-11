@@ -4,6 +4,7 @@ import { ITEMS } from '../data/items.js';
 import { GRID } from '../data/farm.js';
 import { now } from './clock.js';
 import { newChateau } from '../data/chateau.js';
+import { oldLvl } from '../data/lv80.js';
 
 export const SAVE_KEY = 'meuhSave';
 export const BACKUP_KEY = SAVE_KEY + '_secours';
@@ -24,6 +25,7 @@ export function newState() {
         lv14: true, // échelle des 50 niveaux
         lv136: true, // échelle des 60 niveaux
         lv156: true, // échelle des 64 niveaux
+        lv1109: true, // 1.109 : échelle des 80 niveaux
         lv18: true, // machines et recettes aux niveaux de la 1.8
         lvKeep: {}, // ce qu'une ancienne partie avait déjà ouvert (posé à la conversion)
         moved131: false,
@@ -208,8 +210,10 @@ export const setState = s => (state = s);
 export const skill = id => (state.skills && state.skills[id]) || 0;
 export const lvOk = (d, lvl = d.reqLvl) => state.level >= (lvl || 1) || !!(state.lvKeep && state.lvKeep[d.id]);
 // 1.36 : les gains gardent l'échelle des 50 niveaux : jusqu'au 57, la même pente ; de 58 à 64, elle s'adoucit (1.56)
+// 1.109 : 80 niveaux. L'économie reste réglée sur l'ancienne échelle (64 niveaux) : ecoLvl() est l'ancien niveau équivalent
+export const ecoLvl = () => oldLvl(state.level);
 export const scaleLvl = () => {
-    const L = state.level;
+    const L = ecoLvl();
     return L <= 57 ? 1 + ((L - 1) * 39) / 59 : 1 + (56 * 39) / 59 + ((L - 57) * 2.6) / 7;
 };
 
@@ -239,6 +243,7 @@ export function fromSave(parsed) {
     if (!parsed.lv18) s.lv18 = false;
     if (!parsed.lv136) s.lv136 = false;
     if (!parsed.lv156) s.lv156 = false;
+    if (!parsed.lv1109) s.lv1109 = false;
     return s;
 }
 

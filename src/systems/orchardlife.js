@@ -16,6 +16,7 @@ import { clampQuality } from './farm.js';
 import { fishWeek, isWeekend, weekendEnd } from './fishing.js';
 import { slotsOf, treeStage, matOf, onTreePick, livingTrees } from './orchard.js';
 import { rollRareGraft } from './orchardplus.js';
+import { ecoLvl } from '../core/state.js';
 
 const seasonIdx = () => Math.floor((state.day - 1) / DAYS_PER_SEASON);
 const hash = n => {
@@ -142,7 +143,7 @@ function ensureHarvest() {
         const list = seasonTrees('automne');
         const pick = [...list.filter(d => livingTrees(d.id) > 0), ...list.filter(d => !livingTrees(d.id))].slice(0, 2);
         if (!pick.length) return o.cueil || null;
-        const base = Math.round(HARVEST.base + state.level * HARVEST.per);
+        const base = Math.round(HARVEST.base + ecoLvl() * HARVEST.per);
         o.cueil = { s, need: Object.fromEntries(pick.map((d, k) => [d.id, k ? Math.round(base * 0.7) : base])), got: {}, claimed: false };
     }
     return o.cueil;
@@ -150,7 +151,7 @@ function ensureHarvest() {
 export const harvestState = () => ensureHarvest();
 export const harvestDone = c => !!c && Object.keys(c.need).every(id => (c.got[id] || 0) >= c.need[id]);
 export const harvestReady = () => !!(orch().cueil && !orch().cueil.claimed && harvestDone(orch().cueil));
-export const harvestReward = () => ({ coins: round5(HARVEST.coins(state.level)), xp: HARVEST.xp(state.level) });
+export const harvestReward = () => ({ coins: round5(HARVEST.coins(ecoLvl())), xp: Math.round(HARVEST.xp(ecoLvl())) });
 export function claimHarvest(at) {
     const c = orch().cueil;
     if (!c || c.claimed || !harvestDone(c)) return false;
@@ -199,7 +200,7 @@ export function basketId(week = fishWeek()) {
 export function basketRivals(c, t = now()) {
     const end = weekendEnd(c.endAt ? c.endAt - 1 : t);
     const progress = Math.min(1, Math.max(0.35, 1 - (end - t) / (2 * 86400000)));
-    const top = 50 + state.level * 4;
+    const top = 50 + ecoLvl() * 4;
     return RIVALS.map((r, k) => {
         const rnd = rng(c.week * 1000 + k + 5);
         const frac = Math.min(0.97, Math.max(0.2, 0.3 + rnd() * 0.5 + (r.f - 0.75) * 0.25));
@@ -229,7 +230,7 @@ function basketTick() {
 }
 export const basketPrize = rank => {
     const pz = BASKET_CONTEST.prize[rank - 1];
-    return { coins: pz ? round5(pz.coins(state.level)) : 0, rubans: pz ? pz.rubans : 0, graft: pz ? pz.graft : 0, xp: BASKET_CONTEST.xp(state.level) };
+    return { coins: pz ? round5(pz.coins(ecoLvl())) : 0, rubans: pz ? pz.rubans : 0, graft: pz ? pz.graft : 0, xp: Math.round(BASKET_CONTEST.xp(ecoLvl())) };
 };
 export const basketResultReady = () => !!(orch().lastContest && !orch().lastContest.seen);
 export function claimBasket(at) {
@@ -258,7 +259,7 @@ export function feteState() {
     if (!feteActive()) return o.fete && o.fete.s === seasonIdx() ? o.fete : null;
     const s = seasonIdx();
     if (!o.fete || o.fete.s !== s) {
-        const extra = Math.floor(state.level / 3);
+        const extra = Math.floor(ecoLvl() / 3);
         o.fete = { s, need: { apple: CIDER_FETE.need[0] + extra, pear: CIDER_FETE.need[1] + extra }, given: {}, claimed: false };
     }
     return o.fete;
@@ -284,7 +285,7 @@ export function giveFete(id, at) {
     if (feteDone(f) && view.started) toast('La pressée est prête ! Récupérez vos bouteilles', ['item', 'cider']);
     return true;
 }
-export const feteReward = () => ({ coins: round5(CIDER_FETE.coins(state.level)), xp: CIDER_FETE.xp(state.level), cider: CIDER_FETE.cider });
+export const feteReward = () => ({ coins: round5(CIDER_FETE.coins(ecoLvl())), xp: Math.round(CIDER_FETE.xp(ecoLvl())), cider: CIDER_FETE.cider });
 export function claimFete(at) {
     const f = orch().fete;
     if (!f || f.claimed || !feteDone(f)) return false;
@@ -308,7 +309,7 @@ export function vendState() {
     if (!vendActive()) return o.vend && o.vend.s === seasonIdx() ? o.vend : null;
     const s = seasonIdx();
     tip('vend');
-    if (!o.vend || o.vend.s !== s) o.vend = { s, need: WINE_FETE.need + Math.floor(state.level / 2), given: 0, claimed: false };
+    if (!o.vend || o.vend.s !== s) o.vend = { s, need: WINE_FETE.need + Math.floor(ecoLvl() / 2), given: 0, claimed: false };
     return o.vend;
 }
 export const vendDone = v => !!v && v.given >= v.need;
@@ -332,7 +333,7 @@ export function giveVend(at) {
     if (vendDone(v) && view.started) toast('Les vendanges sont finies ! Margaux vous attend', ['item', 'grape']);
     return true;
 }
-export const vendReward = () => ({ coins: round5(WINE_FETE.coins(state.level)), xp: WINE_FETE.xp(state.level), bottles: WINE_FETE.bottles });
+export const vendReward = () => ({ coins: round5(WINE_FETE.coins(ecoLvl())), xp: Math.round(WINE_FETE.xp(ecoLvl())), bottles: WINE_FETE.bottles });
 export function claimVend(at) {
     const v = orch().vend;
     if (!v || v.claimed || !vendDone(v)) return false;

@@ -10,6 +10,7 @@ import { earn, addXp } from './player.js';
 import { hasCost, payCost } from './home.js';
 import { addFriendship } from './village.js';
 import { ensureNat, depthOpen, onNatureHit, natGot } from './nature.js';
+import { ecoLvl } from '../core/state.js';
 
 // ---------------- la charbonnière ----------------
 export const kilnOpen = () => state.level >= KILN.lvl;
@@ -156,7 +157,7 @@ function newGaspard(day) {
     if (roll < 0.2 && state.level >= 8 && depthOpen('quarry') && state.level >= 18 && depthOpen('gallery')) return { ...base, kind: 'vein', need: 1 };
     if (roll < 0.4) {
         const sps = Object.keys(SPECIES).filter(id => state.level >= SPECIES[id].lvl);
-        return { ...base, kind: 'species', id: sps[Math.floor(Math.random() * sps.length)], need: 4 + Math.floor(state.level / 15) };
+        return { ...base, kind: 'species', id: sps[Math.floor(Math.random() * sps.length)], need: 4 + Math.floor(ecoLvl() / 15) };
     }
     const pool = GET_POOL(),
         [id, need] = pool[Math.floor(Math.random() * pool.length)];
@@ -189,7 +190,7 @@ export function gaspardText(g = ensureGaspard()) {
     if (g.kind === 'species') return `Abattre ${g.need} ${SPECIES[g.id].name.toLowerCase()}s`;
     return `Rapporter ${g.need} ${ITEMS[g.id].name.toLowerCase()}`;
 }
-export const gaspardReward = () => ({ coins: round5(GASPARD.coins(state.level)), xp: GASPARD.xp(state.level) });
+export const gaspardReward = () => ({ coins: round5(GASPARD.coins(ecoLvl())), xp: Math.round(GASPARD.xp(ecoLvl())) });
 export const gaspardReady = () => !!(gaspardOpen() && state.nat && state.nat.gaspard && state.nat.gaspard.done && !state.nat.gaspard.claimed);
 export function claimGaspard(at) {
     const g = state.nat && state.nat.gaspard;

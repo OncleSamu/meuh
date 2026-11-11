@@ -11,6 +11,7 @@ import { addPhoto } from './style.js';
 import { champWon } from './stud.js';
 import { tip } from './tips.js';
 import { harasOpen, horseByUid, aptOf, rec, startPass, equipApt, equipPres } from './haras.js';
+import { ecoLvl } from '../core/state.js';
 
 export const showOpen = () => harasOpen();
 export function ensureShow() {
@@ -50,7 +51,7 @@ export function gpAt(from = new Date(now())) {
 // ---------------- les divisions et la note ----------------
 export const divOpen = i => i === 0 || ensureShow().rose[i - 1] >= SHOW.open;
 export const divsOpen = () => SHOW.divs.map((d, i) => i).filter(divOpen);
-export const purseOf = (div, mult = 1) => Math.round((SHOW.divs[div].purse * mult * (1 + state.level / 60)) / 10) * 10;
+export const purseOf = (div, mult = 1) => Math.round((SHOW.divs[div].purse * mult * (1 + ecoLvl() / 60)) / 10) * 10;
 export const feeOf = (div, mult = 1) => Math.ceil(purseOf(div, mult) * SHOW.fee);
 // la note prévue d'un cheval dans une discipline ; `pass` : le passage joué (0 à 1), ou null quand Jules monte
 export function showNote(a, disc, pass = null) {

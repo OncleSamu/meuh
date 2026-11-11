@@ -20,10 +20,11 @@ import { tip } from './tips.js';
 import { advanceRivals, rivalBase, rivalEventText, RIVAL_CFG } from './rivals.js';
 import { record } from './book.js';
 import { earn, addXp } from './player.js';
+import { oldLvl } from '../data/lv80.js';
 
 export const contestOpen = () => state.level >= CONTEST_LVL;
 // 1.4 : le niveau est ramené à l'échelle des 40 niveaux (sinon les rivales grandissent plus vite que vos points)
-const lv40 = L => 1 + ((L - 1) * 39) / 49;
+const lv40 = L => 1 + ((oldLvl(L) - 1) * 39) / 49; // 1.109 : sur l'ancienne échelle des niveaux
 export const contestTarget = L => Math.round((300 + lv40(L) * 170) / 50) * 50;
 export const contestEndsIn = () => (state.contest ? Math.max(0, state.contest.end - now()) / 1000 : weekEndsIn());
 // part de la semaine écoulée depuis votre inscription : les rivales partent en même temps que vous

@@ -30,6 +30,7 @@ import { takeVarSeed, harvestVariety, varRank, varExtra, varGrowth, varCold } fr
 import { slotsOf, pickTree, treeStage, groundFull, advanceTree } from './orchard.js';
 import { compSpeed, plotFx, compHarvest, NORD_BASE } from './companions.js';
 import { hasCost, payCost } from './home.js';
+import { ecoLvl } from '../core/state.js';
 
 const COIN = ['ui', 'coin'];
 const FLAME = ['ui', 'noChaleur'];
@@ -587,7 +588,7 @@ export function sledClaim(at) {
     c.out = null;
     c.trips++;
     state.stats.sleds = (state.stats.sleds || 0) + 1;
-    addXp(220 + 20 * Math.min(60, state.level), at);
+    addXp(220 + 20 * Math.min(60, ecoLvl()), at);
     sfx('level');
     toast(`Le traîneau est rentré : ${fmt(value)} pièces${spice ? ` et ${spice} gousses de cardamome` : ''}`, ['ui', 'noTraineau']);
     changed('nord');

@@ -29,6 +29,8 @@ import { hasCost, payCost } from './home.js';
 import { inPasture, enclosOpen, isOasisBeast, pastureFree } from './pastures.js';
 import { sellPrice } from './market.js';
 import { isAdult } from './animals.js';
+import { lv80 } from '../data/lv80.js';
+import { ecoLvl } from '../core/state.js';
 
 const COIN = ['ui', 'coin'];
 const DROP = ['ui', 'drop'];
@@ -582,7 +584,7 @@ export function caravanClaim(at) {
     c.out = null;
     c.trips++;
     state.stats.caravans = (state.stats.caravans || 0) + 1;
-    addXp(200 + 20 * Math.min(60, state.level), at);
+    addXp(200 + 20 * Math.min(60, ecoLvl()), at);
     sfx('level');
     toast(`La caravane est rentrée : ${fmt(value)} pièces${spice ? ` et ${spice} pistils de safran du souk` : ''}`, ['ui', 'oaCaravane']);
     changed('oasis');
@@ -624,4 +626,4 @@ export function clearSand(k, at) {
     changed('oasis');
     return true;
 }
-const PEN_LVL = 61;
+const PEN_LVL = lv80(61);

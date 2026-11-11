@@ -21,6 +21,7 @@ import { challengeOn } from './prestige.js';
 import { isOpen } from './orders.js';
 import { makeNeighborReq, reqReady, reqPay, noteServed } from './neighbordish.js';
 import { tip } from './tips.js';
+import { lv80 } from '../data/lv80.js';
 
 // ---------------- l'étal ----------------
 // On y met jusqu'à 10 exemplaires (16 en fin de partie) d'un produit au prix choisi. Plus c'est cher, plus
@@ -35,7 +36,7 @@ export const stallUnit = (id, ratio) => Math.max(1, Math.round(stallBase(id) * r
 export const stallMood = ratio =>
     ratio <= 0.8 ? 'Bon marché : vendu vite' : ratio <= 1.1 ? 'Prix juste' : ratio <= 1.3 ? 'Un peu cher : patience' : 'Très cher : les clients hésitent';
 // 1.38 : l'étal suit la ferme (10 unités, 12 au niveau 40, 16 au niveau 55)
-export const stallCap = () => STALL_MAX_QTY + (state.level >= 40 ? 2 : 0) + (state.level >= 55 ? 4 : 0) + (cupHas(1) ? 2 : 0);
+export const stallCap = () => STALL_MAX_QTY + (state.level >= lv80(40) ? 2 : 0) + (state.level >= lv80(55) ? 4 : 0) + (cupHas(1) ? 2 : 0);
 export const stallMax = id => Math.min(stallCap(), sellableQty(id));
 
 export function ensureStall() {

@@ -1,5 +1,6 @@
 import { MAX_LEVEL } from './progress.js';
 import { FISH_133 } from './ajouts/poissons.js';
+import { lv80 } from './lv80.js';
 // Données qui contenaient autrefois du code : textes à trous, icônes, conditions.
 // Les trous : {n} = nombre formaté, {s} = « s » si pluriel, {x} = valeur du rang (compétences).
 
@@ -169,7 +170,7 @@ export const SKILLS = {
     voy: {
         name: 'Contrées',
         icon: ['ui', 'oaVoyages'],
-        lvl: 35,
+        lvl: lv80(35),
         list: [
             { id: 'tropic', name: 'Main tropicale', max: 3, icon: ['item', 'pineapple'], desc: 'Les plantations de l’île poussent {x} % plus vite', per: 6 },
             { id: 'dowser', name: 'Sourcier', max: 2, icon: ['ui', 'drop'], desc: 'La source de l’oasis donne {x} L/h de plus', per: 4 },

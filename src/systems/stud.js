@@ -10,6 +10,7 @@ import { placeAnimal } from './pastures.js';
 import { ensureHaras, harasOpen, horses, horseByUid, rec, onRando, aptCap } from './haras.js';
 import { coatOf } from './coat.js';
 import { tip } from './tips.js';
+import { ecoLvl } from '../core/state.js';
 
 const dayNo = () => Math.floor((now() / 60000 - new Date(now()).getTimezoneOffset()) / 1440);
 export function ensureStud() {
@@ -97,7 +98,7 @@ export function retire(uid) {
 // une saillie vaut plus quand le champion a beaucoup gagné
 export const studIncome = a => {
     const wins = a && state.show && state.show.titles ? state.show.titles[a.uid] || 0 : 0;
-    return Math.round((STUD.income * (1 + state.level / 60) * (1 + Math.min(STUD.incomeWinMax, wins * STUD.incomeWin))) / 10) * 10;
+    return Math.round((STUD.income * (1 + ecoLvl() / 60) * (1 + Math.min(STUD.incomeWinMax, wins * STUD.incomeWin))) / 10) * 10;
 };
 export function studTick() {
     if (!state.haras || !state.haras.stud) return false;

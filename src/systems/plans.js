@@ -9,6 +9,7 @@ import { getPlot, allPlots, resetPlot } from './farm.js';
 import { storyOk } from './story.js';
 import { preferSeed, varSelfWater } from './genetics.js';
 import { tip } from './tips.js';
+import { ecoLvl } from '../core/state.js';
 
 export const PLAN_SLOTS = [0, 1, 3, 6];
 export const planSlots = () => PLAN_SLOTS[Math.min(state.upgrades.plan || 0, PLAN_SLOTS.length - 1)];
@@ -58,7 +59,7 @@ export function clearPlan(k) {
 }
 
 // la main-d'œuvre d'un replantage : 50 pièces au niveau 28, 10 de plus tous les 5 niveaux
-export const planFee = () => 50 + 10 * Math.max(0, Math.floor((state.level - 28) / 5));
+export const planFee = () => 50 + 10 * Math.max(0, Math.floor((ecoLvl() - 28) / 5));
 
 // peut-on semer cette culture maintenant (graines en stock, ou de quoi les acheter) avec cet argent ?
 function canSow(id, money = state.money, stock = state.seeds[id] || 0) {

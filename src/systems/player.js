@@ -24,7 +24,7 @@ import { CONTRACT_LVL, CONTEST_LVL, LEAGUES, CARGO, ARMAND, NMARKET, VAULT } fro
 import { DOMAINE_LVL } from '../data/domaine.js';
 import { DAILY_REWARDS, HOLIDAY_LVL } from '../data/world.js';
 import { levelGate } from './goals.js';
-import { BALANCE, MAX_LEVEL, MAX_LEVEL_60, RENOWN_XP, ACH_REWARDS, MEDALS, CAP_REQ, MASTERY_LVL, HOUSE, FARMHAND, ALBUM_LEVELS } from '../data/progress.js';
+import { BALANCE, MAX_LEVEL, MAX_LEVEL_64, MAX_LEVEL_60, RENOWN_XP, ACH_REWARDS, MEDALS, CAP_REQ, MASTERY_LVL, HOUSE, FARMHAND, ALBUM_LEVELS } from '../data/progress.js';
 import { ACHIEVEMENTS, SKILLS } from '../data/meta.js';
 import { trackDayEarn, record } from './book.js';
 import { renownStar } from './mastery.js';
@@ -33,6 +33,7 @@ import { tip } from './tips.js';
 import { MAMIE_LVL } from './mamie.js';
 import { ensureQuests } from './orders.js';
 import { STALL_LEVELS } from './stall.js';
+import { lv80 } from '../data/lv80.js';
 
 // ---------------- argent ----------------
 export function earn(amount, at) {
@@ -92,10 +93,12 @@ export const getXpReq60 = lvl => {
 // 1.56 : 64 niveaux. Jusqu'au 49, la courbe des 60 niveaux ; de 50 à 63, une pente douce (127 000 puis environ 2 000 de plus par niveau)
 // 1.60 : les premiers niveaux allaient trop vite ; du 2 au 14, il faut plus d'expérience (× 2,2 au niveau 2, de moins en moins jusqu'au 15)
 export const earlySlow = lvl => (lvl >= 2 && lvl < BALANCE.slowTo ? 1 + (BALANCE.slowMax - 1) * ((BALANCE.slowTo - lvl) / (BALANCE.slowTo - 2)) : 1);
-export const getXpReq = lvl =>
+export const getXpReq64 = lvl =>
     lvl < BALANCE.xp64.from
         ? Math.round((getXpReq60(lvl) * earlySlow(lvl)) / 10) * 10
         : Math.round((BALANCE.xp64.first + (lvl - BALANCE.xp64.from) * BALANCE.xp64.step) / 10) * 10;
+// 1.109 : 80 niveaux. Jusqu'au 29, rien ne change ; le niveau 30 demande un peu plus que le 29, puis chaque niveau un peu plus que le précédent
+export const getXpReq = lvl => (lvl < BALANCE.xp80.from ? getXpReq64(lvl) : Math.round((BALANCE.xp80.first + (lvl - BALANCE.xp80.from) * BALANCE.xp80.step) / 10) * 10);
 // expérience totale pour atteindre un niveau
 export const xpToReach = (L, req = getXpReq) => {
     let s = 0;
@@ -155,11 +158,11 @@ export function migrateLevels64() {
     // au maximum d'avant, les étoiles de renommée redeviennent de l'expérience (elles se refont au nouveau maximum)
     let total = xpToReach(before, getXpReq60) + state.xp + (state.level >= MAX_LEVEL_60 ? (state.renown || 0) * RENOWN_XP : 0);
     let L = 1;
-    while (L < MAX_LEVEL && xpToReach(L + 1) <= total) L++;
-    total -= xpToReach(L);
+    while (L < MAX_LEVEL_64 && xpToReach(L + 1, getXpReq64) <= total) L++;
+    total -= xpToReach(L, getXpReq64);
     state.level = L;
     state.renown = 0;
-    if (L >= MAX_LEVEL) {
+    if (L >= MAX_LEVEL_64) {
         state.renown = Math.floor(total / RENOWN_XP);
         total -= state.renown * RENOWN_XP;
     }
@@ -169,6 +172,20 @@ export function migrateLevels64() {
         for (const d of Object.values(o)) if (d.lv155 !== undefined && d.lv155 <= before && d.reqLvl > state.level) state.lvKeep[d.id] = true;
     for (const r of Object.values(RECIPES)) if (r.lv155 !== undefined && r.lv155 <= before && r.lvl > state.level) state.lvKeep[r.id] = true;
     state.stats.maxLevel = Math.max(state.level, prevMax >= MAX_LEVEL_60 ? state.level : prevMax);
+}
+
+// 1.109 : les 64 niveaux passent à 80. Une partie au-dessus du niveau 30 arrive au début de sa nouvelle tranche et garde
+// tout ce qu'elle avait ouvert (lv108 : niveau d'avant la 1.109)
+export function migrateLevels80() {
+    const before = Math.min(state.level, MAX_LEVEL_64);
+    if (before <= 30) return;
+    state.level = before >= MAX_LEVEL_64 ? MAX_LEVEL : lv80(before);
+    if (state.level < MAX_LEVEL) state.xp = Math.min(state.xp, getXpReq(state.level));
+    state.lvKeep = state.lvKeep || {};
+    for (const o of [ITEMS, ANIMALS, MACHINES, DECOS, UPGRADES])
+        for (const d of Object.values(o)) if (d.lv108 !== undefined && d.lv108 <= before && d.reqLvl > state.level) state.lvKeep[d.id] = true;
+    for (const r of Object.values(RECIPES)) if (r.lv108 !== undefined && r.lv108 <= before && r.lvl > state.level) state.lvKeep[r.id] = true;
+    state.stats.maxLevel = Math.max(state.level, (state.stats.maxLevel || 1) >= MAX_LEVEL_64 ? MAX_LEVEL : lv80(Math.min(state.stats.maxLevel || 1, MAX_LEVEL_64)));
 }
 
 export function addXp(amount, at) {

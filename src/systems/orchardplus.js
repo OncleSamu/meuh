@@ -12,6 +12,7 @@ import { addFriendship } from './village.js';
 import { season } from './world.js';
 import { qual } from './farm.js';
 import { slotsOf, treeList, matOf, treeStage, pickTree, onTreePick, onOrchardPicker } from './orchard.js';
+import { ecoLvl } from '../core/state.js';
 
 const seasonIdx = () => Math.floor((state.day - 1) / DAYS_PER_SEASON);
 const treeAt = (k, z = 'farm') => {
@@ -216,7 +217,7 @@ export function odileText(g = ensureOdile()) {
 }
 export const odileReward = g => {
     const mult = g && g.kind === 'choice' ? ODILE.choiceMult : 1;
-    return { coins: round5(ODILE.coins(state.level) * mult), xp: Math.round(ODILE.xp(state.level) * mult) };
+    return { coins: round5(ODILE.coins(ecoLvl()) * mult), xp: Math.round(ODILE.xp(ecoLvl()) * mult) };
 };
 export const odileReady = () => !!(odileOpen() && state.orchard.odile && state.orchard.odile.done && !state.orchard.odile.claimed);
 // un greffon rare : or (50), double (35) ou éternel (15)

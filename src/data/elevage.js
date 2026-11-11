@@ -1,3 +1,4 @@
+import { lv80 } from './lv80.js';
 // L'Élevage (1.45) : la foire aux bestiaux, les bêtes des voisins, la réputation de l'élevage (le Comice : comice.js).
 
 export const FAIR = {
@@ -5,7 +6,7 @@ export const FAIR = {
     slots: [
         [12, 3],
         [30, 4],
-        [45, 5],
+        [lv80(45), 5],
     ], // [niveau, acheteurs à la fois]
     every: 3 * 3600 * 1000, // un nouvel acheteur toutes les 3 heures
     stay: 24 * 3600 * 1000, // chacun reste un jour

@@ -6,6 +6,7 @@ import { view } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { CHAPTERS, PROJECTS, CHAPTER_ORDER, STORY_REWARD, chapterNum, chapterAfter } from '../data/village.js';
+import { oldLvl } from '../data/lv80.js';
 export { CHAPTER_ORDER, chapterNum, chapterAfter };
 import { STORY_MAPS } from '../data/meta.js';
 import { tip } from './tips.js';
@@ -148,7 +149,7 @@ export function chapterBonus(n, at) {
     const done = (state.story.bonus = state.story.bonus || {});
     if (done[n]) return null;
     done[n] = true;
-    const coins = Math.round(STORY_REWARD.chapterCoins(CHAPTERS[n - 1].lvl) / 5) * 5;
+    const coins = Math.round(STORY_REWARD.chapterCoins(oldLvl(CHAPTERS[n - 1].lvl)) / 5) * 5;
     earn(coins, at);
     const ruban = chapterNum(n) >= STORY_REWARD.chapterRuban ? 1 : 0;
     state.prestige.rubans += ruban;

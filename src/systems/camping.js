@@ -11,6 +11,7 @@ import { randomId, rng } from '../art/habitants.js';
 import { hasCost, payCost } from './home.js';
 import { earn, addXp } from './player.js';
 import { canGet, haveQ, takeQ } from './defis.js';
+import { ecoLvl } from '../core/state.js';
 
 export const campOpen = () => state.level >= CAMPING.lvl;
 export const campBuilt = () => !!state.camping;
@@ -208,7 +209,7 @@ function leave(g, at, stay = false) {
 }
 // ---- l'épicerie : une caisse qui se remplit hors ligne ----
 export const tillCap = () => CAMPING.tillHours * tillPerHour();
-const tillPerHour = () => state.level * CAMPING.tillRate * (state.camping ? state.camping.pitches : 0) * (1 + resBonus('till'));
+const tillPerHour = () => ecoLvl() * CAMPING.tillRate * (state.camping ? state.camping.pitches : 0) * (1 + resBonus('till'));
 export function tillTick() {
     const c = state.camping;
     if (!c || !c.up.shop) return;

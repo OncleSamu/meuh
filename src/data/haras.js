@@ -1,7 +1,8 @@
 // Les grandes écuries (1.23) : boxes, forme, soins, aptitudes et plafonds, randonnée.
 // Les mini-jeux d'entraînement (1.23.1 et 1.23.2) et les concours (1.24) viendront s'y brancher.
 
-export const HARAS_LVL = 45;
+import { lv80 } from './lv80.js';
+export const HARAS_LVL = lv80(45);
 
 // les quatre disciplines ; le gène donne le plafond de l'aptitude : 40 + 12 × le gène (gène 5 → 100)
 export const DISCIPLINES = [

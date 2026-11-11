@@ -11,6 +11,7 @@ import { NORD } from '../data/nord.js';
 import { ASSOCS, ASSOC, COMP_LVL, COMP_FX, COMP_CAP, COMP_TIERS, MAMIE, isBad } from '../data/companions.js';
 import { earn, addXp } from './player.js';
 import { tip } from './tips.js';
+import { ecoLvl } from '../core/state.js';
 
 export const compOpen = () => state.level >= COMP_LVL;
 export function ensureComp() {
@@ -195,8 +196,8 @@ export function claimMamie(at) {
     const d = mamieDefi();
     if (!d || !d.done || d.claimed) return false;
     d.claimed = true;
-    earn(MAMIE.coins(state.level), at);
-    addXp(MAMIE.xp(state.level), at);
+    earn(Math.round(MAMIE.coins(ecoLvl())), at);
+    addXp(Math.round(MAMIE.xp(ecoLvl())), at);
     state.seeds.saffron = (state.seeds.saffron || 0) + MAMIE.seeds;
     let fert = 0;
     if (Math.random() < MAMIE.fertChance) {

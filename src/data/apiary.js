@@ -1,11 +1,12 @@
 // 1.69 : le rucher de chaque contrée. 1 à 3 ruches qui ne butinent que leur contrée (parcelles et verger).
 // cost : le prix de la 1re, 2e et 3e ruche ; every : secondes par pot et par ruche, toutes fleurs dehors ;
 // cap : pots en réserve par ruche ; full : fleurs qu'il faut pour que les ruches travaillent à plein.
+import { lv80 } from './lv80.js';
 export const APIARY = {
     island: {
         name: 'Le rucher de l’île',
         icon: 'apiaryIsland',
-        lvl: 38,
+        lvl: lv80(38),
         cost: [
             { coins: 60000, wood: 40, wax: 10 },
             { coins: 180000, wood: 80, wax: 25 },
@@ -16,7 +17,7 @@ export const APIARY = {
     oasis: {
         name: 'Le rucher de l’oasis',
         icon: 'apiaryOasis',
-        lvl: 59,
+        lvl: lv80(59),
         cost: [
             { coins: 400000, stone: 60, wax: 20 },
             { coins: 1000000, stone: 120, wax: 40 },
@@ -28,7 +29,7 @@ export const APIARY = {
     nord: {
         name: 'Le rucher du Grand Nord',
         icon: 'apiaryNord',
-        lvl: 62,
+        lvl: lv80(62),
         cost: [
             { coins: 500000, plank: 60, wax: 20 },
             { coins: 1200000, plank: 120, wax: 40 },

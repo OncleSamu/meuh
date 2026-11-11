@@ -17,6 +17,7 @@ import { campBuilt, campGuests } from './camping.js';
 import { presentVillagers } from './home.js';
 import { addFriendship } from './village.js';
 import { isBirthday } from './friends.js';
+import { ecoLvl } from '../core/state.js';
 
 const M = () => state.maison;
 export const maisonOpen = () => campBuilt();
@@ -198,7 +199,7 @@ export const offerFor = (cof, c, g) => {
 };
 // 1.103.2 : l'expérience d'une vente de paquet
 // 1.104.5 : le socle grandit avec la valeur (un paquet sans valeur ne rapporte presque rien) ; au niveau 60, un paquet de 1 200 pièces touche le socle entier
-export const pkXp = pay => Math.round(MAISON.xp * Math.min(1, pay / Math.max(1, state.level * MAISON.xpRef)) + pay * MAISON.xpPay);
+export const pkXp = pay => Math.round(MAISON.xp * Math.min(1, pay / Math.max(1, ecoLvl() * MAISON.xpRef)) + pay * MAISON.xpPay);
 function takeCoffret(cof, at, pay, rep) {
     M().stock = M().stock.filter(x => x !== cof);
     earn(pay, at);

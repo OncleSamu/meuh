@@ -35,6 +35,7 @@ import { eventActive, eventProgress } from './events.js';
 import { defiWanted } from './defis.js';
 import { fishOrderOk } from './fishing.js';
 import { cupHas } from './cup.js';
+import { ecoLvl } from '../core/state.js';
 
 // Ce que la ferme sait produire en ce moment (ingrédients compris)
 export function questPool() {
@@ -132,7 +133,7 @@ export function makeOrder() {
     if (projectDone('townhall')) mult *= 1.1;
     mult *= (1 + rank('loyal') * 0.1) * (1 + state.upgrades.price * 0.04);
     // 1.38 : +3 % par niveau au-delà de 50 (pièces seulement)
-    const gold = round5(value * mult * bonus * (1 + 0.03 * Math.max(0, state.level - 50)) * (cupHas(5) ? 1.05 : 1));
+    const gold = round5(value * mult * bonus * (1 + 0.03 * Math.max(0, ecoLvl() - 50)) * (cupHas(5) ? 1.05 : 1));
     return {
         items,
         gold,
@@ -250,8 +251,8 @@ const TRAIN_PK = 0.35,
 // 1.106 : la valeur de marchandises demandée par wagon. Avant, elle grandissait en ligne droite (1 250 au niveau 60) alors que
 // la production de la ferme double tous les huit niveaux : un train plein ne pesait plus rien. Elle suit maintenant la production
 // (environ 600 au niveau 15, 5 000 au niveau 40, 30 000 au niveau 60), et un wagon peut demander jusqu'à 60 produits.
-export const wagonTarget = (L = state.level) => Math.max(60 + scaleLvl() * 30, L >= 15 ? 400 * Math.pow(1.09, L - 10) : 0);
-export const wagonMax = (L = state.level) => Math.round(Math.min(60, 20 + Math.max(0, L - 30) * 1.34));
+export const wagonTarget = (L = ecoLvl()) => Math.max(60 + scaleLvl() * 30, L >= 15 ? 400 * Math.pow(1.09, L - 10) : 0);
+export const wagonMax = (L = ecoLvl()) => Math.round(Math.min(60, 20 + Math.max(0, L - 30) * 1.34));
 export const slotHave = sl => (sl.pk ? pkHave(sl.pk) >= sl.qty : (state.inventory[sl.id] || 0) >= sl.qty);
 export const trainOpen = () => projectDone('station');
 // chaque cheval fait revenir le train 10 % plus tôt (30 % au plus)

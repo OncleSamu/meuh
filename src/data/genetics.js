@@ -6,6 +6,7 @@ import { OASIS_CROPS, OASIS_TREES, OASIS_BEASTS } from './oasis.js';
 import { NORD_BEASTS } from './nord.js';
 import { NORD_CROPS, NORD_TREES } from './nord.js';
 import { ANIMALS_135 } from './ajouts/animaux.js';
+import { lv80 } from './lv80.js';
 
 // ---------------- les caractères ----------------
 // Chaque caractère va de 0 à 5. Les plantes ont des saveurs et des qualités de culture,
@@ -262,7 +263,7 @@ export const ANIMAL_BASE = Object.fromEntries(Object.entries(A).map(([id, s]) =>
 
 // ---------------- le labo ----------------
 export const GENETICS = {
-    lvl: 40,
+    lvl: lv80(40),
     // chantiers qui ouvrent chaque partie
     plantProject: 'pollination', // croisements de plantes
     animalProject: 'breeding', // étable de sélection
