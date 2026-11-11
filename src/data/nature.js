@@ -1,5 +1,6 @@
 // La nature : forêt, mine, étang et poissons, pêche en mer.
 import { SEA_CATCH_133 } from './ajouts/poissons.js';
+import { lv80 } from './lv80.js';
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
 export const NATURE = {
@@ -196,5 +197,5 @@ export const NATURE_UNLOCKS = [
     [24, 'Le mineur, qui travaille même jeu fermé'],
     [28, 'Hache et pioche : têtes en fer, en argent et en or'],
     [30, 'La grotte profonde : argent, or, rubis, saphirs, émeraudes'],
-    [34, 'Bâtiments et machines améliorés (niveau 3)'],
+    [lv80(34), 'Bâtiments et machines améliorés (niveau 3)'],
 ];

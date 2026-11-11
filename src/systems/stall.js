@@ -26,7 +26,7 @@ import { lv80 } from '../data/lv80.js';
 // ---------------- l'étal ----------------
 // On y met jusqu'à 10 exemplaires (16 en fin de partie) d'un produit au prix choisi. Plus c'est cher, plus
 // le client met de temps à venir. Le grossiste (vente immédiate) paie beaucoup moins.
-export const STALL_LEVELS = [8, 16, 26, 36];
+export const STALL_LEVELS = [8, 16, 26, lv80(36)];
 export const stallSlots = () => 4 + STALL_LEVELS.filter(l => state.level >= l).length + extraStall();
 export const stallBase = id =>
     ITEMS[id].sell * masteryMult(id) * priceMult() * (state.market.hot === id ? HOT_MULT : 1) * eventSellMult() * (cupHas(5) ? 1.05 : 1);

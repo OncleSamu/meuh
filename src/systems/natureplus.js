@@ -161,7 +161,7 @@ function newGaspard(day) {
     }
     const pool = GET_POOL(),
         [id, need] = pool[Math.floor(Math.random() * pool.length)];
-    const q = id === 'ruby' || id === 'sapphire' || id === 'emerald' || id === 'quartz' || id === 'amethyst' ? need : Math.round(need * (1 + state.level / 40));
+    const q = id === 'ruby' || id === 'sapphire' || id === 'emerald' || id === 'quartz' || id === 'amethyst' ? need : Math.round(need * (1 + ecoLvl() / 40));
     return { ...base, kind: 'get', id, need: q, from: ensureNat().log[id] || 0 };
 }
 export function ensureGaspard() {

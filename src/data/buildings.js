@@ -1,7 +1,8 @@
 // 1.11 : les bâtiments s'améliorent en trois niveaux avec les matériaux de la nature.
 // Niveau 1 (14) : planches et pierre · niveau 2 (22) : poutres, pierre taillée, lingots de fer ou de cuivre, charbon
 // · niveau 3 (34) : chêne massif, lingots d'argent, une pierre précieuse.
-export const TIER_LVL = [14, 22, 34];
+import { lv80 } from './lv80.js';
+export const TIER_LVL = [14, 22, lv80(34)];
 export const TIER_NAMES = ['Renforcé', 'Pierre et fer', 'Chêne et argent'];
 export const TIER_COINS = [3000, 12000, 40000];
 export const BLD_MAX = 3;

@@ -180,7 +180,7 @@ export const choiceCount = () =>
     [...treeList('farm'), ...treeList('island'), ...treeList('oasisV'), ...treeList('nordV')].reduce((a, d) => a + qual(d.id).s + qual(d.id).g, 0);
 function newOdile(day) {
     const roll = Math.random(),
-        lvl = state.level;
+        lvl = ecoLvl();
     const base = { day, done: false, claimed: false, got: 0 };
     const trees = [...state.orchard.slots].filter(s => s.tree);
     if (roll < 0.15 && trees.some(s => matOf(s.tree) >= 40)) return { ...base, kind: 'veteran', need: 1 };

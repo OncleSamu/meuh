@@ -17,7 +17,7 @@ export const ACHIEVEMENTS = [
     { id: 'pests', name: 'Garde champêtre', desc: 'Chasser {n} invasions de pucerons', icon: ['ui', 'pest'], tiers: [1, 10, 50] },
     { id: 'crows', name: 'Épouvanteur', desc: 'Chasser {n} corbeaux', icon: ['ui', 'crow'], tiers: [5, 40, 200] },
     { id: 'golden', name: 'Doigts d’or', desc: 'Faire {n} récolte{s} dorée{s}', icon: ['ui', 'star'], tiers: [1, 10, 50] },
-    { id: 'maxLevel', name: 'Expérience', desc: 'Atteindre le niveau {n}', icon: ['ui', 'xp'], tiers: [20, 45, 64] },
+    { id: 'maxLevel', name: 'Expérience', desc: 'Atteindre le niveau {n}', icon: ['ui', 'xp'], tiers: [20, 50, 80] },
     { id: 'maxPlots', name: 'Grand domaine', desc: 'Posséder {n} parcelles', icon: ['ui', 'barn'], tiers: [18, 30, 48] },
     { id: 'prestiges', name: 'Renaissance', desc: 'Vendre la ferme {n} fois', icon: ['ui', 'ribbon'], tiers: [1, 3, 10] },
     { id: 'cooked', name: 'Cordon bleu', desc: 'Cuisiner {n} plats', icon: ['item', 'pie'], tiers: [5, 50, 400] },

@@ -14,6 +14,7 @@ import { formatDuration, pickRand } from '../core/format.js';
 import { barnBlocked } from './barn.js';
 import { butterflyGolden } from './surprises.js';
 import { hiveHoney, addHoney, honeyForecast, HONEYS } from './honey.js';
+import { ecoLvl } from '../core/state.js';
 
 // ---------------- le corbeau ----------------
 // Le corbeau est un imprévu (voir incidents) : ici, seulement son compte à rebours.
@@ -180,7 +181,7 @@ export function dogFinds() {
         const c = crops[Math.floor(Math.random() * crops.length)];
         return { kind: 'seed', id: c.id, n: 3 + Math.floor(Math.random() * 4) };
     }
-    return { kind: 'treasure', n: (30 + L * 15) * 10 };
+    return { kind: 'treasure', n: Math.round(30 + ecoLvl() * 15) * 10 };
 }
 
 // l'icône d'une trouvaille, [sorte, id]

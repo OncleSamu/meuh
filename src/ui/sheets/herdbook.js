@@ -10,6 +10,8 @@ import { ico, art } from '../icons.js';
 import { segmented } from '../kit.js';
 import { defineSheet, sheetOpts } from '../sheets.js';
 import { genWrap } from '../genlook.js';
+import { lv80 } from '../../data/lv80.js';
+const GX_LVL = lv80(40);
 
 const pair = v => [
     [v, 1],
@@ -83,7 +85,7 @@ const plantLook = (base, { c = 0, p = 0, s = 1, f = 0, halo = false }) =>
     genWrap(art('item', base), { t: {}, form: base, l: { size: pair(s), color: pair(c), pattern: pair(p), finish: pair(f) }, halo });
 const SIZE_NAMES = ['Petite', 'Normale', 'Grosse', 'Géante', 'Fine', 'Naine', 'Gros fruit'];
 export function plantRobesTab(kind, o) {
-    if (!G.plantLabOpen()) return '<p class="empty">Les variétés se créent au labo des plantes (station de recherche, niveau 40).</p>';
+    if (!G.plantLabOpen()) return '<p class="empty">Les variétés se créent au labo des plantes (station de recherche, niveau ' + GX_LVL + ').</p>';
     const bases = G.plantBookTypes(kind);
     if (!bases.length)
         return `<p class="empty">Créez une variété ${kind === 'tree' ? 'd’arbre fruitier' : 'de culture'} au labo : sa page s’ouvrira ici, avec toutes les couleurs et tous les motifs à obtenir.</p>`;

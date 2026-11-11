@@ -229,7 +229,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les grandes étapes',
-                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, abbaye et brasserie 35, île 38, génétique 40, grand hall du Comice 43, Haras ${HARAS_LVL}, alpage ${chLvl(9)}, oasis ${chLvl(21)}, Grand Nord ${chLvl(23)}, et le niveau ${MAX_LEVEL} pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
+                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, abbaye 36, île 40, génétique 43, grand hall du Comice 47, Haras ${HARAS_LVL}, alpage ${chLvl(9)}, oasis ${chLvl(21)}, Grand Nord ${chLvl(23)}, et le niveau ${MAX_LEVEL} pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
             },
             { h: `Après le niveau ${MAX_LEVEL}`, t: 'L’expérience donne des étoiles de renommée : voir « Renommée et Ferme légendaire ».' },
         ],
@@ -496,11 +496,11 @@ export const GUIDE_PAGES = [
         cat: 'farm',
         name: 'L’île',
         icon: ['item', 'pineapple'],
-        lvl: 38,
+        lvl: 40,
         go: 'farm/island#isle',
         intro: 'Une île tropicale où tout pousse sans arrosage et en toute saison.',
         secs: [
-            { h: 'Comment l’ouvrir', t: 'Au niveau 38, une fois l’abbaye rénovée, réparez le bac de Tiago (Village › Village, carte « L’île »).' },
+            { h: 'Comment l’ouvrir', t: 'Au niveau 40, une fois l’abbaye rénovée, réparez le bac de Tiago (Village › Village, carte « L’île »).' },
             {
                 h: 'Les parcelles et le verger',
                 b: [
@@ -567,7 +567,7 @@ export const GUIDE_PAGES = [
                 t: `Après le chantier du chadouf : ${OASIS.chadouf.perDay} fois par jour, remontez ${OASIS.chadouf.scoops} seaux en touchant quand le seau plonge dans l’eau. Jusqu’à ${OASIS.chadouf.max} litres.`,
             },
             {
-                h: 'L’enclos de la palmeraie (niveau 61)',
+                h: 'L’enclos de la palmeraie (niveau 73)',
                 b: [
                     `Après le chantier de l’enclos (chapitre « Le souk de l’oasis ») : ${PEN.cap[0]} places, ${PEN.cap[1]} avec la palissade agrandie.`,
                     'Seulement les bêtes de l’oasis : le dromadaire (lait de chamelle, et parfois de la laine), le zébu (lait de zébu) et le mouton barbarin (laine barbarine). Elles ne vont pas dans les prés de la ferme.',
@@ -597,7 +597,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'La cuisine de l’oasis (1.50)',
                 b: [
-                    'Trois machines, après le puits d’Idris : le four en terre (niveau 59 : kesra, msemen, pains), le tajine (60 : tajines, couscous, harira, chakchouka, keftas) et la confiserie orientale (61 : cornes de gazelle, baklava, makrout, loukoums…).',
+                    'Trois machines, après le puits d’Idris : le four en terre (niveau 70 : kesra, msemen, pains), le tajine (72 : tajines, couscous, harira, chakchouka, keftas) et la confiserie orientale (73 : cornes de gazelle, baklava, makrout, loukoums…).',
                     'Dans les machines que vous avez déjà : semoule et ras el-hanout au moulin, harissa à la marmite, citrons confits à la poterie, pâte de dattes, sirop de jujube et confiture de bigarades à la sucrerie, huile de sésame et tahini à l’huilerie, eau de fleur d’oranger à l’alambic, fromage de chamelle, smen et lben à la fromagerie, tapis berbère et couverture de caravane au métier à tisser.',
                 ],
             },
@@ -690,7 +690,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'La cuisine du Nord (1.53)',
                 b: [
-                    'Trois machines, une par niveau de 62 à 64 : le poêle-four (62, après le poêle de Tuomas : pain de seigle noir, tarte de Carélie, pulla, pâtisseries aux airelles et au chicoutai), le chaudron de la taïga (63, après l’étable : soupes de saumon et de champignons, bouillie de seigle, kalakukko) et la sucrerie de baies (64, après la serre de rondins : confitures, gelées, pastilles, bonbons à l’épicéa).',
+                    'Trois machines, du niveau 75 au 79 : le poêle-four (75, après le poêle de Tuomas : pain de seigle noir, tarte de Carélie, pulla, pâtisseries aux airelles et au chicoutai), le chaudron de la taïga (77, après l’étable : soupes de saumon et de champignons, bouillie de seigle, kalakukko) et la sucrerie de baies (79, après la serre de rondins : confitures, gelées, pastilles, bonbons à l’épicéa).',
                     'Dans les machines que vous avez déjà : farine de seigle au moulin, huile d’argousier à la huilerie, fromage de renne et lait fermenté à la fromagerie d’alpage, liqueur de chicoutai et eau-de-vie de sorbier à l’alambic, écharpe et bonnet en qiviut au métier à tisser, bois de renne gravé à la scierie, gravlax à la poissonnerie, glace au chicoutai au glacier.',
                     'La cardamome que rapporte le traîneau parfume la pulla, les biscuits de seigle et la crème de chicoutai.',
                 ],
@@ -889,7 +889,7 @@ export const GUIDE_PAGES = [
         cat: 'animals',
         name: 'La transhumance',
         icon: ['ui', 'mountain'],
-        lvl: 45,
+        lvl: 49,
         go: 'animals',
         intro: 'Envoyez quelques bêtes à l’alpage : elles rapportent du lait et de la laine d’altitude.',
         secs: [
@@ -910,7 +910,7 @@ export const GUIDE_PAGES = [
         cat: 'animals',
         name: 'Le Grand Haras',
         icon: ['ui', 'hEcuries'],
-        lvl: 44,
+        lvl: 48,
         go: 'animals/haras',
         intro: 'Logez vos chevaux en boxes, soignez-les, entraînez-les au galop, à l’endurance, au dressage et au saut, faites-les concourir chaque semaine et élevez vos propres lignées.',
         secs: [
@@ -1026,8 +1026,8 @@ export const GUIDE_PAGES = [
                 b: [
                     '57 boissons. Chacune se prépare en 2 à 4 gestes, et la règle de chacun s’affiche avant de commencer : température, infusion, mouture, extraction, service, fouet, mousse (cœur, feuille ou tulipe, en 12 secondes), presser un agrume, remuer sans déborder, secouer le shaker, attraper les glaçons, doser une goutte, verser de haut (le verre va et vient : on ne verse que lorsqu’il passe sous le jet). Note de 1 à 3 étoiles (qualité normale, argent, or).',
                     'Les cafés s’ouvrent avec la brûlerie de l’île.',
-                    'Huit boissons de l’oasis (niveaux 59 à 61) : thé du désert, thé à la datte, tisane de jujube, thé à la bigarade, café de noyaux de datte ; et, après l’enclos de la palmeraie, lait de sésame glacé, lait de dromadaire aux dattes et lait safrané. Elles s’ouvrent avec le puits d’Idris.',
-                    'Huit boissons du Grand Nord (niveaux 62 à 64) : café de seigle, thé aux pousses d’épicéa, tisane d’airelles, infusion de chicoutai, argousier chaud, thé glacé au sorbier, kvas de seigle ; et, avec le traîneau, lait de renne à la cardamome. Elles s’ouvrent avec le poêle de Tuomas.',
+                    'Huit boissons de l’oasis (niveaux 70 à 80) : thé du désert, thé à la datte, tisane de jujube, thé à la bigarade, café de noyaux de datte ; et, après l’enclos de la palmeraie, lait de sésame glacé, lait de dromadaire aux dattes et lait safrané. Elles s’ouvrent avec le puits d’Idris.',
+                    'Huit boissons du Grand Nord (niveaux 75 à 80) : café de seigle, thé aux pousses d’épicéa, tisane d’airelles, infusion de chicoutai, argousier chaud, thé glacé au sorbier, kvas de seigle ; et, avec le traîneau, lait de renne à la cardamome. Elles s’ouvrent avec le poêle de Tuomas.',
                     'Le stock sert aux commandes, au train et aux quêtes.',
                 ],
             },
@@ -1150,7 +1150,7 @@ export const GUIDE_PAGES = [
         cat: 'craft',
         name: 'La brasserie',
         icon: ['ui', 'beer'],
-        lvl: 35,
+        lvl: 36,
         go: 'machines/brew',
         intro: 'Composez vos propres bières : un malt, du houblon et des ingrédients de la ferme.',
         secs: [
@@ -1190,7 +1190,7 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
-                h: 'L’hydromel (niveau 42)',
+                h: 'L’hydromel (niveau 45)',
                 b: [
                     'Choisissez « Hydromel » : 6 pots de miel à la place du malt, pas de houblon, et un ingrédient de plus que pour une bière (4 au plus).',
                     'Le miel toutes fleurs va avec tout, sans éclat ; chaque miel de fleur (lavande, châtaignier, oranger…) aime certains goûts.',
@@ -1387,7 +1387,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Le Chantier de la ferme',
-                t: 'Aux niveaux 14, 22 et 34, trois niveaux d’amélioration pour la grange, les prés, la cave, le verger, la serre, les nasses et chaque machine, fabriqués avec vos matériaux.',
+                t: 'Aux niveaux 14, 22 et 35, trois niveaux d’amélioration pour la grange, les prés, la cave, le verger, la serre, les nasses et chaque machine, fabriqués avec vos matériaux.',
             },
             { h: 'Au marché', t: 'Bois, pierre, minerais, lingots et pierres précieuses se vendent un par un ; « Tout vendre » garde ce qu’il faut.' },
         ],
@@ -1408,13 +1408,13 @@ export const GUIDE_PAGES = [
                     'La berge (niveau 9) : gardon, ablette, goujon, perche, écrevisse, truite.',
                     'Les roseaux (niveau 11) : tanche, carpe, anguille (de nuit), lotte (nuits d’hiver), brochet, silure par temps de pluie.',
                     'Le ponton (après le chantier du village) : sandre, brochet, silure, saumon, esturgeon, lavaret (automne et hiver, à la mouche) ; poissons 25 % plus lourds.',
-                    'Le lagon (niveau 38, bac de Tiago réparé) : vivaneau, mahi-mahi, poulpe et langouste (de nuit), à la crevette ; poissons 15 % plus lourds.',
+                    'Le lagon (niveau 40, bac de Tiago réparé) : vivaneau, mahi-mahi, poulpe et langouste (de nuit), à la crevette ; poissons 15 % plus lourds.',
                     'Le poisson doré, très rare, peut mordre partout.',
                 ],
             },
             {
                 h: 'Les appâts',
-                t: 'Un appât multiplie par 5 les chances des poissons qu’il vise. L’écran montre ce qui mord ici et maintenant, avec les chances. Où trouver chacun : le ver de terre (niveau 9) se remplit tout seul dans la boîte à vers (un toutes les 3 minutes, 20 au plus) ; le maïs (niveau 11) vient de votre stock : un épi par prise, à récolter au champ ; la mouche (niveau 13) se fabrique au bord de l’étang avec le bouton « +4 mouches » (une plume de canard et une pelote de laine), et les défis de Marcel en donnent parfois ; le vif (ponton réparé) est une ablette de votre stock, que vous pêchez à la canne ; la crevette (niveau 38, bac de Tiago réparé) vient aussi de votre stock : celles du filet de pêche en mer. Une nasse peut aussi recevoir un appât à la pose.',
+                t: 'Un appât multiplie par 5 les chances des poissons qu’il vise. L’écran montre ce qui mord ici et maintenant, avec les chances. Où trouver chacun : le ver de terre (niveau 9) se remplit tout seul dans la boîte à vers (un toutes les 3 minutes, 20 au plus) ; le maïs (niveau 11) vient de votre stock : un épi par prise, à récolter au champ ; la mouche (niveau 13) se fabrique au bord de l’étang avec le bouton « +4 mouches » (une plume de canard et une pelote de laine), et les défis de Marcel en donnent parfois ; le vif (ponton réparé) est une ablette de votre stock, que vous pêchez à la canne ; la crevette (niveau 40, bac de Tiago réparé) vient aussi de votre stock : celles du filet de pêche en mer. Une nasse peut aussi recevoir un appât à la pose.',
             },
             {
                 h: 'Le mini-jeu',
@@ -1484,7 +1484,7 @@ export const GUIDE_PAGES = [
         secs: [
             {
                 h: 'Le train (après la gare)',
-                t: 'Trois wagons à remplir, payés 2,4 fois le prix des produits, et un bonus de 50 % quand tout est chargé. Les wagons grandissent avec la ferme : quelques milliers de pièces au niveau 20, environ 65 000 au niveau 40, plus de 300 000 au niveau 60 pour un train plein. Aux hauts niveaux, il préfère les produits de valeur (60 par wagon au plus). Un train qui part plein fait monter le renom du domaine de 2 points (voir Le marché). Chaque cheval du haras le fait revenir plus tôt. Il reste environ 1 heure.',
+                t: 'Trois wagons à remplir, payés 2,4 fois le prix des produits, et un bonus de 50 % quand tout est chargé. Les wagons grandissent avec la ferme : quelques milliers de pièces au niveau 20, environ 65 000 au niveau 43, plus de 300 000 au niveau 72 pour un train plein. Aux hauts niveaux, il préfère les produits de valeur (60 par wagon au plus). Un train qui part plein fait monter le renom du domaine de 2 points (voir Le marché). Chaque cheval du haras le fait revenir plus tôt. Il reste environ 1 heure.',
             },
             { h: 'La montgolfière (après l’auberge)', t: 'De grosses commandes bien payées, qui partent après environ 1 heure.' },
             {
@@ -1512,7 +1512,7 @@ export const GUIDE_PAGES = [
                     'Six soutes (trois produits de la ferme, trois de l’atelier), jusqu’à dix avec le domaine.',
                     'Chargez petit à petit : chaque unité est payée tout de suite (2,2 fois son prix).',
                     'Avion plein : un gros bonus (+80 %) et des matériaux rares.',
-                    'Les soutes grandissent avec la ferme : passé le niveau 45, un avion plein dépasse le million de pièces au niveau 60.',
+                    'Les soutes grandissent avec la ferme : passé le niveau 49, un avion plein dépasse le million de pièces au niveau 72.',
                     'Touchez un produit pour aller le produire.',
                 ],
             },
@@ -1602,7 +1602,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'L’étal',
-                t: 'Vous fixez le prix : plus il est haut, plus le client tarde. 4 places, puis une de plus aux niveaux 8, 16, 26 et 36 (et jusqu’à 3 de plus avec la maison et le domaine). Une place prend 10 exemplaires, 12 dès le niveau 40, 16 dès le niveau 55.',
+                t: 'Vous fixez le prix : plus il est haut, plus le client tarde. 4 places, puis une de plus aux niveaux 8, 16, 26 et 37 (et jusqu’à 3 de plus avec la maison et le domaine). Une place prend 10 exemplaires, 12 dès le niveau 43, 16 dès le niveau 63.',
             },
             {
                 h: 'Le renom du domaine',
@@ -1794,13 +1794,13 @@ export const GUIDE_PAGES = [
                     'Niveau 14, véranda : +1 commande au tableau.',
                     'Niveau 23, étage : +1 place dans la file de chaque machine.',
                     'Niveau 32, belle demeure : +1 place à l’étal.',
-                    'Niveau 42, grande ferme : toutes les commandes paient 10 % de plus.',
+                    'Niveau 45, grande ferme : toutes les commandes paient 10 % de plus.',
                     `Niveau ${HOUSE[HOUSE.length - 1].lvl}, le manoir : +80 places dans la grange et 1 place de plus à l’étal.`,
                 ],
             },
             {
                 h: 'Théo, le commis',
-                t: 'Après le pont du hameau (chapitre 5), Théo récolte, replante et arrose à votre place les parcelles encadrées du champ, en replantant la dernière culture posée. On le forme de plus en plus : de 6 parcelles à 36 au dernier niveau (31, 37, 41 puis 47). L’aide au champ du domaine lui ajoute des parcelles.',
+                t: 'Après le pont du hameau (chapitre 5), Théo récolte, replante et arrose à votre place les parcelles encadrées du champ, en replantant la dernière culture posée. On le forme de plus en plus : de 6 parcelles à 36 au dernier niveau (31, 39, 44 puis 66). L’aide au champ du domaine lui ajoute des parcelles.',
             },
             {
                 h: 'Personnaliser',
@@ -1860,7 +1860,7 @@ export const GUIDE_PAGES = [
         secs: [
             {
                 h: 'Où le trouver',
-                t: 'Village › sous-onglet Village, sous la carte de l’histoire (niveau 25). Deux volets : Améliorations (les neuf branches) et Dépendances (six bâtiments, niveau 45).',
+                t: 'Village › sous-onglet Village, sous la carte de l’histoire (niveau 25). Deux volets : Améliorations (les neuf branches) et Dépendances (six bâtiments, niveau 49).',
             },
             {
                 h: 'Les neuf branches',
@@ -1885,7 +1885,7 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
-                h: 'Les dépendances (niveau 45)',
+                h: 'Les dépendances (niveau 49)',
                 b: [
                     'Six bâtiments d’apparat, trois niveaux chacun : 15, 40 puis 100 millions de pièces.',
                     'La table d’hôtes : le renom du domaine ne descend jamais sous 2, 4 puis 6 %.',
@@ -1983,13 +1983,13 @@ export const GUIDE_PAGES = [
         cat: 'lab',
         name: 'Le laboratoire de plantes',
         icon: ['ui', 'packet'],
-        lvl: 40,
+        lvl: 43,
         go: 'machines/lab',
         intro: 'Croiser des plantes pour créer des variétés plus savoureuses ou plus robustes, à garder pour toujours.',
         secs: [
             {
                 h: 'Ce qui l’ouvre',
-                t: 'La station de recherche (niveau 40) : Agathe et Victor. La serre de pollinisation, puis le laboratoire et le conservatoire des semences, sont des chantiers du village.',
+                t: 'La station de recherche (niveau 43) : Agathe et Victor. La serre de pollinisation, puis le laboratoire et le conservatoire des semences, sont des chantiers du village.',
             },
             {
                 h: 'Croiser',
@@ -2032,7 +2032,7 @@ export const GUIDE_PAGES = [
         cat: 'lab',
         name: 'L’étable de sélection',
         icon: ['ui', 'nursery'],
-        lvl: 40,
+        lvl: 43,
         go: 'machines/lab',
         intro: 'Choisir ses reproducteurs pour des petits aux traits rares, puis les présenter au Comice et les vendre à la foire.',
         secs: [
@@ -2047,7 +2047,7 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
-                h: 'Le grand hall du Comice (niveau 43)',
+                h: 'Le grand hall du Comice (niveau 47)',
                 t: 'Le chantier de l’ancien Salon de l’agriculture ouvre le grand hall : le Comice agricole a une catégorie de bêtes de plus, et ses prix sont doublés. Les variétés, elles, ont le concours du potager au labo (un critère tous les deux jours : fruit le plus sucré, légume le plus épicé…).',
             },
         ],
@@ -2058,7 +2058,7 @@ export const GUIDE_PAGES = [
         cat: 'end',
         name: 'Grands défis et Ferme légendaire',
         icon: ['ui', 'trophy'],
-        lvl: 50,
+        lvl: 56,
         go: 'sheet:progress',
         intro: `Au niveau ${MAX_LEVEL}, le jeu change : défis, renommée, Ferme légendaire et prestige.`,
         secs: [
@@ -2069,7 +2069,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Le camping de la vallée',
                 b: [
-                    'Dès le niveau 57 : un camping à aménager (1,5 million de pièces, planches, pierres, poutres), avec 3 emplacements, puis jusqu’à 12. Village › Camping : un vrai terrain, avec ses tentes, ses cabanes et ses aménagements. Touchez un campeur ou une cabane pour lui parler.',
+                    'Dès le niveau 66 : un camping à aménager (1,5 million de pièces, planches, pierres, poutres), avec 3 emplacements, puis jusqu’à 12. Village › Camping : un vrai terrain, avec ses tentes, ses cabanes et ses aménagements. Touchez un campeur ou une cabane pour lui parler.',
                     'Toutes les 3 à 6 heures, un campeur au visage tiré au hasard plante sa tente pour 10 à 30 heures. Randonneur, famille, gourmet, pêcheur, artiste ou couple : chacun cherche 2 ou 3 produits, que vous lui vendez deux fois leur valeur.',
                     'Un campeur ravi (tout ce qu’il cherchait vendu) demande parfois à rester : une bulle « cabane » se lève sur sa tente, et sa fiche vous pose la question. Vous l’accueillez : il range sa tente et s’installe dans une cabane (100 000 pièces par résident déjà installé, 12 au maximum) ou vous refusez. S’il repart avant votre réponse, sa demande vous attend au portail. Il apparaît aussi dans Village › Villageois (filtre « Résidents »), avec la même fiche : Amitié, Cadeau, Goûts, Histoire. Il a un métier, une commande permanente payée 1,6 fois sa valeur, trois produits qu’il aime, un produit adoré qui se révèle à 3 cœurs, et une histoire à 2, 4 et 5 cœurs, tirée au hasard. Comme les villageois, ils ont cinq cœurs. Un cadeau toutes les 6 heures. On peut le faire partir à tout moment (deux appuis).',
                     'Chaque résident aide le camping grâce à son métier, d’autant plus qu’il a de cœurs. Le boulanger, le fromager et le pêcheur déposent un panier chaque jour devant leur cabane (un produit par cœur). Les autres donnent un bonus : guide de randonnée (arrivées plus rapides), aubergiste (séjours plus longs), fleuriste (pourboires), peintre (prix), poissonnier (poisson), potier (épicerie), instituteur (expérience), couturier (commandes des résidents), cartographe (campeurs remarquables).',
@@ -2081,7 +2081,7 @@ export const GUIDE_PAGES = [
                 h: 'La Maison, votre marque',
                 b: [
                     'Quand le camping est bâti : fondez la Maison (2 millions de pièces, planches, pierres, poutres). Donnez-lui un nom, un emblème et des couleurs. Elle a son volet dans l’Atelier (Atelier › Maison), et son étal en bas à gauche de la carte du camping y mène.',
-                    'À l’atelier, composez des paquets de trois produits de la ferme, n’importe lesquels (15 minutes chacun, moins avec la renommée), dans la boîte de votre choix : cagette, panier, filet, caisse, tonnelet, malle, cloche, écrin… Les boîtes s’ouvrent avec la réputation et se fabriquent par trois à l’emballerie (Atelier › Production, dès le niveau 58), comme n’importe quelle recette : les villageois, le train et l’avion-cargo en demandent aussi. Le train a parfois un wagon de paquets, et l’avion-cargo une soute de paquets : on les charge depuis l’étagère (les moins chers qui conviennent d’abord), payés 1,6 fois leur valeur. La boîte de carton est toujours là, gratuite. Une belle boîte rapporte plus (jusqu’à +40 % pour l’écrin), et sa valeur compte dans celle du paquet. Vous nommez chaque paquet vous-même. Il vaut ses produits, chacun avec sa qualité (argent, or, platine, diamant : celle du moins bon produit), fois 2,2, plus s’ils sont de trois genres différents, plus avec la boîte et la réputation. Chaque paquet garde sa recette dans le Livre de la ferme, Collection › Mes paquets : un geste pour le refaire. Les paquets ont leur propre étagère : les commandes n’y touchent jamais.',
+                    'À l’atelier, composez des paquets de trois produits de la ferme, n’importe lesquels (15 minutes chacun, moins avec la renommée), dans la boîte de votre choix : cagette, panier, filet, caisse, tonnelet, malle, cloche, écrin… Les boîtes s’ouvrent avec la réputation et se fabriquent par trois à l’emballerie (Atelier › Production, dès le niveau 68), comme n’importe quelle recette : les villageois, le train et l’avion-cargo en demandent aussi. Le train a parfois un wagon de paquets, et l’avion-cargo une soute de paquets : on les charge depuis l’étagère (les moins chers qui conviennent d’abord), payés 1,6 fois leur valeur. La boîte de carton est toujours là, gratuite. Une belle boîte rapporte plus (jusqu’à +40 % pour l’écrin), et sa valeur compte dans celle du paquet. Vous nommez chaque paquet vous-même. Il vaut ses produits, chacun avec sa qualité (argent, or, platine, diamant : celle du moins bon produit), fois 2,2, plus s’ils sont de trois genres différents, plus avec la boîte et la réputation. Chaque paquet garde sa recette dans le Livre de la ferme, Collection › Mes paquets : un geste pour le refaire. Les paquets ont leur propre étagère : les commandes n’y touchent jamais.',
                     'Chaque produit a son genre : Verger et champ (fruits, légumes, graines, plantes), Animaux (œufs, laits, laines, viandes, miel…), Mer (poissons et fruits de mer), Cuisine (tout ce qui sort des fourneaux, des laiteries, des pressoirs…), Artisanat (tissus, savons, parfums, poteries, bijoux, objets de la forge) et Trésors (pierres précieuses, minerais, lingots de métal). Les matériaux bruts (bois, pierre, résine…) ne vont pas dans un paquet. Chaque boîte accepte certains genres ; trois genres différents dans un paquet rapportent un peu plus.',
                     'Vendez-les à vos clients : voisins, souk, château, vitrine du village, et les campeurs du camping (un paquet chacun par séjour, à proposer depuis leur fiche ; un campeur remarquable en veut un d’argent au moins). Chaque vente rapporte beaucoup d’expérience (au moins 700, plus une part du prix ; une commande deux fois et demie plus) et fait monter la réputation, qui ouvre de nouveaux clients (qui paient mieux mais exigent une belle qualité, jusqu’au platine pour la vitrine) et de nouveaux emblèmes. Un client revient 3 heures après un achat.',
                     'La page de la Maison a quatre onglets : Atelier, Étagère, Commandes, Marque. Trois commandes de paquets attendent toujours, avec un client et une occasion (un genre de paquet, parfois une qualité) : elles paient 2,2 fois la valeur du paquet et rapportent beaucoup de réputation. Une nouvelle commande arrive 3 heures après une livraison ; une commande passée est remplacée une heure plus tard.',

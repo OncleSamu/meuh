@@ -18,6 +18,7 @@ import { presentVillagers } from './home.js';
 import { addFriendship } from './village.js';
 import { nHearts } from './nmarket.js';
 import { tip } from './tips.js';
+import { ecoLvl } from '../core/state.js';
 
 export const fairOpen = () => state.level >= FAIR.lvl;
 const SKIP = BIRTHS.skip;
@@ -62,7 +63,7 @@ const traitName = k => (ANIMAL_TRAITS.find(t => t.id === k) || {}).name || k;
 const ownedTypes = () => [...new Set(state.animals.filter(a => !SKIP.includes(a.type)).map(a => a.type))];
 
 function maxReqs() {
-    const l = state.level;
+    const l = ecoLvl();
     return Math.min(3, (l < 20 ? 1 : l < 35 ? 2 : 3) + (elevRepTier() >= 3 ? 1 : 0));
 }
 
