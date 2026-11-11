@@ -349,7 +349,11 @@ function progress() {
         tag('nature', () => {
             G.ensureNature();
             ['lamp', 'cart'].forEach(k => state.money > 12000 && G.buyGear(k));
-            ['cave', 'gallery'].find(d => G.depthOpen(d) && (G.setDepth(d) || state.nat.depth === d));
+            // 1.109 : s'il manque de la pierre pour une machine demandée par un objectif, le robot remonte à la carrière
+            // (plus bas, la mine ne donne presque que du minerai : il restait bloqué des heures à 0 pierre)
+            const stoneShort = G.levelGoals().some(g => g.kind === 'machine' && !G.goalDone(g) && ((G.matCost('machine', g.id) || {}).stone || 0) > (state.inventory.stone || 0));
+            if (stoneShort) G.setDepth('quarry');
+            else ['cave', 'gallery'].find(d => G.depthOpen(d) && (G.setDepth(d) || state.nat.depth === d));
             ['lumber', 'miner'].forEach(k => {
                 if (G.workerOpen(k) && !G.workerLvl(k) && state.money > 20000) G.hireWorker(k);
                 if (G.workerLvl(k) && G.workerNext(k) && state.money > 80000) G.upgradeWorker(k);
