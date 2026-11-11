@@ -12,7 +12,7 @@ export const BALANCE = {
     xpP: 1.7,
     xpK: 1.18, // 1.4 : la courbe des 50 niveaux est un peu plus longue que celle des 40
     xp64: { from: 50, first: 130000, step: 3600 }, // 1.56 : de 50 à 63, la courbe monte doucement (réglée avec le robot : environ 42 h pour le niveau 64)
-    xp80: { from: 30, first: 39000, step: 2020 }, // 1.109 : de 30 à 79, une pente régulière (réglée avec le robot : le niveau 80 vers 38-39 h)
+    xp80: { from: 30, first: 39000, step: 1860 }, // 1.109 : de 30 à 79, une pente régulière (réglée avec le robot : le niveau 80 vers 38-39 h)
     xpK60: 1.42, // 1.36 : la courbe des 60 niveaux (réglée avec le robot : environ 5 heures de plus que les 50 niveaux)
     cropXp: 0.06,
     animalXp: 0.08,
