@@ -1,6 +1,7 @@
 import { LV_MACH, LV_REC } from './levels14.js';
 import { LV18_MACH, LV18_REC } from './levels18.js';
-import { applyLevels64 } from './levels64.js';
+import { applyLevels64, GATE_LVL } from './levels64.js';
+import { applyLevels80, lv80 } from './lv80.js';
 import { LV60_ITEM, LV60_ANIMAL, LV60_MACH, LV60_REC } from './levels60.js';
 import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155 } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
@@ -3556,3 +3557,7 @@ applyLevels64({ ITEMS, ANIMALS, MACHINES, RECIPES });
 // 1.104 : l'emballerie, les boîtes de la Maison par trois (ajoutée après la répartition des niveaux : de 58 à 62)
 MACHINES[EMBALLERIE.id] = { ...EMBALLERIE };
 for (const [, id, , ing, time, lvl] of BOXES) RECIPES[id] = { id, machine: EMBALLERIE.id, ing, time, lvl, base: lvl, outQty: BOX_OUT, xp: Math.round(time / 12) };
+
+// ---------------- 1.109 : 80 niveaux ----------------
+// les nouveautés des niveaux 30 à 64 s'étirent sur 30 à 80 (voir lv80.js) ; tout ce qui précède est réglé sur l'ancienne échelle
+applyLevels80({ ITEMS, ANIMALS, MACHINES, RECIPES }, d => (d.needProject && GATE_LVL[d.needProject] ? lv80(GATE_LVL[d.needProject]) : 0));
