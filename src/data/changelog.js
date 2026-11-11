@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.110",
+  "title": "Vendre ses boutures",
+  "date": "11 novembre 2026",
+  "items": [
+   "Verger : une carte « Mes boutures » ouvre la liste de toutes les boutures, rangées par espèce",
+   "Chaque bouture peut se vendre : la moitié du prix du jeune arbre, les trois quarts si elle porte un greffon",
+   "Un bouton vend d'un coup toutes les boutures simples d'une espèce, ou toutes les boutures simples ; celles qui portent un greffon se vendent une par une"
+  ]
+ },
+ {
   "v": "1.109",
   "title": "80 niveaux",
   "date": "11 novembre 2026",

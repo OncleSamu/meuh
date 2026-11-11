@@ -1696,3 +1696,12 @@ button.cm-spot:active {
     border-radius: 6px;
     padding: 0 4px;
 }
+
+/* 1.110 : la feuille des boutures */
+.cut-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 6px;
+}

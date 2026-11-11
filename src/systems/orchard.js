@@ -14,7 +14,7 @@ import { OASIS_GROVE } from '../data/oasis.js';
 import { NORD_GROVE } from '../data/nord.js';
 import { DAYS_PER_SEASON } from '../data/world.js';
 import { BALANCE } from '../data/progress.js';
-import { speedMult, addXp, spend, rank, rollYield } from './player.js';
+import { speedMult, addXp, spend, rank, rollYield, earn } from './player.js';
 import { cropRate, season, weather, dayInSeason } from './world.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
@@ -351,6 +351,32 @@ export function leaveCutting(t) {
     o.cuttings.push({ id: t.id, g: t.g || null, rem: t.rem || null, v: t.v || null, mat: Math.floor(matOf(t) * MATURE.cutKeep) });
     toast(`Une bouture de ${ITEMS[t.id].seedName.toLowerCase()} garde la lignée de l’arbre`, ['item', 'cutting']);
     return true;
+}
+// 1.110 : vendre une bouture. La moitié du prix du jeune arbre, moitié plus si elle porte un greffon, un remède ou une variété
+export const cuttingPlain = c => !c.g && !c.rem && !c.v;
+export const cuttingPrice = c => Math.round((ITEMS[c.id].cost * (cuttingPlain(c) ? 0.5 : 0.75)) / 5) * 5;
+export function sellCutting(ci, at) {
+    const list = state.orchard.cuttings || [],
+        c = list[ci];
+    if (!c) return false;
+    list.splice(ci, 1);
+    earn(cuttingPrice(c), at);
+    sfx('coin');
+    changed('orchard');
+    return true;
+}
+// toutes les boutures simples d'une espèce (ou de toutes) : celles qui portent un greffon se vendent une par une, exprès
+export function sellPlainCuttings(id, at) {
+    const list = state.orchard.cuttings || [];
+    const out = list.filter(c => cuttingPlain(c) && (!id || c.id === id));
+    if (!out.length) return 0;
+    state.orchard.cuttings = list.filter(c => !out.includes(c));
+    const gain = out.reduce((a, c) => a + cuttingPrice(c), 0);
+    earn(gain, at);
+    sfx('coin');
+    toast(`${out.length} bouture${out.length > 1 ? 's' : ''} vendue${out.length > 1 ? 's' : ''} : ${gain} pièces`, ['item', 'cutting']);
+    changed('orchard');
+    return out.length;
 }
 // replanter une bouture sur une place libre
 export function plantCutting(k, ci, at, z = 'farm') {

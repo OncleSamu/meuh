@@ -471,7 +471,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Greffons et boutures',
-                t: 'Un greffon par arbre : doré (un fruit sur quatre en or), double (deux fruits, plus lent), éternel (ne vieillit jamais), précoce (plus vite) et robuste (plus durable). Un arbre abattu après au moins 50 fruits laisse une bouture qui garde son greffon.',
+                t: 'Un greffon par arbre : doré (un fruit sur quatre en or), double (deux fruits, plus lent), éternel (ne vieillit jamais), précoce (plus vite) et robuste (plus durable). Un arbre abattu après au moins 50 fruits laisse une bouture qui garde son greffon. Les boutures en trop se vendent depuis la carte « Mes boutures », sous le verger : la moitié du prix du jeune arbre, les trois quarts avec un greffon.',
             },
             { h: 'Soins', t: 'Tailler en hiver, fumer, rajeunir : voir la fiche de l’arbre. La vitesse totale est plafonnée.' },
             {

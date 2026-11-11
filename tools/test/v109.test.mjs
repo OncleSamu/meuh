@@ -1,5 +1,6 @@
 // 1.109 : 80 niveaux. Les nouveautés des niveaux 30 à 64 sont étirées sur 30 à 80, l'économie garde l'ancienne échelle.
 import test from 'node:test';
+import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import { memStore } from './helpers.mjs';
 import { state, setStore, scaleLvl, ecoLvl, lvOk } from '../../src/core/state.js';
@@ -111,4 +112,28 @@ test('80 niveaux : une partie d’avant au-dessus du niveau 30 arrive au début 
         for (const d of Object.values(ITEMS)) if (d.reqLvl && (d.lv108 ?? d.reqLvl) <= lv) assert.ok(lvOk(d), `${d.id} refermé (niveau ${lv})`);
         for (const m of Object.values(MACHINES)) if ((m.lv108 ?? m.reqLvl) <= lv) assert.ok(lvOk(m), `${m.id} refermée (niveau ${lv})`);
     }
+});
+
+test('1.110 : une bouture se vend (moitié du prix du jeune arbre), les simples d’un coup, jamais celles à greffon', () => {
+    fresh();
+    state.orchard.cuttings = [
+        { id: 'apple', g: null, rem: null, v: null, mat: 10 },
+        { id: 'apple', g: null, rem: null, v: null, mat: 20 },
+        { id: 'apple', g: 'gold', rem: null, v: null, mat: 30 },
+        { id: 'pear', g: null, rem: null, v: null, mat: 5 },
+    ];
+    assert.equal(G.cuttingPrice(state.orchard.cuttings[0]), ITEMS.apple.cost / 2);
+    assert.ok(G.cuttingPrice(state.orchard.cuttings[2]) > G.cuttingPrice(state.orchard.cuttings[0]));
+    let m = state.money;
+    assert.equal(G.sellPlainCuttings('apple'), 2);
+    assert.equal(state.money - m, ITEMS.apple.cost);
+    assert.deepEqual(state.orchard.cuttings.map(c => c.id + (c.g || '')), ['applegold', 'pear']);
+    m = state.money;
+    assert.ok(G.sellCutting(0));
+    assert.equal(state.money - m, Math.round((ITEMS.apple.cost * 0.75) / 5) * 5);
+    assert.equal(G.sellCutting(5), false);
+    assert.equal(G.sellPlainCuttings(null), 1);
+    assert.equal(state.orchard.cuttings.length, 0);
+    const src = readFileSync(new URL('../../src/ui/views/orchard2.js', import.meta.url), 'utf8');
+    for (const act of ['cuttingsSheet', 'sellCutting', 'sellCuttingsOf', 'sellCuttingsAll']) assert.ok(new RegExp(`\\n {8}${act}: `).test(src), `action ${act}`);
 });

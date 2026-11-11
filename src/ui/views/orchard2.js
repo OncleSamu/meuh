@@ -5,10 +5,10 @@ import { ITEMS } from '../../data/items.js';
 import { GRAFTS, GRAFT_IDS, CARE, PICKER, MATURE } from '../../data/orchard.js';
 import * as G from '../../systems/index.js';
 import { actions, anchorEl } from '../dom.js';
-import { closeSheet } from '../sheets.js';
+import { closeSheet, openSheet, defineSheet } from '../sheets.js';
 import { foldWrap } from '../fold.js';
 import { ico } from '../icons.js';
-import { btn, lines } from '../kit.js';
+import { btn, lines, hint } from '../kit.js';
 import { seasonLine, remLine } from './orchard3.js';
 
 const costOf = c =>
@@ -68,7 +68,7 @@ export function treeExtras(t, k, z) {
 export function cuttingsHtml(k, z) {
     const list = state.orchard.cuttings || [];
     if (!list.length) return '';
-    return `<div class="cuttings"><div class="card-sub center">Boutures : elles gardent le greffon et un tiers de la maturité</div><div class="pick-grid trees">${list
+    return `<div class="cuttings"><div class="card-sub center">Boutures : elles gardent le greffon et un tiers de la maturité</div><div class="center">${btn('Vendre des boutures', { act: 'cuttingsSheet', size: 'sm' })}</div><div class="pick-grid trees">${list
         .map((c, ci) => {
             const ok = G.treeZone(ITEMS[c.id]) === z;
             const g = c.g && GRAFTS[c.g];
@@ -78,6 +78,42 @@ export function cuttingsHtml(k, z) {
         })
         .join('')}</div></div>`;
 }
+
+// 1.110 : la feuille des boutures : les voir toutes, les vendre une par une ou par espèce
+const cutLabel = c => {
+    const g = c.g && GRAFTS[c.g];
+    return `${ico(['ui', 'star'])}${c.mat} fruits${g ? ` · ${g.name.replace('Greffon ', '')}` : ''}${c.v ? ' · variété' : ''}${c.rem ? ' · soignée' : ''}`;
+};
+defineSheet('cuttings', {
+    title: 'Mes boutures',
+    render() {
+        const list = state.orchard.cuttings || [];
+        if (!list.length) return '<p class="empty">Aucune bouture. Un arbre mûr qu’on abat en laisse une.</p>';
+        const ids = [...new Set(list.map(c => c.id))].sort((a, b) => ITEMS[a].seedName.localeCompare(ITEMS[b].seedName, 'fr'));
+        const plainAll = list.filter(G.cuttingPlain);
+        const head =
+            hint('Une bouture se replante en touchant une place libre du verger. Celles en trop se vendent ici : la moitié du prix du jeune arbre, un peu plus avec un greffon.') +
+            (plainAll.length > 1
+                ? `<div class="cut-row"><span class="card-sub">${plainAll.length} boutures simples (sans greffon)</span>${btn(`Tout vendre · ${fmt(plainAll.reduce((a, c) => a + G.cuttingPrice(c), 0))}`, { act: 'sellCuttingsAll', size: 'sm' })}</div>`
+                : '');
+        return (
+            head +
+            ids
+                .map(id => {
+                    const mine = list.map((c, ci) => [c, ci]).filter(x => x[0].id === id);
+                    const plain = mine.filter(x => G.cuttingPlain(x[0]));
+                    return `<div class="card"><div class="card-head">${ico(['item', id], 'ico big')}<div class="card-main"><div class="card-title">${ITEMS[id].seedName} · ${mine.length}</div></div></div>${
+                        plain.length > 1
+                            ? `<div class="cut-row"><span class="card-sub">${plain.length} simples</span>${btn(`Tout vendre · ${fmt(plain.reduce((a, x) => a + G.cuttingPrice(x[0]), 0))}`, { act: 'sellCuttingsOf', data: { id }, size: 'sm' })}</div>`
+                            : ''
+                    }${mine
+                        .map(([c, ci]) => `<div class="cut-row"><span class="card-sub">${cutLabel(c)}</span>${btn(`Vendre · ${fmt(G.cuttingPrice(c))}`, { act: 'sellCutting', data: { ci }, size: 'sm' })}</div>`)
+                        .join('')}</div>`;
+                })
+                .join('')
+        );
+    },
+});
 
 // ---- les cartes sous le verger ----
 function odileCard() {
@@ -137,6 +173,8 @@ export function orchardCards() {
                 odileCard(),
                 g.done && !g.claimed,
             ),
+        (state.orchard.cuttings || []).length > 0 &&
+            `<div class="card" data-act="cuttingsSheet" role="button" tabindex="0"><div class="card-head">${ico(['item', 'cutting'], 'ico big')}<div class="card-main"><div class="card-title">Mes boutures · ${state.orchard.cuttings.length}</div><div class="card-sub">Les voir, vendre celles en trop</div></div>${btn('Ouvrir', { act: 'cuttingsSheet', size: 'sm' })}</div></div>`,
         G.nurseryOpen() && foldWrap('nursery', ['ui', 'nursery'], 'La pépinière', `${stock} greffon${stock > 1 ? 's' : ''} en stock`, nurseryCard()),
         G.pickerOpen() && foldWrap('picker', ['villager', 'picker'], 'Le cueilleur', lvl ? `Niveau ${lvl}` : 'À embaucher', pickerCard()),
     ]
@@ -155,6 +193,10 @@ export function setupOrchard2() {
         plantCutting: (el, d) => {
             if (G.plantCutting(+d.k, +d.ci, at(d, el), d.z || 'farm')) closeSheet('plantTree');
         },
+        cuttingsSheet: () => openSheet('cuttings', {}),
+        sellCutting: (el, d) => G.sellCutting(+d.ci, el),
+        sellCuttingsOf: (el, d) => G.sellPlainCuttings(d.id, el),
+        sellCuttingsAll: el => G.sellPlainCuttings(null, el),
         craftGraft: (el, d) => G.craftGraft(d.id, el),
         upgradePicker: el => G.upgradePicker(el),
         claimOdile: el => G.claimOdile(el),
