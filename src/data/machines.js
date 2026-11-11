@@ -2,6 +2,7 @@ import { LV_MACH, LV_REC } from './levels14.js';
 import { LV18_MACH, LV18_REC } from './levels18.js';
 import { applyLevels64, GATE_LVL } from './levels64.js';
 import { applyLevels80, lv80 } from './lv80.js';
+import { PROJECTS } from './village.js';
 import { LV60_ITEM, LV60_ANIMAL, LV60_MACH, LV60_REC } from './levels60.js';
 import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155 } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
@@ -3560,4 +3561,8 @@ for (const [, id, , ing, time, lvl] of BOXES) RECIPES[id] = { id, machine: EMBAL
 
 // ---------------- 1.109 : 80 niveaux ----------------
 // les nouveautés des niveaux 30 à 64 s'étirent sur 30 à 80 (voir lv80.js) ; tout ce qui précède est réglé sur l'ancienne échelle
-applyLevels80({ ITEMS, ANIMALS, MACHINES, RECIPES }, d => (d.needProject && GATE_LVL[d.needProject] ? lv80(GATE_LVL[d.needProject]) : 0));
+applyLevels80(
+    { ITEMS, ANIMALS, MACHINES, RECIPES },
+    d => (d.needProject && GATE_LVL[d.needProject] ? lv80(GATE_LVL[d.needProject]) : 0),
+    Object.values(PROJECTS).flatMap(p => Object.keys(p.need)),
+);

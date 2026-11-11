@@ -11,14 +11,15 @@ import { CARNET } from '../../src/data/carnet.js';
 import { RECIPES_150, MACHINES_150 } from '../../src/data/ajouts/oasis-cuisine.js';
 import { OASIS_IDS, OASIS_PRODUCTS } from '../../src/data/oasis.js';
 import { SPR } from '../../src/art/index.js';
+import { lv80 } from '../../src/data/lv80.js';
 
 test('trois machines, aux niveaux 59, 60 et 61, après le puits d’Idris', () => {
     assert.deepEqual(
         MACHINES_150.map(m => [m[0], MACHINES[m[0]].reqLvl]),
         [
-            ['earthOven', 59],
-            ['tajine', 60],
-            ['orientalSweets', 61],
+            ['earthOven', lv80(59)],
+            ['tajine', lv80(60)],
+            ['orientalSweets', lv80(61)],
         ],
     );
     for (const [id] of MACHINES_150) {
@@ -35,7 +36,7 @@ test('trente-huit recettes : dessin, anecdote de Mamie, ingrédients connus, pri
         assert.ok(SPR.item(id).length > 300, `${id} : dessin`);
         assert.ok(CARNET[id], `${id} : anecdote`);
         for (const k of Object.keys(ing)) assert.ok(ITEMS[k], `${id} : ${k}`);
-        assert.ok(RECIPES[id].lvl >= 59 && RECIPES[id].lvl <= 61, `${id} : niveau ${RECIPES[id].lvl}`);
+        assert.ok(RECIPES[id].lvl >= lv80(59) && RECIPES[id].lvl <= 80, `${id} : niveau ${RECIPES[id].lvl}`);
     }
 });
 

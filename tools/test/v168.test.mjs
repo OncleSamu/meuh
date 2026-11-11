@@ -7,7 +7,7 @@ import { setView } from '../../src/core/view.js';
 import * as G from '../../src/systems/index.js';
 import { MEAD } from '../../src/data/abbey.js';
 
-function abbey(lvl = 50) {
+function abbey(lvl = 56) {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });

@@ -16,13 +16,14 @@ import { GUIDE_PAGES } from '../../src/data/guide.js';
 import { SPR } from '../../src/art/index.js';
 import { youngExtra, readyExtra, items, ui } from '../../src/art/kit.js';
 import { MAP_BG } from '../../src/art/maps.js';
+import { lv80 } from '../../src/data/lv80.js';
 
 const H = 3600;
 function oasis({ open = true, water } = {}) {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 64;
+    state.level = 80;
     state.money = 10_000_000;
     state.gameTimeMinutes = 8 * 60; // le matin : pas de chaleur
     if (open) state.projects.oasisWell = { given: {}, done: true };
@@ -247,7 +248,7 @@ test('contrôle : les treize plantes ont leurs dessins, leurs saveurs, leur plac
     assert.deepEqual(trees.sort(), ['argan', 'bitterOrange', 'carob', 'citron', 'date', 'jujube', 'mulberry', 'pricklyPear', 'tamarind']);
     for (const id of OASIS_IDS) {
         const d = ITEMS[id];
-        assert.ok(d && d.oasis && d.island && d.reqLvl >= OASIS.lvl && d.reqLvl <= 61, id);
+        assert.ok(d && d.oasis && d.island && d.reqLvl >= OASIS.lvl && d.reqLvl <= lv80(61) + 1, id);
         assert.ok(FLAVORS[id] && FLAVORS[id].length === 5, `saveurs ${id}`);
         assert.ok(items[id], `dessin du produit ${id}`);
         if (d.type === 'crop') assert.ok(youngExtra[id] && readyExtra[id], `dessins de la plante ${id}`);

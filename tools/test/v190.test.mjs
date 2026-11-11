@@ -10,7 +10,7 @@ function farm() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 40;
+    state.level = 43;
 }
 
 test('1.90 : l’amélioration de la serre s’ajoute aux parcelles déjà achetées', () => {

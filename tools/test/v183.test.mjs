@@ -8,7 +8,7 @@ import * as G from '../../src/systems/index.js';
 import { RECIPES } from '../../src/data/machines.js';
 import { ITEMS } from '../../src/data/items.js';
 
-function farm(lvl = 40) {
+function farm(lvl = 43) {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'machines' });
@@ -85,7 +85,7 @@ test('1.83.4 : on livre le plat à Mamie : +50 %, payé tout de suite, compté, 
 });
 
 test('1.83.2 : boissons, vins et bières peuvent être le plat de la semaine', () => {
-    farm(60);
+    farm(80);
     state.projects.chai = { done: true };
     state.machines.push(G.newMachine('counter'), G.newMachine('winery'));
     const list = G.mamieChoices();

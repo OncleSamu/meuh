@@ -58,7 +58,7 @@ test('les cultures de l’île poussent sans arrosage, et pas dans le champ', ()
         G.gameTick();
     }
     assert.ok(G.islandPlots()[k].ready);
-    state.barn.lvl = 50;
+    state.barn.lvl = 56;
     const before = state.inventory.pineapple;
     assert.ok(G.harvestIsland(k, null, true));
     assert.ok(state.inventory.pineapple > before);

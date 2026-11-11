@@ -13,13 +13,14 @@ import { ANIMAL_BASE } from '../../src/data/genetics.js';
 import { CHAPTERS, PROJECTS, VILLAGERS, CHAPTER_ORDER } from '../../src/data/village.js';
 import { TIPS } from '../../src/data/texts.js';
 import { SPR } from '../../src/art/index.js';
+import { lv80 } from '../../src/data/lv80.js';
 
 const H = 3600 * 1000;
 function nord({ barn = true } = {}) {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 64;
+    state.level = 80;
     state.money = 100_000_000;
     state.gameTimeMinutes = 12 * 60;
     state.projects.northStove = { given: {}, done: true };
@@ -122,7 +123,7 @@ test('contrôle : les trois bêtes et quatre produits ont dessins, gènes, prén
     assert.equal(NORD_BEAST_IDS.length, 3);
     for (const id of NORD_BEAST_IDS) {
         const d = ANIMALS[id];
-        assert.ok(d && d.nord && d.reqLvl === 63, id);
+        assert.ok(d && d.nord && d.reqLvl >= lv80(63) && d.reqLvl <= lv80(63) + 1, id);
         assert.ok(ITEMS[d.prodId] && SPR.item(d.prodId).length > 300, `produit ${id}`);
         if (d.extra) assert.ok(ITEMS[d.extra], `second produit ${id}`);
         assert.ok(SPR.animal(id).length > 500, `dessin ${id}`);

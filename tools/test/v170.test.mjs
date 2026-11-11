@@ -13,7 +13,7 @@ function village() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 64;
+    state.level = 80;
     G.ensureVillagers();
 }
 const toHearts = (vid, h) => G.addFriendship(vid, HEART_POINTS[h - 1] - state.villagers[vid].pts);

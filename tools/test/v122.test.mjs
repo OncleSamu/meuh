@@ -6,7 +6,7 @@ import { LOOKS, PLANT_TRAITS, ANIMAL_TRAITS } from '../../src/data/genetics.js';
 
 const fresh = () => {
     G.loadGame();
-    state.level = 40;
+    state.level = 43;
     G.ensureGenetics();
 };
 
@@ -103,7 +103,7 @@ test('1.22 : la note de robe compte les apparences rares', () => {
 
 test('1.22 : un contrat de saison dure au moins 13 jours, même en fin de saison', () => {
     fresh();
-    state.level = 40;
+    state.level = 43;
     state.day = 12; // dernier jour de la saison
     state.contract = null;
     assert.ok(G.ensureContract());

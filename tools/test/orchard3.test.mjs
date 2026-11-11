@@ -16,7 +16,7 @@ const SPRING = 3,
 const start = () => {
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 44;
+    state.level = 48;
     state.money = 1e9;
     state.day = SPRING;
     state.gameTimeMinutes = 8 * 60;
@@ -124,7 +124,7 @@ test('la gelée : prévenue, les torches protègent, sinon quelques fruits perdu
 test('la grande cueillette : un panier de la saison à remplir, récompense et greffon', () => {
     start();
     state.day = AUTUMN + 4;
-    state.level = 40;
+    state.level = 43;
     assert.ok(G.harvestActive());
     plant('apple');
     const c = G.harvestState();

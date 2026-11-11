@@ -11,7 +11,7 @@ const DAY = 864e5;
 const start = hist => {
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 40;
+    state.level = 43;
     state.contest = null;
     state.contestHist = hist;
     G.contestTick();
@@ -77,7 +77,7 @@ test('votre score entre dans la moyenne et se garde dans la sauvegarde', () => {
 
 test('concours de pêche : les rivales pêchent par sorties pendant le week-end', () => {
     G.loadGame();
-    state.level = 40;
+    state.level = 43;
     const c = { id: G.contestFish(), week: 2970, startAt: Date.UTC(2026, 9, 24, 9) };
     const ses = G.rivalCatches(c, 3);
     assert.ok(ses.length >= 3 && ses.length <= 5, `${ses.length} sorties`);

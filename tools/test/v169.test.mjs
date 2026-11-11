@@ -12,7 +12,7 @@ function lands() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 64;
+    state.level = 80;
     G.ensureGenetics();
     for (const p of ['ferry', 'oasisWell', 'northStove']) state.projects[p] = { given: {}, done: true };
     G.ensureIsland();

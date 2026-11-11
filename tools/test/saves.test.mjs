@@ -22,10 +22,11 @@ test('une sauvegarde de la 6.2 se charge sans rien perdre', () => {
     loadGame();
     setView({ started: true, tab: 'farm' });
     // 1.4 : le niveau passe à l'échelle des 50 niveaux, à expérience totale égale (un peu plus haut)
-    assert.ok(state.level > old.level && state.level <= 60, 'niveau ' + state.level);
+    assert.ok(state.level > old.level && state.level <= 80, 'niveau ' + state.level);
     assert.ok(state.lv14);
     const totOld = G.xpToReach(old.level, G.getXpReqOld) + old.xp;
-    assert.ok(Math.abs(G.xpToReach(state.level) + state.xp - totOld) < 10, 'expérience totale gardée');
+    // 1.109 : au-dessus du niveau 30, la partie arrive au début de sa nouvelle tranche (80 niveaux)
+    if (state.level <= 30) assert.ok(Math.abs(G.xpToReach(state.level) + state.xp - totOld) < 10, 'expérience totale gardée');
     // ce qui était ouvert le reste
     for (const r of Object.values(RECIPES))
         if (r.lvOld <= old.level && !r.teacher && !r.fete && !r.holiday && G.storyOk(ITEMS[r.id])) assert.ok(G.recipeUnlocked(r.id), r.id);

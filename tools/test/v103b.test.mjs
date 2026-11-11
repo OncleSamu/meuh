@@ -17,7 +17,7 @@ function farm() {
     G.loadGame();
     setView({ started: true, tab: 'farm', hidden: false });
     state.tutorial.done = true;
-    state.level = 60;
+    state.level = 80;
     state.money = 1e10;
     for (const k of ['plank', 'stone', 'beam', 'tools', 'nail', 'paint', 'cloth', 'hempRope']) state.inventory[k] = 1000;
     G.buildCamp();
@@ -82,6 +82,6 @@ test('équilibrage 1.103.2 : un paquet aux voisins vaut plus qu’aux campeurs, 
     const ids = ['apple', 'pear', 'strawberry'];
     const raw = ids.reduce((a, id) => a + ITEMS[id].sell, 0);
     assert.ok(G.coffretValue(ids, 0, 'carton') > raw * CAMPING.pay);
-    assert.ok(G.pkXp(1000) >= 700);
+    assert.ok(G.pkXp(1300) >= 700);
     assert.equal(CAMPING.tillRate, 40);
 });

@@ -7,6 +7,7 @@ import { BREW, NEW_DRINKS_154 } from '../../src/data/counter.js';
 import { CARNET } from '../../src/data/carnet.js';
 import { PROJECTS } from '../../src/data/village.js';
 import { SPR } from '../../src/art/index.js';
+import { lv80 } from '../../src/data/lv80.js';
 
 test('1.54 : huit boissons de l’oasis, chacune avec ses gestes, son dessin et son anecdote', () => {
     assert.equal(NEW_DRINKS_154.length, 8);
@@ -17,7 +18,7 @@ test('1.54 : huit boissons de l’oasis, chacune avec ses gestes, son dessin et 
         assert.equal(ITEMS[id].name, name);
         assert.ok(ITEMS[id].sell > 0);
         assert.equal(RECIPES[id].machine, 'counter');
-        assert.ok(RECIPES[id].lvl >= 59 && RECIPES[id].lvl <= 64);
+        assert.ok(RECIPES[id].lvl >= lv80(59) && RECIPES[id].lvl <= 80);
         assert.ok(SPR.item(id).length > 300, `${id} : dessin`);
         assert.ok(CARNET[id] && CARNET[id].length > 80, `${id} : anecdote`);
         assert.ok(PROJECTS[ITEMS[id].needProject], id);

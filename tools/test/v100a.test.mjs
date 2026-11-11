@@ -16,16 +16,16 @@ function farm() {
     G.loadGame();
     setView({ started: true, tab: 'farm', hidden: false });
     state.tutorial.done = true;
-    state.level = 60;
+    state.level = 80;
     state.money = 1e10;
     for (const k of ['plank', 'stone', 'beam', 'tools']) state.inventory[k] = 1000;
 }
 
 test('camping : se bâtit au niveau 57, pas avant, une seule fois', () => {
     farm();
-    state.level = 50;
+    state.level = 56;
     assert.equal(G.canBuildCamp(), false);
-    state.level = 60;
+    state.level = 80;
     assert.ok(G.buildCamp());
     assert.equal(G.campPitches(), CAMPING.pitches);
     assert.equal(G.buildCamp(), false);

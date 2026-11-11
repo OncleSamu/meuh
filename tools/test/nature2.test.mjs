@@ -36,7 +36,7 @@ const used = id => Object.values(RECIPES).filter(r => r.ing[id]).length;
 const start = () => {
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 44;
+    state.level = 48;
     state.money = 1e7;
     for (const k of Object.keys(state.inventory)) state.inventory[k] = 0;
     for (const k of [
@@ -112,7 +112,7 @@ test('la mine a trois profondeurs : la galerie veut une lampe et un wagonnet', (
     assert.ok(G.depthOpen('gallery') && G.depthOpen('cave'));
     state.level = 17;
     assert.equal(G.depthOpen('gallery'), false, 'pas avant le niveau 18');
-    state.level = 44;
+    state.level = 48;
     assert.ok(G.setDepth('cave'));
     // une veine donne toujours une pierre précieuse et du minerai, en cassant la roche
     const sl = state.mine[0];
@@ -209,7 +209,7 @@ test('les bâtiments s’améliorent en trois niveaux avec les matériaux de la 
     assert.equal(G.barnCap(), cap + 60);
     state.level = 21;
     assert.equal(G.upgradeBld('b', 'barn'), false, 'le niveau 2 s’ouvre au niveau 22');
-    state.level = 44;
+    state.level = 48;
     assert.ok(G.upgradeBld('b', 'barn') && G.upgradeBld('b', 'barn'));
     assert.equal(G.bldNext('b', 'barn'), null);
     assert.equal(G.barnCap(), cap + 260);

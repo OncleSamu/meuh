@@ -27,9 +27,9 @@ test('chaque boisson a ses gestes, son prix et sa recette au comptoir', () => {
 
 test('un comptoir : préparer pour le stock, servir un client, les gains sont raisonnables', () => {
     G.loadGame();
-    state.level = 50;
+    state.level = 56;
     state.money = 1e6;
-    state.barn.lvl = 50;
+    state.barn.lvl = 56;
     for (const p of Object.values(PROJECTS)) state.projects[p.id] = { given: {}, done: true };
     for (const r of Object.values(RECIPES)) if (r.machine === 'counter') for (const k of Object.keys(r.ing)) state.inventory[k] = 50;
     state.machines.push(G.newMachine('counter'));

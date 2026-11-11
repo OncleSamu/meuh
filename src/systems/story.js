@@ -13,7 +13,7 @@ import { tip } from './tips.js';
 import { clampQuality } from './farm.js';
 import { addPhoto } from './style.js';
 import { addFriendship } from './village.js';
-import { addXp, earn, getXpReq } from './player.js';
+import { addXp, earn, getXpReq64 } from './player.js';
 import { ensureQuests } from './orders.js';
 import { ensureStall } from './stall.js';
 import { ensureIsland } from './island.js';
@@ -143,7 +143,7 @@ export function giveAllToProject(pid, at) {
 }
 
 // expérience d'un chantier : l'ancienne valeur, ou une part du niveau du chapitre quand il est plus haut
-export const projectXp = p => Math.round(Math.max(150 + chapterNum(p.ch) * 150, STORY_REWARD.xpFrac * getXpReq(CHAPTERS[p.ch - 1].lvl)) / 10) * 10;
+export const projectXp = p => Math.round(Math.max(150 + chapterNum(p.ch) * 150, STORY_REWARD.xpFrac * getXpReq64(Math.round(oldLvl(CHAPTERS[p.ch - 1].lvl)))) / 10) * 10;
 // le dernier chantier d'un chapitre rapporte des pièces, et un ruban à partir du chapitre 5
 export function chapterBonus(n, at) {
     const done = (state.story.bonus = state.story.bonus || {});

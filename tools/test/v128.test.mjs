@@ -6,7 +6,7 @@ import { QUALITY, QX } from '../../src/data/farm.js';
 
 const fresh = () => {
     G.loadGame();
-    state.level = 50;
+    state.level = 56;
     state.money = 1e8;
     state.barn.lvl = 30;
     state.quality = {};

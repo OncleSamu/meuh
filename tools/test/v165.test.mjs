@@ -9,7 +9,7 @@ import { RECIPES } from '../../src/data/machines.js';
 setStore(memStore());
 G.loadGame();
 setView({ started: false, tab: 'farm' });
-state.level = 64;
+state.level = 80;
 state.money = 1e12;
 state.tutorial.done = true;
 G.ensureGenetics();

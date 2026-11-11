@@ -13,11 +13,12 @@ import { CHAPTERS, CHAPTER_ORDER, PROJECTS, VILLAGERS } from '../../src/data/vil
 import { CHATEAU_CLASSES, PRIMEUR, TOURISM, PAIRINGS } from '../../src/data/chateau.js';
 import { RECIPES_137 } from '../../src/data/ajouts/chateau.js';
 import { SPR } from '../../src/art/index.js';
+import { lv80 } from '../../src/data/lv80.js';
 
 const ready = () => {
     G.loadGame();
     setView({ started: true, tab: 'farm' });
-    state.level = 64;
+    state.level = 80;
     state.money = 1e7;
     G.ensureCave();
     G.ensureChateau();
@@ -51,9 +52,9 @@ test('1.37 : douze recettes du château, leurs dessins et leurs anecdotes', () =
         assert.ok(SPR.has.items[id], `${id} : dessin`);
         assert.ok(CARNET[id], `${id} : anecdote`);
         assert.ok(G.dishOwner(id) >= 0, `${id} : un voisin`);
-        assert.ok(lvl >= 55 && lvl <= 60 && RECIPES[id].lvl >= 50 && RECIPES[id].lvl <= lvl, `${id} : niveau`); // 1.56 : certaines passent plus tôt
+        assert.ok(lvl >= 55 && lvl <= 60 && RECIPES[id].lvl >= lv80(50) && RECIPES[id].lvl <= 80, `${id} : niveau`); // 1.56 : certaines passent plus tôt
         assert.ok(RECIPES[id].lvl >= MACHINES[machine].reqLvl, `${id} : machine`);
-        for (const k of Object.keys(ing)) assert.ok(ITEMS[k] && lvl >= (RECIPES[k] ? RECIPES[k].lvl : 0), `${id} : ${k} avant`);
+        for (const k of Object.keys(ing)) assert.ok(ITEMS[k] && RECIPES[id].lvl >= (RECIPES[k] ? RECIPES[k].lvl : 0), `${id} : ${k} avant`);
     }
     assert.equal(CAVE_ITEMS.cognac, 'cider');
     assert.equal(CAVE_ITEMS.strawWine, 'wine');
@@ -61,7 +62,7 @@ test('1.37 : douze recettes du château, leurs dessins et leurs anecdotes', () =
 
 test('1.37 : deux chapitres à la fin de l’histoire, Octave, ce que demande un chantier est ouvert avant', () => {
     assert.deepEqual(CHAPTER_ORDER.slice(CHAPTER_ORDER.indexOf(19), CHAPTER_ORDER.indexOf(19) + 2), [19, 20]); // 1.48 et 1.49 : l'oasis vient après
-    assert.equal(CHAPTERS[18].lvl, 55);
+    assert.equal(CHAPTERS[18].lvl, lv80(55));
     assert.ok(CHAPTERS[19].lvl >= CHAPTERS[18].lvl);
     assert.ok(VILLAGERS.octave && SPR.villager('octave').includes('<svg'));
     const mine = Object.values(PROJECTS).filter(p => p.map === 'chateau');
@@ -239,7 +240,7 @@ test('1.37 : la nouvelle ferme garde réputation et médailles, pas les visiteur
     state.chateau.rep = 20;
     state.chateau.medals[3] = 2;
     state.chateau.vis = [{ id: 1, wine: 'redWine', n: 1, pair: 'cheese', until: clock.t + 1e6 }];
-    state.level = 64;
+    state.level = 80;
     state.stats.earnedRun = 1e10;
     assert.ok(G.doPrestige());
     assert.equal(state.chateau.rep, 20);

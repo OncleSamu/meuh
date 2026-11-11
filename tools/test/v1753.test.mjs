@@ -12,7 +12,7 @@ function farm() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 64;
+    state.level = 80;
 }
 
 test('1.75.3 : chaque machine a un ami qui la connaît, et Inès fait payer plus au comptoir', () => {

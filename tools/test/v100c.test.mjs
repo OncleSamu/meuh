@@ -16,7 +16,7 @@ function farm() {
     G.loadGame();
     setView({ started: true, tab: 'farm', hidden: false });
     state.tutorial.done = true;
-    state.level = 60;
+    state.level = 80;
     state.money = 1e10;
     for (const k of ['plank', 'stone', 'beam', 'tools', 'nail', 'paint', 'cloth', 'hempRope']) state.inventory[k] = 1000;
     G.buildCamp();
@@ -29,7 +29,7 @@ test('maison : il faut le camping, puis la fonder une seule fois', () => {
     setStore(memStore());
     G.loadGame();
     setView({ started: true, tab: 'farm', hidden: false });
-    state.level = 60;
+    state.level = 80;
     state.money = 1e10;
     assert.equal(G.canFoundMaison(), false);
     farm();

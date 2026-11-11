@@ -16,7 +16,7 @@ function nord() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 64;
+    state.level = 80;
     state.money = 100_000_000;
     for (const id of ['northStove', 'northStable', 'northSled']) state.projects[id] = { given: {}, done: true };
     G.ensureNord();

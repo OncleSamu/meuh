@@ -12,7 +12,7 @@ function farm() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 40;
+    state.level = 43;
     G.ensureGenetics();
 }
 // pose une culture en fleur (prête) sur la case j
@@ -58,7 +58,7 @@ test('1.67 : le miel de fleur fait partie du stock de miel ; les recettes au mie
 
 test('1.67 : au coffre, un miel de fleur garde son nom', () => {
     farm();
-    state.level = 40;
+    state.level = 43;
     state.inventory.honey = 5;
     G.addHoney('lavender', 5);
     G.ensureVault();

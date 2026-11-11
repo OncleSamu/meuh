@@ -28,7 +28,7 @@ test('l’abbaye vient après le port, l’île après l’abbaye', () => {
 });
 
 test('composer et brasser une bière à un ingrédient', () => {
-    state.level = 40;
+    state.level = 43;
     for (const n of [1, 2, 3, 4, 5, 6, 7, 8]) finishChapter(n);
     state.projects.malthouse = { given: {}, done: true };
     state.projects.brewhall = { given: {}, done: true };
@@ -120,7 +120,7 @@ test('la malterie et l’orge', () => {
 
 test('vendre la ferme garde les recettes et le livre, pas les bouteilles', () => {
     const n = Object.keys(state.brew.beers).length;
-    state.level = 64;
+    state.level = 80;
     state.stats.earnedRun = 1e6;
     assert.ok(G.doPrestige('', 'none'));
     assert.equal(Object.keys(state.brew.beers).length, n);
@@ -132,7 +132,7 @@ test('vendre la ferme garde les recettes et le livre, pas les bouteilles', () =>
 });
 
 test('1.6.2 : étoiles secrètes, rebrasser, boucle, demande et commandes de bière', () => {
-    state.level = 40;
+    state.level = 43;
     for (const p of ['malthouse', 'brewhall', 'fermenters', 'labelshop', 'barrelcellar']) state.projects[p] = { given: {}, done: true };
     G.ensureBrew();
     assert.ok(!G.BREWABLE.includes('hop'), 'le houblon n’est pas un ingrédient');

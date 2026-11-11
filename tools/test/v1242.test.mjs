@@ -15,7 +15,7 @@ const coat = o => {
 };
 const horse = () => {
     G.loadGame();
-    state.level = 50;
+    state.level = 56;
     state.money = 1e9;
     for (const id of ['plank', 'beam', 'nail', 'stone', 'paint']) state.inventory[id] = 999;
     const a = G.newAnimal('horse');

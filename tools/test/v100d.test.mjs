@@ -16,7 +16,7 @@ function farm(camp = true) {
     G.loadGame();
     setView({ started: true, tab: 'farm', hidden: false });
     state.tutorial.done = true;
-    state.level = 60;
+    state.level = 80;
     state.money = 1e10;
     for (const k of ['plank', 'stone', 'beam', 'tools']) state.inventory[k] = 1000;
     if (camp) G.buildCamp();
@@ -61,7 +61,7 @@ test('fête : le bilan est figé le soir de la fête et compte la partie', () =>
     assert.equal(b.guests, state.stats.campGuests);
     state.stats.harvested = 9999;
     assert.equal(state.fete.bilan.harvested, 1234);
-    assert.ok(b.level === 60 && b.day >= 1);
+    assert.ok(b.level === state.level && b.day >= 1);
 });
 
 test('fête : le générique réunit les habitants, les résidents et les campeurs de passage', () => {

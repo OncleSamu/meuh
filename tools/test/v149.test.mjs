@@ -13,13 +13,14 @@ import { ANIMAL_BASE, featuresOf } from '../../src/data/genetics.js';
 import { CHAPTERS, PROJECTS, VILLAGERS } from '../../src/data/village.js';
 import { TIPS } from '../../src/data/texts.js';
 import { SPR } from '../../src/art/index.js';
+import { lv80 } from '../../src/data/lv80.js';
 
 const H = 3600 * 1000;
 function oasis({ pen = true } = {}) {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 61;
+    state.level = 80;
     state.money = 100_000_000;
     state.gameTimeMinutes = 8 * 60;
     state.projects.oasisWell = { given: {}, done: true };
@@ -129,7 +130,7 @@ test('les associations de l’enclos', () => {
     oasis();
     const z = beast('zebu'),
         d = beast('dromedary');
-    state.level = 61;
+    state.level = 80;
     clock.t += 2000;
     assert.ok(G.assocMult(d) > 1);
     assert.equal(G.assocMult(z), 1);
@@ -183,7 +184,7 @@ test('la tempête de sable ensable des cases au soleil, jamais à l’ombre ; un
 });
 
 test('le chapitre 22 : trois chantiers, Yasmine, le souk paie 15 % de plus', () => {
-    assert.equal(CHAPTERS[21].lvl, 61);
+    assert.equal(CHAPTERS[21].lvl, lv80(61));
     const mine = Object.values(PROJECTS).filter(p => p.ch === 22);
     assert.equal(mine.length, 3);
     for (const p of mine) assert.ok(SPR.building(p.id, 2).length > 200, p.id);
@@ -199,7 +200,7 @@ test('contrôle : les trois bêtes ont leurs dessins, gènes, prénoms, Comice, 
     assert.equal(OASIS_BEAST_IDS.length, 3);
     for (const id of OASIS_BEAST_IDS) {
         const d = ANIMALS[id];
-        assert.ok(d && d.oasis && d.reqLvl === 61 && d.drink > 0, id);
+        assert.ok(d && d.oasis && d.reqLvl >= lv80(61) && d.reqLvl <= lv80(61) + 1 && d.drink > 0, id);
         assert.ok(ITEMS[d.prodId] && SPR.item(d.prodId).length > 300, `produit ${id}`);
         if (d.extra) assert.ok(ITEMS[d.extra], `second produit ${id}`);
         assert.ok(SPR.animal(id).length > 500, `dessin ${id}`);

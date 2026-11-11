@@ -7,7 +7,7 @@ import { CARGO } from '../../src/data/commerce.js';
 
 test('1.22.5 : un avion reparti ne revient pas si la Réception allonge le séjour', () => {
     G.loadGame();
-    state.level = 40;
+    state.level = 43;
     state.domaine = {};
     const every = CARGO.every;
     clock.t = Math.floor(clock.t / every) * every + 1000; // début de période

@@ -49,7 +49,7 @@ test('1.26 : chaque voisine vend sa spécialité, rien de plus tard que le nivea
 
 test('1.26 : offres, quantités et prix selon les cœurs', () => {
     for (let h = 0; h <= 5; h++) {
-        farm(40, h);
+        farm(43, h);
         for (const st of state.nmarket.stalls) {
             assert.ok(st.offers.length <= NMARKET.offers[h]);
             for (const o of st.offers) {
@@ -148,7 +148,7 @@ import { PROJECTS } from '../../src/data/village.js';
 import { VILLAGERS } from '../../src/data/village.js';
 
 const fullFarm = () => {
-    farm(50);
+    farm(56);
     for (const m of Object.keys(MACHINES)) if (!state.machines.some(x => x.type === m)) state.machines.push(G.newMachine(m));
     for (const p of Object.values(PROJECTS)) state.projects[p.id] = { done: true };
     for (const v of Object.keys(VILLAGERS)) state.villagers[v] = { ...(state.villagers[v] || {}), hearts: 10 };

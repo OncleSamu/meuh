@@ -17,7 +17,7 @@ function cave() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'cave' });
-    state.level = 40;
+    state.level = 43;
     G.ensureCave();
     state.cave.temp = 50;
     state.cave.hum = 50;

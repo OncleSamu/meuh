@@ -42,9 +42,9 @@ test('une ancienne partie passe aux croisements multiples', () => {
 });
 
 test('une portée de jeunes plants, deux pollinisations avec la ruche', () => {
-    state.level = 44;
+    state.level = 48;
     state.money = 1e9;
-    state.barn.lvl = 60;
+    state.barn.lvl = 80;
     G.CHAPTER_ORDER.slice(0, G.CHAPTER_ORDER.indexOf(15)).forEach(n => G.chapterProjects(n).forEach(p => (G.projState(p.id).done = true)));
     for (const id of ['pollination', 'breeding']) assert.ok(build(id), id);
     assert.equal(G.litterSize(), GENETICS.litter);
@@ -99,7 +99,7 @@ test('viser un goût : le labo propose les parents', () => {
 });
 
 test('une variété brassée garde son propre goût', () => {
-    state.level = 44;
+    state.level = 48;
     for (const p of ['malthouse', 'brewhall']) state.projects[p] = { given: {}, done: true };
     G.ensureBrew();
     const g = G.wildPlant('carrot');

@@ -65,7 +65,7 @@ test('un arbre grandit, donne ses fruits, attend quand le sol est plein, puis me
 });
 
 test('ramasser met les fruits en grange', () => {
-    state.barn.lvl = 50;
+    state.barn.lvl = 56;
     const k = state.orchard.slots.findIndex(x => x.open && !x.tree);
     G.plantTree(k, 'cherry');
     const t = state.orchard.slots[k].tree;
@@ -99,7 +99,7 @@ test('20 bêtes par pré, achat d’un pré, déménagement', () => {
 });
 
 test('vendre la ferme repart avec un pré et un verger fermé', () => {
-    state.level = 64;
+    state.level = 80;
     state.money = 1e9;
     G.doPrestige('', 'none');
     assert.equal(state.pastures.length, 1);

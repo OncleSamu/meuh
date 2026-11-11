@@ -10,7 +10,7 @@ function farm() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 60;
+    state.level = 80;
     state.money = 1e9;
     G.ensureGenetics();
 }

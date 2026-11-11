@@ -30,7 +30,9 @@ export function oldLvl(n) {
 
 // range les registres sur les 80 niveaux : machines, cultures, arbres et bêtes au début (ou le long) de leur tranche,
 // recettes réparties sur toute la tranche, jamais avant leur machine, leurs ingrédients ou leur chantier
-export function applyLevels80({ ITEMS, ANIMALS, MACHINES, RECIPES }, gateOf = () => 0) {
+// pins : les produits qu'un chantier demande ([id, ...]) ; eux et leurs ingrédients s'ouvrent au début de leur tranche,
+// pour rester ouverts avant le chapitre qui les demande
+export function applyLevels80({ ITEMS, ANIMALS, MACHINES, RECIPES }, gateOf = () => 0, pins = []) {
     const spread = (list, key) => {
         const by = {};
         for (const d of list) if (d[key] > 30) (by[d[key]] = by[d[key]] || []).push(d);
@@ -59,6 +61,23 @@ export function applyLevels80({ ITEMS, ANIMALS, MACHINES, RECIPES }, gateOf = ()
         r.lv108 = r.lvl;
         r.lvl = r.base = Math.max(lv80(r.lvl), 30 + Math.floor((k * (MAX_NEW - 29)) / recs.length));
     });
+    const animalOf = {};
+    for (const an of Object.values(ANIMALS)) for (const k of [an.prodId, an.extra]) if (k) (animalOf[k] = animalOf[k] || []).push(an);
+    const pinned = new Set();
+    const pin = id => {
+        if (pinned.has(id)) return;
+        pinned.add(id);
+        const r = RECIPES[id];
+        if (r) {
+            if (r.lv108 !== undefined) r.lvl = r.base = lv80(r.lv108);
+            Object.keys(r.ing).forEach(pin);
+        } else {
+            if (ITEMS[id] && ITEMS[id].lv108 !== undefined) ITEMS[id].reqLvl = lv80(ITEMS[id].lv108);
+            for (const an of animalOf[id] || []) if (an.lv108 !== undefined && an.reqLvl === Math.min(...animalOf[id].map(x => x.reqLvl))) an.reqLvl = lv80(an.lv108);
+        }
+    };
+    pins.forEach(pin);
+    for (const an of Object.values(ANIMALS)) for (const k of [an.prodId, an.extra]) if (k) prodBy[k] = Math.min(prodBy[k] === undefined || pinned.has(k) ? 999 : prodBy[k], an.reqLvl);
     // jamais avant la machine, le chantier ou un ingrédient (plusieurs passes : un ingrédient peut lui-même monter)
     const lvOf = id => (RECIPES[id] ? RECIPES[id].lvl : ITEMS[id] ? Math.max(ITEMS[id].reqLvl || 0, prodBy[id] || 0, gateOf(ITEMS[id])) : 0);
     for (let pass = 0; pass < 6; pass++) {

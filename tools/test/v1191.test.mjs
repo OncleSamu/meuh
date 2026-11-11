@@ -161,7 +161,7 @@ test('Domaine : fermé avant le niveau 25, achat, effets cumulés et séjours bo
 
 test('Domaine : annexes, cargo, quai et Suite d’Armand', () => {
     fresh();
-    state.level = 40;
+    state.level = 43;
     state.money = 1e10;
     for (const k of ['beam', 'plank', 'tools', 'nail', 'paint']) state.inventory[k] = 999;
     // annexes : une cuve, un siège, une étagère, une nasse, une place de sélection

@@ -14,12 +14,13 @@ import { STORY_MAPS } from '../../src/data/meta.js';
 import { GUIDE_PAGES } from '../../src/data/guide.js';
 import { SPR } from '../../src/art/index.js';
 import { MAP_BG } from '../../src/art/maps.js';
+import { lv80 } from '../../src/data/lv80.js';
 
 function nord({ open = true } = {}) {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 64;
+    state.level = 80;
     state.money = 10_000_000;
     state.gameTimeMinutes = 12 * 60; // midi : pas de gel
     state.inventory.stone = 100;
@@ -137,7 +138,7 @@ test('douze plantes branchées : dessin, goûts, nom, niveau', () => {
     for (const id of NORD_IDS) {
         const d = ITEMS[id];
         assert.ok(d && d.nord && d.island && d.needProject === 'northStove', id);
-        assert.ok(d.reqLvl >= 62 && d.reqLvl <= 64, id);
+        assert.ok(d.reqLvl >= lv80(62) && d.reqLvl <= 80, id);
         assert.ok(FLAVORS[id], `${id} : goûts`);
         assert.ok(SPR.item(id).length > 300, `${id} : dessin`);
     }

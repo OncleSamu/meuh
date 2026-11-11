@@ -7,7 +7,7 @@ import { RECIPES, MACHINES } from '../../src/data/machines.js';
 import { PROJECTS, VILLAGERS } from '../../src/data/village.js';
 import { clock } from './helpers.mjs';
 
-const farm = (lvl = 50, hearts = 0, equip = true) => {
+const farm = (lvl = 56, hearts = 0, equip = true) => {
     G.loadGame();
     state.level = lvl;
     state.money = 1e8;
@@ -31,7 +31,7 @@ const farm = (lvl = 50, hearts = 0, equip = true) => {
 
 test('1.27 : un plat de 0 à 2 cœurs, deux ou trois plats différents de 3 à 5 cœurs', () => {
     for (let h = 0; h <= 5; h++) {
-        farm(50, h);
+        farm(56, h);
         const seen = new Set();
         for (let n = 0; n < 80; n++) {
             const r = G.makeNeighborReq(1);
@@ -53,7 +53,7 @@ test('1.27 : un plat de 0 à 2 cœurs, deux ou trois plats différents de 3 à 5
 });
 
 test('1.27 : la qualité n’est exigée que si la ferme a déjà su la faire', () => {
-    farm(50, 5);
+    farm(56, 5);
     for (let n = 0; n < 150; n++)
         assert.ok(
             G.makeNeighborReq(1).items.every(x => !x.q),
@@ -84,7 +84,7 @@ test('1.27 : la qualité n’est exigée que si la ferme a déjà su la faire', 
 });
 
 test('1.27 : récompense = 1,6 × la valeur (qualité comprise), +15 % par plat en plus', () => {
-    farm(50, 5);
+    farm(56, 5);
     for (const id of Object.keys(RECIPES)) if (G.dishOwner(id) === 2) state.qmade[id] = { s: 3, g: 3 };
     for (let n = 0; n < 60; n++) {
         const r = G.makeNeighborReq(2);
@@ -95,7 +95,7 @@ test('1.27 : récompense = 1,6 × la valeur (qualité comprise), +15 % par plat 
 });
 
 test('1.27 : livrer une demande avec qualité prend l’argent avant l’or et rend les pièces', () => {
-    farm(50, 3);
+    farm(56, 3);
     const [a, b] = Object.keys(RECIPES).filter(id => G.dishOwner(id) === 3 && G.questPool().some(i => i.id === id));
     state.neighbors[3].req = {
         items: [
@@ -130,7 +130,7 @@ test('1.27 : la commande spéciale arrive au niveau 12, une par semaine, avec un
     farm(11);
     G.specialTick();
     assert.equal(G.specialOf(), null);
-    farm(50);
+    farm(56);
     assert.ok(G.specialTick());
     const sp = G.specialOf();
     assert.ok(sp && !sp.done);
@@ -146,7 +146,7 @@ test('1.27 : la commande spéciale arrive au niveau 12, une par semaine, avec un
 });
 
 test('1.27 : livrer la commande spéciale (récompenses, amitié, plat noté), puis une autre la semaine suivante', () => {
-    farm(50);
+    farm(56);
     G.specialTick();
     const sp = G.specialOf();
     const [x] = sp.items;
@@ -175,7 +175,7 @@ test('1.27 : livrer la commande spéciale (récompenses, amitié, plat noté), p
 });
 
 test('1.27 : la commande spéciale tourne entre les quatre voisins et se rabat sur le moins livré', () => {
-    farm(50);
+    farm(56);
     const owners = new Set();
     for (let w = 0; w < 4; w++) {
         G.specialTick();
@@ -196,7 +196,7 @@ test('1.27 : la commande spéciale tourne entre les quatre voisins et se rabat s
 });
 
 test('1.27 : sans ateliers, pas de commande spéciale ; elle arrive dès qu’un plat est possible', () => {
-    farm(50, 0, false);
+    farm(56, 0, false);
     state.machines = [];
     assert.equal(G.specialTick(), false);
     assert.equal(G.specialOf(), null);

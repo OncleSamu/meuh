@@ -7,7 +7,7 @@ import { GALOP, SAUT } from '../../src/data/haras.js';
 
 const horse = () => {
     G.loadGame();
-    state.level = 45;
+    state.level = 49;
     state.money = 1e9;
     for (const id of ['plank', 'beam', 'nail', 'stone', 'paint']) state.inventory[id] = 999;
     const a = G.newAnimal('horse');

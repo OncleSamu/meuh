@@ -7,7 +7,7 @@ import { SHOW, STUD, DRESSAGE } from '../../src/data/haras.js';
 
 const stable = (n = 4, apt = 60) => {
     G.loadGame();
-    state.level = 50;
+    state.level = 56;
     state.money = 1e9;
     for (const id of ['plank', 'beam', 'nail', 'stone', 'paint']) state.inventory[id] = 999;
     state.animals = [];

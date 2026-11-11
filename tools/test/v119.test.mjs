@@ -6,7 +6,7 @@ import { MASTERY_EXTRA, MASTERY_TIERS } from '../../src/data/progress.js';
 
 test('maîtrise étendue : platine et diamant, la demande baisse moins et reste plus haute', () => {
     G.loadGame();
-    state.level = 50;
+    state.level = 56;
     const id = 'appleJuice' in state.inventory ? 'appleJuice' : 'juice';
     const t = MASTERY_TIERS[G.masteryKind(id)],
         x = MASTERY_EXTRA[G.masteryKind(id)];

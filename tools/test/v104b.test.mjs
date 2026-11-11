@@ -16,7 +16,7 @@ function farm() {
     G.loadGame();
     setView({ started: true, tab: 'farm', hidden: false });
     state.tutorial.done = true;
-    state.level = 62;
+    state.level = 80;
     state.money = 1e10;
     for (const k of ['plank', 'stone', 'beam', 'tools', 'nail', 'paint', 'cloth', 'hempRope']) state.inventory[k] = 1000;
     G.buildCamp();

@@ -11,7 +11,7 @@ function farm() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 60;
+    state.level = 80;
     state.money = 1e9;
     G.ensureGenetics();
     state.genetics.bestFirst = true;
@@ -129,7 +129,7 @@ test('1.62 : verger et contrées : Maturation lente et Chance comptent', () => {
 
 test('1.62 : un vin de cépage : la variété choisie à la cuverie, son rang, sa cuvée, sa cave et son château', () => {
     farm();
-    state.level = 64;
+    state.level = 80;
     state.projects.chai = { given: {}, done: true };
     makeVar('vR', 'grape', 6);
     state.inventory.grape = 0;
@@ -190,7 +190,7 @@ test('1.62 : vendre ses bouteilles de cépage : les plus basses d’abord', () =
 // ---------------- 1.63 : le coffre et les variétés, les fromages de race ----------------
 test('1.63 : une variété au coffre garde son nom et son rang, et revient telle quelle', () => {
     farm();
-    state.level = 64;
+    state.level = 80;
     makeVar('vA', 'carrot');
     state.inventory.carrot = 0;
     state.quality.carrot = { s: 0, g: 0, p: 0, d: 0 };
@@ -216,7 +216,7 @@ test('1.63 : une variété au coffre garde son nom et son rang, et revient telle
 
 test('1.63 : le lait d’une race fixée garde sa race, et fait un fromage de race', () => {
     farm();
-    state.level = 64;
+    state.level = 80;
     const G2 = state.genetics;
     const g = G.wildAnimal('cow');
     for (const t of ['rich', 'soft', 'aroma'])

@@ -273,12 +273,12 @@ export const TIPS = {
     lvl61: {
         icon: ['animal', 'dromedary'],
         title: 'Le souk est ouvert',
-        text: 'Niveau 61 : les bêtes du désert sont à vous, et la caravane peut partir au souk. Là-bas, on marchande avant de payer, même le sel. Ma tante Simone achetait son pain en discutant vingt minutes ; le boulanger disait que ça faisait partie du prix.',
+        text: 'Niveau 73 : les bêtes du désert sont à vous, et la caravane peut partir au souk. Là-bas, on marchande avant de payer, même le sel. Ma tante Simone achetait son pain en discutant vingt minutes ; le boulanger disait que ça faisait partie du prix.',
     },
     lvl64: {
         icon: ['ui', 'star'],
         title: 'Le dernier niveau',
-        text: 'Niveau 64, ma petite fleur ! Plus rien à gravir : le prestige et les grands défis vous attendent, et chaque point d’expérience en plus devient une étoile de renommée. Ton grand-père aurait dit qu’on est au sommet de la meule de foin. Il en tombait chaque année.',
+        text: 'Niveau 80, ma petite fleur ! Plus rien à gravir : le prestige et les grands défis vous attendent, et chaque point d’expérience en plus devient une étoile de renommée. Ton grand-père aurait dit qu’on est au sommet de la meule de foin. Il en tombait chaque année.',
     },
     aurora: {
         icon: ['ui', 'noAurore'],

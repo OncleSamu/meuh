@@ -7,7 +7,7 @@ import { PROJECTS, CHAPTERS } from '../../src/data/village.js';
 
 const start = () => {
     G.loadGame();
-    state.level = 64;
+    state.level = 80;
     state.money = 0;
 };
 

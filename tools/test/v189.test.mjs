@@ -10,7 +10,7 @@ function farm() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 40;
+    state.level = 43;
 }
 
 test('1.89 : les ruches du champ ne font plus de miel quand les abeilles se reposent', () => {

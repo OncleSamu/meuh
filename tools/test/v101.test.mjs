@@ -14,7 +14,7 @@ test('1.101 : pas deux commandes ouvertes pour le même villageois', () => {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 40;
+    state.level = 43;
     for (let k = 0; k < 40; k++) {
         const qs = [];
         for (let i = 0; i < 6; i++) {

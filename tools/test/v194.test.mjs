@@ -23,7 +23,7 @@ function farm() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 64;
+    state.level = 80;
 }
 
 test('1.94 : chaque défi a un villageois, une décoration et un dessin', () => {

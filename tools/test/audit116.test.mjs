@@ -26,7 +26,7 @@ test('aucune recette ne vaut moins que ses ingrédients', () => {
 
 test('Débiter les morts : un appui libère toutes les places', () => {
     G.loadGame();
-    state.level = 50;
+    state.level = 56;
     state.barn.lvl = 12;
     G.ensureOrchard();
     state.orchard.slots.forEach(x => (x.tree = null));

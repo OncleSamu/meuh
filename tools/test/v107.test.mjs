@@ -9,7 +9,7 @@ import * as G from '../../src/systems/index.js';
 import { DOMAINE, DOMAINE_IDS, DOMAINE_COINS, DOMAINE_MATS, WORKS, WORK_IDS, WORKS_COINS, WORKS_LVL } from '../../src/data/domaine.js';
 
 let T = Date.UTC(2026, 10, 10, 12);
-function farm(lvl = 60) {
+function farm(lvl = 80) {
     T = Date.UTC(2026, 10, 10, 12);
     setClock(() => T);
     setStore(memStore());

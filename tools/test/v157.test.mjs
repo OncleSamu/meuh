@@ -20,7 +20,7 @@ function nordNight() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 64;
+    state.level = 80;
     state.money = 100_000_000;
     for (const id of ['northStove', 'northStable', 'northSled']) state.projects[id] = { given: {}, done: true };
     G.ensureNord();
@@ -43,14 +43,17 @@ test('1.57 : la première aurore va dans l’album, une seule fois', () => {
     assert.equal(state.album.filter(p => p.id === 'noAurore').length, 1, 'pas de seconde photo');
 });
 
-test('1.57 : un mot de Mamie aux niveaux 61 et 64', () => {
+test('1.57 : un mot de Mamie aux niveaux 73 et 80 (61 et 64 avant la 1.109)', () => {
     assert.ok(TIPS.lvl61 && TIPS.lvl64);
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
     state.tutorial.done = true;
-    state.level = 60;
+    state.level = 72;
     state.xp = 0;
-    G.addXp(10_000_000);
+    for (let k = 0; k < 400 && state.level < 80; k++) {
+        state.lvGoals = { lvl: state.level, list: [] };
+        G.addXp(200_000);
+    }
     assert.ok(state.tips.lvl61 && state.tips.lvl64);
 });

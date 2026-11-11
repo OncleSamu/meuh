@@ -33,7 +33,7 @@ import { tip } from './tips.js';
 import { MAMIE_LVL } from './mamie.js';
 import { ensureQuests } from './orders.js';
 import { STALL_LEVELS } from './stall.js';
-import { lv80 } from '../data/lv80.js';
+import { lv80, oldLvl } from '../data/lv80.js';
 
 // ---------------- argent ----------------
 export function earn(amount, at) {
@@ -463,7 +463,7 @@ const UNLOCK_GO = [
     ['Maison de la ferme', 'sheet:house'],
     ['Commis de ferme', 'sheet:house'],
 ];
-const LEVEL_TIPS = { 61: 'lvl61', 64: 'lvl64' };
+const LEVEL_TIPS = { [lv80(61)]: 'lvl61', [MAX_LEVEL]: 'lvl64' }; // 1.109 : 73 et 80
 const plain = t => String(t).replace(/[\u00a0\u202f]/g, ' ');
 export function unlockGo(u) {
     if (u.go) return u.go;
@@ -554,8 +554,9 @@ export function achReward(tier, lvl = state.level) {
     const base = ACH_REWARDS[tier],
         k = ACH_SCALE[tier];
     return {
-        coins: Math.max(base.coins, Math.round((k.coins * lvl * lvl) / 100) * 100),
-        xp: Math.max(base.xp, Math.round((k.xp * getXpReq(Math.min(lvl, MAX_LEVEL - 1))) / 10) * 10),
+        // 1.109 : les récompenses gardent l'ancienne échelle des niveaux
+        coins: Math.max(base.coins, Math.round((k.coins * oldLvl(lvl) * oldLvl(lvl)) / 100) * 100),
+        xp: Math.max(base.xp, Math.round((k.xp * getXpReq64(Math.min(Math.round(oldLvl(lvl)), MAX_LEVEL_64 - 1))) / 10) * 10),
         ruban: k.ruban,
     };
 }

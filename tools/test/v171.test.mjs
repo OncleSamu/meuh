@@ -27,7 +27,7 @@ test('1.71 : la récompense suit le niveau, jamais moins qu’avant', () => {
         assert.ok(G.achReward(t).coins >= ACH_REWARDS[t].coins);
         assert.ok(G.achReward(t).xp >= ACH_REWARDS[t].xp);
     }
-    farm(64);
+    farm(80);
     assert.ok(G.achReward(2).coins > 2e6);
     assert.equal(G.achReward(2).ruban, 2);
     const r0 = state.prestige.rubans;
@@ -40,7 +40,7 @@ test('1.71 : la récompense suit le niveau, jamais moins qu’avant', () => {
 });
 
 test('1.71 : les valeurs calculées (produits adorés, miels, contrées)', () => {
-    farm(64);
+    farm(80);
     G.ensureVillagers();
     for (const v of ['gaston', 'lucie', 'paul']) state.villagers[v].love = true;
     const a = ACHIEVEMENTS.find(x => x.id === 'lovesFound');

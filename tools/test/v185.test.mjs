@@ -88,9 +88,9 @@ test('1.85 : la main-d’œuvre : 50 pièces, +10 tous les 5 niveaux ; sans elle
     assert.equal(G.planFee(), 50);
     state.level = 32;
     assert.equal(G.planFee(), 50);
-    state.level = 33;
+    state.level = 34;
     assert.equal(G.planFee(), 60);
-    state.level = 43;
+    state.level = 47;
     assert.equal(G.planFee(), 80);
     state.level = 30;
     sow(0, 'carrot');

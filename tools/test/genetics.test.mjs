@@ -30,9 +30,9 @@ test('une vieille ferme reçoit des génomes, et la station s’ouvre au niveau 
     G.loadGame();
     setView({ started: true, tab: 'farm' });
     assert.ok(state.animals.every(a => a.uid && a.g && a.g.t.rich));
-    state.level = 41;
+    state.level = 44;
     state.money = 1e9;
-    state.barn.lvl = 60;
+    state.barn.lvl = 80;
     // 1.4 : la station suit l'île dans l'histoire ; les chapitres d'avant sont finis
     G.CHAPTER_ORDER.slice(0, G.CHAPTER_ORDER.indexOf(15)).forEach(n => G.chapterProjects(n).forEach(p => (G.projState(p.id).done = true)));
     assert.ok(G.chapterOpen(15));
@@ -123,7 +123,7 @@ test('élevage : un petit naît avec les gènes de ses parents ; une race se fix
 });
 
 test('le grand hall du Comice (l’ancien Salon) et la commande du chef', () => {
-    state.level = 44;
+    state.level = 48;
     for (const id of ['seedbank', 'selectHive', 'salonHall']) assert.ok(build(id), id);
     tick(12);
     // 1.45 : plus de Salon tous les deux jours ; le Comice prend le relais, avec le potager quand on a des variétés
@@ -135,7 +135,7 @@ test('le grand hall du Comice (l’ancien Salon) et la commande du chef', () => 
 
 test('vendre la ferme garde les créations', () => {
     const races = Object.keys(state.genetics.races).length;
-    state.level = 50;
+    state.level = 56;
     G.doPrestige('', 'none');
     assert.equal(Object.keys(state.genetics.races).length, races);
     tick(5);

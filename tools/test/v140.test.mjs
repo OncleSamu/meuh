@@ -12,7 +12,7 @@ const DAY = 864e5;
 const start = () => {
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 64;
+    state.level = 80;
     state.money = 5e9;
     state.cup = {};
     G.ensureCup();
@@ -115,7 +115,7 @@ test('la statue dorée : tous les défis en or', () => {
 
 test('la mine : chaque profondeur garde ses pierres quand on change', () => {
     G.loadGame();
-    state.level = 64;
+    state.level = 80;
     G.ensureNature();
     const n = G.ensureNat();
     n.gear.lamp = n.gear.cart = true;

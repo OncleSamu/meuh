@@ -12,7 +12,7 @@ import { CARGO } from '../../src/data/commerce.js';
 import { BALANCE } from '../../src/data/progress.js';
 
 let T = Date.UTC(2026, 10, 10, 12);
-function farm(lvl = 60) {
+function farm(lvl = 80) {
     T = Date.UTC(2026, 10, 10, 12);
     setClock(() => T);
     setStore(memStore());
@@ -34,13 +34,13 @@ const train = () => {
 test('wagon : la valeur demandée suit la production (rien ne change avant le niveau 15)', () => {
     farm(10);
     assert.equal(G.wagonTarget(), 60 + scaleLvl() * 30);
-    farm(60);
-    assert.ok(G.wagonTarget() > 25000 && G.wagonTarget() < 35000);
+    farm(80);
+    assert.ok(G.wagonTarget() > 35000 && G.wagonTarget() < 50000);
     assert.equal(G.wagonMax(), 60);
     state.level = 20;
     assert.equal(G.wagonMax(), 20);
     let prev = 0;
-    for (let L = 1; L <= 64; L++) {
+    for (let L = 1; L <= 80; L++) {
         state.level = L;
         assert.ok(G.wagonTarget() >= prev, `niveau ${L}`);
         prev = G.wagonTarget();
@@ -48,7 +48,7 @@ test('wagon : la valeur demandée suit la production (rien ne change avant le ni
 });
 
 test('train : au niveau 60 un train plein paie des centaines de milliers de pièces, l’expérience reste celle d’avant', () => {
-    farm(60);
+    farm(80);
     let gold = 0,
         xp = 0,
         n = 0;
@@ -68,7 +68,7 @@ test('train : au niveau 60 un train plein paie des centaines de milliers de piè
 });
 
 test('renom : un train plein donne 2 points, +1 % par point au marché, 12 au plus', () => {
-    farm(40);
+    farm(43);
     const id = Object.keys(ITEMS).find(k => ITEMS[k].sell > 5000);
     const p0 = G.sellPrice(id);
     assert.equal(G.renomPts(), 0);
@@ -81,7 +81,7 @@ test('renom : un train plein donne 2 points, +1 % par point au marché, 12 au pl
 });
 
 test('renom : il baisse d’un point toutes les 4 heures, même hors ligne, et un gain ne remet pas l’horloge à zéro', () => {
-    farm(40);
+    farm(43);
     G.addRenom(3);
     T += G.RENOM.decay - 1000;
     assert.equal(G.renomPts(), 3);
@@ -108,6 +108,6 @@ test('renom : le départ d’un train plein le fait monter', () => {
 });
 
 test('avion-cargo : une soute vaut au moins trois wagons', () => {
-    farm(60);
+    farm(80);
     assert.ok(3 * G.wagonTarget() > CARGO.value(scaleLvl()));
 });

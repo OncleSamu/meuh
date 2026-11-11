@@ -7,7 +7,7 @@ import { FORM, STABLE, RANDO } from '../../src/data/haras.js';
 
 const setup = (n = 1) => {
     G.loadGame();
-    state.level = 45;
+    state.level = 49;
     state.money = 1e9;
     for (const id of ['plank', 'beam', 'nail', 'stone', 'paint', 'carrot']) state.inventory[id] = 999;
     state.animals = [];
@@ -24,9 +24,9 @@ const setup = (n = 1) => {
 
 test('1.23 : les écuries se construisent au niveau 45 et s’agrandissent trois fois', () => {
     setup();
-    state.level = 44;
+    state.level = 48;
     assert.equal(G.stableCanUp(), false);
-    state.level = 45;
+    state.level = 49;
     assert.ok(G.upgradeStable());
     assert.equal(G.boxCount(), 4);
     G.upgradeStable();
@@ -162,7 +162,7 @@ test('1.23 : la randonnée dure 2 heures et rapporte des trouvailles et de l’e
 
 test('1.23 : un vieux cheval a la docilité et la détente d’un cheval sauvage', () => {
     G.loadGame();
-    state.level = 45;
+    state.level = 49;
     const a = G.newAnimal('horse');
     state.animals = [a];
     a.g.t.docile = [
