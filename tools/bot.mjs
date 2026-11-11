@@ -75,6 +75,13 @@ const need = () => {
     if (state.boat.status === 'here') state.boat.items.forEach(x => add(x.id, x.qty));
     if (state.incident && state.incident.type === 'express') state.incident.items.forEach(x => add(x.id, x.qty));
     Object.values(PROJECTS).forEach(p => G.projectOpen(p.id) && Object.keys(p.need).forEach(id => add(id, G.projectLeft(p.id, id))));
+    // 1.109 : les ingrédients d'une recette demandée par un objectif de niveau (sinon le robot ne plante jamais la canne à sucre de la cassonade)
+    const walk = (id, q, depth = 0) => {
+        add(id, q);
+        const r = RECIPES[id];
+        if (r && depth < 3 && (state.inventory[id] || 0) < q) for (const [k, x] of Object.entries(r.ing)) walk(k, x * q, depth + 1);
+    };
+    for (const g of G.levelGoals()) if (g.kind === 'make' && !G.goalDone(g)) walk(g.id, g.n || 1);
     // 1.109 : les matériaux d'une machine demandée par un objectif de niveau (sinon le robot les vend et reste bloqué des heures)
     for (const g of G.levelGoals()) if (g.kind === 'machine' && !G.goalDone(g)) for (const [k, q] of Object.entries(G.matCost('machine', g.id) || {})) add(k, q);
     const ct = state.contract;
@@ -625,7 +632,17 @@ function abbey() {
 }
 
 // 1.105 : faire les objectifs du niveau qui ne se font pas tout seuls (machine, bête, arbre)
+// 1.109 : le robot ne sait pas cultiver l'oasis ni le Grand Nord ; un objectif qui en demande un produit est tenu pour fait
+// (un joueur, lui, y a ses champs), sinon le robot reste bloqué des heures et la mesure ne veut plus rien dire
+const FAR_PROD = new Set(Object.values(ANIMALS).filter(a => a.oasis || a.nord).flatMap(a => [a.prodId, a.extra].filter(Boolean)));
+const farAway = (id, depth = 0) => {
+    const d = ITEMS[id];
+    if (d && (d.oasis || d.nord || FAR_PROD.has(id))) return true;
+    const r = RECIPES[id];
+    return !!r && depth < 3 && Object.keys(r.ing).some(k => farAway(k, depth + 1));
+};
 function goals() {
+    if (state.lvGoals && state.lvGoals.list.some(g => g.kind === 'make' && farAway(g.id))) state.lvGoals.list = state.lvGoals.list.filter(g => !(g.kind === 'make' && farAway(g.id)));
     G.levelGoals().forEach(g => {
         if (G.goalDone(g)) return;
         if (g.kind === 'machine' && state.money > MACHINES[g.id].cost && G.hasMats(G.matCost('machine', g.id))) G.buy('machine', g.id, 1);
