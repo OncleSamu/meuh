@@ -75,6 +75,8 @@ const need = () => {
     if (state.boat.status === 'here') state.boat.items.forEach(x => add(x.id, x.qty));
     if (state.incident && state.incident.type === 'express') state.incident.items.forEach(x => add(x.id, x.qty));
     Object.values(PROJECTS).forEach(p => G.projectOpen(p.id) && Object.keys(p.need).forEach(id => add(id, G.projectLeft(p.id, id))));
+    // 1.109 : les matériaux d'une machine demandée par un objectif de niveau (sinon le robot les vend et reste bloqué des heures)
+    for (const g of G.levelGoals()) if (g.kind === 'machine' && !G.goalDone(g)) for (const [k, q] of Object.entries(G.matCost('machine', g.id) || {})) add(k, q);
     const ct = state.contract;
     if (ct && !ct.done) add(ct.item, ct.qty - ct.given);
     Object.keys(STORIES).forEach(v => G.villagerStoryOpen(v) && Object.keys(G.storyNeed(v)).forEach(k => add(k, G.storyLeftOf(v, k))));

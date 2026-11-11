@@ -12,7 +12,7 @@ setClock(() => now);
 setStore(null);
 G.loadGame();
 setView({ started: false, tab: 'farm' });
-state.level = 64;
+state.level = 80;
 state.money = 50_000_000;
 state.barn.lvl = 50;
 for (const p of Object.values(PROJECTS)) state.projects[p.id] = { given: {}, done: true };

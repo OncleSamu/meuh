@@ -51,15 +51,15 @@ export function applyLevels80({ ITEMS, ANIMALS, MACHINES, RECIPES }, gateOf = ()
     spread(Object.values(ANIMALS), 'reqLvl');
     const prodBy = {};
     for (const a of Object.values(ANIMALS)) for (const k of [a.prodId, a.extra]) if (k) prodBy[k] = Math.min(prodBy[k] ?? 999, a.reqLvl);
-    // les recettes : réparties également sur les 51 niveaux, dans l'ordre d'avant, jamais avant le début de leur tranche
+    // les recettes d'après le niveau 30 : réparties également sur les 50 niveaux, dans l'ordre d'avant, jamais avant le début de leur tranche
     const recs = Object.values(RECIPES)
-        .filter(r => r.lvl >= 30)
+        .filter(r => r.lvl > 30)
         .map((r, k) => [r, k])
         .sort((x, y) => x[0].lvl - y[0].lvl || x[1] - y[1])
         .map(x => x[0]);
     recs.forEach((r, k) => {
         r.lv108 = r.lvl;
-        r.lvl = r.base = Math.max(lv80(r.lvl), 30 + Math.floor((k * (MAX_NEW - 29)) / recs.length));
+        r.lvl = r.base = Math.max(lv80(r.lvl), 31 + Math.floor((k * (MAX_NEW - 30)) / recs.length));
     });
     const animalOf = {};
     for (const an of Object.values(ANIMALS)) for (const k of [an.prodId, an.extra]) if (k) (animalOf[k] = animalOf[k] || []).push(an);
@@ -93,7 +93,7 @@ export function applyLevels80({ ITEMS, ANIMALS, MACHINES, RECIPES }, gateOf = ()
         if (!moved) break;
     }
     // une machine s'ouvre avec au moins deux recettes à son niveau, quand leurs ingrédients le permettent
-    for (const m of Object.values(MACHINES).filter(x => x.reqLvl >= 30)) {
+    for (const m of Object.values(MACHINES).filter(x => x.reqLvl > 30)) {
         const mine = recs.filter(r => r.machine === m.id).sort((x, y) => x.lvl - y.lvl);
         const at = Math.max(m.reqLvl, gateOf(m));
         let have = mine.filter(r => r.lvl <= at).length;

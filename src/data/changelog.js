@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.109",
+  "title": "80 niveaux",
+  "date": "11 novembre 2026",
+  "items": [
+   "Le jeu passe de 64 à 80 niveaux : les nouveautés des niveaux 30 à 64 sont étirées sur 30 à 80. Rien ne change jusqu'au niveau 30",
+   "Environ 13 nouvelles recettes par niveau au lieu de 17 à 27, et une machine, une bête ou une plante tous les un à trois niveaux",
+   "Les grandes étapes se déplacent : île au niveau 40, hydromel 45, haras et dépendances 49, alpage 56, château 63, camping 66, Maison 68, oasis 70, Grand Nord 75",
+   "L'expérience demandée repart du niveau 29 et monte régulièrement jusqu'au 80 ; les niveaux passent plus souvent",
+   "Les prix, les commandes, le train et les récompenses gardent leur réglage d'avant",
+   "Une partie au-dessus du niveau 30 arrive au début de sa nouvelle tranche et garde tout ce qu'elle avait ouvert"
+  ]
+ },
+ {
   "v": "1.108",
   "title": "Trier les ingrédients de la brasserie",
   "date": "10 novembre 2026",
