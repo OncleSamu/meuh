@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.116",
+  "title": "Audit des dernières nouveautés",
+  "date": "12 novembre 2026",
+  "items": [
+   "Audit de tout ce qui est arrivé depuis la 1.105 (80 niveaux, domaine, renom, métiers, page d'accueil, boutures, serre) : 16 écrans et plus de 300 boutons essayés, aucune erreur",
+   "Corrigé : les 57 boissons du comptoir (thés, cafés, chocolats) comptent pour le vigneron, et non plus pour le cuisinier ; elles profitent de ses bonus et de ses leçons"
+  ]
+ },
+ {
   "v": "1.115.1",
   "title": "L'icône du métier centrée",
   "date": "12 novembre 2026",

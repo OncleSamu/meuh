@@ -94,15 +94,15 @@ export const METIERS = {
         rate: 0.02,
         lessons: [
             [L('c:fruit', 20, 'Ramasser 20 fruits'), L('s:crafted', 40, 'Préparer 40 produits à l’atelier')],
-            [L('c:drink', 15, 'Presser ou distiller 15 boissons'), L('s:crafted', 150, 'Préparer 150 produits à l’atelier')],
-            [L('c:drink', 60, 'Presser ou distiller 60 boissons'), L('s:caveLots', 3, 'Vendre 3 lots de la cave')],
-            [L('c:drink', 150, 'Presser ou distiller 150 boissons'), L('s:cuvees', 3, 'Vendre 3 cuvées baptisées')],
-            [L('c:drink', 300, 'Presser ou distiller 300 boissons'), L('s:beers', 20, 'Brasser 20 bouteilles de bière')],
-            [L('c:drink', 600, 'Presser ou distiller 600 boissons'), L('s:caveLots', 25, 'Vendre 25 lots de la cave')],
-            [L('c:drink', 1000, 'Presser ou distiller 1 000 boissons'), L('s:beerOrders', 5, 'Livrer 5 commandes de bière')],
-            [L('c:drink', 1600, 'Presser ou distiller 1 600 boissons'), L('s:meads', 20, 'Brasser 20 bouteilles d’hydromel')],
-            [L('c:drink', 2500, 'Presser ou distiller 2 500 boissons'), L('s:auctionSold', 3, 'Réussir 3 ventes aux enchères')],
-            [L('c:drink', 4000, 'Presser ou distiller 4 000 boissons'), L('s:drinks', 200, 'Servir 200 boissons au comptoir')],
+            [L('c:drink', 15, 'Préparer 15 boissons'), L('s:crafted', 150, 'Préparer 150 produits à l’atelier')],
+            [L('c:drink', 60, 'Préparer 60 boissons'), L('s:caveLots', 3, 'Vendre 3 lots de la cave')],
+            [L('c:drink', 150, 'Préparer 150 boissons'), L('s:cuvees', 3, 'Vendre 3 cuvées baptisées')],
+            [L('c:drink', 300, 'Préparer 300 boissons'), L('s:beers', 20, 'Brasser 20 bouteilles de bière')],
+            [L('c:drink', 600, 'Préparer 600 boissons'), L('s:caveLots', 25, 'Vendre 25 lots de la cave')],
+            [L('c:drink', 1000, 'Préparer 1 000 boissons'), L('s:beerOrders', 5, 'Livrer 5 commandes de bière')],
+            [L('c:drink', 1600, 'Préparer 1 600 boissons'), L('s:meads', 20, 'Brasser 20 bouteilles d’hydromel')],
+            [L('c:drink', 2500, 'Préparer 2 500 boissons'), L('s:auctionSold', 3, 'Réussir 3 ventes aux enchères')],
+            [L('c:drink', 4000, 'Préparer 4 000 boissons'), L('s:drinks', 200, 'Servir 200 boissons au comptoir')],
         ],
     },
     pecheur: {
@@ -128,7 +128,8 @@ export const METIERS = {
 };
 export const METIER_IDS = Object.keys(METIERS);
 // les machines du vigneron (leurs produits sont ses « boissons »)
-export const DRINK_MACHINES = ['press', 'brewery', 'malthouse', 'still', 'juiceBar', 'rumDistillery', 'winery'];
+// 1.116 : avec le comptoir (thés, cafés, chocolats), qui comptaient par erreur pour le cuisinier
+export const DRINK_MACHINES = ['press', 'brewery', 'malthouse', 'still', 'juiceBar', 'rumDistillery', 'winery', 'counter'];
 // les bonus : le prix des produits du métier monte à chaque rang ; trois rangs marquants
 export const METIER_FX = {
     master: 0.1, // rang 10 : encore 10 % de prix sur les produits du métier

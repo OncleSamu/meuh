@@ -233,3 +233,10 @@ test('1.115 : le produit signature (rang 5) se vend plus cher, se change une foi
     const c = G.metierClient();
     if (G.questPool().some(i => i.id === 'carrot')) assert.ok(c.items.some(x => x.id === 'carrot'));
 });
+
+test('1.116 : les boissons du comptoir comptent pour le vigneron', async () => {
+    const { RECIPES } = await import('../../src/data/machines.js');
+    const drinks = Object.values(RECIPES).filter(r => r.machine === 'counter');
+    assert.ok(drinks.length > 20);
+    for (const r of drinks) assert.equal(G.metierOf(r.id), 'vigneron', r.id);
+});
