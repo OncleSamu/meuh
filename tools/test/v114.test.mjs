@@ -240,3 +240,38 @@ test('1.116 : les boissons du comptoir comptent pour le vigneron', async () => {
     assert.ok(drinks.length > 20);
     for (const r of drinks) assert.equal(G.metierOf(r.id), 'vigneron', r.id);
 });
+
+test('1.117 : le carnet de la brasserie et le meilleur accord avec le stock', () => {
+    fresh(60);
+    state.projects.abbey = { done: true };
+    G.ensureBrew();
+    const B = state.brew;
+    B.beers.b1 = { id: 'b1', name: 'Blonde du verger', malt: 'maltBlond', hop: 1, ings: [['apple', 1]], stars: 2, value: 100 };
+    assert.equal(G.isFav('b1'), false);
+    assert.ok(G.toggleFav('b1'));
+    assert.equal(G.isFav('b1'), true);
+    assert.equal(G.favBeers().length, 1);
+    assert.equal(G.toggleFav('nope'), false);
+    G.toggleFav('b1');
+    assert.equal(G.favBeers().length, 0);
+    // aucun ingrédient en stock : pas d'accord (le malt et le houblon, eux, sont là)
+    for (const k of G.BREWABLE) state.inventory[k] = 0;
+    for (const k of Object.keys(state.inventory)) if (/^malt/.test(k)) state.inventory[k] = 500;
+    state.inventory.hop = 500;
+    state.inventory.maltBlond = 500;
+    assert.equal(G.bestAccord(), null);
+    state.inventory.apple = 50;
+    state.inventory.pear = 50;
+    const b = G.bestAccord();
+    assert.ok(b && b.ings.length >= 1);
+    assert.ok(b.ings.every(([id]) => ['apple', 'pear'].includes(id)));
+    assert.ok(G.applyBestAccord());
+    assert.deepEqual(B.draft.ings, b.ings);
+});
+
+test('1.117 : l’état de la cave a ses actions', () => {
+    const src = readFileSync(new URL('../../src/ui/views/cave.js', import.meta.url), 'utf8');
+    assert.ok(/\n {8}caveGo: /.test(src));
+    const brew = readFileSync(new URL('../../src/ui/views/brewery.js', import.meta.url), 'utf8');
+    for (const act of ['favBeer', 'brewBest', 'rebrew']) assert.ok(new RegExp(`\\n {8}${act}: `).test(brew), act);
+});

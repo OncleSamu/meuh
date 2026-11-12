@@ -1,5 +1,6 @@
 // Atelier | Brasserie (1.6) : composer sa bière (malt, houblon, 1 à 3 ingrédients), la brasser, la nommer,
 // la vendre, et remplir le livre des bières. Le vieillissement en fût se fait à la cave (1.6.3).
+import { toast } from '../../core/bus.js';
 import { state, lvOk } from '../../core/state.js';
 import { now } from '../../core/clock.js';
 import { fmt, formatDuration } from '../../core/format.js';
@@ -161,6 +162,7 @@ function composerHtml() {
         <div class="bc-row"><span class="bc-label">Houblon</span><div class="seg n3 brew-hops">${hops}</div></div>`
         }
         <div class="bc-row"><span class="bc-label">Ingrédients</span><div class="brew-slots">${slots}</div></div>${more}
+        <div class="center">${btn('Meilleur accord avec mon stock', { act: 'brewBest', size: 'sm', icon: ['ui', 'sparkle'] })}</div>
         ${preview}
         ${
             // 1.74 : quand on ne peut pas brasser, une phrase dit pourquoi (plus de gros bouton gris)
@@ -168,6 +170,19 @@ function composerHtml() {
                 ? btn('Brasser', { act: 'brew', kind: 'green', wide: true, size: 'lg', icon: mead ? ['item', 'mead'] : ['ui', 'beer'] })
                 : `<p class="state-line">${pv.freeVat < 0 ? 'Toutes les cuves sont pleines : mettez une bière en bouteille.' : !pv.ings.length ? 'Choisissez au moins un ingrédient.' : `Il manque : ${pv.miss.map(([id, n]) => `${n - G.ingHave(id)} ${G.ingName(id).toLowerCase()}`).join(', ')}.`}</p>`
         }</div>`;
+}
+
+// ---------------- 1.117 : le carnet des favorites ----------------
+function carnetHtml() {
+    const favs = G.favBeers();
+    if (!favs.length) return G.myBeers().length ? '<p class="hint">Touchez l’étoile d’une bière (onglet Bières) pour la garder dans votre carnet et la relancer d’ici.</p>' : '';
+    return `<div class="card brew-carnet"><div class="card-title">Mon carnet</div>${favs
+        .slice(0, 8)
+        .map(b => {
+            const ok = G.canRebrew(b.id);
+            return `<div class="cut-row"><span class="carnet-name">${stars(b.stars)} <b>${b.name}</b> ${ingIcons(b.ings)}</span>${btn(ok ? 'Brasser' : 'Il manque…', { act: 'rebrew', data: { id: b.id }, kind: ok ? 'green' : '', size: 'sm', icon: ['ui', 'loop'] })}</div>`;
+        })
+        .join('')}</div>`;
 }
 
 // ---------------- mes bières ----------------
@@ -179,8 +194,10 @@ function beersHtml() {
     const inStock = all.filter(b => G.beerStock(b.id) > 0),
         top = all.filter(b => b.stars >= 3),
         meads = all.filter(b => b.mead);
+    const favs = all.filter(b => G.isFav(b.id));
     const opts = [
         ['stock', 'En stock', inStock.length],
+        ['fav', 'Carnet', favs.length],
         ['top', '3 étoiles', top.length],
         ['all', 'Toutes', all.length],
     ];
@@ -188,7 +205,7 @@ function beersHtml() {
     if (meads.length) opts.splice(2, 0, ['beer', 'Bières', all.length - meads.length], ['mead', 'Hydromels', meads.length]);
     const f = filterOf('beers', opts);
     const q = queryOf('beers');
-    const list = (f === 'stock' ? inStock : f === 'top' ? top : f === 'mead' ? meads : f === 'beer' ? all.filter(b => !b.mead) : [...all])
+    const list = (f === 'stock' ? inStock : f === 'fav' ? favs : f === 'top' ? top : f === 'mead' ? meads : f === 'beer' ? all.filter(b => !b.mead) : [...all])
         .filter(b => matchQ(q, b.name, ...b.ings.map(x => G.ingName(x[0]))))
         .sort((a, b) => G.beerStock(b.id) - G.beerStock(a.id) || b.stars - a.stars || b.value - a.value);
     const pg = page('beers:' + f, list, 10);
@@ -219,7 +236,9 @@ function beersHtml() {
                         ? btn('Vendre', { act: 'sellBeer', data: { id: b.id, n: 1 }, size: 'sm' }) +
                           (n > 1 ? btn('Tout vendre', { act: 'sellBeer', data: { id: b.id, n }, kind: 'gold', size: 'sm' }) : '')
                         : '');
-                const again = b.aged ? '' : btn('Rebrasser', { act: 'rebrew', data: { id: b.id }, kind: 'green', size: 'sm', icon: ['ui', 'loop'] });
+                const again =
+                    (b.aged ? '' : btn('Rebrasser', { act: 'rebrew', data: { id: b.id }, kind: 'green', size: 'sm', icon: ['ui', 'loop'] })) +
+                    (b.aged ? '' : `<button class="fav-star${G.isFav(b.id) ? ' on' : ''}" data-act="favBeer" data-id="${b.id}" aria-label="${G.isFav(b.id) ? 'Retirer du carnet' : 'Garder dans le carnet'}">${G.isFav(b.id) ? '★' : '☆'}</button>`);
                 return `<div class="card brew-beer${n ? '' : ' none'}"><div class="card-art">${beerSvg(b)}</div><div class="card-main"><div class="card-title">${b.name} ${renameBtn('beer', b.id, b.mead ? 'Renommer l’hydromel' : 'Renommer la bière')}</div><div class="card-sub">${sub}</div>${again ? `<div class="bb-again">${again}</div>` : ''}</div><div class="card-side">${side}</div></div>`;
             })
             .join('')}</div>${pg.more}`
@@ -302,6 +321,7 @@ function renderBrew(el) {
                 : '',
         ],
         ['vats', t === 'make' ? vatsHtml() : ''],
+        ['carnet', t === 'make' ? carnetHtml() : ''],
         ['compose', t === 'make' ? composerHtml() : ''],
         ['beersHead', t === 'mine' ? section(G.meadOpen() ? 'Mes boissons' : 'Mes bières', n ? `<small>${n}</small>` : '') : ''],
         ['beerSearch', t === 'mine' && n > 20 ? searchBox('beers', G.meadOpen() ? 'Boisson ou ingrédient' : 'Bière ou ingrédient') : ''],
@@ -455,6 +475,13 @@ export function setupBrewery() {
         },
         brew: el => G.startBrew(el),
         rebrew: (el, d) => G.rebrew(d.id, el),
+        favBeer: (el, d) => G.toggleFav(d.id),
+        brewBest: () => {
+            const b = G.applyBestAccord();
+            if (!b) toast('Pas assez d’ingrédients en stock pour proposer un accord', ['ui', 'beer']);
+            // les étoiles d'une bière nouvelle restent à découvrir en la brassant
+            else toast('Voici le meilleur accord avec votre stock', ['ui', 'sparkle']);
+        },
         vatLoop: (el, d) => G.toggleVatLoop(+d.i),
         beerOrder: (el, d) => G.deliverBeerOrder(d.id, null, el),
         beerDrop: (el, d) => G.dismissBeerOrder(d.id),

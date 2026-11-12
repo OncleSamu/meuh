@@ -15,7 +15,7 @@ import { blocks, actions } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
 import { QUALITY } from '../../data/farm.js';
 import { btn, bar, timer, card, section, empty } from '../kit.js';
-import { defineView, defineLive } from '../app.js';
+import { defineView, defineLive, ui } from '../app.js';
 import { foldWrap } from '../fold.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 import { askBuy } from '../sheets/askbuy.js';
@@ -282,6 +282,29 @@ function chateauFold() {
     return foldWrap('chateau', ['ui', 'star'], 'Le château de Margaux', sum, html, serve > 0);
 }
 
+// 1.117 : l'état de la cave, en tête des Lots : ce qui attend, avec un geste pour chaque chose
+function stateHtml(c, needCare, finished, auction) {
+    const free = c.slots.filter(l => !l).length;
+    const ready = G.caveOrdersReady();
+    const items = [];
+    if (!G.climOk()) items.push(['warn', 'Le climat abîme vos lots', 'caveGo', 'clim', 'Régler']);
+    if (needCare) items.push(['care', `${needCare} lot${needCare > 1 ? 's' : ''} à soigner`, 'careAll', '', 'Tout soigner']);
+    if (finished) items.push(['done', `${finished} lot${finished > 1 ? 's' : ''} fini${finished > 1 ? 's' : ''}`, 'takeOutDone', '', 'Sortir']);
+    if (ready) items.push(['order', `${ready} client${ready > 1 ? 's' : ''} servi${ready > 1 ? 's' : ''} par vos lots`, 'caveGo', 'orders', 'Voir']);
+    if (auction) items.push(['auction', 'Une vente aux enchères en cours', 'caveGo', 'sales', 'Voir']);
+    if (free) items.push(['free', `${free} place${free > 1 ? 's' : ''} libre${free > 1 ? 's' : ''}`, 'open', 'cavePut', 'Remplir']);
+    if (!items.length) return '<div class="cave-state ok">Tout va bien dans la cave : rien à faire pour l’instant.</div>';
+    return `<div class="cave-state">${items
+        .map(
+            ([k, text, act, v, label]) =>
+                `<div class="cave-state-row ${k}"><span>${text}</span>${
+                    act === 'open'
+                        ? `<button class="btn sm" data-act="open" data-sheet="cavePut" data-slot="${c.slots.findIndex(l => !l)}">${label}</button>`
+                        : btn(label, { act, data: v ? { v } : {}, size: 'sm', kind: k === 'warn' ? 'gold' : '' })
+                }</div>`,
+        )
+        .join('')}</div>`;
+}
 function renderCave(el) {
     if (!G.caveOpen()) return blocks(el, [['lock', empty('La cave s’ouvre au niveau 20.')]]);
     G.ensureCave();
@@ -309,9 +332,8 @@ function renderCave(el) {
             t === 'lots'
                 ? `<div class="card cave-clim"><div class="card-head">${ico(['ui', 'cave'], 'ico big')}<div class="card-main"><div class="card-title">La cave</div>
             <div class="card-sub">Cote de la cave : <b>${Math.round(c.cote)}</b> / 100 · lots de ${G.caveLotMax()} au plus${G.climOk() ? '' : ' · le climat abîme vos lots'}</div></div></div>
-            ${needCare ? btn(`Tout soigner (${needCare})`, { act: 'careAll', kind: 'gold', wide: true, icon: ['ui', 'sparkle'] }) : ''}
-            ${finished ? btn(`Sortir les lots finis (${finished})`, { act: 'takeOutDone', kind: 'green', wide: true }) : ''}
-            ${climHtml()}</div>`
+            ${stateHtml(c, needCare, finished, auction)}
+            <div id="cave-clim-box">${climHtml()}</div></div>`
                 : '',
         ],
         ['cepage', t === 'sales' ? cepageHtml() : ''],
@@ -414,6 +436,11 @@ export function setupCave() {
         nudge: (el, d) => G.nudgeClimate(d.k, +d.d),
         careLot: (el, d) => G.careLot(+d.i, el),
         careAll: el => G.careAll(el),
+        // 1.117 : un geste de l'état de la cave : changer d'onglet, ou descendre jusqu'au climat
+        caveGo: (el, d) => {
+            if (d.v === 'clim') return void document.getElementById('cave-clim-box')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            ui.sel['it:cave'] = d.v;
+        },
         cycleLabel: (el, d) => G.cycleLabel(d.uid),
         tasteLot: (el, d) => G.tasteLot(+d.i, el),
         boostLot: (el, d) => G.boostLot(+d.i),

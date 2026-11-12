@@ -807,3 +807,57 @@ export function brewTick() {
     return ch;
 }
 export { MALT_IDS };
+
+// ---------------- 1.117 : le carnet et le meilleur accord ----------------
+// les bières favorites : relancées d'un geste depuis l'onglet Brasser
+export const isFav = bid => !!(state.brew && state.brew.fav && state.brew.fav[bid]);
+export function toggleFav(bid) {
+    const B = ensureBrew();
+    if (!B.beers[bid]) return false;
+    B.fav = B.fav || {};
+    if (B.fav[bid]) delete B.fav[bid];
+    else B.fav[bid] = 1;
+    return true;
+}
+export const favBeers = () => myBeers().filter(b => isFav(b.id) && !b.aged);
+// peut-on la rebrasser maintenant : une cuve libre et tous les ingrédients
+export function canRebrew(bid) {
+    const r = recipeOf(bid);
+    if (!r) return false;
+    const pv = brewPreview(r);
+    return pv.ings.length > 0 && !pv.miss.length && pv.freeVat >= 0;
+}
+// le meilleur accord possible avec le stock, pour le malt (ou le miel) et le houblon choisis :
+// on essaie chaque ingrédient en stock, puis les meilleures paires, et on garde le plus d'étoiles (puis la plus grande valeur)
+export function bestAccord(d = ensureBrew().draft) {
+    const slots = brewSlots(d.malt);
+    const hop = isMead(d.malt) ? 0 : d.hop;
+    const have = [...BREWABLE, ...brewVarieties().map(v => v.id)].filter(id => ingHave(id) >= ABBEY.ingPerDose);
+    if (!have.length) return null;
+    const score = ings => {
+        const h = brewHarmony(d.malt, hop, ings);
+        const miss = Object.entries(brewCost(d.malt, hop, ings)).some(([id, n]) => ingHave(id) < n);
+        return miss ? -1 : h.stars * 1e6 + brewValue(d.malt, hop, ings, h.stars);
+    };
+    const singles = have.map(id => [[[id, 1]], score([[id, 1]])]).sort((a, b) => b[1] - a[1]);
+    let best = singles[0];
+    if (slots >= 2) {
+        const top = singles.slice(0, 14).map(x => x[0][0][0]);
+        for (let i = 0; i < top.length; i++)
+            for (let j = i + 1; j < top.length; j++) {
+                const ings = [
+                    [top[i], 1],
+                    [top[j], 1],
+                ];
+                const sc = score(ings);
+                if (sc > best[1]) best = [ings, sc];
+            }
+    }
+    return best && best[1] >= 0 ? { ings: best[0], stars: Math.floor(best[1] / 1e6) } : null;
+}
+export function applyBestAccord() {
+    const b = bestAccord();
+    if (!b) return false;
+    ensureBrew().draft.ings = b.ings.map(([id, n]) => [id, n]);
+    return b;
+}

@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.117",
+  "title": "La cave et la brasserie plus faciles",
+  "date": "12 novembre 2026",
+  "items": [
+   "Cave : en tête des lots, l'état de la cave dit ce qui attend (climat, lots à soigner, lots finis, clients servis, enchère en cours, places libres), avec un bouton pour chaque chose",
+   "Brasserie : une étoile sur chaque bière la range dans votre carnet ; le carnet, dans l'onglet Brasser, relance une favorite d'un geste",
+   "Brasserie : le bouton « Meilleur accord avec mon stock » compose la meilleure bière possible avec ce que vous avez (les étoiles restent à découvrir en brassant)"
+  ]
+ },
+ {
   "v": "1.116",
   "title": "Audit des dernières nouveautés",
   "date": "12 novembre 2026",

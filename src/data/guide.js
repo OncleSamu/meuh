@@ -1078,6 +1078,10 @@ export const GUIDE_PAGES = [
         intro: 'Affiner pour que la valeur grimpe : fromages, cidres, vins, champagnes, salaisons et bières.',
         secs: [
             {
+                h: 'L’état de la cave',
+                t: 'En tête de l’onglet Lots, l’état de la cave dit ce qui attend : climat à régler, lots à soigner, lots finis à sortir, clients que vos lots peuvent servir, enchère en cours, places libres. Chaque ligne a son bouton.',
+            },
+            {
                 h: 'Mettre en cave',
                 t: 'Onglet Atelier, puis Cave. À chaque étape de l’affinage, un lot peut bien vieillir (sa valeur grimpe), mal vieillir (il tourne) ou se perdre. Un lot entièrement en argent, en or, en platine ou en diamant garde sa qualité : il vieillit un peu mieux et se vend plus cher (un vin légendaire en or est le meilleur de la cave).',
             },
@@ -1180,6 +1184,10 @@ export const GUIDE_PAGES = [
                     '1 à 3 ingrédients de la ferme, chacun dosé de 1 à 3. Chaque culture ou fruit a son goût.',
                     'Les produits d’atelier se brassent aussi, dès qu’on en a en stock : caramel (sucré, un peu amer), sucre, cassonade, chocolat noir et café (amers), cidre (acide), piment d’Espelette en poudre (épicé). Ils n’ont pas de page au livre des bières.',
                 ],
+            },
+            {
+                h: 'Le carnet et le meilleur accord',
+                t: 'Touchez l’étoile d’une bière (onglet Bières) pour la ranger dans votre carnet : elle se relance d’un geste depuis l’onglet Brasser. Le bouton « Meilleur accord avec mon stock » compose la meilleure bière possible avec le malt, le houblon et les ingrédients que vous avez ; ses étoiles restent à découvrir en la brassant.',
             },
             {
                 h: 'Trouver un ingrédient ou un miel',
