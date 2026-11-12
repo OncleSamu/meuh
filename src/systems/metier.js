@@ -125,7 +125,7 @@ export const metierPerks = (id = metierId()) => {
     return [
         { rank: 1, text: `Le marché et l’étal paient ${d.what} ${pct(d.rate)} % de plus par rang (${pct(d.rate * METIER_RANKS)} % au rang 10)` },
         { rank: METIER_FX.orders.rank, text: `Une commande du village qui en contient paie ${pct(METIER_FX.orders.pay)} % de plus` },
-        { rank: METIER_CLIENT.rank, text: `${CLIENTS[id].name}, ${CLIENTS[id].who}, passe une commande par jour, payée ${METIER_CLIENT.pay} fois` },
+        { rank: METIER_CLIENT.rank, text: `${CLIENTS[id].name}, ${CLIENTS[id].who}, passe une commande par jour, payée ${String(METIER_CLIENT.pay).replace(".", ",")} fois` },
         { rank: METIER_SIGN.rank, text: `Votre produit signature : un produit du métier que vous maîtrisez, vendu ${pct(METIER_SIGN.pay)} % plus cher` },
         { rank: METIER_FX.transport.rank, text: `Le train et l’avion-cargo les paient ${pct(METIER_FX.transport.pay)} % de plus` },
         { rank: METIER_RANKS, text: `${d.master} : encore ${pct(METIER_FX.master)} % de prix, et le titre sur votre carte de visite` },

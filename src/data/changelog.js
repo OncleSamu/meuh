@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.115",
+  "title": "Le monde connaît votre métier",
+  "date": "12 novembre 2026",
+  "items": [
+   "Le village, le train et l'avion-cargo demandent plus souvent les produits de votre métier : 15 % des choix dès le départ, jusqu'à 45 % au rang 10",
+   "Rang 4 : un client attitré par métier (Madame Lebrun la primeuse, Fernand le boucher, Rose la confiturière, le chef Antoine, Monsieur Delorme le caviste, Yvonne la poissonnière) passe une commande par jour, payée 1,5 fois",
+   "Rang 5 : le produit signature, choisi parmi les produits du métier que vous maîtrisez, se vend 15 % plus cher et votre client le demande à chaque fois. Il se change une fois par semaine",
+   "La carte de la maison, dans le champ, porte le nom de votre ferme et l'enseigne de votre métier"
+  ]
+ },
+ {
   "v": "1.114",
   "title": "Le métier de la ferme",
   "date": "12 novembre 2026",
