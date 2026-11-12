@@ -1,126 +1,171 @@
-// 1.14 : bois fruitier, décorations en matériaux, cuve, enclos, manoir, poisson au mur.
+// 1.114 : les spécialités de ferme. Six métiers, dix rangs, des leçons, des bonus qui dorment quand on change.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { state } from '../../src/core/state.js';
+import { readFileSync } from 'node:fs';
+import { memStore } from './helpers.mjs';
+import { state, setStore } from '../../src/core/state.js';
 import { setView } from '../../src/core/view.js';
+import { setClock } from '../../src/core/clock.js';
 import * as G from '../../src/systems/index.js';
 import { ITEMS } from '../../src/data/items.js';
-import { RECIPES } from '../../src/data/machines.js';
-import { DECOS } from '../../src/data/farm.js';
-import { HOUSE } from '../../src/data/progress.js';
-import { SPR } from '../../src/art/index.js';
+import { METIERS, METIER_IDS, METIER_RANKS, METIER_CHANGE } from '../../src/data/metiers.js';
 
-const start = () => {
+let T = Date.UTC(2026, 10, 12, 12);
+function fresh(lvl = 30) {
+    T = Date.UTC(2026, 10, 12, 12);
+    setClock(() => T);
+    setStore(memStore());
     G.loadGame();
-    setView({ started: false, tab: 'farm' });
-    state.level = 80;
+    setView({ started: true, tab: 'farm', hidden: false });
+    state.tutorial.done = true;
+    state.level = lvl;
     state.money = 1e9;
-    state.bld = null;
-    state.barn.lvl = 12;
-    G.ensureOrchard();
-    state.orchard.slots.forEach(x => (x.tree = null));
-    for (const k of [
-        'wood',
-        'stone',
-        'plank',
-        'beam',
-        'nail',
-        'tools',
-        'coal',
-        'cutStone',
-        'ironIngot',
-        'copperIngot',
-        'silverIngot',
-        'solidOak',
-        'quartz',
-        'emerald',
-        'ruby',
-        'sapphire',
-        'paint',
-    ])
-        state.inventory[k] = 300;
+}
+// réussit les leçons du rang en cours en faisant tourner les compteurs
+const passRank = () => {
+    for (const l of G.metierLessons()) {
+        const left = l.n - G.lessonDone(l);
+        if (l.key[0] === 'c') state.metier.c[l.key.slice(2)] = (state.metier.c[l.key.slice(2)] || 0) + left;
+        else state.stats[l.key.slice(2)] = (state.stats[l.key.slice(2)] || 0) + left;
+    }
+    return G.metierRankUp();
 };
 
-test('le bois fruitier se dessine ; un arbre abattu en laisse', () => {
-    start();
-    assert.ok(ITEMS.fruitWood && SPR.item('fruitWood').includes('<svg'));
-    const k = state.orchard.slots.findIndex(x => x.open && !x.tree);
-    assert.ok(G.plantTree(k, 'apple'));
-    const t = state.orchard.slots[k].tree;
-    t.age = ITEMS.apple.time;
-    t.ground = 0;
-    state.inventory.fruitWood = 0;
-    assert.ok(G.fellTree(k));
-    assert.ok(state.inventory.fruitWood >= 1);
-});
-
-test('le fumoir : le bois fruitier fait sortir un lot en argent', () => {
-    start();
-    state.machines.push(G.newMachine('smokehouse'));
-    const i = state.machines.length - 1;
-    const rid = Object.keys(RECIPES).find(r => RECIPES[r].machine === 'smokehouse' && Object.keys(RECIPES[r].ing).length === 1);
-    for (const [k, n] of Object.entries(RECIPES[rid].ing)) state.inventory[k] = n * 4;
-    state.inventory.fruitWood = 2;
-    const old = Math.random;
-    Math.random = () => 0;
-    assert.ok(G.queueRecipe(i, rid));
-    Math.random = old;
-    assert.equal(state.inventory.fruitWood, 1, 'un bout de bois brûlé');
-    assert.equal(state.machines[i].qq[0], 1, 'lot en argent');
-});
-
-test('les décorations en matériaux : cloche, banc, lanterne', () => {
-    start();
-    for (const id of ['copperBell', 'oakBench', 'ironLamp']) {
-        assert.ok(DECOS[id] && SPR.ui(id).includes('<svg'), id);
-        assert.ok(G.matCost('placedeco', id), id);
-        const n = state.decorInv[id] || 0;
-        assert.ok(G.buy('placedeco', id, 1), id);
-        assert.equal(state.decorInv[id], n + 1);
+test('métiers : six métiers, dix rangs de deux leçons, des quantités qui montent', () => {
+    assert.equal(METIER_IDS.length, 6);
+    for (const id of METIER_IDS) {
+        const m = METIERS[id];
+        assert.equal(m.lessons.length, METIER_RANKS, id);
+        for (const r of m.lessons) {
+            assert.equal(r.length, 2, id);
+            for (const l of r) assert.ok(l.n > 0 && l.text && /^[cs]:/.test(l.key), `${id} ${l.key}`);
+        }
+        // une même leçon demande toujours plus d'un rang à l'autre
+        const last = {};
+        m.lessons.forEach((r, k) =>
+            r.forEach(l => {
+                if (last[l.key] !== undefined) assert.ok(l.n > last[l.key], `${id} rang ${k + 1} : ${l.key}`);
+                last[l.key] = l.n;
+            }),
+        );
     }
-    state.grid[5].isUnlocked = true;
-    state.grid[5].deco = 'copperBell';
-    assert.ok(G.decoGrowth(5) > 1.07);
-    state.grid[5].deco = null;
 });
 
-test('la cuve de brasserie et les enclos du laboratoire se gagnent au Chantier', () => {
-    start();
-    state.projects.brewhall = { done: true, given: {} };
-    state.projects.lab = { done: true, given: {} };
-    const v = G.vatCount(),
-        b = G.breedSlots();
-    assert.ok(G.bldOpen('brewery') && G.bldOpen('labPens'));
-    assert.ok(G.upgradeBld('b', 'brewery'));
-    assert.equal(G.vatCount(), v + 1);
-    assert.ok(G.upgradeBld('b', 'labPens'));
-    assert.equal(G.breedSlots(), b + 1);
+test('métiers : chaque leçon de statistique existe dans le jeu', () => {
+    const src = ['farm', 'island', 'animals', 'births', 'stud', 'genetics', 'haras', 'comice', 'fair', 'orchard', 'orchardplus', 'orchardlife', 'farmlife', 'apiary', 'workshop', 'orders', 'armand', 'maison', 'cave', 'brewery', 'counter', 'fishing', 'port', 'incidents', 'oasis', 'nord']
+        .map(f => readFileSync(new URL(`../../src/systems/${f}.js`, import.meta.url), 'utf8'))
+        .join('\n');
+    for (const id of METIER_IDS)
+        for (const r of METIERS[id].lessons)
+            for (const l of r) if (l.key[0] === 's') assert.ok(new RegExp(`stats\\.${l.key.slice(2)}\\b`).test(src), `${id} : ${l.key}`);
 });
 
-test('le manoir : un septième niveau de maison', () => {
-    start();
-    assert.equal(HOUSE.length, 7);
-    assert.ok(SPR.farmhouse(6).includes('<svg'));
-    state.house.lvl = 5;
-    const barn = G.barnCap(),
-        stall = G.extraStall();
-    assert.ok(G.upgradeHouse());
-    assert.equal(G.houseLvl(), 6);
-    assert.equal(G.barnCap(), barn + 80);
-    assert.equal(G.extraStall(), stall + 1);
-    assert.equal(G.houseNext(), null);
+test('métiers : chaque produit à son métier', () => {
+    assert.equal(G.metierOf('wheat'), 'maraicher');
+    assert.equal(G.metierOf('milk'), 'eleveur');
+    assert.equal(G.metierOf('apple'), 'arbo');
+    assert.equal(G.metierOf('carp'), 'pecheur');
+    assert.equal(G.metierOf('bread'), 'cuisinier');
+    assert.equal(G.metierOf('tableWine'), 'vigneron');
+    assert.equal(G.metierOf('juice'), 'vigneron');
+    assert.equal(G.metierOf('plank'), null);
 });
 
-test('le poisson au mur : +20 de charme', () => {
-    start();
-    assert.equal(G.wallFish(), null);
-    const id = Object.keys(G.wallCandidates()).length ? G.wallCandidates()[0].id : null;
-    assert.equal(id, null, 'aucune prise : rien à accrocher');
-    state.collection.f_trout = { n: 3, best: 1.2 };
-    const list = G.wallCandidates();
-    assert.ok(list.length && list[0].id === 'trout');
-    const charm = G.charmScore();
-    assert.ok(G.hangFish('trout'));
-    assert.equal(G.wallFish().id, 'trout');
-    assert.equal(G.charmScore(), charm + G.WALL_CHARM);
+test('métiers : on choisit, on apprend, le rang fait mieux payer les produits du métier seulement', () => {
+    fresh();
+    assert.equal(G.metierId(), null);
+    const crop = Object.keys(ITEMS).filter(k => ITEMS[k].type === 'crop').sort((a, b) => ITEMS[b].sell - ITEMS[a].sell)[0];
+    const p0 = G.sellPrice(crop),
+        b0 = G.sellPrice('bread');
+    assert.ok(G.chooseMetier('maraicher'));
+    assert.equal(G.metierRank(), 0);
+    assert.equal(G.metierCanRank(), false);
+    // les leçons comptent à partir du rang : ce qui précède ne compte pas
+    G.metierCount('wheat', 10);
+    assert.equal(G.lessonDone(G.metierLessons()[0]), 10);
+    assert.ok(passRank());
+    assert.equal(G.metierRank(), 1);
+    assert.ok(G.sellPrice(crop) > p0, `${crop} : ${G.sellPrice(crop)} contre ${p0}`);
+    assert.equal(G.sellPrice('bread'), b0);
+    for (let k = 1; k < METIER_RANKS; k++) assert.ok(passRank(), `rang ${k + 1}`);
+    assert.equal(G.metierRank(), METIER_RANKS);
+    assert.equal(G.metierRankUp(), false);
+    assert.ok(Math.abs(G.metierPriceRate() - (METIERS.maraicher.rate * 10 + 0.1)) < 1e-9);
+    assert.match(G.metierTitle(), /Maître/);
+});
+
+test('métiers : changer garde les rangs et fait dormir les bonus ; premier changement gratuit, puis payant et sept jours d’attente', () => {
+    fresh();
+    G.chooseMetier('pecheur');
+    passRank();
+    passRank();
+    // une leçon du rang 3 à moitié faite
+    const l = G.metierLessons()[0];
+    state.metier.c.fish += Math.floor(l.n / 2);
+    const half = G.lessonDone(l);
+    assert.equal(G.metierChangeCost(), 0);
+    const m = state.money;
+    assert.ok(G.chooseMetier('cuisinier'));
+    assert.equal(state.money, m);
+    assert.equal(G.metierRankOf('pecheur'), 2);
+    assert.equal(G.metierPriceRate('pecheur'), 0);
+    assert.equal(G.metierPrice('carp'), 1);
+    // le deuxième : payant, et pas avant sept jours
+    assert.ok(G.metierChangeCost() > 0);
+    assert.equal(G.chooseMetier('pecheur'), false);
+    T += METIER_CHANGE.wait + 1;
+    const cost = G.metierChangeCost();
+    const m2 = state.money;
+    assert.ok(G.chooseMetier('pecheur'));
+    assert.equal(m2 - state.money, cost);
+    // le pêcheur reprend où il en était, rang et leçon à moitié
+    assert.equal(G.metierRank(), 2);
+    assert.equal(G.lessonDone(G.metierLessons()[0]), half);
+    assert.ok(G.metierPrice('carp') > 1);
+});
+
+test('métiers : les commandes et les transports paient plus aux rangs 3 et 6', () => {
+    fresh();
+    G.chooseMetier('maraicher');
+    assert.equal(G.metierOrderPay(['wheat']), 1);
+    passRank();
+    passRank();
+    passRank();
+    assert.equal(G.metierOrderPay(['wheat', 'bread']), 1.1);
+    assert.equal(G.metierOrderPay(['bread']), 1);
+    assert.equal(G.metierTransportPay('wheat'), 1);
+    passRank();
+    passRank();
+    passRank();
+    assert.equal(G.metierTransportPay('wheat'), 1.15);
+    assert.equal(G.metierTransportPay('bread'), 1);
+});
+
+test('métiers : le vigneron fait mieux payer la cave et les bières', () => {
+    fresh();
+    assert.equal(G.metierCellar(), 1);
+    G.chooseMetier('vigneron');
+    passRank();
+    assert.ok(G.metierCellar() > 1);
+    G.chooseMetier('pecheur');
+    assert.equal(G.metierCellar(), 1);
+});
+
+test('métiers : les compteurs tournent avec la vraie production', () => {
+    fresh();
+    G.chooseMetier('maraicher');
+    const before = state.metier.c.crop || 0;
+    G.addMastery('wheat', 5);
+    assert.equal(state.metier.c.crop, before + 5);
+    assert.ok(ITEMS.wheat);
+});
+
+test('métiers : une ancienne sauvegarde sans métier se charge, et les écrans ont leurs actions', () => {
+    fresh();
+    delete state.metier;
+    assert.equal(G.metierId(), null);
+    assert.equal(G.metierPrice('wheat'), 1);
+    assert.equal(G.metierRank(), 0);
+    const src = readFileSync(new URL('../../src/ui/sheets/metier.js', import.meta.url), 'utf8');
+    for (const act of ['metierOpen', 'metierOther', 'metierBack', 'metierRankUp', 'metierPick', 'meMetier']) assert.ok(new RegExp(`\\n {8}${act}: `).test(src), act);
 });
