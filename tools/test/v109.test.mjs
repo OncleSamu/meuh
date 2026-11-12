@@ -3,7 +3,7 @@ import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import { memStore } from './helpers.mjs';
-import { state, setStore, scaleLvl, ecoLvl, lvOk } from '../../src/core/state.js';
+import { state, setStore, scaleLvl, ecoLvl, lvOk, writeSave } from '../../src/core/state.js';
 import { setView } from '../../src/core/view.js';
 import * as G from '../../src/systems/index.js';
 import { ITEMS } from '../../src/data/items.js';
@@ -230,7 +230,7 @@ test('1.113 : la carte de visite (personnage et nom de ferme)', async () => {
     assert.equal(G.farmName(), G.DEFAULT_FARM);
     // elle survit à la sauvegarde
     G.setIdentity(look, 'Le Clos');
-    G.saveGame();
+    writeSave();
     G.loadGame();
     assert.equal(G.farmName(), 'Le Clos');
     assert.equal(G.meLook(), look);
