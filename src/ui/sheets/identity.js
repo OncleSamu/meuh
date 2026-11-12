@@ -5,12 +5,11 @@ import * as G from '../../systems/index.js';
 import { TRAITS, TRAIT_COUNT, TRAIT_NAMES, lookOf, idOf, randomId } from '../../art/habitants.js';
 import { actions, esc } from '../dom.js';
 import { ui } from '../app.js';
-import { art } from '../icons.js';
+import { art, ico } from '../icons.js';
 import { btn } from '../kit.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 import { toast } from '../../core/bus.js';
-import { METIER_IDS } from '../../data/metiers.js';
-import { metierPickCard } from './metier.js';
+import { METIERS, METIER_IDS } from '../../data/metiers.js';
 
 const draft = () => {
     if (!ui.sel.me) ui.sel.me = { look: G.meLook(), farm: G.farmName() === G.DEFAULT_FARM ? '' : G.farmName() };
@@ -21,8 +20,10 @@ const keepName = () => {
     const input = document.getElementById('me-farm');
     if (input && ui.sel.me) ui.sel.me.farm = input.value;
 };
+// des chevrons dessinés (les caractères ‹ › ne tombent jamais au centre d'un bouton)
+const CHEV = d => `<svg viewBox="0 0 14 14" aria-hidden="true"><path d="${d < 0 ? 'M9 2 L4 7 L9 12' : 'M5 2 L10 7 L5 12'}" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const traitRow = (t, look) =>
-    `<div class="me-trait"><button class="me-arrow" data-act="meTrait" data-t="${t}" data-d="-1" aria-label="${TRAIT_NAMES[t]} précédent">‹</button><span><b>${TRAIT_NAMES[t]}</b><small>${look[t] + 1} / ${TRAIT_COUNT[t]}</small></span><button class="me-arrow" data-act="meTrait" data-t="${t}" data-d="1" aria-label="${TRAIT_NAMES[t]} suivant">›</button></div>`;
+    `<div class="me-trait"><button class="me-arrow" data-act="meTrait" data-t="${t}" data-d="-1" aria-label="${TRAIT_NAMES[t]} précédent">${CHEV(-1)}</button><span><b>${TRAIT_NAMES[t]}</b><small>${look[t] + 1} / ${TRAIT_COUNT[t]}</small></span><button class="me-arrow" data-act="meTrait" data-t="${t}" data-d="1" aria-label="${TRAIT_NAMES[t]} suivant">${CHEV(1)}</button></div>`;
 
 defineSheet('identity', {
     cls: 'identity-sheet',
@@ -49,7 +50,7 @@ defineSheet('identity', {
                 'metier',
                 G.metierId()
                     ? ''
-                    : `<div class="me-metier"><span class="me-label">La spécialité de votre ferme</span><p class="card-sub">Elle fait mieux payer ses produits, rang après rang. Tout le reste reste jouable, et le premier changement est gratuit.</p>${METIER_IDS.map(id => metierPickCard(id, { act: 'meMetier', sel: d.metier })).join('')}</div>`,
+                    : `<div class="me-metier"><span class="me-label">La spécialité de votre ferme</span><p class="card-sub">Elle fait mieux payer ses produits, rang après rang. Tout le reste du jeu reste ouvert ; le premier changement est gratuit.</p><div class="me-metiers">${METIER_IDS.map(id => `<button class="me-metier-tile${d.metier === id ? ' on' : ''}" data-act="meMetier" data-id="${id}">${ico(METIERS[id].icon, 'ico big')}<b>${METIERS[id].name}</b></button>`).join('')}</div><p class="card-sub me-metier-desc">${d.metier ? METIERS[d.metier].desc : 'Touchez un métier pour le choisir. Vous pourrez aussi le choisir plus tard, depuis le menu.'}</p></div>`,
             ],
             ['ok', `<div class="me-ok">${btn(first ? 'C’est parti !' : 'Enregistrer', { act: 'meSave', kind: 'green', wide: true })}</div>`],
         ];

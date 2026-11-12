@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.114",
+  "title": "Le métier de la ferme",
+  "date": "12 novembre 2026",
+  "items": [
+   "Nouveau : six métiers pour spécialiser sa ferme (maraîcher, éleveur, arboriculteur, cuisinier, vigneron, pêcheur), dix rangs chacun",
+   "Un rang se gagne en réussissant deux leçons du métier (récolter, pêcher, presser, faire naître, gagner un concours…), comptées à partir du rang",
+   "Chaque rang fait mieux payer les produits du métier au marché et à l'étal ; au rang 3, les commandes du village qui en contiennent paient plus ; au rang 6, le train et l'avion-cargo ; au rang 10, le titre de maître",
+   "Le métier se choisit sur la page d'accueil d'une nouvelle partie, ou depuis le menu pour une partie en cours",
+   "Changer de métier : gratuit la première fois, ensuite des pièces et sept jours d'attente. Le métier quitté garde ses rangs, ses bonus dorment",
+   "La page d'accueil est plus légère : petites flèches centrées, boutons plus discrets, tout est centré"
+  ]
+ },
+ {
   "v": "1.113",
   "title": "Votre carte de visite",
   "date": "12 novembre 2026",

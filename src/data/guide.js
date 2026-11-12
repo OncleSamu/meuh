@@ -49,6 +49,17 @@ export const GUIDE_PAGES = [
         intro: 'Meuh est un jeu de ferme où tout s’enchaîne : on cultive, on transforme, on livre, et l’argent sert à grandir.',
         secs: [
             {
+                h: 'Le métier de la ferme',
+                b: [
+                    'Six métiers : maraîcher, éleveur, arboriculteur, cuisinier, vigneron et pêcheur. On en choisit un sur la page d’accueil, ou plus tard depuis le menu (carte « Choisir un métier »).',
+                    'Dix rangs par métier. Un rang se gagne en réussissant ses deux leçons : elles comptent à partir du moment où le rang commence.',
+                    'Chaque rang fait mieux payer les produits du métier au marché et à l’étal (2 % par rang, 1 % pour le cuisinier). Au rang 3, une commande du village qui en contient paie 10 % de plus ; au rang 6, le train et l’avion-cargo les paient 15 % de plus ; au rang 10, encore 10 % et le titre de maître.',
+                    'Le vigneron fait aussi mieux payer les bouteilles de la cave et les bières.',
+                    'Rien d’autre n’est fermé : tout le jeu reste ouvert, quel que soit le métier.',
+                    'Changer de métier : gratuit la première fois, puis des pièces (selon le niveau) et sept jours d’attente avant le suivant. Le métier quitté garde ses rangs et ses leçons en cours ; ses bonus dorment jusqu’à ce qu’il redevienne votre métier.',
+                ],
+            },
+            {
                 h: 'Votre carte de visite',
                 t: 'Au début de la partie, vous composez votre personnage (douze traits, comme les habitants de la vallée) et vous nommez votre ferme. Les deux se changent quand vous voulez : touchez votre carte en haut du menu. Le nom apparaît sur l’étal et dans le livre de la ferme.',
             },

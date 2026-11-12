@@ -1731,46 +1731,59 @@ button.cm-spot:active {
 .me-traits {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    gap: 4px 10px;
+    max-width: 340px;
+    margin: 0 auto;
 }
+/* 1.114 : des flèches discrètes, centrées, au lieu de gros boutons jaunes */
 .me-trait {
-    display: flex;
+    display: grid;
+    grid-template-columns: 28px 1fr 28px;
     align-items: center;
-    justify-content: space-between;
-    gap: 4px;
-    padding: 4px;
-    border: 2px solid var(--ink);
-    border-radius: 12px;
-    background: #fff;
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(58, 38, 24, 0.12);
 }
 .me-trait span {
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
     line-height: 1.15;
     min-width: 0;
+    font-size: 13px;
 }
 .me-trait small {
     color: var(--muted, #8a7a66);
-    font-size: 11px;
+    font-size: 10px;
 }
 .me-arrow {
-    width: 38px;
-    height: 38px;
-    flex: none;
-    border-radius: 10px;
-    border: 2px solid var(--ink);
-    background: var(--gold, #f2c14e);
-    font-size: 22px;
-    font-weight: 800;
-    line-height: 1;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: none;
+    background: rgba(58, 38, 24, 0.07);
     color: var(--ink);
+    cursor: pointer;
+}
+.me-arrow svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+}
+.me-arrow:active {
+    background: rgba(58, 38, 24, 0.18);
 }
 .me-name {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 4px;
-    margin: 12px 0 8px;
+    max-width: 340px;
+    margin: 14px auto 8px;
     font-weight: 700;
 }
 .me-name input {
@@ -1857,9 +1870,57 @@ button.cm-spot:active {
     margin-top: 8px;
     position: relative;
 }
+.identity-sheet .sheet-body {
+    text-align: center;
+}
 .me-metier {
-    margin-top: 12px;
+    max-width: 340px;
+    margin: 14px auto 0;
+}
+.me-metier .metier-pick {
+    text-align: left;
+}
+.me-ok {
+    max-width: 340px;
+    margin: 0 auto;
 }
 .me-label {
     font-weight: 800;
+}
+
+/* 1.114 : la page d'accueil, plus légère : petits boutons, métiers en tuiles */
+.me-rand .btn {
+    padding: 4px 12px;
+    min-height: 0;
+    font-size: 13px;
+    box-shadow: 0 2px 0 var(--ink);
+}
+.me-metiers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+}
+.me-metier-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 4px;
+    border: 2px solid rgba(58, 38, 24, 0.25);
+    border-radius: 12px;
+    background: #fffaf0;
+    color: var(--ink);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+.me-metier-tile.on {
+    border-color: var(--green-d, #3c7d33);
+    background: #eaf6e2;
+    box-shadow: 0 0 0 2px var(--green, #5fae4f);
+}
+.me-metier-desc {
+    min-height: 2.6em;
+    margin-top: 6px;
 }
