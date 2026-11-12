@@ -1040,6 +1040,10 @@ export const GUIDE_PAGES = [
         intro: 'Un salon où l’on prépare thés, infusions et cafés au doigt, pour des clients qui paient bien.',
         secs: [
             {
+                h: 'La carte du salon',
+                t: 'Dans le salon, « Composer » ouvre la carte : jusqu’à quatre boissons. Les clients y commandent sept fois sur dix, et elles se paient 10 % plus cher. Un cœur marque la boisson préférée d’un habitué que vous connaissez : quand elle est à la carte, il vient plus souvent. Pendant votre absence, trois clients au plus s’installent et vous attendent ; ils ne s’impatientent que lorsque vous êtes au salon.',
+            },
+            {
                 h: 'L’atelier de boissons',
                 b: [
                     '57 boissons. Chacune se prépare en 2 à 4 gestes, et la règle de chacun s’affiche avant de commencer : température, infusion, mouture, extraction, service, fouet, mousse (cœur, feuille ou tulipe, en 12 secondes), presser un agrume, remuer sans déborder, secouer le shaker, attraper les glaçons, doser une goutte, verser de haut (le verre va et vient : on ne verse que lorsqu’il passe sous le jet). Note de 1 à 3 étoiles (qualité normale, argent, or).',

@@ -19,7 +19,7 @@ import { ensureVillagers } from './village.js';
 import { ensureGhPlots, seedList, plotRate, ghTick, ghOffline } from './farm.js';
 import { ensureAnimalData, animalsTick, growTick, animalsOffline } from './animals.js';
 import { ensureNature } from './nature.js';
-import { migrateCounter, counterTick } from './counter.js';
+import { migrateCounter, counterTick, counterOffline } from './counter.js';
 import { ensureMachineData, ensureRecipeMoves, workshopTick, advanceMachine } from './workshop.js';
 import { ensureQuests, truckTick, balloonTick, checkQuestReady } from './orders.js';
 import { ensureStall, stallTick, neighborTick, neighborsReady } from './stall.js';
@@ -431,6 +431,7 @@ export function offlineProgress() {
     });
     // 1.75.2 : les cuves en boucle enchaînent leurs tournées
     const brews = brewOffline();
+    const salon = counterOffline(elapsed); // 1.118 : des clients attendent au comptoir
     const pasture = animalsOffline(elapsed);
     const babies = birthsTick(); // 1.45 : les naissances au pré pendant l'absence
     let artisan = 0;
@@ -473,6 +474,7 @@ export function offlineProgress() {
     add(pasture.products, ['item', 'egg'], `${pasture.products} produit${s(pasture.products)} à ramasser au pâturage`);
     add(artisan, ['machine', 'bakery'], `${artisan} produit${s(artisan)} terminé${s(artisan)} à l’atelier`);
     add(brews, ['ui', 'beer'], `${brews} tournée${s(brews)} de bière mise${s(brews)} en bouteille`);
+    add(salon, ['machine', 'counter'], `${salon} client${s(salon)} vous attend${salon > 1 ? 'ent' : ''} au comptoir`);
     add(hand.crops, ['villager', 'theo'], `Théo, votre commis, a récolté ${hand.crops} produit${s(hand.crops)}`);
     add(
         babies.length,

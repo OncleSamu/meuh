@@ -237,3 +237,7 @@ export const FAVORITE = {
 
 // le prix des décors du salon
 export const DECOR_COST = { plant: 1500, lamp: 4000, rug: 9000, garland: 18000, sign: 30000 };
+
+// 1.118 : la carte du salon (quatre boissons au plus) : 70 % des commandes s'y font, elles se paient 10 % de plus,
+// et un habitué dont la boisson préférée est à la carte vient plus souvent. Au retour dans le jeu, trois clients au plus attendent.
+export const CARTE = { max: 4, share: 0.7, pay: 0.1, fans: 0.5, away: 3 };

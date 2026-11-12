@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.118",
+  "title": "Un comptoir vivant",
+  "date": "12 novembre 2026",
+  "items": [
+   "Comptoir : pendant votre absence, des clients s'installent (trois au plus) et vous attendent au retour",
+   "Nouveau : la carte du salon. Choisissez jusqu'à quatre boissons : les clients y commandent surtout, et elles se paient 10 % plus cher",
+   "Un habitué dont la boisson préférée est à la carte vient plus souvent ; la feuille de la carte montre un cœur pour ces boissons"
+  ]
+ },
+ {
   "v": "1.117",
   "title": "La cave et la brasserie plus faciles",
   "date": "12 novembre 2026",

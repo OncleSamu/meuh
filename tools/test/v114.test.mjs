@@ -275,3 +275,29 @@ test('1.117 : l’état de la cave a ses actions', () => {
     const brew = readFileSync(new URL('../../src/ui/views/brewery.js', import.meta.url), 'utf8');
     for (const act of ['favBeer', 'brewBest', 'rebrew']) assert.ok(new RegExp(`\\n {8}${act}: `).test(brew), act);
 });
+
+test('1.118 : la carte du salon (quatre boissons), payée plus cher, et les clients qui attendent au retour', async () => {
+    const { CARTE, CLIENT } = await import('../../src/data/counter.js');
+    const { RECIPES, MACHINES } = await import('../../src/data/machines.js');
+    fresh(40);
+    state.machines.push(G.newMachine('counter'));
+    G.ensureCounter();
+    const drinks = G.counterRecipes()
+        .filter(r => G.recipeUnlocked(r.id))
+        .map(r => r.id);
+    assert.ok(drinks.length >= 5);
+    for (let k = 0; k < CARTE.max; k++) assert.ok(G.toggleCarte(drinks[k]));
+    assert.equal(G.toggleCarte(drinks[4]), false, 'quatre au plus');
+    assert.ok(G.toggleCarte(drinks[0]), 'on retire');
+    assert.equal(G.counterCarte().length, CARTE.max - 1);
+    assert.equal(G.toggleCarte('bread'), false);
+    // au retour, trois clients au plus attendent
+    state.counter.seats = [];
+    const got = G.counterOffline(3600);
+    assert.ok(got >= 1 && got <= CARTE.away, `${got} clients`);
+    assert.equal(state.counter.seats.length, got);
+    assert.equal(G.counterOffline(0), 0);
+    assert.ok(MACHINES.counter && RECIPES[drinks[1]] && CLIENT.daily(0) > 0);
+    const src = readFileSync(new URL('../../src/ui/views/counter.js', import.meta.url), 'utf8');
+    assert.ok(/\n {8}carteToggle: /.test(src));
+});

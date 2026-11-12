@@ -7,7 +7,7 @@ import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
 import { RECIPES } from '../data/machines.js';
 import { VILLAGERS } from '../data/village.js';
 import { BALANCE } from '../data/progress.js';
-import { CLIENT, BREW_COOLDOWN, SALON, DECORS, DECOR_COST, DECOR_PATIENCE, FAVORITE } from '../data/counter.js';
+import { CLIENT, BREW_COOLDOWN, SALON, DECORS, DECOR_COST, DECOR_PATIENCE, FAVORITE, CARTE } from '../data/counter.js';
 import { heartsOf, addFriendship } from './village.js';
 import { presentVillagers, hasCost, payCost } from './home.js';
 import { recipeUnlocked, canCook, missingFor, hasMachine, newMachine } from './workshop.js';
@@ -109,6 +109,12 @@ function orderable() {
 function pickDrink(vid) {
     const list = orderable();
     if (!list.length) return null;
+    // 1.118 : la carte du salon : les clients y commandent surtout
+    const carte = counterCarte().filter(id => list.some(r => r.id === id));
+    if (carte.length && Math.random() < CARTE.share) {
+        if (FAVORITE[vid] && carte.includes(FAVORITE[vid]) && Math.random() < 0.6) return FAVORITE[vid];
+        return carte[Math.floor(Math.random() * carte.length)];
+    }
     const fav = FAVORITE[vid];
     if (fav && list.some(r => r.id === fav) && Math.random() < 0.35) return fav;
     // plutôt des boissons que l'on peut préparer ou avoir en stock
@@ -121,7 +127,10 @@ function newClient() {
     const here = C.seats.map(s => s.vid);
     const cands = presentVillagers().filter(v => !here.includes(v));
     if (!cands.length) return false;
-    const vid = cands[Math.floor(Math.random() * cands.length)];
+    // 1.118 : un habitué dont la boisson préférée est à la carte vient plus volontiers
+    const carte = counterCarte();
+    const fans = cands.filter(v => FAVORITE[v] && carte.includes(FAVORITE[v]));
+    const vid = fans.length && Math.random() < CARTE.fans ? fans[Math.floor(Math.random() * fans.length)] : cands[Math.floor(Math.random() * cands.length)];
     const drink = pickDrink(vid);
     if (!drink) return false;
     C.seats.push({ vid, drink, left: patienceMax() });
@@ -252,7 +261,7 @@ function serve(seat, id, tier, stars, at) {
     const hearts = heartsOf(s.vid);
     const base = sellPrice(id);
     // 1.75.3 : le talent d'Inès
-    const price = Math.round(base * CLIENT.premium * CLIENT.star[tier] * (1 + CLIENT.heart * hearts) * (1 + talentFx('counter')));
+    const price = Math.round(base * CLIENT.premium * CLIENT.star[tier] * (1 + CLIENT.heart * hearts) * (1 + talentFx('counter')) * (counterCarte().includes(id) ? 1 + CARTE.pay : 1)); // 1.118 : la carte
     earn(price, at);
     state.income.counter = (state.income.counter || 0) + price;
     let tip = 0;
@@ -285,3 +294,27 @@ export const counterStars = r => {
 };
 
 export const counterFavorite = vid => FAVORITE[vid];
+
+// ---------------- 1.118 : la carte du salon et les clients du retour ----------------
+// la carte : quatre boissons au plus, choisies par le joueur ; les clients y commandent surtout, et elles se paient plus cher
+export const counterCarte = () => (state.counter && Array.isArray(state.counter.carte) ? state.counter.carte : []);
+export function toggleCarte(id) {
+    const C = ensureCounter();
+    const r = RECIPES[id];
+    if (!r || r.machine !== 'counter' || !recipeUnlocked(id)) return false;
+    C.carte = counterCarte().slice();
+    if (C.carte.includes(id)) C.carte = C.carte.filter(x => x !== id);
+    else if (C.carte.length < CARTE.max) C.carte.push(id);
+    else return false;
+    return true;
+}
+// pendant l'absence, des clients s'installent (trois au plus, jamais plus que de places ni que la limite du jour)
+export function counterOffline(sec) {
+    if (!counterOwned() || !(sec > 0)) return 0;
+    const C = ensureCounter();
+    rollDay();
+    let n = Math.min(CARTE.away, Math.floor(sec / salonDef().every));
+    let got = 0;
+    while (n-- > 0 && C.seats.length < salonDef().seats && dailyLeft() > C.seats.length && newClient()) got++;
+    return got;
+}

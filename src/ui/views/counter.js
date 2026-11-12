@@ -6,7 +6,7 @@ import { ITEMS } from '../../data/items.js';
 import { MACHINES, RECIPES } from '../../data/machines.js';
 import { toast } from '../../core/bus.js';
 import { VILLAGERS } from '../../data/village.js';
-import { BREW, CLIENT, DECORS, DECOR_COST, DECOR_PATIENCE, SALON, FAVORITE } from '../../data/counter.js';
+import { BREW, CLIENT, DECORS, DECOR_COST, DECOR_PATIENCE, SALON, FAVORITE, CARTE } from '../../data/counter.js';
 import { salonScene } from '../../art/village/salon.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions } from '../dom.js';
@@ -15,7 +15,7 @@ import { QUALITY } from '../../data/farm.js';
 import { btn, bar, hint, segmented, section, hearts, costRow } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
 import { openBrew } from '../brew.js';
-import { openSheet } from '../sheets.js';
+import { openSheet, defineSheet } from '../sheets.js';
 import { page, searchBox, queryOf, matchQ } from '../pager.js';
 
 const tab = () => ui.sel.counterTab || 'salon';
@@ -68,6 +68,37 @@ function seatCard(s, i) {
             ${ok || have ? '' : G.canCook(s.drink) ? '<small class="short">Le comptoir se repose…</small>' : `<button class="short link" data-act="needs" data-id="${s.drink}">Il manque ${G.missingFor(s.drink).join(', ')} ›</button>`}
         </div></div>`;
 }
+// 1.118 : la carte du salon
+const fansOf = id => Object.keys(FAVORITE).filter(v => FAVORITE[v] === id && (G.ensureCounter().favs || {})[v]);
+function carteHtml() {
+    const carte = G.counterCarte();
+    const cells = carte
+        .map(id => {
+            const fans = fansOf(id);
+            return `<button class="carte-item" data-act="carteToggle" data-id="${id}" aria-label="Retirer ${ITEMS[id].name} de la carte">${ico(['item', id], 'ico big')}<b>${ITEMS[id].name}</b><small>×${state.inventory[id] || 0}${fans.length ? ` · ♥ ${fans.length}` : ''}</small></button>`;
+        })
+        .join('');
+    return `<div class="card carte-card"><div class="cut-row"><div><div class="card-title">La carte du salon · ${carte.length}/${CARTE.max}</div><div class="card-sub">${
+        carte.length ? `Les clients y commandent surtout, et la paient ${Math.round(CARTE.pay * 100)} % plus cher.` : 'Choisissez jusqu’à quatre boissons : les clients les commanderont surtout, et les habitués viendront pour leur préférée.'
+    }</div></div>${btn(carte.length ? 'Changer' : 'Composer', { act: 'open', data: { sheet: 'carte' }, size: 'sm' })}</div>${carte.length ? `<div class="carte-items">${cells}</div>` : ''}</div>`;
+}
+defineSheet('carte', {
+    title: 'La carte du salon',
+    render() {
+        const carte = G.counterCarte();
+        const all = G.counterRecipes()
+            .filter(r => G.recipeUnlocked(r.id))
+            .map(r => r.id)
+            .sort((a, b) => carte.includes(b) - carte.includes(a) || fansOf(b).length - fansOf(a).length || (state.inventory[b] || 0) - (state.inventory[a] || 0) || ITEMS[a].name.localeCompare(ITEMS[b].name, 'fr'));
+        return `${hint(`Touchez une boisson pour l’ajouter à la carte ou l’en retirer (quatre au plus). Un ♥ : la boisson préférée d’un habitué que vous connaissez.`)}<div class="pick-grid">${all
+            .map(id => {
+                const on = carte.includes(id),
+                    fans = fansOf(id);
+                return `<button class="pick-cell${on ? ' on' : ''}" data-act="carteToggle" data-id="${id}"${!on && carte.length >= CARTE.max ? ' disabled' : ''}>${ico(['item', id], 'ico big')}<b>${ITEMS[id].name}</b><small>×${state.inventory[id] || 0}${fans.length ? ` · ♥ ${fans.map(v => VILLAGERS[v].name).join(', ')}` : ''}</small></button>`;
+            })
+            .join('')}</div>`;
+    },
+});
 function salonHtml() {
     const C = G.ensureCounter(),
         d = G.salonDef();
@@ -77,8 +108,9 @@ function salonHtml() {
     return `<div class="card"><div class="card-main">
         <div class="card-title">Salon · ${d.seats} places</div>
         <div class="card-sub">Clients servis aujourd’hui : ${C.served}/${CLIENT.daily(C.lvl)} · pourboires ${C.tips}/${CLIENT.tipMax}</div></div></div>
+        ${carteHtml()}
         ${rows.join('')}
-        ${hint('Les clients n’arrivent et ne patientent que lorsque vous êtes ici. Un client paie plus que le marché ; une belle note et les cœurs d’amitié augmentent le prix.')}`;
+        ${hint('Les clients ne s’impatientent que lorsque vous êtes ici ; pendant votre absence, trois au plus s’installent et vous attendent. Un client paie plus que le marché ; une belle note et les cœurs d’amitié augmentent le prix.')}`;
 }
 
 // ---------------- l'atelier ----------------
@@ -245,5 +277,6 @@ export function setupCounter() {
         seatAway: (el, d) => G.counterSendAway(+d.i),
         upSalon: () => G.upgradeSalon(),
         buyDecor: (el, d) => G.buyDecor(d.id),
+        carteToggle: (el, d) => G.toggleCarte(d.id),
     });
 }
