@@ -15,7 +15,7 @@ import { btn, hint, timer, section, bar, empty } from '../kit.js';
 import { defineView, ui, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { confirmTap } from '../confirm.js';
-import { genWrap, looksText, animalArt, lineageHtml, varRankChips } from '../genlook.js';
+import { genWrap, looksText, animalArt, lineageHtml, varRankChips, nodeTraits, lineNodeAt } from '../genlook.js';
 import { renameBtn } from '../sheets/rename.js';
 import { NOTE_COL } from '../../data/abbey.js';
 import { chefCard } from './orders.js';
@@ -576,8 +576,42 @@ defineSheet('salonPick', {
     },
 });
 
+// 1.119 : la fiche d'un ancêtre de la lignée, avec ses caractères et ceux de ses parents
+defineSheet('lnNode', {
+    title: () => esc((ui.sel.lnNode || {}).n || 'Ancêtre'),
+    render() {
+        const x = ui.sel.lnNode;
+        if (!x) return '';
+        const pic = x.t ? animalArt(x.t, x.g) : x.g ? genWrap(art('item', x.b), x.g) : art('item', x.b);
+        const kind = x.t ? (ANIMALS[x.t] ? ANIMALS[x.t].name : '') : ITEMS[x.b] ? ITEMS[x.b].name : '';
+        const gen = x.gen ? `génération ${x.gen}` : x.t === 'horse' ? 'd’origine' : 'sauvage';
+        const tr = nodeTraits(x);
+        const par = (x.lin || []).filter(Boolean).map(nodeTraits).filter(l => l.length);
+        const pv = (l, id) => {
+            const o = l.find(q => q.t.id === id);
+            return o ? o.v : 0;
+        };
+        const rows = tr
+            .map(({ t, v }) => {
+                const pips = Array.from({ length: 5 }, (_, k) => `<i class="${k < v ? 'on' : ''}"></i>`).join('');
+                const from = par.map(l => pv(l, t.id));
+                const up = from.length === 2 && v > Math.max(...from);
+                return `<div class="tr">${ico(t.icon)}<span class="tr-name">${t.name}${up ? ' <b class="ln-up">↑</b>' : ''}</span><span class="tr-pips">${pips}</span>${from.length ? `<small class="tr-al">${from.join(' · ')}</small>` : ''}</div>`;
+            })
+            .join('');
+        return `<div class="ln-sheet center"><span class="ln-art big">${pic}</span><p class="card-sub">${esc(kind)} · ${gen}</p></div>
+            ${tr.length ? `<div class="traits">${rows}</div>${par.length ? '<p class="card-sub center">À droite, ce que valaient ses deux parents ; ↑ : mieux que l’un et l’autre.</p>' : ''}` : '<p class="card-sub center">Ses caractères n’ont pas été notés : cet ancêtre est né avant la version 1.119. Ceux des prochains croisements le seront.</p>'}`;
+    },
+});
+
 export function setupLab() {
     actions({
+        lnNode: (el, d) => {
+            const x = lineNodeAt(+d.i);
+            if (!x) return;
+            ui.sel.lnNode = x;
+            openSheet('lnNode');
+        },
         goStation: () => {
             ui.sel.map = 'station';
             ui.sel.proj = 'pollination';

@@ -1,8 +1,9 @@
 // L'apparence d'une création : le dessin de l'espèce, modifié par ses gènes (taille, couleur, motif, auréole).
 // Jamais choisie par le joueur : elle découle des gènes. Le motif est posé par-dessus, découpé à la forme du dessin.
 import * as G from '../systems/index.js';
-import { art, qStar } from './icons.js';
-import { FEATURES, featuresOf } from '../data/genetics.js';
+import { state } from '../core/state.js';
+import { art, qStar, ico } from './icons.js';
+import { FEATURES, featuresOf, PLANT_TRAITS, ANIMAL_TRAITS } from '../data/genetics.js';
 
 const SIZE = [
     [0.82, 0.82],
@@ -199,12 +200,50 @@ export function featuresText(type, g) {
 
 // la lignée (1.2) : grands-parents, parents, puis la création elle-même
 const escName = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+// 1.119 : les caractères d'un ancêtre, lus dans sa fiche (un chiffre par gène)
+// pour un ancêtre noté avant 1.119, on relit la variété ou la bête si elle est encore à la ferme
+function liveKey(x) {
+    if (x.k) return x.k;
+    const st = state;
+    if (x.t) {
+        const a = x.u && (st.animals || []).find(b => b.uid === x.u);
+        return a ? G.traitKey(a.g, G.ANIMAL_IDS) || '' : '';
+    }
+    // une plante sauvage : les caractères de son espèce
+    if (!x.gen && x.b) return G.traitKey(G.wildPlant(x.b), G.PLANT_IDS) || '';
+    const v = Object.values((st.genetics && st.genetics.vars) || {}).find(y => G.varName(y) === x.n);
+    return v ? G.traitKey(v.g, G.PLANT_IDS) || '' : '';
+}
+export function nodeTraits(x) {
+    if (!x) return [];
+    const k = liveKey(x);
+    if (!k) return [];
+    x = { ...x, k };
+    const list = x.t ? ANIMAL_TRAITS.filter(t => !t.species || t.species.includes(x.t)) : PLANT_TRAITS;
+    const ids = (x.t ? ANIMAL_TRAITS : PLANT_TRAITS).map(t => t.id);
+    return list.map(t => ({ t, v: +x.k[ids.indexOf(t.id)] || 0 })).filter(o => o.v > 0);
+}
+// les deux plus forts, en petits badges sous le portrait
+const topTraits = x =>
+    nodeTraits(x)
+        .filter(o => !o.t.extra)
+        .sort((a, b) => b.v - a.v)
+        .slice(0, 2);
+// chaque nœud dessiné reçoit un numéro (les 200 derniers sont gardés pour la fiche au toucher)
+const lnNodes = new Map();
+let lnSeq = 0;
+export const lineNodeAt = i => lnNodes.get(i) || null;
 function lineNode(x, me) {
     if (!x) return '<div class="ln-node empty"><span class="ln-art"></span><b>Inconnu</b></div>';
     const pic = x.t ? animalArt(x.t, x.g) : x.g ? genWrap(art('item', x.b), x.g) : art('item', x.b);
     // 1.24.3 : un cheval champion Élite porte une couronne ; un cheval de génération 0 est « d'origine »
     const champ = x.t === 'horse' && x.u && G.isChampionUid(x.u) ? `<i class="ln-crown">${art('ui', 'hCouronne')}</i>` : '';
-    return `<div class="ln-node${me ? ' me' : ''}">${champ}<span class="ln-art">${pic}</span><b>${escName(x.n)}</b><small>${x.gen ? `gén. ${x.gen}` : x.t === 'horse' ? 'd’origine' : 'sauvage'}</small></div>`;
+    const top = topTraits(x);
+    const tr = top.length ? `<span class="ln-tr">${top.map(o => `<i title="${o.t.name}">${ico(o.t.icon)}${o.v}</i>`).join('')}</span>` : '';
+    const id = ++lnSeq;
+    lnNodes.set(id, x);
+    if (lnNodes.size > 200) lnNodes.delete(lnNodes.keys().next().value);
+    return `<button type="button" class="ln-node${me ? ' me' : ''}" data-act="lnNode" data-i="${id}" aria-label="Voir ${escName(x.n)}">${champ}<span class="ln-art">${pic}</span><b>${escName(x.n)}</b><small>${x.gen ? `gén. ${x.gen}` : x.t === 'horse' ? 'd’origine' : 'sauvage'}</small>${tr}</button>`;
 }
 export function lineageHtml(self) {
     if (!self || !self.lin) return '';

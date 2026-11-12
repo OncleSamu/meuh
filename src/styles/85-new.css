@@ -2078,3 +2078,47 @@ button.cm-spot:active {
 .pick-cell.on {
     outline: 3px solid var(--green, #5fae4f);
 }
+
+/* 1.119 : la lignée se lit : deux caractères par ancêtre, et une fiche au toucher */
+button.ln-node {
+    background: none;
+    border: 0;
+    padding: 2px;
+    font: inherit;
+    color: inherit;
+    border-radius: 10px;
+    cursor: pointer;
+}
+button.ln-node:active {
+    background: rgba(58, 38, 24, 0.08);
+}
+.ln-tr {
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+    margin-top: 1px;
+}
+.ln-tr i {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    font-style: normal;
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    padding: 0 4px 0 2px;
+}
+.ln-tr .ico {
+    width: 14px;
+    height: 14px;
+}
+.ln-sheet .ln-art.big {
+    display: block;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 4px;
+}
+.ln-up {
+    color: var(--good, #2e7d32);
+}

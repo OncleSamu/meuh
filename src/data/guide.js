@@ -2029,6 +2029,7 @@ export const GUIDE_PAGES = [
                     'Elle donne une portée de jeunes plants (3, 4 avec le laboratoire) : vous en gardez un.',
                     'Chaque gène peut muter (5 %, 9 % avec la ruche de sélection).',
                     'Deux espèces différentes donnent plus souvent des graines stériles.',
+                    'La fiche d’une variété ou d’une bête montre sa lignée : sous chaque ancêtre, ses deux meilleurs caractères. Touchez un ancêtre pour voir tous ses caractères, ceux de ses parents, et ce qu’il a gagné sur eux (↑).',
                 ],
             },
             {

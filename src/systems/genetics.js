@@ -1096,15 +1096,18 @@ export function startBreed(ua, ub, at) {
 // la lignée (1.2) : parents et grands-parents, en petites fiches qui survivent à la vente des bêtes
 const snapLooks = g =>
     g && g.l ? { l: JSON.parse(JSON.stringify(g.l)), halo: !!g.halo, coat: g.coat ? JSON.parse(JSON.stringify(g.coat)) : undefined } : null;
+// 1.119 : les caractères visibles, un chiffre par gène (dans l'ordre de PLANT_IDS / ANIMAL_IDS)
+export const traitKey = (g, ids) => (g && g.t ? ids.map(k => Math.min(9, g.t[k] ? express(g.t[k]) : 0)).join('') : undefined);
 export function lineSnap(x, deep) {
     if (!x) return null;
     const isVar = !!x.kind;
     const s = isVar
-        ? { n: varName(x), b: x.base, g: snapLooks(x.g), gen: x.gen || 0 }
+        ? { n: varName(x), b: x.base, g: snapLooks(x.g), gen: x.gen || 0, k: traitKey(x.g, PLANT_IDS) }
         : x.t
-          ? { n: x.name || x.n, t: x.t, g: x.g, gen: x.gen || 0 }
-          : { n: x.name, t: x.type, g: snapLooks(x.g), gen: x.gen || 0, u: x.uid };
-    if (deep && x.lin) s.lin = x.lin.map(y => y && { n: y.n, t: y.t, b: y.b, g: y.g, gen: y.gen });
+          ? { n: x.name || x.n, t: x.t, g: x.g, gen: x.gen || 0, k: x.k }
+          : { n: x.name, t: x.type, g: snapLooks(x.g), gen: x.gen || 0, u: x.uid, k: traitKey(x.g, ANIMAL_IDS) };
+    if (s.k === undefined) delete s.k;
+    if (deep && x.lin) s.lin = x.lin.map(y => y && { n: y.n, t: y.t, b: y.b, g: y.g, gen: y.gen, ...(y.k ? { k: y.k } : {}) });
     return s;
 }
 // une plante sauvage dans une lignée : son espèce, génération 0

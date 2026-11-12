@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.119",
+  "title": "Une lignée qui se lit",
+  "date": "12 novembre 2026",
+  "items": [
+   "Lignée des variétés, des bêtes et des chevaux : chaque ancêtre affiche ses deux meilleurs caractères",
+   "Touchez un ancêtre : sa fiche montre tous ses caractères, ceux de ses deux parents, et une flèche ↑ là où il fait mieux que l'un et l'autre",
+   "Les croisements notent désormais les caractères de chaque parent ; pour les anciennes lignées, ils sont relus sur les plantes sauvages et sur les variétés et bêtes encore à la ferme"
+  ]
+ },
+ {
   "v": "1.118",
   "title": "Un comptoir vivant",
   "date": "12 novembre 2026",
