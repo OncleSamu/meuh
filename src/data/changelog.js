@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.115.1",
+  "title": "L'icône du métier centrée",
+  "date": "12 novembre 2026",
+  "items": [
+   "Menu : l'icône du métier est centrée dans sa pastille"
+  ]
+ },
+ {
   "v": "1.115",
   "title": "Le monde connaît votre métier",
   "date": "12 novembre 2026",

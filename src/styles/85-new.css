@@ -1975,3 +1975,21 @@ button.cm-spot:active {
 .metier-need.ok {
     background: rgba(95, 174, 79, 0.18);
 }
+
+/* 1.115.1 : l'icône du métier, centrée dans sa pastille du menu */
+.metier-card .avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+.metier-card .avatar .ico {
+    width: 36px;
+    height: 36px;
+    margin: 0;
+}
+.metier-card .dot {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+}
