@@ -11,7 +11,8 @@ import { wineBottle, LABEL_STYLES } from '../../art/items2.js';
 import { renameBtn } from '../sheets/rename.js';
 import '../sheets/bottle.js';
 import * as G from '../../systems/index.js';
-import { blocks, actions } from '../dom.js';
+import { blocks, actions, esc } from '../dom.js';
+import { DAYS_PER_SEASON } from '../../data/world.js';
 import { ico, art, qStar } from '../icons.js';
 import { QUALITY } from '../../data/farm.js';
 import { btn, bar, timer, card, section, empty } from '../kit.js';
@@ -171,6 +172,23 @@ function saleHtml() {
 }
 
 // les lots légendaires : les trophées de la cave
+// 1.120 : le millésime de l'année et son palmarès
+function millHtml() {
+    G.millTick();
+    const M = G.ensureMill();
+    const b = M.best;
+    const daysLeft = 4 * DAYS_PER_SEASON - ((state.day - 1) % (4 * DAYS_PER_SEASON));
+    const pic = x => (x.id === 'beer' && G.beerOf(x.bid) ? `<i class="ico big">${beerSvg(G.beerOf(x.bid))}</i>` : ico(x.id === 'beer' ? ['ui', 'beer'] : ['item', x.id], 'ico big'));
+    const list = M.list
+        .slice(0, 6)
+        .map(x => `<div class="trophy cave-legend">${pic(x)}<b>${esc(x.name)}</b><small>Année ${x.y}</small><small>${fmt(x.prize)}${COIN()}</small></div>`)
+        .join('');
+    return `<div class="card mill-card"><div class="card-head">${ico(['ui', 'trophy'], 'ico big')}<div class="card-main"><div class="card-title">Millésime de l’année ${M.y}</div>
+        <div class="card-sub">${b ? `En tête : <b>${esc(b.name)}</b> (${fmt(b.u)}${COIN()} la bouteille)` : 'Aucune bouteille sortie cette année'} · encore ${daysLeft} jour${daysLeft > 1 ? 's' : ''} de jeu</div></div></div>
+        <p class="card-sub">À la fin de l’année, la bouteille la plus chère sortie de la cave entre au palmarès : elle rapporte quatre fois sa valeur et 2 points de renommée.${b ? ` Aujourd’hui : ${fmt(G.millPrize(b))}${COIN()}.` : ''}</p>
+        ${list ? `<div class="set-sub">Le palmarès</div><div class="trophy-grid">${list}</div>` : ''}</div>`;
+}
+
 function legendsHtml() {
     const L = G.caveLegends();
     if (!L.length) return '';
@@ -353,6 +371,7 @@ function renderCave(el) {
             t === 'sales' ? reserveHtml() || empty('La réserve est vide : sortez un lot de la cave pour le vendre, l’envoyer aux enchères ou au coffre.') : '',
         ],
         ['chateau', t === 'sales' ? chateauFold() : ''],
+        ['mill', t === 'sales' ? millHtml() : ''],
         ['legends', t === 'sales' ? legendsHtml() : ''],
         ['orders', t === 'orders' ? ordersHtml() || empty('Pas de commande pour le moment : les habitués de la cave passent régulièrement.') : ''],
         ['gear', t === 'gear' ? gearHtml() : ''],

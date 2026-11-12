@@ -2122,3 +2122,28 @@ button.ln-node:active {
 .ln-up {
     color: var(--good, #2e7d32);
 }
+
+/* 1.120 : catalogue de semences */
+.row.on {
+    border-color: var(--good, #2e7d32);
+    background: #eef8e4;
+}
+.cat-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+}
+.cat-line > .ico {
+    width: 30px;
+    height: 30px;
+    flex: none;
+}
+.cat-line b,
+.cat-line small {
+    display: block;
+}
+.cat-line small {
+    color: var(--ink-soft);
+}

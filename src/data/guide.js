@@ -1128,6 +1128,10 @@ export const GUIDE_PAGES = [
                 ],
             },
             { h: 'Trophées', t: 'Chaque lot légendaire entre dans la salle des trophées ; le premier de chaque famille rapporte un ruban.' },
+            {
+                h: 'Le millésime de l’année',
+                t: 'Onglet Réserve. Chaque année de jeu (quatre saisons), la bouteille la plus chère sortie de la cave devient le millésime de l’année. À la fin de l’année, elle entre au palmarès et rapporte quatre fois sa valeur, plus 2 points de renommée.',
+            },
         ],
         see: ['brewery', 'orchard'],
     },
@@ -1227,6 +1231,10 @@ export const GUIDE_PAGES = [
                     'Les classiques donnent une étoile de plus : pomme (cyser), raisin (pyment), fruits rouges (mélomel), herbes et épices (métheglin).',
                     'Il fermente plus lentement (15 min, puis 5 par ingrédient), se range dans « Mes boissons », a ses commandes et vieillit en fût à la cave. Chaque miel brassé ajoute une page au livre.',
                 ],
+            },
+            {
+                h: 'Le concours de la saison',
+                t: 'Onglet Clients. Chaque saison, le jury attend une boisson d’un goût précis : acidulée au printemps, sucrée l’été, amère l’automne, épicée l’hiver. Note sur 20 : 4 par étoile, 4 pour le bon goût, 1 par rang de la meilleure bouteille. Le jury goûte deux bouteilles ; les prix (pièces, expérience, renommée) tombent à la fin de la saison.',
             },
             {
                 h: 'Commandes et fût',
@@ -2055,6 +2063,10 @@ export const GUIDE_PAGES = [
             {
                 h: 'Mes créations et le chef',
                 t: 'Mes créations garde chaque variété et permet de racheter graines et petits. Le chef passe des commandes de plusieurs heures qui demandent un trait précis.',
+            },
+            {
+                h: 'Le catalogue de semences',
+                t: 'Onglet Catalogue du labo, avec le conservatoire. Inscrivez jusqu’à trois variétés fixées : les voisins commandent leurs graines, une commande toutes les deux heures (trois en attente au plus, même absent). Plus une variété dépasse son espèce (saveurs, pousse, soif, froid, rendement), mieux elle se paie.',
             },
         ],
         see: ['labanimals', 'workshop'],

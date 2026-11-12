@@ -36,7 +36,7 @@ import { rareTick, ensureContract, rareActive } from './surprises.js';
 import { boatTick, transTick, ensureFarmSeason, netReady } from './port.js';
 import { ensureHoliday } from './holidays.js';
 import { contestTick } from './contest.js';
-import { caveOpen, caveTick, auctionTick, caveCareCount, caveOrderTick } from './cave.js';
+import { caveOpen, caveTick, auctionTick, caveCareCount, caveOrderTick, millTick } from './cave.js';
 import { ensureChateau, visitorTick } from './chateau.js';
 import { tip } from './tips.js';
 import { trimDayEarn, syncBook } from './book.js';
@@ -63,6 +63,8 @@ import { pondTick, trapsReady } from './fishing.js';
 import { birthsTick, birthsTip } from './births.js';
 import { fairTick } from './fair.js';
 import { comiceTick } from './comice.js';
+import { festTick } from './brewfest.js';
+import { catTick } from './seedcat.js';
 import { herdbookTick } from './herdbook.js';
 
 // ---------------- chargement ----------------
@@ -341,6 +343,10 @@ function tickDeliveries() {
         if (fairTick()) changed = true;
         if (comiceTick()) changed = true;
         if (herdbookTick()) changed = true;
+        // 1.120 : concours de bière de la saison, catalogue de semences, millésime de l'année
+        if (festTick()) changed = true;
+        if (catTick()) changed = true;
+        if (caveOpen() && millTick()) changed = true;
     }
     if (nmarketTick()) changed = true;
     if (specialTick()) changed = true;

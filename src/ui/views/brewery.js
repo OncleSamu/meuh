@@ -246,6 +246,41 @@ function beersHtml() {
 }
 
 // ---------------- les commandes de bière ----------------
+// 1.120 : le concours de bière de la saison
+function festHtml() {
+    G.festTick();
+    const F = G.fest();
+    if (!F) return '';
+    const th = G.festTheme();
+    const rows = [...F.rivals, ...(F.entry ? [{ name: `${F.entry.name} (vous)`, score: F.entry.score, you: true }] : [])]
+        .sort((a, b) => b.score - a.score)
+        .map((r, k) => `<li class="${r.you ? 'me' : ''}"><b>${k + 1}</b><span>${esc(r.name)}</span><em>${r.score}/20</em></li>`)
+        .join('');
+    const left = G.seasonDaysLeft();
+    const last = F.last ? `<p class="card-sub">La saison passée : ${esc(F.last.name)} a fini ${F.last.r === 1 ? '<b>première</b>' : `${F.last.r}e`} (${esc(F.last.theme)}).</p>` : '';
+    return `<div class="card salon-card fest-card"><div class="card-head">${ico(['ui', 'trophy'], 'ico big')}<div class="card-main"><div class="card-title">Concours : ${th.name}</div>
+        <div class="card-sub">Le jury veut une boisson <b style="color:${NOTE_COL[th.note]}">${th.want}</b> · encore ${left} jour${left > 1 ? 's' : ''} de jeu</div></div></div>
+        <ol class="ranking">${rows}</ol>
+        <p class="card-sub">Note sur 20 : 4 par étoile, 4 si la note du goût est celle du thème, 1 par rang de la meilleure bouteille. Le jury goûte deux bouteilles. Premier prix : des pièces, de l’expérience et 2 points de renommée.</p>
+        ${last}
+        ${btn(F.entry ? 'Changer de boisson' : 'Inscrire une boisson', { act: 'open', data: { sheet: 'festPick' }, kind: F.entry ? '' : 'gold', wide: true })}</div>`;
+}
+defineSheet('festPick', {
+    title: 'Inscrire au concours',
+    render() {
+        const list = G.festCandidates();
+        if (!list.length) return empty('Il faut au moins deux bouteilles d’une boisson en stock.');
+        return `<p class="card-sub center">${G.festTheme().name} : le jury veut une boisson ${G.festTheme().want}. Il goûte deux bouteilles.</p><div class="list">${list
+            .slice(0, 30)
+            .map(c => {
+                const b = G.beerOf(c.id);
+                const s = c.score;
+                return `<button class="row" data-act="festEnter" data-id="${c.id}">${bottle(b)}<span class="row-main"><span>${esc(c.name)} ${stars(b.stars)}</span><small>étoiles ${s.stars}${s.theme ? ` · thème +${s.theme}` : ' · pas le goût du thème'}${s.rank ? ` · rang +${s.rank}` : ''} · ${G.beerStock(c.id)} en stock</small></span><b>${s.total}/20</b></button>`;
+            })
+            .join('')}</div>`;
+    },
+});
+
 function ordersHtml() {
     const B = state.brew;
     if (!B.orders.length) return '';
@@ -329,7 +364,7 @@ function renderBrew(el) {
         ['cellar', t === 'mine' ? cellarHtml() : ''],
         [
             'orders',
-            t === 'orders' ? ordersHtml() || empty('Pas de commande de bière pour le moment : Frère Hugues, Agnès et les habitués passent régulièrement.') : '',
+            t === 'orders' ? festHtml() + (ordersHtml() || empty('Pas de commande de bière pour le moment : Frère Hugues, Agnès et les habitués passent régulièrement.')) : '',
         ],
         ['book', t === 'book' ? bookHtml() : ''],
     ]);
@@ -451,6 +486,9 @@ defineSheet('brewHoneyPick', {
 
 export function setupBrewery() {
     actions({
+        festEnter: (el, d) => {
+            if (G.enterFest(d.id)) closeSheet('festPick');
+        },
         goCave: () => go('machines/cave'),
         goAbbey: () => {
             ui.sel.map = 'abbey';

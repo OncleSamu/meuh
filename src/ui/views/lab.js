@@ -7,6 +7,7 @@ import { on, toast } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
 import { ANIMALS } from '../../data/animals.js';
 import { PLANT_TRAITS, ANIMAL_TRAITS, FLAVORS, ANIMAL_BASE, extraBase, GENETICS as GX } from '../../data/genetics.js';
+import { SEEDCAT } from '../../data/brewfest.js';
 import { PROJECTS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc, QUIET } from '../dom.js';
@@ -303,6 +304,47 @@ function salonCard() {
         ${btn(s.entry ? 'Changer de variété' : 'Inscrire une variété', { act: 'open', data: { sheet: 'salonPick' }, kind: s.entry ? '' : 'gold', wide: true })}</div>`;
 }
 
+// 1.120 : le catalogue de semences
+function catHtml() {
+    if (!G.catOpen()) return '';
+    G.catTick();
+    const ids = G.catIds();
+    const orders = G.catOrders();
+    const seeds = id => state.genetics.seeds[id] || 0;
+    const listed = ids
+        .map(id => {
+            const v = G.variety(id);
+            return `<div class="cut-row"><span class="cat-line"><span class="ico">${varArt(v)}</span><span><b>${esc(G.varName(v))}</b> <small>${seeds(id)} graine${seeds(id) > 1 ? 's' : ''} · réputation ×${String(Math.round(G.meritMult(v) * 100) / 100).replace('.', ',')}</small></span></span>${btn('Retirer', { act: 'catToggle', data: { id }, size: 'sm', kind: 'ghost' })}</div>`;
+        })
+        .join('');
+    const ord = orders
+        .map(o => {
+            const v = G.variety(o.vid);
+            const ok = seeds(o.vid) >= o.n;
+            return `<div class="cut-row"><span class="cat-line"><span class="ico">${varArt(v)}</span><span><b>${esc(o.who)}</b> <small>${o.n} graines de ${esc(G.varName(v))} · ${fmt(G.catPay(v, o.n))}${ico(['ui', 'coin'])}</small></span></span>${btn(ok ? 'Livrer' : `${seeds(o.vid)}/${o.n}`, { act: 'catDeliver', data: { id: o.id }, kind: ok ? 'green' : '', size: 'sm' })}</div>`;
+        })
+        .join('');
+    return `<div class="card cat-card"><div class="card-head">${ico(['ui', 'packet'], 'ico big')}<div class="card-main"><div class="card-title">Mon catalogue de semences</div>
+        <div class="card-sub">${ids.length}/${SEEDCAT.slots} variétés · une commande des voisins toutes les deux heures, même absent (trois en attente au plus)</div></div></div>
+        ${listed || '<p class="card-sub">Inscrivez vos variétés fixées : les voisins commanderont leurs graines.</p>'}
+        ${btn(ids.length ? 'Changer les variétés' : 'Choisir des variétés', { act: 'open', data: { sheet: 'catPick' }, kind: ids.length ? '' : 'gold', wide: true })}</div>
+        ${ord ? section('Commandes de graines') + `<div class="card">${ord}</div>` : ids.length ? '<p class="empty">Pas encore de commande : elles arrivent toutes les deux heures.</p>' : ''}
+        ${hint('Le prix d’une commande monte avec la réputation de la variété : chaque caractère au-dessus de l’espèce (saveurs, pousse, soif, froid, rendement) l’augmente. Les graines viennent des récoltes de la variété, ou du rachat dans « Mes créations ».')}`;
+}
+defineSheet('catPick', {
+    title: 'Mon catalogue',
+    render() {
+        const list = G.catChoices().sort((a, b) => G.varMerit(b) - G.varMerit(a));
+        if (!list.length) return empty('Fixez d’abord une variété au laboratoire.');
+        return `<p class="card-sub center">${G.catIds().length}/${SEEDCAT.slots} variétés. Les plus réputées sont en haut.</p><div class="list">${list
+            .map(v => {
+                const on = G.inCat(v.id);
+                return `<button class="row${on ? ' on' : ''}" data-act="catToggle" data-id="${v.id}"><span class="ico">${varArt(v)}</span><span class="row-main"><span>${esc(G.varName(v))}</span><small>réputation ×${String(Math.round(G.meritMult(v) * 100) / 100).replace('.', ',')} · ${state.genetics.seeds[v.id] || 0} graines</small></span><b>${on ? '✓' : '+'}</b></button>`;
+            })
+            .join('')}</div>`;
+    },
+});
+
 function renderLab(el) {
     G.ensureGenetics();
     if (!G.geneticsOpen()) {
@@ -318,6 +360,7 @@ function renderLab(el) {
             ['cross', 'Croiser', null, litters ? 1 : 0],
             ['vars', 'Variétés', null, 0],
             ['salon', 'Concours', null, 0],
+            ...(G.catOpen() ? [['cat', 'Catalogue', null, G.catReady()]] : []),
         ],
         'cross',
     );
@@ -343,6 +386,7 @@ function renderLab(el) {
         ],
         ['varSearch', t === 'vars' ? varToolsBlock() : ''],
         ['vars', t === 'vars' ? varietiesBlock() : ''],
+        ['cat', t === 'cat' ? catHtml() : ''],
         ['salon', t === 'salon' ? salonCard() || '<p class="empty">Le concours du potager s’ouvre avec vos premières variétés.</p>' : ''],
         [
             'hint',
@@ -606,6 +650,8 @@ defineSheet('lnNode', {
 
 export function setupLab() {
     actions({
+        catToggle: (el, d) => G.toggleCat(d.id),
+        catDeliver: (el, d) => G.deliverCat(d.id, el),
         lnNode: (el, d) => {
             const x = lineNodeAt(+d.i);
             if (!x) return;

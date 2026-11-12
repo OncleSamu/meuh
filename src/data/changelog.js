@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.120",
+  "title": "Concours, catalogue et millésime",
+  "date": "12 novembre 2026",
+  "items": [
+   "Brasserie › Clients : le concours de la saison. Le jury attend un goût (acidulé, sucré, amer, épicé selon la saison) ; note sur 20, trois brasseries voisines en face ; pièces, expérience et renommée à la fin de la saison",
+   "Labo › Catalogue : inscrivez jusqu'à trois variétés fixées. Les voisins commandent leurs graines toutes les deux heures, même pendant votre absence ; une variété meilleure que son espèce se paie plus cher",
+   "Cave › Réserve : le millésime de l'année. La bouteille la plus chère sortie dans l'année entre au palmarès et rapporte quatre fois sa valeur et de la renommée"
+  ]
+ },
+ {
   "v": "1.119",
   "title": "Une lignée qui se lit",
   "date": "12 novembre 2026",

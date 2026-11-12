@@ -56,6 +56,7 @@ import { caveBonus } from './buildings.js';
 import { cupHas } from './cup.js';
 import { DAYS_PER_SEASON } from '../data/world.js';
 import { VINTAGES, LABEL_COUNT } from '../data/cave.js';
+import { MILLESIME } from '../data/brewfest.js';
 import { domStepSum } from './estate.js';
 import { repStars, classMult, settleOnExit, settlePrimeur, makeCuvee, sellPrimeur, primeurQuote, enterWineContest, serveVisitor } from './chateau.js';
 import { takeQ } from './defis.js';
@@ -484,6 +485,7 @@ export function takeOut(i, at) {
     c.reserve.push(kept);
     state.stats.caveLots = (state.stats.caveLots || 0) + 1;
     if (!lot.bad) record('lot', lotValue(lot));
+    if (!lot.bad) noteMill(lot);
     if (!lot.bad && vintageOf(lot)) collect(`cv_${lot.id}_${lot.vq}`);
     if (!lot.bad && vintageOf(lot) && lot.vq >= 2) state.stats.vintageTop = (state.stats.vintageTop || 0) + 1;
     if (!lot.bad && lot.name && isVinous(lot.id)) state.stats.cuvees = (state.stats.cuvees || 0) + 1;
@@ -517,6 +519,43 @@ function addLegend(lot) {
             toast(`Premier lot légendaire de ${CAVE_FAMILIES[f].name.toLowerCase()} : un trophée et +${CAVE_LEGEND_RUBANS} ruban !`, ['ui', 'trophy']);
     }
 }
+// 1.120 : le millésime de l'année. Chaque année de jeu (quatre saisons), la bouteille la plus chère sortie de la cave
+// entre au palmarès ; à la fin de l'année, elle rapporte quatre fois sa valeur et de la renommée.
+export function ensureMill() {
+    const c = state.cave;
+    if (!c.mill || typeof c.mill !== 'object') c.mill = { y: gameYear(), best: null, list: [] };
+    c.mill.list = c.mill.list || [];
+    return c.mill;
+}
+export const millPrize = b => Math.round((b.u * MILLESIME.bottles) / 10) * 10;
+function noteMill(lot) {
+    millTick();
+    const M = ensureMill();
+    const u = lotUnit(lot);
+    if (M.best && M.best.u >= u) return;
+    M.best = { name: lotName(lot), id: lot.id, bid: lot.bid || null, rank: lot.rank, u, day: state.day };
+    if (view.started) toast(`${lotName(lot)} devient le millésime de l’année ${M.y}`, ['ui', 'trophy']);
+}
+export function millTick() {
+    if (!state.cave) return false;
+    const M = ensureMill();
+    const y = gameYear();
+    if (y <= M.y) return false;
+    if (M.best) {
+        const prize = millPrize(M.best);
+        earn(prize, null);
+        addRenom(MILLESIME.renom, 'millésime de l’année');
+        M.list.unshift({ y: M.y, ...M.best, prize });
+        M.list.length = Math.min(M.list.length, MILLESIME.keep);
+        state.stats.millesimes = (state.stats.millesimes || 0) + 1;
+        addPhoto(...lotIcon(M.best), `${M.best.name}, millésime ${M.y}`, 'Le palmarès de la cave');
+        if (view.started) toast(`Millésime de l’année ${M.y} : ${M.best.name}. ${fmt(prize)} pièces et de la renommée`, ['ui', 'trophy']);
+    }
+    M.y = y;
+    M.best = null;
+    return true;
+}
+
 export const caveLegends = () => Object.entries((state.cave && state.cave.legends) || {});
 
 // ---------------- réserve : négociant ou enchères ----------------
