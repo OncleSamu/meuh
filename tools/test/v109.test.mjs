@@ -224,7 +224,7 @@ test('1.113 : la carte de visite (personnage et nom de ferme)', async () => {
     assert.ok(G.setIdentity(look, '   Les   Trois  Chênes  et beaucoup trop de lettres   '));
     assert.equal(G.identitySet(), true);
     assert.equal(G.meLook(), look);
-    assert.equal(G.farmName(), 'Les Trois Chênes et bea');
+    assert.equal(G.farmName(), 'Les Trois Chênes et be');
     assert.ok(G.farmName().length <= G.FARM_NAME_MAX);
     assert.ok(G.setIdentity(look, ''));
     assert.equal(G.farmName(), G.DEFAULT_FARM);

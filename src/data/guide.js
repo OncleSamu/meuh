@@ -49,6 +49,10 @@ export const GUIDE_PAGES = [
         intro: 'Meuh est un jeu de ferme où tout s’enchaîne : on cultive, on transforme, on livre, et l’argent sert à grandir.',
         secs: [
             {
+                h: 'Votre carte de visite',
+                t: 'Au début de la partie, vous composez votre personnage (douze traits, comme les habitants de la vallée) et vous nommez votre ferme. Les deux se changent quand vous voulez : touchez votre carte en haut du menu. Le nom apparaît sur l’étal et dans le livre de la ferme.',
+            },
+            {
                 h: 'La boucle du jeu',
                 b: [
                     'Cultivez et élevez : le champ, les animaux, puis le verger, la pêche, la forêt et la mine.',
