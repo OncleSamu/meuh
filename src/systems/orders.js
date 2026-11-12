@@ -36,7 +36,7 @@ import { defiWanted } from './defis.js';
 import { fishOrderOk } from './fishing.js';
 import { cupHas } from './cup.js';
 import { ecoLvl } from '../core/state.js';
-import { metierOrderPay, metierTransportPay } from './metier.js';
+import { metierOrderPay, metierTransportPay, metierPick, clientOrder } from './metier.js';
 
 // Ce que la ferme sait produire en ce moment (ingrédients compris)
 export function questPool() {
@@ -103,7 +103,9 @@ export function pickItems(n, likes = []) {
         const fav = pool.filter(i => likes.includes(i.id) && !out.includes(i));
         const rest = pool.filter(i => !out.includes(i));
         if (!rest.length) break;
-        out.push(fav.length && Math.random() < 0.4 ? pickWeighted(fav) : pickWeighted(rest));
+        // 1.115 : le métier de la ferme se fait demander plus souvent
+        const mine = metierPick(rest);
+        out.push(mine || (fav.length && Math.random() < 0.4 ? pickWeighted(fav) : pickWeighted(rest)));
     }
     return out;
 }
@@ -180,6 +182,24 @@ export function ensureQuests() {
     return changed;
 }
 
+// 1.115 : le client attitré du métier (rang 4), une commande par jour
+export const metierClient = () => clientOrder(questPool(), qtyFor, 30 + scaleLvl() * 22, xpBonus());
+export function deliverClient(at) {
+    const c = metierClient();
+    if (!c || c.done || !hasAll(c.items)) return false;
+    payItems(c.items);
+    c.done = true;
+    state.stats.orders++;
+    state.stats.clientOrders = (state.stats.clientOrders || 0) + 1;
+    state.income.orders += c.gold;
+    sfx('level');
+    buzz(20);
+    burst(at, 'sparkle', 14);
+    earn(c.gold, at);
+    addXp(c.xp, at);
+    rollRare(0.3, at);
+    return true;
+}
 export const hasAll = items => items.every(x => state.inventory[x.id] >= x.qty);
 export const checkQuestReady = q => isOpen(q) && hasAll(q.items);
 

@@ -137,3 +137,19 @@ export const METIER_FX = {
 };
 // changer de métier : gratuit la première fois, puis des pièces (selon le niveau) et sept jours d'attente
 export const METIER_CHANGE = { coins: lvl => Math.round((500 * lvl * lvl) / 1000) * 1000, wait: 7 * 24 * 3600000 };
+
+// ---------------- 1.115 : le monde réagit ----------------
+// la demande : une commande, un wagon ou une soute choisit un produit du métier une fois sur (0,15 + 0,03 par rang), 45 % au plus
+export const METIER_DEMAND = { base: 0.15, per: 0.03, max: 0.45 };
+// rang 4 : un client attitré passe une commande par jour, payée 1,5 fois une commande du village
+// rang 5 : le produit signature, choisi parmi les produits du métier qu'on maîtrise (une étoile), se vend 15 % plus cher
+export const METIER_CLIENT = { rank: 4, pay: 1.5, items: [2, 3] };
+export const METIER_SIGN = { rank: 5, pay: 0.15, change: 7 * 24 * 3600000 };
+export const CLIENTS = {
+    maraicher: { name: 'Madame Lebrun', who: 'primeur du marché couvert', seed: 41, female: true, say: 'Des légumes comme les vôtres, mes clientes les réclament !' },
+    eleveur: { name: 'Fernand', who: 'boucher-charcutier du bourg', seed: 52, male: true, say: 'Une bête bien soignée, ça se goûte.' },
+    arbo: { name: 'Rose', who: 'confiturière de la vallée', seed: 63, female: true, say: 'Vos fruits ont un parfum qu’on ne trouve nulle part ailleurs.' },
+    cuisinier: { name: 'Le chef Antoine', who: 'cuisinier de l’auberge', seed: 74, male: true, say: 'Ce soir, je sers vos plats à ma table d’honneur.' },
+    vigneron: { name: 'Monsieur Delorme', who: 'caviste en ville', seed: 85, male: true, say: 'Votre nom commence à circuler chez les amateurs.' },
+    pecheur: { name: 'Yvonne', who: 'poissonnière du port', seed: 96, female: true, say: 'Du poisson frais du matin, c’est ce qui part en premier !' },
+};

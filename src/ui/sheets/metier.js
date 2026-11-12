@@ -2,10 +2,12 @@
 import { state } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import * as G from '../../systems/index.js';
-import { METIERS, METIER_IDS, METIER_RANKS } from '../../data/metiers.js';
+import { METIERS, METIER_IDS, METIER_RANKS, METIER_CLIENT, METIER_SIGN } from '../../data/metiers.js';
+import { ITEMS } from '../../data/items.js';
+import { randomId } from '../../art/habitants.js';
 import { actions } from '../dom.js';
 import { ui } from '../app.js';
-import { ico } from '../icons.js';
+import { ico, art } from '../icons.js';
 import { btn, bar, hint } from '../kit.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { askBuy } from './askbuy.js';
@@ -22,6 +24,37 @@ export function metierPickCard(id, { act = 'metierPick', sel = null } = {}) {
 function lessonRow(l) {
     const got = G.lessonDone(l);
     return `<div class="metier-lesson${got >= l.n ? ' done' : ''}"><div class="cut-row"><span>${got >= l.n ? '✓ ' : ''}${l.text}</span><b>${fmt(got)} / ${fmt(l.n)}</b></div>${bar(got / l.n)}</div>`;
+}
+// 1.115 : le client attitré
+function clientHtml() {
+    const id = G.metierId(),
+        c = G.clientOf(id);
+    if (!G.clientOpen()) return `<div class="card metier-soon"><div class="card-title">Au rang ${METIER_CLIENT.rank} : ${c.name}</div><div class="card-sub">${c.who}, passera une commande par jour.</div></div>`;
+    const o = G.metierClient();
+    const face = `<span class="avatar">${art('villager', randomId(c.seed, c.female ? { female: true } : c.male ? { male: true } : {}))}</span>`;
+    if (!o) return `<div class="card"><div class="card-head">${face}<div class="card-main"><div class="card-title">${c.name}</div><div class="card-sub">Rien à vous demander pour l’instant : produisez d’abord des produits du métier.</div></div></div></div>`;
+    const items = o.items.map(x => `<span class="metier-need${(state.inventory[x.id] || 0) >= x.qty ? ' ok' : ''}">${ico(['item', x.id])}${fmt(Math.min(state.inventory[x.id] || 0, x.qty))}/${fmt(x.qty)}</span>`).join('');
+    return `<div class="card metier-client"><div class="card-head">${face}<div class="card-main"><div class="card-title">${c.name} · ${c.who}</div><div class="card-sub">« ${c.say} »</div></div></div>
+        ${o.done ? '<div class="card-sub center">Commande du jour livrée. Elle revient demain.</div>' : `<div class="metier-needs">${items}</div><div class="cut-row"><span class="card-sub">${fmt(o.gold)} pièces · ${fmt(o.xp)} d’expérience</span>${btn('Livrer', { act: 'clientDeliver', kind: G.hasAll(o.items) ? 'green' : '', size: 'sm', disabled: !G.hasAll(o.items) })}</div>`}</div>`;
+}
+// 1.115 : le produit signature
+function signatureHtml() {
+    const id = G.metierId();
+    if (G.metierRank() < METIER_SIGN.rank) return `<div class="card metier-soon"><div class="card-title">Au rang ${METIER_SIGN.rank} : votre produit signature</div><div class="card-sub">Un produit du métier que vous maîtrisez, vendu ${Math.round(METIER_SIGN.pay * 100)} % plus cher, et que ${G.clientOf(id).name} demande à chaque fois.</div></div>`;
+    const sig = G.signature(),
+        wait = G.signatureWait();
+    const cands = Object.keys(state.mastery || {})
+        .filter(k => ITEMS[k] && G.metierOf(k) === id && G.masteryStars(k) >= 1)
+        .sort((a, b) => ITEMS[b].sell - ITEMS[a].sell)
+        .slice(0, 24);
+    const head = `<div class="card-title">Votre produit signature</div><div class="card-sub">${sig ? `${ITEMS[sig].name} : vendu ${Math.round(METIER_SIGN.pay * 100)} % plus cher.` : 'Choisissez-le parmi les produits du métier que vous maîtrisez (une étoile au moins).'}${sig && wait > 0 ? ` Changer dans ${formatDuration(wait / 1000)}.` : sig ? ' Il se change une fois par semaine.' : ''}</div>`;
+    if (ui.sel.sigOpen || !sig)
+        return `<div class="card">${head}${
+            cands.length
+                ? `<div class="pick-grid">${cands.map(k => `<button class="pick-cell${k === sig ? ' locked' : ''}" data-act="sigPick" data-id="${k}"${k === sig || (sig && wait > 0) ? ' disabled' : ''}>${ico(['item', k], 'ico big')}<b>${ITEMS[k].name}</b></button>`).join('')}</div>`
+                : '<p class="empty">Aucun produit du métier n’a encore sa première étoile de maîtrise.</p>'
+        }</div>`;
+    return `<div class="card"><div class="card-head">${ico(['item', sig], 'ico big')}<div class="card-main">${head}</div></div><div class="od-foot">${btn('Changer', { act: 'sigOpen', size: 'sm', disabled: wait > 0 })}</div></div>`;
 }
 function dashboard() {
     const id = G.metierId(),
@@ -43,6 +76,8 @@ function dashboard() {
                 : `<div class="card"><div class="card-title">Les leçons du rang ${r + 1}</div>${lessons.map(lessonRow).join('')}
                    <div class="od-foot">${btn(`Passer au rang ${r + 1}`, { act: 'metierRankUp', kind: G.metierCanRank() ? 'green' : '', wide: true, disabled: !G.metierCanRank() })}</div></div>`
         }
+        ${clientHtml()}
+        ${signatureHtml()}
         <div class="card"><div class="card-title">Les bonus du métier</div>${perks}</div>
         ${asleep.length ? `<div class="card"><div class="card-title">Métiers endormis</div><div class="card-sub">${asleep.map(k => `${METIERS[k].name} (rang ${G.metierRankOf(k)})`).join(', ')}. Leurs rangs sont gardés, leurs bonus dorment.</div></div>` : ''}
         <div class="card"><div class="card-title">Changer de métier</div><div class="card-sub">${
@@ -58,6 +93,7 @@ defineSheet('metier', {
     title: () => 'Le métier de la ferme',
     open() {
         ui.sel.metierList = false;
+        ui.sel.sigOpen = false;
     },
     render() {
         if (!G.metierId())
@@ -81,6 +117,13 @@ export function setupMetier() {
             ui.sel.metierList = false;
         },
         metierRankUp: () => G.metierRankUp(),
+        clientDeliver: el => G.deliverClient(el),
+        sigOpen: () => {
+            ui.sel.sigOpen = true;
+        },
+        sigPick: (el, d) => {
+            if (G.setSignature(d.id, k => G.masteryStars(k) >= 1)) ui.sel.sigOpen = false;
+        },
         metierPick: (el, d) => {
             const id = d.id;
             if (!G.metierId()) return void G.chooseMetier(id);

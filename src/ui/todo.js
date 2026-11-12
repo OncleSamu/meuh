@@ -124,6 +124,10 @@ export function todoList() {
     }
     // 1.20 : le domaine
     if (G.metierCanRank()) push('farm', ['ui', 'star'], 'Un rang de métier à passer (menu)', 1);
+    if (G.clientOpen()) {
+        const c = G.metierClient();
+        if (c && !c.done && G.hasAll(c.items)) push('farm', ['ui', 'star'], `${G.clientOf().name} attend sa commande (menu › métier)`, 1);
+    }
     if (G.domaineOpen() && G.domReady())
         push('village/village#story', ['ui', 'house'], `${G.domReady()} chantier${s(G.domReady())} du domaine à lancer`, G.domReady());
     // 1.19.1 : Armand

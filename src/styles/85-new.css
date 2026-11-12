@@ -1924,3 +1924,54 @@ button.cm-spot:active {
     min-height: 2.6em;
     margin-top: 6px;
 }
+
+/* 1.115 : l'enseigne du métier sur la maison, le client attitré, le produit signature */
+.yard-house {
+    position: relative;
+}
+.farm-sign {
+    position: absolute;
+    right: -6px;
+    bottom: -4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 2px solid var(--ink);
+    background: #f7e3b5;
+    box-shadow: 0 2px 0 var(--ink);
+}
+.farm-sign .ico {
+    width: 16px;
+    height: 16px;
+}
+.metier-soon {
+    opacity: 0.7;
+}
+.metier-client .avatar,
+.metier-client + .card .avatar {
+    width: 48px;
+    height: 48px;
+    flex: none;
+}
+.metier-needs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0 4px;
+}
+.metier-need {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px 2px 4px;
+    border-radius: 999px;
+    background: rgba(200, 69, 58, 0.12);
+    font-weight: 700;
+    font-size: 13px;
+}
+.metier-need.ok {
+    background: rgba(95, 174, 79, 0.18);
+}

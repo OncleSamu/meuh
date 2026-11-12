@@ -9,7 +9,7 @@ import { SOILS, GH, MAT } from '../../data/farm.js';
 import { HOUSE, FARMHAND } from '../../data/progress.js';
 import { EVENTS } from '../../data/world.js';
 import * as G from '../../systems/index.js';
-import { byId, blocks, actions, run } from '../dom.js';
+import { byId, blocks, actions, run, esc } from '../dom.js';
 import { ico, art, COIN } from '../icons.js';
 import { genWrap } from '../genlook.js';
 import { btn, bar, tip15 } from '../kit.js';
@@ -25,6 +25,7 @@ import { SPR, parts as partsHtml } from '../icons.js';
 import { tabEl } from '../app.js';
 import { askBuy } from '../sheets/askbuy.js';
 import { compCard } from './companions.js';
+import { METIERS } from '../../data/metiers.js';
 
 const plotEls = [],
     plotSig = [];
@@ -223,9 +224,15 @@ function farmyardHtml() {
             : 'La plus belle maison du canton';
     if (G.houseCanUp()) G.tip('house');
     return `<button class="farmyard card" data-act="open" data-sheet="house" aria-label="Maison de la ferme">
-        <span class="yard-house">${houseArt(l)}</span>
-        <span class="card-main"><span class="card-title">${HOUSE[l].name}${state.legend ? ' ' + ico(['ui', 'goldCow']) : ''}</span><span class="card-sub">${sub}</span></span>
+        <span class="yard-house">${houseArt(l)}${farmSign()}</span>
+        <span class="card-main"><span class="card-title">${G.identitySet() ? esc(G.farmName()) : HOUSE[l].name}${state.legend ? ' ' + ico(['ui', 'goldCow']) : ''}</span><span class="card-sub">${sub}</span></span>
         ${G.handLvl() ? `<span class="yard-hand">${art('villager', 'theo')}</span>` : ''}${can ? '<span class="dot">!</span>' : ''}</button>`;
+}
+// 1.115 : l'enseigne de la ferme, au nom de la ferme et au métier (dès le rang 1)
+function farmSign() {
+    const id = G.metierId();
+    if (!id || G.metierRank() < 1) return '';
+    return `<span class="farm-sign" title="${esc(G.farmName())} · ${esc(G.metierTitle())}">${ico(METIERS[id].icon)}</span>`;
 }
 // la maison avec la couleur de toit choisie
 const houseArt = l => (G.roofColor() ? SPR.farmhouse(l, G.roofColor()) : art('house', l));

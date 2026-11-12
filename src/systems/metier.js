@@ -7,7 +7,9 @@ import { toast, sfx, emit } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { RECIPES } from '../data/machines.js';
 import { itemKind } from '../data/paquets.js';
-import { METIERS, METIER_RANKS, METIER_FX, METIER_CHANGE, DRINK_MACHINES } from '../data/metiers.js';
+import { METIERS, METIER_RANKS, METIER_FX, METIER_CHANGE, DRINK_MACHINES, METIER_DEMAND, METIER_CLIENT, METIER_SIGN, CLIENTS } from '../data/metiers.js';
+import { dateKey } from '../core/format.js';
+import { BALANCE } from '../data/progress.js';
 
 const M = () => state.metier || (state.metier = { id: null, r: {}, c: {}, changes: 0, at: 0 });
 const slot = id => M().r[id] || (M().r[id] = { rank: 0, base: {}, kept: {} });
@@ -109,7 +111,7 @@ export const metierPriceRate = (id = metierId()) => {
 // le prix d'un produit au marché et à l'étal
 export const metierPrice = item => {
     const id = metierId();
-    return id && metierOf(item) === id ? 1 + metierPriceRate(id) : 1;
+    return id && metierOf(item) === id ? 1 + metierPriceRate(id) + (signature() === item ? METIER_SIGN.pay : 0) : 1;
 };
 // les bouteilles de cave et les bières du vigneron
 export const metierCellar = () => 1 + metierPriceRate('vigneron') * (metierId() === 'vigneron' ? 1 : 0);
@@ -123,6 +125,8 @@ export const metierPerks = (id = metierId()) => {
     return [
         { rank: 1, text: `Le marché et l’étal paient ${d.what} ${pct(d.rate)} % de plus par rang (${pct(d.rate * METIER_RANKS)} % au rang 10)` },
         { rank: METIER_FX.orders.rank, text: `Une commande du village qui en contient paie ${pct(METIER_FX.orders.pay)} % de plus` },
+        { rank: METIER_CLIENT.rank, text: `${CLIENTS[id].name}, ${CLIENTS[id].who}, passe une commande par jour, payée ${METIER_CLIENT.pay} fois` },
+        { rank: METIER_SIGN.rank, text: `Votre produit signature : un produit du métier que vous maîtrisez, vendu ${pct(METIER_SIGN.pay)} % plus cher` },
         { rank: METIER_FX.transport.rank, text: `Le train et l’avion-cargo les paient ${pct(METIER_FX.transport.pay)} % de plus` },
         { rank: METIER_RANKS, text: `${d.master} : encore ${pct(METIER_FX.master)} % de prix, et le titre sur votre carte de visite` },
     ];
@@ -132,3 +136,72 @@ export const metierTitle = () => {
     if (!id) return '';
     return metierRank() >= METIER_RANKS ? METIERS[id].master : `${METIERS[id].name}, rang ${metierRank()}`;
 };
+
+// ---------------- 1.115 : le monde réagit ----------------
+// la part des commandes, wagons et soutes qui demandent un produit du métier
+export const metierDemand = () => (metierId() ? Math.min(METIER_DEMAND.max, METIER_DEMAND.base + METIER_DEMAND.per * metierRank()) : 0);
+// choisit dans une liste un produit du métier, une fois sur metierDemand() (sinon null : on tire comme d'habitude)
+export function metierPick(list, rnd = Math.random) {
+    const id = metierId();
+    if (!id || rnd() >= metierDemand()) return null;
+    const mine = list.filter(i => metierOf(i.id || i) === id);
+    return mine.length ? mine[Math.floor(rnd() * mine.length)] : null;
+}
+
+// le produit signature (rang 5)
+export const signature = () => {
+    const m = state.metier;
+    return m && m.id && m.sig && m.sig[m.id] && metierRank() >= METIER_SIGN.rank ? m.sig[m.id] : null;
+};
+export const signatureWait = (t = now()) => {
+    const m = state.metier;
+    const at = m && m.sigAt && m.sigAt[metierId()];
+    return at ? Math.max(0, at + METIER_SIGN.change - t) : 0;
+};
+export function setSignature(item, can = () => true) {
+    const id = metierId();
+    if (!id || metierRank() < METIER_SIGN.rank || metierOf(item) !== id || !can(item) || signatureWait() > 0) return false;
+    const m = M();
+    m.sig = m.sig || {};
+    m.sigAt = m.sigAt || {};
+    if (m.sig[id] === item) return false;
+    if (m.sig[id]) m.sigAt[id] = now();
+    m.sig[id] = item;
+    sfx('ok');
+    toast(`Votre produit signature : ${ITEMS[item].name}`, ['item', item]);
+    return true;
+}
+
+// le client attitré (rang 4) : une commande par jour
+export const clientOf = (id = metierId()) => (id ? CLIENTS[id] : null);
+export const clientOpen = () => metierRank() >= METIER_CLIENT.rank;
+const today = () => dateKey(new Date(now()));
+// pool : les produits qu'on peut demander (questPool d'orders.js), qty(it, valeur) : la quantité pour une valeur donnée
+export function clientOrder(pool, qtyFor, target, xpBonus = 1) {
+    if (!clientOpen()) return null;
+    const m = M(),
+        id = metierId();
+    if (m.client && m.client.day === today() && m.client.m === id) return m.client;
+    const mine = pool.filter(i => metierOf(i.id) === id);
+    if (!mine.length) return null;
+    const n = Math.min(mine.length, METIER_CLIENT.items[Math.random() < 0.5 ? 0 : 1]);
+    const picks = [];
+    const sig = signature();
+    if (sig && mine.some(i => i.id === sig)) picks.push(mine.find(i => i.id === sig));
+    while (picks.length < n) {
+        const it = mine[Math.floor(Math.random() * mine.length)];
+        if (!picks.includes(it)) picks.push(it);
+    }
+    const items = picks.map(it => ({ id: it.id, qty: qtyFor(it, target * (0.7 + Math.random() * 0.6)) }));
+    const value = items.reduce((a, x) => a + ITEMS[x.id].sell * x.qty, 0);
+    m.client = {
+        day: today(),
+        m: id,
+        items,
+        gold: Math.round((value * BALANCE.orderPay * METIER_CLIENT.pay * (1 + metierPriceRate())) / 5) * 5,
+        xp: Math.max(5, Math.round(value * BALANCE.orderXp * xpBonus)),
+        done: false,
+    };
+    return m.client;
+}
+export const clientDone = () => !!(state.metier && state.metier.client && state.metier.client.day === today() && state.metier.client.done);

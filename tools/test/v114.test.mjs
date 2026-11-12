@@ -169,3 +169,67 @@ test('métiers : une ancienne sauvegarde sans métier se charge, et les écrans 
     const src = readFileSync(new URL('../../src/ui/sheets/metier.js', import.meta.url), 'utf8');
     for (const act of ['metierOpen', 'metierOther', 'metierBack', 'metierRankUp', 'metierPick', 'meMetier']) assert.ok(new RegExp(`\\n {8}${act}: `).test(src), act);
 });
+
+test('1.115 : le métier se fait demander plus souvent par le village et le train', () => {
+    fresh(40);
+    const pool = G.questPool();
+    const count = () => {
+        let n = 0;
+        for (let k = 0; k < 600; k++) n += G.pickItems(1).filter(i => G.metierOf(i.id) === 'pecheur').length;
+        return n / 600;
+    };
+    state.inventory.carp = 1;
+    if (!pool.some(i => G.metierOf(i.id) === 'pecheur')) return; // rien à pêcher à ce niveau sur cette ferme d'essai
+    const before = count();
+    G.chooseMetier('pecheur');
+    assert.ok(G.metierDemand() >= 0.15);
+    const after = count();
+    assert.ok(after > before + 0.08, `${before} puis ${after}`);
+});
+
+test('1.115 : le client attitré (rang 4) passe une commande par jour, payée 1,5 fois', () => {
+    fresh(40);
+    G.chooseMetier('maraicher');
+    for (let k = 0; k < 3; k++) passRank();
+    assert.equal(G.clientOpen(), false);
+    assert.equal(G.metierClient(), null);
+    passRank();
+    assert.ok(G.clientOpen());
+    const c = G.metierClient();
+    assert.ok(c && c.items.length >= 1);
+    assert.ok(c.items.every(x => G.metierOf(x.id) === 'maraicher'));
+    assert.equal(G.metierClient(), c, 'la même toute la journée');
+    for (const x of c.items) state.inventory[x.id] = x.qty;
+    const m = state.money;
+    assert.ok(G.deliverClient());
+    assert.equal(state.money - m, c.gold);
+    assert.equal(G.deliverClient(), false);
+    assert.ok(G.clientDone());
+    T += 24 * 3600000;
+    const c2 = G.metierClient();
+    assert.ok(c2 && !c2.done);
+});
+
+test('1.115 : le produit signature (rang 5) se vend plus cher, se change une fois par semaine', () => {
+    fresh(40);
+    G.chooseMetier('maraicher');
+    const crop = Object.keys(ITEMS).filter(k => ITEMS[k].type === 'crop').sort((a, b) => ITEMS[b].sell - ITEMS[a].sell)[0];
+    for (let k = 0; k < 4; k++) passRank();
+    assert.equal(G.setSignature(crop), false, 'pas avant le rang 5');
+    passRank();
+    const p0 = G.sellPrice(crop);
+    assert.equal(G.setSignature('bread'), false, 'pas un produit d’un autre métier');
+    assert.ok(G.setSignature(crop));
+    assert.equal(G.signature(), crop);
+    assert.ok(G.sellPrice(crop) > p0);
+    assert.equal(G.signatureWait(), 0, 'le premier choix ne fait pas attendre');
+    assert.ok(G.setSignature('wheat'));
+    assert.ok(G.signatureWait() > 0);
+    assert.equal(G.setSignature('carrot'), false);
+    T += 7 * 24 * 3600000 + 1;
+    assert.ok(G.setSignature('carrot'));
+    // le client demande le produit signature
+    state.metier.client = null;
+    const c = G.metierClient();
+    if (G.questPool().some(i => i.id === 'carrot')) assert.ok(c.items.some(x => x.id === 'carrot'));
+});
