@@ -400,7 +400,7 @@ function stallCard() {
     const later = G.STALL_LEVELS.filter(l => state.level < l);
     const free = slots.map((x, k) => (x ? -1 : k)).filter(k => k >= 0);
     return `<div class="card stall-card">
-        <div class="card-head">${ico(['ui', 'stall'], 'ico big')}<div class="card-main"><div class="card-title">L’étal de la ferme</div><div class="card-sub">${sold ? `${sold} vente${sold > 1 ? 's' : ''} · ${fmt(slots.reduce((a, x) => a + (x && x.sold ? x.qty * x.price : 0), 0))}${COIN()}` : 'Vous fixez le prix, les passants achètent peu à peu.'}</div></div>
+        <div class="card-head">${ico(['ui', 'stall'], 'ico big')}<div class="card-main"><div class="card-title">${G.farmName() === G.DEFAULT_FARM ? 'L’étal de la ferme' : `L’étal · ${esc(G.farmName())}`}</div><div class="card-sub">${sold ? `${sold} vente${sold > 1 ? 's' : ''} · ${fmt(slots.reduce((a, x) => a + (x && x.sold ? x.qty * x.price : 0), 0))}${COIN()}` : 'Vous fixez le prix, les passants achètent peu à peu.'}</div></div>
         ${sold ? btn('Encaisser', { act: 'collectStalls', kind: 'gold', size: 'sm' }) : ''}</div>
         <div class="stall-slots">${slots
             .map((sl, k) => {

@@ -9,7 +9,7 @@ import { setupApp, refresh, saveNow, tabEl, ui, currentPath } from './ui/app.js'
 import { setupSound, SoundEngine } from './ui/sound.js';
 import { setupTypo } from './ui/typo.js';
 import { setupFx } from './ui/fx.js';
-import { setupSheets } from './ui/sheets.js';
+import { setupSheets, openSheet } from './ui/sheets.js';
 import { setupMoments, pushMoment, closeMoment } from './ui/moments.js';
 import { setupToolbar } from './ui/toolbar.js';
 import { updateScene } from './ui/scene.js';
@@ -55,6 +55,8 @@ import { setupBook } from './ui/sheets/book.js';
 import { setupInfo } from './ui/sheets/info.js';
 import { setupSettings } from './ui/sheets/settings.js';
 import { setupRename } from './ui/sheets/rename.js';
+import { setupIdentity } from './ui/sheets/identity.js';
+import { randomId } from './art/habitants.js';
 import { setupPlans } from './ui/sheets/plans.js';
 import { setupNight, updateNight } from './ui/night.js';
 import { setupAskBuy } from './ui/sheets/askbuy.js';
@@ -123,6 +125,7 @@ function start() {
     setupInfo();
     setupSettings();
     setupRename();
+    setupIdentity();
     setupPlans();
     setupNight();
     setupAskBuy();
@@ -138,6 +141,12 @@ function start() {
     setView({ started: true, hidden: document.hidden });
     updateScene();
     refresh();
+    // 1.113 : la page d'accueil (personnage et nom de la ferme), une fois, avant le tutoriel
+    // (un personnage au hasard est déjà en place : fermer la page sans rien choisir ne la fait pas revenir)
+    if (!G.identitySet()) {
+        G.setIdentity(randomId(Math.floor(Math.random() * 1e9)), '');
+        openSheet('identity', { first: true });
+    }
     // 1.44 : la sauvegarde était abîmée
     if (G.loadIssue && G.loadIssue.restored)
         pushMoment('notice', {

@@ -360,7 +360,7 @@ const badge = id =>
 
 defineSheet('book', {
     cls: 'book-sheet',
-    title: 'Livre de la ferme',
+    title: () => (G.farmName() === G.DEFAULT_FARM ? 'Livre de la ferme' : `Le livre · ${G.farmName()}`),
     open(o) {
         G.syncBook();
         G.tip('bookHerd');

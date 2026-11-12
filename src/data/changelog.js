@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.113",
+  "title": "Votre carte de visite",
+  "date": "12 novembre 2026",
+  "items": [
+   "Nouveau : une page d'accueil pour composer son personnage (teint, coiffure, barbe, chapeau, vêtement… les mêmes traits que les habitants de la vallée) et nommer sa ferme",
+   "Elle s'ouvre au début d'une partie, avant le tutoriel, et une fois pour les parties en cours",
+   "Le personnage et le nom se changent quand on veut depuis le menu ; le nom apparaît aussi sur l'étal et le livre de la ferme",
+   "C'est la première étape des spécialités de ferme, qui arrivent dans la prochaine version"
+  ]
+ },
+ {
   "v": "1.112",
   "title": "Armand donne moins d'expérience",
   "date": "12 novembre 2026",

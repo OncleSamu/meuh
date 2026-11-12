@@ -212,3 +212,26 @@ test('1.112 : une visite d’Armand donne au plus 60 % du niveau en expérience,
         setClock(() => Date.now());
     }
 });
+
+test('1.113 : la carte de visite (personnage et nom de ferme)', async () => {
+    const { randomId, isHabitant } = await import('../../src/art/habitants.js');
+    fresh();
+    assert.equal(G.identitySet(), false);
+    assert.equal(G.farmName(), G.DEFAULT_FARM);
+    assert.ok(isHabitant(G.meLook()));
+    assert.equal(G.setIdentity('pas un visage', 'X'), false);
+    const look = randomId(42);
+    assert.ok(G.setIdentity(look, '   Les   Trois  Chênes  et beaucoup trop de lettres   '));
+    assert.equal(G.identitySet(), true);
+    assert.equal(G.meLook(), look);
+    assert.equal(G.farmName(), 'Les Trois Chênes et bea');
+    assert.ok(G.farmName().length <= G.FARM_NAME_MAX);
+    assert.ok(G.setIdentity(look, ''));
+    assert.equal(G.farmName(), G.DEFAULT_FARM);
+    // elle survit à la sauvegarde
+    G.setIdentity(look, 'Le Clos');
+    G.saveGame();
+    G.loadGame();
+    assert.equal(G.farmName(), 'Le Clos');
+    assert.equal(G.meLook(), look);
+});

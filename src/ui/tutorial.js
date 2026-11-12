@@ -5,7 +5,7 @@ import * as G from '../systems/index.js';
 import { byId, actions } from './dom.js';
 import { art } from './icons.js';
 import { currentPath, save, refresh } from './app.js';
-import { anySheet } from './sheets.js';
+import { anySheet, topSheet } from './sheets.js';
 import { momentShown, pump } from './moments.js';
 import { confetti } from './fx.js';
 
@@ -114,7 +114,7 @@ function finish(reward) {
 
 export function tutoTick() {
     const wrap = byId('tuto');
-    if (!state.tutorial || state.tutorial.done || momentShown()) {
+    if (!state.tutorial || state.tutorial.done || momentShown() || (topSheet() && topSheet().name === 'identity')) {
         wrap.hidden = true;
         return;
     }

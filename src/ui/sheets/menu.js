@@ -60,7 +60,9 @@ defineSheet('menu', {
             const t = tiles.filter(Boolean);
             return t.length ? `<h4 class="mgroup">${title}</h4><div class="menu-tiles">${t.join('')}</div>` : '';
         };
+        const card = `<button class="me-card" data-act="open" data-sheet="identity" aria-label="Votre carte de visite"><span class="avatar">${art('villager', G.meLook())}</span><span class="card-main"><b>${esc(G.farmName())}</b><small>Niveau ${state.level} · toucher pour changer de tête ou de nom</small></span></button>`;
         return (
+            card +
             group('Ma ferme', [
                 tile('Progrès', 'progress', ['ui', 'skillbook'], pts, pts ? `${pts} point${pts > 1 ? 's' : ''}` : 'Compétences'),
                 tile('Niveaux', 'levels', ['ui', 'star'], 0, `Niveau ${state.level}`),
