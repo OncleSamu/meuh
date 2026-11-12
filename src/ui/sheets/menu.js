@@ -19,6 +19,7 @@ import { defineSheet, openSheet, closeSheet, closeAll, sheetOpts } from '../shee
 import { produce } from '../navigate.js';
 import { vaultCard } from './vault.js';
 import { lv80 } from '../../data/lv80.js';
+import { METIERS } from '../../data/metiers.js';
 
 const COIN = () => ico(['ui', 'coin']);
 
@@ -60,7 +61,7 @@ defineSheet('menu', {
             const t = tiles.filter(Boolean);
             return t.length ? `<h4 class="mgroup">${title}</h4><div class="menu-tiles">${t.join('')}</div>` : '';
         };
-        const card = `<button class="me-card" data-act="open" data-sheet="identity" aria-label="Votre carte de visite"><span class="avatar">${art('villager', G.meLook())}</span><span class="card-main"><b>${esc(G.farmName())}</b><small>Niveau ${state.level} · toucher pour changer de tête ou de nom</small></span></button>`;
+        const card = `<button class="me-card" data-act="open" data-sheet="identity" aria-label="Votre carte de visite"><span class="avatar">${art('villager', G.meLook())}</span><span class="card-main"><b>${esc(G.farmName())}</b><small>Niveau ${state.level} · toucher pour changer de tête ou de nom</small></span></button><button class="me-card metier-card" data-act="metierOpen" aria-label="Le métier de la ferme"><span class="avatar">${ico(G.metierId() ? METIERS[G.metierId()].icon : ['ui', 'star'], 'ico big')}</span><span class="card-main"><b>${G.metierId() ? G.metierTitle() : 'Choisir un métier'}</b><small>${G.metierId() ? (G.metierCanRank() ? 'Un rang à passer !' : 'Leçons, bonus, changer de métier') : 'La spécialité de votre ferme'}</small></span>${!G.metierId() || G.metierCanRank() ? '<span class="dot">!</span>' : ''}</button>`;
         return (
             card +
             group('Ma ferme', [

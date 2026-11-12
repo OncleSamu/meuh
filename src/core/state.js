@@ -50,6 +50,7 @@ export function newState() {
         brew: null, // 1.6 : la brasserie de l'abbaye
         cargo: null, // 1.8 : l'avion-cargo
         me: null, // 1.113 : la carte de visite { look, farm }
+        metier: { id: null, r: {}, c: {}, changes: 0, at: 0 }, // 1.114 : la spécialité de la ferme
         works: {}, // 1.107 : niveaux des grands travaux du domaine { table: n, … }
         domaine: {}, // 1.20 : paliers du domaine par branche { barn: n, … }
         armand: null, // 1.19.1 : Armand, le chef du Grand Hôtel (produit phare, commande, fidélité)

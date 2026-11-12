@@ -1,4 +1,5 @@
 // Maîtrise des produits, renommée après le niveau 64, ligues du concours et Ferme légendaire.
+import { metierCount } from './metier.js';
 import { state } from '../core/state.js';
 import { view } from '../core/view.js';
 import { fmt } from '../core/format.js';
@@ -60,6 +61,7 @@ export const masteryKnown = () =>
 
 export function addMastery(id, qty) {
     farmSeasonAdd(id, qty);
+    metierCount(id, qty); // 1.114 : les compteurs des métiers
     // 1.71.1 : ce qu'on fabrique est compté même sans prix de vente (nourriture, planches, clous…), pour les objectifs de niveau
     state.made = state.made || {};
     state.made[id] = (state.made[id] || 0) + qty;

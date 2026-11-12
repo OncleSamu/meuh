@@ -1810,3 +1810,56 @@ button.cm-spot:active {
 .me-card small {
     color: var(--muted, #8a7a66);
 }
+
+/* 1.114 : le métier de la ferme */
+.metier-pick {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-top: 8px;
+}
+.metier-pick.on {
+    outline: 3px solid var(--green, #5fae4f);
+}
+.metier-pick.cur {
+    opacity: 0.7;
+}
+.metier-pick .card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.metier-pick .card-main {
+    display: flex;
+    flex-direction: column;
+}
+.metier-lesson {
+    margin-top: 8px;
+}
+.metier-lesson.done span {
+    color: var(--green-d, #3c7d33);
+    font-weight: 700;
+}
+.metier-perk {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    opacity: 0.5;
+}
+.metier-perk.on {
+    opacity: 1;
+}
+.metier-perk b {
+    flex: none;
+    width: 62px;
+}
+.metier-card {
+    margin-top: 8px;
+    position: relative;
+}
+.me-metier {
+    margin-top: 12px;
+}
+.me-label {
+    font-weight: 800;
+}

@@ -79,3 +79,4 @@ export * from './cepage.js';
 export * from './honey.js';
 export * from './renom.js';
 export * from './identity.js';
+export * from './metier.js';

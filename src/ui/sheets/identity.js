@@ -9,6 +9,8 @@ import { art } from '../icons.js';
 import { btn } from '../kit.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 import { toast } from '../../core/bus.js';
+import { METIER_IDS } from '../../data/metiers.js';
+import { metierPickCard } from './metier.js';
 
 const draft = () => {
     if (!ui.sel.me) ui.sel.me = { look: G.meLook(), farm: G.farmName() === G.DEFAULT_FARM ? '' : G.farmName() };
@@ -43,6 +45,12 @@ defineSheet('identity', {
                 'name',
                 `<label class="me-name"><span>Le nom de votre ferme</span><input type="text" id="me-farm" maxlength="${G.FARM_NAME_MAX}" placeholder="${esc(G.DEFAULT_FARM)}" value="${esc(d.farm)}" autocomplete="off"></label>`,
             ],
+            [
+                'metier',
+                G.metierId()
+                    ? ''
+                    : `<div class="me-metier"><span class="me-label">La spécialité de votre ferme</span><p class="card-sub">Elle fait mieux payer ses produits, rang après rang. Tout le reste reste jouable, et le premier changement est gratuit.</p>${METIER_IDS.map(id => metierPickCard(id, { act: 'meMetier', sel: d.metier })).join('')}</div>`,
+            ],
             ['ok', `<div class="me-ok">${btn(first ? 'C’est parti !' : 'Enregistrer', { act: 'meSave', kind: 'green', wide: true })}</div>`],
         ];
     },
@@ -67,6 +75,7 @@ export function setupIdentity() {
             const me = draft(),
                 first = !!(sheetOpts('identity') || {}).first;
             if (!G.setIdentity(me.look, me.farm)) return;
+            if (me.metier && !G.metierId()) G.chooseMetier(me.metier);
             ui.sel.me = null;
             closeSheet('identity');
             toast(first ? `Bienvenue à ${G.farmName()} !` : 'Carte de visite enregistrée', ['villager', state.me.look]);

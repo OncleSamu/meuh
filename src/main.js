@@ -56,6 +56,7 @@ import { setupInfo } from './ui/sheets/info.js';
 import { setupSettings } from './ui/sheets/settings.js';
 import { setupRename } from './ui/sheets/rename.js';
 import { setupIdentity } from './ui/sheets/identity.js';
+import { setupMetier } from './ui/sheets/metier.js';
 import { randomId } from './art/habitants.js';
 import { setupPlans } from './ui/sheets/plans.js';
 import { setupNight, updateNight } from './ui/night.js';
@@ -126,6 +127,7 @@ function start() {
     setupSettings();
     setupRename();
     setupIdentity();
+    setupMetier();
     setupPlans();
     setupNight();
     setupAskBuy();

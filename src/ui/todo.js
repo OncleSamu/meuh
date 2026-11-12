@@ -123,6 +123,7 @@ export function todoList() {
         if (G.beerBookClaimable()) push('machines/brew', ['ui', 'beer'], 'Récompense du livre des bières', 1);
     }
     // 1.20 : le domaine
+    if (G.metierCanRank()) push('farm', ['ui', 'star'], 'Un rang de métier à passer (menu)', 1);
     if (G.domaineOpen() && G.domReady())
         push('village/village#story', ['ui', 'house'], `${G.domReady()} chantier${s(G.domReady())} du domaine à lancer`, G.domReady());
     // 1.19.1 : Armand

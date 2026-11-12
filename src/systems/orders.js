@@ -36,6 +36,7 @@ import { defiWanted } from './defis.js';
 import { fishOrderOk } from './fishing.js';
 import { cupHas } from './cup.js';
 import { ecoLvl } from '../core/state.js';
+import { metierOrderPay, metierTransportPay } from './metier.js';
 
 // Ce que la ferme sait produire en ce moment (ingrédients compris)
 export function questPool() {
@@ -126,7 +127,7 @@ export function makeOrder() {
     const items = its.map(it => ({ id: it.id, qty: qtyFor(it, target * (0.6 + Math.random() * 0.8)) }));
     const value = items.reduce((a, x) => a + ITEMS[x.id].sell * x.qty, 0);
     // la maîtrise et la maison paient plus, sans changer l'expérience
-    const bonus = (items.reduce((a, x) => a + ITEMS[x.id].sell * masteryMult(x.id) * x.qty, 0) / value) * housePay() * (1 + workFx('post')); // 1.107 : le relais de poste
+    const bonus = (items.reduce((a, x) => a + ITEMS[x.id].sell * masteryMult(x.id) * x.qty, 0) / value) * housePay() * (1 + workFx('post')) * metierOrderPay(items.map(x => x.id)); // 1.107 : le relais de poste ; 1.114 : le métier
     let mult = BALANCE.orderPay * (0.95 + Math.random() * 0.15);
     if (heartsOf(vid) >= 5) mult *= BEST_FRIEND_BONUS;
     if (vid === 'paul' && projectDone('bakery')) mult *= 1.2;
@@ -299,7 +300,7 @@ function makeTruck() {
     const slots = its.map(it => {
         const rnd = 0.8 + Math.random() * 0.5;
         const qty = qtyFor(it, target * rnd, wagonMax());
-        const gold = round5(it.sell * qty * mult);
+        const gold = round5(it.sell * qty * mult * metierTransportPay(it.id)); // 1.114 : le métier, au rang 6
         const goldOld = round5(it.sell * qtyFor(it, old * rnd, 20) * mult);
         return {
             id: it.id,

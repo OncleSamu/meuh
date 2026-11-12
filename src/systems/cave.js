@@ -1,4 +1,5 @@
 // La cave (Atelier | Cave) : vieillissement par étapes, climat et soins, réserve, salle des ventes.
+import { metierCellar } from './metier.js';
 import { addRenom, RENOM } from './renom.js';
 import { state, scaleLvl } from '../core/state.js';
 import { now } from '../core/clock.js';
@@ -123,7 +124,8 @@ export const lotUnit = lot =>
             (vintageOf(lot) ? vintageOf(lot).mult : 1) *
             (lot.bad ? CAVE_TURNED : 1) *
             classMult(lot) *
-            (state.cave.gear.ledger ? CAVE_GEAR_FX.ledger : 1), // 1.97 : le registre des millésimes
+            (state.cave.gear.ledger ? CAVE_GEAR_FX.ledger : 1) * // 1.97 : le registre des millésimes
+            metierCellar(), // 1.114 : le vigneron
     );
 // la taille des lots grandit avec les étagères : 8, 12, 16 puis 20
 export const caveLotMax = () =>

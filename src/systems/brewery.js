@@ -1,5 +1,6 @@
 // La brasserie de l'abbaye (1.6) : on compose ses bières (malt, houblon, 1 à 3 ingrédients), on les nomme,
 // on les vend. Depuis 1.6.3, le vieillissement en fût se fait à la cave (le cellier ne sert plus qu'aux anciennes sauvegardes).
+import { metierCellar } from './metier.js';
 import { addRenom, RENOM } from './renom.js';
 import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
@@ -537,7 +538,7 @@ const demandNow = bid => {
     return d ? d.n * Math.pow(0.5, (now() - d.t) / 1000 / DEMAND.half) : 0;
 };
 export const demandMult = bid => Math.max(DEMAND.floor, 1 - DEMAND.per * demandNow(bid));
-export const beerPrice = bid => Math.max(5, Math.round((beerValue(bid) * demandMult(bid)) / 5) * 5);
+export const beerPrice = bid => Math.max(5, Math.round((beerValue(bid) * demandMult(bid) * metierCellar()) / 5) * 5); // 1.114 : le vigneron
 // 1.83.4 : dealer = { mult } : on la livre à Mamie : valeur de la bière (sans la baisse de demande) × mult, payée tout de suite
 export const beerDealPrice = (bid, r, mult) => Math.max(5, Math.round((beerValue(bid) * QUALITY[r].mult * mult) / 5) * 5);
 export function sellBeer(bid, n, at, dealer) {

@@ -16,6 +16,7 @@ import { giveRare } from './barn.js';
 import { stayOf, domStepSum } from './estate.js';
 import { pkTransportOk, pkReq, pkEstimate, pkHave, pullPk } from './maison.js';
 import { wagonTarget } from './orders.js';
+import { metierTransportPay } from './metier.js';
 
 export const holdCount = () => CARGO.holds + domStepSum('cargo', 'hold');
 export const cargoOpen = () => state.level >= CARGO.lvl;
@@ -65,7 +66,7 @@ const CARGO_PK = 0.5,
     CARGO_PK_PAY = 1.6;
 const haveFor = h => (h.pk ? pkHave(h.pk) : state.inventory[h.id] || 0);
 export const holdHave = h => haveFor(h);
-export const holdPay = (h, n) => round5((h.pk ? h.est : ITEMS[h.id].sell) * n * CARGO.pay);
+export const holdPay = (h, n) => round5((h.pk ? h.est : ITEMS[h.id].sell * metierTransportPay(h.id)) * n * CARGO.pay);
 export const cargoTotal = () => (state.cargo && state.cargo.holds ? state.cargo.holds.reduce((a, h) => a + holdPay(h, h.qty), 0) : 0);
 export const cargoBonus = () => round5(cargoTotal() * (CARGO.bonus + domStepSum('cargo', 'bonus')));
 // 1.106 : les soutes ont grossi, pas l'expérience : elle se compte sur la quantité qu'une soute demandait avant
