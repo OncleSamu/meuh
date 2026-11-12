@@ -156,7 +156,7 @@ function pickerCard() {
         ? `Niveau ${lvl} · il ramasse les fruits au sol toutes les ${formatDuration(G.pickerEvery() / 1000)}, même quand vous n’êtes pas là.`
         : 'Il ramasse tous les fruits tombés, même quand vous n’êtes pas là.';
     return `<div class="card picker-card"><div class="nature-head">${ico(['villager', 'picker'], 'ico big')}<div class="card-main"><div class="card-title">Le cueilleur</div><div class="card-sub">${sub}</div></div></div>
-        ${nxt ? `<div class="worker-up"><span>${lvl ? `Niveau ${lvl + 1} : plus vite (${formatDuration(PICKER.every[lvl + 1] / 1000)})` : 'Embaucher le cueilleur'}</span>${btn(`<span class="cost">${costOf(nxt)}</span>`, { act: 'upgradePicker', kind: G.hasCost(nxt) ? 'green' : '', size: 'sm', title: lvl ? 'Améliorer' : 'Embaucher' })}</div>` : ''}</div>`;
+        ${nxt ? `<div class="worker-up"><span>${lvl ? `Niveau ${lvl + 1} : plus vite (${formatDuration(PICKER.every[lvl + 1] / 1000)})` : 'Embaucher le cueilleur'}</span>${btn(`<span class="cost">${costOf(nxt)}</span>`, { act: 'upgradePicker', kind: G.hasCost(nxt) ? 'green' : '', size: 'sm', title: lvl ? 'Améliorer' : 'Embaucher' })}</div>` : ''}${lvl ? `<div class="cut-row"><span class="card-sub">${G.pickerPaused() ? 'En pause : les fruits restent au sol.' : 'Au travail.'}</span>${btn(G.pickerPaused() ? 'Remettre au travail' : 'Mettre en pause', { act: 'togglePicker', size: 'sm', kind: G.pickerPaused() ? 'green' : '' })}</div>` : ''}</div>`;
 }
 // 1.38 : Odile, la pépinière et le cueilleur se replient sur une ligne
 export function orchardCards() {
@@ -176,7 +176,7 @@ export function orchardCards() {
         (state.orchard.cuttings || []).length > 0 &&
             `<div class="card" data-act="cuttingsSheet" role="button" tabindex="0"><div class="card-head">${ico(['item', 'cutting'], 'ico big')}<div class="card-main"><div class="card-title">Mes boutures · ${state.orchard.cuttings.length}</div><div class="card-sub">Les voir, vendre celles en trop</div></div>${btn('Ouvrir', { act: 'cuttingsSheet', size: 'sm' })}</div></div>`,
         G.nurseryOpen() && foldWrap('nursery', ['ui', 'nursery'], 'La pépinière', `${stock} greffon${stock > 1 ? 's' : ''} en stock`, nurseryCard()),
-        G.pickerOpen() && foldWrap('picker', ['villager', 'picker'], 'Le cueilleur', lvl ? `Niveau ${lvl}` : 'À embaucher', pickerCard()),
+        G.pickerOpen() && foldWrap('picker', ['villager', 'picker'], 'Le cueilleur', lvl ? (G.pickerPaused() ? 'En pause' : `Niveau ${lvl}`) : 'À embaucher', pickerCard()),
     ]
         .filter(Boolean)
         .join('');
@@ -199,6 +199,7 @@ export function setupOrchard2() {
         sellCuttingsAll: el => G.sellPlainCuttings(null, el),
         craftGraft: (el, d) => G.craftGraft(d.id, el),
         upgradePicker: el => G.upgradePicker(el),
+        togglePicker: () => G.togglePicker(),
         claimOdile: el => G.claimOdile(el),
     });
 }

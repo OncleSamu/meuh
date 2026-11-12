@@ -137,3 +137,47 @@ test('1.110 : une bouture se vend (moitié du prix du jeune arbre), les simples 
     const src = readFileSync(new URL('../../src/ui/views/orchard2.js', import.meta.url), 'utf8');
     for (const act of ['cuttingsSheet', 'sellCutting', 'sellCuttingsOf', 'sellCuttingsAll']) assert.ok(new RegExp(`\\n {8}${act}: `).test(src), `action ${act}`);
 });
+
+test('1.111 : l’amélioration de la serre ajoute des parcelles même à une serre complète', () => {
+    fresh();
+    state.greenhouse.built = true;
+    G.ensureGhPlots();
+    assert.equal(state.greenhouse.plots.length, 12);
+    state.greenhouse.plots.forEach(p => (p.isUnlocked = true));
+    state.greenhouse.paid = 6;
+    state.bld = state.bld || {};
+    state.bld.b = { ...(state.bld.b || {}), greenhouse: 2 };
+    assert.equal(G.ghExtraPlots(), 2);
+    G.ghExtra();
+    assert.equal(state.greenhouse.plots.length, 14);
+    assert.equal(G.ghUnlocked(), 14);
+    // une serre à 8 parcelles (6 + 2 achetées) passe à 10, sans rien perdre
+    fresh();
+    state.greenhouse.built = true;
+    G.ensureGhPlots();
+    state.greenhouse.plots.forEach((p, k) => (p.isUnlocked = k < 8));
+    state.greenhouse.paid = 2;
+    state.bld = state.bld || {};
+    state.bld.b = { ...(state.bld.b || {}), greenhouse: 2 };
+    G.ensureGhPlots();
+    assert.equal(G.ghUnlocked(), 10);
+    assert.equal(state.greenhouse.plots.length, 14);
+});
+
+test('1.111 : Théo et le cueilleur se mettent en pause', () => {
+    fresh();
+    state.farmhand = { lvl: 1, t: 0 };
+    assert.ok(G.handZone().length > 0);
+    assert.ok(G.toggleHand());
+    assert.equal(G.handPaused(), true);
+    assert.equal(G.handZone().length, 0);
+    assert.equal(G.handOffline(3600).zone.size, 0);
+    G.toggleHand();
+    assert.ok(G.handZone().length > 0);
+    state.orchard.picker = { lvl: 1, at: 0 };
+    assert.ok(G.togglePicker());
+    assert.equal(G.pickerPaused(), true);
+    assert.equal(G.pickerTick(), false);
+    assert.ok(G.togglePicker());
+    assert.equal(G.pickerPaused(), false);
+});

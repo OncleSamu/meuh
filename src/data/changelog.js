@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.111",
+  "title": "La serre agrandie, les aides en pause",
+  "date": "12 novembre 2026",
+  "items": [
+   "Corrigé : l'amélioration de la serre (Nature) ajoute bien ses parcelles, même quand la serre a déjà ses 12 parcelles (jusqu'à 15)",
+   "Théo peut être mis en pause depuis la maison de la ferme : il ne récolte plus, ne replante plus et n'arrose plus, même pendant l'absence",
+   "Le cueilleur peut être mis en pause depuis sa carte du verger : les fruits restent au sol"
+  ]
+ },
+ {
   "v": "1.110",
   "title": "Vendre ses boutures",
   "date": "11 novembre 2026",

@@ -79,9 +79,17 @@ export const handCanUp = () => {
 let handMsg = '';
 export const handMessage = () => handMsg;
 
+// 1.111 : Théo peut être mis en pause (il ne récolte plus, ne replante plus, n'arrose plus, même pendant l'absence)
+export const handPaused = () => !!(state.farmhand && state.farmhand.off);
+export function toggleHand() {
+    if (!handLvl()) return false;
+    state.farmhand.off = !state.farmhand.off;
+    toast(state.farmhand.off ? 'Théo est en pause : le champ est à vous' : 'Théo reprend le travail', ['villager', 'theo']);
+    return true;
+}
 export function handZone() {
     const l = handLvl();
-    if (!l) return [];
+    if (!l || handPaused()) return [];
     const out = [];
     for (let i = 0; i < state.grid.length && out.length < FARMHAND[l].plots + domStepSum('field'); i++) if (state.grid[i].isUnlocked) out.push(i);
     return out;

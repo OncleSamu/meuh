@@ -154,15 +154,25 @@ export function autoPick() {
     if (n) state.stats.pickerFruits = (state.stats.pickerFruits || 0) + n;
     return n;
 }
+// 1.111 : le cueilleur peut être mis en pause (les fruits restent au sol, même pendant l'absence)
+export const pickerPaused = () => !!(state.orchard.picker && state.orchard.picker.off);
+export function togglePicker() {
+    const p = state.orchard.picker;
+    if (!p || !p.lvl) return false;
+    p.off = !p.off;
+    if (!p.off) p.at = now() + pickerEvery();
+    toast(p.off ? 'Le cueilleur est en pause : les fruits restent au sol' : 'Le cueilleur reprend le travail', ['villager', 'picker']);
+    return true;
+}
 export function pickerTick() {
     const p = state.orchard.picker;
-    if (!p || !p.lvl || now() < p.at) return false;
+    if (!p || !p.lvl || p.off || now() < p.at) return false;
     p.at = now() + pickerEvery();
     return autoPick() > 0;
 }
 onOrchardPicker(
-    () => pickerEvery() || 0,
-    () => autoPick(),
+    () => (pickerPaused() ? 0 : pickerEvery() || 0),
+    () => (pickerPaused() ? 0 : autoPick()),
 );
 export function pickerAfterOffline() {
     const p = state.orchard.picker;

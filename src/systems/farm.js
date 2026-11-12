@@ -32,7 +32,7 @@ import {
     preferSeed,
 } from './genetics.js';
 import { wishGold, fireflyHarvest } from './night.js';
-import { ghExtra, ghPaid } from './buildings.js';
+import { ghExtra, ghPaid, ghExtraPlots } from './buildings.js';
 import { compSpeed, plotFx, compHarvest } from './companions.js';
 
 const COIN = ['ui', 'coin'];
@@ -451,7 +451,8 @@ export function buyExp(at) {
 export function ensureGhPlots() {
     const g = state.greenhouse;
     if (!g.built) return;
-    while (g.plots.length < GH.maxPlots)
+    // 1.111 : l'amélioration de la serre ajoute de vraies parcelles en plus des 12 (avant, une serre complète n'en gagnait aucune)
+    while (g.plots.length < GH.maxPlots + ghExtraPlots())
         g.plots.push({ isUnlocked: g.plots.length < GH.basePlots, terrain: 'plowed', itemId: null, growProgress: 0, isWatered: true, isReady: false });
     ghExtra();
 }

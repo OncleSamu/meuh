@@ -485,7 +485,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Aides',
-                t: 'Le cueilleur (niveau 22) ramasse les fruits au sol toutes les 2 heures, même jeu fermé. « Débiter les morts » coupe d’un geste tous les arbres morts.',
+                t: 'Le cueilleur (niveau 22) ramasse les fruits au sol toutes les 2 heures, même jeu fermé. « Débiter les morts » coupe d’un geste tous les arbres morts. Un bouton le met en pause : les fruits restent alors au sol.',
             },
         ],
         tips: ['Les vignes se croisent au labo : un cépage donne de meilleurs raisins pour le vin.'],
@@ -1800,7 +1800,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Théo, le commis',
-                t: 'Après le pont du hameau (chapitre 5), Théo récolte, replante et arrose à votre place les parcelles encadrées du champ, en replantant la dernière culture posée. On le forme de plus en plus : de 6 parcelles à 36 au dernier niveau (31, 39, 44 puis 66). L’aide au champ du domaine lui ajoute des parcelles.',
+                t: 'Après le pont du hameau (chapitre 5), Théo récolte, replante et arrose à votre place les parcelles encadrées du champ, en replantant la dernière culture posée. On le forme de plus en plus : de 6 parcelles à 36 au dernier niveau (31, 39, 44 puis 66). L’aide au champ du domaine lui ajoute des parcelles. Un bouton « Mettre en pause », dans la maison de la ferme, l’arrête quand vous voulez reprendre le champ en main.',
             },
             {
                 h: 'Personnaliser',

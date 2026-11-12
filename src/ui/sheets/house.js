@@ -62,7 +62,8 @@ function hand() {
                 ? `<div class="card-sub">Niveau ${hl + 1} : ${hn.plots} parcelles, toutes les ${hn.every} secondes.</div>${costRow(G.costParts(hn.cost))}
             ${state.level < hn.lvl ? btn(`Niveau ${hn.lvl}`, { wide: true, disabled: true, icon: ['ui', 'lock'] }) : btn('Former Théo', { act: 'upgradeHand', kind: G.hasCost(hn.cost) ? 'green' : '', wide: true, disabled: !G.hasCost(hn.cost) })}`
                 : '<div class="card-sub">Théo est au sommet de son art.</div>'
-        }</div>`;
+        }
+        <div class="cut-row"><span class="card-sub">${G.handPaused() ? 'En pause : il ne touche plus au champ.' : 'Au travail.'}</span>${btn(G.handPaused() ? 'Remettre au travail' : 'Mettre en pause', { act: 'toggleHand', size: 'sm', kind: G.handPaused() ? 'green' : '' })}</div></div>`;
 }
 
 defineSheet('house', {
@@ -107,6 +108,7 @@ export function setupHouse() {
     actions({
         upgradeHouse: el => G.upgradeHouse(el),
         upgradeHand: el => G.upgradeHand(el),
+        toggleHand: () => G.toggleHand(),
         hangFish: (el, d) => G.hangFish(d.id),
         style: (el, d) => {
             G.pickStyle(d.k, d.v, el);

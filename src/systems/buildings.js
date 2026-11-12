@@ -97,6 +97,9 @@ export function ghPaid() {
 export function ghExtra() {
     const g = state.greenhouse;
     if (!g || !g.built) return;
+    // 1.111 : les parcelles de l'amélioration s'ajoutent au-delà des 12 de la serre
+    while (g.plots.length < GH.maxPlots + ghExtraPlots())
+        g.plots.push({ isUnlocked: false, terrain: 'plowed', itemId: null, growProgress: 0, isWatered: true, isReady: false });
     const want = Math.min(g.plots.length, GH.basePlots + ghPaid() + ghExtraPlots());
     g.plots.forEach((p, k) => {
         if (k < want) p.isUnlocked = true;

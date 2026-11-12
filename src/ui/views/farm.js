@@ -215,7 +215,7 @@ function farmyardHtml() {
         n = G.houseNext();
     const can = G.houseCanUp() || G.handCanUp();
     const sub = G.handLvl()
-        ? G.handMessage() || `Théo s’occupe de ${FARMHAND[G.handLvl()].plots} parcelles`
+        ? (G.handPaused() ? 'Théo est en pause' : G.handMessage()) || `Théo s’occupe de ${FARMHAND[G.handLvl()].plots} parcelles`
         : n && state.level < n.lvl
           ? `Agrandissement au niveau ${n.lvl}`
           : n
