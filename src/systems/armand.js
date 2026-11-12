@@ -8,7 +8,8 @@ import { pickRand, round5 } from '../core/format.js';
 import { toast, sfx, buzz, burst } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { ARMAND, RARE } from '../data/commerce.js';
-import { earn, addXp } from './player.js';
+import { earn, addXp, getXpReq } from './player.js';
+import { MAX_LEVEL } from '../data/progress.js';
 import { clampQuality, qual } from './farm.js';
 import { giveRare } from './barn.js';
 import { stayOf, domStepSum } from './estate.js';
@@ -69,7 +70,28 @@ export const armandRate = id => ARMAND.pay * masteryMult(id) * (1 + ARMAND.fidPa
 export const armandPay = (o, n) => round5(ITEMS[o.id].sell * n * armandRate(o.id) * (o.pm || 1));
 export const armandTotal = o => (o ? armandPay(o, o.qty) : 0);
 export const armandBonus = o => round5(armandTotal(o) * ARMAND.bonus);
-export const armandBonusXp = o => Math.round(armandBonus(o) * ARMAND.xp);
+// 1.112 : l'expérience d'une visite d'Armand est plafonnée à 60 % du niveau en cours, toutes commandes et bonus compris
+// (au niveau 22, une seule commande donnait presque trois niveaux). Les pièces ne changent pas.
+export const armandXpCap = () => Math.round(ARMAND.xpCap * getXpReq(Math.min(state.level, MAX_LEVEL - 1)));
+// la part de l'expérience brute qu'on garde : le plafond rapporté à tout ce que la visite peut donner
+const xpShare = () => {
+    let all = 0;
+    for (let i = 0; i < armandSlots(); i++) {
+        const o = armandOrder(i);
+        if (o && !armandOff(o)) all += armandTotal(o) * (1 + ARMAND.bonus) * ARMAND.xp;
+    }
+    return all > 0 ? Math.min(1, armandXpCap() / all) : 1;
+};
+// l'expérience vraiment donnée : réduite d'abord, puis bornée par ce qui reste du plafond de la visite
+function armandXp(raw, at) {
+    const a = A();
+    if (a.xk !== cycle()) Object.assign(a, { xk: cycle(), xg: 0 });
+    const give = Math.max(0, Math.min(Math.round(raw * xpShare()), armandXpCap() - a.xg));
+    a.xg += give;
+    if (give > 0) addXp(give, at);
+    return give;
+}
+export const armandBonusXp = o => Math.round(armandBonus(o) * ARMAND.xp * xpShare());
 
 // un produit devenu trop cher pour le budget du niveau (ancienne sauvegarde) ne donne pas de commande
 // 1.66 : une nouvelle commande commence « à discuter » (deal : 'talk', puis 'ok' conclue, ou 'off' retirée pour la semaine)
@@ -130,7 +152,7 @@ export function deliverArmand(at, slot = 0, n) {
     o.got += can;
     const gold = armandPay(o, can);
     earn(gold, at);
-    addXp(Math.round(gold * ARMAND.xp), at);
+    armandXp(gold * ARMAND.xp, at);
     state.income.trucks = (state.income.trucks || 0) + gold;
     sfx('load');
     buzz(10);
@@ -139,7 +161,7 @@ export function deliverArmand(at, slot = 0, n) {
         o.done = true;
         const bonus = armandBonus(o);
         earn(bonus, at);
-        addXp(armandBonusXp(o), at);
+        armandXp(armandBonus(o) * ARMAND.xp, at);
         for (let j = 0; j < ARMAND.mats; j++) giveRare(pickRand(RARE), 2, at);
         // 1.66 : une commande réduite (« moins de quantité ») ne fait pas gagner de fidélité
         if (!o.half) a.fid[o.id] = Math.min(ARMAND.fidMax, armandFid(o.id) + 1);

@@ -181,3 +181,34 @@ test('1.111 : Théo et le cueilleur se mettent en pause', () => {
     assert.ok(G.togglePicker());
     assert.equal(G.pickerPaused(), false);
 });
+
+test('1.112 : une visite d’Armand donne au plus 60 % du niveau en expérience, les pièces ne changent pas', async () => {
+    const { ARMAND } = await import('../../src/data/commerce.js');
+    const { setClock } = await import('../../src/core/clock.js');
+    fresh();
+    state.level = 22;
+    state.xp = 0;
+    const id = 'apple';
+    state.mastery[id] = 1000;
+    const t = Math.floor(Date.now() / ARMAND.every) * ARMAND.every + 1000;
+    setClock(() => t);
+    try {
+        G.armandTick();
+        assert.ok(G.setFlagship(id));
+        const o = G.armandOrder();
+        G.armandTalk(0, 'yes');
+        state.inventory[id] = o.qty;
+        const total = G.xpToReach(state.level) + state.xp;
+        const m = state.money;
+        const cap = G.armandXpCap();
+        assert.equal(cap, Math.round(0.6 * G.getXpReq(22)));
+        state.lvGoals = { lvl: 22, list: [] };
+        assert.ok(G.deliverArmand(null));
+        assert.ok(o.done);
+        const got = G.xpToReach(state.level) + state.xp - total;
+        assert.ok(got > cap * 0.9 && got <= cap, `expérience ${got} pour un plafond de ${cap}`);
+        assert.ok(state.money - m >= G.armandTotal(o), 'les pièces ne sont pas plafonnées');
+    } finally {
+        setClock(() => Date.now());
+    }
+});

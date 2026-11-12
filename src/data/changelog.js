@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.112",
+  "title": "Armand donne moins d'expérience",
+  "date": "12 novembre 2026",
+  "items": [
+   "Une visite d'Armand donne au plus 60 % du niveau en cours en expérience, toutes commandes et bonus compris (au niveau 22, une seule commande donnait presque trois niveaux)",
+   "Les pièces qu'il paie ne changent pas"
+  ]
+ },
+ {
   "v": "1.111",
   "title": "La serre agrandie, les aides en pause",
   "date": "12 novembre 2026",

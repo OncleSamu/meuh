@@ -1528,6 +1528,7 @@ export const GUIDE_PAGES = [
         go: 'village/orders',
         intro: 'Un visiteur rare qui commande votre produit phare en quantités énormes.',
         secs: [
+            { h: 'L’expérience', t: 'Armand paie surtout en pièces. Une visite donne au plus 60 % du niveau en cours en expérience, toutes commandes et bonus compris.' },
             { h: 'Les visites', t: 'Une fois par semaine (temps réel, même jeu fermé), il reste 3 jours. Manquer sa visite ne coûte rien.' },
             {
                 h: 'Le produit phare',

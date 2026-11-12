@@ -145,6 +145,7 @@ export const ARMAND = {
     fidMax: 5,
     bonus: 0.6,
     xp: 0.35,
+    xpCap: 0.6, // 1.112 : au plus 60 % du niveau en cours par visite
     mats: 3,
     // 1.66 : la table de négociation. Chaque demande coûte de l'humeur ; la chance d'un « oui » est l'humeur moins ce coût.
     talk: {
