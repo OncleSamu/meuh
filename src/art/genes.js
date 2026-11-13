@@ -1,6 +1,6 @@
 // 1.121 : les icônes propres aux caractères génétiques (elles remplacent des icônes empruntées ailleurs).
 // Cadre 64 × 64, lisibles dès 14 px : une forme simple, un contour franc, une couleur dominante.
-import { C, E, F, FC, HL, L, P, ui } from './kit.js';
+import { C, E, F, FC, FE, HL, L, P, ui } from './kit.js';
 
 const O = '#3a2618';
 
@@ -37,7 +37,16 @@ Object.assign(ui, {
     // Chance : le trèfle à quatre feuilles
     gLuck: () => {
         const lf = (x, y, r) => `<g transform="rotate(${r} 32 30)">${P('M32 30 Q22 22 24 12 Q28 6 32 12 Q36 6 40 12 Q42 22 32 30Z', '#5cb85c', 2.4)}</g>`;
-        return L('M32 32 Q34 46 26 58', 4, O) + L('M32 32 Q34 46 26 58', 2, '#3f8f2e') + lf(0, 0, 0) + lf(0, 0, 90) + lf(0, 0, 180) + lf(0, 0, 270) + FC(32, 30, 3, '#8bd88b') + HL(28, 16, 3, 1.8, -30, 0.7);
+        return (
+            L('M32 32 Q34 46 26 58', 4, O) +
+            L('M32 32 Q34 46 26 58', 2, '#3f8f2e') +
+            lf(0, 0, 0) +
+            lf(0, 0, 90) +
+            lf(0, 0, 180) +
+            lf(0, 0, 270) +
+            FC(32, 30, 3, '#8bd88b') +
+            HL(28, 16, 3, 1.8, -30, 0.7)
+        );
     },
 
     // Fécondité : le nid et ses trois œufs
@@ -75,3 +84,195 @@ Object.assign(ui, {
         L('M18 53 L46 53', 1.6, '#a8743f') +
         HL(18, 30, 2, 5, 0, 0.5),
 });
+
+// ---------------- 1.122 : le plumage des oiseaux et l'essaim des abeilles ----------------
+// huppe : où pousse la touffe (sommet de la tête), son inclinaison, sa couleur ;
+// frisé : des plumes retroussées posées sur le contour du corps [x, y, direction en degrés] (relevé par rayons depuis le centre du corps)
+const PLUME = {
+    chicken: {
+        c: '#fffaf0',
+        d: '#e8dcc6',
+        head: [47, 15, -10],
+        ruff: [
+            [23.1, 58, 125],
+            [18.8, 51, 150],
+            [14, 44.1, 175],
+            [9.7, 33.5, 200],
+            [21.6, 30.1, 225],
+            [28.5, 27.2, 250],
+            [49.8, 53.4, 35],
+        ],
+    },
+    duck: {
+        c: '#c9d0da',
+        d: '#9aa4b2',
+        crest: '#2f7d3a',
+        head: [56, 17, -15],
+        ruff: [
+            [24.9, 58.8, 125],
+            [18.8, 53.3, 150],
+            [16.2, 45.1, 175],
+            [9.7, 34, 200],
+            [24.8, 32.6, 225],
+            [31.8, 33.2, 250],
+            [52, 54.9, 35],
+        ],
+    },
+    goose: {
+        c: '#b9bec7',
+        d: '#8d939d',
+        head: [53, 8, -65],
+        ruff: [
+            [23.4, 59.3, 125],
+            [17, 54, 150],
+            [12, 45.9, 175],
+            [9.2, 35, 200],
+            [23.3, 33.3, 225],
+            [30.5, 34.2, 250],
+            [50.5, 55.4, 35],
+        ],
+    },
+    peacock: {
+        c: '#3f6fb8',
+        d: '#2b4f8a',
+        crest: '#2a9d8f',
+        head: [60, 13, 0],
+        ruff: [
+            [31.4, 43.3, 125],
+            [20.5, 48.3, 150],
+            [5.5, 43.6, 175],
+            [1.4, 29.8, 200],
+            [1.3, 9.8, 225],
+            [19, 3.2, 250],
+            [53.3, 55.6, 35],
+        ],
+    },
+    turkey: {
+        c: '#6b4a33',
+        d: '#4e3424',
+        head: [55, 22, -10],
+        ruff: [
+            [26.4, 53.3, 125],
+            [25, 47, 150],
+            [26.2, 42.4, 175],
+            [1.4, 29.5, 200],
+            [5.6, 12.8, 225],
+            [22, 7.4, 250],
+            [52.8, 54.4, 35],
+        ],
+    },
+    quail: {
+        c: '#b07a3e',
+        d: '#7d5428',
+        head: [46, 25, -25],
+        ruff: [
+            [25.1, 60.8, 125],
+            [18.3, 54.8, 150],
+            [16, 45.9, 175],
+            [19.9, 38, 200],
+            [26.8, 34.3, 225],
+            [31, 28.4, 250],
+            [51, 54.1, 35],
+        ],
+    },
+    pigeon: {
+        c: '#a7b1c2',
+        d: '#7d8799',
+        head: [54, 28, -10],
+        ruff: [
+            [27.1, 61, 125],
+            [18.3, 56.8, 150],
+            [14.5, 47.4, 175],
+            [19.9, 38.8, 200],
+            [28.6, 35.8, 225],
+            [35, 36.7, 250],
+            [53.8, 56.1, 35],
+        ],
+    },
+    guinea: {
+        c: '#5d6470',
+        d: '#3e444e',
+        head: [56, 25, -5],
+        ruff: [
+            [24.4, 63, 125],
+            [12.8, 59.3, 150],
+            [12.5, 47.6, 175],
+            [18.9, 39.3, 200],
+            [26.8, 35.8, 225],
+            [32.8, 35.2, 250],
+            [52.8, 56.9, 35],
+        ],
+    },
+    pheasant: {
+        c: '#c8732e',
+        d: '#8e4f1c',
+        crest: '#2f7d5a',
+        head: [56, 26, -15],
+        ruff: [
+            [26.6, 62.5, 125],
+            [6.5, 64.3, 150],
+            [14.2, 48.1, 175],
+            [20.7, 39.5, 200],
+            [30.1, 37.6, 225],
+            [35.3, 37.7, 250],
+            [55, 57.6, 35],
+        ],
+    },
+    ostrich: {
+        c: '#2b2a30',
+        d: '#151418',
+        head: [56, 6, -70],
+        ruff: [
+            [22.6, 58, 125],
+            [17.3, 52.5, 150],
+            [7.5, 45.9, 175],
+            [10.4, 35.3, 200],
+            [19.8, 30.6, 225],
+            [27.8, 29.4, 250],
+            [50.8, 56.1, 35],
+        ],
+    },
+    ptarmigan: {
+        c: '#fbfdff',
+        d: '#cfd8e2',
+        head: [53, 23, -15],
+        ruff: [
+            [24.4, 61.8, 125],
+            [16.5, 55.5, 150],
+            [7.7, 46.1, 175],
+            [16.9, 36, 200],
+            [24.1, 30.1, 225],
+            [31.8, 28.4, 250],
+            [55, 55.9, 35],
+        ],
+    },
+};
+export const PLUME_SPECIES = Object.keys(PLUME);
+// une touffe de trois plumes, pointe vers l'extérieur
+const tuft = (x, y, a, c, d) =>
+    `<g transform="translate(${x} ${y}) rotate(${a}) scale(.62)">${P('M-3 -4 Q5 -7 10 -3 Q6 -1 4 -0.5 Q9 1 11 4 Q5 4 2 2 Q4 6 6 8 Q0 6 -3 3Z', c, 1.6)}${L('M0 -1 L7 -2 M0 2 L7 3', 0.9, d)}</g>`;
+// la huppe : un éventail de plumes qui se dresse sur la tête
+const crest = (x, y, a, c, d) =>
+    `<g transform="translate(${x} ${y}) rotate(${a}) scale(.85)">${[-38, -14, 10, 34]
+        .map(r => `<g transform="rotate(${r})">${P('M-2 1 Q-4 -8 0 -14 Q4 -8 2 1Z', c, 1.6)}${L('M0 -1 L0 -10', 0.9, d)}</g>`)
+        .join('')}</g>`;
+export function plumeArt(id, v) {
+    const p = PLUME[id];
+    if (!p || !v) return '';
+    if (v === 1) return crest(...p.head, p.crest || p.c, p.d);
+    return p.ruff.map(([x, y, a]) => tuft(x, y, a, p.c, p.d)).join('');
+}
+// l'essaim nombreux : trois abeilles de plus autour de la ruche
+const bee = (x, y) =>
+    `${FE(x - 1, y - 3.6, 3, 2, '#ffffff', 0.85)}${E(x, y, 4.5, 3.2, '#ffd23f', 0, 1.6)}${L(`M${x - 1} ${y - 3} L${x - 1} ${y + 3} M${x + 1.5} ${y - 3} L${x + 1.5} ${y + 3}`, 1.2)}`;
+export const swarmArt = v =>
+    v
+        ? [
+              [30, 12],
+              [72, 30],
+              [8, 34],
+              [40, 6],
+          ]
+              .map(([x, y]) => bee(x, y))
+              .join('')
+        : '';

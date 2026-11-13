@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.122",
+  "title": "Huppés et frisés",
+  "date": "13 novembre 2026",
+  "items": [
+   "Les onze oiseaux ont un trait visible : le plumage. Naturel, huppé (une touffe sur la tête) ou frisé (des plumes retroussées tout autour)",
+   "Les abeilles aussi : un essaim nombreux bourdonne autour de la ruche",
+   "Vos oiseaux et vos ruches portent parfois déjà ce trait caché : il peut apparaître dès les prochains croisements. Il compte pour la beauté au comice"
+  ]
+ },
+ {
   "v": "1.121",
   "title": "Les gènes se voient mieux",
   "date": "13 novembre 2026",

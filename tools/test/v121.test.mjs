@@ -3,6 +3,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { FEATURES, featuresOf, PLANT_TRAITS, ANIMAL_TRAITS } from '../../src/data/genetics.js';
 import { art } from '../../src/ui/icons.js';
+import { clock, memStore } from './helpers.mjs';
+import { state, setStore } from '../../src/core/state.js';
+import * as G from '../../src/systems/index.js';
 
 test('chaque variante de chaque trait visible se voit sur le dessin', () => {
     for (const [k, F] of Object.entries(FEATURES))
@@ -29,4 +32,18 @@ test('les icônes des caractères existent et ne sont plus empruntées', () => {
     const own = { late: 'gLate', luck: 'gLuck', soft: 'gSoft', fertile: 'gFertile', health: 'gHealth', social: 'gSocial', curious: 'gCurious' };
     for (const [id, ic] of Object.entries(own)) assert.ok([...PLANT_TRAITS, ...ANIMAL_TRAITS].some(t => t.id === id && t.icon[1] === ic), id);
     assert.ok(art('ui', 'seedPack').length > 50);
+});
+
+test('1.122 : les oiseaux et les abeilles reçoivent leur trait visible', () => {
+    setStore(memStore());
+    clock.t += 1000;
+    G.loadGame();
+    assert.deepEqual(featuresOf('chicken'), ['plume']);
+    assert.deepEqual(featuresOf('bees'), ['swarm']);
+    // une poule d'avant 1.122 (sans gène de plumage) le reçoit
+    state.animals.push({ type: 'chicken', g: G.wildAnimal('chicken', false), age: 99 });
+    delete state.animals.at(-1).g.l.plume;
+    G.ensureGenetics();
+    assert.ok(state.animals.at(-1).g.l.plume);
+    assert.notEqual(art('animal', 'chicken~1'), art('animal', 'chicken~2'));
 });

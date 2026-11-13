@@ -876,7 +876,7 @@ export const GUIDE_PAGES = [
                 b: [
                     `Chaque semaine, ${COMICE.cats} catégories tirées parmi vos espèces (une de plus avec le grand hall). Les variétés ont leur propre concours, au labo : le concours du potager.`,
                     'Dans chaque catégorie, le jury regarde surtout une chose (les gènes, la beauté, l’affection ou la présentation) : elle compte une fois et demie.',
-                    `Une bête par catégorie. La note sur 100 : gènes au-dessus de la moyenne de l’espèce ${COMICE.w.genes}, beauté (robe, motifs, cornes, toison) ${COMICE.w.beauty}, cœurs ${COMICE.w.hearts}, présentation ${COMICE.w.show}.`,
+                    `Une bête par catégorie. La note sur 100 : gènes au-dessus de la moyenne de l’espèce ${COMICE.w.genes}, beauté (robe, motifs, cornes, toison, plumage) ${COMICE.w.beauty}, cœurs ${COMICE.w.hearts}, présentation ${COMICE.w.show}.`,
                     `La présentation : brossez la bête ${COMICE.brushTime} secondes, de la tête vers la queue. Une fois par jour ; le meilleur brossage de la semaine compte.`,
                     'Les quatre fermes voisines concourent aussi, avec une note qui grandit avec votre niveau. Résultats à la fin de la semaine.',
                     'Premier prix : un ruban (deux la première fois pour une espèce), des pièces et la plaque « Primée » sur la bête, dont le prix double à la foire. Deuxième et troisième : des pièces.',
@@ -2084,7 +2084,7 @@ export const GUIDE_PAGES = [
                 h: 'L’étable de sélection',
                 b: [
                     'Associez deux parents : la naissance prend environ 15 minutes, en temps réel.',
-                    'Les petits héritent de leurs traits : cornes, oreilles, toison, lait plus riche… et, chez le cheval, la détente et la docilité qui fixent ses plafonds aux écuries.',
+                    'Les petits héritent de leurs traits : cornes, oreilles, toison, plumage des oiseaux (huppé ou frisé), essaim des abeilles, lait plus riche… et, chez le cheval, la détente et la docilité qui fixent ses plafonds aux écuries.',
                     'Jumeaux dans 15 % des naissances.',
                     'Un enclos d’élevage de base, un de plus avec le laboratoire, un autre avec le conservatoire, un de plus avec le domaine.',
                     'Une race fixée donne des petits dont le prix est plus élevé.',

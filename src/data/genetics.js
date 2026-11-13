@@ -90,6 +90,13 @@ export const FEATURES = {
         species: ['cow', 'goat', 'buffalo', 'sheep', 'zebu', 'barbarySheep', 'reindeer', 'muskox'],
     },
     ears: { name: 'Oreilles', list: ['Naturelles', 'Tombantes'], species: ['rabbit', 'pig', 'goat'] },
+    // 1.122 : les oiseaux ont enfin leur trait visible, et les abeilles le leur
+    plume: {
+        name: 'Plumage',
+        list: ['Naturel', 'Huppé', 'Frisé'],
+        species: ['chicken', 'duck', 'goose', 'peacock', 'turkey', 'quail', 'pigeon', 'guinea', 'pheasant', 'ostrich', 'ptarmigan'],
+    },
+    swarm: { name: 'Essaim', list: ['Naturel', 'Nombreux'], species: ['bees'] },
     coat: {
         name: 'Toison',
         list: ['Naturelle', 'Longue', 'Frisée'],
