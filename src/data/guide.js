@@ -1699,7 +1699,15 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Le foyer',
-                t: 'Les pièces s’ajoutent à la maison, avec des pièces d’or et des matériaux : la chambre des époux, puis le grand salon (paniers plus garnis, trois niveaux). D’autres pièces viendront avec les enfants.',
+                t: 'Les pièces s’ajoutent à la maison, avec des pièces d’or et des matériaux : la chambre des époux, le grand salon (paniers plus garnis), la chambre de bébé, la chambre des enfants (deuxième et troisième enfant), la salle de jeux (on grandit plus vite, le bonheur dure) et le bureau des grands (coups de main plus forts).',
+            },
+            {
+                h: 'Les enfants',
+                t: 'Onglet Enfants, après la noce et avec la chambre de bébé : le bébé arrive six heures après l’annonce, si votre conjoint se sent aimé. Trois enfants au plus. Leur visage mêle le vôtre et celui de votre conjoint. Ils grandissent avec le temps : bébé deux jours, enfant quatre jours, ado quatre jours, puis adulte.',
+            },
+            {
+                h: 'Bonheur, soins et coups de main',
+                t: 'Le bonheur baisse chaque jour ; au-dessous de 50 %, un enfant grandit deux fois moins vite et aide moitié moins. Chaque soin (biberon, câlin, jeux, goûter, discussion, argent de poche) donne du bonheur et fait grandir un peu. L’enfant ramasse de petites choses toutes les six heures ; l’ado et l’adulte choisissent où aider : au potager, avec les bêtes, à l’atelier ou au marché.',
             },
         ],
         see: ['village'],

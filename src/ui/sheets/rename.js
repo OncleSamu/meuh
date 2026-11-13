@@ -20,6 +20,7 @@ const WHAT = {
     maison: { title: 'Nommer la Maison', get: () => state.maison, name: o => o.name, set: (id, n) => G.renameBrand(id, n) },
     paquet: { title: 'Nommer le paquet', max: 30, get: () => sheetOpts('paquet'), name: o => o.name || '', set: (id, n) => ((sheetOpts('paquet').name = String(n).trim().slice(0, 30)), !!String(n).trim()) },
     recette: { title: 'Nommer le paquet', max: 30, get: id => G.recipeAt(+id), name: o => o.name, set: (id, n) => G.renameRecipe(id, n) },
+    kid: { title: 'Renommer l’enfant', max: 16, get: id => G.kidById(id), name: o => o.name, set: (id, n) => G.renameKid(id, n) },
     race: { title: 'Renommer la race', get: id => state.genetics && state.genetics.races[id], name: o => o.name, set: (id, n) => G.renameRace(id, n) },
 };
 

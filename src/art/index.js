@@ -19,7 +19,7 @@ import './station.js';
 import './defis.js';
 import './nuit.js';
 import { plumeArt, swarmArt } from './genes.js';
-import './famille.js';
+import { babyArt, childArt } from './famille.js';
 // les dessins refaits (1.2.1 et suivantes) passent en dernier : ils remplacent les anciens
 import './items2.js';
 import './buildings2.js';
@@ -112,6 +112,9 @@ export const SPR = {
         return svg(ui[id]());
     },
     villager(id) {
+        // 1.124 : « b:… » un bébé (« B:… » une petite fille), « c:… » un enfant ; le reste est un habitant
+        const s = String(id);
+        if (s[1] === ':' && 'bBc'.includes(s[0])) return svg(s[0] === 'c' ? childArt(s.slice(2)) : babyArt(s.slice(2), s[0] === 'B'), '0 0 64 64', 'villager');
         return svg(people[id] ? people[id]() : habitantArt(id), '0 0 64 64', 'villager');
     },
     truck() {

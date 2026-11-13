@@ -100,3 +100,80 @@ Object.assign(ui, {
         E(22, 30, 5, 4, '#ffd23f', 0, 1.8) +
         HL(16, 26, 4, 1.6, -10, 0.5),
 });
+
+// ---------------- 1.124 : les enfants ----------------
+import { SKINS, HAIRS, lookOf, habitantArt } from './habitants.js';
+
+// le bébé : emmailloté dans sa couverture (rose ou bleue), les yeux fermés, une mèche de la couleur de ses cheveux
+export function babyArt(id, girl) {
+    const k = lookOf(id);
+    const skin = SKINS[k.skin],
+        hair = HAIRS[k.hairColor];
+    const wrap = girl ? '#f8bbd0' : '#b3d9f2',
+        wrapD = girl ? '#e391b0' : '#7fb3d9';
+    return (
+        P('M8 64 Q8 40 32 38 Q56 40 56 64Z', wrap, 2.6) +
+        P('M14 64 Q20 48 32 50 Q44 48 50 64', 'none', 0) +
+        L('M16 60 Q32 50 48 60', 2, wrapD) +
+        P('M14 34 Q14 10 32 10 Q50 10 50 34 Q50 48 32 48 Q14 48 14 34Z', wrap, 2.6) +
+        C(32, 32, 13, skin, 2.4) +
+        P('M28 20 Q30 14 34 16 Q32 18 33 21 Q30 19 28 20Z', hair, 1.6) +
+        L('M25 31 Q27 33 29 31 M35 31 Q37 33 39 31', 1.8) +
+        FC(24.5, 36, 2.6, '#f49a8f', 0.5) +
+        FC(39.5, 36, 2.6, '#f49a8f', 0.5) +
+        E(32, 38.5, 2.2, 1.6, '#b5523f', 0, 1.2) +
+        HL(26, 25, 3, 1.6, -30, 0.5)
+    );
+}
+// l'enfant : son visage, plus petit dans le cadre (les grands gardent le dessin d'un habitant)
+export const childArt = id => `<g transform="translate(7 10) scale(.8)">${habitantArt(id)}</g>`;
+
+Object.assign(ui, {
+    fmCradle: () =>
+        SHADOW(32, 58, 24, 3) +
+        P('M10 30 Q10 52 32 52 Q54 52 54 30Z', '#f6e3c4', 2.6) +
+        L('M14 52 Q12 58 8 58 M50 52 Q52 58 56 58', 3) +
+        L('M8 58 Q32 62 56 58', 3) +
+        P('M10 30 Q12 12 32 10 L32 30Z', '#b3d9f2', 2.4) +
+        L('M14 36 L50 36 M14 42 L50 42', 1.4, '#c4a46a') +
+        L('M44 4 L44 14', 1.6) +
+        FC(38, 16, 2.4, '#ffd23f') +
+        FC(44, 18, 2.4, '#f06292') +
+        FC(50, 16, 2.4, '#6cc04a') +
+        L('M36 14 L52 14', 1.6),
+    fmBunk: () =>
+        L('M10 6 L10 60 M54 6 L54 60', 3.4) +
+        R(10, 16, 44, 10, 2, '#e57373', 2.2) +
+        R(10, 42, 44, 10, 2, '#64b5f6', 2.2) +
+        E(18, 15, 5, 3, '#fff', 0, 1.6) +
+        E(18, 41, 5, 3, '#fff', 0, 1.6) +
+        L('M42 26 L42 42 M48 26 L48 42 M42 31 L48 31 M42 36 L48 36', 1.8, '#8b5a2b'),
+    fmToys: () =>
+        SHADOW(32, 58, 26, 3) +
+        R(6, 38, 18, 18, 2, '#e2412f', 2.2) +
+        R(24, 38, 18, 18, 2, '#ffd23f', 2.2) +
+        R(15, 20, 18, 18, 2, '#64b5f6', 2.2) +
+        L('M11 43 L19 51 M19 43 L11 51', 1.8, '#fff') +
+        L('M29 47 L37 47 M33 43 L33 51', 1.8, '#8b5a2b') +
+        C(52, 46, 9, '#c08b52', 2.2) +
+        C(46, 36, 4, '#c08b52', 2) +
+        C(58, 36, 4, '#c08b52', 2) +
+        FC(49, 45, 1.2, O) +
+        FC(55, 45, 1.2, O) +
+        E(52, 49, 2.4, 1.6, '#8b5a2b'),
+    fmDesk: () =>
+        SHADOW(32, 58, 26, 3) +
+        R(6, 30, 52, 8, 2, '#a8693a', 2.4) +
+        L('M10 38 L10 58 M54 38 L54 58', 3.2) +
+        R(12, 20, 18, 10, 1, '#f6f1e6', 2) +
+        L('M15 24 L27 24 M15 27 L24 27', 1.2, '#7a7a7a') +
+        L('M44 30 L48 14 L40 8', 2.6) +
+        P('M34 8 L44 4 L46 12Z', '#ffd23f', 2) +
+        F('M36 12 L46 12 L52 30 L30 30Z', '#fff3a3', 0.5),
+    fmTalk: () =>
+        P('M6 10 L40 10 Q44 10 44 14 L44 30 Q44 34 40 34 L20 34 L12 42 L13 34 L10 34 Q6 34 6 30Z', '#ffffff', 2.4) +
+        P('M24 28 L54 28 Q58 28 58 32 L58 46 Q58 50 54 50 L50 50 L51 58 L43 50 L28 50 Q24 50 24 46Z', '#bfe6ff', 2.4) +
+        FC(16, 22, 2, O) +
+        FC(25, 22, 2, O) +
+        FC(34, 22, 2, O),
+});

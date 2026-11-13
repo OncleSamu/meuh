@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.124",
+  "title": "La famille, chapitre 2 : les enfants",
+  "date": "13 novembre 2026",
+  "items": [
+   "Village › Famille › Enfants : après la noce et avec la chambre de bébé, un heureux événement (six heures). Trois enfants au plus",
+   "Leur visage mêle le vôtre et celui de votre conjoint : teint, cheveux, yeux",
+   "Ils grandissent : bébé, enfant, ado, puis adulte. Le bonheur se soigne (biberon, câlin, jeux, goûter, discussion, argent de poche) ; un enfant malheureux grandit moins vite",
+   "Ils aident : l'enfant ramasse de petites choses, l'ado et l'adulte donnent un coup de main au potager, aux bêtes, à l'atelier ou au marché",
+   "Quatre nouvelles pièces : chambre de bébé, chambre des enfants, salle de jeux, bureau des grands"
+  ]
+ },
+ {
   "v": "1.123",
   "title": "La famille, chapitre 1 : le mariage",
   "date": "13 novembre 2026",

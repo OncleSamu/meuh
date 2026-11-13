@@ -33,6 +33,7 @@ import {
 } from './genetics.js';
 import { wishGold, fireflyHarvest } from './night.js';
 import { ghExtra, ghPaid, ghExtraPlots } from './buildings.js';
+import { kidFx } from './family.js';
 import { compSpeed, plotFx, compHarvest } from './companions.js';
 
 const COIN = ['ui', 'coin'];
@@ -54,7 +55,8 @@ export const plotRate = (p, i) =>
               : cropRate(p.itemId) * decoGrowth(i) * soilMult(i, p.itemId, p.v ? varSoilShare(p.v) : 0) * (p.v && !isInSeason(p.itemId) ? varHardy(p.v) : 1)) *
           masterySpeed(p.itemId) *
           (p.v ? varGrowth(p.v) : 1) *
-          compSpeed(i); // 1.25 : les cultures compagnes
+          compSpeed(i) * // 1.25 : les cultures compagnes
+          kidFx('field'); // 1.124 : un enfant de la famille aide au potager
 
 // secondes restantes avant la récolte
 export const plotLeft = (p, i) => Math.max(0, Math.ceil((ITEMS[p.itemId].time / speedMult() - p.growProgress) / plotRate(p, i)));

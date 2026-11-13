@@ -4,7 +4,8 @@ import { fmt } from '../../core/format.js';
 import { VILLAGERS } from '../../data/village.js';
 import { ITEMS } from '../../data/items.js';
 import { LOVES } from '../../data/friends.js';
-import { FAMILY, DATES, FOYER } from '../../data/family.js';
+import { FAMILY, DATES, FOYER, KIDS, TASKS } from '../../data/family.js';
+import { renameBtn } from '../sheets/rename.js';
 import * as G from '../../systems/index.js';
 import { actions, blocks, esc } from '../dom.js';
 import { ico, art } from '../icons.js';
@@ -113,12 +114,64 @@ function foyerTab() {
     <p class="card-sub center">Déjà investi dans le foyer : ${fmt(G.foyerSpent())}${COIN()}</p>`;
 }
 
+// ---------------- 1.124 : les enfants ----------------
+export const kidPic = k => {
+    const st = G.stageOf(k);
+    return st === 0 ? `${k.girl ? 'B' : 'b'}:${k.look}` : st === 1 ? `c:${k.look}` : k.look;
+};
+const hoursText = h => (h >= 48 ? `${Math.round(h / 24)} jours` : h >= 1 ? `${Math.round(h)} h` : 'bientôt');
+function kidCard(k) {
+    const st = G.stageOf(k);
+    const joy = G.kidJoy(k);
+    const cares = G.caresOf(k)
+        .map(c => {
+            const left = G.careLeft(k, c);
+            const nd = G.careNeed(c);
+            const req = c.coins ? `${fmt(G.pocketCoins(c))}${COIN()}` : nd ? need(nd) : c.snack ? '<span class="short">un goûter</span>' : '';
+            return `<button class="fm-care${G.careCan(k, c) ? '' : ' off'}" data-act="fmCare" data-id="${k.id}" data-c="${c.id}" ${G.careCan(k, c) ? '' : 'disabled'}>${ico(c.icon)}<span><b>${c.name}</b><small>${left ? timer(Date.now() + left) : req || '+' + KIDS.joy.care + ' de bonheur'}</small></span></button>`;
+        })
+        .join('');
+    const find =
+        st === 1
+            ? `<div class="fm-find">${ico(['ui', 'basket'])}<span>${G.findReady(k) ? `${esc(k.name)} a ramassé des choses pour vous` : `${esc(k.name)} ramasse de petites choses… ${timer(Date.now() + G.findLeft(k))}`}</span>${G.findReady(k) ? btn('Voir', { act: 'fmFind', data: { id: k.id }, kind: 'gold', size: 'sm' }) : ''}</div>`
+            : '';
+    const tasks =
+        st >= 2
+            ? `<div class="fm-tasks">${TASKS.map(t => `<button class="fm-task${k.task === t.id ? ' on' : ''}" data-act="fmTask" data-id="${k.id}" data-t="${t.id}" title="${t.text}">${ico(t.icon)}<small>${t.name}</small></button>`).join('')}</div>
+               <p class="card-sub">${k.task ? `${esc(TASKS.find(t => t.id === k.task).text[0].toUpperCase() + TASKS.find(t => t.id === k.task).text.slice(1))} : +${String(Math.round(G.kidHelp(k) * 1000) / 10).replace('.', ',')} %` : 'Choisissez où il ou elle donne un coup de main.'}</p>`
+            : '';
+    const grow = st < KIDS.ages.length ? `<div class="fm-grow"><small>${KIDS.ageNames[st + 1]} dans ${hoursText(G.kidGrowLeft(k))}</small>${bar(G.stageInto(k))}</div>` : '';
+    return `<div class="card fm-kid"><div class="fm-head">${portrait(kidPic(k), 'big')}<div><div class="card-title">${esc(k.name)} ${renameBtn('kid', k.id, 'Renommer')}</div><div class="card-sub">${G.stageName(k)} · ${k.girl ? 'votre fille' : 'votre fils'}</div>
+        <div class="fm-aff">${ico(['ui', joy >= KIDS.joy.keep ? 'heart' : 'heartOff'])}${bar(joy / 100, joy >= KIDS.joy.keep ? 'good' : 'bad')}<small>${joy} %</small></div>${grow}</div></div>
+        <div class="fm-cares">${cares}</div>${find}${tasks}</div>`;
+}
+function kidsTab() {
+    const F = G.ensureFamily();
+    if (!F.spouse) return empty('Les enfants viendront après la noce.');
+    const max = G.kidsMax();
+    const left = G.babyLeft();
+    const head = F.baby
+        ? `<div class="card fm-intro">${ico(['ui', 'fmCradle'], 'ico big')}<div><div class="card-title">Un heureux événement</div><div class="card-sub">Le bébé arrive dans ${timer(Date.now() + left)}.</div></div></div>`
+        : F.kids.length < KIDS.max
+          ? `<div class="card fm-intro">${ico(['ui', 'fmCradle'], 'ico big')}<div><div class="card-title">Agrandir la famille</div><div class="card-sub">${
+                F.kids.length >= max
+                    ? `Il faut ${F.kids.length ? 'agrandir la chambre des enfants' : 'la chambre de bébé'} (onglet Pièces).`
+                    : G.spouseHappy()
+                      ? `${F.kids.length}/${KIDS.max} enfants. Le bébé arrive six heures après.`
+                      : `${G.vName(F.spouse)} doit se sentir aimé${G.eFem(F.spouse)} (tendresse au-dessus de ${FAMILY.aff.keep} %).`
+            }</div></div>${btn('Un bébé', { act: 'fmExpect', kind: 'gold', size: 'sm', disabled: !G.canExpect() })}</div>`
+          : '';
+    return `${head}${F.kids.map(kidCard).join('')}
+        ${F.kids.length ? hint(`Le bonheur baisse chaque jour : au-dessous de ${KIDS.joy.keep} %, un enfant grandit deux fois moins vite et aide moitié moins. Chaque soin donne du bonheur et fait grandir un peu.`) : ''}`;
+}
+
 function renderFamily(el) {
     if (!G.familyOpen()) return blocks(el, [['lock', empty(`La famille s’ouvre au niveau ${FAMILY.lvl}.`)]]);
     const T = innerTabs(
         'fam',
         [
             ['heart', G.spouseOf() ? 'Mon foyer' : 'Cœur', null, G.familyReady()],
+            ...(G.spouseOf() ? [['kids', 'Enfants', null, G.kids().reduce((a, k) => a + G.kidReady(k), 0) + (G.canExpect() ? 1 : 0)]] : []),
             ['foyer', 'Pièces', null, FOYER.some(r => G.roomCan(r.id)) && !G.roomLvl('bedroom') ? 1 : 0],
         ],
         'heart',
@@ -127,6 +180,7 @@ function renderFamily(el) {
     blocks(el, [
         ['tabs', T.html],
         ['heart', t === 'heart' ? heartTab() : ''],
+        ['kids', t === 'kids' ? kidsTab() : ''],
         ['foyer', t === 'foyer' ? foyerTab() : ''],
     ]);
 }
@@ -142,6 +196,10 @@ export function setupFamily() {
         fmWord: el => G.sweetWord(el),
         fmBasket: el => G.takeBasket(el),
         fmRoom: (el, d) => G.buildRoom(d.id, el),
+        fmExpect: () => G.expect(),
+        fmCare: (el, d) => G.careKid(d.id, d.c, el),
+        fmFind: (el, d) => G.kidFind(d.id, el),
+        fmTask: (el, d) => G.setTask(d.id, d.t),
     });
 }
 export const familyDot = () => (G.familyOpen() ? G.familyReady() : 0);

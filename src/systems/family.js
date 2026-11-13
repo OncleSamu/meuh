@@ -7,7 +7,9 @@ import { fmt, pickRand } from '../core/format.js';
 import { ITEMS } from '../data/items.js';
 import { VILLAGERS } from '../data/village.js';
 import { LOVES } from '../data/friends.js';
-import { FAMILY, SUITORS, SHE, DATES, ROSE_LINES, FOYER } from '../data/family.js';
+import { FAMILY, SUITORS, SHE, DATES, ROSE_LINES, FOYER, KIDS, CARES, SNACKS, TASKS, KID_NAMES, SPOUSE_LOOK } from '../data/family.js';
+import { randomLook, idOf, lookOf, isHabitant } from '../art/habitants.js';
+import { meLook } from './identity.js';
 import { heartsOf } from './village.js';
 import { villagerHere, hasCost, payCost } from './home.js';
 import { spend, addXp } from './player.js';
@@ -24,6 +26,8 @@ export function ensureFamily() {
     if (F.court === undefined) F.court = null;
     if (F.spouse === undefined) F.spouse = null;
     F.dateAt = F.dateAt || 0;
+    F.kids = F.kids || [];
+    if (F.baby === undefined) F.baby = null;
     return F;
 }
 export const vName = vid => (VILLAGERS[vid] ? VILLAGERS[vid].name : '');
@@ -244,21 +248,229 @@ export const roomFx = k =>
     }, 0);
 export const foyerSpent = () => FOYER.reduce((a, r) => a + r.lv.slice(0, roomLvl(r.id)).reduce((b, x) => b + (x.cost.coins || 0), 0), 0);
 
+// ---------------- 1.124 : les enfants ----------------
+export const kids = () => ensureFamily().kids;
+export const kidById = id => kids().find(k => k.id === id) || null;
+export const kidsMax = () => Math.min(KIDS.max, (roomLvl('nursery') ? 1 : 0) + roomLvl('kidsroom'));
+export const canExpect = () => {
+    const F = ensureFamily();
+    return !!F.spouse && !F.baby && spouseHappy() && F.kids.length < kidsMax();
+};
+export function expect() {
+    if (!canExpect()) return false;
+    ensureFamily().baby = { due: now() + KIDS.expect };
+    sfx('pop');
+    toast(`Un heureux événement s’annonce : le bébé arrivera dans six heures`, ['ui', 'fmCradle']);
+    return true;
+}
+export const babyLeft = () => (ensureFamily().baby ? Math.max(0, ensureFamily().baby.due - now()) : 0);
+// le visage d'un enfant : le teint, les cheveux et les yeux d'un parent ou de l'autre, le reste au hasard
+const parentLook = who => {
+    if (isHabitant(who)) {
+        const l = lookOf(who);
+        return [l.skin, l.hairColor, l.eyeColor];
+    }
+    return SPOUSE_LOOK[who] || [1, 2, 1];
+};
+export function kidLook(a, b, girl, seed) {
+    const A = parentLook(a),
+        B = parentLook(b);
+    const r = j => ((seed >> j) & 1 ? A : B);
+    return idOf(randomLook(seed, { female: girl, male: !girl, fix: { skin: r(1)[0], hairColor: r(2)[1], eyeColor: r(3)[2], beard: 0, glasses: 0, hat: 0 } }));
+}
+function birth() {
+    const F = ensureFamily();
+    F.baby = null;
+    const girl = Math.random() < 0.5;
+    const taken = F.kids.map(k => k.name);
+    const pool = KID_NAMES[girl ? 'girl' : 'boy'].filter(n => !taken.includes(n));
+    const seed = Math.floor(Math.random() * 1e9);
+    const kid = {
+        id: 'k' + (F.next = (F.next || 0) + 1),
+        name: pickRand(pool.length ? pool : KID_NAMES[girl ? 'girl' : 'boy']),
+        girl,
+        born: now(),
+        bornDay: state.day,
+        at: now(),
+        grow: 0,
+        joy: KIDS.joy.max,
+        care: {},
+        find: now(),
+        task: null,
+        gen: 1,
+        parents: [meLook(), F.spouse],
+        look: kidLook(meLook(), F.spouse, girl, seed),
+    };
+    F.kids.push(kid);
+    state.stats.births2 = (state.stats.births2 || 0) + 1;
+    addRenom(KIDS.renom, 'une naissance');
+    addPhoto('villager', kid.look, `La naissance de ${kid.name}`, 'La famille');
+    if (view.started) toast(`${kid.name} est né${girl ? 'e' : ''} ! Bienvenue dans la famille`, ['ui', 'fmCradle']);
+    emit('kidBorn', { id: kid.id });
+    return kid;
+}
+export function renameKid(id, n) {
+    const k = kidById(id);
+    const v = String(n || '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 16);
+    if (!k || !v) return false;
+    k.name = v;
+    return true;
+}
+export const stageOf = k => KIDS.ages.filter(h => k.grow >= h).length;
+export const stageName = k => KIDS.ageNames[stageOf(k)];
+// les heures qui restent avant l'âge suivant
+export const kidGrowLeft = k => (stageOf(k) >= KIDS.ages.length ? 0 : KIDS.ages[stageOf(k)] - k.grow);
+export const stageInto = k => {
+    const st = stageOf(k);
+    if (st >= KIDS.ages.length) return 1;
+    const a = st ? KIDS.ages[st - 1] : 0;
+    return (k.grow - a) / (KIDS.ages[st] - a);
+};
+const growMult = () => 1 + roomFx('grow');
+// le temps qui passe : le bonheur baisse, l'enfant grandit (moitié moins vite s'il est malheureux)
+function settleKid(k, t = now()) {
+    const dt = Math.max(0, t - (k.at || t));
+    k.at = t;
+    if (!dt) return;
+    const h = dt / 3600000;
+    const happy = k.joy >= KIDS.joy.keep;
+    const st = stageOf(k);
+    if (st < KIDS.ages.length) {
+        k.grow += h * (happy ? 1 : 0.5) * growMult();
+        if (stageOf(k) > st) grewUp(k);
+    }
+    k.joy = Math.max(0, k.joy - (h / 24) * KIDS.joy.decayDay * (1 - roomFx('joy')));
+}
+function grewUp(k) {
+    const st = stageOf(k);
+    const g = k.girl ? 'e' : '';
+    const txt = [null, `${k.name} fait ses premiers pas, c’est un${g ? 'e' : ''} enfant !`, `${k.name} entre dans l’adolescence`, `${k.name} est adulte !`][st];
+    if (txt && view.started) toast(txt, ['villager', k.look]);
+    addPhoto('villager', k.look, txt || k.name, 'La famille');
+    if (st >= 2 && !k.task) k.task = 'field';
+    emit('kidGrew', { id: k.id, stage: st });
+}
+export const kidJoy = k => {
+    settleKid(k);
+    return Math.round(k.joy);
+};
+export const caresOf = k => CARES[Math.min(stageOf(k), CARES.length - 1)];
+export const careLeft = (k, c) => Math.max(0, (k.care[c.id] || 0) + KIDS.careWait - now());
+export const snackOf = () => SNACKS.find(id => ITEMS[id] && (state.inventory[id] || 0) > 0) || null;
+export const pocketCoins = c => Math.round((c.coins * (1 + Math.max(0, state.level - FAMILY.lvl) * 0.08)) / 100) * 100;
+export function careNeed(c) {
+    if (c.need) return c.need;
+    if (c.snack) return snackOf() ? { [snackOf()]: 1 } : null;
+    return {};
+}
+export function careCan(k, c) {
+    if (careLeft(k, c) > 0) return false;
+    if (c.coins && state.money < pocketCoins(c)) return false;
+    const nd = careNeed(c);
+    return !!nd && Object.entries(nd).every(([id, n]) => (state.inventory[id] || 0) >= n);
+}
+export function careKid(id, cid, at) {
+    const k = kidById(id);
+    if (!k) return false;
+    settleKid(k);
+    const c = caresOf(k).find(x => x.id === cid);
+    if (!c || !careCan(k, c)) return false;
+    Object.entries(careNeed(c)).forEach(([i, n]) => (state.inventory[i] -= n));
+    if (c.coins) spend(pocketCoins(c));
+    k.care[c.id] = now();
+    k.joy = Math.min(KIDS.joy.max, k.joy + KIDS.joy.care);
+    const st = stageOf(k);
+    if (st < KIDS.ages.length) {
+        k.grow += KIDS.careGrow;
+        if (stageOf(k) > st) grewUp(k);
+    }
+    state.stats.kidCares = (state.stats.kidCares || 0) + 1;
+    sfx('pop');
+    if (at) burst(at, 'heart', 8);
+    return true;
+}
+// l'enfant (de 1 à 2) ramasse de petites choses
+export const findLeft = k => Math.max(0, (k.find || 0) + KIDS.find.every - now());
+export const findReady = k => stageOf(k) === 1 && findLeft(k) === 0;
+export function kidFind(id, at) {
+    const k = kidById(id);
+    if (!k || !findReady(k)) return false;
+    const pool = KIDS.find.pool.filter(i => ITEMS[i]);
+    const n = Math.max(1, Math.round((KIDS.find.base + state.level * KIDS.find.perLvl) * (kidJoy(k) >= KIDS.joy.keep ? 1 : 0.5)));
+    const got = {};
+    for (let j = 0; j < 2; j++) {
+        const i = pickRand(pool);
+        got[i] = (got[i] || 0) + n;
+    }
+    Object.entries(got).forEach(([i, q]) => (state.inventory[i] = (state.inventory[i] || 0) + q));
+    k.find = now();
+    sfx('harvest');
+    if (at) burst(at, 'sparkle', 10);
+    toast(
+        `${k.name} rapporte ${Object.entries(got)
+            .map(([i, q]) => `${q} ${ITEMS[i].name.toLowerCase()}`)
+            .join(' et ')}`,
+        ['villager', k.look],
+    );
+    return got;
+}
+// le coup de main des ados et des adultes
+export function setTask(id, task) {
+    const k = kidById(id);
+    if (!k || stageOf(k) < 2 || !TASKS.some(t => t.id === task) || k.task === task) return false;
+    k.task = task;
+    sfx('pop');
+    return true;
+}
+export const kidHelp = k => {
+    const st = stageOf(k);
+    if (st < 2 || !k.task) return 0;
+    const base = (KIDS.help + roomFx('help')) * (st >= 3 ? KIDS.adultHelp : 1);
+    return base * (k.joy >= KIDS.joy.keep ? 1 : 0.5);
+};
+// le multiplicateur d'une tâche (1 + la somme des coups de main), lu par le champ, les bêtes, l'atelier et le marché
+export const kidFx = task => {
+    const F = state.family;
+    if (!F || !F.kids || !F.kids.length) return 1;
+    return 1 + F.kids.reduce((a, k) => a + (k.task === task ? kidHelp(k) : 0), 0);
+};
+export const kidReady = k => (findReady(k) ? 1 : 0) + (caresOf(k).some(c => careCan(k, c)) && kidJoy(k) < KIDS.joy.max - 15 ? 1 : 0);
+
 // ce qui attend le joueur (pastille de l'onglet)
 export function familyReady() {
     if (!familyOpen()) return 0;
     const F = ensureFamily();
-    if (F.spouse) return (basketReady() ? 1 : 0) + (wordLeft() === 0 && affection() < FAMILY.aff.max - 10 ? 1 : 0);
+    if (F.spouse)
+        return (
+            (basketReady() ? 1 : 0) +
+            (wordLeft() === 0 && affection() < FAMILY.aff.max - 10 ? 1 : 0) +
+            (canExpect() ? 1 : 0) +
+            F.kids.reduce((a, k) => a + kidReady(k), 0)
+        );
     if (F.engaged) return canWed() ? 1 : 0;
     if (F.court) return (dateReady() && DATES.some(d => dateCan(d)) ? 1 : 0) + (canPropose() ? 1 : 0);
     return 0;
 }
 export function familyTick() {
     if (!state.family || !state.family.spouse) return false;
+    const F = state.family;
+    let ch = false;
+    if (F.baby && now() >= F.baby.due) {
+        birth();
+        ch = true;
+    }
+    for (const k of F.kids || []) {
+        const st = stageOf(k);
+        settleKid(k);
+        if (stageOf(k) !== st) ch = true;
+    }
     const before = state.family.aff >= FAMILY.aff.keep;
     settleAff();
     const after = state.family.aff >= FAMILY.aff.keep;
     if (before && !after && view.started) toast(`${vName(state.family.spouse)} se sent un peu délaissé${eFem(state.family.spouse)}`, ['ui', 'heartOff']);
-    return before !== after;
+    return ch || before !== after;
 }
 export const fmtCoins = n => fmt(n);

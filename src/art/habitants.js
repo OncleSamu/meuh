@@ -19,8 +19,8 @@ export const TRAIT_NAMES = {
     collar: 'Col',
     extra: 'Détail',
 };
-const SKINS = ['#fbdcc0', '#f6cfa6', '#e8b88a', '#c98f62', '#a06a45', '#6e4730'];
-const HAIRS = ['#2b2220', '#4a2f1e', '#6b3d1e', '#8a4b24', '#c4521f', '#e3c06a', '#f2dc9c', '#b9b9c2', '#ececf2'];
+export const SKINS = ['#fbdcc0', '#f6cfa6', '#e8b88a', '#c98f62', '#a06a45', '#6e4730'];
+export const HAIRS = ['#2b2220', '#4a2f1e', '#6b3d1e', '#8a4b24', '#c4521f', '#e3c06a', '#f2dc9c', '#b9b9c2', '#ececf2'];
 const EYES = ['#3b2a20', '#7a4a22', '#4f8a4f', '#4a78b8', '#8a98a8'];
 const SHIRTS = ['#e2412f', '#2f6fb0', '#6cc04a', '#e8b83a', '#b58ad6', '#f08ac0', '#5aa9a0', '#8a5a2a', '#f1ece0', '#5c5c6e'];
 

@@ -2356,3 +2356,93 @@ button.ln-node:active {
     color: #2e7d32;
     font-weight: 700;
 }
+
+/* 1.124 : les enfants */
+.fm-cares {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 6px;
+    margin-top: 8px;
+}
+.fm-care {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 12px;
+    border: 2px solid var(--line, #d8c39a);
+    background: #fff;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+.fm-care.off {
+    opacity: 0.55;
+    cursor: default;
+}
+.fm-care > .ico {
+    width: 28px;
+    height: 28px;
+    flex: none;
+}
+.fm-care span {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.fm-care small {
+    color: var(--ink-soft);
+    font-size: 0.72rem;
+}
+.fm-find {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 6px 8px;
+    border-radius: 12px;
+    background: #fff6dc;
+}
+.fm-find > span {
+    flex: 1;
+    font-size: 0.85rem;
+}
+.fm-tasks {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-top: 8px;
+}
+.fm-task {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 2px;
+    border-radius: 10px;
+    border: 2px solid var(--line, #d8c39a);
+    background: #fff;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+.fm-task.on {
+    border-color: #6cc04a;
+    background: #eef8e4;
+}
+.fm-task .ico {
+    width: 26px;
+    height: 26px;
+}
+.fm-task small {
+    font-size: 0.66rem;
+    text-align: center;
+}
+.fm-grow {
+    margin-top: 4px;
+}
+.fm-grow small {
+    color: var(--ink-soft);
+    font-size: 0.72rem;
+}

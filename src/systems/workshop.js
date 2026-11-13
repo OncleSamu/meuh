@@ -26,6 +26,7 @@ import { qtyName } from '../core/format.js';
 import { mTimeMult, mExtraYield } from './buildings.js';
 import { cupHas } from './cup.js';
 import { talentSpeed } from './friends.js';
+import { kidFx } from './family.js';
 import { tip } from './tips.js';
 
 // les machines de cuisine (le compteur « plats cuisinés »)
@@ -60,7 +61,7 @@ export const machineOutput = m => Object.keys(m.out).find(k => m.out[k] > 0) || 
 // durée réelle d'une recette : vitesse générale, moulin du hameau, maîtrise
 export const recipeTime = id =>
     (RECIPES[id].time /
-        (speedMult() * machineBoost(RECIPES[id].machine) * masterySpeed(id) * (1 + 0.05 * skill('quickHands')) * talentSpeed(RECIPES[id].machine))) *
+        (speedMult() * machineBoost(RECIPES[id].machine) * masterySpeed(id) * (1 + 0.05 * skill('quickHands')) * talentSpeed(RECIPES[id].machine) * kidFx('workshop'))) *
     mTimeMult(RECIPES[id].machine);
 export const machinePct = m => (m.queue.length ? Math.min(1, m.progress / recipeTime(m.queue[0])) : 0);
 export const machinePct2 = m => (m.lane2 && m.queue.length > 1 ? Math.min(1, (m.progress2 || 0) / recipeTime(m.queue[1])) : 0);
