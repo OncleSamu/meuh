@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.132",
+  "title": "Chercher dans la grange",
+  "date": "13 novembre 2026",
+  "items": [
+   "La grange a une barre de recherche dès qu'elle contient plus de 12 produits : « fromage » ne garde que les fromages",
+   "Sans accents ni majuscules ; touchez ensuite le produit pour le vendre, le verrouiller ou le mettre à l'étal"
+  ]
+ },
+ {
   "v": "1.131",
   "title": "Le camping, plus vivant",
   "date": "13 novembre 2026",

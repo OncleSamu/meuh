@@ -13,7 +13,8 @@ import { flavorMini } from '../views/lab.js';
 import { varRankChips } from '../genlook.js';
 import { ico, art, qStar } from '../icons.js';
 import { btn, navRow, lines, line, bar, dot } from '../kit.js';
-import { go } from '../app.js';
+import { go, ui } from '../app.js';
+import { searchBox, queryOf, matchQ } from '../pager.js';
 import { toast } from '../../core/bus.js';
 import { defineSheet, openSheet, closeSheet, closeAll, sheetOpts } from '../sheets.js';
 import { produce } from '../navigate.js';
@@ -160,7 +161,10 @@ defineSheet('barn', {
             cap = G.barnCap(),
             l = state.barn.lvl;
         const cost = G.barnUpCost(l);
-        const goods = G.barnGoods();
+        // 1.132 : une recherche par nom quand la grange est bien remplie
+        const all = G.barnGoods();
+        const q = queryOf('barn');
+        const goods = q ? all.filter(id => matchQ(q, ITEMS[id].name)) : all;
         const sel = o.sel && state.inventory[o.sel] ? o.sel : null;
         let item = '';
         if (sel) {
@@ -210,6 +214,7 @@ defineSheet('barn', {
         const can = G.canUpgradeBarn();
         return [
             ['meter', `<div class="barn-meter">${bar(used / cap, used >= cap ? 'red' : '')}<b>${used} / ${cap}</b></div>`],
+            ['search', all.length > 12 ? searchBox('barn', `Chercher parmi ${all.length} produits`) : ''],
             [
                 'goods',
                 `<div class="barn-goods">${
@@ -220,7 +225,9 @@ defineSheet('barn', {
                                       `<button class="bgood${sel === id ? ' sel' : ''}" data-act="barnSel" data-id="${id}" title="${ITEMS[id].name}">${ico(['item', id])}<b>${state.inventory[id]}</b>${G.isLocked(id) ? `<i class="lk">${art('ui', 'lock')}</i>` : ''}</button>`,
                               )
                               .join('')
-                        : '<p class="empty">La grange est vide.</p>'
+                        : q
+                          ? `<p class="empty">Aucun produit ne correspond à « ${esc(ui.sel.q.barn)} ».</p>`
+                          : '<p class="empty">La grange est vide.</p>'
                 }</div>`,
             ],
             [
