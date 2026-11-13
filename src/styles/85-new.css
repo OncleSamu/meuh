@@ -2474,29 +2474,6 @@ button.ln-node:active {
     align-items: center;
     font-size: 0.72rem;
 }
-.fm-pop {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    margin-top: 10px;
-    text-align: center;
-}
-.fm-pop span {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.fm-pop .ico {
-    width: 30px;
-    height: 30px;
-}
-.fm-pop b {
-    font-size: 1.2rem;
-}
-.fm-pop small {
-    font-size: 0.68rem;
-    color: var(--ink-soft);
-}
 .ft {
     display: flex;
     flex-direction: column;
@@ -2631,22 +2608,6 @@ button.ln-node:active {
     flex-wrap: wrap;
     align-items: center;
     gap: 2px;
-}
-.tm-card {
-    padding: 6px;
-}
-.tm-map {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-}
-.tm-hit {
-    cursor: pointer;
-}
-.tm-info {
-    min-height: 2.4em;
-    margin-top: 6px;
 }
 
 /* 1.128 : les petites demandes */

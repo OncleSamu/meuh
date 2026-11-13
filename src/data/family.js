@@ -168,7 +168,7 @@ export const SPOUSE_LOOK = {
     ingrid: [0, 5, 3],
 };
 
-// ---------------- 1.125 : ils grandissent, la ville s'agrandit ----------------
+// ---------------- 1.125 : ils grandissent ----------------
 // un enfant adulte choisit son métier : les produits de ce métier se vendent un peu plus cher
 export const KID_METIER = { price: 0.08 };
 // il ou elle peut épouser un résident du camping (3 cœurs d'amitié avec vous), et le couple s'installe au village
@@ -180,18 +180,6 @@ export const KID_WED = {
 };
 // leurs enfants, vos petits-enfants : deux par couple, un tous les deux jours
 export const GRANDKIDS = { max: 2, every: 2 * 24 * 3600 * 1000 };
-// la ville : ses habitants (villageois, résidents du camping, votre famille) ; chaque palier relève un peu les prix
-export const TOWN = {
-    tiers: [
-        { n: 0, name: 'Hameau' },
-        { n: 25, name: 'Village' },
-        { n: 32, name: 'Gros village' },
-        { n: 40, name: 'Bourg' },
-        { n: 50, name: 'Petite ville' },
-        { n: 65, name: 'Ville' },
-    ],
-    price: 0.015, // +1,5 % par palier au-dessus du hameau
-};
 
 // ---------------- 1.127 : la vie de famille ----------------
 // les anniversaires : tous les deux jours depuis la naissance, jusqu'à l'âge adulte ; on a une journée pour le fêter
@@ -220,14 +208,6 @@ export const MEAL = {
     aff: 30,
     xp: 12, // par convive, plus le niveau
 };
-// les grands bâtiments de la ville, un par palier
-export const LANDMARKS = [
-    { tier: 1, id: 'well', name: 'Le puits de la place' },
-    { tier: 2, id: 'chapel', name: 'La chapelle' },
-    { tier: 3, id: 'fountain', name: 'La fontaine' },
-    { tier: 4, id: 'hall', name: 'La halle du marché' },
-    { tier: 5, id: 'townhall', name: 'La mairie' },
-];
 
 // ---------------- 1.128 : les petites demandes ----------------
 // de temps en temps, un enfant (à partir de l'âge « enfant ») demande quelques produits ; il rend le service en bonheur et en pièces

@@ -6,7 +6,7 @@ import { clock, memStore } from './helpers.mjs';
 import { state, setStore } from '../../src/core/state.js';
 import { setView } from '../../src/core/view.js';
 import * as G from '../../src/systems/index.js';
-import { KIDS, KID_WED, GRANDKIDS, TOWN, KID_METIER } from '../../src/data/family.js';
+import { KIDS, KID_WED, GRANDKIDS, KID_METIER } from '../../src/data/family.js';
 import { RECIPES } from '../../src/data/machines.js';
 
 const setup = () => {
@@ -42,17 +42,14 @@ test('le mariage avec un résident du camping, la maison, les petits-enfants', (
     state.camping.res[0].fr = 100;
     assert.equal(G.kidMatches().length, 1);
     for (const [kk, n] of Object.entries(G.kidWedCost())) if (kk !== 'coins') state.inventory[kk] = n;
-    const pop0 = G.population().total;
     assert.ok(G.kidWed('k1', 123));
     assert.equal(k.spouse.name, 'Bastien');
     assert.equal(state.camping.res.length, 0, 'il quitte sa cabane pour la maison du village');
-    assert.equal(G.population().total, pop0, 'un habitant de plus en famille, un de moins au camping');
     assert.equal(G.kidWedCost().coins, KID_WED.house(2), 'la maison suivante coûte plus');
     // un petit-enfant tous les deux jours, deux au plus
     clock.t += GRANDKIDS.every + 1000;
     G.familyTick();
     assert.equal(k.gk.length, 1);
-    assert.equal(G.population().total, pop0 + 1);
     clock.t += GRANDKIDS.every * 5;
     G.familyTick();
     G.familyTick();
@@ -60,13 +57,10 @@ test('le mariage avec un résident du camping, la maison, les petits-enfants', (
     assert.equal(k.gk.length, GRANDKIDS.max);
 });
 
-test('la ville : des paliers d’habitants qui relèvent les prix', () => {
+test('1.129 : la ville n’existe plus, les prix n’en dépendent pas', () => {
     setup();
-    const t = G.townTier();
-    assert.equal(G.townMult(), 1 + TOWN.price * t);
-    assert.equal(G.townName(), TOWN.tiers[t].name);
-    state.level = 20;
-    assert.equal(G.townMult(), 1, 'avant le niveau 30, pas de bonus');
+    assert.equal(G.townMult, undefined);
+    assert.equal(G.population, undefined);
 });
 
 test('1.125 : les actions et l’arbre existent', () => {

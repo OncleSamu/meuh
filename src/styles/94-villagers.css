@@ -213,3 +213,9 @@
     justify-content: center;
     gap: 8px;
 }
+/* 1.129 : la famille dans la liste des villageois */
+.vl-go {
+    font: 900 1.3rem var(--display);
+    color: var(--ink-soft);
+    padding: 0 6px;
+}

@@ -7,7 +7,6 @@ import { setView } from '../../src/core/view.js';
 import * as G from '../../src/systems/index.js';
 import { KIDS, BDAY, GIFT, MEAL, FAVS } from '../../src/data/family.js';
 import { ITEMS } from '../../src/data/items.js';
-import { townMapArt } from '../../src/art/famille.js';
 
 const H = 3600000;
 function setup() {
@@ -93,19 +92,4 @@ test('le repas de famille : tout le monde à table', () => {
     clock.t += MEAL.wait;
     assert.deepEqual(G.mealPlan(), { pizza: 2 });
     assert.equal(G.mealVaried(G.mealPlan()), false, 'deux fois le même plat');
-});
-
-test('la carte de la ville : une maison par foyer, une tente par résident', () => {
-    setup();
-    state.family.kids[1].spouse = { name: 'Bastien', look: 'h410030200000' };
-    state.family.elders = [{ look: 'h514012302620', spouse: 'idris', gen: 1 }];
-    state.family.gen = 2;
-    const hs = G.townHouses();
-    assert.equal(hs[0].kind, 'farm');
-    assert.ok(hs.some(h => h.kind === 'couple' && h.who.includes('Bastien')));
-    assert.ok(hs.some(h => h.kind === 'elder' && h.name === 'La maison de vos parents'));
-    assert.equal(hs.filter(h => h.kind === 'villager').length, G.population().villagers);
-    const svg = townMapArt(hs, ['Clara', 'Paul'], G.landmarks(), { k: 'house', i: 0 });
-    assert.equal((svg.match(/data-act="fmHouse"/g) || []).length, hs.length);
-    assert.equal((svg.match(/data-act="fmTent"/g) || []).length, 2);
 });

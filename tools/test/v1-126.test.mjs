@@ -28,7 +28,6 @@ test('léguer la ferme : on devient l’héritier, les parents prennent leur ret
     assert.equal(G.canLegate('k1'), false, 'et un peu de temps');
     clock.t += G.LEGACY.wait;
     assert.ok(G.canLegate('k1'));
-    const pop0 = G.population().total;
     const x0 = G.xpBonus();
     const lvl = state.level;
     assert.ok(G.legate('k1'));
@@ -51,7 +50,6 @@ test('léguer la ferme : on devient l’héritier, les parents prennent leur ret
     // le frère reste au village, son métier compte encore ; personne ne disparaît
     assert.equal(state.family.kin.length, 1);
     assert.ok(G.kidMetiers().includes('pecheur'));
-    assert.equal(G.population().total, pop0);
     // la sagesse des anciens
     assert.ok(Math.abs(G.xpBonus() / x0 - (1 + G.LEGACY.xp)) < 1e-9);
     // le conjoint venu du camping : un panier plus garni, et on peut avoir d'autres enfants

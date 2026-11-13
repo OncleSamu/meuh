@@ -1730,8 +1730,8 @@ export const GUIDE_PAGES = [
                 t: 'Une fois par jour (onglet Mon foyer), toute la famille passe à table : conjoint, enfants, frères et sœurs et leurs époux, anciens. Il faut un plat cuisiné pour deux convives. Tendresse et bonheur des enfants remontent, et l’expérience grandit avec la tablée (+50 % si tous les plats sont différents).',
             },
             {
-                h: 'La ville et l’arbre',
-                t: 'Onglet La ville : les habitants de la vallée (villageois, résidents du camping, votre famille). Hameau, village, gros village, bourg, petite ville, ville : chaque palier relève tous les prix de 1,5 %. La carte montre chaque maison (touchez-la pour voir qui y habite), les tentes du camping et un grand bâtiment par palier : le puits, la chapelle, la fontaine, la halle et la mairie. Le bouton « L’arbre de la famille » montre toutes les générations.',
+                h: 'L’arbre et le village',
+                t: 'Le bouton « L’arbre de la famille » (onglet Enfants) montre toutes les générations. Toute la famille vit au village : enfants, leurs époux, petits-enfants, frères et sœurs, anciens. On les retrouve dans Village › Villageois, avec le filtre « Famille ».',
             },
         ],
         see: ['village'],

@@ -4,8 +4,7 @@ import { fmt, qtyName } from '../../core/format.js';
 import { VILLAGERS } from '../../data/village.js';
 import { ITEMS } from '../../data/items.js';
 import { LOVES } from '../../data/friends.js';
-import { FAMILY, DATES, FOYER, KIDS, TASKS, KID_WED, TOWN, KID_METIER, MEAL, LANDMARKS } from '../../data/family.js';
-import { townMapArt } from '../../art/famille.js';
+import { FAMILY, DATES, FOYER, KIDS, TASKS, KID_WED, KID_METIER, MEAL } from '../../data/family.js';
 import { METIERS } from '../../data/metiers.js';
 import { defineSheet } from '../sheets.js';
 import { renameBtn } from '../sheets/rename.js';
@@ -124,7 +123,7 @@ function heartTab() {
     if (F.spouse) return spouseCard();
     if (F.engaged) return engagedCard();
     return `${F.court ? courtCard() : `<div class="card fm-intro">${ico(['ui', 'fmHome'], 'ico big')}<div><div class="card-title">Fonder une famille</div><div class="card-sub">Choisissez à qui faire la cour parmi les villageois. Il faut ${FAMILY.hearts} cœurs d’amitié : les cadeaux du village les font monter.</div></div></div>`}
-        ${section(F.court ? 'Les autres villageois' : 'À qui faire la cour ?')}${suitorGrid()}`;
+        ${section(F.court ? 'Les autres villageois' : 'À qui faire la cour ?')}${suitorGrid()}${(F.elders || []).length ? btn('L’arbre de la famille', { act: 'open', data: { sheet: 'famTree' }, wide: true, icon: ['ui', 'fmHome'] }) : ''}`;
 }
 
 // ---------------- le foyer ----------------
@@ -225,48 +224,12 @@ function adultHtml(k) {
         : `<p class="card-sub">Les résidents du camping avec qui vous avez ${KID_WED.hearts} cœurs d’amitié pourront ${k.girl ? 'la' : 'le'} rencontrer.</p>`;
     return `${met}${section('Son cœur')}${list}`;
 }
-const gkPic = g => {
+export const gkPic = g => {
     const st = G.gkStage(g);
     return st === 0 ? `${g.girl ? 'B' : 'b'}:${g.look}` : st === 1 ? `c:${g.look}` : g.look;
 };
 
-// ---------------- 1.125 : la ville et l'arbre ----------------
-function townTab() {
-    const p = G.population();
-    const nx = G.townNext();
-    const tier = G.townTier();
-    const prev = TOWN.tiers[tier].n;
-    return `<div class="card fm-town"><div class="card-head">${ico(['ui', 'village'], 'ico big')}<div class="card-main"><div class="card-title">${G.townName()} · ${p.total} habitants</div>
-        <div class="card-sub">Tout se vend ${String(Math.round((G.townMult() - 1) * 1000) / 10).replace('.', ',')} % plus cher grâce à la ville.</div></div></div>
-        ${nx ? `<div class="fm-grow"><small>${nx.name} à ${nx.n} habitants</small>${bar((p.total - prev) / (nx.n - prev))}</div>` : ''}
-        <div class="fm-pop">${[
-            ['villager', 'odette', 'Villageois', p.villagers],
-            ['ui', 'tent', 'Résidents du camping', p.residents],
-            ['ui', 'fmHome', 'Votre famille', p.family + 1],
-        ]
-            .map(([a, b, n, v]) => `<span>${ico([a, b])}<b>${v}</b><small>${n}</small></span>`)
-            .join('')}</div></div>
-        ${townMap()}
-        ${btn('L’arbre de la famille', { act: 'open', data: { sheet: 'famTree' }, kind: 'gold', wide: true, icon: ['ui', 'fmHome'] })}
-        ${hint('La ville grandit avec ses habitants : les villageois, les résidents du camping, et votre famille (votre conjoint, vos enfants, leurs époux et vos petits-enfants). Chaque palier relève un peu tous les prix.')}`;
-}
-// 1.127 : la carte de la ville
-function townMap() {
-    const houses = G.townHouses();
-    const tents = G.townTents();
-    const marks = G.landmarks();
-    const pick = ui.sel.tmPick;
-    let info = 'Touchez une maison pour voir qui y habite.';
-    if (pick && pick.k === 'house' && houses[pick.i]) {
-        const h = houses[pick.i];
-        info = `<b>${esc(h.name)}</b> · ${h.who.map(esc).join(', ')}`;
-    } else if (pick && pick.k === 'tent' && tents[pick.i]) info = `<b>Une tente du camping</b> · ${esc(tents[pick.i])}`;
-    else if (pick && pick.k === 'mark' && marks[pick.i]) info = `<b>${esc(marks[pick.i].name)}</b> · bâti quand la vallée est devenue « ${TOWN.tiers[marks[pick.i].tier].name} »`;
-    const nx = LANDMARKS.find(l => l.tier > G.townTier());
-    return `<div class="card tm-card">${townMapArt(houses, tents, marks, pick)}<p class="card-sub center tm-info">${info}</p>${
-        nx ? `<p class="card-sub center">Prochain grand bâtiment : ${nx.name.toLowerCase()}, au palier « ${TOWN.tiers[nx.tier].name} ».</p>` : ''
-    }</div>`;
-}
+// ---------------- 1.125 : l'arbre ----------------
 const node = (pic, name, sub, cls = '') => `<div class="ft-node ${cls}">${portrait(pic, 'sm')}<b>${esc(name)}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
 defineSheet('famTree', {
     title: 'L’arbre de la famille',
@@ -318,7 +281,8 @@ function kidsTab() {
                       : `${G.vName(F.spouse)} doit se sentir aimé${G.eFem(F.spouse)} (tendresse au-dessus de ${FAMILY.aff.keep} %).`
             }</div></div>${btn('Un bébé', { act: 'fmExpect', kind: 'gold', size: 'sm', disabled: !G.canExpect() })}</div>`
           : '';
-    return `${head}${F.kids.map(kidCard).join('')}${legacyCard()}
+    const tree = F.kids.length || (F.elders || []).length ? btn('L’arbre de la famille', { act: 'open', data: { sheet: 'famTree' }, kind: 'gold', wide: true, icon: ['ui', 'fmHome'] }) : '';
+    return `${head}${F.kids.map(kidCard).join('')}${legacyCard()}${tree}
         ${F.kids.length ? hint(`Le bonheur baisse chaque jour : au-dessous de ${KIDS.joy.keep} %, un enfant grandit deux fois moins vite et aide moitié moins. Chaque soin donne du bonheur et fait grandir un peu.`) : ''}`;
 }
 
@@ -330,7 +294,6 @@ function renderFamily(el) {
             ['heart', G.spouseOf() ? 'Mon foyer' : 'Cœur', null, G.familyReady()],
             ...(G.spouseOf() ? [['kids', 'Enfants', null, G.kids().reduce((a, k) => a + G.kidReady(k), 0) + (G.canExpect() ? 1 : 0)]] : []),
             ['foyer', 'Pièces', null, FOYER.some(r => G.roomCan(r.id)) && !G.roomLvl('bedroom') ? 1 : 0],
-            ['town', 'La ville', null, 0],
         ],
         'heart',
     );
@@ -340,7 +303,6 @@ function renderFamily(el) {
         ['heart', t === 'heart' ? heartTab() : ''],
         ['kids', t === 'kids' ? kidsTab() : ''],
         ['foyer', t === 'foyer' ? foyerTab() : ''],
-        ['town', t === 'town' ? townTab() : ''],
     ]);
 }
 defineView('village/family', renderFamily);
@@ -365,9 +327,6 @@ export function setupFamily() {
         fmGkBday: (el, d) => G.gkCelebrate(d.k, d.g, el),
         fmBday: (el, d) => G.celebrate(d.id, el),
         fmMeal: el => G.familyMeal(el),
-        fmHouse: (el, d) => (ui.sel.tmPick = { k: 'house', i: +d.i }),
-        fmTent: (el, d) => (ui.sel.tmPick = { k: 'tent', i: +d.i }),
-        fmMark: (el, d) => (ui.sel.tmPick = { k: 'mark', i: +d.i }),
         fmMetier: (el, d) => G.setKidMetier(d.id, d.m),
         fmKidWed: (el, d) => G.kidWed(d.id, +d.r, el),
         fmLegate: (el, d) => {

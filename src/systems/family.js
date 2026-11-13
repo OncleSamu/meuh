@@ -7,14 +7,14 @@ import { fmt, pickRand, qtyName } from '../core/format.js';
 import { ITEMS } from '../data/items.js';
 import { VILLAGERS } from '../data/village.js';
 import { LOVES } from '../data/friends.js';
-import { FAMILY, SUITORS, SHE, DATES, ROSE_LINES, FOYER, KIDS, CARES, SNACKS, TASKS, KID_NAMES, SPOUSE_LOOK, KID_METIER, KID_WED, GRANDKIDS, TOWN, BDAY, FAVS, GIFT, MEAL, LANDMARKS, ASKS, GK_BDAY } from '../data/family.js';
+import { FAMILY, SUITORS, SHE, DATES, ROSE_LINES, FOYER, KIDS, CARES, SNACKS, TASKS, KID_NAMES, SPOUSE_LOOK, KID_METIER, KID_WED, GRANDKIDS, BDAY, FAVS, GIFT, MEAL, ASKS, GK_BDAY } from '../data/family.js';
 import { METIERS } from '../data/metiers.js';
 import { metierOf } from './metier.js';
 import { campRes, resHearts } from './residents.js';
 import { randomLook, idOf, lookOf, isHabitant } from '../art/habitants.js';
 import { meLook } from './identity.js';
 import { heartsOf } from './village.js';
-import { villagerHere, hasCost, payCost, presentVillagers } from './home.js';
+import { villagerHere, hasCost, payCost } from './home.js';
 import { spend, addXp, earn } from './player.js';
 import { addRenom } from './renom.js';
 import { addPhoto } from './style.js';
@@ -525,20 +525,6 @@ export const allPeople = () => {
     }
     return out;
 };
-// ---------------- la ville ----------------
-export function population() {
-    const F = state.family || {};
-    const house = k => 1 + (k.spouse ? 1 : 0) + (k.gk || []).length;
-    const fam = (F.spouse ? 1 : 0) + (F.kids || []).reduce((a, k) => a + house(k), 0) + (F.kin || []).reduce((a, k) => a + house(k), 0) + (F.elders || []).reduce((a, e) => a + (e.spouse ? 2 : 1), 0);
-    const v = presentVillagers().length;
-    const r = campRes().length;
-    return { villagers: v, residents: r, family: fam, total: v + r + fam + 1 };
-}
-export const townTier = () => TOWN.tiers.filter(t => population().total >= t.n).length - 1;
-export const townName = () => TOWN.tiers[townTier()].name;
-export const townNext = () => TOWN.tiers[townTier() + 1] || null;
-export const townMult = () => (familyOpen() ? 1 + TOWN.price * townTier() : 1);
-
 // ---------------- 1.126 : la transmission ----------------
 // au bout d'un temps, la ferme passe à un enfant adulte qui a choisi son métier : on devient lui ou elle.
 // Rien ne repart de zéro : seule la personne change ; les parents prennent leur retraite au village (les anciens).
@@ -756,19 +742,6 @@ export function familyMeal(at) {
     toast(`Un bon repas de famille : ${n} à table`, ['ui', 'cake']);
     return true;
 }
-// la carte de la ville : les maisons, du plus proche au plus lointain
-export function townHouses() {
-    const F = state.family || {};
-    const out = [{ kind: 'farm', name: 'Votre ferme', who: ['Vous', ...(F.spouse ? [vName(F.spouse)] : []), ...(F.kids || []).filter(k => !k.spouse).map(k => k.name)] }];
-    for (const e of F.elders || [])
-        out.push({ kind: 'elder', name: e.gen === generation() - 1 ? 'La maison de vos parents' : `La maison des anciens (génération ${e.gen})`, who: [e.heir ? `les parents de ${e.heir}` : 'votre parent', ...(e.spouse ? [vName(e.spouse)] : [])] });
-    for (const k of [...(F.kids || []), ...(F.kin || [])])
-        if (k.spouse) out.push({ kind: 'couple', name: `La maison de ${k.name}`, who: [k.name, k.spouse.name, ...(k.gk || []).map(g => g.name)] });
-    for (const vid of presentVillagers()) out.push({ kind: 'villager', name: `Chez ${vName(vid)}`, who: [vName(vid)], vid });
-    return out;
-}
-export const townTents = () => campRes().map(r => r.name);
-export const landmarks = () => LANDMARKS.filter(l => townTier() >= l.tier);
 
 // ---------------- 1.128 : les petites demandes ----------------
 const askPool = st => (ASKS.pools[Math.min(st, ASKS.pools.length - 1)] || []).filter(i => ITEMS[i]);
@@ -865,13 +838,7 @@ export function familyTick() {
     if (!familyOpen()) return false;
     const F = ensureFamily();
     let ch = false;
-    // la ville change de palier
-    const tier = townTier();
-    if (F.town !== undefined && tier > F.town && view.started) toast(`La vallée compte ${population().total} habitants : la voici « ${townName()} »`, ['ui', 'village']);
-    if (F.town !== tier) {
-        F.town = tier;
-        ch = true;
-    }
+    delete F.town; // 1.129 : la ville n'existe plus
     if (!F.spouse) return ch;
     if (F.baby && now() >= F.baby.due) {
         birth();

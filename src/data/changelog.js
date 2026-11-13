@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.129",
+  "title": "La famille au village",
+  "date": "13 novembre 2026",
+  "items": [
+   "La ville est retirée : plus de paliers, plus de carte, plus de hausse des prix liée aux habitants",
+   "Toute la famille apparaît dans Village › Villageois : enfants, leurs époux, petits-enfants, frères et sœurs, anciens (filtre « Famille »)",
+   "Votre conjoint villageois porte un petit cœur dans la liste",
+   "L'arbre de la famille s'ouvre depuis l'onglet Enfants"
+  ]
+ },
+ {
   "v": "1.128",
   "title": "La famille, chapitre 6 : les petites demandes",
   "date": "13 novembre 2026",

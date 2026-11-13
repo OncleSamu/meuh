@@ -15,12 +15,16 @@ import { page, filterOf, filterChips, searchBox, queryOf, matchQ } from '../page
 import { setupResFiche, resHeartsHtml } from '../sheets/resfiche.js';
 import { pkHtml } from '../paquets.js';
 import { go } from '../app.js';
+import { METIERS } from '../../data/metiers.js';
+import { KIDS } from '../../data/family.js';
+import { kidPic, gkPic } from './family.js';
 
 const when = d => (d === 0 ? 'aujourd’hui' : d === 1 ? 'demain' : `dans ${d} jours`);
 const whenShort = d => (d === 0 ? 'aujourd’hui' : d === 1 ? 'demain' : `dans ${d} j`);
 // un petit drapeau sur la ligne du villageois
 const flags = vid => {
     const f = [];
+    if (state.family && state.family.spouse === vid) f.push(`<span class="vl-flag" title="Votre conjoint">${ico(['ui', 'heart'])}</span>`);
     if (G.isBirthday(vid)) f.push(`<span class="vl-flag cake" title="Anniversaire">${ico(['ui', 'cake'])}</span>`);
     if (G.villagerStoryReady(vid)) f.push(`<span class="vl-flag" title="Histoire prête">${ico(['ui', 'scroll'])}</span>`);
     return f.join('');
@@ -48,6 +52,37 @@ function resRow(r, i) {
         <div class="vl-main"><b>${esc(r.name)}${flag}<small class="vl-job"> · ${esc(r.job)}</small></b><span class="vl-sub">${resHeartsHtml(r)}</span></div>
         ${G.resGiftReady(r) ? btn('Offrir', { act: 'resOpen', data: { i, t: 'gift' }, kind: resCan(r) ? 'gold' : '', size: 'sm' }) : `<small class="vl-done">${ico(['ui', 'check'])}offert</small>`}</div>`;
 }
+// 1.129 : la famille vit au village : enfants, leurs époux, petits-enfants, frères et sœurs, anciens
+export function familyPeople() {
+    const F = state.family;
+    if (!F || !G.familyOpen()) return [];
+    const out = [];
+    const add = (pic, name, sub) => out.push({ pic, name, sub });
+    const met = k => (k.metier && METIERS[k.metier] ? ` · ${METIERS[k.metier].name}` : '');
+    const gks = (k, a, b) => (k.gk || []).forEach(g => add(gkPic(g), g.name, `${g.girl ? a[0] : a[1]} · ${KIDS.ageNames[G.gkStage(g)]}${b}`));
+    if (F.spouse && typeof F.spouse === 'object') add(F.spouse.look, F.spouse.name, F.spouse.woman ? 'Votre épouse' : 'Votre époux');
+    for (const k of F.kids || []) {
+        add(kidPic(k), k.name, `${k.girl ? 'Votre fille' : 'Votre fils'} · ${G.stageName(k)}${met(k)}`);
+        if (k.spouse) add(k.spouse.look, k.spouse.name, `${k.spouse.woman ? 'Épouse' : 'Époux'} de ${k.name}`);
+        gks(k, ['Petite-fille', 'Petit-fils'], '');
+    }
+    for (const k of F.kin || []) {
+        add(k.look, k.name, `${k.girl ? 'Votre sœur' : 'Votre frère'}${met(k)}`);
+        if (k.spouse) add(k.spouse.look, k.spouse.name, `${k.spouse.woman ? 'Épouse' : 'Époux'} de ${k.name}`);
+        gks(k, ['Nièce', 'Neveu'], '');
+    }
+    for (const e of F.elders || []) {
+        add(e.look, e.gen === G.generation() - 1 ? 'Votre parent' : `Génération ${e.gen}`, 'À la retraite');
+        if (e.spouse) add(G.artId(e.spouse), G.vName(e.spouse), 'À la retraite');
+    }
+    return out;
+}
+const famRow = p =>
+    `<div class="vl-row" data-act="go" data-path="village/family"><div class="avatar xs">${art('villager', p.pic)}</div><div class="vl-main"><b>${esc(p.name)}</b><span class="vl-sub"><small class="vl-job">${esc(p.sub)}</small></span></div><span class="vl-go">›</span></div>`;
+const famBlock = () => {
+    const fam = familyPeople();
+    return fam.length ? `<h4 class="vf-h">La famille</h4><div class="vl-list">${fam.map(famRow).join('')}</div>` : '';
+};
 const resBlock = () => {
     const rs = G.campRes();
     return rs.length ? `<h4 class="vf-h">Résidents du camping</h4><div class="vl-list">${rs.map(resRow).join('')}</div>` : '';
@@ -55,6 +90,7 @@ const resBlock = () => {
 export function villagersCard(flat = false) {
     const ids = G.presentVillagers();
     const rsn = G.campRes().length;
+    const fmn = familyPeople().length;
     const gift = ids.filter(id => !G.giftedToday(id) && G.giftable(id).length).length + G.campRes().filter(resCan).length;
     const bdays = G.nextBirthdays(ids, 6);
     const today = bdays.filter(([, d]) => d === 0).length;
@@ -62,7 +98,7 @@ export function villagersCard(flat = false) {
         ? `Anniversaire aujourd’hui !`
         : gift
           ? `${gift} cadeau${gift > 1 ? 'x' : ''} possible${gift > 1 ? 's' : ''}`
-          : `${ids.length} villageois${rsn ? ` et ${rsn} résident${rsn > 1 ? 's' : ''}` : ''}`;
+          : `${ids.length + fmn} villageois${rsn ? ` et ${rsn} résident${rsn > 1 ? 's' : ''}` : ''}`;
     // les anniversaires qui viennent : une ligne de portraits
     const cal = bdays.length
         ? `<div class="vl-bdays">${ico(['ui', 'cake'])}${bdays
@@ -74,17 +110,18 @@ export function villagersCard(flat = false) {
               .join('')}</div>`
         : '';
     const story = ids.filter(storyOpen);
-    const opts = [['all', 'Tous', ids.length + rsn], ['gift', 'Cadeau possible', gift], ...(story.length ? [['story', 'Histoire', story.length]] : []), ...(rsn ? [['res', 'Résidents', rsn]] : [])];
+    const opts = [['all', 'Tous', ids.length + rsn + fmn], ['gift', 'Cadeau possible', gift], ...(story.length ? [['story', 'Histoire', story.length]] : []), ...(fmn ? [['fam', 'Famille', fmn]] : []), ...(rsn ? [['res', 'Résidents', rsn]] : [])];
     const f = filterOf('villagers', opts);
-    const list = f === 'res' ? [] : f === 'gift' ? ids.filter(id => !G.giftedToday(id) && G.giftable(id).length) : f === 'story' ? story : ids;
+    const list = f === 'res' || f === 'fam' ? [] : f === 'gift' ? ids.filter(id => !G.giftedToday(id) && G.giftable(id).length) : f === 'story' ? story : ids;
     const pg = page('villagers:' + f, list, 14);
     const body =
         hint('Touchez un villageois pour sa fiche : cœurs, goûts, anniversaire, talent et histoire. Un cadeau par jour chacun.') +
         cal +
         filterChips('villagers', opts, f) +
         pg.top +
-        (pg.items.length ? `<div class="vl-list">${pg.items.map(rowHtml).join('')}</div>` : f === 'res' ? '' : empty('Personne ici pour le moment.')) +
+        (pg.items.length ? `<div class="vl-list">${pg.items.map(rowHtml).join('')}</div>` : f === 'res' || f === 'fam' ? '' : empty('Personne ici pour le moment.')) +
         pg.more +
+        (f === 'all' || f === 'fam' ? famBlock() : '') +
         (f === 'all' || f === 'res' ? resBlock() : f === 'gift' && G.campRes().some(resCan) ? `<h4 class="vf-h">Résidents du camping</h4><div class="vl-list">${G.campRes().map((r, i) => (resCan(r) ? resRow(r, i) : '')).join('')}</div>` : '');
     // 1.73 : dans son onglet du village, la liste est déjà ouverte
     if (flat) return `<div class="card vl-card">${body}</div>`;
