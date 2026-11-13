@@ -1677,6 +1677,34 @@ export const GUIDE_PAGES = [
         see: ['cargo', 'armand', 'trains'],
     },
     {
+        id: 'family',
+        cat: 'village',
+        name: 'La famille',
+        icon: ['ui', 'fmHome'],
+        lvl: 30,
+        go: 'village/family',
+        intro: 'Dès le niveau 30, on peut fonder une famille : faire la cour à un villageois, l’épouser, et agrandir le foyer.',
+        secs: [
+            {
+                h: 'Faire la cour',
+                t: 'Village › Famille. Dix-neuf villageois adultes et libres peuvent être courtisés, à partir de 3 cœurs d’amitié, une personne à la fois. Un rendez-vous toutes les trois heures : la promenade (gratuite), le pique-nique (trois produits qu’il ou elle aime), le bal du village (des pièces, dès 2 roses), le dîner aux chandelles (son produit adoré, dès 3 roses). Les cadeaux du village comptent aussi.',
+            },
+            {
+                h: 'La demande et la noce',
+                t: 'À 5 roses, on demande sa main avec une bague en améthyste (bijouterie). La noce demande la chambre des époux (onglet Pièces), des gâteaux de Savoie, des pots de fleurs, du cidre et des pièces. Elle donne de l’expérience, 3 points de renommée et une photo.',
+            },
+            {
+                h: 'Le conjoint',
+                t: 'Il ou elle s’installe à la ferme. Tant que sa tendresse reste au-dessus de 50 %, son talent d’ami monte d’un cran (même sans 5 cœurs). Toutes les douze heures, un panier de trois produits qu’il ou elle aime. La tendresse baisse un peu chaque jour : un mot doux toutes les quatre heures la relève.',
+            },
+            {
+                h: 'Le foyer',
+                t: 'Les pièces s’ajoutent à la maison, avec des pièces d’or et des matériaux : la chambre des époux, puis le grand salon (paniers plus garnis, trois niveaux). D’autres pièces viendront avec les enfants.',
+            },
+        ],
+        see: ['village'],
+    },
+    {
         id: 'village',
         cat: 'village',
         name: 'Le village et son histoire',

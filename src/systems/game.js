@@ -65,6 +65,7 @@ import { fairTick } from './fair.js';
 import { comiceTick } from './comice.js';
 import { festTick } from './brewfest.js';
 import { catTick } from './seedcat.js';
+import { familyTick } from './family.js';
 import { herdbookTick } from './herdbook.js';
 
 // ---------------- chargement ----------------
@@ -347,6 +348,8 @@ function tickDeliveries() {
         if (festTick()) changed = true;
         if (catTick()) changed = true;
         if (caveOpen() && millTick()) changed = true;
+        // 1.123 : la tendresse du conjoint
+        if (familyTick()) changed = true;
     }
     if (nmarketTick()) changed = true;
     if (specialTick()) changed = true;

@@ -205,6 +205,9 @@ export function todoList() {
     if (campN) push('village/camping', ['ui', 'tent'], `${campN} à servir au camping`, campN);
     if (G.maisonReady()) push('machines/maison', ['ui', 'maison'], 'La Maison a des paquets à faire ou à vendre', G.maisonReady());
     if (G.canValleeFete()) push('village/camping', ['ui', 'tent'], 'Tout est prêt pour la fête de la vallée', 1);
+    // 1.123 : la famille (un rendez-vous, la demande, la noce, le panier, un mot doux)
+    const famN = G.familyReady();
+    if (famN) push('village/family', ['ui', 'fmHome'], G.spouseOf() ? 'Votre famille vous attend' : 'Votre cœur vous attend', famN);
     if (G.netReady()) push('farm/pond', ['ui', 'net'], 'Filet de pêche plein', 1);
     const traps = G.trapsReady();
     if (traps) push('farm/pond', ['ui', 'trap'], `${traps} nasse${s(traps)} pleine${s(traps)}`, traps);

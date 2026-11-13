@@ -23,6 +23,7 @@ import { ico, parts } from './icons.js';
 import { segmented, dot, tabDot } from './kit.js';
 import { render as renderSheets, openSheet, anySheet, closeSheet } from './sheets.js';
 import { momentShown, closeMoment } from './moments.js';
+import { FAMILY } from '../data/family.js';
 import { todoList, todoCounts } from './todo.js';
 
 // ---------------- l'état de l'interface (jamais sauvegardé, sauf l'onglet) ----------------
@@ -82,6 +83,8 @@ export const TABS = [
             ['village', 'Village', ['ui', 'village']],
             // 1.103 : le camping, ce sont des gens (campeurs, résidents, la fête) : il rejoint le Village
             ['camping', 'Camping', ['ui', 'tent'], () => CAMPING.lvl],
+            // 1.123 : la famille
+            ['family', 'Famille', ['ui', 'fmHome'], () => FAMILY.lvl],
         ],
     },
     {
@@ -212,6 +215,7 @@ const HELP = {
     'farm/pond': 'pond',
     'farm/island': 'island',
     'village/camping': 'legend',
+    'village/family': 'family',
     'animals/pasture': 'animals',
     'animals/haras': 'haras',
     'animals/comice': 'elevage',

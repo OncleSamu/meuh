@@ -9,6 +9,7 @@ import { earn } from './player.js';
 import { tip } from './tips.js';
 import { addPhoto } from './style.js';
 import { LOVES, GIFT_PTS, MEH_LINES, WARM_LINE } from '../data/friends.js';
+import { giftLove } from './family.js';
 import { isBirthday, loveMachine, partnerOf, talentText } from './friends.js';
 
 export function ensureVillagers() {
@@ -137,6 +138,8 @@ export function giveGift(vid, id, at) {
         toast(`${name} : « ${warm ? WARM_LINE : MEH_LINES[Math.floor(Math.random() * MEH_LINES.length)]} »`, ['villager', vid]);
     }
     if (bday) tip('birthday');
+    // 1.123 : un cadeau à qui l'on fait la cour compte aussi pour son cœur
+    giftLove(vid, kind, at);
     // son duo est content aussi
     const p = partnerOf(vid);
     if (p && kind !== 'meh' && state.villagers[p]) addFriendship(p, 1, null);

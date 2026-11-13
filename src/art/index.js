@@ -19,6 +19,7 @@ import './station.js';
 import './defis.js';
 import './nuit.js';
 import { plumeArt, swarmArt } from './genes.js';
+import './famille.js';
 // les dessins refaits (1.2.1 et suivantes) passent en dernier : ils remplacent les anciens
 import './items2.js';
 import './buildings2.js';

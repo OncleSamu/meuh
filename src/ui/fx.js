@@ -39,6 +39,7 @@ const PARTICLES = {
     chips: { colors: ['#e8c38c', '#c08b52', '#a8693a'], shape: 'leaf', up: 1.1, spread: 1 },
     pebbles: { colors: ['#a7adb4', '#7d848c', '#d6dade'], shape: 'dot', up: 1, spread: 1.1 },
     smoke: { colors: ['#ffffff', '#e8e8e8'], shape: 'puff', up: 1.5, spread: 0.5 },
+    heart: { colors: ['#f06292', '#ff8fb1', '#ffd1dc'], shape: 'star', up: 1.3, spread: 1.1 }, // 1.123 : la famille
 };
 
 export function burstAt(x, y, kind, n = 10) {

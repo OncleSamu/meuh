@@ -6,6 +6,7 @@ import { VILLAGERS, STORIES } from '../data/village.js';
 import { RECIPES } from '../data/machines.js';
 import { LOVES, TALENT, TALENTS, DUOS, YEAR_DAYS, DUO_STORIES } from '../data/friends.js';
 import { SEASONS, DAYS_PER_SEASON } from '../data/world.js';
+import { FAMILY } from '../data/family.js';
 
 export { LOVES, TALENTS, DUOS, DUO_STORIES };
 
@@ -41,7 +42,9 @@ export const triedOf = vid => (state.villagers[vid] && state.villagers[vid].trie
 
 // ---------------- le talent de l'ami ----------------
 // 0 : pas encore (moins de 5 cœurs) ; 1 : talent ; 2 : talent doublé (son histoire est finie)
-export const talentLevel = vid => (hearts(vid) >= 5 ? (storyDone(vid) ? 2 : 1) : 0);
+// 1.123 : le conjoint heureux a son talent d'un cran au-dessus (même avant 5 cœurs)
+const wedBonus = vid => (state.family && state.family.spouse === vid && (state.family.aff ?? 100) >= FAMILY.aff.keep ? 1 : 0);
+export const talentLevel = vid => (hearts(vid) >= 5 ? (storyDone(vid) ? 2 : 1) : 0) + wedBonus(vid);
 // les machines et leurs amis (rangé une fois)
 let BYM = null;
 const byMachine = () => {

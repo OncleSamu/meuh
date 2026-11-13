@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.123",
+  "title": "La famille, chapitre 1 : le mariage",
+  "date": "13 novembre 2026",
+  "items": [
+   "Nouvel onglet Village › Famille, dès le niveau 30",
+   "Faites la cour à l'un des dix-neuf villageois adultes et libres : promenade, pique-nique, bal du village, dîner aux chandelles. Les roses montent jusqu'à cinq",
+   "Demandez sa main avec une bague en améthyste, puis célébrez la noce : expérience, renommée et une photo",
+   "Votre conjoint s'installe : son talent monte d'un cran tant que sa tendresse est au-dessus de 50 %, et il ou elle rapporte un panier toutes les douze heures",
+   "Le foyer s'agrandit : la chambre des époux, puis le grand salon (trois niveaux). Les chambres des enfants arrivent dans la prochaine version"
+  ]
+ },
+ {
   "v": "1.122",
   "title": "Huppés et frisés",
   "date": "13 novembre 2026",
