@@ -2689,3 +2689,39 @@ button.fm-gk.bday .gk-b {
 .plan-strip .bar {
     margin-top: 4px;
 }
+/* 1.134 : la quantité du plan */
+.plan-qty {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 0;
+}
+.pq-b {
+    min-width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: 2px solid var(--ink, #3a2618);
+    background: #fff;
+    font: 800 16px var(--display, inherit);
+    color: inherit;
+    box-shadow: 0 2px 0 var(--ink, #3a2618);
+}
+.pq-in {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-soft);
+}
+.pq-in input {
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+    border: 2px solid var(--ink, #3a2618);
+    text-align: center;
+    font: 800 20px var(--display, inherit);
+    background: #fff7e0;
+    color: #3a2618;
+}

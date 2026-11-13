@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.134",
+  "title": "Le plan : la quantité au choix",
+  "date": "13 novembre 2026",
+  "items": [
+   "Le plan de production a une case pour taper la quantité voulue (de 1 à 200)",
+   "Des boutons −10, −, + et +10 pour l'ajuster, et les raccourcis ×1, ×5, ×10, ×25, ×50",
+   "Le bouton « Tout lancer » rappelle la quantité choisie"
+  ]
+ },
+ {
   "v": "1.133",
   "title": "Le plan de production",
   "date": "13 novembre 2026",

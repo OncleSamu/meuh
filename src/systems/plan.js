@@ -10,7 +10,8 @@ import { RECIPES, MACHINES } from '../data/machines.js';
 import { recipeUnlocked, recipeTime, hasMachine, queueQuiet, collectMachine } from './workshop.js';
 import { machineSlots } from './home.js';
 
-export const PLAN_QTYS = [1, 5, 10, 25];
+export const PLAN_QTYS = [1, 5, 10, 25, 50];
+export const PLAN_MAX = 200;
 export const PLAN_DEPTH = 8;
 export const planOf = () => state.plan || null;
 // les recettes qu'on peut mettre en plan : ouvertes, faites sur une machine qu'on possède
@@ -104,7 +105,7 @@ export function planReserve(id) {
 // ---------------- les gestes ----------------
 export function startPlan(id, n) {
     if (!plannable(id) || !(n > 0)) return false;
-    state.plan = { id, n: Math.min(99, Math.round(n)), queued: 0, at: now() };
+    state.plan = { id, n: Math.min(PLAN_MAX, Math.round(n)), queued: 0, at: now() };
     sfx('click');
     planTick(true);
     return true;

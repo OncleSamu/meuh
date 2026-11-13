@@ -61,17 +61,30 @@ function current(p) {
         <div class="row-btns">${btn('Arrêter le plan', { act: 'planStop', size: 'sm' })}</div>`;
 }
 
+// 1.134 : la quantité au choix : les raccourcis, les boutons − et +, et une case où taper le nombre
+const clampN = n => Math.max(1, Math.min(G.PLAN_MAX, Math.round(n) || 1));
 function choose(id) {
-    const n = ui.sel.planN || 10;
+    const n = clampN(ui.sel.planN || 10);
     const sum = G.prodPreview(id, n);
-    const qty = `<div class="chips-row">${G.PLAN_QTYS.map(q => `<button class="pick-chip${q === n ? ' on' : ''}" data-act="planN" data-n="${q}">×${q}</button>`).join('')}</div>`;
     const ok = !sum.blocked.length;
-    return `<div class="card-head">${ico(['item', id], 'ico big')}<div class="card-main"><div class="card-title">${n} ${plainName(id)}</div><div class="card-sub">${MACHINES[RECIPES[id].machine].name} · environ ${dur(sum.time)} · en stock : ${fmt(state.inventory[id] || 0)}</div></div></div>
-        ${qty}
-        ${chain(sum) || '<p class="card-sub">Tout est déjà en grange : le plan lance le plat tout de suite.</p>'}
-        <p class="card-sub">${sum.raws.length ? 'Les produits qui manquent sont seulement signalés : le plan attend qu’ils soient en grange.' : 'Rien ne manque du champ ni des bêtes.'} Le plat final part tout seul quand il y a de quoi faire les ${n}.</p>
-        ${G.planOf() ? `<p class="card-sub short">Un plan est déjà en cours (${G.planOf().n} ${plainName(G.planOf().id)}) : il sera remplacé.</p>` : ''}
-        <div class="row-btns">${btn('Changer de plat', { act: 'planPick', size: 'sm' })}${btn('Tout lancer', { act: 'planGo', data: { id }, kind: 'gold', disabled: !ok, icon: ['ui', 'loop'] })}</div>`;
+    const raw = ui.sel.planRaw !== undefined ? ui.sel.planRaw : String(n);
+    return [
+        ['head', `<div class="card-head">${ico(['item', id], 'ico big')}<div class="card-main"><div class="card-title">${n} ${plainName(id)}</div><div class="card-sub">${MACHINES[RECIPES[id].machine].name} · environ ${dur(sum.time)} · en stock : ${fmt(state.inventory[id] || 0)}</div></div></div>`],
+        [
+            'qty',
+            `<div class="plan-qty"><button class="pq-b" data-act="planStep" data-d="-10" aria-label="10 de moins">−10</button><button class="pq-b" data-act="planStep" data-d="-1" aria-label="Un de moins">−</button>
+            <label class="pq-in"><span>Quantité</span><input type="number" inputmode="numeric" min="1" max="${G.PLAN_MAX}" value="${esc(raw)}" data-input="planQty" aria-label="Quantité à faire"></label>
+            <button class="pq-b" data-act="planStep" data-d="1" aria-label="Un de plus">+</button><button class="pq-b" data-act="planStep" data-d="10" aria-label="10 de plus">+10</button></div>`,
+        ],
+        ['presets', `<div class="chips-row">${G.PLAN_QTYS.map(q => `<button class="pick-chip${q === n ? ' on' : ''}" data-act="planN" data-n="${q}">×${q}</button>`).join('')}</div>`],
+        ['chain', chain(sum) || '<p class="card-sub">Tout est déjà en grange : le plan lance le plat tout de suite.</p>'],
+        [
+            'note',
+            `<p class="card-sub">${sum.raws.length ? 'Les produits qui manquent sont seulement signalés : le plan attend qu’ils soient en grange.' : 'Rien ne manque du champ ni des bêtes.'} Le plat final part tout seul quand il y a de quoi faire les ${n}.</p>
+            ${G.planOf() ? `<p class="card-sub short">Un plan est déjà en cours (${G.planOf().n} ${plainName(G.planOf().id)}) : il sera remplacé.</p>` : ''}`,
+        ],
+        ['go', `<div class="row-btns">${btn('Changer de plat', { act: 'planPick', size: 'sm' })}${btn(`Tout lancer · ${n}`, { act: 'planGo', data: { id }, kind: 'gold', disabled: !ok, icon: ['ui', 'loop'] })}</div>`],
+    ];
 }
 
 function picker() {
@@ -123,10 +136,25 @@ export function planCard() {
 
 export function setupPlan() {
     actions({
-        planN: (el, d) => (ui.sel.planN = +d.n),
+        planN: (el, d) => {
+            ui.sel.planN = clampN(+d.n);
+            delete ui.sel.planRaw;
+        },
+        planStep: (el, d) => {
+            ui.sel.planN = clampN((ui.sel.planN || 10) + +d.d);
+            delete ui.sel.planRaw;
+        },
+        // en tapant : la case garde ce qu'on écrit ; le nombre compte dès qu'il est valable
+        planQty: (el, d) => {
+            ui.sel.planRaw = d.value;
+            const v = parseInt(d.value, 10);
+            if (v > 0) ui.sel.planN = clampN(v);
+            if (v > G.PLAN_MAX) ui.sel.planRaw = String(G.PLAN_MAX);
+        },
         planPick: (el, d) => openSheet('plan', d.id ? { id: d.id } : { pick: true }),
         planGo: (el, d) => {
-            if (G.startPlan(d.id, ui.sel.planN || 10)) openSheet('plan', {});
+            delete ui.sel.planRaw;
+            if (G.startPlan(d.id, clampN(ui.sel.planN || 10))) openSheet('plan', {});
         },
         planStop: () => {
             G.stopPlan();

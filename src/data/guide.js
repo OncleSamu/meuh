@@ -1008,7 +1008,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Le plan de production',
-                t: 'En haut de l’atelier (ou « En faire en quantité » dans la fiche d’un plat, « En faire… » dans la grange) : choisissez un plat et une quantité (×1, ×5, ×10, ×25). Le jeu calcule toute la chaîne, stock déduit : les lots à lancer sur chaque machine et les produits du champ ou des bêtes qui manquent. « Tout lancer » : les machines libres préparent les étapes, le plan ramasse ce qu’elles font, et le plat final part tout seul quand il y a de quoi faire toute la quantité. Ce que le plan garde ne part pas au marché. Un seul plan à la fois ; les produits bruts sont seulement signalés.',
+                t: 'En haut de l’atelier (ou « En faire en quantité » dans la fiche d’un plat, « En faire… » dans la grange) : choisissez un plat et une quantité (tapez-la, ajustez-la avec − et +, ou prenez ×1, ×5, ×10, ×25, ×50 ; jusqu’à 200). Le jeu calcule toute la chaîne, stock déduit : les lots à lancer sur chaque machine et les produits du champ ou des bêtes qui manquent. « Tout lancer » : les machines libres préparent les étapes, le plan ramasse ce qu’elles font, et le plat final part tout seul quand il y a de quoi faire toute la quantité. Ce que le plan garde ne part pas au marché. Un seul plan à la fois ; les produits bruts sont seulement signalés.',
             },
             {
                 h: 'Le plat de la semaine (1.83)',
