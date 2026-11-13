@@ -2565,3 +2565,19 @@ button.ln-node:active {
     border-top: 2px dashed var(--ink-soft);
     padding-top: 8px;
 }
+.ft-elder {
+    opacity: 0.85;
+    padding: 6px 10px;
+    border-radius: 14px;
+    background: #f3ead8;
+}
+.ft-down {
+    height: 12px;
+    border-left: 2.5px solid var(--ink);
+}
+.ft-kin {
+    flex-wrap: wrap;
+}
+.fm-legacy {
+    border-color: #c9a227;
+}

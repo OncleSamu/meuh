@@ -1714,6 +1714,10 @@ export const GUIDE_PAGES = [
                 t: 'Un enfant adulte choisit son métier : les produits de ce métier se vendent 8 % plus cher. Il ou elle peut épouser un résident du camping avec qui vous avez 3 cœurs d’amitié : la noce et une maison au village (de plus en plus chère). Le couple a ensuite deux enfants, un tous les deux jours : vos petits-enfants.',
             },
             {
+                h: 'La transmission',
+                t: 'Sept jours après la noce (ou la transmission précédente), vous pouvez léguer la ferme à un enfant adulte qui a choisi son métier : vous devenez lui ou elle, avec son conjoint et ses enfants. Rien ne repart de zéro : la ferme, les pièces d’or et le niveau restent. Vous et votre conjoint prenez votre retraite au village : chaque génération d’anciens donne +5 % d’expérience aux commandes (cinq au plus). Les frères et sœurs restent au village, et leur métier compte toujours.',
+            },
+            {
                 h: 'La ville et l’arbre',
                 t: 'Onglet La ville : les habitants de la vallée (villageois, résidents du camping, votre famille). Hameau, village, gros village, bourg, petite ville, ville : chaque palier relève tous les prix de 1,5 %. Le bouton « L’arbre de la famille » montre toutes les générations.',
             },

@@ -36,6 +36,7 @@ import { defiWanted } from './defis.js';
 import { fishOrderOk } from './fishing.js';
 import { cupHas } from './cup.js';
 import { ecoLvl } from '../core/state.js';
+import { eldersMult } from './family.js';
 import { metierOrderPay, metierTransportPay, metierPick, clientOrder } from './metier.js';
 
 // Ce que la ferme sait produire en ce moment (ingrédients compris)
@@ -72,7 +73,7 @@ export function questPool() {
 
 export const orderSlots = () =>
     Math.min(ORDER_MAX + extraOrders(), 3 + Math.floor(scaleLvl() / 2) + (projectDone('bakery') ? 1 : 0) + extraOrders()) + (cupHas(3) ? 1 : 0);
-export const xpBonus = () => (projectDone('school') ? 1.1 : 1) * (1 + workFx('library')); // 1.107 : la bibliothèque du domaine
+export const xpBonus = () => (projectDone('school') ? 1.1 : 1) * (1 + workFx('library')) * eldersMult(); // 1.107 : la bibliothèque du domaine ; 1.126 : les anciens
 
 // Quantité qui donne à peu près la valeur visée, bornée
 export const qtyFor = (it, target, max = 12) => Math.max(1, Math.min(max, Math.round(target / it.sell)));

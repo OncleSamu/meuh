@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.126",
+  "title": "La famille, chapitre 4 : la transmission",
+  "date": "13 novembre 2026",
+  "items": [
+   "Léguez la ferme à un enfant adulte qui a choisi son métier : vous devenez lui ou elle, avec son conjoint et ses enfants",
+   "Rien ne repart de zéro : la ferme, les pièces d'or et le niveau restent",
+   "Les parents prennent leur retraite au village : chaque génération d'anciens donne +5 % d'expérience aux commandes",
+   "Les frères et sœurs s'installent au village ; leur métier compte toujours",
+   "L'arbre de la famille montre toutes les générations, des anciens aux petits-enfants. Et ainsi de suite…"
+  ]
+ },
+ {
   "v": "1.125",
   "title": "La famille, chapitre 3 : ils grandissent, la ville aussi",
   "date": "13 novembre 2026",

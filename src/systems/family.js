@@ -33,8 +33,11 @@ export function ensureFamily() {
     if (F.baby === undefined) F.baby = null;
     return F;
 }
-export const vName = vid => (VILLAGERS[vid] ? VILLAGERS[vid].name : '');
-export const isShe = vid => SHE.includes(vid);
+// 1.126 : un conjoint est un villageois (son identifiant) ou, après une transmission, un ancien résident ({ name, look, woman })
+export const vName = vid => (vid && typeof vid === 'object' ? vid.name : VILLAGERS[vid] ? VILLAGERS[vid].name : '');
+export const isShe = vid => (vid && typeof vid === 'object' ? !!vid.woman : SHE.includes(vid));
+export const artId = vid => (vid && typeof vid === 'object' ? vid.look : vid);
+const likesOf = vid => (vid && typeof vid === 'object' ? (vid.likes && vid.likes.length ? vid.likes : KIDS.find.pool) : VILLAGERS[vid].likes);
 export const ilElle = vid => (isShe(vid) ? 'elle' : 'il');
 export const eFem = vid => (isShe(vid) ? 'e' : '');
 
@@ -160,6 +163,7 @@ export function marry(at) {
     sfx('level');
     buzz([30, 40, 30]);
     if (at) burst(at, 'heart', 40);
+    F.since = now();
     addPhoto('villager', F.spouse, `Le mariage avec ${vName(F.spouse)}`, 'Tout le village était là');
     toast(`Vive les mariés ! ${vName(F.spouse)} s’installe à la ferme`, ['ui', 'fmRing']);
     emit('wedding', { vid: F.spouse });
@@ -190,18 +194,18 @@ export function sweetWord(at) {
     F.wordAt = now();
     sfx('pop');
     if (at) burst(at, 'heart', 10);
-    toast(`${vName(F.spouse)} sourit`, ['villager', F.spouse]);
+    toast(`${vName(F.spouse)} sourit`, ['villager', artId(F.spouse)]);
     return true;
 }
 // le panier : trois produits qu'il ou elle aime, plus garni avec le grand salon et la tendresse
 export const basketLeft = () => Math.max(0, (ensureFamily().basketAt || 0) + FAMILY.basket.every - now());
 export const basketReady = () => !!spouseOf() && basketLeft() === 0;
-export const basketMult = () => 1 + roomFx('basket');
+export const basketMult = () => (1 + roomFx('basket')) * (spouseOf() && typeof spouseOf() === 'object' ? 1.3 : 1); // 1.126 : un conjoint venu du camping garnit mieux ses paniers (il n'a pas de talent d'ami)
 export const basketQty = () => Math.max(1, Math.round((FAMILY.basket.base + state.level * FAMILY.basket.perLvl) * basketMult() * (spouseHappy() ? 1 : 0.5)));
 export function takeBasket(at) {
     const F = ensureFamily();
     if (!basketReady()) return false;
-    const pool = VILLAGERS[F.spouse].likes.filter(id => ITEMS[id]);
+    const pool = likesOf(F.spouse).filter(id => ITEMS[id]);
     const got = {};
     const n = basketQty();
     for (let k = 0; k < FAMILY.basket.items; k++) {
@@ -269,6 +273,7 @@ export function expect() {
 export const babyLeft = () => (ensureFamily().baby ? Math.max(0, ensureFamily().baby.due - now()) : 0);
 // le visage d'un enfant : le teint, les cheveux et les yeux d'un parent ou de l'autre, le reste au hasard
 const parentLook = who => {
+    if (who && typeof who === 'object') who = who.look;
     if (isHabitant(who)) {
         const l = lookOf(who);
         return [l.skin, l.hairColor, l.eyeColor];
@@ -301,7 +306,7 @@ function birth() {
         find: now(),
         task: null,
         gen: 1,
-        parents: [meLook(), F.spouse],
+        parents: [meLook(), artId(F.spouse)],
         look: kidLook(meLook(), F.spouse, girl, seed),
     };
     F.kids.push(kid);
@@ -453,7 +458,11 @@ export function setKidMetier(id, mid) {
     toast(`${k.name} devient ${METIERS[mid].name.toLowerCase()}`, METIERS[mid].icon);
     return true;
 }
-export const kidMetiers = () => [...new Set(((state.family && state.family.kids) || []).filter(k => k.metier && isAdultKid(k)).map(k => k.metier))];
+export const kidMetiers = () => [
+    ...new Set(
+        [...((state.family && state.family.kids) || []), ...((state.family && state.family.kin) || [])].filter(k => k.metier && isAdultKid(k)).map(k => k.metier),
+    ),
+];
 export const kidMetierMult = item => {
     const F = state.family;
     if (!F || !F.kids || !F.kids.length) return 1;
@@ -471,7 +480,7 @@ export function kidWed(id, rid, at) {
     if (!r || !kidCanWed(k, r.id)) return false;
     payCost(kidWedCost());
     state.camping.res = state.camping.res.filter(x => x !== r);
-    k.spouse = { name: r.name, look: r.look, woman: !!r.woman, job: r.job || '' };
+    k.spouse = { name: r.name, look: r.look, woman: !!r.woman, job: r.job || '', likes: (r.likes || []).slice() };
     k.wedAt = now();
     k.gk = [];
     k.gkAt = now();
@@ -518,7 +527,8 @@ export const allPeople = () => {
 // ---------------- la ville ----------------
 export function population() {
     const F = state.family || {};
-    const fam = (F.spouse ? 1 : 0) + (F.kids || []).reduce((a, k) => a + 1 + (k.spouse ? 1 : 0) + (k.gk || []).length, 0);
+    const house = k => 1 + (k.spouse ? 1 : 0) + (k.gk || []).length;
+    const fam = (F.spouse ? 1 : 0) + (F.kids || []).reduce((a, k) => a + house(k), 0) + (F.kin || []).reduce((a, k) => a + house(k), 0) + (F.elders || []).reduce((a, e) => a + (e.spouse ? 2 : 1), 0);
     const v = presentVillagers().length;
     const r = campRes().length;
     return { villagers: v, residents: r, family: fam, total: v + r + fam + 1 };
@@ -527,6 +537,71 @@ export const townTier = () => TOWN.tiers.filter(t => population().total >= t.n).
 export const townName = () => TOWN.tiers[townTier()].name;
 export const townNext = () => TOWN.tiers[townTier() + 1] || null;
 export const townMult = () => (familyOpen() ? 1 + TOWN.price * townTier() : 1);
+
+// ---------------- 1.126 : la transmission ----------------
+// au bout d'un temps, la ferme passe à un enfant adulte qui a choisi son métier : on devient lui ou elle.
+// Rien ne repart de zéro : seule la personne change ; les parents prennent leur retraite au village (les anciens).
+export const LEGACY = { wait: 7 * 24 * 3600 * 1000, xp: 0.05, maxGens: 5, renom: 3 };
+export const elders = () => (state.family && state.family.elders) || [];
+export const generation = () => (state.family && state.family.gen) || 1;
+export const legacySince = () => ensureFamily().since || ensureFamily().wedAt || 0;
+export const legacyLeft = () => Math.max(0, legacySince() + LEGACY.wait - now());
+export const heirs = () => kids().filter(k => isAdultKid(k) && k.metier);
+export const canLegate = id => {
+    const F = ensureFamily();
+    const k = kidById(id);
+    return !!F.spouse && !!k && heirs().includes(k) && legacyLeft() === 0;
+};
+// la sagesse des anciens : l'expérience des commandes, +5 % par génération à la retraite (cinq au plus)
+export const eldersMult = () => 1 + LEGACY.xp * Math.min(LEGACY.maxGens, elders().length);
+export function legate(id, at) {
+    if (!canLegate(id)) return false;
+    const F = ensureFamily();
+    const heir = kidById(id);
+    F.elders = F.elders || [];
+    F.elders.push({ look: meLook(), spouse: F.spouse, gen: generation(), at: now(), day: state.day, heir: heir.name });
+    F.kin = [...(F.kin || []), ...F.kids.filter(k => k !== heir).map(k => ({ ...k, task: null }))];
+    // on devient l'héritier : son visage, son conjoint, ses enfants (qui deviennent les vôtres)
+    if (!state.me) state.me = {};
+    state.me.look = heir.look;
+    F.spouse = heir.spouse ? { ...heir.spouse } : null;
+    F.kids = (heir.gk || []).map(g => ({
+        id: g.id,
+        name: g.name,
+        girl: g.girl,
+        born: g.born,
+        bornDay: state.day,
+        at: now(),
+        grow: Math.min(KIDS.ages[KIDS.ages.length - 1], (now() - g.born) / 3600000),
+        joy: 80,
+        care: {},
+        find: now(),
+        task: null,
+        look: g.look,
+        gen: (g.gen || 2) + 0,
+    }));
+    for (const k of F.kids) if (stageOf(k) >= 2) k.task = 'field';
+    F.court = null;
+    F.pts = {};
+    F.engaged = false;
+    F.baby = null;
+    F.aff = FAMILY.aff.max;
+    F.affAt = now();
+    F.wordAt = 0;
+    F.basketAt = now() - FAMILY.basket.every;
+    F.wedDay = F.spouse ? state.day : 0;
+    F.since = now();
+    F.gen = generation() + 1;
+    state.stats.legacies = (state.stats.legacies || 0) + 1;
+    addRenom(LEGACY.renom, 'la transmission');
+    sfx('level');
+    buzz([30, 40, 30]);
+    if (at) burst(at, 'sparkle', 40);
+    addPhoto('villager', heir.look, `${heir.name} reprend la ferme`, `La ${F.gen}e génération`);
+    toast(`${heir.name} reprend la ferme : la ${F.gen}e génération commence !`, ['ui', 'fmHome']);
+    emit('legacy', { gen: F.gen });
+    return true;
+}
 
 // ce qui attend le joueur (pastille de l'onglet)
 export function familyReady() {
@@ -569,7 +644,7 @@ export function familyTick() {
     const before = state.family.aff >= FAMILY.aff.keep;
     settleAff();
     const after = state.family.aff >= FAMILY.aff.keep;
-    if (before && !after && view.started) toast(`${vName(state.family.spouse)} se sent un peu délaissé${eFem(state.family.spouse)}`, ['ui', 'heartOff']);
+    if (before && !after && view.started) toast(`${vName(state.family.spouse)} se sent un peu délaissé${isShe(state.family.spouse) ? 'e' : ''}`, ['ui', 'heartOff']);
     return ch || before !== after;
 }
 export const fmtCoins = n => fmt(n);

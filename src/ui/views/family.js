@@ -13,7 +13,7 @@ import { actions, blocks, esc } from '../dom.js';
 import { ico, art } from '../icons.js';
 import { btn, bar, timer, hearts, costRow, section, hint, empty } from '../kit.js';
 import { innerTabs } from '../innertabs.js';
-import { defineView } from '../app.js';
+import { defineView, ui } from '../app.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const roses = n =>
@@ -86,13 +86,17 @@ function spouseCard() {
     const days = Math.max(0, state.day - (F.wedDay || state.day));
     const wl = G.wordLeft(),
         bl = G.basketLeft();
-    return `<div class="card fm-court fm-spouse"><div class="fm-head">${portrait(vid, 'big')}<div><div class="card-title">${esc(VILLAGERS[vid].name)}</div><div class="card-sub">Votre ${G.isShe(vid) ? 'épouse' : 'époux'} · ${days ? `mariés depuis ${days} jour${days > 1 ? 's' : ''}` : 'jeunes mariés'}</div>
+    return `<div class="card fm-court fm-spouse"><div class="fm-head">${portrait(G.artId(vid), 'big')}<div><div class="card-title">${esc(G.vName(vid))}</div><div class="card-sub">Votre ${G.isShe(vid) ? 'épouse' : 'époux'} · ${days ? `mariés depuis ${days} jour${days > 1 ? 's' : ''}` : 'jeunes mariés'}</div>
         <div class="fm-aff">${ico(['ui', a >= FAMILY.aff.keep ? 'heart' : 'heartOff'])}${bar(a / 100, a >= FAMILY.aff.keep ? 'good' : 'bad')}<small>${a} %</small></div></div></div>
         <div class="fm-acts">
             ${btn(wl ? `Mot doux · ${timer(Date.now() + wl)}` : 'Un mot doux', { act: 'fmWord', kind: wl ? '' : 'green', size: 'sm', disabled: !!wl, icon: ['ui', 'heart'] })}
             ${btn(bl ? `Panier · ${timer(Date.now() + bl)}` : `Son panier (${G.basketQty()} × 3)`, { act: 'fmBasket', kind: bl ? '' : 'gold', size: 'sm', disabled: !!bl, icon: ['ui', 'basket'] })}
         </div>
-        <p class="card-sub"><b>Son talent</b> : ${G.talentText(vid)}${G.spouseHappy() ? ' (un cran de plus, grâce à la tendresse)' : ''}.</p>
+        ${
+            typeof vid === 'string'
+                ? `<p class="card-sub"><b>Son talent</b> : ${G.talentText(vid)}${G.spouseHappy() ? ' (un cran de plus, grâce à la tendresse)' : ''}.</p>`
+                : '<p class="card-sub">Venu du camping, il ou elle n’a pas de talent d’ami, mais ses paniers sont plus garnis (+30 %).</p>'.replace('il ou elle', G.ilElle(vid))
+        }
         ${hint(`La tendresse baisse un peu chaque jour. Au-dessus de ${FAMILY.aff.keep} %, le talent de votre ${G.isShe(vid) ? 'épouse' : 'époux'} monte d’un cran et ses paniers sont pleins. Un mot doux toutes les quatre heures suffit.`)}</div>`;
 }
 function heartTab() {
@@ -199,17 +203,35 @@ defineSheet('famTree', {
     render() {
         const F = G.ensureFamily();
         const me = node(G.meLook(), 'Vous', G.farmName());
-        const sp = F.spouse ? node(F.spouse, G.vName(F.spouse), F.wedDay ? `marié${G.isShe(F.spouse) ? 'e' : ''} le jour ${F.wedDay}` : '') : '';
+        const sp = F.spouse ? node(G.artId(F.spouse), G.vName(F.spouse), F.wedDay ? `marié${G.isShe(F.spouse) ? 'e' : ''} le jour ${F.wedDay}` : '') : '';
+        // 1.126 : les anciens, de la plus vieille génération à la vôtre, et vos frères et sœurs
+        const old = (F.elders || [])
+            .map(e => `<div class="ft-couple ft-elder">${node(e.look, `Génération ${e.gen}`, 'à la retraite')}${e.spouse ? `<i class="ft-love">♥</i>${node(G.artId(e.spouse), G.vName(e.spouse), '')}` : ''}</div>`)
+            .join('<div class="ft-down"></div>');
+        const kin = (F.kin || []).length
+            ? `<div class="ft-row ft-kin">${F.kin.map(k => `<div class="ft-couple">${node(k.look, k.name, k.metier ? METIERS[k.metier].name : 'au village')}${k.spouse ? `<i class="ft-love">♥</i>${node(k.spouse.look, k.spouse.name, '')}` : ''}</div>`).join('')}</div><p class="card-sub center">Vos frères et sœurs, au village</p>`
+            : '';
         const kidsCols = F.kids
             .map(
                 k => `<div class="ft-col"><div class="ft-couple">${node(kidPic(k), k.name, G.stageName(k))}${k.spouse ? `<i class="ft-love">♥</i>${node(k.spouse.look, k.spouse.name, 'du camping')}` : ''}</div>
                 ${(k.gk || []).length ? `<div class="ft-row ft-gen2">${k.gk.map(g => node(gkPic(g), g.name, KIDS.ageNames[G.gkStage(g)])).join('')}</div>` : ''}</div>`,
             )
             .join('');
-        return `<div class="ft"><div class="ft-couple ft-root">${me}${sp ? `<i class="ft-love">♥</i>${sp}` : ''}</div>
+        return `<div class="ft">${old}${old ? '<div class="ft-down"></div>' : ''}${kin}<div class="ft-couple ft-root">${me}${sp ? `<i class="ft-love">♥</i>${sp}` : ''}</div>
             ${F.kids.length ? `<div class="ft-row ft-kids">${kidsCols}</div>` : '<p class="empty">Les enfants viendront ici.</p>'}</div>`;
     },
 });
+// 1.126 : la transmission
+function legacyCard() {
+    const F = G.ensureFamily();
+    if (!F.kids.length || !F.kids.some(k => G.isAdultKid(k))) return '';
+    const left = G.legacyLeft();
+    const heirs = G.heirs();
+    const conf = ui.sel.fmLegate;
+    return `<div class="card fm-legacy"><div class="card-head">${ico(['ui', 'fmHome'], 'ico big')}<div class="card-main"><div class="card-title">La transmission · génération ${G.generation()}</div>
+        <div class="card-sub">Léguez la ferme à un enfant adulte qui a choisi son métier : vous devenez lui ou elle. Rien ne repart de zéro : la ferme, les pièces d’or et le niveau restent. Vous et votre conjoint prenez votre retraite au village, et les anciens donnent +${Math.round(G.LEGACY.xp * 100)} % d’expérience aux commandes, à chaque génération.</div></div></div>
+        ${left ? `<p class="card-sub center">Possible dans ${timer(Date.now() + left)}</p>` : heirs.length ? `<div class="fm-matches">${heirs.map(k => `<button class="fm-suitor${conf === k.id ? ' on' : ''}" data-act="fmLegate" data-id="${k.id}">${portrait(k.look)}<b>${esc(k.name)}</b><small>${conf === k.id ? 'Toucher encore pour confirmer' : METIERS[k.metier].name}</small></button>`).join('')}</div>` : '<p class="card-sub center">Un enfant adulte doit d’abord choisir son métier.</p>'}</div>`;
+}
 function kidsTab() {
     const F = G.ensureFamily();
     if (!F.spouse) return empty('Les enfants viendront après la noce.');
@@ -226,7 +248,7 @@ function kidsTab() {
                       : `${G.vName(F.spouse)} doit se sentir aimé${G.eFem(F.spouse)} (tendresse au-dessus de ${FAMILY.aff.keep} %).`
             }</div></div>${btn('Un bébé', { act: 'fmExpect', kind: 'gold', size: 'sm', disabled: !G.canExpect() })}</div>`
           : '';
-    return `${head}${F.kids.map(kidCard).join('')}
+    return `${head}${F.kids.map(kidCard).join('')}${legacyCard()}
         ${F.kids.length ? hint(`Le bonheur baisse chaque jour : au-dessous de ${KIDS.joy.keep} %, un enfant grandit deux fois moins vite et aide moitié moins. Chaque soin donne du bonheur et fait grandir un peu.`) : ''}`;
 }
 
@@ -269,6 +291,11 @@ export function setupFamily() {
         fmTask: (el, d) => G.setTask(d.id, d.t),
         fmMetier: (el, d) => G.setKidMetier(d.id, d.m),
         fmKidWed: (el, d) => G.kidWed(d.id, +d.r, el),
+        fmLegate: (el, d) => {
+            if (ui.sel.fmLegate !== d.id) return void (ui.sel.fmLegate = d.id);
+            ui.sel.fmLegate = null;
+            return G.legate(d.id, el);
+        },
     });
 }
 export const familyDot = () => (G.familyOpen() ? G.familyReady() : 0);
