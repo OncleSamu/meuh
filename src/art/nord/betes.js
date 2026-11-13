@@ -8,7 +8,7 @@ import { milkB } from '../items2.js';
 const O = '#3a2618';
 
 // ======================= le renne =======================
-// pelage brun-gris, collerette crème, bois branchus ; horns 1 = bois tombés, 2 = grands bois
+// pelage brun-gris, collerette crème, bois branchus ; horns 1 = bois tombés, 2 = grands bois, 3 = bois en lyre (1.121)
 const RN = '#a58f78',
     RND = '#7c6850',
     RNL = '#ece3d2';
@@ -20,7 +20,13 @@ animals.reindeer = (o = {}) => {
     const antlers =
         h === 1
             ? FC(59, 13, 1.6, '#c9b690') + FC(64, 12, 1.6, '#c9b690')
-            : beam(`M60 14 Q${h === 2 ? '50 10 51 2' : '53 10 54 4'}`) +
+            : h === 3
+              ? // en lyre : deux grands bras qui s'écartent puis se referment en pointe, quelques andouillers vers l'intérieur
+                beam('M60 14 Q47 10 50 3 Q52 0 57 1') +
+                beam('M64 12 Q77 7 74 1 Q72 -1 67 1') +
+                beam('M51 6 Q55 5 57 8', 2) +
+                beam('M74 4 Q70 4 68 7', 2)
+              : beam(`M60 14 Q${h === 2 ? '50 10 51 2' : '53 10 54 4'}`) +
               beam(`M64 12 Q${h === 2 ? '72 8 70 1' : '70 8 69 3'}`) +
               beam(h === 2 ? 'M54 8 Q49 8 47 4 M52 5 Q57 5 58 2 M51 3 Q49 1 47 1' : 'M55 8 Q51 7 50 5', 2.2) +
               beam(h === 2 ? 'M70 6 Q75 6 77 2 M71 3 Q67 3 66 1 M70 1 Q73 0 74 -1' : 'M69 7 Q73 6 74 4', 2.2);
@@ -55,7 +61,8 @@ animals.reindeer = (o = {}) => {
 };
 
 // ======================= le bœuf musqué =======================
-// brun presque noir, la jupe de longs poils qui tombe jusqu'aux sabots, la selle pâle, les cornes qui descendent puis se relèvent ; horns 1 = courtes, 2 = grandes
+// brun presque noir, la jupe de longs poils qui tombe jusqu'aux sabots, la selle pâle, les cornes qui descendent puis se relèvent ;
+// horns 1 = courtes, 2 = longues (elles descendent bas et remontent loin), 3 = en lyre (elles montent et s'ouvrent) : 1.121
 const MX = '#4e3a2b',
     MXD = '#2e2118',
     MXL = '#d2bf93';
@@ -67,7 +74,11 @@ animals.muskox = (o = {}) => {
     const horns =
         h === 1
             ? horn('M60 24 Q56 30 58 34') + horn('M70 24 Q74 30 72 34')
-            : horn('M59 23 Q50 28 52 38 Q54 40 56 34') + horn('M71 23 Q80 28 78 38 Q76 40 74 34');
+            : h === 2
+              ? horn('M59 23 Q46 27 47 41 Q49 46 53 38') + horn('M71 23 Q78 26 77 39 Q76 44 73 37')
+              : h === 3
+                ? horn('M60 23 Q53 19 53 12 Q54 7 58 8') + horn('M70 23 Q77 19 77 12 Q76 7 72 8')
+                : horn('M59 23 Q50 28 52 38 Q54 40 56 34') + horn('M71 23 Q80 28 78 38 Q76 40 74 34');
     const strands = (pts, c) => pts.map(([x, y, l]) => L(`M${x} ${y} Q${x - 1} ${y + l / 2} ${x + 0.6} ${y + l}`, 1.7, c)).join('');
     return (
         SHADOW(40, 74, 27, 3.6) +

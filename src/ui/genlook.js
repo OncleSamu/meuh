@@ -263,3 +263,6 @@ export const varRankChips = vid => {
     const chips = [4, 3, 2, 1].filter(k => r[k]).map(k => `<span class="qchip">${qStar(k)}${r[k]} ${QN[k]}</span>`);
     return chips.length ? `<span class="var-ranks">${chips.join('')}</span>` : '';
 };
+
+// 1.121 : le sachet de graines d'une variété : le sachet kraft, et la variété (couleur, motif) dans sa fenêtre
+export const packArt = v => `<span class="pack-art">${art('ui', 'seedPack')}<span class="pack-in">${genWrap(art('item', v.base), v.g)}</span></span>`;

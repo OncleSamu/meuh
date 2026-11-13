@@ -23,10 +23,10 @@ export const PLANT_TRAITS = [
     { id: 'yield', name: 'Rendement', icon: ['ui', 'basket'] },
     // 1.22 : caractères discrets, à 0 chez les espèces sauvages (sauf quelques-unes), qui se cultivent par croisement
     { id: 'regrow', name: 'Repousse', icon: ['ui', 'loop'], extra: true, hint: 'la plante repousse après la récolte' },
-    { id: 'late', name: 'Maturation lente', icon: ['ui', 'star'], extra: true, hint: 'plus longue à pousser, plus souvent en argent ou en or' },
+    { id: 'late', name: 'Maturation lente', icon: ['ui', 'gLate'], extra: true, hint: 'plus longue à pousser, plus souvent en argent ou en or' },
     { id: 'pest', name: 'Anti-nuisibles', icon: ['ui', 'pest'], extra: true, hint: 'moins de pucerons et de corbeaux' },
     { id: 'seedy', name: 'Graine généreuse', icon: ['ui', 'packet'], extra: true, hint: 'plus de graines à la récolte' },
-    { id: 'luck', name: 'Chance', icon: ['ui', 'wishStar'], extra: true, hint: 'plus de récoltes dorées, et des fruits en or au verger' },
+    { id: 'luck', name: 'Chance', icon: ['ui', 'gLuck'], extra: true, hint: 'plus de récoltes dorées, et des fruits en or au verger' },
     { id: 'soilfit', name: 'Terre d’accueil', icon: ['ui', 'soilWet'], extra: true, hint: 'profite du bonus de bon sol sur n’importe quel sol' },
     { id: 'calibre', name: 'Calibre', icon: ['ui', 'yield'], extra: true, hint: 'parfois une unité de plus, mais un peu moins de qualité' },
 ];
@@ -42,7 +42,7 @@ export const ANIMAL_TRAITS = [
     {
         id: 'soft',
         name: 'Douceur',
-        icon: ['ui', 'heart'],
+        icon: ['ui', 'gSoft'],
         flavor: true,
         hint: 'avec la richesse et l’arôme, des produits plus souvent en qualité argent ou or',
     },
@@ -57,12 +57,12 @@ export const ANIMAL_TRAITS = [
     { id: 'speed', name: 'Vitesse', icon: ['ui', 'clock'], hint: 'produit plus vite (+5 % par point au-dessus de 2)' },
     { id: 'appetite', name: 'Petit appétit', icon: ['item', 'feed'], hint: 'des repas offerts (7 % par point au-dessus de 2)' },
     { id: 'robust', name: 'Robustesse', icon: ['ui', 'thermo'], hint: 'à 4 ou plus, presque jamais malade' },
-    { id: 'fertile', name: 'Fécondité', icon: ['ui', 'remTwin'], extra: true, hint: 'plus de jumeaux à l’étable de sélection' },
-    { id: 'health', name: 'Santé', icon: ['ui', 'sick'], extra: true, hint: 'tombe moins souvent malade' },
+    { id: 'fertile', name: 'Fécondité', icon: ['ui', 'gFertile'], extra: true, hint: 'plus de jumeaux à l’étable de sélection' },
+    { id: 'health', name: 'Santé', icon: ['ui', 'gHealth'], extra: true, hint: 'tombe moins souvent malade' },
     { id: 'docile', name: 'Docilité', icon: ['ui', 'hand'], extra: true, hint: 'l’amitié rend la bête encore plus productive' },
-    { id: 'social', name: 'Sociabilité', icon: ['ui', 'chick'], extra: true, hint: 'produit plus vite entourée de sa propre espèce' },
+    { id: 'social', name: 'Sociabilité', icon: ['ui', 'gSocial'], extra: true, hint: 'produit plus vite entourée de sa propre espèce' },
     { id: 'jump', name: 'Détente', icon: ['ui', 'hSaut'], extra: true, species: ['horse'], hint: 'plafond du saut d’obstacles aux écuries' },
-    { id: 'curious', name: 'Curiosité', icon: ['ui', 'sparkle'], extra: true, hint: 'trouve parfois un petit trésor à la collecte' },
+    { id: 'curious', name: 'Curiosité', icon: ['ui', 'gCurious'], extra: true, hint: 'trouve parfois un petit trésor à la collecte' },
 ];
 // les gènes d'apparence : jamais choisis, ils découlent des croisements
 export const LOOKS = {

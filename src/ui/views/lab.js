@@ -16,7 +16,7 @@ import { btn, hint, timer, section, bar, empty } from '../kit.js';
 import { defineView, ui, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { confirmTap } from '../confirm.js';
-import { genWrap, looksText, animalArt, lineageHtml, varRankChips, nodeTraits, lineNodeAt } from '../genlook.js';
+import { genWrap, looksText, animalArt, lineageHtml, varRankChips, nodeTraits, lineNodeAt, packArt } from '../genlook.js';
 import { renameBtn } from '../sheets/rename.js';
 import { NOTE_COL } from '../../data/abbey.js';
 import { chefCard } from './orders.js';
@@ -314,14 +314,14 @@ function catHtml() {
     const listed = ids
         .map(id => {
             const v = G.variety(id);
-            return `<div class="cut-row"><span class="cat-line"><span class="ico">${varArt(v)}</span><span><b>${esc(G.varName(v))}</b> <small>${seeds(id)} graine${seeds(id) > 1 ? 's' : ''} · réputation ×${String(Math.round(G.meritMult(v) * 100) / 100).replace('.', ',')}</small></span></span>${btn('Retirer', { act: 'catToggle', data: { id }, size: 'sm', kind: 'ghost' })}</div>`;
+            return `<div class="cut-row"><span class="cat-line"><span class="ico">${packArt(v)}</span><span><b>${esc(G.varName(v))}</b> <small>${seeds(id)} graine${seeds(id) > 1 ? 's' : ''} · réputation ×${String(Math.round(G.meritMult(v) * 100) / 100).replace('.', ',')}</small></span></span>${btn('Retirer', { act: 'catToggle', data: { id }, size: 'sm', kind: 'ghost' })}</div>`;
         })
         .join('');
     const ord = orders
         .map(o => {
             const v = G.variety(o.vid);
             const ok = seeds(o.vid) >= o.n;
-            return `<div class="cut-row"><span class="cat-line"><span class="ico">${varArt(v)}</span><span><b>${esc(o.who)}</b> <small>${o.n} graines de ${esc(G.varName(v))} · ${fmt(G.catPay(v, o.n))}${ico(['ui', 'coin'])}</small></span></span>${btn(ok ? 'Livrer' : `${seeds(o.vid)}/${o.n}`, { act: 'catDeliver', data: { id: o.id }, kind: ok ? 'green' : '', size: 'sm' })}</div>`;
+            return `<div class="cut-row"><span class="cat-line"><span class="ico">${packArt(v)}</span><span><b>${esc(o.who)}</b> <small>${o.n} graines de ${esc(G.varName(v))} · ${fmt(G.catPay(v, o.n))}${ico(['ui', 'coin'])}</small></span></span>${btn(ok ? 'Livrer' : `${seeds(o.vid)}/${o.n}`, { act: 'catDeliver', data: { id: o.id }, kind: ok ? 'green' : '', size: 'sm' })}</div>`;
         })
         .join('');
     return `<div class="card cat-card"><div class="card-head">${ico(['ui', 'packet'], 'ico big')}<div class="card-main"><div class="card-title">Mon catalogue de semences</div>
@@ -339,7 +339,7 @@ defineSheet('catPick', {
         return `<p class="card-sub center">${G.catIds().length}/${SEEDCAT.slots} variétés. Les plus réputées sont en haut.</p><div class="list">${list
             .map(v => {
                 const on = G.inCat(v.id);
-                return `<button class="row${on ? ' on' : ''}" data-act="catToggle" data-id="${v.id}"><span class="ico">${varArt(v)}</span><span class="row-main"><span>${esc(G.varName(v))}</span><small>réputation ×${String(Math.round(G.meritMult(v) * 100) / 100).replace('.', ',')} · ${state.genetics.seeds[v.id] || 0} graines</small></span><b>${on ? '✓' : '+'}</b></button>`;
+                return `<button class="row${on ? ' on' : ''}" data-act="catToggle" data-id="${v.id}"><span class="ico">${packArt(v)}</span><span class="row-main"><span>${esc(G.varName(v))}</span><small>réputation ×${String(Math.round(G.meritMult(v) * 100) / 100).replace('.', ',')} · ${state.genetics.seeds[v.id] || 0} graines</small></span><b>${on ? '✓' : '+'}</b></button>`;
             })
             .join('')}</div>`;
     },

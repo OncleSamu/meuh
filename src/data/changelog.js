@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.121",
+  "title": "Les gènes se voient mieux",
+  "date": "13 novembre 2026",
+  "items": [
+   "Renne : les bois en lyre ont enfin leur dessin. Bœuf musqué : les cornes longues et les cornes en lyre aussi (elles ressemblaient aux cornes naturelles)",
+   "Sept nouvelles icônes de caractères : Santé (écusson), Maturation lente (escargot doré), Sociabilité, Chance (trèfle), Fécondité (nid), Curiosité (loupe), Douceur (plume)",
+   "Catalogue de semences : chaque variété a son sachet, avec sa couleur et son motif dans la fenêtre"
+  ]
+ },
+ {
   "v": "1.120",
   "title": "Concours, catalogue et millésime",
   "date": "12 novembre 2026",
