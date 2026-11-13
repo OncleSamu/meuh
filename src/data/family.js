@@ -228,3 +228,28 @@ export const LANDMARKS = [
     { tier: 4, id: 'hall', name: 'La halle du marché' },
     { tier: 5, id: 'townhall', name: 'La mairie' },
 ];
+
+// ---------------- 1.128 : les petites demandes ----------------
+// de temps en temps, un enfant (à partir de l'âge « enfant ») demande quelques produits ; il rend le service en bonheur et en pièces
+export const ASKS = {
+    every: 10 * 3600 * 1000, // une demande toutes les dix heures au plus
+    last: 8 * 3600 * 1000, // elle attend huit heures
+    joy: 20,
+    miss: 5,
+    coins: 3, // × le prix de vente des produits demandés
+    pools: [
+        null,
+        ['strawberry', 'apple', 'carrot', 'egg', 'honey', 'milk', 'cherry', 'pumpkin'],
+        ['wool', 'jam', 'bread', 'juice', 'cheese', 'cookies', 'crepes', 'flowerPot'],
+        ['plank', 'cheese', 'cider', 'jam', 'bread', 'honeyPot', 'candle', 'paintedVase'],
+    ],
+    why: [
+        null,
+        ['une surprise', 'nourrir ses poupées', 'la kermesse de l’école', 'un goûter avec les copains'],
+        ['un projet d’école', 'la fête de fin d’année', 'un pique-nique avec les copains', 'le marché de l’école'],
+        ['son travail', 'recevoir des amis', 'aider un voisin', 'la fête du village'],
+    ],
+    qty: [0, 3, 2, 2], // de base, plus un par tranche de 15 niveaux
+};
+// les anniversaires des petits-enfants : une carte et un gâteau, pour le plaisir (pas de tristesse s'il est oublié)
+export const GK_BDAY = { xp: 15 };

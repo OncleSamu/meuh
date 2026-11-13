@@ -2648,3 +2648,43 @@ button.ln-node:active {
     min-height: 2.4em;
     margin-top: 6px;
 }
+
+/* 1.128 : les petites demandes */
+.fm-ask {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 6px 8px;
+    border-radius: 12px;
+    background: #eef8e6;
+    box-shadow: 0 0 0 2px #8bc34a inset;
+}
+.fm-ask > div {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.85rem;
+}
+.fm-ask small {
+    display: block;
+    color: var(--ink-soft);
+}
+.fm-ask-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+button.fm-gk.bday {
+    position: relative;
+    border: 2px solid #f6b93b;
+    border-radius: 12px;
+    background: #fff0c2;
+    padding: 2px 4px;
+}
+button.fm-gk.bday .gk-b {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: 700;
+    color: #b8860b;
+}

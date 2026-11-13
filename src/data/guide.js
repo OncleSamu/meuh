@@ -1722,6 +1722,10 @@ export const GUIDE_PAGES = [
                 t: 'Tous les deux jours, jusqu’à l’âge adulte, un enfant fête son anniversaire : vous avez une journée pour le fêter avec un gâteau (éponge, fraises, chocolat, noix…). Bonheur au maximum, quelques heures de croissance, et le double si vous offrez aussi son cadeau préféré. Un anniversaire oublié rend triste. Le cadeau préféré change avec l’âge et après chaque cadeau ; on peut l’offrir toutes les huit heures.',
             },
             {
+                h: 'Les petites demandes',
+                t: 'De temps en temps, un enfant (à partir de l’âge « enfant ») vous demande quelques produits pour une kermesse, un projet d’école ou des amis. Donnez-les dans les huit heures : il ou elle gagne du bonheur et vous rend trois fois leur prix en pièces. Une demande oubliée coûte un peu de bonheur ; on peut aussi dire non. Les petits-enfants ont leur anniversaire eux aussi : un gâteau pour le fêter, de l’expérience et une photo, sans tristesse s’il est oublié.',
+            },
+            {
                 h: 'Le repas de famille',
                 t: 'Une fois par jour (onglet Mon foyer), toute la famille passe à table : conjoint, enfants, frères et sœurs et leurs époux, anciens. Il faut un plat cuisiné pour deux convives. Tendresse et bonheur des enfants remontent, et l’expérience grandit avec la tablée (+50 % si tous les plats sont différents).',
             },

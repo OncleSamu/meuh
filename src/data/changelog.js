@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.128",
+  "title": "La famille, chapitre 6 : les petites demandes",
+  "date": "13 novembre 2026",
+  "items": [
+   "Les enfants ont de petites demandes : quelques produits pour la kermesse, un projet d'école ou des amis",
+   "Donnez-les dans les huit heures : du bonheur, et trois fois leur prix rendu en pièces",
+   "Les petits-enfants fêtent aussi leur anniversaire : un gâteau, de l'expérience et une photo",
+   "Les quantités s'écrivent au pluriel (« 5 fraises »)"
+  ]
+ },
+ {
   "v": "1.127",
   "title": "La famille, chapitre 5 : la vie de famille",
   "date": "13 novembre 2026",

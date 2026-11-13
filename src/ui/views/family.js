@@ -1,6 +1,6 @@
 // 1.123 : l'onglet Village › Famille : faire la cour, la noce, le conjoint et le foyer.
 import { state } from '../../core/state.js';
-import { fmt } from '../../core/format.js';
+import { fmt, qtyName } from '../../core/format.js';
 import { VILLAGERS } from '../../data/village.js';
 import { ITEMS } from '../../data/items.js';
 import { LOVES } from '../../data/friends.js';
@@ -190,7 +190,15 @@ function kidLife(k) {
         gl ? timer(Date.now() + gl) : 'Offrir',
         { act: 'fmGift', data: { id: k.id }, kind: gl ? '' : 'green', size: 'sm', disabled: !G.giftCan(k) },
     )}</div>`;
-    return bd + gift;
+    return bd + askHtml(k) + gift;
+}
+// 1.128 : la petite demande
+function askHtml(k) {
+    const a = G.askOf(k);
+    if (!a) return '';
+    const have = state.inventory[a.item] || 0;
+    return `<div class="fm-ask">${ico(['item', a.item], 'ico big')}<div><b>« Je peux avoir ${esc(qtyName(a.n, ITEMS[a.item].name))} ? »</b><small>C’est pour ${esc(a.why)}. Vous en avez ${have}. En retour : ${fmt(G.askCoins(a))}${COIN()} · encore ${timer(Date.now() + G.askLeft(k))}</small></div>
+        <span class="fm-ask-btns">${btn('Donner', { act: 'fmAsk', data: { id: k.id }, kind: 'green', size: 'sm', disabled: !G.askCan(k) })}${btn('Non', { act: 'fmAskNo', data: { id: k.id }, kind: 'ghost', size: 'sm' })}</span></div>`;
 }
 // 1.125 : l'enfant adulte : son métier, son mariage, ses enfants
 function adultHtml(k) {
@@ -199,7 +207,11 @@ function adultHtml(k) {
         .join('')}</div><p class="card-sub">${k.metier ? `Les produits ${METIERS[k.metier].name === 'Cuisinier' ? 'du cuisinier' : 'de ce métier'} se vendent ${Math.round(KID_METIER.price * 100)} % plus cher.` : 'Choisissez son métier : ses produits se vendront un peu plus cher.'}</p>`;
     if (k.spouse) {
         const gk = (k.gk || [])
-            .map(g => `<span class="fm-gk">${portrait(gkPic(g), 'sm')}<small>${esc(g.name)}</small></span>`)
+            .map(g =>
+                G.gkBdayToday(g)
+                    ? `<button class="fm-gk bday" data-act="fmGkBday" data-k="${k.id}" data-g="${g.id}" ${G.cakeOf() ? '' : 'disabled'}>${portrait(gkPic(g), 'sm')}<small>${esc(g.name)}</small><small class="gk-b">${ico(['ui', 'cake'])}Fêter</small></button>`
+                    : `<span class="fm-gk">${portrait(gkPic(g), 'sm')}<small>${esc(g.name)}</small></span>`,
+            )
             .join('');
         return `${met}${section('Au village')}<div class="fm-couple">${portrait(k.spouse.look, 'sm')}<span>Marié${k.girl ? 'e' : ''} à <b>${esc(k.spouse.name)}</b>, dans leur maison au village.</span></div>
             ${gk ? `<div class="fm-gks">${gk}</div>` : '<p class="card-sub">Un petit-enfant devrait bientôt arriver.</p>'}`;
@@ -348,6 +360,9 @@ export function setupFamily() {
         fmFind: (el, d) => G.kidFind(d.id, el),
         fmTask: (el, d) => G.setTask(d.id, d.t),
         fmGift: (el, d) => G.giveKidGift(d.id, el),
+        fmAsk: (el, d) => G.answerAsk(d.id, el),
+        fmAskNo: (el, d) => G.refuseAsk(d.id),
+        fmGkBday: (el, d) => G.gkCelebrate(d.k, d.g, el),
         fmBday: (el, d) => G.celebrate(d.id, el),
         fmMeal: el => G.familyMeal(el),
         fmHouse: (el, d) => (ui.sel.tmPick = { k: 'house', i: +d.i }),
