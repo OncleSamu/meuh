@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.131",
+  "title": "Le camping, plus vivant",
+  "date": "13 novembre 2026",
+  "items": [
+   "Les campeurs achètent par lots : de 3 à 6 exemplaires de chaque envie selon leur profil, un peu plus avec le niveau. Un campeur rapporte maintenant 4 à 5 fois plus",
+   "Un lot se vend en une fois, ou ce que vous avez en stock ; le reste plus tard",
+   "La réputation du camping : les campeurs ravis la font monter, les déçus baisser. Cinq paliers, de « Nouveau camping » à « Camping légendaire » : plus de pourboire et plus de campeurs remarquables",
+   "Tout le camping : les résidents en lignes courtes, leur fiche d'un appui"
+  ]
+ },
+ {
   "v": "1.130",
   "title": "Chercher une graine",
   "date": "13 novembre 2026",

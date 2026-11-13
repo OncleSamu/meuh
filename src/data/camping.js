@@ -64,6 +64,23 @@ export const CAMP_EVENTS = [
     { id: 'banquet', name: 'Grand banquet', kinds: ['plat'], txt: 'Les plats se vendent 30 % plus cher' },
 ];
 export const EVENT_BONUS = 1.3;
+// 1.131 : un campeur achète par lots, selon son profil ; un peu plus avec le niveau (+1 tous les 8 niveaux après 57, 4 au plus)
+export const LOTS = { hiker: 4, family: 6, gourmet: 3, fisher: 5, artist: 3, couple: 4, perLvl: 8, maxExtra: 4 };
+// 1.131 : la réputation du camping. Un campeur ravi la fait monter (un remarquable ravi encore plus), un déçu la fait baisser.
+// Chaque palier : plus de pourboire, plus de campeurs remarquables.
+export const CAMP_REP = {
+    tiers: [
+        { n: 0, name: 'Nouveau camping' },
+        { n: 15, name: 'Camping apprécié' },
+        { n: 50, name: 'Camping réputé' },
+        { n: 120, name: 'Camping renommé' },
+        { n: 250, name: 'Camping légendaire' },
+    ],
+    gain: [-1, 1, 3], // déçu, content, ravi
+    star: 3, // en plus, pour un remarquable ravi
+    tip: 0.05, // pourboire en plus par palier
+    starChance: 0.02, // chance de remarquable en plus par palier
+};
 export const PROFILES = {
     hiker: { name: 'Randonneur', wants: ['fresh', 'fresh', 'plat'] },
     family: { name: 'Famille', wants: ['fresh', 'sweet', 'plat'] },

@@ -85,7 +85,7 @@ test('résidents 1.104.4 : un campeur ravi demande à rester depuis sa tente ; o
     state.camping.asks = [];
     const g = G.newGuest(T, 3, { plain: true });
     for (let i = 0; i < g.wants.length; i++) {
-        state.inventory[g.wants[i].item] = 5;
+        state.inventory[g.wants[i].item] = 20;
         assert.ok(G.sellTo(0, i));
     }
     assert.ok(g.ask && g.ask.job, 'la demande est sur la tente');

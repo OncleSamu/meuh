@@ -5,7 +5,7 @@ import { view } from '../core/view.js';
 import { toast, sfx, burst } from '../core/bus.js';
 import { RECIPES } from '../data/machines.js';
 import { ITEMS } from '../data/items.js';
-import { CAMPING, WANTS, PROFILES, ORIGINS, FIRST_NAMES, CAMP_UPGRADES, SAYINGS, STARS, REGULARS, CAMP_EVENTS, EVENT_BONUS } from '../data/camping.js';
+import { CAMPING, WANTS, PROFILES, ORIGINS, FIRST_NAMES, CAMP_UPGRADES, SAYINGS, STARS, REGULARS, CAMP_EVENTS, EVENT_BONUS, LOTS, CAMP_REP } from '../data/camping.js';
 import { RESIDENTS, JOBS, JOB_FX } from '../data/campers.js';
 import { randomId, rng } from '../art/habitants.js';
 import { hasCost, payCost } from './home.js';
@@ -50,7 +50,7 @@ export function addPitch() {
     return true;
 }
 const mult = k => Object.keys(state.camping ? state.camping.up : {}).reduce((a, id) => a * (CAMP_UPGRADES[id][k] || 1), 1);
-const tipRate = () => CAMPING.tip + Object.keys(state.camping.up).reduce((a, id) => a + (CAMP_UPGRADES[id].tip || 0), 0) + resBonus('tip');
+const tipRate = () => CAMPING.tip + Object.keys(state.camping.up).reduce((a, id) => a + (CAMP_UPGRADES[id].tip || 0), 0) + resBonus('tip') + CAMP_REP.tip * campRepTier();
 export const campGap = () => CAMPING.gap.map(x => x * mult('gap') * (1 - Math.min(0.5, resBonus('gap'))));
 
 // ---- 1.102 : les métiers des résidents ----
@@ -94,7 +94,16 @@ export function pickWant(kind, taken, r) {
     const l = ok.length ? ok : all;
     return l.length ? l[Math.floor(r() * l.length)] : null;
 }
-export const starChance = () => STARS.chance + resBonus('star');
+export const starChance = () => STARS.chance + resBonus('star') + CAMP_REP.starChance * campRepTier();
+// 1.131 : les lots et la réputation
+export const lotSize = pid => (LOTS[pid] || 3) + Math.min(LOTS.maxExtra, Math.max(0, Math.floor((state.level - CAMPING.lvl) / LOTS.perLvl)));
+export const wantN = w => w.n || 1;
+export const wantLeft = w => Math.max(0, wantN(w) - (w.sold || 0));
+export const campRep = () => (state.camping && state.camping.rep) || 0;
+export const campRepTier = () => CAMP_REP.tiers.filter(t => campRep() >= t.n).length - 1;
+export const campRepName = () => CAMP_REP.tiers[campRepTier()].name;
+export const campRepNext = () => CAMP_REP.tiers[campRepTier() + 1] || null;
+export const wantsValue = g => g.wants.reduce((a, w) => a + priceOf(w.item, g) * wantN(w), 0);
 // opts (tests) : { star: index dans STARS.who, regular: nom d'un ancien campeur, plain: ni l'un ni l'autre }
 export function newGuest(t = now(), seed, opts = {}) {
     const c = state.camping;
@@ -115,7 +124,8 @@ export function newGuest(t = now(), seed, opts = {}) {
         const id = pickWant(k, taken, r);
         if (id) {
             taken.push(id);
-            wants.push(star != null ? { item: id, done: false, q: STARS.q } : { item: id, done: false });
+            const n = lotSize(pid);
+            wants.push(star != null ? { item: id, done: false, q: STARS.q, n, sold: 0 } : { item: id, done: false, n, sold: 0 });
         }
     }
     const names = FIRST_NAMES.filter(n => !used.includes(n));
@@ -152,13 +162,17 @@ export const priceOf = (id, g) =>
     Math.round(ITEMS[id].sell * CAMPING.pay * mult('pay') * (1 + resBonus('pay')) * (inKind(id, 'fish') ? 1 + resBonus('fish') : 1) * (eventBoosts(id) ? EVENT_BONUS : 1) * (g && g.star != null ? STARS.pay : 1));
 export const wantQ = w => w.q || 0;
 export const canSell = (g, i) => !!g.wants[i] && !g.wants[i].done && haveQ(g.wants[i].item, wantQ(g.wants[i])) >= 1;
+// combien on peut lui vendre tout de suite (le lot, ou ce qu'on a en stock)
+export const sellNow = (g, i) => (canSell(g, i) ? Math.min(wantLeft(g.wants[i]), haveQ(g.wants[i].item, wantQ(g.wants[i]))) : 0);
 export function sellTo(gi, i, at) {
     const g = campGuests()[gi];
     if (!g || !canSell(g, i)) return false;
     const w = g.wants[i];
-    takeQ(w.item, 1, wantQ(w));
-    w.done = true;
-    earn(priceOf(w.item, g), at);
+    const k = sellNow(g, i);
+    takeQ(w.item, k, wantQ(w));
+    w.sold = (w.sold || 0) + k;
+    if (wantLeft(w) <= 0) w.done = true;
+    earn(priceOf(w.item, g) * k, at);
     checkRavi(g);
     state.stats.campSales = (state.stats.campSales || 0) + 1;
     sfx('coin');
@@ -167,7 +181,7 @@ export function sellTo(gi, i, at) {
 }
 export const guestMood = g => {
     const n = g.wants.filter(w => w.done).length;
-    return n === g.wants.length ? 2 : n > 0 ? 1 : 0; // 0 déçu, 1 content, 2 ravi
+    return n === g.wants.length ? 2 : n > 0 || g.wants.some(w => w.sold > 0) ? 1 : 0; // 0 déçu, 1 content (un lot entamé suffit), 2 ravi
 };
 export const MOODS = ['Déçu', 'Content', 'Ravi'];
 // eslint-disable-next-line no-var -- var : les imports circulaires (residents.js) appellent setLeaveHook avant cette ligne
@@ -191,7 +205,7 @@ export const leaveToStay = (g, at) => leave(g, at, true);
 function leave(g, at, stay = false) {
     const mood = guestMood(g);
     const loyal = Math.min(REGULARS.tipMax, ((g.visits || 1) - 1) * REGULARS.tip);
-    const tip = mood === 2 ? Math.round(g.wants.reduce((a, w) => a + priceOf(w.item, g), 0) * (tipRate() + loyal + (g.star != null ? STARS.tip : 0))) : 0;
+    const tip = mood === 2 ? Math.round(wantsValue(g) * (tipRate() + loyal + (g.star != null ? STARS.tip : 0))) : 0;
     const c = state.camping;
     c.visits = c.visits || {};
     c.visits[g.name] = g.visits || 1;
@@ -200,6 +214,10 @@ function leave(g, at, stay = false) {
     c.past.length = Math.min(c.past.length, CAMPING.keep);
     c.guests = c.guests.filter(x => x !== g);
     if (tip) earn(tip, at);
+    // 1.131 : la réputation du camping
+    const t0 = campRepTier();
+    c.rep = Math.max(0, (c.rep || 0) + CAMP_REP.gain[mood] + (mood === 2 && g.star != null ? CAMP_REP.star : 0));
+    if (campRepTier() > t0 && view.started) toast(`Le bouche-à-oreille marche : voici un « ${campRepName()} » !`, ['ui', 'star']);
     addXp(CAMPING.xp * (mood === 2 ? 1 : mood === 1 ? 0.5 : 0.2) * (1 + resBonus('xp')) * (g.star != null && mood === 2 ? STARS.xp : 1), at);
     state.stats.campGuests = (state.stats.campGuests || 0) + 1;
     if (g.star != null && mood === 2) state.stats.campStars = (state.stats.campStars || 0) + 1;

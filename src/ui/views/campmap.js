@@ -1,14 +1,14 @@
 // 1.101 : la carte du camping de la vallée. Un vrai terrain, tout près de la ferme : les emplacements avec leurs tentes, les cabanes
 // des résidents, les aménagements, le feu de camp, la Maison et la tente de la fête. On touche un campeur pour lui parler.
 import { fmt } from '../../core/format.js';
-import { CAMPING, PROFILES, EVENT_BONUS } from '../../data/camping.js';
+import { CAMPING, PROFILES, EVENT_BONUS, CAMP_REP } from '../../data/camping.js';
 import { now } from '../../core/clock.js';
 import { PALETTES } from '../../data/maison.js';
 import { state } from '../../core/state.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc } from '../dom.js';
 import { ico } from '../icons.js';
-import { btn, hint } from '../kit.js';
+import { btn, hint, bar } from '../kit.js';
 import { defineView, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { SPRITES, TENT_COLORS, CABIN_COLORS, sceneBg } from '../../art/camping.js';
@@ -132,6 +132,15 @@ const BONUS_TXT = {
     order: c => `commandes +${c} %`,
     star: c => `remarquables +${c} pts`,
 };
+// 1.131 : la réputation du camping
+export function repHtml() {
+    const rep = G.campRep(),
+        t = G.campRepTier(),
+        nx = G.campRepNext();
+    const from = CAMP_REP.tiers[t].n;
+    const fx = t ? ` · pourboires +${Math.round(CAMP_REP.tip * t * 100)} %, remarquables +${Math.round(CAMP_REP.starChance * t * 100)} pts` : '';
+    return `<div class="od-line cm-rep">${ico(['ui', 'trophy'])}<span><b>${G.campRepName()}</b><small>${nx ? `${rep - from} / ${nx.n - from} vers « ${nx.name} »` : 'Le plus beau camping de la région'}${fx}</small>${nx ? bar((rep - from) / (nx.n - from), 'thin') : ''}</span></div>`;
+}
 function infoHtml() {
     const till = G.tillAmount();
     const shop = G.campUp('shop') ? `<div class="od-line"><span><b>Caisse de l’épicerie</b><small>${fmt(till)} pièces</small></span>${btn('Encaisser', { act: 'campTill', kind: till > 0 ? 'green' : '', size: 'sm', disabled: till <= 0 })}</div>` : '';
@@ -143,8 +152,9 @@ function infoHtml() {
         .map(([v, f]) => f(Math.round(v * 100)));
     const fx = bonus.length ? `<div class="od-line">${ico(['ui', 'star'])}<span><b>Grâce aux résidents</b><small>${bonus.join(' · ')}</small></span></div>` : '';
     return `<div class="card camp-card"><div class="card-title">Le camping · ${G.campGuests().length}/${G.campPitches()} emplacements · ${G.campRes().length}/12 résidents</div>
+        ${repHtml()}
         <div class="od-line">${ico(['ui', 'sparkle'])}<span><b>Aujourd’hui : ${ev.name}</b><small>${ev.txt}</small></span></div>${fx}
-        ${hint('Touchez un campeur pour lui vendre ce qu’il cherche, une cabane pour parler au résident, un voyageur au portail pour l’accueillir. Les terrains grisés avec un « + » sont à aménager.')}
+        ${hint('Touchez un campeur pour lui vendre ce qu’il cherche (il achète par lots), une cabane pour parler au résident, un voyageur au portail pour l’accueillir. Les terrains grisés avec un « + » sont à aménager.')}
         ${shop}${pitch}
         <div class="od-foot">${btn('Aménagements', { act: 'open', data: { sheet: 'campups' }, size: 'sm' })}${btn('Tout le camping', { act: 'campHub', data: { id: 'camping' }, size: 'sm' })}</div></div>`;
 }

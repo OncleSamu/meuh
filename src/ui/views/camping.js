@@ -76,10 +76,16 @@ function stayHtml(g, gi) {
 export function guestCard(g, gi) {
     const left = formatDuration(Math.max(0, (g.leave - now()) / 1000));
     const wants = g.wants
-        .map(
-            (w, i) =>
-                `<div class="od-line">${ico(['item', w.item])}<span><b>${ITEMS[w.item].name}${w.q ? ` <em class="q-tag q${w.q}">${QUALITY[w.q].name} ou mieux</em>` : ''}</b><small>${w.done ? 'Vendu ✓' : `${fmt(G.priceOf(w.item, g))} pièces${G.eventBoosts(w.item) ? ' · ' + G.campEvent().name.toLowerCase() : ''}${G.canSell(g, i) ? '' : ' · pas en stock'}`}</small></span>${w.done ? '' : btn('Vendre', { act: 'campSell', data: { g: gi, n: esc(g.name), i }, kind: G.canSell(g, i) ? 'green' : '', size: 'sm', disabled: !G.canSell(g, i) })}</div>`,
-        )
+        .map((w, i) => {
+            const n = G.wantN(w),
+                sold = w.sold || 0,
+                k = G.sellNow(g, i);
+            const have = state.inventory[w.item] || 0;
+            const sub = w.done
+                ? `Vendu ✓ · ${fmt(G.priceOf(w.item, g) * n)} pièces`
+                : `${fmt(G.priceOf(w.item, g))} pièces l’unité${sold ? ` · ${sold}/${n} vendus` : ''}${G.eventBoosts(w.item) ? ' · ' + G.campEvent().name.toLowerCase() : ''}${k ? '' : ` · ${have ? 'pas assez beau' : 'pas en stock'}`}`;
+            return `<div class="od-line">${ico(['item', w.item])}<span><b>${n > 1 ? `${n} × ` : ''}${ITEMS[w.item].name}${w.q ? ` <em class="q-tag q${w.q}">${QUALITY[w.q].name} ou mieux</em>` : ''}</b><small>${sub}</small></span>${w.done ? '' : btn(k ? `Vendre ×${k}` : 'Vendre', { act: 'campSell', data: { g: gi, n: esc(g.name), i }, kind: k ? 'green' : '', size: 'sm', disabled: !k })}</div>`;
+        })
         .join('');
     return `<div class="card camp-card"><div class="card-head">${ico(['villager', g.look], 'ico big')}<div class="card-main"><div class="card-title">${g.star != null ? ico(['ui', 'star']) : ''}${g.name} ${g.from}</div><div class="card-sub">${G.guestTitle(g)} · repart dans ${left}</div></div></div>${stayHtml(g, gi)}${g.say ? `<p class="camp-say">« ${g.say} »</p>` : ''}${wants}${pkLine(g, gi)}${g.star != null ? hint(`Campeur remarquable : produits d’argent au moins, payés ×${STARS.pay}, et un gros pourboire s’il repart ravi.`) : g.visits > 1 ? hint('Un habitué : son pourboire grandit à chaque séjour.') : ''}</div>`;
 }
@@ -89,6 +95,12 @@ export function upsHtml() {
         .map(([id, u]) => `<div class="od-line"><span><b>${u.name}</b><small>${u.desc}</small></span>${btn(costHtml(u.cost), { act: 'campUp', data: { id }, kind: G.upCan(id) ? 'green' : '', size: 'sm', disabled: !G.upCan(id) })}</div>`)
         .join('');
     return ups || '<p class="card-sub">Tous les aménagements sont faits : le camping est complet.</p>';
+}
+// 1.131 : un résident en une ligne ; sa fiche s'ouvre d'un appui
+function resLine(r, i) {
+    const ready = G.resCanDeliver(r);
+    const sub = [r.job, ready ? 'commande prête' : '', G.resGiftReady(r) ? 'cadeau possible' : ''].filter(Boolean).join(' · ');
+    return `<div class="vl-row" data-act="campOne" data-kind="res" data-i="${i}"><div class="avatar xs">${ico(['villager', r.look])}</div><div class="vl-main"><b>${esc(r.name)}</b><span class="vl-sub"><small class="vl-job">${esc(sub)}</small></span></div>${ready ? `<span class="vl-flag">${ico(['item', r.order.item])}</span>` : ''}<span class="vl-go">›</span></div>`;
 }
 export function campingCard() {
     if (!G.campOpen()) return null;
@@ -108,7 +120,7 @@ export function campingCard() {
     return `<div class="camps"><div class="card camp-card"><div class="card-head">${ico(['ui', 'tent'], 'ico big')}<div class="card-main"><div class="card-title">Le camping · ${G.campPitches()} emplacements</div><div class="card-sub">${gs.length} campeur${gs.length > 1 ? 's' : ''} sur place · ${G.campFree()} libre${G.campFree() > 1 ? 's' : ''}</div></div></div>${shop}${pitch}</div>
         ${G.campAsks().map(askCard).join('')}
         ${gs.length ? gs.map(guestCard).join('') : '<p class="card-sub">Un campeur arrive bientôt.</p>'}
-        ${G.campRes().length ? `<div class="card-title camp-h">Résidents (${G.campRes().length}/12)</div>${G.campRes().map(residentCard).join('')}` : ''}
+        ${G.campRes().length ? `<div class="card-title camp-h">Résidents (${G.campRes().length}/12)</div><div class="vl-list">${G.campRes().map(resLine).join('')}</div>` : ''}
         ${ups ? `<div class="card camp-card"><div class="card-title">Améliorations</div>${ups}</div>` : ''}
         ${hint('Vendez-leur ce qu’ils cherchent avant leur départ : tout vendu, ils sont ravis et laissent un pourboire. Rien n’est jamais perdu.')}</div>`;
 }
