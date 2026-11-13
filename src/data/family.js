@@ -167,3 +167,28 @@ export const SPOUSE_LOOK = {
     tuomas: [0, 5, 3],
     ingrid: [0, 5, 3],
 };
+
+// ---------------- 1.125 : ils grandissent, la ville s'agrandit ----------------
+// un enfant adulte choisit son métier : les produits de ce métier se vendent un peu plus cher
+export const KID_METIER = { price: 0.08 };
+// il ou elle peut épouser un résident du camping (3 cœurs d'amitié avec vous), et le couple s'installe au village
+export const KID_WED = {
+    hearts: 3,
+    items: { spongeCake: 4, flowerPot: 3, cider: 4 },
+    house: n => 1500000 * n, // la maison au village du n-ième couple
+    mats: { plank: 60, stone: 40, beam: 16 },
+};
+// leurs enfants, vos petits-enfants : deux par couple, un tous les deux jours
+export const GRANDKIDS = { max: 2, every: 2 * 24 * 3600 * 1000 };
+// la ville : ses habitants (villageois, résidents du camping, votre famille) ; chaque palier relève un peu les prix
+export const TOWN = {
+    tiers: [
+        { n: 0, name: 'Hameau' },
+        { n: 25, name: 'Village' },
+        { n: 32, name: 'Gros village' },
+        { n: 40, name: 'Bourg' },
+        { n: 50, name: 'Petite ville' },
+        { n: 65, name: 'Ville' },
+    ],
+    price: 0.015, // +1,5 % par palier au-dessus du hameau
+};

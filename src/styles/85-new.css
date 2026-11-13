@@ -2446,3 +2446,122 @@ button.ln-node:active {
     color: var(--ink-soft);
     font-size: 0.72rem;
 }
+
+/* 1.125 : ils grandissent, la ville, l'arbre */
+.fm-metiers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 4px;
+}
+.fm-couple {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.fm-gks,
+.fm-matches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 6px 0;
+}
+.fm-matches .fm-suitor {
+    width: 96px;
+}
+.fm-gk {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.72rem;
+}
+.fm-pop {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 10px;
+    text-align: center;
+}
+.fm-pop span {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.fm-pop .ico {
+    width: 30px;
+    height: 30px;
+}
+.fm-pop b {
+    font-size: 1.2rem;
+}
+.fm-pop small {
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+}
+.ft {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+.ft-couple {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+}
+.ft-root {
+    padding: 8px 12px;
+    border-radius: 16px;
+    background: #fff0f4;
+}
+.ft-love {
+    font-style: normal;
+    color: #e2412f;
+    font-size: 1.1rem;
+    margin-top: 16px;
+}
+.ft-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70px;
+    text-align: center;
+}
+.ft-node b {
+    font-size: 0.75rem;
+    line-height: 1.1;
+}
+.ft-node small {
+    font-size: 0.62rem;
+    color: var(--ink-soft);
+}
+.ft-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    position: relative;
+}
+.ft-kids {
+    border-top: 2.5px solid var(--ink);
+    padding-top: 12px;
+}
+.ft-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+.ft-col::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 35px;
+    height: 12px;
+    border-left: 2.5px solid var(--ink);
+}
+.ft-gen2 {
+    border-top: 2px dashed var(--ink-soft);
+    padding-top: 8px;
+}

@@ -4,7 +4,9 @@ import { fmt } from '../../core/format.js';
 import { VILLAGERS } from '../../data/village.js';
 import { ITEMS } from '../../data/items.js';
 import { LOVES } from '../../data/friends.js';
-import { FAMILY, DATES, FOYER, KIDS, TASKS } from '../../data/family.js';
+import { FAMILY, DATES, FOYER, KIDS, TASKS, KID_WED, TOWN, KID_METIER } from '../../data/family.js';
+import { METIERS } from '../../data/metiers.js';
+import { defineSheet } from '../sheets.js';
 import { renameBtn } from '../sheets/rename.js';
 import * as G from '../../systems/index.js';
 import { actions, blocks, esc } from '../dom.js';
@@ -140,11 +142,74 @@ function kidCard(k) {
             ? `<div class="fm-tasks">${TASKS.map(t => `<button class="fm-task${k.task === t.id ? ' on' : ''}" data-act="fmTask" data-id="${k.id}" data-t="${t.id}" title="${t.text}">${ico(t.icon)}<small>${t.name}</small></button>`).join('')}</div>
                <p class="card-sub">${k.task ? `${esc(TASKS.find(t => t.id === k.task).text[0].toUpperCase() + TASKS.find(t => t.id === k.task).text.slice(1))} : +${String(Math.round(G.kidHelp(k) * 1000) / 10).replace('.', ',')} %` : 'Choisissez où il ou elle donne un coup de main.'}</p>`
             : '';
+    const adult = st >= KIDS.ages.length ? adultHtml(k) : '';
     const grow = st < KIDS.ages.length ? `<div class="fm-grow"><small>${KIDS.ageNames[st + 1]} dans ${hoursText(G.kidGrowLeft(k))}</small>${bar(G.stageInto(k))}</div>` : '';
     return `<div class="card fm-kid"><div class="fm-head">${portrait(kidPic(k), 'big')}<div><div class="card-title">${esc(k.name)} ${renameBtn('kid', k.id, 'Renommer')}</div><div class="card-sub">${G.stageName(k)} · ${k.girl ? 'votre fille' : 'votre fils'}</div>
         <div class="fm-aff">${ico(['ui', joy >= KIDS.joy.keep ? 'heart' : 'heartOff'])}${bar(joy / 100, joy >= KIDS.joy.keep ? 'good' : 'bad')}<small>${joy} %</small></div>${grow}</div></div>
-        <div class="fm-cares">${cares}</div>${find}${tasks}</div>`;
+        <div class="fm-cares">${cares}</div>${find}${tasks}${adult}</div>`;
 }
+// 1.125 : l'enfant adulte : son métier, son mariage, ses enfants
+function adultHtml(k) {
+    const met = `${section('Son métier')}<div class="fm-metiers">${Object.entries(METIERS)
+        .map(([id, m]) => `<button class="fm-task${k.metier === id ? ' on' : ''}" data-act="fmMetier" data-id="${k.id}" data-m="${id}">${ico(m.icon)}<small>${m.name}</small></button>`)
+        .join('')}</div><p class="card-sub">${k.metier ? `Les produits ${METIERS[k.metier].name === 'Cuisinier' ? 'du cuisinier' : 'de ce métier'} se vendent ${Math.round(KID_METIER.price * 100)} % plus cher.` : 'Choisissez son métier : ses produits se vendront un peu plus cher.'}</p>`;
+    if (k.spouse) {
+        const gk = (k.gk || [])
+            .map(g => `<span class="fm-gk">${portrait(gkPic(g), 'sm')}<small>${esc(g.name)}</small></span>`)
+            .join('');
+        return `${met}${section('Au village')}<div class="fm-couple">${portrait(k.spouse.look, 'sm')}<span>Marié${k.girl ? 'e' : ''} à <b>${esc(k.spouse.name)}</b>, dans leur maison au village.</span></div>
+            ${gk ? `<div class="fm-gks">${gk}</div>` : '<p class="card-sub">Un petit-enfant devrait bientôt arriver.</p>'}`;
+    }
+    const matches = G.kidMatches();
+    const cost = G.kidWedCost();
+    const list = matches.length
+        ? `<div class="fm-matches">${matches
+              .map(r => `<button class="fm-suitor" data-act="fmKidWed" data-id="${k.id}" data-r="${r.id}" ${G.kidCanWed(k, r.id) ? '' : 'disabled'}>${portrait(r.look)}<b>${esc(r.name)}</b><small>${esc(r.job || '')}</small></button>`)
+              .join('')}</div><div class="fm-check">${ico(['ui', 'fmHome'])}<span>La noce et une maison au village</span>${costRow(G.costParts(cost))}</div>`
+        : `<p class="card-sub">Les résidents du camping avec qui vous avez ${KID_WED.hearts} cœurs d’amitié pourront ${k.girl ? 'la' : 'le'} rencontrer.</p>`;
+    return `${met}${section('Son cœur')}${list}`;
+}
+const gkPic = g => {
+    const st = G.gkStage(g);
+    return st === 0 ? `${g.girl ? 'B' : 'b'}:${g.look}` : st === 1 ? `c:${g.look}` : g.look;
+};
+
+// ---------------- 1.125 : la ville et l'arbre ----------------
+function townTab() {
+    const p = G.population();
+    const nx = G.townNext();
+    const tier = G.townTier();
+    const prev = TOWN.tiers[tier].n;
+    return `<div class="card fm-town"><div class="card-head">${ico(['ui', 'village'], 'ico big')}<div class="card-main"><div class="card-title">${G.townName()} · ${p.total} habitants</div>
+        <div class="card-sub">Tout se vend ${String(Math.round((G.townMult() - 1) * 1000) / 10).replace('.', ',')} % plus cher grâce à la ville.</div></div></div>
+        ${nx ? `<div class="fm-grow"><small>${nx.name} à ${nx.n} habitants</small>${bar((p.total - prev) / (nx.n - prev))}</div>` : ''}
+        <div class="fm-pop">${[
+            ['villager', 'odette', 'Villageois', p.villagers],
+            ['ui', 'tent', 'Résidents du camping', p.residents],
+            ['ui', 'fmHome', 'Votre famille', p.family + 1],
+        ]
+            .map(([a, b, n, v]) => `<span>${ico([a, b])}<b>${v}</b><small>${n}</small></span>`)
+            .join('')}</div></div>
+        ${btn('L’arbre de la famille', { act: 'open', data: { sheet: 'famTree' }, kind: 'gold', wide: true, icon: ['ui', 'fmHome'] })}
+        ${hint('La ville grandit avec ses habitants : les villageois, les résidents du camping, et votre famille (votre conjoint, vos enfants, leurs époux et vos petits-enfants). Chaque palier relève un peu tous les prix.')}`;
+}
+const node = (pic, name, sub, cls = '') => `<div class="ft-node ${cls}">${portrait(pic, 'sm')}<b>${esc(name)}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
+defineSheet('famTree', {
+    title: 'L’arbre de la famille',
+    render() {
+        const F = G.ensureFamily();
+        const me = node(G.meLook(), 'Vous', G.farmName());
+        const sp = F.spouse ? node(F.spouse, G.vName(F.spouse), F.wedDay ? `marié${G.isShe(F.spouse) ? 'e' : ''} le jour ${F.wedDay}` : '') : '';
+        const kidsCols = F.kids
+            .map(
+                k => `<div class="ft-col"><div class="ft-couple">${node(kidPic(k), k.name, G.stageName(k))}${k.spouse ? `<i class="ft-love">♥</i>${node(k.spouse.look, k.spouse.name, 'du camping')}` : ''}</div>
+                ${(k.gk || []).length ? `<div class="ft-row ft-gen2">${k.gk.map(g => node(gkPic(g), g.name, KIDS.ageNames[G.gkStage(g)])).join('')}</div>` : ''}</div>`,
+            )
+            .join('');
+        return `<div class="ft"><div class="ft-couple ft-root">${me}${sp ? `<i class="ft-love">♥</i>${sp}` : ''}</div>
+            ${F.kids.length ? `<div class="ft-row ft-kids">${kidsCols}</div>` : '<p class="empty">Les enfants viendront ici.</p>'}</div>`;
+    },
+});
 function kidsTab() {
     const F = G.ensureFamily();
     if (!F.spouse) return empty('Les enfants viendront après la noce.');
@@ -173,6 +238,7 @@ function renderFamily(el) {
             ['heart', G.spouseOf() ? 'Mon foyer' : 'Cœur', null, G.familyReady()],
             ...(G.spouseOf() ? [['kids', 'Enfants', null, G.kids().reduce((a, k) => a + G.kidReady(k), 0) + (G.canExpect() ? 1 : 0)]] : []),
             ['foyer', 'Pièces', null, FOYER.some(r => G.roomCan(r.id)) && !G.roomLvl('bedroom') ? 1 : 0],
+            ['town', 'La ville', null, 0],
         ],
         'heart',
     );
@@ -182,6 +248,7 @@ function renderFamily(el) {
         ['heart', t === 'heart' ? heartTab() : ''],
         ['kids', t === 'kids' ? kidsTab() : ''],
         ['foyer', t === 'foyer' ? foyerTab() : ''],
+        ['town', t === 'town' ? townTab() : ''],
     ]);
 }
 defineView('village/family', renderFamily);
@@ -200,6 +267,8 @@ export function setupFamily() {
         fmCare: (el, d) => G.careKid(d.id, d.c, el),
         fmFind: (el, d) => G.kidFind(d.id, el),
         fmTask: (el, d) => G.setTask(d.id, d.t),
+        fmMetier: (el, d) => G.setKidMetier(d.id, d.m),
+        fmKidWed: (el, d) => G.kidWed(d.id, +d.r, el),
     });
 }
 export const familyDot = () => (G.familyOpen() ? G.familyReady() : 0);

@@ -7,11 +7,14 @@ import { fmt, pickRand } from '../core/format.js';
 import { ITEMS } from '../data/items.js';
 import { VILLAGERS } from '../data/village.js';
 import { LOVES } from '../data/friends.js';
-import { FAMILY, SUITORS, SHE, DATES, ROSE_LINES, FOYER, KIDS, CARES, SNACKS, TASKS, KID_NAMES, SPOUSE_LOOK } from '../data/family.js';
+import { FAMILY, SUITORS, SHE, DATES, ROSE_LINES, FOYER, KIDS, CARES, SNACKS, TASKS, KID_NAMES, SPOUSE_LOOK, KID_METIER, KID_WED, GRANDKIDS, TOWN } from '../data/family.js';
+import { METIERS } from '../data/metiers.js';
+import { metierOf } from './metier.js';
+import { campRes, resHearts } from './residents.js';
 import { randomLook, idOf, lookOf, isHabitant } from '../art/habitants.js';
 import { meLook } from './identity.js';
 import { heartsOf } from './village.js';
-import { villagerHere, hasCost, payCost } from './home.js';
+import { villagerHere, hasCost, payCost, presentVillagers } from './home.js';
 import { spend, addXp } from './player.js';
 import { addRenom } from './renom.js';
 import { addPhoto } from './style.js';
@@ -439,6 +442,92 @@ export const kidFx = task => {
 };
 export const kidReady = k => (findReady(k) ? 1 : 0) + (caresOf(k).some(c => careCan(k, c)) && kidJoy(k) < KIDS.joy.max - 15 ? 1 : 0);
 
+// ---------------- 1.125 : ils grandissent ----------------
+export const isAdultKid = k => stageOf(k) >= KIDS.ages.length;
+// son métier : les produits de ce métier se vendent un peu plus cher (une fois par métier)
+export function setKidMetier(id, mid) {
+    const k = kidById(id);
+    if (!k || !isAdultKid(k) || !METIERS[mid] || k.metier === mid) return false;
+    k.metier = mid;
+    sfx('pop');
+    toast(`${k.name} devient ${METIERS[mid].name.toLowerCase()}`, METIERS[mid].icon);
+    return true;
+}
+export const kidMetiers = () => [...new Set(((state.family && state.family.kids) || []).filter(k => k.metier && isAdultKid(k)).map(k => k.metier))];
+export const kidMetierMult = item => {
+    const F = state.family;
+    if (!F || !F.kids || !F.kids.length) return 1;
+    const m = metierOf(item);
+    return m && kidMetiers().includes(m) ? 1 + KID_METIER.price : 1;
+};
+// son mariage avec un résident du camping, et la maison au village
+export const couples = () => kids().filter(k => k.spouse);
+export const kidWedCost = () => ({ coins: KID_WED.house(couples().length + 1), ...KID_WED.mats, ...KID_WED.items });
+export const kidMatches = () => campRes().filter(r => resHearts(r) >= KID_WED.hearts);
+export const kidCanWed = (k, rid) => !!k && isAdultKid(k) && !k.spouse && kidMatches().some(r => r.id === rid) && hasCost(kidWedCost());
+export function kidWed(id, rid, at) {
+    const k = kidById(id);
+    const r = campRes().find(x => x.id === rid);
+    if (!r || !kidCanWed(k, r.id)) return false;
+    payCost(kidWedCost());
+    state.camping.res = state.camping.res.filter(x => x !== r);
+    k.spouse = { name: r.name, look: r.look, woman: !!r.woman, job: r.job || '' };
+    k.wedAt = now();
+    k.gk = [];
+    k.gkAt = now();
+    state.stats.kidWeddings = (state.stats.kidWeddings || 0) + 1;
+    addRenom(2, 'une noce au village');
+    addXp(1500 + state.level * 40, at);
+    sfx('level');
+    if (at) burst(at, 'heart', 30);
+    addPhoto('villager', k.look, `Le mariage de ${k.name} et ${r.name}`, 'Une nouvelle maison au village');
+    toast(`${k.name} épouse ${r.name} : une maison de plus au village !`, ['ui', 'fmRing']);
+    return true;
+}
+// les petits-enfants : ils naissent et grandissent tout seuls
+export const gkStage = g => KIDS.ages.filter(h => (now() - g.born) / 3600000 >= h).length;
+function grandkidTick(k) {
+    if (!k.spouse) return false;
+    k.gk = k.gk || [];
+    if (k.gk.length >= GRANDKIDS.max || now() < (k.gkAt || 0) + GRANDKIDS.every) return false;
+    const girl = Math.random() < 0.5;
+    const taken = allPeople().map(p => p.name);
+    const pool = KID_NAMES[girl ? 'girl' : 'boy'].filter(n => !taken.includes(n));
+    const seed = Math.floor(Math.random() * 1e9);
+    const g = { id: k.id + 'g' + (k.gk.length + 1), name: pickRand(pool.length ? pool : KID_NAMES[girl ? 'girl' : 'boy']), girl, born: now(), look: kidLook(k.look, k.spouse.look, girl, seed), gen: 2 };
+    k.gk.push(g);
+    k.gkAt = now();
+    state.stats.grandkids = (state.stats.grandkids || 0) + 1;
+    addRenom(1, 'un petit-enfant');
+    addPhoto('villager', g.look, `La naissance de ${g.name}, fille de ${k.name}`.replace('fille de', girl ? 'fille de' : 'fils de'), 'Les petits-enfants');
+    if (view.started) toast(`${k.name} a un${girl ? 'e' : ''} petit${girl ? 'e' : ''} ${g.name} : vous êtes grand-parent !`, ['ui', 'fmCradle']);
+    return true;
+}
+// tous les membres de la famille (pour l'arbre et les noms)
+export const allPeople = () => {
+    const F = state.family;
+    if (!F) return [];
+    const out = [];
+    for (const k of F.kids || []) {
+        out.push(k);
+        if (k.spouse) out.push(k.spouse);
+        for (const g of k.gk || []) out.push(g);
+    }
+    return out;
+};
+// ---------------- la ville ----------------
+export function population() {
+    const F = state.family || {};
+    const fam = (F.spouse ? 1 : 0) + (F.kids || []).reduce((a, k) => a + 1 + (k.spouse ? 1 : 0) + (k.gk || []).length, 0);
+    const v = presentVillagers().length;
+    const r = campRes().length;
+    return { villagers: v, residents: r, family: fam, total: v + r + fam + 1 };
+}
+export const townTier = () => TOWN.tiers.filter(t => population().total >= t.n).length - 1;
+export const townName = () => TOWN.tiers[townTier()].name;
+export const townNext = () => TOWN.tiers[townTier() + 1] || null;
+export const townMult = () => (familyOpen() ? 1 + TOWN.price * townTier() : 1);
+
 // ce qui attend le joueur (pastille de l'onglet)
 export function familyReady() {
     if (!familyOpen()) return 0;
@@ -448,16 +537,25 @@ export function familyReady() {
             (basketReady() ? 1 : 0) +
             (wordLeft() === 0 && affection() < FAMILY.aff.max - 10 ? 1 : 0) +
             (canExpect() ? 1 : 0) +
-            F.kids.reduce((a, k) => a + kidReady(k), 0)
+            F.kids.reduce((a, k) => a + kidReady(k), 0) +
+            F.kids.filter(k => isAdultKid(k) && !k.metier).length
         );
     if (F.engaged) return canWed() ? 1 : 0;
     if (F.court) return (dateReady() && DATES.some(d => dateCan(d)) ? 1 : 0) + (canPropose() ? 1 : 0);
     return 0;
 }
 export function familyTick() {
-    if (!state.family || !state.family.spouse) return false;
-    const F = state.family;
+    if (!familyOpen()) return false;
+    const F = ensureFamily();
     let ch = false;
+    // la ville change de palier
+    const tier = townTier();
+    if (F.town !== undefined && tier > F.town && view.started) toast(`La vallée compte ${population().total} habitants : la voici « ${townName()} »`, ['ui', 'village']);
+    if (F.town !== tier) {
+        F.town = tier;
+        ch = true;
+    }
+    if (!F.spouse) return ch;
     if (F.baby && now() >= F.baby.due) {
         birth();
         ch = true;
@@ -466,6 +564,7 @@ export function familyTick() {
         const st = stageOf(k);
         settleKid(k);
         if (stageOf(k) !== st) ch = true;
+        if (grandkidTick(k)) ch = true;
     }
     const before = state.family.aff >= FAMILY.aff.keep;
     settleAff();

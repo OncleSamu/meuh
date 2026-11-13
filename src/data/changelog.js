@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.125",
+  "title": "La famille, chapitre 3 : ils grandissent, la ville aussi",
+  "date": "13 novembre 2026",
+  "items": [
+   "Un enfant adulte choisit son métier : les produits de ce métier se vendent 8 % plus cher",
+   "Il ou elle peut épouser un résident du camping (3 cœurs d'amitié avec vous) : la noce, et une nouvelle maison au village",
+   "Les couples ont deux enfants : vos petits-enfants",
+   "Nouvel onglet La ville : les habitants de la vallée (villageois, résidents, famille). De hameau à ville, chaque palier relève tous les prix de 1,5 %",
+   "L'arbre de la famille : vous, votre conjoint, vos enfants, leurs époux et vos petits-enfants"
+  ]
+ },
+ {
   "v": "1.124",
   "title": "La famille, chapitre 2 : les enfants",
   "date": "13 novembre 2026",

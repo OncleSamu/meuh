@@ -1709,6 +1709,14 @@ export const GUIDE_PAGES = [
                 h: 'Bonheur, soins et coups de main',
                 t: 'Le bonheur baisse chaque jour ; au-dessous de 50 %, un enfant grandit deux fois moins vite et aide moitié moins. Chaque soin (biberon, câlin, jeux, goûter, discussion, argent de poche) donne du bonheur et fait grandir un peu. L’enfant ramasse de petites choses toutes les six heures ; l’ado et l’adulte choisissent où aider : au potager, avec les bêtes, à l’atelier ou au marché.',
             },
+            {
+                h: 'Les enfants adultes',
+                t: 'Un enfant adulte choisit son métier : les produits de ce métier se vendent 8 % plus cher. Il ou elle peut épouser un résident du camping avec qui vous avez 3 cœurs d’amitié : la noce et une maison au village (de plus en plus chère). Le couple a ensuite deux enfants, un tous les deux jours : vos petits-enfants.',
+            },
+            {
+                h: 'La ville et l’arbre',
+                t: 'Onglet La ville : les habitants de la vallée (villageois, résidents du camping, votre famille). Hameau, village, gros village, bourg, petite ville, ville : chaque palier relève tous les prix de 1,5 %. Le bouton « L’arbre de la famille » montre toutes les générations.',
+            },
         ],
         see: ['village'],
     },

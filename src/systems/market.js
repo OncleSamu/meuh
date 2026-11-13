@@ -26,17 +26,17 @@ import { tip } from './tips.js';
 import { defiNeed } from './defis.js';
 import { talentPrice } from './friends.js';
 import { renomMult } from './renom.js';
-import { kidFx } from './family.js';
+import { kidFx, townMult, kidMetierMult } from './family.js';
 import { metierPrice } from './metier.js';
 
 const COIN = ['ui', 'coin'];
 
 // ---------------- les prix ----------------
 // 1.106 : le renom du domaine (trains pleins, cave, brasserie) relève tous les prix du grossiste
-export const marketMult = () => Math.max(BALANCE.marketEnd, BALANCE.marketStart - BALANCE.marketSlope * (scaleLvl() - 1)) * renomMult() * kidFx('market'); // 1.124 : un enfant aide au marché
+export const marketMult = () => Math.max(BALANCE.marketEnd, BALANCE.marketStart - BALANCE.marketSlope * (scaleLvl() - 1)) * renomMult() * kidFx('market') * townMult(); // 1.124 : un enfant aide au marché ; 1.125 : la ville grandit
 // 1.61 : « Fait maison » : les produits de l'atelier se vendent plus cher
 // 1.70 : le talent de l'ami (les produits de sa machine se vendent plus cher)
-export const craftMult = id => (ITEMS[id].type === 'artisan' ? 1 + 0.04 * skill('chefPrice') : 1) * talentPrice(id) * metierPrice(id); // 1.114 : le métier de la ferme
+export const craftMult = id => (ITEMS[id].type === 'artisan' ? 1 + 0.04 * skill('chefPrice') : 1) * talentPrice(id) * metierPrice(id) * kidMetierMult(id); // 1.114 : le métier de la ferme ; 1.125 : celui d'un enfant
 export const sellPrice = id => Math.floor(ITEMS[id].sell * masteryMult(id) * marketMult() * priceMult() * craftMult(id));
 export const demand = id => (state.market.f[id] === undefined ? 1 : state.market.f[id]);
 export const dropPer = id => 0.0075 * (1 + Math.log10(ITEMS[id].sell)) * (rank('trader') ? 0.5 : 1) * dropMult(id);
