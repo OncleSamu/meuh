@@ -2649,3 +2649,43 @@ button.fm-gk.bday .gk-b {
     font-weight: 700;
     color: #b8860b;
 }
+
+/* 1.133 : le plan de production */
+.plan-strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+    background: var(--paper-2, #fff7e0);
+    border: 2px dashed var(--line, rgba(58, 38, 24, 0.35));
+    border-radius: 14px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    font: inherit;
+    color: inherit;
+}
+.plan-strip.on {
+    border-style: solid;
+    background: #fff4d2;
+    box-shadow: inset 4px 0 0 #f2c14e;
+}
+.plan-strip > span {
+    flex: 1;
+    min-width: 0;
+}
+.plan-strip b {
+    display: block;
+    font-weight: 800;
+}
+.plan-strip small {
+    display: block;
+    color: var(--ink-soft);
+}
+.plan-strip .ico {
+    width: 30px;
+    height: 30px;
+}
+.plan-strip .bar {
+    margin-top: 4px;
+}

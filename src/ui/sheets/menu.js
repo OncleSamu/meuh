@@ -2,6 +2,7 @@
 import { state, lvOk } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
+import { RECIPES } from '../../data/machines.js';
 import { DAYS_PER_SEASON, WEATHER } from '../../data/world.js';
 import { RARE } from '../../data/commerce.js';
 import { MAX_LEVEL } from '../../data/progress.js';
@@ -209,7 +210,8 @@ defineSheet('barn', {
                 ${surplus && !G.challengeOn('noMarket') ? btn(`Grossiste +${fmt(r.gain)}${COIN()}`, { act: 'barnSell', data: { id: sel }, kind: 'gold', size: 'sm' }) : ''}
                 ${surplus && it.sell ? btn('À l’étal', { act: 'barnStall', data: { id: sel }, kind: 'green', size: 'sm' }) : ''}
                 ${G.vaultOpen() ? btn('Au coffre', { act: 'vaultAdd', data: { id: sel }, size: 'sm', icon: ['ui', 'vault'] }) : ''}
-                ${btn('Produire', { act: 'produce', data: { id: sel }, size: 'sm' })}</div></div>`;
+                ${btn('Produire', { act: 'produce', data: { id: sel }, size: 'sm' })}
+                ${G.plannable(sel) && Object.keys(RECIPES[sel].ing).some(k => RECIPES[k]) ? btn('En faire…', { act: 'open', data: { sheet: 'plan', id: sel }, size: 'sm', icon: ['ui', 'loop'] }) : ''}</div></div>`;
         }
         const can = G.canUpgradeBarn();
         return [

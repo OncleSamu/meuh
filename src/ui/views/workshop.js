@@ -1,4 +1,5 @@
 // Atelier | Machines : chaque machine en vignette, et son tiroir de recettes.
+import { planCard } from '../sheets/plan.js';
 import { state } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
@@ -67,6 +68,7 @@ function renderWorkshop(el) {
             'top',
             `<div class="view-top end"><div class="actions">${btn('Relancer', { act: 'restartMachines', size: 'sm', icon: ['ui', 'loop'] })}${btn('Tout récupérer', { act: 'collectMachines', kind: any ? 'gold' : '', size: 'sm', icon: ['ui', 'basket'], disabled: !any })}</div></div>`,
         ],
+        ['plan', planCard()],
         ['pin', pinBar()],
         [
             'grid',

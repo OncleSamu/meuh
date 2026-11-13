@@ -1007,6 +1007,10 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'Le plan de production',
+                t: 'En haut de l’atelier (ou « En faire en quantité » dans la fiche d’un plat, « En faire… » dans la grange) : choisissez un plat et une quantité (×1, ×5, ×10, ×25). Le jeu calcule toute la chaîne, stock déduit : les lots à lancer sur chaque machine et les produits du champ ou des bêtes qui manquent. « Tout lancer » : les machines libres préparent les étapes, le plan ramasse ce qu’elles font, et le plat final part tout seul quand il y a de quoi faire toute la quantité. Ce que le plan garde ne part pas au marché. Un seul plan à la fois ; les produits bruts sont seulement signalés.',
+            },
+            {
                 h: 'Le plat de la semaine (1.83)',
                 t: 'Dès le niveau 10, Mamie Odette choisit chaque lundi quelque chose à préparer parmi ce que ta ferme sait déjà faire : un plat, un pain, une pâtisserie, une glace, un fromage, une conserve, un jus, un thé ou un café du comptoir, un alcool, un vin, ou même une de tes bières. Jamais un fruit, un légume, une viande, ni de la farine, de l’huile ou du sucre. Toujours rapide à préparer (10 minutes au plus, sauf les bières), pour que tu puisses en faire beaucoup. Tu ne le vends pas au marché : tu le livres à Mamie, dans Village › Commandes › À livrer. Elle le paie tout de suite plus cher (sans faire baisser les prix du marché) : +50 % pour les 50 premiers de la semaine, puis +30 % jusqu’à 100, +20 % jusqu’à 200, +10 % au-delà, et compte ce que tu lui as donné. Chaque exemplaire fabriqué compte aussi double pour sa maîtrise (pas pour les bières). Son dessin apparaît sur la recette. Elle change le lundi à minuit ; jamais deux semaines de suite le même plat.',
             },

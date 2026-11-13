@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.133",
+  "title": "Le plan de production",
+  "date": "13 novembre 2026",
+  "items": [
+   "En haut de l'atelier : choisissez un plat et une quantité, le jeu calcule toute la chaîne (stock déduit)",
+   "Tout lancer : les machines libres préparent les étapes (pâtes, sauce, fromage…), le plan ramasse ce qu'elles font",
+   "Le plat final part tout seul quand il y a de quoi faire toute la quantité voulue",
+   "Les produits du champ et des bêtes qui manquent sont signalés, avec un bouton pour y aller ; le plan reprend dès qu'ils sont en grange",
+   "Ce que le plan garde ne part ni au grossiste ni à l'étal",
+   "Aussi depuis la fiche d'un plat (« En faire en quantité ») et la grange (« En faire… »)"
+  ]
+ },
+ {
   "v": "1.132",
   "title": "Chercher dans la grange",
   "date": "13 novembre 2026",

@@ -38,6 +38,7 @@ import { setupHerdbook } from './ui/sheets/herdbook.js';
 import { setupBrewery } from './ui/views/brewery.js';
 import { setupCounter } from './ui/views/counter.js';
 import { setupFamily } from './ui/views/family.js';
+import { setupPlan } from './ui/sheets/plan.js';
 import { setupOrders } from './ui/views/orders.js';
 import { setupDefis } from './ui/views/defis.js';
 import { setupCamping } from './ui/views/camping.js';
@@ -111,6 +112,7 @@ function start() {
     setupBrewery();
     setupCounter();
     setupFamily();
+    setupPlan();
     setupOrders();
     setupDefis();
     setupCamping();

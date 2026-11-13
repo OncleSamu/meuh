@@ -67,6 +67,7 @@ import { festTick } from './brewfest.js';
 import { catTick } from './seedcat.js';
 import { familyTick } from './family.js';
 import { herdbookTick } from './herdbook.js';
+import { planTick } from './plan.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -377,7 +378,7 @@ function tickProgress() {
     return false;
 }
 
-const SYSTEMS = [tickClock, tickWorld, tickFarm, animalsTick, workshopTick, () => counterTick(1), tickDeliveries, tickCave, tickProgress];
+const SYSTEMS = [tickClock, tickWorld, tickFarm, animalsTick, workshopTick, () => counterTick(1), tickDeliveries, tickCave, tickProgress, () => planTick()];
 
 // renvoie vrai si quelque chose de visible a changé
 export function gameTick() {

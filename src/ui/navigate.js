@@ -126,7 +126,9 @@ defineSheet('needs', {
             })
             .join('');
         const miss = Object.entries(r.ing).filter(([k, n]) => (state.inventory[k] || 0) < n).length;
-        return `<p class="card-sub">${miss ? `Il manque ${miss > 1 ? `${miss} ingrédients` : 'un ingrédient'}. Touchez « Y aller » : le jeu vous mène là où il se fait.` : 'Tout est en stock : la recette est prête à lancer.'}</p><div class="rneeds">${rows}</div>`;
+        // 1.133 : en faire en quantité, avec toute la chaîne
+        const plan = G.plannable(o.id) && Object.keys(r.ing).some(k => RECIPES[k]) ? btn('En faire en quantité', { act: 'open', data: { sheet: 'plan', id: o.id }, kind: 'gold', wide: true, icon: ['ui', 'loop'] }) : '';
+        return `<p class="card-sub">${miss ? `Il manque ${miss > 1 ? `${miss} ingrédients` : 'un ingrédient'}. Touchez « Y aller » : le jeu vous mène là où il se fait.` : 'Tout est en stock : la recette est prête à lancer.'}</p><div class="rneeds">${rows}</div>${plan}`;
     },
 });
 

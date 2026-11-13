@@ -28,6 +28,7 @@ import { talentPrice } from './friends.js';
 import { renomMult } from './renom.js';
 import { kidFx, kidMetierMult } from './family.js';
 import { metierPrice } from './metier.js';
+import { planReserve } from './plan.js';
 
 const COIN = ['ui', 'coin'];
 
@@ -150,6 +151,7 @@ export function reservedQty(id) {
     if (state.incident && state.incident.type === 'express') state.incident.items.forEach(x => x.id === id && (n += x.qty));
     n += projectsNeed(id);
     n += defiNeed(id);
+    n += planReserve(id); // 1.133 : le plan de production
     if (state.truck.status === 'here')
         state.truck.slots.forEach(sl => {
             if (!sl.loaded && sl.id === id) n += sl.qty;

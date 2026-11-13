@@ -135,6 +135,20 @@ export function loopRefill(m) {
     return true;
 }
 
+// 1.133 : lancer une recette sans bruit (pour le plan de production) ; faux si la file est pleine ou s'il manque un ingrédient
+export function queueQuiet(i, id) {
+    const m = state.machines[i],
+        r = RECIPES[id];
+    if (!m || !r || r.machine !== m.type || !recipeUnlocked(id) || m.queue.length >= machineSlots(m.type) || !canCook(id)) return false;
+    const t = takeFor(m, id);
+    clampAllQuality();
+    if (!m.queue.length) m.progress = 0;
+    if (m.queue.length < 2) m.progress2 = 0;
+    pushJob(m, id, t.q, t.vid);
+    m.last = id;
+    return true;
+}
+
 export function toggleLoop(i) {
     const m = state.machines[i];
     if (!m) return;
