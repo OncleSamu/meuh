@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.130",
+  "title": "Chercher une graine",
+  "date": "13 novembre 2026",
+  "items": [
+   "Le tiroir des graines a une barre de recherche : tapez quelques lettres (« to » trouve tomate, tournesol, coton…)",
+   "La recherche fouille toutes les graines à la fois, avec les variétés du labo et les décorations",
+   "Sans accents ni majuscules : « mais » trouve le maïs"
+  ]
+ },
+ {
   "v": "1.129",
   "title": "La famille au village",
   "date": "13 novembre 2026",

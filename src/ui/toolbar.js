@@ -10,7 +10,8 @@ import { genWrap } from './genlook.js';
 import { ico, art, COIN } from './icons.js';
 import { currentPath, setToolbar, ui } from './app.js';
 import { defineSheet, closeSheet } from './sheets.js';
-import { hint } from './kit.js';
+import { hint, empty } from './kit.js';
+import { searchBox, queryOf, matchQ } from './pager.js';
 
 const isSeed = t => ITEMS[t] && ITEMS[t].type === 'crop';
 
@@ -83,6 +84,10 @@ const seedBtn = i => {
     const tag = G.isInSeason(i.id) ? `<span class="season-tag">${art('ui', G.season().icon)}</span>` : '';
     return `<button class="seed${state.selectedTool === i.id ? ' on' : ''}${n === 0 && i.type === 'tree' ? ' empty' : ''}" data-act="pickSeed" data-t="${i.id}">${art('seed', i.id)}${badge}${tag}<small>${i.name}</small></button>`;
 };
+const varBtn = v =>
+    `<button class="seed var${curVar() === v ? ' on' : ''}" data-act="pickVarSeed" data-id="${v.id}">${genWrap(art('item', v.base), v.g)}<span class="badge gold">${state.genetics.seeds[v.id]}</span><small>${esc(G.varName(v))}</small></button>`;
+const decoBtn = d =>
+    `<button class="seed${state.selectedTool === 'deco:' + d.id ? ' on' : ''}" data-act="pickSeed" data-t="deco:${d.id}">${art('ui', d.id)}<span class="badge blue">${state.decorInv[d.id]}</span><small>${d.name}</small></button>`;
 defineSheet('seeds', {
     title: 'Que planter ?',
     render() {
@@ -102,29 +107,35 @@ defineSheet('seeds', {
         if (!tabs.some(([k]) => k === tab)) tab = tabs[0][0];
         const recent = (state.settings.recentSeeds || []).map(id => all.find(i => i.id === id)).filter(Boolean);
         const sorted = list => list.slice().sort((a, b) => G.isInSeason(b.id) - G.isInSeason(a.id) || (a.reqLvl || 0) - (b.reqLvl || 0));
+        // 1.130 : une recherche par nom, dans toutes les graines, variétés et décorations à la fois
+        const q = queryOf('seeds');
+        if (q) {
+            const hits = sorted(all.filter(i => matchQ(q, i.name, i.seedName)));
+            const vHits = vars.filter(v => matchQ(q, G.varName(v), ITEMS[v.base].name));
+            const dHits = decos.filter(d => matchQ(q, d.name));
+            const cells = hits.map(seedBtn).join('') + vHits.map(varBtn).join('') + dHits.map(decoBtn).join('');
+            return [
+                ['search', searchBox('seeds', 'Chercher une graine')],
+                ['recent', ''],
+                ['tabs', ''],
+                ['grid', cells ? `<div class="seed-grid">${cells}</div>` : empty(`Aucune graine ne correspond à « ${esc(ui.sel.q.seeds)} ».`)],
+                ['hint', ''],
+            ];
+        }
         let grid;
-        if (tab === 'vars')
-            grid = vars
-                .map(
-                    v =>
-                        `<button class="seed var${curVar() === v ? ' on' : ''}" data-act="pickVarSeed" data-id="${v.id}">${genWrap(art('item', v.base), v.g)}<span class="badge gold">${state.genetics.seeds[v.id]}</span><small>${esc(G.varName(v))}</small></button>`,
-                )
-                .join('');
-        else if (tab === 'decos')
-            grid = decos
-                .map(
-                    d =>
-                        `<button class="seed${state.selectedTool === 'deco:' + d.id ? ' on' : ''}" data-act="pickSeed" data-t="deco:${d.id}">${art('ui', d.id)}<span class="badge blue">${state.decorInv[d.id]}</span><small>${d.name}</small></button>`,
-                )
-                .join('');
+        if (tab === 'vars') grid = vars.map(varBtn).join('');
+        else if (tab === 'decos') grid = decos.map(decoBtn).join('');
         else
             grid = sorted(tab === 'season' ? inSeason : tab === 'stock' ? inStock : all)
                 .map(seedBtn)
                 .join('');
-        return `${recent.length ? `<h3 class="section-title"><span>Récentes</span></h3><div class="seed-grid recent">${recent.map(seedBtn).join('')}</div>` : ''}
-            <div class="chips-row seed-tabs">${tabs.map(([k, label, n]) => `<button class="pick-chip${k === tab ? ' on' : ''}" data-act="seedTab" data-f="${k}">${label} · ${n}</button>`).join('')}</div>
-            <div class="seed-grid">${grid}</div>
-            ${tab === 'season' || tab === 'all' ? hint(`En ${G.season().name.toLowerCase()}, les cultures marquées ${ico(['ui', G.season().icon])} poussent 30 % plus vite.`) : ''}`;
+        return [
+            ['search', searchBox('seeds', 'Chercher une graine')],
+            ['recent', recent.length ? `<h3 class="section-title"><span>Récentes</span></h3><div class="seed-grid recent">${recent.map(seedBtn).join('')}</div>` : ''],
+            ['tabs', `<div class="chips-row seed-tabs">${tabs.map(([k, label, n]) => `<button class="pick-chip${k === tab ? ' on' : ''}" data-act="seedTab" data-f="${k}">${label} · ${n}</button>`).join('')}</div>`],
+            ['grid', `<div class="seed-grid">${grid}</div>`],
+            ['hint', tab === 'season' || tab === 'all' ? hint(`En ${G.season().name.toLowerCase()}, les cultures marquées ${ico(['ui', G.season().icon])} poussent 30 % plus vite.`) : ''],
+        ];
     },
 });
 const rememberSeed = id => {
