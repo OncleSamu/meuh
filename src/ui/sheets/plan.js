@@ -72,9 +72,9 @@ function choose(id) {
         ['head', `<div class="card-head">${ico(['item', id], 'ico big')}<div class="card-main"><div class="card-title">${n} ${plainName(id)}</div><div class="card-sub">${MACHINES[RECIPES[id].machine].name} · environ ${dur(sum.time)} · en stock : ${fmt(state.inventory[id] || 0)}</div></div></div>`],
         [
             'qty',
-            `<div class="plan-qty"><button class="pq-b" data-act="planStep" data-d="-10" aria-label="10 de moins">−10</button><button class="pq-b" data-act="planStep" data-d="-1" aria-label="Un de moins">−</button>
-            <label class="pq-in"><span>Quantité</span><input type="number" inputmode="numeric" min="1" max="${G.PLAN_MAX}" value="${esc(raw)}" data-input="planQty" aria-label="Quantité à faire"></label>
-            <button class="pq-b" data-act="planStep" data-d="1" aria-label="Un de plus">+</button><button class="pq-b" data-act="planStep" data-d="10" aria-label="10 de plus">+10</button></div>`,
+            `<div class="plan-qty">${btn('10', { act: 'planStep', data: { d: -10 }, icon: ['ui', 'minus'], disabled: n <= 1, title: '10 de moins' })}${btn('', { act: 'planStep', data: { d: -1 }, icon: ['ui', 'minus'], disabled: n <= 1, title: 'Un de moins' })}
+            <input type="number" inputmode="numeric" min="1" max="${G.PLAN_MAX}" value="${esc(raw)}" data-input="planQty" aria-label="Quantité à faire">
+            ${btn('', { act: 'planStep', data: { d: 1 }, icon: ['ui', 'plus'], disabled: n >= G.PLAN_MAX, title: 'Un de plus' })}${btn('10', { act: 'planStep', data: { d: 10 }, icon: ['ui', 'plus'], disabled: n >= G.PLAN_MAX, title: '10 de plus' })}</div>`,
         ],
         ['presets', `<div class="chips-row">${G.PLAN_QTYS.map(q => `<button class="pick-chip${q === n ? ' on' : ''}" data-act="planN" data-n="${q}">×${q}</button>`).join('')}</div>`],
         ['chain', chain(sum) || '<p class="card-sub">Tout est déjà en grange : le plan lance le plat tout de suite.</p>'],

@@ -2689,39 +2689,45 @@ button.fm-gk.bday .gk-b {
 .plan-strip .bar {
     margin-top: 4px;
 }
-/* 1.134 : la quantité du plan */
+/* 1.134 : la quantité du plan (1.135 : les boutons du jeu, une case au milieu) */
 .plan-qty {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr) auto auto;
     align-items: center;
     gap: 6px;
-    margin: 8px 0;
+    margin: 10px 0 8px;
 }
-.pq-b {
-    min-width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    border: 2px solid var(--ink, #3a2618);
-    background: #fff;
-    font: 800 16px var(--display, inherit);
-    color: inherit;
-    box-shadow: 0 2px 0 var(--ink, #3a2618);
+.plan-qty .btn {
+    min-width: 46px;
+    min-height: 46px;
+    padding: 6px 9px;
+    gap: 2px;
 }
-.pq-in {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--ink-soft);
+.plan-qty .btn .ico {
+    width: 18px;
+    height: 18px;
 }
-.pq-in input {
+.plan-qty input {
     width: 100%;
-    height: 44px;
-    border-radius: 12px;
-    border: 2px solid var(--ink, #3a2618);
+    min-width: 0;
+    height: 46px;
+    border-radius: 14px;
+    border: 2.5px solid var(--ink);
+    background: #fff;
+    box-shadow: inset 0 3px 0 rgba(58, 38, 24, 0.08);
     text-align: center;
-    font: 800 20px var(--display, inherit);
-    background: #fff7e0;
-    color: #3a2618;
+    font: 900 1.35rem var(--display, inherit);
+    color: var(--ink);
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+.plan-qty input::-webkit-outer-spin-button,
+.plan-qty input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.plan-qty input:focus {
+    outline: none;
+    border-color: var(--gold-d, #c9952a);
+    box-shadow: 0 0 0 3px rgba(242, 193, 78, 0.45);
 }

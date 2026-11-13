@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.135",
+  "title": "Le plan : de plus beaux boutons",
+  "date": "13 novembre 2026",
+  "items": [
+   "Les boutons −10, −, + et +10 du plan de production reprennent ceux du jeu, autour d'une grande case pour la quantité"
+  ]
+ },
+ {
   "v": "1.134",
   "title": "Le plan : la quantité au choix",
   "date": "13 novembre 2026",
