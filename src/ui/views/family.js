@@ -4,7 +4,8 @@ import { fmt } from '../../core/format.js';
 import { VILLAGERS } from '../../data/village.js';
 import { ITEMS } from '../../data/items.js';
 import { LOVES } from '../../data/friends.js';
-import { FAMILY, DATES, FOYER, KIDS, TASKS, KID_WED, TOWN, KID_METIER } from '../../data/family.js';
+import { FAMILY, DATES, FOYER, KIDS, TASKS, KID_WED, TOWN, KID_METIER, MEAL, LANDMARKS } from '../../data/family.js';
+import { townMapArt } from '../../art/famille.js';
 import { METIERS } from '../../data/metiers.js';
 import { defineSheet } from '../sheets.js';
 import { renameBtn } from '../sheets/rename.js';
@@ -97,7 +98,26 @@ function spouseCard() {
                 ? `<p class="card-sub"><b>Son talent</b> : ${G.talentText(vid)}${G.spouseHappy() ? ' (un cran de plus, grâce à la tendresse)' : ''}.</p>`
                 : '<p class="card-sub">Venu du camping, il ou elle n’a pas de talent d’ami, mais ses paniers sont plus garnis (+30 %).</p>'.replace('il ou elle', G.ilElle(vid))
         }
+        ${mealCard()}
         ${hint(`La tendresse baisse un peu chaque jour. Au-dessus de ${FAMILY.aff.keep} %, le talent de votre ${G.isShe(vid) ? 'épouse' : 'époux'} monte d’un cran et ses paniers sont pleins. Un mot doux toutes les quatre heures suffit.`)}</div>`;
+}
+// 1.127 : le repas de famille
+function mealCard() {
+    const guests = G.mealGuests();
+    const left = G.mealLeft();
+    const plan = G.mealPlan();
+    const faces = guests
+        .slice(0, 12)
+        .map(p => `<span class="avatar sm" title="${esc(p.name)}">${art('villager', p.kid ? kidPic(p.kid) : p.look)}</span>`)
+        .join('');
+    const dishes = plan
+        ? need(plan)
+        : `<span class="short">${G.mealNeed()} plats cuisinés (soupe, omelette, quiche, gratin, pizza, pot-au-feu…)</span>`;
+    return `${section('Le repas de famille', left ? `<small class="fm-wait">prochain dans ${timer(Date.now() + left)}</small>` : '')}
+        <div class="fm-meal"><div class="fm-faces">${faces}${guests.length > 12 ? `<small>+${guests.length - 12}</small>` : ''}</div>
+        <small>${guests.length} à table, un plat pour deux : ${dishes}</small>
+        <small>Tendresse +${MEAL.aff}, bonheur des enfants +${MEAL.joy}, ${fmt(G.mealXp(guests.length, G.mealVaried(plan)))} d’expérience${G.mealVaried(plan) ? ' (menu varié : +50 %)' : ' (+50 % si tous les plats sont différents)'}</small>
+        ${btn('Passer à table', { act: 'fmMeal', kind: 'gold', size: 'sm', disabled: !G.mealCan(), icon: ['ui', 'cake'] })}</div>`;
 }
 function heartTab() {
     const F = G.ensureFamily();
@@ -147,10 +167,30 @@ function kidCard(k) {
                <p class="card-sub">${k.task ? `${esc(TASKS.find(t => t.id === k.task).text[0].toUpperCase() + TASKS.find(t => t.id === k.task).text.slice(1))} : +${String(Math.round(G.kidHelp(k) * 1000) / 10).replace('.', ',')} %` : 'Choisissez où il ou elle donne un coup de main.'}</p>`
             : '';
     const adult = st >= KIDS.ages.length ? adultHtml(k) : '';
+    const life = kidLife(k);
     const grow = st < KIDS.ages.length ? `<div class="fm-grow"><small>${KIDS.ageNames[st + 1]} dans ${hoursText(G.kidGrowLeft(k))}</small>${bar(G.stageInto(k))}</div>` : '';
     return `<div class="card fm-kid"><div class="fm-head">${portrait(kidPic(k), 'big')}<div><div class="card-title">${esc(k.name)} ${renameBtn('kid', k.id, 'Renommer')}</div><div class="card-sub">${G.stageName(k)} · ${k.girl ? 'votre fille' : 'votre fils'}</div>
         <div class="fm-aff">${ico(['ui', joy >= KIDS.joy.keep ? 'heart' : 'heartOff'])}${bar(joy / 100, joy >= KIDS.joy.keep ? 'good' : 'bad')}<small>${joy} %</small></div>${grow}</div></div>
-        <div class="fm-cares">${cares}</div>${find}${tasks}${adult}</div>`;
+        ${life}<div class="fm-cares">${cares}</div>${find}${tasks}${adult}</div>`;
+}
+// 1.127 : l'anniversaire et le cadeau préféré
+function kidLife(k) {
+    const fav = G.favOf(k);
+    const have = state.inventory[fav] || 0;
+    const gl = G.giftLeft(k);
+    let bd = '';
+    if (G.bdayToday(k)) {
+        const cake = G.cakeOf();
+        bd = `<div class="fm-bday">${ico(['ui', 'cake'], 'ico big')}<div><b>C’est l’anniversaire de ${esc(k.name)} !</b><small>${
+            cake ? `Un ${ITEMS[cake].name.toLowerCase()}${have ? ` et son cadeau préféré (${ITEMS[fav].name.toLowerCase()})` : ''}.` : 'Il faut un gâteau (éponge, fraises, chocolat, noix…).'
+        } Encore ${timer(Date.now() + G.bdayLeft(k))}</small></div>${btn('Fêter', { act: 'fmBday', data: { id: k.id }, kind: 'gold', size: 'sm', disabled: !G.bdayCan(k) })}</div>`;
+    }
+    const next = !G.isAdultKid(k) && !G.bdayToday(k) ? ` · anniversaire dans ${hoursText(G.bdayNext(k) / 3600000)}` : '';
+    const gift = `<div class="fm-gift">${ico(['item', fav])}<span><small>Son cadeau préféré${next}</small><b>${esc(ITEMS[fav].name)}</b> <span class="${have ? 'ok' : 'short'}">(${have})</span></span>${btn(
+        gl ? timer(Date.now() + gl) : 'Offrir',
+        { act: 'fmGift', data: { id: k.id }, kind: gl ? '' : 'green', size: 'sm', disabled: !G.giftCan(k) },
+    )}</div>`;
+    return bd + gift;
 }
 // 1.125 : l'enfant adulte : son métier, son mariage, ses enfants
 function adultHtml(k) {
@@ -194,8 +234,26 @@ function townTab() {
         ]
             .map(([a, b, n, v]) => `<span>${ico([a, b])}<b>${v}</b><small>${n}</small></span>`)
             .join('')}</div></div>
+        ${townMap()}
         ${btn('L’arbre de la famille', { act: 'open', data: { sheet: 'famTree' }, kind: 'gold', wide: true, icon: ['ui', 'fmHome'] })}
         ${hint('La ville grandit avec ses habitants : les villageois, les résidents du camping, et votre famille (votre conjoint, vos enfants, leurs époux et vos petits-enfants). Chaque palier relève un peu tous les prix.')}`;
+}
+// 1.127 : la carte de la ville
+function townMap() {
+    const houses = G.townHouses();
+    const tents = G.townTents();
+    const marks = G.landmarks();
+    const pick = ui.sel.tmPick;
+    let info = 'Touchez une maison pour voir qui y habite.';
+    if (pick && pick.k === 'house' && houses[pick.i]) {
+        const h = houses[pick.i];
+        info = `<b>${esc(h.name)}</b> · ${h.who.map(esc).join(', ')}`;
+    } else if (pick && pick.k === 'tent' && tents[pick.i]) info = `<b>Une tente du camping</b> · ${esc(tents[pick.i])}`;
+    else if (pick && pick.k === 'mark' && marks[pick.i]) info = `<b>${esc(marks[pick.i].name)}</b> · bâti quand la vallée est devenue « ${TOWN.tiers[marks[pick.i].tier].name} »`;
+    const nx = LANDMARKS.find(l => l.tier > G.townTier());
+    return `<div class="card tm-card">${townMapArt(houses, tents, marks, pick)}<p class="card-sub center tm-info">${info}</p>${
+        nx ? `<p class="card-sub center">Prochain grand bâtiment : ${nx.name.toLowerCase()}, au palier « ${TOWN.tiers[nx.tier].name} ».</p>` : ''
+    }</div>`;
 }
 const node = (pic, name, sub, cls = '') => `<div class="ft-node ${cls}">${portrait(pic, 'sm')}<b>${esc(name)}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
 defineSheet('famTree', {
@@ -289,6 +347,12 @@ export function setupFamily() {
         fmCare: (el, d) => G.careKid(d.id, d.c, el),
         fmFind: (el, d) => G.kidFind(d.id, el),
         fmTask: (el, d) => G.setTask(d.id, d.t),
+        fmGift: (el, d) => G.giveKidGift(d.id, el),
+        fmBday: (el, d) => G.celebrate(d.id, el),
+        fmMeal: el => G.familyMeal(el),
+        fmHouse: (el, d) => (ui.sel.tmPick = { k: 'house', i: +d.i }),
+        fmTent: (el, d) => (ui.sel.tmPick = { k: 'tent', i: +d.i }),
+        fmMark: (el, d) => (ui.sel.tmPick = { k: 'mark', i: +d.i }),
         fmMetier: (el, d) => G.setKidMetier(d.id, d.m),
         fmKidWed: (el, d) => G.kidWed(d.id, +d.r, el),
         fmLegate: (el, d) => {

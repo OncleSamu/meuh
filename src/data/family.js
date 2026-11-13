@@ -192,3 +192,39 @@ export const TOWN = {
     ],
     price: 0.015, // +1,5 % par palier au-dessus du hameau
 };
+
+// ---------------- 1.127 : la vie de famille ----------------
+// les anniversaires : tous les deux jours depuis la naissance, jusqu'à l'âge adulte ; on a une journée pour le fêter
+export const BDAY = {
+    every: 2 * 24 * 3600 * 1000,
+    window: 24 * 3600 * 1000,
+    cakes: ['spongeCake', 'strawberryCake', 'chocCake', 'walnutCake', 'mandarinCake', 'pineappleCake', 'easterCake'],
+    joy: 40,
+    grow: 6, // heures de croissance offertes
+    favGrow: 6, // et autant si on offre aussi son cadeau préféré
+    miss: 20, // le bonheur perdu si on l'oublie
+};
+// le cadeau préféré, selon l'âge ; il change une fois offert
+export const FAVS = [
+    ['wool', 'honey', 'juice', 'strawberry'],
+    ['cookies', 'crepes', 'waffles', 'jam', 'lemonade', 'woolHat', 'strawHat'],
+    ['scarf', 'sweater', 'colorSweater', 'perfume', 'lavenderSoap', 'pizza', 'chocCake'],
+    ['paintedVase', 'flowerPot', 'cheese', 'cider', 'fondue', 'candle'],
+];
+export const GIFT = { wait: 8 * 3600 * 1000, joy: 35, aff: 10 };
+// le repas de famille : tout le monde à table, un plat pour deux convives
+export const MEAL = {
+    wait: 20 * 3600 * 1000,
+    dishes: ['soup', 'omelette', 'quiche', 'gratin', 'salad', 'pizza', 'fondue', 'paella', 'couscous', 'potee', 'potAuFeu', 'butterPotatoes', 'pie', 'bread'],
+    joy: 30,
+    aff: 30,
+    xp: 12, // par convive, plus le niveau
+};
+// les grands bâtiments de la ville, un par palier
+export const LANDMARKS = [
+    { tier: 1, id: 'well', name: 'Le puits de la place' },
+    { tier: 2, id: 'chapel', name: 'La chapelle' },
+    { tier: 3, id: 'fountain', name: 'La fontaine' },
+    { tier: 4, id: 'hall', name: 'La halle du marché' },
+    { tier: 5, id: 'townhall', name: 'La mairie' },
+];

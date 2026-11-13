@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.127",
+  "title": "La famille, chapitre 5 : la vie de famille",
+  "date": "13 novembre 2026",
+  "items": [
+   "Les anniversaires : tous les deux jours jusqu'à l'âge adulte, fêtez-les avec un gâteau (et son cadeau préféré pour grandir deux fois plus)",
+   "Chaque enfant a son cadeau préféré, qui change avec l'âge et après chaque cadeau",
+   "Le repas de famille, une fois par jour : toute la famille à table, un plat pour deux, tendresse, bonheur et expérience",
+   "La carte de la ville : une maison par foyer, les tentes du camping, et un grand bâtiment par palier (puits, chapelle, fontaine, halle, mairie)"
+  ]
+ },
+ {
   "v": "1.126",
   "title": "La famille, chapitre 4 : la transmission",
   "date": "13 novembre 2026",

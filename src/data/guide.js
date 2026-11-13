@@ -1718,8 +1718,16 @@ export const GUIDE_PAGES = [
                 t: 'Sept jours après la noce (ou la transmission précédente), vous pouvez léguer la ferme à un enfant adulte qui a choisi son métier : vous devenez lui ou elle, avec son conjoint et ses enfants. Rien ne repart de zéro : la ferme, les pièces d’or et le niveau restent. Vous et votre conjoint prenez votre retraite au village : chaque génération d’anciens donne +5 % d’expérience aux commandes (cinq au plus). Les frères et sœurs restent au village, et leur métier compte toujours.',
             },
             {
+                h: 'Anniversaires et cadeaux',
+                t: 'Tous les deux jours, jusqu’à l’âge adulte, un enfant fête son anniversaire : vous avez une journée pour le fêter avec un gâteau (éponge, fraises, chocolat, noix…). Bonheur au maximum, quelques heures de croissance, et le double si vous offrez aussi son cadeau préféré. Un anniversaire oublié rend triste. Le cadeau préféré change avec l’âge et après chaque cadeau ; on peut l’offrir toutes les huit heures.',
+            },
+            {
+                h: 'Le repas de famille',
+                t: 'Une fois par jour (onglet Mon foyer), toute la famille passe à table : conjoint, enfants, frères et sœurs et leurs époux, anciens. Il faut un plat cuisiné pour deux convives. Tendresse et bonheur des enfants remontent, et l’expérience grandit avec la tablée (+50 % si tous les plats sont différents).',
+            },
+            {
                 h: 'La ville et l’arbre',
-                t: 'Onglet La ville : les habitants de la vallée (villageois, résidents du camping, votre famille). Hameau, village, gros village, bourg, petite ville, ville : chaque palier relève tous les prix de 1,5 %. Le bouton « L’arbre de la famille » montre toutes les générations.',
+                t: 'Onglet La ville : les habitants de la vallée (villageois, résidents du camping, votre famille). Hameau, village, gros village, bourg, petite ville, ville : chaque palier relève tous les prix de 1,5 %. La carte montre chaque maison (touchez-la pour voir qui y habite), les tentes du camping et un grand bâtiment par palier : le puits, la chapelle, la fontaine, la halle et la mairie. Le bouton « L’arbre de la famille » montre toutes les générations.',
             },
         ],
         see: ['village'],

@@ -177,3 +177,120 @@ Object.assign(ui, {
         FC(25, 22, 2, O) +
         FC(34, 22, 2, O),
 });
+
+// ---------------- 1.127 : la carte de la ville ----------------
+const WALLS = ['#f2d6a2', '#f7f3ea', '#f3c9b5', '#e6dcc0', '#d9e7c9', '#cfe0ec', '#f5e1a4'];
+const ROOFS = ['#c8453a', '#5aa9e6', '#8e5a3c', '#6c8e3c', '#a05aa8', '#e08a2c', '#596a7a'];
+const g = (x, y, s, inner, attrs = '') => `<g transform="translate(${x} ${y}) scale(${s})"${attrs}>${inner}</g>`;
+function houseArt(kind, i) {
+    const wall = kind === 'farm' ? '#f2d6a2' : kind === 'elder' ? '#efe3cf' : WALLS[i % WALLS.length];
+    const roof = kind === 'farm' ? '#b5332a' : kind === 'elder' ? '#7a8a6a' : kind === 'couple' ? '#e0607e' : ROOFS[(i * 3 + 1) % ROOFS.length];
+    if (kind === 'farm')
+        return (
+            SHADOW(32, 59, 30, 3) +
+            R(4, 30, 56, 28, 1, wall, 2.4) +
+            P('M0 32 L32 8 L64 32Z', roof, 2.4) +
+            R(26, 40, 12, 18, 1, '#8b5a2b', 2) +
+            R(9, 38, 10, 9, 1, '#bfe6fb', 1.8) +
+            R(45, 38, 10, 9, 1, '#bfe6fb', 1.8) +
+            L('M27 41 L37 57 M37 41 L27 57', 1.4, '#f2d6a2') +
+            heart(32, 22, 0.6, '#ffd23f', 1.6)
+        );
+    const door = kind === 'couple' ? heart(32, 30, 0.5, '#f06292', 1.6) : '';
+    const smoke = kind === 'elder' ? FC(48, 8, 3, '#d6d6d6', 0.8) + FC(52, 3, 2.4, '#e6e6e6', 0.7) : '';
+    return (
+        SHADOW(32, 59, 24, 3) +
+        smoke +
+        R(44, 12, 6, 14, 1, '#9a6a4a', 1.8) +
+        R(12, 34, 40, 24, 1, wall, 2.4) +
+        P('M6 36 L32 16 L58 36Z', roof, 2.4) +
+        R(27, 44, 10, 14, 1, '#8b5a2b', 2) +
+        R(16, 40, 8, 7, 1, '#bfe6fb', 1.6) +
+        R(40, 40, 8, 7, 1, '#bfe6fb', 1.6) +
+        door
+    );
+}
+const tentArt = i =>
+    SHADOW(32, 58, 24, 3) + P('M8 56 L32 18 L56 56Z', ['#f2a33a', '#64b5f6', '#e57373', '#81c784'][i % 4], 2.4) + P('M26 56 L32 40 L38 56Z', '#5a3a22', 2) + L('M32 18 L32 10', 2);
+const LANDMARK_ART = {
+    well: () => SHADOW(32, 58, 18, 3) + R(18, 40, 28, 16, 2, '#b8b0a4', 2.4) + L('M20 40 L20 20 M44 40 L44 20', 2.6) + P('M14 22 L32 10 L50 22Z', '#8e5a3c', 2.2) + L('M32 22 L32 34', 1.4) + R(29, 32, 6, 5, 1, '#8b5a2b', 1.4),
+    chapel: () =>
+        SHADOW(32, 59, 22, 3) +
+        R(16, 30, 32, 28, 1, '#f7f3ea', 2.4) +
+        P('M12 32 L32 14 L52 32Z', '#596a7a', 2.4) +
+        R(26, 4, 12, 14, 1, '#f7f3ea', 2) +
+        L('M32 -4 L32 4 M28 0 L36 0', 2) +
+        P('M27 58 L27 46 Q32 40 37 46 L37 58Z', '#8b5a2b', 2) +
+        C(32, 24, 3, '#ffd23f', 1.4),
+    fountain: () =>
+        SHADOW(32, 58, 26, 3) +
+        E(32, 50, 26, 8, '#b8b0a4', 0, 2.4) +
+        E(32, 48, 20, 5, '#7cc4f0', 0, 1.4) +
+        R(29, 26, 6, 22, 2, '#b8b0a4', 2) +
+        E(32, 26, 10, 3, '#b8b0a4', 0, 2) +
+        L('M32 24 Q24 12 18 30 M32 24 Q40 12 46 30', 1.8, '#7cc4f0'),
+    hall: () =>
+        SHADOW(32, 59, 30, 3) +
+        P('M2 30 L32 12 L62 30Z', '#c8453a', 2.4) +
+        R(6, 30, 52, 4, 1, '#e6dcc0', 2) +
+        L('M10 34 L10 58 M22 34 L22 58 M42 34 L42 58 M54 34 L54 58', 3, '#8e5a3c') +
+        R(26, 46, 12, 8, 1, '#ffd23f', 1.6) +
+        FC(18, 54, 3, '#e2412f') +
+        FC(48, 54, 3, '#6cc04a'),
+    townhall: () =>
+        SHADOW(32, 59, 30, 3) +
+        R(4, 28, 56, 30, 1, '#f7f3ea', 2.4) +
+        P('M0 30 L32 14 L64 30Z', '#596a7a', 2.4) +
+        R(26, 2, 12, 16, 1, '#f7f3ea', 2) +
+        C(32, 9, 4, '#fff', 1.6) +
+        L('M32 9 L32 6 M32 9 L34 10', 1.2) +
+        R(27, 42, 10, 16, 1, '#8b5a2b', 2) +
+        R(10, 36, 8, 10, 1, '#bfe6fb', 1.6) +
+        R(46, 36, 8, 10, 1, '#bfe6fb', 1.6) +
+        R(30, 20, 4, 6, 0, '#4f8bd6') +
+        L('M30 20 L30 14', 1.2),
+};
+const tree = (x, y, s) => g(x, y, s, SHADOW(32, 58, 12, 2) + R(29, 40, 6, 18, 1, '#8b5a2b', 2) + C(32, 30, 16, '#6cc04a', 2.4) + HL(26, 24, 4, 3));
+// la carte : la place et ses grands bâtiments, les rues de maisons, le pré du camping
+export function townMapArt(houses, tents, marks, pick = null, W = 360) {
+    const on = (k, i) => (pick && pick.k === k && pick.i === i ? FE(32, 58, 30, 7, '#ffd23f', 0.9) : '');
+    const cols = 5,
+        lot = W / cols,
+        rowH = 70;
+    const parts = [];
+    let y = 8;
+    // la place
+    const placeH = 76;
+    parts.push(`<rect x="8" y="${y}" width="${W - 16}" height="${placeH}" rx="14" fill="#e9dcc0" stroke="${O}" stroke-width="2"/>`);
+    if (marks.length) {
+        const step = (W - 16) / marks.length;
+        marks.forEach((m, k) => parts.push(g(8 + step * k + step / 2 - 30, y + 8, 0.95, on('mark', k) + LANDMARK_ART[m.id](), ` data-act="fmMark" data-i="${k}" class="tm-hit"`)));
+    } else parts.push(`<text x="${W / 2}" y="${y + placeH / 2 + 5}" text-anchor="middle" font-size="13" fill="#8a7860" font-family="sans-serif">La place du hameau</text>`);
+    y += placeH + 8;
+    // les rues
+    const rows = Math.ceil(houses.length / cols);
+    for (let r = 0; r < rows; r++) {
+        parts.push(`<rect x="0" y="${y + rowH - 6}" width="${W}" height="12" fill="#d9c49a"/>`);
+        for (let c = 0; c < cols; c++) {
+            const i = r * cols + c;
+            const h = houses[i];
+            const x = c * lot + (lot - 58) / 2;
+            if (!h) {
+                if ((r + c) % 2) parts.push(tree(x + 8, y + 18, 0.7));
+                continue;
+            }
+            parts.push(g(x, y + 2, h.kind === 'farm' ? 0.95 : 0.9, on('house', i) + houseArt(h.kind, i), ` data-act="fmHouse" data-i="${i}" class="tm-hit"`));
+        }
+        y += rowH + 8;
+    }
+    // le pré du camping
+    if (tents.length) {
+        const tc = 9,
+            tw = W / tc;
+        const tr = Math.ceil(tents.length / tc);
+        parts.push(`<rect x="8" y="${y}" width="${W - 16}" height="${tr * 40 + 14}" rx="14" fill="#cfe8b0" stroke="${O}" stroke-width="2" stroke-dasharray="6 5"/>`);
+        tents.forEach((n, k) => parts.push(g((k % tc) * tw + (tw - 34) / 2, y + 6 + Math.floor(k / tc) * 40, 0.55, on('tent', k) + tentArt(k), ` data-act="fmTent" data-i="${k}" class="tm-hit"`)));
+        y += tr * 40 + 22;
+    }
+    return `<svg class="tm-map" viewBox="0 0 ${W} ${y}" xmlns="http://www.w3.org/2000/svg"><rect width="${W}" height="${y}" fill="#bfe0a0"/>${parts.join('')}</svg>`;
+}

@@ -2581,3 +2581,70 @@ button.ln-node:active {
 .fm-legacy {
     border-color: #c9a227;
 }
+
+/* 1.127 : la vie de famille */
+.fm-bday,
+.fm-gift {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 6px 8px;
+    border-radius: 12px;
+    background: #fff0f4;
+}
+.fm-bday {
+    background: linear-gradient(90deg, #fff0c2, #ffe1ea);
+    box-shadow: 0 0 0 2px #f6b93b inset;
+}
+.fm-bday > div,
+.fm-gift > span {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.85rem;
+}
+.fm-bday small,
+.fm-gift small {
+    display: block;
+    color: var(--ink-soft);
+}
+.fm-gift {
+    background: #f3f7ff;
+}
+.fm-meal {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 12px;
+    background: #fff6dc;
+}
+.fm-meal > small {
+    color: var(--ink-soft);
+}
+.fm-meal .ok,
+.fm-meal .short {
+    margin-right: 4px;
+}
+.fm-faces {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+}
+.tm-card {
+    padding: 6px;
+}
+.tm-map {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+.tm-hit {
+    cursor: pointer;
+}
+.tm-info {
+    min-height: 2.4em;
+    margin-top: 6px;
+}

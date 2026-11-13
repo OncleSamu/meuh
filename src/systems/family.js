@@ -1,5 +1,5 @@
 // 1.123 : la famille. Faire la cour à un villageois (roses), la demande, la noce, le conjoint et le foyer.
-import { state } from '../core/state.js';
+import { state, scaleLvl } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { toast, sfx, emit, buzz, burst, float } from '../core/bus.js';
@@ -7,7 +7,7 @@ import { fmt, pickRand } from '../core/format.js';
 import { ITEMS } from '../data/items.js';
 import { VILLAGERS } from '../data/village.js';
 import { LOVES } from '../data/friends.js';
-import { FAMILY, SUITORS, SHE, DATES, ROSE_LINES, FOYER, KIDS, CARES, SNACKS, TASKS, KID_NAMES, SPOUSE_LOOK, KID_METIER, KID_WED, GRANDKIDS, TOWN } from '../data/family.js';
+import { FAMILY, SUITORS, SHE, DATES, ROSE_LINES, FOYER, KIDS, CARES, SNACKS, TASKS, KID_NAMES, SPOUSE_LOOK, KID_METIER, KID_WED, GRANDKIDS, TOWN, BDAY, FAVS, GIFT, MEAL, LANDMARKS } from '../data/family.js';
 import { METIERS } from '../data/metiers.js';
 import { metierOf } from './metier.js';
 import { campRes, resHearts } from './residents.js';
@@ -445,7 +445,7 @@ export const kidFx = task => {
     if (!F || !F.kids || !F.kids.length) return 1;
     return 1 + F.kids.reduce((a, k) => a + (k.task === task ? kidHelp(k) : 0), 0);
 };
-export const kidReady = k => (findReady(k) ? 1 : 0) + (caresOf(k).some(c => careCan(k, c)) && kidJoy(k) < KIDS.joy.max - 15 ? 1 : 0);
+export const kidReady = k => (bdayToday(k) ? 1 : 0) + (findReady(k) ? 1 : 0) + (caresOf(k).some(c => careCan(k, c)) && kidJoy(k) < KIDS.joy.max - 15 ? 1 : 0);
 
 // ---------------- 1.125 : ils grandissent ----------------
 export const isAdultKid = k => stageOf(k) >= KIDS.ages.length;
@@ -603,6 +603,172 @@ export function legate(id, at) {
     return true;
 }
 
+// ---------------- 1.127 : la vie de famille ----------------
+// le cadeau préféré : il dépend de l'âge et change une fois offert
+const favPool = st => FAVS[Math.min(st, FAVS.length - 1)].filter(i => ITEMS[i]);
+export function favOf(k) {
+    const st = stageOf(k);
+    if (!k.fav || k.favSt !== st || !ITEMS[k.fav]) {
+        const pool = favPool(st).filter(i => i !== k.fav);
+        k.fav = pickRand(pool.length ? pool : favPool(st));
+        k.favSt = st;
+    }
+    return k.fav;
+}
+export const giftLeft = k => Math.max(0, (k.giftAt || 0) + GIFT.wait - now());
+export const giftCan = k => giftLeft(k) === 0 && (state.inventory[favOf(k)] || 0) >= 1;
+export function giveKidGift(id, at) {
+    const k = kidById(id);
+    if (!k || !giftCan(k)) return false;
+    settleKid(k);
+    const it = favOf(k);
+    state.inventory[it] -= 1;
+    k.giftAt = now();
+    k.gifts = (k.gifts || 0) + 1;
+    k.joy = Math.min(KIDS.joy.max, k.joy + GIFT.joy);
+    // une nouvelle envie, jamais la même
+    const pool = favPool(stageOf(k)).filter(i => i !== it);
+    if (pool.length) k.fav = pickRand(pool);
+    state.stats.kidGifts = (state.stats.kidGifts || 0) + 1;
+    sfx('pop');
+    if (at) burst(at, 'heart', 14);
+    toast(`${k.name} adore : ${ITEMS[it].name.toLowerCase()} ! Son prochain souhait : ${ITEMS[k.fav].name.toLowerCase()}`, ['villager', k.look]);
+    return true;
+}
+// les anniversaires : tous les deux jours depuis la naissance, jusqu'à l'âge adulte
+export const bdayCount = k => Math.floor((now() - k.born) / BDAY.every);
+const bdayInit = k => {
+    if (k.bd === undefined) k.bd = bdayCount(k);
+    return k.bd;
+};
+const bdayAt = k => k.born + (bdayInit(k) + 1) * BDAY.every;
+export const bdayToday = k => !isAdultKid(k) && now() >= bdayAt(k) && now() < bdayAt(k) + BDAY.window;
+export const bdayLeft = k => (bdayToday(k) ? Math.max(0, bdayAt(k) + BDAY.window - now()) : 0);
+export const bdayNext = k => Math.max(0, bdayAt(k) - now());
+export const cakeOf = () => BDAY.cakes.find(id => ITEMS[id] && (state.inventory[id] || 0) > 0) || null;
+export const bdayCan = k => bdayToday(k) && !!cakeOf();
+export function celebrate(id, at) {
+    const k = kidById(id);
+    if (!k || !bdayCan(k)) return false;
+    settleKid(k);
+    const cake = cakeOf();
+    state.inventory[cake] -= 1;
+    const fav = favOf(k);
+    const withFav = (state.inventory[fav] || 0) > 0;
+    if (withFav) state.inventory[fav] -= 1;
+    k.bd = bdayInit(k) + 1;
+    k.joy = KIDS.joy.max;
+    const st = stageOf(k);
+    k.grow += BDAY.grow + (withFav ? BDAY.favGrow : 0);
+    if (stageOf(k) > st) grewUp(k);
+    if (withFav) {
+        k.gifts = (k.gifts || 0) + 1;
+        const pool = favPool(stageOf(k)).filter(i => i !== fav);
+        if (pool.length) k.fav = pickRand(pool);
+    }
+    state.stats.bdays = (state.stats.bdays || 0) + 1;
+    addXp(Math.round(20 + scaleLvl() * 3), at);
+    sfx('level');
+    if (at) burst(at, 'heart', 24);
+    addPhoto('villager', k.look, `Le ${k.bd === 1 ? '1er' : k.bd + 'e'} anniversaire de ${k.name}`, 'La famille');
+    toast(`Joyeux anniversaire, ${k.name} !${withFav ? ` Et son cadeau préféré en plus : ${ITEMS[fav].name.toLowerCase()}` : ''}`, ['ui', 'cake']);
+    return true;
+}
+// un anniversaire oublié passe, et l'enfant est triste
+function bdaySettle(k) {
+    bdayInit(k);
+    if (isAdultKid(k)) {
+        k.bd = Math.max(k.bd, bdayCount(k));
+        return false;
+    }
+    let ch = false;
+    while (now() >= bdayAt(k) + BDAY.window) {
+        k.bd++;
+        k.joy = Math.max(0, k.joy - BDAY.miss);
+        ch = true;
+        if (view.started) toast(`Vous avez oublié l’anniversaire de ${k.name}…`, ['ui', 'heartOff']);
+    }
+    if (bdayToday(k) && k.bdTold !== k.bd) {
+        k.bdTold = k.bd;
+        ch = true;
+        if (view.started) toast(`C’est l’anniversaire de ${k.name} aujourd’hui !`, ['ui', 'cake']);
+    }
+    return ch;
+}
+// le repas de famille : tout le monde à table, un plat pour deux convives
+export function mealGuests() {
+    const F = ensureFamily();
+    if (!F.spouse) return [];
+    const out = [{ look: meLook(), name: 'Vous' }, { look: artId(F.spouse), name: vName(F.spouse) }];
+    for (const k of F.kids) out.push({ look: k.look, name: k.name, kid: k });
+    for (const k of F.kin || []) {
+        out.push({ look: k.look, name: k.name });
+        if (k.spouse) out.push({ look: k.spouse.look, name: k.spouse.name });
+    }
+    for (const e of F.elders || []) {
+        out.push({ look: e.look, name: `Génération ${e.gen}` });
+        if (e.spouse) out.push({ look: artId(e.spouse), name: vName(e.spouse) });
+    }
+    return out;
+}
+export const mealNeed = () => Math.ceil(mealGuests().length / 2);
+export const mealLeft = () => Math.max(0, (ensureFamily().mealAt || 0) + MEAL.wait - now());
+// les plats servis : un de chaque d'abord, pour varier, puis les plus nombreux
+export function mealPlan() {
+    const need = mealNeed();
+    const have = MEAL.dishes.filter(id => ITEMS[id] && (state.inventory[id] || 0) > 0).map(id => ({ id, n: state.inventory[id] }));
+    const plan = {};
+    let got = 0;
+    while (got < need && have.some(h => h.n > 0)) {
+        for (const h of have.sort((a, b) => b.n - a.n)) {
+            if (got >= need || h.n <= 0) continue;
+            plan[h.id] = (plan[h.id] || 0) + 1;
+            h.n--;
+            got++;
+        }
+    }
+    return got >= need ? plan : null;
+}
+// un menu varié (tous les plats différents) rapporte moitié plus
+export const mealVaried = plan => !!plan && Object.keys(plan).length >= 2 && Object.values(plan).every(n => n === 1);
+export const mealXp = (n = mealGuests().length, varied = false) => Math.round(n * (MEAL.xp + scaleLvl() * 2) * (varied ? 1.5 : 1));
+export const mealCan = () => !!spouseOf() && mealLeft() === 0 && !!mealPlan();
+export function familyMeal(at) {
+    if (!mealCan()) return false;
+    const F = ensureFamily();
+    const plan = mealPlan();
+    Object.entries(plan).forEach(([id, n]) => (state.inventory[id] -= n));
+    const n = mealGuests().length;
+    settleAff();
+    F.aff = Math.min(FAMILY.aff.max, F.aff + MEAL.aff);
+    for (const k of F.kids) {
+        settleKid(k);
+        k.joy = Math.min(KIDS.joy.max, k.joy + MEAL.joy);
+    }
+    F.mealAt = now();
+    F.meals = (F.meals || 0) + 1;
+    state.stats.familyMeals = (state.stats.familyMeals || 0) + 1;
+    addXp(mealXp(n, mealVaried(plan)), at);
+    sfx('harvest');
+    if (at) burst(at, 'heart', 18);
+    if (F.meals === 1 || F.meals % 10 === 0) addPhoto('villager', meLook(), `Le repas de famille, ${n} à table`, 'La famille');
+    toast(`Un bon repas de famille : ${n} à table`, ['ui', 'cake']);
+    return true;
+}
+// la carte de la ville : les maisons, du plus proche au plus lointain
+export function townHouses() {
+    const F = state.family || {};
+    const out = [{ kind: 'farm', name: 'Votre ferme', who: ['Vous', ...(F.spouse ? [vName(F.spouse)] : []), ...(F.kids || []).filter(k => !k.spouse).map(k => k.name)] }];
+    for (const e of F.elders || [])
+        out.push({ kind: 'elder', name: e.gen === generation() - 1 ? 'La maison de vos parents' : `La maison des anciens (génération ${e.gen})`, who: [e.heir ? `les parents de ${e.heir}` : 'votre parent', ...(e.spouse ? [vName(e.spouse)] : [])] });
+    for (const k of [...(F.kids || []), ...(F.kin || [])])
+        if (k.spouse) out.push({ kind: 'couple', name: `La maison de ${k.name}`, who: [k.name, k.spouse.name, ...(k.gk || []).map(g => g.name)] });
+    for (const vid of presentVillagers()) out.push({ kind: 'villager', name: `Chez ${vName(vid)}`, who: [vName(vid)], vid });
+    return out;
+}
+export const townTents = () => campRes().map(r => r.name);
+export const landmarks = () => LANDMARKS.filter(l => townTier() >= l.tier);
+
 // ce qui attend le joueur (pastille de l'onglet)
 export function familyReady() {
     if (!familyOpen()) return 0;
@@ -612,6 +778,7 @@ export function familyReady() {
             (basketReady() ? 1 : 0) +
             (wordLeft() === 0 && affection() < FAMILY.aff.max - 10 ? 1 : 0) +
             (canExpect() ? 1 : 0) +
+            (mealCan() ? 1 : 0) +
             F.kids.reduce((a, k) => a + kidReady(k), 0) +
             F.kids.filter(k => isAdultKid(k) && !k.metier).length
         );
@@ -640,6 +807,7 @@ export function familyTick() {
         settleKid(k);
         if (stageOf(k) !== st) ch = true;
         if (grandkidTick(k)) ch = true;
+        if (bdaySettle(k)) ch = true;
     }
     const before = state.family.aff >= FAMILY.aff.keep;
     settleAff();
