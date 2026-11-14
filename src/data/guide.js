@@ -12,6 +12,8 @@ import { ANIMAL_TRAITS } from './genetics.js';
 import { MACHINES, RECIPES } from './machines.js';
 import { CHAPTERS } from './village.js';
 import { HARAS_LVL } from './haras.js';
+import { FAMILY } from './family.js';
+import { CAMPING } from './camping.js';
 import { MAX_LEVEL, HOUSE } from './progress.js';
 import { LEAGUES } from './commerce.js';
 
@@ -51,7 +53,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Le métier de la ferme',
                 b: [
-                    'Six métiers : maraîcher, éleveur, arboriculteur, cuisinier, vigneron et pêcheur. On en choisit un sur la page d’accueil, ou plus tard depuis le menu (carte « Choisir un métier »).',
+                    'Six métiers : maraîcher, éleveur, arboriculteur, cuisinier, vigneron et pêcheur. Il se propose à partir du niveau 3 : dans le menu, touchez votre carte de visite (bouton « Choisir un métier »).',
                     'Dix rangs par métier. Un rang se gagne en réussissant ses deux leçons : elles comptent à partir du moment où le rang commence.',
                     'Chaque rang fait mieux payer les produits du métier au marché et à l’étal (2 % par rang, 1 % pour le cuisinier). Au rang 3, une commande du village qui en contient paie 10 % de plus ; au rang 6, le train et l’avion-cargo les paient 15 % de plus ; au rang 10, encore 10 % et le titre de maître.',
                     'Le vigneron fait aussi mieux payer les bouteilles de la cave et les bières.',
@@ -132,10 +134,10 @@ export const GUIDE_PAGES = [
             {
                 h: 'Les cinq onglets',
                 b: [
-                    'Ferme : le champ, la serre, le verger, la nature (forêt et mine), la pêche et l’île.',
+                    'Ferme : le champ, la serre, le verger, la nature (forêt et mine), la pêche et les voyages (l’île, l’oasis, le Grand Nord).',
                     'Animaux : les prés (l’étable, la transhumance) et le haras (écuries, concours, élevage).',
-                    'Atelier : les machines, le comptoir, la cave, la brasserie et le labo.',
-                    'Village : les commandes (tableau, train, cargo, Armand…) et le village (chapitres, villageois, concours, domaine).',
+                    'Atelier : la production (les machines), le comptoir, la cave, la brasserie, le labo et la Maison de la ferme.',
+                    'Village : les commandes (tableau, train, cargo, Armand…), le village (chapitres, villageois, concours, domaine), le camping et la famille.',
                     'Marché : le magasin pour acheter, le grossiste et l’étal pour vendre.',
                     'Le « ? » au bout des onglets du haut ouvre la page du guide de l’écran où vous êtes.',
                 ],
@@ -152,12 +154,13 @@ export const GUIDE_PAGES = [
             {
                 h: 'S’y retrouver (1.74)',
                 b: [
-                    'Chaque volet garde son nom ; quand ils ne tiennent pas, la bande défile (un fondu montre qu’il en reste). Les offres de Zéphyr et les familles du grossiste défilent de la même façon.',
+                    'Sur téléphone, tous les volets d’un onglet tiennent sur une ligne, l’icône au-dessus du nom (1.138). Les offres de Zéphyr et les familles du grossiste défilent dans leur bande (un fondu montre qu’il en reste).',
                     'Un point doré sur un onglet : il y a quelque chose à faire. Une pastille rouge chiffrée : ça presse (grange pleine, citerne vide, poêle éteint, anniversaire…).',
                     'Les pages longues ont leurs onglets : Brasserie, Cave, Comice, Labo et Village ; et dans le menu, la Coupe, la Maison, Progrès et Statistiques (toute la ferme en chiffres, rangée par coin : champ, bêtes, atelier, nature, village).',
-                    'Les listes longues vont par pages : graines du marché et produits à vendre par 15, boissons par 10. Un grand verger montre quatre arbres par rangée. À l’étal, plus de 3 ventes finies se résument en une ligne à encaisser.',
+                    'Les listes longues vont par pages : graines du marché et produits à vendre par 15, grange et choix de l’étal par 60, boissons par 10. Un grand verger montre quatre arbres par rangée. À l’étal, plus de 3 ventes finies se résument en une ligne à encaisser.',
                     'À la brasserie, une phrase dit ce qui bloque (cuves pleines, il manque…) ; « Tout mettre en bouteille » vide les cuves prêtes d’un coup.',
                     'Une astuce grise se ferme d’un « Compris » ; Réglages › Réafficher les astuces les fait revenir.',
+                    'Chercher et trier : la grange, le marché (acheter et vendre), les machines, le choix de l’étal, le tiroir des graines, la brasserie et le guide ont la même barre de recherche (une loupe, une croix pour effacer) et, là où ça sert, le même bouton de tri.',
                 ],
             },
             {
@@ -208,6 +211,13 @@ export const GUIDE_PAGES = [
                 t: 'La réserve (Marché › Vendre) met de côté ce que demandent vos commandes et vos défis, pour ne pas le vendre par erreur.',
             },
             {
+                h: 'Retrouver un produit',
+                b: [
+                    'Dès qu’elle contient plus de 12 produits, la grange a une barre de recherche, des familles (récoltes, bêtes, atelier, pêche, le reste) et un tri (quantité, valeur du stock, nom). Elle va par pages de 60.',
+                    'Touchez un produit, puis « Fiche » : son stock, d’où il vient, sa recette, les recettes où il sert, qui le demande, et les boutons pour y aller, en faire en quantité ou le vendre. Un appui long sur un produit ouvre aussi sa fiche.',
+                ],
+            },
+            {
                 h: 'Le coffre-fort (niveau 15)',
                 b: [
                     'Dans la grange, touchez un produit puis « Au coffre » : choisissez la qualité (normal, argent, or, platine, diamant) et la quantité. Le produit garde sa qualité.',
@@ -247,7 +257,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les grandes étapes',
-                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, abbaye 36, île 40, génétique 43, grand hall du Comice 47, Haras ${HARAS_LVL}, alpage ${chLvl(9)}, oasis ${chLvl(21)}, Grand Nord ${chLvl(23)}, et le niveau ${MAX_LEVEL} pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
+                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, famille ${FAMILY.lvl}, abbaye 36, île 40, génétique 43, grand hall du Comice 47, Haras ${HARAS_LVL}, alpage ${chLvl(9)}, camping, Maison et fête de la vallée ${CAMPING.lvl}, oasis ${chLvl(21)}, Grand Nord ${chLvl(23)}, et le niveau ${MAX_LEVEL} pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
             },
             { h: `Après le niveau ${MAX_LEVEL}`, t: 'L’expérience donne des étoiles de renommée : voir « Renommée et Ferme légendaire ».' },
         ],
@@ -1513,6 +1523,7 @@ export const GUIDE_PAGES = [
                     'Des villageois demandent des produits ; livrez dès que vous avez tout.',
                     'Touchez un produit manquant : le jeu vous mène là où on le fabrique.',
                     'Épinglez une commande pour la garder sous les yeux, ou jetez-la.',
+                    'Dès que deux commandes sont prêtes, « Tout livrer » les livre d’un coup, dans l’ordre du tableau ; chacune revérifie ce qui reste en grange.',
                     'Le nombre de commandes grandit avec le niveau, la maison et le domaine.',
                 ],
             },
@@ -2271,6 +2282,7 @@ export const GUIDE_PAGES = [
                     'Cultures, serre, bêtes, machines, cave, brasserie, élevage et pollinisation.',
                     'Nasses, bûcheron, mineur, cueilleur et filet de mer : une charge toutes les 2 heures.',
                     'Théo.',
+                    'Le plan de production : il ramasse, relance les étapes et lance le plat final, même jeu fermé.',
                 ],
             },
             {
@@ -2285,6 +2297,7 @@ export const GUIDE_PAGES = [
                 h: 'Où trouver quoi',
                 b: [
                     'Un produit manquant : touchez-le dans une commande, ou cherchez-le dans ce guide.',
+                    'Tout sur un produit : sa fiche (grange, guide, ou appui long sur le produit).',
                     'Ce qu’un niveau ouvre : Menu › Les niveaux.',
                     'Points de compétence, prestige : Menu › Progrès.',
                     'Livre de la ferme, album, légende : Menu › Livre de la ferme.',

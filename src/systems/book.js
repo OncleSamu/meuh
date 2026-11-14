@@ -10,7 +10,7 @@ import { EVENTS } from '../data/world.js';
 import { CAVE_ITEMS, CAVE_FAMILIES, VINTAGES } from '../data/cave.js';
 import { CARNET } from '../data/carnet.js';
 import { ANIMALS } from '../data/animals.js';
-import { BOOK_PAGES, TREASURES, FISH, RECORDS } from '../data/meta.js';
+import { BOOK_PAGES, BOOK_EXTRA, TREASURES, FISH, RECORDS } from '../data/meta.js';
 import { RARE } from '../data/commerce.js';
 import { BOOK_QUARTERS, MASTERY_NAMES } from '../data/progress.js';
 import { seedList } from './farm.js';
@@ -146,7 +146,12 @@ const ENTRIES = {
             star: true,
         })),
 };
-export const BOOK = BOOK_PAGES.map(p => ({ ...p, entries: ENTRIES[p.id] || (() => recipeEntries(p.id)) }));
+const extraEntries = pid => {
+    const x = BOOK_EXTRA[pid];
+    return x ? x.ids.filter(id => ITEMS[id]).map(id => ({ key: 'x_' + id, kind: 'item', id, icon: ['item', id], name: ITEMS[id].name, hint: x.hint, extra: true })) : [];
+};
+const withExtra = (pid, f) => (BOOK_EXTRA[pid] ? () => [...f(), ...extraEntries(pid)] : f);
+export const BOOK = BOOK_PAGES.map(p => ({ ...p, entries: withExtra(p.id, ENTRIES[p.id] || (() => recipeEntries(p.id))) }));
 export const allEntries = () => BOOK.flatMap(p => p.entries());
 const staticEntries = () => BOOK.filter(p => !p.dyn).flatMap(p => p.entries());
 export const isFound = e => !!(e.found || state.collection[e.key]);
@@ -191,6 +196,11 @@ export function syncBook() {
             if (e.id && !state.collection[e.key] && (p.id === 'garden' ? false : masteryCount(e.id) > 0))
                 state.collection[e.key] = { n: masteryCount(e.id), best: 0, day: 0 };
     }
+    // 1.139 : les ajouts du livre (pêche en mer, miel…) : trouvés dès qu'on en a eu un
+    for (const p of BOOK)
+        for (const e of extraEntries(p.id))
+            if (!state.collection[e.key] && (masteryCount(e.id) > 0 || (state.made && state.made[e.id] > 0) || (state.inventory[e.id] || 0) > 0))
+                state.collection[e.key] = { n: 1, best: 0, day: state.day };
 }
 
 export const bookClaimable = () => BOOK.reduce((n, p) => n + pageReadyCount(p), 0);
@@ -445,6 +455,27 @@ export function statsData() {
                 ['Montgolfières', n('balloons'), ['ui', 'balloon']],
                 ['Cœurs d’amitié', n('hearts'), ['ui', 'heart']],
                 ['Chantiers', n('projects'), ['ui', 'crate']],
+            ],
+        ],
+        // 1.139 : le camping, la Maison et la famille avaient leurs compteurs, mais pas de place ici
+        [
+            'Camping et Maison',
+            [
+                ['Campeurs accueillis', n('campGuests'), ['ui', 'tent']],
+                ['Campeurs repartis ravis', n('campHappy'), ['ui', 'heart']],
+                ['Résidents installés', n('campResidents'), ['ui', 'house']],
+                ['Paquets vendus', n('coffretsSold'), ['ui', 'maison']],
+            ],
+        ],
+        [
+            'Famille',
+            [
+                ['Mariages', n('weddings'), ['ui', 'heart']],
+                ['Repas de famille', n('familyMeals'), ['item', 'soup']],
+                ['Anniversaires fêtés', n('bdays'), ['ui', 'star']],
+                ['Soins aux enfants', n('kidCares'), ['ui', 'fmHome']],
+                ['Petits-enfants', n('grandkids'), ['ui', 'fmHome']],
+                ['Transmissions', n('legacies'), ['ui', 'house']],
             ],
         ],
     ];

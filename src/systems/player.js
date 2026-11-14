@@ -21,10 +21,15 @@ import { HARAS_LVL } from '../data/haras.js';
 import { COMP_LVL } from '../data/companions.js';
 import { INCIDENT_LVL, RARE_EVENT_LVL } from '../data/surprises.js';
 import { CONTRACT_LVL, CONTEST_LVL, LEAGUES, CARGO, ARMAND, NMARKET, VAULT } from '../data/commerce.js';
-import { DOMAINE_LVL } from '../data/domaine.js';
+import { DOMAINE_LVL, WORKS_LVL } from '../data/domaine.js';
+import { FAMILY } from '../data/family.js';
+import { CAMPING } from '../data/camping.js';
+import { OASIS } from '../data/oasis.js';
+import { NORD } from '../data/nord.js';
+import { APIARY } from '../data/apiary.js';
 import { DAILY_REWARDS, HOLIDAY_LVL } from '../data/world.js';
 import { levelGate } from './goals.js';
-import { BALANCE, MAX_LEVEL, MAX_LEVEL_64, MAX_LEVEL_60, RENOWN_XP, ACH_REWARDS, MEDALS, CAP_REQ, MASTERY_LVL, HOUSE, FARMHAND, ALBUM_LEVELS } from '../data/progress.js';
+import { LANE2_LVL, BALANCE, MAX_LEVEL, MAX_LEVEL_64, MAX_LEVEL_60, RENOWN_XP, ACH_REWARDS, MEDALS, CAP_REQ, MASTERY_LVL, HOUSE, FARMHAND, ALBUM_LEVELS } from '../data/progress.js';
 import { ACHIEVEMENTS, SKILLS } from '../data/meta.js';
 import { trackDayEarn, record } from './book.js';
 import { renownStar } from './mastery.js';
@@ -373,6 +378,17 @@ export function unlocksAt(lvl) {
     LEAGUES.forEach(g => {
         if (g.lvl === lvl && g.lvl > CONTEST_LVL) add(['ui', 'podium'], `Concours : la ligue ${g.name.toLowerCase()} est ouverte (gagnez pour y monter)`);
     });
+    // 1.139 : ce qui manquait à la liste (famille, camping, oasis, Grand Nord, ruchers, dépendances, deuxième poste, métier)
+    const addGo = (go, icon, name) => list.push({ icon, name, go });
+    const bigGo = (go, icon, name) => list.splice(1, 0, { icon, name, big: true, go });
+    if (lvl === 3) addGo('sheet:identity', ['ui', 'star'], 'Votre métier : maraîcher, éleveur, arboriculteur, cuisinier, vigneron ou pêcheur (Menu, votre carte de visite)');
+    if (lvl === LANE2_LVL) addGo('machines/workshop', ['machine', 'mill'], 'Le deuxième poste : une machine fait deux lots à la fois (fiche de la machine)');
+    if (lvl === WORKS_LVL) addGo('village/village', ['ui', 'house'], 'Les dépendances du domaine : six bâtiments d’apparat, trois niveaux chacun (Village › Village, Domaine)');
+    Object.entries(APIARY).forEach(([k, a]) => a && a.lvl === lvl && a.name && addGo(`farm/island#${k === 'island' ? 'isle' : k}`, ['ui', a.icon], `${a.name} : des ruches qui ne butinent que leur contrée`));
+    if (lvl === FAMILY.lvl) bigGo('village/family', ['ui', 'fmHome'], 'Grande étape : la famille (faire la cour, se marier, des enfants), Village › Famille');
+    if (lvl === CAMPING.lvl) bigGo('village/camping', ['ui', 'tent'], 'Grande étape : le camping, la Maison de la ferme et la fête de la vallée (Village › Camping, Atelier › Maison)');
+    if (lvl === OASIS.lvl) bigGo('farm/island#oasis', ['ui', 'oaVoyages'], 'Grande étape : l’oasis, après « La source d’Idris » (Ferme › Voyages)');
+    if (lvl === NORD.lvl) bigGo('farm/island#nord', ['ui', 'noTraineau'], 'Grande étape : le Grand Nord, après « Le poêle de Tuomas » (Ferme › Voyages)');
     if (lvl === ORCHARD.lvl) big(['ui', 'appleCart'], 'Grande étape : le verger');
     if (lvl === GH.lvl) big(['ui', 'greenhouse'], 'Grande étape : la serre');
     if (lvl === DOMAINE_LVL) big(['ui', 'house'], 'Grande étape : le domaine, un puits pour vos pièces');

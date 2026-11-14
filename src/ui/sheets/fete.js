@@ -1,4 +1,5 @@
 // 1.100 (étape 4) : la fête de la vallée, le bilan de la partie et le générique (une seule fenêtre, trois pages).
+import { familyPeople } from '../views/villagers.js';
 import { state } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { FETE } from '../../data/fete.js';
@@ -10,6 +11,14 @@ import { defineSheet } from '../sheets.js';
 
 const TITLES = { scene: FETE.title, bilan: 'Le bilan de la partie', credits: 'Le générique' };
 const row = (label, v) => `<div class="od-line"><span><b>${label}</b></span><b>${v}</b></div>`;
+// 1.139 : la famille au bilan (lue au moment où on ouvre la page)
+function famBilan() {
+    const F = state.family;
+    if (!F || !G.familyOpen() || !F.spouse) return '';
+    const st = state.stats;
+    return `<div class="card camp-card"><div class="card-title">La famille</div>
+        ${row('Enfants', (F.kids || []).length)}${row('Petits-enfants', fmt(st.grandkids || 0))}${row('Repas de famille', fmt(st.familyMeals || 0))}${row('Anniversaires fêtés', fmt(st.bdays || 0))}</div>`;
+}
 function bilanPage() {
     const b = (state.fete && state.fete.bilan) || G.valleeBilan();
     const brand = b.brand ? row('Votre marque', esc(b.brand)) : '';
@@ -19,16 +28,19 @@ function bilanPage() {
         ${row('Chapitres de l’histoire terminés', b.chapters)}</div>
         <div class="card camp-card"><div class="card-title">Le camping et la Maison</div>
         ${row('Campeurs accueillis', fmt(b.guests))}${row('Campeurs repartis ravis', fmt(b.happy))}${row('Résidents installés', b.residents)}${row('Amis à cinq cœurs', b.friends)}
-        ${row('Paquets vendus', fmt(b.coffrets))}${brand}</div>`;
+        ${row('Paquets vendus', fmt(b.coffrets))}${brand}</div>${famBilan()}`;
 }
 const face = (look, name, sub) => `<div class="credit"><span class="credit-av">${art('villager', look)}</span><span><b>${esc(name)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</span></div>`;
 function creditsPage() {
     const c = G.valleeCredits();
+    // 1.139 : la famille a sa place au générique
+    const fam = familyPeople();
     const cast = state.fete && state.fete.cast && state.fete.cast.length ? state.fete.cast : c.residents;
     return `<div class="credits"><p class="card-sub center">Une ferme, une vallée.</p>
         <h3>Les habitants de la vallée</h3>${c.villagers.map(v => face(v.id, v.name, v.role)).join('')}
         ${cast.length ? `<h3>Les campeurs devenus voisins</h3>${cast.map(r => face(r.look, r.name, r.job)).join('')}` : ''}
         ${c.passers.length ? `<h3>Les campeurs de passage</h3>${c.passers.map(p => face(p.look, p.name)).join('')}` : ''}
+        ${fam.length ? `<h3>La famille</h3>${fam.map(p => face(p.pic, p.name, p.sub)).join('')}` : ''}
         ${c.brand ? `<h3>La Maison</h3><p class="card-sub center">${esc(c.brand)}</p>` : ''}
         <h3>Merci d’avoir joué</h3><p class="card-sub center">La vallée est à vous. Le jeu continue.</p></div>`;
 }

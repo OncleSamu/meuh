@@ -398,6 +398,12 @@ Object.assign(FISH, FISH_133);
 // ---------------- Livre de la ferme : les pages ----------------
 // 1.18 : le Grand livre. icon : [genre, id] ; abs : paliers en nombre (pages qui grandissent avec la partie) ;
 // machines : les machines dont les recettes forment la page ; dyn : la page n'entre pas dans le total du livre.
+// 1.139 : les produits sans recette ni bête qui manquaient au livre (pêche en mer, miel, lait d'alpage, cardamome)
+export const BOOK_EXTRA = {
+    sea: { ids: ['sardine', 'mackerel', 'shrimp', 'seabass', 'lobster', 'squid', 'bream', 'skate', 'tuna'], hint: 'Pêché en mer' },
+    herd: { ids: ['honey', 'alpineMilk'], hint: 'Des ruches, ou de l’alpage' },
+    pantry: { ids: ['cardamom'], hint: 'Rapportée par le traîneau du Grand Nord' },
+};
 export const BOOK_PAGES = [
     { id: 'garden', name: 'Potager d’or', icon: ['item', 'carrot'] },
     { id: 'orchard', name: 'Verger', icon: ['item', 'apple'] },
@@ -405,13 +411,13 @@ export const BOOK_PAGES = [
     { id: 'fish', name: 'Poissons', icon: ['item', 'perch'] },
     // 1.82 : les produits des bêtes (premiers et seconds)
     { id: 'herd', name: 'Élevage', icon: ['item', 'egg'] },
-    { id: 'dishes', name: 'Plats', icon: ['item', 'lasagna'], machines: ['kitchen', 'marmite', 'stove', 'pastaworks', 'crepery', 'deli'] },
+    { id: 'dishes', name: 'Plats', icon: ['item', 'lasagna'], machines: ['kitchen', 'marmite', 'stove', 'pastaworks', 'crepery', 'deli', 'pizzeria', 'tajine', 'taigaPot'] },
     { id: 'sea', name: 'Mer et étang', icon: ['item', 'bouillabaisse'], machines: ['fishmonger', 'smokehouse', 'cannery'] },
     {
         id: 'sweets',
         name: 'Pâtisseries et douceurs',
         icon: ['item', 'cherryPie'],
-        machines: ['pastry', 'bakery', 'confectionery', 'icecream', 'chocolatier', 'islandBakery', 'sugarmill'],
+        machines: ['pastry', 'bakery', 'confectionery', 'icecream', 'chocolatier', 'islandBakery', 'sugarmill', 'earthOven', 'tiledStove', 'orientalSweets', 'berryKettle'],
     },
     { id: 'cheese', name: 'Fromagerie', icon: ['item', 'camembert'], machines: ['dairy', 'alpineDairy'] },
     { id: 'counter', name: 'Boissons du comptoir', icon: ['item', 'cappuccino'], machines: ['counter'] },
@@ -422,7 +428,7 @@ export const BOOK_PAGES = [
         id: 'crafts',
         name: 'Artisanat',
         icon: ['item', 'sweater'],
-        machines: ['loom', 'tailor', 'pottery', 'forge', 'sawmill', 'jewelry', 'soapworks', 'perfumery', 'dyeworks', 'oilmill', 'saddlery'],
+        machines: ['loom', 'tailor', 'pottery', 'forge', 'sawmill', 'jewelry', 'soapworks', 'perfumery', 'dyeworks', 'oilmill', 'saddlery', 'emballerie'],
     },
     { id: 'pantry', name: 'Épicerie et salaison', icon: ['item', 'flour'], machines: ['mill', 'dryer', 'saloir', 'malthouse'] },
     { id: 'treasure', name: 'Mines et gemmes', icon: ['item', 'ruby'] },

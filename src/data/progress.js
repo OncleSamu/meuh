@@ -32,6 +32,8 @@ export const BALANCE = {
     rareDrop: 0.012,
 };
 
+// 1.139 : le niveau du deuxième poste des machines (ici pour que la liste des niveaux le lise sans cycle)
+export const LANE2_LVL = 15;
 export const MAX_LEVEL = 80; // 1.109 : 80 niveaux (64 de la 1.56 à la 1.108)
 export const MAX_LEVEL_64 = 64;
 export const MAX_LEVEL_60 = 60; // le maximum de la 1.36 à la 1.55 (pour convertir les anciennes parties)

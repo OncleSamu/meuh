@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.139",
+  "title": "Tout est à jour",
+  "date": "15 novembre 2026",
+  "items": [
+   "Les niveaux : la famille (30), le camping, la Maison et la fête de la vallée (66), l'oasis (70) et le Grand Nord (75) apparaissent comme grandes étapes ; le métier (3), le deuxième poste des machines (15), les dépendances du domaine (49) et les trois ruchers des contrées y sont aussi. Chaque ligne mène là où ça se passe",
+   "Le guide : les onglets d'aujourd'hui (Voyages, Maison, camping, famille), les volets tous visibles, la recherche et le tri partout, la fiche produit, « Tout livrer », le plan qui avance jeu fermé, le métier proposé au niveau 3, la famille et le camping dans les grandes étapes",
+   "Le livre de la ferme : les plats de la pizzeria, de l'oasis et du Nord rejoignent leurs pages (Plats, Pâtisseries et douceurs) au lieu de l'Épicerie ; les paquets de l'emballerie vont à l'Artisanat. La pêche en mer, le miel, le lait d'alpage et la cardamome y entrent enfin",
+   "Les statistiques : deux nouveaux groupes, Camping et Maison, et Famille",
+   "La fête de la vallée : la famille a sa place au bilan et au générique"
+  ]
+ },
+ {
   "v": "1.138",
   "title": "Tous les volets d'un coup d'œil",
   "date": "14 novembre 2026",

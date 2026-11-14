@@ -9,7 +9,7 @@ import { ITEMS } from '../data/items.js';
 import { MACHINES, LEGACY_RECIPE, RECIPES } from '../data/machines.js';
 import { VILLAGERS } from '../data/village.js';
 import { EVENTS, HOLIDAYS } from '../data/world.js';
-import { BALANCE } from '../data/progress.js';
+import { BALANCE, LANE2_LVL } from '../data/progress.js';
 import { heartsOf } from './village.js';
 import { eventActive, eventProgress } from './events.js';
 import { holidayActive } from './holidays.js';
@@ -225,7 +225,7 @@ export function toggleLoop(i) {
 
 // 1.37.1 : un deuxième poste de travail (acheté une fois par machine) fait tourner deux lots à la fois :
 // le lot de tête (progress) et le suivant de la file (progress2).
-export const LANE2_LVL = 15;
+export { LANE2_LVL };
 export const lane2Cost = type => Math.round((((MACHINES[type].cost || 6000) * 6 + 30000) * (cupHas(4) ? 0.5 : 1)) / 1000) * 1000;
 export const lane2Open = () => state.level >= LANE2_LVL;
 export function buyLane2(i, at) {
