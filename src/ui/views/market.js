@@ -402,6 +402,9 @@ function stallCard() {
     const sold = G.stallSoldCount();
     const later = G.STALL_LEVELS.filter(l => state.level < l);
     const free = slots.map((x, k) => (x ? -1 : k)).filter(k => k >= 0);
+    // 1.137 : un étal vide tient sur une ligne, pour laisser la place aux produits
+    if (free.length === slots.length)
+        return `<button class="card stall-card compact" data-act="open" data-sheet="stall" data-k="${free[0]}">${ico(['ui', 'stall'], 'ico big')}<span class="card-main"><b class="card-title">L’étal · ${free.length} place${free.length > 1 ? 's' : ''} libre${free.length > 1 ? 's' : ''}</b><small class="card-sub">Vous fixez le prix, les passants achètent peu à peu.</small></span><span class="btn sm gold">Vendre</span></button>`;
     return `<div class="card stall-card">
         <div class="card-head">${ico(['ui', 'stall'], 'ico big')}<div class="card-main"><div class="card-title">${G.farmName() === G.DEFAULT_FARM ? 'L’étal de la ferme' : `L’étal · ${esc(G.farmName())}`}</div><div class="card-sub">${sold ? `${sold} vente${sold > 1 ? 's' : ''} · ${fmt(slots.reduce((a, x) => a + (x && x.sold ? x.qty * x.price : 0), 0))}${COIN()}` : 'Vous fixez le prix, les passants achètent peu à peu.'}</div></div>
         ${sold ? btn('Encaisser', { act: 'collectStalls', kind: 'gold', size: 'sm' }) : ''}</div>
@@ -434,13 +437,9 @@ function banners() {
             sub: 'Le grossiste n’achète rien sur cette ferme : livrez des commandes et des trains.',
             cls: 'banner',
         });
+    // 1.137 : le produit du jour sur une seule ligne
     if (hot)
-        html += card({
-            icon: ['item', hot],
-            title: `Produit du jour : ${ITEMS[hot].name}`,
-            sub: `Vendu 50 % plus cher aujourd’hui${state.inventory[hot] ? '' : ', mais vous n’en avez pas en stock'}.`,
-            cls: 'banner hot',
-        });
+        html += `<div class="hot-line">${ico(['item', hot])}<span>Produit du jour : <b>${ITEMS[hot].name}</b> · +50 %${state.inventory[hot] ? '' : ' (aucun en stock)'}</span></div>`;
     const rp = G.renomPts();
     if (rp)
         html += card({
@@ -619,14 +618,15 @@ function renderSell(el) {
         ['selltab', sellTabs(tab)],
         ['pin', pinBar()],
         ['stall', stallCard()],
+        ['banners', banners()],
         ['whole', section('Grossiste', btn('Tout vendre', { act: 'sellAll', kind: 'gold', size: 'sm', icon: ['ui', 'coin'], anchor: 'btn:sellAll' }))],
+        ['tools', G.sellableKeys().length > 12 ? listBar('sell', { search: 'Chercher un produit', sorts: GOODS_SORTS }) : ''],
+        ['goods', goodsGrid()],
+        // 1.137 : ce réglage passe sous la liste (on le touche rarement)
         [
             'reserve',
             toggle('Garder ce qu’il faut pour les commandes', state.settings.reserve, 'toggleReserve', null, 'Train, chantiers, fête, acheteur pressé'),
         ],
-        ['banners', banners()],
-        ['tools', G.sellableKeys().length > 12 ? listBar('sell', { search: 'Chercher un produit', sorts: GOODS_SORTS }) : ''],
-        ['goods', goodsGrid()],
         [
             'hint',
             tip15(
@@ -691,21 +691,34 @@ defineSheet('stall', {
         if (o.id) o.qty = G.stallMax(o.id);
     },
     render(o) {
-        const list = G.stallChoices();
-        const grid = list.length
-            ? `<div class="barn-goods">${list.map(id => `<button class="bgood${o.id === id ? ' sel' : ''}" data-act="stallPick" data-id="${id}" title="${ITEMS[id].name}">${ico(['item', id])}<b>${G.sellableQty(id)}</b></button>`).join('')}</div>`
-            : empty('Rien à vendre : les produits gardés pour les commandes ou verrouillés ne sont pas proposés.');
-        if (!o.id || !list.includes(o.id)) return grid + (list.length ? '<p class="card-sub center">Choisissez un produit à mettre en vente.</p>' : '');
+        const all = G.stallChoices();
+        // 1.137 : recherche, familles et pages, comme à la vente
+        const q = queryOf('stall');
+        const fams = FAMS.map(([id, label, ok]) => [id, label, all.filter(k => ok(ITEMS[k].type)).length]).filter(([id, , n]) => id === 'all' || n > 0);
+        const f = fams.some(x => x[0] === ui.sel.stallF) ? ui.sel.stallF : 'all';
+        const famOk = FAMS.find(x => x[0] === f)[2];
+        const shown = all.filter(k => famOk(ITEMS[k].type) && matchQ(q, ITEMS[k].name));
+        const pg = page('stall:' + f, shown, 60);
+        const list = pg.items;
+        const chips = all.length > 12 ? `<div class="chips-row sell-fams">${fams.map(([id, label, n]) => `<button class="pick-chip${id === f ? ' on' : ''}" data-act="stallF" data-f="${id}">${label} · ${n}</button>`).join('')}</div>` : '';
+        const grid = !all.length
+            ? empty('Rien à vendre : les produits gardés pour les commandes ou verrouillés ne sont pas proposés.')
+            : !shown.length
+              ? `${chips}${empty(q ? `Aucun produit ne correspond à « ${esc(ui.sel.q.stall)} ».` : 'Rien dans cette famille.')}`
+              : `${chips}${pg.top}<div class="barn-goods">${list.map(id => `<button class="bgood${o.id === id ? ' sel' : ''}" data-act="stallPick" data-id="${id}" title="${ITEMS[id].name}">${ico(['item', id])}<b>${G.sellableQty(id)}</b></button>`).join('')}</div>`;
+        const search = ['search', all.length > 12 ? searchBox('stall', `Chercher parmi ${all.length} produits`) : ''];
+        if (!o.id || !all.includes(o.id)) return [search, ['grid', grid + (all.length ? '<p class="card-sub center">Choisissez un produit à mettre en vente.</p>' : '')], ['form', '']];
         const max = G.stallMax(o.id);
         o.qty = Math.max(1, Math.min(o.qty, max));
         const unit = G.stallUnit(o.id, o.ratio);
         const whole = G.unitPrice(o.id, 0);
-        return `${grid}<div class="stall-form">
+        const form = `<div class="stall-form">
             <div class="card-head">${ico(['item', o.id], 'ico big')}<div class="card-main"><div class="card-title">${ITEMS[o.id].name}</div><div class="card-sub">${G.sellableQty(o.id)} disponible${G.sellableQty(o.id) > 1 ? 's' : ''} · au grossiste : ${fmt(whole)} pièce${whole > 1 ? 's' : ''} l’unité</div></div></div>
             <div class="form-row"><span>Quantité</span><div class="stepper">${btn('', { act: 'stallQty', data: { d: -1 }, size: 'sm', icon: ['ui', 'minus'], title: 'Moins' })}<b>${o.qty}</b>${btn('', { act: 'stallQty', data: { d: 1 }, size: 'sm', icon: ['ui', 'plus'], title: 'Plus' })}${btn('Max', { act: 'stallQty', data: { d: 99 }, size: 'sm' })}</div></div>
             <div class="form-row"><span>Prix</span><input type="range" min="50" max="150" step="5" value="${Math.round(o.ratio * 100)}" data-input="stallPrice"><b id="stall-pct">${Math.round(o.ratio * 100)} %</b></div>
             <div class="stall-sum" id="stall-sum">${stallSum(o, unit)}</div>
         </div>`;
+        return [search, ['grid', grid], ['form', form]];
     },
     foot: o => (o.id && G.stallChoices().includes(o.id) ? btn('Mettre en vente', { act: 'listStall', kind: 'gold', wide: true, size: 'lg' }) : ''),
 });
@@ -716,6 +729,7 @@ export function setupMarket() {
         shopCat: (el, d) => (ui.sel.shop = d.c),
         seedShop: (el, d) => (ui.sel.seedShop = d.f),
         sellF: (el, d) => (ui.sel.sellF = d.f),
+        stallF: (el, d) => (ui.sel.stallF = d.f),
         sellTab: (el, d) => (ui.sel.sell = d.v),
         fairSell: (el, d) => G.sellToBuyer(d.id, el),
         fairToggle: (el, d) => G.toggleBuyerPick(d.id, d.uid),

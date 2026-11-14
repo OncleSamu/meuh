@@ -31,7 +31,7 @@
 
 .gauge-label b {
     font-size: 0.72rem;
-    color: var(--leaf-d);
+    color: #2a6a1f;
 }
 
 .gauge.off .gauge-label b {

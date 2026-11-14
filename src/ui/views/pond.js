@@ -89,7 +89,8 @@ function fightBar(f) {
 }
 
 // ---------------- la canne : ce qui mord ici, le mini-jeu ----------------
-const PHASE_BTN = { idle: 'Lancer la ligne', wait: 'Ferrer', bite: 'Ferrer !', reel: 'Ferrer !' };
+// 1.137 : pendant l'attente, le bouton dit d'attendre (ferrer trop tôt fait tout rater)
+const PHASE_BTN = { idle: 'Lancer la ligne', wait: 'Attendez le « ! »…', bite: 'Ferrer !', reel: 'Ferrer !' };
 function rodCard() {
     const p = state.pond,
         f = G.fishing,
@@ -111,12 +112,12 @@ function rodCard() {
     }[ph];
     const zone = ph === 'reel' ? `left:${(G.zoneCenter() - f.width / 2) * 100}%;width:${f.width * 100}%` : '';
     return `<div class="card nature-card pond-card">
-        <div class="nature-head">${ico(['ui', 'rod'])}<div class="card-main"><div class="card-title">${SPOTS[p.spot].name}</div><div class="card-sub">${msg}</div></div>${ph === 'idle' ? btn('?', { act: 'open', data: { sheet: 'guide', page: 'pond' }, size: 'sm', kind: 'ghost', title: 'Comment on pêche ?' }) : ''}</div>
+        <div class="nature-head">${ico(['ui', 'rod'])}<div class="card-main"><div class="card-title">${SPOTS[p.spot].name}</div><div class="card-sub pond-msg">${msg}</div></div>${ph === 'idle' ? btn('?', { act: 'open', data: { sheet: 'guide', page: 'pond' }, size: 'sm', kind: 'ghost', title: 'Comment on pêche ?' }) : ''}</div>
         <div class="catch-row">${table.map(r => `<span class="catch${r.boosted ? ' boost' : ''}" title="${fname(r.id)}">${ico(['item', r.id])}<b>${r.pct}%</b></span>`).join('') || '<span class="card-sub">Rien ne mord ici en ce moment.</span>'}</div>
         <div class="pond spot-${p.spot}" id="pond" data-phase="${ph}" data-anchor="pond"><div class="ripple r1"></div><div class="ripple r2"></div><div class="lily l1"></div><div class="lily l2"></div><div class="bobber"><span class="excl">!</span></div></div>
         ${ph === 'reel' ? fightBar(f) : ''}
         <div class="reel"${ph === 'reel' ? '' : ' hidden'}><div class="reel-zone" id="reel-zone" style="${zone}"></div><div class="reel-cursor" id="reel-cursor"></div></div>
-        ${btn(PHASE_BTN[ph], { act: 'fish', kind: ph === 'idle' ? 'blue' : 'gold', wide: true, size: 'lg', cls: 'fish-btn' })}
+        ${btn(PHASE_BTN[ph], { act: 'fish', kind: ph === 'idle' ? 'blue' : ph === 'wait' ? '' : 'gold', wide: true, size: 'lg', cls: `fish-btn${ph === 'wait' ? ' waiting' : ''}` })}
     </div>`;
 }
 const fightText = f =>

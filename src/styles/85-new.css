@@ -370,7 +370,7 @@
     padding: 1px 8px;
     font-size: 0.72rem;
     vertical-align: middle;
-    background: #cd8a4a;
+    background: #a5632b;
     color: #fff;
     border: 2px solid var(--ink);
     border-radius: 999px;
@@ -2892,4 +2892,126 @@ button.goods-art {
     flex-direction: column;
     gap: 5px;
     flex: none;
+}
+
+/* ================= 1.137 : audit UX ================= */
+/* la recherche garde toute la largeur : sur téléphone, le tri n'est qu'une icône (la liste s'ouvre au toucher) */
+@media (max-width: 560px) {
+    .list-bar .list-sort:not(.filt) {
+        flex: 0 0 52px;
+        justify-content: center;
+    }
+    .list-bar .list-sort:not(.filt) .ls-ico {
+        margin: 0;
+        opacity: 0.85;
+    }
+    .list-bar .list-sort:not(.filt) select {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        padding: 0;
+    }
+    .list-bar .list-sort:not(.filt)::after {
+        display: none;
+    }
+}
+/* la grange vide : le texte sur toute la largeur, pas dans une case */
+.barn-goods > .empty {
+    grid-column: 1 / -1;
+    margin: 6px 0;
+}
+/* la pêche : le texte garde deux lignes, le bouton ne saute plus à la touche */
+.pond-msg {
+    min-height: 2.5em;
+}
+.fish-btn.waiting {
+    opacity: 0.75;
+}
+/* zones sensibles plus grandes, sans changer le dessin */
+.sub-help {
+    position: relative;
+}
+.sub-help::after {
+    content: '';
+    position: absolute;
+    inset: -9px;
+}
+.goods-btns .btn {
+    min-height: 36px;
+}
+.shop-list .btn {
+    min-height: 34px;
+}
+.note-word {
+    padding: 0 6px 1px;
+    border-radius: 6px;
+    color: var(--ink);
+}
+/* vendre : l'étal vide et le produit du jour tiennent chacun sur une ligne */
+.stall-card.compact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+.stall-card.compact .card-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.stall-card.compact .card-sub {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hot-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 6px 0;
+    padding: 4px 10px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: #fff1b8;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+.hot-line .ico {
+    width: 22px;
+    height: 22px;
+    flex: none;
+}
+/* atelier : plan et programmes sur une ligne */
+.ws-tools {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.ws-tools .btn {
+    flex: 1;
+}
+/* petit téléphone : le mot « Renommée » laisse la place au chiffre */
+.rw-short {
+    display: none;
+}
+@media (max-width: 379px) {
+    .rw-long {
+        display: none;
+    }
+    .rw-short {
+        display: inline;
+    }
+}
+@media (max-width: 359px) {
+    .inner-tabs button,
+    .seg > button {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
 }

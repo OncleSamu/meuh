@@ -1,6 +1,7 @@
 /* eslint-disable prefer-const -- les gestes déclarent leurs poignées avant de les affecter */
 // Le mini-jeu du comptoir (1.17) : une boisson = une suite de gestes, une note de 1 à 3 étoiles.
 
+import { state } from '../core/state.js';
 import { ITEMS } from '../data/items.js';
 import { BREW } from '../data/counter.js';
 import { VILLAGERS } from '../data/village.js';
@@ -912,7 +913,12 @@ export function openBrew(id, vid) {
         const kinds = [...new Set(d.st.map(x => x[0]))];
         stage.innerHTML = `<div class="cb-how"><b>Comment on joue ?</b>${d.st.map((x, k) => `<p><i>${k + 1}</i><span><b>${LBL[x[0]]}</b> : ${HOW[x[0]]}</span></p>`).join('')}<button class="btn gold" id="cbgo">C’est parti !</button></div>`;
         o.querySelector('#cbhint').textContent = `${d.st.length} geste${d.st.length > 1 ? 's' : ''} : ${kinds.map(k => LBL[k].toLowerCase()).join(', ')}`;
-        await new Promise(r => (o.querySelector('#cbgo').onclick = r));
+        // 1.137 : après trois boissons avec ces gestes, on ne réexplique plus (le rappel reste écrit sous la tasse)
+        const seen = (state.settings.cbHow ||= {});
+        const known = kinds.every(k => (seen[k] || 0) >= 3);
+        kinds.forEach(k => (seen[k] = (seen[k] || 0) + 1));
+        if (known) stage.innerHTML = '';
+        else await new Promise(r => (o.querySelector('#cbgo').onclick = r));
         if (me !== run) return;
         await ready({ stage });
         const scores = [];

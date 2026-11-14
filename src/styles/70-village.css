@@ -679,7 +679,7 @@ html.season-automne .meadow {
     line-height: 1.1;
     padding: 0 4px;
     font-family: var(--display);
-    font-size: clamp(0.6rem, 2.3cqi, 0.95rem);
+    font-size: clamp(0.69rem, 2.3cqi, 0.95rem);
     background: var(--paper-l);
     border: 1.5px solid var(--ink);
     border-radius: 6px;

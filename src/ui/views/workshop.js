@@ -57,7 +57,7 @@ function machineList() {
         .sort(([a, i], [b, j]) => rank[mState(a)] - rank[mState(b)] || (t - (a.used || 0) > WEEK) - (t - (b.used || 0) > WEEK) || i - j);
 }
 function machineFilter() {
-    if (state.machines.length < 6) return '';
+    if (state.machines.length < 9) return '';
     const f = ui.sel.mfilter || 'all';
     const n = k => (k === 'all' ? state.machines.length : state.machines.filter(m => mState(m) === k).length);
     return `<div class="chips-row mfilter">${MFILTERS.map(([k, label]) => `<button class="pick-chip${f === k ? ' on' : ''}" data-act="mfilter" data-f="${k}">${label} · ${n(k)}</button>`).join('')}</div>`;
@@ -68,9 +68,17 @@ function renderWorkshop(el) {
     blocks(el, [
         [
             'top',
-            `<div class="view-top end"><div class="actions">${state.machines.length > 1 ? btn('Programmes', { act: 'open', data: { sheet: 'presets' }, size: 'sm' }) : ''}${btn('Relancer', { act: 'restartMachines', size: 'sm', icon: ['ui', 'loop'] })}${btn('Tout récupérer', { act: 'collectMachines', kind: any ? 'gold' : '', size: 'sm', icon: ['ui', 'basket'], disabled: !any })}</div></div>`,
+            `<div class="view-top end"><div class="actions">${btn('Relancer', { act: 'restartMachines', size: 'sm', icon: ['ui', 'loop'] })}${btn('Tout récupérer', { act: 'collectMachines', kind: any ? 'gold' : '', size: 'sm', icon: ['ui', 'basket'], disabled: !any })}</div></div>`,
         ],
-        ['plan', planCard()],
+        // 1.137 : un plan en cours garde sa carte ; sinon, plan et programmes tiennent sur une ligne, et seulement quand il y a assez de machines
+        [
+            'plan',
+            G.planOf()
+                ? planCard()
+                : state.machines.length >= 4
+                  ? `<div class="ws-tools">${btn('Plan de production', { act: 'open', data: { sheet: 'plan' }, size: 'sm', icon: ['ui', 'loop'] })}${btn('Programmes', { act: 'open', data: { sheet: 'presets' }, size: 'sm' })}</div>`
+                  : '',
+        ],
         ['pin', pinBar()],
         [
             'grid',

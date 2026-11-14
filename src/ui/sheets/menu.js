@@ -15,7 +15,7 @@ import { varRankChips } from '../genlook.js';
 import { ico, art, qStar } from '../icons.js';
 import { btn, navRow, lines, line, bar, dot } from '../kit.js';
 import { go, ui } from '../app.js';
-import { queryOf, matchQ, listBar, sortOf } from '../pager.js';
+import { queryOf, matchQ, listBar, sortOf, page } from '../pager.js';
 import { toast } from '../../core/bus.js';
 import { defineSheet, openSheet, closeSheet, closeAll, sheetOpts } from '../sheets.js';
 import { produce } from '../navigate.js';
@@ -63,7 +63,7 @@ defineSheet('menu', {
             const t = tiles.filter(Boolean);
             return t.length ? `<h4 class="mgroup">${title}</h4><div class="menu-tiles">${t.join('')}</div>` : '';
         };
-        const card = `<button class="me-card" data-act="open" data-sheet="identity" aria-label="Votre carte de visite"><span class="avatar">${art('villager', G.meLook())}</span><span class="card-main"><b>${esc(G.farmName())}</b><small>Niveau ${state.level} · toucher pour changer de tête ou de nom</small></span></button><button class="me-card metier-card" data-act="metierOpen" aria-label="Le métier de la ferme"><span class="avatar">${ico(G.metierId() ? METIERS[G.metierId()].icon : ['ui', 'star'], 'ico big')}</span><span class="card-main"><b>${G.metierId() ? G.metierTitle() : 'Choisir un métier'}</b><small>${G.metierId() ? (G.metierCanRank() ? 'Un rang à passer !' : 'Leçons, bonus, changer de métier') : 'La spécialité de votre ferme'}</small></span>${!G.metierId() || G.metierCanRank() ? '<span class="dot">!</span>' : ''}</button>`;
+        const card = `<button class="me-card" data-act="open" data-sheet="identity" aria-label="Votre carte de visite"><span class="avatar">${art('villager', G.meLook())}</span><span class="card-main"><b>${esc(G.farmName())}</b><small>Niveau ${state.level} · toucher pour changer de tête ou de nom</small></span></button><button class="me-card metier-card" data-act="metierOpen" aria-label="Le métier de la ferme"><span class="avatar">${ico(G.metierId() ? METIERS[G.metierId()].icon : ['ui', 'star'], 'ico big')}</span><span class="card-main"><b>${G.metierId() ? G.metierTitle() : 'Choisir un métier'}</b><small>${G.metierId() ? (G.metierCanRank() ? 'Un rang à passer !' : 'Leçons, bonus, changer de métier') : 'La spécialité de votre ferme'}</small></span>${(!G.metierId() && state.level >= 3) || G.metierCanRank() ? '<span class="dot">!</span>' : ''}</button>`;
         return (
             card +
             group('Ma ferme', [
@@ -186,10 +186,13 @@ defineSheet('barn', {
         const all = G.barnGoods();
         const q = queryOf('barn');
         // 1.136 : les mêmes familles et les mêmes tris qu'à la vente
-        const famOk = (BARN_FAMS.find(x => x[0] === ui.sel.barnF) || BARN_FAMS[0])[2];
+        const cur0 = BARN_FAMS.some(x => x[0] === ui.sel.barnF) ? ui.sel.barnF : 'all';
+        const famOk = BARN_FAMS.find(x => x[0] === cur0)[2];
         const sort = sortOf('barn', BARN_SORTS);
         const goods = all.filter(id => famOk(ITEMS[id].type) && matchQ(q, ITEMS[id].name));
         if (sort !== 'def') goods.sort(barnCmp(sort));
+        // 1.137 : par pages de 60, pour que la grange reste vive avec des centaines de produits
+        const pg = page('barn:' + cur0, goods, 60);
         const fams = BARN_FAMS.map(([id, label, ok]) => [id, label, all.filter(k => ok(ITEMS[k].type)).length]).filter(x => x[2] > 0);
         const cur = fams.some(x => x[0] === ui.sel.barnF) ? ui.sel.barnF : 'all';
         const sel = o.sel && state.inventory[o.sel] ? o.sel : null;
@@ -252,9 +255,9 @@ defineSheet('barn', {
             ],
             [
                 'goods',
-                `<div class="barn-goods">${
+                `${pg.top}<div class="barn-goods">${
                     goods.length
-                        ? goods
+                        ? pg.items
                               .map(
                                   id =>
                                       `<button class="bgood${sel === id ? ' sel' : ''}" data-act="barnSel" data-id="${id}" title="${ITEMS[id].name}">${ico(['item', id])}<b>${state.inventory[id]}</b>${G.isLocked(id) ? `<i class="lk">${art('ui', 'lock')}</i>` : ''}</button>`,

@@ -1,6 +1,25 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.137",
+  "title": "Audit de confort : la suite",
+  "date": "14 novembre 2026",
+  "items": [
+   "Marché, Vendre : les produits remontent. L'étal vide et le produit du jour tiennent chacun sur une ligne, le réglage « Garder ce qu'il faut » passe sous la liste",
+   "Grange : par pages de 60 produits. Elle s'ouvre et répond vite, même avec des centaines de produits",
+   "Choix de l'étal : une recherche, des familles et des pages",
+   "Recherche avec tri : sur téléphone, le tri devient une icône et la recherche garde toute la largeur",
+   "Début de partie : le premier cœur d'un villageois est un simple message, plus une fenêtre. Une astuce n'arrive plus dans la foulée d'une autre fenêtre",
+   "Début de partie : le métier ne se choisit plus sur le tout premier écran ; il se propose dans le menu à partir du niveau 3",
+   "Les messages s'affichent tout en haut et ne couvrent plus les volets",
+   "Atelier : « Plan de production » et « Programmes » sur une seule ligne, à partir de 4 machines ; les filtres à partir de 9",
+   "Pêche : le bouton dit « Attendez le ! » pendant l'attente, et ne saute plus quand ça mord",
+   "Comptoir : « Comment on joue ? » ne revient plus après trois boissons avec les mêmes gestes",
+   "Lisibilité : boutons d'aide, de vente et d'achat plus faciles à toucher ; noms du village et renommée écrits plus gros ; quatre textes trop pâles foncés",
+   "Corrigé : « La grange est vide. » ne s'écrit plus à la verticale"
+  ]
+ },
+ {
   "v": "1.136",
   "title": "Tout retrouver, tout enchaîner",
   "date": "14 novembre 2026",

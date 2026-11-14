@@ -537,7 +537,7 @@ body.wide #tabs {
 }
 /* 1.73 : « Renommée 14 » au niveau maximum : un peu plus petit pour tenir dans la jauge */
 .xp-bar.renown > small {
-    font-size: 0.6rem;
+    font-size: 0.69rem;
     padding-left: 8px;
     letter-spacing: -0.01em;
 }

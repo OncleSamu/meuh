@@ -48,7 +48,8 @@ defineSheet('identity', {
             ],
             [
                 'metier',
-                G.metierId()
+                // 1.137 : à la toute première ouverture, pas de métier à choisir (on ne sait pas encore ce qu'est la ferme) : il se propose au niveau 3, dans le menu
+                G.metierId() || (first && state.level < 3)
                     ? ''
                     : `<div class="me-metier"><span class="me-label">La spécialité de votre ferme</span><p class="card-sub">Elle fait mieux payer ses produits, rang après rang. Tout le reste du jeu reste ouvert ; le premier changement est gratuit.</p><div class="me-metiers">${METIER_IDS.map(id => `<button class="me-metier-tile${d.metier === id ? ' on' : ''}" data-act="meMetier" data-id="${id}">${ico(METIERS[id].icon, 'ico big')}<b>${METIERS[id].name}</b></button>`).join('')}</div><p class="card-sub me-metier-desc">${d.metier ? METIERS[d.metier].desc : 'Touchez un métier pour le choisir. Vous pourrez aussi le choisir plus tard, depuis le menu.'}</p></div>`,
             ],

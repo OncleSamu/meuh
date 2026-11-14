@@ -259,7 +259,7 @@ function festHtml() {
     const left = G.seasonDaysLeft();
     const last = F.last ? `<p class="card-sub">La saison passée : ${esc(F.last.name)} a fini ${F.last.r === 1 ? '<b>première</b>' : `${F.last.r}e`} (${esc(F.last.theme)}).</p>` : '';
     return `<div class="card salon-card fest-card"><div class="card-head">${ico(['ui', 'trophy'], 'ico big')}<div class="card-main"><div class="card-title">Concours : ${th.name}</div>
-        <div class="card-sub">Le jury veut une boisson <b style="color:${NOTE_COL[th.note]}">${th.want}</b> · encore ${left} jour${left > 1 ? 's' : ''} de jeu</div></div></div>
+        <div class="card-sub">Le jury veut une boisson <b class="note-word" style="background:color-mix(in srgb, ${NOTE_COL[th.note]} 50%, #fff)">${th.want}</b> · encore ${left} jour${left > 1 ? 's' : ''} de jeu</div></div></div>
         <ol class="ranking">${rows}</ol>
         <p class="card-sub">Note sur 20 : 4 par étoile, 4 si la note du goût est celle du thème, 1 par rang de la meilleure bouteille. Le jury goûte deux bouteilles. Premier prix : des pièces, de l’expérience et 2 points de renommée.</p>
         ${last}

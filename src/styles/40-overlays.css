@@ -309,7 +309,8 @@
 #toasts {
     position: fixed;
     left: 50%;
-    top: calc(58px + var(--safe-t));
+    /* 1.137 : par-dessus le bandeau du haut, pour ne plus couvrir les volets */
+    top: calc(4px + var(--safe-t));
     transform: translateX(-50%);
     z-index: 80;
     display: flex;

@@ -2,7 +2,7 @@
 // et les bulles d'aide de Mamie Odette. Une seule carte à la fois, dans l'ordre d'arrivée.
 import { state } from '../core/state.js';
 import { fmt, formatDuration } from '../core/format.js';
-import { on, emit } from '../core/bus.js';
+import { on, emit, toast } from '../core/bus.js';
 import { PROJECTS, VILLAGERS, STORIES } from '../data/village.js';
 import { DAILY_REWARDS } from '../data/world.js';
 import { STUD } from '../data/haras.js';
@@ -153,6 +153,9 @@ const BUILD = {
     },
 };
 
+const TIP_GAP = 45000;
+let lastClosed = 0,
+    tipTimer = null;
 export function pushMoment(type, data, first) {
     if (first) queue.unshift({ type, data });
     else queue.push({ type, data });
@@ -166,6 +169,13 @@ export function pump() {
     let k = queue.findIndex(m => m.type !== 'tip' && (m.type !== 'daily' || state.tutorial.done));
     if (k < 0) {
         if (anySheet() || !state.tutorial.done) return;
+        // 1.137 : une astuce n'arrive jamais dans la foulée d'une autre fenêtre : elle attend un peu
+        const wait = TIP_GAP - (Date.now() - lastClosed);
+        if (wait > 0) {
+            clearTimeout(tipTimer);
+            tipTimer = setTimeout(pump, wait + 50);
+            return;
+        }
         k = 0;
     }
     const [m] = queue.splice(k, 1);
@@ -196,6 +206,7 @@ export function closeMoment() {
     el.hidden = true;
     el._html = '';
     current = null;
+    lastClosed = Date.now();
     refresh();
     setTimeout(pump, 250);
 }
@@ -206,7 +217,12 @@ export function setupMoments(onClose) {
     refresh = onClose;
     on('levelUp', l => pushMoment('level', l));
     on('celebrate', c => pushMoment('celebrate', c));
-    on('friend', f => pushMoment('friend', f));
+    // 1.137 : le premier cœur d'un villageois est un simple message (six fenêtres identiques dans les dix premières minutes, c'était trop)
+    on('friend', f => {
+        if (f.h > 1) return pushMoment('friend', f);
+        toast(`${VILLAGERS[f.vid].name} vous apprécie : ${G.rewardLines(f.r).map(l => l[1]).join(', ')}`, ['villager', f.vid]);
+        emit('sfx', 'level');
+    });
     on('story', s => pushMoment('story', s));
     on('storyEnd', s => pushMoment('storyEnd', s));
     on('duoEnd', s => pushMoment('duoEnd', s));
