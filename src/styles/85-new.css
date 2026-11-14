@@ -3015,3 +3015,60 @@ button.goods-art {
         padding-right: 4px;
     }
 }
+
+/* 1.138 : quatre volets ou plus : tous visibles d'un coup sur téléphone, l'icône au-dessus du nom (plus besoin de faire glisser la bande) */
+@media (max-width: 700px) {
+    .subnav-row.strip.stack > .seg {
+        overflow: visible;
+        gap: 2px;
+    }
+    .subnav-row.strip.stack .seg > button,
+    .subnav-row.strip.stack .seg.n5 > button,
+    .subnav-row.strip.stack .seg.n5 > button.on {
+        flex: 1 1 auto;
+        min-width: 0;
+        flex-direction: column;
+        gap: 1px;
+        min-height: 46px;
+        padding: 4px 2px 3px;
+        font-size: 0.66rem;
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+    }
+    .subnav-row.strip.stack .seg > button span,
+    .subnav-row.strip.stack .seg.n5 > button:not(.on) span {
+        display: block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .subnav-row.strip.stack .seg > button small {
+        display: block;
+        margin: 0;
+        font-size: 0.6rem;
+        opacity: 0.8;
+    }
+    .subnav-row.strip.stack .seg > button .ico {
+        width: 22px;
+        height: 22px;
+    }
+    .subnav-row.strip.stack .seg > button .dot {
+        top: 0;
+        right: 2px;
+    }
+}
+@media (max-width: 360px) {
+    .subnav-row.strip.stack .seg > button,
+    .subnav-row.strip.stack .seg.n5 > button,
+    .subnav-row.strip.stack .seg.n5 > button.on {
+        padding: 4px 1px 3px;
+        font-size: 0.6rem;
+        letter-spacing: -0.03em;
+    }
+    .subnav-row.strip.stack > .seg {
+        gap: 0;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+}

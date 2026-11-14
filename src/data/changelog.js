@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.138",
+  "title": "Tous les volets d'un coup d'œil",
+  "date": "14 novembre 2026",
+  "items": [
+   "Sur téléphone, les onglets à quatre volets ou plus (Ferme, Atelier, Village) les montrent tous à la fois, l'icône au-dessus du nom : plus besoin de faire glisser la bande pour trouver le Labo, la Maison, les Voyages ou la Famille",
+   "Le niveau 1 est plus court : 150 points d'expérience au lieu de 280"
+  ]
+ },
+ {
   "v": "1.137",
   "title": "Audit de confort : la suite",
   "date": "14 novembre 2026",

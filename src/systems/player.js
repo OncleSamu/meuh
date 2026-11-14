@@ -98,7 +98,8 @@ export const getXpReq64 = lvl =>
         ? Math.round((getXpReq60(lvl) * earlySlow(lvl)) / 10) * 10
         : Math.round((BALANCE.xp64.first + (lvl - BALANCE.xp64.from) * BALANCE.xp64.step) / 10) * 10;
 // 1.109 : 80 niveaux. Jusqu'au 29, rien ne change ; le niveau 30 demande un peu plus que le 29, puis chaque niveau un peu plus que le précédent
-export const getXpReq = lvl => (lvl < BALANCE.xp80.from ? getXpReq64(lvl) : Math.round((BALANCE.xp80.first + (lvl - BALANCE.xp80.from) * BALANCE.xp80.step) / 10) * 10);
+// 1.138 : le niveau 1 est plus court (150 au lieu de 280) : huit minutes avec une seule culture, c'était long
+export const getXpReq = lvl => (lvl === 1 ? BALANCE.xpLvl1 : lvl < BALANCE.xp80.from ? getXpReq64(lvl) : Math.round((BALANCE.xp80.first + (lvl - BALANCE.xp80.from) * BALANCE.xp80.step) / 10) * 10);
 // expérience totale pour atteindre un niveau
 export const xpToReach = (L, req = getXpReq) => {
     let s = 0;

@@ -95,7 +95,10 @@ test('80 niveaux : les grandes étapes à leur nouvelle place', () => {
 });
 
 test('80 niveaux : l’expérience ne change pas avant le 30, puis monte régulièrement', () => {
-    for (let l = 1; l < 30; l++) assert.equal(G.getXpReq(l), G.getXpReq64(l));
+    // 1.138 : le niveau 1 est plus court (150) ; du 2 au 29, rien ne change
+    assert.equal(G.getXpReq(1), 150);
+    assert.ok(G.getXpReq(1) < G.getXpReq(2));
+    for (let l = 2; l < 30; l++) assert.equal(G.getXpReq(l), G.getXpReq64(l));
     assert.ok(G.getXpReq(30) > G.getXpReq(29));
     for (let l = 31; l < 80; l++) assert.ok(G.getXpReq(l) > G.getXpReq(l - 1), `niveau ${l}`);
 });

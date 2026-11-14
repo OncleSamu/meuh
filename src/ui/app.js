@@ -251,7 +251,7 @@ function renderSubnav() {
     // 1.73 : chaque volet garde son nom ; s'ils ne tiennent pas, la bande défile et le volet ouvert se centre
     patch(
         el,
-        `<div class="subnav-row${t.subs.length > 2 ? ' strip' : ''}">` +
+        `<div class="subnav-row${t.subs.length > 2 ? ' strip' : ''}${t.subs.length >= 4 ? ' stack' : ''}">` +
             segmented(
                 t.subs.map(([id, label, icon]) => {
                     const locked = subLocked(t.id, id);

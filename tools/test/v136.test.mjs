@@ -72,7 +72,7 @@ test('1.36 : un rythme à peu près égal (recettes, plantes, animaux, machines)
 
 test('1.109 : la courbe d’expérience monte régulièrement de 30 à 79, les gains gardent l’échelle d’avant', () => {
     for (let l = 2; l < 80; l++) assert.ok(G.getXpReq(l) >= G.getXpReq(l - 1), `niveau ${l}`);
-    for (let l = 1; l < 30; l++) assert.equal(G.getXpReq(l), G.getXpReq64(l), `niveau ${l} inchangé`);
+    for (let l = 2; l < 30; l++) assert.equal(G.getXpReq(l), G.getXpReq64(l), `niveau ${l} inchangé`);
     // le niveau 30 demande un peu plus que le 29
     assert.ok(G.getXpReq(30) > G.getXpReq(29) && G.getXpReq(30) < G.getXpReq(29) * 1.1);
     state.level = lv80(57);
@@ -99,7 +99,7 @@ test('1.36 : une partie des niveaux 20 à 46 garde son expérience totale et tou
         assert.ok(state.lv136);
         assert.ok(state.level >= lv && state.level <= 80, `niveau ${state.level}`);
         // 1.109 : au-dessus du niveau 30, la partie arrive au début de sa nouvelle tranche
-        if (state.level <= 30) assert.ok(Math.abs(G.xpToReach(state.level) + state.xp - was) <= 10, 'expérience totale gardée');
+        if (state.level <= 30) assert.ok(Math.abs(G.xpToReach(state.level, G.getXpReq64) + state.xp - was) <= 10, 'expérience totale gardée');
         for (const o of [ITEMS, ANIMALS, MACHINES])
             for (const d of Object.values(o))
                 if (d.lv135 !== undefined && d.lv135 <= lv) assert.ok(d.reqLvl <= state.level || state.lvKeep[d.id], `${d.id} (niveau ${lv}) refermé`);
