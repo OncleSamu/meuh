@@ -230,6 +230,17 @@ export function turnInQuest(i, at) {
     return true;
 }
 
+// 1.136 : toutes les commandes prêtes d'un coup, dans l'ordre du tableau ; chacune revérifie le stock qui reste
+export const questsReady = () => state.quests.filter(checkQuestReady).length;
+export function turnInAll(at) {
+    let n = 0;
+    state.quests.forEach((q, i) => {
+        if (turnInQuest(i, at)) n++;
+    });
+    if (n > 1) toast(`${n} commandes livrées`, ['ui', 'scroll']);
+    return n;
+}
+
 // la confirmation (second appui) est demandée par l'interface
 export function trashQuest(i) {
     const q = state.quests[i];

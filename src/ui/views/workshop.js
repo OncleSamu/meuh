@@ -1,4 +1,5 @@
 // Atelier | Machines : chaque machine en vignette, et son tiroir de recettes.
+import { searchBox, queryOf, matchQ } from '../pager.js';
 import { planCard } from '../sheets/plan.js';
 import { state } from '../../core/state.js';
 import { fmt, formatDuration } from '../../core/format.js';
@@ -9,7 +10,8 @@ import * as G from '../../systems/index.js';
 import { blocks, actions, byId, esc } from '../dom.js';
 import { ico, art, qStar } from '../icons.js';
 import { btn, bar, empty, timer, toggle, tip15 } from '../kit.js';
-import { defineView, defineLive, ui } from '../app.js';
+import { defineView, defineLive, ui, refresh } from '../app.js';
+import { longPress } from '../longpress.js';
 import { defineSheet, openSheet } from '../sheets.js';
 import { pinBar } from './common.js';
 import { now } from '../../core/clock.js';
@@ -66,7 +68,7 @@ function renderWorkshop(el) {
     blocks(el, [
         [
             'top',
-            `<div class="view-top end"><div class="actions">${btn('Relancer', { act: 'restartMachines', size: 'sm', icon: ['ui', 'loop'] })}${btn('Tout récupérer', { act: 'collectMachines', kind: any ? 'gold' : '', size: 'sm', icon: ['ui', 'basket'], disabled: !any })}</div></div>`,
+            `<div class="view-top end"><div class="actions">${state.machines.length > 1 ? btn('Programmes', { act: 'open', data: { sheet: 'presets' }, size: 'sm' }) : ''}${btn('Relancer', { act: 'restartMachines', size: 'sm', icon: ['ui', 'loop'] })}${btn('Tout récupérer', { act: 'collectMachines', kind: any ? 'gold' : '', size: 'sm', icon: ['ui', 'basket'], disabled: !any })}</div></div>`,
         ],
         ['plan', planCard()],
         ['pin', pinBar()],
@@ -144,8 +146,12 @@ defineSheet('machine', {
         const ready = Object.entries(m.out).filter(([, n]) => n > 0);
         const f = ui.sel.recipeFilter || 'all',
             wanted = G.wantedItems();
-        const list = G.recipesOf(m.type)
+        // 1.136 : une recherche par nom de recette ou d'ingrédient
+        const allRecs = G.recipesOf(m.type);
+        const q = queryOf('rec');
+        const list = allRecs
             .filter(r => f === 'all' || (f === 'can' ? G.recipeUnlocked(r.id) && G.canCook(r.id) : wanted.has(r.id)))
+            .filter(r => matchQ(q, ITEMS[r.id].name, ...Object.keys(r.ing).map(k => ITEMS[k].name)))
             .sort((a, b) => wanted.has(b.id) - wanted.has(a.id) || G.recipeUnlocked(b.id) - G.recipeUnlocked(a.id) || a.lvl - b.lvl);
         const tiles = list
             .map(r => {
@@ -203,6 +209,7 @@ defineSheet('machine', {
                       )
                     : '',
             ],
+            ['search', allRecs.length > 12 ? searchBox('rec', 'Chercher une recette ou un ingrédient') : ''],
             [
                 'filters',
                 `<div class="chips-row">${filters.map(([k, t]) => `<button class="pick-chip${f === k ? ' on' : ''}" data-act="recipeFilter" data-f="${k}">${t}</button>`).join('')}</div>`,
@@ -211,7 +218,7 @@ defineSheet('machine', {
                 'grid',
                 list.length
                     ? `<div class="recipe-grid">${tiles}</div>`
-                    : empty(f === 'can' ? 'Aucune recette faisable avec votre stock.' : 'Aucune commande ne demande un produit de cette machine.'),
+                    : empty(q ? `Aucune recette ne correspond à « ${esc(ui.sel.q.rec)} ».` : f === 'can' ? 'Aucune recette faisable avec votre stock.' : 'Aucune commande ne demande un produit de cette machine.'),
             ],
         ];
     },
@@ -229,7 +236,37 @@ defineSheet('machine', {
     },
 });
 
+// 1.136 : les programmes. Trois jeux de files enregistrés, relancés d'un geste.
+defineSheet('presets', {
+    title: `${ico(['ui', 'loop'])}Programmes de l’atelier`,
+    render() {
+        const list = G.presets();
+        const rows = Array.from({ length: G.PRESET_MAX }, (_, k) => {
+            const p = list[k];
+            if (!p)
+                return `<div class="card preset empty"><div class="card-main"><div class="card-title">Programme ${k + 1}</div><div class="card-sub">Libre.</div></div>${btn('Enregistrer', { act: 'presetSave', data: { k }, size: 'sm', kind: 'gold', disabled: !G.presetCanSave() })}</div>`;
+            const jobs = p.jobs
+                .map(j => {
+                    const by = {};
+                    j.ids.forEach(id => (by[id] = (by[id] || 0) + 1));
+                    return `<span class="preset-job">${art('machine', j.type)}${Object.entries(by)
+                        .map(([id, n]) => `<span class="preset-it${state.inventory && G.canCook(id) ? '' : ' no'}">${ico(['item', id])}${n > 1 ? `<b>×${n}</b>` : ''}</span>`)
+                        .join('')}</span>`;
+                })
+                .join('');
+            return `<div class="card preset"><div class="card-main"><div class="card-title">Programme ${k + 1} <small>${G.presetSize(k)} lots · ${p.jobs.length} machine${p.jobs.length > 1 ? 's' : ''}</small></div>
+                <div class="preset-jobs">${jobs}</div></div>
+                <div class="preset-btns">${btn('Lancer', { act: 'presetRun', data: { k }, kind: 'green', size: 'sm' })}${btn('Remplacer', { act: 'presetSave', data: { k }, size: 'sm', disabled: !G.presetCanSave() })}${btn('Effacer', { act: 'presetDrop', data: { k }, size: 'sm' })}</div></div>`;
+        }).join('');
+        return `<p class="card-sub">Remplissez les files de vos machines comme vous aimez, puis enregistrez : le programme retient tout. Plus tard, « Lancer » remet les mêmes recettes dans les mêmes machines, selon la place et les ingrédients.</p>${rows}`;
+    },
+});
+
 export function setupWorkshop() {
+    // 1.136 : rester appuyé sur une recette remplit toute la file
+    longPress(byId('sheets'), '.rtile.ok[data-act="queue"]', el => {
+        if (G.fillQueue(+el.dataset.i, el.dataset.id, el)) refresh();
+    });
     actions({
         collectMachine: (el, d) => {
             const r = G.collectMachine(+d.i, el.closest('[data-anchor]') || el);
@@ -242,6 +279,9 @@ export function setupWorkshop() {
             if (G.recipeUnlocked(d.id) && !G.canCook(d.id)) return openSheet('needs', { id: d.id });
             return G.queueRecipe(+d.i, d.id, el);
         },
+        presetSave: (el, d) => G.savePreset(+d.k),
+        presetRun: (el, d) => G.runPreset(+d.k, el),
+        presetDrop: (el, d) => G.dropPreset(+d.k),
         buyLane2: (el, d) => G.buyLane2(+d.i, el),
         cancelQueued: (el, d) => G.cancelQueued(+d.i, +d.k),
         toggleLoop: (el, d) => G.toggleLoop(+d.i),

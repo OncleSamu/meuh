@@ -15,7 +15,7 @@ import { varRankChips } from '../genlook.js';
 import { ico, art, qStar } from '../icons.js';
 import { btn, navRow, lines, line, bar, dot } from '../kit.js';
 import { go, ui } from '../app.js';
-import { searchBox, queryOf, matchQ } from '../pager.js';
+import { queryOf, matchQ, listBar, sortOf } from '../pager.js';
 import { toast } from '../../core/bus.js';
 import { defineSheet, openSheet, closeSheet, closeAll, sheetOpts } from '../sheets.js';
 import { produce } from '../navigate.js';
@@ -155,6 +155,26 @@ defineSheet('almanac', {
 });
 
 // ---------------- la grange ----------------
+const BARN_FAMS = [
+    ['all', 'Tout', () => true],
+    ['crop', 'Récoltes', t => t === 'crop' || t === 'tree'],
+    ['product', 'Bêtes', t => t === 'product'],
+    ['artisan', 'Atelier', t => t === 'artisan'],
+    ['fish', 'Pêche', t => t === 'fish'],
+    ['other', 'Le reste', t => !['crop', 'tree', 'product', 'artisan', 'fish'].includes(t)],
+];
+const BARN_SORTS = [
+    ['def', 'Rangement habituel'],
+    ['qty', 'Quantité'],
+    ['value', 'Valeur du stock'],
+    ['name', 'Nom (A à Z)'],
+];
+const barnCmp = sort => (a, b) =>
+    sort === 'qty'
+        ? state.inventory[b] - state.inventory[a]
+        : sort === 'name'
+          ? ITEMS[a].name.localeCompare(ITEMS[b].name, 'fr')
+          : G.unitPrice(b, 0) * state.inventory[b] - G.unitPrice(a, 0) * state.inventory[a];
 defineSheet('barn', {
     title: `${ico(['ui', 'barn'])}Grange`,
     render(o) {
@@ -165,7 +185,13 @@ defineSheet('barn', {
         // 1.132 : une recherche par nom quand la grange est bien remplie
         const all = G.barnGoods();
         const q = queryOf('barn');
-        const goods = q ? all.filter(id => matchQ(q, ITEMS[id].name)) : all;
+        // 1.136 : les mêmes familles et les mêmes tris qu'à la vente
+        const famOk = (BARN_FAMS.find(x => x[0] === ui.sel.barnF) || BARN_FAMS[0])[2];
+        const sort = sortOf('barn', BARN_SORTS);
+        const goods = all.filter(id => famOk(ITEMS[id].type) && matchQ(q, ITEMS[id].name));
+        if (sort !== 'def') goods.sort(barnCmp(sort));
+        const fams = BARN_FAMS.map(([id, label, ok]) => [id, label, all.filter(k => ok(ITEMS[k].type)).length]).filter(x => x[2] > 0);
+        const cur = fams.some(x => x[0] === ui.sel.barnF) ? ui.sel.barnF : 'all';
         const sel = o.sel && state.inventory[o.sel] ? o.sel : null;
         let item = '';
         if (sel) {
@@ -210,13 +236,20 @@ defineSheet('barn', {
                 ${surplus && !G.challengeOn('noMarket') ? btn(`Grossiste +${fmt(r.gain)}${COIN()}`, { act: 'barnSell', data: { id: sel }, kind: 'gold', size: 'sm' }) : ''}
                 ${surplus && it.sell ? btn('À l’étal', { act: 'barnStall', data: { id: sel }, kind: 'green', size: 'sm' }) : ''}
                 ${G.vaultOpen() ? btn('Au coffre', { act: 'vaultAdd', data: { id: sel }, size: 'sm', icon: ['ui', 'vault'] }) : ''}
+                ${btn('Fiche', { act: 'open', data: { sheet: 'item', id: sel }, size: 'sm', kind: 'gold' })}
                 ${btn('Produire', { act: 'produce', data: { id: sel }, size: 'sm' })}
                 ${G.plannable(sel) && Object.keys(RECIPES[sel].ing).some(k => RECIPES[k]) ? btn('En faire…', { act: 'open', data: { sheet: 'plan', id: sel }, size: 'sm', icon: ['ui', 'loop'] }) : ''}</div></div>`;
         }
         const can = G.canUpgradeBarn();
         return [
             ['meter', `<div class="barn-meter">${bar(used / cap, used >= cap ? 'red' : '')}<b>${used} / ${cap}</b></div>`],
-            ['search', all.length > 12 ? searchBox('barn', `Chercher parmi ${all.length} produits`) : ''],
+            ['search', all.length > 12 ? listBar('barn', { search: `Chercher parmi ${all.length} produits`, sorts: BARN_SORTS }) : ''],
+            [
+                'fams',
+                all.length > 12
+                    ? `<div class="chips-row sell-fams">${fams.map(([id, label, n]) => `<button class="pick-chip${id === cur ? ' on' : ''}" data-act="barnF" data-f="${id}">${label} · ${n}</button>`).join('')}</div>`
+                    : '',
+            ],
             [
                 'goods',
                 `<div class="barn-goods">${
@@ -229,6 +262,8 @@ defineSheet('barn', {
                               .join('')
                         : q
                           ? `<p class="empty">Aucun produit ne correspond à « ${esc(ui.sel.q.barn)} ».</p>`
+                          : all.length
+                            ? '<p class="empty">Rien dans cette famille.</p>'
                           : '<p class="empty">La grange est vide.</p>'
                 }</div>`,
             ],
@@ -277,6 +312,7 @@ export function setupMenu() {
             sheetOpts('levels').l = +d.l;
             lvTop();
         },
+        barnF: (el, d) => (ui.sel.barnF = d.f),
         barnSel: (el, d) => {
             const o = sheetOpts('barn');
             o.sel = o.sel === d.id ? null : d.id;

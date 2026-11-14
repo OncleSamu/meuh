@@ -21,7 +21,7 @@ import { RIVALS } from '../../data/village.js';
 import { PASSERS, REPUTATION } from '../../data/elevage.js';
 import { renameBtn } from '../sheets/rename.js';
 import { genWrap, animalKey, looksText } from '../genlook.js';
-import { page } from '../pager.js';
+import { page, queryOf, matchQ, sortOf, listBar, searchBox } from '../pager.js';
 
 const COIN = () => ico(['ui', 'coin']);
 const matChips = m =>
@@ -98,10 +98,12 @@ function seeds() {
     ].filter(([, , n]) => n > 0);
     let tab = ui.sel.seedShop;
     if (!tabs.some(([k]) => k === tab)) tab = tabs.length ? tabs[0][0] : 'crop';
-    const keep = i => (tab === 'season' ? G.isInSeason(i.id) : tab === 'stock' ? state.seeds[i.id] > 0 : i.type === tab);
+    // 1.136 : la recherche fouille toutes les graines et tous les arbres à la fois
+    const q = queryOf('seeds');
+    const keep = i => (q ? matchQ(q, i.seedName, i.name) : tab === 'season' ? G.isInSeason(i.id) : tab === 'stock' ? state.seeds[i.id] > 0 : i.type === tab);
     const head = `<div class="chips-row seed-tabs">${tabs.map(([k, label, n]) => `<button class="pick-chip${k === tab ? ' on' : ''}" data-act="seedShop" data-f="${k}">${label} · ${n}</button>`).join('')}</div>`;
     const rows = all
-        .filter(i => (lvOk(i) && G.storyOk(i) ? keep(i) : tab === 'crop' || tab === 'tree' ? i.type === tab : false))
+        .filter(i => (q ? keep(i) : lvOk(i) && G.storyOk(i) ? keep(i) : tab === 'crop' || tab === 'tree' ? i.type === tab : false))
         .map(i => {
             const locked = !lvOk(i) || !G.storyOk(i);
             const season = i.seasons
@@ -387,6 +389,7 @@ function renderShop(el) {
             'cats',
             `<div class="chips-row cats">${CATS.map(([id, label, icon]) => `<button class="pick-chip${id === cat ? ' on' : ''}" data-act="shopCat" data-c="${id}">${ico(icon)}${label}</button>`).join('')}</div>`,
         ],
+        ['search', cat === 'seeds' ? searchBox('seeds', 'Chercher une graine ou un arbre') : ''],
         ['list', `<div class="list shop-list">${c[3]()}</div>`],
     ]);
 }
@@ -461,6 +464,23 @@ const FAMS = [
     ['other', 'Mine et forêt', t => ['gem', 'ore', 'ingot', 'material', 'junk'].includes(t)],
 ];
 const GOODS_PAGE = 15;
+// 1.136 : les tris de la vente (les mêmes dans la grange)
+const GOODS_SORTS = [
+    ['value', 'Valeur du stock'],
+    ['qty', 'Quantité'],
+    ['price', 'Prix à l’unité'],
+    ['name', 'Nom (A à Z)'],
+];
+const goodsCmp = sort => (a, b) =>
+    sort === 'qty'
+        ? state.inventory[b] - state.inventory[a]
+        : sort === 'price'
+          ? G.unitPrice(b, 0) - G.unitPrice(a, 0)
+          : sort === 'name'
+            ? ITEMS[a].name.localeCompare(ITEMS[b].name, 'fr')
+            : G.unitPrice(b, 0) * state.inventory[b] - G.unitPrice(a, 0) * state.inventory[a];
+const sellChips = (fams, f, n) =>
+    n > 12 ? `<div class="chips-row sell-fams">${fams.map(([id, label, k]) => `<button class="pick-chip${id === f ? ' on' : ''}" data-act="sellF" data-f="${id}">${label} · ${k}</button>`).join('')}</div>` : '';
 function goodsGrid() {
     G.clampAllQuality();
     const all = G.sellableKeys();
@@ -470,16 +490,16 @@ function goodsGrid() {
     let f = ui.sel.sellF || 'all';
     if (!fams.some(([id]) => id === f)) f = 'all';
     const ok = FAMS.find(x => x[0] === f)[2];
+    const q = queryOf('sell');
+    const cmp = goodsCmp(sortOf('sell', GOODS_SORTS));
     const sorted = all
-        .filter(k => ok(ITEMS[k].type))
-        .sort((a, b) => (b === hot) - (a === hot) || G.unitPrice(b, 0) * state.inventory[b] - G.unitPrice(a, 0) * state.inventory[a]);
+        .filter(k => ok(ITEMS[k].type) && matchQ(q, ITEMS[k].name))
+        .sort((a, b) => (b === hot) - (a === hot) || cmp(a, b));
+    if (!sorted.length && q) return `${sellChips(fams, f, all.length)}${empty(`Aucun produit ne correspond à « ${esc(ui.sel.q.sell)} ».`)}`;
     // 1.74.7 : par pages de 15, comme les graines
     const pg = page('sell:' + f, sorted, GOODS_PAGE);
     const keys = pg.items;
-    const chips =
-        all.length > 12
-            ? `<div class="chips-row sell-fams">${fams.map(([id, label, n]) => `<button class="pick-chip${id === f ? ' on' : ''}" data-act="sellF" data-f="${id}">${label} · ${n}</button>`).join('')}</div>`
-            : '';
+    const chips = sellChips(fams, f, all.length);
     return `${chips}${pg.top}<div class="goods-grid">${keys
         .map(k => {
             const it = ITEMS[k],
@@ -498,9 +518,9 @@ function goodsGrid() {
             ]
                 .map(([r, f]) => (q[f] ? `<span class="qchip">${qStar(r)}${fmt(q[f])}</span>` : ''))
                 .join('');
-            return `<div class="goods${k === hot ? ' hot' : ''}" data-anchor="goods:${k}">
+            return `<div class="goods${k === hot ? ' hot' : ''}" data-anchor="goods:${k}" data-item="${k}">
                 ${k === hot ? '<span class="hot-tag">+50 %</span>' : ''}
-                <span class="goods-art">${art('item', k)}</span>
+                <button class="goods-art" data-act="open" data-sheet="item" data-id="${k}" aria-label="Fiche : ${it.name}">${art('item', k)}</button>
                 <b class="goods-name">${it.name} <small>×${fmt(n)}</small></b>
                 <span class="goods-meta">${qs ? `<span class="qrow">${qs}</span>` : ''}
                 ${G.isLocked(k) ? `<span class="reserved">${ico(['ui', 'lock'])} verrouillé</span>` : keep ? `<span class="reserved">${keep} gardé${keep > 1 ? 's' : ''}</span>` : ''}
@@ -605,6 +625,7 @@ function renderSell(el) {
             toggle('Garder ce qu’il faut pour les commandes', state.settings.reserve, 'toggleReserve', null, 'Train, chantiers, fête, acheteur pressé'),
         ],
         ['banners', banners()],
+        ['tools', G.sellableKeys().length > 12 ? listBar('sell', { search: 'Chercher un produit', sorts: GOODS_SORTS }) : ''],
         ['goods', goodsGrid()],
         [
             'hint',

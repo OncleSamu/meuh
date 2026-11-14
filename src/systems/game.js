@@ -445,7 +445,16 @@ export function offlineProgress() {
     const pasture = animalsOffline(elapsed);
     const babies = birthsTick(); // 1.45 : les naissances au pré pendant l'absence
     let artisan = 0;
-    state.machines.forEach(m => (artisan += advanceMachine(m, elapsed)));
+    // 1.136 : un plan de production continue pendant l'absence (ramasse, relance, étape après étape)
+    const planBefore = state.plan ? { ...state.plan } : null;
+    if (planBefore) {
+        const step = Math.max(30, Math.ceil(elapsed / 240));
+        for (let t = 0; t < elapsed; t += step) {
+            const dt = Math.min(step, elapsed - t);
+            state.machines.forEach(m => (artisan += advanceMachine(m, dt)));
+            if (state.plan) planTick(true);
+        }
+    } else state.machines.forEach(m => (artisan += advanceMachine(m, elapsed)));
     const totalMin = state.gameTimeMinutes + elapsed * GAME_MIN_PER_SEC;
     const days = Math.floor(totalMin / 1440);
     // le calendrier avance de tous les jours écoulés ; seule la météo du dernier jour est tirée
@@ -483,6 +492,11 @@ export function offlineProgress() {
     add(orch.dead, ['item', 'wood'], `${orch.dead} arbre${s(orch.dead)} mort${s(orch.dead)} de vieillesse au verger`);
     add(pasture.products, ['item', 'egg'], `${pasture.products} produit${s(pasture.products)} à ramasser au pâturage`);
     add(artisan, ['machine', 'bakery'], `${artisan} produit${s(artisan)} terminé${s(artisan)} à l’atelier`);
+    if (planBefore) {
+        const pn = ITEMS[planBefore.id].name.toLowerCase();
+        add(!state.plan, ['item', planBefore.id], `Plan terminé : les ${planBefore.n} ${pn} sont lancés`);
+        add(!!state.plan, ['item', planBefore.id], `Le plan « ${planBefore.n} ${pn} » a continué sans vous`);
+    }
     add(brews, ['ui', 'beer'], `${brews} tournée${s(brews)} de bière mise${s(brews)} en bouteille`);
     add(salon, ['machine', 'counter'], `${salon} client${s(salon)} vous attend${salon > 1 ? 'ent' : ''} au comptoir`);
     add(hand.crops, ['villager', 'theo'], `Théo, votre commis, a récolté ${hand.crops} produit${s(hand.crops)}`);

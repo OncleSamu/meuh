@@ -1,4 +1,5 @@
 // Statistiques, mes bonus, le guide du fermier, une photo de l'album et la carte postale.
+import { searchBox } from '../pager.js';
 import { state } from '../../core/state.js';
 import { fmt, qtyName } from '../../core/format.js';
 import { now } from '../../core/clock.js';
@@ -13,7 +14,7 @@ import { COLS } from '../../data/farm.js';
 import { GUIDE_CATS, GUIDE_PAGES } from '../../data/guide.js';
 import { RECORDS, FISH } from '../../data/meta.js';
 import * as G from '../../systems/index.js';
-import { actions, QUIET, esc } from '../dom.js';
+import { actions, QUIET } from '../dom.js';
 import { ico, SPR } from '../icons.js';
 import { btn, line, empty } from '../kit.js';
 import { defineSheet, sheetOpts, closeSheet } from '../sheets.js';
@@ -130,7 +131,7 @@ defineSheet('bonus', {
 const norm = sv => String(sv).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 // d'où vient un produit, en une ligne
-function itemSource(id) {
+export function itemSource(id) {
     const it = ITEMS[id];
     if (it.type === 'crop' && it.needProject)
         return `Graines au niveau ${it.reqLvl}, après « ${PROJECTS[it.needProject].name} »${it.ghOnly ? ', seulement dans la serre' : ''}`;
@@ -172,7 +173,7 @@ function itemSource(id) {
 }
 
 // qui en veut en ce moment
-function itemDemand(id) {
+export function itemDemand(id) {
     const who = [];
     state.quests.forEach(q => G.isOpen(q) && q.items.some(x => x.id === id) && who.push(`commande de ${VILLAGERS[q.vid].name}`));
     if (state.truck.status === 'here' && state.truck.slots.some(sl => sl.id === id && !sl.loaded)) who.push('le train');
@@ -192,7 +193,7 @@ function itemCard(id) {
         <div class="card-title">${it.name}${G.masteryCount(id) ? ` <small>${'★'.repeat(G.masteryStars(id))}</small>` : ''}</div>
         <div class="card-sub">En stock : <b>${fmt(state.inventory[id] || 0)}</b>${it.sell ? ` · vaut ${fmt(Math.round(it.sell * G.masteryMult(id)))} pièces` : ''}</div>
         ${src ? `<div class="card-sub">${src}</div>` : ''}${demand.length ? `<div class="card-sub want">Demandé par : ${demand.join(', ')}</div>` : ''}</div>
-        ${btn('Produire', { act: 'produce', data: { id }, size: 'sm' })}</div>`;
+        <span class="gi-btns">${btn('Fiche', { act: 'open', data: { sheet: 'item', id }, size: 'sm', kind: 'gold' })}${btn('Produire', { act: 'produce', data: { id }, size: 'sm' })}</span></div>`;
 }
 
 const GUIDE_GO = {
@@ -259,7 +260,7 @@ defineSheet('guide', {
     render: o => [
         [
             'search',
-            `<input type="search" class="search" placeholder="Chercher un produit ou un sujet…" autocomplete="off" data-input="guideSearch" value="${esc(o.q || '')}">`,
+            searchBox('guide', 'Chercher un produit ou un sujet', { input: 'guideSearch', value: o.q || '' }),
         ],
         ['res', `<div id="guide-res">${guideBody(o)}</div>`],
     ],

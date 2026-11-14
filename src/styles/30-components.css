@@ -726,7 +726,6 @@ button.card {
     margin-top: 10px;
 }
 .rename input,
-.search,
 textarea {
     flex: 1;
     min-width: 0;
@@ -735,10 +734,6 @@ textarea {
     border: 2.5px solid var(--ink);
     border-radius: 12px;
     font-weight: 800;
-}
-.search {
-    width: 100%;
-    margin-bottom: 10px;
 }
 textarea {
     width: 100%;
@@ -865,28 +860,96 @@ body {
     margin-left: 5px;
     opacity: 0.65;
 }
-.list-search {
-    position: relative;
+.list-bar {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
     margin-bottom: 8px;
 }
-.list-search input {
-    width: 100%;
-    min-height: 42px;
-    padding: 8px 40px 8px 14px;
-    border: 2px solid var(--ink);
-    border-radius: 999px;
+.list-bar .list-search,
+.list-bar .list-sort {
+    margin-bottom: 0;
+}
+.list-bar .list-search {
+    flex: 1 1 60%;
+}
+.list-bar .list-sort {
+    flex: 0 1 37%;
+}
+.list-search,
+.list-sort {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    min-height: 44px;
+    margin-bottom: 8px;
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
     background: #fffaf0;
-    font: inherit;
-    font-weight: 700;
+    box-shadow: inset 0 3px 0 rgba(58, 38, 24, 0.07);
     color: var(--ink);
+}
+.list-search:focus-within,
+.list-sort:focus-within {
+    border-color: var(--gold-d, #c9952a);
+    box-shadow: 0 0 0 3px rgba(242, 193, 78, 0.45);
+}
+.ls-ico {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-left: 11px;
+    opacity: 0.7;
+    pointer-events: none;
+}
+.list-search input,
+.list-sort select {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    min-height: 40px;
+    padding: 6px 10px 6px 8px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    font-weight: 800;
+    color: var(--ink);
+}
+.list-search input {
+    padding-right: 38px;
+}
+.list-search input::placeholder {
+    color: var(--ink-soft);
+    font-weight: 700;
+}
+.list-search input::-webkit-search-cancel-button {
+    display: none;
+}
+.list-sort select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 26px;
+    text-overflow: ellipsis;
+    background: transparent
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1.5 L6 6.5 L11 1.5' fill='none' stroke='%233a2618' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+        no-repeat right 10px center / 11px;
+}
+.list-sort.filt > span {
+    flex: none;
+    margin-left: 12px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
 }
 .list-search .ls-clear {
     position: absolute;
-    right: 6px;
+    right: 4px;
     top: 50%;
     transform: translateY(-50%);
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border: 0;
     border-radius: 50%;
     background: transparent;
@@ -951,32 +1014,6 @@ body {
     order: 2;
 }
 
-/* 1.64.3 : le tri en liste déroulante */
-.list-sel {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    font-weight: 800;
-}
-.list-sel span {
-    flex: none;
-    padding: 2px 10px;
-    border-radius: 999px;
-    background: rgba(255, 248, 230, 0.85);
-}
-.list-sel select {
-    flex: 1;
-    min-width: 0;
-    min-height: 42px;
-    padding: 6px 12px;
-    border: 2px solid var(--ink);
-    border-radius: 14px;
-    background: #fff8e6;
-    font: inherit;
-    font-weight: 800;
-    color: var(--ink);
-}
 
 /* 1.73 : « il y a à faire » : un point doré sans chiffre (le rouge chiffré reste pour ce qui presse) */
 .dot.soft {

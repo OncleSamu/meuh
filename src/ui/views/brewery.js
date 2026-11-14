@@ -14,7 +14,7 @@ import { QUALITY } from '../../data/farm.js';
 import { btn, bar, timer, section, empty, hint } from '../kit.js';
 import { defineView, defineLive, ui, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
-import { page, filterOf, filterChips, filterSelect, searchBox, queryOf, matchQ } from '../pager.js';
+import { page, filterOf, filterChips, searchBox, listBar, sortOf, queryOf, matchQ } from '../pager.js';
 import { renameBtn } from '../sheets/rename.js';
 import { beerSvg } from '../../art/abbey.js';
 import { genWrap } from '../genlook.js';
@@ -375,12 +375,6 @@ defineView('machines/brew', renderBrew);
 // 1.108 : feuilles de tri. Une recherche, des puces (en stock, fruits, cultures, ateliers, variétés) et un tri (stock, nom, une note de goût).
 const NOTE_SORT = NOTES.map((n, k) => [`n${k}`, `${cap(n)} d’abord`]);
 const TRIS = [['stock', 'En stock d’abord'], ['name', 'Nom (A à Z)'], ...NOTE_SORT];
-const tri = (key, cur, count) =>
-    `<label class="list-sel"><span>Trier par</span><select data-input="filtSel" data-k="${key}">${TRIS.map(([id, n]) => `<option value="${id}"${cur === id ? ' selected' : ''}>${n}</option>`).join('')}</select></label>${count}`;
-const sortOf = key => {
-    const f = ui.sel.filt && ui.sel.filt[key];
-    return TRIS.some(x => x[0] === f) ? f : 'stock';
-};
 const noteLine = id =>
     G.ingFlavor(id)
         .map((v, k) => [v, k])
@@ -414,7 +408,7 @@ defineSheet('brewPick', {
             ['vars', 'Mes variétés', vars.length],
         ];
         const f = filterOf('ing', opts);
-        const sort = sortOf('ingSort');
+        const sort = sortOf('ing', TRIS);
         const keep = id => (f === 'all' || (f === 'stock' && stock(id)) || (f === 'fruit' && fruit(id)) || (f === 'crop' && !fruit(id) && !extra(id)) || (f === 'extra' && extra(id))) && matchQ(q, ITEMS[id].name);
         const cmp = (flav, have, name) => (a, b) =>
             (sort.startsWith('n') ? flav(b)[+sort[1]] - flav(a)[+sort[1]] : 0) ||
@@ -435,9 +429,9 @@ defineSheet('brewPick', {
             .join('');
         return [
             ['info', hint(mead ? 'Pour un hydromel, le miel donne la base : ajoutez-y un fruit sucré ou acidulé, ou des herbes. Il en faut ' + ABBEY.ingPerDose + ' par dose. Les pages déjà dans le livre sont cochées (✓).' : `Il en faut ${ABBEY.ingPerDose} par dose. Les pages déjà dans le livre des bières sont cochées (✓). Chaque ingrédient a des notes de goût : sucré, acide, amer, épicé, umami.`)],
-            ['search', searchBox('ing', 'Chercher un ingrédient')],
+            ['search', listBar('ing', { search: 'Chercher un ingrédient', sorts: TRIS })],
             ['chips', filterChips('ing', opts, f)],
-            ['sort', `<div class="list-tools">${tri('ingSort', sort, '')}<small class="card-sub">${list.length + vlist.length} ingrédient${list.length + vlist.length > 1 ? 's' : ''}</small></div>`],
+            ['sort', `<small class="card-sub">${list.length + vlist.length} ingrédient${list.length + vlist.length > 1 ? 's' : ''}</small>`],
             ['top', pg.top],
             ['vars', varHtml],
             ['cells', list.length ? `<div class="pick-grid">${cells}</div>` : vlist.length ? '' : empty(q ? `Aucun ingrédient ne correspond à « ${esc(ui.sel.q.ing)} ».` : 'Rien dans cette catégorie pour le moment.')],
@@ -447,6 +441,10 @@ defineSheet('brewPick', {
 });
 
 // 1.108 : le choix du miel d'un hydromel : une feuille de tri (recherche, ce qu'il aime, tri par stock ou par nom)
+const HONEY_SORTS = [
+    ['stock', 'En stock d’abord'],
+    ['name', 'Nom (A à Z)'],
+];
 const LIKES = NOTES.map((n, k) => [`l${k}`, `Aime le ${n}`, k]);
 defineSheet('brewHoneyPick', {
     title: 'Un miel pour l’hydromel',
@@ -460,15 +458,14 @@ defineSheet('brewHoneyPick', {
         const likes = h => (MEAD_BASES[h] ? MEAD_BASES[h].likes : []);
         const opts = [['all', 'Tous', all.length], ...LIKES.map(([id, n, k]) => [id, n, all.filter(h => likes(h).includes(k)).length])];
         const f = filterOf('honey', opts);
-        const sort = ui.sel.filt && ui.sel.filt.honeySort === 'name' ? 'name' : 'stock';
+        const sort = sortOf('honey', HONEY_SORTS);
         const list = all
             .filter(h => (f === 'all' || likes(h).includes(+f.slice(1))) && matchQ(q, name(h), MEAD_BASES[h].text))
             .sort((a, b) => (sort === 'name' ? 0 : have(b) - have(a)) || name(a).localeCompare(name(b), 'fr'));
         return [
             ['info', hint('Un miel de fleur donne un goût propre à l’hydromel. « Aime… » dit ce qui s’accorde le mieux avec lui. Toutes fleurs va avec tout, sans éclat.')],
-            ['search', all.length > 6 ? searchBox('honey', 'Chercher un miel') : ''],
+            ['search', listBar('honey', { search: all.length > 6 ? 'Chercher un miel' : '', sorts: HONEY_SORTS })],
             ['chips', filterChips('honey', opts, f)],
-            ['sort', filterSelect('honeySort', [['stock', 'En stock d’abord', all.length], ['name', 'Nom (A à Z)', all.length]], sort, 'Trier par')],
             [
                 'cells',
                 list.length

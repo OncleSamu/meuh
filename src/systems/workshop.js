@@ -149,6 +149,64 @@ export function queueQuiet(i, id) {
     return true;
 }
 
+// 1.136 : un appui long sur une recette remplit toute la file (tant qu'il y a de la place et des ingrédients)
+export function fillQueue(i, id, at) {
+    if (!queueRecipe(i, id, at)) return 0;
+    let n = 1;
+    while (queueQuiet(i, id)) n++;
+    if (n > 1) toast(`${ITEMS[id].name} ×${n} dans la file`, ['item', id]);
+    return n;
+}
+
+// 1.136 : les programmes de l'atelier. On enregistre les files du moment, on les relance d'un geste.
+export const PRESET_MAX = 3;
+export const presets = () => (state.presets ||= []);
+const presetJobs = () => state.machines.map(m => ({ type: m.type, ids: m.queue.slice() })).filter(j => j.ids.length);
+export const presetCanSave = () => presetJobs().length > 0;
+export function savePreset(k) {
+    const jobs = presetJobs();
+    if (k < 0 || k >= PRESET_MAX || !jobs.length) {
+        toast('Lancez d’abord des recettes : le programme retient les files en cours', ['machine', 'mill']);
+        sfx('error');
+        return false;
+    }
+    presets()[k] = { jobs, i: state.machines.map((m, i) => (m.queue.length ? i : -1)).filter(i => i >= 0) };
+    sfx('buy');
+    toast(`Programme ${k + 1} enregistré`, ['ui', 'loop']);
+    return true;
+}
+export function dropPreset(k) {
+    if (!presets()[k]) return false;
+    presets()[k] = null;
+    return true;
+}
+// combien de lots le programme lancerait maintenant, et combien il en contient
+export const presetSize = k => (presets()[k] ? presets()[k].jobs.reduce((a, j) => a + j.ids.length, 0) : 0);
+export function runPreset(k, at) {
+    const p = presets()[k];
+    if (!p) return 0;
+    let n = 0;
+    p.jobs.forEach((j, x) => {
+        // la même machine si elle est toujours là, sinon une autre du même type
+        let i = p.i[x];
+        if (!state.machines[i] || state.machines[i].type !== j.type) i = state.machines.findIndex(m => m.type === j.type);
+        if (i < 0) return;
+        j.ids.forEach(id => {
+            if (queueQuiet(i, id)) n++;
+        });
+    });
+    const all = presetSize(k);
+    if (!n) {
+        toast('Rien à lancer : files pleines ou ingrédients manquants', ['ui', 'loop']);
+        squish(at);
+        sfx('error');
+        return 0;
+    }
+    sfx('machine');
+    toast(n < all ? `Programme ${k + 1} : ${n} lots lancés sur ${all} (le reste manque d’ingrédients ou de place)` : `Programme ${k + 1} : ${n} lot${n > 1 ? 's' : ''} lancé${n > 1 ? 's' : ''}`, ['ui', 'loop']);
+    return n;
+}
+
 export function toggleLoop(i) {
     const m = state.machines[i];
     if (!m) return;

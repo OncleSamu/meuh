@@ -97,7 +97,7 @@ export function setupPaquet() {
             const s = o();
             // 1.104.5 : une case vide mène à la grille des produits
             if (!s.slots[+d.i]) {
-                const g = document.querySelector('.sheet .pk-grid, .sheet .pick-grid, .sheet .search');
+                const g = document.querySelector('.sheet .pk-grid, .sheet .pick-grid, .sheet .list-search');
                 if (g) g.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 return false;
             }

@@ -31,6 +31,10 @@ function setup() {
             (ui.sel.filt = ui.sel.filt || {})[d.k] = d.value;
             firstPage(d.k);
         },
+        sortSel: (el, d) => {
+            (ui.sel.sort = ui.sel.sort || {})[d.k] = d.value;
+            firstPage(d.k);
+        },
         clearSearch: (el, d) => {
             if (ui.sel.q) ui.sel.q[d.k] = '';
             firstPage(d.k);
@@ -48,14 +52,29 @@ export const norm = t =>
 export const queryOf = key => norm(ui.sel.q && ui.sel.q[key]);
 export const matchQ = (q, ...texts) => !q || texts.some(t => norm(t).includes(q));
 
-// un champ de recherche (à mettre dans son propre bloc : il n'est pas redessiné pendant qu'on écrit)
-export function searchBox(key, placeholder) {
+// 1.136 : la même barre partout. Une loupe, le champ, la croix pour effacer ; et à côté, le tri, de la même taille.
+const LOUPE = '<svg class="ls-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M15.5 15.5 L21 21" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>';
+const TRI = '<svg class="ls-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4 V20 M7 20 L3.5 16 M7 20 L10.5 16 M17 20 V4 M17 4 L13.5 8 M17 4 L20.5 8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+// un champ de recherche (à mettre dans son propre bloc, à part des résultats : il n'est pas redessiné pendant qu'on écrit)
+export function searchBox(key, placeholder, { input = 'searchList', value } = {}) {
     setup();
-    const v = (ui.sel.q && ui.sel.q[key]) || '';
-    return `<div class="list-search"><input type="search" placeholder="${esc(placeholder)}" value="${esc(v)}" data-input="searchList" data-k="${key}" autocomplete="off" enterkeyhint="search">${
-        v ? `<button class="ls-clear" data-act="clearSearch" data-k="${key}" aria-label="Effacer">×</button>` : ''
+    const v = value !== undefined ? value : (ui.sel.q && ui.sel.q[key]) || '';
+    return `<div class="list-search">${LOUPE}<input type="search" placeholder="${esc(placeholder)}" value="${esc(v)}" data-input="${input}" data-k="${key}" autocomplete="off" enterkeyhint="search" aria-label="${esc(placeholder)}">${
+        v && input === 'searchList' ? `<button class="ls-clear" data-act="clearSearch" data-k="${key}" aria-label="Effacer">×</button>` : ''
     }</div>`;
 }
+// le tri choisi pour cette liste (le premier par défaut) ; sorts : [[id, nom]]
+export const sortOf = (key, sorts) => {
+    const v = ui.sel.sort && ui.sel.sort[key];
+    return sorts.some(o => o[0] === v) ? v : sorts[0][0];
+};
+export function sortSelect(key, sorts) {
+    setup();
+    const cur = sortOf(key, sorts);
+    return `<label class="list-sort">${TRI}<select data-input="sortSel" data-k="${key}" aria-label="Trier par">${sorts.map(([id, name]) => `<option value="${esc(id)}"${cur === id ? ' selected' : ''}>${esc(name)}</option>`).join('')}</select></label>`;
+}
+// la barre d'une liste : la recherche, le tri, ou les deux côte à côte
+export const listBar = (key, { search, sorts } = {}) => `<div class="list-bar">${search ? searchBox(key, search) : ''}${sorts ? sortSelect(key, sorts) : ''}</div>`;
 
 // une page de la liste (step éléments) et la barre des pages, en haut et en bas de la liste.
 // 1.64.2 : tous les numéros tant qu'il y en a 15 au plus (on saute directement à la page 6), sinon 1 … 4 5 6 7 8 … 26
@@ -112,7 +131,7 @@ export const filterChips = (key, opts, cur) => {
 // 1.64.3 : un tri en liste déroulante quand il y a trop de puces (une espèce par puce, ça faisait trois lignes)
 export const filterSelect = (key, opts, cur, label) => {
     setup();
-    return `<label class="list-sel"><span>${esc(label)}</span><select data-input="filtSel" data-k="${key}">${opts
+    return `<label class="list-sort filt"><span>${esc(label)}</span><select data-input="filtSel" data-k="${key}" aria-label="${esc(label)}">${opts
         .filter(o => o[2] > 0 || o[0] === cur)
         .map(([id, name, n]) => `<option value="${esc(id)}"${cur === id ? ' selected' : ''}>${esc(name)} (${n})</option>`)
         .join('')}</select></label>`;

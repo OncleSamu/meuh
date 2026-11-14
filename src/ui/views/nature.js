@@ -213,6 +213,8 @@ function renderNature(el) {
         ],
     ]);
 }
+const HOLD_WAIT = 380,
+    HOLD_EVERY = 170;
 defineView('farm/nature', renderNature);
 
 export function setupNature() {
@@ -232,10 +234,38 @@ export function setupNature() {
     });
     // un coup de hache au premier contact, sans attendre le « clic »
     // 1.60 : au doigt, le coup part au relâché, et seulement si le doigt n'a pas glissé (sinon, on fait défiler la page)
-    let touch = null;
+    // 1.136 : rester appuyé enchaîne les coups, sans marteler l'écran
+    let touch = null,
+        hold = null;
+    const stopHold = () => {
+        clearTimeout(hold);
+        clearInterval(hold);
+        hold = null;
+    };
+    const startHold = (slot, x, y) => {
+        stopHold();
+        hold = setTimeout(() => {
+            if (touch) touch.held = true;
+            const again = () => {
+                // la case est redessinée à chaque coup : on la retrouve par son numéro
+                const cur = document.querySelector(`[data-res="${slot.dataset.res}"][data-k="${slot.dataset.k}"]`);
+                if (!cur || cur.disabled) return stopHold();
+                const r = run('hit', cur, cur.dataset);
+                if (r !== 'hit') stopHold();
+            };
+            again();
+            hold = setInterval(again, HOLD_EVERY);
+        }, HOLD_WAIT);
+        holdAt = [x, y];
+    };
+    let holdAt = null;
+    window.addEventListener('pointermove', e => {
+        if (hold && holdAt && Math.hypot(e.clientX - holdAt[0], e.clientY - holdAt[1]) > 12) stopHold();
+    });
     const down = e => {
         const slot = e.target.closest('[data-res]');
         if (!slot || slot.disabled) return;
+        startHold(slot, e.clientX, e.clientY);
         if (e.pointerType === 'touch') {
             touch = { slot, x: e.clientX, y: e.clientY };
             return;
@@ -246,7 +276,8 @@ export function setupNature() {
     const up = e => {
         const t = touch;
         touch = null;
-        if (!t || e.type !== 'pointerup' || Math.hypot(e.clientX - t.x, e.clientY - t.y) > 10 || !t.slot.isConnected || t.slot.disabled) return;
+        stopHold();
+        if (!t || t.held || e.type !== 'pointerup' || Math.hypot(e.clientX - t.x, e.clientY - t.y) > 10 || !t.slot.isConnected || t.slot.disabled) return;
         run('hit', t.slot, t.slot.dataset);
     };
     for (const id of ['view-farm', 'view-aside']) byId(id).addEventListener('pointerdown', down);

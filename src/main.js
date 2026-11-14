@@ -55,6 +55,7 @@ import { setupUpgrades } from './ui/sheets/upgrades.js';
 import { setupProgress } from './ui/sheets/progress.js';
 import { setupBook } from './ui/sheets/book.js';
 import { setupInfo } from './ui/sheets/info.js';
+import { setupItem } from './ui/sheets/item.js';
 import { setupSettings } from './ui/sheets/settings.js';
 import { setupRename } from './ui/sheets/rename.js';
 import { setupIdentity } from './ui/sheets/identity.js';
@@ -128,6 +129,7 @@ function start() {
     setupProgress();
     setupBook();
     setupInfo();
+    setupItem();
     setupSettings();
     setupRename();
     setupIdentity();

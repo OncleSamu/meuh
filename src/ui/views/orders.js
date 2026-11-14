@@ -71,7 +71,10 @@ function boardHtml() {
             </button>`;
         })
         .join('');
-    return `<div class="order-board">${tickets}</div>`;
+    // 1.136 : tout livrer d'un coup dès que deux commandes sont prêtes
+    const n = G.questsReady();
+    const all = n > 1 ? btn(`Tout livrer · ${n} commandes`, { act: 'deliverAll', kind: 'green', wide: true, cls: 'deliver-all' }) : '';
+    return `<div class="order-board">${tickets}</div>${all}`;
 }
 
 defineSheet('order', {
@@ -638,6 +641,7 @@ defineView('village/orders', renderOrders);
 export function setupOrders() {
     actions({
         deliver: (el, d) => G.turnInQuest(+d.i, el) && closeSheet('order'),
+        deliverAll: el => G.turnInAll(el),
         trash: (el, d) => confirmTap('trash' + d.i, el, 'Jeter ?') && G.trashQuest(+d.i) && closeSheet('order'),
         pin: (el, d) => G.togglePin(+d.i),
         express: el => G.deliverExpress(el),

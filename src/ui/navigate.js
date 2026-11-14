@@ -120,7 +120,7 @@ defineSheet('needs', {
                 const have = state.inventory[k] || 0,
                     ok = have >= n;
                 const src = G.sourceOf(k);
-                return `<div class="rneed${ok ? ' ok' : ''}"><span class="rneed-art">${art('item', k)}</span>
+                return `<div class="rneed${ok ? ' ok' : ''}" data-item="${k}"><span class="rneed-art">${art('item', k)}</span>
                     <span class="row-main"><b>${ITEMS[k].name}</b><small>${fmt(Math.min(have, n))} / ${n}${src ? ` · ${src}` : ''}</small></span>
                     ${ok ? `<span class="chip ok">${ico(['ui', 'check'])}en stock</span>` : btn('Y aller', { act: 'produce', data: { id: k }, kind: 'gold', size: 'sm' })}</div>`;
             })

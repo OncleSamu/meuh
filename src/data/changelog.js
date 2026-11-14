@@ -1,6 +1,24 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.136",
+  "title": "Tout retrouver, tout enchaîner",
+  "date": "14 novembre 2026",
+  "items": [
+   "Recherche et tri : toutes les barres de recherche et tous les tris du jeu se ressemblent enfin (loupe, croix pour effacer, même bouton de tri)",
+   "Marché, Vendre : une recherche et un tri (valeur du stock, quantité, prix à l'unité, nom)",
+   "Marché, Acheter : une recherche parmi toutes les graines et tous les arbres",
+   "Machines : une recherche par nom de recette ou d'ingrédient dès qu'il y a plus de 12 recettes",
+   "Grange : des familles (récoltes, bêtes, atelier, pêche, le reste) et un tri",
+   "La fiche produit : le stock, d'où il vient, sa recette, toutes les recettes où il sert, qui le demande, et les boutons pour y aller, en faire en quantité ou le vendre. Elle s'ouvre depuis la grange, le guide, l'image d'un produit à la vente, ou par un appui long sur un produit",
+   "Atelier : rester appuyé sur une recette remplit toute la file de la machine",
+   "Atelier : les programmes. Enregistrez les files de vos machines (trois programmes), relancez-les d'un geste",
+   "Commandes du village : un bouton « Tout livrer » dès que deux commandes sont prêtes",
+   "Forêt et mine : rester appuyé enchaîne les coups de hache ou de pioche",
+   "Le plan de production continue pendant votre absence : il ramasse, relance les étapes et lance le plat final"
+  ]
+ },
+ {
   "v": "1.135",
   "title": "Le plan : de plus beaux boutons",
   "date": "13 novembre 2026",
