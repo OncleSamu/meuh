@@ -41,8 +41,14 @@ function chain(sum, finals = '') {
     }
     for (const r of sum.raws) {
         const base = ITEMS[r.id] ? r.id : G.ingBase(r.id);
+        const sow = ITEMS[base] ? G.planSowInfo(base, r.n) : null;
+        const side = !ITEMS[base]
+            ? ''
+            : sow && sow.count > 0
+              ? `<span class="cut-btns">${btn(`Semer ×${sow.count}`, { act: 'planSow', data: { id: base, n: r.n }, kind: 'green', size: 'sm' })}${btn('Voir', { act: 'produce', data: { id: base }, size: 'sm' })}</span>`
+              : btn(sow ? 'Aller semer' : 'Y aller', { act: 'produce', data: { id: base }, kind: 'gold', size: 'sm' });
         rows.push(
-            `<div class="rneed"><span class="rneed-art">${rawArt(r.id)}</span><span class="row-main"><b>Il manque ${esc(qtyName(r.n, rawName(r.id)).toLowerCase())}</b><small>${G.sourceOf(base) || 'à récolter'} · en stock : ${fmt(rawHave(r.id))}</small></span>${ITEMS[base] ? btn('Y aller', { act: 'produce', data: { id: base }, kind: 'gold', size: 'sm' }) : ''}</div>`,
+            `<div class="rneed"><span class="rneed-art">${rawArt(r.id)}</span><span class="row-main"><b>Il manque ${esc(qtyName(r.n, rawName(r.id)).toLowerCase())}</b><small>${G.sourceOf(base) || 'à récolter'} · en stock : ${fmt(rawHave(r.id))}</small></span>${side}</div>`,
         );
     }
     if (finals) rows.push(finals);
@@ -335,12 +341,14 @@ export function setupPlan() {
             }
         },
         planOrder: (el, d) => {
-            const ref = d.kind === 'quest' ? +d.ref : d.ref;
+            const numKind = d.kind === 'quest' || d.kind === 'neighbor' || d.kind === 'armand';
+            const ref = d.ref !== undefined && d.ref !== '' ? (numKind ? +d.ref : d.ref) : undefined;
             if (G.startOrderPlan(d.kind, ref)) {
                 if (G.planOf()) openSheet('plan', {});
                 else closeAll();
             }
         },
+        planSow: (el, d) => G.planSow(d.id, +d.n || 1, el),
         planDomaine: () => openSheet('domaine', {}),
         planStop: () => {
             G.stopPlan();

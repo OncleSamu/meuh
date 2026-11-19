@@ -202,7 +202,10 @@ export function contractCard() {
                           disabled: !have,
                       }),
                   ) +
-                  `<div class="card-sub reward-line">${ico(['ui', 'star'])} ${fmt(c.coins)} pièces, ${fmt(c.xp)} d’expérience, et 2 de chaque matériau rare</div>`
+                  `<div class="card-sub reward-line">${ico(['ui', 'star'])} ${fmt(c.coins)} pièces, ${fmt(c.xp)} d’expérience, et 2 de chaque matériau rare</div>` +
+                  (G.canPlanOrder('contract')
+                      ? `<div class="row-btns">${btn('Planifier', { act: 'planOrder', data: { kind: 'contract' }, kind: 'gold', size: 'sm', icon: ['ui', 'loop'] })}</div>`
+                      : '')
         }</div>`;
 }
 
@@ -257,7 +260,7 @@ function specialBlock() {
     const ok = G.reqReady(sp);
     return `<div class="neighbor nb-special">${head}
         <div class="olines">${sp.items.map(x => itemLine(x, G.haveQ(x.id, x.q || 0))).join('')}</div>
-        <div class="nb-foot"><div class="card-sub">${rewardHtml(sp.coins, G.neighborXp(sp), sp.mats)} <span class="reward">+${sp.pts}${ico(['ui', 'heart'])}</span><br>jusqu’à lundi · ${timer(sp.until)}</div>${btn('Livrer', { act: 'helpSpecial', kind: ok ? 'gold' : '', size: 'sm', disabled: !ok })}</div></div>`;
+        <div class="nb-foot"><div class="card-sub">${rewardHtml(sp.coins, G.neighborXp(sp), sp.mats)} <span class="reward">+${sp.pts}${ico(['ui', 'heart'])}</span><br>jusqu’à lundi · ${timer(sp.until)}</div><span class="cut-btns">${!ok && G.canPlanOrder('special') ? btn('Planifier', { act: 'planOrder', data: { kind: 'special' }, kind: 'gold', size: 'sm', icon: ['ui', 'loop'] }) : ''}${btn('Livrer', { act: 'helpSpecial', kind: ok ? 'gold' : '', size: 'sm', disabled: !ok })}</span></div></div>`;
 }
 
 export function neighborsCard() {
@@ -288,7 +291,7 @@ export function neighborsBody() {
                 <div class="card-main"><div class="card-title">${r.owner} <small>· ${r.name}</small></div><div class="card-sub">${NMARKET.specs[k]}</div>${hearts(n.hearts)}</div></div>
                 ${
                     q
-                        ? `<div class="olines">${q.items.map(x => itemLine(x, G.haveQ(x.id, x.q || 0))).join('')}</div><div class="nb-foot"><div class="card-sub">${rewardHtml(q.coins, G.neighborXp(q), q.mats)}<br>repart dans ${timer(q.until)}</div>${btn('Aider', { act: 'helpNeighbor', data: { k }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}</div>`
+                        ? `<div class="olines">${q.items.map(x => itemLine(x, G.haveQ(x.id, x.q || 0))).join('')}</div><div class="nb-foot"><div class="card-sub">${rewardHtml(q.coins, G.neighborXp(q), q.mats)}<br>repart dans ${timer(q.until)}</div><span class="cut-btns">${!ok && G.canPlanOrder('neighbor', k) ? btn('Planifier', { act: 'planOrder', data: { kind: 'neighbor', ref: k }, kind: 'gold', size: 'sm', icon: ['ui', 'loop'] }) : ''}${btn('Aider', { act: 'helpNeighbor', data: { k }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}</span></div>`
                         : `<div class="card-sub">Pas de demande pour l’instant · revient dans ${timer(Math.max(n.next, now()))}</div>`
                 }</div>`;
         }).join('')}</div>`;

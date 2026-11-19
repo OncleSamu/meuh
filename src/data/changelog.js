@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.141",
+  "title": "Tout planifier, tout semer",
+  "date": "19 novembre 2026",
+  "items": [
+   "Plan de production en 1 clic étendu à tous les clients : avion-cargo, Armand (par commande ou tout planifier), contrat de saison, fermes voisines, commande spéciale de la semaine et plat de la semaine de Mamie (y compris bière maison)",
+   "Semis direct depuis le plan : quand il manque une culture (ex. « Il manque 28 tomates »), un bouton vert « Semer ×N » sème directement sur vos parcelles libres (champ, serre, île, oasis ou Grand Nord) ; si le champ est plein, « Aller semer » ouvre le champ avec la graine déjà en main"
+  ]
+ },
+ {
   "v": "1.140",
   "title": "Planifier en grand",
   "date": "19 novembre 2026",

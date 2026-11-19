@@ -2,19 +2,30 @@
 // une bière maison, ou toute une commande en un clic) : le jeu calcule toute la chaîne (stock déduit),
 // lance les étapes intermédiaires sur les machines libres, ramasse ce qu'elles font, et lance les produits finaux
 // (ou les brassins en cuve) dès que leurs ingrédients sont prêts. Les produits bruts sont seulement signalés.
-import { state } from '../core/state.js';
+import { state, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
-import { toast, sfx } from '../core/bus.js';
+import { toast, sfx, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { RECIPES, MACHINES } from '../data/machines.js';
-import { PROJECTS, VILLAGERS } from '../data/village.js';
+import { PROJECTS, VILLAGERS, RIVALS } from '../data/village.js';
+import { CONTRACT_LVL } from '../data/commerce.js';
 import { recipeUnlocked, recipeTime, hasMachine, queueQuiet, collectMachine } from './workshop.js';
 import { machineSlots } from './home.js';
 import { planCap } from './estate.js';
 import { brewOpen, meadOpen, beerOf, brewCost, brewTime, ingHave, ingBase, recipeOf, startBrew, vatReady, collectVat, ensureBrew, vatCount } from './brewery.js';
-import { projectOpen, projectDone, givenOf } from './story.js';
+import { projectOpen, projectDone, givenOf, storyOk } from './story.js';
 import { isOpen } from './orders.js';
+import { cargoHere } from './cargo.js';
+import { armandHere, armandSlots, armandOrder, armandTalking, armandOff } from './armand.js';
+import { nmarketOpen } from './nmarket.js';
+import { specialOf } from './neighborspecial.js';
+import { mamieInfo, mamieMade, mamieStock } from './mamie.js';
+import { allPlots, plantSeed } from './farm.js';
+import { slotsOf as orchardSlots } from './orchard.js';
+import { islandOpen, islandCropOk, islandPlots, plantIsland } from './island.js';
+import { oasisOpen, oasisCropOk, oasisPlots, plantOasis } from './oasis.js';
+import { nordOpen, nordCropOk, nordPlots, plantNord, stoveAt } from './nord.js';
 
 export const PLAN_QTYS = [1, 5, 10, 25, 50];
 export const PLAN_MAX = 200;
@@ -334,6 +345,61 @@ export function orderPlanData(kind, ref) {
         const v = VILLAGERS[q.vid];
         return buildOrderPlan(`Commande de ${v ? v.name : 'villageois'}`, q.items || []);
     }
+    if (kind === 'cargo') {
+        const c = state.cargo;
+        if (!cargoHere() || !c || c.done || !c.holds || !c.holds.length) return null;
+        return buildOrderPlan(
+            'Avion-cargo',
+            c.holds.filter(h => !h.pk && h.got < h.qty).map(h => ({ id: h.id, qty: h.qty - h.got })),
+        );
+    }
+    if (kind === 'armand') {
+        if (!armandHere()) return null;
+        if (ref !== undefined && ref !== null && ref !== '') {
+            const o = armandOrder(+ref);
+            if (!o || o.done || armandTalking(o) || armandOff(o)) return null;
+            const left = Math.max(0, o.qty - o.got);
+            return buildOrderPlan(`Armand · ${ITEMS[o.id] ? ITEMS[o.id].name : o.id}`, [{ id: o.id, qty: left }]);
+        }
+        const lines = [];
+        for (let i = 0; i < armandSlots(); i++) {
+            const o = armandOrder(i);
+            if (o && !o.done && !armandTalking(o) && !armandOff(o) && o.got < o.qty) lines.push({ id: o.id, qty: o.qty - o.got });
+        }
+        return lines.length ? buildOrderPlan('Armand, chef du Grand Hôtel', lines) : null;
+    }
+    if (kind === 'contract') {
+        const c = state.contract;
+        if (state.level < CONTRACT_LVL || !c || c.done) return null;
+        const left = Math.max(0, c.qty - c.given);
+        return buildOrderPlan('Contrat de saison', [{ id: c.item, qty: left }]);
+    }
+    if (kind === 'neighbor') {
+        const k = +ref;
+        const n = state.neighbors && state.neighbors[k];
+        if (!n || !n.req) return null;
+        const r = RIVALS[k];
+        return buildOrderPlan(`Voisin · ${r ? r.owner : 'ferme voisine'}`, n.req.items || []);
+    }
+    if (kind === 'special') {
+        const sp = nmarketOpen() ? specialOf() : null;
+        if (!sp || sp.done) return null;
+        const r = RIVALS[sp.k];
+        return buildOrderPlan(`Commande spéciale · ${r ? r.owner : 'voisin'}`, sp.items || []);
+    }
+    if (kind === 'mamie') {
+        const d = mamieInfo();
+        if (!d) return null;
+        const label = `Mamie · ${d.name}`;
+        if (d.beer) {
+            const bid = d.id.slice(5);
+            return brewPlannable(bid) ? { label, items: [{ kind: 'beer', bid, n: 3 }], raws: [], blocked: [] } : { label, items: [], raws: [], blocked: [] };
+        }
+        if (!plannable(d.id)) return { label, items: [], raws: [], blocked: [{ id: d.id, n: 10 }] };
+        const made = mamieMade() + mamieStock();
+        const want = made < 50 ? Math.min(25, Math.max(10, 50 - made)) : 10;
+        return { label, items: [{ kind: 'recipe', id: d.id, n: Math.min(PLAN_MAX, Math.ceil(want / outQty(d.id))) }], raws: [], blocked: [] };
+    }
     return null;
 }
 export const canPlanOrder = (kind, ref) => {
@@ -346,6 +412,73 @@ export function startOrderPlan(kind, ref) {
     const ok = startMultiPlan(d.items, { label: d.label, raws: d.raws, order: true });
     if (ok && view.started) toast(`Plan lancé : ${d.label}`, ['ui', 'loop']);
     return ok;
+}
+
+// ---------------- 1.141 : semer directement les cultures manquantes depuis le plan ----------------
+export function planSowInfo(id, need = 1) {
+    const d = ITEMS[id];
+    if (!d || d.type !== 'crop') return null;
+    const want = Math.max(1, Math.round(need || 1));
+    const seeds = state.seeds[id] || 0;
+    const afford = d.exotic ? seeds : seeds + (d.cost > 0 ? Math.floor(state.money / d.cost) : want);
+    if (d.nord) {
+        if (!nordOpen() || !nordCropOk(d)) return { zone: 'nord', free: 0, count: 0 };
+        const sl = orchardSlots('nord');
+        const free = nordPlots().filter((p, k) => p && p.open && !p.id && !stoveAt(k) && !(sl[k] && sl[k].tree)).length;
+        return { zone: 'nord', free, count: Math.min(free, afford, want) };
+    }
+    if (d.oasis) {
+        if (!oasisOpen() || !oasisCropOk(d)) return { zone: 'oasis', free: 0, count: 0 };
+        const sl = orchardSlots('oasis');
+        const free = oasisPlots().filter((p, k) => p && p.open && !p.id && !(sl[k] && sl[k].tree)).length;
+        return { zone: 'oasis', free, count: Math.min(free, afford, want) };
+    }
+    if (d.island) {
+        if (!islandOpen() || !islandCropOk(d)) return { zone: 'island', free: 0, count: 0 };
+        const free = islandPlots().filter(p => p && p.open && !p.id).length;
+        return { zone: 'island', free, count: Math.min(free, afford, want) };
+    }
+    if (!((lvOk(d) && storyOk(d)) || seeds > 0)) return { zone: 'farm', free: 0, count: 0 };
+    const free = allPlots().filter(([p, i]) => p.isUnlocked && !p.itemId && (!d.ghOnly || i >= 1000)).length;
+    return { zone: 'farm', free, count: Math.min(free, afford, want) };
+}
+export function planSow(id, need = 1, at = null) {
+    const info = planSowInfo(id, need);
+    if (!info || !info.count) return 0;
+    const d = ITEMS[id];
+    const want = Math.max(1, Math.round(need || 1));
+    let n = 0;
+    if (info.zone === 'nord') {
+        nordPlots().forEach((p, k) => {
+            if (n < want && plantNord(k, id, at, true)) n++;
+        });
+    } else if (info.zone === 'oasis') {
+        oasisPlots().forEach((p, k) => {
+            if (n < want && plantOasis(k, id, at, true)) n++;
+        });
+    } else if (info.zone === 'island') {
+        islandPlots().forEach((p, k) => {
+            if (n < want && plantIsland(k, id, at, true)) n++;
+        });
+    } else {
+        for (const [p, i] of allPlots()) {
+            if (n >= want) break;
+            if (!p.isUnlocked || p.itemId || (d.ghOnly && i < 1000)) continue;
+            if (p.terrain !== 'plowed') p.terrain = 'plowed';
+            const res = plantSeed(p, id);
+            if (!res) break;
+            if (i >= 1000) p.isWatered = true;
+            n++;
+        }
+    }
+    if (n) {
+        sfx('plant');
+        changed(info.zone);
+        if (view.started) {
+            toast(`${n} parcelle${n > 1 ? 's' : ''} de ${d.name.toLowerCase()} semée${n > 1 ? 's' : ''}`, ['seed', id]);
+        }
+    }
+    return n;
 }
 
 // une entrée du plan peut-elle partir maintenant ?

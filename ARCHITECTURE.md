@@ -53,7 +53,8 @@ Auparavant, les niveaux étaient réécrits au chargement par cinq passes succes
 
 ## Plan de production (`src/systems/plan.js` + `src/ui/sheets/plan.js`)
 
-- **Commandes en 1 clic** : bouton *Planifier* sur le train, la montgolfière, le bateau de livraison, les chantiers du village et les commandes de villageois (déduit le stock existant et signale les produits bruts manquants).
+- **Commandes en 1 clic** : bouton *Planifier* sur le train, la montgolfière, le bateau de livraison, l’avion-cargo, Armand, le contrat de saison, les fermes voisines, la commande spéciale, les chantiers du village, les commandes de villageois et le plat de la semaine de Mamie (déduit le stock existant et signale les produits bruts manquants).
+- **Semis direct des cultures manquantes** : bouton *Semer ×N* (`planSowInfo` / `planSow`) pour planter directement sur les parcelles libres (champ, serre, île, oasis, Grand Nord) ou *Aller semer* avec la graine en main.
 - **Bières maison & hydromels** : planification de plusieurs brassins en chaîne (malterie + ingrédients d’atelier + enchaînement automatique des cuves de l’abbaye).
 - **Multi-plats / multi-bières** : débloqué progressivement au Domaine via le **Tableau d’intendance** (`PLAN_UPGRADE` dans `src/data/domaine.js` : 2, 3, 5 puis 8 produits simultanés dans un même plan à chaîne commune).
 

@@ -1025,10 +1025,11 @@ export const GUIDE_PAGES = [
                 t: 'Tout sur un produit au même endroit : le stock, d’où il vient, sa recette, les recettes où il sert, qui le demande, et les boutons pour y aller, en faire en quantité ou le vendre. Elle s’ouvre par « Fiche » dans la grange et le guide, en touchant l’image d’un produit à la vente, ou par un appui long sur un produit. Touchez un ingrédient pour passer à sa fiche.',
             },
             {
-                h: 'Le plan de production (1.140)',
+                h: 'Le plan de production (1.141)',
                 b: [
                     'En haut de l’atelier (ou « En faire en quantité » dans la fiche d’un plat, « En faire… » dans la grange) : choisissez un plat et une quantité (jusqu’à 200). Le jeu calcule toute la chaîne, stock déduit : les lots à lancer sur chaque machine et les produits bruts qui manquent. « Tout lancer » : les machines libres préparent les étapes, le plan ramasse ce qu’elles font, et le plat final part tout seul quand tout est prêt. Ce que le plan garde ne part pas au marché.',
-                    'En 1 clic sur une commande : le bouton « Planifier » apparaît sur le train, la montgolfière, le bateau de livraison, les chantiers du village et les commandes de villageois dès qu’il manque un produit d’atelier. Le stock déjà en grange est déduit et les produits bruts manquants sont signalés.',
+                    'En 1 clic sur n’importe quelle commande : le bouton « Planifier » apparaît sur le train, la montgolfière, le bateau de livraison, l’avion-cargo, Armand, le contrat de saison, les fermes voisines, la commande spéciale, les chantiers du village, les commandes de villageois et le plat de la semaine de Mamie dès qu’il manque un produit d’atelier (ou une bière maison pour Mamie). Le stock déjà en grange est déduit.',
+                    'Semer ce qui manque en 1 clic : quand une culture manque (« Il manque 28 tomates »), le bouton « Semer ×N » sème directement sur vos parcelles libres (champ, serre, île, oasis ou Grand Nord) en prenant d’abord vos graines en stock ; si tout est occupé, « Aller semer » vous mène au champ avec la graine en main.',
                     'Bières maison et hydromels : l’onglet « Bières maison » du plan (ou « Planifier » dans Mon carnet et Mes bières) lance plusieurs brassins d’affilée : la malterie et les ateliers préparent les ingrédients, puis les cuves s’enchaînent automatiquement.',
                     'Plusieurs plats ensemble : par défaut, un plan libre prépare un seul plat ou une seule bière à la fois. Au niveau 25, le Tableau d’intendance (Domaine) débloque 2, 3, 5 puis 8 plats ou bières combinés dans un même plan à chaîne commune.',
                 ],
@@ -1583,7 +1584,7 @@ export const GUIDE_PAGES = [
                     'Chargez petit à petit : chaque unité est payée tout de suite (2,2 fois son prix).',
                     'Avion plein : un gros bonus (+80 %) et des matériaux rares.',
                     'Les soutes grandissent avec la ferme : passé le niveau 49, un avion plein dépasse le million de pièces au niveau 72.',
-                    'Touchez un produit pour aller le produire.',
+                    'Touchez un produit pour aller le produire, ou « Planifier » en bas de la carte pour lancer en 1 clic toute la chaîne des soutes d’atelier restantes.',
                 ],
             },
         ],
@@ -1625,6 +1626,7 @@ export const GUIDE_PAGES = [
                     'Payée à prix fixe (environ 1,8 fois le prix, plus la maîtrise et la fidélité), quelle que soit la demande du marché.',
                     'Commande finie : bonus de 60 %, trois matériaux rares et +1 de fidélité (5 au maximum, par produit).',
                     'Plus la fidélité monte, plus la commande grossit et mieux elle paie.',
+                    'Une fois le marché conclu, le bouton « Planifier » (par ligne ou « Tout planifier ») lance en 1 clic toute la chaîne des produits d’atelier demandés.',
                 ],
             },
         ],
@@ -1644,7 +1646,7 @@ export const GUIDE_PAGES = [
                 h: 'Comment ça marche',
                 b: [
                     'Livrez petit à petit avant la fin de la saison : le délai est d’au moins 13 jours du jeu (environ une heure réelle), même si le contrat arrive tard.',
-                    'La récompense (pièces, expérience, ruban, matériaux rares) vaut le coup.',
+                    'La récompense (pièces, expérience, ruban, matériaux rares) vaut le coup. Si le produit sort d’un atelier, le bouton « Planifier » lance toute sa chaîne en 1 clic.',
                 ],
             },
         ],
@@ -1817,7 +1819,7 @@ export const GUIDE_PAGES = [
                 b: [
                     'À partir de 3 cœurs, un voisin demande deux plats, parfois trois (une chance sur deux à 5 cœurs), tous différents. Plus il y a de plats, plus la récompense grandit (15 % en plus par plat en plus).',
                     'Il peut aussi exiger un plat en argent (ou mieux) ou en or : une étoile le signale. Il ne le demande que si votre ferme a déjà su faire ce plat dans cette qualité, et jamais sur plus d’un plat par demande. Pour livrer, les plats ordinaires partent d’abord, puis l’argent, puis l’or (le platine et le diamant comptent comme de l’or).',
-                    'Dès le niveau 12, chaque lundi, un voisin à tour de rôle vous passe la commande spéciale de la semaine : un seul plat de sa spécialité, un plat que vous n’avez jamais livré aux voisins (à défaut, un des moins livrés). La récompense est très belle : 2,5 fois la valeur en pièces, trois matériaux rares, de l’expérience et 2 points d’amitié. Elle disparaît lundi.',
+                    'Dès le niveau 12, chaque lundi, un voisin à tour de rôle vous passe la commande spéciale de la semaine : un seul plat de sa spécialité, un plat que vous n’avez jamais livré aux voisins (à défaut, un des moins livrés). La récompense est très belle : 2,5 fois la valeur en pièces, trois matériaux rares, de l’expérience et 2 points d’amitié. Elle disparaît lundi. Le bouton « Planifier » permet aussi de lancer en 1 clic les plats d’un voisin ou de sa commande spéciale.',
                 ],
             },
         ],

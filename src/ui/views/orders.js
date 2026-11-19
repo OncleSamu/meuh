@@ -191,7 +191,7 @@ function cargoCard() {
         <div class="card-sub">${c.done ? 'Soutes pleines : merci ! Il repartira à l’heure.' : 'D’énormes soutes : chaque unité chargée est payée tout de suite, l’avion plein donne un gros bonus.'}</div></div>
         <span class="timer-pill" title="Temps réel">${ico(['ui', 'clock'])}${timer(G.cargoLeave())}</span></div>
         <div class="holds">${holds}</div>
-        ${c.done ? '' : `<div class="truck-reward"><span>Avion plein : bonus</span>${rewardHtml(G.cargoBonus(), G.cargoBonusXp())}${ico(['item', 'plank'])}${ico(['item', 'nail'])}${ico(['item', 'paint'])}</div>`}</div>`;
+        ${c.done ? '' : `<div class="truck-reward"><span>Avion plein : bonus</span>${rewardHtml(G.cargoBonus(), G.cargoBonusXp())}${ico(['item', 'plank'])}${ico(['item', 'nail'])}${ico(['item', 'paint'])}${G.canPlanOrder('cargo') ? btn('Planifier', { act: 'planOrder', data: { kind: 'cargo' }, size: 'sm', kind: 'gold', icon: ['ui', 'loop'] }) : ''}</div>`}</div>`;
 }
 
 // ---------------- 1.19.2 : l'Agenda ----------------
@@ -229,11 +229,14 @@ function mamieCard() {
     const bonus = G.mamieNowBonus(),
         pct = Math.round((bonus - 1) * 100);
     const unit = d.beer ? G.beerDealPrice(d.id.slice(5), 0, bonus) : G.sellPrice(d.id) * bonus;
+    const planBtn = G.canPlanOrder('mamie') ? btn('Planifier', { act: 'planOrder', data: { kind: 'mamie' }, kind: 'gold', size: 'sm', icon: ['ui', 'loop'] }) : '';
     const act = !can
-        ? d.beer
-            ? btn('Brasser', { act: 'go', data: { path: 'machines/brew' }, size: 'sm' })
-            : btn('Produire', { act: 'mamieGo', data: { id: d.id, i: mi }, size: 'sm' })
-        : `<div class="md-btns">${btn(`Donner ${fmt(Math.min(can, 1))}`, { act: 'mamieGive', data: { n: 1 }, size: 'sm' })}${can > 1 ? btn(`Donner ${fmt(can)}`, { act: 'mamieGive', data: { n: can }, kind: 'green', size: 'sm' }) : ''}</div>`;
+        ? `<div class="md-btns">${
+              d.beer
+                  ? btn('Brasser', { act: 'go', data: { path: 'machines/brew' }, size: 'sm' })
+                  : btn('Produire', { act: 'mamieGo', data: { id: d.id, i: mi }, size: 'sm' })
+          }${planBtn}</div>`
+        : `<div class="md-btns">${btn(`Donner ${fmt(Math.min(can, 1))}`, { act: 'mamieGive', data: { n: 1 }, size: 'sm' })}${can > 1 ? btn(`Donner ${fmt(can)}`, { act: 'mamieGive', data: { n: can }, kind: 'green', size: 'sm' }) : ''}${planBtn}</div>`;
     return `<div class="card mamie-dish">
         <span class="md-av">${art('villager', 'odette')}</span>
         <span class="md-art">${art(d.icon[0], d.icon[1])}</span>
@@ -247,6 +250,7 @@ function armandCard() {
     const slots = G.armandSlots(),
         here = G.armandHere();
     const fidStars = id => '★'.repeat(G.armandFid(id)) + '☆'.repeat(5 - G.armandFid(id));
+    let plannableCount = 0;
     const rows = Array.from({ length: slots }, (_, i) => {
         const f = G.armandFlagship(i),
             o = G.armandOrder(i);
@@ -262,9 +266,11 @@ function armandCard() {
             return `<div class="hold off">${ico(['item', o.id], 'ico big')}<div class="hold-main"><b>${ITEMS[o.id].name}</b><small>Pas de commande cette semaine : « ${esc(o.say || '')} »</small></div></div>`;
         const have = state.inventory[o.id] || 0,
             n = Math.min(have, o.qty - o.got);
+        const canP = !o.done && G.canPlanOrder('armand', i);
+        if (canP) plannableCount++;
         return `<div class="hold${o.done ? ' full' : ''}"><button class="hold-item" data-act="produce" data-id="${o.id}" aria-label="Aller produire">${ico(['item', o.id], 'ico big')}</button>
             <div class="hold-main"><b>${ITEMS[o.id].name} · ${fmt(o.qty)}</b>${bar(o.got / o.qty)}<small>${fmt(o.got)} / ${fmt(o.qty)}${o.done ? ' · terminée' : ` · ${fmt(G.armandPay(o, 1))} pièces l’unité · ${fmt(have)} en stock`} · fidélité ${fidStars(o.id)}</small></div>
-            ${o.done ? ico(['ui', 'check'], 'ico tick') : btn(have ? `Livrer ${fmt(n)}` : 'Produire', { act: have ? 'armandGive' : 'produce', data: have ? { slot: i } : { id: o.id }, kind: have ? 'green' : '', size: 'sm' })}</div>`;
+            ${o.done ? ico(['ui', 'check'], 'ico tick') : `<span class="cut-btns">${canP ? btn('Planifier', { act: 'planOrder', data: { kind: 'armand', ref: i }, kind: 'gold', size: 'sm', icon: ['ui', 'loop'] }) : ''}${btn(have ? `Livrer ${fmt(n)}` : 'Produire', { act: have ? 'armandGive' : 'produce', data: have ? { slot: i } : { id: o.id }, kind: have ? 'green' : '', size: 'sm' })}</span>`}</div>`;
     }).join('');
     const sub = here
         ? 'Il passe en cuisine : chaque unité livrée est payée tout de suite, au prix fixé, quel que soit le marché. Commande finie : bonus et matériaux rares.'
@@ -273,7 +279,7 @@ function armandCard() {
         ? `<span class="timer-pill" title="Temps réel">${ico(['ui', 'clock'])}${timer(G.armandLeave())}</span>`
         : `<span class="timer-pill" title="Temps réel">${ico(['ui', 'clock'])}dans ${timer(G.armandArrive(), 'b')}</span>`;
     return `<div class="card armand-card${here ? ' here' : ' away'}"><div class="card-head">${portrait}<div class="card-main"><div class="card-title">Armand, chef du Grand Hôtel</div>
-        <div class="card-sub">${sub}</div></div>${when}</div><div class="holds">${rows}</div></div>`;
+        <div class="card-sub">${sub}</div></div>${when}</div><div class="holds">${rows}</div>${plannableCount > 1 ? `<div class="row-btns">${btn('Tout planifier', { act: 'planOrder', data: { kind: 'armand' }, kind: 'gold', size: 'sm', icon: ['ui', 'loop'] })}</div>` : ''}</div>`;
 }
 // ---------------- 1.66 : la table de négociation ----------------
 const MOODS = [

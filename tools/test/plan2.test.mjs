@@ -226,13 +226,141 @@ test('UI et actions : tous les nouveaux boutons du planificateur et du domaine s
     const ordersSrc = readFileSync(new URL('../../src/ui/views/orders.js', import.meta.url), 'utf8');
     const villageSrc = readFileSync(new URL('../../src/ui/views/village.js', import.meta.url), 'utf8');
     const brewSrc = readFileSync(new URL('../../src/ui/views/brewery.js', import.meta.url), 'utf8');
-    for (const act of ['planTab', 'planBeer', 'planDraftAdd', 'planDraftQty', 'planDraftDel', 'planDraftClear', 'planDraftGo', 'planOrder', 'planDomaine']) {
+    for (const act of ['planTab', 'planBeer', 'planDraftAdd', 'planDraftQty', 'planDraftDel', 'planDraftClear', 'planDraftGo', 'planOrder', 'planSow', 'planDomaine']) {
         assert.match(planSrc, new RegExp(`\\n {8}${act}: `), `action ${act} dans plan.js`);
     }
     assert.match(villageSrc, /\n {8}buyPlanUp: /, 'action buyPlanUp dans village.js');
     assert.ok(ordersSrc.includes("act: 'planOrder'"), 'bouton Planifier dans orders.js');
+    assert.ok(ordersSrc.includes("kind: 'cargo'"), 'bouton Planifier sur l’avion-cargo');
+    assert.ok(ordersSrc.includes("kind: 'armand'"), 'bouton Planifier sur Armand');
+    assert.ok(ordersSrc.includes("kind: 'mamie'"), 'bouton Planifier sur Mamie');
     assert.ok(villageSrc.includes("act: 'planOrder'"), 'bouton Planifier dans village.js');
+    assert.ok(villageSrc.includes("kind: 'contract'"), 'bouton Planifier sur le contrat');
+    assert.ok(villageSrc.includes("kind: 'special'"), 'bouton Planifier sur la commande spéciale');
+    assert.ok(villageSrc.includes("kind: 'neighbor'"), 'bouton Planifier sur les voisins');
     assert.ok(brewSrc.includes("act: 'planBeer'"), 'bouton Planifier dans brewery.js');
+});
+
+test('planifier en 1 clic (1.141) : avion-cargo, Armand, contrat, voisins, commande spéciale et Mamie', () => {
+    farm(55);
+    Object.assign(state.inventory, {
+        wheat: 0,
+        flour: 0,
+        egg: 0,
+        tomato: 0,
+        carrot: 0,
+        milk: 0,
+        pasta: 0,
+        sauce: 0,
+        cheese: 0,
+        lasagna: 0,
+    });
+
+    // Avion-cargo : on recule l'horloge sur une fenêtre où cargoHere() est vrai
+    let foundCargo = false;
+    for (let h = 0; h < 60 && !foundCargo; h++) {
+        if (G.cargoHere()) foundCargo = true;
+        else T += 3600000;
+    }
+    assert.ok(foundCargo, 'créneau avion-cargo trouvé');
+    state.cargo = {
+        done: false,
+        gone: -1,
+        holds: [
+            { id: 'lasagna', qty: 12, got: 2 },
+            { id: 'tomato', qty: 30, got: 0 },
+        ],
+    };
+    assert.ok(G.canPlanOrder('cargo'));
+    assert.equal(G.orderPlanData('cargo').items[0].n, 10);
+    assert.ok(G.startOrderPlan('cargo'));
+    assert.equal(G.planInfo().title, 'Avion-cargo');
+    G.stopPlan();
+
+    // Armand : on trouve un créneau où armandHere() est vrai
+    let foundArmand = false;
+    for (let h = 0; h < 200 && !foundArmand; h++) {
+        if (G.armandHere()) foundArmand = true;
+        else T += 3600000;
+    }
+    assert.ok(foundArmand, 'créneau Armand trouvé');
+    assert.ok(G.buyDomaine('armand'), 'débloque le 2e produit phare d’Armand');
+    G.armandTick();
+    state.armand.orders = [
+        { id: 'lasagna', qty: 20, got: 5, done: false, deal: 'ok' },
+        { id: 'cheese', qty: 15, got: 0, done: false, deal: 'ok' },
+    ];
+    state.armand.flagships = ['lasagna', 'cheese'];
+    assert.ok(G.canPlanOrder('armand', 0));
+    assert.ok(G.startOrderPlan('armand', 0));
+    assert.match(G.planInfo().title, /^Armand · /);
+    G.stopPlan();
+    assert.ok(G.startOrderPlan('armand'));
+    assert.equal(G.planEntries().length, 2, 'Tout planifier pour Armand prend les 2 commandes');
+    G.stopPlan();
+
+    // Contrat de saison
+    state.contract = { item: 'lasagna', qty: 8, given: 3, done: false, coins: 1000, xp: 100 };
+    assert.ok(G.canPlanOrder('contract'));
+    assert.equal(G.orderPlanData('contract').items[0].n, 5);
+    assert.ok(G.startOrderPlan('contract'));
+    assert.equal(G.planInfo().title, 'Contrat de saison');
+    G.stopPlan();
+
+    // Voisins & commande spéciale
+    G.ensureNeighbors();
+    state.neighbors[0].req = { items: [{ id: 'lasagna', qty: 2 }], coins: 500, until: T + 3600000 };
+    assert.ok(G.canPlanOrder('neighbor', 0));
+    assert.ok(G.startOrderPlan('neighbor', 0));
+    assert.match(G.planInfo().title, /^Voisin · /);
+    G.stopPlan();
+
+    G.specialTick();
+    assert.ok(state.nmarket && state.nmarket.special);
+    Object.assign(state.nmarket.special, { k: 0, items: [{ id: 'lasagna', qty: 3 }], done: false, none: false, coins: 800, pts: 2, until: T + 3600000 });
+    assert.ok(G.canPlanOrder('special'));
+    assert.ok(G.startOrderPlan('special'));
+    assert.match(G.planInfo().title, /^Commande spéciale · /);
+    G.stopPlan();
+
+    // Mamie (plat de la semaine)
+    assert.ok(G.mamieInfo());
+    assert.ok(G.canPlanOrder('mamie'));
+    assert.ok(G.startOrderPlan('mamie'));
+    assert.match(G.planInfo().title, /^Mamie · /);
+    G.stopPlan();
+});
+
+test('semer directement depuis le plan (planSowInfo / planSow) : laboure, utilise le stock puis les pièces et respecte la quantité', () => {
+    farm(45);
+    // On libère exactement 6 parcelles du champ principal (dont certaines non labourées)
+    state.grid.forEach((p, idx) => {
+        p.isUnlocked = idx < 6;
+        p.itemId = null;
+        p.terrain = idx % 2 === 0 ? 'plowed' : 'grass';
+    });
+    state.seeds.tomato = 2;
+    const moneyBefore = state.money;
+    const info = G.planSowInfo('tomato', 28);
+    assert.equal(info.zone, 'farm');
+    assert.equal(info.free, 6);
+    assert.equal(info.count, 6);
+    const planted = G.planSow('tomato', 28);
+    assert.equal(planted, 6);
+    assert.equal(state.seeds.tomato, 0, 'les 2 graines en stock partent d’abord');
+    assert.ok(state.money < moneyBefore, 'les 4 autres sont achetées');
+    assert.equal(state.grid.filter(p => p.itemId === 'tomato').length, 6);
+    assert.equal(G.planSowInfo('tomato', 28).count, 0, 'plus de parcelle libre');
+
+    // Si on demande seulement 2 parcelles sur 6 libres, on ne sème pas tout le champ
+    state.grid.forEach((p, idx) => {
+        if (idx < 6) p.itemId = null;
+    });
+    assert.equal(G.planSow('tomato', 2), 2);
+    assert.equal(state.grid.filter(p => p.itemId === 'tomato').length, 2);
+
+    // Un produit animal ou de pêche ne renvoie pas d'info de semis
+    assert.equal(G.planSowInfo('milk', 5), null);
 });
 
 test('audit économique (tools/dev/check-econ.mjs) : JSON valide et zéro marge négative vendable', () => {
@@ -244,7 +372,7 @@ test('audit économique (tools/dev/check-econ.mjs) : JSON valide et zéro marge 
     assert.ok(data.byMachine.length > 40);
 });
 
-test('documentation en jeu (1.140) : VERSION, notes de mise à jour, barre des niveaux, guide et statistiques', async () => {
+test('documentation en jeu (1.141) : VERSION, notes de mise à jour, barre des niveaux, guide et statistiques', async () => {
     const ver = readFileSync(new URL('../../VERSION', import.meta.url), 'utf8').trim();
     const { CHANGELOG } = await import('../../src/data/changelog.js');
     const { GUIDE_PAGES } = await import('../../src/data/guide.js');
@@ -257,6 +385,7 @@ test('documentation en jeu (1.140) : VERSION, notes de mise à jour, barre des n
     const dom = GUIDE_PAGES.find(p => p.id === 'domaine');
     assert.ok(JSON.stringify(ws).includes('Tableau d’intendance'), 'guide atelier mentionne le Tableau d’intendance');
     assert.ok(JSON.stringify(ws).includes('Bières maison'), 'guide atelier mentionne les bières maison');
+    assert.ok(JSON.stringify(ws).includes('Semer ×N'), 'guide atelier documente le semis direct');
     assert.ok(JSON.stringify(dom).includes('Tableau d’intendance'), 'guide domaine documente le Tableau d’intendance');
     // Un plan terminé incrémente state.stats.plans et apparaît dans Statistiques › Atelier
     farm(45);
