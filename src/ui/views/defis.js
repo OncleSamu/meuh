@@ -18,6 +18,7 @@ import { animalArt } from '../genlook.js';
 import { varArt } from './lab.js';
 import { legendCell } from './cave.js';
 import { CAVE_FAMILIES } from '../../data/cave.js';
+import { perfumeSvg } from '../../art/perfume.js';
 
 const CUPS = ['cupNone', 'cupBronze', 'cupSilver', 'cupGold', 'cupPlat', 'cupDiamond'];
 const QNAME = ['', 'argent ou or', 'or'];
@@ -28,7 +29,7 @@ function stepIcon(st) {
     if (st.done) return ['ui', 'check'];
     if (st.kind === 'give') return ['item', st.items[0].id];
     if (st.kind === 'count') return st.icon || ['ui', 'trophy'];
-    return st.kind === 'animal' ? ['animal', 'cow'] : st.kind === 'beer' ? ['ui', 'beer'] : ['ui', 'packet'];
+    return st.kind === 'animal' ? ['animal', 'cow'] : st.kind === 'beer' ? ['ui', 'beer'] : st.kind === 'perfume' ? ['ui', 'perfume'] : ['ui', 'packet'];
 }
 
 // une ligne d'étape (carte et fiche)
@@ -178,6 +179,17 @@ defineSheet('defiPick', {
                     .map(
                         c =>
                             `<button class="pick-cell${c.score >= st.n ? ' ok' : ' short'}" data-act="presentDefi" data-k="${o.k}" data-id="${c.b.id}"><span class="pc-art">${ico(['ui', 'beer'], 'ico big')}</span><b>${esc(c.b.name)}</b><small>${'★'.repeat(c.score)}</small></button>`,
+                    )
+                    .join('')}</div>`;
+        }
+        if (st.kind === 'perfume') {
+            const list = G.perfumeCandidates().sort((a, b) => b.score - a.score);
+            if (!list.length) return empty('Aucun parfum maison : composez-en un à l’Atelier du Parfumeur.');
+            return `<p class="card-sub">Le jury veut un parfum maison d’au moins <b>${st.n} étoile${st.n > 1 ? 's' : ''}</b> (accordez bien la pyramide et la méthode d’extraction).</p>
+                <div class="pick-grid">${list
+                    .map(
+                        c =>
+                            `<button class="pick-cell${c.score >= st.n ? ' ok' : ' short'}" data-act="presentDefi" data-k="${o.k}" data-id="${c.p.id}"><span class="pc-art">${perfumeSvg(c.p)}</span><b>${esc(c.p.name)}</b><small>${'★'.repeat(c.score)}</small></button>`,
                     )
                     .join('')}</div>`;
         }

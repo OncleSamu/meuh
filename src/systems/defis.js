@@ -22,6 +22,7 @@ import { apiaryOpen } from './apiary.js';
 import { harasOpen } from './haras.js';
 import { nmarketOpen } from './nmarket.js';
 import { meadOpen } from './brewery.js';
+import { perfumeOpen } from './perfume.js';
 import { nordOpen } from './nord.js';
 import { caveOpen, hallOpen } from './cave.js';
 import { pondOpen, fishOrderOk } from './fishing.js';
@@ -58,6 +59,7 @@ const PARTS = {
     hall: () => hallOpen(),
     boat: () => boatOpen(),
     brew: () => hasMachine('brewery'),
+    perfume: () => perfumeOpen(),
     counter: () => hasMachine('counter'),
     pond: () => pondOpen(),
     gallery: () => depthOpen('gallery'),
@@ -127,7 +129,7 @@ function buildStep(s0) {
             .map(id => ({ id, n: FIXED.has(id) ? s.n : Math.round(s.n * k), got: 0 }));
     } else if (s.kind === 'count') {
         Object.assign(st, { stat: s.stat, n: s.n <= 1 ? s.n : Math.round(s.n * k), base: state.stats[s.stat] || 0, icon: s.icon, text: s.text });
-    } else if (s.kind === 'beer') {
+    } else if (s.kind === 'beer' || s.kind === 'perfume') {
         Object.assign(st, { n: Math.min(3, s.n + Math.floor((state.renown || 0) / 20)), text: s.text });
     } else {
         Object.assign(st, { n: s.n + Math.floor((state.renown || 0) / 10), text: s.text });
@@ -243,11 +245,18 @@ export const beerCandidates = () =>
               .filter(b => b.stars > 0 && (b.made || 0) > 0)
               .map(b => ({ b, score: b.stars }))
         : [];
+export const perfumeCandidates = () =>
+    state.perfume && state.perfume.creations
+        ? Object.values(state.perfume.creations)
+              .filter(p => p.stars > 0 && (p.made || 0) > 0)
+              .map(p => ({ p, score: p.stars }))
+        : [];
 export const canPresent = st =>
     !st.done &&
     ((st.kind === 'animal' && animalCandidates().some(c => c.score >= st.n)) ||
         (st.kind === 'variety' && varietyCandidates().some(c => c.score >= st.n)) ||
-        (st.kind === 'beer' && beerCandidates().some(c => c.score >= st.n)));
+        (st.kind === 'beer' && beerCandidates().some(c => c.score >= st.n)) ||
+        (st.kind === 'perfume' && perfumeCandidates().some(c => c.score >= st.n)));
 // nombre d'étapes où l'on peut agir tout de suite (pastille)
 export const defiReady = () => {
     const d = curDefi();
@@ -326,12 +335,14 @@ export function presentDefi(k, ref, at) {
             ? animalCandidates().find(x => x.a.uid === ref)
             : st.kind === 'beer'
               ? beerCandidates().find(x => x.b.id === ref)
-              : varietyCandidates().find(x => x.v.id === ref);
+              : st.kind === 'perfume'
+                ? perfumeCandidates().find(x => x.p.id === ref)
+                : varietyCandidates().find(x => x.v.id === ref);
     if (!c || c.score < st.n) {
         toast('Le jury attend mieux : il faut plus de points', ['ui', 'trophy']);
         return false;
     }
-    st.who = st.kind === 'animal' ? c.a.name : st.kind === 'beer' ? c.b.name : varName(c.v);
+    st.who = st.kind === 'animal' ? c.a.name : st.kind === 'beer' ? c.b.name : st.kind === 'perfume' ? c.p.name : varName(c.v);
     finishStep(st, at);
     return true;
 }

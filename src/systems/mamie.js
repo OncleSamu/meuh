@@ -9,12 +9,14 @@ import { sfx, buzz, burst } from '../core/bus.js';
 import { earn, addXp } from './player.js';
 import { sellBatch } from './market.js';
 import { sellBeer, ensureBrew, beerDealPrice } from './brewery.js';
+import { sellPerfume, ensurePerfume, perfumeDealPrice, perfumeQual } from './perfume.js';
 import { RECIPES } from '../data/machines.js';
 import { ITEMS } from '../data/items.js';
 import { hasMachine, recipeUnlocked } from './workshop.js';
 import { tip } from './tips.js';
 
 const BEER = 'beer:';
+const PERF = 'perf:';
 // le bonus de Mamie selon ce qu'on lui a déjà donné cette semaine : +50 % jusqu'à 50, puis +30 %, +20 % après 100, +10 % après 200
 export const MAMIE_TIERS = [
     [50, 0.5],
@@ -67,6 +69,7 @@ const FOOD_MACHINES = [
 const localDay = t => Math.floor((t - new Date(t).getTimezoneOffset() * 60000) / 86400000);
 // les semaines commencent le lundi (le 1er janvier 1970 était un jeudi)
 export const isBeer = id => typeof id === 'string' && id.startsWith(BEER);
+export const isPerf = id => typeof id === 'string' && id.startsWith(PERF);
 export const mamieWeek = (t = now()) => Math.floor((localDay(t) + 3) / 7);
 // la fin de la semaine en cours : lundi 0 h, heure locale
 export function mamieWeekEnd(t = now()) {
@@ -94,7 +97,11 @@ export function mamieChoices() {
     const beers = Object.values((state.brew && state.brew.beers) || {})
         .filter(b => b.made > 0)
         .map(b => BEER + b.id);
-    return [...(quick.length ? quick : all).map(r => r.id), ...beers];
+    // 1.146 : un de tes parfums maison déjà mis en flacon
+    const perfumes = Object.values((state.perfume && state.perfume.creations) || {})
+        .filter(p => p.made > 0)
+        .map(p => PERF + p.id);
+    return [...(quick.length ? quick : all).map(r => r.id), ...beers, ...perfumes];
 }
 
 // un tirage qui ne change pas de la semaine (même graine pour tous les appels)
@@ -111,7 +118,14 @@ export function mamieDish(t = now()) {
     if (state.level < MAMIE_LVL) return null;
     const w = mamieWeek(t);
     const m = (state.mamie ||= { w: -1, id: null });
-    if (m.w === w && m.id && (RECIPES[m.id] || (isBeer(m.id) && state.brew && state.brew.beers[m.id.slice(BEER.length)]))) return m.id;
+    if (
+        m.w === w &&
+        m.id &&
+        (RECIPES[m.id] ||
+            (isBeer(m.id) && state.brew && state.brew.beers[m.id.slice(BEER.length)]) ||
+            (isPerf(m.id) && state.perfume && state.perfume.creations && state.perfume.creations[m.id.slice(PERF.length)]))
+    )
+        return m.id;
     let list = mamieChoices();
     if (!list.length) return null;
     // pas deux semaines de suite le même plat, s'il y a le choix
@@ -128,6 +142,7 @@ export const mamieMade = () => (mamieDish() && state.mamie.n) || 0;
 export const isMamieDish = id => !!id && mamieDish() === id;
 export const mamieMasteryMult = id => (isMamieDish(id) ? MAMIE_MASTERY : 1);
 export const isMamieBeer = bid => mamieDish() === BEER + bid;
+export const isMamiePerf = pid => mamieDish() === PERF + pid;
 // le bonus de la prochaine pièce
 export const mamieNowBonus = () => mamieBonusAt(mamieMade());
 const dealerOf = () => {
@@ -138,7 +153,9 @@ const dealerOf = () => {
 export function mamieStock() {
     const id = mamieDish();
     if (!id) return 0;
-    return isBeer(id) ? ensureBrew().stock[id.slice(BEER.length)] || 0 : state.inventory[id] || 0;
+    if (isBeer(id)) return ensureBrew().stock[id.slice(BEER.length)] || 0;
+    if (isPerf(id)) return ensurePerfume().stock[id.slice(PERF.length)] || 0;
+    return state.inventory[id] || 0;
 }
 // ce qu'elle paierait pour n pièces (les meilleures d'abord), sans rien prendre
 export function mamiePay(n) {
@@ -146,6 +163,7 @@ export function mamiePay(n) {
     n = Math.min(n, mamieStock());
     if (!id || n <= 0) return 0;
     if (isBeer(id)) return dealBeer(id.slice(BEER.length), n, false);
+    if (isPerf(id)) return dealPerf(id.slice(PERF.length), n, false);
     return sellBatch(id, n, false, dealerOf()).gain;
 }
 // bière : même barème que sellBeer (les plus hauts rangs d'abord), sans rien prendre
@@ -172,6 +190,27 @@ function dealBeer(bid, n, apply, at) {
     for (let k = 0; k < left; k++) coins += per(0);
     return coins;
 }
+function dealPerf(pid, n, apply, at) {
+    if (apply) return sellPerfume(pid, n, at, dealerOf()) || 0;
+    const q = perfumeQual(pid);
+    let left = n,
+        coins = 0;
+    const d = dealerOf();
+    let idx = 0;
+    const per = r => perfumeDealPrice(pid, r, d.multAt(idx++));
+    for (const [r, f] of [
+        [4, 'd'],
+        [3, 'p'],
+        [2, 'g'],
+        [1, 's'],
+    ]) {
+        const t = Math.min(left, q[f] || 0);
+        left -= t;
+        for (let k = 0; k < t; k++) coins += per(r);
+    }
+    for (let k = 0; k < left; k++) coins += per(0);
+    return coins;
+}
 // donne n pièces de son plat à Mamie : elles partent, elle paie tout de suite
 export function deliverMamie(at, n = Infinity) {
     const id = mamieDish();
@@ -179,6 +218,7 @@ export function deliverMamie(at, n = Infinity) {
     if (!id || n <= 0) return false;
     let gold;
     if (isBeer(id)) gold = dealBeer(id.slice(BEER.length), n, true, at);
+    else if (isPerf(id)) gold = dealPerf(id.slice(PERF.length), n, true, at);
     else {
         const r = sellBatch(id, n, true, dealerOf());
         gold = r.gain;
@@ -199,7 +239,11 @@ export function mamieInfo() {
     if (!id) return null;
     if (isBeer(id)) {
         const b = state.brew.beers[id.slice(BEER.length)];
-        return { id, beer: true, name: b.name, icon: ['ui', 'beer'], machine: 'brewery' };
+        return { id, beer: true, perf: false, name: b.name, icon: ['ui', 'beer'], machine: 'brewery' };
     }
-    return { id, beer: false, name: ITEMS[id].name, icon: ['item', id], machine: RECIPES[id].machine };
+    if (isPerf(id)) {
+        const p = state.perfume.creations[id.slice(PERF.length)];
+        return { id, beer: false, perf: true, pid: p.id, name: p.name, icon: ['ui', 'perfume'], machine: 'perfume' };
+    }
+    return { id, beer: false, perf: false, name: ITEMS[id].name, icon: ['item', id], machine: RECIPES[id].machine };
 }

@@ -554,6 +554,20 @@ export const DEFIS = {
             { kind: 'give', name: 'Le plat de la brasserie', pool: PUB_DISH, k: 1, n: 4, q: 2 },
         ],
     },
+    salonParfums: {
+        name: 'Le Grand Salon des Parfums',
+        who: 'margaux',
+        icon: ['ui', 'perfume'],
+        deco: 'perfumeFountain',
+        open: 'perfume',
+        intro: 'Les nez de toute la région se retrouvent ici ! Montrez-leur vos plus beaux flacons.',
+        steps: [
+            { kind: 'count', name: 'Les flacons', stat: 'perfumes', n: 16, icon: ['ui', 'perfume'], text: 'Mettre en flacon {n} parfums' },
+            { kind: 'count', name: 'Les commandes du Salon', stat: 'perfumeOrders', n: 3, icon: ['ui', 'perfume'], text: 'Livrer {n} commandes de parfum' },
+            { kind: 'perfume', name: 'Le parfum de la maison', n: 2, text: 'Présenter un parfum maison de {n} étoiles' },
+            { kind: 'give', name: 'Les essences rares', pool: ['lavender', 'tiare', 'orchid', 'saffron', 'vanilla', 'patchouli'], k: 2, n: 6, q: 1 },
+        ],
+    },
     comptoir: {
         name: 'Le comptoir en fête',
         who: 'paul',
@@ -765,6 +779,7 @@ export const MINI = {
         { id: 'help', stat: 'neighborHelps', n: 4, open: 'nmarket', icon: ['ui', 'heart'], text: 'Rendre {n} services aux voisins' },
         { id: 'stall', stat: 'stallSales', n: 12, open: 'nmarket', icon: ['ui', 'basket'], text: 'Vendre {n} fois à l’étal de la ferme' },
         { id: 'beers', stat: 'beers', n: 12, open: 'brew', icon: ['ui', 'beer'], text: 'Brasser {n} bouteilles' },
+        { id: 'perfumes', stat: 'perfumes', n: 8, open: 'perfume', icon: ['ui', 'perfume'], text: 'Mettre en flacon {n} parfums' },
         { id: 'lots', stat: 'caveLots', n: 4, open: 'cave', icon: ['ui', 'cave'], text: 'Sortir {n} lots de la cave' },
         { id: 'gold', stat: 'goldDishes', n: 8, open: null, icon: ['ui', 'star'], text: 'Sortir {n} produits en or de l’atelier' },
     ],

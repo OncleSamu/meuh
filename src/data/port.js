@@ -135,7 +135,7 @@ export const FARM_SEASON_DEFIS = {
     miel: ['miel'],
     mine: ['expedition'],
     textile: ['defile'],
-    parfums: ['parfums'],
+    parfums: ['parfums', 'salonParfums'],
 };
 
 export const FARM_THEMES = {

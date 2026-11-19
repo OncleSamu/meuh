@@ -263,7 +263,98 @@ test('1.143 : gestes de soin au choix, valeur non cumulée, ruban unique, signat
     assert.equal(state.perfume.vats.length, 0, 'dame-jeannes vidées au prestige');
 });
 
-test('UI et documentation en jeu (1.144) : actions, onglet, barre des niveaux, guide, changelog et stats', async () => {
+test('1.146 : ponts vers Train, Avion-cargo, Mamie Odette, Grand Défi, Défi éclair et Saison des parfums', async () => {
+    const { DEFIS, MINI } = await import('../../src/data/defis.js');
+    const { FARM_SEASONS, FARM_SEASON_DEFIS, FARM_SEASON_MS } = await import('../../src/data/port.js');
+    farm(80);
+    // On cale l'horloge sur « La saison des parfums » et la chapelle rénovée
+    const idxParf = FARM_SEASONS.findIndex(s => s.id === 'parfums');
+    T = (120 + idxParf) * FARM_SEASON_MS + 3600e3;
+    state.projects.chapel = { done: true };
+    state.projects.station = { done: true };
+    G.ensureFarmSeason();
+    assert.equal(G.farmSeasonTheme().id, 'parfums');
+    assert.ok(FARM_SEASON_DEFIS.parfums.includes('salonParfums'));
+
+    // Création et mise en flacon -> marque des points pour La saison des parfums !
+    G.ensurePerfume();
+    G.setPerfumeNote('head', 'lemon');
+    G.setPerfumeNote('heart', 'lavender');
+    G.setPerfumeNote('base', 'resin');
+    G.setPerfumeMethod('enfleurage');
+    G.setPerfumeConc('extrait');
+    const pid = G.startPerfume();
+    T += 2 * 3600 * 1000;
+    G.perfumeOffline();
+    const ptsBefore = state.fseason.pts;
+    assert.ok(G.bottlePerfume(0));
+    assert.ok(state.fseason.pts > ptsBefore, 'la mise en flacon marque des points de saison');
+
+    // 1. Train de marchandises : wagon de parfums maison
+    assert.equal(G.pfTransportOk(), true);
+    const req = { family: G.perfumeOf(pid).family, minStars: 2 };
+    assert.ok(G.pfHave(req) >= 5);
+    assert.ok(G.pfReqTxt(req).includes('Parfum'));
+    state.truck = {
+        status: 'here',
+        expiresAt: T + 3600e3,
+        slots: [
+            { id: 'perfumeCustom', pf: req, qty: 2, mult: 1.5, loaded: false, gold: 1000, xp: 50, mat: null },
+            { id: 'wheat', qty: 1, loaded: true, gold: 10, xp: 5, mat: null },
+            { id: 'wheat', qty: 1, loaded: true, gold: 10, xp: 5, mat: null },
+        ],
+        gold: 500,
+        xp: 20,
+    };
+    assert.equal(G.slotHave(state.truck.slots[0]), true);
+    const stockBeforeTrain = G.perfumeStock(pid);
+    const moneyBeforeTrain = state.money;
+    assert.ok(G.loadSlot(0));
+    assert.equal(G.perfumeStock(pid), stockBeforeTrain - 2);
+    assert.ok(state.money > moneyBeforeTrain);
+
+    // 2. Avion-cargo : soute de parfums maison
+    state.cargo = {
+        k: Math.floor(T / (48 * 3600e3)),
+        holds: [{ id: 'perfumeCustom', pf: req, qty: 2, got: 0, est: 900 }],
+        done: false,
+    };
+    const stockBeforeCargo = G.perfumeStock(pid);
+    if (G.cargoHere()) {
+        assert.ok(G.loadHold(0, null, 1));
+        assert.equal(G.perfumeStock(pid), stockBeforeCargo - 1);
+    } else {
+        // même hors créneau cargo, pullPf fonctionne directement
+        assert.ok(G.pullPf(req, 1) > 0);
+        assert.equal(G.perfumeStock(pid), stockBeforeCargo - 1);
+    }
+
+    // 3. Mamie Odette : parfum maison comme création de la semaine
+    assert.ok(G.mamieChoices().includes('perf:' + pid));
+    state.mamie = { w: G.mamieWeek(), id: 'perf:' + pid, n: 0 };
+    assert.equal(G.mamieInfo().perf, true);
+    assert.equal(G.mamieStock(), G.perfumeStock(pid));
+    assert.ok(G.mamiePay(1) > 0);
+    const stockBeforeMamie = G.perfumeStock(pid);
+    assert.ok(G.deliverMamie(null, 1));
+    assert.equal(G.perfumeStock(pid), stockBeforeMamie - 1);
+    assert.equal(G.mamieMade(), 1);
+
+    // 4. Grand Défi « Le Grand Salon des Parfums » + présentation au jury + Défi éclair
+    assert.ok(DEFIS.salonParfums);
+    assert.ok(MINI.list.some(m => m.id === 'perfumes'));
+    assert.equal(G.defiEligible('salonParfums'), true);
+    const d = G.startDefi('salonParfums');
+    assert.equal(d.id, 'salonParfums');
+    const stepIdx = d.steps.findIndex(st => st.kind === 'perfume');
+    assert.ok(stepIdx >= 0);
+    assert.equal(G.canPresent(d.steps[stepIdx]), true);
+    assert.ok(G.presentDefi(stepIdx, pid));
+    assert.equal(d.steps[stepIdx].done, true);
+    assert.equal(d.steps[stepIdx].who, G.perfumeOf(pid).name);
+});
+
+test('UI et documentation en jeu (1.146) : actions, onglet, barre des niveaux, guide, changelog et stats', async () => {
     const viewSrc = readFileSync(new URL('../../src/ui/views/perfume.js', import.meta.url), 'utf8');
     const appSrc = readFileSync(new URL('../../src/ui/app.js', import.meta.url), 'utf8');
     for (const act of ['perfPick', 'perfSet', 'perfMethod', 'perfConc', 'perfBottle', 'perfCap', 'perfBest', 'perfStart', 'carePerf', 'bottlePerf', 'sellPerf', 'perfSign', 'perfOrder', 'perfOrganClaim']) {

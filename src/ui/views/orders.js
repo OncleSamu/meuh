@@ -22,6 +22,7 @@ import { defiCard } from './defis.js';
 import { rareCard, holidayCard, contractCard, farmSeasonCard, neighborsBody } from './village.js';
 import { HOLIDAYS } from '../../data/world.js';
 import { RARE_EVENTS } from '../../data/surprises.js';
+import { perfumeSvg } from '../../art/perfume.js';
 
 // ---------------- la fête de saison ----------------
 function eventCard() {
@@ -144,19 +145,21 @@ function train() {
         return `<div class="card away">${ico(['ui', 'trainIcon'], 'ico big')}<div class="card-main"><div class="card-title">Train de marchandises</div><div class="card-sub">Prochain passage dans ${timer(t.arriveAt, 'b')}</div></div></div>`;
     const wagons = t.slots
         .map((sl, k) => {
-            const have = sl.pk ? G.pkHave(sl.pk) : state.inventory[sl.id] || 0,
+            const have = sl.pk ? G.pkHave(sl.pk) : sl.pf ? G.pfHave(sl.pf) : state.inventory[sl.id] || 0,
                 ok = have >= sl.qty;
-            // 1.104.1 : un wagon de paquets de la Maison
+            // 1.104.1 : un wagon de paquets de la Maison ; 1.146 : un wagon de parfums maison
             const goBtn = sl.pk
                 ? `<button class="wagon-load go" data-act="pkGoShelf" aria-label="${esc(G.pkReqTxt(sl.pk))}">${ico(['ui', 'maison'])}<b>×${sl.qty}</b>${G.pkReqTag(sl.pk) ? `<i class="wagon-tag">${esc(G.pkReqTag(sl.pk))}</i>` : ''}</button>`
-                : `<button class="wagon-load go" data-act="produce" data-id="${sl.id}" aria-label="Aller produire">${ico(['item', sl.id])}<b>×${sl.qty}</b></button>`;
+                : sl.pf
+                  ? `<button class="wagon-load go" data-act="pfGoAtelier" aria-label="${esc(G.pfReqTxt(sl.pf))}">${ico(['ui', 'perfume'])}<b>×${sl.qty}</b>${G.pfReqTag(sl.pf) ? `<i class="wagon-tag">${esc(G.pfReqTag(sl.pf))}</i>` : ''}</button>`
+                  : `<button class="wagon-load go" data-act="produce" data-id="${sl.id}" aria-label="Aller produire">${ico(['item', sl.id])}<b>×${sl.qty}</b></button>`;
             return `<div class="wagon${sl.loaded ? ' loaded' : ''}" data-anchor="wagon:${k}">
                 ${sl.loaded ? `<div class="wagon-load"><div class="crate">${art('ui', 'crate')}</div></div>` : goBtn}
                 <div class="wagon-spr">${SPR.wagon(WAGON_COLORS[k])}</div>
                 <div class="wagon-info">${
                     sl.loaded
                         ? ico(['ui', 'check'])
-                        : `<span class="slot-have${ok ? ' ok' : ''}">${have} en stock</span><span class="wagon-rew">${sl.pk ? '≈ ' : ''}${fmt(sl.gold)}${ico(['ui', 'coin'])}${sl.mat ? ico(['item', sl.mat]) : ''}</span>
+                        : `<span class="slot-have${ok ? ' ok' : ''}">${have} en stock</span><span class="wagon-rew">${sl.pk || sl.pf ? '≈ ' : ''}${fmt(sl.gold)}${ico(['ui', 'coin'])}${sl.mat ? ico(['item', sl.mat]) : ''}</span>
                     ${btn('Charger', { act: 'loadWagon', data: { k }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}`
                 }</div></div>`;
         })
@@ -181,10 +184,14 @@ function cargoCard() {
                 full = left <= 0;
             const head = h.pk
                 ? `<button class="hold-item" data-act="pkGoShelf" aria-label="Étagère de la Maison">${ico(['ui', 'maison'], 'ico big')}</button>`
-                : `<button class="hold-item" data-act="produce" data-id="${h.id}" aria-label="Aller produire">${ico(['item', h.id], 'ico big')}</button>`;
+                : h.pf
+                  ? `<button class="hold-item" data-act="pfGoAtelier" aria-label="Atelier du Parfumeur">${ico(['ui', 'perfume'], 'ico big')}</button>`
+                  : `<button class="hold-item" data-act="produce" data-id="${h.id}" aria-label="Aller produire">${ico(['item', h.id], 'ico big')}</button>`;
+            const label = h.pk ? esc(G.pkReqTxt(h.pk)) : h.pf ? esc(G.pfReqTxt(h.pf)) : ITEMS[h.id].name;
+            const goAct = h.pk ? 'pkGoShelf' : h.pf ? 'pfGoAtelier' : 'produce';
             return `<div class="hold${full ? ' full' : ''}">${head}
-                <div class="hold-main"><b>${h.pk ? esc(G.pkReqTxt(h.pk)) : ITEMS[h.id].name}</b>${bar(h.got / h.qty)}<small>${fmt(h.got)} / ${fmt(h.qty)}${full ? '' : ` · ${fmt(have)} en stock${have ? ` · ${h.pk ? '≈ ' : ''}${fmt(G.holdPay(h, Math.min(have, left)))}${ico(['ui', 'coin'])}` : ''}`}</small></div>
-                ${full ? ico(['ui', 'check'], 'ico tick') : btn(have ? `Charger ${fmt(Math.min(have, left))}` : h.pk ? 'Composer' : 'Produire', { act: have ? 'loadHold' : h.pk ? 'pkGoShelf' : 'produce', data: have ? { i } : { id: h.id }, kind: have ? 'green' : '', size: 'sm' })}</div>`;
+                <div class="hold-main"><b>${label}</b>${bar(h.got / h.qty)}<small>${fmt(h.got)} / ${fmt(h.qty)}${full ? '' : ` · ${fmt(have)} en stock${have ? ` · ${h.pk || h.pf ? '≈ ' : ''}${fmt(G.holdPay(h, Math.min(have, left)))}${ico(['ui', 'coin'])}` : ''}`}</small></div>
+                ${full ? ico(['ui', 'check'], 'ico tick') : btn(have ? `Charger ${fmt(Math.min(have, left))}` : h.pk || h.pf ? 'Composer' : 'Produire', { act: have ? 'loadHold' : goAct, data: have ? { i } : { id: h.id }, kind: have ? 'green' : '', size: 'sm' })}</div>`;
         })
         .join('');
     return `<div class="card cargo-card here"><div class="card-head">${ico(['ui', 'plane'], 'ico big')}<div class="card-main"><div class="card-title">Avion-cargo</div>
@@ -228,18 +235,25 @@ function mamieCard() {
     const mi = state.machines.findIndex(x => x.type === d.machine);
     const bonus = G.mamieNowBonus(),
         pct = Math.round((bonus - 1) * 100);
-    const unit = d.beer ? G.beerDealPrice(d.id.slice(5), 0, bonus) : G.sellPrice(d.id) * bonus;
+    const unit = d.beer
+        ? G.beerDealPrice(d.id.slice(5), 0, bonus)
+        : d.perf
+          ? G.perfumeDealPrice(d.pid, 0, bonus)
+          : G.sellPrice(d.id) * bonus;
     const planBtn = G.canPlanOrder('mamie') ? btn('Planifier', { act: 'planOrder', data: { kind: 'mamie' }, kind: 'gold', size: 'sm', icon: ['ui', 'loop'] }) : '';
     const act = !can
         ? `<div class="md-btns">${
               d.beer
                   ? btn('Brasser', { act: 'go', data: { path: 'machines/brew' }, size: 'sm' })
-                  : btn('Produire', { act: 'mamieGo', data: { id: d.id, i: mi }, size: 'sm' })
+                  : d.perf
+                    ? btn('Composer', { act: 'go', data: { path: 'machines/perfume' }, size: 'sm' })
+                    : btn('Produire', { act: 'mamieGo', data: { id: d.id, i: mi }, size: 'sm' })
           }${planBtn}</div>`
         : `<div class="md-btns">${btn(`Donner ${fmt(Math.min(can, 1))}`, { act: 'mamieGive', data: { n: 1 }, size: 'sm' })}${can > 1 ? btn(`Donner ${fmt(can)}`, { act: 'mamieGive', data: { n: can }, kind: 'green', size: 'sm' }) : ''}${planBtn}</div>`;
+    const pic = d.perf && G.perfumeOf(d.pid) ? perfumeSvg(G.perfumeOf(d.pid)) : art(d.icon[0], d.icon[1]);
     return `<div class="card mamie-dish">
         <span class="md-av">${art('villager', 'odette')}</span>
-        <span class="md-art">${art(d.icon[0], d.icon[1])}</span>
+        <span class="md-art">${pic}</span>
         <span class="card-main"><span class="card-title">${esc(d.name)}</span>
         <small class="card-sub">« Apporte-moi ça cette semaine ! » · environ ${fmt(Math.round(unit))}${ico(['ui', 'coin'])} pièce (+${pct} %), payé tout de suite · encore ${days} jour${days > 1 ? 's' : ''}<br>${made ? `« Tu m’en as déjà donné <b>${fmt(made)}</b> ! »` : '« Tu ne m’en as pas encore donné… »'} · ${fmt(have)} en stock</small>${act}</span>
     </div>`;
@@ -653,6 +667,7 @@ export function setupOrders() {
         express: el => G.deliverExpress(el),
         loadHold: (el, d) => G.loadHold(+d.i, el),
         pkGoShelf: () => go('machines/maison#atelier'),
+        pfGoAtelier: () => go('machines/perfume'),
         foldToggle: (el, d) => toggleFold(d.id, d.ready === '1'),
         agendaToggle: () => {
             try {

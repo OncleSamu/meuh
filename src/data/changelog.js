@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.146",
+  "title": "Le parfum dans toute la vallée",
+  "date": "19 novembre 2026",
+  "items": [
+   "Train de marchandises & Avion-cargo : dès que vous avez créé au moins un parfum, un wagon du train ou une soute du cargo peut demander un lot de parfums maison (famille olfactive et étoiles), payé 1,75× sa valeur réelle selon la qualité",
+   "Mamie Odette : vos créations de parfum peuvent désormais être choisies comme demande de la semaine (+50 % à +10 %, sans faire baisser la demande du marché)",
+   "Grands Défis & Défis éclair : nouveau grand défi « Le Grand Salon des Parfums » avec Margaux (flacons créés, commandes du Salon, présentation d’un parfum maison au jury et essences rares) + nouveau défi éclair Parfums",
+   "Coupe de la vallée : chaque mise en flacon marque des points pendant « La saison des parfums », qui met désormais aussi en avant « Le Grand Salon des Parfums » (points doublés)"
+  ]
+ },
+ {
   "v": "1.145",
   "title": "Atelier plus clair",
   "date": "19 novembre 2026",

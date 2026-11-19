@@ -15,6 +15,7 @@ import { clampQuality } from './farm.js';
 import { giveRare } from './barn.js';
 import { stayOf, domStepSum } from './estate.js';
 import { pkTransportOk, pkReq, pkEstimate, pkHave, pullPk } from './maison.js';
+import { pfTransportOk, pfReq, pfEstimate, pfHave, pullPf } from './perfume.js';
 import { wagonTarget } from './orders.js';
 import { metierTransportPay } from './metier.js';
 
@@ -60,17 +61,25 @@ function makeHolds() {
         const pk = pkReq();
         holds[holds.length - 1] = { id: 'paquet', pk, qty: 2 + Math.floor(Math.random() * 3), got: 0, est: Math.round(pkEstimate(pk) * CARGO_PK_PAY) };
     }
+    // 1.146 : une soute demande parfois des parfums maison
+    if (pfTransportOk() && Math.random() < CARGO_PF && holds.length >= 2) {
+        const pf = pfReq();
+        const idx = holds[holds.length - 1].pk ? holds.length - 2 : holds.length - 1;
+        holds[idx] = { id: 'perfumeCustom', pf, qty: 2 + Math.floor(Math.random() * 3), got: 0, est: Math.round(pfEstimate(pf) * CARGO_PF_PAY) };
+    }
     return holds;
 }
 const CARGO_PK = 0.5,
-    CARGO_PK_PAY = 1.6;
-const haveFor = h => (h.pk ? pkHave(h.pk) : state.inventory[h.id] || 0);
+    CARGO_PK_PAY = 1.6,
+    CARGO_PF = 0.45,
+    CARGO_PF_PAY = 1.75;
+const haveFor = h => (h.pk ? pkHave(h.pk) : h.pf ? pfHave(h.pf) : state.inventory[h.id] || 0);
 export const holdHave = h => haveFor(h);
-export const holdPay = (h, n) => round5((h.pk ? h.est : ITEMS[h.id].sell * metierTransportPay(h.id)) * n * CARGO.pay);
+export const holdPay = (h, n) => round5((h.pk || h.pf ? h.est : ITEMS[h.id].sell * metierTransportPay(h.id)) * n * CARGO.pay);
 export const cargoTotal = () => (state.cargo && state.cargo.holds ? state.cargo.holds.reduce((a, h) => a + holdPay(h, h.qty), 0) : 0);
 export const cargoBonus = () => round5(cargoTotal() * (CARGO.bonus + domStepSum('cargo', 'bonus')));
 // 1.106 : les soutes ont grossi, pas l'expérience : elle se compte sur la quantité qu'une soute demandait avant
-const xpScale = h => (h.pk ? 1 : Math.min(1, Math.max(CARGO.min, Math.min(CARGO.max, Math.round(CARGO.value(scaleLvl()) / Math.max(1, ITEMS[h.id].sell)))) / h.qty));
+const xpScale = h => (h.pk || h.pf ? 1 : Math.min(1, Math.max(CARGO.min, Math.min(CARGO.max, Math.round(CARGO.value(scaleLvl()) / Math.max(1, ITEMS[h.id].sell)))) / h.qty));
 export const cargoBonusXp = () =>
     state.cargo && state.cargo.holds ? Math.round(state.cargo.holds.reduce((a, h) => a + holdPay(h, h.qty) * xpScale(h), 0) * (CARGO.bonus + domStepSum('cargo', 'bonus')) * CARGO.xp) : 0;
 export const cargoFull = () => !!(state.cargo && state.cargo.holds && state.cargo.holds.every(h => h.got >= h.qty));
@@ -106,13 +115,14 @@ export function loadHold(i, at, n) {
     if (can <= 0) return false;
     let val = 0;
     if (h.pk) val = pullPk(h.pk, can);
+    else if (h.pf) val = pullPf(h.pf, can);
     else {
         state.inventory[h.id] -= can;
         clampQuality(h.id);
     }
     h.got += can;
-    // 1.104.5 : une soute de paquets paie selon la valeur réelle des paquets chargés
-    const gold = h.pk ? round5(val * CARGO_PK_PAY * CARGO.pay) : holdPay(h, can);
+    // 1.104.5 : une soute de paquets ou parfums paie selon la valeur réelle des lots chargés
+    const gold = h.pk ? round5(val * CARGO_PK_PAY * CARGO.pay) : h.pf ? round5(val * CARGO_PF_PAY * CARGO.pay) : holdPay(h, can);
     earn(gold, at);
     // l'expérience reste à l'échelle d'avant la 1.106
     addXp(Math.round(gold * CARGO.xp * xpScale(h)), at);

@@ -3,6 +3,7 @@
 import { addRenom, RENOM } from './renom.js';
 import { livingTrees } from './orchard.js';
 import { pkTransportOk, pkReq, pkEstimate, pkHave, pullPk } from './maison.js';
+import { pfTransportOk, pfReq, pfEstimate, pfHave, pullPf } from './perfume.js';
 import { islandOpen } from './island.js';
 import { oasisOpen } from './oasis.js';
 import { nordOpen } from './nord.js';
@@ -280,13 +281,15 @@ export const inProduction = id => state.machines.reduce((n, m) => n + m.queue.fi
 // ---------------- le train de marchandises ----------------
 // 1.104.1 : un wagon de paquets (une chance sur trois quand la Maison a des recettes), payé 1,6 fois leur valeur
 const TRAIN_PK = 0.35,
-    TRAIN_PK_PAY = 1.6;
+    TRAIN_PK_PAY = 1.6,
+    TRAIN_PF = 0.3,
+    TRAIN_PF_PAY = 1.75;
 // 1.106 : la valeur de marchandises demandée par wagon. Avant, elle grandissait en ligne droite (1 250 au niveau 60) alors que
 // la production de la ferme double tous les huit niveaux : un train plein ne pesait plus rien. Elle suit maintenant la production
 // (environ 600 au niveau 15, 5 000 au niveau 40, 30 000 au niveau 60), et un wagon peut demander jusqu'à 60 produits.
 export const wagonTarget = (L = ecoLvl()) => Math.max(60 + scaleLvl() * 30, L >= 15 ? 400 * Math.pow(1.09, L - 10) : 0);
 export const wagonMax = (L = ecoLvl()) => Math.round(Math.min(60, 20 + Math.max(0, L - 30) * 1.34));
-export const slotHave = sl => (sl.pk ? pkHave(sl.pk) >= sl.qty : (state.inventory[sl.id] || 0) >= sl.qty);
+export const slotHave = sl => (sl.pk ? pkHave(sl.pk) >= sl.qty : sl.pf ? pfHave(sl.pf) >= sl.qty : (state.inventory[sl.id] || 0) >= sl.qty);
 export const trainOpen = () => projectDone('station');
 // chaque cheval fait revenir le train 10 % plus tôt (30 % au plus)
 export const trainAway = () => TRAIN_AWAY * (1 - Math.min(0.3, 0.1 * state.animals.filter(a => a.type === 'horse' && isAdult(a)).length));
@@ -350,8 +353,16 @@ function makeTruck() {
         const gold = round5(pkEstimate(pk) * qty * TRAIN_PK_PAY * mult);
         slots[2] = { id: 'paquet', pk, qty, mult, loaded: false, gold, xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus() * 2)), mat: Math.random() < 0.5 ? pickRand(RARE) : null };
     }
+    // 1.146 : un wagon demande parfois des parfums maison de l'Atelier du Parfumeur
+    if (pfTransportOk() && Math.random() < TRAIN_PF) {
+        const pf = pfReq();
+        const qty = 1 + Math.floor(Math.random() * 2);
+        const gold = round5(pfEstimate(pf) * qty * TRAIN_PF_PAY * mult);
+        const idx = slots[2].pk ? 1 : 2;
+        slots[idx] = { id: 'perfumeCustom', pf, qty, mult, loaded: false, gold, xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus() * 2)), mat: Math.random() < 0.5 ? pickRand(RARE) : null };
+    }
     const sum = slots.reduce((a, sl) => a + sl.gold, 0);
-    const xpSum = slots.reduce((a, sl) => a + (sl.pk ? sl.xp / 2 : sl.xp), 0);
+    const xpSum = slots.reduce((a, sl) => a + (sl.pk || sl.pf ? sl.xp / 2 : sl.xp), 0);
     Object.assign(t, {
         status: 'here',
         expiresAt: n + stayOf(TRAIN_STAY),
@@ -379,6 +390,10 @@ export function loadSlot(k, at) {
         // 1.104.5 : payé selon la valeur réelle des paquets chargés (le prix affiché n'est qu'une estimation)
         const val = pullPk(sl.pk, sl.qty);
         sl.gold = round5(val * TRAIN_PK_PAY * (sl.mult || 1));
+        sl.xp = Math.max(5, Math.round(sl.gold * BALANCE.truckXp * xpBonus() * 2));
+    } else if (sl.pf) {
+        const val = pullPf(sl.pf, sl.qty);
+        sl.gold = round5(val * TRAIN_PF_PAY * (sl.mult || 1));
         sl.xp = Math.max(5, Math.round(sl.gold * BALANCE.truckXp * xpBonus() * 2));
     } else {
         state.inventory[sl.id] -= sl.qty;

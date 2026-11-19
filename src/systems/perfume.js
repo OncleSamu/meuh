@@ -46,6 +46,7 @@ import { addRenom, RENOM } from './renom.js';
 import { clampQuality, qual } from './farm.js';
 import { varName, clampVarieties, scoreTier, takeVarUnits, varRanks, plainRanks, QK, vdef, vdefMult } from './genetics.js';
 import { giveRare } from './barn.js';
+import { farmSeasonAdd } from './port.js';
 
 export const perfumeOpen = () => state.level >= PERFUME_LVL;
 export const perfumeVatCount = () => {
@@ -566,6 +567,7 @@ export function bottlePerfume(i, at) {
     }
     p.made += v.n;
     state.stats.perfumes = (state.stats.perfumes || 0) + v.n;
+    farmSeasonAdd('perfume', v.n); // 1.146 : compte pour La saison des parfums
 
     // Découvertes dans l'Orgue du Parfumeur
     let news = 0;
@@ -630,8 +632,12 @@ export const perfumePrice = pid => {
     const p = perfumeOf(pid);
     return p ? Math.max(10, Math.round((p.value * perfumeDemandMult(pid)) / 5) * 5) : 0;
 };
+export const perfumeDealPrice = (pid, rank = 0, mult = 1) => {
+    const p = perfumeOf(pid);
+    return p ? Math.max(10, Math.round((p.value * QUALITY[rank].mult * mult) / 5) * 5) : 0;
+};
 
-export function sellPerfume(pid, n, at) {
+export function sellPerfume(pid, n, at, dealer = null) {
     const P = ensurePerfume();
     const p = perfumeOf(pid);
     const have = P.stock[pid] || 0;
@@ -639,9 +645,30 @@ export function sellPerfume(pid, n, at) {
     if (!p || n <= 0) return false;
     const q = perfumeQual(pid);
     P.stock[pid] = have - n;
-    // les meilleurs flacons partent ou les ordinaires d'abord selon bestFirst ; ici ordinaires d'abord pour garder le prestige
     let left = n;
     let total = 0;
+    if (dealer) {
+        // vente directe à un acheteur spécial (Mamie) : les meilleurs flacons d'abord, sans baisse de demande
+        let idx = 0;
+        for (const [r, k] of [
+            [4, 'd'],
+            [3, 'p'],
+            [2, 'g'],
+            [1, 's'],
+        ]) {
+            if (left <= 0) break;
+            const t = Math.min(left, q[k]);
+            q[k] -= t;
+            left -= t;
+            for (let j = 0; j < t; j++) total += perfumeDealPrice(pid, r, dealer.multAt(idx++));
+        }
+        for (let j = 0; j < left; j++) total += perfumeDealPrice(pid, 0, dealer.multAt(idx++));
+        earn(total, at);
+        sfx('coin');
+        changed('perfume');
+        return total;
+    }
+    // vente directe : ordinaires d'abord pour garder le prestige
     const unit = perfumePrice(pid);
     const ord = Math.max(0, have - (q.s + q.g + q.p + q.d));
     const takeOrd = Math.min(left, ord);
@@ -665,6 +692,78 @@ export function sellPerfume(pid, n, at) {
     sfx('coin');
     changed('perfume');
     return true;
+}
+
+// ---------------- 1.146 : les parfums maison dans les transports (train, avion-cargo) ----------------
+export const pfTransportOk = () => perfumeOpen() && myPerfumes().some(p => (p.made || 0) > 0);
+export function pfReq() {
+    const madeFams = [...new Set(myPerfumes().filter(p => (p.made || 0) > 0).map(p => p.family))];
+    const pool = [...madeFams, ...FAMILY_IDS, null, null];
+    const family = pickRand(pool);
+    const minStars = Math.random() < 0.4 ? 2 : 1;
+    return { family, minStars };
+}
+export const pfReqTxt = req => {
+    const fam = req && req.family && FAMILIES[req.family] ? ` ${FAMILIES[req.family].name.toLowerCase()}` : ' maison';
+    return `Parfum${fam}${req && req.minStars >= 2 ? `, ${req.minStars}★+` : ''}`;
+};
+export const pfReqTag = req => {
+    const parts = [];
+    if (req && req.family && FAMILIES[req.family]) parts.push(FAMILIES[req.family].name.toLowerCase());
+    if (req && req.minStars >= 2) parts.push(`${req.minStars}★+`);
+    return parts.join(' · ');
+};
+const pfFits = (p, req) =>
+    !!p &&
+    perfumeStock(p.id) > 0 &&
+    (!req || ((!req.family || p.family === req.family) && p.stars >= (req.minStars || 0)));
+export function pfEstimate(req) {
+    const all = myPerfumes().filter(p => (p.made || 0) > 0);
+    const matching = all.filter(p => !req || ((!req.family || p.family === req.family) && p.stars >= (req.minStars || 0)));
+    const list = matching.length ? matching : all;
+    if (!list.length) return 400;
+    return Math.max(350, Math.round(list.reduce((a, p) => a + (p.value || 400), 0) / list.length));
+}
+export const pfHave = req =>
+    myPerfumes()
+        .filter(p => pfFits(p, req))
+        .reduce((a, p) => a + perfumeStock(p.id), 0);
+export function pullPf(req, n) {
+    if (pfHave(req) < n) return 0;
+    const P = ensurePerfume();
+    const list = myPerfumes()
+        .filter(p => pfFits(p, req))
+        .sort((a, b) => a.value - b.value);
+    let left = n,
+        val = 0;
+    for (const p of list) {
+        if (left <= 0) break;
+        const have = P.stock[p.id] || 0;
+        const take = Math.min(left, have);
+        if (take <= 0) continue;
+        const q = perfumeQual(p.id);
+        P.stock[p.id] = have - take;
+        let rem = take;
+        const ord = Math.max(0, have - (q.s + q.g + q.p + q.d));
+        const tOrd = Math.min(rem, ord);
+        val += tOrd * p.value;
+        rem -= tOrd;
+        for (const [r, k] of [
+            [1, 's'],
+            [2, 'g'],
+            [3, 'p'],
+            [4, 'd'],
+        ]) {
+            if (rem <= 0) break;
+            const t = Math.min(rem, q[k]);
+            q[k] -= t;
+            rem -= t;
+            val += Math.round(t * p.value * QUALITY[r].mult);
+        }
+        left -= take;
+    }
+    changed('perfume');
+    return val;
 }
 
 // ---------------- Parfum signature de la ferme ----------------

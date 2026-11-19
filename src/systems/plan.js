@@ -318,7 +318,7 @@ export function orderPlanData(kind, ref) {
         if (!t || t.status !== 'here') return null;
         return buildOrderPlan(
             'Train de marchandises',
-            t.slots.filter(sl => !sl.loaded && !sl.pk).map(sl => ({ id: sl.id, qty: sl.qty })),
+            t.slots.filter(sl => !sl.loaded && !sl.pk && !sl.pf).map(sl => ({ id: sl.id, qty: sl.qty })),
         );
     }
     if (kind === 'balloon') {
@@ -350,7 +350,7 @@ export function orderPlanData(kind, ref) {
         if (!cargoHere() || !c || c.done || !c.holds || !c.holds.length) return null;
         return buildOrderPlan(
             'Avion-cargo',
-            c.holds.filter(h => !h.pk && h.got < h.qty).map(h => ({ id: h.id, qty: h.qty - h.got })),
+            c.holds.filter(h => !h.pk && !h.pf && h.got < h.qty).map(h => ({ id: h.id, qty: h.qty - h.got })),
         );
     }
     if (kind === 'armand') {
@@ -389,7 +389,7 @@ export function orderPlanData(kind, ref) {
     }
     if (kind === 'mamie') {
         const d = mamieInfo();
-        if (!d) return null;
+        if (!d || d.perf) return null;
         const label = `Mamie · ${d.name}`;
         if (d.beer) {
             const bid = d.id.slice(5);
