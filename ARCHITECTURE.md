@@ -1,0 +1,69 @@
+# Architecture de Meuh
+
+Guide rapide pour s’orienter dans le code source de Meuh, ajouter du contenu ou équilibrer les niveaux sans se perdre.
+
+## Vue d’ensemble des dossiers
+
+```
+src/
+├── core/        # État global (state.js), horloge (clock.js), bus d’événements (bus.js), vue active
+├── data/        # Données statiques du jeu (produits, machines, animaux, contrées, niveaux)
+│   ├── levels.js         ← SOURCE DE VÉRITÉ UNIQUE des niveaux de déblocage (1 à 80)
+│   ├── legacy-levels.js  ← Archive des anciens seuils (uniquement pour la migration d’anciennes sauvegardes)
+│   ├── lv80.js           ← Convertisseur mathématique d’échelle 64 ↔ 80 (utilisé par ecoLvl / scaleLvl)
+│   ├── items.js          ← Registre ITEMS (1 136 produits : cultures, arbres, élevage, artisanat, matériaux)
+│   ├── machines.js       ← Registres MACHINES (48 ateliers) et RECIPES (882 recettes)
+│   ├── animals.js        ← Registre ANIMALS (29 espèces) et constantes d’élevage
+│   ├── farm.js           ← Parcelles, sols, qualité, DECOS, UPGRADES
+│   ├── ajouts/           ← Extensions thématiques (cultures, arbres, île, poissons, cave, château, pizzeria, oasis, Nord…)
+│   └── *.js              ← Modules dédiés : abbey.js, cave.js, genetics.js, haras.js, honey.js, island.js, oasis.js, nord.js, paquets.js, village.js…
+├── art/         # Tous les dessins SVG procéduraux (zéro image externe)
+│   ├── kit.js            ← Primitives SVG (P, E, C, L, R, SHADOW, HL) et registres items/animals/machines/ui/people
+│   ├── index.js          ← Point d’entrée SPR (importe socle → refontes → extensions → retouches)
+│   └── retouches/        ← Surcharges visuelles chargées en dernier
+├── systems/     # Logique métier et simulation (farm, workshop, orders, genetics, brewery, cave, haras, player…)
+├── ui/          # Rendu DOM sans framework (views/, sheets/, genlook.js, brew.js, icons.js)
+└── styles/      # Feuilles CSS numérotées (assemblées dans l’ordre par tools/css.mjs)
+
+tools/
+├── build.mjs            # Assemble dist/index.html et dist/Meuh <version>.html (fichier autonome)
+├── codex.mjs            # Génère dist/codex.html (encyclopédie interactive : sprites, produits, génétique, brasserie)
+├── dev/check-all.mjs    # Garde-fou complet (levels.js, sync inline, recettes, saveurs, sprites SVG)
+├── dev/check-levels.mjs # Vérifie les invariants de src/data/levels.js et affiche la feuille de route 1..80
+├── dev/audit.mjs        # Simule 72 h sur une ferme niv. 80 pour détecter NaN/infinis/négatifs
+└── test/                # 100+ suites de tests Node (npm test)
+```
+
+## Comment fonctionnent les niveaux (1 à 80)
+
+Auparavant, les niveaux étaient réécrits au chargement par cinq passes successives (`levels14` → `levels18` → `levels60` → `levels64` → `applyLevels80`). Désormais :
+
+1. **Un seul fichier fait foi : [`src/data/levels.js`](src/data/levels.js)** (exporte `LEVELS` et `applyLevels`).
+   - `items.js`, `animals.js`, `farm.js` et `machines.js` ont tous leurs niveaux inline alignés sur `levels.js` et appellent chacun `applyLevels(...)` à la fin de leur propre module : l’ordre d’import n’a plus aucun effet de bord caché.
+2. **Les anciens seuils de migration sont isolés dans [`src/data/legacy-levels.js`](src/data/legacy-levels.js)** (`lvOld`, `lv17`, `lv135`, `lv155`, `lv108`).
+   - Ils servent uniquement à `migrateLevels*()` (`src/systems/player.js`, `src/systems/game.js`) pour qu’une ancienne sauvegarde garde ce qu’elle avait ouvert (`state.lvKeep`).
+3. **Pour modifier un niveau**, il suffit d’éditer `src/data/levels.js` puis de lancer :
+   ```bash
+   npm run check
+   ```
+
+## Où ajouter un nouveau contenu ?
+
+| Ce que tu ajoutes | Fichiers à toucher |
+|---|---|
+| Une culture ou un arbre | `src/data/items.js` (ou `src/data/ajouts/`), son niveau dans `src/data/levels.js`, ses notes dans `FLAVORS` (`src/data/genetics.js`), son dessin dans `src/art/` |
+| Une recette d’atelier | `src/data/items.js` (produit) + `src/data/machines.js` (recette) + son niveau dans `src/data/levels.js` + son dessin dans `src/art/` |
+| Une machine / un atelier | `src/data/machines.js` + son niveau dans `src/data/levels.js` + son dessin dans `src/art/machines.js` (ou dossier dédié) |
+| Un sprite / une retouche | Ajouter ou surcharger la fonction dans `src/art/` et vérifier l’ordre d’import dans `src/art/index.js` |
+
+## Commandes utiles
+
+```bash
+npm run check                             # Garde-fou global en 1 s (niveaux, sync inline, recettes, saveurs, sprites)
+npm test                                  # Lancer toute la suite de tests (700+ tests)
+npm run build                             # Générer dist/Meuh <version>.html
+npm run codex                             # Générer dist/codex.html (explorateur visuel autonome)
+node tools/dev/check-levels.mjs --roadmap # Voir tout ce qui se débloque du niveau 1 au 80
+node tools/dev/check-levels.mjs --level 40
+node tools/dev/audit.mjs                  # Audit de simulation sur 72 h
+```

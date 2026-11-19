@@ -1,5 +1,5 @@
 import { CROPS_130 } from './ajouts/cultures.js';
-import { LV_DECO, LV_UPG } from './levels14.js';
+import { applyLevels } from './levels.js';
 // Le champ, la serre, les sols, la qualité, les décorations, le chien, les engins et les styles.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -29,7 +29,7 @@ export const UPGRADES = {
         baseCost: 1000,
         mult: 3,
         maxLvl: 5,
-        reqLvl: 10,
+        reqLvl: 11,
     },
     yield: {
         id: 'yield',
@@ -38,7 +38,7 @@ export const UPGRADES = {
         baseCost: 2000,
         mult: 4,
         maxLvl: 5,
-        reqLvl: 14,
+        reqLvl: 17,
     },
     feeder: {
         id: 'feeder',
@@ -47,7 +47,7 @@ export const UPGRADES = {
         baseCost: 6000,
         mult: 1,
         maxLvl: 1,
-        reqLvl: 12,
+        reqLvl: 14,
     },
     seeder: {
         id: 'seeder',
@@ -56,7 +56,7 @@ export const UPGRADES = {
         baseCost: 15000,
         mult: 1,
         maxLvl: 1,
-        reqLvl: 13,
+        reqLvl: 16,
     },
     harvester: {
         id: 'harvester',
@@ -65,7 +65,7 @@ export const UPGRADES = {
         baseCost: 45000,
         mult: 1,
         maxLvl: 1,
-        reqLvl: 19,
+        reqLvl: 24,
     },
     plan: {
         id: 'plan',
@@ -218,7 +218,7 @@ export const DECOS = {
         name: 'Ruche',
         desc: 'Les abeilles font pousser les voisines 15 % plus vite',
         cost: 1200,
-        reqLvl: 11,
+        reqLvl: 12,
         charm: 6,
     },
     well: {
@@ -226,7 +226,7 @@ export const DECOS = {
         name: 'Puits',
         desc: 'Arrose automatiquement les 8 parcelles voisines',
         cost: 2000,
-        reqLvl: 12,
+        reqLvl: 13,
         charm: 8,
     },
     gnome: {
@@ -234,7 +234,7 @@ export const DECOS = {
         name: 'Nain de jardin',
         desc: 'Double les chances de récolte dorée des voisines',
         cost: 1500,
-        reqLvl: 15,
+        reqLvl: 17,
         charm: 12,
     },
     scarecrow: {
@@ -313,7 +313,7 @@ export const DECOS = {
         name: 'Paratonnerre',
         desc: 'Protège tout le champ de la foudre pendant les orages',
         cost: 2500,
-        reqLvl: 9,
+        reqLvl: 8,
         charm: 6,
     },
     cheeseWheel: {
@@ -349,7 +349,7 @@ export const DECOS = {
         name: 'Nichoir à chouette',
         desc: 'Une chouette s’y installe et chasse les corbeaux (6 sur 10) : +10 de charme au concours',
         cost: 4000,
-        reqLvl: 15,
+        reqLvl: 18,
         charm: 10,
     },
     fireflyJar: {
@@ -673,7 +673,7 @@ export const DECOS = {
         name: 'Mare aux canards',
         desc: 'Les canards mangent les pucerons des 8 voisines',
         cost: 5000,
-        reqLvl: 13,
+        reqLvl: 14,
         charm: 10,
     },
     miniMill: {
@@ -681,7 +681,7 @@ export const DECOS = {
         name: 'Moulin miniature',
         desc: 'Voisines : 25 % de chances de récolte double',
         cost: 7000,
-        reqLvl: 16,
+        reqLvl: 19,
         charm: 12,
     },
     flowerArch: {
@@ -689,7 +689,7 @@ export const DECOS = {
         name: 'Arche fleurie',
         desc: 'Voisines : poussent 10 % plus vite ; +20 de charme',
         cost: 9000,
-        reqLvl: 20,
+        reqLvl: 24,
         charm: 20,
     },
     copperBell: {
@@ -1002,6 +1002,6 @@ export const PASTURE_NAMES = [
     'Le pré du bout du monde',
 ];
 
-// 1.4 : 50 niveaux
-for (const [id, l] of Object.entries(LV_DECO)) if (DECOS[id]) [DECOS[id].lvOld, DECOS[id].reqLvl] = [DECOS[id].reqLvl || 1, l];
-for (const [id, l] of Object.entries(LV_UPG)) if (UPGRADES[id]) [UPGRADES[id].lvOld, UPGRADES[id].reqLvl] = [UPGRADES[id].reqLvl || 1, l];
+// Niveaux définitifs et seuils historiques de migration (voir data/levels.js)
+applyLevels('decos', DECOS);
+applyLevels('upgrades', UPGRADES);

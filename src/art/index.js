@@ -1,4 +1,6 @@
 // API des dessins : chaque fonction renvoie un <svg> prêt à insérer.
+// L’ordre des imports compte : les fichiers chargés plus bas surchargent les dessins précédents
+// (en particulier items2/buildings2/plants2 puis les dossiers retouches/).
 import { habitantArt } from './habitants.js';
 import { featuresOf } from '../data/genetics.js';
 import { ITEMS } from '../data/items.js';
@@ -6,6 +8,11 @@ import { items, animals, machines, ui, people, svg } from './kit.js';
 import { tree, sprout, youngPlant, readyPlant } from './plants.js';
 import { building, farmhouseArt } from './buildings.js';
 import { truck, loco, wagon } from './vehicles.js';
+import { plumeArt, swarmArt } from './genes.js';
+import { babyArt, childArt } from './famille.js';
+import { balloon2 } from './misc2.js';
+
+// --- 1. Socle de base ---
 import './items.js';
 import './camping.js';
 import './paquets.js';
@@ -18,13 +25,13 @@ import './island.js';
 import './station.js';
 import './defis.js';
 import './nuit.js';
-import { plumeArt, swarmArt } from './genes.js';
-import { babyArt, childArt } from './famille.js';
-// les dessins refaits (1.2.1 et suivantes) passent en dernier : ils remplacent les anciens
+
+// --- 2. Refontes principales (remplacent les premiers dessins) ---
 import './items2.js';
 import './buildings2.js';
 import './plants2.js';
-import { balloon2 } from './misc2.js';
+
+// --- 3. Extensions, contrées et métiers ---
 import './champ/nouvelles-cultures.js';
 import './cuisine/plats-cultures.js';
 import './verger/arbres.js';
@@ -75,6 +82,19 @@ import './comptoir/boissons-nord.js';
 import './verger/fruits-sur-arbre.js';
 import './oasis/sorgho.js';
 import './verger/contrees.js';
+
+// --- 4. Ajouts tardifs et retouches prioritaires (passent en dernier) ---
+import './retouches/fromages.js';
+import './miel/cire.js';
+import './cuisine/pizzeria.js';
+import './cuisine/dernieres.js';
+import './miel/miels.js';
+import './miel/ruchers.js';
+import './village/amis.js';
+import './village/salon.js';
+import './animaux/ration.js';
+import './animaux/seconds.js';
+import './retouches/produits-uniques.js';
 
 export const SPR = {
     farmhouse(l, roof) {
@@ -140,14 +160,3 @@ export const SPR = {
 // un dessin par sorte : villager, item, animal, machine, seed, et ui par défaut
 const KIND = { villager: SPR.villager, item: SPR.item, animal: SPR.animal, machine: SPR.machine, seed: SPR.seed };
 export const sprite = (kind, id) => (KIND[kind] || SPR.ui)(id);
-import './retouches/fromages.js';
-import './miel/cire.js';
-import './cuisine/pizzeria.js';
-import './cuisine/dernieres.js';
-import './miel/miels.js';
-import './miel/ruchers.js';
-import './village/amis.js';
-import './village/salon.js';
-import './animaux/ration.js';
-import './animaux/seconds.js';
-import './retouches/produits-uniques.js';

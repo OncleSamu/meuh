@@ -1,4 +1,4 @@
-import { LV_ANIMAL } from './levels14.js';
+import { applyLevels } from './levels.js';
 import { ANIMALS_135 } from './ajouts/animaux.js';
 import { EXTRAS_181 } from './ajouts/seconds.js';
 import { OASIS_BEASTS } from './oasis.js';
@@ -22,7 +22,7 @@ export const ANIMALS = {
         prodId: 'feather',
         cost: 250,
         time: 150,
-        reqLvl: 5,
+        reqLvl: 4,
         xp: 1,
     },
     sheep: {
@@ -40,7 +40,7 @@ export const ANIMALS = {
         prodId: 'angora',
         cost: 1200,
         time: 420,
-        reqLvl: 10,
+        reqLvl: 11,
         xp: 5,
     },
     cow: {
@@ -49,7 +49,7 @@ export const ANIMALS = {
         prodId: 'milk',
         cost: 2000,
         time: 900,
-        reqLvl: 16,
+        reqLvl: 18,
         xp: 12,
     },
     goat: {
@@ -58,7 +58,7 @@ export const ANIMALS = {
         prodId: 'goatMilk',
         cost: 4500,
         time: 1200,
-        reqLvl: 22,
+        reqLvl: 24,
         xp: 18,
     },
     pig: {
@@ -67,7 +67,7 @@ export const ANIMALS = {
         prodId: 'truffle',
         cost: 8000,
         time: 3600,
-        reqLvl: 26,
+        reqLvl: 33,
         xp: 40,
     },
     goose: {
@@ -85,7 +85,7 @@ export const ANIMALS = {
         prodId: 'wax',
         cost: 6000,
         time: 900,
-        reqLvl: 17,
+        reqLvl: 21,
         xp: 12,
     },
     horse: {
@@ -94,7 +94,7 @@ export const ANIMALS = {
         prodId: 'horsehair',
         cost: 15000,
         time: 1800,
-        reqLvl: 28,
+        reqLvl: 27,
         xp: 24,
     },
     peacock: {
@@ -103,7 +103,7 @@ export const ANIMALS = {
         prodId: 'peacockFeather',
         cost: 9000,
         time: 1800,
-        reqLvl: 20,
+        reqLvl: 49,
         xp: 26,
     },
     alpaca: {
@@ -112,7 +112,7 @@ export const ANIMALS = {
         prodId: 'alpacaWool',
         cost: 12000,
         time: 1500,
-        reqLvl: 24,
+        reqLvl: 66,
         xp: 24,
     },
     buffalo: {
@@ -121,7 +121,7 @@ export const ANIMALS = {
         prodId: 'buffaloMilk',
         cost: 20000,
         time: 1200,
-        reqLvl: 30,
+        reqLvl: 53,
         xp: 22,
     },
     donkey: {
@@ -130,7 +130,7 @@ export const ANIMALS = {
         prodId: 'donkeyMilk',
         cost: 25000,
         time: 1500,
-        reqLvl: 33,
+        reqLvl: 47,
         xp: 26,
     },
     turkey: {
@@ -139,7 +139,7 @@ export const ANIMALS = {
         prodId: 'turkeyEgg',
         cost: 7000,
         time: 1500,
-        reqLvl: 17,
+        reqLvl: 23,
         xp: 21,
     },
     // 1.3.2 : la brebis laitière (le mouton garde sa laine)
@@ -149,7 +149,7 @@ export const ANIMALS = {
         prodId: 'sheepMilk',
         cost: 5500,
         time: 1200,
-        reqLvl: 23,
+        reqLvl: 31,
         xp: 18,
     },
     // 1.5 : la caille, petite et rapide
@@ -245,8 +245,8 @@ export const TRANS_TIME = 5400000;
 
 export const ALPINE_SPEED = 1.2;
 
-// 1.4 : 50 niveaux
-for (const [id, l] of Object.entries(LV_ANIMAL)) if (ANIMALS[id]) [ANIMALS[id].lvOld, ANIMALS[id].reqLvl] = [ANIMALS[id].reqLvl || 1, l];
+// Niveaux définitifs (1 à 80) et seuils historiques de migration (voir data/levels.js)
+applyLevels('animals', ANIMALS);
 
 // 1.45 : les naissances au pré (L'Élevage)
 export const BIRTHS = {

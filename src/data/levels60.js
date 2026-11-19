@@ -1,5 +1,6 @@
-// Meuh 1.36 : 60 niveaux. Le niveau de chaque chose, calculé par tools/levels60.mjs (niveaux 1 à 20 inchangés).
-// Appliqué à la fin de chaque fichier de données ; le niveau d'avant reste dans lv135 (une ancienne partie garde ce qu'elle avait ouvert).
+// Archive historique (Meuh 1.36 — 60 niveaux).
+// Ce fichier n’est plus importé par le jeu : la source de vérité des niveaux est src/data/levels.js
+// (et les anciens seuils de migration sont dans src/data/legacy-levels.js). Conservé pour tools/test/v136.test.mjs.
 export const LV60_ITEM = {
     mirabelle: 23,
     rice: 24,

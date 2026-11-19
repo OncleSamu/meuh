@@ -71,6 +71,8 @@ test('un croisement donne des graines d’une nouvelle variété, qui pousse au 
         tick(500);
     }
     assert.ok(state.grid[i].isReady);
+    state.grid[i].crow = false;
+    state.grid[i].pest = false;
     G.doPlotAction(i, 'harvest');
     assert.ok(state.genetics.stock[v.id] > 0, 'des produits de la variété');
 });

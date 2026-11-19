@@ -80,6 +80,7 @@ defineSheet('menu', {
                 state.genetics && G.geneticsOpen() ? tile('Mes créations', 'creations', ['ui', 'flowers']) : '',
             ]) +
             group('Aide et réglages', [
+                `<button class="menu-tile" data-act="openSearch" aria-label="Chercher">${ico(['ui', 'search'], 'ico big')}<b>Chercher</b><small>Produit, atelier…</small></button>`,
                 tile('Guide', 'guide', ['ui', 'info']),
                 tile('Almanach', 'almanac', ['ui', G.season().icon], 0, G.season().name),
                 tile('Réglages', 'settings', ['ui', 'gear']),
@@ -89,6 +90,17 @@ defineSheet('menu', {
 });
 
 // ---------------- les niveaux ----------------
+// les prochaines grandes étapes (chapitres, contrées, ateliers ou nouveautés majeures) après le niveau actuel
+function nextMilestones(limit = 4) {
+    const out = [];
+    for (let l = state.level + 1; l <= MAX_LEVEL && out.length < limit; l++) {
+        const list = G.unlocksAt(l);
+        const pick = list.find(u => u.big) || list.find(u => u.icon && u.icon[0] === 'machine');
+        if (pick) out.push({ l, name: pick.name.replace(/^Atelier\s*:\s*/i, ''), icon: pick.icon });
+    }
+    return out;
+}
+
 defineSheet('levels', {
     title: 'Les niveaux',
     cls: 'lv-sheet', // hauteur fixe : passer d'un niveau à l'autre ne fait pas sauter la fenêtre
@@ -109,12 +121,22 @@ defineSheet('levels', {
                     `<button class="lv-chip${l < state.level ? ' done' : l === state.level ? ' now' : ''}${l === L ? ' on" data-center="1' : ''}" data-act="lvPick" data-l="${l}">${l}</button>`,
             )
             .join('');
+        const miles = nextMilestones();
+        const nextBar = miles.length
+            ? `<div class="lv-next"><span class="lv-next-lbl">Prochaines étapes</span><div class="lv-miles">${miles
+                  .map(
+                      m =>
+                          `<button class="lv-mile${m.l === L ? ' on' : ''}" data-act="lvPick" data-l="${m.l}">${ico(m.icon)}<b>Niv. ${m.l}</b><span>${m.name}</span></button>`,
+                  )
+                  .join('')}</div></div>`
+            : '';
         return [
             [
                 'nav',
                 `<div class="lv-nav">${btn('', { act: 'lvStep', data: { d: -1 }, icon: ['ui', 'back'], disabled: L <= 1, title: 'Niveau précédent' })}<div class="lv-head"><b>Niveau ${L}</b><small>${status}</small></div>${btn('', { act: 'lvStep', data: { d: 1 }, icon: ['ui', 'next'], disabled: L >= MAX_LEVEL, title: 'Niveau suivant' })}</div>`,
             ],
             ['strip', `<div class="lv-strip">${strip}</div>`],
+            ['miles', nextBar],
             [
                 'list',
                 `<div class="lines${L <= state.level ? ' got' : ''}">${G.unlocksAt(L)
@@ -300,6 +322,7 @@ const lvTop = () => {
 
 export function setupMenu() {
     actions({
+        openSearch: () => openSheet('guide', { focusSearch: true }),
         lvGo: (el, d) => {
             const to = d.to;
             closeAll();

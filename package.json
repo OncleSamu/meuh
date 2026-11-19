@@ -6,6 +6,8 @@
     "type": "module",
     "scripts": {
         "build": "node tools/build.mjs",
+        "check": "node tools/dev/check-all.mjs",
+        "codex": "node tools/codex.mjs",
         "test": "node --test tools/test/*.test.mjs",
         "bot": "node tools/bot.mjs",
         "lint": "eslint src tools",

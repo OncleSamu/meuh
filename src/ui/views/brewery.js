@@ -5,7 +5,7 @@ import { state, lvOk } from '../../core/state.js';
 import { now } from '../../core/clock.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
-import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, NOTE_COL, BARRELS, BEER_BOOK } from '../../data/abbey.js';
+import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, NOTE_COL, PAIRS, CLASSICS, MEAD_CLASSICS, BARRELS, BEER_BOOK } from '../../data/abbey.js';
 import { VILLAGERS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc } from '../dom.js';
@@ -169,7 +169,50 @@ function composerHtml() {
             can
                 ? btn('Brasser', { act: 'brew', kind: 'green', wide: true, size: 'lg', icon: mead ? ['item', 'mead'] : ['ui', 'beer'] })
                 : `<p class="state-line">${pv.freeVat < 0 ? 'Toutes les cuves sont pleines : mettez une bière en bouteille.' : !pv.ings.length ? 'Choisissez au moins un ingrédient.' : `Il manque : ${pv.miss.map(([id, n]) => `${n - G.ingHave(id)} ${G.ingName(id).toLowerCase()}`).join(', ')}.`}</p>`
-        }</div>`;
+        }</div>${brewGuideHtml(mead)}`;
+}
+
+// Guide discret des accords de notes et suivi des recettes classiques (bières et hydromels)
+const CLASSIC_HINTS = {
+    witbier: 'Une épice et un agrume de l’oasis',
+    sahti: 'Une céréale et une pousse du Grand Nord',
+    stout: 'Deux saveurs torréfiées d’atelier',
+    kriek: 'Deux petits fruits rouges du verger et du champ',
+    pumpkinAle: 'Une courge d’automne et une gousse de la serre',
+    cyser: 'Un fruit à pépins des vergers normands',
+    pyment: 'Le fruit de la vigne',
+    melomel: 'Un fruit rouge ou une baie sucrée',
+    metheglin: 'Une herbe aromatique ou une épice',
+};
+function brewGuideHtml(mead) {
+    const beers = G.myBeers();
+    const basesOf = b => (b.ings || []).map(([id]) => (b.bases && b.bases[id]) || id);
+    const goodPairs = Object.entries(PAIRS)
+        .filter(([, v]) => v > 0)
+        .map(([k]) => k.split('-').map(Number));
+    const badPairs = Object.entries(PAIRS)
+        .filter(([, v]) => v < 0)
+        .map(([k]) => k.split('-').map(Number));
+    const pill = i => `<span class="bg-note"><i style="background:${NOTE_COL[i]}"></i>${NOTES[i]}</span>`;
+    const list = mead ? MEAD_CLASSICS : CLASSICS;
+    const found = c =>
+        beers.some(b => {
+            if (!!b.mead !== mead) return false;
+            const bs = basesOf(b);
+            return mead ? c.any.some(id => bs.includes(id)) : c.ings.every(id => bs.includes(id));
+        });
+    const nFound = list.filter(found).length;
+    return `<details class="card brew-guide"><summary><b>Guide des accords &amp; classiques</b><small>${nFound}/${list.length} classiques trouvés</small></summary>
+        <div class="bg-body">
+            <div class="bg-sec"><b>Mariages qui s’accordent (+1 ★)</b><div class="bg-pairs">${goodPairs.map(([a, b]) => `<span class="bg-pair ok">${pill(a)} + ${pill(b)}</span>`).join('')}</div></div>
+            <div class="bg-sec"><b>Notes qui se battent (−1 ★)</b><div class="bg-pairs">${badPairs.map(([a, b]) => `<span class="bg-pair bad">${pill(a)} × ${pill(b)}</span>`).join('')}</div></div>
+            <div class="bg-sec"><b>${mead ? 'Grands hydromels' : 'Grandes bières classiques'} (${nFound}/${list.length})</b><ul class="bg-cls">${list
+                .map(c => {
+                    const ok = found(c);
+                    return `<li class="${ok ? 'ok' : ''}"><b>${ok ? '✓ ' : ''}${cap(c.name)}</b> — <small>${ok ? c.text : CLASSIC_HINTS[c.id] || 'À découvrir en brassant'}</small></li>`;
+                })
+                .join('')}</ul></div>
+        </div></details>`;
 }
 
 // ---------------- 1.117 : le carnet des favorites ----------------

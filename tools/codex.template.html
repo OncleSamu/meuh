@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Codex de Meuh — __VERSION__</title>
+<script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+<style>
+  body {
+    background: var(--background, #f6f2e9);
+    color: var(--foreground, #2b2118);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  .card {
+    background: var(--card, #ffffff);
+    border: 1px solid var(--card-border, var(--border, #e2d8c5));
+  }
+  .surf {
+    background: var(--content, var(--sidebar, #efe9dc));
+    border: 1px solid var(--border, #e2d8c5);
+  }
+  .muted { color: var(--muted-foreground, #6f6253); }
+  .btn-pri {
+    background: var(--primary, #3f7a44);
+    color: var(--primary-foreground, #ffffff);
+  }
+  .btn-sec {
+    background: var(--secondary, #ede5d5);
+    color: var(--secondary-foreground, #2b2118);
+    border: 1px solid var(--border, #d9ccb4);
+  }
+  .tab-btn { border-bottom: 2px solid transparent; transition: all .15s; }
+  .tab-btn.active {
+    border-bottom-color: var(--primary, #3f7a44);
+    color: var(--primary, #3f7a44);
+    font-weight: 700;
+  }
+  .pill {
+    border: 1px solid var(--border, #d9ccb4);
+    background: var(--card, #ffffff);
+    transition: all .12s;
+  }
+  .pill.active {
+    background: var(--primary, #3f7a44);
+    color: var(--primary-foreground, #ffffff);
+    border-color: var(--primary, #3f7a44);
+  }
+  .spr-box svg { width: 100%; height: 100%; display: block; }
+  .checker {
+    background-image: linear-gradient(45deg, rgba(128,128,128,.08) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(128,128,128,.08) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(128,128,128,.08) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(128,128,128,.08) 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+  }
+
+  /* ---- Apparence génétique authentique de Meuh (src/styles/68-lab.css) ---- */
+  .gl {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: scale(var(--gsx, 1), var(--gsy, 1));
+    transform-origin: 50% 88%;
+  }
+  .gl > svg { width: 100%; height: 100%; overflow: visible; }
+  .gp {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+  .gp-1 {
+    background: radial-gradient(circle at 30% 35%, rgba(58, 38, 24, 0.42) 0 9%, transparent 10%),
+      radial-gradient(circle at 68% 58%, rgba(58, 38, 24, 0.42) 0 11%, transparent 12%),
+      radial-gradient(circle at 42% 74%, rgba(58, 38, 24, 0.42) 0 7%, transparent 8%),
+      radial-gradient(circle at 74% 26%, rgba(58, 38, 24, 0.42) 0 6%, transparent 7%);
+  }
+  .gp-2 { background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0 22%, transparent 26%) 0 0 / 20% 20%; }
+  .gp-3 { background: repeating-linear-gradient(60deg, rgba(58, 38, 24, 0.3) 0 5%, transparent 5% 13%); }
+  .gp-4 {
+    background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.8) 46%, transparent 62%) 0 0 / 220% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  .gp-5 { background: conic-gradient(rgba(58, 38, 24, 0.34) 25%, transparent 0 50%, rgba(58, 38, 24, 0.34) 0 75%, transparent 0) 0 0 / 20% 20%; }
+  .gp-6 {
+    background: repeating-linear-gradient(72deg, rgba(40,26,18,.55) 0 3%, transparent 3% 8%, rgba(40,26,18,.4) 8% 9.5%, transparent 9.5% 17%, rgba(40,26,18,.5) 17% 21%, transparent 21% 29%);
+  }
+  .gp-7 {
+    background: radial-gradient(circle, rgba(58,38,24,.55) 0 11%, transparent 14%) 0 0 / 9% 9%,
+      radial-gradient(circle, rgba(58,38,24,.4) 0 9%, transparent 12%) 4.5% 4.5% / 9% 9%;
+  }
+  .gp-8 {
+    background: radial-gradient(ellipse 28% 18% at 25% 30%, rgba(58,38,24,.42), transparent 70%),
+      radial-gradient(ellipse 22% 30% at 62% 55%, rgba(255,255,255,.55), transparent 70%),
+      radial-gradient(ellipse 30% 16% at 70% 22%, rgba(58,38,24,.35), transparent 70%),
+      radial-gradient(ellipse 24% 20% at 35% 75%, rgba(255,255,255,.5), transparent 70%),
+      radial-gradient(ellipse 20% 26% at 85% 70%, rgba(58,38,24,.38), transparent 70%);
+  }
+  .gp-c9 {
+    background: linear-gradient(115deg, rgba(255,255,255,0) 20%, rgba(255,255,255,.85) 38%, rgba(255,255,255,0) 52%, rgba(200,215,235,.55) 70%, rgba(255,255,255,0) 90%) 0 0 / 220% 100%;
+    animation: shimmer 3.4s ease-in-out infinite;
+  }
+  .gp-c10 { background: linear-gradient(160deg, rgba(255,200,120,.55), rgba(150,70,20,.25) 55%, rgba(255,190,110,.5)); }
+  .gp-c11 { background: linear-gradient(180deg, rgba(255,110,150,0) 15%, rgba(255,90,160,.55) 55%, rgba(90,60,210,.7)); }
+  .gp-f1 {
+    background: radial-gradient(circle at 20% 25%, rgba(255,255,255,.95) 0 3%, transparent 4%),
+      radial-gradient(circle at 60% 15%, rgba(255,255,255,.9) 0 2.5%, transparent 3.5%),
+      radial-gradient(circle at 80% 45%, rgba(255,255,255,.95) 0 3.5%, transparent 4.5%),
+      radial-gradient(circle at 35% 60%, rgba(255,255,255,.85) 0 3%, transparent 4%),
+      radial-gradient(circle at 70% 80%, rgba(255,255,255,.9) 0 2.5%, transparent 3.5%),
+      linear-gradient(rgba(210,240,255,.45), rgba(190,225,250,.3));
+  }
+  .gp-f2 {
+    background: radial-gradient(ellipse 30% 18% at 22% 22%, #4f9a3c 40%, transparent 85%),
+      radial-gradient(ellipse 26% 16% at 52% 14%, #3f8a2e 40%, transparent 85%),
+      radial-gradient(ellipse 28% 18% at 80% 24%, #5fa84a 40%, transparent 85%),
+      radial-gradient(ellipse 22% 14% at 16% 62%, #3f8a2e 40%, transparent 85%),
+      radial-gradient(ellipse 24% 16% at 86% 70%, #4f9a3c 40%, transparent 85%),
+      radial-gradient(ellipse 22% 14% at 50% 82%, #5fa84a 40%, transparent 85%);
+  }
+  .gp-f4 {
+    background: linear-gradient(120deg, rgba(255,255,255,0) 18%, rgba(255,255,255,.75) 30%, rgba(255,255,255,0) 40%),
+      radial-gradient(ellipse 18% 10% at 28% 28%, rgba(255,255,255,.9), transparent 70%);
+  }
+  .gp-f5 {
+    background: radial-gradient(circle at 24% 24%, #ffd23f 0 2.5%, #f59ab1 3% 7%, transparent 8%),
+      radial-gradient(circle at 62% 16%, #ffd23f 0 2.5%, #fff 3% 7%, transparent 8%),
+      radial-gradient(circle at 80% 46%, #ffd23f 0 2.5%, #f59ab1 3% 7%, transparent 8%),
+      radial-gradient(circle at 36% 58%, #ffd23f 0 2.5%, #fff 3% 7%, transparent 8%),
+      radial-gradient(circle at 66% 78%, #ffd23f 0 2.5%, #f59ab1 3% 7%, transparent 8%);
+  }
+  .gl .bigpart {
+    position: absolute; inset: 0;
+    clip-path: circle(31% at 50% 66%);
+    transform: scale(1.28); transform-origin: 50% 80%;
+    pointer-events: none;
+  }
+  .gl .bigpart > svg { width: 100%; height: 100%; }
+  .spk {
+    position: absolute; width: 18%; height: 18%; margin: -9% 0 0 -9%;
+    background: #fff6c8;
+    clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+    animation: spk-tw 1.6s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes shimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+  @keyframes spk-tw { 0%, 100% { opacity: 0; transform: scale(.3); } 50% { opacity: 1; transform: scale(1.2); } }
+</style>
+</head>
+<body class="antialiased m-0 p-0">
+  <div id="loading" class="p-10 text-center text-sm muted">Chargement du Codex de Meuh…</div>
+  <div id="app" class="hidden min-h-screen flex flex-col">
+    <header class="card sticky top-0 z-30 border-x-0 border-t-0 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 pt-3 flex flex-col gap-2">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <div id="hdr-logo" class="w-9 h-9 spr-box shrink-0"></div>
+            <div>
+              <h1 class="text-base font-bold leading-tight">Codex de Meuh <span id="hdr-ver" class="text-xs font-normal muted ml-1"></span></h1>
+              <p id="hdr-stats" class="text-xs muted"></p>
+            </div>
+          </div>
+          <nav class="flex flex-wrap gap-1 text-sm" id="tabs">
+            <button data-tab="sprites" class="tab-btn px-3 py-2 cursor-pointer">Sprites</button>
+            <button data-tab="products" class="tab-btn px-3 py-2 cursor-pointer">Produits &amp; Usines</button>
+            <button data-tab="genetics" class="tab-btn px-3 py-2 cursor-pointer">Générateur Génétique</button>
+            <button data-tab="brewery" class="tab-btn px-3 py-2 cursor-pointer">Brasserie d’Abbaye</button>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <main id="main" class="max-w-7xl w-full mx-auto px-4 py-4 flex-1"></main>
+  </div>
+
+  <!-- Modale d'inspection (sprite ou produit) -->
+  <div id="modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div class="card rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-5 shadow-xl relative">
+      <button id="modal-close" class="btn-sec rounded-lg px-2.5 py-1 text-xs absolute top-3 right-3 cursor-pointer">Fermer ✕</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden fixed bottom-4 right-4 z-50 btn-pri text-xs px-3 py-2 rounded-lg shadow-lg"></div>
+
+<script>
+const DATA_GZ = "__DATA_GZ__";
+
+// ---- Utilitaires ----
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const fmt = n => Number(n || 0).toLocaleString('fr-FR');
+const fmtDur = s => {
+  if (!s) return '—';
+  if (s < 60) return s + ' s';
+  const m = Math.floor(s / 60), r = s % 60;
+  if (m < 60) return r ? `${m} min ${r} s` : `${m} min`;
+  const h = Math.floor(m / 60), rm = m % 60;
+  return rm ? `${h} h ${rm} min` : `${h} h`;
+};
+let toastTimer;
+function showToast(msg) {
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add('hidden'), 1800);
+}
+async function copyText(t, label = 'Copié !') {
+  try { await navigator.clipboard.writeText(t); showToast(label); }
+  catch {
+    const ta = document.createElement('textarea');
+    ta.value = t; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove(); showToast(label);
+  }
+}
+
+// Décompression gzip native du payload embarqué
+async function loadPayload() {
+  const bin = atob(DATA_GZ);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const ds = new DecompressionStream('gzip');
+  const stream = new Blob([bytes]).stream().pipeThrough(ds);
+  const text = await new Response(stream).text();
+  return JSON.parse(text);
+}
+
+// ---- Moteurs SVG fidèles au jeu ----
+let SPR, DATA, USED_IN;
+const svgWrap = (inner, vb = '0 0 64 64') =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" stroke-linecap="round" stroke-linejoin="round">${inner || ''}</svg>`;
+const itemSvg = id => svgWrap(SPR.items[id] || SPR.ui.star || '');
+const machSvg = id => svgWrap(SPR.machines[id] || '');
+const uiSvg = id => svgWrap(SPR.ui[id] || '');
+const animSvg = key => svgWrap(SPR.animVars[key] || SPR.animals[key.split('~')[0]] || '', '0 0 80 80');
+const plantSvg = (id, stage) => {
+  const it = DATA.items[id];
+  const arr = SPR.plants[id];
+  if (!it || !arr) return itemSvg(id);
+  if (it.type === 'crop') return svgWrap(stage === 0 ? SPR.sprout : arr[stage === 1 ? 0 : 1]);
+  return svgWrap(arr[Math.max(0, Math.min(2, stage))]);
+};
+
+// Primitives SVG du jeu (kit.js) pour chevaux du Haras & bouteilles d'abbaye
+const INK = '#3a2618';
+const P = (d, f, sw = 2.4) => `<path d="${d}" fill="${f}" stroke="${INK}" stroke-width="${sw}"/>`;
+const F = (d, f, op = 1) => `<path d="${d}" fill="${f}"${op < 1 ? ` opacity="${op}"` : ''}/>`;
+const L = (d, sw = 2.2, c = INK) => `<path d="${d}" fill="none" stroke="${c}" stroke-width="${sw}"/>`;
+const C = (x, y, r, f, sw = 2.4) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" stroke="${INK}" stroke-width="${sw}"/>`;
+const FC = (x, y, r, f, op = 1) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${f}"${op < 1 ? ` opacity="${op}"` : ''}/>`;
+const E = (x, y, rx, ry, f, rot = 0, sw = 2.4) =>
+  `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${f}" stroke="${INK}" stroke-width="${sw}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ''}/>`;
+const FE = (x, y, rx, ry, f, op = 1, rot = 0) =>
+  `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${f}"${op < 1 ? ` opacity="${op}"` : ''}${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ''}/>`;
+const R = (x, y, w, h, rx, f, sw = 2.4) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${f}" stroke="${INK}" stroke-width="${sw}"/>`;
+const SHADOW = (x, y, rx, ry = 3.5) => FE(x, y, rx, ry, INK, 0.14);
+const HL = (x, y, rx, ry, rot = -25, op = 0.55) => FE(x, y, rx, ry, '#fff', op, rot);
+const subItem = (id, x, y, s) => {
+  const inner = SPR.items[id];
+  return inner ? `<g transform="translate(${x} ${y}) scale(${s / 64})">${inner}</g>` : '';
+};
+
+// ---- Robes & génétique des chevaux du Haras (src/art/haras/robes.js & src/systems/coat.js) ----
+const ROBES = {
+  bai: { name: 'Bai', K: '#a8693a', M: '#3a2618', G: '#4a2c18' },
+  baibrun: { name: 'Bai brun', K: '#6b3a1e', M: '#2a1a10', G: '#2a1a10' },
+  alezan: { name: 'Alezan', K: '#bf6228', M: '#8e3f1c', G: '#a24e1e' },
+  noir: { name: 'Noir', K: '#35302f', M: '#1a1616', G: '#1a1616' },
+  gris: { name: 'Gris', K: '#c9ced6', M: '#9aa3ad', G: '#aab1bb', dapple: true },
+  palomino: { name: 'Palomino', K: '#e3b75e', M: '#f6ecd2', G: '#d9a94a' },
+  isabelle: { name: 'Isabelle', K: '#d9a15a', M: '#3a2618', G: '#3a2618' },
+  creme: { name: 'Crème', K: '#f1e3c2', M: '#fff7e0', G: '#e8d6aa' },
+  rouan: { name: 'Rouan', K: '#8f5a45', M: '#3a2618', G: '#4a2c18', roan: true },
+  aubere: { name: 'Aubère', K: '#b8683f', M: '#8e3f1c', G: '#a24e1e', roan: true },
+  louvet: { name: 'Louvet', K: '#cfaa70', M: '#3a2618', G: '#3a2618', dorsal: true },
+};
+const WHITE = '#fffdf6';
+const HMARKS = {
+  etoile: () => FE(69.4, 9.6, 1.9, 2.6, WHITE, 1, 40),
+  liste: () => F('M62 9 Q66 12 70 17 Q74 22 75 25 L72 25 Q69 21 65 16 Q62 13 60 10Z', WHITE),
+  balzanes: () => [[22,71],[31,72],[47,72],[55,71]].map(([x,y]) => L(`M${x} ${y-8} L${x} ${y}`, 2.6, WHITE)).join(''),
+  pie: () => P('M18 36 Q22 30 30 34 Q34 40 28 46 Q20 48 18 40Z M40 32 Q48 30 52 36 Q54 44 46 48 Q38 44 40 36Z', WHITE, 1.6) + P('M46 20 Q52 18 55 26 L50 32 Q46 28 46 20Z', WHITE, 1.4),
+  belleface: () => F('M60 8 Q66 5 70 9 L78 20 Q80 25 74 27 L68 25 L61 16Z', WHITE),
+  raie: () => L('M44 35 Q30 33 17 38', 2.4, '#4a2c18'),
+  lave: () => '',
+  appaloosa: () => P('M13 36 Q20 31 31 33 Q36 42 30 51 Q19 53 14 44Z', WHITE, 1.6) + [[18,38],[24,36],[28,42],[20,46],[26,48],[16,42]].map(([x,y]) => FC(x,y,1.7,INK)).join(''),
+};
+const hSpeck = pts => pts.map(([x,y]) => FC(x,y,1.1,WHITE)).join('');
+const hLeg = (d, c) => L(d, 5.4) + L(d, 2.4, c);
+const hBody = (r, marks) => SHADOW(36,75,26,3) + hLeg('M23 50 L22 71', r.G) + hLeg('M31 52 L31 72', r.G) + hLeg('M47 52 L47 72', r.G) + hLeg('M54 50 L55 71', r.G)
+  + [22,31,47,55].map(x => L(`M${x-1.6} 73 L${x+1.6} 73`, 4, INK)).join('')
+  + P('M15 34 Q1 38 3 66 Q8 52 16 44Z', r.M, 2)
+  + P('M13 37 Q13 30 21 30 L47 30 Q57 30 58 38 Q58 53 48 54 L24 54 Q13 53 13 37Z', r.K, 2.4)
+  + (r.dapple ? [[20,40],[28,36],[36,44],[44,38],[26,48],[50,44],[18,33]].map(([x,y]) => FE(x,y,3.6,2.2,'#aab1bb')).join('') : '')
+  + (r.roan ? hSpeck([[18,38],[24,34],[30,42],[36,36],[42,44],[48,38],[22,48],[34,50],[44,33],[52,46],[16,44],[28,33]]) : '')
+  + (r.dorsal ? HMARKS.raie() : '')
+  + marks.filter(m => ['balzanes','pie','appaloosa','raie'].includes(m)).map(m => HMARKS[m]()).join('')
+  + HL(24, 38, 8, 3, -10, 0.45);
+const hHead = (r, marks) => P('M45 36 L53 10 Q57 5 62 8 L66 20 L58 42Z', r.K, 2.4)
+  + P('M58 8 Q64 2 69 7 L77 19 Q79 25 74 26 L68 24 L61 17Z', r.K, 2.4)
+  + P('M60 7 L59 0 L64 5Z', r.K, 2)
+  + P('M53 9 Q44 20 46 38 L52 35 Q52 22 59 10Z', r.M, 2)
+  + (r.roan ? hSpeck([[56,14],[60,20],[52,24],[64,24],[49,30],[68,16]]) : '')
+  + marks.filter(m => ['etoile','liste','belleface'].includes(m)).map(m => HMARKS[m]()).join('')
+  + FC(66,11,1.9,INK) + FC(66.7,10.3,0.7,'#fff') + FE(75.5,22.5,1.3,1,INK,0.9);
+function horseSvg({ robe = 'bai', marks = [], stage = 2, shoes = 0, coat = 0, gearSet = '' }) {
+  const r0 = ROBES[robe] || ROBES.bai;
+  const r = marks.includes('lave') ? { ...r0, M: '#f0d9a0' } : r0;
+  let inner;
+  if (stage === 0) inner = `<g transform="translate(8 18) scale(0.74)">${hBody(r, marks)}</g><g transform="translate(-2.5 10.4) scale(0.95)">${hHead(r, marks)}</g>`;
+  else if (stage === 1) inner = `<g transform="translate(5 8) scale(0.88)">${hBody(r, marks)}${hHead(r, marks)}</g>`;
+  else {
+    const g = SPR.gear || {};
+    const gearMap = {
+      dress: [g.padDress, g.saddleDress, g.stirrup, g.bridle],
+      jump: [g.padJump, g.saddleJump, g.stirrup, g.bridle],
+      race: [g.padRace, g.saddleRace, g.bridle],
+      cover: [g.blanket],
+    };
+    const coatFx = coat === 1 ? P('M12 38 Q0 46 4 70 Q8 58 15 48Z', r.M, 2) + P('M58 12 Q46 22 46 44 L54 36 Q56 24 63 15Z', r.M, 2) : '';
+    const shoesFx = shoes ? [22,31,47,55].map(x => L(`M${x-2.8} 74.4 Q${x} 76.6 ${x+2.8} 74.4`, 3.4) + L(`M${x-2.8} 74.4 Q${x} 76.6 ${x+2.8} 74.4`, 1.6, shoes === 2 ? '#f4f6fb' : '#aab1bb')).join('') + (shoes === 2 ? [22,47].map(x => FC(x+2,74,0.8,'#fff')).join('') : '') : '';
+    inner = hBody(r, marks) + hHead(r, marks) + coatFx + (gearMap[gearSet] || []).join('') + shoesFx;
+  }
+  return svgWrap(inner, '0 0 80 80');
+}
+// Génétique mendélienne des robes (coat.js)
+const dom = p => !!(p[0] || p[1]);
+function founderCoat() {
+  const c = {};
+  for (const [k, f] of Object.entries(DATA.haras.coat.freq)) c[k] = [Math.random() < f, Math.random() < f];
+  return c;
+}
+function crossCoat(a, b) {
+  const c = {}, mut = DATA.haras.coat.mut;
+  for (const k of Object.keys(DATA.haras.coat.freq)) {
+    const pick = p => { const v = !!p[Math.random() < .5 ? 0 : 1]; return Math.random() < mut ? !v : v; };
+    c[k] = [pick(a[k]), pick(b[k])];
+  }
+  return c;
+}
+function robeOfCoat(c) {
+  const black = dom(c.E), bay = black && dom(c.A);
+  const base = !black ? 'alezan' : bay ? (dom(c.Br) ? 'bai' : 'baibrun') : 'noir';
+  const cr = (c.Cr[0] ? 1 : 0) + (c.Cr[1] ? 1 : 0);
+  if (dom(c.G)) return 'gris';
+  if (cr === 2) return 'creme';
+  if (dom(c.Rn)) return bay ? 'rouan' : !black ? 'aubere' : 'noir';
+  if (dom(c.D) && bay) return 'louvet';
+  if (cr === 1) return !black ? 'palomino' : bay ? 'isabelle' : 'noir';
+  return base;
+}
+function marksOfCoat(c) {
+  const m = [], robe = robeOfCoat(c);
+  if (!dom(c.belleface)) m.push('belleface');
+  else if (dom(c.liste)) m.push('liste');
+  else if (dom(c.etoile)) m.push('etoile');
+  if (dom(c.balzanes)) m.push('balzanes');
+  if (dom(c.pie)) m.push('pie');
+  if (dom(c.appaloosa)) m.push('appaloosa');
+  if (dom(c.raie) && robe !== 'louvet') m.push('raie');
+  if (!dom(c.lave) && ['alezan','palomino','aubere'].includes(robe)) m.push('lave');
+  return m;
+}
+function geneLetters(c) {
+  return Object.keys(DATA.haras.coat.freq).map(k => `${k}:${c[k].map(x => x ? 'D' : 'r').join('')}`).join(' ');
+}
+
+// ---- Enveloppe génétique visuelle (src/ui/genlook.js) ----
+const G_SIZE = [[.82,.82],[1,1],[1.14,1.14],[1.3,1.3],[.8,1.1],[.68,.68],[1,1]];
+const G_COLOR = [
+  '', 'sepia(.9) saturate(5) hue-rotate(-45deg) brightness(.95)',
+  'sepia(.9) saturate(3.2) hue-rotate(5deg) brightness(1.12)',
+  'sepia(.9) saturate(3) hue-rotate(225deg) brightness(.9)',
+  'grayscale(1) brightness(1.45) contrast(.9)',
+  'grayscale(.4) brightness(.55) contrast(1.2)',
+  'sepia(.9) saturate(3) hue-rotate(165deg) brightness(.95)',
+  'sepia(.8) saturate(3) hue-rotate(290deg) brightness(1.2)',
+  'sepia(.9) saturate(5.5) hue-rotate(-18deg) brightness(1.1)',
+  'grayscale(1) brightness(1.25) contrast(1.15)',
+  'sepia(1) saturate(3.2) hue-rotate(-28deg) brightness(.92) contrast(1.05)',
+  'sepia(.6) saturate(2) hue-rotate(200deg) brightness(1.05)',
+];
+const G_FIN_FILTER = ['', 'saturate(.8) brightness(1.06) drop-shadow(0 0 3px #bfe9ff)', '', '', 'saturate(1.3) contrast(1.1)', ''];
+const G_SPARKS = [[8,12],[88,20],[18,60],[82,66],[50,4],[70,40],[30,35]];
+const maskCache = new Map();
+function maskOf(svgStr) {
+  let m = maskCache.get(svgStr);
+  if (!m) {
+    m = `url('data:image/svg+xml;utf8,${encodeURIComponent(svgStr).replace(/'/g, '%27')}')`;
+    if (maskCache.size > 300) maskCache.clear();
+    maskCache.set(svgStr, m);
+  }
+  return m;
+}
+function genWrap(svgStr, l, isPlant = false) {
+  const bigFruit = l.size === 6 && isPlant;
+  if ((l.size === 1 || l.size === 6) && !bigFruit && !l.color && !l.pattern && !l.halo && !l.finish) return svgStr;
+  const [sx, sy] = G_SIZE[l.size] || G_SIZE[1];
+  const filter = [G_COLOR[l.color] || '', G_FIN_FILTER[l.finish] || '', l.halo ? 'drop-shadow(0 0 4px #ffd23f) drop-shadow(0 0 2px #fff6c8)' : ''].join(' ').trim();
+  const m = `-webkit-mask-image:${maskOf(svgStr)};mask-image:${maskOf(svgStr)}`;
+  const ov = c => `<i class="gp ${c}" style="${m}"></i>`;
+  let over = '';
+  if (l.color >= 9) over += ov(`gp-c${l.color}`);
+  if (l.pattern) over += ov(`gp-${l.pattern}`);
+  if (l.finish && l.finish !== 3) over += ov(`gp-f${l.finish}`);
+  if (l.finish === 3) over += G_SPARKS.map(([x,y],i) => `<b class="spk" style="left:${x}%;top:${y}%;animation-delay:${i*0.37}s"></b>`).join('');
+  const big = bigFruit ? `<div class="bigpart">${svgStr}</div>` : '';
+  return `<span class="gl" style="--gsx:${sx};--gsy:${sy};${filter ? `filter:${filter}` : ''}">${svgStr}${big}${over}</span>`;
+}
+
+// ---- Bouteille de bière & cruchon d'hydromel (src/art/abbey.js & hydromel.js) ----
+function renderMeadSvg(b) {
+  const col = DATA.honeyCol[b.honey || 'all'] || DATA.honeyCol.all;
+  const ings = b.ings || [];
+  const main = ings.length ? [...ings].sort((x, y) => y[1] - x[1])[0][0] : 'honey';
+  const aged = !!b.aged;
+  const clay = aged ? '#b9a48a' : '#d9cbb2';
+  const body = 'M24 14 L40 14 L40 19 Q52 24 52 40 Q52 58 32 59 Q12 58 12 40 Q12 24 24 19Z';
+  const inner = SHADOW(32,61,18,2.6)
+    + P('M45 24 Q57 25 56 36 Q55 44 48 45 L47 41 Q51 40 51.5 35 Q52 29 45 28.5Z', clay, 2)
+    + P(body, clay)
+    + F('M24.3 19.6 L39.7 19.6 Q46 22 48.5 27 L15.5 27 Q18 22 24.3 19.6Z', '#5a7fae', 0.85)
+    + F('M13.2 29.5 L50.8 29.5 L51.2 37 L12.8 37Z', col, 0.95)
+    + HL(19, 40, 2, 9, 0, 0.35)
+    + R(19, 38, 26, 17, 5, '#fffaf0', 1.6)
+    + subItem(main, 24.5, 38.5, 15)
+    + ings.slice(1, 4).map(([id], k) => C(20 + k * 12, 37.5, 4.2, '#fffaf0', 1.1) + subItem(id, 16.2 + k * 12, 33.7, 7.6)).join('')
+    + P(body, 'none')
+    + R(26, 7, 12, 8, 2.5, '#c9a070', 1.8)
+    + P('M24.5 8 Q32 3 39.5 8 Q40 11 37 11 Q32 9.5 27 11 Q24 11 24.5 8Z', aged ? '#7a2a1a' : '#b8321f', 1.6)
+    + FE(29.5, 7.5, 1.6, 0.9, '#fff', 0.35)
+    + (aged ? L('M14 46 Q32 49 50 46', 1.2, '#8b6a44') : '')
+    + [0,1,2].map(k => k < (b.stars || 0) ? P(`M${26+k*6} 52 l1 2 2.2 .3 -1.6 1.5 .4 2.2 -2 -1 -2 1 .4 -2.2 -1.6 -1.5 2.2 -.3Z`, '#ffd23f', 0.8) : '').join('');
+  return svgWrap(inner);
+}
+function renderBeerSvg(b) {
+  if (b.mead) return renderMeadSvg(b);
+  const c = (DATA.abbey.malts[b.malt] || DATA.abbey.malts.maltBlond).color;
+  const ings = b.ings || [];
+  const main = ings.length ? [...ings].sort((x, y) => y[1] - x[1])[0][0] : 'barley';
+  const body = 'M27 4 L37 4 L37 16 Q46 22 46 30 L46 56 Q46 60 42 60 L22 60 Q18 60 18 56 L18 30 Q18 22 27 16Z';
+  const aged = !!b.aged;
+  const inner = SHADOW(32,61,15,2.4)
+    + P(body, aged ? '#5a3a20' : '#7a4a1a')
+    + F('M19.4 30 Q32 27 44.6 30 L44.6 56 Q44.6 58.6 42 58.6 L22 58.6 Q19.4 58.6 19.4 56Z', c, 0.92)
+    + R(20, 34, 24, 18, 4, '#fffaf0', 1.6)
+    + L('M22 49 L42 49', 1.4, c)
+    + subItem(main, 24, 34, 15)
+    + (ings.length > 1 ? ings.slice(1).map(([id], k) => C(23 + k * 18, 33, 3.6, '#fffaf0', 1.2) + subItem(id, 20 + k * 18, 30, 6)).join('') : '')
+    + F('M20.5 28 L23 26 L23 54 L20.5 54Z', '#fff', 0.4)
+    + P(body, 'none')
+    + R(26, 0, 12, 6, 2, aged ? '#8b5a2b' : '#c8453a')
+    + (aged ? L('M18 40 L46 40', 1.2, '#d8b070') : '')
+    + [0,1,2].map(k => k < (b.stars || 0) ? P(`M${26+k*6} 56.5 l1 2 2.2 .3 -1.6 1.5 .4 2.2 -2 -1 -2 1 .4 -2.2 -1.6 -1.5 2.2 -.3Z`, '#ffd23f', 0.8) : '').join('');
+  return svgWrap(inner);
+}
+
+// ---- Moteur logique de la Brasserie d'Abbaye (src/systems/brewery.js) ----
+function evalBrew(mode, baseKey, hop, ings, barrelId) {
+  const A = DATA.abbey;
+  const mead = mode === 'mead';
+  const bd = mead
+    ? { name: 'Hydromel', color: DATA.honeyCol[baseKey] || DATA.honeyCol.all, ...(A.meadBases[baseKey] || A.meadBases.all), mead: true, honey: baseKey }
+    : { ...(A.malts[baseKey] || A.malts.maltBlond), mead: false };
+  const ingFl = id => DATA.genetics.flavors[id] || A.brewExtra[id] || [0,0,0,0,0];
+  const noteOf = v => v.indexOf(Math.max(...v));
+  const det = k => (k === 0 ? 'le ' : 'l’') + A.notes[k];
+  const cap = t => t[0].toUpperCase() + t.slice(1);
+  const honeyDe = h => (DATA.honeys[h] ? ' ' + DATA.honeys[h].name.replace(/^Miel /, '') : '');
+
+  const profile = [...bd.taste];
+  profile[2] += mead ? 0 : hop;
+  for (const [id, d] of ings) ingFl(id).forEach((v, k) => (profile[k] += v * d));
+
+  const reasons = [];
+  let stars = 0, classic = null;
+  if (!ings.length) {
+    reasons.push('Ajoutez au moins un ingrédient.');
+  } else {
+    const ip = [0,0,0,0,0];
+    for (const [id, d] of ings) ingFl(id).forEach((v, k) => (ip[k] += v * d));
+    const order = ip.map((v, k) => [v, k]).sort((x, y) => y[0] - x[0]);
+    const [a, b] = [order[0][1], order[1][1]];
+    let score = 0;
+    if (order[1][0] >= order[0][0] * 0.3 && order[1][0] > 0) {
+      const pair = A.pairs[`${Math.min(a,b)}-${Math.max(a,b)}`] || 0;
+      if (pair > 0) reasons.push(`${cap(det(a))} et ${det(b)} vont bien ensemble.`);
+      if (pair < 0) reasons.push(`${cap(det(a))} et ${det(b)} se battent.`);
+      score += pair;
+    } else reasons.push(`Une seule note domine : ${A.notes[a]}.`);
+
+    const who = mead ? `L’hydromel${honeyDe(baseKey)}` : `Une ${bd.name.toLowerCase()}`;
+    if (!bd.likes.length) reasons.push(`${who} ${bd.text}.`);
+    else if (bd.likes.includes(a)) { score += 1; reasons.push(`${who} ${bd.text}.`); }
+    else reasons.push(`${who} ${bd.text} : essayez ${mead ? 'un autre miel' : 'un autre malt'}.`);
+
+    const effHop = mead ? 0 : hop;
+    if (effHop === 3 && a === 0) { score -= 1; reasons.push('Trop de houblon pour une bière douce.'); }
+    if (effHop === 1 && (a === 2 || a === 3)) reasons.push('Un houblon plus fort irait bien à ce goût.');
+    if (effHop === 3 && (a === 2 || a === 3)) { score += 1; reasons.push('Le houblon fort relève ce goût.'); }
+
+    const bases = ings.map(([id]) => id);
+    classic = mead ? A.meadClassics.find(c => c.any.some(id => bases.includes(id))) : A.classics.find(c => c.ings.every(id => bases.includes(id)));
+    if (classic && !mead) {
+      reasons.push(classic.text);
+      stars = Math.max(0, Math.min(3, score + 2));
+    } else {
+      if (classic) { reasons.push(classic.text); score += 1; }
+      const tops = ings.map(([id]) => noteOf(ingFl(id)));
+      let clash = false;
+      for (let x = 0; x < tops.length; x++)
+        for (let y = x + 1; y < tops.length; y++)
+          if ((A.pairs[`${Math.min(tops[x],tops[y])}-${Math.max(tops[x],tops[y])}`] || 0) < 0) clash = true;
+      if (clash) { score -= 1; reasons.push('Deux ingrédients ne s’entendent pas.'); }
+      else if (ings.length > 1 && new Set(tops).size > 1) { score += 1; reasons.push('Un beau mélange, riche et équilibré.'); }
+      stars = Math.max(0, Math.min(3, score));
+    }
+  }
+
+  // Nom & coût & valeur
+  const ingVal = id => id in A.brewExtra ? Math.round((DATA.items[id]?.sell || 0) * 0.2) : (DATA.items[id]?.sell || 0);
+  const honeyMult = mead && DATA.honeys[baseKey] ? DATA.honeys[baseKey].mult : 1;
+  const costMap = mead
+    ? { honey: A.mead.honeyPerBrew }
+    : { [baseKey]: A.abbey.maltPerBrew, hop: hop * A.abbey.hopPerDose };
+  for (const [id, d] of ings) costMap[id] = (costMap[id] || 0) + d * A.abbey.ingPerDose;
+  let totalCost = 0;
+  for (const [id, n] of Object.entries(costMap)) {
+    const u = id === 'honey' && mead ? Math.round((DATA.items.honey?.sell || 120) * honeyMult) : ingVal(id);
+    totalCost += u * n;
+  }
+  const time = mead ? A.mead.baseTime + A.mead.perIng * ings.length : A.abbey.baseTime + A.abbey.perIng * ings.length;
+  const baseValue = ings.length ? Math.round((((A.abbey.price * totalCost + 0.1 * time) / A.abbey.bottles) * A.abbey.harmony[stars]) / 5) * 5 : 0;
+  const barrel = barrelId ? A.barrels[barrelId] : null;
+  const agedMaxValue = barrel ? Math.round((baseValue * barrel.mult * A.cellar.mult[3]) / 5) * 5 : 0;
+
+  let name = '';
+  if (ings.length) {
+    const list = [...ings].sort((x, y) => y[1] - x[1]).map(([id]) => (DATA.items[id]?.name || id).toLowerCase());
+    const what = list.length === 1 ? list[0] : list.length === 2 ? `${list[0]}-${list[1]}` : `${list.slice(0,-1).join(', ')} et ${list[list.length-1]}`;
+    name = mead ? `${classic ? classic.name : 'Hydromel'}${honeyDe(baseKey)} ${what}` : `${bd.name} ${what}`;
+  }
+  return { mead, bd, profile, stars, reasons, classic, costMap, time, baseValue, barrel, agedMaxValue, name };
+}
+
+// ---- État global de l'application ----
+const S = {
+  tab: 'sprites',
+  sprCat: 'items',
+  sprQ: '',
+  sprLimit: 120,
+  prodMode: 'machines',
+  prodQ: '',
+  prodMach: 'all',
+  prodMaxLvl: 80,
+  prodSort: 'lvl',
+  genMode: 'plants', // plants | animals | horses
+  genId: 'strawberry',
+  genStage: 2,
+  genSize: 1,
+  genColor: 0,
+  genPattern: 0,
+  genFinish: 0,
+  genHalo: false,
+  genFeat: {},
+  genCompare: 'color',
+  horseRobe: 'bai',
+  horseMarks: [],
+  horseStage: 2,
+  horseShoes: 0,
+  horseCoat: 0,
+  horseGear: '',
+  horseGenome: null,
+  horseParentA: null,
+  horseParentB: null,
+  brewMode: 'beer', // beer | mead
+  brewMalt: 'maltBlond',
+  brewHoney: 'lavender',
+  brewHop: 2,
+  brewIngs: [['cherry', 1], ['raspberry', 1]],
+  brewBarrel: '',
+  brewQ: '',
+};
+
+// ---- Modale ----
+function openModal(html) {
+  $('#modal-body').innerHTML = html;
+  $('#modal').classList.remove('hidden');
+}
+function closeModal() { $('#modal').classList.add('hidden'); }
+$('#modal-close').onclick = closeModal;
+$('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function inspectSprite(cat, id) {
+  let title = id, svgStr = '', extra = '';
+  if (cat === 'items') {
+    const it = DATA.items[id];
+    title = it ? it.name : id;
+    svgStr = itemSvg(id);
+    if (it) extra = `<div class="mt-3 flex flex-wrap gap-2 text-xs">
+      <span class="surf px-2 py-1 rounded">Type : ${esc(it.type)}</span>
+      ${it.reqLvl ? `<span class="surf px-2 py-1 rounded">Niveau ${it.reqLvl}</span>` : ''}
+      ${it.sell ? `<span class="surf px-2 py-1 rounded">Vente : ${fmt(it.sell)} pièces</span>` : ''}
+      <button class="btn-sec px-2.5 py-1 rounded cursor-pointer" onclick="inspectProduct('${esc(id)}')">Voir la fiche produit →</button>
+    </div>`;
+  } else if (cat === 'plants') {
+    const it = DATA.items[id];
+    title = it ? `${it.name} (${it.seedName || ''})` : id;
+    svgStr = plantSvg(id, 2);
+    const stages = it?.type === 'tree' ? ['Jeune arbre', 'En fleurs', 'Avec fruits'] : ['Pousse', 'Jeune plant', 'Prêt à récolter'];
+    extra = `<div class="mt-4"><div class="text-xs font-semibold mb-2">Stades de pousse</div>
+      <div class="grid grid-cols-3 gap-2">${[0,1,2].map(st => `<div class="surf rounded-lg p-2 flex flex-col items-center">
+        <div class="w-16 h-16 spr-box">${plantSvg(id, st)}</div><span class="text-xs muted mt-1">${stages[st]}</span>
+      </div>`).join('')}</div></div>`;
+  } else if (cat === 'animals') {
+    const a = DATA.animals[id];
+    title = a ? a.name : id;
+    svgStr = animSvg(id);
+    const fs = DATA.genetics.speciesFeatures[id] || [];
+    if (fs.length) {
+      extra = `<div class="mt-3 text-xs muted">Traits morphologiques disponibles dans le Générateur Génétique : <b>${fs.map(f => DATA.genetics.features[f].name).join(', ')}</b>.</div>`;
+    }
+  } else if (cat === 'machines') {
+    const m = DATA.machines[id];
+    title = m ? m.name : id;
+    svgStr = machSvg(id);
+    if (m) extra = `<div class="mt-3 text-xs muted">Débloqué au niveau <b>${m.reqLvl}</b></div>`;
+  } else if (cat === 'ui') {
+    title = `Icône UI · ${id}`;
+    svgStr = uiSvg(id);
+  } else if (cat === 'people') {
+    title = DATA.villagers[id] || id;
+    svgStr = svgWrap(SPR.people[id] || '');
+  } else if (cat === 'buildings') {
+    if (id.startsWith('farmhouse_')) {
+      const l = +id.split('_')[1];
+      title = `Maison de ferme (niv. ${l})`;
+      svgStr = svgWrap(SPR.farmhouses[l]);
+    } else {
+      title = `Bâtiment · ${id}`;
+      svgStr = svgWrap(SPR.buildings[id] || '', '0 -20 100 110');
+    }
+  } else if (cat === 'vehicles') {
+    title = id;
+    svgStr = SPR.vehicles[id] || '';
+  }
+  window.__lastSvg = svgStr;
+  openModal(`
+    <div class="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+      <div class="w-40 h-40 checker rounded-xl border border-[var(--border,#e2d8c5)] p-3 spr-box shrink-0">${svgStr}</div>
+      <div class="flex-1 min-w-0">
+        <div class="text-xs uppercase tracking-wide muted">${esc(cat)} · <code>${esc(id)}</code></div>
+        <h2 class="text-lg font-bold mt-0.5">${esc(title)}</h2>
+        ${extra}
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button class="btn-pri text-xs px-3 py-1.5 rounded-lg cursor-pointer" onclick="copyText(window.__lastSvg, 'SVG copié !')">Copier le SVG</button>
+          <button class="btn-sec text-xs px-3 py-1.5 rounded-lg cursor-pointer" onclick="copyText('${esc(id)}', 'ID copié !')">Copier l’ID</button>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+function inspectProduct(id) {
+  const it = DATA.items[id];
+  if (!it) return;
+  const rec = DATA.recipes[id];
+  const used = USED_IN[id] || [];
+  const caveFam = DATA.cave.items[id];
+  const zoneBadges = [
+    it.ghOnly ? 'Serre' : '',
+    it.oasis ? 'Oasis' : it.nord ? 'Grand Nord' : it.island ? 'Île' : '',
+    it.sea ? 'Pêche en mer' : '',
+    it.exotic ? 'Marchand ambulant' : '',
+    caveFam ? `Affinable en cave (${DATA.cave.families[caveFam] || caveFam})` : '',
+  ].filter(Boolean);
+  const SEAS = { printemps: 'Printemps', ete: 'Été', automne: 'Automne', hiver: 'Hiver' };
+  const animSrc = Object.values(DATA.animals).filter(a => a.prodId === id || a.extra === id);
+  openModal(`
+    <div class="flex items-start gap-4">
+      <div class="w-24 h-24 checker rounded-xl border border-[var(--border,#e2d8c5)] p-2 spr-box shrink-0">${itemSvg(id)}</div>
+      <div class="flex-1 min-w-0">
+        <div class="text-xs muted"><code>${esc(id)}</code> · ${esc(it.type)}</div>
+        <h2 class="text-xl font-bold">${esc(it.name)}</h2>
+        <div class="flex flex-wrap gap-1.5 mt-2 text-xs">
+          ${rec ? `<span class="surf px-2 py-0.5 rounded font-medium">Atelier : ${esc(DATA.machines[rec.machine]?.name || rec.machine)} (niv. ${rec.lvl})</span>` : it.reqLvl ? `<span class="surf px-2 py-0.5 rounded">Niveau ${it.reqLvl}</span>` : ''}
+          ${it.sell != null ? `<span class="surf px-2 py-0.5 rounded">Vente : <b>${fmt(it.sell)}</b> p.</span>` : ''}
+          ${rec?.time ? `<span class="surf px-2 py-0.5 rounded">Durée : ${fmtDur(rec.time)}</span>` : it.time ? `<span class="surf px-2 py-0.5 rounded">Pousse : ${fmtDur(it.time)}</span>` : ''}
+          ${rec?.out > 1 ? `<span class="surf px-2 py-0.5 rounded">Produit ×${rec.out}</span>` : ''}
+          ${zoneBadges.map(b => `<span class="surf px-2 py-0.5 rounded">${esc(b)}</span>`).join('')}
+          ${it.seasons ? `<span class="surf px-2 py-0.5 rounded">Saisons : ${it.seasons.map(s => SEAS[s] || s).join(', ')}</span>` : ''}
+        </div>
+        ${animSrc.length ? `<div class="mt-2 text-xs muted">Produit par : ${animSrc.map(a => `<b>${esc(a.name)}</b>${a.extra === id ? ' (2e produit)' : ''}`).join(', ')}</div>` : ''}
+      </div>
+    </div>
+    ${rec ? `<div class="mt-4 pt-3 border-t border-[var(--border,#e2d8c5)]">
+      <div class="text-xs font-bold uppercase tracking-wide muted mb-2">Ingrédients requis</div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        ${Object.entries(rec.ing).map(([k, n]) => `<button onclick="inspectProduct('${esc(k)}')" class="surf hover:opacity-85 rounded-lg p-2 flex items-center gap-2 text-left cursor-pointer">
+          <div class="w-8 h-8 spr-box shrink-0">${itemSvg(k)}</div>
+          <div class="min-w-0 text-xs"><div class="font-semibold truncate">${esc(DATA.items[k]?.name || k)}</div><div class="muted">×${n}</div></div>
+        </button>`).join('')}
+      </div>
+    </div>` : ''}
+    ${used.length ? `<div class="mt-4 pt-3 border-t border-[var(--border,#e2d8c5)]">
+      <div class="text-xs font-bold uppercase tracking-wide muted mb-2">Utilisé dans ${used.length} recette${used.length > 1 ? 's' : ''}</div>
+      <div class="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto">
+        ${used.map(uid => `<button onclick="inspectProduct('${esc(uid)}')" class="surf hover:opacity-85 rounded-lg px-2 py-1 flex items-center gap-1.5 text-xs cursor-pointer">
+          <span class="w-5 h-5 spr-box inline-block">${itemSvg(uid)}</span>${esc(DATA.items[uid]?.name || uid)}
+        </button>`).join('')}
+      </div>
+    </div>` : ''}
+  `);
+}
+window.inspectSprite = inspectSprite;
+window.inspectProduct = inspectProduct;
+window.copyText = copyText;
+
+// ---- ONGLET 1 : SPRITES ----
+function getSpriteEntries(cat) {
+  if (cat === 'items') return Object.keys(SPR.items).map(id => ({ id, label: DATA.items[id]?.name || id, svg: () => itemSvg(id) }));
+  if (cat === 'plants') return Object.keys(SPR.plants).map(id => ({ id, label: DATA.items[id]?.name || id, svg: () => plantSvg(id, 2) }));
+  if (cat === 'animals') return Object.keys(SPR.animals).map(id => ({ id, label: DATA.animals[id]?.name || id, svg: () => animSvg(id) }));
+  if (cat === 'machines') return Object.keys(SPR.machines).map(id => ({ id, label: DATA.machines[id]?.name || id, svg: () => machSvg(id) }));
+  if (cat === 'ui') return Object.keys(SPR.ui).map(id => ({ id, label: id, svg: () => uiSvg(id) }));
+  if (cat === 'people') return Object.keys(SPR.people).map(id => ({ id, label: DATA.villagers[id] || id, svg: () => svgWrap(SPR.people[id]) }));
+  if (cat === 'buildings') return [
+    ...SPR.farmhouses.map((_, i) => ({ id: 'farmhouse_' + i, label: 'Ferme niv. ' + i, svg: () => svgWrap(SPR.farmhouses[i]) })),
+    ...Object.keys(SPR.buildings).map(id => ({ id, label: id, svg: () => svgWrap(SPR.buildings[id], '0 -20 100 110') })),
+  ];
+  if (cat === 'vehicles') return Object.keys(SPR.vehicles).map(id => ({ id, label: id, svg: () => SPR.vehicles[id] }));
+  return [];
+}
+
+function renderSprites() {
+  const cats = [
+    ['items', 'Objets', Object.keys(SPR.items).length],
+    ['plants', 'Plantes & Arbres', Object.keys(SPR.plants).length],
+    ['animals', 'Animaux', Object.keys(SPR.animals).length],
+    ['machines', 'Machines', Object.keys(SPR.machines).length],
+    ['ui', 'Icônes UI', Object.keys(SPR.ui).length],
+    ['people', 'Personnages', Object.keys(SPR.people).length],
+    ['buildings', 'Bâtiments', Object.keys(SPR.buildings).length + SPR.farmhouses.length],
+    ['vehicles', 'Véhicules', Object.keys(SPR.vehicles).length],
+  ];
+  const q = norm(S.sprQ);
+  const all = getSpriteEntries(S.sprCat);
+  const filtered = q ? all.filter(e => norm(e.label).includes(q) || norm(e.id).includes(q)) : all;
+  const shown = filtered.slice(0, S.sprLimit);
+
+  $('#main').innerHTML = `
+    <div class="space-y-4">
+      <div class="card rounded-xl p-4 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap gap-1.5" id="spr-cats">
+            ${cats.map(([k, lbl, n]) => `<button data-cat="${k}" class="pill ${S.sprCat === k ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">${lbl} <span class="opacity-75">(${n})</span></button>`).join('')}
+          </div>
+          <input id="spr-q" type="search" value="${esc(S.sprQ)}" placeholder="Rechercher un sprite (nom ou ID)…" class="surf rounded-lg px-3 py-1.5 text-sm w-full sm:w-64 outline-none" />
+        </div>
+        <div class="text-xs muted">${fmt(filtered.length)} sprite${filtered.length > 1 ? 's' : ''} trouvé${filtered.length > 1 ? 's' : ''} — cliquez sur un sprite pour l’agrandir ou copier son SVG.</div>
+      </div>
+
+      <div class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-9 gap-2.5">
+        ${shown.map(e => `<button onclick="inspectSprite('${S.sprCat}','${esc(e.id)}')" class="card rounded-xl p-2 flex flex-col items-center gap-1 hover:shadow-md transition cursor-pointer text-center">
+          <div class="w-14 h-14 spr-box">${e.svg()}</div>
+          <div class="text-xs font-medium leading-tight line-clamp-2 w-full">${esc(e.label)}</div>
+          <div class="text-[10px] muted font-mono truncate w-full">${esc(e.id)}</div>
+        </button>`).join('')}
+      </div>
+
+      ${filtered.length > shown.length ? `<div class="text-center pt-2">
+        <button id="spr-more" class="btn-sec px-4 py-2 rounded-lg text-sm cursor-pointer">Afficher plus (${shown.length} / ${filtered.length})</button>
+      </div>` : ''}
+    </div>
+  `;
+
+  $$('#spr-cats button').forEach(b => b.onclick = () => { S.sprCat = b.dataset.cat; S.sprLimit = 120; renderSprites(); });
+  $('#spr-q').oninput = e => { S.sprQ = e.target.value; S.sprLimit = 120; renderSprites(); $('#spr-q').focus(); $('#spr-q').setSelectionRange(S.sprQ.length, S.sprQ.length); };
+  const more = $('#spr-more');
+  if (more) more.onclick = () => { S.sprLimit += 180; renderSprites(); };
+}
+
+// ---- ONGLET 2 : PRODUITS & USINES ----
+function renderProducts() {
+  const q = norm(S.prodQ);
+  const machList = Object.values(DATA.machines).sort((a, b) => a.reqLvl - b.reqLvl || a.name.localeCompare(b.name, 'fr'));
+  const modes = [
+    ['machines', 'Par usine / atelier (48)'],
+    ['raw', 'Matières brutes (266)'],
+    ['special', 'Crus de miel, Cave & Paquets'],
+  ];
+
+  let body = '';
+  if (S.prodMode === 'machines') {
+    const byM = {};
+    for (const r of Object.values(DATA.recipes)) {
+      if (r.lvl > S.prodMaxLvl) continue;
+      const it = DATA.items[r.id];
+      if (!it) continue;
+      if (q) {
+        const hitName = norm(it.name).includes(q) || norm(r.id).includes(q);
+        const hitIng = Object.keys(r.ing).some(k => norm(DATA.items[k]?.name || k).includes(q));
+        if (!hitName && !hitIng) continue;
+      }
+      (byM[r.machine] ||= []).push(r);
+    }
+    const visibleMachs = machList.filter(m => (S.prodMach === 'all' || m.id === S.prodMach) && (byM[m.id]?.length));
+    const totalShown = visibleMachs.reduce((a, m) => a + byM[m.id].length, 0);
+    const sortRec = (a, b) => S.prodSort === 'price' ? (DATA.items[b.id]?.sell || 0) - (DATA.items[a.id]?.sell || 0)
+      : S.prodSort === 'name' ? DATA.items[a.id].name.localeCompare(DATA.items[b.id].name, 'fr')
+      : a.lvl - b.lvl || DATA.items[a.id].name.localeCompare(DATA.items[b.id].name, 'fr');
+
+    body = `<div class="text-xs muted mb-3">${totalShown} recettes affichées sur ${visibleMachs.length} atelier${visibleMachs.length > 1 ? 's' : ''}. Cliquez sur un produit pour voir sa fiche complète et où il est utilisé.</div>
+    <div class="space-y-4">
+      ${visibleMachs.map(m => {
+        const list = byM[m.id].sort(sortRec);
+        return `<section class="card rounded-xl p-4">
+          <div class="flex items-center gap-3 pb-3 mb-3 border-b border-[var(--border,#e2d8c5)]">
+            <div class="w-11 h-11 spr-box shrink-0">${machSvg(m.id)}</div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-sm sm:text-base">${esc(m.name)}</h3>
+              <div class="text-xs muted">Débloqué niv. ${m.reqLvl} · ${list.length} produit${list.length > 1 ? 's' : ''}</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+            ${list.map(r => {
+              const it = DATA.items[r.id];
+              const cave = DATA.cave.items[r.id];
+              return `<button onclick="inspectProduct('${esc(r.id)}')" class="surf hover:shadow rounded-xl p-2.5 flex items-center gap-2.5 text-left cursor-pointer transition">
+                <div class="w-12 h-12 spr-box shrink-0">${itemSvg(r.id)}</div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-1">
+                    <span class="font-semibold text-xs sm:text-sm truncate">${esc(it.name)}</span>
+                    ${it.sell ? `<span class="text-xs font-mono shrink-0">${fmt(it.sell)} p.</span>` : ''}
+                  </div>
+                  <div class="text-[11px] muted">Niv. ${r.lvl} · ${fmtDur(r.time)}${r.out > 1 ? ` · ×${r.out}` : ''}${cave ? ' · Cave' : ''}</div>
+                  <div class="flex flex-wrap gap-1 mt-1">
+                    ${Object.entries(r.ing).map(([k, n]) => `<span class="card rounded px-1.5 py-0.5 text-[11px] flex items-center gap-1" title="${esc(DATA.items[k]?.name || k)}">
+                      <span class="w-3.5 h-3.5 spr-box inline-block">${itemSvg(k)}</span>${n}
+                    </span>`).join('')}
+                  </div>
+                </div>
+              </button>`;
+            }).join('')}
+          </div>
+        </section>`;
+      }).join('') || '<div class="card rounded-xl p-8 text-center muted text-sm">Aucune recette ne correspond aux filtres.</div>'}
+    </div>`;
+  } else if (S.prodMode === 'raw') {
+    const rawItems = Object.values(DATA.items).filter(i => i.type !== 'artisan');
+    const match = i => (!q || norm(i.name).includes(q) || norm(i.id).includes(q)) && (!i.reqLvl || i.reqLvl <= S.prodMaxLvl);
+    const groups = [
+      ['Cultures — Ferme (plein champ)', rawItems.filter(i => i.type === 'crop' && !i.ghOnly && !i.island)],
+      ['Cultures — Serre uniquement', rawItems.filter(i => i.type === 'crop' && i.ghOnly)],
+      ['Cultures — Île, Oasis & Grand Nord', rawItems.filter(i => i.type === 'crop' && i.island)],
+      ['Arbres — Verger (ferme)', rawItems.filter(i => i.type === 'tree' && !i.island)],
+      ['Arbres — Île, Oasis & Grand Nord', rawItems.filter(i => i.type === 'tree' && i.island)],
+      ['Élevage & Produits spécifiques', rawItems.filter(i => i.type === 'product' && !i.sea)],
+      ['Pêche (étang, lagon & pêche en mer)', rawItems.filter(i => i.type === 'fish' || i.type === 'junk' || (i.type === 'product' && i.sea))],
+      ['Minerais, gemmes, lingots, bois & matériaux', rawItems.filter(i => ['ore','gem','ingot','material','rare','misc'].includes(i.type))],
+    ];
+    body = `<div class="space-y-4">
+      ${groups.map(([title, list]) => {
+        const items = list.filter(match).sort((a,b) => (a.reqLvl||0)-(b.reqLvl||0) || a.name.localeCompare(b.name,'fr'));
+        if (!items.length) return '';
+        return `<section class="card rounded-xl p-4">
+          <h3 class="font-bold text-sm mb-3">${title} <span class="muted font-normal">(${items.length})</span></h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+            ${items.map(i => `<button onclick="inspectProduct('${esc(i.id)}')" class="surf hover:shadow rounded-lg p-2 flex items-center gap-2 text-left cursor-pointer">
+              <div class="w-10 h-10 spr-box shrink-0">${itemSvg(i.id)}</div>
+              <div class="min-w-0 text-xs">
+                <div class="font-semibold truncate">${esc(i.name)}</div>
+                <div class="muted">${i.reqLvl ? `Niv. ${i.reqLvl}` : i.oasis ? 'Oasis' : i.nord ? 'Grand Nord' : i.sea ? 'Mer' : i.type}${i.sell ? ` · ${fmt(i.sell)} p.` : ''}</div>
+              </div>
+            </button>`).join('')}
+          </div>
+        </section>`;
+      }).join('')}
+    </div>`;
+  } else {
+    const byFam = {};
+    for (const [id, fam] of Object.entries(DATA.cave.items)) (byFam[fam] ||= []).push(id);
+    body = `<div class="space-y-4">
+      <section class="card rounded-xl p-4">
+        <h3 class="font-bold text-sm mb-3">Rucher — 23 crus de miel floraux</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+          ${Object.entries(DATA.honeys).map(([k, h]) => `<div class="surf rounded-lg p-2.5 flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-full shrink-0 border border-black/20" style="background:${DATA.honeyCol[k] || '#e8a825'}"></span>
+            <div class="min-w-0 text-xs"><div class="font-semibold truncate">${esc(h.name)}</div><div class="muted">Multiplicateur ×${h.mult}</div></div>
+          </div>`).join('')}
+        </div>
+      </section>
+      <section class="card rounded-xl p-4">
+        <h3 class="font-bold text-sm mb-3">Cave d’affinage — 35 produits en 6 familles</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          ${Object.entries(byFam).map(([fam, ids]) => `<div class="surf rounded-lg p-3">
+            <div class="text-xs font-bold mb-2">${esc(DATA.cave.families[fam] || fam)} (${ids.length})</div>
+            <div class="flex flex-wrap gap-1.5">
+              ${ids.map(id => id === 'beer'
+                ? `<span class="card rounded px-2 py-1 text-xs flex items-center gap-1"><span class="w-4 h-4 spr-box inline-block">${uiSvg('beer')}</span>Bières d’abbaye</span>`
+                : `<button onclick="inspectProduct('${esc(id)}')" class="card rounded px-2 py-1 text-xs flex items-center gap-1 cursor-pointer hover:opacity-80"><span class="w-4 h-4 spr-box inline-block">${itemSvg(id)}</span>${esc(DATA.items[id]?.name || id)}</button>`
+              ).join('')}
+            </div>
+          </div>`).join('')}
+        </div>
+      </section>
+      <section class="card rounded-xl p-4">
+        <h3 class="font-bold text-sm mb-3">Paquets &amp; assortiments de la Maison (${DATA.packs.length})</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+          ${DATA.packs.map(p => `<div class="surf rounded-lg p-2.5 flex items-center gap-2.5">
+            <div class="w-10 h-10 spr-box shrink-0">${p.item ? itemSvg(p.item) : itemSvg('crate')}</div>
+            <div class="text-xs"><div class="font-semibold">${esc(p.name)} ${p.bonus ? `<span class="muted">(+${Math.round(p.bonus*100)}%)</span>` : ''}</div><div class="muted">${esc(p.blurb)}</div></div>
+          </div>`).join('')}
+        </div>
+      </section>
+    </div>`;
+  }
+
+  $('#main').innerHTML = `
+    <div class="space-y-4">
+      <div class="card rounded-xl p-4 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap gap-1.5" id="prod-modes">
+            ${modes.map(([k, lbl]) => `<button data-m="${k}" class="pill ${S.prodMode === k ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">${lbl}</button>`).join('')}
+          </div>
+          ${S.prodMode !== 'special' ? `<input id="prod-q" type="search" value="${esc(S.prodQ)}" placeholder="Nom de produit ou d’ingrédient…" class="surf rounded-lg px-3 py-1.5 text-sm w-full sm:w-64 outline-none" />` : ''}
+        </div>
+        ${S.prodMode === 'machines' ? `<div class="flex flex-wrap items-center gap-3 text-xs">
+          <label class="flex items-center gap-1.5">Usine :
+            <select id="prod-mach" class="surf rounded-lg px-2 py-1">
+              <option value="all">Toutes les 48 usines</option>
+              ${machList.map(m => `<option value="${m.id}" ${S.prodMach === m.id ? 'selected' : ''}>${esc(m.name)} (niv. ${m.reqLvl})</option>`).join('')}
+            </select>
+          </label>
+          <label class="flex items-center gap-1.5">Tri :
+            <select id="prod-sort" class="surf rounded-lg px-2 py-1">
+              <option value="lvl" ${S.prodSort === 'lvl' ? 'selected' : ''}>Niveau</option>
+              <option value="price" ${S.prodSort === 'price' ? 'selected' : ''}>Prix décroissant</option>
+              <option value="name" ${S.prodSort === 'name' ? 'selected' : ''}>Alphabétique</option>
+            </select>
+          </label>
+          <label class="flex items-center gap-2">Niveau max : <b id="prod-lvl-v">${S.prodMaxLvl}</b>
+            <input id="prod-lvl" type="range" min="1" max="80" value="${S.prodMaxLvl}" class="w-28" />
+          </label>
+        </div>` : ''}
+      </div>
+      ${body}
+    </div>
+  `;
+
+  $$('#prod-modes button').forEach(b => b.onclick = () => { S.prodMode = b.dataset.m; renderProducts(); });
+  const pq = $('#prod-q');
+  if (pq) pq.oninput = e => { S.prodQ = e.target.value; renderProducts(); $('#prod-q').focus(); $('#prod-q').setSelectionRange(S.prodQ.length, S.prodQ.length); };
+  const pm = $('#prod-mach');
+  if (pm) pm.onchange = e => { S.prodMach = e.target.value; renderProducts(); };
+  const ps = $('#prod-sort');
+  if (ps) ps.onchange = e => { S.prodSort = e.target.value; renderProducts(); };
+  const pl = $('#prod-lvl');
+  if (pl) pl.oninput = e => { S.prodMaxLvl = +e.target.value; renderProducts(); };
+}
+
+// ---- ONGLET 3 : GÉNÉRATEUR GÉNÉTIQUE (+ ROBES DU HARAS) ----
+function currentBaseSvg() {
+  if (S.genMode === 'plants') return S.genStage === 'item' ? itemSvg(S.genId) : plantSvg(S.genId, +S.genStage);
+  if (S.genMode === 'animals') {
+    const fs = DATA.genetics.speciesFeatures[S.genId] || [];
+    const code = fs.map(f => S.genFeat[f] || 0).join('');
+    const key = code && !/^0*$/.test(code) ? `${S.genId}~${code}` : S.genId;
+    return animSvg(key);
+  }
+  return horseSvg({ robe: S.horseRobe, marks: S.horseMarks, stage: S.horseStage, shoes: S.horseShoes, coat: S.horseCoat, gearSet: S.horseGear });
+}
+
+function renderGenetics() {
+  const LKS = DATA.genetics.looks;
+  const plantsList = Object.values(DATA.items).filter(i => i.type === 'crop' || i.type === 'tree').sort((a,b) => a.name.localeCompare(b.name,'fr'));
+  const animList = Object.values(DATA.animals).sort((a,b) => a.name.localeCompare(b.name,'fr'));
+  if (S.genMode === 'plants' && !DATA.items[S.genId]) S.genId = 'strawberry';
+  if (S.genMode === 'animals' && !DATA.animals[S.genId]) S.genId = 'cow';
+  if (S.genMode === 'horses' && !S.horseGenome) {
+    S.horseParentA = founderCoat(); S.horseParentB = founderCoat();
+    S.horseGenome = crossCoat(S.horseParentA, S.horseParentB);
+  }
+
+  const baseSvg = currentBaseSvg();
+  const lookObj = { size: S.genSize, color: S.genColor, pattern: S.genPattern, finish: S.genFinish, halo: S.genHalo };
+  const wrapped = genWrap(baseSvg, lookObj, S.genMode === 'plants');
+  const fs = S.genMode === 'animals' ? (DATA.genetics.speciesFeatures[S.genId] || []) : [];
+
+  // Planche de comparaison
+  let cmpCards = [];
+  if (S.genCompare === 'color') {
+    cmpCards = LKS.color.map((name, i) => ({ name, active: S.genColor === i, click: `setGen('genColor',${i})`, html: genWrap(baseSvg, { ...lookObj, color: i }, S.genMode === 'plants') }));
+  } else if (S.genCompare === 'pattern') {
+    cmpCards = LKS.pattern.map((name, i) => ({ name, active: S.genPattern === i, click: `setGen('genPattern',${i})`, html: genWrap(baseSvg, { ...lookObj, pattern: i }, S.genMode === 'plants') }));
+  } else if (S.genCompare === 'finish') {
+    cmpCards = LKS.finish.map((name, i) => ({ name, active: S.genFinish === i, click: `setGen('genFinish',${i})`, html: genWrap(baseSvg, { ...lookObj, finish: i }, S.genMode === 'plants') }));
+  } else if (S.genCompare === 'size') {
+    cmpCards = LKS.size.map((name, i) => ({ name, active: S.genSize === i, click: `setGen('genSize',${i})`, html: genWrap(baseSvg, { ...lookObj, size: i }, S.genMode === 'plants') }));
+  } else if (S.genCompare === 'robes' && S.genMode === 'horses') {
+    cmpCards = Object.entries(DATA.haras.coat.robes).map(([k, name]) => ({
+      name, active: S.horseRobe === k, click: `setGen('horseRobe','${k}')`,
+      html: genWrap(horseSvg({ robe: k, marks: S.horseMarks, stage: S.horseStage, shoes: S.horseShoes, coat: S.horseCoat, gearSet: S.horseGear }), lookObj, false),
+    }));
+  }
+
+  const traitsList = S.genMode === 'plants' ? DATA.genetics.plantTraits : DATA.genetics.animalTraits;
+  const speciesFlavors = S.genMode === 'plants' ? DATA.genetics.flavors[S.genId] : null;
+  const totalCombos = LKS.size.length * LKS.color.length * LKS.pattern.length * LKS.finish.length * 2;
+
+  $('#main').innerHTML = `
+    <div class="space-y-4">
+      <div class="card rounded-xl p-4 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap gap-1.5" id="gen-modes">
+          <button data-gm="plants" class="pill ${S.genMode === 'plants' ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">Plantes &amp; Arbres (${plantsList.length})</button>
+          <button data-gm="animals" class="pill ${S.genMode === 'animals' ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">Animaux (${animList.length})</button>
+          <button data-gm="horses" class="pill ${S.genMode === 'horses' ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">Haras — Robes de chevaux (11 robes × 8 marques)</button>
+        </div>
+        <div class="flex gap-2">
+          <button id="gen-rand" class="btn-pri text-xs px-3 py-1.5 rounded-lg cursor-pointer">🎲 Aléatoire</button>
+          <button id="gen-reset" class="btn-sec text-xs px-3 py-1.5 rounded-lg cursor-pointer">Réinitialiser</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <!-- Studio d'aperçu -->
+        <div class="lg:col-span-5 card rounded-xl p-5 flex flex-col items-center">
+          <div class="w-56 h-56 checker rounded-2xl border border-[var(--border,#e2d8c5)] p-6 flex items-center justify-center overflow-hidden">
+            <div class="w-40 h-40">${wrapped}</div>
+          </div>
+          <div class="mt-3 text-center">
+            <div class="font-bold text-base">
+              ${S.genMode === 'plants' ? esc(DATA.items[S.genId]?.name) : S.genMode === 'animals' ? esc(DATA.animals[S.genId]?.name) : `Cheval · ${esc(DATA.haras.coat.robes[S.horseRobe])}`}
+            </div>
+            <div class="text-xs muted mt-0.5">
+              ${[LKS.size[S.genSize], LKS.color[S.genColor], LKS.pattern[S.genPattern], S.genFinish ? LKS.finish[S.genFinish] : '', S.genHalo ? 'Auréole dorée' : ''].filter(Boolean).join(' · ')}
+            </div>
+            ${S.genMode === 'horses' && S.horseMarks.length ? `<div class="text-xs muted mt-0.5">Marques : ${S.horseMarks.map(m => DATA.haras.coat.marks[m]).join(', ')}</div>` : ''}
+            <div class="text-[11px] muted mt-1">${fmt(totalCombos)} combinaisons d’apparence par espèce</div>
+          </div>
+
+          ${speciesFlavors ? `<div class="w-full mt-4 pt-3 border-t border-[var(--border,#e2d8c5)]">
+            <div class="text-xs font-semibold mb-1.5">Profil gustatif de base de l’espèce</div>
+            <div class="space-y-1">${DATA.abbey.notes.map((n, i) => `<div class="flex items-center gap-2 text-xs">
+              <span class="w-14 capitalize muted">${n}</span>
+              <div class="flex-1 h-2 surf rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:${Math.min(100, speciesFlavors[i]*20)}%;background:${DATA.abbey.noteCol[i]}"></div></div>
+              <span class="w-4 text-right font-mono">${speciesFlavors[i]}</span>
+            </div>`).join('')}</div>
+          </div>` : ''}
+
+          ${S.genMode === 'horses' ? `<div class="w-full mt-4 pt-3 border-t border-[var(--border,#e2d8c5)] space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold">Croisement mendélien du Haras</span>
+              <button id="horse-breed" class="btn-sec text-xs px-2.5 py-1 rounded-lg cursor-pointer">Simuler un poulain</button>
+            </div>
+            <div class="text-[11px] font-mono surf rounded-lg p-2 break-all muted">${esc(geneLetters(S.horseGenome))}</div>
+          </div>` : ''}
+        </div>
+
+        <!-- Contrôles -->
+        <div class="lg:col-span-7 card rounded-xl p-4 space-y-4">
+          ${S.genMode === 'plants' ? `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="text-xs font-semibold block">Espèce (culture ou arbre)
+              <select id="gen-species" class="surf rounded-lg px-2.5 py-1.5 text-sm w-full mt-1 font-normal">
+                ${plantsList.map(i => `<option value="${i.id}" ${S.genId === i.id ? 'selected' : ''}>${esc(i.name)} (${i.type === 'tree' ? 'arbre' : 'culture'})</option>`).join('')}
+              </select>
+            </label>
+            <div class="text-xs font-semibold">Affichage
+              <div class="flex flex-wrap gap-1 mt-1 font-normal">
+                ${[['2','Plante mûre'],['1','Jeune'],['0','Pousse'],['item','Récolte']].map(([v,l]) => `<button data-st="${v}" class="pill ${String(S.genStage) === v ? 'active' : ''} text-xs px-2.5 py-1 rounded-lg cursor-pointer">${l}</button>`).join('')}
+              </div>
+            </div>
+          </div>` : ''}
+
+          ${S.genMode === 'animals' ? `<div class="space-y-3">
+            <label class="text-xs font-semibold block">Espèce animale
+              <select id="gen-species" class="surf rounded-lg px-2.5 py-1.5 text-sm w-full mt-1 font-normal">
+                ${animList.map(a => `<option value="${a.id}" ${S.genId === a.id ? 'selected' : ''}>${esc(a.name)}</option>`).join('')}
+              </select>
+            </label>
+            ${fs.length ? `<div class="surf rounded-lg p-3 space-y-2">
+              <div class="text-xs font-semibold">Traits morphologiques propres à l’espèce</div>
+              <div class="flex flex-wrap gap-3">
+                ${fs.map(fk => `<div class="text-xs"><span class="muted mr-1.5">${DATA.genetics.features[fk].name} :</span>
+                  ${DATA.genetics.features[fk].list.map((lbl, idx) => `<button data-fk="${fk}" data-fv="${idx}" class="pill ${(S.genFeat[fk]||0) === idx ? 'active' : ''} px-2 py-0.5 rounded-md cursor-pointer mr-1">${lbl}</button>`).join('')}
+                </div>`).join('')}
+              </div>
+            </div>` : '<div class="text-xs muted">Cette espèce n’a pas de trait morphologique supplémentaire (uniquement les gènes d’apparence ci-dessous).</div>'}
+          </div>` : ''}
+
+          ${S.genMode === 'horses' ? `<div class="space-y-3 surf rounded-xl p-3">
+            <div class="text-xs font-semibold">Robe génétique (11)</div>
+            <div class="flex flex-wrap gap-1.5">
+              ${Object.entries(DATA.haras.coat.robes).map(([k, lbl]) => `<button data-hr="${k}" class="pill ${S.horseRobe === k ? 'active' : ''} text-xs px-2.5 py-1 rounded-lg cursor-pointer flex items-center gap-1.5">
+                <span class="w-3 h-3 rounded-full border border-black/25 inline-block" style="background:${ROBES[k].K}"></span>${lbl}
+              </button>`).join('')}
+            </div>
+            <div class="text-xs font-semibold pt-1">Marques (combinables)</div>
+            <div class="flex flex-wrap gap-1.5">
+              ${Object.entries(DATA.haras.coat.marks).map(([k, lbl]) => `<button data-hm="${k}" class="pill ${S.horseMarks.includes(k) ? 'active' : ''} text-xs px-2.5 py-1 rounded-lg cursor-pointer">${lbl}</button>`).join('')}
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 text-xs">
+              <div><div class="font-semibold mb-1">Âge</div>
+                ${[[0,'Poulain'],[1,'Jeune'],[2,'Adulte']].map(([v,l]) => `<button data-hst="${v}" class="pill ${S.horseStage === v ? 'active' : ''} px-2 py-1 rounded mr-1 cursor-pointer">${l}</button>`).join('')}
+              </div>
+              <div><div class="font-semibold mb-1">Équipement (adulte)</div>
+                <select id="horse-gear" class="card rounded-lg px-2 py-1 w-full">
+                  <option value="" ${S.horseGear === '' ? 'selected' : ''}>Sans équipement</option>
+                  <option value="dress" ${S.horseGear === 'dress' ? 'selected' : ''}>Dressage</option>
+                  <option value="jump" ${S.horseGear === 'jump' ? 'selected' : ''}>Obstacle</option>
+                  <option value="race" ${S.horseGear === 'race' ? 'selected' : ''}>Course</option>
+                  <option value="cover" ${S.horseGear === 'cover' ? 'selected' : ''}>Couverture d’hiver</option>
+                </select>
+              </div>
+              <div><div class="font-semibold mb-1">Fers &amp; Crins</div>
+                <div class="flex flex-wrap gap-1">
+                  ${[[0,'Pieds nus'],[1,'Fer'],[2,'Argent']].map(([v,l]) => `<button data-hsh="${v}" class="pill ${S.horseShoes === v ? 'active' : ''} px-2 py-1 rounded cursor-pointer">${l}</button>`).join('')}
+                  <button id="horse-coat" class="pill ${S.horseCoat ? 'active' : ''} px-2 py-1 rounded cursor-pointer">Crins longs</button>
+                </div>
+              </div>
+            </div>
+          </div>` : ''}
+
+          <!-- Gènes d'apparence universels -->
+          <div class="space-y-2.5 text-xs">
+            <div><span class="font-semibold block mb-1">Couleur (${LKS.color.length})</span>
+              <div class="flex flex-wrap gap-1">${LKS.color.map((l, i) => `<button data-gc="${i}" class="pill ${S.genColor === i ? 'active' : ''} px-2.5 py-1 rounded-lg cursor-pointer">${l}</button>`).join('')}</div>
+            </div>
+            <div><span class="font-semibold block mb-1">Motif (${LKS.pattern.length})</span>
+              <div class="flex flex-wrap gap-1">${LKS.pattern.map((l, i) => `<button data-gp="${i}" class="pill ${S.genPattern === i ? 'active' : ''} px-2.5 py-1 rounded-lg cursor-pointer">${l}</button>`).join('')}</div>
+            </div>
+            <div><span class="font-semibold block mb-1">Finition (${LKS.finish.length})</span>
+              <div class="flex flex-wrap gap-1">${LKS.finish.map((l, i) => `<button data-gf="${i}" class="pill ${S.genFinish === i ? 'active' : ''} px-2.5 py-1 rounded-lg cursor-pointer">${l}</button>`).join('')}</div>
+            </div>
+            <div class="flex flex-wrap items-center gap-4">
+              <div><span class="font-semibold block mb-1">Taille (${LKS.size.length})</span>
+                <div class="flex flex-wrap gap-1">${LKS.size.map((l, i) => `<button data-gs="${i}" class="pill ${S.genSize === i ? 'active' : ''} px-2 py-1 rounded-lg cursor-pointer">${l}</button>`).join('')}</div>
+              </div>
+              <label class="flex items-center gap-2 font-semibold cursor-pointer mt-4">
+                <input id="gen-halo" type="checkbox" ${S.genHalo ? 'checked' : ''} class="w-4 h-4" /> ✨ Auréole dorée
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Planche comparative -->
+      <section class="card rounded-xl p-4 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="font-bold text-sm">Planche de variations (cliquez pour appliquer)</h3>
+          <div class="flex flex-wrap gap-1.5 text-xs" id="gen-cmp-btns">
+            ${[['color','12 Couleurs'],['pattern','9 Motifs'],['finish','6 Finitions'],['size','7 Tailles'], ...(S.genMode === 'horses' ? [['robes','11 Robes']] : [])].map(([k,l]) => `<button data-cmp="${k}" class="pill ${S.genCompare === k ? 'active' : ''} px-2.5 py-1 rounded-full cursor-pointer">${l}</button>`).join('')}
+          </div>
+        </div>
+        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+          ${cmpCards.map(c => `<button onclick="${c.click}" class="${c.active ? 'ring-2 ring-[var(--primary,#3f7a44)]' : ''} surf rounded-xl p-2 flex flex-col items-center gap-1.5 cursor-pointer hover:shadow transition">
+            <div class="w-16 h-16 p-1">${c.html}</div>
+            <span class="text-xs font-medium">${esc(c.name)}</span>
+          </button>`).join('')}
+        </div>
+      </section>
+
+      <!-- Liste des traits génétiques -->
+      <section class="card rounded-xl p-4">
+        <h3 class="font-bold text-sm mb-2">Traits génétiques transmissibles (${S.genMode === 'plants' ? 'Plantes & arbres' : 'Animaux'})</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+          ${traitsList.map(t => `<div class="surf rounded-lg p-2">
+            <div class="font-semibold">${esc(t.name)} ${t.flavor ? '<span class="muted font-normal">(goût)</span>' : t.extra ? '<span class="muted font-normal">(rare)</span>' : ''}</div>
+            ${t.hint ? `<div class="muted text-[11px] mt-0.5">${esc(t.hint)}</div>` : ''}
+          </div>`).join('')}
+        </div>
+      </section>
+    </div>
+  `;
+
+  window.setGen = (k, v) => { S[k] = v; renderGenetics(); };
+  $$('#gen-modes button').forEach(b => b.onclick = () => {
+    S.genMode = b.dataset.gm;
+    if (S.genMode === 'plants') { S.genId = 'strawberry'; S.genCompare = S.genCompare === 'robes' ? 'color' : S.genCompare; }
+    else if (S.genMode === 'animals') { S.genId = 'cow'; S.genFeat = {}; S.genCompare = S.genCompare === 'robes' ? 'color' : S.genCompare; }
+    else S.genCompare = 'robes';
+    renderGenetics();
+  });
+  const sp = $('#gen-species');
+  if (sp) sp.onchange = e => { S.genId = e.target.value; S.genFeat = {}; renderGenetics(); };
+  $$('[data-st]').forEach(b => b.onclick = () => { S.genStage = b.dataset.st; renderGenetics(); });
+  $$('[data-fk]').forEach(b => b.onclick = () => { S.genFeat[b.dataset.fk] = +b.dataset.fv; renderGenetics(); });
+  $$('[data-gc]').forEach(b => b.onclick = () => { S.genColor = +b.dataset.gc; renderGenetics(); });
+  $$('[data-gp]').forEach(b => b.onclick = () => { S.genPattern = +b.dataset.gp; renderGenetics(); });
+  $$('[data-gf]').forEach(b => b.onclick = () => { S.genFinish = +b.dataset.gf; renderGenetics(); });
+  $$('[data-gs]').forEach(b => b.onclick = () => { S.genSize = +b.dataset.gs; renderGenetics(); });
+  $('#gen-halo').onchange = e => { S.genHalo = e.target.checked; renderGenetics(); };
+  $$('#gen-cmp-btns button').forEach(b => b.onclick = () => { S.genCompare = b.dataset.cmp; renderGenetics(); });
+
+  $$('[data-hr]').forEach(b => b.onclick = () => { S.horseRobe = b.dataset.hr; renderGenetics(); });
+  $$('[data-hm]').forEach(b => b.onclick = () => {
+    const k = b.dataset.hm;
+    S.horseMarks = S.horseMarks.includes(k) ? S.horseMarks.filter(x => x !== k) : [...S.horseMarks, k];
+    renderGenetics();
+  });
+  $$('[data-hst]').forEach(b => b.onclick = () => { S.horseStage = +b.dataset.hst; renderGenetics(); });
+  $$('[data-hsh]').forEach(b => b.onclick = () => { S.horseShoes = +b.dataset.hsh; renderGenetics(); });
+  const hg = $('#horse-gear'); if (hg) hg.onchange = e => { S.horseGear = e.target.value; renderGenetics(); };
+  const hc = $('#horse-coat'); if (hc) hc.onclick = () => { S.horseCoat = S.horseCoat ? 0 : 1; renderGenetics(); };
+  const hb = $('#horse-breed');
+  if (hb) hb.onclick = () => {
+    S.horseParentA = founderCoat(); S.horseParentB = founderCoat();
+    S.horseGenome = crossCoat(S.horseParentA, S.horseParentB);
+    S.horseRobe = robeOfCoat(S.horseGenome);
+    S.horseMarks = marksOfCoat(S.horseGenome);
+    renderGenetics();
+  };
+
+  $('#gen-rand').onclick = () => {
+    S.genSize = Math.floor(Math.random() * LKS.size.length);
+    S.genColor = Math.floor(Math.random() * LKS.color.length);
+    S.genPattern = Math.floor(Math.random() * LKS.pattern.length);
+    S.genFinish = Math.floor(Math.random() * LKS.finish.length);
+    S.genHalo = Math.random() < 0.25;
+    if (S.genMode === 'animals') {
+      for (const fk of fs) S.genFeat[fk] = Math.floor(Math.random() * DATA.genetics.features[fk].list.length);
+    } else if (S.genMode === 'horses') {
+      S.horseGenome = founderCoat();
+      S.horseRobe = robeOfCoat(S.horseGenome);
+      S.horseMarks = marksOfCoat(S.horseGenome);
+    }
+    renderGenetics();
+  };
+  $('#gen-reset').onclick = () => {
+    S.genSize = 1; S.genColor = 0; S.genPattern = 0; S.genFinish = 0; S.genHalo = false; S.genFeat = {};
+    S.horseRobe = 'bai'; S.horseMarks = []; S.horseStage = 2; S.horseShoes = 0; S.horseCoat = 0; S.horseGear = '';
+    renderGenetics();
+  };
+}
+
+// ---- ONGLET 4 : BRASSERIE D'ABBAYE ----
+function renderBrewery() {
+  const A = DATA.abbey;
+  const mead = S.brewMode === 'mead';
+  const maxSlots = mead ? A.mead.maxSlots : 3;
+  if (S.brewIngs.length > maxSlots) S.brewIngs = S.brewIngs.slice(0, maxSlots);
+  const baseKey = mead ? S.brewHoney : S.brewMalt;
+  const ev = evalBrew(S.brewMode, baseKey, S.brewHop, S.brewIngs, S.brewBarrel);
+  const bottleSvg = renderBeerSvg({ mead, malt: S.brewMalt, honey: S.brewHoney, ings: S.brewIngs, stars: ev.stars, aged: !!S.brewBarrel });
+  window.__lastBrewSvg = bottleSvg;
+
+  const allIngs = [...A.brewable, ...Object.keys(A.brewExtra)].sort((a,b) => (DATA.items[a]?.name || a).localeCompare(DATA.items[b]?.name || b, 'fr'));
+  const q = norm(S.brewQ);
+  const filteredIngs = q ? allIngs.filter(id => norm(DATA.items[id]?.name || id).includes(q)) : allIngs;
+  const maxNote = Math.max(5, ...ev.profile);
+
+  $('#main').innerHTML = `
+    <div class="space-y-4">
+      <div class="card rounded-xl p-4 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap gap-1.5" id="brew-modes">
+          <button data-bm="beer" class="pill ${!mead ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">🍺 Bière d’abbaye (4 malts · max 3 ingrédients)</button>
+          <button data-bm="mead" class="pill ${mead ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">🍯 Hydromel (24 miels · max 4 ingrédients)</button>
+        </div>
+        <div class="flex gap-2">
+          <button id="brew-rand3" class="btn-pri text-xs px-3 py-1.5 rounded-lg cursor-pointer">✨ Trouver un brassin 3★</button>
+          <button id="brew-clear" class="btn-sec text-xs px-3 py-1.5 rounded-lg cursor-pointer">Vider</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <!-- Résultat en direct -->
+        <div class="lg:col-span-5 card rounded-xl p-5 space-y-4">
+          <div class="flex flex-col items-center text-center">
+            <div class="w-44 h-44 checker rounded-2xl border border-[var(--border,#e2d8c5)] p-4 spr-box">${bottleSvg}</div>
+            <h2 class="text-lg font-bold mt-3">${ev.name ? esc(ev.name) : '<span class="muted">Choisissez au moins 1 ingrédient</span>'}</h2>
+            <div class="text-xl tracking-widest mt-1">${[1,2,3].map(i => `<span style="color:${i <= ev.stars ? '#e5a417' : 'rgba(128,128,128,.3)'}">★</span>`).join('')}</div>
+            ${ev.classic ? `<div class="mt-2 text-xs font-semibold px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-700 dark:text-amber-300">Recette classique reconnue : ${esc(ev.classic.name)}</div>` : ''}
+            <button onclick="copyText(window.__lastBrewSvg, 'SVG de la bouteille copié !')" class="btn-sec text-xs px-3 py-1 rounded-lg mt-2 cursor-pointer">Copier le SVG</button>
+          </div>
+
+          <div class="surf rounded-xl p-3 space-y-1.5 text-xs">
+            <div class="font-bold">Notes d’accord</div>
+            ${ev.reasons.map(r => `<div class="muted">• ${esc(r)}</div>`).join('')}
+          </div>
+
+          <div class="space-y-1.5">
+            <div class="text-xs font-bold">Profil des 5 notes gustatives</div>
+            ${A.notes.map((n, i) => `<div class="flex items-center gap-2 text-xs">
+              <span class="w-14 capitalize muted">${n}</span>
+              <div class="flex-1 h-2.5 surf rounded-full overflow-hidden"><div class="h-full rounded-full transition-all" style="width:${Math.round((ev.profile[i]/maxNote)*100)}%;background:${A.noteCol[i]}"></div></div>
+              <span class="w-6 text-right font-mono">${ev.profile[i]}</span>
+            </div>`).join('')}
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="surf rounded-lg p-2.5">
+              <div class="muted">Valeur estimée / bouteille</div>
+              <div class="text-base font-bold mt-0.5">${fmt(ev.baseValue)} pièces</div>
+              <div class="text-[11px] muted">Brassin de ${A.abbey.bottles} bout. · ${fmtDur(ev.time)}</div>
+            </div>
+            <div class="surf rounded-lg p-2.5">
+              <div class="muted">${ev.barrel ? `Grande réserve (${ev.barrel.name})` : 'Vieillissement en fût'}</div>
+              <div class="text-base font-bold mt-0.5">${ev.barrel ? `${fmt(ev.agedMaxValue)} pièces` : '—'}</div>
+              <div class="text-[11px] muted">${ev.barrel ? `Note ${ev.barrel.note} (×${(ev.barrel.mult * A.cellar.mult[3]).toFixed(2)})` : 'Sélectionnez un fût'}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compositeur -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="card rounded-xl p-4 space-y-3 text-xs">
+            ${!mead ? `
+              <div><div class="font-bold mb-1.5">1. Malt de base (4 sacs)</div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  ${A.maltIds.map(id => `<button data-malt="${id}" class="pill ${S.brewMalt === id ? 'active' : ''} rounded-lg p-2 flex items-center gap-2 cursor-pointer text-left">
+                    <span class="w-4 h-4 rounded-full border border-black/30 shrink-0" style="background:${A.malts[id].color}"></span>
+                    <div><div class="font-semibold">${A.malts[id].name}</div></div>
+                  </button>`).join('')}
+                </div>
+                <div class="muted mt-1">${esc(A.malts[S.brewMalt].text)}</div>
+              </div>
+              <div><div class="font-bold mb-1.5">2. Dose de houblon</div>
+                <div class="flex gap-2">
+                  ${A.hopDoses.map((lbl, idx) => `<button data-hop="${idx+1}" class="pill ${S.brewHop === idx+1 ? 'active' : ''} px-3 py-1.5 rounded-lg cursor-pointer">${lbl} (${(idx+1)*A.abbey.hopPerDose} cônes)</button>`).join('')}
+                </div>
+              </div>
+            ` : `
+              <div><div class="font-bold mb-1.5">1. Miel de base (${A.mead.honeyPerBrew} pots)</div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 max-h-40 overflow-y-auto pr-1">
+                  ${['all', ...Object.keys(DATA.honeys)].map(k => `<button data-honey="${k}" class="pill ${S.brewHoney === k ? 'active' : ''} rounded-lg px-2 py-1.5 flex items-center gap-1.5 cursor-pointer text-left">
+                    <span class="w-3.5 h-3.5 rounded-full border border-black/25 shrink-0" style="background:${DATA.honeyCol[k] || '#e8a825'}"></span>
+                    <span class="truncate">${k === 'all' ? 'Toutes fleurs' : esc(DATA.honeys[k].name.replace(/^Miel /, ''))}</span>
+                  </button>`).join('')}
+                </div>
+                <div class="muted mt-1">${esc((A.meadBases[S.brewHoney] || A.meadBases.all).text)}</div>
+              </div>
+            `}
+
+            <div><div class="font-bold mb-1.5">${mead ? '2' : '3'}. Fût de vieillissement en cave (optionnel)</div>
+              <div class="flex flex-wrap gap-1.5">
+                <button data-bar="" class="pill ${S.brewBarrel === '' ? 'active' : ''} px-2.5 py-1 rounded-lg cursor-pointer">Jeune (sans fût)</button>
+                ${Object.entries(A.barrels).map(([k, b]) => `<button data-bar="${k}" class="pill ${S.brewBarrel === k ? 'active' : ''} px-2.5 py-1 rounded-lg cursor-pointer">${esc(b.name)} (×${b.mult})</button>`).join('')}
+              </div>
+            </div>
+
+            <div><div class="font-bold mb-1.5">Recettes classiques reconnues (1 clic pour tester)</div>
+              <div class="flex flex-wrap gap-1.5">
+                ${(!mead ? A.classics : A.meadClassics).map(c => `<button data-cls="${c.id}" class="btn-sec px-2.5 py-1 rounded-lg cursor-pointer">${esc(c.name)}</button>`).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Ingrédients sélectionnés + sélecteur -->
+          <div class="card rounded-xl p-4 space-y-3 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold">Ingrédients du brassin (${S.brewIngs.length} / ${maxSlots})</span>
+              <input id="brew-q" type="search" value="${esc(S.brewQ)}" placeholder="Filtrer les ingrédients…" class="surf rounded-lg px-2.5 py-1 w-48 outline-none" />
+            </div>
+
+            ${S.brewIngs.length ? `<div class="flex flex-wrap gap-2">
+              ${S.brewIngs.map(([id, d], idx) => `<div class="surf rounded-lg px-2.5 py-1.5 flex items-center gap-2">
+                <span class="w-6 h-6 spr-box inline-block">${itemSvg(id)}</span>
+                <span class="font-semibold">${esc(DATA.items[id]?.name || id)}</span>
+                <div class="flex gap-0.5">${[1,2,3].map(v => `<button data-dose="${idx}:${v}" class="pill ${d === v ? 'active' : ''} px-1.5 py-0.5 rounded text-[11px] cursor-pointer">×${v}</button>`).join('')}</div>
+                <button data-rm="${idx}" class="muted hover:text-red-500 font-bold px-1 cursor-pointer">✕</button>
+              </div>`).join('')}
+            </div>` : '<div class="muted">Cliquez sur les ingrédients ci-dessous pour composer votre recette.</div>'}
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5 max-h-64 overflow-y-auto pr-1">
+              ${filteredIngs.map(id => {
+                const picked = S.brewIngs.some(([x]) => x === id);
+                const fl = DATA.genetics.flavors[id] || A.brewExtra[id] || [0,0,0,0,0];
+                const top = fl.indexOf(Math.max(...fl));
+                return `<button data-add="${id}" ${picked || S.brewIngs.length >= maxSlots ? 'disabled' : ''} class="${picked ? 'opacity-45' : 'hover:shadow cursor-pointer'} surf rounded-lg p-1.5 flex items-center gap-1.5 text-left">
+                  <span class="w-7 h-7 spr-box shrink-0">${itemSvg(id)}</span>
+                  <div class="min-w-0">
+                    <div class="font-medium truncate">${esc(DATA.items[id]?.name || id)}</div>
+                    <div class="text-[10px] muted capitalize">${A.notes[top]} (${fl[top]})${id in A.brewExtra ? ' · atelier' : ''}</div>
+                  </div>
+                </button>`;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  $$('#brew-modes button').forEach(b => b.onclick = () => { S.brewMode = b.dataset.bm; renderBrewery(); });
+  $$('[data-malt]').forEach(b => b.onclick = () => { S.brewMalt = b.dataset.malt; renderBrewery(); });
+  $$('[data-honey]').forEach(b => b.onclick = () => { S.brewHoney = b.dataset.honey; renderBrewery(); });
+  $$('[data-hop]').forEach(b => b.onclick = () => { S.brewHop = +b.dataset.hop; renderBrewery(); });
+  $$('[data-bar]').forEach(b => b.onclick = () => { S.brewBarrel = b.dataset.bar; renderBrewery(); });
+  $$('[data-dose]').forEach(b => b.onclick = () => { const [i, v] = b.dataset.dose.split(':').map(Number); S.brewIngs[i][1] = v; renderBrewery(); });
+  $$('[data-rm]').forEach(b => b.onclick = () => { S.brewIngs.splice(+b.dataset.rm, 1); renderBrewery(); });
+  $$('[data-add]').forEach(b => b.onclick = () => { if (S.brewIngs.length < maxSlots) { S.brewIngs.push([b.dataset.add, 1]); renderBrewery(); } });
+  const bq = $('#brew-q');
+  if (bq) bq.oninput = e => { S.brewQ = e.target.value; renderBrewery(); $('#brew-q').focus(); $('#brew-q').setSelectionRange(S.brewQ.length, S.brewQ.length); };
+
+  $$('[data-cls]').forEach(b => b.onclick = () => {
+    const cid = b.dataset.cls;
+    if (!mead) {
+      const c = A.classics.find(x => x.id === cid);
+      if (c) {
+        S.brewIngs = c.ings.map(id => [id, 2]);
+        if (cid === 'stout') { S.brewMalt = 'maltBlack'; S.brewHop = 3; }
+        else if (cid === 'witbier') { S.brewMalt = 'maltBlond'; S.brewHop = 1; }
+        else if (cid === 'sahti') { S.brewMalt = 'maltBrown'; S.brewHop = 2; }
+        else if (cid === 'kriek') { S.brewMalt = 'maltBlond'; S.brewHop = 1; }
+        else if (cid === 'pumpkinAle') { S.brewMalt = 'maltAmber'; S.brewHop = 1; }
+      }
+    } else {
+      const c = A.meadClassics.find(x => x.id === cid);
+      if (c) S.brewIngs = [[c.any[0], 2]];
+    }
+    renderBrewery();
+  });
+
+  $('#brew-clear').onclick = () => { S.brewIngs = []; S.brewBarrel = ''; renderBrewery(); };
+  $('#brew-rand3').onclick = () => {
+    const pool = [...A.brewable, ...Object.keys(A.brewExtra)];
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    for (let t = 0; t < 200; t++) {
+      const n = 2 + Math.floor(Math.random() * (maxSlots - 1));
+      const set = new Set();
+      while (set.size < n) set.add(pick(pool));
+      const ings = [...set].map(id => [id, 1 + Math.floor(Math.random() * 3)]);
+      const m = mead ? pick(Object.keys(DATA.honeys)) : pick(A.maltIds);
+      const h = mead ? 0 : 1 + Math.floor(Math.random() * 3);
+      if (evalBrew(S.brewMode, m, h, ings, '').stars === 3) {
+        if (mead) S.brewHoney = m; else { S.brewMalt = m; S.brewHop = h; }
+        S.brewIngs = ings;
+        renderBrewery();
+        return;
+      }
+    }
+    showToast('Essayez à nouveau !');
+  };
+}
+
+function renderActiveTab() {
+  $$('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === S.tab));
+  if (S.tab === 'sprites') renderSprites();
+  else if (S.tab === 'products') renderProducts();
+  else if (S.tab === 'genetics') renderGenetics();
+  else renderBrewery();
+}
+
+// ---- Boot ----
+loadPayload().then(payload => {
+  SPR = payload.sprites;
+  DATA = payload.data;
+  USED_IN = {};
+  for (const r of Object.values(DATA.recipes)) {
+    for (const k of Object.keys(r.ing)) (USED_IN[k] ||= []).push(r.id);
+  }
+  $('#hdr-logo').innerHTML = animSvg('cow');
+  $('#hdr-ver').textContent = 'v' + DATA.version;
+  const totalSpr = Object.keys(SPR.items).length + Object.keys(SPR.animals).length + Object.keys(SPR.machines).length + Object.keys(SPR.ui).length + Object.keys(SPR.people).length + Object.keys(SPR.buildings).length + SPR.farmhouses.length + Object.keys(SPR.vehicles).length;
+  $('#hdr-stats').textContent = `${fmt(Object.keys(DATA.items).length)} produits · ${fmt(totalSpr)} sprites · ${Object.keys(DATA.machines).length} ateliers`;
+  $$('#tabs button').forEach(b => b.onclick = () => { S.tab = b.dataset.tab; renderActiveTab(); });
+  $('#loading').classList.add('hidden');
+  $('#app').classList.remove('hidden');
+  renderActiveTab();
+}).catch(err => {
+  $('#loading').textContent = 'Erreur de chargement : ' + err.message;
+});
+</script>
+</body>
+</html>

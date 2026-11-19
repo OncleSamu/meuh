@@ -982,6 +982,49 @@ svg.chart .bar:hover path {
     box-shadow: 0 0 0 3px var(--ink);
 }
 
+.lv-next {
+    padding: 0 14px 8px;
+}
+
+.lv-next-lbl {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    opacity: 0.75;
+    margin-bottom: 4px;
+}
+
+.lv-miles {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.lv-mile {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 2px solid var(--ink);
+    background: var(--paper-l, #fff);
+    font: inherit;
+    font-size: 0.75rem;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.lv-mile .ico {
+    width: 18px;
+    height: 18px;
+}
+
+.lv-mile.on {
+    background: var(--gold);
+}
+
 .guide-page,
 .guide-item {
     display: flex;

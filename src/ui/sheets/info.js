@@ -1,6 +1,6 @@
 // Statistiques, mes bonus, le guide du fermier, une photo de l'album et la carte postale.
 import { searchBox } from '../pager.js';
-import { state } from '../../core/state.js';
+import { state, lvOk } from '../../core/state.js';
 import { fmt, qtyName } from '../../core/format.js';
 import { now } from '../../core/clock.js';
 import { toast } from '../../core/bus.js';
@@ -17,7 +17,7 @@ import * as G from '../../systems/index.js';
 import { actions, QUIET } from '../dom.js';
 import { ico, SPR } from '../icons.js';
 import { btn, line, empty } from '../kit.js';
-import { defineSheet, sheetOpts, closeSheet } from '../sheets.js';
+import { defineSheet, sheetOpts, openSheet, closeSheet, closeAll } from '../sheets.js';
 import { go } from '../app.js';
 import { photoArt } from './book.js';
 import { innerTabs } from '../innertabs.js';
@@ -234,16 +234,48 @@ function guideRead(g) {
         ${see.length ? `<div class="set-title">Voir aussi</div><div class="guide-chips">${see.map(x => `<button class="chip" data-act="guidePage" data-p="${x.id}">${ico(x.icon, 'ico sm')}<span>${x.name}</span></button>`).join('')}</div>` : ''}`;
 }
 
+function machineCard(m) {
+    const idx = state.machines.findIndex(x => x.type === m.id);
+    const open = lvOk(m) && G.storyOk(m);
+    const actBtn =
+        idx >= 0
+            ? btn('Ouvrir', { act: 'guideMach', data: { id: m.id }, size: 'sm', kind: 'green' })
+            : open
+              ? btn('Acheter', { act: 'guideMach', data: { id: m.id }, size: 'sm', kind: 'gold' })
+              : `<span class="chip">niv. ${m.reqLvl}</span>`;
+    return `<div class="card guide-item">${ico(['machine', m.id], 'ico big')}<div class="card-main">
+        <div class="card-title">${m.name}</div>
+        <div class="card-sub">${m.desc || `Atelier · niveau ${m.reqLvl}`}</div></div>
+        <span class="gi-btns">${actBtn}</span></div>`;
+}
+
+function animalCard(a) {
+    const prods = [ITEMS[a.prodId]?.name, a.extra && ITEMS[a.extra]?.name].filter(Boolean).join(' · ');
+    const open = lvOk(a) && G.storyOk(a);
+    return `<div class="card guide-item">${ico(['animal', a.id], 'ico big')}<div class="card-main">
+        <div class="card-title">${a.name}</div>
+        <div class="card-sub">${prods}${a.oasis ? ' · Oasis' : a.nord ? ' · Grand Nord' : ''}</div></div>
+        <span class="gi-btns">${open ? btn('Y aller', { act: 'guideAnim', data: { id: a.id }, size: 'sm', kind: 'gold' }) : `<span class="chip">niv. ${a.reqLvl}</span>`}</span></div>`;
+}
+
 function guideResults(q) {
     q = norm(q || '').trim();
+    const machs = Object.values(MACHINES)
+        .filter(m => norm(m.name).includes(q) || norm(m.desc || '').includes(q))
+        .slice(0, 5);
+    const anims = Object.values(ANIMALS)
+        .filter(a => norm(a.name).includes(q))
+        .slice(0, 5);
     const items = Object.keys(ITEMS)
-        .filter(id => norm(ITEMS[id].name).includes(q) && ITEMS[id].type !== 'material')
-        .slice(0, 8);
+        .filter(id => norm(ITEMS[id].name).includes(q) && ITEMS[id].type !== 'junk')
+        .slice(0, 10);
     const pages = GUIDE_PAGES.filter(g => norm(guideText(g)).includes(q));
     return (
+        (machs.length ? `<div class="set-title">Ateliers</div>${machs.map(machineCard).join('')}` : '') +
+        (anims.length ? `<div class="set-title">Animaux</div>${anims.map(animalCard).join('')}` : '') +
         (items.length ? `<div class="set-title">Produits</div>${items.map(itemCard).join('')}` : '') +
         (pages.length ? `<div class="set-title">Guide</div>${pages.map(g => guideCard(g)).join('')}` : '') +
-        (!items.length && !pages.length ? empty('Rien trouvé. Essayez « fromage », « grange » ou « concours ».') : '')
+        (!machs.length && !anims.length && !items.length && !pages.length ? empty('Rien trouvé. Essayez « fromage », « moulin », « vache » ou « concours ».') : '')
     );
 }
 
@@ -256,11 +288,19 @@ const guideBody = o => {
 
 defineSheet('guide', {
     cls: 'guide-sheet',
-    title: 'Guide du fermier',
+    title: o => (o.focusSearch ? 'Rechercher' : 'Guide du fermier'),
+    open(o) {
+        if (o.focusSearch) {
+            setTimeout(() => {
+                const inp = document.querySelector('.guide-sheet input[type="search"]');
+                if (inp) inp.focus();
+            }, 60);
+        }
+    },
     render: o => [
         [
             'search',
-            searchBox('guide', 'Chercher un produit ou un sujet', { input: 'guideSearch', value: o.q || '' }),
+            searchBox('guide', 'Chercher un produit, un atelier, un animal ou un sujet', { input: 'guideSearch', value: o.q || '' }),
         ],
         ['res', `<div id="guide-res">${guideBody(o)}</div>`],
     ],
@@ -381,6 +421,25 @@ export function setupInfo() {
             closeSheet('guide');
             closeSheet('menu');
             go(d.path);
+        },
+        guideMach: (el, d) => {
+            const idx = state.machines.findIndex(x => x.type === d.id);
+            closeAll();
+            if (idx >= 0) {
+                go('machines/workshop');
+                openSheet('machine', { i: idx });
+            } else {
+                go('market/shop#machines');
+            }
+        },
+        guideAnim: (el, d) => {
+            const a = ANIMALS[d.id];
+            closeAll();
+            if (!a) return;
+            if (a.oasis) return go('farm/island#oasis');
+            if (a.nord) return go('farm/island#nord');
+            const has = state.animals.some(x => x.type === a.id);
+            go(has ? 'farm/animals' : 'market/shop#animals');
         },
         sharePhoto: () => {
             const ph = (state.album || [])[+sheetOpts('photo').k];
