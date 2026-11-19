@@ -214,7 +214,8 @@ const tpl = fs.readFileSync(tplPath, 'utf8');
 const html = tpl.replace('__VERSION__', () => version).replace('__DATA_GZ__', () => gzB64);
 
 const outIdx = process.argv.indexOf('--out');
-const targets = outIdx > 0 ? [path.resolve(process.argv[outIdx + 1])] : [path.join(root, 'dist/codex.html')];
+const publish = process.argv.includes('--publish');
+const targets = outIdx > 0 ? [path.resolve(process.argv[outIdx + 1])] : [path.join(root, publish ? 'tools/codex.html' : 'dist/codex.html')];
 
 for (const outPath of targets) {
     fs.mkdirSync(path.dirname(outPath), { recursive: true });
