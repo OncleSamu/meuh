@@ -94,7 +94,7 @@ function detail(i) {
         <div class="card-head"><div class="avatar sm">${art('villager', q.vid)}</div><div class="card-main"><div class="card-title">${v.name}</div><div class="card-sub">${v.role}</div></div></div>
         <div class="olines">${q.items.map(x => itemLine(x)).join('')}</div>
         <div class="od-foot">${rewardHtml(q.gold, q.xp, q.mat ? [q.mat] : [])}</div>
-        <div class="row-btns">${btn(q.pinned ? 'Détacher' : 'Épingler', { act: 'pin', data: { i }, size: 'sm', icon: ['ui', 'pin'], cls: q.pinned ? 'on' : '' })}${btn('Jeter', { act: 'trash', data: { i }, size: 'sm', icon: ['ui', 'shovel'] })}${btn('Livrer', { act: 'deliver', data: { i }, kind: ok ? 'green' : '', disabled: !ok, anchor: 'deliver' })}</div>
+        <div class="row-btns">${btn(q.pinned ? 'Détacher' : 'Épingler', { act: 'pin', data: { i }, size: 'sm', icon: ['ui', 'pin'], cls: q.pinned ? 'on' : '' })}${!ok && G.canPlanOrder('quest', i) ? btn('Planifier', { act: 'planOrder', data: { kind: 'quest', ref: i }, size: 'sm', kind: 'gold', icon: ['ui', 'loop'] }) : ''}${btn('Jeter', { act: 'trash', data: { i }, size: 'sm', icon: ['ui', 'shovel'] })}${btn('Livrer', { act: 'deliver', data: { i }, kind: ok ? 'green' : '', disabled: !ok, anchor: 'deliver' })}</div>
     </div>`;
 }
 
@@ -164,7 +164,7 @@ function train() {
     return `<div class="card truck-card here">
         <div class="card-head"><div class="card-main"><div class="card-title">Train de marchandises</div></div><span class="timer-pill">${ico(['ui', 'clock'])}${timer(t.expiresAt)}</span></div>
         <div class="rails"><div class="train-row">${wagons}<div class="loco">${SPR.loco()}</div></div></div>
-        <div class="truck-reward"><span>Train complet : bonus</span>${rewardHtml(t.gold, t.xp)}${ico(['ui', 'barn'])}</div>
+        <div class="truck-reward"><span>Train complet : bonus</span>${rewardHtml(t.gold, t.xp)}${ico(['ui', 'barn'])}${G.canPlanOrder('train') ? btn('Planifier', { act: 'planOrder', data: { kind: 'train' }, size: 'sm', kind: 'gold', icon: ['ui', 'loop'] }) : ''}</div>
     </div>`;
 }
 
@@ -360,7 +360,7 @@ function delivery(kind) {
         <div class="card-main">
             <div class="card-head"><div class="card-title">${name}</div><span class="timer-pill">${ico(['ui', 'clock'])}${timer(b.expiresAt)}</span></div>
             <div class="olines">${b.items.map(x => itemLine(x)).join('')}</div>
-            <div class="od-foot">${rewardHtml(b.gold, b.xp, b.mats)}${btn(isBoat ? 'Charger' : 'Livrer', { act: isBoat ? 'sendBoat' : 'sendBalloon', kind: ok ? 'green' : '', disabled: !ok })}</div>
+            <div class="od-foot">${rewardHtml(b.gold, b.xp, b.mats)}${!ok && G.canPlanOrder(kind) ? btn('Planifier', { act: 'planOrder', data: { kind }, size: 'sm', kind: 'gold', icon: ['ui', 'loop'] }) : ''}${btn(isBoat ? 'Charger' : 'Livrer', { act: isBoat ? 'sendBoat' : 'sendBalloon', kind: ok ? 'green' : '', disabled: !ok })}</div>
         </div></div>`;
 }
 

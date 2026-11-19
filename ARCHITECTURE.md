@@ -26,12 +26,16 @@ src/
 └── styles/      # Feuilles CSS numérotées (assemblées dans l’ordre par tools/css.mjs)
 
 tools/
-├── build.mjs            # Assemble dist/index.html et dist/Meuh <version>.html (fichier autonome)
-├── codex.mjs            # Génère dist/codex.html (encyclopédie interactive : sprites, produits, génétique, brasserie)
+├── build.mjs            # Assemble dist/index.html (ou --publish à la racine) et sw.js
+├── codex.mjs            # Génère dist/codex.html (ou --publish vers tools/codex.html : encyclopédie autonome)
 ├── dev/check-all.mjs    # Garde-fou complet (levels.js, sync inline, recettes, saveurs, sprites SVG)
+├── dev/check-econ.mjs   # Audit de rentabilité économique (pièces/min, marges, XP/min, goulots, anomalies)
 ├── dev/check-levels.mjs # Vérifie les invariants de src/data/levels.js et affiche la feuille de route 1..80
 ├── dev/audit.mjs        # Simule 72 h sur une ferme niv. 80 pour détecter NaN/infinis/négatifs
 └── test/                # 100+ suites de tests Node (npm test)
+
+.github/workflows/
+└── ci.yml               # Intégration continue : check, econ --strict, lint, test, build et codex
 ```
 
 ## Comment fonctionnent les niveaux (1 à 80)
@@ -47,6 +51,12 @@ Auparavant, les niveaux étaient réécrits au chargement par cinq passes succes
    npm run check
    ```
 
+## Plan de production (`src/systems/plan.js` + `src/ui/sheets/plan.js`)
+
+- **Commandes en 1 clic** : bouton *Planifier* sur le train, la montgolfière, le bateau de livraison, les chantiers du village et les commandes de villageois (déduit le stock existant et signale les produits bruts manquants).
+- **Bières maison & hydromels** : planification de plusieurs brassins en chaîne (malterie + ingrédients d’atelier + enchaînement automatique des cuves de l’abbaye).
+- **Multi-plats / multi-bières** : débloqué progressivement au Domaine via le **Tableau d’intendance** (`PLAN_UPGRADE` dans `src/data/domaine.js` : 2, 3, 5 puis 8 produits simultanés dans un même plan à chaîne commune).
+
 ## Où ajouter un nouveau contenu ?
 
 | Ce que tu ajoutes | Fichiers à toucher |
@@ -60,10 +70,13 @@ Auparavant, les niveaux étaient réécrits au chargement par cinq passes succes
 
 ```bash
 npm run check                             # Garde-fou global en 1 s (niveaux, sync inline, recettes, saveurs, sprites)
+npm run econ                              # Audit de rentabilité économique (--json, --top N, --machine id, --strict)
+npm run lint                              # Vérification ESLint (src et tools)
 npm test                                  # Lancer toute la suite de tests (700+ tests)
-npm run build                             # Générer dist/Meuh <version>.html
-npm run codex                             # Générer dist/codex.html (explorateur visuel autonome)
+npm run build                             # Générer dist/Meuh <version>.html (--publish pour la racine GitHub Pages)
+npm run codex                             # Générer dist/codex.html (--publish pour tools/codex.html)
 node tools/dev/check-levels.mjs --roadmap # Voir tout ce qui se débloque du niveau 1 au 80
 node tools/dev/check-levels.mjs --level 40
 node tools/dev/audit.mjs                  # Audit de simulation sur 72 h
 ```
+

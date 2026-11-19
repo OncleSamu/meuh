@@ -67,7 +67,7 @@ import { festTick } from './brewfest.js';
 import { catTick } from './seedcat.js';
 import { familyTick } from './family.js';
 import { herdbookTick } from './herdbook.js';
-import { planTick } from './plan.js';
+import { planTick, planInfo } from './plan.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -493,9 +493,11 @@ export function offlineProgress() {
     add(pasture.products, ['item', 'egg'], `${pasture.products} produit${s(pasture.products)} à ramasser au pâturage`);
     add(artisan, ['machine', 'bakery'], `${artisan} produit${s(artisan)} terminé${s(artisan)} à l’atelier`);
     if (planBefore) {
-        const pn = ITEMS[planBefore.id].name.toLowerCase();
-        add(!state.plan, ['item', planBefore.id], `Plan terminé : les ${planBefore.n} ${pn} sont lancés`);
-        add(!!state.plan, ['item', planBefore.id], `Le plan « ${planBefore.n} ${pn} » a continué sans vous`);
+        const pi = planInfo(planBefore);
+        if (pi) {
+            add(!state.plan, pi.icon, `Plan terminé : ${pi.title}`);
+            add(!!state.plan, pi.icon, `Le plan « ${pi.title} » a continué sans vous`);
+        }
     }
     add(brews, ['ui', 'beer'], `${brews} tournée${s(brews)} de bière mise${s(brews)} en bouteille`);
     add(salon, ['machine', 'counter'], `${salon} client${s(salon)} vous attend${salon > 1 ? 'ent' : ''} au comptoir`);

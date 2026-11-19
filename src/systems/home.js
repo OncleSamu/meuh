@@ -6,8 +6,8 @@ import { MACHINE_SLOTS } from '../data/machines.js';
 import { VILLAGERS } from '../data/village.js';
 import { FETE_END } from '../data/world.js';
 import { HOUSE, FARMHAND } from '../data/progress.js';
-import { DOMAINE, DOMAINE_IDS, DOMAINE_COINS, DOMAINE_MATS, WORKS, WORK_IDS, WORKS_COINS, WORKS_MATS } from '../data/domaine.js';
-import { domaineOpen, domLvl, domMax, domStepSum, worksOpen, workLvl, workMax } from './estate.js';
+import { DOMAINE, DOMAINE_IDS, DOMAINE_COINS, DOMAINE_MATS, PLAN_UPGRADE, WORKS, WORK_IDS, WORKS_COINS, WORKS_MATS } from '../data/domaine.js';
+import { domaineOpen, domLvl, domMax, domStepSum, planUpLvl, planUpMax, worksOpen, workLvl, workMax } from './estate.js';
 import { spend, addXp, speedMult } from './player.js';
 import { chapterOpen, projectDone } from './story.js';
 import { addPhoto } from './style.js';
@@ -206,7 +206,13 @@ export function upgradeHand(at) {
 export const domCost = (b, n = domLvl(b) + 1) =>
     n > domMax() ? null : { coins: DOMAINE_COINS[n - 1], [DOMAINE[b].mats[0]]: DOMAINE_MATS[n - 1][0], [DOMAINE[b].mats[1]]: DOMAINE_MATS[n - 1][1] };
 export const domCan = b => domaineOpen() && domLvl(b) < domMax() && hasCost(domCost(b));
-export const domReady = () => DOMAINE_IDS.filter(domCan).length + WORK_IDS.filter(gworkCan).length;
+// Tableau d'intendance : plans multi-plats et bières maison
+export const planUpCost = (n = planUpLvl() + 1) =>
+    n > planUpMax()
+        ? null
+        : { coins: PLAN_UPGRADE.coins[n - 1], [PLAN_UPGRADE.mats[0]]: PLAN_UPGRADE.matQty[n - 1][0], [PLAN_UPGRADE.mats[1]]: PLAN_UPGRADE.matQty[n - 1][1] };
+export const planUpCan = () => domaineOpen() && planUpLvl() < planUpMax() && hasCost(planUpCost());
+export const domReady = () => DOMAINE_IDS.filter(domCan).length + WORK_IDS.filter(gworkCan).length + (planUpCan() ? 1 : 0);
 export const domTotal = () => DOMAINE_IDS.reduce((a, b) => a + domLvl(b), 0);
 // 1.107 : les dépendances du domaine
 export const workCost = (w, n = workLvl(w) + 1) =>
@@ -216,7 +222,20 @@ export const worksTotal = () => WORK_IDS.reduce((a, w) => a + workLvl(w), 0);
 // tout ce que le domaine a coûté en pièces (pour l'afficher)
 export const domSpent = () =>
     DOMAINE_IDS.reduce((a, b) => a + DOMAINE_COINS.slice(0, domLvl(b)).reduce((x, y) => x + y, 0), 0) +
+    PLAN_UPGRADE.coins.slice(0, planUpLvl()).reduce((x, y) => x + y, 0) +
     WORK_IDS.reduce((a, w) => a + WORKS_COINS.slice(0, workLvl(w)).reduce((x, y) => x + y, 0), 0);
+export function buyPlanUp(at) {
+    if (!planUpCan()) return false;
+    payCost(planUpCost());
+    state.domaine = state.domaine || {};
+    state.domaine.planUp = planUpLvl() + 1;
+    sfx('level');
+    buzz(30);
+    burst(at, 'sparkle', 18);
+    emit('confetti');
+    toast(`${PLAN_UPGRADE.name} : ${PLAN_UPGRADE.steps[planUpLvl() - 1].toLowerCase()}`, PLAN_UPGRADE.icon);
+    return true;
+}
 export function buyWork(w, at) {
     if (!WORKS[w] || !gworkCan(w)) return false;
     payCost(workCost(w));

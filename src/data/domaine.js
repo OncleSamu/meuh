@@ -163,6 +163,28 @@ export const DOMAINE = {
 };
 export const DOMAINE_IDS = Object.keys(DOMAINE);
 
+// Tableau d'intendance : débloque les plans de production à plusieurs plats et bières maison
+export const PLAN_UPGRADE = {
+    name: 'Tableau d’intendance',
+    icon: ['ui', 'loop'],
+    mats: ['plank', 'tools'],
+    desc: 'Enchaîner plusieurs plats et bières maison dans un même plan de production',
+    coins: [75000, 250000, 800000, 2500000],
+    matQty: [
+        [4, 2],
+        [8, 4],
+        [14, 8],
+        [22, 12],
+    ],
+    caps: [2, 3, 5, 8],
+    steps: [
+        'Jusqu’à 2 plats ou bières par plan',
+        'Jusqu’à 3 plats ou bières par plan',
+        'Jusqu’à 5 plats ou bières par plan',
+        'Jusqu’à 8 plats ou bières par plan',
+    ],
+};
+
 // ---------------- 1.107 : les dépendances du domaine ----------------
 // Six bâtiments d'apparat, trois niveaux chacun, à des dizaines de millions de pièces : la vraie dépense de la fin de partie.
 // Chacun a un effet utile ; fx : la valeur cumulée au niveau 1, 2 et 3 (lue par workFx dans systems/estate.js).

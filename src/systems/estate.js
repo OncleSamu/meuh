@@ -1,10 +1,13 @@
 // 1.20 : l'état du domaine, en lecture seule. Ce fichier n'importe presque rien : tous les systèmes peuvent le lire sans cycle.
 import { state } from '../core/state.js';
-import { DOMAINE, DOMAINE_LVL, DOMAINE_COINS, WORKS, WORKS_LVL } from '../data/domaine.js';
+import { DOMAINE, DOMAINE_LVL, DOMAINE_COINS, PLAN_UPGRADE, WORKS, WORKS_LVL } from '../data/domaine.js';
 
 export const domaineOpen = () => state.level >= DOMAINE_LVL;
 export const domMax = () => DOMAINE_COINS.length;
 export const domLvl = b => (state.domaine && state.domaine[b]) || 0;
+export const planUpMax = () => PLAN_UPGRADE.coins.length;
+export const planUpLvl = () => (domaineOpen() && state.domaine && state.domaine.planUp) || 0;
+export const planCap = () => (planUpLvl() ? PLAN_UPGRADE.caps[planUpLvl() - 1] : 1);
 
 // somme des effets des paliers atteints d'une branche ; key : champ de l'effet s'il est un objet
 export function domStepSum(b, key) {
@@ -25,3 +28,4 @@ export const worksOpen = () => state.level >= WORKS_LVL;
 export const workMax = () => 3;
 export const workLvl = w => (worksOpen() && state.works && state.works[w]) || 0;
 export const workFx = w => (workLvl(w) ? WORKS[w].fx[workLvl(w) - 1] : 0);
+

@@ -24,7 +24,7 @@ import { defineView, ui } from '../app.js';
 import { itemLine, rewardHtml } from './common.js';
 import { askBuy } from '../sheets/askbuy.js';
 import { defineSheet, openSheet } from '../sheets.js';
-import { DOMAINE, DOMAINE_IDS, DOMAINE_LVL, WORKS, WORK_IDS, WORKS_LVL } from '../../data/domaine.js';
+import { DOMAINE, DOMAINE_IDS, DOMAINE_LVL, PLAN_UPGRADE, WORKS, WORK_IDS, WORKS_LVL } from '../../data/domaine.js';
 import { costRow, segmented, hint } from '../kit.js';
 import { domaineScene, domThumb, worksScene, workThumb } from '../../art/village/domaine.js';
 import { villagersCard } from './villagers.js';
@@ -150,7 +150,13 @@ function projectDetail(pid) {
         .join('');
     return `<div class="proj open"><div class="card-head">${who}<div class="card-main"><div class="card-title">${p.name}</div><div class="card-sub">${v.name} : « ${p.before} »</div></div></div>
         <div class="plines">${lines}</div><div class="card-sub reward-line">${ico(['ui', 'star'])} ${p.reward}</div>
-        ${G.projectComplete(pid) ? btn('Rénover !', { act: 'finishProject', data: { p: pid }, kind: 'gold', wide: true, size: 'lg', icon: ['ui', 'village'] }) : btn('Tout apporter', { act: 'giveAllProject', data: { p: pid }, wide: true })}</div>`;
+        ${
+            G.projectComplete(pid)
+                ? btn('Rénover !', { act: 'finishProject', data: { p: pid }, kind: 'gold', wide: true, size: 'lg', icon: ['ui', 'village'] })
+                : G.canPlanOrder('project', pid)
+                  ? `<div class="row-btns">${btn('Tout apporter', { act: 'giveAllProject', data: { p: pid }, size: 'sm' })}${btn('Planifier', { act: 'planOrder', data: { kind: 'project', ref: pid }, kind: 'gold', size: 'sm', icon: ['ui', 'loop'] })}</div>`
+                  : btn('Tout apporter', { act: 'giveAllProject', data: { p: pid }, wide: true })
+        }</div>`;
 }
 
 // ---------------- fête du calendrier ----------------
@@ -453,12 +459,26 @@ function workHtml(w) {
                 : '<div class="card-sub">Tout est construit.</div>'
         }</div>`;
 }
+function planUpHtml() {
+    const l = G.planUpLvl(),
+        max = G.planUpMax();
+    const pips = Array.from({ length: max }, (_, k) => `<i class="${k < l ? 'on' : ''}"></i>`).join('');
+    const next = l < max ? G.planUpCost() : null;
+    return `<div class="card branch-card"><div class="card-head">${ico(PLAN_UPGRADE.icon, 'ico big')}<div class="card-main"><div class="card-title">${PLAN_UPGRADE.name} · ${l} / ${max}</div>
+        <div class="card-sub">${PLAN_UPGRADE.desc}</div><span class="pips">${pips}</span></div></div>
+        ${l ? `<div class="card-sub">Aujourd’hui : jusqu’à ${G.planCap()} plats ou bières par plan</div>` : ''}
+        ${
+            next
+                ? `<div class="od-foot"><div class="card-main"><small>Palier ${l + 1} : ${PLAN_UPGRADE.steps[l]}</small>${costRow(G.costParts(next))}${missing(next)}</div>${btn('Construire', { act: 'buyPlanUp', kind: G.planUpCan() ? 'green' : '', size: 'sm', disabled: !G.planUpCan() })}</div>`
+                : '<div class="card-sub">Tout est construit.</div>'
+        }</div>`;
+}
 defineSheet('domaine', {
     cls: 'domaine-sheet',
     title: () => 'Le domaine',
     render: () => {
         const tab = ui.sel.domTab === 'works' ? 'works' : 'dom';
-        const nb = DOMAINE_IDS.filter(G.domCan).length,
+        const nb = DOMAINE_IDS.filter(G.domCan).length + (G.planUpCan() ? 1 : 0),
             nw = WORK_IDS.filter(G.gworkCan).length;
         const tabs = [
             ['dom', 'Améliorations', null, nb],
@@ -471,7 +491,7 @@ defineSheet('domaine', {
                 ? `${worksScene(state.works)}${hint('Six dépendances, trois niveaux chacune. Elles coûtent des dizaines de millions, et chacune rend un vrai service au domaine.')}${WORK_IDS.map(workHtml).join('')}`
                 : `<p class="empty">Les dépendances s’ouvrent au niveau ${WORKS_LVL}.</p>`;
         else
-            body = `${domaineScene(state.domaine)}${hint('Chaque palier ajoute du confort pour toujours : de la place, des files plus longues, des visiteurs qui restent. Les paliers 6 à 8 sont les grands chantiers de la fin de partie.')}${DOMAINE_IDS.map(branchHtml).join('')}`;
+            body = `${domaineScene(state.domaine)}${hint('Chaque palier ajoute du confort pour toujours : de la place, des files plus longues, des visiteurs qui restent. Les paliers 6 à 8 sont les grands chantiers de la fin de partie.')}${planUpHtml()}${DOMAINE_IDS.map(branchHtml).join('')}`;
         return `${segmented(tabs, tab, 'domTab')}${spent ? `<p class="card-sub center">${fmt(spent)} pièces investies dans le domaine</p>` : ''}${body}`;
     },
 });
@@ -523,6 +543,22 @@ export function setupVillage() {
                     cost: G.workCost(w).coins,
                     mats: Object.fromEntries(Object.entries(G.workCost(w)).filter(([k]) => k !== 'coins')),
                     run: at => G.buyWork(w, at),
+                },
+                el,
+            );
+        },
+        buyPlanUp: el => {
+            const n = G.planUpLvl() + 1;
+            const c = G.planUpCost();
+            if (!c) return;
+            askBuy(
+                {
+                    title: PLAN_UPGRADE.name,
+                    icon: PLAN_UPGRADE.icon,
+                    text: `Palier ${n} : ${PLAN_UPGRADE.steps[n - 1].toLowerCase()}.`,
+                    cost: c.coins,
+                    mats: Object.fromEntries(Object.entries(c).filter(([k]) => k !== 'coins')),
+                    run: at => G.buyPlanUp(at),
                 },
                 el,
             );

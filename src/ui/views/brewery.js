@@ -223,7 +223,7 @@ function carnetHtml() {
         .slice(0, 8)
         .map(b => {
             const ok = G.canRebrew(b.id);
-            return `<div class="cut-row"><span class="carnet-name">${stars(b.stars)} <b>${b.name}</b> ${ingIcons(b.ings)}</span>${btn(ok ? 'Brasser' : 'Il manque…', { act: 'rebrew', data: { id: b.id }, kind: ok ? 'green' : '', size: 'sm', icon: ['ui', 'loop'] })}</div>`;
+            return `<div class="cut-row"><span class="carnet-name">${stars(b.stars)} <b>${b.name}</b> ${ingIcons(b.ings)}</span><span class="cut-btns">${btn(ok ? 'Brasser' : 'Il manque…', { act: 'rebrew', data: { id: b.id }, kind: ok ? 'green' : '', size: 'sm', icon: ['ui', 'loop'] })}${btn('Planifier', { act: 'planBeer', data: { id: b.id }, kind: 'gold', size: 'sm', title: 'Planifier plusieurs brassins' })}</span></div>`;
         })
         .join('')}</div>`;
 }
@@ -281,6 +281,7 @@ function beersHtml() {
                         : '');
                 const again =
                     (b.aged ? '' : btn('Rebrasser', { act: 'rebrew', data: { id: b.id }, kind: 'green', size: 'sm', icon: ['ui', 'loop'] })) +
+                    (b.aged ? '' : btn('Planifier', { act: 'planBeer', data: { id: b.id }, kind: 'gold', size: 'sm', title: 'Planifier plusieurs brassins' })) +
                     (b.aged ? '' : `<button class="fav-star${G.isFav(b.id) ? ' on' : ''}" data-act="favBeer" data-id="${b.id}" aria-label="${G.isFav(b.id) ? 'Retirer du carnet' : 'Garder dans le carnet'}">${G.isFav(b.id) ? '★' : '☆'}</button>`);
                 return `<div class="card brew-beer${n ? '' : ' none'}"><div class="card-art">${beerSvg(b)}</div><div class="card-main"><div class="card-title">${b.name} ${renameBtn('beer', b.id, b.mead ? 'Renommer l’hydromel' : 'Renommer la bière')}</div><div class="card-sub">${sub}</div>${again ? `<div class="bb-again">${again}</div>` : ''}</div><div class="card-side">${side}</div></div>`;
             })
