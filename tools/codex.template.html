@@ -1773,7 +1773,7 @@ function renderPerfumery() {
         </div>
 
         <div class="card rounded-xl p-4 space-y-2">
-          <div class="flex items-center justify-between"><h3 class="font-bold text-sm">Les 6 Grands Classiques (+2★)</h3><button id="pf-rand3" class="btn-pri text-xs px-2.5 py-1 rounded-lg cursor-pointer">🎲 Accord 3★</button></div>
+          <div class="flex items-center justify-between"><h3 class="font-bold text-sm">Les ${PF.classics.length} Grands Classiques (+2★)</h3><button id="pf-rand3" class="btn-pri text-xs px-2.5 py-1 rounded-lg cursor-pointer">🎲 Accord 3★</button></div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${PF.classics.map(cl => `
             <button data-pf-cls="${cl.id}" class="text-left surf hover:border-amber-500 border rounded-lg p-2.5 cursor-pointer">
               <div class="font-semibold text-xs">★ ${esc(cl.name)}</div>
@@ -1803,7 +1803,7 @@ function renderPerfumery() {
 
         <div class="card rounded-xl p-4 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <h3 class="font-bold text-sm">L’Orgue · ${S.pfTier === 'head' ? 'Notes de tête (14)' : S.pfTier === 'heart' ? 'Notes de cœur (13)' : 'Notes de fond (14)'}</h3>
+            <h3 class="font-bold text-sm">L’Orgue · ${S.pfTier === 'head' ? `Notes de tête (${PF.head.length})` : S.pfTier === 'heart' ? `Notes de cœur (${PF.heart.length})` : `Notes de fond (${PF.base.length})`}</h3>
             <input id="pf-q" type="search" value="${esc(S.pfQ)}" placeholder="Filtrer une essence…" class="surf border rounded-lg px-2.5 py-1 text-xs w-44">
           </div>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">${filtered.map(id => {

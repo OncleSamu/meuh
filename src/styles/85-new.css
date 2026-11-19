@@ -3104,6 +3104,24 @@ button.goods-art {
         top: 0;
         right: 2px;
     }
+    /* 1.144 : 6 volets ou plus (Atelier : Production, Comptoir, Cave, Parfums, Brasserie, Labo, Maison) :
+       sur deux rangées équilibrées (4 + 3) pour rester lisibles et confortables sur petit téléphone */
+    .subnav-row.strip.stack > .seg.n6,
+    .subnav-row.strip.stack > .seg.n7,
+    .subnav-row.strip.stack > .seg.n8 {
+        flex-wrap: wrap;
+        gap: 3px;
+        padding: 4px;
+    }
+    .subnav-row.strip.stack > .seg.n6 > button,
+    .subnav-row.strip.stack > .seg.n7 > button,
+    .subnav-row.strip.stack > .seg.n8 > button {
+        flex: 1 1 calc(25% - 4px);
+        min-height: 44px;
+        padding: 5px 4px 4px;
+        font-size: 0.73rem;
+        letter-spacing: 0;
+    }
 }
 @media (max-width: 360px) {
     .subnav-row.strip.stack .seg > button,
@@ -3117,5 +3135,19 @@ button.goods-art {
         gap: 0;
         padding-left: 2px;
         padding-right: 2px;
+    }
+    .subnav-row.strip.stack > .seg.n6,
+    .subnav-row.strip.stack > .seg.n7,
+    .subnav-row.strip.stack > .seg.n8 {
+        gap: 3px;
+        padding: 3px;
+    }
+    .subnav-row.strip.stack > .seg.n6 > button,
+    .subnav-row.strip.stack > .seg.n7 > button,
+    .subnav-row.strip.stack > .seg.n8 > button {
+        flex: 1 1 calc(25% - 4px);
+        padding: 4px 2px 3px;
+        font-size: 0.68rem;
+        letter-spacing: -0.01em;
     }
 }

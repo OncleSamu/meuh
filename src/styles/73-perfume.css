@@ -198,3 +198,53 @@
     color: #7a4c00;
     border: 1px solid var(--gold-d, #c9952a);
 }
+/* 1.144 : lisibilité Méthode d'extraction & Concentration (empilés titre + sous-titre, lisible même sur petit téléphone) */
+.pf-compose .seg > button {
+    flex-direction: column;
+    gap: 2px;
+    min-height: 50px;
+    padding: 7px 6px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.15;
+}
+.pf-compose .seg > button span {
+    display: block;
+    font-size: 0.84rem;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+}
+.pf-compose .seg > button small {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    opacity: 0.85;
+    white-space: normal;
+}
+@media (max-width: 420px) {
+    .pf-compose .seg {
+        gap: 3px;
+        padding: 3px;
+    }
+    .pf-compose .seg > button {
+        min-height: 48px;
+        padding: 6px 4px;
+    }
+    .pf-compose .seg > button span {
+        font-size: 0.76rem;
+    }
+    .pf-compose .seg > button small {
+        font-size: 0.66rem;
+    }
+    .pf-t-head {
+        width: 92%;
+    }
+    .pf-t-heart {
+        width: 96%;
+    }
+    .pf-tier {
+        padding: 7px 9px;
+        gap: 6px;
+    }
+}

@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.144",
+  "title": "Un Orgue plus riche & confort petit écran",
+  "date": "19 novembre 2026",
+  "items": [
+   "L’Atelier du Parfumeur passe de 41 à 69 essences (23 par étage) : cédrat, bigarade, génépi, coriandre, rhubarbe, concombre, aloe vera, ananas, argousier en tête ; eau de fleur d’oranger, thé, poivre noir, cassis, mûres, litchi, fruit de la passion, abricot, sureau, airelles en cœur ; patchouli, chêne massif, bois fruitier, pignons de cembro, noix de coco, datte, caroubes, noisette et cognac en fond",
+   "2 nouveaux Grands Classiques (8 au total, 84 découvertes dans l’Orgue) : Cologne Royale (bigarade/cédrat + fleur d’oranger + bois noble) et Chypre Impérial (agrume vif + cassis/thé + patchouli)",
+   "Confort sur petit téléphone : les boutons Méthode d’extraction et Concentration affichent titre et sous-titre sur deux lignes lisibles ; les 7 volets de l’Atelier (Production, Comptoir, Cave, Parfums, Brasserie, Labo, Maison) passent sur deux rangées équilibrées au lieu d’être tassés ; les sous-onglets internes et les malts de la brasserie respirent mieux sur écran étroit"
+  ]
+ },
+ {
   "v": "1.143",
   "title": "L’Art du Parfumeur",
   "date": "19 novembre 2026",

@@ -1215,9 +1215,9 @@ export const GUIDE_PAGES = [
             {
                 h: 'La pyramide olfactive',
                 b: [
-                    'Chaque parfum associe trois étages : une note de tête (l’envolée fraîche : agrumes, menthe, conifères…), une note de cœur (l’âme : lavande, tiaré, orchidée, hibiscus, épices, fruits…) et une note de fond (le sillage : résine, bois dur, vanille, cacao, miel…).',
+                    'Chaque parfum associe trois étages parmi 69 essences (23 par étage) : une note de tête (l’envolée fraîche : agrumes, bigarade, cédrat, menthe, génépi, coriandre, rhubarbe, conifères…), une note de cœur (l’âme : lavande, fleur d’oranger, tiaré, orchidée, hibiscus, thé, cassis, litchi, poivre noir, épices…) et une note de fond (le sillage : résine, patchouli, bois précieux, chêne, vanille, cacao, coco, datte, miel, cognac…).',
                     'Les variétés fixées du laboratoire et les miels de fleurs renforcent leur facette dominante et transmettent leur qualité au flacon.',
-                    'Six grands classiques (Eau de Provence, Alizés des Îles, Nuit de l’Oasis, Brume Boréale, Velours Noir, Or d’Abeille) valent deux étoiles de plus et une étiquette dorée.',
+                    'Huit grands classiques (Eau de Provence, Alizés des Îles, Nuit de l’Oasis, Brume Boréale, Velours Noir, Or d’Abeille, Cologne Royale et Chypre Impérial) valent deux étoiles de plus et une étiquette dorée.',
                 ],
             },
             {
@@ -1242,7 +1242,7 @@ export const GUIDE_PAGES = [
                     'Choisissez la silhouette du flacon (5 formes), le bouchon (4 matières) et le nom : la couleur du jus se mélange automatiquement. Vos plus beaux flacons se rangent aussi au Coffre-fort et ont leur page « Parfums » dans le Livre de la ferme.',
                     'Parfum signature : désignez un parfum de 2★ ou 3★ comme signature de la ferme pour gagner +10 % ou +15 % sur toutes les ventes du Salon et +1 point d’amitié quand vous l’offrez.',
                     'Au Salon, des clients décrivent un portrait olfactif et paient +75 % (plus la qualité et la signature) avec amitié et renom. Vous pouvez aussi offrir directement vos flacons en cadeau du jour aux villageois.',
-                    'L’Orgue du Parfumeur recense vos 41 essences, 7 familles olfactives et 6 grands classiques : une récompense tombe toutes les 6 découvertes, et 1 ruban une fois l’Orgue complet. Vos créations, votre Orgue et votre signature survivent au prestige.',
+                    'L’Orgue du Parfumeur recense vos 69 essences, 7 familles olfactives et 8 grands classiques : une récompense tombe toutes les 6 découvertes, et 1 ruban une fois l’Orgue complet. Vos créations, votre Orgue et votre signature survivent au prestige.',
                 ],
             },
         ],

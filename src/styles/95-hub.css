@@ -112,6 +112,26 @@
 .inner-tabs.strip .seg > button span {
     overflow: visible;
 }
+/* 1.144 : sous-onglets internes (Cave, Brasserie, Parfums, Maison, Labo, Village) plus respirants sur petit téléphone */
+@media (max-width: 420px) {
+    .inner-tabs:not(.strip) .seg {
+        gap: 3px;
+        padding: 3px;
+    }
+    .inner-tabs:not(.strip) .seg > button {
+        font-size: 0.74rem;
+        padding: 6px 4px;
+        min-height: 36px;
+    }
+    .inner-tabs:not(.strip) .seg.n5,
+    .inner-tabs:not(.strip) .seg.n6 {
+        flex-wrap: wrap;
+    }
+    .inner-tabs:not(.strip) .seg.n5 > button,
+    .inner-tabs:not(.strip) .seg.n6 > button {
+        flex: 1 1 calc(33.3% - 4px);
+    }
+}
 
 /* 1.73 : une graine du marché sur une ligne */
 .srow {
