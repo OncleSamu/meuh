@@ -2773,7 +2773,9 @@ button.fm-gk.bday .gk-b {
 .cut-btns {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
     flex-shrink: 0;
 }
 

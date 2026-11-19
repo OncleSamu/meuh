@@ -411,6 +411,10 @@
     align-items: flex-end;
 }
 .bb-again {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
     margin-top: 6px;
 }
 
