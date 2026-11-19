@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.145",
+  "title": "Atelier plus clair",
+  "date": "19 novembre 2026",
+  "items": [
+   "Atelier › Production : la vignette « Comptoir » (qui ne servait qu’à renvoyer vers l’onglet Comptoir) est retirée de la grille des machines et de son compteur « À l’arrêt » ; le comptoir reste directement accessible via son onglet dédié Atelier › Comptoir"
+  ]
+ },
+ {
   "v": "1.144",
   "title": "Un Orgue plus riche & confort petit écran",
   "date": "19 novembre 2026",

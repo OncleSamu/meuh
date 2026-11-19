@@ -29,7 +29,7 @@ function tile(m, i) {
         ? `<div class="m-now">${ico(['item', cur])}<span>${ITEMS[cur].name}</span></div>${bar(G.machinePct(m), 'm-bar', `mac:${i}`)}<div class="m-time">${timer(now() + G.machineLeft(m) * 1000)}${m.queue.length > 1 ? ` · +${m.queue.length - 1} en file` : ''}</div>`
         : `<div class="m-idle">${m.loop ? 'En boucle : ingrédients manquants' : 'À l’arrêt'}</div>`;
     return `<div class="mtile${G.machineBusy(m) ? ' working' : ''}${ready.length ? ' has-out' : ''}" data-anchor="machine:${i}">
-        <button class="mtile-main" ${m.type === 'counter' ? 'data-act="go" data-path="machines/counter"' : `data-act="open" data-sheet="machine" data-i="${i}"`}>
+        <button class="mtile-main" data-act="open" data-sheet="machine" data-i="${i}">
             <span class="m-art">${art('machine', m.type)}${puffs(m)}</span>
             <span class="m-name">${d.name}${m.loop ? ico(['ui', 'loop'], 'ico m-loop') : ''}</span>
             ${status}
@@ -39,7 +39,9 @@ function tile(m, i) {
 }
 
 // 1.38 : un filtre en haut de l'atelier ; les machines prêtes passent devant, les machines oubliées depuis 7 jours derrière
+// 1.145 : le comptoir a son propre onglet Atelier › Comptoir et ne figure plus dans la grille Production
 const WEEK = 7 * 864e5;
+const isProdMachine = m => m && m.type !== 'counter';
 const mState = m => (G.outCount(m) > 0 ? 'ready' : G.machineBusy(m) ? 'busy' : 'idle');
 const MFILTERS = [
     ['all', 'Toutes'],
@@ -53,18 +55,20 @@ function machineList() {
         t = now();
     return state.machines
         .map((m, i) => [m, i])
-        .filter(([m]) => f === 'all' || mState(m) === f)
+        .filter(([m]) => isProdMachine(m) && (f === 'all' || mState(m) === f))
         .sort(([a, i], [b, j]) => rank[mState(a)] - rank[mState(b)] || (t - (a.used || 0) > WEEK) - (t - (b.used || 0) > WEEK) || i - j);
 }
 function machineFilter() {
-    if (state.machines.length < 9) return '';
+    const prod = state.machines.filter(isProdMachine);
+    if (prod.length < 9) return '';
     const f = ui.sel.mfilter || 'all';
-    const n = k => (k === 'all' ? state.machines.length : state.machines.filter(m => mState(m) === k).length);
+    const n = k => (k === 'all' ? prod.length : prod.filter(m => mState(m) === k).length);
     return `<div class="chips-row mfilter">${MFILTERS.map(([k, label]) => `<button class="pick-chip${f === k ? ' on' : ''}" data-act="mfilter" data-f="${k}">${label} · ${n(k)}</button>`).join('')}</div>`;
 }
 
 function renderWorkshop(el) {
-    const any = state.machines.some(m => G.outCount(m) > 0);
+    const prod = state.machines.filter(isProdMachine);
+    const any = prod.some(m => G.outCount(m) > 0);
     blocks(el, [
         [
             'top',
@@ -75,14 +79,14 @@ function renderWorkshop(el) {
             'plan',
             G.planOf()
                 ? planCard()
-                : state.machines.length >= 4
+                : prod.length >= 4
                   ? `<div class="ws-tools">${btn('Plan de production', { act: 'open', data: { sheet: 'plan' }, size: 'sm', icon: ['ui', 'loop'] })}${btn('Programmes', { act: 'open', data: { sheet: 'presets' }, size: 'sm' })}</div>`
                   : '',
         ],
         ['pin', pinBar()],
         [
             'grid',
-            state.machines.length
+            prod.length
                 ? `${machineFilter()}<div class="mgrid">${machineList()
                       .map(([m, i]) => tile(m, i))
                       .join('')}</div>`
