@@ -149,11 +149,11 @@ export const RECIPES_133 = [
     ['vanillaSpinyLobster', 'Langouste à la vanille', 'stove', { spinyLobster: 1, vanilla: 1, cream: 1 }, 300, 39],
     ['spinyBisque', 'Bisque de langouste', 'cannery', { spinyLobster: 1, cream: 1, tomato: 3 }, 270, 39],
     // le vivaneau
-    ['snapperLime', 'Vivaneau au citron vert', 'islandBakery', { snapper: 1, lime: 2, rice: 1 }, 180, 39],
+    ['snapperLime', 'Vivaneau au citron vert', 'fishmonger', { snapper: 1, lime: 2, rice: 1 }, 180, 39],
     ['creoleSnapper', 'Vivaneau à la créole', 'stove', { snapper: 1, tomato: 3, onion: 1, islandChili: 1 }, 120, 39],
     ['snapperCeviche', 'Ceviche de vivaneau', 'deli', { snapper: 1, lime: 2, mango: 1 }, 220, 39],
     // le mahi-mahi
-    ['mahiPineapple', 'Mahi-mahi à l’ananas', 'islandBakery', { mahi: 1, pineapple: 2, rice: 1 }, 220, 39],
+    ['mahiPineapple', 'Mahi-mahi à l’ananas', 'fishmonger', { mahi: 1, pineapple: 2, rice: 1 }, 220, 39],
     ['mahiPoke', 'Poke de mahi-mahi', 'deli', { mahi: 1, rice: 2, mango: 1, soy: 1 }, 240, 39],
     ['smokedMahi', 'Mahi-mahi fumé', 'smokehouse', { mahi: 2 }, 140, 39],
     ['mahiTacos', 'Tacos de mahi-mahi', 'kitchen', { mahi: 1, flour: 2, avocado: 1, lime: 1 }, 220, 39],

@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.147",
+  "title": "Les poissons retournent à la poissonnerie",
+  "date": "19 novembre 2026",
+  "items": [
+   "Vivaneau au citron vert et Mahi-mahi à l’ananas quittent la Pâtisserie des îles (et la page Pâtisseries et douceurs du Livre) pour rejoindre la Poissonnerie et la page Mer et étang"
+  ]
+ },
+ {
   "v": "1.146",
   "title": "Le parfum dans toute la vallée",
   "date": "19 novembre 2026",
