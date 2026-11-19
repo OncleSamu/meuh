@@ -3,6 +3,8 @@ import { fmt } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { QUALITY } from '../../data/farm.js';
 import { VAULT } from '../../data/commerce.js';
+import { FAMILIES, CONCENTRATIONS } from '../../data/perfume.js';
+import { perfumeSvg } from '../../art/perfume.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { genWrap } from '../genlook.js';
@@ -35,17 +37,29 @@ const slotHtml = (s, i, sel) => {
         const l = s.lot;
         return `<button class="vslot lot${sel === i ? ' sel' : ''}" data-act="vaultSel" data-i="${i}" title="${G.lotName(l)}">${lotIco(l, 'vs-art')}${l.q ? `<i class="vs-q">${qStar(l.q)}</i>` : ''}<b>×${l.n}</b></button>`;
     }
+    if (s.kind === 'perfume') {
+        const pf = s.pf;
+        return `<button class="vslot lot${sel === i ? ' sel' : ''}" data-act="vaultSel" data-i="${i}" title="${esc(pf.name)}"><span class="vs-art">${perfumeSvg(pf)}</span>${pf.q ? `<i class="vs-q">${qStar(pf.q)}</i>` : ''}<b>×1</b></button>`;
+    }
     return `<button class="vslot${sel === i ? ' sel' : ''}${s.v ? ' var' : ''}" data-act="vaultSel" data-i="${i}" title="${esc(G.vaultSlotName(s))}"><span class="vs-art">${slotArt(s)}</span>${s.q ? `<i class="vs-q">${qStar(s.q)}</i>` : ''}<b>×${s.n}</b></button>`;
 };
 
 const detail = (s, i) => {
     if (!s)
-        return '<p class="card-sub center">Touchez un emplacement pour le reprendre. Pour en ranger, touchez un produit dans la grange, ou une bouteille dans la réserve de la cave.</p>';
+        return '<p class="card-sub center">Touchez un emplacement pour le reprendre. Pour en ranger, touchez un produit dans la grange, un lot de cave ou un flacon de parfum.</p>';
     if (s.kind === 'lot') {
         const l = s.lot;
         return `<div class="card vault-item"><div class="card-head">${lotIco(l, 'ico big')}<div class="card-main"><div class="card-title">${G.lotName(l)} ×${l.n}</div>
             <div class="card-sub">${G.rankName(l)}${lotSub(l)} · vaut ${fmt(G.lotValue(l))}${COIN()}</div></div></div>
             <div class="row-btns">${btn('Remettre en réserve', { act: 'vaultTakeLot', data: { i }, size: 'sm', kind: 'green' })}</div></div>`;
+    }
+    if (s.kind === 'perfume') {
+        const pf = s.pf;
+        const fam = (FAMILIES[pf.family] && FAMILIES[pf.family].name) || 'Floral';
+        const conc = (CONCENTRATIONS[pf.conc] && CONCENTRATIONS[pf.conc].name) || '';
+        return `<div class="card vault-item"><div class="card-head"><span class="ico big">${perfumeSvg(pf)}</span><div class="card-main"><div class="card-title">${esc(pf.name)}</div>
+            <div class="card-sub">${fam}${conc ? ` · ${conc}` : ''}${pf.q ? ` · ${qStar(pf.q)} ${qname(pf.q)}` : ''} · vaut ${fmt(G.vaultSlotValue(s))}${COIN()}</div></div></div>
+            <div class="row-btns">${btn('Remettre à l’atelier', { act: 'vaultTakePerf', data: { i }, size: 'sm', kind: 'green' })}</div></div>`;
     }
     return `<div class="card vault-item"><div class="card-head"><span class="ico big">${slotArt(s)}</span><div class="card-main"><div class="card-title">${esc(G.vaultSlotName(s))} ×${s.n}</div>
         <div class="card-sub">${s.v ? `${G.vdef(s.v) && G.vdef(s.v).kind === 'race' ? 'race' : 'variété'} · ` : ''}${s.q ? `${qStar(s.q)} qualité ${qname(s.q)} · ` : ''}vaut ${fmt(G.vaultSlotValue(s))}${COIN()}</div></div></div>
@@ -146,6 +160,9 @@ export function setupVault() {
         vaultTakeLot: (el, d) => {
             if (G.vaultTake(+d.i)) toast('Le lot est revenu dans la réserve de la cave', ['ui', 'barrel']);
         },
+        vaultTakePerf: (el, d) => {
+            if (G.vaultTake(+d.i)) toast('Le flacon est revenu à l’Atelier du Parfumeur', ['ui', 'perfume']);
+        },
         vaultUp: () => G.upgradeVault(),
         vaultAdd: (el, d) => openSheet('vaultPut', { id: d.id }),
         vaultVar: (el, d) => {
@@ -177,6 +194,9 @@ export function setupVault() {
         },
         vaultLot: (el, d) => {
             if (G.vaultPutLot(+d.uid)) toast('Le lot est au coffre, à l’abri', ['ui', 'vault']);
+        },
+        vaultPerf: (el, d) => {
+            if (G.vaultPutPerfume(d.id)) toast('Le flacon est au coffre, à l’abri', ['ui', 'vault']);
         },
     });
 }

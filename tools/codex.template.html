@@ -362,6 +362,7 @@
               <button data-tab="products" class="tab-btn px-3 py-2 cursor-pointer">Produits &amp; Usines</button>
               <button data-tab="genetics" class="tab-btn px-3 py-2 cursor-pointer">Générateur Génétique</button>
               <button data-tab="brewery" class="tab-btn px-3 py-2 cursor-pointer">Brasserie d’Abbaye</button>
+              <button data-tab="perfume" class="tab-btn px-3 py-2 cursor-pointer">Parfumerie</button>
             </nav>
             <button id="theme-btn" class="btn-sec rounded-lg px-2.5 py-1 text-xs cursor-pointer" title="Changer le thème clair / sombre">🌙</button>
             <a href="../" class="btn-sec rounded-lg px-2.5 py-1 text-xs" style="text-decoration:none">← Jouer à Meuh</a>
@@ -782,6 +783,15 @@ const S = {
   brewIngs: [['cherry', 1], ['raspberry', 1]],
   brewBarrel: '',
   brewQ: '',
+  pfHead: 'lemon',
+  pfHeart: 'lavender',
+  pfBase: 'resin',
+  pfMethod: 'enfleurage',
+  pfConc: 'toilette',
+  pfBottle: 'goutte',
+  pfCap: 'or',
+  pfTier: 'head',
+  pfQ: '',
 };
 
 // ---- Modale ----
@@ -1636,11 +1646,212 @@ function renderBrewery() {
   };
 }
 
+// ---- Onglet 5 : Atelier du Parfumeur ----
+const PF_BODIES = {
+  apothicaire: { glass: 'M24 22 H40 V26 C46 28 49 32 49 38 V54 C49 57 46 59 43 59 H21 C18 59 15 57 15 54 V38 C15 32 18 28 24 26 Z', juice: 'M17 40 H47 V54 C47 56 45 57 43 57 H21 C19 57 17 56 17 54 Z', topY: 40, topW: 30, label: [21, 41, 22, 12] },
+  goutte: { glass: 'M27 22 H37 V27 C42 32 50 40 50 48 C50 55 43 59 32 59 C21 59 14 55 14 48 C14 40 22 32 27 27 Z', juice: 'M16 44 C18 41 46 41 48 44 C49 46 49 48 49 49 C49 54 42 57 32 57 C22 57 15 54 15 49 C15 48 15 46 16 44 Z', topY: 43, topW: 30, label: [22, 44, 20, 10] },
+  cristal: { glass: 'M26 22 H38 V26 L49 35 L45 57 L32 60 L19 57 L15 35 L26 26 Z', juice: 'M17 39 H47 L44 55 L32 58 L20 55 Z', topY: 39, topW: 28, label: [22, 41, 20, 11], extra: '<path d="M26 26 L22 56 M38 26 L42 56" stroke="rgba(255,255,255,0.45)" stroke-width="1.3" fill="none"/>' },
+  amphore: { glass: 'M26 22 H38 V27 C46 30 49 38 46 47 C44 53 41 58 38 59 H26 C23 58 20 53 18 47 C15 38 18 30 26 27 Z', juice: 'M18 40 H46 C46 44 45 48 43 52 C41 55 39 57 37 57 H27 C25 57 23 55 21 52 C19 48 18 44 18 40 Z', topY: 40, topW: 26, label: [22, 42, 20, 10], extra: '<path d="M25 28 C16 28 13 36 18 42 M39 28 C48 28 51 36 46 42" stroke="#3a2618" stroke-width="2.2" fill="none" stroke-linecap="round"/>' },
+  givre: { glass: 'M25 22 H39 V27 L48 31 V55 L39 59 H25 L16 55 V31 L25 27 Z', juice: 'M18 39 H46 V54 L39 57 H25 L18 54 Z', topY: 39, topW: 28, label: [21, 41, 22, 11], extra: '<path d="M20 33 L24 35 M44 33 L40 35 M32 31 V36" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>' },
+};
+function pfMixHex(c1, c2, c3) {
+  const parse = h => { const x = String(h || '#e8b339').replace('#', ''); const n = parseInt(x, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+  const a = parse(c1), b = parse(c2), c = parse(c3);
+  const ch = i => Math.round(a[i] * 0.35 + b[i] * 0.4 + c[i] * 0.25);
+  return '#' + [ch(0), ch(1), ch(2)].map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('');
+}
+function pfBottleSvg(p) {
+  const sh = PF_BODIES[p.bottle] || PF_BODIES.apothicaire;
+  const cap = DATA.perfume.caps[p.cap] || DATA.perfume.caps.or;
+  const col = p.color || '#d988b9';
+  const n = parseInt(col.replace('#', ''), 16);
+  const tint = '#' + [16, 8, 0].map(s => Math.min(255, Math.round(((n >> s) & 255) + (255 - ((n >> s) & 255)) * 0.35)).toString(16).padStart(2, '0')).join('');
+  const gold = !!(p.classic || p.stars >= 3);
+  const [lx, ly, lw, lh] = sh.label;
+  const capShape = cap.id === 'verre'
+    ? `<circle cx="32" cy="12" r="6.5" fill="${cap.fill}" stroke="${INK}" stroke-width="2"/><ellipse cx="30" cy="10" rx="2.2" ry="1.4" fill="#fff" opacity="0.75"/>`
+    : cap.id === 'or'
+      ? `<path d="M24 19 L26 9 H38 L40 19 Z" fill="${cap.fill}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/><ellipse cx="30" cy="12" rx="3" ry="1.2" fill="#fff" opacity="0.6"/>`
+      : `<rect x="25" y="10" width="14" height="10" rx="2.5" fill="${cap.fill}" stroke="${INK}" stroke-width="2"/><path d="M27 14 H37" stroke="rgba(58,38,24,0.35)" stroke-width="1.2"/>`;
+  return svgWrap(`<ellipse cx="32" cy="60" rx="16" ry="2.6" fill="rgba(58,38,24,0.18)"/>${sh.extra || ''}
+    <path d="${sh.glass}" fill="rgba(255,252,244,0.72)" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="${sh.juice}" fill="${col}"/><ellipse cx="32" cy="${sh.topY}" rx="${Math.round(sh.topW / 2) - 1}" ry="2.2" fill="${tint}"/>
+    <path d="${sh.glass}" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>
+    <rect x="25" y="19" width="14" height="4.5" rx="1.5" fill="${gold ? '#f2c14e' : '#e4d6be'}" stroke="${INK}" stroke-width="1.8"/>
+    ${capShape}
+    <rect x="${lx}" y="${ly}" width="${lw}" height="${lh}" rx="2" fill="#fff7e2" stroke="${gold ? '#c9952a' : INK}" stroke-width="${gold ? '1.8' : '1.4'}"/>
+    <path d="M${lx + 4} ${ly + lh / 2 - 1.5} H${lx + lw - 4}" stroke="${INK}" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/>
+    <path d="M${lx + 6} ${ly + lh / 2 + 2.2} H${lx + lw - 6}" stroke="${gold ? '#c9952a' : col}" stroke-width="1.4" stroke-linecap="round"/>
+    <ellipse cx="22" cy="36" rx="2" ry="5" transform="rotate(-12 22 36)" fill="#fff" opacity="0.55"/>`);
+}
+function evalPerfume(head, heart, base, method, conc) {
+  const PF = DATA.perfume;
+  const m = PF.methods[method] || PF.methods.enfleurage;
+  const c = PF.concs[conc] || PF.concs.fraiche;
+  const topOf = v => v.indexOf(Math.max(...v));
+  const profile = [0, 0, 0, 0, 0];
+  for (const [tier, id] of [['head', head], ['heart', heart], ['base', base]]) {
+    const nd = PF.notes[id];
+    if (!nd) continue;
+    const mult = m.tier === tier ? 1.25 : 1;
+    nd.v.forEach((x, k) => (profile[k] += Math.round(x * mult)));
+  }
+  profile[m.facet] += m.boost;
+  const classic = PF.classics.find(cl => cl.head.includes(head) && cl.heart.includes(heart) && cl.base.includes(base)) || null;
+  const hd = PF.notes[head], cd = PF.notes[heart], bd = PF.notes[base];
+  const top = topOf(profile);
+  const family = (hd && hd.tag === 'boreal') || (cd && cd.tag === 'boreal') ? 'boreal' : top === 0 ? (hd && hd.tag === 'aromatique' ? 'aromatique' : 'hesperide') : ['hesperide', 'floral', 'boise', 'oriental', 'gourmand'][top];
+  const order = profile.map((v, k) => [v, k]).sort((a, b) => b[0] - a[0]);
+  const [a, b] = [order[0][1], order[1][1]];
+  let score = 0;
+  const reasons = [];
+  if (classic) { score += 2; reasons.push(classic.text); }
+  if (order[1][0] >= order[0][0] * 0.35 && order[1][0] > 0) {
+    const pair = PF.pairs[`${Math.min(a, b)}-${Math.max(a, b)}`] || 0;
+    if (pair > 0) { score += 1; reasons.push(`${PF.facets[a]} et ${PF.facets[b].toLowerCase()} s’accordent à merveille.`); }
+    else if (pair < 0) { score -= 1; reasons.push(`${PF.facets[a]} et ${PF.facets[b].toLowerCase()} se heurtent.`); }
+  }
+  const tId = m.tier === 'head' ? head : m.tier === 'heart' ? heart : base;
+  if (PF.notes[tId] && topOf(PF.notes[tId].v) === m.facet) { score += 1; reasons.push(`La ${m.name.toLowerCase()} sublime l’étage ${m.tier === 'head' ? 'de tête' : m.tier === 'heart' ? 'de cœur' : 'de fond'}.`); }
+  const tops = [topOf(hd.v), topOf(cd.v), topOf(bd.v)];
+  if (new Set(tops).size === 3) { score += 1; reasons.push('Pyramide riche : trois facettes distinctes.'); }
+  const stars = Math.max(0, Math.min(3, score));
+  const raw = ((DATA.items[head]?.sell || 40) + (DATA.items[heart]?.sell || 40) + (DATA.items[base]?.sell || 40)) * c.qty;
+  const baseVal = (raw * PF.cfg.priceMult + c.stageSec * 0.25) / c.bottles;
+  const value = Math.max(25, Math.round((baseVal * m.valMult * c.valMult * PF.cfg.harmony[stars]) / 5) * 5);
+  const deepVal = Math.max(25, Math.round((value * 1.54) / 5) * 5);
+  const color = pfMixHex(hd?.col, cd?.col, bd?.col);
+  const stageSec = Math.round(c.stageSec * m.timeMult);
+  const name = classic ? classic.name : `${conc === 'extrait' ? 'Extrait' : conc === 'toilette' ? 'Parfum' : 'Eau'} ${(DATA.items[heart]?.name || heart).toLowerCase()} & ${(DATA.items[base]?.name || base).toLowerCase()}`;
+  return { profile, classic, family, stars, reasons, value, deepVal, color, stageSec, totalSec: stageSec * 3, bottles: c.bottles, qty: c.qty, name };
+}
+function renderPerfumery() {
+  const PF = DATA.perfume;
+  const ev = evalPerfume(S.pfHead, S.pfHeart, S.pfBase, S.pfMethod, S.pfConc);
+  const fam = PF.families[ev.family];
+  const tierIds = S.pfTier === 'head' ? PF.head : S.pfTier === 'heart' ? PF.heart : PF.base;
+  const q = norm(S.pfQ);
+  const filtered = tierIds.filter(id => !q || norm(DATA.items[id]?.name || id).includes(q));
+  const maxF = Math.max(8, ...ev.profile);
+
+  $('#main').innerHTML = `
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <div class="lg:col-span-5 space-y-4">
+        <div class="card rounded-xl p-5">
+          <div class="flex items-center gap-4">
+            <div class="w-28 h-28 shrink-0 flex items-center justify-center rounded-xl surf border">
+              <div class="w-24 h-24">${pfBottleSvg({ bottle: S.pfBottle, cap: S.pfCap, color: ev.color, stars: ev.stars, classic: ev.classic?.id })}</div>
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold text-white" style="background:${fam.col}">${fam.name}</span>
+                ${ev.classic ? `<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/20 text-amber-700 dark:text-amber-300">★ Grand classique</span>` : ''}
+              </div>
+              <h2 class="text-lg font-bold mt-1 leading-tight">${esc(ev.name)}</h2>
+              <div class="text-base mt-1" style="color:#d99a1e">${'★'.repeat(ev.stars)}<span class="opacity-25">${'★'.repeat(3 - ev.stars)}</span></div>
+              <div class="text-xs muted mt-1">${ev.bottles} flacons · ${fmtDur(ev.totalSec)} (3 étapes)</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 mt-4 text-center">
+            <div class="surf rounded-lg p-2.5"><div class="text-[11px] muted">Valeur de base</div><div class="text-base font-bold">${fmt(ev.value)} 🪙</div></div>
+            <div class="surf rounded-lg p-2.5"><div class="text-[11px] muted">Grand Sillage (3 soins profonds)</div><div class="text-base font-bold text-purple-600 dark:text-purple-400">${fmt(ev.deepVal)} 🪙</div></div>
+          </div>
+
+          <div class="mt-4">
+            <div class="text-xs font-semibold mb-1.5">Profil des 5 facettes olfactives</div>
+            <div class="space-y-1.5">${PF.facets.map((f, k) => `
+              <div class="flex items-center gap-2 text-xs">
+                <span class="w-20 muted">${f}</span>
+                <div class="flex-1 h-2.5 surf rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:${Math.round((ev.profile[k] / maxF) * 100)}%;background:${PF.facetCol[k]}"></div></div>
+                <span class="w-6 text-right font-mono">${ev.profile[k]}</span>
+              </div>`).join('')}
+            </div>
+          </div>
+
+          ${ev.reasons.length ? `<ul class="mt-3 space-y-1 text-xs muted">${ev.reasons.map(r => `<li>• ${esc(r)}</li>`).join('')}</ul>` : ''}
+        </div>
+
+        <div class="card rounded-xl p-4 space-y-2">
+          <div class="flex items-center justify-between"><h3 class="font-bold text-sm">Les 6 Grands Classiques (+2★)</h3><button id="pf-rand3" class="btn-pri text-xs px-2.5 py-1 rounded-lg cursor-pointer">🎲 Accord 3★</button></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${PF.classics.map(cl => `
+            <button data-pf-cls="${cl.id}" class="text-left surf hover:border-amber-500 border rounded-lg p-2.5 cursor-pointer">
+              <div class="font-semibold text-xs">★ ${esc(cl.name)}</div>
+              <div class="text-[11px] muted mt-0.5">${esc(cl.text)}</div>
+            </button>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 space-y-4">
+        <div class="card rounded-xl p-4 space-y-3">
+          <h3 class="font-bold text-sm">Pyramide olfactive, méthode, concentration &amp; flaconnage</h3>
+          <div class="grid grid-cols-3 gap-2">
+            ${[['head', 'Tête', S.pfHead], ['heart', 'Cœur', S.pfHeart], ['base', 'Fond', S.pfBase]].map(([t, lbl, id]) => `
+              <button data-pf-tier="${t}" class="p-2.5 rounded-xl border text-left cursor-pointer ${S.pfTier === t ? 'ring-2 ring-amber-500 border-amber-500' : ''} surf">
+                <div class="text-[10px] uppercase font-bold muted">${lbl} (×${ev.qty})</div>
+                <div class="flex items-center gap-2 mt-1"><div class="w-7 h-7 shrink-0">${itemSvg(id)}</div><div class="text-xs font-semibold truncate">${esc(DATA.items[id]?.name || id)}</div></div>
+              </button>`).join('')}
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div><div class="text-xs muted mb-1">Méthode d’extraction</div><div class="flex flex-wrap gap-1.5">${PF.methodIds.map(m => `<button data-pf-m="${m}" class="pill ${S.pfMethod === m ? 'active' : ''} px-2.5 py-1 rounded-lg text-xs cursor-pointer">${PF.methods[m].name}</button>`).join('')}</div></div>
+            <div><div class="text-xs muted mb-1">Concentration</div><div class="flex flex-wrap gap-1.5">${PF.concIds.map(c => `<button data-pf-c="${c}" class="pill ${S.pfConc === c ? 'active' : ''} px-2.5 py-1 rounded-lg text-xs cursor-pointer">${PF.concs[c].name}</button>`).join('')}</div></div>
+            <div><div class="text-xs muted mb-1">Silhouette du flacon</div><div class="flex flex-wrap gap-1.5">${PF.bottleIds.map(b => `<button data-pf-b="${b}" class="pill ${S.pfBottle === b ? 'active' : ''} px-2.5 py-1 rounded-lg text-xs cursor-pointer">${PF.bottles[b].name}</button>`).join('')}</div></div>
+            <div><div class="text-xs muted mb-1">Bouchon</div><div class="flex flex-wrap gap-1.5">${PF.capIds.map(c => `<button data-pf-cap="${c}" class="pill ${S.pfCap === c ? 'active' : ''} px-2.5 py-1 rounded-lg text-xs cursor-pointer">${PF.caps[c].name}</button>`).join('')}</div></div>
+          </div>
+        </div>
+
+        <div class="card rounded-xl p-4 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="font-bold text-sm">L’Orgue · ${S.pfTier === 'head' ? 'Notes de tête (14)' : S.pfTier === 'heart' ? 'Notes de cœur (13)' : 'Notes de fond (14)'}</h3>
+            <input id="pf-q" type="search" value="${esc(S.pfQ)}" placeholder="Filtrer une essence…" class="surf border rounded-lg px-2.5 py-1 text-xs w-44">
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">${filtered.map(id => {
+            const nd = PF.notes[id];
+            const top = nd.v.indexOf(Math.max(...nd.v));
+            const active = (S.pfTier === 'head' ? S.pfHead : S.pfTier === 'heart' ? S.pfHeart : S.pfBase) === id;
+            return `<button data-pf-note="${id}" class="flex items-center gap-2 p-2 rounded-lg border text-left cursor-pointer ${active ? 'border-amber-500 ring-2 ring-amber-500/40' : ''} surf">
+              <div class="w-8 h-8 shrink-0">${itemSvg(id)}</div>
+              <div class="min-w-0 flex-1"><div class="text-xs font-semibold truncate">${esc(DATA.items[id]?.name || id)}</div><div class="text-[10px] muted">${PF.facets[top]} (${nd.v[top]})</div></div>
+            </button>`;
+          }).join('')}</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  $$('[data-pf-tier]').forEach(b => b.onclick = () => { S.pfTier = b.dataset.pfTier; renderPerfumery(); });
+  $$('[data-pf-note]').forEach(b => b.onclick = () => {
+    if (S.pfTier === 'head') S.pfHead = b.dataset.pfNote;
+    else if (S.pfTier === 'heart') S.pfHeart = b.dataset.pfNote;
+    else S.pfBase = b.dataset.pfNote;
+    renderPerfumery();
+  });
+  $$('[data-pf-m]').forEach(b => b.onclick = () => { S.pfMethod = b.dataset.pfM; renderPerfumery(); });
+  $$('[data-pf-c]').forEach(b => b.onclick = () => { S.pfConc = b.dataset.pfC; renderPerfumery(); });
+  $$('[data-pf-b]').forEach(b => b.onclick = () => { S.pfBottle = b.dataset.pfB; renderPerfumery(); });
+  $$('[data-pf-cap]').forEach(b => b.onclick = () => { S.pfCap = b.dataset.pfCap; renderPerfumery(); });
+  $$('[data-pf-cls]').forEach(b => b.onclick = () => {
+    const cl = PF.classics.find(x => x.id === b.dataset.pfCls);
+    if (cl) { S.pfHead = cl.head[0]; S.pfHeart = cl.heart[0]; S.pfBase = cl.base[0]; renderPerfumery(); }
+  });
+  $('#pf-rand3').onclick = () => {
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    for (let t = 0; t < 200; t++) {
+      const h = pick(PF.head), c = pick(PF.heart), b = pick(PF.base), m = pick(PF.methodIds);
+      if (evalPerfume(h, c, b, m, S.pfConc).stars === 3) { S.pfHead = h; S.pfHeart = c; S.pfBase = b; S.pfMethod = m; renderPerfumery(); return; }
+    }
+  };
+  const pq = $('#pf-q');
+  if (pq) pq.oninput = e => { S.pfQ = e.target.value; renderPerfumery(); $('#pf-q').focus(); $('#pf-q').setSelectionRange(S.pfQ.length, S.pfQ.length); };
+}
+
 function renderActiveTab() {
   $$('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === S.tab));
   if (S.tab === 'sprites') renderSprites();
   else if (S.tab === 'products') renderProducts();
   else if (S.tab === 'genetics') renderGenetics();
+  else if (S.tab === 'perfume') renderPerfumery();
   else renderBrewery();
 }
 

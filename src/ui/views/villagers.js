@@ -18,6 +18,7 @@ import { go } from '../app.js';
 import { METIERS } from '../../data/metiers.js';
 import { KIDS } from '../../data/family.js';
 import { kidPic, gkPic } from './family.js';
+import { perfumeSvg } from '../../art/perfume.js';
 
 const when = d => (d === 0 ? 'aujourd’hui' : d === 1 ? 'demain' : `dans ${d} jours`);
 const whenShort = d => (d === 0 ? 'aujourd’hui' : d === 1 ? 'demain' : `dans ${d} j`);
@@ -152,6 +153,19 @@ function pkGifts(vid) {
         .join('');
     return `<h4 class="vf-h">Un paquet de ${esc(G.brandName())}</h4><div class="pick-grid">${cells}</div>${hint('Un paquet fait toujours plaisir, d’autant plus qu’il contient ce qu’il ou elle aime (et encore plus son produit adoré).')}`;
 }
+// 1.143 : un parfum maison de l'Atelier du Parfumeur comme cadeau du jour
+function perfumeGifts(vid) {
+    const list = G.perfumeGiftable(vid);
+    if (!list.length) return '';
+    const cells = list
+        .slice(0, 8)
+        .map(
+            p =>
+                `<button class="pick-cell" data-act="giftPerf" data-v="${vid}" data-id="${p.id}"><span class="pc-art">${perfumeSvg(p)}</span><b>${esc(p.name)}</b><small>×${G.perfumeStock(p.id)} · +${G.perfumeGiftPts(vid, p.id)} d’amitié</small></button>`,
+        )
+        .join('');
+    return `<h4 class="vf-h">Un parfum de votre atelier</h4><div class="pick-grid">${cells}</div>${hint('Un parfum maison touche toujours le cœur (encore plus en extrait, 3★, classique, avec une note qu’il aime ou votre Parfum signature).')}`;
+}
 // 1.103.1 : sa commande d'un de vos paquets, s'il en a passé une à la Maison
 function pkAsk(vid) {
     const o = G.orders().find(x => x.vid === vid && !x.due);
@@ -174,7 +188,7 @@ function giftTab(vid) {
         .sort((a, b) => ITEMS[a].name.localeCompare(ITEMS[b].name));
     const pg = page('vgift:' + vid, others, 12);
     return `${G.isBirthday(vid) ? `<p class="vf-bday">${ico(['ui', 'cake'])}C’est son anniversaire : tout compte triple !</p>` : ''}
-        <h4 class="vf-h">Ce qu’il ou elle aime${love ? ' (et adore)' : ''}</h4>${top}${pkGifts(vid)}
+        <h4 class="vf-h">Ce qu’il ou elle aime${love ? ' (et adore)' : ''}</h4>${top}${pkGifts(vid)}${perfumeGifts(vid)}
         <h4 class="vf-h">Autre chose ?</h4><p class="card-sub">Peut-être son produit adoré… ou un « bof ». Les produits déjà essayés n’apparaissent plus.</p>
         ${others.length > 12 || q ? searchBox('vgift', 'Chercher un produit') : ''}${pg.top}<div class="pick-grid">${pg.items.map(id => giftCell(vid, id)).join('')}</div>${pg.more}`;
 }
@@ -268,6 +282,7 @@ export function setupVillagers() {
         },
         giveDuo: (el, d) => G.giveDuoStory(d.k.split('-'), el),
         giftPk: (el, d) => G.giftPaquet(d.v, +d.uid, el),
+        giftPerf: (el, d) => G.giftPerfume(d.v, d.id, el),
         pkAskGo: () => {
             closeSheet('villager');
             go('machines/maison#orders');

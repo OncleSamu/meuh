@@ -4,7 +4,7 @@
 import { state } from '../core/state.js';
 import { toast, sfx } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { QX } from '../data/farm.js';
+import { QUALITY, QX } from '../data/farm.js';
 import { VAULT } from '../data/commerce.js';
 import { spend } from './player.js';
 import { tip } from './tips.js';
@@ -12,6 +12,7 @@ import { inBarn, barnSpace } from './barn.js';
 import { qual, qCount, clampQuality } from './farm.js';
 import { unitPrice } from './market.js';
 import { plainRanks, varRanks, vdef, varName, vdefMult, takeVarRank, giveVarRank, clampVarieties } from './genetics.js';
+import { takePerfumeForVault, restorePerfumeFromVault } from './perfume.js';
 
 export const vaultOpen = () => state.level >= VAULT.lvl;
 export const vaultLvl = () => (state.vault && state.vault.lvl) || 0;
@@ -28,14 +29,20 @@ export const vaultList = () => ensureVault().slots;
 export const vaultUsed = () => vaultList().filter(Boolean).length;
 export const vaultFree = () => vaultList().findIndex(s => !s);
 
-// la valeur d'un emplacement, au prix du marché sans baisse de la demande (un lot : sa valeur de cave)
+// la valeur d'un emplacement, au prix du marché sans baisse de la demande (un lot : sa valeur de cave ; un parfum : valeur × qualité)
 let lotUnitFn = null;
 // la cave donne la valeur d'un lot ; elle s'enregistre ici pour éviter une boucle d'imports
 export const setVaultLotUnit = fn => (lotUnitFn = fn);
 const vaultLotUnit = lot => (lotUnitFn ? lotUnitFn(lot) : 0);
 // 1.63 : une variété ou une race au coffre vaut son goût (ou ses gènes) en plus
 export const vaultSlotValue = s =>
-    !s ? 0 : s.kind === 'lot' ? vaultLotUnit(s.lot) * s.lot.n : Math.round(unitPrice(s.id, s.q || 0, 1) * (s.v ? s.vm || 1 : 1)) * s.n;
+    !s
+        ? 0
+        : s.kind === 'lot'
+          ? vaultLotUnit(s.lot) * s.lot.n
+          : s.kind === 'perfume'
+            ? Math.round((s.pf.value || 0) * QUALITY[s.pf.q || 0].mult)
+            : Math.round(unitPrice(s.id, s.q || 0, 1) * (s.v ? s.vm || 1 : 1)) * s.n;
 // « Carotte Sorcière » plutôt que « Carotte « Carotte Sorcière » »
 export const vaultSlotName = s =>
     !s.v ? ITEMS[s.id].name : s.vn.toLowerCase().includes(ITEMS[s.id].name.split(' ')[0].toLowerCase()) ? s.vn : `${ITEMS[s.id].name} « ${s.vn} »`;
@@ -132,12 +139,35 @@ export function vaultPutLot(uid) {
 }
 export const vaultLots = () => ((state.vault && state.vault.slots) || []).filter(s => s && s.kind === 'lot').map(s => s.lot);
 
+// ---------------- les flacons de parfum (1.143) ----------------
+export function vaultPutPerfume(pid) {
+    ensureVault();
+    if (!vaultOpen()) return false;
+    const f = vaultFree();
+    if (f < 0) {
+        toast('Le coffre est plein : agrandissez-le ou reprenez quelque chose', ['ui', 'vault']);
+        sfx('error');
+        return false;
+    }
+    const pf = takePerfumeForVault(pid);
+    if (!pf) return false;
+    state.vault.slots[f] = { kind: 'perfume', pf };
+    sfx('load');
+    return true;
+}
+
 // ---------------- reprendre ----------------
 export function vaultTake(i, n) {
     const s = vaultList()[i];
     if (!s) return false;
     if (s.kind === 'lot') {
         state.cave.reserve.push(s.lot);
+        state.vault.slots[i] = null;
+        sfx('pop');
+        return true;
+    }
+    if (s.kind === 'perfume') {
+        restorePerfumeFromVault(s.pf);
         state.vault.slots[i] = null;
         sfx('pop');
         return true;

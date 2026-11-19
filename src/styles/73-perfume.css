@@ -156,3 +156,45 @@
     height: 20px;
     flex-shrink: 0;
 }
+.pf-sign {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #fff9e6, #fdf1f8);
+    border-color: var(--gold-d, #c9952a);
+}
+.pf-care-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+.pf-care-choices .btn {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    line-height: 1.15;
+    padding: 5px 9px;
+}
+.pf-care-choices .btn small {
+    font-size: 0.68rem;
+    font-weight: 700;
+    opacity: 0.85;
+}
+.pf-care-choices .btn.pf-deep {
+    background: #f0e4fb;
+    border-color: #7c4ba8;
+    color: #3d2159;
+}
+.pf-touch {
+    background: #efe6fb;
+    color: #4f2a75;
+    border: 1px solid #9d73cc;
+}
+.pf-sig-chip {
+    background: #fff3c4;
+    color: #7a4c00;
+    border: 1px solid var(--gold-d, #c9952a);
+}

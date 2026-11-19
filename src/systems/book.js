@@ -18,6 +18,8 @@ import { earn, claimableCount } from './player.js';
 import { legendReady, masteryCount, masteryStars, masteryExtra, extraName } from './mastery.js';
 import { carnetOpen } from './carnet.js';
 import { beerOf, beerPrice } from './brewery.js';
+import { FAMILIES, CONCENTRATIONS, METHODS, PERFUME_TOUCHES, PERFUME_CLASSICS } from '../data/perfume.js';
+import { perfumeOf, perfumePrice, perfumeNoteName } from './perfume.js';
 import { flavorGain, stability } from './genetics.js';
 import { addPhoto } from './style.js';
 
@@ -103,6 +105,12 @@ const ENTRIES = {
             ? Object.values(state.brew.beers)
                   .filter(b => (b.made || 0) > 0)
                   .map(b => ({ key: 'b_' + b.id, kind: 'beer', id: b.id, icon: ['ui', 'beer'], name: b.name, hint: '', found: true, star: b.stars >= 3 }))
+            : [],
+    perfumes: () =>
+        state.perfume && state.perfume.creations
+            ? Object.values(state.perfume.creations)
+                  .filter(p => (p.made || 0) > 0)
+                  .map(p => ({ key: 'pf_' + p.id, kind: 'perfume', id: p.id, icon: ['ui', 'perfume'], name: p.name, hint: '', found: true, star: p.stars >= 3 }))
             : [],
     vintages: () =>
         WINES.flatMap(id =>
@@ -308,6 +316,36 @@ export function entryInfo(key) {
             info.lines.push(['Prix de la bouteille', `${fmt(beerPrice(b.id))} pièces`]);
             if (b.note) info.lines.push(['Dégustation', b.note]);
         }
+    } else if (e.kind === 'perfume') {
+        const p = perfumeOf(e.id);
+        info.stars = p ? p.stars : 0;
+        const pq = (p && p.qmade) || {};
+        info.counters = [
+            ['Flacons', p ? p.made : 0],
+            ['En argent', pq.s || 0],
+            ['En or', pq.g || 0],
+            ...(pq.p || pq.d
+                ? [
+                      ['En platine', pq.p || 0],
+                      ['En diamant', pq.d || 0],
+                  ]
+                : []),
+        ];
+        if (p) {
+            const fam = FAMILIES[p.family];
+            const conc = CONCENTRATIONS[p.conc];
+            const meth = METHODS[p.method];
+            info.lines.push(['Famille', fam ? fam.name : p.family]);
+            if (conc) info.lines.push(['Concentration', conc.name]);
+            if (meth) info.lines.push(['Extraction', meth.name]);
+            info.lines.push(['Pyramide', `${perfumeNoteName(p.head)} · ${perfumeNoteName(p.heart)} · ${perfumeNoteName(p.base)}`]);
+            if (p.touch && PERFUME_TOUCHES[p.touch]) info.lines.push(['Touche', PERFUME_TOUCHES[p.touch]]);
+            if (p.classic) {
+                const cl = PERFUME_CLASSICS.find(x => x.id === p.classic);
+                if (cl) info.lines.push(['Grand classique', cl.name]);
+            }
+            info.lines.push(['Prix du flacon', `${fmt(perfumePrice(p.id))} pièces`]);
+        }
     } else if (e.kind === 'variety') {
         const v = state.genetics && state.genetics.vars[e.id];
         if (v) {
@@ -375,7 +413,16 @@ export function statsData() {
         .slice(0, 8);
     // origine des pièces
     const inc = state.income,
-        known = inc.market + (inc.stall || 0) + inc.orders + inc.trucks + (inc.cave || 0) + (inc.brew || 0) + (inc.counter || 0) + (inc.haras || 0);
+        known =
+            inc.market +
+            (inc.stall || 0) +
+            inc.orders +
+            inc.trucks +
+            (inc.cave || 0) +
+            (inc.brew || 0) +
+            (inc.perfume || 0) +
+            (inc.counter || 0) +
+            (inc.haras || 0);
     const sources = [
         ['Étal', inc.stall || 0],
         ['Grossiste', inc.market],
@@ -384,6 +431,7 @@ export function statsData() {
         ['Cave et enchères', inc.cave || 0],
         // 1.75.2
         ['Brasserie', inc.brew || 0],
+        ['Parfumerie', inc.perfume || 0],
         ['Comptoir', inc.counter || 0],
         ['Haras', inc.haras || 0],
         ['Autres', Math.max(0, (S.earned || 0) - known)],
@@ -435,6 +483,7 @@ export function statsData() {
                 // 1.92 : la brasserie, le comptoir et le labo
                 ['Commandes de bière', n('beerOrders'), ['ui', 'beer']],
                 ['Commandes de parfum', n('perfumeOrders'), ['ui', 'perfume']],
+                ['Parfums offerts', n('perfumeGifts'), ['ui', 'perfume']],
                 ['Boissons servies', n('drinks'), ['ui', 'beer']],
                 ['Clients du comptoir', n('clients'), ['ui', 'heart']],
                 ['Variétés fixées', state.genetics ? Object.values(state.genetics.vars || {}).filter(v => v && v.fixed).length : 0, ['ui', 'flowers']],

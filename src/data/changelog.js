@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.143",
+  "title": "L’Art du Parfumeur",
+  "date": "19 novembre 2026",
+  "items": [
+   "Macération à gestes au choix : à chaque étape, choisissez entre un geste vif (−15 % temps, +12 % valeur) ou profond (+18 % valeur). Trois soins signent la touche du parfum : Cristallin, Grand Sillage (jusqu’à +54 %) ou Équilibré",
+   "Parfum signature : désignez un parfum de 2★ ou 3★ comme signature de la ferme (+10 % ou +15 % sur toutes les ventes du Salon et +1 point d’amitié quand vous l’offrez)",
+   "Cadeaux & Coffre-fort : offrez directement vos flacons maison aux villageois (Village › Villageois › Cadeau) et rangez vos plus beaux flacons au Coffre-fort de la grange",
+   "Livre de la ferme, Succès & Statistiques : nouvelle page « Parfums » (avec le flacon sur chaque fiche), deux succès (Parfumeur et Nez du salon), revenus de Parfumerie suivis dans les statistiques et compteur de parfums offerts",
+   "Prestige, Guide & Codex : vos créations, votre Orgue et votre signature sont conservés à la vente de la ferme ; Guide complété (renom, domaine, coffre-fort, hors-ligne) et nouvel onglet Parfumerie dans le Codex",
+   "Correctifs : la valeur d’un parfum ne se cumule plus à l’infini en le recréant avec soins, et le ruban de l’Orgue complet n’est plus donné qu’une seule fois"
+  ]
+ },
+ {
   "v": "1.142",
   "title": "L’Atelier du Parfumeur",
   "date": "19 novembre 2026",

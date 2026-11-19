@@ -18,6 +18,8 @@ import {
     CONCENTRATIONS,
     CONC_IDS,
     STAGES,
+    PERFUME_TOUCHES,
+    PERFUME_SIGN,
     FAMILIES,
     FAMILY_IDS,
     HEAD_NOTES,
@@ -66,6 +68,20 @@ function closedCard() {
     </div>`;
 }
 
+// ---------------- bandeau Parfum signature ----------------
+function signatureHtml() {
+    const sig = G.perfumeSignature();
+    if (!sig) return '';
+    const pct = Math.round(G.perfumeSignatureSalonBonus() * 100);
+    return `<div class="card pf-sign">
+        <span class="pf-vat-art">${perfumeSvg(sig)}</span>
+        <div class="card-main">
+            <div class="card-title">Parfum signature : ${esc(sig.name)} ${famBadge(sig.family)}</div>
+            <div class="card-sub">+${pct} % sur toutes les ventes du Salon · +${PERFUME_SIGN.giftBonus} amitié quand vous l’offrez à un villageois</div>
+        </div>
+    </div>`;
+}
+
 // ---------------- les dame-jeannes de macération ----------------
 defineLive('pvat', i => {
     const v = state.perfume && state.perfume.vats[i];
@@ -85,18 +101,28 @@ function vatsHtml() {
             const ready = G.perfumeVatReady(v);
             const canCare = G.perfumeVatCanCare(v);
             const st = !ready ? STAGES[v.stage] : null;
+            const bonusPct = Math.round((typeof v.careBonus === 'number' && v.careBonus > 0 ? v.careBonus : (v.finesse || 0) * 0.12) * 100);
             const pips = STAGES.map((s, k) => `<i class="${k < v.stage ? 'done' : k === v.stage ? 'cur' : ''}${v.cared[k] ? ' cared' : ''}" title="${s.name}"></i>`).join('');
+            const careBtns = canCare
+                ? `<div class="pf-care-choices">${st.choices
+                      .map(
+                          ch =>
+                              `<button class="btn sm ${ch.id === 'quick' ? 'gold' : 'pf-deep'}" data-act="carePerf" data-i="${i}" data-m="${ch.id}"><span>${esc(ch.name)}</span><small>${esc(ch.hint)}</small></button>`,
+                      )
+                      .join('')}</div>`
+                : '';
             return `<div class="brew-vat pf-vat${ready ? ' ready' : canCare ? ' care' : ''}">
                 <span class="pf-vat-art">${perfumeSvg(p)}</span>
                 <div class="bv-main"><b>${esc(p.name)}</b>
-                    <div class="pf-stages">${pips}<span>${ready ? `${v.n} flacons prêts · finesse ${v.finesse}/3` : `Étape ${v.stage + 1}/3 : ${st.name} · finesse ${v.finesse}/3`}</span></div>
+                    <div class="pf-stages">${pips}<span>${ready ? `${v.n} flacons prêts · finesse ${v.finesse}/3${bonusPct ? ` (+${bonusPct} %)` : ''}` : `Étape ${v.stage + 1}/3 : ${st.name} · finesse ${v.finesse}/3${bonusPct ? ` (+${bonusPct} %)` : ''}`}</span></div>
                     ${ready ? '' : `${bar(0, 'thin', `pvat:${i}`)}<small>${timer(v.stageUntil)}</small>`}
+                    ${careBtns}
                 </div>
                 <div class="bv-btns">${
                     ready
                         ? btn('Mettre en flacon', { act: 'bottlePerf', data: { i }, kind: 'green', size: 'sm' })
                         : canCare
-                          ? btn(st.care, { act: 'carePerf', data: { i }, kind: 'gold', size: 'sm', icon: ['ui', 'sparkle'] })
+                          ? ''
                           : '<span class="chip ok">Soigné</span>'
                 }</div>
             </div>`;
@@ -258,9 +284,12 @@ function bottlesHtml() {
                         ? btn('Vendre', { act: 'sellPerf', data: { id: p.id, n: 1 }, size: 'sm' }) +
                           (n > 1 ? btn('Tout vendre', { act: 'sellPerf', data: { id: p.id, n }, kind: 'gold', size: 'sm' }) : '')
                         : '');
-                const sub = `${stars(p.stars)} ${famBadge(p.family)} <span class="chip">${CONCENTRATIONS[p.conc]?.name || ''}</span>${p.classic ? ' <span class="chip ok">Classique</span>' : ''}${chips}
+                const isSig = state.perfume && state.perfume.signature === p.id;
+                const canSig = p.made > 0 && p.stars >= PERFUME_SIGN.minStars;
+                const touch = p.touch && PERFUME_TOUCHES[p.touch];
+                const sub = `${stars(p.stars)} ${famBadge(p.family)} <span class="chip">${CONCENTRATIONS[p.conc]?.name || ''}</span>${p.classic ? ' <span class="chip ok">Classique</span>' : ''}${touch ? ` <span class="chip pf-touch">${touch}</span>` : ''}${isSig ? ' <span class="chip pf-sig-chip">Signature</span>' : ''}${chips}
                     <div class="pf-notes-mini">${noteIco(p.head)} ${noteIco(p.heart)} ${noteIco(p.base)} <small>· ${METHODS[p.method]?.name || ''}</small></div>`;
-                const again = `<div class="bb-again">${btn('Recomposer', { act: 'perfLoad', data: { id: p.id }, kind: 'green', size: 'sm', icon: ['ui', 'loop'] })}<button class="fav-star${G.isPerfumeFav(p.id) ? ' on' : ''}" data-act="perfFav" data-id="${p.id}" aria-label="Favori">${G.isPerfumeFav(p.id) ? '★' : '☆'}</button></div>`;
+                const again = `<div class="bb-again">${btn('Recomposer', { act: 'perfLoad', data: { id: p.id }, kind: 'green', size: 'sm', icon: ['ui', 'loop'] })}${canSig ? btn(isSig ? 'Signature ✓' : 'Signature', { act: 'perfSign', data: { id: p.id }, kind: isSig ? 'gold' : '', size: 'sm', title: 'Désigner comme Parfum signature de la ferme' }) : ''}${n > 0 && G.vaultOpen() ? btn('Au coffre', { act: 'vaultPerf', data: { id: p.id }, size: 'sm', icon: ['ui', 'vault'] }) : ''}<button class="fav-star${G.isPerfumeFav(p.id) ? ' on' : ''}" data-act="perfFav" data-id="${p.id}" aria-label="Favori">${G.isPerfumeFav(p.id) ? '★' : '☆'}</button></div>`;
                 return `<div class="card brew-beer${n ? '' : ' none'}"><div class="card-art">${perfumeSvg(p)}</div><div class="card-main"><div class="card-title">${esc(p.name)} ${renameBtn('perfume', p.id, 'Renommer le parfum')}</div><div class="card-sub">${sub}</div>${again}</div><div class="card-side">${side}</div></div>`;
             })
             .join('')}</div>${pg.more}`
@@ -326,6 +355,7 @@ function renderPerfume(el) {
     const t = T.cur;
     blocks(el, [
         ['tabs', T.html],
+        ['sign', signatureHtml()],
         ['vats', t === 'compose' ? vatsHtml() : ''],
         ['compose', t === 'compose' ? composerHtml() : ''],
         ['bottles', t === 'bottles' ? bottlesHtml() : ''],
@@ -391,11 +421,12 @@ export function setupPerfume() {
             else toast('Voici le meilleur accord avec vos essences en stock', ['ui', 'sparkle']);
         },
         perfStart: el => G.startPerfume(el),
-        carePerf: (el, d) => G.carePerfumeVat(+d.i, el),
+        carePerf: (el, d) => G.carePerfumeVat(+d.i, d.m || 'quick', el),
         bottlePerf: (el, d) => G.bottlePerfume(+d.i, el),
         bottleAllPerf: el => state.perfume.vats.forEach((v, i) => G.perfumeVatReady(v) && G.bottlePerfume(i, el)),
         sellPerf: (el, d) => G.sellPerfume(d.id, +d.n, el),
         perfFav: (el, d) => G.togglePerfumeFav(d.id),
+        perfSign: (el, d) => G.setPerfumeSignature(d.id),
         perfLoad: (el, d) => {
             if (G.loadPerfumeDraft(d.id)) ui.sel['it:perfume'] = 'compose';
         },

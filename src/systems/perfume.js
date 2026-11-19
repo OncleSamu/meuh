@@ -9,6 +9,7 @@ import { ITEMS } from '../data/items.js';
 import { QUALITY, QX } from '../data/farm.js';
 import { HONEYS, HONEY_COL } from '../data/honey.js';
 import { VILLAGERS } from '../data/village.js';
+import { LOVES, GIFT_PTS } from '../data/friends.js';
 import { RARE } from '../data/commerce.js';
 import {
     PERFUME,
@@ -20,6 +21,9 @@ import {
     CONCENTRATIONS,
     CONC_IDS,
     STAGES,
+    PERFUME_TOUCHES,
+    PERFUME_SIGN,
+    PERFUME_GIFT,
     FAMILIES,
     FAMILY_IDS,
     PERFUME_NOTES,
@@ -37,6 +41,7 @@ import { mixHex } from '../art/perfume.js';
 import { domLvl } from './estate.js';
 import { earn, addXp } from './player.js';
 import { addFriendship } from './village.js';
+import { isBirthday } from './friends.js';
 import { addRenom, RENOM } from './renom.js';
 import { clampQuality, qual } from './farm.js';
 import { varName, clampVarieties, scoreTier, takeVarUnits, varRanks, plainRanks, QK, vdef, vdefMult } from './genetics.js';
@@ -163,6 +168,8 @@ export function ensurePerfume() {
     P.q = P.q || {};
     P.organ = P.organ || {};
     P.organClaimed = P.organClaimed || 0;
+    P.organRibbon = !!P.organRibbon;
+    P.signature = P.signature || null;
     P.vats = P.vats || [];
     P.demand = P.demand || {};
     P.orders = P.orders || [];
@@ -450,6 +457,7 @@ export function startPerfume(at, d = ensurePerfume().draft) {
             color: pv.color,
             value: pv.value,
             made: 0,
+            qmade: { s: 0, g: 0, p: 0, d: 0 },
             day: state.day,
             fav: false,
         };
@@ -465,6 +473,7 @@ export function startPerfume(at, d = ensurePerfume().draft) {
         stageUntil: now() + pv.stageSec * 1000,
         cared: [false, false, false],
         finesse: 0,
+        careBonus: 0,
         n: pv.bottles,
         q,
     };
@@ -478,19 +487,25 @@ export function startPerfume(at, d = ensurePerfume().draft) {
 export const perfumeVatReady = v => !!v && v.stage >= STAGES.length;
 export const perfumeVatCanCare = v => !!v && v.stage < STAGES.length && !v.cared[v.stage];
 
-export function carePerfumeVat(i, at) {
+export function carePerfumeVat(i, choiceOrAt, maybeAt) {
     const P = ensurePerfume();
     const v = P.vats[i];
     if (!perfumeVatCanCare(v)) return false;
-    v.cared[v.stage] = true;
+    const isChoice = choiceOrAt === 0 || choiceOrAt === 1 || choiceOrAt === 'quick' || choiceOrAt === 'deep';
+    const at = isChoice ? maybeAt : choiceOrAt;
+    const st = STAGES[v.stage];
+    const ch = isChoice ? (choiceOrAt === 1 || choiceOrAt === 'deep' ? st.choices[1] : st.choices[0]) : st.choices[0];
+    v.cared[v.stage] = ch.id;
     v.finesse = (v.finesse || 0) + 1;
-    // un soin réussi réduit le temps restant de l'étape de 15 %
-    const left = Math.max(0, v.stageUntil - now());
-    v.stageUntil = now() + Math.round(left * 0.85);
+    v.careBonus = (v.careBonus || 0) + ch.bonus;
+    if (ch.speed > 0) {
+        const left = Math.max(0, v.stageUntil - now());
+        v.stageUntil = now() + Math.round(left * (1 - ch.speed));
+    }
     sfx('pop');
     buzz(10);
     if (at) burst(at, 'sparkle', 10);
-    toast(`${STAGES[v.stage].care} effectué · finesse ${v.finesse}/${STAGES.length} (+${Math.round(v.finesse * PERFUME.careBonus * 100)} %)`, ['ui', 'perfume']);
+    toast(`${ch.name} · finesse ${v.finesse}/${STAGES.length} (+${Math.round(v.careBonus * 100)} %)`, ['ui', 'perfume']);
     changed('perfume');
     return true;
 }
@@ -518,21 +533,37 @@ export function perfumeQual(pid) {
     return q;
 }
 
+function vatTouch(v) {
+    if (!v || (v.finesse || 0) < STAGES.length) return null;
+    const modes = (v.cared || []).map(x => (x === 'deep' ? 'deep' : x ? 'quick' : null)).filter(Boolean);
+    if (modes.length < STAGES.length) return null;
+    if (modes.every(m => m === 'deep')) return 'deep';
+    if (modes.every(m => m === 'quick')) return 'quick';
+    return 'mix';
+}
+
 export function bottlePerfume(i, at) {
     const P = ensurePerfume();
     const v = P.vats[i];
     if (!perfumeVatReady(v)) return false;
     const p = P.creations[v.pid];
     P.vats[i] = null;
-    // 3 soins parfaits élèvent le rang qualité d'un cran (jusqu'à Diamant) et bonifient durablement la finesse
+    // 3 soins parfaits élèvent le rang qualité d'un cran (jusqu'à Diamant) et signent la touche du parfum
     const q = Math.min(4, (v.q || 0) + (v.finesse >= STAGES.length ? 1 : 0));
-    const finesseMult = 1 + (v.finesse || 0) * PERFUME.careBonus;
-    const finalVal = Math.max(p.value, Math.round((p.value * finesseMult) / 5) * 5);
-    p.value = finalVal;
+    const bonus = typeof v.careBonus === 'number' && v.careBonus > 0 ? v.careBonus : (v.finesse || 0) * PERFUME.careBonus;
+    const baseVal = perfumeValue(p.head, p.heart, p.base, p.method, p.conc, p.stars);
+    p.bestBonus = Math.max(p.bestBonus || 0, bonus);
     p.bestFinesse = Math.max(p.bestFinesse || 0, v.finesse || 0);
+    p.value = Math.max(25, Math.round((baseVal * (1 + p.bestBonus)) / 5) * 5);
+    const touch = vatTouch(v);
+    if (touch && (!p.touch || touch === 'deep' || (touch === 'mix' && p.touch === 'quick'))) p.touch = touch;
     perfumeQual(v.pid);
     P.stock[v.pid] = (P.stock[v.pid] || 0) + v.n;
-    if (q) P.q[v.pid][QX.keys[q]] += v.n;
+    p.qmade = p.qmade || { s: 0, g: 0, p: 0, d: 0 };
+    if (q) {
+        P.q[v.pid][QX.keys[q]] += v.n;
+        p.qmade[QX.keys[q]] = (p.qmade[QX.keys[q]] || 0) + v.n;
+    }
     p.made += v.n;
     state.stats.perfumes = (state.stats.perfumes || 0) + v.n;
 
@@ -544,9 +575,10 @@ export function bottlePerfume(i, at) {
             news++;
         }
     }
-    const xp = Math.round(((v.stageSec * STAGES.length * 0.08) + 18) * (0.85 + p.stars * 0.25));
-    addXp(xp, at);
+    const xp = Math.round(v.stageSec * STAGES.length * 0.08 + 18) * (0.85 + p.stars * 0.25);
+    addXp(Math.round(xp), at);
     if (at) float(at, [`+${v.n}`, ['ui', 'perfume']], '', -20);
+    if (touch) toast(`Touche « ${PERFUME_TOUCHES[touch]} » obtenue sur ${p.name} !`, ['ui', 'sparkle']);
     if (news) toast(`Orgue du Parfumeur : ${organCount()} / ${organTotal()} découvertes`, ['ui', 'perfume']);
     sfx('level');
     buzz(20);
@@ -628,8 +660,157 @@ export function sellPerfume(pid, n, at) {
         total += Math.round(t * unit * QUALITY[r].mult);
     }
     P.demand[pid] = { n: demandNow(pid) + n, t: now() };
+    state.income.perfume = (state.income.perfume || 0) + total;
     earn(total, at);
     sfx('coin');
+    changed('perfume');
+    return true;
+}
+
+// ---------------- Parfum signature de la ferme ----------------
+export function perfumeSignature() {
+    const P = state.perfume;
+    if (!P || !P.signature) return null;
+    const p = P.creations && P.creations[P.signature];
+    return p && p.made > 0 && p.stars >= PERFUME_SIGN.minStars ? p : null;
+}
+export function setPerfumeSignature(pid) {
+    const P = ensurePerfume();
+    if (!pid || P.signature === pid) {
+        P.signature = null;
+        toast('Parfum signature retiré', ['ui', 'perfume']);
+        changed('perfume');
+        return true;
+    }
+    const p = perfumeOf(pid);
+    if (!p || !p.made || p.stars < PERFUME_SIGN.minStars) return false;
+    P.signature = pid;
+    const pct = Math.round(perfumeSignatureSalonBonus() * 100);
+    toast(`« ${p.name} » devient votre Parfum signature (+${pct} % au Salon, +${PERFUME_SIGN.giftBonus} amitié) !`, ['ui', 'perfume']);
+    sfx('level');
+    changed('perfume');
+    return true;
+}
+export function perfumeSignatureSalonBonus() {
+    const s = perfumeSignature();
+    return s ? PERFUME_SIGN.salonBonus[Math.min(3, s.stars)] || 0 : 0;
+}
+
+// ---------------- Offrir un parfum à un villageois (cadeau du jour) ----------------
+export function perfumeGiftPts(vid, pid) {
+    const p = perfumeOf(pid);
+    const v = VILLAGERS[vid];
+    if (!p || !v) return 0;
+    let pts = PERFUME_GIFT.base[p.conc] || 3;
+    if (p.stars >= 3) pts += PERFUME_GIFT.star3;
+    if (p.classic) pts += PERFUME_GIFT.classic;
+    const notes = [perfumeNoteBase(p.head), perfumeNoteBase(p.heart), perfumeNoteBase(p.base)];
+    if (notes.some(id => id === LOVES[vid] || (v.likes && v.likes.includes(id)))) pts += PERFUME_GIFT.matchNote;
+    if (state.perfume && state.perfume.signature === pid) pts += PERFUME_SIGN.giftBonus;
+    return pts * (isBirthday(vid) ? GIFT_PTS.birthday : 1);
+}
+export function perfumeGiftable(vid) {
+    if (!perfumeOpen() || !state.perfume) return [];
+    return myPerfumes()
+        .filter(p => perfumeStock(p.id) > 0)
+        .sort((a, b) => perfumeGiftPts(vid, b.id) - perfumeGiftPts(vid, a.id) || b.value - a.value);
+}
+export function giftPerfume(vid, pid, at) {
+    const P = ensurePerfume();
+    const p = perfumeOf(pid);
+    const v = state.villagers && state.villagers[vid];
+    const have = P.stock[pid] || 0;
+    if (!p || !v || v.giftDay === state.day || have < 1) return false;
+    const pts = perfumeGiftPts(vid, pid);
+    // consomme un flacon ordinaire d'abord (ou le plus bas rang) pour préserver les flacons diamant
+    const q = perfumeQual(pid);
+    P.stock[pid] = have - 1;
+    const ord = Math.max(0, have - (q.s + q.g + q.p + q.d));
+    if (ord <= 0) {
+        for (const k of ['s', 'g', 'p', 'd']) {
+            if (q[k] > 0) {
+                q[k]--;
+                break;
+            }
+        }
+    }
+    v.giftDay = state.day;
+    addFriendship(vid, pts, at);
+    state.stats.perfumeGifts = (state.stats.perfumeGifts || 0) + 1;
+    sfx('buy');
+    if (at) burst(at, 'sparkle', 14);
+    toast(`${VILLAGERS[vid].name} : « Quel parfum raffiné, merci ! » +${pts} d’amitié`, ['villager', vid]);
+    changed('perfume');
+    return true;
+}
+
+// ---------------- Coffre-fort (rangement / reprise d'un flacon précieux) ----------------
+export function takePerfumeForVault(pid) {
+    const P = ensurePerfume();
+    const p = perfumeOf(pid);
+    const have = P.stock[pid] || 0;
+    if (!p || have < 1) return null;
+    const q = perfumeQual(pid);
+    // range le meilleur flacon disponible en priorité (diamant -> platine -> or -> argent -> ordinaire)
+    let rank = 0;
+    for (const [r, k] of [
+        [4, 'd'],
+        [3, 'p'],
+        [2, 'g'],
+        [1, 's'],
+    ]) {
+        if (q[k] > 0) {
+            q[k]--;
+            rank = r;
+            break;
+        }
+    }
+    P.stock[pid] = have - 1;
+    changed('perfume');
+    return {
+        pid,
+        name: p.name,
+        bottle: p.bottle,
+        cap: p.cap,
+        color: p.color,
+        stars: p.stars,
+        classic: p.classic || null,
+        family: p.family,
+        conc: p.conc,
+        value: p.value,
+        q: rank,
+    };
+}
+export function restorePerfumeFromVault(pf) {
+    if (!pf || !pf.pid) return false;
+    const P = ensurePerfume();
+    if (!P.creations[pf.pid]) {
+        P.creations[pf.pid] = {
+            id: pf.pid,
+            name: pf.name,
+            head: 'lemon',
+            heart: 'lavender',
+            base: 'resin',
+            method: 'enfleurage',
+            conc: pf.conc || 'fraiche',
+            bottle: pf.bottle || 'apothicaire',
+            cap: pf.cap || 'or',
+            stars: pf.stars || 0,
+            family: pf.family || 'floral',
+            classic: pf.classic || null,
+            color: pf.color || '#d988b9',
+            value: pf.value || 50,
+            made: 1,
+            qmade: { s: 0, g: 0, p: 0, d: 0 },
+            day: state.day,
+            fav: false,
+        };
+    }
+    P.stock[pf.pid] = (P.stock[pf.pid] || 0) + 1;
+    if (pf.q) {
+        const q = perfumeQual(pf.pid);
+        q[QX.keys[pf.q]] = (q[QX.keys[pf.q]] || 0) + 1;
+    }
     changed('perfume');
     return true;
 }
@@ -686,7 +867,8 @@ export function perfumeOrderPay(o, pid) {
             break;
         }
     }
-    return Math.round((p.value * o.qty * PERFUME_ORDERS.payMult * QUALITY[bestQ].mult) / 5) * 5;
+    const signMult = 1 + perfumeSignatureSalonBonus();
+    return Math.round((p.value * o.qty * PERFUME_ORDERS.payMult * signMult * QUALITY[bestQ].mult) / 5) * 5;
 }
 export function deliverPerfumeOrder(oid, pid, at) {
     const P = ensurePerfume();
@@ -708,6 +890,7 @@ export function deliverPerfumeOrder(oid, pid, at) {
         left -= t;
     }
     P.orders.splice(idx, 1);
+    state.income.perfume = (state.income.perfume || 0) + pay;
     earn(pay, at);
     addXp(Math.round(60 + pay * 0.04), at);
     if (VILLAGERS[o.vid]) addFriendship(o.vid, 2);
@@ -745,7 +928,8 @@ export function claimOrgan(at) {
     earn(coins, at);
     addXp(PERFUME_ORGAN.xp * P.organClaimed, at);
     giveRare(pickRand(RARE), 2, at);
-    if (organCount() >= organTotal()) {
+    if (!P.organRibbon && organCount() >= organTotal() && P.organClaimed * PERFUME_ORGAN.step >= organTotal()) {
+        P.organRibbon = true;
         state.prestige.rubans++;
         toast('Orgue du Parfumeur complet : +1 ruban !', ['ui', 'perfume']);
     } else {

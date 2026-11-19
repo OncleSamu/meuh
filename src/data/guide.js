@@ -156,11 +156,11 @@ export const GUIDE_PAGES = [
                 b: [
                     'Sur téléphone, tous les volets d’un onglet tiennent sur une ligne, l’icône au-dessus du nom (1.138). Les offres de Zéphyr et les familles du grossiste défilent dans leur bande (un fondu montre qu’il en reste).',
                     'Un point doré sur un onglet : il y a quelque chose à faire. Une pastille rouge chiffrée : ça presse (grange pleine, citerne vide, poêle éteint, anniversaire…).',
-                    'Les pages longues ont leurs onglets : Brasserie, Cave, Comice, Labo et Village ; et dans le menu, la Coupe, la Maison, Progrès et Statistiques (toute la ferme en chiffres, rangée par coin : champ, bêtes, atelier, nature, village).',
-                    'Les listes longues vont par pages : graines du marché et produits à vendre par 15, grange et choix de l’étal par 60, boissons par 10. Un grand verger montre quatre arbres par rangée. À l’étal, plus de 3 ventes finies se résument en une ligne à encaisser.',
-                    'À la brasserie, une phrase dit ce qui bloque (cuves pleines, il manque…) ; « Tout mettre en bouteille » vide les cuves prêtes d’un coup.',
+                    'Les pages longues ont leurs onglets : Brasserie, Cave, Parfums, Comice, Labo et Village ; et dans le menu, la Coupe, la Maison, Progrès et Statistiques (toute la ferme en chiffres, rangée par coin : champ, bêtes, atelier, nature, village).',
+                    'Les listes longues vont par pages : graines du marché et produits à vendre par 15, grange et choix de l’étal par 60, boissons et parfums par 10. Un grand verger montre quatre arbres par rangée. À l’étal, plus de 3 ventes finies se résument en une ligne à encaisser.',
+                    'À la brasserie et aux parfums, une phrase dit ce qui bloque (cuves ou dame-jeannes pleines, il manque…) ; « Tout mettre en bouteille / en flacon » vide tout ce qui est prêt d’un coup.',
                     'Une astuce grise se ferme d’un « Compris » ; Réglages › Réafficher les astuces les fait revenir.',
-                    'Chercher et trier : la grange, le marché (acheter et vendre), les machines, le choix de l’étal, le tiroir des graines, la brasserie et le guide ont la même barre de recherche (une loupe, une croix pour effacer) et, là où ça sert, le même bouton de tri.',
+                    'Chercher et trier : la grange, le marché (acheter et vendre), les machines, le choix de l’étal, le tiroir des graines, la brasserie, les parfums et le guide ont la même barre de recherche (une loupe, une croix pour effacer) et, là où ça sert, le même bouton de tri.',
                 ],
             },
             {
@@ -221,7 +221,7 @@ export const GUIDE_PAGES = [
                 h: 'Le coffre-fort (niveau 15)',
                 b: [
                     'Dans la grange, touchez un produit puis « Au coffre » : choisissez la qualité (normal, argent, or, platine, diamant) et la quantité. Le produit garde sa qualité.',
-                    'Depuis la cave, la réserve a un bouton « Au coffre » pour garder un lot : un grand cru, un champagne légendaire en diamant.',
+                    'Depuis la cave ou l’Atelier du Parfumeur, le bouton « Au coffre » met un lot ou un flacon précieux à l’abri (grand cru, extrait pur diamant, grand classique).',
                     'Une variété du labo ou le produit d’une race fixée se range aussi, avec son nom, ses couleurs et son rang : choisissez-la en haut de la fenêtre.',
                     'Ce qui est au coffre ne se vend pas, ne part pas dans une commande ou une recette, et ne prend pas de place dans la grange. « Reprendre » le rend (il faut de la place dans la grange).',
                     '6 emplacements au départ, 4 agrandissements de 4 emplacements (20 000, 80 000, 320 000 puis 1 280 000 pièces). Un emplacement garde jusqu’à 99 unités d’un même produit et d’une même qualité.',
@@ -1228,19 +1228,21 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
-                h: 'Macération active et soins',
+                h: 'Macération active et gestes au choix',
                 b: [
                     'Deux dame-jeannes au départ (jusqu’à quatre grâce à la branche « Cuisines et ateliers » du domaine).',
                     'Chaque parfum traverse trois étapes : Infusion, Repos au noir, puis Glaçage & filtrage (elle avance même jeu fermé).',
-                    'À chaque étape, un geste de soin (Remuer, Aérer, Filtrer) augmente la finesse (+12 % de valeur par soin) et accélère l’étape de 15 %. Trois soins parfaits élèvent même la qualité du lot d’un cran.',
+                    'À chaque étape, deux gestes de parfumeur au choix : le geste vif (Remuer à vif, Aérer au matin, Glacer & filtrer : −15 % de temps, +12 % de valeur) ou le geste profond (Infuser lentement, Sceller à l’ombre, Soutirer sur lie : +18 % de valeur).',
+                    'Trois soins parfaits élèvent la qualité du lot d’un cran et signent sa touche : Cristallin (3 gestes vifs), Grand Sillage (3 gestes profonds, jusqu’à +54 %) ou Équilibré (mixte).',
                 ],
             },
             {
-                h: 'Flacons, Salon et Orgue du Parfumeur',
+                h: 'Flacons, Parfum signature, Salon, Cadeaux et Orgue',
                 b: [
-                    'Choisissez la silhouette du flacon (5 formes), le bouchon (4 matières) et le nom : la couleur du jus se mélange automatiquement à partir de vos trois notes.',
-                    'Au Salon, des clients décrivent un portrait olfactif (famille, concentration, étoiles) et paient +75 % (plus la qualité) avec amitié et renommée.',
-                    'L’Orgue du Parfumeur recense vos 41 essences, 7 familles olfactives et 6 grands classiques : une récompense tombe toutes les 6 découvertes, et 1 ruban une fois l’Orgue complet.',
+                    'Choisissez la silhouette du flacon (5 formes), le bouchon (4 matières) et le nom : la couleur du jus se mélange automatiquement. Vos plus beaux flacons se rangent aussi au Coffre-fort et ont leur page « Parfums » dans le Livre de la ferme.',
+                    'Parfum signature : désignez un parfum de 2★ ou 3★ comme signature de la ferme pour gagner +10 % ou +15 % sur toutes les ventes du Salon et +1 point d’amitié quand vous l’offrez.',
+                    'Au Salon, des clients décrivent un portrait olfactif et paient +75 % (plus la qualité et la signature) avec amitié et renom. Vous pouvez aussi offrir directement vos flacons en cadeau du jour aux villageois.',
+                    'L’Orgue du Parfumeur recense vos 41 essences, 7 familles olfactives et 6 grands classiques : une récompense tombe toutes les 6 découvertes, et 1 ruban une fois l’Orgue complet. Vos créations, votre Orgue et votre signature survivent au prestige.',
                 ],
             },
         ],
@@ -1722,7 +1724,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Le renom du domaine',
-                t: `Quand la ferme fait parler d’elle, le grossiste paie tout plus cher : +1 % par point de renom, ${RENOM.max} % au plus. Un train qui part plein donne ${RENOM.train} points. Une bouteille de la cave vendue « Vieux » ou mieux au négociant, une vente réussie aux enchères, une commande de cave ou une commande de bière livrée donnent 1 point. Les dépendances du domaine le renforcent : le pigeonnier relève le plafond, la tour de l’horloge ralentit la baisse, la table d’hôtes l’empêche de retomber à zéro. Le renom baisse d’un point toutes les 4 heures : il se garde en jouant régulièrement le train, la cave et la brasserie. Il s’affiche en haut du grossiste.`,
+                t: `Quand la ferme fait parler d’elle, le grossiste paie tout plus cher : +1 % par point de renom, ${RENOM.max} % au plus. Un train qui part plein donne ${RENOM.train} points. Une bouteille de la cave vendue « Vieux » ou mieux au négociant, une vente réussie aux enchères, une commande de cave, de bière ou de parfum livrée donnent 1 point. Les dépendances du domaine le renforcent : le pigeonnier relève le plafond, la tour de l’horloge ralentit la baisse, la table d’hôtes l’empêche de retomber à zéro. Le renom baisse d’un point toutes les 4 heures : il se garde en jouant régulièrement le train, la cave, la brasserie et la parfumerie. Il s’affiche en haut du grossiste.`,
             },
             { h: 'Le produit du jour et la réserve', t: 'Un produit du jour paie plus. La réserve met de côté ce que demandent commandes et défis.' },
             {
@@ -2049,7 +2051,7 @@ export const GUIDE_PAGES = [
                 h: 'Les neuf branches',
                 b: [
                     'Grange agrandie : de la place pour ranger (2 350 places en tout).',
-                    'Cuisines et ateliers : +1 place dans la file de chaque machine, à chaque palier.',
+                    'Cuisines et ateliers : +1 place dans la file de chaque machine à chaque palier, et des dame-jeannes supplémentaires à l’Atelier du Parfumeur (paliers 2 et 5).',
                     'Aide au champ : Théo soigne plus de parcelles.',
                     'Commerce : des commandes au tableau et des places à l’étal en plus.',
                     'Annexes des métiers : des cuves de brasserie, un siège au comptoir, des étagères de cave, des nasses, une place à l’étable de sélection.',
@@ -2340,7 +2342,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Ce qui travaille jeu fermé',
                 b: [
-                    'Cultures, serre, bêtes, machines, cave, brasserie, élevage et pollinisation.',
+                    'Cultures, serre, bêtes, machines, cave, parfumerie, brasserie, élevage et pollinisation.',
                     'Nasses, bûcheron, mineur, cueilleur et filet de mer : une charge toutes les 2 heures.',
                     'Théo.',
                     'Le plan de production : il ramasse, relance les étapes et lance le plat final, même jeu fermé.',

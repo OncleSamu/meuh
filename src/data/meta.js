@@ -65,6 +65,9 @@ export const ACHIEVEMENTS = [
         calc: true,
     },
     { id: 'cuvees', name: 'Grand cru', desc: 'Sortir {n} cuvée{s} nommée{s} de la cave', icon: ['item', 'redWine'], tiers: [1, 15, 80] },
+    // 1.143 : L'Atelier du Parfumeur
+    { id: 'perfumes', name: 'Parfumeur', desc: 'Mettre en flacon {n} parfum{s}', icon: ['ui', 'perfume'], tiers: [12, 120, 1000] },
+    { id: 'perfumeOrders', name: 'Nez du salon', desc: 'Livrer {n} commande{s} de parfum', icon: ['ui', 'perfume'], tiers: [5, 25, 80] },
 ];
 
 // ---------------- Compétences ----------------
@@ -423,6 +426,7 @@ export const BOOK_PAGES = [
     { id: 'counter', name: 'Boissons du comptoir', icon: ['item', 'cappuccino'], machines: ['counter'] },
     { id: 'drinks', name: 'Jus et alcools', icon: ['item', 'juice'], machines: ['press', 'juiceBar', 'still', 'rumDistillery', 'brewery', 'winery'] },
     { id: 'beers', name: 'Bières et hydromels', icon: ['ui', 'beer'], abs: [2, 5, 10, 20], dyn: true, unit: 'bière' },
+    { id: 'perfumes', name: 'Parfums', icon: ['ui', 'perfume'], abs: [2, 5, 10, 20], dyn: true, unit: 'parfum' },
     { id: 'vintages', name: 'Cuvées et millésimes', icon: ['item', 'champagne'] },
     {
         id: 'crafts',

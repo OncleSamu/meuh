@@ -131,7 +131,7 @@ test('Salon (commandes Portrait olfactif), meilleur accord, hors-ligne et Orgue 
     const p = G.perfumeOf(pid);
 
     // On crée une commande du Salon qui correspond exactement à ce parfum
-    state.perfume.orders = [{ id: 'po1', vid: 'claire', family: p.family, minStars: 1, conc: null, qty: 1 }];
+    state.perfume.orders = [{ id: 'po1', vid: 'rose', family: p.family, minStars: 1, conc: null, qty: 1 }];
     assert.equal(G.perfumeOrdersReady(), 1);
     const matches = G.perfumeOrderMatches(state.perfume.orders[0]);
     assert.ok(matches.some(x => x.id === pid));
@@ -153,10 +153,111 @@ test('Salon (commandes Portrait olfactif), meilleur accord, hors-ligne et Orgue 
     assert.equal(G.myPerfumes().length, 0);
 });
 
-test('UI et documentation en jeu (1.142) : actions, onglet, barre des niveaux, guide, changelog et stats', async () => {
+test('1.143 : gestes de soin au choix, valeur non cumulée, ruban unique, signature, cadeaux, coffre, prestige, Livre et succès', async () => {
+    farm(80);
+    G.ensurePerfume();
+    G.setPerfumeNote('head', 'lemon');
+    G.setPerfumeNote('heart', 'lavender');
+    G.setPerfumeNote('base', 'resin');
+    G.setPerfumeMethod('enfleurage');
+    G.setPerfumeConc('extrait');
+
+    // 1. Trois soins profonds -> touche Grand Sillage (+54 %) et valeur stable à la recréation
+    const pid = G.startPerfume();
+    assert.ok(pid);
+    for (let s = 0; s < STAGES.length; s++) {
+        assert.ok(G.carePerfumeVat(0, 'deep'));
+        T = state.perfume.vats[0].stageUntil + 1000;
+        G.perfumeTick();
+    }
+    assert.ok(G.bottlePerfume(0));
+    const valOnce = G.perfumeOf(pid).value;
+    assert.equal(G.perfumeOf(pid).touch, 'deep');
+
+    // On recrée exactement le même parfum avec 3 soins profonds : la valeur ne doit PAS exploser !
+    const pid2 = G.startPerfume();
+    assert.equal(pid2, pid);
+    for (let s = 0; s < STAGES.length; s++) {
+        assert.ok(G.carePerfumeVat(0, 'deep'));
+        T = state.perfume.vats[0].stageUntil + 1000;
+        G.perfumeTick();
+    }
+    assert.ok(G.bottlePerfume(0));
+    assert.equal(G.perfumeOf(pid).value, valOnce, 'la valeur ne doit pas se multiplier en boucle');
+
+    // 2. Parfum signature -> +15 % au Salon (3★) et +1 amitié en cadeau
+    const o = { id: 'poSig', vid: 'rose', family: G.perfumeOf(pid).family, minStars: 2, conc: null, qty: 1 };
+    const payNoSig = G.perfumeOrderPay(o, pid);
+    const giftNoSig = G.perfumeGiftPts('rose', pid);
+    assert.ok(G.setPerfumeSignature(pid));
+    assert.equal(G.perfumeSignature().id, pid);
+    assert.ok(G.perfumeOrderPay(o, pid) > payNoSig, 'la signature augmente le prix du Salon');
+    assert.ok(G.perfumeGiftPts('rose', pid) > giftNoSig, 'la signature augmente les points de cadeau');
+
+    // 3. Cadeau aux villageois
+    G.ensureVillagers();
+    const stockBeforeGift = G.perfumeStock(pid);
+    assert.ok(G.giftPerfume('rose', pid));
+    assert.equal(G.perfumeStock(pid), stockBeforeGift - 1);
+    assert.equal(state.stats.perfumeGifts, 1);
+    assert.equal(G.giftPerfume('rose', pid), false, 'un seul cadeau par jour');
+
+    // 4. Coffre-fort : dépôt et reprise d'un flacon
+    const stockBeforeVault = G.perfumeStock(pid);
+    assert.ok(G.vaultPutPerfume(pid));
+    assert.equal(G.perfumeStock(pid), stockBeforeVault - 1);
+    const vIdx = G.vaultList().findIndex(s => s && s.kind === 'perfume' && s.pf.pid === pid);
+    assert.ok(vIdx >= 0);
+    assert.ok(G.vaultSlotValue(G.vaultList()[vIdx]) > 0);
+    assert.ok(G.vaultTake(vIdx));
+    assert.equal(G.perfumeStock(pid), stockBeforeVault);
+
+    // 5. Revenus Parfumerie dans Statistiques + Livre de la ferme (page Parfums) + Succès
+    assert.ok(G.sellPerfume(pid, 1));
+    assert.ok(state.income.perfume > 0);
+    const stats = G.statsData();
+    assert.ok(
+        stats.sources.some(([label, val]) => label === 'Parfumerie' && val > 0),
+        'Parfumerie dans origine des pièces',
+    );
+    const pfPage = G.BOOK.find(p => p.id === 'perfumes');
+    assert.ok(pfPage, 'page Parfums dans le Livre de la ferme');
+    const pfEntries = pfPage.entries();
+    assert.equal(pfEntries.length, 1);
+    const fiche = G.entryInfo(pfEntries[0].key);
+    assert.ok(fiche && fiche.found && fiche.lines.some(([k]) => k === 'Touche'));
+
+    const { ACHIEVEMENTS } = await import('../../src/data/meta.js');
+    assert.ok(ACHIEVEMENTS.some(a => a.id === 'perfumes'));
+    assert.ok(ACHIEVEMENTS.some(a => a.id === 'perfumeOrders'));
+
+    // 6. Orgue complet avec 2 paliers en attente : un seul ruban accordé !
+    const P = state.perfume;
+    P.organ = {};
+    for (const id of Object.keys(PERFUME_NOTES)) P.organ[id] = true;
+    for (const f of ['hesperide', 'aromatique', 'floral', 'boise', 'oriental', 'gourmand', 'boreal']) P.organ['F:' + f] = true;
+    for (const c of PERFUME_CLASSICS) P.organ['C:' + c.id] = true;
+    P.organClaimed = 7; // 2 paliers en attente (8e et 9e sur 9)
+    P.organRibbon = false;
+    const rubBefore = state.prestige.rubans;
+    assert.equal(G.organClaimable(), 2);
+    assert.ok(G.claimOrgan());
+    assert.ok(G.claimOrgan());
+    assert.equal(state.prestige.rubans, rubBefore + 1, 'un seul ruban pour Orgue complet');
+
+    // 7. Prestige : conserve créations, Orgue et signature, vide stock/dame-jeannes/commandes
+    state.stats.earnedRun = 1000000;
+    assert.ok(G.doPrestige());
+    assert.ok(state.perfume && state.perfume.creations[pid], 'créations conservées au prestige');
+    assert.equal(state.perfume.signature, pid, 'signature conservée au prestige');
+    assert.equal(G.perfumeStock(pid), 0, 'stock vidé au prestige');
+    assert.equal(state.perfume.vats.length, 0, 'dame-jeannes vidées au prestige');
+});
+
+test('UI et documentation en jeu (1.143) : actions, onglet, barre des niveaux, guide, changelog et stats', async () => {
     const viewSrc = readFileSync(new URL('../../src/ui/views/perfume.js', import.meta.url), 'utf8');
     const appSrc = readFileSync(new URL('../../src/ui/app.js', import.meta.url), 'utf8');
-    for (const act of ['perfPick', 'perfSet', 'perfMethod', 'perfConc', 'perfBottle', 'perfCap', 'perfBest', 'perfStart', 'carePerf', 'bottlePerf', 'sellPerf', 'perfOrder', 'perfOrganClaim']) {
+    for (const act of ['perfPick', 'perfSet', 'perfMethod', 'perfConc', 'perfBottle', 'perfCap', 'perfBest', 'perfStart', 'carePerf', 'bottlePerf', 'sellPerf', 'perfSign', 'perfOrder', 'perfOrganClaim']) {
         assert.match(viewSrc, new RegExp(`\\n {8}${act}: `), `action ${act} dans views/perfume.js`);
     }
     assert.ok(appSrc.includes("['perfume', 'Parfums'"), 'onglet Parfums enregistré dans Atelier');

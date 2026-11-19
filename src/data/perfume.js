@@ -104,12 +104,60 @@ export const CONCENTRATIONS = {
 };
 export const CONC_IDS = Object.keys(CONCENTRATIONS);
 
-// 3 étapes de macération dans les dame-jeannes
+// 3 étapes de macération dans les dame-jeannes — 2 gestes de parfumeur au choix par étape :
+// geste 0 (vif) : accélère l'étape de 15 % et ajoute +12 % de finesse ;
+// geste 1 (profond) : sans accélération, mais +18 % de finesse et un sillage plus intense.
 export const STAGES = [
-    { name: 'Infusion', care: 'Remuer', desc: 'Les essences se mêlent doucement.' },
-    { name: 'Repos au noir', care: 'Aérer', desc: 'L’accord s’arrondit à l’abri du jour.' },
-    { name: 'Glaçage & filtrage', care: 'Filtrer', desc: 'Le jus devient limpide et prêt à mettre en flacon.' },
+    {
+        name: 'Infusion',
+        care: 'Remuer à vif',
+        desc: 'Les essences se mêlent doucement.',
+        choices: [
+            { id: 'quick', name: 'Remuer à vif', speed: 0.15, bonus: 0.12, hint: '−15 % temps · +12 %' },
+            { id: 'deep', name: 'Infuser lentement', speed: 0, bonus: 0.18, hint: '+18 % valeur' },
+        ],
+    },
+    {
+        name: 'Repos au noir',
+        care: 'Aérer au matin',
+        desc: 'L’accord s’arrondit à l’abri du jour.',
+        choices: [
+            { id: 'quick', name: 'Aérer au matin', speed: 0.15, bonus: 0.12, hint: '−15 % temps · +12 %' },
+            { id: 'deep', name: 'Sceller à l’ombre', speed: 0, bonus: 0.18, hint: '+18 % valeur' },
+        ],
+    },
+    {
+        name: 'Glaçage & filtrage',
+        care: 'Glacer & filtrer',
+        desc: 'Le jus devient limpide et prêt à mettre en flacon.',
+        choices: [
+            { id: 'quick', name: 'Glacer & filtrer', speed: 0.15, bonus: 0.12, hint: '−15 % temps · +12 %' },
+            { id: 'deep', name: 'Soutirer sur lie', speed: 0, bonus: 0.18, hint: '+18 % valeur' },
+        ],
+    },
 ];
+
+// Touche obtenue avec 3 soins réussis selon l'orientation des gestes
+export const PERFUME_TOUCHES = {
+    quick: 'Cristallin',
+    deep: 'Grand Sillage',
+    mix: 'Équilibré',
+};
+
+// Parfum signature de la ferme (1 actif, 2★ minimum)
+export const PERFUME_SIGN = {
+    minStars: 2,
+    salonBonus: [0, 0, 0.1, 0.15], // +10 % au Salon pour 2★, +15 % pour 3★
+    giftBonus: 1, // +1 point d'amitié bonus en cadeau villageois
+};
+
+// Cadeau de parfum maison aux villageois (son cadeau du jour)
+export const PERFUME_GIFT = {
+    base: { fraiche: 3, toilette: 4, extrait: 5 },
+    star3: 1,
+    classic: 1,
+    matchNote: 1,
+};
 
 // 7 familles olfactives
 export const FAMILIES = {
@@ -266,7 +314,7 @@ export const PERFUME_ORDERS = {
     every: 2400, // une nouvelle commande toutes les 40 min
     max: 3,
     payMult: 1.75,
-    villagers: ['claire', 'marie', 'margaux', 'agathe', 'yasmine', 'ingrid', 'maeva', 'ines', 'armand', 'octave'],
+    villagers: ['rose', 'lucie', 'margaux', 'agathe', 'yasmine', 'ingrid', 'maeva', 'ines', 'morgane', 'octave', 'lea', 'odile'],
 };
 
 // Récompenses de l'Orgue du Parfumeur (tous les 6 essences/classiques découverts)
