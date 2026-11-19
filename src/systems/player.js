@@ -306,11 +306,17 @@ export function unlocksAt(lvl) {
             ['villager', 'armand'],
             'Armand, chef du Grand Hôtel : une fois par semaine, il commande en énorme quantité votre produit phare (onglet Village, commandes)',
         );
-    if (lvl === DOMAINE_LVL)
+    if (lvl === DOMAINE_LVL) {
         add(
             ['ui', 'house'],
             'L’amélioration du domaine : grange, cuisines, aide au champ, commerce, annexes, Armand, cargo, quai et réception (onglet Village)',
         );
+        list.push({
+            icon: ['ui', 'loop'],
+            name: 'Le Tableau d’intendance (Domaine) : 4 paliers pour enchaîner jusqu’à 8 plats ou bières maison dans un même plan de production (Village › Village, Domaine)',
+            go: 'sheet:domaine',
+        });
+    }
     // 1.83.3 : le plat de la semaine de Mamie
     if (lvl === MAMIE_LVL)
         list.push({

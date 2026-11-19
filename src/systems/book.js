@@ -427,6 +427,7 @@ export function statsData() {
             [
                 ['Produits fabriqués', n('crafted'), ['ui', 'gear']],
                 ['Plats cuisinés', n('cooked'), ['item', 'soup']],
+                ['Plans terminés', n('plans'), ['ui', 'loop']],
                 ['Boissons brassées', n('beers'), ['ui', 'beer']],
                 ['Lots de cave', n('caveLots'), ['ui', 'cave']],
                 ['Créations', n('creations'), ['ui', 'star']],

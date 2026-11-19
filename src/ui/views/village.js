@@ -387,9 +387,10 @@ function contestCard() {
 // ---------------- 1.20 : l'Amélioration du domaine ----------------
 function domaineCard() {
     if (!G.domaineOpen())
-        return `<div class="card locked">${ico(['ui', 'lock'], 'ico big')}<div class="card-main"><div class="card-title">Amélioration du domaine</div><div class="card-sub">Au niveau ${DOMAINE_LVL}, faites grandir votre domaine : grange, cuisines, aide au champ, commerce, réception.</div></div></div>`;
+        return `<div class="card locked">${ico(['ui', 'lock'], 'ico big')}<div class="card-main"><div class="card-title">Amélioration du domaine</div><div class="card-sub">Au niveau ${DOMAINE_LVL}, faites grandir votre domaine : intendance (plans multi-plats), grange, cuisines, aide au champ, commerce, réception.</div></div></div>`;
     const ready = G.domReady();
-    return `<div class="card domaine-card"><div class="dom-banner">${domaineScene(state.domaine)}</div>${head(['ui', 'house'], 'Amélioration du domaine', `${G.domTotal()} / ${DOMAINE_IDS.length * G.domMax()} paliers${G.worksOpen() ? ` · ${G.worksTotal()} / ${WORK_IDS.length * G.workMax()} dépendances` : ''}`, ready ? `<span class="dot">${ready}</span>` : '')}
+    const ip = G.planUpLvl() ? ` · intendance ${G.planUpLvl()} / ${G.planUpMax()}` : '';
+    return `<div class="card domaine-card"><div class="dom-banner">${domaineScene(state.domaine)}</div>${head(['ui', 'house'], 'Amélioration du domaine', `${G.domTotal()} / ${DOMAINE_IDS.length * G.domMax()} paliers${ip}${G.worksOpen() ? ` · ${G.worksTotal()} / ${WORK_IDS.length * G.workMax()} dépendances` : ''}`, ready ? `<span class="dot">${ready}</span>` : '')}
         <div class="od-foot">${btn('Ouvrir le domaine', { act: 'domaine', kind: ready ? 'green' : '', size: 'sm' })}</div></div>`;
 }
 const stepName = (b, k) => DOMAINE[b].steps[k][0];

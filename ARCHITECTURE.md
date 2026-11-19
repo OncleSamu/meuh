@@ -66,6 +66,17 @@ Auparavant, les niveaux étaient réécrits au chargement par cinq passes succes
 | Une machine / un atelier | `src/data/machines.js` + son niveau dans `src/data/levels.js` + son dessin dans `src/art/machines.js` (ou dossier dédié) |
 | Un sprite / une retouche | Ajouter ou surcharger la fonction dans `src/art/` et vérifier l’ordre d’import dans `src/art/index.js` |
 
+## Checklist de mise à jour (documentation en jeu)
+
+À chaque ajout ou modification visible par le joueur, vérifier systématiquement :
+
+1. **Version & Notes de mise à jour** : incrémenter `VERSION` et ajouter l’entrée correspondante en tête de [`src/data/changelog.js`](src/data/changelog.js) (vérifié automatiquement par `npm run check`).
+2. **Barre des niveaux** : mettre à jour `unlocksAt()` dans [`src/systems/player.js`](src/systems/player.js) si une nouveauté se débloque à un niveau donné.
+3. **Guide du fermier** : mettre à jour les pages concernées dans [`src/data/guide.js`](src/data/guide.js).
+4. **Livre de la ferme & Statistiques** : vérifier le classement des nouveaux produits dans [`src/systems/book.js`](src/systems/book.js) et ajouter les compteurs utiles dans `farmStats()`.
+5. **Carnets & Astuces** : ajouter les anecdotes de Mamie ([`src/data/carnet.js`](src/data/carnet.js)) pour toute nouvelle recette, les saveurs ([`src/data/genetics.js`](src/data/genetics.js)) pour toute nouvelle plante, et les astuces ([`src/data/texts.js`](src/data/texts.js)) si besoin.
+6. **Publication** : lancer `npm run check && npm run econ -- --strict && npm run lint && npm test`, puis `node tools/build.mjs --publish` et `node tools/codex.mjs --publish`.
+
 ## Commandes utiles
 
 ```bash

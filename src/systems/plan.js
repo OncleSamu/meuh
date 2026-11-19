@@ -417,6 +417,7 @@ export function planTick(force) {
     if (Array.isArray(p.items)) p.queued = list.reduce((a, e) => a + e.queued, 0);
     if (list.every(e => e.queued >= e.n)) {
         const info = planInfo(p);
+        state.stats.plans = (state.stats.plans || 0) + 1;
         if (view.started && info) toast(`Plan terminé : ${info.title}`, info.icon);
         sfx('level');
         state.plan = null;

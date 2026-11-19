@@ -10,6 +10,7 @@ import { MAX_LEVEL } from '../../src/data/progress.js';
 import { FLAVORS } from '../../src/data/genetics.js';
 import { CAVE_ITEMS } from '../../src/data/cave.js';
 import { HONEYS, HONEY_COL } from '../../src/data/honey.js';
+import { CHANGELOG } from '../../src/data/changelog.js';
 import { SPR } from '../../src/art/index.js';
 import { BLD } from '../../src/art/kit.js';
 
@@ -116,8 +117,14 @@ for (const id of Object.keys(BLD)) if (!okSvg(SPR.building(id, false))) errors.p
 for (const id of Object.keys(CAVE_ITEMS)) if (id !== 'beer' && !ITEMS[id]) errors.push(`Cave ${id} : produit inconnu`);
 for (const id of Object.keys(HONEYS)) if (!HONEY_COL[id]) errors.push(`Miel ${id} : couleur absente de HONEY_COL`);
 
+// 5. Documentation en jeu : la version courante (VERSION) doit figurer en tête de changelog.js
+const curVersion = fs.readFileSync('VERSION', 'utf8').trim();
+if (!CHANGELOG[0] || CHANGELOG[0].v !== curVersion) {
+    errors.push(`VERSION (${curVersion}) ≠ dernière entrée de src/data/changelog.js (${CHANGELOG[0] ? CHANGELOG[0].v : 'vide'})`);
+}
+
 console.log(
-    `Audit Meuh : ${Object.keys(ITEMS).length} produits · ${Object.keys(ANIMALS).length} animaux · ${Object.keys(MACHINES).length} machines · ${Object.keys(RECIPES).length} recettes · ${Object.keys(SPR.has.items).length} sprites d’objets`,
+    `Audit Meuh ${curVersion} : ${Object.keys(ITEMS).length} produits · ${Object.keys(ANIMALS).length} animaux · ${Object.keys(MACHINES).length} machines · ${Object.keys(RECIPES).length} recettes · ${Object.keys(SPR.has.items).length} sprites d’objets`,
 );
 console.log(`Erreurs : ${errors.length} | Avertissements : ${warnings.length}`);
 for (const e of errors) console.error('  ✗', e);

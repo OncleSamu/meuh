@@ -243,3 +243,28 @@ test('audit économique (tools/dev/check-econ.mjs) : JSON valide et zéro marge 
     assert.ok(data.topBottlenecks.length > 0);
     assert.ok(data.byMachine.length > 40);
 });
+
+test('documentation en jeu (1.140) : VERSION, notes de mise à jour, barre des niveaux, guide et statistiques', async () => {
+    const ver = readFileSync(new URL('../../VERSION', import.meta.url), 'utf8').trim();
+    const { CHANGELOG } = await import('../../src/data/changelog.js');
+    const { GUIDE_PAGES } = await import('../../src/data/guide.js');
+    assert.equal(CHANGELOG[0].v, ver, 'VERSION correspond à la dernière note de mise à jour');
+    assert.ok(
+        G.unlocksAt(DOMAINE_LVL).some(u => /Tableau d’intendance/.test(u.name)),
+        'Tableau d’intendance présent dans la barre des niveaux',
+    );
+    const ws = GUIDE_PAGES.find(p => p.id === 'workshop');
+    const dom = GUIDE_PAGES.find(p => p.id === 'domaine');
+    assert.ok(JSON.stringify(ws).includes('Tableau d’intendance'), 'guide atelier mentionne le Tableau d’intendance');
+    assert.ok(JSON.stringify(ws).includes('Bières maison'), 'guide atelier mentionne les bières maison');
+    assert.ok(JSON.stringify(dom).includes('Tableau d’intendance'), 'guide domaine documente le Tableau d’intendance');
+    // Un plan terminé incrémente state.stats.plans et apparaît dans Statistiques › Atelier
+    farm(45);
+    state.inventory.wheat = 20;
+    assert.ok(G.startPlan('bread', 2));
+    assert.equal(G.planOf(), null);
+    assert.equal(state.stats.plans, 1);
+    const atelier = G.statsData().groups.find(([t]) => t === 'Atelier');
+    assert.ok(atelier && atelier[1].some(([label]) => label === 'Plans terminés'), 'statistique Plans terminés présente');
+});
+

@@ -148,7 +148,7 @@ export const GUIDE_PAGES = [
                     'L’étoile et la barre bleue : votre niveau et votre expérience.',
                     'Les pièces : la monnaie du jeu.',
                     'La grange : votre stock et sa place. Touchez-la pour tout voir.',
-                    'Le menu ☰ : des tuiles en trois groupes, Ma ferme (progrès, niveaux, bonus, statistiques), Collections (livre, carnets, coupe, trophées, créations) et Aide et réglages (guide, almanach, réglages).',
+                    'Le menu ☰ : des tuiles en trois groupes, Ma ferme (progrès, niveaux, bonus, statistiques), Collections (livre, carnets, coupe, trophées, créations) et Aide et réglages (chercher, guide, almanach, réglages). « Chercher » fouille d’un coup produits, machines, animaux, matériaux et pages du guide.',
                 ],
             },
             {
@@ -252,7 +252,7 @@ export const GUIDE_PAGES = [
                 h: 'Ce que donne un niveau',
                 b: [
                     'Un point de compétence à placer dans Progrès.',
-                    'Les nouveautés du niveau, listées au moment du passage et dans Menu › Les niveaux (les grandes étapes y sont surlignées).',
+                    'Les nouveautés du niveau, listées au moment du passage et dans Menu › Les niveaux (les grandes étapes y sont surlignées, et le bandeau « Prochaines étapes » résume les prochains jalons à venir).',
                 ],
             },
             {
@@ -1025,8 +1025,13 @@ export const GUIDE_PAGES = [
                 t: 'Tout sur un produit au même endroit : le stock, d’où il vient, sa recette, les recettes où il sert, qui le demande, et les boutons pour y aller, en faire en quantité ou le vendre. Elle s’ouvre par « Fiche » dans la grange et le guide, en touchant l’image d’un produit à la vente, ou par un appui long sur un produit. Touchez un ingrédient pour passer à sa fiche.',
             },
             {
-                h: 'Le plan de production',
-                t: 'En haut de l’atelier (ou « En faire en quantité » dans la fiche d’un plat, « En faire… » dans la grange) : choisissez un plat et une quantité (tapez-la, ajustez-la avec − et +, ou prenez ×1, ×5, ×10, ×25, ×50 ; jusqu’à 200). Le jeu calcule toute la chaîne, stock déduit : les lots à lancer sur chaque machine et les produits du champ ou des bêtes qui manquent. « Tout lancer » : les machines libres préparent les étapes, le plan ramasse ce qu’elles font, et le plat final part tout seul quand il y a de quoi faire toute la quantité. Ce que le plan garde ne part pas au marché. Un seul plan à la fois ; les produits bruts sont seulement signalés.',
+                h: 'Le plan de production (1.140)',
+                b: [
+                    'En haut de l’atelier (ou « En faire en quantité » dans la fiche d’un plat, « En faire… » dans la grange) : choisissez un plat et une quantité (jusqu’à 200). Le jeu calcule toute la chaîne, stock déduit : les lots à lancer sur chaque machine et les produits bruts qui manquent. « Tout lancer » : les machines libres préparent les étapes, le plan ramasse ce qu’elles font, et le plat final part tout seul quand tout est prêt. Ce que le plan garde ne part pas au marché.',
+                    'En 1 clic sur une commande : le bouton « Planifier » apparaît sur le train, la montgolfière, le bateau de livraison, les chantiers du village et les commandes de villageois dès qu’il manque un produit d’atelier. Le stock déjà en grange est déduit et les produits bruts manquants sont signalés.',
+                    'Bières maison et hydromels : l’onglet « Bières maison » du plan (ou « Planifier » dans Mon carnet et Mes bières) lance plusieurs brassins d’affilée : la malterie et les ateliers préparent les ingrédients, puis les cuves s’enchaînent automatiquement.',
+                    'Plusieurs plats ensemble : par défaut, un plan libre prépare un seul plat ou une seule bière à la fois. Au niveau 25, le Tableau d’intendance (Domaine) débloque 2, 3, 5 puis 8 plats ou bières combinés dans un même plan à chaîne commune.',
+                ],
             },
             {
                 h: 'Le plat de la semaine (1.83)',
@@ -1228,8 +1233,8 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
-                h: 'L’accord',
-                t: 'L’accord (0 à 3 étoiles) se lit avant de brasser, avec ses raisons ; il fait le prix. Trois étoiles demandent un mélange réussi.',
+                h: 'L’accord et le guide des classiques',
+                t: 'L’accord (0 à 3 étoiles) se lit avant de brasser, avec ses raisons ; il fait le prix. Trois étoiles demandent un mélange réussi. Sous le compositeur, le « Guide des accords & classiques » (dépliable) rappelle quels goûts s’accordent ou se battent et suit les grandes recettes déjà découvertes.',
             },
             {
                 h: 'Les grandes recettes',
@@ -1241,7 +1246,7 @@ export const GUIDE_PAGES = [
                     'Chaque nouvelle recette reçoit un nom, que vous changez avec le crayon.',
                     'Les étoiles d’une recette restent secrètes jusqu’au premier brassin (on voit des indices).',
                     'Plus vous vendez une même bière, plus son prix baisse, puis il remonte avec le temps.',
-                    '« Rebrasser » refait la dernière recette ; les cuves peuvent tourner en boucle, même pendant votre absence (tant qu’il reste des ingrédients).',
+                    '« Rebrasser » refait la dernière recette ; « Planifier » (dans Mes bières, Mon carnet ou le Plan de production) enchaîne plusieurs brassins en préparant le malt à la malterie et en relançant vos cuves libres ; les cuves peuvent aussi tourner en boucle pendant votre absence.',
                     'Qualité : avec « Meilleurs ingrédients d’abord » (atelier), un brassin fait d’ingrédients en argent, en or, en platine ou en diamant donne des bouteilles de ce rang (même score que les plats). Elles se vendent plus cher, gardent leur rang en cave, et une commande de bière les paie selon leur rang (les meilleures partent en premier).',
                 ],
             },
@@ -1521,7 +1526,7 @@ export const GUIDE_PAGES = [
                 h: 'Le tableau',
                 b: [
                     'Des villageois demandent des produits ; livrez dès que vous avez tout.',
-                    'Touchez un produit manquant : le jeu vous mène là où on le fabrique.',
+                    'Touchez un produit manquant : le jeu vous mène là où on le fabrique. Le bouton « Planifier » lance en 1 clic toute la chaîne des plats manquants de la commande.',
                     'Épinglez une commande pour la garder sous les yeux, ou jetez-la.',
                     'Dès que deux commandes sont prêtes, « Tout livrer » les livre d’un coup, dans l’ordre du tableau ; chacune revérifie ce qui reste en grange.',
                     'Le nombre de commandes grandit avec le niveau, la maison et le domaine.',
@@ -1551,6 +1556,10 @@ export const GUIDE_PAGES = [
             {
                 h: 'Le bateau (après le quai)',
                 t: 'Quatre produits payés très cher ; il part, puis revient. Le chantier naval le fait revenir plus vite, et le domaine (Quai agrandi) ajoute des lignes.',
+            },
+            {
+                h: 'Planifier en 1 clic',
+                t: 'Le bouton « Planifier » sur le train, la montgolfière ou le bateau lance d’un coup toute la chaîne des plats d’atelier qui manquent (stock déjà en grange déduit).',
             },
             { h: 'Le domaine y change des choses', t: 'La branche « Réception » les fait rester plus longtemps.' },
         ],
@@ -1775,7 +1784,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'L’histoire',
                 b: [
-                    'Chaque chapitre est un chantier : on y livre des produits, des pièces et des matériaux, et chaque chapitre rapporte de l’expérience et des pièces (un ruban dès le chapitre 5).',
+                    'Chaque chapitre est un chantier : on y livre des produits, des pièces et des matériaux, et chaque chapitre rapporte de l’expérience et des pièces (un ruban dès le chapitre 5). Le bouton « Planifier » lance en 1 clic toute la chaîne des produits d’atelier qui manquent au chantier.',
                     'Un chapitre fini ouvre des bâtiments, des machines, des cultures ou des villageois. Les grandes étapes (hameau, port, abbaye, île, station, alpage, domaine, château) ouvrent une nouvelle carte.',
                     'Un chantier ne demande jamais un produit que vous n’avez pas encore pu débloquer.',
                 ],
@@ -1978,11 +1987,18 @@ export const GUIDE_PAGES = [
         icon: ['ui', 'house'],
         lvl: 25,
         go: 'village/village',
-        intro: 'Le grand chantier du jeu, fait pour dépenser ses pièces jusqu’au bout : neuf branches de huit paliers et six dépendances.',
+        intro: 'Le grand chantier du jeu, fait pour dépenser ses pièces jusqu’au bout : le Tableau d’intendance, neuf branches de huit paliers et six dépendances.',
         secs: [
             {
                 h: 'Où le trouver',
-                t: 'Village › sous-onglet Village, sous la carte de l’histoire (niveau 25). Deux volets : Améliorations (les neuf branches) et Dépendances (six bâtiments, niveau 49).',
+                t: 'Village › sous-onglet Village, sous la carte de l’histoire (niveau 25). Deux volets : Améliorations (le Tableau d’intendance et les neuf branches) et Dépendances (six bâtiments, niveau 49).',
+            },
+            {
+                h: 'Le Tableau d’intendance (4 paliers)',
+                b: [
+                    'Débloque les plans de production à plusieurs plats et bières maison dans une même chaîne partagée : 2, 3, 5 puis 8 produits simultanés (au lieu d’un seul par défaut).',
+                    'Coût progressif en pièces (75 000, 250 000, 800 000 puis 2,5 millions), planches et outils.',
+                ],
             },
             {
                 h: 'Les neuf branches',

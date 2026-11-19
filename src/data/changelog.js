@@ -1,6 +1,19 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.140",
+  "title": "Planifier en grand",
+  "date": "19 novembre 2026",
+  "items": [
+   "Plan de production : un bouton « Planifier » en 1 clic sur le train, la montgolfière, le bateau de livraison, les chantiers du village et les commandes de villageois (le stock en grange est déduit et les produits bruts manquants sont signalés)",
+   "Plan de production : planifiez plusieurs brassins de vos bières maison et hydromels (depuis l’onglet Bières maison du plan, Mon carnet ou Mes bières) : la malterie et les ateliers préparent tout, puis les cuves s’enchaînent",
+   "Domaine (niveau 25) : le Tableau d’intendance (4 paliers) permet de combiner 2, 3, 5 puis 8 plats ou bières maison dans un même plan à chaîne commune",
+   "Brasserie : un guide dépliable des accords de notes et le suivi des grandes recettes classiques (bières et hydromels)",
+   "Menu et niveaux : une tuile « Chercher » dans le menu (produits, machines, animaux, matériaux et guide) et un bandeau « Prochaines étapes » dans Les niveaux",
+   "Statistiques : les plans de production terminés sont comptés dans l’onglet Atelier"
+  ]
+ },
+ {
   "v": "1.139",
   "title": "Tout est à jour",
   "date": "15 novembre 2026",
