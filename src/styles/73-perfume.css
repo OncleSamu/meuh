@@ -1,0 +1,158 @@
+/* 1.142 : L'Atelier du Parfumeur (Atelier › Parfums) */
+.pf-vats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.pf-vat.care {
+    border-color: var(--gold-d, #c9952a);
+    background: #fff9e5;
+}
+.pf-vat-art svg {
+    width: 44px;
+    height: 44px;
+    display: block;
+}
+.pf-stages {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 3px 0;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+}
+.pf-stages i {
+    width: 12px;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(58, 38, 24, 0.18);
+    display: inline-block;
+}
+.pf-stages i.done {
+    background: var(--leaf, #5da652);
+}
+.pf-stages i.cur {
+    background: var(--gold, #f2c14e);
+}
+.pf-stages i.cared {
+    box-shadow: 0 0 0 1.5px var(--gold-d, #b8860b);
+}
+.pf-compose .pf-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+}
+.pf-pyramid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+.pf-tier {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 12px;
+    border-radius: 13px;
+    border: 2px solid var(--ink);
+    background: #fffaf0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+}
+.pf-t-head {
+    width: 82%;
+    background: #f4fbff;
+}
+.pf-t-heart {
+    width: 91%;
+    background: #fff3f8;
+}
+.pf-t-base {
+    width: 100%;
+    background: #fbf4e6;
+}
+.pf-t-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+.pf-t-val {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+.pf-t-val b {
+    display: block;
+    font-size: 0.9rem;
+}
+.pf-t-val small {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+}
+.pf-t-val small.short {
+    color: var(--red, #c8453a);
+    font-weight: 700;
+}
+.pf-fam {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 999px;
+    border: 1.5px solid;
+    font-size: 0.72rem;
+    font-weight: 800;
+    vertical-align: middle;
+}
+.pf-notes-mini {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-top: 3px;
+}
+.pf-notes-mini .ico {
+    width: 18px;
+    height: 18px;
+}
+.pf-org-sec {
+    margin-top: 12px;
+}
+.pf-org-sec h4 {
+    margin: 0 0 6px;
+    font-size: 0.85rem;
+}
+.pf-org-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: 6px;
+}
+.pf-org-cell {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 7px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(58, 38, 24, 0.18);
+    background: rgba(58, 38, 24, 0.04);
+    font-size: 0.76rem;
+    opacity: 0.55;
+}
+.pf-org-cell.ok {
+    opacity: 1;
+    border-color: var(--gold-d, #c9952a);
+    background: #fff7dd;
+    font-weight: 700;
+}
+.pf-org-cell .ico {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}

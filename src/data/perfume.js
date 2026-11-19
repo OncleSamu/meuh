@@ -1,0 +1,277 @@
+// 1.142 : L'Atelier du Parfumeur (L'Orgue à parfums).
+// Pyramide olfactive (Tête · Cœur · Fond), 3 méthodes d'extraction, 3 concentrations,
+// macération active en 3 étapes avec soins, flacons SVG sur mesure, salon de commandes et Orgue à remplir.
+
+export const PERFUME_LVL = 54;
+
+export const PERFUME = {
+    lvl: PERFUME_LVL,
+    vatsBase: 2, // 2 dame-jeannes de macération au départ (+1 dès Cuisines & ateliers niv. 2, +1 au niv. 5)
+    maxVats: 4,
+    priceMult: 2.35, // multiplicateur de base sur la valeur des essences
+    harmony: [0.8, 1.05, 1.35, 1.8], // 0 à 3 étoiles
+    careBonus: 0.12, // +12 % de valeur par soin réussi (jusqu'à +36 % avec 3 soins)
+    demandHalf: 6 * 3600, // demi-vie de la baisse de demande (6 h)
+    demandPer: 0.04,
+    demandFloor: 0.55,
+};
+
+// 5 facettes olfactives (dans cet ordre pour tous les profils)
+export const FACETS = ['Frais', 'Floral', 'Boisé', 'Épicé', 'Gourmand'];
+export const FACET_COL = ['#4aa8d8', '#d972a6', '#8b6239', '#d45a2a', '#d99b26'];
+
+// Accords entre deux facettes dominantes (clé "a-b" avec a < b)
+export const PERFUME_PAIRS = {
+    '0-1': 1, // Frais + Floral : lumineux
+    '0-2': 1, // Frais + Boisé : vivifiant
+    '1-2': 1, // Floral + Boisé : élégant
+    '1-4': 1, // Floral + Gourmand : velouté
+    '2-3': 1, // Boisé + Épicé : noble et profond
+    '3-4': 1, // Épicé + Gourmand : ambré chaleureux
+    '0-4': -1, // Frais + Gourmand : se heurtent
+    '0-3': 0,
+    '1-3': 1, // Floral + Épicé : envoûtant
+    '2-4': 0,
+};
+
+// 3 méthodes d'extraction : chacune amplifie un étage et une facette
+export const METHODS = {
+    steam: {
+        id: 'steam',
+        name: 'Distillation',
+        short: 'Vapeur',
+        tier: 'head',
+        facet: 0, // Frais
+        boost: 2,
+        timeMult: 0.85,
+        valMult: 1.0,
+        desc: 'À la vapeur : vif et cristallin, amplifie la note de tête.',
+    },
+    enfleurage: {
+        id: 'enfleurage',
+        name: 'Enfleurage',
+        short: 'À froid',
+        tier: 'heart',
+        facet: 1, // Floral
+        boost: 2,
+        timeMult: 1.05,
+        valMult: 1.15,
+        desc: 'À froid : délicat et soyeux, sublime la note de cœur.',
+    },
+    maceration: {
+        id: 'maceration',
+        name: 'Macération',
+        short: 'Lente',
+        tier: 'base',
+        facet: 2, // Boisé
+        boost: 2,
+        timeMult: 1.25,
+        valMult: 1.28,
+        desc: 'Lente au noir : profond et tenace, révèle la note de fond.',
+    },
+};
+export const METHOD_IDS = Object.keys(METHODS);
+
+// 3 concentrations : quantité d'ingrédients, durée par étape, nombre de flacons produits, prestige
+export const CONCENTRATIONS = {
+    fraiche: {
+        id: 'fraiche',
+        name: 'Eau fraîche',
+        qty: 1,
+        stageSec: 180, // 3 min × 3 étapes = 9 min
+        bottles: 4,
+        valMult: 1.0,
+        desc: 'Légère et rapide (1 unité par note, 4 flacons).',
+    },
+    toilette: {
+        id: 'toilette',
+        name: 'Eau de parfum',
+        qty: 2,
+        stageSec: 360, // 6 min × 3 étapes = 18 min
+        bottles: 4,
+        valMult: 1.35,
+        desc: 'Équilibrée et tenace (2 unités par note, 4 flacons).',
+    },
+    extrait: {
+        id: 'extrait',
+        name: 'Extrait pur',
+        qty: 3,
+        stageSec: 600, // 10 min × 3 étapes = 30 min
+        bottles: 5,
+        valMult: 1.75,
+        desc: 'Précieux et concentré (3 unités par note, 5 flacons).',
+    },
+};
+export const CONC_IDS = Object.keys(CONCENTRATIONS);
+
+// 3 étapes de macération dans les dame-jeannes
+export const STAGES = [
+    { name: 'Infusion', care: 'Remuer', desc: 'Les essences se mêlent doucement.' },
+    { name: 'Repos au noir', care: 'Aérer', desc: 'L’accord s’arrondit à l’abri du jour.' },
+    { name: 'Glaçage & filtrage', care: 'Filtrer', desc: 'Le jus devient limpide et prêt à mettre en flacon.' },
+];
+
+// 7 familles olfactives
+export const FAMILIES = {
+    hesperide: { id: 'hesperide', name: 'Hespéridé', col: '#f2b830', desc: 'Éclatant d’agrumes et de fraîcheur' },
+    aromatique: { id: 'aromatique', name: 'Aromatique', col: '#58a864', desc: 'Herbes fraîches et souffle vert' },
+    floral: { id: 'floral', name: 'Floral', col: '#d972a6', desc: 'Bouquet délicat de fleurs de la ferme' },
+    boise: { id: 'boise', name: 'Boisé', col: '#8b6239', desc: 'Notes chaudes de forêts et de résine' },
+    oriental: { id: 'oriental', name: 'Oriental', col: '#c94f2a', desc: 'Épices précieuses et sillage envoûtant' },
+    gourmand: { id: 'gourmand', name: 'Gourmand', col: '#d99b26', desc: 'Miel, vanille, cacao et fruits mûrs' },
+    boreal: { id: 'boreal', name: 'Boréal', col: '#5a9bc4', desc: 'Conifères givrés et baies du Nord' },
+};
+export const FAMILY_IDS = Object.keys(FAMILIES);
+
+// Toutes les essences de l'Orgue : [Frais, Floral, Boisé, Épicé, Gourmand] + couleur du jus
+export const PERFUME_NOTES = {
+    // ---- Notes de Tête (14) ----
+    lemon: { id: 'lemon', tier: 'head', v: [5, 0, 0, 0, 0], col: '#f5dc58', tag: 'hesperide' },
+    orange: { id: 'orange', tier: 'head', v: [4, 1, 0, 0, 1], col: '#f29c38', tag: 'hesperide' },
+    mandarin: { id: 'mandarin', tier: 'head', v: [4, 1, 0, 0, 2], col: '#f4822e', tag: 'hesperide' },
+    grapefruit: { id: 'grapefruit', tier: 'head', v: [5, 0, 0, 1, 0], col: '#f07c70', tag: 'hesperide' },
+    lime: { id: 'lime', tier: 'head', v: [5, 0, 0, 1, 0], col: '#9cd64c', tag: 'hesperide' },
+    mint: { id: 'mint', tier: 'head', v: [5, 0, 1, 0, 0], col: '#5cc48e', tag: 'aromatique' },
+    basil: { id: 'basil', tier: 'head', v: [4, 0, 1, 2, 0], col: '#5da652', tag: 'aromatique' },
+    apple: { id: 'apple', tier: 'head', v: [3, 1, 0, 0, 2], col: '#b8dc6a', tag: 'hesperide' },
+    pear: { id: 'pear', tier: 'head', v: [3, 2, 0, 0, 2], col: '#d7dd74', tag: 'floral' },
+    peach: { id: 'peach', tier: 'head', v: [2, 2, 0, 0, 3], col: '#f5a97a', tag: 'gourmand' },
+    cherry: { id: 'cherry', tier: 'head', v: [2, 2, 0, 0, 3], col: '#d64558', tag: 'gourmand' },
+    spruce: { id: 'spruce', tier: 'head', v: [4, 0, 3, 0, 0], col: '#4a8f6a', tag: 'boreal' },
+    juniper: { id: 'juniper', tier: 'head', v: [3, 0, 3, 2, 0], col: '#5b7fb0', tag: 'boreal' },
+    birchSap: { id: 'birchSap', tier: 'head', v: [4, 0, 2, 0, 1], col: '#9fd0df', tag: 'boreal' },
+
+    // ---- Notes de Cœur (13) ----
+    lavender: { id: 'lavender', tier: 'heart', v: [2, 5, 1, 0, 0], col: '#9e7fd4', tag: 'floral' },
+    tiare: { id: 'tiare', tier: 'heart', v: [1, 5, 0, 0, 2], col: '#f2e4a8', tag: 'floral' },
+    orchid: { id: 'orchid', tier: 'heart', v: [0, 5, 1, 1, 2], col: '#d46cb4', tag: 'floral' },
+    hibiscus: { id: 'hibiscus', tier: 'heart', v: [1, 4, 0, 2, 1], col: '#d94862', tag: 'floral' },
+    fig: { id: 'fig', tier: 'heart', v: [1, 2, 2, 0, 3], col: '#8d5b8c', tag: 'gourmand' },
+    pomegranate: { id: 'pomegranate', tier: 'heart', v: [2, 2, 0, 2, 2], col: '#c93c54', tag: 'oriental' },
+    ginger: { id: 'ginger', tier: 'heart', v: [2, 0, 1, 5, 0], col: '#d9a44a', tag: 'oriental' },
+    saffron: { id: 'saffron', tier: 'heart', v: [0, 2, 1, 5, 1], col: '#e06924', tag: 'oriental' },
+    cardamom: { id: 'cardamom', tier: 'heart', v: [2, 0, 2, 5, 0], col: '#8aa86a', tag: 'oriental' },
+    strawberry: { id: 'strawberry', tier: 'heart', v: [1, 2, 0, 0, 4], col: '#e65a6e', tag: 'gourmand' },
+    raspberry: { id: 'raspberry', tier: 'heart', v: [2, 3, 0, 0, 3], col: '#d4427a', tag: 'floral' },
+    blueberry: { id: 'blueberry', tier: 'heart', v: [2, 2, 1, 0, 2], col: '#5c6ec4', tag: 'aromatique' },
+    cloudberry: { id: 'cloudberry', tier: 'heart', v: [3, 2, 1, 0, 2], col: '#eba23b', tag: 'boreal' },
+
+    // ---- Notes de Fond (14) ----
+    resin: { id: 'resin', tier: 'base', v: [0, 0, 5, 2, 1], col: '#c9822e', tag: 'boise' },
+    hardwood: { id: 'hardwood', tier: 'base', v: [0, 0, 5, 1, 0], col: '#8a5934', tag: 'boise' },
+    wood: { id: 'wood', tier: 'base', v: [1, 0, 4, 0, 0], col: '#a87a4c', tag: 'boise' },
+    vanilla: { id: 'vanilla', tier: 'base', v: [0, 1, 1, 1, 5], col: '#e6c57a', tag: 'gourmand' },
+    cacao: { id: 'cacao', tier: 'base', v: [0, 0, 2, 1, 5], col: '#7a4b32', tag: 'gourmand' },
+    coffee: { id: 'coffee', tier: 'base', v: [0, 0, 3, 2, 4], col: '#63412c', tag: 'oriental' },
+    honey: { id: 'honey', tier: 'base', v: [0, 2, 0, 0, 5], col: '#e8b339', tag: 'gourmand' },
+    caramel: { id: 'caramel', tier: 'base', v: [0, 0, 1, 0, 5], col: '#c97a2e', tag: 'gourmand' },
+    brownSugar: { id: 'brownSugar', tier: 'base', v: [0, 0, 1, 1, 4], col: '#b8763e', tag: 'gourmand' },
+    chestnut: { id: 'chestnut', tier: 'base', v: [0, 0, 4, 0, 3], col: '#8f5932', tag: 'boise' },
+    walnut: { id: 'walnut', tier: 'base', v: [0, 0, 4, 1, 2], col: '#9c6c3e', tag: 'boise' },
+    almond: { id: 'almond', tier: 'base', v: [0, 1, 2, 0, 4], col: '#dfc296', tag: 'gourmand' },
+    cider: { id: 'cider', tier: 'base', v: [2, 0, 2, 1, 2], col: '#d49e3a', tag: 'aromatique' },
+    rum: { id: 'rum', tier: 'base', v: [0, 0, 2, 3, 4], col: '#c9883b', tag: 'oriental' },
+};
+
+export const HEAD_NOTES = Object.values(PERFUME_NOTES)
+    .filter(n => n.tier === 'head')
+    .map(n => n.id);
+export const HEART_NOTES = Object.values(PERFUME_NOTES)
+    .filter(n => n.tier === 'heart')
+    .map(n => n.id);
+export const BASE_NOTES = Object.values(PERFUME_NOTES)
+    .filter(n => n.tier === 'base')
+    .map(n => n.id);
+export const ALL_NOTE_IDS = Object.keys(PERFUME_NOTES);
+
+// 6 Grands Classiques de la Parfumerie (+2★ + bande dorée sur le flacon)
+export const PERFUME_CLASSICS = [
+    {
+        id: 'provence',
+        name: 'Eau de Provence',
+        head: ['lemon'],
+        heart: ['lavender'],
+        base: ['resin'],
+        hint: 'Un agrume jaune, une fleur mauve des champs et une résine de forêt',
+        text: 'Le grand classique méridional : citron, lavande et résine.',
+    },
+    {
+        id: 'alizes',
+        name: 'Alizés des Îles',
+        head: ['lime'],
+        heart: ['tiare'],
+        base: ['vanilla'],
+        hint: 'Trois trésors tropicaux de l’île : agrume vert, fleur blanche et gousse douce',
+        text: 'Un souffle des îles : citron vert, fleur de tiaré et vanille.',
+    },
+    {
+        id: 'oasis',
+        name: 'Nuit de l’Oasis',
+        head: ['orange'],
+        heart: ['saffron', 'hibiscus'],
+        base: ['hardwood'],
+        hint: 'Agrume doux, fleur rouge ou épice d’or, sur un bois précieux',
+        text: 'Un accord oriental envoûtant : orange, safran ou hibiscus et bois dur.',
+    },
+    {
+        id: 'boreale',
+        name: 'Brume Boréale',
+        head: ['spruce', 'juniper'],
+        heart: ['cloudberry'],
+        base: ['resin', 'wood'],
+        hint: 'Un conifère du Grand Nord, sa baie dorée et un fond boisé',
+        text: 'L’air pur du Grand Nord : épicéa ou genièvre, chicoutai et bois.',
+    },
+    {
+        id: 'velours',
+        name: 'Velours Noir',
+        head: ['mandarin'],
+        heart: ['orchid'],
+        base: ['cacao', 'coffee'],
+        hint: 'Agrume hivernal, fleur rare et note sombre torréfiée',
+        text: 'Un sillage de soirée : mandarine, orchidée et cacao ou café.',
+    },
+    {
+        id: 'abeille',
+        name: 'Or d’Abeille',
+        head: ['peach'],
+        heart: ['fig', 'lavender'],
+        base: ['honey'],
+        hint: 'Fruit velouté du verger, cœur de figue ou lavande, posé sur le miel',
+        text: 'Douceur dorée de la ferme : pêche, figue ou lavande et miel.',
+    },
+];
+
+// 5 silhouettes de flacons SVG
+export const BOTTLES = {
+    apothicaire: { id: 'apothicaire', name: 'Apothicaire' },
+    goutte: { id: 'goutte', name: 'Goutte' },
+    cristal: { id: 'cristal', name: 'Cristal' },
+    amphore: { id: 'amphore', name: 'Amphore' },
+    givre: { id: 'givre', name: 'Givré' },
+};
+export const BOTTLE_IDS = Object.keys(BOTTLES);
+
+// 4 styles de bouchon
+export const CAPS = {
+    liege: { id: 'liege', name: 'Liège', fill: '#c9975b' },
+    bois: { id: 'bois', name: 'Bois', fill: '#7a4b2a' },
+    verre: { id: 'verre', name: 'Verre', fill: '#d6eef8' },
+    or: { id: 'or', name: 'Or', fill: '#f2c14e' },
+};
+export const CAP_IDS = Object.keys(CAPS);
+
+// Salon de commandes « Portrait olfactif »
+export const PERFUME_ORDERS = {
+    every: 2400, // une nouvelle commande toutes les 40 min
+    max: 3,
+    payMult: 1.75,
+    villagers: ['claire', 'marie', 'margaux', 'agathe', 'yasmine', 'ingrid', 'maeva', 'ines', 'armand', 'octave'],
+};
+
+// Récompenses de l'Orgue du Parfumeur (tous les 6 essences/classiques découverts)
+export const PERFUME_ORGAN = {
+    step: 6,
+    coins: 12000,
+    xp: 250,
+};

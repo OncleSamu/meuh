@@ -68,6 +68,7 @@ import { catTick } from './seedcat.js';
 import { familyTick } from './family.js';
 import { herdbookTick } from './herdbook.js';
 import { planTick, planInfo } from './plan.js';
+import { perfumeTick, perfumeOffline } from './perfume.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -330,6 +331,7 @@ function tickDeliveries() {
     if (ensureHoliday()) changed = true;
     if (geneticsTick()) changed = true;
     if (brewTick()) changed = true;
+    if (perfumeTick()) changed = true;
     if (cargoTick()) changed = true;
     if (armandTick()) changed = true;
     if (pondTick()) changed = true;
@@ -441,6 +443,7 @@ export function offlineProgress() {
     });
     // 1.75.2 : les cuves en boucle enchaînent leurs tournées
     const brews = brewOffline();
+    const perfumes = perfumeOffline();
     const salon = counterOffline(elapsed); // 1.118 : des clients attendent au comptoir
     const pasture = animalsOffline(elapsed);
     const babies = birthsTick(); // 1.45 : les naissances au pré pendant l'absence
@@ -500,6 +503,7 @@ export function offlineProgress() {
         }
     }
     add(brews, ['ui', 'beer'], `${brews} tournée${s(brews)} de bière mise${s(brews)} en bouteille`);
+    add(perfumes, ['ui', 'perfume'], `${perfumes} macération${s(perfumes)} de parfum prête${s(perfumes)} à mettre en flacon`);
     add(salon, ['machine', 'counter'], `${salon} client${s(salon)} vous attend${salon > 1 ? 'ent' : ''} au comptoir`);
     add(hand.crops, ['villager', 'theo'], `Théo, votre commis, a récolté ${hand.crops} produit${s(hand.crops)}`);
     add(

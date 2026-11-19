@@ -429,10 +429,12 @@ export function statsData() {
                 ['Plats cuisinés', n('cooked'), ['item', 'soup']],
                 ['Plans terminés', n('plans'), ['ui', 'loop']],
                 ['Boissons brassées', n('beers'), ['ui', 'beer']],
+                ['Parfums créés', n('perfumes'), ['ui', 'perfume']],
                 ['Lots de cave', n('caveLots'), ['ui', 'cave']],
                 ['Créations', n('creations'), ['ui', 'star']],
                 // 1.92 : la brasserie, le comptoir et le labo
                 ['Commandes de bière', n('beerOrders'), ['ui', 'beer']],
+                ['Commandes de parfum', n('perfumeOrders'), ['ui', 'perfume']],
                 ['Boissons servies', n('drinks'), ['ui', 'beer']],
                 ['Clients du comptoir', n('clients'), ['ui', 'heart']],
                 ['Variétés fixées', state.genetics ? Object.values(state.genetics.vars || {}).filter(v => v && v.fixed).length : 0, ['ui', 'flowers']],

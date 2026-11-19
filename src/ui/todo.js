@@ -122,6 +122,15 @@ export function todoList() {
         if (bo) push('machines/brew', ['villager', 'hugues'], `${bo} commande${s(bo)} de bière à livrer`, bo);
         if (G.beerBookClaimable()) push('machines/brew', ['ui', 'beer'], 'Récompense du livre des bières', 1);
     }
+    if (G.perfumeOpen() && state.perfume) {
+        const pr = G.perfumeReadyCount();
+        if (pr) push('machines/perfume', ['ui', 'perfume'], `${pr} parfum${s(pr)} à mettre en flacon`, pr);
+        const pc = G.perfumeCareCount();
+        if (pc) push('machines/perfume', ['ui', 'perfume'], `${pc} macération${s(pc)} à soigner`, pc);
+        const po = G.perfumeOrdersReady();
+        if (po) push('machines/perfume', ['ui', 'perfume'], `${po} commande${s(po)} de parfum à livrer`, po);
+        if (G.organClaimable()) push('machines/perfume', ['ui', 'perfume'], 'Récompense de l’Orgue du Parfumeur', 1);
+    }
     // 1.20 : le domaine
     if (G.metierCanRank()) push('farm', ['ui', 'star'], 'Un rang de métier à passer (menu)', 1);
     if (G.clientOpen()) {

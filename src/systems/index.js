@@ -84,3 +84,4 @@ export * from './brewfest.js';
 export * from './seedcat.js';
 export * from './family.js';
 export * from './plan.js';
+export * from './perfume.js';

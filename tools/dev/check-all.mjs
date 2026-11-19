@@ -10,6 +10,7 @@ import { MAX_LEVEL } from '../../src/data/progress.js';
 import { FLAVORS } from '../../src/data/genetics.js';
 import { CAVE_ITEMS } from '../../src/data/cave.js';
 import { HONEYS, HONEY_COL } from '../../src/data/honey.js';
+import { PERFUME_NOTES } from '../../src/data/perfume.js';
 import { CHANGELOG } from '../../src/data/changelog.js';
 import { SPR } from '../../src/art/index.js';
 import { BLD } from '../../src/art/kit.js';
@@ -116,6 +117,8 @@ for (const m of Object.values(MACHINES)) if (!SPR.has.machines[m.id] || !okSvg(S
 for (const id of Object.keys(BLD)) if (!okSvg(SPR.building(id, false))) errors.push(`Bâtiment ${id} : dessin invalide`);
 for (const id of Object.keys(CAVE_ITEMS)) if (id !== 'beer' && !ITEMS[id]) errors.push(`Cave ${id} : produit inconnu`);
 for (const id of Object.keys(HONEYS)) if (!HONEY_COL[id]) errors.push(`Miel ${id} : couleur absente de HONEY_COL`);
+for (const id of Object.keys(PERFUME_NOTES)) if (!ITEMS[id]) errors.push(`Parfumerie ${id} : essence absente de ITEMS`);
+if (!SPR.has.ui.perfume || !okSvg(SPR.ui('perfume'))) errors.push('Icône UI perfume manquante ou invalide');
 
 // 5. Documentation en jeu : la version courante (VERSION) doit figurer en tête de changelog.js
 const curVersion = fs.readFileSync('VERSION', 'utf8').trim();

@@ -13,6 +13,7 @@ import { ISLAND } from '../data/island.js';
 import { GENETICS } from '../data/genetics.js';
 import { ABBEY } from '../data/abbey.js';
 import { CAVE_LVL } from '../data/cave.js';
+import { PERFUME_LVL } from '../data/perfume.js';
 import { HARAS_LVL } from '../data/haras.js';
 import { CAMPING } from '../data/camping.js';
 import { COMICE } from '../data/elevage.js';
@@ -69,6 +70,7 @@ export const TABS = [
             ['workshop', 'Production', ['machine', 'mill']],
             ['counter', 'Comptoir', ['machine', 'counter'], () => MACHINES.counter.reqLvl],
             ['cave', 'Cave', ['ui', 'cave'], () => CAVE_LVL],
+            ['perfume', 'Parfums', ['ui', 'perfume'], () => PERFUME_LVL],
             ['brew', 'Brasserie', ['ui', 'beer'], () => ABBEY.lvl],
             ['lab', 'Labo', ['ui', 'flowers'], () => GENETICS.lvl],
             ['maison', 'Maison', ['ui', 'maison'], () => CAMPING.lvl],
@@ -222,6 +224,7 @@ const HELP = {
     'machines/workshop': 'workshop',
     'machines/counter': 'counter',
     'machines/cave': 'cave',
+    'machines/perfume': 'perfume',
     'machines/brew': 'brewery',
     'machines/lab': 'labplants',
     'machines/maison': 'legend',

@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.142",
+  "title": "L’Atelier du Parfumeur",
+  "date": "19 novembre 2026",
+  "items": [
+   "Nouvel onglet Atelier › Parfums (juste à côté de Cave, niveau 54) : composez vos propres parfums avec une pyramide olfactive à 3 étages (note de tête, note de cœur, note de fond) parmi 41 essences de la ferme, du verger, de la forêt, des contrées, des ruches et du labo de génétique",
+   "Savoir-faire : 3 méthodes d’extraction (distillation à la vapeur, enfleurage à froid, macération lente) et 3 concentrations (eau fraîche, eau de parfum, extrait pur)",
+   "Macération active : 3 étapes (infusion, repos au noir, glaçage & filtrage) avec un geste de soin à chaque étape (remuer, aérer, filtrer) qui augmente la finesse (+12 % par soin) et élève le rang qualité avec 3 soins parfaits",
+   "Flaconnage sur mesure : choisissez parmi 5 silhouettes de flacons et 4 bouchons, donnez un nom à chaque création, la couleur du jus se mélange automatiquement",
+   "Salon de commandes « Portrait olfactif » : livrez des flacons assortis aux demandes des villageois (+75 %, amitié et renommée) ; L’Orgue du Parfumeur suit vos essences, 7 familles olfactives et 6 grands classiques avec des récompenses par paliers"
+  ]
+ },
+ {
   "v": "1.141",
   "title": "Tout planifier, tout semer",
   "date": "19 novembre 2026",

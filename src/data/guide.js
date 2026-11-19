@@ -136,7 +136,7 @@ export const GUIDE_PAGES = [
                 b: [
                     'Ferme : le champ, la serre, le verger, la nature (forêt et mine), la pêche et les voyages (l’île, l’oasis, le Grand Nord).',
                     'Animaux : les prés (l’étable, la transhumance) et le haras (écuries, concours, élevage).',
-                    'Atelier : la production (les machines), le comptoir, la cave, la brasserie, le labo et la Maison de la ferme.',
+                    'Atelier : la production (les machines), le comptoir, la cave, les parfums, la brasserie, le labo et la Maison de la ferme.',
                     'Village : les commandes (tableau, train, cargo, Armand…), le village (chapitres, villageois, concours, domaine), le camping et la famille.',
                     'Marché : le magasin pour acheter, le grossiste et l’étal pour vendre.',
                     'Le « ? » au bout des onglets du haut ouvre la page du guide de l’écran où vous êtes.',
@@ -257,7 +257,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les grandes étapes',
-                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, famille ${FAMILY.lvl}, abbaye 36, île 40, génétique 43, grand hall du Comice 47, Haras ${HARAS_LVL}, alpage ${chLvl(9)}, camping, Maison et fête de la vallée ${CAMPING.lvl}, oasis ${chLvl(21)}, Grand Nord ${chLvl(23)}, et le niveau ${MAX_LEVEL} pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
+                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, famille ${FAMILY.lvl}, abbaye 36, île 40, génétique 43, grand hall du Comice 47, Haras ${HARAS_LVL}, Parfums 54, alpage ${chLvl(9)}, camping, Maison et fête de la vallée ${CAMPING.lvl}, oasis ${chLvl(21)}, Grand Nord ${chLvl(23)}, et le niveau ${MAX_LEVEL} pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
             },
             { h: `Après le niveau ${MAX_LEVEL}`, t: 'L’expérience donne des étoiles de renommée : voir « Renommée et Ferme légendaire ».' },
         ],
@@ -1202,6 +1202,49 @@ export const GUIDE_PAGES = [
             'Le primeur est un pari : ne promettez que ce que votre lot peut tenir.',
         ],
         see: ['cave', 'domaine'],
+    },
+    {
+        id: 'perfume',
+        cat: 'craft',
+        name: 'L’Atelier du Parfumeur',
+        icon: ['ui', 'perfume'],
+        lvl: 54,
+        go: 'machines/perfume',
+        intro: 'Composez vos propres parfums : une pyramide à trois étages, trois méthodes d’extraction, une macération active et des flacons sur mesure.',
+        secs: [
+            {
+                h: 'La pyramide olfactive',
+                b: [
+                    'Chaque parfum associe trois étages : une note de tête (l’envolée fraîche : agrumes, menthe, conifères…), une note de cœur (l’âme : lavande, tiaré, orchidée, hibiscus, épices, fruits…) et une note de fond (le sillage : résine, bois dur, vanille, cacao, miel…).',
+                    'Les variétés fixées du laboratoire et les miels de fleurs renforcent leur facette dominante et transmettent leur qualité au flacon.',
+                    'Six grands classiques (Eau de Provence, Alizés des Îles, Nuit de l’Oasis, Brume Boréale, Velours Noir, Or d’Abeille) valent deux étoiles de plus et une étiquette dorée.',
+                ],
+            },
+            {
+                h: 'Méthode d’extraction et concentration',
+                b: [
+                    'Distillation à la vapeur (vif, amplifie la tête), Enfleurage à froid (soyeux, sublime le cœur) ou Macération lente (profond, révèle le fond).',
+                    'Eau fraîche (rapide, ×1 ingrédient), Eau de parfum (équilibrée, ×2) ou Extrait pur (concentré, ×3, 5 flacons de grand prestige).',
+                ],
+            },
+            {
+                h: 'Macération active et soins',
+                b: [
+                    'Deux dame-jeannes au départ (jusqu’à quatre grâce à la branche « Cuisines et ateliers » du domaine).',
+                    'Chaque parfum traverse trois étapes : Infusion, Repos au noir, puis Glaçage & filtrage (elle avance même jeu fermé).',
+                    'À chaque étape, un geste de soin (Remuer, Aérer, Filtrer) augmente la finesse (+12 % de valeur par soin) et accélère l’étape de 15 %. Trois soins parfaits élèvent même la qualité du lot d’un cran.',
+                ],
+            },
+            {
+                h: 'Flacons, Salon et Orgue du Parfumeur',
+                b: [
+                    'Choisissez la silhouette du flacon (5 formes), le bouchon (4 matières) et le nom : la couleur du jus se mélange automatiquement à partir de vos trois notes.',
+                    'Au Salon, des clients décrivent un portrait olfactif (famille, concentration, étoiles) et paient +75 % (plus la qualité) avec amitié et renommée.',
+                    'L’Orgue du Parfumeur recense vos 41 essences, 7 familles olfactives et 6 grands classiques : une récompense tombe toutes les 6 découvertes, et 1 ruban une fois l’Orgue complet.',
+                ],
+            },
+        ],
+        see: ['cave', 'brewery', 'labplants', 'domaine'],
     },
     {
         id: 'brewery',

@@ -16,12 +16,12 @@ src/
 │   ├── animals.js        ← Registre ANIMALS (29 espèces) et constantes d’élevage
 │   ├── farm.js           ← Parcelles, sols, qualité, DECOS, UPGRADES
 │   ├── ajouts/           ← Extensions thématiques (cultures, arbres, île, poissons, cave, château, pizzeria, oasis, Nord…)
-│   └── *.js              ← Modules dédiés : abbey.js, cave.js, genetics.js, haras.js, honey.js, island.js, oasis.js, nord.js, paquets.js, village.js…
+│   └── *.js              ← Modules dédiés : abbey.js, cave.js, perfume.js, genetics.js, haras.js, honey.js, island.js, oasis.js, nord.js, paquets.js, village.js…
 ├── art/         # Tous les dessins SVG procéduraux (zéro image externe)
 │   ├── kit.js            ← Primitives SVG (P, E, C, L, R, SHADOW, HL) et registres items/animals/machines/ui/people
 │   ├── index.js          ← Point d’entrée SPR (importe socle → refontes → extensions → retouches)
 │   └── retouches/        ← Surcharges visuelles chargées en dernier
-├── systems/     # Logique métier et simulation (farm, workshop, orders, genetics, brewery, cave, haras, player…)
+├── systems/     # Logique métier et simulation (farm, workshop, orders, genetics, brewery, perfume, cave, haras, player…)
 ├── ui/          # Rendu DOM sans framework (views/, sheets/, genlook.js, brew.js, icons.js)
 └── styles/      # Feuilles CSS numérotées (assemblées dans l’ordre par tools/css.mjs)
 
