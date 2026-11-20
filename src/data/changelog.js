@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.148.1",
+  "title": "Domaine plus aéré sur téléphone",
+  "date": "20 novembre 2026",
+  "items": [
+   "Vue du Domaine : mise en page verticalement plus aérée (6 plans bien espacés) et sprites composites (train, serre, écuries) strictement contenus dans leur zone — aucun chevauchement sur téléphone, même avec les bulles et étiquettes"
+  ]
+ },
+ {
   "v": "1.148",
   "title": "La Vue du Domaine",
   "date": "20 novembre 2026",

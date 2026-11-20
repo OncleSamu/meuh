@@ -25,19 +25,18 @@ const DOM_DECOS = [
 ];
 
 const DECO_SLOTS = [
-    [36, 46],
-    [64, 46],
-    [49, 64],
-    [14, 59],
-    [50, 82],
+    [15, 26],
+    [85, 26],
+    [84, 39],
+    [51, 55],
+    [50, 68],
 ];
 
 const DOG_WAYPOINTS = [
-    [56, 48],
-    [41, 49],
-    [60, 58],
-    [46, 62],
-    [35, 48],
+    [50, 47.5],
+    [36, 47.5],
+    [64, 47.5],
+    [50, 47.5],
 ];
 
 // État local purement visuel (jamais bloquant pour la sauvegarde)
@@ -260,8 +259,8 @@ function buildZones() {
         {
             id: 'station',
             name: 'Gare',
-            pos: [22, 18],
-            w: 26,
+            pos: [27, 14],
+            w: 42,
             open: true,
             go: 'village/orders',
             icon: ['ui', 'trainIcon'],
@@ -269,15 +268,28 @@ function buildZones() {
             desc: 'Commandes du village, train régional, cargo, montgolfière et Grands Défis.',
             bub: stationBub,
             art: () =>
-                `<div class="dom-art">${art('building', 'station')}${
-                    trainHere ? `<div class="dom-train"><span class="loco">${SPR.loco()}</span><span class="wag">${SPR.wagon('#c8453a')}</span></div>` : ''
+                `<div class="dom-art dom-station"><span class="st-bld">${art('building', 'station')}</span>${
+                    trainHere ? `<span class="st-train"><span class="st-loco">${SPR.loco()}</span><span class="st-wag">${SPR.wagon('#c8453a')}</span></span>` : ''
                 }</div>`,
+        },
+        {
+            id: 'port',
+            name: 'Voyages',
+            pos: [77, 14],
+            w: 34,
+            open: voyagesOpen,
+            go: voyOpenPath,
+            icon: ['ui', 'oaVoyages'],
+            tags: [G.islandOpen() ? 'Île' : '', G.oasisOpen() ? 'Oasis' : '', G.nordOpen() ? 'Grand Nord' : ''].filter(Boolean),
+            desc: 'Toutes tes contrées lointaines réunies au quai. Touche la bulle pour ramener les récoltes prêtes.',
+            bub: portBub,
+            art: () => `<div class="dom-art dom-pair"><span class="main">${art('building', 'lighthouse')}</span><span class="boat">${art('ui', 'boat')}</span></div>`,
         },
         {
             id: 'village',
             name: 'Village',
-            pos: [54, 17],
-            w: 26,
+            pos: [50, 26],
+            w: 36,
             open: state.level >= 3,
             go: campN > 0 ? 'village/camping' : famN > 0 ? 'village/family' : 'village/village',
             icon: ['ui', 'village'],
@@ -290,23 +302,23 @@ function buildZones() {
                 }</div>`,
         },
         {
-            id: 'port',
-            name: 'Voyages',
-            pos: [83, 21],
+            id: 'barn',
+            name: 'Grange',
+            pos: [20, 39],
             w: 24,
-            open: voyagesOpen,
-            go: voyOpenPath,
-            icon: ['ui', 'oaVoyages'],
-            tags: [G.islandOpen() ? 'Île' : '', G.oasisOpen() ? 'Oasis' : '', G.nordOpen() ? 'Grand Nord' : ''].filter(Boolean),
-            desc: 'Toutes tes contrées lointaines réunies au quai. Touche la bulle pour ramener les récoltes prêtes.',
-            bub: portBub,
-            art: () => `<div class="dom-art dom-pair"><span class="main">${art('building', 'lighthouse')}</span><span class="boat">${art('ui', 'boat')}</span></div>`,
+            open: true,
+            go: 'sheet:barn',
+            icon: ['ui', 'barn'],
+            tags: [`${G.barnUsed()} / ${G.barnCap()}`, stallSold ? `${stallSold} vente(s) à encaisser` : 'Réserves & coffre'],
+            desc: 'Tes stocks, le coffre de la grange et l’encaissement rapide de ton étal.',
+            bub: barnBub,
+            art: () => `<div class="dom-art">${art('ui', 'barn')}</div>`,
         },
         {
             id: 'house',
             name: 'Maison',
-            pos: [50, 40],
-            w: 27,
+            pos: [52, 38.5],
+            w: 28,
             open: true,
             glow: true,
             go: 'sheet:house',
@@ -317,23 +329,10 @@ function buildZones() {
             art: () => `<div class="dom-art">${SPR.farmhouse(G.houseLvl(), G.styleOf('barn'))}</div>`,
         },
         {
-            id: 'barn',
-            name: 'Grange',
-            pos: [18, 42],
-            w: 21,
-            open: true,
-            go: 'sheet:barn',
-            icon: ['ui', 'barn'],
-            tags: [`${G.barnUsed()} / ${G.barnCap()}`, stallSold ? `${stallSold} vente(s) à encaisser` : 'Réserves & coffre'],
-            desc: 'Tes stocks, le coffre de la grange et l’encaissement rapide de ton étal.',
-            bub: barnBub,
-            art: () => `<div class="dom-art">${art('ui', 'barn')}</div>`,
-        },
-        {
             id: 'workshop',
             name: 'Ateliers',
-            pos: [82, 42],
-            w: 26,
+            pos: [24, 55],
+            w: 34,
             open: hasWorkshop,
             glow: true,
             go: 'machines/workshop',
@@ -349,8 +348,8 @@ function buildZones() {
         {
             id: 'counter',
             name: 'Comptoir',
-            pos: [30, 56],
-            w: 19,
+            pos: [77, 55],
+            w: 24,
             open: counterOpen,
             go: 'machines/counter',
             icon: ['machine', 'counter'],
@@ -362,8 +361,8 @@ function buildZones() {
         {
             id: 'perfume',
             name: 'Parfumerie',
-            pos: [69, 55],
-            w: 20,
+            pos: [24, 68],
+            w: 26,
             open: pfOpen,
             glow: true,
             go: 'machines/perfume',
@@ -376,8 +375,8 @@ function buildZones() {
         {
             id: 'cave',
             name: G.brewOpen() && G.caveOpen() ? 'Cave & Brasserie' : G.brewOpen() ? 'Brasserie' : 'Cave',
-            pos: [85, 66],
-            w: 23,
+            pos: [76, 68],
+            w: 28,
             open: caveOrBrew,
             go: brewVats.length || beerOrd > 0 || !G.caveOpen() ? 'machines/brew' : 'machines/cave',
             icon: ['ui', G.caveOpen() ? 'cave' : 'beer'],
@@ -389,8 +388,8 @@ function buildZones() {
         {
             id: 'fields',
             name: state.greenhouse && state.greenhouse.built ? 'Champs & Serre' : 'Champs',
-            pos: [27, 72],
-            w: 34,
+            pos: [27, 80.5],
+            w: 42,
             open: true,
             go: 'farm/field',
             icon: ['item', 'wheat'],
@@ -398,15 +397,15 @@ function buildZones() {
             desc: 'Tes vraies parcelles poussent ici en direct. Un tap sur la bulle récolte tout ce qui est mûr ou arrose le champ.',
             bub: fieldBub,
             art: () =>
-                `<div class="dom-art"><div class="dom-fields">${samplePlots
+                `<div class="dom-art dom-fields-box"><div class="dom-fields">${samplePlots
                     .map(p => `<span class="dom-cell">${plotThumb(p)}</span>`)
-                    .join('')}${state.greenhouse && state.greenhouse.built ? `<span class="dom-gh">${art('ui', 'greenhouse')}</span>` : ''}</div></div>`,
+                    .join('')}</div>${state.greenhouse && state.greenhouse.built ? `<span class="dom-gh">${art('ui', 'greenhouse')}</span>` : ''}</div>`,
         },
         {
             id: 'orchard',
             name: 'Verger',
-            pos: [64, 74],
-            w: 27,
+            pos: [75, 80.5],
+            w: 36,
             open: orchardOpen,
             go: 'farm/orchard',
             icon: ['item', 'apple'],
@@ -423,8 +422,8 @@ function buildZones() {
         {
             id: 'pasture',
             name: G.harasOpen() ? 'Prés & Haras' : 'Prés',
-            pos: [30, 89],
-            w: 33,
+            pos: [27, 93],
+            w: 42,
             open: pastureOpen,
             go: 'animals/pasture',
             icon: ['animal', 'cow'],
@@ -433,14 +432,14 @@ function buildZones() {
             bub: pastureBub,
             art: () => {
                 const list = sampleAn.length ? sampleAn.map(a => `<span class="an">${art('animal', a.type)}</span>`).join('') : `<span class="an">${art('animal', 'chicken')}</span>`;
-                return `<div class="dom-art dom-pasture">${G.harasOpen() ? `<span class="stud">${art('building', 'stud')}</span>` : ''}${list}</div>`;
+                return `<div class="dom-art dom-pasture-wrap">${G.harasOpen() ? `<span class="stud">${art('building', 'stud')}</span>` : ''}<div class="dom-pasture">${list}</div></div>`;
             },
         },
         {
             id: 'pond',
             name: G.pondOpen() ? 'Étang & Forêt' : 'Forêt',
-            pos: [76, 89],
-            w: 25,
+            pos: [75, 93],
+            w: 32,
             open: natureOpen,
             go: trapsN > 0 ? 'farm/pond' : 'farm/nature',
             icon: ['ui', G.pondOpen() ? 'rod' : 'axe'],
@@ -455,8 +454,8 @@ function buildZones() {
 // ---------------- décor SVG ancré (saisons, nuit, bois sauvages) ----------------
 function bgSvg(zones) {
     const W = 420;
-    const H = 790;
-    const skyH = 110;
+    const H = 1680;
+    const skyH = 132;
     const O = '#3a2618';
     const winter = G.season().id === 'hiver';
     const pathStyle = domPrefs().path || 'sand';
@@ -477,12 +476,10 @@ function bgSvg(zones) {
         })
         .join('');
 
+    const mainRoad = `M${W * 0.5} ${H * 0.26} V${H * 0.82} M${W * 0.2} ${H * 0.4} H${W * 0.8} M${W * 0.24} ${H * 0.56} H${W * 0.77} M${W * 0.24} ${H * 0.69} H${W * 0.76} M${W * 0.27} ${H * 0.82} H${W * 0.75}`;
     const cobble =
         pathStyle === 'cobble'
-            ? `<g stroke="rgba(58,38,24,.26)" stroke-width="2.5" stroke-dasharray="2 9" stroke-linecap="round" fill="none">
-                <path d="M${W * 0.52} ${skyH + 14} Q${W * 0.48} ${H * 0.34} ${W * 0.5} ${H * 0.48} Q${W * 0.5} ${H * 0.63} ${W * 0.47} ${H * 0.77}"/>
-                <path d="M${W * 0.21} ${H * 0.46} Q${W * 0.48} ${H * 0.5} ${W * 0.8} ${H * 0.46}"/>
-              </g>`
+            ? `<path d="${mainRoad}" stroke="rgba(58,38,24,.24)" stroke-width="2.5" stroke-dasharray="2 10" stroke-linecap="round" fill="none"/>`
             : '';
 
     return `<svg class="dom-bg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
@@ -497,41 +494,45 @@ function bgSvg(zones) {
                 <stop offset="100%" stop-color="var(--dom-m3)"/>
             </linearGradient>
         </defs>
-        <rect width="${W}" height="${skyH + 40}" fill="url(#domSky)"/>
+        <rect width="${W}" height="${skyH + 45}" fill="url(#domSky)"/>
         <path d="M0 ${skyH - 8} Q${W * 0.24} ${skyH - 42} ${W * 0.52} ${skyH - 12} T${W} ${skyH - 20} L${W} ${H} L0 ${H}Z" fill="var(--dom-h1)"/>
-        <path d="M0 ${skyH + 16} Q${W * 0.32} ${skyH - 18} ${W * 0.64} ${skyH + 10} T${W} ${skyH - 2} L${W} ${H} L0 ${H}Z" fill="var(--dom-h2)"/>
-        <path d="M0 ${skyH + 34} Q${W * 0.48} ${skyH + 16} ${W} ${skyH + 30} L${W} ${H} L0 ${H}Z" fill="url(#domMeadow)"/>
-        <path d="M${W * 0.66} ${skyH + 8} Q${W * 0.78} ${skyH + 38} ${W} ${skyH + 54} L${W} ${skyH - 6} Q${W * 0.84} ${skyH - 4} ${W * 0.66} ${skyH + 8}Z" fill="var(--dom-water1)" stroke="${O}" stroke-width="2"/>
-        <path d="M${W * 0.92} ${skyH + 46} Q${W * 0.97} ${H * 0.54} ${W * 0.9} ${H * 0.74} Q${W * 0.85} ${H * 0.84} ${W * 0.76} ${H * 0.89}" fill="none" stroke="var(--dom-water1)" stroke-width="13" stroke-linecap="round"/>
-        <ellipse cx="${W * 0.76}" cy="${H * 0.9}" rx="54" ry="24" fill="var(--dom-water1)" stroke="${O}" stroke-width="2.2"/>
-        <ellipse cx="${W * 0.76}" cy="${H * 0.895}" rx="40" ry="14" fill="var(--dom-water2)" opacity=".55"/>
-        <path d="M0 ${skyH + 10} Q${W * 0.18} ${skyH + 22} ${W * 0.39} ${skyH + 6}" fill="none" stroke="#8b6a4a" stroke-width="7" stroke-dasharray="3 5"/>
-        <path d="M0 ${skyH + 8} Q${W * 0.18} ${skyH + 20} ${W * 0.39} ${skyH + 4} M0 ${skyH + 12} Q${W * 0.18} ${skyH + 24} ${W * 0.39} ${skyH + 8}" fill="none" stroke="#5d5248" stroke-width="1.6"/>
+        <path d="M0 ${skyH + 18} Q${W * 0.32} ${skyH - 18} ${W * 0.64} ${skyH + 12} T${W} ${skyH} L${W} ${H} L0 ${H}Z" fill="var(--dom-h2)"/>
+        <path d="M0 ${skyH + 38} Q${W * 0.48} ${skyH + 20} ${W} ${skyH + 34} L${W} ${H} L0 ${H}Z" fill="url(#domMeadow)"/>
+        <!-- Anse du port + ruisseau le long du bord droit jusqu'à l'étang -->
+        <path d="M${W * 0.6} ${H * 0.115} Q${W * 0.7} ${H * 0.175} ${W} ${H * 0.18} L${W} ${H * 0.105} Q${W * 0.8} ${H * 0.1} ${W * 0.6} ${H * 0.115}Z" fill="var(--dom-water1)" stroke="${O}" stroke-width="2"/>
+        <path d="M${W * 0.95} ${H * 0.175} Q${W * 0.98} ${H * 0.52} ${W * 0.94} ${H * 0.78} Q${W * 0.9} ${H * 0.89} ${W * 0.78} ${H * 0.935}" fill="none" stroke="var(--dom-water1)" stroke-width="14" stroke-linecap="round"/>
+        <ellipse cx="${W * 0.75}" cy="${H * 0.935}" rx="64" ry="28" fill="var(--dom-water1)" stroke="${O}" stroke-width="2.2"/>
+        <ellipse cx="${W * 0.75}" cy="${H * 0.932}" rx="46" ry="16" fill="var(--dom-water2)" opacity=".55"/>
+        <!-- Voie ferrée de la gare -->
+        <path d="M0 ${H * 0.16} Q${W * 0.25} ${H * 0.168} ${W * 0.52} ${H * 0.156}" fill="none" stroke="#8b6a4a" stroke-width="7" stroke-dasharray="3 5"/>
+        <path d="M0 ${H * 0.158} Q${W * 0.25} ${H * 0.166} ${W * 0.52} ${H * 0.154} M0 ${H * 0.162} Q${W * 0.25} ${H * 0.17} ${W * 0.52} ${H * 0.158}" fill="none" stroke="#5d5248" stroke-width="1.6"/>
+        <!-- Chemins sablonneux / pavés -->
         <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M${W * 0.52} ${skyH + 8} Q${W * 0.48} ${H * 0.34} ${W * 0.5} ${H * 0.48} Q${W * 0.5} ${H * 0.63} ${W * 0.47} ${H * 0.77} M${W * 0.19} ${H * 0.46} Q${W * 0.48} ${H * 0.5} ${W * 0.82} ${H * 0.46} M${W * 0.5} ${H * 0.58} Q${W * 0.34} ${H * 0.66} ${W * 0.28} ${H * 0.73} M${W * 0.5} ${H * 0.6} Q${W * 0.68} ${H * 0.67} ${W * 0.76} ${H * 0.74}" stroke="var(--dom-path-e)" stroke-width="24"/>
-            <path d="M${W * 0.52} ${skyH + 8} Q${W * 0.48} ${H * 0.34} ${W * 0.5} ${H * 0.48} Q${W * 0.5} ${H * 0.63} ${W * 0.47} ${H * 0.77} M${W * 0.19} ${H * 0.46} Q${W * 0.48} ${H * 0.5} ${W * 0.82} ${H * 0.46} M${W * 0.5} ${H * 0.58} Q${W * 0.34} ${H * 0.66} ${W * 0.28} ${H * 0.73} M${W * 0.5} ${H * 0.6} Q${W * 0.68} ${H * 0.67} ${W * 0.76} ${H * 0.74}" stroke="var(--dom-path)" stroke-width="17"/>
+            <path d="${mainRoad}" stroke="var(--dom-path-e)" stroke-width="24"/>
+            <path d="${mainRoad}" stroke="var(--dom-path)" stroke-width="17"/>
         </g>
         ${cobble}
+        <!-- Clôture bois de la cour -->
         <g stroke="#8b5a32" stroke-width="2.6" stroke-linecap="round">
-            <path d="M${W * 0.26} ${H * 0.34} H${W * 0.42} M${W * 0.58} ${H * 0.34} H${W * 0.74}"/>
-            <path d="M${W * 0.28} ${H * 0.325} V${H * 0.355} M${W * 0.35} ${H * 0.325} V${H * 0.355} M${W * 0.41} ${H * 0.325} V${H * 0.355}"/>
-            <path d="M${W * 0.59} ${H * 0.325} V${H * 0.355} M${W * 0.66} ${H * 0.325} V${H * 0.355} M${W * 0.73} ${H * 0.325} V${H * 0.355}"/>
+            <path d="M${W * 0.12} ${H * 0.33} H${W * 0.42} M${W * 0.58} ${H * 0.33} H${W * 0.88}"/>
+            <path d="M${W * 0.16} ${H * 0.322} V${H * 0.338} M${W * 0.28} ${H * 0.322} V${H * 0.338} M${W * 0.4} ${H * 0.322} V${H * 0.338}"/>
+            <path d="M${W * 0.6} ${H * 0.322} V${H * 0.338} M${W * 0.72} ${H * 0.322} V${H * 0.338} M${W * 0.84} ${H * 0.322} V${H * 0.338}"/>
         </g>
+        <!-- Bosquets de lisière (strictement sur les bords, loin des sprites) -->
         <g stroke="${O}" stroke-width="2">
-            <circle cx="${W * 0.03}" cy="${H * 0.31}" r="18" fill="var(--dom-tree1)"/>
-            <circle cx="${W * 0.07}" cy="${H * 0.34}" r="13" fill="var(--dom-tree2)"/>
-            <circle cx="${W * 0.97}" cy="${H * 0.35}" r="17" fill="var(--dom-tree1)"/>
-            <circle cx="${W * 0.93}" cy="${H * 0.38}" r="12" fill="var(--dom-tree2)"/>
-            <circle cx="${W * 0.04}" cy="${H * 0.6}" r="16" fill="var(--dom-tree1)"/>
-            <circle cx="${W * 0.97}" cy="${H * 0.55}" r="15" fill="var(--dom-tree2)"/>
-            <circle cx="${W * 0.04}" cy="${H * 0.95}" r="18" fill="var(--dom-tree1)"/>
-            <circle cx="${W * 0.96}" cy="${H * 0.95}" r="18" fill="var(--dom-tree1)"/>
+            <circle cx="${W * 0.02}" cy="${H * 0.22}" r="15" fill="var(--dom-tree1)"/>
+            <circle cx="${W * 0.98}" cy="${H * 0.23}" r="15" fill="var(--dom-tree2)"/>
+            <circle cx="${W * 0.02}" cy="${H * 0.48}" r="14" fill="var(--dom-tree1)"/>
+            <circle cx="${W * 0.98}" cy="${H * 0.48}" r="14" fill="var(--dom-tree2)"/>
+            <circle cx="${W * 0.02}" cy="${H * 0.75}" r="15" fill="var(--dom-tree1)"/>
+            <circle cx="${W * 0.98}" cy="${H * 0.75}" r="14" fill="var(--dom-tree1)"/>
         </g>
         <g opacity="${winter ? 0 : 0.9}">
-            <circle cx="${W * 0.37}" cy="${H * 0.31}" r="2.8" fill="#fff7c2" stroke="${O}" stroke-width="1"/>
-            <circle cx="${W * 0.4}" cy="${H * 0.325}" r="2.4" fill="#f59ab1" stroke="${O}" stroke-width="1"/>
-            <circle cx="${W * 0.63}" cy="${H * 0.315}" r="2.6" fill="#fff7c2" stroke="${O}" stroke-width="1"/>
-            <circle cx="${W * 0.14}" cy="${H * 0.54}" r="2.7" fill="#ffd23f" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.35}" cy="${H * 0.31}" r="2.8" fill="#fff7c2" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.66}" cy="${H * 0.31}" r="2.6" fill="#f59ab1" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.38}" cy="${H * 0.48}" r="2.6" fill="#ffd23f" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.63}" cy="${H * 0.62}" r="2.6" fill="#fff7c2" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.52}" cy="${H * 0.88}" r="2.8" fill="#f59ab1" stroke="${O}" stroke-width="1"/>
         </g>
         ${wildWoods}
     </svg>`;
@@ -652,7 +653,7 @@ function perfumePopHtml() {
     const v = state.perfume.vats[idx];
     const p = state.perfume.creations[v.pid];
     const name = p ? p.name : 'Macération';
-    return `<div class="dom-pop" style="left:clamp(124px,69%,calc(100% - 124px));top:calc(55% - 32px)">
+    return `<div class="dom-pop" style="left:clamp(124px,24%,calc(100% - 124px));top:calc(68% - 34px)">
         <div class="dom-pop-head">${ico(['ui', 'perfume'])}<span>${esc(name)}</span><button class="dom-pop-close" data-act="domPfClose" aria-label="Fermer">×</button></div>
         <div class="dom-pop-btns">
             <button class="dom-pop-opt" data-act="domPfCare" data-i="${idx}" data-choice="quick">${ico(['ui', 'drop'])}<strong>Rapide</strong><span>Gratuit</span></button>
