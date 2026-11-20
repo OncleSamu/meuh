@@ -109,17 +109,18 @@ export const GUIDE_PAGES = [
             {
                 h: 'Deux gestes sur chaque zone',
                 b: [
-                    'Touchez la bulle qui flotte au-dessus d’un bâtiment pour agir tout de suite sans changer d’écran : récolter le champ, arroser, ramasser les œufs et le lait, vider les machines, encaisser l’étal, soigner une macération de parfum ou ramener vos récoltes des Voyages.',
-                    'Touchez le bâtiment lui-même pour ouvrir sa fiche rapide ou accéder directement à son écran complet.',
+                    'Touchez la bulle qui flotte au-dessus d’un bâtiment pour agir tout de suite sans changer d’écran : récolter le champ, arroser, ramasser les œufs et le lait, vider les machines, encaisser l’étal, remuer la Cave, soigner une macération de parfum ou ramener vos récoltes des Voyages.',
+                    'Touchez le bâtiment lui-même pour ouvrir sa fiche actionnable : ressemer les champs, relancer vos dernières recettes d’atelier, suivre les barres en direct, livrer les commandes prêtes ou accéder à l’écran complet.',
                 ],
             },
             {
-                h: 'Tournée rapide & outils',
+                h: 'Tournée rapide, vie & outils',
                 b: [
-                    'La bande du haut liste uniquement les zones qui ont besoin de vous, avec un bouton « Tout faire » pour lancer les récoltes prêtes en cascade.',
-                    'Mode Focus (étoile) : masque les noms des bâtiments au repos pour faire ressortir uniquement ce qui est prêt.',
-                    'Personnalisation (fleurs) : choisissez le style du chemin (Sable, Pavés, Tomette) et posez librement vos décorations sur cinq emplacements du domaine.',
-                    'Mode Carte postale (appareil photo) : masque les étiquettes et les bulles pour admirer votre ferme telle qu’elle est.',
+                    'La bande collante du haut reste toujours accessible au défilement : bouton « Tout » pour enchaîner les récoltes prêtes et « Suivant → » pour sauter d’une zone active à l’autre.',
+                    'Le domaine vit au rythme réel de votre ferme : météo (pluie, neige, arc-en-ciel, pétales ou feuilles), ailes du moulin, Filou dans la cour, Mamie Odette, un habitant du jour et votre conjoint·e près de la Maison.',
+                    'Mode Focus (étoile) : masque les bâtiments au repos pour faire ressortir uniquement ce qui vous attend.',
+                    'Personnalisation (fleurs) : choisissez le style du chemin (Sable, Pavés, Tomette) et posez vos décorations et trophées débloqués au fil de votre progression.',
+                    'Mode Carte postale (appareil photo) : masque les bulles et permet d’enregistrer une vraie image PNG souvenir de votre domaine.',
                 ],
             },
         ],

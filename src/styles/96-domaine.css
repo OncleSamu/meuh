@@ -1,4 +1,4 @@
-/* 1.148 : Vue du Domaine (onglet isolé, facile à retirer) */
+/* 1.148 → 1.149 : Vue du Domaine (onglet isolé, facile à retirer) */
 
 #view-domaine {
     padding: 0 6px 24px;
@@ -10,11 +10,25 @@
     gap: 8px;
 }
 
-/* ---------------- barre Tournée rapide + outils ---------------- */
+/* ---------------- barre Tournée rapide + outils (sticky au scroll) ---------------- */
 .dom-top {
+    position: sticky;
+    top: 4px;
+    z-index: 30;
     display: flex;
     align-items: center;
     gap: 6px;
+    padding: 5px 6px;
+    background: linear-gradient(180deg, rgba(255, 248, 228, 0.96), rgba(246, 232, 198, 0.95));
+    border: 2.2px solid var(--ink);
+    border-radius: 16px;
+    box-shadow:
+        0 4px 0 rgba(58, 38, 24, 0.34),
+        0 8px 18px rgba(58, 38, 24, 0.14);
+    backdrop-filter: blur(6px);
+}
+html.night .dom-top {
+    background: linear-gradient(180deg, rgba(46, 56, 82, 0.94), rgba(34, 42, 64, 0.94));
 }
 
 .dom-tour {
@@ -25,7 +39,7 @@
     gap: 6px;
     overflow-x: auto;
     scrollbar-width: none;
-    padding: 2px 1px 4px;
+    padding: 1px 1px 3px;
 }
 .dom-tour::-webkit-scrollbar {
     display: none;
@@ -36,26 +50,30 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    min-height: 32px;
+    min-height: 31px;
     padding: 3px 9px 3px 5px;
     background: linear-gradient(#fffbf0, #f6e2b6);
     border: 2px solid var(--ink);
     border-radius: 99px;
     box-shadow:
-        0 3px 0 rgba(58, 38, 24, 0.4),
+        0 2.5px 0 rgba(58, 38, 24, 0.4),
         inset 0 1.5px 0 #fff;
     font-family: var(--display);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 900;
     color: var(--ink);
     white-space: nowrap;
 }
 .dom-chip .ico {
-    width: 20px;
-    height: 20px;
+    width: 19px;
+    height: 19px;
 }
 .dom-chip.urgent {
     background: linear-gradient(#fff2b8, #ffd56b);
+}
+.dom-chip.next {
+    background: linear-gradient(#effce4, #c9f09f);
+    padding: 3px 10px;
 }
 .dom-chip:active {
     transform: translateY(2px);
@@ -66,12 +84,12 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 12px;
+    padding: 4px 11px;
     background: linear-gradient(#fffbf0, #f5e5be);
     border: 2px solid var(--ink);
     border-radius: 99px;
-    box-shadow: 0 3px 0 rgba(58, 38, 24, 0.32);
-    font-size: 0.8rem;
+    box-shadow: 0 2.5px 0 rgba(58, 38, 24, 0.3);
+    font-size: 0.78rem;
     font-weight: 900;
     color: var(--leaf-d);
     white-space: nowrap;
@@ -88,19 +106,19 @@
 }
 
 .dom-tool {
-    width: 34px;
-    height: 34px;
+    width: 33px;
+    height: 33px;
     padding: 4px;
-    border-radius: 11px;
+    border-radius: 10px;
     border: 2.2px solid var(--ink);
     background: linear-gradient(rgba(255, 255, 255, 0.45), transparent 55%), var(--paper-l);
-    box-shadow: 0 3px 0 var(--ink);
+    box-shadow: 0 2.5px 0 var(--ink);
     display: grid;
     place-items: center;
 }
 .dom-tool .ico {
-    width: 21px;
-    height: 21px;
+    width: 20px;
+    height: 20px;
 }
 .dom-tool.on {
     background: linear-gradient(rgba(255, 255, 255, 0.4), transparent 55%), var(--gold);
@@ -153,7 +171,7 @@
     font-weight: 800;
 }
 
-/* ---------------- la scène illustrée du Domaine (aérée, 0 chevauchement) ---------------- */
+/* ---------------- la scène illustrée du Domaine ---------------- */
 .dom-scene {
     --dom-h1: #b9e59a;
     --dom-h2: #93d46a;
@@ -171,7 +189,7 @@
 
     position: relative;
     width: 100%;
-    aspect-ratio: 420 / 1760;
+    aspect-ratio: 420 / 1820;
     border: 3px solid var(--ink);
     border-radius: 20px;
     overflow: hidden;
@@ -249,6 +267,157 @@ html.night.season-hiver .dom-scene {
     display: block;
 }
 
+/* ---------------- vrais arbres illustrés en lisière (unification src/art) ---------------- */
+.dom-trees {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+.dom-tree {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 3px 0 rgba(58, 38, 24, 0.16));
+}
+.dom-tree svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ---------------- ciel, nuages, oiseaux & météo vivante ---------------- */
+.dom-clouds {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8.5%;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+}
+.dom-cloud {
+    position: absolute;
+    height: 22px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow:
+        14px -6px 0 4px rgba(255, 255, 255, 0.82),
+        28px -2px 0 2px rgba(255, 255, 255, 0.78);
+    animation: domCloud 36s linear infinite;
+}
+html.night .dom-cloud {
+    background: rgba(168, 190, 232, 0.28);
+    box-shadow:
+        14px -6px 0 4px rgba(168, 190, 232, 0.25),
+        28px -2px 0 2px rgba(168, 190, 232, 0.22);
+}
+
+.dom-weather {
+    position: absolute;
+    inset: 0;
+    z-index: 15;
+    pointer-events: none;
+    overflow: hidden;
+}
+.dom-sunbeams {
+    position: absolute;
+    top: -4%;
+    right: -8%;
+    width: 66%;
+    height: 28%;
+    background: radial-gradient(ellipse at 82% 10%, rgba(255, 244, 178, 0.44), rgba(255, 232, 140, 0.1) 52%, transparent 74%);
+    mix-blend-mode: screen;
+}
+html.night .dom-sunbeams {
+    display: none;
+}
+
+.dom-rain i {
+    position: absolute;
+    top: -6%;
+    width: 2px;
+    height: 22px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, rgba(178, 224, 255, 0), rgba(165, 220, 255, 0.85));
+    animation: domRain 1.15s linear infinite;
+}
+.dom-storm-flash {
+    position: absolute;
+    inset: 0;
+    background: rgba(232, 244, 255, 0.24);
+    opacity: 0;
+    animation: domFlash 9s ease-in-out infinite;
+}
+.dom-snow i {
+    position: absolute;
+    top: -4%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.7);
+    animation: domSnow 7.5s linear infinite;
+}
+.dom-drift i {
+    position: absolute;
+    top: -4%;
+    width: 8px;
+    height: 5px;
+    border-radius: 60% 40% 60% 40%;
+    opacity: 0.86;
+    animation: domDrift 9s ease-in-out infinite;
+}
+.dom-drift.petals i {
+    background: #f9b8cf;
+    border: 1px solid rgba(190, 90, 128, 0.35);
+}
+.dom-drift.leaves i {
+    background: #e8892c;
+    border: 1px solid rgba(122, 58, 18, 0.35);
+}
+
+.dom-butterflies {
+    position: absolute;
+    inset: 0;
+    z-index: 13;
+    pointer-events: none;
+}
+.dom-bfly {
+    position: absolute;
+    width: 10px;
+    height: 7px;
+    animation: domBfly 6.8s ease-in-out infinite;
+}
+.dom-bfly::before,
+.dom-bfly::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 5px;
+    height: 7px;
+    border-radius: 50% 50% 30% 30%;
+    background: #ffe066;
+    border: 1px solid rgba(58, 38, 24, 0.55);
+}
+.dom-bfly::before {
+    left: 0;
+    transform-origin: right center;
+    animation: domWingL 0.38s ease-in-out infinite alternate;
+}
+.dom-bfly::after {
+    right: 0;
+    transform-origin: left center;
+    animation: domWingR 0.38s ease-in-out infinite alternate;
+}
+.dom-bfly.pink::before,
+.dom-bfly.pink::after {
+    background: #f9a8c9;
+}
+html.night .dom-butterflies {
+    display: none;
+}
+
 .dom-night-veil {
     position: absolute;
     inset: 0;
@@ -260,7 +429,7 @@ html.night.season-hiver .dom-scene {
 
 .dom-plane {
     position: absolute;
-    top: 2%;
+    top: 1.8%;
     left: 0;
     width: 40px;
     height: 40px;
@@ -272,6 +441,11 @@ html.night.season-hiver .dom-scene {
 .dom-plane .ico {
     width: 100%;
     height: 100%;
+}
+
+/* Eau animée douce */
+.dom-ripple {
+    animation: domRipple 4.4s ease-in-out infinite;
 }
 
 /* ---------------- zones cliquables (tout contenu strictement dans la boîte) ---------------- */
@@ -288,6 +462,19 @@ html.night.season-hiver .dom-scene {
     font-family: var(--display);
     cursor: pointer;
     transition: filter 0.2s ease;
+}
+.dom-spot::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 14px;
+    width: 82%;
+    height: 13px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(58, 38, 24, 0.24), rgba(58, 38, 24, 0) 72%);
+    pointer-events: none;
+    z-index: -1;
 }
 .dom-spot:active {
     filter: brightness(1.06);
@@ -317,6 +504,15 @@ html.night.season-hiver .dom-scene {
     height: auto;
     display: block;
     filter: drop-shadow(0 3px 0 rgba(58, 38, 24, 0.2));
+}
+
+/* Ailes du moulin animées */
+.dom-sails {
+    transform-origin: 50px 28px;
+    animation: domSpin 18s linear infinite;
+}
+.dom-sails.busy {
+    animation-duration: 5.5s;
 }
 
 /* Gare + Train contenus dans la largeur du spot */
@@ -368,7 +564,7 @@ html.night.season-hiver .dom-scene {
     animation: domBob 3.2s ease-in-out infinite;
 }
 
-/* Champs + Serre sans aucun débordement externe */
+/* Champs (8 parcelles 4x2) + Serre sans débordement externe */
 .dom-fields-box {
     display: flex;
     align-items: flex-end;
@@ -378,7 +574,7 @@ html.night.season-hiver .dom-scene {
 .dom-fields {
     flex: 1;
     min-width: 0;
-    padding: 6% 5% 6%;
+    padding: 5% 4.5% 5.5%;
     background: linear-gradient(180deg, #b57a44, #9c6434);
     border: 2.5px solid var(--ink);
     border-radius: 12px;
@@ -386,19 +582,19 @@ html.night.season-hiver .dom-scene {
         inset 0 -3px 0 rgba(58, 38, 24, 0.2),
         0 3px 0 rgba(58, 38, 24, 0.28);
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 2px;
 }
 .dom-cell {
     background: rgba(58, 38, 24, 0.14);
-    border-radius: 5px;
+    border-radius: 4px;
     aspect-ratio: 1;
     display: grid;
     place-items: center;
     padding: 1px;
 }
 .dom-gh {
-    width: 34%;
+    width: 30%;
     flex-shrink: 0;
     filter: drop-shadow(0 3px 0 rgba(58, 38, 24, 0.22));
 }
@@ -411,20 +607,25 @@ html.night.season-hiver .dom-scene {
     justify-content: center;
 }
 .dom-orchard .t1 {
-    width: 48%;
+    width: 42%;
 }
 .dom-orchard .t2 {
-    width: 44%;
-    margin-left: -8%;
+    width: 38%;
+    margin-left: -10%;
+    margin-bottom: 4%;
+}
+.dom-orchard .t3 {
+    width: 36%;
+    margin-left: -10%;
 }
 .dom-orchard .hive {
-    width: 28%;
+    width: 24%;
     margin-left: -6%;
-    margin-bottom: 4%;
+    margin-bottom: 2%;
     animation: domBob 2.6s ease-in-out 0.6s infinite;
 }
 
-/* Pré + Haras contenus strictement dans la boîte */
+/* Pré (jusqu'à 4 animaux décalés) + Haras */
 .dom-pasture-wrap {
     width: 100%;
     display: flex;
@@ -432,7 +633,7 @@ html.night.season-hiver .dom-scene {
     align-items: center;
 }
 .dom-pasture-wrap .stud {
-    width: 48%;
+    width: 46%;
     margin-bottom: -10%;
     z-index: 1;
 }
@@ -440,7 +641,7 @@ html.night.season-hiver .dom-scene {
     position: relative;
     z-index: 2;
     width: 100%;
-    padding: 6% 4% 4%;
+    padding: 6% 3% 4%;
     border: 2.5px solid #8b5a2b;
     border-radius: 14px;
     background: rgba(143, 214, 95, 0.34);
@@ -452,11 +653,19 @@ html.night.season-hiver .dom-scene {
     justify-content: space-around;
 }
 .dom-pasture .an {
-    width: 34%;
+    width: 28%;
     animation: domBob 3s ease-in-out infinite;
 }
-.dom-pasture .an:nth-child(even) {
-    animation-delay: 0.9s;
+.dom-pasture .an:nth-child(2) {
+    transform: translateY(-3px);
+    animation-delay: 0.7s;
+}
+.dom-pasture .an:nth-child(3) {
+    animation-delay: 1.4s;
+}
+.dom-pasture .an:nth-child(4) {
+    transform: translateY(-2px);
+    animation-delay: 2s;
 }
 
 .dom-smoke {
@@ -498,7 +707,7 @@ html.night.season-hiver .dom-scene {
     font-size: 10.5px;
     font-weight: 900;
     color: var(--ink);
-    background: rgba(255, 247, 224, 0.92);
+    background: rgba(255, 247, 224, 0.93);
     border: 1.8px solid var(--ink);
     border-radius: 99px;
     padding: 0 7px;
@@ -508,14 +717,47 @@ html.night.season-hiver .dom-scene {
     transition: opacity 0.2s;
 }
 
+/* Micro-jauge live sous les bâtiments en activité */
+.dom-pulse {
+    margin-top: 2px;
+    width: 54px;
+    height: 6px;
+    border-radius: 99px;
+    background: rgba(58, 38, 24, 0.26);
+    border: 1.4px solid var(--ink);
+    overflow: hidden;
+    box-shadow: 0 1.5px 0 rgba(58, 38, 24, 0.25);
+}
+.dom-pulse > i {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #6dc94b, #9ce667);
+    transition: width 0.5s linear;
+}
+.dom-pulse.perfume > i {
+    background: linear-gradient(90deg, #b57be0, #e6a8f5);
+}
+.dom-pulse.cave > i {
+    background: linear-gradient(90deg, #d68b38, #f2c14e);
+}
+.dom-pulse.warn > i {
+    background: linear-gradient(90deg, #e88e2a, #ffd23f);
+}
+.dom-pulse.full > i {
+    background: linear-gradient(90deg, #d9483b, #ff7a6b);
+}
+
 /* Mode Focus & Mode Carte postale */
-.dom-scene.focus .dom-spot:not(.has-bub) .dom-name {
+.dom-scene.focus .dom-spot:not(.has-bub) .dom-name,
+.dom-scene.focus .dom-spot:not(.has-bub) .dom-pulse {
     opacity: 0;
 }
 .dom-scene.focus .dom-spot:not(.has-bub) {
-    filter: saturate(0.75) opacity(0.86);
+    filter: saturate(0.72) opacity(0.84);
 }
 .dom-scene.postcard .dom-name,
+.dom-scene.postcard .dom-pulse,
 .dom-scene.postcard .dom-bub,
 .dom-scene.postcard .dom-deco-plus,
 .dom-scene.postcard .dom-dog-bub {
@@ -653,12 +895,12 @@ html.night.season-hiver .dom-scene {
     box-shadow: 0 1px 0 var(--ink);
 }
 
-/* ---------------- Filou le chien sur le domaine ---------------- */
+/* ---------------- Filou le chien & habitants sur le domaine ---------------- */
 .dom-dog {
     position: absolute;
     z-index: 12;
     transform: translate(-50%, -50%);
-    width: 11%;
+    width: 10.5%;
     background: none;
     border: none;
     padding: 0;
@@ -672,6 +914,10 @@ html.night.season-hiver .dom-scene {
     height: auto;
     filter: drop-shadow(0 3px 0 rgba(58, 38, 24, 0.22));
     animation: domBob 2.4s ease-in-out infinite;
+    transition: transform 0.3s ease;
+}
+.dom-dog.flip .ico {
+    transform: scaleX(-1);
 }
 .dom-dog-bub {
     position: absolute;
@@ -709,6 +955,18 @@ html.night.season-hiver .dom-scene {
     padding: 0;
     cursor: pointer;
 }
+.dom-npc::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -2px;
+    width: 80%;
+    height: 7px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: rgba(58, 38, 24, 0.22);
+    pointer-events: none;
+}
 .dom-npc .ico {
     width: 100%;
     height: auto;
@@ -725,7 +983,7 @@ html.night.season-hiver .dom-scene {
     position: absolute;
     z-index: 8;
     transform: translate(-50%, -50%);
-    width: 12%;
+    width: 11%;
     background: none;
     border: none;
     padding: 0;
@@ -760,16 +1018,44 @@ html.night.season-hiver .dom-scene {
     background: rgba(255, 246, 200, 0.4);
 }
 
-/* ---------------- bouton sortie Carte postale ---------------- */
-.dom-exit-pc {
-    position: absolute;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 22;
+/* ---------------- mode Carte postale (cartouche & export PNG) ---------------- */
+.dom-pc-bar {
+    position: sticky;
+    bottom: 10px;
+    z-index: 26;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: -112px;
+    padding: 0 10px 10px;
+}
+.dom-pc-stamp {
+    background: linear-gradient(180deg, #fffdf4, #f5e6c4);
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    padding: 6px 14px;
+    box-shadow: 0 4px 0 rgba(58, 38, 24, 0.36);
+    text-align: center;
+    color: var(--ink);
+}
+.dom-pc-stamp strong {
+    display: block;
+    font-family: var(--display);
+    font-size: 0.92rem;
+    font-weight: 900;
+}
+.dom-pc-stamp span {
+    font-size: 0.74rem;
+    font-weight: 800;
+    color: var(--ink-soft);
+}
+.dom-pc-btns {
+    display: flex;
+    gap: 8px;
 }
 
-/* ---------------- fiches du domaine ---------------- */
+/* ---------------- fiches actionnables du domaine ---------------- */
 .dom-sheet-tags {
     display: flex;
     flex-wrap: wrap;
@@ -784,9 +1070,66 @@ html.night.season-hiver .dom-scene {
     border-radius: 99px;
     padding: 2px 9px;
 }
+.dom-sheet-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 8px 0 10px;
+}
+.dom-sheet-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 9px;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+.dom-sheet-item .ico {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+.dom-sheet-item .mid {
+    flex: 1;
+    min-width: 0;
+}
+.dom-sheet-item .mid strong {
+    display: block;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dom-sheet-item .mid small {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+}
+.dom-sheet-bar {
+    margin-top: 4px;
+    height: 7px;
+    border-radius: 99px;
+    background: rgba(58, 38, 24, 0.16);
+    border: 1.4px solid var(--ink);
+    overflow: hidden;
+}
+.dom-sheet-bar > i {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #6dc94b, #a1e86d);
+}
+.dom-sheet-acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 10px;
+}
+
 .dom-deco-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 7px;
     margin: 8px 0 12px;
 }
@@ -803,6 +1146,7 @@ html.night.season-hiver .dom-scene {
     gap: 3px;
     font-size: 0.72rem;
     font-weight: 900;
+    text-align: center;
     box-shadow: 0 3px 0 rgba(58, 38, 24, 0.3);
 }
 .dom-deco-opt .ico {
@@ -812,6 +1156,16 @@ html.night.season-hiver .dom-scene {
 .dom-deco-opt.on {
     background: #e3fad0;
     box-shadow: 0 3px 0 var(--leaf-d);
+}
+.dom-deco-opt.locked {
+    opacity: 0.56;
+    filter: grayscale(0.75);
+}
+.dom-deco-opt small {
+    font-size: 0.62rem;
+    color: var(--ink-soft);
+    font-weight: 800;
+    line-height: 1.15;
 }
 
 /* ---------------- lucioles la nuit ---------------- */
@@ -847,6 +1201,122 @@ html.night .dom-fireflies {
 @keyframes domBubBob {
     50% {
         transform: translate(-50%, -4px);
+    }
+}
+@keyframes domSpin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+@keyframes domCloud {
+    0% {
+        transform: translateX(-80px);
+    }
+    100% {
+        transform: translateX(520px);
+    }
+}
+@keyframes domRain {
+    0% {
+        transform: translate(0, 0) rotate(14deg);
+        opacity: 0;
+    }
+    12% {
+        opacity: 0.85;
+    }
+    100% {
+        transform: translate(-48px, 680px) rotate(14deg);
+        opacity: 0.15;
+    }
+}
+@keyframes domSnow {
+    0% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.92;
+    }
+    50% {
+        transform: translate(18px, 340px);
+    }
+    100% {
+        transform: translate(-12px, 680px);
+        opacity: 0.1;
+    }
+}
+@keyframes domDrift {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.85;
+    }
+    50% {
+        transform: translate(34px, 300px) rotate(140deg);
+    }
+    100% {
+        transform: translate(-18px, 640px) rotate(280deg);
+        opacity: 0;
+    }
+}
+@keyframes domFlash {
+    0%,
+    94%,
+    100% {
+        opacity: 0;
+    }
+    95% {
+        opacity: 0.65;
+    }
+    96% {
+        opacity: 0.1;
+    }
+    97% {
+        opacity: 0.45;
+    }
+}
+@keyframes domBfly {
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(-6deg);
+    }
+    33% {
+        transform: translate(22px, -16px) rotate(10deg);
+    }
+    66% {
+        transform: translate(-14px, -24px) rotate(-10deg);
+    }
+}
+@keyframes domWingL {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0.35);
+    }
+}
+@keyframes domWingR {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0.35);
+    }
+}
+@keyframes domRipple {
+    0%,
+    100% {
+        transform: translateX(0);
+        opacity: 0.55;
+    }
+    50% {
+        transform: translateX(4px);
+        opacity: 0.9;
     }
 }
 @keyframes domSmoke {

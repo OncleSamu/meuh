@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.149",
+  "title": "Le Domaine vivant, météo et cockpit en un geste",
+  "date": "20 novembre 2026",
+  "items": [
+   "Paysage unifié & hameaux naturels : vrais arbres illustrés de saison sur les lisières, ombres douces sous chaque bâtiment, 8 parcelles en direct dans les Champs, 3 arbres au Verger, 4 animaux dans les Prés et le Château sur la Cave dès son ouverture",
+   "Vie & météo réelles : nuages qui dérivent, pluie, orage, neige, arc-en-ciel, rayons de soleil, pétales au printemps, feuilles en automne, ailes du moulin qui tournent, papillons, Filou qui trottine tout seul dans la cour, Mamie Odette, un habitant de passage chaque jour et votre conjoint·e près de la Maison",
+   "Cockpit ultra pratique : barre de Tournée rapide collante en haut de l’écran avec bouton « Suivant → », micro-jauges live sous les Ateliers, la Cave, la Parfumerie et la Grange, chrono du train à quai et mini-fiches actionnables (ressemer le champ, relancer les machines, soigner/remuer la Cave, livrer les commandes prêtes)",
+   "Votre Domaine & Carte postale PNG : 15 décorations posables qui se débloquent avec votre progression (Verger, Étang, Île, Parfumerie, Château, Statue Meuh…) et bouton « Enregistrer PNG » en mode Carte postale pour sauvegarder un souvenir de votre ferme"
+  ]
+ },
+ {
   "v": "1.148.2",
   "title": "Un Domaine plus organique et vivant",
   "date": "20 novembre 2026",
