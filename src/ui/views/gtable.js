@@ -19,7 +19,7 @@ import * as G from '../../systems/index.js';
 import { blocks, actions, esc, centerOf } from '../dom.js';
 import { ico, art, COIN } from '../icons.js';
 import { btn, timer, empty, hint } from '../kit.js';
-import { defineView, ui } from '../app.js';
+import { defineView } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { innerTabs } from '../innertabs.js';
 
@@ -384,22 +384,21 @@ function renderGTable(el) {
         blocks(el, [['build', buildCard()]]);
         return;
     }
-    const sub = ui.sel.gtable || 'hall';
     const waiting = G.gtableTablesWaiting();
-    const tabs = innerTabs(
+    const T = innerTabs(
         'gtable',
         [
             ['hall', 'Salle', ['ui', 'gtable'], waiting],
-            ['brigade', 'Brigade', ['villager', 'odette']],
-            ['banquets', 'Banquets', ['ui', 'trophy']],
-            ['book', 'Livre d’Or', ['ui', 'book']],
+            ['brigade', 'Brigade', ['villager', 'odette'], 0],
+            ['banquets', 'Banquets', ['ui', 'trophy'], 0],
+            ['book', 'Livre d’Or', ['ui', 'book'], 0],
         ],
-        sub,
+        'hall',
     );
-    const body = sub === 'brigade' ? brigadeTabHtml() : sub === 'banquets' ? banquetsTabHtml() : sub === 'book' ? bookTabHtml() : hallTabHtml();
+    const body = T.cur === 'brigade' ? brigadeTabHtml() : T.cur === 'banquets' ? banquetsTabHtml() : T.cur === 'book' ? bookTabHtml() : hallTabHtml();
     blocks(el, [
         ['hero', heroHtml()],
-        ['tabs', tabs],
+        ['tabs', T.html],
         ['body', body],
     ]);
 }

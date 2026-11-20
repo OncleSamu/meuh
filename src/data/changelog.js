@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.150.1",
+  "title": "Correctif onglets internes de La Grande Table",
+  "date": "20 novembre 2026",
+  "items": [
+   "Village › Table : les 4 volets internes (Salle, Brigade, Banquets, Livre d’Or) s’affichent et basculent désormais correctement"
+  ]
+ },
+ {
   "v": "1.150",
   "title": "La Grande Table Étoilée",
   "date": "20 novembre 2026",
