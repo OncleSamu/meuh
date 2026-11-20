@@ -1,0 +1,2571 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Meuh — Vue du Domaine (Prototype complet)</title>
+<style>
+  :root {
+    --ink: #3a2618;
+    --ink-soft: rgba(58, 38, 24, 0.72);
+    --wood: #a8693a;
+    --wood-d: #7a4a2a;
+    --wood-l: #e8c38c;
+    --paper: #fbecc9;
+    --paper-l: #fff8e6;
+    --leaf: #6cc04a;
+    --leaf-d: #3f8f2e;
+    --gold: #f2c14e;
+    --gold-d: #c9952a;
+    --red: #c8453a;
+    --water: #4da8e8;
+    --font: 'Nunito', ui-rounded, 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    /* Palette dynamique Heure / Saison / Style */
+    --sky-1: #54aee8;
+    --sky-2: #a9e0fc;
+    --sky-3: #e4f6ff;
+    --hill-far: #8ec979;
+    --hill-mid: #7cc05d;
+    --grass-1: #96d36a;
+    --grass-2: #7fc354;
+    --grass-3: #6eb247;
+    --path-c: #efd39d;
+    --path-edge: #d4b073;
+    --water-1: #48a5e6;
+    --water-2: #7ac9f7;
+    --tree-1: #4da74c;
+    --tree-2: #6ec45b;
+    --tree-3: #37853b;
+    --win-fill: #cde9fa;
+    --win-glow: 0;
+    --night-veil: 0;
+    --stars-op: 0;
+    --snow-op: 0;
+    --sun-op: 1;
+    --moon-op: 0;
+    --sun-rays-op: 0.25;
+    --lantern-glow: 0;
+
+    /* Palette personnalisable de la Maison */
+    --house-wall: #fff3d6;
+    --house-roof: #c8453a;
+    --house-trim: #a8693a;
+  }
+
+  /* ---- STYLES DE MAISON ---- */
+  [data-house="terracotta"] { --house-wall: #fff3d6; --house-roof: #c8453a; --house-trim: #a8693a; }
+  [data-house="slate"]      { --house-wall: #f3efe6; --house-roof: #4e637a; --house-trim: #7b6b58; }
+  [data-house="lavender"]   { --house-wall: #fbf2f7; --house-roof: #8b63b3; --house-trim: #9c7960; }
+
+  /* ---- STYLES DE CHEMIN ---- */
+  [data-path="sand"]   { --path-c: #efd39d; --path-edge: #d4b073; }
+  [data-path="cobble"] { --path-c: #d6cfc2; --path-edge: #a79d8c; }
+  [data-path="rose"]   { --path-c: #f2d8c2; --path-edge: #d69c88; }
+
+  /* ---- HEURES DU JOUR ---- */
+  [data-time="morning"] {
+    --sky-1: #6caee6;
+    --sky-2: #f9cfa0;
+    --sky-3: #fff0d2;
+    --hill-far: #91c27a;
+    --win-fill: #ffe8ad;
+    --win-glow: 0.24;
+    --night-veil: 0.04;
+    --sun-rays-op: 0.45;
+    --lantern-glow: 0.25;
+  }
+  [data-time="noon"] {
+    --sky-1: #4fa9e8;
+    --sky-2: #a5defc;
+    --sky-3: #dff4ff;
+    --win-fill: #cde9fa;
+    --win-glow: 0;
+    --night-veil: 0;
+    --sun-rays-op: 0.28;
+    --lantern-glow: 0;
+  }
+  [data-time="evening"] {
+    --sky-1: #4e498a;
+    --sky-2: #df7762;
+    --sky-3: #ffcf82;
+    --hill-far: #7a7d6c;
+    --hill-mid: #6b8858;
+    --win-fill: #ffd46a;
+    --win-glow: 0.78;
+    --night-veil: 0.16;
+    --stars-op: 0.42;
+    --sun-op: 0.94;
+    --moon-op: 0.34;
+    --sun-rays-op: 0.4;
+    --lantern-glow: 0.85;
+  }
+  [data-time="night"] {
+    --sky-1: #121c3b;
+    --sky-2: #1f315e;
+    --sky-3: #334878;
+    --hill-far: #2d4945;
+    --hill-mid: #284b3e;
+    --grass-1: #376345;
+    --grass-2: #2d5339;
+    --grass-3: #254630;
+    --path-c: #96866c;
+    --path-edge: #73654e;
+    --water-1: #1f446d;
+    --water-2: #2e6091;
+    --win-fill: #ffd059;
+    --win-glow: 1;
+    --night-veil: 0.34;
+    --stars-op: 1;
+    --sun-op: 0;
+    --moon-op: 1;
+    --sun-rays-op: 0;
+    --lantern-glow: 1;
+  }
+
+  /* ---- SAISONS ---- */
+  [data-season="spring"] {
+    --tree-1: #57b854;
+    --tree-2: #f4a4c0;
+    --tree-3: #3f9645;
+  }
+  [data-season="summer"] {
+    --tree-1: #44a348;
+    --tree-2: #66be56;
+    --tree-3: #2f7d38;
+  }
+  [data-season="autumn"] {
+    --hill-far: #bc9f5e;
+    --hill-mid: #ac944d;
+    --grass-1: #b8b356;
+    --grass-2: #a09e47;
+    --grass-3: #8c8c3d;
+    --tree-1: #d96932;
+    --tree-2: #edb23b;
+    --tree-3: #b0462c;
+  }
+  [data-season="autumn"][data-time="night"] {
+    --hill-far: #484638;
+    --hill-mid: #434332;
+    --grass-1: #525335;
+    --grass-2: #44452c;
+    --grass-3: #373924;
+  }
+  [data-season="winter"] {
+    --hill-far: #c9dce8;
+    --hill-mid: #d7e7f0;
+    --grass-1: #e5f1f6;
+    --grass-2: #d4e6ef;
+    --grass-3: #c3d9e5;
+    --path-c: #d9cbb6;
+    --path-edge: #b7a893;
+    --tree-1: #477c6b;
+    --tree-2: #eff8fc;
+    --tree-3: #335f52;
+    --snow-op: 1;
+  }
+  [data-season="winter"][data-time="night"] {
+    --hill-far: #4a6078;
+    --hill-mid: #526b85;
+    --grass-1: #607b97;
+    --grass-2: #526c87;
+    --grass-3: #455e77;
+    --path-c: #737b86;
+  }
+
+  /* ---- MODE CALME (RÉDUCTION MOUVEMENT) ---- */
+  .calm *, .calm *::before, .calm *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font);
+    color: var(--ink);
+    background: var(--background, #eee4cc);
+    min-height: 100%;
+  }
+
+  .studio {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 10px 10px 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ---- BARRE DE LABO PROTOTYPE ---- */
+  .controls {
+    width: 100%;
+    background: #fff9eb;
+    border: 2px solid #d9bf94;
+    border-radius: 16px;
+    padding: 9px 11px;
+    box-shadow: 0 4px 14px rgba(58, 38, 24, 0.08);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px 10px;
+    color: var(--ink);
+  }
+  .ctrl-title {
+    font-weight: 900;
+    font-size: 13px;
+    color: var(--wood-d);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: auto;
+  }
+  .ctrl-badge {
+    font-size: 10.5px;
+    font-weight: 900;
+    background: linear-gradient(180deg, #ffe79e, #f2c14e);
+    color: var(--ink);
+    padding: 2px 8px;
+    border-radius: 99px;
+    border: 1.5px solid #b88424;
+  }
+  .ctrl-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #f5e6c8;
+    padding: 3px;
+    border-radius: 11px;
+    border: 1.5px solid #dec392;
+  }
+  .ctrl-btn {
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 800;
+    padding: 4px 7px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.12s;
+    white-space: nowrap;
+  }
+  .ctrl-btn:hover { background: rgba(255, 255, 255, 0.58); }
+  .ctrl-btn.on {
+    background: #fffdf6;
+    box-shadow: 0 1px 3px rgba(58, 38, 24, 0.18);
+    color: var(--wood-d);
+  }
+  .ctrl-btn:active { transform: scale(0.95); }
+
+  /* ---- APPAREIL ---- */
+  .stage { width: 100%; display: flex; justify-content: center; }
+  .device {
+    position: relative;
+    width: 100%;
+    max-width: 416px;
+    background: var(--paper);
+    border: 3px solid var(--ink);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 20px 48px rgba(58, 38, 24, 0.24), 0 0 0 6px rgba(255, 247, 224, 0.72);
+    display: flex;
+    flex-direction: column;
+    transition: max-width 0.35s cubic-bezier(.22,1,.36,1), border-radius 0.3s;
+  }
+  .device.wide { max-width: 960px; border-radius: 22px; }
+
+  /* ---- EN-TÊTE MEUH ---- */
+  .hud {
+    position: relative;
+    z-index: 22;
+    background: linear-gradient(180deg, #fff6df 0%, #f7e4bc 100%);
+    border-bottom: 2.5px solid var(--wood);
+    padding: 7px 9px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    transition: transform 0.28s ease, opacity 0.28s ease;
+  }
+  .postcard .hud, .postcard .tour-bar, .postcard .tabs, .postcard .deco-bar {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+  }
+  .postcard .tabs { transform: translateY(16px); }
+
+  .hud-top { display: flex; align-items: center; gap: 5px; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #fffbf0;
+    border: 2px solid var(--wood);
+    border-radius: 99px;
+    padding: 3px 8px 3px 6px;
+    font-size: 12.5px;
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--ink);
+    box-shadow: 0 2px 0 rgba(122, 74, 42, 0.2);
+    transition: transform 0.18s cubic-bezier(.34,1.56,.64,1);
+    white-space: nowrap;
+  }
+  .pill.pop { transform: scale(1.14); background: #fff3bd; }
+  .pill .sub { font-size: 10.5px; font-weight: 700; color: var(--ink-soft); }
+  .pill-lvl { background: linear-gradient(180deg, #ffe799, #f2c14e); border-color: #9e6b1b; }
+  .hud-right { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+  .ico-btn {
+    border: 2px solid var(--wood);
+    background: #fffbf0;
+    color: var(--ink);
+    border-radius: 10px;
+    height: 30px;
+    min-width: 30px;
+    padding: 0 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 2px 0 rgba(122, 74, 42, 0.2);
+    transition: background 0.15s, transform 0.1s;
+  }
+  .ico-btn.active {
+    background: linear-gradient(180deg, #ffeaa8, #f2c14e);
+    border-color: #8f5c14;
+  }
+  .ico-btn:active { transform: translateY(1px); }
+
+  /* ---- BARRE TOURNÉE RAPIDE ---- */
+  .tour-bar {
+    position: relative;
+    z-index: 20;
+    background: rgba(255, 248, 228, 0.95);
+    backdrop-filter: blur(6px);
+    border-bottom: 2px solid rgba(168, 105, 58, 0.34);
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .tour-bar::-webkit-scrollbar { display: none; }
+  .tour-all {
+    flex: 0 0 auto;
+    border: 2px solid #2f7322;
+    background: linear-gradient(180deg, #86d65d, #54ac36);
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 900;
+    padding: 5px 10px;
+    border-radius: 99px;
+    cursor: pointer;
+    box-shadow: 0 2px 0 #2f7322;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .tour-all:active { transform: translateY(1px); }
+  .tour-chip {
+    flex: 0 0 auto;
+    border: 1.5px solid #d5b37c;
+    background: #fffdf7;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 800;
+    padding: 4px 9px;
+    border-radius: 99px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    transition: background 0.15s, transform 0.12s;
+  }
+  .tour-chip.urgent { background: #fff0d1; border-color: #d68528; color: #8c4608; }
+  .tour-chip:active { transform: scale(0.95); }
+  .tour-calm {
+    font-size: 12px;
+    font-weight: 800;
+    color: #367328;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 4px;
+    white-space: nowrap;
+  }
+
+  /* ---- BARRE PERSONNALISATION (MODE DÉCORER) ---- */
+  .deco-bar {
+    display: none;
+    position: relative;
+    z-index: 20;
+    background: #fff3d6;
+    border-bottom: 2px solid var(--wood);
+    padding: 7px 9px;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 11.5px;
+    font-weight: 800;
+  }
+  .decorating .deco-bar { display: flex; }
+  .deco-bar .seg {
+    display: inline-flex;
+    gap: 3px;
+    background: #f0dbb0;
+    padding: 2px;
+    border-radius: 9px;
+    border: 1.5px solid #d4b073;
+  }
+  .deco-bar button {
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 7px;
+    border-radius: 7px;
+    cursor: pointer;
+  }
+  .deco-bar button.on { background: #fffdf6; color: var(--wood-d); box-shadow: 0 1px 2px rgba(58,38,24,.15); }
+  .deco-hint { font-size: 11px; color: var(--wood-d); width: 100%; }
+
+  /* ---- SCÈNE DU DOMAINE ---- */
+  .viewport {
+    position: relative;
+    height: 625px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    background: var(--grass-3);
+  }
+  .device.wide .viewport { height: 650px; }
+
+  .world {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 420 / 820;
+    min-height: 640px;
+    user-select: none;
+    overflow: hidden;
+  }
+  .device.wide .world { aspect-ratio: 940 / 645; min-height: 645px; }
+
+  .bg-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  /* ---- ANIMATIONS AMBIANTES ---- */
+  @keyframes cloudDrift { 0% { transform: translateX(-45px); } 100% { transform: translateX(980px); } }
+  @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes smokeRise {
+    0% { transform: translateY(0) scale(0.6); opacity: 0; }
+    25% { opacity: 0.78; }
+    100% { transform: translateY(-22px) translateX(7px) scale(1.4); opacity: 0; }
+  }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+  @keyframes graze {
+    0%, 40%, 100% { transform: translate(0, 0) rotate(0deg); }
+    55%, 80% { transform: translate(2px, 1.5px) rotate(4deg); }
+  }
+  @keyframes beeOrbit {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(9px, -6px); }
+    50% { transform: translate(15px, 1px); }
+    75% { transform: translate(6px, 5px); }
+    100% { transform: translate(0, 0); }
+  }
+  @keyframes birdFly {
+    0% { transform: translate(-40px, 12px) scale(0.9); opacity: 0; }
+    10% { opacity: 0.85; }
+    90% { opacity: 0.85; }
+    100% { transform: translate(980px, -24px) scale(1.05); opacity: 0; }
+  }
+  @keyframes planePass {
+    0% { transform: translate(-80px, 24px); opacity: 0; }
+    8% { opacity: 1; }
+    92% { opacity: 1; }
+    100% { transform: translate(1020px, -30px); opacity: 0; }
+  }
+  @keyframes bubbleFloat { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -4px); } }
+  @keyframes popHit {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    35% { transform: translate(-50%, -50%) scale(1.13, 0.89); }
+    70% { transform: translate(-50%, -50%) scale(0.95, 1.06); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+  }
+  @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+  @keyframes firefly {
+    0%, 100% { transform: translate(0, 0); opacity: 0.12; }
+    42% { transform: translate(10px, -12px); opacity: 0.96; }
+    78% { transform: translate(-7px, -4px); opacity: 0.55; }
+  }
+  @keyframes waterShimmer { 0%, 100% { transform: translateX(0); opacity: 0.5; } 50% { transform: translateX(6px); opacity: 0.92; } }
+  @keyframes ripple {
+    0% { transform: scale(0.4); opacity: 0.9; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+  @keyframes rainFall {
+    0% { transform: translateY(-20px) translateX(6px); opacity: 0; }
+    15% { opacity: 0.72; }
+    100% { transform: translateY(120px) translateX(-16px); opacity: 0; }
+  }
+  @keyframes snowFall {
+    0% { transform: translateY(-10px) translateX(0); opacity: 0; }
+    20% { opacity: 0.95; }
+    100% { transform: translateY(130px) translateX(20px); opacity: 0; }
+  }
+  @keyframes trainBreath { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.2px); } }
+  @keyframes pulseRing {
+    0% { transform: translate(-50%, -50%) scale(0.65); opacity: 0.9; }
+    100% { transform: translate(-50%, -50%) scale(1.65); opacity: 0; }
+  }
+  @keyframes sparkle {
+    0%, 100% { transform: scale(0.5) rotate(0deg); opacity: 0.35; }
+    50% { transform: scale(1.15) rotate(45deg); opacity: 1; }
+  }
+  @keyframes trainLeave {
+    0% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(-160px); opacity: 0; }
+  }
+  @keyframes trainArrive {
+    0% { transform: translateX(-140px); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+
+  .cloud-a { animation: cloudDrift 52s linear infinite; }
+  .cloud-b { animation: cloudDrift 70s linear -26s infinite; }
+  .cloud-c { animation: cloudDrift 60s linear -12s infinite; }
+  .blade-spin { animation: spinSlow 8.5s linear infinite; }
+  .wheel-spin { animation: spinSlow 6s linear infinite; }
+  .smoke-1 { animation: smokeRise 3s ease-out infinite; }
+  .smoke-2 { animation: smokeRise 3s ease-out 1.5s infinite; }
+  .boat-bob { animation: bob 3.4s ease-in-out infinite; }
+  .cow-graze { animation: graze 5.2s ease-in-out infinite; }
+  .hen-bob { animation: bob 2.4s ease-in-out 0.8s infinite; }
+  .horse-bob { animation: bob 3.1s ease-in-out 0.3s infinite; }
+  .bee-1 { animation: beeOrbit 3.6s ease-in-out infinite; }
+  .bee-2 { animation: beeOrbit 4.2s ease-in-out 1.4s infinite; }
+  .water-line { animation: waterShimmer 3.1s ease-in-out infinite; }
+  .ripple-ring { transform-box: fill-box; transform-origin: center; animation: ripple 2.2s ease-out infinite; }
+  .star { animation: twinkle 2.8s ease-in-out infinite; }
+  .star.s2 { animation-delay: 1.1s; }
+  .star.s3 { animation-delay: 2s; }
+  .spark { transform-box: fill-box; transform-origin: center; animation: sparkle 2s ease-in-out infinite; }
+  .spark.s2 { animation-delay: 0.9s; }
+  .train-idle { animation: trainBreath 1.3s ease-in-out infinite; }
+  .train-depart { animation: trainLeave 1.35s cubic-bezier(.55,.06,.68,.19) forwards; }
+  .train-arrive { animation: trainArrive 1.4s cubic-bezier(.22,1,.36,1) forwards; }
+  .bird-flock { animation: birdFly 22s linear infinite; }
+  .plane-fly { animation: planePass 28s linear 4s infinite; }
+
+  /* ---- HOTSPOTS DES ZONES ---- */
+  .spot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    transition: filter 0.2s ease, opacity 0.25s ease;
+  }
+  .spot:hover { z-index: 13; filter: brightness(1.04); }
+  .spot.hit { animation: popHit 0.42s cubic-bezier(.34,1.56,.64,1); }
+  .spot.spotlight::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 4px solid #fff3b0;
+    pointer-events: none;
+    animation: pulseRing 0.9s ease-out 2;
+  }
+  .spot svg.sprite {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 3px 3px rgba(58, 38, 24, 0.2));
+  }
+  .spot-label {
+    margin-top: -5px;
+    font-size: 10.5px;
+    font-weight: 900;
+    color: var(--ink);
+    background: rgba(255, 249, 232, 0.9);
+    border: 1.5px solid rgba(122, 74, 42, 0.45);
+    border-radius: 99px;
+    padding: 1px 7px;
+    line-height: 1.3;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(58, 38, 24, 0.14);
+    transition: opacity 0.22s;
+  }
+  /* Mode Focus : cache les étiquettes des bâtiments calmes pour lisibilité chirurgicale */
+  .focus-mode .spot:not(.has-bub) .spot-label { opacity: 0; }
+  .focus-mode .spot:not(.has-bub) { filter: saturate(0.84); }
+  .postcard .spot-label, .postcard .action-bub, .postcard .deco-slot-btn, .postcard .walker-bub { opacity: 0; pointer-events: none; }
+
+  .night-halo {
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    width: 82%;
+    height: 58%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 212, 102, 0.68) 0%, rgba(255, 190, 70, 0) 70%);
+    opacity: var(--win-glow);
+    pointer-events: none;
+    transition: opacity 0.55s ease;
+    mix-blend-mode: screen;
+  }
+
+  /* ---- BULLE D'ACTION DIRECTE ---- */
+  .action-bub {
+    position: absolute;
+    left: 50%;
+    top: -13px;
+    transform: translate(-50%, 0);
+    z-index: 15;
+    border: 2.2px solid var(--ink);
+    background: linear-gradient(180deg, #fffdf5 0%, #fff0c7 100%);
+    border-radius: 99px;
+    padding: 4px 9px 4px 7px;
+    min-height: 31px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12.5px;
+    font-weight: 900;
+    color: var(--ink);
+    box-shadow: 0 4px 10px rgba(58, 38, 24, 0.28), 0 0 0 2px rgba(255, 255, 255, 0.72);
+    cursor: pointer;
+    animation: bubbleFloat 2.4s ease-in-out infinite;
+    transition: transform 0.15s ease, opacity 0.25s ease;
+    white-space: nowrap;
+  }
+  .action-bub::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    transform: translateX(-50%) rotate(45deg);
+    width: 9px;
+    height: 9px;
+    background: #fff0c7;
+    border-right: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+  }
+  .action-bub.ready { background: linear-gradient(180deg, #f3ffe6 0%, #c6ef97 100%); border-color: #2f6c22; }
+  .action-bub.ready::after { background: #c6ef97; border-color: #2f6c22; }
+  .action-bub.gold { background: linear-gradient(180deg, #fff7d4 0%, #ffd56b 100%); border-color: #8f5810; }
+  .action-bub.gold::after { background: #ffd56b; border-color: #8f5810; }
+  .action-bub.care { background: linear-gradient(180deg, #fff0f8 0%, #f5c6e8 100%); border-color: #7c3573; }
+  .action-bub.care::after { background: #f5c6e8; border-color: #7c3573; }
+  .action-bub.plant { background: linear-gradient(180deg, #e8f8ff 0%, #bce7ff 100%); border-color: #246894; }
+  .action-bub.plant::after { background: #bce7ff; border-color: #246894; }
+  .action-bub:hover { transform: translate(-50%, -2px) scale(1.07); }
+  .action-bub:active { transform: translate(-50%, 1px) scale(0.94); }
+
+  /* ---- MINI POPOVER RAPIDE (EX: SOIN PARFUM EN 1 TAP) ---- */
+  .quick-pop {
+    position: absolute;
+    z-index: 26;
+    transform: translate(-50%, -100%);
+    background: var(--paper-l);
+    border: 2.5px solid var(--ink);
+    border-radius: 16px;
+    padding: 8px 9px;
+    box-shadow: 0 10px 26px rgba(58, 38, 24, 0.3);
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    width: 224px;
+    color: var(--ink);
+  }
+  .quick-pop.open { display: flex; }
+  .qp-head { font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: space-between; }
+  .qp-close { border: none; background: none; font-size: 14px; cursor: pointer; color: var(--ink-soft); font-weight: 900; }
+  .qp-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .qp-opt {
+    border: 2px solid var(--wood);
+    background: #fff;
+    border-radius: 11px;
+    padding: 6px 5px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: center;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .qp-opt strong { font-size: 11.5px; }
+  .qp-opt span { font-size: 10px; color: var(--ink-soft); font-weight: 700; }
+  .qp-opt.deep { background: #faf0ff; border-color: #84489e; }
+  .qp-opt:active { transform: scale(0.96); }
+
+  /* ---- PERSONNAGES VIVANTS QUI MARCHENT (FILOU + VILLAGEOIS) ---- */
+  .walker {
+    position: absolute;
+    z-index: 11;
+    transform: translate(-50%, -50%);
+    transition: left 3.6s ease-in-out, top 3.6s ease-in-out;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .walker svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 2px 2px rgba(58,38,24,.22)); }
+  .walker-bub {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff8d6;
+    border: 2px solid #8f5810;
+    border-radius: 99px;
+    padding: 2px 7px;
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--ink);
+    white-space: nowrap;
+    box-shadow: 0 3px 8px rgba(58,38,24,.24);
+    animation: bubbleFloat 2s ease-in-out infinite;
+  }
+
+  /* ---- EMPLACEMENTS DÉCO PERSONNALISABLES ---- */
+  .deco-slot {
+    position: absolute;
+    z-index: 7;
+    transform: translate(-50%, -50%);
+    width: 11%;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .device.wide .deco-slot { width: 6.5%; }
+  .deco-slot svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 2px 2px rgba(58,38,24,.18)); }
+  .deco-slot-btn {
+    display: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2.2px dashed #7a4a2a;
+    background: rgba(255, 248, 224, 0.9);
+    color: var(--wood-d);
+    font-size: 16px;
+    font-weight: 900;
+    place-items: center;
+    box-shadow: 0 3px 8px rgba(58,38,24,.18);
+  }
+  .decorating .deco-slot.empty .deco-slot-btn { display: grid; }
+  .decorating .deco-slot:not(.empty) { outline: 2.5px dashed #f2c14e; border-radius: 50%; background: rgba(255, 246, 200, 0.35); }
+
+  /* ---- COUCHES ATMOSPHÈRE ---- */
+  .fx-layer { position: absolute; inset: 0; pointer-events: none; z-index: 16; overflow: hidden; }
+  .night-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 48%, rgba(20, 32, 68, 0.1), rgba(14, 22, 52, 0.64));
+    opacity: var(--night-veil);
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+    z-index: 14;
+  }
+  .firefly {
+    position: absolute;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #ffe875;
+    box-shadow: 0 0 10px 3px rgba(255, 232, 117, 0.85);
+    opacity: 0;
+    animation: firefly 4.2s ease-in-out infinite;
+  }
+  [data-time="night"] .firefly, [data-time="evening"] .firefly { display: block; }
+  [data-time="morning"] .firefly, [data-time="noon"] .firefly { display: none; }
+
+  .weather-drop { position: absolute; pointer-events: none; }
+  .weather-drop.rain {
+    width: 2px; height: 17px; border-radius: 2px;
+    background: linear-gradient(180deg, rgba(210, 236, 255, 0), rgba(190, 226, 255, 0.84));
+    animation: rainFall 0.85s linear infinite;
+  }
+  .weather-drop.snow {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+    animation: snowFall 4.2s linear infinite;
+  }
+  .weather-drop.petal {
+    width: 8px; height: 5px; border-radius: 60% 40% 60% 40%;
+    background: #ffb7cf;
+    animation: snowFall 5.6s ease-in-out infinite;
+  }
+  .weather-drop.leaf {
+    width: 9px; height: 6px; border-radius: 65% 35% 65% 35%;
+    background: #e57a2e;
+    animation: snowFall 5.2s ease-in-out infinite;
+  }
+
+  /* ---- PARTICULES JUICE ---- */
+  .fly-item {
+    position: fixed;
+    z-index: 999;
+    pointer-events: none;
+    font-size: 20px;
+    filter: drop-shadow(0 3px 4px rgba(58, 38, 24, 0.28));
+  }
+  .burst-spark {
+    position: fixed;
+    z-index: 998;
+    pointer-events: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffd95e;
+    box-shadow: 0 0 6px #ffe896;
+    transition: transform 0.5s cubic-bezier(.16,.84,.44,1), opacity 0.5s ease;
+  }
+  .float-txt {
+    position: fixed;
+    z-index: 999;
+    pointer-events: none;
+    font-size: 13px;
+    font-weight: 900;
+    color: #fff;
+    background: rgba(58, 38, 24, 0.88);
+    padding: 3px 9px;
+    border-radius: 99px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22);
+    transform: translate(-50%, 0);
+    transition: transform 0.85s ease-out, opacity 0.85s ease-out;
+  }
+
+  /* ---- BADGE COMBO ---- */
+  .combo-pill {
+    position: absolute;
+    top: 108px;
+    right: 12px;
+    z-index: 24;
+    background: linear-gradient(180deg, #ffe58f, #f2b738);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    border-radius: 99px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 900;
+    box-shadow: 0 4px 12px rgba(58,38,24,.24);
+    opacity: 0;
+    transform: scale(0.75);
+    transition: opacity 0.2s, transform 0.22s cubic-bezier(.34,1.56,.64,1);
+    pointer-events: none;
+  }
+  .combo-pill.show { opacity: 1; transform: scale(1); }
+
+  /* ---- FEUILLE DU BAS ---- */
+  .sheet-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(34, 22, 12, 0.44);
+    z-index: 30;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+  .sheet {
+    width: 100%;
+    max-width: 470px;
+    background: var(--paper-l);
+    color: var(--ink);
+    border-top: 3px solid var(--ink);
+    border-radius: 22px 22px 0 0;
+    padding: 12px 16px 16px;
+    transform: translateY(100%);
+    transition: transform 0.26s cubic-bezier(.22,1,.36,1);
+    box-shadow: 0 -10px 28px rgba(58, 38, 24, 0.26);
+  }
+  .sheet-backdrop.open .sheet { transform: translateY(0); }
+  .sheet-handle { width: 40px; height: 4px; border-radius: 99px; background: rgba(58, 38, 24, 0.22); margin: 0 auto 10px; }
+  .sheet-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .sheet-ico {
+    width: 46px; height: 46px; border-radius: 14px;
+    background: var(--paper); border: 2px solid var(--wood);
+    display: grid; place-items: center; font-size: 24px; flex-shrink: 0;
+  }
+  .sheet-title { font-size: 16px; font-weight: 900; margin: 0; }
+  .sheet-path { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
+  .sheet-meta {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;
+  }
+  .meta-tag {
+    font-size: 11px; font-weight: 800; background: #fff; border: 1.5px solid #e0c392;
+    border-radius: 99px; padding: 3px 8px; color: var(--wood-d);
+  }
+  .sheet-desc {
+    font-size: 13px; line-height: 1.45; margin: 4px 0 12px;
+    background: #fff; border: 1.5px solid #e4cca2; border-radius: 12px; padding: 9px 11px;
+  }
+  .sheet-actions { display: flex; gap: 8px; }
+  .deco-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin: 8px 0 12px;
+  }
+  .deco-choice {
+    border: 2px solid #dec392; background: #fff; border-radius: 12px;
+    padding: 7px 4px; cursor: pointer; font-family: inherit; color: var(--ink);
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    font-size: 10.5px; font-weight: 800;
+  }
+  .deco-choice.on { border-color: #3f8f2e; background: #f1ffe6; }
+  .deco-choice span.em { font-size: 20px; }
+
+  .btn-main, .btn-sec {
+    flex: 1; border-radius: 12px; padding: 10px 12px;
+    font-family: inherit; font-size: 13px; font-weight: 900; cursor: pointer;
+  }
+  .btn-main {
+    background: linear-gradient(180deg, #86d65d, #54ac36);
+    color: #fff; border: 2px solid #2f7322; box-shadow: 0 3px 0 #2f7322;
+  }
+  .btn-sec {
+    background: var(--paper); color: var(--ink);
+    border: 2px solid var(--wood); box-shadow: 0 3px 0 var(--wood-d);
+  }
+  .btn-main:active, .btn-sec:active { transform: translateY(1px); }
+
+  /* ---- ONGLETS BAS ---- */
+  .tabs {
+    position: relative;
+    z-index: 22;
+    background: linear-gradient(180deg, #f9e8c3, #efd59f);
+    border-top: 2.5px solid var(--wood);
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    padding: 5px 4px 7px;
+    gap: 2px;
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .tab {
+    position: relative; border: none; background: transparent; border-radius: 11px;
+    padding: 4px 2px; font-family: inherit; color: var(--ink-soft);
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+    cursor: pointer; font-size: 10px; font-weight: 800;
+  }
+  .tab .em { font-size: 18px; line-height: 1.1; }
+  .tab.on { background: #fff9eb; color: var(--ink); box-shadow: inset 0 0 0 1.8px var(--wood); }
+  .tab .dot {
+    position: absolute; top: 2px; right: 7px; min-width: 15px; height: 15px;
+    border-radius: 99px; background: var(--red); color: #fff; font-size: 9px;
+    font-weight: 900; display: grid; place-items: center; padding: 0 3px; border: 1.5px solid #fff7e0;
+  }
+
+  .exit-postcard {
+    position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+    z-index: 25; border: 2px solid var(--ink); background: rgba(255, 249, 235, 0.94);
+    color: var(--ink); font-family: inherit; font-size: 12px; font-weight: 900;
+    padding: 7px 14px; border-radius: 99px; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22); display: none;
+  }
+  .postcard .exit-postcard { display: inline-flex; align-items: center; gap: 6px; }
+
+  .toast {
+    position: absolute; bottom: 72px; left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: rgba(58, 38, 24, 0.93); color: #fff8e6;
+    font-size: 12px; font-weight: 800; padding: 7px 14px; border-radius: 99px;
+    z-index: 28; opacity: 0; pointer-events: none;
+    transition: opacity 0.22s, transform 0.22s; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .legend {
+    width: 100%; max-width: 960px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 8px; font-size: 12px; line-height: 1.4;
+  }
+  .legend-card {
+    background: #fff9eb; color: var(--ink);
+    border: 1.5px solid #dec392; border-radius: 13px; padding: 9px 11px;
+  }
+  .legend-card b { color: var(--wood-d); display: block; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+<div class="studio">
+  <!-- Barre de test du prototype -->
+  <div class="controls" aria-label="Réglages de la maquette">
+    <div class="ctrl-title">
+      <span>🏡 Meuh · Vue du Domaine</span>
+      <span class="ctrl-badge">Prototype poussé à fond</span>
+    </div>
+
+    <div class="ctrl-group" data-ctrl="layout">
+      <button class="ctrl-btn on" data-val="phone">📱 Tel</button>
+      <button class="ctrl-btn" data-val="wide">💻 Large</button>
+    </div>
+
+    <div class="ctrl-group" data-ctrl="time">
+      <button class="ctrl-btn" data-val="morning">🌅 Aube</button>
+      <button class="ctrl-btn on" data-val="noon">☀️ Jour</button>
+      <button class="ctrl-btn" data-val="evening">🌇 Soir</button>
+      <button class="ctrl-btn" data-val="night">🌙 Nuit</button>
+    </div>
+
+    <div class="ctrl-group" data-ctrl="season">
+      <button class="ctrl-btn on" data-val="spring">🌸 Print.</button>
+      <button class="ctrl-btn" data-val="summer">☀️ Été</button>
+      <button class="ctrl-btn" data-val="autumn">🍂 Aut.</button>
+      <button class="ctrl-btn" data-val="winter">❄️ Hiver</button>
+    </div>
+
+    <div class="ctrl-group" data-ctrl="weather">
+      <button class="ctrl-btn on" data-val="clear">☀️ Clair</button>
+      <button class="ctrl-btn" data-val="rain">🌧️ Pluie</button>
+    </div>
+
+    <div class="ctrl-group" data-ctrl="stage">
+      <button class="ctrl-btn" data-val="early">🌱 Niv. 3</button>
+      <button class="ctrl-btn" data-val="mid">🏡 Niv. 25</button>
+      <button class="ctrl-btn on" data-val="full">👑 Niv. 60</button>
+    </div>
+
+    <div class="ctrl-group">
+      <button class="ctrl-btn on" id="btnLive" title="Les récoltes repoussent doucement en direct">⏱️ Vie auto</button>
+      <button class="ctrl-btn" id="btnCalm" title="Mode calme (sans animations)">🌿 Calme</button>
+      <button class="ctrl-btn on" id="btnSound">🔊 Son</button>
+      <button class="ctrl-btn" id="btnReset">🔄 Bulles</button>
+    </div>
+  </div>
+
+  <!-- Appareil Meuh -->
+  <div class="stage">
+    <div class="device" id="device" data-time="noon" data-season="spring" data-house="terracotta" data-path="sand">
+      <!-- En-tête -->
+      <header class="hud">
+        <div class="hud-top">
+          <div class="pill pill-lvl" id="pillLvl">⭐ <span id="lvlVal">60</span></div>
+          <div class="pill" id="pillCoins">🪙 <span id="coinsVal">12 450</span></div>
+          <div class="pill" id="pillBarn">🏚️ <span id="barnVal">148</span><span class="sub">/220</span></div>
+          <div class="hud-right">
+            <button class="ico-btn" id="btnFocus" title="Mode Focus : ne montrer que les bâtiments ayant une action">👁️</button>
+            <button class="ico-btn" id="btnDeco" title="Personnaliser le domaine et poser des décos">🎨</button>
+            <button class="ico-btn" id="btnPostcard" title="Mode carte postale">📸</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Barre Personnalisation (mode Décorer) -->
+      <div class="deco-bar" id="decoBar">
+        <span>Maison :</span>
+        <div class="seg" data-style="house">
+          <button class="on" data-val="terracotta">Tuile</button>
+          <button data-val="slate">Ardoise</button>
+          <button data-val="lavender">Lavande</button>
+        </div>
+        <span>Chemin :</span>
+        <div class="seg" data-style="path">
+          <button class="on" data-val="sand">Sable</button>
+          <button data-val="cobble">Pavés</button>
+          <button data-val="rose">Tomette</button>
+        </div>
+        <div class="deco-hint">✨ Touche un cercle <b>+</b> ou une déco sur le domaine pour placer tes trophées !</div>
+      </div>
+
+      <!-- Barre Tournée rapide -->
+      <div class="tour-bar" id="tourBar"></div>
+
+      <!-- Badge Combo -->
+      <div class="combo-pill" id="comboPill">✨ Combo ×3</div>
+
+      <!-- Scène vivante -->
+      <div class="viewport" id="viewport">
+        <div class="world" id="world">
+          <svg class="bg-svg" id="bgSvg" viewBox="0 0 420 820" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <div id="decoLayer"></div>
+          <div id="spotsLayer"></div>
+          <div id="walkersLayer"></div>
+          <div class="quick-pop" id="quickPop"></div>
+          <div class="night-overlay"></div>
+          <div class="fx-layer" id="fxLayer"></div>
+        </div>
+      </div>
+
+      <button class="exit-postcard" id="btnExitPostcard">✨ Réafficher l'interface</button>
+      <div class="toast" id="toast"></div>
+
+      <!-- Fiche bâtiment / choix déco -->
+      <div class="sheet-backdrop" id="sheetBg">
+        <div class="sheet" role="dialog" aria-modal="true" id="sheetBox"></div>
+      </div>
+
+      <!-- Barre d'onglets Meuh -->
+      <nav class="tabs" id="tabsBar" aria-label="Navigation principale">
+        <button class="tab on" data-tab="domaine"><span class="em">🗺️</span><span>Domaine</span></button>
+        <button class="tab" data-tab="farm"><span class="em">🌾</span><span>Ferme</span><span class="dot" id="dot-farm">0</span></button>
+        <button class="tab" data-tab="animals"><span class="em">🐄</span><span>Animaux</span><span class="dot" id="dot-animals">0</span></button>
+        <button class="tab" data-tab="machines"><span class="em">⚙️</span><span>Atelier</span><span class="dot" id="dot-machines">0</span></button>
+        <button class="tab" data-tab="village"><span class="em">🏘️</span><span>Village</span><span class="dot" id="dot-village">0</span></button>
+        <button class="tab" data-tab="market"><span class="em">🧺</span><span>Marché</span></button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Repères -->
+  <div class="legend">
+    <div class="legend-card">
+      <b>🚂 Monde qui réagit en vrai</b>
+      Expédie le train (il siffle et roule sur les rails !), récolte les champs puis resème en 1 tap, choisis le soin rapide/approfondi directement sur la Parfumerie, sers Mamie Odette qui vient te voir !
+    </div>
+    <div class="legend-card">
+      <b>👁️ Focus + ⚡ Tournée express</b>
+      Active l'œil <b>👁️</b> pour ne faire ressortir que les bâtiments actifs, ou clique <b>✨ Tout faire</b> pour une cascade de récoltes en 2 secondes.
+    </div>
+    <div class="legend-card">
+      <b>🎨 Personnalise ton domaine</b>
+      Clique <b>🎨</b> pour changer le style de la Maison, les pavés du chemin et poser tes trophées (fontaine, rosiers, trophée parfum, lanterne…) sur les 5 emplacements libres !
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // ---------------- MOTEUR AUDIO DOUX (WEB AUDIO API) ----------------
+  let audioCtx = null;
+  let soundOn = true;
+  let comboCount = 0;
+  let comboTimer = 0;
+  const PENTA = [523.25, 587.33, 659.25, 783.99, 880.0, 1046.5, 1174.66, 1318.5];
+
+  function getCtx() {
+    if (!soundOn) return null;
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    } catch { return null; }
+  }
+
+  function tone(freq, dur, type = 'triangle', vol = 0.075, delay = 0, slideTo = null) {
+    const ctx = getCtx();
+    if (!ctx) return;
+    const t0 = ctx.currentTime + delay;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t0);
+    if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur * 0.7);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + 0.014);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.02);
+  }
+
+  function playSfx(kind) {
+    if (kind === 'open') return tone(440, 0.13, 'sine', 0.04);
+    if (kind === 'coin') {
+      tone(987.77, 0.16, 'sine', 0.06, 0);
+      tone(1318.5, 0.24, 'triangle', 0.07, 0.07);
+      return;
+    }
+    if (kind === 'train') {
+      // Petit sifflet de train harmonisé tout doux
+      tone(440, 0.26, 'triangle', 0.055, 0, 446);
+      tone(554.37, 0.26, 'sine', 0.045, 0, 560);
+      tone(440, 0.38, 'triangle', 0.055, 0.3, 434);
+      tone(554.37, 0.38, 'sine', 0.045, 0.3, 548);
+      return;
+    }
+    if (kind === 'dog') {
+      tone(620, 0.09, 'triangle', 0.06, 0, 760);
+      tone(740, 0.12, 'triangle', 0.06, 0.1, 880);
+      return;
+    }
+    if (kind === 'plant') {
+      tone(392, 0.12, 'sine', 0.05, 0, 494);
+      return;
+    }
+    if (kind === 'perfume') {
+      tone(659.25, 0.22, 'sine', 0.055, 0);
+      tone(880, 0.28, 'sine', 0.055, 0.08);
+      tone(1318.5, 0.36, 'triangle', 0.05, 0.16);
+      return;
+    }
+    // Récolte pentatonique ascendante
+    const f = PENTA[comboCount % PENTA.length];
+    tone(f, 0.32, 'triangle', 0.075, 0, f * 1.015);
+    tone(f * 2, 0.22, 'sine', 0.025, 0.02);
+  }
+
+  function bumpCombo() {
+    comboCount++;
+    clearTimeout(comboTimer);
+    const pill = document.getElementById('comboPill');
+    if (comboCount >= 3) {
+      pill.textContent = comboCount >= 6 ? `🌟 Tournée royale ×${comboCount}` : `✨ Belle tournée ×${comboCount}`;
+      pill.classList.add('show');
+    }
+    comboTimer = setTimeout(() => {
+      comboCount = 0;
+      pill.classList.remove('show');
+    }, 2600);
+  }
+
+  // ---------------- SPRITES SVG HAUTE QUALITÉ (STYLE MEUH SUBLIMÉ) ----------------
+  const O = '#3a2618';
+  const wrapSvg = (inner, vb = '0 0 88 76') =>
+    `<svg class="sprite" viewBox="${vb}" aria-hidden="true">${inner}</svg>`;
+
+  const SPRITES = {
+    station: (trainState) => wrapSvg(`
+      <ellipse cx="46" cy="66" rx="40" ry="5.5" fill="rgba(58,38,24,.16)"/>
+      <!-- Quai en bois + abri -->
+      <rect x="4" y="55" width="84" height="7" rx="2" fill="#c79e6b" stroke="${O}" stroke-width="1.8"/>
+      <rect x="6" y="32" width="44" height="25" rx="2" fill="#f5dbb0" stroke="${O}" stroke-width="2.2"/>
+      <polygon points="2,34 28,16 54,34" fill="#3f6fb5" stroke="${O}" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M5 33 L28 16.5 L51 33 Q39 37 28 33 Q16 37 5 33Z" fill="#fff" style="opacity:var(--snow-op)"/>
+      <rect x="11" y="40" width="10" height="9" rx="1.5" fill="var(--win-fill)" stroke="${O}" stroke-width="1.7"/>
+      <rect x="35" y="40" width="10" height="9" rx="1.5" fill="var(--win-fill)" stroke="${O}" stroke-width="1.7"/>
+      <rect x="24" y="43" width="8" height="14" rx="1.2" fill="#8b5a2b" stroke="${O}" stroke-width="1.7"/>
+      <circle cx="28" cy="26" r="5.5" fill="#fffaf0" stroke="${O}" stroke-width="1.8"/>
+      <path d="M28 26 V22.5 M28 26 L30.8 27" stroke="${O}" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- Locomotive + wagon -->
+      ${trainState !== 'gone' ? `
+      <g class="${trainState === 'departing' ? 'train-depart' : trainState === 'arriving' ? 'train-arrive' : 'train-idle'}">
+        <g class="smoke-1"><circle cx="56" cy="22" r="4.6" fill="#fff" opacity=".85"/></g>
+        <g class="smoke-2"><circle cx="61" cy="15" r="5.6" fill="#fff" opacity=".68"/></g>
+        <rect x="52" y="28" width="6" height="11" rx="1.5" fill="#3a2618"/>
+        <rect x="46" y="38" width="42" height="18" rx="4" fill="#c8453a" stroke="${O}" stroke-width="2.1"/>
+        <rect x="68" y="31" width="17" height="13" rx="2" fill="#e55a4d" stroke="${O}" stroke-width="2"/>
+        <rect x="72" y="34" width="8" height="6" rx="1" fill="var(--win-fill)" stroke="${O}" stroke-width="1.4"/>
+        <rect x="49" y="43" width="16" height="3.2" rx="1.5" fill="#f2c14e"/>
+        <circle cx="54" cy="57" r="4.8" fill="#4f4945" stroke="${O}" stroke-width="1.9"/>
+        <circle cx="67" cy="57" r="4.8" fill="#4f4945" stroke="${O}" stroke-width="1.9"/>
+        <circle cx="80" cy="57" r="4.8" fill="#4f4945" stroke="${O}" stroke-width="1.9"/>
+        <circle cx="48" cy="47" r="2.7" fill="#ffe27a"/>
+      </g>` : ''}
+    `, '0 0 94 72'),
+
+    village: () => wrapSvg(`
+      <ellipse cx="44" cy="64" rx="37" ry="5" fill="rgba(58,38,24,.15)"/>
+      <!-- Mairie / clocher -->
+      <rect x="8" y="34" width="26" height="26" rx="2" fill="#f8e6c6" stroke="${O}" stroke-width="2.1"/>
+      <polygon points="5,36 21,21 37,36" fill="#c8453a" stroke="${O}" stroke-width="2.1" stroke-linejoin="round"/>
+      <rect x="13" y="42" width="6.5" height="7" rx="1" fill="var(--win-fill)" stroke="${O}" stroke-width="1.5"/>
+      <rect x="23" y="46" width="6.5" height="14" rx="1" fill="#8b5a2b" stroke="${O}" stroke-width="1.5"/>
+      <!-- Maisonnette lavande -->
+      <rect x="34" y="40" width="17" height="20" rx="2" fill="#f6e3ee" stroke="${O}" stroke-width="2"/>
+      <polygon points="32,41 42.5,31 53,41" fill="#8d65b8" stroke="${O}" stroke-width="2"/>
+      <rect x="39" y="47" width="6.5" height="7" rx="1" fill="var(--win-fill)" stroke="${O}" stroke-width="1.4"/>
+      <!-- Tente camping colorée -->
+      <polygon points="54,60 68,35 82,60" fill="#e67e35" stroke="${O}" stroke-width="2.1" stroke-linejoin="round"/>
+      <polygon points="63,60 68,46 73,60" fill="${O}"/>
+      <path d="M68 35 V28 L76 31 L68 35Z" fill="#fff6df" stroke="${O}" stroke-width="1.4"/>
+      <!-- Guirlande de fête -->
+      <path d="M34 39 Q48 46 61 40" fill="none" stroke="${O}" stroke-width="1.4"/>
+      <circle cx="40" cy="42" r="2.2" fill="#f2c14e"/><circle cx="48" cy="43.5" r="2.2" fill="#e84a5f"/><circle cx="55" cy="42" r="2.2" fill="#4fb3f6"/>
+      <path d="M8 35 L21 21.5 L34 35Z" fill="#fff" style="opacity:var(--snow-op)"/>
+    `, '0 0 88 70'),
+
+    port: () => wrapSvg(`
+      <rect x="6" y="46" width="40" height="8" rx="2" fill="#a8693a" stroke="${O}" stroke-width="2"/>
+      <path d="M12 54 V63 M26 54 V63 M40 54 V63" stroke="${O}" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Phare miniature sur le quai -->
+      <path d="M13 46 L16 24 H23 L26 46Z" fill="#fff8ea" stroke="${O}" stroke-width="1.9"/>
+      <rect x="15" y="33" width="9" height="4.5" fill="#c8453a"/>
+      <rect x="16" y="20" width="7" height="5" fill="#ffe066" stroke="${O}" stroke-width="1.5"/>
+      <polygon points="14,20 19.5,14 25,20" fill="#c8453a" stroke="${O}" stroke-width="1.6"/>
+      <!-- Voilier -->
+      <g class="boat-bob">
+        <path d="M40 48 Q58 58 78 48 L73 57 Q58 63 44 57Z" fill="#fff8eb" stroke="${O}" stroke-width="2.1"/>
+        <path d="M59 48 V17" stroke="${O}" stroke-width="2.3" stroke-linecap="round"/>
+        <path d="M59 19 L77 43 L59 43Z" fill="#f2c14e" stroke="${O}" stroke-width="1.9" stroke-linejoin="round"/>
+        <path d="M57 23 L44 43 L57 43Z" fill="#e85b4f" stroke="${O}" stroke-width="1.9" stroke-linejoin="round"/>
+      </g>
+      <path class="water-line" d="M36 63 Q49 60 62 63 T85 62" fill="none" stroke="#cdeeff" stroke-width="2" stroke-linecap="round"/>
+    `, '0 0 90 70'),
+
+    house: () => wrapSvg(`
+      <ellipse cx="52" cy="80" rx="44" ry="6.5" fill="rgba(58,38,24,.19)"/>
+      <!-- Cheminée + fumée -->
+      <rect x="68" y="15" width="9.5" height="19" rx="1.5" fill="var(--house-trim)" stroke="${O}" stroke-width="2"/>
+      <g class="smoke-1"><circle cx="73" cy="10" r="4.2" fill="#fff" opacity=".75"/></g>
+      <g class="smoke-2"><circle cx="77" cy="4" r="5.2" fill="#fff" opacity=".55"/></g>
+      <!-- Corps maison personnalisable -->
+      <rect x="18" y="37" width="68" height="40" rx="3.5" fill="var(--house-wall)" stroke="${O}" stroke-width="2.5"/>
+      <polygon points="11,40 52,10 93,40" fill="var(--house-roof)" stroke="${O}" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M16 38 L52 11.5 L88 38 Q70 44 52 38 Q34 44 16 38Z" fill="#fff" style="opacity:var(--snow-op)"/>
+      <!-- Lucarne ronde -->
+      <circle cx="52" cy="27" r="5.8" fill="var(--win-fill)" stroke="${O}" stroke-width="2"/>
+      <!-- Fenêtres + volets + jardinières -->
+      <rect x="25" y="46" width="13" height="12" rx="2" fill="var(--win-fill)" stroke="${O}" stroke-width="2"/>
+      <rect x="20.5" y="46" width="4.2" height="12" rx="1" fill="var(--house-roof)" stroke="${O}" stroke-width="1.3"/>
+      <rect x="38.3" y="46" width="4.2" height="12" rx="1" fill="var(--house-roof)" stroke="${O}" stroke-width="1.3"/>
+      <path d="M31.5 46 V58 M25 52 H38" stroke="${O}" stroke-width="1.2"/>
+      <rect x="66" y="46" width="13" height="12" rx="2" fill="var(--win-fill)" stroke="${O}" stroke-width="2"/>
+      <rect x="61.5" y="46" width="4.2" height="12" rx="1" fill="var(--house-roof)" stroke="${O}" stroke-width="1.3"/>
+      <rect x="79.3" y="46" width="4.2" height="12" rx="1" fill="var(--house-roof)" stroke="${O}" stroke-width="1.3"/>
+      <path d="M72.5 46 V58 M66 52 H79" stroke="${O}" stroke-width="1.2"/>
+      <!-- Fleurs fenêtres -->
+      <circle cx="28" cy="60" r="2.6" fill="#e84a5f"/><circle cx="33" cy="60.5" r="2.4" fill="#ffd23f"/>
+      <circle cx="70" cy="60" r="2.6" fill="#f59ab1"/><circle cx="75" cy="60.5" r="2.4" fill="#ffd23f"/>
+      <!-- Porte cintrée + perron -->
+      <path d="M44.5 77 V54 Q52 48.5 59.5 54 V77Z" fill="#8b5a2b" stroke="${O}" stroke-width="2.2"/>
+      <circle cx="56" cy="65" r="1.5" fill="#ffd23f"/>
+      <rect x="41" y="75" width="22" height="4" rx="1.5" fill="#d9cbb6" stroke="${O}" stroke-width="1.5"/>
+      <!-- Boîte aux lettres -->
+      <rect x="89" y="67" width="3" height="10" fill="#7a4a2a"/>
+      <rect x="85.5" y="61" width="10" height="7" rx="2" fill="#4f8cc9" stroke="${O}" stroke-width="1.5"/>
+      <path d="M95.5 64 V57 L99 58.5 L95.5 60" fill="#e84a5f" stroke="${O}" stroke-width="1"/>
+    `, '0 0 104 88'),
+
+    barn: () => wrapSvg(`
+      <ellipse cx="44" cy="70" rx="36" ry="5.5" fill="rgba(58,38,24,.18)"/>
+      <!-- Silo à grains accolé -->
+      <rect x="65" y="22" width="16" height="45" rx="3" fill="#e3d5ba" stroke="${O}" stroke-width="2.1"/>
+      <path d="M64 23 Q73 11 82 23Z" fill="#8d99a6" stroke="${O}" stroke-width="2"/>
+      <!-- Grange rouge -->
+      <rect x="11" y="34" width="56" height="34" rx="2" fill="#c8453a" stroke="${O}" stroke-width="2.4"/>
+      <polygon points="6,36 18,18 39,10 60,18 72,36" fill="#8f2d25" stroke="${O}" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M9 34 L19 19 L39 11 L59 19 L69 34Z" fill="#fff" style="opacity:var(--snow-op)"/>
+      <rect x="30" y="21" width="18" height="10" rx="1.5" fill="#59351e" stroke="${O}" stroke-width="1.8"/>
+      <rect x="26" y="43" width="26" height="25" rx="1.5" fill="#a8342a" stroke="#fff6df" stroke-width="2.4"/>
+      <path d="M26 43 L52 68 M52 43 L26 68" stroke="#fff6df" stroke-width="2.1"/>
+    `, '0 0 88 76'),
+
+    workshop: (busy) => wrapSvg(`
+      <ellipse cx="44" cy="70" rx="36" ry="5.5" fill="rgba(58,38,24,.17)"/>
+      <path d="M18 68 L24 24 H42 L48 68Z" fill="#f5e1c2" stroke="${O}" stroke-width="2.3"/>
+      <polygon points="21,25 33,12 45,25" fill="#c8453a" stroke="${O}" stroke-width="2.2" stroke-linejoin="round"/>
+      <g class="blade-spin" style="transform-origin:33px 26px">
+        <path d="M33 7 V45 M14 26 H52" stroke="${O}" stroke-width="2.8" stroke-linecap="round"/>
+        <rect x="33" y="9" width="7.5" height="12.5" rx="1" fill="#fff7e2" stroke="${O}" stroke-width="1.6"/>
+        <rect x="25.5" y="30.5" width="7.5" height="12.5" rx="1" fill="#fff7e2" stroke="${O}" stroke-width="1.6"/>
+        <rect x="16" y="26" width="12.5" height="7.5" rx="1" fill="#fff7e2" stroke="${O}" stroke-width="1.6"/>
+        <rect x="37.5" y="18.5" width="12.5" height="7.5" rx="1" fill="#fff7e2" stroke="${O}" stroke-width="1.6"/>
+        <circle cx="33" cy="26" r="3.6" fill="#a8693a" stroke="${O}" stroke-width="1.8"/>
+      </g>
+      <rect x="47" y="42" width="30" height="26" rx="2" fill="#e8c38c" stroke="${O}" stroke-width="2.2"/>
+      <polygon points="44,43 62,30 80,43" fill="#b85636" stroke="${O}" stroke-width="2.2"/>
+      <path d="M55 68 V54 Q62 47 69 54 V68Z" fill="${busy ? '#ff9d3b' : '#5e402a'}" stroke="${O}" stroke-width="2"/>
+      ${busy ? `<g class="smoke-1"><circle cx="70" cy="23" r="4.2" fill="#fff" opacity=".82"/></g><g class="smoke-2"><circle cx="75" cy="15" r="5.2" fill="#fff" opacity=".64"/></g>` : ''}
+    `, '0 0 88 76'),
+
+    counter: () => wrapSvg(`
+      <ellipse cx="40" cy="60" rx="31" ry="4.8" fill="rgba(58,38,24,.16)"/>
+      <rect x="12" y="35" width="56" height="23" rx="2.5" fill="#c98a4b" stroke="${O}" stroke-width="2.2"/>
+      <path d="M8 35 L14 18 H66 L72 35Z" fill="#c8453a" stroke="${O}" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M23 18 L19 35 M40 18 V35 M57 18 L61 35" stroke="#fff7e2" stroke-width="5"/>
+      <path d="M8 35 L14 18 H66 L72 35Z" fill="none" stroke="${O}" stroke-width="2.2"/>
+      <circle cx="24" cy="44" r="4.2" fill="#e84a5f" stroke="${O}" stroke-width="1.5"/>
+      <circle cx="40" cy="44" r="4.2" fill="#f2c14e" stroke="${O}" stroke-width="1.5"/>
+      <circle cx="56" cy="44" r="4.2" fill="#77c351" stroke="${O}" stroke-width="1.5"/>
+    `, '0 0 80 66'),
+
+    perfume: () => wrapSvg(`
+      <ellipse cx="44" cy="68" rx="35" ry="5.2" fill="rgba(58,38,24,.16)"/>
+      <rect x="13" y="33" width="62" height="33" rx="3.5" fill="#faf0f8" stroke="${O}" stroke-width="2.3"/>
+      <!-- Verrière art-nouveau -->
+      <path d="M11 35 Q44 8 77 35Z" fill="#9c73c4" stroke="${O}" stroke-width="2.3"/>
+      <path d="M22 33 Q44 15 66 33" fill="none" stroke="#e8d6fa" stroke-width="2.4" opacity=".85"/>
+      <path d="M44 19 V34" stroke="#e8d6fa" stroke-width="1.8" opacity=".8"/>
+      <path d="M14 34 Q44 12 74 34Z" fill="#fff" style="opacity:var(--snow-op)"/>
+      <rect x="20" y="43" width="13" height="13" rx="2" fill="var(--win-fill)" stroke="${O}" stroke-width="1.8"/>
+      <rect x="55" y="43" width="13" height="13" rx="2" fill="var(--win-fill)" stroke="${O}" stroke-width="1.8"/>
+      <rect x="38" y="46" width="12" height="20" rx="2" fill="#7b4b99" stroke="${O}" stroke-width="1.8"/>
+      <!-- Enseigne flacon -->
+      <circle cx="44" cy="29" r="8" fill="#fffaf2" stroke="${O}" stroke-width="1.8"/>
+      <rect x="40.8" y="27" width="6.4" height="7" rx="2.2" fill="#f2c14e" stroke="${O}" stroke-width="1.3"/>
+      <rect x="42.5" y="23.8" width="3" height="3.2" fill="#c89228" stroke="${O}" stroke-width="1.1"/>
+      <!-- Lavande & rosiers -->
+      <circle cx="11" cy="63" r="5" fill="#8b5ec4" stroke="${O}" stroke-width="1.5"/>
+      <circle cx="17" cy="64" r="3.5" fill="#f59ab1" stroke="${O}" stroke-width="1.3"/>
+      <circle cx="77" cy="63" r="5" fill="#8b5ec4" stroke="${O}" stroke-width="1.5"/>
+      <circle cx="71" cy="64" r="3.5" fill="#f59ab1" stroke="${O}" stroke-width="1.3"/>
+    `, '0 0 88 74'),
+
+    cave: () => wrapSvg(`
+      <ellipse cx="44" cy="66" rx="36" ry="5" fill="rgba(58,38,24,.16)"/>
+      <path d="M8 64 Q8 22 44 22 Q80 22 80 64Z" fill="#9c9387" stroke="${O}" stroke-width="2.3"/>
+      <path d="M10 43 Q44 17 78 43 Q80 22 44 22 Q8 22 10 43Z" fill="var(--tree-1)" stroke="${O}" stroke-width="2"/>
+      <!-- Rangs de vigne sur le toit du coteau -->
+      <circle cx="27" cy="29" r="2.2" fill="#7b3f96"/><circle cx="36" cy="26" r="2.2" fill="#7b3f96"/><circle cx="48" cy="27" r="2.2" fill="#7b3f96"/>
+      <path d="M24 64 V44 Q35 34 46 44 V64Z" fill="#6b4220" stroke="${O}" stroke-width="2.2"/>
+      <path d="M35 39 V64" stroke="${O}" stroke-width="1.5"/>
+      <!-- Tonneau -->
+      <ellipse cx="16" cy="59" rx="5.5" ry="7" fill="#b8763e" stroke="${O}" stroke-width="1.7"/>
+      <path d="M11 57 H21 M11 61 H21" stroke="#4d4843" stroke-width="1.4"/>
+      <!-- Cuve cuivre brasserie -->
+      <rect x="53" y="36" width="18" height="27" rx="4.5" fill="#d9873e" stroke="${O}" stroke-width="2.1"/>
+      <path d="M53 40 Q62 30 71 40Z" fill="#f0aa5b" stroke="${O}" stroke-width="2"/>
+      <circle cx="62" cy="50" r="3.2" fill="#fff4c4" stroke="${O}" stroke-width="1.4"/>
+      <g class="smoke-1"><circle cx="62" cy="25" r="3.8" fill="#fff" opacity=".76"/></g>
+    `, '0 0 88 72'),
+
+    fields: (phase) => wrapSvg(`
+      <ellipse cx="55" cy="68" rx="48" ry="7.5" fill="rgba(58,38,24,.15)"/>
+      <polygon points="8,46 52,29 102,48 58,66" fill="#a86d3b" stroke="${O}" stroke-width="2.3" stroke-linejoin="round"/>
+      <path d="M20 45 L58 31 M31 51 L71 36 M44 57 L84 42" stroke="#7d4d25" stroke-width="2" stroke-linecap="round"/>
+      ${phase === 'ready' ? `
+        <g fill="#f2c14e" stroke="${O}" stroke-width="1.4">
+          <ellipse cx="32" cy="40" rx="5.2" ry="7.5"/><ellipse cx="47" cy="36" rx="5.2" ry="7.5"/>
+          <ellipse cx="62" cy="40" rx="5.2" ry="7.5"/><ellipse cx="45" cy="49" rx="5.2" ry="7.5"/>
+          <ellipse cx="60" cy="53" rx="5.2" ry="7.5"/><ellipse cx="75" cy="46" rx="5.2" ry="7.5"/>
+        </g>
+        <g class="spark" fill="#fff9c4"><path d="M52 25 L54 29 L58 31 L54 33 L52 37 L50 33 L46 31 L50 29Z"/></g>
+        <g class="spark s2" fill="#fff9c4"><path d="M74 34 L75.5 37 L78.5 38.5 L75.5 40 L74 43 L72.5 40 L69.5 38.5 L72.5 37Z"/></g>
+      ` : phase === 'growing' ? `
+        <g fill="#69ba4b" stroke="${O}" stroke-width="1.3">
+          <circle cx="34" cy="44" r="4.2"/><circle cx="50" cy="40" r="4.2"/><circle cx="66" cy="45" r="4.2"/>
+          <circle cx="48" cy="51" r="4.2"/><circle cx="63" cy="54" r="4.2"/>
+        </g>
+      ` : `
+        <g fill="#8c5a30" opacity=".65">
+          <circle cx="36" cy="45" r="2.2"/><circle cx="54" cy="42" r="2.2"/><circle cx="68" cy="47" r="2.2"/>
+        </g>
+      `}
+      <!-- Serre vitrée lumineuse -->
+      <g transform="translate(60 2)">
+        <rect x="6" y="18" width="30" height="18" rx="2" fill="#d9f4ff" fill-opacity=".88" stroke="${O}" stroke-width="2"/>
+        <path d="M4 19 Q21 3 38 19Z" fill="#bae7fa" fill-opacity=".9" stroke="${O}" stroke-width="2"/>
+        <path d="M21 10 V36 M13 18 V36 M29 18 V36" stroke="#fff" stroke-width="1.6" opacity=".82"/>
+        <circle cx="15" cy="31" r="2.5" fill="#e84a5f"/><circle cx="27" cy="31" r="2.5" fill="#f2c14e"/>
+      </g>
+    `, '0 0 108 76'),
+
+    orchard: (ready) => wrapSvg(`
+      <ellipse cx="48" cy="68" rx="40" ry="6" fill="rgba(58,38,24,.15)"/>
+      <rect x="23" y="43" width="8" height="23" rx="2" fill="#8b5a2b" stroke="${O}" stroke-width="2"/>
+      <circle cx="27" cy="31" r="16.5" fill="var(--tree-1)" stroke="${O}" stroke-width="2.2"/>
+      <rect x="52" y="46" width="8" height="20" rx="2" fill="#8b5a2b" stroke="${O}" stroke-width="2"/>
+      <circle cx="56" cy="35" r="14.5" fill="var(--tree-2)" stroke="${O}" stroke-width="2.2"/>
+      ${ready ? `
+        <circle cx="21" cy="28" r="3.5" fill="#e8453c" stroke="${O}" stroke-width="1.3"/>
+        <circle cx="33" cy="34" r="3.5" fill="#e8453c" stroke="${O}" stroke-width="1.3"/>
+        <circle cx="28" cy="22" r="3.3" fill="#f2c14e" stroke="${O}" stroke-width="1.3"/>
+        <circle cx="53" cy="32" r="3.5" fill="#e8453c" stroke="${O}" stroke-width="1.3"/>
+        <circle cx="62" cy="37" r="3.3" fill="#f2c14e" stroke="${O}" stroke-width="1.3"/>
+      ` : ''}
+      <!-- Ruche + abeilles en orbite -->
+      <rect x="70" y="47" width="16" height="19" rx="3" fill="#f2c14e" stroke="${O}" stroke-width="2"/>
+      <polygon points="67,48 78,40 89,48" fill="#a8693a" stroke="${O}" stroke-width="2"/>
+      <circle cx="78" cy="57" r="2.5" fill="${O}"/>
+      <g class="bee-1"><ellipse cx="70" cy="35" rx="2.6" ry="1.8" fill="#ffd23f" stroke="${O}" stroke-width="1"/></g>
+      <g class="bee-2"><ellipse cx="80" cy="32" rx="2.4" ry="1.7" fill="#ffd23f" stroke="${O}" stroke-width="1"/></g>
+    `, '0 0 98 76'),
+
+    pasture: () => wrapSvg(`
+      <path d="M6 60 H94 M6 52 H94" stroke="#c89252" stroke-width="3" stroke-linecap="round"/>
+      <path d="M10 47 V65 M34 47 V65 M64 47 V65 M90 47 V65" stroke="#8b5a2b" stroke-width="3.6" stroke-linecap="round"/>
+      <!-- Écurie Haras -->
+      <rect x="52" y="16" width="34" height="26" rx="2" fill="#f5e1c2" stroke="${O}" stroke-width="2.1"/>
+      <polygon points="48,18 69,6 90,18" fill="#b8433a" stroke="${O}" stroke-width="2.1"/>
+      <rect x="63" y="26" width="12" height="16" rx="1.5" fill="#7a4a2a" stroke="${O}" stroke-width="1.8"/>
+      <!-- Petit cheval alezan au paddock -->
+      <g class="horse-bob" transform="translate(55 34)">
+        <ellipse cx="14" cy="14" rx="10" ry="6" fill="#a85c32" stroke="${O}" stroke-width="1.8"/>
+        <circle cx="24" cy="9" r="4.6" fill="#a85c32" stroke="${O}" stroke-width="1.7"/>
+        <path d="M19 6 Q22 2 25 5" stroke="#4d2914" stroke-width="2.2" fill="none"/>
+        <path d="M8 19 V24 M19 19 V24" stroke="${O}" stroke-width="2"/>
+      </g>
+      <!-- Vache meuh qui broute -->
+      <g class="cow-graze" transform="translate(10 28)">
+        <ellipse cx="18" cy="22" rx="14" ry="9" fill="#fffdf7" stroke="${O}" stroke-width="2"/>
+        <ellipse cx="14" cy="20" rx="5" ry="3.5" fill="#593c28"/>
+        <ellipse cx="24" cy="24" rx="4" ry="3" fill="#593c28"/>
+        <circle cx="31" cy="17" r="6.5" fill="#fffdf7" stroke="${O}" stroke-width="2"/>
+        <ellipse cx="33" cy="20" rx="4.5" ry="3" fill="#f5b3bc" stroke="${O}" stroke-width="1.4"/>
+        <circle cx="29" cy="15.5" r="1.2" fill="${O}"/><circle cx="33.5" cy="15.5" r="1.2" fill="${O}"/>
+        <path d="M10 30 V35 M16 30 V35 M23 30 V35" stroke="${O}" stroke-width="2.2" stroke-linecap="round"/>
+      </g>
+      <!-- Poulette -->
+      <g class="hen-bob" transform="translate(42 44)">
+        <ellipse cx="8" cy="10" rx="6" ry="5" fill="#fff7e0" stroke="${O}" stroke-width="1.8"/>
+        <circle cx="13" cy="6" r="3.6" fill="#fff7e0" stroke="${O}" stroke-width="1.8"/>
+        <polygon points="16,6 19,7.5 16,9" fill="#e8792a"/>
+        <circle cx="13" cy="2.2" r="1.8" fill="#c8453a"/>
+      </g>
+    `, '0 0 100 72'),
+
+    pond: (bite) => wrapSvg(`
+      <ellipse cx="48" cy="48" rx="40" ry="19" fill="var(--water-1)" stroke="${O}" stroke-width="2.3"/>
+      <ellipse cx="48" cy="47" rx="31" ry="13" fill="var(--water-2)" opacity=".65"/>
+      <path class="water-line" d="M28 48 Q38 45 48 48 T68 47" fill="none" stroke="#d8f2ff" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="30" cy="52" r="6.2" fill="#5ab54e" stroke="${O}" stroke-width="1.6"/>
+      <circle cx="30" cy="51" r="2.7" fill="#f59ab1"/>
+      <rect x="54" y="28" width="23" height="9" rx="2" fill="#a8693a" stroke="${O}" stroke-width="2"/>
+      <path d="M58 37 V45 M73 37 V45" stroke="${O}" stroke-width="2.4"/>
+      <path d="M66 28 Q58 11 47 22" fill="none" stroke="${O}" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M47 22 V44" stroke="#fff" stroke-width="1.2" stroke-dasharray="2 2"/>
+      ${bite ? `<circle class="ripple-ring" cx="47" cy="45" r="7" fill="none" stroke="#fff" stroke-width="1.8"/>` : ''}
+      <circle cx="47" cy="45" r="2.5" fill="#e8453c"/>
+      <path d="M13 46 Q11 31 15 24 M19 48 Q20 34 23 28" stroke="#3f8f2e" stroke-width="2.3" stroke-linecap="round"/>
+    `, '0 0 96 72'),
+  };
+
+  // ---------------- DÉCORATIONS POSABLES (PALIER 3) ----------------
+  const DECOS = [
+    { id: 'none', name: 'Libre', em: '❌', svg: '' },
+    { id: 'fountain', name: 'Fontaine', em: '⛲', svg: `<svg viewBox="0 0 48 48"><ellipse cx="24" cy="40" rx="18" ry="5" fill="#d8d0c2" stroke="${O}" stroke-width="2"/><ellipse cx="24" cy="39" rx="13" ry="3.2" fill="#5aa9e6"/><rect x="21" y="23" width="6" height="16" fill="#d8d0c2" stroke="${O}" stroke-width="1.8"/><ellipse cx="24" cy="23" rx="10" ry="3.5" fill="#e9e2d0" stroke="${O}" stroke-width="1.8"/><path d="M24 21 Q18 11 14 20 M24 21 Q30 11 34 20" fill="none" stroke="#9be0ff" stroke-width="2" stroke-linecap="round"/></svg>` },
+    { id: 'roses', name: 'Rosiers', em: '🌹', svg: `<svg viewBox="0 0 48 48"><ellipse cx="24" cy="41" rx="15" ry="4" fill="rgba(58,38,24,.15)"/><path d="M10 40 Q10 12 24 12 Q38 12 38 40" fill="none" stroke="#449940" stroke-width="6" stroke-linecap="round"/><path d="M10 40 Q10 12 24 12 Q38 12 38 40" fill="none" stroke="${O}" stroke-width="1.8"/><circle cx="13" cy="24" r="4" fill="#e84a5f" stroke="${O}" stroke-width="1.3"/><circle cx="24" cy="13" r="4.5" fill="#f59ab1" stroke="${O}" stroke-width="1.3"/><circle cx="35" cy="24" r="4" fill="#e84a5f" stroke="${O}" stroke-width="1.3"/></svg>` },
+    { id: 'trophy', name: 'Trophée Salon', em: '🏆', svg: `<svg viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="13" ry="3.5" fill="rgba(58,38,24,.16)"/><rect x="16" y="34" width="16" height="8" rx="1.5" fill="#e6dcc8" stroke="${O}" stroke-width="1.8"/><path d="M16 14 H32 L29 27 Q24 31 19 27Z" fill="#f2c14e" stroke="${O}" stroke-width="2"/><rect x="22" y="28" width="4" height="6" fill="#c9952a" stroke="${O}" stroke-width="1.5"/><circle cx="24" cy="20" r="2.6" fill="#fff7cc"/></svg>` },
+    { id: 'lantern', name: 'Lanterne', em: '🏮', svg: `<svg viewBox="0 0 48 48"><circle cx="24" cy="22" r="18" fill="rgba(255,214,102,.55)" style="opacity:var(--lantern-glow)"/><rect x="22" y="26" width="4" height="17" fill="#594538" stroke="${O}" stroke-width="1.5"/><rect x="17" y="13" width="14" height="14" rx="4" fill="#ffe184" stroke="${O}" stroke-width="2"/><polygon points="14,14 24,7 34,14" fill="#7a4a2a" stroke="${O}" stroke-width="1.8"/></svg>` },
+    { id: 'bench', name: 'Banc fleuri', em: '🪑', svg: `<svg viewBox="0 0 48 48"><ellipse cx="24" cy="41" rx="17" ry="4" fill="rgba(58,38,24,.15)"/><rect x="9" y="23" width="30" height="6" rx="1.5" fill="#c98a4b" stroke="${O}" stroke-width="1.8"/><rect x="8" y="31" width="32" height="5" rx="1.5" fill="#a8693a" stroke="${O}" stroke-width="1.8"/><path d="M12 36 V42 M36 36 V42" stroke="${O}" stroke-width="2.6"/><circle cx="40" cy="39" r="3" fill="#ffd23f"/></svg>` },
+    { id: 'scarecrow', name: 'Épouvantail', em: '🎃', svg: `<svg viewBox="0 0 48 48"><path d="M24 24 V43 M12 24 H36" stroke="#8b5a2b" stroke-width="3.2" stroke-linecap="round"/><rect x="18" y="22" width="12" height="13" rx="2" fill="#4f8cc9" stroke="${O}" stroke-width="1.8"/><circle cx="24" cy="16" r="6" fill="#f5d8a8" stroke="${O}" stroke-width="1.8"/><polygon points="15,12 24,4 33,12" fill="#e6a835" stroke="${O}" stroke-width="1.8"/></svg>` },
+  ];
+
+  // ---------------- ZONES DU DOMAINE ----------------
+  const makeInitialZones = () => [
+    {
+      id: 'station', name: 'Gare & Train', tab: 'village', path: 'Village › Commandes', ico: '🚂',
+      unlock: 'early', posP: [22, 19], posW: [17, 21], wP: 29, wW: 16, trainState: 'here',
+      meta: ['Train régional', '3 wagons prêts', 'Prime +420 🪙'],
+      bubble: { ico: '🚂', label: 'Expédier', cls: 'gold', urgent: true, gainCoins: 420, gainBarn: 0, fly: ['📦','🚂','🪙'], sfx: 'train', msg: 'Tchou-tchou ! Train parti avec +420 🪙' },
+      desc: 'Le train régional est à quai. Un tap sur la bulle charge les wagons et le fait partir physiquement sur les rails !',
+      sprite: z => SPRITES.station(z.trainState)
+    },
+    {
+      id: 'village', name: 'Village & Camping', tab: 'village', path: 'Village › Place & Camping', ico: '🏘️',
+      unlock: 'mid', posP: [54, 17], posW: [50, 18], wP: 26, wW: 15,
+      meta: ['Place du village', 'Camping', 'Famille'],
+      bubble: { ico: '🧺', label: 'Mamie', cls: 'gold', gainCoins: 280, gainBarn: 1, fly: ['🧺','❤️','🪙'], sfx: 'coin', msg: 'Plat de Mamie Odette livré ! +280 🪙' },
+      desc: 'Les habitants, le Camping de la vallée et ta Famille réunis en haut du chemin.',
+      sprite: () => SPRITES.village()
+    },
+    {
+      id: 'port', name: 'Voyages & Cargo', tab: 'farm', path: 'Ferme › Voyages (Île, Oasis, Nord)', ico: '⛵',
+      unlock: 'full', posP: [83, 21], posW: [83, 22], wP: 26, wW: 15,
+      meta: ['Île tropicale', 'Oasis', 'Grand Nord'],
+      bubble: { ico: '🍍', label: '4', cls: 'ready', gainCoins: 0, gainBarn: 4, fly: ['🍍','🥥','🪵'], sfx: 'harvest', msg: '+4 récoltes ramenées par bateau !' },
+      desc: 'L’Île, l’Oasis et le Grand Nord depuis le même quai. L’avion cargo survole aussi la vallée quand un vol est prêt.',
+      sprite: () => SPRITES.port()
+    },
+    {
+      id: 'house', name: 'Maison', tab: 'farm', path: 'Ferme › Maison & Gazette', ico: '🏡',
+      unlock: 'early', posP: [50, 40], posW: [49, 43], wP: 32, wW: 17, glow: true,
+      meta: ['Style personnalisable', 'Gazette du matin', 'Repos & bonus'],
+      bubble: { ico: '📰', label: 'Gazette', cls: 'gold', gainCoins: 120, gainBarn: 0, fly: ['📰','✨','🪙'], sfx: 'coin', msg: 'Gazette de la Vallée lue ! Bonus du jour +120 🪙' },
+      desc: 'Ta maison reflète tes choix de couleurs (essaie 🎨) et ses fenêtres s’allument à la tombée du soir.',
+      sprite: () => SPRITES.house()
+    },
+    {
+      id: 'barn', name: 'Grange', tab: 'market', path: 'Marché › Grange & Coffre', ico: '🏚️',
+      unlock: 'early', posP: [18, 42], posW: [21, 45], wP: 25, wW: 13.5,
+      meta: ['Stockage central', 'Coffre à réserves', 'Ventes'],
+      bubble: null,
+      desc: 'Toutes tes récoltes volent ici visuellement. Ouvre ton inventaire ou le coffre en un geste.',
+      sprite: () => SPRITES.barn()
+    },
+    {
+      id: 'workshop', name: 'Ateliers', tab: 'machines', path: 'Atelier › Production', ico: '⚙️',
+      unlock: 'early', posP: [82, 42], posW: [77, 43], wP: 26, wW: 14, glow: true,
+      meta: ['Moulin & Four', '5 produits prêts'],
+      bubble: { ico: '🥖', label: '5 prêts', cls: 'ready', gainCoins: 0, gainBarn: 5, fly: ['🥖','🧀','🥧'], sfx: 'harvest', msg: '+5 produits sortis des ateliers !' },
+      desc: 'Le four rougeoie et la cheminée fume tant qu’une fabrication tourne.',
+      sprite: z => SPRITES.workshop(!!z.bubble)
+    },
+    {
+      id: 'counter', name: 'Comptoir', tab: 'machines', path: 'Atelier › Comptoir', ico: '🧁',
+      unlock: 'mid', posP: [30, 55], posW: [35, 58], wP: 22, wW: 12,
+      meta: ['Ventes directes', 'Caisse pleine'],
+      bubble: { ico: '🪙', label: '+310', cls: 'gold', gainCoins: 310, gainBarn: 0, fly: ['🪙','🪙','🪙'], sfx: 'coin', msg: 'Caisse du comptoir encaissée ! +310 🪙' },
+      desc: 'Encaisse tes ventes directement depuis la cour sans changer d’onglet.',
+      sprite: () => SPRITES.counter()
+    },
+    {
+      id: 'perfume', name: 'Parfumerie', tab: 'machines', path: 'Atelier › Parfums', ico: '🌸',
+      unlock: 'full', posP: [70, 55], posW: [64, 57], wP: 26, wW: 14, glow: true,
+      meta: ['Ambre d’Été en cours', 'Soin d’étape prêt'],
+      bubble: { ico: '✨', label: 'Soin', cls: 'care', urgent: true, popover: 'perfume' },
+      desc: 'Touche la bulle pour choisir un geste rapide ou un soin approfondi directement sur la carte !',
+      sprite: () => SPRITES.perfume()
+    },
+    {
+      id: 'cave', name: 'Cave & Brasserie', tab: 'machines', path: 'Atelier › Cave & Brasserie', ico: '🍷',
+      unlock: 'mid', posP: [86, 66], posW: [86, 61], wP: 24, wW: 13.5,
+      meta: ['2 fûts prêts', 'Coteau viticole'],
+      bubble: { ico: '🍺', label: '2 fûts', cls: 'ready', gainCoins: 0, gainBarn: 2, fly: ['🍷','🍺'], sfx: 'harvest', msg: '+2 cuvées mises en bouteille !' },
+      desc: 'Cave à vins et brasserie de l’abbaye nichées dans le coteau.',
+      sprite: () => SPRITES.cave()
+    },
+    {
+      id: 'fields', name: 'Champs & Serre', tab: 'farm', path: 'Ferme › Champ', ico: '🌾',
+      unlock: 'early', posP: [26, 72], posW: [21, 75], wP: 34, wW: 18, fieldPhase: 'ready',
+      meta: ['6 parcelles', 'Serre active'],
+      bubble: { ico: '🌾', label: '6 mûrs', cls: 'ready', gainCoins: 0, gainBarn: 6, fly: ['🌾','🍓','🌻'], sfx: 'harvest', msg: '6 parcelles récoltées ! Tu peux ressemer en 1 tap.' },
+      desc: 'Les parcelles passent visuellement de terre nue → jeunes pousses → blé doré scintillant. Après récolte, une bulle permet de ressemer sur place !',
+      sprite: z => SPRITES.fields(z.fieldPhase)
+    },
+    {
+      id: 'orchard', name: 'Verger & Ruches', tab: 'farm', path: 'Ferme › Verger', ico: '🍎',
+      unlock: 'mid', posP: [64, 74], posW: [46, 78], wP: 29, wW: 16,
+      meta: ['Arbres fruitiers', 'Ruches actives'],
+      bubble: { ico: '🍯', label: '4', cls: 'ready', gainCoins: 0, gainBarn: 4, fly: ['🍎','🍯','🍒'], sfx: 'harvest', msg: 'Fruits du verger et miel récoltés !' },
+      desc: 'Les fruits brillent dans les arbres et les abeilles tournent autour des ruches.',
+      sprite: z => SPRITES.orchard(!!z.bubble)
+    },
+    {
+      id: 'pasture', name: 'Prés & Haras', tab: 'animals', path: 'Animaux › Prés & Haras', ico: '🐄',
+      unlock: 'early', posP: [29, 89], posW: [71, 80], wP: 33, wW: 17.5,
+      meta: ['Vaches & poules', 'Écuries du Haras'],
+      bubble: { ico: '🥛', label: 'Lait & œufs', cls: 'ready', gainCoins: 0, gainBarn: 4, fly: ['🥛','🥚','🧀'], sfx: 'harvest', msg: 'Lait frais et œufs ramassés !' },
+      desc: 'Vaches qui broutent, poules qui picorent et cheval au paddock juste devant les écuries.',
+      sprite: () => SPRITES.pasture()
+    },
+    {
+      id: 'pond', name: 'Étang & Forêt', tab: 'farm', path: 'Ferme › Pêche & Nature', ico: '🎣',
+      unlock: 'mid', posP: [75, 89], posW: [89, 83], wP: 29, wW: 15,
+      meta: ['Ligne tendue', 'Bois de forêt'],
+      bubble: { ico: '🐟', label: 'Ça mord !', cls: 'ready', gainCoins: 0, gainBarn: 2, fly: ['🐟','🪵'], sfx: 'harvest', msg: 'Belle truite remontée de l’étang !' },
+      desc: 'Des ronds dans l’eau apparaissent autour du bouchon dès qu’un poisson mord.',
+      sprite: z => SPRITES.pond(!!z.bubble)
+    }
+  ];
+
+  // ---------------- ÉTAT GLOBAL ----------------
+  const app = {
+    layout: 'phone',
+    time: 'noon',
+    season: 'spring',
+    weather: 'clear',
+    stage: 'full',
+    house: 'terracotta',
+    pathStyle: 'sand',
+    live: true,
+    calm: false,
+    focus: false,
+    decorating: false,
+    postcard: false,
+    coins: 12450,
+    barn: 148,
+    zones: makeInitialZones(),
+    // 5 emplacements libres de déco sur le domaine
+    decoSlots: [
+      { id: 0, posP: [36, 46], posW: [36, 45], deco: 'fountain' },
+      { id: 1, posP: [64, 46], posW: [61, 45], deco: 'lantern' },
+      { id: 2, posP: [49, 64], posW: [49, 63], deco: 'roses' },
+      { id: 3, posP: [14, 59], posW: [12, 60], deco: 'none' },
+      { id: 4, posP: [50, 82], posW: [58, 71], deco: 'trophy' },
+    ],
+    // Filou le chien qui se promène + Mamie Odette qui vient visiter
+    dog: { xP: 56, yP: 47, xW: 54, yW: 50, hasTreasure: true },
+    visitor: { active: true, name: 'Mamie Odette', want: '🍓 Tarte', gain: 190, xP: 45, yP: 53, xW: 44, yW: 55 },
+  };
+
+  const STAGE_ORDER = { early: 1, mid: 2, full: 3 };
+  const unlocked = z => STAGE_ORDER[z.unlock] <= STAGE_ORDER[app.stage];
+
+  // ---------------- DÉCOR PAYSAGER RICHE ----------------
+  function renderBackground() {
+    const wide = app.layout === 'wide';
+    const svg = document.getElementById('bgSvg');
+    const W = wide ? 940 : 420;
+    const H = wide ? 645 : 820;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const skyH = wide ? 142 : 162;
+
+    const wildTrees = app.zones.filter(z => !unlocked(z)).map(z => {
+      const [px, py] = wide ? z.posW : z.posP;
+      const cx = (px / 100) * W, cy = (py / 100) * H;
+      return `
+        <g opacity=".94">
+          <ellipse cx="${cx}" cy="${cy + 19}" rx="30" ry="6.5" fill="rgba(58,38,24,.12)"/>
+          <rect x="${cx - 17}" y="${cy + 2}" width="6" height="16" rx="2" fill="#8b5a2b" stroke="${O}" stroke-width="1.6"/>
+          <circle cx="${cx - 14}" cy="${cy - 6}" r="14.5" fill="var(--tree-3)" stroke="${O}" stroke-width="1.8"/>
+          <rect x="${cx + 8}" y="${cy + 4}" width="6" height="14" rx="2" fill="#8b5a2b" stroke="${O}" stroke-width="1.6"/>
+          <circle cx="${cx + 11}" cy="${cy - 4}" r="13.5" fill="var(--tree-1)" stroke="${O}" stroke-width="1.8"/>
+          <circle cx="${cx - 1}" cy="${cy - 13}" r="12.5" fill="var(--tree-2)" stroke="${O}" stroke-width="1.8"/>
+        </g>`;
+    }).join('');
+
+    // Petits pavés subtils si style 'cobble'
+    const cobbleDots = app.pathStyle === 'cobble' ? `
+      <g stroke="rgba(90,82,70,.35)" stroke-width="2.2" stroke-dasharray="2 8" stroke-linecap="round" fill="none">
+        <path d="M${W*0.52} ${skyH + 14} Q${W*0.48} ${H*0.34} ${W*0.50} ${H*0.47} Q${W*0.50} ${H*0.62} ${W*0.47} ${H*0.76}"/>
+        <path d="M${W*0.21} ${H*0.46} Q${W*0.48} ${H*0.50} ${W*0.80} ${H*0.47}"/>
+      </g>` : '';
+
+    const sunX = wide ? W * 0.72 : 316;
+    const sunY = app.time === 'evening' ? 66 : app.time === 'morning' ? 52 : 36;
+
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--sky-1)"/>
+          <stop offset="65%" stop-color="var(--sky-2)"/>
+          <stop offset="100%" stop-color="var(--sky-3)"/>
+        </linearGradient>
+        <linearGradient id="meadowGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--grass-1)"/>
+          <stop offset="52%" stop-color="var(--grass-2)"/>
+          <stop offset="100%" stop-color="var(--grass-3)"/>
+        </linearGradient>
+        <radialGradient id="sunGlow">
+          <stop offset="0%" stop-color="#fff8cc" stop-opacity=".95"/>
+          <stop offset="55%" stop-color="#ffd56b" stop-opacity=".55"/>
+          <stop offset="100%" stop-color="#ffd56b" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="sunRay" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fff6cc" stop-opacity=".5"/>
+          <stop offset="100%" stop-color="#fff6cc" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Ciel -->
+      <rect width="${W}" height="${skyH + 45}" fill="url(#skyGrad)"/>
+
+      <!-- Rayons de soleil doux -->
+      <g style="opacity:var(--sun-rays-op)">
+        <polygon points="${sunX - 18},${sunY} ${sunX - 140},${skyH + 70} ${sunX - 60},${skyH + 70}" fill="url(#sunRay)"/>
+        <polygon points="${sunX + 8},${sunY} ${sunX - 20},${skyH + 70} ${sunX + 75},${skyH + 70}" fill="url(#sunRay)"/>
+      </g>
+
+      <!-- Étoiles -->
+      <g style="opacity:var(--stars-op)" fill="#fff9d6">
+        <circle class="star" cx="${W*0.10}" cy="24" r="1.7"/>
+        <circle class="star s2" cx="${W*0.24}" cy="42" r="1.4"/>
+        <circle class="star s3" cx="${W*0.39}" cy="18" r="1.9"/>
+        <circle class="star" cx="${W*0.56}" cy="33" r="1.5"/>
+        <circle class="star s2" cx="${W*0.70}" cy="21" r="1.8"/>
+        <circle class="star s3" cx="${W*0.84}" cy="44" r="1.5"/>
+        <circle class="star" cx="${W*0.92}" cy="19" r="1.3"/>
+      </g>
+
+      <!-- Soleil & Lune -->
+      <g style="opacity:var(--sun-op)">
+        <circle cx="${sunX}" cy="${sunY}" r="44" fill="url(#sunGlow)"/>
+        <circle cx="${sunX}" cy="${sunY}" r="18" fill="#ffe787" stroke="#f5b841" stroke-width="2"/>
+      </g>
+      <g style="opacity:var(--moon-op)">
+        <circle cx="${wide ? W*0.76 : 338}" cy="40" r="16" fill="#fff6c7"/>
+        <circle cx="${wide ? W*0.76 + 6 : 344}" cy="36" r="14" fill="var(--sky-1)"/>
+      </g>
+
+      <!-- Oiseaux & Avion Cargo dans le ciel -->
+      <g class="bird-flock" stroke="${O}" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".65">
+        <path d="M0 44 Q4 39 8 44 Q12 39 16 44"/>
+        <path d="M22 52 Q25 48 28 52 Q31 48 34 52"/>
+      </g>
+      ${app.stage === 'full' ? `
+      <g class="plane-fly">
+        <path d="M0 32 L18 28 L34 31 L18 35Z" fill="#fff7e2" stroke="${O}" stroke-width="1.4"/>
+        <path d="M12 29 L19 19 L23 29" fill="#e85b4f" stroke="${O}" stroke-width="1.3"/>
+        <path d="M-24 32 H-4" stroke="#fff" stroke-width="1.8" stroke-dasharray="4 4" opacity=".65"/>
+      </g>` : ''}
+
+      <!-- Nuages -->
+      <g fill="#fff" opacity="${app.time==='night' ? 0.14 : 0.78}">
+        <g class="cloud-a">
+          <ellipse cx="40" cy="48" rx="28" ry="11"/><ellipse cx="60" cy="43" rx="19" ry="12"/><ellipse cx="22" cy="50" rx="17" ry="8"/>
+        </g>
+        <g class="cloud-b">
+          <ellipse cx="190" cy="29" rx="24" ry="9.5"/><ellipse cx="208" cy="26" rx="16" ry="10.5"/>
+        </g>
+        <g class="cloud-c">
+          <ellipse cx="320" cy="62" rx="24" ry="9"/><ellipse cx="338" cy="58" rx="16" ry="10"/>
+        </g>
+      </g>
+
+      <!-- Collines douces -->
+      <path d="M0 ${skyH - 12} Q${W*0.24} ${skyH - 54} ${W*0.52} ${skyH - 18} T${W} ${skyH - 28} L${W} ${H} L0 ${H}Z" fill="var(--hill-far)"/>
+      <path d="M0 ${skyH + 14} Q${W*0.32} ${skyH - 26} ${W*0.64} ${skyH + 8} T${W} ${skyH - 4} L${W} ${H} L0 ${H}Z" fill="var(--hill-mid)"/>
+      <path d="M0 ${skyH + 34} Q${W*0.48} ${skyH + 14} ${W} ${skyH + 30} L${W} ${H} L0 ${H}Z" fill="url(#meadowGrad)"/>
+
+      <!-- Anse du port + Ruisseau sinueux qui relie le quai à l'étang -->
+      <path d="M${W*0.67} ${skyH + 8} Q${W*0.78} ${skyH + 40} ${W} ${skyH + 54} L${W} ${skyH - 6} Q${W*0.84} ${skyH - 4} ${W*0.67} ${skyH + 8}Z" fill="var(--water-1)"/>
+      <path d="M${W*0.92} ${skyH + 45} Q${W*0.97} ${H*0.52} ${W*0.91} ${H*0.72} Q${W*0.86} ${H*0.82} ${W*0.76} ${H*0.88}"
+            fill="none" stroke="var(--water-1)" stroke-width="${wide ? 18 : 13}" stroke-linecap="round" opacity=".88"/>
+      <path class="water-line" d="M${W*0.76} ${skyH + 18} Q${W*0.84} ${skyH + 15} ${W*0.92} ${skyH + 19}" fill="none" stroke="#c8ecff" stroke-width="2" stroke-linecap="round"/>
+
+      <!-- Voie ferrée de la gare -->
+      <path d="M0 ${skyH + 10} Q${W*0.18} ${skyH + 22} ${W*0.38} ${skyH + 6}" fill="none" stroke="#856547" stroke-width="6.5" stroke-dasharray="3 5"/>
+      <path d="M0 ${skyH + 8} Q${W*0.18} ${skyH + 20} ${W*0.38} ${skyH + 4} M0 ${skyH + 12} Q${W*0.18} ${skyH + 24} ${W*0.38} ${skyH + 8}" fill="none" stroke="#5d5248" stroke-width="1.5"/>
+
+      <!-- Chemins de la ferme -->
+      <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M${W*0.52} ${skyH + 8} Q${W*0.48} ${H*0.34} ${W*0.50} ${H*0.47} Q${W*0.50} ${H*0.62} ${W*0.47} ${H*0.76}
+                 M${W*0.20} ${H*0.45} Q${W*0.48} ${H*0.50} ${W*0.81} ${H*0.46}
+                 M${W*0.50} ${H*0.58} Q${W*0.34} ${H*0.66} ${W*0.28} ${H*0.74}
+                 M${W*0.50} ${H*0.60} Q${W*0.68} ${H*0.67} ${W*0.76} ${H*0.74}"
+              stroke="var(--path-edge)" stroke-width="${wide ? 28 : 22}"/>
+        <path d="M${W*0.52} ${skyH + 8} Q${W*0.48} ${H*0.34} ${W*0.50} ${H*0.47} Q${W*0.50} ${H*0.62} ${W*0.47} ${H*0.76}
+                 M${W*0.20} ${H*0.45} Q${W*0.48} ${H*0.50} ${W*0.81} ${H*0.46}
+                 M${W*0.50} ${H*0.58} Q${W*0.34} ${H*0.66} ${W*0.28} ${H*0.74}
+                 M${W*0.50} ${H*0.60} Q${W*0.68} ${H*0.67} ${W*0.76} ${H*0.74}"
+              stroke="var(--path-c)" stroke-width="${wide ? 22 : 16}"/>
+      </g>
+      ${cobbleDots}
+
+      <!-- Petit pont de pierre sur le chemin du village -->
+      <g transform="translate(${W*0.47} ${skyH + 46})">
+        <rect x="0" y="0" width="26" height="10" rx="3" fill="#cfc5b4" stroke="${O}" stroke-width="1.6"/>
+        <path d="M2 2 H24 M2 8 H24" stroke="#9e9484" stroke-width="1.5"/>
+      </g>
+
+      <!-- Bosquets de lisière -->
+      <g>
+        <circle cx="${W*0.03}" cy="${H*0.31}" r="19" fill="var(--tree-3)"/>
+        <circle cx="${W*0.07}" cy="${H*0.34}" r="14" fill="var(--tree-1)"/>
+        <circle cx="${W*0.96}" cy="${H*0.35}" r="18" fill="var(--tree-3)"/>
+        <circle cx="${W*0.92}" cy="${H*0.38}" r="13" fill="var(--tree-2)"/>
+        <circle cx="${W*0.04}" cy="${H*0.60}" r="17" fill="var(--tree-1)"/>
+        <circle cx="${W*0.97}" cy="${H*0.55}" r="16" fill="var(--tree-1)"/>
+        <circle cx="${W*0.04}" cy="${H*0.95}" r="19" fill="var(--tree-3)"/>
+        <circle cx="${W*0.96}" cy="${H*0.95}" r="19" fill="var(--tree-3)"/>
+      </g>
+
+      <!-- Petites fleurs sauvages -->
+      <g opacity="${app.season==='winter' ? 0 : 0.88}">
+        <circle cx="${W*0.36}" cy="${H*0.32}" r="2.6" fill="#fff7c2"/>
+        <circle cx="${W*0.39}" cy="${H*0.34}" r="2.2" fill="#f59ab1"/>
+        <circle cx="${W*0.64}" cy="${H*0.33}" r="2.4" fill="#fff7c2"/>
+        <circle cx="${W*0.14}" cy="${H*0.54}" r="2.5" fill="#ffd23f"/>
+        <circle cx="${W*0.48}" cy="${H*0.69}" r="2.4" fill="#fff7c2"/>
+        <circle cx="${W*0.52}" cy="${H*0.86}" r="2.6" fill="#f59ab1"/>
+      </g>
+
+      ${wildTrees}
+    `;
+  }
+
+  // ---------------- EFFETS MÉTÉO & LUCIOLES ----------------
+  function renderAtmosphere() {
+    const layer = document.getElementById('fxLayer');
+    const items = [];
+    for (let i = 0; i < 12; i++) {
+      items.push(`<span class="firefly" style="left:${9 + ((i*23)%83)}%;top:${25 + ((i*19)%67)}%;animation-delay:${(i*0.42).toFixed(2)}s"></span>`);
+    }
+    if (app.weather === 'rain') {
+      for (let i = 0; i < 30; i++) {
+        items.push(`<span class="weather-drop rain" style="left:${(i*3.4)%100}%;top:${(i*13)%90}%;animation-delay:${(i*0.1).toFixed(2)}s"></span>`);
+      }
+    } else if (app.season === 'winter') {
+      for (let i = 0; i < 24; i++) {
+        items.push(`<span class="weather-drop snow" style="left:${(i*4.3)%100}%;top:${(i*17)%90}%;animation-delay:${(i*0.28).toFixed(2)}s"></span>`);
+      }
+    } else if (app.season === 'spring') {
+      for (let i = 0; i < 10; i++) {
+        items.push(`<span class="weather-drop petal" style="left:${(i*10.5)%96}%;top:${(i*19)%85}%;animation-delay:${(i*0.58).toFixed(2)}s"></span>`);
+      }
+    } else if (app.season === 'autumn') {
+      for (let i = 0; i < 10; i++) {
+        items.push(`<span class="weather-drop leaf" style="left:${(i*10.2)%96}%;top:${(i*17)%85}%;animation-delay:${(i*0.52).toFixed(2)}s"></span>`);
+      }
+    }
+    layer.innerHTML = items.join('');
+  }
+
+  // ---------------- DÉCOS PERSONNALISABLES ----------------
+  function renderDecos() {
+    const wide = app.layout === 'wide';
+    const layer = document.getElementById('decoLayer');
+    layer.innerHTML = app.decoSlots.map(s => {
+      const [x, y] = wide ? s.posW : s.posP;
+      const d = DECOS.find(k => k.id === s.deco) || DECOS[0];
+      const empty = d.id === 'none';
+      return `
+        <div class="deco-slot ${empty ? 'empty' : ''}" data-deco-slot="${s.id}" style="left:${x}%;top:${y}%" title="Emplacement décoration">
+          ${empty ? '<span class="deco-slot-btn">+</span>' : d.svg}
+        </div>`;
+    }).join('');
+  }
+
+  // ---------------- PERSONNAGES VIVANTS (FILOU + VISITEUR) ----------------
+  function renderWalkers() {
+    const wide = app.layout === 'wide';
+    const layer = document.getElementById('walkersLayer');
+    const dx = wide ? app.dog.xW : app.dog.xP;
+    const dy = wide ? app.dog.yW : app.dog.yP;
+
+    const dogSvg = `<svg viewBox="0 0 42 36" aria-hidden="true">
+      <ellipse cx="21" cy="31" rx="13" ry="3.5" fill="rgba(58,38,24,.18)"/>
+      <g class="hen-bob">
+        <ellipse cx="22" cy="23" rx="10" ry="6.2" fill="#d98c44" stroke="${O}" stroke-width="2"/>
+        <circle cx="13" cy="16" r="6.2" fill="#d98c44" stroke="${O}" stroke-width="2"/>
+        <ellipse cx="9" cy="17.5" rx="2.3" ry="4.2" fill="#8b5122" stroke="${O}" stroke-width="1.5"/>
+        <circle cx="12.5" cy="15" r="1.3" fill="${O}"/>
+        <circle cx="9.2" cy="16.5" r="1.4" fill="${O}"/>
+        <path d="M31 20 Q37 13 35 10" fill="none" stroke="#d98c44" stroke-width="3" stroke-linecap="round"/>
+        <path d="M16 28 V32 M27 28 V32" stroke="${O}" stroke-width="2.2" stroke-linecap="round"/>
+      </g>
+    </svg>`;
+
+    const visSvg = `<svg viewBox="0 0 42 50" aria-hidden="true">
+      <ellipse cx="21" cy="45" rx="11" ry="3.2" fill="rgba(58,38,24,.18)"/>
+      <path d="M13 44 L16 26 H26 L29 44Z" fill="#7c5ca8" stroke="${O}" stroke-width="2"/>
+      <rect x="17" y="28" width="8" height="14" rx="2" fill="#fff7e6"/>
+      <circle cx="21" cy="17" r="7.5" fill="#fbd7bc" stroke="${O}" stroke-width="2"/>
+      <path d="M13 15 Q21 7 29 15" fill="#e8e2d8" stroke="${O}" stroke-width="1.8"/>
+      <circle cx="21" cy="8.5" r="3.2" fill="#e8e2d8" stroke="${O}" stroke-width="1.6"/>
+      <circle cx="18.5" cy="17" r="1.2" fill="${O}"/><circle cx="23.5" cy="17" r="1.2" fill="${O}"/>
+      <path d="M19 20 Q21 22 23 20" fill="none" stroke="${O}" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>`;
+
+    const vx = wide ? app.visitor.xW : app.visitor.xP;
+    const vy = wide ? app.visitor.yW : app.visitor.yP;
+
+    layer.innerHTML = `
+      <div class="walker" id="walkerDog" style="left:${dx}%;top:${dy}%;width:${wide ? '4.8%' : '9.5%'}" title="Filou le chien">
+        ${app.dog.hasTreasure ? '<span class="walker-bub">🦴 Trésor !</span>' : ''}
+        ${dogSvg}
+      </div>
+      ${app.visitor.active && app.stage !== 'early' ? `
+      <div class="walker" id="walkerVis" style="left:${vx}%;top:${vy}%;width:${wide ? '4.6%' : '9.2%'}" title="${app.visitor.name}">
+        <span class="walker-bub">${app.visitor.want}</span>
+        ${visSvg}
+      </div>` : ''}
+    `;
+  }
+
+  // ---------------- ZONES & BARRE TOURNÉE ----------------
+  function renderSpots() {
+    const wide = app.layout === 'wide';
+    const layer = document.getElementById('spotsLayer');
+    layer.innerHTML = app.zones.filter(unlocked).map(z => {
+      const [x, y] = wide ? z.posW : z.posP;
+      const w = wide ? z.wW : z.wP;
+      const b = z.bubble;
+      const bubHtml = b
+        ? `<span class="action-bub ${b.cls}" data-bub="${z.id}">${b.ico}<span>${b.label}</span></span>`
+        : '';
+      return `
+        <div class="spot ${b ? 'has-bub' : ''}" id="spot-${z.id}" data-zone="${z.id}" style="left:${x}%;top:${y}%;width:${w}%" role="button" tabindex="0" aria-label="${z.name}">
+          ${z.glow ? '<span class="night-halo"></span>' : ''}
+          ${bubHtml}
+          ${z.sprite(z)}
+          <span class="spot-label">${z.name}</span>
+        </div>`;
+    }).join('');
+  }
+
+  function pendingDirectActions() {
+    const list = app.zones.filter(z => unlocked(z) && z.bubble);
+    return list;
+  }
+
+  function renderTourBar() {
+    const bar = document.getElementById('tourBar');
+    const pending = pendingDirectActions();
+    const extraCount = (app.dog.hasTreasure ? 1 : 0) + (app.visitor.active && app.stage !== 'early' ? 1 : 0);
+    const total = pending.length + extraCount;
+
+    if (!total) {
+      bar.innerHTML = `<div class="tour-calm">🌿 Domaine paisible — tout pousse tranquillement sous le soleil !</div>`;
+    } else {
+      const allBtn = total >= 2
+        ? `<button class="tour-all" id="btnHarvestAll">✨ Tout faire (${total})</button>`
+        : '';
+      const chips = pending.map(z =>
+        `<button class="tour-chip ${z.bubble.urgent ? 'urgent' : ''}" data-focus="${z.id}">${z.bubble.ico} ${z.name}</button>`
+      );
+      if (app.dog.hasTreasure) chips.unshift(`<button class="tour-chip urgent" data-focus-dog="1">🐕 Filou</button>`);
+      if (app.visitor.active && app.stage !== 'early') chips.push(`<button class="tour-chip" data-focus-vis="1">👵 ${app.visitor.name}</button>`);
+      bar.innerHTML = allBtn + chips.join('');
+    }
+
+    const counts = { farm: 0, animals: 0, machines: 0, village: 0 };
+    pending.forEach(z => { if (counts[z.tab] != null) counts[z.tab]++; });
+    if (app.dog.hasTreasure) counts.farm++;
+    if (app.visitor.active && app.stage !== 'early') counts.village++;
+    Object.entries(counts).forEach(([k, v]) => {
+      const el = document.getElementById('dot-' + k);
+      if (!el) return;
+      el.textContent = v;
+      el.style.display = v > 0 ? 'grid' : 'none';
+    });
+  }
+
+  function updateHud() {
+    document.getElementById('coinsVal').textContent = app.coins.toLocaleString('fr-FR');
+    document.getElementById('barnVal').textContent = app.barn;
+    document.getElementById('lvlVal').textContent = app.stage === 'early' ? '3' : app.stage === 'mid' ? '25' : '60';
+  }
+
+  // ---------------- EFFETS JUICE (BÉZIER + ÉTINCELLES) ----------------
+  function popEl(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('pop');
+    void el.offsetWidth;
+    el.classList.add('pop');
+  }
+
+  let toastT = 0;
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastT);
+    toastT = setTimeout(() => el.classList.remove('show'), 2400);
+  }
+
+  function burstSparks(fromEl, color = '#ffd95e') {
+    if (!fromEl || app.calm) return;
+    const r = fromEl.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height * 0.4;
+    for (let i = 0; i < 8; i++) {
+      const sp = document.createElement('span');
+      sp.className = 'burst-spark';
+      sp.style.left = cx + 'px';
+      sp.style.top = cy + 'px';
+      sp.style.background = color;
+      document.body.appendChild(sp);
+      const ang = (Math.PI * 2 * i) / 8 + Math.random() * 0.35;
+      const dist = 24 + Math.random() * 24;
+      requestAnimationFrame(() => {
+        sp.style.transform = `translate(${Math.cos(ang)*dist}px, ${Math.sin(ang)*dist}px) scale(0.2)`;
+        sp.style.opacity = '0';
+      });
+      setTimeout(() => sp.remove(), 540);
+    }
+  }
+
+  function flyBezier(fromEl, toEl, icons) {
+    if (!fromEl || !toEl || app.calm) return;
+    const a = fromEl.getBoundingClientRect();
+    const b = toEl.getBoundingClientRect();
+    const sx = a.left + a.width / 2, sy = a.top + a.height * 0.35;
+    const tx = b.left + b.width / 2, ty = b.top + b.height / 2;
+
+    icons.forEach((em, idx) => {
+      const node = document.createElement('span');
+      node.className = 'fly-item';
+      node.textContent = em;
+      node.style.left = sx + 'px';
+      node.style.top = sy + 'px';
+      document.body.appendChild(node);
+
+      const ctrlX = (sx + tx) / 2 + (idx - (icons.length - 1) / 2) * 55;
+      const ctrlY = Math.min(sy, ty) - 70 - idx * 14;
+      const start = performance.now() + idx * 65;
+      const dur = 640;
+
+      function step(now) {
+        const p = (now - start) / dur;
+        if (p < 0) return requestAnimationFrame(step);
+        if (p >= 1) return node.remove();
+        const t = 1 - Math.pow(1 - p, 2.2);
+        const x = (1 - t) * (1 - t) * sx + 2 * (1 - t) * t * ctrlX + t * t * tx;
+        const y = (1 - t) * (1 - t) * sy + 2 * (1 - t) * t * ctrlY + t * t * ty;
+        const sc = p < 0.25 ? 0.7 + p * 2.2 : 1.25 - p * 0.7;
+        node.style.left = x + 'px';
+        node.style.top = y + 'px';
+        node.style.transform = `translate(-50%,-50%) scale(${sc.toFixed(2)})`;
+        node.style.opacity = p > 0.8 ? String(1 - (p - 0.8) * 4.2) : '1';
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  function floatMsg(fromEl, text) {
+    if (!fromEl) return;
+    const r = fromEl.getBoundingClientRect();
+    const el = document.createElement('div');
+    el.className = 'float-txt';
+    el.textContent = text;
+    el.style.left = (r.left + r.width / 2) + 'px';
+    el.style.top = (r.top + 8) + 'px';
+    document.body.appendChild(el);
+    requestAnimationFrame(() => {
+      el.style.transform = 'translate(-50%, -40px)';
+      el.style.opacity = '0';
+    });
+    setTimeout(() => el.remove(), 920);
+  }
+
+  // ---------------- POPOVER SOIN PARFUM DIRECT ----------------
+  function openPerfumePopover() {
+    const pop = document.getElementById('quickPop');
+    const spot = document.getElementById('spot-perfume');
+    if (!spot) return;
+    pop.style.left = `clamp(118px, ${spot.style.left}, calc(100% - 118px))`;
+    pop.style.top = `calc(${spot.style.top} - 36px)`;
+    pop.innerHTML = `
+      <div class="qp-head">
+        <span>🌸 Soin · Ambre d’Été</span>
+        <button class="qp-close" id="qpClose">✕</button>
+      </div>
+      <div class="qp-btns">
+        <button class="qp-opt" data-pf="quick">
+          <strong>💧 Geste rapide</strong>
+          <span>Gratuit · +6 %</span>
+        </button>
+        <button class="qp-opt deep" data-pf="deep">
+          <strong>🌿 Approfondi</strong>
+          <span>1 essence · +18 %</span>
+        </button>
+      </div>`;
+    pop.classList.add('open');
+    playSfx('open');
+  }
+
+  function closePopover() {
+    document.getElementById('quickPop').classList.remove('open');
+  }
+
+  // ---------------- ACTIONS DIRECTES ----------------
+  function doZoneAction(id, silentToast = false, opts = {}) {
+    const z = app.zones.find(x => x.id === id);
+    if (!z || !z.bubble) return;
+
+    // Cas spécial Parfumerie : popover en 1 clic si pas en mode Tout faire
+    if (z.bubble.popover === 'perfume' && !opts.perfumeChoice && !opts.auto) {
+      openPerfumePopover();
+      return;
+    }
+
+    const b = z.bubble;
+    const spotEl = document.getElementById('spot-' + id);
+
+    // Cas spécial Champs : cycle Récolter → Semer → Repousse
+    if (id === 'fields' && b.isPlant) {
+      z.fieldPhase = 'growing';
+      z.bubble = null;
+      playSfx('plant');
+      burstSparks(spotEl, '#8fe06a');
+      floatMsg(spotEl, '🌱 Semé !');
+      if (!silentToast) showToast('6 parcelles ressemées sur place ! Elles mûrissent…');
+      renderSpots();
+      renderTourBar();
+      setTimeout(() => {
+        if (z.fieldPhase === 'growing') {
+          z.fieldPhase = 'ready';
+          z.bubble = { ico: '🌾', label: '6 mûrs', cls: 'ready', gainCoins: 0, gainBarn: 6, fly: ['🌾','🍓','🌻'], sfx: 'harvest', msg: '6 parcelles récoltées !' };
+          renderSpots();
+          renderTourBar();
+        }
+      }, 6500);
+      return;
+    }
+
+    // Cas spécial Parfumerie complété
+    if (id === 'perfume') {
+      const deep = opts.perfumeChoice !== 'quick';
+      z.bubble = null;
+      app.barn += 1;
+      bumpCombo();
+      playSfx('perfume');
+      burstSparks(spotEl, '#e59ef5');
+      flyBezier(spotEl, document.getElementById('pillBarn'), ['🧴','🌸','✨']);
+      floatMsg(spotEl, deep ? '✨ Grand Sillage +18 %' : '💧 +6 %');
+      if (!silentToast) showToast(deep ? 'Soin approfondi appliqué : Grand Sillage (+18 %) !' : 'Geste rapide appliqué (+6 %)');
+      updateHud();
+      renderSpots();
+      renderTourBar();
+      return;
+    }
+
+    // Cas spécial Train qui part physiquement sur les rails
+    if (id === 'station') {
+      z.bubble = null;
+      z.trainState = 'departing';
+      app.coins += b.gainCoins;
+      bumpCombo();
+      playSfx('train');
+      burstSparks(spotEl, '#ffd95e');
+      flyBezier(spotEl, document.getElementById('pillCoins'), b.fly);
+      floatMsg(spotEl, `+${b.gainCoins} 🪙`);
+      if (!silentToast) showToast(b.msg);
+      updateHud();
+      renderSpots();
+      renderTourBar();
+      setTimeout(() => popEl('pillCoins'), 420);
+      setTimeout(() => {
+        z.trainState = 'gone';
+        renderSpots();
+      }, 1350);
+      // Le prochain train arrive peu après si mode Vie auto actif
+      setTimeout(() => {
+        if (!app.live) return;
+        z.trainState = 'arriving';
+        z.bubble = { ico: '🚂', label: '3 wagons', cls: 'gold', urgent: true, gainCoins: 420, gainBarn: 0, fly: ['📦','🚂','🪙'], sfx: 'train', msg: 'Tchou-tchou ! Train parti avec +420 🪙' };
+        renderSpots();
+        renderTourBar();
+        setTimeout(() => { z.trainState = 'here'; renderSpots(); }, 1400);
+      }, 9000);
+      return;
+    }
+
+    // Action standard
+    z.bubble = null;
+    if (id === 'fields') {
+      z.fieldPhase = 'bare';
+      // Propose aussitôt de ressemer en 1 tap !
+      setTimeout(() => {
+        if (z.fieldPhase === 'bare') {
+          z.bubble = { ico: '🌱', label: 'Semer', cls: 'plant', isPlant: true };
+          renderSpots();
+          renderTourBar();
+        }
+      }, 550);
+    }
+
+    app.coins += b.gainCoins || 0;
+    app.barn += b.gainBarn || 0;
+    bumpCombo();
+    playSfx(b.sfx || 'harvest');
+    burstSparks(spotEl, b.gainCoins ? '#ffd95e' : '#a4eb7c');
+
+    const targetEl = b.gainCoins > 0 ? document.getElementById('pillCoins') : document.getElementById('pillBarn');
+    flyBezier(spotEl, targetEl, b.fly || [b.ico]);
+    floatMsg(spotEl, b.gainCoins ? `+${b.gainCoins} 🪙` : `+${b.gainBarn} ${b.ico}`);
+    if (!silentToast) showToast(b.msg);
+
+    updateHud();
+    renderSpots();
+    renderTourBar();
+
+    const freshSpot = document.getElementById('spot-' + id);
+    if (freshSpot) {
+      freshSpot.classList.add('hit');
+      setTimeout(() => freshSpot.classList.remove('hit'), 450);
+    }
+    setTimeout(() => popEl(b.gainCoins > 0 ? 'pillCoins' : 'pillBarn'), 450);
+  }
+
+  function doDogAction(silent = false) {
+    const el = document.getElementById('walkerDog');
+    if (app.dog.hasTreasure) {
+      app.dog.hasTreasure = false;
+      app.coins += 150;
+      bumpCombo();
+      playSfx('dog');
+      burstSparks(el, '#ff9eb5');
+      flyBezier(el, document.getElementById('pillCoins'), ['🦴','❤️','🪙']);
+      floatMsg(el, '+150 🪙');
+      if (!silent) showToast('Filou remue la queue ! Trésor trouvé : +150 🪙');
+      updateHud();
+      renderWalkers();
+      renderTourBar();
+      setTimeout(() => popEl('pillCoins'), 420);
+    } else {
+      playSfx('dog');
+      burstSparks(el, '#ff9eb5');
+      floatMsg(el, '♥ Wouf !');
+    }
+  }
+
+  function doVisitorAction(silent = false) {
+    if (!app.visitor.active) return;
+    const el = document.getElementById('walkerVis');
+    app.visitor.active = false;
+    app.coins += app.visitor.gain;
+    bumpCombo();
+    playSfx('coin');
+    burstSparks(el, '#ffd95e');
+    flyBezier(el, document.getElementById('pillCoins'), ['🍓','❤️','🪙']);
+    floatMsg(el, `+${app.visitor.gain} 🪙`);
+    if (!silent) showToast(`${app.visitor.name} te remercie ! +${app.visitor.gain} 🪙`);
+    updateHud();
+    renderWalkers();
+    renderTourBar();
+    setTimeout(() => popEl('pillCoins'), 420);
+  }
+
+  // ---------------- FICHES BÂTIMENT & DÉCO ----------------
+  function openZoneSheet(id) {
+    const z = app.zones.find(x => x.id === id);
+    if (!z) return;
+    closePopover();
+    playSfx('open');
+    const box = document.getElementById('sheetBox');
+    box.innerHTML = `
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <div class="sheet-ico">${z.ico}</div>
+        <div>
+          <h3 class="sheet-title">${z.name}</h3>
+          <div class="sheet-path">${z.path}</div>
+        </div>
+      </div>
+      <div class="sheet-meta">${(z.meta || []).map(m => `<span class="meta-tag">${m}</span>`).join('')}</div>
+      <div class="sheet-desc">${z.desc}</div>
+      <div class="sheet-actions">
+        ${z.bubble ? `<button class="btn-main" id="shAct">${z.bubble.ico} ${z.bubble.label} maintenant</button>` : ''}
+        <button class="btn-sec" id="shOpen">Ouvrir « ${z.path.split('›').pop().trim()} »</button>
+      </div>`;
+    document.getElementById('sheetBg').classList.add('open');
+
+    const actBtn = document.getElementById('shAct');
+    if (actBtn) actBtn.onclick = () => { closeSheet(); doZoneAction(id); };
+    document.getElementById('shOpen').onclick = () => { closeSheet(); showToast(`→ Ouvre « ${z.path} » dans Meuh`); };
+  }
+
+  function openDecoSheet(slotId) {
+    const slot = app.decoSlots.find(s => s.id === slotId);
+    if (!slot) return;
+    playSfx('open');
+    const box = document.getElementById('sheetBox');
+    box.innerHTML = `
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <div class="sheet-ico">🎨</div>
+        <div>
+          <h3 class="sheet-title">Décorer cet emplacement</h3>
+          <div class="sheet-path">Trophées & décos gagnés dans Meuh</div>
+        </div>
+      </div>
+      <div class="deco-grid">
+        ${DECOS.map(d => `
+          <button class="deco-choice ${slot.deco === d.id ? 'on' : ''}" data-pick-deco="${d.id}">
+            <span class="em">${d.em}</span>
+            <span>${d.name}</span>
+          </button>`).join('')}
+      </div>
+      <div class="sheet-actions">
+        <button class="btn-sec" id="shClose">Fermer</button>
+      </div>`;
+    document.getElementById('sheetBg').classList.add('open');
+    box.querySelectorAll('[data-pick-deco]').forEach(btn => {
+      btn.onclick = () => {
+        slot.deco = btn.dataset.pickDeco;
+        playSfx('plant');
+        renderDecos();
+        closeSheet();
+        showToast(slot.deco === 'none' ? 'Emplacement libéré' : `✨ ${DECOS.find(x => x.id === slot.deco).name} posé(e) sur le domaine !`);
+      };
+    });
+    document.getElementById('shClose').onclick = closeSheet;
+  }
+
+  function closeSheet() { document.getElementById('sheetBg').classList.remove('open'); }
+
+  // ---------------- RENDER GLOBAL ----------------
+  function renderAll() {
+    const dev = document.getElementById('device');
+    dev.dataset.time = app.time;
+    dev.dataset.season = app.season;
+    dev.dataset.house = app.house;
+    dev.dataset.path = app.pathStyle;
+    dev.classList.toggle('wide', app.layout === 'wide');
+    dev.classList.toggle('postcard', app.postcard);
+    dev.classList.toggle('calm', app.calm);
+    dev.classList.toggle('focus-mode', app.focus);
+    dev.classList.toggle('decorating', app.decorating);
+    document.getElementById('btnFocus').classList.toggle('active', app.focus);
+    document.getElementById('btnDeco').classList.toggle('active', app.decorating);
+
+    updateHud();
+    renderBackground();
+    renderDecos();
+    renderSpots();
+    renderWalkers();
+    renderTourBar();
+    renderAtmosphere();
+  }
+
+  // ---------------- VIE AMBIANTE AUTOMATIQUE ----------------
+  const DOG_WAYPOINTS_P = [[56, 47], [41, 49], [60, 58], [46, 62], [35, 48]];
+  const DOG_WAYPOINTS_W = [[54, 50], [42, 52], [58, 60], [45, 64], [38, 49]];
+  let dogStep = 0;
+
+  setInterval(() => {
+    if (app.calm) return;
+    dogStep = (dogStep + 1) % DOG_WAYPOINTS_P.length;
+    app.dog.xP = DOG_WAYPOINTS_P[dogStep][0];
+    app.dog.yP = DOG_WAYPOINTS_P[dogStep][1];
+    app.dog.xW = DOG_WAYPOINTS_W[dogStep][0];
+    app.dog.yW = DOG_WAYPOINTS_W[dogStep][1];
+    const el = document.getElementById('walkerDog');
+    if (el) {
+      el.style.left = (app.layout === 'wide' ? app.dog.xW : app.dog.xP) + '%';
+      el.style.top = (app.layout === 'wide' ? app.dog.yW : app.dog.yP) + '%';
+    }
+  }, 4600);
+
+  // Réapparition douce de nouvelles récoltes en mode Vie auto
+  setInterval(() => {
+    if (!app.live) return;
+    const calmZones = app.zones.filter(z => unlocked(z) && !z.bubble && z.id !== 'barn' && z.id !== 'station' && z.id !== 'fields');
+    if (!calmZones.length) return;
+    const pick = calmZones[Math.floor(Math.random() * calmZones.length)];
+    const fresh = makeInitialZones().find(x => x.id === pick.id);
+    if (fresh && fresh.bubble) {
+      pick.bubble = { ...fresh.bubble };
+      renderSpots();
+      renderTourBar();
+    }
+  }, 11000);
+
+  // ---------------- ÉVÉNEMENTS ----------------
+  document.querySelectorAll('.ctrl-group[data-ctrl]').forEach(grp => {
+    const key = grp.dataset.ctrl;
+    grp.addEventListener('click', e => {
+      const btn = e.target.closest('.ctrl-btn');
+      if (!btn) return;
+      app[key] = btn.dataset.val;
+      grp.querySelectorAll('.ctrl-btn').forEach(b => b.classList.toggle('on', b === btn));
+      closePopover();
+      renderAll();
+    });
+  });
+
+  document.getElementById('btnLive').addEventListener('click', e => {
+    app.live = !app.live;
+    e.currentTarget.classList.toggle('on', app.live);
+    showToast(app.live ? '⏱️ Vie auto activée : le domaine vit tout seul' : '⏸️ Vie auto en pause');
+  });
+
+  document.getElementById('btnCalm').addEventListener('click', e => {
+    app.calm = !app.calm;
+    e.currentTarget.classList.toggle('on', app.calm);
+    renderAll();
+  });
+
+  document.getElementById('btnSound').addEventListener('click', e => {
+    soundOn = !soundOn;
+    e.currentTarget.classList.toggle('on', soundOn);
+    e.currentTarget.textContent = soundOn ? '🔊 Son' : '🔇 Muet';
+  });
+
+  document.getElementById('btnReset').addEventListener('click', () => {
+    app.zones = makeInitialZones();
+    app.dog.hasTreasure = true;
+    app.visitor.active = true;
+    closePopover();
+    renderAll();
+    showToast('🔄 Toutes les bulles et visiteurs sont de retour !');
+  });
+
+  document.getElementById('btnFocus').addEventListener('click', () => {
+    app.focus = !app.focus;
+    renderAll();
+    showToast(app.focus ? '👁️ Mode Focus : seuls les bâtiments actifs ressortent' : '👁️ Affichage normal');
+  });
+
+  document.getElementById('btnDeco').addEventListener('click', () => {
+    app.decorating = !app.decorating;
+    closePopover();
+    renderAll();
+    if (app.decorating) showToast('🎨 Touche un + ou une déco sur le domaine !');
+  });
+
+  document.getElementById('decoBar').addEventListener('click', e => {
+    const seg = e.target.closest('.seg');
+    const btn = e.target.closest('button');
+    if (!seg || !btn) return;
+    if (seg.dataset.style === 'house') app.house = btn.dataset.val;
+    if (seg.dataset.style === 'path') app.pathStyle = btn.dataset.val;
+    seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === btn));
+    playSfx('plant');
+    renderAll();
+  });
+
+  document.getElementById('btnPostcard').addEventListener('click', () => { app.postcard = true; closePopover(); renderAll(); });
+  document.getElementById('btnExitPostcard').addEventListener('click', () => { app.postcard = false; renderAll(); });
+
+  // Clics décos
+  document.getElementById('decoLayer').addEventListener('click', e => {
+    const sl = e.target.closest('[data-deco-slot]');
+    if (!sl) return;
+    if (!app.decorating) {
+      showToast('Clique sur 🎨 en haut pour personnaliser tes décos !');
+      return;
+    }
+    openDecoSheet(Number(sl.dataset.decoSlot));
+  });
+
+  // Clics scène (bulle = action directe, bâtiment = fiche)
+  document.getElementById('spotsLayer').addEventListener('click', e => {
+    const bub = e.target.closest('[data-bub]');
+    if (bub) {
+      e.stopPropagation();
+      doZoneAction(bub.dataset.bub);
+      return;
+    }
+    const sp = e.target.closest('[data-zone]');
+    if (sp) openZoneSheet(sp.dataset.zone);
+  });
+
+  // Clics personnages (Filou + Mamie Odette)
+  document.getElementById('walkersLayer').addEventListener('click', e => {
+    if (e.target.closest('#walkerDog')) return doDogAction();
+    if (e.target.closest('#walkerVis')) return doVisitorAction();
+  });
+
+  // Popover rapide Parfumerie
+  document.getElementById('quickPop').addEventListener('click', e => {
+    if (e.target.closest('#qpClose')) return closePopover();
+    const opt = e.target.closest('[data-pf]');
+    if (!opt) return;
+    closePopover();
+    doZoneAction('perfume', false, { perfumeChoice: opt.dataset.pf });
+  });
+
+  // Barre Tournée rapide
+  document.getElementById('tourBar').addEventListener('click', e => {
+    if (e.target.closest('#btnHarvestAll')) {
+      closePopover();
+      const ids = pendingDirectActions().map(z => z.id);
+      let step = 0;
+      if (app.dog.hasTreasure) { setTimeout(() => doDogAction(true), step++ * 165); }
+      ids.forEach(id => { setTimeout(() => doZoneAction(id, true, { auto: true, perfumeChoice: 'deep' }), step++ * 165); });
+      if (app.visitor.active && app.stage !== 'early') { setTimeout(() => doVisitorAction(true), step++ * 165); }
+      setTimeout(() => showToast(`✨ Tournée express terminée (${step} actions) !`), step * 165 + 140);
+      return;
+    }
+    if (e.target.closest('[data-focus-dog]')) {
+      const el = document.getElementById('walkerDog');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (e.target.closest('[data-focus-vis]')) {
+      const el = document.getElementById('walkerVis');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    const chip = e.target.closest('[data-focus]');
+    if (!chip) return;
+    const spot = document.getElementById('spot-' + chip.dataset.focus);
+    if (spot) {
+      spot.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      spot.classList.remove('spotlight');
+      void spot.offsetWidth;
+      spot.classList.add('spotlight');
+      setTimeout(() => spot.classList.remove('spotlight'), 1900);
+    }
+  });
+
+  document.getElementById('sheetBg').addEventListener('click', e => { if (e.target.id === 'sheetBg') closeSheet(); });
+
+  document.getElementById('tabsBar').addEventListener('click', e => {
+    const t = e.target.closest('.tab');
+    if (!t) return;
+    if (t.dataset.tab !== 'domaine') {
+      showToast(`Vue classique « ${t.textContent.replace(/\d+$/, '').trim()} » toujours accessible en 1 tap`);
+    }
+  });
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
