@@ -13,6 +13,7 @@ import { setupSheets, openSheet } from './ui/sheets.js';
 import { setupMoments, pushMoment, closeMoment } from './ui/moments.js';
 import { setupToolbar } from './ui/toolbar.js';
 import { updateScene } from './ui/scene.js';
+import { setupDomaine } from './ui/views/domaine.js';
 import { setupFarm, wanderDog } from './ui/views/farm.js';
 import { setupNature } from './ui/views/nature.js';
 import { setupPond } from './ui/views/pond.js';
@@ -89,6 +90,7 @@ function start() {
     setupTypo();
     setupMoments(refresh);
     setupToolbar();
+    setupDomaine();
     setupFarm();
     setupNature();
     setupPond();

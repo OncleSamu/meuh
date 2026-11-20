@@ -95,7 +95,39 @@ export const GUIDE_PAGES = [
             'Rien ne se perd jeu fermé : cultures, machines, cave et visiteurs avancent sans vous.',
             'On ne vous punit jamais pour une pause : seuls les imprévus attendent votre retour.',
         ],
-        see: ['time', 'screens', 'levels'],
+        see: ['vuedomaine', 'time', 'screens', 'levels'],
+    },
+    {
+        id: 'vuedomaine',
+        cat: 'base',
+        name: 'La Vue du Domaine',
+        icon: ['ui', 'house'],
+        lvl: 1,
+        go: 'domaine',
+        intro: 'Une carte vivante et illustrée de toute votre ferme : voyez ce qui vous attend d’un seul coup d’œil et faites votre tournée en quelques gestes.',
+        secs: [
+            {
+                h: 'Deux gestes sur chaque zone',
+                b: [
+                    'Touchez la bulle qui flotte au-dessus d’un bâtiment pour agir tout de suite sans changer d’écran : récolter le champ, arroser, ramasser les œufs et le lait, vider les machines, encaisser l’étal, soigner une macération de parfum ou ramener vos récoltes des Voyages.',
+                    'Touchez le bâtiment lui-même pour ouvrir sa fiche rapide ou accéder directement à son écran complet.',
+                ],
+            },
+            {
+                h: 'Tournée rapide & outils',
+                b: [
+                    'La bande du haut liste uniquement les zones qui ont besoin de vous, avec un bouton « Tout faire » pour lancer les récoltes prêtes en cascade.',
+                    'Mode Focus (étoile) : masque les noms des bâtiments au repos pour faire ressortir uniquement ce qui est prêt.',
+                    'Personnalisation (fleurs) : choisissez le style du chemin (Sable, Pavés, Tomette) et posez librement vos décorations sur cinq emplacements du domaine.',
+                    'Mode Carte postale (appareil photo) : masque les étiquettes et les bulles pour admirer votre ferme telle qu’elle est.',
+                ],
+            },
+        ],
+        tips: [
+            'Les zones non encore débloquées restent de jolis bois et s’ouvrent naturellement au fil de votre progression.',
+            'Tous les onglets classiques (Ferme, Animaux, Atelier, Village, Marché) restent accessibles à tout moment.',
+        ],
+        see: ['start', 'screens', 'field'],
     },
     {
         id: 'time',

@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.148",
+  "title": "La Vue du Domaine",
+  "date": "20 novembre 2026",
+  "items": [
+   "Nouvel onglet Domaine : une carte illustrée et vivante de toute votre ferme qui évolue au fil de vos déblocages, des saisons et du cycle jour/nuit (avec fenêtres éclairées, lucioles et avion-cargo dans le ciel)",
+   "Tournée rapide en 1 geste : touchez la bulle d’un bâtiment pour récolter, arroser, ramasser les œufs/lait, vider les machines, encaisser l’étal ou soigner une macération de parfum sans changer d’écran — ou utilisez le bouton « Tout faire »",
+   "Confort & personnalisation : mode Focus (pour ne faire ressortir que les bâtiments qui vous attendent), style du chemin (Sable, Pavés, Tomette), 5 emplacements de décorations/trophées sur le domaine et mode Carte postale"
+  ]
+ },
+ {
   "v": "1.147",
   "title": "Les poissons retournent à la poissonnerie",
   "date": "19 novembre 2026",

@@ -1,0 +1,888 @@
+/* 1.148 : Vue du Domaine (onglet isolé, facile à retirer) */
+
+#view-domaine {
+    padding: 0 6px 24px;
+}
+
+.dom-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* ---------------- barre Tournée rapide + outils ---------------- */
+.dom-top {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dom-tour {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 2px 1px 4px;
+}
+.dom-tour::-webkit-scrollbar {
+    display: none;
+}
+
+.dom-chip {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 32px;
+    padding: 3px 9px 3px 5px;
+    background: linear-gradient(#fffbf0, #f6e2b6);
+    border: 2px solid var(--ink);
+    border-radius: 99px;
+    box-shadow:
+        0 3px 0 rgba(58, 38, 24, 0.4),
+        inset 0 1.5px 0 #fff;
+    font-family: var(--display);
+    font-size: 0.78rem;
+    font-weight: 900;
+    color: var(--ink);
+    white-space: nowrap;
+}
+.dom-chip .ico {
+    width: 20px;
+    height: 20px;
+}
+.dom-chip.urgent {
+    background: linear-gradient(#fff2b8, #ffd56b);
+}
+.dom-chip:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(58, 38, 24, 0.4);
+}
+
+.dom-calm-msg {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: linear-gradient(#fffbf0, #f5e5be);
+    border: 2px solid var(--ink);
+    border-radius: 99px;
+    box-shadow: 0 3px 0 rgba(58, 38, 24, 0.32);
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: var(--leaf-d);
+    white-space: nowrap;
+}
+.dom-calm-msg .ico {
+    width: 18px;
+    height: 18px;
+}
+
+.dom-tools {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.dom-tool {
+    width: 34px;
+    height: 34px;
+    padding: 4px;
+    border-radius: 11px;
+    border: 2.2px solid var(--ink);
+    background: linear-gradient(rgba(255, 255, 255, 0.45), transparent 55%), var(--paper-l);
+    box-shadow: 0 3px 0 var(--ink);
+    display: grid;
+    place-items: center;
+}
+.dom-tool .ico {
+    width: 21px;
+    height: 21px;
+}
+.dom-tool.on {
+    background: linear-gradient(rgba(255, 255, 255, 0.4), transparent 55%), var(--gold);
+}
+.dom-tool:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--ink);
+}
+
+/* ---------------- bandeau personnalisation ---------------- */
+.dom-deco-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    padding: 8px 10px;
+    background: var(--paper-l);
+    border: 2.5px solid var(--ink);
+    border-radius: 15px;
+    box-shadow: 0 4px 0 rgba(58, 38, 24, 0.32);
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+.dom-deco-bar .dom-seg {
+    display: inline-flex;
+    gap: 2px;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 2px;
+}
+.dom-deco-bar .dom-seg button {
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--display);
+    font-size: 0.74rem;
+    font-weight: 900;
+    padding: 3px 8px;
+    border-radius: 7px;
+}
+.dom-deco-bar .dom-seg button.on {
+    background: var(--gold);
+    box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+.dom-deco-note {
+    width: 100%;
+    font-size: 0.74rem;
+    color: var(--ink-soft);
+    font-weight: 800;
+}
+
+/* ---------------- la scène illustrée du Domaine ---------------- */
+.dom-scene {
+    --dom-h1: #b9e59a;
+    --dom-h2: #93d46a;
+    --dom-m1: #9bd96f;
+    --dom-m2: #86c95b;
+    --dom-m3: #72b64c;
+    --dom-path: #f2d6a2;
+    --dom-path-e: #caa56a;
+    --dom-water1: #4fa9e6;
+    --dom-water2: #8ad3fa;
+    --dom-tree1: #56b566;
+    --dom-tree2: #f5a8c4;
+    --dom-glow: 0;
+    --dom-veil: 0;
+
+    position: relative;
+    width: 100%;
+    aspect-ratio: 420 / 790;
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow:
+        0 6px 0 rgba(58, 38, 24, 0.35),
+        inset 0 2px 0 rgba(255, 255, 255, 0.35);
+    background: var(--dom-m3);
+    user-select: none;
+}
+
+html.season-ete .dom-scene {
+    --dom-h1: #aadf82;
+    --dom-h2: #87cc5b;
+    --dom-m1: #90d161;
+    --dom-m2: #7bc04f;
+    --dom-m3: #68ac41;
+    --dom-tree1: #4aa860;
+    --dom-tree2: #6bc259;
+}
+html.season-automne .dom-scene {
+    --dom-h1: #e3c27a;
+    --dom-h2: #c9a24e;
+    --dom-m1: #b9c85e;
+    --dom-m2: #a5b44e;
+    --dom-m3: #909e41;
+    --dom-tree1: #e8792a;
+    --dom-tree2: #f0b23a;
+}
+html.season-hiver .dom-scene {
+    --dom-h1: #eef5f9;
+    --dom-h2: #e1edf3;
+    --dom-m1: #e4efe6;
+    --dom-m2: #d6e6dc;
+    --dom-m3: #c5dcc6;
+    --dom-path: #dfd2be;
+    --dom-path-e: #b4a58f;
+    --dom-tree1: #dfeaf0;
+    --dom-tree2: #eef6fa;
+}
+html.night .dom-scene {
+    --dom-h1: #3b5850;
+    --dom-h2: #315342;
+    --dom-m1: #3c694a;
+    --dom-m2: #325a3f;
+    --dom-m3: #2a4d35;
+    --dom-path: #a69577;
+    --dom-path-e: #7b6c54;
+    --dom-water1: #234973;
+    --dom-water2: #366a9e;
+    --dom-glow: 1;
+    --dom-veil: 0.28;
+}
+html.night.season-hiver .dom-scene {
+    --dom-h1: #566d85;
+    --dom-h2: #4e657d;
+    --dom-m1: #5a7188;
+    --dom-m2: #4e657d;
+    --dom-m3: #435970;
+}
+
+.dom-scene.path-cobble {
+    --dom-path: #d9d1c3;
+    --dom-path-e: #9f9584;
+}
+.dom-scene.path-brick {
+    --dom-path: #ebbfa4;
+    --dom-path-e: #bd8366;
+}
+
+.dom-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.dom-night-veil {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 48%, rgba(20, 32, 68, 0.08), rgba(14, 22, 52, 0.56));
+    opacity: var(--dom-veil);
+    pointer-events: none;
+    z-index: 14;
+}
+
+.dom-plane {
+    position: absolute;
+    top: 3%;
+    left: 0;
+    width: 42px;
+    height: 42px;
+    z-index: 4;
+    pointer-events: none;
+    animation: domPlane 26s linear 2s infinite;
+    filter: drop-shadow(0 10px 4px rgba(58, 38, 24, 0.16));
+}
+.dom-plane .ico {
+    width: 100%;
+    height: 100%;
+}
+
+/* ---------------- zones cliquables ---------------- */
+.dom-spot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--display);
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+.dom-spot:active {
+    filter: brightness(1.06);
+}
+.dom-spot.spotlight::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 4px solid #fff2b0;
+    pointer-events: none;
+    animation: domPulse 0.9s ease-out 2;
+}
+
+.dom-art {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+.dom-art svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 3px 0 rgba(58, 38, 24, 0.2));
+}
+
+.dom-train {
+    position: absolute;
+    right: -26%;
+    bottom: 2%;
+    width: 70%;
+    display: flex;
+    align-items: flex-end;
+    pointer-events: none;
+}
+.dom-train .loco {
+    width: 58%;
+    margin-right: -12%;
+    z-index: 2;
+}
+.dom-train .wag {
+    width: 48%;
+}
+
+.dom-pair {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+.dom-pair .main {
+    width: 64%;
+}
+.dom-pair .side {
+    width: 46%;
+    margin-left: -13%;
+    margin-bottom: 2%;
+}
+.dom-pair .boat {
+    width: 54%;
+    margin-left: -14%;
+    margin-bottom: -4%;
+    animation: domBob 3.2s ease-in-out infinite;
+}
+
+.dom-fields {
+    position: relative;
+    width: 100%;
+    padding: 10% 6% 7%;
+    background: linear-gradient(180deg, #b57a44, #9c6434);
+    border: 2.5px solid var(--ink);
+    border-radius: 13px;
+    box-shadow:
+        inset 0 -4px 0 rgba(58, 38, 24, 0.2),
+        0 4px 0 rgba(58, 38, 24, 0.28);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+}
+.dom-cell {
+    background: rgba(58, 38, 24, 0.14);
+    border-radius: 5px;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    padding: 1px;
+}
+.dom-gh {
+    position: absolute;
+    right: -12%;
+    top: -32%;
+    width: 44%;
+    filter: drop-shadow(0 3px 0 rgba(58, 38, 24, 0.22));
+}
+
+.dom-orchard {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+.dom-orchard .t1 {
+    width: 54%;
+}
+.dom-orchard .t2 {
+    width: 50%;
+    margin-left: -14%;
+}
+.dom-orchard .hive {
+    width: 32%;
+    margin-left: -10%;
+    margin-bottom: 4%;
+    animation: domBob 2.6s ease-in-out 0.6s infinite;
+}
+
+.dom-pasture {
+    position: relative;
+    width: 100%;
+    padding: 10% 4% 4%;
+    border: 2.5px solid #8b5a2b;
+    border-radius: 15px;
+    background: rgba(143, 214, 95, 0.28);
+    box-shadow:
+        inset 0 0 0 2px rgba(255, 244, 210, 0.35),
+        0 3px 0 rgba(58, 38, 24, 0.22);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+}
+.dom-pasture .stud {
+    position: absolute;
+    right: 2%;
+    top: -38%;
+    width: 46%;
+    z-index: 1;
+}
+.dom-pasture .an {
+    width: 38%;
+    z-index: 2;
+    animation: domBob 3s ease-in-out infinite;
+}
+.dom-pasture .an:nth-child(even) {
+    animation-delay: 0.9s;
+}
+
+.dom-smoke {
+    position: absolute;
+    top: -10%;
+    right: 18%;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+}
+.dom-smoke i {
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1.5px solid rgba(58, 38, 24, 0.2);
+    animation: domSmoke 2.8s ease-out infinite;
+}
+.dom-smoke i:nth-child(2) {
+    animation-delay: 1.4s;
+}
+
+.dom-glow {
+    position: absolute;
+    left: 50%;
+    top: 54%;
+    width: 78%;
+    height: 56%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 214, 96, 0.72) 0%, rgba(255, 190, 64, 0) 72%);
+    opacity: var(--dom-glow);
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+.dom-name {
+    margin-top: 1px;
+    font-size: 10.5px;
+    font-weight: 900;
+    color: var(--ink);
+    background: rgba(255, 247, 224, 0.88);
+    border: 1.8px solid var(--ink);
+    border-radius: 99px;
+    padding: 0 7px;
+    line-height: 1.38;
+    white-space: nowrap;
+    box-shadow: 0 2px 0 rgba(58, 38, 24, 0.35);
+    transition: opacity 0.2s;
+}
+
+/* Mode Focus & Mode Carte postale */
+.dom-scene.focus .dom-spot:not(.has-bub) .dom-name {
+    opacity: 0;
+}
+.dom-scene.focus .dom-spot:not(.has-bub) {
+    filter: saturate(0.75) opacity(0.86);
+}
+.dom-scene.postcard .dom-name,
+.dom-scene.postcard .dom-bub,
+.dom-scene.postcard .dom-deco-plus,
+.dom-scene.postcard .dom-dog-bub {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ---------------- bulles d'action directe (1 tap) ---------------- */
+.dom-bub {
+    position: absolute;
+    left: 50%;
+    top: -15px;
+    transform: translate(-50%, 0);
+    z-index: 16;
+    min-width: 38px;
+    height: 35px;
+    padding: 3px 8px 3px 4px;
+    border-radius: 99px;
+    background: linear-gradient(#fffbe0, #fff099);
+    border: 2.3px solid var(--ink);
+    box-shadow:
+        0 3px 0 var(--ink),
+        inset 0 1.5px 0 #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    font-family: var(--display);
+    font-size: 11.5px;
+    font-weight: 900;
+    color: var(--ink);
+    white-space: nowrap;
+    cursor: pointer;
+    animation: domBubBob 1.5s ease-in-out infinite;
+}
+.dom-bub.ready {
+    background: linear-gradient(#f5ffe6, #c6ef97);
+}
+.dom-bub.care {
+    background: linear-gradient(#fff2fc, #f0c2f2);
+}
+.dom-bub.water {
+    background: linear-gradient(#ecfbff, #b8e6ff);
+}
+.dom-bub.urgent {
+    background: linear-gradient(#ffe3dc, #ffada2);
+}
+.dom-bub .ico {
+    width: 23px;
+    height: 23px;
+}
+.dom-bub:active {
+    transform: translate(-50%, 2px);
+    box-shadow: 0 1px 0 var(--ink);
+}
+
+/* ---------------- mini-popover soin parfum direct ---------------- */
+.dom-pop {
+    position: absolute;
+    z-index: 24;
+    transform: translate(-50%, -100%);
+    background: var(--paper-l);
+    border: 2.5px solid var(--ink);
+    border-radius: 16px;
+    padding: 9px;
+    box-shadow:
+        0 5px 0 rgba(58, 38, 24, 0.36),
+        0 12px 24px rgba(58, 38, 24, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    width: 232px;
+    color: var(--ink);
+}
+.dom-pop-head {
+    font-size: 12.5px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.dom-pop-head .ico {
+    width: 20px;
+    height: 20px;
+}
+.dom-pop-close {
+    margin-left: auto;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-weight: 900;
+    display: grid;
+    place-items: center;
+    line-height: 1;
+}
+.dom-pop-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+.dom-pop-opt {
+    border: 2px solid var(--ink);
+    background: linear-gradient(rgba(255, 255, 255, 0.45), transparent 50%), var(--paper);
+    border-radius: 12px;
+    padding: 6px 5px;
+    box-shadow: 0 3px 0 var(--ink);
+    font-family: var(--display);
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-align: center;
+}
+.dom-pop-opt.deep {
+    background: linear-gradient(rgba(255, 255, 255, 0.45), transparent 50%), #f0d8fa;
+}
+.dom-pop-opt .ico {
+    width: 22px;
+    height: 22px;
+}
+.dom-pop-opt strong {
+    font-size: 11.5px;
+}
+.dom-pop-opt span {
+    font-size: 10px;
+    color: var(--ink-soft);
+    font-weight: 800;
+}
+.dom-pop-opt:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--ink);
+}
+
+/* ---------------- Filou le chien sur le domaine ---------------- */
+.dom-dog {
+    position: absolute;
+    z-index: 12;
+    transform: translate(-50%, -50%);
+    width: 11%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition:
+        left 3.6s ease-in-out,
+        top 3.6s ease-in-out;
+}
+.dom-dog .ico {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 3px 0 rgba(58, 38, 24, 0.22));
+    animation: domBob 2.4s ease-in-out infinite;
+}
+.dom-dog-bub {
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(#fffbe0, #fff099);
+    border: 2px solid var(--ink);
+    border-radius: 99px;
+    padding: 2px 7px 2px 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10.5px;
+    font-weight: 900;
+    color: var(--ink);
+    box-shadow: 0 2.5px 0 var(--ink);
+    white-space: nowrap;
+    animation: domBubBob 1.5s ease-in-out infinite;
+}
+.dom-dog-bub .ico {
+    width: 17px;
+    height: 17px;
+    animation: none;
+    filter: none;
+}
+
+/* ---------------- décos posables sur le domaine ---------------- */
+.dom-deco {
+    position: absolute;
+    z-index: 8;
+    transform: translate(-50%, -50%);
+    width: 12%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+}
+.dom-deco .ico {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 3px 0 rgba(58, 38, 24, 0.2));
+}
+.dom-deco-plus {
+    display: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2.3px dashed var(--ink);
+    background: var(--paper-l);
+    color: var(--ink);
+    font-size: 17px;
+    font-weight: 900;
+    place-items: center;
+    box-shadow: 0 3px 0 rgba(58, 38, 24, 0.25);
+}
+.dom-scene.decorating .dom-deco.empty .dom-deco-plus {
+    display: grid;
+}
+.dom-scene.decorating .dom-deco:not(.empty) {
+    outline: 2.5px dashed var(--gold);
+    border-radius: 50%;
+    background: rgba(255, 246, 200, 0.4);
+}
+
+/* ---------------- bouton sortie Carte postale ---------------- */
+.dom-exit-pc {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 22;
+}
+
+/* ---------------- fiches du domaine ---------------- */
+.dom-sheet-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 6px 0 10px;
+}
+.dom-sheet-tag {
+    font-size: 0.76rem;
+    font-weight: 900;
+    background: var(--wood-ll);
+    border: 1.8px solid var(--ink);
+    border-radius: 99px;
+    padding: 2px 9px;
+}
+.dom-deco-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+    margin: 8px 0 12px;
+}
+.dom-deco-opt {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    border-radius: 12px;
+    padding: 7px 4px;
+    font-family: var(--display);
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.72rem;
+    font-weight: 900;
+    box-shadow: 0 3px 0 rgba(58, 38, 24, 0.3);
+}
+.dom-deco-opt .ico {
+    width: 30px;
+    height: 30px;
+}
+.dom-deco-opt.on {
+    background: #e3fad0;
+    box-shadow: 0 3px 0 var(--leaf-d);
+}
+
+/* ---------------- lucioles la nuit ---------------- */
+.dom-fireflies {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 16;
+    display: none;
+}
+html.night .dom-fireflies {
+    display: block;
+}
+.dom-fireflies i {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ffe875;
+    box-shadow: 0 0 9px 3px rgba(255, 232, 117, 0.85);
+    animation: domFirefly 4.2s ease-in-out infinite;
+}
+
+@keyframes domBob {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+}
+@keyframes domBubBob {
+    50% {
+        transform: translate(-50%, -4px);
+    }
+}
+@keyframes domSmoke {
+    0% {
+        transform: translateY(0) scale(0.55);
+        opacity: 0;
+    }
+    25% {
+        opacity: 0.78;
+    }
+    100% {
+        transform: translateY(-18px) translateX(5px) scale(1.3);
+        opacity: 0;
+    }
+}
+@keyframes domPlane {
+    0% {
+        transform: translateX(-60px) translateY(10px);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(480px) translateY(-14px);
+        opacity: 0;
+    }
+}
+@keyframes domPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.65);
+        opacity: 0.9;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.6);
+        opacity: 0;
+    }
+}
+@keyframes domFirefly {
+    0%,
+    100% {
+        transform: translate(0, 0);
+        opacity: 0.15;
+    }
+    45% {
+        transform: translate(8px, -10px);
+        opacity: 0.95;
+    }
+    75% {
+        transform: translate(-6px, -4px);
+        opacity: 0.55;
+    }
+}
+
+html.calm .dom-scene *,
+html.calm .dom-scene *::before,
+html.calm .dom-scene *::after {
+    animation: none !important;
+}
+
+@media (max-width: 400px) {
+    .dom-name {
+        font-size: 9.5px;
+        padding: 0 5px;
+    }
+    .dom-bub {
+        height: 31px;
+        min-width: 34px;
+        font-size: 10.5px;
+        padding: 2px 6px 2px 3px;
+    }
+    .dom-bub .ico {
+        width: 20px;
+        height: 20px;
+    }
+}
