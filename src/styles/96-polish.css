@@ -1,0 +1,506 @@
+/* 1.148 : Éclat de la ferme — sublime le décor, le Champ, les Prés et l'Atelier (100 % isolé et réversible). */
+
+:root {
+    --glint: rgba(255, 255, 255, 0.34);
+    --glint-s: rgba(255, 255, 255, 0.22);
+    --glint-b: rgba(255, 255, 255, 0.44);
+}
+
+/* ---------------- 1. Décor & horizon vivants ---------------- */
+#sun {
+    box-shadow:
+        0 0 28px 8px rgba(255, 226, 110, 0.42),
+        0 0 60px 18px rgba(255, 210, 63, 0.2);
+}
+
+#stars {
+    animation: starTwinkle 5.5s ease-in-out infinite alternate;
+}
+
+#hills .hill-sails {
+    transform-origin: 30px 20px;
+    animation: hillSpin 22s linear infinite;
+}
+
+html.night #hills .hill-mist {
+    opacity: 0.08;
+}
+
+html.season-printemps #hills .tree-top:nth-of-type(even) {
+    fill: #f6b2ca;
+}
+
+html.season-automne #hills .tree-top:nth-of-type(even) {
+    fill: #f0b23a;
+}
+
+/* ---------------- 2. Le Champ, la Serre & la Cour ---------------- */
+.field {
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.34),
+        inset 0 -8px 0 rgba(58, 38, 24, 0.11),
+        0 8px 0 #568a32,
+        0 8px 0 3px var(--ink),
+        0 14px 24px rgba(58, 38, 24, 0.22);
+}
+
+/* Doux voile de lumière solaire en diagonale sur l'herbe du champ (sans toucher ::after des guirlandes de fête) */
+.field::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 19px;
+    pointer-events: none;
+    background: linear-gradient(140deg, rgba(255, 252, 224, 0.24) 0%, rgba(255, 252, 224, 0) 44%, rgba(35, 68, 22, 0.09) 100%);
+    z-index: 0;
+}
+
+html.night .field::before {
+    background: linear-gradient(160deg, rgba(160, 195, 255, 0.1), rgba(14, 22, 52, 0.14));
+}
+
+.plots {
+    position: relative;
+    z-index: 1;
+}
+
+/* Parcelles tactiles : ressort immédiat au doigt & transitions fluides */
+.plot {
+    transition:
+        transform 0.12s cubic-bezier(0.25, 1.4, 0.5, 1),
+        box-shadow 0.15s ease,
+        filter 0.18s ease;
+}
+
+.plot:active:not(.hidden) {
+    transform: translateY(2px) scale(0.95);
+    box-shadow: 0 2px 0 rgba(58, 38, 24, 0.65);
+}
+
+.plot.grass {
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.35),
+        inset 0 -2px 0 rgba(58, 38, 24, 0.08),
+        0 4px 0 rgba(58, 38, 24, 0.58);
+}
+
+.plot.watered {
+    box-shadow:
+        inset 0 3px 6px rgba(24, 14, 6, 0.28),
+        inset 0 -2px 0 rgba(168, 224, 255, 0.24),
+        0 4px 0 rgba(58, 38, 24, 0.62);
+}
+
+/* Cultures prêtes : halo doré chaleureux immédiatement lisible */
+.plot.ready {
+    box-shadow:
+        inset 0 0 0 2px rgba(255, 244, 178, 0.92),
+        0 0 12px rgba(255, 214, 70, 0.55),
+        0 4px 0 rgba(58, 38, 24, 0.62);
+}
+
+.plot.ready .spr-wrap {
+    filter: drop-shadow(0 2px 3px rgba(58, 38, 24, 0.24)) drop-shadow(0 0 6px rgba(255, 232, 120, 0.45));
+}
+
+.plot.planted .spr-wrap {
+    filter: drop-shadow(0 2px 1px rgba(58, 38, 24, 0.22));
+}
+
+/* Serre : éclat vitré oblique pour renforcer la sensation de verre lumineux */
+.glasshouse {
+    overflow: hidden;
+    box-shadow:
+        inset 0 12px 0 #a8703c,
+        inset 0 15px 0 var(--ink),
+        0 9px 0 #7a4a2a,
+        0 9px 0 3px var(--ink),
+        0 14px 22px rgba(58, 38, 24, 0.2);
+}
+
+.glasshouse::after {
+    content: '';
+    position: absolute;
+    inset: 15px 0 0 0;
+    pointer-events: none;
+    z-index: 2;
+    background: linear-gradient(
+        118deg,
+        transparent 14%,
+        var(--glint) 22%,
+        transparent 32%,
+        transparent 62%,
+        var(--glint-s) 68%,
+        transparent 74%
+    );
+}
+
+/* Carte de la Maison : vrai petit décor de jardin et halo chaud la nuit */
+.farmyard {
+    background:
+        linear-gradient(180deg, rgba(220, 244, 255, 0.55) 0 46%, rgba(162, 218, 118, 0.36) 46% 100%),
+        linear-gradient(#fffbee, var(--paper));
+    box-shadow:
+        0 4px 0 var(--wood-d),
+        inset 0 2px 0 rgba(255, 255, 255, 0.7);
+    transition: transform 0.08s ease;
+}
+
+.farmyard:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--wood-d);
+}
+
+.farmyard .yard-house {
+    position: relative;
+    filter: drop-shadow(0 3px 0 rgba(58, 38, 24, 0.22));
+}
+
+html.night .farmyard .yard-house {
+    filter: drop-shadow(0 0 10px rgba(255, 214, 102, 0.65)) drop-shadow(0 3px 0 rgba(58, 38, 24, 0.35));
+}
+
+/* Bandeaux À faire & Objectif : plus nets et tactiles */
+.todo-chip {
+    background: linear-gradient(180deg, #fffdf4, var(--paper));
+    box-shadow:
+        0 2.5px 0 var(--wood-d),
+        inset 0 1.5px 0 rgba(255, 255, 255, 0.75);
+    transition: transform 0.08s ease;
+}
+
+.todo-chip:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--wood-d);
+}
+
+/* ---------------- 3. Les Prés : clôture, lumière, mare vivante & ombres des animaux ---------------- */
+.meadow {
+    background-image:
+        linear-gradient(165deg, rgba(255, 252, 220, 0.26) 0%, rgba(255, 252, 220, 0) 46%, rgba(44, 86, 28, 0.14) 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M6 22l1.5-5 1.5 5M26 10l1.5-5 1.5 5M20 34l1.2-4 1.2 4' stroke='%236cc04a' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='34' cy='30' r='2' fill='%23fff'/%3E%3Ccircle cx='34' cy='30' r='.8' fill='%23ffd23f'/%3E%3C/svg%3E");
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.34),
+        inset 0 -10px 0 rgba(48, 88, 26, 0.14),
+        0 8px 0 #568a32,
+        0 8px 0 3px var(--ink),
+        0 14px 24px rgba(58, 38, 24, 0.22);
+}
+
+/* Clôture en bois qui borde le haut du pré (suit le style de clôture choisi par le joueur !) */
+.meadow::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 22px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.92;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='22'%3E%3Crect x='0' y='7' width='28' height='4.5' fill='%23e8c38c' stroke='%233a2618' stroke-width='1.8'/%3E%3Crect x='0' y='14' width='28' height='3.5' fill='%23e8c38c' stroke='%233a2618' stroke-width='1.8'/%3E%3Cpath d='M10 21V5l4-4 4 4v16z' fill='%23f5deb3' stroke='%233a2618' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E")
+        repeat-x;
+}
+
+html.fence-white .meadow::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='22'%3E%3Crect x='0' y='7' width='28' height='4.5' fill='%23ffffff' stroke='%233a2618' stroke-width='1.8'/%3E%3Crect x='0' y='14' width='28' height='3.5' fill='%23ffffff' stroke='%233a2618' stroke-width='1.8'/%3E%3Cpath d='M10 21V5l4-4 4 4v16z' fill='%23ffffff' stroke='%233a2618' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+html.fence-hedge .meadow::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='22'%3E%3Cpath d='M0 21 V10 q7 -9 15 -2 q8 -7 15 2 V21z' fill='%234f9e3a' stroke='%233a2618' stroke-width='1.8'/%3E%3Ccircle cx='9' cy='13' r='1.3' fill='%237fcf4c'/%3E%3Ccircle cx='21' cy='15' r='1.3' fill='%237fcf4c'/%3E%3C/svg%3E");
+}
+
+html.fence-flowers .meadow::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='22'%3E%3Crect x='0' y='10' width='28' height='4.5' fill='%23e8c38c' stroke='%233a2618' stroke-width='1.8'/%3E%3Cpath d='M12 21V7l2-2 2 2v14z' fill='%23f5deb3' stroke='%233a2618' stroke-width='1.8'/%3E%3Ccircle cx='5' cy='7' r='3' fill='%23e8364b' stroke='%233a2618' stroke-width='1.3'/%3E%3Ccircle cx='23' cy='6' r='3' fill='%23ffd23f' stroke='%233a2618' stroke-width='1.3'/%3E%3C/svg%3E");
+}
+
+html.season-printemps .meadow {
+    background-image:
+        linear-gradient(165deg, rgba(255, 252, 224, 0.28) 0%, rgba(255, 252, 224, 0) 48%, rgba(44, 86, 28, 0.1) 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52'%3E%3Cpath d='M8 22l1.4-4.5 1.4 4.5M34 14l1.4-4.5 1.4 4.5' stroke='%2364b844' stroke-width='1.7' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='40' r='2.5' fill='%23fff'/%3E%3Ccircle cx='18' cy='40' r='1' fill='%23ffd23f'/%3E%3Ccircle cx='42' cy='34' r='2.4' fill='%23f6a5b5'/%3E%3C/svg%3E");
+}
+
+html.season-automne .meadow {
+    background-image:
+        linear-gradient(165deg, rgba(255, 232, 168, 0.24) 0%, rgba(255, 232, 168, 0) 48%, rgba(92, 62, 20, 0.14) 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M10 14 q5 -5 9 0 q-4 5 -9 0z' fill='%23e8792a'/%3E%3Cpath d='M38 40 q5 -5 9 0 q-4 5 -9 0z' fill='%23c8453a'/%3E%3C/svg%3E");
+}
+
+html.season-hiver .meadow {
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.6),
+        inset 0 -10px 0 rgba(110, 145, 160, 0.15),
+        0 8px 0 #8aa79a,
+        0 8px 0 3px var(--ink),
+        0 14px 24px rgba(58, 38, 24, 0.18);
+}
+
+/* Mare vivante : berge sablée, reflet animé et nénuphar */
+.meadow .pond {
+    box-shadow:
+        0 0 0 5px rgba(232, 206, 152, 0.58),
+        inset 0 4px 10px rgba(255, 255, 255, 0.45),
+        inset 0 -6px 12px rgba(26, 78, 126, 0.25);
+}
+
+.meadow .pond::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 20px;
+    width: 58px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--glint-b);
+    animation: pondGlint 4.2s ease-in-out infinite;
+}
+
+.meadow .pond::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    bottom: 24px;
+    width: 18px;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 60% 42%, #f8a8c4 0 28%, #54a842 30% 100%);
+    border: 1.6px solid var(--ink);
+}
+
+html.season-hiver .meadow .pond {
+    background: radial-gradient(ellipse at 40% 35%, #eef9ff, #b8dff2);
+}
+
+html.season-hiver .meadow .pond::after {
+    opacity: 0;
+}
+
+/* Ombres douces au sol sous chaque animal du pré */
+.critter::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 4px;
+    width: 50px;
+    height: 13px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(42, 32, 16, 0.28), rgba(42, 32, 16, 0) 72%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.critter.baby::before {
+    width: 34px;
+    height: 9px;
+}
+
+.critter-body {
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 2px 0 rgba(58, 38, 24, 0.16));
+}
+
+.critter:active .critter-body {
+    transform: scale(0.92);
+}
+
+.critter.flip:active .critter-body {
+    transform: scaleX(-0.92) scaleY(0.92);
+}
+
+.bubble {
+    background: linear-gradient(180deg, #ffffff, #fff6d6);
+    box-shadow:
+        0 3px 0 rgba(58, 38, 24, 0.32),
+        0 6px 12px rgba(58, 38, 24, 0.14);
+}
+
+.bubble::after {
+    background: #fff6d6;
+}
+
+.critter-name {
+    box-shadow: 0 2px 0 rgba(58, 38, 24, 0.22);
+}
+
+/* ---------------- 4. L'Atelier : hiérarchie visuelle immédiate & établi vivant ---------------- */
+.mtile {
+    transition:
+        transform 0.09s ease,
+        box-shadow 0.12s ease;
+}
+
+.mtile:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--wood-d);
+}
+
+/* Petit socle d'établi doux sous chaque machine */
+.m-art::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 2px;
+    width: 54px;
+    height: 12px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(112, 74, 38, 0.22), rgba(112, 74, 38, 0) 72%);
+    pointer-events: none;
+}
+
+.m-art > svg {
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 3px 0 rgba(58, 38, 24, 0.18));
+}
+
+/* Machine prête : éclat doré chaleureux & bouton Récupérer irrésistible */
+.mtile.has-out {
+    background: linear-gradient(180deg, #fffbe2 0%, #ffe694 100%);
+    box-shadow:
+        0 4px 0 #8a5e18,
+        0 0 0 2px rgba(255, 224, 110, 0.55),
+        inset 0 2px 0 #fff;
+}
+
+.mtile.has-out .m-art::before {
+    background: radial-gradient(ellipse, rgba(242, 193, 78, 0.55), rgba(242, 193, 78, 0) 74%);
+}
+
+.m-collect {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #ffe073 0%, #f2b738 100%);
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.58);
+}
+
+.m-collect::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 30%, var(--glint-b) 48%, transparent 66%);
+    transform: translateX(-110%);
+    animation: sheenSweep 3.4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Machine en marche : barre de cuisson animée douce */
+.mtile.working {
+    background: linear-gradient(180deg, #fffef8 0%, #f7ebd2 100%);
+}
+
+.mtile.working .m-bar > i {
+    background:
+        repeating-linear-gradient(-45deg, var(--glint-s) 0 7px, transparent 7px 14px),
+        linear-gradient(#b8ee88, #6dc442);
+    background-size: 28px 100%, 100% 100%;
+    animation: barFlow 1.6s linear infinite;
+}
+
+/* Machine à l'arrêt : plus apaisée pour faire ressortir les actives et prêtes */
+.mtile:not(.working):not(.has-out) {
+    background: linear-gradient(180deg, #faf3e2 0%, #efe2c6 100%);
+}
+
+.mtile:not(.working):not(.has-out) .m-idle {
+    color: var(--ink-soft);
+    font-weight: 800;
+}
+
+.rtile {
+    transition: transform 0.08s ease;
+}
+
+.rtile:active:not(:disabled) {
+    transform: translateY(2px);
+}
+
+/* ---------------- 5. Finition HUD, barre d'XP & onglets ---------------- */
+.xp-bar > i::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 25%, var(--glint) 50%, transparent 75%);
+    transform: translateX(-120%);
+    animation: sheenSweep 5.5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.pill {
+    background: linear-gradient(180deg, #fffcf2, var(--wood-ll));
+    box-shadow:
+        0 3px 0 var(--wood-d),
+        inset 0 1.5px 0 rgba(255, 255, 255, 0.72);
+}
+
+/* ---------------- Animations douces & mode calme ---------------- */
+@keyframes hillSpin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes starTwinkle {
+    0% {
+        filter: brightness(0.88);
+    }
+    100% {
+        filter: brightness(1.18);
+    }
+}
+
+@keyframes pondGlint {
+    0%,
+    100% {
+        transform: translateX(0) scaleX(1);
+        opacity: 0.38;
+    }
+    50% {
+        transform: translateX(6px) scaleX(1.12);
+        opacity: 0.65;
+    }
+}
+
+@keyframes sheenSweep {
+    0%,
+    65% {
+        transform: translateX(-120%);
+    }
+    100% {
+        transform: translateX(130%);
+    }
+}
+
+@keyframes barFlow {
+    from {
+        background-position: 0 0, 0 0;
+    }
+    to {
+        background-position: 28px 0, 0 0;
+    }
+}
+
+html.calm #stars,
+html.calm #hills .hill-sails,
+html.calm .meadow .pond::before,
+html.calm .m-collect::after,
+html.calm .mtile.working .m-bar > i,
+html.calm .xp-bar > i::after {
+    animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #stars,
+    #hills .hill-sails,
+    .meadow .pond::before,
+    .m-collect::after,
+    .mtile.working .m-bar > i,
+    .xp-bar > i::after {
+        animation: none !important;
+    }
+}

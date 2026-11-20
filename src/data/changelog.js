@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.148",
+  "title": "Éclat de la ferme",
+  "date": "20 novembre 2026",
+  "items": [
+   "Horizon vivant : petit moulin aux ailes qui tournent doucement sur la colline, chemin vers la grange rouge, bosquets de saison, halo solaire chaud et étoiles scintillantes la nuit",
+   "Le Champ, la Serre et la Cour : retour tactile élastique sur chaque parcelle, halo doré sur les cultures mûres, reflets vitrés obliques sur la serre et petit décor de jardin derrière votre maison",
+   "Les Prés : clôture de bois (qui suit votre style de clôture), lumière de saison, mare animée avec nénuphar et vraie ombre au sol sous chaque animal",
+   "L’Atelier : lecture immédiate entre machines prêtes (éclat doré et bouton Récupérer lumineux), machines en marche (barre animée) et machines au repos"
+  ]
+ },
+ {
   "v": "1.147",
   "title": "Les poissons retournent à la poissonnerie",
   "date": "19 novembre 2026",
