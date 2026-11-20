@@ -95,40 +95,7 @@ export const GUIDE_PAGES = [
             'Rien ne se perd jeu fermé : cultures, machines, cave et visiteurs avancent sans vous.',
             'On ne vous punit jamais pour une pause : seuls les imprévus attendent votre retour.',
         ],
-        see: ['vuedomaine', 'time', 'screens', 'levels'],
-    },
-    {
-        id: 'vuedomaine',
-        cat: 'base',
-        name: 'La Vue du Domaine',
-        icon: ['ui', 'house'],
-        lvl: 1,
-        go: 'domaine',
-        intro: 'Une carte vivante et illustrée de toute votre ferme : voyez ce qui vous attend d’un seul coup d’œil et faites votre tournée en quelques gestes.',
-        secs: [
-            {
-                h: 'Deux gestes sur chaque zone',
-                b: [
-                    'Touchez la bulle qui flotte au-dessus d’un bâtiment pour agir tout de suite sans changer d’écran : récolter le champ, arroser, ramasser les œufs et le lait, vider les machines, encaisser l’étal, remuer la Cave, soigner une macération de parfum ou ramener vos récoltes des Voyages.',
-                    'Touchez le bâtiment lui-même pour ouvrir sa fiche actionnable : ressemer les champs, relancer vos dernières recettes d’atelier, suivre les barres en direct, livrer les commandes prêtes ou accéder à l’écran complet.',
-                ],
-            },
-            {
-                h: 'Tournée rapide, vie & outils',
-                b: [
-                    'La bande collante du haut reste toujours accessible au défilement : bouton « Tout » pour enchaîner les récoltes prêtes et « Suivant → » pour sauter d’une zone active à l’autre.',
-                    'Le domaine vit au rythme réel de votre ferme : météo (pluie, neige, arc-en-ciel, pétales ou feuilles), ailes du moulin, Filou dans la cour, Mamie Odette, un habitant du jour et votre conjoint·e près de la Maison.',
-                    'Mode Focus (étoile) : masque les bâtiments au repos pour faire ressortir uniquement ce qui vous attend.',
-                    'Personnalisation (fleurs) : choisissez le style du chemin (Sable, Pavés, Tomette) et posez vos décorations et trophées débloqués au fil de votre progression.',
-                    'Mode Carte postale (appareil photo) : masque les bulles et permet d’enregistrer une vraie image PNG souvenir de votre domaine.',
-                ],
-            },
-        ],
-        tips: [
-            'Les zones non encore débloquées restent de jolis bois et s’ouvrent naturellement au fil de votre progression.',
-            'Tous les onglets classiques (Ferme, Animaux, Atelier, Village, Marché) restent accessibles à tout moment.',
-        ],
-        see: ['start', 'screens', 'field'],
+        see: ['time', 'screens', 'levels'],
     },
     {
         id: 'time',

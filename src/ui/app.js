@@ -38,11 +38,6 @@ export const ui = {
 
 export const TABS = [
     {
-        id: 'domaine',
-        name: 'Domaine',
-        icon: ['ui', 'house'],
-    },
-    {
         id: 'farm',
         name: 'Ferme',
         icon: ['item', 'wheat'],
@@ -437,7 +432,7 @@ function handleKey(e) {
         return;
     }
     if (momentShown() || anySheet()) return;
-    if (/^[1-6]$/.test(e.key) && TABS[+e.key - 1]) return go(TABS[+e.key - 1].id);
+    if (/^[1-5]$/.test(e.key)) return go(TABS[+e.key - 1].id);
     const k = e.key.toLowerCase(),
         p = currentPath();
     const press = act => {

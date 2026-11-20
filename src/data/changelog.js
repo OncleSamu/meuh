@@ -1,44 +1,6 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
-  "v": "1.149",
-  "title": "Le Domaine vivant, météo et cockpit en un geste",
-  "date": "20 novembre 2026",
-  "items": [
-   "Paysage unifié & hameaux naturels : vrais arbres illustrés de saison sur les lisières, ombres douces sous chaque bâtiment, 8 parcelles en direct dans les Champs, 3 arbres au Verger, 4 animaux dans les Prés et le Château sur la Cave dès son ouverture",
-   "Vie & météo réelles : nuages qui dérivent, pluie, orage, neige, arc-en-ciel, rayons de soleil, pétales au printemps, feuilles en automne, ailes du moulin qui tournent, papillons, Filou qui trottine tout seul dans la cour, Mamie Odette, un habitant de passage chaque jour et votre conjoint·e près de la Maison",
-   "Cockpit ultra pratique : barre de Tournée rapide collante en haut de l’écran avec bouton « Suivant → », micro-jauges live sous les Ateliers, la Cave, la Parfumerie et la Grange, chrono du train à quai et mini-fiches actionnables (ressemer le champ, relancer les machines, soigner/remuer la Cave, livrer les commandes prêtes)",
-   "Votre Domaine & Carte postale PNG : 15 décorations posables qui se débloquent avec votre progression (Verger, Étang, Île, Parfumerie, Château, Statue Meuh…) et bouton « Enregistrer PNG » en mode Carte postale pour sauvegarder un souvenir de votre ferme"
-  ]
- },
- {
-  "v": "1.148.2",
-  "title": "Un Domaine plus organique et vivant",
-  "date": "20 novembre 2026",
-  "items": [
-   "Vue du Domaine : fini la grille symétrique ! Les bâtiments suivent désormais un vrai sentier sinueux en S, décalés naturellement sans aucun chevauchement",
-   "Paysage plus humain : cour de ferme chaleureuse autour de la Maison et la Grange, ruisseau sinueux et petit pont en bois, coteau de vignes derrière la Cave, clairière de lavande autour de la Parfumerie, bottes de foin, panneau directionnel et Mamie Odette en promenade sur le sentier"
-  ]
- },
- {
-  "v": "1.148.1",
-  "title": "Domaine plus aéré sur téléphone",
-  "date": "20 novembre 2026",
-  "items": [
-   "Vue du Domaine : mise en page verticalement plus aérée (6 plans bien espacés) et sprites composites (train, serre, écuries) strictement contenus dans leur zone — aucun chevauchement sur téléphone, même avec les bulles et étiquettes"
-  ]
- },
- {
-  "v": "1.148",
-  "title": "La Vue du Domaine",
-  "date": "20 novembre 2026",
-  "items": [
-   "Nouvel onglet Domaine : une carte illustrée et vivante de toute votre ferme qui évolue au fil de vos déblocages, des saisons et du cycle jour/nuit (avec fenêtres éclairées, lucioles et avion-cargo dans le ciel)",
-   "Tournée rapide en 1 geste : touchez la bulle d’un bâtiment pour récolter, arroser, ramasser les œufs/lait, vider les machines, encaisser l’étal ou soigner une macération de parfum sans changer d’écran — ou utilisez le bouton « Tout faire »",
-   "Confort & personnalisation : mode Focus (pour ne faire ressortir que les bâtiments qui vous attendent), style du chemin (Sable, Pavés, Tomette), 5 emplacements de décorations/trophées sur le domaine et mode Carte postale"
-  ]
- },
- {
   "v": "1.147",
   "title": "Les poissons retournent à la poissonnerie",
   "date": "19 novembre 2026",
