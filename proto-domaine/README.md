@@ -1,16 +1,8 @@
-# Prototype isolé — Vue du Domaine (Meuh)
+# Prototype isolé — Vue du Domaine (100 % vibe Meuh)
 
-Maquette interactive complète et 100 % autonome (`index.html`), totalement séparée du code de Meuh (`src/`, `docs/`, `tools/`).
+Version authentique de ce qui serait ajouté à Meuh, toujours 100 % isolée dans `proto-domaine/` (aucun fichier de `src/`, `index.html`, `VERSION` ou `tools/` n'est modifié).
 
-## Ce qu'on peut tester
-- **Formats** : `📱 Tel` (scroll vertical 3 plans pensé pour le pouce) et `💻 Large` (panorama complet).
-- **Ambiance dynamique** : `🌅 Aube / ☀️ Jour / 🌇 Soir / 🌙 Nuit` (rayons, étoiles, lune, fenêtres éclairées, lanternes, lucioles), **4 saisons** (pétales, été, feuilles d'automne, toits enneigés & flocons), **pluie**, **mode calme** (`🌿 Calme`).
-- **Progression organique** : `🌱 Niv. 3 → 🏡 Niv. 25 → 👑 Niv. 60` (les bois s'ouvrent peu à peu, zéro cadenas gris).
-- **Vie qui réagit** : train qui siffle et roule physiquement sur les rails puis revient, champs qui passent par *blé mûr → récolte → semer en 1 tap → pousses → repousse*, soin Parfumerie via mini-popover direct, Filou qui se promène, Mamie Odette en visite, abeilles, vache, cheval, avion cargo, oiseaux, ronds dans l'eau.
-- **Praticité** : barre *Tournée rapide* (`✨ Tout faire` + puces de centrage), mode **Focus** (`👁️`) qui isole les bâtiments actifs, **Personnalisation** (`🎨` : couleur Maison, pavés du chemin, 5 emplacements de trophées/décos), et mode **Carte postale** (`📸`).
-
-## Supprimer proprement
-Effacer simplement ce dossier :
-```bash
-rm -rf proto-domaine
-```
+- **Assets réels** : `build.mjs` embarque directement 92 vrais sprites SVG de `src/art/` (maisons évolutives + 3 toits, bâtiments du village/domaine, machines, train, animaux, cultures à plusieurs stades, Mamie Odette, Filou, décos/trophées et toutes les icônes HUD/onglets — zéro emoji dans le jeu).
+- **DA officielle Meuh** : police Nunito, HUD flottant sur le ciel (`.lvl-star`, `.xp-bar`, `.pill`), barre d'onglets en bois verni `#a8693a` avec onglet actif doré relevé, boutons BD `#3a2618` et palettes saisonnières exactes de `src/styles/70-village.css`.
+- **Régénérer** : `node proto-domaine/build.mjs`
+- **Supprimer proprement** : `git rm -r proto-domaine`
