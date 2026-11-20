@@ -1757,6 +1757,48 @@ export const GUIDE_PAGES = [
         see: ['cargo', 'armand', 'trains'],
     },
     {
+        id: 'gtable',
+        cat: 'village',
+        name: 'La Grande Table Étoilée',
+        icon: ['ui', 'gtable'],
+        lvl: 26,
+        go: 'village/table',
+        intro: 'Dès le niveau 26, ouvrez votre restaurant gastronomique au village : services en salle, accords mets & boissons, brigade de villageois, critiques anonymes et course aux 3 Étoiles.',
+        secs: [
+            {
+                h: 'Ouvrir un service en salle',
+                b: [
+                    'Contrairement à La Maison (qui vend des coffrets à emporter), La Grande Table accueille de vrais convives assis à table quand vous décidez d’ouvrir le service (3 à 6 tables selon la taille de votre salle).',
+                    'Chaque table arrive avec une envie de terroir (Terroir de la Ferme, Table de la Mer, Douceurs & Pâtisserie, et vos contrées débloquées).',
+                ],
+            },
+            {
+                h: 'Composer l’harmonie parfaite',
+                b: [
+                    'Choisissez un plat principal, un accompagnement ou dessert facultatif, et un accord boisson (bouteille de votre Cave, bière maison de votre Brasserie ou boisson du Comptoir).',
+                    'Votre note sur 100 dépend de l’accord terroir, de la fraîcheur de saison, de la qualité des produits, de l’accord boisson, du décor de la salle et de la variété de votre carte (servir le même plat plusieurs fois de suite lasse les habitués).',
+                ],
+            },
+            {
+                h: 'Synergies avec toute la vallée',
+                b: [
+                    'Brigade : recrutez jusqu’à 3 amis du village (3 cœurs et +) ou vos enfants adultes de la Famille en cuisine, sommellerie et salle.',
+                    'Parfumerie : diffusez un de vos parfums comme parfum d’ambiance en salle (gratuit et permanent avec votre Parfum signature).',
+                    'La Maison : glissez un de vos coffrets Maison comme cadeau VIP sur une table (+12 pts d’accueil et +25 % de pourboire).',
+                ],
+            },
+            {
+                h: 'Critiques anonymes & 3 Étoiles',
+                t: 'Un inspecteur du Guide se glisse régulièrement incognito à une table — un indice discret dans son dialogue permet de le repérer. Réussissez sa table pour publier une chronique dans votre Livre d’Or et grimper de Bib Gourmand jusqu’à 3 Étoiles (conservées au Prestige).',
+            },
+        ],
+        tips: [
+            'Utilisez « Suggestion du Chef » dans le tiroir de dressage pour pré-remplir le meilleur accord disponible dans vos stocks.',
+            'Les Banquets d’Honneur offrent de gros cachets et de la renommée dès que votre rang les débloque.',
+        ],
+        see: ['family', 'cave', 'brewery', 'perfume'],
+    },
+    {
         id: 'family',
         cat: 'village',
         name: 'La famille',

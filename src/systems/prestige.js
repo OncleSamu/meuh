@@ -56,6 +56,8 @@ export function doPrestige(challenge, theme) {
         brew: state.brew ? { ...state.brew, stock: {}, q: {}, vats: [], barrels: [] } : null,
         // 1.143 : la parfumerie garde ses créations, son Orgue et sa signature ; flacons, dame-jeannes et commandes partent avec la ferme
         perfume: state.perfume ? { ...state.perfume, stock: {}, q: {}, vats: [], orders: [], demand: {} } : null,
+        // 1.150 : La Grande Table garde ses Étoiles, son Livre d'Or, ses styles et son palmarès ; le service en cours et le parfum d'ambiance repartent
+        gtable: state.gtable ? { ...state.gtable, service: null, scent: null, nextAt: 0, lastReport: null, brigade: { chef: null, sommelier: null, maitre: null } } : null,
         // les grands défis gardent leurs trophées ; le défi en cours est mis de côté
         defis: state.defis ? { ...state.defis, cur: null } : null,
         night: state.night,

@@ -85,3 +85,4 @@ export * from './seedcat.js';
 export * from './family.js';
 export * from './plan.js';
 export * from './perfume.js';
+export * from './gtable.js';

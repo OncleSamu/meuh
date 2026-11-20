@@ -96,7 +96,9 @@ import './animaux/ration.js';
 import './animaux/seconds.js';
 import './retouches/produits-uniques.js';
 import { perfumeUiIcon } from './perfume.js';
+import { gtableUiIcon } from './gtable.js';
 ui.perfume = perfumeUiIcon;
+ui.gtable = gtableUiIcon;
 
 export const SPR = {
     farmhouse(l, roof) {

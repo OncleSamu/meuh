@@ -68,6 +68,9 @@ export const ACHIEVEMENTS = [
     // 1.143 : L'Atelier du Parfumeur
     { id: 'perfumes', name: 'Parfumeur', desc: 'Mettre en flacon {n} parfum{s}', icon: ['ui', 'perfume'], tiers: [12, 120, 1000] },
     { id: 'perfumeOrders', name: 'Nez du salon', desc: 'Livrer {n} commande{s} de parfum', icon: ['ui', 'perfume'], tiers: [5, 25, 80] },
+    // 1.150 : La Grande Table Étoilée
+    { id: 'gtableServices', name: 'Chef de Table', desc: 'Assurer {n} service{s} à La Grande Table', icon: ['ui', 'gtable'], tiers: [3, 15, 50] },
+    { id: 'gtableStars', name: 'Table Étoilée', desc: 'Décrocher {n} étoile{s} au Guide', icon: ['ui', 'gtable'], tiers: [1, 2, 3] },
 ];
 
 // ---------------- Compétences ----------------
@@ -475,6 +478,7 @@ export const RECORDS = {
     contest: { name: 'Meilleur score au concours', unit: 'points', icon: ['ui', 'podium'] },
     auction: { name: 'Plus belle vente aux enchères', unit: 'pièces', icon: ['ui', 'gavel'] },
     lot: { name: 'Plus beau lot sorti de la cave', unit: 'pièces', icon: ['ui', 'cave'] },
+    gtableScore: { name: 'Meilleure note à La Grande Table', unit: '/ 100', icon: ['ui', 'gtable'] },
     streak: { name: 'Plus longue série de cadeaux du jour', unit: 'jour', icon: ['ui', 'calendar'] },
 };
 
