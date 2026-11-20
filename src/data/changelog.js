@@ -1,26 +1,6 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
-  "v": "1.150.1",
-  "title": "Correctif onglets internes de La Grande Table",
-  "date": "20 novembre 2026",
-  "items": [
-   "Village › Table : les 4 volets internes (Salle, Brigade, Banquets, Livre d’Or) s’affichent et basculent désormais correctement"
-  ]
- },
- {
-  "v": "1.150",
-  "title": "La Grande Table Étoilée",
-  "date": "20 novembre 2026",
-  "items": [
-   "Nouvel onglet Village › Table (dès le niveau 26) : fondez et agrandissez votre restaurant gastronomique de 3 à 6 tables avec 4 décors de salle illustrés (Bistrot Vichy, Lin & Oliviers, Velours & Laiton, Or & Cristal)",
-   "Services vivants & harmonie gastronomique : ouvrez le service quand vous voulez et composez chaque assiette (plat principal, accompagnement/dessert et accord boisson avec vos vraies bouteilles de Cave, bières maison de la Brasserie ou boissons du Comptoir) selon l’envie du soir, la saison, la qualité et la variété de votre carte",
-   "Critiques anonymes & course aux 3 Étoiles : repérez les inspecteurs du Guide incognito grâce à leurs indices en salle, collectionnez leurs chroniques dans le Livre d’Or et grimpez de Table de campagne à Bib Gourmand, ★, ★★ puis ★★★ (conservées au Prestige)",
-   "Synergies avec toute la vallée : recrutez une Brigade de villageois (3 cœurs et +) et vos enfants adultes de la Famille, diffusez un parfum de votre Parfumerie en salle, offrez un coffret de votre Maison comme cadeau VIP sur une table (+12 pts & +25 %) et organisez 4 grands Banquets d’Honneur",
-   "Succès, Statistiques, Records, Guide & À faire : 2 nouveaux succès (Chef de Table, Table Étoilée), suivi des revenus et couverts dans les statistiques, record personnel, alerte « À faire » et page complète dans le Guide"
-  ]
- },
- {
   "v": "1.148",
   "title": "Éclat de la ferme",
   "date": "20 novembre 2026",

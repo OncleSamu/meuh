@@ -421,7 +421,6 @@ export function statsData() {
             (inc.cave || 0) +
             (inc.brew || 0) +
             (inc.perfume || 0) +
-            (inc.gtable || 0) +
             (inc.counter || 0) +
             (inc.haras || 0);
     const sources = [
@@ -433,7 +432,6 @@ export function statsData() {
         // 1.75.2
         ['Brasserie', inc.brew || 0],
         ['Parfumerie', inc.perfume || 0],
-        ['Grande Table', inc.gtable || 0],
         ['Comptoir', inc.counter || 0],
         ['Haras', inc.haras || 0],
         ['Autres', Math.max(0, (S.earned || 0) - known)],
@@ -530,15 +528,6 @@ export function statsData() {
                 ['Soins aux enfants', n('kidCares'), ['ui', 'fmHome']],
                 ['Petits-enfants', n('grandkids'), ['ui', 'fmHome']],
                 ['Transmissions', n('legacies'), ['ui', 'house']],
-            ],
-        ],
-        [
-            'La Grande Table',
-            [
-                ['Services en salle', n('gtableServices'), ['ui', 'gtable']],
-                ['Couverts servis', n('gtableCovers'), ['item', 'soup']],
-                ['Critiques conquis', n('gtableCritics'), ['ui', 'star']],
-                ['Banquets d’honneur', n('gtableBanquets'), ['ui', 'trophy']],
             ],
         ],
     ];

@@ -14,7 +14,6 @@ import { GENETICS } from '../data/genetics.js';
 import { ABBEY } from '../data/abbey.js';
 import { CAVE_LVL } from '../data/cave.js';
 import { PERFUME_LVL } from '../data/perfume.js';
-import { GTABLE_LVL } from '../data/gtable.js';
 import { HARAS_LVL } from '../data/haras.js';
 import { CAMPING } from '../data/camping.js';
 import { COMICE } from '../data/elevage.js';
@@ -88,8 +87,6 @@ export const TABS = [
             ['camping', 'Camping', ['ui', 'tent'], () => CAMPING.lvl],
             // 1.123 : la famille
             ['family', 'Famille', ['ui', 'fmHome'], () => FAMILY.lvl],
-            // 1.150 : La Grande Table Étoilée
-            ['table', 'Table', ['ui', 'gtable'], () => GTABLE_LVL],
         ],
     },
     {
@@ -221,7 +218,6 @@ const HELP = {
     'farm/island': 'island',
     'village/camping': 'legend',
     'village/family': 'family',
-    'village/table': 'gtable',
     'animals/pasture': 'animals',
     'animals/haras': 'haras',
     'animals/comice': 'elevage',

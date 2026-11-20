@@ -212,11 +212,6 @@ export function todoList() {
     // 1.103 : le camping est dans Village › Camping
     const campN = G.campReady() + G.residentReady();
     if (campN) push('village/camping', ['ui', 'tent'], `${campN} à servir au camping`, campN);
-    if (G.gtableBuilt()) {
-        const gtW = G.gtableTablesWaiting();
-        if (gtW) push('village/table', ['ui', 'gtable'], `${gtW} table${s(gtW)} à servir à La Grande Table`, gtW, { urgent: true });
-        else if (G.gtableReadyToOpen()) push('village/table', ['ui', 'gtable'], 'La Grande Table est prête à ouvrir', 1);
-    }
     if (G.maisonReady()) push('machines/maison', ['ui', 'maison'], 'La Maison a des paquets à faire ou à vendre', G.maisonReady());
     if (G.canValleeFete()) push('village/camping', ['ui', 'tent'], 'Tout est prêt pour la fête de la vallée', 1);
     // 1.123 : la famille (un rendez-vous, la demande, la noce, le panier, un mot doux)

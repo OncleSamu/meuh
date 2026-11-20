@@ -37,7 +37,6 @@ import { setupComice } from './ui/views/comice.js';
 import { setupHerdbook } from './ui/sheets/herdbook.js';
 import { setupBrewery } from './ui/views/brewery.js';
 import { setupPerfume } from './ui/views/perfume.js';
-import { setupGTable } from './ui/views/gtable.js';
 import { setupCounter } from './ui/views/counter.js';
 import { setupFamily } from './ui/views/family.js';
 import { setupPlan } from './ui/sheets/plan.js';
@@ -114,7 +113,6 @@ function start() {
     setupHerdbook();
     setupBrewery();
     setupPerfume();
-    setupGTable();
     setupCounter();
     setupFamily();
     setupPlan();
