@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.148.2",
+  "title": "Un Domaine plus organique et vivant",
+  "date": "20 novembre 2026",
+  "items": [
+   "Vue du Domaine : fini la grille symétrique ! Les bâtiments suivent désormais un vrai sentier sinueux en S, décalés naturellement sans aucun chevauchement",
+   "Paysage plus humain : cour de ferme chaleureuse autour de la Maison et la Grange, ruisseau sinueux et petit pont en bois, coteau de vignes derrière la Cave, clairière de lavande autour de la Parfumerie, bottes de foin, panneau directionnel et Mamie Odette en promenade sur le sentier"
+  ]
+ },
+ {
   "v": "1.148.1",
   "title": "Domaine plus aéré sur téléphone",
   "date": "20 novembre 2026",

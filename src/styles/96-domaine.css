@@ -171,7 +171,7 @@
 
     position: relative;
     width: 100%;
-    aspect-ratio: 420 / 1680;
+    aspect-ratio: 420 / 1760;
     border: 3px solid var(--ink);
     border-radius: 20px;
     overflow: hidden;
@@ -697,6 +697,27 @@ html.night.season-hiver .dom-scene {
     height: 17px;
     animation: none;
     filter: none;
+}
+
+.dom-npc {
+    position: absolute;
+    z-index: 11;
+    transform: translate(-50%, -50%);
+    width: 9.5%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+.dom-npc .ico {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 3px 0 rgba(58, 38, 24, 0.22));
+    animation: domBob 3.2s ease-in-out 0.4s infinite;
+}
+.dom-scene.postcard .dom-npc .dom-dog-bub {
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* ---------------- décos posables sur le domaine ---------------- */

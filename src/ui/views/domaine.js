@@ -25,18 +25,18 @@ const DOM_DECOS = [
 ];
 
 const DECO_SLOTS = [
-    [15, 26],
-    [85, 26],
-    [84, 39],
-    [51, 55],
-    [50, 68],
+    [78, 28],
+    [86, 43],
+    [53, 59],
+    [48, 72],
+    [64, 24],
 ];
 
 const DOG_WAYPOINTS = [
-    [50, 47.5],
-    [36, 47.5],
-    [64, 47.5],
-    [50, 47.5],
+    [46, 46.5],
+    [36, 48],
+    [55, 45.5],
+    [42, 44.5],
 ];
 
 // État local purement visuel (jamais bloquant pour la sauvegarde)
@@ -259,7 +259,7 @@ function buildZones() {
         {
             id: 'station',
             name: 'Gare',
-            pos: [27, 14],
+            pos: [26, 12.5],
             w: 42,
             open: true,
             go: 'village/orders',
@@ -275,7 +275,7 @@ function buildZones() {
         {
             id: 'port',
             name: 'Voyages',
-            pos: [77, 14],
+            pos: [76, 16.5],
             w: 34,
             open: voyagesOpen,
             go: voyOpenPath,
@@ -288,7 +288,7 @@ function buildZones() {
         {
             id: 'village',
             name: 'Village',
-            pos: [50, 26],
+            pos: [34, 26.5],
             w: 36,
             open: state.level >= 3,
             go: campN > 0 ? 'village/camping' : famN > 0 ? 'village/family' : 'village/village',
@@ -302,22 +302,9 @@ function buildZones() {
                 }</div>`,
         },
         {
-            id: 'barn',
-            name: 'Grange',
-            pos: [20, 39],
-            w: 24,
-            open: true,
-            go: 'sheet:barn',
-            icon: ['ui', 'barn'],
-            tags: [`${G.barnUsed()} / ${G.barnCap()}`, stallSold ? `${stallSold} vente(s) à encaisser` : 'Réserves & coffre'],
-            desc: 'Tes stocks, le coffre de la grange et l’encaissement rapide de ton étal.',
-            bub: barnBub,
-            art: () => `<div class="dom-art">${art('ui', 'barn')}</div>`,
-        },
-        {
             id: 'house',
             name: 'Maison',
-            pos: [52, 38.5],
+            pos: [63, 37.5],
             w: 28,
             open: true,
             glow: true,
@@ -329,9 +316,35 @@ function buildZones() {
             art: () => `<div class="dom-art">${SPR.farmhouse(G.houseLvl(), G.styleOf('barn'))}</div>`,
         },
         {
+            id: 'barn',
+            name: 'Grange',
+            pos: [21, 41.5],
+            w: 24,
+            open: true,
+            go: 'sheet:barn',
+            icon: ['ui', 'barn'],
+            tags: [`${G.barnUsed()} / ${G.barnCap()}`, stallSold ? `${stallSold} vente(s) à encaisser` : 'Réserves & coffre'],
+            desc: 'Tes stocks, le coffre de la grange et l’encaissement rapide de ton étal.',
+            bub: barnBub,
+            art: () => `<div class="dom-art">${art('ui', 'barn')}</div>`,
+        },
+        {
+            id: 'counter',
+            name: 'Comptoir',
+            pos: [76, 52.5],
+            w: 23,
+            open: counterOpen,
+            go: 'machines/counter',
+            icon: ['machine', 'counter'],
+            tags: [counterW ? `${counterW} client(s) attendent` : 'Salle calme'],
+            desc: 'Sers tes clients au comptoir avec tes spécialités du jour.',
+            bub: counterBub,
+            art: () => `<div class="dom-art">${art('machine', 'counter')}</div>`,
+        },
+        {
             id: 'workshop',
             name: 'Ateliers',
-            pos: [24, 55],
+            pos: [24, 55.5],
             w: 34,
             open: hasWorkshop,
             glow: true,
@@ -346,22 +359,22 @@ function buildZones() {
                 }</div>`,
         },
         {
-            id: 'counter',
-            name: 'Comptoir',
-            pos: [77, 55],
-            w: 24,
-            open: counterOpen,
-            go: 'machines/counter',
-            icon: ['machine', 'counter'],
-            tags: [counterW ? `${counterW} client(s) attendent` : 'Salle calme'],
-            desc: 'Sers tes clients au comptoir avec tes spécialités du jour.',
-            bub: counterBub,
-            art: () => `<div class="dom-art">${art('machine', 'counter')}</div>`,
+            id: 'cave',
+            name: G.brewOpen() && G.caveOpen() ? 'Cave & Brasserie' : G.brewOpen() ? 'Brasserie' : 'Cave',
+            pos: [76, 65.5],
+            w: 28,
+            open: caveOrBrew,
+            go: brewVats.length || beerOrd > 0 || !G.caveOpen() ? 'machines/brew' : 'machines/cave',
+            icon: ['ui', G.caveOpen() ? 'cave' : 'beer'],
+            tags: [G.caveOpen() ? 'Cave d’affinage' : '', G.brewOpen() ? 'Brasserie d’abbaye' : ''].filter(Boolean),
+            desc: 'Tes cuvées en vieillissement et tes brassins d’abbaye réunis au flanc du coteau.',
+            bub: caveBub,
+            art: () => `<div class="dom-art">${art('building', G.caveOpen() ? 'chai' : 'brewhall')}</div>`,
         },
         {
             id: 'perfume',
             name: 'Parfumerie',
-            pos: [24, 68],
+            pos: [25, 69.5],
             w: 26,
             open: pfOpen,
             glow: true,
@@ -373,39 +386,10 @@ function buildZones() {
             art: () => `<div class="dom-art">${art('machine', 'perfumery')}</div>`,
         },
         {
-            id: 'cave',
-            name: G.brewOpen() && G.caveOpen() ? 'Cave & Brasserie' : G.brewOpen() ? 'Brasserie' : 'Cave',
-            pos: [76, 68],
-            w: 28,
-            open: caveOrBrew,
-            go: brewVats.length || beerOrd > 0 || !G.caveOpen() ? 'machines/brew' : 'machines/cave',
-            icon: ['ui', G.caveOpen() ? 'cave' : 'beer'],
-            tags: [G.caveOpen() ? 'Cave d’affinage' : '', G.brewOpen() ? 'Brasserie d’abbaye' : ''].filter(Boolean),
-            desc: 'Tes cuvées en vieillissement et tes brassins d’abbaye réunis au flanc du coteau.',
-            bub: caveBub,
-            art: () => `<div class="dom-art">${art('building', G.caveOpen() ? 'chai' : 'brewhall')}</div>`,
-        },
-        {
-            id: 'fields',
-            name: state.greenhouse && state.greenhouse.built ? 'Champs & Serre' : 'Champs',
-            pos: [27, 80.5],
-            w: 42,
-            open: true,
-            go: 'farm/field',
-            icon: ['item', 'wheat'],
-            tags: [readyPlots.length ? `${readyPlots.length} à récolter` : `${plots.length} parcelles`, dryPlots.length ? `${dryPlots.length} à arroser` : 'Bien arrosé'],
-            desc: 'Tes vraies parcelles poussent ici en direct. Un tap sur la bulle récolte tout ce qui est mûr ou arrose le champ.',
-            bub: fieldBub,
-            art: () =>
-                `<div class="dom-art dom-fields-box"><div class="dom-fields">${samplePlots
-                    .map(p => `<span class="dom-cell">${plotThumb(p)}</span>`)
-                    .join('')}</div>${state.greenhouse && state.greenhouse.built ? `<span class="dom-gh">${art('ui', 'greenhouse')}</span>` : ''}</div>`,
-        },
-        {
             id: 'orchard',
             name: 'Verger',
-            pos: [75, 80.5],
-            w: 36,
+            pos: [75, 79.5],
+            w: 35,
             open: orchardOpen,
             go: 'farm/orchard',
             icon: ['item', 'apple'],
@@ -420,9 +404,38 @@ function buildZones() {
             },
         },
         {
+            id: 'fields',
+            name: state.greenhouse && state.greenhouse.built ? 'Champs & Serre' : 'Champs',
+            pos: [26, 82],
+            w: 42,
+            open: true,
+            go: 'farm/field',
+            icon: ['item', 'wheat'],
+            tags: [readyPlots.length ? `${readyPlots.length} à récolter` : `${plots.length} parcelles`, dryPlots.length ? `${dryPlots.length} à arroser` : 'Bien arrosé'],
+            desc: 'Tes vraies parcelles poussent ici en direct. Un tap sur la bulle récolte tout ce qui est mûr ou arrose le champ.',
+            bub: fieldBub,
+            art: () =>
+                `<div class="dom-art dom-fields-box"><div class="dom-fields">${samplePlots
+                    .map(p => `<span class="dom-cell">${plotThumb(p)}</span>`)
+                    .join('')}</div>${state.greenhouse && state.greenhouse.built ? `<span class="dom-gh">${art('ui', 'greenhouse')}</span>` : ''}</div>`,
+        },
+        {
+            id: 'pond',
+            name: G.pondOpen() ? 'Étang & Forêt' : 'Forêt',
+            pos: [76, 92.5],
+            w: 31,
+            open: natureOpen,
+            go: trapsN > 0 ? 'farm/pond' : 'farm/nature',
+            icon: ['ui', G.pondOpen() ? 'rod' : 'axe'],
+            tags: [G.pondOpen() ? 'Pêche ouverte' : 'Forêt & bois', lumberReady + minerReady ? `${lumberReady + minerReady} charge(s) prête(s)` : 'Tranquille'],
+            desc: 'Récupère les charges du bûcheron et du mineur en 1 tap ou pars pêcher à l’étang.',
+            bub: pondBub,
+            art: () => `<div class="dom-art">${art('building', 'pontoon')}</div>`,
+        },
+        {
             id: 'pasture',
             name: G.harasOpen() ? 'Prés & Haras' : 'Prés',
-            pos: [27, 93],
+            pos: [27, 94],
             w: 42,
             open: pastureOpen,
             go: 'animals/pasture',
@@ -435,51 +448,52 @@ function buildZones() {
                 return `<div class="dom-art dom-pasture-wrap">${G.harasOpen() ? `<span class="stud">${art('building', 'stud')}</span>` : ''}<div class="dom-pasture">${list}</div></div>`;
             },
         },
-        {
-            id: 'pond',
-            name: G.pondOpen() ? 'Étang & Forêt' : 'Forêt',
-            pos: [75, 93],
-            w: 32,
-            open: natureOpen,
-            go: trapsN > 0 ? 'farm/pond' : 'farm/nature',
-            icon: ['ui', G.pondOpen() ? 'rod' : 'axe'],
-            tags: [G.pondOpen() ? 'Pêche ouverte' : 'Forêt & bois', lumberReady + minerReady ? `${lumberReady + minerReady} charge(s) prête(s)` : 'Tranquille'],
-            desc: 'Récupère les charges du bûcheron et du mineur en 1 tap ou pars pêcher à l’étang.',
-            bub: pondBub,
-            art: () => `<div class="dom-art">${art('building', 'pontoon')}</div>`,
-        },
     ];
 }
 
-// ---------------- décor SVG ancré (saisons, nuit, bois sauvages) ----------------
+// ---------------- décor SVG organique (sentiers en S, cour vivante, ruisseau, pont, vignes, lavande) ----------------
 function bgSvg(zones) {
     const W = 420;
-    const H = 1680;
-    const skyH = 132;
+    const H = 1760;
+    const skyH = 128;
     const O = '#3a2618';
     const winter = G.season().id === 'hiver';
     const pathStyle = domPrefs().path || 'sand';
 
     const wildWoods = zones
         .filter(z => !z.open)
-        .map(z => {
+        .map((z, k) => {
             const cx = (z.pos[0] / 100) * W;
             const cy = (z.pos[1] / 100) * H;
+            const s = k % 2 ? 1 : -1;
             return `<g>
-                <ellipse cx="${cx}" cy="${cy + 18}" rx="28" ry="6" fill="rgba(58,38,24,.15)"/>
-                <rect x="${cx - 16}" y="${cy + 1}" width="7" height="16" rx="2" fill="#8b5a32" stroke="${O}" stroke-width="2"/>
-                <circle cx="${cx - 12}" cy="${cy - 7}" r="14" fill="var(--dom-tree1)" stroke="${O}" stroke-width="2.2"/>
-                <rect x="${cx + 7}" y="${cy + 3}" width="7" height="14" rx="2" fill="#8b5a32" stroke="${O}" stroke-width="2"/>
-                <circle cx="${cx + 11}" cy="${cy - 4}" r="13" fill="var(--dom-tree2)" stroke="${O}" stroke-width="2.2"/>
-                <circle cx="${cx}" cy="${cy - 12}" r="12" fill="var(--dom-tree1)" stroke="${O}" stroke-width="2.2"/>
+                <ellipse cx="${cx}" cy="${cy + 18}" rx="30" ry="6.5" fill="rgba(58,38,24,.14)"/>
+                <rect x="${cx - 17 * s}" y="${cy + 2}" width="7" height="16" rx="2" fill="#8b5a32" stroke="${O}" stroke-width="2"/>
+                <circle cx="${cx - 13 * s}" cy="${cy - 6}" r="14.5" fill="var(--dom-tree1)" stroke="${O}" stroke-width="2.2"/>
+                <rect x="${cx + 8 * s}" y="${cy + 4}" width="6.5" height="14" rx="2" fill="#8b5a32" stroke="${O}" stroke-width="2"/>
+                <circle cx="${cx + 12 * s}" cy="${cy - 3}" r="12.5" fill="var(--dom-tree2)" stroke="${O}" stroke-width="2.2"/>
+                <circle cx="${cx - 2 * s}" cy="${cy - 13}" r="12" fill="var(--dom-tree1)" stroke="${O}" stroke-width="2.2"/>
             </g>`;
         })
         .join('');
 
-    const mainRoad = `M${W * 0.5} ${H * 0.26} V${H * 0.82} M${W * 0.2} ${H * 0.4} H${W * 0.8} M${W * 0.24} ${H * 0.56} H${W * 0.77} M${W * 0.24} ${H * 0.69} H${W * 0.76} M${W * 0.27} ${H * 0.82} H${W * 0.75}`;
+    // Chemin sinueux en courbes organiques (aucune ligne droite !)
+    const lane =
+        `M${W * 0.34} ${H * 0.29} ` +
+        `C${W * 0.44} ${H * 0.33}, ${W * 0.54} ${H * 0.36}, ${W * 0.56} ${H * 0.41} ` +
+        `C${W * 0.58} ${H * 0.47}, ${W * 0.72} ${H * 0.49}, ${W * 0.73} ${H * 0.54} ` +
+        `C${W * 0.74} ${H * 0.59}, ${W * 0.38} ${H * 0.54}, ${W * 0.30} ${H * 0.58} ` +
+        `C${W * 0.24} ${H * 0.62}, ${W * 0.68} ${H * 0.63}, ${W * 0.72} ${H * 0.675} ` +
+        `C${W * 0.75} ${H * 0.72}, ${W * 0.38} ${H * 0.68}, ${W * 0.28} ${H * 0.725} ` +
+        `C${W * 0.22} ${H * 0.76}, ${W * 0.62} ${H * 0.78}, ${W * 0.70} ${H * 0.815} ` +
+        `C${W * 0.62} ${H * 0.855}, ${W * 0.42} ${H * 0.84}, ${W * 0.32} ${H * 0.89}`;
+    const spurBarn = `M${W * 0.52} ${H * 0.425} Q${W * 0.36} ${H * 0.455} ${W * 0.22} ${H * 0.435}`;
+    const spurPond = `M${W * 0.52} ${H * 0.855} Q${W * 0.64} ${H * 0.885} ${W * 0.72} ${H * 0.915}`;
+    const allPaths = `${lane} ${spurBarn} ${spurPond}`;
+
     const cobble =
         pathStyle === 'cobble'
-            ? `<path d="${mainRoad}" stroke="rgba(58,38,24,.24)" stroke-width="2.5" stroke-dasharray="2 10" stroke-linecap="round" fill="none"/>`
+            ? `<path d="${allPaths}" stroke="rgba(58,38,24,.23)" stroke-width="2.4" stroke-dasharray="2 10" stroke-linecap="round" fill="none"/>`
             : '';
 
     return `<svg class="dom-bg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
@@ -494,45 +508,88 @@ function bgSvg(zones) {
                 <stop offset="100%" stop-color="var(--dom-m3)"/>
             </linearGradient>
         </defs>
-        <rect width="${W}" height="${skyH + 45}" fill="url(#domSky)"/>
-        <path d="M0 ${skyH - 8} Q${W * 0.24} ${skyH - 42} ${W * 0.52} ${skyH - 12} T${W} ${skyH - 20} L${W} ${H} L0 ${H}Z" fill="var(--dom-h1)"/>
-        <path d="M0 ${skyH + 18} Q${W * 0.32} ${skyH - 18} ${W * 0.64} ${skyH + 12} T${W} ${skyH} L${W} ${H} L0 ${H}Z" fill="var(--dom-h2)"/>
-        <path d="M0 ${skyH + 38} Q${W * 0.48} ${skyH + 20} ${W} ${skyH + 34} L${W} ${H} L0 ${H}Z" fill="url(#domMeadow)"/>
-        <!-- Anse du port + ruisseau le long du bord droit jusqu'à l'étang -->
-        <path d="M${W * 0.6} ${H * 0.115} Q${W * 0.7} ${H * 0.175} ${W} ${H * 0.18} L${W} ${H * 0.105} Q${W * 0.8} ${H * 0.1} ${W * 0.6} ${H * 0.115}Z" fill="var(--dom-water1)" stroke="${O}" stroke-width="2"/>
-        <path d="M${W * 0.95} ${H * 0.175} Q${W * 0.98} ${H * 0.52} ${W * 0.94} ${H * 0.78} Q${W * 0.9} ${H * 0.89} ${W * 0.78} ${H * 0.935}" fill="none" stroke="var(--dom-water1)" stroke-width="14" stroke-linecap="round"/>
-        <ellipse cx="${W * 0.75}" cy="${H * 0.935}" rx="64" ry="28" fill="var(--dom-water1)" stroke="${O}" stroke-width="2.2"/>
-        <ellipse cx="${W * 0.75}" cy="${H * 0.932}" rx="46" ry="16" fill="var(--dom-water2)" opacity=".55"/>
-        <!-- Voie ferrée de la gare -->
-        <path d="M0 ${H * 0.16} Q${W * 0.25} ${H * 0.168} ${W * 0.52} ${H * 0.156}" fill="none" stroke="#8b6a4a" stroke-width="7" stroke-dasharray="3 5"/>
-        <path d="M0 ${H * 0.158} Q${W * 0.25} ${H * 0.166} ${W * 0.52} ${H * 0.154} M0 ${H * 0.162} Q${W * 0.25} ${H * 0.17} ${W * 0.52} ${H * 0.158}" fill="none" stroke="#5d5248" stroke-width="1.6"/>
-        <!-- Chemins sablonneux / pavés -->
+        <rect width="${W}" height="${skyH + 48}" fill="url(#domSky)"/>
+        <path d="M0 ${skyH - 8} Q${W * 0.22} ${skyH - 44} ${W * 0.5} ${skyH - 14} T${W} ${skyH - 22} L${W} ${H} L0 ${H}Z" fill="var(--dom-h1)"/>
+        <path d="M0 ${skyH + 18} Q${W * 0.34} ${skyH - 16} ${W * 0.68} ${skyH + 12} T${W} ${skyH + 2} L${W} ${H} L0 ${H}Z" fill="var(--dom-h2)"/>
+        <path d="M0 ${skyH + 38} Q${W * 0.44} ${skyH + 18} ${W} ${skyH + 36} L${W} ${H} L0 ${H}Z" fill="url(#domMeadow)"/>
+
+        <!-- Reliefs doux & clairières naturelles par quartier -->
+        <ellipse cx="${W * 0.46}" cy="${H * 0.425}" rx="122" ry="64" fill="var(--dom-path)" opacity=".32"/>
+        <ellipse cx="${W * 0.24}" cy="${H * 0.705}" rx="86" ry="44" fill="${winter ? '#dfe9f2' : '#c8aee8'}" opacity=".3"/>
+        <ellipse cx="${W * 0.78}" cy="${H * 0.665}" rx="84" ry="46" fill="var(--dom-h1)" opacity=".42"/>
+        <ellipse cx="${W * 0.28}" cy="${H * 0.945}" rx="108" ry="48" fill="var(--dom-h2)" opacity=".35"/>
+
+        <!-- Anse du port + ruisseau qui serpente naturellement jusqu'à l'étang -->
+        <path d="M${W * 0.58} ${H * 0.135} Q${W * 0.68} ${H * 0.205} ${W} ${H * 0.21} L${W} ${H * 0.12} Q${W * 0.78} ${H * 0.115} ${W * 0.58} ${H * 0.135}Z" fill="var(--dom-water1)" stroke="${O}" stroke-width="2"/>
+        <path d="M${W * 0.94} ${H * 0.205} C${W * 0.98} ${H * 0.33}, ${W * 0.87} ${H * 0.44}, ${W * 0.93} ${H * 0.57} C${W * 0.98} ${H * 0.69}, ${W * 0.88} ${H * 0.82}, ${W * 0.78} ${H * 0.925}" fill="none" stroke="var(--dom-water1)" stroke-width="14" stroke-linecap="round"/>
+        <path d="M${W * 0.94} ${H * 0.24} Q${W * 0.91} ${H * 0.36} ${W * 0.92} ${H * 0.46}" fill="none" stroke="var(--dom-water2)" stroke-width="2.5" stroke-dasharray="8 16" stroke-linecap="round" opacity=".7"/>
+        <ellipse cx="${W * 0.76}" cy="${H * 0.93}" rx="68" ry="29" fill="var(--dom-water1)" stroke="${O}" stroke-width="2.2"/>
+        <ellipse cx="${W * 0.76}" cy="${H * 0.926}" rx="48" ry="16" fill="var(--dom-water2)" opacity=".55"/>
+
+        <!-- Voie ferrée courbe qui suit le relief -->
+        <path d="M0 ${H * 0.145} Q${W * 0.22} ${H * 0.158} ${W * 0.5} ${H * 0.138}" fill="none" stroke="#8b6a4a" stroke-width="7" stroke-dasharray="3 5"/>
+        <path d="M0 ${H * 0.143} Q${W * 0.22} ${H * 0.156} ${W * 0.5} ${H * 0.136} M0 ${H * 0.147} Q${W * 0.22} ${H * 0.16} ${W * 0.5} ${H * 0.14}" fill="none" stroke="#5d5248" stroke-width="1.6"/>
+
+        <!-- Rangs de vignes ondulants derrière la Cave -->
+        <g stroke="#5e8f2e" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="${winter ? 0.35 : 0.72}">
+            <path d="M${W * 0.64} ${H * 0.625} Q${W * 0.76} ${H * 0.614} ${W * 0.9} ${H * 0.622}"/>
+            <path d="M${W * 0.66} ${H * 0.635} Q${W * 0.78} ${H * 0.624} ${W * 0.91} ${H * 0.632}"/>
+            <path d="M${W * 0.65} ${H * 0.645} Q${W * 0.77} ${H * 0.635} ${W * 0.9} ${H * 0.642}"/>
+        </g>
+
+        <!-- Sentiers en S doux (bordure terre + sable/pavés) -->
         <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="${mainRoad}" stroke="var(--dom-path-e)" stroke-width="24"/>
-            <path d="${mainRoad}" stroke="var(--dom-path)" stroke-width="17"/>
+            <path d="${allPaths}" stroke="var(--dom-path-e)" stroke-width="23"/>
+            <path d="${allPaths}" stroke="var(--dom-path)" stroke-width="16"/>
         </g>
         ${cobble}
-        <!-- Clôture bois de la cour -->
-        <g stroke="#8b5a32" stroke-width="2.6" stroke-linecap="round">
-            <path d="M${W * 0.12} ${H * 0.33} H${W * 0.42} M${W * 0.58} ${H * 0.33} H${W * 0.88}"/>
-            <path d="M${W * 0.16} ${H * 0.322} V${H * 0.338} M${W * 0.28} ${H * 0.322} V${H * 0.338} M${W * 0.4} ${H * 0.322} V${H * 0.338}"/>
-            <path d="M${W * 0.6} ${H * 0.322} V${H * 0.338} M${W * 0.72} ${H * 0.322} V${H * 0.338} M${W * 0.84} ${H * 0.322} V${H * 0.338}"/>
+
+        <!-- Petit pont en bois sur le ruisseau (côté est) -->
+        <g transform="translate(${W * 0.89} ${H * 0.565}) rotate(-12)">
+            <rect x="-12" y="-5" width="24" height="10" rx="2.5" fill="#c98a4b" stroke="${O}" stroke-width="1.8"/>
+            <path d="M-6 -5 V5 M0 -5 V5 M6 -5 V5" stroke="#8b5a32" stroke-width="1.4"/>
         </g>
-        <!-- Bosquets de lisière (strictement sur les bords, loin des sprites) -->
+
+        <!-- Petites bottes de foin près de la Grange & panneau en bois au carrefour -->
+        <g>
+            <ellipse cx="${W * 0.1}" cy="${H * 0.455}" rx="9" ry="6" fill="#f2c14e" stroke="${O}" stroke-width="1.7"/>
+            <ellipse cx="${W * 0.135}" cy="${H * 0.46}" rx="8" ry="5.5" fill="#e6b03c" stroke="${O}" stroke-width="1.7"/>
+            <path d="M${W * 0.44} ${H * 0.585} V${H * 0.598}" stroke="#7a4a2a" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M${W * 0.422} ${H * 0.587} L${W * 0.458} ${H * 0.585} L${W * 0.464} ${H * 0.589} L${W * 0.458} ${H * 0.593} L${W * 0.422} ${H * 0.591}Z" fill="#e8c38c" stroke="${O}" stroke-width="1.4"/>
+        </g>
+
+        <!-- Murets / clôtures courbes organiques (pas de barre rigide) -->
+        <g stroke="#8b5a32" stroke-width="2.4" stroke-linecap="round" fill="none">
+            <path d="M${W * 0.08} ${H * 0.345} Q${W * 0.22} ${H * 0.335} ${W * 0.34} ${H * 0.35}"/>
+            <path d="M${W * 0.12} ${H * 0.338} V${H * 0.352} M${W * 0.22} ${H * 0.334} V${H * 0.348} M${W * 0.31} ${H * 0.341} V${H * 0.355}"/>
+            <path d="M${W * 0.62} ${H * 0.475} Q${W * 0.74} ${H * 0.468} ${W * 0.84} ${H * 0.478}"/>
+            <path d="M${W * 0.65} ${H * 0.468} V${H * 0.482} M${W * 0.75} ${H * 0.466} V${H * 0.48} M${W * 0.82} ${H * 0.47} V${H * 0.484}"/>
+        </g>
+
+        <!-- Bosquets asymétriques variés sur les bords -->
         <g stroke="${O}" stroke-width="2">
-            <circle cx="${W * 0.02}" cy="${H * 0.22}" r="15" fill="var(--dom-tree1)"/>
-            <circle cx="${W * 0.98}" cy="${H * 0.23}" r="15" fill="var(--dom-tree2)"/>
-            <circle cx="${W * 0.02}" cy="${H * 0.48}" r="14" fill="var(--dom-tree1)"/>
-            <circle cx="${W * 0.98}" cy="${H * 0.48}" r="14" fill="var(--dom-tree2)"/>
-            <circle cx="${W * 0.02}" cy="${H * 0.75}" r="15" fill="var(--dom-tree1)"/>
-            <circle cx="${W * 0.98}" cy="${H * 0.75}" r="14" fill="var(--dom-tree1)"/>
+            <circle cx="${W * 0.03}" cy="${H * 0.23}" r="16" fill="var(--dom-tree1)"/>
+            <circle cx="${W * 0.07}" cy="${H * 0.245}" r="10" fill="var(--dom-tree2)"/>
+            <circle cx="${W * 0.96}" cy="${H * 0.32}" r="15" fill="var(--dom-tree2)"/>
+            <circle cx="${W * 0.02}" cy="${H * 0.49}" r="14" fill="var(--dom-tree1)"/>
+            <circle cx="${W * 0.97}" cy="${H * 0.5}" r="12" fill="var(--dom-tree1)"/>
+            <circle cx="${W * 0.04}" cy="${H * 0.64}" r="15" fill="var(--dom-tree2)"/>
+            <circle cx="${W * 0.97}" cy="${H * 0.73}" r="15" fill="var(--dom-tree1)"/>
+            <circle cx="${W * 0.03}" cy="${H * 0.89}" r="14" fill="var(--dom-tree1)"/>
         </g>
+
+        <!-- Touffes d'herbe, lavande & fleurs dispersées naturellement -->
         <g opacity="${winter ? 0 : 0.9}">
-            <circle cx="${W * 0.35}" cy="${H * 0.31}" r="2.8" fill="#fff7c2" stroke="${O}" stroke-width="1"/>
-            <circle cx="${W * 0.66}" cy="${H * 0.31}" r="2.6" fill="#f59ab1" stroke="${O}" stroke-width="1"/>
-            <circle cx="${W * 0.38}" cy="${H * 0.48}" r="2.6" fill="#ffd23f" stroke="${O}" stroke-width="1"/>
-            <circle cx="${W * 0.63}" cy="${H * 0.62}" r="2.6" fill="#fff7c2" stroke="${O}" stroke-width="1"/>
-            <circle cx="${W * 0.52}" cy="${H * 0.88}" r="2.8" fill="#f59ab1" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.14}" cy="${H * 0.685}" r="3.4" fill="#8b5ec4" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.17}" cy="${H * 0.725}" r="3" fill="#a87ce0" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.36}" cy="${H * 0.72}" r="3.2" fill="#8b5ec4" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.57}" cy="${H * 0.295}" r="2.8" fill="#fff7c2" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.6}" cy="${H * 0.305}" r="2.3" fill="#f59ab1" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.33}" cy="${H * 0.495}" r="2.6" fill="#ffd23f" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.6}" cy="${H * 0.615}" r="2.5" fill="#fff7c2" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.48}" cy="${H * 0.78}" r="2.7" fill="#f59ab1" stroke="${O}" stroke-width="1"/>
+            <circle cx="${W * 0.53}" cy="${H * 0.885}" r="2.8" fill="#fff7c2" stroke="${O}" stroke-width="1"/>
+            <path d="M${W * 0.56} ${H * 0.33} l-3 -5 m3 5 l3 -4 M${W * 0.16} ${H * 0.59} l-3 -5 m3 5 l3 -4 M${W * 0.61} ${H * 0.76} l-3 -5 m3 5 l3 -4 M${W * 0.54} ${H * 0.94} l-3 -5 m3 5 l3 -4" stroke="#3f8f2e" stroke-width="1.6" stroke-linecap="round"/>
         </g>
         ${wildWoods}
     </svg>`;
@@ -653,7 +710,7 @@ function perfumePopHtml() {
     const v = state.perfume.vats[idx];
     const p = state.perfume.creations[v.pid];
     const name = p ? p.name : 'Macération';
-    return `<div class="dom-pop" style="left:clamp(124px,24%,calc(100% - 124px));top:calc(68% - 34px)">
+    return `<div class="dom-pop" style="left:clamp(124px,25%,calc(100% - 124px));top:calc(69.5% - 34px)">
         <div class="dom-pop-head">${ico(['ui', 'perfume'])}<span>${esc(name)}</span><button class="dom-pop-close" data-act="domPfClose" aria-label="Fermer">×</button></div>
         <div class="dom-pop-btns">
             <button class="dom-pop-opt" data-act="domPfCare" data-i="${idx}" data-choice="quick">${ico(['ui', 'drop'])}<strong>Rapide</strong><span>Gratuit</span></button>
@@ -746,6 +803,12 @@ function renderDomaine(el) {
             </button>`
             : '';
 
+    const mamieReady = G.mamieReady && G.mamieReady();
+    const odetteHtml = `<button class="dom-npc" data-act="domOdette" style="left:41%;top:36.5%" aria-label="Mamie Odette">
+        ${mamieReady ? `<span class="dom-dog-bub">${ico(['ui', 'heart'])}<span>Plat !</span></span>` : ''}
+        ${ico(['villager', 'odette'])}
+    </button>`;
+
     const planeHtml = G.cargoHere(now()) ? `<div class="dom-plane">${ico(['ui', 'plane'])}</div>` : '';
     const fireflies = Array.from({ length: 10 }, (_, i) => {
         const l = 10 + ((i * 23) % 82);
@@ -772,6 +835,7 @@ function renderDomaine(el) {
         ${planeHtml}
         ${decosHtml}
         ${spotsHtml}
+        ${odetteHtml}
         ${dogHtml}
         ${perfumePopHtml()}
         <div class="dom-night-veil"></div>
@@ -891,6 +955,20 @@ export function setupDomaine() {
             if (!state.dog || !state.dog.owned) return;
             G.handleDog(centerOf(el));
             local.dogStep = (local.dogStep + 1) % DOG_WAYPOINTS.length;
+        },
+        domOdette: el => {
+            if (G.mamieReady && G.mamieReady()) {
+                go('village/orders#give');
+                return;
+            }
+            const at = centerOf(el);
+            burstAt(at.x, at.y, 'heart', 5);
+            const lines = [
+                'Mamie Odette : « Comme le domaine respire bon aujourd’hui ! »',
+                'Mamie Odette : « Un petit tour par les champs, et je rentre au fourneau. »',
+                'Mamie Odette : « Tes fleurs poussent à merveille sur le sentier ! »',
+            ];
+            emit('toast', { text: lines[Math.floor(Math.random() * lines.length)], icon: ['villager', 'odette'] });
         },
         domPfClose: () => {
             local.pfPop = false;
