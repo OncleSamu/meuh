@@ -96,3 +96,24 @@ test('1.150 : randomId couvre correctement les modes féminin, masculin, âgé e
         if (opts.old) assert.ok(greyCount >= 20, `Trop peu de cheveux gris/blancs en mode âgé : ${greyCount}/40`);
     }
 });
+
+test('1.151 : les tenues de saison adaptent chapeaux, lunettes et cols selon la saison', () => {
+    let winterWarm = 0;
+    let summerSun = 0;
+    let springFloral = 0;
+    let autumnCozy = 0;
+    for (let seed = 1; seed <= 60; seed++) {
+        const w = lookOf(randomId(seed * 997, { female: seed % 2 === 0, male: seed % 2 === 1, season: 'hiver' }));
+        if ([12, 4].includes(w.hat) || [5, 9].includes(w.collar)) winterWarm++;
+        const e = lookOf(randomId(seed * 997, { female: seed % 2 === 0, male: seed % 2 === 1, season: 'ete' }));
+        if ([2, 8, 9, 15].includes(e.hat) || [3, 7].includes(e.glasses)) summerSun++;
+        const p = lookOf(randomId(seed * 997, { female: true, season: 'printemps' }));
+        if ([7, 17].includes(p.hat) || p.extra === 8) springFloral++;
+        const a = lookOf(randomId(seed * 997, { female: seed % 2 === 0, male: seed % 2 === 1, season: 'automne' }));
+        if ([3, 10, 4, 6].includes(a.hat) || [6, 2, 9].includes(a.collar)) autumnCozy++;
+    }
+    assert.ok(winterWarm >= 40, `Tenues chaudes d’hiver insuffisantes : ${winterWarm}/60`);
+    assert.ok(summerSun >= 35, `Tenues d’été insuffisantes : ${summerSun}/60`);
+    assert.ok(springFloral >= 15, `Touches fleuries de printemps insuffisantes : ${springFloral}/60`);
+    assert.ok(autumnCozy >= 35, `Tenues d’automne insuffisantes : ${autumnCozy}/60`);
+});

@@ -53,6 +53,32 @@ html.dark .farmyard {
         0 3px 0 #120b06,
         inset 0 1px 0 rgba(255, 232, 190, 0.1);
 }
+html.dark .me-panel {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(242, 228, 200, 0.22);
+}
+html.dark .me-tab,
+html.dark .me-tile {
+    background: var(--paper-l);
+    border-color: rgba(242, 228, 200, 0.22);
+}
+html.dark .me-tab.on {
+    background: var(--green, #5fae4f);
+    color: #fff;
+    border-color: var(--ink);
+}
+html.dark .me-tile.on {
+    background: rgba(95, 174, 79, 0.24);
+    border-color: #79cc67;
+}
+html.dark .me-thumb {
+    background: #3d2f22;
+    border-color: rgba(242, 228, 200, 0.28);
+}
+html.dark .me-code-row input {
+    background: var(--paper-l);
+    border-color: rgba(242, 228, 200, 0.3);
+}
 html.dark.contrast {
     --ink: #ffffff;
     --ink-soft: #eadcc4;

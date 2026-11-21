@@ -1883,23 +1883,39 @@ function habRng(seed) {
 const HAB_COMMON_HATS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 17];
 const HAB_FEMALE_HAIRS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 15, 16, 18];
 const HAB_MALE_HAIRS = [0, 1, 1, 4, 7, 11, 12, 13, 15, 17, 19];
+const HAB_SEASON_STYLE = {
+  printemps: { hatRate: 0.48, hatsF: [7, 7, 17, 2, 3, 8], hatsM: [2, 3, 8, 15, 1], collars: [0, 1, 2, 3, 4], shirts: [2, 3, 4, 5, 6, 8, 14, 15], extras: [8, 8, 5, 1, 11], extraRate: 0.42 },
+  ete: { hatRate: 0.64, hatsF: [2, 2, 9, 9, 15, 8, 11], hatsM: [2, 2, 8, 15, 1, 11, 6], glasses: [3, 3, 7], glassesRate: 0.42, collars: [0, 7, 7, 3, 1], shirts: [0, 1, 2, 3, 6, 8, 12, 14], extras: [5, 5, 1, 8, 9], extraRate: 0.35 },
+  automne: { hatRate: 0.52, hatsF: [3, 3, 10, 4, 6], hatsM: [3, 10, 10, 4, 6], collars: [6, 6, 2, 9, 4, 1], shirts: [7, 10, 11, 12, 13, 15, 3], extras: [1, 3, 5, 6], extraRate: 0.25 },
+  hiver: { hatRate: 0.74, hatsF: [12, 12, 4, 4, 3, 10], hatsM: [12, 12, 4, 4, 10, 3], collars: [5, 5, 5, 9, 9, 6], shirts: [10, 11, 13, 9, 8, 1, 7], extras: [10, 10, 3, 2], extraRate: 0.44 },
+};
 function habRandomLook(seed, o = {}) {
   const H = habMeta();
   const r = habRng(seed);
   const pick = t => Math.floor(r() * H.count[t]);
+  const from = arr => arr[Math.floor(r() * arr.length)];
   const look = Object.fromEntries(H.traits.map(t => [t, pick(t)]));
   if (r() < 0.9) look.hairColor = Math.floor(r() * 12);
   if (r() < 0.55) look.hat = 0;
-  else if (r() < 0.92) look.hat = HAB_COMMON_HATS[Math.floor(r() * HAB_COMMON_HATS.length)];
+  else if (r() < 0.92) look.hat = from(HAB_COMMON_HATS);
   if (r() < 0.65) look.glasses = 0;
   if (r() < 0.45) look.extra = 0;
   if (r() < 0.45) look.beard = 0;
   if (o.female) {
     look.beard = 0;
-    look.hair = HAB_FEMALE_HAIRS[Math.floor(r() * HAB_FEMALE_HAIRS.length)];
+    look.hair = from(HAB_FEMALE_HAIRS);
   }
-  if (o.male) look.hair = HAB_MALE_HAIRS[Math.floor(r() * HAB_MALE_HAIRS.length)];
-  if (o.old) look.hairColor = r() < 0.75 ? [7, 8, 10][Math.floor(r() * 3)] : look.hairColor;
+  if (o.male) look.hair = from(HAB_MALE_HAIRS);
+  if (o.old) look.hairColor = r() < 0.75 ? from([7, 8, 10]) : look.hairColor;
+  const st = o.season && HAB_SEASON_STYLE[o.season];
+  if (st) {
+    const hats = o.male ? st.hatsM : o.female ? st.hatsF : [...st.hatsF, ...st.hatsM];
+    look.hat = r() < st.hatRate ? from(hats) : 0;
+    if (st.glasses && r() < st.glassesRate) look.glasses = from(st.glasses);
+    if (r() < 0.72) look.collar = from(st.collars);
+    if (r() < 0.7) look.shirt = from(st.shirts);
+    if (st.extras && r() < st.extraRate) look.extra = from(st.extras);
+  }
   Object.assign(look, o.fix || {});
   return look;
 }
@@ -2094,7 +2110,7 @@ function rollCampersBatch() {
     const seed = Math.floor(Math.random() * 1e9);
     const woman = Math.random() < 0.5;
     const old = Math.random() < 0.2;
-    const id = habRandomId(seed, { [woman ? 'female' : 'male']: true, ...(old ? { old: true } : {}) });
+    const id = habRandomId(seed, { [woman ? 'female' : 'male']: true, ...(old ? { old: true } : {}), ...(S.charSeason ? { season: S.charSeason } : {}) });
     const avail = C0.names.filter(n => !used.has(n));
     const name = avail.length ? avail[Math.floor(Math.random() * avail.length)] : C0.names[i % C0.names.length];
     used.add(name);
@@ -2123,6 +2139,7 @@ function renderCharacters() {
   const totalParts = H.traits.reduce((a, t) => a + H.count[t], 0);
   const curTrait = S.charTrait;
   const curLabels = H.labels[curTrait] || [];
+  const seasons = [['', 'Toutes'], ['printemps', '🌸 Printemps'], ['ete', '☀️ Été'], ['automne', '🍂 Automne'], ['hiver', '❄️ Hiver']];
 
   $('#main').innerHTML = `
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -2173,6 +2190,9 @@ function renderCharacters() {
               <p class="text-[11px] muted">Clique un campeur pour le charger dans l’éditeur</p>
             </div>
             <button id="hab-campers-roll" class="btn-sec rounded-lg px-2.5 py-1 text-xs cursor-pointer">🎲 Nouveau tirage</button>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            ${seasons.map(([k, lbl]) => `<button data-hab-season="${k}" class="pill ${(S.charSeason || '') === k ? 'active' : ''} px-2 py-0.5 rounded-lg text-[11px] cursor-pointer">${lbl}</button>`).join('')}
           </div>
           <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2">
             ${S.charCampers.map(c => `
@@ -2239,6 +2259,7 @@ function renderCharacters() {
   `;
 
   $$('[data-hab-tab]').forEach(b => b.onclick = () => { S.charTrait = b.dataset.habTab; renderCharacters(); });
+  $$('[data-hab-season]').forEach(b => b.onclick = () => { S.charSeason = b.dataset.habSeason; rollCampersBatch(); renderCharacters(); });
   $$('[data-hab-set]').forEach(b => b.onclick = () => {
     const [t, v] = b.dataset.habSet.split(':');
     const next = habLookOf(S.charId);

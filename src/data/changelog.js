@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.151",
+  "title": "Atelier du Portrait & Campeurs de Saison",
+  "date": "21 novembre 2026",
+  "items": [
+   "Nouvel éditeur de personnage visuel dans « Votre carte de visite » : onglets par catégorie, galerie cliquable de portraits miniatures pour chaque coiffure, chapeau, col, détail, barbe, regard, lunettes ou nez, et pastilles de couleur directes (teint, cheveux, yeux, vêtement)",
+   "Partage et import par code portrait (h…) : copiez votre personnage en un tap ou collez directement un code créé dans le Codex pour l’adopter aussitôt",
+   "Campeurs habillés selon la saison : couronnes de fleurs et teintes douces au printemps, chapeaux de paille, lunettes de soleil et marinières en été, bérets et gilets chauds en automne, chapkas, bonnets, écharpes d’hiver et joues rosées en hiver"
+  ]
+ },
+ {
   "v": "1.150",
   "title": "Visages de la vallée",
   "date": "21 novembre 2026",

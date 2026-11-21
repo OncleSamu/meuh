@@ -12,6 +12,7 @@ import { hasCost, payCost } from './home.js';
 import { earn, addXp } from './player.js';
 import { canGet, haveQ, takeQ } from './defis.js';
 import { ecoLvl } from '../core/state.js';
+import { season } from './world.js';
 
 export const campOpen = () => state.level >= CAMPING.lvl;
 export const campBuilt = () => !!state.camping;
@@ -131,7 +132,7 @@ export function newGuest(t = now(), seed, opts = {}) {
     const names = FIRST_NAMES.filter(n => !used.includes(n));
     const say = SAYINGS[pid];
     const g = {
-        look: back ? back.look : randomId(seed, woman ? { female: true } : { male: true }),
+        look: back ? back.look : randomId(seed, { ...(woman ? { female: true } : { male: true }), season: season().id }),
         name: back ? back.name : names[Math.floor(r() * names.length)] || FIRST_NAMES[0],
         from: back ? back.from : ORIGINS[Math.floor(r() * ORIGINS.length)],
         profile: pid,

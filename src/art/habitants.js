@@ -184,26 +184,77 @@ export function rng(seed) {
 const COMMON_HATS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 17];
 const FEMALE_HAIRS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 15, 16, 18];
 const MALE_HAIRS = [0, 1, 1, 4, 7, 11, 12, 13, 15, 17, 19];
+// 1.151 : tenues de saison pour les campeurs (optionnel, sans effet si o.season est absent)
+const SEASON_STYLE = {
+    printemps: {
+        hatRate: 0.48,
+        hatsF: [7, 7, 17, 2, 3, 8],
+        hatsM: [2, 3, 8, 15, 1],
+        collars: [0, 1, 2, 3, 4],
+        shirts: [2, 3, 4, 5, 6, 8, 14, 15],
+        extras: [8, 8, 5, 1, 11],
+        extraRate: 0.42,
+    },
+    ete: {
+        hatRate: 0.64,
+        hatsF: [2, 2, 9, 9, 15, 8, 11],
+        hatsM: [2, 2, 8, 15, 1, 11, 6],
+        glasses: [3, 3, 7],
+        glassesRate: 0.42,
+        collars: [0, 7, 7, 3, 1],
+        shirts: [0, 1, 2, 3, 6, 8, 12, 14],
+        extras: [5, 5, 1, 8, 9],
+        extraRate: 0.35,
+    },
+    automne: {
+        hatRate: 0.52,
+        hatsF: [3, 3, 10, 4, 6],
+        hatsM: [3, 10, 10, 4, 6],
+        collars: [6, 6, 2, 9, 4, 1],
+        shirts: [7, 10, 11, 12, 13, 15, 3],
+        extras: [1, 3, 5, 6],
+        extraRate: 0.25,
+    },
+    hiver: {
+        hatRate: 0.74,
+        hatsF: [12, 12, 4, 4, 3, 10],
+        hatsM: [12, 12, 4, 4, 10, 3],
+        collars: [5, 5, 5, 9, 9, 6],
+        shirts: [10, 11, 13, 9, 8, 1, 7],
+        extras: [10, 10, 3, 2],
+        extraRate: 0.44,
+    },
+};
 
 // âge : 0 jeune, 1 adulte, 2 âgé (pilote la barbe, les cheveux gris et la coiffure quand on ne choisit pas)
 export function randomLook(seed, o = {}) {
     const r = rng(seed);
     const pick = t => Math.floor(r() * TRAIT_COUNT[t]);
+    const from = arr => arr[Math.floor(r() * arr.length)];
     const look = Object.fromEntries(TRAITS.map(t => [t, pick(t)]));
     // teintes naturelles privilégiées (10 % de chance d'une couleur fantaisie)
     if (r() < 0.9) look.hairColor = Math.floor(r() * 12);
     // la plupart des gens n'ont ni chapeau, ni lunettes, ni détail : on les rend plus rares
     if (r() < 0.55) look.hat = 0;
-    else if (r() < 0.92) look.hat = COMMON_HATS[Math.floor(r() * COMMON_HATS.length)];
+    else if (r() < 0.92) look.hat = from(COMMON_HATS);
     if (r() < 0.65) look.glasses = 0;
     if (r() < 0.45) look.extra = 0;
     if (r() < 0.45) look.beard = 0;
     if (o.female) {
         look.beard = 0;
-        look.hair = FEMALE_HAIRS[Math.floor(r() * FEMALE_HAIRS.length)];
+        look.hair = from(FEMALE_HAIRS);
     }
-    if (o.male) look.hair = MALE_HAIRS[Math.floor(r() * MALE_HAIRS.length)];
-    if (o.old) look.hairColor = r() < 0.75 ? [7, 8, 10][Math.floor(r() * 3)] : look.hairColor;
+    if (o.male) look.hair = from(MALE_HAIRS);
+    if (o.old) look.hairColor = r() < 0.75 ? from([7, 8, 10]) : look.hairColor;
+    const st = o.season && SEASON_STYLE[o.season];
+    if (st) {
+        const hats = o.male ? st.hatsM : o.female ? st.hatsF : [...st.hatsF, ...st.hatsM];
+        look.hat = r() < st.hatRate ? from(hats) : 0;
+        if (st.glasses && r() < st.glassesRate) look.glasses = from(st.glasses);
+        if (r() < 0.72) look.collar = from(st.collars);
+        if (r() < 0.7) look.shirt = from(st.shirts);
+        if (st.extras && r() < st.extraRate) look.extra = from(st.extras);
+    }
     Object.assign(look, o.fix || {});
     return look;
 }
