@@ -1,4 +1,5 @@
 import { CROPS_130 } from './ajouts/cultures.js';
+import { CROPS_152 } from './ajouts/pack152.js';
 import { applyLevels } from './levels.js';
 // Le champ, la serre, les sols, la qualité, les décorations, le chien, les engins et les styles.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
@@ -188,8 +189,9 @@ export const SOILS = {
     },
 };
 
-// 1.30 : le sol préféré des quatorze nouvelles cultures
+// 1.30 & 1.152 : le sol préféré des nouvelles cultures de ferme
 for (const c of CROPS_130) SOILS[c[9]].crops.push(c[0]);
+for (const c of CROPS_152) if (c[9] && SOILS[c[9]]) SOILS[c[9]].crops.push(c[0]);
 
 export const SOIL_BONUS = {
     speed: 1.25,

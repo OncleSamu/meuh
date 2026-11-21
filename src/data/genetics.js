@@ -6,6 +6,7 @@ import { OASIS_CROPS, OASIS_TREES, OASIS_BEASTS } from './oasis.js';
 import { NORD_BEASTS } from './nord.js';
 import { NORD_CROPS, NORD_TREES } from './nord.js';
 import { ANIMALS_135 } from './ajouts/animaux.js';
+import { CROPS_152, TREES_152, ANIMALS_152 } from './ajouts/pack152.js';
 import { lv80 } from './lv80.js';
 
 // ---------------- les caractères ----------------
@@ -113,6 +114,8 @@ const F = {
     ...Object.fromEntries(CROPS_132.map(c => [c[0], c[8]])), // 1.32 : les huit cultures de l'île
     ...Object.fromEntries([...OASIS_CROPS, ...OASIS_TREES].map(c => [c[0], c[8]])), // 1.48 : les six plantes de l'oasis
     ...Object.fromEntries([...NORD_CROPS, ...NORD_TREES].map(c => [c[0], c[8]])), // 1.51 : les six plantes du Grand Nord
+    ...Object.fromEntries(CROPS_152.map(c => [c[0], c[10]])), // 1.152 : 7 nouvelles plantes
+    ...Object.fromEntries(TREES_152.map(t => [t[0], t[10]])), // 1.152 : cannelier & muscadier
     wheat: '10101',
     carrot: '30000',
     tomato: '23003',
@@ -263,6 +266,7 @@ const A = {
     ewe: '3422223',
     quail: '2222232',
     ...Object.fromEntries(ANIMALS_135.map(a => [a[0], a[10]])),
+    ...Object.fromEntries(ANIMALS_152.map(a => [a[0], a[10]])),
     ...Object.fromEntries(OASIS_BEASTS.map(a => [a[0], a[10]])),
     ...Object.fromEntries(NORD_BEASTS.map(a => [a[0], a[10]])),
 };

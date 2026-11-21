@@ -1,4 +1,5 @@
 import { applyLevels } from './levels.js';
+import { oldLvl } from './lv80.js';
 import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155, COFFEE_GATED } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
 import { CROPS_130, RECIPES_130 } from './ajouts/cultures.js';
@@ -17,6 +18,7 @@ import { RECIPES_134 } from './ajouts/cave.js';
 import { PRODUCTS_135, RECIPES_135 } from './ajouts/animaux.js';
 import { PRODUCTS_181, RECIPES_181 } from './ajouts/seconds.js';
 import { RECIPES_137 } from './ajouts/chateau.js';
+import { CROPS_152, TREES_152, PRODUCTS_152, RECIPES_152 } from './ajouts/pack152.js';
 // Tous les produits du jeu : cultures, arbres, produits animaux, plats, matériaux.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -3018,6 +3020,45 @@ for (const [id, name, , ing] of RECIPES_181) {
 for (const [, id, name, ing] of BOXES) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', box: true, sell: Math.max(5, Math.ceil((cost * 1.37) / BOX_OUT / 5) * 5) };
+}
+
+// ---------------- 1.152 : Capybara, 7 nouvelles plantes, 2 arbres et 33 recettes ----------------
+for (const [id, name, seedName, reqLvl, seasons, cost, sell, time, xp, , , zone] of CROPS_152) {
+    ITEMS[id] = {
+        id,
+        name,
+        seedName,
+        type: 'crop',
+        cost,
+        sell,
+        time,
+        reqLvl,
+        xp,
+        ...(reqLvl > 30 ? { lv108: oldLvl(reqLvl) } : {}),
+        ...(seasons ? { seasons } : {}),
+        ...(zone === 'gh' ? { ghOnly: true } : {}),
+        ...(zone === 'island' ? { island: true } : {}),
+    };
+}
+for (const [id, name, seedName, reqLvl, cost, sell, time, xp, , island] of TREES_152) {
+    ITEMS[id] = {
+        id,
+        name,
+        seedName,
+        type: 'tree',
+        cost,
+        sell,
+        time,
+        reqLvl,
+        xp,
+        ...(reqLvl > 30 ? { lv108: oldLvl(reqLvl) } : {}),
+        ...(island ? { island: true } : {}),
+    };
+}
+for (const [id, name, sell] of PRODUCTS_152) ITEMS[id] = { id, name, type: 'product', sell };
+for (const [id, name, , ing] of RECIPES_152) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
 }
 
 // Niveaux définitifs (1 à 80) et seuils historiques de migration (voir data/levels.js)

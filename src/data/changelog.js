@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.152",
+  "title": "Le Capybara & Nouvelles Récoltes",
+  "date": "21 novembre 2026",
+  "items": [
+   "Nouvel animal dans les Prés : le Capybara (niveau 34), tout en douceur près de la mare — il offre du Cresson d’eau et des Fleurs de nénuphar (6 recettes dédiées : velouté, beurre, salade, infusion, savon et parfum)",
+   "5 nouvelles plantes de la Ferme : Thym, Potimarron, Fenouil, Topinambour et Camomille, avec leurs 3 stades de pousse et 15 nouvelles recettes (veloutés, tarte, gnocchis, bar au fenouil, fenouil braisé, liqueur, chips, gratin, huile, fromage frais, tisanes, savon et eau florale)",
+   "Nouvelle plante rare en Serre : le Wasabi (sauce wasabi, tartare de thon au wasabi, noix de cajou au wasabi)",
+   "Nouveautés de l’Île tropicale : la Citronnelle (bouillon, infusion glacée, savon) et deux arbres aromatiques, le Cannelier (roulé à la cannelle, rhum arrangé, chocolat chaud) et le Muscadier (béchamel, pain d’épices, élixir muscade & vanille)"
+  ]
+ },
+ {
   "v": "1.151",
   "title": "Atelier du Portrait & Campeurs de Saison",
   "date": "21 novembre 2026",

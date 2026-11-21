@@ -95,6 +95,7 @@ import './village/salon.js';
 import './animaux/ration.js';
 import './animaux/seconds.js';
 import './retouches/produits-uniques.js';
+import './ajouts-152.js';
 import { perfumeUiIcon } from './perfume.js';
 ui.perfume = perfumeUiIcon;
 

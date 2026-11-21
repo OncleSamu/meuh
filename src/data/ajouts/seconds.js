@@ -22,7 +22,7 @@ export const EXTRAS_181 = {
 };
 
 // les seconds produits qui ne sont pas de la viande (Yvette ne les vend pas)
-export const NOT_MEAT_181 = new Set(['whey', 'goatHorn', 'royalFleece', 'royalJelly', 'fertilizer', 'peacockFeather']);
+export const NOT_MEAT_181 = new Set(['whey', 'goatHorn', 'royalFleece', 'royalJelly', 'fertilizer', 'peacockFeather', 'waterLily']);
 
 // id, nom, prix, projet qui l'ouvre (oasis, Nord)
 export const PRODUCTS_181 = [

@@ -3,6 +3,7 @@ import { ANIMALS_135 } from './ajouts/animaux.js';
 import { EXTRAS_181 } from './ajouts/seconds.js';
 import { OASIS_BEASTS } from './oasis.js';
 import { NORD_BEASTS } from './nord.js';
+import { ANIMALS_152 } from './ajouts/pack152.js';
 // Les animaux : prix, production, croissance des petits, noms.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
@@ -164,8 +165,8 @@ export const ANIMALS = {
     },
 };
 
-// 1.35 : six animaux de plus (voir v135.js)
-for (const [id, name, prodId, cost, time, reqLvl, xp, extra] of ANIMALS_135)
+// 1.35 : six animaux de plus (voir v135.js) ; 1.152 : le capybara
+for (const [id, name, prodId, cost, time, reqLvl, xp, extra] of [...ANIMALS_135, ...ANIMALS_152])
     ANIMALS[id] = { id, name, prodId, cost, time, reqLvl, xp, ...(extra ? { extra } : {}) };
 
 // 1.49 : les bêtes de l'oasis (elles ne vivent que dans l'enclos de la palmeraie)
@@ -204,6 +205,7 @@ export const GROW = {
     ewe: 800,
     quail: 300,
     ...Object.fromEntries(ANIMALS_135.map(a => [a[0], a[8]])),
+    ...Object.fromEntries(ANIMALS_152.map(a => [a[0], a[8]])),
     ...Object.fromEntries(OASIS_BEASTS.map(a => [a[0], a[8]])),
     ...Object.fromEntries(NORD_BEASTS.map(a => [a[0], a[8]])),
 };
@@ -226,6 +228,7 @@ export const NAMES = {
     ewe: ['Roquette', 'Bergère', 'Brebisette', 'Lainette', 'Marjolaine', 'Pâquerette'],
     quail: ['Caillette', 'Grain-de-blé', 'Mouchetée', 'Pistou', 'Noisette', 'Roucoule'],
     ...Object.fromEntries(ANIMALS_135.map(a => [a[0], a[9]])),
+    ...Object.fromEntries(ANIMALS_152.map(a => [a[0], a[9]])),
     ...Object.fromEntries(OASIS_BEASTS.map(a => [a[0], a[9]])),
     ...Object.fromEntries(NORD_BEASTS.map(a => [a[0], a[9]])),
     turkey: ['Glouglou', 'Dindonnette', 'Gobble', 'Plumette', 'Caroline', 'Barnabé'],

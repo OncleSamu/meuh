@@ -14,6 +14,7 @@ import { RECIPES_161, PIZZERIA } from './ajouts/pizzeria.js';
 import { RECIPES_153, MACHINES_153 } from './ajouts/nord-cuisine.js';
 import { RECIPES_100 } from './ajouts/dernieres.js';
 import { BOXES, BOX_OUT, EMBALLERIE } from './ajouts/emballerie.js';
+import { RECIPES_152 } from './ajouts/pack152.js';
 // Les machines de l'atelier et toutes les recettes (les niveaux définitifs 1 à 80 vivent dans data/levels.js).
 
 export const MACHINES = {
@@ -3479,6 +3480,9 @@ for (const [id, , machine, ing, time, lvl] of RECIPES_181) RECIPES[id] = { id, m
 // ---------------- 1.104 : l'emballerie (les boîtes de la Maison par trois) ----------------
 MACHINES[EMBALLERIE.id] = { ...EMBALLERIE };
 for (const [, id, , ing, time, lvl] of BOXES) RECIPES[id] = { id, machine: EMBALLERIE.id, ing, time, lvl, base: lvl, outQty: BOX_OUT, xp: Math.round(time / 12) };
+
+// ---------------- 1.152 : 33 nouvelles recettes (Capybara, plantes & arbres) ----------------
+for (const [id, , machine, ing, time, lvl] of RECIPES_152) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 
 // ---------------- Niveaux définitifs (1 à 80) et seuils historiques de migration (voir data/levels.js) ----------------
 applyLevels('machines', MACHINES);

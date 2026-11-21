@@ -13,7 +13,7 @@ import { ANIMALS_135, PRODUCTS_135, RECIPES_135 } from '../../src/data/ajouts/an
 import { SPR } from '../../src/art/index.js';
 
 test('1.35 : 23 animaux, onze produits, 36 recettes', () => {
-    assert.equal(Object.keys(ANIMALS).length, 29); // 1.52 : les trois bêtes du Grand Nord
+    assert.equal(Object.keys(ANIMALS).length, 30); // 1.152 : le capybara
     assert.equal(ANIMALS_135.length, 6);
     assert.equal(PRODUCTS_135.length, 11);
     assert.equal(RECIPES_135.length, 36);

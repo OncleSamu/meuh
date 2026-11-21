@@ -124,6 +124,7 @@ export const COMICE_CAT = {
     reindeer: 'Les rennes',
     muskox: 'Les bœufs musqués',
     ptarmigan: 'Les lagopèdes',
+    capybara: 'Les capybaras',
 };
 
 // ---------------- 1.46 : le carnet des robes ----------------
