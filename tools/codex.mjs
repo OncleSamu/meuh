@@ -17,6 +17,7 @@ import { VILLAGERS } from '../src/data/village.js';
 import { HONEYS, HONEY_COL } from '../src/data/honey.js';
 import { CAVE_ITEMS, CAVE_FAMILIES } from '../src/data/cave.js';
 import { PACKS } from '../src/data/paquets.js';
+import { FIRST_NAMES, ORIGINS, PROFILES } from '../src/data/camping.js';
 import { LOOKS, FEATURES, featuresOf, FLAVORS, PLANT_TRAITS, ANIMAL_TRAITS } from '../src/data/genetics.js';
 import { COAT } from '../src/data/haras.js';
 import {
@@ -249,6 +250,11 @@ const data = {
         bottleIds: BOTTLE_IDS,
         caps: CAPS,
         capIds: CAP_IDS,
+    },
+    camping: {
+        names: FIRST_NAMES,
+        origins: ORIGINS,
+        profiles: Object.values(PROFILES).map(p => p.name),
     },
 };
 

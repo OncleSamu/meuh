@@ -193,6 +193,7 @@
   .rounded-2xl { border-radius: 1rem; }
   .rounded-full { border-radius: 9999px; }
   .border { border-width: 1px; border-style: solid; border-color: var(--border, #e2d8c5); }
+  .border-2 { border-width: 2px; border-style: solid; border-color: var(--border, #e2d8c5); }
   .border-t { border-top: 1px solid var(--border, #e2d8c5); }
   .border-b { border-bottom: 1px solid var(--border, #e2d8c5); }
   .border-x-0 { border-left: 0; border-right: 0; }
@@ -219,6 +220,7 @@
   .hover\:opacity-85:hover { opacity: .85; }
   .hover\:text-red-500:hover { color: #ef4444; }
   .ring-2 { box-shadow: 0 0 0 2px var(--primary, #3f7a44); }
+  .p-0\.5 { padding: .125rem; }
   @media (min-width: 640px) {
     .sm\:flex-row { flex-direction: row; }
     .sm\:items-start { align-items: flex-start; }
@@ -237,6 +239,7 @@
     .md\:grid-cols-7 { grid-template-columns: repeat(7, minmax(0, 1fr)); }
   }
   @media (min-width: 1024px) {
+    .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .lg\:grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
@@ -363,6 +366,7 @@
               <button data-tab="genetics" class="tab-btn px-3 py-2 cursor-pointer">Générateur Génétique</button>
               <button data-tab="brewery" class="tab-btn px-3 py-2 cursor-pointer">Brasserie d’Abbaye</button>
               <button data-tab="perfume" class="tab-btn px-3 py-2 cursor-pointer">Parfumerie</button>
+              <button data-tab="people" class="tab-btn px-3 py-2 cursor-pointer">Personnages</button>
             </nav>
             <button id="theme-btn" class="btn-sec rounded-lg px-2.5 py-1 text-xs cursor-pointer" title="Changer le thème clair / sombre">🌙</button>
             <a href="../" class="btn-sec rounded-lg px-2.5 py-1 text-xs" style="text-decoration:none">← Jouer à Meuh</a>
@@ -1846,12 +1850,377 @@ function renderPerfumery() {
   if (pq) pq.oninput = e => { S.pfQ = e.target.value; renderPerfumery(); $('#pf-q').focus(); $('#pf-q').setSelectionRange(S.pfQ.length, S.pfQ.length); };
 }
 
+// ---- Générateur de personnages (fidèle à src/art/habitants.js : création du fermier & camping) ----
+const HAB_TRAITS = ['skin', 'hair', 'hairColor', 'beard', 'nose', 'eyes', 'eyeColor', 'glasses', 'hat', 'shirt', 'collar', 'extra'];
+const HAB_COUNT = { skin: 6, hair: 8, hairColor: 9, beard: 6, nose: 4, eyes: 4, eyeColor: 5, glasses: 3, hat: 6, shirt: 10, collar: 4, extra: 5 };
+const HAB_NAMES = {
+  skin: 'Teint',
+  hair: 'Coiffure',
+  hairColor: 'Couleur des cheveux',
+  beard: 'Barbe',
+  nose: 'Nez',
+  eyes: 'Regard',
+  eyeColor: 'Couleur des yeux',
+  glasses: 'Lunettes',
+  hat: 'Chapeau',
+  shirt: 'Couleur du vêtement',
+  collar: 'Col / Tenue',
+  extra: 'Détail',
+};
+const HAB_LABELS = {
+  hair: ['Chauve / ras', 'Court', 'Mi-long', 'Chignon', 'Bouclé', 'Queue de cheval', 'Tresses', 'Mèche sur le côté'],
+  beard: ['Aucune', '3 jours', 'Courte', 'Grande barbe', 'Moustache', 'Bouc'],
+  nose: ['Petit', 'Rond', 'Long', 'Crochu'],
+  eyes: ['Brillant', 'Grands yeux', 'Souriant', 'En amande'],
+  glasses: ['Aucune', 'Rondes', 'Rectangulaires'],
+  hat: ['Aucun', 'Casquette', 'Chapeau de paille', 'Béret', 'Bonnet', 'Toque'],
+  collar: ['Simple', 'Col en V', 'Salopette', 'Foulard'],
+  extra: ['Aucun', 'Taches de rousseur', 'Boucles d’oreilles', 'Gros sourcils', 'Petit nœud'],
+};
+const HAB_SKINS = ['#fbdcc0', '#f6cfa6', '#e8b88a', '#c98f62', '#a06a45', '#6e4730'];
+const HAB_HAIRS = ['#2b2220', '#4a2f1e', '#6b3d1e', '#8a4b24', '#c4521f', '#e3c06a', '#f2dc9c', '#b9b9c2', '#ececf2'];
+const HAB_EYES = ['#3b2a20', '#7a4a22', '#4f8a4f', '#4a78b8', '#8a98a8'];
+const HAB_SHIRTS = ['#e2412f', '#2f6fb0', '#6cc04a', '#e8b83a', '#b58ad6', '#f08ac0', '#5aa9a0', '#8a5a2a', '#f1ece0', '#5c5c6e'];
+const HAB_SWATCH = { skin: HAB_SKINS, hairColor: HAB_HAIRS, eyeColor: HAB_EYES, shirt: HAB_SHIRTS };
+const HAB_TOTAL = HAB_TRAITS.reduce((a, t) => a * HAB_COUNT[t], 1);
+
+const habHex = (c, k) => {
+  const n = parseInt(c.slice(1), 16);
+  const f = v => Math.max(0, Math.min(255, Math.round(v * k)));
+  return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(v => f(v).toString(16).padStart(2, '0')).join('');
+};
+const isHabId = id => typeof id === 'string' && /^h[0-9ab]{12}$/.test(id);
+const habLookOf = id => Object.fromEntries(HAB_TRAITS.map((t, i) => [t, parseInt((isHabId(id) ? id : 'h000000000000')[i + 1], 12) % HAB_COUNT[t]]));
+const habIdOf = look => 'h' + HAB_TRAITS.map(t => (((look[t] || 0) % HAB_COUNT[t]) + HAB_COUNT[t]) % HAB_COUNT[t]).map(v => v.toString(12)).join('');
+
+function habRng(seed) {
+  let s = (seed >>> 0) || 1;
+  return () => {
+    s = (Math.imul(s ^ (s >>> 15), 2246822507) + 0x9e3779b9) >>> 0;
+    s = Math.imul(s ^ (s >>> 13), 3266489909) >>> 0;
+    return ((s ^ (s >>> 16)) >>> 0) / 4294967296;
+  };
+}
+function habRandomLook(seed, o = {}) {
+  const r = habRng(seed);
+  const pick = t => Math.floor(r() * HAB_COUNT[t]);
+  const look = Object.fromEntries(HAB_TRAITS.map(t => [t, pick(t)]));
+  if (r() < 0.55) look.hat = 0;
+  if (r() < 0.65) look.glasses = 0;
+  if (r() < 0.4) look.extra = 0;
+  if (r() < 0.4) look.beard = 0;
+  if (o.female) {
+    look.beard = 0;
+    look.hair = [2, 3, 4, 5, 6, 7][Math.floor(r() * 6)];
+  }
+  if (o.male) look.hair = [0, 1, 1, 4, 7][Math.floor(r() * 5)];
+  if (o.old) look.hairColor = r() < 0.7 ? 7 + Math.floor(r() * 2) : look.hairColor;
+  Object.assign(look, o.fix || {});
+  return look;
+}
+const habRandomId = (seed, o) => habIdOf(habRandomLook(seed, o));
+
+function habHairBack(h, c) {
+  const d = habHex(c, 0.8);
+  switch (h) {
+    case 2: return P('M16 30 C12 14 52 14 48 30 L51 54 L40 50 L24 50 L13 54Z', c);
+    case 3: return C(32, 11.5, 6.5, c);
+    case 5: return P('M44 22 Q58 24 54 42 Q50 34 44 32Z', c) + F('M50 28 Q54 34 52 40', d, 0.5);
+    case 6: return P('M17 30 Q10 42 15 56 L20 56 Q18 44 21 32Z', c) + P('M47 30 Q54 42 49 56 L44 56 Q46 44 43 32Z', c) + R(14, 54, 7, 4, 2, '#e2412f', 1.4) + R(43, 54, 7, 4, 2, '#e2412f', 1.4);
+    case 4: return [18, 24, 32, 40, 46].map((x, i) => C(x, i % 2 ? 13 : 16, 6.5, c)).join('') + C(15, 26, 5.5, c) + C(49, 26, 5.5, c);
+    default: return '';
+  }
+}
+function habHairFront(h, c) {
+  switch (h) {
+    case 1: return P('M18 30 C16 13 48 13 46 30 C44 22 38 19 32 19 C26 19 20 22 18 30Z', c);
+    case 2: case 5: case 6: return P('M18 30 C16 13 48 13 46 30 C42 23 36 21 32 21 C26 21 21 24 18 30Z', c);
+    case 3: return P('M18 30 C16 14 48 14 46 30 C44 22 38 19 32 19 C26 19 20 22 18 30Z', c);
+    case 4: return '';
+    case 7: return P('M18 31 C15 13 49 12 46 28 C43 25 40 21 33 20 C28 24 23 25 18 31Z', c) + P('M33 20 C40 20 44 24 46 28 C44 24 40 23 33 20Z', habHex(c, 0.8), 1);
+    default: return h === 0 ? F('M20 24 Q32 16 44 24 Q32 20 20 24Z', habHex(c, 0.9), 0.35) : '';
+  }
+}
+function habBeardArt(b, c) {
+  const d = habHex(c, 0.85);
+  switch (b) {
+    case 1: return F('M19 32 C20 42 26 46 32 46 C38 46 44 42 45 32 C42 40 36 42 32 42 C28 42 22 40 19 32Z', habHex(c, 1), 0.45);
+    case 2: return P('M18 33 C19 44 25 48 32 48 C39 48 45 44 46 33 C43 40 38 41 32 41 C26 41 21 40 18 33Z', d);
+    case 3: return P('M17 32 C16 48 24 56 32 56 C40 56 48 48 47 32 C44 41 38 43 32 43 C26 43 20 41 17 32Z', d);
+    case 4: return P('M23 37 C26 33 30 34 32 36.5 C34 34 38 33 41 37 C38 40 35 38 32 38 C29 38 26 40 23 37Z', d, 1.8);
+    case 5: return P('M26 40 C28 38 36 38 38 40 C38 46 35 50 32 50 C29 50 26 46 26 40Z', d);
+    default: return '';
+  }
+}
+function habNoseArt(n) {
+  const sk = '#c98a62';
+  return [
+    L('M32 31.2 Q33.6 33.6 31.6 34.2', 1.3, sk),
+    C(32, 33, 2.4, '#e9b48a', 1.4),
+    L('M32 28 Q35 34 31 35.6', 1.5, sk),
+    L('M32 28.5 Q36 32 34 35 Q32 34.6 30.6 35', 1.5, sk),
+  ][n];
+}
+function habEyesArt(shape, iris) {
+  const w = '#fff';
+  switch (shape) {
+    case 1: return C(27, 30, 2.7, w, 1.2) + C(37, 30, 2.7, w, 1.2) + FC(27, 30.3, 1.5, iris) + FC(37, 30.3, 1.5, iris) + FC(26.4, 29.4, 0.6, w) + FC(36.4, 29.4, 0.6, w);
+    case 2: return L('M24.5 30.5 Q27 27.5 29.5 30.5', 1.8) + L('M34.5 30.5 Q37 27.5 39.5 30.5', 1.8);
+    case 3: return E(27, 30, 2.6, 1.7, w, 0, 1.1) + E(37, 30, 2.6, 1.7, w, 0, 1.1) + FC(27, 30, 1.3, iris) + FC(37, 30, 1.3, iris) + FC(27, 30, 0.6, INK) + FC(37, 30, 0.6, INK);
+    default: return E(27, 30, 1.9, 2.4, iris === HAB_EYES[0] ? INK : iris, 0, 0) + E(37, 30, 1.9, 2.4, iris === HAB_EYES[0] ? INK : iris, 0, 0) + FC(27.7, 29.1, 0.75, w) + FC(37.7, 29.1, 0.75, w);
+  }
+}
+const habGlassesArt = g =>
+  g === 1
+    ? C(27, 30, 4.4, 'none', 1.7) + C(37, 30, 4.4, 'none', 1.7) + L('M31.4 30 L32.6 30', 1.7)
+    : g === 2
+      ? R(22.4, 26.6, 9, 7, 2, 'none', 1.7) + R(32.6, 26.6, 9, 7, 2, 'none', 1.7) + L('M31.4 29.5 L32.6 29.5', 1.7)
+      : '';
+function habHatArt(h) {
+  switch (h) {
+    case 1: return P('M17 25 C17 10 47 10 47 25Z', '#2f6fb0') + P('M17 25 Q10 26 12 29 Q26 26 47 25Z', '#1f4f84', 1.8) + HL(27, 15, 5, 1.6, -15, 0.4);
+    case 2: return P('M6 25 C6 20 58 20 58 25 C58 30 6 30 6 25Z', '#e8c76a') + P('M17 24 C16 8 48 8 47 24Z', '#f1d98a') + R(17, 18, 30, 4, 1, '#c0392b', 1.4);
+    case 3: return P('M14 22 C12 10 44 6 52 16 C54 22 40 24 14 22Z', '#c0392b') + L('M33 8 L35 4', 2.2);
+    case 4: return P('M17 25 C16 8 48 8 47 25Z', '#5aa9a0') + R(15, 22, 34, 6, 3, '#3f8480', 1.8) + C(32, 6, 3.4, '#f1ece0', 1.6);
+    case 5: return R(19, 18, 26, 6, 2, '#fff', 1.8) + P('M19 18 C12 16 13 5 21 7 C22 1 32 0 33 6 C37 1 46 3 44 9 C51 9 51 17 45 18Z', '#fff');
+    default: return '';
+  }
+}
+function habShirtArt(shirt, collar) {
+  const s = HAB_SHIRTS[shirt];
+  const base = P('M8 66 C8 51 19 45 32 45 C45 45 56 51 56 66Z', s) + F('M10 62 C12 54 18 50 24 49 C18 53 14 58 13 66 L9 66Z', 'rgba(0,0,0,.12)') + HL(20, 52, 4, 1.6, -30, 0.35);
+  const extra = [
+    '',
+    P('M22 46 L32 57 L42 46 L39 45 L32 51 L25 45Z', '#f1ece0', 1.8),
+    P('M16 66 L16 52 L24 46 L40 46 L48 52 L48 66Z', '#4a6fa5', 2) + L('M24 46 L24 66 M40 46 L40 66', 1.6, '#2f4f80') + R(27, 56, 10, 7, 1.5, '#3b5f95', 1.4),
+    P('M20 47 L32 53 L44 47 L42 52 L32 59 L22 52Z', '#e8b83a', 2),
+  ][collar];
+  return base + extra + R(28, 38, 8, 9, 3, 'SKIN', 2);
+}
+const habExtraArt = x => [
+  '',
+  [24, 27, 26, 38, 41, 39].map((p, i) => FC(p, i % 3 === 1 ? 35.5 : 34, 0.7, '#c46a3a')).join(''),
+  FC(18, 35, 1.5, '#f5d36b') + FC(46, 35, 1.5, '#f5d36b'),
+  L('M22 23 Q25 21 28 23 M36 23 Q39 21 42 23', 1.8, '#4a2f1e'),
+  P('M30 14 Q32 6 34 14 Q32 11 30 14Z', '#e2412f', 1.2),
+][x];
+
+function habitantInner(id) {
+  const k = habLookOf(id);
+  const skin = HAB_SKINS[k.skin], hair = HAB_HAIRS[k.hairColor];
+  const sk = s => s.replace(/SKIN/g, skin);
+  const face =
+    E(18, 31, 2.8, 3.8, skin, 0, 2) +
+    E(46, 31, 2.8, 3.8, skin, 0, 2) +
+    L('M17.6 29.5 Q16.6 31 17.8 32.6 M46.4 29.5 Q47.4 31 46.2 32.6', 1.1, habHex(skin, 0.8)) +
+    C(32, 30, 14, skin) +
+    F('M40 38 Q45 33 45.6 27 Q47 36 39 42 Q36 43.5 33 43.8 Q37 42 40 38Z', habHex(skin, 0.92), 0.7) +
+    habEyesArt(k.eyes, HAB_EYES[k.eyeColor]) +
+    habNoseArt(k.nose) +
+    (k.beard === 2 || k.beard === 3 ? '' : P('M28.2 36.2 Q32 40.6 35.8 36.2 Q32 37.4 28.2 36.2Z', '#b5523f', 1.6)) +
+    FC(23.5, 34.2, 2.7, '#f49a8f', 0.45) +
+    FC(40.5, 34.2, 2.7, '#f49a8f', 0.45);
+  const smileUnderBeard = k.beard === 2 || k.beard === 3 ? L('M29 39.4 Q32 41.4 35 39.4', 1.5, '#7a3a2a') : '';
+  return (
+    sk(habHairBack(k.hair, hair)) +
+    sk(habShirtArt(k.shirt, k.collar)) +
+    sk(face) +
+    sk(habBeardArt(k.beard, hair)) +
+    smileUnderBeard +
+    habExtraArt(k.extra) +
+    sk(habHairFront(k.hair, hair)) +
+    habGlassesArt(k.glasses) +
+    habHatArt(k.hat)
+  );
+}
+const habSvg = id => svgWrap(habitantInner(id), '0 0 64 64');
+
+function rollCampersBatch() {
+  const C0 = DATA.camping || { names: ['Camille', 'Lucien', 'Éloïse', 'Hector', 'Nina', 'Oscar', 'Rosalie', 'Bastien'], origins: ['de Bretagne', 'de Provence', 'de Savoie', 'du Québec'], profiles: ['Randonneur', 'Gourmet', 'Artiste', 'Pêcheur'] };
+  const used = new Set();
+  const list = [];
+  for (let i = 0; i < 8; i++) {
+    const seed = Math.floor(Math.random() * 1e9);
+    const woman = Math.random() < 0.5;
+    const old = Math.random() < 0.2;
+    const id = habRandomId(seed, { [woman ? 'female' : 'male']: true, ...(old ? { old: true } : {}) });
+    const avail = C0.names.filter(n => !used.has(n));
+    const name = avail.length ? avail[Math.floor(Math.random() * avail.length)] : C0.names[i % C0.names.length];
+    used.add(name);
+    const origin = C0.origins[Math.floor(Math.random() * C0.origins.length)];
+    const profile = C0.profiles[Math.floor(Math.random() * C0.profiles.length)];
+    list.push({ id, name, origin, profile });
+  }
+  S.charCampers = list;
+}
+
+function renderCharacters() {
+  if (!isHabId(S.charId)) S.charId = 'h122000102120';
+  if (!S.charCampers) rollCampersBatch();
+  const look = habLookOf(S.charId);
+  const svgStr = habSvg(S.charId);
+
+  const colorTraits = ['skin', 'hairColor', 'eyeColor', 'shirt'];
+  const shapeTraits = ['hair', 'beard', 'eyes', 'nose', 'glasses', 'hat', 'collar', 'extra'];
+
+  $('#main').innerHTML = `
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <div class="lg:col-span-5 space-y-4">
+        <div class="card rounded-xl p-5">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-base font-bold">Fabrique d’habitants</h2>
+              <p class="text-xs muted">Fermier, campeurs &amp; famille · ${fmt(HAB_TOTAL)} visages possibles</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col items-center gap-3">
+            <div class="w-44 h-44 rounded-full surf border-2 flex items-center justify-center p-2 shadow-sm overflow-hidden" style="border-color:var(--border)">
+              <div class="w-40 h-40">${svgStr}</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex flex-col items-center gap-1"><div class="w-12 h-12 rounded-full surf border overflow-hidden p-0.5">${svgStr}</div><span class="text-[10px] muted">Menu</span></div>
+              <div class="flex flex-col items-center gap-1"><div class="w-9 h-9 rounded-full surf border overflow-hidden">${svgStr}</div><span class="text-[10px] muted">Camping</span></div>
+              <div class="flex flex-col items-center gap-1"><div class="w-6 h-6 rounded-full surf border overflow-hidden">${svgStr}</div><span class="text-[10px] muted">Puce</span></div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-wrap gap-1.5 justify-center">
+            <button data-hab-rand="any" class="btn-pri rounded-lg px-3 py-1.5 text-xs cursor-pointer">🎲 Aléatoire</button>
+            <button data-hab-rand="female" class="btn-sec rounded-lg px-2.5 py-1.5 text-xs cursor-pointer">👩 Féminin</button>
+            <button data-hab-rand="male" class="btn-sec rounded-lg px-2.5 py-1.5 text-xs cursor-pointer">👨 Masculin</button>
+            <button data-hab-rand="old" class="btn-sec rounded-lg px-2.5 py-1.5 text-xs cursor-pointer">🧓 Âgé</button>
+          </div>
+
+          <div class="mt-4 pt-3 border-t space-y-2">
+            <div class="flex items-center gap-2">
+              <label for="hab-code" class="text-xs muted shrink-0">Code ID</label>
+              <input id="hab-code" type="text" value="${esc(S.charId)}" maxlength="13" spellcheck="false" class="surf border rounded-lg px-2.5 py-1 text-xs font-mono flex-1 min-w-0">
+              <button id="hab-copy-id" class="btn-sec rounded-lg px-2.5 py-1 text-xs cursor-pointer">Copier</button>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button id="hab-copy-svg" class="btn-sec rounded-lg px-2.5 py-1.5 text-xs cursor-pointer flex-1">Copier SVG</button>
+              <button id="hab-dl-svg" class="btn-sec rounded-lg px-2.5 py-1.5 text-xs cursor-pointer flex-1">Télécharger .svg</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card rounded-xl p-4 space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-sm">Fournée du camping</h3>
+              <p class="text-[11px] muted">Clique un campeur pour le charger dans l’éditeur</p>
+            </div>
+            <button id="hab-campers-roll" class="btn-sec rounded-lg px-2.5 py-1 text-xs cursor-pointer">🎲 Nouveau tirage</button>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2">
+            ${S.charCampers.map(c => `
+              <button data-hab-load="${c.id}" class="flex items-center gap-2 p-2 rounded-lg border text-left cursor-pointer surf ${S.charId === c.id ? 'border-amber-500 ring-2 ring-amber-500/40' : ''}">
+                <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 border" style="background:var(--bg)">${habSvg(c.id)}</div>
+                <div class="min-w-0 flex-1">
+                  <div class="text-xs font-semibold truncate">${esc(c.name)}</div>
+                  <div class="text-[10px] muted truncate">${esc(c.origin)}</div>
+                  <div class="text-[10px] muted truncate">${esc(c.profile)}</div>
+                </div>
+              </button>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 space-y-4">
+        <div class="card rounded-xl p-4 space-y-3">
+          <h3 class="font-bold text-sm">Couleurs (4 traits)</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            ${colorTraits.map(t => `
+              <div class="surf rounded-xl p-3 border">
+                <div class="flex items-center justify-between text-xs mb-2">
+                  <span class="font-semibold">${HAB_NAMES[t]}</span>
+                  <span class="muted font-mono">${look[t] + 1}/${HAB_COUNT[t]}</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                  ${HAB_SWATCH[t].map((col, idx) => `
+                    <button data-hab-set="${t}:${idx}" title="${HAB_NAMES[t]} ${idx + 1} (${col})" class="w-7 h-7 rounded-full border-2 cursor-pointer ${look[t] === idx ? 'ring-2 ring-amber-500' : ''}" style="background:${col};border-color:${look[t] === idx ? '#3a2618' : 'rgba(58,38,24,0.35)'}"></button>`).join('')}
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="card rounded-xl p-4 space-y-3">
+          <h3 class="font-bold text-sm">Traits du visage &amp; tenue (8 traits)</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            ${shapeTraits.map(t => `
+              <div class="surf rounded-xl p-3 border space-y-2">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-semibold">${HAB_NAMES[t]}</span>
+                  <div class="flex items-center gap-1">
+                    <button data-hab-step="${t}:-1" class="btn-sec rounded-md px-2 py-0.5 text-xs cursor-pointer" title="Précédent">‹</button>
+                    <span class="text-[11px] muted font-mono px-1">${look[t] + 1}/${HAB_COUNT[t]}</span>
+                    <button data-hab-step="${t}:1" class="btn-sec rounded-md px-2 py-0.5 text-xs cursor-pointer" title="Suivant">›</button>
+                  </div>
+                </div>
+                <div class="flex flex-wrap gap-1">
+                  ${HAB_LABELS[t].map((lbl, idx) => `
+                    <button data-hab-set="${t}:${idx}" class="pill ${look[t] === idx ? 'active' : ''} px-2 py-1 rounded-lg text-[11px] cursor-pointer">${esc(lbl)}</button>`).join('')}
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  $$('[data-hab-set]').forEach(b => b.onclick = () => {
+    const [t, v] = b.dataset.habSet.split(':');
+    const next = habLookOf(S.charId);
+    next[t] = +v;
+    S.charId = habIdOf(next);
+    renderCharacters();
+  });
+  $$('[data-hab-step]').forEach(b => b.onclick = () => {
+    const [t, d] = b.dataset.habStep.split(':');
+    const next = habLookOf(S.charId);
+    next[t] = (next[t] + +d + HAB_COUNT[t]) % HAB_COUNT[t];
+    S.charId = habIdOf(next);
+    renderCharacters();
+  });
+  $$('[data-hab-rand]').forEach(b => b.onclick = () => {
+    const m = b.dataset.habRand;
+    const seed = Math.floor(Math.random() * 1e9);
+    const o = m === 'female' ? { female: true } : m === 'male' ? { male: true } : m === 'old' ? { old: true } : {};
+    S.charId = habRandomId(seed, o);
+    renderCharacters();
+  });
+  $$('[data-hab-load]').forEach(b => b.onclick = () => {
+    S.charId = b.dataset.habLoad;
+    renderCharacters();
+  });
+  $('#hab-campers-roll').onclick = () => { rollCampersBatch(); renderCharacters(); };
+  $('#hab-copy-id').onclick = () => copyText(S.charId, `Code ${S.charId} copié !`);
+  $('#hab-copy-svg').onclick = () => copyText(svgStr, 'SVG copié !');
+  $('#hab-dl-svg').onclick = () => {
+    const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `meuh-personnage-${S.charId}.svg`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast('SVG téléchargé !');
+  };
+  const codeIn = $('#hab-code');
+  if (codeIn) codeIn.oninput = e => {
+    const val = e.target.value.trim().toLowerCase();
+    if (isHabId(val)) { S.charId = val; renderCharacters(); $('#hab-code').focus(); }
+  };
+}
+
 function renderActiveTab() {
   $$('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === S.tab));
   if (S.tab === 'sprites') renderSprites();
   else if (S.tab === 'products') renderProducts();
   else if (S.tab === 'genetics') renderGenetics();
   else if (S.tab === 'perfume') renderPerfumery();
+  else if (S.tab === 'people') renderCharacters();
   else renderBrewery();
 }
 
