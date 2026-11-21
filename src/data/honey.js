@@ -99,6 +99,25 @@ export const HONEYS = {
         mult: 1.3,
         mamie: 'Le miel de prunier sent l’amande et le printemps. Les fleurs de prunier sont si petites qu’on se demande comment les abeilles s’y retrouvent.',
     },
+    // 1.153 : miels des nouvelles aromatiques et fleurs de la ferme
+    thyme: {
+        flower: 'thyme',
+        name: 'Miel de thym',
+        mult: 1.6,
+        mamie: 'Le miel de thym est ambré, chaud, et il sent les collines en été. Une cuillère le soir d’hiver vaut tous les sirops du pharmacien.',
+    },
+    chamomile: {
+        flower: 'chamomile',
+        name: 'Miel de camomille',
+        mult: 1.5,
+        mamie: 'Le miel de camomille est pâle comme la lune et doux comme un oreiller. Les abeilles y reviennent dès la rosée du matin.',
+    },
+    fennel: {
+        flower: 'fennel',
+        name: 'Miel de fenouil',
+        mult: 1.6,
+        mamie: 'Le miel de fenouil a des reflets dorés-verts et un petit parfum d’anis tout frais. Très rare : il faut laisser monter les ombelles jusqu’à l’été.',
+    },
 };
 // 1.69 : les miels des contrées : ils ne viennent que du rucher de leur contrée (land)
 export const LAND_HONEYS = {
@@ -122,6 +141,13 @@ export const LAND_HONEYS = {
         name: 'Miel de tiaré',
         mult: 2,
         mamie: 'La fleur de tiaré se met derrière l’oreille, à Tahiti : à droite si on est libre, à gauche si on est pris. Son miel sent la même chose que la fleur. Moi je la mettais des deux côtés, pour ne pas choisir.',
+    },
+    cinnamon: {
+        flower: 'cinnamon',
+        land: 'island',
+        name: 'Miel de cannelier',
+        mult: 2,
+        mamie: 'Les fleurs du cannelier sont minuscules, mais les abeilles de l’île en font un miel cuivré au parfum d’épice douce. Sur une crêpe chaude, c’est un voyage.',
     },
     argan: {
         flower: 'argan',
@@ -179,9 +205,13 @@ export const HONEY_COL = {
     orange: '#f2a020',
     chestnut: '#8a4416',
     almond: '#f1d394',
+    thyme: '#c97828',
+    chamomile: '#f5d86e',
+    fennel: '#b8c448',
     lychee: '#f0c8a0',
     avocado: '#4a2a14',
     tiare: '#f6d878',
+    cinnamon: '#a84e22',
     argan: '#c8702a',
     coriander: '#d08a2a',
     fir: '#5a2e14',

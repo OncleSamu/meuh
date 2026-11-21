@@ -171,9 +171,9 @@ export const FAMILIES = {
 };
 export const FAMILY_IDS = Object.keys(FAMILIES);
 
-// Toutes les essences de l'Orgue (69) : [Frais, Floral, Boisé, Épicé, Gourmand] + couleur du jus
+// Toutes les essences de l'Orgue (75) : [Frais, Floral, Boisé, Épicé, Gourmand] + couleur du jus
 export const PERFUME_NOTES = {
-    // ---- Notes de Tête (23) ----
+    // ---- Notes de Tête (25) ----
     lemon: { id: 'lemon', tier: 'head', v: [5, 0, 0, 0, 0], col: '#f5dc58', tag: 'hesperide' },
     orange: { id: 'orange', tier: 'head', v: [4, 1, 0, 0, 1], col: '#f29c38', tag: 'hesperide' },
     mandarin: { id: 'mandarin', tier: 'head', v: [4, 1, 0, 0, 2], col: '#f4822e', tag: 'hesperide' },
@@ -183,6 +183,8 @@ export const PERFUME_NOTES = {
     bitterOrange: { id: 'bitterOrange', tier: 'head', v: [5, 2, 0, 1, 0], col: '#e87f24', tag: 'hesperide' },
     mint: { id: 'mint', tier: 'head', v: [5, 0, 1, 0, 0], col: '#5cc48e', tag: 'aromatique' },
     basil: { id: 'basil', tier: 'head', v: [4, 0, 1, 2, 0], col: '#5da652', tag: 'aromatique' },
+    thyme: { id: 'thyme', tier: 'head', v: [4, 1, 1, 2, 0], col: '#6fa65a', tag: 'aromatique' },
+    lemongrass: { id: 'lemongrass', tier: 'head', v: [5, 0, 0, 2, 0], col: '#b8e06c', tag: 'hesperide' },
     genepi: { id: 'genepi', tier: 'head', v: [4, 1, 2, 1, 0], col: '#7ec26b', tag: 'aromatique' },
     coriander: { id: 'coriander', tier: 'head', v: [3, 0, 0, 4, 0], col: '#83b85e', tag: 'aromatique' },
     rhubarb: { id: 'rhubarb', tier: 'head', v: [4, 1, 0, 0, 2], col: '#d45a6e', tag: 'aromatique' },
@@ -198,8 +200,10 @@ export const PERFUME_NOTES = {
     birchSap: { id: 'birchSap', tier: 'head', v: [4, 0, 2, 0, 1], col: '#9fd0df', tag: 'boreal' },
     seaBuckthorn: { id: 'seaBuckthorn', tier: 'head', v: [4, 1, 0, 1, 2], col: '#f2922c', tag: 'boreal' },
 
-    // ---- Notes de Cœur (23) ----
+    // ---- Notes de Cœur (25) ----
     lavender: { id: 'lavender', tier: 'heart', v: [2, 5, 1, 0, 0], col: '#9e7fd4', tag: 'floral' },
+    chamomile: { id: 'chamomile', tier: 'heart', v: [2, 5, 0, 0, 1], col: '#f5dc78', tag: 'floral' },
+    waterLily: { id: 'waterLily', tier: 'heart', v: [3, 5, 0, 0, 0], col: '#f5a8c8', tag: 'floral' },
     orangeBlossomWater: { id: 'orangeBlossomWater', tier: 'heart', v: [2, 5, 0, 0, 1], col: '#f7ead0', tag: 'floral' },
     tiare: { id: 'tiare', tier: 'heart', v: [1, 5, 0, 0, 2], col: '#f2e4a8', tag: 'floral' },
     orchid: { id: 'orchid', tier: 'heart', v: [0, 5, 1, 1, 2], col: '#d46cb4', tag: 'floral' },
@@ -223,9 +227,11 @@ export const PERFUME_NOTES = {
     elderberry: { id: 'elderberry', tier: 'heart', v: [2, 4, 1, 0, 1], col: '#644a7d', tag: 'boreal' },
     lingonberry: { id: 'lingonberry', tier: 'heart', v: [3, 2, 1, 1, 1], col: '#cc3d4c', tag: 'boreal' },
 
-    // ---- Notes de Fond (23) ----
+    // ---- Notes de Fond (25) ----
     resin: { id: 'resin', tier: 'base', v: [0, 0, 5, 2, 1], col: '#c9822e', tag: 'boise' },
     patchouli: { id: 'patchouli', tier: 'base', v: [0, 0, 5, 3, 1], col: '#6b4e2e', tag: 'boise' },
+    cinnamon: { id: 'cinnamon', tier: 'base', v: [0, 0, 2, 5, 2], col: '#b85a2a', tag: 'oriental' },
+    nutmeg: { id: 'nutmeg', tier: 'base', v: [0, 0, 3, 5, 1], col: '#9e6238', tag: 'oriental' },
     hardwood: { id: 'hardwood', tier: 'base', v: [0, 0, 5, 1, 0], col: '#8a5934', tag: 'boise' },
     solidOak: { id: 'solidOak', tier: 'base', v: [0, 0, 5, 1, 0], col: '#7a4f2b', tag: 'boise' },
     fruitWood: { id: 'fruitWood', tier: 'base', v: [1, 1, 4, 0, 1], col: '#b37544', tag: 'boise' },
@@ -260,7 +266,7 @@ export const BASE_NOTES = Object.values(PERFUME_NOTES)
     .map(n => n.id);
 export const ALL_NOTE_IDS = Object.keys(PERFUME_NOTES);
 
-// 8 Grands Classiques de la Parfumerie (+2★ + bande dorée sur le flacon)
+// 10 Grands Classiques de la Parfumerie (+2★ + bande dorée sur le flacon)
 export const PERFUME_CLASSICS = [
     {
         id: 'provence',
@@ -333,6 +339,24 @@ export const PERFUME_CLASSICS = [
         base: ['patchouli'],
         hint: 'Un agrume vif, une note de cassis ou de thé, posée sur le patchouli',
         text: 'L’accord chypré mythique : cédrat ou pamplemousse, cassis ou thé et patchouli.',
+    },
+    {
+        id: 'etang',
+        name: 'Rosée de la Mare',
+        head: ['lemongrass', 'mint'],
+        heart: ['waterLily', 'chamomile'],
+        base: ['honey', 'wood'],
+        hint: 'Citronnelle ou menthe fraîche, fleur de nénuphar ou camomille, posée sur le miel ou le bois',
+        text: 'La fraîcheur sereine de la mare aux capybaras : citronnelle ou menthe, nénuphar ou camomille et miel ou bois.',
+    },
+    {
+        id: 'epices',
+        name: 'Route des Épices',
+        head: ['thyme', 'orange'],
+        heart: ['ginger', 'cardamom'],
+        base: ['cinnamon', 'nutmeg'],
+        hint: 'Un souffle de thym ou d’orange, un cœur de gingembre ou cardamome et un fond de cannelle ou muscade',
+        text: 'Le grand accord épicé des îles : thym ou orange, gingembre ou cardamome, cannelle ou noix de muscade.',
     },
 ];
 

@@ -9,6 +9,8 @@ import { ANIMAL_BASE, FLAVORS } from '../../src/data/genetics.js';
 import { COMICE_CAT } from '../../src/data/elevage.js';
 import { NOT_MEAT_181 } from '../../src/data/ajouts/seconds.js';
 import { ANIMALS_152, CROPS_152, PRODUCTS_152, RECIPES_152, TREES_152 } from '../../src/data/ajouts/pack152.js';
+import { HONEYS, HONEY_COL, HONEY_OF } from '../../src/data/honey.js';
+import { PERFUME_CLASSICS, PERFUME_NOTES } from '../../src/data/perfume.js';
 import { SPR } from '../../src/art/index.js';
 
 test('1.152 : le Capybara est branché partout (élevage, produits non-viande, Comice, gènes, dessin)', () => {
@@ -64,4 +66,26 @@ test('1.152 : les 33 recettes ont un dessin propre, une anecdote dans le Carnet 
         const svg = SPR.item(id);
         assert.ok(svg.length > 200 && !/undefined|NaN/.test(svg), `Dessin recette ${id}`);
     }
+});
+
+test('1.153 : 4 nouveaux miels de fleurs (thym, camomille, fenouil, cannelier) et 6 nouvelles essences de parfumerie', () => {
+    for (const k of ['thyme', 'chamomile', 'fennel', 'cinnamon']) {
+        assert.ok(HONEYS[k] && HONEYS[k].mamie && HONEY_COL[k], `Miel ${k}`);
+        assert.equal(HONEY_OF[k], k);
+        const svg = SPR.item('honey_' + k);
+        assert.ok(svg.includes('<svg') && svg.length > 250 && !/undefined|NaN/.test(svg), `Pot de miel ${k}`);
+    }
+    assert.equal(HONEYS.cinnamon.land, 'island');
+    for (const [id, tier] of [
+        ['thyme', 'head'],
+        ['lemongrass', 'head'],
+        ['chamomile', 'heart'],
+        ['waterLily', 'heart'],
+        ['cinnamon', 'base'],
+        ['nutmeg', 'base'],
+    ]) {
+        assert.equal(PERFUME_NOTES[id]?.tier, tier, `Essence ${id}`);
+    }
+    const classicIds = PERFUME_CLASSICS.map(c => c.id);
+    assert.ok(classicIds.includes('etang') && classicIds.includes('epices'));
 });

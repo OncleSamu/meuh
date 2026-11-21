@@ -1030,7 +1030,7 @@ export function claimOrgan(at) {
     earn(coins, at);
     addXp(PERFUME_ORGAN.xp * P.organClaimed, at);
     giveRare(pickRand(RARE), 2, at);
-    if (!P.organRibbon && organCount() >= organTotal() && P.organClaimed * PERFUME_ORGAN.step >= organTotal()) {
+    if (!P.organRibbon && organCount() >= organTotal() && P.organClaimed >= Math.floor(organTotal() / PERFUME_ORGAN.step)) {
         P.organRibbon = true;
         state.prestige.rubans++;
         toast('Orgue du Parfumeur complet : +1 ruban !', ['ui', 'perfume']);

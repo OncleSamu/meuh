@@ -165,3 +165,45 @@ items.honey_lychee = () => pot('#ecbc68', '#fde0a0', '#f8b0c0', '#c03050', litch
 items.honey_avocado = () => pot('#4a2814', '#7a4a24', '#b8d880', '#4f8a2a', avocado());
 items.honey_argan = () => pot('#b05e26', '#d88a4a', '#f0d890', '#a07020', argan());
 items.honey_fir = () => pot('#5e2e16', '#8a4a26', '#7ab08a', '#1f5a2a', fir());
+
+// 1.153 : quatre nouveaux pots de miel (thym, camomille, fenouil, cannelier)
+const thyme = () =>
+    L('M32 50 L32 37', 1.3, '#6b4e30') +
+    [
+        [29, 47],
+        [35, 46],
+        [29, 43],
+        [35, 42],
+        [30, 39],
+        [34, 39],
+    ]
+        .map(([x, y]) => E(x, y, 2.2, 1.3, '#5b8f48', x < 32 ? -25 : 25, 0.9))
+        .join('') +
+    FC(32, 36.8, 1.5, '#d99be6') +
+    FC(30, 38, 1.1, '#e8b6f2') +
+    FC(34, 38, 1.1, '#e8b6f2');
+const chamomile = () =>
+    [0, 45, 90, 135, 180, 225, 270, 315]
+        .map(a => FE(32 + 4 * Math.cos((a * Math.PI) / 180), 43.5 + 4 * Math.sin((a * Math.PI) / 180), 2.1, 1.1, '#fffdf6', 1, a))
+        .join('') + C(32, 43.5, 2.6, '#f5c22c', 1.1);
+const fennel = () =>
+    L('M32 50 L32 42 M32 45 L27 40 M32 45 L37 40 M32 42 L29 38 M32 42 L35 38', 1.2, '#4f962e') +
+    [
+        [27, 39.5],
+        [37, 39.5],
+        [29, 37.5],
+        [35, 37.5],
+        [32, 37],
+    ]
+        .map(([x, y]) => FC(x, y, 1.4, '#e8d84a'))
+        .join('') +
+    E(32, 48.5, 3.2, 2, '#eef5dc', 0, 0.9);
+const cinnamon = () =>
+    `<g transform="translate(32 43.5) rotate(-22)">${R(-6, -1.8, 12, 3.6, 1.5, '#a6532a', 1)}</g>` +
+    `<g transform="translate(32 43.5) rotate(22)">${R(-6, -1.8, 12, 3.6, 1.5, '#8c3f1b', 1)}</g>` +
+    FC(36.5, 41, 1.2, '#5fb544');
+
+items.honey_thyme = () => pot('#c97828', '#eba652', '#d4b8e8', '#7a52a8', thyme());
+items.honey_chamomile = () => pot('#f5d86e', '#fff2b0', '#fff3a8', '#d9b530', chamomile());
+items.honey_fennel = () => pot('#b8c448', '#e2eb8a', '#c8e8a0', '#4f962e', fennel());
+items.honey_cinnamon = () => pot('#a84e22', '#d97a46', '#e09668', '#7c3214', cinnamon());

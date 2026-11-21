@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.153",
+  "title": "Miels de Fleurs & Essences de l’Orgue",
+  "date": "21 novembre 2026",
+  "items": [
+   "4 nouveaux miels monofloraux pour les ruches, le Livre des miels et l’hydromel : Miel de thym (×1,6), Miel de camomille (×1,5) et Miel de fenouil (×1,6) à la ferme, et Miel de cannelier (×2,0) au rucher de l’Île tropicale, chacun avec son pot dessiné et le mot de Mamie Odette",
+   "Atelier du Parfumeur enrichi à 75 essences (25 par étage) : Thym et Citronnelle en Tête, Camomille et Fleur de nénuphar en Cœur, Cannelle et Noix de muscade en Fond (plus les 4 nouveaux miels comme notes gourmandes)",
+   "2 nouveaux Grands Classiques de la Parfumerie (10 au total) : « Rosée de la Mare » (citronnelle/menthe, nénuphar/camomille, miel/bois) et « Route des Épices » (thym/orange, gingembre/cardamome, cannelle/muscade)"
+  ]
+ },
+ {
   "v": "1.152",
   "title": "Le Capybara & Nouvelles Récoltes",
   "date": "21 novembre 2026",
