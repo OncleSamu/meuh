@@ -28,6 +28,7 @@ export const mix = (a, b, t) =>
 
 let lastBody = '';
 let lastSky = '',
+    lastTheme = '',
     fadeUntil = 0;
 
 export function updateScene() {
@@ -52,8 +53,12 @@ export function updateScene() {
         scene.style.setProperty('--sky-bot', bot);
         lastSky = top + bot;
     }
-    const meta = document.querySelector('meta[name=theme-color]');
-    if (meta) meta.setAttribute('content', mix(t0, t1, t));
+    const themeColor = darkOn() ? '#2a1f17' : mix(t0, t1, t);
+    if (themeColor !== lastTheme) {
+        lastTheme = themeColor;
+        const meta = document.querySelector('meta[name=theme-color]');
+        if (meta) meta.setAttribute('content', themeColor);
+    }
 
     // obscurité : 0 le jour, 1 en pleine nuit
     let dark = 0;

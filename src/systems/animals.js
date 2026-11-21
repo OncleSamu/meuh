@@ -1,5 +1,6 @@
 // Le pâturage : production, bébés, câlins et mangeoires.
 import { state, scaleLvl } from '../core/state.js';
+import { now } from '../core/clock.js';
 import { viewShown } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish } from '../core/bus.js';
 import { ANIMALS, GROW, NAMES, MAX_STACK, MAX_FOOD, EXTRA_DROP } from '../data/animals.js';
@@ -357,8 +358,10 @@ export function animalsTick() {
     state.animals.forEach(anim => {
         autoFeed(anim);
         if (!isAdult(anim) || anim.sick || isAway(anim) || isResting(anim) || anim.food <= 0 || anim.stack >= MAX_STACK) return;
+        const req = animalTime(anim);
+        if (!Number.isFinite(req)) return;
         anim.prodProgress++;
-        if (anim.prodProgress < animalTime(anim)) return;
+        if (anim.prodProgress < req) return;
         anim.prodProgress = 0;
         anim.stack++;
         if (!animalSaves(anim)) anim.food--;
@@ -377,15 +380,16 @@ export function animalsOffline(elapsed) {
         // jeu fermé : la nuit de gel compte pour sa part de la journée, quelle que soit l'heure du retour
         const cur = nordBeastMult(anim);
         const timeReq = animalTime(anim) * (cur ? cur / nordBeastMultOffline(anim) : 1);
+        if (!Number.isFinite(timeReq)) return;
         let t = elapsed;
         autoFeed(anim);
         while (isAdult(anim) && !anim.sick && !isAway(anim) && !isResting(anim) && anim.food > 0 && anim.stack < MAX_STACK) {
-            const need = timeReq - anim.prodProgress;
+            const need = Math.max(1, timeReq - anim.prodProgress);
             if (t >= need) {
                 t -= need;
                 anim.prodProgress = 0;
                 anim.stack++;
-                anim.food--;
+                if (!animalSaves(anim)) anim.food--;
                 products++;
                 autoFeed(anim);
             } else {
@@ -415,17 +419,23 @@ export function animalSalePrice(a) {
     if (!isAdult(a)) p *= 0.6;
     return Math.max(5, Math.round(p / 5) * 5);
 }
-// pas pendant la transhumance, ni quand elle fait un petit à l'étable de sélection
-export const animalSellBlock = a =>
-    !a
-        ? 'introuvable'
-        : isAway(a)
-          ? 'Elle est en transhumance'
-          : a.trip
-            ? 'Il est parti en caravane'
-            : state.genetics && state.genetics.breeds && state.genetics.breeds.some(b => b.a === a.uid || b.b === a.uid)
-              ? 'Elle fait un petit à l’étable de sélection'
-              : '';
+// pas pendant la transhumance, ni quand elle fait un petit à l'étable de sélection, ni en concours/rando/retraite
+const horseRec = a => (a && a.type === 'horse' && state.haras && state.haras.h && state.haras.h[a.uid]) || null;
+export const animalSellBlock = a => {
+    if (!a) return 'introuvable';
+    if (isAway(a)) return 'Elle est en transhumance';
+    if (a.trip) return 'Il est parti en caravane';
+    if (state.genetics && state.genetics.breeds && state.genetics.breeds.some(b => b.a === a.uid || b.b === a.uid))
+        return 'Elle fait un petit à l’étable de sélection';
+    const hr = horseRec(a);
+    if (hr) {
+        if (hr.rando && hr.rando.until > now()) return 'Ce cheval est en randonnée';
+        if (hr.retired) return 'Ce cheval est à la retraite au haras';
+    }
+    const sh = state.show;
+    if (sh && ((sh.entries || []).some(e => e.uid === a.uid) || (sh.gp && sh.gp.uid === a.uid))) return 'Ce cheval est inscrit à un concours';
+    return '';
+};
 export function sellAnimal(i, at) {
     const a = state.animals[i];
     const why = animalSellBlock(a);
@@ -433,6 +443,14 @@ export function sellAnimal(i, at) {
         toast(why, ['ui', 'flowers']);
         sfx('error');
         return false;
+    }
+    // 1.149 : rendre l'équipement éventuel du cheval avant la vente
+    const hr = horseRec(a);
+    if (hr && hr.eq) {
+        for (const item of Object.values(hr.eq)) {
+            if (item) state.inventory[item] = (state.inventory[item] || 0) + 1;
+        }
+        hr.eq = {};
     }
     // ce qu'elle a produit part d'abord à la grange
     if (a.stack > 0) collectAnimal(a);

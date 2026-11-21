@@ -21,7 +21,7 @@ import { oasisOpen, caravanOpen } from './oasis.js';
 import { apiaryOpen } from './apiary.js';
 import { harasOpen } from './haras.js';
 import { nmarketOpen } from './nmarket.js';
-import { meadOpen } from './brewery.js';
+import { brewOpen, meadOpen } from './brewery.js';
 import { perfumeOpen } from './perfume.js';
 import { nordOpen } from './nord.js';
 import { caveOpen, hallOpen } from './cave.js';
@@ -58,7 +58,7 @@ const PARTS = {
     soap: () => hasMachine('soapworks') || hasMachine('perfumery'),
     hall: () => hallOpen(),
     boat: () => boatOpen(),
-    brew: () => hasMachine('brewery'),
+    brew: () => brewOpen(),
     perfume: () => perfumeOpen(),
     counter: () => hasMachine('counter'),
     pond: () => pondOpen(),

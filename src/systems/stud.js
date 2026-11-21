@@ -80,6 +80,10 @@ export function retire(uid) {
     if (!a || !canRetire(a)) return false;
     const r = rec(a);
     r.retired = now();
+    // 1.149 : rendre l'équipement (selle, bride, couverture) à la grange avant la retraite
+    for (const item of Object.values(r.eq || {})) {
+        if (item) state.inventory[item] = (state.inventory[item] || 0) + 1;
+    }
     r.eq = {};
     if (a.box) {
         a.box = false;

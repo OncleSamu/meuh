@@ -954,20 +954,23 @@ export function perfumeOrderPay(o, pid) {
     const p = perfumeOf(pid);
     if (!p) return 0;
     const q = perfumeQual(pid);
-    let bestQ = 0;
+    // 1.149 : paie flacon par flacon selon les rangs réellement livrés (évite de payer Ordinaire un mix Diamant + Platine)
+    let left = o.qty;
+    let qSum = 0;
     for (const [r, k] of [
         [4, 'd'],
         [3, 'p'],
         [2, 'g'],
         [1, 's'],
     ]) {
-        if (q[k] >= o.qty) {
-            bestQ = r;
-            break;
-        }
+        if (left <= 0) break;
+        const take = Math.min(left, q[k] || 0);
+        qSum += take * QUALITY[r].mult;
+        left -= take;
     }
+    qSum += left * QUALITY[0].mult;
     const signMult = 1 + perfumeSignatureSalonBonus();
-    return Math.round((p.value * o.qty * PERFUME_ORDERS.payMult * signMult * QUALITY[bestQ].mult) / 5) * 5;
+    return Math.round((p.value * qSum * PERFUME_ORDERS.payMult * signMult) / 5) * 5;
 }
 export function deliverPerfumeOrder(oid, pid, at) {
     const P = ensurePerfume();

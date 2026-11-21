@@ -425,6 +425,7 @@ export function setupInfo() {
         guideMach: (el, d) => {
             const idx = state.machines.findIndex(x => x.type === d.id);
             closeAll();
+            if (d.id === 'counter' && G.counterOwned()) return go('machines/counter');
             if (idx >= 0) {
                 go('machines/workshop');
                 openSheet('machine', { i: idx });
@@ -439,7 +440,7 @@ export function setupInfo() {
             if (a.oasis) return go('farm/island#oasis');
             if (a.nord) return go('farm/island#nord');
             const has = state.animals.some(x => x.type === a.id);
-            go(has ? 'farm/animals' : 'market/shop#animals');
+            go(has ? 'animals/pasture' : 'market/shop#animals');
         },
         sharePhoto: () => {
             const ph = (state.album || [])[+sheetOpts('photo').k];

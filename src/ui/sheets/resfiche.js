@@ -1,7 +1,6 @@
 // 1.101.3 : la fiche d'un résident du camping, la même que celle d'un villageois : Amitié, Cadeau, Goûts, Histoire.
 import { state } from '../../core/state.js';
-import { fmt, formatDuration } from '../../core/format.js';
-import { now } from '../../core/clock.js';
+import { fmt } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { RESIDENTS } from '../../data/campers.js';
 import { PROFILES } from '../../data/camping.js';
@@ -9,7 +8,7 @@ import * as G from '../../systems/index.js';
 import { jobHtml } from '../views/camping.js';
 import { actions, esc } from '../dom.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, hearts, segmented, hint } from '../kit.js';
+import { btn, bar, hearts, segmented, hint, timer } from '../kit.js';
 import { defineSheet, sheetOpts } from '../sheets.js';
 
 const res = i => G.campRes()[+i];
@@ -37,10 +36,8 @@ function friendTab(r, i) {
         <div class="od-foot">${btn(sure ? 'Sûr ? Appuyez encore' : 'Faire partir', { act: 'campLeave', data: { i }, size: 'sm' })}</div>`;
 }
 function giftTab(r, i) {
-    if (!G.resGiftReady(r)) {
-        const left = (r.gift || 0) + RESIDENTS.gift.cool - now();
-        return `<p class="card-sub center">Un cadeau a déjà été offert. Revenez dans ${formatDuration(Math.max(0, left) / 1000)}.</p>`;
-    }
+    if (!G.resGiftReady(r))
+        return `<p class="card-sub center">Un cadeau a déjà été offert. Revenez dans ${timer((r.gift || 0) + RESIDENTS.gift.cool)}.</p>`;
     const ids = r.likes.concat(r.seen ? [r.loved] : []).filter((id, k, a) => a.indexOf(id) === k && ITEMS[id]);
     const cell = id =>
         `<button class="pick-cell" data-act="campGift" data-i="${i}" data-id="${id}"${(state.inventory[id] || 0) < 1 ? ' disabled' : ''}><span class="pc-art">${art('item', id)}</span><b>${ITEMS[id].name}</b><small>×${fmt(state.inventory[id] || 0)} · ${id === r.loved ? 'adore' : 'aime'}</small></button>`;

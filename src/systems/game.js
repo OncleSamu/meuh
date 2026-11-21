@@ -100,7 +100,7 @@ export function loadGame() {
 export let loadIssue = null;
 
 function applySave(sv) {
-    if (!sv || typeof sv !== 'object' || !Array.isArray(sv.grid) || !Number.isFinite(sv.money) || !Number.isFinite(sv.level || 1))
+    if (!sv || typeof sv !== 'object' || !Array.isArray(sv.grid) || !Number.isFinite(sv.money) || (sv.level !== undefined && (!Number.isFinite(sv.level) || sv.level < 1)))
         throw new Error('sauvegarde incomplète');
     setState(fromSave(sv));
     finishLoad();
@@ -109,8 +109,8 @@ function finishLoad() {
     fillGrid();
     state.stats.maxLevel = Math.max(state.stats.maxLevel, state.level);
     state.stats.maxPlots = Math.max(state.stats.maxPlots, state.unlockedPlots);
-    if (!isToolValid(state.selectedTool)) state.selectedTool = 'hand';
     normalizeState();
+    if (!isToolValid(state.selectedTool)) state.selectedTool = 'hand';
 }
 function hasRawSave() {
     try {
@@ -211,6 +211,9 @@ export function normalizeState() {
     ensureRecipeMoves();
     ensureQuests();
     ensureStall();
+    // 1.149 : purge d'éventuelles parcelles contenant un produit disparu
+    for (const p of [...state.grid, ...(state.greenhouse.plots || [])])
+        if (p && p.itemId && !ITEMS[p.itemId]) Object.assign(p, { itemId: null, growProgress: 0, isReady: false, isWatered: false, fert: false, pest: false, varId: null });
     // le corbeau ne survit pas à un rechargement de la page
     if (state.incident && state.incident.type === 'crow' && !state.crow) state.incident = null;
     state.grid.forEach(p => p.pest && (!state.incident || state.incident.type !== 'aphids') && (p.pest = false));
@@ -233,7 +236,7 @@ export function isToolValid(t) {
         t === 'feed' ||
         (t === 'ration' && state.level >= 6) ||
         (t === 'fert' && state.level >= 4) ||
-        (state.seeds[t] !== undefined && ITEMS[t].type === 'crop' && !ITEMS[t].island && ((lvOk(ITEMS[t]) && storyOk(ITEMS[t])) || state.seeds[t] > 0))
+        (state.seeds[t] !== undefined && !!ITEMS[t] && ITEMS[t].type === 'crop' && !ITEMS[t].island && ((lvOk(ITEMS[t]) && storyOk(ITEMS[t])) || state.seeds[t] > 0))
     );
 }
 
@@ -403,7 +406,7 @@ export function gameTick() {
 // Fait avancer la ferme du temps passé loin du jeu ; renvoie le compte rendu
 // { elapsed, lines: [[icône, texte]] } ou null si l'absence est trop courte.
 export function offlineProgress() {
-    const elapsed = Math.floor((now() - state.lastSaved) / 1000);
+    const elapsed = Math.min(Math.floor((now() - state.lastSaved) / 1000), 30 * 86400);
     if (elapsed < 60) return null;
     const sm = speedMult();
     let crops = 0;
@@ -412,22 +415,23 @@ export function offlineProgress() {
     growTick(elapsed, true);
     const transBack = transTick();
     const caveSum = caveTick();
-    const aucBefore = caveOpen() && state.cave.auction && !state.cave.auction.over;
+    const prevSale = caveOpen() ? state.cave.lastSale : null;
     auctionTick();
-    const aucDone = aucBefore && state.cave.auction.over ? state.cave.auction.results.filter(l => l.sold) : null;
+    const aucDone = caveOpen() && state.cave.lastSale && state.cave.lastSale !== prevSale ? state.cave.lastSale.results.filter(l => l.sold) : null;
     // les imprévus attendent votre retour
     if (state.incident && state.incident.until) state.incident.until += elapsed * 1000;
     crops += ghOffline(elapsed);
     const orch = orchardOffline(elapsed);
     pickerAfterOffline();
     lifeAfterOffline();
+    // 1.69 : les ruchers des contrées (avant que les contrées n'aient tout bu : une approximation douce)
+    apiaryTick(Math.min(elapsed, 12 * 3600));
     const isl = islandOffline(elapsed);
     const oas = oasisOffline(elapsed);
     const nor = nordOffline(elapsed);
-    // 1.69 : les ruchers des contrées (avant que les contrées n'aient tout bu : une approximation douce)
-    apiaryTick(Math.min(elapsed, 12 * 3600));
-    // le commis travaille pendant votre absence
+    // le commis et le puits travaillent pendant votre absence
     const hand = handOffline(elapsed);
+    wellTick();
     state.grid.forEach((plot, gi) => {
         if (hand.zone.has(gi)) return;
         if (plot.itemId && !plot.isReady && plot.isWatered && !plot.pest) {
@@ -466,6 +470,7 @@ export function offlineProgress() {
         newDay(true);
     }
     state.gameTimeMinutes = totalMin % 1440;
+    marketTick(elapsed);
 
     // ce qui attend au village (train, montgolfière, marchand, fête, commandes)
     truckTick();

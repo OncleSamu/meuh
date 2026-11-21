@@ -544,10 +544,11 @@ export function orchardOffline(elapsed) {
     let fell = 0,
         dead = 0,
         picked = 0;
-    // avec un cueilleur, le temps passe par tranches : il ramasse entre deux
+    // avec un cueilleur, le temps passe par tranches : il ramasse entre deux (plafonné pour éviter tout gel)
     const every = pickerEveryHook() / 1000;
-    let left = elapsed;
-    while (left > 0) {
+    let left = Math.min(elapsed, 14 * 86400);
+    let guard = 0;
+    while (left > 0 && guard++ < 500) {
         const dt = every > 0 ? Math.min(every, left) : left;
         left -= dt;
         for (const slot of tickSlots()) {

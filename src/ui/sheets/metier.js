@@ -1,14 +1,14 @@
 // 1.114 : le métier de la ferme. Le tableau de bord (rang, leçons, bonus), le choix d'un métier et le changement.
 import { state } from '../../core/state.js';
-import { fmt, formatDuration } from '../../core/format.js';
+import { fmt } from '../../core/format.js';
 import * as G from '../../systems/index.js';
-import { METIERS, METIER_IDS, METIER_RANKS, METIER_CLIENT, METIER_SIGN } from '../../data/metiers.js';
+import { METIERS, METIER_IDS, METIER_RANKS, METIER_CLIENT, METIER_SIGN, METIER_CHANGE } from '../../data/metiers.js';
 import { ITEMS } from '../../data/items.js';
 import { randomId } from '../../art/habitants.js';
 import { actions } from '../dom.js';
 import { ui } from '../app.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, hint } from '../kit.js';
+import { btn, bar, hint, timer } from '../kit.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { askBuy } from './askbuy.js';
 
@@ -43,11 +43,12 @@ function signatureHtml() {
     if (G.metierRank() < METIER_SIGN.rank) return `<div class="card metier-soon"><div class="card-title">Au rang ${METIER_SIGN.rank} : votre produit signature</div><div class="card-sub">Un produit du métier que vous maîtrisez, vendu ${Math.round(METIER_SIGN.pay * 100)} % plus cher, et que ${G.clientOf(id).name} demande à chaque fois.</div></div>`;
     const sig = G.signature(),
         wait = G.signatureWait();
+    const sigUntil = state.metier && state.metier.sigAt && state.metier.sigAt[id] ? state.metier.sigAt[id] + METIER_SIGN.change : 0;
     const cands = Object.keys(state.mastery || {})
         .filter(k => ITEMS[k] && G.metierOf(k) === id && G.masteryStars(k) >= 1)
         .sort((a, b) => ITEMS[b].sell - ITEMS[a].sell)
         .slice(0, 24);
-    const head = `<div class="card-title">Votre produit signature</div><div class="card-sub">${sig ? `${ITEMS[sig].name} : vendu ${Math.round(METIER_SIGN.pay * 100)} % plus cher.` : 'Choisissez-le parmi les produits du métier que vous maîtrisez (une étoile au moins).'}${sig && wait > 0 ? ` Changer dans ${formatDuration(wait / 1000)}.` : sig ? ' Il se change une fois par semaine.' : ''}</div>`;
+    const head = `<div class="card-title">Votre produit signature</div><div class="card-sub">${sig ? `${ITEMS[sig].name} : vendu ${Math.round(METIER_SIGN.pay * 100)} % plus cher.` : 'Choisissez-le parmi les produits du métier que vous maîtrisez (une étoile au moins).'}${sig && wait > 0 ? ` Changer dans ${timer(sigUntil)}.` : sig ? ' Il se change une fois par semaine.' : ''}</div>`;
     if (ui.sel.sigOpen || !sig)
         return `<div class="card">${head}${
             cands.length
@@ -68,6 +69,7 @@ function dashboard() {
     const asleep = METIER_IDS.filter(k => k !== id && G.metierRankOf(k) > 0);
     const cost = G.metierChangeCost(),
         wait = G.metierChangeWait();
+    const changeUntil = state.metier && state.metier.at ? state.metier.at + METIER_CHANGE.wait : 0;
     return `<div class="card metier-main"><div class="card-head">${ico(d.icon, 'ico big')}<div class="card-main"><div class="card-title">${G.metierTitle()}</div><div class="card-sub">${d.desc}</div>${pips(r)}</div></div>
         <div class="card-sub">${r ? `Aujourd’hui : le marché et l’étal paient ${d.what} ${rate} % de plus.` : 'Réussissez les deux leçons pour gagner le premier rang et son bonus.'}</div></div>
         ${
@@ -82,7 +84,7 @@ function dashboard() {
         ${asleep.length ? `<div class="card"><div class="card-title">Métiers endormis</div><div class="card-sub">${asleep.map(k => `${METIERS[k].name} (rang ${G.metierRankOf(k)})`).join(', ')}. Leurs rangs sont gardés, leurs bonus dorment.</div></div>` : ''}
         <div class="card"><div class="card-title">Changer de métier</div><div class="card-sub">${
             wait > 0
-                ? `Encore ${formatDuration(wait / 1000)} avant de pouvoir changer.`
+                ? `Encore ${timer(changeUntil)} avant de pouvoir changer.`
                 : cost
                   ? `Changer coûte ${fmt(cost)} pièces, puis il faut attendre 7 jours avant de changer encore.`
                   : 'Le premier changement est gratuit : vous avez choisi sans connaître le jeu.'

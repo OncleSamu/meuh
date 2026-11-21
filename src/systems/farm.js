@@ -368,8 +368,11 @@ export function plantAll(at) {
         toast('Choisissez d’abord une graine dans la barre d’outils');
         return 0;
     }
+    const ghOnly = !!ITEMS[tool].ghOnly;
     let n = 0;
     for (const [p, i] of allPlots()) {
+        if (ghOnly && i < 1000) continue;
+        if (ITEMS[tool].type === 'tree' && i >= 1000) continue;
         if (plotAction(p, tool, i) !== 'plant' || p.itemId) continue;
         doPlotAction(i, 'plant', at);
         if (!p.itemId) break;
@@ -517,7 +520,7 @@ export function ghTick() {
         const req = ITEMS[p.itemId].time / speedMult();
         const firstHalf = p.growProgress < req / 2;
         p.isWatered = true;
-        p.growProgress += GH.rate * compSpeed(1000 + k);
+        p.growProgress += plotRate(p, 1000 + k);
         if (firstHalf && p.growProgress >= req / 2) changedAny = true;
         if (p.growProgress >= req) {
             p.isReady = true;
@@ -535,7 +538,7 @@ export function ghOffline(elapsed) {
     state.greenhouse.plots.forEach((p, k) => {
         if (!p.isUnlocked || !p.itemId || p.isReady) return;
         const req = ITEMS[p.itemId].time / speedMult();
-        p.growProgress += elapsed * GH.rate * compSpeed(1000 + k);
+        p.growProgress += elapsed * plotRate(p, 1000 + k);
         if (p.growProgress >= req) {
             p.isReady = true;
             p.growProgress = req;

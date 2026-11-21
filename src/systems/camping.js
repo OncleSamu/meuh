@@ -172,7 +172,9 @@ export function sellTo(gi, i, at) {
     takeQ(w.item, k, wantQ(w));
     w.sold = (w.sold || 0) + k;
     if (wantLeft(w) <= 0) w.done = true;
-    earn(priceOf(w.item, g) * k, at);
+    const gain = priceOf(w.item, g) * k;
+    earn(gain, at);
+    state.income.camping = (state.income.camping || 0) + gain;
     checkRavi(g);
     state.stats.campSales = (state.stats.campSales || 0) + 1;
     sfx('coin');
@@ -213,7 +215,10 @@ function leave(g, at, stay = false) {
     if (mood === 2 && leaveHook && !stay) leaveHook(g);
     c.past.length = Math.min(c.past.length, CAMPING.keep);
     c.guests = c.guests.filter(x => x !== g);
-    if (tip) earn(tip, at);
+    if (tip) {
+        earn(tip, at);
+        state.income.camping = (state.income.camping || 0) + tip;
+    }
     // 1.131 : la réputation du camping
     const t0 = campRepTier();
     c.rep = Math.max(0, (c.rep || 0) + CAMP_REP.gain[mood] + (mood === 2 && g.star != null ? CAMP_REP.star : 0));
@@ -241,6 +246,7 @@ export function collectTill(at) {
     if (n <= 0) return false;
     state.camping.till = 0;
     earn(n, at);
+    state.income.camping = (state.income.camping || 0) + n;
     sfx('coin');
     return true;
 }

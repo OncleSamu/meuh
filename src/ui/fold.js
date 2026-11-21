@@ -4,15 +4,19 @@ import { state } from '../core/state.js';
 import { ico } from './icons.js';
 
 const KEY = 'meuhFold';
+let cache = null;
 const read = () => {
+    if (cache) return cache;
     try {
-        return JSON.parse(localStorage.getItem(KEY) || '{}') || {};
+        cache = JSON.parse(localStorage.getItem(KEY) || '{}') || {};
     } catch {
-        return {};
+        cache = {};
     }
+    return cache;
 };
 const DEFAULT = { board: () => state.level < 10, villagers: () => state.level < 10 };
 const write = m => {
+    cache = m;
     try {
         localStorage.setItem(KEY, JSON.stringify(m));
     } catch {

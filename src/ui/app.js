@@ -23,7 +23,8 @@ import { $$, byId, patch, setupActions, afterAction, actions } from './dom.js';
 import { ico, parts } from './icons.js';
 import { segmented, dot, tabDot } from './kit.js';
 import { render as renderSheets, openSheet, anySheet, closeSheet } from './sheets.js';
-import { momentShown, closeMoment } from './moments.js';
+import { momentShown, closeMoment, dismissMoment } from './moments.js';
+import { syncMoney } from './fx.js';
 import { FAMILY } from '../data/family.js';
 import { todoList, todoCounts } from './todo.js';
 
@@ -125,10 +126,13 @@ export function go(path, opts = {}) {
     if (path === 'animals/show' || path === 'animals/stud') path = 'animals/haras#' + path.split('/')[1];
     // 1.103 : le camping est passé de la Ferme au Village
     if (path === 'farm/camping') path = 'village/camping';
-    // « market/shop#neighbors » : ouvre le volet sur un rayon (ui.sel[volet])
+    // « market/shop#neighbors » ou « machines/cave#sales » : ouvre le volet sur un rayon ou onglet interne
     const [path0, hash] = path.split('#');
     const [tab, sub0] = path0.split('/');
-    if (hash && sub0) ui.sel[sub0] = hash;
+    if (hash && sub0) {
+        ui.sel[sub0] = hash;
+        ui.sel['it:' + sub0] = hash;
+    }
     let sub = sub0;
     // écran large : l'onglet Ferme montre la nature à droite (le champ est toujours à gauche)
     if (view.wide && tab === 'farm' && !sub) sub = !subLocked('farm', 'orchard') ? 'orchard' : !subLocked('farm', 'nature') ? 'nature' : sub;
@@ -158,7 +162,7 @@ export function go(path, opts = {}) {
     state.settings.lastView = currentPath();
     if (changed) {
         emit('sfx', 'click');
-        const v = byId('view-' + tab);
+        const v = viewEl(currentPath());
         if (v) v.scrollTop = 0;
     }
     refresh();
@@ -194,6 +198,7 @@ function renderHud() {
         <button class="pill barn${used >= cap ? ' full' : used >= cap * 0.85 ? ' near' : ''}" id="barn-pill" data-act="open" data-sheet="barn" aria-label="Grange">${ico(['ui', 'barn'])}<b>${used >= 1e4 || cap >= 1e4 ? `${fmt(used)}/${fmt(cap)}` : `${used}/${cap}`}</b></button>
         <button class="icon-btn menu-btn" data-act="open" data-sheet="menu" aria-label="Menu">${ico(['ui', 'menu'])}${dot(menuN)}</button>`,
     );
+    syncMoney();
     if (used >= cap * 0.8) G.tip('barn');
 }
 
@@ -216,7 +221,7 @@ const HELP = {
     'farm/nature': 'forest',
     'farm/pond': 'pond',
     'farm/island': 'island',
-    'village/camping': 'legend',
+    'village/camping': 'camping',
     'village/family': 'family',
     'animals/pasture': 'animals',
     'animals/haras': 'haras',
@@ -227,7 +232,7 @@ const HELP = {
     'machines/perfume': 'perfume',
     'machines/brew': 'brewery',
     'machines/lab': 'labplants',
-    'machines/maison': 'legend',
+    'machines/maison': 'maison',
     'village/orders': 'orders',
     'village/village': 'village',
     'market/shop': 'market',
@@ -251,6 +256,8 @@ function renderSubnav() {
               : currentPath() === 'farm/island' && ui.sel.island === 'nord'
                 ? 'nord'
                 : HELP[currentPath()];
+    const prevSeg = el.querySelector('.strip > .seg');
+    const prevScroll = prevSeg ? prevSeg.scrollLeft : null;
     // 1.73 : chaque volet garde son nom ; s'ils ne tiennent pas, la bande défile et le volet ouvert se centre
     patch(
         el,
@@ -276,6 +283,7 @@ function renderSubnav() {
     );
     // 1.74.4 : on ne recentre que quand le volet change, pas à chaque rafraîchissement (on peut faire défiler la bande)
     const key = `${t.id}/${ui.sub[t.id]}`;
+    const seg = el.querySelector('.strip > .seg');
     const on = el.querySelector('.strip .seg > button.on');
     if (on && centered !== key) {
         centered = key;
@@ -283,9 +291,10 @@ function renderSubnav() {
         const r = on.getBoundingClientRect(),
             r0 = seg0.getBoundingClientRect();
         seg0.scrollLeft = Math.max(0, seg0.scrollLeft + r.left - r0.left - (r0.width - r.width) / 2);
+    } else if (seg && prevScroll !== null) {
+        seg.scrollLeft = prevScroll;
     }
     // un fondu sur le bord où d'autres volets attendent
-    const seg = el.querySelector('.strip > .seg');
     if (seg) {
         const edges = () => {
             seg.classList.toggle('more-r', seg.scrollLeft + seg.clientWidth < seg.scrollWidth - 4);
@@ -427,7 +436,7 @@ function applyWide() {
 function handleKey(e) {
     if (e.ctrlKey || e.metaKey || e.altKey || /input|textarea|select/i.test(e.target.tagName)) return;
     if (e.key === 'Escape') {
-        if (momentShown()) closeMoment();
+        if (momentShown()) dismissMoment();
         else if (anySheet()) closeSheet();
         return;
     }

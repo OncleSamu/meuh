@@ -25,7 +25,7 @@ import { talentFx } from './friends.js';
 
 const DAY = 86400000;
 // le jour du téléphone (minuit à l'heure locale)
-const dayNum = () => Math.floor((now() - new Date(now()).getTimezoneOffset() * -60000) / DAY);
+const dayNum = () => Math.floor((now() - new Date(now()).getTimezoneOffset() * 60000) / DAY);
 export const counterRecipes = () => Object.values(RECIPES).filter(r => r.machine === 'counter');
 export const counterOwned = () => hasMachine('counter');
 

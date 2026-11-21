@@ -12,11 +12,10 @@ import * as G from '../../systems/index.js';
 import { byId, blocks, actions, run, esc } from '../dom.js';
 import { ico, art, COIN } from '../icons.js';
 import { genWrap } from '../genlook.js';
-import { btn, bar, tip15 } from '../kit.js';
+import { btn, bar, timer, tip15 } from '../kit.js';
 import { defineView, defineLive, ui } from '../app.js';
 import { reduceMotion } from '../fx.js';
 import { pinBar } from './common.js';
-import { formatDuration } from '../../core/format.js';
 import { emit } from '../../core/bus.js';
 import { PROJECTS } from '../../data/village.js';
 import { burstAt, floatText, flyTo } from '../fx.js';
@@ -280,8 +279,9 @@ function nextGoal() {
         return { icon: ['ui', 'village'], text: `Chapitre ${G.chapterNum(c.n)} au niveau ${c.lvl} : « ${c.name} »`, go: 'sheet:levels' };
     if (G.houseCanUp()) return { icon: ['ui', 'house'], text: 'Agrandissez la maison de la ferme', go: 'sheet:house' };
     if (!state.legend) {
-        const n = G.legendGoals().filter(g => g.ok).length;
-        return { icon: ['ui', 'goldCow'], text: `Ferme légendaire : ${n} exploit${n > 1 ? 's' : ''} sur 5`, go: 'sheet:book', sec: 'legend' };
+        const goals = G.legendGoals();
+        const n = goals.filter(g => g.ok).length;
+        return { icon: ['ui', 'goldCow'], text: `Ferme légendaire : ${n} exploit${n > 1 ? 's' : ''} sur ${goals.length}`, go: 'sheet:book', sec: 'legend' };
     }
     return null;
 }
@@ -295,19 +295,24 @@ function goalHtml() {
 // ce qui attend, en puces qu'on fait défiler du doigt
 function todoHtml() {
     if (!ui.todo.length) return '';
+    const more =
+        ui.todo.length > 4
+            ? `<button class="todo-chip soft" data-act="go" data-path="sheet:todo">${ico(['ui', 'scroll'])}<span>Tout voir (${ui.todo.length})</span></button>`
+            : '';
     return `<div class="todo" aria-label="À faire">${ui.todo
         .map(
             t =>
                 `<button class="todo-chip${t.urgent ? ' urgent' : ''}${t.n ? '' : ' soft'}" data-act="go" data-path="${t.go}">${t.icon ? ico(t.icon) : ''}<span>${t.text}</span></button>`,
         )
-        .join('')}</div>`;
+        .join('')}${more}</div>`;
 }
 
 function eventBanner() {
     if (!G.eventActive()) return '';
     const e = state.event,
         ready = G.eventReady();
-    return `<button class="event-banner" data-act="go" data-path="village/orders#event">${ico(G.eventIcon(e.season))}<span>${EVENTS[e.season].name}</span><small>${formatDuration(G.eventEndsIn())}</small>${ready ? `<span class="dot">${ready}</span>` : ''}</button>`;
+    const until = Math.round((now() + G.eventEndsIn() * 1000) / 10000) * 10000;
+    return `<button class="event-banner" data-act="go" data-path="village/orders#event">${ico(G.eventIcon(e.season))}<span>${EVENTS[e.season].name}</span><small>${timer(until)}</small>${ready ? `<span class="dot">${ready}</span>` : ''}</button>`;
 }
 
 const FIELD = `<div class="field"><div class="fence"></div>
@@ -316,6 +321,7 @@ const FIELD = `<div class="field"><div class="fence"></div>
 const GH_BOX = `<div class="glasshouse"><div id="gh-grid" class="plots gh"></div></div>`;
 
 export function renderFarm(el) {
+    const todoPrev = el.querySelector('.todo')?.scrollLeft || 0;
     blocks(el, [
         ['top', topHtml()],
         ['pin', pinBar()],
@@ -329,6 +335,8 @@ export function renderFarm(el) {
         ['yard', farmyardHtml()],
         ['hint', tip15('Astuce : gardez le doigt appuyé et glissez sur les parcelles pour labourer, planter, arroser ou récolter d’un seul geste.')],
     ]);
+    const todoEl = el.querySelector('.todo');
+    if (todoEl && todoPrev) todoEl.scrollLeft = todoPrev;
     renderPlots();
     renderGreenhouse();
     renderDog();

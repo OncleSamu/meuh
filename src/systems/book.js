@@ -422,7 +422,9 @@ export function statsData() {
             (inc.brew || 0) +
             (inc.perfume || 0) +
             (inc.counter || 0) +
-            (inc.haras || 0);
+            (inc.haras || 0) +
+            (inc.camping || 0) +
+            (inc.maison || 0);
     const sources = [
         ['Étal', inc.stall || 0],
         ['Grossiste', inc.market],
@@ -434,6 +436,8 @@ export function statsData() {
         ['Parfumerie', inc.perfume || 0],
         ['Comptoir', inc.counter || 0],
         ['Haras', inc.haras || 0],
+        ['Camping', inc.camping || 0],
+        ['La Maison', inc.maison || 0],
         ['Autres', Math.max(0, (S.earned || 0) - known)],
     ];
     // 1.74.2 : toute la ferme, rangée par coin (seuls les chiffres non nuls)

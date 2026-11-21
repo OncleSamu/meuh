@@ -20,6 +20,7 @@ export function openSheet(name, opts = {}) {
         const [s] = stack.splice(old, 1);
         s.opts = opts;
         stack.push(s);
+        byId('sheets').appendChild(s.el);
         render();
         return;
     }
@@ -28,6 +29,7 @@ export function openSheet(name, opts = {}) {
     let replace = false;
     if (top && SHEETS[top.name].hub) {
         stack.pop();
+        if (top.off) top.off();
         top.el.remove();
         replace = true;
     }
@@ -42,9 +44,9 @@ export function openSheet(name, opts = {}) {
         </div>`;
     byId('sheets').appendChild(el);
     el._t = performance.now();
-    stack.push({ name, opts, el });
+    const off = grip(el);
+    stack.push({ name, opts, el, off });
     if (def.open) def.open(opts);
-    grip(el);
     if (replace) history.replaceState({ sheet: name }, '');
     else history.pushState({ sheet: name }, '');
     if (replace) el.classList.add('in', 'swap');
@@ -53,21 +55,26 @@ export function openSheet(name, opts = {}) {
     emit('sfx', 'click');
 }
 
-export function closeSheet(name) {
-    const k = name ? stack.findIndex(s => s.name === name) : stack.length - 1;
-    if (k < 0) return;
-    const [s] = stack.splice(k, 1);
+function dismissSheetEntry(s) {
     const def = SHEETS[s.name];
-    if (def.close) def.close(s.opts);
+    if (def && def.close) def.close(s.opts);
+    if (s.off) s.off();
     s.el.classList.remove('in');
     s.el.classList.add('out');
     setTimeout(() => s.el.remove(), 260);
     syncFlags();
+    emit('sheetClosed', s.name);
+}
+
+export function closeSheet(name) {
+    const k = name ? stack.findIndex(s => s.name === name) : stack.length - 1;
+    if (k < 0) return;
+    const [s] = stack.splice(k, 1);
+    dismissSheetEntry(s);
     if (history.state && history.state.sheet) {
         skipPop++;
         history.back();
     }
-    emit('sheetClosed', s.name);
 }
 let skipPop = 0;
 
@@ -139,6 +146,11 @@ function grip(wrap) {
     window.addEventListener('pointermove', move, { passive: true });
     window.addEventListener('pointerup', up);
     window.addEventListener('pointercancel', up);
+    return () => {
+        window.removeEventListener('pointermove', move);
+        window.removeEventListener('pointerup', up);
+        window.removeEventListener('pointercancel', up);
+    };
 }
 
 export function setupSheets() {
@@ -150,11 +162,7 @@ export function setupSheets() {
         }
         if (stack.length) {
             const [s] = stack.splice(stack.length - 1, 1);
-            s.el.classList.remove('in');
-            s.el.classList.add('out');
-            setTimeout(() => s.el.remove(), 260);
-            syncFlags();
-            emit('sheetClosed', s.name);
+            dismissSheetEntry(s);
         }
     });
 }

@@ -203,6 +203,7 @@ export const pkXp = pay => Math.round(MAISON.xp * Math.min(1, pay / Math.max(1, 
 function takeCoffret(cof, at, pay, rep) {
     M().stock = M().stock.filter(x => x !== cof);
     earn(pay, at);
+    state.income.maison = (state.income.maison || 0) + pay;
     const before = maisonTier();
     M().rep += rep;
     M().sold++;

@@ -258,7 +258,6 @@ function bottlesHtml() {
         .sort((a, b) => G.perfumeStock(b.id) - G.perfumeStock(a.id) || b.stars - a.stars || b.value - a.value);
     const pg = page('perfumes:' + f, list, 10);
     return (
-        listBar('perfumes', { search: all.length > 5 ? 'Chercher un parfum ou une note' : '' }) +
         filterChips('perfumes', opts, f) +
         (list.length ? '' : empty('Aucun parfum ne correspond.')) +
         pg.top +
@@ -353,11 +352,13 @@ function renderPerfume(el) {
         'compose',
     );
     const t = T.cur;
+    const perfCount = state.perfume && state.perfume.creations ? Object.keys(state.perfume.creations).length : 0;
     blocks(el, [
         ['tabs', T.html],
         ['sign', signatureHtml()],
         ['vats', t === 'compose' ? vatsHtml() : ''],
         ['compose', t === 'compose' ? composerHtml() : ''],
+        ['bottlesSearch', t === 'bottles' && perfCount > 5 ? listBar('perfumes', { search: 'Chercher un parfum ou une note' }) : ''],
         ['bottles', t === 'bottles' ? bottlesHtml() : ''],
         ['salon', t === 'salon' ? salonHtml() : ''],
         ['organ', t === 'organ' ? organHtml() : ''],

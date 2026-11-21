@@ -2245,6 +2245,70 @@ export const GUIDE_PAGES = [
         see: ['labplants', 'animals', 'legend'],
     },
     {
+        id: 'camping',
+        cat: 'village',
+        name: 'Le camping de la vallée',
+        icon: ['ui', 'tent'],
+        lvl: CAMPING.lvl,
+        go: 'village/camping',
+        intro: 'Accueillez des campeurs de passage, installez des résidents en cabane et faites grandir la réputation du terrain.',
+        secs: [
+            {
+                h: 'Les campeurs de passage',
+                b: [
+                    `Dès le niveau ${CAMPING.lvl}, aménagez le camping (3 emplacements au départ, jusqu’à 12). Un campeur arrive toutes les 3 à 6 heures pour un séjour de 10 à 30 heures.`,
+                    'Chaque campeur achète 2 ou 3 lots de produits au double de leur valeur. Tout vendu : il repart ravi et laisse un pourboire ; un lot entamé suffit pour qu’il reparte content.',
+                    'Les habitués reviennent avec un pourboire plus gros, les campeurs remarquables demandent au moins la qualité argent et paient 1,5 fois plus, et la soirée du jour bonifie une famille de produits de 30 %.',
+                ],
+            },
+            {
+                h: 'Les résidents en cabane',
+                b: [
+                    'Un campeur ravi peut demander à s’installer dans une cabane (jusqu’à 12 résidents). Il apparaît aussi dans Village › Villageois (filtre « Résidents ») avec sa fiche Amitié, Cadeau, Goûts et Histoire.',
+                    'Il passe une commande permanente payée 1,6 fois sa valeur, accepte un cadeau toutes les 6 heures et aide le camping grâce à son métier (panier quotidien ou bonus proportionnel à ses cœurs).',
+                ],
+            },
+            {
+                h: 'Aménagements, réputation et fête de la vallée',
+                b: [
+                    'Cinq améliorations (point d’eau, sanitaires, salle commune, terrain de jeux et épicerie dont la caisse se remplit même hors ligne) renforcent le terrain.',
+                    'La réputation du camping (de Nouveau à Légendaire) augmente les pourboires et les visites de campeurs remarquables. Quand le camping, les résidents et la Maison atteignent les cinq buts de la grande tente, dressez la table de la fête de la vallée.',
+                ],
+            },
+        ],
+        tips: ['Servez en priorité les campeurs remarquables et les habitués : leurs pourboires et la réputation grimpent vite.'],
+        see: ['maison', 'village', 'legend'],
+    },
+    {
+        id: 'maison',
+        cat: 'craft',
+        name: 'La Maison, votre marque',
+        icon: ['ui', 'maison'],
+        lvl: CAMPING.lvl,
+        go: 'machines/maison',
+        intro: 'Fondez votre propre marque, composez des paquets de trois produits dans de belles boîtes et vendez-les à des clients exigeants.',
+        secs: [
+            {
+                h: 'Composer un paquet',
+                b: [
+                    'Une fois le camping bâti, fondez la Maison : choisissez son nom, son emblème et ses couleurs (Atelier › Maison).',
+                    'Composez un paquet avec trois produits de la ferme (tous genres sauf matériaux bruts) et une boîte (carton gratuit, ou cagette, panier, filet, caisse, tonnelet, malle, cloche, écrin fabriqués à l’emballerie dès le niveau 68).',
+                    'La qualité du paquet est celle de son produit le moins élevé. Trois genres différents, une belle boîte et la réputation de la Maison augmentent sa valeur. Chaque composition s’enregistre comme recette pour la refaire en un geste.',
+                ],
+            },
+            {
+                h: 'Vendre, livrer et offrir',
+                b: [
+                    'Vendez depuis l’étagère aux clients de la Maison (voisins, campeurs, souk, château, vitrine du village), ou livrez les trois commandes dédiées qui paient 2,2 fois la valeur et rapportent beaucoup de réputation.',
+                    'Vous pouvez aussi offrir un paquet en cadeau du jour à un villageois, ou charger les wagons et soutes de paquets du train et de l’avion-cargo.',
+                    'Plus votre réputation grandit, plus l’atelier va vite (de 15 à 5 minutes) et plus vous pouvez lancer de paquets à la suite (jusqu’à 6).',
+                ],
+            },
+        ],
+        tips: ['Mélangez trois genres différents dans une boîte adaptée pour cumuler les bonus de valeur et de réputation.'],
+        see: ['camping', 'workshop', 'legend'],
+    },
+    {
         id: 'legend',
         cat: 'end',
         name: 'Grands défis et Ferme légendaire',
@@ -2312,14 +2376,14 @@ export const GUIDE_PAGES = [
             {
                 h: 'Vendre la ferme',
                 b: [
-                    'Vous recommencez à zéro mais gardez les rubans, les succès, les amitiés, le chien, les décorations, le village rénové, la grange, le livre, la maîtrise, la cave (étagères et cote) et les créations de génétique.',
+                    'Vous recommencez à zéro mais gardez les rubans, les succès, les amitiés, le chien, les décorations, le village rénové, la grange, le livre, la maîtrise, la cave (étagères et cote), la famille et les créations de génétique.',
                     'Les rubans gagnés dépendent de ce que vous avez gagné pendant la ferme. Chacun donne +5 % aux ventes et +3 % de vitesse, pour toujours.',
                     'Un défi de prestige (sans animaux, hiver éternel, petit lopin, marché fermé) réussi rapporte 3 rubans de plus.',
                     'Un thème de ferme : maraîchère (cultures 15 % plus rapides), laitière (bêtes 20 %), fruitière (arbres 30 %), du littoral (filet de mer double).',
                 ],
             },
         ],
-        see: ['skills', 'domaine', 'book'],
+        see: ['skills', 'domaine', 'book', 'camping', 'maison'],
         tips: ['Le prestige est facultatif : on peut rester sur sa ferme et viser la Ferme légendaire.'],
     },
     {

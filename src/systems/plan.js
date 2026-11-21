@@ -544,6 +544,8 @@ export function planTick(force) {
                         ch = true;
                     }
                 });
+                // 1.149 : si les ingrédients manquent (stock partagé ou consommé ailleurs), on relâche go pour relancer les étapes
+                if (e.queued < e.n && !entryReady(e)) e.go = false;
             }
         }
     }

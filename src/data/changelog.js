@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.149",
+  "title": "Grand Nettoyage & Fluidité",
+  "date": "20 novembre 2026",
+  "items": [
+   "À faire accessible partout : un nouveau tiroir « À faire » dans le Menu (et un bouton « Tout voir » sur la ferme) rassemble toutes les tâches en attente et mène directement au bon sous-onglet (Enchères de la cave, Salon des parfums, Commandes de bière, Métier…)",
+   "Correctifs de jeu : fin du blocage des plans de production, les derniers flacons Diamant gardent leur score au concours de bière, la brasserie ne peut plus créer de stock négatif entre un produit et sa variété du labo, les grands défis de brasserie s’ouvrent correctement, les harnais d’un cheval reviennent en grange à sa retraite ou à sa vente, la serre applique bien vos bonus de vitesse, et les commandes de parfum paient exactement chaque flacon selon sa qualité",
+   "Prestige et sauvegarde renforcés : vendre la ferme conserve désormais votre famille et votre lignée, bloque les doublons de récompenses et nettoie les anciens défis/commandes ; les sauvegardes abîmées sont mieux protégées et le progrès hors ligne (verger, enchères, ruchers, puits, marché) est plus juste",
+   "Fluidité et batterie : l’animation de la bourse s’arrête au repos, les minuteries (Maison, Camping, Château, Commandes, Métier) ne redessinent plus les écrans chaque seconde, les recherches en direct (Cadeaux des villageois, Flacons de parfum, Graines du magasin) filtrent instantanément et les tiroirs ne laissent plus d’écouteurs actifs",
+   "Confort mobile, contraste et Guide : zones de toucher agrandies, position du défilement préservée sur la barre de volets et « À faire », vrai mode Contraste renforcé, mode Calme unifié, thème sombre corrigé (bandeau urgent, listes déroulantes, barre d’expérience) et deux nouvelles pages du Guide pour le Camping et la Maison"
+  ]
+ },
+ {
   "v": "1.148",
   "title": "Éclat de la ferme",
   "date": "20 novembre 2026",

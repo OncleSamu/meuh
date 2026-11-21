@@ -211,6 +211,15 @@ export function closeMoment() {
     setTimeout(pump, 250);
 }
 
+export function dismissMoment() {
+    if (!current) return;
+    if (current.type === 'daily' || current.type === 'foal') {
+        const b = byId('moment').querySelector('.moment-card [data-act]');
+        if (b) return b.click();
+    }
+    closeMoment();
+}
+
 export const momentShown = () => !!current;
 
 export function setupMoments(onClose) {

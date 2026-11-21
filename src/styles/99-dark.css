@@ -26,3 +26,39 @@ html.dark .btn:disabled {
     background: #3a2c21;
     color: rgba(242, 228, 200, 0.45);
 }
+
+/* 1.149 : lisibilité et finitions du thème sombre */
+html.dark .goal-line.urgent {
+    background: linear-gradient(#6b4714, #4c300b);
+    color: #fff2cc;
+    border-color: #d9a03b;
+}
+html.dark .xp-bar > i {
+    background: linear-gradient(#53a7f5, #2b73c2);
+}
+html.dark .list-sort select {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1.5 L6 6.5 L11 1.5' fill='none' stroke='%23f2e4c8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
+html.dark .mtile.has-out {
+    background: linear-gradient(180deg, #523e1c 0%, #3d2d14 100%);
+    box-shadow:
+        0 4px 0 #1c1208,
+        0 0 0 2px rgba(245, 196, 78, 0.5),
+        inset 0 1px 0 rgba(255, 224, 140, 0.22);
+}
+html.dark .pill,
+html.dark .todo-chip,
+html.dark .farmyard {
+    box-shadow:
+        0 3px 0 #120b06,
+        inset 0 1px 0 rgba(255, 232, 190, 0.1);
+}
+html.dark.contrast {
+    --ink: #ffffff;
+    --ink-soft: #eadcc4;
+    --ink-l: #cfc0a8;
+    --paper: #17110c;
+    --paper-l: #221912;
+    --line: #ffffff;
+}
+

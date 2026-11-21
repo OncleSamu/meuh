@@ -99,7 +99,7 @@ function seeds() {
     let tab = ui.sel.seedShop;
     if (!tabs.some(([k]) => k === tab)) tab = tabs.length ? tabs[0][0] : 'crop';
     // 1.136 : la recherche fouille toutes les graines et tous les arbres à la fois
-    const q = queryOf('seeds');
+    const q = queryOf('shopSeeds');
     const keep = i => (q ? matchQ(q, i.seedName, i.name) : tab === 'season' ? G.isInSeason(i.id) : tab === 'stock' ? state.seeds[i.id] > 0 : i.type === tab);
     const head = `<div class="chips-row seed-tabs">${tabs.map(([k, label, n]) => `<button class="pick-chip${k === tab ? ' on' : ''}" data-act="seedShop" data-f="${k}">${label} · ${n}</button>`).join('')}</div>`;
     const rows = all
@@ -389,7 +389,7 @@ function renderShop(el) {
             'cats',
             `<div class="chips-row cats">${CATS.map(([id, label, icon]) => `<button class="pick-chip${id === cat ? ' on' : ''}" data-act="shopCat" data-c="${id}">${ico(icon)}${label}</button>`).join('')}</div>`,
         ],
-        ['search', cat === 'seeds' ? searchBox('seeds', 'Chercher une graine ou un arbre') : ''],
+        ['search', cat === 'seeds' ? searchBox('shopSeeds', 'Chercher une graine ou un arbre') : ''],
         ['list', `<div class="list shop-list">${c[3]()}</div>`],
     ]);
 }

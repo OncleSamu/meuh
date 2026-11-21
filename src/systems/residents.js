@@ -86,6 +86,7 @@ export function resAccept(i, at) {
     payCost({ coins: resCabinCost() });
     C().asks.splice(i, 1);
     const r = newResident(a);
+    C().res = C().res || [];
     C().res.push(r);
     resMakeOrder(r);
     state.stats.campResidents = (state.stats.campResidents || 0) + 1;
@@ -184,7 +185,9 @@ export function resDeliver(i, at) {
     const r = campRes()[i];
     if (!r || !resCanDeliver(r)) return false;
     takeQ(r.order.item, r.order.n, 0);
-    earn(resOrderValue(r), at);
+    const pay = resOrderValue(r);
+    earn(pay, at);
+    state.income.camping = (state.income.camping || 0) + pay;
     r.done++;
     r.order = null;
     r.wait = now() + RESIDENTS.order.wait;

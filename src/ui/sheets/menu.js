@@ -49,6 +49,17 @@ defineSheet('carnets', {
     },
 });
 
+// ---------------- 1.149 : À faire (accessible depuis n'importe quel onglet) ----------------
+defineSheet('todo', {
+    title: `${ico(['ui', 'scroll'])}À faire`,
+    render() {
+        if (!ui.todo.length) return '<p class="empty">Tout est calme à la ferme pour l’instant.</p>';
+        return `<div class="menu-grid">${ui.todo
+            .map(t => navRow(t.text, 'todoGo', { path: t.go }, t.icon || ['ui', 'scroll'], t.urgent ? '<span class="dot">!</span>' : '›'))
+            .join('')}</div>`;
+    },
+});
+
 // ---------------- le menu ----------------
 defineSheet('menu', {
     title: 'Menu',
@@ -63,7 +74,12 @@ defineSheet('menu', {
             const t = tiles.filter(Boolean);
             return t.length ? `<h4 class="mgroup">${title}</h4><div class="menu-tiles">${t.join('')}</div>` : '';
         };
-        const card = `<button class="me-card" data-act="open" data-sheet="identity" aria-label="Votre carte de visite"><span class="avatar">${art('villager', G.meLook())}</span><span class="card-main"><b>${esc(G.farmName())}</b><small>Niveau ${state.level} · toucher pour changer de tête ou de nom</small></span></button><button class="me-card metier-card" data-act="metierOpen" aria-label="Le métier de la ferme"><span class="avatar">${ico(G.metierId() ? METIERS[G.metierId()].icon : ['ui', 'star'], 'ico big')}</span><span class="card-main"><b>${G.metierId() ? G.metierTitle() : 'Choisir un métier'}</b><small>${G.metierId() ? (G.metierCanRank() ? 'Un rang à passer !' : 'Leçons, bonus, changer de métier') : 'La spécialité de votre ferme'}</small></span>${(!G.metierId() && state.level >= 3) || G.metierCanRank() ? '<span class="dot">!</span>' : ''}</button>`;
+        const todoN = ui.todo.length;
+        const todoUrg = ui.todo.some(t => t.urgent);
+        const todoCard = todoN
+            ? `<button class="me-card todo-card" data-act="open" data-sheet="todo" aria-label="À faire"><span class="avatar">${ico(ui.todo[0].icon || ['ui', 'scroll'], 'ico big')}</span><span class="card-main"><b>À faire · ${todoN} tâche${todoN > 1 ? 's' : ''}</b><small>${esc(ui.todo[0].text)}${todoN > 1 ? ` et ${todoN - 1} autre${todoN > 2 ? 's' : ''}` : ''}</small></span>${todoUrg ? '<span class="dot">!</span>' : dot(todoN)}</button>`
+            : '';
+        const card = `<button class="me-card" data-act="open" data-sheet="identity" aria-label="Votre carte de visite"><span class="avatar">${art('villager', G.meLook())}</span><span class="card-main"><b>${esc(G.farmName())}</b><small>Niveau ${state.level} · toucher pour changer de tête ou de nom</small></span></button><button class="me-card metier-card" data-act="metierOpen" aria-label="Le métier de la ferme"><span class="avatar">${ico(G.metierId() ? METIERS[G.metierId()].icon : ['ui', 'star'], 'ico big')}</span><span class="card-main"><b>${G.metierId() ? G.metierTitle() : 'Choisir un métier'}</b><small>${G.metierId() ? (G.metierCanRank() ? 'Un rang à passer !' : 'Leçons, bonus, changer de métier') : 'La spécialité de votre ferme'}</small></span>${(!G.metierId() && state.level >= 3) || G.metierCanRank() ? '<span class="dot">!</span>' : ''}</button>${todoCard}`;
         return (
             card +
             group('Ma ferme', [
@@ -208,15 +224,14 @@ defineSheet('barn', {
         const all = G.barnGoods();
         const q = queryOf('barn');
         // 1.136 : les mêmes familles et les mêmes tris qu'à la vente
-        const cur0 = BARN_FAMS.some(x => x[0] === ui.sel.barnF) ? ui.sel.barnF : 'all';
-        const famOk = BARN_FAMS.find(x => x[0] === cur0)[2];
+        const fams = BARN_FAMS.map(([id, label, ok]) => [id, label, all.filter(k => ok(ITEMS[k].type)).length]).filter(x => x[2] > 0);
+        const cur = fams.some(x => x[0] === ui.sel.barnF) ? ui.sel.barnF : 'all';
+        const famOk = BARN_FAMS.find(x => x[0] === cur)[2];
         const sort = sortOf('barn', BARN_SORTS);
         const goods = all.filter(id => famOk(ITEMS[id].type) && matchQ(q, ITEMS[id].name));
         if (sort !== 'def') goods.sort(barnCmp(sort));
         // 1.137 : par pages de 60, pour que la grange reste vive avec des centaines de produits
-        const pg = page('barn:' + cur0, goods, 60);
-        const fams = BARN_FAMS.map(([id, label, ok]) => [id, label, all.filter(k => ok(ITEMS[k].type)).length]).filter(x => x[2] > 0);
-        const cur = fams.some(x => x[0] === ui.sel.barnF) ? ui.sel.barnF : 'all';
+        const pg = page('barn:' + cur, goods, 60);
         const sel = o.sel && state.inventory[o.sel] ? o.sel : null;
         let item = '';
         if (sel) {
@@ -323,6 +338,10 @@ const lvTop = () => {
 export function setupMenu() {
     actions({
         openSearch: () => openSheet('guide', { focusSearch: true }),
+        todoGo: (el, d) => {
+            closeAll();
+            go(d.path);
+        },
         lvGo: (el, d) => {
             const to = d.to;
             closeAll();

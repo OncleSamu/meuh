@@ -187,6 +187,7 @@ function coinsFly(amount, at) {
                 const give = i === n - 1 ? batch.left : Math.min(part, batch.left);
                 batch.left -= give;
                 money.hold -= give;
+                syncMoney();
                 if (i % 2 === 0) emitCoin();
                 bump(pill);
             },
@@ -196,6 +197,7 @@ function coinsFly(amount, at) {
         if (batch.left > 0) {
             money.hold -= batch.left;
             batch.left = 0;
+            syncMoney();
         }
     }, 2500);
     floatText(c.x, c.y - 10, `+${fmt(amount)}${`<i class="ico">${art('ui', 'coin')}</i>`}`, 'gold');
@@ -203,25 +205,46 @@ function coinsFly(amount, at) {
 }
 let emitCoin = () => {};
 
-// à chaque image : la bourse rattrape doucement le vrai montant
-function tickMoney() {
-    const target = state.money - money.hold;
-    const d = target - money.shown;
-    if (Math.abs(d) < 1) money.shown = target;
-    else money.shown += d * 0.16 + Math.sign(d) * 0.6;
+// à chaque image (seulement pendant un changement) : la bourse rattrape doucement le vrai montant
+let moneyRaf = 0;
+function drawMoney() {
     const el = byId('ui-money');
     if (el) {
         const txt = fmt(money.shown);
         if (el.textContent !== txt) el.textContent = txt;
     }
-    requestAnimationFrame(tickMoney);
+}
+function tickMoney() {
+    moneyRaf = 0;
+    const target = state.money - money.hold;
+    if (document.hidden || reduceMotion()) {
+        money.shown = target;
+        drawMoney();
+        return;
+    }
+    const d = target - money.shown;
+    if (Math.abs(d) < 1) money.shown = target;
+    else money.shown += d * 0.16 + Math.sign(d) * 0.6;
+    drawMoney();
+    if (money.shown !== target || money.hold !== 0) moneyRaf = requestAnimationFrame(tickMoney);
+}
+export function syncMoney() {
+    const target = state.money - money.hold;
+    if (money.shown === target && money.hold === 0) {
+        drawMoney();
+        return;
+    }
+    if (!moneyRaf) moneyRaf = requestAnimationFrame(tickMoney);
 }
 
 // ---------------- branchement sur les annonces des règles ----------------
 export function setupFx({ sfx, tabEl }) {
     emitCoin = () => sfx('coin');
     money.shown = state.money;
-    requestAnimationFrame(tickMoney);
+    drawMoney();
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) syncMoney();
+    });
     const at = a => centerOf(a);
     on('float', ({ at: a, parts: p, cls, dy = 0, dx = 0, delay = 0 }) => {
         if (!anchorEl(a) && a !== undefined && a !== null) return;
@@ -251,7 +274,10 @@ export function setupFx({ sfx, tabEl }) {
     });
     on('squish', squish);
     on('shake', shake);
-    on('earn', ({ amount, at: a }) => coinsFly(amount, a));
+    on('earn', ({ amount, at: a }) => {
+        coinsFly(amount, a);
+        syncMoney();
+    });
     on('rare', ({ at: a, id, n }) => {
         if (!anchorEl(a)) return;
         const c = at(a);

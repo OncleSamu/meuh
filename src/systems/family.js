@@ -176,7 +176,7 @@ export const spouseOf = () => (state.family && state.family.spouse) || null;
 function settleAff(t = now()) {
     const F = ensureFamily();
     if (!F.spouse) return;
-    const days = (t - (F.affAt || t)) / DAY;
+    const days = Math.max(0, (t - (F.affAt || t)) / DAY);
     F.aff = Math.max(0, Math.min(FAMILY.aff.max, (F.aff ?? FAMILY.aff.max) - days * FAMILY.aff.decayDay));
     F.affAt = t;
 }
@@ -466,7 +466,7 @@ export const kidMetiers = () => [
 ];
 export const kidMetierMult = item => {
     const F = state.family;
-    if (!F || !F.kids || !F.kids.length) return 1;
+    if (!F || (!(F.kids && F.kids.length) && !(F.kin && F.kin.length))) return 1;
     const m = metierOf(item);
     return m && kidMetiers().includes(m) ? 1 + KID_METIER.price : 1;
 };
@@ -669,9 +669,12 @@ function bdaySettle(k) {
         return false;
     }
     let ch = false;
-    while (now() >= bdayAt(k) + BDAY.window) {
-        k.bd++;
-        k.joy = Math.max(0, k.joy - BDAY.miss);
+    const t = now();
+    if (t >= bdayAt(k) + BDAY.window) {
+        const missed = Math.min(20, Math.floor((t - BDAY.window - k.born) / BDAY.every) - k.bd);
+        const totalMissed = Math.max(1, Math.floor((t - BDAY.window - k.born) / BDAY.every) - k.bd);
+        k.bd += totalMissed;
+        k.joy = Math.max(0, k.joy - BDAY.miss * Math.max(1, missed));
         ch = true;
         if (view.started) toast(`Vous avez oublié l’anniversaire de ${k.name}…`, ['ui', 'heartOff']);
     }
@@ -810,10 +813,11 @@ export function gkCelebrate(kid, gid, at) {
     toast(`Joyeux anniversaire, ${g.name} ! Votre petit${g.girl ? 'e' : ''}-${g.girl ? 'fille' : 'fils'} est ravi${g.girl ? 'e' : ''}`, ['ui', 'cake']);
     return true;
 }
-export const gkBdays = () => kids().reduce((a, k) => a + (k.gk || []).filter(gkBdayToday).length, 0);
+export const gkBdays = () => [...kids(), ...(ensureFamily().kin || [])].reduce((a, k) => a + (k.gk || []).filter(gkBdayToday).length, 0);
 function gkBdaySettle(g) {
     bdayInit(g);
-    while (now() >= bdayAt(g) + BDAY.window) g.bd++;
+    const t = now();
+    if (t >= bdayAt(g) + BDAY.window) g.bd += Math.max(1, Math.floor((t - BDAY.window - g.born) / BDAY.every) - g.bd);
 }
 
 // ce qui attend le joueur (pastille de l'onglet)

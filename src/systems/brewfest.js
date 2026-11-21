@@ -85,9 +85,9 @@ export function enterFest(bid) {
     const b = beerOf(bid);
     if (!b || beerStock(bid) < BREWFEST.bottles) return false;
     const B = state.brew;
+    const s = festScore(bid);
     B.stock[bid] -= BREWFEST.bottles;
     beerQual(bid);
-    const s = festScore(bid);
     F.entry = { id: bid, name: b.name, score: s.total };
     sfx('pop');
     toast(`${b.name} est inscrite au concours (note ${s.total}/20)`, ['ui', 'trophy']);

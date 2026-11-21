@@ -230,15 +230,29 @@ export function fromSave(parsed) {
         if (TRANSIENT_KEYS.includes(k) || !(k in parsed)) continue;
         const v = parsed[k];
         if (Array.isArray(def)) s[k] = Array.isArray(v) ? v : def;
-        else if (def && typeof def === 'object') s[k] = { ...def, ...(v && typeof v === 'object' ? v : {}) };
+        else if (def && typeof def === 'object') {
+            const merged = { ...def };
+            if (v && typeof v === 'object' && !Array.isArray(v)) {
+                for (const [sk, sv] of Object.entries(v)) {
+                    if (sv === null && def[sk] !== null && typeof def[sk] === 'object') continue;
+                    merged[sk] = sv;
+                }
+            }
+            s[k] = merged;
+        } else if (typeof def === 'number') s[k] = Number.isFinite(v) ? v : def;
         else s[k] = v;
     }
     // 1.71.1 : les parties ajoutées sans valeur de départ ici (comice, foire, livre généalogique, ruchers, duos…)
     // étaient perdues au chargement : on garde tout ce que la sauvegarde contient
     for (const k of Object.keys(parsed)) if (!(k in base) && !TRANSIENT_KEYS.includes(k)) s[k] = parsed[k];
+    // 1.149 : bornes de sécurité sur niveau, jour et stocks (protège contre NaN / 0 / Infinity)
+    if (!Number.isFinite(s.level) || s.level < 1) s.level = 1;
+    if (!Number.isFinite(s.day) || s.day < 1) s.day = 1;
+    if (!Number.isFinite(s.xp) || s.xp < 0) s.xp = 0;
+    if (!Number.isFinite(s.gameTimeMinutes) || s.gameTimeMinutes < 0) s.gameTimeMinutes = base.gameTimeMinutes;
     // les objets apparus depuis la sauvegarde (nouveaux produits, nouvelles graines) commencent à zéro
-    for (const id of Object.keys(base.inventory)) if (typeof s.inventory[id] !== 'number') s.inventory[id] = 0;
-    for (const id of Object.keys(base.seeds)) if (typeof s.seeds[id] !== 'number') s.seeds[id] = 0;
+    for (const id of Object.keys(base.inventory)) if (!Number.isFinite(s.inventory[id]) || s.inventory[id] < 0) s.inventory[id] = 0;
+    for (const id of Object.keys(base.seeds)) if (!Number.isFinite(s.seeds[id]) || s.seeds[id] < 0) s.seeds[id] = 0;
     s.version = SAVE_VERSION;
     // une sauvegarde d'avant la 1.4 est convertie aux 50 niveaux (normalizeState)
     if (!parsed.lv14) s.lv14 = false;

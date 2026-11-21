@@ -267,7 +267,7 @@ function finishJob(m, k) {
         m.outq = m.outq || {};
         const o = (m.outq[id] = m.outq[id] || { s: 0, g: 0 });
         const key = ['s', 's', 'g', 'p', 'd'][q];
-        o[key] = (o[key] || 0) + 1;
+        o[key] = (o[key] || 0) + n;
     }
 }
 
@@ -277,8 +277,8 @@ export function advanceMachine(m, dt) {
     loopRefill(m);
     if (!m.lane2) m.progress2 = 0;
     for (let guard = 0; m.queue.length && dt > 1e-9 && guard < 5000; guard++) {
-        const needA = recipeTime(m.queue[0]) - m.progress;
-        const needB = laneB(m) ? recipeTime(m.queue[1]) - (m.progress2 || 0) : Infinity;
+        const needA = Math.max(0, recipeTime(m.queue[0]) - m.progress);
+        const needB = laneB(m) ? Math.max(0, recipeTime(m.queue[1]) - (m.progress2 || 0)) : Infinity;
         const step = Math.min(dt, needA, needB);
         m.progress += step;
         if (laneB(m)) m.progress2 = (m.progress2 || 0) + step;

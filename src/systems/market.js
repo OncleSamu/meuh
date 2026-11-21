@@ -127,10 +127,11 @@ export function pickHot() {
     if (state.market.hot && view.started && state.tutorial.done) toast(`Produit du jour au marché : ${ITEMS[state.market.hot].name.toLowerCase()} +50 %`, ['item', state.market.hot]);
 }
 
-export function marketTick() {
+export function marketTick(sec = 1) {
     let changed = false;
+    const rec = MARKET_RECOVER * Math.max(1, sec);
     for (const id of Object.keys(state.market.f)) {
-        const f = state.market.f[id] + MARKET_RECOVER;
+        const f = state.market.f[id] + rec;
         if (f >= 1) delete state.market.f[id];
         else state.market.f[id] = f;
         changed = true;

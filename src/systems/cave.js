@@ -247,12 +247,12 @@ export function lotOdds(lot, c = careLevel(lot), f = climFit()) {
     const champ = CAVE_ITEMS[lot.id] === 'champagne';
     const riskMul = (1.6 - 0.8 * c) * (1.5 - 0.5 * f);
     if (lot.rank >= 4) {
-        const rot = Math.min(0.6, CAVE_LEGEND_RISK.rot * riskMul + (champ && c < 0.3 ? 0.12 : 0)) * airMul(),
+        const rot = Math.min(0.6, CAVE_LEGEND_RISK.rot * riskMul + (champ && c <= 0.3 ? 0.12 : 0)) * airMul(),
             bad = Math.min(0.6, CAVE_LEGEND_RISK.bad * riskMul) * probeMul();
         return { good: 0, bad, rot, stay: Math.max(0, 1 - rot - bad) };
     }
     const good = Math.max(0.05, Math.min(0.95, CAVE_GOOD[lot.rank] + 0.14 * (c - 0.6) + 0.12 * (f - 0.7) + famBonus(lot)));
-    const rot = Math.min(1 - good, CAVE_ROT[lot.rank] * riskMul + (champ && c < 0.3 ? 0.12 : 0)) * airMul();
+    const rot = Math.min(1 - good, CAVE_ROT[lot.rank] * riskMul + (champ && c <= 0.3 ? 0.12 : 0)) * airMul();
     const bad = Math.max(0, 1 - good - rot) * probeMul();
     return { good, bad, rot, stay: Math.max(0, 1 - good - rot - bad) };
 }
@@ -392,6 +392,7 @@ export function putInCave(slot, id, n, at) {
     const lq = putQuality(id, n);
     if (lq) state.quality[id][QX.keys[lq]] -= n;
     state.inventory[id] -= n;
+    clampQuality(id);
     const t = now();
     c.slots[slot] = { uid: caveUid(), id, n, rank: 0, bad: false, next: t + caveStep(id), care: t, boost: 0, put: t, q: lq };
     if (isVinous(id)) {

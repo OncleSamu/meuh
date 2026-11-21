@@ -323,7 +323,12 @@ export function brewPreview(d = ensureBrew().draft) {
     const hop = isMead(d.malt) ? 0 : d.hop;
     const h = brewHarmony(d.malt, hop, ings);
     const cost = brewCost(d.malt, hop, ings);
-    const miss = Object.entries(cost).filter(([id, n]) => ingHave(id) < n);
+    const byBase = {};
+    for (const [id, n] of Object.entries(cost)) {
+        const b = ingBase(id);
+        byBase[b] = (byBase[b] || 0) + n;
+    }
+    const miss = Object.entries(cost).filter(([id, n]) => ingHave(id) < n || (state.inventory[ingBase(id)] || 0) < byBase[ingBase(id)]);
     const sig = sigOf(d.malt, hop, ings);
     const known = ensureBrew().sig[sig];
     return {
@@ -771,7 +776,11 @@ export function brewOffline(t = now()) {
             if (!r || j < 0 || !startBrew(null, { ...r, loop: true }, true)) break;
             const nv = B.vats[j];
             nv.until = end + (nv.until - t);
-            if (j !== i) break;
+            // 1.149 : remettre la cuve relancée à son emplacement i pour ne pas couper la boucle si une cuve précédente était vide
+            if (j !== i) {
+                B.vats[i] = nv;
+                B.vats[j] = null;
+            }
         }
     }
     return n;
@@ -792,8 +801,9 @@ export function brewTick() {
         if (v && v.loop && vatReady(v)) {
             const bid = v.bid;
             collectVat(i);
-            if (startBrew(null, { ...recipeOf(bid), loop: true }, true)) ch = true;
-            else if (view.started) toast(`${B.beers[bid].name} : plus assez d’ingrédients pour la relancer`, ['ui', 'beer']);
+            const r = recipeOf(bid);
+            if (r && startBrew(null, { ...r, loop: true }, true)) ch = true;
+            else if (view.started && B.beers[bid]) toast(`${B.beers[bid].name} : plus assez d’ingrédients pour la relancer`, ['ui', 'beer']);
             ch = true;
         }
     });

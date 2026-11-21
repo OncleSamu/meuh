@@ -13,7 +13,7 @@
         0 0 60px 18px rgba(255, 210, 63, 0.2);
 }
 
-#stars {
+html.night #stars {
     animation: starTwinkle 5.5s ease-in-out infinite alternate;
 }
 
@@ -100,7 +100,7 @@ html.night .field::before {
 }
 
 .plot.ready .spr-wrap {
-    filter: drop-shadow(0 2px 3px rgba(58, 38, 24, 0.24)) drop-shadow(0 0 6px rgba(255, 232, 120, 0.45));
+    filter: drop-shadow(0 2px 3px rgba(58, 38, 24, 0.28));
 }
 
 .plot.planted .spr-wrap {
@@ -447,10 +447,10 @@ html.season-hiver .meadow .pond::after {
 
 @keyframes starTwinkle {
     0% {
-        filter: brightness(0.88);
+        opacity: 0.72;
     }
     100% {
-        filter: brightness(1.18);
+        opacity: 1;
     }
 }
 
@@ -485,22 +485,52 @@ html.season-hiver .meadow .pond::after {
     }
 }
 
-html.calm #stars,
-html.calm #hills .hill-sails,
-html.calm .meadow .pond::before,
-html.calm .m-collect::after,
-html.calm .mtile.working .m-bar > i,
-html.calm .xp-bar > i::after {
-    animation: none !important;
+/* 1.149 : mode calme unifié (arrête toutes les animations décoratives pour préserver confort et batterie) */
+html.calm *,
+html.calm *::before,
+html.calm *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    #stars,
-    #hills .hill-sails,
-    .meadow .pond::before,
-    .m-collect::after,
-    .mtile.working .m-bar > i,
-    .xp-bar > i::after {
-        animation: none !important;
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
     }
 }
+
+/* 1.149 : vrai mode Contraste renforcé (Réglages › Contraste) */
+html.contrast {
+    --ink: #1a1008;
+    --ink-soft: #3a2412;
+    --ink-l: #51351d;
+    --line: #1a1008;
+    --paper: #fffdf7;
+    --paper-l: #ffffff;
+}
+html.contrast .card,
+html.contrast .btn,
+html.contrast .pill,
+html.contrast .todo-chip,
+html.contrast .pick-chip,
+html.contrast .seg,
+html.contrast .list-search input,
+html.contrast .list-sort select {
+    border-width: 2.5px;
+    border-color: var(--ink);
+}
+html.contrast .hint,
+html.contrast .card-sub,
+html.contrast small {
+    color: var(--ink-soft);
+}
+html.contrast :focus-visible {
+    outline: 3px solid #1256b8;
+    outline-offset: 2px;
+}
+

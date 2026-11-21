@@ -50,14 +50,14 @@ export function doPrestige(challenge, theme) {
         })(),
         // le village rénové et la grange restent acquis
         projects: state.projects,
-        // la génétique garde ses créations, ses variétés et leurs graines ; produits et bêtes partent avec la ferme
-        genetics: state.genetics ? { ...state.genetics, stock: {}, crosses: [], breeds: [], litters: [] } : null,
-        // la brasserie garde ses recettes et son livre ; les bouteilles, les cuves et les fûts partent avec la ferme
-        brew: state.brew ? { ...state.brew, stock: {}, q: {}, vats: [], barrels: [] } : null,
+        // la génétique garde ses créations, ses variétés et leurs graines ; produits, bêtes, chef et catalogue partent avec la ferme
+        genetics: state.genetics ? { ...state.genetics, stock: {}, q: {}, crosses: [], breeds: [], litters: [], chef: null, cat: null } : null,
+        // la brasserie garde ses recettes et son livre ; bouteilles, cuves, fûts et commandes partent avec la ferme
+        brew: state.brew ? { ...state.brew, stock: {}, q: {}, vats: [], barrels: [], orders: [], demand: {} } : null,
         // 1.143 : la parfumerie garde ses créations, son Orgue et sa signature ; flacons, dame-jeannes et commandes partent avec la ferme
         perfume: state.perfume ? { ...state.perfume, stock: {}, q: {}, vats: [], orders: [], demand: {} } : null,
-        // les grands défis gardent leurs trophées ; le défi en cours est mis de côté
-        defis: state.defis ? { ...state.defis, cur: null } : null,
+        // les grands défis gardent leurs trophées ; le défi en cours, le mini-défi et l'offre sont mis de côté
+        defis: state.defis ? { ...state.defis, cur: null, mini: null, offer: null } : null,
         night: state.night,
         // les chapitres gardés à la conversion 1.4 ne survivent pas à une nouvelle ferme
         story: { ...state.story, keep: {} },
@@ -72,11 +72,18 @@ export function doPrestige(challenge, theme) {
         album: state.album,
         stories: state.stories,
         fseason: state.fseason,
+        fseasonLog: state.fseasonLog,
         records: state.records,
         bookQuarters: state.bookQuarters,
+        bookTiers: state.bookTiers,
+        qmade: state.qmade,
+        duos: state.duos,
+        herdbook: state.herdbook,
+        me: state.me,
+        family: state.family,
         holiday: state.holiday,
         farmTheme: theme || 'none',
-        // la cave garde ses étagères, son équipement, sa cote et ses trophées ; les lots partent avec la ferme
+        // la cave garde ses étagères, son équipement, sa cote, son palmarès et ses trophées ; les lots partent avec la ferme
         cave: {
             ...newState().cave,
             shelves: state.cave.shelves,
@@ -84,13 +91,21 @@ export function doPrestige(challenge, theme) {
             cote: state.cave.cote,
             uid: state.cave.uid,
             legends: state.cave.legends || {},
+            mill: state.cave.mill || null,
+            seen: state.cave.seen || {},
         },
         // le château garde sa réputation, ses classements et ses médailles ; visiteurs et primeurs repartent avec la ferme
-        chateau: { ...newChateau(), rep: (state.chateau || {}).rep || 0, classes: (state.chateau || {}).classes, medals: (state.chateau || {}).medals },
+        chateau: {
+            ...newChateau(),
+            rep: (state.chateau || {}).rep || 0,
+            classes: (state.chateau && state.chateau.classes) || newChateau().classes,
+            medals: (state.chateau && state.chateau.medals) || newChateau().medals,
+        },
         // le coffre garde sa taille ; ce qu'il contient part avec la ferme
         vault: { lvl: (state.vault && state.vault.lvl) || 0, slots: [] },
         contest: state.contest,
         lastContest: state.lastContest,
+        contestHist: state.contestHist,
         day: state.day,
         weather: state.weather,
         nextWeather: state.nextWeather,

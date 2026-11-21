@@ -1,13 +1,12 @@
 // Le château de Margaux (1.37), vu depuis la cave : réputation, boutique et visiteurs, concours, mise en cuvée et vente en primeur.
 import { state } from '../../core/state.js';
-import { now } from '../../core/clock.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { CHATEAU_CLASSES, REP_MAX, PRIMEUR, CONTEST } from '../../data/chateau.js';
 import * as G from '../../systems/index.js';
 import { actions } from '../dom.js';
 import { ico } from '../icons.js';
-import { btn, section } from '../kit.js';
+import { btn, section, timer } from '../kit.js';
 import { defineSheet, closeSheet, sheetOpts } from '../sheets.js';
 
 const COIN = () => ico(['ui', 'coin']);
@@ -38,12 +37,11 @@ export const reserveChateauActions = l =>
 
 // ---------------- la fiche du château, en haut de la cave ----------------
 function guestRow(v) {
-    const left = Math.max(0, v.until - now());
     const have = G.haveWine(v),
         pair = G.havePair(v);
     return `<div class="card guest-row"><div class="ico-stack">${ico(['item', v.wine], 'ico big')}</div><div class="card-main">
         <div class="card-title">${v.n} × ${ITEMS[v.wine].name}</div>
-        <div class="card-sub">Cherche un accord avec : ${ITEMS[v.pair].name.toLowerCase()} · il reste ${formatDuration(left / 1000)}</div></div>
+        <div class="card-sub">Cherche un accord avec : ${ITEMS[v.pair].name.toLowerCase()} · il reste ${timer(v.until)}</div></div>
         <div class="card-side col">
         ${btn(`Servir ${fmt(G.visitorPrice(v, false))}`, { act: 'guestServe', data: { id: v.id }, size: 'sm', disabled: !have, icon: ['ui', 'coin'] })}
         ${btn(`Avec l’accord ${fmt(G.visitorPrice(v, true))}`, { act: 'guestServe', data: { id: v.id, pair: 1 }, size: 'sm', kind: 'gold', disabled: !have || !pair })}

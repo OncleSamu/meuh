@@ -172,25 +172,28 @@ function pkAsk(vid) {
     if (!o) return '';
     return `<div class="vf-line">${pkHtml({ pack: o.pack || 'carton', items: o.items, q: o.q }, 'sm')}<div><b>Voudrait « ${esc(o.name)} »</b><small>Une commande à la Maison, ${esc(o.why)}.</small></div>${btn('Voir', { act: 'pkAskGo', size: 'sm' })}</div>`;
 }
-function giftTab(vid) {
-    if (G.giftedToday(vid)) return `<p class="card-sub center">Déjà un cadeau aujourd’hui. Revenez demain !</p>`;
+function giftTabParts(vid) {
+    if (G.giftedToday(vid)) return { top: `<p class="card-sub center">Déjà un cadeau aujourd’hui. Revenez demain !</p>`, search: '', list: '' };
     const liked = G.giftable(vid).filter(id => id !== G.LOVES[vid] || G.loveFound(vid));
     const love = G.loveFound(vid) && state.inventory[G.LOVES[vid]] > 0;
-    const top = liked.length
+    const topLiked = liked.length
         ? `<div class="pick-grid">${liked.map(id => giftCell(vid, id, id === G.LOVES[vid] ? ' · adore' : ' · aime')).join('')}</div>`
         : '<p class="card-sub">Rien de ce qu’il ou elle aime en stock.</p>';
     // les autres produits (fabriqués), pour chercher son produit adoré
     const q = queryOf('vgift');
     const tried = G.triedOf(vid);
-    const others = Object.keys(state.inventory)
-        .filter(id => state.inventory[id] > 0 && ITEMS[id] && ITEMS[id].type === 'artisan' && !liked.includes(id) && !tried.includes(id))
-        .filter(id => matchQ(q, ITEMS[id].name))
-        .sort((a, b) => ITEMS[a].name.localeCompare(ITEMS[b].name));
+    const allOthers = Object.keys(state.inventory).filter(
+        id => state.inventory[id] > 0 && ITEMS[id] && ITEMS[id].type === 'artisan' && !liked.includes(id) && !tried.includes(id),
+    );
+    const others = allOthers.filter(id => matchQ(q, ITEMS[id].name)).sort((a, b) => ITEMS[a].name.localeCompare(ITEMS[b].name));
     const pg = page('vgift:' + vid, others, 12);
-    return `${G.isBirthday(vid) ? `<p class="vf-bday">${ico(['ui', 'cake'])}C’est son anniversaire : tout compte triple !</p>` : ''}
-        <h4 class="vf-h">Ce qu’il ou elle aime${love ? ' (et adore)' : ''}</h4>${top}${pkGifts(vid)}${perfumeGifts(vid)}
-        <h4 class="vf-h">Autre chose ?</h4><p class="card-sub">Peut-être son produit adoré… ou un « bof ». Les produits déjà essayés n’apparaissent plus.</p>
-        ${others.length > 12 || q ? searchBox('vgift', 'Chercher un produit') : ''}${pg.top}<div class="pick-grid">${pg.items.map(id => giftCell(vid, id)).join('')}</div>${pg.more}`;
+    return {
+        top: `${G.isBirthday(vid) ? `<p class="vf-bday">${ico(['ui', 'cake'])}C’est son anniversaire : tout compte triple !</p>` : ''}
+        <h4 class="vf-h">Ce qu’il ou elle aime${love ? ' (et adore)' : ''}</h4>${topLiked}${pkGifts(vid)}${perfumeGifts(vid)}
+        <h4 class="vf-h">Autre chose ?</h4><p class="card-sub">Peut-être son produit adoré… ou un « bof ». Les produits déjà essayés n’apparaissent plus.</p>`,
+        search: allOthers.length > 12 || q ? searchBox('vgift', 'Chercher un produit') : '',
+        list: `${pg.top}<div class="pick-grid">${pg.items.map(id => giftCell(vid, id)).join('')}</div>${pg.more}`,
+    };
 }
 function tasteTab(vid) {
     const love = G.LOVES[vid];
@@ -266,8 +269,25 @@ defineSheet('villager', {
             ['story', 'Histoire', null, G.villagerStoryReady(vid) || (G.duoOf(vid) && G.duoReady(G.duoOf(vid))) ? 1 : 0],
         ];
         const cur = tabs.some(t => t[0] === o.tab) ? o.tab : 'friend';
-        const body = cur === 'gift' ? giftTab(vid) : cur === 'taste' ? tasteTab(vid) : cur === 'story' ? storyTab(vid) : friendTab(vid);
-        return `<p class="card-sub center">${VILLAGERS[vid].role}</p>${segmented(tabs, cur, 'vfTab')}<div class="vf-body">${body}</div>`;
+        const head = `<p class="card-sub center">${VILLAGERS[vid].role}</p>${segmented(tabs, cur, 'vfTab')}`;
+        if (cur === 'gift') {
+            const g = giftTabParts(vid);
+            return [
+                ['head', head],
+                ['giftTop', `<div class="vf-body">${g.top}</div>`],
+                ['giftSearch', g.search],
+                ['giftList', g.list ? `<div class="vf-body">${g.list}</div>` : ''],
+                ['body', ''],
+            ];
+        }
+        const body = cur === 'taste' ? tasteTab(vid) : cur === 'story' ? storyTab(vid) : friendTab(vid);
+        return [
+            ['head', head],
+            ['giftTop', ''],
+            ['giftSearch', ''],
+            ['giftList', ''],
+            ['body', `<div class="vf-body">${body}</div>`],
+        ];
     },
 });
 

@@ -4,7 +4,7 @@ import { maisonCard } from './maison.js';
 import { feteCard } from './fete.js';
 import { state, scaleLvl } from '../../core/state.js';
 import { now } from '../../core/clock.js';
-import { fmt, formatDuration, qtyName } from '../../core/format.js';
+import { fmt, qtyName } from '../../core/format.js';
 import { EVENTS } from '../../data/world.js';
 import { VILLAGERS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
@@ -31,13 +31,15 @@ function eventCard() {
     if (!e || e.ended) {
         const n = G.nextFete(),
             next = n.season;
-        return `<div class="card event-card idle" title="${EVENTS[next.id].effect}"><div class="card-ico">${ico(G.eventIcon(next.id), 'ico')}</div><div class="card-main"><div class="card-title">${EVENTS[next.id].name}</div><div class="card-sub">Prochaine fête dans <b>${formatDuration(n.secs)}</b></div></div></div>`;
+        const until = Math.round((now() + n.secs * 1000) / 10000) * 10000;
+        return `<div class="card event-card idle" title="${EVENTS[next.id].effect}"><div class="card-ico">${ico(G.eventIcon(next.id), 'ico')}</div><div class="card-main"><div class="card-title">${EVENTS[next.id].name}</div><div class="card-sub">Prochaine fête dans <b>${timer(until)}</b></div></div></div>`;
     }
     const ev = EVENTS[e.season];
     const allClaimed = e.goals.every(x => x.claimed);
+    const endUntil = Math.round((now() + G.eventEndsIn() * 1000) / 10000) * 10000;
     return `<div class="card event-card live">
         <div class="card-head">${ico(G.eventIcon(e.season), 'ico big')}<div class="card-main"><div class="card-title">${ev.name}</div><div class="card-sub">${ev.effect}</div></div>
-            <span class="timer-pill">${ico(['ui', 'clock'])}<span>${formatDuration(G.eventEndsIn())}</span></span></div>
+            <span class="timer-pill">${ico(['ui', 'clock'])}${timer(endUntil)}</span></div>
         <div class="goals">${e.goals
             .map((x, k) => {
                 const done = x.prog >= x.target;
@@ -387,7 +389,8 @@ function delivery(kind) {
 // ---------------- 1.73 : le tableau des commandes en trois volets ----------------
 // À livrer (le tableau des villageois, puis une ligne par demande), Transports, Événements.
 // Chaque ligne dit en un mot où on en est ; la toucher ouvre la carte complète en fiche. Ce qui est prêt remonte.
-const left = at => formatDuration(Math.max(0, (at - now()) / 1000));
+const left = at => timer(at);
+const leftSec = secs => timer(Math.round((now() + secs * 1000) / 10000) * 10000);
 const has = (id, n) => (state.inventory[id] || 0) >= n;
 const ROWS = [
     // ---- à livrer ----
@@ -547,9 +550,9 @@ const ROWS = [
         icon: () => G.eventIcon(G.eventActive() ? state.event.season : G.nextFete().season.id),
         title: () => EVENTS[G.eventActive() ? state.event.season : G.nextFete().season.id].name,
         sub: () => {
-            if (!G.eventActive()) return `Prochaine fête dans ${formatDuration(G.nextFete().secs)}`;
+            if (!G.eventActive()) return `Prochaine fête dans ${leftSec(G.nextFete().secs)}`;
             const e = state.event;
-            return `${e.goals.filter(x => x.prog >= x.target).length} / ${e.goals.length} objectifs · ${formatDuration(G.eventEndsIn())}`;
+            return `${e.goals.filter(x => x.prog >= x.target).length} / ${e.goals.length} objectifs · ${leftSec(G.eventEndsIn())}`;
         },
         ready: () => G.eventReady() > 0,
         here: () => G.eventActive(),
@@ -567,7 +570,7 @@ const ROWS = [
                 ? 'Choisissez votre grand défi'
                 : d.awarded
                   ? 'Médaille gagnée'
-                  : `${G.stepsDone(d)} étape${G.stepsDone(d) > 1 ? 's' : ''} sur 4 · ${formatDuration(G.defiLeft(d) / 1000)}`;
+                  : `${G.stepsDone(d)} étape${G.stepsDone(d) > 1 ? 's' : ''} sur 4 · ${timer(d.end)}`;
         },
         ready: () => G.defiReady() > 0,
         here: () => true,
@@ -590,7 +593,7 @@ const ROWS = [
         on: () => !!farmSeasonCard(),
         icon: () => ['item', G.farmSeasonTheme().icon],
         title: () => G.farmSeasonTheme().name,
-        sub: () => `${fmt(state.fseason.pts)} points · ${formatDuration(G.farmSeasonEndsIn())}`,
+        sub: () => `${fmt(state.fseason.pts)} points · ${leftSec(G.farmSeasonEndsIn())}`,
         ready: () => G.farmSeasonClaimable() > 0,
         here: () => true,
         html: farmSeasonCard,

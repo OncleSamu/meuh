@@ -749,8 +749,8 @@
     }
     .goods-grid .goods-btns .btn {
         min-width: 74px;
-        min-height: 26px;
-        padding: 2px 8px;
+        min-height: 36px;
+        padding: 5px 10px;
     }
     /* 1.90 : une petite pastille posée sur le coin (avant, elle s'étirait sur toute la largeur et cachait le nom) */
     .goods-grid .hot-tag {
@@ -3101,8 +3101,9 @@ button.goods-art {
         height: 22px;
     }
     .subnav-row.strip.stack .seg > button .dot {
-        top: 0;
-        right: 2px;
+        position: absolute;
+        top: 2px;
+        right: 4px;
     }
     /* 1.144 : 6 volets ou plus (Atelier : Production, Comptoir, Cave, Parfums, Brasserie, Labo, Maison) :
        sur deux rangées équilibrées (4 + 3) pour rester lisibles et confortables sur petit téléphone */

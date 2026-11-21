@@ -1,7 +1,6 @@
 // 1.100 (étape 1) : la carte du camping de la vallée.
-import { fmt, formatDuration } from '../../core/format.js';
+import { fmt } from '../../core/format.js';
 import { state } from '../../core/state.js';
-import { now } from '../../core/clock.js';
 import { CAMPING, CAMP_UPGRADES, STARS } from '../../data/camping.js';
 import { QUALITY } from '../../data/farm.js';
 import { jobUnit } from '../../data/campers.js';
@@ -9,7 +8,7 @@ import { ITEMS } from '../../data/items.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { ico } from '../icons.js';
-import { btn, hint } from '../kit.js';
+import { btn, hint, timer } from '../kit.js';
 import { closeSheet } from '../sheets.js';
 
 // 1.102 : ce que le métier d'un résident apporte au camping, et son panier
@@ -21,7 +20,7 @@ export function jobHtml(r, i, vf) {
     let basket = '';
     if (fx.basket && h) {
         const ready = G.resBasketReady(r);
-        basket = btn(ready ? 'Ramasser' : formatDuration(Math.max(0, G.resBasketAt(r) - now()) / 1000), { act: 'campBasket', data: { i }, kind: ready ? 'green' : '', size: 'sm', disabled: !ready });
+        basket = btn(ready ? 'Ramasser' : timer(G.resBasketAt(r)), { act: 'campBasket', data: { i }, kind: ready ? 'green' : '', size: 'sm', disabled: !ready });
     }
     const icon = ico(['ui', fx.basket ? 'basket' : 'star']);
     return vf ? `<div class="vf-line">${icon}<div><b>Son métier au camping</b><small>${txt}.</small></div>${basket}</div>` : `<div class="od-line">${icon}<span><b>Son métier au camping</b><small>${txt}</small></span>${basket}</div>`;
@@ -74,7 +73,6 @@ function stayHtml(g, gi) {
         <div class="od-foot">${btn(`Accueillir · ${fmt(G.resCabinCost())}${ico(['ui', 'coin'])}`, { act: 'campStay', data: { g: gi, n: esc(g.name) }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}${btn('Pas cette fois', { act: 'campNoStay', data: { g: gi, n: esc(g.name) }, size: 'sm' })}</div></div>`;
 }
 export function guestCard(g, gi) {
-    const left = formatDuration(Math.max(0, (g.leave - now()) / 1000));
     const wants = g.wants
         .map((w, i) => {
             const n = G.wantN(w),
@@ -87,7 +85,7 @@ export function guestCard(g, gi) {
             return `<div class="od-line">${ico(['item', w.item])}<span><b>${n > 1 ? `${n} × ` : ''}${ITEMS[w.item].name}${w.q ? ` <em class="q-tag q${w.q}">${QUALITY[w.q].name} ou mieux</em>` : ''}</b><small>${sub}</small></span>${w.done ? '' : btn(k ? `Vendre ×${k}` : 'Vendre', { act: 'campSell', data: { g: gi, n: esc(g.name), i }, kind: k ? 'green' : '', size: 'sm', disabled: !k })}</div>`;
         })
         .join('');
-    return `<div class="card camp-card"><div class="card-head">${ico(['villager', g.look], 'ico big')}<div class="card-main"><div class="card-title">${g.star != null ? ico(['ui', 'star']) : ''}${g.name} ${g.from}</div><div class="card-sub">${G.guestTitle(g)} · repart dans ${left}</div></div></div>${stayHtml(g, gi)}${g.say ? `<p class="camp-say">« ${g.say} »</p>` : ''}${wants}${pkLine(g, gi)}${g.star != null ? hint(`Campeur remarquable : produits d’argent au moins, payés ×${STARS.pay}, et un gros pourboire s’il repart ravi.`) : g.visits > 1 ? hint('Un habitué : son pourboire grandit à chaque séjour.') : ''}</div>`;
+    return `<div class="card camp-card"><div class="card-head">${ico(['villager', g.look], 'ico big')}<div class="card-main"><div class="card-title">${g.star != null ? ico(['ui', 'star']) : ''}${g.name} ${g.from}</div><div class="card-sub">${G.guestTitle(g)} · repart dans ${timer(g.leave)}</div></div></div>${stayHtml(g, gi)}${g.say ? `<p class="camp-say">« ${g.say} »</p>` : ''}${wants}${pkLine(g, gi)}${g.star != null ? hint(`Campeur remarquable : produits d’argent au moins, payés ×${STARS.pay}, et un gros pourboire s’il repart ravi.`) : g.visits > 1 ? hint('Un habitué : son pourboire grandit à chaque séjour.') : ''}</div>`;
 }
 export function upsHtml() {
     const ups = Object.entries(CAMP_UPGRADES)

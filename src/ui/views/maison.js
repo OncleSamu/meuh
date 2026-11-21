@@ -1,6 +1,6 @@
 // 1.100 (étape 3) : la carte de la Maison, votre marque.
 import { state } from '../../core/state.js';
-import { fmt, formatDuration } from '../../core/format.js';
+import { fmt } from '../../core/format.js';
 import { MAISON, MAISON_CLIENTS, EMBLEMS, PALETTES, MAISON_ORDERS, ORDER_KIND_TXT } from '../../data/maison.js';
 import { PACKS } from '../../data/paquets.js';
 import { ITEMS } from '../../data/items.js';
@@ -8,7 +8,7 @@ import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { closeSheet, defineSheet } from '../sheets.js';
 import { ico, art } from '../icons.js';
-import { btn, segmented, bar, hint } from '../kit.js';
+import { btn, segmented, bar, hint, timer } from '../kit.js';
 import { renameBtn } from '../sheets/rename.js';
 import { QUALITY } from '../../data/farm.js';
 import { CAMPING } from '../../data/camping.js';
@@ -63,7 +63,7 @@ function fameHtml(tier) {
 function atelierTab(m) {
     const q = G.queue();
     const work = m.work
-        ? `<div class="pk-row">${pkHtml({ pack: m.work.pack || 'carton', items: m.work.items, q: m.work.q }, 'sm')}<span class="pk-row-main"><b>À l’atelier : ${esc(m.work.name || 'un paquet')}</b><small>${m.work.items.map(i => ITEMS[i].name).join(', ')} · prêt dans ${formatDuration(G.workLeft() / 1000)}</small></span></div>`
+        ? `<div class="pk-row">${pkHtml({ pack: m.work.pack || 'carton', items: m.work.items, q: m.work.q }, 'sm')}<span class="pk-row-main"><b>À l’atelier : ${esc(m.work.name || 'un paquet')}</b><small>${m.work.items.map(i => ITEMS[i].name).join(', ')} · prêt dans ${timer(m.work.ready)}</small></span></div>`
         : '';
     const wait = q.map((w, k) => `<div class="pk-row dim">${pkHtml({ pack: w.pack || 'carton', items: w.items, q: w.q }, 'sm')}<span class="pk-row-main"><b>${k + 2}. ${esc(w.name)}</b><small>en attente</small></span></div>`).join('');
     const room = G.slotsMax() - G.busyCount();
@@ -87,7 +87,7 @@ function shelfTab(m) {
     return `<div class="card camp-card"><div class="card-title">Sur l’étagère (${m.stock.length}/${MAISON.stock})</div>${G.maisonTier() >= 1 ? `<p class="card-sub">${n ? `${n} campeur${n > 1 ? 's' : ''} au camping peu${n > 1 ? 'vent' : 't'} acheter un paquet.` : 'Aucun campeur à servir pour l’instant.'}</p>` : ''}<div class="pk-shelf">${m.stock.map(coffretRow).join('')}</div></div>`;
 }
 function orderRow(o, i) {
-    if (o.due) return `<div class="od-line off">${ico(['ui', 'clock'])}<span><b>Une nouvelle commande</b><small>arrive dans ${formatDuration(Math.max(0, o.due - Date.now()) / 1000)}</small></span></div>`;
+    if (o.due) return `<div class="od-line off">${ico(['ui', 'clock'])}<span><b>Une nouvelle commande</b><small>arrive dans ${timer(o.due)}</small></span></div>`;
     const best = G.bestPkFor(o);
     const deliver = best
         ? btn(`Livrer « ${esc(best.name)} » · ${fmt(G.orderPay(best, o))}${COIN()}`, { act: 'pkOrder', data: { i, uid: best.uid }, kind: 'green', size: 'sm' })

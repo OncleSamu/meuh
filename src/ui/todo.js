@@ -91,9 +91,9 @@ export function todoList() {
 
     const products = state.animals.reduce((a, x) => a + x.stack, 0);
     const firstProd = state.animals.find(x => x.stack);
-    add('animals', firstProd ? ['item', ANIMALS[firstProd.type].prodId] : null, `${products} à ramasser`, products);
+    add('animals/pasture', firstProd ? ['item', ANIMALS[firstProd.type].prodId] : null, `${products} à ramasser`, products);
     const hungry = state.animals.filter(a => G.isAdult(a) && a.food === 0).length;
-    add('animals', ['item', 'feed'], `${hungry} ${hungry > 1 ? 'ont' : 'a'} faim`, hungry);
+    add('animals/pasture', ['item', 'feed'], `${hungry} ${hungry > 1 ? 'ont' : 'a'} faim`, hungry);
 
     const done = state.machines.filter(m => G.outCount(m) > 0);
     add(
@@ -117,25 +117,25 @@ export function todoList() {
     if (bq) push('sheet:book', ['ui', 'book'], 'Récompense du livre', bq);
     if (G.brewOpen() && state.brew) {
         const vr = state.brew.vats.filter(v => G.vatReady(v) && !v.loop).length;
-        if (vr) push('machines/brew', ['ui', 'beer'], `${vr} cuve${s(vr)} à mettre en bouteille`, vr);
+        if (vr) push('machines/brew#make', ['ui', 'beer'], `${vr} cuve${s(vr)} à mettre en bouteille`, vr);
         const bo = G.beerOrdersReady();
-        if (bo) push('machines/brew', ['villager', 'hugues'], `${bo} commande${s(bo)} de bière à livrer`, bo);
-        if (G.beerBookClaimable()) push('machines/brew', ['ui', 'beer'], 'Récompense du livre des bières', 1);
+        if (bo) push('machines/brew#orders', ['villager', 'hugues'], `${bo} commande${s(bo)} de bière à livrer`, bo);
+        if (G.beerBookClaimable()) push('machines/brew#book', ['ui', 'beer'], 'Récompense du livre des bières', 1);
     }
     if (G.perfumeOpen() && state.perfume) {
         const pr = G.perfumeReadyCount();
-        if (pr) push('machines/perfume', ['ui', 'perfume'], `${pr} parfum${s(pr)} à mettre en flacon`, pr);
+        if (pr) push('machines/perfume#compose', ['ui', 'perfume'], `${pr} parfum${s(pr)} à mettre en flacon`, pr);
         const pc = G.perfumeCareCount();
-        if (pc) push('machines/perfume', ['ui', 'perfume'], `${pc} macération${s(pc)} à soigner`, pc);
+        if (pc) push('machines/perfume#compose', ['ui', 'perfume'], `${pc} macération${s(pc)} à soigner`, pc);
         const po = G.perfumeOrdersReady();
-        if (po) push('machines/perfume', ['ui', 'perfume'], `${po} commande${s(po)} de parfum à livrer`, po);
-        if (G.organClaimable()) push('machines/perfume', ['ui', 'perfume'], 'Récompense de l’Orgue du Parfumeur', 1);
+        if (po) push('machines/perfume#salon', ['ui', 'perfume'], `${po} commande${s(po)} de parfum à livrer`, po);
+        if (G.organClaimable()) push('machines/perfume#organ', ['ui', 'perfume'], 'Récompense de l’Orgue du Parfumeur', 1);
     }
     // 1.20 : le domaine
-    if (G.metierCanRank()) push('farm', ['ui', 'star'], 'Un rang de métier à passer (menu)', 1);
+    if (G.metierCanRank()) push('sheet:metier', ['ui', 'star'], 'Un rang de métier à passer', 1);
     if (G.clientOpen()) {
         const c = G.metierClient();
-        if (c && !c.done && G.hasAll(c.items)) push('farm', ['ui', 'star'], `${G.clientOf().name} attend sa commande (menu › métier)`, 1);
+        if (c && !c.done && G.hasAll(c.items)) push('sheet:metier', ['ui', 'star'], `${G.clientOf().name} attend sa commande`, 1);
     }
     if (G.domaineOpen() && G.domReady())
         push('village/village#story', ['ui', 'house'], `${G.domReady()} chantier${s(G.domReady())} du domaine à lancer`, G.domReady());
@@ -153,27 +153,27 @@ export function todoList() {
     // 1.7 : le labo
     if (state.genetics && G.geneticsOpen()) {
         const lt = state.genetics.litters.length + (G.crossReady() ? 1 : 0);
-        if (lt) push('machines/lab', ['ui', 'flowers'], `${lt} portée${s(lt)} à découvrir`, lt);
+        if (lt) push('machines/lab#cross', ['ui', 'flowers'], `${lt} portée${s(lt)} à découvrir`, lt);
         const p = G.goalPlan();
-        if (p && p.done && !(state.genetics.stock[p.done] > 0)) push('machines/lab', ['ui', 'search'], 'But atteint : semez la variété', 1);
+        if (p && p.done && !(state.genetics.stock[p.done] > 0)) push('machines/lab#vars', ['ui', 'search'], 'But atteint : semez la variété', 1);
     }
     if (G.caveOpen()) {
         const care = G.caveCareCount();
-        if (care) push('machines/cave', ['ui', 'turn'], `${care} lot${s(care)} à soigner`, care);
-        if (!G.climOk() && !state.cave.gear.hygro && state.cave.slots.some(Boolean)) push('machines/cave', ['ui', 'thermo'], 'Climat de la cave à régler', 1);
+        if (care) push('machines/cave#lots', ['ui', 'turn'], `${care} lot${s(care)} à soigner`, care);
+        if (!G.climOk() && !state.cave.gear.hygro && state.cave.slots.some(Boolean)) push('machines/cave#lots', ['ui', 'thermo'], 'Climat de la cave à régler', 1);
         const co = G.caveOrdersReady();
-        if (co) push('machines/cave', ['ui', 'cave'], `${co} commande${s(co)} de cave à livrer`, co);
+        if (co) push('machines/cave#orders', ['ui', 'cave'], `${co} commande${s(co)} de cave à livrer`, co);
         const a = state.cave.auction;
-        if (a && a.lots && !a.over) push('machines/cave', ['ui', 'gavel'], 'Enchères en direct !', 1, { urgent: true });
+        if (a && a.lots && !a.over) push('machines/cave#sales', ['ui', 'gavel'], 'Enchères en direct !', 1, { urgent: true });
         const last = G.lastSaleShown();
-        if (last && last.results.length) push('machines/cave', ['ui', 'gavel'], 'Résultats de la vente', 1);
+        if (last && last.results.length) push('machines/cave#sales', ['ui', 'gavel'], 'Résultats de la vente', 1);
     }
 
     // imprévus en premier : ils pressent
     const inc = G.incidentTodo();
     if (inc)
         list.unshift({
-            go: inc.view === 'farm' ? 'farm/field' : inc.view === 'animals' ? 'animals' : 'village/orders',
+            go: inc.view === 'farm' ? 'farm/field' : inc.view === 'animals' ? 'animals/pasture' : 'village/orders',
             icon: inc.icon,
             text: inc.text,
             n: 1,
