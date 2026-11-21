@@ -2,7 +2,7 @@
 // Elle s'ouvre au premier lancement, une fois pour les parties en cours, puis depuis le menu.
 import { state } from '../../core/state.js';
 import * as G from '../../systems/index.js';
-import { TRAITS, TRAIT_COUNT, TRAIT_NAMES, lookOf, idOf, randomId } from '../../art/habitants.js';
+import { TRAITS, TRAIT_COUNT, TRAIT_NAMES, TRAIT_LABELS, lookOf, idOf, randomId } from '../../art/habitants.js';
 import { actions, esc } from '../dom.js';
 import { ui } from '../app.js';
 import { art, ico } from '../icons.js';
@@ -22,8 +22,10 @@ const keepName = () => {
 };
 // des chevrons dessinés (les caractères ‹ › ne tombent jamais au centre d'un bouton)
 const CHEV = d => `<svg viewBox="0 0 14 14" aria-hidden="true"><path d="${d < 0 ? 'M9 2 L4 7 L9 12' : 'M5 2 L10 7 L5 12'}" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-const traitRow = (t, look) =>
-    `<div class="me-trait"><button class="me-arrow" data-act="meTrait" data-t="${t}" data-d="-1" aria-label="${TRAIT_NAMES[t]} précédent">${CHEV(-1)}</button><span><b>${TRAIT_NAMES[t]}</b><small>${look[t] + 1} / ${TRAIT_COUNT[t]}</small></span><button class="me-arrow" data-act="meTrait" data-t="${t}" data-d="1" aria-label="${TRAIT_NAMES[t]} suivant">${CHEV(1)}</button></div>`;
+const traitRow = (t, look) => {
+    const lbl = TRAIT_LABELS[t] ? TRAIT_LABELS[t][look[t]] : `${look[t] + 1} / ${TRAIT_COUNT[t]}`;
+    return `<div class="me-trait"><button class="me-arrow" data-act="meTrait" data-t="${t}" data-d="-1" aria-label="${TRAIT_NAMES[t]} précédent">${CHEV(-1)}</button><span><b>${TRAIT_NAMES[t]}</b><small>${lbl}</small></span><button class="me-arrow" data-act="meTrait" data-t="${t}" data-d="1" aria-label="${TRAIT_NAMES[t]} suivant">${CHEV(1)}</button></div>`;
+};
 
 defineSheet('identity', {
     cls: 'identity-sheet',

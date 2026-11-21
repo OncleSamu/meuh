@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.150",
+  "title": "Visages de la vallée",
+  "date": "21 novembre 2026",
+  "items": [
+   "Générateur de personnages largement enrichi : 151 éléments graphiques au lieu de 70 pour créer votre fermier et peupler le camping (plus de 8 800 milliards de visages possibles, 100 % compatible avec vos personnages existants)",
+   "Nouvelles coiffures et couvre-chefs : 20 coiffures (carré droit, long ondulé, double chignons, houppe rétro, afro, couronne tressée, tresse d’épaule…) et 18 chapeaux (cowboy, couronne de fleurs, capeline, gavroche, chapka, apiculteur, canotier, chapeau pointu…)",
+   "Nouveaux visages, tenues et détails : 11 barbes, 10 regards, 8 lunettes (soleil, demi-lunes, monocle, œil de chat, aviateur), 7 nez, 12 cols et tenues (tablier de ferme, écharpe d’hiver, marinière, nœud papillon, veste de chef, collier de perles), 13 détails (brin de paille, fleur à l’oreille, créoles, pansement, médaillon…) et 52 couleurs",
+   "Création du fermier plus lisible : chaque coiffure, chapeau, tenue, barbe ou accessoire affiche désormais son nom en clair pendant la personnalisation"
+  ]
+ },
+ {
   "v": "1.149",
   "title": "Grand Nettoyage & Fluidité",
   "date": "20 novembre 2026",
