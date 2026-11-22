@@ -22,7 +22,6 @@ import { produce } from '../navigate.js';
 import { vaultCard } from './vault.js';
 import { lv80 } from '../../data/lv80.js';
 import { METIERS } from '../../data/metiers.js';
-import { beuhLogoSvg } from '../../art/beuh.js';
 
 const COIN = () => ico(['ui', 'coin']);
 
@@ -101,12 +100,7 @@ defineSheet('menu', {
                 tile('Guide', 'guide', ['ui', 'info']),
                 tile('Almanach', 'almanac', ['ui', G.season().icon], 0, G.season().name),
                 tile('Réglages', 'settings', ['ui', 'gear']),
-            ]) +
-            (G.beuhUnlocked()
-                ? `<button class="me-card beuh-secret-card" data-act="beuhOpen" aria-label="BEUH : Le Sous-Sol"><span class="avatar">${beuhLogoSvg()}</span><span class="card-main"><b>BEUH · Le Sous-Sol</b><small>Rang ${state.beuh.lvl} · ${fmt(Math.floor(state.beuh.dirty))} 💵 sale · ${fmt(Math.floor(state.beuh.clean))} 💶 propre</small></span></button>`
-                : G.beuhEndgame()
-                  ? `<button class="me-card beuh-secret-card" data-act="beuhKnock" aria-label="Trappe secrète"><span class="avatar">${beuhLogoSvg()}</span><span class="card-main"><b>??? · Trappe sous la grange</b><small>Quelque chose bourdonne dans le sous-sol…</small></span></button>`
-                  : '')
+            ])
         );
     },
 });

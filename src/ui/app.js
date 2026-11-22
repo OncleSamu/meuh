@@ -27,7 +27,6 @@ import { momentShown, closeMoment, dismissMoment } from './moments.js';
 import { syncMoney } from './fx.js';
 import { FAMILY } from '../data/family.js';
 import { todoList, todoCounts } from './todo.js';
-import { isBeuhOpen, renderBeuh } from './beuh.js';
 
 // ---------------- l'état de l'interface (jamais sauvegardé, sauf l'onglet) ----------------
 export const ui = {
@@ -336,7 +335,6 @@ export function refresh() {
     if (view.wide && (ui.tab !== 'farm' || aside)) VIEWS['farm/field'](byId('view-farm'));
     toolbarRender();
     renderSheets();
-    if (isBeuhOpen()) renderBeuh();
     live();
 }
 
@@ -345,7 +343,6 @@ const LIVE = {};
 export const defineLive = (kind, fn) => (LIVE[kind] = fn);
 
 export function live() {
-    if (isBeuhOpen()) renderBeuh();
     const t = now();
     $$('[data-until]').forEach(el => {
         // déjà mis en forme (espaces insécables) : la typographie n'a pas à le réécrire chaque seconde

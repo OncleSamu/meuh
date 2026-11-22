@@ -10,8 +10,7 @@ export function gameCss(root) {
         .filter(f => f.endsWith('.css'))
         .sort()
         .map(f => [f, fs.readFileSync(path.join(dir, f), 'utf8')]);
-    const light = files.filter(([f]) => f !== '99-dark.css' && f !== '98-beuh.css');
+    const light = files.filter(([f]) => f !== '99-dark.css');
     const dark = files.find(([f]) => f === '99-dark.css');
-    const beuh = files.find(([f]) => f === '98-beuh.css');
-    return [...light.map(([, c]) => c), darkCss(light), dark ? dark[1] : '', beuh ? beuh[1] : ''].join('\n');
+    return [...light.map(([, c]) => c), darkCss(light), dark ? dark[1] : ''].join('\n');
 }

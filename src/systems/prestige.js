@@ -81,7 +81,6 @@ export function doPrestige(challenge, theme) {
         herdbook: state.herdbook,
         me: state.me,
         family: state.family,
-        beuh: state.beuh,
         holiday: state.holiday,
         farmTheme: theme || 'none',
         // la cave garde ses étagères, son équipement, sa cote, son palmarès et ses trophées ; les lots partent avec la ferme

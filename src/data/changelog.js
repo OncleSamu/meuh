@@ -1,15 +1,6 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
-  "v": "1.154",
-  "title": "La Trappe sous la Grange",
-  "date": "22 novembre 2026",
-  "items": [
-   "Une rumeur court au village : les fermiers accomplis (niveau 80 ou prestige) entendraient quelque chose vibrer sous le plancher de la grange…",
-   "Les plus curieux prétendent même qu’en frappant plusieurs fois sur le numéro de version dans Réglages › Aide, une trappe secrète s’ouvrirait vers un tout autre univers parallèle"
-  ]
- },
- {
   "v": "1.153",
   "title": "Miels de Fleurs & Essences de l’Orgue",
   "date": "21 novembre 2026",
