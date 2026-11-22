@@ -635,11 +635,177 @@ html.calm .gp-4 {
         transform: scale(1.2);
     }
 }
+/* 1.154 : nouvelles teintes rares, motifs, finitions et morphologies végétales */
+.gp-c12 {
+    background: linear-gradient(145deg, rgba(110, 255, 190, 0.35), rgba(10, 110, 75, 0.25) 55%, rgba(160, 255, 210, 0.4));
+}
+.gp-c14 {
+    background: linear-gradient(155deg, rgba(255, 232, 145, 0.5), rgba(190, 105, 15, 0.22) 60%, rgba(255, 220, 115, 0.45));
+}
+.gp-c16 {
+    background: linear-gradient(130deg, rgba(120, 160, 255, 0.36) 0%, rgba(18, 22, 42, 0.42) 48%, rgba(180, 140, 255, 0.32) 100%);
+}
+.gp-c17 {
+    background: linear-gradient(180deg, rgba(255, 195, 90, 0.45) 0%, rgba(255, 95, 145, 0.48) 52%, rgba(92, 54, 185, 0.62) 100%);
+}
+.gp-c18 {
+    background: linear-gradient(
+            120deg,
+            rgba(255, 195, 235, 0.45) 0%,
+            rgba(185, 245, 255, 0.48) 33%,
+            rgba(255, 248, 195, 0.48) 66%,
+            rgba(215, 200, 255, 0.48) 100%
+        )
+        0 0 / 200% 100%;
+    animation: shimmer 4s ease-in-out infinite;
+}
+/* motifs 9..16 : tigrée, écailles, spirales, bicolore, cœurs, flocons, nervures, calico */
+.gp-9 {
+    background: repeating-linear-gradient(
+            -55deg,
+            rgba(46, 26, 14, 0.5) 0 4%,
+            transparent 4% 11%,
+            rgba(46, 26, 14, 0.34) 11% 13.5%,
+            transparent 13.5% 22%
+        ),
+        repeating-linear-gradient(-40deg, transparent 0 14%, rgba(46, 26, 14, 0.25) 14% 17%, transparent 17% 31%);
+}
+.gp-10 {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='14' viewBox='0 0 16 14'%3E%3Cpath d='M0 7 A8 7 0 0 0 16 7 M-8 14 A8 7 0 0 0 8 14 M8 14 A8 7 0 0 0 24 14' fill='none' stroke='%233a2618' stroke-opacity='.42' stroke-width='1.5'/%3E%3C/svg%3E")
+        0 0 / 26% 22%;
+}
+.gp-11 {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cpath d='M11 11 m-1.5 0 a1.5 1.5 0 1 1 3 0 a3.5 3.5 0 1 1 -7 0 a5.5 5.5 0 1 1 11 0' fill='none' stroke='%233a2618' stroke-opacity='.42' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E")
+        0 0 / 34% 34%;
+}
+.gp-12 {
+    background: linear-gradient(108deg, rgba(255, 252, 240, 0.52) 0 49.5%, rgba(46, 30, 20, 0.42) 50.5% 100%);
+}
+.gp-13 {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M10 15.5 C6 12.2 4 9.8 4 7.4 A3 3 0 0 1 10 6.5 A3 3 0 0 1 16 7.4 C16 9.8 14 12.2 10 15.5Z' fill='%23ff5c8a' fill-opacity='.68'/%3E%3C/svg%3E")
+        0 0 / 28% 28%;
+}
+.gp-14 {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cg stroke='%23ffffff' stroke-opacity='.88' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M11 4 L11 18 M4 11 L18 11 M6 6 L16 16 M16 6 L6 16'/%3E%3C/g%3E%3C/svg%3E")
+        0 0 / 30% 30%;
+}
+.gp-15 {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='16' viewBox='0 0 20 16'%3E%3Cpath d='M10 0 L10 16 M10 5 L2 1 M10 5 L18 1 M10 12 L2 8 M10 12 L18 8' fill='none' stroke='%23fff6c2' stroke-opacity='.65' stroke-width='1.3'/%3E%3C/svg%3E")
+        0 0 / 32% 26%;
+}
+.gp-16 {
+    background: radial-gradient(ellipse 30% 24% at 24% 28%, rgba(232, 118, 42, 0.62) 55%, transparent 72%),
+        radial-gradient(ellipse 28% 22% at 72% 32%, rgba(44, 28, 20, 0.58) 55%, transparent 72%),
+        radial-gradient(ellipse 32% 24% at 54% 72%, rgba(255, 250, 240, 0.66) 55%, transparent 72%),
+        radial-gradient(ellipse 24% 20% at 22% 76%, rgba(44, 28, 20, 0.5) 55%, transparent 72%),
+        radial-gradient(ellipse 24% 22% at 82% 74%, rgba(232, 118, 42, 0.55) 55%, transparent 72%);
+}
+/* finitions 6..13 : bioluminescente, cristalline, kintsugi, rosée, nacrée, étoilée, automnale, solaire */
+.gp-f6 {
+    background: radial-gradient(circle at 30% 35%, rgba(120, 255, 220, 0.52), transparent 55%),
+        radial-gradient(circle at 72% 62%, rgba(72, 235, 205, 0.45), transparent 55%);
+}
+.gp-f7 {
+    background: conic-gradient(
+        from 20deg at 45% 40%,
+        rgba(255, 255, 255, 0.65) 0 14%,
+        rgba(145, 225, 255, 0.35) 14% 30%,
+        rgba(255, 190, 245, 0.38) 30% 46%,
+        rgba(255, 255, 255, 0.6) 46% 62%,
+        rgba(175, 245, 225, 0.35) 62% 80%,
+        rgba(255, 245, 180, 0.4) 80% 100%
+    );
+}
+.gp-f8 {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M10 18 L24 28 L34 22 L52 34 M24 28 L20 48 L30 56 M34 22 L40 10 M38 38 L54 46' fill='none' stroke='%23ffd23f' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M10 18 L24 28 L34 22 L52 34 M24 28 L20 48' fill='none' stroke='%23fff8d6' stroke-width='1'/%3E%3C/svg%3E")
+        0 0 / 100% 100%;
+}
+.gp-f9 {
+    background: radial-gradient(circle at 26% 28%, #fff 0 2.2%, rgba(170, 230, 255, 0.78) 2.5% 6%, rgba(45, 125, 175, 0.38) 6.5%, transparent 8%),
+        radial-gradient(circle at 68% 24%, #fff 0 1.8%, rgba(170, 230, 255, 0.78) 2% 5%, rgba(45, 125, 175, 0.35) 5.5%, transparent 7%),
+        radial-gradient(circle at 74% 58%, #fff 0 2.4%, rgba(170, 230, 255, 0.78) 2.6% 6.5%, rgba(45, 125, 175, 0.38) 7%, transparent 8.5%),
+        radial-gradient(circle at 36% 66%, #fff 0 2%, rgba(170, 230, 255, 0.78) 2.2% 5.5%, rgba(45, 125, 175, 0.35) 6%, transparent 7.5%);
+}
+.gp-f10 {
+    background: linear-gradient(
+            125deg,
+            rgba(255, 175, 220, 0.52) 0%,
+            rgba(255, 240, 175, 0.5) 25%,
+            rgba(165, 250, 225, 0.52) 50%,
+            rgba(175, 205, 255, 0.52) 75%,
+            rgba(255, 175, 220, 0.52) 100%
+        )
+        0 0 / 220% 100%;
+    animation: shimmer 3.6s ease-in-out infinite;
+}
+.gp-f11 {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M16 20 L34 15 L48 28 L38 46 L20 42Z' fill='none' stroke='%23ffe680' stroke-opacity='.55' stroke-width='1'/%3E%3Cg fill='%23fff8d0'%3E%3Ccircle cx='16' cy='20' r='2.2'/%3E%3Ccircle cx='34' cy='15' r='2.6'/%3E%3Ccircle cx='48' cy='28' r='2.1'/%3E%3Ccircle cx='38' cy='46' r='2.4'/%3E%3Ccircle cx='20' cy='42' r='1.8'/%3E%3Ccircle cx='50' cy='50' r='1.4'/%3E%3C/g%3E%3C/svg%3E")
+        0 0 / 100% 100%,
+        linear-gradient(160deg, rgba(30, 38, 95, 0.34), rgba(75, 42, 125, 0.22));
+}
+.gp-f12 {
+    background: radial-gradient(ellipse 14% 9% at 24% 26%, #d95b26 55%, transparent 72%),
+        radial-gradient(ellipse 13% 8% at 68% 22%, #f0a828 55%, transparent 72%),
+        radial-gradient(ellipse 14% 9% at 76% 58%, #b8381c 55%, transparent 72%),
+        radial-gradient(ellipse 12% 8% at 32% 68%, #e88224 55%, transparent 72%),
+        radial-gradient(ellipse 12% 8% at 54% 46%, #ffd23f 50%, transparent 70%);
+}
+.gp-f13 {
+    background: radial-gradient(circle at 50% 35%, rgba(255, 240, 150, 0.55), rgba(255, 145, 35, 0.25) 60%, transparent 88%);
+}
+/* morphologies végétales */
+.gp-m1 {
+    background: radial-gradient(ellipse 26% 18% at 28% 30%, rgba(255, 250, 224, 0.85) 55%, transparent 76%),
+        radial-gradient(ellipse 24% 16% at 68% 42%, rgba(255, 248, 215, 0.82) 55%, transparent 76%),
+        radial-gradient(ellipse 22% 15% at 44% 68%, rgba(255, 252, 232, 0.8) 55%, transparent 76%);
+}
+.gp-m5 {
+    background: radial-gradient(circle at 50% 50%, transparent 45%, rgba(255, 236, 220, 0.62) 85%, rgba(255, 248, 240, 0.85) 100%);
+}
+.morph-twin {
+    position: absolute;
+    inset: 0;
+    transform: translate(-18%, 6%) scale(0.82) rotate(-10deg);
+    opacity: 0.94;
+    pointer-events: none;
+}
+.morph-twin > svg {
+    width: 100%;
+    height: 100%;
+}
+.morph-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+.gl-bonsai > svg:first-of-type {
+    transform: translateY(-9%);
+}
+.ffly {
+    position: absolute;
+    width: 12%;
+    height: 12%;
+    margin: -6% 0 0 -6%;
+    border-radius: 50%;
+    background: radial-gradient(circle, #eafff6 0 40%, #3ef2be 70%, transparent 100%);
+    box-shadow: 0 0 6px #3ef2be;
+    animation: spk-tw 2.2s ease-in-out infinite;
+    pointer-events: none;
+}
+.spk.sun {
+    background: #ffcf48;
+}
 html.calm .gp-c9,
-html.calm .spk {
+html.calm .gp-c18,
+html.calm .gp-f10,
+html.calm .spk,
+html.calm .ffly {
     animation: none;
 }
-html.calm .spk {
+html.calm .spk,
+html.calm .ffly {
     opacity: 0.9;
 }
 

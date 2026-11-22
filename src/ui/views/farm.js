@@ -222,10 +222,16 @@ function farmyardHtml() {
             ? 'Touchez pour agrandir la maison'
             : 'La plus belle maison du canton';
     if (G.houseCanUp()) G.tip('house');
-    return `<button class="farmyard card" data-act="open" data-sheet="house" aria-label="Maison de la ferme">
-        <span class="yard-house">${houseArt(l)}${farmSign()}</span>
-        <span class="card-main"><span class="card-title">${G.identitySet() ? esc(G.farmName()) : HOUSE[l].name}${state.legend ? ' ' + ico(['ui', 'goldCow']) : ''}</span><span class="card-sub">${sub}</span></span>
-        ${G.handLvl() ? `<span class="yard-hand">${art('villager', 'theo')}</span>` : ''}${can ? '<span class="dot">!</span>' : ''}</button>`;
+    const paused = G.handPaused();
+    const handBtn = G.handLvl()
+        ? `<button type="button" class="yard-hand-btn${paused ? ' off' : ''}" data-act="toggleHand" aria-pressed="${!paused}" aria-label="${paused ? 'Remettre Théo au travail' : 'Mettre Théo en pause'}" title="${paused ? 'Remettre Théo au travail' : 'Mettre Théo en pause'}"><span class="yard-hand">${art('villager', 'theo')}</span><span class="yard-hand-tag">${paused ? 'Pause' : 'Actif'}</span></button>`
+        : '';
+    return `<div class="farmyard card">
+        <button type="button" class="farmyard-go" data-act="open" data-sheet="house" aria-label="Maison de la ferme">
+            <span class="yard-house">${houseArt(l)}${farmSign()}</span>
+            <span class="card-main"><span class="card-title">${G.identitySet() ? esc(G.farmName()) : HOUSE[l].name}${state.legend ? ' ' + ico(['ui', 'goldCow']) : ''}</span><span class="card-sub">${sub}</span></span>
+        </button>
+        ${handBtn}${can ? '<span class="dot">!</span>' : ''}</div>`;
 }
 // 1.115 : l'enseigne de la ferme, au nom de la ferme et au métier (dès le rang 1)
 function farmSign() {

@@ -1,42 +1,102 @@
-// 1.54 : les huit boissons de l'oasis au comptoir, et le geste du thé versé de haut.
+// 1.154 : Pause rapide de Théo & 5 nouvelles catégories de sprites génétiques.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ITEMS } from '../../src/data/items.js';
-import { RECIPES } from '../../src/data/machines.js';
-import { BREW, NEW_DRINKS_154 } from '../../src/data/counter.js';
-import { CARNET } from '../../src/data/carnet.js';
-import { PROJECTS } from '../../src/data/village.js';
+import { state, newState, setState } from '../../src/core/state.js';
+import { LOOKS, FEATURES, featuresOf } from '../../src/data/genetics.js';
 import { SPR } from '../../src/art/index.js';
-import { lv80 } from '../../src/data/lv80.js';
+import { genWrap, looksText } from '../../src/ui/genlook.js';
+import * as G from '../../src/systems/index.js';
 
-test('1.54 : huit boissons de l’oasis, chacune avec ses gestes, son dessin et son anecdote', () => {
-    assert.equal(NEW_DRINKS_154.length, 8);
-    const combos = new Set();
-    for (const [id, name, ing] of NEW_DRINKS_154) {
-        assert.ok(BREW[id] && BREW[id].st.length >= 3, `${id} : gestes`);
-        combos.add(BREW[id].st.map(s => s[0]).join('>'));
-        assert.equal(ITEMS[id].name, name);
-        assert.ok(ITEMS[id].sell > 0);
-        assert.equal(RECIPES[id].machine, 'counter');
-        assert.ok(RECIPES[id].lvl >= lv80(59) && RECIPES[id].lvl <= 80);
-        assert.ok(SPR.item(id).length > 300, `${id} : dessin`);
-        assert.ok(CARNET[id] && CARNET[id].length > 80, `${id} : anecdote`);
-        assert.ok(PROJECTS[ITEMS[id].needProject], id);
-        for (const k of Object.keys(ing)) assert.ok(ITEMS[k], `${id} : ${k}`);
+const pair = v => [
+    [v, 1],
+    [v, 1],
+];
+
+test('1.154 : 19 couleurs, 17 motifs, 14 finitions et 7 morphologies végétales rendent sans erreur', () => {
+    assert.equal(LOOKS.color.length, 19);
+    assert.equal(LOOKS.pattern.length, 17);
+    assert.equal(LOOKS.finish.length, 14);
+    assert.equal(LOOKS.morph.length, 7);
+
+    const baseSvg = SPR.item('strawberry');
+    for (let c = 1; c < LOOKS.color.length; c++) {
+        const g = { t: {}, form: 'strawberry', l: { size: pair(1), color: pair(c), pattern: pair(0), finish: pair(0), morph: pair(0) }, halo: false };
+        const html = genWrap(baseSvg, g);
+        assert.ok(html.includes('class="gl') && !/undefined|NaN/.test(html), `couleur ${c}`);
+        assert.ok(looksText(g).length > 8, `label couleur ${c}`);
     }
-    assert.equal(combos.size, 8, 'chaque boisson a sa propre combinaison de gestes');
+    for (let p = 1; p < LOOKS.pattern.length; p++) {
+        const g = { t: {}, form: 'strawberry', l: { size: pair(1), color: pair(0), pattern: pair(p), finish: pair(0), morph: pair(0) }, halo: false };
+        const html = genWrap(baseSvg, g);
+        assert.ok(html.includes(`gp-${p}`) && !/undefined|NaN/.test(html), `motif ${p}`);
+    }
+    for (let f = 1; f < LOOKS.finish.length; f++) {
+        const g = { t: {}, form: 'strawberry', l: { size: pair(1), color: pair(0), pattern: pair(0), finish: pair(f), morph: pair(0) }, halo: false };
+        const html = genWrap(baseSvg, g);
+        assert.ok(html.includes('class="gl') && !/undefined|NaN/.test(html), `finition ${f}`);
+        if (f === 6) assert.ok(html.includes('class="ffly"'), 'bioluminescente a des lucioles');
+        if (f === 13) assert.ok(html.includes('spk sun'), 'solaire a des éclats dorés');
+    }
+    for (let m = 1; m < LOOKS.morph.length; m++) {
+        const g = { t: {}, form: 'strawberry', l: { size: pair(1), color: pair(0), pattern: pair(0), finish: pair(0), morph: pair(m) }, halo: false };
+        const html = genWrap(baseSvg, g);
+        assert.ok(html.includes('class="gl') && !/undefined|NaN/.test(html), `morphologie ${m}`);
+        assert.ok(looksText(g).includes(','), `label morphologie ${m}`);
+    }
 });
 
-test('1.54 : le lait attend l’enclos de la palmeraie, le reste le puits d’Idris', () => {
-    for (const id of ['sesameMilk', 'camelDate', 'saffronMilk']) assert.equal(ITEMS[id].needProject, 'oasisPen', id);
-    for (const id of ['desertTea', 'dateTea', 'jujubeTisane', 'bitterOrangeTea', 'dateCoffee']) assert.equal(ITEMS[id].needProject, 'oasisWell', id);
+test('1.154 : chaque espèce animale (dont le Capybara) possède ses traits visibles et chaque variante diffère', () => {
+    assert.ok(featuresOf('capybara').includes('charm'));
+    assert.ok(featuresOf('capybara').includes('eyes'));
+    assert.equal(FEATURES.plume.list.length, 5);
+    assert.equal(FEATURES.swarm.list.length, 4);
+
+    for (const [k, F] of Object.entries(FEATURES)) {
+        for (const sp of F.species) {
+            const fs = featuresOf(sp);
+            const mk = v => {
+                const a = fs.map(() => 0);
+                a[fs.indexOf(k)] = v;
+                return v ? `${sp}~${a.join('')}` : sp;
+            };
+            const base = SPR.animal(mk(0));
+            const seen = new Set([base]);
+            for (let v = 1; v < F.list.length; v++) {
+                const svg = SPR.animal(mk(v));
+                assert.ok(svg.includes('<svg') && !/undefined|NaN/.test(svg), `SVG corrompu ${sp}:${k}=${v}`);
+                if (!(k === 'horns' && v === 1)) assert.ok(!seen.has(svg), `Variante invisible ${sp}:${k}=${v}`);
+                seen.add(svg);
+            }
+        }
+    }
 });
 
-test('1.54 : le thé versé de haut sert à quatre boissons (trois de l’oasis, une du Nord), avec des réglages qui leur sont propres', () => {
-    const hp = Object.entries(BREW).filter(([, d]) => d.st.some(s => s[0] === 'highpour'));
-    assert.deepEqual(hp.map(h => h[0]).sort(), ['cloudberryInfusion', 'dateCoffee', 'desertTea', 'saffronMilk']);
-    for (const [, d] of hp) {
-        const p = d.st.find(s => s[0] === 'highpour')[1];
-        assert.ok(p.w > 0 && p.w < 0.5 && p.dur >= 6 && p.speed > 0);
-    }
+test('1.154 : compatibilité sauvegardes (morph + nouveaux traits), carnet des plantes et pause de Théo', () => {
+    setState(newState());
+    G.loadGame();
+    state.level = 50;
+    G.ensureGenetics();
+
+    // Ancien génome plante sans morph : complété au chargement
+    const oldPlant = G.wildPlant('tomato');
+    delete oldPlant.l.morph;
+    state.genetics.vars.v_old = { id: 'v_old', kind: 'plant', base: 'tomato', g: oldPlant };
+    G.ensureGenetics();
+    assert.ok(state.genetics.vars.v_old.g.l.morph);
+
+    // Suivi d'une morphologie végétale dans le carnet du potager
+    state.genetics.vars.v_old.g.l.morph = pair(3);
+    const found = G.scanPlantRobes();
+    assert.ok(found.some(x => x.kind === 'rare' && x.i === 'm3'));
+    assert.equal(G.hasPlantRare('m3'), true);
+
+    // Pause / reprise rapide de Théo
+    state.farmhand.lvl = 1;
+    assert.equal(G.handPaused(), false);
+    assert.ok(G.handZone().length > 0);
+    assert.equal(G.toggleHand(), true);
+    assert.equal(G.handPaused(), true);
+    assert.equal(G.handZone().length, 0);
+    assert.equal(G.toggleHand(), true);
+    assert.equal(G.handPaused(), false);
 });

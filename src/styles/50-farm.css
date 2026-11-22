@@ -504,14 +504,28 @@ html.calm .ripple {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     width: 100%;
     margin: 0 0 8px;
-    padding: 4px 12px 4px 6px;
-    cursor: pointer;
+    padding: 4px 8px 4px 6px;
     font: inherit;
     text-align: left;
     color: var(--ink);
+}
+
+.farmyard-go {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    color: inherit;
 }
 
 .farmyard .card-main {
@@ -534,11 +548,66 @@ html.calm .ripple {
     flex-shrink: 0;
 }
 
+.yard-hand-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    padding: 3px 9px 3px 4px;
+    border: 2px solid #2e7d32;
+    border-radius: 999px;
+    background: linear-gradient(#ecfae5, #d2f0c4);
+    box-shadow: 0 2px 0 #2e7d32;
+    cursor: pointer;
+    font: inherit;
+    color: #1d5720;
+    transition: transform 0.08s ease, filter 0.15s ease;
+}
+
+.yard-hand-btn:active {
+    transform: translateY(2px);
+    box-shadow: none;
+}
+
+.yard-hand-btn.off {
+    border-color: var(--wood-d);
+    background: linear-gradient(#f4ece0, #e3d6c1);
+    box-shadow: 0 2px 0 var(--wood-d);
+    color: var(--ink-soft);
+}
+
 .yard-hand {
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
     flex-shrink: 0;
     animation: bob 1.4s ease-in-out infinite alternate;
+}
+
+.yard-hand-btn.off .yard-hand {
+    animation: none;
+    filter: grayscale(0.65) opacity(0.75);
+}
+
+.yard-hand-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.01em;
+}
+
+.yard-hand-tag::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 4px;
+    border-radius: 50%;
+    background: #3da83b;
+    vertical-align: middle;
+}
+
+.yard-hand-btn.off .yard-hand-tag::before {
+    background: #c9862c;
 }
 
 .plot.hand::before {

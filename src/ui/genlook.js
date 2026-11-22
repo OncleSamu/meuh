@@ -28,9 +28,32 @@ const COLOR = [
     'grayscale(1) brightness(1.25) contrast(1.15)', // argentée
     'sepia(1) saturate(3.2) hue-rotate(-28deg) brightness(.92) contrast(1.05)', // cuivrée
     'sepia(.6) saturate(2) hue-rotate(200deg) brightness(1.05)', // dégradée
+    // 1.154 : 7 nouvelles teintes mutantes
+    'sepia(.95) saturate(3.4) hue-rotate(85deg) brightness(.88) contrast(1.08)', // émeraude
+    'sepia(.9) saturate(3.8) hue-rotate(138deg) brightness(1.05)', // turquoise
+    'sepia(1) saturate(4.2) hue-rotate(-5deg) brightness(1.05)', // ambre
+    'sepia(.7) saturate(2.2) hue-rotate(235deg) brightness(1.22)', // lavande
+    'grayscale(.7) brightness(.44) contrast(1.38)', // obsidienne
+    'sepia(.75) saturate(3.2) hue-rotate(-22deg) brightness(1.04)', // crépuscule
+    'grayscale(.65) brightness(1.32) contrast(.96)', // opale
 ];
 // finitions : un filtre léger et/ou un calque découpé à la forme du dessin
-const FINISH_FILTER = ['', 'saturate(.8) brightness(1.06) drop-shadow(0 0 3px #bfe9ff)', '', '', 'saturate(1.3) contrast(1.1)', ''];
+const FINISH_FILTER = [
+    '',
+    'saturate(.8) brightness(1.06) drop-shadow(0 0 3px #bfe9ff)', // 1 givrée
+    '', // 2 moussue
+    '', // 3 étincelles
+    'saturate(1.3) contrast(1.1)', // 4 vernie
+    '', // 5 fleurie
+    'brightness(1.08) drop-shadow(0 0 4px #4ff2c8) drop-shadow(0 0 2px #bfffea)', // 6 bioluminescente
+    'saturate(1.18) brightness(1.1) contrast(1.08) drop-shadow(0 0 3px #d8f3ff)', // 7 cristalline
+    'contrast(1.06)', // 8 kintsugi
+    'brightness(1.05) saturate(1.08)', // 9 rosée
+    'brightness(1.1) saturate(1.12) drop-shadow(0 0 3px rgba(255,215,245,.8))', // 10 nacrée
+    'contrast(1.08) drop-shadow(0 0 3px rgba(140,165,255,.7))', // 11 étoilée
+    'saturate(1.12)', // 12 automnale
+    'saturate(1.25) brightness(1.08) drop-shadow(0 0 4px #ffae34)', // 13 solaire
+];
 const SPARKS = [
     [8, 12],
     [88, 20],
@@ -40,6 +63,34 @@ const SPARKS = [
     [70, 40],
     [30, 35],
 ];
+const FIREFLIES = [
+    [12, 22],
+    [84, 16],
+    [20, 74],
+    [80, 68],
+    [52, 8],
+];
+// 1.154 : décors SVG propres aux morphologies des plantes (couronne florale, vrilles, pot bonsaï)
+const MORPH_CROWN =
+    '<svg class="morph-svg morph-crown" viewBox="0 0 64 64" aria-hidden="true">' +
+    '<path d="M16 17 Q32 9 48 17" fill="none" stroke="#4da83b" stroke-width="2.6" stroke-linecap="round"/>' +
+    '<circle cx="19" cy="15" r="4.5" fill="#f79ab6" stroke="#3a2618" stroke-width="1.5"/><circle cx="19" cy="15" r="1.7" fill="#ffd23f"/>' +
+    '<circle cx="32" cy="11" r="5.2" fill="#fffaf0" stroke="#3a2618" stroke-width="1.6"/><circle cx="32" cy="11" r="2" fill="#ffd23f"/>' +
+    '<circle cx="45" cy="15" r="4.5" fill="#c4a6f7" stroke="#3a2618" stroke-width="1.5"/><circle cx="45" cy="15" r="1.7" fill="#ffd23f"/>' +
+    '</svg>';
+const MORPH_VINE =
+    '<svg class="morph-svg morph-vine" viewBox="0 0 64 64" aria-hidden="true">' +
+    '<path d="M12 46 C4 38 7 24 16 24 C20 24 20 30 15 30 C12 30 12 26 15 26" fill="none" stroke="#3f9432" stroke-width="2.4" stroke-linecap="round"/>' +
+    '<path d="M52 44 C60 36 57 22 48 22 C44 22 44 28 49 28 C52 28 52 24 49 24" fill="none" stroke="#3f9432" stroke-width="2.4" stroke-linecap="round"/>' +
+    '<ellipse cx="9" cy="36" rx="3.4" ry="2" transform="rotate(-35 9 36)" fill="#6cc04a" stroke="#3a2618" stroke-width="1.2"/>' +
+    '<ellipse cx="55" cy="34" rx="3.4" ry="2" transform="rotate(35 55 34)" fill="#6cc04a" stroke="#3a2618" stroke-width="1.2"/>' +
+    '</svg>';
+const MORPH_BONSAI =
+    '<svg class="morph-svg morph-bonsai" viewBox="0 0 64 64" aria-hidden="true">' +
+    '<path d="M15 49 L49 49 L45 59 L19 59Z" fill="#9c4f2b" stroke="#3a2618" stroke-width="2" stroke-linejoin="round"/>' +
+    '<rect x="12" y="46" width="40" height="4.5" rx="2" fill="#be663a" stroke="#3a2618" stroke-width="1.8"/>' +
+    '<ellipse cx="32" cy="46.5" rx="14" ry="2.2" fill="#5aa13e" opacity=".85"/>' +
+    '</svg>';
 const masks = new Map();
 const maskOf = svg => {
     let m = masks.get(svg);
@@ -56,11 +107,22 @@ const maskOf = svg => {
 export function genWrap(svg, g, cls = '') {
     if (!g || !g.l) return svg;
     const l = G.looksOf(g);
-    // le gros fruit ne vaut que pour les plantes (les bêtes gardent leur taille)
-    const bigFruit = l.size === 6 && !!g.form;
-    if ((l.size === 1 || l.size === 6) && !bigFruit && !l.color && !l.pattern && !l.halo && !l.finish) return svg;
-    const [sx, sy] = SIZE[l.size] || SIZE[1];
-    const filter = [COLOR[l.color] || '', FINISH_FILTER[l.finish] || '', l.halo ? 'drop-shadow(0 0 4px #ffd23f) drop-shadow(0 0 2px #fff6c8)' : '']
+    const isPlant = !!g.form;
+    // le gros fruit et les morphologies ne valent que pour les plantes
+    const bigFruit = l.size === 6 && isPlant;
+    const morph = isPlant ? l.morph || 0 : 0;
+    if ((l.size === 1 || l.size === 6) && !bigFruit && !l.color && !l.pattern && !l.halo && !l.finish && !morph) return svg;
+    let [sx, sy] = SIZE[l.size] || SIZE[1];
+    if (morph === 6) {
+        sx *= 0.82;
+        sy *= 0.82;
+    }
+    const filter = [
+        COLOR[l.color] || '',
+        FINISH_FILTER[l.finish] || '',
+        morph === 5 ? 'drop-shadow(0 0 2px rgba(255,232,214,.95))' : '',
+        l.halo ? 'drop-shadow(0 0 4px #ffd23f) drop-shadow(0 0 2px #fff6c8)' : '',
+    ]
         .join(' ')
         .trim();
     const m = `-webkit-mask-image:${maskOf(svg)};mask-image:${maskOf(svg)}`;
@@ -70,8 +132,16 @@ export function genWrap(svg, g, cls = '') {
     if (l.pattern) over += ov(`gp-${l.pattern}`);
     if (l.finish && l.finish !== 3) over += ov(`gp-f${l.finish}`);
     if (l.finish === 3) over += SPARKS.map(([x, y], i) => `<b class="spk" style="left:${x}%;top:${y}%;animation-delay:${i * 0.37}s"></b>`).join('');
+    if (l.finish === 6) over += FIREFLIES.map(([x, y], i) => `<b class="ffly" style="left:${x}%;top:${y}%;animation-delay:${i * 0.55}s"></b>`).join('');
+    if (l.finish === 13) over += SPARKS.slice(0, 5).map(([x, y], i) => `<b class="spk sun" style="left:${x}%;top:${y}%;animation-delay:${i * 0.42}s"></b>`).join('');
+    if (morph === 1) over += ov('gp-m1');
+    if (morph === 5) over += ov('gp-m5');
+    if (morph === 3) over += MORPH_CROWN;
+    if (morph === 4) over += MORPH_VINE;
+    const pre = morph === 2 ? `<div class="morph-twin">${svg}</div>` : '';
+    const post = morph === 6 ? MORPH_BONSAI : '';
     const big = bigFruit ? `<div class="bigpart">${svg}</div>` : '';
-    return `<span class="gl ${cls}" style="--gsx:${sx};--gsy:${sy};${filter ? `filter:${filter}` : ''}">${svg}${big}${over}</span>`;
+    return `<span class="gl${morph === 6 ? ' gl-bonsai' : ''} ${cls}" style="--gsx:${sx};--gsy:${sy};${filter ? `filter:${filter}` : ''}">${pre}${svg}${big}${over}${post}</span>`;
 }
 
 // 1.24.5 : la couleur des gènes appliquée à une couleur précise (les chevaux des mini-jeux sont dessinés couleur par couleur,
@@ -167,14 +237,69 @@ export function looksText(g) {
     if (!g || !g.l) return '';
     const L = {
         size: ['Petite', 'Normale', 'Grosse', 'Géante', 'Fine', 'Naine', 'Gros fruit'],
-        color: ['', 'rouge', 'dorée', 'violette', 'blanche', 'sombre', 'bleutée', 'rose', 'orange vif', 'argentée', 'cuivrée', 'dégradée'],
-        pattern: ['', 'à taches', 'à pois', 'à rayures', 'à reflets', 'en damier', 'zébrée', 'mouchetée fin', 'marbrée'],
-        finish: ['', 'givrée', 'moussue', 'étincelante', 'vernie', 'fleurie'],
+        color: [
+            '',
+            'rouge',
+            'dorée',
+            'violette',
+            'blanche',
+            'sombre',
+            'bleutée',
+            'rose',
+            'orange vif',
+            'argentée',
+            'cuivrée',
+            'dégradée',
+            'émeraude',
+            'turquoise',
+            'ambre',
+            'lavande',
+            'obsidienne',
+            'crépuscule',
+            'opale',
+        ],
+        pattern: [
+            '',
+            'à taches',
+            'à pois',
+            'à rayures',
+            'à reflets',
+            'en damier',
+            'zébrée',
+            'mouchetée fin',
+            'marbrée',
+            'tigrée',
+            'à écailles',
+            'à spirales',
+            'bicolore',
+            'à cœurs',
+            'à flocons',
+            'nervurée',
+            'calico',
+        ],
+        finish: [
+            '',
+            'givrée',
+            'moussue',
+            'étincelante',
+            'vernie',
+            'fleurie',
+            'bioluminescente',
+            'cristalline',
+            'kintsugi',
+            'de rosée',
+            'nacrée',
+            'étoilée',
+            'automnale',
+            'solaire',
+        ],
+        morph: ['', 'panachée', 'à fruits jumeaux', 'à couronne florale', 'à vrilles', 'veloutée', 'bonsaï'],
     };
     const l = G.looksOf(g);
     const parts = [L.size[l.size]];
     if (l.color) parts.push(L.color[l.color]);
     if (l.pattern) parts.push(L.pattern[l.pattern]);
+    if (g.form && l.morph) parts.push(L.morph[l.morph]);
     if (l.finish) parts.push(L.finish[l.finish]);
     if (l.halo) parts.push('auréolée');
     return parts.join(', ');

@@ -8,7 +8,7 @@ import { items, animals, machines, ui, people, svg } from './kit.js';
 import { tree, sprout, youngPlant, readyPlant } from './plants.js';
 import { building, farmhouseArt } from './buildings.js';
 import { truck, loco, wagon } from './vehicles.js';
-import { plumeArt, swarmArt } from './genes.js';
+import { animalExtrasArt } from './genes.js';
 import { babyArt, childArt } from './famille.js';
 import { balloon2 } from './misc2.js';
 
@@ -125,8 +125,8 @@ export const SPR = {
             if (st !== undefined && st !== '') o.stage = +st;
             if (fl && fl.includes('f')) o.shoes = fl.includes('fa') ? 2 : 1; // 1.24.5 : fers en fer (f) ou en argent (fa)
         }
-        // 1.122 : la huppe ou le plumage frisé des oiseaux, l'essaim nombreux des abeilles, posés par-dessus
-        return svg(animals[id](o) + plumeArt(id, o.plume) + (id === 'bees' ? swarmArt(o.swarm) : ''), '0 0 80 80', 'animal-spr');
+        // 1.122 + 1.154 : traits génétiques posés par-dessus (queue, crinière, plumage, essaim, charme Capybara, regard)
+        return svg(animals[id](o) + animalExtrasArt(id, o), '0 0 80 80', 'animal-spr');
     },
     machine(id) {
         return svg(machines[id]());

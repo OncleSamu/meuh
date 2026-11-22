@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.154",
+  "title": "Pause de Théo & Génétique Enrichie",
+  "date": "22 novembre 2026",
+  "items": [
+   "Bouton rapide d’un seul toucher directement sur le bandeau de la ferme pour mettre en pause ou réactiver le commis Théo (pastille verte Actif / ambre Pause)",
+   "8 nouvelles finitions génétiques rares : Bioluminescente (lucioles animées), Cristalline, Kintsugi (veines d’or), Rosée, Nacrée, Étoilée, Automnale et Solaire",
+   "8 nouveaux motifs (Tigrée, Écailles, Spirales, Bicolore, Cœurs, Flocons, Nervures, Calico) et 7 nouvelles couleurs mutantes (Émeraude, Turquoise, Ambre, Lavande, Obsidienne, Crépuscule, Opale)",
+   "Nouveaux traits physiques visibles sur les 30 espèces animales : charme du Capybara (mandarine, nénuphar, moustaches), queues (en panache, bouclée), crinières & collerettes, regards rares (yeux vairons, yeux dorés), plumage étendu (queue en éventail, collerette) et essaim fleuri ou royal",
+   "6 morphologies végétales visibles sur les plantes et fruits (Panachée, Jumeaux, Couronne florale, Vrilles, Veloutée et Bonsaï), suivies dans les Carnets du potager et du verger et testables dans le Codex"
+  ]
+ },
+ {
   "v": "1.153",
   "title": "Miels de Fleurs & Essences de l’Orgue",
   "date": "21 novembre 2026",

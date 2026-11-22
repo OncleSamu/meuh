@@ -256,23 +256,221 @@ const crest = (x, y, a, c, d) =>
     `<g transform="translate(${x} ${y}) rotate(${a}) scale(.85)">${[-38, -14, 10, 34]
         .map(r => `<g transform="rotate(${r})">${P('M-2 1 Q-4 -8 0 -14 Q4 -8 2 1Z', c, 1.6)}${L('M0 -1 L0 -10', 0.9, d)}</g>`)
         .join('')}</g>`;
+// éventail de queue pour les oiseaux (v = 3)
+const tailFan = (x, y, c, d, accent) =>
+    `<g transform="translate(${x} ${y})">${[-46, -24, -4, 16, 36]
+        .map(
+            (r, i) =>
+                `<g transform="rotate(${r})">${P('M0 0 Q-9 -4 -17 -1 Q-13 5 -1 3Z', i % 2 ? accent || c : c, 1.5)}${L('M-2 0 L-13 -0.5', 0.9, d)}</g>`,
+        )
+        .join('')}</g>`;
+// collerette royale autour du cou des oiseaux (v = 4)
+const birdRuff = (x, y, c, d) =>
+    `<g transform="translate(${x} ${y})">${[-65, -35, -5, 25, 55]
+        .map(r => `<g transform="rotate(${r})">${P('M-2.5 0 Q-3 7 0 11 Q3 7 2.5 0Z', c, 1.4)}${L('M0 2 L0 8', 0.8, d)}</g>`)
+        .join('')}</g>`;
 export function plumeArt(id, v) {
     const p = PLUME[id];
     if (!p || !v) return '';
     if (v === 1) return crest(...p.head, p.crest || p.c, p.d);
-    return p.ruff.map(([x, y, a]) => tuft(x, y, a, p.c, p.d)).join('');
+    if (v === 2) return p.ruff.map(([x, y, a]) => tuft(x, y, a, p.c, p.d)).join('');
+    if (v === 3) {
+        const [tx, ty] = p.ruff[2] || [14, 44];
+        return tailFan(tx + 2, ty - 2, p.c, p.d, p.crest);
+    }
+    const [hx, hy] = p.head;
+    return birdRuff(hx - 2, Math.min(44, hy + 15), p.crest || p.c, p.d);
 }
-// l'essaim nombreux : trois abeilles de plus autour de la ruche
-const bee = (x, y) =>
-    `${FE(x - 1, y - 3.6, 3, 2, '#ffffff', 0.85)}${E(x, y, 4.5, 3.2, '#ffd23f', 0, 1.6)}${L(`M${x - 1} ${y - 3} L${x - 1} ${y + 3} M${x + 1.5} ${y - 3} L${x + 1.5} ${y + 3}`, 1.2)}`;
-export const swarmArt = v =>
-    v
-        ? [
-              [30, 12],
-              [72, 30],
-              [8, 34],
-              [40, 6],
-          ]
-              .map(([x, y]) => bee(x, y))
-              .join('')
-        : '';
+// l'essaim : 1 = nombreux, 2 = fleuri (fleurs autour de la ruche), 3 = royal (abeille reine couronnée)
+const bee = (x, y, s = 1) =>
+    `<g transform="translate(${x} ${y}) scale(${s})">${FE(-1, -3.6, 3, 2, '#ffffff', 0.85)}${E(0, 0, 4.5, 3.2, '#ffd23f', 0, 1.6)}${L('M-1 -3 L-1 3 M1.5 -3 L1.5 3', 1.2)}</g>`;
+const tinyFlower = (x, y, col) =>
+    `<g transform="translate(${x} ${y})">${[0, 72, 144, 216, 288]
+        .map(a => `<g transform="rotate(${a})">${E(0, -3.4, 2.2, 3, col, 0, 1.1)}</g>`)
+        .join('')}${C(0, 0, 2, '#ffd23f', 1)}</g>`;
+export function swarmArt(v) {
+    if (!v) return '';
+    if (v === 1)
+        return [
+            [30, 12],
+            [72, 30],
+            [8, 34],
+            [40, 6],
+        ]
+            .map(([x, y]) => bee(x, y))
+            .join('');
+    if (v === 2)
+        return (
+            tinyFlower(18, 60, '#f59ab1') +
+            tinyFlower(61, 58, '#fff7cc') +
+            tinyFlower(24, 30, '#f7c6e0') +
+            tinyFlower(57, 32, '#c8e6ff') +
+            bee(26, 14) +
+            bee(56, 12)
+        );
+    // 3 : reine couronnée + escorte
+    return (
+        bee(40, 14, 1.35) +
+        P('M34 8 L36 3 L40 6 L44 3 L46 8Z', '#ffd23f', 1.4) +
+        FC(40, 5.5, 1, '#e84a5f') +
+        bee(16, 26, 0.9) +
+        bee(66, 26, 0.9)
+    );
+}
+
+// ---------------- 1.154 : charme du Capybara (mandarine, nénuphar, moustaches) ----------------
+export function charmArt(id, v) {
+    if (id !== 'capybara' || !v) return '';
+    if (v === 1) {
+        // mandarine / yuzu posée sur la tête
+        return (
+            E(59, 14.5, 6.2, 5.2, '#f98b24', 0, 1.8) +
+            HL(57, 12.5, 2, 1.1, -25, 0.55) +
+            P('M59 9.5 Q63 5.5 67 8 Q64 11 59 10.5Z', '#4caf50', 1.4) +
+            L('M59 9.5 L59 7.5', 1.5, '#5a3a1e')
+        );
+    }
+    if (v === 2) {
+        // fleur de nénuphar & petite feuille verte sur la tête
+        return (
+            E(59, 17.5, 8.5, 2.8, '#4aa33c', -5, 1.6) +
+            P('M59 16 C53 16 51 11 55 10 C55 7 58 6 59 9 C60 6 63 7 63 10 C67 11 65 16 59 16Z', '#f9a8c9', 1.6) +
+            C(59, 13, 2.3, '#ffd23f', 1.2)
+        );
+    }
+    // 3 : moustaches de gentleman + petite houppe
+    return (
+        P('M56 18 Q58 11 61 15 Q63 11 64 18Z', '#8a5d3b', 1.6) +
+        L('M70 37 Q75 35 78 36 M70 39 Q75 39 78 41 M68 38 Q63 39 60 41', 1.7, '#5a3820')
+    );
+}
+
+// ---------------- 1.154 : queues des mammifères (1 = en panache, 2 = bouclée) ----------------
+const TAILS = {
+    cow: [13, 44, '#f5efe6', '#3a2618'],
+    pig: [14, 44, '#f29aae', '#c96b80'],
+    rabbit: [17, 50, '#fffaf0', '#cfd4db'],
+    horse: [14, 42, '#5a3a22', '#2f1d10'],
+    donkey: [13, 44, '#7d7f86', '#4a4c52'],
+    alpaca: [17, 46, '#f6e7cf', '#bfa684'],
+    buffalo: [13, 43, '#3c3638', '#1e1a1b'],
+    zebu: [13, 44, '#d9cbb2', '#8f7d63'],
+    yak: [13, 46, '#362c28', '#1b1512'],
+    dromedary: [16, 40, '#d8a96c', '#9c6f38'],
+    reindeer: [15, 42, '#b89f86', '#6e5742'],
+    muskox: [13, 46, '#4d3a2c', '#291e16'],
+    ewe: [17, 46, '#f7f3ea', '#c9bfa8'],
+    mohairGoat: [18, 48, '#fbf8f2', '#cfc6b5'],
+};
+export function tailArt(id, v) {
+    const t = TAILS[id];
+    if (!t || !v) return '';
+    const [x, y, c, d] = t;
+    if (v === 1) {
+        // queue en panache fourni
+        return (
+            `<g transform="translate(${x} ${y})">` +
+            P('M2 0 Q-9 -8 -12 4 Q-14 14 -6 17 Q-2 12 2 6Z', c, 1.8) +
+            L('M-1 2 Q-8 3 -8 12 M0 4 Q-5 8 -5 14', 1.1, d) +
+            `</g>`
+        );
+    }
+    // queue bouclée / en spirale
+    return (
+        `<g transform="translate(${x} ${y})">` +
+        C(-5, -1, 5.5, c, 1.8) +
+        L('M-3 -2 a2.8 2.8 0 1 1 -4 2.5 a4.2 4.2 0 1 1 6 -4', 1.3, d) +
+        `</g>`
+    );
+}
+
+// ---------------- 1.154 : crinières & collerettes (1 = collerette, 2 = ondulée) ----------------
+const MANES = {
+    goat: [51, 34, '#f3ead8', '#b8ab92'],
+    mohairGoat: [52, 38, '#fffaf0', '#cfc5b2'],
+    alpaca: [54, 28, '#f6e7cf', '#bfa684'],
+    yak: [55, 38, '#4a3a30', '#241b16'],
+    dromedary: [56, 24, '#c79355', '#875c2b'],
+    muskox: [54, 34, '#5a4232', '#2e2017'],
+    reindeer: [54, 24, '#efe4d4', '#a8947a'],
+    horse: [56, 22, '#5a3a22', '#2f1d10'],
+    donkey: [52, 24, '#6d7078', '#3c3e45'],
+};
+export function maneArt(id, v) {
+    const m = MANES[id];
+    if (!m || !v) return '';
+    const [x, y, c, d] = m;
+    if (v === 1) {
+        // collerette de fourrure épaisse autour du cou
+        return (
+            `<g transform="translate(${x} ${y})">` +
+            P('M-8 -4 Q-12 4 -6 10 Q0 14 6 10 Q11 5 7 -3 Q0 1 -8 -4Z', c, 1.8) +
+            L('M-5 2 Q0 6 5 2 M-3 6 Q0 9 3 6', 1.1, d) +
+            `</g>`
+        );
+    }
+    // crinière ondulée fluide
+    return (
+        `<g transform="translate(${x} ${y})">` +
+        P('M-4 -10 Q-12 -5 -7 1 Q-13 7 -5 12 Q1 8 -1 2 Q3 -4 -4 -10Z', c, 1.7) +
+        L('M-5 -6 Q-9 -2 -5 2 Q-8 6 -4 9', 1.1, d) +
+        `</g>`
+    );
+}
+
+// ---------------- 1.154 : regards rares (1 = vairons, 2 = dorés) ----------------
+const EYES = {
+    cow: [
+        [59, 29, 2.6],
+        [69, 29, 2.6],
+    ],
+    sheep: [
+        [58.6, 41.5, 2],
+        [64.6, 39.5, 2],
+    ],
+    rabbit: [[61, 35, 2.7]],
+    pig: [
+        [57, 36, 2.6],
+        [65, 34, 2.6],
+    ],
+    capybara: [[61, 30, 2.3]],
+    buffalo: [
+        [58, 29, 2.6],
+        [70, 29, 2.6],
+    ],
+    zebu: [
+        [61, 32, 2.6],
+        [68, 32, 2.6],
+    ],
+    ewe: [
+        [58.6, 41.5, 2],
+        [64.6, 39.5, 2],
+    ],
+    barbarySheep: [[65, 34, 2.6]],
+};
+export function eyesArt(id, v) {
+    const pts = EYES[id];
+    if (!pts || !v) return '';
+    return pts
+        .map(([x, y, r], i) => {
+            if (v === 1) {
+                // vairons : un œil bleu lagon + un œil ambre (ou bicolore si profil)
+                if (pts.length === 1) {
+                    return (
+                        C(x, y, r, '#38bdf8', 1) +
+                        F(`M${x} ${y - r} A${r} ${r} 0 0 1 ${x} ${y + r}Z`, '#f59e0b', 0.95) +
+                        FC(x, y, r * 0.48, O) +
+                        FC(x - r * 0.3, y - r * 0.3, r * 0.28, '#fff')
+                    );
+                }
+                const col = i === 0 ? '#38bdf8' : '#f59e0b';
+                return C(x, y, r, col, 1) + FC(x, y, r * 0.5, O) + FC(x - r * 0.28, y - r * 0.28, r * 0.28, '#fff');
+            }
+            // dorés : iris or lumineux + reflet étoilé
+            return C(x, y, r, '#ffd23f', 1.1) + FC(x, y, r * 0.45, '#6b3e0a') + FC(x - r * 0.3, y - r * 0.3, r * 0.32, '#fffef2');
+        })
+        .join('');
+}
+
+export const animalExtrasArt = (id, o) =>
+    tailArt(id, o.tail) + maneArt(id, o.mane) + plumeArt(id, o.plume) + (id === 'bees' ? swarmArt(o.swarm) : '') + charmArt(id, o.charm) + eyesArt(id, o.eyes);

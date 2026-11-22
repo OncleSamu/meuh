@@ -122,6 +122,7 @@ function addExtras(g, keys, id) {
     if (!g || !g.t) return;
     for (const k of keys) if (!g.t[k]) g.t[k] = pair(extraBase(k, id));
     if (g.l && !g.l.finish) g.l.finish = pair(0);
+    if (g.form && g.l && !g.l.morph) g.l.morph = pair(0);
 }
 
 // ---------------- génomes ----------------
@@ -130,7 +131,7 @@ const pair = (v, d = 1) => [
     [v, d],
 ];
 const clamp5 = v => Math.max(0, Math.min(5, v));
-const baseLooks = () => ({ size: pair(1), color: pair(0), pattern: pair(0), finish: pair(0) });
+const baseLooks = plant => (plant ? { size: pair(1), color: pair(0), pattern: pair(0), finish: pair(0), morph: pair(0) } : { size: pair(1), color: pair(0), pattern: pair(0), finish: pair(0) });
 
 // le génome sauvage d'une plante : ses saveurs de base, sans surprise
 export function wildPlant(id) {
@@ -139,7 +140,7 @@ export function wildPlant(id) {
     FLAVOR_IDS.forEach((k, j) => (t[k] = pair(f[j])));
     Object.entries(PLANT_BASE).forEach(([k, v]) => (t[k] = pair(v)));
     EXTRA_PLANT.forEach(k => (t[k] = pair(extraBase(k, id))));
-    return { t, l: baseLooks(), form: id, halo: false };
+    return { t, l: baseLooks(true), form: id, halo: false };
 }
 
 // le génome d'une bête : ses caractères de base, avec un peu de variété chez les bêtes déjà là
@@ -156,7 +157,7 @@ export function wildAnimal(type, vary) {
             [alt, Math.random() < 0.5 ? 1 : 0],
         ];
     });
-    const l = baseLooks();
+    const l = baseLooks(false);
     if (vary && Math.random() < 0.25) l.color = [l.color[0], [1 + Math.floor(Math.random() * 6), 0]];
     if (vary && Math.random() < 0.2) l.pattern = [l.pattern[0], [1 + Math.floor(Math.random() * 4), 0]];
     const g = addFeatures({ t, l, halo: false }, type, vary);
@@ -186,6 +187,7 @@ export const looksOf = g => ({
     color: expressLook(g.l.color),
     pattern: expressLook(g.l.pattern),
     finish: g.l.finish ? expressLook(g.l.finish) : 0,
+    morph: g.l.morph ? expressLook(g.l.morph) : 0,
     halo: !!g.halo,
 });
 // tirage pondéré d'une apparence (les plus rares tombent moins) ; le gros fruit ne concerne que les plantes
@@ -196,10 +198,11 @@ const lookPick = (k, n, plant) => {
     for (let i = 0; i < n; i++) if ((r -= w[i]) < 0) return i;
     return 0;
 };
-// une finition, avec un coup de pouce à celle de la saison
+// une finition, avec un coup de pouce à celles de la saison
 function finishPick() {
     const fav = FINISH_SEASON[season().id];
-    const w = [0, 1, 1, 1, 1, 1].map((x, i) => (i === fav ? 3 : x));
+    const favs = Array.isArray(fav) ? fav : [fav];
+    const w = LOOKS.finish.map((_, i) => (i === 0 ? 0 : favs.includes(i) ? 3 : 1));
     let r = Math.random() * w.reduce((a, b) => a + b, 0);
     for (let i = 0; i < w.length; i++) if ((r -= w[i]) < 0) return i;
     return 1;
@@ -1303,7 +1306,13 @@ export function salonScore(crit, target) {
         const l = looksOf(g);
         // 1.22 : les apparences rares et les finitions comptent davantage
         const sz = l.size === 3 || (l.size === 6 && g.form) ? 2 : l.size === 2 || l.size === 5 ? 1 : 0;
-        const s = sz + (l.color >= 9 ? 1.6 : l.color ? 1.2 : 0) + (l.pattern >= 8 ? 1.3 : l.pattern ? 1 : 0) + (l.finish ? 1.5 : 0) + (l.halo ? 1.5 : 0);
+        const s =
+            sz +
+            (l.color >= 9 ? 1.6 : l.color ? 1.2 : 0) +
+            (l.pattern >= 8 ? 1.3 : l.pattern ? 1 : 0) +
+            (l.finish ? 1.5 : 0) +
+            (l.morph ? 1.3 : 0) +
+            (l.halo ? 1.5 : 0);
         return Math.round(s * 10) / 10;
     }
     // cornes et toison : plus le trait est marqué, mieux c'est, puis la robustesse ou la douceur départagent

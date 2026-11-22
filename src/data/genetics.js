@@ -68,21 +68,80 @@ export const ANIMAL_TRAITS = [
 // les gènes d'apparence : jamais choisis, ils découlent des croisements
 export const LOOKS = {
     size: ['Petite', 'Normale', 'Grosse', 'Géante', 'Fine', 'Naine', 'Gros fruit'],
-    color: ['Naturelle', 'Rouge', 'Dorée', 'Violette', 'Blanche', 'Sombre', 'Bleutée', 'Rose', 'Orange vif', 'Argentée', 'Cuivrée', 'Dégradée'],
-    pattern: ['Unie', 'Taches', 'Pois', 'Rayures', 'Reflets', 'Damier', 'Zébrures', 'Mouchetée fin', 'Marbrée'],
-    finish: ['Aucune', 'Givrée', 'Moussue', 'Étincelles', 'Vernie', 'Fleurie'],
+    color: [
+        'Naturelle',
+        'Rouge',
+        'Dorée',
+        'Violette',
+        'Blanche',
+        'Sombre',
+        'Bleutée',
+        'Rose',
+        'Orange vif',
+        'Argentée',
+        'Cuivrée',
+        'Dégradée',
+        // 1.154 : 7 nouvelles teintes mutantes
+        'Émeraude',
+        'Turquoise',
+        'Ambre',
+        'Lavande',
+        'Obsidienne',
+        'Crépuscule',
+        'Opale',
+    ],
+    pattern: [
+        'Unie',
+        'Taches',
+        'Pois',
+        'Rayures',
+        'Reflets',
+        'Damier',
+        'Zébrures',
+        'Mouchetée fin',
+        'Marbrée',
+        // 1.154 : 8 nouveaux motifs génétiques
+        'Tigrée',
+        'Écailles',
+        'Spirales',
+        'Bicolore',
+        'Cœurs',
+        'Flocons',
+        'Nervures',
+        'Calico',
+    ],
+    finish: [
+        'Aucune',
+        'Givrée',
+        'Moussue',
+        'Étincelles',
+        'Vernie',
+        'Fleurie',
+        // 1.154 : 8 nouvelles finitions rares
+        'Bioluminescente',
+        'Cristalline',
+        'Kintsugi',
+        'Rosée',
+        'Nacrée',
+        'Étoilée',
+        'Automnale',
+        'Solaire',
+    ],
+    // 1.154 : traits morphologiques propres aux plantes et fruits
+    morph: ['Naturelle', 'Panachée', 'Jumeaux', 'Couronne florale', 'Vrilles', 'Veloutée', 'Bonsaï'],
 };
 // 1.22 : la rareté des apparences à la mutation (poids ; les absentes valent 3). Les finitions sont rares et uniques.
 export const LOOK_WEIGHT = {
     size: { 0: 3, 1: 3, 2: 3, 3: 2, 4: 3, 5: 1, 6: 0.5 },
-    color: { 7: 2, 8: 2, 9: 1, 10: 1, 11: 1 },
-    pattern: { 5: 2, 6: 2, 7: 2, 8: 1 },
+    color: { 7: 2, 8: 2, 9: 1, 10: 1, 11: 1, 12: 2, 13: 2, 14: 2, 15: 2, 16: 1, 17: 1, 18: 1 },
+    pattern: { 5: 2, 6: 2, 7: 2, 8: 1, 9: 2, 10: 2, 11: 2, 12: 2, 13: 1, 14: 1, 15: 1, 16: 1 },
+    morph: { 0: 4, 1: 2, 2: 2, 3: 1.5, 4: 1.5, 5: 1.5, 6: 1 },
 };
 export const FINISH_CHANCE = 0.25; // part des mutations d'apparence qui donnent une finition
-// finition favorisée par la saison (×3) : l'hiver givrée, le printemps fleurie, l'été étincelles, l'automne moussue
-export const FINISH_SEASON = { hiver: 1, printemps: 5, ete: 3, automne: 2 };
+// finitions favorisées par la saison (×3) : hiver givrée/cristalline, printemps fleurie/rosée, été étincelles/solaire, automne moussue/automnale
+export const FINISH_SEASON = { hiver: [1, 7], printemps: [5, 9], ete: [3, 13], automne: [2, 12] };
 
-// les traits des animaux (1.2) : cornes, oreilles, toison ; seulement pour les espèces où ils se voient.
+// les traits des animaux (1.2 + 1.154) : cornes, oreilles, plumage, essaim, toison, charme, queue, crinière, regard.
 // L'indice 0 est l'allure naturelle de l'espèce. Comme les autres apparences, jamais choisis.
 export const FEATURES = {
     horns: {
@@ -91,17 +150,38 @@ export const FEATURES = {
         species: ['cow', 'goat', 'buffalo', 'sheep', 'zebu', 'barbarySheep', 'reindeer', 'muskox'],
     },
     ears: { name: 'Oreilles', list: ['Naturelles', 'Tombantes'], species: ['rabbit', 'pig', 'goat'] },
-    // 1.122 : les oiseaux ont enfin leur trait visible, et les abeilles le leur
+    // 1.122 + 1.154 : les oiseaux (huppe, frisé, queue en éventail, collerette) et les abeilles (nombreux, fleuri, royal)
     plume: {
         name: 'Plumage',
-        list: ['Naturel', 'Huppé', 'Frisé'],
+        list: ['Naturel', 'Huppé', 'Frisé', 'Queue en éventail', 'Collerette'],
         species: ['chicken', 'duck', 'goose', 'peacock', 'turkey', 'quail', 'pigeon', 'guinea', 'pheasant', 'ostrich', 'ptarmigan'],
     },
-    swarm: { name: 'Essaim', list: ['Naturel', 'Nombreux'], species: ['bees'] },
+    swarm: { name: 'Essaim', list: ['Naturel', 'Nombreux', 'Fleuri', 'Royal'], species: ['bees'] },
     coat: {
         name: 'Toison',
         list: ['Naturelle', 'Longue', 'Frisée'],
         species: ['sheep', 'alpaca', 'horse', 'donkey', 'ewe', 'mohairGoat', 'yak', 'dromedary', 'barbarySheep'],
+    },
+    // 1.154 : traits dédiés au Capybara, queues, crinières/collerettes et regards rares
+    charm: {
+        name: 'Charme',
+        list: ['Naturel', 'Mandarine', 'Nénuphar', 'Moustaches'],
+        species: ['capybara'],
+    },
+    tail: {
+        name: 'Queue',
+        list: ['Naturelle', 'En panache', 'Bouclée'],
+        species: ['cow', 'pig', 'rabbit', 'horse', 'donkey', 'alpaca', 'buffalo', 'zebu', 'yak', 'dromedary', 'reindeer', 'muskox', 'ewe', 'mohairGoat'],
+    },
+    mane: {
+        name: 'Crinière',
+        list: ['Naturelle', 'Collerette', 'Ondulée'],
+        species: ['goat', 'mohairGoat', 'alpaca', 'yak', 'dromedary', 'muskox', 'reindeer', 'horse', 'donkey'],
+    },
+    eyes: {
+        name: 'Regard',
+        list: ['Naturels', 'Vairons', 'Dorés'],
+        species: ['cow', 'sheep', 'rabbit', 'pig', 'capybara', 'buffalo', 'zebu', 'ewe', 'barbarySheep'],
     },
 };
 export const featuresOf = type => Object.keys(FEATURES).filter(k => FEATURES[k].species.includes(type));

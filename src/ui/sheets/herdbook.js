@@ -81,8 +81,8 @@ defineSheet('herdbook', {
 });
 
 // ---------------- 1.47 : les variétés du labo (carnets du potager et du verger) ----------------
-const plantLook = (base, { c = 0, p = 0, s = 1, f = 0, halo = false }) =>
-    genWrap(art('item', base), { t: {}, form: base, l: { size: pair(s), color: pair(c), pattern: pair(p), finish: pair(f) }, halo });
+const plantLook = (base, { c = 0, p = 0, s = 1, f = 0, m = 0, halo = false }) =>
+    genWrap(art('item', base), { t: {}, form: base, l: { size: pair(s), color: pair(c), pattern: pair(p), finish: pair(f), morph: pair(m) }, halo });
 const SIZE_NAMES = ['Petite', 'Normale', 'Grosse', 'Géante', 'Fine', 'Naine', 'Gros fruit'];
 export function plantRobesTab(kind, o) {
     if (!G.plantLabOpen()) return '<p class="empty">Les variétés se créent au labo des plantes (station de recherche, niveau ' + GX_LVL + ').</p>';
@@ -102,8 +102,8 @@ export function plantRobesTab(kind, o) {
     };
     const rare = G.PLANT_RARE.map(id => {
         const got = G.hasPlantRare(id);
-        const f = id === 'halo' ? { halo: true } : id[0] === 's' ? { s: +id.slice(1) } : { f: +id.slice(1) };
-        const name = id === 'halo' ? 'Auréolée' : id[0] === 's' ? SIZE_NAMES[+id.slice(1)] : LOOKS.finish[+id.slice(1)];
+        const f = id === 'halo' ? { halo: true } : id[0] === 's' ? { s: +id.slice(1) } : id[0] === 'm' ? { m: +id.slice(1) } : { f: +id.slice(1) };
+        const name = id === 'halo' ? 'Auréolée' : id[0] === 's' ? SIZE_NAMES[+id.slice(1)] : id[0] === 'm' ? LOOKS.morph[+id.slice(1)] : LOOKS.finish[+id.slice(1)];
         return `<div class="hb-robe${got ? ' got' : ''}"><span class="hb-art">${got ? plantLook(cur, f) : art('item', cur)}</span><small>${got ? name : '?'}</small></div>`;
     }).join('');
     // les variétés qui existent encore pour cette plante

@@ -99,10 +99,73 @@ export function scanRobes() {
     changed('animals');
     return found;
 }
-const COL = ['', 'rouge', 'dorée', 'violette', 'blanche', 'sombre', 'bleutée', 'rose', 'orange vif', 'argentée', 'cuivrée', 'dégradée'];
-const PAT = ['', 'à taches', 'à pois', 'à rayures', 'à reflets', 'en damier', 'zébrée', 'mouchetée fin', 'marbrée'];
-const FIN = ['', 'givrée', 'moussue', 'étincelante', 'vernie', 'fleurie'];
-export const robeName = (kind, i) => (kind === 'c' ? COL[i] : kind === 'p' ? PAT[i] : i === 'halo' ? 'auréolée' : FIN[+String(i).slice(1)]);
+const COL = [
+    '',
+    'rouge',
+    'dorée',
+    'violette',
+    'blanche',
+    'sombre',
+    'bleutée',
+    'rose',
+    'orange vif',
+    'argentée',
+    'cuivrée',
+    'dégradée',
+    'émeraude',
+    'turquoise',
+    'ambre',
+    'lavande',
+    'obsidienne',
+    'crépuscule',
+    'opale',
+];
+const PAT = [
+    '',
+    'à taches',
+    'à pois',
+    'à rayures',
+    'à reflets',
+    'en damier',
+    'zébrée',
+    'mouchetée fin',
+    'marbrée',
+    'tigrée',
+    'à écailles',
+    'à spirales',
+    'bicolore',
+    'à cœurs',
+    'à flocons',
+    'nervurée',
+    'calico',
+];
+const FIN = [
+    '',
+    'givrée',
+    'moussue',
+    'étincelante',
+    'vernie',
+    'fleurie',
+    'bioluminescente',
+    'cristalline',
+    'kintsugi',
+    'de rosée',
+    'nacrée',
+    'étoilée',
+    'automnale',
+    'solaire',
+];
+const MORPH = ['', 'panachée', 'à fruits jumeaux', 'à couronne florale', 'à vrilles', 'veloutée', 'bonsaï'];
+export const robeName = (kind, i) =>
+    kind === 'c'
+        ? COL[i]
+        : kind === 'p'
+          ? PAT[i]
+          : i === 'halo'
+            ? 'auréolée'
+            : String(i)[0] === 'm'
+              ? MORPH[+String(i).slice(1)]
+              : FIN[+String(i).slice(1)];
 
 // ---------------- les associations au pré ----------------
 // une table des multiplicateurs, recalculée au plus une fois par seconde : { pré: { espèce: [mult, [ids]] } }
@@ -172,7 +235,12 @@ export function herdbookTick() {
 // ---------------- 1.47 : les variétés du labo dans les carnets du potager et du verger ----------------
 // pour chaque culture ou arbre qui a eu une variété : 11 couleurs et 8 motifs ; les raretés (tailles, finitions, auréole) toutes plantes
 export const PLANT_SIZES = [0, 2, 3, 4, 5, 6]; // Petite, Grosse, Géante, Fine, Naine, Gros fruit (pas « Normale »)
-export const PLANT_RARE = [...PLANT_SIZES.map(i => 's' + i), ...LOOKS.finish.map((_, i) => 'f' + i).slice(1), 'halo'];
+export const PLANT_RARE = [
+    ...PLANT_SIZES.map(i => 's' + i),
+    ...LOOKS.morph.map((_, i) => 'm' + i).slice(1),
+    ...LOOKS.finish.map((_, i) => 'f' + i).slice(1),
+    'halo',
+];
 const plantBook = () => {
     const h = ensureHerdbook();
     h.plants = h.plants || {}; // { base: { c: [], p: [] } }
@@ -208,9 +276,12 @@ export function scanPlantRobes() {
             r.p.push(l.pattern);
             found.push({ base: v.base, kind: 'p', i: l.pattern });
         }
-        const rares = [l.size !== 1 && PLANT_SIZES.includes(l.size) ? 's' + l.size : null, l.finish ? 'f' + l.finish : null, l.halo ? 'halo' : null].filter(
-            Boolean,
-        );
+        const rares = [
+            l.size !== 1 && PLANT_SIZES.includes(l.size) ? 's' + l.size : null,
+            l.morph ? 'm' + l.morph : null,
+            l.finish ? 'f' + l.finish : null,
+            l.halo ? 'halo' : null,
+        ].filter(Boolean);
         for (const x of rares)
             if (!h.prare.includes(x)) {
                 h.prare.push(x);
