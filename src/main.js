@@ -68,6 +68,7 @@ import { setupAskBuy } from './ui/sheets/askbuy.js';
 import { setupNavigate } from './ui/navigate.js';
 import { setupTutorial, tutoTick } from './ui/tutorial.js';
 import { setupPwa } from './ui/pwa.js';
+import { setupBeuh } from './ui/beuh.js';
 
 function start() {
     G.loadGame();
@@ -141,6 +142,7 @@ function start() {
     setupAskBuy();
     setupNavigate();
     setupTutorial();
+    setupBeuh();
     actions({
         claimDaily: el => {
             G.claimDaily(el);

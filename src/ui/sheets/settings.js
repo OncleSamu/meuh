@@ -153,7 +153,7 @@ function mainPage() {
                                   : ''),
                       ),
                       btn('Recommencer à zéro', { act: 'resetGame', kind: 'red', wide: true }),
-                      `<p class="card-sub center set-foot">Meuh ${VERSION} · fait avec amour, sans serveur ni compte : votre ferme reste sur votre appareil.</p>`,
+                      `<p class="card-sub center set-foot set-foot-secret" data-act="beuhKnock">Meuh ${VERSION} · fait avec amour, sans serveur ni compte : votre ferme reste sur votre appareil.</p>`,
                   ];
     return T.html + parts.join('');
 }

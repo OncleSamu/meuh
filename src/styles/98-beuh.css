@@ -1,0 +1,423 @@
+/* 1.154 : BEUH — Le Sous-Sol de Meuh (coque plein écran underground néon, isolée de Meuh). */
+#beuh-app {
+    position: fixed;
+    inset: 0;
+    z-index: 950;
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(circle at 50% 0%, #192620 0%, #0d1211 58%, #080b0b 100%);
+    color: #e6f4ea;
+    font-family: inherit;
+    overflow: hidden;
+}
+#beuh-app[hidden] {
+    display: none;
+}
+.beuh-hdr {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: max(8px, env(safe-area-inset-top)) 10px 8px;
+    background: linear-gradient(180deg, #131c1a 0%, #0d1413 100%);
+    border-bottom: 2px solid #243b31;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+.beuh-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.beuh-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+.beuh-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #172721;
+    border: 2px solid #4ade80;
+    padding: 2px;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.35);
+    flex: none;
+}
+.beuh-logo svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.beuh-title {
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: #4ade80;
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+    line-height: 1.05;
+}
+.beuh-sub {
+    font-size: 11px;
+    color: #9bb8a8;
+}
+.beuh-exit {
+    padding: 6px 11px;
+    border-radius: 999px;
+    border: 1.5px solid #3c594a;
+    background: #182521;
+    color: #fde68a;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    flex: none;
+}
+.beuh-exit:active {
+    transform: translateY(1px);
+}
+.beuh-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+.beuh-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    border-radius: 10px;
+    background: #141f1c;
+    border: 1.5px solid #243931;
+    min-width: 0;
+}
+.beuh-stat .spr {
+    width: 22px;
+    height: 22px;
+    flex: none;
+}
+.beuh-stat div {
+    min-width: 0;
+    line-height: 1.1;
+}
+.beuh-stat b {
+    display: block;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.beuh-stat small {
+    display: block;
+    font-size: 10px;
+    color: #8aa798;
+}
+.beuh-stat.dirty b {
+    color: #4ade80;
+}
+.beuh-stat.clean b {
+    color: #38bdf8;
+}
+.beuh-stat.heat b {
+    color: #fb7185;
+}
+.beuh-stat.heat.hot {
+    border-color: #f43f5e;
+    box-shadow: 0 0 10px rgba(244, 63, 94, 0.35);
+}
+.beuh-xp {
+    height: 5px;
+    border-radius: 999px;
+    background: #192622;
+    overflow: hidden;
+}
+.beuh-xp > i {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e, #c084fc);
+    transition: width 0.25s;
+}
+.beuh-notice {
+    padding: 6px 10px;
+    font-size: 12px;
+    background: #192521;
+    border-bottom: 1px solid #263d33;
+    color: #d9f99d;
+    text-align: center;
+}
+.beuh-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 10px;
+    max-width: 720px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.beuh-card {
+    background: #131c1a;
+    border: 1.5px solid #243a31;
+    border-radius: 14px;
+    padding: 10px;
+}
+.beuh-card-h {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.beuh-card-h h3 {
+    margin: 0;
+    font-size: 14px;
+    color: #e6f4ea;
+}
+.beuh-muted {
+    font-size: 11px;
+    color: #8aa798;
+}
+.beuh-row-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.beuh-btn {
+    padding: 7px 11px;
+    min-height: 36px;
+    border-radius: 10px;
+    border: 1.5px solid #2c4a3d;
+    background: #1a2a24;
+    color: #e6f4ea;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.beuh-btn:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+}
+.beuh-btn.green {
+    background: linear-gradient(180deg, #22c55e, #15803d);
+    border-color: #4ade80;
+    color: #05160c;
+}
+.beuh-btn.purple {
+    background: linear-gradient(180deg, #a855f7, #7e22ce);
+    border-color: #d8b4fe;
+    color: #fff;
+}
+.beuh-btn.blue {
+    background: linear-gradient(180deg, #38bdf8, #0284c7);
+    border-color: #7dd3fc;
+    color: #041524;
+}
+.beuh-btn.red {
+    background: linear-gradient(180deg, #f43f5e, #be123c);
+    border-color: #fda4af;
+    color: #fff;
+}
+.beuh-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.beuh-pill {
+    padding: 5px 9px;
+    border-radius: 999px;
+    border: 1.5px solid #284136;
+    background: #141f1c;
+    color: #c6ded0;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.beuh-pill .spr {
+    width: 16px;
+    height: 16px;
+}
+.beuh-pill.on {
+    background: #1f3d2e;
+    border-color: #4ade80;
+    color: #fff;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.28);
+}
+.beuh-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+@media (min-width: 520px) {
+    .beuh-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+.beuh-plot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 6px;
+    border-radius: 12px;
+    border: 1.5px solid #243a31;
+    background: radial-gradient(circle at 50% 35%, #1d2e27 0%, #111917 100%);
+    color: #e6f4ea;
+    font: inherit;
+    cursor: pointer;
+    position: relative;
+}
+.beuh-plot.ready {
+    border-color: #4ade80;
+    box-shadow: 0 0 12px rgba(74, 222, 128, 0.35);
+}
+.beuh-plot.watered {
+    border-color: #38bdf8;
+}
+.beuh-plot .spr {
+    width: 52px;
+    height: 52px;
+}
+.beuh-plot b {
+    font-size: 11px;
+    line-height: 1.15;
+    text-align: center;
+}
+.beuh-plot small {
+    font-size: 10px;
+    color: #93b3a2;
+}
+.beuh-prog {
+    width: 100%;
+    height: 5px;
+    border-radius: 999px;
+    background: #0d1513;
+    overflow: hidden;
+}
+.beuh-prog > i {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #4ade80, #a3e635);
+}
+.beuh-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.beuh-item-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px;
+    border-radius: 12px;
+    background: #16221f;
+    border: 1.5px solid #243b31;
+}
+.beuh-item-row .spr {
+    width: 42px;
+    height: 42px;
+    flex: none;
+}
+.beuh-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #1e2d28;
+    border: 2px solid #4ade80;
+    flex: none;
+}
+.beuh-avatar.shady {
+    border-color: #f43f5e;
+}
+.beuh-avatar svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.beuh-item-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.beuh-item-main b {
+    display: block;
+    font-size: 13px;
+}
+.beuh-item-main small {
+    display: block;
+    font-size: 11px;
+    color: #93b3a2;
+    margin-top: 2px;
+}
+.beuh-nav {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+    padding: 6px 6px max(8px, env(safe-area-inset-bottom));
+    background: #0d1413;
+    border-top: 2px solid #243b31;
+}
+.beuh-nav button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 2px;
+    border-radius: 10px;
+    border: 1.5px solid transparent;
+    background: transparent;
+    color: #8aa798;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    position: relative;
+}
+.beuh-nav button.on {
+    background: #172b22;
+    border-color: #4ade80;
+    color: #4ade80;
+}
+.beuh-badge {
+    position: absolute;
+    top: 2px;
+    right: 6px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #4ade80;
+    color: #05160c;
+    font-size: 10px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Tuile secrète dans le Menu de Meuh une fois la trappe ouverte */
+.beuh-secret-card {
+    background: linear-gradient(135deg, #13211b 0%, #1f172b 100%) !important;
+    border-color: #4ade80 !important;
+    color: #e6f4ea !important;
+    margin-top: 10px;
+}
+.beuh-secret-card small {
+    color: #9fe8b5 !important;
+}
+.set-foot-secret {
+    cursor: pointer;
+    user-select: none;
+}

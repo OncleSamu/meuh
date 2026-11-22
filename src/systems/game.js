@@ -69,6 +69,7 @@ import { familyTick } from './family.js';
 import { herdbookTick } from './herdbook.js';
 import { planTick, planInfo } from './plan.js';
 import { perfumeTick, perfumeOffline } from './perfume.js';
+import { beuhTick, beuhOffline } from './beuh.js';
 
 // ---------------- chargement ----------------
 // Lit la sauvegarde (ou commence une partie neuve) et complète ce qui manque
@@ -383,7 +384,7 @@ function tickProgress() {
     return false;
 }
 
-const SYSTEMS = [tickClock, tickWorld, tickFarm, animalsTick, workshopTick, () => counterTick(1), tickDeliveries, tickCave, tickProgress, () => planTick()];
+const SYSTEMS = [tickClock, tickWorld, tickFarm, animalsTick, workshopTick, () => counterTick(1), tickDeliveries, tickCave, tickProgress, () => planTick(), () => beuhTick(1)];
 
 // renvoie vrai si quelque chose de visible a changé
 export function gameTick() {
@@ -448,6 +449,7 @@ export function offlineProgress() {
     // 1.75.2 : les cuves en boucle enchaînent leurs tournées
     const brews = brewOffline();
     const perfumes = perfumeOffline();
+    beuhOffline(elapsed);
     const salon = counterOffline(elapsed); // 1.118 : des clients attendent au comptoir
     const pasture = animalsOffline(elapsed);
     const babies = birthsTick(); // 1.45 : les naissances au pré pendant l'absence
