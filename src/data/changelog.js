@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.158",
+  "title": "Notice du MeuhCG dans le Guide",
+  "date": "23 novembre 2026",
+  "items": [
+   "Nouvelle page « MeuhCG : cartes et duels » dans le Guide du fermier (Menu › Guide) expliquant les boosters, le budget de deck de 16 étoiles, les 5 manches de duel, les terrains, les 6 pouvoirs de famille, le Défi du jour et la forge",
+   "Bouton rapide « Guide » directement dans le bandeau supérieur du MeuhCG (et dans l’encart des règles en Duels) pour consulter la notice en un clic"
+  ]
+ },
+ {
   "v": "1.157",
   "title": "Équilibrage MeuhCG : Budget de Deck & Défi du Jour",
   "date": "23 novembre 2026",

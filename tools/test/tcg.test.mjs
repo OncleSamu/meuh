@@ -9,7 +9,7 @@ import { TCG_CARDS, TCG_CARD_BY_ID, TCG_DECK_BUDGET, TCG_FAMILIES, TCG_RARITIES,
 import { SPR } from '../../src/art/index.js';
 import * as G from '../../src/systems/index.js';
 
-test('1.156 : les 300 cartes MeuhCG, les 14 villageois, les icônes SVG et la règle des 0 émoji', () => {
+test('1.156 : les 300 cartes MeuhCG, les 14 villageois, les icônes SVG et la règle des 0 émoji', async () => {
     assert.equal(TCG_CARDS.length, 300);
     assert.equal(TCG_VILLAGER_DUELS.length, 14);
     const ids = new Set();
@@ -41,6 +41,9 @@ test('1.156 : les 300 cartes MeuhCG, les 14 villageois, les icônes SVG et la r�
         const txt = fs.readFileSync(p, 'utf8');
         assert.equal(/\p{Extended_Pictographic}/u.test(txt), false, `émoji interdit détecté dans ${p}`);
     }
+    const { GUIDE_PAGES } = await import('../../src/data/guide.js');
+    const gp = GUIDE_PAGES.find(p => p.id === 'meuhcg');
+    assert.ok(gp && gp.go === 'sheet:tcg' && gp.secs.length >= 5, 'notice MeuhCG présente dans le Guide');
 });
 
 test('1.155 : boosters, pity timer, recyclage, forge, paliers et isolation économique totale de la ferme', () => {

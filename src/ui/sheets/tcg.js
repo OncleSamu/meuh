@@ -395,7 +395,7 @@ function renderDuelsTab(T) {
         ${!overBudget && !deckOk ? `<div class="tcg-pity">${ICO_PACK()} Ouvre au moins 1 booster gratuit dans l’onglet <b>Boosters</b> pour obtenir tes 5 premières cartes !</div>` : ''}
         <div class="tcg-pills">${catPills}</div>
         <div class="tcg-opp-list">${oppHtml}</div>
-        <details class="tcg-rules"><summary>Pouvoirs des 6 familles &amp; règles de combat</summary><div class="tcg-rules-body">${powersGuide}</div></details>
+        <details class="tcg-rules"><summary>Pouvoirs des 6 familles &amp; règles de combat</summary><div class="tcg-rules-body">${powersGuide}<button type="button" class="btn sm" data-act="open" data-sheet="guide" data-page="meuhcg">${ti(['ui', 'info'], 'tcg-ico xs')} Lire la notice complète du MeuhCG</button></div></details>
     `;
 }
 
@@ -540,6 +540,7 @@ defineSheet('tcg', {
                 <span class="tcg-chip">${ICO_PACK()} <b>${T.freePacks}</b></span>
                 <span class="tcg-chip">${ti(['ui', 'book'])} <b>${G.tcgOwnedCount()}/${TCG_CARDS.length}</b></span>
                 ${favCard ? `<button type="button" class="tcg-chip tcg-fav" data-act="tcgZoom" data-id="${favCard.id}" title="Carte favorite">${ti(['ui', 'star'], 'tcg-ico xs')} ${esc(favCard.name)}</button>` : ''}
+                <button type="button" class="tcg-chip tcg-help" data-act="open" data-sheet="guide" data-page="meuhcg" title="Comment jouer au MeuhCG">${ti(['ui', 'info'], 'tcg-ico xs')} Guide</button>
             </div>
             ${daily ? `<button type="button" class="tcg-daily" data-act="tcgClaimDaily"><span>${ti(['ui', 'sparkle'])} <b>Booster du jour !</b></span><span class="tcg-daily-rew">+1 ${ICO_PACK()} +30 ${ICO_TOK()}</span></button>` : ''}
             ${it.html}

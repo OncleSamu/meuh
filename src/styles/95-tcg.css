@@ -41,6 +41,13 @@
     border-color: #c98808;
     color: #5c3b00;
 }
+.tcg-chip.tcg-help {
+    cursor: pointer;
+    margin-left: auto;
+    background: linear-gradient(#eef7ff, #d7ebff);
+    border-color: #2b7de0;
+    color: #164b8a;
+}
 .tcg-daily {
     display: flex;
     flex-wrap: wrap;

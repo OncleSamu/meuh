@@ -16,6 +16,7 @@ import { FAMILY } from './family.js';
 import { CAMPING } from './camping.js';
 import { MAX_LEVEL, HOUSE } from './progress.js';
 import { LEAGUES } from './commerce.js';
+import { TCG_CARDS, TCG_DECK_BUDGET, TCG_FAMILIES, TCG_RARITIES, TCG_SET_IDS, TCG_VILLAGER_DUELS } from './tcg.js';
 
 // 1.36 : les niveaux cités dans les textes viennent des données (ils ne peuvent plus se démentir)
 const lv = id => (ITEMS[id] || ANIMALS[id] || MACHINES[id]).reqLvl;
@@ -2163,6 +2164,60 @@ export const GUIDE_PAGES = [
             },
         ],
         see: ['mastery', 'legend', 'decor'],
+    },
+    {
+        id: 'meuhcg',
+        cat: 'grow',
+        name: 'MeuhCG : cartes et duels',
+        icon: ['ui', 'meuhcg'],
+        lvl: 1,
+        go: 'sheet:tcg',
+        intro: `Le jeu de cartes à collectionner de la vallée : ${TCG_CARDS.length} cartes en ${TCG_SET_IDS.length} séries, 100 % indépendant de l’économie de la ferme.`,
+        secs: [
+            {
+                h: 'Bien débuter',
+                b: [
+                    'Ouvrez Menu › Collections › MeuhCG. Aucun lien avec vos pièces ou vos ressources de la ferme : tout fonctionne avec des jetons MeuhCG, des boosters gratuits et de la poussière dorée.',
+                    'Vous démarrez avec 2 boosters gratuits et 120 jetons, puis vous recevez 1 booster gratuit et 30 jetons chaque jour (bandeau vert en haut de l’écran).',
+                    'Chaque booster contient 5 cartes : touchez le paquet pour le déchirer, puis retournez les cartes une par une (le halo au dos annonce déjà les cartes rares). Un booster au plus tous les 10 garantit une Légendaire ou une Secrète Chromatique.',
+                ],
+            },
+            {
+                h: 'Construire son deck (budget de 16 étoiles)',
+                b: [
+                    `Un deck contient 5 cartes pour un coût total d’au plus ${TCG_DECK_BUDGET} étoiles : Commune (${TCG_RARITIES.C.cost}), Peu commune (${TCG_RARITIES.U.cost}), Rare (${TCG_RARITIES.R.cost}), Holo (${TCG_RARITIES.F.cost}), Légendaire (${TCG_RARITIES.L.cost}), Secrète Chromatique (${TCG_RARITIES.S.cost}).`,
+                    'Dans l’onglet Mon Deck, touchez vos cartes pour les ajouter ou les retirer, ou appuyez sur « Auto » pour composer automatiquement le meilleur deck sous le budget en tenant compte des synergies.',
+                    'Synergie de famille : placer au moins 2 cartes de la même famille dans votre deck donne +2 à chacune de ces cartes en duel.',
+                ],
+            },
+            {
+                h: 'Déroulement d’un duel (5 manches)',
+                b: [
+                    `Défiez les ${TCG_VILLAGER_DUELS.length} villageois (du commis Théo à Mamie Odette), les campeurs et résidents réels de votre camping, ainsi que votre conjoint et vos enfants.`,
+                    'Chaque duel comporte 5 manches avec un critère actif (Terroir, Saveur ou Prestige). La frise en haut montre les 5 critères à l’avance pour planifier l’ordre de vos cartes ; le score réel de chaque carte en main s’affiche en vert.',
+                    'Terrain : chaque adversaire joue sur son terrain, qui donne +1 aux cartes de la famille du lieu.',
+                    'Deux coups tactiques utilisables 1 fois par duel : « Changer critère » (fait tourner le critère de la manche en cours) et « Coup de Maître » (+3 sur la prochaine carte jouée). Attention : les adversaires Difficile et Maître disposent eux aussi d’un Coup spécial (+2) une fois par duel.',
+                ],
+            },
+            {
+                h: 'Les 6 pouvoirs de famille',
+                b: Object.values(TCG_FAMILIES).map(f => `${f.name} (${f.power}) : ${f.powerDesc}`),
+            },
+            {
+                h: 'Récompenses, Défi du jour et Forge',
+                b: [
+                    '1re victoire historique contre un adversaire : +1 booster gratuit en plus des jetons.',
+                    'Anti-spam quotidien : la 1re victoire du jour contre un adversaire rapporte 100 % de ses jetons ; les revanches contre le même adversaire le même jour passent en mode entraînement (+5 jetons).',
+                    'Défi du jour : battez 3 adversaires différents dans la journée pour réclamer +80 jetons et +1 booster gratuit dans l’onglet Duels.',
+                    'Classeur & Forge : recyclez vos doublons en poussière dorée pour forger n’importe quelle carte manquante, et réclamez les paliers de collection dans l’onglet Boosters.',
+                ],
+            },
+        ],
+        tips: [
+            'Votre collection MeuhCG, vos jetons et vos cartes favorites sont conservés intégralement lors d’un Prestige.',
+            'Gardez votre Coup de Maître (+3) ou votre Relance de critère pour une manche serrée contre un boss, et surveillez le moment où le boss n’a pas encore utilisé son Coup spécial (+2).',
+        ],
+        see: ['book', 'camping', 'family'],
     },
     {
         id: 'labplants',
