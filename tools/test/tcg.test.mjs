@@ -1,14 +1,15 @@
 // 1.155 : MeuhCG — vérification des 100 cartes & sprites, isolation économique totale, boosters, forge,
 // duels (villageois, campeurs réels, famille réelle), sauvegarde et Prestige.
+import fs from 'node:fs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { state, newState, setState, fromSave } from '../../src/core/state.js';
 import { PRESTIGE_LVL } from '../../src/data/progress.js';
-import { TCG_CARDS, TCG_CARD_BY_ID, TCG_FAMILIES, TCG_RARITIES, TCG_SERIES, TCG_VILLAGER_DUELS } from '../../src/data/tcg.js';
+import { TCG_CARDS, TCG_CARD_BY_ID, TCG_FAMILIES, TCG_RARITIES, TCG_SERIES, TCG_STATS, TCG_VILLAGER_DUELS } from '../../src/data/tcg.js';
 import { SPR } from '../../src/art/index.js';
 import * as G from '../../src/systems/index.js';
 
-test('1.155 : les 100 cartes MeuhCG, les decks villageois et l’icône ui.meuhcg ont tous un sprite valide', () => {
+test('1.155 : les 100 cartes MeuhCG, les decks villageois, les icônes SVG et la règle des 0 émoji', () => {
     assert.equal(TCG_CARDS.length, 100);
     const ids = new Set();
     for (const c of TCG_CARDS) {
@@ -28,8 +29,16 @@ test('1.155 : les 100 cartes MeuhCG, les decks villageois et l’icône ui.meuhc
         const av = SPR.villager(opp.art);
         assert.ok(av.includes('<svg') && !/undefined|NaN/.test(av), `portrait invalide ${opp.id}`);
     }
-    const ico = SPR.ui('meuhcg');
-    assert.ok(ico.includes('<svg') && ico.length > 200 && !/undefined|NaN/.test(ico));
+    for (const k of ['meuhcg', 'tcgToken', 'tcgDust', 'tcgPack', 'tcgDuel', 'tcgTent']) {
+        const ico = SPR.ui(k);
+        assert.ok(ico.includes('<svg') && ico.length > 150 && !/undefined|NaN/.test(ico), `icône ui.${k}`);
+    }
+    for (const f of Object.values(TCG_FAMILIES)) assert.ok(SPR[f.icon[0]](f.icon[1]).includes('<svg'), f.id);
+    for (const s of TCG_STATS) assert.ok(SPR[s.icon[0]](s.icon[1]).includes('<svg'), s.key);
+    for (const p of ['src/data/tcg.js', 'src/systems/tcg.js', 'src/ui/sheets/tcg.js', 'src/art/tcg.js']) {
+        const txt = fs.readFileSync(p, 'utf8');
+        assert.equal(/\p{Extended_Pictographic}/u.test(txt), false, `émoji interdit détecté dans ${p}`);
+    }
 });
 
 test('1.155 : boosters, pity timer, recyclage, forge, paliers et isolation économique totale de la ferme', () => {

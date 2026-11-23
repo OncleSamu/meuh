@@ -1,4 +1,5 @@
 // 1.155 : Feuille MeuhCG — Boosters, Duels (Villageois / Camping / Famille), Classeur et Deck.
+// Respecte strictement la règle des 0 émoji de Meuh : toutes les icônes sont en SVG kit.js.
 import { state } from '../../core/state.js';
 import * as G from '../../systems/index.js';
 import {
@@ -14,7 +15,7 @@ import {
     TCG_STATS,
 } from '../../data/tcg.js';
 import { actions, esc } from '../dom.js';
-import { art } from '../icons.js';
+import { art, ico } from '../icons.js';
 import { genWrap } from '../genlook.js';
 import { innerTabs } from '../innertabs.js';
 import { defineSheet } from '../sheets.js';
@@ -28,6 +29,12 @@ const pair = v => [
     [v, 1],
     [v, 1],
 ];
+
+const ti = (ref, cls = 'tcg-ico') => ico(ref, `ico ${cls}`);
+const ICO_TOK = () => ti(['ui', 'tcgToken']);
+const ICO_DUST = () => ti(['ui', 'tcgDust']);
+const ICO_PACK = () => ti(['ui', 'tcgPack']);
+const ICO_DUEL = () => ti(['ui', 'tcgDuel']);
 
 function cardSpriteHtml(c) {
     const raw = art(c.spr[0], c.spr[1]);
@@ -70,19 +77,27 @@ function renderCardHtml(c, opts = {}) {
         .join(' ');
     const statsHtml = TCG_STATS.map((s, i) => {
         const val = c.stats[i] + (hiStat === i ? synBonus : 0);
-        return `<span class="tcg-st${hiStat === i ? ' hi' : ''}" title="${s.name}">${s.emo}<b>${val}</b></span>`;
+        return `<span class="tcg-st${hiStat === i ? ' hi' : ''}" title="${s.name}">${ti(s.icon, 'tcg-ico xs')}<b>${val}</b></span>`;
     }).join('');
+    const sparks =
+        c.rarity === 'S'
+            ? '<span class="tcg-sparks"><i style="--x:12%;--y:16%;--d:0s"></i><i style="--x:86%;--y:14%;--d:.4s"></i><i style="--x:14%;--y:74%;--d:.8s"></i><i style="--x:88%;--y:68%;--d:1.2s"></i><i style="--x:50%;--y:8%;--d:.6s"></i><i style="--x:76%;--y:42%;--d:1.5s"></i></span>'
+            : c.rarity === 'L'
+              ? '<span class="tcg-sparks gold"><i style="--x:14%;--y:18%;--d:0s"></i><i style="--x:85%;--y:20%;--d:.5s"></i><i style="--x:20%;--y:72%;--d:1s"></i><i style="--x:82%;--y:70%;--d:1.4s"></i></span>'
+              : '';
     const num = String(c.num).padStart(3, '0');
     return `<button type="button" class="${cls}" data-act="${act}" ${extraData} style="--rc:${r.col};--rbg:${r.bg};--fc:${fam.col}">
         <span class="tcg-holo"></span>
-        <span class="tcg-top"><i class="tcg-fam" title="${fam.name}">${fam.emo}</i><i class="tcg-rar">${r.short}</i></span>
+        <span class="tcg-glare"></span>
+        ${sparks}
+        <span class="tcg-top"><i class="tcg-fam" title="${fam.name}">${ti(fam.icon, 'tcg-ico xs')}</i><i class="tcg-rar">${r.short}</i></span>
         <span class="tcg-art">${cardSpriteHtml(c)}</span>
         <span class="tcg-name">${esc(c.name)}</span>
         <span class="tcg-stats">${statsHtml}</span>
         ${opts.big ? `<span class="tcg-flavor">${esc(c.flavor)}</span><span class="tcg-meta">#${num}/${TCG_CARDS.length} · ${esc(TCG_SERIES[c.series].short)}</span>` : ''}
         ${opts.isNew ? '<span class="tcg-new">NOUVEAU</span>' : ''}
         ${!opts.hideQty && qty > 1 ? `<span class="tcg-qty">×${qty}</span>` : ''}
-        ${!opts.noDeckBadge && (inDeck || isFav) ? `<span class="tcg-pin">${isFav ? '★' : '⚔️'}</span>` : ''}
+        ${!opts.noDeckBadge && (inDeck || isFav) ? `<span class="tcg-pin">${isFav ? ti(['ui', 'star'], 'tcg-ico xs') : ti(['ui', 'tcgDuel'], 'tcg-ico xs')}</span>` : ''}
     </button>`;
 }
 
@@ -99,7 +114,7 @@ function renderPackOpening(T) {
                 <span class="tcg-pack-brand">MEUH<span>CG</span></span>
                 <span class="tcg-pack-art">${art(s.icon[0], s.icon[1])}</span>
                 <span class="tcg-pack-label">${esc(s.short)}</span>
-                <span class="tcg-pack-cta">✨ Touche pour déchirer !</span>
+                <span class="tcg-pack-cta">${ti(['ui', 'sparkle'], 'tcg-ico xs')} Touche pour déchirer !</span>
                 <span class="tcg-pack-crimp bot"></span>
             </button>
             <div class="tcg-stage-actions">
@@ -113,6 +128,7 @@ function renderPackOpening(T) {
             const c = TCG_CARD_BY_ID[entry.id];
             if (!p.revealed[idx]) {
                 return `<button type="button" class="tcg-back glow-${c.rarity}" data-act="tcgReveal" data-i="${idx}" aria-label="Retourner la carte ${idx + 1}">
+                    <span class="tcg-back-shine"></span>
                     <span class="tcg-back-in"><b>MEUH<small>CG</small></b><i>?</i></span>
                 </button>`;
             }
@@ -120,12 +136,12 @@ function renderPackOpening(T) {
         })
         .join('');
     const canAgain = G.tcgCanOpenPack(p.seriesId);
-    const againLabel = !s.allSeries && T.freePacks > 0 ? `Ouvrir un autre (🎁 ${T.freePacks})` : `Ouvrir un autre (${s.cost} 🎟️)`;
+    const againLabel = !s.allSeries && T.freePacks > 0 ? `${ICO_PACK()} Ouvrir un autre (${T.freePacks} gratuit${T.freePacks > 1 ? 's' : ''})` : `Ouvrir un autre (${s.cost} ${ICO_TOK()})`;
     return `<div class="tcg-stage">
         <div class="tcg-stage-title">${allOpen ? 'Cartes obtenues !' : 'Touche chaque carte pour la révéler'}</div>
         <div class="tcg-reveal-grid">${cardsHtml}</div>
         <div class="tcg-stage-actions">
-            ${!allOpen ? '<button type="button" class="btn gold sm" data-act="tcgRevealAll">✨ Tout révéler</button>' : ''}
+            ${!allOpen ? `<button type="button" class="btn gold sm" data-act="tcgRevealAll">${ti(['ui', 'sparkle'])} Tout révéler</button>` : ''}
             ${allOpen && canAgain ? `<button type="button" class="btn green sm" data-act="tcgOpenPack" data-s="${p.seriesId}">${againLabel}</button>` : ''}
             ${allOpen ? '<button type="button" class="btn sm" data-act="tcgClosePack">Retour aux boosters</button>' : ''}
         </div>
@@ -151,7 +167,7 @@ function renderBoostersTab(T) {
                 <div class="tcg-pack-desc">${esc(s.desc)}</div>
                 <div class="tcg-prog-row"><div class="tcg-prog"><i style="width:${pct}%"></i></div><span>${prog.have}/${prog.total}</span></div>
                 <button type="button" class="btn sm ${free ? 'green' : can ? 'gold' : ''}" data-act="tcgOpenPack" data-s="${sid}" ${can ? '' : 'disabled'}>
-                    ${free ? `🎁 Ouvrir (gratuit · ${T.freePacks})` : `Ouvrir · ${s.cost} 🎟️`}
+                    ${free ? `${ICO_PACK()} Ouvrir (gratuit · ${T.freePacks})` : `Ouvrir · ${s.cost} ${ICO_TOK()}`}
                 </button>
             </div>
         </div>`;
@@ -162,16 +178,16 @@ function renderBoostersTab(T) {
         const done = !!T.milestones[m.id];
         const ready = !done && n >= m.need;
         return `<div class="tcg-mile${done ? ' done' : ready ? ' ready' : ''}">
-            <div><b>${esc(m.name)}</b><small>${m.need} cartes · +${m.tokens} 🎟️ &amp; +${m.packs} 📦</small></div>
-            ${done ? '<span class="tcg-done-tag">✓ Pris</span>' : ready ? `<button type="button" class="btn green sm" data-act="tcgClaimMile" data-id="${m.id}">Prendre</button>` : `<span class="tcg-muted">${n}/${m.need}</span>`}
+            <div><b>${esc(m.name)}</b><small>${m.need} cartes · +${m.tokens} ${ICO_TOK()} &amp; +${m.packs} ${ICO_PACK()}</small></div>
+            ${done ? `<span class="tcg-done-tag">${ti(['ui', 'check'], 'tcg-ico xs')} Pris</span>` : ready ? `<button type="button" class="btn green sm" data-act="tcgClaimMile" data-id="${m.id}">Prendre</button>` : `<span class="tcg-muted">${n}/${m.need}</span>`}
         </div>`;
     }).join('');
 
     const pityLeft = Math.max(1, 10 - (T.pity || 0));
     return `
-        <div class="tcg-pity">✨ 5 cartes par booster (1 Rare+ garantie) · Légendaire/Secrète garantie dans au plus <b>${pityLeft}</b> booster${pityLeft > 1 ? 's' : ''}.</div>
+        <div class="tcg-pity">${ti(['ui', 'sparkle'], 'tcg-ico xs')} 5 cartes par booster (1 Rare+ garantie) · Légendaire/Secrète garantie dans au plus <b>${pityLeft}</b> booster${pityLeft > 1 ? 's' : ''}.</div>
         <div class="tcg-pack-list">${packsHtml}</div>
-        <h4 class="tcg-h4">🏆 Paliers de collection</h4>
+        <h4 class="tcg-h4">${ti(['ui', 'trophy'])} Paliers de collection</h4>
         <div class="tcg-miles">${milesHtml}</div>
     `;
 }
@@ -188,7 +204,7 @@ function renderDuelArena(T) {
         const oC = TCG_CARD_BY_ID[D.last.oId];
         const txt = D.last.outcome === 'win' ? 'Manche gagnée !' : D.last.outcome === 'lose' ? 'Manche perdue…' : 'Égalité !';
         clashHtml = `<div class="tcg-clash ${D.last.outcome}">
-            <div class="tcg-clash-head">Manche ${D.last.round} · ${D.last.stat.emo} ${D.last.stat.name} — <b>${txt}</b></div>
+            <div class="tcg-clash-head">Manche ${D.last.round} · ${ti(D.last.stat.icon, 'tcg-ico xs')} ${D.last.stat.name} — <b>${txt}</b></div>
             <div class="tcg-clash-cards">
                 <div class="tcg-clash-side">
                     <small>Toi · <b>${D.last.pVal}</b>${D.last.pSynBonus ? ' <i>(+2 synergie)</i>' : ''}</small>
@@ -204,7 +220,12 @@ function renderDuelArena(T) {
     }
 
     if (D.done) {
-        const title = D.result === 'win' ? '🏆 Victoire !' : D.result === 'draw' ? '🤝 Match nul !' : '😅 Défaite…';
+        const title =
+            D.result === 'win'
+                ? `${ti(['ui', 'trophy'])} Victoire !`
+                : D.result === 'draw'
+                  ? `${ICO_DUEL()} Match nul !`
+                  : `${ICO_DUEL()} Défaite…`;
         const react = D.result === 'win' ? D.winQuote : D.loseQuote;
         return `<div class="tcg-arena">
             <div class="tcg-opp-bar">
@@ -215,9 +236,9 @@ function renderDuelArena(T) {
             ${clashHtml}
             <div class="tcg-result ${D.result}">
                 <h3>${title}</h3>
-                <p>Récompense : <b>+${D.gainTokens} 🎟️ jetons MeuhCG</b>${D.firstWinPack ? ' &amp; <b>+1 📦 Booster gratuit (1re victoire !)</b>' : ''}</p>
+                <p>Récompense : <b>+${D.gainTokens} ${ICO_TOK()} jetons MeuhCG</b>${D.firstWinPack ? ` &amp; <b>+1 ${ICO_PACK()} Booster gratuit (1re victoire !)</b>` : ''}</p>
                 <div class="tcg-stage-actions">
-                    <button type="button" class="btn green sm" data-act="tcgStartDuel" data-id="${esc(D.oppId)}">🔄 Revanche</button>
+                    <button type="button" class="btn green sm" data-act="tcgStartDuel" data-id="${esc(D.oppId)}">${ti(['ui', 'loop'])} Revanche</button>
                     <button type="button" class="btn sm" data-act="tcgEndDuel">Autres adversaires</button>
                 </div>
             </div>
@@ -245,9 +266,9 @@ function renderDuelArena(T) {
             <div class="tcg-opp-meta"><b>${esc(D.oppName)}</b><small>${esc(D.oppRole)} · ${esc(D.oppDiffLabel)}</small><p class="tcg-bubble">${esc(D.quote)}</p></div>
             <div class="tcg-score"><b>${D.pScore}</b><span>-</span><b>${D.oScore}</b></div>
         </div>
-        <div class="tcg-round-pill">Manche <b>${D.round + 1}/5</b> · Critère actif : <b>${activeStat.emo} ${activeStat.name}</b></div>
+        <div class="tcg-round-pill">Manche <b>${D.round + 1}/5</b> · Critère actif : <b>${ti(activeStat.icon, 'tcg-ico xs')} ${activeStat.name}</b></div>
         ${clashHtml}
-        <div class="tcg-hand-label">Choisis une carte de ta main${D.pSyn.length ? ` · Synergies (+2) : ${D.pSyn.map(f => TCG_FAMILIES[f].emo + ' ' + TCG_FAMILIES[f].name).join(', ')}` : ''}</div>
+        <div class="tcg-hand-label">Choisis une carte de ta main${D.pSyn.length ? ` · Synergies (+2) : ${D.pSyn.map(f => `${ti(TCG_FAMILIES[f].icon, 'tcg-ico xs')} ${TCG_FAMILIES[f].name}`).join(', ')}` : ''}</div>
         <div class="tcg-hand">${handHtml}</div>
         <div class="tcg-stage-actions"><button type="button" class="btn sm" data-act="tcgEndDuel">Abandonner</button></div>
     </div>`;
@@ -267,11 +288,11 @@ function renderDuelsTab(T) {
     const syn = [...G.tcgDeckSynergies(T.deck)];
 
     const catPills = [
-        ['village', `🏡 Villageois (${byCat.village.length})`],
-        ['camping', `⛺ Camping (${byCat.camping.length})`],
-        ['family', `👨‍👩‍👧 Famille (${byCat.family.length})`],
+        ['village', ['ui', 'village'], `Villageois (${byCat.village.length})`],
+        ['camping', ['ui', 'tcgTent'], `Camping (${byCat.camping.length})`],
+        ['family', ['ui', 'heart'], `Famille (${byCat.family.length})`],
     ]
-        .map(([k, lbl]) => `<button type="button" class="tcg-pill${duelCat === k ? ' on' : ''}" data-act="tcgDuelCat" data-c="${k}">${lbl}</button>`)
+        .map(([k, ic, lbl]) => `<button type="button" class="tcg-pill${duelCat === k ? ' on' : ''}" data-act="tcgDuelCat" data-c="${k}">${ti(ic, 'tcg-ico xs')} ${lbl}</button>`)
         .join('');
 
     const oppHtml = list.length
@@ -283,7 +304,7 @@ function renderDuelsTab(T) {
                       <div class="tcg-opp-info">
                           <div class="tcg-opp-top"><b>${esc(o.name)}</b><span class="tcg-diff d${o.diff}">${esc(o.diffLabel)}</span></div>
                           <small>${esc(o.role)}</small>
-                          <div class="tcg-opp-rew">+${o.reward} 🎟️${beaten ? ` · ✓ Vaincu ×${beaten}` : ' · 🎁 +1 📦 1re victoire'}</div>
+                          <div class="tcg-opp-rew">+${o.reward} ${ICO_TOK()}${beaten ? ` · ${ti(['ui', 'check'], 'tcg-ico xs')} Vaincu ×${beaten}` : ` · +1 ${ICO_PACK()} 1re victoire`}</div>
                       </div>
                       <button type="button" class="btn green sm" data-act="tcgStartDuel" data-id="${esc(o.id)}" ${deckOk ? '' : 'disabled'}>Défier</button>
                   </div>`;
@@ -296,10 +317,10 @@ function renderDuelsTab(T) {
 
     return `
         <div class="tcg-deck-strip">
-            <div><b>Ton deck : ${T.deck.length}/5 cartes</b>${syn.length ? `<small>Synergies (+2) : ${syn.map(f => TCG_FAMILIES[f].emo + ' ' + TCG_FAMILIES[f].name).join(' · ')}</small>` : '<small>2 cartes de la même famille donnent +2 en duel !</small>'}</div>
-            <span class="tcg-muted">🏆 ${T.wins || 0} V · ${T.losses || 0} D</span>
+            <div><b>Ton deck : ${T.deck.length}/5 cartes</b>${syn.length ? `<small>Synergies (+2) : ${syn.map(f => `${ti(TCG_FAMILIES[f].icon, 'tcg-ico xs')} ${TCG_FAMILIES[f].name}`).join(' · ')}</small>` : '<small>2 cartes de la même famille donnent +2 en duel !</small>'}</div>
+            <span class="tcg-muted">${ti(['ui', 'trophy'], 'tcg-ico xs')} ${T.wins || 0} V · ${T.losses || 0} D</span>
         </div>
-        ${!deckOk ? '<div class="tcg-pity">📦 Ouvre au moins 1 booster gratuit dans l’onglet <b>Boosters</b> pour obtenir tes 5 premières cartes !</div>' : ''}
+        ${!deckOk ? `<div class="tcg-pity">${ICO_PACK()} Ouvre au moins 1 booster gratuit dans l’onglet <b>Boosters</b> pour obtenir tes 5 premières cartes !</div>` : ''}
         <div class="tcg-pills">${catPills}</div>
         <div class="tcg-opp-list">${oppHtml}</div>
     `;
@@ -320,10 +341,10 @@ function renderBinderTab(T) {
                   const r = TCG_RARITIES[c.rarity];
                   const canCraft = T.dust >= r.craft;
                   return `<div class="tcg-card locked rar-${c.rarity}" style="--rc:${r.col}">
-                      <span class="tcg-top"><i class="tcg-fam">${TCG_FAMILIES[c.family].emo}</i><i class="tcg-rar">${r.short}</i></span>
+                      <span class="tcg-top"><i class="tcg-fam">${ti(TCG_FAMILIES[c.family].icon, 'tcg-ico xs')}</i><i class="tcg-rar">${r.short}</i></span>
                       <span class="tcg-lock-num">#${String(c.num).padStart(3, '0')}</span>
                       <span class="tcg-name">${esc(c.name)}</span>
-                      <button type="button" class="tcg-craft-btn${canCraft ? ' ok' : ''}" data-act="tcgCraft" data-id="${c.id}" ${canCraft ? '' : 'disabled'}>Forger · ${r.craft} ✨</button>
+                      <button type="button" class="tcg-craft-btn${canCraft ? ' ok' : ''}" data-act="tcgCraft" data-id="${c.id}" ${canCraft ? '' : 'disabled'}>Forger · ${r.craft} ${ICO_DUST()}</button>
                   </div>`;
               })
               .join('')
@@ -331,8 +352,8 @@ function renderBinderTab(T) {
 
     return `
         <div class="tcg-forge-bar">
-            <div><b>✨ Poussière dorée : ${T.dust}</b><small>${dupes.count ? `${dupes.count} doublon${dupes.count > 1 ? 's' : ''} à recycler (+${dupes.dust} ✨)` : 'Aucun doublon à recycler'}</small></div>
-            <button type="button" class="btn sm ${dupes.count ? 'gold' : ''}" data-act="tcgRecycle" ${dupes.count ? '' : 'disabled'}>♻️ Recycler</button>
+            <div><b>${ICO_DUST()} Poussière dorée : ${T.dust}</b><small>${dupes.count ? `${dupes.count} doublon${dupes.count > 1 ? 's' : ''} à recycler (+${dupes.dust} ${ICO_DUST()})` : 'Aucun doublon à recycler'}</small></div>
+            <button type="button" class="btn sm ${dupes.count ? 'gold' : ''}" data-act="tcgRecycle" ${dupes.count ? '' : 'disabled'}>${ti(['ui', 'loop'])} Recycler</button>
         </div>
         <div class="tcg-pills">
             ${seriesPills}
@@ -363,8 +384,8 @@ function renderDeckTab(T) {
 
     return `
         <div class="tcg-forge-bar">
-            <div><b>⚔️ Deck actif (${T.deck.length}/5)</b><small>${syn.length ? `Synergies (+2) : ${syn.map(f => TCG_FAMILIES[f].emo + ' ' + TCG_FAMILIES[f].name).join(' · ')}` : 'Mets 2 cartes d’une même famille pour +2 en duel !'}</small></div>
-            <button type="button" class="btn green sm" data-act="tcgAutoDeck" ${owned.length ? '' : 'disabled'}>⚡ Auto</button>
+            <div><b>${ICO_DUEL()} Deck actif (${T.deck.length}/5)</b><small>${syn.length ? `Synergies (+2) : ${syn.map(f => `${ti(TCG_FAMILIES[f].icon, 'tcg-ico xs')} ${TCG_FAMILIES[f].name}`).join(' · ')}` : 'Mets 2 cartes d’une même famille pour +2 en duel !'}</small></div>
+            <button type="button" class="btn green sm" data-act="tcgAutoDeck" ${owned.length ? '' : 'disabled'}>${ti(['ui', 'bolt'])} Auto</button>
         </div>
         <div class="tcg-deck-slots">${slotsHtml}</div>
         <h4 class="tcg-h4">Tes cartes (touche pour ajouter / retirer du deck)</h4>
@@ -381,10 +402,10 @@ function renderZoomOverlay(T) {
     return `<div class="tcg-zoom-back" data-act="tcgCloseZoom">
         <div class="tcg-zoom-box" data-act="tcgNoop">
             <div class="tcg-tilt-wrap">${renderCardHtml(c, { big: true, act: 'tcgNoop' })}</div>
-            <div class="tcg-zoom-meta">Possédée ×${T.cards[c.id]} · ${esc(TCG_RARITIES[c.rarity].name)} · Famille ${TCG_FAMILIES[c.family].emo} ${TCG_FAMILIES[c.family].name}</div>
+            <div class="tcg-zoom-meta">Possédée ×${T.cards[c.id]} · ${esc(TCG_RARITIES[c.rarity].name)} · Famille ${ti(TCG_FAMILIES[c.family].icon, 'tcg-ico xs')} ${TCG_FAMILIES[c.family].name}</div>
             <div class="tcg-stage-actions">
-                <button type="button" class="btn sm ${inDeck ? '' : 'green'}" data-act="tcgToggleDeck" data-id="${c.id}">${inDeck ? 'Retirer du deck' : '⚔️ Mettre au deck'}</button>
-                <button type="button" class="btn sm ${isFav ? 'gold' : ''}" data-act="tcgSetFav" data-id="${c.id}">${isFav ? '★ Favorite' : '☆ Favorite'}</button>
+                <button type="button" class="btn sm ${inDeck ? '' : 'green'}" data-act="tcgToggleDeck" data-id="${c.id}">${inDeck ? 'Retirer du deck' : `${ICO_DUEL()} Mettre au deck`}</button>
+                <button type="button" class="btn sm ${isFav ? 'gold' : ''}" data-act="tcgSetFav" data-id="${c.id}">${ti(['ui', 'star'], 'tcg-ico xs')} ${isFav ? 'Favorite' : 'Épingler'}</button>
                 <button type="button" class="btn sm" data-act="tcgCloseZoom">Fermer</button>
             </div>
         </div>
@@ -407,10 +428,10 @@ defineSheet('tcg', {
         const it = innerTabs(
             'tcg',
             [
-                ['boosters', 'Boosters', null, boostBadge],
-                ['duels', 'Duels', null, T.duel ? 1 : 0],
-                ['binder', 'Classeur', null, G.tcgDupeSummary().count ? 1 : 0],
-                ['deck', 'Mon Deck', null, 0],
+                ['boosters', 'Boosters', ['ui', 'tcgPack'], boostBadge],
+                ['duels', 'Duels', ['ui', 'tcgDuel'], T.duel ? 1 : 0],
+                ['binder', 'Classeur', ['ui', 'book'], G.tcgDupeSummary().count ? 1 : 0],
+                ['deck', 'Mon Deck', ['ui', 'meuhcg'], 0],
             ],
             'boosters',
         );
@@ -426,13 +447,13 @@ defineSheet('tcg', {
 
         return `
             <div class="tcg-hud">
-                <span class="tcg-chip">🎟️ <b>${T.tokens}</b></span>
-                <span class="tcg-chip">✨ <b>${T.dust}</b></span>
-                <span class="tcg-chip">📦 <b>${T.freePacks}</b></span>
-                <span class="tcg-chip">📖 <b>${G.tcgOwnedCount()}/${TCG_CARDS.length}</b></span>
-                ${favCard ? `<button type="button" class="tcg-chip fav" data-act="tcgZoom" data-id="${favCard.id}" title="Carte favorite">★ ${esc(favCard.name)}</button>` : ''}
+                <span class="tcg-chip">${ICO_TOK()} <b>${T.tokens}</b></span>
+                <span class="tcg-chip">${ICO_DUST()} <b>${T.dust}</b></span>
+                <span class="tcg-chip">${ICO_PACK()} <b>${T.freePacks}</b></span>
+                <span class="tcg-chip">${ti(['ui', 'book'])} <b>${G.tcgOwnedCount()}/${TCG_CARDS.length}</b></span>
+                ${favCard ? `<button type="button" class="tcg-chip fav" data-act="tcgZoom" data-id="${favCard.id}" title="Carte favorite">${ti(['ui', 'star'], 'tcg-ico xs')} ${esc(favCard.name)}</button>` : ''}
             </div>
-            ${daily ? `<button type="button" class="tcg-daily" data-act="tcgClaimDaily">🎁 <b>Booster gratuit du jour ${state.day || 1} !</b><span>+1 📦 &amp; +30 🎟️</span></button>` : ''}
+            ${daily ? `<button type="button" class="tcg-daily" data-act="tcgClaimDaily"><span>${ti(['ui', 'sparkle'])} <b>Booster gratuit du jour ${state.day || 1} !</b></span><span>+1 ${ICO_PACK()} &amp; +30 ${ICO_TOK()}</span></button>` : ''}
             ${it.html}
             <div class="tcg-view">${body}</div>
             ${renderZoomOverlay(T)}
@@ -479,10 +500,14 @@ export function setupTcg() {
         card.style.setProperty('--my', `${(py * 100).toFixed(0)}%`);
         card.style.setProperty('--ang', `${ang}deg`);
     });
-    document.addEventListener('pointerleave', e => {
-        const card = e.target.closest && e.target.closest('.tcg-tilt-wrap .tcg-card.big');
-        if (!card) return;
-        card.style.setProperty('--rx', '0deg');
-        card.style.setProperty('--ry', '0deg');
-    }, true);
+    document.addEventListener(
+        'pointerleave',
+        e => {
+            const card = e.target.closest && e.target.closest('.tcg-tilt-wrap .tcg-card.big');
+            if (!card) return;
+            card.style.setProperty('--rx', '0deg');
+            card.style.setProperty('--ry', '0deg');
+        },
+        true,
+    );
 }

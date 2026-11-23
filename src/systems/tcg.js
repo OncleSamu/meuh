@@ -240,7 +240,7 @@ export function tcgRecycleDupes() {
     }
     T.dust += dust;
     sfx('sell');
-    toast(`${count} doublon${count > 1 ? 's' : ''} recyclé${count > 1 ? 's' : ''} → +${dust} ✨ poussière dorée`, ['ui', 'meuhcg']);
+    toast(`${count} doublon${count > 1 ? 's' : ''} recyclé${count > 1 ? 's' : ''} : +${dust} poussière dorée`, ['ui', 'tcgDust']);
     return dust;
 }
 
@@ -266,7 +266,7 @@ export function tcgClaimMilestone(id) {
     T.tokens += m.tokens;
     T.freePacks += m.packs;
     sfx('level');
-    toast(`Palier « ${m.name} » : +${m.tokens} 🎟️ et +${m.packs} booster${m.packs > 1 ? 's' : ''} !`, ['ui', 'meuhcg']);
+    toast(`Palier « ${m.name} » : +${m.tokens} jetons et +${m.packs} booster${m.packs > 1 ? 's' : ''} !`, ['ui', 'tcgPack']);
     return true;
 }
 

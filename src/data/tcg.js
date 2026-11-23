@@ -12,18 +12,18 @@ export const TCG_RARITIES = {
 export const TCG_RARITY_ORDER = ['C', 'U', 'R', 'F', 'L', 'S'];
 
 export const TCG_FAMILIES = {
-    potager: { id: 'potager', name: 'Potager', emo: '🌿', col: '#3d9942' },
-    elevage: { id: 'elevage', name: 'Élevage', emo: '🐄', col: '#c47b33' },
-    terroir: { id: 'terroir', name: 'Terroir', emo: '🧀', col: '#d98a1c' },
-    horizons: { id: 'horizons', name: 'Horizons', emo: '🏝️', col: '#1f9aa8' },
-    atelier: { id: 'atelier', name: 'Ateliers', emo: '⚙️', col: '#6366c9' },
-    village: { id: 'village', name: 'Village', emo: '🏡', col: '#c94b6b' },
+    potager: { id: 'potager', name: 'Potager', icon: ['item', 'wheat'], col: '#3d9942' },
+    elevage: { id: 'elevage', name: 'Élevage', icon: ['animal', 'cow'], col: '#c47b33' },
+    terroir: { id: 'terroir', name: 'Terroir', icon: ['item', 'cheese'], col: '#d98a1c' },
+    horizons: { id: 'horizons', name: 'Horizons', icon: ['item', 'mango'], col: '#1f9aa8' },
+    atelier: { id: 'atelier', name: 'Ateliers', icon: ['ui', 'gear'], col: '#6366c9' },
+    village: { id: 'village', name: 'Village', icon: ['ui', 'village'], col: '#c94b6b' },
 };
 
 export const TCG_STATS = [
-    { id: 0, key: 'terroir', name: 'Terroir', emo: '🌿' },
-    { id: 1, key: 'saveur', name: 'Saveur', emo: '🍯' },
-    { id: 2, key: 'prestige', name: 'Prestige', emo: '⭐' },
+    { id: 0, key: 'terroir', name: 'Terroir', icon: ['item', 'wheat'] },
+    { id: 1, key: 'saveur', name: 'Saveur', icon: ['item', 'honey'] },
+    { id: 2, key: 'prestige', name: 'Prestige', icon: ['ui', 'star'] },
 ];
 
 export const TCG_SERIES = {
