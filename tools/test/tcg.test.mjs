@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { state, newState, setState, fromSave } from '../../src/core/state.js';
 import { PRESTIGE_LVL } from '../../src/data/progress.js';
-import { TCG_CARDS, TCG_CARD_BY_ID, TCG_FAMILIES, TCG_RARITIES, TCG_SERIES, TCG_STATS, TCG_VILLAGER_DUELS } from '../../src/data/tcg.js';
+import { TCG_CARDS, TCG_CARD_BY_ID, TCG_DECK_BUDGET, TCG_FAMILIES, TCG_RARITIES, TCG_SERIES, TCG_STATS, TCG_VILLAGER_DUELS } from '../../src/data/tcg.js';
 import { SPR } from '../../src/art/index.js';
 import * as G from '../../src/systems/index.js';
 
@@ -37,7 +37,7 @@ test('1.156 : les 300 cartes MeuhCG, les 14 villageois, les icônes SVG et la r�
     }
     for (const f of Object.values(TCG_FAMILIES)) assert.ok(SPR[f.icon[0]](f.icon[1]).includes('<svg'), f.id);
     for (const s of TCG_STATS) assert.ok(SPR[s.icon[0]](s.icon[1]).includes('<svg'), s.key);
-    for (const p of ['src/data/tcg.js', 'src/systems/tcg.js', 'src/ui/sheets/tcg.js', 'src/art/tcg.js']) {
+    for (const p of ['src/data/tcg.js', 'src/systems/tcg.js', 'src/ui/sheets/tcg.js', 'src/art/tcg.js', 'src/styles/95-tcg.css']) {
         const txt = fs.readFileSync(p, 'utf8');
         assert.equal(/\p{Extended_Pictographic}/u.test(txt), false, `émoji interdit détecté dans ${p}`);
     }
@@ -66,6 +66,7 @@ test('1.155 : boosters, pity timer, recyclage, forge, paliers et isolation écon
     assert.ok(T.lastPack.revealed.every(Boolean));
     assert.equal(G.tcgClosePack(), true);
     assert.equal(T.deck.length, 5, 'le deck de départ se remplit automatiquement');
+    assert.ok(G.tcgDeckCost(T.deck) <= TCG_DECK_BUDGET, 'le deck de départ respecte le budget de 16 étoiles');
 
     // Pity timer : au 10e booster (pity = 9), au moins une Légendaire ou Secrète
     T.pity = 9;
@@ -111,8 +112,11 @@ test('1.156 : duels 2.0 (relance, Coup de Maître +3, pouvoirs de famille, campe
     setState(newState());
     G.loadGame();
     const T = G.ensureTcg();
-    ['v16', 'v24', 'h23', 'h24', 'p23'].forEach(id => (T.cards[id] = 1));
-    T.deck = ['v16', 'v24', 'h23', 'h24', 'p23'];
+    // Deck valide sous 16 étoiles : v01(C=1) + v04(C=1) + v16(R=3) + h23(L=5) + v24(S=6) = 16
+    const validDeck = ['v01', 'v04', 'v16', 'h23', 'v24'];
+    validDeck.forEach(id => (T.cards[id] = 1));
+    T.deck = [...validDeck];
+    assert.equal(G.tcgDeckCost(T.deck), 16);
     assert.ok(G.tcgDeckSynergies(T.deck).has('elevage'));
 
     state.camping = {
@@ -156,6 +160,105 @@ test('1.156 : duels 2.0 (relance, Coup de Maître +3, pouvoirs de famille, campe
     assert.ok(T.tokens > tokensBefore, 'le duel donne des jetons MeuhCG');
     assert.equal(state.money, moneyBefore, 'aucun lien avec les pièces de la ferme');
     assert.equal(G.tcgEndDuel(), true);
+});
+
+test('1.157 : équilibrage MeuhCG — budget 16 étoiles, anti-spam quotidien, Défi du jour, pouvoirs & Boss +2', () => {
+    setState(newState());
+    G.loadGame();
+    const T = G.ensureTcg();
+    TCG_CARDS.forEach(c => (T.cards[c.id] = 1));
+
+    // 1. Budget de deck (16 étoiles) : refuse un deck > 16 étoiles et tcgAutoDeck reste <= 16
+    T.deck = ['v24', 'h24', 'p24', 't24']; // 4 Secrètes = 24 étoiles (héritage pré-1.157)
+    assert.equal(G.tcgToggleDeck('v23'), false, 'refuse d’ajouter une carte au-delà de 16 étoiles');
+    T.deck = ['v24', 'h24', 'p24', 't24', 'v23']; // 29 étoiles
+    assert.equal(G.tcgStartDuel('v_theo'), false, 'refuse de lancer un duel avec un deck > 16 étoiles');
+    assert.equal(G.tcgAutoDeck(), true);
+    assert.equal(T.deck.length, 5);
+    assert.ok(G.tcgDeckCost(T.deck) <= TCG_DECK_BUDGET, 'tcgAutoDeck respecte strictement 16 étoiles');
+
+    // 2. Anti-spam quotidien & Défi du jour (3 adversaires différents)
+    const playForcedWin = oppId => {
+        assert.equal(G.tcgStartDuel(oppId), true);
+        // S'assurer d'un score gagnant pour tester les récompenses de victoire de manière déterministe
+        T.duel.pScore = 4;
+        T.duel.oScore = 0;
+        T.duel.round = 4;
+        T.duel.pHand = [T.deck[0]];
+        T.duel.oHand = [T.duel.oHand[0]];
+        assert.equal(G.tcgPlayDuelCard(0), true);
+        const snap = { ...T.duel };
+        G.tcgEndDuel();
+        return snap;
+    };
+
+    const theoReward = TCG_VILLAGER_DUELS.find(o => o.id === 'v_theo').reward;
+    const w1 = playForcedWin('v_theo');
+    assert.equal(w1.result, 'win');
+    assert.equal(w1.training, false);
+    assert.equal(w1.gainTokens, theoReward, '1re victoire du jour contre Théo = 100 % des jetons');
+    assert.equal(G.tcgDailyBeaten('v_theo'), true);
+
+    const w1Again = playForcedWin('v_theo');
+    assert.equal(w1Again.result, 'win');
+    assert.equal(w1Again.training, true);
+    assert.equal(w1Again.gainTokens, 5, 'revanche le même jour contre Théo = mode entraînement (5 jetons)');
+
+    // 2 autres adversaires différents -> Défi du jour prêt (+80 jetons + 1 booster)
+    playForcedWin('v_lucie');
+    assert.equal(G.tcgDailyQuestProgress().ready, false);
+    playForcedWin('v_marcel');
+    assert.equal(G.tcgDailyQuestProgress().have, 3);
+    assert.equal(G.tcgDailyQuestProgress().ready, true);
+    const tokBeforeQuest = T.tokens;
+    const packsBeforeQuest = T.freePacks;
+    assert.equal(G.tcgClaimDailyQuest(), true);
+    assert.equal(T.tokens, tokBeforeQuest + 80);
+    assert.equal(T.freePacks, packsBeforeQuest + 1);
+    assert.equal(G.tcgClaimDailyQuest(), false, 'Défi du jour réclamable 1 seule fois par jour');
+
+    // Jour suivant -> réinitialisation
+    state.day = (state.day || 1) + 1;
+    assert.equal(G.tcgDailyBeaten('v_theo'), false);
+    assert.equal(G.tcgDailyQuestProgress().have, 0);
+
+    // 3. Pouvoirs rééquilibrés : Troupeau max +2, Horizons +1 hors terrain, Entraide sur 2 cartes
+    const elev5 = TCG_CARDS.filter(c => c.family === 'elevage' && c.rarity === 'C').slice(0, 5);
+    T.deck = elev5.map(c => c.id);
+    assert.equal(G.tcgStartDuel('v_theo'), true); // terrain potager
+    T.duel.rounds[0] = 0;
+    const baseStat = elev5[0].stats[0];
+    // Synergie (+2) + Troupeau plafonné à +2 (malgré 4 autres Élevage en main !) = +4
+    assert.equal(G.tcgCardPreviewPower(T.duel, elev5[0].id), baseStat + 4, 'Troupeau plafonné à +2');
+    G.tcgEndDuel();
+
+    const byCheap = fam => TCG_CARDS.filter(c => c.family === fam).sort((a, b) => G.tcgCardCost(a.id) - G.tcgCardCost(b.id));
+    const hor1 = byCheap('horizons')[0];
+    const vil1 = byCheap('village')[0];
+    const pot3 = byCheap('potager').slice(0, 3);
+    T.deck = [vil1.id, hor1.id, pot3[0].id, pot3[1].id, pot3[2].id];
+    assert.equal(G.tcgStartDuel('v_theo'), true); // terrain potager (!== horizons)
+    T.duel.rounds = [0, 0, 0, 0, 0];
+    // Horizons hors de son terrain gagne +1 Aventure (pas de synergie car 1 seule carte Horizons)
+    assert.equal(G.tcgCardPreviewPower(T.duel, hor1.id), hor1.stats[0] + 1, 'Horizons +1 hors de son terrain');
+    // Jouer la carte Village (index 0) -> donne 2 charges d'Entraide
+    assert.equal(G.tcgPlayDuelCard(0), true);
+    assert.equal(T.duel.pEntraide, 2, 'Entraide donne 2 charges');
+    // Jouer 2 cartes -> consomme les 2 charges (0 restante sur la 4e carte)
+    assert.equal(G.tcgPlayDuelCard(0), true);
+    assert.equal(T.duel.pEntraide, 1);
+    assert.equal(G.tcgPlayDuelCard(0), true);
+    assert.equal(T.duel.pEntraide, 0, 'Entraide expire après 2 cartes');
+    G.tcgEndDuel();
+
+    // 4. Boss Difficile / Maître (diff >= 3) déclenche son Coup spécial (+2) pendant le duel
+    assert.equal(G.tcgAutoDeck(), true);
+    assert.equal(G.tcgStartDuel('v_jules'), true);
+    assert.equal(T.duel.oHasBoost, true);
+    assert.equal(T.duel.oUsedBoost, false);
+    for (let r = 0; r < 5; r++) assert.equal(G.tcgPlayDuelCard(0), true);
+    assert.equal(T.duel.oUsedBoost, true, 'le boss Difficile utilise son Coup spécial (+2)');
+    G.tcgEndDuel();
 });
 
 test('1.155 : sauvegarde (fromSave) et Prestige conservent intégralement la collection MeuhCG', () => {

@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.157",
+  "title": "Équilibrage MeuhCG : Budget de Deck & Défi du Jour",
+  "date": "23 novembre 2026",
+  "items": [
+   "Anti-spam sur les duels MeuhCG : la 1re victoire du jour contre un adversaire rapporte 100 % des jetons, puis les revanches le même jour passent en mode entraînement (+5 jetons)",
+   "Nouveau Défi du jour MeuhCG : bats 3 adversaires différents dans la journée pour gagner +80 jetons et +1 booster gratuit",
+   "Budget de deck fixé à 16 étoiles (Commune 1, Peu commune 2, Rare 3, Holo 4, Légendaire 5, Chroma 6) avec jauge dans Mon Deck et bouton Auto intelligent qui optimise les synergies sous le budget",
+   "Rééquilibrage des 6 pouvoirs de famille (Troupeau plafonné à +2, Entraide limité aux 2 prochaines cartes, Aventure +1 hors de son terrain), Coup spécial (+2) pour les boss Difficile & Maître, et coûts de forge adoucis sur les cartes rares"
+  ]
+ },
+ {
   "v": "1.156",
   "title": "MeuhCG : 300 Cartes & Duels Tactiques",
   "date": "23 novembre 2026",

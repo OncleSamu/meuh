@@ -1,13 +1,15 @@
 // 1.156 : MeuhCG — 300 cartes à collectionner en 8 séries + Booster Doré, 6 raretés, pouvoirs de famille et Duels 2.0.
 // 100 % indépendant de l'économie de la ferme · 0 émoji Unicode (icônes SVG uniquement).
 
+export const TCG_DECK_BUDGET = 16;
+
 export const TCG_RARITIES = {
-    C: { id: 'C', name: 'Commune', short: 'C', weight: 56, dust: 5, craft: 25, col: '#9e7b56', bg: '#f6efe4' },
-    U: { id: 'U', name: 'Peu commune', short: 'PC', weight: 26, dust: 12, craft: 60, col: '#3e8e41', bg: '#e8f7e8' },
-    R: { id: 'R', name: 'Rare', short: 'R', weight: 11.5, dust: 25, craft: 130, col: '#2b7de0', bg: '#e6f2ff' },
-    F: { id: 'F', name: 'Foil', short: 'Holo', weight: 4.3, dust: 60, craft: 300, col: '#8b46d9', bg: '#f3e8ff' },
-    L: { id: 'L', name: 'Légendaire', short: 'Lég.', weight: 1.7, dust: 150, craft: 700, col: '#d98a00', bg: '#fff5d6' },
-    S: { id: 'S', name: 'Secrète', short: 'Chroma', weight: 0.5, dust: 300, craft: 1400, col: '#d63384', bg: '#ffe8f5' },
+    C: { id: 'C', name: 'Commune', short: 'C', cost: 1, weight: 56, dust: 5, craft: 25, col: '#9e7b56', bg: '#f6efe4' },
+    U: { id: 'U', name: 'Peu commune', short: 'PC', cost: 2, weight: 26, dust: 12, craft: 55, col: '#3e8e41', bg: '#e8f7e8' },
+    R: { id: 'R', name: 'Rare', short: 'R', cost: 3, weight: 11.5, dust: 25, craft: 110, col: '#2b7de0', bg: '#e6f2ff' },
+    F: { id: 'F', name: 'Foil', short: 'Holo', cost: 4, weight: 4.3, dust: 60, craft: 240, col: '#8b46d9', bg: '#f3e8ff' },
+    L: { id: 'L', name: 'Légendaire', short: 'Lég.', cost: 5, weight: 1.7, dust: 150, craft: 500, col: '#d98a00', bg: '#fff5d6' },
+    S: { id: 'S', name: 'Secrète', short: 'Chroma', cost: 6, weight: 0.5, dust: 300, craft: 950, col: '#d63384', bg: '#ffe8f5' },
 };
 export const TCG_RARITY_ORDER = ['C', 'U', 'R', 'F', 'L', 'S'];
 
@@ -26,7 +28,7 @@ export const TCG_FAMILIES = {
         icon: ['animal', 'cow'],
         col: '#c47b33',
         power: 'Troupeau',
-        powerDesc: '+1 par autre carte Élevage encore dans ta main.',
+        powerDesc: '+1 par autre carte Élevage en main (max +2).',
     },
     terroir: {
         id: 'terroir',
@@ -42,7 +44,7 @@ export const TCG_FAMILIES = {
         icon: ['item', 'mango'],
         col: '#1f9aa8',
         power: 'Aventure',
-        powerDesc: 'Neutralise le bonus de synergie adverse sur cette manche.',
+        powerDesc: 'Annule la synergie adverse et +1 hors de son terrain.',
     },
     atelier: {
         id: 'atelier',
@@ -58,7 +60,7 @@ export const TCG_FAMILIES = {
         icon: ['ui', 'village'],
         col: '#c94b6b',
         power: 'Entraide',
-        powerDesc: 'Donne +1 permanent à toutes tes cartes restantes en main.',
+        powerDesc: 'Donne +1 à tes 2 prochaines cartes jouées.',
     },
 };
 

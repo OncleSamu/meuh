@@ -8,6 +8,7 @@ import { guestTitle } from './camping.js';
 import {
     TCG_CARD_BY_ID,
     TCG_CARDS,
+    TCG_DECK_BUDGET,
     TCG_MILESTONES,
     TCG_RARITIES,
     TCG_RARITY_ORDER,
@@ -23,6 +24,7 @@ export function ensureTcg() {
             dust: 0,
             freePacks: 2,
             dailyDay: 0,
+            dailyWins: { day: state.day || 1, ids: [], claimed: false },
             cards: {}, // { cardId: count }
             deck: [], // jusqu'à 5 ids de cartes
             fav: null,
@@ -44,10 +46,20 @@ export function ensureTcg() {
     T.deck = Array.isArray(T.deck) ? T.deck.filter(id => TCG_CARD_BY_ID[id] && (T.cards[id] || 0) > 0).slice(0, 5) : [];
     T.beaten = T.beaten || {};
     T.milestones = T.milestones || {};
+    dailyWinsBox(T);
     return T;
 }
 
-// ---- Compteurs & pastille Menu ----
+function dailyWinsBox(T) {
+    const day = state.day || 1;
+    if (!T.dailyWins || typeof T.dailyWins !== 'object' || T.dailyWins.day !== day) {
+        T.dailyWins = { day, ids: [], claimed: false };
+    }
+    if (!Array.isArray(T.dailyWins.ids)) T.dailyWins.ids = [];
+    return T.dailyWins;
+}
+
+// ---- Compteurs, Défi du jour & pastille Menu ----
 export const tcgOwnedCount = () => {
     const T = state.tcg;
     if (!T || !T.cards) return 0;
@@ -65,6 +77,19 @@ export const tcgDailyReady = () => {
     if (!T) return true;
     return (state.day || 1) > (T.dailyDay || 0);
 };
+export const tcgDailyBeaten = oppId => {
+    const T = state.tcg;
+    if (!T || !T.dailyWins || T.dailyWins.day !== (state.day || 1)) return false;
+    return Array.isArray(T.dailyWins.ids) && T.dailyWins.ids.includes(oppId);
+};
+export const tcgDailyQuestProgress = () => {
+    const T = state.tcg;
+    const day = state.day || 1;
+    const box = T && T.dailyWins && T.dailyWins.day === day ? T.dailyWins : null;
+    const have = box && Array.isArray(box.ids) ? box.ids.length : 0;
+    const claimed = !!(box && box.claimed);
+    return { have, need: 3, claimed, ready: !claimed && have >= 3 };
+};
 export const tcgClaimableMilestones = () => {
     const T = state.tcg;
     if (!T) return [];
@@ -75,6 +100,7 @@ export const tcgBadge = () => {
     const T = state.tcg;
     let b = tcgDailyReady() ? 1 : 0;
     if (T && T.freePacks > 0) b += T.freePacks;
+    if (tcgDailyQuestProgress().ready) b += 1;
     b += tcgClaimableMilestones().length;
     return b;
 };
@@ -83,7 +109,7 @@ export const tcgSub = () => {
     return n ? `${n}/${TCG_CARDS.length} cartes` : 'Boosters & Duels';
 };
 
-// ---- Booster gratuit quotidien ----
+// ---- Booster gratuit quotidien & Défi du jour ----
 export function tcgClaimDaily() {
     const T = ensureTcg();
     if (!tcgDailyReady()) return false;
@@ -92,6 +118,18 @@ export function tcgClaimDaily() {
     T.tokens += 30;
     sfx('level');
     toast('MeuhCG : +1 booster gratuit et +30 jetons offerts !', ['ui', 'meuhcg']);
+    return true;
+}
+
+export function tcgClaimDailyQuest() {
+    const T = ensureTcg();
+    const box = dailyWinsBox(T);
+    if (box.claimed || box.ids.length < 3) return false;
+    box.claimed = true;
+    T.tokens += 80;
+    T.freePacks++;
+    sfx('level');
+    toast('Défi du jour MeuhCG : +80 jetons et +1 booster gratuit !', ['ui', 'tcgPack']);
     return true;
 }
 
@@ -159,11 +197,14 @@ export function tcgOpenPack(seriesId) {
         return { id: c.id, isNew };
     });
 
-    // Si le deck n'a pas encore 5 cartes, le compléter automatiquement avec les cartes obtenues
+    // Si le deck n'a pas encore 5 cartes, le compléter automatiquement dans la limite du budget (16 étoiles)
     if (T.deck.length < 5) {
-        for (const x of cards) {
+        const byCost = [...cards].sort((a, b) => tcgCardCost(a.id) - tcgCardCost(b.id));
+        for (const x of byCost) {
             if (T.deck.length >= 5) break;
-            if (!T.deck.includes(x.id)) T.deck.push(x.id);
+            if (!T.deck.includes(x.id) && tcgDeckCost(T.deck) + tcgCardCost(x.id) <= TCG_DECK_BUDGET) {
+                T.deck.push(x.id);
+            }
         }
     }
     if (!T.fav && cards.length) T.fav = cards[cards.length - 1].id;
@@ -252,7 +293,9 @@ export function tcgCraftCard(id) {
     if (T.dust < cost) return false;
     T.dust -= cost;
     T.cards[id] = 1;
-    if (T.deck.length < 5 && !T.deck.includes(id)) T.deck.push(id);
+    if (T.deck.length < 5 && !T.deck.includes(id) && tcgDeckCost(T.deck) + tcgCardCost(id) <= TCG_DECK_BUDGET) {
+        T.deck.push(id);
+    }
     sfx('level');
     toast(`Carte forgée : ${c.name} !`, ['ui', 'meuhcg']);
     return true;
@@ -270,7 +313,11 @@ export function tcgClaimMilestone(id) {
     return true;
 }
 
-// ---- Deck (5 cartes) & Carte favorite ----
+// ---- Deck (5 cartes, budget 16 étoiles) & Carte favorite ----
+export const tcgCardCost = id => TCG_RARITIES[TCG_CARD_BY_ID[id]?.rarity]?.cost || 1;
+export const tcgDeckCost = (deckIds = ensureTcg().deck) => deckIds.reduce((s, id) => s + tcgCardCost(id), 0);
+export const tcgDeckValid = (deckIds = ensureTcg().deck) => deckIds.length === 5 && tcgDeckCost(deckIds) <= TCG_DECK_BUDGET;
+
 export function tcgToggleDeck(id) {
     const T = ensureTcg();
     if (!TCG_CARD_BY_ID[id] || !(T.cards[id] > 0)) return false;
@@ -284,6 +331,11 @@ export function tcgToggleDeck(id) {
         toast('Ton deck contient déjà 5 cartes : retire-en une d’abord.', ['ui', 'meuhcg']);
         return false;
     }
+    const nextCost = tcgDeckCost(T.deck) + tcgCardCost(id);
+    if (nextCost > TCG_DECK_BUDGET) {
+        toast(`Budget du deck dépassé (${nextCost}/${TCG_DECK_BUDGET} étoiles max) : retire une carte coûteuse.`, ['ui', 'meuhcg']);
+        return false;
+    }
     T.deck.push(id);
     sfx('pop');
     return true;
@@ -293,10 +345,64 @@ export function tcgAutoDeck() {
     const T = ensureTcg();
     const owned = TCG_CARDS.filter(c => (T.cards[c.id] || 0) > 0);
     if (!owned.length) return false;
-    owned.sort((a, b) => b.stats[0] + b.stats[1] + b.stats[2] - (a.stats[0] + a.stats[1] + a.stats[2]));
-    T.deck = owned.slice(0, 5).map(c => c.id);
+
+    const statSum = c => c.stats[0] + c.stats[1] + c.stats[2];
+    const capByCost = { 1: 5, 2: 4, 3: 3, 4: 2, 5: 2, 6: 2 };
+    const buckets = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+    for (const c of owned) buckets[tcgCardCost(c.id)].push(c);
+    const pool = [];
+    for (let cost = 1; cost <= 6; cost++) {
+        buckets[cost].sort((a, b) => statSum(b) - statSum(a));
+        pool.push(...buckets[cost].slice(0, capByCost[cost]));
+    }
+
+    let bestDeck = null;
+    let bestScore = -1;
+    const cur = [];
+    const dfs = (start, cost, sum) => {
+        const rem = 5 - cur.length;
+        if (rem === 0) {
+            const famCount = {};
+            for (const c of cur) famCount[c.family] = (famCount[c.family] || 0) + 1;
+            let synBonus = 0;
+            for (const c of cur) if (famCount[c.family] >= 2) synBonus += 5;
+            const total = sum + synBonus;
+            if (total > bestScore) {
+                bestScore = total;
+                bestDeck = cur.map(c => c.id);
+            }
+            return;
+        }
+        if (cost + rem > TCG_DECK_BUDGET) return;
+        for (let i = start; i <= pool.length - rem; i++) {
+            const c = pool[i];
+            const cc = tcgCardCost(c.id);
+            if (cost + cc + (rem - 1) > TCG_DECK_BUDGET) continue;
+            cur.push(c);
+            dfs(i + 1, cost + cc, sum + statSum(c));
+            cur.pop();
+        }
+    };
+    if (pool.length >= 5) dfs(0, 0, 0);
+
+    if (bestDeck) {
+        T.deck = bestDeck;
+    } else {
+        // Fallback si moins de 5 cartes possédées ou aucune combinaison <= budget
+        const cheap = [...owned].sort((a, b) => tcgCardCost(a.id) - tcgCardCost(b.id) || statSum(b) - statSum(a));
+        const pick = [];
+        let cost = 0;
+        for (const c of cheap) {
+            const cc = tcgCardCost(c.id);
+            if (pick.length < 5 && cost + cc <= TCG_DECK_BUDGET) {
+                pick.push(c.id);
+                cost += cc;
+            }
+        }
+        T.deck = pick;
+    }
     sfx('pop');
-    return true;
+    return T.deck.length > 0;
 }
 
 export function tcgSetFav(id) {
@@ -505,8 +611,8 @@ export function tcgOpponents() {
     return out;
 }
 
-// ---- Moteur de Duel 2.0 (pouvoirs de famille, terrain, frise 5 manches, Relance & Coup de Maître) ----
-function evalCard(cardId, statIdx, { synSet, terrain, otherHand, nextBonus, handBuff, masterBoost, oppIsHorizons }) {
+// ---- Moteur de Duel 2.1 (pouvoirs rééquilibrés, terrain, Coup spécial Boss +2 & anti-spam quotidien) ----
+function evalCard(cardId, statIdx, { synSet, terrain, otherHand, nextBonus, entraide, masterBoost, oppIsHorizons }) {
     const c = TCG_CARD_BY_ID[cardId];
     if (!c) return { total: 0, tags: [] };
     let total = c.stats[statIdx];
@@ -524,11 +630,15 @@ function evalCard(cardId, statIdx, { synSet, terrain, otherHand, nextBonus, hand
         tags.push('+1 terrain');
     }
     if (c.family === 'elevage') {
-        const herd = otherHand.filter(id => TCG_CARD_BY_ID[id]?.family === 'elevage').length;
+        const herd = Math.min(2, otherHand.filter(id => TCG_CARD_BY_ID[id]?.family === 'elevage').length);
         if (herd > 0) {
             total += herd;
             tags.push(`+${herd} Troupeau`);
         }
+    }
+    if (c.family === 'horizons' && terrain && terrain !== 'horizons') {
+        total += 1;
+        tags.push('+1 Aventure');
     }
     if (c.family === 'terroir' && statIdx === 1) {
         total += 1;
@@ -538,13 +648,13 @@ function evalCard(cardId, statIdx, { synSet, terrain, otherHand, nextBonus, hand
         total += nextBonus;
         tags.push(`+${nextBonus} Récolte`);
     }
-    if (handBuff > 0) {
-        total += handBuff;
-        tags.push(`+${handBuff} Entraide`);
+    if (entraide) {
+        total += 1;
+        tags.push('+1 Entraide');
     }
-    if (masterBoost) {
-        total += 3;
-        tags.push('+3 Coup de Maître');
+    if (masterBoost > 0) {
+        total += masterBoost;
+        tags.push(masterBoost >= 3 ? `+${masterBoost} Coup de Maître` : `+${masterBoost} Coup spécial`);
     }
     return { total, tags };
 }
@@ -558,8 +668,8 @@ export function tcgCardPreviewPower(D, cardId) {
         terrain: D.terrain,
         otherHand: others,
         nextBonus: D.pNextBonus || 0,
-        handBuff: D.pHandBuff || 0,
-        masterBoost: !!D.boostArmed,
+        entraide: (D.pEntraide || 0) > 0,
+        masterBoost: D.boostArmed ? 3 : 0,
         oppIsHorizons: false,
     }).total;
 }
@@ -572,6 +682,10 @@ export function tcgStartDuel(oppId) {
             toast('Ouvre un booster pour obtenir 5 cartes avant de lancer un duel !', ['ui', 'meuhcg']);
             return false;
         }
+    }
+    if (tcgDeckCost(T.deck) > TCG_DECK_BUDGET) {
+        toast(`Ton deck dépasse le budget de ${TCG_DECK_BUDGET} étoiles : ajuste-le dans Mon Deck ou clique sur Auto !`, ['ui', 'meuhcg']);
+        return false;
     }
     const opp = tcgOpponents().find(o => o.id === oppId);
     if (!opp) return false;
@@ -601,17 +715,20 @@ export function tcgStartDuel(oppId) {
         oSyn: [...tcgDeckSynergies(oppHand)],
         pNextBonus: 0,
         oNextBonus: 0,
-        pHandBuff: 0,
-        oHandBuff: 0,
+        pEntraide: 0,
+        oEntraide: 0,
         usedReroll: false,
         usedBoost: false,
         boostArmed: false,
+        oHasBoost: opp.diff >= 3,
+        oUsedBoost: false,
         pScore: 0,
         oScore: 0,
         last: null,
         done: false,
         result: null,
         gainTokens: 0,
+        training: false,
         firstWinPack: false,
     };
     sfx('pop');
@@ -659,8 +776,8 @@ export function tcgPlayDuelCard(handIdx) {
                 terrain: D.terrain,
                 otherHand: others,
                 nextBonus: D.oNextBonus || 0,
-                handBuff: D.oHandBuff || 0,
-                masterBoost: false,
+                entraide: (D.oEntraide || 0) > 0,
+                masterBoost: 0,
                 oppIsHorizons: false,
             });
             if (ev.total > best) {
@@ -675,13 +792,17 @@ export function tcgPlayDuelCard(handIdx) {
     const pCard = TCG_CARD_BY_ID[pId];
     const oCard = TCG_CARD_BY_ID[oId];
 
+    // Coup spécial (+2) des adversaires Difficile & Maître (utilisé 1× entre les manches 2 et 4)
+    const oBossBoost = !!(D.oHasBoost && !D.oUsedBoost && D.round >= 1 && D.round <= 3 && (D.oScore <= D.pScore || D.round === 3));
+    if (oBossBoost) D.oUsedBoost = true;
+
     const pEval = evalCard(pId, statIdx, {
         synSet: pSyn,
         terrain: D.terrain,
         otherHand: D.pHand,
         nextBonus: D.pNextBonus || 0,
-        handBuff: D.pHandBuff || 0,
-        masterBoost: !!D.boostArmed,
+        entraide: (D.pEntraide || 0) > 0,
+        masterBoost: D.boostArmed ? 3 : 0,
         oppIsHorizons: oCard.family === 'horizons',
     });
     const oEval = evalCard(oId, statIdx, {
@@ -689,22 +810,26 @@ export function tcgPlayDuelCard(handIdx) {
         terrain: D.terrain,
         otherHand: D.oHand,
         nextBonus: D.oNextBonus || 0,
-        handBuff: D.oHandBuff || 0,
-        masterBoost: false,
+        entraide: (D.oEntraide || 0) > 0,
+        masterBoost: oBossBoost ? 2 : 0,
         oppIsHorizons: pCard.family === 'horizons',
     });
 
-    // Consommer les bonus à usage unique
+    // Consommer les bonus à usage unique et 1 charge d'Entraide
     D.pNextBonus = 0;
     D.oNextBonus = 0;
     D.boostArmed = false;
+    if (D.pEntraide > 0) D.pEntraide--;
+    if (D.oEntraide > 0) D.oEntraide--;
 
     let outcome = 'draw';
     const notes = [];
+    if (oBossBoost) notes.push(`${D.oppName} déclenche son Coup spécial (+2) !`);
+
     if (pEval.total > oEval.total) {
         if (oCard.family === 'atelier' && pEval.total - oEval.total <= 2) {
             outcome = 'draw';
-            notes.push(`Savoir-faire adverse : égalité sauvée !`);
+            notes.push('Savoir-faire adverse : égalité sauvée !');
         } else {
             outcome = 'win';
         }
@@ -726,7 +851,7 @@ export function tcgPlayDuelCard(handIdx) {
         }
     }
 
-    // Effets après manche : Récolte (Potager) & Entraide (Village)
+    // Effets après manche : Récolte (Potager) & Entraide (Village : +1 sur les 2 prochaines cartes)
     if (outcome === 'win') {
         D.pScore++;
         if (pCard.family === 'potager') {
@@ -741,11 +866,11 @@ export function tcgPlayDuelCard(handIdx) {
         }
     }
     if (pCard.family === 'village' && D.pHand.length) {
-        D.pHandBuff = (D.pHandBuff || 0) + 1;
-        notes.push('Entraide : +1 à toutes tes cartes en main !');
+        D.pEntraide = (D.pEntraide || 0) + 2;
+        notes.push('Entraide : +1 sur tes 2 prochaines cartes !');
     }
     if (oCard.family === 'village' && D.oHand.length) {
-        D.oHandBuff = (D.oHandBuff || 0) + 1;
+        D.oEntraide = (D.oEntraide || 0) + 2;
     }
 
     D.history = [...(D.history || []), outcome];
@@ -766,12 +891,21 @@ export function tcgPlayDuelCard(handIdx) {
 
     if (D.round >= 5 || !D.pHand.length) {
         D.done = true;
+        const box = dailyWinsBox(T);
+        const alreadyToday = box.ids.includes(D.oppId);
         if (D.pScore > D.oScore) {
             D.result = 'win';
             T.wins++;
             const first = !T.beaten[D.oppId];
             T.beaten[D.oppId] = (T.beaten[D.oppId] || 0) + 1;
-            D.gainTokens = D.reward;
+            if (!alreadyToday) {
+                box.ids.push(D.oppId);
+                D.gainTokens = D.reward;
+                D.training = false;
+            } else {
+                D.gainTokens = 5;
+                D.training = true;
+            }
             T.tokens += D.gainTokens;
             if (first) {
                 D.firstWinPack = true;
@@ -780,14 +914,16 @@ export function tcgPlayDuelCard(handIdx) {
             sfx('level');
         } else if (D.pScore === D.oScore) {
             D.result = 'draw';
-            D.gainTokens = Math.round(D.reward * 0.5);
+            D.training = alreadyToday;
+            D.gainTokens = alreadyToday ? 3 : Math.round(D.reward * 0.5);
             T.tokens += D.gainTokens;
             sfx('pop');
         } else {
             D.result = 'lose';
             T.losses++;
-            D.gainTokens = 10;
-            T.tokens += 10;
+            D.training = alreadyToday;
+            D.gainTokens = alreadyToday ? 2 : 10;
+            T.tokens += D.gainTokens;
         }
     }
     return true;

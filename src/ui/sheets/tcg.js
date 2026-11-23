@@ -4,6 +4,7 @@ import * as G from '../../systems/index.js';
 import {
     TCG_CARD_BY_ID,
     TCG_CARDS,
+    TCG_DECK_BUDGET,
     TCG_FAMILIES,
     TCG_MILESTONES,
     TCG_PACK_IDS,
@@ -70,6 +71,7 @@ function renderCardHtml(c, opts = {}) {
         opts.big ? 'big' : '',
         opts.isNew ? 'is-new' : '',
         opts.armed ? 'armed' : '',
+        opts.overBudget ? 'over-budget' : '',
         inDeck && !opts.noDeckBadge ? 'in-deck' : '',
         opts.cls || '',
     ]
@@ -90,12 +92,18 @@ function renderCardHtml(c, opts = {}) {
         <span class="tcg-holo"></span>
         <span class="tcg-glare"></span>
         ${sparks}
-        <span class="tcg-top"><i class="tcg-fam" title="${fam.name} · ${fam.power}">${ti(fam.icon, 'tcg-ico xs')}</i><i class="tcg-rar">${r.short}</i></span>
+        <span class="tcg-top">
+            <i class="tcg-fam" title="${fam.name} · ${fam.power}">${ti(fam.icon, 'tcg-ico xs')}</i>
+            <span class="tcg-top-r">
+                <i class="tcg-cost" title="Coût de deck : ${r.cost} étoile${r.cost > 1 ? 's' : ''}">${r.cost}${ti(['ui', 'star'], 'tcg-ico xs')}</i>
+                <i class="tcg-rar">${r.short}</i>
+            </span>
+        </span>
         <span class="tcg-art">${cardSpriteHtml(c)}</span>
         <span class="tcg-name">${esc(c.name)}</span>
         <span class="tcg-stats">${statsHtml}</span>
         ${opts.showPower ? `<span class="tcg-pow-mini">${esc(fam.power)}</span>` : ''}
-        ${opts.big ? `<span class="tcg-pow-box"><b>${esc(fam.power)}</b> : ${esc(fam.powerDesc)}</span><span class="tcg-flavor">${esc(c.flavor)}</span><span class="tcg-meta">#${num}/${TCG_CARDS.length} · ${esc(TCG_SERIES[c.series].short)}</span>` : ''}
+        ${opts.big ? `<span class="tcg-pow-box"><b>${esc(fam.power)}</b> : ${esc(fam.powerDesc)}</span><span class="tcg-flavor">${esc(c.flavor)}</span><span class="tcg-meta">#${num}/${TCG_CARDS.length} · ${esc(TCG_SERIES[c.series].short)} · ${r.cost} étoile${r.cost > 1 ? 's' : ''}</span>` : ''}
         ${opts.isNew ? '<span class="tcg-new">NOUVEAU</span>' : ''}
         ${!opts.hideQty && qty > 1 ? `<span class="tcg-qty">×${qty}</span>` : ''}
         ${!opts.noDeckBadge && (inDeck || isFav) ? `<span class="tcg-pin">${isFav ? ti(['ui', 'star'], 'tcg-ico xs') : ti(['ui', 'tcgDuel'], 'tcg-ico xs')}</span>` : ''}
@@ -258,7 +266,7 @@ function renderDuelArena(T) {
             ${clashHtml}
             <div class="tcg-result ${D.result}">
                 <h3>${title}</h3>
-                <p>Récompense : <b>+${D.gainTokens} ${ICO_TOK()} jetons MeuhCG</b>${D.firstWinPack ? ` &amp; <b>+1 ${ICO_PACK()} Booster gratuit (1re victoire !)</b>` : ''}</p>
+                <p>Récompense : <b>+${D.gainTokens} ${ICO_TOK()} jetons MeuhCG</b>${D.training ? ' <span class="tcg-train-note">(entraînement · déjà battu aujourd’hui)</span>' : ''}${D.firstWinPack ? ` &amp; <b>+1 ${ICO_PACK()} Booster gratuit (1re victoire !)</b>` : ''}</p>
                 <div class="tcg-stage-actions">
                     <button type="button" class="btn green sm" data-act="tcgStartDuel" data-id="${esc(D.oppId)}">${ti(['ui', 'loop'])} Revanche</button>
                     <button type="button" class="btn sm" data-act="tcgEndDuel">Autres adversaires</button>
@@ -269,7 +277,7 @@ function renderDuelArena(T) {
 
     const activeBuffs = [];
     if (D.pNextBonus > 0) activeBuffs.push(`Récolte +${D.pNextBonus}`);
-    if (D.pHandBuff > 0) activeBuffs.push(`Entraide +${D.pHandBuff}`);
+    if (D.pEntraide > 0) activeBuffs.push(`Entraide +1 (${D.pEntraide} carte${D.pEntraide > 1 ? 's' : ''})`);
     if (D.boostArmed) activeBuffs.push('Coup de Maître +3 armé');
 
     const handHtml = D.pHand
@@ -297,8 +305,8 @@ function renderDuelArena(T) {
             <div class="tcg-score"><b>${D.pScore}</b><span>-</span><b>${D.oScore}</b></div>
         </div>
         <div class="tcg-terrain-bar">
-            <span>Terrain : <b>${esc(D.terrainName || 'Vallée')}</b></span>
-            <span class="tcg-terr-bonus">${ti(terrFam.icon, 'tcg-ico xs')} +1 ${terrFam.name}</span>
+            <span>Terrain : <b>${esc(D.terrainName || 'Vallée')}</b> · <span class="tcg-terr-bonus">${ti(terrFam.icon, 'tcg-ico xs')} +1 ${terrFam.name}</span></span>
+            ${D.oHasBoost ? `<span class="tcg-boss-tag${D.oUsedBoost ? ' used' : ''}">${ti(['ui', 'bolt'], 'tcg-ico xs')} ${D.oUsedBoost ? 'Boss +2 utilisé' : 'Boss +2 prêt'}</span>` : ''}
         </div>
         <div class="tcg-timeline">${timelineHtml}</div>
         <div class="tcg-round-pill">Manche <b>${D.round + 1}/5</b> · Critère actif : <b>${ti(activeStat.icon, 'tcg-ico xs')} ${activeStat.name}</b></div>
@@ -324,8 +332,12 @@ function renderDuelsTab(T) {
         family: all.filter(o => o.cat === 'family'),
     };
     const list = byCat[duelCat] || byCat.village;
-    const deckOk = T.deck.length >= 5 || G.tcgOwnedCount() >= 5;
+    const deckCost = G.tcgDeckCost(T.deck);
+    const overBudget = deckCost > TCG_DECK_BUDGET;
+    const deckOk = !overBudget && (T.deck.length >= 5 || G.tcgOwnedCount() >= 5);
     const syn = [...G.tcgDeckSynergies(T.deck)];
+    const quest = G.tcgDailyQuestProgress();
+    const questPct = Math.min(100, Math.round((quest.have / quest.need) * 100));
 
     const catPills = [
         ['village', ['ui', 'village'], `Villageois (${byCat.village.length})`],
@@ -339,15 +351,19 @@ function renderDuelsTab(T) {
         ? list
               .map(o => {
                   const beaten = T.beaten[o.id] || 0;
+                  const beatenToday = G.tcgDailyBeaten(o.id);
                   const tf = TCG_FAMILIES[o.terrain] || TCG_FAMILIES.village;
-                  return `<div class="tcg-opp-card">
+                  const rewHtml = beatenToday
+                      ? `<span class="tcg-train-tag">${ti(['ui', 'check'], 'tcg-ico xs')} Déjà battu aujourd’hui · Entraînement (+5 ${ICO_TOK()})</span>`
+                      : `+${o.reward} ${ICO_TOK()}${beaten ? ` · ${ti(['ui', 'check'], 'tcg-ico xs')} Vaincu ×${beaten}` : ` · +1 ${ICO_PACK()} 1re victoire`}`;
+                  return `<div class="tcg-opp-card${beatenToday ? ' beaten-today' : ''}">
                       <span class="tcg-opp-av">${art('villager', o.art)}</span>
                       <div class="tcg-opp-info">
-                          <div class="tcg-opp-top"><b>${esc(o.name)}</b><span class="tcg-diff d${o.diff}">${esc(o.diffLabel)}</span></div>
+                          <div class="tcg-opp-top"><b>${esc(o.name)}</b><span class="tcg-diff d${o.diff}">${esc(o.diffLabel)}</span>${o.diff >= 3 ? `<span class="tcg-boss-mini" title="Coup spécial +2 en duel">${ti(['ui', 'bolt'], 'tcg-ico xs')}+2</span>` : ''}</div>
                           <small>${esc(o.role)} · ${ti(tf.icon, 'tcg-ico xs')} +1 ${tf.name}</small>
-                          <div class="tcg-opp-rew">+${o.reward} ${ICO_TOK()}${beaten ? ` · ${ti(['ui', 'check'], 'tcg-ico xs')} Vaincu ×${beaten}` : ` · +1 ${ICO_PACK()} 1re victoire`}</div>
+                          <div class="tcg-opp-rew">${rewHtml}</div>
                       </div>
-                      <button type="button" class="btn green sm" data-act="tcgStartDuel" data-id="${esc(o.id)}" ${deckOk ? '' : 'disabled'}>Défier</button>
+                      <button type="button" class="btn ${beatenToday ? '' : 'green'} sm" data-act="tcgStartDuel" data-id="${esc(o.id)}" ${deckOk ? '' : 'disabled'}>${beatenToday ? 'Rejouer' : 'Défier'}</button>
                   </div>`;
               })
               .join('')
@@ -361,11 +377,22 @@ function renderDuelsTab(T) {
         .join('');
 
     return `
-        <div class="tcg-deck-strip">
-            <div><b>Ton deck : ${T.deck.length}/5 cartes</b>${syn.length ? `<small>Synergies (+2) : ${syn.map(f => `${ti(TCG_FAMILIES[f].icon, 'tcg-ico xs')} ${TCG_FAMILIES[f].name}`).join(' · ')}</small>` : '<small>2 cartes de la même famille donnent +2 en duel !</small>'}</div>
-            <span class="tcg-muted">${ti(['ui', 'trophy'], 'tcg-ico xs')} ${T.wins || 0} V · ${T.losses || 0} D</span>
+        <div class="tcg-quest-card${quest.ready ? ' ready' : quest.claimed ? ' done' : ''}">
+            <div class="tcg-quest-info">
+                <b>${ti(['ui', 'trophy'], 'tcg-ico xs')} Défi du jour : battre ${quest.need} adversaires différents</b>
+                <small>Récompense : +80 ${ICO_TOK()} &amp; +1 ${ICO_PACK()} · 1re victoire du jour = récompense complète, revanche le même jour = 5 jetons.</small>
+                <div class="tcg-prog-row"><div class="tcg-prog"><i style="width:${questPct}%"></i></div><span>${Math.min(quest.have, quest.need)}/${quest.need}</span></div>
+            </div>
+            ${quest.claimed ? `<span class="tcg-done-tag">${ti(['ui', 'check'], 'tcg-ico xs')} Pris</span>` : quest.ready ? `<button type="button" class="btn green sm" data-act="tcgClaimDailyQuest">Prendre</button>` : `<span class="tcg-muted">${quest.have}/${quest.need}</span>`}
         </div>
-        ${!deckOk ? `<div class="tcg-pity">${ICO_PACK()} Ouvre au moins 1 booster gratuit dans l’onglet <b>Boosters</b> pour obtenir tes 5 premières cartes !</div>` : ''}
+        <div class="tcg-deck-strip${overBudget ? ' over' : ''}">
+            <div>
+                <b>Ton deck : ${T.deck.length}/5 · ${deckCost}/${TCG_DECK_BUDGET} ${ti(['ui', 'star'], 'tcg-ico xs')}</b>
+                ${overBudget ? `<small>Budget dépassé (max ${TCG_DECK_BUDGET} étoiles) : clique sur Auto ou ajuste ton deck.</small>` : syn.length ? `<small>Synergies (+2) : ${syn.map(f => `${ti(TCG_FAMILIES[f].icon, 'tcg-ico xs')} ${TCG_FAMILIES[f].name}`).join(' · ')}</small>` : '<small>2 cartes de la même famille donnent +2 en duel !</small>'}
+            </div>
+            ${overBudget ? `<button type="button" class="btn green sm" data-act="tcgAutoDeck">${ti(['ui', 'bolt'])} Auto</button>` : `<span class="tcg-muted">${ti(['ui', 'trophy'], 'tcg-ico xs')} ${T.wins || 0} V · ${T.losses || 0} D</span>`}
+        </div>
+        ${!overBudget && !deckOk ? `<div class="tcg-pity">${ICO_PACK()} Ouvre au moins 1 booster gratuit dans l’onglet <b>Boosters</b> pour obtenir tes 5 premières cartes !</div>` : ''}
         <div class="tcg-pills">${catPills}</div>
         <div class="tcg-opp-list">${oppHtml}</div>
         <details class="tcg-rules"><summary>Pouvoirs des 6 familles &amp; règles de combat</summary><div class="tcg-rules-body">${powersGuide}</div></details>
@@ -387,7 +414,7 @@ function renderBinderTab(T) {
                   const r = TCG_RARITIES[c.rarity];
                   const canCraft = T.dust >= r.craft;
                   return `<div class="tcg-card locked rar-${c.rarity}" style="--rc:${r.col}">
-                      <span class="tcg-top"><i class="tcg-fam">${ti(TCG_FAMILIES[c.family].icon, 'tcg-ico xs')}</i><i class="tcg-rar">${r.short}</i></span>
+                      <span class="tcg-top"><i class="tcg-fam">${ti(TCG_FAMILIES[c.family].icon, 'tcg-ico xs')}</i><span class="tcg-top-r"><i class="tcg-cost">${r.cost}${ti(['ui', 'star'], 'tcg-ico xs')}</i><i class="tcg-rar">${r.short}</i></span></span>
                       <span class="tcg-lock-num">#${String(c.num).padStart(3, '0')}</span>
                       <span class="tcg-name">${esc(c.name)}</span>
                       <button type="button" class="tcg-craft-btn${canCraft ? ' ok' : ''}" data-act="tcgCraft" data-id="${c.id}" ${canCraft ? '' : 'disabled'}>Forger · ${r.craft} ${ICO_DUST()}</button>
@@ -412,6 +439,9 @@ function renderBinderTab(T) {
 // ---------------- ONGLET 4 : MON DECK ----------------
 function renderDeckTab(T) {
     const syn = [...G.tcgDeckSynergies(T.deck)];
+    const deckCost = G.tcgDeckCost(T.deck);
+    const overBudget = deckCost > TCG_DECK_BUDGET;
+    const budgetPct = Math.min(100, Math.round((deckCost / TCG_DECK_BUDGET) * 100));
     const slotsHtml = Array.from({ length: 5 }, (_, i) => {
         const cid = T.deck[i];
         if (!cid || !TCG_CARD_BY_ID[cid]) return '<div class="tcg-slot-empty">Emplacement libre</div>';
@@ -425,12 +455,22 @@ function renderDeckTab(T) {
     });
 
     const poolHtml = owned.length
-        ? owned.map(c => renderCardHtml(c, { act: 'tcgToggleDeck', data: `data-id="${c.id}"` })).join('')
+        ? owned
+              .map(c => {
+                  const inDeck = T.deck.includes(c.id);
+                  const cantFit = !inDeck && T.deck.length < 5 && deckCost + G.tcgCardCost(c.id) > TCG_DECK_BUDGET;
+                  return renderCardHtml(c, { act: 'tcgToggleDeck', data: `data-id="${c.id}"`, overBudget: cantFit });
+              })
+              .join('')
         : '<div class="tcg-empty"><b>Aucune carte pour le moment</b><p>Ouvre tes boosters gratuits dans l’onglet Boosters !</p></div>';
 
     return `
-        <div class="tcg-forge-bar">
-            <div><b>${ICO_DUEL()} Deck actif (${T.deck.length}/5)</b><small>${syn.length ? `Synergies (+2) : ${syn.map(f => `${ti(TCG_FAMILIES[f].icon, 'tcg-ico xs')} ${TCG_FAMILIES[f].name}`).join(' · ')}` : 'Mets 2 cartes d’une même famille pour +2 en duel !'}</small></div>
+        <div class="tcg-forge-bar${overBudget ? ' over' : ''}">
+            <div class="tcg-budget-info">
+                <b>${ICO_DUEL()} Deck actif (${T.deck.length}/5) · Budget : ${deckCost}/${TCG_DECK_BUDGET} ${ti(['ui', 'star'], 'tcg-ico xs')}</b>
+                <div class="tcg-budget-bar${overBudget ? ' over' : ''}"><i style="width:${budgetPct}%"></i></div>
+                <small>${overBudget ? `Retire une carte coûteuse ou clique sur Auto pour rester sous ${TCG_DECK_BUDGET} étoiles.` : syn.length ? `Synergies (+2) : ${syn.map(f => `${ti(TCG_FAMILIES[f].icon, 'tcg-ico xs')} ${TCG_FAMILIES[f].name}`).join(' · ')}` : 'C = 1 · PC = 2 · R = 3 · Holo = 4 · Lég. = 5 · Chroma = 6 étoiles.'}</small>
+            </div>
             <button type="button" class="btn green sm" data-act="tcgAutoDeck" ${owned.length ? '' : 'disabled'}>${ti(['ui', 'bolt'])} Auto</button>
         </div>
         <div class="tcg-deck-slots">${slotsHtml}</div>
@@ -471,13 +511,15 @@ defineSheet('tcg', {
         const daily = G.tcgDailyReady();
         const favCard = T.fav && T.cards[T.fav] > 0 ? TCG_CARD_BY_ID[T.fav] : null;
         const boostBadge = (daily ? 1 : 0) + (T.freePacks || 0) + G.tcgClaimableMilestones().length;
+        const duelsBadge = (T.duel ? 1 : 0) + (G.tcgDailyQuestProgress().ready ? 1 : 0);
+        const deckBadge = G.tcgDeckCost(T.deck) > TCG_DECK_BUDGET ? 1 : 0;
         const it = innerTabs(
             'tcg',
             [
                 ['boosters', 'Boosters', ['ui', 'tcgPack'], boostBadge],
-                ['duels', 'Duels', ['ui', 'tcgDuel'], T.duel ? 1 : 0],
+                ['duels', 'Duels', ['ui', 'tcgDuel'], duelsBadge],
                 ['binder', 'Classeur', ['ui', 'book'], G.tcgDupeSummary().count ? 1 : 0],
-                ['deck', 'Mon Deck', ['ui', 'meuhcg'], 0],
+                ['deck', 'Mon Deck', ['ui', 'meuhcg'], deckBadge],
             ],
             'boosters',
         );
@@ -511,6 +553,7 @@ export function setupTcg() {
     actions({
         tcgNoop: () => {},
         tcgClaimDaily: () => G.tcgClaimDaily(),
+        tcgClaimDailyQuest: () => G.tcgClaimDailyQuest(),
         tcgOpenPack: (el, d) => G.tcgOpenPack(d.s),
         tcgTear: () => G.tcgTearPack(),
         tcgReveal: (el, d) => G.tcgRevealCard(+d.i),

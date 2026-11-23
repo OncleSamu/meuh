@@ -1281,6 +1281,140 @@
     line-height: 1.3;
 }
 
+/* 1.157 : Budget de deck (16 étoiles), Défi du jour, mode entraînement & Boss +2 */
+.tcg-top-r {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+.tcg-cost {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    font-style: normal;
+    padding: 0 4px;
+    border-radius: 99px;
+    background: rgba(255, 245, 200, 0.92);
+    border: 1px solid #c98808;
+    color: #6b4200;
+    font-size: 0.54rem;
+    font-weight: 900;
+}
+.tcg-cost .tcg-ico.xs {
+    width: 10px;
+    height: 10px;
+    vertical-align: 0;
+}
+.tcg-card.over-budget {
+    opacity: 0.54;
+    filter: saturate(0.55);
+}
+.tcg-budget-info {
+    flex: 1;
+    min-width: 0;
+}
+.tcg-budget-bar {
+    height: 7px;
+    border-radius: 99px;
+    background: rgba(58, 38, 24, 0.14);
+    overflow: hidden;
+    margin: 4px 0 3px;
+}
+.tcg-budget-bar > i {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #3f8f3b, #e6a817);
+    transition: width 0.2s ease;
+}
+.tcg-budget-bar.over > i {
+    background: linear-gradient(90deg, #d94141, #b71c1c);
+}
+.tcg-forge-bar.over,
+.tcg-deck-strip.over {
+    border-color: #c84343;
+    background: #fdeeee;
+}
+.tcg-quest-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: linear-gradient(120deg, #fff8dc, #f6ead2);
+    border: 1.5px solid #c98808;
+    margin: 6px 0 8px;
+    font-size: 0.78rem;
+}
+.tcg-quest-card.ready {
+    border-color: #2e7d32;
+    background: linear-gradient(120deg, #e7fae0, #fff6cf);
+    box-shadow: 0 2px 0 rgba(46, 125, 50, 0.35);
+}
+.tcg-quest-card.done {
+    opacity: 0.74;
+}
+.tcg-quest-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.tcg-quest-info small {
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+    line-height: 1.25;
+}
+.tcg-quest-card .tcg-prog > i {
+    background: linear-gradient(90deg, #3f8f3b, #7bc659);
+}
+.tcg-opp-card.beaten-today {
+    background: var(--paper-d, #f1e6d2);
+    opacity: 0.88;
+}
+.tcg-train-tag {
+    color: var(--ink-soft);
+    font-weight: 700;
+}
+.tcg-train-note {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    font-weight: 700;
+}
+.tcg-boss-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    font-size: 0.58rem;
+    font-weight: 900;
+    padding: 1px 5px;
+    border-radius: 99px;
+    background: #fff1cc;
+    border: 1px solid #c98808;
+    color: #7a4500;
+}
+.tcg-boss-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 99px;
+    background: #fde6e6;
+    border: 1px solid #c84343;
+    color: #8f1d1d;
+    white-space: nowrap;
+}
+.tcg-boss-tag.used {
+    background: rgba(58, 38, 24, 0.08);
+    border-color: var(--wood-d);
+    color: var(--ink-soft);
+    text-decoration: line-through;
+}
+
 @keyframes tcg-float {
     0%,
     100% {
