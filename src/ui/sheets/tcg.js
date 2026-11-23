@@ -472,10 +472,12 @@ export function setupTcg() {
         const r = card.getBoundingClientRect();
         const px = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
         const py = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
-        card.style.setProperty('--rx', `${((0.5 - py) * 18).toFixed(1)}deg`);
-        card.style.setProperty('--ry', `${((px - 0.5) * 20).toFixed(1)}deg`);
+        const ang = Math.round(105 + (px - 0.5) * 90 + (py - 0.5) * 40);
+        card.style.setProperty('--rx', `${((0.5 - py) * 20).toFixed(1)}deg`);
+        card.style.setProperty('--ry', `${((px - 0.5) * 22).toFixed(1)}deg`);
         card.style.setProperty('--mx', `${(px * 100).toFixed(0)}%`);
         card.style.setProperty('--my', `${(py * 100).toFixed(0)}%`);
+        card.style.setProperty('--ang', `${ang}deg`);
     });
     document.addEventListener('pointerleave', e => {
         const card = e.target.closest && e.target.closest('.tcg-tilt-wrap .tcg-card.big');
