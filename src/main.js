@@ -63,6 +63,7 @@ import { setupIdentity } from './ui/sheets/identity.js';
 import { setupMetier } from './ui/sheets/metier.js';
 import { randomId } from './art/habitants.js';
 import { setupPlans } from './ui/sheets/plans.js';
+import { setupTcg } from './ui/sheets/tcg.js';
 import { setupNight, updateNight } from './ui/night.js';
 import { setupAskBuy } from './ui/sheets/askbuy.js';
 import { setupNavigate } from './ui/navigate.js';
@@ -137,6 +138,7 @@ function start() {
     setupIdentity();
     setupMetier();
     setupPlans();
+    setupTcg();
     setupNight();
     setupAskBuy();
     setupNavigate();

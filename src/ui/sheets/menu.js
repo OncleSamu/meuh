@@ -89,6 +89,7 @@ defineSheet('menu', {
                 tile('Statistiques', 'stats', ['ui', 'chart']),
             ]) +
             group('Collections', [
+                tile('MeuhCG', 'tcg', ['ui', 'meuhcg'], G.tcgBadge(), G.tcgSub()),
                 tile('Livre de la ferme', 'book', ['ui', 'book'], book),
                 carnetsOpen() ? tile('Carnets', 'carnets', ['ui', 'cpCarnet'], carnetsReady()) : '',
                 G.defiOpen() ? tile('La Coupe', 'cup', ['ui', 'cupRank' + G.cupRank()], 0, G.cupRankName()) : '',

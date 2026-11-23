@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.155",
+  "title": "Le MeuhCG : Cartes & Duels de la Vallée",
+  "date": "23 novembre 2026",
+  "items": [
+   "Nouvel onglet MeuhCG dans Menu › Collections, 100 % indépendant de l’économie de la ferme (jetons MeuhCG, boosters gratuits quotidiens et poussière dorée anti-doublons)",
+   "100 cartes à collectionner en 4 séries thématiques (La Vallée, Table & Terroir, Grands Horizons, Haras & Parfums) + Booster Doré, réparties en 6 raretés dont 8 cartes Secrètes Chromatiques animées avec les finitions génétiques (Capybara Bioluminescent, Vache Kintsugi, Fraise Couronne Nacrée, Paon Éventail Étoilé…)",
+   "Ouverture interactive des boosters (paquet brillant à déchirer, 5 cartes à retourner avec suspense et garantie Légendaire/Secrète tous les 10 boosters), classeur complet avec zoom 3D holographique et forge pour fabriquer les cartes manquantes",
+   "Duels de 5 manches contre les villageois (de Théo à Mamie Odette), les campeurs et résidents de ton camping, ainsi que ton conjoint et tes enfants avec leurs vrais portraits !"
+  ]
+ },
+ {
   "v": "1.154",
   "title": "Pause de Théo & Génétique Enrichie",
   "date": "22 novembre 2026",
