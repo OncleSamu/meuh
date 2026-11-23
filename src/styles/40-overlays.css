@@ -10,6 +10,7 @@
 .sheet-wrap {
     position: absolute;
     inset: 0;
+    isolation: isolate;
     pointer-events: auto;
 }
 .sheet-back {
