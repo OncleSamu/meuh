@@ -231,8 +231,13 @@ test('1.157 : équilibrage MeuhCG — budget 16 étoiles, anti-spam quotidien, D
     assert.equal(G.tcgStartDuel('v_theo'), true); // terrain potager
     T.duel.rounds[0] = 0;
     const baseStat = elev5[0].stats[0];
-    // Synergie (+2) + Troupeau plafonné à +2 (malgré 4 autres Élevage en main !) = +4
-    assert.equal(G.tcgCardPreviewPower(T.duel, elev5[0].id), baseStat + 4, 'Troupeau plafonné à +2');
+    const duoBonus = G.tcgDeckDuos(T.deck)
+        .filter(d => d.cards.includes(elev5[0].id))
+        .reduce((s, d) => s + d.bonus, 0);
+    // Synergie (+2) + Troupeau plafonné à +2 (malgré 4 autres Élevage en main !) + éventuel Duo secret
+    const pvElev = G.tcgCardPreview(T.duel, elev5[0].id);
+    assert.ok(pvElev.tags.includes('+2 Troupeau'), 'Troupeau plafonné à +2');
+    assert.equal(pvElev.total, baseStat + 4 + duoBonus, 'score exact avec Troupeau plafonné à +2');
     G.tcgEndDuel();
 
     const byCheap = fam => TCG_CARDS.filter(c => c.family === fam).sort((a, b) => G.tcgCardCost(a.id) - G.tcgCardCost(b.id));
@@ -327,3 +332,110 @@ test('1.155 : sauvegarde (fromSave) et Prestige conservent intégralement la col
     assert.equal(state.tcg.skin.h24, 'gold');
     assert.equal(state.tcg.fav, 'h24');
 });
+
+test('1.162 : 3 decks, Duos secrets, Manche ×2, Tournoi de la Vallée, Troc du jour & Dos de cartes', async () => {
+    const { TCG_DUOS, TCG_TOURNEY_RULES, TCG_CARD_BACKS } = await import('../../src/data/tcg.js');
+    assert.equal(TCG_DUOS.length, 10, '10 Duos secrets');
+    for (const d of TCG_DUOS) {
+        assert.equal(d.cards.length, 2);
+        for (const id of d.cards) assert.ok(TCG_CARD_BY_ID[id], `carte de duo inconnue: ${id}`);
+    }
+    assert.equal(TCG_TOURNEY_RULES.length, 5, '5 règles tournantes de tournoi');
+    assert.equal(TCG_CARD_BACKS.length, 5, '5 dos de cartes déblocables');
+
+    setState(newState());
+    G.loadGame();
+    const T = G.ensureTcg();
+    for (const c of TCG_CARDS) T.cards[c.id] = 3; // collection complète avec doublons
+
+    // 1. 3 emplacements de decks indépendants
+    assert.equal(G.tcgSelectDeck(0), true);
+    T.deck = ['v01', 't01', 'v08', 'v04', 'v09']; // Duo Boulanger (v01+t01, +1) & Duo Basse-cour (v08+v04, +1)
+    G.ensureTcg();
+    assert.equal(G.tcgSelectDeck(1), true);
+    assert.equal(T.deck.length, 0, 'Deck 2 est indépendant du Deck 1');
+    assert.equal(G.tcgAutoDeck(12), true, 'tcgAutoDeck(12) remplit le Deck 2 sous 12 étoiles');
+    assert.equal(T.deck.length, 5);
+    assert.ok(G.tcgDeckCost(T.deck) <= 12, 'Deck 2 respecte 12 étoiles');
+    assert.equal(G.tcgSelectDeck(0), true);
+    assert.deepEqual(T.deck, ['v01', 't01', 'v08', 'v04', 'v09'], 'Deck 1 intact après bascule');
+
+    // 2. Duos secrets & décomposition de score + Manche ×2
+    const duos = G.tcgDeckDuos(T.deck);
+    assert.equal(duos.length, 2, '2 Duos détectés dans Deck 1');
+    assert.equal(G.tcgStartDuel('v_theo'), true);
+    assert.ok(T.duel.doubleRound >= 1 && T.duel.doubleRound <= 3, 'Manche double parmi M2..M4');
+    T.duel.rounds[0] = 0;
+    const pv = G.tcgCardPreview(T.duel, 'v01');
+    assert.ok(
+        pv.tags.some(t => t.includes('Duo Boulanger')),
+        'tcgCardPreview détaille le bonus Duo',
+    );
+    // Vérifier qu'une victoire sur la manche double vaut 2 points
+    T.duel.round = T.duel.doubleRound;
+    T.duel.pScore = 0;
+    T.duel.oScore = 0;
+    T.duel.boostArmed = true; // +3 pour assurer la victoire si nécessaire
+    T.duel.pHand = ['g35', 'v01']; // grosse carte
+    T.duel.oHand = ['v01', 'v02'];
+    assert.equal(G.tcgPlayDuelCard(0), true);
+    assert.equal(T.duel.last.pts, 2, 'Manche double enregistre pts = 2');
+    assert.equal(T.duel.pScore, 2, 'Victoire en Manche double rapporte +2 points');
+    G.tcgEndDuel();
+
+    // 3. Tournoi de la Vallée (3 victoires -> +120 jetons, +1 Coupe, +1 Booster Doré gratuit)
+    state.day = 2; // Jour 2 = règle 'light' (Coupe Poids Plume, budget 12★)
+    const stLight = G.tcgTourneyStatus();
+    assert.equal(stLight.rule.id, 'light');
+    assert.equal(stLight.rule.budget, 12);
+    // Un deck à 16★ doit être refusé sur Coupe Poids Plume
+    const expensive = TCG_CARDS.filter(c => c.rarity === 'R').slice(0, 5).map(c => c.id); // 5*3 = 15★
+    T.deck = expensive;
+    G.ensureTcg();
+    assert.equal(G.tcgStartTourneyMatch(), false, 'Tournoi Poids Plume refuse un deck > 12★');
+    // Basculer sur Deck 2 (<= 12★) -> accepté !
+    assert.equal(G.tcgSelectDeck(1), true);
+    const cupsBefore = T.cups;
+    const goldBefore = T.freeGoldPacks;
+    for (let s = 0; s < 3; s++) {
+        assert.equal(G.tcgStartTourneyMatch(), true, `Lancement match tournoi ${s + 1}/3`);
+        T.duel.pScore = 4;
+        T.duel.oScore = 0;
+        T.duel.round = 4;
+        T.duel.pHand = [T.deck[0]];
+        T.duel.oHand = [T.duel.oHand[0]];
+        assert.equal(G.tcgPlayDuelCard(0), true);
+        if (s === 2) assert.equal(T.duel.tourneyChamp, true, '3e victoire couronne le champion');
+        G.tcgEndDuel();
+    }
+    assert.equal(T.cups, cupsBefore + 1, '+1 coupe de tournoi');
+    assert.equal(T.freeGoldPacks, goldBefore + 1, '+1 Booster Doré gratuit');
+    assert.equal(G.tcgTourneyStatus().wonToday, true);
+    assert.equal(G.tcgStartTourneyMatch(), false, 'Tournoi déjà remporté aujourd’hui');
+    // Ouvrir le Booster Doré gratuitement sans dépenser de jetons
+    T.tokens = 0;
+    assert.equal(G.tcgCanOpenPack('gold'), true, 'Booster Doré gratuit ouvrable avec 0 jeton');
+    assert.ok(G.tcgOpenPack('gold'), 'Ouverture du Booster Doré gratuit');
+    assert.equal(T.freeGoldPacks, goldBefore, '1 Booster Doré gratuit consommé');
+    G.tcgClosePack();
+
+    // 4. Troc du jour avec les villageois
+    const trades = G.tcgDailyTrades();
+    assert.equal(trades.length, 3, '3 offres de troc par jour');
+    assert.equal(trades[0].canAccept, true, 'offre 0 acceptable avec doublons');
+    const give0 = trades[0].giveId;
+    const recv0 = trades[0].offerCardId;
+    const countGiveBefore = T.cards[give0];
+    const countRecvBefore = T.cards[recv0] || 0;
+    assert.equal(G.tcgAcceptTrade(0), true);
+    assert.equal(T.cards[give0], countGiveBefore - 1, '1 doublon consommé');
+    assert.equal(T.cards[recv0], countRecvBefore + 1, '1 carte offerte reçue');
+    assert.equal(G.tcgAcceptTrade(0), false, 'offre déjà faite non répétable');
+
+    // 5. Dos de cartes déblocables
+    const backs = G.tcgUnlockedBacks();
+    assert.equal(backs.length, 5, 'tous les dos débloqués avec 300 cartes');
+    assert.equal(G.tcgSetCardBack('or24'), true);
+    assert.equal(G.tcgCardBack(), 'or24');
+});
+

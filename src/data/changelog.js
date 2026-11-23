@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.162",
+  "title": "MeuhCG : Tournoi, Troc, 3 Decks & Combos",
+  "date": "23 novembre 2026",
+  "items": [
+   "Tournoi de la Vallée (Duels) : 3 matchs éliminatoires par jour sous 5 règles tournantes (Classique, Poids Plume 12 étoiles, Tournoi Vagabond, Fête des Familles +3, Grand Banquet) avec à la clé +120 jetons, +1 Booster Doré gratuit et un compteur de Coupes",
+   "Troc du jour (Classeur) : 3 villageois proposent chaque jour d’échanger 1 doublon de même rareté contre une carte manquante ou une édition spéciale (Inversée, Croquis, Full Art, Or Gravé)",
+   "3 emplacements de decks sauvegardés (Deck 1, Deck 2, Deck 3) commutables en un geste dans Mon Deck et Duels, avec Auto adapté au budget du tournoi",
+   "Duels encore plus tactiques : 10 Duos secrets (+1/+2 pour les paires emblématiques), une Manche Double (×2) valant 2 points sur la frise, et détail en direct des bonus sur chaque carte en main",
+   "Recherche par nom et filtres rapides par famille et coût (dont « <= reste ») dans le Classeur et Mon Deck, plus 5 dos de cartes déblocables à équiper dans Boosters"
+  ]
+ },
+ {
   "v": "1.161",
   "title": "Confort PC, Pluie GPU & Pré Défilable",
   "date": "23 novembre 2026",

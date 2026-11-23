@@ -6,18 +6,41 @@ import { randomId } from '../art/habitants.js';
 import { vName, artId, stageOf } from './family.js';
 import { guestTitle } from './camping.js';
 import {
+    TCG_CARD_BACKS,
     TCG_CARD_BY_ID,
     TCG_CARDS,
     TCG_DECK_BUDGET,
+    TCG_DUOS,
+    TCG_FAMILIES,
     TCG_MILESTONES,
     TCG_RARITIES,
     TCG_RARITY_ORDER,
     TCG_SERIES,
     TCG_STATS,
+    TCG_TOURNEY_RULES,
     TCG_VARIANT_ORDER,
     TCG_VARIANTS,
     TCG_VILLAGER_DUELS,
 } from '../data/tcg.js';
+
+function cleanDeckIds(arr, cards) {
+    if (!Array.isArray(arr)) return [];
+    const seen = new Set();
+    const out = [];
+    for (const id of arr) {
+        if (out.length >= 5) break;
+        if (!seen.has(id) && TCG_CARD_BY_ID[id] && (cards[id] || 0) > 0) {
+            seen.add(id);
+            out.push(id);
+        }
+    }
+    return out;
+}
+
+function syncActiveDeck(T) {
+    if (!Array.isArray(T.decks) || T.decks.length !== 3) T.decks = [[], [], []];
+    T.decks[T.deckIdx] = [...T.deck];
+}
 
 export function ensureTcg() {
     if (!state.tcg || typeof state.tcg !== 'object') {
@@ -25,12 +48,17 @@ export function ensureTcg() {
             tokens: 120,
             dust: 0,
             freePacks: 2,
+            freeGoldPacks: 0,
             dailyDay: 0,
             dailyWins: { day: state.day || 1, ids: [], claimed: false },
             cards: {}, // { cardId: count }
             variants: {}, // { cardId: { reverse: n, sketch: n, fullart: n, gold: n } }
             skin: {}, // { cardId: 'std' | 'reverse' | 'sketch' | 'fullart' | 'gold' }
-            deck: [], // jusqu'à 5 ids de cartes
+            deck: [], // jusqu'à 5 ids de cartes (miroir du slot actif)
+            decks: [[], [], []], // 3 emplacements de decks sauvegardés
+            deckIdx: 0,
+            back: 'vallee',
+            cups: 0,
             fav: null,
             pity: 0,
             opened: 0,
@@ -38,6 +66,8 @@ export function ensureTcg() {
             losses: 0,
             beaten: {}, // { opponentId: count }
             milestones: {}, // { milestoneId: true }
+            tourney: null,
+            trades: null,
             lastPack: null, // { seriesId, cards: [{ id, isNew, variant, isNewVar }], torn, revealed: [bool...] }
             duel: null,
         };
@@ -46,10 +76,20 @@ export function ensureTcg() {
     if (!Number.isFinite(T.tokens)) T.tokens = 120;
     if (!Number.isFinite(T.dust)) T.dust = 0;
     if (!Number.isFinite(T.freePacks)) T.freePacks = 0;
+    if (!Number.isFinite(T.freeGoldPacks)) T.freeGoldPacks = 0;
+    if (!Number.isFinite(T.cups)) T.cups = 0;
+    if (typeof T.back !== 'string' || !T.back) T.back = 'vallee';
     T.cards = T.cards || {};
     T.variants = T.variants || {};
     T.skin = T.skin || {};
-    T.deck = Array.isArray(T.deck) ? T.deck.filter(id => TCG_CARD_BY_ID[id] && (T.cards[id] || 0) > 0).slice(0, 5) : [];
+    T.deckIdx = Number.isInteger(T.deckIdx) && T.deckIdx >= 0 && T.deckIdx < 3 ? T.deckIdx : 0;
+    T.deck = cleanDeckIds(T.deck, T.cards);
+    if (!Array.isArray(T.decks) || T.decks.length !== 3) {
+        T.decks = [[], [], []];
+    } else {
+        T.decks = T.decks.map(d => cleanDeckIds(d, T.cards));
+    }
+    T.decks[T.deckIdx] = [...T.deck];
     T.beaten = T.beaten || {};
     T.milestones = T.milestones || {};
     dailyWinsBox(T);
@@ -106,6 +146,7 @@ export const tcgBadge = () => {
     const T = state.tcg;
     let b = tcgDailyReady() ? 1 : 0;
     if (T && T.freePacks > 0) b += T.freePacks;
+    if (T && T.freeGoldPacks > 0) b += T.freeGoldPacks;
     if (tcgDailyQuestProgress().ready) b += 1;
     b += tcgClaimableMilestones().length;
     return b;
@@ -159,6 +200,7 @@ export function tcgCanOpenPack(seriesId) {
     const T = ensureTcg();
     const s = TCG_SERIES[seriesId];
     if (!s) return false;
+    if (s.allSeries && T.freeGoldPacks > 0) return true;
     if (!s.allSeries && T.freePacks > 0) return true;
     return T.tokens >= s.cost;
 }
@@ -220,8 +262,10 @@ export function tcgOpenPack(seriesId) {
     const T = ensureTcg();
     const s = TCG_SERIES[seriesId];
     if (!s || !tcgCanOpenPack(seriesId)) return null;
+    const usedFreeGold = !!s.allSeries && T.freeGoldPacks > 0;
     const usedFree = !s.allSeries && T.freePacks > 0;
-    if (usedFree) T.freePacks--;
+    if (usedFreeGold) T.freeGoldPacks--;
+    else if (usedFree) T.freePacks--;
     else T.tokens -= s.cost;
 
     const pool = s.allSeries ? TCG_CARDS : TCG_CARDS.filter(c => c.series === seriesId);
@@ -273,6 +317,7 @@ export function tcgOpenPack(seriesId) {
                 T.deck.push(x.id);
             }
         }
+        syncActiveDeck(T);
     }
     if (!T.fav && cards.length) T.fav = cards[cards.length - 1].id;
 
@@ -431,6 +476,7 @@ export function tcgCraftCard(id) {
     T.cards[id] = 1;
     if (T.deck.length < 5 && !T.deck.includes(id) && tcgDeckCost(T.deck) + tcgCardCost(id) <= TCG_DECK_BUDGET) {
         T.deck.push(id);
+        syncActiveDeck(T);
     }
     sfx('level');
     toast(`Carte forgée : ${c.name} !`, ['ui', 'meuhcg']);
@@ -449,10 +495,22 @@ export function tcgClaimMilestone(id) {
     return true;
 }
 
-// ---- Deck (5 cartes, budget 16 étoiles) & Carte favorite ----
+// ---- 3 Decks sauvegardés (5 cartes, budget 16 étoiles), Duos secrets & Dos de cartes ----
 export const tcgCardCost = id => TCG_RARITIES[TCG_CARD_BY_ID[id]?.rarity]?.cost || 1;
 export const tcgDeckCost = (deckIds = ensureTcg().deck) => deckIds.reduce((s, id) => s + tcgCardCost(id), 0);
-export const tcgDeckValid = (deckIds = ensureTcg().deck) => deckIds.length === 5 && tcgDeckCost(deckIds) <= TCG_DECK_BUDGET;
+export const tcgDeckValid = (deckIds = ensureTcg().deck, maxBudget = TCG_DECK_BUDGET) =>
+    deckIds.length === 5 && tcgDeckCost(deckIds) <= maxBudget;
+
+export function tcgSelectDeck(idx) {
+    const T = ensureTcg();
+    if (!Number.isInteger(idx) || idx < 0 || idx > 2) return false;
+    if (T.deckIdx === idx) return true;
+    syncActiveDeck(T);
+    T.deckIdx = idx;
+    T.deck = [...(T.decks[idx] || [])];
+    sfx('click');
+    return true;
+}
 
 export function tcgToggleDeck(id) {
     const T = ensureTcg();
@@ -460,6 +518,7 @@ export function tcgToggleDeck(id) {
     const idx = T.deck.indexOf(id);
     if (idx >= 0) {
         T.deck.splice(idx, 1);
+        syncActiveDeck(T);
         sfx('click');
         return true;
     }
@@ -473,11 +532,17 @@ export function tcgToggleDeck(id) {
         return false;
     }
     T.deck.push(id);
+    syncActiveDeck(T);
     sfx('pop');
     return true;
 }
 
-export function tcgAutoDeck() {
+export function tcgDeckDuos(deckIds) {
+    const set = new Set(deckIds || []);
+    return TCG_DUOS.filter(d => d.cards.every(id => set.has(id)));
+}
+
+export function tcgAutoDeck(maxBudget = TCG_DECK_BUDGET) {
     const T = ensureTcg();
     const owned = TCG_CARDS.filter(c => (T.cards[c.id] || 0) > 0);
     if (!owned.length) return false;
@@ -502,18 +567,20 @@ export function tcgAutoDeck() {
             for (const c of cur) famCount[c.family] = (famCount[c.family] || 0) + 1;
             let synBonus = 0;
             for (const c of cur) if (famCount[c.family] >= 2) synBonus += 5;
-            const total = sum + synBonus;
+            const ids = cur.map(c => c.id);
+            const duoBonus = tcgDeckDuos(ids).reduce((s, d) => s + d.bonus * 5, 0);
+            const total = sum + synBonus + duoBonus;
             if (total > bestScore) {
                 bestScore = total;
-                bestDeck = cur.map(c => c.id);
+                bestDeck = ids;
             }
             return;
         }
-        if (cost + rem > TCG_DECK_BUDGET) return;
+        if (cost + rem > maxBudget) return;
         for (let i = start; i <= pool.length - rem; i++) {
             const c = pool[i];
             const cc = tcgCardCost(c.id);
-            if (cost + cc + (rem - 1) > TCG_DECK_BUDGET) continue;
+            if (cost + cc + (rem - 1) > maxBudget) continue;
             cur.push(c);
             dfs(i + 1, cost + cc, sum + statSum(c));
             cur.pop();
@@ -530,13 +597,14 @@ export function tcgAutoDeck() {
         let cost = 0;
         for (const c of cheap) {
             const cc = tcgCardCost(c.id);
-            if (pick.length < 5 && cost + cc <= TCG_DECK_BUDGET) {
+            if (pick.length < 5 && cost + cc <= maxBudget) {
                 pick.push(c.id);
                 cost += cc;
             }
         }
         T.deck = pick;
     }
+    syncActiveDeck(T);
     sfx('pop');
     return T.deck.length > 0;
 }
@@ -556,6 +624,130 @@ export function tcgDeckSynergies(deckIds) {
         if (c) counts[c.family] = (counts[c.family] || 0) + 1;
     }
     return new Set(Object.keys(counts).filter(f => counts[f] >= 2));
+}
+
+// ---- Dos de cartes déblocables ----
+export function tcgUnlockedBacks() {
+    const T = state.tcg;
+    const owned = tcgOwnedCount();
+    const cups = (T && T.cups) || 0;
+    return TCG_CARD_BACKS.filter(b => owned >= b.needCards || (b.needCups > 0 && cups >= b.needCups)).map(b => b.id);
+}
+
+export function tcgCardBack() {
+    const T = state.tcg;
+    const cur = T && T.back;
+    if (cur && tcgUnlockedBacks().includes(cur)) return cur;
+    return 'vallee';
+}
+
+export function tcgSetCardBack(backId) {
+    const T = ensureTcg();
+    if (!tcgUnlockedBacks().includes(backId)) return false;
+    T.back = backId;
+    sfx('click');
+    return true;
+}
+
+// ---- Troc du jour avec les villageois (3 offres quotidiennes) ----
+function nextRng(seed) {
+    return (Math.imul(seed || 1337, 1664525) + 1013904223) >>> 0;
+}
+
+function tradesBox(T) {
+    const day = state.day || 1;
+    if (T.trades && typeof T.trades === 'object' && T.trades.day === day && Array.isArray(T.trades.offers) && T.trades.offers.length === 3) {
+        return T.trades;
+    }
+    let rng = hashStr('tcg-trades:' + day);
+    const pick = arr => {
+        rng = nextRng(rng);
+        return arr[rng % arr.length];
+    };
+    const vPool = [...TCG_VILLAGER_DUELS];
+    const specs = [
+        { rarities: ['C', 'U'], forceVar: ['reverse', 'sketch'] },
+        { rarities: ['U', 'R'], preferMissing: true, altVar: ['reverse', 'sketch'] },
+        { rarities: ['R', 'F'], preferMissing: true, altVar: ['fullart', 'gold'] },
+    ];
+    const offers = specs.map((sp, idx) => {
+        rng = nextRng(rng);
+        const vIdx = rng % vPool.length;
+        const v = vPool.splice(vIdx, 1)[0];
+        const rar = pick(sp.rarities);
+        const allR = TCG_CARDS.filter(c => c.rarity === rar);
+        const missing = sp.preferMissing ? allR.filter(c => !(T.cards[c.id] > 0)) : [];
+        const card = pick(missing.length ? missing : allR);
+        let offerVariant = 'std';
+        if (sp.forceVar) {
+            offerVariant = pick(sp.forceVar);
+        } else if (missing.length) {
+            rng = nextRng(rng);
+            if (rng % 10 < 3) offerVariant = pick(sp.altVar);
+        } else {
+            offerVariant = pick(sp.altVar);
+        }
+        return {
+            idx,
+            villagerId: v.id,
+            villagerName: v.name,
+            villagerArt: v.art,
+            giveRarity: rar,
+            offerCardId: card.id,
+            offerVariant,
+            done: false,
+        };
+    });
+    T.trades = { day, offers };
+    return T.trades;
+}
+
+export function tcgTradeCandidate(rarity, excludeCardId = null) {
+    const T = ensureTcg();
+    const dupes = Object.entries(T.cards)
+        .filter(([id, n]) => n > 1 && TCG_CARD_BY_ID[id]?.rarity === rarity)
+        .sort((a, b) => (a[0] === excludeCardId ? 1 : 0) - (b[0] === excludeCardId ? 1 : 0) || b[1] - a[1]);
+    return dupes.length ? dupes[0][0] : null;
+}
+
+export function tcgDailyTrades() {
+    const T = ensureTcg();
+    const box = tradesBox(T);
+    return box.offers.map(o => {
+        const giveId = o.done ? null : tcgTradeCandidate(o.giveRarity, o.offerCardId);
+        return { ...o, giveId, canAccept: !o.done && !!giveId };
+    });
+}
+
+export function tcgAcceptTrade(idx) {
+    const T = ensureTcg();
+    const box = tradesBox(T);
+    const offer = box.offers[idx];
+    if (!offer || offer.done) return false;
+    const giveId = tcgTradeCandidate(offer.giveRarity, offer.offerCardId);
+    if (!giveId) {
+        const rName = TCG_RARITIES[offer.giveRarity]?.name || offer.giveRarity;
+        toast(`Il te faut un doublon ${rName} pour cet échange.`, ['ui', 'meuhcg']);
+        return false;
+    }
+    const c = TCG_CARD_BY_ID[offer.offerCardId];
+    if (!c) return false;
+    T.cards[giveId]--;
+    T.cards[offer.offerCardId] = (T.cards[offer.offerCardId] || 0) + 1;
+    if (offer.offerVariant && offer.offerVariant !== 'std') {
+        T.variants[offer.offerCardId] = T.variants[offer.offerCardId] || {};
+        T.variants[offer.offerCardId][offer.offerVariant] = (T.variants[offer.offerCardId][offer.offerVariant] || 0) + 1;
+        T.skin[offer.offerCardId] = offer.offerVariant;
+    }
+    offer.done = true;
+    if (T.deck.length < 5 && !T.deck.includes(c.id) && tcgDeckCost(T.deck) + tcgCardCost(c.id) <= TCG_DECK_BUDGET) {
+        T.deck.push(c.id);
+        syncActiveDeck(T);
+    }
+    sfx('level');
+    const vLabel = offer.offerVariant !== 'std' ? ` (${TCG_VARIANTS[offer.offerVariant]?.name || offer.offerVariant})` : '';
+    toast(`Troc réussi avec ${offer.villagerName} : ${c.name}${vLabel} reçue !`, ['ui', 'meuhcg']);
+    return true;
 }
 
 // ---- Adversaires de Duel : Villageois + Campeurs réels + Famille réelle ----
@@ -747,8 +939,85 @@ export function tcgOpponents() {
     return out;
 }
 
-// ---- Moteur de Duel 2.1 (pouvoirs rééquilibrés, terrain, Coup spécial Boss +2 & anti-spam quotidien) ----
-function evalCard(cardId, statIdx, { synSet, terrain, otherHand, nextBonus, entraide, masterBoost, oppIsHorizons }) {
+// ---- Tournoi de la Vallée (3 matchs éliminatoires/jour + règles tournantes) ----
+function tourneyBox(T) {
+    const day = state.day || 1;
+    if (
+        T.tourney &&
+        typeof T.tourney === 'object' &&
+        T.tourney.day === day &&
+        Array.isArray(T.tourney.oppIds) &&
+        T.tourney.oppIds.length === 3
+    ) {
+        return T.tourney;
+    }
+    const rule = TCG_TOURNEY_RULES[(day - 1) % TCG_TOURNEY_RULES.length];
+    let rng = hashStr('tcg-tourney:' + day);
+    const pick = arr => {
+        rng = nextRng(rng);
+        return arr[rng % arr.length];
+    };
+    const easy = TCG_VILLAGER_DUELS.filter(v => v.diff === 1);
+    const med = TCG_VILLAGER_DUELS.filter(v => v.diff === 2);
+    const hard = TCG_VILLAGER_DUELS.filter(v => v.diff >= 3);
+    const o0 = pick(easy);
+    const o1 = pick(med);
+    const o2 = pick(hard);
+    T.tourney = {
+        day,
+        ruleId: rule.id,
+        oppIds: [o0.id, o1.id, o2.id],
+        stage: 0,
+        wonToday: false,
+    };
+    return T.tourney;
+}
+
+export function tcgTourneyStatus() {
+    const T = ensureTcg();
+    const box = tourneyBox(T);
+    const rule = TCG_TOURNEY_RULES.find(r => r.id === box.ruleId) || TCG_TOURNEY_RULES[0];
+    const opps = box.oppIds.map(id => TCG_VILLAGER_DUELS.find(v => v.id === id)).filter(Boolean);
+    return {
+        day: box.day,
+        rule,
+        stage: box.stage || 0,
+        wonToday: !!box.wonToday,
+        cups: T.cups || 0,
+        opps,
+    };
+}
+
+export function tcgStartTourneyMatch() {
+    const T = ensureTcg();
+    const box = tourneyBox(T);
+    if (box.wonToday) {
+        toast('Tu as déjà remporté le Tournoi de la Vallée aujourd’hui ! Reviens demain.', ['ui', 'meuhcg']);
+        return false;
+    }
+    const rule = TCG_TOURNEY_RULES.find(r => r.id === box.ruleId) || TCG_TOURNEY_RULES[0];
+    const stage = Math.max(0, Math.min(2, box.stage || 0));
+    const oppId = box.oppIds[stage];
+    return tcgStartDuel(oppId, {
+        stage,
+        ruleId: rule.id,
+        ruleName: rule.name,
+        ruleDesc: rule.desc,
+        budget: rule.budget,
+    });
+}
+
+// ---- Moteur de Duel 2.2 (Duos secrets, Manche ×2, décomposition & Tournoi de la Vallée) ----
+function resolveDuos(ids) {
+    if (!Array.isArray(ids) || !ids.length) return [];
+    return ids.map(id => TCG_DUOS.find(d => d.id === id)).filter(Boolean);
+}
+
+function evalCard(
+    cardId,
+    statIdx,
+    { synSet, duos, terrain, otherHand, nextBonus, entraide, masterBoost, oppIsHorizons, synBonus = 2, saveurBoost = 0 },
+) {
     const c = TCG_CARD_BY_ID[cardId];
     if (!c) return { total: 0, tags: [] };
     let total = c.stats[statIdx];
@@ -757,8 +1026,16 @@ function evalCard(cardId, statIdx, { synSet, terrain, otherHand, nextBonus, entr
         if (oppIsHorizons) {
             tags.push('Synergie annulée (Aventure)');
         } else {
-            total += 2;
-            tags.push('+2 synergie');
+            total += synBonus;
+            tags.push(`+${synBonus} synergie`);
+        }
+    }
+    if (duos && duos.length) {
+        for (const d of duos) {
+            if (d.cards.includes(cardId)) {
+                total += d.bonus;
+                tags.push(`+${d.bonus} ${d.name}`);
+            }
         }
     }
     if (terrain && c.family === terrain) {
@@ -780,6 +1057,10 @@ function evalCard(cardId, statIdx, { synSet, terrain, otherHand, nextBonus, entr
         total += 1;
         tags.push('+1 Festin');
     }
+    if (saveurBoost > 0 && statIdx === 1) {
+        total += saveurBoost;
+        tags.push(`+${saveurBoost} Banquet`);
+    }
     if (nextBonus > 0) {
         total += nextBonus;
         tags.push(`+${nextBonus} Récolte`);
@@ -795,32 +1076,45 @@ function evalCard(cardId, statIdx, { synSet, terrain, otherHand, nextBonus, entr
     return { total, tags };
 }
 
-export function tcgCardPreviewPower(D, cardId) {
-    if (!D || D.done) return 0;
+export function tcgCardPreview(D, cardId) {
+    if (!D || D.done) return { total: 0, tags: [] };
     const statIdx = D.rounds[D.round];
     const others = D.pHand.filter(id => id !== cardId);
     return evalCard(cardId, statIdx, {
         synSet: new Set(D.pSyn || []),
+        duos: resolveDuos(D.pDuos),
         terrain: D.terrain,
         otherHand: others,
         nextBonus: D.pNextBonus || 0,
         entraide: (D.pEntraide || 0) > 0,
         masterBoost: D.boostArmed ? 3 : 0,
         oppIsHorizons: false,
-    }).total;
+        synBonus: D.synBonus || 2,
+        saveurBoost: D.saveurBoost || 0,
+    });
 }
 
-export function tcgStartDuel(oppId) {
+export function tcgCardPreviewPower(D, cardId) {
+    return tcgCardPreview(D, cardId).total;
+}
+
+export function tcgStartDuel(oppId, tourneyOpt = null) {
     const T = ensureTcg();
+    const budget = tourneyOpt ? tourneyOpt.budget : TCG_DECK_BUDGET;
     if (T.deck.length < 5) {
-        tcgAutoDeck();
+        tcgAutoDeck(budget);
         if (T.deck.length < 5) {
             toast('Ouvre un booster pour obtenir 5 cartes avant de lancer un duel !', ['ui', 'meuhcg']);
             return false;
         }
     }
-    if (tcgDeckCost(T.deck) > TCG_DECK_BUDGET) {
-        toast(`Ton deck dépasse le budget de ${TCG_DECK_BUDGET} étoiles : ajuste-le dans Mon Deck ou clique sur Auto !`, ['ui', 'meuhcg']);
+    if (tcgDeckCost(T.deck) > budget) {
+        toast(
+            budget < TCG_DECK_BUDGET
+                ? `Ce tournoi impose un budget de ${budget} étoiles max : utilise « Auto ${budget}★ » ou un autre deck !`
+                : `Ton deck dépasse le budget de ${budget} étoiles : ajuste-le dans Mon Deck ou clique sur Auto !`,
+            ['ui', 'meuhcg'],
+        );
         return false;
     }
     const opp = tcgOpponents().find(o => o.id === oppId);
@@ -829,6 +1123,7 @@ export function tcgStartDuel(oppId) {
     const base = [0, 1, 2, Math.floor(Math.random() * 3), Math.floor(Math.random() * 3)];
     const rounds = base.sort(() => Math.random() - 0.5);
     const oppHand = [...opp.deck].sort(() => Math.random() - 0.5);
+    const doubleRound = 1 + Math.floor(Math.random() * 3); // Manche 2, 3 ou 4 vaut ×2 points !
     T.duel = {
         oppId: opp.id,
         oppName: opp.name,
@@ -843,12 +1138,19 @@ export function tcgStartDuel(oppId) {
         winQuote: opp.winQuote,
         loseQuote: opp.loseQuote,
         rounds,
+        doubleRound,
         history: [], // 'win' | 'lose' | 'draw'
         round: 0,
         pHand: [...T.deck],
         oHand: oppHand,
         pSyn: [...tcgDeckSynergies(T.deck)],
         oSyn: [...tcgDeckSynergies(oppHand)],
+        pDuos: tcgDeckDuos(T.deck).map(d => d.id),
+        oDuos: tcgDeckDuos(oppHand).map(d => d.id),
+        tourney: tourneyOpt ? { ...tourneyOpt } : null,
+        synBonus: tourneyOpt?.ruleId === 'double_syn' ? 3 : 2,
+        saveurBoost: tourneyOpt?.ruleId === 'boost_saveur' ? 2 : 0,
+        randomTerrain: tourneyOpt?.ruleId === 'random_terrain',
         pNextBonus: 0,
         oNextBonus: 0,
         pEntraide: 0,
@@ -866,6 +1168,9 @@ export function tcgStartDuel(oppId) {
         gainTokens: 0,
         training: false,
         firstWinPack: false,
+        tourneyChamp: false,
+        tourneyNext: null,
+        tourneyOut: false,
     };
     sfx('pop');
     return true;
@@ -900,8 +1205,12 @@ export function tcgPlayDuelCard(handIdx) {
     const pId = D.pHand.splice(handIdx, 1)[0];
     const pSyn = new Set(D.pSyn || []);
     const oSyn = new Set(D.oSyn || []);
+    const pDuos = resolveDuos(D.pDuos);
+    const oDuos = resolveDuos(D.oDuos);
+    const synBonus = D.synBonus || 2;
+    const saveurBoost = D.saveurBoost || 0;
 
-    // Choix IA selon difficulté (tient compte du terrain, synergie et pouvoirs)
+    // Choix IA selon difficulté (tient compte du terrain, synergie, duos et pouvoirs)
     let oPick = 0;
     if (D.oppDiff >= 3 || (D.oppDiff === 2 && Math.random() < 0.6)) {
         let best = -1;
@@ -909,12 +1218,15 @@ export function tcgPlayDuelCard(handIdx) {
             const others = D.oHand.filter((_, j) => j !== i);
             const ev = evalCard(cid, statIdx, {
                 synSet: oSyn,
+                duos: oDuos,
                 terrain: D.terrain,
                 otherHand: others,
                 nextBonus: D.oNextBonus || 0,
                 entraide: (D.oEntraide || 0) > 0,
                 masterBoost: 0,
                 oppIsHorizons: false,
+                synBonus,
+                saveurBoost,
             });
             if (ev.total > best) {
                 best = ev.total;
@@ -929,26 +1241,38 @@ export function tcgPlayDuelCard(handIdx) {
     const oCard = TCG_CARD_BY_ID[oId];
 
     // Coup spécial (+2) des adversaires Difficile & Maître (utilisé 1× entre les manches 2 et 4)
-    const oBossBoost = !!(D.oHasBoost && !D.oUsedBoost && D.round >= 1 && D.round <= 3 && (D.oScore <= D.pScore || D.round === 3));
+    const oBossBoost = !!(
+        D.oHasBoost &&
+        !D.oUsedBoost &&
+        D.round >= 1 &&
+        D.round <= 3 &&
+        (D.round === D.doubleRound || D.oScore <= D.pScore || D.round === 3)
+    );
     if (oBossBoost) D.oUsedBoost = true;
 
     const pEval = evalCard(pId, statIdx, {
         synSet: pSyn,
+        duos: pDuos,
         terrain: D.terrain,
         otherHand: D.pHand,
         nextBonus: D.pNextBonus || 0,
         entraide: (D.pEntraide || 0) > 0,
         masterBoost: D.boostArmed ? 3 : 0,
         oppIsHorizons: oCard.family === 'horizons',
+        synBonus,
+        saveurBoost,
     });
     const oEval = evalCard(oId, statIdx, {
         synSet: oSyn,
+        duos: oDuos,
         terrain: D.terrain,
         otherHand: D.oHand,
         nextBonus: D.oNextBonus || 0,
         entraide: (D.oEntraide || 0) > 0,
         masterBoost: oBossBoost ? 2 : 0,
         oppIsHorizons: pCard.family === 'horizons',
+        synBonus,
+        saveurBoost,
     });
 
     // Consommer les bonus à usage unique et 1 charge d'Entraide
@@ -987,15 +1311,19 @@ export function tcgPlayDuelCard(handIdx) {
         }
     }
 
+    const pts = D.round === D.doubleRound ? 2 : 1;
+
     // Effets après manche : Récolte (Potager) & Entraide (Village : +1 sur les 2 prochaines cartes)
     if (outcome === 'win') {
-        D.pScore++;
+        D.pScore += pts;
+        if (pts === 2) notes.unshift('Manche double (×2) : +2 points !');
         if (pCard.family === 'potager') {
             D.pNextBonus = 2;
             notes.push('Récolte : +2 sur ta prochaine carte !');
         }
     } else if (outcome === 'lose') {
-        D.oScore++;
+        D.oScore += pts;
+        if (pts === 2) notes.unshift('Manche double (×2) : +2 points adverses !');
         if (oCard.family === 'potager') {
             D.oNextBonus = 2;
             notes.push('Récolte adverse : +2 au prochain tour.');
@@ -1013,6 +1341,7 @@ export function tcgPlayDuelCard(handIdx) {
     D.last = {
         round: D.round + 1,
         stat: TCG_STATS[statIdx],
+        pts,
         pId,
         oId,
         pVal: pEval.total,
@@ -1023,10 +1352,52 @@ export function tcgPlayDuelCard(handIdx) {
         outcome,
     };
     D.round++;
+
+    // Règle Tournoi Vagabond : changer le terrain à chaque manche
+    if (D.randomTerrain && D.round < 5 && D.pHand.length) {
+        const fams = Object.keys(TCG_FAMILIES).filter(f => f !== D.terrain);
+        if (fams.length) {
+            D.terrain = fams[Math.floor(Math.random() * fams.length)];
+            D.terrainName = `Terrain : ${TCG_FAMILIES[D.terrain].name}`;
+        }
+    }
+
     sfx(outcome === 'win' ? 'harvest' : outcome === 'lose' ? 'error' : 'click');
 
     if (D.round >= 5 || !D.pHand.length) {
         D.done = true;
+        if (D.tourney) {
+            const box = tourneyBox(T);
+            if (D.pScore > D.oScore) {
+                D.result = 'win';
+                T.wins++;
+                const nextStage = Math.min(3, (D.tourney.stage || 0) + 1);
+                box.stage = nextStage;
+                if (nextStage >= 3) {
+                    box.wonToday = true;
+                    T.cups = (T.cups || 0) + 1;
+                    D.gainTokens = 120;
+                    T.tokens += 120;
+                    T.freeGoldPacks = (T.freeGoldPacks || 0) + 1;
+                    D.tourneyChamp = true;
+                } else {
+                    D.gainTokens = 35 + nextStage * 15;
+                    T.tokens += D.gainTokens;
+                    D.tourneyNext = nextStage;
+                }
+                sfx('level');
+            } else {
+                D.result = D.pScore === D.oScore ? 'draw' : 'lose';
+                if (D.result === 'lose') T.losses++;
+                box.stage = 0;
+                D.tourneyOut = true;
+                D.gainTokens = D.result === 'draw' ? 20 : 10;
+                T.tokens += D.gainTokens;
+                sfx(D.result === 'draw' ? 'pop' : 'error');
+            }
+            return true;
+        }
+
         const box = dailyWinsBox(T);
         const alreadyToday = box.ids.includes(D.oppId);
         if (D.pScore > D.oScore) {

@@ -760,3 +760,36 @@ export const TCG_MILESTONES = [
     { id: 'm250', need: 250, name: 'Gardien des 8 séries', tokens: 550, packs: 4 },
     { id: 'm300', need: 300, name: 'Légende Absolue du MeuhCG', tokens: 1000, packs: 6 },
 ];
+
+// 1.162 : 10 Duos secrets (bonus si les deux cartes sont dans ton deck)
+export const TCG_DUOS = [
+    { id: 'bassecour', name: 'Duo Basse-cour', cards: ['v08', 'v04'], bonus: 1 },
+    { id: 'boulanger', name: 'Duo Boulanger', cards: ['v01', 't01'], bonus: 1 },
+    { id: 'berger', name: 'Duo Berger', cards: ['v09', 'v06'], bonus: 1 },
+    { id: 'fromager', name: 'Duo Fromager', cards: ['v16', 't07'], bonus: 2 },
+    { id: 'rucher', name: 'Duo Rucher', cards: ['v17', 't04'], bonus: 2 },
+    { id: 'patissier', name: 'Duo Pâtissier', cards: ['v10', 't12'], bonus: 1 },
+    { id: 'vigneron', name: 'Duo Vigneron', cards: ['f07', 't17'], bonus: 2 },
+    { id: 'parfumeur', name: 'Duo Parfumeur', cards: ['p02', 'p13'], bonus: 1 },
+    { id: 'zen', name: 'Duo Zen', cards: ['h23', 'f05'], bonus: 2 },
+    { id: 'ferme', name: 'Duo de la Ferme', cards: ['v20', 'v23'], bonus: 2 },
+];
+
+// 1.162 : 5 règles tournantes du Tournoi de la Vallée (3 matchs éliminatoires, 1 règle par jour)
+export const TCG_TOURNEY_RULES = [
+    { id: 'classic', name: 'Coupe de la Vallée', desc: 'Règles classiques (budget 16 étoiles).', budget: 16 },
+    { id: 'light', name: 'Coupe Poids Plume', desc: 'Budget réduit à 12 étoiles : fais briller tes Communes et Peu communes !', budget: 12 },
+    { id: 'random_terrain', name: 'Tournoi Vagabond', desc: 'Le terrain change à chaque manche !', budget: 16 },
+    { id: 'double_syn', name: 'Fête des Familles', desc: 'Les synergies de famille donnent +3 au lieu de +2 !', budget: 16 },
+    { id: 'boost_saveur', name: 'Grand Banquet', desc: 'Les manches Saveur accordent +2 à toutes les cartes !', budget: 16 },
+];
+
+// 1.162 : 5 dos de cartes déblocables (affichés à l’ouverture des boosters et dans les duels)
+export const TCG_CARD_BACKS = [
+    { id: 'vallee', name: 'Classique', needCards: 0, needCups: 0, desc: 'Dos bois & or traditionnel du MeuhCG.' },
+    { id: 'foret', name: 'Émeraude', needCards: 25, needCups: 0, desc: 'Débloqué à 25 cartes.' },
+    { id: 'nuit', name: 'Nuit Étoilée', needCards: 50, needCups: 1, desc: 'Débloqué à 50 cartes ou 1 coupe de tournoi.' },
+    { id: 'capy', name: 'Capybara Zen', needCards: 100, needCups: 3, desc: 'Débloqué à 100 cartes ou 3 coupes de tournoi.' },
+    { id: 'or24', name: 'Or Royal 24k', needCards: 150, needCups: 5, desc: 'Débloqué à 150 cartes ou 5 coupes de tournoi.' },
+];
+
