@@ -63,19 +63,20 @@ function renderCardHtml(c, opts = {}) {
     const act = opts.act || 'tcgZoom';
     const extraData = opts.data || `data-id="${c.id}"`;
     const hiStat = opts.hiStat ?? -1;
-    const synBonus = opts.synBonus ? 2 : 0;
+    const previewVal = opts.previewVal;
     const cls = [
         'tcg-card',
         `rar-${c.rarity}`,
         opts.big ? 'big' : '',
         opts.isNew ? 'is-new' : '',
+        opts.armed ? 'armed' : '',
         inDeck && !opts.noDeckBadge ? 'in-deck' : '',
         opts.cls || '',
     ]
         .filter(Boolean)
         .join(' ');
     const statsHtml = TCG_STATS.map((s, i) => {
-        const val = c.stats[i] + (hiStat === i ? synBonus : 0);
+        const val = hiStat === i && previewVal != null ? previewVal : c.stats[i];
         return `<span class="tcg-st${hiStat === i ? ' hi' : ''}" title="${s.name}">${ti(s.icon, 'tcg-ico xs')}<b>${val}</b></span>`;
     }).join('');
     const sparks =
@@ -89,11 +90,12 @@ function renderCardHtml(c, opts = {}) {
         <span class="tcg-holo"></span>
         <span class="tcg-glare"></span>
         ${sparks}
-        <span class="tcg-top"><i class="tcg-fam" title="${fam.name}">${ti(fam.icon, 'tcg-ico xs')}</i><i class="tcg-rar">${r.short}</i></span>
+        <span class="tcg-top"><i class="tcg-fam" title="${fam.name} · ${fam.power}">${ti(fam.icon, 'tcg-ico xs')}</i><i class="tcg-rar">${r.short}</i></span>
         <span class="tcg-art">${cardSpriteHtml(c)}</span>
         <span class="tcg-name">${esc(c.name)}</span>
         <span class="tcg-stats">${statsHtml}</span>
-        ${opts.big ? `<span class="tcg-flavor">${esc(c.flavor)}</span><span class="tcg-meta">#${num}/${TCG_CARDS.length} · ${esc(TCG_SERIES[c.series].short)}</span>` : ''}
+        ${opts.showPower ? `<span class="tcg-pow-mini">${esc(fam.power)}</span>` : ''}
+        ${opts.big ? `<span class="tcg-pow-box"><b>${esc(fam.power)}</b> : ${esc(fam.powerDesc)}</span><span class="tcg-flavor">${esc(c.flavor)}</span><span class="tcg-meta">#${num}/${TCG_CARDS.length} · ${esc(TCG_SERIES[c.series].short)}</span>` : ''}
         ${opts.isNew ? '<span class="tcg-new">NOUVEAU</span>' : ''}
         ${!opts.hideQty && qty > 1 ? `<span class="tcg-qty">×${qty}</span>` : ''}
         ${!opts.noDeckBadge && (inDeck || isFav) ? `<span class="tcg-pin">${isFav ? ti(['ui', 'star'], 'tcg-ico xs') : ti(['ui', 'tcgDuel'], 'tcg-ico xs')}</span>` : ''}
@@ -191,30 +193,50 @@ function renderBoostersTab(T) {
     `;
 }
 
-// ---------------- ONGLET 2 : DUELS ----------------
+// ---------------- ONGLET 2 : DUELS 2.0 ----------------
 function renderDuelArena(T) {
     const D = T.duel;
-    const pSyn = new Set(D.pSyn || []);
     const activeStat = !D.done ? TCG_STATS[D.rounds[D.round]] : null;
+    const terrFam = TCG_FAMILIES[D.terrain] || TCG_FAMILIES.village;
+
+    // Frise tactique des 5 manches
+    const timelineHtml = D.rounds
+        .map((stIdx, i) => {
+            const st = TCG_STATS[stIdx];
+            const res = (D.history || [])[i];
+            const cur = !D.done && i === D.round;
+            return `<span class="tcg-tl-step${cur ? ' cur' : ''}${res ? ' ' + res : ''}" title="Manche ${i + 1} : ${st.name}">
+                <small>M${i + 1}</small>${ti(st.icon, 'tcg-ico xs')}
+            </span>`;
+        })
+        .join('');
 
     let clashHtml = '';
     if (D.last) {
         const pC = TCG_CARD_BY_ID[D.last.pId];
         const oC = TCG_CARD_BY_ID[D.last.oId];
         const txt = D.last.outcome === 'win' ? 'Manche gagnée !' : D.last.outcome === 'lose' ? 'Manche perdue…' : 'Égalité !';
+        const pTags = (D.last.pTags || []).map(x => `<i>${esc(x)}</i>`).join('');
+        const oTags = (D.last.oTags || []).map(x => `<i>${esc(x)}</i>`).join('');
+        const notesHtml = (D.last.notes || []).length
+            ? `<div class="tcg-clash-notes">${D.last.notes.map(n => `<span>${ti(['ui', 'sparkle'], 'tcg-ico xs')} ${esc(n)}</span>`).join('')}</div>`
+            : '';
         clashHtml = `<div class="tcg-clash ${D.last.outcome}">
             <div class="tcg-clash-head">Manche ${D.last.round} · ${ti(D.last.stat.icon, 'tcg-ico xs')} ${D.last.stat.name} — <b>${txt}</b></div>
             <div class="tcg-clash-cards">
                 <div class="tcg-clash-side">
-                    <small>Toi · <b>${D.last.pVal}</b>${D.last.pSynBonus ? ' <i>(+2 synergie)</i>' : ''}</small>
-                    ${renderCardHtml(pC, { hiStat: D.last.stat.id, synBonus: D.last.pSynBonus, hideQty: true, noDeckBadge: true, act: 'tcgNoop' })}
+                    <small>Toi · <b>${D.last.pVal}</b></small>
+                    ${renderCardHtml(pC, { hiStat: D.last.stat.id, previewVal: D.last.pVal, hideQty: true, noDeckBadge: true, act: 'tcgNoop' })}
+                    ${pTags ? `<div class="tcg-tags">${pTags}</div>` : ''}
                 </div>
                 <div class="tcg-vs">VS</div>
                 <div class="tcg-clash-side">
-                    <small>${esc(D.oppName)} · <b>${D.last.oVal}</b>${D.last.oSynBonus ? ' <i>(+2)</i>' : ''}</small>
-                    ${renderCardHtml(oC, { hiStat: D.last.stat.id, synBonus: D.last.oSynBonus, hideQty: true, noDeckBadge: true, act: 'tcgNoop' })}
+                    <small>${esc(D.oppName)} · <b>${D.last.oVal}</b></small>
+                    ${renderCardHtml(oC, { hiStat: D.last.stat.id, previewVal: D.last.oVal, hideQty: true, noDeckBadge: true, act: 'tcgNoop' })}
+                    ${oTags ? `<div class="tcg-tags">${oTags}</div>` : ''}
                 </div>
             </div>
+            ${notesHtml}
         </div>`;
     }
 
@@ -232,6 +254,7 @@ function renderDuelArena(T) {
                 <div class="tcg-opp-meta"><b>${esc(D.oppName)}</b><small>${esc(D.oppRole)}</small><p class="tcg-bubble">${esc(react)}</p></div>
                 <div class="tcg-score"><b>${D.pScore}</b><span>-</span><b>${D.oScore}</b></div>
             </div>
+            <div class="tcg-timeline">${timelineHtml}</div>
             ${clashHtml}
             <div class="tcg-result ${D.result}">
                 <h3>${title}</h3>
@@ -244,14 +267,22 @@ function renderDuelArena(T) {
         </div>`;
     }
 
+    const activeBuffs = [];
+    if (D.pNextBonus > 0) activeBuffs.push(`Récolte +${D.pNextBonus}`);
+    if (D.pHandBuff > 0) activeBuffs.push(`Entraide +${D.pHandBuff}`);
+    if (D.boostArmed) activeBuffs.push('Coup de Maître +3 armé');
+
     const handHtml = D.pHand
         .map((cid, i) => {
             const c = TCG_CARD_BY_ID[cid];
+            const pw = G.tcgCardPreviewPower(D, cid);
             return renderCardHtml(c, {
                 act: 'tcgPlayCard',
                 data: `data-i="${i}"`,
                 hiStat: activeStat.id,
-                synBonus: pSyn.has(c.family),
+                previewVal: pw,
+                showPower: true,
+                armed: !!D.boostArmed,
                 hideQty: true,
                 noDeckBadge: true,
                 cls: 'playable',
@@ -265,9 +296,19 @@ function renderDuelArena(T) {
             <div class="tcg-opp-meta"><b>${esc(D.oppName)}</b><small>${esc(D.oppRole)} · ${esc(D.oppDiffLabel)}</small><p class="tcg-bubble">${esc(D.quote)}</p></div>
             <div class="tcg-score"><b>${D.pScore}</b><span>-</span><b>${D.oScore}</b></div>
         </div>
+        <div class="tcg-terrain-bar">
+            <span>Terrain : <b>${esc(D.terrainName || 'Vallée')}</b></span>
+            <span class="tcg-terr-bonus">${ti(terrFam.icon, 'tcg-ico xs')} +1 ${terrFam.name}</span>
+        </div>
+        <div class="tcg-timeline">${timelineHtml}</div>
         <div class="tcg-round-pill">Manche <b>${D.round + 1}/5</b> · Critère actif : <b>${ti(activeStat.icon, 'tcg-ico xs')} ${activeStat.name}</b></div>
+        <div class="tcg-tactics">
+            <button type="button" class="btn sm${D.usedReroll ? '' : ' blue'}" data-act="tcgReroll" ${D.usedReroll ? 'disabled' : ''}>${ti(['ui', 'loop'])} Changer critère ${D.usedReroll ? '(utilisé)' : '(1×)'}</button>
+            <button type="button" class="btn sm${D.boostArmed ? ' gold' : D.usedBoost ? '' : ' green'}" data-act="tcgBoost" ${D.usedBoost ? 'disabled' : ''}>${ti(['ui', 'bolt'])} ${D.boostArmed ? 'Coup de Maître +3 armé !' : D.usedBoost ? 'Coup de Maître (utilisé)' : 'Coup de Maître +3 (1×)'}</button>
+        </div>
+        ${activeBuffs.length ? `<div class="tcg-buffs">${activeBuffs.map(b => `<span>${ti(['ui', 'sparkle'], 'tcg-ico xs')} ${esc(b)}</span>`).join('')}</div>` : ''}
         ${clashHtml}
-        <div class="tcg-hand-label">Choisis une carte de ta main${D.pSyn.length ? ` · Synergies (+2) : ${D.pSyn.map(f => `${ti(TCG_FAMILIES[f].icon, 'tcg-ico xs')} ${TCG_FAMILIES[f].name}`).join(', ')}` : ''}</div>
+        <div class="tcg-hand-label">Choisis ta carte (score réel affiché en vert)${D.pSyn.length ? ` · Synergies (+2) : ${D.pSyn.map(f => `${ti(TCG_FAMILIES[f].icon, 'tcg-ico xs')} ${TCG_FAMILIES[f].name}`).join(', ')}` : ''}</div>
         <div class="tcg-hand">${handHtml}</div>
         <div class="tcg-stage-actions"><button type="button" class="btn sm" data-act="tcgEndDuel">Abandonner</button></div>
     </div>`;
@@ -298,11 +339,12 @@ function renderDuelsTab(T) {
         ? list
               .map(o => {
                   const beaten = T.beaten[o.id] || 0;
+                  const tf = TCG_FAMILIES[o.terrain] || TCG_FAMILIES.village;
                   return `<div class="tcg-opp-card">
                       <span class="tcg-opp-av">${art('villager', o.art)}</span>
                       <div class="tcg-opp-info">
                           <div class="tcg-opp-top"><b>${esc(o.name)}</b><span class="tcg-diff d${o.diff}">${esc(o.diffLabel)}</span></div>
-                          <small>${esc(o.role)}</small>
+                          <small>${esc(o.role)} · ${ti(tf.icon, 'tcg-ico xs')} +1 ${tf.name}</small>
                           <div class="tcg-opp-rew">+${o.reward} ${ICO_TOK()}${beaten ? ` · ${ti(['ui', 'check'], 'tcg-ico xs')} Vaincu ×${beaten}` : ` · +1 ${ICO_PACK()} 1re victoire`}</div>
                       </div>
                       <button type="button" class="btn green sm" data-act="tcgStartDuel" data-id="${esc(o.id)}" ${deckOk ? '' : 'disabled'}>Défier</button>
@@ -314,6 +356,10 @@ function renderDuelsTab(T) {
               <p>Dès que tu te maries ou que tu as des enfants à la ferme, ton conjoint et chacun de tes enfants apparaîtront ici avec leur vrai portrait pour faire des duels de MeuhCG !</p>
           </div>`;
 
+    const powersGuide = Object.values(TCG_FAMILIES)
+        .map(f => `<div class="tcg-pow-row">${ti(f.icon, 'tcg-ico xs')} <b>${f.name} (${f.power})</b> : ${esc(f.powerDesc)}</div>`)
+        .join('');
+
     return `
         <div class="tcg-deck-strip">
             <div><b>Ton deck : ${T.deck.length}/5 cartes</b>${syn.length ? `<small>Synergies (+2) : ${syn.map(f => `${ti(TCG_FAMILIES[f].icon, 'tcg-ico xs')} ${TCG_FAMILIES[f].name}`).join(' · ')}</small>` : '<small>2 cartes de la même famille donnent +2 en duel !</small>'}</div>
@@ -322,6 +368,7 @@ function renderDuelsTab(T) {
         ${!deckOk ? `<div class="tcg-pity">${ICO_PACK()} Ouvre au moins 1 booster gratuit dans l’onglet <b>Boosters</b> pour obtenir tes 5 premières cartes !</div>` : ''}
         <div class="tcg-pills">${catPills}</div>
         <div class="tcg-opp-list">${oppHtml}</div>
+        <details class="tcg-rules"><summary>Pouvoirs des 6 familles &amp; règles de combat</summary><div class="tcg-rules-body">${powersGuide}</div></details>
     `;
 }
 
@@ -479,6 +526,8 @@ export function setupTcg() {
         tcgToggleMiss: () => (binderMissing = !binderMissing),
         tcgDuelCat: (el, d) => (duelCat = d.c || 'village'),
         tcgStartDuel: (el, d) => G.tcgStartDuel(d.id),
+        tcgReroll: () => G.tcgDuelReroll(),
+        tcgBoost: () => G.tcgDuelBoost(),
         tcgPlayCard: (el, d) => G.tcgPlayDuelCard(+d.i),
         tcgEndDuel: () => G.tcgEndDuel(),
         tcgZoom: (el, d) => (zoomCardId = d.id || null),

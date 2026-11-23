@@ -1128,6 +1128,159 @@
     color: var(--ink-soft);
 }
 
+/* 1.156 : Duels 2.0 (terrain, frise 5 manches, coups tactiques, pouvoirs & journal) */
+.tcg-terrain-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 5px 10px;
+    border-radius: 9px;
+    background: var(--paper);
+    border: 1.5px solid var(--wood-d);
+    font-size: 0.74rem;
+}
+.tcg-terr-bonus {
+    font-weight: 800;
+    color: #2e7d32;
+}
+.tcg-timeline {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 5px;
+}
+.tcg-tl-step {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 4px 3px;
+    border-radius: 8px;
+    background: var(--paper-d, #f0e4ce);
+    border: 1.5px solid var(--wood-d);
+    font-size: 0.68rem;
+    font-weight: 800;
+    opacity: 0.78;
+}
+.tcg-tl-step.cur {
+    opacity: 1;
+    border-color: #c98808;
+    background: linear-gradient(#fff8d6, #ffe38f);
+    box-shadow: 0 2px 0 #c98808;
+}
+.tcg-tl-step.win {
+    opacity: 1;
+    border-color: #2e7d32;
+    background: #dff6d6;
+}
+.tcg-tl-step.lose {
+    opacity: 1;
+    border-color: #c84343;
+    background: #fbe3e3;
+}
+.tcg-tl-step.draw {
+    opacity: 1;
+    border-color: #8a7866;
+    background: #ece6dc;
+}
+.tcg-tactics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+.tcg-tactics .btn {
+    width: 100%;
+    font-size: 0.72rem;
+}
+.tcg-buffs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+}
+.tcg-buffs span {
+    padding: 3px 8px;
+    border-radius: 99px;
+    background: linear-gradient(#fff6cf, #ffe285);
+    border: 1.5px solid #c98808;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #5c3b00;
+}
+.tcg-card.armed {
+    box-shadow:
+        0 0 0 2px #ffd23f,
+        0 0 14px rgba(255, 195, 25, 0.85);
+}
+.tcg-pow-mini {
+    position: relative;
+    z-index: 1;
+    font-size: 0.56rem;
+    font-weight: 800;
+    color: var(--fc, var(--ink-soft));
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 99px;
+    padding: 0 6px;
+}
+.tcg-pow-box {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    font-size: 0.68rem;
+    line-height: 1.25;
+    padding: 4px 6px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(58, 38, 24, 0.14);
+}
+.tcg-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3px;
+}
+.tcg-tags i {
+    font-style: normal;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 99px;
+    background: rgba(58, 38, 24, 0.08);
+}
+.tcg-clash-notes {
+    margin-top: 7px;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(58, 38, 24, 0.2);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #5c3b00;
+}
+.tcg-rules {
+    margin-top: 12px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: var(--paper-d, #f3e8d2);
+    border: 1.5px solid var(--wood-d);
+    font-size: 0.74rem;
+}
+.tcg-rules summary {
+    font-weight: 800;
+    cursor: pointer;
+}
+.tcg-rules-body {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.tcg-pow-row {
+    line-height: 1.3;
+}
+
 @keyframes tcg-float {
     0%,
     100% {

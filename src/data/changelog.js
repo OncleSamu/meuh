@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.156",
+  "title": "MeuhCG : 300 Cartes & Duels Tactiques",
+  "date": "23 novembre 2026",
+  "items": [
+   "Collection MeuhCG triplée à 300 cartes réparties en 8 séries thématiques : La Vallée, Table & Terroir, Grands Horizons, Haras & Parfums, Verger & Miels, Mer Étang & Forêt, Ateliers & Métiers, et Légendes & Chromas (plus le Booster Doré et 8 paliers jusqu’à 300 cartes)",
+   "Système de combat Duels 2.0 avec 6 pouvoirs de famille (Récolte, Troupeau, Festin, Aventure, Savoir-faire, Entraide), terrains de duel par adversaire (+1 à la famille du lieu), frise tactique des 5 manches à venir, et 2 coups spéciaux utilisables 1× par duel : Changer de critère et Coup de Maître (+3)",
+   "14 adversaires villageois (avec Tonton Marcel, Odile, Jules, Idris, Tuomas et Maître Duval en renfort) en plus de tous les campeurs réels et des membres de ta famille"
+  ]
+ },
+ {
   "v": "1.155",
   "title": "Le MeuhCG : Cartes & Duels de la Vallée",
   "date": "23 novembre 2026",

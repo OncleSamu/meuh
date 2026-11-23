@@ -9,8 +9,9 @@ import { TCG_CARDS, TCG_CARD_BY_ID, TCG_FAMILIES, TCG_RARITIES, TCG_SERIES, TCG_
 import { SPR } from '../../src/art/index.js';
 import * as G from '../../src/systems/index.js';
 
-test('1.155 : les 100 cartes MeuhCG, les decks villageois, les icônes SVG et la règle des 0 émoji', () => {
-    assert.equal(TCG_CARDS.length, 100);
+test('1.156 : les 300 cartes MeuhCG, les 14 villageois, les icônes SVG et la règle des 0 émoji', () => {
+    assert.equal(TCG_CARDS.length, 300);
+    assert.equal(TCG_VILLAGER_DUELS.length, 14);
     const ids = new Set();
     for (const c of TCG_CARDS) {
         assert.ok(!ids.has(c.id), `doublon id ${c.id}`);
@@ -25,6 +26,7 @@ test('1.155 : les 100 cartes MeuhCG, les decks villageois, les icônes SVG et la
     }
     for (const opp of TCG_VILLAGER_DUELS) {
         assert.equal(opp.deck.length, 5, `deck de ${opp.id}`);
+        assert.ok(TCG_FAMILIES[opp.terrain], `terrain invalide ${opp.id}`);
         for (const cid of opp.deck) assert.ok(TCG_CARD_BY_ID[cid], `carte inconnue ${cid} chez ${opp.id}`);
         const av = SPR.villager(opp.art);
         assert.ok(av.includes('<svg') && !/undefined|NaN/.test(av), `portrait invalide ${opp.id}`);
@@ -105,16 +107,14 @@ test('1.155 : boosters, pity timer, recyclage, forge, paliers et isolation écon
     assert.equal(state.prestige.rubans, rubansBefore);
 });
 
-test('1.155 : duels contre villageois, campeurs réels du camping et famille réelle (conjoint + enfants)', () => {
+test('1.156 : duels 2.0 (relance, Coup de Maître +3, pouvoirs de famille, campeurs et famille réels)', () => {
     setState(newState());
     G.loadGame();
     const T = G.ensureTcg();
-    // Donner 5 cartes fortes avec synergie Élevage
     ['v16', 'v24', 'h23', 'h24', 'p23'].forEach(id => (T.cards[id] = 1));
     T.deck = ['v16', 'v24', 'h23', 'h24', 'p23'];
     assert.ok(G.tcgDeckSynergies(T.deck).has('elevage'));
 
-    // Ajouter un vrai campeur et un vrai résident au camping
     state.camping = {
         pitches: 3,
         guests: [{ name: 'Chloé', from: 'de Lyon', profile: 'gourmand', look: 'h00000000000', say: 'Super endroit !' }],
@@ -122,7 +122,6 @@ test('1.155 : duels contre villageois, campeurs réels du camping et famille ré
         past: [],
         up: {},
     };
-    // Ajouter un vrai conjoint et un vrai enfant
     state.family = {
         spouse: 'ines',
         kids: [{ id: 'k1', name: 'Malo', girl: false, grow: 100, look: 'h22222222222' }],
@@ -132,17 +131,28 @@ test('1.155 : duels contre villageois, campeurs réels du camping et famille ré
 
     const opps = G.tcgOpponents();
     assert.ok(opps.some(o => o.cat === 'village' && o.id === 'v_odette'));
+    assert.ok(opps.some(o => o.cat === 'village' && o.id === 'v_duval'));
     assert.ok(opps.some(o => o.cat === 'camping' && o.name === 'Chloé'));
     assert.ok(opps.some(o => o.cat === 'camping' && o.name === 'Bastien'));
     assert.ok(opps.some(o => o.cat === 'family' && o.name === 'Inès'));
     assert.ok(opps.some(o => o.cat === 'family' && o.name === 'Malo'));
 
-    // Jouer un duel complet (5 manches) contre Théo
+    // Jouer un duel complet avec Relance du critère + Coup de Maître (+3)
     const moneyBefore = state.money;
     const tokensBefore = T.tokens;
     assert.equal(G.tcgStartDuel('v_theo'), true);
+    const stat0 = T.duel.rounds[0];
+    assert.equal(G.tcgDuelReroll(), true);
+    assert.equal(T.duel.rounds[0], (stat0 + 1) % 3);
+    assert.equal(G.tcgDuelReroll(), false, '1 seule relance par duel');
+    const beforeBoost = G.tcgCardPreviewPower(T.duel, T.duel.pHand[0]);
+    assert.equal(G.tcgDuelBoost(), true);
+    assert.equal(G.tcgCardPreviewPower(T.duel, T.duel.pHand[0]), beforeBoost + 3);
+    assert.equal(G.tcgDuelBoost(), false, '1 seul Coup de Maître par duel');
+
     for (let r = 0; r < 5; r++) assert.equal(G.tcgPlayDuelCard(0), true);
     assert.equal(T.duel.done, true);
+    assert.equal(T.duel.history.length, 5);
     assert.ok(T.tokens > tokensBefore, 'le duel donne des jetons MeuhCG');
     assert.equal(state.money, moneyBefore, 'aucun lien avec les pièces de la ferme');
     assert.equal(G.tcgEndDuel(), true);

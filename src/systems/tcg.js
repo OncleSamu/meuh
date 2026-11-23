@@ -347,6 +347,8 @@ const DEMO_CAMPERS = [
         art: randomId(41021, { male: true, season: 'ete' }),
         diff: 1,
         diffLabel: 'Facile',
+        terrain: 'horizons',
+        terrainName: 'Feu de camp',
         reward: 45,
         quote: '« On fait une partie autour du feu de camp ? »',
         winQuote: '« Super partie ! J’adore l’ambiance de ta vallée. »',
@@ -361,6 +363,8 @@ const DEMO_CAMPERS = [
         art: randomId(78932, { female: true, season: 'printemps' }),
         diff: 2,
         diffLabel: 'Moyen',
+        terrain: 'horizons',
+        terrainName: 'Sentier du camping',
         reward: 65,
         quote: '« J’ai glissé mes cartes préférées dans mon sac à dos ! »',
         winQuote: '« Bravo ! Tu m’offres la revanche au prochain sentier ? »',
@@ -400,6 +404,8 @@ export function tcgOpponents() {
                 art: g.look,
                 diff: star ? 3 : 2,
                 diffLabel: star ? 'Difficile' : 'Moyen',
+                terrain: 'horizons',
+                terrainName: 'Clairière du camping',
                 reward: star ? 90 : 55,
                 quote: g.say ? `« ${g.say} On se fait un duel ? »` : '« Super camping ! Tu fais une petite partie de MeuhCG ? »',
                 winQuote: '« Quelle partie mémorable, je reviendrai au camping ! »',
@@ -417,6 +423,8 @@ export function tcgOpponents() {
                 art: r.look,
                 diff: 3,
                 diffLabel: 'Difficile',
+                terrain: 'horizons',
+                terrainName: 'Bungalow du camping',
                 reward: 80,
                 quote: '« Depuis que j’habite ici, je m’entraîne tous les soirs au MeuhCG ! »',
                 winQuote: '« Magnifique victoire ! On remet ça demain ? »',
@@ -443,6 +451,8 @@ export function tcgOpponents() {
                 art: look,
                 diff: 3,
                 diffLabel: 'Difficile',
+                terrain: 'village',
+                terrainName: 'Table de la maison',
                 reward: 90,
                 quote: '« Le perdant fait la vaisselle ce soir ! Prêt ? »',
                 winQuote: '« D’accord, d’accord, je fais la vaisselle avec le sourire ! »',
@@ -462,6 +472,8 @@ export function tcgOpponents() {
                 art: kidPortraitId(k),
                 diff,
                 diffLabel: diff === 1 ? 'Facile' : diff === 2 ? 'Moyen' : 'Difficile',
+                terrain: 'elevage',
+                terrainName: 'Salon familial',
                 reward: 45 + diff * 15,
                 quote: st <= 1 ? '« Regarde mes cartes brillantes ! On joue ensemble ? »' : '« J’ai monté un deck secret pour te battre ! »',
                 winQuote: '« Trop fort ! Tu m’apprends tes combos ? »',
@@ -479,6 +491,8 @@ export function tcgOpponents() {
                 art: k.look || 'odette',
                 diff: 3,
                 diffLabel: 'Difficile',
+                terrain: 'village',
+                terrainName: 'Terrasse familiale',
                 reward: 85,
                 quote: '« Voyons si la nouvelle génération maîtrise toujours le MeuhCG ! »',
                 winQuote: '« La relève est assurée, quelle fierté ! »',
@@ -491,12 +505,64 @@ export function tcgOpponents() {
     return out;
 }
 
-// ---- Moteur de Duel (5 manches tactiques) ----
-const cardPower = (cardId, statIdx, synSet) => {
+// ---- Moteur de Duel 2.0 (pouvoirs de famille, terrain, frise 5 manches, Relance & Coup de Maître) ----
+function evalCard(cardId, statIdx, { synSet, terrain, otherHand, nextBonus, handBuff, masterBoost, oppIsHorizons }) {
     const c = TCG_CARD_BY_ID[cardId];
-    if (!c) return 0;
-    return c.stats[statIdx] + (synSet.has(c.family) ? 2 : 0);
-};
+    if (!c) return { total: 0, tags: [] };
+    let total = c.stats[statIdx];
+    const tags = [];
+    if (synSet.has(c.family)) {
+        if (oppIsHorizons) {
+            tags.push('Synergie annulée (Aventure)');
+        } else {
+            total += 2;
+            tags.push('+2 synergie');
+        }
+    }
+    if (terrain && c.family === terrain) {
+        total += 1;
+        tags.push('+1 terrain');
+    }
+    if (c.family === 'elevage') {
+        const herd = otherHand.filter(id => TCG_CARD_BY_ID[id]?.family === 'elevage').length;
+        if (herd > 0) {
+            total += herd;
+            tags.push(`+${herd} Troupeau`);
+        }
+    }
+    if (c.family === 'terroir' && statIdx === 1) {
+        total += 1;
+        tags.push('+1 Festin');
+    }
+    if (nextBonus > 0) {
+        total += nextBonus;
+        tags.push(`+${nextBonus} Récolte`);
+    }
+    if (handBuff > 0) {
+        total += handBuff;
+        tags.push(`+${handBuff} Entraide`);
+    }
+    if (masterBoost) {
+        total += 3;
+        tags.push('+3 Coup de Maître');
+    }
+    return { total, tags };
+}
+
+export function tcgCardPreviewPower(D, cardId) {
+    if (!D || D.done) return 0;
+    const statIdx = D.rounds[D.round];
+    const others = D.pHand.filter(id => id !== cardId);
+    return evalCard(cardId, statIdx, {
+        synSet: new Set(D.pSyn || []),
+        terrain: D.terrain,
+        otherHand: others,
+        nextBonus: D.pNextBonus || 0,
+        handBuff: D.pHandBuff || 0,
+        masterBoost: !!D.boostArmed,
+        oppIsHorizons: false,
+    }).total;
+}
 
 export function tcgStartDuel(oppId) {
     const T = ensureTcg();
@@ -509,8 +575,9 @@ export function tcgStartDuel(oppId) {
     }
     const opp = tcgOpponents().find(o => o.id === oppId);
     if (!opp) return false;
-    const rounds = Array.from({ length: 5 }, (_, i) => (i + Math.floor(Math.random() * 3)) % 3);
-    // Mélanger un peu la main adverse
+    // 5 manches variées couvrant toujours les 3 critères au moins une fois
+    const base = [0, 1, 2, Math.floor(Math.random() * 3), Math.floor(Math.random() * 3)];
+    const rounds = base.sort(() => Math.random() - 0.5);
     const oppHand = [...opp.deck].sort(() => Math.random() - 0.5);
     T.duel = {
         oppId: opp.id,
@@ -519,25 +586,55 @@ export function tcgStartDuel(oppId) {
         oppArt: opp.art,
         oppDiff: opp.diff,
         oppDiffLabel: opp.diffLabel,
+        terrain: opp.terrain || 'village',
+        terrainName: opp.terrainName || 'Place du village',
         reward: opp.reward,
         quote: opp.quote,
         winQuote: opp.winQuote,
         loseQuote: opp.loseQuote,
-        rounds, // indices de stat (0 Terroir, 1 Saveur, 2 Prestige) pour les 5 manches
+        rounds,
+        history: [], // 'win' | 'lose' | 'draw'
         round: 0,
         pHand: [...T.deck],
         oHand: oppHand,
         pSyn: [...tcgDeckSynergies(T.deck)],
         oSyn: [...tcgDeckSynergies(oppHand)],
+        pNextBonus: 0,
+        oNextBonus: 0,
+        pHandBuff: 0,
+        oHandBuff: 0,
+        usedReroll: false,
+        usedBoost: false,
+        boostArmed: false,
         pScore: 0,
         oScore: 0,
-        last: null, // résultat de la manche précédente
+        last: null,
         done: false,
-        result: null, // 'win' | 'draw' | 'lose'
+        result: null,
         gainTokens: 0,
         firstWinPack: false,
     };
     sfx('pop');
+    return true;
+}
+
+export function tcgDuelReroll() {
+    const T = ensureTcg();
+    const D = T.duel;
+    if (!D || D.done || D.usedReroll) return false;
+    D.rounds[D.round] = (D.rounds[D.round] + 1) % 3;
+    D.usedReroll = true;
+    sfx('click');
+    return true;
+}
+
+export function tcgDuelBoost() {
+    const T = ensureTcg();
+    const D = T.duel;
+    if (!D || D.done || D.usedBoost) return false;
+    D.usedBoost = true;
+    D.boostArmed = true;
+    sfx('level');
     return true;
 }
 
@@ -548,17 +645,26 @@ export function tcgPlayDuelCard(handIdx) {
 
     const statIdx = D.rounds[D.round];
     const pId = D.pHand.splice(handIdx, 1)[0];
-    const pSyn = new Set(D.pSyn);
-    const oSyn = new Set(D.oSyn);
+    const pSyn = new Set(D.pSyn || []);
+    const oSyn = new Set(D.oSyn || []);
 
-    // Choix IA selon la difficulté : Facile = aléatoire, Moyen = 50 % malin, Difficile/Maître = joue sa meilleure carte sur le critère
+    // Choix IA selon difficulté (tient compte du terrain, synergie et pouvoirs)
     let oPick = 0;
-    if (D.oppDiff >= 3 || (D.oppDiff === 2 && Math.random() < 0.55)) {
+    if (D.oppDiff >= 3 || (D.oppDiff === 2 && Math.random() < 0.6)) {
         let best = -1;
         D.oHand.forEach((cid, i) => {
-            const pw = cardPower(cid, statIdx, oSyn);
-            if (pw > best) {
-                best = pw;
+            const others = D.oHand.filter((_, j) => j !== i);
+            const ev = evalCard(cid, statIdx, {
+                synSet: oSyn,
+                terrain: D.terrain,
+                otherHand: others,
+                nextBonus: D.oNextBonus || 0,
+                handBuff: D.oHandBuff || 0,
+                masterBoost: false,
+                oppIsHorizons: false,
+            });
+            if (ev.total > best) {
+                best = ev.total;
                 oPick = i;
             }
         });
@@ -566,27 +672,93 @@ export function tcgPlayDuelCard(handIdx) {
         oPick = Math.floor(Math.random() * D.oHand.length);
     }
     const oId = D.oHand.splice(oPick, 1)[0];
+    const pCard = TCG_CARD_BY_ID[pId];
+    const oCard = TCG_CARD_BY_ID[oId];
 
-    const pVal = cardPower(pId, statIdx, pSyn);
-    const oVal = cardPower(oId, statIdx, oSyn);
+    const pEval = evalCard(pId, statIdx, {
+        synSet: pSyn,
+        terrain: D.terrain,
+        otherHand: D.pHand,
+        nextBonus: D.pNextBonus || 0,
+        handBuff: D.pHandBuff || 0,
+        masterBoost: !!D.boostArmed,
+        oppIsHorizons: oCard.family === 'horizons',
+    });
+    const oEval = evalCard(oId, statIdx, {
+        synSet: oSyn,
+        terrain: D.terrain,
+        otherHand: D.oHand,
+        nextBonus: D.oNextBonus || 0,
+        handBuff: D.oHandBuff || 0,
+        masterBoost: false,
+        oppIsHorizons: pCard.family === 'horizons',
+    });
+
+    // Consommer les bonus à usage unique
+    D.pNextBonus = 0;
+    D.oNextBonus = 0;
+    D.boostArmed = false;
+
     let outcome = 'draw';
-    if (pVal > oVal) {
-        D.pScore++;
-        outcome = 'win';
-    } else if (oVal > pVal) {
-        D.oScore++;
-        outcome = 'lose';
+    const notes = [];
+    if (pEval.total > oEval.total) {
+        if (oCard.family === 'atelier' && pEval.total - oEval.total <= 2) {
+            outcome = 'draw';
+            notes.push(`Savoir-faire adverse : égalité sauvée !`);
+        } else {
+            outcome = 'win';
+        }
+    } else if (oEval.total > pEval.total) {
+        if (pCard.family === 'atelier' && oEval.total - pEval.total <= 2) {
+            outcome = 'draw';
+            notes.push('Savoir-faire : égalité sauvée !');
+        } else {
+            outcome = 'lose';
+        }
+    } else {
+        // Égalité : le pouvoir Festin (Terroir) tranche !
+        if (pCard.family === 'terroir' && oCard.family !== 'terroir') {
+            outcome = 'win';
+            notes.push('Festin remporte l’égalité !');
+        } else if (oCard.family === 'terroir' && pCard.family !== 'terroir') {
+            outcome = 'lose';
+            notes.push('Festin adverse remporte l’égalité !');
+        }
     }
 
+    // Effets après manche : Récolte (Potager) & Entraide (Village)
+    if (outcome === 'win') {
+        D.pScore++;
+        if (pCard.family === 'potager') {
+            D.pNextBonus = 2;
+            notes.push('Récolte : +2 sur ta prochaine carte !');
+        }
+    } else if (outcome === 'lose') {
+        D.oScore++;
+        if (oCard.family === 'potager') {
+            D.oNextBonus = 2;
+            notes.push('Récolte adverse : +2 au prochain tour.');
+        }
+    }
+    if (pCard.family === 'village' && D.pHand.length) {
+        D.pHandBuff = (D.pHandBuff || 0) + 1;
+        notes.push('Entraide : +1 à toutes tes cartes en main !');
+    }
+    if (oCard.family === 'village' && D.oHand.length) {
+        D.oHandBuff = (D.oHandBuff || 0) + 1;
+    }
+
+    D.history = [...(D.history || []), outcome];
     D.last = {
         round: D.round + 1,
         stat: TCG_STATS[statIdx],
         pId,
         oId,
-        pVal,
-        oVal,
-        pSynBonus: pSyn.has(TCG_CARD_BY_ID[pId].family),
-        oSynBonus: oSyn.has(TCG_CARD_BY_ID[oId].family),
+        pVal: pEval.total,
+        oVal: oEval.total,
+        pTags: pEval.tags,
+        oTags: oEval.tags,
+        notes,
         outcome,
     };
     D.round++;
