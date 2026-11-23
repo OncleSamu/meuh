@@ -210,6 +210,7 @@ const PAGES = {
 
 defineSheet('settings', {
     cls: 'settings-sheet',
+    static: true,
     open(o) {
         o.page = 'main';
         G.tip('theme');

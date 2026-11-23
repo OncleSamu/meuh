@@ -248,7 +248,7 @@ function topHtml() {
         m = Math.floor(state.gameTimeMinutes % 60);
     const night = G.isNight() && ['sun', 'cloudy', 'heat'].includes(state.weather);
     return `<div class="view-top">
-        <button class="pill clock" data-act="open" data-sheet="almanac" aria-label="Heure de la ferme (une journée de jeu dure environ 5 minutes) : almanach" title="Heure de la ferme, pas l’heure réelle">${night ? moonSvg : ico(['ui', G.weather().icon])}<b>${String(h).padStart(2, '0')}:${String(m - (m % 10)).padStart(2, '0')}</b>${ico(['ui', G.season().icon])}</button>
+        <button class="pill clock" data-act="open" data-sheet="almanac" aria-label="Heure de la ferme (une journée de jeu dure environ 5 minutes) : almanach" title="Heure de la ferme, pas l’heure réelle">${night ? moonSvg : ico(['ui', G.weather().icon])}<b id="farm-clock-txt">${String(h).padStart(2, '0')}:${String(m - (m % 10)).padStart(2, '0')}</b>${ico(['ui', G.season().icon])}</button>
         <div class="actions">${btn('Arroser', { act: 'waterAll', kind: 'blue', size: 'sm', icon: ['ui', 'can'], anchor: 'btn:water' })}${btn('Récolter', { act: 'harvestAll', kind: 'green', size: 'sm', icon: ['ui', 'basket'], anchor: 'btn:harvest' })}${G.planOpen() ? btn('Plans', { act: 'open', data: { sheet: 'plans' }, size: 'sm', icon: ['ui', 'plan'] }) : ''}${ITEMS[state.selectedTool]?.type === 'crop' ? btn('Semer', { act: 'plantAll', size: 'sm', icon: ['item', state.selectedTool] }) : ''}</div>
     </div>`;
 }

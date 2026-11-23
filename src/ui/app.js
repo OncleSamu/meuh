@@ -317,7 +317,7 @@ let toolbarRender = () => {};
 export const setToolbar = fn => (toolbarRender = fn);
 let started = false;
 
-export function refresh() {
+export function refresh(fromTick = false) {
     if (!started) return;
     ui.todo = todoList();
     ui.counts = todoCounts(ui.todo);
@@ -334,7 +334,7 @@ export function refresh() {
     // grand écran : le champ toujours à gauche
     if (view.wide && (ui.tab !== 'farm' || aside)) VIEWS['farm/field'](byId('view-farm'));
     toolbarRender();
-    renderSheets();
+    renderSheets({ fromTick });
     live();
 }
 
@@ -344,33 +344,58 @@ export const defineLive = (kind, fn) => (LIVE[kind] = fn);
 
 export function live() {
     const t = now();
-    $$('[data-until]').forEach(el => {
-        // déjà mis en forme (espaces insécables) : la typographie n'a pas à le réécrire chaque seconde
-        const txt = frenchSpaces(formatDuration(Math.max(0, (+el.dataset.until - t) / 1000)));
-        if (el.textContent !== txt) el.textContent = txt;
-    });
-    $$('[data-live]').forEach(el => {
-        const [kind, ...args] = el.dataset.live.split(':');
-        const fn = LIVE[kind];
-        if (!fn) return;
-        const p = fn(...args);
-        const i = el.firstElementChild;
-        if (i && p !== undefined && p !== null) i.style.width = `${(Math.max(0, Math.min(1, p)) * 100).toFixed(1)}%`;
-    });
+    let expired = false;
+    const roots = document.querySelectorAll('.view.on, #sheets > .sheet-wrap:not(.under):not(.out)');
+    for (const root of roots) {
+        root.querySelectorAll('[data-until]').forEach(el => {
+            const left = (+el.dataset.until - t) / 1000;
+            if (left > 0) el._wasPos = true;
+            else if (el._wasPos) {
+                el._wasPos = false;
+                expired = true;
+            }
+            // déjà mis en forme (espaces insécables) : la typographie n'a pas à le réécrire chaque seconde
+            const txt = frenchSpaces(formatDuration(Math.max(0, left)));
+            if (el.textContent !== txt) el.textContent = txt;
+        });
+        root.querySelectorAll('[data-live]').forEach(el => {
+            const [kind, ...args] = el.dataset.live.split(':');
+            const fn = LIVE[kind];
+            if (!fn) return;
+            const p = fn(...args);
+            const i = el.firstElementChild;
+            if (i && p !== undefined && p !== null) i.style.width = `${(Math.max(0, Math.min(1, p)) * 100).toFixed(1)}%`;
+        });
+    }
+    const clk = byId('farm-clock-txt');
+    if (clk) {
+        const h = Math.floor(state.gameTimeMinutes / 60);
+        const m = Math.floor(state.gameTimeMinutes % 60);
+        const txt = `${String(h).padStart(2, '0')}:${String(m - (m % 10)).padStart(2, '0')}`;
+        if (clk.textContent !== txt) clk.textContent = txt;
+    }
+    return expired;
 }
 
 // ---------------- sauvegarde ----------------
 let saveTimer = null;
 let noSave = false;
+let dirty = false;
+export const markDirty = () => (dirty = true);
 export const stopSaving = () => (noSave = true);
 export function save() {
+    dirty = true;
     if (noSave || saveTimer) return;
     saveTimer = setTimeout(saveNow, 400);
+}
+export function saveIfDirty() {
+    if (dirty) saveNow();
 }
 export function saveNow() {
     clearTimeout(saveTimer);
     saveTimer = null;
     if (noSave) return;
+    dirty = false;
     // 1.44 : plus de place sur l'appareil ? on libère les copies de secours et on réessaie, puis on prévient (une fois)
     if (!writeSave() && getStore()) {
         try {

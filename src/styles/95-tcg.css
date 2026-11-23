@@ -1885,3 +1885,64 @@ html.calm .tcg-sparks > i {
 html.calm .tcg-sparks > i {
     opacity: 0.85;
 }
+
+/* 1.160 : Performance — sprites <img> légers, content-visibility et halos statiques sur les grandes grilles */
+.tcg-ico > img,
+.tcg-art > img,
+.tcg-pack-art > img,
+.tcg-opp-av > img {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.tcg-pack-mini > img {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
+}
+.tcg-card.var-sketch .tcg-art > img {
+    filter: sepia(0.55) contrast(1.12) saturate(0.78);
+}
+.tcg-grid > .tcg-card {
+    content-visibility: auto;
+    contain-intrinsic-size: 96px 148px;
+}
+.tcg-grid .tcg-card,
+.tcg-grid .tcg-holo,
+.tcg-grid .tcg-sparks > i {
+    animation: none;
+}
+.tcg-grid .tcg-sparks > i {
+    opacity: 0.85;
+}
+.tcg-grid .tcg-card.rar-F {
+    box-shadow:
+        0 3px 0 rgba(95, 36, 155, 0.42),
+        0 0 12px rgba(155, 81, 224, 0.55),
+        inset 0 0 10px rgba(215, 165, 255, 0.45);
+}
+.tcg-grid .tcg-card.rar-L,
+.tcg-grid .tcg-card.var-gold {
+    box-shadow:
+        0 3px 0 rgba(165, 102, 0, 0.48),
+        0 0 14px rgba(255, 198, 26, 0.72),
+        inset 0 0 12px rgba(255, 240, 165, 0.55);
+}
+.tcg-grid .tcg-card.rar-S {
+    box-shadow:
+        0 3px 0 rgba(155, 28, 95, 0.45),
+        0 0 14px rgba(244, 63, 142, 0.7),
+        inset 0 0 12px rgba(185, 250, 255, 0.55);
+}
+.tcg-grid .tcg-card.is-fullart .tcg-foot-glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(255, 252, 245, 0.92);
+}
+.tcg-more-row {
+    display: flex;
+    justify-content: center;
+    margin: 12px 0 4px;
+}

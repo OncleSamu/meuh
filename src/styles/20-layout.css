@@ -592,3 +592,13 @@ html.calm .view.enter-f {
 .xp-bar.full > i {
     background: linear-gradient(#ffe48a 0 22%, var(--gold) 22%, #e0a92a);
 }
+
+/* 1.160 : met en pause les onglets cachés et évite de peindre les tuiles hors écran */
+.view:not(.on) *,
+body.has-sheet .view * {
+    animation-play-state: paused !important;
+}
+.mgrid > .mtile {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 136px;
+}

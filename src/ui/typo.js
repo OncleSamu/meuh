@@ -30,19 +30,24 @@ export function frenchSpaces(s) {
         .replace(RE_FRAC, `$1${NB}/${NB}$2`);
 }
 
-const SKIP = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT']);
+const SKIP = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT', 'SVG', 'IMG']);
+const isSvgNode = n => !!(n && n.namespaceURI === 'http://www.w3.org/2000/svg');
 
 function fixNode(root) {
     if (!root) return;
     if (root.nodeType === 3) {
+        if (isSvgNode(root.parentNode)) return;
         const v = root.nodeValue,
             f = frenchSpaces(v);
         if (f !== v) root.nodeValue = f;
         return;
     }
-    if (root.nodeType !== 1 || SKIP.has(root.tagName)) return;
+    if (root.nodeType !== 1 || isSvgNode(root) || SKIP.has(root.tagName.toUpperCase())) return;
     const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-        acceptNode: n => (n.parentNode && SKIP.has(n.parentNode.tagName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
+        acceptNode: n => {
+            const p = n.parentNode;
+            return p && (isSvgNode(p) || SKIP.has(p.tagName.toUpperCase())) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+        },
     });
     let n;
     while ((n = w.nextNode())) {
@@ -63,8 +68,14 @@ export function setupTypo() {
     };
     const obs = new MutationObserver(muts => {
         for (const m of muts) {
+            if (isSvgNode(m.target)) continue;
             if (m.type === 'characterData') pending.add(m.target);
-            else m.addedNodes.forEach(n => pending.add(n));
+            else {
+                for (const n of m.addedNodes) {
+                    if (n.nodeType === 1 && (isSvgNode(n) || SKIP.has(n.tagName.toUpperCase()))) continue;
+                    pending.add(n);
+                }
+            }
         }
         if (!queued && pending.size) {
             queued = true;

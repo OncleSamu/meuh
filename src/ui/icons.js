@@ -33,14 +33,28 @@ export function art(kind, id) {
     return s;
 }
 
-// 1.59 : le même dessin en image (un seul nœud au lieu de dizaines) : pour les longues rangées d'icônes
+// 1.160 : chaque icône en <img> mise en cache (1 seul nœud DOM au lieu de ~60 balises SVG, texture partagée par le navigateur)
 const imgCache = new Map();
+const canBlobUrl = () =>
+    typeof Blob !== 'undefined' &&
+    typeof URL !== 'undefined' &&
+    typeof URL.createObjectURL === 'function' &&
+    typeof location !== 'undefined' &&
+    location.protocol !== 'file:';
+
 export function artImg(kind, id) {
     const key = kind + ':' + id;
     let s = imgCache.get(key);
     if (s === undefined) {
         const svg = art(kind, id);
-        s = svg ? `<img class="spr" src="data:image/svg+xml,${encodeURIComponent(svg)}" alt="" draggable="false">` : '';
+        if (!svg) {
+            s = '';
+        } else if (canBlobUrl()) {
+            const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+            s = `<img class="spr" src="${url}" alt="" draggable="false">`;
+        } else {
+            s = `<img class="spr" src="data:image/svg+xml,${encodeURIComponent(svg)}" alt="" draggable="false">`;
+        }
         imgCache.set(key, s);
     }
     return s;
@@ -59,8 +73,8 @@ export function ico(spec, cls = 'ico') {
     if (!spec) return '';
     const [kind, id] = spec;
     if (kind === 'q' || kind === 'star') return id ? `<i class="${cls}">${qStar(id, 'spr')}</i>` : '';
-    if (kind === 'coin') return `<i class="${cls}">${art('ui', 'coin')}</i>`;
-    return `<i class="${cls}">${art(kind, id)}</i>`;
+    if (kind === 'coin') return `<i class="${cls}">${artImg('ui', 'coin')}</i>`;
+    return `<i class="${cls}">${artImg(kind, id)}</i>`;
 }
 export const COIN = () => ico(['ui', 'coin']);
 export { SPR };

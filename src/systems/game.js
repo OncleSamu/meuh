@@ -268,8 +268,10 @@ function safe(fn) {
 
 function tickClock() {
     const prev = state.gameTimeMinutes;
+    const prevNight = prev < 360 || prev >= 1260;
     state.gameTimeMinutes = (state.gameTimeMinutes + GAME_MIN_PER_SEC) % 1440;
-    if (state.gameTimeMinutes >= prev) return false;
+    const nowNight = state.gameTimeMinutes < 360 || state.gameTimeMinutes >= 1260;
+    if (state.gameTimeMinutes >= prev) return prevNight !== nowNight;
     newDay(false);
     return true;
 }

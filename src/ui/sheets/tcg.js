@@ -17,7 +17,7 @@ import {
     TCG_VARIANTS,
 } from '../../data/tcg.js';
 import { actions, esc } from '../dom.js';
-import { art, ico } from '../icons.js';
+import { art, artImg, ico } from '../icons.js';
 import { genWrap } from '../genlook.js';
 import { innerTabs } from '../innertabs.js';
 import { defineSheet } from '../sheets.js';
@@ -25,6 +25,8 @@ import { defineSheet } from '../sheets.js';
 let binderSeries = 'all';
 let binderMissing = false;
 let binderSpecial = false;
+let binderLimit = 48;
+let deckLimit = 48;
 let duelCat = 'village';
 let zoomCardId = null;
 
@@ -40,8 +42,8 @@ const ICO_PACK = () => ti(['ui', 'tcgPack']);
 const ICO_DUEL = () => ti(['ui', 'tcgDuel']);
 
 function cardSpriteHtml(c) {
+    if (!c.look) return artImg(c.spr[0], c.spr[1]);
     const raw = art(c.spr[0], c.spr[1]);
-    if (!c.look) return raw;
     const g = {
         t: {},
         form: c.spr[0] === 'item' ? c.spr[1] : undefined,
@@ -428,8 +430,10 @@ function renderBinderTab(T) {
             (!binderMissing || !(T.cards[c.id] > 0)) &&
             (!binderSpecial || G.tcgHasSpecialVariant(c.id)),
     );
-    const gridHtml = cards.length
-        ? cards
+    const shown = cards.slice(0, binderLimit);
+    const rem = cards.length - shown.length;
+    const gridHtml = shown.length
+        ? shown
               .map(c => {
                   if (T.cards[c.id] > 0) return renderCardHtml(c);
                   const r = TCG_RARITIES[c.rarity];
@@ -455,6 +459,7 @@ function renderBinderTab(T) {
             <button type="button" class="tcg-pill${binderSpecial ? ' on' : ''}" data-act="tcgToggleSpec">${ti(['ui', 'sparkle'], 'tcg-ico xs')} Spéciales (${specCount})</button>
         </div>
         <div class="tcg-grid">${gridHtml}</div>
+        ${rem > 0 ? `<div class="tcg-more-row"><button type="button" class="btn sm" data-act="tcgMoreBinder">Afficher plus (${shown.length}/${cards.length})</button></div>` : ''}
     `;
 }
 
@@ -475,9 +480,11 @@ function renderDeckTab(T) {
         const sb = b.stats[0] + b.stats[1] + b.stats[2];
         return sb - sa || TCG_RARITY_ORDER.indexOf(b.rarity) - TCG_RARITY_ORDER.indexOf(a.rarity);
     });
+    const shownOwned = owned.slice(0, deckLimit);
+    const remOwned = owned.length - shownOwned.length;
 
-    const poolHtml = owned.length
-        ? owned
+    const poolHtml = shownOwned.length
+        ? shownOwned
               .map(c => {
                   const inDeck = T.deck.includes(c.id);
                   const cantFit = !inDeck && T.deck.length < 5 && deckCost + G.tcgCardCost(c.id) > TCG_DECK_BUDGET;
@@ -498,6 +505,7 @@ function renderDeckTab(T) {
         <div class="tcg-deck-slots">${slotsHtml}</div>
         <h4 class="tcg-h4">Tes cartes (touche pour ajouter / retirer du deck)</h4>
         <div class="tcg-grid">${poolHtml}</div>
+        ${remOwned > 0 ? `<div class="tcg-more-row"><button type="button" class="btn sm" data-act="tcgMoreDeck">Afficher plus (${shownOwned.length}/${owned.length})</button></div>` : ''}
     `;
 }
 
@@ -541,9 +549,12 @@ function renderZoomOverlay(T) {
 defineSheet('tcg', {
     title: 'MeuhCG · Cartes & Duels',
     cls: 'sheet-tcg',
+    static: true,
     open() {
         G.ensureTcg();
         zoomCardId = null;
+        binderLimit = 48;
+        deckLimit = 48;
     },
     render() {
         const T = G.ensureTcg();
@@ -607,15 +618,22 @@ export function setupTcg() {
         tcgSetFav: (el, d) => G.tcgSetFav(d.id),
         tcgSetSkin: (el, d) => G.tcgSetCardSkin(d.id, d.v),
         tcgCraftVar: (el, d) => G.tcgCraftVariant(d.id, d.v),
-        tcgFilterS: (el, d) => (binderSeries = d.s || 'all'),
+        tcgFilterS: (el, d) => {
+            binderSeries = d.s || 'all';
+            binderLimit = 48;
+        },
         tcgToggleMiss: () => {
             binderMissing = !binderMissing;
             if (binderMissing) binderSpecial = false;
+            binderLimit = 48;
         },
         tcgToggleSpec: () => {
             binderSpecial = !binderSpecial;
             if (binderSpecial) binderMissing = false;
+            binderLimit = 48;
         },
+        tcgMoreBinder: () => (binderLimit += 48),
+        tcgMoreDeck: () => (deckLimit += 48),
         tcgDuelCat: (el, d) => (duelCat = d.c || 'village'),
         tcgStartDuel: (el, d) => G.tcgStartDuel(d.id),
         tcgReroll: () => G.tcgDuelReroll(),

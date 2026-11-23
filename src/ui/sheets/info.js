@@ -288,6 +288,7 @@ const guideBody = o => {
 
 defineSheet('guide', {
     cls: 'guide-sheet',
+    static: true,
     title: o => (o.focusSearch ? 'Rechercher' : 'Guide du fermier'),
     open(o) {
         if (o.focusSearch) {

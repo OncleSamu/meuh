@@ -342,6 +342,11 @@ html.calm #weather .flutter {
     animation: none;
 }
 
+/* 1.160 : met en pause le décor animé dès qu'un tiroir recouvre l'écran */
+body.has-sheet #scene * {
+    animation-play-state: paused !important;
+}
+
 @keyframes drift {
     from {
         transform: translateX(-160px);

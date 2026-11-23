@@ -71,6 +71,7 @@ export function closeSheet(name) {
     if (k < 0) return;
     const [s] = stack.splice(k, 1);
     dismissSheetEntry(s);
+    if (stack.length) render();
     if (history.state && history.state.sheet) {
         skipPop++;
         history.back();
@@ -88,20 +89,21 @@ function syncFlags() {
     stack.forEach((s, k) => s.el.classList.toggle('under', k < stack.length - 1));
 }
 
-// redessine les tiroirs ouverts (seul celui du dessus est visible, mais tous restent à jour)
-export function render() {
+// 1.160 : ne redessine que le tiroir visible du dessus (et ignore les tiroirs statiques lors du tick d'arrière-plan)
+export function render(opts) {
     syncFlags();
-    for (const s of stack) {
-        const def = SHEETS[s.name];
-        patch(s.el.querySelector('.sheet-title'), typeof def.title === 'function' ? def.title(s.opts) : def.title || '');
-        const body = s.el.querySelector('.sheet-body');
-        const content = def.render(s.opts, s);
-        if (Array.isArray(content)) blocks(body, content);
-        else patch(body, content);
-        centerMarked(body);
-        patch(s.el.querySelector('.sheet-foot'), def.foot ? def.foot(s.opts) : '');
-        s.el.querySelector('.sheet-foot').hidden = !def.foot;
-    }
+    const s = topSheet();
+    if (!s) return;
+    const def = SHEETS[s.name];
+    if (opts && opts.fromTick && def.static) return;
+    patch(s.el.querySelector('.sheet-title'), typeof def.title === 'function' ? def.title(s.opts) : def.title || '');
+    const body = s.el.querySelector('.sheet-body');
+    const content = def.render(s.opts, s);
+    if (Array.isArray(content)) blocks(body, content);
+    else patch(body, content);
+    centerMarked(body);
+    patch(s.el.querySelector('.sheet-foot'), def.foot ? def.foot(s.opts) : '');
+    s.el.querySelector('.sheet-foot').hidden = !def.foot;
 }
 
 // un élément marqué data-center est ramené au milieu de sa bande défilante (une fois par dessin)
@@ -163,6 +165,7 @@ export function setupSheets() {
         if (stack.length) {
             const [s] = stack.splice(stack.length - 1, 1);
             dismissSheetEntry(s);
+            if (stack.length) render();
         }
     });
 }

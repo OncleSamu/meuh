@@ -5,7 +5,7 @@ import { setView } from './core/view.js';
 import { emit } from './core/bus.js';
 import * as G from './systems/index.js';
 import { actions } from './ui/dom.js';
-import { setupApp, refresh, saveNow, tabEl, ui, currentPath } from './ui/app.js';
+import { setupApp, refresh, live, markDirty, saveIfDirty, tabEl, ui, currentPath } from './ui/app.js';
 import { setupSound, SoundEngine } from './ui/sound.js';
 import { setupTypo } from './ui/typo.js';
 import { setupFx } from './ui/fx.js';
@@ -191,15 +191,17 @@ function start() {
     // 1.37.1 : le jeu suit l'heure réelle. Un onglet ou une appli en arrière-plan voit ses minuteries gelées ou ralenties :
     // au retour, le temps manqué se rattrape comme une absence (au lieu d'être perdu seconde après seconde).
     let lastRun = now();
+    let secTick = 0;
     const secondOfGame = () => {
         const t = now(),
             gap = Math.floor((t - lastRun) / 1000);
         if (t < lastRun) lastRun = t; // l'horloge du téléphone a reculé
         if (gap < 1) return;
+        let changed = false;
         if (gap <= 300) {
             // quelques secondes ou minutes manquées : on les rejoue une par une, comme si l'écran était resté allumé
             lastRun += gap * 1000; // le reste de la seconde se reporte
-            for (let k = 0; k < gap; k++) G.gameTick();
+            for (let k = 0; k < gap; k++) if (G.gameTick()) changed = true;
         } else {
             // plus long : le calcul d'absence (comme à l'ouverture du jeu)
             lastRun = t;
@@ -207,17 +209,26 @@ function start() {
             const back = G.offlineProgress();
             if (back && back.lines.length && back.elapsed >= 300) pushMoment('offline', back);
             state.lastSaved = t;
+            changed = true;
         }
-        // 1.44 : écran caché, le jeu avance mais ne se redessine pas (la batterie) ; tout se remet à jour au retour
+        if (changed) markDirty();
+        secTick++;
+        // 1.160 : ne redessine tout que si quelque chose a vraiment changé (sinon seuls les compteurs et jauges visibles bougent)
         if (!document.hidden) {
-            updateScene();
-            refresh();
-            updateNight();
+            if (changed || secTick % 2 === 0) {
+                updateScene();
+                updateNight();
+            }
+            if (changed || secTick % 15 === 0) {
+                refresh(true);
+            } else if (live()) {
+                refresh(true);
+            }
         }
     };
     setInterval(secondOfGame, 1000);
     document.addEventListener('visibilitychange', () => !document.hidden && secondOfGame());
-    setInterval(saveNow, 5000);
+    setInterval(saveIfDirty, 20000);
     const shown = fn => () => !document.hidden && fn();
     setInterval(shown(wanderAnimals), 1600);
     setInterval(shown(wanderDog), 2200);

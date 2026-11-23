@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.160",
+  "title": "Fluidité & Performance Globale",
+  "date": "23 novembre 2026",
+  "items": [
+   "Boucle de rendu allégée sur tout le jeu : lorsque rien n’a changé à la ferme, seules les jauges et minuteries visibles avancent sur place (sans recalculer tout l’écran ni les tiroirs statiques comme MeuhCG, Guide, Livre ou Réglages)",
+   "Correctif des barres de progression en direct (Atelier, Champ, Brasserie, Cave…) qui cassaient le cache DOM chaque seconde et obligeaient le navigateur à recréer les tuiles",
+   "Icônes du jeu converties en images mises en cache (1 seul nœud DOM par icône au lieu de dizaines de balises SVG) et correcteur typographique optimisé pour ignorer l’intérieur des SVG",
+   "Animations du décor et des onglets cachés mises en pause derrière les tiroirs, sauvegarde automatique intelligente (uniquement si quelque chose a changé, toutes les 20 s), et Classeur MeuhCG paginé avec content-visibility pour un défilement fluide sur mobile"
+  ]
+ },
+ {
   "v": "1.159",
   "title": "MeuhCG : Full Art, Inversées, Croquis & Or Gravé",
   "date": "23 novembre 2026",

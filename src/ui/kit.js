@@ -25,9 +25,9 @@ export function card({ icon, art: big, title, sub, side = '', body = '', cls = '
         ${side ? `<div class="card-side">${side}</div>` : ''}</${tag}>`;
 }
 
-// barre de progression : p de 0 à 1 ; live = clé pour la mise à jour à chaque seconde
+// barre de progression : p de 0 à 1 ; live = clé pour la mise à jour à chaque seconde (largeur fixe dans le HTML pour éviter de casser patch())
 export const bar = (p, cls = '', live = '') =>
-    `<div class="bar ${cls}"${live ? ` data-live="${live}"` : ''}><i style="width:${Math.max(0, Math.min(100, p * 100)).toFixed(1)}%"></i></div>`;
+    `<div class="bar ${cls}"${live ? ` data-live="${live}"` : ''}><i style="width:${live ? '0' : Math.max(0, Math.min(100, p * 100)).toFixed(1)}%"></i></div>`;
 
 // petite étiquette : icône + texte
 export const chip = (text, icon, cls = '') => `<span class="chip ${cls}">${icon ? ico(icon) : ''}${text}</span>`;
