@@ -14,6 +14,8 @@ import {
     TCG_RARITY_ORDER,
     TCG_SERIES,
     TCG_STATS,
+    TCG_VARIANT_ORDER,
+    TCG_VARIANTS,
     TCG_VILLAGER_DUELS,
 } from '../data/tcg.js';
 
@@ -26,6 +28,8 @@ export function ensureTcg() {
             dailyDay: 0,
             dailyWins: { day: state.day || 1, ids: [], claimed: false },
             cards: {}, // { cardId: count }
+            variants: {}, // { cardId: { reverse: n, sketch: n, fullart: n, gold: n } }
+            skin: {}, // { cardId: 'std' | 'reverse' | 'sketch' | 'fullart' | 'gold' }
             deck: [], // jusqu'à 5 ids de cartes
             fav: null,
             pity: 0,
@@ -34,7 +38,7 @@ export function ensureTcg() {
             losses: 0,
             beaten: {}, // { opponentId: count }
             milestones: {}, // { milestoneId: true }
-            lastPack: null, // { seriesId, cards: [{ id, isNew }], torn, revealed: [bool...] }
+            lastPack: null, // { seriesId, cards: [{ id, isNew, variant, isNewVar }], torn, revealed: [bool...] }
             duel: null,
         };
     }
@@ -43,6 +47,8 @@ export function ensureTcg() {
     if (!Number.isFinite(T.dust)) T.dust = 0;
     if (!Number.isFinite(T.freePacks)) T.freePacks = 0;
     T.cards = T.cards || {};
+    T.variants = T.variants || {};
+    T.skin = T.skin || {};
     T.deck = Array.isArray(T.deck) ? T.deck.filter(id => TCG_CARD_BY_ID[id] && (T.cards[id] || 0) > 0).slice(0, 5) : [];
     T.beaten = T.beaten || {};
     T.milestones = T.milestones || {};
@@ -157,6 +163,59 @@ export function tcgCanOpenPack(seriesId) {
     return T.tokens >= s.cost;
 }
 
+function rollVariant(card, slotIdx, isGoldPack) {
+    const pick = table => {
+        let r = Math.random();
+        for (const [id, p] of table) {
+            if ((r -= p) <= 0) return id;
+        }
+        return table[table.length - 1][0];
+    };
+    let v = 'std';
+    if (slotIdx === 3) {
+        // 4e carte : finition spéciale garantie (Inversée, Croquis, Full Art ou Or Gravé)
+        v = pick(
+            isGoldPack
+                ? [
+                      ['fullart', 0.36],
+                      ['gold', 0.24],
+                      ['reverse', 0.25],
+                      ['sketch', 0.15],
+                  ]
+                : [
+                      ['reverse', 0.56],
+                      ['sketch', 0.18],
+                      ['fullart', 0.18],
+                      ['gold', 0.08],
+                  ],
+        );
+    } else if (slotIdx === 4) {
+        if (isGoldPack) {
+            v = pick([
+                ['fullart', 0.44],
+                ['gold', 0.34],
+                ['reverse', 0.14],
+                ['sketch', 0.08],
+            ]);
+        } else if (Math.random() < 0.3) {
+            v = pick([
+                ['reverse', 0.4],
+                ['fullart', 0.32],
+                ['sketch', 0.16],
+                ['gold', 0.12],
+            ]);
+        }
+    } else if (Math.random() < 0.08) {
+        v = pick([
+            ['reverse', 0.62],
+            ['sketch', 0.23],
+            ['fullart', 0.15],
+        ]);
+    }
+    if (v === 'fullart' && (card.rarity === 'L' || card.rarity === 'S')) v = 'gold';
+    return v;
+}
+
 export function tcgOpenPack(seriesId) {
     const T = ensureTcg();
     const s = TCG_SERIES[seriesId];
@@ -179,7 +238,7 @@ export function tcgOpenPack(seriesId) {
         return pickCard(pool, minR);
     };
 
-    // 5 cartes : 3 normales, 1 Peu commune+, 1 Rare+ (ou Foil+ sur Doré, ou Légendaire+ au 10e booster !)
+    // 5 cartes : 3 normales, 1 Peu commune+ (finition spéciale garantie !), 1 Rare+ (ou Foil+ sur Doré, ou Légendaire+ au 10e booster)
     drawn.push(drawOne('C'));
     drawn.push(drawOne('C'));
     drawn.push(drawOne('C'));
@@ -191,10 +250,18 @@ export function tcgOpenPack(seriesId) {
     T.pity = hasBig ? 0 : T.pity + 1;
     T.opened++;
 
-    const cards = drawn.map(c => {
+    const cards = drawn.map((c, idx) => {
         const isNew = !(T.cards[c.id] > 0);
         T.cards[c.id] = (T.cards[c.id] || 0) + 1;
-        return { id: c.id, isNew };
+        const variant = rollVariant(c, idx, !!s.allSeries);
+        let isNewVar = false;
+        if (variant !== 'std') {
+            T.variants[c.id] = T.variants[c.id] || {};
+            isNewVar = !(T.variants[c.id][variant] > 0);
+            T.variants[c.id][variant] = (T.variants[c.id][variant] || 0) + 1;
+            if (!T.skin[c.id] || T.skin[c.id] === 'std') T.skin[c.id] = variant;
+        }
+        return { id: c.id, isNew, variant, isNewVar };
     });
 
     // Si le deck n'a pas encore 5 cartes, le compléter automatiquement dans la limite du budget (16 étoiles)
@@ -232,8 +299,17 @@ export function tcgRevealCard(idx) {
     const p = T.lastPack;
     if (!p || !p.torn || !p.cards[idx] || p.revealed[idx]) return false;
     p.revealed[idx] = true;
-    const c = TCG_CARD_BY_ID[p.cards[idx].id];
-    sfx(c && (c.rarity === 'L' || c.rarity === 'S') ? 'level' : c && (c.rarity === 'R' || c.rarity === 'F') ? 'sell' : 'click');
+    const entry = p.cards[idx];
+    const c = TCG_CARD_BY_ID[entry.id];
+    const bigVar = entry.variant === 'gold' || entry.variant === 'fullart';
+    const midVar = entry.variant === 'reverse' || entry.variant === 'sketch';
+    sfx(
+        bigVar || (c && (c.rarity === 'L' || c.rarity === 'S'))
+            ? 'level'
+            : midVar || (c && (c.rarity === 'R' || c.rarity === 'F'))
+              ? 'sell'
+              : 'click',
+    );
     return true;
 }
 
@@ -245,7 +321,7 @@ export function tcgRevealAll() {
     p.revealed = p.cards.map(() => true);
     const big = p.cards.some(x => {
         const r = TCG_CARD_BY_ID[x.id]?.rarity;
-        return r === 'L' || r === 'S';
+        return r === 'L' || r === 'S' || x.variant === 'gold' || x.variant === 'fullart';
     });
     sfx(big ? 'level' : 'harvest');
     return true;
@@ -254,6 +330,66 @@ export function tcgRevealAll() {
 export function tcgClosePack() {
     const T = ensureTcg();
     T.lastPack = null;
+    return true;
+}
+
+// ---- Variantes & Finitions de cartes (Inversée, Croquis, Full Art, Or Gravé) ----
+export function tcgCardVariants(id) {
+    const T = ensureTcg();
+    if (!(T.cards[id] > 0)) return [];
+    const vmap = (T.variants && T.variants[id]) || {};
+    return TCG_VARIANT_ORDER.filter(v => v === 'std' || (vmap[v] || 0) > 0);
+}
+
+export function tcgCardSkin(id) {
+    const T = state.tcg;
+    if (!T || !(T.cards && T.cards[id] > 0)) return 'std';
+    const cur = T.skin && T.skin[id];
+    if (cur && cur !== 'std' && T.variants && T.variants[id] && T.variants[id][cur] > 0) return cur;
+    return 'std';
+}
+
+export function tcgHasSpecialVariant(id) {
+    const T = state.tcg;
+    const vmap = T && T.variants && T.variants[id];
+    return !!(vmap && Object.values(vmap).some(n => n > 0));
+}
+
+export function tcgSpecialVariantCount() {
+    const T = state.tcg;
+    if (!T || !T.variants) return 0;
+    let total = 0;
+    for (const vmap of Object.values(T.variants)) {
+        if (!vmap) continue;
+        for (const [k, n] of Object.entries(vmap)) {
+            if (k !== 'std' && n > 0) total++;
+        }
+    }
+    return total;
+}
+
+export function tcgSetCardSkin(id, variantId) {
+    const T = ensureTcg();
+    if (!TCG_CARD_BY_ID[id] || !(T.cards[id] > 0) || !TCG_VARIANTS[variantId]) return false;
+    if (variantId !== 'std' && !(T.variants[id] && T.variants[id][variantId] > 0)) return false;
+    T.skin[id] = variantId;
+    sfx('click');
+    return true;
+}
+
+export function tcgCraftVariant(id, variantId) {
+    const T = ensureTcg();
+    const c = TCG_CARD_BY_ID[id];
+    const v = TCG_VARIANTS[variantId];
+    if (!c || !v || variantId === 'std' || !(T.cards[id] > 0)) return false;
+    T.variants[id] = T.variants[id] || {};
+    if (T.variants[id][variantId] > 0) return tcgSetCardSkin(id, variantId);
+    if (T.dust < v.craft) return false;
+    T.dust -= v.craft;
+    T.variants[id][variantId] = 1;
+    T.skin[id] = variantId;
+    sfx('level');
+    toast(`${c.name} · édition ${v.name} débloquée !`, ['ui', 'meuhcg']);
     return true;
 }
 

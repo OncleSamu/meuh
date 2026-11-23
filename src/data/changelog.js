@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.159",
+  "title": "MeuhCG : Full Art, Inversées, Croquis & Or Gravé",
+  "date": "23 novembre 2026",
+  "items": [
+   "4 éditions spéciales à collectionner sur les 300 cartes du MeuhCG : Inversée (Reverse Holo métallique aux couleurs de la famille et cadre d’illustration mat), Croquis d’Odette (carnet sépia vintage à l’encre), Full Art (illustration plein cadre sans bordure sur décor de famille et bandeau givré) et Or Gravé (ébène et or 24 carats)",
+   "Toutes les cartes Légendaires et Secrètes Chromatiques adoptent directement le format Full Art, et chaque booster garantit désormais au moins 1 carte en édition spéciale (2 dans le Booster Doré !)",
+   "Sélecteur de finition en direct dans le Zoom 3D (avec possibilité de forger une finition avec la poussière dorée) et filtre « Spéciales » dans le Classeur"
+  ]
+ },
+ {
   "v": "1.158",
   "title": "Notice du MeuhCG dans le Guide",
   "date": "23 novembre 2026",

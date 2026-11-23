@@ -13,12 +13,23 @@ export const TCG_RARITIES = {
 };
 export const TCG_RARITY_ORDER = ['C', 'U', 'R', 'F', 'L', 'S'];
 
+export const TCG_VARIANTS = {
+    std: { id: 'std', name: 'Classique', short: '', craft: 0, desc: 'Cadre traditionnel de la vallée.' },
+    reverse: { id: 'reverse', name: 'Inversée', short: 'INV.', craft: 40, desc: 'Corps holographique texturé aux couleurs de la famille et cadre d’illustration mat.' },
+    sketch: { id: 'sketch', name: 'Croquis', short: 'CROQ.', craft: 70, desc: 'Édition carnet de Mamie Odette sur papier parchemin sépia et double filet à l’encre.' },
+    fullart: { id: 'fullart', name: 'Full Art', short: 'FULL', craft: 120, desc: 'Illustration plein cadre sans bordure sur décor de famille et bandeau givré.' },
+    gold: { id: 'gold', name: 'Or Gravé', short: 'OR', craft: 200, desc: 'Édition prestige ébène et or 24 carats avec filigrane doré et éclats solaires.' },
+};
+export const TCG_VARIANT_ORDER = ['std', 'reverse', 'sketch', 'fullart', 'gold'];
+
 export const TCG_FAMILIES = {
     potager: {
         id: 'potager',
         name: 'Potager',
         icon: ['item', 'wheat'],
         col: '#3d9942',
+        bg1: '#d4f5c4',
+        bg2: '#5cb85c',
         power: 'Récolte',
         powerDesc: 'Si elle gagne, ta prochaine carte reçoit +2.',
     },
@@ -27,6 +38,8 @@ export const TCG_FAMILIES = {
         name: 'Élevage',
         icon: ['animal', 'cow'],
         col: '#c47b33',
+        bg1: '#fde7be',
+        bg2: '#d98c3f',
         power: 'Troupeau',
         powerDesc: '+1 par autre carte Élevage en main (max +2).',
     },
@@ -35,6 +48,8 @@ export const TCG_FAMILIES = {
         name: 'Terroir',
         icon: ['item', 'cheese'],
         col: '#d98a1c',
+        bg1: '#fff1b8',
+        bg2: '#e39b24',
         power: 'Festin',
         powerDesc: '+1 en Saveur et remporte les égalités.',
     },
@@ -43,6 +58,8 @@ export const TCG_FAMILIES = {
         name: 'Horizons',
         icon: ['item', 'mango'],
         col: '#1f9aa8',
+        bg1: '#c6f4fa',
+        bg2: '#2ca9b8',
         power: 'Aventure',
         powerDesc: 'Annule la synergie adverse et +1 hors de son terrain.',
     },
@@ -51,6 +68,8 @@ export const TCG_FAMILIES = {
         name: 'Ateliers',
         icon: ['ui', 'gear'],
         col: '#6366c9',
+        bg1: '#e0e1ff',
+        bg2: '#7376d9',
         power: 'Savoir-faire',
         powerDesc: 'Transforme une défaite de 2 pts ou moins en égalité.',
     },
@@ -59,6 +78,8 @@ export const TCG_FAMILIES = {
         name: 'Village',
         icon: ['ui', 'village'],
         col: '#c94b6b',
+        bg1: '#ffd9e4',
+        bg2: '#d96482',
         power: 'Entraide',
         powerDesc: 'Donne +1 à tes 2 prochaines cartes jouées.',
     },

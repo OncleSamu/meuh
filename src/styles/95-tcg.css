@@ -1424,6 +1424,348 @@
     text-decoration: line-through;
 }
 
+/* 1.159 : Éditions & Styles de cartes (Inversée, Croquis d’Odette, Full Art, Or Gravé) */
+.tcg-top-l {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    min-width: 0;
+}
+.tcg-foot-glass {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+.tcg-var-pill {
+    font-style: normal;
+    padding: 0 4px;
+    border-radius: 99px;
+    font-size: 0.48rem;
+    font-weight: 900;
+    letter-spacing: 0.03em;
+    color: #fff;
+    background: #3a2618;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+}
+.tcg-var-pill.v-reverse {
+    background: linear-gradient(120deg, #0ea5e9, #8b5cf6);
+}
+.tcg-var-pill.v-sketch {
+    background: #6b4726;
+    color: #fff3d6;
+}
+.tcg-var-pill.v-fullart {
+    background: linear-gradient(120deg, #16a34a, #0284c7);
+}
+.tcg-var-pill.v-gold {
+    background: linear-gradient(135deg, #b87700, #ffd84d);
+    color: #2e1a00;
+}
+.tcg-new.is-var {
+    background: linear-gradient(120deg, #7c3aed, #d97706);
+}
+
+/* Dos de carte spécial à l'ouverture de booster */
+.tcg-back-tag {
+    font-size: 0.56rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    padding: 1px 6px;
+    border-radius: 99px;
+    background: rgba(255, 225, 105, 0.22);
+    border: 1px solid rgba(255, 225, 105, 0.7);
+    color: #fff6cf;
+}
+.tcg-back.var-glow-reverse {
+    border-color: #38bdf8;
+    box-shadow:
+        0 0 0 2px rgba(56, 189, 248, 0.55),
+        0 0 18px rgba(139, 92, 246, 0.75);
+}
+.tcg-back.var-glow-sketch {
+    border-color: #d4a36a;
+    background: linear-gradient(145deg, #5e4229, #362415);
+    box-shadow: 0 0 14px rgba(212, 163, 106, 0.65);
+}
+.tcg-back.var-glow-fullart {
+    border-color: #34d399;
+    box-shadow:
+        0 0 0 2px rgba(52, 211, 153, 0.7),
+        0 0 22px rgba(14, 165, 233, 0.85);
+    animation: tcg-pulse 1.6s ease-in-out infinite;
+}
+.tcg-back.var-glow-gold {
+    border-color: #ffd84d;
+    background: linear-gradient(145deg, #3b2a10, #16100a);
+    animation: tcg-gold-aura 1.5s ease-in-out infinite, tcg-pulse 1.4s ease-in-out infinite;
+}
+
+/* 1. INVERSÉE (Reverse Holo) : corps métallique holo de la famille, fenêtre d’illustration mate nette */
+.tcg-card.var-reverse {
+    border-color: var(--fc, #3b82f6);
+    background:
+        repeating-linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.24) 0 4px,
+            transparent 4px 10px
+        ),
+        repeating-linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 0.16) 0 4px,
+            transparent 4px 10px
+        ),
+        linear-gradient(150deg, var(--fbg1, #dceeff) 0%, var(--fbg2, #6ba8e5) 100%);
+    box-shadow:
+        0 3px 0 rgba(36, 46, 72, 0.35),
+        0 0 14px color-mix(in srgb, var(--fc, #3b82f6) 52%, transparent),
+        inset 0 0 12px rgba(255, 255, 255, 0.55);
+}
+.tcg-card.var-reverse .tcg-holo {
+    opacity: 0.68;
+    z-index: 1;
+    mix-blend-mode: screen;
+    background: linear-gradient(
+        var(--ang, 120deg),
+        transparent 18%,
+        rgba(255, 255, 255, 0.85) 42%,
+        rgba(145, 230, 255, 0.65) 50%,
+        rgba(255, 185, 240, 0.65) 58%,
+        transparent 82%
+    );
+    background-size: 240% 100%;
+    animation: shimmer 2.8s ease-in-out infinite;
+}
+.tcg-card.var-reverse .tcg-art {
+    z-index: 3;
+    background: #fffdf8;
+    border: 2px solid rgba(58, 38, 24, 0.45);
+    box-shadow: inset 0 2px 5px rgba(58, 38, 24, 0.14);
+}
+.tcg-card.var-reverse .tcg-top,
+.tcg-card.var-reverse .tcg-foot-glass {
+    z-index: 3;
+}
+.tcg-card.var-reverse .tcg-name {
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+/* 2. CROQUIS D'ODETTE (Vintage carnet sépia) */
+.tcg-card.var-sketch {
+    border-color: #5c3a1d;
+    outline: 1.5px solid rgba(92, 58, 29, 0.45);
+    outline-offset: -5px;
+    background:
+        repeating-linear-gradient(180deg, transparent 0 11px, rgba(112, 76, 40, 0.11) 11px 12px),
+        linear-gradient(165deg, #fbf1dc 0%, #ead5ad 60%, #e0c392 100%);
+    color: #3d2410;
+    box-shadow:
+        0 3px 0 rgba(70, 42, 18, 0.35),
+        inset 0 0 14px rgba(138, 92, 42, 0.25);
+    animation: none;
+}
+.tcg-card.var-sketch .tcg-holo {
+    opacity: 0;
+}
+.tcg-card.var-sketch .tcg-art {
+    background: rgba(255, 248, 232, 0.85);
+    border: 1.5px dashed #7a5230;
+    box-shadow: none;
+}
+.tcg-card.var-sketch .tcg-art > svg,
+.tcg-card.var-sketch .tcg-art > .gl {
+    filter: sepia(0.55) contrast(1.12) saturate(0.78);
+}
+.tcg-card.var-sketch .tcg-name {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    color: #3d2410;
+}
+.tcg-card.var-sketch .tcg-stats {
+    background: rgba(255, 248, 232, 0.78);
+    border: 1px solid rgba(92, 58, 29, 0.25);
+}
+
+/* 3. FULL ART (plein cadre scénique + bandeau givré — actif sur var-fullart et par défaut sur L & S) */
+.tcg-card.is-fullart {
+    padding: 5px 5px 5px;
+    justify-content: space-between;
+    background:
+        conic-gradient(
+            from 0deg at 50% 42%,
+            rgba(255, 255, 255, 0.34) 0 10%,
+            transparent 10% 22%,
+            rgba(255, 255, 255, 0.28) 22% 32%,
+            transparent 32% 46%,
+            rgba(255, 255, 255, 0.32) 46% 58%,
+            transparent 58% 74%,
+            rgba(255, 255, 255, 0.28) 74% 86%,
+            transparent 86% 100%
+        ),
+        radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.82), transparent 58%),
+        linear-gradient(168deg, var(--fbg1, #e0f2fe) 0%, var(--fbg2, #38bdf8) 100%);
+}
+.tcg-card.is-fullart.rar-L {
+    background:
+        conic-gradient(
+            from 12deg at 50% 40%,
+            rgba(255, 252, 220, 0.45) 0 12%,
+            transparent 12% 24%,
+            rgba(255, 240, 160, 0.35) 24% 38%,
+            transparent 38% 54%,
+            rgba(255, 252, 220, 0.42) 54% 68%,
+            transparent 68% 84%,
+            rgba(255, 225, 110, 0.35) 84% 100%
+        ),
+        radial-gradient(circle at 50% 38%, #fffef5, rgba(255, 215, 85, 0.65) 56%, rgba(217, 138, 0, 0.55) 100%),
+        linear-gradient(165deg, #fff8d0 0%, #f5b301 100%);
+}
+.tcg-card.is-fullart.rar-S {
+    background:
+        radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.92), rgba(255, 195, 240, 0.55) 45%, rgba(120, 225, 255, 0.65) 100%),
+        linear-gradient(135deg, #ff99d6 0%, #9ce8ff 46%, #ffe588 100%);
+}
+.tcg-card.is-fullart .tcg-art {
+    width: 72px;
+    height: 72px;
+    margin: -2px 0 -4px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    filter: drop-shadow(0 4px 6px rgba(30, 18, 8, 0.28));
+}
+.tcg-card.is-fullart.big .tcg-art {
+    width: 146px;
+    height: 146px;
+    margin: 2px 0;
+}
+.tcg-card.is-fullart .tcg-foot-glass {
+    background: rgba(255, 252, 245, 0.84);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    border-radius: 8px;
+    padding: 3px 4px;
+    box-shadow: 0 2px 6px rgba(20, 12, 6, 0.16);
+}
+.tcg-card.is-fullart.big .tcg-foot-glass {
+    border-radius: 12px;
+    padding: 7px 8px;
+    gap: 5px;
+}
+.tcg-card.var-fullart .tcg-holo {
+    opacity: 0.45;
+    mix-blend-mode: screen;
+    background: linear-gradient(var(--ang, 125deg), transparent 22%, rgba(255, 255, 255, 0.72) 48%, rgba(165, 240, 255, 0.55) 56%, transparent 78%);
+    background-size: 240% 100%;
+    animation: shimmer 3.2s ease-in-out infinite;
+}
+
+/* 4. OR GRAVÉ (Ébène & Or 24 carats) */
+.tcg-card.var-gold {
+    border-color: #f5c542;
+    outline: 1px solid rgba(255, 224, 115, 0.6);
+    outline-offset: -5px;
+    background:
+        radial-gradient(circle at 50% 38%, rgba(255, 210, 75, 0.34), rgba(55, 36, 12, 0.4) 52%, transparent 80%),
+        linear-gradient(155deg, #2b1f14 0%, #150f0a 52%, #332312 100%);
+    color: #ffecaa;
+    animation: tcg-gold-aura 2.4s ease-in-out infinite;
+}
+.tcg-card.var-gold .tcg-holo {
+    opacity: 0.65;
+    mix-blend-mode: screen;
+    background: linear-gradient(
+        var(--ang, 118deg),
+        transparent 18%,
+        rgba(255, 210, 70, 0.55) 42%,
+        rgba(255, 250, 220, 0.92) 50%,
+        rgba(255, 195, 45, 0.55) 58%,
+        transparent 82%
+    );
+    background-size: 240% 100%;
+    animation: shimmer 2.4s ease-in-out infinite;
+}
+.tcg-card.var-gold .tcg-art {
+    background: radial-gradient(circle, rgba(255, 232, 130, 0.28), rgba(20, 14, 8, 0.85) 75%);
+    border: 1.5px solid rgba(245, 197, 66, 0.75);
+    box-shadow:
+        0 0 12px rgba(255, 200, 45, 0.45),
+        inset 0 0 10px rgba(255, 220, 90, 0.3);
+}
+.tcg-card.var-gold .tcg-name {
+    color: #ffecaa;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+.tcg-card.var-gold .tcg-stats {
+    background: rgba(255, 215, 90, 0.14);
+    border: 1px solid rgba(245, 197, 66, 0.48);
+    color: #ffe899;
+}
+.tcg-card.var-gold .tcg-st.hi {
+    background: linear-gradient(135deg, #f5c542, #ffd866);
+    color: #2b1800;
+}
+.tcg-card.var-gold .tcg-pow-mini {
+    background: rgba(255, 215, 90, 0.18);
+    color: #ffe380;
+}
+.tcg-card.var-gold .tcg-pow-box {
+    background: rgba(255, 215, 90, 0.12);
+    border-color: rgba(245, 197, 66, 0.45);
+    color: #fff0bd;
+}
+.tcg-card.var-gold .tcg-flavor,
+.tcg-card.var-gold .tcg-meta {
+    color: #e6c678;
+}
+
+/* Sélecteur de finition dans le Zoom 3D */
+.tcg-var-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+}
+.tcg-var-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1.5px solid rgba(255, 240, 210, 0.45);
+    background: rgba(38, 25, 15, 0.85);
+    color: #fff6e5;
+    font: inherit;
+    font-size: 0.68rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+.tcg-var-btn.on {
+    border-color: #ffd84d;
+    background: linear-gradient(135deg, #f5b301, #ffd866);
+    color: #362000;
+    box-shadow: 0 0 10px rgba(255, 210, 60, 0.55);
+}
+.tcg-var-btn.locked {
+    opacity: 0.55;
+    border-style: dashed;
+    cursor: not-allowed;
+}
+.tcg-var-btn.locked.can {
+    opacity: 0.96;
+    border-color: #e6a817;
+    background: rgba(88, 56, 12, 0.92);
+    color: #ffe799;
+    cursor: pointer;
+}
+
 @keyframes tcg-float {
     0%,
     100% {

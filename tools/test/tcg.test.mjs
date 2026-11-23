@@ -264,6 +264,43 @@ test('1.157 : équilibrage MeuhCG — budget 16 étoiles, anti-spam quotidien, D
     G.tcgEndDuel();
 });
 
+test('1.159 : éditions spéciales (Inversée, Croquis, Full Art, Or Gravé) — boosters, sélecteur, forge & Prestige', () => {
+    setState(newState());
+    G.loadGame();
+    const T = G.ensureTcg();
+
+    // Chaque booster normal garantit une édition spéciale sur la 4e carte (index 3)
+    const p1 = G.tcgOpenPack('vallee');
+    assert.ok(p1.cards[3].variant && p1.cards[3].variant !== 'std', '4e carte garantie en édition spéciale');
+    const specId = p1.cards[3].id;
+    const specVar = p1.cards[3].variant;
+    assert.equal(G.tcgHasSpecialVariant(specId), true);
+    assert.equal(G.tcgCardSkin(specId), specVar, 'édition spéciale équipée automatiquement');
+    assert.ok(G.tcgSpecialVariantCount() >= 1);
+    G.tcgClosePack();
+
+    // Booster Doré garantit 2 éditions spéciales (index 3 et 4)
+    T.tokens = 500;
+    const pGold = G.tcgOpenPack('gold');
+    assert.notEqual(pGold.cards[3].variant, 'std');
+    assert.notEqual(pGold.cards[4].variant, 'std');
+    G.tcgClosePack();
+
+    // Basculer le style vers Classique et refuser un style non débloqué
+    assert.equal(G.tcgSetCardSkin(specId, 'std'), true);
+    assert.equal(G.tcgCardSkin(specId), 'std');
+    T.cards.v01 = 1;
+    T.variants.v01 = {};
+    assert.equal(G.tcgSetCardSkin('v01', 'gold'), false, 'refuse d’équiper une édition non débloquée');
+
+    // Forger une finition Or Gravé avec de la poussière dorée
+    T.dust = 300;
+    assert.equal(G.tcgCraftVariant('v01', 'gold'), true);
+    assert.equal(T.dust, 100);
+    assert.equal(G.tcgCardSkin('v01'), 'gold');
+    assert.ok(G.tcgCardVariants('v01').includes('gold'));
+});
+
 test('1.155 : sauvegarde (fromSave) et Prestige conservent intégralement la collection MeuhCG', () => {
     setState(newState());
     G.loadGame();
@@ -271,12 +308,15 @@ test('1.155 : sauvegarde (fromSave) et Prestige conservent intégralement la col
     T.tokens = 777;
     T.dust = 333;
     T.cards.h24 = 2;
+    T.variants.h24 = { gold: 1 };
+    T.skin.h24 = 'gold';
     T.fav = 'h24';
 
     const restored = fromSave(JSON.parse(JSON.stringify(state)));
     assert.equal(restored.tcg.tokens, 777);
     assert.equal(restored.tcg.dust, 333);
     assert.equal(restored.tcg.cards.h24, 2);
+    assert.equal(restored.tcg.skin.h24, 'gold');
 
     setState(restored);
     state.level = PRESTIGE_LVL;
@@ -284,5 +324,6 @@ test('1.155 : sauvegarde (fromSave) et Prestige conservent intégralement la col
     assert.equal(G.doPrestige(), true);
     assert.equal(state.tcg.tokens, 777);
     assert.equal(state.tcg.cards.h24, 2);
+    assert.equal(state.tcg.skin.h24, 'gold');
     assert.equal(state.tcg.fav, 'h24');
 });

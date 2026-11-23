@@ -2212,6 +2212,14 @@ export const GUIDE_PAGES = [
                     'Classeur & Forge : recyclez vos doublons en poussière dorée pour forger n’importe quelle carte manquante, et réclamez les paliers de collection dans l’onglet Boosters.',
                 ],
             },
+            {
+                h: 'Éditions spéciales : Inversée, Croquis, Full Art & Or Gravé',
+                b: [
+                    'Chaque booster garantit au moins 1 carte en édition spéciale (et 2 dans le Booster Doré) : Inversée (corps holographique coloré de la famille et cadre d’illustration mat), Croquis d’Odette (carnet sépia vintage), Full Art (illustration plein cadre sans bordure sur décor de famille) ou Or Gravé (ébène et or 24 carats).',
+                    'Les cartes Légendaires et Secrètes Chromatiques s’affichent directement en Full Art.',
+                    'Dans le Zoom 3D d’une carte, vous pouvez basculer librement entre ses éditions débloquées ou en forger une nouvelle avec votre poussière dorée, et filtrer « Spéciales » dans le Classeur pour admirer toute votre vitrine.',
+                ],
+            },
         ],
         tips: [
             'Votre collection MeuhCG, vos jetons et vos cartes favorites sont conservés intégralement lors d’un Prestige.',

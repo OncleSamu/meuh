@@ -13,6 +13,8 @@ import {
     TCG_SERIES,
     TCG_SET_IDS,
     TCG_STATS,
+    TCG_VARIANT_ORDER,
+    TCG_VARIANTS,
 } from '../../data/tcg.js';
 import { actions, esc } from '../dom.js';
 import { art, ico } from '../icons.js';
@@ -22,6 +24,7 @@ import { defineSheet } from '../sheets.js';
 
 let binderSeries = 'all';
 let binderMissing = false;
+let binderSpecial = false;
 let duelCat = 'village';
 let zoomCardId = null;
 
@@ -61,6 +64,9 @@ function renderCardHtml(c, opts = {}) {
     const qty = T.cards[c.id] || 0;
     const inDeck = T.deck.includes(c.id);
     const isFav = T.fav === c.id;
+    const variant = opts.variant || (opts.ignoreSkin ? 'std' : G.tcgCardSkin(c.id));
+    const vInfo = TCG_VARIANTS[variant] || TCG_VARIANTS.std;
+    const isFullArt = variant === 'fullart' || (variant === 'std' && (c.rarity === 'L' || c.rarity === 'S'));
     const act = opts.act || 'tcgZoom';
     const extraData = opts.data || `data-id="${c.id}"`;
     const hiStat = opts.hiStat ?? -1;
@@ -68,6 +74,8 @@ function renderCardHtml(c, opts = {}) {
     const cls = [
         'tcg-card',
         `rar-${c.rarity}`,
+        `var-${variant}`,
+        isFullArt ? 'is-fullart' : '',
         opts.big ? 'big' : '',
         opts.isNew ? 'is-new' : '',
         opts.armed ? 'armed' : '',
@@ -82,29 +90,35 @@ function renderCardHtml(c, opts = {}) {
         return `<span class="tcg-st${hiStat === i ? ' hi' : ''}" title="${s.name}">${ti(s.icon, 'tcg-ico xs')}<b>${val}</b></span>`;
     }).join('');
     const sparks =
-        c.rarity === 'S'
+        c.rarity === 'S' && variant !== 'gold' && variant !== 'sketch'
             ? '<span class="tcg-sparks"><i style="--x:12%;--y:16%;--d:0s"></i><i style="--x:86%;--y:14%;--d:.4s"></i><i style="--x:14%;--y:74%;--d:.8s"></i><i style="--x:88%;--y:68%;--d:1.2s"></i><i style="--x:50%;--y:8%;--d:.6s"></i><i style="--x:76%;--y:42%;--d:1.5s"></i></span>'
-            : c.rarity === 'L'
+            : c.rarity === 'L' || variant === 'gold'
               ? '<span class="tcg-sparks gold"><i style="--x:14%;--y:18%;--d:0s"></i><i style="--x:85%;--y:20%;--d:.5s"></i><i style="--x:20%;--y:72%;--d:1s"></i><i style="--x:82%;--y:70%;--d:1.4s"></i></span>'
               : '';
     const num = String(c.num).padStart(3, '0');
-    return `<button type="button" class="${cls}" data-act="${act}" ${extraData} style="--rc:${r.col};--rbg:${r.bg};--fc:${fam.col}">
+    const ribbon = opts.isNew ? 'NOUVEAU' : opts.isNewVar && variant !== 'std' ? vInfo.name.toUpperCase() : '';
+    return `<button type="button" class="${cls}" data-act="${act}" ${extraData} style="--rc:${r.col};--rbg:${r.bg};--fc:${fam.col};--fbg1:${fam.bg1};--fbg2:${fam.bg2}">
         <span class="tcg-holo"></span>
         <span class="tcg-glare"></span>
         ${sparks}
         <span class="tcg-top">
-            <i class="tcg-fam" title="${fam.name} · ${fam.power}">${ti(fam.icon, 'tcg-ico xs')}</i>
+            <span class="tcg-top-l">
+                <i class="tcg-fam" title="${fam.name} · ${fam.power}">${ti(fam.icon, 'tcg-ico xs')}</i>
+                ${vInfo.short ? `<i class="tcg-var-pill v-${variant}" title="Édition ${vInfo.name}">${vInfo.short}</i>` : ''}
+            </span>
             <span class="tcg-top-r">
                 <i class="tcg-cost" title="Coût de deck : ${r.cost} étoile${r.cost > 1 ? 's' : ''}">${r.cost}${ti(['ui', 'star'], 'tcg-ico xs')}</i>
                 <i class="tcg-rar">${r.short}</i>
             </span>
         </span>
         <span class="tcg-art">${cardSpriteHtml(c)}</span>
-        <span class="tcg-name">${esc(c.name)}</span>
-        <span class="tcg-stats">${statsHtml}</span>
-        ${opts.showPower ? `<span class="tcg-pow-mini">${esc(fam.power)}</span>` : ''}
-        ${opts.big ? `<span class="tcg-pow-box"><b>${esc(fam.power)}</b> : ${esc(fam.powerDesc)}</span><span class="tcg-flavor">${esc(c.flavor)}</span><span class="tcg-meta">#${num}/${TCG_CARDS.length} · ${esc(TCG_SERIES[c.series].short)} · ${r.cost} étoile${r.cost > 1 ? 's' : ''}</span>` : ''}
-        ${opts.isNew ? '<span class="tcg-new">NOUVEAU</span>' : ''}
+        <span class="tcg-foot-glass">
+            <span class="tcg-name">${esc(c.name)}</span>
+            <span class="tcg-stats">${statsHtml}</span>
+            ${opts.showPower ? `<span class="tcg-pow-mini">${esc(fam.power)}</span>` : ''}
+            ${opts.big ? `<span class="tcg-pow-box"><b>${esc(fam.power)}</b> : ${esc(fam.powerDesc)}</span><span class="tcg-flavor">${esc(c.flavor)}</span><span class="tcg-meta">#${num}/${TCG_CARDS.length} · ${esc(TCG_SERIES[c.series].short)} · ${r.cost} étoile${r.cost > 1 ? 's' : ''}${variant !== 'std' ? ` · ${esc(vInfo.name)}` : ''}</span>` : ''}
+        </span>
+        ${ribbon ? `<span class="tcg-new${opts.isNew ? '' : ' is-var'}">${esc(ribbon)}</span>` : ''}
         ${!opts.hideQty && qty > 1 ? `<span class="tcg-qty">×${qty}</span>` : ''}
         ${!opts.noDeckBadge && (inDeck || isFav) ? `<span class="tcg-pin">${isFav ? ti(['ui', 'star'], 'tcg-ico xs') : ti(['ui', 'tcgDuel'], 'tcg-ico xs')}</span>` : ''}
     </button>`;
@@ -135,13 +149,14 @@ function renderPackOpening(T) {
     const cardsHtml = p.cards
         .map((entry, idx) => {
             const c = TCG_CARD_BY_ID[entry.id];
+            const v = entry.variant || 'std';
             if (!p.revealed[idx]) {
-                return `<button type="button" class="tcg-back glow-${c.rarity}" data-act="tcgReveal" data-i="${idx}" aria-label="Retourner la carte ${idx + 1}">
+                return `<button type="button" class="tcg-back glow-${c.rarity}${v !== 'std' ? ` var-glow-${v}` : ''}" data-act="tcgReveal" data-i="${idx}" aria-label="Retourner la carte ${idx + 1}">
                     <span class="tcg-back-shine"></span>
-                    <span class="tcg-back-in"><b>MEUH<small>CG</small></b><i>?</i></span>
+                    <span class="tcg-back-in"><b>MEUH<small>CG</small></b><i>?</i>${v !== 'std' ? `<span class="tcg-back-tag">${esc(TCG_VARIANTS[v].short)}</span>` : ''}</span>
                 </button>`;
             }
-            return renderCardHtml(c, { isNew: entry.isNew, hideQty: true, noDeckBadge: true, cls: 'pop-flip' });
+            return renderCardHtml(c, { variant: v, isNew: entry.isNew, isNewVar: entry.isNewVar, hideQty: true, noDeckBadge: true, cls: 'pop-flip' });
         })
         .join('');
     const canAgain = G.tcgCanOpenPack(p.seriesId);
@@ -194,7 +209,7 @@ function renderBoostersTab(T) {
 
     const pityLeft = Math.max(1, 10 - (T.pity || 0));
     return `
-        <div class="tcg-pity">${ti(['ui', 'sparkle'], 'tcg-ico xs')} 5 cartes par booster (1 Rare+ garantie) · Légendaire/Secrète garantie dans au plus <b>${pityLeft}</b> booster${pityLeft > 1 ? 's' : ''}.</div>
+        <div class="tcg-pity">${ti(['ui', 'sparkle'], 'tcg-ico xs')} 5 cartes par booster (1 Rare+ et 1 édition spéciale Inversée, Croquis, Full Art ou Or Gravé garanties) · Légendaire/Secrète dans au plus <b>${pityLeft}</b> booster${pityLeft > 1 ? 's' : ''}.</div>
         <div class="tcg-pack-list">${packsHtml}</div>
         <h4 class="tcg-h4">${ti(['ui', 'trophy'])} Paliers de collection</h4>
         <div class="tcg-miles">${milesHtml}</div>
@@ -240,7 +255,7 @@ function renderDuelArena(T) {
                 <div class="tcg-vs">VS</div>
                 <div class="tcg-clash-side">
                     <small>${esc(D.oppName)} · <b>${D.last.oVal}</b></small>
-                    ${renderCardHtml(oC, { hiStat: D.last.stat.id, previewVal: D.last.oVal, hideQty: true, noDeckBadge: true, act: 'tcgNoop' })}
+                    ${renderCardHtml(oC, { hiStat: D.last.stat.id, previewVal: D.last.oVal, variant: D.oppDiff >= 4 ? 'gold' : 'std', ignoreSkin: true, hideQty: true, noDeckBadge: true, act: 'tcgNoop' })}
                     ${oTags ? `<div class="tcg-tags">${oTags}</div>` : ''}
                 </div>
             </div>
@@ -402,11 +417,17 @@ function renderDuelsTab(T) {
 // ---------------- ONGLET 3 : CLASSEUR & FORGE ----------------
 function renderBinderTab(T) {
     const dupes = G.tcgDupeSummary();
+    const specCount = G.tcgSpecialVariantCount();
     const seriesPills = [['all', 'Toutes'], ...TCG_SET_IDS.map(id => [id, TCG_SERIES[id].short])]
         .map(([k, lbl]) => `<button type="button" class="tcg-pill${binderSeries === k ? ' on' : ''}" data-act="tcgFilterS" data-s="${k}">${lbl}</button>`)
         .join('');
 
-    const cards = TCG_CARDS.filter(c => (binderSeries === 'all' || c.series === binderSeries) && (!binderMissing || !(T.cards[c.id] > 0)));
+    const cards = TCG_CARDS.filter(
+        c =>
+            (binderSeries === 'all' || c.series === binderSeries) &&
+            (!binderMissing || !(T.cards[c.id] > 0)) &&
+            (!binderSpecial || G.tcgHasSpecialVariant(c.id)),
+    );
     const gridHtml = cards.length
         ? cards
               .map(c => {
@@ -421,16 +442,17 @@ function renderBinderTab(T) {
                   </div>`;
               })
               .join('')
-        : '<div class="tcg-empty"><b>Bravo !</b><p>Aucune carte manquante dans ce filtre.</p></div>';
+        : `<div class="tcg-empty"><b>${binderSpecial ? 'Aucune édition spéciale ici' : 'Bravo !'}</b><p>${binderSpecial ? 'Ouvre des boosters ou transforme une carte dans son zoom 3D pour débloquer Inversée, Croquis, Full Art et Or Gravé.' : 'Aucune carte manquante dans ce filtre.'}</p></div>`;
 
     return `
         <div class="tcg-forge-bar">
-            <div><b>${ICO_DUST()} Poussière dorée : ${T.dust}</b><small>${dupes.count ? `${dupes.count} doublon${dupes.count > 1 ? 's' : ''} à recycler (+${dupes.dust} ${ICO_DUST()})` : 'Aucun doublon à recycler'}</small></div>
+            <div><b>${ICO_DUST()} Poussière dorée : ${T.dust}</b><small>${dupes.count ? `${dupes.count} doublon${dupes.count > 1 ? 's' : ''} à recycler (+${dupes.dust} ${ICO_DUST()})` : 'Aucun doublon à recycler'} · ${specCount} édition${specCount > 1 ? 's' : ''} spéciale${specCount > 1 ? 's' : ''}</small></div>
             <button type="button" class="btn sm ${dupes.count ? 'gold' : ''}" data-act="tcgRecycle" ${dupes.count ? '' : 'disabled'}>${ti(['ui', 'loop'])} Recycler</button>
         </div>
         <div class="tcg-pills">
             ${seriesPills}
             <button type="button" class="tcg-pill${binderMissing ? ' on' : ''}" data-act="tcgToggleMiss">Manquantes</button>
+            <button type="button" class="tcg-pill${binderSpecial ? ' on' : ''}" data-act="tcgToggleSpec">${ti(['ui', 'sparkle'], 'tcg-ico xs')} Spéciales (${specCount})</button>
         </div>
         <div class="tcg-grid">${gridHtml}</div>
     `;
@@ -485,10 +507,27 @@ function renderZoomOverlay(T) {
     const c = TCG_CARD_BY_ID[zoomCardId];
     const inDeck = T.deck.includes(c.id);
     const isFav = T.fav === c.id;
+    const curSkin = G.tcgCardSkin(c.id);
+    const unlocked = new Set(G.tcgCardVariants(c.id));
+    const listVars = TCG_VARIANT_ORDER.filter(v => !(v === 'fullart' && (c.rarity === 'L' || c.rarity === 'S')));
+    const varBtns = listVars
+        .map(v => {
+            const info = TCG_VARIANTS[v];
+            const has = unlocked.has(v);
+            const active = curSkin === v;
+            if (has) {
+                return `<button type="button" class="tcg-var-btn${active ? ' on' : ''} v-${v}" data-act="tcgSetSkin" data-id="${c.id}" data-v="${v}" title="${esc(info.desc)}">${esc(info.name)}</button>`;
+            }
+            const can = T.dust >= info.craft;
+            return `<button type="button" class="tcg-var-btn locked v-${v}${can ? ' can' : ''}" data-act="tcgCraftVar" data-id="${c.id}" data-v="${v}" ${can ? '' : 'disabled'} title="${esc(info.desc)}">${esc(info.name)} · ${info.craft}${ICO_DUST()}</button>`;
+        })
+        .join('');
+
     return `<div class="tcg-zoom-back" data-act="tcgCloseZoom">
         <div class="tcg-zoom-box" data-act="tcgNoop">
             <div class="tcg-tilt-wrap">${renderCardHtml(c, { big: true, act: 'tcgNoop' })}</div>
             <div class="tcg-zoom-meta">Possédée ×${T.cards[c.id]} · ${esc(TCG_RARITIES[c.rarity].name)} · Famille ${ti(TCG_FAMILIES[c.family].icon, 'tcg-ico xs')} ${TCG_FAMILIES[c.family].name}</div>
+            <div class="tcg-var-bar">${varBtns}</div>
             <div class="tcg-stage-actions">
                 <button type="button" class="btn sm ${inDeck ? '' : 'green'}" data-act="tcgToggleDeck" data-id="${c.id}">${inDeck ? 'Retirer du deck' : `${ICO_DUEL()} Mettre au deck`}</button>
                 <button type="button" class="btn sm ${isFav ? 'gold' : ''}" data-act="tcgSetFav" data-id="${c.id}">${ti(['ui', 'star'], 'tcg-ico xs')} ${isFav ? 'Favorite' : 'Épingler'}</button>
@@ -566,8 +605,17 @@ export function setupTcg() {
         tcgToggleDeck: (el, d) => G.tcgToggleDeck(d.id),
         tcgAutoDeck: () => G.tcgAutoDeck(),
         tcgSetFav: (el, d) => G.tcgSetFav(d.id),
+        tcgSetSkin: (el, d) => G.tcgSetCardSkin(d.id, d.v),
+        tcgCraftVar: (el, d) => G.tcgCraftVariant(d.id, d.v),
         tcgFilterS: (el, d) => (binderSeries = d.s || 'all'),
-        tcgToggleMiss: () => (binderMissing = !binderMissing),
+        tcgToggleMiss: () => {
+            binderMissing = !binderMissing;
+            if (binderMissing) binderSpecial = false;
+        },
+        tcgToggleSpec: () => {
+            binderSpecial = !binderSpecial;
+            if (binderSpecial) binderMissing = false;
+        },
         tcgDuelCat: (el, d) => (duelCat = d.c || 'village'),
         tcgStartDuel: (el, d) => G.tcgStartDuel(d.id),
         tcgReroll: () => G.tcgDuelReroll(),
