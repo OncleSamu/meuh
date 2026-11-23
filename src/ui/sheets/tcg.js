@@ -1,6 +1,5 @@
 // 1.155 : Feuille MeuhCG — Boosters, Duels (Villageois / Camping / Famille), Classeur et Deck.
 // Respecte strictement la règle des 0 émoji de Meuh : toutes les icônes sont en SVG kit.js.
-import { state } from '../../core/state.js';
 import * as G from '../../systems/index.js';
 import {
     TCG_CARD_BY_ID,
@@ -451,9 +450,9 @@ defineSheet('tcg', {
                 <span class="tcg-chip">${ICO_DUST()} <b>${T.dust}</b></span>
                 <span class="tcg-chip">${ICO_PACK()} <b>${T.freePacks}</b></span>
                 <span class="tcg-chip">${ti(['ui', 'book'])} <b>${G.tcgOwnedCount()}/${TCG_CARDS.length}</b></span>
-                ${favCard ? `<button type="button" class="tcg-chip fav" data-act="tcgZoom" data-id="${favCard.id}" title="Carte favorite">${ti(['ui', 'star'], 'tcg-ico xs')} ${esc(favCard.name)}</button>` : ''}
+                ${favCard ? `<button type="button" class="tcg-chip tcg-fav" data-act="tcgZoom" data-id="${favCard.id}" title="Carte favorite">${ti(['ui', 'star'], 'tcg-ico xs')} ${esc(favCard.name)}</button>` : ''}
             </div>
-            ${daily ? `<button type="button" class="tcg-daily" data-act="tcgClaimDaily"><span>${ti(['ui', 'sparkle'])} <b>Booster gratuit du jour ${state.day || 1} !</b></span><span>+1 ${ICO_PACK()} &amp; +30 ${ICO_TOK()}</span></button>` : ''}
+            ${daily ? `<button type="button" class="tcg-daily" data-act="tcgClaimDaily"><span>${ti(['ui', 'sparkle'])} <b>Booster du jour !</b></span><span class="tcg-daily-rew">+1 ${ICO_PACK()} +30 ${ICO_TOK()}</span></button>` : ''}
             ${it.html}
             <div class="tcg-view">${body}</div>
             ${renderZoomOverlay(T)}

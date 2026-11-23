@@ -35,7 +35,7 @@
     font-weight: 700;
     color: var(--ink);
 }
-.tcg-chip.fav {
+.tcg-chip.tcg-fav {
     cursor: pointer;
     background: linear-gradient(#fff6cf, #ffe38f);
     border-color: #c98808;
@@ -43,22 +43,27 @@
 }
 .tcg-daily {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px 8px;
     width: 100%;
+    box-sizing: border-box;
     margin-bottom: 10px;
-    padding: 9px 12px;
+    padding: 8px 11px;
     border: 2px solid #2e7d32;
     border-radius: 12px;
     background: linear-gradient(120deg, #e7fae0, #fff6cf);
     box-shadow: 0 3px 0 #2e7d32;
     font: inherit;
-    font-size: 0.84rem;
+    font-size: 0.8rem;
     color: #1c4e1f;
     cursor: pointer;
 }
-.tcg-daily span {
+.tcg-daily-rew {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-weight: 800;
     white-space: nowrap;
 }
