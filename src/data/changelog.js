@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.161",
+  "title": "Confort PC, Pluie GPU & Pré Défilable",
+  "date": "23 novembre 2026",
+  "items": [
+   "Pluie, neige, feuilles et papillons convertis en déplacement GPU (translate3d) au lieu de repeindre tout l’écran sur le CPU : fini les ralentissements par temps de pluie sur PC et mobile",
+   "En mode « Animations réduites », le décor et la météo restent calmes mais les animaux du pré (poules, vaches…) gardent une vie douce au lieu de rester figés",
+   "Sur grand écran (PC), l’onglet « Terres » (à la place de l’onglet Ferme redondant avec le champ déjà épinglé à gauche) ouvre directement Nature, Verger, Pêche et Voyages et masque le sous-onglet Champ inutile",
+   "Dans Animaux › Prés, les boutons Nourrir / Ramasser, le choix Pré / Étable et les options de pré restent désormais fixes en haut tandis que seul l’intérieur du pré défile"
+  ]
+ },
+ {
   "v": "1.160",
   "title": "Fluidité & Performance Globale",
   "date": "23 novembre 2026",

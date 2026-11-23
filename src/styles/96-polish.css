@@ -485,13 +485,24 @@ html.season-hiver .meadow .pond::after {
     }
 }
 
-/* 1.149 : mode calme unifié (arrête toutes les animations décoratives pour préserver confort et batterie) */
+/* 1.149 / 1.161 : mode calme (coupe décor, pluie, transitions et particules tout en laissant les bêtes du pré vivre doucement) */
 html.calm *,
 html.calm *::before,
 html.calm *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+}
+html.calm .critter {
+    transition:
+        left 4.2s linear,
+        top 4.2s linear !important;
+}
+html.calm .critter-body {
+    animation: idle 3.6s ease-in-out infinite !important;
+}
+html.calm .critter.walking .critter-body .spr {
+    animation: waddle 0.55s ease-in-out infinite !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

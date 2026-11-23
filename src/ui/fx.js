@@ -9,6 +9,7 @@ import { byId, centerOf, anchorEl } from './dom.js';
 const layer = () => byId('fx');
 const systemCalm = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 // animations réduites : réglage du système ou option du jeu
+export const systemReduceMotion = () => systemCalm;
 export const reduceMotion = () => systemCalm || state.settings.calm;
 
 export function floatText(x, y, html, cls = '') {

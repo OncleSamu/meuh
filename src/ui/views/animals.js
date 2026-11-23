@@ -14,7 +14,7 @@ import { defineSheet, openSheet, closeSheet } from '../sheets.js';
 import { STUD } from '../../data/haras.js';
 import { genWrap, looksText, animalKey, featuresText, lineageHtml } from '../genlook.js';
 import { animalTraits } from './lab.js';
-import { reduceMotion, burstAt } from '../fx.js';
+import { systemReduceMotion, burstAt } from '../fx.js';
 import { pinBar } from './common.js';
 import { longPress } from '../longpress.js';
 import { renameBtn } from '../sheets/rename.js';
@@ -31,7 +31,7 @@ function freeSpot(self, list = main.els) {
     let best = null,
         bestD = -1;
     // marges en pixels : la bulle au-dessus, le nom en dessous, la mare en bas à droite
-    const h = (self && self.parentElement && self.parentElement.offsetHeight) || 380;
+    const h = (self && self.parentElement && self.parentElement.offsetHeight) || 340;
     const y0 = (84 / h) * 100,
         y1 = 100 - (46 / h) * 100,
         pond = 100 - (120 / h) * 100;
@@ -136,16 +136,17 @@ defineLive('grow', i => {
 });
 
 export function wanderAnimals() {
-    if (reduceMotion()) return;
+    if (systemReduceMotion()) return;
     const lists = [];
     if (currentPath() === 'animals/pasture') lists.push(main.els);
     if (byId('pasture-pen')) lists.push(pen.els);
-    lists.forEach(list => walk(list));
+    lists.forEach(list => walk(list, state.settings.calm ? 0.16 : 0.3));
 }
-function walk(list) {
+function walk(list, chance = 0.3) {
+    const dur = state.settings.calm ? 4200 : 3200;
     list.forEach(el => {
         if (!el) return;
-        if (Math.random() > 0.3 || !el.isConnected) return;
+        if (Math.random() > chance || !el.isConnected) return;
         const [x, y] = freeSpot(el, list);
         el.classList.toggle('flip', x < parseFloat(el.style.left));
         el.classList.add('walking');
@@ -153,7 +154,7 @@ function walk(list) {
         el.style.top = y + '%';
         el.style.zIndex = Math.round(y) + (el.querySelector('.bubble.show') ? 100 : 0);
         clearTimeout(el._stop);
-        el._stop = setTimeout(() => el.classList.remove('walking'), 3200);
+        el._stop = setTimeout(() => el.classList.remove('walking'), dur);
     });
 }
 
@@ -183,9 +184,9 @@ function transCard() {
         ${btn(`Monter aux estives (${pick.length}/${G.transMax()})`, { act: 'startTrans', kind: pick.length ? 'green' : '', wide: true, disabled: !pick.length })}</div>`;
 }
 
-// le pré grandit avec le troupeau pour que chacun ait sa place
+// 1.161 : le pré défile dans son propre cadre afin que les options restent fixes en haut sans scroller toute la page
 const meadowHtml = n =>
-    `<div class="meadow${n > 14 ? ' crowd' : ''}" id="pasture" style="height:${Math.min(1000, Math.max(380, 160 + n * 42))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${state.animals.length ? 'Ce pré est vide : déplacez-y des bêtes depuis leur fiche.' : 'Votre pâturage est vide. Achetez une poule au marché pour commencer.'}</div>`}</div>`;
+    `<div class="meadow-scroll"><div class="meadow${n > 14 ? ' crowd' : ''}" id="pasture" style="height:${Math.min(820, Math.max(300, 140 + n * 34))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${state.animals.length ? 'Ce pré est vide : déplacez-y des bêtes depuis leur fiche.' : 'Votre pâturage est vide. Achetez une poule au marché pour commencer.'}</div>`}</div></div>`;
 
 // une bête de l'étable
 export function stableTile(a, i, mf) {
@@ -285,26 +286,25 @@ function renderAnimals(el) {
     if (mode === 'meadow' && k === 'all') k = 0;
     // 1.73 : l'étable montre un pré à la fois (le premier par défaut) ; « Tous les prés » reste à un toucher
     if (mode === 'stable' && ui.sel.pasture === undefined) k = 0;
+    const modeBar =
+        n > 0
+            ? segmented(
+                  [
+                      ['meadow', 'Le pré', ['ui', 'flowers']],
+                      ['stable', 'L’étable', ['ui', 'barn']],
+                  ],
+                  mode,
+                  'animalMode',
+              )
+            : '';
+    const pasControls = n || state.pastures.length > 1 ? pastureBar(mode, k) : '';
     blocks(el, [
         [
-            'top',
-            `<div class="view-top end"><div class="actions">${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'], anchor: 'btn:feed' })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'], anchor: 'btn:collect' })}</div></div>`,
+            'controls',
+            `<div class="view-top end"><div class="actions">${btn('Nourrir', { act: 'feedAll', kind: 'gold', size: 'sm', icon: ['item', 'feed'], anchor: 'btn:feed' })}${btn('Ramasser', { act: 'collectAnimals', kind: 'green', size: 'sm', icon: ['ui', 'basket'], anchor: 'btn:collect' })}</div></div>${modeBar}${pasControls}`,
+            'animals-sticky',
         ],
         ['pin', pinBar()],
-        [
-            'mode',
-            n > 0
-                ? segmented(
-                      [
-                          ['meadow', 'Le pré', ['ui', 'flowers']],
-                          ['stable', 'L’étable', ['ui', 'barn']],
-                      ],
-                      mode,
-                      'animalMode',
-                  )
-                : '',
-        ],
-        ['pastures', n || state.pastures.length > 1 ? pastureBar(mode, k) : ''],
         ['meadow', mode === 'stable' ? stableHtml(k) : meadowHtml(G.pastureLoad(k))],
         [
             'hint',

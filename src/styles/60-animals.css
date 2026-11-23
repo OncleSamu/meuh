@@ -269,7 +269,6 @@ html.season-automne .meadow {
 html.calm .cloud,
 html.calm .rays,
 html.calm .plot.ready .spr-wrap,
-html.calm .critter-body,
 html.calm .need-water,
 html.calm .bubble,
 html.calm .plot.ready::after,
@@ -282,8 +281,43 @@ html.calm .ripple {
     animation: none !important;
 }
 
-html.calm .critter {
-    transition: none;
+/* 1.161 : options du pré fixes en haut et défilement limité à l'intérieur du pré */
+.animals-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    padding: 4px 0 6px;
+    background: linear-gradient(180deg, rgba(250, 241, 224, 0.96) 86%, rgba(250, 241, 224, 0));
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+html.dark .animals-sticky {
+    background: linear-gradient(180deg, rgba(42, 31, 23, 0.96) 86%, rgba(42, 31, 23, 0));
+}
+.meadow-scroll {
+    max-height: clamp(270px, 46dvh, 430px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    box-shadow:
+        0 8px 0 #5c8f36,
+        0 8px 0 3px var(--ink);
+    margin: 6px 0 14px;
+    background-color: #8ccf62;
+}
+html.season-hiver .meadow-scroll {
+    background-color: #cfe2d0;
+}
+html.season-automne .meadow-scroll {
+    background-color: #b5c964;
+}
+.meadow-scroll > .meadow {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
 }
 
 .critter.sick .critter-body {

@@ -114,6 +114,12 @@ export const currentPath = () => (tabDef(ui.tab).subs ? `${ui.tab}/${ui.sub[ui.t
 const VIEWS = {};
 export const defineView = (path, fn) => (VIEWS[path] = fn);
 
+const wideFarmSub = () => {
+    const subs = (tabDef('farm').subs || []).filter(([id]) => id !== 'field');
+    const open = subs.find(([id]) => !subLocked('farm', id));
+    return open ? open[0] : null;
+};
+
 // ---------------- navigation ----------------
 // go('village/orders'), go('market'), go('sheet:book')
 export function go(path, opts = {}) {
@@ -134,8 +140,16 @@ export function go(path, opts = {}) {
         ui.sel['it:' + sub0] = hash;
     }
     let sub = sub0;
-    // écran large : l'onglet Ferme montre la nature à droite (le champ est toujours à gauche)
-    if (view.wide && tab === 'farm' && !sub) sub = !subLocked('farm', 'orchard') ? 'orchard' : !subLocked('farm', 'nature') ? 'nature' : sub;
+    // 1.161 : écran large (PC) : le champ est déjà épinglé à gauche, l'onglet Terres ouvre toujours Nature/Verger/Pêche/Voyages à droite
+    if (view.wide && tab === 'farm' && (!sub || sub === 'field')) {
+        const cur = ui.sub.farm;
+        sub = cur && cur !== 'field' && !subLocked('farm', cur) ? cur : wideFarmSub();
+        if (!sub) {
+            emit('toast', { text: `Terres (Nature & Verger) : s’ouvre au niveau ${NATURE.forest.lvl} — ton champ est déjà à gauche !`, icon: ['ui', 'lock'] });
+            emit('sfx', 'error');
+            return;
+        }
+    }
     if (tabLocked(tab)) {
         emit('toast', { text: `${tabDef(tab).name} : s’ouvre au niveau ${tabLockLvl(tab)}`, icon: ['ui', 'lock'] });
         emit('sfx', 'error');
@@ -206,10 +220,13 @@ function renderTabs() {
     patch(
         byId('tabs'),
         TABS.map(t => {
-            const locked = tabLocked(t.id),
-                n = ui.counts[t.id] || 0;
-            return `<button class="tab${ui.tab === t.id ? ' on' : ''}${locked ? ' locked' : ''}" data-act="go" data-path="${t.id}" data-tab="${t.id}" aria-label="${t.name}">
-                <span class="tab-ico">${ico(locked ? ['ui', 'lock'] : t.icon)}</span><span class="tab-name">${t.name}</span>${locked ? '' : tabDot(n, ui.counts['!' + t.id] || 0)}</button>`;
+            const wideFarm = view.wide && t.id === 'farm';
+            const locked = wideFarm ? !wideFarmSub() : tabLocked(t.id);
+            const label = wideFarm ? 'Terres' : t.name;
+            const icon = wideFarm ? ['item', 'wood'] : t.icon;
+            const n = ui.counts[t.id] || 0;
+            return `<button class="tab${ui.tab === t.id ? ' on' : ''}${locked ? ' locked' : ''}" data-act="go" data-path="${t.id}" data-tab="${t.id}" aria-label="${label}">
+                <span class="tab-ico">${ico(locked ? ['ui', 'lock'] : icon)}</span><span class="tab-name">${label}</span>${locked ? '' : tabDot(n, ui.counts['!' + t.id] || 0)}</button>`;
         }).join(''),
     );
 }
@@ -248,6 +265,7 @@ function renderSubnav() {
         return;
     }
     el.hidden = false;
+    const subs = view.wide && t.id === 'farm' ? t.subs.filter(([id]) => id !== 'field') : t.subs;
     const help =
         currentPath() === 'market/sell' && ui.sel.sell === 'beasts' && G.fairOpen()
             ? 'elevage'
@@ -261,9 +279,9 @@ function renderSubnav() {
     // 1.73 : chaque volet garde son nom ; s'ils ne tiennent pas, la bande défile et le volet ouvert se centre
     patch(
         el,
-        `<div class="subnav-row${t.subs.length > 2 ? ' strip' : ''}${t.subs.length >= 4 ? ' stack' : ''}">` +
+        `<div class="subnav-row${subs.length > 2 ? ' strip' : ''}${subs.length >= 4 ? ' stack' : ''}">` +
             segmented(
-                t.subs.map(([id, label, icon]) => {
+                subs.map(([id, label, icon]) => {
                     const locked = subLocked(t.id, id);
                     return [
                         id,
