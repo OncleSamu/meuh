@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.163",
+  "title": "MeuhCG : Confort petit téléphone",
+  "date": "23 novembre 2026",
+  "items": [
+   "Dans Mon Deck sur téléphone, les 5 emplacements du deck passent en grille lisible (3 + 2 cartes, ou 2 par ligne sur les tout petits écrans) au lieu de 5 cartes écrasées côte à côte",
+   "En Duel et dans le Classeur sur petit écran, cartes, en-têtes (édition, étoiles, rareté) et barres de filtres (familles et coûts en 1 seule ligne glissable) s’adaptent sans déborder"
+  ]
+ },
+ {
   "v": "1.162",
   "title": "MeuhCG : Tournoi, Troc, 3 Decks & Combos",
   "date": "23 novembre 2026",

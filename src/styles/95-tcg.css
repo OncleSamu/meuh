@@ -2368,3 +2368,116 @@ html.calm .tcg-sparks > i {
     border-color: #fff4b8;
 }
 
+/* 1.163 : Mise en page mobile propre (petits téléphones) pour Mon Deck, Main de duel et Filtres */
+.tcg-card,
+.tcg-foot-glass {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+}
+.tcg-top {
+    gap: 2px;
+    min-width: 0;
+}
+.tcg-top-l,
+.tcg-top-r {
+    min-width: 0;
+    flex-shrink: 1;
+}
+.tcg-forge-bar > .btn,
+.tcg-deck-strip > .btn {
+    flex-shrink: 0;
+}
+@media (max-width: 519px) {
+    .tcg-deck-slots {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+    }
+    .tcg-slot-empty {
+        min-height: 122px;
+        font-size: 0.68rem;
+    }
+    .tcg-hand {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+    }
+    .tcg-subpills {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+    }
+    .tcg-subpills::-webkit-scrollbar {
+        display: none;
+    }
+    .tcg-subpills .tcg-pill {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+}
+@media (max-width: 420px) {
+    .tcg-card:not(.big) {
+        padding: 5px 4px 6px;
+        border-radius: 10px;
+        gap: 2px;
+    }
+    .tcg-card:not(.big) .tcg-art {
+        width: 46px;
+        height: 46px;
+    }
+    .tcg-card.is-fullart:not(.big) .tcg-art {
+        width: 58px;
+        height: 58px;
+    }
+    .tcg-card:not(.big) .tcg-top {
+        font-size: 0.54rem;
+    }
+    .tcg-card:not(.big) .tcg-var-pill {
+        padding: 0 3px;
+        font-size: 0.45rem;
+    }
+    .tcg-card:not(.big) .tcg-cost {
+        padding: 0 3px;
+        font-size: 0.49rem;
+    }
+    .tcg-card:not(.big) .tcg-rar {
+        padding: 1px 4px;
+        font-size: 0.49rem;
+    }
+    .tcg-card:not(.big) .tcg-name {
+        font-size: 0.62rem;
+    }
+    .tcg-card:not(.big) .tcg-stats {
+        font-size: 0.54rem;
+        padding: 2px;
+        gap: 1px;
+    }
+    .tcg-deck-tabs {
+        gap: 4px;
+    }
+    .tcg-deck-tab {
+        padding: 5px 3px;
+    }
+    .tcg-deck-tab b {
+        font-size: 0.7rem;
+    }
+    .tcg-deck-tab small {
+        font-size: 0.6rem;
+    }
+    .tcg-forge-bar,
+    .tcg-deck-strip {
+        padding: 7px 8px;
+        gap: 6px;
+        font-size: 0.74rem;
+    }
+}
+@media (max-width: 345px) {
+    .tcg-deck-slots,
+    .tcg-grid,
+    .tcg-hand {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
