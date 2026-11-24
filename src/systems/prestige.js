@@ -83,6 +83,8 @@ export function doPrestige(challenge, theme) {
         me: state.me,
         family: state.family,
         tcg: state.tcg,
+        museum: state.museum,
+        mineDeep: state.mineDeep ? { ...state.mineDeep, floor: 1, grid: null, sonarUsed: false } : null,
         holiday: state.holiday,
         farmTheme: theme || 'none',
         // la cave garde ses étagères, son équipement, sa cote, son palmarès et ses trophées ; les lots partent avec la ferme

@@ -276,7 +276,9 @@ function renderSubnav() {
                 ? 'nord'
                 : currentPath() === 'farm/island' && ui.sel.island === 'asie'
                   ? 'asie'
-                  : HELP[currentPath()];
+                  : currentPath() === 'farm/nature' && ui.sel.natTab === 'deep'
+                    ? 'museum'
+                    : HELP[currentPath()];
     const prevSeg = el.querySelector('.strip > .seg');
     const prevScroll = prevSeg ? prevSeg.scrollLeft : null;
     // 1.73 : chaque volet garde son nom ; s'ils ne tiennent pas, la bande défile et le volet ouvert se centre

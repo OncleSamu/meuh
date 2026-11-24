@@ -80,6 +80,15 @@ export function todoList() {
             add('farm/island#asie', ['ui', 'asRoue'], 'La roue à eau vous attend', 1);
         if (G.junkBack()) add('farm/island#asie', ['ui', 'asJonque'], 'La jonque de la soie est rentrée !', 1, { urgent: true });
     }
+    // 1.172 : Le Musée de la vallée (dons, géodes, paliers)
+    if (G.museumOpen()) {
+        const don = G.museumDonateReady();
+        if (don) add('sheet:museum', ['ui', 'museum'], `${don} pièce${s(don)} à exposer au Musée`, don, { urgent: true });
+        const geo = G.museumGeodeTotal();
+        if (geo) add('sheet:museum', ['ui', 'geodeAmethyst'], `${geo} géode${s(geo)} à ouvrir au Musée`, geo);
+        const ms = G.museumClaimableMilestones().length;
+        if (ms) add('sheet:museum', ['ui', 'star'], `${ms} récompense${s(ms)} du Musée à prendre`, ms, { urgent: true });
+    }
     // 1.69 : les ruchers des contrées
     for (const [land, where, name] of [
         ['island', 'isle', 'sur l’île'],

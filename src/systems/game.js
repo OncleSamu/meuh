@@ -53,6 +53,8 @@ import { ensureIsland, islandTick, islandOffline } from './island.js';
 import { ensureOasis, oasisTick, oasisOffline, sandstormTick } from './oasis.js';
 import { ensureNord, nordTick, nordOffline } from './nord.js';
 import { ensureAsie, asieTick, asieOffline } from './asie.js';
+import { ensureMineDeep, mineTick, mineSyncEnergy } from './mine.js';
+import { ensureMuseum } from './museum.js';
 import { apiaryTick } from './apiary.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
@@ -199,6 +201,8 @@ export function normalizeState() {
     ensureOasis();
     ensureNord();
     ensureAsie();
+    ensureMineDeep();
+    ensureMuseum();
     ensureGenetics();
     ensureChateau();
     if (brewOpen()) ensureBrew();
@@ -313,6 +317,7 @@ function tickFarm() {
     if (oasisTick()) changed = true;
     if (nordTick()) changed = true;
     if (asieTick()) changed = true;
+    if (mineTick()) changed = true;
     if (sandstormTick()) changed = true;
     if (wellTick()) changed = true;
     if (honeyTick(1)) changed = true;
@@ -435,6 +440,7 @@ export function offlineProgress() {
     const oas = oasisOffline(elapsed);
     const nor = nordOffline(elapsed);
     const asi = asieOffline(elapsed);
+    mineSyncEnergy();
     // le commis et le puits travaillent pendant votre absence
     const hand = handOffline(elapsed);
     wellTick();

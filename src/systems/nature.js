@@ -8,6 +8,7 @@ import { season } from './world.js';
 import { hasCost, payCost } from './home.js';
 import { addXp, speedMult } from './player.js';
 import { collect } from './book.js';
+import { museumBonus, museumAddSpecimen } from './museum.js';
 
 // l'état de la nature (1.11) : profondeur de la mine, équipement, charbonnière, ouvriers, carnet, défi de Gaspard
 export function ensureNat() {
@@ -186,7 +187,8 @@ export function hitSlot(kind, k, at) {
     let xp = kind === 'forest' ? 4 : 6;
     if (kind === 'forest') {
         const sp = SPECIES[sl.sp] || SPECIES.oak;
-        give('wood', stoneQty + (sp.wood || 0), at);
+        const natBonus = Math.random() < museumBonus('nature') ? 1 : 0;
+        give('wood', stoneQty + (sp.wood || 0) + natBonus, at);
         const [id, p, a, b] = sp.extra;
         if (Math.random() < p + (sl.big ? 0.2 : 0)) give(id, a + Math.floor(Math.random() * (b - a + 1)), at, '', -48, 150);
         state.nat.lastSpecies = sl.sp;
@@ -201,24 +203,40 @@ export function hitSlot(kind, k, at) {
             state.seeds.apple++;
             toast('Une jeune pousse de pommier était cachée sous l’arbre !', ['seed', 'apple']);
         }
+        // 1.172 : curiosités des bois pour le Musée
+        if (state.level >= 8 && Math.random() < 0.06 * (1 + museumBonus('nature'))) {
+            const forestCurios = ['msFougere', 'msBoisFlotte', ...(state.level >= 18 ? ['msAmbre'] : []), ...(state.level >= 30 ? ['msCloche'] : [])];
+            museumAddSpecimen(forestCurios[Math.floor(Math.random() * forestCurios.length)], 1, at);
+        }
     } else {
         const d = depthNow(),
             ore = sl.ore || 'stone';
-        if (ore === 'stone') give('stone', stoneQty, at);
+        const natBonus = Math.random() < museumBonus('nature') ? 1 : 0;
+        if (ore === 'stone') give('stone', stoneQty + natBonus, at);
         else {
             // un minerai se garde plus rare que la pierre
-            const q = 1 + Math.floor(Math.random() * 2) + (sl.big ? 1 : 0) + Math.floor(tl / 2) + (bonus ? 1 : 0) + (sl.gem ? 1 : 0);
+            const q = 1 + Math.floor(Math.random() * 2) + (sl.big ? 1 : 0) + Math.floor(tl / 2) + (bonus ? 1 : 0) + (sl.gem ? 1 : 0) + natBonus;
             give(ore, q, at);
             give('stone', 1 + Math.floor(Math.random() * 2), at, '', -44, 120);
             xp += 3;
         }
         // une pierre précieuse : une veine en donne toujours une
-        if (sl.gem || Math.random() < (sl.big ? 0.4 : 0.11) + 0.04 * skill('gemEye')) {
+        const gemBoost = 1 + museumBonus('mineDrop');
+        if (sl.gem || Math.random() < ((sl.big ? 0.4 : 0.11) + 0.04 * skill('gemEye')) * gemBoost) {
             const g = pick(d.gems);
             give(g, 1 + (sl.gem ? skill('prospector') : 0), at, 'gold', -56, 250);
             sfx('golden');
             burst(at, 'sparkle', 12);
             xp += 4;
+        }
+        // 1.172 : chance de trouver une géode pour le Musée même dans la mine de surface
+        if (Math.random() < 0.14 * gemBoost) {
+            const gId = d.id === 'cave' ? 'geodeCrystal' : d.id === 'gallery' ? 'geodeAmethyst' : 'geodeStone';
+            if (!state.mineDeep) state.mineDeep = { geodes: {} };
+            state.mineDeep.geodes = state.mineDeep.geodes || {};
+            state.mineDeep.geodes[gId] = (state.mineDeep.geodes[gId] || 0) + 1;
+            state.stats.geodesFound = (state.stats.geodesFound || 0) + 1;
+            if (at) float(at, ['+1', ['ui', gId]], 'gold', -68);
         }
         state.nat.lastOre = ore;
     }

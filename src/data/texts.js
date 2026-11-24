@@ -400,6 +400,26 @@ export const TIPS = {
         title: 'La poule soie',
         text: 'On dirait un petit nuage sur pattes ! La poule soie pond vite des œufs délicats et laisse parfois du duvet de soie au nid. Mamie Odette a voulu en tricoter des chaussons : elle a juré qu’on marchait sur du beurre.',
     },
+    mineDeep: {
+        icon: ['ui', 'mineDeep'],
+        title: 'La mine souterraine',
+        text: 'Sous la carrière s’étendent 40 étages répartis en 4 strates ! Creusez les rochers pour trouver l’escalier vers l’étage suivant, déterrer des géodes, des fossiles et des reliques. Tous les 5 étages, l’ascenseur s’ouvre définitivement.',
+    },
+    geode: {
+        icon: ['ui', 'geodeStone'],
+        title: 'Les géodes',
+        text: 'Une géode ne prend aucune place dans la grange : apportez-la au Musée (Menu › Musée › Géodes) pour que le Professeur Anatole la brise et en sorte une pièce rare ou des gemmes !',
+    },
+    museum: {
+        icon: ['ui', 'museum'],
+        title: 'Le Musée de la vallée',
+        text: 'Accessible dans le Menu (Collections › Musée), le Musée rassemble 32 pièces uniques en 4 ailes : Paléontologie, Minéralogie, Reliques et Trésors naturels. Compléter les ailes accorde des bonus permanents à toute la ferme !',
+    },
+    museumWing: {
+        icon: ['ui', 'museum'],
+        title: 'Les bonus des ailes',
+        text: 'Dès 4 pièces données dans une aile (moitié), un bonus permanent s’active pour toute la ferme ; à 8 pièces (aile complète), il double ! Les doublons se revendent directement au Musée.',
+    },
     robebook: {
         icon: ['ui', 'cpCarnet'],
         title: 'Le carnet des robes',

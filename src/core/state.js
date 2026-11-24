@@ -46,6 +46,8 @@ export function newState() {
         oasis: null, // 1.48 : l'oasis (cases, citerne, source, chadouf)
         nord: null, // 1.51 : le Grand Nord (cases, poêles, bois)
         asie: null, // 1.171 : Les Terres d'Asie (terrasses, bassin, rigoles, pavillon, jonque)
+        mineDeep: null, // 1.172 : La Mine souterraine (40 étages, grille 5×5, géodes, lanterne, améliorations)
+        museum: null, // 1.172 : Le Musée de la vallée (32 spécimens, 4 ailes, paliers, atelier de géodes)
         genetics: null,
         cepage: null, // 1.62 : les vins de cépage
         brew: null, // 1.6 : la brasserie de l'abbaye

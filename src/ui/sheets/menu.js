@@ -90,6 +90,7 @@ defineSheet('menu', {
             ]) +
             group('Collections', [
                 tile('MeuhCG', 'tcg', ['ui', 'meuhcg'], G.tcgBadge(), G.tcgSub()),
+                tile('Musée', 'museum', ['ui', 'museum'], G.museumBadge(), G.museumOpen() ? G.museumSub() : 'Niveau 8'),
                 tile('Livre de la ferme', 'book', ['ui', 'book'], book),
                 carnetsOpen() ? tile('Carnets', 'carnets', ['ui', 'cpCarnet'], carnetsReady()) : '',
                 G.defiOpen() ? tile('La Coupe', 'cup', ['ui', 'cupRank' + G.cupRank()], 0, G.cupRankName()) : '',
@@ -341,12 +342,14 @@ export function setupMenu() {
         openSearch: () => openSheet('guide', { focusSearch: true }),
         todoGo: (el, d) => {
             closeAll();
+            if (d.path && d.path.startsWith('sheet:')) return openSheet(d.path.slice(6));
             go(d.path);
         },
         lvGo: (el, d) => {
             const to = d.to;
             closeAll();
             if (to.startsWith('produce:')) return produce(to.slice(8));
+            if (to.startsWith('sheet:')) return openSheet(to.slice(6));
             go(to);
         },
         lvStep: (el, d) => {

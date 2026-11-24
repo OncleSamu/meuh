@@ -80,6 +80,7 @@ import './nord/cuisine.js';
 import './asie/asie.js';
 import './asie/betes.js';
 import './asie/cuisine.js';
+import './mine-museum.js';
 import './comptoir/boissons-oasis.js';
 import './comptoir/boissons-nord.js';
 import './verger/fruits-sur-arbre.js';

@@ -16,6 +16,7 @@ import { DAYS_PER_SEASON } from '../data/world.js';
 import { SPOTS, BAITS, BAIT_MULT, WORMS, FLY_CRAFT, RODS, TRAPS, MARCEL, SALMON_RUN, FISH_CONTEST, SIZES, LOG_STEPS, FISH_QUALITY } from '../data/fishing.js';
 import { addQuality, ascend } from './farm.js';
 import { addMastery } from './mastery.js';
+import { museumBonus, museumAddSpecimen } from './museum.js';
 import { spend, addXp, earn, rank } from './player.js';
 import { collect } from './book.js';
 import { season, isNight, dayInSeason } from './world.js';
@@ -458,6 +459,18 @@ export function landFish(id, w, at, perfect) {
         marcelCatch(id, w, perfect, 1);
         contestCatch(id, w);
         runCatch(id, w);
+        // 1.172 : bonus d'aile Trésors naturels + curiosités aquatiques pour le Musée
+        if (Math.random() < museumBonus('nature')) state.inventory[id]++;
+        if (state.level >= 8 && Math.random() < 0.08 * (1 + museumBonus('nature'))) {
+            const waterCurios = [
+                'msPerle',
+                'msBoisFlotte',
+                ...(state.level >= 18 ? ['msDentRequin', 'msCorail'] : []),
+                ...(state.level >= 30 ? ['msBoussole'] : []),
+                ...(state.level >= 55 ? ['msNacre'] : []),
+            ];
+            museumAddSpecimen(waterCurios[Math.floor(Math.random() * waterCurios.length)], 1, at);
+        }
     }
     return true;
 }

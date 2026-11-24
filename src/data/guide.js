@@ -1593,7 +1593,50 @@ export const GUIDE_PAGES = [
             },
             { h: 'Au marché', t: 'Bois, pierre, minerais, lingots et pierres précieuses se vendent un par un ; « Tout vendre » garde ce qu’il faut.' },
         ],
-        see: ['barn', 'workshop', 'domaine'],
+        see: ['museum', 'barn', 'workshop', 'domaine'],
+    },
+    {
+        id: 'museum',
+        cat: 'nature',
+        name: 'Mine souterraine et Musée',
+        icon: ['ui', 'museum'],
+        lvl: 8,
+        go: 'farm/nature',
+        intro: 'Quarante étages à explorer sous la vallée, quatre types de géodes et un Musée de 32 pièces aux bonus permanents.',
+        facts: [
+            { icon: ['ui', 'mineDeep'], v: '40 étages', l: '4 strates · ascenseur /5' },
+            { icon: ['ui', 'geodeAmethyst'], v: '4 géodes', l: 'Ouvertes au Musée' },
+            { icon: ['ui', 'museum'], v: '32 pièces', l: '4 ailes · 8 vitrines' },
+            { icon: ['ui', 'star'], v: '4 bonus', l: 'Permanents à 50 % et 100 %' },
+        ],
+        secs: [
+            {
+                h: 'La descente souterraine (Ferme › Nature)',
+                b: [
+                    'Quatre strates de 10 étages : Carrière ancienne (niv. 8), Galeries de cuivre (niv. 18, lampe et wagonnet), Cavernes de cristal (niv. 30) et Abysses d’obsidienne (niv. 55, pioche niv. 4+).',
+                    'Chaque étage est une grille 5×5 à creuser avec la lanterne (recharge automatique même jeu fermé, ou casse-croûte au charbon 2×/jour).',
+                    'Trouvez l’escalier caché pour descendre. Chaque palier de 5 étages (5, 10, 15… 40) se débloque à l’ascenseur et renferme un coffre souterrain.',
+                ],
+            },
+            {
+                h: 'Outils tactiques et améliorations',
+                b: [
+                    'Dynamite : dégage plusieurs rochers d’un coup (croix, puis carré 3×3 avec la Caisse de dynamite).',
+                    'Boussole de veine : révèle où se cachent l’escalier, les géodes et les fossiles de l’étage.',
+                    'Quatre améliorations permanentes : Grand réservoir, Lampe frontale, Caisse de dynamite et Treuil renforcé.',
+                ],
+            },
+            {
+                h: 'Le Musée de la vallée (Menu › Musée)',
+                b: [
+                    'Quatre ailes de 8 pièces : Paléontologie (+5 % / +10 % XP), Minéralogie (+10 % / +20 % gemmes & géodes), Reliques (+3 % / +6 % prix de vente) et Trésors naturels (+10 % / +20 % forêt, mine, pêche).',
+                    'Atelier de géodes : brisez vos géodes au Musée pour découvrir de nouveaux spécimens (forte priorité aux pièces manquantes) ou des gemmes rares. Les doublons se vendent directement en un clic.',
+                    'Paliers de dons (tous les 4 dons jusqu’à 32) : pièces, XP, rubans de prestige et trois décorations exclusives.',
+                ],
+            },
+        ],
+        tips: ['Les bois et la pêche peuvent aussi révéler des curiosités naturelles pour la 4e aile du Musée !'],
+        see: ['forest', 'pond', 'legend'],
     },
     {
         id: 'pond',

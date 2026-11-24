@@ -9,6 +9,7 @@ import { projectDone } from './story.js';
 import { housePay, houseBarn, houseLvl, extraOrders, extraStall } from './home.js';
 import { barnCap } from './barn.js';
 import { goldMasteries } from './mastery.js';
+import { MUSEUM_WINGS, MUSEUM_BY_WING } from '../data/museum.js';
 
 export function tip(id) {
     if (!TIPS[id] || state.tips[id] || !state.tutorial.done) return;
@@ -18,6 +19,16 @@ export function tip(id) {
 
 const signed = x => `${x >= 0 ? '+' : ''}${Math.round(x * 100)} %`;
 export const bonusValue = v => (typeof v === 'number' ? signed(v) : v);
+
+const museumBonusLocal = key => {
+    const M = state.museum;
+    if (!M || !M.donated) return 0;
+    const w = MUSEUM_WINGS.find(x => x.bonusKey === key);
+    if (!w) return 0;
+    const ids = MUSEUM_BY_WING[w.id] || [];
+    const n = ids.filter(id => M.donated[id]).length;
+    return n >= ids.length ? w.fullPct / 100 : n >= Math.ceil(ids.length / 2) ? w.halfPct / 100 : 0;
+};
 
 // [icône, nom, valeur, origine]
 export function bonusLines() {
@@ -34,6 +45,10 @@ export function bonusLines() {
     const orders = (1 + rank('loyal') * 0.1) * (1 + up.price * 0.04) * (projectDone('townhall') ? 1.1 : 1) * housePay() - 1;
     const magic = ['Engrais magique', up.speed * 0.1],
         rib = ['Rubans', r * 0.03];
+    const msXp = museumBonusLocal('xp'),
+        msSell = museumBonusLocal('sell'),
+        msMine = museumBonusLocal('mineDrop'),
+        msNat = museumBonusLocal('nature');
     return [
         [['item', 'wheat'], 'Pousse des cultures', crop, src([magic, rib, ['Main verte', rank('green') * 0.05]])],
         [['item', 'egg'], 'Production des animaux', anim, src([magic, rib, ['Bien nourris', rank('fed') * 0.08]])],
@@ -57,6 +72,7 @@ export function bonusLines() {
                 ['Négociation', up.price * 0.1],
                 ['Rubans', r * 0.05],
                 ['Bagou', rank('gab') * 0.04],
+                ['Musée (Reliques)', msSell],
             ]),
         ],
         [
@@ -87,6 +103,17 @@ export function bonusLines() {
             ]),
         ],
         [['ui', 'xp'], 'Expérience des livraisons', projectDone('school') ? 0.1 : 0, src([['L’école', projectDone('school') ? 0.1 : 0]])],
+        [
+            ['ui', 'museum'],
+            'Musée de la vallée',
+            `${Object.keys((state.museum && state.museum.donated) || {}).length} / 32`,
+            src([
+                ['Paléontologie (XP)', msXp],
+                ['Minéralogie (gemmes/géodes)', msMine],
+                ['Reliques (prix)', msSell],
+                ['Trésors (nature/pêche)', msNat],
+            ]),
+        ],
         [
             ['ui', 'barn'],
             'Place dans la grange',

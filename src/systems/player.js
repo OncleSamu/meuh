@@ -28,6 +28,7 @@ import { CAMPING } from '../data/camping.js';
 import { OASIS } from '../data/oasis.js';
 import { NORD } from '../data/nord.js';
 import { ASIE } from '../data/asie.js';
+import { MUSEUM_WINGS, MUSEUM_BY_WING } from '../data/museum.js';
 import { APIARY } from '../data/apiary.js';
 import { DAILY_REWARDS, HOLIDAY_LVL } from '../data/world.js';
 import { levelGate } from './goals.js';
@@ -59,8 +60,17 @@ export function spend(amount) {
 }
 
 // ---------------- multiplicateurs généraux ----------------
+const msBonus = key => {
+    const M = state.museum;
+    if (!M || !M.donated) return 0;
+    const w = MUSEUM_WINGS.find(x => x.bonusKey === key);
+    if (!w) return 0;
+    const ids = MUSEUM_BY_WING[w.id] || [];
+    const n = ids.filter(id => M.donated[id]).length;
+    return n >= ids.length ? w.fullPct / 100 : n >= Math.ceil(ids.length / 2) ? w.halfPct / 100 : 0;
+};
 export const speedMult = () => (1 + state.upgrades.speed * 0.1) * (1 + state.prestige.rubans * 0.03);
-export const priceMult = () => (1 + state.upgrades.price * 0.1) * (1 + state.prestige.rubans * 0.05) * (1 + rank('gab') * 0.04);
+export const priceMult = () => (1 + state.upgrades.price * 0.1) * (1 + state.prestige.rubans * 0.05) * (1 + rank('gab') * 0.04) * (1 + msBonus('sell'));
 export const rollYield = kind =>
     Math.random() < state.upgrades.yield * 0.1 + (kind === 'crop' ? rank('bounty') * 0.04 : kind === 'animal' ? rank('pasture') * 0.05 : 0) ? 2 : 1;
 
@@ -197,7 +207,7 @@ export function migrateLevels80() {
 }
 
 export function addXp(amount, at) {
-    amount = Math.floor(amount);
+    amount = Math.floor(amount * (1 + msBonus('xp')));
     if (amount <= 0) return;
     state.xp += amount;
     if (at !== undefined) emit('float', { at, parts: [`+${fmt(amount)}`, ['ui', 'xp']], cls: 'xp', dy: 0, dx: 18 });
@@ -391,6 +401,11 @@ export function unlocksAt(lvl) {
     // 1.139 : ce qui manquait à la liste (famille, camping, oasis, Grand Nord, ruchers, dépendances, deuxième poste, métier)
     const addGo = (go, icon, name) => list.push({ icon, name, go });
     const bigGo = (go, icon, name) => list.splice(1, 0, { icon, name, big: true, go });
+    if (lvl === NATURE.mine.lvl) {
+        addGo('farm/nature', ['ui', 'mineDeep'], 'La mine souterraine : 40 étages à explorer, géodes et reliques (Ferme › Nature)');
+        addGo('sheet:museum', ['ui', 'museum'], 'Le Musée de la vallée : 32 pièces à exposer et 4 bonus permanents (Menu › Musée)');
+    }
+    if (lvl === 55) addGo('farm/nature', ['ui', 'mineDeep'], 'Mine souterraine : les abysses d’obsidienne (étages 31 à 40)');
     if (lvl === 3) addGo('sheet:identity', ['ui', 'star'], 'Votre métier : maraîcher, éleveur, arboriculteur, cuisinier, vigneron ou pêcheur (Menu, votre carte de visite)');
     if (lvl === LANE2_LVL) addGo('machines/workshop', ['machine', 'mill'], 'Le deuxième poste : une machine fait deux lots à la fois (fiche de la machine)');
     if (lvl === WORKS_LVL) addGo('village/village', ['ui', 'house'], 'Les dépendances du domaine : six bâtiments d’apparat, trois niveaux chacun (Village › Village, Domaine)');

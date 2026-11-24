@@ -6,10 +6,11 @@ import { ITEMS } from '../../data/items.js';
 import * as G from '../../systems/index.js';
 import { byId, blocks, actions, run } from '../dom.js';
 import { ico, art } from '../icons.js';
-import { btn, timer, tip15 } from '../kit.js';
+import { btn, timer, tip15, segmented } from '../kit.js';
 import { defineSheet } from '../sheets.js';
 import { foldWrap } from '../fold.js';
-import { defineView } from '../app.js';
+import { defineView, ui } from '../app.js';
+import { renderMineDeep } from './mine.js';
 
 const costOf = c =>
     G.costParts(c)
@@ -165,8 +166,30 @@ defineSheet('natLog', { title: 'Carnet du bûcheron et du mineur', render: () =>
 
 function renderNature(el) {
     G.ensureNature();
+    const cur = ui.sel.natTab === 'deep' ? 'deep' : 'surface';
+    const pick = segmented(
+        [
+            ['surface', 'Forêt & Carrière', ['item', 'wood']],
+            ['deep', 'Mine souterraine', ['ui', 'mineDeep'], G.museumGeodeTotal(), !G.mineDeepOpen()],
+        ],
+        cur,
+        'natTab',
+    );
+    if (cur === 'deep') {
+        blocks(el, [
+            ['npick', pick],
+            ['nbody-deep', '<div class="nat-deep-body"></div>'],
+        ]);
+        renderMineDeep(el.querySelector('.nat-deep-body'));
+        return;
+    }
     const inv = id => `<span class="mat big">${ico(['item', id])}${fmt(Math.floor(state.inventory[id] || 0))}</span>`;
+    const deepFloor = (state.mineDeep && state.mineDeep.floor) || 1;
+    const deepShortcut = G.mineDeepOpen()
+        ? `<div class="tool-row">${ico(['ui', 'mineDeep'])}<span>Mine souterraine : 40 étages, géodes et pièces du Musée</span>${btn(`Descendre (Ét. ${deepFloor})`, { act: 'natTab', data: { v: 'deep' }, kind: 'gold', size: 'sm' })}</div>`
+        : '';
     blocks(el, [
+        ['npick', pick],
         [
             'head',
             `<div class="view-top end"><div class="mats">${inv('wood')}${inv('stone')}${state.level >= 8 ? inv('coal') : ''}${state.level >= 12 ? inv('hardwood') : ''}</div></div>`,
@@ -208,7 +231,7 @@ function renderNature(el) {
                 'Mine',
                 'Les roches cachent du minerai. Une veine qui brille donne toujours une pierre précieuse.',
                 ['ui', 'pickaxe'],
-                workerRow('miner'),
+                deepShortcut + workerRow('miner'),
             ),
         ],
     ]);
@@ -219,6 +242,9 @@ defineView('farm/nature', renderNature);
 
 export function setupNature() {
     actions({
+        natTab: (el, d) => {
+            ui.sel.natTab = d.v === 'deep' ? 'deep' : 'surface';
+        },
         upgradeTool: (el, d) => G.upgradeTool(d.k, el),
         hit: (el, d) => G.hitSlot(d.res, +d.k, el),
         setDepth: (el, d) => G.setDepth(d.id),

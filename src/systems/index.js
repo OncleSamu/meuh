@@ -88,4 +88,6 @@ export * from './plan.js';
 export * from './perfume.js';
 export * from './tcg.js';
 export * from './cloud.js';
+export * from './mine.js';
+export * from './museum.js';
 

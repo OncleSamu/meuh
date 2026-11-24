@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.172",
+  "title": "La Mine souterraine et le Musée de la vallée",
+  "date": "24 novembre 2026",
+  "items": [
+   "Nouvelle exploration dans Ferme › Nature : La Mine souterraine sur 40 étages et 4 strates (Carrière ancienne niv. 8, Galeries de cuivre niv. 18, Cavernes de cristal niv. 30, Abysses d’obsidienne niv. 55) avec grille 5×5 à creuser, escaliers cachés, coffres tous les 5 étages et ascenseur débloqué définitivement par palier",
+   "Outils tactiques et améliorations de mine : lanterne à recharge automatique (et casse-croûte au charbon 2×/jour), dynamite, boussole de veine et 4 améliorations permanentes (grand réservoir, lampe frontale, caisse de dynamite, treuil renforcé)",
+   "Nouveau Musée de la vallée accessible dans le Menu (Collections › Musée) avec le Professeur Anatole : 32 pièces uniques réparties en 4 ailes (Paléontologie, Minéralogie, Reliques de la vallée, Trésors naturels), toutes illustrées avec leurs anecdotes",
+   "Atelier de géodes au Musée (4 géodes : grise, améthyste, cristal, abyssale), vente rapide des doublons, géode mystère du jour, 8 paliers de récompenses (dont 3 décorations exclusives et 4 rubans) et 4 bonus passifs permanents débloqués à 50 % et doublés à 100 % par aile"
+  ]
+ },
+ {
   "v": "1.171",
   "title": "Les Terres d’Asie : rizières en terrasses, pavillon de bambou, jonque et cuisine d’Asie",
   "date": "24 novembre 2026",
