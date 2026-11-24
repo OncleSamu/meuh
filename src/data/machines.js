@@ -3233,6 +3233,7 @@ Object.assign(RECIPES, {
     rabbitMustard: { id: 'rabbitMustard', machine: 'stove', ing: { rabbitSaddle: 1, mustardSauce: 1, cream: 1 }, time: 480, lvl: 34, base: 34, xp: 30 },
     magretFigs: { id: 'magretFigs', machine: 'stove', ing: { magret: 1, fig: 2, honey: 1 }, time: 420, lvl: 46, base: 46, xp: 27 },
     moussaka: { id: 'moussaka', machine: 'stove', ing: { eggplant: 2, beef: 1, tomato: 2 }, time: 540, lvl: 18, base: 18, xp: 34 },
+    cevapi: { id: 'cevapi', machine: 'stove', ing: { beef: 1, lambLeg: 1, onion: 1, garlic: 1, bread: 1 }, time: 420, lvl: 20, base: 20, xp: 28 },
     choucroute: { id: 'choucroute', machine: 'stove', ing: { cabbage: 2, lard: 1, potato: 2 }, time: 540, lvl: 47, base: 47, xp: 34 },
     stuffedCabbage: { id: 'stuffedCabbage', machine: 'stove', ing: { cabbage: 1, turkeyFillet: 1, onion: 1 }, time: 480, lvl: 25, base: 25, xp: 30 },
     gooseLegApples: { id: 'gooseLegApples', machine: 'stove', ing: { gooseLeg: 1, apple: 2 }, time: 480, lvl: 22, base: 22, xp: 30 },

@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.166",
+  "title": "Nouvelle recette : Assiette de ćevapi",
+  "date": "24 novembre 2026",
+  "items": [
+   "Ajout du plat signature de la Serbie au Fourneau (niveau 20) : l’Assiette de ćevapi (bœuf, agneau, oignon, ail et pain), avec son dessin dédié et son anecdote de Mamie Odette dans le carnet"
+  ]
+ },
+ {
   "v": "1.165",
   "title": "Guide : correctif Tout ouvrir / Tout replier",
   "date": "24 novembre 2026",

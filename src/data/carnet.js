@@ -456,6 +456,8 @@ Object.assign(CARNET, {
     magretFigs: 'Les figues du mur du sud, et le magret de nos canards. C’est le plat des fins d’été, quand on dîne dehors jusqu’à la nuit, avec les grillons.',
     moussaka:
         'La moussaka, c’est une recette de Grèce. Un voisin grec nous l’a apprise un soir d’été. Il chantait en cuisinant, en grec. On ne comprenait rien, mais c’était beau.',
+    cevapi:
+        'Les ćevapi viennent de Serbie : de petits rouleaux de bœuf et d’agneau bien grillés, servis dans un pain chaud avec de l’oignon cru. Un voyageur de Belgrade nous les a fait goûter un soir de foire ; ton grand-père a voulu rallumer le fourneau le lendemain matin.',
     choucroute:
         'La choucroute, c’est la recette de mon arrière-grand-mère alsacienne. Le chou doit fermenter des semaines dans un grand pot de grès. La cave sentait le chou tout l’hiver.',
     stuffedCabbage:

@@ -390,7 +390,7 @@ export const LEVELS = {
         // Niv. 19
         crate: 19, gazpacho: 19, gooseRillettes: 19, gudgeonLemon: 19, lemonade: 19, quailSalad: 19, salad: 19, smokedPike: 19, smokedSalmon: 19, whitefishTartare: 19, zanderLeeks: 19,
         // Niv. 20
-        buckwheatFlour: 20, burbotCider: 20, cider: 20, ironPan: 20, pochouse: 20, salmonSteak: 20, strawHat: 20, sweater: 20, woolSocks: 20,
+        buckwheatFlour: 20, burbotCider: 20, cevapi: 20, cider: 20, ironPan: 20, pochouse: 20, salmonSteak: 20, strawHat: 20, sweater: 20, woolSocks: 20,
         // Niv. 21
         buckwheatSalad: 21, butter: 21, cheese: 21, copperPot: 21, featherDuster: 21, lemonTart: 21, poachedPigeonEggs: 21, rabbitTerrine: 21, ratatouille: 21, rhubarbTart: 21, salmonTartare: 21, shallotButter: 21, shallotTatin: 21, spinachQuiche: 21, whitefishMeuniere: 21,
         // Niv. 22

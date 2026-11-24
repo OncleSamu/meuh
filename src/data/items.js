@@ -2552,6 +2552,7 @@ Object.assign(ITEMS, {
     rabbitMustard: { id: 'rabbitMustard', name: 'Lapin à la moutarde', type: 'artisan', sell: 1590 },
     magretFigs: { id: 'magretFigs', name: 'Magret aux figues', type: 'artisan', sell: 1350 },
     moussaka: { id: 'moussaka', name: 'Moussaka', type: 'artisan', sell: 1755 },
+    cevapi: { id: 'cevapi', name: 'Assiette de ćevapi', type: 'artisan', sell: 1950 },
     choucroute: { id: 'choucroute', name: 'Choucroute garnie', type: 'artisan', sell: 2405 },
     stuffedCabbage: { id: 'stuffedCabbage', name: 'Chou farci', type: 'artisan', sell: 1040 },
     gooseLegApples: { id: 'gooseLegApples', name: 'Cuisse d’oie rôtie aux pommes', type: 'artisan', sell: 810 },
