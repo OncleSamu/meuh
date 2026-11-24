@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.169",
+  "title": "Animaux : défilement propre sans bandeau figé",
+  "date": "24 novembre 2026",
+  "items": [
+   "Suppression du bandeau collant semi-transparent en haut de l’onglet Animaux (qui affichait un rectangle clair sur le ciel de nuit et laissait dépasser les cartes d’animaux dessous au défilement dans l’étable) : les commandes suivent désormais le flux naturel de la page, comme sur tous les autres onglets"
+  ]
+ },
+ {
   "v": "1.168",
   "title": "Serre : parcelles à la bonne taille sur PC",
   "date": "24 novembre 2026",
