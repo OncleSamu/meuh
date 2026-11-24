@@ -32,8 +32,7 @@ export function apiaryHtml(land) {
         : `<div class="card-sub">${G.apiaryForecast(land)}</div>${jars < cap ? `<div class="card-sub">Un pot toutes les ${formatDuration(1 / rate)}</div>` : '<div class="card-sub">Les ruches sont pleines.</div>'}`;
     return (
         head +
-        `<div class="card ap-card"><div class="card-head"><span class="oa-up-art">${art('ui', A.icon)}</span><div class="card-main"><div class="card-title">${fmt(jars)} / ${cap} pots</div>${status}${bar(r.honey / cap, 'thin')}<div class="ap-kinds">${kinds}</div></div>
-        ${btn(r.rest ? 'Réveiller' : 'Au repos', { act: 'hiveRest', data: { land }, kind: 'ghost', size: 'sm', title: r.rest ? 'Remettre les abeilles au travail' : 'Dire aux abeilles de ne pas faire de miel' })}${btn('Récolter', { act: 'harvestApiary', data: { land }, kind: jars ? 'green' : '', size: 'sm', icon: ['item', 'honey'], disabled: !jars })}</div>${buy}</div>`
+        `<div class="card ap-card"><div class="card-head"><span class="oa-up-art">${art('ui', A.icon)}</span><div class="card-main"><div class="card-title">${fmt(jars)} / ${cap} pots</div>${status}${bar(r.honey / cap, 'thin')}<div class="ap-kinds">${kinds}</div><div class="actions wrap ap-acts">${btn(r.rest ? 'Réveiller' : 'Au repos', { act: 'hiveRest', data: { land }, kind: 'ghost', size: 'sm', title: r.rest ? 'Remettre les abeilles au travail' : 'Dire aux abeilles de ne pas faire de miel' })}${btn('Récolter', { act: 'harvestApiary', data: { land }, kind: jars ? 'green' : '', size: 'sm', icon: ['item', 'honey'], disabled: !jars })}</div></div></div>${buy}</div>`
     );
 }
 

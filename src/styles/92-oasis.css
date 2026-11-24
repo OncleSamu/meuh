@@ -354,7 +354,10 @@ html.calm .oa-thirst {
 
 /* 1.69 : le rucher des contrées */
 .ap-card .card-head {
-    align-items: center;
+    align-items: flex-start;
+}
+.ap-acts {
+    margin-top: 8px;
 }
 .ap-kinds {
     display: flex;
