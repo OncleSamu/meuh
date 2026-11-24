@@ -2111,8 +2111,14 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
-                h: 'Théo, le commis',
-                t: 'Après le pont du hameau (chapitre 5), Théo récolte, replante et arrose à votre place les parcelles encadrées du champ, en replantant la dernière culture posée. On le forme de plus en plus : de 6 parcelles à 36 au dernier niveau (31, 39, 44 puis 66). L’aide au champ du domaine lui ajoute des parcelles. Un bouton « Mettre en pause », dans la maison de la ferme, l’arrête quand vous voulez reprendre le champ en main.',
+                h: 'L’Équipe du Domaine (Maison › Équipe)',
+                b: [
+                    'Tout le personnel de la ferme est réuni dans un seul onglet : Maison › Équipe, avec un bouton maître « Tout mettre en pause / Tout activer » en haut de l’écran (et la pastille rapide de Théo sur le bandeau de la Maison).',
+                    'Théo · Champs & Serre (après le pont du hameau, ch. 5) : récolte, replante et arrose de 6 à 36 parcelles (+ aide au champ du domaine). Dès le niveau 3 (avec la serre bâtie), la case « Inclure la Serre » lui confie aussi la serre ; dès le niveau 4, « Suivre le Plan actif » sème en priorité les cultures demandées par le Plan en cours.',
+                    'Lina · Animaux (dès niv. 28) : nourrit les bêtes et ramasse les productions du 1er pré jusqu’à tous les prés (3 modes : Nourrir & ramasser, Ramasser seulement, Nourrir seulement). Au niveau 4 (niv. 68), Lina soigne aussi automatiquement les bêtes malades.',
+                    'Henri · Atelier (dès niv. 32) : choisissez 3 à 6 recettes à maintenir au-dessus d’un seuil (ex. Farine : 20, Beurre : 15). Henri ramasse les lots finis et relance automatiquement uniquement lorsque le stock passe sous le seuil, sans ouvrir vos machines une par une.',
+                    'Milo · Nature (dès niv. 30) : relève les nasses de l’étang, ramasse les fruits tombés du verger (ferme puis toutes les contrées au niv. 3) ainsi que les charges du bûcheron/mineur et la cueillette saisonnière de la forêt (dès niv. 2). Toute l’équipe est conservée après un prestige.',
+                ],
             },
             {
                 h: 'Personnaliser',

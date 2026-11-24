@@ -90,4 +90,5 @@ export * from './tcg.js';
 export * from './cloud.js';
 export * from './mine.js';
 export * from './museum.js';
+export * from './team.js';
 

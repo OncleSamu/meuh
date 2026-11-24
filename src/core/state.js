@@ -175,6 +175,7 @@ export function newState() {
         neighbors: {},
         house: { lvl: 0 },
         farmhand: { lvl: 0, t: 0 },
+        team: null,
         mastery: {},
         renown: 0,
         league: 0,

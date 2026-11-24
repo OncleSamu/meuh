@@ -405,6 +405,9 @@ export function unlocksAt(lvl) {
         addGo('farm/nature', ['ui', 'mineDeep'], 'La mine souterraine : 40 étages à explorer, géodes et reliques (Ferme › Nature)');
         addGo('sheet:museum', ['ui', 'museum'], 'Le Musée de la vallée : 32 pièces à exposer et 4 bonus permanents (Menu › Musée)');
     }
+    if (lvl === 28) addGo('sheet:house', ['villager', 'lina'], 'L’Équipe du Domaine : Lina aux prés (Maison › Équipe)');
+    if (lvl === 30) addGo('sheet:house', ['villager', 'milo'], 'L’Équipe du Domaine : Milo pour les nasses, le verger et la forêt (Maison › Équipe)');
+    if (lvl === 32) addGo('sheet:house', ['villager', 'henri'], 'L’Équipe du Domaine : Henri à l’atelier pour maintenir vos stocks (Maison › Équipe)');
     if (lvl === 55) addGo('farm/nature', ['ui', 'mineDeep'], 'Mine souterraine : les abysses d’obsidienne (étages 31 à 40)');
     if (lvl === 3) addGo('sheet:identity', ['ui', 'star'], 'Votre métier : maraîcher, éleveur, arboriculteur, cuisinier, vigneron ou pêcheur (Menu, votre carte de visite)');
     if (lvl === LANE2_LVL) addGo('machines/workshop', ['machine', 'mill'], 'Le deuxième poste : une machine fait deux lots à la fois (fiche de la machine)');

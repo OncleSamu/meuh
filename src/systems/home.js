@@ -6,6 +6,7 @@ import { MACHINE_SLOTS } from '../data/machines.js';
 import { VILLAGERS } from '../data/village.js';
 import { FETE_END } from '../data/world.js';
 import { HOUSE, FARMHAND } from '../data/progress.js';
+import { THEO_OPTS } from '../data/team.js';
 import { DOMAINE, DOMAINE_IDS, DOMAINE_COINS, DOMAINE_MATS, PLAN_UPGRADE, WORKS, WORK_IDS, WORKS_COINS, WORKS_MATS } from '../data/domaine.js';
 import { domaineOpen, domLvl, domMax, domStepSum, planUpLvl, planUpMax, worksOpen, workLvl, workMax } from './estate.js';
 import { spend, addXp, speedMult } from './player.js';
@@ -87,6 +88,29 @@ export function toggleHand() {
     toast(state.farmhand.off ? 'Théo est en pause : le champ est à vous' : 'Théo reprend le travail', ['villager', 'theo']);
     return true;
 }
+// 1.173 : options fin de partie de Théo (« Inclure la Serre » et « Suivre le Plan actif »)
+export const handGhCan = () => handLvl() >= THEO_OPTS.ghLvl && !!(state.greenhouse && state.greenhouse.built);
+export const handGhOn = () => handGhCan() && !!(state.farmhand && state.farmhand.gh);
+export function toggleHandGh() {
+    if (!handGhCan()) return false;
+    state.farmhand.gh = !state.farmhand.gh;
+    toast(state.farmhand.gh ? 'Théo s’occupe maintenant aussi de la serre' : 'Théo ne touche plus à la serre', ['villager', 'theo']);
+    return true;
+}
+export const handPlanCan = () => handLvl() >= THEO_OPTS.planLvl;
+export const handFollowPlanOn = () => handPlanCan() && !!(state.farmhand && state.farmhand.followPlan);
+export function toggleHandFollowPlan() {
+    if (!handPlanCan()) return false;
+    state.farmhand.followPlan = !state.farmhand.followPlan;
+    toast(state.farmhand.followPlan ? 'Théo suit désormais le Plan actif' : 'Théo replante la culture précédente', ['villager', 'theo']);
+    return true;
+}
+// branché par team.js pour éviter tout import circulaire avec plan.js
+let planCropPicker = null;
+export function setPlanCropPicker(fn) {
+    planCropPicker = fn;
+}
+
 export function handZone() {
     const l = handLvl();
     if (!l || handPaused()) return [];
@@ -95,40 +119,52 @@ export function handZone() {
     return out;
 }
 
-// replante la culture que le joueur avait mise sur cette parcelle
-function handPlant(p) {
-    const d = ITEMS[p.hand];
-    if (!d || d.type !== 'crop' || !lvOk(d)) return false;
+// replante une culture précise (plan actif) ou la culture que le joueur avait mise sur cette parcelle
+function handPlant(p, isGh = false, forcedId = null) {
+    const cid = forcedId || p.hand;
+    const d = ITEMS[cid];
+    if (!d || d.type !== 'crop' || d.island || (!isGh && d.ghOnly) || !lvOk(d)) return false;
     if (state.seeds[d.id] > 0) state.seeds[d.id]--;
     else if (!d.exotic && state.money >= d.cost * 4) spend(d.cost);
     else return false;
-    p.terrain = 'plowed';
+    if (!isGh) p.terrain = 'plowed';
     resetPlot(p, d.id);
     p.isWatered = true;
     return true;
 }
 
-// Un passage du commis : récolter, replanter, arroser
+function pickPlanCrop(isGh) {
+    if (!handFollowPlanOn() || !planCropPicker) return null;
+    return planCropPicker(isGh) || null;
+}
+
+// Un passage du commis : récolter, replanter, arroser (champ + serre optionnelle)
 export function handPass() {
     let harvested = 0,
         xp = 0,
         planted = 0,
         watered = 0;
-    for (const i of handZone()) {
-        const p = state.grid[i];
-        if (p.pest) continue;
-        if (p.itemId && ITEMS[p.itemId].type === 'crop') p.hand = p.itemId;
+    const tend = (p, isGh) => {
+        if (p.pest) return;
+        if (p.itemId && ITEMS[p.itemId] && ITEMS[p.itemId].type === 'crop') p.hand = p.itemId;
         if (p.isReady) {
-            if (barnBlocked(true)) continue;
+            if (barnBlocked(true)) return;
             const r = harvestPlot(p);
             harvested += r.qty;
             xp += r.item.xp;
         }
-        if (!p.itemId && p.hand && handPlant(p)) planted++;
+        if (!p.itemId) {
+            const planId = pickPlanCrop(isGh);
+            if ((planId && handPlant(p, isGh, planId)) || (p.hand && handPlant(p, isGh))) planted++;
+        }
         if (p.itemId && !p.isReady && !p.isWatered) {
             p.isWatered = true;
             watered++;
         }
+    };
+    for (const i of handZone()) tend(state.grid[i], false);
+    if (!handPaused() && handGhOn()) {
+        for (const p of state.greenhouse.plots || []) if (p && p.isUnlocked) tend(p, true);
     }
     if (xp) addXp(xp);
     if (harvested || planted || watered) {
@@ -153,25 +189,25 @@ export function handTick() {
     return handPass();
 }
 
-// Pendant l'absence : chaque parcelle de la zone enchaîne pousses et récoltes
+// Pendant l'absence : chaque parcelle de la zone enchaîne pousses et récoltes (champ + serre si incluse)
 export function handOffline(elapsed) {
     const zone = handZone();
     let crops = 0;
     // 1.75 : la place en grange, comptée une fois puis tenue à jour (la recompter à chaque récolte coûtait cher)
     let space = barnSpace();
-    for (const i of zone) {
-        const p = state.grid[i];
-        if (p.pest) continue;
-        if (p.itemId && ITEMS[p.itemId].type === 'crop') p.hand = p.itemId;
+    const runPlot = (p, idx, isGh) => {
+        if (p.pest) return;
+        if (p.itemId && ITEMS[p.itemId] && ITEMS[p.itemId].type === 'crop') p.hand = p.itemId;
         let t = elapsed;
         for (let k = 0; k < 40 && t > 0; k++) {
             if (!p.itemId) {
-                if (!p.hand || !handPlant(p)) break;
+                const planId = pickPlanCrop(isGh);
+                if (!((planId && handPlant(p, isGh, planId)) || (p.hand && handPlant(p, isGh)))) break;
             }
             p.isWatered = true;
             const req = ITEMS[p.itemId].time / speedMult();
             if (!p.isReady) {
-                const rate = plotRate(p, i);
+                const rate = plotRate(p, idx);
                 const need = (req - p.growProgress) / rate;
                 if (t < need) {
                     p.growProgress += t * rate;
@@ -187,6 +223,10 @@ export function handOffline(elapsed) {
             space -= r.qty;
             addXp(r.item.xp);
         }
+    };
+    for (const i of zone) runPlot(state.grid[i], i, false);
+    if (!handPaused() && handGhOn()) {
+        (state.greenhouse.plots || []).forEach((p, k) => p && p.isUnlocked && runPlot(p, 1000 + k, true));
     }
     return { zone: new Set(zone), crops };
 }

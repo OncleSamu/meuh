@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.173",
+  "title": "L’Équipe du Domaine : automatisation centralisée dans Maison › Équipe",
+  "date": "24 novembre 2026",
+  "items": [
+   "L’onglet Commis de la Maison devient « Équipe » : un seul écran centralisé avec un bouton maître « Tout mettre en pause / Tout activer » (et la pastille rapide de Théo reste sur le bandeau de la Maison)",
+   "Théo · Champs & Serre : conserve ses 5 niveaux de parcelles et gagne deux options de fin de partie — « Inclure la Serre » (niv. 3 + serre bâtie) et « Suivre le Plan actif » (niv. 4)",
+   "Lina · Animaux (dès niv. 28) : nourrit et ramasse les productions de vos prés selon le mode choisi, et soigne automatiquement les bêtes malades au niveau 4",
+   "Henri · Atelier (dès niv. 32) : maintient 3 à 6 recettes au-dessus de votre seuil de stock (ex. Farine : 20, Beurre : 15) et relance tout seul uniquement quand le stock passe sous le seuil",
+   "Milo · Nature (dès niv. 30) : relève les nasses de l’étang, ramasse les fruits tombés du verger (ferme puis contrées) ainsi que les charges et cueillettes de la forêt"
+  ]
+ },
+ {
   "v": "1.172",
   "title": "La Mine souterraine et le Musée de la vallée",
   "date": "24 novembre 2026",

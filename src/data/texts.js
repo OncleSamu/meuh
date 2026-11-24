@@ -645,4 +645,9 @@ export const TIPS = {
         title: 'Le semoir',
         text: 'Plantez une graine : le semoir sème toute la rangée, sur les parcelles labourées et vides.',
     },
+    team: {
+        icon: ['villager', 'lina'],
+        title: 'L’Équipe du Domaine',
+        text: 'Retrouve toute ton équipe au même endroit dans Maison › Équipe : Théo (champs & serre), Lina (animaux), Henri (stocks d’atelier) et Milo (nasses, verger & forêt), avec un bouton global pour tout mettre en pause ou réactiver en un clic.',
+    },
 };

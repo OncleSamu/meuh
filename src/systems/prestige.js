@@ -64,6 +64,13 @@ export function doPrestige(challenge, theme) {
         story: { ...state.story, keep: {} },
         barn: state.barn,
         farmhand: state.farmhand,
+        team: state.team
+            ? {
+                  lina: { ...state.team.lina, t: 0 },
+                  henri: { ...state.team.henri, t: 0, rules: (state.team.henri.rules || []).map(r => ({ ...r })) },
+                  milo: { ...state.team.milo, t: 0, fg: 0 },
+              }
+            : null,
         mastery: state.mastery,
         renown: state.renown,
         cup: state.cup, // 1.40 : la Coupe de la vallée (points, rangs, mécénat) se garde

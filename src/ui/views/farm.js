@@ -213,7 +213,7 @@ function renderGreenhouse() {
 function farmyardHtml() {
     const l = G.houseLvl(),
         n = G.houseNext();
-    const can = G.houseCanUp() || G.handCanUp();
+    const can = G.houseCanUp() || G.handCanUp() || G.teamCanUp();
     const sub = G.handLvl()
         ? (G.handPaused() ? 'Théo est en pause' : G.handMessage()) || `Théo s’occupe de ${FARMHAND[G.handLvl()].plots} parcelles`
         : n && state.level < n.lvl

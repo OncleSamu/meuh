@@ -55,6 +55,7 @@ import { ensureNord, nordTick, nordOffline } from './nord.js';
 import { ensureAsie, asieTick, asieOffline } from './asie.js';
 import { ensureMineDeep, mineTick, mineSyncEnergy } from './mine.js';
 import { ensureMuseum } from './museum.js';
+import { ensureTeam, teamTick, teamOffline } from './team.js';
 import { apiaryTick } from './apiary.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
@@ -203,6 +204,7 @@ export function normalizeState() {
     ensureAsie();
     ensureMineDeep();
     ensureMuseum();
+    ensureTeam();
     ensureGenetics();
     ensureChateau();
     if (brewOpen()) ensureBrew();
@@ -324,6 +326,7 @@ function tickFarm() {
     if (apiaryTick(1)) changed = true;
     if (crowTick()) changed = true;
     if (handTick()) changed = true;
+    if (teamTick()) changed = true;
     if (dogTick()) changed = true;
     return changed;
 }
@@ -494,6 +497,7 @@ export function offlineProgress() {
     stallTick();
     neighborTick();
     boatTick();
+    const teamOff = teamOffline(elapsed);
     const sold = state.stall.slots.filter(x => x && x.sold).length;
     const neigh = neighborsReady();
     syncEvent();
@@ -524,6 +528,9 @@ export function offlineProgress() {
     add(perfumes, ['ui', 'perfume'], `${perfumes} macération${s(perfumes)} de parfum prête${s(perfumes)} à mettre en flacon`);
     add(salon, ['machine', 'counter'], `${salon} client${s(salon)} vous attend${salon > 1 ? 'ent' : ''} au comptoir`);
     add(hand.crops, ['villager', 'theo'], `Théo, votre commis, a récolté ${hand.crops} produit${s(hand.crops)}`);
+    add(teamOff.lina, ['villager', 'lina'], `Lina a veillé sur les prés (${teamOff.lina} action${s(teamOff.lina)})`);
+    add(teamOff.henri, ['villager', 'henri'], `Henri a maintenu vos stocks d’atelier (${teamOff.henri} lot${s(teamOff.henri)})`);
+    add(teamOff.milo, ['villager', 'milo'], `Milo a rapporté ${teamOff.milo} récolte${s(teamOff.milo)} de sa tournée nature`);
     add(
         babies.length,
         ['animal', babies.length ? babies[0].type : 'chicken'],
