@@ -31,8 +31,8 @@ test('la cuisine attend la pierre, la boulangerie ne demande rien', () => {
     assert.ok(MACHINES.kitchen.reqLvl >= 8);
     assert.equal(G.matCost('machine', 'bakery'), null);
     const per = {};
-    // 1.53 : les trois machines du Grand Nord arrivent d'un bloc au dernier niveau
-    const block = new Set(['tiledStove', 'taigaPot', 'berryKettle']);
+    // 1.53 & 1.171 : les machines du Grand Nord et des Terres d'Asie arrivent d'un bloc au dernier niveau
+    const block = new Set(['tiledStove', 'taigaPot', 'berryKettle', 'wok', 'steamer', 'wagashi']);
     for (const m of Object.values(MACHINES)) if (!block.has(m.id)) per[m.reqLvl] = (per[m.reqLvl] || 0) + 1;
     assert.ok(
         Object.values(per).every(n => n === 1),

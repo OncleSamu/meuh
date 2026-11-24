@@ -30,7 +30,7 @@ test('80 niveaux : rien ne bouge avant le 30, chaque ancien niveau devient une t
         assert.equal(lv80(l), lv80Hi(l - 1) + 1, `niveau ${l}`);
     }
     assert.equal(lv80Hi(64), 80);
-    for (const d of Object.values(ITEMS)) if (!d.lv108) assert.ok((d.reqLvl || 0) <= 30, d.id);
+    for (const d of Object.values(ITEMS)) if (!d.lv108 && !d.asie) assert.ok((d.reqLvl || 0) <= 30, d.id);
     for (const r of Object.values(RECIPES)) if (r.lvl < 30) assert.equal(r.lv108, undefined, r.id);
 });
 
@@ -54,7 +54,8 @@ test('80 niveaux : l’ancien niveau équivalent, et l’économie qui garde son
 test('80 niveaux : pas de zone creuse (8 à 20 recettes par niveau de 30 à 80)', () => {
     const count = {};
     for (const r of Object.values(RECIPES)) count[r.lvl] = (count[r.lvl] || 0) + 1;
-    for (let l = 30; l <= 80; l++) assert.ok(count[l] >= 8 && count[l] <= 20, `niveau ${l} : ${count[l]} recettes`);
+    // 1.171 : Les Terres d'Asie ouvrent leurs recettes en bloc au niveau 80
+    for (let l = 30; l <= 80; l++) assert.ok(count[l] >= 8 && count[l] <= (l === 80 ? 64 : 20), `niveau ${l} : ${count[l]} recettes`);
     for (const r of Object.values(RECIPES)) assert.ok(r.lvl <= 80, r.id);
     // au plus trois niveaux de suite sans machine, culture, arbre ni bête
     let dry = 0;

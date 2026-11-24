@@ -86,6 +86,10 @@ export const ASSOCS = [
         why: 'Dans la tourbière, elles poussent côte à côte et se tiennent chaud.',
     }),
     A('seigleChicoutai', 'Seigle et chicoutai', 'rye', 'cloudberry', 'mp', { why: 'Le seigle étouffe la petite plante basse du chicoutai.' }),
+    // 1.171 : les cultures des Terres d'Asie
+    A('lotusBambou', 'Lotus et bambou', 'lotus', 'bambooShoot', 'q', { why: 'Les tiges de bambou filtrent le vent au-dessus de l’eau où fleurit le lotus.' }),
+    A('shiitakePakChoi', 'Shiitake et pak choï', 'shiitake', 'bokChoy', 'r', { why: 'Le feuillage du pak choï garde la fraîcheur au pied des shiitakes.' }),
+    A('bambouPakChoi', 'Bambou et pak choï', 'bambooShoot', 'bokChoy', 'mp', { why: 'Les jeunes turions de bambou prennent toute la place aux racines du pak choï.' }),
 ];
 export const ASSOC = Object.fromEntries(ASSOCS.map(a => [a.id, a]));
 export const isBad = a => a.fx[0] === 'm';

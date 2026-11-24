@@ -1582,3 +1582,101 @@ Object.assign(CARNET, {
         'Le lagopède à la chicoutai, c’est l’oiseau du Nord avec la baie la plus rare du Nord. Ingrid dit que la chicoutai se cueille à genoux dans les marais, une à une. Ça vaut bien un plat de fête.',
 });
 Object.assign(CARNET, CARNET_152);
+
+// ---------------- 1.171 : Les Terres d'Asie (cuisine, artisanat et boissons) ----------------
+Object.assign(CARNET, {
+    silkKimono:
+        'Un kimono de soie légère qui glisse sur les épaules comme de l’eau fraîche. Mei m’a appris à plier les manches sans jamais marquer un pli : j’ai quand même réussi à faire un nœud avec la ceinture.',
+    silkiePillow:
+        'Un coussin garni de duvet de poule soie : on pose la tête dessus et on a l’impression de dormir sur un nuage d’été. Ton grand-père s’y est assoupi à quatre heures de l’après-midi et n’en est ressorti que pour le dîner.',
+    silkieQuilt:
+        'Un édredon tout gonflé de duvet de poule soie, léger comme une plume et chaud comme un feu de cheminée. On le secoue à la fenêtre le matin, et toute la vallée voit passer le nuage.',
+    goldenSilkParasol:
+        'Une ombrelle de soie dorée tendue sur des brins de bambou finement fendus. Sous le soleil des rizières, elle jette une lumière de miel sur les visages : Mei ne sort jamais sans la sienne.',
+    goldenObi:
+        'Une grande ceinture obi tissée de fil d’or et de soie teinte. Les jours de fête aux lanternes, elle brille presque autant que les lampions au-dessus des terrasses.',
+    silkFan:
+        'Un éventail de bambou et de soie qui s’ouvre d’un coup de poignet sec. J’ai voulu faire pareil que Mei pour me rafraîchir : j’ai envoyé valser la salière jusque dans le saladier.',
+    velvetCarving:
+        'Une petite statuette taillée dans le bois de velours du cerf sika. Kenji passe des soirées entières à la polir au chiffon doux jusqu’à ce qu’elle luise comme de l’ivoire tiède.',
+    velvetElixir:
+        'Un élixir ambré au bois de velours, aux noix de ginkgo et au miel des terrasses. On en boit un dé à coudre au changement de saison : Kenji jure que ça redonne des jambes de vingt ans.',
+    umeshu:
+        'La liqueur d’ume dort de longs mois en bocal avec du sucre jusqu’à devenir couleur d’ambre clair. Elle est douce, un peu acidulée, et Mei en sert un tout petit verre quand les cerisiers fleurissent.',
+    yuzuSorbet:
+        'Un sorbet au yuzu et au kumquat qui réveille la langue dès la première cuillerée. C’est frais, vif, presque fleuri : le genre de dessert qui fait taire toute la table d’un seul coup.',
+    nashiCider:
+        'Le poiré de nashi pétille finement et sent la poire croquante du verger d’Asie. Servi bien frais dans de petits verres en grès, il désaltère mieux que l’eau de la source après les récoltes.',
+    velvetAmulet:
+        'Une amulette en bois de velours entourée d’un fil de soie dorée et d’une pépite. Dans la vallée de Mei, on l’offre aux voyageurs avant que la jonque ne lève l’ancre pour leur porter bonheur.',
+    sikaTofuCheese:
+        'Un caillé d’une douceur incroyable, fait au lait de biche sika et parfumé d’un zeste de yuzu. On le mange à la petite cuillère avec une goutte de miel : il fond avant même qu’on l’ait mâché.',
+    bambooStirFry:
+        'Des pousses de bambou et du pak choï sautés à feu vif dans le wok, juste le temps d’un souffle de sauce soja. Kenji dit que le légume doit encore chanter sous la dent quand il arrive dans le bol.',
+    shiitakeNoodles:
+        'Des nouilles sautées aux shiitakes qui embaument toute la cour dès que le wok fume. Les champignons boivent la sauce soja comme des éponges et donnent un goût profond qu’on n’oublie pas.',
+    lotusCrisps:
+        'De fines rondelles de racine de lotus, trouées comme de la dentelle, caramélisées au sésame. Ça craque sous la dent comme un biscuit d’automne : impossible d’en manger une seule sans vider l’assiette.',
+    ginkgoRice:
+        'Un riz sauté parsemé de noix de ginkgo dorées et d’œuf de poule soie. Les noix ont un petit goût d’amande et de beurre qui surprend toujours les invités de la vallée.',
+    bokChoyWok:
+        'Du pak choï saisi trois minutes au wok avec du gingembre râpé et un trait de sauce soja. C’est le plat du midi de Mei : simple, brillant, vert tendre, et prêt avant que la bouilloire ne siffle.',
+    yuzuDuckWok:
+        'Un magret émincé sauté à feu vif avec du jus de yuzu et des pousses de bambou croquantes. Gaston a juré que le canard et l’agrume d’Asie s’étaient attendus pendant trois siècles.',
+    fiveSpiceBeef:
+        'Du bœuf saisi au wok avec la badiane étoilée rapportée par la jonque et du pak choï croquant. Une seule étoile de badiane parfume toute la cuisine : on dirait un voyage rien qu’à l’odeur.',
+    shrimpLotusWok:
+        'Des crevettes roses sautées avec des rondelles de lotus et du gingembre frais. Les couleurs dans le wok font penser à un bouquet : c’est aussi joli à regarder que bon à partager.',
+    shiitakeTofuWok:
+        'Des dés de tofu dorés qui mijotent doucement avec des shiitakes, des pousses de bambou et une étoile de badiane. Un plat tranquille et généreux qui réchauffe les soirs de mousson.',
+    silkieFriedRice:
+        'Un grand riz sauté aux œufs de poule soie, aux petits pois et aux oignons doux. Les œufs ont un jaune si riche qu’ils colorent chaque grain comme un petit rayon de soleil.',
+    shiitakeBao:
+        'Des brioches blanches cuites dans le panier de bambou, gonflées comme des nuages et farcies aux shiitakes et au pak choï. On les ouvre encore brûlantes en soufflant dessus pour ne pas se brûler les doigts.',
+    lotusDimSum:
+        'De petits raviolis pliés à la main, translucides à la vapeur, garnis de racine de lotus et de bambou croquant. Mei les plie en deux secondes chrono ; les miens ressemblent à des chapeaux de gendarme.',
+    yuzuFishSteam:
+        'Un filet de bar cuit tout doucement à la vapeur dans le panier de bambou, avec des tranches de yuzu et du gingembre. La chair reste nacrée et parfumée : Marcel en a redemandé deux fois.',
+    custardSilkie:
+        'Un flan salé tout tremblotant aux œufs de poule soie, au lait de sika et aux lamelles de shiitake. On le cuit dans de petits bols au panier vapeur : c’est doux comme de la soie chaude.',
+    umeOnigiri:
+        'Un triangle de riz tiède roulé au sésame qui cache en son cœur une prune ume bien acidulée. C’est le casse-croûte préféré de Kenji quand il répare les rigoles de bambou en haut des terrasses.',
+    longanSteamedBun:
+        'Une brioche vapeur toute moelleuse garnie de longanes juteux et d’un voile de sucre. À la sortie du panier de bambou, elle sent le fruit d’été et la pâte chaude : les enfants font la queue devant la porte.',
+    ginkgoBroth:
+        'Un bouillon clair parfumé aux noix de ginkgo, aux pousses de bambou et aux shiitakes. Kenji le boit dans un grand bol en terre après les journées de pluie : ça remet les idées et l’estomac d’aplomb.',
+    nashiSteamPear:
+        'Une poire nashi entière étuvée à la vapeur avec du miel et une étoile de badiane. Elle devient translucide et fondante tout en gardant son parfum de verger : le remède de Mei contre les soirées fraîches.',
+    bokChoyDumplings:
+        'Des gyoza dodus farcis de pak choï, d’ail et de sésame, cuits à la vapeur dans le panier de bambou. On en prépare toujours une grande tablée parce que personne ne s’arrête avant le sixième.',
+    yuzuMochi:
+        'De petits coussins de pâte de riz gluant, tendres et poudrés, au cœur acidulé de yuzu. Mei les façonne à la main avec un geste si léger qu’on dirait qu’elle roule de la neige fraîche.',
+    umeJelly:
+        'Une gelée rose pâle de prune ume, claire comme du verre et pleine de peps. On la coupe en petits cubes brillants qu’on sert à l’heure du thé sous les cerisiers.',
+    kumquatConfit:
+        'Des kumquats entiers confits doucement dans le sucre jusqu’à devenir brillants comme des billes d’or. On croque la peau douce et la pulpe vive en même temps : un vrai feu d’artifice miniature.',
+    nashiTart:
+        'Une tarte fine aux lamelles de poire nashi rangées en rosace et dorées au beurre. La poire reste croquante sous la pâte feuilletée : Paul le boulanger en a pris note dans son petit carnet.',
+    longanPudding:
+        'Une crème douce au lait de sika et aux longanes frais, prise tout doucement sans jamais bouillir. C’est fondant, parfumé et léger comme une fin d’après-midi dans la vallée.',
+    lotusMooncake:
+        'Un gâteau de lune moulé d’un joli motif fleuri, garni de pâte de lotus, de miel et d’œuf de poule soie. On le coupe en petits quartiers pour le partager en regardant la pleine lune se lever sur les rizières.',
+    ginkgoSweetSoup:
+        'Une soupe sucrée et tiède aux noix de ginkgo et aux longanes, servie dans de petits bols en porcelaine. C’est le dessert d’automne de Mei : réconfortant, délicat, pas trop sucré.',
+    kumquatMochi:
+        'Un daifuku tout rond qui enferme un kumquat entier dans un lit de pâte de haricots rouges. Quand on le coupe en deux, le cœur orange apparaît comme un petit soleil caché.',
+    starAniseCandies:
+        'De petits bonbons ambrés au miel et à la badiane étoilée qui parfument la bouche pendant une heure. Kenji en garde toujours une poignée dans sa poche pour les matins de brume au bord du quai.',
+    yuzuTea:
+        'Un thé vert fumant dans lequel on presse du yuzu frais et une bonne cuillère de miel. Le parfum d’agrume monte tout de suite au nez : c’est la boisson préférée de Kenji après le travail au wok.',
+    umeSoda:
+        'Une eau pétillante rose clair au jus de prune ume et aux feuilles de menthe fraîche. Ça pétille, c’est acidulé et ça rafraîchit instantanément les après-midi chauds sur les terrasses.',
+    lotusInfusion:
+        'Une tisane rose pâle aux tranches de lotus et au miel des rizières. Elle a un goût doux et apaisant qui donne envie de s’asseoir sur le bord d’un muret de pierre et d’écouter l’eau couler.',
+    kumquatIcedTea:
+        'Un grand verre de thé glacé plein de rondelles de kumquat et de glaçons qui tintent. Un peu sucré, un peu vif : les clients du comptoir le commandent dès que le premier rayon de soleil chauffe la vitre.',
+    sikaMatcha:
+        'Un thé vert fouetté longuement au bambou jusqu’à faire une mousse fine, allongé de lait de sika bien chaud. C’est le petit luxe quotidien de Mei, qui sourit dès qu’elle en sent l’odeur.',
+    aniseChai:
+        'Un thé corsé infusé à la badiane étoilée, adouci de lait de sika et de miel. Rapportée par la jonque de la soie, la badiane donne à cette tasse un parfum d’épice douce qui réchauffe jusqu’au bout des doigts.',
+});

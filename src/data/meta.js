@@ -43,7 +43,7 @@ export const ACHIEVEMENTS = [
     {
         id: 'landHarvest',
         name: 'Grand voyageur',
-        desc: 'Récolter {n} fois sur l’île, à l’oasis et au Grand Nord',
+        desc: 'Récolter {n} fois sur l’île, à l’oasis, au Grand Nord et aux Terres d’Asie',
         icon: ['ui', 'oaVoyages'],
         tiers: [50, 1000, 10000],
         calc: true,
@@ -178,7 +178,7 @@ export const SKILLS = {
             { id: 'tropic', name: 'Main tropicale', max: 3, icon: ['item', 'pineapple'], desc: 'Les plantations de l’île poussent {x} % plus vite', per: 6 },
             { id: 'dowser', name: 'Sourcier', max: 2, icon: ['ui', 'drop'], desc: 'La source de l’oasis donne {x} L/h de plus', per: 4 },
             { id: 'stoker', name: 'Poêlier', max: 2, icon: ['item', 'wood'], desc: 'Les poêles du Grand Nord brûlent {x} % de bois en moins', per: 12 },
-            { id: 'caravaner', name: 'Caravanier', max: 1, cap: true, icon: ['ui', 'oaCaravane'], desc: 'La caravane et le traîneau rapportent 10 % de plus' },
+            { id: 'caravaner', name: 'Caravanier', max: 1, cap: true, icon: ['ui', 'oaCaravane'], desc: 'La caravane, le traîneau et la jonque rapportent 10 % de plus' },
         ],
     },
     vil: {
@@ -405,7 +405,7 @@ Object.assign(FISH, FISH_133);
 export const BOOK_EXTRA = {
     sea: { ids: ['sardine', 'mackerel', 'shrimp', 'seabass', 'lobster', 'squid', 'bream', 'skate', 'tuna'], hint: 'Pêché en mer' },
     herd: { ids: ['honey', 'alpineMilk'], hint: 'Des ruches, ou de l’alpage' },
-    pantry: { ids: ['cardamom'], hint: 'Rapportée par le traîneau du Grand Nord' },
+    pantry: { ids: ['cardamom', 'starAnise'], hint: 'Rapportées par le traîneau du Grand Nord ou la jonque d’Asie' },
 };
 export const BOOK_PAGES = [
     { id: 'garden', name: 'Potager d’or', icon: ['item', 'carrot'] },
@@ -414,13 +414,13 @@ export const BOOK_PAGES = [
     { id: 'fish', name: 'Poissons', icon: ['item', 'perch'] },
     // 1.82 : les produits des bêtes (premiers et seconds)
     { id: 'herd', name: 'Élevage', icon: ['item', 'egg'] },
-    { id: 'dishes', name: 'Plats', icon: ['item', 'lasagna'], machines: ['kitchen', 'marmite', 'stove', 'pastaworks', 'crepery', 'deli', 'pizzeria', 'tajine', 'taigaPot'] },
+    { id: 'dishes', name: 'Plats', icon: ['item', 'lasagna'], machines: ['kitchen', 'marmite', 'stove', 'pastaworks', 'crepery', 'deli', 'pizzeria', 'tajine', 'taigaPot', 'wok', 'steamer'] },
     { id: 'sea', name: 'Mer et étang', icon: ['item', 'bouillabaisse'], machines: ['fishmonger', 'smokehouse', 'cannery'] },
     {
         id: 'sweets',
         name: 'Pâtisseries et douceurs',
         icon: ['item', 'cherryPie'],
-        machines: ['pastry', 'bakery', 'confectionery', 'icecream', 'chocolatier', 'islandBakery', 'sugarmill', 'earthOven', 'tiledStove', 'orientalSweets', 'berryKettle'],
+        machines: ['pastry', 'bakery', 'confectionery', 'icecream', 'chocolatier', 'islandBakery', 'sugarmill', 'earthOven', 'tiledStove', 'orientalSweets', 'berryKettle', 'wagashi'],
     },
     { id: 'cheese', name: 'Fromagerie', icon: ['item', 'camembert'], machines: ['dairy', 'alpineDairy'] },
     { id: 'counter', name: 'Boissons du comptoir', icon: ['item', 'cappuccino'], machines: ['counter'] },
@@ -492,4 +492,5 @@ export const STORY_MAPS = [
     { id: 'chateau', name: 'Le château', openChapter: 18, party: 'harvestFest' },
     { id: 'oasis', name: 'L’oasis', openChapter: 20, party: 'soukStalls' },
     { id: 'nord', name: 'Le Grand Nord', openChapter: 22, party: 'northIce' },
+    { id: 'asie', name: 'Les Terres d’Asie', openChapter: 24, party: 'asiaLanterns' },
 ];

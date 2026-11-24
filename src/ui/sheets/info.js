@@ -350,7 +350,7 @@ function animalCard(a) {
     const open = lvOk(a) && G.storyOk(a);
     return `<div class="card guide-item">${ico(['animal', a.id], 'ico big')}<div class="card-main">
         <div class="card-title">${a.name}</div>
-        <div class="card-sub">${prods}${a.oasis ? ' · Oasis' : a.nord ? ' · Grand Nord' : ''}</div></div>
+        <div class="card-sub">${prods}${a.oasis ? ' · Oasis' : a.nord ? ' · Grand Nord' : a.asie ? ' · Terres d’Asie' : ''}</div></div>
         <span class="gi-btns">${open ? btn('Y aller', { act: 'guideAnim', data: { id: a.id }, size: 'sm', kind: 'gold' }) : `<span class="chip">niv. ${a.reqLvl}</span>`}</span></div>`;
 }
 
@@ -549,6 +549,7 @@ export function setupInfo() {
             if (!a) return;
             if (a.oasis) return go('farm/island#oasis');
             if (a.nord) return go('farm/island#nord');
+            if (a.asie) return go('farm/island#asie');
             const has = state.animals.some(x => x.type === a.id);
             go(has ? 'animals/pasture' : 'market/shop#animals');
         },

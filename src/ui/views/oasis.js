@@ -19,6 +19,8 @@ import { askBuy } from '../sheets/askbuy.js';
 import { renderIsland } from './island.js';
 import { renderNord } from './nord.js';
 import { NORD } from '../../data/nord.js';
+import { renderAsie } from './asie.js';
+import { ASIE } from '../../data/asie.js';
 import { apiaryHtml } from './apiary.js';
 import { treeArt, anchorOf, spot } from './orchard.js';
 import { svg } from '../../art/kit.js';
@@ -30,10 +32,11 @@ const PICKS = [
     ['isle', 'L’île', ['item', 'pineapple']],
     ['oasis', 'L’oasis', ['ui', 'oaOasis']],
     ['nord', 'Le Nord', ['ui', 'noNord']],
+    ['asie', 'L’Asie', ['ui', 'asAsie']],
 ];
 function renderVoyages(el) {
-    const cur = ui.sel.island === 'oasis' || ui.sel.island === 'nord' ? ui.sel.island : 'isle';
-    const locked = id => (id === 'oasis' && !G.oasisLvlOk()) || (id === 'nord' && !G.nordLvlOk());
+    const cur = ui.sel.island === 'oasis' || ui.sel.island === 'nord' || ui.sel.island === 'asie' ? ui.sel.island : 'isle';
+    const locked = id => (id === 'oasis' && !G.oasisLvlOk()) || (id === 'nord' && !G.nordLvlOk()) || (id === 'asie' && !G.asieLvlOk());
     const pick = segmented(
         PICKS.map(([id, name, icon]) => [id, name, locked(id) ? ['ui', 'lock'] : icon, 0, locked(id)]),
         cur,
@@ -43,7 +46,7 @@ function renderVoyages(el) {
         ['vpick', pick],
         ['vbody-' + cur, '<div class="voy-body"></div>'],
     ]);
-    (cur === 'oasis' ? renderOasis : cur === 'nord' ? renderNord : renderIsland)(el.querySelector('.voy-body'));
+    (cur === 'oasis' ? renderOasis : cur === 'nord' ? renderNord : cur === 'asie' ? renderAsie : renderIsland)(el.querySelector('.voy-body'));
 }
 defineView('farm/island', renderVoyages);
 
@@ -403,6 +406,10 @@ export function setupOasis() {
             }
             if (d.v === 'nord' && !G.nordLvlOk()) {
                 toast(`Le Grand Nord s’ouvre au niveau ${NORD.lvl}`, ['ui', 'lock']);
+                return;
+            }
+            if (d.v === 'asie' && !G.asieLvlOk()) {
+                toast(`Les Terres d’Asie s’ouvrent au niveau ${ASIE.lvl}`, ['ui', 'lock']);
                 return;
             }
             ui.sel.island = d.v;

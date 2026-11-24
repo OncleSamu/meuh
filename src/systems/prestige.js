@@ -4,6 +4,7 @@ import { ensurePastures } from './pastures.js';
 import { ensureIsland } from './island.js';
 import { ensureOasis } from './oasis.js';
 import { ensureNord } from './nord.js';
+import { ensureAsie } from './asie.js';
 import { ensureGenetics } from './genetics.js';
 import { state, newState, setState, fillGrid } from '../core/state.js';
 import { now } from '../core/clock.js';
@@ -118,6 +119,7 @@ export function doPrestige(challenge, theme) {
     ensureIsland();
     ensureOasis();
     ensureNord();
+    ensureAsie();
     ensureGenetics();
     state.truck.arriveAt = now() + 60000;
     ensureVillagers();

@@ -1,5 +1,5 @@
 // Le commerce : magasin, matériaux de construction, marché, prix et annulation d'une vente.
-import { herdFull, placeAnimal, isOasisBeast, isNordBeast, fullText } from './pastures.js';
+import { herdFull, placeAnimal, isOasisBeast, isNordBeast, isAsieBeast, fullText } from './pastures.js';
 import { state, scaleLvl, lvOk, skill } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -324,7 +324,9 @@ export function buy(type, id, qty = 1, at) {
                 ? `${fullText(id)} : agrandissez-le à l’oasis`
                 : isNordBeast(id)
                   ? `${fullText(id)} : agrandissez-la au Grand Nord`
-                  : 'Tous vos prés sont pleins : achetez un nouveau pré dans l’onglet Animaux',
+                  : isAsieBeast(id)
+                    ? `${fullText(id)} : agrandissez-le aux Terres d’Asie`
+                    : 'Tous vos prés sont pleins : achetez un nouveau pré dans l’onglet Animaux',
             ['ui', 'flowers'],
         );
         sfx('error');
@@ -351,7 +353,7 @@ export function buy(type, id, qty = 1, at) {
         const a = newAnimal(id);
         placeAnimal(a);
         state.animals.push(a);
-        if (ANIMALS[id].oasis || ANIMALS[id].nord) tip(id);
+        if (ANIMALS[id].oasis || ANIMALS[id].nord || ANIMALS[id].asie) tip(id);
     } else if (type === 'machine') state.machines.push(newMachine(id));
     else if (type === 'placedeco') state.decorInv[id] = (state.decorInv[id] || 0) + 1;
     sfx('buy');

@@ -17,9 +17,9 @@ export const FAMILY = {
 };
 
 // les prétendants : les villageois adultes et libres
-export const SUITORS = ['gaspard', 'odile', 'jules', 'ines', 'morgane', 'yann', 'bruno', 'lea', 'margaux', 'maeva', 'tiago', 'agathe', 'victor', 'agnes', 'idris', 'yasmine', 'tuomas', 'ingrid'];
+export const SUITORS = ['gaspard', 'odile', 'jules', 'ines', 'morgane', 'yann', 'bruno', 'lea', 'margaux', 'maeva', 'tiago', 'agathe', 'victor', 'agnes', 'idris', 'yasmine', 'tuomas', 'ingrid', 'mei', 'kenji'];
 // pour les accords de la langue : « il » ou « elle »
-export const SHE = ['odile', 'ines', 'morgane', 'lea', 'margaux', 'maeva', 'agathe', 'agnes', 'yasmine', 'ingrid'];
+export const SHE = ['odile', 'ines', 'morgane', 'lea', 'margaux', 'maeva', 'agathe', 'agnes', 'yasmine', 'ingrid', 'mei'];
 
 // les rendez-vous, selon les roses déjà gagnées
 export const DATES = [
@@ -166,6 +166,8 @@ export const SPOUSE_LOOK = {
     yasmine: [3, 0, 1],
     tuomas: [0, 5, 3],
     ingrid: [0, 5, 3],
+    mei: [1, 0, 0],
+    kenji: [1, 0, 0],
 };
 
 // ---------------- 1.125 : ils grandissent ----------------

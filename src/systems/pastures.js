@@ -5,6 +5,7 @@ import { toast, sfx, buzz, burst, float, changed } from '../core/bus.js';
 import { PASTURE, PASTURE_NAMES } from '../data/farm.js';
 import { PEN } from '../data/oasis.js';
 import { BARN } from '../data/nord.js';
+import { PAVILION } from '../data/asie.js';
 import { ANIMALS } from '../data/animals.js';
 import { projectDone } from './story.js';
 import { spend } from './player.js';
@@ -19,10 +20,12 @@ export const pastureLoad = k => inPasture(k).length;
 export const penCap = () => PASTURE.cap + penBonus();
 // 1.49 : l'enclos de la palmeraie (numéro PEN.key), réservé aux bêtes de l'oasis
 // 1.52 : l'étable de rondins du Grand Nord (numéro BARN.key), réservée aux bêtes du Nord
+// 1.171 : le pavillon de bambou des Terres d'Asie (numéro PAVILION.key), réservé aux bêtes d'Asie
 export const isOasisBeast = type => !!(ANIMALS[type] && ANIMALS[type].oasis);
 export const isNordBeast = type => !!(ANIMALS[type] && ANIMALS[type].nord);
+export const isAsieBeast = type => !!(ANIMALS[type] && ANIMALS[type].asie);
 // le numéro du pré fermé d'une espèce (null : un pré de la ferme)
-export const penKeyOf = type => (isOasisBeast(type) ? PEN.key : isNordBeast(type) ? BARN.key : null);
+export const penKeyOf = type => (isOasisBeast(type) ? PEN.key : isNordBeast(type) ? BARN.key : isAsieBeast(type) ? PAVILION.key : null);
 export const enclosOpen = () => projectDone(PEN.project);
 export const enclosCap = () => PEN.cap[state.oasis && state.oasis.penBig ? 1 : 0];
 export const enclos = () => {
@@ -37,12 +40,33 @@ export const nordBarn = () => {
     if (!state.nord.pen || typeof state.nord.pen !== 'object') state.nord.pen = { name: BARN.name };
     return state.nord.pen;
 };
-// le « pré » numéro k : un pré de la ferme, l'enclos ou l'étable
-export const penOf = k => (k === PEN.key ? (enclosOpen() ? enclos() : null) : k === BARN.key ? (nordBarnOpen() ? nordBarn() : null) : state.pastures[k]);
+export const asiaPavilionOpen = () => projectDone(PAVILION.project);
+export const asiaPavilionCap = () => PAVILION.cap[state.asie && state.asie.pavilionBig ? 1 : 0];
+export const asiaPavilion = () => {
+    if (!state.asie) return null;
+    if (!state.asie.pen || typeof state.asie.pen !== 'object') state.asie.pen = { name: PAVILION.name };
+    return state.asie.pen;
+};
+// le « pré » numéro k : un pré de la ferme, l'enclos, l'étable ou le pavillon
+export const penOf = k =>
+    k === PEN.key
+        ? enclosOpen()
+            ? enclos()
+            : null
+        : k === BARN.key
+          ? nordBarnOpen()
+              ? nordBarn()
+              : null
+          : k === PAVILION.key
+            ? asiaPavilionOpen()
+                ? asiaPavilion()
+                : null
+            : state.pastures[k];
 export const penKeys = () => [
     ...state.pastures.map((_, k) => k),
     ...(enclosOpen() && state.oasis ? [PEN.key] : []),
     ...(nordBarnOpen() && state.nord ? [BARN.key] : []),
+    ...(asiaPavilionOpen() && state.asie ? [PAVILION.key] : []),
 ];
 export const pastureFree = k =>
     k === PEN.key
@@ -53,7 +77,11 @@ export const pastureFree = k =>
           ? nordBarnOpen()
               ? nordBarnCap() - pastureLoad(k)
               : 0
-          : penCap() - pastureLoad(k);
+          : k === PAVILION.key
+            ? asiaPavilionOpen()
+                ? asiaPavilionCap() - pastureLoad(k)
+                : 0
+            : penCap() - pastureLoad(k);
 export const pastureCost = () => Math.floor(PASTURE.cost * Math.pow(PASTURE.mult, Math.max(0, state.pastures.length - 1)));
 export const canAddPasture = () => state.pastures.length < PASTURE.max;
 // le premier pré qui a de la place (en commençant par celui qu'on regarde)
@@ -65,7 +93,13 @@ export function roomyPasture(pref = 0) {
 // plus de place pour une bête de cette espèce (sans espèce : dans les prés de la ferme)
 export const herdFull = type => (type && penKeyOf(type) !== null ? pastureFree(penKeyOf(type)) <= 0 : roomyPasture() < 0);
 export const fullText = type =>
-    type && isOasisBeast(type) ? `${PEN.name} est plein` : type && isNordBeast(type) ? `${BARN.name} est pleine` : 'Tous vos prés sont pleins';
+    type && isOasisBeast(type)
+        ? `${PEN.name} est plein`
+        : type && isNordBeast(type)
+          ? `${BARN.name} est pleine`
+          : type && isAsieBeast(type)
+            ? `${PAVILION.name} est plein`
+            : 'Tous vos prés sont pleins';
 
 const newPasture = k => ({ name: PASTURE_NAMES[k] || `Pré ${k + 1}` });
 

@@ -100,6 +100,13 @@ export const BREW = {
         col: '#f0b640',
         st: [temp(75, 2.5), drop('le safran', '#f08a1a', 0.2, 0.05), ['whisk', { turns: 4, dur: 6 }], highpour('#f0b640', 0.9, 0.22)],
     },
+    // ---- 1.171 : les boissons des Terres d'Asie ----
+    yuzuTea: { col: '#f2c84a', st: [temp(85, 3), steep(0.45, 0.65, 7), squeeze('le yuzu', '#e8b82a', 24), drop('le miel', '#d9a441', 0.28)] },
+    umeSoda: { col: '#e8788a', st: [squeeze('l’ume', '#d8586a', 24), ice(4), shake(6), pour(0.8, '#e8788a', 'le soda d’ume')] },
+    lotusInfusion: { col: '#f2c2cc', st: [temp(90), steep(0.5, 0.72, 7), stir(3, '#f2c2cc'), drop('le miel', '#e8b04a', 0.25)] },
+    kumquatIcedTea: { col: '#f09432', st: [temp(85), steep(0.4, 0.62, 7), ice(4), squeeze('le kumquat', '#e87a1a', 22)] },
+    sikaMatcha: { col: '#6aa84f', st: [temp(75, 3), ['whisk', { turns: 5, dur: 7 }], pour(0.8, MILK, 'le lait de sika')] },
+    aniseChai: { col: '#b87a4a', st: [grind(4, 38), temp(92), drop('la badiane', '#8a4a22', 0.25), highpour('#b87a4a', 1.1, 0.18)] },
 };
 
 // Les nouveaux produits (les autres existent déjà dans items.js) : nom, recette, niveau, durée de référence
@@ -168,6 +175,16 @@ export const NEW_DRINKS_155 = [
     ['cardamomMilk', 'Lait de renne à la cardamome', { reindeerMilk: 2, cardamom: 1, honey: 1 }, 60, 240, 'sled'],
 ];
 
+// 1.171 : six boissons des Terres d'Asie (niveau 80)
+export const NEW_DRINKS_ASIE = [
+    ['yuzuTea', 'Thé chaud au yuzu', { tea: 1, yuzu: 2, honey: 1 }, 80, 200],
+    ['umeSoda', 'Eau pétillante à l’ume', { ume: 2, sugar: 1, mint: 1 }, 80, 200],
+    ['lotusInfusion', 'Tisane de lotus', { lotus: 2, honey: 1 }, 80, 200],
+    ['kumquatIcedTea', 'Thé glacé au kumquat', { tea: 1, kumquat: 2, sugar: 1 }, 80, 220],
+    ['sikaMatcha', 'Matcha au lait de sika', { tea: 2, sikaMilk: 1, sugar: 1 }, 80, 240, 'pavilion'],
+    ['aniseChai', 'Thé épicé à la badiane', { tea: 1, starAnise: 1, sikaMilk: 1, honey: 1 }, 80, 260, 'junk'],
+];
+
 // Les produits existants qui passent du salon de thé et de la brûlerie au comptoir
 export const OLD_DRINKS = ['greenTea', 'sobacha', 'milkTea', 'lavenderTea', 'icedTea', 'gingerTea', 'genepiTea', 'cafeLatte'];
 export const COFFEE_GATED = ['coffee', 'cafeLatte', 'tiramisu'];
@@ -233,6 +250,9 @@ export const FAVORITE = {
     yasmine: 'dateTea',
     tuomas: 'ryeCoffee',
     ingrid: 'cloudberryInfusion',
+    // 1.171 : les villageois des Terres d'Asie
+    mei: 'sikaMatcha',
+    kenji: 'yuzuTea',
 };
 
 // le prix des décors du salon

@@ -113,7 +113,7 @@ test('les naissances et les associations marchent dans l’étable', () => {
 
 test('chapitre 24 : Ingrid, l’étable, après le chapitre 23', () => {
     assert.ok(CHAPTERS.find(c => c.n === 24 && c.map === 'nord'));
-    assert.equal(CHAPTER_ORDER.at(-1), 24);
+    assert.equal(CHAPTER_ORDER.indexOf(24), CHAPTER_ORDER.indexOf(23) + 1);
     assert.ok(VILLAGERS.ingrid && SPR.villager('ingrid').includes('<svg'));
     assert.equal(PROJECTS.northStable.ch, 24);
     assert.ok(SPR.building('northStable', 2).length > 200);

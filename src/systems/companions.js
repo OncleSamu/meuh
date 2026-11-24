@@ -8,6 +8,7 @@ import { ITEMS } from '../data/items.js';
 import { COLS } from '../data/farm.js';
 import { OASIS } from '../data/oasis.js';
 import { NORD } from '../data/nord.js';
+import { ASIE } from '../data/asie.js';
 import { ASSOCS, ASSOC, COMP_LVL, COMP_FX, COMP_CAP, COMP_TIERS, MAMIE, isBad } from '../data/companions.js';
 import { earn, addXp } from './player.js';
 import { tip } from './tips.js';
@@ -29,14 +30,18 @@ const GH_COLS = 4;
 export const OASIS_BASE = 2000;
 // 1.51 : les cases du Grand Nord (indices à partir de 3000, 4 colonnes)
 export const NORD_BASE = 3000;
+// 1.171 : les terrasses des Terres d'Asie (indices à partir de 4000, 4 colonnes)
+export const ASIE_BASE = 4000;
 const zoneOf = i =>
-    i >= NORD_BASE
-        ? { list: (state.nord && state.nord.plots) || [], cols: NORD.cols, k: i - NORD_BASE, base: NORD_BASE, oasis: true }
-        : i >= OASIS_BASE
-          ? { list: (state.oasis && state.oasis.plots) || [], cols: OASIS.cols, k: i - OASIS_BASE, base: OASIS_BASE, oasis: true }
-          : i >= 1000
-            ? { list: state.greenhouse.plots, cols: GH_COLS, k: i - 1000, base: 1000 }
-            : { list: state.grid, cols: COLS, k: i, base: 0 };
+    i >= ASIE_BASE
+        ? { list: (state.asie && state.asie.plots) || [], cols: ASIE.cols, k: i - ASIE_BASE, base: ASIE_BASE, oasis: true }
+        : i >= NORD_BASE
+          ? { list: (state.nord && state.nord.plots) || [], cols: NORD.cols, k: i - NORD_BASE, base: NORD_BASE, oasis: true }
+          : i >= OASIS_BASE
+            ? { list: (state.oasis && state.oasis.plots) || [], cols: OASIS.cols, k: i - OASIS_BASE, base: OASIS_BASE, oasis: true }
+            : i >= 1000
+              ? { list: state.greenhouse.plots, cols: GH_COLS, k: i - 1000, base: 1000 }
+              : { list: state.grid, cols: COLS, k: i, base: 0 };
 export function compNeighbors(i) {
     const { list, cols, k, base } = zoneOf(i);
     const out = [];

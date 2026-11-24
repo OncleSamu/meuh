@@ -3,6 +3,7 @@ import { ANIMALS_135 } from './ajouts/animaux.js';
 import { EXTRAS_181 } from './ajouts/seconds.js';
 import { OASIS_BEASTS } from './oasis.js';
 import { NORD_BEASTS } from './nord.js';
+import { ASIE_BEASTS } from './asie.js';
 import { ANIMALS_152 } from './ajouts/pack152.js';
 // Les animaux : prix, production, croissance des petits, noms.
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
@@ -177,6 +178,10 @@ for (const [id, name, prodId, cost, time, reqLvl, xp, extra, , , , drink] of OAS
 for (const [id, name, prodId, cost, time, reqLvl, xp, extra, , , , cold] of NORD_BEASTS)
     ANIMALS[id] = { id, name, prodId, cost, time, reqLvl, xp, nord: true, cold: !!cold, needProject: 'northStable', ...(extra ? { extra } : {}) };
 
+// 1.171 : les bêtes des Terres d'Asie (elles ne vivent que dans le pavillon de bambou)
+for (const [id, name, prodId, cost, time, reqLvl, xp, extra, , , , wet] of ASIE_BEASTS)
+    ANIMALS[id] = { id, name, prodId, cost, time, reqLvl, xp, asie: true, wet: !!wet, needProject: 'asiaPavilion', ...(extra ? { extra } : {}) };
+
 // 1.3.2 : un second produit, pour le saloir, de temps en temps au ramassage (le gène « rendement » aide un peu)
 // 1.81 : 15 % (au lieu de 10 %) ; la ration d'engraissement ajoute 35 % pendant 2 h ; la compétence « Bon éleveur » 5 % par rang
 export const EXTRA_DROP = { chance: 0.15, gene: 0.5, ration: 0.35, rationHours: 2, skill: 0.05 };
@@ -208,6 +213,7 @@ export const GROW = {
     ...Object.fromEntries(ANIMALS_152.map(a => [a[0], a[8]])),
     ...Object.fromEntries(OASIS_BEASTS.map(a => [a[0], a[8]])),
     ...Object.fromEntries(NORD_BEASTS.map(a => [a[0], a[8]])),
+    ...Object.fromEntries(ASIE_BEASTS.map(a => [a[0], a[8]])),
 };
 
 export const NAMES = {
@@ -231,6 +237,7 @@ export const NAMES = {
     ...Object.fromEntries(ANIMALS_152.map(a => [a[0], a[9]])),
     ...Object.fromEntries(OASIS_BEASTS.map(a => [a[0], a[9]])),
     ...Object.fromEntries(NORD_BEASTS.map(a => [a[0], a[9]])),
+    ...Object.fromEntries(ASIE_BEASTS.map(a => [a[0], a[9]])),
     turkey: ['Glouglou', 'Dindonnette', 'Gobble', 'Plumette', 'Caroline', 'Barnabé'],
 };
 

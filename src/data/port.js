@@ -93,6 +93,13 @@ export const FARM_SEASONS = [
         items: ['rye', 'lingonberry', 'cloudberry', 'seaBuckthorn', 'birchSap', 'reindeerMilk', 'ptarmiganEgg', ...made('taigaPot', 'tiledStove')],
     },
     {
+        id: 'asie',
+        name: 'La saison des Terres d’Asie',
+        icon: 'yuzu',
+        deco: 'bannerAsie',
+        items: ['lotus', 'bambooShoot', 'shiitake', 'bokChoy', 'yuzu', 'sikaMilk', 'silkThread', 'silkieEgg', ...made('wok', 'steamer', 'wagashi')],
+    },
+    {
         id: 'miel',
         name: 'La saison du miel',
         icon: 'honey',
@@ -132,6 +139,7 @@ export const FARM_SEASON_DEFIS = {
     brasserie: ['brasserie', 'cuvee'],
     oasis: ['souk'],
     nord: ['hiver'],
+    asie: ['lanternes'],
     miel: ['miel'],
     mine: ['expedition'],
     textile: ['defile'],

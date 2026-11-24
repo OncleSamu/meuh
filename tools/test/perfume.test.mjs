@@ -271,7 +271,7 @@ test('1.146 : ponts vers Train, Avion-cargo, Mamie Odette, Grand Défi, Défi é
     farm(80);
     // On cale l'horloge sur « La saison des parfums » et la chapelle rénovée
     const idxParf = FARM_SEASONS.findIndex(s => s.id === 'parfums');
-    T = (120 + idxParf) * FARM_SEASON_MS + 3600e3;
+    T = (FARM_SEASONS.length * 10 + idxParf) * FARM_SEASON_MS + 3600e3;
     state.projects.chapel = { done: true };
     state.projects.station = { done: true };
     G.ensureFarmSeason();

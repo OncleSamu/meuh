@@ -143,8 +143,8 @@ export const LEVELS = {
         cembro: 78, juniper: 78,
         // Niv. 79 — Baies de sureau
         elderberry: 79,
-        // Niv. 80 — Baies d’aronia
-        aronia: 80,
+        // Niv. 80 — Baies d’aronia et Les Terres d’Asie
+        aronia: 80, lotus: 80, bambooShoot: 80, shiitake: 80, bokChoy: 80, yuzu: 80, ume: 80, kumquat: 80, nashi: 80, longan: 80, ginkgo: 80,
     },
 
     // ---------------- Animaux (reqLvl) ----------------
@@ -201,6 +201,8 @@ export const LEVELS = {
         muskox: 77, reindeer: 77,
         // Niv. 78 — Lagopède
         ptarmigan: 78,
+        // Niv. 80 — Cerf sika, Ver à soie, Poule soie
+        sika: 80, silkworm: 80, silkie: 80,
     },
 
     // ---------------- Machines / ateliers (reqLvl) ----------------
@@ -301,12 +303,14 @@ export const LEVELS = {
         taigaPot: 77,
         // Niv. 79 — Sucrerie de baies
         berryKettle: 79,
+        // Niv. 80 — Wok de fonte, Panier vapeur, Atelier de douceurs d’Asie
+        wok: 80, steamer: 80, wagashi: 80,
     },
 
     // ---------------- Décorations (reqLvl) ----------------
     decos: {
-        // Niv. 1 — Ancre marine, Brouette de pommes, Fanion de la saison de la brasserie, Fanion de la saison des chevaux, Fanion de la saison du miel, Fanion de la saison de la mine, Fanion de la saison du Grand Nord, Fanion de la saison de l’oasis, Fanion de la saison des parfums, Fanion de la saison du textile, Table du banquet, Médaille géante, Fût de la brasserie, Statue du taureau, Tour du château, Pupitre à champagne, Meule d’or, Grande cloche, Lapin de Pâques, Lanterne à lucioles, Poisson trophée, Vache dorée, Livre d’or, Ruche dorée, Hamac des îles, Tonneau d’honneur, Rosette du concours, Girouette cheval, Citrouille-lanterne, Lanterne, Mannequin de couture, Wagonnet de la mine, Chalet miniature, Phare miniature, Locomotive miniature, Banc des voisins, Enseigne du comptoir, Traîneau du Grand Nord, Pressoir ancien, Balançoire du verger, Orchidée de la serre, Fontaine parfumée, Four à pizza, Obstacle de concours, Podium, Lanterne du souk, Statue dorée, Barrière blanche, Sapin de Noël
-        anchorDeco: 1, appleCart: 1, bannerBrasserie: 1, bannerHaras: 1, bannerMiel: 1, bannerMine: 1, bannerNord: 1, bannerOasis: 1, bannerParfums: 1, bannerTextile: 1, banquetTable: 1, bigMedal: 1, brewBarrel: 1, bullStatue: 1, castleTower: 1, champagneRack: 1, cheeseWheel: 1, cowbell: 1, easterBunny: 1, fireflyJar: 1, fishTrophy: 1, goldCow: 1, goldenBook: 1, goldenHive: 1, hammock: 1, honorBarrel: 1, horseRosette: 1, horsevane: 1, jackLantern: 1, lantern: 1, mannequin: 1, minecart: 1, miniChalet: 1, miniLighthouse: 1, miniLoco: 1, neighborBench: 1, neonSign: 1, northSled: 1, oldPress: 1, orchardSwing: 1, orchidPot: 1, perfumeFountain: 1, pizzaOven: 1, showjump: 1, showpodium: 1, souqLantern: 1, statue: 1, whitefence: 1, xmasTree: 1,
+        // Niv. 1 — Ancre marine, Brouette de pommes, Fanion de la saison de la brasserie, Fanion de la saison des chevaux, Fanion de la saison du miel, Fanion de la saison de la mine, Fanion de la saison du Grand Nord, Fanion de la saison de l’oasis, Fanion de la saison des parfums, Fanion de la saison du textile, Fanion de la saison d’Asie, Jonque miniature, Table du banquet, Médaille géante, Fût de la brasserie, Statue du taureau, Tour du château, Pupitre à champagne, Meule d’or, Grande cloche, Lapin de Pâques, Lanterne à lucioles, Poisson trophée, Vache dorée, Livre d’or, Ruche dorée, Hamac des îles, Tonneau d’honneur, Rosette du concours, Girouette cheval, Citrouille-lanterne, Lanterne, Mannequin de couture, Wagonnet de la mine, Chalet miniature, Phare miniature, Locomotive miniature, Banc des voisins, Enseigne du comptoir, Traîneau du Grand Nord, Pressoir ancien, Balançoire du verger, Orchidée de la serre, Fontaine parfumée, Four à pizza, Obstacle de concours, Podium, Lanterne du souk, Statue dorée, Barrière blanche, Sapin de Noël
+        anchorDeco: 1, appleCart: 1, asiaJunkDeco: 1, bannerAsie: 1, bannerBrasserie: 1, bannerHaras: 1, bannerMiel: 1, bannerMine: 1, bannerNord: 1, bannerOasis: 1, bannerParfums: 1, bannerTextile: 1, banquetTable: 1, bigMedal: 1, brewBarrel: 1, bullStatue: 1, castleTower: 1, champagneRack: 1, cheeseWheel: 1, cowbell: 1, easterBunny: 1, fireflyJar: 1, fishTrophy: 1, goldCow: 1, goldenBook: 1, goldenHive: 1, hammock: 1, honorBarrel: 1, horseRosette: 1, horsevane: 1, jackLantern: 1, lantern: 1, mannequin: 1, minecart: 1, miniChalet: 1, miniLighthouse: 1, miniLoco: 1, neighborBench: 1, neonSign: 1, northSled: 1, oldPress: 1, orchardSwing: 1, orchidPot: 1, perfumeFountain: 1, pizzaOven: 1, showjump: 1, showpodium: 1, souqLantern: 1, statue: 1, whitefence: 1, xmasTree: 1,
         // Niv. 5 — Nichoir
         birdhouse: 5,
         // Niv. 7 — Parterre de fleurs
@@ -511,6 +515,12 @@ export const LEVELS = {
         buckthornHot: 79, buckthornLozenges: 79, cardamomMilk: 79, cloudberryJam: 79, cloudberryLiqueur: 79, grilledCheese: 79, lingonJelly: 79, reindeerCheese: 79, reindeerKefir: 79, rowanJelly: 79, rowanSpirit: 79, rowanTea: 79, seaBuckthornOil: 79, spruceTea: 79,
         // Niv. 80
         berryPaste: 80, buckthornHoney: 80, cloudberryCream: 80, juniperRoast: 80, lingonSoup: 80, nordPie: 80, ptarmiganCloudberry: 80, ptarmiganLingon: 80, ptarmiganSoup: 80, sorghumBerryPaste: 80, spruceCandy: 80, turkeyEggCurd: 80, zebuMilkJam: 80,
+        // Niv. 80 — Les Terres d’Asie
+        silkKimono: 80, silkiePillow: 80, silkieQuilt: 80, goldenSilkParasol: 80, goldenObi: 80, silkFan: 80, velvetCarving: 80, velvetElixir: 80, umeshu: 80, yuzuSorbet: 80, nashiCider: 80, velvetAmulet: 80, sikaTofuCheese: 80,
+        bambooStirFry: 80, shiitakeNoodles: 80, lotusCrisps: 80, ginkgoRice: 80, bokChoyWok: 80, yuzuDuckWok: 80, fiveSpiceBeef: 80, shrimpLotusWok: 80, shiitakeTofuWok: 80, silkieFriedRice: 80,
+        shiitakeBao: 80, lotusDimSum: 80, yuzuFishSteam: 80, custardSilkie: 80, umeOnigiri: 80, longanSteamedBun: 80, ginkgoBroth: 80, nashiSteamPear: 80, bokChoyDumplings: 80,
+        yuzuMochi: 80, umeJelly: 80, kumquatConfit: 80, nashiTart: 80, longanPudding: 80, lotusMooncake: 80, ginkgoSweetSoup: 80, kumquatMochi: 80, starAniseCandies: 80,
+        yuzuTea: 80, umeSoda: 80, lotusInfusion: 80, kumquatIcedTea: 80, sikaMatcha: 80, aniseChai: 80,
     },
 };
 

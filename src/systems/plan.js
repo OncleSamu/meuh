@@ -26,6 +26,7 @@ import { slotsOf as orchardSlots } from './orchard.js';
 import { islandOpen, islandCropOk, islandPlots, plantIsland } from './island.js';
 import { oasisOpen, oasisCropOk, oasisPlots, plantOasis } from './oasis.js';
 import { nordOpen, nordCropOk, nordPlots, plantNord, stoveAt } from './nord.js';
+import { asieOpen, asieCropOk, asiePlots, plantAsie, canalAt } from './asie.js';
 
 export const PLAN_QTYS = [1, 5, 10, 25, 50];
 export const PLAN_MAX = 200;
@@ -421,6 +422,12 @@ export function planSowInfo(id, need = 1) {
     const want = Math.max(1, Math.round(need || 1));
     const seeds = state.seeds[id] || 0;
     const afford = d.exotic ? seeds : seeds + (d.cost > 0 ? Math.floor(state.money / d.cost) : want);
+    if (d.asie) {
+        if (!asieOpen() || !asieCropOk(d)) return { zone: 'asie', free: 0, count: 0 };
+        const sl = orchardSlots('asie');
+        const free = asiePlots().filter((p, k) => p && p.open && !p.id && !canalAt(k) && !(sl[k] && sl[k].tree)).length;
+        return { zone: 'asie', free, count: Math.min(free, afford, want) };
+    }
     if (d.nord) {
         if (!nordOpen() || !nordCropOk(d)) return { zone: 'nord', free: 0, count: 0 };
         const sl = orchardSlots('nord');
@@ -448,7 +455,11 @@ export function planSow(id, need = 1, at = null) {
     const d = ITEMS[id];
     const want = Math.max(1, Math.round(need || 1));
     let n = 0;
-    if (info.zone === 'nord') {
+    if (info.zone === 'asie') {
+        asiePlots().forEach((p, k) => {
+            if (n < want && plantAsie(k, id, at, true)) n++;
+        });
+    } else if (info.zone === 'nord') {
         nordPlots().forEach((p, k) => {
             if (n < want && plantNord(k, id, at, true)) n++;
         });

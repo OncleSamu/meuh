@@ -24,6 +24,7 @@ import { nmarketOpen } from './nmarket.js';
 import { brewOpen, meadOpen } from './brewery.js';
 import { perfumeOpen } from './perfume.js';
 import { nordOpen } from './nord.js';
+import { asieOpen } from './asie.js';
 import { caveOpen, hallOpen } from './cave.js';
 import { pondOpen, fishOrderOk } from './fishing.js';
 import { depthOpen } from './nature.js';
@@ -69,8 +70,9 @@ const PARTS = {
     // 1.94 : les parties du jeu qui ont leurs grands défis
     oasis: () => oasisOpen(),
     nord: () => nordOpen(),
+    asie: () => asieOpen(),
     stud: () => harasOpen(),
-    apiary: () => ['island', 'oasis', 'nord'].some(apiaryOpen),
+    apiary: () => ['island', 'oasis', 'nord', 'asie'].some(apiaryOpen),
     mead: () => meadOpen(),
     caravan: () => caravanOpen(),
     greenhouse: () => !!(state.greenhouse && state.greenhouse.built),
@@ -89,7 +91,7 @@ export function canGet(id) {
     if (id === 'lobster') return netOpen();
     if (i.type === 'fish') return fishOrderOk(id);
     if (i.type === 'ore' || i.type === 'gem') return Object.values(DEPTHS).some(d => depthOpen(d.id) && [...d.ores, ...d.gems].some(([x]) => x === id));
-    if (i.type === 'tree') return lvOk(i) && storyOk(i) && (i.nord ? nordOpen() : i.oasis ? oasisOpen() : !i.island || islandOpen());
+    if (i.type === 'tree') return lvOk(i) && storyOk(i) && (i.asie ? asieOpen() : i.nord ? nordOpen() : i.oasis ? oasisOpen() : !i.island || islandOpen());
     if (!poolMemo || poolMemo.t !== now()) poolMemo = { t: now(), ids: new Set(questPool().map(x => x.id)) };
     if (poolMemo.ids.has(id)) return true;
     return i.type === 'artisan' && makeable(id, 0);

@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.171",
+  "title": "Les Terres d’Asie : rizières en terrasses, pavillon de bambou, jonque et cuisine d’Asie",
+  "date": "24 novembre 2026",
+  "items": [
+   "Nouvelle contrée dans Ferme › Voyages : Les Terres d’Asie (niv. 80), ouvertes par deux nouveaux chapitres d’histoire (« Les rizières de Mei » et « La jonque de Kenji ») avec deux nouveaux personnages, Mei et Kenji, une nouvelle carte illustrée et 6 chantiers",
+   "Mécanique signature : 20 cases en terrasses alimentées par un bassin de source et des rigoles de bambou en cascade (+10 % de vitesse par terrasse descendue), trois améliorations (double déversoir, murets de pierre, grand bassin) et le minijeu de rythme de la roue à eau",
+   "10 nouvelles plantes (racine de lotus, pousses de bambou, shiitake, pak choï + verger d’Asie : yuzu, prunes ume, kumquat, poire nashi, longane, ginkgo), rucher des terrasses et 2 miels (yuzu et lotus)",
+   "Pavillon de bambou avec 3 nouvelles espèces (cerf sika, ver à soie, poule soie) et leurs 6 produits, jonque de la soie (expédition de 7 h rapportant parfois de la badiane étoilée), et météo spéciale (mousson & floraison des cerisiers Hanami)",
+   "3 nouveaux ateliers (Wok de fonte, Panier vapeur, Atelier de douceurs d’Asie), 41 nouvelles recettes culinaires et artisanales, 6 boissons au comptoir, anecdotes de Mamie, défi « La fête des lanternes », saison d’Asie, Guide et Codex à jour"
+  ]
+ },
+ {
   "v": "1.170",
   "title": "Synchro cloud : correctif rebouclage d’onglet sur téléphone",
   "date": "24 novembre 2026",

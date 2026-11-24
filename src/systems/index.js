@@ -33,6 +33,7 @@ export * from './incidents.js';
 export * from './island.js';
 export * from './oasis.js';
 export * from './nord.js';
+export * from './asie.js';
 export * from './apiary.js';
 export * from './friends.js';
 export * from './market.js';

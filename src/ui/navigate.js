@@ -31,6 +31,13 @@ export function produce(id) {
         go('village/village#story');
         return toast(G.storyLockText(it), ['ui', 'village']);
     }
+    if (it.asie && (it.type === 'tree' || it.type === 'crop')) {
+        go(G.asieOpen() ? 'farm/island#asie' : 'village/village#story');
+        return toast(
+            G.asieOpen() ? `${it.name} : à cultiver aux Terres d’Asie` : 'Ouvrez d’abord la vanne de Mei pour rejoindre les Terres d’Asie',
+            ['item', id],
+        );
+    }
     if (it.nord && (it.type === 'tree' || it.type === 'crop')) {
         go(G.nordOpen() ? 'farm/island#nord' : 'village/village#story');
         return toast(G.nordOpen() ? `${it.name} : à cultiver au Grand Nord` : 'Rallumez d’abord le poêle de Tuomas pour rejoindre le Grand Nord', ['item', id]);
@@ -71,14 +78,23 @@ export function produce(id) {
             ['item', id],
         );
     }
+    // 1.171 : la badiane étoilée revient avec la jonque des Terres d'Asie
+    if (id === 'starAnise') {
+        go(G.asieOpen() ? 'farm/island#asie' : 'village/village#story');
+        return toast(
+            G.asieOpen() ? 'La badiane étoilée revient parfois avec la jonque de la soie' : 'Ouvrez d’abord la vanne de Mei pour rejoindre les Terres d’Asie',
+            ['item', id],
+        );
+    }
     if (it.type === 'product') {
         // 1.79.1 : les viandes et seconds produits (magret, bœuf, laine de dromadaire…) viennent aussi d'une bête, de temps en temps
         const extra = Object.values(ANIMALS).find(x => x.extra === id);
         const a = Object.values(ANIMALS).find(x => x.prodId === id) || extra;
         if (!a) return toast(`${it.name} : ${G.sourceOf(id) || 'introuvable pour l’instant'}`, ['item', id]);
         const owned = G.animalCount(a.id) > 0;
+        const home = a.oasis ? 'farm/island#oasis' : a.nord ? 'farm/island#nord' : a.asie ? 'farm/island#asie' : 'animals';
         if (extra && extra === a) {
-            go(owned ? (a.oasis ? 'farm/island#oasis' : a.nord ? 'farm/island#nord' : 'animals') : 'market/shop');
+            go(owned ? home : 'market/shop');
             return toast(
                 owned
                     ? `${it.name} : de temps en temps en ramassant les produits de vos ${a.name.toLowerCase()}s`
@@ -86,7 +102,7 @@ export function produce(id) {
                 ['animal', a.id],
             );
         }
-        go(owned ? 'animals' : 'market/shop');
+        go(owned ? home : 'market/shop');
         return toast(owned ? `${a.name} : nourrissez-les pour obtenir ${it.name.toLowerCase()}` : `Il vous faut un animal : ${a.name.toLowerCase()} (marché)`, [
             'animal',
             a.id,

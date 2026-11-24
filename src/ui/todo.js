@@ -66,11 +66,26 @@ export function todoList() {
         }
         if (G.chopOpen() && G.chopLeft() && (state.inventory.wood || 0) < 40) add('farm/island#nord', ['ui', 'noFendre'], 'Du bois à fendre', 1);
     }
+    // 1.171 : les Terres d'Asie : récoltes, boue, bassin, roue à eau, jonque
+    if (state.asie && G.asieOpen()) {
+        const r = G.asieToPick();
+        add('farm/island#asie', ['ui', 'asAsie'], `${r} récolte${s(r)} aux Terres d’Asie`, r);
+        const dd = G.deadTrees('asie');
+        add('farm/island#asie', ['item', 'wood'], `${dd} arbre${s(dd)} mort${s(dd)} aux Terres d’Asie`, dd);
+        const mud = G.mudCells();
+        if (mud) add('farm/island#asie', ['ui', 'asMousson'], `${mud} terrasse${s(mud)} envasée${s(mud)} à drainer`, mud, { urgent: true });
+        if (G.asieWater() <= 0 && !G.monsoonOn() && G.asieDryCount())
+            add('farm/island#asie', ['ui', 'asSec'], 'Le bassin est vide : les terrasses ont soif', 1, { urgent: true });
+        else if (G.wheelOpen() && G.wheelLeft() && G.asieWater() < G.asieBasinCap() * 0.35)
+            add('farm/island#asie', ['ui', 'asRoue'], 'La roue à eau vous attend', 1);
+        if (G.junkBack()) add('farm/island#asie', ['ui', 'asJonque'], 'La jonque de la soie est rentrée !', 1, { urgent: true });
+    }
     // 1.69 : les ruchers des contrées
     for (const [land, where, name] of [
         ['island', 'isle', 'sur l’île'],
         ['oasis', 'oasis', 'à l’oasis'],
         ['nord', 'nord', 'au Grand Nord'],
+        ['asie', 'asie', 'aux Terres d’Asie'],
     ])
         if (G.apiaryOpen(land) && G.apiaryHives(land)) {
             const j = Math.floor(G.apiaryOf(land).honey);

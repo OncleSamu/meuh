@@ -54,6 +54,15 @@ export const PASSERS = [
         likes: ['robust', 'appetite'],
     },
     { id: 'qiviut', name: 'Une coopérative de laine du Nord', icon: ['item', 'qiviut'], types: ['muskox', 'sheep', 'alpaca', 'yak'], likes: ['soft', 'yield'] },
+    // 1.171 : les acheteurs des Terres d'Asie
+    {
+        id: 'kenji',
+        name: 'Kenji, maître des terrasses',
+        icon: ['villager', 'kenji'],
+        types: ['sika', 'silkworm', 'silkie'],
+        likes: ['soft', 'yield'],
+    },
+    { id: 'soierie', name: 'Une maison de soierie d’Orient', icon: ['item', 'silkThread'], types: ['silkworm', 'silkie', 'peacock'], likes: ['soft', 'fert'] },
 ];
 
 // la réputation de l'élevage : cinq paliers, +5 % aux prix de la foire par palier
@@ -125,6 +134,9 @@ export const COMICE_CAT = {
     muskox: 'Les bœufs musqués',
     ptarmigan: 'Les lagopèdes',
     capybara: 'Les capybaras',
+    sika: 'Les cerfs sika',
+    silkworm: 'Les vers à soie',
+    silkie: 'Les poules soie',
 };
 
 // ---------------- 1.46 : le carnet des robes ----------------
@@ -317,5 +329,37 @@ export const PAIRS = [
         name: 'Le bœuf gêne le lagopède',
         why: 'il occupe tout le coin du poêle : le lagopède dort mal et pond moins',
         mamie: 'Tu mets un gros bonhomme sur le seul fauteuil près du feu, et plus personne ne sait où s’asseoir. Chez nous, c’était l’oncle Raymond.',
+    },
+    // 1.171 : les bêtes du pavillon de bambou (Terres d'Asie)
+    {
+        id: 'sikaSilkie',
+        a: 'sika',
+        b: 'silkie',
+        on: 'silkie',
+        f: 0.08,
+        name: 'La poule soie suit le cerf sika',
+        why: 'elle gratte sous les pas calmes du cerf et picore les graines tombées : plus d’œufs',
+        mamie: 'Le cerf sika marche sans un bruit, et la poule soie trottine derrière comme un pompon qui aurait pris des jambes. Deux natures tranquilles, ça fait toujours bon ménage.',
+    },
+    {
+        id: 'sikaSilkworm',
+        a: 'sika',
+        b: 'silkworm',
+        on: 'silkworm',
+        f: 0.08,
+        name: 'Le cerf veille sur les claies',
+        why: 'sa présence paisible rassure le pavillon et tient les oiseaux à distance : plus de soie',
+        mamie: 'Kenji m’a dit que les vers à soie détestent le bruit et les courants d’air. Un cerf sika qui rumine doucement au soleil, c’est le meilleur garde du corps qu’on puisse rêver.',
+    },
+    {
+        id: 'silkieSilkworm',
+        a: 'silkie',
+        b: 'silkworm',
+        on: 'silkworm',
+        f: -0.08,
+        bad: true,
+        name: 'La poule soie lorgne les cocons',
+        why: 'elle picore autour des claies de bambou et dérange les vers à soie : moins de soie',
+        mamie: 'Même habillée en nuage, une poule reste une poule : tout ce qui bouge sous une feuille, elle veut voir si ça se mange. Il vaut mieux séparer les claies du poulailler.',
     },
 ];

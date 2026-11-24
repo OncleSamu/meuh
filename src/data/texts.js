@@ -345,6 +345,61 @@ export const TIPS = {
         title: 'Le verger du Grand Nord',
         text: 'Les arbres du Nord sont rustiques : ils n’ont pas besoin de poêle. La nuit de gel ils dorment à moitié, et l’aurore les réveille. Papi Lucien disait qu’un arbre qui a connu l’hiver ne se plaint plus jamais du vent. Il disait ça en rentrant du bois, les joues rouges, en se plaignant du vent.',
     },
+    asie: {
+        icon: ['ui', 'asAsie'],
+        title: 'Les Terres d’Asie',
+        text: 'Aux Terres d’Asie, l’eau descend de terrasse en terrasse. La rangée du haut boit au bassin de source ; posez des rigoles de bambou pour guider l’eau en cascade vers les terrasses du bas : plus elle tombe loin, plus elle oxygène les racines (+10 % par palier). À sec, rien ne meurt : tout pousse au ralenti.',
+    },
+    asieCanal: {
+        icon: ['ui', 'asRigoleOn'],
+        title: 'La rigole de bambou',
+        text: 'Une rigole posée sur une case libre déverse l’eau sur toute la colonne en dessous et sur ses voisines de gauche et de droite. Avec le double déversoir, elle arrose trois colonnes entières en cascade !',
+    },
+    asieWheel: {
+        icon: ['ui', 'asRoue'],
+        title: 'La roue à eau en bambou',
+        text: 'Trois fois par jour, lancez les augets de la grande roue en rythme : touchez quand l’aiguille passe au milieu, et l’eau de montagne remplit le bassin de source. Mamie Odette dit qu’on n’a jamais rien inventé de plus apaisant qu’une roue à eau qui tourne droit.',
+    },
+    asieDry: {
+        icon: ['ui', 'asSec'],
+        title: 'Le bassin est à sec',
+        text: 'Les terrasses attendent l’eau sans jamais mourir. Le ruisseau remplit doucement le bassin ; pour aller plus vite, faites tourner la roue à eau ou agrandissez le bassin de source.',
+    },
+    asieGrove: {
+        icon: ['item', 'yuzu'],
+        title: 'Le verger des Terres d’Asie',
+        text: 'Yuzus, prunes ume, kumquats, poires nashi, longanes et ginkgos poussent au calme à côté des terrasses, sans rien coûter au bassin. Quand les cerisiers fleurissent (Hanami), tout le verger s’accélère aussi.',
+    },
+    monsoon: {
+        icon: ['ui', 'asMousson'],
+        title: 'La mousson',
+        text: 'Pendant quatre heures, la pluie d’Asie gonfle le ruisseau (×2,5) et irrigue toutes les terrasses d’un coup. Quelques cases loin d’une rigole peuvent s’envaser : un simple appui les draine. La jonque en mer prend une heure de retard.',
+    },
+    hanami: {
+        icon: ['ui', 'asHanami'],
+        title: 'La floraison des cerisiers',
+        text: 'Une pluie de pétales roses traverse la vallée ! Pendant une heure, toutes vos terrasses et votre verger d’Asie poussent une fois et demie plus vite.',
+    },
+    junk: {
+        icon: ['ui', 'asJonque'],
+        title: 'La jonque de la soie',
+        text: 'Trois cerfs sika descendent dix-huit charges au quai : sept heures plus tard, la jonque rentre du grand port d’Orient avec un joli prix pour vos produits d’Asie, et parfois de la badiane étoilée.',
+    },
+    sika: {
+        icon: ['animal', 'sika'],
+        title: 'Le cerf sika',
+        text: 'Élégant et calme, le cerf sika donne un lait très fin et parfois des bois de velours. Trois cerfs adultes suffisent à acheminer les caisses jusqu’à l’embarcadère de la jonque.',
+    },
+    silkworm: {
+        icon: ['animal', 'silkworm'],
+        title: 'Le ver à soie',
+        text: 'Au frais dans le pavillon de bambou, le ver à soie tisse un fil d’une finesse rare, et parfois un fil de soie dorée. Il aime l’air humide des rizières : si le bassin est vide, il file deux fois moins vite.',
+    },
+    silkie: {
+        icon: ['animal', 'silkie'],
+        title: 'La poule soie',
+        text: 'On dirait un petit nuage sur pattes ! La poule soie pond vite des œufs délicats et laisse parfois du duvet de soie au nid. Mamie Odette a voulu en tricoter des chaussons : elle a juré qu’on marchait sur du beurre.',
+    },
     robebook: {
         icon: ['ui', 'cpCarnet'],
         title: 'Le carnet des robes',

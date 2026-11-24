@@ -20,6 +20,7 @@ import { setupOrchard } from './ui/views/orchard.js';
 import { setupIsland } from './ui/views/island.js';
 import { setupOasis } from './ui/views/oasis.js';
 import { setupNord } from './ui/views/nord.js';
+import { setupAsie } from './ui/views/asie.js';
 import { setupApiary } from './ui/views/apiary.js';
 import { setupVillagers } from './ui/views/villagers.js';
 import { setupInnerTabs } from './ui/innertabs.js';
@@ -81,7 +82,7 @@ function start() {
     // 1.75 : l'ambiance suit l'endroit où l'on est
     SoundEngine.setPlace(() => {
         const p = currentPath();
-        if (p === 'farm/island') return ui.sel.island === 'oasis' ? 'oasis' : ui.sel.island === 'nord' ? 'nord' : 'isle';
+        if (p === 'farm/island') return ui.sel.island === 'oasis' ? 'oasis' : ui.sel.island === 'nord' ? 'nord' : ui.sel.island === 'asie' ? 'asie' : 'isle';
         return p === 'farm/pond' ? 'pond' : 'farm';
     });
     setupFx({ sfx: name => emit('sfx', name), tabEl });
@@ -97,6 +98,7 @@ function start() {
     setupIsland();
     setupOasis();
     setupNord();
+    setupAsie();
     setupApiary();
     setupVillagers();
     setupInnerTabs();

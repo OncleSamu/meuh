@@ -94,9 +94,10 @@ test('1.8 : une machine par niveau, avec au moins une recette faisable et ses ma
         return Math.min(Math.max(it.reqLvl || 1, it.needProject ? projLvl(it.needProject) : 0), prodBy[id] || 99);
     };
     const seen = {};
-    // 1.53 : les trois machines du Grand Nord arrivent d'un bloc au dernier niveau, avec leur contrée
+    // 1.53 & 1.171 : les machines du Grand Nord et des Terres d'Asie arrivent d'un bloc au dernier niveau, avec leur contrée
     const { MACHINES_153 } = await import('../../src/data/ajouts/nord-cuisine.js');
-    const block = new Set(MACHINES_153.map(m => m[0]));
+    const { MACHINES_ASIE } = await import('../../src/data/ajouts/asie-cuisine.js');
+    const block = new Set([...MACHINES_153, ...MACHINES_ASIE].map(m => m[0]));
     for (const m of Object.values(MACHINES)) {
         if (block.has(m.id)) continue;
         assert.ok(!seen[m.reqLvl], `niveau ${m.reqLvl} : ${seen[m.reqLvl]} et ${m.id}`);

@@ -20,7 +20,7 @@ const tick = s => {
 };
 
 test('les données des défis sont complètes', () => {
-    assert.equal(Object.keys(DEFIS).length, 25);
+    assert.equal(Object.keys(DEFIS).length, 26); // 1.171 : Fête des lanternes
     for (const [id, d] of Object.entries(DEFIS)) {
         assert.ok(VILLAGERS[d.who], `${id} : ${d.who}`);
         assert.ok(DECOS[d.deco], `${id} : ${d.deco}`);

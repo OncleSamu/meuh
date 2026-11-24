@@ -37,6 +37,17 @@ export const APIARY = {
         ],
         rule: 'Au printemps et en été seulement ; le reste de l’année, il faut un poêle allumé au champ de neige pour que les abeilles sortent.',
     },
+    asie: {
+        name: 'Le rucher des terrasses',
+        icon: 'apiaryAsie',
+        lvl: 80,
+        cost: [
+            { coins: 600000, wood: 80, wax: 25 },
+            { coins: 1500000, wood: 140, wax: 50 },
+            { coins: 3500000, wood: 220, wax: 90 },
+        ],
+        rule: 'Les abeilles butinent tant que le bassin de source contient de l’eau, ou pendant la floraison des cerisiers.',
+    },
 };
-export const APIARY_LANDS = ['island', 'oasis', 'nord'];
+export const APIARY_LANDS = ['island', 'oasis', 'nord', 'asie'];
 export const APIARY_RUN = { every: 300, cap: 8, full: 8, xp: 20 };

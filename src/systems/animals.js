@@ -35,6 +35,7 @@ import { troughBonus } from './buildings.js';
 import { assocMult } from './herdbook.js';
 import { oasisBeastMult } from './oasis.js';
 import { nordBeastMult, nordBeastMultOffline } from './nord.js';
+import { asieBeastMult } from './asie.js';
 import { kidFx } from './family.js';
 import { pastureHoney, addHoney } from './honey.js';
 
@@ -50,6 +51,7 @@ export const animalMult = a =>
     assocMult(a) *
     oasisBeastMult(a) *
     nordBeastMult(a) *
+    asieBeastMult(a) *
     kidFx('animals'); // 1.124 : un enfant de la famille aide aux bêtes
 export const animalTime = a => ANIMALS[a.type].time / (speedMult() * animalMult(a) * masterySpeed(ANIMALS[a.type].prodId));
 export const growLeft = a => Math.max(0, (GROW[a.type] - (a.age || 0)) / (rank('nursery') ? 2 : 1) / speedMult());

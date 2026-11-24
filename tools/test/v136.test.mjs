@@ -40,8 +40,8 @@ test('1.36 : chaque niveau de 2 à 60 ouvre quelque chose, aucune recette au-del
 test('1.36 : un rythme à peu près égal (recettes, plantes, animaux, machines)', () => {
     const per = (vals, from, to) => vals.filter(l => l >= from && l <= to).length;
     const rec = Object.values(RECIPES).map(r => r.lvl);
-    // 1.56 : l'oasis et le Nord sont répartis sur 59 à 64 (au plus 22 recettes par niveau)
-    for (let l = 21; l <= MAX_LEVEL; l++) assert.ok(per(rec, l, l) <= 20, `niveau ${l} : ${per(rec, l, l)} recettes`);
+    // 1.56 & 1.171 : l'oasis et le Nord sont répartis jusqu'au niv. 79, Les Terres d'Asie arrivent en bloc au niv. 80
+    for (let l = 21; l <= MAX_LEVEL; l++) assert.ok(per(rec, l, l) <= (l === 80 ? 64 : 20), `niveau ${l} : ${per(rec, l, l)} recettes`);
     const plants = Object.values(ITEMS)
         .filter(i => (i.type === 'crop' || i.type === 'tree') && i.reqLvl > 1)
         .map(i => i.reqLvl);
@@ -65,7 +65,11 @@ test('1.36 : un rythme à peu près égal (recettes, plantes, animaux, machines)
         [71, 80],
     ])
         assert.ok(per(an, a, b) >= 2, `animaux ${a}-${b}`);
-    const mach = Object.values(MACHINES).map(m => m.reqLvl);
+    // 1.171 : les trois ateliers des Terres d'Asie arrivent d'un bloc au niveau 80
+    const asieBlock = new Set(['wok', 'steamer', 'wagashi']);
+    const mach = Object.values(MACHINES)
+        .filter(m => !asieBlock.has(m.id))
+        .map(m => m.reqLvl);
     assert.ok(per(mach, 51, 60) >= 2, 'machines 51-60');
     assert.equal(new Set(mach).size, mach.length, 'une machine par niveau');
 });
@@ -166,7 +170,7 @@ test('1.56 : chaque niveau de 58 à 64 ouvre quelque chose, jamais plus de 24 re
         assert.ok(G.unlocksAt(l).length > 1, `niveau ${l}`);
         // 1.81 : 24 aux niveaux 63 et 64 (les plats du bœuf musqué et du lagopède ne peuvent pas s'ouvrir plus tôt)
         // 1.100 : 28 aux deux derniers niveaux et 24 de 59 à 62 : les dernières recettes (four en terre, bouilloire à baies, laines du désert) ne peuvent pas s'ouvrir plus tôt
-        assert.ok(Object.values(RECIPES).filter(r => r.lvl === l).length <= (l >= 63 ? 28 : l >= 59 ? 24 : 22), `niveau ${l}`);
+        assert.ok(Object.values(RECIPES).filter(r => r.lvl === l).length <= (l === 80 ? 64 : l >= 63 ? 28 : l >= 59 ? 24 : 22), `niveau ${l}`);
     }
     for (const r of Object.values(RECIPES)) assert.ok(r.lvl >= MACHINES[r.machine].reqLvl, `${r.id} avant sa machine`);
 });

@@ -48,7 +48,7 @@ defineSheet('companions', {
         return tabs + assocTab();
     },
 });
-const LAND_DE = { island: 'de l’île', oasis: 'de l’oasis', nord: 'du Grand Nord' };
+const LAND_DE = { island: 'de l’île', oasis: 'de l’oasis', nord: 'du Grand Nord', asie: 'des Terres d’Asie' };
 function honeyTab() {
     const got = state.stats.honeyKinds || {};
     const rows = Object.entries(G.HONEYS)

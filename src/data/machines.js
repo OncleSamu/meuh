@@ -1,5 +1,5 @@
 import { applyLevels } from './levels.js';
-import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155 } from './counter.js';
+import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155, NEW_DRINKS_ASIE } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
 import { MARMITE, RECIPES_130 } from './ajouts/cultures.js';
 import { RECIPES_131 } from './ajouts/arbres.js';
@@ -12,6 +12,7 @@ import { RECIPES_137 } from './ajouts/chateau.js';
 import { RECIPES_150, MACHINES_150 } from './ajouts/oasis-cuisine.js';
 import { RECIPES_161, PIZZERIA } from './ajouts/pizzeria.js';
 import { RECIPES_153, MACHINES_153 } from './ajouts/nord-cuisine.js';
+import { RECIPES_ASIE, MACHINES_ASIE } from './ajouts/asie-cuisine.js';
 import { RECIPES_100 } from './ajouts/dernieres.js';
 import { BOXES, BOX_OUT, EMBALLERIE } from './ajouts/emballerie.js';
 import { RECIPES_152 } from './ajouts/pack152.js';
@@ -3420,7 +3421,7 @@ Object.assign(RECIPES, {
 });
 
 // ---------------- 1.17 : le comptoir, une recette par boisson ----------------
-for (const [id, , ing, lvl, time] of [...NEW_DRINKS, ...NEW_DRINKS_134, ...NEW_DRINKS_154, ...NEW_DRINKS_155])
+for (const [id, , ing, lvl, time] of [...NEW_DRINKS, ...NEW_DRINKS_134, ...NEW_DRINKS_154, ...NEW_DRINKS_155, ...NEW_DRINKS_ASIE])
     RECIPES[id] = { id, machine: 'counter', ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 
 // 1.18.7 : les recettes des cultures de la serre
@@ -3484,6 +3485,15 @@ for (const [, id, , ing, time, lvl] of BOXES) RECIPES[id] = { id, machine: EMBAL
 
 // ---------------- 1.152 : 33 nouvelles recettes (Capybara, plantes & arbres) ----------------
 for (const [id, , machine, ing, time, lvl] of RECIPES_152) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
+
+// ---------------- 1.171 : la cuisine et l'artisanat des Terres d'Asie ----------------
+const DESC_ASIE = {
+    wok: 'Sautés vifs, nouilles et légumes croquants à feu fort',
+    steamer: 'Brioches, raviolis et plats délicats cuits à la vapeur',
+    wagashi: 'Mochis, gelées de yuzu et confiseries de saison',
+};
+for (const [id, name, reqLvl, cost, needProject] of MACHINES_ASIE) MACHINES[id] = { id, name, cost, reqLvl, needProject, desc: DESC_ASIE[id] };
+for (const [id, , machine, ing, time, lvl] of RECIPES_ASIE) RECIPES[id] = { id, machine, ing, time, lvl, base: lvl, xp: Math.round(time / 16) };
 
 // ---------------- Niveaux définitifs (1 à 80) et seuils historiques de migration (voir data/levels.js) ----------------
 applyLevels('machines', MACHINES);

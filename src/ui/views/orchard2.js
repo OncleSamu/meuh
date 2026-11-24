@@ -15,7 +15,7 @@ const costOf = c =>
     G.costParts(c)
         .map(x => `<span class="${x.ok ? 'ok' : 'short'}">${ico(x.icon)}${fmt(x.n)}</span>`)
         .join('');
-const ZA = { island: 'itree', oasis: 'otree', nord: 'ntree', oasisV: 'otreev', nordV: 'ntreev' };
+const ZA = { island: 'itree', oasis: 'otree', nord: 'ntree', asie: 'atree', oasisV: 'otreev', nordV: 'ntreev', asieV: 'atreev' };
 const anchorOf = (z, k) => `${ZA[z] || 'tree'}:${k}`;
 
 // ---- la fiche d'un arbre ----

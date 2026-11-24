@@ -52,6 +52,7 @@ import { specialTick } from './neighborspecial.js';
 import { ensureIsland, islandTick, islandOffline } from './island.js';
 import { ensureOasis, oasisTick, oasisOffline, sandstormTick } from './oasis.js';
 import { ensureNord, nordTick, nordOffline } from './nord.js';
+import { ensureAsie, asieTick, asieOffline } from './asie.js';
 import { apiaryTick } from './apiary.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
@@ -197,6 +198,7 @@ export function normalizeState() {
     ensureIsland();
     ensureOasis();
     ensureNord();
+    ensureAsie();
     ensureGenetics();
     ensureChateau();
     if (brewOpen()) ensureBrew();
@@ -310,6 +312,7 @@ function tickFarm() {
     if (islandTick()) changed = true;
     if (oasisTick()) changed = true;
     if (nordTick()) changed = true;
+    if (asieTick()) changed = true;
     if (sandstormTick()) changed = true;
     if (wellTick()) changed = true;
     if (honeyTick(1)) changed = true;
@@ -431,6 +434,7 @@ export function offlineProgress() {
     const isl = islandOffline(elapsed);
     const oas = oasisOffline(elapsed);
     const nor = nordOffline(elapsed);
+    const asi = asieOffline(elapsed);
     // le commis et le puits travaillent pendant votre absence
     const hand = handOffline(elapsed);
     wellTick();
@@ -497,6 +501,7 @@ export function offlineProgress() {
     add(isl, ['item', 'pineapple'], `${isl} culture${s(isl)} prête${s(isl)} sur l’île`);
     add(oas.crops + oas.fruits, ['ui', 'oaOasis'], `${oas.crops + oas.fruits} récolte${s(oas.crops + oas.fruits)} à faire à l’oasis`);
     add(nor.crops + nor.fruits, ['ui', 'noNord'], `${nor.crops + nor.fruits} récolte${s(nor.crops + nor.fruits)} à faire au Grand Nord`);
+    add(asi.crops + asi.fruits, ['ui', 'asAsie'], `${asi.crops + asi.fruits} récolte${s(asi.crops + asi.fruits)} à faire aux Terres d’Asie`);
     add(orch.fell, ['item', 'apple'], `${orch.fell} fruit${s(orch.fell)} tombé${s(orch.fell)} au verger`);
     add(orch.picked, ['villager', 'picker'], `Le cueilleur a ramassé ${orch.picked} fruit${s(orch.picked)} au verger`);
     add(orch.dead, ['item', 'wood'], `${orch.dead} arbre${s(orch.dead)} mort${s(orch.dead)} de vieillesse au verger`);

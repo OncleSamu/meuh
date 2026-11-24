@@ -241,6 +241,17 @@ export const SoundEngine = (() => {
             case 'ptarmigan':
                 [0, 0.06, 0.12].forEach(d => tone(600, t + d, 0.05, { type: 'square', vol: 0.035, glide: 750 }));
                 break;
+            case 'sika':
+                tone(540, t, 0.24, { type: 'triangle', vol: 0.06, glide: 740 });
+                tone(680, t + 0.18, 0.18, { type: 'triangle', vol: 0.05, glide: 520 });
+                break;
+            case 'silkworm':
+                noise(t, 0.12, { vol: 0.08, freq: 3200, type: 'bandpass', q: 3 });
+                break;
+            case 'silkie':
+                tone(960, t, 0.05, { type: 'triangle', vol: 0.05, glide: 1220 });
+                tone(1060, t + 0.08, 0.06, { type: 'triangle', vol: 0.045, glide: 1320 });
+                break;
             case 'dromedary':
                 tone(140, t, 0.3, { type: 'sawtooth', vol: 0.05, glide: 200 });
                 tone(180, t + 0.25, 0.35, { type: 'sawtooth', vol: 0.045, glide: 110 });
@@ -404,6 +415,10 @@ export const SoundEngine = (() => {
         } else if (place === 'oasis') {
             mix.wind = 0.07;
             if (!night) mix.ev.push([bell, 0.03]);
+        } else if (place === 'asie') {
+            mix.brook = 0.08;
+            mix.wind = 0.03;
+            if (!night) mix.ev.push([bell, 0.025]);
         } else {
             if (place === 'pond') mix.brook = 0.1;
             if (w === 'snow' || s === 'hiver') mix.wind = Math.max(mix.wind, 0.16);

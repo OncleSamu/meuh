@@ -45,7 +45,7 @@ function fullFarm(theme) {
 }
 
 test('1.95 : douze saisons, chacune avec ses produits, son fanion et ses défis', () => {
-    assert.equal(FARM_SEASONS.length, 12);
+    assert.equal(FARM_SEASONS.length, 13); // 1.171 : Saison des Terres d'Asie
     for (const s of FARM_SEASONS) {
         assert.ok(ITEMS[s.icon], `${s.id} : icône`);
         assert.ok(DECOS[s.deco], `${s.id} : décoration`);

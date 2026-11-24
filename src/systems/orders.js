@@ -7,6 +7,7 @@ import { pfTransportOk, pfReq, pfEstimate, pfHave, pullPf } from './perfume.js';
 import { islandOpen } from './island.js';
 import { oasisOpen } from './oasis.js';
 import { nordOpen } from './nord.js';
+import { asieOpen } from './asie.js';
 import { state, scaleLvl, lvOk } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
@@ -57,7 +58,7 @@ export function questPool() {
                 lvOk(i) &&
                 storyOk(i) &&
                 (!i.ghOnly || !!(state.greenhouse && state.greenhouse.built)) &&
-                (i.nord ? nordOpen() : i.oasis ? oasisOpen() : !i.island || islandOpen());
+                (i.asie ? asieOpen() : i.nord ? nordOpen() : i.oasis ? oasisOpen() : !i.island || islandOpen());
         else if (i.type === 'tree') ok = livingTrees(i.id) > 0;
         else if (i.type === 'product') ok = state.animals.some(a => ANIMALS[a.type].prodId === i.id);
         else if (i.type === 'fish') ok = fishOrderOk(id);
@@ -260,6 +261,7 @@ export function sourceOf(id) {
     if (it.ghOnly) return 'Serre';
     if (it.oasis) return 'Oasis';
     if (it.nord) return 'Grand Nord';
+    if (it.asie) return 'Terres d’Asie';
     if (it.island) return it.type === 'tree' ? 'Verger de l’île' : 'Île';
     if (it.type === 'crop') return isInSeason(id) ? 'Champ (de saison)' : 'Champ';
     if (it.type === 'tree') return 'Arbre fruitier';
@@ -270,7 +272,7 @@ export function sourceOf(id) {
         // 1.79.1 : un second produit (viande, laine…), de temps en temps au ramassage
         const b = Object.values(ANIMALS).find(x => x.extra === id);
         if (b) return `${b.name} (au ramassage, parfois)`;
-        return id === 'cardamom' ? 'Traîneau du Grand Nord' : '';
+        return id === 'cardamom' ? 'Traîneau du Grand Nord' : id === 'starAnise' ? 'Jonque des Terres d’Asie' : '';
     }
     const r = RECIPES[id];
     return r && MACHINES[r.machine] ? MACHINES[r.machine].name : '';

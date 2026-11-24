@@ -229,7 +229,7 @@ const FISH_BASE = [
     'crayfishGratin',
     'paella',
 ];
-const PLATS = merge(PLATS_BASE, fromMachines('pizzeria', 'pastaworks', 'tajine', 'taigaPot'));
+const PLATS = merge(PLATS_BASE, fromMachines('pizzeria', 'pastaworks', 'tajine', 'taigaPot', 'wok', 'steamer'));
 const DESSERTS = merge(DESSERTS_BASE, fromMachines('icecream', 'orientalSweets'), [
     'cloudberryTart',
     'lingonPastry',
@@ -295,6 +295,18 @@ const OASIS_DISH = [
     'dateTea',
 ];
 const NORD_RAW = ['rye', 'lingonberry', 'cloudberry', 'seaBuckthorn', 'birchSap', 'spruce', 'reindeerMilk', 'ptarmiganEgg'];
+const ASIE_RAW = ['lotus', 'bambooShoot', 'shiitake', 'bokChoy', 'yuzu', 'ume', 'sikaMilk', 'silkThread', 'silkieEgg'];
+const ASIE_DISH = [
+    'bambooStirFry',
+    'shiitakeNoodles',
+    'lotusCrisps',
+    'shiitakeBao',
+    'lotusDimSum',
+    'yuzuMochi',
+    'lotusMooncake',
+    'umeOnigiri',
+    'yuzuTea',
+];
 const NORD_DISH = [
     'lingonStew',
     'lingonPastry',
@@ -713,6 +725,20 @@ export const DEFIS = {
             { kind: 'give', name: 'La table du poêle', pool: NORD_DISH, k: 2, n: 5, q: 1 },
         ],
     },
+    lanternes: {
+        name: 'La fête des lanternes',
+        who: 'mei',
+        icon: ['item', 'yuzu'],
+        deco: 'asiaJunkDeco',
+        open: 'asie',
+        intro: 'Les terrasses brillent sous les lanternes rouges : récoltez, chargez la jonque et mettez le wok en fête !',
+        steps: [
+            { kind: 'count', name: 'Les récoltes', stat: 'asieHarvest', n: 50, icon: ['item', 'lotus'], text: 'Récolter {n} produits aux Terres d’Asie' },
+            { kind: 'count', name: 'Les jonques', stat: 'junks', n: 3, icon: ['animal', 'sika'], text: 'Mener {n} jonques' },
+            { kind: 'give', name: 'Les terrasses', pool: ASIE_RAW, k: 3, n: 20, q: 0 },
+            { kind: 'give', name: 'La table d’Asie', pool: ASIE_DISH, k: 2, n: 5, q: 1 },
+        ],
+    },
     serre: {
         name: 'La serre en fête',
         who: 'yasmine',
@@ -776,6 +802,7 @@ export const MINI = {
         { id: 'island', stat: 'islandHarvest', n: 40, open: 'island', icon: ['item', 'banana'], text: 'Récolter {n} produits sur l’île' },
         { id: 'oasis', stat: 'oasisHarvest', n: 40, open: 'oasis', icon: ['item', 'date'], text: 'Récolter {n} produits à l’oasis' },
         { id: 'nord', stat: 'nordHarvest', n: 40, open: 'nord', icon: ['item', 'lingonberry'], text: 'Récolter {n} produits au Grand Nord' },
+        { id: 'asie', stat: 'asieHarvest', n: 40, open: 'asie', icon: ['item', 'lotus'], text: 'Récolter {n} produits aux Terres d’Asie' },
         { id: 'help', stat: 'neighborHelps', n: 4, open: 'nmarket', icon: ['ui', 'heart'], text: 'Rendre {n} services aux voisins' },
         { id: 'stall', stat: 'stallSales', n: 12, open: 'nmarket', icon: ['ui', 'basket'], text: 'Vendre {n} fois à l’étal de la ferme' },
         { id: 'beers', stat: 'beers', n: 12, open: 'brew', icon: ['ui', 'beer'], text: 'Brasser {n} bouteilles' },

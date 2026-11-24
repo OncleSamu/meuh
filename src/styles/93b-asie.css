@@ -1,0 +1,180 @@
+/* ---------------- Ferme | Voyages | Les Terres d'Asie (1.171) ---------------- */
+/* la grille et les cases reprennent celles de l'oasis (92-oasis.css) : ici, des rizières en terrasses, du bambou et l'eau en cascade */
+.as-water {
+    background: linear-gradient(#e4f5ef, #f4f1df);
+}
+.as-water.dry {
+    background: linear-gradient(#f5ecd8, #efe6d4);
+}
+.as-water.hanami {
+    background: linear-gradient(#fdeaf0, #e6f5ef);
+}
+.oa-grid.as-grid {
+    padding: 20px;
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Crect width='24' height='24' fill='%235d8e3e'/%3E%3Cpath d='M0 0 L24 0 M0 12 L24 12 M0 24 L24 24' stroke='%233d6426' stroke-width='1.5'/%3E%3Cpath d='M12 0 L12 12 M4 12 L4 24' stroke='%233d6426' stroke-width='1.2' opacity='.7'/%3E%3Cpath d='M2 5 Q12 3 22 5 M2 17 Q12 15 22 17' fill='none' stroke='%238bc062' stroke-width='.9' opacity='.7'/%3E%3C/svg%3E")
+            0 0 / 24px 24px,
+        #5d8e3e;
+}
+.oa-grid.as-grid::before {
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23d8ebe0'/%3E%3Cpath d='M0 14 Q10 11 20 14 T40 14 M0 32 Q10 29 20 32 T40 32' fill='none' stroke='%23bdd9ca' stroke-width='1.2'/%3E%3Ccircle cx='12' cy='22' r='1.1' fill='%23eef8f2'/%3E%3Ccircle cx='30' cy='8' r='1' fill='%23eef8f2'/%3E%3C/svg%3E")
+            0 0 / 40px 40px,
+        #d8ebe0;
+}
+/* case sèche : argile claire en terrasse */
+.as-cell {
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect width='60' height='60' fill='%23d9c9a6'/%3E%3Cpath d='M4 16 Q16 12 28 16 T52 16 M8 38 Q20 34 32 38 T56 38' fill='none' stroke='%23c4b086' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='42' cy='24' r='1.3' fill='%23b59e72'/%3E%3Ccircle cx='16' cy='46' r='1.1' fill='%23e8dbb9'/%3E%3C/svg%3E")
+            center / 60px 60px,
+        #d9c9a6;
+}
+/* case irriguée : miroir d'eau jade de rizière */
+.as-cell.irrigated {
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect width='60' height='60' fill='%2388cbb8'/%3E%3Cpath d='M4 16 Q16 12 28 16 T52 16 M8 38 Q20 34 32 38 T56 38' fill='none' stroke='%23b2e3d4' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='42' cy='22' r='1.4' fill='%23e6faf4'/%3E%3Ccircle cx='18' cy='46' r='1.1' fill='%23e6faf4'/%3E%3C/svg%3E")
+            center / 60px 60px,
+        #88cbb8;
+    box-shadow:
+        inset 0 0 0 3px rgba(60, 154, 124, 0.28),
+        0 4px 0 rgba(58, 38, 24, 0.5);
+}
+/* cascade en profondeur : eau plus vive (+10 / +20 / +30 %) */
+.as-cell.cascade-1 {
+    box-shadow:
+        inset 0 0 0 3px rgba(46, 168, 188, 0.38),
+        0 4px 0 rgba(58, 38, 24, 0.5);
+}
+.as-cell.cascade-2 {
+    box-shadow:
+        inset 0 0 0 3px rgba(34, 150, 198, 0.5),
+        0 4px 0 rgba(58, 38, 24, 0.5);
+}
+.as-cell.cascade-3 {
+    box-shadow:
+        inset 0 0 0 3px rgba(242, 193, 78, 0.65),
+        0 4px 0 rgba(58, 38, 24, 0.5);
+}
+/* case sèche en train de pousser : voile ocre */
+.as-cell.dry {
+    box-shadow:
+        inset 0 0 0 3px rgba(196, 134, 56, 0.42),
+        0 4px 0 rgba(58, 38, 24, 0.5);
+}
+.as-cell.dry .oa-art {
+    filter: saturate(0.72) brightness(1.02);
+}
+.as-cell.locked {
+    background: rgba(255, 255, 255, 0.32);
+    border-style: dashed;
+    box-shadow: none;
+}
+.as-cell.locked.can {
+    background: rgba(242, 193, 78, 0.45);
+}
+/* rigole en bambou */
+.as-cell.canal {
+    background: #6c8d4a;
+    box-shadow:
+        inset 0 0 0 3px rgba(0, 0, 0, 0.2),
+        0 4px 0 rgba(58, 38, 24, 0.5);
+}
+.as-cell.canal.flowing {
+    background: radial-gradient(circle at 50% 45%, #7ad8e8 0, #3f9c88 55%, #4a7836 100%);
+    animation: as-flow 2.6s ease-in-out infinite;
+}
+@keyframes as-flow {
+    50% {
+        filter: brightness(1.1);
+    }
+}
+html.calm .as-cell.canal.flowing {
+    animation: none;
+}
+.as-cell.void {
+    display: none;
+}
+.as-cascade-tag {
+    position: absolute;
+    top: 3px;
+    left: 4px;
+    padding: 1px 5px;
+    border-radius: 7px;
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: #fff;
+    background: rgba(32, 122, 114, 0.88);
+    line-height: 1.25;
+}
+.as-cell.cascade-3 .as-cascade-tag {
+    background: rgba(188, 128, 24, 0.92);
+}
+.as-closed .ic-art {
+    background: #e4f5ef;
+}
+/* minijeu de la roue à eau en bambou */
+.as-wheel {
+    background: linear-gradient(#cdecf2 0 42%, #e4f3e8 42%);
+}
+.as-wheel-art svg {
+    width: 100%;
+    height: 100%;
+}
+.as-meter {
+    position: relative;
+    height: 22px;
+    margin: 10px 0 6px;
+    border: 2.5px solid var(--ink);
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+}
+.as-zone {
+    position: absolute;
+    left: 37.5%;
+    width: 25%;
+    top: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, #98dce8, #5ec49a 50%, #98dce8);
+}
+.as-mark {
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    width: 6px;
+    margin-left: -3px;
+    left: 0;
+    border-radius: 3px;
+    background: var(--ink);
+}
+
+/* case envasée après une mousson */
+.oa-cell.muddy .oa-art {
+    filter: saturate(0.55) brightness(0.92);
+}
+.as-mud {
+    position: absolute;
+    inset: 30% 0 0;
+    border-radius: 40% 40% 9px 9px / 30% 30% 9px 9px;
+    background: linear-gradient(#9b7852, #6f5236);
+    box-shadow: inset 0 3px 0 rgba(255, 236, 200, 0.35);
+}
+.as-mud-txt {
+    position: absolute;
+    bottom: 6px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: #fff6e6;
+}
+
+/* le pavillon de bambou : prairie de bambou et bassin de jade */
+html .meadow.bamboo {
+    background-color: #cde6be;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M10 0 L10 44 M32 0 L32 44' stroke='%23b2d49e' stroke-width='2' opacity='.55'/%3E%3Cpath d='M8 14 L12 14 M30 28 L34 28' stroke='%238cb674' stroke-width='1.6'/%3E%3Cpath d='M12 12 Q18 8 22 12 Q17 15 12 12Z' fill='%23a6ce8e' opacity='.65'/%3E%3C/svg%3E");
+    box-shadow:
+        0 8px 0 #7ca664,
+        0 8px 0 3px var(--ink);
+}
+.meadow.bamboo .pond {
+    background: radial-gradient(ellipse at 40% 35%, #ccf4ee, #68bfb0);
+}

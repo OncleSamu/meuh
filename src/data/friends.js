@@ -31,6 +31,8 @@ export const LOVES = {
     yasmine: 'honeyJujubes',
     tuomas: 'kalakukko',
     ingrid: 'cloudberryTart',
+    mei: 'yuzuMochi',
+    kenji: 'bambooStirFry',
     duval: 'goldLocket',
 };
 export const GIFT_PTS = { love: 5, likeRaw: 1, likeCraft: 3, meh: 0, birthday: 3, loveHint: 2 };
@@ -79,6 +81,8 @@ export const TALENTS = {
     yasmine: { m: ['orientalSweets'] },
     tuomas: { m: ['taigaPot'] },
     ingrid: { m: ['tiledStove', 'berryKettle'] },
+    mei: { m: ['wok', 'wagashi'] },
+    kenji: { m: ['steamer'] },
     duval: { m: ['jewelry'] },
 };
 
@@ -89,6 +93,7 @@ export const DUOS = [
     ['idris', 'yasmine'],
     ['tuomas', 'ingrid'],
     ['morgane', 'yann'],
+    ['mei', 'kenji'],
 ];
 
 // ---------------- treize histoires de plus (même forme que STORIES : 3 étapes) ----------------
@@ -210,6 +215,24 @@ export const STORIES_170 = {
             ['Et les malts noirs, les plus difficiles : ceux de la bière de Noël.', { maltBrown: 10, maltBlack: 6 }],
         ],
     },
+    mei: {
+        title: 'Les terrasses de la source',
+        end: 'L’eau chante sur chaque palier, et les cerisiers s’y reflètent. Cette vallée est aussi un peu la tienne maintenant.',
+        steps: [
+            ['Je veux réveiller les anciennes rizières de ma grand-mère : d’abord des rhizomes de lotus et des pousses de bambou.', { lotus: 20, bambooShoot: 20 }],
+            ['Le soir, après le travail des rigoles, on partage des sautés de bambou et des mochis au yuzu.', { bambooStirFry: 4, yuzuMochi: 4 }],
+            ['Pour la fête de la floraison : des gâteaux de lune au lotus et du thé chaud au yuzu pour tout le village !', { lotusMooncake: 4, yuzuTea: 4 }],
+        ],
+    },
+    kenji: {
+        title: 'La grande traversée de soie',
+        end: 'La jonque a battu tous les records du port d’Orient ! Voici un ruban de soie dorée : il porte bonheur aux marins.',
+        steps: [
+            ['Ma jonque part bientôt vers le grand port : il me faut de la soie grège et des œufs de poule soie pour l’équipage.', { silkThread: 12, silkieEgg: 15 }],
+            ['Pour le voyage, on emporte des bouchées vapeur et un bouillon clair au ginkgo.', { lotusSteamedBuns: 6, ginkgoBroth: 4 }],
+            ['Et pour le cadeau au gouverneur du port : un kimono de soie et un obi de soie dorée !', { silkKimono: 2, goldenObi: 2 }],
+        ],
+    },
 };
 
 // ---------------- les histoires à deux ----------------
@@ -248,6 +271,15 @@ export const DUO_STORIES = {
             ['La grande marée découvre des rochers qu’on ne voit qu’une fois par an. On pêche à pied !', { sardine: 20, shrimp: 15 }],
             ['Ce qu’on ne mange pas tout de suite, on le met en boîte pour l’hiver.', { cannedSardines: 4, mackerelRillettes: 4 }],
             ['Et le soir, sur le port : une bouillabaisse et un homard pour fêter ça.', { bouillabaisse: 4, lobsterDish: 2 }],
+        ],
+    },
+    'mei-kenji': {
+        title: 'La nuit des mille lanternes',
+        end: 'Mille lanternes se reflètent dans l’eau des terrasses, et toute la vallée retient son souffle. Merci d’avoir illuminé les Terres d’Asie.',
+        steps: [
+            ['Pour la fête des lanternes, il nous faut de la soie dorée et de la badiane étoilée pour parfumer la soirée.', { goldenSilk: 4, starAnise: 4 }],
+            ['Aux fourneaux ! Des nouilles sautées aux shiitakes et des raviolis vapeur au pak-choï pour tous les invités.', { shiitakeNoodles: 4, bokChoyDumplings: 4 }],
+            ['Et pour lever nos tasses sous les lanternes : des mochis au kumquat et du matcha au lait de sika !', { kumquatMochi: 4, sikaMatcha: 4 }],
         ],
     },
 };

@@ -12,13 +12,13 @@ import { MEAD } from '../data/abbey.js';
 import { APIARY } from '../data/apiary.js';
 import { FISH } from '../data/meta.js';
 import { NATURE } from '../data/nature.js';
-const LAND_PROJECT = { island: 'ferry', oasis: 'oasisWell', nord: 'northStove' };
+const LAND_PROJECT = { island: 'ferry', oasis: 'oasisWell', nord: 'northStove', asie: 'asiaSluice' };
 
 // lu directement dans l'état (pas d'import des autres systèmes : goals.js est chargé par player.js)
 const projectDone = id => !!(state.projects[id] && state.projects[id].done);
 const masteryCount = id => (state.mastery && state.mastery[id]) || 0;
 const treesOf = id =>
-    [state.orchard && state.orchard.slots, state.island && state.island.orchard, state.oasis && state.oasis.grove, state.nord && state.nord.grove]
+    [state.orchard && state.orchard.slots, state.island && state.island.orchard, state.oasis && state.oasis.grove, state.nord && state.nord.grove, state.asie && state.asie.grove]
         .filter(Boolean)
         .flat()
         .filter(sl => sl && sl.tree && sl.tree.id === id).length;
@@ -60,13 +60,13 @@ export function makeGoals(L) {
     }
     // une culture du niveau : la récolter
     const gh = !!(state.greenhouse && state.greenhouse.plots && state.greenhouse.plots.length);
-    const crop = Object.values(ITEMS).find(d => d.type === 'crop' && d.reqLvl === L && reachable(d) && !d.island && !d.oasis && !d.nord && (!d.ghOnly || gh));
+    const crop = Object.values(ITEMS).find(d => d.type === 'crop' && d.reqLvl === L && reachable(d) && !d.island && !d.oasis && !d.nord && !d.asie && (!d.ghOnly || gh));
     if (crop) push({ kind: 'make', id: crop.id, n: 5 });
     // une bête du niveau : en avoir une
-    const beast = Object.values(ANIMALS).find(a => a.reqLvl === L && !a.oasis && !a.nord && !a.needProject && a.id !== 'horse');
+    const beast = Object.values(ANIMALS).find(a => a.reqLvl === L && !a.oasis && !a.nord && !a.asie && !a.needProject && a.id !== 'horse');
     if (beast) push({ kind: 'animal', id: beast.id });
     // un arbre du niveau : le planter
-    const tree = Object.values(ITEMS).find(d => d.type === 'tree' && d.reqLvl === L && reachable(d) && !d.island && !d.oasis && !d.nord);
+    const tree = Object.values(ITEMS).find(d => d.type === 'tree' && d.reqLvl === L && reachable(d) && !d.island && !d.oasis && !d.nord && !d.asie);
     if (tree) push({ kind: 'tree', id: tree.id });
     // une recette du niveau dans une machine qu'on a déjà
     const rec = Object.values(RECIPES).find(x => x.lvl === L && owns(x.machine) && !x.teacher && !x.fete && !x.holiday && x.machine !== 'counter' && x.machine !== 'emballerie' && ingOk(x));

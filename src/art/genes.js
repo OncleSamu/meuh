@@ -246,6 +246,18 @@ const PLUME = {
             [55, 55.9, 35],
         ],
     },
+    silkie: {
+        c: '#fffdf8',
+        d: '#dfd6c8',
+        head: [56, 21, -12],
+        ruff: [
+            [24, 58, 130],
+            [18, 48, 165],
+            [22, 36, 205],
+            [34, 30, 240],
+            [52, 54, 35],
+        ],
+    },
 };
 export const PLUME_SPECIES = Object.keys(PLUME);
 // une touffe de trois plumes, pointe vers l'extérieur
@@ -359,6 +371,7 @@ const TAILS = {
     dromedary: [16, 40, '#d8a96c', '#9c6f38'],
     reindeer: [15, 42, '#b89f86', '#6e5742'],
     muskox: [13, 46, '#4d3a2c', '#291e16'],
+    sika: [15, 42, '#f6ecd8', '#c48046'],
     ewe: [17, 46, '#f7f3ea', '#c9bfa8'],
     mohairGoat: [18, 48, '#fbf8f2', '#cfc6b5'],
 };
@@ -393,6 +406,7 @@ const MANES = {
     dromedary: [56, 24, '#c79355', '#875c2b'],
     muskox: [54, 34, '#5a4232', '#2e2017'],
     reindeer: [54, 24, '#efe4d4', '#a8947a'],
+    sika: [54, 26, '#f6ecd8', '#c48046'],
     horse: [56, 22, '#5a3a22', '#2f1d10'],
     donkey: [52, 24, '#6d7078', '#3c3e45'],
 };

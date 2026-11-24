@@ -177,6 +177,20 @@ export const LAND_HONEYS = {
         mult: 1.9,
         mamie: 'Les airelles fleurissent en clochettes roses sous la neige qui fond. Le miel est rouge comme les baies. Là-haut, on le mange avec les galettes de seigle.',
     },
+    yuzu: {
+        flower: 'yuzu',
+        land: 'asie',
+        name: 'Miel de yuzu',
+        mult: 2.1,
+        mamie: 'Les fleurs blanches du yuzu parfument toute la terrasse au printemps. Le miel est clair comme de la soie dorée, avec une petite pointe d’agrume qui réveille un bol de thé.',
+    },
+    lotus: {
+        flower: 'lotus',
+        land: 'asie',
+        name: 'Miel de lotus',
+        mult: 2.0,
+        mamie: 'Les abeilles se posent au cœur des grandes fleurs roses qui flottent sur les rizières. Un miel fin, doux et fleuri : Mei en met une goutte dans sa tisane quand la brume monte.',
+    },
 };
 Object.assign(HONEYS, LAND_HONEYS);
 export const HONEY_RULE = {
@@ -216,4 +230,6 @@ export const HONEY_COL = {
     coriander: '#d08a2a',
     fir: '#5a2e14',
     lingonberry: '#b8582a',
+    yuzu: '#f0c948',
+    lotus: '#ebb0b8',
 };

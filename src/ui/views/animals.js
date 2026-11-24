@@ -322,7 +322,13 @@ function renderAnimals(el) {
 // 1.58.3 : le pré de l'enclos de la palmeraie ou de l'étable du Nord, sous leur verger : les bêtes s'y promènent comme dans l'onglet Animaux
 export const penMeadowHtml = (k, theme) => {
     const n = G.pastureLoad(k);
-    return `<div class="meadow pen-meadow ${theme}" id="pasture-pen" data-pen="${k}" style="height:${Math.min(700, Math.max(260, 140 + n * 36))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${k === 99 ? 'L’enclos est vide. Dromadaires, zébus et moutons barbarins vous attendent au marché.' : 'L’étable est vide. Rennes, bœufs musqués et lagopèdes vous attendent au marché.'}</div>`}</div>`;
+    const emptyMsg =
+        k === 99
+            ? 'L’enclos est vide. Dromadaires, zébus et moutons barbarins vous attendent au marché.'
+            : k === 97
+              ? 'Le pavillon de bambou est vide. Cerfs sika, vers à soie et poules soie vous attendent au marché.'
+              : 'L’étable est vide. Rennes, bœufs musqués et lagopèdes vous attendent au marché.';
+    return `<div class="meadow pen-meadow ${theme}" id="pasture-pen" data-pen="${k}" style="height:${Math.min(700, Math.max(260, 140 + n * 36))}px"><div class="pond"></div>${n ? '' : `<div class="empty">${emptyMsg}</div>`}</div>`;
 };
 // 1.58.4 : comme dans Animaux, on choisit le pré (les bêtes se promènent) ou l'étable (la liste)
 export const penModeBar = k =>
@@ -371,7 +377,7 @@ function geneBlock(a) {
 }
 
 // ---------------- la fiche d'un animal ----------------
-const FEM_KIND = ['cow', 'goat', 'chicken', 'ewe', 'guinea', 'ostrich', 'mohairGoat', 'quail'];
+const FEM_KIND = ['cow', 'goat', 'chicken', 'ewe', 'guinea', 'ostrich', 'mohairGoat', 'quail', 'silkie'];
 defineSheet('animal', {
     cls: 'animal-sheet',
     title: o => {
@@ -420,6 +426,17 @@ defineSheet('animal', {
                         : [['ui', 'noFroid'], 'Nuit de gel, hors d’un poêle allumé : il produit deux fois moins vite'],
                 );
         }
+        // 1.171 : une bête des Terres d'Asie
+        if (ANIMALS[a.type].asie) {
+            info.push([['ui', 'asPavillon'], 'Vit au pavillon de bambou, aux Terres d’Asie']);
+            if (a.trip) info.push([['ui', 'asJonque'], 'Parti avec la jonque vers le grand port d’Orient']);
+            else if (adult && ANIMALS[a.type].wet)
+                info.push(
+                    G.asieWater() > 0 || G.monsoonOn()
+                        ? [['ui', 'asEau'], 'Bassin en eau : l’air humide lui convient parfaitement']
+                        : [['ui', 'asSec'], 'Bassin à sec : il file deux fois moins vite'],
+                );
+        }
         // 1.45 : né au pré, de quels parents (au labo, la fiche des gènes le dit déjà)
         if (a.born === 'pre' && a.parents && !(state.genetics && G.geneticsOpen() && a.g))
             info.push([
@@ -437,7 +454,7 @@ defineSheet('animal', {
             ${a.type === 'bees' && adult ? `<div class="row-btns">${btn(a.rest ? 'Remettre au travail' : 'Au repos : pas de miel', { act: 'beeRest', data: { uid: a.uid }, kind: a.rest ? 'gold' : '', icon: ['item', 'honey'] })}</div>` : ''}
             ${a.type === 'zebu' && adult && G.noriaBuilt() ? `<div class="row-btns">${btn(a.noria ? 'Dételer de la noria' : 'Atteler à la noria', { act: 'noriaToggle', data: { uid: a.uid }, kind: a.noria ? '' : 'gold', icon: ['ui', 'oaNoria'] })}</div>` : ''}
             ${
-                state.pastures.length > 1 && !ANIMALS[a.type].oasis && !ANIMALS[a.type].nord
+                state.pastures.length > 1 && !ANIMALS[a.type].oasis && !ANIMALS[a.type].nord && !ANIMALS[a.type].asie
                     ? `<div class="set-sub">Son pré</div><div class="chips-row pas-move">${state.pastures
                           .map((p, k) => {
                               const here = (a.p || 0) === k,

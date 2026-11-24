@@ -956,7 +956,7 @@ function inspectProduct(id) {
   const caveFam = DATA.cave.items[id];
   const zoneBadges = [
     it.ghOnly ? 'Serre' : '',
-    it.oasis ? 'Oasis' : it.nord ? 'Grand Nord' : it.island ? 'Île' : '',
+    it.oasis ? 'Oasis' : it.nord ? 'Grand Nord' : it.asie ? 'Terres d’Asie' : it.island ? 'Île' : '',
     it.sea ? 'Pêche en mer' : '',
     it.exotic ? 'Marchand ambulant' : '',
     caveFam ? `Affinable en cave (${DATA.cave.families[caveFam] || caveFam})` : '',
@@ -1139,9 +1139,9 @@ function renderProducts() {
     const groups = [
       ['Cultures — Ferme (plein champ)', rawItems.filter(i => i.type === 'crop' && !i.ghOnly && !i.island)],
       ['Cultures — Serre uniquement', rawItems.filter(i => i.type === 'crop' && i.ghOnly)],
-      ['Cultures — Île, Oasis & Grand Nord', rawItems.filter(i => i.type === 'crop' && i.island)],
+      ['Cultures — Île, Oasis, Grand Nord & Asie', rawItems.filter(i => i.type === 'crop' && i.island)],
       ['Arbres — Verger (ferme)', rawItems.filter(i => i.type === 'tree' && !i.island)],
-      ['Arbres — Île, Oasis & Grand Nord', rawItems.filter(i => i.type === 'tree' && i.island)],
+      ['Arbres — Île, Oasis, Grand Nord & Asie', rawItems.filter(i => i.type === 'tree' && i.island)],
       ['Élevage & Produits spécifiques', rawItems.filter(i => i.type === 'product' && !i.sea)],
       ['Pêche (étang, lagon & pêche en mer)', rawItems.filter(i => i.type === 'fish' || i.type === 'junk' || (i.type === 'product' && i.sea))],
       ['Minerais, gemmes, lingots, bois & matériaux', rawItems.filter(i => ['ore','gem','ingot','material','rare','misc'].includes(i.type))],
@@ -1157,7 +1157,7 @@ function renderProducts() {
               <div class="w-10 h-10 spr-box shrink-0">${itemSvg(i.id)}</div>
               <div class="min-w-0 text-xs">
                 <div class="font-semibold truncate">${esc(i.name)}</div>
-                <div class="muted">${i.reqLvl ? `Niv. ${i.reqLvl}` : i.oasis ? 'Oasis' : i.nord ? 'Grand Nord' : i.sea ? 'Mer' : i.type}${i.sell ? ` · ${fmt(i.sell)} p.` : ''}</div>
+                <div class="muted">${i.reqLvl ? `Niv. ${i.reqLvl}` : i.oasis ? 'Oasis' : i.nord ? 'Grand Nord' : i.asie ? 'Terres d’Asie' : i.sea ? 'Mer' : i.type}${i.sell ? ` · ${fmt(i.sell)} p.` : ''}</div>
               </div>
             </button>`).join('')}
           </div>

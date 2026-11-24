@@ -5,6 +5,7 @@ import { CROPS_132 } from './ajouts/ile.js';
 import { OASIS_CROPS, OASIS_TREES, OASIS_BEASTS } from './oasis.js';
 import { NORD_BEASTS } from './nord.js';
 import { NORD_CROPS, NORD_TREES } from './nord.js';
+import { ASIE_CROPS, ASIE_TREES, ASIE_BEASTS } from './asie.js';
 import { ANIMALS_135 } from './ajouts/animaux.js';
 import { CROPS_152, TREES_152, ANIMALS_152 } from './ajouts/pack152.js';
 import { lv80 } from './lv80.js';
@@ -147,14 +148,14 @@ export const FEATURES = {
     horns: {
         name: 'Cornes',
         list: ['Naturelles', 'Sans cornes', 'Longues', 'En lyre'],
-        species: ['cow', 'goat', 'buffalo', 'sheep', 'zebu', 'barbarySheep', 'reindeer', 'muskox'],
+        species: ['cow', 'goat', 'buffalo', 'sheep', 'zebu', 'barbarySheep', 'reindeer', 'muskox', 'sika'],
     },
     ears: { name: 'Oreilles', list: ['Naturelles', 'Tombantes'], species: ['rabbit', 'pig', 'goat'] },
     // 1.122 + 1.154 : les oiseaux (huppe, frisé, queue en éventail, collerette) et les abeilles (nombreux, fleuri, royal)
     plume: {
         name: 'Plumage',
         list: ['Naturel', 'Huppé', 'Frisé', 'Queue en éventail', 'Collerette'],
-        species: ['chicken', 'duck', 'goose', 'peacock', 'turkey', 'quail', 'pigeon', 'guinea', 'pheasant', 'ostrich', 'ptarmigan'],
+        species: ['chicken', 'duck', 'goose', 'peacock', 'turkey', 'quail', 'pigeon', 'guinea', 'pheasant', 'ostrich', 'ptarmigan', 'silkie'],
     },
     swarm: { name: 'Essaim', list: ['Naturel', 'Nombreux', 'Fleuri', 'Royal'], species: ['bees'] },
     coat: {
@@ -171,12 +172,12 @@ export const FEATURES = {
     tail: {
         name: 'Queue',
         list: ['Naturelle', 'En panache', 'Bouclée'],
-        species: ['cow', 'pig', 'rabbit', 'horse', 'donkey', 'alpaca', 'buffalo', 'zebu', 'yak', 'dromedary', 'reindeer', 'muskox', 'ewe', 'mohairGoat'],
+        species: ['cow', 'pig', 'rabbit', 'horse', 'donkey', 'alpaca', 'buffalo', 'zebu', 'yak', 'dromedary', 'reindeer', 'muskox', 'ewe', 'mohairGoat', 'sika'],
     },
     mane: {
         name: 'Crinière',
         list: ['Naturelle', 'Collerette', 'Ondulée'],
-        species: ['goat', 'mohairGoat', 'alpaca', 'yak', 'dromedary', 'muskox', 'reindeer', 'horse', 'donkey'],
+        species: ['goat', 'mohairGoat', 'alpaca', 'yak', 'dromedary', 'muskox', 'reindeer', 'horse', 'donkey', 'sika'],
     },
     eyes: {
         name: 'Regard',
@@ -194,6 +195,7 @@ const F = {
     ...Object.fromEntries(CROPS_132.map(c => [c[0], c[8]])), // 1.32 : les huit cultures de l'île
     ...Object.fromEntries([...OASIS_CROPS, ...OASIS_TREES].map(c => [c[0], c[8]])), // 1.48 : les six plantes de l'oasis
     ...Object.fromEntries([...NORD_CROPS, ...NORD_TREES].map(c => [c[0], c[8]])), // 1.51 : les six plantes du Grand Nord
+    ...Object.fromEntries([...ASIE_CROPS, ...ASIE_TREES].map(c => [c[0], c[8]])), // 1.171 : les dix plantes des Terres d'Asie
     ...Object.fromEntries(CROPS_152.map(c => [c[0], c[10]])), // 1.152 : 7 nouvelles plantes
     ...Object.fromEntries(TREES_152.map(t => [t[0], t[10]])), // 1.152 : cannelier & muscadier
     wheat: '10101',
@@ -349,6 +351,7 @@ const A = {
     ...Object.fromEntries(ANIMALS_152.map(a => [a[0], a[10]])),
     ...Object.fromEntries(OASIS_BEASTS.map(a => [a[0], a[10]])),
     ...Object.fromEntries(NORD_BEASTS.map(a => [a[0], a[10]])),
+    ...Object.fromEntries(ASIE_BEASTS.map(a => [a[0], a[10]])),
 };
 export const ANIMAL_BASE = Object.fromEntries(Object.entries(A).map(([id, s]) => [id, [...s].map(Number)]));
 

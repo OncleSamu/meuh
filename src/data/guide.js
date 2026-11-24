@@ -6,6 +6,7 @@ import { RENOM } from '../systems/renom.js';
 import { ITEMS } from './items.js';
 import { OASIS, PEN, CARAVAN } from './oasis.js';
 import { NORD, SLED } from './nord.js';
+import { ASIE, JUNK } from './asie.js';
 import { ANIMALS, BIRTHS } from './animals.js';
 import { FAIR, REPUTATION, REP_BONUS, COMICE, ROBEBOOK, ASSOC_LVL } from './elevage.js';
 import { ANIMAL_TRAITS } from './genetics.js';
@@ -747,7 +748,75 @@ export const GUIDE_PAGES = [
                 t: 'Les six plantes ont leurs gènes et leurs variétés comme les autres. Seigle et pousses d’épicéa ensemble donnent la sahti, une grande recette de brasseur : deux étoiles de plus.',
             },
         ],
-        see: ['oasis', 'island', 'labplants'],
+        see: ['oasis', 'island', 'asie', 'labplants'],
+    },
+    {
+        id: 'asie',
+        cat: 'farm',
+        name: 'Les Terres d’Asie',
+        icon: ['ui', 'asAsie'],
+        lvl: ASIE.lvl,
+        go: 'farm/island#asie',
+        intro: 'Des rizières en terrasses irriguées en cascade, un pavillon de bambou, une jonque marchande et trois nouveaux ateliers culinaires.',
+        facts: [
+            { icon: ['ui', 'asAsie'], v: `Niv. ${ASIE.lvl}`, l: 'Grande écluse de Mei' },
+            { icon: ['ui', 'asRigoleOn'], v: '+10 % / palier', l: 'Bonus de cascade' },
+            { icon: ['ui', 'asJonque'], v: 'Jonque', l: '7 h · ventes ×' + String(JUNK.mult).replace('.', ',') },
+            { icon: ['ui', 'asRoue'], v: `${ASIE.wheel.perDay}×/jour`, l: 'Roue à eau' },
+        ],
+        secs: [
+            {
+                h: 'Comment l’ouvrir',
+                t: `Au niveau ${ASIE.lvl}, après le marché de glace du Grand Nord, relevez la grande écluse de Mei (chapitre « Les rizières de Mei », Village › Village, carte « Les Terres d’Asie »).`,
+            },
+            {
+                h: 'Les rizières en terrasses et la cascade',
+                b: [
+                    `${ASIE.cellsBase} cases offertes, jusqu’à ${ASIE.cells} (4 colonnes × 5 terrasses). Sur chaque case, une culture ou une rigole de bambou.`,
+                    'Quatre cultures en terrasses : racine de lotus, pousses de bambou, shiitake et pak choï.',
+                    'La terrasse du haut (rangée 1) boit au bassin de source dès qu’il contient de l’eau. Pour irriguer les terrasses plus basses, posez des rigoles de bambou : chacune fait couler l’eau sur toute sa colonne en dessous et sur ses voisines gauche/droite (et trois colonnes entières avec le double déversoir).',
+                    'Plus l’eau descend en cascade sous une rigole, plus elle oxygène les racines : +10 % de vitesse par terrasse descendue (jusqu’à +30 % en bas !). À sec, rien ne meurt : tout pousse au ralenti.',
+                ],
+            },
+            {
+                h: 'Le bassin, la roue à eau et les améliorations',
+                b: [
+                    `Le ruisseau de montagne remplit le bassin de ${ASIE.spring} L/h même jeu fermé (capacité ${ASIE.basin[0]} L, puis ${ASIE.basin[1]} L et +${ASIE.springBonus} L/h avec le grand bassin).`,
+                    `Après le chantier de la roue à eau, lancez les augets en rythme ${ASIE.wheel.perDay} fois par jour pour remonter jusqu’à ${ASIE.wheel.max} L d’un coup.`,
+                    'Trois améliorations : le double déversoir (3 colonnes par rigole), les murets de pierre (−25 % d’eau consommée) et le grand bassin de source.',
+                ],
+            },
+            {
+                h: 'Le verger d’Asie et le rucher des terrasses',
+                b: [
+                    'Un verger à part de 4 à 12 arbres : yuzuier, abricotier du Japon (prunes ume), kumquatier, poirier nashi, longanier et ginkgo biloba. Ils poussent sans rien prendre au bassin.',
+                    'Le rucher des terrasses accueille jusqu’à 3 ruches (actives tant que le bassin a de l’eau ou pendant le Hanami) et produit deux nouveaux miels : miel de yuzu et miel de lotus.',
+                ],
+            },
+            {
+                h: 'Le pavillon de bambou et les trois bêtes',
+                b: [
+                    'Chapitre 26 (« La jonque de Kenji ») : le pavillon de bambou accueille 12 puis 20 bêtes : cerf sika (lait de sika & bois de velours), ver à soie (fil de soie & fil de soie dorée) et poule soie (œuf & duvet de soie).',
+                    'Le ver à soie aime la fraîcheur humide : si le bassin est vide, il file deux fois moins vite.',
+                ],
+            },
+            {
+                h: 'La jonque de la soie, la mousson et le Hanami',
+                b: [
+                    `Trois cerfs sika adultes descendent jusqu’à ${JUNK.loads} charges de ${JUNK.perLoad} produits au quai : la jonque revient en 7 heures avec ${String(JUNK.mult).replace('.', ',')} fois le prix du grossiste sur les produits d’Asie (+15 % avec le marché aux lanternes) et parfois de la badiane étoilée.`,
+                    'La mousson gonfle la source (×2,5) et irrigue toutes les terrasses pendant 4 h, mais peut envaser 2 à 4 cases (un appui les draine) et retarde la jonque d’une heure.',
+                    'Le Hanami (floraison des cerisiers) fait tomber une pluie de pétales pendant 1 h : tout pousse ×1,5 (terrasses et verger).',
+                ],
+            },
+            {
+                h: 'La cuisine et l’artisanat d’Asie',
+                b: [
+                    'Trois nouveaux ateliers au niveau 80 : le Wok de fonte (après la grande écluse), le Panier vapeur (après le pavillon de bambou) et l’Atelier de douceurs d’Asie (après la bambouseraie en fleurs).',
+                    'Quarante et une recettes et six boissons au comptoir : sautés au wok, baozi, gyoza, mochis au yuzu, gâteaux de lune, kimono de soie, éventail en bambou, liqueur d’ume, thé au yuzu et matcha au lait de sika.',
+                ],
+            },
+        ],
+        see: ['nord', 'oasis', 'island', 'labplants'],
     },
     {
         id: 'night',

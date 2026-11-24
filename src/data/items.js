@@ -1,6 +1,6 @@
 import { applyLevels } from './levels.js';
 import { oldLvl } from './lv80.js';
-import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155, COFFEE_GATED } from './counter.js';
+import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155, NEW_DRINKS_ASIE, COFFEE_GATED } from './counter.js';
 import { SERRE_RECIPES } from './serre.js';
 import { CROPS_130, RECIPES_130 } from './ajouts/cultures.js';
 import { TREES_131, RECIPES_131 } from './ajouts/arbres.js';
@@ -8,11 +8,13 @@ import { CROPS_132, RECIPES_132 } from './ajouts/ile.js';
 import { OASIS_CROPS, OASIS_TREES, OASIS_PRODUCTS } from './oasis.js';
 import { NORD_PRODUCTS } from './nord.js';
 import { NORD_CROPS, NORD_TREES } from './nord.js';
+import { ASIE_CROPS, ASIE_TREES, ASIE_PRODUCTS } from './asie.js';
 import { RECIPES_150 } from './ajouts/oasis-cuisine.js';
 import { RECIPES_161 } from './ajouts/pizzeria.js';
 import { RECIPES_100 } from './ajouts/dernieres.js';
 import { BOXES, BOX_OUT } from './ajouts/emballerie.js';
 import { RECIPES_153 } from './ajouts/nord-cuisine.js';
+import { RECIPES_ASIE } from './ajouts/asie-cuisine.js';
 import { FISH_ITEMS_133, RECIPES_133 } from './ajouts/poissons.js';
 import { RECIPES_134 } from './ajouts/cave.js';
 import { PRODUCTS_135, RECIPES_135 } from './ajouts/animaux.js';
@@ -3060,6 +3062,28 @@ for (const [id, name, sell] of PRODUCTS_152) ITEMS[id] = { id, name, type: 'prod
 for (const [id, name, , ing] of RECIPES_152) {
     const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
     ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}
+
+// ---------------- 1.171 : Les Terres d'Asie (plantes, arbres, bêtes, badiane, cuisine, boissons) ----------------
+for (const [id, name, seedName, reqLvl, cost, sell, time, xp] of ASIE_CROPS)
+    ITEMS[id] = { id, name, seedName, type: 'crop', cost, sell, time, reqLvl, xp, island: true, asie: true, needProject: 'asiaSluice' };
+for (const [id, name, seedName, reqLvl, cost, sell, time, xp] of ASIE_TREES)
+    ITEMS[id] = { id, name, seedName, type: 'tree', cost, sell, time, reqLvl, xp, island: true, asie: true, needProject: 'asiaSluice' };
+for (const [id, name, sell] of ASIE_PRODUCTS) ITEMS[id] = { id, name, type: 'product', sell, needProject: 'asiaPavilion' };
+ITEMS.starAnise = { id: 'starAnise', name: 'Badiane étoilée', type: 'product', sell: 440, needProject: 'asiaJunk' };
+for (const [id, name, , ing] of RECIPES_ASIE) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = { id, name, type: 'artisan', sell: Math.round((cost * 1.37) / 5) * 5 };
+}
+for (const [id, name, ing, , , tag] of NEW_DRINKS_ASIE) {
+    const cost = Object.entries(ing).reduce((a, [k, n]) => a + (ITEMS[k].sell || 0) * n, 0);
+    ITEMS[id] = {
+        id,
+        name,
+        type: 'artisan',
+        sell: Math.round((cost * 1.37) / 5) * 5,
+        needProject: tag === 'junk' ? 'asiaJunk' : tag === 'pavilion' ? 'asiaPavilion' : 'asiaSluice',
+    };
 }
 
 // Niveaux définitifs (1 à 80) et seuils historiques de migration (voir data/levels.js)

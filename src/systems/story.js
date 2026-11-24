@@ -19,6 +19,7 @@ import { ensureStall } from './stall.js';
 import { ensureIsland } from './island.js';
 import { ensureOasis } from './oasis.js';
 import { ensureNord } from './nord.js';
+import { ensureAsie } from './asie.js';
 import { ensureBrew } from './brewery.js';
 import { pluralFr } from '../core/format.js';
 
@@ -192,6 +193,8 @@ export function applyProjectReward(pid) {
     if (pid === 'oasisGrove') state.seeds.date = (state.seeds.date || 0) + 3;
     if (pid === 'northStove' || pid === 'northStable') ensureNord();
     if (pid === 'northGreenhouse') state.seeds.spruce = (state.seeds.spruce || 0) + 3;
+    if (pid === 'asiaSluice' || pid === 'asiaPavilion') ensureAsie();
+    if (pid === 'asiaGrove') state.seeds.yuzu = (state.seeds.yuzu || 0) + 3;
     if (
         pid === 'carnival' ||
         pid === 'salonHall' ||
@@ -200,7 +203,9 @@ export function applyProjectReward(pid) {
         pid === 'oasisGrove' ||
         pid === 'soukStalls' ||
         pid === 'northGreenhouse' ||
-        pid === 'northIce'
+        pid === 'northIce' ||
+        pid === 'asiaGrove' ||
+        pid === 'asiaLanterns'
     )
         state.prestige.rubans += 5;
     if (pid === 'brewhall') tip('brew');
@@ -218,6 +223,7 @@ const MAP_TEASE = {
     station: 'au bout du chemin des vergers, une station de recherche',
     oasis: 'par-delà la mer, une oasis qui a soif',
     nord: 'tout là-haut, un village qui n’a plus de bois',
+    asie: 'au bout du fleuve, une vallée de rizières en terrasses',
 };
 
 // la suite de l'histoire, après une rénovation

@@ -20,12 +20,13 @@ import { slotsOf, treeStage } from './orchard.js';
 import { islandOpen, islandPlots } from './island.js';
 import { oasisOpen, oasisPlots } from './oasis.js';
 import { nordOpen, nordPlots, stoveKeys, stoveLit } from './nord.js';
+import { asieOpen, asiePlots, asieWater, hanamiOn } from './asie.js';
 import { judge, addHoney, honeyForecast } from './honey.js';
 
 export { APIARY, APIARY_LANDS };
-const OPEN = { island: islandOpen, oasis: oasisOpen, nord: nordOpen };
-const PLOTS = { island: islandPlots, oasis: oasisPlots, nord: nordPlots };
-const ZONES = { island: ['island'], oasis: ['oasis', 'oasisV'], nord: ['nord', 'nordV'] };
+const OPEN = { island: islandOpen, oasis: oasisOpen, nord: nordOpen, asie: asieOpen };
+const PLOTS = { island: islandPlots, oasis: oasisPlots, nord: nordPlots, asie: asiePlots };
+const ZONES = { island: ['island'], oasis: ['oasis', 'oasisV'], nord: ['nord', 'nordV'], asie: ['asie', 'asieV'] };
 
 export const apiaryOpen = land => !!(APIARY[land] && OPEN[land]() && state.level >= APIARY[land].lvl);
 // 1.89 : mettre les ruches d'une contrée au repos (ou les remettre au travail)
@@ -55,7 +56,7 @@ export function landBloom(land) {
         by[id] = (by[id] || 0) + 1;
     };
     for (const p of PLOTS[land]() || [])
-        if (p && p.open && p.id && ITEMS[p.id] && !p.sand && !p.snow && (p.ready || p.prog >= ITEMS[p.id].time / speedMult() / 2)) add(p.id);
+        if (p && p.open && p.id && ITEMS[p.id] && !p.sand && !p.snow && !p.mud && (p.ready || p.prog >= ITEMS[p.id].time / speedMult() / 2)) add(p.id);
     for (const z of ZONES[land])
         for (const sl of slotsOf(z))
             if (sl && sl.tree && ITEMS[sl.tree.id]) {
@@ -73,6 +74,8 @@ export function apiaryIdle(land) {
     if (land === 'oasis' && !(state.oasis && state.oasis.water >= 0.01)) return 'La citerne est vide : les abeilles ont soif';
     if (land === 'nord' && !['printemps', 'ete'].includes(season().id) && !stoveKeys().some(stoveLit))
         return 'Trop froid : les abeilles attendent le printemps, ou un poêle allumé au champ de neige';
+    if (land === 'asie' && asieWater() < 0.01 && !hanamiOn())
+        return 'Le bassin de source est à sec : faites couler l’eau pour que les abeilles butinent';
     if (!landBloom(land).total) return 'Rien ne fleurit : plantez des cultures et des arbres dans la contrée';
     return null;
 }

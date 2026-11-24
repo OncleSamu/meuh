@@ -160,7 +160,7 @@ test('un arbre du Grand Nord se plante au verger du Nord, pas sur une case', () 
 
 test('chapitre 23, Tuomas, trois chantiers, carte du Nord', () => {
     assert.ok(CHAPTERS.find(c => c.n === 23));
-    assert.equal(CHAPTER_ORDER[CHAPTER_ORDER.length - 1], 24);
+    assert.equal(CHAPTER_ORDER.indexOf(24), CHAPTER_ORDER.indexOf(23) + 1);
     for (const p of ['northStove', 'northWood', 'northGreenhouse']) assert.equal(PROJECTS[p].map, 'nord', p);
     assert.equal(STORY_MAPS.find(m => m.id === 'nord').openChapter, 22);
     assert.ok(MAP_BG.nord);

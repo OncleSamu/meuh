@@ -22,8 +22,8 @@ export const CAMPING = {
 export const WANTS = {
     fresh: { types: ['crop', 'tree', 'product'] },
     fish: { types: ['fish'] },
-    plat: { machines: ['kitchen', 'deli', 'fishmonger', 'pizzeria', 'pastaworks', 'stove', 'marmite', 'tajine', 'taigaPot', 'crepery', 'earthOven', 'tiledStove', 'bakery', 'smokehouse'] },
-    sweet: { machines: ['pastry', 'icecream', 'orientalSweets', 'islandBakery', 'chocolatier', 'confectionery'] },
+    plat: { machines: ['kitchen', 'deli', 'fishmonger', 'pizzeria', 'pastaworks', 'stove', 'marmite', 'tajine', 'taigaPot', 'wok', 'steamer', 'crepery', 'earthOven', 'tiledStove', 'bakery', 'smokehouse'] },
+    sweet: { machines: ['pastry', 'icecream', 'orientalSweets', 'islandBakery', 'chocolatier', 'confectionery', 'wagashi'] },
     drink: { machines: ['press', 'winery', 'brewery', 'juiceBar'] },
     cheese: { machines: ['dairy', 'alpineDairy'] },
     bread: { machines: ['bakery', 'islandBakery', 'pastry', 'crepery'] }, // 1.102 : le panier du boulanger

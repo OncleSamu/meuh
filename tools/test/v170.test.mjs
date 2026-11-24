@@ -21,13 +21,13 @@ const toHearts = (vid, h) => G.addFriendship(vid, HEART_POINTS[h - 1] - state.vi
 test('1.70 : 28 histoires, des anniversaires tous différents, un produit adoré et un talent pour chacun', () => {
     village();
     const ids = Object.keys(VILLAGERS);
-    assert.equal(ids.length, 28);
+    assert.equal(ids.length, 30); // 1.171 : Mei et Kenji
     for (const v of ids) {
         assert.ok(STORIES[v] && STORIES[v].steps.length === 3 && STORIES[v].end, v);
         assert.ok(LOVES[v] && G.TALENTS[v], v);
     }
-    assert.equal(new Set(ids.map(G.birthdayOf)).size, 28);
-    assert.equal(Object.keys(DUO_STORIES).length, 4);
+    assert.equal(new Set(ids.map(G.birthdayOf)).size, 30);
+    assert.equal(Object.keys(DUO_STORIES).length, 5);
 });
 
 test('1.70 : adoré +5, aimé +1 ou +3, bof rien ; on découvre le produit adoré', () => {

@@ -27,6 +27,7 @@ import { FAMILY } from '../data/family.js';
 import { CAMPING } from '../data/camping.js';
 import { OASIS } from '../data/oasis.js';
 import { NORD } from '../data/nord.js';
+import { ASIE } from '../data/asie.js';
 import { APIARY } from '../data/apiary.js';
 import { DAILY_REWARDS, HOLIDAY_LVL } from '../data/world.js';
 import { levelGate } from './goals.js';
@@ -264,13 +265,15 @@ export function unlocksAt(lvl) {
                 x.seedName +
                     (x.needProject
                         ? ` (après « ${PROJECTS[x.needProject].name} »)`
-                        : x.nord
-                          ? ' (au Grand Nord)'
-                          : x.oasis
-                            ? ' (à l’oasis)'
-                            : x.island
-                              ? ' (sur l’île)'
-                              : ''),
+                        : x.asie
+                          ? ' (aux Terres d’Asie)'
+                          : x.nord
+                            ? ' (au Grand Nord)'
+                            : x.oasis
+                              ? ' (à l’oasis)'
+                              : x.island
+                                ? ' (sur l’île)'
+                                : ''),
             );
         else add(['item', x.id], `${x.name} (au magasin)`);
     });
@@ -398,6 +401,7 @@ export function unlocksAt(lvl) {
     if (lvl === CAMPING.lvl) bigGo('village/camping', ['ui', 'tent'], 'Grande étape : le camping, la Maison de la ferme et la fête de la vallée (Village › Camping, Atelier › Maison)');
     if (lvl === OASIS.lvl) bigGo('farm/island#oasis', ['ui', 'oaVoyages'], 'Grande étape : l’oasis, après « La source d’Idris » (Ferme › Voyages)');
     if (lvl === NORD.lvl) bigGo('farm/island#nord', ['ui', 'noTraineau'], 'Grande étape : le Grand Nord, après « Le poêle de Tuomas » (Ferme › Voyages)');
+    if (lvl === ASIE.lvl) bigGo('farm/island#asie', ['ui', 'asJonque'], 'Grande étape : les Terres d’Asie, après « Les rizières de Mei » (Ferme › Voyages)');
     if (lvl === ORCHARD.lvl) big(['ui', 'appleCart'], 'Grande étape : le verger');
     if (lvl === GH.lvl) big(['ui', 'greenhouse'], 'Grande étape : la serre');
     if (lvl === DOMAINE_LVL) big(['ui', 'house'], 'Grande étape : le domaine, un puits pour vos pièces');
@@ -477,6 +481,7 @@ const UNLOCK_GO = [
     ['île aux Alizés', 'farm/island#isle'],
     ['oasis', 'farm/island#oasis'],
     ['Grand Nord', 'farm/island#nord'],
+    ['Terres d’Asie', 'farm/island#asie'],
     ['génétique', 'machines/lab'],
     ['grand hall du Comice', 'animals/comice'],
     ['Comice agricole', 'animals/comice'],
@@ -496,13 +501,15 @@ export function unlockGo(u) {
     const [kind, id] = u.icon || [];
     const name = plain(u.name);
     if (kind === 'seed')
-        return ITEMS[id] && ITEMS[id].nord
-            ? 'farm/island#nord'
-            : ITEMS[id] && ITEMS[id].oasis
-              ? 'farm/island#oasis'
-              : ITEMS[id] && ITEMS[id].island
-                ? 'farm/island#isle'
-                : 'market/shop#seeds';
+        return ITEMS[id] && ITEMS[id].asie
+            ? 'farm/island#asie'
+            : ITEMS[id] && ITEMS[id].nord
+              ? 'farm/island#nord'
+              : ITEMS[id] && ITEMS[id].oasis
+                ? 'farm/island#oasis'
+                : ITEMS[id] && ITEMS[id].island
+                  ? 'farm/island#isle'
+                  : 'market/shop#seeds';
     if (kind === 'animal') return 'market/shop#animals';
     if (kind === 'machine') return (state.machines || []).some(m => m.type === id) ? 'machines/workshop' : 'market/shop#machines';
     if (kind === 'item' && /nouvelles? recettes?/.test(name)) return 'produce:' + id;
@@ -566,7 +573,7 @@ const ACH_CALC = {
     honeyKinds: () => Object.keys(state.stats.honeyKinds || {}).length,
     showWins: () => (state.show && state.show.wins) || 0,
     fixedVars: () => (state.genetics ? Object.values(state.genetics.vars).filter(v => v && v.fixed).length : 0),
-    landHarvest: () => (state.stats.islandHarvest || 0) + (state.stats.oasisHarvest || 0) + (state.stats.nordHarvest || 0),
+    landHarvest: () => (state.stats.islandHarvest || 0) + (state.stats.oasisHarvest || 0) + (state.stats.nordHarvest || 0) + (state.stats.asieHarvest || 0),
 };
 export const achValue = a => (a.calc && ACH_CALC[a.id] ? ACH_CALC[a.id]() : state.stats[a.id] || 0);
 export const achClaimable = a => achClaimed(a) < 3 && achValue(a) >= a.tiers[achClaimed(a)];

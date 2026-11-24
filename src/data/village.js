@@ -272,6 +272,20 @@ export const VILLAGERS = {
         ch: 24,
         likes: ['rye', 'cloudberry', 'lingonberry', 'aronia', 'bread', 'butter', 'cheese', 'honey', 'milk'],
     },
+    mei: {
+        id: 'mei',
+        name: 'Mei',
+        role: 'La jardinière des rizières',
+        ch: 25,
+        likes: ['lotus', 'bambooShoot', 'yuzu', 'nashi', 'rice', 'tea', 'ginger', 'honey', 'peach'],
+    },
+    kenji: {
+        id: 'kenji',
+        name: 'Kenji',
+        role: 'Le maître de la roue et du wok',
+        ch: 26,
+        likes: ['shiitake', 'bokChoy', 'yuzu', 'ume', 'wasabi', 'rice', 'soy', 'salmon', 'plum'],
+    },
     duval: {
         id: 'duval',
         name: 'Maître Duval',
@@ -450,13 +464,27 @@ export const CHAPTERS = [
         map: 'nord',
         intro: 'Le poêle ronfle, le bois est rentré : le village du Nord respire. Ingrid, la boulangère, rouvre le four commun, et les bêtes du Nord cherchent une étable de rondins bien chauffée.',
     },
+    {
+        n: 25,
+        name: 'Les rizières de Mei',
+        lvl: 80,
+        map: 'asie',
+        intro: 'Au port, une jonque aux voiles de bambou a accosté : dans la vallée des terrasses, la grande écluse de montagne s’est effondrée. Mei a besoin de vous pour faire couler l’eau de terrasse en terrasse, remonter la roue à eau et replanter la bambouseraie.',
+    },
+    {
+        n: 26,
+        name: 'La jonque de Kenji',
+        lvl: 80,
+        map: 'asie',
+        intro: 'L’eau chante de terrasse en terrasse, les cerisiers bourgeonnent : la vallée s’éveille. Kenji veut bâtir le pavillon de bambou pour les bêtes d’Asie, armer la jonque de la soie et ouvrir le marché aux lanternes.',
+    },
 ];
 
 // 1.4 : les chapitres forment une seule histoire, jouée dans cet ordre (numéros 1 à 16 à l'écran)
 // 1.16 : récompenses des chantiers à l'échelle des 50 niveaux
 // expérience d'un chantier : au moins l'ancienne valeur, sinon une part de ce que coûte le niveau du chapitre
 export const STORY_REWARD = { xpFrac: 0.03, chapterCoins: lvl => 500 + lvl * lvl * 8, chapterRuban: 5 };
-export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12, 19, 20, 21, 22, 23, 24];
+export const CHAPTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8, 17, 18, 13, 14, 15, 16, 9, 10, 11, 12, 19, 20, 21, 22, 23, 24, 25, 26];
 export const chapterNum = n => CHAPTER_ORDER.indexOf(n) + 1;
 export const chapterAfter = n => CHAPTER_ORDER[CHAPTER_ORDER.indexOf(n) - 1] || 0;
 
@@ -1947,6 +1975,92 @@ Object.assign(PROJECTS, {
         x: 66,
         y: 62,
         map: 'nord',
+    },
+});
+
+// ---------------- 1.171 : Les Terres d'Asie, chapitre 25 « Les rizières de Mei » ----------------
+Object.assign(PROJECTS, {
+    asiaSluice: {
+        id: 'asiaSluice',
+        ch: 25,
+        name: 'La grande écluse',
+        vid: 'mei',
+        need: { stone: 160, beam: 40, plank: 60, tools: 20 },
+        before: 'Là-bas, chaque rizière boit l’eau qui descend de la terrasse au-dessus. L’écluse de pierre s’est rompue cet automne : aidez-moi à la relever, et la montagne chantera de nouveau.',
+        after: 'L’eau dévale les terrasses ! Les Terres d’Asie s’ouvrent dans l’onglet Ferme, volet Voyages. Posez vos rigoles de bambou pour guider l’eau en cascade jusqu’en bas.',
+        reward: 'Les Terres d’Asie : terrasses, bassin et rigoles (Ferme › Voyages)',
+        x: 24,
+        y: 56,
+        map: 'asie',
+    },
+    asiaWheel: {
+        id: 'asiaWheel',
+        ch: 25,
+        name: 'La roue à eau en bambou',
+        vid: 'mei',
+        need: { wood: 180, beam: 40, plank: 50, nail: 40 },
+        before: 'Quand le ruisseau faiblit, une grande roue de bambou remonte l’eau du torrent jusqu’au bassin du haut. Donnez-moi du bois et des clous, et elle tournera au rythme de vos mains.',
+        after: 'La grande roue tourne au-dessus du bassin ! Trois fois par jour, lancez les augets en rythme pour faire le plein d’eau de montagne.',
+        reward: 'La roue à eau : remplir le bassin en rythme, trois fois par jour',
+        x: 74,
+        y: 44,
+        map: 'asie',
+    },
+    asiaGrove: {
+        id: 'asiaGrove',
+        ch: 25,
+        name: 'La bambouseraie en fleurs',
+        vid: 'mei',
+        need: { lotus: 25, bambooShoot: 25, shiitake: 25, yuzu: 10 },
+        before: 'Une vallée sans bosquet ni verger n’a pas d’âme. Apportez-moi vos premières récoltes de lotus, de bambou, de shiitakes et de yuzus pour inaugurer la bambouseraie en fleurs.',
+        after: 'Les fleurs blanches embaument toutes les terrasses ! Je vous laisse trois jeunes yuzus pour votre verger d’Asie, l’atelier de douceurs s’ouvre, et 5 rubans de toute la vallée.',
+        reward: 'Trois yuzus offerts, l’atelier de douceurs d’Asie et 5 rubans',
+        x: 48,
+        y: 22,
+        map: 'asie',
+    },
+});
+
+// ---------------- 1.171 : Les Terres d'Asie, chapitre 26 « La jonque de Kenji » ----------------
+Object.assign(PROJECTS, {
+    asiaPavilion: {
+        id: 'asiaPavilion',
+        ch: 26,
+        name: 'Le pavillon de bambou',
+        vid: 'kenji',
+        need: { plank: 100, beam: 60, wood: 160, nail: 40, feed: 60 },
+        before: 'Les cerfs sika des collines, nos vers à soie et les poules soie attendent un vrai pavillon aéré en bambou. Bâtissons-le ensemble, au frais près de l’eau.',
+        after: 'Le pavillon de bambou est prêt aux Terres d’Asie ! Cerfs sika, vers à soie et poules soie vous attendent au marché, et le panier vapeur est désormais ouvert.',
+        reward: 'Le pavillon de bambou, ses trois bêtes et le panier vapeur',
+        x: 18,
+        y: 34,
+        map: 'asie',
+    },
+    asiaJunk: {
+        id: 'asiaJunk',
+        ch: 26,
+        name: 'L’embarcadère de la jonque',
+        vid: 'kenji',
+        need: { beam: 70, plank: 90, cloth: 50, silkThread: 10, sikaMilk: 10 },
+        before: 'Ma jonque aux voiles lattées peut descendre le fleuve jusqu’au grand port d’Orient. Il lui faut un quai solide, de la toile pour ses voiles, du fil de soie et du lait de sika pour la traversée.',
+        after: 'La jonque est amarrée ! Trois cerfs sika descendent vos caisses au quai : elle revient sept heures plus tard avec un beau pactole, et parfois de la badiane étoilée.',
+        reward: 'La jonque de la soie : vendre au grand port d’Orient',
+        x: 82,
+        y: 24,
+        map: 'asie',
+    },
+    asiaLanterns: {
+        id: 'asiaLanterns',
+        ch: 26,
+        name: 'Le marché aux lanternes',
+        vid: 'kenji',
+        need: { plank: 60, cloth: 40, lotus: 30, yuzu: 20, silkieEgg: 15 },
+        before: 'Quand le soir tombe sur les rizières, on allume cent lanternes rouges au-dessus de l’eau. Apportez-moi des lotus, des yuzus et des œufs de poule soie : toute la vallée fera la fête.',
+        after: 'Les lanternes se reflètent dans chaque terrasse ! La renommée de votre vallée traverse la mer : la jonque rapporte 15 % de plus, et la vallée vous offre 5 rubans.',
+        reward: 'La jonque rapporte 15 % de plus, et 5 rubans',
+        x: 64,
+        y: 66,
+        map: 'asie',
     },
 });
 

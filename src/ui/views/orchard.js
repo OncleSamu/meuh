@@ -44,7 +44,8 @@ const groundHtml = t =>
         .join('');
 
 // zone : 'farm' (le verger de la ferme) ou 'island' (le verger de l'île)
-export const anchorOf = (z, k) => `${{ island: 'itree', oasis: 'otree', nord: 'ntree', oasisV: 'otreev', nordV: 'ntreev' }[z] || 'tree'}:${k}`;
+export const anchorOf = (z, k) =>
+    `${{ island: 'itree', oasis: 'otree', nord: 'ntree', asie: 'atree', oasisV: 'otreev', nordV: 'ntreev', asieV: 'atreev' }[z] || 'tree'}:${k}`;
 const treeAt = (z, k) => (G.slotsOf(z)[k] || {}).tree;
 
 defineLive('tree', arg => {
@@ -178,7 +179,12 @@ defineSheet('tree', {
             ['ui', 'calendar'],
             `${t.drops} fruit${t.drops > 1 ? 's donnés' : ' donné'}${G.lifeMax(t) === Infinity ? ' : il ne vieillit jamais' : ` sur une vie d’environ ${Math.round(G.lifeMax(t))}`}`,
         ]);
-        if (d.nord) {
+        if (d.asie) {
+            info.push([
+                ['ui', 'asEau'],
+                'Aux Terres d’Asie : au verger il pousse sans consommer le bassin ; sur une terrasse irriguée en cascade il accélère jusqu’à +30 %',
+            ]);
+        } else if (d.nord) {
             info.push([
                 ['ui', 'noChaleur'],
                 'Au Grand Nord : il pousse à plein régime près d’un poêle allumé ; ailleurs il va au tiers de sa vitesse, et dort la nuit de gel',
@@ -222,8 +228,19 @@ export function setupOrchard() {
                               ? 'Agrandir le verger de l’oasis'
                               : z === 'nordV'
                                 ? 'Agrandir le verger du Nord'
-                                : 'Agrandir le verger',
-                    icon: z === 'island' ? ['item', 'coconut'] : z === 'oasisV' ? ['item', 'date'] : z === 'nordV' ? ['item', 'spruce'] : ['item', 'apple'],
+                                : z === 'asieV'
+                                  ? 'Agrandir le verger d’Asie'
+                                  : 'Agrandir le verger',
+                    icon:
+                        z === 'island'
+                            ? ['item', 'coconut']
+                            : z === 'oasisV'
+                              ? ['item', 'date']
+                              : z === 'nordV'
+                                ? ['item', 'spruce']
+                                : z === 'asieV'
+                                  ? ['item', 'yuzu']
+                                  : ['item', 'apple'],
                     text: 'Une place de plus pour planter un arbre.',
                     cost: G.slotCost(z),
                     run: at => G.buySlot(at, z),

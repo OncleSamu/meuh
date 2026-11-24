@@ -20,7 +20,7 @@ import { takeVarSeed, harvestVariety, varRank, varExtra, varGrowth } from './gen
 const COIN = ['ui', 'coin'];
 
 export const islandOpen = () => projectDone(ISLAND.project);
-export const islandCrops = () => Object.values(ITEMS).filter(i => i.type === 'crop' && i.island && !i.oasis && !i.nord);
+export const islandCrops = () => Object.values(ITEMS).filter(i => i.type === 'crop' && i.island && !i.oasis && !i.nord && !i.asie);
 export const islandCropOk = d => (lvOk(d) && storyOk(d)) || state.seeds[d.id] > 0;
 export const islandPlots = () => (state.island ? state.island.plots : []);
 const openPlots = () => islandPlots().filter(p => p.open).length;
@@ -65,7 +65,7 @@ export function buyIslandPlot(at) {
 export function plantIsland(k, id, at, quiet) {
     const p = islandPlots()[k],
         d = ITEMS[id];
-    if (!p || !p.open || p.id || !d || !d.island || d.oasis || d.nord || d.type !== 'crop') return false;
+    if (!p || !p.open || p.id || !d || !d.island || d.oasis || d.nord || d.asie || d.type !== 'crop') return false;
     if (!islandCropOk(d)) {
         if (!quiet) toast(`${d.seedName} : débloqué au niveau ${d.reqLvl}`, ['ui', 'lock']);
         return false;
@@ -96,7 +96,7 @@ export function plantIsland(k, id, at, quiet) {
 export function plantIslandVar(k, vid, at) {
     const p = islandPlots()[k];
     const v = state.genetics && state.genetics.vars[vid];
-    if (!p || !p.open || p.id || !v || !ITEMS[v.base].island || ITEMS[v.base].oasis || ITEMS[v.base].nord) return false;
+    if (!p || !p.open || p.id || !v || !ITEMS[v.base].island || ITEMS[v.base].oasis || ITEMS[v.base].nord || ITEMS[v.base].asie) return false;
     if (!takeVarSeed(vid)) {
         toast('Plus de graines de cette variété', ['ui', 'flowers']);
         return false;
