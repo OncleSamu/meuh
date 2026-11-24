@@ -138,3 +138,53 @@ test('1.167 : synchro PC <-> Téléphone (activation, liaison, pull auto, détec
     assert.equal(G.cloudDisable(), true);
     assert.equal(G.cloudStatus().enabled, false);
 });
+
+test('1.170 : anti-boucle au changement d’onglet (onlyIfDirty, keepalive pendingPushTs, coupe-circuit et zéro refresh sur markLocalMod)', async () => {
+    const srv = fakeSupabaseServer();
+    G.cloudSetFetcher(srv.fetch);
+    let reloaded = 0;
+    let updates = 0;
+    G.cloudSetHooks({ onReload: () => reloaded++, onUpdate: () => updates++ });
+
+    const store = memStore();
+    setStore(store);
+    setState(newState());
+    state.level = 30;
+    state.money = 50000;
+    assert.equal(await G.cloudEnable(), true);
+    const tok = G.cloudStatus().token;
+
+    // 1. cloudMarkLocalMod ne déclenche pas de refresh UI (onUpdate)
+    const beforeUpdates = updates;
+    G.cloudMarkLocalMod();
+    assert.equal(updates, beforeUpdates, 'cloudMarkLocalMod reste silencieux côté UI');
+
+    // 2. Sans modification depuis le dernier push, onlyIfDirty n'envoie rien
+    const cfg0 = JSON.parse(store.getItem('meuh_cloud_v1'));
+    cfg0.localModAt = cfg0.lastPushAt;
+    store.setItem('meuh_cloud_v1', JSON.stringify(cfg0));
+    assert.equal(await G.cloudPush({ keepalive: true, silent: true, onlyIfDirty: true }), false);
+
+    // 3. Un envoi keepalive dont la réponse n'a pas eu le temps de mettre à jour lastSyncAt est reconnu au prochain onglet sans recharger
+    const fakeTs = cfg0.lastSyncAt + 10000;
+    const payload = await G.packSave(JSON.stringify(state));
+    srv.rows.set(tok, { payload, updated_at: fakeTs, meta: 'Niveau 30', device: 'Android' });
+    cfg0.pendingPushTs = fakeTs;
+    store.setItem('meuh_cloud_v1', JSON.stringify(cfg0));
+    const resKeepalive = await G.cloudSync({ autoApply: true, silent: true });
+    assert.equal(resKeepalive.action, 'noop', 'reconnaît son propre push keepalive sans recharger');
+    assert.equal(reloaded, 0);
+
+    // 4. Coupe-circuit anti-boucle : impossible d'auto-recharger deux fois en moins de 15 s
+    const ts2 = fakeTs + 20000;
+    srv.rows.set(tok, { payload, updated_at: ts2, meta: 'Niveau 31', device: 'PC Windows' });
+    const resFirst = await G.cloudSync({ autoApply: true, silent: true });
+    assert.equal(resFirst.action, 'pulled');
+    assert.equal(reloaded, 1);
+
+    const ts3 = ts2 + 20000;
+    srv.rows.set(tok, { payload, updated_at: ts3, meta: 'Niveau 32', device: 'PC Windows' });
+    const resSecond = await G.cloudSync({ autoApply: true, silent: true });
+    assert.equal(resSecond.action, 'conflict', 'le coupe-circuit empêche un 2e rechargement immédiat en boucle');
+    assert.equal(reloaded, 1);
+});

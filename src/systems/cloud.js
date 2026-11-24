@@ -52,7 +52,7 @@ function readCfg() {
     }
 }
 
-function writeCfg(patch) {
+function writeCfg(patch, { notify = true } = {}) {
     const store = getStore();
     const next = { ...readCfg(), ...patch };
     if (store) {
@@ -62,7 +62,7 @@ function writeCfg(patch) {
             // stockage indisponible
         }
     }
-    notifyHook();
+    if (notify) notifyHook();
     return next;
 }
 
@@ -114,14 +114,14 @@ export function cloudShareUrl(token = readCfg().token) {
 export function cloudMarkLocalMod() {
     const cfg = readCfg();
     if (!cfg.token) return;
-    writeCfg({ localModAt: now() });
+    writeCfg({ localModAt: now() }, { notify: false });
 }
 
 export function cloudConsumeSyncNotice() {
     const cfg = readCfg();
     if (!cfg.justSyncedFrom) return '';
     const from = cfg.justSyncedFrom;
-    writeCfg({ justSyncedFrom: '' });
+    writeCfg({ justSyncedFrom: '' }, { notify: false });
     return from;
 }
 
@@ -167,10 +167,14 @@ export function cloudDisable() {
     return true;
 }
 
-export async function cloudPush({ force = false, keepalive = false, silent = true } = {}) {
+export async function cloudPush({ force = false, keepalive = false, silent = true, onlyIfDirty = false } = {}) {
     const cfg = readCfg();
     if (!cfg.token) return false;
-    if (busy && !keepalive) return false;
+    if (busy) return false;
+    if (onlyIfDirty && !force) {
+        const synced = Math.max(cfg.lastPushAt || 0, cfg.lastSyncAt || 0);
+        if ((cfg.localModAt || 0) <= synced) return false;
+    }
     if (!keepalive) {
         busy = true;
         notifyHook();
@@ -178,6 +182,7 @@ export async function cloudPush({ force = false, keepalive = false, silent = tru
     try {
         const ts = now();
         state.lastSaved = ts;
+        if (keepalive) writeCfg({ pendingPushTs: ts }, { notify: false });
         const payload = await packSave(JSON.stringify(state));
         const res = await rpc(
             'meuh_push',
@@ -193,12 +198,16 @@ export async function cloudPush({ force = false, keepalive = false, silent = tru
         );
         if (res && res.ok) {
             pendingConflict = null;
-            writeCfg({
-                lastSyncAt: ts,
-                lastPushAt: ts,
-                localModAt: ts,
-                lastError: '',
-            });
+            writeCfg(
+                {
+                    lastSyncAt: ts,
+                    lastPushAt: ts,
+                    localModAt: ts,
+                    pendingPushTs: 0,
+                    lastError: '',
+                },
+                { notify: !keepalive },
+            );
             return true;
         }
         if (res && res.conflict && res.payload) {
@@ -220,7 +229,7 @@ export async function cloudPush({ force = false, keepalive = false, silent = tru
             if (!silent) toast('Une sauvegarde plus récente existe dans le cloud : choisis dans Réglages › Sauvegarde.', ['ui', 'download']);
             return false;
         }
-        writeCfg({ lastError: 'Impossible d’envoyer la sauvegarde.' });
+        writeCfg({ lastError: 'Impossible d’envoyer la sauvegarde.' }, { notify: !keepalive });
         return false;
     } catch {
         if (!keepalive) writeCfg({ lastError: 'Hors ligne ou serveur indisponible.' });
@@ -254,18 +263,39 @@ export async function cloudSync({ autoApply = true, silent = true } = {}) {
         const lastSync = cfg.lastSyncAt || 0;
         const localMod = cfg.localModAt || 0;
 
+        // 1.170 : reconnaît notre propre envoi keepalive d'un onglet qui vient de se fermer (évite toute boucle de rechargement)
+        if (cfg.pendingPushTs && Math.abs(serverTs - cfg.pendingPushTs) <= 1000) {
+            writeCfg(
+                {
+                    lastSyncAt: Math.max(lastSync, serverTs),
+                    lastPushAt: Math.max(cfg.lastPushAt || 0, serverTs),
+                    pendingPushTs: 0,
+                    lastError: '',
+                },
+                { notify: !silent },
+            );
+            if (!silent) toast('Ta ferme est déjà à jour avec le cloud.', ['ui', 'check']);
+            return { ok: true, action: 'noop' };
+        }
+
         // Le cloud est plus récent que notre dernière synchro
         if (serverTs > lastSync + 2000) {
             const parsed = await readCode(res.payload);
             const localChanged = localMod > lastSync + 5000;
-            if (autoApply && !localChanged) {
+            const justAutoReloaded = !!(cfg.lastAutoReloadAt && now() - cfg.lastAutoReloadAt < 15000);
+            if (autoApply && !localChanged && !justAutoReloaded) {
                 if (replaceSave(parsed.json)) {
-                    writeCfg({
-                        lastSyncAt: serverTs,
-                        localModAt: serverTs,
-                        lastError: '',
-                        justSyncedFrom: res.device || 'le cloud',
-                    });
+                    writeCfg(
+                        {
+                            lastSyncAt: serverTs,
+                            localModAt: serverTs,
+                            pendingPushTs: 0,
+                            lastAutoReloadAt: now(),
+                            lastError: '',
+                            justSyncedFrom: res.device || 'le cloud',
+                        },
+                        { notify: false },
+                    );
                     reloadHook();
                     return { ok: true, action: 'pulled' };
                 }
@@ -291,7 +321,7 @@ export async function cloudSync({ autoApply = true, silent = true } = {}) {
             return { ok: pushed, action: 'pushed' };
         }
 
-        writeCfg({ lastError: '' });
+        writeCfg({ lastError: '' }, { notify: !silent });
         if (!silent) toast('Ta ferme est déjà à jour avec le cloud.', ['ui', 'check']);
         return { ok: true, action: 'noop' };
     } catch {

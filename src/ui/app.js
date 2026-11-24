@@ -183,10 +183,11 @@ export function go(path, opts = {}) {
     if (changed && !state.settings.calm) {
         const el = viewEl(currentPath());
         if (el) {
+            clearTimeout(el._enterT);
             el.classList.remove('enter-f', 'enter-r', 'enter-l');
             void el.offsetWidth;
             el.classList.add('enter-' + dir);
-            setTimeout(() => el.classList.remove('enter-' + dir), 260);
+            el._enterT = setTimeout(() => el.classList.remove('enter-' + dir), 260);
         }
     }
 }
@@ -399,10 +400,12 @@ export function live() {
 let saveTimer = null;
 let noSave = false;
 let dirty = false;
+let userDirty = false;
 export const markDirty = () => (dirty = true);
 export const stopSaving = () => (noSave = true);
-export function save() {
+export function save(userMod = true) {
     dirty = true;
+    if (userMod) userDirty = true;
     if (noSave || saveTimer) return;
     saveTimer = setTimeout(saveNow, 400);
 }
@@ -413,7 +416,9 @@ export function saveNow() {
     clearTimeout(saveTimer);
     saveTimer = null;
     if (noSave) return;
+    const hadUserMod = userDirty;
     dirty = false;
+    userDirty = false;
     // 1.44 : plus de place sur l'appareil ? on libère les copies de secours et on réessaie, puis on prévient (une fois)
     if (!writeSave() && getStore()) {
         try {
@@ -429,7 +434,7 @@ export function saveNow() {
     }
     saveWarned = false;
     G.pushBackup();
-    G.cloudMarkLocalMod();
+    if (hadUserMod) G.cloudMarkLocalMod();
 }
 let saveWarned = false;
 
@@ -505,10 +510,11 @@ export const tabEl = id => document.querySelector(`#tabs [data-tab="${id}"]`) ||
 
 export function setupApp() {
     setupActions();
+    const NAV_ACTS = new Set(['go', 'sub', 'open', 'sheetClose', 'momentOk']);
     // après chaque geste : on redessine et on sauvegarde
-    afterAction(() => {
+    afterAction(name => {
         refresh();
-        save();
+        save(!NAV_ACTS.has(name));
     });
     actions({
         go: (el, d) => go(d.path, { ...d }), // une copie : le dataset du bouton transforme tout en texte

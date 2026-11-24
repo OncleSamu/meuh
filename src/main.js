@@ -9,7 +9,7 @@ import { setupApp, refresh, live, markDirty, saveIfDirty, stopSaving, tabEl, ui,
 import { setupSound, SoundEngine } from './ui/sound.js';
 import { setupTypo } from './ui/typo.js';
 import { setupFx } from './ui/fx.js';
-import { setupSheets, openSheet } from './ui/sheets.js';
+import { setupSheets, openSheet, anySheet } from './ui/sheets.js';
 import { setupMoments, pushMoment, closeMoment } from './ui/moments.js';
 import { setupToolbar } from './ui/toolbar.js';
 import { updateScene } from './ui/scene.js';
@@ -227,20 +227,24 @@ function start() {
         }
     };
     setInterval(secondOfGame, 1000);
+    let cloudReloading = false;
     document.addEventListener('visibilitychange', () => {
+        if (cloudReloading) return;
         if (document.hidden) {
             saveIfDirty();
-            G.cloudPush({ keepalive: true, silent: true });
+            G.cloudPush({ keepalive: true, silent: true, onlyIfDirty: true });
         } else {
             secondOfGame();
             G.cloudMaybeAutoSync();
         }
     });
     addEventListener('pagehide', () => {
+        if (cloudReloading) return;
         saveIfDirty();
-        G.cloudPush({ keepalive: true, silent: true });
+        G.cloudPush({ keepalive: true, silent: true, onlyIfDirty: true });
     });
     setInterval(() => {
+        if (cloudReloading) return;
         saveIfDirty();
         G.cloudMaybeAutoPush();
     }, 20000);
@@ -257,10 +261,13 @@ function start() {
     // 1.167 : Synchro cloud Supabase (PC <-> Téléphone)
     G.cloudSetHooks({
         onReload: () => {
+            cloudReloading = true;
             stopSaving();
             location.reload();
         },
-        onUpdate: () => refresh(),
+        onUpdate: () => {
+            if (anySheet()) refresh();
+        },
     });
     const syncedFrom = G.cloudConsumeSyncNotice();
     if (syncedFrom) toast(`Ferme synchronisée depuis ${syncedFrom} !`, ['ui', 'check']);

@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.170",
+  "title": "Synchro cloud : correctif rebouclage d’onglet sur téléphone",
+  "date": "24 novembre 2026",
+  "items": [
+   "Correction d’un bug de synchro cloud sur mobile qui pouvait faire recharger l’interface en boucle à l’ouverture ou au retour sur un onglet (envoi keepalive bloqué pendant un rechargement, reconnaissance de ses propres envois d’onglet fermé et coupe-circuit anti-boucle de 15 s)",
+   "Un appareil resté ouvert sans action (ticks passifs) ou une simple navigation entre onglets ne déclenche plus d’envoi cloud ni de redessin inutile en arrière-plan"
+  ]
+ },
+ {
   "v": "1.169",
   "title": "Animaux : défilement propre sans bandeau figé",
   "date": "24 novembre 2026",
