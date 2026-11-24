@@ -429,6 +429,7 @@ export function saveNow() {
     }
     saveWarned = false;
     G.pushBackup();
+    G.cloudMarkLocalMod();
 }
 let saveWarned = false;
 

@@ -2071,3 +2071,115 @@ button.short.link {
     width: 24px;
     height: 24px;
 }
+
+/* 1.167 : Synchro cloud Supabase (PC <-> Téléphone) */
+.cloud-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 2px solid var(--wood-d);
+    background: var(--paper, #fffaf0);
+}
+.cloud-box.on {
+    border-color: #2e7d32;
+    background: linear-gradient(180deg, #f4fde9, #fffaf0);
+}
+.cloud-box.conflict {
+    border-color: #c98808;
+    background: linear-gradient(180deg, #fff8d6, #fffaf0);
+}
+.cloud-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: #6b4200;
+}
+.cloud-st {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--ink-soft);
+}
+.cloud-st.ok {
+    color: #256829;
+}
+.cloud-st.bad {
+    color: #a33228;
+}
+.cloud-st .ico.sm,
+.cloud-head .ico.sm {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+.cloud-code-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.cloud-code {
+    flex: 1;
+    min-width: 0;
+    padding: 7px 10px;
+    border-radius: 10px;
+    background: #fffdf8;
+    border: 1.5px dashed var(--wood-d);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.86rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    text-align: center;
+    user-select: all;
+    overflow-x: auto;
+}
+.cloud-link-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.cloud-link-row input {
+    flex: 1;
+    min-width: 0;
+    padding: 7px 10px;
+    border-radius: 10px;
+    border: 1.5px solid var(--wood-d);
+    background: #fffdf8;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ink);
+}
+.cloud-cmp {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.cloud-cmp > div {
+    padding: 7px 9px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1.5px solid rgba(90, 62, 34, 0.25);
+}
+.cloud-cmp small {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--ink-soft);
+}
+.cloud-cmp b {
+    font-size: 0.8rem;
+}
+.cloud-sub-btns {
+    margin-top: -2px;
+}
+.cloud-foot-link {
+    display: flex;
+    justify-content: flex-end;
+}
+

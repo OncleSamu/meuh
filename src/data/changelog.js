@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.167",
+  "title": "Synchro cloud PC et téléphone",
+  "date": "24 novembre 2026",
+  "items": [
+   "Nouvelle synchro cloud facultative dans Réglages › Copies : active-la en un clic pour recevoir un code de ferme secret et un lien magique à ouvrir sur ton autre appareil (PC ou téléphone), sans compte ni mot de passe",
+   "Une fois liés, tes appareils se synchronisent automatiquement à l’ouverture, au retour sur l’onglet, pendant la partie et à la fermeture",
+   "Protection anti-écrasement : si deux appareils ont joué séparément hors ligne, un écran comparatif te laisse choisir quelle ferme garder, avec copie locale de secours automatique"
+  ]
+ },
+ {
   "v": "1.166",
   "title": "Nouvelle recette : Assiette de ćevapi",
   "date": "24 novembre 2026",

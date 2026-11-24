@@ -2,10 +2,10 @@
 import { state } from './core/state.js';
 import { now } from './core/clock.js';
 import { setView } from './core/view.js';
-import { emit } from './core/bus.js';
+import { emit, toast } from './core/bus.js';
 import * as G from './systems/index.js';
 import { actions } from './ui/dom.js';
-import { setupApp, refresh, live, markDirty, saveIfDirty, tabEl, ui, currentPath } from './ui/app.js';
+import { setupApp, refresh, live, markDirty, saveIfDirty, stopSaving, tabEl, ui, currentPath } from './ui/app.js';
 import { setupSound, SoundEngine } from './ui/sound.js';
 import { setupTypo } from './ui/typo.js';
 import { setupFx } from './ui/fx.js';
@@ -227,8 +227,23 @@ function start() {
         }
     };
     setInterval(secondOfGame, 1000);
-    document.addEventListener('visibilitychange', () => !document.hidden && secondOfGame());
-    setInterval(saveIfDirty, 20000);
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            saveIfDirty();
+            G.cloudPush({ keepalive: true, silent: true });
+        } else {
+            secondOfGame();
+            G.cloudMaybeAutoSync();
+        }
+    });
+    addEventListener('pagehide', () => {
+        saveIfDirty();
+        G.cloudPush({ keepalive: true, silent: true });
+    });
+    setInterval(() => {
+        saveIfDirty();
+        G.cloudMaybeAutoPush();
+    }, 20000);
     const shown = fn => () => !document.hidden && fn();
     setInterval(shown(wanderAnimals), 1600);
     setInterval(shown(wanderDog), 2200);
@@ -238,6 +253,24 @@ function start() {
         tutoTick();
     });
     setupPwa();
+
+    // 1.167 : Synchro cloud Supabase (PC <-> Téléphone)
+    G.cloudSetHooks({
+        onReload: () => {
+            stopSaving();
+            location.reload();
+        },
+        onUpdate: () => refresh(),
+    });
+    const syncedFrom = G.cloudConsumeSyncNotice();
+    if (syncedFrom) toast(`Ferme synchronisée depuis ${syncedFrom} !`, ['ui', 'check']);
+    const hashToken = G.cloudReadHashToken();
+    if (hashToken) {
+        openSheet('settings', { tab: 'save' });
+        G.cloudLinkToken(hashToken);
+    } else if (G.cloudStatus().enabled) {
+        G.cloudSync({ autoApply: true, silent: true });
+    }
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);

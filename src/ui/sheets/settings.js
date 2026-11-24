@@ -7,7 +7,7 @@ import * as G from '../../systems/index.js';
 import { actions, esc, QUIET } from '../dom.js';
 import { ico } from '../icons.js';
 import { btn, toggle, navRow } from '../kit.js';
-import { saveNow, stopSaving, refresh } from '../app.js';
+import { saveNow, stopSaving, refresh, ui } from '../app.js';
 import { defineSheet, sheetOpts, closeAll } from '../sheets.js';
 import { SoundEngine } from '../sound.js';
 import { confirmTap } from '../confirm.js';
@@ -25,17 +25,74 @@ const group = (title, rows) => `<div class="set-group"><div class="set-title">${
 const slider = (label, key, act) =>
     `<label class="row slider"><span class="row-main"><span>${label}</span></span><input type="range" min="0" max="100" step="5" value="${Math.round((state.settings[key] === undefined ? (key === 'ambVol' ? 0.6 : 0.8) : state.settings[key]) * 100)}" data-input="${act}" data-key="${key}"></label>`;
 
-function mainPage() {
+function cloudSection(o) {
+    const cs = G.cloudStatus();
+    if (cs.conflict) {
+        const cf = cs.conflict;
+        return `<div class="cloud-box conflict">
+            <div class="cloud-head">${ico(['ui', 'download'], 'ico sm')}<b>${cf.linking ? 'Ferme trouvée dans le cloud !' : 'Sauvegarde plus récente dans le cloud'}</b></div>
+            <div class="cloud-cmp">
+                <div><small>Dans le cloud · ${esc(cf.device)} (${G.backupAgo(cf.updatedAt)})</small><b>${esc(cf.meta)}</b></div>
+                <div><small>Sur cet appareil</small><b>${G.saveSummary(state)}</b></div>
+            </div>
+            <div class="row-btns">
+                ${btn('Charger celle du cloud', { act: 'cloudAcceptPull', kind: 'green', size: 'sm' })}
+                ${btn('Garder cet appareil', { act: 'cloudForcePush', kind: 'gold', size: 'sm' })}
+            </div>
+            <p class="card-sub">Une copie locale de secours est gardée automatiquement avant tout chargement.</p>
+            <div class="cloud-foot-link"><button type="button" class="chip" data-act="cloudDismiss">Annuler</button></div>
+        </div>`;
+    }
+    if (cs.enabled) {
+        const statusLine = cs.busy
+            ? `<span class="cloud-st">${ico(['ui', 'loop'], 'ico sm')}Synchronisation…</span>`
+            : cs.lastError
+              ? `<span class="cloud-st bad">${ico(['ui', 'info'], 'ico sm')}${esc(cs.lastError)}</span>`
+              : `<span class="cloud-st ok">${ico(['ui', 'check'], 'ico sm')}Synchronisée ${cs.lastSyncAt ? G.backupAgo(cs.lastSyncAt) : ''} · ${esc(cs.device)}</span>`;
+        const linkForm = o && o.showCloudLink
+            ? `<div class="cloud-link-row"><input type="text" id="cloud-token-in" placeholder="MEUH-XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters">${btn('Lier', { act: 'cloudLink', kind: 'green', size: 'sm' })}</div>`
+            : '';
+        return `<div class="cloud-box on">
+            ${statusLine}
+            <div class="cloud-code-row">
+                <code class="cloud-code" id="cloud-code">${esc(cs.token)}</code>
+                ${btn('Copier', { act: 'cloudCopyToken', size: 'sm', kind: 'gold' })}
+            </div>
+            <p class="card-sub">Ouvre le lien magique ou entre ce code une seule fois sur ton autre appareil (PC ou téléphone) : ensuite, la sauvegarde se fait toute seule.</p>
+            <div class="row-btns">
+                ${btn(navigator.share ? 'Partager le lien' : 'Copier le lien', { act: 'cloudShareLink', kind: 'green', size: 'sm', icon: ['ui', 'share'] })}
+                ${btn('Synchroniser', { act: 'cloudSyncNow', size: 'sm', icon: ['ui', 'loop'], disabled: cs.busy })}
+            </div>
+            <div class="row-btns cloud-sub-btns">
+                ${btn('Autre code', { act: 'cloudToggleLink', size: 'sm' })}
+                ${btn('Désactiver', { act: 'cloudDisable', kind: 'red', size: 'sm' })}
+            </div>
+            ${linkForm}
+        </div>`;
+    }
+    return `<div class="cloud-box">
+        <p class="card-sub">Retrouve automatiquement ta ferme sur PC et téléphone, sans compte ni mot de passe.</p>
+        ${btn(cs.busy ? 'Activation…' : 'Activer la synchro cloud', { act: 'cloudEnable', kind: 'gold', wide: true, icon: ['ui', 'share'], disabled: cs.busy })}
+        <div class="set-sub">Déjà activé sur un autre appareil ? Entre ton code de ferme :</div>
+        <div class="cloud-link-row">
+            <input type="text" id="cloud-token-in" placeholder="MEUH-XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters">
+            ${btn('Lier', { act: 'cloudLink', kind: 'green', size: 'sm', disabled: cs.busy })}
+        </div>
+    </div>`;
+}
+
+function mainPage(o) {
     const s = set(state);
     const inst = installState();
     const backups = G.readBackups();
+    const cs = G.cloudStatus();
     // 1.74.2 : quatre onglets au lieu d'une longue page
     const T = innerTabs(
         'settings',
         [
             ['sound', 'Son', null, 0],
             ['comfort', 'Confort', null, 0],
-            ['save', 'Copies', null, 0],
+            ['save', 'Copies', null, cs.conflict ? 1 : 0],
             ['help', 'Aide', null, 0],
         ],
         'sound',
@@ -116,8 +173,9 @@ function mainPage() {
                 ]
               : t === 'save'
                 ? [
+                      group('Synchro cloud (PC et téléphone)', cloudSection(o)),
                       group(
-                          'Sauvegarde',
+                          'Sauvegarde manuelle',
                           navRow(
                               'Exporter ma ferme',
                               'setPage',
@@ -153,7 +211,7 @@ function mainPage() {
                                   : ''),
                       ),
                       btn('Recommencer à zéro', { act: 'resetGame', kind: 'red', wide: true }),
-                      `<p class="card-sub center set-foot">Meuh ${VERSION} · fait avec amour, sans serveur ni compte : votre ferme reste sur votre appareil.</p>`,
+                      `<p class="card-sub center set-foot">Meuh ${VERSION} · fait avec amour · synchro cloud facultative, sans compte ni mot de passe.</p>`,
                   ];
     return T.html + parts.join('');
 }
@@ -213,6 +271,7 @@ defineSheet('settings', {
     static: true,
     open(o) {
         o.page = 'main';
+        if (o.tab) ui.sel['it:settings'] = o.tab;
         G.tip('theme');
     },
     title: o => (o.page === 'main' ? 'Réglages' : `<button class="back" data-act="setPage" data-p="main">${ico(['ui', 'back'])}</button>${PAGES[o.page][0]}`),
@@ -357,6 +416,64 @@ export function setupSettings() {
             const i = document.getElementById('rename-dog');
             if (i && G.renameDog(i.value)) i.blur();
         },
+        cloudEnable: () => {
+            saveNow();
+            G.cloudEnable();
+        },
+        cloudLink: () => {
+            const i = document.getElementById('cloud-token-in');
+            if (!i || !i.value.trim()) return toast('Colle ton code de ferme (MEUH-XXXX-XXXX-XXXX).', ['ui', 'info']);
+            saveNow();
+            G.cloudLinkToken(i.value.trim()).then(r => {
+                if (r && r.ok && o()) o().showCloudLink = false;
+            });
+        },
+        cloudCopyToken: async () => {
+            const token = G.cloudStatus().token;
+            if (!token) return;
+            try {
+                await navigator.clipboard.writeText(token);
+                toast('Code de ferme copié !', ['ui', 'check']);
+            } catch {
+                toast(`Code : ${token}`, ['ui', 'info']);
+            }
+        },
+        cloudShareLink: async () => {
+            const url = G.cloudShareUrl();
+            if (!url) return;
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title: 'Synchroniser ma ferme Meuh', text: 'Ouvre ce lien sur ton autre appareil pour synchroniser ta ferme Meuh :', url });
+                    return;
+                } catch {
+                    // fallback copie
+                }
+            }
+            try {
+                await navigator.clipboard.writeText(url);
+                toast('Lien magique copié : ouvre-le sur ton autre appareil !', ['ui', 'check']);
+            } catch {
+                toast('Copie le code ci-dessus sur ton autre appareil.', ['ui', 'info']);
+            }
+        },
+        cloudSyncNow: () => {
+            saveNow();
+            G.cloudSync({ autoApply: true, silent: false });
+        },
+        cloudToggleLink: () => {
+            if (o()) o().showCloudLink = !o().showCloudLink;
+        },
+        cloudDisable: el => {
+            if (!confirmTap('cloudDisable', el, 'Touchez encore pour désactiver')) return;
+            G.cloudDisable();
+            if (o()) o().showCloudLink = false;
+        },
+        cloudAcceptPull: () => G.cloudAcceptPull(),
+        cloudForcePush: () => {
+            saveNow();
+            G.cloudForcePush();
+        },
+        cloudDismiss: () => G.cloudDismissConflict(),
     });
     // un fichier choisi : on le lit comme un code collé
     document.addEventListener('change', e => {
