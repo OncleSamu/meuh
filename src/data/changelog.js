@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.168",
+  "title": "Serre : parcelles à la bonne taille sur PC",
+  "date": "24 novembre 2026",
+  "items": [
+   "Sur ordinateur, les parcelles de la serre s’adaptent désormais à la largeur de la fenêtre pour avoir exactement la même taille et le même alignement que celles du champ au-dessus, tout en conservant leurs 4 colonnes (et vos associations compagnes) et leur confort sur mobile"
+  ]
+ },
+ {
   "v": "1.167",
   "title": "Synchro cloud PC et téléphone",
   "date": "24 novembre 2026",
