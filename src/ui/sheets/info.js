@@ -294,19 +294,20 @@ function renderGuideSecBody(x) {
 
 function guideRead(g, o = {}) {
     const locked = state.level < g.lvl;
-    const allOpen = !!o.allOpen;
+    const mode = o.allOpen; // 'all' | 'none' | undefined (par défaut : 1er chapitre ouvert)
     const factsHtml = (g.facts || []).length
         ? `<div class="guide-facts">${g.facts
               .map(f => `<div class="guide-fact">${ico(f.icon, 'ico sm')}<b>${f.v}</b><span>${f.l}</span></div>`)
               .join('')}</div>`
         : '';
+    const allOpenNow = mode === 'all' || (mode !== 'none' && g.secs.length <= 1);
     const toolbar =
-        g.secs.length > 2
-            ? `<div class="guide-sec-bar"><span>${g.secs.length} points clés</span><button type="button" class="chip sm" data-act="guideExpand">${allOpen ? 'Tout replier' : 'Tout ouvrir'}</button></div>`
+        g.secs.length > 1
+            ? `<div class="guide-sec-bar"><span>${g.secs.length} chapitres</span><button type="button" class="chip sm" data-act="guideExpand">${allOpenNow ? 'Tout replier' : 'Tout ouvrir'}</button></div>`
             : '';
     const secs = g.secs
         .map((x, idx) => {
-            const isOpen = allOpen || idx === 0 || g.secs.length <= 2;
+            const isOpen = mode === 'all' ? true : mode === 'none' ? false : idx === 0;
             const count = x.tiles ? `${x.tiles.length} fiches` : x.steps ? `${x.steps.length} étapes` : x.b ? `${x.b.length} points` : '';
             return `<details class="guide-sec"${isOpen ? ' open' : ''}>
                 <summary><span class="gs-title">${cleanGuide(x.h)}</span>${count ? `<span class="gs-meta">${count}</span>` : ''}</summary>
@@ -511,11 +512,19 @@ export function setupInfo() {
             const o = sheetOpts('guide');
             o.q = '';
             o.page = d.p || '';
-            o.allOpen = false;
+            o.allOpen = undefined;
         },
-        guideExpand: () => {
+        guideExpand: el => {
             const o = sheetOpts('guide');
-            o.allOpen = !o.allOpen;
+            const root = (el && el.closest && el.closest('#guide-res')) || document.getElementById('guide-res');
+            if (!root) return QUIET;
+            const secs = [...root.querySelectorAll('details.guide-sec')];
+            if (!secs.length) return QUIET;
+            const openAll = secs.some(d => !d.open);
+            secs.forEach(d => (d.open = openAll));
+            if (o) o.allOpen = openAll ? 'all' : 'none';
+            if (el) el.textContent = openAll ? 'Tout replier' : 'Tout ouvrir';
+            return QUIET;
         },
         guideCat: (el, d) => (sheetOpts('guide').cat = d.c),
         guideGo: (el, d) => {
@@ -553,4 +562,22 @@ export function setupInfo() {
             state.stats.postcards = (state.stats.postcards || 0) + 1;
         },
     });
+    // Synchroniser le libellé du bouton « Tout ouvrir / Tout replier » quand on ouvre/ferme un chapitre à la main
+    document.addEventListener(
+        'toggle',
+        e => {
+            const det = e.target;
+            if (!det || !det.matches || !det.matches('details.guide-sec')) return;
+            const root = det.closest('#guide-res');
+            if (!root) return;
+            const btnEl = root.querySelector('[data-act="guideExpand"]');
+            if (!btnEl) return;
+            const secs = [...root.querySelectorAll('details.guide-sec')];
+            const allOpen = secs.length > 0 && secs.every(d => d.open);
+            btnEl.textContent = allOpen ? 'Tout replier' : 'Tout ouvrir';
+            const o = sheetOpts('guide');
+            if (o) o.allOpen = allOpen ? 'all' : secs.every(d => !d.open) ? 'none' : undefined;
+        },
+        true,
+    );
 }

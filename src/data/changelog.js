@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.165",
+  "title": "Guide : correctif Tout ouvrir / Tout replier",
+  "date": "24 novembre 2026",
+  "items": [
+   "Le bouton « Tout ouvrir / Tout replier » du Guide du fermier ouvre et replie désormais instantanément tous les chapitres (y compris le 1er) sans saut de défilement, et reste synchronisé si vous ouvrez ou fermez des chapitres à la main"
+  ]
+ },
+ {
   "v": "1.164",
   "title": "Guide du fermier illustré & digeste",
   "date": "23 novembre 2026",
