@@ -12,7 +12,7 @@ const DAY = 864e5;
 const start = () => {
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 80;
+    state.level = 100;
     state.money = 5e9;
     state.cup = {};
     G.ensureCup();

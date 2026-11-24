@@ -4,7 +4,8 @@ import { ITEMS } from '../data/items.js';
 import { GRID } from '../data/farm.js';
 import { now } from './clock.js';
 import { newChateau } from '../data/chateau.js';
-import { oldLvl } from '../data/lv80.js';
+import { oldLvl, MAX_OLD } from '../data/lv80.js';
+import { oldLvl80 } from '../data/lv100.js';
 
 export const SAVE_KEY = 'meuhSave';
 export const BACKUP_KEY = SAVE_KEY + '_secours';
@@ -216,8 +217,8 @@ export const setState = s => (state = s);
 export const skill = id => (state.skills && state.skills[id]) || 0;
 export const lvOk = (d, lvl = d.reqLvl) => state.level >= (lvl || 1) || !!(state.lvKeep && state.lvKeep[d.id]);
 // 1.36 : les gains gardent l'échelle des 50 niveaux : jusqu'au 57, la même pente ; de 58 à 64, elle s'adoucit (1.56)
-// 1.109 : 80 niveaux. L'économie reste réglée sur l'ancienne échelle (64 niveaux) : ecoLvl() est l'ancien niveau équivalent
-export const ecoLvl = () => oldLvl(state.level);
+// 1.109 → 1.174 : 100 niveaux. L'économie reste réglée sur l'ancienne échelle (64 niveaux) : ecoLvl() est l'ancien niveau équivalent
+export const ecoLvl = () => Math.min(MAX_OLD, oldLvl(oldLvl80(state.level)));
 export const scaleLvl = () => {
     const L = ecoLvl();
     return L <= 57 ? 1 + ((L - 1) * 39) / 59 : 1 + (56 * 39) / 59 + ((L - 57) * 2.6) / 7;

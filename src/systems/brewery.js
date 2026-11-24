@@ -2,7 +2,7 @@
 // on les vend. Depuis 1.6.3, le vieillissement en fût se fait à la cave (le cellier ne sert plus qu'aux anciennes sauvegardes).
 import { metierCellar } from './metier.js';
 import { addRenom, RENOM } from './renom.js';
-import { state } from '../core/state.js';
+import { state, skill } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { toast, sfx, buzz, burst, float, emit } from '../core/bus.js';
@@ -340,7 +340,7 @@ export function brewPreview(d = ensureBrew().draft) {
         cost,
         miss,
         // 1.70 : le talent de Frère Hugues
-        time: Math.round(brewTime(ings, d.malt) * (1 - talentFx('brew'))),
+        time: Math.round(brewTime(ings, d.malt) * (1 - talentFx('brew')) * (1 - 0.08 * skill('cellarMaster'))),
         value: ings.length ? brewValue(d.malt, hop, ings, h.stars) : 0,
         name: known ? state.brew.beers[known].name : ings.length ? brewName(d.malt, ings) : '',
         known,

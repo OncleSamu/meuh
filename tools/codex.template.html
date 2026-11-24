@@ -825,7 +825,7 @@ const S = {
   prodMode: 'machines',
   prodQ: '',
   prodMach: 'all',
-  prodMaxLvl: 80,
+  prodMaxLvl: 100,
   prodSort: 'lvl',
   genMode: 'plants', // plants | animals | horses
   genId: 'strawberry',
@@ -1071,9 +1071,10 @@ function renderSprites() {
 function renderProducts() {
   const q = norm(S.prodQ);
   const machList = Object.values(DATA.machines).sort((a, b) => a.reqLvl - b.reqLvl || a.name.localeCompare(b.name, 'fr'));
+  const rawCount = Object.values(DATA.items).filter(it => !DATA.recipes[it.id]).length;
   const modes = [
-    ['machines', 'Par usine / atelier (48)'],
-    ['raw', 'Matières brutes (266)'],
+    ['machines', `Par usine / atelier (${machList.length})`],
+    ['raw', `Matières brutes (${rawCount})`],
     ['special', 'Crus de miel, Cave & Paquets'],
   ];
 
@@ -1215,7 +1216,7 @@ function renderProducts() {
         ${S.prodMode === 'machines' ? `<div class="flex flex-wrap items-center gap-3 text-xs">
           <label class="flex items-center gap-1.5">Usine :
             <select id="prod-mach" class="surf rounded-lg px-2 py-1">
-              <option value="all">Toutes les 48 usines</option>
+              <option value="all">Toutes les ${machList.length} usines</option>
               ${machList.map(m => `<option value="${m.id}" ${S.prodMach === m.id ? 'selected' : ''}>${esc(m.name)} (niv. ${m.reqLvl})</option>`).join('')}
             </select>
           </label>
@@ -1227,7 +1228,7 @@ function renderProducts() {
             </select>
           </label>
           <label class="flex items-center gap-2">Niveau max : <b id="prod-lvl-v">${S.prodMaxLvl}</b>
-            <input id="prod-lvl" type="range" min="1" max="80" value="${S.prodMaxLvl}" class="w-28" />
+            <input id="prod-lvl" type="range" min="1" max="100" value="${S.prodMaxLvl}" class="w-28" />
           </label>
         </div>` : ''}
       </div>

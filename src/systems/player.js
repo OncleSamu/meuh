@@ -32,7 +32,7 @@ import { MUSEUM_WINGS, MUSEUM_BY_WING } from '../data/museum.js';
 import { APIARY } from '../data/apiary.js';
 import { DAILY_REWARDS, HOLIDAY_LVL } from '../data/world.js';
 import { levelGate } from './goals.js';
-import { LANE2_LVL, BALANCE, MAX_LEVEL, MAX_LEVEL_64, MAX_LEVEL_60, RENOWN_XP, ACH_REWARDS, MEDALS, CAP_REQ, MASTERY_LVL, HOUSE, FARMHAND, ALBUM_LEVELS } from '../data/progress.js';
+import { LANE2_LVL, BALANCE, MAX_LEVEL, MAX_LEVEL_80, MAX_LEVEL_64, MAX_LEVEL_60, RENOWN_XP, ACH_REWARDS, MEDALS, CAP_REQ, MASTERY_LVL, HOUSE, FARMHAND, ALBUM_LEVELS } from '../data/progress.js';
 import { ACHIEVEMENTS, SKILLS } from '../data/meta.js';
 import { trackDayEarn, record } from './book.js';
 import { renownStar } from './mastery.js';
@@ -42,6 +42,7 @@ import { MAMIE_LVL } from './mamie.js';
 import { ensureQuests } from './orders.js';
 import { STALL_LEVELS } from './stall.js';
 import { lv80, oldLvl } from '../data/lv80.js';
+import { lv100, oldLvl80 } from '../data/lv100.js';
 
 // ---------------- argent ----------------
 export function earn(amount, at) {
@@ -114,9 +115,14 @@ export const getXpReq64 = lvl =>
     lvl < BALANCE.xp64.from
         ? Math.round((getXpReq60(lvl) * earlySlow(lvl)) / 10) * 10
         : Math.round((BALANCE.xp64.first + (lvl - BALANCE.xp64.from) * BALANCE.xp64.step) / 10) * 10;
-// 1.109 : 80 niveaux. Jusqu'au 29, rien ne change ; le niveau 30 demande un peu plus que le 29, puis chaque niveau un peu plus que le précédent
-// 1.138 : le niveau 1 est plus court (150 au lieu de 280) : huit minutes avec une seule culture, c'était long
-export const getXpReq = lvl => (lvl === 1 ? BALANCE.xpLvl1 : lvl < BALANCE.xp80.from ? getXpReq64(lvl) : Math.round((BALANCE.xp80.first + (lvl - BALANCE.xp80.from) * BALANCE.xp80.step) / 10) * 10);
+// 1.109 → 1.174 : 100 niveaux. De 1 à 39 rien ne change ; de 40 à 99 une pente progressive plus exigeante (~47-49 h au total)
+export const getXpReq = lvl => {
+    if (lvl === 1) return BALANCE.xpLvl1;
+    if (lvl < BALANCE.xp80.from) return getXpReq64(lvl);
+    if (lvl < BALANCE.xp100.from) return Math.round((BALANCE.xp80.first + (lvl - BALANCE.xp80.from) * BALANCE.xp80.step) / 10) * 10;
+    const d = lvl - BALANCE.xp100.from;
+    return Math.round((BALANCE.xp100.first + d * BALANCE.xp100.step + d * d * BALANCE.xp100.quad) / 10) * 10;
+};
 // expérience totale pour atteindre un niveau
 export const xpToReach = (L, req = getXpReq) => {
     let s = 0;
@@ -197,13 +203,13 @@ export function migrateLevels64() {
 export function migrateLevels80() {
     const before = Math.min(state.level, MAX_LEVEL_64);
     if (before <= 30) return;
-    state.level = before >= MAX_LEVEL_64 ? MAX_LEVEL : lv80(before);
-    if (state.level < MAX_LEVEL) state.xp = Math.min(state.xp, getXpReq(state.level));
+    state.level = before >= MAX_LEVEL_64 ? MAX_LEVEL_80 : lv80(before);
+    if (state.level < MAX_LEVEL_80) state.xp = Math.min(state.xp, getXpReq(state.level));
     state.lvKeep = state.lvKeep || {};
     for (const o of [ITEMS, ANIMALS, MACHINES, DECOS, UPGRADES])
         for (const d of Object.values(o)) if (d.lv108 !== undefined && d.lv108 <= before && d.reqLvl > state.level) state.lvKeep[d.id] = true;
     for (const r of Object.values(RECIPES)) if (r.lv108 !== undefined && r.lv108 <= before && r.lvl > state.level) state.lvKeep[r.id] = true;
-    state.stats.maxLevel = Math.max(state.level, (state.stats.maxLevel || 1) >= MAX_LEVEL_64 ? MAX_LEVEL : lv80(Math.min(state.stats.maxLevel || 1, MAX_LEVEL_64)));
+    state.stats.maxLevel = Math.max(state.level, (state.stats.maxLevel || 1) >= MAX_LEVEL_64 ? MAX_LEVEL_80 : lv80(Math.min(state.stats.maxLevel || 1, MAX_LEVEL_64)));
 }
 
 export function addXp(amount, at) {
@@ -408,7 +414,7 @@ export function unlocksAt(lvl) {
     if (lvl === 28) addGo('sheet:house', ['villager', 'lina'], 'L’Équipe du Domaine : Lina aux prés (Maison › Équipe)');
     if (lvl === 30) addGo('sheet:house', ['villager', 'milo'], 'L’Équipe du Domaine : Milo pour les nasses, le verger et la forêt (Maison › Équipe)');
     if (lvl === 32) addGo('sheet:house', ['villager', 'henri'], 'L’Équipe du Domaine : Henri à l’atelier pour maintenir vos stocks (Maison › Équipe)');
-    if (lvl === 55) addGo('farm/nature', ['ui', 'mineDeep'], 'Mine souterraine : les abysses d’obsidienne (étages 31 à 40)');
+    if (lvl === 60) addGo('farm/nature', ['ui', 'mineDeep'], 'Mine souterraine : les abysses d’obsidienne (étages 31 à 40)');
     if (lvl === 3) addGo('sheet:identity', ['ui', 'star'], 'Votre métier : maraîcher, éleveur, arboriculteur, cuisinier, vigneron ou pêcheur (Menu, votre carte de visite)');
     if (lvl === LANE2_LVL) addGo('machines/workshop', ['machine', 'mill'], 'Le deuxième poste : une machine fait deux lots à la fois (fiche de la machine)');
     if (lvl === WORKS_LVL) addGo('village/village', ['ui', 'house'], 'Les dépendances du domaine : six bâtiments d’apparat, trois niveaux chacun (Village › Village, Domaine)');
@@ -512,7 +518,7 @@ const UNLOCK_GO = [
     ['Maison de la ferme', 'sheet:house'],
     ['Commis de ferme', 'sheet:house'],
 ];
-const LEVEL_TIPS = { [lv80(61)]: 'lvl61', [MAX_LEVEL]: 'lvl64' }; // 1.109 : 73 et 80
+const LEVEL_TIPS = { [lv100(lv80(61))]: 'lvl61', [MAX_LEVEL]: 'lvl64' }; // 1.174 : 80 et 100
 const plain = t => String(t).replace(/[\u00a0\u202f]/g, ' ');
 export function unlockGo(u) {
     if (u.go) return u.go;
@@ -604,10 +610,11 @@ const ACH_SCALE = [
 export function achReward(tier, lvl = state.level) {
     const base = ACH_REWARDS[tier],
         k = ACH_SCALE[tier];
+    const eq = oldLvl(oldLvl80(lvl));
     return {
-        // 1.109 : les récompenses gardent l'ancienne échelle des niveaux
-        coins: Math.max(base.coins, Math.round((k.coins * oldLvl(lvl) * oldLvl(lvl)) / 100) * 100),
-        xp: Math.max(base.xp, Math.round((k.xp * getXpReq64(Math.min(Math.round(oldLvl(lvl)), MAX_LEVEL_64 - 1))) / 10) * 10),
+        // 1.109 → 1.174 : les récompenses gardent l'ancienne échelle des niveaux
+        coins: Math.max(base.coins, Math.round((k.coins * eq * eq) / 100) * 100),
+        xp: Math.max(base.xp, Math.round((k.xp * getXpReq64(Math.min(Math.round(eq), MAX_LEVEL_64 - 1))) / 10) * 10),
         ruban: k.ruban,
     };
 }
@@ -647,16 +654,27 @@ export function checkNewAchievements() {
 // ---------------- compétences ----------------
 export const rank = id => (state.skills && state.skills[id]) || 0;
 export const skillsSpent = () => Object.values(state.skills || {}).reduce((a, b) => a + b, 0);
-export const skillPoints = () => Math.max(0, state.level - 1 - skillsSpent());
+export const skillsTotalCap = () => Object.values(SKILLS).reduce((a, br) => a + br.list.reduce((s, sk) => s + sk.max, 0), 0);
+export const skillPoints = () => Math.max(0, Math.min(state.level - 1, skillsTotalCap()) - skillsSpent());
 export const branchSpent = b => SKILLS[b].list.reduce((a, sk) => a + rank(sk.id), 0);
 export const respecCost = () => 400 * state.level;
 export const skillDesc = (sk, r) => fill(sk.desc, 0, r * (sk.per || 0));
 
 export function skillReq(b, k) {
-    const sk = SKILLS[b].list[k];
-    if (state.level < (SKILLS[b].lvl || 1)) return `Cette branche s’ouvre au niveau ${SKILLS[b].lvl}`;
-    if (k > 0 && rank(SKILLS[b].list[k - 1].id) < 1) return `Apprenez d’abord « ${SKILLS[b].list[k - 1].name} »`;
-    if (sk.cap && branchSpent(b) < CAP_REQ) return `Placez ${CAP_REQ} points en ${SKILLS[b].name.toLowerCase()} pour le débloquer`;
+    const br = SKILLS[b];
+    const sk = br.list[k];
+    if (state.level < (br.lvl || 1)) return `Cette branche s’ouvre au niveau ${br.lvl}`;
+    if (sk.req) {
+        const reqs = Array.isArray(sk.req) ? sk.req : [sk.req];
+        const ok = reqs.some(id => rank(id) >= 1);
+        if (!ok) {
+            const names = reqs.map(id => (br.list.find(x => x.id === id) || {}).name || id);
+            return names.length > 1 ? `Apprenez d’abord l’une de ces bases : ${names.join(' ou ')}` : `Apprenez d’abord « ${names[0]} »`;
+        }
+    } else if (k > 0 && rank(br.list[k - 1].id) < 1) {
+        return `Apprenez d’abord « ${br.list[k - 1].name} »`;
+    }
+    if (sk.cap && branchSpent(b) < CAP_REQ) return `Placez ${CAP_REQ} points en ${br.name.toLowerCase()} pour le débloquer`;
     return null;
 }
 

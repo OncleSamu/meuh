@@ -2,6 +2,7 @@
 // Une bière = un malt (sa couleur), une dose de houblon (son amertume), et 1 à 3 ingrédients de la ferme, chacun dosé de 1 à 3.
 
 import { lv80 } from './lv80.js';
+import { lv100 } from './lv100.js';
 export const ABBEY = {
     lvl: lv80(35), // l'étape clé : premier chapitre de l'abbaye
     maltPerBrew: 4, // sacs de malt par brassin
@@ -115,7 +116,7 @@ export const BEER_ORDERS = {
 // Un deuxième type de boisson à la brasserie : du miel à la place du malt, pas de houblon, jusqu'à 4 ingrédients.
 // La base s'écrit 'mead:<miel>' (miel : 'all' pour toutes fleurs, ou un miel de fleur) dans le champ « malt » de la recette.
 export const MEAD = {
-    lvl: lv80(42), // comme l'hydromel ordinaire de la brasserie artisanale
+    lvl: lv100(lv80(42)), // comme l'hydromel ordinaire de la brasserie artisanale
     honeyPerBrew: 6, // pots de miel par brassin
     baseTime: 900, // il fermente plus lentement : 15 min, puis +5 par ingrédient
     perIng: 300,

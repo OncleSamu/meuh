@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import { clock } from './helpers.mjs';
 import { state } from '../../src/core/state.js';
 import * as G from '../../src/systems/index.js';
-import { FORM, STABLE, RANDO } from '../../src/data/haras.js';
+import { FORM, STABLE, RANDO, HARAS_LVL } from '../../src/data/haras.js';
 
 const setup = (n = 1) => {
     G.loadGame();
-    state.level = 49;
+    state.level = HARAS_LVL;
     state.money = 1e9;
     for (const id of ['plank', 'beam', 'nail', 'stone', 'paint', 'carrot']) state.inventory[id] = 999;
     state.animals = [];
@@ -24,9 +24,9 @@ const setup = (n = 1) => {
 
 test('1.23 : les écuries se construisent au niveau 45 et s’agrandissent trois fois', () => {
     setup();
-    state.level = 48;
+    state.level = HARAS_LVL - 1;
     assert.equal(G.stableCanUp(), false);
-    state.level = 49;
+    state.level = HARAS_LVL;
     assert.ok(G.upgradeStable());
     assert.equal(G.boxCount(), 4);
     G.upgradeStable();

@@ -1,6 +1,6 @@
 // Le Comptoir (1.17) : thés et cafés préparés à la main (mini-jeu), stock pour les commandes, le train et les quêtes,
 // et un salon où les villageois viennent commander. Les produits gardent leurs identifiants.
-import { state } from '../core/state.js';
+import { state, skill } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { emit, toast, sfx, buzz, burst, float } from '../core/bus.js';
@@ -261,7 +261,15 @@ function serve(seat, id, tier, stars, at) {
     const hearts = heartsOf(s.vid);
     const base = sellPrice(id);
     // 1.75.3 : le talent d'Inès
-    const price = Math.round(base * CLIENT.premium * CLIENT.star[tier] * (1 + CLIENT.heart * hearts) * (1 + talentFx('counter')) * (counterCarte().includes(id) ? 1 + CARTE.pay : 1)); // 1.118 : la carte
+    const price = Math.round(
+        base *
+            CLIENT.premium *
+            CLIENT.star[tier] *
+            (1 + CLIENT.heart * hearts) *
+            (1 + talentFx('counter')) *
+            (counterCarte().includes(id) ? 1 + CARTE.pay : 1) *
+            (1 + 0.06 * skill('hospitality')),
+    ); // 1.118 : la carte
     earn(price, at);
     state.income.counter = (state.income.counter || 0) + price;
     let tip = 0;

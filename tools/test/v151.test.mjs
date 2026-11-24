@@ -133,12 +133,13 @@ test('fendre le bois : trois fois par jour, bûches selon les coups', () => {
     assert.equal(G.chopLeft(), NORD.chop.perDay - 1);
 });
 
-test('douze plantes branchées : dessin, goûts, nom, niveau', () => {
+test('douze plantes branchées : dessin, goûts, nom, niveau', async () => {
+    const { lv100 } = await import('../../src/data/lv100.js');
     assert.equal(NORD_IDS.length, 12);
     for (const id of NORD_IDS) {
         const d = ITEMS[id];
         assert.ok(d && d.nord && d.island && d.needProject === 'northStove', id);
-        assert.ok(d.reqLvl >= lv80(62) && d.reqLvl <= 80, id);
+        assert.ok(d.reqLvl >= lv100(lv80(62)) && d.reqLvl <= 100, id);
         assert.ok(FLAVORS[id], `${id} : goûts`);
         assert.ok(SPR.item(id).length > 300, `${id} : dessin`);
     }

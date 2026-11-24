@@ -1,7 +1,7 @@
 // 1.142 : L'Atelier du Parfumeur (L'Orgue à parfums).
 // Pyramide olfactive (Tête · Cœur · Fond), 3 méthodes d'extraction, 3 concentrations,
 // macération active en 3 étapes avec soins, flacons SVG sur mesure, salon de commandes et Orgue à remplir.
-import { state } from '../core/state.js';
+import { state, skill } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { toast, sfx, buzz, burst, float, emit, changed } from '../core/bus.js';
 import { pickRand } from '../core/format.js';
@@ -467,11 +467,12 @@ export function startPerfume(at, d = ensurePerfume().draft) {
         P.creations[pid].bottle = d.bottle || P.creations[pid].bottle;
         P.creations[pid].cap = d.cap || P.creations[pid].cap;
     }
+    const stageSec = Math.max(30, Math.round(pv.stageSec * (1 - 0.08 * skill('cellarMaster'))));
     P.vats[pv.freeVat] = {
         pid,
         stage: 0,
-        stageSec: pv.stageSec,
-        stageUntil: now() + pv.stageSec * 1000,
+        stageSec,
+        stageUntil: now() + stageSec * 1000,
         cared: [false, false, false],
         finesse: 0,
         careBonus: 0,
@@ -970,7 +971,7 @@ export function perfumeOrderPay(o, pid) {
     }
     qSum += left * QUALITY[0].mult;
     const signMult = 1 + perfumeSignatureSalonBonus();
-    return Math.round((p.value * qSum * PERFUME_ORDERS.payMult * signMult) / 5) * 5;
+    return Math.round((p.value * qSum * PERFUME_ORDERS.payMult * signMult * (1 + 0.06 * skill('hospitality'))) / 5) * 5;
 }
 export function deliverPerfumeOrder(oid, pid, at) {
     const P = ensurePerfume();

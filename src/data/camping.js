@@ -1,8 +1,9 @@
 // 1.100 (étape 1) : le camping de la vallée. Des campeurs au visage tiré au hasard (art/habitants.js) plantent la tente,
 // achètent vos produits et repartent. Rien n'est jamais perdu : un campeur mal servi paie moins, c'est tout.
 import { lv80 } from './lv80.js';
+import { lv100 } from './lv100.js';
 export const CAMPING = {
-    lvl: lv80(57), // le niveau le moins chargé après le château (55)
+    lvl: lv100(lv80(57)), // le niveau le moins chargé après le château (55)
     cost: { coins: 1500000, plank: 200, stone: 120, beam: 40 },
     pitches: 3, // emplacements au départ
     maxPitches: 12,

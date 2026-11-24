@@ -8,6 +8,7 @@ import { CARNET } from '../../src/data/carnet.js';
 import { PROJECTS } from '../../src/data/village.js';
 import { SPR } from '../../src/art/index.js';
 import { lv80 } from '../../src/data/lv80.js';
+import { lv100 } from '../../src/data/lv100.js';
 
 test('1.55 : huit boissons du Grand Nord, chacune avec ses gestes, son dessin et son anecdote', () => {
     assert.equal(NEW_DRINKS_155.length, 8);
@@ -18,7 +19,7 @@ test('1.55 : huit boissons du Grand Nord, chacune avec ses gestes, son dessin et
         assert.equal(ITEMS[id].name, name);
         assert.ok(ITEMS[id].sell > 0);
         assert.equal(RECIPES[id].machine, 'counter');
-        assert.ok(RECIPES[id].lvl >= lv80(62) && RECIPES[id].lvl <= 80);
+        assert.ok(RECIPES[id].lvl >= lv100(lv80(62)) && RECIPES[id].lvl <= 100);
         assert.ok(SPR.item(id).length > 300, `${id} : dessin`);
         assert.ok(CARNET[id] && CARNET[id].length > 80, `${id} : anecdote`);
         assert.ok(PROJECTS[ITEMS[id].needProject], id);

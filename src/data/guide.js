@@ -811,7 +811,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'La cuisine et l’artisanat d’Asie',
                 b: [
-                    'Trois nouveaux ateliers au niveau 80 : le Wok de fonte (après la grande écluse), le Panier vapeur (après le pavillon de bambou) et l’Atelier de douceurs d’Asie (après la bambouseraie en fleurs).',
+                    'Trois nouveaux ateliers répartis entre les niveaux 91 et 97 : le Wok de fonte (niv. 91, après la grande écluse), le Panier vapeur (niv. 94, après le pavillon de bambou) et l’Atelier de douceurs d’Asie (niv. 97, après la bambouseraie en fleurs).',
                     'Quarante et une recettes et six boissons au comptoir : sautés au wok, baozi, gyoza, mochis au yuzu, gâteaux de lune, kimono de soie, éventail en bambou, liqueur d’ume, thé au yuzu et matcha au lait de sika.',
                 ],
             },
@@ -2232,41 +2232,40 @@ export const GUIDE_PAGES = [
         icon: ['ui', 'star'],
         lvl: 2,
         go: 'sheet:progress',
-        intro: 'Chaque niveau gagné donne un point à placer dans trois arbres : agriculture, élevage, commerce.',
+        intro: 'Chaque niveau gagné (jusqu’au niveau 100) donne un point à placer dans un arbre visuel en 3 grandes voies et 11 branches (108 rangs pour 99 points : choisissez votre spécialisation !).',
         secs: [
-            { h: 'Où', t: 'Menu › Progrès. Le menu signale les points à placer.' },
+            { h: 'Où et comment', t: 'Menu › Progrès › Compétences. Passez de la Vue globale en constellation au zoom par voie, touchez un nœud pour voir ses effets puis « Apprendre ». Les liens s’illuminent au fil de vos choix.' },
             {
-                h: 'Agriculture',
+                h: 'Voie Terre & Nature (vert)',
                 b: [
-                    'Main verte : les cultures poussent plus vite (3 rangs).',
-                    'Récolte généreuse : chance de double récolte (3).',
-                    'Œil d’expert : plus de qualité argent ou or (2).',
-                    'Toucher d’or : les récoltes dorées sont 60 % plus fréquentes.',
+                    'Agriculture : Main verte, Récolte généreuse, Œil d’expert et la clé Toucher d’or.',
+                    'Verger : Arboriculteur, Panier plein, Vieux arbres et Fruits de concours.',
+                    'Nature : Bras solides, Forêt vivante, Œil du mineur et Prospecteur.',
+                    'Pêche & Mer : Bon ferrage, Nasses pleines, Filet solide et Loup de mer.',
                 ],
             },
             {
-                h: 'Élevage',
+                h: 'Voie Domaine & Élevage (ambre)',
                 b: [
-                    'Bien nourris : les bêtes produisent plus vite (3).',
-                    'Grande mangeoire : plus de repas (2).',
-                    'Pâturage fertile : chance de double production (3).',
-                    'Pouponnière : les bébés grandissent deux fois plus vite.',
+                    'Élevage : Bien nourris, Grande mangeoire, Pâturage fertile, Bon éleveur et Pouponnière.',
+                    'Atelier : Mains agiles, Fournée généreuse, Fait maison et Grand atelier.',
+                    'Domaine & Équipe : Cadence d’équipe, Maître de chai (cave/abbaye/parfums), Sens de l’accueil et la clé Intendant d’or (+1 recette pour Henri, +2 parcelles pour Théo).',
                 ],
             },
             {
-                h: 'Commerce',
+                h: 'Voie Commerce & Exploration (bleu)',
                 b: [
-                    'Bagou : tout se vend plus cher (3).',
-                    'Client fidèle : les commandes du village paient plus (2).',
-                    'Logisticien : les trains paient plus (2).',
-                    'Marchand avisé : les prix baissent deux fois moins vite quand vous vendez beaucoup.',
+                    'Commerce : Bagou, Client fidèle, Logisticien et Marchand avisé.',
+                    'Village : Bâtisseur, Bon voisin, Maquignon et Grand tableau.',
+                    'Contrées : Main tropicale, Sourcier, Poêlier, Riziculteur (Terres d’Asie) et Caravanier.',
+                    'Mine & Musée : Lanterne économe, Chasseur de géodes, Œil d’archéologue et Archéologue chevronné.',
                 ],
             },
             {
                 h: 'Règles',
                 b: [
-                    'Dans chaque arbre, on apprend dans l’ordre ; la dernière compétence demande 4 points déjà placés dans l’arbre.',
-                    'Il y a 26 rangs en tout : vous aurez les points pour tout apprendre.',
+                    'Chaque branche part d’une base qui se ramifie en 2 ou 3 spécialités, puis converge vers un nœud Clé doré (4 points requis dans la branche).',
+                    'Avec 108 rangs pour 99 points au niveau 100, chaque ferme peut se construire un profil unique.',
                     'Vous pouvez tout redistribuer contre des pièces (400 × votre niveau).',
                 ],
             },

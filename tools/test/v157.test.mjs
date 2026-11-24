@@ -43,17 +43,17 @@ test('1.57 : la première aurore va dans l’album, une seule fois', () => {
     assert.equal(state.album.filter(p => p.id === 'noAurore').length, 1, 'pas de seconde photo');
 });
 
-test('1.57 : un mot de Mamie aux niveaux 73 et 80 (61 et 64 avant la 1.109)', () => {
+test('1.57 : un mot de Mamie aux niveaux 80 et 100 (73 et 80 en 1.109, 61 et 64 avant)', () => {
     assert.ok(TIPS.lvl61 && TIPS.lvl64);
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
     state.tutorial.done = true;
-    state.level = 72;
+    state.level = 79;
     state.xp = 0;
-    for (let k = 0; k < 400 && state.level < 80; k++) {
+    for (let k = 0; k < 1000 && state.level < 100; k++) {
         state.lvGoals = { lvl: state.level, list: [] };
-        G.addXp(200_000);
+        G.addXp(250_000);
     }
     assert.ok(state.tips.lvl61 && state.tips.lvl64);
 });

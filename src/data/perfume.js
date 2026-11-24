@@ -2,7 +2,7 @@
 // Pyramide olfactive (Tête · Cœur · Fond), 3 méthodes d'extraction, 3 concentrations,
 // macération active en 3 étapes avec soins, flacons SVG sur mesure, salon de commandes et Orgue à remplir.
 
-export const PERFUME_LVL = 54;
+export const PERFUME_LVL = 58;
 
 export const PERFUME = {
     lvl: PERFUME_LVL,

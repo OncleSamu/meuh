@@ -54,7 +54,7 @@ test('mine souterraine : ouverte au niveau 8, 4 strates et verrouillages d’éq
     state.nat.gear.lamp = true;
     state.nat.gear.cart = true;
     assert.equal(G.mineStratumOpen(MINE_STRATA[1]), true);
-    state.level = 55;
+    state.level = 60;
     assert.equal(G.mineStratumOpen(MINE_STRATA[3]), false); // manque pioche niv. 4+ (pick >= 3)
     state.tools.pick = 3;
     assert.equal(G.mineStratumOpen(MINE_STRATA[3]), true);
@@ -176,7 +176,7 @@ test('Atelier de géodes et géode mystère du jour', () => {
 });
 
 test('Prestige conserve les dons, paliers du Musée et les équipements/records de la Mine', () => {
-    const { D } = setupMineMuseum({ lvl: 80 });
+    const { D } = setupMineMuseum({ lvl: 100 });
     D.maxFloor = 35;
     G.mineBuyUpgrade('lanternTank');
     G.museumAddSpecimen('msAmmonite', 1, null, true);

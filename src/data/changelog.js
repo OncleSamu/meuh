@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.174",
+  "title": "Cap sur le niveau 100 et nouvel Arbre de compétences visuel",
+  "date": "24 novembre 2026",
+  "items": [
+   "Progression étendue de 80 à 100 niveaux : les niveaux 1 à 39 ne bougent pas, les niveaux 40 à 79 respirent sur 40 à 90, Les Terres d’Asie s’étalent sur les niveaux 91 à 99 (Wok niv. 91, Panier vapeur niv. 94, Douceurs d’Asie niv. 97) et le niveau 100 devient le sommet (Prestige, Renommée, Grands Défis et Ferme légendaire)",
+   "Nouvelle courbe d’expérience progressive de 40 à 100 (pente un peu plus exigeante en fin de partie, moins de 50 h au total) ; les sauvegardes existantes conservent leur niveau actuel sans rien perdre",
+   "Nouvel Arbre de compétences visuel dans Progrès › Compétences : 3 grandes voies colorées reliées au cœur de la ferme (Terre & Nature, Domaine & Élevage, Commerce & Exploration) avec vue globale en constellation, zoom tactile par voie, liaisons lumineuses, prérequis en arbre et nœuds Clés dorés",
+   "108 rangs répartis en 11 branches (pour 99 points au niveau 100) : ajout des branches Pêche & Mer, Domaine & Équipe et Mine & Musée, de la compétence Riziculteur (Terres d’Asie) et d’un 4e rang sur 7 compétences piliers"
+  ]
+ },
+ {
   "v": "1.173",
   "title": "L’Équipe du Domaine : automatisation centralisée dans Maison › Équipe",
   "date": "24 novembre 2026",

@@ -32,7 +32,7 @@ function asie({ open = true, pavilion = false, junk = false, wheel = false } = {
     setNow(1_700_000_000_000);
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 80;
+    state.level = 100;
     state.money = 100_000_000;
     state.inventory.stone = 600;
     state.inventory.plank = 400;

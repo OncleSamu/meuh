@@ -241,7 +241,7 @@ function step(dt) {
         if (!cellGrowing(k)) return;
         const irr = mon || (hadWater && reach[k] >= 0);
         const depth = irr && reach[k] > 0 ? Math.min(3, reach[k]) : 0;
-        const m = (irr ? 1 + depth * ASIE.cascadeBonus : ASIE.dry) * han;
+        const m = (irr ? 1 + depth * ASIE.cascadeBonus : ASIE.dry) * han * (1 + 0.06 * rank('riceGrow'));
         if (p.id && !p.ready) {
             p.prog += dt * m * cropStep(p, k);
             if (p.prog >= asieGrow(p.id)) {

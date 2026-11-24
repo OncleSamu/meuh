@@ -1,5 +1,5 @@
 // 1.100 (étape 1) : le camping de la vallée (voir data/camping.js).
-import { state } from '../core/state.js';
+import { state, skill } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { toast, sfx, burst } from '../core/bus.js';
@@ -160,7 +160,16 @@ export function newGuest(t = now(), seed, opts = {}) {
 export const guestTitle = g => (g.star != null ? STARS.who[g.star].name : g.visits > 1 ? `Habitué${g.woman ? 'e' : ''} · ${g.visits}e séjour` : PROFILES[g.profile].name);
 // le prix au camping : ×2, les aménagements, le peintre, le poissonnier, l'événement du jour, un campeur remarquable
 export const priceOf = (id, g) =>
-    Math.round(ITEMS[id].sell * CAMPING.pay * mult('pay') * (1 + resBonus('pay')) * (inKind(id, 'fish') ? 1 + resBonus('fish') : 1) * (eventBoosts(id) ? EVENT_BONUS : 1) * (g && g.star != null ? STARS.pay : 1));
+    Math.round(
+        ITEMS[id].sell *
+            CAMPING.pay *
+            mult('pay') *
+            (1 + resBonus('pay')) *
+            (inKind(id, 'fish') ? 1 + resBonus('fish') : 1) *
+            (eventBoosts(id) ? EVENT_BONUS : 1) *
+            (g && g.star != null ? STARS.pay : 1) *
+            (1 + 0.06 * skill('hospitality')),
+    );
 export const wantQ = w => w.q || 0;
 export const canSell = (g, i) => !!g.wants[i] && !g.wants[i].done && haveQ(g.wants[i].item, wantQ(g.wants[i])) >= 1;
 // combien on peut lui vendre tout de suite (le lot, ou ce qu'on a en stock)

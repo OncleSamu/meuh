@@ -1,5 +1,5 @@
 // 1.173 : L'Équipe du Domaine — centralisée dans Maison › Équipe (Théo, Lina, Henri, Milo).
-import { state, lvOk } from '../core/state.js';
+import { state, lvOk, skill } from '../core/state.js';
 import { toast, sfx, buzz, burst } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
 import { RECIPES } from '../data/machines.js';
@@ -166,7 +166,7 @@ export const henriCanUp = () => {
     return !!n && state.level >= n.lvl && hasCost(n.cost);
 };
 export const henriPaused = () => !!(state.team && state.team.henri && state.team.henri.off);
-export const henriMaxSlots = () => (henriDef() ? henriDef().slots : 0);
+export const henriMaxSlots = () => (henriDef() ? henriDef().slots + (skill('steward') ? 1 : 0) : 0);
 export const henriRules = () => (state.team && state.team.henri && Array.isArray(state.team.henri.rules) ? state.team.henri.rules : []);
 let henriMsg = '';
 export const henriMessage = () => henriMsg;
@@ -456,10 +456,12 @@ export function teamTick() {
     const T = ensureTeam();
     let changed = false;
 
+    const pace = base => Math.max(4, Math.round(base * (1 - 0.1 * skill('teamSpeed'))));
+
     const lDef = linaDef();
     if (lDef && !T.lina.off) {
         T.lina.t = (T.lina.t || 0) + 1;
-        if (T.lina.t >= lDef.every) {
+        if (T.lina.t >= pace(lDef.every)) {
             T.lina.t = 0;
             if (linaPass()) changed = true;
         }
@@ -468,7 +470,7 @@ export function teamTick() {
     const hDef = henriDef();
     if (hDef && !T.henri.off) {
         T.henri.t = (T.henri.t || 0) + 1;
-        if (T.henri.t >= hDef.every) {
+        if (T.henri.t >= pace(hDef.every)) {
             T.henri.t = 0;
             if (henriPass()) changed = true;
         }
@@ -477,7 +479,7 @@ export function teamTick() {
     const mDef = miloDef();
     if (mDef && !T.milo.off) {
         T.milo.t = (T.milo.t || 0) + 1;
-        if (T.milo.t >= mDef.every) {
+        if (T.milo.t >= pace(mDef.every)) {
             T.milo.t = 0;
             if (miloPass(true)) changed = true;
         }

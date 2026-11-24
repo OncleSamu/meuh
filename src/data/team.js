@@ -16,7 +16,7 @@ export const TEAM_LINA = [
         cost: { coins: 60000, tools: 4, wood: 10 },
     },
     {
-        lvl: 40,
+        lvl: 42,
         pastures: 2,
         every: 25,
         heal: false,
@@ -24,7 +24,7 @@ export const TEAM_LINA = [
         cost: { coins: 180000, tools: 8, ironIngot: 12 },
     },
     {
-        lvl: 54,
+        lvl: 60,
         pastures: 99,
         every: 18,
         heal: false,
@@ -32,7 +32,7 @@ export const TEAM_LINA = [
         cost: { coins: 420000, tools: 14, solidOak: 8 },
     },
     {
-        lvl: 68,
+        lvl: 84,
         pastures: 99,
         every: 12,
         heal: true,
@@ -51,21 +51,21 @@ export const TEAM_HENRI = [
         cost: { coins: 90000, tools: 5, ironIngot: 8 },
     },
     {
-        lvl: 45,
+        lvl: 48,
         slots: 4,
         every: 22,
         desc: 'Maintient 4 recettes en stock · vérifie toutes les 22 s',
         cost: { coins: 240000, tools: 10, cutStone: 12 },
     },
     {
-        lvl: 58,
+        lvl: 66,
         slots: 5,
         every: 15,
         desc: 'Maintient 5 recettes en stock · vérifie toutes les 15 s',
         cost: { coins: 520000, tools: 16, solidOak: 10 },
     },
     {
-        lvl: 72,
+        lvl: 92,
         slots: 6,
         every: 10,
         desc: 'Maintient 6 recettes en stock · vérifie toutes les 10 s',
@@ -84,7 +84,7 @@ export const TEAM_MILO = [
         cost: { coins: 75000, tools: 4, hardwood: 8 },
     },
     {
-        lvl: 44,
+        lvl: 45,
         every: 30,
         forest: true,
         lands: false,
@@ -92,7 +92,7 @@ export const TEAM_MILO = [
         cost: { coins: 200000, tools: 8, resin: 10 },
     },
     {
-        lvl: 56,
+        lvl: 63,
         every: 20,
         forest: true,
         lands: true,
@@ -100,7 +100,7 @@ export const TEAM_MILO = [
         cost: { coins: 460000, tools: 14, solidOak: 10 },
     },
     {
-        lvl: 70,
+        lvl: 88,
         every: 12,
         forest: true,
         lands: true,

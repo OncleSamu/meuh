@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import { clock } from './helpers.mjs';
 import { state } from '../../src/core/state.js';
 import * as G from '../../src/systems/index.js';
-import { GALOP, SAUT } from '../../src/data/haras.js';
+import { GALOP, SAUT, HARAS_LVL } from '../../src/data/haras.js';
 
 const horse = () => {
     G.loadGame();
-    state.level = 49;
+    state.level = HARAS_LVL;
     state.money = 1e9;
     for (const id of ['plank', 'beam', 'nail', 'stone', 'paint']) state.inventory[id] = 999;
     const a = G.newAnimal('horse');

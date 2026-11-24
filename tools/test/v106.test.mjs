@@ -34,13 +34,13 @@ const train = () => {
 test('wagon : la valeur demandée suit la production (rien ne change avant le niveau 15)', () => {
     farm(10);
     assert.equal(G.wagonTarget(), 60 + scaleLvl() * 30);
-    farm(80);
+    farm(100);
     assert.ok(G.wagonTarget() > 35000 && G.wagonTarget() < 50000);
     assert.equal(G.wagonMax(), 60);
     state.level = 20;
     assert.equal(G.wagonMax(), 20);
     let prev = 0;
-    for (let L = 1; L <= 80; L++) {
+    for (let L = 1; L <= 100; L++) {
         state.level = L;
         assert.ok(G.wagonTarget() >= prev, `niveau ${L}`);
         prev = G.wagonTarget();

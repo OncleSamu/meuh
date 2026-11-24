@@ -14,7 +14,7 @@ function farm() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 80;
+    state.level = DEFI.lvl;
 }
 
 test('1.93 : un défi terminé sans médaille laisse une ligne dans le journal', () => {

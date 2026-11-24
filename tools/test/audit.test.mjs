@@ -5,6 +5,7 @@ import { pluralFr, qtyName } from '../../src/core/format.js';
 import { ITEMS } from '../../src/data/items.js';
 import { RECIPES, MACHINES } from '../../src/data/machines.js';
 import { PROJECTS } from '../../src/data/village.js';
+import { MAX_LEVEL } from '../../src/data/progress.js';
 
 test('pluriel des noms de produits', () => {
     assert.equal(pluralFr('Pomme de terre'), 'Pommes de terre');
@@ -16,17 +17,17 @@ test('pluriel des noms de produits', () => {
     assert.equal(qtyName(5, 'Oignon'), '5 oignons');
 });
 
-test('chaque recette et chaque chantier peut être fait au plus tard au niveau 80', () => {
+test('chaque recette et chaque chantier peut être fait au plus tard au niveau maximum', () => {
     const ok = new Set(
         Object.values(ITEMS)
-            .filter(i => i.type !== 'artisan' && (i.reqLvl || 0) <= 80)
+            .filter(i => i.type !== 'artisan' && (i.reqLvl || 0) <= MAX_LEVEL)
             .map(i => i.id),
     );
     let grew = true;
     while (grew) {
         grew = false;
         for (const r of Object.values(RECIPES))
-            if (!ok.has(r.id) && MACHINES[r.machine] && MACHINES[r.machine].reqLvl <= 80 && Object.keys(r.ing).every(k => ok.has(k))) {
+            if (!ok.has(r.id) && MACHINES[r.machine] && MACHINES[r.machine].reqLvl <= MAX_LEVEL && Object.keys(r.ing).every(k => ok.has(k))) {
                 ok.add(r.id);
                 grew = true;
             }

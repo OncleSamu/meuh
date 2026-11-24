@@ -16,7 +16,7 @@ function farm() {
     setStore(memStore());
     G.loadGame();
     setView({ started: false, tab: 'farm' });
-    state.level = 80;
+    state.level = 100;
     state.projects.chapel = { done: true };
 }
 const endSeason = pts => {

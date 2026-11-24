@@ -1,7 +1,7 @@
-// Progrès : compétences, prestige (vendre la ferme), défis et fermes à thème.
+// Progrès : arbre de compétences visuel (constellation 3 voies), prestige (vendre la ferme), défis et fermes à thème.
 import { state } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
-import { SKILLS, CHALLENGES } from '../../data/meta.js';
+import { SKILLS, SKILL_WINGS, CHALLENGES } from '../../data/meta.js';
 import { PRESTIGE_LVL, CHALLENGE_BONUS } from '../../data/progress.js';
 import { FARM_THEMES } from '../../data/port.js';
 import * as G from '../../systems/index.js';
@@ -13,30 +13,248 @@ import { confirmTap } from '../confirm.js';
 import { ui } from '../app.js';
 import { innerTabs } from '../innertabs.js';
 
+const WING_BY_ID = Object.fromEntries(SKILL_WINGS.map(w => [w.id, w]));
+
+function wingSpent(w) {
+    return w.branches.reduce((a, b) => a + G.branchSpent(b), 0);
+}
+function wingCap(w) {
+    return w.branches.reduce((a, b) => a + SKILLS[b].list.reduce((s, sk) => s + sk.max, 0), 0);
+}
+
+// Calcule les nœuds et arêtes pour la Vue globale (constellation radiale 3 voies)
+function layoutGlobal() {
+    const nodes = [];
+    const edges = [];
+    const wingArcs = {
+        terre: [-194, -166, -138, -110],
+        domaine: [-68, -32, 4],
+        horizon: [46, 74, 102, 130],
+    };
+    const wingTags = {
+        terre: { x: 24, y: 6.5 },
+        domaine: { x: 76, y: 6.5 },
+        horizon: { x: 50, y: 94.5 },
+    };
+    const cx = 50,
+        cy = 51;
+    const pt = (deg, r) => {
+        const rad = (deg * Math.PI) / 180;
+        return { x: +(cx + Math.cos(rad) * r).toFixed(2), y: +(cy + Math.sin(rad) * r).toFixed(2) };
+    };
+    for (const w of SKILL_WINGS) {
+        const angles = wingArcs[w.id];
+        w.branches.forEach((b, bi) => {
+            const br = SKILLS[b];
+            const ang = angles[bi];
+            const list = br.list;
+            const posById = {};
+            const midIds = list.filter((sk, idx) => idx > 0 && !sk.cap);
+            const rootP = pt(ang, 14.5);
+            posById[list[0].id] = rootP;
+            nodes.push({ b, k: 0, sk: list[0], w, ...rootP });
+            edges.push({ x1: cx, y1: cy, x2: rootP.x, y2: rootP.y, w, lit: G.rank(list[0].id) > 0, avail: state.level >= (br.lvl || 1) });
+
+            midIds.forEach((sk, mi) => {
+                const k = list.indexOf(sk);
+                const spread = midIds.length === 3 ? (mi - 1) * 7.8 : (mi - 0.5) * 9.8;
+                const p = pt(ang + spread, 27);
+                posById[sk.id] = p;
+                nodes.push({ b, k, sk, w, ...p });
+                const lit = G.rank(sk.id) > 0;
+                const avail = !lit && !G.skillReq(b, k);
+                edges.push({ x1: rootP.x, y1: rootP.y, x2: p.x, y2: p.y, w, lit, avail });
+            });
+
+            const capSk = list.find(sk => sk.cap);
+            if (capSk) {
+                const k = list.indexOf(capSk);
+                const cp = pt(ang, 39);
+                posById[capSk.id] = cp;
+                nodes.push({ b, k, sk: capSk, w, ...cp });
+                const lit = G.rank(capSk.id) > 0;
+                const avail = !lit && !G.skillReq(b, k);
+                for (const m of midIds) {
+                    const mp = posById[m.id];
+                    edges.push({ x1: mp.x, y1: mp.y, x2: cp.x, y2: cp.y, w, lit: lit && G.rank(m.id) > 0, avail: avail && G.rank(m.id) > 0 });
+                }
+            }
+        });
+    }
+    return { w: 100, h: 100, nodes, edges, wingTags };
+}
+
+// Calcule les nœuds et arêtes pour une Voie zoomée (arbres ramifiés lisibles au pouce)
+function layoutWing(wing) {
+    const branches = wing.branches;
+    const nodes = [];
+    const edges = [];
+    const labels = [];
+    let cursorY = 7;
+
+    branches.forEach(b => {
+        const br = SKILLS[b];
+        const list = br.list;
+        const midIds = list.filter((sk, idx) => idx > 0 && !sk.cap);
+        const laneH = midIds.length === 3 ? 52 : 40;
+        const cy = cursorY + laneH * 0.56;
+        const locked = state.level < (br.lvl || 1);
+        labels.push({
+            x: 20,
+            y: cursorY + 4.2,
+            text: locked ? `${br.name} · niv. ${br.lvl}` : `${br.name} (${G.branchSpent(b)}/${list.reduce((a, x) => a + x.max, 0)})`,
+            locked,
+        });
+
+        const rootP = { x: 16, y: cy };
+        nodes.push({ b, k: 0, sk: list[0], w: wing, ...rootP });
+
+        const posById = { [list[0].id]: rootP };
+        midIds.forEach((sk, mi) => {
+            const k = list.indexOf(sk);
+            const dy = midIds.length === 3 ? (mi - 1) * 15.5 : (mi - 0.5) * 16.5;
+            const p = { x: 52, y: +(cy + dy).toFixed(2) };
+            posById[sk.id] = p;
+            nodes.push({ b, k, sk, w: wing, ...p });
+            const lit = G.rank(sk.id) > 0;
+            const avail = !lit && !G.skillReq(b, k);
+            edges.push({ x1: rootP.x, y1: rootP.y, x2: p.x, y2: p.y, w: wing, lit, avail, curve: true });
+        });
+
+        const capSk = list.find(sk => sk.cap);
+        if (capSk) {
+            const k = list.indexOf(capSk);
+            const cp = { x: 84, y: cy };
+            nodes.push({ b, k, sk: capSk, w: wing, ...cp });
+            const lit = G.rank(capSk.id) > 0;
+            const avail = !lit && !G.skillReq(b, k);
+            for (const m of midIds) {
+                const mp = posById[m.id];
+                edges.push({ x1: mp.x, y1: mp.y, x2: cp.x, y2: cp.y, w: wing, lit: lit && G.rank(m.id) > 0, avail: avail && G.rank(m.id) > 0, curve: true });
+            }
+        }
+        cursorY += laneH + 4;
+    });
+    return { w: 100, h: cursorY + 4, nodes, edges, labels };
+}
+
+function edgePath(e) {
+    if (e.curve) {
+        const mx = +((e.x1 + e.x2) / 2).toFixed(2);
+        return `M${e.x1} ${e.y1} C${mx} ${e.y1} ${mx} ${e.y2} ${e.x2} ${e.y2}`;
+    }
+    return `M${e.x1} ${e.y1} L${e.x2} ${e.y2}`;
+}
+
+function nodeDetailHtml(b, k, pts) {
+    const br = SKILLS[b];
+    const sk = br && br.list[k];
+    if (!sk) return '';
+    const wing = WING_BY_ID[br.wing] || SKILL_WINGS[0];
+    const r = G.rank(sk.id);
+    const req = G.skillReq(b, k);
+    const full = r >= sk.max;
+    const can = !full && !req && pts > 0;
+    const curDesc = r ? G.skillDesc(sk, r) + '.' : 'Pas encore appris.';
+    const nextDesc = full ? 'Rang maximum atteint.' : `Prochain rang : ${G.skillDesc(sk, r + 1)}.`;
+    return `<div class="sk-detail" style="--wc:${wing.color};--wg:${wing.glow}">
+        <div class="sk-det-top">
+            <div class="sk-det-ico" style="border-color:${wing.color}">${ico(sk.icon)}</div>
+            <div class="sk-det-main">
+                <div class="sk-det-tag"><i class="sk-dot"></i>${wing.name} · ${br.name}${sk.cap ? ' · Clé' : ''}</div>
+                <div class="card-title">${sk.name} ${pips(r, sk.max)}</div>
+                <div class="card-sub">${r ? curDesc : G.skillDesc(sk, 1) + '.'}</div>
+            </div>
+        </div>
+        <div class="sk-det-foot">
+            <div class="card-sub" style="flex:1;min-width:140px">${req ? `<b>Verrouillé :</b> ${req}.` : nextDesc}</div>
+            ${full ? `<span class="chip ok">${ico(['ui', 'check'])} Maîtrisé</span>` : btn(can ? 'Apprendre (1 pt)' : pts < 1 && !req ? '0 point' : 'Apprendre', { act: 'learn', data: { b, k }, kind: can ? 'green' : '', size: 'sm', disabled: !can })}
+        </div>
+    </div>`;
+}
+
 function skills() {
-    const b = ui.sel.branch || 'agri',
-        pts = G.skillPoints();
-    return `<div class="card skills-card"><div class="card-head">${ico(['ui', 'skillbook'], 'ico big')}<div class="card-main"><div class="card-title">${pts ? `${pts} point${pts > 1 ? 's' : ''} à placer` : 'Aucun point à placer'}</div>
-        <div class="card-sub">Un point par niveau, plus de rangs que de points : choisissez. Remis à zéro si vous vendez la ferme.</div></div></div>
-        <div class="chips-row wrap skill-branches">${Object.entries(SKILLS)
-            .map(([id, br]) => {
-                const locked = state.level < (br.lvl || 1);
-                return `<button class="pick-chip${id === b ? ' on' : ''}${locked ? ' locked' : ''}" data-act="branch" data-b="${id}">${ico(locked ? ['ui', 'lock'] : br.icon)}<span>${br.name}</span><small>${locked ? `niv. ${br.lvl}` : `${G.branchSpent(id)}/${br.list.reduce((a, k) => a + k.max, 0)}`}</small></button>`;
-            })
-            .join('')}</div>
-        <div class="tree">${SKILLS[b].list
-            .map((sk, k) => {
-                const r = G.rank(sk.id),
-                    req = G.skillReq(b, k),
-                    full = r >= sk.max;
-                const can = !full && !req && pts > 0;
-                const desc = r ? G.skillDesc(sk, r) + (full ? '.' : `. Prochain rang : ${G.skillDesc(sk, r + 1).toLowerCase()}.`) : G.skillDesc(sk, 1) + '.';
-                return `<div class="node${r ? ' learned' : ''}${req ? ' locked' : ''}${sk.cap ? ' cap' : ''}">${ico(sk.icon, 'ico big')}
-                <div class="card-main"><div class="card-title">${sk.name}${pips(r, sk.max)}</div><div class="card-sub">${desc}</div>${req ? `<div class="card-sub req">${req}.</div>` : ''}</div>
-                ${full ? ico(['ui', 'check']) : btn('Apprendre', { act: 'learn', data: { b, k }, kind: can ? 'green' : '', size: 'sm', disabled: !can })}</div>`;
-            })
-            .join('')}</div>
-        ${G.skillsSpent() ? btn(`Réinitialiser les points · ${fmt(G.respecCost())}${ico(['ui', 'coin'])}`, { act: 'respec', size: 'sm', wide: true }) : ''}</div>`;
+    const mode = ui.sel.skWing || 'all';
+    const pts = G.skillPoints();
+    const spent = G.skillsSpent();
+    const total = G.skillsTotalCap();
+
+    // Garantir une sélection valide
+    if (!ui.sel.skNode || !SKILLS[ui.sel.skNode.b] || !SKILLS[ui.sel.skNode.b].list[ui.sel.skNode.k]) {
+        const defB = mode === 'all' ? 'agri' : WING_BY_ID[mode].branches[0];
+        ui.sel.skNode = { b: defB, k: 0 };
+    }
+    const sel = ui.sel.skNode;
+
+    const hud = `<div class="sk-hud">
+        <div class="sk-hud-main">
+            <span class="sk-pts${pts ? '' : ' zero'}">${ico(['ui', 'skillbook'])}${pts} pt${pts > 1 ? 's' : ''}</span>
+            <span class="sk-spent">${spent} / ${total} rangs</span>
+        </div>
+        ${spent ? btn(`Réinitialiser · ${fmt(G.respecCost())}`, { act: 'respec', size: 'sm', icon: ['ui', 'coin'] }) : '<span class="sk-spent">1 pt par niveau · choisissez vos voies</span>'}
+    </div>`;
+
+    const wingTabs = `<div class="sk-wings">
+        <button type="button" class="sk-wbtn${mode === 'all' ? ' on' : ''}" data-act="skWing" data-v="all" style="--wc:#f4c84a">
+            <i class="sk-dot"></i><span>Vue globale</span>
+        </button>
+        ${SKILL_WINGS.map(
+            w => `<button type="button" class="sk-wbtn${mode === w.id ? ' on' : ''}" data-act="skWing" data-v="${w.id}" style="--wc:${w.color}">
+                <i class="sk-dot"></i><span>${w.short}</span><small>${wingSpent(w)}/${wingCap(w)}</small>
+            </button>`,
+        ).join('')}
+    </div>`;
+
+    const isAll = mode === 'all';
+    const wing = isAll ? null : WING_BY_ID[mode] || SKILL_WINGS[0];
+    const graph = isAll ? layoutGlobal() : layoutWing(wing);
+    const ratioStyle = isAll ? '' : `style="aspect-ratio:100 / ${graph.h}"`;
+
+    const edgesSvg = graph.edges
+        .map(
+            e =>
+                `<path class="sk-edge${e.lit ? ' lit' : e.avail ? ' avail' : ''}" style="--wc:${e.w.color};--wg:${e.w.glow}" d="${edgePath(e)}" />`,
+        )
+        .join('');
+
+    const nodesHtml = graph.nodes
+        .map(n => {
+            const r = G.rank(n.sk.id);
+            const req = G.skillReq(n.b, n.k);
+            const full = r >= n.sk.max;
+            const can = !full && !req && pts > 0;
+            const isSel = sel.b === n.b && sel.k === n.k;
+            const cls = `sk-node${n.sk.cap ? ' cap' : ''}${full ? ' full' : ''}${r > 0 ? ' learned' : req ? ' locked' : ''}${can ? ' can' : ''}${isSel ? ' sel' : ''}`;
+            const topPct = +((n.y / graph.h) * 100).toFixed(2);
+            return `<button type="button" class="${cls}" style="left:${n.x}%;top:${topPct}%;--wc:${n.w.color};--wg:${n.w.glow}" data-act="skPick" data-b="${n.b}" data-k="${n.k}" aria-label="${n.sk.name} (${r}/${n.sk.max})">
+                <span class="sk-ni">${ico(n.sk.icon)}</span>
+                <span class="sk-rk">${r}/${n.sk.max}</span>
+            </button>`;
+        })
+        .join('');
+
+    const extras = isAll
+        ? `<div class="sk-core">${ico(['ui', 'house'])}</div>${SKILL_WINGS.map(w => {
+              const t = graph.wingTags[w.id];
+              return `<button type="button" class="sk-wtag" style="left:${t.x}%;top:${t.y}%;--wc:${w.color};--wg:${w.glow}" data-act="skWing" data-v="${w.id}">${w.name} (${wingSpent(w)})</button>`;
+          }).join('')}`
+        : graph.labels
+              .map(
+                  lb =>
+                      `<span class="sk-blbl${lb.locked ? ' locked' : ''}" style="left:${lb.x}%;top:${+((lb.y / graph.h) * 100).toFixed(2)}%">${lb.text}</span>`,
+              )
+              .join('');
+
+    return `<div class="sk-wrap">
+        ${hud}
+        ${wingTabs}
+        <div class="sk-canvas ${isAll ? 'mode-all' : 'mode-wing'}" ${ratioStyle}>
+            <svg class="sk-svg" viewBox="0 0 ${graph.w} ${graph.h}" preserveAspectRatio="none">${edgesSvg}</svg>
+            ${extras}
+            ${nodesHtml}
+        </div>
+        ${nodeDetailHtml(sel.b, sel.k, pts)}
+    </div>`;
 }
 
 function challengeCard() {
@@ -95,7 +313,7 @@ defineSheet('prestige', {
         return `<p>Vous repartez de zéro sur une nouvelle ferme, avec des rubans de concours qui rendent tout plus rentable.</p>
             <div class="prestige-gain">+${gain}${ico(['ui', 'ribbon'])}</div>
             <p class="card-sub center">${state.challenge ? `Défi « ${CHALLENGES[state.challenge].name} » réussi : ${CHALLENGE_BONUS} rubans en plus. ` : ''}Après : +${after * 5} % de ventes et +${after * 3} % de vitesse.</p>
-            <div class="keep-lose"><div class="line ok"><div><b>Vous gardez</b><br>Rubans, succès, amitiés, chien, décorations, village rénové, grange, livre, cave (étagères et cote), statistiques</div></div>
+            <div class="keep-lose"><div class="line ok"><div><b>Vous gardez</b><br>Rubans, succès, amitiés, chien, décorations, village rénové, grange, livre, cave (étagères et cote), musée, mine, équipe, statistiques</div></div>
             <div class="line bad"><div><b>Vous perdez</b><br>Pièces, niveau, compétences, champs, serre, animaux, machines, stocks, améliorations</div></div></div>
             <div class="set-title">Défi pour la prochaine ferme (facultatif)</div>
             <div class="choice-list"><button class="choice${o.ch ? '' : ' on'}" data-act="pickChallenge" data-c="">Aucun défi</button>${Object.entries(
@@ -122,7 +340,26 @@ defineSheet('prestige', {
 
 export function setupProgress() {
     actions({
-        branch: (el, d) => (ui.sel.branch = d.b),
+        branch: (el, d) => {
+            ui.sel.branch = d.b;
+            const br = SKILLS[d.b];
+            if (br) {
+                ui.sel.skWing = br.wing;
+                ui.sel.skNode = { b: d.b, k: 0 };
+            }
+        },
+        skWing: (el, d) => {
+            ui.sel.skWing = d.v;
+            if (d.v !== 'all' && WING_BY_ID[d.v]) {
+                const cur = ui.sel.skNode;
+                if (!cur || !WING_BY_ID[d.v].branches.includes(cur.b)) {
+                    ui.sel.skNode = { b: WING_BY_ID[d.v].branches[0], k: 0 };
+                }
+            }
+        },
+        skPick: (el, d) => {
+            ui.sel.skNode = { b: d.b, k: +d.k };
+        },
         learn: (el, d) => G.learnSkill(d.b, +d.k, el),
         respec: el => confirmTap('respec', el, `Touchez encore : ${fmt(G.respecCost())} pièces`) && G.respecSkills(),
         abandon: el => confirmTap('abandon', el, 'Confirmer ?') && G.abandonChallenge(),
@@ -135,3 +372,4 @@ export function setupProgress() {
         },
     });
 }
+

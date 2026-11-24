@@ -1,7 +1,7 @@
 // La cave (Atelier | Cave) : vieillissement par étapes, climat et soins, réserve, salle des ventes.
 import { metierCellar } from './metier.js';
 import { addRenom, RENOM } from './renom.js';
-import { state, scaleLvl } from '../core/state.js';
+import { state, scaleLvl, skill } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { fmt } from '../core/format.js';
@@ -107,7 +107,10 @@ export const caveSlots = () =>
     (repStars() >= 5 ? 1 : 0);
 // 1.70 : le talent d'Octave
 export const caveStep = id =>
-    (CAVE_ITEMS[id] === 'cider' && projectDone('cidery') ? 4 * CAVE_H : caveFam(id).step) * (cupHas(2) ? 0.9 : 1) * (1 - talentFx('cave'));
+    (CAVE_ITEMS[id] === 'cider' && projectDone('cidery') ? 4 * CAVE_H : caveFam(id).step) *
+    (cupHas(2) ? 0.9 : 1) *
+    (1 - talentFx('cave')) *
+    (1 - 0.08 * skill('cellarMaster'));
 export const rankName = lot =>
     lot.bad ? (lot.id === 'beer' ? 'Tournée' : 'Tourné') : caveFam(lot.id).ranks[lot.rank] + (lot.q ? ` · ${QUALITY[lot.q].name}` : '');
 // 1.6.3 : un lot peut être une bière (id 'beer', sa recette bid et son fût k)

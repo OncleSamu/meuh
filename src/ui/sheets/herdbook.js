@@ -11,7 +11,8 @@ import { segmented } from '../kit.js';
 import { defineSheet, sheetOpts } from '../sheets.js';
 import { genWrap } from '../genlook.js';
 import { lv80 } from '../../data/lv80.js';
-const GX_LVL = lv80(40);
+import { lv100 } from '../../data/lv100.js';
+const GX_LVL = lv100(lv80(40));
 
 const pair = v => [
     [v, 1],

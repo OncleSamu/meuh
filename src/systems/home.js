@@ -115,7 +115,8 @@ export function handZone() {
     const l = handLvl();
     if (!l || handPaused()) return [];
     const out = [];
-    for (let i = 0; i < state.grid.length && out.length < FARMHAND[l].plots + domStepSum('field'); i++) if (state.grid[i].isUnlocked) out.push(i);
+    const cap = FARMHAND[l].plots + domStepSum('field') + (skill('steward') ? 2 : 0);
+    for (let i = 0; i < state.grid.length && out.length < cap; i++) if (state.grid[i].isUnlocked) out.push(i);
     return out;
 }
 
@@ -184,7 +185,8 @@ export function handTick() {
     if (!l) return false;
     const h = state.farmhand;
     h.t = (h.t || 0) + 1;
-    if (h.t < FARMHAND[l].every) return false;
+    const every = Math.max(4, Math.round(FARMHAND[l].every * (1 - 0.1 * skill('teamSpeed'))));
+    if (h.t < every) return false;
     h.t = 0;
     return handPass();
 }

@@ -2,6 +2,7 @@
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
 import { lv80 } from './lv80.js';
+import { lv100 } from './lv100.js';
 export const BARN_TYPES = ['crop', 'tree', 'product', 'artisan', 'fish'];
 
 export const BARN_CAPS = [50, 70, 95, 125, 160, 200, 250, 310, 380, 460, 550];
@@ -112,7 +113,7 @@ export const LEAGUES = [
         name: 'Diamant',
         f: 1.75,
         pay: 3,
-        lvl: lv80(45),
+        lvl: lv100(lv80(45)),
     },
 ];
 

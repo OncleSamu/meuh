@@ -11,6 +11,7 @@ import { ANIMALS } from '../../src/data/animals.js';
 import { MACHINES, RECIPES } from '../../src/data/machines.js';
 import { MAX_LEVEL } from '../../src/data/progress.js';
 import { lv80, lv80Hi, oldLvl, WIDTH, MAX_NEW } from '../../src/data/lv80.js';
+import { lv100 } from '../../src/data/lv100.js';
 import { CAMPING } from '../../src/data/camping.js';
 import { CHAPTERS } from '../../src/data/village.js';
 
@@ -22,7 +23,7 @@ function fresh() {
 }
 
 test('80 niveaux : rien ne bouge avant le 30, chaque ancien niveau devient une tranche de 1 à 3 niveaux', () => {
-    assert.equal(MAX_LEVEL, 80);
+    assert.equal(MAX_LEVEL, 100);
     assert.equal(MAX_NEW, 80);
     for (let l = 1; l <= 30; l++) assert.equal(lv80(l), l);
     for (let l = 31; l <= 64; l++) {
@@ -44,28 +45,27 @@ test('80 niveaux : l’ancien niveau équivalent, et l’économie qui garde son
     }
     fresh();
     for (const l of [10, 30, 45, 57, 64]) {
-        state.level = lv80(l);
+        state.level = lv100(lv80(l));
         assert.equal(ecoLvl(), l);
         const old = l <= 57 ? 1 + ((l - 1) * 39) / 59 : 1 + (56 * 39) / 59 + ((l - 57) * 2.6) / 7;
         assert.ok(Math.abs(scaleLvl() - old) < 1e-9, `échelle au niveau ${l}`);
     }
 });
 
-test('80 niveaux : pas de zone creuse (8 à 20 recettes par niveau de 30 à 80)', () => {
+test('100 niveaux : pas de zone creuse (7 à 20 recettes par niveau de 30 à 99)', () => {
     const count = {};
     for (const r of Object.values(RECIPES)) count[r.lvl] = (count[r.lvl] || 0) + 1;
-    // 1.171 : Les Terres d'Asie ouvrent leurs recettes en bloc au niveau 80
-    for (let l = 30; l <= 80; l++) assert.ok(count[l] >= 8 && count[l] <= (l === 80 ? 64 : 20), `niveau ${l} : ${count[l]} recettes`);
-    for (const r of Object.values(RECIPES)) assert.ok(r.lvl <= 80, r.id);
-    // au plus trois niveaux de suite sans machine, culture, arbre ni bête
+    for (let l = 30; l <= 99; l++) assert.ok(count[l] >= 7 && count[l] <= 20, `niveau ${l} : ${count[l]} recettes`);
+    for (const r of Object.values(RECIPES)) assert.ok(r.lvl <= MAX_LEVEL, r.id);
+    // au plus quatre niveaux de suite sans machine, culture, arbre ni bête
     let dry = 0;
-    for (let l = 30; l <= 80; l++) {
+    for (let l = 30; l <= 99; l++) {
         const big =
             Object.values(MACHINES).some(m => m.reqLvl === l) ||
             Object.values(ANIMALS).some(a => a.reqLvl === l) ||
             Object.values(ITEMS).some(i => (i.type === 'crop' || i.type === 'tree') && i.reqLvl === l);
         dry = big ? 0 : dry + 1;
-        assert.ok(dry <= 3, `niveau ${l} : ${dry} niveaux de suite sans nouveauté hors recettes`);
+        assert.ok(dry <= 4, `niveau ${l} : ${dry} niveaux de suite sans nouveauté hors recettes`);
     }
 });
 
@@ -87,12 +87,12 @@ test('80 niveaux : une machine s’ouvre avec des recettes, une recette jamais a
 });
 
 test('80 niveaux : les grandes étapes à leur nouvelle place', () => {
-    assert.equal(CAMPING.lvl, lv80(57));
-    assert.equal(MACHINES.emballerie.reqLvl, lv80(58));
-    assert.equal(MACHINES.earthOven.reqLvl, lv80(59));
-    assert.equal(MACHINES.berryKettle.reqLvl, lv80(64));
-    assert.ok(MACHINES.berryKettle.reqLvl <= 80);
-    for (let k = 1; k < CHAPTERS.length; k++) assert.ok(CHAPTERS[k].lvl <= 80);
+    assert.equal(CAMPING.lvl, lv100(lv80(57)));
+    assert.equal(MACHINES.emballerie.reqLvl, lv100(lv80(58)));
+    assert.equal(MACHINES.earthOven.reqLvl, lv100(lv80(59)));
+    assert.equal(MACHINES.berryKettle.reqLvl, lv100(lv80(64)));
+    assert.ok(MACHINES.berryKettle.reqLvl <= MAX_LEVEL);
+    for (let k = 1; k < CHAPTERS.length; k++) assert.ok(CHAPTERS[k].lvl <= MAX_LEVEL);
 });
 
 test('80 niveaux : l’expérience ne change pas avant le 30, puis monte régulièrement', () => {
@@ -101,7 +101,7 @@ test('80 niveaux : l’expérience ne change pas avant le 30, puis monte réguli
     assert.ok(G.getXpReq(1) < G.getXpReq(2));
     for (let l = 2; l < 30; l++) assert.equal(G.getXpReq(l), G.getXpReq64(l));
     assert.ok(G.getXpReq(30) > G.getXpReq(29));
-    for (let l = 31; l < 80; l++) assert.ok(G.getXpReq(l) > G.getXpReq(l - 1), `niveau ${l}`);
+    for (let l = 31; l < MAX_LEVEL; l++) assert.ok(G.getXpReq(l) > G.getXpReq(l - 1), `niveau ${l}`);
 });
 
 test('80 niveaux : une partie d’avant au-dessus du niveau 30 arrive au début de sa tranche et garde ce qu’elle avait', () => {

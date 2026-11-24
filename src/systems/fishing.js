@@ -1,7 +1,7 @@
 // 1.10 : la pêche à l'étang. Trois coins de pêche, des appâts, la canne et son mini-jeu (chaque poisson
 // se bat à sa façon), les nasses qui pêchent seules, le carnet des records, les défis de Marcel,
 // la remontée des saumons et le concours de pêche du week-end.
-import { state } from '../core/state.js';
+import { state, skill } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { RIVAL_STYLE } from './rivals.js';
 import { view } from '../core/view.js';
@@ -191,6 +191,7 @@ export function fishOdds(id, spot, bait) {
     if (f.run && salmonRun()) o *= SALMON_RUN.mult;
     if (bait && f.bait && f.bait.includes(bait)) o *= BAIT_MULT;
     if (bait && f.junk) o *= 0.5;
+    if (skill('seaWolf') && !f.junk && f.odds <= 12) o *= 1.4;
     return o;
 }
 export function pickFish(spot = state.pond.spot, bait = null) {
@@ -494,7 +495,7 @@ const pluralName = id => qtyName(2, FISH[id].name).replace(/^2 /, '');
 
 // ---------------- les nasses ----------------
 export const trapMax = () => (state.level >= TRAPS.lvl ? TRAPS.max(state.level) + trapBonus() + domStepSum('annex', 'trap') : 0);
-export const trapReady = t => !!(t && t.start && now() >= t.start + TRAPS.every);
+export const trapReady = t => !!(t && t.start && now() >= t.start + TRAPS.every * (1 - 0.08 * skill('netFast')));
 export const trapsReady = () => (state.pond ? state.pond.traps.filter(trapReady).length : 0);
 export function buyTrap(at) {
     ensurePond();
@@ -549,7 +550,8 @@ export function haulTrap(i, at) {
     const p = ensurePond(),
         t = p.traps[i];
     if (!trapReady(t)) return false;
-    const n = Math.min(TRAPS.catch[0] + Math.floor(Math.random() * (TRAPS.catch[1] - TRAPS.catch[0] + 1)), Math.max(0, Math.floor(barnSpace())));
+    const extraTrap = Math.random() < 0.12 * skill('trapExtra') ? 1 : 0;
+    const n = Math.min(TRAPS.catch[0] + Math.floor(Math.random() * (TRAPS.catch[1] - TRAPS.catch[0] + 1)) + extraTrap, Math.max(0, Math.floor(barnSpace())));
     if (n <= 0) {
         barnBlocked();
         return false;

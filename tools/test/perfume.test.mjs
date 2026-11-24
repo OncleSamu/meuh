@@ -158,7 +158,7 @@ test('Salon (commandes Portrait olfactif), meilleur accord, hors-ligne et Orgue 
 });
 
 test('1.143 : gestes de soin au choix, valeur non cumulée, ruban unique, signature, cadeaux, coffre, prestige, Livre et succès', async () => {
-    farm(80);
+    farm(100);
     G.ensurePerfume();
     G.setPerfumeNote('head', 'lemon');
     G.setPerfumeNote('heart', 'lavender');

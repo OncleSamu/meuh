@@ -2,6 +2,7 @@
 // Valeurs reprises telles quelles de la version 6.2 (même équilibre).
 
 import { lv80 } from './lv80.js';
+import { lv100 } from './lv100.js';
 export const BALANCE = {
     xpBase: 300,
     slowMax: 2.2, // 1.60 : × 2,2 d'expérience au niveau 2…
@@ -14,6 +15,7 @@ export const BALANCE = {
     xp64: { from: 50, first: 130000, step: 3600 }, // 1.56 : de 50 à 63, la courbe monte doucement (réglée avec le robot : environ 42 h pour le niveau 64)
     xpLvl1: 150,
     xp80: { from: 30, first: 39000, step: 2400 }, // 1.109 : de 30 à 79, une pente régulière (réglée avec le robot : le niveau 80 vers 38-39 h)
+    xp100: { from: 40, first: 63000, step: 1150, quad: 18 }, // 1.174 : de 40 à 99, pente progressive plus raide jusqu'au niveau 100 (~47-49 h)
     xpK60: 1.42, // 1.36 : la courbe des 60 niveaux (réglée avec le robot : environ 5 heures de plus que les 50 niveaux)
     cropXp: 0.06,
     animalXp: 0.08,
@@ -34,7 +36,8 @@ export const BALANCE = {
 
 // 1.139 : le niveau du deuxième poste des machines (ici pour que la liste des niveaux le lise sans cycle)
 export const LANE2_LVL = 15;
-export const MAX_LEVEL = 80; // 1.109 : 80 niveaux (64 de la 1.56 à la 1.108)
+export const MAX_LEVEL = 100; // 1.174 : 100 niveaux (80 de la 1.109 à la 1.173)
+export const MAX_LEVEL_80 = 80;
 export const MAX_LEVEL_64 = 64;
 export const MAX_LEVEL_60 = 60; // le maximum de la 1.36 à la 1.55 (pour convertir les anciennes parties)
 
@@ -132,7 +135,7 @@ export const HOUSE = [
         },
     },
     {
-        lvl: lv80(42),
+        lvl: lv100(lv80(42)),
         name: 'Grande ferme',
         bonus: 'Toutes les commandes paient 10 % de plus',
         cost: {
@@ -143,7 +146,7 @@ export const HOUSE = [
         },
     },
     {
-        lvl: lv80(56),
+        lvl: lv100(lv80(56)),
         name: 'Le manoir',
         bonus: '+80 places dans la grange et 1 place de plus à l’étal',
         cost: {
@@ -181,7 +184,7 @@ export const FARMHAND = [
         },
     },
     {
-        lvl: lv80(41),
+        lvl: lv100(lv80(41)),
         plots: 24,
         every: 15,
         cost: {
@@ -190,7 +193,7 @@ export const FARMHAND = [
         },
     },
     {
-        lvl: lv80(57),
+        lvl: lv100(lv80(57)),
         plots: 36,
         every: 10,
         cost: {
@@ -200,13 +203,13 @@ export const FARMHAND = [
     },
 ];
 
-export const PRESTIGE_LVL = 80;
+export const PRESTIGE_LVL = 100;
 
 export const CHALLENGE_BONUS = 3;
 
 export const ALBUM_MAX = 60;
 
-export const ALBUM_LEVELS = [5, 10, 20, 30, 40, 50, 60, 70, 80];
+export const ALBUM_LEVELS = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
 export const BOOK_QUARTERS = [0.25, 0.5, 0.75, 1];
 

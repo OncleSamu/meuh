@@ -5,7 +5,7 @@
 // Hors cascade ou bassin vide, rien ne meurt : les plantes poussent simplement au ralenti.
 
 export const ASIE = {
-    lvl: 80,
+    lvl: 91,
     project: 'asiaSluice', // le chantier qui ouvre Les Terres d’Asie (chapitre 25)
     cols: 4,
     cells: 20, // cases en tout (4 × 5 terrasses)

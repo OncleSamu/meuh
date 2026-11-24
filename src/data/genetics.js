@@ -9,6 +9,7 @@ import { ASIE_CROPS, ASIE_TREES, ASIE_BEASTS } from './asie.js';
 import { ANIMALS_135 } from './ajouts/animaux.js';
 import { CROPS_152, TREES_152, ANIMALS_152 } from './ajouts/pack152.js';
 import { lv80 } from './lv80.js';
+import { lv100 } from './lv100.js';
 
 // ---------------- les caractères ----------------
 // Chaque caractère va de 0 à 5. Les plantes ont des saveurs et des qualités de culture,
@@ -357,7 +358,7 @@ export const ANIMAL_BASE = Object.fromEntries(Object.entries(A).map(([id, s]) =>
 
 // ---------------- le labo ----------------
 export const GENETICS = {
-    lvl: lv80(40),
+    lvl: lv100(lv80(40)),
     // chantiers qui ouvrent chaque partie
     plantProject: 'pollination', // croisements de plantes
     animalProject: 'breeding', // étable de sélection

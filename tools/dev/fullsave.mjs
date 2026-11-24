@@ -18,7 +18,7 @@ const T0 = Date.now();
 setClock(() => T0);
 setStore(null);
 G.loadGame();
-state.level = 80;
+state.level = 100;
 state.xp = 0;
 state.money = 30000000;
 state.barn.lvl = 60;

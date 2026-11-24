@@ -42,7 +42,7 @@ function richFarm(lvl = 80) {
 }
 
 test('Théo · Champs & Serre : options « Inclure la Serre » et « Suivre le Plan actif »', () => {
-    richFarm(80);
+    richFarm(100);
     state.farmhand.lvl = 2;
     state.greenhouse.built = true;
     G.ensureGhPlots();
@@ -83,7 +83,7 @@ test('Théo · Champs & Serre : options « Inclure la Serre » et « Suivre le P
 });
 
 test('Lina · Animaux : prés, modes et auto-soin des bêtes malades au niveau 4', () => {
-    richFarm(80);
+    richFarm(100);
     assert.equal(G.linaLvl(), 0);
     assert.equal(G.upgradeLina(), true);
     assert.equal(G.linaLvl(), 1);
@@ -131,7 +131,7 @@ test('Lina · Animaux : prés, modes et auto-soin des bêtes malades au niveau 4
 });
 
 test('Henri · Atelier : liste de 3 à 6 recettes maintenues au seuil de stock', () => {
-    richFarm(80);
+    richFarm(100);
     state.machines.push(G.newMachine('mill'), G.newMachine('dairy'), G.newMachine('bakery'));
     assert.equal(G.upgradeHenri(), true);
     assert.equal(G.henriLvl(), 1);
@@ -174,7 +174,7 @@ test('Henri · Atelier : liste de 3 à 6 recettes maintenues au seuil de stock',
 });
 
 test('Milo · Nature : nasses, fruits tombés du verger, charges et cueillette forêt', () => {
-    richFarm(80);
+    richFarm(100);
     assert.equal(G.upgradeMilo(), true);
     assert.equal(G.miloLvl(), 1);
 
@@ -211,7 +211,7 @@ test('Milo · Nature : nasses, fruits tombés du verger, charges et cueillette f
 });
 
 test('Bouton maître « Tout mettre en pause / Tout activer », hors-ligne et Prestige', () => {
-    richFarm(80);
+    richFarm(100);
     state.farmhand.lvl = 3;
     G.upgradeLina();
     G.upgradeHenri();

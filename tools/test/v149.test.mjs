@@ -183,8 +183,9 @@ test('la tempête de sable ensable des cases au soleil, jamais à l’ombre ; un
     assert.ok(G.cellNeed(k) > 0);
 });
 
-test('le chapitre 22 : trois chantiers, Yasmine, le souk paie 15 % de plus', () => {
-    assert.equal(CHAPTERS[21].lvl, lv80(61));
+test('le chapitre 22 : trois chantiers, Yasmine, le souk paie 15 % de plus', async () => {
+    const { lv100 } = await import('../../src/data/lv100.js');
+    assert.equal(CHAPTERS[21].lvl, lv100(lv80(61)));
     const mine = Object.values(PROJECTS).filter(p => p.ch === 22);
     assert.equal(mine.length, 3);
     for (const p of mine) assert.ok(SPR.building(p.id, 2).length > 200, p.id);
@@ -196,11 +197,12 @@ test('le chapitre 22 : trois chantiers, Yasmine, le souk paie 15 % de plus', () 
 });
 
 // ---------------- le contrôle : chaque bête est branchée partout ----------------
-test('contrôle : les trois bêtes ont leurs dessins, gènes, prénoms, Comice, foire, carnet, bulles', () => {
+test('contrôle : les trois bêtes ont leurs dessins, gènes, prénoms, Comice, foire, carnet, bulles', async () => {
+    const { lv100 } = await import('../../src/data/lv100.js');
     assert.equal(OASIS_BEAST_IDS.length, 3);
     for (const id of OASIS_BEAST_IDS) {
         const d = ANIMALS[id];
-        assert.ok(d && d.oasis && d.reqLvl >= lv80(61) && d.reqLvl <= lv80(61) + 1 && d.drink > 0, id);
+        assert.ok(d && d.oasis && d.reqLvl >= lv100(lv80(61)) && d.reqLvl <= lv100(lv80(61)) + 2 && d.drink > 0, id);
         assert.ok(ITEMS[d.prodId] && SPR.item(d.prodId).length > 300, `produit ${id}`);
         if (d.extra) assert.ok(ITEMS[d.extra], `second produit ${id}`);
         assert.ok(SPR.animal(id).length > 500, `dessin ${id}`);

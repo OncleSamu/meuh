@@ -42,7 +42,7 @@ export const netReady = () => netOpen() && state.net.until && now() >= state.net
 
 export function castNet(at) {
     if (!netOpen() || state.net.until) return false;
-    state.net.until = now() + SEA_NET_TIME;
+    state.net.until = now() + Math.round(SEA_NET_TIME * (1 - 0.08 * rank('netFast')));
     sfx('water');
     burst(at, 'water', 12);
     tip('seaNet');

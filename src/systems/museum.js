@@ -1,5 +1,5 @@
 // 1.172 : Le Musée de la vallée — 32 spécimens en 4 ailes, atelier de géodes, paliers et bonus permanents.
-import { state } from '../core/state.js';
+import { state, skill } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { fmt, dateKey, s } from '../core/format.js';
 import { toast, sfx, buzz, burst, float, changed } from '../core/bus.js';
@@ -67,7 +67,8 @@ export const museumDupeList = () =>
     MUSEUM_EXHIBIT_IDS.map(id => {
         const have = museumBagCount(id);
         const dupes = museumHasDonated(id) ? have : Math.max(0, have - 1);
-        return dupes > 0 ? { id, n: dupes, value: dupes * MUSEUM_EXHIBITS[id].sell } : null;
+        const mult = skill('archMaster') ? 2 : 1;
+        return dupes > 0 ? { id, n: dupes, value: dupes * MUSEUM_EXHIBITS[id].sell * mult } : null;
     }).filter(Boolean);
 
 export const museumDupeValue = () => museumDupeList().reduce((a, x) => a + x.value, 0);

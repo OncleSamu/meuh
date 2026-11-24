@@ -60,9 +60,10 @@ test('1.37 : douze recettes du château, leurs dessins et leurs anecdotes', () =
     assert.equal(CAVE_ITEMS.strawWine, 'wine');
 });
 
-test('1.37 : deux chapitres à la fin de l’histoire, Octave, ce que demande un chantier est ouvert avant', () => {
+test('1.37 : deux chapitres à la fin de l’histoire, Octave, ce que demande un chantier est ouvert avant', async () => {
+    const { lv100 } = await import('../../src/data/lv100.js');
     assert.deepEqual(CHAPTER_ORDER.slice(CHAPTER_ORDER.indexOf(19), CHAPTER_ORDER.indexOf(19) + 2), [19, 20]); // 1.48 et 1.49 : l'oasis vient après
-    assert.equal(CHAPTERS[18].lvl, lv80(55));
+    assert.equal(CHAPTERS[18].lvl, lv100(lv80(55)));
     assert.ok(CHAPTERS[19].lvl >= CHAPTERS[18].lvl);
     assert.ok(VILLAGERS.octave && SPR.villager('octave').includes('<svg'));
     const mine = Object.values(PROJECTS).filter(p => p.map === 'chateau');
@@ -240,7 +241,7 @@ test('1.37 : la nouvelle ferme garde réputation et médailles, pas les visiteur
     state.chateau.rep = 20;
     state.chateau.medals[3] = 2;
     state.chateau.vis = [{ id: 1, wine: 'redWine', n: 1, pair: 'cheese', until: clock.t + 1e6 }];
-    state.level = 80;
+    state.level = 100;
     state.stats.earnedRun = 1e10;
     assert.ok(G.doPrestige());
     assert.equal(state.chateau.rep, 20);

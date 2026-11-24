@@ -86,7 +86,7 @@ export const MINE_STRATA = [
         name: 'Les abysses d’obsidienne',
         from: 31,
         to: 40,
-        lvl: 55,
+        lvl: 60,
         needs: ['lamp', 'cart'],
         minPick: 3, // pioche niveau 4+ (tête de fer ou mieux) recommandée/requise
         theme: 'stratum-abyss',

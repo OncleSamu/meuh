@@ -1,0 +1,378 @@
+/* ---------------- 1.174 : Arbre de compétences visuel (style constellation / ARC Raiders) ---------------- */
+.sk-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.sk-hud {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 2.5px solid var(--ink);
+    border-radius: 15px;
+    background: linear-gradient(135deg, #212634, #171b26);
+    color: #f4efe4;
+    box-shadow: 0 4px 0 rgba(30, 24, 20, 0.35);
+}
+.sk-hud .btn {
+    color: var(--ink);
+}
+.sk-hud-main {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+}
+.sk-pts {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(244, 200, 74, 0.18);
+    border: 1.5px solid #f4c84a;
+    color: #ffe484;
+    font-size: 0.84rem;
+    font-weight: 800;
+}
+.sk-pts.zero {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.22);
+    color: rgba(244, 239, 228, 0.72);
+}
+.sk-spent {
+    font-size: 0.74rem;
+    color: rgba(244, 239, 228, 0.78);
+    font-weight: 600;
+}
+.sk-wings {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+}
+@media (max-width: 420px) {
+    .sk-wings {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+.sk-wbtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-width: 0;
+    padding: 7px 6px;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    background: #222838;
+    color: #e6e0d2;
+    font-size: 0.76rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 2px 0 rgba(20, 18, 26, 0.45);
+    transition: transform 0.08s ease;
+}
+.sk-wbtn:active {
+    transform: translateY(1px);
+}
+.sk-wbtn.on {
+    background: #2f384e;
+    color: #fff;
+    border-color: var(--wc, #f4c84a);
+    box-shadow:
+        0 0 10px color-mix(in srgb, var(--wc, #f4c84a) 45%, transparent),
+        0 2px 0 rgba(20, 18, 26, 0.5);
+}
+.sk-wbtn small {
+    opacity: 0.78;
+    font-size: 0.68rem;
+}
+.sk-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex: none;
+    background: var(--wc, #f4c84a);
+    box-shadow: 0 0 6px var(--wc, #f4c84a);
+}
+
+/* ---- Toile interactive de l'arbre ---- */
+.sk-canvas {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 50% 48%, rgba(244, 200, 74, 0.11), transparent 55%),
+        radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(160deg, #161a24, #1e2433 55%, #151923);
+    background-size:
+        100% 100%,
+        18px 18px,
+        100% 100%;
+    box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.45);
+}
+.sk-canvas.mode-all {
+    aspect-ratio: 1 / 1.02;
+    min-height: 330px;
+}
+.sk-canvas.mode-wing {
+    min-height: 340px;
+}
+.sk-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+}
+.sk-edge {
+    fill: none;
+    vector-effect: non-scaling-stroke;
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke-dasharray: 5 5;
+}
+.sk-edge.avail {
+    stroke: var(--wc, #f4c84a);
+    stroke-opacity: 0.55;
+    stroke-dasharray: none;
+    stroke-width: 2.5px;
+}
+.sk-edge.lit {
+    stroke: var(--wg, #ffe082);
+    stroke-opacity: 0.96;
+    stroke-dasharray: none;
+    stroke-width: 3.4px;
+    filter: drop-shadow(0 0 5px var(--wc, #f4c84a));
+}
+.sk-core {
+    position: absolute;
+    left: 50%;
+    top: 51%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2.5px solid #f4c84a;
+    background: radial-gradient(circle, #3c3424, #1c1e28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 0 18px rgba(244, 200, 74, 0.5),
+        inset 0 0 8px rgba(244, 200, 74, 0.3);
+    pointer-events: none;
+    z-index: 2;
+}
+.sk-core .ico {
+    width: 26px;
+    height: 26px;
+}
+.sk-wtag {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1.5px solid var(--wc, #f4c84a);
+    background: rgba(18, 22, 32, 0.9);
+    color: var(--wg, #fff);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    white-space: nowrap;
+    z-index: 5;
+}
+.sk-blbl {
+    position: absolute;
+    left: 10px !important;
+    transform: translateY(-50%);
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: rgba(15, 19, 28, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: rgba(244, 239, 228, 0.92);
+    font-size: 0.66rem;
+    font-weight: 800;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 2;
+}
+.sk-blbl.locked {
+    opacity: 0.55;
+}
+
+/* ---- Nœuds circulaires & Clés dorées ---- */
+.sk-node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    border: 2.5px solid rgba(255, 255, 255, 0.24);
+    background: radial-gradient(circle at 35% 30%, #2e3446, #1a1f2d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 4;
+    touch-action: manipulation;
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+.sk-node.cap {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    transform: translate(-50%, -50%) rotate(45deg);
+    border-color: rgba(244, 200, 74, 0.55);
+    background: radial-gradient(circle at 35% 30%, #3d3420, #1f1b16);
+}
+.sk-canvas.mode-all .sk-node {
+    width: 24px;
+    height: 24px;
+    border-width: 1.8px;
+}
+.sk-canvas.mode-all .sk-node.cap {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+}
+.sk-canvas.mode-all .sk-rk {
+    display: none;
+}
+.sk-node.cap > .sk-ni {
+    transform: rotate(-45deg);
+}
+.sk-ni {
+    width: 68%;
+    height: 68%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+.sk-ni .ico {
+    width: 100%;
+    height: 100%;
+}
+.sk-node.locked {
+    opacity: 0.45;
+    filter: grayscale(0.65);
+}
+.sk-node.can {
+    border-color: var(--wg, #ffe082);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--wc, #f4c84a) 35%, transparent), 0 0 12px color-mix(in srgb, var(--wc, #f4c84a) 65%, transparent);
+    animation: sk-pulse 2s ease-in-out infinite;
+}
+@keyframes sk-pulse {
+    50% {
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--wc, #f4c84a) 45%, transparent), 0 0 18px color-mix(in srgb, var(--wc, #f4c84a) 85%, transparent);
+    }
+}
+html.calm .sk-node.can {
+    animation: none;
+}
+.sk-node.learned {
+    border-color: var(--wg, #ffe082);
+    background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--wc, #46c46e) 55%, #1d2230), #1a212e);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--wc, #46c46e) 60%, transparent);
+    opacity: 1;
+    filter: none;
+}
+.sk-node.full {
+    border-color: #ffe278;
+    box-shadow: 0 0 14px color-mix(in srgb, var(--wc, #f4c84a) 80%, transparent);
+}
+.sk-node.sel {
+    z-index: 6;
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+}
+.sk-rk {
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0 4px;
+    border-radius: 6px;
+    background: #131722;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #fff;
+    font-size: 0.56rem;
+    font-weight: 900;
+    line-height: 1.2;
+    white-space: nowrap;
+    pointer-events: none;
+}
+.sk-node.cap .sk-rk {
+    transform: translateX(-50%) rotate(-45deg);
+    bottom: -9px;
+    left: 72%;
+}
+.sk-node.learned .sk-rk {
+    border-color: var(--wg, #ffe082);
+    color: var(--wg, #ffe082);
+}
+
+/* ---- Fiche d'inspection du nœud sélectionné ---- */
+.sk-detail {
+    padding: 11px 12px;
+    border: 2.5px solid var(--ink);
+    border-radius: 15px;
+    background: linear-gradient(135deg, #fffdf7, #f5ebd8);
+    box-shadow: 0 3px 0 rgba(58, 38, 24, 0.24);
+}
+.sk-det-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.sk-det-ico {
+    width: 46px;
+    height: 46px;
+    flex: none;
+    border-radius: 13px;
+    border: 2.5px solid var(--ink);
+    background: #23293a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sk-det-ico .ico {
+    width: 30px;
+    height: 30px;
+}
+.sk-det-main {
+    flex: 1;
+    min-width: 0;
+}
+.sk-det-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    opacity: 0.78;
+}
+.sk-det-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1.5px dashed rgba(58, 38, 24, 0.18);
+}

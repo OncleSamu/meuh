@@ -125,7 +125,7 @@ test('élevage : un petit naît avec les gènes de ses parents ; une race se fix
 });
 
 test('le grand hall du Comice (l’ancien Salon) et la commande du chef', () => {
-    state.level = 48;
+    state.level = 60;
     for (const id of ['seedbank', 'selectHive', 'salonHall']) assert.ok(build(id), id);
     tick(12);
     // 1.45 : plus de Salon tous les deux jours ; le Comice prend le relais, avec le potager quand on a des variétés

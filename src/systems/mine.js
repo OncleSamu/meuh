@@ -16,7 +16,10 @@ import { tip } from './tips.js';
 export const mineDeepOpen = () => state.level >= MINE_DEEP.lvl;
 export const mineUp = id => !!(state.mineDeep && state.mineDeep.ups && state.mineDeep.ups[id]);
 export const mineMaxEnergy = () => MINE_DEEP.energyBase + (mineUp('lanternTank') ? 15 : 0) + (mineUp('headlamp') ? 15 : 0);
-export const mineRegenSec = () => (mineUp('winch') ? Math.round(MINE_DEEP.energyRegenSec * 0.7) : MINE_DEEP.energyRegenSec);
+export const mineRegenSec = () => {
+    const base = mineUp('winch') ? MINE_DEEP.energyRegenSec * 0.7 : MINE_DEEP.energyRegenSec;
+    return Math.max(15, Math.round(base * (1 - 0.1 * skill('lanternEco'))));
+};
 
 export function mineStratumOpen(stratum) {
     const sDef = typeof stratum === 'object' ? stratum : MINE_STRATA.find(x => x.id === stratum) || stratumOf(stratum);
@@ -149,8 +152,8 @@ export function mineGenerateFloor(floor) {
         cells[chestIdx].maxHp = 1;
     }
 
-    // 3. Fossiles / reliques enfouis (1 à 2 par étage)
-    const relicCount = sIdx >= 2 ? 2 : 1;
+    // 3. Fossiles / reliques enfouis (1 à 2 par étage + compétence Œil d'archéologue)
+    const relicCount = (sIdx >= 2 ? 2 : 1) + (Math.random() < 0.1 * skill('archEye') ? 1 : 0);
     const specialIndices = [];
     for (let i = 0; i < relicCount; i++) {
         const k = take();
@@ -160,8 +163,8 @@ export function mineGenerateFloor(floor) {
         specialIndices.push(k);
     }
 
-    // 4. Gisements de géodes (1 à 2 par étage, bonus Treuil)
-    const geodeCount = 1 + (Math.random() < 0.45 + (mineUp('winch') ? 0.25 : 0) ? 1 : 0);
+    // 4. Gisements de géodes (1 à 2 par étage, bonus Treuil + Chasseur de géodes)
+    const geodeCount = 1 + (Math.random() < 0.45 + (mineUp('winch') ? 0.25 : 0) + 0.12 * skill('geodeHunt') ? 1 : 0);
     for (let i = 0; i < geodeCount; i++) {
         const k = take();
         cells[k].kind = 'geode';
@@ -233,8 +236,9 @@ function resolveCellLoot(cell, floor, at, quiet = false) {
         const g = pickW(sDef.gems);
         giveInv(g, 2, at, 'gold', -42, 120);
         loot.items[g] = 2;
-        mineAddGeode(sDef.geode, 1, at, true);
-        loot.geodes[sDef.geode] = 1;
+        const chestGeodes = 1 + (skill('archMaster') ? 1 : 0);
+        mineAddGeode(sDef.geode, chestGeodes, at, true);
+        loot.geodes[sDef.geode] = chestGeodes;
         const sp = rollMuseumSpecimen(sIdx, null, 0.85);
         museumAddSpecimen(sp, 1, at, quiet);
         loot.specimens.push(sp);
@@ -242,7 +246,7 @@ function resolveCellLoot(cell, floor, at, quiet = false) {
         if (!quiet) {
             sfx('level');
             burst(at, 'sparkle', 14);
-            toast(`Coffre de l’étage ${floor} : +${fmt(coins)} pièces, 1 géode et 1 spécimen !`, ['ui', 'mineChest']);
+            toast(`Coffre de l’étage ${floor} : +${fmt(coins)} pièces, ${chestGeodes} géode${chestGeodes > 1 ? 's' : ''} et 1 spécimen !`, ['ui', 'mineChest']);
         }
     } else if (cell.kind === 'relic') {
         const sp = rollMuseumSpecimen(sIdx, null, 0.78);
