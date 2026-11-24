@@ -1224,81 +1224,415 @@ svg.chart .bar:hover path {
     min-width: 0;
 }
 
-/* guide du fermier : catégories, pages lues */
+/* 1.164 : guide du fermier illustré (raccourcis, catégories glissables, tuiles En bref, accordéons & schémas) */
+.guide-quick {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin: 4px 0 8px;
+}
+.guide-qbtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 7px 4px;
+    border-radius: 12px;
+    border: 2px solid var(--wood-d);
+    background: linear-gradient(180deg, #fffdf6, #f4e6ca);
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--ink);
+    cursor: pointer;
+    box-shadow: 0 2px 0 rgba(58, 38, 24, 0.16);
+}
+.guide-qbtn:active {
+    transform: translateY(1px);
+}
+.guide-qbtn .ico.sm {
+    width: 22px;
+    height: 22px;
+}
+
 .guide-chips {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     margin: 6px 0 10px;
 }
+.guide-cats-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px 2px 4px;
+}
+.guide-cats-bar::-webkit-scrollbar {
+    display: none;
+}
+.guide-cats-bar .chip {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+@media (min-width: 720px) {
+    .guide-cats-bar {
+        flex-wrap: wrap;
+        overflow-x: visible;
+    }
+}
 
 .guide-chips .chip {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
 }
-
 .guide-chips .chip.on {
-    box-shadow: 0 0 0 3px var(--ink);
+    box-shadow: 0 0 0 2.5px var(--ink);
+    background: #fff3c4;
 }
-
 .guide-chips .ico.sm {
-    width: 20px;
-    height: 20px;
+    width: 19px;
+    height: 19px;
+}
+.gc-cnt {
+    font-style: normal;
+    font-size: 0.66rem;
+    font-weight: 800;
+    opacity: 0.68;
 }
 
+.guide-page {
+    align-items: center;
+}
+.guide-page .gp-go {
+    margin-left: auto;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--ink-soft);
+    padding-left: 4px;
+}
+
+.guide-later {
+    margin-top: 12px;
+    border-radius: 12px;
+    border: 1.5px dashed var(--wood-d);
+    background: rgba(243, 232, 210, 0.55);
+    padding: 7px 9px;
+}
+.guide-later > summary {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--ink-soft);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.guide-later > summary::after {
+    content: '+';
+    font-size: 1rem;
+    font-weight: 900;
+}
+.guide-later[open] > summary::after {
+    content: '−';
+}
+.guide-later-list {
+    margin-top: 8px;
+}
+
+.guide-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 2px 0 8px;
+}
 .guide-back {
-    margin: 4px 0 8px;
-    min-height: 32px; /* 1.105 : plus facile à toucher */
+    margin: 0;
+    min-height: 32px;
 }
 
 .guide-head {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px;
+    padding: 10px 12px;
+    background: linear-gradient(180deg, #fffdf7, #f5e9d0);
 }
-
 .guide-head .want {
     color: #8e3f1e;
     font-weight: 800;
 }
 
-.guide-body {
-    margin: 8px 2px 12px;
-    line-height: 1.4;
+/* Bandeau « En bref » */
+.guide-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    margin: 8px 0;
+}
+@media (min-width: 480px) {
+    .guide-facts {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+.guide-fact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+    padding: 8px 6px;
+    border-radius: 12px;
+    background: #fffdf6;
+    border: 1.5px solid var(--wood-d);
+    box-shadow: 0 2px 0 rgba(58, 38, 24, 0.12);
+}
+.guide-fact .ico.sm {
+    width: 24px;
+    height: 24px;
+}
+.guide-fact b {
+    font-size: 0.82rem;
+    color: #7c3515;
+    line-height: 1.15;
+}
+.guide-fact span {
+    font-size: 0.67rem;
+    color: var(--ink-soft);
+    line-height: 1.2;
 }
 
-.guide-body h4 {
-    margin: 16px 0 4px;
-    font-size: 1.05rem;
+.guide-sec-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 8px 2px 6px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: var(--ink-soft);
+}
+.guide-sec-bar .chip.sm {
+    font-size: 0.72rem;
+    padding: 3px 9px;
+}
+
+/* Sections en accordéons */
+.guide-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 6px 0 12px;
+    line-height: 1.42;
+}
+.guide-sec {
+    border-radius: 12px;
+    border: 1.5px solid var(--wood-d);
+    background: var(--paper, #fffaf0);
+    overflow: hidden;
+    box-shadow: 0 2px 0 rgba(58, 38, 24, 0.1);
+}
+.guide-sec > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px 12px;
+    background: linear-gradient(180deg, #faf0dc, #f1e2c5);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+}
+.guide-sec > summary::-webkit-details-marker {
+    display: none;
+}
+.guide-sec > summary::after {
+    content: '▸';
+    font-size: 0.9rem;
     font-weight: 900;
     color: #8e3f1e;
+    transition: transform 0.14s ease;
+    flex-shrink: 0;
+}
+.guide-sec[open] > summary::after {
+    transform: rotate(90deg);
+}
+.guide-sec[open] > summary {
+    border-bottom: 1.5px solid rgba(90, 62, 34, 0.22);
+}
+.gs-title {
+    font-size: 0.9rem;
+    font-weight: 900;
+    color: #7c3515;
+    flex: 1;
+    min-width: 0;
+}
+.gs-meta {
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+.gs-body {
+    padding: 9px 12px 10px;
+    font-size: 0.85rem;
+}
+.gs-body p {
+    margin: 0 0 7px;
+}
+.gs-body p:last-child {
+    margin-bottom: 0;
+}
+.guide-ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.guide-ul li {
+    position: relative;
+    padding-left: 14px;
+    margin: 0;
+}
+.guide-ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.56em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #b86228;
+}
+.g-key {
+    color: #7c3515;
+    font-weight: 900;
 }
 
-.guide-body p,
-.guide-body ul {
-    margin: 0 0 6px;
+/* Schémas d’étapes A › B › C */
+.guide-steps {
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+    margin: 2px 0 10px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+.guide-step {
+    flex: 1 1 0;
+    min-width: 68px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+    padding: 7px 5px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #fffdf7, #f5e8cc);
+    border: 1.5px solid var(--wood-d);
+}
+.guide-step .ico.sm {
+    width: 24px;
+    height: 24px;
+}
+.guide-step b {
+    font-size: 0.74rem;
+    color: #5c2e0e;
+}
+.guide-step small {
+    font-size: 0.64rem;
+    color: var(--ink-soft);
+    line-height: 1.15;
+}
+.gs-arr {
+    align-self: center;
+    font-weight: 900;
+    font-size: 1rem;
+    color: #b86228;
+    flex-shrink: 0;
 }
 
-.guide-body ul {
-    padding-left: 20px;
+/* Grilles de fiches illustrées */
+.guide-tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    margin: 2px 0 10px;
 }
-
-.guide-body li {
-    margin-bottom: 3px;
+.guide-tile {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    padding: 7px 8px;
+    border-radius: 10px;
+    background: #fffdf7;
+    border: 1.5px solid rgba(90, 62, 34, 0.32);
+}
+.guide-tile .ico.sm {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.gt-txt {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+.gt-txt b {
+    font-size: 0.78rem;
+    color: var(--ink);
+    line-height: 1.2;
+}
+.gt-val {
+    font-size: 0.72rem;
+    font-weight: 900;
+    color: #2e7d32;
+}
+.gt-txt small {
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+    line-height: 1.22;
 }
 
 .guide-tips {
-    margin-top: 12px;
-    padding: 8px 10px;
+    margin-top: 4px;
+    padding: 9px 11px;
     border-radius: 12px;
-    background: #fff3c4;
-    border: 2px solid var(--ink);
+    background: linear-gradient(180deg, #fff8d6, #ffedb0);
+    border: 2px solid #c98808;
+    font-size: 0.83rem;
 }
-
-.guide-tips p {
-    margin: 4px 0 0;
+.gtips-h {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #6b4200;
+    margin-bottom: 5px;
+}
+.gtips-h .ico.sm {
+    width: 18px;
+    height: 18px;
+}
+.guide-tips ul {
+    margin: 0;
+    padding-left: 16px;
+}
+.guide-tips li {
+    margin-bottom: 3px;
+}
+.guide-tips li:last-child {
+    margin-bottom: 0;
 }
 
 /* 1.59 : les sujets du guide ne se touchent plus */

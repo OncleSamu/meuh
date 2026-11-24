@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.164",
+  "title": "Guide du fermier illustré & digeste",
+  "date": "23 novembre 2026",
+  "items": [
+   "Accueil du Guide repensé : 4 raccourcis rapides (Débuter, Horaires, Jeu fermé, MeuhCG), barre de catégories glissable sur 1 ligne sur mobile et séparation automatique des sujets débloqués vs « Plus tard dans l’aventure »",
+   "Lecture aérée en carnet illustré : bouton « Y aller » accessible tout en haut, chapitres en accordéons dépliables (avec bouton Tout ouvrir / Tout replier), mise en gras automatique des mots-clés et découpage des longs paragraphes",
+   "Bandeaux « En bref », schémas d’étapes et fiches illustrées ajoutés sur les pages clés (Débuter, Le temps, Aide-mémoire, Animaux, Haras, Atelier, Oasis, Grand Nord, MeuhCG et Fin de partie) et allègement massif des plus gros pavés"
+  ]
+ },
+ {
   "v": "1.163",
   "title": "MeuhCG : Confort petit téléphone",
   "date": "23 novembre 2026",

@@ -203,34 +203,129 @@ const GUIDE_GO = {
     nature: 'farm/nature',
     pond: 'farm/pond',
 };
+const GUIDE_QUICK = [
+    ['start', 'Débuter', ['ui', 'star']],
+    ['memo', 'Horaires', ['ui', 'clock']],
+    ['time', 'Jeu fermé', ['ui', 'firefly']],
+    ['meuhcg', 'MeuhCG', ['ui', 'meuhcg']],
+];
 const guideById = id => GUIDE_PAGES.find(g => g.id === id);
 const pagePath = g => GUIDE_GO[g.go] || g.go || 'farm/field';
-const guideText = g => [g.name, g.intro, ...g.secs.map(x => x.h + ' ' + (x.t || (x.b || []).join(' '))), ...(g.tips || [])].join(' ');
+const cleanGuide = s =>
+    String(s || '')
+        .replace(/\s*\((?:depuis la\s+)?1\.\d+(?:\.\d+)?\)/gi, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+const fmtGuideLine = s =>
+    cleanGuide(s).replace(/^([^:.!?(),]{2,38})(\s?[:]\s+)/, '<b class="g-key">$1</b>$2');
+const splitGuidePara = s => {
+    const c = cleanGuide(s);
+    if (c.length < 240) return `<p>${fmtGuideLine(c)}</p>`;
+    // Découper les longs paragraphes en phrases aérées (2 phrases par bloc max)
+    const parts = c.match(/[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$/g);
+    if (!parts || parts.length <= 2) return `<p>${fmtGuideLine(c)}</p>`;
+    const chunks = [];
+    for (let i = 0; i < parts.length; i += 2) {
+        chunks.push(parts.slice(i, i + 2).join('').trim());
+    }
+    return chunks.map(ch => `<p>${fmtGuideLine(ch)}</p>`).join('');
+};
+const guideText = g =>
+    [
+        g.name,
+        g.intro,
+        ...(g.facts || []).map(f => `${f.v} ${f.l}`),
+        ...g.secs.map(x =>
+            [
+                x.h,
+                x.t || '',
+                ...(x.b || []),
+                ...(x.steps || []).map(st => `${st.label} ${st.sub || ''}`),
+                ...(x.tiles || []).map(tl => `${tl.title} ${tl.val || ''} ${tl.sub || ''}`),
+            ].join(' '),
+        ),
+        ...(g.tips || []),
+    ].join(' ');
 
 function guideCard(g, snippet) {
     const locked = state.level < g.lvl;
-    return `<button class="card guide-page${locked ? ' locked' : ''}" data-act="guidePage" data-p="${g.id}">${ico(g.icon, 'ico big')}<span class="card-main"><span class="card-title">${g.name}${locked ? ` <small>niveau ${g.lvl}</small>` : ''}</span><span class="card-sub">${snippet || g.intro}</span></span></button>`;
+    return `<button class="card guide-page${locked ? ' locked' : ''}" data-act="guidePage" data-p="${g.id}">${ico(g.icon, 'ico big')}<span class="card-main"><span class="card-title">${g.name}${locked ? ` <small>niv. ${g.lvl}</small>` : ''}</span><span class="card-sub">${cleanGuide(snippet || g.intro)}</span></span><span class="gp-go" aria-hidden="true">›</span></button>`;
 }
 
 function guideHome(o) {
     const cat = o.cat || GUIDE_CATS[0].id;
-    const chips = GUIDE_CATS.map(
-        c => `<button class="chip${c.id === cat ? ' on' : ''}" data-act="guideCat" data-c="${c.id}">${ico(c.icon, 'ico sm')}<span>${c.name}</span></button>`,
-    ).join('');
-    return `<div class="guide-chips">${chips}</div>${GUIDE_PAGES.filter(g => g.cat === cat)
-        .map(g => guideCard(g))
-        .join('')}`;
+    const quick = `<div class="guide-quick">${GUIDE_QUICK.map(
+        ([id, lbl, ic]) => `<button class="guide-qbtn" data-act="guidePage" data-p="${id}">${ico(ic, 'ico sm')}<span>${lbl}</span></button>`,
+    ).join('')}</div>`;
+    const chips = GUIDE_CATS.map(c => {
+        const list = GUIDE_PAGES.filter(g => g.cat === c.id);
+        const openN = list.filter(g => state.level >= g.lvl).length;
+        return `<button class="chip${c.id === cat ? ' on' : ''}" data-act="guideCat" data-c="${c.id}">${ico(c.icon, 'ico sm')}<span>${c.name}</span><i class="gc-cnt">${openN}/${list.length}</i></button>`;
+    }).join('');
+    const inCat = GUIDE_PAGES.filter(g => g.cat === cat);
+    const unlocked = inCat.filter(g => state.level >= g.lvl);
+    const later = inCat.filter(g => state.level < g.lvl);
+    const laterBlock = later.length
+        ? `<details class="guide-later"${unlocked.length ? '' : ' open'}><summary>Plus tard dans l’aventure (${later.length})</summary><div class="guide-later-list">${later.map(g => guideCard(g)).join('')}</div></details>`
+        : '';
+    return `${quick}<div class="guide-chips guide-cats-bar">${chips}</div>${unlocked.map(g => guideCard(g)).join('')}${laterBlock}`;
 }
 
-function guideRead(g) {
+function renderGuideSecBody(x) {
+    const stepsHtml = (x.steps || []).length
+        ? `<div class="guide-steps">${x.steps
+              .map(
+                  (st, i) =>
+                      `${i ? '<span class="gs-arr" aria-hidden="true">›</span>' : ''}<div class="guide-step">${ico(st.icon, 'ico sm')}<b>${st.label}</b>${st.sub ? `<small>${st.sub}</small>` : ''}</div>`,
+              )
+              .join('')}</div>`
+        : '';
+    const tilesHtml = (x.tiles || []).length
+        ? `<div class="guide-tiles">${x.tiles
+              .map(
+                  tl =>
+                      `<div class="guide-tile">${tl.icon ? ico(tl.icon, 'ico sm') : ''}<div class="gt-txt"><b>${tl.title}</b>${tl.val ? `<span class="gt-val">${tl.val}</span>` : ''}${tl.sub ? `<small>${tl.sub}</small>` : ''}</div></div>`,
+              )
+              .join('')}</div>`
+        : '';
+    const textHtml = x.t ? splitGuidePara(x.t) : x.b && x.b.length ? `<ul class="guide-ul">${x.b.map(i => `<li>${fmtGuideLine(i)}</li>`).join('')}</ul>` : '';
+    return `${stepsHtml}${tilesHtml}${textHtml}`;
+}
+
+function guideRead(g, o = {}) {
     const locked = state.level < g.lvl;
-    const secs = g.secs.map(x => `<h4>${x.h}</h4>${x.t ? `<p>${x.t}</p>` : `<ul>${x.b.map(i => `<li>${i}</li>`).join('')}</ul>`}`).join('');
-    const tips = (g.tips || []).length ? `<div class="guide-tips"><b>À retenir</b>${g.tips.map(t => `<p>${t}</p>`).join('')}</div>` : '';
+    const allOpen = !!o.allOpen;
+    const factsHtml = (g.facts || []).length
+        ? `<div class="guide-facts">${g.facts
+              .map(f => `<div class="guide-fact">${ico(f.icon, 'ico sm')}<b>${f.v}</b><span>${f.l}</span></div>`)
+              .join('')}</div>`
+        : '';
+    const toolbar =
+        g.secs.length > 2
+            ? `<div class="guide-sec-bar"><span>${g.secs.length} points clés</span><button type="button" class="chip sm" data-act="guideExpand">${allOpen ? 'Tout replier' : 'Tout ouvrir'}</button></div>`
+            : '';
+    const secs = g.secs
+        .map((x, idx) => {
+            const isOpen = allOpen || idx === 0 || g.secs.length <= 2;
+            const count = x.tiles ? `${x.tiles.length} fiches` : x.steps ? `${x.steps.length} étapes` : x.b ? `${x.b.length} points` : '';
+            return `<details class="guide-sec"${isOpen ? ' open' : ''}>
+                <summary><span class="gs-title">${cleanGuide(x.h)}</span>${count ? `<span class="gs-meta">${count}</span>` : ''}</summary>
+                <div class="gs-body">${renderGuideSecBody(x)}</div>
+            </details>`;
+        })
+        .join('');
+    const tips = (g.tips || []).length
+        ? `<div class="guide-tips"><div class="gtips-h">${ico(['ui', 'sparkle'], 'ico sm')}<b>À retenir</b></div><ul>${g.tips.map(t => `<li>${fmtGuideLine(t)}</li>`).join('')}</ul></div>`
+        : '';
     const see = (g.see || []).map(guideById).filter(Boolean);
-    return `<button class="chip guide-back" data-act="guidePage" data-p="">‹ Tous les sujets</button>
-        <div class="card guide-head">${ico(g.icon, 'ico big')}<div class="card-main"><div class="card-title">${g.name}</div><div class="card-sub">${g.intro}</div>${locked ? `<div class="card-sub want">S’ouvre au niveau ${g.lvl}</div>` : ''}</div></div>
+    return `<div class="guide-nav">
+            <button class="chip guide-back" data-act="guidePage" data-p="">‹ Tous les sujets</button>
+            ${btn('Y aller', { act: 'guideGo', data: { path: pagePath(g) }, kind: 'gold', size: 'sm', disabled: locked })}
+        </div>
+        <div class="card guide-head">${ico(g.icon, 'ico big')}<div class="card-main"><div class="card-title">${g.name}</div><div class="card-sub">${cleanGuide(g.intro)}</div>${locked ? `<div class="card-sub want">S’ouvre au niveau ${g.lvl}</div>` : ''}</div></div>
+        ${factsHtml}
+        ${toolbar}
         <div class="guide-body">${secs}${tips}</div>
-        ${btn('Y aller', { act: 'guideGo', data: { path: pagePath(g) }, kind: 'gold', wide: true, disabled: locked })}
         ${see.length ? `<div class="set-title">Voir aussi</div><div class="guide-chips">${see.map(x => `<button class="chip" data-act="guidePage" data-p="${x.id}">${ico(x.icon, 'ico sm')}<span>${x.name}</span></button>`).join('')}</div>` : ''}`;
 }
 
@@ -283,7 +378,7 @@ const guideBody = o => {
     const q = norm(o.q || '').trim();
     if (q.length >= 2) return guideResults(o.q);
     const g = o.page && guideById(o.page);
-    return g ? guideRead(g) : guideHome(o);
+    return g ? guideRead(g, o) : guideHome(o);
 };
 
 defineSheet('guide', {
@@ -416,6 +511,11 @@ export function setupInfo() {
             const o = sheetOpts('guide');
             o.q = '';
             o.page = d.p || '';
+            o.allOpen = false;
+        },
+        guideExpand: () => {
+            const o = sheetOpts('guide');
+            o.allOpen = !o.allOpen;
         },
         guideCat: (el, d) => (sheetOpts('guide').cat = d.c),
         guideGo: (el, d) => {

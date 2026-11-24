@@ -24,5 +24,12 @@ test('guide : chaque icône existe', async () => {
     const { SPR } = await import('../../src/art/index.js');
     const map = { item: 'items', animal: 'animals', machine: 'machines', ui: 'ui', villager: 'people' };
     const all = [...GUIDE_CATS.map(c => [c.id, c.icon]), ...GUIDE_PAGES.map(g => [g.id, g.icon])];
+    for (const g of GUIDE_PAGES) {
+        for (const f of g.facts || []) all.push([`${g.id}.fact`, f.icon]);
+        for (const s of g.secs) {
+            for (const st of s.steps || []) all.push([`${g.id}.step`, st.icon]);
+            for (const tl of s.tiles || []) if (tl.icon) all.push([`${g.id}.tile`, tl.icon]);
+        }
+    }
     for (const [id, [kind, name]] of all) assert.ok(SPR.has[map[kind]] && SPR.has[map[kind]][name], `${id} : icône ${kind}/${name}`);
 });
