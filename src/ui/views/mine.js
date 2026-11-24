@@ -9,9 +9,9 @@ import { btn, bar, section, costRow, hint } from '../kit.js';
 import { ui } from '../app.js';
 import { defineSheet } from '../sheets.js';
 
-function cellArt(c) {
+function cellArt(c, nextFloor) {
     if (c.cleared) {
-        if (c.stairs) return `<span class="mn-art">${art('ui', 'mineStairs')}</span><b class="mn-stairs-lbl">Descendre</b>`;
+        if (c.stairs) return `<span class="mn-art">${art('ui', 'mineStairs')}</span><b class="mn-stairs-lbl">↓ Ét. ${nextFloor}</b>`;
         return '';
     }
     if (c.kind === 'chest') return `<span class="mn-art">${art('ui', 'mineChest')}</span>`;
@@ -25,12 +25,12 @@ function cellArt(c) {
     return `<span class="mn-art">${art('ui', 'rock')}</span>`;
 }
 
-function cellHtml(c, k) {
+function cellHtml(c, k, nextFloor) {
     const cls = `mn-cell ${c.kind}${c.cleared ? ' cleared' : ''}${c.stairs && c.cleared ? ' stairs' : ''}${c.hinted && !c.cleared ? ' hinted' : ''}`;
     const hp = !c.cleared && c.hp < c.maxHp ? `<span class="mn-hp"><b style="width:${(c.hp / c.maxHp) * 100}%"></b></span>` : '';
     const hintDot = c.hinted && !c.cleared ? `<span class="mn-hint-dot">${c.stairs ? '↓' : '★'}</span>` : '';
     const act = ui.sel.mineBomb && !c.cleared ? 'mineBombAt' : 'mineDig';
-    return `<button class="${cls}" data-act="${act}" data-k="${k}" data-anchor="mndig:${k}" ${c.cleared && !c.stairs ? 'disabled' : ''}>${cellArt(c)}${hp}${hintDot}</button>`;
+    return `<button class="${cls}" data-act="${act}" data-k="${k}" data-anchor="mndig:${k}" ${c.cleared && !c.stairs ? 'disabled' : ''}>${cellArt(c, nextFloor)}${hp}${hintDot}</button>`;
 }
 
 export function renderMineDeep(el) {
@@ -57,6 +57,7 @@ export function renderMineDeep(el) {
     const geodeTot = G.museumGeodeTotal();
     const elevs = G.mineElevators();
     const stairFound = D.grid.some(c => c.stairs && c.cleared);
+    const nextFloor = Math.min(MINE_DEEP.maxFloor, D.floor + 1);
 
     const headCard = `<div class="card mn-head ${sDef.theme}">
         <div class="card-head">
@@ -80,9 +81,9 @@ export function renderMineDeep(el) {
     </div>`;
 
     const toolsBar = `<div class="mn-tools">
-        ${btn(ui.sel.mineBomb ? 'Dynamite ACTIVE (toucher un rocher)' : `Dynamite (${bombCost.coal} charb. · ${fmt(bombCost.coins)} p.)`, { act: 'mineToggleBomb', kind: ui.sel.mineBomb ? 'red' : canBomb ? 'gold' : '', size: 'sm', icon: ['ui', 'mineBomb'], disabled: !ui.sel.mineBomb && !canBomb })}
+        ${btn(ui.sel.mineBomb ? 'Dynamite armée · toucher un rocher' : `Dynamite (${bombCost.coal} charb. · ${fmt(bombCost.coins)} p.)`, { act: 'mineToggleBomb', kind: ui.sel.mineBomb ? 'red' : canBomb ? 'gold' : '', size: 'sm', icon: ['ui', 'mineBomb'], disabled: !ui.sel.mineBomb && !canBomb })}
         ${btn(D.sonarUsed ? 'Boussole activée' : `Boussole (${MINE_DEEP.sonarCost.coal} charb. · ${fmt(MINE_DEEP.sonarCost.coins)} p.)`, { act: 'mineSonar', kind: canSonar ? 'green' : '', size: 'sm', icon: ['ui', 'mineSonar'], disabled: !canSonar })}
-        ${stairFound ? btn(`Descendre → Ét. ${Math.min(MINE_DEEP.maxFloor, D.floor + 1)}`, { act: 'mineStairs', kind: 'gold', size: 'sm', icon: ['ui', 'mineStairs'] }) : ''}
+        ${stairFound ? btn(`Descendre → Ét. ${nextFloor}`, { act: 'mineStairs', kind: 'gold', size: 'sm', icon: ['ui', 'mineStairs'] }) : ''}
     </div>`;
 
     const elevHtml = `<div class="card"><div class="card-title">Ascenseur de la mine <small class="o-count small">Record : étage ${D.maxFloor}</small></div>
@@ -103,7 +104,7 @@ export function renderMineDeep(el) {
         ['head', headCard],
         ['tools', toolsBar],
         ['hgrid', section(`Sous-sol · Étage ${D.floor}`, `<small class="o-count small">${D.grid.filter(c => c.cleared).length} / ${MINE_DEEP.cells} dégagées</small>`)],
-        ['grid', `<div class="mn-grid ${sDef.theme}${ui.sel.mineBomb ? ' bomb-mode' : ''}">${D.grid.map((c, k) => cellHtml(c, k)).join('')}</div>`],
+        ['grid', `<div class="mn-grid ${sDef.theme}${ui.sel.mineBomb ? ' bomb-mode' : ''}">${D.grid.map((c, k) => cellHtml(c, k, nextFloor)).join('')}</div>`],
         ['hint', hint('Creusez pour trouver l’escalier caché vers l’étage suivant, les géodes et les fossiles du Musée. Votre niveau de pioche accélère aussi la fouille !')],
         ['elev', elevHtml],
         ['strata', strataInfo],

@@ -24,9 +24,13 @@
 }
 .mn-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 7px;
-    padding: 12px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+    padding: 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
     border: 3px solid var(--ink);
     border-radius: 18px;
     box-shadow: 0 5px 0 rgba(58, 38, 24, 0.35);
@@ -48,7 +52,12 @@
 }
 .mn-cell {
     position: relative;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
     aspect-ratio: 1;
+    box-sizing: border-box;
+    overflow: hidden;
     border: 2.5px solid var(--ink);
     border-radius: 12px;
     padding: 4px;
@@ -60,6 +69,7 @@
     cursor: pointer;
     box-shadow: 0 3px 0 rgba(0, 0, 0, 0.32);
     transition: transform 0.08s ease;
+    touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
 }
 .mn-cell:active:not(:disabled) {
@@ -93,10 +103,15 @@
     background: linear-gradient(#f4d058, #d49622);
     border-color: var(--ink);
     box-shadow:
-        0 0 12px rgba(246, 204, 72, 0.65),
+        0 0 10px rgba(246, 204, 72, 0.65),
         0 3px 0 rgba(58, 38, 24, 0.45);
     cursor: pointer;
     animation: mn-pulse 1.8s ease-in-out infinite;
+}
+.mn-cell.cleared.stairs .mn-art {
+    width: 68%;
+    height: 68%;
+    margin-bottom: 10px;
 }
 .mn-cell.hinted:not(.cleared) {
     box-shadow:
@@ -105,7 +120,7 @@
 }
 @keyframes mn-pulse {
     50% {
-        transform: scale(1.04);
+        filter: brightness(1.08);
     }
 }
 html.calm .mn-cell.cleared.stairs {
@@ -114,6 +129,8 @@ html.calm .mn-cell.cleared.stairs {
 .mn-art {
     width: 78%;
     height: 78%;
+    flex: none;
+    pointer-events: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -149,11 +166,19 @@ html.calm .mn-cell.cleared.stairs {
     border-radius: 6px;
 }
 .mn-stairs-lbl {
-    font-size: 0.62rem;
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    text-align: center;
+    font-size: clamp(0.5rem, 2.3vw, 0.64rem);
     font-weight: 800;
     color: var(--ink);
     line-height: 1;
-    margin-top: -2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
 }
 .mn-tools {
     display: flex;
@@ -161,6 +186,11 @@ html.calm .mn-cell.cleared.stairs {
     gap: 8px;
     align-items: center;
     margin: 8px 0;
+}
+.mn-tools .btn {
+    white-space: normal;
+    text-align: center;
+    max-width: 100%;
 }
 
 /* ---- Le Musée de la vallée (Menu › Musée) ---- */
@@ -188,7 +218,7 @@ html.calm .mn-cell.cleared.stairs {
 }
 .ms-wings {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 7px;
     margin: 10px 0;
 }
@@ -196,6 +226,7 @@ html.calm .mn-cell.cleared.stairs {
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 0;
     padding: 8px 10px;
     border: 2.5px solid var(--ink);
     border-radius: 14px;
@@ -223,17 +254,18 @@ html.calm .mn-cell.cleared.stairs {
 }
 .ms-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
     margin: 10px 0;
 }
 @media (max-width: 480px) {
     .ms-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 .ms-case {
     position: relative;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -347,9 +379,10 @@ html.calm .mn-cell.cleared.stairs {
 }
 .ms-bonus-row {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px 8px;
     padding: 8px 10px;
     border: 2px solid rgba(58, 38, 24, 0.2);
     border-radius: 12px;
