@@ -223,7 +223,7 @@
 }
 
 /* ---------------- Modale des 3 mini-jeux tactiles ---------------- */
-.cm-back {
+.cfm-back {
     position: fixed;
     inset: 0;
     z-index: 1200;
@@ -235,7 +235,7 @@
     padding: 14px;
 }
 
-.cm-box {
+.cfm-box {
     width: 100%;
     max-width: 400px;
     background: #fff9ef;
@@ -249,47 +249,47 @@
     color: var(--ink);
 }
 
-.cm-head {
+.cfm-head {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.cm-art {
+.cfm-art {
     width: 46px;
     height: 46px;
     flex: 0 0 46px;
 }
 
-.cm-art svg {
+.cfm-art svg {
     width: 100%;
     height: 100%;
 }
 
-.cm-head b {
+.cfm-head b {
     display: block;
     font-size: 1rem;
 }
 
-.cm-head small {
+.cfm-head small {
     display: block;
     font-size: 0.8rem;
     color: var(--ink-soft);
 }
 
-.cm-stage {
+.cfm-stage {
     min-height: 210px;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-.cm-foot {
+.cfm-foot {
     display: flex;
     justify-content: flex-end;
 }
 
-.cm-phase {
+.cfm-phase {
     text-align: center;
     font-weight: 700;
     font-size: 0.92rem;
@@ -297,13 +297,13 @@
 }
 
 /* Mini-jeu 1 : Tempérage sur marbre */
-.cm-temper {
+.cfm-temper {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.cm-therm {
+.cfm-therm {
     position: relative;
     height: 36px;
     border-radius: 99px;
@@ -312,7 +312,7 @@
     overflow: hidden;
 }
 
-.cm-zone {
+.cfm-zone {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -322,11 +322,11 @@
     transition: background 0.12s;
 }
 
-.cm-zone.hit {
+.cfm-zone.hit {
     background: rgba(114, 224, 128, 0.55);
 }
 
-.cm-needle {
+.cfm-needle {
     position: absolute;
     top: 3px;
     bottom: 3px;
@@ -337,14 +337,14 @@
     box-shadow: 0 0 0 2px #3b2210;
 }
 
-.cm-meter {
+.cfm-meter {
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 0.82rem;
 }
 
-.cm-mbar {
+.cfm-mbar {
     flex: 1;
     height: 10px;
     background: rgba(90, 56, 30, 0.15);
@@ -352,34 +352,34 @@
     overflow: hidden;
 }
 
-.cm-mbar i {
+.cfm-mbar i {
     display: block;
     height: 100%;
     width: 0;
     background: linear-gradient(90deg, #e09a2f, #49b056);
 }
 
-.cm-hold {
+.cfm-hold {
     touch-action: none;
     user-select: none;
     white-space: normal;
     line-height: 1.25;
 }
 
-.cm-hold.on {
+.cfm-hold.on {
     transform: scale(0.98);
     filter: brightness(1.06);
 }
 
 /* Mini-jeu 2 : L'Instant Ambré */
-.cm-amber {
+.cfm-amber {
     display: flex;
     flex-direction: column;
     gap: 12px;
     align-items: center;
 }
 
-.cm-pot {
+.cfm-pot {
     width: 128px;
     height: 92px;
     border-radius: 14px 14px 44px 44px;
@@ -392,7 +392,7 @@
     justify-content: center;
 }
 
-.cm-liquid {
+.cfm-liquid {
     position: absolute;
     inset: 14px 4px 4px;
     border-radius: 8px 8px 36px 36px;
@@ -400,7 +400,7 @@
     transition: background 0.1s;
 }
 
-.cm-pot-deg {
+.cfm-pot-deg {
     position: relative;
     z-index: 2;
     font-weight: 800;
@@ -409,7 +409,7 @@
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
 }
 
-.cm-cbar {
+.cfm-cbar {
     position: relative;
     width: 100%;
     height: 18px;
@@ -419,7 +419,7 @@
     overflow: hidden;
 }
 
-.cm-czone {
+.cfm-czone {
     position: absolute;
     left: 68%;
     width: 17%;
@@ -431,18 +431,18 @@
     z-index: 2;
 }
 
-.cm-cbar i {
+.cfm-cbar i {
     display: block;
     height: 100%;
     width: 0;
     background: linear-gradient(90deg, #f5da88, #d97a1e 75%, #4a1e08);
 }
 
-.cm-butter-pad {
+.cfm-butter-pad {
     width: 100%;
 }
 
-.cm-drop {
+.cfm-drop {
     touch-action: none;
     user-select: none;
     white-space: normal;
@@ -450,13 +450,13 @@
 }
 
 /* Mini-jeu 3 : La Coupe au Ciseau */
-.cm-snip {
+.cfm-snip {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.cm-belt {
+.cfm-belt {
     position: relative;
     height: 68px;
     border-radius: 14px;
@@ -475,11 +475,11 @@
     cursor: pointer;
 }
 
-.cm-belt.snip {
+.cfm-belt.snip {
     filter: brightness(1.15);
 }
 
-.cm-cutline {
+.cfm-cutline {
     position: absolute;
     left: 22%;
     top: 0;
@@ -491,12 +491,12 @@
     z-index: 3;
 }
 
-.cm-marks {
+.cfm-marks {
     position: absolute;
     inset: 0;
 }
 
-.cm-diamond {
+.cfm-diamond {
     position: absolute;
     top: 50%;
     width: 24px;
@@ -510,25 +510,25 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.cm-diamond.perfect {
+.cfm-diamond.perfect {
     background: #5bd46e;
     border-color: #1c6b2a;
     transform: rotate(45deg) scale(1.18);
 }
 
-.cm-diamond.ok {
+.cfm-diamond.ok {
     background: #f5c94c;
     border-color: #8c620a;
 }
 
-.cm-diamond.miss {
+.cfm-diamond.miss {
     background: #d95a50;
     border-color: #6b1a14;
     opacity: 0.6;
 }
 
 /* Écran de fin */
-.cm-done {
+.cfm-done {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -536,38 +536,38 @@
     gap: 10px;
 }
 
-.cm-done-art {
+.cfm-done-art {
     width: 78px;
     height: 78px;
 }
 
-.cm-done-art svg {
+.cfm-done-art svg {
     width: 100%;
     height: 100%;
 }
 
-.cm-stars {
+.cfm-stars {
     display: flex;
     gap: 4px;
     font-size: 1.5rem;
 }
 
-.cm-star {
+.cfm-star {
     color: #d6c5ad;
 }
 
-.cm-star.on {
+.cfm-star.on {
     color: #f0a818;
     text-shadow: 0 1px 0 #8c5206;
 }
 
-.cm-done p {
+.cfm-done p {
     margin: 0;
     font-size: 0.86rem;
     color: var(--ink-soft);
 }
 
-.cm-done small {
+.cfm-done small {
     font-size: 0.82rem;
     font-weight: 700;
     color: #7c4194;

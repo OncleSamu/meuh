@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.178.4",
+  "title": "Correctif d’affichage des étoiles de fin de mini-jeu Confiserie",
+  "date": "25 novembre 2026",
+  "items": [
+   "Mini-jeux Confiserie : correction d’un conflit de classe CSS (.cm-star) avec la carte du camping qui affichait un disque jaune géant sur l’écran de résultat"
+  ]
+ },
+ {
   "v": "1.178.3",
   "title": "Confiserie : finition visuelle des cartes Créations",
   "date": "25 novembre 2026",

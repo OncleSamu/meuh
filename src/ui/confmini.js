@@ -24,19 +24,19 @@ export function launchConfMini(kind) {
 
     // Créer la fenêtre modale dédiée
     const overlay = document.createElement('div');
-    overlay.className = 'cm-back';
-    overlay.innerHTML = `<div class="cm-box">
-        <div class="cm-head">
-            <span class="cm-art">${confSvg({ kind, shape: pv.shape, baseCol: pv.baseCol, baseCol2: pv.baseCol2, accentCol: pv.accentCol })}</span>
+    overlay.className = 'cfm-back';
+    overlay.innerHTML = `<div class="cfm-box">
+        <div class="cfm-head">
+            <span class="cfm-art">${confSvg({ kind, shape: pv.shape, baseCol: pv.baseCol, baseCol2: pv.baseCol2, accentCol: pv.accentCol })}</span>
             <div><b>${kDef.miniName}</b><small>${kDef.miniDesc}</small></div>
         </div>
-        <div class="cm-stage" id="cm-stage"></div>
-        <div class="cm-foot"><button type="button" class="btn sm" id="cm-cancel">Annuler</button></div>
+        <div class="cfm-stage" id="cfm-stage"></div>
+        <div class="cfm-foot"><button type="button" class="btn sm" id="cfm-cancel">Annuler</button></div>
     </div>`;
     document.body.appendChild(overlay);
 
-    const stage = overlay.querySelector('#cm-stage');
-    overlay.querySelector('#cm-cancel').addEventListener('click', () => closeModal(overlay));
+    const stage = overlay.querySelector('#cfm-stage');
+    overlay.querySelector('#cfm-cancel').addEventListener('click', () => closeModal(overlay));
 
     const finish = (stars, summary) => {
         if (activeRaf) cancelAnimationFrame(activeRaf);
@@ -46,23 +46,23 @@ export function launchConfMini(kind) {
             closeModal(overlay);
             return;
         }
-        const starHtml = [1, 2, 3].map(i => `<span class="cm-star${i <= stars ? ' on' : ''}">★</span>`).join('');
+        const starHtml = [1, 2, 3].map(i => `<span class="cfm-star${i <= stars ? ' on' : ''}">★</span>`).join('');
         const bonusTxt =
             stars >= 3
                 ? 'Finition Miroir ! +30 % valeur et +1 cran de qualité !'
                 : stars === 2
                   ? 'Belle maîtrise ! +15 % valeur.'
                   : 'Fournée réussie ! +5 % valeur.';
-        stage.innerHTML = `<div class="cm-done">
-            <div class="cm-done-art">${confSvg({ kind, shape: pv.shape, baseCol: pv.baseCol, baseCol2: pv.baseCol2, accentCol: pv.accentCol, mirror: stars >= 3, classic: !!pv.harmony.classic })}</div>
-            <div class="cm-stars">${starHtml}</div>
+        stage.innerHTML = `<div class="cfm-done">
+            <div class="cfm-done-art">${confSvg({ kind, shape: pv.shape, baseCol: pv.baseCol, baseCol2: pv.baseCol2, accentCol: pv.accentCol, mirror: stars >= 3, classic: !!pv.harmony.classic })}</div>
+            <div class="cfm-stars">${starHtml}</div>
             <b>${pv.name} ×${res.qty}</b>
             <p>${summary}</p>
             <small>${bonusTxt}</small>
-            <button type="button" class="btn green" id="cm-ok">Ranger dans mes créations</button>
+            <button type="button" class="btn green" id="cfm-ok">Ranger dans mes créations</button>
         </div>`;
-        overlay.querySelector('#cm-cancel').style.display = 'none';
-        overlay.querySelector('#cm-ok').addEventListener('click', () => {
+        overlay.querySelector('#cfm-cancel').style.display = 'none';
+        overlay.querySelector('#cfm-ok').addEventListener('click', () => {
             closeModal(overlay);
             refresh();
         });
@@ -81,22 +81,22 @@ function runTemperMini(stage, pv, finish) {
         { label: '2/3 · Marbre froid (28 °C)', target: 0.24, dur: 3.0 },
         { label: '3/3 · Stabiliser (31 °C)', target: 0.46, dur: 3.0 },
     ];
-    stage.innerHTML = `<div class="cm-temper">
-        <div class="cm-phase" id="cm-ph">${PHASES[0].label}</div>
-        <div class="cm-therm">
-            <div class="cm-zone" id="cm-zone"></div>
-            <div class="cm-needle" id="cm-needle" style="background:${pv.baseCol}"></div>
+    stage.innerHTML = `<div class="cfm-temper">
+        <div class="cfm-phase" id="cfm-ph">${PHASES[0].label}</div>
+        <div class="cfm-therm">
+            <div class="cfm-zone" id="cfm-zone"></div>
+            <div class="cfm-needle" id="cfm-needle" style="background:${pv.baseCol}"></div>
         </div>
-        <div class="cm-meter"><span>Brillance miroir</span><div class="cm-mbar"><i id="cm-fill"></i></div><b id="cm-pct">0 %</b></div>
-        <button type="button" class="btn gold wide lg cm-hold" id="cm-heat">Maintenir pour chauffer · Relâcher pour refroidir</button>
+        <div class="cfm-meter"><span>Brillance miroir</span><div class="cfm-mbar"><i id="cfm-fill"></i></div><b id="cfm-pct">0 %</b></div>
+        <button type="button" class="btn gold wide lg cfm-hold" id="cfm-heat">Maintenir pour chauffer · Relâcher pour refroidir</button>
     </div>`;
 
-    const phEl = stage.querySelector('#cm-ph');
-    const zoneEl = stage.querySelector('#cm-zone');
-    const needleEl = stage.querySelector('#cm-needle');
-    const fillEl = stage.querySelector('#cm-fill');
-    const pctEl = stage.querySelector('#cm-pct');
-    const heatBtn = stage.querySelector('#cm-heat');
+    const phEl = stage.querySelector('#cfm-ph');
+    const zoneEl = stage.querySelector('#cfm-zone');
+    const needleEl = stage.querySelector('#cfm-needle');
+    const fillEl = stage.querySelector('#cfm-fill');
+    const pctEl = stage.querySelector('#cfm-pct');
+    const heatBtn = stage.querySelector('#cfm-heat');
 
     let heating = false;
     const onDown = e => {
@@ -158,23 +158,23 @@ function runTemperMini(stage, pv, finish) {
 // ---------------- 2. CARAMEL : L'Instant Ambré ----------------
 function runAmberMini(stage, pv, finish) {
     // 2 cuissons rapides : glisser le beurre vers le haut (ou toucher le chaudron) dans la zone ambrée (66 % – 86 %)
-    stage.innerHTML = `<div class="cm-amber">
-        <div class="cm-phase" id="cm-aph">Fournée 1/2 · Attends la teinte ambrée !</div>
-        <div class="cm-pot" id="cm-pot">
-            <div class="cm-liquid" id="cm-liq"></div>
-            <span class="cm-pot-deg" id="cm-deg">110 °C</span>
+    stage.innerHTML = `<div class="cfm-amber">
+        <div class="cfm-phase" id="cfm-aph">Fournée 1/2 · Attends la teinte ambrée !</div>
+        <div class="cfm-pot" id="cfm-pot">
+            <div class="cfm-liquid" id="cfm-liq"></div>
+            <span class="cfm-pot-deg" id="cfm-deg">110 °C</span>
         </div>
-        <div class="cm-cbar"><div class="cm-czone"></div><i id="cm-cprog"></i></div>
-        <div class="cm-butter-pad">
-            <button type="button" class="btn gold wide lg cm-drop" id="cm-drop">Glisse vers le haut ou touche pour déglacer !</button>
+        <div class="cfm-cbar"><div class="cfm-czone"></div><i id="cfm-cprog"></i></div>
+        <div class="cfm-butter-pad">
+            <button type="button" class="btn gold wide lg cfm-drop" id="cfm-drop">Glisse vers le haut ou touche pour déglacer !</button>
         </div>
     </div>`;
 
-    const phEl = stage.querySelector('#cm-aph');
-    const liqEl = stage.querySelector('#cm-liq');
-    const degEl = stage.querySelector('#cm-deg');
-    const progEl = stage.querySelector('#cm-cprog');
-    const dropBtn = stage.querySelector('#cm-drop');
+    const phEl = stage.querySelector('#cfm-aph');
+    const liqEl = stage.querySelector('#cfm-liq');
+    const degEl = stage.querySelector('#cfm-deg');
+    const progEl = stage.querySelector('#cfm-cprog');
+    const dropBtn = stage.querySelector('#cfm-drop');
 
     let round = 0;
     let heat = 0;
@@ -250,19 +250,19 @@ function runAmberMini(stage, pv, finish) {
 // ---------------- 3. BERLINGOTS : La Coupe au Ciseau ----------------
 function runSnipMini(stage, pv, finish) {
     // 6 losanges défilent vers la ligne de coupe (x = 22 %)
-    stage.innerHTML = `<div class="cm-snip">
-        <div class="cm-phase" id="cm-sph">Tranche pile sur les 6 repères (0/6)</div>
-        <div class="cm-belt" id="cm-belt" style="--c1:${pv.baseCol};--c2:${pv.accentCol}">
-            <div class="cm-cutline"></div>
-            <div class="cm-marks" id="cm-marks"></div>
+    stage.innerHTML = `<div class="cfm-snip">
+        <div class="cfm-phase" id="cfm-sph">Tranche pile sur les 6 repères (0/6)</div>
+        <div class="cfm-belt" id="cfm-belt" style="--c1:${pv.baseCol};--c2:${pv.accentCol}">
+            <div class="cfm-cutline"></div>
+            <div class="cfm-marks" id="cfm-marks"></div>
         </div>
-        <button type="button" class="btn green wide lg" id="cm-cut">Couper le ruban !</button>
+        <button type="button" class="btn green wide lg" id="cfm-cut">Couper le ruban !</button>
     </div>`;
 
-    const phEl = stage.querySelector('#cm-sph');
-    const marksEl = stage.querySelector('#cm-marks');
-    const cutBtn = stage.querySelector('#cm-cut');
-    const beltEl = stage.querySelector('#cm-belt');
+    const phEl = stage.querySelector('#cfm-sph');
+    const marksEl = stage.querySelector('#cfm-marks');
+    const cutBtn = stage.querySelector('#cfm-cut');
+    const beltEl = stage.querySelector('#cfm-belt');
 
     const CUT_X = 22; // pourcentage depuis la gauche
     const marks = Array.from({ length: 6 }, (_, i) => ({
@@ -272,7 +272,7 @@ function runSnipMini(stage, pv, finish) {
 
     const nodes = marks.map(() => {
         const el = document.createElement('span');
-        el.className = 'cm-diamond';
+        el.className = 'cfm-diamond';
         marksEl.appendChild(el);
         return el;
     });
