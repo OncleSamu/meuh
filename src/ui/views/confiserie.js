@@ -99,7 +99,6 @@ function composerHtml(kind) {
     const d = G.confDraft(kind);
     const kDef = CONF_KINDS[kind];
     const pv = G.confPreview(kind);
-    const bases = G.confBasesFor(kind);
     const shapes = Object.values(CONF_SHAPES).filter(s => s.kind === kind);
 
     const kindSeg = `<div class="bc-row">
@@ -110,12 +109,21 @@ function composerHtml(kind) {
         <small class="pf-hint">${esc(kDef.title)} — ${esc(kDef.miniDesc)}</small>
     </div>`;
 
-    const basesHtml = bases
-        .map(bId => {
-            const b = G.confBaseDef(bId);
-            return `<button class="pick-chip${d.base === bId ? ' on' : ''}" data-act="confBase" data-k="${kind}" data-b="${bId}"><i class="swatch" style="background:${b.col}"></i>${esc(b.short)}</button>`;
-        })
-        .join('');
+    const fixedBases = G.confBasesFor(kind).filter(bId => !G.isHoneyBase(bId));
+    const isHoneyCur = G.isHoneyBase(d.base);
+    const curHoney = isHoneyCur ? G.baseHoneyId(d.base) : 'all';
+    const curHoneyDef = G.confBaseDef('honey:' + curHoney);
+    const totalHoneys = G.confAllHoneys().length;
+    const basesHtml =
+        fixedBases
+            .map(bId => {
+                const b = G.confBaseDef(bId);
+                return `<button class="pick-chip${d.base === bId ? ' on' : ''}" data-act="confBase" data-k="${kind}" data-b="${bId}"><i class="swatch" style="background:${b.col}"></i>${esc(b.short)}</button>`;
+            })
+            .join('') +
+        (kind === 'caramel'
+            ? `<button class="pick-chip${isHoneyCur ? ' on' : ''}" data-act="confHoneyPick"><i class="swatch" style="background:${curHoneyDef.col}"></i>${isHoneyCur ? `Miel · ${esc(curHoneyDef.short)}` : `Miel (${totalHoneys}) ▾`}</button>`
+            : '');
 
     const shapesHtml = shapes
         .map(s => {
@@ -491,12 +499,59 @@ defineSheet('confGift', {
     },
 });
 
+// ---------------- Feuille de choix du miel pour le Caramel (les 30 miels du jeu) ----------------
+defineSheet('confHoneyPick', {
+    title: 'Choisir un miel pour le caramel',
+    render() {
+        const d = G.confDraft('caramel');
+        const all = G.confAllHoneys();
+        const haveOf = h => G.confIngHave(h === 'all' ? 'honey' : 'H' + h);
+        const nameOf = h => (h === 'all' ? 'Toutes fleurs' : G.confBaseDef('honey:' + h).short);
+        const q = queryOf('confHoney');
+        const sort = sortOf('confHoney', ING_SORTS);
+        const opts = [
+            ['all', 'Tous les miels', all.length],
+            ['stock', 'En stock', all.filter(h => haveOf(h) > 0).length],
+        ];
+        const f = filterOf('confHoney', opts);
+        const list = (f === 'stock' ? all.filter(h => haveOf(h) > 0) : all)
+            .filter(h => {
+                const def = G.confBaseDef('honey:' + h);
+                return matchQ(q, nameOf(h), def.name, def.text);
+            })
+            .sort((a, b) => (sort === 'name' ? 0 : haveOf(b) - haveOf(a)) || nameOf(a).localeCompare(nameOf(b), 'fr'));
+        const cells = list
+            .map(h => {
+                const bId = 'honey:' + h;
+                const def = G.confBaseDef(bId);
+                const have = haveOf(h);
+                const icoId = h === 'all' ? 'honey' : 'honey_' + h;
+                return `<button class="pick-cell${d.base === bId ? ' locked' : ''}" data-act="confHoneySet" data-h="${h}">
+                    ${ico(['item', icoId], 'ico big')}
+                    <b>${esc(nameOf(h))}</b>
+                    <small><i class="cf-dot" style="background:${def.col}"></i>×${have}</small>
+                </button>`;
+            })
+            .join('');
+        return [
+            ['info', hint('Choisissez n’importe lequel des 30 miels du jeu (toutes fleurs, ferme, île, oasis, Grand Nord et Terres d’Asie). Chaque miel donne sa couleur et son profil de goût au caramel.')],
+            ['search', listBar('confHoney', { search: 'Chercher un miel (lavande, lotus, yuzu…)', sorts: ING_SORTS })],
+            ['chips', filterChips('confHoney', opts, f)],
+            ['cells', list.length ? `<div class="pick-grid">${cells}</div>` : empty('Aucun miel ne correspond.')],
+        ];
+    },
+});
+
 export function setupConfiserie() {
     actions({
         confKind: (el, d) => {
             if (CONF_KIND_IDS.includes(d.k)) ui.sel.confKind = d.k;
         },
         confBase: (el, d) => G.setConfBase(d.k, d.b),
+        confHoneyPick: () => openSheet('confHoneyPick', {}),
+        confHoneySet: (el, d) => {
+            if (G.setConfBase('caramel', 'honey:' + d.h)) closeSheet('confHoneyPick');
+        },
         confShape: (el, d) => G.setConfShape(d.k, d.s),
         confPick: (el, d) => openSheet('confPick', { kind: d.k }),
         confPickSet: (el, d) => {

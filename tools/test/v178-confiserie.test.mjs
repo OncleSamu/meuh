@@ -94,7 +94,9 @@ test('1.178 : mini-jeu 3★ Finition Miroir (+1 qualité jusqu’à Diamant) + C
     assert.equal(G.confQual(res.id).d, CONF_KINDS.chocolate.batch);
     assert.equal(G.confBestQuality(res.id), 4);
 
-    // 2. Caramel au miel de lavande (miel de fleur) + variété du Labo
+    // 2. Caramel au miel : tous les 30 miels du jeu sélectionnables (même hors stock) + miel de lavande en stock + variété du Labo
+    assert.ok(G.confAllHoneys().length >= 30, 'tous les miels du jeu disponibles');
+    assert.ok(G.setConfBase('caramel', 'honey:yuzu'), 'miel de yuzu sélectionnable même à 0 en stock');
     state.inventory.honey = 10;
     state.inventory.apple = 10;
     G.addHoney('lavender', 6);

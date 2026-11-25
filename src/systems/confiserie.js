@@ -9,7 +9,7 @@ import { FLAVORS } from '../data/genetics.js';
 import { HONEYS, HONEY_COL } from '../data/honey.js';
 import { QUALITY, QX } from '../data/farm.js';
 import { VILLAGERS } from '../data/village.js';
-import { PAIRS } from '../data/abbey.js';
+import { PAIRS, MEAD_BASES } from '../data/abbey.js';
 import {
     CONF_LVL,
     CONF_KINDS,
@@ -47,9 +47,10 @@ export const confKettleCount = () => {
     return 2 + (k >= 2 ? 1 : 0) + (k >= 5 ? 1 : 0);
 };
 
-// ---------------- Bases (y compris miels de fleurs pour Caramel) ----------------
+// ---------------- Bases (y compris tous les miels de fleurs pour Caramel) ----------------
 export const isHoneyBase = b => typeof b === 'string' && b.startsWith('honey:');
 export const baseHoneyId = b => (isHoneyBase(b) ? b.slice(6) : null);
+export const confAllHoneys = () => ['all', ...Object.keys(HONEYS)];
 
 export function confBaseDef(baseId) {
     if (!isHoneyBase(baseId)) return CONF_BASES[baseId] || CONF_BASES.dark;
@@ -57,17 +58,18 @@ export function confBaseDef(baseId) {
     const col = HONEY_COL[h] || HONEY_COL.all || '#e8b339';
     const hName = h === 'all' ? 'Miel toutes fleurs' : HONEYS[h] ? HONEYS[h].name : 'Miel de fleur';
     const costItem = h === 'all' ? 'honey' : honeyProd(h) || 'H' + h;
+    const mb = MEAD_BASES[h] || MEAD_BASES.all;
     return {
         id: baseId,
         kind: 'caramel',
         name: `Caramel au ${hName}`,
-        short: h === 'all' ? 'Miel' : hName.replace(/^Miel (de |d’)/i, ''),
+        short: h === 'all' ? 'Toutes fleurs' : hName.replace(/^Miel (de |d’)/i, ''),
         cost: { [costItem]: 2, sugar: 2 },
         col,
         col2: '#a86a18',
-        taste: [4, 1, 0, 0, 1],
-        likes: [0, 1, 3, 4],
-        text: 'rondeur miellée, sublime fleurs, épices et fruits du verger',
+        taste: mb ? [...mb.taste] : [4, 1, 0, 0, 1],
+        likes: mb ? [...mb.likes] : [0, 1, 3, 4],
+        text: (mb && mb.text) || 'rondeur miellée, sublime fleurs, épices et fruits du verger',
         isHoney: true,
         honey: h,
     };
@@ -78,8 +80,7 @@ export function confBasesFor(kind) {
         .filter(b => b.kind === kind)
         .map(b => b.id);
     if (kind !== 'caramel') return fixed;
-    const honeys = ['honey:all', ...Object.keys(HONEYS).filter(k => state.genetics && (state.genetics.stock['H' + k] || 0) > 0).map(k => 'honey:' + k)];
-    return [...fixed, ...honeys];
+    return [...fixed, ...confAllHoneys().map(h => 'honey:' + h)];
 }
 
 // ---------------- Ingrédients éligibles (cultures, arbres, extra + variétés du Labo) ----------------

@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.178.2",
+  "title": "Confiserie : tous les miels du jeu accessibles pour le Caramel",
+  "date": "25 novembre 2026",
+  "items": [
+   "Caramel au miel : nouvelle fenêtre dédiée « Choisir un miel » listant les 30 miels du jeu (Toutes fleurs + les 29 miels de fleurs de la ferme, de l’île, de l’oasis, du Grand Nord et des Terres d’Asie), avec recherche, filtre En stock / Tous et profil de goût unique pour chaque miel"
+  ]
+ },
+ {
   "v": "1.178.1",
   "title": "Confiserie : ergonomie façon Brasserie et correctifs visuels",
   "date": "25 novembre 2026",
