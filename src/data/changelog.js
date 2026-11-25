@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.178.1",
+  "title": "Confiserie : ergonomie façon Brasserie et correctifs visuels",
+  "date": "25 novembre 2026",
+  "items": [
+   "Organisation calquée sur la Brasserie : 4 onglets (Confectionner, Créations, Commandes, Grimoire) avec sélecteur Chocolat / Caramel / Berlingots dans Confectionner",
+   "Cases d’ingrédients façon Brasserie (noms complets et bouton croix centré), espacements aérés entre blocs et boutons d’action empilés sans aucun chevauchement de texte"
+  ]
+ },
+ {
   "v": "1.178",
   "title": "L’Atelier Confiserie : Chocolat, Caramel, Berlingots & 3 mini-jeux inédits",
   "date": "25 novembre 2026",

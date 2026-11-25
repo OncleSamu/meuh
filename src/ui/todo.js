@@ -157,7 +157,7 @@ export function todoList() {
     }
     if (G.confOpen() && state.confiserie) {
         const cr = G.confReadyCount();
-        if (cr) push('machines/confiserie#chocolate', ['ui', 'confiserie'], `${cr} chaudron${s(cr)} de confiserie prêt${s(cr)}`, cr);
+        if (cr) push('machines/confiserie#make', ['ui', 'confiserie'], `${cr} chaudron${s(cr)} de confiserie prêt${s(cr)}`, cr);
         const co = G.confOrdersReady();
         if (co) push('machines/confiserie#orders', ['ui', 'confiserie'], `${co} commande${s(co)} gourmande${s(co)} à livrer`, co);
         if (G.confGrimoireClaimable()) push('machines/confiserie#grimoire', ['ui', 'confiserie'], 'Récompense du Grimoire du Confiseur', 1);

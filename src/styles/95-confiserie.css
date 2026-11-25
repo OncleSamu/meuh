@@ -3,8 +3,8 @@
 .cf-kettles {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 8px;
-    margin-bottom: 10px;
+    gap: 10px;
+    margin-bottom: 12px;
 }
 
 .cf-k-art {
@@ -24,47 +24,41 @@
 .cf-compose {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
-.cf-head-intro {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding-bottom: 6px;
-    border-bottom: 1px dashed rgba(90, 56, 30, 0.18);
+.cf-compose .bc-row {
+    gap: 8px;
 }
 
-.cf-head-intro b {
-    font-size: 1.05rem;
-    color: var(--ink);
-}
-
-.cf-head-intro small {
-    color: var(--ink-soft);
-    font-size: 0.84rem;
+.cf-compose .brew-slot .bs-pick small.short {
+    color: #b8332a;
+    opacity: 1;
+    font-weight: 700;
 }
 
 .cf-shapes {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 6px;
+    gap: 10px;
 }
 
 .cf-shape-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 8px 6px;
+    gap: 5px;
+    padding: 10px 6px;
     border-radius: 12px;
-    border: 2px solid rgba(90, 56, 30, 0.2);
+    border: 2px solid rgba(90, 56, 30, 0.22);
     background: #fffdf8;
     color: var(--ink);
     font: inherit;
     font-size: 0.82rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
+    text-align: center;
+    line-height: 1.2;
     transition: transform 0.12s, border-color 0.12s, background 0.12s;
 }
 
@@ -75,8 +69,8 @@
 }
 
 .cf-sh-ico {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -87,101 +81,12 @@
     height: 100%;
 }
 
-.cf-ing-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-    gap: 8px;
-}
-
-.cf-ing-slot {
-    border-radius: 12px;
-    border: 2px dashed rgba(90, 56, 30, 0.25);
-    background: #fffcf6;
-    padding: 8px 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-    min-width: 0;
-}
-
-.cf-ing-slot.empty {
-    flex-direction: column;
-    align-items: flex-start;
-    cursor: pointer;
-    text-align: left;
-    font: inherit;
-    color: var(--ink);
-}
-
-.cf-ing-slot.empty small {
-    color: var(--ink-soft);
-    font-size: 0.78rem;
-}
-
-.cf-ing-slot.filled {
-    border-style: solid;
-    border-color: rgba(154, 98, 42, 0.35);
-    background: #fff8eb;
-    padding: 4px 6px 4px 8px;
-}
-
-.cf-ing-main {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border: 0;
-    background: transparent;
-    padding: 4px 0;
-    font: inherit;
-    color: var(--ink);
-    text-align: left;
-    cursor: pointer;
-    min-width: 0;
-    flex: 1;
-}
-
-.cf-ing-main span {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.cf-ing-main b {
-    font-size: 0.88rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.cf-ing-main small {
-    font-size: 0.76rem;
-    color: var(--ink-soft);
-}
-
-.cf-ing-main small.short {
-    color: #b8332a;
-    font-weight: 700;
-}
-
-.cf-ing-rm {
-    flex: 0 0 26px;
-    width: 26px;
-    height: 26px;
-    border-radius: 99px;
-    border: 0;
-    background: rgba(90, 56, 30, 0.1);
-    color: var(--ink);
-    font-size: 1rem;
-    line-height: 1;
-    cursor: pointer;
-}
-
 .cf-tools {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 6px;
+    gap: 10px;
+    margin: 2px 0;
 }
 
 .cf-preview .bp-art {
@@ -196,14 +101,26 @@
 }
 
 .cf-go-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.cf-go-row .btn {
+    white-space: normal;
+    line-height: 1.25;
+    padding-inline: 14px;
 }
 
 .cf-mini-tip {
     text-align: center;
-    margin-top: -4px;
+    margin: 4px 0 0;
+    line-height: 1.35;
+}
+
+.cf-guide {
+    margin-top: 12px;
 }
 
 .cf-mirror {
@@ -241,10 +158,10 @@
     border: 2px solid #8a5628;
     border-radius: 18px;
     box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
-    padding: 14px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
     color: var(--ink);
 }
 
@@ -361,6 +278,8 @@
 .cm-hold {
     touch-action: none;
     user-select: none;
+    white-space: normal;
+    line-height: 1.25;
 }
 
 .cm-hold.on {
@@ -372,7 +291,7 @@
 .cm-amber {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
 }
 
@@ -442,6 +361,8 @@
 .cm-drop {
     touch-action: none;
     user-select: none;
+    white-space: normal;
+    line-height: 1.25;
 }
 
 /* Mini-jeu 3 : La Coupe au Ciseau */
@@ -528,7 +449,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .cm-done-art {

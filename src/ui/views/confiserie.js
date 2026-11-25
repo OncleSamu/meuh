@@ -1,6 +1,7 @@
 // 1.178 : Atelier | Confiserie (Chocolat, Caramel & Berlingots).
-// Trois métiers sucrés, tous les ingrédients + variétés du Labo + miels de fleurs,
-// 3 mini-jeux tactiles inédits, chaudrons passifs, Grimoire, Commandes, Cadeaux & Coffre-fort.
+// Présentation alignée sur la Brasserie : Confectionner (Chocolat / Caramel / Berlingots),
+// Créations, Commandes et Grimoire — avec 3 mini-jeux tactiles inédits, chaudrons passifs,
+// variétés du Labo, miels de fleurs, cadeaux & Coffre-fort.
 
 import { toast } from '../../core/bus.js';
 import { state } from '../../core/state.js';
@@ -52,6 +53,8 @@ const topNoteIdx = vec => {
     return best;
 };
 
+const currentKind = () => (CONF_KIND_IDS.includes(ui.sel.confKind) ? ui.sel.confKind : 'chocolate');
+
 // ---------------- Fermé avant niveau 54 ----------------
 function closedCard() {
     return `<div class="card island-closed">
@@ -91,13 +94,21 @@ function kettlesHtml() {
         .join('')}</div>`;
 }
 
-// ---------------- Compositeur (Chocolat / Caramel / Berlingots) ----------------
+// ---------------- Compositeur (Confectionner : Chocolat / Caramel / Berlingots) ----------------
 function composerHtml(kind) {
     const d = G.confDraft(kind);
     const kDef = CONF_KINDS[kind];
     const pv = G.confPreview(kind);
     const bases = G.confBasesFor(kind);
     const shapes = Object.values(CONF_SHAPES).filter(s => s.kind === kind);
+
+    const kindSeg = `<div class="bc-row">
+        <span class="bc-label">Confiserie</span>
+        <div class="seg n3">${CONF_KIND_IDS.map(
+            id => `<button class="${id === kind ? 'on' : ''}" data-act="confKind" data-k="${id}">${esc(CONF_KINDS[id].name)}</button>`,
+        ).join('')}</div>
+        <small class="pf-hint">${esc(kDef.title)} — ${esc(kDef.miniDesc)}</small>
+    </div>`;
 
     const basesHtml = bases
         .map(bId => {
@@ -113,16 +124,17 @@ function composerHtml(kind) {
         })
         .join('');
 
+    // Cases ingrédients calquées sur la Brasserie (.brew-slots / .brew-slot) : nom complet + croix parfaitement centrée
     const ingSlots = Array.from({ length: kDef.maxIngs }, (_, idx) => {
         const id = d.ings[idx];
         if (!id) {
-            return `<button class="cf-ing-slot empty" data-act="confPick" data-k="${kind}"><b>+ Ajouter un ingrédient</b><small>Récoltes, variétés du Labo, épices</small></button>`;
+            return `<button class="brew-slot empty" data-act="confPick" data-k="${kind}"><b>+</b><span>Ingrédient</span></button>`;
         }
         const have = G.confIngHave(id);
         const top = NOTE_NAMES[topNoteIdx(G.confIngFlavor(id))] || '';
-        return `<div class="cf-ing-slot filled">
-            <button class="cf-ing-main" data-act="confPick" data-k="${kind}">${ingIco(id, 'ico big')}<span><b>${esc(G.confIngName(id))}</b><small class="${have >= 2 ? 'ok' : 'short'}">${have}/2 · ${top}</small></span></button>
-            <button class="cf-ing-rm" data-act="confToggleIng" data-k="${kind}" data-id="${id}" aria-label="Retirer">×</button>
+        return `<div class="brew-slot">
+            <button class="bs-pick" data-act="confPick" data-k="${kind}">${ingIco(id, 'ico big')}<span>${esc(G.confIngName(id))}${varOf(id) ? ' <small class="chip ok">variété</small>' : ''}</span><small class="${have >= 2 ? '' : 'short'}">${have}/2 en stock · ${top}</small></button>
+            ${btn('', { act: 'confToggleIng', data: { k: kind, id }, icon: ['ui', 'cross'], kind: 'ghost', size: 'sm', title: 'Retirer' })}
         </div>`;
     }).join('');
 
@@ -145,11 +157,8 @@ function composerHtml(kind) {
 
     const canKettle = pv.can && pv.freeKettle >= 0;
 
-    return `<div class="card cf-compose">
-        <div class="cf-head-intro">
-            <b>${esc(kDef.title)}</b>
-            <small>${esc(kDef.miniDesc)}</small>
-        </div>
+    return `<div class="card brew-compose cf-compose">
+        ${kindSeg}
         <div class="bc-row">
             <span class="bc-label">Base${kind === 'caramel' ? ' (beurre, crème ou miel de fleur)' : ''}</span>
             <div class="chips-row">${basesHtml}</div>
@@ -161,7 +170,7 @@ function composerHtml(kind) {
         </div>
         <div class="bc-row">
             <span class="bc-label">Ingrédients (${d.ings.length}/${kDef.maxIngs})</span>
-            <div class="cf-ing-row">${ingSlots}</div>
+            <div class="brew-slots">${ingSlots}</div>
         </div>
         <div class="center cf-tools">
             ${btn('Meilleur accord avec mon stock', { act: 'confBest', data: { k: kind }, size: 'sm', icon: ['ui', 'sparkle'] })}
@@ -184,8 +193,8 @@ function composerHtml(kind) {
         ${
             pv.can
                 ? `<div class="cf-go-row">
-                    ${btn(`${kDef.miniName} (instantané)`, { act: 'confMini', data: { k: kind }, kind: 'gold', size: 'lg', icon: ['ui', 'sparkle'] })}
-                    ${btn(canKettle ? `Chaudron (${formatDuration(pv.time)})` : 'Chaudrons pleins', { act: 'confKettle', data: { k: kind }, kind: 'green', size: 'lg', disabled: !canKettle })}
+                    ${btn(`${kDef.miniName} · instantané`, { act: 'confMini', data: { k: kind }, kind: 'gold', wide: true, size: 'lg', icon: ['ui', 'sparkle'] })}
+                    ${btn(canKettle ? `Cuire au chaudron (${formatDuration(pv.time)})` : 'Chaudrons pleins', { act: 'confKettle', data: { k: kind }, kind: 'green', wide: true, size: 'lg', disabled: !canKettle })}
                 </div>
                 <p class="pf-hint cf-mini-tip">3★ au mini-jeu : Finition Miroir (+30 % valeur et +1 qualité, jusqu’à Diamant).</p>`
                 : `<p class="state-line">${
@@ -201,7 +210,7 @@ function classicsGuideHtml(kind) {
     const gr = (state.confiserie && state.confiserie.grimoire) || {};
     const list = CONF_CLASSICS.filter(c => c.kind === kind);
     const nFound = list.filter(c => gr['C:' + c.id]).length;
-    return `<details class="card brew-guide">
+    return `<details class="card brew-guide cf-guide">
         <summary><b>Grands Classiques · ${esc(CONF_KINDS[kind].name)}</b><small>${nFound}/${list.length} découverts</small></summary>
         <div class="bg-body">
             <ul class="bg-cls">${list
@@ -365,32 +374,36 @@ function grimoireHtml() {
     </div>`;
 }
 
-// ---------------- Vue principale ----------------
+// ---------------- Vue principale (4 onglets comme la Brasserie) ----------------
 function renderConfiserie(el) {
     if (!G.confOpen()) return blocks(el, [['closed', closedCard()]]);
     G.ensureConf();
+    const C = state.confiserie;
     const ready = G.confReadyCount();
     const ord = G.confOrdersReady();
     const grim = G.confGrimoireClaimable();
     const T = innerTabs(
         'confiserie',
         [
-            ['chocolate', 'Chocolat', null, 0],
-            ['caramel', 'Caramel', null, 0],
-            ['berlingot', 'Berlingots', null, 0],
-            ['stock', 'Créations', null, ready],
+            ['make', 'Confectionner', null, ready],
+            ['stock', 'Créations', null, 0],
             ['orders', 'Commandes', null, ord],
             ['grimoire', 'Grimoire', null, grim],
         ],
-        'chocolate',
+        'make',
     );
     const t = T.cur;
-    const isCraft = CONF_KIND_IDS.includes(t);
-    const confCount = state.confiserie && state.confiserie.creations ? Object.keys(state.confiserie.creations).length : 0;
+    const kind = currentKind();
+    const confCount = C.creations ? Object.keys(C.creations).length : 0;
+    const head =
+        t === 'make'
+            ? `<div class="card"><div class="card-head">${ico(['ui', 'confiserie'], 'ico big')}<div class="card-main"><div class="card-title">L’Atelier Confiserie</div><div class="card-sub">${C.kettles.length} chaudron${C.kettles.length > 1 ? 's' : ''} · chocolats, caramels aux miels et berlingots</div></div></div></div>`
+            : '';
     blocks(el, [
         ['tabs', T.html],
-        ['kettles', isCraft ? kettlesHtml() : ''],
-        ['compose', isCraft ? composerHtml(t) : ''],
+        ['head', head],
+        ['kettles', t === 'make' ? kettlesHtml() : ''],
+        ['compose', t === 'make' ? composerHtml(kind) : ''],
         ['stockSearch', t === 'stock' && confCount > 4 ? listBar('confs', { search: 'Chercher une confiserie ou un ingrédient' }) : ''],
         ['stock', t === 'stock' ? stockHtml() : ''],
         ['orders', t === 'orders' ? ordersHtml() : ''],
@@ -480,6 +493,9 @@ defineSheet('confGift', {
 
 export function setupConfiserie() {
     actions({
+        confKind: (el, d) => {
+            if (CONF_KIND_IDS.includes(d.k)) ui.sel.confKind = d.k;
+        },
         confBase: (el, d) => G.setConfBase(d.k, d.b),
         confShape: (el, d) => G.setConfShape(d.k, d.s),
         confPick: (el, d) => openSheet('confPick', { kind: d.k }),
@@ -505,7 +521,10 @@ export function setupConfiserie() {
         confFav: (el, d) => G.toggleConfFav(d.id),
         confLoad: (el, d) => {
             const k = G.loadConfDraft(d.id);
-            if (k) ui.sel['it:confiserie'] = k;
+            if (k) {
+                ui.sel.confKind = k;
+                ui.sel['it:confiserie'] = 'make';
+            }
         },
         confGiftOpen: (el, d) => openSheet('confGift', { id: d.id }),
         confGiftDo: (el, d) => {
