@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.176.1",
+  "title": "Correctif d’affichage du bandeau Maison sur mobile",
+  "date": "25 novembre 2026",
+  "items": [
+   "Bandeau de la Maison : le sous-titre (Théo + résumé Équipe) passe désormais proprement sur 2 lignes et reste strictement contenu dans sa case sur petit écran"
+  ]
+ },
+ {
   "v": "1.176",
   "title": "L’Asie partout : Parfumerie, Brasserie, MeuhCG Série 9 & Cave",
   "date": "25 novembre 2026",
