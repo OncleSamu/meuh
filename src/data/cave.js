@@ -97,6 +97,10 @@ export const CAVE_ITEMS = {
     alpineFlowerCheese: 'cheese',
     drySausage: 'charcuterie',
     coppa: 'charcuterie',
+    // 1.176 : les Terres d'Asie à la cave
+    sikaTofuCheese: 'cheese',
+    nashiCider: 'cider',
+    umeshu: 'cider',
     beer: 'beer', // un lot de bière garde sa recette (bid) et son fût (k)
 };
 

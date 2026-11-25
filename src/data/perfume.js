@@ -171,9 +171,9 @@ export const FAMILIES = {
 };
 export const FAMILY_IDS = Object.keys(FAMILIES);
 
-// Toutes les essences de l'Orgue (75) : [Frais, Floral, Boisé, Épicé, Gourmand] + couleur du jus
+// Toutes les essences de l'Orgue (81) : [Frais, Floral, Boisé, Épicé, Gourmand] + couleur du jus
 export const PERFUME_NOTES = {
-    // ---- Notes de Tête (25) ----
+    // ---- Notes de Tête (27) ----
     lemon: { id: 'lemon', tier: 'head', v: [5, 0, 0, 0, 0], col: '#f5dc58', tag: 'hesperide' },
     orange: { id: 'orange', tier: 'head', v: [4, 1, 0, 0, 1], col: '#f29c38', tag: 'hesperide' },
     mandarin: { id: 'mandarin', tier: 'head', v: [4, 1, 0, 0, 2], col: '#f4822e', tag: 'hesperide' },
@@ -199,8 +199,10 @@ export const PERFUME_NOTES = {
     juniper: { id: 'juniper', tier: 'head', v: [3, 0, 3, 2, 0], col: '#5b7fb0', tag: 'boreal' },
     birchSap: { id: 'birchSap', tier: 'head', v: [4, 0, 2, 0, 1], col: '#9fd0df', tag: 'boreal' },
     seaBuckthorn: { id: 'seaBuckthorn', tier: 'head', v: [4, 1, 0, 1, 2], col: '#f2922c', tag: 'boreal' },
+    yuzu: { id: 'yuzu', tier: 'head', v: [5, 2, 0, 1, 0], col: '#f2dc49', tag: 'hesperide' },
+    kumquat: { id: 'kumquat', tier: 'head', v: [4, 1, 0, 1, 2], col: '#f28c28', tag: 'hesperide' },
 
-    // ---- Notes de Cœur (25) ----
+    // ---- Notes de Cœur (27) ----
     lavender: { id: 'lavender', tier: 'heart', v: [2, 5, 1, 0, 0], col: '#9e7fd4', tag: 'floral' },
     chamomile: { id: 'chamomile', tier: 'heart', v: [2, 5, 0, 0, 1], col: '#f5dc78', tag: 'floral' },
     waterLily: { id: 'waterLily', tier: 'heart', v: [3, 5, 0, 0, 0], col: '#f5a8c8', tag: 'floral' },
@@ -226,8 +228,10 @@ export const PERFUME_NOTES = {
     cloudberry: { id: 'cloudberry', tier: 'heart', v: [3, 2, 1, 0, 2], col: '#eba23b', tag: 'boreal' },
     elderberry: { id: 'elderberry', tier: 'heart', v: [2, 4, 1, 0, 1], col: '#644a7d', tag: 'boreal' },
     lingonberry: { id: 'lingonberry', tier: 'heart', v: [3, 2, 1, 1, 1], col: '#cc3d4c', tag: 'boreal' },
+    lotus: { id: 'lotus', tier: 'heart', v: [3, 5, 1, 0, 0], col: '#f4a4c4', tag: 'floral' },
+    ume: { id: 'ume', tier: 'heart', v: [2, 3, 0, 1, 3], col: '#d85c78', tag: 'floral' },
 
-    // ---- Notes de Fond (25) ----
+    // ---- Notes de Fond (27) ----
     resin: { id: 'resin', tier: 'base', v: [0, 0, 5, 2, 1], col: '#c9822e', tag: 'boise' },
     patchouli: { id: 'patchouli', tier: 'base', v: [0, 0, 5, 3, 1], col: '#6b4e2e', tag: 'boise' },
     cinnamon: { id: 'cinnamon', tier: 'base', v: [0, 0, 2, 5, 2], col: '#b85a2a', tag: 'oriental' },
@@ -253,6 +257,8 @@ export const PERFUME_NOTES = {
     cider: { id: 'cider', tier: 'base', v: [2, 0, 2, 1, 2], col: '#d49e3a', tag: 'aromatique' },
     rum: { id: 'rum', tier: 'base', v: [0, 0, 2, 3, 4], col: '#c9883b', tag: 'oriental' },
     cognac: { id: 'cognac', tier: 'base', v: [0, 0, 3, 3, 4], col: '#b86c28', tag: 'oriental' },
+    ginkgo: { id: 'ginkgo', tier: 'base', v: [1, 1, 5, 1, 1], col: '#d6b44a', tag: 'boise' },
+    bambooShoot: { id: 'bambooShoot', tier: 'base', v: [3, 0, 4, 0, 0], col: '#84b862', tag: 'boise' },
 };
 
 export const HEAD_NOTES = Object.values(PERFUME_NOTES)
@@ -358,6 +364,15 @@ export const PERFUME_CLASSICS = [
         hint: 'Un souffle de thym ou d’orange, un cœur de gingembre ou cardamome et un fond de cannelle ou muscade',
         text: 'Le grand accord épicé des îles : thym ou orange, gingembre ou cardamome, cannelle ou noix de muscade.',
     },
+    {
+        id: 'jardinsAsie',
+        name: 'Jardins de Lotus',
+        head: ['yuzu', 'kumquat'],
+        heart: ['lotus', 'ume'],
+        base: ['ginkgo', 'bambooShoot'],
+        hint: 'Un agrume d’Asie, une fleur de lotus ou prune ume, sur un fond de ginkgo ou de bambou',
+        text: 'Sérénité des terrasses d’Asie : yuzu ou kumquat, lotus ou prune ume, posés sur le ginkgo ou le bambou.',
+    },
 ];
 
 // 5 silhouettes de flacons SVG
@@ -384,7 +399,7 @@ export const PERFUME_ORDERS = {
     every: 2400, // une nouvelle commande toutes les 40 min
     max: 3,
     payMult: 1.75,
-    villagers: ['rose', 'lucie', 'margaux', 'agathe', 'yasmine', 'ingrid', 'maeva', 'ines', 'morgane', 'octave', 'lea', 'odile'],
+    villagers: ['rose', 'lucie', 'margaux', 'agathe', 'yasmine', 'ingrid', 'maeva', 'mei', 'ines', 'morgane', 'octave', 'lea', 'odile'],
 };
 
 // Récompenses de l'Orgue du Parfumeur (tous les 6 essences/classiques découverts)

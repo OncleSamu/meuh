@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.176",
+  "title": "L’Asie partout : Parfumerie, Brasserie, MeuhCG Série 9 & Cave",
+  "date": "25 novembre 2026",
+  "items": [
+   "Parfumerie : 6 nouvelles essences des Terres d’Asie (yuzu, kumquat, lotus, prune ume, ginkgo et bambou — 81 essences au total, 27 par étage), un 11e Grand Classique « Jardins de Lotus » et Mei rejoint les clientes du Salon",
+   "Brasserie & Hydromel : ajout de la 6e grande bière classique « la bière au yuzu » (yuzu + lotus), des 2 bases d’hydromel d’Asie (miels de lotus et de yuzu) et du 5e grand classique d’hydromel « Hydromel impérial »",
+   "MeuhCG · Série 9 « Terres d’Asie » : 35 nouvelles cartes (335 au total) incluant les cultures, vergers, bêtes, ateliers, Mei, Kenji et 3 Secrètes chromas, 2 nouveaux duels villageois (Mei et Kenji), 2 Duos secrets (Terrasses et Soie), le palier Empereur (335) et le 6e dos de carte « Laque & Cerisier »",
+   "Cave d’affinage : le Caillé doux au lait de sika, le Poiré de nashi et la Liqueur d’ume peuvent désormais vieillir et s’affiner à la cave jusqu’au rang Légendaire"
+  ]
+ },
+ {
   "v": "1.175",
   "title": "Fluidité mobile, performances et confort d’atelier",
   "date": "25 novembre 2026",

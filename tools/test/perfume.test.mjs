@@ -35,12 +35,12 @@ function farm(lvl = 60) {
     for (const id of Object.keys(PERFUME_NOTES)) state.inventory[id] = 30;
 }
 
-test('données et SVG : 75 essences valides (25 par étage), 5 flacons × 4 bouchons + icône UI perfume', () => {
+test('données et SVG : 81 essences valides (27 par étage), 5 flacons × 4 bouchons + icône UI perfume', () => {
     const notes = Object.values(PERFUME_NOTES);
-    assert.equal(notes.length, 75);
-    assert.equal(notes.filter(n => n.tier === 'head').length, 25);
-    assert.equal(notes.filter(n => n.tier === 'heart').length, 25);
-    assert.equal(notes.filter(n => n.tier === 'base').length, 25);
+    assert.equal(notes.length, 81);
+    assert.equal(notes.filter(n => n.tier === 'head').length, 27);
+    assert.equal(notes.filter(n => n.tier === 'heart').length, 27);
+    assert.equal(notes.filter(n => n.tier === 'base').length, 27);
     for (const id of Object.keys(PERFUME_NOTES)) assert.ok(ITEMS[id], `essence ${id} dans ITEMS`);
     for (const b of BOTTLE_IDS) {
         for (const c of CAP_IDS) {
@@ -235,14 +235,14 @@ test('1.143 : gestes de soin au choix, valeur non cumulée, ruban unique, signat
     assert.ok(ACHIEVEMENTS.some(a => a.id === 'perfumes'));
     assert.ok(ACHIEVEMENTS.some(a => a.id === 'perfumeOrders'));
 
-    // 6. Orgue complet (92 → 15 paliers de 6) avec 2 paliers en attente : un seul ruban accordé !
+    // 6. Orgue complet (99 → 16 paliers de 6) avec 2 paliers en attente : un seul ruban accordé !
     const P = state.perfume;
     P.organ = {};
     for (const id of Object.keys(PERFUME_NOTES)) P.organ[id] = true;
     for (const f of ['hesperide', 'aromatique', 'floral', 'boise', 'oriental', 'gourmand', 'boreal']) P.organ['F:' + f] = true;
     for (const c of PERFUME_CLASSICS) P.organ['C:' + c.id] = true;
-    assert.equal(G.organTotal(), 92);
-    P.organClaimed = 13; // 2 paliers en attente (14e et 15e sur 15)
+    assert.equal(G.organTotal(), 99);
+    P.organClaimed = 14; // 2 paliers en attente (15e et 16e sur 16)
     P.organRibbon = false;
     const rubBefore = state.prestige.rubans;
     assert.equal(G.organClaimable(), 2);
@@ -250,11 +250,12 @@ test('1.143 : gestes de soin au choix, valeur non cumulée, ruban unique, signat
     assert.ok(G.claimOrgan());
     assert.equal(state.prestige.rubans, rubBefore + 1, 'un seul ruban pour Orgue complet');
 
-    // 7. Nouveaux Grands Classiques (1.144 & 1.153)
+    // 7. Nouveaux Grands Classiques (1.144, 1.153 & 1.176)
     assert.equal(G.perfumeClassic('bitterOrange', 'orangeBlossomWater', 'solidOak')?.id, 'cologne');
     assert.equal(G.perfumeClassic('citron', 'blackcurrant', 'patchouli')?.id, 'chypre');
     assert.equal(G.perfumeClassic('lemongrass', 'waterLily', 'honey')?.id, 'etang');
     assert.equal(G.perfumeClassic('thyme', 'ginger', 'cinnamon')?.id, 'epices');
+    assert.equal(G.perfumeClassic('yuzu', 'lotus', 'ginkgo')?.id, 'jardinsAsie');
 
     // 8. Prestige : conserve créations, Orgue et signature, vide stock/dame-jeannes/commandes
     state.stats.earnedRun = 1000000;
@@ -374,5 +375,5 @@ test('UI et documentation en jeu (1.146) : actions, onglet, barre des niveaux, g
         'Atelier du Parfumeur dans la barre des niveaux (54)',
     );
     assert.ok(GUIDE_PAGES.some(p => p.id === 'perfume'), 'page guide perfume présente');
-    assert.equal(PERFUME_CLASSICS.length, 10);
+    assert.equal(PERFUME_CLASSICS.length, 11);
 });

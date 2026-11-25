@@ -75,6 +75,13 @@ export const CLASSICS = [
         name: 'la bière de citrouille',
         text: 'Citrouille et vanille : la bière d’automne, douce et ronde.',
     },
+    // 1.176 : la grande bière des Terres d'Asie
+    {
+        id: 'yuzuAle',
+        ings: ['yuzu', 'lotus'],
+        name: 'la bière au yuzu',
+        text: 'Yuzu et lotus : une bière légère et parfumée des terrasses d’Asie.',
+    },
 ];
 
 // les fûts (à la cave depuis 1.6.3) : chacun donne sa note et multiplie la valeur de la bière
@@ -151,6 +158,9 @@ export const MEAD_BASES = {
     coriander: HB([1, 1, 0, 2, 0], [3, 1], 'aime l’épicé et l’agrume'),
     fir: HB([1, 0, 2, 1, 0], [2, 3], 'aime l’amer et la résine : genièvre, épicéa, airelle'),
     lingonberry: HB([1, 2, 0, 0, 0], [1, 0], 'aime l’acidulé des baies du Nord'),
+    // 1.176 : les miels des Terres d'Asie
+    lotus: HB([2, 0, 0, 0, 1], [0, 4], 'aime le floral et le doux : nashi, longane, thé'),
+    yuzu: HB([1, 2, 0, 1, 0], [1, 3], 'aime l’agrume et les épices : kumquat, gingembre, badiane'),
 };
 // les grands classiques de l'hydromel : un de ces ingrédients suffit, et une étoile de plus
 export const MEAD_CLASSICS = [
@@ -167,5 +177,11 @@ export const MEAD_CLASSICS = [
         name: 'Métheglin',
         any: ['mint', 'basil', 'vanilla', 'saffron', 'coriander', 'cumin', 'juniper', 'lavender', 'ginger', 'peppercorn', 'hibiscus'],
         text: 'Avec des herbes ou des épices : un métheglin, l’hydromel des moines.',
+    },
+    {
+        id: 'imperialMead',
+        name: 'Hydromel impérial',
+        any: ['lotus', 'yuzu'],
+        text: 'Au lotus ou au yuzu : un hydromel impérial des Terres d’Asie.',
     },
 ];

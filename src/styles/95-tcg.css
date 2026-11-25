@@ -2367,6 +2367,11 @@ html.calm .tcg-sparks > i {
     background: linear-gradient(145deg, #f5b700, #8a5600);
     border-color: #fff4b8;
 }
+.tcg-back.back-sakura,
+.tcg-back-swatch.back-sakura {
+    background: linear-gradient(145deg, #9e1f34, #4c0d1b);
+    border-color: #f8b4c4;
+}
 
 /* 1.163 : Mise en page mobile propre (petits téléphones) pour Mon Deck, Main de duel et Filtres */
 .tcg-card,

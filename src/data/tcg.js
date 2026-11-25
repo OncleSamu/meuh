@@ -172,9 +172,19 @@ export const TCG_SERIES = {
         col2: '#f278b4',
         icon: ['item', 'emerald'],
     },
+    asie: {
+        id: 'asie',
+        name: 'Série 9 · Terres d’Asie',
+        short: 'Asie',
+        desc: 'Rizières en terrasses, pavillon de bambou, wok, douceurs, Mei, Kenji et chromas.',
+        cost: 125,
+        col: '#b83240',
+        col2: '#f08c96',
+        icon: ['item', 'yuzu'],
+    },
     gold: {
         id: 'gold',
-        name: 'Booster Doré · 300 Cartes',
+        name: 'Booster Doré · 335 Cartes',
         short: 'Doré',
         desc: '5 cartes de toutes les séries avec 1 Foil, Légendaire ou Secrète garantie !',
         cost: 220,
@@ -185,7 +195,7 @@ export const TCG_SERIES = {
         minTop: 'F',
     },
 };
-export const TCG_SET_IDS = ['vallee', 'terroir', 'horizons', 'prestige', 'verger', 'nature', 'ateliers', 'legendes'];
+export const TCG_SET_IDS = ['vallee', 'terroir', 'horizons', 'prestige', 'verger', 'nature', 'ateliers', 'legendes', 'asie'];
 export const TCG_PACK_IDS = [...TCG_SET_IDS, 'gold'];
 
 // Format compact : [id, series, rarity, family, name, spr, [terroir, saveur, prestige], flavor, look?]
@@ -466,7 +476,7 @@ const RAW_CARDS = [
     ['a31', 'ateliers', 'F', 'village', 'Ingrid du Grand Nord', ['villager', 'ingrid'], [8, 9, 7], 'Ses pains chauds réchauffent tout le cercle polaire.'],
     ['a32', 'ateliers', 'L', 'atelier', 'Comptoir de la Vallée', ['machine', 'counter'], [9, 10, 10], 'Le cœur vivant où se croisent tous les gourmets !'],
     ['a33', 'ateliers', 'S', 'atelier', 'Lingot d’Or Étoilé', ['item', 'goldIngot'], [11, 8, 13], 'Forgé sous une pluie d’étoiles filantes.', { finish: 11, halo: true }],
-    ['a34', 'ateliers', 'S', 'atelier', 'Parfumerie Nacrée', ['machine', 'perfumery'], [9, 11, 12], 'Reflets d’opale sur l’orgue aux 75 essences.', { finish: 10, halo: true }],
+    ['a34', 'ateliers', 'S', 'atelier', 'Parfumerie Nacrée', ['machine', 'perfumery'], [9, 11, 12], 'Reflets d’opale sur l’orgue aux 81 essences.', { finish: 10, halo: true }],
     ['a35', 'ateliers', 'S', 'atelier', 'Alambic Solaire', ['machine', 'still'], [11, 11, 11], 'Cuivre incandescent distillant l’élixir suprême.', { finish: 13, halo: true }],
 
     // ==================== SÉRIE 8 : LÉGENDES & CHROMAS (35) ====================
@@ -505,6 +515,43 @@ const RAW_CARDS = [
     ['g33', 'legendes', 'S', 'elevage', 'Paon Collerette Bioluminescent', ['animal', 'peacock~4'], [11, 10, 13], 'Fait briller toute la nuit d’une aura turquoise.', { color: 13, finish: 6, halo: true }],
     ['g34', 'legendes', 'S', 'elevage', 'Renne Obsidienne Étoilé', ['animal', 'reindeer~312'], [12, 10, 13], 'Galope dans la nuit polaire entre les constellations.', { color: 16, finish: 11, halo: true }],
     ['g35', 'legendes', 'S', 'potager', 'Safran Couronne Solaire', ['item', 'saffron'], [11, 13, 12], 'L’essence ultime née de toutes les saisons réunies.', { finish: 13, morph: 3, halo: true }],
+
+    // ==================== SÉRIE 9 : TERRES D'ASIE (35) ====================
+    ['z01', 'asie', 'C', 'potager', 'Fleur de Lotus', ['item', 'lotus'], [4, 4, 4], 'S’ouvre à l’aube sur les bassins calmes des terrasses.'],
+    ['z02', 'asie', 'C', 'potager', 'Pousse de Bambou', ['item', 'bambooShoot'], [5, 4, 3], 'Croquante, tendre et cueillie au premier rayon de soleil.'],
+    ['z03', 'asie', 'C', 'potager', 'Shiitake des Bois', ['item', 'shiitake'], [4, 5, 3], 'Parfum boisé qui sublime chaque bouillon et sauté au wok.'],
+    ['z04', 'asie', 'C', 'potager', 'Pak Choï Frais', ['item', 'bokChoy'], [5, 4, 3], 'Feuilles vert sombre et côtes blanches gorgées de rosée.'],
+    ['z05', 'asie', 'C', 'horizons', 'Yuzu Doré', ['item', 'yuzu'], [4, 5, 3], 'Agrume vif entre mandarine et citron, star des terrasses.'],
+    ['z06', 'asie', 'C', 'horizons', 'Prune Ume', ['item', 'ume'], [4, 5, 3], 'Acidulée et parfumée, idéale en liqueur comme en onigiri.'],
+    ['z07', 'asie', 'C', 'horizons', 'Kumquat Sucré', ['item', 'kumquat'], [4, 4, 4], 'Tout petit agrume qui se croque entier avec son zeste.'],
+    ['z08', 'asie', 'C', 'horizons', 'Poire Nashi', ['item', 'nashi'], [4, 5, 3], 'Croquante comme une pomme et juteuse comme une poire d’été.'],
+    ['z09', 'asie', 'C', 'horizons', 'Longane Perle', ['item', 'longan'], [3, 5, 4], 'Chair translucide et douce qu’on surnomme œil-de-dragon.'],
+    ['z10', 'asie', 'C', 'horizons', 'Noix de Ginkgo', ['item', 'ginkgo'], [5, 3, 4], 'Récoltée sous les feuilles d’or de l’arbre millénaire.'],
+    ['z11', 'asie', 'U', 'elevage', 'Lait de Sika', ['item', 'sikaMilk'], [5, 6, 5], 'Doux et velouté, récolté chaque matin au pavillon de bambou.'],
+    ['z12', 'asie', 'U', 'elevage', 'Œuf de Poule Soie', ['item', 'silkieEgg'], [5, 6, 5], 'Coquille crème et jaune riche prisé pour les flans vapeur.'],
+    ['z13', 'asie', 'U', 'atelier', 'Fil de Soie', ['item', 'silkThread'], [5, 4, 7], 'Brillant, souple et léger comme une brume du matin.'],
+    ['z14', 'asie', 'U', 'terroir', 'Miel de Lotus', ['item', 'honey_lotus'], [5, 7, 5], 'Nectar pâle et floral récolté au bord des bassins.'],
+    ['z15', 'asie', 'U', 'terroir', 'Miel de Yuzu', ['item', 'honey_yuzu'], [5, 7, 5], 'Vif, parfumé et recherché par les maîtres hydromeliers.'],
+    ['z16', 'asie', 'U', 'terroir', 'Mochi au Yuzu', ['item', 'yuzuMochi'], [4, 7, 5], 'Pâte de riz moelleuse au cœur d’agrume acidulé.'],
+    ['z17', 'asie', 'U', 'terroir', 'Baozi aux Shiitakes', ['item', 'shiitakeBao'], [6, 6, 4], 'Brioche vapeur toute chaude farcie de champignons parfumés.'],
+    ['z18', 'asie', 'U', 'terroir', 'Poiré de Nashi', ['item', 'nashiCider'], [5, 6, 5], 'Fines bulles fraîches qui s’affinent volontiers à la cave.'],
+    ['z19', 'asie', 'U', 'terroir', 'Liqueur d’Ume', ['item', 'umeshu'], [5, 7, 5], 'Ambrée, fruitée et patiemment élevée en fût.'],
+    ['z20', 'asie', 'R', 'elevage', 'Cerf Sika des Terrasses', ['animal', 'sika'], [8, 6, 7], 'Pelage tacheté de blanc et démarche silencieuse dans les bambous.'],
+    ['z21', 'asie', 'R', 'elevage', 'Ver à Soie', ['animal', 'silkworm'], [7, 5, 9], 'File patiemment des cocons précieux entre les feuilles de mûrier.'],
+    ['z22', 'asie', 'R', 'elevage', 'Poule Soie', ['animal', 'silkie'], [7, 7, 7], 'Plumage duveteux comme un nuage et caractère tout doux.'],
+    ['z23', 'asie', 'R', 'terroir', 'Caillé Doux de Sika', ['item', 'sikaTofuCheese'], [7, 8, 6], 'Fromage frais au lait de sika et zeste de yuzu.'],
+    ['z24', 'asie', 'R', 'terroir', 'Gâteau de Lune au Lotus', ['item', 'lotusMooncake'], [6, 8, 7], 'Pâtisserie ciselée offerte sous les lanternes d’automne.'],
+    ['z25', 'asie', 'R', 'atelier', 'Kimono de Soie', ['item', 'silkKimono'], [6, 6, 9], 'Cousu dans une soie fluide aux reflets changeants.'],
+    ['z26', 'asie', 'F', 'atelier', 'Wok de Fonte', ['machine', 'wok'], [9, 9, 7], 'Saisit en un éclair pousses de bambou, crevettes et magret au yuzu.'],
+    ['z27', 'asie', 'F', 'atelier', 'Panier Vapeur', ['machine', 'steamer'], [8, 9, 8], 'Tressé en bambou pour des baozi et gyoza parfaitement tendres.'],
+    ['z28', 'asie', 'F', 'atelier', 'Atelier de Douceurs', ['machine', 'wagashi'], [8, 10, 8], 'Façonne mochi, daifuku et gâteaux de lune comme des bijoux.'],
+    ['z29', 'asie', 'F', 'terroir', 'Magret Sauté au Yuzu', ['item', 'yuzuDuckWok'], [8, 10, 8], 'Le grand plat de fête que Chef Gaston a salué chapeau bas.'],
+    ['z30', 'asie', 'L', 'village', 'Mei des Terrasses', ['villager', 'mei'], [11, 10, 10], '« Quand l’eau chante de terrasse en terrasse, toute la vallée sourit. »'],
+    ['z31', 'asie', 'L', 'village', 'Kenji le Charpentier', ['villager', 'kenji'], [11, 9, 11], 'Assemble bambou, jonques et pavillons sans un seul clou de trop.'],
+    ['z32', 'asie', 'L', 'atelier', 'Ombrelle de Soie Dorée', ['item', 'goldenSilkParasol'], [9, 9, 13], 'Tissée de fils d’or et montée sur baleines de bambou verni.'],
+    ['z33', 'asie', 'S', 'elevage', 'Sika Fleur de Cerisier', ['animal', 'sika~322'], [11, 10, 13], 'Robe rosée et bois nacrés aperçus dans la brume des terrasses.', { color: 7, finish: 10, halo: true }],
+    ['z34', 'asie', 'S', 'elevage', 'Poule Soie Lune d’Or', ['animal', 'silkie~4'], [10, 11, 13], 'Plumage auréolé d’or qui éclaire le pavillon de bambou la nuit.', { color: 14, finish: 13, halo: true }],
+    ['z35', 'asie', 'S', 'horizons', 'Lotus Impérial Doré', ['item', 'lotus'], [11, 12, 13], 'Fleur légendaire qui n’éclot qu’au sommet des Terres d’Asie.', { finish: 13, morph: 3, halo: true }],
 ];
 
 export const TCG_CARDS = RAW_CARDS.map(([id, series, rarity, family, name, spr, stats, flavor, look], idx) => ({
@@ -700,6 +747,22 @@ export const TCG_VILLAGER_DUELS = [
         deck: ['h17', 'h18', 'g22', 'h22', 'h25'],
     },
     {
+        id: 'v_mei',
+        cat: 'village',
+        name: 'Mei',
+        role: 'Cultivatrice des terrasses',
+        art: 'mei',
+        diff: 3,
+        diffLabel: 'Difficile',
+        terrain: 'potager',
+        terrainName: 'Rizières en terrasses',
+        reward: 105,
+        quote: '« L’eau coule calmement de terrasse en terrasse… jusqu’à ma victoire ! »',
+        winQuote: '« Quelle maîtrise ! Tes cartes fleurissent comme un lotus d’aube. »',
+        loseQuote: '« Patience et équilibre : les terrasses finissent toujours par l’emporter. »',
+        deck: ['z01', 'z14', 'z20', 'z24', 'z30'],
+    },
+    {
         id: 'v_agathe',
         cat: 'village',
         name: 'Docteure Agathe',
@@ -714,6 +777,22 @@ export const TCG_VILLAGER_DUELS = [
         winQuote: '« Fascinant ! Une anomalie statistique magnifique ! »',
         loseQuote: '« La science — et un peu de chance — triomphe toujours. »',
         deck: ['p18', 'a26', 'p20', 'v25', 'a34'],
+    },
+    {
+        id: 'v_kenji',
+        cat: 'village',
+        name: 'Kenji',
+        role: 'Charpentier de la jonque',
+        art: 'kenji',
+        diff: 4,
+        diffLabel: 'Maître',
+        terrain: 'atelier',
+        terrainName: 'Pavillon de bambou',
+        reward: 130,
+        quote: '« Un deck solide se bâtit comme une jonque : chaque pièce à sa juste place ! »',
+        winQuote: '« Magnifique assemblage ! Tu navigues comme un vrai capitaine d’Asie. »',
+        loseQuote: '« Le bambou plie mais ne rompt jamais : belle manche ! »',
+        deck: ['z21', 'z25', 'z26', 'z31', 'z33'],
     },
     {
         id: 'v_duval',
@@ -749,7 +828,7 @@ export const TCG_VILLAGER_DUELS = [
     },
 ];
 
-// 8 paliers de collection (100 % internes au MeuhCG : jetons + boosters gratuits, 0 impact ferme)
+// 9 paliers de collection (100 % internes au MeuhCG : jetons + boosters gratuits, 0 impact ferme)
 export const TCG_MILESTONES = [
     { id: 'm10', need: 10, name: 'Débutant curieux', tokens: 60, packs: 1 },
     { id: 'm25', need: 25, name: 'Collectionneur du pré', tokens: 100, packs: 1 },
@@ -757,11 +836,12 @@ export const TCG_MILESTONES = [
     { id: 'm100', need: 100, name: 'Centurion de la vallée', tokens: 220, packs: 2 },
     { id: 'm150', need: 150, name: 'Archiviste des terroirs', tokens: 300, packs: 3 },
     { id: 'm200', need: 200, name: 'Chasseur de Chromas', tokens: 400, packs: 3 },
-    { id: 'm250', need: 250, name: 'Gardien des 8 séries', tokens: 550, packs: 4 },
-    { id: 'm300', need: 300, name: 'Légende Absolue du MeuhCG', tokens: 1000, packs: 6 },
+    { id: 'm250', need: 250, name: 'Gardien des 9 séries', tokens: 550, packs: 4 },
+    { id: 'm300', need: 300, name: 'Légende du MeuhCG', tokens: 1000, packs: 6 },
+    { id: 'm335', need: 335, name: 'Empereur du MeuhCG', tokens: 1200, packs: 8 },
 ];
 
-// 1.162 : 10 Duos secrets (bonus si les deux cartes sont dans ton deck)
+// 1.162 + 1.176 : 12 Duos secrets (bonus si les deux cartes sont dans ton deck)
 export const TCG_DUOS = [
     { id: 'bassecour', name: 'Duo Basse-cour', cards: ['v08', 'v04'], bonus: 1 },
     { id: 'boulanger', name: 'Duo Boulanger', cards: ['v01', 't01'], bonus: 1 },
@@ -773,6 +853,8 @@ export const TCG_DUOS = [
     { id: 'parfumeur', name: 'Duo Parfumeur', cards: ['p02', 'p13'], bonus: 1 },
     { id: 'zen', name: 'Duo Zen', cards: ['h23', 'f05'], bonus: 2 },
     { id: 'ferme', name: 'Duo de la Ferme', cards: ['v20', 'v23'], bonus: 2 },
+    { id: 'terrasses', name: 'Duo des Terrasses', cards: ['z30', 'z31'], bonus: 2 },
+    { id: 'soie', name: 'Duo de la Soie', cards: ['z21', 'z25'], bonus: 2 },
 ];
 
 // 1.162 : 5 règles tournantes du Tournoi de la Vallée (3 matchs éliminatoires, 1 règle par jour)
@@ -784,12 +866,13 @@ export const TCG_TOURNEY_RULES = [
     { id: 'boost_saveur', name: 'Grand Banquet', desc: 'Les manches Saveur accordent +2 à toutes les cartes !', budget: 16 },
 ];
 
-// 1.162 : 5 dos de cartes déblocables (affichés à l’ouverture des boosters et dans les duels)
+// 1.162 + 1.176 : 6 dos de cartes déblocables (affichés à l’ouverture des boosters et dans les duels)
 export const TCG_CARD_BACKS = [
     { id: 'vallee', name: 'Classique', needCards: 0, needCups: 0, desc: 'Dos bois & or traditionnel du MeuhCG.' },
     { id: 'foret', name: 'Émeraude', needCards: 25, needCups: 0, desc: 'Débloqué à 25 cartes.' },
     { id: 'nuit', name: 'Nuit Étoilée', needCards: 50, needCups: 1, desc: 'Débloqué à 50 cartes ou 1 coupe de tournoi.' },
     { id: 'capy', name: 'Capybara Zen', needCards: 100, needCups: 3, desc: 'Débloqué à 100 cartes ou 3 coupes de tournoi.' },
     { id: 'or24', name: 'Or Royal 24k', needCards: 150, needCups: 5, desc: 'Débloqué à 150 cartes ou 5 coupes de tournoi.' },
+    { id: 'sakura', name: 'Laque & Cerisier', needCards: 220, needCups: 7, desc: 'Débloqué à 220 cartes ou 7 coupes de tournoi.' },
 ];
 

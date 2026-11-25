@@ -20,10 +20,10 @@ test('1.92 : les tourtes et pâtés salés se cuisent à la boulangerie', () => 
     for (const id of ['pigeonPie', 'pheasantPate', 'kidPie']) assert.equal(RECIPES[id].machine, 'bakery', id);
 });
 
-test('1.92 : cinq grandes recettes de bière, sans doublon d’ingrédients', () => {
-    assert.equal(CLASSICS.length, 5);
+test('1.92 : grandes recettes de bière, sans doublon d’ingrédients', () => {
+    assert.equal(CLASSICS.length, 6);
     const keys = CLASSICS.map(c => [...c.ings].sort().join('+'));
-    assert.equal(new Set(keys).size, 5);
+    assert.equal(new Set(keys).size, 6);
     assert.ok(CLASSICS.find(c => c.id === 'stout').ings.includes('coffee'));
 });
 

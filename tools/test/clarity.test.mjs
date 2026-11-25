@@ -37,5 +37,5 @@ test('navigation : tuile Chercher, frise des prochaines étapes, recherche ateli
     assert.ok(infoSrc.includes('function machineCard') && infoSrc.includes('function animalCard'), 'recherche ateliers et animaux');
     assert.ok(infoSrc.includes('guideMach:') && infoSrc.includes('guideAnim:'), 'actions guideMach et guideAnim');
     assert.ok(brewSrc.includes('brew-guide') && brewSrc.includes('CLASSIC_HINTS'), 'guide des accords et classiques à la brasserie');
-    assert.ok(Object.keys(PAIRS).length >= 6 && CLASSICS.length === 5 && MEAD_CLASSICS.length === 4);
+    assert.ok(Object.keys(PAIRS).length >= 6 && CLASSICS.length === 6 && MEAD_CLASSICS.length === 5);
 });

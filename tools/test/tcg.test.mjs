@@ -9,9 +9,9 @@ import { TCG_CARDS, TCG_CARD_BY_ID, TCG_DECK_BUDGET, TCG_FAMILIES, TCG_RARITIES,
 import { SPR } from '../../src/art/index.js';
 import * as G from '../../src/systems/index.js';
 
-test('1.156 : les 300 cartes MeuhCG, les 14 villageois, les icônes SVG et la règle des 0 émoji', async () => {
-    assert.equal(TCG_CARDS.length, 300);
-    assert.equal(TCG_VILLAGER_DUELS.length, 14);
+test('1.156 + 1.176 : les 335 cartes MeuhCG, les 16 villageois, les icônes SVG et la règle des 0 émoji', async () => {
+    assert.equal(TCG_CARDS.length, 335);
+    assert.equal(TCG_VILLAGER_DUELS.length, 16);
     const ids = new Set();
     for (const c of TCG_CARDS) {
         assert.ok(!ids.has(c.id), `doublon id ${c.id}`);
@@ -335,13 +335,13 @@ test('1.155 : sauvegarde (fromSave) et Prestige conservent intégralement la col
 
 test('1.162 : 3 decks, Duos secrets, Manche ×2, Tournoi de la Vallée, Troc du jour & Dos de cartes', async () => {
     const { TCG_DUOS, TCG_TOURNEY_RULES, TCG_CARD_BACKS } = await import('../../src/data/tcg.js');
-    assert.equal(TCG_DUOS.length, 10, '10 Duos secrets');
+    assert.equal(TCG_DUOS.length, 12, '12 Duos secrets');
     for (const d of TCG_DUOS) {
         assert.equal(d.cards.length, 2);
         for (const id of d.cards) assert.ok(TCG_CARD_BY_ID[id], `carte de duo inconnue: ${id}`);
     }
     assert.equal(TCG_TOURNEY_RULES.length, 5, '5 règles tournantes de tournoi');
-    assert.equal(TCG_CARD_BACKS.length, 5, '5 dos de cartes déblocables');
+    assert.equal(TCG_CARD_BACKS.length, 6, '6 dos de cartes déblocables');
 
     setState(newState());
     G.loadGame();
@@ -434,7 +434,7 @@ test('1.162 : 3 decks, Duos secrets, Manche ×2, Tournoi de la Vallée, Troc du 
 
     // 5. Dos de cartes déblocables
     const backs = G.tcgUnlockedBacks();
-    assert.equal(backs.length, 5, 'tous les dos débloqués avec 300 cartes');
+    assert.equal(backs.length, 6, 'tous les dos débloqués avec 335 cartes');
     assert.equal(G.tcgSetCardBack('or24'), true);
     assert.equal(G.tcgCardBack(), 'or24');
 });

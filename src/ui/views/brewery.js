@@ -179,10 +179,12 @@ const CLASSIC_HINTS = {
     stout: 'Deux saveurs torréfiées d’atelier',
     kriek: 'Deux petits fruits rouges du verger et du champ',
     pumpkinAle: 'Une courge d’automne et une gousse de la serre',
+    yuzuAle: 'Un agrume et une fleur d’eau des Terres d’Asie',
     cyser: 'Un fruit à pépins des vergers normands',
     pyment: 'Le fruit de la vigne',
     melomel: 'Un fruit rouge ou une baie sucrée',
     metheglin: 'Une herbe aromatique ou une épice',
+    imperialMead: 'Une fleur de lotus ou un agrume des Terres d’Asie',
 };
 function brewGuideHtml(mead) {
     const beers = G.myBeers();

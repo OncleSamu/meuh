@@ -2311,7 +2311,7 @@ export const GUIDE_PAGES = [
         go: 'sheet:tcg',
         intro: `${TCG_CARDS.length} cartes en ${TCG_SET_IDS.length} séries, 100 % indépendant de l’économie de la ferme.`,
         facts: [
-            { icon: ['ui', 'tcgPack'], v: `${TCG_CARDS.length} cartes`, l: '8 séries + Doré' },
+            { icon: ['ui', 'tcgPack'], v: `${TCG_CARDS.length} cartes`, l: '9 séries + Doré' },
             { icon: ['ui', 'star'], v: `${TCG_DECK_BUDGET} ★ max`, l: '5 cartes · 3 decks' },
             { icon: ['ui', 'tcgDuel'], v: '5 manches', l: 'Dont 1 manche ×2' },
             { icon: ['ui', 'trophy'], v: 'Tournoi', l: '3 matchs / jour' },
