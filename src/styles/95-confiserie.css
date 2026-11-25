@@ -138,6 +138,90 @@
     vertical-align: middle;
 }
 
+/* Cartes Mes créations : alignements et espacements propres */
+.cf-card .card-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.cf-title-txt {
+    min-width: 0;
+    line-height: 1.25;
+}
+
+.cf-card .rename-btn {
+    flex: 0 0 auto;
+    margin-top: -1px;
+}
+
+.cf-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    margin-top: 4px;
+}
+
+.cf-meta .chip,
+.cf-meta .qchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin: 0;
+    vertical-align: middle;
+    line-height: 1.2;
+}
+
+.cf-meta .qchip .ico,
+.cf-meta .qchip svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+}
+
+.cf-ings-mini {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+    margin: 6px 0 8px;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+}
+
+.cf-ing-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cf-ing-tag .ico {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+}
+
+.cf-sep {
+    opacity: 0.55;
+}
+
+.cf-card .bb-again {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.cf-card .card-side {
+    gap: 8px;
+}
+
+.cf-card .card-side .bb-n {
+    line-height: 1.1;
+}
+
 /* ---------------- Modale des 3 mini-jeux tactiles ---------------- */
 .cm-back {
     position: fixed;

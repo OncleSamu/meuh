@@ -1,6 +1,14 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.178.3",
+  "title": "Confiserie : finition visuelle des cartes Créations",
+  "date": "25 novembre 2026",
+  "items": [
+   "Cartes Mes créations : icône cœur restaurée sur le bouton Offrir, puce qualité alignée sur les badges, bouton renommer rapproché du titre et boutons Vendre / Tout vendre espacés"
+  ]
+ },
+ {
   "v": "1.178.2",
   "title": "Confiserie : tous les miels du jeu accessibles pour le Caramel",
   "date": "25 novembre 2026",

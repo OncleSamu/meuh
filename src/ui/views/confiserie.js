@@ -292,18 +292,18 @@ function stockHtml() {
                         ? btn('Vendre', { act: 'sellConf', data: { id: c.id, n: 1 }, size: 'sm' }) +
                           (n > 1 ? btn('Tout vendre', { act: 'sellConf', data: { id: c.id, n }, kind: 'gold', size: 'sm' }) : '')
                         : '');
-                const sub = `${stars(c.stars)} <span class="chip">${esc(CONF_KINDS[c.kind]?.name || '')}</span>${c.classic ? ' <span class="chip ok">Classique</span>' : ''}${c.mirror ? ' <span class="chip cf-mirror">Miroir</span>' : ''}${chips}
-                    <div class="pf-notes-mini">${(c.ings || []).map(id => `${ingIco(id)} <small>${esc(G.confIngName(id))}</small>`).join(' · ')}</div>`;
+                const sub = `<div class="cf-meta">${stars(c.stars)}<span class="chip">${esc(CONF_KINDS[c.kind]?.name || '')}</span>${c.classic ? '<span class="chip ok">Classique</span>' : ''}${c.mirror ? '<span class="chip cf-mirror">Miroir</span>' : ''}${chips}</div>
+                    <div class="cf-ings-mini">${(c.ings || []).map(id => `<span class="cf-ing-tag">${ingIco(id)}<span>${esc(G.confIngName(id))}</span></span>`).join('<span class="cf-sep">·</span>')}</div>`;
                 const again = `<div class="bb-again">
                     ${btn('Recomposer', { act: 'confLoad', data: { id: c.id }, kind: 'green', size: 'sm', icon: ['ui', 'loop'] })}
-                    ${n > 0 ? btn('Offrir', { act: 'confGiftOpen', data: { id: c.id }, size: 'sm', icon: ['ui', 'gift'] }) : ''}
+                    ${n > 0 ? btn('Offrir', { act: 'confGiftOpen', data: { id: c.id }, size: 'sm', icon: ['ui', 'heart'] }) : ''}
                     ${n > 0 && G.vaultOpen() ? btn('Au coffre', { act: 'vaultConf', data: { id: c.id }, size: 'sm', icon: ['ui', 'vault'] }) : ''}
                     <button class="fav-star${G.isConfFav(c.id) ? ' on' : ''}" data-act="confFav" data-id="${c.id}" aria-label="Favori">${G.isConfFav(c.id) ? '★' : '☆'}</button>
                 </div>`;
-                return `<div class="card brew-beer${n ? '' : ' none'}">
+                return `<div class="card brew-beer cf-card${n ? '' : ' none'}">
                     <div class="card-art">${confSvg(c)}</div>
                     <div class="card-main">
-                        <div class="card-title">${esc(c.name)} ${renameBtn('confiserie', c.id, 'Renommer la confiserie')}</div>
+                        <div class="card-title"><span class="cf-title-txt">${esc(c.name)}</span>${renameBtn('confiserie', c.id, 'Renommer la confiserie')}</div>
                         <div class="card-sub">${sub}</div>
                         ${again}
                     </div>
