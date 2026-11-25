@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.178",
+  "title": "L’Atelier Confiserie : Chocolat, Caramel, Berlingots & 3 mini-jeux inédits",
+  "date": "25 novembre 2026",
+  "items": [
+   "Nouvel onglet Atelier › Confiserie (débloqué au niveau 54) avec 3 métiers : Chocolat, Caramel (compatible avec les 26 miels de fleurs !) et Berlingots, 9 moules SVG sur mesure et tous les ingrédients de la ferme + variétés du Labo",
+   "3 mini-jeux tactiles inédits (instantanés) : Tempérage sur marbre (Chocolat), L’Instant Ambré (Caramel) et La Coupe au Ciseau (Berlingots) — réussir 3★ accorde la Finition Miroir (+30 % valeur et +1 cran de qualité, jusqu’à Diamant !)",
+   "Cuisson passive en parallèle dans 2 à 4 chaudrons (agrandis via le Domaine), 18 Grands Classiques (6 par métier), Grimoire du Confiseur (+1 ruban de Prestige une fois complet), Commandes gourmandes (+75 %) et cadeaux aux villageois",
+   "Intégration complète : page « Confiseries » dans le Livre de la ferme, rangement au Coffre-fort, 2 nouveaux exploits, statistiques & revenus dédiés, guide contextuel et conservation du Grimoire au Prestige"
+  ]
+ },
+ {
   "v": "1.177",
   "title": "MeuhCG 3.0 : Sensations, Pioche Miracle, Météo, Ligue & Série 10",
   "date": "25 novembre 2026",

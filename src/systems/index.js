@@ -86,6 +86,7 @@ export * from './seedcat.js';
 export * from './family.js';
 export * from './plan.js';
 export * from './perfume.js';
+export * from './confiserie.js';
 export * from './tcg.js';
 export * from './cloud.js';
 export * from './mine.js';

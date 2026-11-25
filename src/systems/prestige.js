@@ -57,6 +57,8 @@ export function doPrestige(challenge, theme) {
         brew: state.brew ? { ...state.brew, stock: {}, q: {}, vats: [], barrels: [], orders: [], demand: {} } : null,
         // 1.143 : la parfumerie garde ses créations, son Orgue et sa signature ; flacons, dame-jeannes et commandes partent avec la ferme
         perfume: state.perfume ? { ...state.perfume, stock: {}, q: {}, vats: [], orders: [], demand: {} } : null,
+        // 1.178 : la confiserie garde ses créations et son Grimoire ; stock, chaudrons et commandes partent avec la ferme
+        confiserie: state.confiserie ? { ...state.confiserie, stock: {}, q: {}, kettles: [], orders: [], demand: {} } : null,
         // les grands défis gardent leurs trophées ; le défi en cours, le mini-défi et l'offre sont mis de côté
         defis: state.defis ? { ...state.defis, cur: null, mini: null, offer: null } : null,
         night: state.night,

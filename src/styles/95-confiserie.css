@@ -1,0 +1,569 @@
+/* 1.178 : Styles de l'Atelier Confiserie et de ses 3 mini-jeux tactiles */
+
+.cf-kettles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.cf-k-art {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cf-k-art svg {
+    width: 100%;
+    height: 100%;
+}
+
+.cf-compose {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cf-head-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed rgba(90, 56, 30, 0.18);
+}
+
+.cf-head-intro b {
+    font-size: 1.05rem;
+    color: var(--ink);
+}
+
+.cf-head-intro small {
+    color: var(--ink-soft);
+    font-size: 0.84rem;
+}
+
+.cf-shapes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.cf-shape-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 6px;
+    border-radius: 12px;
+    border: 2px solid rgba(90, 56, 30, 0.2);
+    background: #fffdf8;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.12s, border-color 0.12s, background 0.12s;
+}
+
+.cf-shape-btn.on {
+    border-color: #c77b24;
+    background: #fff4df;
+    box-shadow: 0 2px 0 rgba(199, 123, 36, 0.28);
+}
+
+.cf-sh-ico {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cf-sh-ico svg {
+    width: 100%;
+    height: 100%;
+}
+
+.cf-ing-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    gap: 8px;
+}
+
+.cf-ing-slot {
+    border-radius: 12px;
+    border: 2px dashed rgba(90, 56, 30, 0.25);
+    background: #fffcf6;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    min-width: 0;
+}
+
+.cf-ing-slot.empty {
+    flex-direction: column;
+    align-items: flex-start;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: var(--ink);
+}
+
+.cf-ing-slot.empty small {
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+}
+
+.cf-ing-slot.filled {
+    border-style: solid;
+    border-color: rgba(154, 98, 42, 0.35);
+    background: #fff8eb;
+    padding: 4px 6px 4px 8px;
+}
+
+.cf-ing-main {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    background: transparent;
+    padding: 4px 0;
+    font: inherit;
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+    min-width: 0;
+    flex: 1;
+}
+
+.cf-ing-main span {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.cf-ing-main b {
+    font-size: 0.88rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cf-ing-main small {
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+}
+
+.cf-ing-main small.short {
+    color: #b8332a;
+    font-weight: 700;
+}
+
+.cf-ing-rm {
+    flex: 0 0 26px;
+    width: 26px;
+    height: 26px;
+    border-radius: 99px;
+    border: 0;
+    background: rgba(90, 56, 30, 0.1);
+    color: var(--ink);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.cf-tools {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+}
+
+.cf-preview .bp-art {
+    width: 72px;
+    height: 72px;
+    flex: 0 0 72px;
+}
+
+.cf-preview .bp-art svg {
+    width: 100%;
+    height: 100%;
+}
+
+.cf-go-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 8px;
+}
+
+.cf-mini-tip {
+    text-align: center;
+    margin-top: -4px;
+}
+
+.cf-mirror {
+    background: linear-gradient(135deg, #fff6d6, #f5d3ff);
+    border-color: #c28ce0;
+    color: #4f2568;
+}
+
+.cf-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+/* ---------------- Modale des 3 mini-jeux tactiles ---------------- */
+.cm-back {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    background: rgba(28, 16, 8, 0.72);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+}
+
+.cm-box {
+    width: 100%;
+    max-width: 400px;
+    background: #fff9ef;
+    border: 2px solid #8a5628;
+    border-radius: 18px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    color: var(--ink);
+}
+
+.cm-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cm-art {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+}
+
+.cm-art svg {
+    width: 100%;
+    height: 100%;
+}
+
+.cm-head b {
+    display: block;
+    font-size: 1rem;
+}
+
+.cm-head small {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+}
+
+.cm-stage {
+    min-height: 210px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cm-foot {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cm-phase {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.92rem;
+    margin-bottom: 10px;
+}
+
+/* Mini-jeu 1 : Tempérage sur marbre */
+.cm-temper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cm-therm {
+    position: relative;
+    height: 36px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #9ed5f5 0%, #f7e6be 45%, #f59442 75%, #c93b28 100%);
+    border: 2px solid #5a381e;
+    overflow: hidden;
+}
+
+.cm-zone {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.34);
+    border-left: 2px dashed #fff;
+    border-right: 2px dashed #fff;
+    transition: background 0.12s;
+}
+
+.cm-zone.hit {
+    background: rgba(114, 224, 128, 0.55);
+}
+
+.cm-needle {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    width: 12px;
+    margin-left: -6px;
+    border-radius: 99px;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #3b2210;
+}
+
+.cm-meter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+}
+
+.cm-mbar {
+    flex: 1;
+    height: 10px;
+    background: rgba(90, 56, 30, 0.15);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.cm-mbar i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #e09a2f, #49b056);
+}
+
+.cm-hold {
+    touch-action: none;
+    user-select: none;
+}
+
+.cm-hold.on {
+    transform: scale(0.98);
+    filter: brightness(1.06);
+}
+
+/* Mini-jeu 2 : L'Instant Ambré */
+.cm-amber {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.cm-pot {
+    width: 128px;
+    height: 92px;
+    border-radius: 14px 14px 44px 44px;
+    border: 3px solid #5c381c;
+    background: #3d2412;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cm-liquid {
+    position: absolute;
+    inset: 14px 4px 4px;
+    border-radius: 8px 8px 36px 36px;
+    background: #f6e0a2;
+    transition: background 0.1s;
+}
+
+.cm-pot-deg {
+    position: relative;
+    z-index: 2;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.cm-cbar {
+    position: relative;
+    width: 100%;
+    height: 18px;
+    border-radius: 99px;
+    background: #eadbc3;
+    border: 2px solid #5c381c;
+    overflow: hidden;
+}
+
+.cm-czone {
+    position: absolute;
+    left: 68%;
+    width: 17%;
+    top: 0;
+    bottom: 0;
+    background: rgba(208, 114, 24, 0.45);
+    border-left: 2px solid #8a4408;
+    border-right: 2px solid #8a4408;
+    z-index: 2;
+}
+
+.cm-cbar i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #f5da88, #d97a1e 75%, #4a1e08);
+}
+
+.cm-butter-pad {
+    width: 100%;
+}
+
+.cm-drop {
+    touch-action: none;
+    user-select: none;
+}
+
+/* Mini-jeu 3 : La Coupe au Ciseau */
+.cm-snip {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cm-belt {
+    position: relative;
+    height: 68px;
+    border-radius: 14px;
+    border: 2px solid #5c381c;
+    overflow: hidden;
+    background: repeating-linear-gradient(
+        -45deg,
+        var(--c1, #f27c9d),
+        var(--c1, #f27c9d) 14px,
+        #ffffff 14px,
+        #ffffff 22px,
+        var(--c2, #73c98d) 22px,
+        var(--c2, #73c98d) 36px
+    );
+    touch-action: none;
+    cursor: pointer;
+}
+
+.cm-belt.snip {
+    filter: brightness(1.15);
+}
+
+.cm-cutline {
+    position: absolute;
+    left: 22%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    margin-left: -2px;
+    background: #fff;
+    box-shadow: 0 0 0 2px #3a2010;
+    z-index: 3;
+}
+
+.cm-marks {
+    position: absolute;
+    inset: 0;
+}
+
+.cm-diamond {
+    position: absolute;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    background: #fff7df;
+    border: 2.5px solid #4a2a12;
+    transform: rotate(45deg);
+    border-radius: 4px;
+    z-index: 2;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.cm-diamond.perfect {
+    background: #5bd46e;
+    border-color: #1c6b2a;
+    transform: rotate(45deg) scale(1.18);
+}
+
+.cm-diamond.ok {
+    background: #f5c94c;
+    border-color: #8c620a;
+}
+
+.cm-diamond.miss {
+    background: #d95a50;
+    border-color: #6b1a14;
+    opacity: 0.6;
+}
+
+/* Écran de fin */
+.cm-done {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+}
+
+.cm-done-art {
+    width: 78px;
+    height: 78px;
+}
+
+.cm-done-art svg {
+    width: 100%;
+    height: 100%;
+}
+
+.cm-stars {
+    display: flex;
+    gap: 4px;
+    font-size: 1.5rem;
+}
+
+.cm-star {
+    color: #d6c5ad;
+}
+
+.cm-star.on {
+    color: #f0a818;
+    text-shadow: 0 1px 0 #8c5206;
+}
+
+.cm-done p {
+    margin: 0;
+    font-size: 0.86rem;
+    color: var(--ink-soft);
+}
+
+.cm-done small {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #7c4194;
+}

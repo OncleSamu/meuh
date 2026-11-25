@@ -1,0 +1,347 @@
+// 1.178 : Les 3 mini-jeux tactiles 100 % inédits de l'Atelier Confiserie (0 émoji, 8–10 s chacun) :
+// 1. Chocolat  : Tempérage sur marbre (maintenir la température dans 3 paliers mobiles : 50 °C → 28 °C → 31 °C)
+// 2. Caramel   : L'Instant Ambré (glisser le beurre/miel dans le chaudron pile dans la fenêtre ambrée)
+// 3. Berlingots: La Coupe au Ciseau (trancher le ruban de sucre rayé pile au passage des 6 losanges)
+
+import { sfx, buzz } from '../core/bus.js';
+import { CONF_KINDS } from '../data/confiserie.js';
+import { confSvg } from '../art/confiserie.js';
+import * as G from '../systems/index.js';
+import { refresh } from './app.js';
+
+let activeRaf = 0;
+
+function closeModal(overlay) {
+    if (activeRaf) cancelAnimationFrame(activeRaf);
+    activeRaf = 0;
+    if (overlay && overlay.parentNode) overlay.remove();
+}
+
+export function launchConfMini(kind) {
+    const pv = G.confPreview(kind);
+    if (!pv.can) return;
+    const kDef = CONF_KINDS[kind];
+
+    // Créer la fenêtre modale dédiée
+    const overlay = document.createElement('div');
+    overlay.className = 'cm-back';
+    overlay.innerHTML = `<div class="cm-box">
+        <div class="cm-head">
+            <span class="cm-art">${confSvg({ kind, shape: pv.shape, baseCol: pv.baseCol, baseCol2: pv.baseCol2, accentCol: pv.accentCol })}</span>
+            <div><b>${kDef.miniName}</b><small>${kDef.miniDesc}</small></div>
+        </div>
+        <div class="cm-stage" id="cm-stage"></div>
+        <div class="cm-foot"><button type="button" class="btn sm" id="cm-cancel">Annuler</button></div>
+    </div>`;
+    document.body.appendChild(overlay);
+
+    const stage = overlay.querySelector('#cm-stage');
+    overlay.querySelector('#cm-cancel').addEventListener('click', () => closeModal(overlay));
+
+    const finish = (stars, summary) => {
+        if (activeRaf) cancelAnimationFrame(activeRaf);
+        activeRaf = 0;
+        const res = G.finishConfMini(kind, stars);
+        if (!res) {
+            closeModal(overlay);
+            return;
+        }
+        const starHtml = [1, 2, 3].map(i => `<span class="cm-star${i <= stars ? ' on' : ''}">★</span>`).join('');
+        const bonusTxt =
+            stars >= 3
+                ? 'Finition Miroir ! +30 % valeur et +1 cran de qualité !'
+                : stars === 2
+                  ? 'Belle maîtrise ! +15 % valeur.'
+                  : 'Fournée réussie ! +5 % valeur.';
+        stage.innerHTML = `<div class="cm-done">
+            <div class="cm-done-art">${confSvg({ kind, shape: pv.shape, baseCol: pv.baseCol, baseCol2: pv.baseCol2, accentCol: pv.accentCol, mirror: stars >= 3, classic: !!pv.harmony.classic })}</div>
+            <div class="cm-stars">${starHtml}</div>
+            <b>${pv.name} ×${res.qty}</b>
+            <p>${summary}</p>
+            <small>${bonusTxt}</small>
+            <button type="button" class="btn green" id="cm-ok">Ranger dans mes créations</button>
+        </div>`;
+        overlay.querySelector('#cm-cancel').style.display = 'none';
+        overlay.querySelector('#cm-ok').addEventListener('click', () => {
+            closeModal(overlay);
+            refresh();
+        });
+    };
+
+    if (kind === 'chocolate') runTemperMini(stage, pv, finish);
+    else if (kind === 'caramel') runAmberMini(stage, pv, finish);
+    else runSnipMini(stage, pv, finish);
+}
+
+// ---------------- 1. CHOCOLAT : Tempérage sur marbre ----------------
+function runTemperMini(stage, pv, finish) {
+    // 3 paliers successifs sur 9 secondes : Fondre (78 %), Marbre froid (24 %), Travail (46 %)
+    const PHASES = [
+        { label: '1/3 · Fondre (50 °C)', target: 0.78, dur: 3.0 },
+        { label: '2/3 · Marbre froid (28 °C)', target: 0.24, dur: 3.0 },
+        { label: '3/3 · Stabiliser (31 °C)', target: 0.46, dur: 3.0 },
+    ];
+    stage.innerHTML = `<div class="cm-temper">
+        <div class="cm-phase" id="cm-ph">${PHASES[0].label}</div>
+        <div class="cm-therm">
+            <div class="cm-zone" id="cm-zone"></div>
+            <div class="cm-needle" id="cm-needle" style="background:${pv.baseCol}"></div>
+        </div>
+        <div class="cm-meter"><span>Brillance miroir</span><div class="cm-mbar"><i id="cm-fill"></i></div><b id="cm-pct">0 %</b></div>
+        <button type="button" class="btn gold wide lg cm-hold" id="cm-heat">Maintenir pour chauffer · Relâcher pour refroidir</button>
+    </div>`;
+
+    const phEl = stage.querySelector('#cm-ph');
+    const zoneEl = stage.querySelector('#cm-zone');
+    const needleEl = stage.querySelector('#cm-needle');
+    const fillEl = stage.querySelector('#cm-fill');
+    const pctEl = stage.querySelector('#cm-pct');
+    const heatBtn = stage.querySelector('#cm-heat');
+
+    let heating = false;
+    const onDown = e => {
+        e.preventDefault();
+        heating = true;
+        heatBtn.classList.add('on');
+    };
+    const onUp = () => {
+        heating = false;
+        heatBtn.classList.remove('on');
+    };
+    heatBtn.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+
+    let temp = 0.5;
+    let vel = 0;
+    let scoreTime = 0;
+    let totalTime = 0;
+    let last = performance.now();
+    const totalDur = 9.0;
+
+    const step = t => {
+        const dt = Math.max(0, Math.min(0.05, (t - last) / 1000));
+        last = t;
+        totalTime += dt;
+        const pIdx = Math.max(0, Math.min(2, Math.floor(totalTime / 3)));
+        const ph = PHASES[pIdx];
+        phEl.textContent = ph.label;
+
+        // Physique douce : maintenir chauffe, relâcher refroidit sur marbre
+        vel += (heating ? 1.45 : -1.35) * dt;
+        vel *= Math.pow(0.18, dt);
+        temp = Math.max(0.04, Math.min(0.96, temp + vel * dt));
+
+        const inZone = Math.abs(temp - ph.target) <= 0.13;
+        if (inZone) scoreTime += dt;
+        const pct = Math.min(100, Math.round((scoreTime / totalDur) * 100));
+
+        zoneEl.style.left = `${Math.round((ph.target - 0.13) * 100)}%`;
+        zoneEl.style.width = '26%';
+        zoneEl.classList.toggle('hit', inZone);
+        needleEl.style.left = `${Math.round(temp * 100)}%`;
+        fillEl.style.width = `${pct}%`;
+        pctEl.textContent = `${pct} %`;
+
+        if (totalTime >= totalDur) {
+            window.removeEventListener('pointerup', onUp);
+            window.removeEventListener('pointercancel', onUp);
+            const stars = pct >= 68 ? 3 : pct >= 40 ? 2 : 1;
+            finish(stars, `Tempérage tenu à ${pct} % sur les 3 paliers.`);
+            return;
+        }
+        activeRaf = requestAnimationFrame(step);
+    };
+    activeRaf = requestAnimationFrame(step);
+}
+
+// ---------------- 2. CARAMEL : L'Instant Ambré ----------------
+function runAmberMini(stage, pv, finish) {
+    // 2 cuissons rapides : glisser le beurre vers le haut (ou toucher le chaudron) dans la zone ambrée (66 % – 86 %)
+    stage.innerHTML = `<div class="cm-amber">
+        <div class="cm-phase" id="cm-aph">Fournée 1/2 · Attends la teinte ambrée !</div>
+        <div class="cm-pot" id="cm-pot">
+            <div class="cm-liquid" id="cm-liq"></div>
+            <span class="cm-pot-deg" id="cm-deg">110 °C</span>
+        </div>
+        <div class="cm-cbar"><div class="cm-czone"></div><i id="cm-cprog"></i></div>
+        <div class="cm-butter-pad">
+            <button type="button" class="btn gold wide lg cm-drop" id="cm-drop">Glisse vers le haut ou touche pour déglacer !</button>
+        </div>
+    </div>`;
+
+    const phEl = stage.querySelector('#cm-aph');
+    const liqEl = stage.querySelector('#cm-liq');
+    const degEl = stage.querySelector('#cm-deg');
+    const progEl = stage.querySelector('#cm-cprog');
+    const dropBtn = stage.querySelector('#cm-drop');
+
+    let round = 0;
+    let heat = 0;
+    let speed = 0.22;
+    const scores = [];
+    let last = performance.now();
+    let locked = false;
+
+    const triggerDrop = () => {
+        if (locked) return;
+        locked = true;
+        sfx('confSizzle');
+        buzz(20);
+        // Fenêtre parfaite : 0.68..0.85
+        const dist = heat < 0.68 ? 0.68 - heat : heat > 0.85 ? heat - 0.85 : 0;
+        const pts = dist === 0 ? 3 : dist <= 0.12 ? 2 : 1;
+        scores.push(pts);
+        round++;
+        if (round >= 2) {
+            const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+            const stars = avg >= 2.5 ? 3 : avg >= 1.75 ? 2 : 1;
+            const txt = scores.map((s, i) => `Cuvée ${i + 1} : ${s === 3 ? 'ambre parfait' : s === 2 ? 'doré' : 'trop tôt/tard'}`).join(' · ');
+            finish(stars, txt);
+            return;
+        }
+        phEl.textContent = 'Fournée 2/2 · Plus vif cette fois !';
+        heat = 0;
+        speed = 0.29;
+        setTimeout(() => {
+            locked = false;
+        }, 320);
+    };
+
+    let startY = null;
+    dropBtn.addEventListener('pointerdown', e => {
+        startY = e.clientY;
+    });
+    dropBtn.addEventListener('pointermove', e => {
+        if (startY != null && startY - e.clientY > 28) {
+            startY = null;
+            triggerDrop();
+        }
+    });
+    dropBtn.addEventListener('click', () => triggerDrop());
+
+    const colorAt = h => {
+        if (h < 0.45) return '#f6e0a2';
+        if (h < 0.68) return '#eba638';
+        if (h <= 0.85) return '#c86414';
+        return '#421d08';
+    };
+
+    const step = t => {
+        const dt = Math.max(0, Math.min(0.05, (t - last) / 1000));
+        last = t;
+        if (!locked) {
+            heat += speed * (1 + heat * 0.45) * dt;
+            if (heat >= 1) {
+                heat = 1;
+                triggerDrop();
+                if (round >= 2) return;
+            }
+        }
+        const deg = Math.round(105 + heat * 70);
+        degEl.textContent = `${deg} °C`;
+        liqEl.style.background = colorAt(heat);
+        progEl.style.width = `${Math.round(heat * 100)}%`;
+        activeRaf = requestAnimationFrame(step);
+    };
+    activeRaf = requestAnimationFrame(step);
+}
+
+// ---------------- 3. BERLINGOTS : La Coupe au Ciseau ----------------
+function runSnipMini(stage, pv, finish) {
+    // 6 losanges défilent vers la ligne de coupe (x = 22 %)
+    stage.innerHTML = `<div class="cm-snip">
+        <div class="cm-phase" id="cm-sph">Tranche pile sur les 6 repères (0/6)</div>
+        <div class="cm-belt" id="cm-belt" style="--c1:${pv.baseCol};--c2:${pv.accentCol}">
+            <div class="cm-cutline"></div>
+            <div class="cm-marks" id="cm-marks"></div>
+        </div>
+        <button type="button" class="btn green wide lg" id="cm-cut">Couper le ruban !</button>
+    </div>`;
+
+    const phEl = stage.querySelector('#cm-sph');
+    const marksEl = stage.querySelector('#cm-marks');
+    const cutBtn = stage.querySelector('#cm-cut');
+    const beltEl = stage.querySelector('#cm-belt');
+
+    const CUT_X = 22; // pourcentage depuis la gauche
+    const marks = Array.from({ length: 6 }, (_, i) => ({
+        x: 75 + i * 32,
+        hit: null, // 'perfect' | 'ok' | 'miss'
+    }));
+
+    const nodes = marks.map(() => {
+        const el = document.createElement('span');
+        el.className = 'cm-diamond';
+        marksEl.appendChild(el);
+        return el;
+    });
+
+    let perfect = 0;
+    let ok = 0;
+    let doneCount = 0;
+    let last = performance.now();
+
+    const doCut = () => {
+        sfx('confSnip');
+        buzz(12);
+        beltEl.classList.add('snip');
+        setTimeout(() => beltEl.classList.remove('snip'), 120);
+        // Trouver le repère non tranché le plus proche de CUT_X
+        let bestIdx = -1,
+            bestDist = 999;
+        marks.forEach((m, i) => {
+            if (m.hit) return;
+            const d = Math.abs(m.x - CUT_X);
+            if (d < bestDist) {
+                bestDist = d;
+                bestIdx = i;
+            }
+        });
+        if (bestIdx < 0 || bestDist > 18) return;
+        const m = marks[bestIdx];
+        if (bestDist <= 6.5) {
+            m.hit = 'perfect';
+            perfect++;
+        } else {
+            m.hit = 'ok';
+            ok++;
+        }
+        nodes[bestIdx].classList.add(m.hit);
+        doneCount++;
+        phEl.textContent = `Tranche pile sur les 6 repères (${doneCount}/6)`;
+    };
+
+    cutBtn.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        doCut();
+    });
+    beltEl.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        doCut();
+    });
+
+    const step = t => {
+        const dt = Math.max(0, Math.min(0.05, (t - last) / 1000));
+        last = t;
+        for (let i = 0; i < marks.length; i++) {
+            const m = marks[i];
+            m.x -= 36 * dt;
+            if (!m.hit && m.x < CUT_X - 14) {
+                m.hit = 'miss';
+                nodes[i].classList.add('miss');
+                doneCount++;
+                phEl.textContent = `Tranche pile sur les 6 repères (${doneCount}/6)`;
+            }
+            nodes[i].style.left = `${m.x.toFixed(1)}%`;
+        }
+        if (doneCount >= 6) {
+            const pts = perfect * 2 + ok;
+            const stars = pts >= 10 ? 3 : pts >= 6 ? 2 : 1;
+            finish(stars, `${perfect} coupes parfaites · ${ok} correctes sur 6 berlingots.`);
+            return;
+        }
+        activeRaf = requestAnimationFrame(step);
+    };
+    activeRaf = requestAnimationFrame(step);
+}

@@ -18,6 +18,7 @@ import { ISLAND } from '../data/island.js';
 import { GENETICS } from '../data/genetics.js';
 import { CAVE_LVL } from '../data/cave.js';
 import { PERFUME_LVL } from '../data/perfume.js';
+import { CONF_LVL } from '../data/confiserie.js';
 import { HARAS_LVL } from '../data/haras.js';
 import { COMP_LVL } from '../data/companions.js';
 import { INCIDENT_LVL, RARE_EVENT_LVL } from '../data/surprises.js';
@@ -419,6 +420,8 @@ export function unlocksAt(lvl) {
     if (lvl === LANE2_LVL) addGo('machines/workshop', ['machine', 'mill'], 'Le deuxième poste : une machine fait deux lots à la fois (fiche de la machine)');
     if (lvl === WORKS_LVL) addGo('village/village', ['ui', 'house'], 'Les dépendances du domaine : six bâtiments d’apparat, trois niveaux chacun (Village › Village, Domaine)');
     Object.entries(APIARY).forEach(([k, a]) => a && a.lvl === lvl && a.name && addGo(`farm/island#${k === 'island' ? 'isle' : k}`, ['ui', a.icon], `${a.name} : des ruches qui ne butinent que leur contrée`));
+    if (lvl === CONF_LVL)
+        bigGo('machines/confiserie', ['ui', 'confiserie'], 'Grande étape : l’Atelier Confiserie (chocolats, caramels aux miels de fleurs, berlingots et 3 mini-jeux inédits), Atelier › Confiserie');
     if (lvl === PERFUME_LVL)
         bigGo('machines/perfume', ['ui', 'perfume'], 'Grande étape : l’Atelier du Parfumeur (pyramide olfactive, macération active, flacons sur mesure et Salon), Atelier › Parfums');
     if (lvl === FAMILY.lvl) bigGo('village/family', ['ui', 'fmHome'], 'Grande étape : la famille (faire la cour, se marier, des enfants), Village › Famille');

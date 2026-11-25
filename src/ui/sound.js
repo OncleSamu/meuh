@@ -315,6 +315,14 @@ export const SoundEngine = (() => {
                 noise(t, 0.18, { vol: 0.18, freq: 600, type: 'bandpass', q: 4 });
                 tone(260, t, 0.16, { type: 'square', vol: 0.03, glide: 200 });
                 break;
+            case 'confSnip':
+                noise(t, 0.045, { vol: 0.3, freq: 3800, type: 'bandpass', q: 3 });
+                tone(1850, t, 0.04, { type: 'triangle', vol: 0.09, glide: 1100 });
+                break;
+            case 'confSizzle':
+                noise(t, 0.28, { vol: 0.26, freq: 3200, type: 'highpass', q: 1 });
+                tone(420, t, 0.18, { type: 'sine', vol: 0.07, glide: 680 });
+                break;
         }
     }
     function schedule() {

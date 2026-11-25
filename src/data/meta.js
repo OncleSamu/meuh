@@ -68,6 +68,9 @@ export const ACHIEVEMENTS = [
     // 1.143 : L'Atelier du Parfumeur
     { id: 'perfumes', name: 'Parfumeur', desc: 'Mettre en flacon {n} parfum{s}', icon: ['ui', 'perfume'], tiers: [12, 120, 1000] },
     { id: 'perfumeOrders', name: 'Nez du salon', desc: 'Livrer {n} commande{s} de parfum', icon: ['ui', 'perfume'], tiers: [5, 25, 80] },
+    // 1.178 : L'Atelier Confiserie
+    { id: 'confiseries', name: 'Maître confiseur', desc: 'Façonner {n} confiserie{s}', icon: ['ui', 'confiserie'], tiers: [20, 200, 1500] },
+    { id: 'confOrders', name: 'Vitrine gourmande', desc: 'Livrer {n} commande{s} gourmande{s}', icon: ['ui', 'confiserie'], tiers: [5, 25, 80] },
 ];
 
 // ---------------- Compétences ----------------
@@ -505,6 +508,7 @@ export const BOOK_PAGES = [
     { id: 'drinks', name: 'Jus et alcools', icon: ['item', 'juice'], machines: ['press', 'juiceBar', 'still', 'rumDistillery', 'brewery', 'winery'] },
     { id: 'beers', name: 'Bières et hydromels', icon: ['ui', 'beer'], abs: [2, 5, 10, 20], dyn: true, unit: 'bière' },
     { id: 'perfumes', name: 'Parfums', icon: ['ui', 'perfume'], abs: [2, 5, 10, 20], dyn: true, unit: 'parfum' },
+    { id: 'confiseries', name: 'Confiseries', icon: ['ui', 'confiserie'], abs: [2, 5, 10, 20], dyn: true, unit: 'confiserie' },
     { id: 'vintages', name: 'Cuvées et millésimes', icon: ['item', 'champagne'] },
     {
         id: 'crafts',

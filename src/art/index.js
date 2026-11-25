@@ -103,6 +103,8 @@ import './ajouts-152.js';
 import './tcg.js';
 import { perfumeUiIcon } from './perfume.js';
 ui.perfume = perfumeUiIcon;
+import { confUiIcon } from './confiserie.js';
+ui.confiserie = confUiIcon;
 
 export const SPR = {
     farmhouse(l, roof) {

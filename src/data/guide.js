@@ -1340,6 +1340,43 @@ export const GUIDE_PAGES = [
         see: ['cave', 'brewery', 'labplants', 'domaine'],
     },
     {
+        id: 'confiserie',
+        cat: 'craft',
+        name: 'L’Atelier Confiserie',
+        icon: ['ui', 'confiserie'],
+        lvl: 54,
+        go: 'machines/confiserie',
+        intro: 'Trois métiers sucrés (Chocolat, Caramel et Berlingots), tous vos ingrédients de la ferme, variétés du Labo et miels de fleurs, portés par trois mini-jeux tactiles inédits.',
+        secs: [
+            {
+                h: 'Trois métiers et neuf moules sur mesure',
+                b: [
+                    'Chocolat : bases Noir 70 %, Lait fondant, Blanc vanille ou Praliné, jusqu’à 2 ingrédients, moulés en Tablette, Truffes ou Carré cœur.',
+                    'Caramel : Beurre salé, Crème tendre, Épicé ou Caramel au miel (toutes fleurs et les 26 miels de fleurs récoltés !), en Papillote, Cœur coulant ou Bâton glacé.',
+                    'Berlingots : Sucre tiré, Mentholé ou Fruité, jusqu’à 2 ingrédients, taillés en Berlingot rayé, Pastille ou Sucre d’orge.',
+                ],
+            },
+            {
+                h: 'Trois mini-jeux inédits et Finition Miroir',
+                b: [
+                    'Tempérage sur marbre (Chocolat) : maintenez la température dans les 3 paliers successifs (50 °C, 28 °C, 31 °C) pour faire briller le beurre de cacao.',
+                    'L’Instant Ambré (Caramel) : guettez la teinte ambrée au chaudron et glissez le beurre ou le miel au moment exact sur deux cuissons.',
+                    'La Coupe au Ciseau (Berlingots) : tranchez le ruban de sucre rayé pile au passage des six losanges.',
+                    'Un mini-jeu est instantané : réussir 3★ offre la Finition Miroir (+30 % de valeur et +1 cran de qualité, jusqu’à Diamant !). Vous pouvez aussi cuire passivement dans vos 2 à 4 chaudrons.',
+                ],
+            },
+            {
+                h: 'Grands Classiques, Grimoire, Commandes et Coffre-fort',
+                b: [
+                    '18 Grands Classiques (6 par métier) offrent +2★ d’harmonie et un sceau doré.',
+                    'Les variétés du Labo et le réglage « Meilleurs ingrédients d’abord » transmettent leur qualité (Argent, Or, Platine, Diamant) à la fournée.',
+                    'Livrez les Commandes gourmandes (+75 % de paiement, amitié et renom), offrez vos douceurs aux villageois, exposez vos plus belles pièces au Coffre-fort et complétez le Grimoire du Confiseur (+1 ruban de Prestige une fois complet).',
+                ],
+            },
+        ],
+        see: ['brewery', 'perfume', 'labplants', 'domaine'],
+    },
+    {
         id: 'brewery',
         cat: 'craft',
         name: 'La brasserie',

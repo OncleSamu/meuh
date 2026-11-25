@@ -18,6 +18,7 @@ import { PACK } from '../../data/paquets.js';
 import { QUALITY } from '../../data/farm.js';
 import { pkHtml } from '../paquets.js';
 import { perfumeSvg } from '../../art/perfume.js';
+import { confSvg } from '../../art/confiserie.js';
 import { renameBtn } from './rename.js';
 import { confirmTap } from '../confirm.js';
 
@@ -86,7 +87,7 @@ function pageView(page) {
     const head = `<div class="bk-head"><h3>${page.name} <small>${fmt(n)} / ${fmt(tot)}</small></h3>${bar(Math.min(1, n / tot))}<div class="bk-ladder">${ladder}</div></div>`;
     const empty =
         page.dyn && !list.length
-            ? `<p class="card-sub center">${page.id === 'varieties' ? 'Croisez des plantes au labo : chaque variété créée a sa fiche ici.' : page.id === 'beers' ? 'Brassez une bière à la brasserie : elle aura sa fiche ici.' : page.id === 'perfumes' ? 'Composez un parfum à l’Atelier du Parfumeur : il aura sa fiche ici.' : 'Fixez une race à la station : elle aura sa fiche ici.'}</p>`
+            ? `<p class="card-sub center">${page.id === 'varieties' ? 'Croisez des plantes au labo : chaque variété créée a sa fiche ici.' : page.id === 'beers' ? 'Brassez une bière à la brasserie : elle aura sa fiche ici.' : page.id === 'perfumes' ? 'Composez un parfum à l’Atelier du Parfumeur : il aura sa fiche ici.' : page.id === 'confiseries' ? 'Façonnez une confiserie à l’Atelier Confiserie : elle aura sa fiche ici.' : 'Fixez une race à la station : elle aura sa fiche ici.'}</p>`
             : '';
     // les entrées encore inconnues : les 9 premières seulement, le reste est compté
     let shownUnknown = 0,
@@ -109,7 +110,7 @@ function pageView(page) {
             if (!f) return `<div class="entry unknown"><span class="entry-ico">${art(e.icon[0], e.icon[1])}</span><b>???</b><small>${e.hint}</small></div>`;
             const sub = e.fish
                 ? `Record : ${(Math.round(((c && c.best) || 0) * 100) / 100).toString().replace('.', ',')} kg`
-                : e.kind === 'beer' || e.kind === 'perfume'
+                : e.kind === 'beer' || e.kind === 'perfume' || e.kind === 'confiserie'
                   ? ''
                   : e.kind === 'variety'
                     ? e.star
@@ -121,13 +122,16 @@ function pageView(page) {
                         ? `×${fmt(c.n)}`
                         : '';
             const pf = e.kind === 'perfume' ? G.perfumeOf(e.id) : null;
+            const cf = e.kind === 'confiserie' ? G.confOf(e.id) : null;
             const bs =
                 e.kind === 'beer' && state.brew && state.brew.beers[e.id]
                     ? state.brew.beers[e.id].stars
                     : pf
                       ? pf.stars
-                      : 0;
-            const pic = pf ? perfumeSvg(pf) : art(e.icon[0], e.icon[1]);
+                      : cf
+                        ? cf.stars
+                        : 0;
+            const pic = pf ? perfumeSvg(pf) : cf ? confSvg(cf) : art(e.icon[0], e.icon[1]);
             return `<button class="entry" data-act="open" data-sheet="bookEntry" data-key="${e.key}"><span class="entry-ico">${pic}${f && e.star && e.kind !== 'variety' ? qStar(2, 'entry-star') : ''}</span><b>${esc(e.name)}</b>${starsOf(bs)}<small>${sub}</small>${dots(e)}</button>`;
         })
         .join('');
@@ -172,7 +176,8 @@ defineSheet('bookEntry', {
             ? `<div class="bk-odette">${art('villager', 'odette')}<p>${i.locked ? esc(i.anecdote) : `« ${esc(i.anecdote)} »`}<br><small>Page de Mamie Odette</small></p></div>`
             : '';
         const pf = e.kind === 'perfume' ? G.perfumeOf(e.id) : null;
-        const pic = pf ? perfumeSvg(pf) : art(e.icon[0], e.icon[1]);
+        const cf = e.kind === 'confiserie' ? G.confOf(e.id) : null;
+        const pic = pf ? perfumeSvg(pf) : cf ? confSvg(cf) : art(e.icon[0], e.icon[1]);
         return `<div class="bk-fiche">${pic}<h3>${esc(e.name)}</h3>${starsOf(i.stars)}${i.found ? '' : `<p class="card-sub">${e.hint}</p>`}${cnt}${withMast ? masteryBlock(e.id) : ''}${lines}${mamie}</div>`;
     },
 });

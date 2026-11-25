@@ -5,6 +5,8 @@ import { QUALITY } from '../../data/farm.js';
 import { VAULT } from '../../data/commerce.js';
 import { FAMILIES, CONCENTRATIONS } from '../../data/perfume.js';
 import { perfumeSvg } from '../../art/perfume.js';
+import { CONF_KINDS } from '../../data/confiserie.js';
+import { confSvg } from '../../art/confiserie.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { genWrap } from '../genlook.js';
@@ -41,12 +43,16 @@ const slotHtml = (s, i, sel) => {
         const pf = s.pf;
         return `<button class="vslot lot${sel === i ? ' sel' : ''}" data-act="vaultSel" data-i="${i}" title="${esc(pf.name)}"><span class="vs-art">${perfumeSvg(pf)}</span>${pf.q ? `<i class="vs-q">${qStar(pf.q)}</i>` : ''}<b>×1</b></button>`;
     }
+    if (s.kind === 'confiserie') {
+        const cf = s.cf;
+        return `<button class="vslot lot${sel === i ? ' sel' : ''}" data-act="vaultSel" data-i="${i}" title="${esc(cf.name)}"><span class="vs-art">${confSvg(cf)}</span>${cf.q ? `<i class="vs-q">${qStar(cf.q)}</i>` : ''}<b>×1</b></button>`;
+    }
     return `<button class="vslot${sel === i ? ' sel' : ''}${s.v ? ' var' : ''}" data-act="vaultSel" data-i="${i}" title="${esc(G.vaultSlotName(s))}"><span class="vs-art">${slotArt(s)}</span>${s.q ? `<i class="vs-q">${qStar(s.q)}</i>` : ''}<b>×${s.n}</b></button>`;
 };
 
 const detail = (s, i) => {
     if (!s)
-        return '<p class="card-sub center">Touchez un emplacement pour le reprendre. Pour en ranger, touchez un produit dans la grange, un lot de cave ou un flacon de parfum.</p>';
+        return '<p class="card-sub center">Touchez un emplacement pour le reprendre. Pour en ranger, touchez un produit dans la grange, un lot de cave, un parfum ou une confiserie.</p>';
     if (s.kind === 'lot') {
         const l = s.lot;
         return `<div class="card vault-item"><div class="card-head">${lotIco(l, 'ico big')}<div class="card-main"><div class="card-title">${G.lotName(l)} ×${l.n}</div>
@@ -60,6 +66,13 @@ const detail = (s, i) => {
         return `<div class="card vault-item"><div class="card-head"><span class="ico big">${perfumeSvg(pf)}</span><div class="card-main"><div class="card-title">${esc(pf.name)}</div>
             <div class="card-sub">${fam}${conc ? ` · ${conc}` : ''}${pf.q ? ` · ${qStar(pf.q)} ${qname(pf.q)}` : ''} · vaut ${fmt(G.vaultSlotValue(s))}${COIN()}</div></div></div>
             <div class="row-btns">${btn('Remettre à l’atelier', { act: 'vaultTakePerf', data: { i }, size: 'sm', kind: 'green' })}</div></div>`;
+    }
+    if (s.kind === 'confiserie') {
+        const cf = s.cf;
+        const kName = (CONF_KINDS[cf.kind] && CONF_KINDS[cf.kind].name) || 'Confiserie';
+        return `<div class="card vault-item"><div class="card-head"><span class="ico big">${confSvg(cf)}</span><div class="card-main"><div class="card-title">${esc(cf.name)}</div>
+            <div class="card-sub">${kName}${cf.mirror ? ' · Finition Miroir' : ''}${cf.q ? ` · ${qStar(cf.q)} ${qname(cf.q)}` : ''} · vaut ${fmt(G.vaultSlotValue(s))}${COIN()}</div></div></div>
+            <div class="row-btns">${btn('Remettre à l’atelier', { act: 'vaultTakeConf', data: { i }, size: 'sm', kind: 'green' })}</div></div>`;
     }
     return `<div class="card vault-item"><div class="card-head"><span class="ico big">${slotArt(s)}</span><div class="card-main"><div class="card-title">${esc(G.vaultSlotName(s))} ×${s.n}</div>
         <div class="card-sub">${s.v ? `${G.vdef(s.v) && G.vdef(s.v).kind === 'race' ? 'race' : 'variété'} · ` : ''}${s.q ? `${qStar(s.q)} qualité ${qname(s.q)} · ` : ''}vaut ${fmt(G.vaultSlotValue(s))}${COIN()}</div></div></div>
@@ -162,6 +175,9 @@ export function setupVault() {
         },
         vaultTakePerf: (el, d) => {
             if (G.vaultTake(+d.i)) toast('Le flacon est revenu à l’Atelier du Parfumeur', ['ui', 'perfume']);
+        },
+        vaultTakeConf: (el, d) => {
+            if (G.vaultTake(+d.i)) toast('La confiserie est revenue à l’Atelier Confiserie', ['ui', 'confiserie']);
         },
         vaultUp: () => G.upgradeVault(),
         vaultAdd: (el, d) => openSheet('vaultPut', { id: d.id }),

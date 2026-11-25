@@ -20,6 +20,8 @@ import { carnetOpen } from './carnet.js';
 import { beerOf, beerPrice } from './brewery.js';
 import { FAMILIES, CONCENTRATIONS, METHODS, PERFUME_TOUCHES, PERFUME_CLASSICS } from '../data/perfume.js';
 import { perfumeOf, perfumePrice, perfumeNoteName } from './perfume.js';
+import { CONF_KINDS, CONF_CLASSICS } from '../data/confiserie.js';
+import { confOf, confPrice, confIngName, confBaseDef, confQual } from './confiserie.js';
 import { flavorGain, stability } from './genetics.js';
 import { addPhoto } from './style.js';
 
@@ -111,6 +113,12 @@ const ENTRIES = {
             ? Object.values(state.perfume.creations)
                   .filter(p => (p.made || 0) > 0)
                   .map(p => ({ key: 'pf_' + p.id, kind: 'perfume', id: p.id, icon: ['ui', 'perfume'], name: p.name, hint: '', found: true, star: p.stars >= 3 }))
+            : [],
+    confiseries: () =>
+        state.confiserie && state.confiserie.creations
+            ? Object.values(state.confiserie.creations)
+                  .filter(c => (c.made || 0) > 0)
+                  .map(c => ({ key: 'cf_' + c.id, kind: 'confiserie', id: c.id, icon: ['ui', 'confiserie'], name: c.name, hint: '', found: true, star: c.stars >= 3 }))
             : [],
     vintages: () =>
         WINES.flatMap(id =>
@@ -346,6 +354,33 @@ export function entryInfo(key) {
             }
             info.lines.push(['Prix du flacon', `${fmt(perfumePrice(p.id))} pièces`]);
         }
+    } else if (e.kind === 'confiserie') {
+        const cf = confOf(e.id);
+        info.stars = cf ? cf.stars : 0;
+        const cq = cf ? confQual(cf.id) : {};
+        info.counters = [
+            ['Pièces', cf ? cf.made : 0],
+            ['En argent', cq.s || 0],
+            ['En or', cq.g || 0],
+            ...(cq.p || cq.d
+                ? [
+                      ['En platine', cq.p || 0],
+                      ['En diamant', cq.d || 0],
+                  ]
+                : []),
+        ];
+        if (cf) {
+            const kd = CONF_KINDS[cf.kind];
+            info.lines.push(['Métier', kd ? kd.name : cf.kind]);
+            info.lines.push(['Base', confBaseDef(cf.base).name]);
+            if (cf.ings && cf.ings.length) info.lines.push(['Ingrédients', cf.ings.map(confIngName).join(' · ')]);
+            if (cf.mirror) info.lines.push(['Finition', 'Miroir (3★ mini-jeu)']);
+            if (cf.classic) {
+                const cl = CONF_CLASSICS.find(x => x.id === cf.classic);
+                if (cl) info.lines.push(['Grand Classique', cl.name]);
+            }
+            info.lines.push(['Prix à la pièce', `${fmt(confPrice(cf.id))} pièces`]);
+        }
     } else if (e.kind === 'variety') {
         const v = state.genetics && state.genetics.vars[e.id];
         if (v) {
@@ -421,6 +456,7 @@ export function statsData() {
             (inc.cave || 0) +
             (inc.brew || 0) +
             (inc.perfume || 0) +
+            (inc.confiserie || 0) +
             (inc.counter || 0) +
             (inc.haras || 0) +
             (inc.camping || 0) +
@@ -434,6 +470,7 @@ export function statsData() {
         // 1.75.2
         ['Brasserie', inc.brew || 0],
         ['Parfumerie', inc.perfume || 0],
+        ['Confiserie', inc.confiserie || 0],
         ['Comptoir', inc.counter || 0],
         ['Haras', inc.haras || 0],
         ['Camping', inc.camping || 0],
@@ -482,12 +519,15 @@ export function statsData() {
                 ['Plans terminés', n('plans'), ['ui', 'loop']],
                 ['Boissons brassées', n('beers'), ['ui', 'beer']],
                 ['Parfums créés', n('perfumes'), ['ui', 'perfume']],
+                ['Confiseries façonnées', n('confiseries'), ['ui', 'confiserie']],
                 ['Lots de cave', n('caveLots'), ['ui', 'cave']],
                 ['Créations', n('creations'), ['ui', 'star']],
                 // 1.92 : la brasserie, le comptoir et le labo
                 ['Commandes de bière', n('beerOrders'), ['ui', 'beer']],
                 ['Commandes de parfum', n('perfumeOrders'), ['ui', 'perfume']],
                 ['Parfums offerts', n('perfumeGifts'), ['ui', 'perfume']],
+                ['Commandes gourmandes', n('confOrders'), ['ui', 'confiserie']],
+                ['Confiseries offertes', n('confGifts'), ['ui', 'confiserie']],
                 ['Boissons servies', n('drinks'), ['ui', 'beer']],
                 ['Clients du comptoir', n('clients'), ['ui', 'heart']],
                 ['Variétés fixées', state.genetics ? Object.values(state.genetics.vars || {}).filter(v => v && v.fixed).length : 0, ['ui', 'flowers']],
