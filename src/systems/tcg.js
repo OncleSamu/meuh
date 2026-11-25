@@ -12,6 +12,7 @@ import {
     TCG_DECK_BUDGET,
     TCG_DUOS,
     TCG_FAMILIES,
+    TCG_LEAGUES,
     TCG_MILESTONES,
     TCG_RARITIES,
     TCG_RARITY_ORDER,
@@ -21,6 +22,8 @@ import {
     TCG_VARIANT_ORDER,
     TCG_VARIANTS,
     TCG_VILLAGER_DUELS,
+    TCG_WEATHERS,
+    TCG_WONDER_COST,
 } from '../data/tcg.js';
 
 function cleanDeckIds(arr, cards) {
@@ -59,6 +62,9 @@ export function ensureTcg() {
             deckIdx: 0,
             back: 'vallee',
             cups: 0,
+            leaguePts: 0,
+            leagueClaimed: {},
+            godPacks: 0,
             fav: null,
             pity: 0,
             opened: 0,
@@ -68,7 +74,9 @@ export function ensureTcg() {
             milestones: {}, // { milestoneId: true }
             tourney: null,
             trades: null,
-            lastPack: null, // { seriesId, cards: [{ id, isNew, variant, isNewVar }], torn, revealed: [bool...] }
+            wonder: null,
+            wonderPick: null,
+            lastPack: null, // { seriesId, cards: [{ id, isNew, variant, isNewVar }], torn, revealed: [bool...], godPack }
             duel: null,
         };
     }
@@ -78,6 +86,8 @@ export function ensureTcg() {
     if (!Number.isFinite(T.freePacks)) T.freePacks = 0;
     if (!Number.isFinite(T.freeGoldPacks)) T.freeGoldPacks = 0;
     if (!Number.isFinite(T.cups)) T.cups = 0;
+    if (!Number.isFinite(T.leaguePts)) T.leaguePts = Math.min(900, (T.wins || 0) * 15 + (T.cups || 0) * 60);
+    if (!Number.isFinite(T.godPacks)) T.godPacks = 0;
     if (typeof T.back !== 'string' || !T.back) T.back = 'vallee';
     T.cards = T.cards || {};
     T.variants = T.variants || {};
@@ -92,6 +102,7 @@ export function ensureTcg() {
     T.decks[T.deckIdx] = [...T.deck];
     T.beaten = T.beaten || {};
     T.milestones = T.milestones || {};
+    T.leagueClaimed = T.leagueClaimed || {};
     dailyWinsBox(T);
     return T;
 }
@@ -142,13 +153,35 @@ export const tcgClaimableMilestones = () => {
     const n = tcgOwnedCount();
     return TCG_MILESTONES.filter(m => n >= m.need && !(T.milestones && T.milestones[m.id]));
 };
+export const tcgWonderFreeReady = () => {
+    const T = state.tcg;
+    const day = state.day || 1;
+    if (!T || !T.wonder || T.wonder.day !== day) return true;
+    return !T.wonder.freeUsed;
+};
+export const tcgLeagueInfo = () => {
+    const T = state.tcg;
+    const pts = (T && Number.isFinite(T.leaguePts) ? T.leaguePts : 0) || 0;
+    const claimed = (T && T.leagueClaimed) || {};
+    let idx = 0;
+    for (let i = 0; i < TCG_LEAGUES.length; i++) {
+        if (pts >= TCG_LEAGUES[i].need) idx = i;
+    }
+    const rank = TCG_LEAGUES[idx];
+    const next = TCG_LEAGUES[idx + 1] || null;
+    const pct = next ? Math.min(100, Math.round(((pts - rank.need) / (next.need - rank.need)) * 100)) : 100;
+    const claimable = TCG_LEAGUES.filter(l => l.need > 0 && pts >= l.need && !claimed[l.id]);
+    return { pts, rank, next, pct, claimable };
+};
 export const tcgBadge = () => {
     const T = state.tcg;
     let b = tcgDailyReady() ? 1 : 0;
+    if (tcgWonderFreeReady()) b += 1;
     if (T && T.freePacks > 0) b += T.freePacks;
     if (T && T.freeGoldPacks > 0) b += T.freeGoldPacks;
     if (tcgDailyQuestProgress().ready) b += 1;
     b += tcgClaimableMilestones().length;
+    b += tcgLeagueInfo().claimable.length;
     return b;
 };
 export const tcgSub = () => {
@@ -258,7 +291,7 @@ function rollVariant(card, slotIdx, isGoldPack) {
     return v;
 }
 
-export function tcgOpenPack(seriesId) {
+export function tcgOpenPack(seriesId, opts = {}) {
     const T = ensureTcg();
     const s = TCG_SERIES[seriesId];
     if (!s || !tcgCanOpenPack(seriesId)) return null;
@@ -282,13 +315,25 @@ export function tcgOpenPack(seriesId) {
         return pickCard(pool, minR);
     };
 
-    // 5 cartes : 3 normales, 1 Peu commune+ (finition spéciale garantie !), 1 Rare+ (ou Foil+ sur Doré, ou Légendaire+ au 10e booster)
-    drawn.push(drawOne('C'));
-    drawn.push(drawOne('C'));
-    drawn.push(drawOne('C'));
-    drawn.push(drawOne('U'));
-    const topMin = T.pity >= 9 ? 'L' : s.minTop || 'R';
-    drawn.push(drawOne(topMin));
+    // 1.177 : God Pack ultra-rare (~1,2 % normal, ~2,5 % Doré) — 5 cartes Foil / Légendaire / Secrète !
+    const godChance = s.allSeries ? 0.025 : 0.012;
+    const isGodPack = !!(opts && opts.forceGodPack) || (T.opened > 0 && Math.random() < godChance);
+    if (isGodPack) {
+        drawn.push(drawOne('F'));
+        drawn.push(drawOne('F'));
+        drawn.push(drawOne('F'));
+        drawn.push(drawOne('L'));
+        drawn.push(drawOne('L'));
+        T.godPacks = (T.godPacks || 0) + 1;
+    } else {
+        // 5 cartes : 3 normales, 1 Peu commune+ (finition spéciale garantie !), 1 Rare+ (ou Foil+ sur Doré, ou Légendaire+ au 10e booster)
+        drawn.push(drawOne('C'));
+        drawn.push(drawOne('C'));
+        drawn.push(drawOne('C'));
+        drawn.push(drawOne('U'));
+        const topMin = T.pity >= 9 ? 'L' : s.minTop || 'R';
+        drawn.push(drawOne(topMin));
+    }
 
     const hasBig = drawn.some(c => c.rarity === 'L' || c.rarity === 'S');
     T.pity = hasBig ? 0 : T.pity + 1;
@@ -297,7 +342,7 @@ export function tcgOpenPack(seriesId) {
     const cards = drawn.map((c, idx) => {
         const isNew = !(T.cards[c.id] > 0);
         T.cards[c.id] = (T.cards[c.id] || 0) + 1;
-        const variant = rollVariant(c, idx, !!s.allSeries);
+        const variant = rollVariant(c, idx, !!s.allSeries || (isGodPack && idx >= 2));
         let isNewVar = false;
         if (variant !== 'std') {
             T.variants[c.id] = T.variants[c.id] || {};
@@ -325,6 +370,7 @@ export function tcgOpenPack(seriesId) {
         seriesId,
         cards,
         torn: false,
+        godPack: isGodPack,
         revealed: [false, false, false, false, false],
     };
     sfx('pop');
@@ -335,7 +381,8 @@ export function tcgTearPack() {
     const T = ensureTcg();
     if (!T.lastPack || T.lastPack.torn) return false;
     T.lastPack.torn = true;
-    sfx('harvest');
+    sfx(T.lastPack.godPack ? 'tcgRare' : 'tcgTear');
+    if (T.lastPack.godPack) toast('GOD PACK ! 5 cartes Foil, Légendaires ou Secrètes !', ['ui', 'sparkle']);
     return true;
 }
 
@@ -350,10 +397,10 @@ export function tcgRevealCard(idx) {
     const midVar = entry.variant === 'reverse' || entry.variant === 'sketch';
     sfx(
         bigVar || (c && (c.rarity === 'L' || c.rarity === 'S'))
-            ? 'level'
+            ? 'tcgRare'
             : midVar || (c && (c.rarity === 'R' || c.rarity === 'F'))
-              ? 'sell'
-              : 'click',
+              ? 'tcgWin'
+              : 'tcgFlip',
     );
     return true;
 }
@@ -368,7 +415,7 @@ export function tcgRevealAll() {
         const r = TCG_CARD_BY_ID[x.id]?.rarity;
         return r === 'L' || r === 'S' || x.variant === 'gold' || x.variant === 'fullart';
     });
-    sfx(big ? 'level' : 'harvest');
+    sfx(p.godPack || big ? 'tcgRare' : 'tcgTear');
     return true;
 }
 
@@ -376,6 +423,160 @@ export function tcgClosePack() {
     const T = ensureTcg();
     T.lastPack = null;
     return true;
+}
+
+// ---- 1.177 : Pioche Miracle quotidienne (3 tables de villageois / campeurs, 1re gratuite/jour) ----
+function wonderBox(T) {
+    const day = state.day || 1;
+    if (!T.wonder || T.wonder.day !== day || !Array.isArray(T.wonder.tables) || T.wonder.tables.length !== 3) {
+        let seed = (day * 92821 + 1777) >>> 0;
+        const rnd = () => {
+            seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+            return seed / 4294967296;
+        };
+        const hosts = [...TCG_VILLAGER_DUELS];
+        const tables = [];
+        const byMin = minR => TCG_CARDS.filter(c => rarIdx(c.rarity) >= rarIdx(minR));
+        const poolC = TCG_CARDS;
+        const poolR = byMin('R');
+        const poolF = byMin('F');
+        const poolL = byMin('L');
+        for (let t = 0; t < 3; t++) {
+            const h = hosts[Math.floor(rnd() * hosts.length)];
+            const used = new Set();
+            const pickFrom = arr => {
+                for (let k = 0; k < 10; k++) {
+                    const c = arr[Math.floor(rnd() * arr.length)];
+                    if (!used.has(c.id)) {
+                        used.add(c.id);
+                        return c;
+                    }
+                }
+                return arr[0];
+            };
+            const topPool = t === 2 ? poolL : poolF;
+            const picked = [pickFrom(poolC), pickFrom(poolC), pickFrom(poolC), pickFrom(poolR), pickFrom(topPool)];
+            const cards = picked.map((c, idx) => {
+                let variant = 'std';
+                if (idx === 4 && rnd() < 0.35) {
+                    variant = c.rarity === 'L' || c.rarity === 'S' ? 'gold' : rnd() < 0.5 ? 'fullart' : 'reverse';
+                }
+                return { id: c.id, variant };
+            });
+            tables.push({ hostName: h.name, hostArt: h.art, cards });
+        }
+        T.wonder = { day, freeUsed: false, done: [false, false, false], tables };
+    }
+    return T.wonder;
+}
+
+export function tcgWonderTables() {
+    const T = ensureTcg();
+    const box = wonderBox(T);
+    return box.tables.map((tb, idx) => {
+        const cards = tb.cards.map(x => ({
+            ...x,
+            isNew: !(T.cards[x.id] > 0),
+        }));
+        const newCount = cards.filter(c => c.isNew).length;
+        const free = !box.freeUsed;
+        const cost = free ? 0 : TCG_WONDER_COST;
+        return {
+            idx,
+            hostName: tb.hostName,
+            hostArt: tb.hostArt,
+            cards,
+            newCount,
+            done: !!box.done[idx],
+            free,
+            cost,
+            canPick: !box.done[idx] && (free || T.tokens >= cost),
+        };
+    });
+}
+
+export function tcgWonderStart(tableIdx) {
+    const T = ensureTcg();
+    const box = wonderBox(T);
+    const tb = box.tables[tableIdx];
+    if (!tb || box.done[tableIdx] || T.wonderPick) return false;
+    const free = !box.freeUsed;
+    if (!free) {
+        if (T.tokens < TCG_WONDER_COST) return false;
+        T.tokens -= TCG_WONDER_COST;
+    } else {
+        box.freeUsed = true;
+    }
+    const order = [0, 1, 2, 3, 4].sort(() => Math.random() - 0.5);
+    T.wonderPick = {
+        tableIdx,
+        hostName: tb.hostName,
+        hostArt: tb.hostArt,
+        cards: tb.cards.map(x => ({ ...x })),
+        order,
+        pickedIdx: null,
+        pickedEntry: null,
+    };
+    sfx('tcgFlip');
+    return true;
+}
+
+export function tcgWonderPick(slotIdx) {
+    const T = ensureTcg();
+    const wp = T.wonderPick;
+    if (!wp || wp.pickedIdx != null || slotIdx < 0 || slotIdx >= 5) return false;
+    const box = wonderBox(T);
+    const origIdx = wp.order[slotIdx];
+    const raw = wp.cards[origIdx];
+    if (!raw) return false;
+    const isNew = !(T.cards[raw.id] > 0);
+    T.cards[raw.id] = (T.cards[raw.id] || 0) + 1;
+    let isNewVar = false;
+    if (raw.variant && raw.variant !== 'std') {
+        T.variants[raw.id] = T.variants[raw.id] || {};
+        isNewVar = !(T.variants[raw.id][raw.variant] > 0);
+        T.variants[raw.id][raw.variant] = (T.variants[raw.id][raw.variant] || 0) + 1;
+        if (!T.skin[raw.id] || T.skin[raw.id] === 'std') T.skin[raw.id] = raw.variant;
+    }
+    box.done[wp.tableIdx] = true;
+    wp.pickedIdx = slotIdx;
+    wp.pickedEntry = { id: raw.id, variant: raw.variant || 'std', isNew, isNewVar };
+    const rar = TCG_CARD_BY_ID[raw.id]?.rarity;
+    sfx(rar === 'L' || rar === 'S' || raw.variant === 'gold' ? 'tcgRare' : rar === 'R' || rar === 'F' ? 'tcgWin' : 'tcgFlip');
+    toast(`Pioche Miracle : ${TCG_CARD_BY_ID[raw.id]?.name || raw.id}${isNew ? ' (NOUVELLE !)' : ''}`, ['ui', 'sparkle']);
+    return true;
+}
+
+export function tcgWonderClose() {
+    const T = ensureTcg();
+    T.wonderPick = null;
+    return true;
+}
+
+// ---- 1.177 : Ligue MeuhCG (récompenses de passage de rang) ----
+export function tcgClaimLeague(rankId) {
+    const T = ensureTcg();
+    const l = TCG_LEAGUES.find(x => x.id === rankId);
+    if (!l || l.need <= 0 || T.leaguePts < l.need || T.leagueClaimed[l.id]) return false;
+    T.leagueClaimed[l.id] = true;
+    if (l.tokens) T.tokens += l.tokens;
+    if (l.packs) T.freePacks += l.packs;
+    if (l.goldPacks) T.freeGoldPacks += l.goldPacks;
+    sfx('tcgRare');
+    const parts = [];
+    if (l.tokens) parts.push(`+${l.tokens} jetons`);
+    if (l.packs) parts.push(`+${l.packs} booster${l.packs > 1 ? 's' : ''}`);
+    if (l.goldPacks) parts.push(`+${l.goldPacks} Booster${l.goldPacks > 1 ? 's' : ''} Doré${l.goldPacks > 1 ? 's' : ''}`);
+    toast(`${l.name} atteinte : ${parts.join(' et ')} !`, ['ui', 'trophy']);
+    return true;
+}
+
+function awardLeaguePts(T, pts) {
+    if (!pts) return { gain: 0, up: null };
+    const before = tcgLeagueInfo().rank.id;
+    T.leaguePts = (T.leaguePts || 0) + pts;
+    const after = tcgLeagueInfo().rank;
+    return { gain: pts, up: after.id !== before ? after : null };
 }
 
 // ---- Variantes & Finitions de cartes (Inversée, Croquis, Full Art, Or Gravé) ----
@@ -1013,10 +1214,12 @@ function resolveDuos(ids) {
     return ids.map(id => TCG_DUOS.find(d => d.id === id)).filter(Boolean);
 }
 
+export const tcgWeatherOf = id => TCG_WEATHERS.find(w => w.id === id) || TCG_WEATHERS[0];
+
 function evalCard(
     cardId,
     statIdx,
-    { synSet, duos, terrain, otherHand, nextBonus, entraide, masterBoost, oppIsHorizons, synBonus = 2, saveurBoost = 0 },
+    { synSet, duos, terrain, otherHand, nextBonus, entraide, masterBoost, oppIsHorizons, synBonus = 2, saveurBoost = 0, weather = null, roundIdx = -1 },
 ) {
     const c = TCG_CARD_BY_ID[cardId];
     if (!c) return { total: 0, tags: [] };
@@ -1041,6 +1244,10 @@ function evalCard(
     if (terrain && c.family === terrain) {
         total += 1;
         tags.push('+1 terrain');
+    }
+    if (weather && weather.round === roundIdx && weather.fams && weather.fams.includes(c.family)) {
+        total += weather.bonus;
+        tags.push(`+${weather.bonus} ${weather.name}`);
     }
     if (c.family === 'elevage') {
         const herd = Math.min(2, otherHand.filter(id => TCG_CARD_BY_ID[id]?.family === 'elevage').length);
@@ -1091,6 +1298,8 @@ export function tcgCardPreview(D, cardId) {
         oppIsHorizons: false,
         synBonus: D.synBonus || 2,
         saveurBoost: D.saveurBoost || 0,
+        weather: tcgWeatherOf(D.weatherId),
+        roundIdx: D.round,
     });
 }
 
@@ -1098,7 +1307,27 @@ export function tcgCardPreviewPower(D, cardId) {
     return tcgCardPreview(D, cardId).total;
 }
 
-export function tcgStartDuel(oppId, tourneyOpt = null) {
+function buildLiveReaction(D, { outcome, oBossBoost, pVal, oVal, inverted, pDuoHit }) {
+    if (oBossBoost) return '« Je sors mon coup spécial ! Voyons si tu tiens le choc ! »';
+    if (inverted) {
+        return outcome === 'win'
+            ? '« Aïe ! L’Orage Inversé a tout retourné contre moi ! »'
+            : outcome === 'lose'
+              ? '« Haha ! Bien joué ma petite carte sous l’Orage Inversé ! »'
+              : '« Même sous l’Orage, impossible de nous départager ! »';
+    }
+    if (pDuoHit && outcome === 'win') return '« Quel duo redoutable… je n’avais pas vu venir cette combo ! »';
+    if (Math.abs(pVal - oVal) === 1) {
+        return outcome === 'win'
+            ? '« À un petit point près ! Tu as le nez creux ! »'
+            : '« Ouf ! Arrachée d’un seul petit point ! »';
+    }
+    if (D.pScore > D.oScore) return '« Tu prends l’avantage… mais je n’ai pas encore dit mon dernier mot ! »';
+    if (D.oScore > D.pScore) return '« Je mène la danse ! Garde tes meilleures cartes pour la suite ! »';
+    return '« Égalité parfaite : la prochaine manche va compter double dans les têtes ! »';
+}
+
+export function tcgStartDuel(oppId, tourneyOpt = null, extraOpt = null) {
     const T = ensureTcg();
     const budget = tourneyOpt ? tourneyOpt.budget : TCG_DECK_BUDGET;
     if (T.deck.length < 5) {
@@ -1123,7 +1352,15 @@ export function tcgStartDuel(oppId, tourneyOpt = null) {
     const base = [0, 1, 2, Math.floor(Math.random() * 3), Math.floor(Math.random() * 3)];
     const rounds = base.sort(() => Math.random() - 0.5);
     const oppHand = [...opp.deck].sort(() => Math.random() - 0.5);
-    const doubleRound = 1 + Math.floor(Math.random() * 3); // Manche 2, 3 ou 4 vaut ×2 points !
+    const weather =
+        extraOpt && extraOpt.weatherId
+            ? tcgWeatherOf(extraOpt.weatherId)
+            : TCG_WEATHERS[Math.floor(Math.random() * TCG_WEATHERS.length)];
+    let doubleRound = 1 + Math.floor(Math.random() * 3); // Manche 2, 3 ou 4 vaut ×2 points !
+    // L'Orage Inversé (manche 3 = index 2) ne tombe jamais sur la manche ×2 pour garder un duel juste et lisible
+    if (weather.invert && doubleRound === weather.round) {
+        doubleRound = Math.random() < 0.5 ? 1 : 3;
+    }
     T.duel = {
         oppId: opp.id,
         oppName: opp.name,
@@ -1133,8 +1370,10 @@ export function tcgStartDuel(oppId, tourneyOpt = null) {
         oppDiffLabel: opp.diffLabel,
         terrain: opp.terrain || 'village',
         terrainName: opp.terrainName || 'Place du village',
+        weatherId: weather.id,
         reward: opp.reward,
         quote: opp.quote,
+        liveQuote: opp.quote,
         winQuote: opp.winQuote,
         loseQuote: opp.loseQuote,
         rounds,
@@ -1166,6 +1405,8 @@ export function tcgStartDuel(oppId, tourneyOpt = null) {
         done: false,
         result: null,
         gainTokens: 0,
+        leagueGain: 0,
+        leagueUp: null,
         training: false,
         firstWinPack: false,
         tourneyChamp: false,
@@ -1192,7 +1433,7 @@ export function tcgDuelBoost() {
     if (!D || D.done || D.usedBoost) return false;
     D.usedBoost = true;
     D.boostArmed = true;
-    sfx('level');
+    sfx('tcgRare');
     return true;
 }
 
@@ -1209,11 +1450,13 @@ export function tcgPlayDuelCard(handIdx) {
     const oDuos = resolveDuos(D.oDuos);
     const synBonus = D.synBonus || 2;
     const saveurBoost = D.saveurBoost || 0;
+    const weather = tcgWeatherOf(D.weatherId);
+    const inverted = !!(weather && weather.invert && D.round === weather.round);
 
-    // Choix IA selon difficulté (tient compte du terrain, synergie, duos et pouvoirs)
+    // Choix IA selon difficulté (tient compte du terrain, météo, Orage Inversé, synergie, duos et pouvoirs)
     let oPick = 0;
     if (D.oppDiff >= 3 || (D.oppDiff === 2 && Math.random() < 0.6)) {
-        let best = -1;
+        let best = inverted ? Infinity : -1;
         D.oHand.forEach((cid, i) => {
             const others = D.oHand.filter((_, j) => j !== i);
             const ev = evalCard(cid, statIdx, {
@@ -1227,8 +1470,10 @@ export function tcgPlayDuelCard(handIdx) {
                 oppIsHorizons: false,
                 synBonus,
                 saveurBoost,
+                weather,
+                roundIdx: D.round,
             });
-            if (ev.total > best) {
+            if (inverted ? ev.total < best : ev.total > best) {
                 best = ev.total;
                 oPick = i;
             }
@@ -1240,10 +1485,11 @@ export function tcgPlayDuelCard(handIdx) {
     const pCard = TCG_CARD_BY_ID[pId];
     const oCard = TCG_CARD_BY_ID[oId];
 
-    // Coup spécial (+2) des adversaires Difficile & Maître (utilisé 1× entre les manches 2 et 4)
+    // Coup spécial (+2) des adversaires Difficile & Maître (jamais gaspillé sur une manche Orage Inversé !)
     const oBossBoost = !!(
         D.oHasBoost &&
         !D.oUsedBoost &&
+        !inverted &&
         D.round >= 1 &&
         D.round <= 3 &&
         (D.round === D.doubleRound || D.oScore <= D.pScore || D.round === 3)
@@ -1261,6 +1507,8 @@ export function tcgPlayDuelCard(handIdx) {
         oppIsHorizons: oCard.family === 'horizons',
         synBonus,
         saveurBoost,
+        weather,
+        roundIdx: D.round,
     });
     const oEval = evalCard(oId, statIdx, {
         synSet: oSyn,
@@ -1273,6 +1521,8 @@ export function tcgPlayDuelCard(handIdx) {
         oppIsHorizons: pCard.family === 'horizons',
         synBonus,
         saveurBoost,
+        weather,
+        roundIdx: D.round,
     });
 
     // Consommer les bonus à usage unique et 1 charge d'Entraide
@@ -1284,17 +1534,22 @@ export function tcgPlayDuelCard(handIdx) {
 
     let outcome = 'draw';
     const notes = [];
+    if (inverted) notes.push('Orage Inversé : la plus petite valeur l’emporte !');
     if (oBossBoost) notes.push(`${D.oppName} déclenche son Coup spécial (+2) !`);
 
-    if (pEval.total > oEval.total) {
-        if (oCard.family === 'atelier' && pEval.total - oEval.total <= 2) {
+    const pAhead = inverted ? pEval.total < oEval.total : pEval.total > oEval.total;
+    const oAhead = inverted ? oEval.total < pEval.total : oEval.total > pEval.total;
+    const diff = Math.abs(pEval.total - oEval.total);
+
+    if (pAhead) {
+        if (oCard.family === 'atelier' && diff <= 2) {
             outcome = 'draw';
             notes.push('Savoir-faire adverse : égalité sauvée !');
         } else {
             outcome = 'win';
         }
-    } else if (oEval.total > pEval.total) {
-        if (pCard.family === 'atelier' && oEval.total - pEval.total <= 2) {
+    } else if (oAhead) {
+        if (pCard.family === 'atelier' && diff <= 2) {
             outcome = 'draw';
             notes.push('Savoir-faire : égalité sauvée !');
         } else {
@@ -1337,11 +1592,15 @@ export function tcgPlayDuelCard(handIdx) {
         D.oEntraide = (D.oEntraide || 0) + 2;
     }
 
+    const pDuoHit = pDuos.some(d => d.cards.includes(pId));
+    D.liveQuote = buildLiveReaction(D, { outcome, oBossBoost, pVal: pEval.total, oVal: oEval.total, inverted, pDuoHit });
+
     D.history = [...(D.history || []), outcome];
     D.last = {
         round: D.round + 1,
         stat: TCG_STATS[statIdx],
         pts,
+        inverted,
         pId,
         oId,
         pVal: pEval.total,
@@ -1362,7 +1621,7 @@ export function tcgPlayDuelCard(handIdx) {
         }
     }
 
-    sfx(outcome === 'win' ? 'harvest' : outcome === 'lose' ? 'error' : 'click');
+    sfx(outcome === 'win' ? 'tcgWin' : outcome === 'lose' ? 'error' : 'tcgFlip');
 
     if (D.round >= 5 || !D.pHand.length) {
         D.done = true;
@@ -1380,12 +1639,18 @@ export function tcgPlayDuelCard(handIdx) {
                     T.tokens += 120;
                     T.freeGoldPacks = (T.freeGoldPacks || 0) + 1;
                     D.tourneyChamp = true;
+                    const lg = awardLeaguePts(T, 60);
+                    D.leagueGain = lg.gain;
+                    D.leagueUp = lg.up ? lg.up.name : null;
                 } else {
                     D.gainTokens = 35 + nextStage * 15;
                     T.tokens += D.gainTokens;
                     D.tourneyNext = nextStage;
+                    const lg = awardLeaguePts(T, 30);
+                    D.leagueGain = lg.gain;
+                    D.leagueUp = lg.up ? lg.up.name : null;
                 }
-                sfx('level');
+                sfx('tcgRare');
             } else {
                 D.result = D.pScore === D.oScore ? 'draw' : 'lose';
                 if (D.result === 'lose') T.losses++;
@@ -1393,6 +1658,11 @@ export function tcgPlayDuelCard(handIdx) {
                 D.tourneyOut = true;
                 D.gainTokens = D.result === 'draw' ? 20 : 10;
                 T.tokens += D.gainTokens;
+                if (D.result === 'draw') {
+                    const lg = awardLeaguePts(T, 5);
+                    D.leagueGain = lg.gain;
+                    D.leagueUp = lg.up ? lg.up.name : null;
+                }
                 sfx(D.result === 'draw' ? 'pop' : 'error');
             }
             return true;
@@ -1418,12 +1688,19 @@ export function tcgPlayDuelCard(handIdx) {
                 D.firstWinPack = true;
                 T.freePacks++;
             }
-            sfx('level');
+            const lPts = alreadyToday ? 5 : D.oppDiff >= 4 ? 35 : D.oppDiff >= 3 ? 25 : 15;
+            const lg = awardLeaguePts(T, lPts);
+            D.leagueGain = lg.gain;
+            D.leagueUp = lg.up ? lg.up.name : null;
+            sfx('tcgRare');
         } else if (D.pScore === D.oScore) {
             D.result = 'draw';
             D.training = alreadyToday;
             D.gainTokens = alreadyToday ? 3 : Math.round(D.reward * 0.5);
             T.tokens += D.gainTokens;
+            const lg = awardLeaguePts(T, 5);
+            D.leagueGain = lg.gain;
+            D.leagueUp = lg.up ? lg.up.name : null;
             sfx('pop');
         } else {
             D.result = 'lose';

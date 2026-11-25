@@ -19,6 +19,7 @@ import {
     TCG_VARIANTS,
 } from '../../data/tcg.js';
 import { actions, esc, QUIET } from '../dom.js';
+import { refresh } from '../app.js';
 import { art, artImg, ico } from '../icons.js';
 import { genWrap } from '../genlook.js';
 import { innerTabs } from '../innertabs.js';
@@ -162,15 +163,16 @@ function renderPackOpening(T) {
     const s = TCG_SERIES[p.seriesId] || TCG_SERIES.vallee;
     const backId = G.tcgCardBack();
     if (!p.torn) {
-        return `<div class="tcg-stage">
+        return `<div class="tcg-stage${p.godPack ? ' is-god' : ''}">
             <div class="tcg-stage-title">${esc(s.name)}</div>
-            <button type="button" class="tcg-foil-pack" data-act="tcgTear" style="--pc1:${s.col};--pc2:${s.col2}">
+            <button type="button" class="tcg-foil-pack${p.godPack ? ' god-hint' : ''}" data-act="tcgTear" style="--pc1:${s.col};--pc2:${s.col2}">
                 <span class="tcg-pack-crimp top"></span>
+                <span class="tcg-tear-strip" aria-hidden="true"><i class="tcg-tear-prog"></i><em class="tcg-tear-knob"></em></span>
                 <span class="tcg-pack-shine"></span>
                 <span class="tcg-pack-brand">MEUH<span>CG</span></span>
                 <span class="tcg-pack-art">${art(s.icon[0], s.icon[1])}</span>
                 <span class="tcg-pack-label">${esc(s.short)}</span>
-                <span class="tcg-pack-cta">${ti(['ui', 'sparkle'], 'tcg-ico xs')} Touche pour déchirer !</span>
+                <span class="tcg-pack-cta">${ti(['ui', 'sparkle'], 'tcg-ico xs')} Glisse ou touche pour déchirer !</span>
                 <span class="tcg-pack-crimp bot"></span>
             </button>
             <div class="tcg-stage-actions">
@@ -189,7 +191,13 @@ function renderPackOpening(T) {
                     <span class="tcg-back-in"><b>MEUH<small>CG</small></b><i>?</i>${v !== 'std' ? `<span class="tcg-back-tag">${esc(TCG_VARIANTS[v].short)}</span>` : ''}</span>
                 </button>`;
             }
-            return renderCardHtml(c, { variant: v, isNew: entry.isNew, isNewVar: entry.isNewVar, hideQty: true, noDeckBadge: true, cls: 'pop-flip' });
+            const bigCls =
+                p.godPack || c.rarity === 'S'
+                    ? 'pop-flip pop-secret'
+                    : c.rarity === 'L' || v === 'gold'
+                      ? 'pop-flip pop-legend'
+                      : 'pop-flip';
+            return renderCardHtml(c, { variant: v, isNew: entry.isNew, isNewVar: entry.isNewVar, hideQty: true, noDeckBadge: true, cls: bigCls });
         })
         .join('');
     const canAgain = G.tcgCanOpenPack(p.seriesId);
@@ -199,7 +207,8 @@ function renderPackOpening(T) {
             : !s.allSeries && T.freePacks > 0
               ? `${ICO_PACK()} Ouvrir un autre (${T.freePacks} gratuit${T.freePacks > 1 ? 's' : ''})`
               : `Ouvrir un autre (${s.cost} ${ICO_TOK()})`;
-    return `<div class="tcg-stage">
+    return `<div class="tcg-stage${p.godPack ? ' is-god' : ''}">
+        ${p.godPack ? `<div class="tcg-god-banner">${ti(['ui', 'sparkle'])} <b>GOD PACK !</b> <span>5 cartes Foil, Légendaires ou Secrètes !</span></div>` : ''}
         <div class="tcg-stage-title">${allOpen ? 'Cartes obtenues !' : 'Touche chaque carte pour la révéler'}</div>
         <div class="tcg-reveal-grid">${cardsHtml}</div>
         <div class="tcg-stage-actions">
@@ -210,8 +219,84 @@ function renderPackOpening(T) {
     </div>`;
 }
 
+function renderWonderStage(T) {
+    const wp = T.wonderPick;
+    const backId = G.tcgCardBack();
+    const picked = wp.pickedIdx != null;
+    const slotsHtml = wp.order
+        .map((origIdx, slotIdx) => {
+            const raw = wp.cards[origIdx];
+            const c = TCG_CARD_BY_ID[raw.id];
+            if (!picked) {
+                return `<button type="button" class="tcg-back back-${backId} tcg-wonder-shuffle" style="--si:${slotIdx}" data-act="tcgWonderPick" data-i="${slotIdx}" aria-label="Piocher la carte ${slotIdx + 1}">
+                    <span class="tcg-back-shine"></span>
+                    <span class="tcg-back-in"><b>MEUH<small>CG</small></b><i>?</i></span>
+                </button>`;
+            }
+            const isWin = slotIdx === wp.pickedIdx;
+            const e = isWin ? wp.pickedEntry : null;
+            return renderCardHtml(c, {
+                variant: raw.variant || 'std',
+                ignoreSkin: !isWin,
+                isNew: !!(e && e.isNew),
+                isNewVar: !!(e && e.isNewVar),
+                hideQty: true,
+                noDeckBadge: true,
+                act: 'tcgNoop',
+                cls: isWin ? 'pop-flip pop-legend tcg-wonder-win' : 'tcg-wonder-miss',
+            });
+        })
+        .join('');
+    return `<div class="tcg-stage tcg-wonder-stage">
+        <div class="tcg-wonder-host">
+            <span class="tcg-opp-av">${art('villager', wp.hostArt)}</span>
+            <div><b>Pioche Miracle · Booster de ${esc(wp.hostName)}</b><small>${picked ? 'Ta carte a rejoint ton classeur ! Voici où se cachaient les 4 autres :' : 'Les 5 cartes ont été mélangées face cachée : choisis-en 1 !'}</small></div>
+        </div>
+        <div class="tcg-reveal-grid">${slotsHtml}</div>
+        ${picked ? `<div class="tcg-stage-actions"><button type="button" class="btn green sm" data-act="tcgWonderClose">Retour aux boosters</button></div>` : ''}
+    </div>`;
+}
+
+function renderWonderSection() {
+    const tables = G.tcgWonderTables();
+    const freeLeft = G.tcgWonderFreeReady();
+    const rows = tables
+        .map(tb => {
+            const minis = tb.cards
+                .map(x => {
+                    const c = TCG_CARD_BY_ID[x.id];
+                    return `<span class="tcg-wmini r-${c.rarity}${x.isNew ? ' is-new' : ''}" title="${esc(c.name)} (${TCG_RARITIES[c.rarity].name})">
+                        <span class="tcg-wmini-art">${artImg(c.spr[0], c.spr[1])}</span>
+                        <b class="tcg-wmini-r">${c.rarity}</b>
+                        ${x.isNew ? '<i class="tcg-wmini-new">NEW</i>' : ''}
+                    </span>`;
+                })
+                .join('');
+            const btnHtml = tb.done
+                ? `<span class="tcg-done-tag">${ti(['ui', 'check'], 'tcg-ico xs')} Piochée</span>`
+                : `<button type="button" class="btn sm ${tb.free ? 'green' : tb.canPick ? 'gold' : ''}" data-act="tcgWonderStart" data-i="${tb.idx}" ${tb.canPick ? '' : 'disabled'}>${tb.free ? 'Gratuit !' : `${tb.cost} ${ICO_TOK()}`}</button>`;
+            return `<div class="tcg-wonder-row${tb.done ? ' done' : ''}">
+                <div class="tcg-wonder-head">
+                    <span class="tcg-wonder-av">${art('villager', tb.hostArt)}</span>
+                    <div class="tcg-wonder-meta"><b>Booster de ${esc(tb.hostName)}</b><small>${tb.newCount ? `${tb.newCount} carte${tb.newCount > 1 ? 's' : ''} manquante${tb.newCount > 1 ? 's' : ''}` : 'Toutes déjà au classeur'}</small></div>
+                    ${btnHtml}
+                </div>
+                <div class="tcg-wonder-cards">${minis}</div>
+            </div>`;
+        })
+        .join('');
+    return `<div class="tcg-wonder-box">
+        <div class="tcg-wonder-title">
+            <b>${ti(['ui', 'sparkle'], 'tcg-ico xs')} Pioche Miracle du jour</b>
+            <small>${freeLeft ? '1re pioche gratuite aujourd’hui ! Choisis 1 carte au hasard parmi 5.' : 'Tables renouvelées chaque jour de jeu.'}</small>
+        </div>
+        <div class="tcg-wonder-list">${rows}</div>
+    </div>`;
+}
+
 function renderBoostersTab(T) {
     if (T.lastPack) return renderPackOpening(T);
+    if (T.wonderPick) return renderWonderStage(T);
 
     const packsHtml = TCG_PACK_IDS.map(sid => {
         const s = TCG_SERIES[sid];
@@ -264,7 +349,8 @@ function renderBoostersTab(T) {
 
     const pityLeft = Math.max(1, 10 - (T.pity || 0));
     return `
-        <div class="tcg-pity">${ti(['ui', 'sparkle'], 'tcg-ico xs')} 5 cartes par booster (1 Rare+ et 1 édition spéciale Inversée, Croquis, Full Art ou Or Gravé garanties) · Légendaire/Secrète dans au plus <b>${pityLeft}</b> booster${pityLeft > 1 ? 's' : ''}.</div>
+        <div class="tcg-pity">${ti(['ui', 'sparkle'], 'tcg-ico xs')} 5 cartes par booster (1 Rare+ et 1 édition spéciale garanties, chance de <b>God Pack</b> !) · Légendaire/Secrète dans au plus <b>${pityLeft}</b> booster${pityLeft > 1 ? 's' : ''}.</div>
+        ${renderWonderSection()}
         <div class="tcg-pack-list">${packsHtml}</div>
         <h4 class="tcg-h4">${ti(['ui', 'sparkle'])} Dos de cartes (${unlockedBacks.size}/${TCG_CARD_BACKS.length})</h4>
         <div class="tcg-backs-bar">${backsHtml}</div>
@@ -273,22 +359,26 @@ function renderBoostersTab(T) {
     `;
 }
 
-// ---------------- ONGLET 2 : DUELS 2.2 ----------------
+// ---------------- ONGLET 2 : DUELS 3.0 ----------------
 function renderDuelArena(T) {
     const D = T.duel;
     const activeStat = !D.done ? TCG_STATS[D.rounds[D.round]] : null;
     const terrFam = TCG_FAMILIES[D.terrain] || TCG_FAMILIES.village;
+    const weather = G.tcgWeatherOf(D.weatherId);
     const isDoubleNow = !D.done && D.round === D.doubleRound;
+    const isInvertNow = !D.done && !!(weather && weather.invert && D.round === weather.round);
+    const isWeatherNow = !D.done && !!(weather && weather.round === D.round);
 
-    // Frise tactique des 5 manches (avec manche ×2)
+    // Frise tactique des 5 manches (avec manche ×2 et manche météo)
     const timelineHtml = D.rounds
         .map((stIdx, i) => {
             const st = TCG_STATS[stIdx];
             const res = (D.history || [])[i];
             const cur = !D.done && i === D.round;
             const dbl = i === D.doubleRound;
-            return `<span class="tcg-tl-step${cur ? ' cur' : ''}${res ? ' ' + res : ''}${dbl ? ' dbl' : ''}" title="Manche ${i + 1} : ${st.name}${dbl ? ' (Manche double : 2 points !)' : ''}">
-                <small>M${i + 1}</small>${ti(st.icon, 'tcg-ico xs')}${dbl ? '<em class="tcg-tl-x2">×2</em>' : ''}
+            const wHere = weather && weather.round === i;
+            return `<span class="tcg-tl-step${cur ? ' cur' : ''}${res ? ' ' + res : ''}${dbl ? ' dbl' : ''}${wHere ? (weather.invert ? ' inv' : ' wth') : ''}" title="Manche ${i + 1} : ${st.name}${dbl ? ' (Manche double : 2 points !)' : ''}${wHere ? ` · ${weather.name}` : ''}">
+                <small>M${i + 1}</small>${ti(st.icon, 'tcg-ico xs')}${dbl ? '<em class="tcg-tl-x2">×2</em>' : wHere ? `<em class="tcg-tl-w">${weather.invert ? 'MIN' : '+2'}</em>` : ''}
             </span>`;
         })
         .join('');
@@ -308,7 +398,7 @@ function renderDuelArena(T) {
             ? `<div class="tcg-clash-notes">${D.last.notes.map(n => `<span>${ti(['ui', 'sparkle'], 'tcg-ico xs')} ${esc(n)}</span>`).join('')}</div>`
             : '';
         clashHtml = `<div class="tcg-clash ${D.last.outcome}">
-            <div class="tcg-clash-head">Manche ${D.last.round}${D.last.pts === 2 ? ' <span class="tcg-dbl-mini">×2</span>' : ''} · ${ti(D.last.stat.icon, 'tcg-ico xs')} ${D.last.stat.name} — <b>${txt}</b></div>
+            <div class="tcg-clash-head">Manche ${D.last.round}${D.last.pts === 2 ? ' <span class="tcg-dbl-mini">×2</span>' : ''}${D.last.inverted ? ' <span class="tcg-inv-mini">INVERSÉE</span>' : ''} · ${ti(D.last.stat.icon, 'tcg-ico xs')} ${D.last.stat.name} — <b>${txt}</b></div>
             <div class="tcg-clash-cards">
                 <div class="tcg-clash-side">
                     <small>Toi · <b>${D.last.pVal}</b></small>
@@ -345,6 +435,9 @@ function renderDuelArena(T) {
         } else {
             if (D.training) rewLine += ' <span class="tcg-train-note">(entraînement · déjà battu aujourd’hui)</span>';
             if (D.firstWinPack) rewLine += ` &amp; <b>+1 ${ICO_PACK()} Booster gratuit (1re victoire !)</b>`;
+        }
+        if (D.leagueGain > 0) {
+            rewLine += ` · <span class="tcg-lg-gain">+${D.leagueGain} pts Ligue${D.leagueUp ? ` — Promotion : ${esc(D.leagueUp)} !` : ''}</span>`;
         }
         const actionsHtml = D.tourneyChamp
             ? `<button type="button" class="btn gold sm" data-act="tcgEndDuel">${ti(['ui', 'trophy'])} Retour aux duels</button>`
@@ -409,24 +502,54 @@ function renderDuelArena(T) {
         ${tourneyBanner}
         <div class="tcg-opp-bar">
             <span class="tcg-opp-av">${art('villager', D.oppArt)}</span>
-            <div class="tcg-opp-meta"><b>${esc(D.oppName)}</b><small>${esc(D.oppRole)} · ${esc(D.oppDiffLabel)}</small><p class="tcg-bubble">${esc(D.quote)}</p></div>
+            <div class="tcg-opp-meta"><b>${esc(D.oppName)}</b><small>${esc(D.oppRole)} · ${esc(D.oppDiffLabel)}</small><p class="tcg-bubble">${esc(D.liveQuote || D.quote)}</p></div>
             <div class="tcg-score"><b>${D.pScore}</b><span>-</span><b>${D.oScore}</b></div>
         </div>
         <div class="tcg-terrain-bar">
             <span>Terrain : <b>${esc(D.terrainName || 'Vallée')}</b> · <span class="tcg-terr-bonus">${ti(terrFam.icon, 'tcg-ico xs')} +1 ${terrFam.name}</span></span>
             ${D.oHasBoost ? `<span class="tcg-boss-tag${D.oUsedBoost ? ' used' : ''}">${ti(['ui', 'bolt'], 'tcg-ico xs')} ${D.oUsedBoost ? 'Boss +2 utilisé' : 'Boss +2 prêt'}</span>` : ''}
         </div>
+        <div class="tcg-weather-bar${isWeatherNow ? ' active' : ''}${weather.invert ? ' storm' : ''}">
+            <span class="tcg-w-name">${ti(weather.icon, 'tcg-ico xs')} <b>${esc(weather.name)}</b></span>
+            <small>${esc(weather.desc)}</small>
+        </div>
         <div class="tcg-timeline">${timelineHtml}</div>
-        <div class="tcg-round-pill${isDoubleNow ? ' dbl' : ''}">Manche <b>${D.round + 1}/5</b> · Critère actif : <b>${ti(activeStat.icon, 'tcg-ico xs')} ${activeStat.name}</b>${isDoubleNow ? ' <span class="tcg-dbl-tag">MANCHE ×2 · 2 PTS</span>' : ''}</div>
+        <div class="tcg-round-pill${isDoubleNow ? ' dbl' : ''}${isInvertNow ? ' inv' : ''}">Manche <b>${D.round + 1}/5</b> · Critère actif : <b>${ti(activeStat.icon, 'tcg-ico xs')} ${activeStat.name}</b>${isDoubleNow ? ' <span class="tcg-dbl-tag">MANCHE ×2 · 2 PTS</span>' : ''}${isInvertNow ? ' <span class="tcg-inv-tag">ORAGE · LA PLUS PETITE GAGNE</span>' : ''}</div>
         <div class="tcg-tactics">
             <button type="button" class="btn sm${D.usedReroll ? '' : ' blue'}" data-act="tcgReroll" ${D.usedReroll ? 'disabled' : ''}>${ti(['ui', 'loop'])} Changer critère ${D.usedReroll ? '(utilisé)' : '(1×)'}</button>
             <button type="button" class="btn sm${D.boostArmed ? ' gold' : D.usedBoost ? '' : ' green'}" data-act="tcgBoost" ${D.usedBoost ? 'disabled' : ''}>${ti(['ui', 'bolt'])} ${D.boostArmed ? 'Coup de Maître +3 armé !' : D.usedBoost ? 'Coup de Maître (utilisé)' : 'Coup de Maître +3 (1×)'}</button>
         </div>
         ${activeBuffs.length ? `<div class="tcg-buffs">${activeBuffs.map(b => `<span>${ti(['ui', 'sparkle'], 'tcg-ico xs')} ${esc(b)}</span>`).join('')}</div>` : ''}
         ${clashHtml}
-        <div class="tcg-hand-label">Choisis ta carte (score réel + bonus détaillés)${synLabel}${duoLabel}</div>
+        <div class="tcg-hand-label">${isInvertNow ? 'Orage Inversé : choisis ta PLUS PETITE valeur !' : 'Choisis ta carte (score réel + bonus détaillés)'}${synLabel}${duoLabel}</div>
         <div class="tcg-hand">${handHtml}</div>
         <div class="tcg-stage-actions"><button type="button" class="btn sm" data-act="tcgEndDuel">Abandonner</button></div>
+    </div>`;
+}
+
+function renderLeagueCard() {
+    const lg = G.tcgLeagueInfo();
+    const claimHtml = lg.claimable.length
+        ? `<div class="tcg-league-claims">${lg.claimable
+              .map(l => {
+                  const rew = [];
+                  if (l.tokens) rew.push(`+${l.tokens} ${ICO_TOK()}`);
+                  if (l.packs) rew.push(`+${l.packs} ${ICO_PACK()}`);
+                  if (l.goldPacks) rew.push(`+${l.goldPacks} Doré`);
+                  return `<button type="button" class="btn gold sm" data-act="tcgClaimLeague" data-id="${l.id}">${ti(l.icon, 'tcg-ico xs')} Réclamer ${esc(l.name)} (${rew.join(' · ')})</button>`;
+              })
+              .join('')}</div>`
+        : '';
+    return `<div class="tcg-league-card" style="--lc1:${lg.rank.col};--lc2:${lg.rank.col2}">
+        <div class="tcg-league-top">
+            <span class="tcg-league-emblem">${art(lg.rank.icon[0], lg.rank.icon[1])}</span>
+            <div class="tcg-league-meta">
+                <b>${esc(lg.rank.name)}</b>
+                <small>${lg.next ? `${lg.pts} / ${lg.next.need} pts vers ${esc(lg.next.name)}` : `${lg.pts} pts · Rang suprême atteint !`}</small>
+                <div class="tcg-prog"><i style="width:${lg.pct}%"></i></div>
+            </div>
+        </div>
+        ${claimHtml}
     </div>`;
 }
 
@@ -504,6 +627,7 @@ function renderDuelsTab(T) {
         .join('');
 
     return `
+        ${renderLeagueCard()}
         <div class="tcg-tourney-card${tourney.wonToday ? ' won' : ''}">
             <div class="tcg-tourney-head">
                 <div>
@@ -779,8 +903,14 @@ defineSheet('tcg', {
         const T = G.ensureTcg();
         const daily = G.tcgDailyReady();
         const favCard = T.fav && T.cards[T.fav] > 0 ? TCG_CARD_BY_ID[T.fav] : null;
-        const boostBadge = (daily ? 1 : 0) + (T.freePacks || 0) + (T.freeGoldPacks || 0) + G.tcgClaimableMilestones().length;
-        const duelsBadge = (T.duel ? 1 : 0) + (G.tcgDailyQuestProgress().ready ? 1 : 0);
+        const lg = G.tcgLeagueInfo();
+        const boostBadge =
+            (daily ? 1 : 0) +
+            (G.tcgWonderFreeReady() ? 1 : 0) +
+            (T.freePacks || 0) +
+            (T.freeGoldPacks || 0) +
+            G.tcgClaimableMilestones().length;
+        const duelsBadge = (T.duel ? 1 : 0) + (G.tcgDailyQuestProgress().ready ? 1 : 0) + lg.claimable.length;
         const deckBadge = G.tcgDeckCost(T.deck) > TCG_DECK_BUDGET ? 1 : 0;
         const it = innerTabs(
             'tcg',
@@ -808,6 +938,7 @@ defineSheet('tcg', {
                 <span class="tcg-chip">${ICO_DUST()} <b>${T.dust}</b></span>
                 <span class="tcg-chip">${ICO_PACK()} <b>${T.freePacks}</b></span>
                 ${T.freeGoldPacks > 0 ? `<span class="tcg-chip tcg-gold-chip">${ICO_PACK()} <b>${T.freeGoldPacks} Doré</b></span>` : ''}
+                <span class="tcg-chip tcg-league-chip" style="--lc1:${lg.rank.col};--lc2:${lg.rank.col2}" title="Ligue MeuhCG (${lg.pts} pts)">${ti(lg.rank.icon, 'tcg-ico xs')} <b>${esc(lg.rank.name)}</b></span>
                 <span class="tcg-chip">${ti(['ui', 'book'])} <b>${G.tcgOwnedCount()}/${TCG_CARDS.length}</b></span>
                 ${favCard ? `<button type="button" class="tcg-chip tcg-fav" data-act="tcgZoom" data-id="${favCard.id}" title="Carte favorite">${ti(['ui', 'star'], 'tcg-ico xs')} ${esc(favCard.name)}</button>` : ''}
                 <button type="button" class="tcg-chip tcg-help" data-act="open" data-sheet="guide" data-page="meuhcg" title="Comment jouer au MeuhCG">${ti(['ui', 'info'], 'tcg-ico xs')} Guide</button>
@@ -830,6 +961,10 @@ export function setupTcg() {
         tcgReveal: (el, d) => G.tcgRevealCard(+d.i),
         tcgRevealAll: () => G.tcgRevealAll(),
         tcgClosePack: () => G.tcgClosePack(),
+        tcgWonderStart: (el, d) => G.tcgWonderStart(+d.i),
+        tcgWonderPick: (el, d) => G.tcgWonderPick(+d.i),
+        tcgWonderClose: () => G.tcgWonderClose(),
+        tcgClaimLeague: (el, d) => G.tcgClaimLeague(d.id),
         tcgSetBack: (el, d) => G.tcgSetCardBack(d.b),
         tcgRecycle: () => G.tcgRecycleDupes(),
         tcgCraft: (el, d) => G.tcgCraftCard(d.id),
@@ -892,20 +1027,68 @@ export function setupTcg() {
         tcgCloseZoom: () => (zoomCardId = null),
     });
 
-    // Effet 3D holographique interactif sur la carte zoomée
-    document.addEventListener('pointermove', e => {
-        const card = e.target.closest && e.target.closest('.tcg-tilt-wrap .tcg-card.big');
-        if (!card) return;
+    // 1.177 : Déchirure tactile au glissé du doigt sur le sachet booster (le clic simple reste actif)
+    let tearState = null;
+    document.addEventListener('pointerdown', e => {
+        const pack = e.target.closest && e.target.closest('.tcg-foil-pack');
+        if (!pack) return;
+        const r = pack.getBoundingClientRect();
+        tearState = { pack, startX: e.clientX, width: Math.max(80, r.width), done: false };
+    });
+
+    const applyTilt = (card, clientX, clientY) => {
         const r = card.getBoundingClientRect();
-        const px = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-        const py = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
-        const ang = Math.round(105 + (px - 0.5) * 90 + (py - 0.5) * 40);
-        card.style.setProperty('--rx', `${((0.5 - py) * 20).toFixed(1)}deg`);
-        card.style.setProperty('--ry', `${((px - 0.5) * 22).toFixed(1)}deg`);
+        const px = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+        const py = Math.max(0, Math.min(1, (clientY - r.top) / r.height));
+        const ang = Math.round(105 + (px - 0.5) * 110 + (py - 0.5) * 50);
+        card.style.setProperty('--rx', `${((0.5 - py) * 24).toFixed(1)}deg`);
+        card.style.setProperty('--ry', `${((px - 0.5) * 26).toFixed(1)}deg`);
         card.style.setProperty('--mx', `${(px * 100).toFixed(0)}%`);
         card.style.setProperty('--my', `${(py * 100).toFixed(0)}%`);
         card.style.setProperty('--ang', `${ang}deg`);
+        card.classList.add('tilting');
+    };
+
+    let activeTiltCard = null;
+    document.addEventListener('pointerdown', e => {
+        const card = e.target.closest && e.target.closest('.tcg-tilt-wrap .tcg-card.big');
+        if (!card) return;
+        activeTiltCard = card;
+        applyTilt(card, e.clientX, e.clientY);
     });
+
+    // Effet 3D holographique interactif (souris + tactile) & glissé déchirure booster
+    document.addEventListener('pointermove', e => {
+        if (tearState && !tearState.done) {
+            const dx = Math.abs(e.clientX - tearState.startX);
+            const pct = Math.min(1, dx / (tearState.width * 0.42));
+            tearState.pack.style.setProperty('--tear', `${Math.round(pct * 100)}%`);
+            if (pct >= 1) {
+                tearState.done = true;
+                tearState.pack.classList.add('tearing');
+                if (G.tcgTearPack()) refresh();
+            }
+            return;
+        }
+        const card = activeTiltCard || (e.target.closest && e.target.closest('.tcg-tilt-wrap .tcg-card.big'));
+        if (!card) return;
+        applyTilt(card, e.clientX, e.clientY);
+    });
+
+    const endInteractions = () => {
+        if (tearState) {
+            if (!tearState.done) tearState.pack.style.setProperty('--tear', '0%');
+            tearState = null;
+        }
+        if (activeTiltCard) {
+            activeTiltCard.style.setProperty('--rx', '0deg');
+            activeTiltCard.style.setProperty('--ry', '0deg');
+            activeTiltCard.classList.remove('tilting');
+            activeTiltCard = null;
+        }
+    };
+    document.addEventListener('pointerup', endInteractions);
+    document.addEventListener('pointercancel', endInteractions);
     document.addEventListener(
         'pointerleave',
         e => {
@@ -913,6 +1096,7 @@ export function setupTcg() {
             if (!card) return;
             card.style.setProperty('--rx', '0deg');
             card.style.setProperty('--ry', '0deg');
+            card.classList.remove('tilting');
         },
         true,
     );

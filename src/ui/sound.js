@@ -202,6 +202,21 @@ export const SoundEngine = (() => {
             case 'level':
                 [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone(f, t + i * 0.085, 0.4, { type: 'triangle', vol: 0.13 }));
                 break;
+            case 'tcgTear':
+                noise(t, 0.22, { vol: 0.26, freq: 2400, type: 'bandpass', q: 1.2 });
+                noise(t + 0.09, 0.14, { vol: 0.22, freq: 3600, type: 'highpass', q: 0.9 });
+                tone(520, t + 0.05, 0.12, { type: 'triangle', vol: 0.07, glide: 980 });
+                break;
+            case 'tcgFlip':
+                noise(t, 0.05, { vol: 0.14, freq: 2800, type: 'bandpass', q: 1.8 });
+                tone(660, t, 0.06, { type: 'triangle', vol: 0.09, glide: 990 });
+                break;
+            case 'tcgRare':
+                [659, 880, 1047, 1319, 1760, 2093].forEach((f, i) => tone(f, t + i * 0.055, 0.36, { type: 'sine', vol: 0.11 }));
+                break;
+            case 'tcgWin':
+                [523, 659, 784, 1047].forEach((f, i) => tone(f, t + i * 0.06, 0.22, { type: 'triangle', vol: 0.11 }));
+                break;
             case 'chicken':
             case 'quail':
                 tone(900, t, 0.06, { type: 'square', vol: 0.04, glide: 1300 });

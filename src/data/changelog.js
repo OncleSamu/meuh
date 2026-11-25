@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.177",
+  "title": "MeuhCG 3.0 : Sensations, Pioche Miracle, Météo, Ligue & Série 10",
+  "date": "25 novembre 2026",
+  "items": [
+   "Sensations d’ouverture : déchirure tactile au glissé du doigt sur les boosters, animations flash/secousse sur les Légendaires et Secrètes, God Packs ultra-rares (5 cartes Foil/Légendaire/Secrète), effet Holo 3D tactile fluide sur téléphone et 4 sons dédiés",
+   "Pioche Miracle quotidienne : chaque jour, 3 villageois exposent leur booster de 5 cartes (avec badge NEW sur tes manquantes) — 1re pioche gratuite chaque jour pour tenter de décrocher une carte rare à l’aveugle",
+   "Duels 3.0 : 5 Météos de duel dont « Orage Inversé » (manche 3 : la plus PETITE valeur l’emporte !), réactions vivantes de l’adversaire à chaque manche et Ligue MeuhCG à 6 rangs (Bois → Maître de la Vallée) avec récompenses",
+   "Série 10 « Mine, Musée & Équipe » : 35 nouvelles cartes (370 au total !) incluant géodes, fossiles, reliques, Lina, Henri, Milo et Professeur Anatole, 2 nouveaux duels (Lina & Anatole), 2 Duos secrets (Équipe & Musée) et le 7e dos de carte « Cristal des Profondeurs »"
+  ]
+ },
+ {
   "v": "1.176.1",
   "title": "Correctif d’affichage du bandeau Maison sur mobile",
   "date": "25 novembre 2026",

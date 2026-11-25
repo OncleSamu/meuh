@@ -182,9 +182,19 @@ export const TCG_SERIES = {
         col2: '#f08c96',
         icon: ['item', 'yuzu'],
     },
+    profondeurs: {
+        id: 'profondeurs',
+        name: 'Série 10 · Mine, Musée & Équipe',
+        short: 'Mine & Équipe',
+        desc: 'Géodes, fossiles, reliques du Musée, Professeur Anatole et l’Équipe du Domaine.',
+        cost: 130,
+        col: '#4a4088',
+        col2: '#9a8cf0',
+        icon: ['ui', 'mineDeep'],
+    },
     gold: {
         id: 'gold',
-        name: 'Booster Doré · 335 Cartes',
+        name: 'Booster Doré · 370 Cartes',
         short: 'Doré',
         desc: '5 cartes de toutes les séries avec 1 Foil, Légendaire ou Secrète garantie !',
         cost: 220,
@@ -195,7 +205,7 @@ export const TCG_SERIES = {
         minTop: 'F',
     },
 };
-export const TCG_SET_IDS = ['vallee', 'terroir', 'horizons', 'prestige', 'verger', 'nature', 'ateliers', 'legendes', 'asie'];
+export const TCG_SET_IDS = ['vallee', 'terroir', 'horizons', 'prestige', 'verger', 'nature', 'ateliers', 'legendes', 'asie', 'profondeurs'];
 export const TCG_PACK_IDS = [...TCG_SET_IDS, 'gold'];
 
 // Format compact : [id, series, rarity, family, name, spr, [terroir, saveur, prestige], flavor, look?]
@@ -552,6 +562,43 @@ const RAW_CARDS = [
     ['z33', 'asie', 'S', 'elevage', 'Sika Fleur de Cerisier', ['animal', 'sika~322'], [11, 10, 13], 'Robe rosée et bois nacrés aperçus dans la brume des terrasses.', { color: 7, finish: 10, halo: true }],
     ['z34', 'asie', 'S', 'elevage', 'Poule Soie Lune d’Or', ['animal', 'silkie~4'], [10, 11, 13], 'Plumage auréolé d’or qui éclaire le pavillon de bambou la nuit.', { color: 14, finish: 13, halo: true }],
     ['z35', 'asie', 'S', 'horizons', 'Lotus Impérial Doré', ['item', 'lotus'], [11, 12, 13], 'Fleur légendaire qui n’éclot qu’au sommet des Terres d’Asie.', { finish: 13, morph: 3, halo: true }],
+
+    // ==================== SÉRIE 10 : MINE, MUSÉE & ÉQUIPE (35) ====================
+    ['m01', 'profondeurs', 'C', 'atelier', 'Géode Grise', ['item', 'geodeStone'], [5, 2, 5], 'Un caillou discret qui cache parfois un éclat de cristal.'],
+    ['m02', 'profondeurs', 'C', 'horizons', 'Pointe de Silex', ['item', 'msSilex'], [5, 2, 5], 'Taillée il y a des millénaires sur les coteaux de la vallée.'],
+    ['m03', 'profondeurs', 'C', 'horizons', 'Pièce Gauloise', ['item', 'msPieceBronze'], [4, 2, 6], 'Frappée d’un épi de blé qui n’a jamais rouillé.'],
+    ['m04', 'profondeurs', 'C', 'potager', 'Fougère Pétrifiée', ['item', 'msFougere'], [5, 3, 4], 'Feuillage ancien gravé pour l’éternité dans la pierre.'],
+    ['m05', 'profondeurs', 'C', 'atelier', 'Pyrite Cubique', ['item', 'msPyrite'], [5, 2, 5], 'L’or des fous qui brille comme un vrai miroir à la lampe.'],
+    ['m06', 'profondeurs', 'C', 'atelier', 'Quartz Fumé', ['item', 'msQuartzFume'], [5, 2, 5], 'Prisme sombre extrait des galeries profondes.'],
+    ['m07', 'profondeurs', 'C', 'horizons', 'Bois Flotté Sculpté', ['item', 'msBoisFlotte'], [4, 3, 5], 'Poli par des décennies de rivière et d’écume.'],
+    ['m08', 'profondeurs', 'C', 'elevage', 'Cloche de Transhumance', ['item', 'msCloche'], [5, 3, 4], 'Son timbre grave porte encore jusqu’aux alpages.'],
+    ['m09', 'profondeurs', 'C', 'atelier', 'Charbon de Galerie', ['item', 'coal'], [6, 2, 4], 'Chauffe la forge et les fourneaux de toute la vallée.'],
+    ['m10', 'profondeurs', 'C', 'atelier', 'Minerai de Fer', ['item', 'ironOre'], [6, 2, 4], 'Lourd, brut et indispensable à chaque outil du domaine.'],
+    ['m11', 'profondeurs', 'U', 'atelier', 'Géode d’Améthyste', ['item', 'geodeAmethyst'], [6, 3, 7], 'En s’ouvrant sous le marteau, elle éclaire toute la pièce.'],
+    ['m12', 'profondeurs', 'U', 'horizons', 'Ammonite Spiralée', ['item', 'msAmmonite'], [6, 3, 7], 'Spirale parfaite qui rappelle la mer d’autrefois.'],
+    ['m13', 'profondeurs', 'U', 'horizons', 'Trilobite de Schiste', ['item', 'msTrilobite'], [6, 4, 6], 'Petit voyageur fossile protégé par sa carapace de pierre.'],
+    ['m14', 'profondeurs', 'U', 'horizons', 'Rose des Sables', ['item', 'msRoseSables'], [5, 4, 7], 'Pétales minéraux façonnés par le vent du désert.'],
+    ['m15', 'profondeurs', 'U', 'atelier', 'Lampe à Huile Antique', ['item', 'msLampeHuile'], [5, 4, 7], 'Éclairait déjà les veillées d’hiver il y a mille ans.'],
+    ['m16', 'profondeurs', 'U', 'atelier', 'Fibule Gravée', ['item', 'msFibule'], [5, 3, 8], 'Agrafe de cuivre ouvragée digne d’une vitrine royale.'],
+    ['m17', 'profondeurs', 'U', 'horizons', 'Perle d’Étang Nacrée', ['item', 'msPerle'], [5, 4, 7], 'Un éclat lunaire trouvé dans une coquille d’eau douce.'],
+    ['m18', 'profondeurs', 'U', 'horizons', 'Corail Fossile Rouge', ['item', 'msCorail'], [6, 3, 7], 'Branche pétrifiée venue d’un océan disparu.'],
+    ['m19', 'profondeurs', 'U', 'horizons', 'Dent de Requin Ancien', ['item', 'msDentRequin'], [7, 3, 6], 'Tranchante comme au premier jour après des millions d’années.'],
+    ['m20', 'profondeurs', 'R', 'atelier', 'Géode de Cristal', ['item', 'geodeCrystal'], [7, 4, 10], 'Cœur de quartz pur qui vibre sous la pioche.'],
+    ['m21', 'profondeurs', 'R', 'potager', 'Empreinte de Libellule', ['item', 'msLibellule'], [7, 6, 8], 'Ailes fines figées dans la roche comme une dentelle.'],
+    ['m22', 'profondeurs', 'R', 'potager', 'Ambre à Insecte', ['item', 'msAmbre'], [7, 6, 8], 'Résine dorée contenant un minuscule témoin du passé.'],
+    ['m23', 'profondeurs', 'R', 'atelier', 'Fluorite Arc-en-ciel', ['item', 'msFluorite'], [7, 5, 9], 'Strates violettes, bleues et émeraude dans une seule pierre.'],
+    ['m24', 'profondeurs', 'R', 'village', 'Sceau de l’Abbaye', ['item', 'msSceauAbbaye'], [6, 6, 9], 'Cire et bronze marqués aux armes des anciens moines brasseurs.'],
+    ['m25', 'profondeurs', 'R', 'horizons', 'Boussole de Capitaine', ['item', 'msBoussole'], [7, 5, 9], 'Son aiguille bleue indique le Nord même au fond des galeries.'],
+    ['m26', 'profondeurs', 'F', 'atelier', 'Géode Abyssale', ['item', 'geodeAbyss'], [9, 6, 11], 'Née dans les étages les plus profonds de la mine souterraine.'],
+    ['m27', 'profondeurs', 'F', 'atelier', 'Druse d’Améthyste', ['item', 'msDruseAmethyste'], [8, 6, 11], 'Une cathédrale de cristaux violets sous verre.'],
+    ['m28', 'profondeurs', 'F', 'horizons', 'Opale de Feu', ['item', 'msOpale'], [8, 7, 11], 'Flamme captive qui change de teinte à chaque rayon.'],
+    ['m29', 'profondeurs', 'F', 'horizons', 'Astrolabe de la Vallée', ['item', 'msAstrolabe'], [9, 6, 11], 'Mesurait les saisons et les étoiles bien avant l’almanach.'],
+    ['m30', 'profondeurs', 'L', 'village', 'Lina des Prés', ['villager', 'lina'], [11, 10, 10], 'Nourrit, ramasse et soigne chaque bête du domaine avec le sourire.'],
+    ['m31', 'profondeurs', 'L', 'village', 'Henri de l’Atelier', ['villager', 'henri'], [10, 11, 10], 'Veille sur tes stocks et relance tes machines au moment exact.'],
+    ['m32', 'profondeurs', 'L', 'village', 'Milo de la Nature', ['villager', 'milo'], [11, 9, 11], 'Relève les nasses, cueille le verger et revient les bras chargés.'],
+    ['m33', 'profondeurs', 'S', 'village', 'Professeur Anatole', ['villager', 'anatole'], [11, 10, 13], '« Chaque fossile raconte une histoire — voici la plus belle de ma vitrine ! »', { finish: 13, halo: true }],
+    ['m34', 'profondeurs', 'S', 'horizons', 'Drake des Cavernes Étoilé', ['item', 'msDrake'], [13, 9, 13], 'Pièce maîtresse du Musée, illuminée comme une constellation souterraine.', { finish: 11, halo: true }],
+    ['m35', 'profondeurs', 'S', 'atelier', 'Cœur de Diamant Brut', ['item', 'msDiamantBrut'], [12, 10, 14], 'Le joyau absolu arraché aux abysses de la mine.', { finish: 10, halo: true }],
 ];
 
 export const TCG_CARDS = RAW_CARDS.map(([id, series, rarity, family, name, spr, stats, flavor, look], idx) => ({
@@ -795,6 +842,38 @@ export const TCG_VILLAGER_DUELS = [
         deck: ['z21', 'z25', 'z26', 'z31', 'z33'],
     },
     {
+        id: 'v_lina',
+        cat: 'village',
+        name: 'Lina',
+        role: 'Soigneuse des prés',
+        art: 'lina',
+        diff: 3,
+        diffLabel: 'Difficile',
+        terrain: 'elevage',
+        terrainName: 'Grand Pré du Domaine',
+        reward: 110,
+        quote: '« Entre deux tournées aux prés, voyons si ton deck a du cœur ! »',
+        winQuote: '« Bravo ! Même mes bêtes applaudissent tes combos. »',
+        loseQuote: '« Douceur et ténacité : l’Équipe du Domaine répond toujours présente ! »',
+        deck: ['m08', 'v16', 'm30', 'm31', 'z20'],
+    },
+    {
+        id: 'v_anatole',
+        cat: 'village',
+        name: 'Professeur Anatole',
+        role: 'Conservateur du Musée',
+        art: 'anatole',
+        diff: 4,
+        diffLabel: 'Maître',
+        terrain: 'horizons',
+        terrainName: 'Galerie du Musée',
+        reward: 140,
+        quote: '« Mes cartes sont toutes des pièces rares dûment cataloguées ! »',
+        winQuote: '« Remarquable ! Ton jeu mérite sa propre vitrine au Musée ! »',
+        loseQuote: '« Ah ! L’histoire et la géologie ont encore le dernier mot ! »',
+        deck: ['m20', 'm27', 'm29', 'm33', 'm34'],
+    },
+    {
         id: 'v_duval',
         cat: 'village',
         name: 'Maître Duval',
@@ -828,7 +907,7 @@ export const TCG_VILLAGER_DUELS = [
     },
 ];
 
-// 9 paliers de collection (100 % internes au MeuhCG : jetons + boosters gratuits, 0 impact ferme)
+// 10 paliers de collection (100 % internes au MeuhCG : jetons + boosters gratuits, 0 impact ferme)
 export const TCG_MILESTONES = [
     { id: 'm10', need: 10, name: 'Débutant curieux', tokens: 60, packs: 1 },
     { id: 'm25', need: 25, name: 'Collectionneur du pré', tokens: 100, packs: 1 },
@@ -836,12 +915,13 @@ export const TCG_MILESTONES = [
     { id: 'm100', need: 100, name: 'Centurion de la vallée', tokens: 220, packs: 2 },
     { id: 'm150', need: 150, name: 'Archiviste des terroirs', tokens: 300, packs: 3 },
     { id: 'm200', need: 200, name: 'Chasseur de Chromas', tokens: 400, packs: 3 },
-    { id: 'm250', need: 250, name: 'Gardien des 9 séries', tokens: 550, packs: 4 },
+    { id: 'm250', need: 250, name: 'Gardien des 10 séries', tokens: 550, packs: 4 },
     { id: 'm300', need: 300, name: 'Légende du MeuhCG', tokens: 1000, packs: 6 },
     { id: 'm335', need: 335, name: 'Empereur du MeuhCG', tokens: 1200, packs: 8 },
+    { id: 'm370', need: 370, name: 'Grand Maître des 10 Séries', tokens: 1500, packs: 10 },
 ];
 
-// 1.162 + 1.176 : 12 Duos secrets (bonus si les deux cartes sont dans ton deck)
+// 1.162 + 1.176 + 1.177 : 14 Duos secrets (bonus si les deux cartes sont dans ton deck)
 export const TCG_DUOS = [
     { id: 'bassecour', name: 'Duo Basse-cour', cards: ['v08', 'v04'], bonus: 1 },
     { id: 'boulanger', name: 'Duo Boulanger', cards: ['v01', 't01'], bonus: 1 },
@@ -855,6 +935,8 @@ export const TCG_DUOS = [
     { id: 'ferme', name: 'Duo de la Ferme', cards: ['v20', 'v23'], bonus: 2 },
     { id: 'terrasses', name: 'Duo des Terrasses', cards: ['z30', 'z31'], bonus: 2 },
     { id: 'soie', name: 'Duo de la Soie', cards: ['z21', 'z25'], bonus: 2 },
+    { id: 'equipe', name: 'Duo de l’Équipe', cards: ['m30', 'm31'], bonus: 2 },
+    { id: 'musee', name: 'Duo du Musée', cards: ['m33', 'm34'], bonus: 2 },
 ];
 
 // 1.162 : 5 règles tournantes du Tournoi de la Vallée (3 matchs éliminatoires, 1 règle par jour)
@@ -866,7 +948,7 @@ export const TCG_TOURNEY_RULES = [
     { id: 'boost_saveur', name: 'Grand Banquet', desc: 'Les manches Saveur accordent +2 à toutes les cartes !', budget: 16 },
 ];
 
-// 1.162 + 1.176 : 6 dos de cartes déblocables (affichés à l’ouverture des boosters et dans les duels)
+// 1.162 + 1.176 + 1.177 : 7 dos de cartes déblocables (affichés à l’ouverture des boosters et dans les duels)
 export const TCG_CARD_BACKS = [
     { id: 'vallee', name: 'Classique', needCards: 0, needCups: 0, desc: 'Dos bois & or traditionnel du MeuhCG.' },
     { id: 'foret', name: 'Émeraude', needCards: 25, needCups: 0, desc: 'Débloqué à 25 cartes.' },
@@ -874,5 +956,28 @@ export const TCG_CARD_BACKS = [
     { id: 'capy', name: 'Capybara Zen', needCards: 100, needCups: 3, desc: 'Débloqué à 100 cartes ou 3 coupes de tournoi.' },
     { id: 'or24', name: 'Or Royal 24k', needCards: 150, needCups: 5, desc: 'Débloqué à 150 cartes ou 5 coupes de tournoi.' },
     { id: 'sakura', name: 'Laque & Cerisier', needCards: 220, needCups: 7, desc: 'Débloqué à 220 cartes ou 7 coupes de tournoi.' },
+    { id: 'cristal', name: 'Cristal des Profondeurs', needCards: 280, needCups: 9, desc: 'Débloqué à 280 cartes ou 9 coupes de tournoi.' },
 ];
+
+// 1.177 : 5 météos de duel (ajoutent un twist tactique sur une manche précise, jamais sur la manche ×2 pour Orage)
+export const TCG_WEATHERS = [
+    { id: 'clear', name: 'Ciel Clair', icon: ['ui', 'w_cloudy'], desc: 'Règles pures : aucun modificateur météo.', round: -1 },
+    { id: 'sun', name: 'Grand Soleil', icon: ['ui', 'w_sun'], desc: 'Manche 2 : cartes Potager +2 !', round: 1, fams: ['potager'], bonus: 2 },
+    { id: 'rain', name: 'Brise des Mers', icon: ['ui', 'w_rain'], desc: 'Manche 3 : cartes Horizons +2 !', round: 2, fams: ['horizons'], bonus: 2 },
+    { id: 'fest', name: 'Fête du Bourg', icon: ['ui', 'w_rainbow'], desc: 'Manche 4 : cartes Village & Terroir +2 !', round: 3, fams: ['village', 'terroir'], bonus: 2 },
+    { id: 'storm', name: 'Orage Inversé', icon: ['ui', 'w_storm'], desc: 'Manche 3 : la plus PETITE valeur l’emporte !', round: 2, invert: true },
+];
+
+// 1.177 : Ligue MeuhCG à 6 rangs (points gagnés en duels & tournois, conservés au Prestige)
+export const TCG_LEAGUES = [
+    { id: 'bois', name: 'Ligue Bois', need: 0, col: '#8d5b34', col2: '#c99362', icon: ['ui', 'medalOff'], tokens: 0, packs: 0, goldPacks: 0 },
+    { id: 'bronze', name: 'Ligue Bronze', need: 60, col: '#b86832', col2: '#e8a26a', icon: ['ui', 'medalB'], tokens: 60, packs: 1, goldPacks: 0 },
+    { id: 'argent', name: 'Ligue Argent', need: 160, col: '#6e7c8a', col2: '#b8c8d8', icon: ['ui', 'medalS'], tokens: 120, packs: 2, goldPacks: 0 },
+    { id: 'or', name: 'Ligue Or', need: 320, col: '#c98808', col2: '#ffe169', icon: ['ui', 'medalG'], tokens: 200, packs: 2, goldPacks: 0 },
+    { id: 'cristal', name: 'Ligue Cristal', need: 560, col: '#4e52b8', col2: '#a4a8ff', icon: ['item', 'geodeCrystal'], tokens: 350, packs: 0, goldPacks: 1 },
+    { id: 'maitre', name: 'Maître de la Vallée', need: 900, col: '#a8225c', col2: '#ff8cc2', icon: ['ui', 'trophy'], tokens: 600, packs: 0, goldPacks: 2 },
+];
+
+// 1.177 : Pioche Miracle quotidienne (1re gratuite par jour, puis 45 jetons par table)
+export const TCG_WONDER_COST = 45;
 
