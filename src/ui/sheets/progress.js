@@ -27,17 +27,17 @@ function layoutGlobal() {
     const nodes = [];
     const edges = [];
     const wingArcs = {
-        terre: [-194, -166, -138, -110],
+        terre: [-198, -167, -136, -105],
         domaine: [-68, -32, 4],
-        horizon: [46, 74, 102, 130],
+        horizon: [40, 72, 104, 136],
     };
     const wingTags = {
-        terre: { x: 24, y: 6.5 },
-        domaine: { x: 76, y: 6.5 },
-        horizon: { x: 50, y: 94.5 },
+        terre: { x: 24, y: 6 },
+        domaine: { x: 76, y: 6 },
+        horizon: { x: 33, y: 94.5 },
     };
     const cx = 50,
-        cy = 51;
+        cy = 49.5;
     const pt = (deg, r) => {
         const rad = (deg * Math.PI) / 180;
         return { x: +(cx + Math.cos(rad) * r).toFixed(2), y: +(cy + Math.sin(rad) * r).toFixed(2) };
@@ -50,15 +50,16 @@ function layoutGlobal() {
             const list = br.list;
             const posById = {};
             const midIds = list.filter((sk, idx) => idx > 0 && !sk.cap);
-            const rootP = pt(ang, 14.5);
+            const rootP = pt(ang, 15);
             posById[list[0].id] = rootP;
             nodes.push({ b, k: 0, sk: list[0], w, ...rootP });
             edges.push({ x1: cx, y1: cy, x2: rootP.x, y2: rootP.y, w, lit: G.rank(list[0].id) > 0, avail: state.level >= (br.lvl || 1) });
 
             midIds.forEach((sk, mi) => {
                 const k = list.indexOf(sk);
-                const spread = midIds.length === 3 ? (mi - 1) * 7.8 : (mi - 0.5) * 9.8;
-                const p = pt(ang + spread, 27);
+                const spread = midIds.length === 3 ? (mi - 1) * 9.5 : (mi - 0.5) * 12.5;
+                const rad = midIds.length === 3 ? (mi === 1 ? 30.5 : 26) : mi === 0 ? 25.5 : 30.5;
+                const p = pt(ang + spread, rad);
                 posById[sk.id] = p;
                 nodes.push({ b, k, sk, w, ...p });
                 const lit = G.rank(sk.id) > 0;
@@ -69,7 +70,7 @@ function layoutGlobal() {
             const capSk = list.find(sk => sk.cap);
             if (capSk) {
                 const k = list.indexOf(capSk);
-                const cp = pt(ang, 39);
+                const cp = pt(ang, 41);
                 posById[capSk.id] = cp;
                 nodes.push({ b, k, sk: capSk, w, ...cp });
                 const lit = G.rank(capSk.id) > 0;
@@ -173,6 +174,38 @@ function nodeDetailHtml(b, k, pts) {
     </div>`;
 }
 
+function getCam() {
+    if (!ui.sel.skCam) ui.sel.skCam = { z: 1, tx: 0, ty: 0 };
+    return ui.sel.skCam;
+}
+function clampCam(c) {
+    c.z = Math.max(1, Math.min(2.6, +c.z.toFixed(3)));
+    const lim = (c.z - 1) * 52;
+    c.tx = Math.max(-lim, Math.min(lim, +c.tx.toFixed(2)));
+    c.ty = Math.max(-lim, Math.min(lim, +c.ty.toFixed(2)));
+    return c;
+}
+function zoomCam(c, nextZ, fx = 0, fy = 0) {
+    const z0 = c.z;
+    const z1 = Math.max(1, Math.min(2.6, nextZ));
+    const ratio = z1 / z0;
+    c.tx = c.tx * ratio + fx * 100 * (1 - ratio);
+    c.ty = c.ty * ratio + fy * 100 * (1 - ratio);
+    c.z = z1;
+    return clampCam(c);
+}
+function applyCamDom(canvas, c) {
+    if (!canvas) return;
+    const stage = canvas.querySelector('.sk-stage');
+    if (stage) stage.style.transform = `translate(${c.tx}%, ${c.ty}%) scale(${c.z})`;
+    canvas.classList.toggle('zoomed', c.z >= 1.35);
+    canvas.classList.toggle('panning', c.z > 1.02);
+    const pct = canvas.querySelector('.sk-zpct');
+    if (pct) pct.textContent = `${Math.round(c.z * 100)} %`;
+    const hint = canvas.querySelector('.sk-zhint');
+    if (hint) hint.hidden = c.z > 1.05;
+}
+
 function skills() {
     const mode = ui.sel.skWing || 'all';
     const pts = G.skillPoints();
@@ -245,13 +278,27 @@ function skills() {
               )
               .join('');
 
+    const cam = isAll ? clampCam(getCam()) : null;
+    const stageOpen = isAll ? `<div class="sk-stage" style="transform:translate(${cam.tx}%, ${cam.ty}%) scale(${cam.z})">` : '';
+    const stageClose = isAll ? '</div>' : '';
+    const zoomHud = isAll
+        ? `<div class="sk-zctl" role="group" aria-label="Zoom">
+               <button type="button" class="sk-zbtn" data-act="skZoom" data-d="-0.45" aria-label="Dézoomer">−</button>
+               <button type="button" class="sk-zbtn sk-zpct" data-act="skZoom" data-d="toggle" aria-label="Réinitialiser le zoom">${Math.round(cam.z * 100)} %</button>
+               <button type="button" class="sk-zbtn" data-act="skZoom" data-d="0.45" aria-label="Zoomer">+</button>
+           </div>`
+        : '';
+
     return `<div class="sk-wrap">
         ${hud}
         ${wingTabs}
-        <div class="sk-canvas ${isAll ? 'mode-all' : 'mode-wing'}" ${ratioStyle}>
+        <div class="sk-canvas ${isAll ? `mode-all${cam.z >= 1.35 ? ' zoomed' : ''}${cam.z > 1.02 ? ' panning' : ''}` : 'mode-wing'}" ${ratioStyle}>
+            ${stageOpen}
             <svg class="sk-svg" viewBox="0 0 ${graph.w} ${graph.h}" preserveAspectRatio="none">${edgesSvg}</svg>
             ${extras}
             ${nodesHtml}
+            ${stageClose}
+            ${zoomHud}
         </div>
         ${nodeDetailHtml(sel.b, sel.k, pts)}
     </div>`;
@@ -338,7 +385,150 @@ defineSheet('prestige', {
     foot: () => `<div class="row-btns">${btn('Annuler', { act: 'sheetClose' })}${btn('Vendre', { act: 'doPrestige', kind: 'red' })}</div>`,
 });
 
+let camGesturesBound = false;
+function bindCamGestures() {
+    if (camGesturesBound || typeof document === 'undefined') return;
+    camGesturesBound = true;
+    let drag = null;
+    let pinch = null;
+    let suppressUntil = 0;
+
+    const canvasOf = el => el && el.closest && el.closest('.sk-canvas.mode-all');
+    const focalOf = (canvas, cx, cy) => {
+        const r = canvas.getBoundingClientRect();
+        return [(cx - r.left) / r.width - 0.5, (cy - r.top) / r.height - 0.5, r];
+    };
+
+    // Bloquer le clic parasite juste après un glissement / pincement
+    document.addEventListener(
+        'click',
+        e => {
+            if (performance.now() < suppressUntil && canvasOf(e.target)) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        },
+        true,
+    );
+
+    // Molette souris sur ordinateur
+    document.addEventListener(
+        'wheel',
+        e => {
+            const canvas = canvasOf(e.target);
+            if (!canvas) return;
+            e.preventDefault();
+            const c = getCam();
+            const [fx, fy] = focalOf(canvas, e.clientX, e.clientY);
+            const factor = e.deltaY < 0 ? 1.18 : 1 / 1.18;
+            zoomCam(c, c.z * factor, fx, fy);
+            applyCamDom(canvas, c);
+        },
+        { passive: false },
+    );
+
+    // Pincement à deux doigts + glissement à un doigt (tactile)
+    document.addEventListener(
+        'touchstart',
+        e => {
+            const canvas = canvasOf(e.target);
+            if (!canvas || e.target.closest('.sk-zctl')) return;
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                drag = null;
+                const [a, b] = e.touches;
+                const c = getCam();
+                pinch = {
+                    canvas,
+                    d0: Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY) || 1,
+                    mx: (a.clientX + b.clientX) / 2,
+                    my: (a.clientY + b.clientY) / 2,
+                    z0: c.z,
+                    tx0: c.tx,
+                    ty0: c.ty,
+                };
+            } else if (e.touches.length === 1 && getCam().z > 1.02) {
+                const t = e.touches[0];
+                const c = getCam();
+                drag = { canvas, sx: t.clientX, sy: t.clientY, tx0: c.tx, ty0: c.ty, moved: false, touch: true };
+            }
+        },
+        { passive: false },
+    );
+
+    document.addEventListener(
+        'touchmove',
+        e => {
+            if (pinch && e.touches.length === 2) {
+                e.preventDefault();
+                const [a, b] = e.touches;
+                const d = Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY) || 1;
+                const mx = (a.clientX + b.clientX) / 2;
+                const my = (a.clientY + b.clientY) / 2;
+                const [fx, fy, r] = focalOf(pinch.canvas, pinch.mx, pinch.my);
+                const c = getCam();
+                c.z = pinch.z0;
+                c.tx = pinch.tx0;
+                c.ty = pinch.ty0;
+                zoomCam(c, pinch.z0 * (d / pinch.d0), fx, fy);
+                c.tx += ((mx - pinch.mx) / r.width) * 100;
+                c.ty += ((my - pinch.my) / r.height) * 100;
+                clampCam(c);
+                applyCamDom(pinch.canvas, c);
+                suppressUntil = performance.now() + 260;
+            } else if (drag && drag.touch && e.touches.length === 1) {
+                const t = e.touches[0];
+                const dx = t.clientX - drag.sx;
+                const dy = t.clientY - drag.sy;
+                if (!drag.moved && Math.hypot(dx, dy) < 6) return;
+                drag.moved = true;
+                e.preventDefault();
+                const r = drag.canvas.getBoundingClientRect();
+                const c = getCam();
+                c.tx = drag.tx0 + (dx / r.width) * 100;
+                c.ty = drag.ty0 + (dy / r.height) * 100;
+                clampCam(c);
+                applyCamDom(drag.canvas, c);
+                suppressUntil = performance.now() + 220;
+            }
+        },
+        { passive: false },
+    );
+
+    document.addEventListener('touchend', e => {
+        if (e.touches.length < 2) pinch = null;
+        if (e.touches.length === 0) drag = null;
+    });
+
+    // Glissement souris sur ordinateur quand zoomé
+    document.addEventListener('mousedown', e => {
+        if (e.button !== 0) return;
+        const canvas = canvasOf(e.target);
+        if (!canvas || e.target.closest('.sk-zctl') || getCam().z <= 1.02) return;
+        const c = getCam();
+        drag = { canvas, sx: e.clientX, sy: e.clientY, tx0: c.tx, ty0: c.ty, moved: false, touch: false };
+    });
+    document.addEventListener('mousemove', e => {
+        if (!drag || drag.touch) return;
+        const dx = e.clientX - drag.sx;
+        const dy = e.clientY - drag.sy;
+        if (!drag.moved && Math.hypot(dx, dy) < 6) return;
+        drag.moved = true;
+        const r = drag.canvas.getBoundingClientRect();
+        const c = getCam();
+        c.tx = drag.tx0 + (dx / r.width) * 100;
+        c.ty = drag.ty0 + (dy / r.height) * 100;
+        clampCam(c);
+        applyCamDom(drag.canvas, c);
+        suppressUntil = performance.now() + 200;
+    });
+    document.addEventListener('mouseup', () => {
+        if (drag && !drag.touch) drag = null;
+    });
+}
+
 export function setupProgress() {
+    bindCamGestures();
     actions({
         branch: (el, d) => {
             ui.sel.branch = d.b;
@@ -356,6 +546,22 @@ export function setupProgress() {
                     ui.sel.skNode = { b: WING_BY_ID[d.v].branches[0], k: 0 };
                 }
             }
+        },
+        skZoom: (el, d) => {
+            const c = getCam();
+            const canvas = el && el.closest && el.closest('.sk-canvas.mode-all');
+            if (d.d === 'toggle') {
+                if (c.z > 1.05) {
+                    c.z = 1;
+                    c.tx = 0;
+                    c.ty = 0;
+                } else {
+                    zoomCam(c, 1.85, 0, 0);
+                }
+            } else {
+                zoomCam(c, c.z + Number(d.d || 0), 0, 0);
+            }
+            applyCamDom(canvas, c);
         },
         skPick: (el, d) => {
             ui.sel.skNode = { b: d.b, k: +d.k };
