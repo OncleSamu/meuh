@@ -21,7 +21,7 @@ import { RARE, ORDER_MAX, ORDER_REFILL, ORDER_TRASH_WAIT, TRAIN_STAY, TRAIN_AWAY
 import { BALANCE } from '../data/progress.js';
 import { netOpen, transOpen } from './port.js';
 import { storyOk, projectDone, projectOpen, projectLeft } from './story.js';
-import { hasMachine, recipeUnlocked } from './workshop.js';
+import { recipeUnlocked } from './workshop.js';
 import { extraOrders, presentVillagers, housePay, studPay } from './home.js';
 import { stayOf, workFx } from './estate.js';
 import { masteryMult } from './mastery.js';
@@ -41,35 +41,57 @@ import { ecoLvl } from '../core/state.js';
 import { eldersMult } from './family.js';
 import { metierOrderPay, metierTransportPay, metierPick, clientOrder } from './metier.js';
 
-// Ce que la ferme sait produire en ce moment (ingrédients compris)
-export function questPool() {
+// 1.175 : pré-calcul O(1) des machines, animaux, ruches et contrées pour accélérer questPool() et ensureQuests()
+function makeCanProduce() {
     const memo = {};
+    const treeMemo = {};
+    const machSet = new Set(state.machines.map(m => m.type));
+    const prodSet = new Set();
+    for (const a of state.animals) {
+        const d = ANIMALS[a.type];
+        if (d) prodSet.add(d.prodId);
+    }
+    const net = netOpen();
+    const trans = transOpen();
+    const gh = !!(state.greenhouse && state.greenhouse.built);
+    const isl = islandOpen();
+    const oas = oasisOpen();
+    const nrd = nordOpen();
+    const asi = asieOpen();
+    let hasHoney;
+    const honeyOk = () =>
+        hasHoney !== undefined
+            ? hasHoney
+            : (hasHoney = state.grid.some(p => p.deco === 'hive') || Object.values(state.apiary || {}).some(a => a && a.hives > 0));
+    const treeOk = id => (id in treeMemo ? treeMemo[id] : (treeMemo[id] = livingTrees(id) > 0));
+
     const can = (id, depth = 0) => {
         if (id in memo) return memo[id];
         const i = ITEMS[id];
         let ok = false;
         if (!i || i.exotic || depth > 4) ok = false;
-        else if (i.sea) ok = netOpen() && id !== 'lobster';
-        else if (id === 'alpineMilk') ok = transOpen();
-        else if (id === 'honey')
-            ok = state.grid.some(p => p.deco === 'hive') || Object.values(state.apiary || {}).some(a => a && a.hives > 0); // 1.94 : les ruchers des contrées aussi
+        else if (i.sea) ok = net && id !== 'lobster';
+        else if (id === 'alpineMilk') ok = trans;
+        else if (id === 'honey') ok = honeyOk();
         else if (i.type === 'crop')
-            ok =
-                lvOk(i) &&
-                storyOk(i) &&
-                (!i.ghOnly || !!(state.greenhouse && state.greenhouse.built)) &&
-                (i.asie ? asieOpen() : i.nord ? nordOpen() : i.oasis ? oasisOpen() : !i.island || islandOpen());
-        else if (i.type === 'tree') ok = livingTrees(i.id) > 0;
-        else if (i.type === 'product') ok = state.animals.some(a => ANIMALS[a.type].prodId === i.id);
+            ok = lvOk(i) && storyOk(i) && (!i.ghOnly || gh) && (i.asie ? asi : i.nord ? nrd : i.oasis ? oas : !i.island || isl);
+        else if (i.type === 'tree') ok = treeOk(i.id);
+        else if (i.type === 'product') ok = prodSet.has(i.id);
         else if (i.type === 'fish') ok = fishOrderOk(id);
         // 1.104.1 : les boîtes de la Maison (bois, lingots, tissu) : demandées dès qu'on a l'emballerie
-        else if (i.box) ok = hasMachine(RECIPES[id].machine) && recipeUnlocked(id);
+        else if (i.box) ok = machSet.has(RECIPES[id].machine) && recipeUnlocked(id);
         else if (i.type === 'artisan') {
             const r = RECIPES[id];
-            ok = !!r && !r.fete && !r.holiday && hasMachine(r.machine) && recipeUnlocked(id) && Object.keys(r.ing).every(k => can(k, depth + 1));
+            ok = !!r && !r.fete && !r.holiday && machSet.has(r.machine) && recipeUnlocked(id) && Object.keys(r.ing).every(k => can(k, depth + 1));
         }
         return (memo[id] = ok);
     };
+    return can;
+}
+
+// Ce que la ferme sait produire en ce moment (ingrédients compris)
+export function questPool() {
+    const can = makeCanProduce();
     return Object.values(ITEMS).filter(i => i.type !== 'fish' && can(i.id));
 }
 
@@ -165,9 +187,9 @@ export function ensureQuests() {
     }
     // une commande devenue impossible (arbre arraché, ruche retirée…) est remplacée sans attendre
     if (state.quests.some(isOpen)) {
-        const ok = new Set(questPool().map(i => i.id));
+        const can = makeCanProduce();
         state.quests.forEach((q, i) => {
-            if (isOpen(q) && q.items.some(x => !ok.has(x.id))) {
+            if (isOpen(q) && q.items.some(x => ITEMS[x.id]?.type === 'fish' || !can(x.id))) {
                 state.quests[i] = emptyOrder(0);
                 changed = true;
             }

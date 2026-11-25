@@ -495,9 +495,48 @@ function bindCamGestures() {
         { passive: false },
     );
 
+    let lastTap = 0;
     document.addEventListener('touchend', e => {
+        if (e.touches.length === 0 && e.changedTouches.length === 1 && !pinch && (!drag || !drag.moved)) {
+            const canvas = canvasOf(e.target);
+            if (canvas && !e.target.closest('.sk-node, .sk-wtag, .sk-zctl')) {
+                const tNow = performance.now();
+                if (tNow - lastTap < 300) {
+                    const t = e.changedTouches[0];
+                    const [fx, fy] = focalOf(canvas, t.clientX, t.clientY);
+                    const c = getCam();
+                    if (c.z > 1.15) {
+                        c.z = 1;
+                        c.tx = 0;
+                        c.ty = 0;
+                    } else {
+                        zoomCam(c, 1.85, fx, fy);
+                    }
+                    applyCamDom(canvas, c);
+                    lastTap = 0;
+                } else {
+                    lastTap = tNow;
+                }
+            }
+        }
         if (e.touches.length < 2) pinch = null;
         if (e.touches.length === 0) drag = null;
+    });
+
+    // Double-clic souris sur le fond de la constellation
+    document.addEventListener('dblclick', e => {
+        const canvas = canvasOf(e.target);
+        if (!canvas || e.target.closest('.sk-node, .sk-wtag, .sk-zctl')) return;
+        const [fx, fy] = focalOf(canvas, e.clientX, e.clientY);
+        const c = getCam();
+        if (c.z > 1.15) {
+            c.z = 1;
+            c.tx = 0;
+            c.ty = 0;
+        } else {
+            zoomCam(c, 1.85, fx, fy);
+        }
+        applyCamDom(canvas, c);
     });
 
     // Glissement souris sur ordinateur quand zoomé

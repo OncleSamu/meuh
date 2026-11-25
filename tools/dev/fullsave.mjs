@@ -126,7 +126,7 @@ for (const m of Object.values(MACHINES)) if ((m.reqLvl || 1) <= 60 && !state.mac
 state.money = 5e10;
 for (const k of Object.keys(ITEMS)) state.inventory[k] = Math.max(state.inventory[k] || 0, G.inBarn(k) ? 25 : ITEMS[k].type === 'material' || ITEMS[k].type === 'rare' ? 5000 : 200);
 const once = ['buildGreenhouse', 'buildKiln', 'buildNoria', 'buyDog'];
-const many = ['buyGhPlot', 'buyIslandPlot', 'buyOasisCell', 'buyNordCell', 'buyPasture', 'buyRod', 'buyTrap', 'buySlot', 'buyShelf', 'buyUp', 'buyExp'];
+const many = ['buyGhPlot', 'buyIslandPlot', 'buyOasisCell', 'buyNordCell', 'buyAsieCell', 'buyPasture', 'buyRod', 'buyTrap', 'buySlot', 'buyShelf', 'buyExp'];
 const done = {};
 for (const f of [...once, ...many]) {
     let n = 0;

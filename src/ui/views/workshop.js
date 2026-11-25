@@ -49,13 +49,20 @@ const MFILTERS = [
     ['busy', 'En marche'],
     ['idle', 'À l’arrêt'],
 ];
+function machineMatches(m, q) {
+    if (!q) return true;
+    const d = MACHINES[m.type];
+    if (d && matchQ(q, d.name)) return true;
+    return Object.values(RECIPES).some(r => r.machine === m.type && G.recipeUnlocked(r.id) && matchQ(q, ITEMS[r.id]?.name || ''));
+}
 function machineList() {
     const f = ui.sel.mfilter || 'all',
+        q = queryOf('workshop'),
         rank = { ready: 0, busy: 1, idle: 2 },
         t = now();
     return state.machines
         .map((m, i) => [m, i])
-        .filter(([m]) => isProdMachine(m) && (f === 'all' || mState(m) === f))
+        .filter(([m]) => isProdMachine(m) && (f === 'all' || mState(m) === f) && machineMatches(m, q))
         .sort(([a, i], [b, j]) => rank[mState(a)] - rank[mState(b)] || (t - (a.used || 0) > WEEK) - (t - (b.used || 0) > WEEK) || i - j);
 }
 function machineFilter() {
@@ -69,6 +76,7 @@ function machineFilter() {
 function renderWorkshop(el) {
     const prod = state.machines.filter(isProdMachine);
     const any = prod.some(m => G.outCount(m) > 0);
+    const list = machineList();
     blocks(el, [
         [
             'top',
@@ -84,12 +92,11 @@ function renderWorkshop(el) {
                   : '',
         ],
         ['pin', pinBar()],
+        ['wsearch', prod.length >= 12 ? searchBox('workshop', 'Chercher un atelier ou une recette…') : ''],
         [
             'grid',
             prod.length
-                ? `${machineFilter()}<div class="mgrid">${machineList()
-                      .map(([m, i]) => tile(m, i))
-                      .join('')}</div>`
+                ? `${machineFilter()}${list.length ? `<div class="mgrid">${list.map(([m, i]) => tile(m, i)).join('')}</div>` : empty('Aucun atelier ne correspond à ce filtre.')}`
                 : empty('Aucune machine pour le moment. Le moulin s’achète au marché dès le niveau 3.'),
         ],
         ['hint', tip15('Touchez une machine pour choisir ses recettes. Chacune enchaîne plusieurs lots, même différents.')],

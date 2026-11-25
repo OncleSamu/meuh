@@ -214,13 +214,16 @@ function farmyardHtml() {
     const l = G.houseLvl(),
         n = G.houseNext();
     const can = G.houseCanUp() || G.handCanUp() || G.teamCanUp();
-    const sub = G.handLvl()
+    const teamHired = G.teamHiredCount(),
+        teamActive = G.teamActiveCount();
+    const baseSub = G.handLvl()
         ? (G.handPaused() ? 'Théo est en pause' : G.handMessage()) || `Théo s’occupe de ${FARMHAND[G.handLvl()].plots} parcelles`
         : n && state.level < n.lvl
           ? `Agrandissement au niveau ${n.lvl}`
           : n
             ? 'Touchez pour agrandir la maison'
             : 'La plus belle maison du canton';
+    const sub = teamHired >= 2 ? `${baseSub} · ${teamActive ? `Équipe ${teamActive}/${teamHired}` : 'Équipe en pause'}` : baseSub;
     if (G.houseCanUp()) G.tip('house');
     const paused = G.handPaused();
     const handBtn = G.handLvl()

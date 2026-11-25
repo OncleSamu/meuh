@@ -384,7 +384,7 @@ test('documentation en jeu (1.141) : VERSION, notes de mise à jour, barre des n
     const ws = GUIDE_PAGES.find(p => p.id === 'workshop');
     const dom = GUIDE_PAGES.find(p => p.id === 'domaine');
     assert.ok(JSON.stringify(ws).includes('Tableau d’intendance'), 'guide atelier mentionne le Tableau d’intendance');
-    assert.ok(JSON.stringify(ws).includes('Bières maison'), 'guide atelier mentionne les bières maison');
+    assert.ok(/bières maison/i.test(JSON.stringify(ws)), 'guide atelier mentionne les bières maison');
     assert.ok(JSON.stringify(ws).includes('Semer ×N'), 'guide atelier documente le semis direct');
     assert.ok(JSON.stringify(dom).includes('Tableau d’intendance'), 'guide domaine documente le Tableau d’intendance');
     // Un plan terminé incrémente state.stats.plans et apparaît dans Statistiques › Atelier

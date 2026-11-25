@@ -350,9 +350,15 @@ export function refresh(fromTick = false) {
     renderSubnav();
     const path = currentPath();
     const aside = asideShown();
-    $$('.view').forEach(v =>
-        v.classList.toggle('on', v.dataset.tab === 'aside' ? aside : (v.dataset.tab === ui.tab && !aside) || (view.wide && v.dataset.tab === 'farm')),
-    );
+    $$('.view').forEach(v => {
+        const on = v.dataset.tab === 'aside' ? aside : (v.dataset.tab === ui.tab && !aside) || (view.wide && v.dataset.tab === 'farm');
+        v.classList.toggle('on', on);
+        // 1.175 : libère le DOM des onglets inactifs pour garder le navigateur fluide sur mobile
+        if (!on && v.firstChild) {
+            v.innerHTML = '';
+            v._html = '';
+        }
+    });
     if (VIEWS[path]) VIEWS[path](viewEl(path));
     // grand écran : le champ toujours à gauche
     if (view.wide && (ui.tab !== 'farm' || aside)) VIEWS['farm/field'](byId('view-farm'));

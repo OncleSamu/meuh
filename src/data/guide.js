@@ -1117,7 +1117,7 @@ export const GUIDE_PAGES = [
                 b: [
                     'En 1 clic partout : le bouton « Planifier » sur une commande, le train, le cargo ou Mamie calcule toute la chaîne, stock déduit.',
                     'Semer ce qui manque : « Semer ×N » plante directement vos cultures manquantes sur vos parcelles libres.',
-                    'Multi-plats (niv. 25) : le Tableau d’intendance (Domaine) combine jusqu’à 8 plats ou bières dans un même plan.',
+                    'Multi-plats (niv. 25) : le Tableau d’intendance (Domaine) combine jusqu’à 8 plats ou bières maison dans un même plan.',
                 ],
             },
             {

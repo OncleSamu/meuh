@@ -74,7 +74,7 @@ export function renderMineDeep(el) {
                 <div class="actions wrap ap-acts">
                     ${btn(snackLeft ? `Recharger (${MINE_DEEP.snackCoal} charb. · ${snackLeft})` : 'Recharge demain', { act: 'mineSnack', kind: snackLeft && energy < maxE && coal >= MINE_DEEP.snackCoal ? 'gold' : '', size: 'sm', icon: ['ui', 'mineLantern'], disabled: !snackLeft || energy >= maxE || coal < MINE_DEEP.snackCoal })}
                     ${btn('Améliorer', { act: 'open', data: { sheet: 'mineUps' }, size: 'sm', icon: ['ui', 'pickaxe'] })}
-                    ${btn(msBadge ? `Musée (${msBadge})` : 'Musée', { act: 'open', data: { sheet: 'museum' }, kind: msBadge ? 'green' : '', size: 'sm', icon: ['ui', 'museum'] })}
+                    ${btn(msBadge ? `Musée · ${msBadge} prêt${msBadge > 1 ? 's' : ''}` : 'Musée', { act: 'open', data: { sheet: 'museum' }, kind: msBadge ? 'green' : '', size: 'sm', icon: ['ui', 'museum'] })}
                 </div>
             </div>
         </div>

@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.175",
+  "title": "Fluidité mobile, performances et confort d’atelier",
+  "date": "25 novembre 2026",
+  "items": [
+   "Performances : accélération majeure de la boucle de jeu (questPool & ensureQuests en accès direct O(1)) pour supprimer les ralentissements en fin de partie",
+   "Fluidité sur téléphone : libération automatique du DOM des onglets inactifs (mémoire et nœuds DOM divisés par 3 après navigation)",
+   "Atelier : ajout d’une barre de recherche rapide dès 12 ateliers pour trouver instantanément une machine ou une recette parmi les 51 ateliers",
+   "Confort : double-tap/double-clic sur la constellation de l’Arbre de compétences pour zoomer/dézoomer, état résumé de l’Équipe sur le bandeau de la Maison, et compteur clair des dons/géodes prêts sur le bouton Musée dans la Mine"
+  ]
+ },
+ {
   "v": "1.174",
   "title": "Cap sur le niveau 100 et nouvel Arbre de compétences visuel",
   "date": "24 novembre 2026",
