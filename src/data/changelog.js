@@ -1,6 +1,15 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.179.1",
+  "title": "Décor panoramique des collines et transition douce de l’horizon",
+  "date": "25 novembre 2026",
+  "items": [
+   "Arrière-plan : remplacement du panorama étroit des collines par une scène panoramique 1600×220 qui ne se coupe plus à l’horizontale sur les grands écrans et écrans larges (16:9, 21:9, 32:9)",
+   "Transition ciel-collines : ajout d’une crête lointaine brumeuse, d’une brume d’horizon dégradée sans bord franc et d’un halo atmosphérique doux qui s’adaptent aux saisons et à la nuit"
+  ]
+ },
+ {
   "v": "1.179",
   "title": "Comice agricole 2.0 : Pouvoirs des bêtes Primées, Express quotidiens, Parade & Boutique",
   "date": "25 novembre 2026",

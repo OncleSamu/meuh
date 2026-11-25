@@ -22,24 +22,34 @@
             <div class="cloud c1"><span></span></div>
             <div class="cloud c2"><span></span></div>
             <div class="cloud c3"><span></span></div>
-            <svg id="hills" viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+            <svg id="hills" viewBox="0 0 1600 220" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <linearGradient id="hillMist" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#fff8dc" stop-opacity="0.32" />
-                        <stop offset="100%" stop-color="#fff8dc" stop-opacity="0" />
+                        <stop offset="0%" stop-color="#fff8e2" stop-opacity="0" />
+                        <stop offset="46%" stop-color="#fff8e2" stop-opacity="0.34" />
+                        <stop offset="76%" stop-color="#fff8e2" stop-opacity="0.14" />
+                        <stop offset="100%" stop-color="#fff8e2" stop-opacity="0" />
                     </linearGradient>
                 </defs>
-                <rect class="hill-mist" x="0" y="34" width="400" height="72" fill="url(#hillMist)" />
+                <!-- crête lointaine brumeuse pour une transition douce entre le ciel et les collines -->
+                <path
+                    class="h0"
+                    d="M-20 88 C80 62 190 64 300 80 C410 96 510 66 620 74 C730 82 830 62 940 76 C1050 90 1160 64 1280 74 C1400 84 1500 66 1620 80 L1620 230 L-20 230Z"
+                    fill="#c2e8a8"
+                    opacity=".48"
+                />
+                <rect class="hill-mist" x="0" y="0" width="1600" height="148" fill="url(#hillMist)" />
                 <path
                     class="h1"
-                    d="M0 90 C60 55 120 60 180 80 C240 100 300 50 400 70 L400 200 L0 200Z"
+                    d="M-20 112 C70 94 170 92 260 108 C340 122 415 92 495 96 C585 100 660 122 745 114 C825 106 885 90 970 100 C1045 108 1095 92 1175 100 C1260 108 1345 120 1440 102 C1510 90 1565 96 1620 106 L1620 230 L-20 230Z"
                     fill="#a9dc84"
                     stroke="#3a2618"
-                    stroke-width="2.5"
+                    stroke-opacity=".55"
+                    stroke-width="2.2"
                     vector-effect="non-scaling-stroke"
                 />
                 <!-- petit moulin lointain sur la colline ouest -->
-                <g transform="translate(36 44) scale(.56)" opacity=".92">
+                <g transform="translate(456 68) scale(.56)" opacity=".92">
                     <path d="M18 54 L22 22 L38 22 L42 54Z" fill="#f3dcb0" stroke="#3a2618" stroke-width="3.2" stroke-linejoin="round" />
                     <path d="M18 24 L30 10 L42 24Z" fill="#b44938" stroke="#3a2618" stroke-width="3.2" stroke-linejoin="round" />
                     <rect x="27" y="38" width="6" height="16" rx="2" fill="#8b5a2b" stroke="#3a2618" stroke-width="2.4" />
@@ -54,42 +64,67 @@
                     <circle cx="30" cy="20" r="3.4" fill="#6b4222" stroke="#3a2618" stroke-width="2" />
                 </g>
                 <!-- grange rouge & petit chemin sur la colline est -->
-                <path d="M306 72 Q292 86 274 96 Q256 106 244 122" fill="none" stroke="#e9cfa0" stroke-width="5" stroke-linecap="round" opacity=".78" />
-                <g transform="translate(286 38) scale(.62)">
+                <path d="M1113 99 Q1100 112 1084 122 Q1068 132 1056 146" fill="none" stroke="#e9cfa0" stroke-width="5" stroke-linecap="round" opacity=".78" />
+                <g transform="translate(1094 64) scale(.60)">
                     <path id="hill-barn" d="M8 58 L8 28 L32 10 L56 28 L56 58Z" fill="#c8453a" stroke="#3a2618" stroke-width="3.5" stroke-linejoin="round" />
                     <path d="M4 30 L32 8 L60 30" fill="none" stroke="#f7f3ea" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
                     <rect x="22" y="36" width="20" height="22" fill="#f7f3ea" stroke="#3a2618" stroke-width="3" />
                     <path d="M22 36 L42 58 M42 36 L22 58" stroke="#3a2618" stroke-width="2.5" />
                 </g>
+                <!-- arbres panoramiques sur les crêtes lointaines -->
                 <g stroke="#3a2618" stroke-width="2.2">
-                    <rect x="66" y="70" width="5" height="14" fill="#8b5a2b" />
-                    <circle class="tree-top" cx="68" cy="62" r="13" fill="#6cc04a" />
-                    <rect x="96" y="64" width="5" height="16" fill="#8b5a2b" />
-                    <circle class="tree-top" cx="98" cy="55" r="11" fill="#7fcf4c" />
-                    <rect x="342" y="60" width="4.5" height="14" fill="#8b5a2b" />
-                    <ellipse class="tree-top" cx="344" cy="50" rx="7.5" ry="15" fill="#59a848" />
-                    <rect x="357" y="65" width="4.5" height="12" fill="#8b5a2b" />
-                    <circle class="tree-top" cx="359" cy="58" r="10" fill="#7fcf4c" />
+                    <rect x="173" y="88" width="5" height="14" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="175" cy="80" r="12.5" fill="#6cc04a" />
+                    <rect x="199" y="92" width="4.5" height="12" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="201" cy="85" r="10" fill="#7fcf4c" />
+                    <rect x="518" y="86" width="5" height="15" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="520" cy="78" r="12.5" fill="#6cc04a" />
+                    <rect x="546" y="89" width="5" height="14" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="548" cy="81" r="10.5" fill="#7fcf4c" />
+                    <rect x="866" y="86" width="5" height="15" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="868" cy="78" r="11.5" fill="#6cc04a" />
+                    <rect x="892" y="88" width="4.5" height="13" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="894" cy="80" r="9.5" fill="#7fcf4c" />
+                    <rect x="1154" y="88" width="4.5" height="14" fill="#8b5a2b" />
+                    <ellipse class="tree-top" cx="1156" cy="78" rx="7.5" ry="14.5" fill="#59a848" />
+                    <rect x="1170" y="92" width="4.5" height="12" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="1172" cy="85" r="10" fill="#7fcf4c" />
+                    <rect x="1428" y="89" width="5" height="14" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="1430" cy="81" r="12" fill="#6cc04a" />
+                    <rect x="1456" y="86" width="4.5" height="14" fill="#8b5a2b" />
+                    <ellipse class="tree-top" cx="1458" cy="76" rx="7" ry="14" fill="#59a848" />
                 </g>
                 <path
                     class="h2"
-                    d="M0 125 C80 95 150 105 220 120 C290 135 340 105 400 112 L400 200 L0 200Z"
+                    d="M-20 146 C90 128 210 134 320 148 C430 162 540 132 660 138 C770 144 860 156 970 142 C1080 128 1190 136 1300 150 C1410 162 1510 134 1620 140 L1620 230 L-20 230Z"
                     fill="#82c95a"
                     stroke="#3a2618"
-                    stroke-width="2.5"
+                    stroke-opacity=".72"
+                    stroke-width="2.4"
                     vector-effect="non-scaling-stroke"
                 />
                 <g stroke="#3a2618" stroke-width="2" opacity=".92">
-                    <rect x="136" y="103" width="4.5" height="13" fill="#8b5a2b" />
-                    <circle class="tree-top" cx="138" cy="96" r="10.5" fill="#65b746" />
-                    <rect x="152" y="108" width="4" height="10" fill="#8b5a2b" />
-                    <circle class="tree-top" cx="154" cy="102" r="8" fill="#7fcf4c" />
+                    <rect x="328" y="137" width="4.5" height="13" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="330" cy="130" r="10" fill="#65b746" />
+                    <rect x="346" y="141" width="4" height="11" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="348" cy="135" r="8" fill="#7fcf4c" />
+                    <rect x="613" y="127" width="4.5" height="13" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="615" cy="120" r="10" fill="#65b746" />
+                    <rect x="758" y="133" width="4.5" height="13" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="760" cy="126" r="10.5" fill="#65b746" />
+                    <rect x="776" y="138" width="4" height="10" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="778" cy="132" r="8" fill="#7fcf4c" />
+                    <rect x="1273" y="136" width="4.5" height="13" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="1275" cy="129" r="10.5" fill="#65b746" />
+                    <rect x="1291" y="140" width="4" height="11" fill="#8b5a2b" />
+                    <circle class="tree-top" cx="1293" cy="134" r="8" fill="#7fcf4c" />
                 </g>
                 <path
                     class="h3"
-                    d="M0 160 C90 140 200 150 260 158 C320 166 360 150 400 152 L400 200 L0 200Z"
+                    d="M-20 180 C110 166 250 174 390 184 C530 194 670 170 810 176 C950 182 1090 192 1230 176 C1370 164 1500 174 1620 182 L1620 230 L-20 230Z"
                     fill="#6cc04a"
                     stroke="#3a2618"
+                    stroke-opacity=".82"
                     stroke-width="2.5"
                     vector-effect="non-scaling-stroke"
                 />
