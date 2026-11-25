@@ -102,7 +102,7 @@ function renderCritters(meadow = byId('pasture'), k = meadowPasture(), hold = ma
         const el = hold.els[i],
             d = ANIMALS[a.type];
         const adult = G.isAdult(a);
-        const sig = `${a.type}|${adult}|${a.g ? JSON.stringify(G.looksOf(a.g)) : ''}|${a.g && a.g.coat ? G.coatKey(a.g) : ''}|${a.type === 'horse' && !adult ? (G.growPct(a) < STUD.stages[0] ? 0 : 1) : ''}|${esc(a.name)}|${a.race || ''}|${a.love}|${a.star ? 1 : 0}|${G.isAway(a) ? 1 : 0}|${a.stack}|${a.food}|${mf}|${a.sick ? 1 : 0}`;
+        const sig = `${a.type}|${adult}|${a.g ? JSON.stringify(G.looksOf(a.g)) : ''}|${a.g && a.g.coat ? G.coatKey(a.g) : ''}|${a.type === 'horse' && !adult ? (G.growPct(a) < STUD.stages[0] ? 0 : 1) : ''}|${esc(a.name)}|${a.race || ''}|${a.prize || 0}|${a.love}|${a.star ? 1 : 0}|${G.isAway(a) ? 1 : 0}|${a.stack}|${a.food}|${mf}|${a.sick ? 1 : 0}`;
         if (el._sig === sig) return;
         el._sig = sig;
         el.classList.toggle('baby', !adult);
@@ -113,7 +113,7 @@ function renderCritters(meadow = byId('pasture'), k = meadowPasture(), hold = ma
         el.classList.toggle('busy', G.isBusy(a));
         el.querySelector('.critter-body').innerHTML = bodyOf(a);
         el.querySelector('.critter-name').innerHTML =
-            `${a.star ? ico(['ui', 'star']) : ''}${a.race ? ico(['ui', 'ribbon']) : ''}${a.love ? ico(['ui', 'heart']) : ''}${esc(a.name)}`;
+            `${a.prize ? ico(['ui', 'medalG']) : ''}${a.star ? ico(['ui', 'star']) : ''}${a.race ? ico(['ui', 'ribbon']) : ''}${a.love ? ico(['ui', 'heart']) : ''}${esc(a.name)}`;
         const bubble = el.querySelector('.bubble');
         let b = '';
         if (a.sick) b = ico(['ui', 'sick']);

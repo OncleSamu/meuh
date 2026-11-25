@@ -100,11 +100,95 @@ export const COMICE = {
     rivalBase: 22,
     rivalPerLvl: 0.9,
     rivalSpread: 8,
-    prizes: [0, 12000, 6000, 3000], // pièces par place (× le niveau, × 2 avec le grand hall)
+    prizes: [0, 12000, 6000, 3000], // pièces par place (× échelle niveau, × 2 avec le grand hall)
+    cocardes: [0, 8, 4, 2], // 1.179 : cocardes gagnées au Grand Comice de la semaine
     rep: [0, 6, 3, 1],
     brushTime: 10, // secondes de présentation
+    paradeMax: 10, // 1.179 : bonus max de la Parade du Jury (2e mini-jeu)
     jury: 1.5, // ce que le jury regarde surtout compte une fois et demie (1.45.2)
 };
+
+// 1.179 : Pouvoirs permanents d'une bête Primée au Comice (a.prize > 0)
+export const COMICE_PRIZE_FX = {
+    speed: 0.25, // +25 % vitesse de production pour la bête primée
+    qualChance: 0.18, // +18 % chance d'élever la qualité de ses produits d'un cran (jusqu'à Diamant)
+    auraPer: 0.1, // +10 % vitesse aux autres bêtes du même pré par bête primée
+    auraMax: 0.3, // plafond d'aura de pré (+30 %)
+    birthRare: 0.25, // +25 % chance de finition/robe rare sur ses petits (+1 trait garanti)
+};
+
+// 1.179 : Concours cantonal express (3 épreuves par jour, jugement immédiat)
+export const COMICE_EXPRESS = {
+    perDay: 3,
+    prizes: [0, 5000, 2800, 1400], // × échelle niveau (× 1,5 avec le grand hall)
+    cocardes: [0, 3, 2, 1],
+    rep: [0, 2, 1, 0],
+    xp: [0, 120, 70, 40],
+    prizeMinScore: 75, // 1re place avec ≥ 75/100 décerne aussi la plaque « Primée » !
+    themes: [
+        { id: 'genes', name: 'Lignée d’élite', desc: 'Le jury scrute la génétique et la vigueur.' },
+        { id: 'beauty', name: 'Concours d’élégance', desc: 'Robe, motifs, finition et silhouette priment.' },
+        { id: 'hearts', name: 'Prix de complicité', desc: 'Les bêtes choyées et proches de l’éleveur brillent.' },
+        { id: 'show', name: 'Grand prix d’allure', desc: 'La présentation et la Parade devant le jury décident.' },
+    ],
+};
+
+// 1.179 : Préparation tactique pour viser le critère préféré du jury (+6 pts avant ×1,5 du jury)
+export const COMICE_PREPS = {
+    groom: { id: 'groom', name: 'Toilettage de gala', stat: 'beauty', bonus: 6, cost: 600, desc: '+6 Beauté (amplifié si le jury aime la beauté)' },
+    ration: { id: 'ration', name: 'Ration championne', stat: 'genes', bonus: 6, cost: 600, desc: '+6 Gènes & vigueur (amplifié si le jury aime les gènes)' },
+    bond: { id: 'bond', name: 'Séance complicité', stat: 'hearts', bonus: 6, cost: 600, desc: '+6 Affection (amplifié si le jury aime l’affection)' },
+};
+export const COMICE_PREP_IDS = Object.keys(COMICE_PREPS);
+
+// 1.179 : Paliers permanents du Palmarès (conservés au Prestige)
+export const COMICE_PALM_TIERS = [
+    { need: 3, name: 'Élevage remarqué', speed: 0.05, qual: 0, rare: 0, coins: 15000, rubans: 0, desc: '+5 % vitesse de tous les animaux' },
+    { need: 6, name: 'Fierté du canton', speed: 0.05, qual: 0.08, rare: 0, coins: 40000, rubans: 0, desc: '+5 % vitesse · +8 % qualité des produits animaux' },
+    { need: 10, name: 'Élevage d’élite', speed: 0, qual: 0, rare: 0.1, coins: 90000, rubans: 1, desc: '+10 % robes rares aux naissances · +1 ruban' },
+    { need: 15, name: 'Maître sélectionneur', speed: 0.1, qual: 0.1, rare: 0, coins: 180000, rubans: 1, desc: '+10 % vitesse · +10 % qualité animale · +1 ruban' },
+    { need: 20, name: 'Légende du Comice', speed: 0.1, qual: 0, rare: 0.15, coins: 350000, rubans: 2, desc: '+10 % vitesse · +15 % robes rares · +2 rubans' },
+];
+
+// 1.179 : Boutique des Cocardes du Comice
+export const COMICE_SHOP = [
+    {
+        id: 'goldHay',
+        name: 'Foin d’or (4 h)',
+        cost: 4,
+        icon: ['item', 'feed'],
+        desc: '+35 % de vitesse de production sur tous vos prés pendant 4 h (cumulable).',
+    },
+    {
+        id: 'treat',
+        name: 'Friandise royale',
+        cost: 3,
+        icon: ['ui', 'heart'],
+        needBeast: true,
+        desc: 'Ajoute instantanément +1 cœur d’affection à la bête de votre choix (max 5).',
+    },
+    {
+        id: 'elixir',
+        name: 'Élixir de lignée',
+        cost: 6,
+        icon: ['ui', 'sparkle'],
+        desc: 'Prochaine naissance au pré : aucune régression, +1 trait garanti et robe/finition rare assurée.',
+    },
+    {
+        id: 'booster',
+        name: 'Booster MeuhCG',
+        cost: 5,
+        icon: ['ui', 'star'],
+        desc: 'Reçoit un booster MeuhCG gratuit (ou un coffret de matériaux rares avant le niv. 12).',
+    },
+    {
+        id: 'champ',
+        name: 'Bête de lignée championne',
+        cost: 12,
+        icon: ['ui', 'ribbon'],
+        desc: 'Accueille une bête adulte d’élite (+4 pts de gènes, robe & finition rares) dans un pré libre.',
+    },
+];
 // les noms des catégories
 export const COMICE_CAT = {
     chicken: 'Les poules',

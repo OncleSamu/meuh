@@ -13,6 +13,7 @@ import { inPasture, pastureFree, penOf, penKeys } from './pastures.js';
 import { crossGenomes, lineSnap, breeding, animalBase } from './genetics.js';
 import { addXp } from './player.js';
 import { tip } from './tips.js';
+import { applyComiceBirthBonus, comiceElixirCount } from './comice.js';
 
 export const birthsOpen = () => state.level >= BIRTHS.lvl;
 export const birthsOn = k => !!(penOf(k) && penOf(k).births);
@@ -85,9 +86,10 @@ function pickParent(list, not) {
     return pool[pool.length - 1];
 }
 
-// les gènes d'un petit né au pré : ceux des parents, sans mutation, et chaque bon gène a une chance sur deux de redescendre d'un point
-export function naturalGenome(a, b, type) {
+// les gènes d'un petit né au pré : ceux des parents, sans mutation, et chaque bon gène a une chance sur deux de redescendre d'un point (sauf Élixir de lignée)
+export function naturalGenome(a, b, type, noRegress = false) {
     const { g } = crossGenomes(a.g, b.g, 0);
+    if (noRegress) return g;
     const base = { type };
     for (const k in g.t) {
         const lo = animalBase(base, k);
@@ -100,7 +102,10 @@ function bornInPasture(k, type, list) {
     const a = pickParent(list),
         b = pickParent(list, a);
     const baby = newAnimal(type);
-    baby.g = a.g && b.g ? naturalGenome(a, b, type) : baby.g;
+    const hasElixir = comiceElixirCount() > 0;
+    baby.g = a.g && b.g ? naturalGenome(a, b, type, hasElixir) : baby.g;
+    // 1.179 : lignée d'élite des bêtes Primées, Palmarès Comice & Élixir de lignée
+    applyComiceBirthBonus(baby, a, b);
     baby.gen = Math.max(a.gen || 0, b.gen || 0) + 1;
     baby.parents = [a.name, b.name];
     baby.lin = [lineSnap(a, true), lineSnap(b, true)];

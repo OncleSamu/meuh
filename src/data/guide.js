@@ -976,14 +976,13 @@ export const GUIDE_PAGES = [
                 t: 'Chaque ferme voisine propose une bête de choix par jour, avec un gène au-dessus de la moyenne (deux avec trois cœurs d’amitié). Mise au pré avec les naissances allumées, elle transmet ses bons gènes aux petits : c’est le moyen d’améliorer son troupeau avant le labo.',
             },
             {
-                h: `Le Comice agricole (niveau ${COMICE.lvl}, Animaux › Comice)`,
+                h: `Le Comice agricole 2.0 (niveau ${COMICE.lvl}, Animaux › Comice)`,
                 b: [
-                    `Chaque semaine, ${COMICE.cats} catégories tirées parmi vos espèces (une de plus avec le grand hall). Les variétés ont leur propre concours, au labo : le concours du potager.`,
-                    'Dans chaque catégorie, le jury regarde surtout une chose (les gènes, la beauté, l’affection ou la présentation) : elle compte une fois et demie.',
-                    `Une bête par catégorie. La note sur 100 : gènes au-dessus de la moyenne de l’espèce ${COMICE.w.genes}, beauté (robe, motifs, cornes, toison, plumage) ${COMICE.w.beauty}, cœurs ${COMICE.w.hearts}, présentation ${COMICE.w.show}.`,
-                    `La présentation : brossez la bête ${COMICE.brushTime} secondes, de la tête vers la queue. Une fois par jour ; le meilleur brossage de la semaine compte.`,
-                    'Les quatre fermes voisines concourent aussi, avec une note qui grandit avec votre niveau. Résultats à la fin de la semaine.',
-                    'Premier prix : un ruban (deux la première fois pour une espèce), des pièces et la plaque « Primée » sur la bête, dont le prix double à la foire. Deuxième et troisième : des pièces.',
+                    'Concours express quotidiens : 3 épreuves par jour à jugement immédiat (Lignée d’élite, Concours d’élégance, Prix de complicité, Grand prix d’allure) pour gagner tout de suite pièces, réputation et Cocardes — une 1re place à ≥ 75/100 décerne même la plaque « Primée » !',
+                    `Grand Comice de la semaine : ${COMICE.cats} catégories (${COMICE.cats + 1} avec le grand hall) face aux 4 fermes voisines. Préparez vos bêtes avec le Brossage, la Parade du Jury (+10 pts bonus) et une Préparation tactique (+6 pts ciblés, amplifiés ×1,5 si c’est le critère préféré du jury).`,
+                    'Pouvoirs permanents d’une bête Primée : +25 % vitesse de production, +18 % chances d’élever la qualité de ses produits (jusqu’à Diamant), Aura de championne (+10 % vitesse aux autres bêtes du même pré, jusqu’à +30 %), lignée d’élite sur ses petits (+1 trait garanti et +25 % chances de robe rare) et prix doublé à la foire.',
+                    'Boutique des Cocardes : échangez vos Cocardes contre du Foin d’or (+35 % vitesse sur tous les prés 4 h), une Friandise royale (+1 cœur instantané), un Élixir de lignée (naissance sans régression + robe rare garantie), un Booster MeuhCG ou une bête de lignée championne.',
+                    'Palmarès à paliers (conservé au Prestige) : atteindre 3, 6, 10, 15 et 20 espèces primées débloque des bonus permanents sur tous vos animaux (vitesse, qualité, robes rares et rubans de Prestige).',
                 ],
             },
             {

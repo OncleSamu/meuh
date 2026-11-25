@@ -457,6 +457,7 @@ export function statsData() {
             (inc.brew || 0) +
             (inc.perfume || 0) +
             (inc.confiserie || 0) +
+            (inc.comice || 0) +
             (inc.counter || 0) +
             (inc.haras || 0) +
             (inc.camping || 0) +
@@ -471,6 +472,7 @@ export function statsData() {
         ['Brasserie', inc.brew || 0],
         ['Parfumerie', inc.perfume || 0],
         ['Confiserie', inc.confiserie || 0],
+        ['Comice agricole', inc.comice || 0],
         ['Comptoir', inc.counter || 0],
         ['Haras', inc.haras || 0],
         ['Camping', inc.camping || 0],
@@ -504,6 +506,8 @@ export function statsData() {
                 ['Produits des bêtes', n('collected'), ['item', 'egg']],
                 ['Croisements', n('crosses'), ['ui', 'heart']],
                 ['Concours gagnés', n('contestWins'), ['ui', 'podium']],
+                ['Premiers prix Comice', n('salonWins'), ['ui', 'medalG']],
+                ['Épreuves express Comice', n('comiceExpress'), ['ui', 'ribbon']],
                 // 1.92 : le haras
                 ['Concours du haras', (state.show && state.show.wins) || 0, ['ui', 'hCup2']],
                 ['Poulains nés', n('foals'), ['animal', 'horse']],

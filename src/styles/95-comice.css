@@ -1,0 +1,348 @@
+/* 1.179 : Styles Comice 2.0 (Express, Préparation tactique, Parade du Jury, Boutique & Palmarès) */
+
+.com2-coc {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: #fff4d6;
+    border: 2px solid #8a5628;
+    min-width: 68px;
+    flex: 0 0 auto;
+    line-height: 1.1;
+}
+
+.com2-coc .ico {
+    width: 18px;
+    height: 18px;
+}
+
+.com2-coc b {
+    font-size: 1rem;
+    color: var(--ink);
+}
+
+.com2-coc small {
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+}
+
+.com2-head-buff {
+    margin-top: 8px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: #eaf7d8;
+    border: 1.5px solid #5aa043;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #28591c;
+    text-align: center;
+}
+
+.com2-cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.com2-cats .pick-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.com2-cats .pick-chip svg {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+}
+
+.com2-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #d9483b;
+    display: inline-block;
+}
+
+.com2-exp {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.com2-exp.done {
+    opacity: 0.92;
+}
+
+.com2-exp.win {
+    background: #f2fae6;
+}
+
+.com2-exp-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.com2-ico {
+    width: 50px;
+    height: 50px;
+    flex: 0 0 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.com2-ico svg,
+.com2-ico .gl {
+    width: 100%;
+    height: 100%;
+}
+
+.com2-exp-btns,
+.com2-act-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.com2-preps {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1.5px dashed rgba(90, 56, 30, 0.25);
+    margin: 4px 0;
+}
+
+.com2-buffs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.com2-shop-row .card-side {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+.com2-powers .card-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.com2-plist {
+    margin: 8px 0 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.84rem;
+    color: var(--ink);
+}
+
+.com2-tiers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.com2-tier {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 2px solid rgba(90, 56, 30, 0.2);
+    background: #fffcf5;
+}
+
+.com2-tier.ready {
+    border-color: #c78b1e;
+    background: #fff6dc;
+}
+
+.com2-tier.done {
+    border-color: #5ca446;
+    background: #eef9e2;
+}
+
+.com2-tmain {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.com2-tmain b {
+    font-size: 0.88rem;
+}
+
+.com2-tmain small {
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+}
+
+.com2-tside {
+    flex: 0 0 auto;
+}
+
+/* ---------------- Modale Mini-jeu 2 : La Parade du Jury ---------------- */
+.com2-back {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    background: rgba(24, 14, 8, 0.72);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+}
+
+.com2-modal {
+    width: 100%;
+    max-width: 400px;
+    background: #fff9ef;
+    border: 2.5px solid #6e4420;
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    color: var(--ink);
+}
+
+.com2-mhead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.com2-mart {
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+}
+
+.com2-mart svg,
+.com2-mart .gl {
+    width: 100%;
+    height: 100%;
+}
+
+.com2-mhead b {
+    display: block;
+    font-size: 0.98rem;
+}
+
+.com2-mhead small {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+}
+
+.com2-pstage {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.com2-pcount {
+    text-align: center;
+    font-weight: 800;
+    font-size: 0.92rem;
+}
+
+.com2-track {
+    position: relative;
+    height: 44px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #ecdcc1, #f9f0df 50%, #ecdcc1);
+    border: 2.5px solid #5c381c;
+    overflow: hidden;
+    touch-action: none;
+    cursor: pointer;
+}
+
+.com2-goldzone {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: rgba(242, 185, 42, 0.55);
+    border-left: 2px dashed #8a5408;
+    border-right: 2px dashed #8a5408;
+}
+
+.com2-cursor {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    width: 14px;
+    margin-left: -7px;
+    border-radius: 99px;
+    background: #3d7d36;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #2a180c;
+}
+
+.com2-pips {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.com2-pips i {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #6e4420;
+    background: #efe3cf;
+}
+
+.com2-pips i.ok {
+    background: #4cb859;
+    border-color: #1f6b29;
+}
+
+.com2-pips i.mid {
+    background: #f0be3c;
+    border-color: #8c5c08;
+}
+
+.com2-pips i.miss {
+    background: #d95a50;
+    border-color: #701d16;
+}
+
+.com2-mfoot {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.com2-done {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+}
+
+.com2-done p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+}

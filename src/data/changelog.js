@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.179",
+  "title": "Comice agricole 2.0 : Pouvoirs des bêtes Primées, Express quotidiens, Parade & Boutique",
+  "date": "25 novembre 2026",
+  "items": [
+   "Vrais pouvoirs permanents pour les bêtes Primées au Comice (médaille visible au pré) : +25 % vitesse, +18 % qualité (Or → Diamant), Aura de championne (+10 % par championne aux autres bêtes du pré, jusqu’à +30 %) et lignée d’élite sur leurs petits (+1 trait garanti et +25 % robes rares)",
+   "Concours express quotidiens : 3 épreuves par jour à jugement immédiat (4 thèmes) rapportant pièces revalorisées, réputation, XP, Cocardes et plaque « Primée » dès 75/100 en 1re place",
+   "2e mini-jeu « La Parade du Jury » (rythme en 5 passages, jusqu’à +10 pts bonus) et Préparation tactique (+6 pts sur le critère ciblé, amplifié ×1,5 si le jury le préfère)",
+   "Boutique des Cocardes (Foin d’or +35 % 4 h, Friandise royale +1 cœur, Élixir de lignée, Booster MeuhCG, Bête championne d’élite) et Palmarès à 5 paliers permanents conservés au Prestige"
+  ]
+ },
+ {
   "v": "1.178.4",
   "title": "Correctif d’affichage des étoiles de fin de mini-jeu Confiserie",
   "date": "25 novembre 2026",
