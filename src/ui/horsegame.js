@@ -122,13 +122,14 @@ const introArt = (d, a, silks) =>
         : `<svg viewBox="0 0 80 80" class="spr">${d === 'endurance' ? endurancePose('walkA', ROBE) : horsePose(d === 'saut' ? 'jump1' : 'galB', { ...ROBE, rider: silks })}</svg>`;
 
 // le panneau d'ouverture : choisir de jouer ou de faire une séance rapide
-export function openHorseGame(uid, d, el, mode = null) {
+export function openHorseGame(uid, d, el, mode = null, extraCtx = null) {
     const a = G.horseByUid(uid);
     if (!a || !a.box || !G.hasGame(d)) return;
     if (!G.canTrain(a)) return void (mode ? G.startPass(uid) : G.trainHorse(uid, d, el)); // fatigué, en randonnée ou au plafond : le message s'affiche
     const me = ++run;
     ROBE = robeOf(a);
-    const { o, stage, q } = shell(`${DISC[d].name} · ${a.name}`);
+    const title = mode === 'express' && extraCtx && extraCtx.evName ? `${extraCtx.evName} · ${a.name}` : `${DISC[d].name} · ${a.name}`;
+    const { o, stage, q } = shell(title);
     const close = () => {
         run++;
         o.remove();
@@ -137,11 +138,20 @@ export function openHorseGame(uid, d, el, mode = null) {
     q('#hgquit').onclick = close;
     const cap = G.aptCap(a, d),
         pts = G.aptOf(a, d);
+    const prep = mode ? G.prepOf(uid) : null;
+    const prepInfo = prep ? `<p class="hg-sub">Échauffement actif : <b>${prep.name}</b> (+${G.prepBonus(uid, d)} pts note).</p>` : '';
     stage.innerHTML = `<div class="hg-intro">
         <div class="hg-hart">${introArt(d, a, silksOf(a))}</div>
         <p class="hg-rules">${RULES[d]}</p>
         <p class="hg-sub hg-apt">${aptHelp(d, pts)}</p>
-        <p class="hg-sub">${mode ? `Passage de concours : ${DISC[d].name.toLowerCase()} ${pts}/${cap} · il coûte 1 de forme et compte pour la note.` : `${DISC[d].name} : ${pts}/${cap} · la séance coûte 1 de forme dès le départ.`}</p>
+        ${prepInfo}
+        <p class="hg-sub">${
+            mode === 'express'
+                ? `Concours Express : ${DISC[d].name.toLowerCase()} ${pts}/${cap} · jugement immédiat à l’arrivée (coûte 1 de forme).`
+                : mode
+                  ? `Passage de concours : ${DISC[d].name.toLowerCase()} ${pts}/${cap} · il coûte 1 de forme et compte pour la note.`
+                  : `${DISC[d].name} : ${pts}/${cap} · la séance coûte 1 de forme dès le départ.`
+        }</p>
         <div class="hg-btns"><button class="btn gold" id="hgplay">Jouer</button>${mode ? '' : '<button class="btn" id="hgquick">Séance rapide</button>'}</div>
         ${mode ? '' : '<small>Séance rapide : un score moyen, sans jouer.</small>'}</div>`;
     if (!mode)
@@ -151,7 +161,16 @@ export function openHorseGame(uid, d, el, mode = null) {
         };
     q('#hgplay').onclick = () => {
         if (me !== run) return;
-        if (!(mode === 'show' ? G.startShowPass(uid) : mode === 'gp' ? G.startGpPass(uid, d) : G.startTrain(uid, d))) return close();
+        const ok =
+            mode === 'express'
+                ? G.startExpressPass(uid, extraCtx.idx)
+                : mode === 'show'
+                  ? G.startShowPass(uid)
+                  : mode === 'gp'
+                    ? G.startGpPass(uid, d)
+                    : G.startTrain(uid, d);
+        if (!ok) return close();
+        const miniBoost = mode ? G.prepMiniBonus(uid) : 0;
         ({ galop: playGalop, saut: playSaut, dressage: playDressage, endurance: playRaid })[d]({
             a,
             d,
@@ -163,7 +182,8 @@ export function openHorseGame(uid, d, el, mode = null) {
             el,
             uid,
             mode,
-            k: G.aptOf(a, d) / 100,
+            extraCtx,
+            k: clamp(G.aptOf(a, d) / 100 + miniBoost, 0, 1),
         });
     };
 }
@@ -181,16 +201,55 @@ function finish(c, score, lines, extra = {}) {
               ? `<b class="hg-rec">Premier record : ${Math.round(score * 100)}/100</b>`
               : `Record de ${c.a.name} : ${Math.round(rec.prev.s * 100)}/100`,
     ];
-    const note = c.mode === 'show' ? G.endShowPass(c.uid, score) : c.mode === 'gp' ? G.endGpPass(c.uid, c.d, score) : null;
+    let exOut = null;
+    let note = null;
+    if (c.mode === 'express' && c.extraCtx) {
+        exOut = G.finishExpress(c.uid, c.extraCtx.idx, c.extraCtx.div, score, c.el);
+    } else if (c.mode === 'show') {
+        note = G.endShowPass(c.uid, score);
+    } else if (c.mode === 'gp') {
+        note = G.endGpPass(c.uid, c.d, score);
+    }
     const gain = c.mode ? 0 : G.endTrain(c.uid, c.d, c.el, score);
-    sfx(n >= 2 ? 'level' : 'pop');
+    sfx(n >= 2 || (exOut && exOut.place === 1) ? 'level' : 'pop');
     buzz(18);
     const star = on =>
         `<svg viewBox="0 0 40 40"><path d="M20 3l5 11 12 1.5-9 8 2.5 12L20 29l-10.5 6.5L12 23.5l-9-8L15 14z" fill="${on ? '#f4b92e' : '#efe3c8'}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/></svg>`;
+    let gainHtml;
+    if (exOut) {
+        const placeTxt = `${exOut.place}${exOut.place === 1 ? 'er' : 'e'} / ${exOut.list.length}`;
+        const extras = [
+            exOut.coins ? `+${exOut.coins.toLocaleString('fr-FR')} pièces` : '',
+            exOut.spurs ? `+${exOut.spurs} Éperon${exOut.spurs > 1 ? 's' : ''}` : '',
+            exOut.rosette ? (exOut.crush ? '+2 rosettes' : '+1 rosette') : '',
+        ]
+            .filter(Boolean)
+            .join(' · ');
+        gainHtml = `<b>${placeTxt}</b> · Note ${exOut.note.toFixed(1).replace('.', ',')}${extras ? `<br>${extras}` : ''}`;
+    } else if (c.mode) {
+        gainHtml = `Passage : ${Math.round(score * 100)}/100 · note du concours ${note ? note.note.toFixed(1).replace('.', ',') : ''}`;
+    } else {
+        gainHtml = gain
+            ? `+${gain} point${gain > 1 ? 's' : ''} ${/^[aeiouéè]/i.test(DISC[c.d].name) ? 'd’' : 'de '}${DISC[c.d].name.toLowerCase()}`
+            : 'Plafond atteint';
+    }
+    const headTitle = exOut
+        ? exOut.place === 1
+            ? 'Victoire !'
+            : exOut.place <= 3
+              ? `Podium : ${exOut.place}e place`
+              : `${exOut.place}e place`
+        : n >= 3
+          ? 'Magnifique !'
+          : n === 2
+            ? 'Belle séance'
+            : n === 1
+              ? 'Séance honnête'
+              : 'On fera mieux';
     const box = document.createElement('div');
     box.className = 'hg-result';
-    box.innerHTML = `<h3>${n >= 3 ? 'Magnifique !' : n === 2 ? 'Belle séance' : n === 1 ? 'Séance honnête' : 'On fera mieux'}</h3><div class="hg-stars">${[1, 2, 3].map(i => star(i <= n)).join('')}</div>
-        ${lines.map(l => `<p>${l}</p>`).join('')}<p class="hg-gain">${c.mode ? `Passage : ${Math.round(score * 100)}/100 · note du concours ${note ? note.note.toFixed(1).replace('.', ',') : ''}` : gain ? `+${gain} point${gain > 1 ? 's' : ''} ${/^[aeiouéè]/i.test(DISC[c.d].name) ? 'd’' : 'de '}${DISC[c.d].name.toLowerCase()}` : 'Plafond atteint'}</p><button class="btn gold" id="hgdone">Terminer</button>`;
+    box.innerHTML = `<h3>${headTitle}</h3><div class="hg-stars">${[1, 2, 3].map(i => star(i <= n)).join('')}</div>
+        ${lines.map(l => `<p>${l}</p>`).join('')}<p class="hg-gain">${gainHtml}</p><button class="btn gold" id="hgdone">Terminer</button>`;
     c.stage.appendChild(box);
     c.q('#hgdone').onclick = c.close;
 }

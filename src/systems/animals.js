@@ -39,6 +39,7 @@ import { asieBeastMult } from './asie.js';
 import { kidFx } from './family.js';
 import { pastureHoney, addHoney } from './honey.js';
 import { comiceAnimalMult, comiceQualityBoost } from './comice.js';
+import { showHorseAnimalMult, showHorseQualityBoost } from './showfx.js';
 
 export const maxFood = () => MAX_FOOD + rank('trough') * 2 + troughBonus();
 export const isAdult = a => a.adult !== false;
@@ -54,7 +55,8 @@ export const animalMult = a =>
     nordBeastMult(a) *
     asieBeastMult(a) *
     kidFx('animals') * // 1.124 : un enfant de la famille aide aux bêtes
-    comiceAnimalMult(a); // 1.179 : bête primée, aura de championne, Palmarès et Foin d'or
+    comiceAnimalMult(a) * // 1.179 : bête primée, aura de championne, Palmarès et Foin d'or
+    showHorseAnimalMult(a); // 1.180 : cheval titré et Palmarès hippique
 export const animalTime = a => ANIMALS[a.type].time / (speedMult() * animalMult(a) * masterySpeed(ANIMALS[a.type].prodId));
 export const growLeft = a => Math.max(0, (GROW[a.type] - (a.age || 0)) / (rank('nursery') ? 2 : 1) / speedMult());
 export const growPct = a => Math.min(1, (a.age || 0) / GROW[a.type]);
@@ -124,8 +126,8 @@ export function collectAnimal(a) {
     state.inventory[d.prodId] += qty;
     // 1.82 : la page Élevage du livre
     collect('a_' + d.prodId);
-    // de bons gènes (+ bête primée & Palmarès Comice) donnent des produits de qualité
-    const q = comiceQualityBoost(a, ascend(d.prodId, animalQuality(a)));
+    // de bons gènes (+ bête primée, Palmarès Comice & cheval titré) donnent des produits de qualité
+    const q = showHorseQualityBoost(a, comiceQualityBoost(a, ascend(d.prodId, animalQuality(a))));
     if (q) addQuality(d.prodId, q, qty);
     // 1.63 : le lait d'une race fixée garde sa race (pour les fromages de race)
     if (a.race && state.genetics && state.genetics.races[a.race]) harvestVariety(raceProd(a.race, d.prodId), qty, q);

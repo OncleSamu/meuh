@@ -70,6 +70,31 @@ export function doPrestige(challenge, theme) {
                   cats: [],
               }
             : null,
+        // 1.180 : les Concours hippiques gardent palmarès, victoires, rosettes, éperons et élixirs ; les épreuves en cours repartent
+        show: state.show
+            ? {
+                  rose: (state.show.rose || [0, 0, 0, 0, 0]).slice(),
+                  cups: state.show.cups || 0,
+                  wins: state.show.wins || 0,
+                  titles: {},
+                  div: 0,
+                  entries: [],
+                  gp: null,
+                  last: null,
+                  lastAll: null,
+                  gpDone: state.show.gpDone || 0,
+                  spurs: state.show.spurs || 0,
+                  palmClaimed: state.show.palmClaimed || {},
+                  goldOatsUntil: 0,
+                  elixirs: state.show.elixirs || 0,
+                  preps: {},
+                  express: [],
+                  deco1: !!state.show.deco1,
+                  deco2: !!state.show.deco2,
+                  deco3: !!state.show.deco3,
+                  deco4: !!state.show.deco4,
+              }
+            : null,
         // les grands défis gardent leurs trophées ; le défi en cours, le mini-défi et l'offre sont mis de côté
         defis: state.defis ? { ...state.defis, cur: null, mini: null, offer: null } : null,
         night: state.night,

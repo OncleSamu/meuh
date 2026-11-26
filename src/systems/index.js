@@ -22,6 +22,7 @@ export * from './holidays.js';
 export * from './haras.js';
 export * from './horsegames.js';
 export * from './show.js';
+export * from './showfx.js';
 export * from './coat.js';
 export * from './stud.js';
 export * from './companions.js';

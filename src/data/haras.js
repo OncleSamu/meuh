@@ -236,3 +236,197 @@ export const STUD = {
     defaultName: 'Les Quatre Vents', // 1.45 : le nom de tout l'élevage (avant : « Haras des Quatre Vents »)
     stages: [0.5], // le poulain devient jeune à la moitié de sa croissance
 };
+
+// 1.180 : Concours hippiques 2.0 — pouvoirs des chevaux titrés, épreuves express, échauffement, boutique & palmarès
+export const SHOW_TITLE_FX = {
+    formMult: 0.8, // -20 % temps de récupération de forme dès 1 titre
+    crinSpeed: 0.25, // +25 % vitesse de production de crin
+    crinQual: 0.15, // +15 % chance qualité supérieure sur le crin
+    randoExtra: 1, // +1 trouvaille garantie au retour de randonnée
+    randoQtyMult: 1.5, // +50 % quantité par trouvaille de randonnée
+    champWins: 3, // seuil « Grand Champion »
+    auraTrain: 0.12, // +12 % gains d'entraînement par Grand Champion aux boxes
+    auraForm: 0.1, // -10 % temps de forme par Grand Champion aux boxes
+    auraMax: 3, // cumulable jusqu'à 3 Grands Champions (+36 % train / -30 % forme)
+    foalApt: 8, // +8 pts d'aptitude offerts au poulain par parent titré
+    foalGene: 1, // +1 sur le gène de spécialité du poulain si un parent est Grand Champion
+};
+
+export const SHOW_EXPRESS = {
+    perDay: 3,
+    purseMult: 0.65,
+    places: [1, 0.55, 0.3],
+    spurs: [3, 2, 1],
+    xp: [45, 30, 18],
+    themes: [
+        { id: 'sprint', disc: 'galop', name: 'Prix de la Ligne Droite', sub: 'Piste rapide : les pointes de vitesse font la différence.' },
+        { id: 'barres', disc: 'saut', name: 'Défi des Barres', sub: 'Parcours technique à enchaîner sans faute.' },
+        { id: 'manege', disc: 'dressage', name: 'Reprise de Gala', sub: 'Souplesse et figures propres devant les juges.' },
+        { id: 'cretes', disc: 'endurance', name: 'Raid des Crêtes', sub: 'Trois terrains variés, gestion fine du pouls.' },
+        { id: 'haies', disc: 'saut', name: 'Grand Prix des Haies', sub: 'Obstacles enchaînés : régularité récompensée.' },
+        { id: 'foulee', disc: 'galop', name: 'Derby de la Vallée', sub: 'Virages serrés et sprint final devant les tribunes.' },
+    ],
+};
+
+export const SHOW_PREPS = [
+    {
+        id: 'oat',
+        name: 'Picotin d’avoine',
+        item: 'oat',
+        qty: 2,
+        coins: 450,
+        icon: ['item', 'oat'],
+        bonus: 5,
+        prefDiscs: ['galop', 'endurance'],
+        prefBonus: 8,
+        miniBoost: 0.06,
+        desc: '+5 pts note (+8 en Galop ou Endurance).',
+    },
+    {
+        id: 'groom',
+        name: 'Pansage de gala',
+        item: 'apple',
+        qty: 2,
+        coins: 450,
+        icon: ['ui', 'hBrosse'],
+        bonus: 5,
+        prefDiscs: ['dressage'],
+        prefBonus: 8,
+        miniBoost: 0.06,
+        desc: '+5 pts note (+8 en Dressage).',
+    },
+    {
+        id: 'shoe',
+        name: 'Réglage des fers',
+        item: 'nail',
+        qty: 2,
+        coins: 550,
+        icon: ['item', 'shoeIron'],
+        bonus: 5,
+        prefDiscs: ['saut', 'galop'],
+        prefBonus: 8,
+        miniBoost: 0.06,
+        desc: '+5 pts note (+8 en Saut ou Galop).',
+    },
+    {
+        id: 'recon',
+        name: 'Reconnaissance',
+        item: null,
+        qty: 0,
+        coins: 200,
+        icon: ['ui', 'hEcusson'],
+        bonus: 4,
+        prefDiscs: [],
+        prefBonus: 4,
+        miniBoost: 0.12,
+        desc: '+4 pts note dans toute discipline et mini-jeu plus tolérant.',
+    },
+];
+
+export const SHOW_SHOP = [
+    {
+        id: 'goldOats',
+        name: 'Avoine dorée (4 h)',
+        cost: 4,
+        icon: ['item', 'oat'],
+        desc: 'Forme régénérée 2× plus vite et +35 % gains d’entraînement aux écuries pendant 4 h.',
+    },
+    {
+        id: 'fullCare',
+        name: 'Soin complet des boxes',
+        cost: 3,
+        icon: ['ui', 'hForme'],
+        desc: 'Restaure instantanément 5/5 de forme et ajoute +1 cœur à tous les chevaux logés.',
+    },
+    {
+        id: 'manual',
+        name: 'Manuel de maître écuyer',
+        cost: 6,
+        icon: ['ui', 'hDressage'],
+        needHorse: true,
+        desc: 'Ajoute immédiatement +6 points d’aptitude dans la spécialité (ou discipline) du cheval choisi.',
+    },
+    {
+        id: 'elixir',
+        name: 'Élixir de galop',
+        cost: 8,
+        icon: ['ui', 'sparkle'],
+        desc: 'Prochaine naissance de poulain : +1 gène de discipline garanti et +25 % de chance de robe ou marque rare.',
+    },
+    {
+        id: 'booster',
+        name: 'Pack Prestige & MeuhCG',
+        cost: 5,
+        icon: ['ui', 'ribbon'],
+        desc: 'Reçoit +1 booster MeuhCG gratuit et +1 ruban de Prestige.',
+    },
+];
+
+export const SHOW_PALM_TIERS = [
+    {
+        id: 't1',
+        need: 3,
+        name: 'Cavalier de Club',
+        train: 0.1,
+        purse: 0,
+        form: 0,
+        crin: 0,
+        note: 0,
+        rubans: 1,
+        spurs: 3,
+        desc: '+10 % gains d’entraînement au haras.',
+    },
+    {
+        id: 't2',
+        need: 8,
+        name: 'Maître de Manège',
+        train: 0,
+        purse: 0.1,
+        form: 0.1,
+        crin: 0,
+        note: 0,
+        rubans: 2,
+        spurs: 5,
+        desc: '+10 % bourses & saillies, -10 % temps de forme.',
+    },
+    {
+        id: 't3',
+        need: 18,
+        name: 'Écuyer d’Élite',
+        train: 0,
+        purse: 0,
+        form: 0,
+        crin: 0.15,
+        note: 2,
+        rubans: 3,
+        spurs: 8,
+        desc: '+15 % vitesse du crin et +2 pts sur toutes les notes de concours.',
+    },
+    {
+        id: 't4',
+        need: 35,
+        name: 'Grand Prix de la Vallée',
+        train: 0.15,
+        purse: 0.15,
+        form: 0,
+        crin: 0,
+        note: 0,
+        rubans: 5,
+        spurs: 12,
+        desc: '+15 % entraînement et +15 % bourses & saillies.',
+    },
+    {
+        id: 't5',
+        need: 60,
+        name: 'Légende des Haras',
+        train: 0.2,
+        purse: 0.2,
+        form: 0.15,
+        crin: 0.2,
+        note: 4,
+        rubans: 8,
+        spurs: 20,
+        desc: '+20 % entraînement/bourses/saillies/crin, -15 % temps de forme et +4 pts de note.',
+    },
+];
+

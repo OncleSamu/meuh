@@ -4,13 +4,14 @@ import { state } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { fmt } from '../core/format.js';
 import { emit, toast, sfx, buzz } from '../core/bus.js';
-import { STUD, COAT, DISC } from '../data/haras.js';
+import { STUD, COAT, DISC, DISCIPLINES, SHOW_TITLE_FX } from '../data/haras.js';
 import { earn, addXp } from './player.js';
 import { placeAnimal } from './pastures.js';
-import { ensureHaras, harasOpen, horses, horseByUid, rec, onRando, aptCap } from './haras.js';
+import { ensureHaras, harasOpen, horses, horseByUid, rec, onRando, aptCap, aptOf } from './haras.js';
 import { coatOf } from './coat.js';
 import { tip } from './tips.js';
 import { ecoLvl } from '../core/state.js';
+import { showStudBonus, isTitledHorse, isGrandChampHorse, showElixirCount } from './showfx.js';
 
 const dayNo = () => Math.floor((now() / 60000 - new Date(now()).getTimezoneOffset()) / 1440);
 export function ensureStud() {
@@ -102,7 +103,7 @@ export function retire(uid) {
 // une saillie vaut plus quand le champion a beaucoup gagné
 export const studIncome = a => {
     const wins = a && state.show && state.show.titles ? state.show.titles[a.uid] || 0 : 0;
-    return Math.round((STUD.income * (1 + ecoLvl() / 60) * (1 + Math.min(STUD.incomeWinMax, wins * STUD.incomeWin))) / 10) * 10;
+    return Math.round((STUD.income * (1 + ecoLvl() / 60) * (1 + Math.min(STUD.incomeWinMax, wins * STUD.incomeWin)) * showStudBonus()) / 10) * 10;
 };
 export function studTick() {
     if (!state.haras || !state.haras.stud) return false;
@@ -136,6 +137,47 @@ export const robesAll = () => Object.keys(COAT.robes).length;
 export const marksAll = () => Object.keys(COAT.marks).length;
 
 // ---------------- la naissance d'un poulain ----------------
+function boostHorseTrait(baby, gKey, delta = 1) {
+    const pair = baby && baby.g && baby.g.t && baby.g.t[gKey];
+    if (!Array.isArray(pair) || pair.length !== 2 || !Array.isArray(pair[0]) || !Array.isArray(pair[1])) return false;
+    const before = Math.max(pair[0][0], pair[1][0]);
+    if (before >= 5) return false;
+    pair[0] = [Math.min(5, pair[0][0] + delta), pair[0][1]];
+    pair[1] = [Math.min(5, pair[1][0] + delta), pair[1][1]];
+    return true;
+}
+
+export function applyShowFoalBonus(baby, a, b) {
+    if (!baby) return false;
+    const r = rec(baby);
+    let boosted = false;
+    for (const p of [a, b]) {
+        if (!p || !isTitledHorse(p)) continue;
+        const pr = rec(p);
+        const disc = pr.spec && DISC[pr.spec] ? pr.spec : DISCIPLINES.reduce((best, d) => (aptOf(p, d.id) > aptOf(p, best) ? d.id : best), 'galop');
+        r.pts[disc] = Math.min(aptCap(baby, disc), (r.pts[disc] || 0) + SHOW_TITLE_FX.foalApt);
+        if (isGrandChampHorse(p)) {
+            boostHorseTrait(baby, DISC[disc].gene, SHOW_TITLE_FX.foalGene);
+        }
+        boosted = true;
+    }
+    if (showElixirCount() > 0 && baby.g) {
+        state.show.elixirs--;
+        const genes = DISCIPLINES.map(d => d.gene);
+        for (const gKey of genes) {
+            if (boostHorseTrait(baby, gKey, 1)) break;
+        }
+        if (baby.g.coat && Math.random() < 0.25) {
+            const rareKeys = ['Cr', 'G', 'pie', 'appaloosa'];
+            const pick = rareKeys[Math.floor(Math.random() * rareKeys.length)];
+            if (COAT.freq[pick] !== undefined) baby.g.coat[pick] = [1, baby.g.coat[pick] ? baby.g.coat[pick][1] : 0];
+        }
+        toast(`Élixir de galop actif sur la naissance de ${baby.name} !`, ['ui', 'sparkle']);
+        boosted = true;
+    }
+    return boosted;
+}
+
 export function studBorn(baby, a, b) {
     state.stats.foals = (state.stats.foals || 0) + 1;
     baby.sire = a.uid;
@@ -151,6 +193,7 @@ export function studBorn(baby, a, b) {
             r.heir.push(p.name);
         }
     }
+    applyShowFoalBonus(baby, a, b);
     ensureStud().foals++;
     const c = coatOf(baby.g);
     if (c) baby.coatName = COAT.robes[c.robe];

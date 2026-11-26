@@ -61,15 +61,31 @@ function closedCard() {
         ${btn('Construire les écuries', { act: 'upStable', kind: 'green', wide: true, disabled: !G.stableCanUp(), icon: ['ui', 'hEcuries'] })}</div>`;
 }
 
+function stableTitleBadge(a) {
+    const w = G.titlesOf(a.uid);
+    if (!w) return '';
+    if (G.isGrandChampHorse(a)) return `<span class="sh-badge champ">${ico(['ui', 'hCouronne'])}Champion · ${w}</span>`;
+    return `<span class="sh-badge titled">${ico(['ui', 'hCup2'])}Titré · ${w}</span>`;
+}
+
 function headCard() {
     const lv = G.stableLvl(),
         n = G.stableNext();
+    const aura = G.showStableAura();
+    const oatsMs = G.showGoldOatsLeftMs();
+    const buffs = [
+        aura.count ? `Aura championne (+${Math.round(aura.train * 100)} % entraînement, -${Math.round(aura.form * 100)} % temps forme)` : '',
+        oatsMs > 0 ? `Avoine dorée (${timer(Date.now() + oatsMs)})` : '',
+    ]
+        .filter(Boolean)
+        .join(' · ');
     const up = n
         ? `${costRow(G.costParts(n.cost))}${btn(`Agrandir : ${n.boxes} boxes`, { act: 'upStable', kind: 'green', size: 'sm', disabled: !G.stableCanUp() })}`
         : '<small>Les écuries sont au maximum.</small>';
     return `<div class="card hz-head"><div class="card-art hz-stable">${stableSvg(lv)}</div><div class="card-main">
         <div class="card-title">${STABLE_NAMES[lv]}</div>
         <div class="card-sub">${G.lodged().length}/${G.boxCount()} boxes occupés · niveau ${lv}/3</div>
+        ${buffs ? `<div class="card-sub hz-buff">${buffs}</div>` : ''}
         <div class="hz-up">${up}</div></div></div>`;
 }
 
@@ -129,7 +145,7 @@ function miniCard(a) {
     return `<div class="hz-card mini${G.onRando(a) ? ' away' : ''}" data-act="haOpen" data-uid="${a.uid}" role="button" aria-expanded="false">
         <div class="hz-art">${boxSvg(false)}${horseArt(a, r)}</div>
         <div class="hz-who">
-            <div class="hz-name"><b>${esc(a.name)}</b>${hearts(a.love || 0)}</div>
+            <div class="hz-name"><b>${esc(a.name)}</b>${hearts(a.love || 0)}${stableTitleBadge(a)}</div>
             <div class="hz-minif">${Array.from({ length: FORM.max }, (_, k) => `<i class="${k < f ? 'on' : ''}">${art('ui', 'hForme')}</i>`).join('')}${note ? `<small>${note}</small>` : ''}</div>
             <div class="hz-mbars">${bars}</div>
         </div><span class="hz-chev" aria-hidden="true">▾</span></div>`;
@@ -149,7 +165,7 @@ function horseCard(a) {
         <div class="hz-top">
             <div class="hz-art">${boxSvg(false)}${horseArt(a, r)}</div>
             <div class="hz-who">
-                <div class="hz-name"><b>${esc(a.name)}</b>${hearts(a.love || 0)}</div>
+                <div class="hz-name"><b>${esc(a.name)}</b>${hearts(a.love || 0)}${stableTitleBadge(a)}</div>
                 <div class="hz-forme">${formPips(a)}${ration}</div>
                 ${a.stack > 0 ? btn(`Ramasser le crin ×${a.stack}`, { act: 'haHair', data: { i }, kind: 'green', size: 'sm', icon: ['item', 'horsehair'] }) : ''}
             </div>

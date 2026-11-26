@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.180",
+  "title": "Concours hippiques 2.0 : Express quotidiens, Chevaux Titrés, Échauffement & Boutique",
+  "date": "26 novembre 2026",
+  "items": [
+   "Concours Express quotidiens : 3 épreuves hippiques par jour à jugement immédiat (mini-jeu complet ou Jules aux rênes) rapportant pièces, Éperons d’or, XP, rosettes de division et titres sans attendre lundi",
+   "Échauffement tactique avant le départ (Picotin d’avoine, Pansage de gala, Réglage des fers, Reconnaissance) : jusqu’à +8 pts sur la note et mini-jeu plus tolérant",
+   "Pouvoirs permanents des chevaux Titrés (badge aux Écuries : forme -20 % temps, crin +25 % vitesse & +15 % qualité, randonnées enrichies) et Aura d’écurie des Grands Champions (+12 % entraînement / -10 % temps de forme aux autres boxes, jusqu’à 3 champions, + hérédité aux poulains)",
+   "Boutique des Éperons d’or (Avoine dorée 4 h, Soin complet des boxes, Manuel de maître écuyer +6 pts, Élixir de galop, Pack Prestige & MeuhCG) et Palmarès Hippique à 5 paliers permanents conservés au Prestige"
+  ]
+ },
+ {
   "v": "1.179.1",
   "title": "Décor panoramique des collines et transition douce de l’horizon",
   "date": "25 novembre 2026",

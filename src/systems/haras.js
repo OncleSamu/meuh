@@ -11,6 +11,7 @@ import { addXp } from './player.js';
 import { rollRare } from './barn.js';
 import { hasCost, payCost } from './home.js';
 import { tip } from './tips.js';
+import { showFormMult, showTrainMult, showRandoBonus } from './showfx.js';
 
 export const harasOpen = () => state.level >= HARAS_LVL;
 
@@ -70,8 +71,8 @@ export function rec(a) {
 }
 
 // ---------------- la forme ----------------
-// 1.24.1 : la couverture d'hiver raccourcit le délai d'une pastille
-export const formEvery = a => FORM.every * (equippedItem(a, 'couv') ? EQUIP.items[equippedItem(a, 'couv')].recover : 1);
+// 1.24.1 : la couverture d'hiver raccourcit le délai d'une pastille ; 1.180 : chevaux titrés, aura, palmarès & avoine dorée
+export const formEvery = a => FORM.every * (equippedItem(a, 'couv') ? EQUIP.items[equippedItem(a, 'couv')].recover : 1) * showFormMult(a);
 export function formOf(a) {
     const r = rec(a);
     if (r.form < FORM.max) {
@@ -120,7 +121,7 @@ export function trainGain(a, d, score = TRAIN.easyScore) {
     const base = TRAIN.min + TRAIN.span * Math.max(0, Math.min(1, score));
     const near = pts / cap > TRAIN.slow ? Math.max(TRAIN.floor, 1 - ((pts / cap - TRAIN.slow) / (1 - TRAIN.slow)) * (1 - TRAIN.floor)) : 1;
     const ration = rationLeftMs(a) > 0 ? 1 + RATION.bonus : 1;
-    return Math.max(1, Math.round(base * near * ration * (1 + (a.love || 0) * TRAIN.love)));
+    return Math.max(1, Math.round(base * near * ration * (1 + (a.love || 0) * TRAIN.love) * showTrainMult(a)));
 }
 export function canTrain(a) {
     return !!a && a.box && !onRando(a) && formOf(a) >= TRAIN.cost;
@@ -245,11 +246,13 @@ export function collectRando(uid, at) {
     const a = horseByUid(uid);
     if (!a || !randoDone(a)) return null;
     const r = rec(a);
+    const rb = showRandoBonus(a);
     const qty = 1 + Math.floor(aptOf(a, 'endurance') / 40);
+    const draws = RANDO.draws + rb.extraDraws;
     const got = {};
-    for (let k = 0; k < RANDO.draws; k++) {
+    for (let k = 0; k < draws; k++) {
         const id = drawFind();
-        const n = 1 + Math.floor(Math.random() * qty);
+        const n = Math.max(1, Math.round((1 + Math.floor(Math.random() * qty)) * rb.qtyMult));
         got[id] = (got[id] || 0) + n;
     }
     Object.entries(got).forEach(([id, n]) => (state.inventory[id] = (state.inventory[id] || 0) + n));
