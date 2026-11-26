@@ -14,6 +14,7 @@ import { crossGenomes, lineSnap, breeding, animalBase } from './genetics.js';
 import { addXp } from './player.js';
 import { tip } from './tips.js';
 import { applyComiceBirthBonus, comiceElixirCount } from './comice.js';
+import { applyRefugeBirthBonus } from './refugefx.js';
 
 export const birthsOpen = () => state.level >= BIRTHS.lvl;
 export const birthsOn = k => !!(penOf(k) && penOf(k).births);
@@ -104,8 +105,9 @@ function bornInPasture(k, type, list) {
     const baby = newAnimal(type);
     const hasElixir = comiceElixirCount() > 0;
     baby.g = a.g && b.g ? naturalGenome(a, b, type, hasElixir) : baby.g;
-    // 1.179 : lignée d'élite des bêtes Primées, Palmarès Comice & Élixir de lignée
+    // 1.179 : lignée d'élite des bêtes Primées, Palmarès Comice & Élixir de lignée ; 1.181 : Baume d'élevage du Refuge
     applyComiceBirthBonus(baby, a, b);
+    applyRefugeBirthBonus(baby);
     baby.gen = Math.max(a.gen || 0, b.gen || 0) + 1;
     baby.parents = [a.name, b.name];
     baby.lin = [lineSnap(a, true), lineSnap(b, true)];

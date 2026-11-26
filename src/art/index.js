@@ -98,6 +98,7 @@ import './village/amis.js';
 import './village/salon.js';
 import './animaux/ration.js';
 import './animaux/seconds.js';
+import './refuge.js';
 import './retouches/produits-uniques.js';
 import './ajouts-152.js';
 import './tcg.js';

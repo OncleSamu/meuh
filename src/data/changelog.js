@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.181",
+  "title": "Le Refuge & Clinique Vétérinaire : faune sauvage, remèdes, mini-jeu de soins & adoptions",
+  "date": "26 novembre 2026",
+  "items": [
+   "Nouveau 4e volet dans Animaux (dès le niv. 18) : le Refuge & Clinique Vétérinaire (3 niveaux d’agrandissement de 2 à 4 lits) accueillant la faune sauvage blessée de la vallée et des animaux de ferme égarés",
+   "12 espèces sauvages illustrées (faon, hérisson, écureuil, chouette, renardeau, loutre, blaireau, tortue, cygne, marmotte, cigogne, lynx) dans le Carnet de la Faune (+1,5 % vitesse animaux par espèce découverte, jusqu’à +18 %, plus des Paniers de remerciement déposés par les espèces relâchées)",
+   "5 remèdes naturels préparés avec vos herbes, miels et récoltes (ou pharmacie) et nouveau mini-jeu tactile « L’Auscultation & Soin » (apaiser le rythme cardiaque + appliquer les soins, jusqu’à 3 étoiles et +50 % récompenses)",
+   "Animaux de ferme recueillis adoptables gratuitement après guérison (avec traits bonus et robe rare sur soin 3 étoiles) ou rendus au village (+2 Cœurs bonus), Boutique de Bienveillance (Sérum de vitalité 4 h, Trousse de tendresse, Appel de la forêt, Baume d’élevage rare, Pack Prestige & MeuhCG) et Palmarès Vétérinaire à 5 paliers permanents conservés au Prestige"
+  ]
+ },
+ {
   "v": "1.180",
   "title": "Concours hippiques 2.0 : Express quotidiens, Chevaux Titrés, Échauffement & Boutique",
   "date": "26 novembre 2026",

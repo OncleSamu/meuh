@@ -1,0 +1,399 @@
+/* 1.181 : Le Refuge & Clinique Vétérinaire (.rf-* et mini-jeu .vm-*) */
+
+.rf-top-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    margin: 2px 0 8px;
+}
+.rf-heart-chip {
+    background: #dff8d2;
+    border-color: #469134;
+    color: #1f5314;
+}
+.rf-buff {
+    background: #fff1bf;
+    border-color: #b87c18;
+    color: #5c3608;
+}
+.rf-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+.rf-head .card-art {
+    width: 52px;
+    flex: none;
+}
+.rf-up {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 6px;
+}
+.rf-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.rf-patient {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.rf-patient.ph-ready {
+    outline: 2.5px solid #57b848;
+}
+.rf-patient.ph-healed {
+    outline: 2.5px solid #f0b526;
+    background: #fffbe6;
+}
+.rf-pat-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.rf-pic {
+    width: 58px;
+    height: 58px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.58);
+    border: 2px solid var(--ink, #3a2618);
+    border-radius: 14px;
+    padding: 4px;
+}
+.rf-pic.sm {
+    width: 46px;
+    height: 46px;
+}
+.rf-pic > svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.rf-step {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.rf-acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.rf-acts .btn {
+    flex: 1 1 130px;
+}
+.rf-basket {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f0fde6;
+}
+.rf-basket .card-main {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Carnet de la Faune (12 espèces) */
+.rf-fauna-sum {
+    margin-bottom: 8px;
+}
+.rf-wild-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+}
+.rf-wild {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 8px 6px;
+    gap: 3px;
+}
+.rf-wild-pic {
+    width: 52px;
+    height: 52px;
+}
+.rf-wild-pic > svg {
+    width: 100%;
+    height: 100%;
+}
+.rf-wild.none {
+    opacity: 0.6;
+}
+.rf-wild.none .rf-wild-pic > svg {
+    filter: brightness(0) opacity(0.24);
+}
+.rf-wild-name {
+    font-size: 0.78rem;
+    font-weight: 900;
+    line-height: 1.15;
+}
+.rf-wild small {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+}
+.rf-hab {
+    opacity: 0.85;
+}
+
+/* Boutique & Palmarès */
+.rf-shop-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.rf-shop-card .card-art {
+    width: 44px;
+    flex: none;
+}
+.rf-shop-card .card-main {
+    flex: 1;
+    min-width: 0;
+}
+.rf-powers .card-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.rf-pow-list {
+    margin: 0;
+    padding-left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.8rem;
+    line-height: 1.3;
+}
+.rf-tier {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.rf-tier.ready {
+    outline: 2.5px solid #57b848;
+    background: #f0fde6;
+}
+.rf-tier-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.rf-tbar {
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(58, 38, 24, 0.14);
+    overflow: hidden;
+}
+.rf-tbar i {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #57b848, #f2b729);
+    border-radius: 999px;
+}
+
+/* Mini-jeu tactile L'Auscultation & Soin (.vm-*) */
+.vm-over {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(34, 22, 12, 0.72);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+}
+.vm-box {
+    width: 100%;
+    max-width: 400px;
+    background: #fff9ec;
+    border: 3px solid var(--ink, #3a2618);
+    border-radius: 22px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+}
+.vm-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: #e3f7d4;
+    border-bottom: 2.5px solid var(--ink, #3a2618);
+}
+.vm-top h2 {
+    margin: 0;
+    font-size: 1rem;
+}
+.vm-stage {
+    padding: 16px 14px;
+}
+.vm-intro,
+.vm-result,
+.vm-play {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+.vm-pic {
+    width: 96px;
+    height: 96px;
+    padding: 8px;
+    border-radius: 22px;
+    border: 2.5px solid var(--ink, #3a2618);
+    background: #f2fde9;
+}
+.vm-pic.sm {
+    width: 76px;
+    height: 76px;
+}
+.vm-pic > svg {
+    width: 100%;
+    height: 100%;
+}
+.vm-lead {
+    margin: 0;
+    font-size: 0.92rem;
+}
+.vm-sub {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    line-height: 1.35;
+}
+.vm-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-top: 4px;
+}
+.vm-hud {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 0.8rem;
+    font-weight: 900;
+}
+.vm-arena {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+.vm-ring-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+.vm-center-art {
+    width: 84px;
+    height: 84px;
+    position: relative;
+    z-index: 1;
+}
+.vm-center-art > svg {
+    width: 100%;
+    height: 100%;
+}
+.vm-tap {
+    width: 100%;
+}
+.vm-spot-board {
+    position: relative;
+    width: 260px;
+    height: 230px;
+    border-radius: 18px;
+    border: 2.5px solid var(--ink, #3a2618);
+    background: linear-gradient(180deg, #effce5, #fff8e4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.vm-board-art {
+    width: 120px;
+    height: 120px;
+    opacity: 0.9;
+}
+.vm-board-art > svg {
+    width: 100%;
+    height: 100%;
+}
+.vm-spot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 2.5px solid var(--ink, #3a2618);
+    background: #6cc04a;
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.82rem;
+    box-shadow: 0 4px 12px rgba(58, 38, 24, 0.25);
+    cursor: pointer;
+    touch-action: manipulation;
+}
+.vm-spot .ico {
+    width: 18px;
+    height: 18px;
+}
+.vm-stars {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+.vm-star {
+    width: 36px;
+    height: 36px;
+}
+
+/* Mode sombre */
+html.dark .rf-heart-chip {
+    background: rgba(87, 184, 72, 0.24);
+    color: #b7f298;
+}
+html.dark .rf-buff {
+    background: rgba(242, 183, 41, 0.24);
+    color: #ffe28a;
+}
+html.dark .rf-patient.ph-healed {
+    background: rgba(242, 183, 41, 0.14);
+}
+html.dark .rf-basket,
+html.dark .rf-tier.ready {
+    background: rgba(87, 184, 72, 0.16);
+}
+html.dark .rf-pic {
+    background: rgba(255, 255, 255, 0.1);
+}
+html.dark .vm-box {
+    background: #2b241d;
+    color: #f6efe2;
+}
+html.dark .vm-top {
+    background: #263b22;
+}
+html.dark .vm-pic,
+html.dark .vm-spot-board {
+    background: #362f26;
+}

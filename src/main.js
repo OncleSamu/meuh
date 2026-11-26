@@ -36,6 +36,7 @@ import { setupCave } from './ui/views/cave.js';
 import { setupChateau } from './ui/views/chateau.js';
 import { setupCup } from './ui/views/cup.js';
 import { setupComice } from './ui/views/comice.js';
+import { setupRefuge } from './ui/views/refuge.js';
 import { setupHerdbook } from './ui/sheets/herdbook.js';
 import { setupBrewery } from './ui/views/brewery.js';
 import { setupPerfume } from './ui/views/perfume.js';
@@ -118,6 +119,7 @@ function start() {
     setupChateau();
     setupCup();
     setupComice();
+    setupRefuge();
     setupHerdbook();
     setupBrewery();
     setupPerfume();
