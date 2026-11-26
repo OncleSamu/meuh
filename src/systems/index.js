@@ -23,8 +23,6 @@ export * from './haras.js';
 export * from './horsegames.js';
 export * from './show.js';
 export * from './showfx.js';
-export * from './refuge.js';
-export * from './refugefx.js';
 export * from './coat.js';
 export * from './stud.js';
 export * from './companions.js';

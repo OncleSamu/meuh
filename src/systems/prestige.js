@@ -95,25 +95,6 @@ export function doPrestige(challenge, theme) {
                   deco4: !!state.show.deco4,
               }
             : null,
-        // 1.181 : le Refuge garde niveau, carnet de la faune, cœurs, palmarès et baumes d'élevage ; patients & paniers repartent
-        refuge: state.refuge
-            ? {
-                  lvl: state.refuge.lvl || 1,
-                  hearts: state.refuge.hearts || 0,
-                  healed: state.refuge.healed || 0,
-                  released: state.refuge.released || 0,
-                  adopted: state.refuge.adopted || 0,
-                  seen: state.refuge.seen || {},
-                  palmClaimed: state.refuge.palmClaimed || {},
-                  breedBalms: state.refuge.breedBalms || 0,
-                  vitalityUntil: 0,
-                  patients: [],
-                  baskets: [],
-                  nextAt: 0,
-                  nextBasketAt: 0,
-                  uid: state.refuge.uid || 1,
-              }
-            : null,
         // les grands défis gardent leurs trophées ; le défi en cours, le mini-défi et l'offre sont mis de côté
         defis: state.defis ? { ...state.defis, cur: null, mini: null, offer: null } : null,
         night: state.night,

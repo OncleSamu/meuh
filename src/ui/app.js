@@ -16,7 +16,6 @@ import { CAVE_LVL } from '../data/cave.js';
 import { PERFUME_LVL } from '../data/perfume.js';
 import { CONF_LVL } from '../data/confiserie.js';
 import { HARAS_LVL } from '../data/haras.js';
-import { REFUGE_LVL } from '../data/refuge.js';
 import { CAMPING } from '../data/camping.js';
 import { COMICE } from '../data/elevage.js';
 import { MAX_LEVEL } from '../data/progress.js';
@@ -59,7 +58,6 @@ export const TABS = [
         lock: () => ANIMALS.chicken.reqLvl,
         subs: [
             ['pasture', 'Prés', ['animal', 'cow']],
-            ['refuge', 'Refuge', ['ui', 'refuge'], () => REFUGE_LVL],
             ['comice', 'Comice', ['ui', 'ribbon'], () => COMICE.lvl],
             ['haras', 'Haras', ['ui', 'hEcuries'], () => HARAS_LVL],
         ],
@@ -246,7 +244,6 @@ const HELP = {
     'village/camping': 'camping',
     'village/family': 'family',
     'animals/pasture': 'animals',
-    'animals/refuge': 'animals',
     'animals/haras': 'haras',
     'animals/comice': 'elevage',
     'machines/workshop': 'workshop',

@@ -19,7 +19,6 @@ import { rollRare } from './barn.js';
 import { owlHere } from './night.js';
 import { NIGHT } from '../data/night.js';
 import { talentFx } from './friends.js';
-import { refugeSickResist, refugeFreeCure } from './refugefx.js';
 
 export function scheduleIncident() {
     state.nextIncident = now() + INCIDENT_GAP[0] + Math.random() * (INCIDENT_GAP[1] - INCIDENT_GAP[0]);
@@ -59,7 +58,7 @@ export function startIncident(force) {
     if (farmShown() && crowSpots.length && !scared) kinds.push('crow', 'crow');
     if (state.level >= INCIDENT_LVL) {
         if (growing.length) kinds.push('aphids');
-        if (adults.length && Math.random() >= refugeSickResist()) kinds.push('sick');
+        if (adults.length) kinds.push('sick');
         if (questPool().length >= 2) kinds.push('express', 'express');
     }
     const type = force || pickRand(kinds);
@@ -146,8 +145,8 @@ export function treatPest(i, at) {
     return true;
 }
 
-// 1.70 : le talent de Victor ; 1.181 : Palier 2 du Refuge ou Sérum de vitalité = soins gratuits
-export const cureCost = () => (refugeFreeCure() ? 0 : Math.round(((40 + scaleLvl() * 15) * (1 - talentFx('cure'))) / 5) * 5);
+// 1.70 : le talent de Victor
+export const cureCost = () => Math.round(((40 + scaleLvl() * 15) * (1 - talentFx('cure'))) / 5) * 5;
 
 export function cureAnimal(i, at) {
     const a = state.animals[i];

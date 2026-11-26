@@ -67,7 +67,6 @@ import { pondTick, trapsReady } from './fishing.js';
 import { birthsTick, birthsTip } from './births.js';
 import { fairTick } from './fair.js';
 import { comiceTick } from './comice.js';
-import { refugeTick } from './refuge.js';
 import { festTick } from './brewfest.js';
 import { catTick } from './seedcat.js';
 import { familyTick } from './family.js';
@@ -365,7 +364,6 @@ function tickDeliveries() {
         birthsTip();
         if (fairTick()) changed = true;
         if (comiceTick()) changed = true;
-        if (refugeTick()) changed = true;
         if (herdbookTick()) changed = true;
         // 1.120 : concours de bière de la saison, catalogue de semences, millésime de l'année
         if (festTick()) changed = true;
