@@ -40,6 +40,7 @@
   .tab-btn.active { border-bottom-color: var(--primary, #3f7a44); color: var(--primary, #3f7a44); font-weight: 700; }
   .pill { border: 1px solid var(--border, #d9ccb4); background: var(--card, #ffffff); transition: all .12s; color: inherit; }
   .pill.active { background: var(--primary, #3f7a44); color: var(--primary-foreground, #ffffff); border-color: var(--primary, #3f7a44); }
+  .pill.active .muted { color: inherit; opacity: .85; }
   .spr-box svg { width: 100%; height: 100%; display: block; }
   .checker {
     background-image: linear-gradient(45deg, rgba(128,128,128,.08) 25%, transparent 25%),
@@ -394,6 +395,7 @@
               <button data-tab="products" class="tab-btn px-3 py-2 cursor-pointer">Produits &amp; Usines</button>
               <button data-tab="genetics" class="tab-btn px-3 py-2 cursor-pointer">Générateur Génétique</button>
               <button data-tab="brewery" class="tab-btn px-3 py-2 cursor-pointer">Brasserie d’Abbaye</button>
+              <button data-tab="confiserie" class="tab-btn px-3 py-2 cursor-pointer">Confiserie</button>
               <button data-tab="perfume" class="tab-btn px-3 py-2 cursor-pointer">Parfumerie</button>
               <button data-tab="people" class="tab-btn px-3 py-2 cursor-pointer">Personnages</button>
             </nav>
@@ -706,8 +708,56 @@ function renderMeadSvg(b) {
     + [0,1,2].map(k => k < (b.stars || 0) ? P(`M${26+k*6} 52 l1 2 2.2 .3 -1.6 1.5 .4 2.2 -2 -1 -2 1 .4 -2.2 -1.6 -1.5 2.2 -.3Z`, '#ffd23f', 0.8) : '').join('');
   return svgWrap(inner);
 }
+function renderCiderSvg(b) {
+  const def = (DATA.abbey.ciderBases && DATA.abbey.ciderBases[b.ciderKey || 'sweet']) || DATA.abbey.ciderBases.sweet;
+  const ings = b.ings || [];
+  const main = ings.length ? [...ings].sort((x, y) => y[1] - x[1])[0][0] : def.item;
+  const aged = !!b.aged;
+  const body = 'M27 7 L37 7 L38 19 Q48 25 48 35 L48 56 Q48 60 43 60 L21 60 Q16 60 16 56 L16 35 Q16 25 26 19Z';
+  const inner = SHADOW(32,61,16,2.5)
+    + P(body, aged ? '#2e4222' : def.glass)
+    + F('M17.5 34 Q32 30 46.5 34 L46.5 56 Q46.5 58.6 43 58.6 L21 58.6 Q17.5 58.6 17.5 56Z', def.color, 0.92)
+    + `<circle cx="24" cy="31" r="1.3" fill="#fffdf0" opacity="0.7"/><circle cx="38" cy="29" r="1.1" fill="#fffdf0" opacity="0.65"/><circle cx="32" cy="26" r="0.9" fill="#fffdf0" opacity="0.6"/>`
+    + F('M26.5 11 L37.5 11 L38 19 Q32 21 26 19Z', aged ? '#b88a32' : '#e6bc4a', 0.95)
+    + R(19, 34, 26, 19, 5, '#fffaf0', 1.6)
+    + L('M21 50 L43 50', 1.6, def.color)
+    + subItem(main, 24.5, 34.5, 15)
+    + (ings.length > 1 ? ings.slice(1, 3).map(([id], idx) => C(22 + idx * 20, 33.5, 3.8, '#fffaf0', 1.1) + subItem(id, 18.8 + idx * 20, 30.3, 6.4)).join('') : '')
+    + F('M19 29 L21.5 27 L21.5 55 L19 55Z', '#fff', 0.36)
+    + P(body, 'none')
+    + P('M26 7 Q26 1.5 32 1.5 Q38 1.5 38 7Z', '#d6a66a', 1.8)
+    + L('M27 5 L37 5 M29 2.5 L29 7 M35 2.5 L35 7', 1.1, aged ? '#8b5a2b' : '#b8861e')
+    + (aged ? L('M16 42 L48 42', 1.2, '#e0b960') : '')
+    + [0,1,2].map(k => k < (b.stars || 0) ? P(`M${26+k*6} 56.5 l1 2 2.2 .3 -1.6 1.5 .4 2.2 -2 -1 -2 1 .4 -2.2 -1.6 -1.5 2.2 -.3Z`, '#ffd23f', 0.8) : '').join('');
+  return svgWrap(inner);
+}
+function renderSakeSvg(b) {
+  const def = (DATA.abbey.sakeBases && DATA.abbey.sakeBases[b.sakeKey || 'junmai']) || DATA.abbey.sakeBases.junmai;
+  const ings = b.ings || [];
+  const main = ings.length ? [...ings].sort((x, y) => y[1] - x[1])[0][0] : 'rice';
+  const aged = !!b.aged;
+  const ceramic = aged ? '#3b2b22' : def.ceramic;
+  const body = 'M25 6 L39 6 L36 16 Q49 24 49 41 Q49 59 32 59 Q15 59 15 41 Q15 24 28 16Z';
+  const inner = SHADOW(32,61,17,2.5)
+    + P(body, ceramic)
+    + F('M16.5 31 Q32 28 47.5 31 L47.5 41 Q32 39 16.5 41Z', def.color, 0.92)
+    + HL(21, 35, 1.8, 9, 0, 0.35)
+    + R(21, 29, 22, 24, 3, '#fffaf0', 1.6)
+    + L('M23 31.5 L41 31.5 M23 50.5 L41 50.5', 1.3, '#c83e32')
+    + subItem(main, 24.5, 33, 15)
+    + (ings.length > 1 ? ings.slice(1, 3).map(([id], idx) => C(21 + idx * 22, 31, 3.8, '#fffaf0', 1.1) + subItem(id, 17.8 + idx * 22, 27.8, 6.4)).join('') : '')
+    + P(body, 'none')
+    + `<ellipse cx="32" cy="6" rx="7.2" ry="2.2" fill="#f5ecd4" stroke="${INK}" stroke-width="1.6"/>`
+    + L('M26.5 16.5 Q32 19 37.5 16.5', 2.6, '#c83e32')
+    + C(32, 18.2, 2.1, '#e6b84c', 1)
+    + (aged ? L('M16 44 Q32 47 48 44', 1.2, '#e0b960') : '')
+    + [0,1,2].map(k => k < (b.stars || 0) ? P(`M${26+k*6} 55.5 l1 2 2.2 .3 -1.6 1.5 .4 2.2 -2 -1 -2 1 .4 -2.2 -1.6 -1.5 2.2 -.3Z`, '#ffd23f', 0.8) : '').join('');
+  return svgWrap(inner);
+}
 function renderBeerSvg(b) {
   if (b.mead) return renderMeadSvg(b);
+  if (b.cider) return renderCiderSvg(b);
+  if (b.sake) return renderSakeSvg(b);
   const c = (DATA.abbey.malts[b.malt] || DATA.abbey.malts.maltBlond).color;
   const ings = b.ings || [];
   const main = ings.length ? [...ings].sort((x, y) => y[1] - x[1])[0][0] : 'barley';
@@ -732,9 +782,16 @@ function renderBeerSvg(b) {
 function evalBrew(mode, baseKey, hop, ings, barrelId) {
   const A = DATA.abbey;
   const mead = mode === 'mead';
+  const cider = mode === 'cider';
+  const sake = mode === 'sake';
+  const noHop = mead || cider || sake;
   const bd = mead
     ? { name: 'Hydromel', color: DATA.honeyCol[baseKey] || DATA.honeyCol.all, ...(A.meadBases[baseKey] || A.meadBases.all), mead: true, honey: baseKey }
-    : { ...(A.malts[baseKey] || A.malts.maltBlond), mead: false };
+    : cider
+      ? { ...(A.ciderBases[baseKey] || A.ciderBases.sweet), cider: true }
+      : sake
+        ? { ...(A.sakeBases[baseKey] || A.sakeBases.junmai), sake: true }
+        : { ...(A.malts[baseKey] || A.malts.maltBlond) };
   const ingFl = id => DATA.genetics.flavors[id] || A.brewExtra[id] || [0,0,0,0,0];
   const noteOf = v => v.indexOf(Math.max(...v));
   const det = k => (k === 0 ? 'le ' : 'l’') + A.notes[k];
@@ -742,7 +799,7 @@ function evalBrew(mode, baseKey, hop, ings, barrelId) {
   const honeyDe = h => (DATA.honeys[h] ? ' ' + DATA.honeys[h].name.replace(/^Miel /, '') : '');
 
   const profile = [...bd.taste];
-  profile[2] += mead ? 0 : hop;
+  profile[2] += noHop ? 0 : hop;
   for (const [id, d] of ings) ingFl(id).forEach((v, k) => (profile[k] += v * d));
 
   const reasons = [];
@@ -762,19 +819,25 @@ function evalBrew(mode, baseKey, hop, ings, barrelId) {
       score += pair;
     } else reasons.push(`Une seule note domine : ${A.notes[a]}.`);
 
-    const who = mead ? `L’hydromel${honeyDe(baseKey)}` : `Une ${bd.name.toLowerCase()}`;
+    const who = mead ? `L’hydromel${honeyDe(baseKey)}` : cider || sake ? `Le ${bd.name.toLowerCase()}` : `Une ${bd.name.toLowerCase()}`;
     if (!bd.likes.length) reasons.push(`${who} ${bd.text}.`);
     else if (bd.likes.includes(a)) { score += 1; reasons.push(`${who} ${bd.text}.`); }
-    else reasons.push(`${who} ${bd.text} : essayez ${mead ? 'un autre miel' : 'un autre malt'}.`);
+    else reasons.push(`${who} ${bd.text} : essayez ${mead ? 'un autre miel' : cider ? 'une autre base de verger' : sake ? 'un autre style de saké' : 'un autre malt'}.`);
 
-    const effHop = mead ? 0 : hop;
+    const effHop = noHop ? 0 : hop;
     if (effHop === 3 && a === 0) { score -= 1; reasons.push('Trop de houblon pour une bière douce.'); }
     if (effHop === 1 && (a === 2 || a === 3)) reasons.push('Un houblon plus fort irait bien à ce goût.');
     if (effHop === 3 && (a === 2 || a === 3)) { score += 1; reasons.push('Le houblon fort relève ce goût.'); }
 
     const bases = ings.map(([id]) => id);
-    classic = mead ? A.meadClassics.find(c => c.any.some(id => bases.includes(id))) : A.classics.find(c => c.ings.every(id => bases.includes(id)));
-    if (classic && !mead) {
+    classic = mead
+      ? A.meadClassics.find(c => c.any.some(id => bases.includes(id)))
+      : cider
+        ? A.ciderClassics.find(c => c.any.some(id => bases.includes(id)))
+        : sake
+          ? A.sakeClassics.find(c => c.any.some(id => bases.includes(id)))
+          : A.classics.find(c => c.ings.every(id => bases.includes(id)));
+    if (classic && !noHop) {
       reasons.push(classic.text);
       stars = Math.max(0, Math.min(3, score + 2));
     } else {
@@ -795,14 +858,24 @@ function evalBrew(mode, baseKey, hop, ings, barrelId) {
   const honeyMult = mead && DATA.honeys[baseKey] ? DATA.honeys[baseKey].mult : 1;
   const costMap = mead
     ? { honey: A.mead.honeyPerBrew }
-    : { [baseKey]: A.abbey.maltPerBrew, hop: hop * A.abbey.hopPerDose };
+    : cider
+      ? { ...(A.ciderBases[baseKey] || A.ciderBases.sweet).cost }
+      : sake
+        ? { ...(A.sakeBases[baseKey] || A.sakeBases.junmai).cost }
+        : { [baseKey]: A.abbey.maltPerBrew, hop: hop * A.abbey.hopPerDose };
   for (const [id, d] of ings) costMap[id] = (costMap[id] || 0) + d * A.abbey.ingPerDose;
   let totalCost = 0;
   for (const [id, n] of Object.entries(costMap)) {
     const u = id === 'honey' && mead ? Math.round((DATA.items.honey?.sell || 120) * honeyMult) : ingVal(id);
     totalCost += u * n;
   }
-  const time = mead ? A.mead.baseTime + A.mead.perIng * ings.length : A.abbey.baseTime + A.abbey.perIng * ings.length;
+  const time = mead
+    ? A.mead.baseTime + A.mead.perIng * ings.length
+    : cider
+      ? A.cider.baseTime + A.cider.perIng * ings.length
+      : sake
+        ? A.sake.baseTime + A.sake.perIng * ings.length
+        : A.abbey.baseTime + A.abbey.perIng * ings.length;
   const baseValue = ings.length ? Math.round((((A.abbey.price * totalCost + 0.1 * time) / A.abbey.bottles) * A.abbey.harmony[stars]) / 5) * 5 : 0;
   const barrel = barrelId ? A.barrels[barrelId] : null;
   const agedMaxValue = barrel ? Math.round((baseValue * barrel.mult * A.cellar.mult[3]) / 5) * 5 : 0;
@@ -811,9 +884,14 @@ function evalBrew(mode, baseKey, hop, ings, barrelId) {
   if (ings.length) {
     const list = [...ings].sort((x, y) => y[1] - x[1]).map(([id]) => (DATA.items[id]?.name || id).toLowerCase());
     const what = list.length === 1 ? list[0] : list.length === 2 ? `${list[0]}-${list[1]}` : `${list.slice(0,-1).join(', ')} et ${list[list.length-1]}`;
-    name = mead ? `${classic ? classic.name : 'Hydromel'}${honeyDe(baseKey)} ${what}` : `${bd.name} ${what}`;
+    if (mead) name = `${classic ? classic.name : 'Hydromel'}${honeyDe(baseKey)} ${what}`;
+    else if (cider) name = `${classic ? classic.name : bd.name} ${what}`;
+    else if (sake) {
+      const dup = classic && list.length === 1 && ((classic.id === 'yuzushu' && ings[0][0] === 'yuzu') || (classic.id === 'umeshuClassic' && ings[0][0] === 'ume'));
+      name = `${classic ? classic.name : bd.name} ${dup ? bd.short.toLowerCase() : what}`;
+    } else name = `${bd.name} ${what}`;
   }
-  return { mead, bd, profile, stars, reasons, classic, costMap, time, baseValue, barrel, agedMaxValue, name };
+  return { mead, cider, sake, bd, profile, stars, reasons, classic, costMap, time, baseValue, barrel, agedMaxValue, name };
 }
 
 // ---- État global de l'application ----
@@ -847,13 +925,21 @@ const S = {
   horseGenome: null,
   horseParentA: null,
   horseParentB: null,
-  brewMode: 'beer', // beer | mead
+  brewMode: 'beer', // beer | cider | mead | sake
   brewMalt: 'maltBlond',
+  brewCider: 'sweet',
   brewHoney: 'lavender',
+  brewSake: 'daiginjo',
   brewHop: 2,
   brewIngs: [['cherry', 1], ['raspberry', 1]],
   brewBarrel: '',
   brewQ: '',
+  confKind: 'nougat',
+  confBase: 'nhoney:lavender',
+  confShape: 'nougat',
+  confIngs: ['pistachio'],
+  confMirror: true,
+  confQ: '',
   pfHead: 'lemon',
   pfHeart: 'lavender',
   pfBase: 'resin',
@@ -1532,27 +1618,100 @@ function renderGenetics() {
 function renderBrewery() {
   const A = DATA.abbey;
   const mead = S.brewMode === 'mead';
+  const cider = S.brewMode === 'cider';
+  const sake = S.brewMode === 'sake';
+  const noHop = mead || cider || sake;
   const maxSlots = mead ? A.mead.maxSlots : 3;
   if (S.brewIngs.length > maxSlots) S.brewIngs = S.brewIngs.slice(0, maxSlots);
-  const baseKey = mead ? S.brewHoney : S.brewMalt;
+  const baseKey = mead ? S.brewHoney : cider ? S.brewCider : sake ? S.brewSake : S.brewMalt;
   const ev = evalBrew(S.brewMode, baseKey, S.brewHop, S.brewIngs, S.brewBarrel);
-  const bottleSvg = renderBeerSvg({ mead, malt: S.brewMalt, honey: S.brewHoney, ings: S.brewIngs, stars: ev.stars, aged: !!S.brewBarrel });
+  const bottleSvg = renderBeerSvg({
+    mead,
+    cider,
+    sake,
+    malt: S.brewMalt,
+    honey: S.brewHoney,
+    ciderKey: S.brewCider,
+    sakeKey: S.brewSake,
+    ings: S.brewIngs,
+    stars: ev.stars,
+    aged: !!S.brewBarrel,
+  });
   window.__lastBrewSvg = bottleSvg;
 
   const allIngs = [...A.brewable, ...Object.keys(A.brewExtra)].sort((a,b) => (DATA.items[a]?.name || a).localeCompare(DATA.items[b]?.name || b, 'fr'));
   const q = norm(S.brewQ);
   const filteredIngs = q ? allIngs.filter(id => norm(DATA.items[id]?.name || id).includes(q)) : allIngs;
   const maxNote = Math.max(5, ...ev.profile);
+  const classicsList = mead ? A.meadClassics : cider ? A.ciderClassics : sake ? A.sakeClassics : A.classics;
+  const honeyTotal = 1 + Object.keys(DATA.honeys).length;
+
+  const basePicker = !noHop ? `
+    <div><div class="font-bold mb-1.5">1. Malt de base (4 sacs)</div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        ${A.maltIds.map(id => `<button data-malt="${id}" class="pill ${S.brewMalt === id ? 'active' : ''} rounded-lg p-2 flex items-center gap-2 cursor-pointer text-left">
+          <span class="w-4 h-4 rounded-full border border-black/30 shrink-0" style="background:${A.malts[id].color}"></span>
+          <div><div class="font-semibold">${A.malts[id].name}</div></div>
+        </button>`).join('')}
+      </div>
+      <div class="muted mt-1">${esc(A.malts[S.brewMalt].text)}</div>
+    </div>
+    <div><div class="font-bold mb-1.5">2. Dose de houblon</div>
+      <div class="flex gap-2">
+        ${A.hopDoses.map((lbl, idx) => `<button data-hop="${idx+1}" class="pill ${S.brewHop === idx+1 ? 'active' : ''} px-3 py-1.5 rounded-lg cursor-pointer">${lbl} (${(idx+1)*A.abbey.hopPerDose} cônes)</button>`).join('')}
+      </div>
+    </div>
+  ` : mead ? `
+    <div><div class="font-bold mb-1.5">1. Miel de base (${A.mead.honeyPerBrew} pots · ${honeyTotal} miels)</div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 max-h-40 overflow-y-auto pr-1">
+        ${['all', ...Object.keys(DATA.honeys)].map(k => `<button data-honey="${k}" class="pill ${S.brewHoney === k ? 'active' : ''} rounded-lg px-2 py-1.5 flex items-center gap-1.5 cursor-pointer text-left">
+          <span class="w-3.5 h-3.5 rounded-full border border-black/25 shrink-0" style="background:${DATA.honeyCol[k] || '#e8a825'}"></span>
+          <span class="truncate">${k === 'all' ? 'Toutes fleurs' : esc(DATA.honeys[k].name.replace(/^Miel /, ''))}</span>
+        </button>`).join('')}
+      </div>
+      <div class="muted mt-1">${esc((A.meadBases[S.brewHoney] || A.meadBases.all).text)}</div>
+    </div>
+  ` : cider ? `
+    <div><div class="font-bold mb-1.5">1. Base du verger (sans houblon)</div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        ${A.ciderIds.map(id => {
+          const cb = A.ciderBases[id];
+          const cStr = Object.entries(cb.cost).map(([k, n]) => `${n} ${DATA.items[k]?.name?.toLowerCase() || k}`).join(' + ');
+          return `<button data-cider="${id}" class="pill ${S.brewCider === id ? 'active' : ''} rounded-lg p-2 flex items-center gap-2 cursor-pointer text-left">
+            <span class="w-4 h-4 rounded-full border border-black/30 shrink-0" style="background:${cb.color}"></span>
+            <div class="min-w-0"><div class="font-semibold truncate">${esc(cb.short)}</div><div class="text-[10px] muted truncate">${esc(cStr)}</div></div>
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="muted mt-1">${esc((A.ciderBases[S.brewCider] || A.ciderBases.sweet).text)}</div>
+    </div>
+  ` : `
+    <div><div class="font-bold mb-1.5">1. Style de saké (riz fermenté, sans houblon)</div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        ${A.sakeIds.map(id => {
+          const sb = A.sakeBases[id];
+          const cStr = Object.entries(sb.cost).map(([k, n]) => `${n} ${DATA.items[k]?.name?.toLowerCase() || k}`).join(' + ');
+          return `<button data-sake="${id}" class="pill ${S.brewSake === id ? 'active' : ''} rounded-lg p-2 flex items-center gap-2 cursor-pointer text-left">
+            <span class="w-4 h-4 rounded-full border border-black/30 shrink-0" style="background:${sb.ceramic}"></span>
+            <div class="min-w-0"><div class="font-semibold truncate">${esc(sb.short)}</div><div class="text-[10px] muted truncate">${esc(cStr)}</div></div>
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="muted mt-1">${esc((A.sakeBases[S.brewSake] || A.sakeBases.junmai).text)}</div>
+    </div>
+  `;
 
   $('#main').innerHTML = `
     <div class="space-y-4">
       <div class="card rounded-xl p-4 flex flex-wrap items-center justify-between gap-2">
         <div class="flex flex-wrap gap-1.5" id="brew-modes">
-          <button data-bm="beer" class="pill ${!mead ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">🍺 Bière d’abbaye (4 malts · max 3 ingrédients)</button>
-          <button data-bm="mead" class="pill ${mead ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">🍯 Hydromel (24 miels · max 4 ingrédients)</button>
+          <button data-bm="beer" class="pill ${S.brewMode === 'beer' ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">Bière (4 malts · max 3 ingr.)</button>
+          <button data-bm="cider" class="pill ${S.brewMode === 'cider' ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">Cidre &amp; Poiré (4 bases · max 3 ingr.)</button>
+          <button data-bm="mead" class="pill ${S.brewMode === 'mead' ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">Hydromel (${honeyTotal} miels · max 4 ingr.)</button>
+          <button data-bm="sake" class="pill ${S.brewMode === 'sake' ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">Saké (4 styles · max 3 ingr.)</button>
         </div>
         <div class="flex gap-2">
-          <button id="brew-rand3" class="btn-pri text-xs px-3 py-1.5 rounded-lg cursor-pointer">✨ Trouver un brassin 3★</button>
+          <button id="brew-rand3" class="btn-pri text-xs px-3 py-1.5 rounded-lg cursor-pointer">Trouver un brassin 3★</button>
           <button id="brew-clear" class="btn-sec text-xs px-3 py-1.5 rounded-lg cursor-pointer">Vider</button>
         </div>
       </div>
@@ -1599,43 +1758,18 @@ function renderBrewery() {
         <!-- Compositeur -->
         <div class="lg:col-span-7 space-y-4">
           <div class="card rounded-xl p-4 space-y-3 text-xs">
-            ${!mead ? `
-              <div><div class="font-bold mb-1.5">1. Malt de base (4 sacs)</div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  ${A.maltIds.map(id => `<button data-malt="${id}" class="pill ${S.brewMalt === id ? 'active' : ''} rounded-lg p-2 flex items-center gap-2 cursor-pointer text-left">
-                    <span class="w-4 h-4 rounded-full border border-black/30 shrink-0" style="background:${A.malts[id].color}"></span>
-                    <div><div class="font-semibold">${A.malts[id].name}</div></div>
-                  </button>`).join('')}
-                </div>
-                <div class="muted mt-1">${esc(A.malts[S.brewMalt].text)}</div>
-              </div>
-              <div><div class="font-bold mb-1.5">2. Dose de houblon</div>
-                <div class="flex gap-2">
-                  ${A.hopDoses.map((lbl, idx) => `<button data-hop="${idx+1}" class="pill ${S.brewHop === idx+1 ? 'active' : ''} px-3 py-1.5 rounded-lg cursor-pointer">${lbl} (${(idx+1)*A.abbey.hopPerDose} cônes)</button>`).join('')}
-                </div>
-              </div>
-            ` : `
-              <div><div class="font-bold mb-1.5">1. Miel de base (${A.mead.honeyPerBrew} pots)</div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 max-h-40 overflow-y-auto pr-1">
-                  ${['all', ...Object.keys(DATA.honeys)].map(k => `<button data-honey="${k}" class="pill ${S.brewHoney === k ? 'active' : ''} rounded-lg px-2 py-1.5 flex items-center gap-1.5 cursor-pointer text-left">
-                    <span class="w-3.5 h-3.5 rounded-full border border-black/25 shrink-0" style="background:${DATA.honeyCol[k] || '#e8a825'}"></span>
-                    <span class="truncate">${k === 'all' ? 'Toutes fleurs' : esc(DATA.honeys[k].name.replace(/^Miel /, ''))}</span>
-                  </button>`).join('')}
-                </div>
-                <div class="muted mt-1">${esc((A.meadBases[S.brewHoney] || A.meadBases.all).text)}</div>
-              </div>
-            `}
+            ${basePicker}
 
-            <div><div class="font-bold mb-1.5">${mead ? '2' : '3'}. Fût de vieillissement en cave (optionnel)</div>
+            <div><div class="font-bold mb-1.5">${noHop ? '2' : '3'}. Fût de vieillissement en cave (optionnel)</div>
               <div class="flex flex-wrap gap-1.5">
                 <button data-bar="" class="pill ${S.brewBarrel === '' ? 'active' : ''} px-2.5 py-1 rounded-lg cursor-pointer">Jeune (sans fût)</button>
                 ${Object.entries(A.barrels).map(([k, b]) => `<button data-bar="${k}" class="pill ${S.brewBarrel === k ? 'active' : ''} px-2.5 py-1 rounded-lg cursor-pointer">${esc(b.name)} (×${b.mult})</button>`).join('')}
               </div>
             </div>
 
-            <div><div class="font-bold mb-1.5">Recettes classiques reconnues (1 clic pour tester)</div>
+            <div><div class="font-bold mb-1.5">Recettes classiques reconnues (${classicsList.length} · 1 clic pour tester)</div>
               <div class="flex flex-wrap gap-1.5">
-                ${(!mead ? A.classics : A.meadClassics).map(c => `<button data-cls="${c.id}" class="btn-sec px-2.5 py-1 rounded-lg cursor-pointer">${esc(c.name)}</button>`).join('')}
+                ${classicsList.map(c => `<button data-cls="${c.id}" class="btn-sec px-2.5 py-1 rounded-lg cursor-pointer">${esc(c.name)}</button>`).join('')}
               </div>
             </div>
           </div>
@@ -1678,7 +1812,9 @@ function renderBrewery() {
 
   $$('#brew-modes button').forEach(b => b.onclick = () => { S.brewMode = b.dataset.bm; renderBrewery(); });
   $$('[data-malt]').forEach(b => b.onclick = () => { S.brewMalt = b.dataset.malt; renderBrewery(); });
+  $$('[data-cider]').forEach(b => b.onclick = () => { S.brewCider = b.dataset.cider; renderBrewery(); });
   $$('[data-honey]').forEach(b => b.onclick = () => { S.brewHoney = b.dataset.honey; renderBrewery(); });
+  $$('[data-sake]').forEach(b => b.onclick = () => { S.brewSake = b.dataset.sake; renderBrewery(); });
   $$('[data-hop]').forEach(b => b.onclick = () => { S.brewHop = +b.dataset.hop; renderBrewery(); });
   $$('[data-bar]').forEach(b => b.onclick = () => { S.brewBarrel = b.dataset.bar; renderBrewery(); });
   $$('[data-dose]').forEach(b => b.onclick = () => { const [i, v] = b.dataset.dose.split(':').map(Number); S.brewIngs[i][1] = v; renderBrewery(); });
@@ -1689,7 +1825,7 @@ function renderBrewery() {
 
   $$('[data-cls]').forEach(b => b.onclick = () => {
     const cid = b.dataset.cls;
-    if (!mead) {
+    if (S.brewMode === 'beer') {
       const c = A.classics.find(x => x.id === cid);
       if (c) {
         S.brewIngs = c.ings.map(id => [id, 2]);
@@ -1700,7 +1836,7 @@ function renderBrewery() {
         else if (cid === 'pumpkinAle') { S.brewMalt = 'maltAmber'; S.brewHop = 1; }
       }
     } else {
-      const c = A.meadClassics.find(x => x.id === cid);
+      const c = classicsList.find(x => x.id === cid);
       if (c) S.brewIngs = [[c.any[0], 2]];
     }
     renderBrewery();
@@ -1715,10 +1851,13 @@ function renderBrewery() {
       const set = new Set();
       while (set.size < n) set.add(pick(pool));
       const ings = [...set].map(id => [id, 1 + Math.floor(Math.random() * 3)]);
-      const m = mead ? pick(Object.keys(DATA.honeys)) : pick(A.maltIds);
-      const h = mead ? 0 : 1 + Math.floor(Math.random() * 3);
+      const m = mead ? pick(Object.keys(DATA.honeys)) : cider ? pick(A.ciderIds) : sake ? pick(A.sakeIds) : pick(A.maltIds);
+      const h = noHop ? 0 : 1 + Math.floor(Math.random() * 3);
       if (evalBrew(S.brewMode, m, h, ings, '').stars === 3) {
-        if (mead) S.brewHoney = m; else { S.brewMalt = m; S.brewHop = h; }
+        if (mead) S.brewHoney = m;
+        else if (cider) S.brewCider = m;
+        else if (sake) S.brewSake = m;
+        else { S.brewMalt = m; S.brewHop = h; }
         S.brewIngs = ings;
         renderBrewery();
         return;
@@ -1726,6 +1865,318 @@ function renderBrewery() {
     }
     showToast('Essayez à nouveau !');
   };
+}
+
+// ---- ONGLET CONFISERIE (Chocolat, Caramel, Berlingots, Nougats & Calissons) ----
+function renderConfSvg(c = {}) {
+  const shape = c.shape || 'tablette';
+  const col = c.baseCol || '#5a311e';
+  const col2 = c.baseCol2 || '#3a1b0e';
+  const acc = c.accentCol || '#f5c842';
+  let body = `<ellipse cx="32" cy="57" rx="20" ry="3.5" fill="${INK}" opacity=".16"/>`;
+  if (shape === 'tablette') {
+    body += `<rect x="14" y="10" width="36" height="44" rx="5" fill="${col}" stroke="${INK}" stroke-width="2.6"/>`
+      + `<rect x="18" y="14" width="12" height="11" rx="2" fill="${col2}" opacity=".45" stroke="${INK}" stroke-width="1.3"/>`
+      + `<rect x="34" y="14" width="12" height="11" rx="2" fill="${col2}" opacity=".45" stroke="${INK}" stroke-width="1.3"/>`
+      + `<rect x="18" y="28" width="12" height="11" rx="2" fill="${col2}" opacity=".45" stroke="${INK}" stroke-width="1.3"/>`
+      + `<rect x="34" y="28" width="12" height="11" rx="2" fill="${col2}" opacity=".45" stroke="${INK}" stroke-width="1.3"/>`
+      + `<rect x="18" y="42" width="28" height="8" rx="2" fill="${acc}" opacity=".9" stroke="${INK}" stroke-width="1.3"/>`
+      + `<circle cx="24" cy="19" r="2.2" fill="${acc}"/><circle cx="40" cy="33" r="2.2" fill="${acc}"/>`;
+  } else if (shape === 'truffe') {
+    body += `<circle cx="23" cy="40" r="13" fill="${col2}" stroke="${INK}" stroke-width="2.4"/>`
+      + `<circle cx="41" cy="40" r="13" fill="${col}" stroke="${INK}" stroke-width="2.4"/>`
+      + `<circle cx="32" cy="25" r="14" fill="${col}" stroke="${INK}" stroke-width="2.5"/>`
+      + `<path d="M23 23 Q32 16 41 23" fill="none" stroke="${acc}" stroke-width="3" stroke-linecap="round"/>`
+      + `<circle cx="27" cy="28" r="1.8" fill="${acc}"/><circle cx="36" cy="27" r="1.8" fill="${acc}"/><circle cx="32" cy="20" r="1.6" fill="#fff" opacity=".65"/>`;
+  } else if (shape === 'rocher') {
+    body += `<path d="M16 48 Q12 34 20 22 Q28 12 38 16 Q50 22 49 38 Q48 50 32 51 Q18 51 16 48Z" fill="${col}" stroke="${INK}" stroke-width="2.6"/>`
+      + `<polygon points="24,25 29,22 28,28" fill="${acc}" stroke="${INK}" stroke-width="1.1"/>`
+      + `<polygon points="36,24 42,27 37,31" fill="${acc}" stroke="${INK}" stroke-width="1.1"/>`
+      + `<polygon points="25,38 31,35 30,42" fill="${acc}" stroke="${INK}" stroke-width="1.1"/>`
+      + `<polygon points="37,39 43,36 42,43" fill="${acc}" stroke="${INK}" stroke-width="1.1"/>`
+      + `<circle cx="32" cy="31" r="2.6" fill="${acc}" stroke="${INK}" stroke-width="1"/>`;
+  } else if (shape === 'papillote') {
+    body += `<path d="M16 28 L6 19 L9 32 L6 45 L16 36Z" fill="${acc}" stroke="${INK}" stroke-width="2.2" stroke-linejoin="round"/>`
+      + `<path d="M48 28 L58 19 L55 32 L58 45 L48 36Z" fill="${acc}" stroke="${INK}" stroke-width="2.2" stroke-linejoin="round"/>`
+      + `<rect x="15" y="19" width="34" height="26" rx="9" fill="${col}" stroke="${INK}" stroke-width="2.6"/>`
+      + `<path d="M20 25 L44 25" stroke="#fff7e2" stroke-width="2.6" stroke-linecap="round" opacity=".65"/>`
+      + `<path d="M24 38 L40 38" stroke="${acc}" stroke-width="2.6" stroke-linecap="round"/>`;
+  } else if (shape === 'pave') {
+    body += `<polygon points="12,30 32,16 52,30 32,44" fill="${col}" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/>`
+      + `<polygon points="12,30 32,44 32,54 12,40" fill="${col2}" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/>`
+      + `<polygon points="52,30 32,44 32,54 52,40" fill="${col}" opacity=".85" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/>`
+      + `<circle cx="28" cy="27" r="2.2" fill="#fffdf6"/><circle cx="36" cy="30" r="1.8" fill="#fffdf6"/><circle cx="32" cy="23" r="2" fill="${acc}"/>`;
+  } else if (shape === 'pot') {
+    body += `<rect x="16" y="20" width="32" height="33" rx="8" fill="${col}" stroke="${INK}" stroke-width="2.6"/>`
+      + `<rect x="19" y="12" width="26" height="8" rx="3" fill="${acc}" stroke="${INK}" stroke-width="2.4"/>`
+      + `<rect x="21" y="29" width="22" height="14" rx="4" fill="#fff8e6" stroke="${INK}" stroke-width="1.6"/>`
+      + `<circle cx="32" cy="36" r="4.2" fill="${acc}"/>`
+      + `<path d="M21 23 L21 48" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".35"/>`;
+  } else if (shape === 'sucette') {
+    body += `<path d="M32 39 L32 56" stroke="#f7eed9" stroke-width="4.5" stroke-linecap="round"/>`
+      + `<path d="M32 39 L32 56" stroke="${INK}" stroke-width="1.8" stroke-linecap="round" opacity=".5"/>`
+      + `<circle cx="32" cy="25" r="17" fill="${col}" stroke="${INK}" stroke-width="2.6"/>`
+      + `<path d="M32 25 C32 20 39 20 39 26 C39 33 25 34 24 25 C23 16 42 14 44 26" fill="none" stroke="${acc}" stroke-width="3.4" stroke-linecap="round"/>`
+      + `<path d="M22 17 Q27 13 33 14" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>`;
+  } else if (shape === 'pastille') {
+    body += `<circle cx="23" cy="39" r="12" fill="${acc}" stroke="${INK}" stroke-width="2.3"/>`
+      + `<circle cx="41" cy="38" r="12" fill="${col2}" stroke="${INK}" stroke-width="2.3"/>`
+      + `<circle cx="32" cy="24" r="13" fill="${col}" stroke="${INK}" stroke-width="2.5"/>`
+      + `<circle cx="32" cy="24" r="7" fill="none" stroke="#fff8e8" stroke-width="2" stroke-dasharray="3 3"/>`
+      + `<circle cx="27" cy="19" r="2.2" fill="#fff" opacity=".7"/>`;
+  } else if (shape === 'nougat') {
+    body += `<polygon points="10,36 22,18 54,18 42,36" fill="${col}" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>`
+      + `<polygon points="10,36 42,36 42,50 10,50" fill="${col}" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>`
+      + `<polygon points="42,36 54,18 54,32 42,50" fill="${col2}" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>`
+      + `<line x1="11" y1="38" x2="41" y2="38" stroke="#fffdf7" stroke-width="2"/>`
+      + `<ellipse cx="20" cy="44" rx="4.2" ry="2.5" transform="rotate(-18 20 44)" fill="#f3e1ba" stroke="${INK}" stroke-width="1.2"/>`
+      + `<ellipse cx="33" cy="43" rx="3.8" ry="2.3" transform="rotate(14 33 43)" fill="${acc}" stroke="${INK}" stroke-width="1.2"/>`
+      + `<circle cx="27" cy="27" r="3" fill="${acc}" stroke="${INK}" stroke-width="1.1"/>`
+      + `<ellipse cx="39" cy="26" rx="3.8" ry="2.2" transform="rotate(-12 39 26)" fill="#f3e1ba" stroke="${INK}" stroke-width="1.1"/>`
+      + `<circle cx="48" cy="34" r="2.4" fill="${acc}" stroke="${INK}" stroke-width="1"/>`;
+  } else if (shape === 'calisson') {
+    body += `<path d="M12 42 Q26 28 42 42 Q26 56 12 42Z" fill="${col2}" stroke="${INK}" stroke-width="2.3" stroke-linejoin="round"/>`
+      + `<path d="M15 40 Q26 30 39 40 Q26 49 15 40Z" fill="#fffdf6" stroke="${INK}" stroke-width="1.6"/>`
+      + `<path d="M22 25 Q37 10 53 25 Q37 40 22 25Z" fill="${col}" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>`
+      + `<path d="M24 23 Q37 12 51 23 Q37 33 24 23Z" fill="#fffdf8" stroke="${INK}" stroke-width="1.7"/>`
+      + `<path d="M30 23 Q37 18 45 23" fill="none" stroke="${acc}" stroke-width="2.4" stroke-linecap="round"/>`
+      + `<circle cx="37" cy="23" r="2.1" fill="${acc}"/>`;
+  } else if (shape === 'bouchee') {
+    body += `<rect x="12" y="30" width="21" height="20" rx="5" fill="${col2}" stroke="${INK}" stroke-width="2.3"/>`
+      + `<rect x="31" y="29" width="21" height="21" rx="5" fill="${col}" stroke="${INK}" stroke-width="2.3"/>`
+      + `<rect x="21" y="14" width="22" height="20" rx="5" fill="${col}" stroke="${INK}" stroke-width="2.4"/>`
+      + `<path d="M23 22 L41 22" stroke="${acc}" stroke-width="3" stroke-linecap="round"/>`
+      + `<ellipse cx="28" cy="28" rx="3" ry="1.8" fill="#fff2cf" stroke="${INK}" stroke-width="1"/>`
+      + `<ellipse cx="37" cy="27" rx="2.6" ry="1.6" fill="#fff2cf" stroke="${INK}" stroke-width="1"/>`
+      + `<ellipse cx="41" cy="40" rx="3" ry="1.8" fill="${acc}" stroke="${INK}" stroke-width="1"/>`
+      + `<path d="M25 18 L35 18" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".55"/>`;
+  } else {
+    body += `<path d="M32 10 L52 38 Q53 48 42 50 L22 50 Q11 48 12 38Z" fill="${col}" stroke="${INK}" stroke-width="2.6" stroke-linejoin="round"/>`
+      + `<path d="M22 25 L43 27 M17 34 L48 36 M15 43 L49 44" stroke="${acc}" stroke-width="3.6" stroke-linecap="round"/>`
+      + `<path d="M28 16 L36 16" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".75"/>`
+      + `<path d="M32 10 L52 38 Q53 48 42 50 L22 50 Q11 48 12 38Z" fill="none" stroke="${INK}" stroke-width="2.6" stroke-linejoin="round"/>`;
+  }
+  if (c.mirror) {
+    body += `<path d="M47 13 L49 17 L53 19 L49 21 L47 25 L45 21 L41 19 L45 17Z" fill="#fff7b8" stroke="${INK}" stroke-width="1.2"/><circle cx="16" cy="16" r="2.2" fill="#fff7b8"/>`;
+  }
+  if (c.classic) {
+    body += `<circle cx="50" cy="48" r="8" fill="#f5b700" stroke="${INK}" stroke-width="2"/><path d="M50 43.5 L51.4 46.6 L54.8 47 L52.2 49.2 L53 52.5 L50 50.8 L47 52.5 L47.8 49.2 L45.2 47 L48.6 46.6Z" fill="#fff9d6"/>`;
+  }
+  return svgWrap(body);
+}
+
+function confBaseObj(baseId) {
+  const C = DATA.confiserie;
+  if (baseId.startsWith('honey:') || baseId.startsWith('nhoney:')) {
+    const isNougat = baseId.startsWith('nhoney:');
+    const h = isNougat ? baseId.slice(7) : baseId.slice(6);
+    const col = DATA.honeyCol[h] || DATA.honeyCol.all || '#e8b339';
+    const hName = h === 'all' ? 'Miel toutes fleurs' : DATA.honeys[h] ? DATA.honeys[h].name : 'Miel de fleur';
+    const mb = DATA.abbey.meadBases[h] || DATA.abbey.meadBases.all;
+    return isNougat
+      ? { id: baseId, kind: 'nougat', name: `Nougat au ${hName}`, short: h === 'all' ? 'Toutes fleurs' : hName.replace(/^Miel (de |d’)/i, ''), cost: { honey: 2, egg: 2, almond: 1 }, col: '#f6edd9', col2: col, likes: mb ? mb.likes : [0, 1, 4], text: mb?.text || 'nougat blanc au miel de fleur', honey: h }
+      : { id: baseId, kind: 'caramel', name: `Caramel au ${hName}`, short: h === 'all' ? 'Toutes fleurs' : hName.replace(/^Miel (de |d’)/i, ''), cost: { honey: 2, sugar: 2 }, col, col2: '#a86a18', likes: mb ? mb.likes : [0, 1, 3, 4], text: mb?.text || 'caramel au miel de fleur', honey: h };
+  }
+  return C.bases[baseId] || C.bases.dark;
+}
+
+function evalConf(kind, baseId, ings, mirror) {
+  const C = DATA.confiserie;
+  const kDef = C.kinds[kind];
+  const b = confBaseObj(baseId);
+  const fl = id => DATA.genetics.flavors[id] || C.extra[id] || [0,0,0,0,0];
+  const topNote = v => v.indexOf(Math.max(...v));
+  const reasons = [];
+  let stars = 0, classic = null;
+  if (!ings.length) {
+    reasons.push('Choisissez au moins un ingrédient.');
+  } else {
+    let score = 1;
+    const tops = ings.map(id => topNote(fl(id)));
+    if (tops.some(t => b.likes.includes(t))) { score += 1; reasons.push(`Belle affinité avec ${b.short}.`); }
+    const bKey = baseId.startsWith('nhoney:') ? 'nougatBlanc' : baseId.startsWith('honey:') ? 'honey' : baseId;
+    classic = C.classics.find(c => c.kind === kind && c.bases.includes(bKey) && c.any.some(id => ings.includes(id))) || null;
+    if (classic) {
+      score += 2;
+      reasons.unshift(classic.text);
+      stars = Math.max(0, Math.min(3, score));
+    } else {
+      let clash = false;
+      for (let i = 0; i < tops.length; i++)
+        for (let j = i + 1; j < tops.length; j++)
+          if ((DATA.abbey.pairs[`${Math.min(tops[i],tops[j])}-${Math.max(tops[i],tops[j])}`] || 0) < 0) clash = true;
+      if (clash) { score -= 1; reasons.push('Deux notes s’entrechoquent un peu.'); }
+      else if (ings.length >= 2 && new Set(tops).size >= 2) { score += 1; reasons.push('Bel équilibre de saveurs !'); }
+      stars = Math.max(0, Math.min(3, score));
+    }
+  }
+  const cost = { ...b.cost };
+  for (const id of ings) cost[id] = (cost[id] || 0) + 2;
+  const valOf = id => id in C.extra ? Math.round((DATA.items[id]?.sell || 0) * 0.35) : (DATA.items[id]?.sell || 0);
+  const rawVal = Object.entries(cost).reduce((s, [id, n]) => s + valOf(id) * n, 0);
+  const baseVal = Math.max(45, Math.round(((rawVal * 1.48 * C.harmony[stars]) / kDef.batch) * 1.15));
+  const finalVal = Math.round(baseVal * C.miniMult[mirror ? 3 : 0]);
+  const accentCol = C.noteCol[ings.length ? topNote(fl(ings[0])) : 0] || '#f5c842';
+  const main = ings.length ? (DATA.items[ings[0]]?.name || ings[0]).toLowerCase() : '';
+  const name = classic ? classic.name : main ? `${kind === 'berlingot' ? 'Berlingots' : b.name} · ${main}` : (kind === 'berlingot' ? 'Berlingots' : b.name);
+  const time = kDef.baseTime + kDef.perIng * ings.length;
+  return { kDef, b, stars, classic, reasons, cost, baseVal, finalVal, accentCol, name, time };
+}
+
+function renderConfiserie() {
+  const C = DATA.confiserie;
+  const kind = C.kindIds.includes(S.confKind) ? S.confKind : 'chocolate';
+  const kDef = C.kinds[kind];
+  const fixedBases = Object.values(C.bases).filter(b => b.kind === kind).map(b => b.id);
+  const hasHoney = kind === 'caramel' || kind === 'nougat';
+  const honeyPref = kind === 'nougat' ? 'nhoney:' : 'honey:';
+  const validBases = hasHoney ? [...fixedBases, ...['all', ...Object.keys(DATA.honeys)].map(h => honeyPref + h)] : fixedBases;
+  if (!validBases.includes(S.confBase)) S.confBase = fixedBases[0];
+  const shapes = Object.values(C.shapes).filter(s => s.kind === kind);
+  if (!shapes.some(s => s.id === S.confShape)) S.confShape = shapes[0].id;
+  if (S.confIngs.length > kDef.maxIngs) S.confIngs = S.confIngs.slice(0, kDef.maxIngs);
+
+  const ev = evalConf(kind, S.confBase, S.confIngs, S.confMirror);
+  const svgStr = renderConfSvg({ kind, shape: S.confShape, baseCol: ev.b.col, baseCol2: ev.b.col2, accentCol: ev.accentCol, mirror: S.confMirror, classic: !!ev.classic });
+  window.__lastConfSvg = svgStr;
+
+  const classics = C.classics.filter(c => c.kind === kind);
+  const q = norm(S.confQ);
+  const allIngs = [...C.ingIds].sort((a, b) => (DATA.items[a]?.name || a).localeCompare(DATA.items[b]?.name || b, 'fr'));
+  const filteredIngs = q ? allIngs.filter(id => norm(DATA.items[id]?.name || id).includes(q)) : allIngs;
+  const honeyList = ['all', ...Object.keys(DATA.honeys)];
+
+  $('#main').innerHTML = `
+    <div class="space-y-4">
+      <div class="card rounded-xl p-4 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap gap-1.5" id="conf-kinds">
+          ${C.kindIds.map(id => `<button data-ck="${id}" class="pill ${id === kind ? 'active' : ''} text-xs px-3 py-1.5 rounded-full cursor-pointer">${esc(C.kinds[id].name)} (${C.kinds[id].batch} pcs · max ${C.kinds[id].maxIngs} ingr.)</button>`).join('')}
+        </div>
+        <div class="flex items-center gap-2 text-xs">
+          <label class="flex items-center gap-1.5 cursor-pointer surf px-2.5 py-1.5 rounded-lg">
+            <input id="conf-mirror" type="checkbox" ${S.confMirror ? 'checked' : ''} />
+            <span>Finition Miroir (3★ mini-jeu)</span>
+          </label>
+          <button id="conf-clear" class="btn-sec px-3 py-1.5 rounded-lg cursor-pointer">Vider</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <div class="lg:col-span-5 card rounded-xl p-5 space-y-4">
+          <div class="flex flex-col items-center text-center">
+            <div class="w-44 h-44 checker rounded-2xl border border-[var(--border,#e2d8c5)] p-4 spr-box">${svgStr}</div>
+            <h2 class="text-lg font-bold mt-3">${esc(ev.name)}</h2>
+            <div class="text-xl tracking-widest mt-1">${[1,2,3].map(i => `<span style="color:${i <= ev.stars ? '#e5a417' : 'rgba(128,128,128,.3)'}">★</span>`).join('')}</div>
+            ${ev.classic ? `<div class="mt-2 text-xs font-semibold px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-700 dark:text-amber-300">Grand Classique : ${esc(ev.classic.name)}</div>` : ''}
+            <button onclick="copyText(window.__lastConfSvg, 'SVG de la confiserie copié !')" class="btn-sec text-xs px-3 py-1 rounded-lg mt-2 cursor-pointer">Copier le SVG</button>
+          </div>
+
+          <div class="surf rounded-xl p-3 space-y-1.5 text-xs">
+            <div class="font-bold">${esc(kDef.title)} · Mini-jeu : ${esc(kDef.miniName)}</div>
+            <div class="muted">${esc(kDef.miniDesc)}</div>
+            ${ev.reasons.map(r => `<div class="muted">• ${esc(r)}</div>`).join('')}
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="surf rounded-lg p-2.5">
+              <div class="muted">Valeur / pièce (${S.confMirror ? 'Miroir 3★' : 'Chaudron'})</div>
+              <div class="text-base font-bold mt-0.5">${fmt(ev.finalVal)} pièces</div>
+              <div class="text-[11px] muted">Fournée de ${kDef.batch} pièces · ${fmtDur(ev.time)}</div>
+            </div>
+            <div class="surf rounded-lg p-2.5">
+              <div class="muted">Coût de base</div>
+              <div class="mt-1 flex flex-wrap gap-1">${Object.entries(ev.cost).map(([id, n]) => `<span class="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">${n} ${esc(DATA.items[id]?.name?.toLowerCase() || id)}</span>`).join('')}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 space-y-4">
+          <div class="card rounded-xl p-4 space-y-3 text-xs">
+            <div><div class="font-bold mb-1.5">1. Base (${esc(ev.b.name)})</div>
+              <div class="flex flex-wrap gap-1.5">
+                ${fixedBases.map(id => {
+                  const b = C.bases[id];
+                  return `<button data-cb="${id}" class="pill ${S.confBase === id ? 'active' : ''} rounded-lg px-2.5 py-1.5 flex items-center gap-1.5 cursor-pointer">
+                    <span class="w-3.5 h-3.5 rounded-full border border-black/25" style="background:${b.col}"></span>${esc(b.short)}
+                  </button>`;
+                }).join('')}
+              </div>
+              ${hasHoney ? `<div class="mt-2"><div class="muted mb-1">Ou choisir parmi les ${honeyList.length} miels de fleurs :</div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 max-h-36 overflow-y-auto pr-1">
+                  ${honeyList.map(h => {
+                    const bId = honeyPref + h;
+                    return `<button data-cb="${bId}" class="pill ${S.confBase === bId ? 'active' : ''} rounded-lg px-2 py-1 flex items-center gap-1.5 cursor-pointer text-left">
+                      <span class="w-3 h-3 rounded-full border border-black/25 shrink-0" style="background:${DATA.honeyCol[h] || '#e8b339'}"></span>
+                      <span class="truncate">${h === 'all' ? 'Toutes fleurs' : esc(DATA.honeys[h].name.replace(/^Miel /, ''))}</span>
+                    </button>`;
+                  }).join('')}
+                </div></div>` : ''}
+              <div class="muted mt-1">${esc(ev.b.text)}</div>
+            </div>
+
+            <div><div class="font-bold mb-1.5">2. Forme &amp; moule</div>
+              <div class="grid grid-cols-3 gap-2">
+                ${shapes.map(sh => `<button data-csh="${sh.id}" class="pill ${S.confShape === sh.id ? 'active' : ''} rounded-lg p-2 flex flex-col items-center gap-1 cursor-pointer">
+                  <span class="w-10 h-10 spr-box">${renderConfSvg({ kind, shape: sh.id, baseCol: ev.b.col, baseCol2: ev.b.col2, accentCol: ev.accentCol })}</span>
+                  <span class="font-semibold text-center">${esc(sh.name)}</span>
+                </button>`).join('')}
+              </div>
+            </div>
+
+            <div><div class="font-bold mb-1.5">Grands Classiques · ${esc(kDef.name)} (${classics.length} / ${C.classics.length} au total)</div>
+              <div class="flex flex-wrap gap-1.5">
+                ${classics.map(c => `<button data-ccls="${c.id}" class="btn-sec px-2.5 py-1 rounded-lg cursor-pointer" title="${esc(c.hint)}">${esc(c.name)}</button>`).join('')}
+              </div>
+            </div>
+          </div>
+
+          <div class="card rounded-xl p-4 space-y-3 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold">Ingrédients (${S.confIngs.length} / ${kDef.maxIngs})</span>
+              <input id="conf-q" type="search" value="${esc(S.confQ)}" placeholder="Filtrer les ingrédients…" class="surf rounded-lg px-2.5 py-1 w-48 outline-none" />
+            </div>
+            ${S.confIngs.length ? `<div class="flex flex-wrap gap-2">${S.confIngs.map((id, idx) => `<div class="surf rounded-lg px-2.5 py-1.5 flex items-center gap-2">
+              <span class="w-6 h-6 spr-box inline-block">${itemSvg(id)}</span>
+              <span class="font-semibold">${esc(DATA.items[id]?.name || id)}</span>
+              <button data-crm="${idx}" class="muted hover:text-red-500 font-bold px-1 cursor-pointer">✕</button>
+            </div>`).join('')}</div>` : '<div class="muted">Sélectionnez un ou plusieurs ingrédients ci-dessous.</div>'}
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5 max-h-60 overflow-y-auto pr-1">
+              ${filteredIngs.map(id => {
+                const picked = S.confIngs.includes(id);
+                const fl = DATA.genetics.flavors[id] || C.extra[id] || [0,0,0,0,0];
+                const top = fl.indexOf(Math.max(...fl));
+                return `<button data-cadd="${id}" ${picked || S.confIngs.length >= kDef.maxIngs ? 'disabled' : ''} class="${picked ? 'opacity-45' : 'hover:shadow cursor-pointer'} surf rounded-lg p-1.5 flex items-center gap-1.5 text-left">
+                  <span class="w-7 h-7 spr-box shrink-0">${itemSvg(id)}</span>
+                  <div class="min-w-0">
+                    <div class="font-medium truncate">${esc(DATA.items[id]?.name || id)}</div>
+                    <div class="text-[10px] muted capitalize">${DATA.abbey.notes[top]} (${fl[top]})</div>
+                  </div>
+                </button>`;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  $$('#conf-kinds button').forEach(b => b.onclick = () => { S.confKind = b.dataset.ck; renderConfiserie(); });
+  $$('[data-cb]').forEach(b => b.onclick = () => { S.confBase = b.dataset.cb; renderConfiserie(); });
+  $$('[data-csh]').forEach(b => b.onclick = () => { S.confShape = b.dataset.csh; renderConfiserie(); });
+  $$('[data-crm]').forEach(b => b.onclick = () => { S.confIngs.splice(+b.dataset.crm, 1); renderConfiserie(); });
+  $$('[data-cadd]').forEach(b => b.onclick = () => { if (S.confIngs.length < kDef.maxIngs) { S.confIngs.push(b.dataset.cadd); renderConfiserie(); } });
+  $$('[data-ccls]').forEach(b => b.onclick = () => {
+    const cl = C.classics.find(x => x.id === b.dataset.ccls);
+    if (cl) {
+      S.confBase = cl.bases[0] === 'honey' ? 'honey:lavender' : cl.bases[0];
+      S.confIngs = [cl.any[0]];
+      renderConfiserie();
+    }
+  });
+  $('#conf-mirror').onchange = e => { S.confMirror = e.target.checked; renderConfiserie(); };
+  $('#conf-clear').onclick = () => { S.confIngs = []; renderConfiserie(); };
+  const cq = $('#conf-q');
+  if (cq) cq.oninput = e => { S.confQ = e.target.value; renderConfiserie(); $('#conf-q').focus(); $('#conf-q').setSelectionRange(S.confQ.length, S.confQ.length); };
 }
 
 // ---- Onglet 5 : Atelier du Parfumeur ----
@@ -2385,6 +2836,7 @@ function renderActiveTab() {
   else if (S.tab === 'products') renderProducts();
   else if (S.tab === 'genetics') renderGenetics();
   else if (S.tab === 'perfume') renderPerfumery();
+  else if (S.tab === 'confiserie') renderConfiserie();
   else if (S.tab === 'people') renderCharacters();
   else renderBrewery();
 }
