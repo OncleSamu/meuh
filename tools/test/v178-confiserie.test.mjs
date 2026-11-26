@@ -38,11 +38,11 @@ test('1.178 : déblocage calme au niveau 54 + unlocksAt + guide + exploits', () 
     assert.ok(ACHIEVEMENTS.some(a => a.id === 'confOrders'), 'succès confOrders présent');
 });
 
-test('1.178 : art SVG — 9 formes + icône UI ui.confiserie, zéro émoji', () => {
+test('1.178 : art SVG — 12 formes + icône UI ui.confiserie, zéro émoji', () => {
     const icon = confUiIcon();
     assert.ok(icon.includes('<path') || icon.includes('<rect') || icon.includes('<circle'));
     assert.ok(SPR.ui('confiserie').includes('<svg'));
-    assert.equal(Object.keys(CONF_SHAPES).length, 9);
+    assert.equal(Object.keys(CONF_SHAPES).length, 12);
     for (const [id, sh] of Object.entries(CONF_SHAPES)) {
         const s = confSvg({ kind: sh.kind, shape: id, baseCol: '#5b3019', baseCol2: '#3a1b0b', accentCol: '#f2c14e', mirror: true, classic: true });
         assert.ok(s.startsWith('<svg') && s.endsWith('</svg>'), `SVG valide pour ${id}`);
@@ -50,9 +50,9 @@ test('1.178 : art SVG — 9 formes + icône UI ui.confiserie, zéro émoji', () 
     }
 });
 
-test('1.178 : 18 Grands Classiques (6 par métier) tous détectables', () => {
-    assert.equal(CONF_CLASSICS.length, 18);
-    for (const k of ['chocolate', 'caramel', 'berlingot']) {
+test('1.178 : 24 Grands Classiques (6 par métier) tous détectables', () => {
+    assert.equal(CONF_CLASSICS.length, 24);
+    for (const k of ['chocolate', 'caramel', 'berlingot', 'nougat']) {
         const list = CONF_CLASSICS.filter(c => c.kind === k);
         assert.equal(list.length, 6, `6 classiques pour ${k}`);
         for (const cl of list) {

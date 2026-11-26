@@ -60,7 +60,7 @@ function closedCard() {
     return `<div class="card island-closed">
         <div class="ic-art">${confSvg({ kind: 'chocolate', shape: 'tablette', baseCol: '#4a2614', baseCol2: '#2e1508', accentCol: '#f4c542', mirror: true, classic: true })}</div>
         <div class="card-title">L’Atelier Confiserie</div>
-        <p class="card-sub">Au niveau ${CONF_LVL}, créez chocolats, caramels (y compris aux miels de fleurs) et berlingots avec vos récoltes et variétés du Labo, à travers trois mini-jeux inédits.</p>
+        <p class="card-sub">Au niveau ${CONF_LVL}, créez chocolats, caramels, berlingots et nougats &amp; calissons (y compris aux 30 miels de fleurs) avec vos récoltes et variétés du Labo, à travers quatre mini-jeux inédits.</p>
     </div>`;
 }
 
@@ -94,7 +94,7 @@ function kettlesHtml() {
         .join('')}</div>`;
 }
 
-// ---------------- Compositeur (Confectionner : Chocolat / Caramel / Berlingots) ----------------
+// ---------------- Compositeur (Confectionner : Chocolat / Caramel / Berlingots / Nougats) ----------------
 function composerHtml(kind) {
     const d = G.confDraft(kind);
     const kDef = CONF_KINDS[kind];
@@ -103,16 +103,18 @@ function composerHtml(kind) {
 
     const kindSeg = `<div class="bc-row">
         <span class="bc-label">Confiserie</span>
-        <div class="seg n3">${CONF_KIND_IDS.map(
+        <div class="seg n4 cf-kind-seg">${CONF_KIND_IDS.map(
             id => `<button class="${id === kind ? 'on' : ''}" data-act="confKind" data-k="${id}">${esc(CONF_KINDS[id].name)}</button>`,
         ).join('')}</div>
         <small class="pf-hint">${esc(kDef.title)} — ${esc(kDef.miniDesc)}</small>
     </div>`;
 
     const fixedBases = G.confBasesFor(kind).filter(bId => !G.isHoneyBase(bId));
+    const hasHoneyPick = kind === 'caramel' || kind === 'nougat';
+    const honeyPref = kind === 'nougat' ? 'nhoney:' : 'honey:';
     const isHoneyCur = G.isHoneyBase(d.base);
     const curHoney = isHoneyCur ? G.baseHoneyId(d.base) : 'all';
-    const curHoneyDef = G.confBaseDef('honey:' + curHoney);
+    const curHoneyDef = G.confBaseDef(honeyPref + curHoney);
     const totalHoneys = G.confAllHoneys().length;
     const basesHtml =
         fixedBases
@@ -121,8 +123,8 @@ function composerHtml(kind) {
                 return `<button class="pick-chip${d.base === bId ? ' on' : ''}" data-act="confBase" data-k="${kind}" data-b="${bId}"><i class="swatch" style="background:${b.col}"></i>${esc(b.short)}</button>`;
             })
             .join('') +
-        (kind === 'caramel'
-            ? `<button class="pick-chip${isHoneyCur ? ' on' : ''}" data-act="confHoneyPick"><i class="swatch" style="background:${curHoneyDef.col}"></i>${isHoneyCur ? `Miel · ${esc(curHoneyDef.short)}` : `Miel (${totalHoneys}) ▾`}</button>`
+        (hasHoneyPick
+            ? `<button class="pick-chip${isHoneyCur ? ' on' : ''}" data-act="confHoneyPick" data-k="${kind}"><i class="swatch" style="background:${kind === 'nougat' ? curHoneyDef.col2 : curHoneyDef.col}"></i>${isHoneyCur ? `Miel · ${esc(curHoneyDef.short)}` : `Miel (${totalHoneys}) ▾`}</button>`
             : '');
 
     const shapesHtml = shapes
@@ -168,7 +170,7 @@ function composerHtml(kind) {
     return `<div class="card brew-compose cf-compose">
         ${kindSeg}
         <div class="bc-row">
-            <span class="bc-label">Base${kind === 'caramel' ? ' (beurre, crème ou miel de fleur)' : ''}</span>
+            <span class="bc-label">Base${kind === 'caramel' ? ' (beurre, crème ou miel de fleur)' : kind === 'nougat' ? ' (nougat, calisson ou miel de fleur)' : ''}</span>
             <div class="chips-row">${basesHtml}</div>
             <small class="pf-hint">${esc(pv.baseDef.name)} — ${esc(pv.baseDef.text)}</small>
         </div>
@@ -234,18 +236,20 @@ function classicsGuideHtml(kind) {
 // ---------------- Mes créations (stock) ----------------
 function stockHtml() {
     const all = G.myConfs();
-    if (!all.length) return empty('Vos chocolats, caramels et berlingots apparaîtront ici dès votre première fournée.');
+    if (!all.length) return empty('Vos chocolats, caramels, berlingots et nougats apparaîtront ici dès votre première fournée.');
     const inStock = all.filter(c => G.confStock(c.id) > 0);
     const favs = all.filter(c => G.isConfFav(c.id));
     const choco = all.filter(c => c.kind === 'chocolate');
     const cara = all.filter(c => c.kind === 'caramel');
     const berl = all.filter(c => c.kind === 'berlingot');
+    const noug = all.filter(c => c.kind === 'nougat');
     const opts = [
         ['stock', 'En stock', inStock.length],
         ['fav', 'Favoris', favs.length],
         ['chocolate', 'Chocolat', choco.length],
         ['caramel', 'Caramel', cara.length],
         ['berlingot', 'Berlingots', berl.length],
+        ['nougat', 'Nougats', noug.length],
         ['all', 'Toutes', all.length],
     ];
     const f = filterOf('confs', opts);
@@ -261,7 +265,9 @@ function stockHtml() {
                   ? cara
                   : f === 'berlingot'
                     ? berl
-                    : [...all];
+                    : f === 'nougat'
+                      ? noug
+                      : [...all];
     const list = src
         .filter(c => matchQ(q, c.name, CONF_KINDS[c.kind]?.name || '', ...(c.ings || []).map(G.confIngName)))
         .sort((a, b) => G.confStock(b.id) - G.confStock(a.id) || b.stars - a.stars || b.value - a.value);
@@ -405,7 +411,7 @@ function renderConfiserie(el) {
     const confCount = C.creations ? Object.keys(C.creations).length : 0;
     const head =
         t === 'make'
-            ? `<div class="card"><div class="card-head">${ico(['ui', 'confiserie'], 'ico big')}<div class="card-main"><div class="card-title">L’Atelier Confiserie</div><div class="card-sub">${C.kettles.length} chaudron${C.kettles.length > 1 ? 's' : ''} · chocolats, caramels aux miels et berlingots</div></div></div></div>`
+            ? `<div class="card"><div class="card-head">${ico(['ui', 'confiserie'], 'ico big')}<div class="card-main"><div class="card-title">L’Atelier Confiserie</div><div class="card-sub">${C.kettles.length} chaudron${C.kettles.length > 1 ? 's' : ''} · chocolats, caramels, berlingots et nougats &amp; calissons</div></div></div></div>`
             : '';
     blocks(el, [
         ['tabs', T.html],
@@ -499,14 +505,16 @@ defineSheet('confGift', {
     },
 });
 
-// ---------------- Feuille de choix du miel pour le Caramel (les 30 miels du jeu) ----------------
+// ---------------- Feuille de choix du miel pour le Caramel et le Nougat (les 30 miels du jeu) ----------------
 defineSheet('confHoneyPick', {
-    title: 'Choisir un miel pour le caramel',
-    render() {
-        const d = G.confDraft('caramel');
+    title: o => (o && o.kind === 'nougat' ? 'Choisir un miel pour le nougat' : 'Choisir un miel pour le caramel'),
+    render(o) {
+        const kind = o && o.kind === 'nougat' ? 'nougat' : 'caramel';
+        const pref = kind === 'nougat' ? 'nhoney:' : 'honey:';
+        const d = G.confDraft(kind);
         const all = G.confAllHoneys();
         const haveOf = h => G.confIngHave(h === 'all' ? 'honey' : 'H' + h);
-        const nameOf = h => (h === 'all' ? 'Toutes fleurs' : G.confBaseDef('honey:' + h).short);
+        const nameOf = h => (h === 'all' ? 'Toutes fleurs' : G.confBaseDef(pref + h).short);
         const q = queryOf('confHoney');
         const sort = sortOf('confHoney', ING_SORTS);
         const opts = [
@@ -516,25 +524,26 @@ defineSheet('confHoneyPick', {
         const f = filterOf('confHoney', opts);
         const list = (f === 'stock' ? all.filter(h => haveOf(h) > 0) : all)
             .filter(h => {
-                const def = G.confBaseDef('honey:' + h);
+                const def = G.confBaseDef(pref + h);
                 return matchQ(q, nameOf(h), def.name, def.text);
             })
             .sort((a, b) => (sort === 'name' ? 0 : haveOf(b) - haveOf(a)) || nameOf(a).localeCompare(nameOf(b), 'fr'));
         const cells = list
             .map(h => {
-                const bId = 'honey:' + h;
+                const bId = pref + h;
                 const def = G.confBaseDef(bId);
                 const have = haveOf(h);
                 const icoId = h === 'all' ? 'honey' : 'honey_' + h;
-                return `<button class="pick-cell${d.base === bId ? ' locked' : ''}" data-act="confHoneySet" data-h="${h}">
+                const dotCol = kind === 'nougat' ? def.col2 : def.col;
+                return `<button class="pick-cell${d.base === bId ? ' locked' : ''}" data-act="confHoneySet" data-k="${kind}" data-h="${h}">
                     ${ico(['item', icoId], 'ico big')}
                     <b>${esc(nameOf(h))}</b>
-                    <small><i class="cf-dot" style="background:${def.col}"></i>×${have}</small>
+                    <small><i class="cf-dot" style="background:${dotCol}"></i>×${have}</small>
                 </button>`;
             })
             .join('');
         return [
-            ['info', hint('Choisissez n’importe lequel des 30 miels du jeu (toutes fleurs, ferme, île, oasis, Grand Nord et Terres d’Asie). Chaque miel donne sa couleur et son profil de goût au caramel.')],
+            ['info', hint(`Choisissez n’importe lequel des 30 miels du jeu (toutes fleurs, ferme, île, oasis, Grand Nord et Terres d’Asie). Chaque miel donne sa teinte et son profil de goût au ${kind === 'nougat' ? 'nougat' : 'caramel'}.`)],
             ['search', listBar('confHoney', { search: 'Chercher un miel (lavande, lotus, yuzu…)', sorts: ING_SORTS })],
             ['chips', filterChips('confHoney', opts, f)],
             ['cells', list.length ? `<div class="pick-grid">${cells}</div>` : empty('Aucun miel ne correspond.')],
@@ -548,9 +557,11 @@ export function setupConfiserie() {
             if (CONF_KIND_IDS.includes(d.k)) ui.sel.confKind = d.k;
         },
         confBase: (el, d) => G.setConfBase(d.k, d.b),
-        confHoneyPick: () => openSheet('confHoneyPick', {}),
+        confHoneyPick: (el, d) => openSheet('confHoneyPick', { kind: d.k === 'nougat' ? 'nougat' : 'caramel' }),
         confHoneySet: (el, d) => {
-            if (G.setConfBase('caramel', 'honey:' + d.h)) closeSheet('confHoneyPick');
+            const kind = d.k === 'nougat' ? 'nougat' : 'caramel';
+            const pref = kind === 'nougat' ? 'nhoney:' : 'honey:';
+            if (G.setConfBase(kind, pref + d.h)) closeSheet('confHoneyPick');
         },
         confShape: (el, d) => G.setConfShape(d.k, d.s),
         confPick: (el, d) => openSheet('confPick', { kind: d.k }),

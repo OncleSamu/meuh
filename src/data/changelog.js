@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.181",
+  "title": "Nougats & Calissons (Confiserie) et Cidres & Poirés artisanaux (Brasserie)",
+  "date": "26 novembre 2026",
+  "items": [
+   "Atelier Confiserie — 4e métier « Nougats & Calissons » : bases Nougat Blanc Tendre, Nougat Noir Croquant, Calisson Fondant + accès aux 30 miels de fleurs du jeu, 3 formes SVG dédiées (Barre de nougat, Calissons glacés, Bouchées nougatine) et 6 nouveaux Grands Classiques (24 au total)",
+   "4e mini-jeu tactile inédit « Le Montage en Neige » : fouettez en rythme pour monter les blancs en neige ferme pendant que le miel chaud coule et décrochez la Finition Miroir (+30 % valeur, +1 cran de qualité jusqu’à Diamant)",
+   "Brasserie — 3e famille « Cidres & Poirés artisanaux » : 4 bases de verger sans houblon (Cidre doux, Cidre brut, Poiré pétillant, Cidre rosé), bouteilles champenoises dédiées à muselet doré et 5 Grands Classiques du cidrier (Cidre de glace, Cidre d’hiver, Cuvée fleurie, Cidre rubis, Cidre impérial)",
+   "Intégration complète des Cidres & Poirés dans les cuves, les commandes de la brasserie, le concours saisonnier, le Livre des bières et le vieillissement en fût à la Cave"
+  ]
+ },
+ {
   "v": "1.180",
   "title": "Concours hippiques 2.0 : Express quotidiens, Chevaux Titrés, Échauffement & Boutique",
   "date": "26 novembre 2026",

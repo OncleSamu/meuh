@@ -5,7 +5,22 @@ import { state, lvOk } from '../../core/state.js';
 import { now } from '../../core/clock.js';
 import { fmt, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
-import { ABBEY, MALTS, MALT_IDS, HOP_DOSES, NOTES, NOTE_COL, PAIRS, CLASSICS, MEAD_CLASSICS, BARRELS, BEER_BOOK } from '../../data/abbey.js';
+import {
+    ABBEY,
+    MALTS,
+    MALT_IDS,
+    HOP_DOSES,
+    NOTES,
+    NOTE_COL,
+    PAIRS,
+    CLASSICS,
+    MEAD_CLASSICS,
+    CIDER_BASES,
+    CIDER_IDS,
+    CIDER_CLASSICS,
+    BARRELS,
+    BEER_BOOK,
+} from '../../data/abbey.js';
 import { VILLAGERS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc } from '../dom.js';
@@ -58,7 +73,7 @@ defineLive('vat', i => {
     const v = state.brew && state.brew.vats[i];
     if (!v) return 0;
     const b = state.brew.beers[v.bid];
-    const tot = G.brewTime(b.ings) * 1000;
+    const tot = G.brewTime(b.ings, b.malt) * 1000;
     return 1 - Math.max(0, v.until - now()) / tot;
 });
 function vatsHtml() {
@@ -73,7 +88,7 @@ function vatsHtml() {
             const ready = G.vatReady(v);
             return `<div class="brew-vat${ready ? ' ready' : ''}" data-anchor="vat:${i}">${bottle(b)}<div class="bv-main"><b>${b.name}</b>
                 ${ready ? `<small>${v.n} bouteilles prêtes</small>` : `${bar(0, 'thin', `vat:${i}`)}<small>${timer(v.until)}</small>`}</div>
-                <div class="bv-btns">${ready ? btn('Mettre en bouteille', { act: 'collectVat', data: { i }, kind: 'green', size: 'sm' }) : ''}${btn(v.loop ? 'En boucle' : 'Boucle', { act: 'vatLoop', data: { i }, kind: v.loop ? 'blue' : '', size: 'sm', icon: ['ui', 'loop'], title: 'Relancer la même bière quand elle est prête' })}</div></div>`;
+                <div class="bv-btns">${ready ? btn('Mettre en bouteille', { act: 'collectVat', data: { i }, kind: 'green', size: 'sm' }) : ''}${btn(v.loop ? 'En boucle' : 'Boucle', { act: 'vatLoop', data: { i }, kind: v.loop ? 'blue' : '', size: 'sm', icon: ['ui', 'loop'], title: 'Relancer la même boisson quand elle est prête' })}</div></div>`;
         })
         .join('')}</div>`;
 }
@@ -90,14 +105,19 @@ function composerHtml() {
         d = B.draft,
         pv = G.brewPreview();
     const mead = G.isMead(d.malt);
-    const kinds = G.meadOpen()
-        ? `<div class="bc-row"><span class="bc-label">Boisson</span><div class="seg n2">${[
-              ['beer', 'Bière'],
-              ['mead', 'Hydromel'],
-          ]
-              .map(([k, n]) => `<button class="${(k === 'mead') === mead ? 'on' : ''}" data-act="brewKind" data-k="${k}">${n}</button>`)
-              .join('')}</div></div>`
-        : '';
+    const cider = G.isCider(d.malt);
+    const curKind = mead ? 'mead' : cider ? 'cider' : 'beer';
+    const kindList = [
+        ['beer', 'Bière'],
+        ...(G.meadOpen() ? [['mead', 'Hydromel']] : []),
+        ...(G.ciderOpen() ? [['cider', 'Cidre']] : []),
+    ];
+    const kinds =
+        kindList.length > 1
+            ? `<div class="bc-row"><span class="bc-label">Boisson</span><div class="seg n${kindList.length}">${kindList
+                  .map(([k, n]) => `<button class="${k === curKind ? 'on' : ''}" data-act="brewKind" data-k="${k}">${n}</button>`)
+                  .join('')}</div></div>`
+            : '';
     // 1.68 : un hydromel : un miel (toutes fleurs ou de fleur), pas de houblon
     const honeys = G.meadHoneys()
         .map(h => {
@@ -110,6 +130,14 @@ function composerHtml() {
         const id = h === 'all' ? 'honey' : 'H' + h;
         return `<button class="brew-malt on" data-act="brewHoneyPick"><i class="swatch" style="background:${HONEY_COL[h] || HONEY_COL.all}"></i><b>${h === 'all' ? 'Toutes fleurs' : cap(HONEYS[h] ? HONEYS[h].name.replace(/^Miel d(e |’)/, '') : h)}</b><small>${ingIco(id)}${G.ingHave(id)}</small></button>`;
     })();
+    // 1.181 : un cidre ou poiré : fruits pressés du verger, pas de houblon
+    const ciders = CIDER_IDS.map(c => {
+        const cb = CIDER_BASES[c];
+        const stockStr = Object.entries(cb.cost)
+            .map(([id]) => `${ico(['item', id])}${state.inventory[id] || 0}`)
+            .join(' ');
+        return `<button class="brew-malt${d.malt === 'cider:' + c ? ' on' : ''}" data-act="brewCider" data-c="${c}"><i class="swatch" style="background:${cb.color}"></i><b>${cb.short}</b><small>${stockStr}</small></button>`;
+    }).join('');
     const malts = MALT_IDS.map(
         m =>
             `<button class="brew-malt${d.malt === m ? ' on' : ''}" data-act="brewMalt" data-m="${m}"><i class="swatch" style="background:${MALTS[m].color}"></i><b>${MALTS[m].name}</b><small>${ico(['item', m])}${state.inventory[m] || 0}</small></button>`,
@@ -147,32 +175,39 @@ function composerHtml() {
             ${noteBars(pv.profile)}
             <div class="cost">${cost}</div>
             <div class="card-sub">${ABBEY.bottles} bouteilles${pv.secret ? '' : ` à ${fmt(pv.value)}${COIN()}`} · ${formatDuration(pv.time)}</div>${pv.q ? `<div class="card-sub bp-q">${qStar(pv.q)} sortira en ${QUALITY[pv.q].name} (×${String(QUALITY[pv.q].mult).replace('.', ',')})</div>` : ''}</div></div>`
-        : `<p class="hint">${mead ? 'Choisissez un ingrédient : la pomme, le raisin, les fruits rouges ou les herbes font les grands hydromels.' : 'Choisissez un ingrédient : chaque fruit et chaque légume de la ferme donne une bière différente.'}</p>`;
+        : `<p class="hint">${
+              mead
+                  ? 'Choisissez un ingrédient : la pomme, le raisin, les fruits rouges ou les herbes font les grands hydromels.'
+                  : cider
+                    ? 'Choisissez un ingrédient : coing, épices d’hiver, fleurs, fruits rouges ou yuzu signent les grands cidres et poirés.'
+                    : 'Choisissez un ingrédient : chaque fruit et chaque légume de la ferme donne une bière différente.'
+          }</p>`;
     const can = pv.ings.length && !pv.miss.length && pv.freeVat >= 0;
+    const baseSection = mead
+        ? `<div class="bc-row"><span class="bc-label">Miel</span>${
+              G.meadHoneys().length > 6
+                  ? `<div class="brew-malts honeys">${honeyCur}<button class="brew-malt" data-act="brewHoneyPick"><b>Choisir un miel</b><small>${G.meadHoneys().length} en stock · trier, chercher</small></button></div>`
+                  : `<div class="brew-malts honeys">${honeys}</div>`
+          }</div>`
+        : cider
+          ? `<div class="bc-row"><span class="bc-label">Base du verger</span><div class="brew-malts">${ciders}</div></div>`
+          : `<div class="bc-row"><span class="bc-label">Malt</span><div class="brew-malts">${malts}</div></div>
+        <div class="bc-row"><span class="bc-label">Houblon</span><div class="seg n3 brew-hops">${hops}</div></div>`;
     return `<div class="card brew-compose">
         ${kinds}
-        ${
-            mead
-                ? `<div class="bc-row"><span class="bc-label">Miel</span>${
-                      G.meadHoneys().length > 6
-                          ? `<div class="brew-malts honeys">${honeyCur}<button class="brew-malt" data-act="brewHoneyPick"><b>Choisir un miel</b><small>${G.meadHoneys().length} en stock · trier, chercher</small></button></div>`
-                          : `<div class="brew-malts honeys">${honeys}</div>`
-                  }</div>`
-                : `<div class="bc-row"><span class="bc-label">Malt</span><div class="brew-malts">${malts}</div></div>
-        <div class="bc-row"><span class="bc-label">Houblon</span><div class="seg n3 brew-hops">${hops}</div></div>`
-        }
+        ${baseSection}
         <div class="bc-row"><span class="bc-label">Ingrédients</span><div class="brew-slots">${slots}</div></div>${more}
         <div class="center">${btn('Meilleur accord avec mon stock', { act: 'brewBest', size: 'sm', icon: ['ui', 'sparkle'] })}</div>
         ${preview}
         ${
             // 1.74 : quand on ne peut pas brasser, une phrase dit pourquoi (plus de gros bouton gris)
             can
-                ? btn('Brasser', { act: 'brew', kind: 'green', wide: true, size: 'lg', icon: mead ? ['item', 'mead'] : ['ui', 'beer'] })
-                : `<p class="state-line">${pv.freeVat < 0 ? 'Toutes les cuves sont pleines : mettez une bière en bouteille.' : !pv.ings.length ? 'Choisissez au moins un ingrédient.' : `Il manque : ${pv.miss.map(([id, n]) => `${n - G.ingHave(id)} ${G.ingName(id).toLowerCase()}`).join(', ')}.`}</p>`
-        }</div>${brewGuideHtml(mead)}`;
+                ? btn(cider ? 'Presser & fermenter' : 'Brasser', { act: 'brew', kind: 'green', wide: true, size: 'lg', icon: mead ? ['item', 'mead'] : cider ? ['item', 'cider'] : ['ui', 'beer'] })
+                : `<p class="state-line">${pv.freeVat < 0 ? 'Toutes les cuves sont pleines : mettez une boisson en bouteille.' : !pv.ings.length ? 'Choisissez au moins un ingrédient.' : `Il manque : ${pv.miss.map(([id, n]) => `${n - G.ingHave(id)} ${G.ingName(id).toLowerCase()}`).join(', ')}.`}</p>`
+        }</div>${brewGuideHtml(curKind)}`;
 }
 
-// Guide discret des accords de notes et suivi des recettes classiques (bières et hydromels)
+// Guide discret des accords de notes et suivi des recettes classiques (bières, hydromels et cidres & poirés)
 const CLASSIC_HINTS = {
     witbier: 'Une épice et un agrume de l’oasis',
     sahti: 'Une céréale et une pousse du Grand Nord',
@@ -185,8 +220,13 @@ const CLASSIC_HINTS = {
     melomel: 'Un fruit rouge ou une baie sucrée',
     metheglin: 'Une herbe aromatique ou une épice',
     imperialMead: 'Une fleur de lotus ou un agrume des Terres d’Asie',
+    iceCider: 'Un coing ou une baie boréale du Grand Nord',
+    spicedCider: 'Une épice chaude d’hiver ou une gousse de vanille',
+    floralPerry: 'Une fleur aromatique ou une herbe fraîche',
+    orchardRed: 'Un petit fruit rouge du verger ou du champ',
+    yuzuCider: 'Un agrume, nashi ou lotus des Terres d’Asie',
 };
-function brewGuideHtml(mead) {
+function brewGuideHtml(kind) {
     const beers = G.myBeers();
     const basesOf = b => (b.ings || []).map(([id]) => (b.bases && b.bases[id]) || id);
     const goodPairs = Object.entries(PAIRS)
@@ -196,19 +236,21 @@ function brewGuideHtml(mead) {
         .filter(([, v]) => v < 0)
         .map(([k]) => k.split('-').map(Number));
     const pill = i => `<span class="bg-note"><i style="background:${NOTE_COL[i]}"></i>${NOTES[i]}</span>`;
-    const list = mead ? MEAD_CLASSICS : CLASSICS;
+    const list = kind === 'mead' ? MEAD_CLASSICS : kind === 'cider' ? CIDER_CLASSICS : CLASSICS;
     const found = c =>
         beers.some(b => {
-            if (!!b.mead !== mead) return false;
+            const bk = b.mead ? 'mead' : b.cider ? 'cider' : 'beer';
+            if (bk !== kind) return false;
             const bs = basesOf(b);
-            return mead ? c.any.some(id => bs.includes(id)) : c.ings.every(id => bs.includes(id));
+            return kind === 'beer' ? c.ings.every(id => bs.includes(id)) : c.any.some(id => bs.includes(id));
         });
     const nFound = list.filter(found).length;
+    const secTitle = kind === 'mead' ? 'Grands hydromels' : kind === 'cider' ? 'Grands cidres & poirés' : 'Grandes bières classiques';
     return `<details class="card brew-guide"><summary><b>Guide des accords &amp; classiques</b><small>${nFound}/${list.length} classiques trouvés</small></summary>
         <div class="bg-body">
             <div class="bg-sec"><b>Mariages qui s’accordent (+1 ★)</b><div class="bg-pairs">${goodPairs.map(([a, b]) => `<span class="bg-pair ok">${pill(a)} + ${pill(b)}</span>`).join('')}</div></div>
             <div class="bg-sec"><b>Notes qui se battent (−1 ★)</b><div class="bg-pairs">${badPairs.map(([a, b]) => `<span class="bg-pair bad">${pill(a)} × ${pill(b)}</span>`).join('')}</div></div>
-            <div class="bg-sec"><b>${mead ? 'Grands hydromels' : 'Grandes bières classiques'} (${nFound}/${list.length})</b><ul class="bg-cls">${list
+            <div class="bg-sec"><b>${secTitle} (${nFound}/${list.length})</b><ul class="bg-cls">${list
                 .map(c => {
                     const ok = found(c);
                     return `<li class="${ok ? 'ok' : ''}"><b>${ok ? '✓ ' : ''}${cap(c.name)}</b> — <small>${ok ? c.text : CLASSIC_HINTS[c.id] || 'À découvrir en brassant'}</small></li>`;
@@ -233,12 +275,13 @@ function carnetHtml() {
 // ---------------- mes bières ----------------
 function beersHtml() {
     const all = G.myBeers();
-    if (!all.length)
-        return empty(G.meadOpen() ? 'Vos bières et vos hydromels apparaîtront ici, avec leur nom.' : 'Vos bières apparaîtront ici, avec leur nom.');
+    if (!all.length) return empty('Vos bières, cidres et hydromels apparaîtront ici, avec leur nom.');
     // 1.64 : une longue liste : filtres (en stock, les meilleures, toutes) et « Voir plus »
     const inStock = all.filter(b => G.beerStock(b.id) > 0),
         top = all.filter(b => b.stars >= 3),
-        meads = all.filter(b => b.mead);
+        meads = all.filter(b => b.mead),
+        ciders = all.filter(b => b.cider),
+        onlyBeers = all.filter(b => !b.mead && !b.cider);
     const favs = all.filter(b => G.isFav(b.id));
     const opts = [
         ['stock', 'En stock', inStock.length],
@@ -246,17 +289,36 @@ function beersHtml() {
         ['top', '3 étoiles', top.length],
         ['all', 'Toutes', all.length],
     ];
-    // 1.68 : bières ou hydromels
-    if (meads.length) opts.splice(2, 0, ['beer', 'Bières', all.length - meads.length], ['mead', 'Hydromels', meads.length]);
+    // 1.68 & 1.181 : bières, hydromels ou cidres
+    if (meads.length || ciders.length) {
+        const extra = [['beer', 'Bières', onlyBeers.length]];
+        if (ciders.length) extra.push(['cider', 'Cidres', ciders.length]);
+        if (meads.length) extra.push(['mead', 'Hydromels', meads.length]);
+        opts.splice(2, 0, ...extra);
+    }
     const f = filterOf('beers', opts);
     const q = queryOf('beers');
-    const list = (f === 'stock' ? inStock : f === 'fav' ? favs : f === 'top' ? top : f === 'mead' ? meads : f === 'beer' ? all.filter(b => !b.mead) : [...all])
+    const list = (
+        f === 'stock'
+            ? inStock
+            : f === 'fav'
+              ? favs
+              : f === 'top'
+                ? top
+                : f === 'mead'
+                  ? meads
+                  : f === 'cider'
+                    ? ciders
+                    : f === 'beer'
+                      ? onlyBeers
+                      : [...all]
+    )
         .filter(b => matchQ(q, b.name, ...b.ings.map(x => G.ingName(x[0]))))
         .sort((a, b) => G.beerStock(b.id) - G.beerStock(a.id) || b.stars - a.stars || b.value - a.value);
     const pg = page('beers:' + f, list, 10);
     return (
         filterChips('beers', opts, f) +
-        (list.length ? '' : empty(`Aucune bière ne correspond à « ${esc(ui.sel.q.beers)} ».`)) +
+        (list.length ? '' : empty(`Aucune boisson ne correspond à « ${esc(ui.sel.q.beers)} ».`)) +
         pg.top +
         `<div class="list">${pg.items
             .map(b => {
@@ -285,7 +347,8 @@ function beersHtml() {
                     (b.aged ? '' : btn('Rebrasser', { act: 'rebrew', data: { id: b.id }, kind: 'green', size: 'sm', icon: ['ui', 'loop'] })) +
                     (b.aged ? '' : btn('Planifier', { act: 'planBeer', data: { id: b.id }, kind: 'gold', size: 'sm', title: 'Planifier plusieurs brassins' })) +
                     (b.aged ? '' : `<button class="fav-star${G.isFav(b.id) ? ' on' : ''}" data-act="favBeer" data-id="${b.id}" aria-label="${G.isFav(b.id) ? 'Retirer du carnet' : 'Garder dans le carnet'}">${G.isFav(b.id) ? '★' : '☆'}</button>`);
-                return `<div class="card brew-beer${n ? '' : ' none'}"><div class="card-art">${beerSvg(b)}</div><div class="card-main"><div class="card-title">${b.name} ${renameBtn('beer', b.id, b.mead ? 'Renommer l’hydromel' : 'Renommer la bière')}</div><div class="card-sub">${sub}</div>${again ? `<div class="bb-again">${again}</div>` : ''}</div><div class="card-side">${side}</div></div>`;
+                const renTitle = b.mead ? 'Renommer l’hydromel' : b.cider ? 'Renommer le cidre' : 'Renommer la bière';
+                return `<div class="card brew-beer${n ? '' : ' none'}"><div class="card-art">${beerSvg(b)}</div><div class="card-main"><div class="card-title">${b.name} ${renameBtn('beer', b.id, renTitle)}</div><div class="card-sub">${sub}</div>${again ? `<div class="bb-again">${again}</div>` : ''}</div><div class="card-side">${side}</div></div>`;
             })
             .join('')}</div>${pg.more}`
     );
@@ -331,15 +394,20 @@ function ordersHtml() {
     const B = state.brew;
     if (!B.orders.length) return '';
     return (
-        section('Commandes de bière') +
+        section('Commandes de la brasserie') +
         `<div class="list">${B.orders
             .map(o => {
                 const fits = G.beerOrderMatches(o);
                 const best = fits[0];
                 const v = VILLAGERS[o.vid];
+                const noneTxt = o.mead
+                    ? 'Aucun de vos hydromels ne convient encore.'
+                    : o.cider
+                      ? 'Aucun de vos cidres ou poirés ne convient encore.'
+                      : 'Aucune de vos bières ne convient encore.';
                 return `<div class="card brew-order${best ? ' ready' : ''}"><div class="card-art">${art('villager', o.vid)}</div><div class="card-main"><div class="card-title">${v ? v.name : ''}</div>
                     <div class="card-sub">« ${G.beerOrderText(o)}. »</div>
-                    ${best ? `<div class="card-sub">Avec : <b>${best.name}</b> · ${fmt(G.beerOrderPay(o, best.id))}${COIN()}</div>` : `<div class="card-sub">${o.mead ? 'Aucun de vos hydromels ne convient encore.' : 'Aucune de vos bières ne convient encore.'}</div>`}</div>
+                    ${best ? `<div class="card-sub">Avec : <b>${best.name}</b> · ${fmt(G.beerOrderPay(o, best.id))}${COIN()}</div>` : `<div class="card-sub">${noneTxt}</div>`}</div>
                     <div class="card-side">${btn('Livrer', { act: 'beerOrder', data: { id: o.id }, kind: 'green', size: 'sm', disabled: !best })}${btn('', { act: 'beerDrop', data: { id: o.id }, icon: ['ui', 'cross'], kind: 'ghost', size: 'sm', title: 'Refuser' })}</div></div>`;
             })
             .join('')}</div>`
@@ -351,7 +419,7 @@ function cellarHtml() {
     if (!G.cellarOpen()) return '';
     const n = state.cave.slots.filter(l => l && l.id === 'beer').length;
     return `<div class="card"><div class="card-head">${ico(['ui', 'barrel'], 'ico big')}<div class="card-main"><div class="card-title">Le vieillissement en fût</div>
-        <div class="card-sub">${n ? `${n} fût${n > 1 ? 's' : ''} en cave. ` : ''}Vos bières vieillissent à la cave, avec les fromages et les vins : un soin par étape, et elles peuvent devenir légendaires.</div></div>
+        <div class="card-sub">${n ? `${n} fût${n > 1 ? 's' : ''} en cave. ` : ''}Vos bières, cidres et hydromels vieillissent à la cave, avec les fromages et les vins : un soin par étape, et ils peuvent devenir légendaires.</div></div>
         ${btn('À la cave', { act: 'goCave', size: 'sm', icon: ['ui', 'cave'] })}</div></div>`;
 }
 
@@ -369,7 +437,7 @@ function bookHtml() {
         : '';
     return (
         section('Le livre des bières', `<small>${n} / ${tot}</small>`) +
-        `<div class="card"><div class="card-sub">Une page par ingrédient mis dans une bière${G.meadOpen() ? ', et une par miel mis dans un hydromel' : ''}. Une récompense toutes les ${BEER_BOOK.every} pages, ${BEER_BOOK.rubans} rubans au livre complet.</div>
+        `<div class="card"><div class="card-sub">Une page par ingrédient mis dans une bière ou un cidre${G.meadOpen() ? ', et une par miel mis dans un hydromel' : ''}. Une récompense toutes les ${BEER_BOOK.every} pages, ${BEER_BOOK.rubans} rubans au livre complet.</div>
         ${bar(n / tot)}<div class="brew-book">${G.BREWABLE.map(id => `<i class="ico${B.book[id] ? '' : ' off'}" title="${ITEMS[id].name}">${art('item', id)}</i>`).join('')}${hp}</div>
         ${G.beerBookClaimable() ? btn(`Récompense : ${fmt(BEER_BOOK.coins * (B.bookClaimed + 1))}`, { act: 'claimBeerBook', kind: 'gold', wide: true, icon: ['ui', 'coin'] }) : ''}</div>`
     );
@@ -382,11 +450,12 @@ function renderBrew(el) {
     const B = state.brew;
     const ready = B.vats.filter(v => G.vatReady(v)).length;
     const n = G.myBeers().length;
+    const multi = G.meadOpen() || G.ciderOpen();
     const T = innerTabs(
         'brew',
         [
             ['make', 'Brasser', null, ready],
-            ['mine', G.meadOpen() ? 'Boissons' : 'Bières', null, 0],
+            ['mine', multi ? 'Boissons' : 'Bières', null, 0],
             ['orders', 'Clients', null, G.beerOrdersReady()],
             ['book', 'Livre', null, G.beerBookClaimable() ? 1 : 0],
         ],
@@ -398,19 +467,19 @@ function renderBrew(el) {
         [
             'head',
             t === 'make'
-                ? `<div class="card"><div class="card-head">${ico(['ui', 'beer'], 'ico big')}<div class="card-main"><div class="card-title">La brasserie de l’abbaye</div><div class="card-sub">${B.vats.length} cuve${B.vats.length > 1 ? 's' : ''} · jusqu’à ${G.brewSlots()} ingrédient${G.brewSlots() > 1 ? 's' : ''} par bière${G.meadOpen() ? `, ${G.brewSlots('mead:all')} par hydromel` : ''}</div></div></div></div>`
+                ? `<div class="card"><div class="card-head">${ico(['ui', 'beer'], 'ico big')}<div class="card-main"><div class="card-title">La brasserie de l’abbaye</div><div class="card-sub">${B.vats.length} cuve${B.vats.length > 1 ? 's' : ''} · bières, cidres &amp; poirés (${G.brewSlots()} ingr.)${G.meadOpen() ? `, hydromels (${G.brewSlots('mead:all')} ingr.)` : ''}</div></div></div></div>`
                 : '',
         ],
         ['vats', t === 'make' ? vatsHtml() : ''],
         ['carnet', t === 'make' ? carnetHtml() : ''],
         ['compose', t === 'make' ? composerHtml() : ''],
-        ['beersHead', t === 'mine' ? section(G.meadOpen() ? 'Mes boissons' : 'Mes bières', n ? `<small>${n}</small>` : '') : ''],
-        ['beerSearch', t === 'mine' && n > 20 ? searchBox('beers', G.meadOpen() ? 'Boisson ou ingrédient' : 'Bière ou ingrédient') : ''],
+        ['beersHead', t === 'mine' ? section(multi ? 'Mes boissons' : 'Mes bières', n ? `<small>${n}</small>` : '') : ''],
+        ['beerSearch', t === 'mine' && n > 20 ? searchBox('beers', multi ? 'Boisson ou ingrédient' : 'Bière ou ingrédient') : ''],
         ['beers', t === 'mine' ? beersHtml() : ''],
         ['cellar', t === 'mine' ? cellarHtml() : ''],
         [
             'orders',
-            t === 'orders' ? festHtml() + (ordersHtml() || empty('Pas de commande de bière pour le moment : Frère Hugues, Agnès et les habitués passent régulièrement.')) : '',
+            t === 'orders' ? festHtml() + (ordersHtml() || empty('Pas de commande de la brasserie pour le moment : Frère Hugues, Agnès et les habitués passent régulièrement.')) : '',
         ],
         ['book', t === 'book' ? bookHtml() : ''],
     ]);
@@ -434,11 +503,15 @@ const brewables = () =>
 const pickCell = (id, o, used, label, small, extra = '') =>
     `<button class="pick-cell${used.includes(id) ? ' locked' : ''}${(state.inventory[id] || 0) <= 0 && !extra ? ' short' : ''}" data-act="brewSet" data-id="${id}" data-s="${o.s}"${used.includes(id) ? ' disabled' : ''}>${ingIco(id, 'ico big')}<b>${label}</b><small>${small}</small></button>`;
 defineSheet('brewPick', {
-    title: () => (G.isMead(state.brew && state.brew.draft && state.brew.draft.malt) ? 'Un ingrédient de l’hydromel' : 'Un ingrédient de la bière'),
+    title: () => {
+        const m = state.brew && state.brew.draft && state.brew.draft.malt;
+        return G.isMead(m) ? 'Un ingrédient de l’hydromel' : G.isCider(m) ? 'Un ingrédient du cidre' : 'Un ingrédient de la bière';
+    },
     render(o) {
         if (!state.brew || !state.brew.draft) return '';
         const used = state.brew.draft.ings.map(([id]) => id);
         const mead = G.isMead(state.brew.draft.malt);
+        const cider = G.isCider(state.brew.draft.malt);
         const all = brewables();
         const vars = G.brewVarieties();
         const q = queryOf('ing');
@@ -473,8 +546,13 @@ defineSheet('brewPick', {
         const cells = pg.items
             .map(id => pickCell(id, o, used, ITEMS[id].name, `×${state.inventory[id] || 0}${state.brew.book[id] ? ' ✓' : ''}${noteLine(id) ? ` · ${noteLine(id)}` : ''}`))
             .join('');
+        const pickHint = mead
+            ? 'Pour un hydromel, le miel donne la base : ajoutez-y un fruit sucré ou acidulé, ou des herbes. Il en faut ' + ABBEY.ingPerDose + ' par dose. Les pages déjà dans le livre sont cochées (✓).'
+            : cider
+              ? 'Pour un cidre ou un poiré, les fruits pressés donnent la base : ajoutez coing, épices d’hiver, fleurs, petits fruits rouges ou yuzu. Il en faut ' + ABBEY.ingPerDose + ' par dose.'
+              : `Il en faut ${ABBEY.ingPerDose} par dose. Les pages déjà dans le livre des bières sont cochées (✓). Chaque ingrédient a des notes de goût : sucré, acide, amer, épicé, umami.`;
         return [
-            ['info', hint(mead ? 'Pour un hydromel, le miel donne la base : ajoutez-y un fruit sucré ou acidulé, ou des herbes. Il en faut ' + ABBEY.ingPerDose + ' par dose. Les pages déjà dans le livre sont cochées (✓).' : `Il en faut ${ABBEY.ingPerDose} par dose. Les pages déjà dans le livre des bières sont cochées (✓). Chaque ingrédient a des notes de goût : sucré, acide, amer, épicé, umami.`)],
+            ['info', hint(pickHint)],
             ['search', listBar('ing', { search: 'Chercher un ingrédient', sorts: TRIS })],
             ['chips', filterChips('ing', opts, f)],
             ['sort', `<small class="card-sub">${list.length + vlist.length} ingrédient${list.length + vlist.length > 1 ? 's' : ''}</small>`],
@@ -542,6 +620,7 @@ export function setupBrewery() {
         brewHop: (el, d) => G.setDraftHop(+d.n),
         brewKind: (el, d) => G.setDraftKind(d.k),
         brewHoney: (el, d) => G.setDraftHoney(d.h),
+        brewCider: (el, d) => G.setDraftCider(d.c),
         brewHoneyPick: () => openSheet('brewHoneyPick', {}),
         brewHoneySet: (el, d) => {
             if (G.setDraftHoney(d.h)) closeSheet('brewHoneyPick');

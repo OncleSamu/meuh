@@ -23,7 +23,7 @@ export function confUiIcon() {
 }
 
 export function confSvg(c = {}) {
-    const shape = c.shape || (c.kind === 'caramel' ? 'papillote' : c.kind === 'berlingot' ? 'berlingot' : 'tablette');
+    const shape = c.shape || (c.kind === 'caramel' ? 'papillote' : c.kind === 'berlingot' ? 'berlingot' : c.kind === 'nougat' ? 'nougat' : 'tablette');
     const col = c.baseCol || '#5a311e';
     const col2 = c.baseCol2 || '#3a1b0e';
     const acc = c.accentCol || '#f5c842';
@@ -89,6 +89,38 @@ export function confSvg(c = {}) {
             `<circle cx="32" cy="24" r="13" fill="${col}" stroke="${INK}" stroke-width="2.5"/>` +
             `<circle cx="32" cy="24" r="7" fill="none" stroke="#fff8e8" stroke-width="2" stroke-dasharray="3 3"/>` +
             `<circle cx="27" cy="19" r="2.2" fill="#fff" opacity=".7"/>`;
+    } else if (shape === 'nougat') {
+        // Barre de nougat tranchée avec hostie fine, éclats d'amande et fruits/pistaches
+        body +=
+            `<polygon points="10,36 22,18 54,18 42,36" fill="${col}" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>` +
+            `<polygon points="10,36 42,36 42,50 10,50" fill="${col}" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>` +
+            `<polygon points="42,36 54,18 54,32 42,50" fill="${col2}" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>` +
+            `<line x1="11" y1="38" x2="41" y2="38" stroke="#fffdf7" stroke-width="2"/>` +
+            `<ellipse cx="20" cy="44" rx="4.2" ry="2.5" transform="rotate(-18 20 44)" fill="#f3e1ba" stroke="${INK}" stroke-width="1.2"/>` +
+            `<ellipse cx="33" cy="43" rx="3.8" ry="2.3" transform="rotate(14 33 43)" fill="${acc}" stroke="${INK}" stroke-width="1.2"/>` +
+            `<circle cx="27" cy="27" r="3" fill="${acc}" stroke="${INK}" stroke-width="1.1"/>` +
+            `<ellipse cx="39" cy="26" rx="3.8" ry="2.2" transform="rotate(-12 39 26)" fill="#f3e1ba" stroke="${INK}" stroke-width="1.1"/>` +
+            `<circle cx="48" cy="34" r="2.4" fill="${acc}" stroke="${INK}" stroke-width="1"/>`;
+    } else if (shape === 'calisson') {
+        // Deux losanges galbés en amande : base dorée fruitée et glaçage royal nacré
+        body +=
+            `<path d="M12 42 Q26 28 42 42 Q26 56 12 42Z" fill="${col2}" stroke="${INK}" stroke-width="2.3" stroke-linejoin="round"/>` +
+            `<path d="M15 40 Q26 30 39 40 Q26 49 15 40Z" fill="#fffdf6" stroke="${INK}" stroke-width="1.6"/>` +
+            `<path d="M22 25 Q37 10 53 25 Q37 40 22 25Z" fill="${col}" stroke="${INK}" stroke-width="2.4" stroke-linejoin="round"/>` +
+            `<path d="M24 23 Q37 12 51 23 Q37 33 24 23Z" fill="#fffdf8" stroke="${INK}" stroke-width="1.7"/>` +
+            `<path d="M30 23 Q37 18 45 23" fill="none" stroke="${acc}" stroke-width="2.4" stroke-linecap="round"/>` +
+            `<circle cx="37" cy="23" r="2.1" fill="${acc}"/>`;
+    } else if (shape === 'bouchee') {
+        // Trois bouchées feuilletées de nougatine dorée aux éclats d'amandes
+        body +=
+            `<rect x="12" y="30" width="21" height="20" rx="5" fill="${col2}" stroke="${INK}" stroke-width="2.3"/>` +
+            `<rect x="31" y="29" width="21" height="21" rx="5" fill="${col}" stroke="${INK}" stroke-width="2.3"/>` +
+            `<rect x="21" y="14" width="22" height="20" rx="5" fill="${col}" stroke="${INK}" stroke-width="2.4"/>` +
+            `<path d="M23 22 L41 22" stroke="${acc}" stroke-width="3" stroke-linecap="round"/>` +
+            `<ellipse cx="28" cy="28" rx="3" ry="1.8" fill="#fff2cf" stroke="${INK}" stroke-width="1"/>` +
+            `<ellipse cx="37" cy="27" rx="2.6" ry="1.6" fill="#fff2cf" stroke="${INK}" stroke-width="1"/>` +
+            `<ellipse cx="41" cy="40" rx="3" ry="1.8" fill="${acc}" stroke="${INK}" stroke-width="1"/>` +
+            `<path d="M25 18 L35 18" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".55"/>`;
     } else {
         // berlingot rayé bicolore
         body +=

@@ -31,6 +31,14 @@
     gap: 8px;
 }
 
+.cf-compose .chips-row {
+    flex-wrap: wrap;
+    overflow: visible;
+    mask-image: none;
+    -webkit-mask-image: none;
+    gap: 6px;
+}
+
 .cf-compose .brew-slot .bs-pick small.short {
     color: #b8332a;
     opacity: 1;
@@ -572,3 +580,135 @@
     font-weight: 700;
     color: #7c4194;
 }
+
+/* 1.181 : Sélecteur 4 familles sur mobile 360px sans troncature */
+.cf-kind-seg > button {
+    padding-inline: 4px;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 400px) {
+    .cf-kind-seg > button {
+        padding-inline: 2px;
+        font-size: 0.74rem;
+    }
+}
+
+/* 1.181 : Mini-jeu 4 : Le Montage en Neige (Nougats & Calissons) */
+.cfm-whip {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    align-items: center;
+}
+
+.cfm-bowl-wrap {
+    position: relative;
+    width: 164px;
+    height: 106px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    touch-action: none;
+    cursor: pointer;
+}
+
+.cfm-pour {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 8px;
+    height: 44px;
+    margin-left: -4px;
+    border-radius: 99px;
+    opacity: 0.9;
+    box-shadow: 0 0 8px rgba(232, 179, 57, 0.55);
+    z-index: 1;
+}
+
+.cfm-bowl {
+    position: relative;
+    width: 146px;
+    height: 76px;
+    border-radius: 14px 14px 56px 56px;
+    border: 3px solid #6b3f1e;
+    background: linear-gradient(180deg, #b86f34 0%, #8a4b1f 100%);
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 2;
+}
+
+.cfm-foam {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    height: 28%;
+    border-radius: 26px 26px 46px 46px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8efdc 100%);
+    border-top: 2px solid #fff;
+    box-shadow: inset 0 4px 10px rgba(226, 198, 140, 0.45);
+    transition: height 0.08s;
+}
+
+.cfm-whisk {
+    position: relative;
+    z-index: 3;
+    width: 34px;
+    height: 46px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.cfm-whisk i {
+    display: block;
+    width: 9px;
+    height: 40px;
+    border: 2.5px solid #4a3525;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.cfm-wbar {
+    position: relative;
+    width: 100%;
+    height: 24px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #c9d9e8 0%, #f7e9c6 45%, #f5b963 80%, #d95d4a 100%);
+    border: 2px solid #5c381c;
+    overflow: hidden;
+}
+
+.cfm-wzone {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.35);
+    border-left: 2px dashed #fff;
+    border-right: 2px dashed #fff;
+    transition: background 0.1s;
+}
+
+.cfm-wzone.hit {
+    background: rgba(98, 214, 118, 0.56);
+}
+
+.cfm-wneedle {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    width: 10px;
+    margin-left: -5px;
+    border-radius: 99px;
+    background: #fffdf6;
+    border: 2px solid #3d2412;
+}
+
+.cfm-whip .cfm-meter {
+    width: 100%;
+}
+

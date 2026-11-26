@@ -185,3 +185,100 @@ export const MEAD_CLASSICS = [
         text: 'Au lotus ou au yuzu : un hydromel impérial des Terres d’Asie.',
     },
 ];
+
+// ---------------- 1.181 : les cidres & poirés artisanaux ----------------
+// Troisième famille de boissons à la brasserie : fruits pressés du verger (pommes / poires), pas de houblon, jusqu'à 3 ingrédients.
+// La base s'écrit 'cider:<type>' dans le champ « malt » de la recette.
+export const CIDER = {
+    lvl: ABBEY.lvl, // accessible dès l'ouverture de la brasserie
+    fruitPerBrew: 6,
+    baseTime: 720, // 12 min + 3 min par ingrédient
+    perIng: 180,
+    maxSlots: 3,
+};
+export const CIDER_BASES = {
+    sweet: {
+        id: 'sweet',
+        name: 'Cidre doux',
+        short: 'Cidre doux',
+        item: 'apple',
+        cost: { apple: 6 },
+        color: '#e8b83a',
+        glass: '#4c6d36',
+        taste: [3, 1, 0, 0, 0],
+        likes: [0, 3],
+        text: 'fruité et rond : aime les épices douces, la vanille et les fruits mûrs',
+    },
+    brut: {
+        id: 'brut',
+        name: 'Cidre brut',
+        short: 'Cidre brut',
+        item: 'apple',
+        cost: { apple: 6 },
+        color: '#cf8b28',
+        glass: '#3b5729',
+        taste: [1, 2, 1, 0, 0],
+        likes: [1, 2, 3],
+        text: 'sec et vif : aime les agrumes, les herbes et les notes boisées',
+    },
+    perry: {
+        id: 'perry',
+        name: 'Poiré',
+        short: 'Poiré',
+        item: 'pear',
+        cost: { pear: 6 },
+        color: '#e6d878',
+        glass: '#527340',
+        taste: [2, 2, 0, 0, 0],
+        likes: [0, 1],
+        text: 'fin et floral : aime les fleurs, les agrumes et les baies délicates',
+    },
+    rose: {
+        id: 'rose',
+        name: 'Cidre rosé',
+        short: 'Cidre rosé',
+        item: 'apple',
+        cost: { apple: 4, raspberry: 2 },
+        color: '#e36b7c',
+        glass: '#8c655c',
+        taste: [2, 2, 0, 0, 0],
+        likes: [1, 0, 3],
+        text: 'frais et acidulé : sublime petits fruits rouges, fleurs et agrumes',
+    },
+};
+export const CIDER_IDS = Object.keys(CIDER_BASES);
+
+// 5 grands classiques du cidrier : un de ces ingrédients suffit (+1★ et nom de cuvée)
+export const CIDER_CLASSICS = [
+    {
+        id: 'iceCider',
+        name: 'Cidre de glace',
+        any: ['quince', 'lingonberry', 'cloudberry', 'seaBuckthorn'],
+        text: 'Au coing ou aux baies boréales : un cidre de glace velouté et précieux.',
+    },
+    {
+        id: 'spicedCider',
+        name: 'Cidre d’hiver',
+        any: ['cinnamon', 'ginger', 'nutmeg', 'vanilla'],
+        text: 'Parfumé aux épices chaudes : le grand cidre d’hiver des veillées.',
+    },
+    {
+        id: 'floralPerry',
+        name: 'Cuvée fleurie',
+        any: ['lavender', 'chamomile', 'mint', 'hibiscus'],
+        text: 'Infusé de fleurs ou d’herbes fines : une cuvée fraîche et aromatique.',
+    },
+    {
+        id: 'orchardRed',
+        name: 'Cidre rubis',
+        any: ['cherry', 'blackcurrant', 'strawberry', 'raspberry', 'blueberry'],
+        text: 'Marié aux petits fruits rouges : robe rubis et bulles gourmandes.',
+    },
+    {
+        id: 'yuzuCider',
+        name: 'Cidre impérial',
+        any: ['yuzu', 'nashi', 'kumquat', 'lotus'],
+        text: 'Au yuzu, nashi, kumquat ou lotus des Terres d’Asie : un grand cru cristallin.',
+    },
+];
+

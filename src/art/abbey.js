@@ -29,7 +29,7 @@ import {
 import { bust, face } from './people.js';
 import { house2 } from './buildings2.js';
 import { MAP_BG } from './maps.js';
-import { MALTS } from '../data/abbey.js';
+import { MALTS, CIDER_BASES } from '../data/abbey.js';
 
 const SKIN = '#f6c9a0';
 const BARLEY = '#e8c060';
@@ -133,11 +133,55 @@ ui.vat = () =>
     R(28, 6, 8, 9, 2, '#d98b3a', 2) +
     L('M50 44 L58 44 L58 50', 2.4);
 
+// ======================= 1.181 : une bouteille de cidre / poiré =======================
+// Bouteille champenoise galbée : col élancé avec coiffe dorée et muselet, bulles fines, étiquette de verger
+export function ciderSvg(b) {
+    const k = b.ciderKey || (String(b.malt || '').startsWith('cider:') ? String(b.malt).slice(6) : 'sweet');
+    const def = CIDER_BASES[k] || CIDER_BASES.sweet;
+    const base = id => (b.bases && b.bases[id]) || id;
+    const ings = b.ings || [];
+    const main = ings.length ? base([...ings].sort((x, y) => y[1] - x[1])[0][0]) : def.item;
+    const aged = !!b.aged;
+    const body = 'M27 7 L37 7 L38 19 Q48 25 48 35 L48 56 Q48 60 43 60 L21 60 Q16 60 16 56 L16 35 Q16 25 26 19Z';
+    const inner =
+        SHADOW(32, 61, 16, 2.5) +
+        P(body, aged ? '#2e4222' : def.glass) +
+        F('M17.5 34 Q32 30 46.5 34 L46.5 56 Q46.5 58.6 43 58.6 L21 58.6 Q17.5 58.6 17.5 56Z', def.color, 0.92) +
+        // Petites bulles pétillantes
+        FC(24, 31, 1.3, '#fffdf0', 0.7) +
+        FC(38, 29, 1.1, '#fffdf0', 0.65) +
+        FC(32, 26, 0.9, '#fffdf0', 0.6) +
+        // Collerette dorée sur le goulot
+        F('M26.5 11 L37.5 11 L38 19 Q32 21 26 19Z', aged ? '#b88a32' : '#e6bc4a', 0.95) +
+        // Étiquette parchemin arrondie avec filet coloré
+        R(19, 34, 26, 19, 5, '#fffaf0', 1.6) +
+        L('M21 50 L43 50', 1.6, def.color) +
+        sub(main, 24.5, 34.5, 15) +
+        (ings.length > 1
+            ? ings
+                  .slice(1, 3)
+                  .map(([id], idx) => C(22 + idx * 20, 33.5, 3.8, '#fffaf0', 1.1) + sub(base(id), 18.8 + idx * 20, 30.3, 6.4))
+                  .join('')
+            : '') +
+        F('M19 29 L21.5 27 L21.5 55 L19 55Z', '#fff', 0.36) +
+        P(body, 'none') +
+        // Bouchon champenois + muselet doré
+        P('M26 7 Q26 1.5 32 1.5 Q38 1.5 38 7Z', '#d6a66a', 1.8) +
+        L('M27 5 L37 5 M29 2.5 L29 7 M35 2.5 L35 7', 1.1, aged ? '#8b5a2b' : '#b8861e') +
+        (aged ? L('M16 42 L48 42', 1.2, '#e0b960') : '') +
+        [0, 1, 2]
+            .map(idx => (idx < (b.stars || 0) ? P(`M${26 + idx * 6} 56.5 l1 2 2.2 .3 -1.6 1.5 .4 2.2 -2 -1 -2 1 .4 -2.2 -1.6 -1.5 2.2 -.3Z`, '#ffd23f', 0.8) : ''))
+            .join('');
+    return svg(inner);
+}
+
 // ======================= une bouteille de bière =======================
 // la couleur du malt, l'étiquette crème avec l'ingrédient principal, la capsule et les étoiles d'accord
 export function beerSvg(b) {
     // 1.68 : un hydromel se dessine en cruchon de grès
     if (b && (b.mead || String(b.malt || '').startsWith('mead:'))) return meadSvg({ ...b, honey: b.honey || String(b.malt).slice(5) });
+    // 1.181 : un cidre ou poiré se dessine en bouteille champenoise
+    if (b && (b.cider || String(b.malt || '').startsWith('cider:'))) return ciderSvg(b);
     const c = (MALTS[b.malt] || MALTS.maltBlond).color;
     // 1.7 : une variété du labo se dessine avec le produit de son espèce
     const base = id => (b.bases && b.bases[id]) || id;

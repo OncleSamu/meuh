@@ -47,18 +47,35 @@ export const confKettleCount = () => {
     return 2 + (k >= 2 ? 1 : 0) + (k >= 5 ? 1 : 0);
 };
 
-// ---------------- Bases (y compris tous les miels de fleurs pour Caramel) ----------------
-export const isHoneyBase = b => typeof b === 'string' && b.startsWith('honey:');
-export const baseHoneyId = b => (isHoneyBase(b) ? b.slice(6) : null);
+// ---------------- Bases (y compris tous les miels de fleurs pour Caramel et Nougat) ----------------
+export const isHoneyBase = b => typeof b === 'string' && (b.startsWith('honey:') || b.startsWith('nhoney:'));
+export const baseHoneyId = b => (typeof b === 'string' && b.startsWith('honey:') ? b.slice(6) : typeof b === 'string' && b.startsWith('nhoney:') ? b.slice(7) : null);
 export const confAllHoneys = () => ['all', ...Object.keys(HONEYS)];
 
 export function confBaseDef(baseId) {
     if (!isHoneyBase(baseId)) return CONF_BASES[baseId] || CONF_BASES.dark;
+    const isNougat = baseId.startsWith('nhoney:');
     const h = baseHoneyId(baseId);
     const col = HONEY_COL[h] || HONEY_COL.all || '#e8b339';
     const hName = h === 'all' ? 'Miel toutes fleurs' : HONEYS[h] ? HONEYS[h].name : 'Miel de fleur';
     const costItem = h === 'all' ? 'honey' : honeyProd(h) || 'H' + h;
     const mb = MEAD_BASES[h] || MEAD_BASES.all;
+    if (isNougat) {
+        return {
+            id: baseId,
+            kind: 'nougat',
+            name: `Nougat au ${hName}`,
+            short: h === 'all' ? 'Toutes fleurs' : hName.replace(/^Miel (de |d’)/i, ''),
+            cost: { [costItem]: 2, egg: 2, almond: 1 },
+            col: '#f6edd9',
+            col2: col,
+            taste: mb ? [...mb.taste] : [4, 0, 0, 0, 2],
+            likes: mb ? [...mb.likes] : [0, 1, 4],
+            text: (mb && mb.text) || 'nougat blanc aérien parfumé au miel de fleur',
+            isHoney: true,
+            honey: h,
+        };
+    }
     return {
         id: baseId,
         kind: 'caramel',
@@ -79,8 +96,9 @@ export function confBasesFor(kind) {
     const fixed = Object.values(CONF_BASES)
         .filter(b => b.kind === kind)
         .map(b => b.id);
-    if (kind !== 'caramel') return fixed;
-    return [...fixed, ...confAllHoneys().map(h => 'honey:' + h)];
+    if (kind === 'caramel') return [...fixed, ...confAllHoneys().map(h => 'honey:' + h)];
+    if (kind === 'nougat') return [...fixed, ...confAllHoneys().map(h => 'nhoney:' + h)];
+    return fixed;
 }
 
 // ---------------- Ingrédients éligibles (cultures, arbres, extra + variétés du Labo) ----------------
@@ -134,6 +152,7 @@ export function ensureConf() {
                 chocolate: { base: 'dark', ings: [], shape: 'tablette' },
                 caramel: { base: 'salted', ings: [], shape: 'papillote' },
                 berlingot: { base: 'sugar', ings: [], shape: 'berlingot' },
+                nougat: { base: 'nougatBlanc', ings: [], shape: 'nougat' },
             },
             kettles: [],
             creations: {},
@@ -154,6 +173,7 @@ export function ensureConf() {
     if (!C.drafts.chocolate) C.drafts.chocolate = { base: 'dark', ings: [], shape: 'tablette' };
     if (!C.drafts.caramel) C.drafts.caramel = { base: 'salted', ings: [], shape: 'papillote' };
     if (!C.drafts.berlingot) C.drafts.berlingot = { base: 'sugar', ings: [], shape: 'berlingot' };
+    if (!C.drafts.nougat) C.drafts.nougat = { base: 'nougatBlanc', ings: [], shape: 'nougat' };
     C.kettles = Array.isArray(C.kettles) ? C.kettles : [];
     const nK = confKettleCount();
     while (C.kettles.length < nK) C.kettles.push(null);
@@ -215,7 +235,7 @@ const topNote = v => {
 };
 
 export function confClassicMatch(kind, baseId, ings) {
-    const bKey = isHoneyBase(baseId) ? 'honey' : baseId;
+    const bKey = typeof baseId === 'string' && baseId.startsWith('nhoney:') ? 'nougatBlanc' : isHoneyBase(baseId) ? 'honey' : baseId;
     const bases = ings.map(confIngBase);
     return CONF_CLASSICS.find(c => c.kind === kind && c.bases.includes(bKey) && c.any.some(id => bases.includes(id))) || null;
 }
@@ -285,7 +305,7 @@ function confAutoName(kind, baseId, ings, classic) {
     if (classic) return classic.name;
     const b = confBaseDef(baseId);
     const main = ings.length ? confIngName(ings[0]).toLowerCase() : '';
-    const pref = kind === 'chocolate' ? b.name : kind === 'caramel' ? b.name : 'Berlingots';
+    const pref = kind === 'berlingot' ? 'Berlingots' : b.name;
     return main ? `${pref} · ${main}` : pref;
 }
 

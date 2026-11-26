@@ -25,6 +25,10 @@ import {
     MEAD,
     MEAD_BASES,
     MEAD_CLASSICS,
+    CIDER,
+    CIDER_BASES,
+    CIDER_IDS,
+    CIDER_CLASSICS,
 } from '../data/abbey.js';
 import { HONEYS, HONEY_COL } from '../data/honey.js';
 import { VILLAGERS } from '../data/village.js';
@@ -40,21 +44,36 @@ import { domStepSum } from './estate.js';
 import { tip } from './tips.js';
 import { talentFx } from './friends.js';
 
-// ---------------- 1.68 : la base d'une boisson : un malt, ou un miel (hydromel) ----------------
+// ---------------- 1.68 & 1.181 : la base d'une boisson : malt (bière), miel (hydromel) ou fruit pressé (cidre & poiré) ----------------
 export const isMead = malt => typeof malt === 'string' && malt.startsWith('mead:');
 export const meadHoney = malt => (isMead(malt) ? malt.slice(5) : null);
 export const meadOpen = () => brewOpen() && state.level >= MEAD.lvl;
+export const isCider = malt => typeof malt === 'string' && malt.startsWith('cider:');
+export const ciderType = malt => (isCider(malt) ? malt.slice(6) : null);
+export const ciderOpen = () => brewOpen() && state.level >= CIDER.lvl;
 // la fiche d'une base : nom, couleur, goût, préférences
 export function baseOf(malt) {
-    if (!isMead(malt)) return MALTS[malt] || MALTS.maltBlond;
-    const h = meadHoney(malt),
-        b = MEAD_BASES[h] || MEAD_BASES.all;
-    return { name: 'Hydromel', color: HONEY_COL[h] || HONEY_COL.all, taste: b.taste, likes: b.likes, text: b.text, mead: true, honey: h };
+    if (isMead(malt)) {
+        const h = meadHoney(malt),
+            b = MEAD_BASES[h] || MEAD_BASES.all;
+        return { name: 'Hydromel', color: HONEY_COL[h] || HONEY_COL.all, taste: b.taste, likes: b.likes, text: b.text, mead: true, honey: h };
+    }
+    if (isCider(malt)) {
+        const k = ciderType(malt),
+            b = CIDER_BASES[k] || CIDER_BASES.sweet;
+        return { name: b.name, short: b.short, color: b.color, taste: b.taste, likes: b.likes, text: b.text, cider: true, ciderKey: k, cost: b.cost };
+    }
+    return MALTS[malt] || MALTS.maltBlond;
 }
 // « de lavande », « d'oranger », ou rien pour le toutes fleurs
 const honeyDe = h => (HONEYS[h] ? ' ' + HONEYS[h].name.replace(/^Miel /, '') : '');
 // le miel d'un brassin : le miel ordinaire (toutes fleurs) ou un miel de fleur (genetics.rv)
 const baseItem = malt => (isMead(malt) ? (meadHoney(malt) === 'all' ? 'honey' : honeyProd(meadHoney(malt))) : malt);
+const baseQualItems = malt => {
+    if (isMead(malt)) return [baseItem(malt)];
+    if (isCider(malt)) return Object.keys((CIDER_BASES[ciderType(malt)] || CIDER_BASES.sweet).cost);
+    return [];
+};
 export const meadHoneys = () => ['all', ...Object.keys(HONEYS).filter(k => state.genetics && (state.genetics.stock['H' + k] || 0) > 0)];
 
 // ---------------- ouverture ----------------
@@ -62,8 +81,10 @@ export const brewOpen = () => projectDone('brewhall');
 export const cellarOpen = () => projectDone('barrelcellar');
 export const brewSlots = (malt = null) => {
     const n = projectDone('labelshop') ? 3 : projectDone('fermenters') ? 2 : 1;
-    // 1.68 : un hydromel prend un ingrédient de plus (4 au plus)
-    return isMead(malt) ? Math.min(MEAD.maxSlots, n + 1) : n;
+    // 1.68 : un hydromel prend un ingrédient de plus (4 au plus) ; 1.181 : un cidre prend jusqu'à 3 ingrédients
+    if (isMead(malt)) return Math.min(MEAD.maxSlots, n + 1);
+    if (isCider(malt)) return Math.min(CIDER.maxSlots, n);
+    return n;
 };
 export const vatCount = () =>
     Object.entries(ABBEY.vats).reduce((a, [p, n]) => a + (projectDone(p) ? n : 0), 0) + (brewOpen() ? vatBonus() + domStepSum('annex', 'vat') : 0);
@@ -143,9 +164,9 @@ function ingTake(id, n, best = false) {
 export function brewQuality(cost, ings, malt = null) {
     let points = 0,
         units = 0;
-    // 1.68 : le rang d'un hydromel compte aussi celui de son miel
-    const base = isMead(malt) ? baseItem(malt) : null;
-    for (const [id] of base ? [...ings, [base]] : ings) {
+    // 1.68 & 1.181 : le rang d'un hydromel ou d'un cidre compte aussi celui de son miel / de ses fruits pressés
+    const seen = new Set([...ings.map(([id]) => id), ...baseQualItems(malt)]);
+    for (const id of seen) {
         const n = cost[id] || 0;
         units += n;
         const v = VAR(id);
@@ -199,6 +220,7 @@ export function ensureBrew() {
     B.draft = B.draft || { malt: 'maltBlond', hop: 1, ings: [] };
     B.draft.ings = B.draft.ings.filter(([id]) => isBrewable(id) || (VAR(id) && BREWABLE.includes(VAR(id).base)));
     if (isMead(B.draft.malt) && !meadOpen()) B.draft.malt = B.draft.beerMalt || 'maltBlond';
+    if (isCider(B.draft.malt) && !ciderOpen()) B.draft.malt = B.draft.beerMalt || 'maltBlond';
     fixAgedNames(B);
     B.demand = B.demand || {};
     B.orders = B.orders || [];
@@ -214,7 +236,7 @@ const cap = t => t[0].toUpperCase() + t.slice(1);
 // profil d'une recette : malt + houblon + ingrédients dosés
 export function brewProfile(malt, hop, ings) {
     const p = [...baseOf(malt).taste];
-    p[2] += isMead(malt) ? 0 : hop;
+    p[2] += isMead(malt) || isCider(malt) ? 0 : hop;
     for (const [id, d] of ings) ingFlavor(id).forEach((v, k) => (p[k] += v * d));
     return p;
 }
@@ -235,16 +257,16 @@ export function brewHarmony(malt, hop, ings) {
         if (pair < 0) reasons.push(`${cap(det(a))} et ${det(b)} se battent.`);
         score += pair;
     } else reasons.push(`Une seule note domine : ${NOTES[a]}.`);
-    // le malt (ou le miel) aime certaines notes
+    // le malt (ou le miel, ou le cidre) aime certaines notes
     const bd = baseOf(malt);
-    const who = bd.mead ? `L’hydromel${honeyDe(bd.honey)}` : `Une ${bd.name.toLowerCase()}`;
+    const who = bd.mead ? `L’hydromel${honeyDe(bd.honey)}` : bd.cider ? `Le ${bd.name.toLowerCase()}` : `Une ${bd.name.toLowerCase()}`;
     if (!bd.likes.length) reasons.push(`${who} ${bd.text}.`);
     else if (bd.likes.includes(a)) {
         score += 1;
         reasons.push(`${who} ${bd.text}.`);
-    } else reasons.push(`${who} ${bd.text} : essayez ${bd.mead ? 'un autre miel' : 'un autre malt'}.`);
+    } else reasons.push(`${who} ${bd.text} : essayez ${bd.mead ? 'un autre miel' : bd.cider ? 'une autre base de verger' : 'un autre malt'}.`);
     // le houblon : trop fort pour une bière douce, bienvenu dans une bière amère ou épicée
-    if (bd.mead) hop = 0; // pas de houblon dans un hydromel
+    if (bd.mead || bd.cider) hop = 0; // pas de houblon dans un hydromel ni un cidre
     if (hop === 3 && a === 0) {
         score -= 1;
         reasons.push('Trop de houblon pour une bière douce.');
@@ -258,13 +280,17 @@ export function brewHarmony(malt, hop, ings) {
     const tops = ings.map(([id]) => noteOf(ingFlavor(id)));
     // 1.48 : une grande recette de brasseur (les variétés du labo comptent pour leur espèce)
     const bases = ings.map(([id]) => (VAR(id) ? VAR(id).base : id));
-    // 1.68 : les classiques de l'hydromel (cyser, pyment, mélomel, métheglin) : un de leurs ingrédients suffit
-    const classic = bd.mead ? MEAD_CLASSICS.find(c => c.any.some(id => bases.includes(id))) : CLASSICS.find(c => c.ings.every(id => bases.includes(id)));
-    if (classic && !bd.mead) {
+    // 1.68 : classiques de l'hydromel ; 1.181 : classiques du cidrier
+    const classic = bd.mead
+        ? MEAD_CLASSICS.find(c => c.any.some(id => bases.includes(id)))
+        : bd.cider
+          ? CIDER_CLASSICS.find(c => c.any.some(id => bases.includes(id)))
+          : CLASSICS.find(c => c.ings.every(id => bases.includes(id)));
+    if (classic && !bd.mead && !bd.cider) {
         reasons.push(classic.text);
         return { stars: Math.max(0, Math.min(3, score + 2)), reasons, classic: classic.id };
     }
-    // 1.68 : un classique de l'hydromel aide (+1), mais le mélange compte encore
+    // 1.68 & 1.181 : un classique d'hydromel ou de cidre aide (+1), mais le mélange compte encore
     if (classic) {
         reasons.push(classic.text);
         score += 1;
@@ -297,6 +323,12 @@ export function brewName(malt, ings) {
         const c = MEAD_CLASSICS.find(x => x.any.some(id => bases.includes(id)));
         return `${c ? c.name : 'Hydromel'}${honeyDe(meadHoney(malt))} ${what}`;
     }
+    if (isCider(malt)) {
+        const bases = ings.map(([id]) => (VAR(id) ? VAR(id).base : id));
+        const c = CIDER_CLASSICS.find(x => x.any.some(id => bases.includes(id)));
+        const b = CIDER_BASES[ciderType(malt)] || CIDER_BASES.sweet;
+        return `${c ? c.name : b.name} ${what}`;
+    }
     return `${MALTS[malt].name} ${what}`;
 }
 const sigOf = (malt, hop, ings) =>
@@ -307,11 +339,20 @@ const sigOf = (malt, hop, ings) =>
 
 // ---------------- ce que coûte un brassin ----------------
 export function brewCost(malt, hop, ings) {
-    const c = isMead(malt) ? { [baseItem(malt)]: MEAD.honeyPerBrew } : { [malt]: ABBEY.maltPerBrew, hop: hop * ABBEY.hopPerDose };
+    const c = isMead(malt)
+        ? { [baseItem(malt)]: MEAD.honeyPerBrew }
+        : isCider(malt)
+          ? { ...(CIDER_BASES[ciderType(malt)] || CIDER_BASES.sweet).cost }
+          : { [malt]: ABBEY.maltPerBrew, hop: hop * ABBEY.hopPerDose };
     for (const [id, d] of ings) c[id] = (c[id] || 0) + d * ABBEY.ingPerDose;
     return c;
 }
-export const brewTime = (ings, malt = null) => (isMead(malt) ? MEAD.baseTime + MEAD.perIng * ings.length : ABBEY.baseTime + ABBEY.perIng * ings.length);
+export const brewTime = (ings, malt = null) =>
+    isMead(malt)
+        ? MEAD.baseTime + MEAD.perIng * ings.length
+        : isCider(malt)
+          ? CIDER.baseTime + CIDER.perIng * ings.length
+          : ABBEY.baseTime + ABBEY.perIng * ings.length;
 // valeur d'une bouteille
 export function brewValue(malt, hop, ings, stars) {
     const cost = Object.entries(brewCost(malt, hop, ings)).reduce((a, [id, n]) => a + ingValue(id) * n, 0);
@@ -320,7 +361,7 @@ export function brewValue(malt, hop, ings, stars) {
 // tout ce qu'il faut pour brasser la recette en cours
 export function brewPreview(d = ensureBrew().draft) {
     const ings = d.ings.filter(([id]) => id).slice(0, brewSlots(d.malt));
-    const hop = isMead(d.malt) ? 0 : d.hop;
+    const hop = isMead(d.malt) || isCider(d.malt) ? 0 : d.hop;
     const h = brewHarmony(d.malt, hop, ings);
     const cost = brewCost(d.malt, hop, ings);
     const byBase = {};
@@ -335,6 +376,7 @@ export function brewPreview(d = ensureBrew().draft) {
         ings,
         hop,
         mead: isMead(d.malt),
+        cider: isCider(d.malt),
         profile: brewProfile(d.malt, hop, ings),
         harmony: h,
         cost,
@@ -362,7 +404,8 @@ export function brewHints(malt, ings) {
     const order = ip.map((v, k) => [v, k]).sort((x, y) => y[0] - x[0]);
     const notes = order[1][0] >= order[0][0] * 0.3 && order[1][0] > 0 ? `${NOTES[order[0][1]]} et ${NOTES[order[1][1]]}` : NOTES[order[0][1]];
     const bd = baseOf(malt);
-    return [`Notes principales : ${notes}.`, `${bd.mead ? `L’hydromel${honeyDe(bd.honey)}` : `Une ${bd.name.toLowerCase()}`} ${bd.text}.`];
+    const who = bd.mead ? `L’hydromel${honeyDe(bd.honey)}` : bd.cider ? `Le ${bd.name.toLowerCase()}` : `Une ${bd.name.toLowerCase()}`;
+    return [`Notes principales : ${notes}.`, `${who} ${bd.text}.`];
 }
 // la note qui domine les ingrédients d'une bière (pour les commandes)
 export function beerNote(b) {
@@ -378,17 +421,28 @@ export function setDraftMalt(m) {
     ensureBrew().draft.malt = m;
     return true;
 }
-// 1.68 : bière ou hydromel ; le miel de l'hydromel
+// 1.68 & 1.181 : bière, hydromel ou cidre & poiré
 export function setDraftKind(kind) {
     const d = ensureBrew().draft;
+    const saveCur = () => {
+        if (isMead(d.malt)) d.meadMalt = d.malt;
+        else if (isCider(d.malt)) d.ciderMalt = d.malt;
+        else d.beerMalt = d.malt;
+    };
     if (kind === 'mead') {
         if (!meadOpen()) return false;
         if (!isMead(d.malt)) {
-            d.beerMalt = d.malt;
+            saveCur();
             d.malt = d.meadMalt || 'mead:all';
         }
-    } else if (isMead(d.malt)) {
-        d.meadMalt = d.malt;
+    } else if (kind === 'cider') {
+        if (!ciderOpen()) return false;
+        if (!isCider(d.malt)) {
+            saveCur();
+            d.malt = d.ciderMalt || 'cider:sweet';
+        }
+    } else if (isMead(d.malt) || isCider(d.malt)) {
+        saveCur();
         d.malt = d.beerMalt || 'maltBlond';
     }
     d.ings = d.ings.slice(0, brewSlots(d.malt));
@@ -398,6 +452,12 @@ export function setDraftHoney(h) {
     const d = ensureBrew().draft;
     if (!meadOpen() || !MEAD_BASES[h]) return false;
     d.malt = 'mead:' + h;
+    return true;
+}
+export function setDraftCider(c) {
+    const d = ensureBrew().draft;
+    if (!ciderOpen() || !CIDER_BASES[c]) return false;
+    d.malt = 'cider:' + c;
     return true;
 }
 export function setDraftHop(n) {
@@ -436,8 +496,8 @@ export function startBrew(at, d = ensureBrew().draft, quiet = false) {
     }
     let points = 0,
         units = 0;
-    const mb = pv.mead ? baseItem(d.malt) : null;
-    const isIng = id => id === mb || pv.ings.some(x => x[0] === id);
+    const bItems = baseQualItems(d.malt);
+    const isIng = id => bItems.includes(id) || pv.ings.some(x => x[0] === id);
     for (const [id, n] of Object.entries(pv.cost)) {
         const pts = ingTake(id, n, isIng(id));
         if (isIng(id)) {
@@ -466,6 +526,7 @@ export function startBrew(at, d = ensureBrew().draft, quiet = false) {
             day: state.day,
         };
         if (pv.mead) Object.assign(B.beers[bid], { mead: true, honey: meadHoney(d.malt) });
+        if (pv.cider) Object.assign(B.beers[bid], { cider: true, ciderKey: ciderType(d.malt) });
     }
     B.vats[pv.freeVat] = { bid, until: now() + pv.time * 1000, n: ABBEY.bottles, loop: !!d.loop, q };
     if (quiet) return bid;
@@ -509,12 +570,22 @@ export function collectVat(i, at) {
     state.stats.beers = (state.stats.beers || 0) + v.n;
     farmSeasonAdd(beer.mead ? 'mead' : 'beer', v.n); // 1.95 : compte pour la saison de la ferme
     if (beer.mead) state.stats.meads = (state.stats.meads || 0) + v.n;
+    if (beer.cider) state.stats.ciders = (state.stats.ciders || 0) + v.n;
     // le livre des bières : une page par ingrédient
     let newPages = 0;
     // 1.68 : un hydromel ouvre aussi la page de son miel
     if (isMead(beer.malt) && !B.book['H' + meadHoney(beer.malt)]) {
         B.book['H' + meadHoney(beer.malt)] = true;
         newPages++;
+    }
+    // 1.181 : un cidre ouvre aussi la page de ses fruits pressés
+    if (isCider(beer.malt)) {
+        for (const id of Object.keys((CIDER_BASES[ciderType(beer.malt)] || CIDER_BASES.sweet).cost)) {
+            if (ITEMS[id] && !B.book[id]) {
+                B.book[id] = true;
+                newPages++;
+            }
+        }
     }
     for (const [id0] of beer.ings) {
         const id = ingBase(id0);
@@ -696,18 +767,31 @@ export function newBeerOrder() {
     const min = slots >= 2 ? pickR([1, 2, 2, 3]) : pickR([1, 1, 2]);
     // une demande réalisable : une note qu'au moins un ingrédient débloqué peut donner
     const note = pickR([0, 0, 1, 2, 3, 4]);
-    // 1.68 : une commande sur trois demande un hydromel
-    const mead = meadOpen() && Math.random() < 1 / 3;
-    const malt = !mead && Math.random() < 0.6 ? pickR(MALT_IDS) : null;
+    // 1.68 & 1.181 : bières, hydromels (dès niv. 47) et cidres & poirés
+    const roll = Math.random();
+    const mead = meadOpen() && roll < 0.28;
+    const cider = !mead && ciderOpen() && roll < (meadOpen() ? 0.54 : 0.3);
+    const malt = !mead && !cider && Math.random() < 0.6 ? pickR(MALT_IDS) : cider && Math.random() < 0.45 ? 'cider:' + pickR(CIDER_IDS) : null;
     const qty = BEER_ORDERS.qty[0] + Math.floor(Math.random() * (BEER_ORDERS.qty[1] - BEER_ORDERS.qty[0] + 1));
     const o = { id: 'o' + B.next++, vid: pickR(who), malt, note, min, qty };
     if (mead) o.mead = true;
+    if (cider) o.cider = true;
     B.orders.push(o);
     return o;
 }
-export const beerOrderText = o =>
-    `${o.qty} bouteilles ${o.mead ? 'd’un hydromel' : `d’une ${o.malt ? MALTS[o.malt].name.toLowerCase() : 'bière'}`} plutôt ${['sucrée', 'acide', 'amère', 'épicée', 'umami'][o.note]}, ${o.min} étoile${o.min > 1 ? 's' : ''} au moins`;
-export const beerFits = (o, b) => !!o.mead === isMead(b.malt) && (!o.malt || b.malt === o.malt) && b.stars >= o.min && beerNote(b) === o.note;
+export const beerOrderText = o => {
+    const drink = o.mead
+        ? 'd’un hydromel'
+        : o.cider
+          ? o.malt && CIDER_BASES[ciderType(o.malt)]
+              ? `d’un ${CIDER_BASES[ciderType(o.malt)].name.toLowerCase()}`
+              : 'd’un cidre ou poiré'
+          : `d’une ${o.malt ? MALTS[o.malt].name.toLowerCase() : 'bière'}`;
+    const adj = o.mead || o.cider ? ['sucré', 'acide', 'amer', 'épicé', 'umami'][o.note] : ['sucrée', 'acide', 'amère', 'épicée', 'umami'][o.note];
+    return `${o.qty} bouteilles ${drink} plutôt ${adj}, ${o.min} étoile${o.min > 1 ? 's' : ''} au moins`;
+};
+export const beerFits = (o, b) =>
+    !!o.mead === isMead(b.malt) && !!o.cider === isCider(b.malt) && (!o.malt || b.malt === o.malt) && b.stars >= o.min && beerNote(b) === o.note;
 export const beerOrderMatches = o => myBeers().filter(b => beerFits(o, b) && beerStock(b.id) >= o.qty);
 // 1.75.3 : les meilleures bouteilles partent en premier, et chacune est payée selon son rang
 function orderRanks(bid, n) {
@@ -810,13 +894,17 @@ export function brewTick() {
     B.vats.forEach(v => {
         if (v && vatReady(v) && !v.told) {
             v.told = true;
-            if (view.started) toast(`${B.beers[v.bid].name} : la bière est prête !`, ['ui', 'beer']);
+            if (view.started) {
+                const drink = B.beers[v.bid];
+                const readyTxt = drink && drink.cider ? 'la cuvée est prête !' : drink && drink.mead ? 'l’hydromel est prêt !' : 'la bière est prête !';
+                toast(`${drink ? drink.name : 'Cuve'} : ${readyTxt}`, ['ui', 'beer']);
+            }
             ch = true;
         }
     });
     return ch;
 }
-export { MALT_IDS };
+export { MALT_IDS, CIDER_IDS };
 
 // ---------------- 1.117 : le carnet et le meilleur accord ----------------
 // les bières favorites : relancées d'un geste depuis l'onglet Brasser
@@ -837,11 +925,11 @@ export function canRebrew(bid) {
     const pv = brewPreview(r);
     return pv.ings.length > 0 && !pv.miss.length && pv.freeVat >= 0;
 }
-// le meilleur accord possible avec le stock, pour le malt (ou le miel) et le houblon choisis :
+// le meilleur accord possible avec le stock, pour le malt (ou le miel, ou le cidre) et le houblon choisis :
 // on essaie chaque ingrédient en stock, puis les meilleures paires, et on garde le plus d'étoiles (puis la plus grande valeur)
 export function bestAccord(d = ensureBrew().draft) {
     const slots = brewSlots(d.malt);
-    const hop = isMead(d.malt) ? 0 : d.hop;
+    const hop = isMead(d.malt) || isCider(d.malt) ? 0 : d.hop;
     const have = [...BREWABLE, ...brewVarieties().map(v => v.id)].filter(id => ingHave(id) >= ABBEY.ingPerDose);
     if (!have.length) return null;
     const score = ings => {

@@ -1345,29 +1345,31 @@ export const GUIDE_PAGES = [
         icon: ['ui', 'confiserie'],
         lvl: 54,
         go: 'machines/confiserie',
-        intro: 'Trois métiers sucrés (Chocolat, Caramel et Berlingots), tous vos ingrédients de la ferme, variétés du Labo et miels de fleurs, portés par trois mini-jeux tactiles inédits.',
+        intro: 'Quatre métiers sucrés (Chocolat, Caramel, Berlingots et Nougats & Calissons), tous vos ingrédients de la ferme, variétés du Labo et 30 miels de fleurs, portés par quatre mini-jeux tactiles inédits.',
         secs: [
             {
-                h: 'Trois métiers et neuf moules sur mesure',
+                h: 'Quatre métiers et douze moules sur mesure',
                 b: [
-                    'Chocolat : bases Noir 70 %, Lait fondant, Blanc vanille ou Praliné, jusqu’à 2 ingrédients, moulés en Tablette, Truffes ou Carré cœur.',
-                    'Caramel : Beurre salé, Crème tendre, Épicé ou Caramel au miel (toutes fleurs et les 26 miels de fleurs récoltés !), en Papillote, Cœur coulant ou Bâton glacé.',
-                    'Berlingots : Sucre tiré, Mentholé ou Fruité, jusqu’à 2 ingrédients, taillés en Berlingot rayé, Pastille ou Sucre d’orge.',
+                    'Chocolat : bases Noir 70 %, Au Lait, Blanc ou Praliné, jusqu’à 3 ingrédients, moulés en Tablette, Truffes ou Rochers.',
+                    'Caramel : Beurre salé, Crème douce, Ambré ou Caramel au miel (les 30 miels de fleurs du jeu !), en Papillotes, Pavés ou Pot de crème.',
+                    'Berlingots : Sucre cuit, Sucre d’orge ou Cristal frais, jusqu’à 2 ingrédients, taillés en Berlingots rayés, Sucettes ou Pastilles.',
+                    'Nougats & Calissons : Nougat Blanc, Nougat Noir, Calisson fondant ou Nougat au miel (les 30 miels de fleurs du jeu !), en Barre de nougat, Calissons glacés ou Bouchées nougatine.',
                 ],
             },
             {
-                h: 'Trois mini-jeux inédits et Finition Miroir',
+                h: 'Quatre mini-jeux inédits et Finition Miroir',
                 b: [
                     'Tempérage sur marbre (Chocolat) : maintenez la température dans les 3 paliers successifs (50 °C, 28 °C, 31 °C) pour faire briller le beurre de cacao.',
                     'L’Instant Ambré (Caramel) : guettez la teinte ambrée au chaudron et glissez le beurre ou le miel au moment exact sur deux cuissons.',
                     'La Coupe au Ciseau (Berlingots) : tranchez le ruban de sucre rayé pile au passage des six losanges.',
+                    'Le Montage en Neige (Nougats & Calissons) : fouettez en rythme dans la zone verte pendant que le miel chaud coule pour monter des blancs bien fermes.',
                     'Un mini-jeu est instantané : réussir 3★ offre la Finition Miroir (+30 % de valeur et +1 cran de qualité, jusqu’à Diamant !). Vous pouvez aussi cuire passivement dans vos 2 à 4 chaudrons.',
                 ],
             },
             {
                 h: 'Grands Classiques, Grimoire, Commandes et Coffre-fort',
                 b: [
-                    '18 Grands Classiques (6 par métier) offrent +2★ d’harmonie et un sceau doré.',
+                    '24 Grands Classiques (6 par métier) offrent +2★ d’harmonie et un sceau doré.',
                     'Les variétés du Labo et le réglage « Meilleurs ingrédients d’abord » transmettent leur qualité (Argent, Or, Platine, Diamant) à la fournée.',
                     'Livrez les Commandes gourmandes (+75 % de paiement, amitié et renom), offrez vos douceurs aux villageois, exposez vos plus belles pièces au Coffre-fort et complétez le Grimoire du Confiseur (+1 ruban de Prestige une fois complet).',
                 ],
@@ -1382,7 +1384,7 @@ export const GUIDE_PAGES = [
         icon: ['ui', 'beer'],
         lvl: 36,
         go: 'machines/brew',
-        intro: 'Composez vos propres bières : un malt, du houblon et des ingrédients de la ferme.',
+        intro: 'Composez vos propres bières, cidres & poirés et hydromels avec vos malts, fruits du verger, miels et récoltes de la ferme.',
         secs: [
             {
                 h: 'Composer une bière',
@@ -1395,7 +1397,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Le carnet et le meilleur accord',
-                t: 'Touchez l’étoile d’une bière (onglet Bières) pour la ranger dans votre carnet : elle se relance d’un geste depuis l’onglet Brasser. Le bouton « Meilleur accord avec mon stock » compose la meilleure bière possible avec le malt, le houblon et les ingrédients que vous avez ; ses étoiles restent à découvrir en la brassant.',
+                t: 'Touchez l’étoile d’une boisson (onglet Boissons) pour la ranger dans votre carnet : elle se relance d’un geste depuis l’onglet Brasser. Le bouton « Meilleur accord avec mon stock » compose la meilleure recette possible avec la base et les ingrédients que vous avez ; ses étoiles restent à découvrir en la brassant.',
             },
             {
                 h: 'Trouver un ingrédient ou un miel',
@@ -1414,13 +1416,21 @@ export const GUIDE_PAGES = [
                 t: 'Cinq mélanges valent deux étoiles de plus et ne se battent jamais : coriandre et oranger amer (la blanche), seigle et épicéa (la sahti), café et chocolat noir (la stout), cerise et framboise (la bière aux fruits rouges), citrouille et vanille (la bière de citrouille).',
             },
             {
-                h: 'Mes bières',
+                h: 'Mes boissons',
                 b: [
                     'Chaque nouvelle recette reçoit un nom, que vous changez avec le crayon.',
                     'Les étoiles d’une recette restent secrètes jusqu’au premier brassin (on voit des indices).',
-                    'Plus vous vendez une même bière, plus son prix baisse, puis il remonte avec le temps.',
-                    '« Rebrasser » refait la dernière recette ; « Planifier » (dans Mes bières, Mon carnet ou le Plan de production) enchaîne plusieurs brassins en préparant le malt à la malterie et en relançant vos cuves libres ; les cuves peuvent aussi tourner en boucle pendant votre absence.',
-                    'Qualité : avec « Meilleurs ingrédients d’abord » (atelier), un brassin fait d’ingrédients en argent, en or, en platine ou en diamant donne des bouteilles de ce rang (même score que les plats). Elles se vendent plus cher, gardent leur rang en cave, et une commande de bière les paie selon leur rang (les meilleures partent en premier).',
+                    'Plus vous vendez une même boisson, plus son prix baisse, puis il remonte avec le temps.',
+                    '« Rebrasser » refait la dernière recette ; « Planifier » (dans Mes boissons, Mon carnet ou le Plan de production) enchaîne plusieurs brassins en préparant le malt à la malterie et en relançant vos cuves libres ; les cuves peuvent aussi tourner en boucle pendant votre absence.',
+                    'Qualité : avec « Meilleurs ingrédients d’abord » (atelier), un brassin fait d’ingrédients en argent, en or, en platine ou en diamant donne des bouteilles de ce rang (même score que les plats). Elles se vendent plus cher, gardent leur rang en cave, et une commande les paie selon leur rang (les meilleures partent en premier).',
+                ],
+            },
+            {
+                h: 'Les cidres & poirés artisanaux',
+                b: [
+                    'Choisissez « Cidre » dès l’ouverture de la brasserie : quatre bases de verger sans houblon (Cidre doux, Cidre brut, Poiré pétillant, Cidre rosé) et jusqu’à 3 ingrédients libres.',
+                    'Les 5 grands classiques du cidrier donnent +1★ : Cidre de glace (coing ou baies boréales), Cidre d’hiver (épices chaudes), Cuvée fleurie (fleurs et herbes), Cidre rubis (petits fruits rouges) et Cidre impérial (yuzu, nashi, kumquat ou lotus).',
+                    'Ils s’embouteillent en flacon champenois à muselet doré, ont leurs propres commandes, participent au concours de la saison et vieillissent en fût à la cave.',
                 ],
             },
             {
@@ -1438,7 +1448,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Commandes et fût',
-                t: 'Frère Hugues, Agnès et des habitués demandent une bière précise. Après le cellier à fûts, vos bières vieillissent en fût à la cave. Le livre des bières donne une récompense toutes les 10 pages.',
+                t: 'Frère Hugues, Agnès et des habitués demandent une bière, un cidre ou un hydromel précis. Après le cellier à fûts, vos boissons vieillissent en fût à la cave. Le livre des bières donne une récompense toutes les 10 pages.',
             },
         ],
         see: ['cave', 'village'],

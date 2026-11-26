@@ -43,6 +43,19 @@ export const CONF_KINDS = {
         shapes: ['berlingot', 'sucette', 'pastille'],
         col: '#d9486b',
     },
+    nougat: {
+        id: 'nougat',
+        name: 'Nougats',
+        title: 'Nougats & Calissons',
+        maxIngs: 2,
+        batch: 7,
+        baseTime: 540, // 9 min + 2 min 30 par ingrédient
+        perIng: 150,
+        miniName: 'Le Montage en Neige',
+        miniDesc: 'Fouette en cadence pour monter les blancs en neige ferme pendant que le miel chaud coule !',
+        shapes: ['nougat', 'calisson', 'bouchee'],
+        col: '#d8b46c',
+    },
 };
 export const CONF_KIND_IDS = Object.keys(CONF_KINDS);
 
@@ -173,6 +186,44 @@ export const CONF_BASES = {
         likes: [1, 2, 3],
         text: 'aime les plantes boréales, le yuzu et les herbes',
     },
+
+    // ---- Nougats & Calissons (1.181) ----
+    nougatBlanc: {
+        id: 'nougatBlanc',
+        kind: 'nougat',
+        name: 'Nougat Blanc Tendre',
+        short: 'Nougat Blanc',
+        cost: { honey: 2, egg: 2, almond: 1 },
+        col: '#f7f0df',
+        col2: '#dfd2b5',
+        taste: [4, 0, 0, 0, 2],
+        likes: [0, 1, 4],
+        text: 'aérien et fondant, sublime pistache, fruits confits et lavande',
+    },
+    nougatNoir: {
+        id: 'nougatNoir',
+        kind: 'nougat',
+        name: 'Nougat Noir Croquant',
+        short: 'Nougat Noir',
+        cost: { honey: 2, almond: 2, sugar: 1 },
+        col: '#965a24',
+        col2: '#633712',
+        taste: [3, 0, 1, 1, 2],
+        likes: [1, 2, 3],
+        text: 'caramélisé et craquant, aime les figues, agrumes, épices et noix',
+    },
+    calisson: {
+        id: 'calisson',
+        kind: 'nougat',
+        name: 'Calisson Fondant',
+        short: 'Calisson',
+        cost: { almond: 2, melon: 1, sugar: 2 },
+        col: '#f5dfb8',
+        col2: '#d9b578',
+        taste: [4, 1, 0, 0, 1],
+        likes: [0, 1, 3],
+        text: 'pâte d’amande et fruits confits sous glaçage royal : aime fleur d’oranger et agrumes',
+    },
 };
 
 export const CONF_SHAPES = {
@@ -185,6 +236,9 @@ export const CONF_SHAPES = {
     berlingot: { id: 'berlingot', kind: 'berlingot', name: 'Berlingots rayés' },
     sucette: { id: 'sucette', kind: 'berlingot', name: 'Sucettes spirales' },
     pastille: { id: 'pastille', kind: 'berlingot', name: 'Pastilles cristallisées' },
+    nougat: { id: 'nougat', kind: 'nougat', name: 'Barre de nougat' },
+    calisson: { id: 'calisson', kind: 'nougat', name: 'Calissons glacés' },
+    bouchee: { id: 'bouchee', kind: 'nougat', name: 'Bouchées nougatine' },
 };
 
 // Ingrédients d'atelier supplémentaires utilisables en confiserie (en plus de toutes les cultures/fruits avec FLAVORS)
@@ -373,6 +427,62 @@ export const CONF_CLASSICS = [
         hint: 'Un bonbon fin à l’hibiscus, nénuphar, tiaré ou lotus',
         text: 'Fleur délicate enfermée dans un écrin de sucre translucide.',
     },
+
+    // Nougats & Calissons (6 — 1.181)
+    {
+        id: 'nougatMontelimar',
+        kind: 'nougat',
+        bases: ['nougatBlanc'],
+        any: ['pistachio', 'lavender', 'almond'],
+        name: 'Nougat de Montélimar',
+        hint: 'Nougat blanc ou au miel de fleur avec pistache, lavande ou amande',
+        text: 'Le grand nougat tendre aux éclats de pistache et parfum de lavande.',
+    },
+    {
+        id: 'calissonAix',
+        kind: 'nougat',
+        bases: ['calisson'],
+        any: ['orange', 'bitterOrange', 'orangeBlossomWater'],
+        name: 'Calisson d’Aix',
+        hint: 'Calisson fondant parfumé à l’orange, bigarade ou fleur d’oranger',
+        text: 'Losange de pâte d’amande confite et glaçage royal aux parfums du Midi.',
+    },
+    {
+        id: 'nougatNoirProvence',
+        kind: 'nougat',
+        bases: ['nougatNoir'],
+        any: ['fig', 'walnut', 'hazelnut'],
+        name: 'Nougat des Treize Desserts',
+        hint: 'Nougat noir croquant enrichi de figue, noix ou noisette',
+        text: 'Miel caramélisé et fruits secs grillés comme aux veillées d’hiver.',
+    },
+    {
+        id: 'nougatSoleil',
+        kind: 'nougat',
+        bases: ['nougatBlanc', 'nougatNoir'],
+        any: ['lemon', 'mandarin', 'yuzu', 'kumquat'],
+        name: 'Nougat Doré aux Agrumes',
+        hint: 'Nougat tendre ou croquant réveillé par citron, mandarine, yuzu ou kumquat',
+        text: 'Douceur miellée traversée par un zeste d’agrume lumineux.',
+    },
+    {
+        id: 'calissonRubis',
+        kind: 'nougat',
+        bases: ['calisson'],
+        any: ['raspberry', 'strawberry', 'cherry', 'apricot'],
+        name: 'Calisson Rubis des Vergers',
+        hint: 'Calisson fondant marié à la framboise, fraise, cerise ou abricot',
+        text: 'Cœur fruité acidulé sous une fine croûte de glaçage immaculé.',
+    },
+    {
+        id: 'nougatOrient',
+        kind: 'nougat',
+        bases: ['nougatBlanc', 'nougatNoir'],
+        any: ['sesame', 'date', 'cinnamon', 'ginger'],
+        name: 'Nougat de la Route de la Soie',
+        hint: 'Nougat parfumé au sésame, datte, cannelle ou gingembre',
+        text: 'Notes chaudes d’épices et de sésame doré prises dans le miel.',
+    },
 ];
 
 // Multiplicateurs selon les étoiles d'accord (0..3) et le score du mini-jeu (0 = atelier auto, 1..3 = mini-jeu)
@@ -387,7 +497,7 @@ export const CONF_ORDERS = {
     villagers: ['lucie', 'odette', 'gaston', 'mei', 'ingrid', 'yasmine', 'margaux', 'odile', 'theo', 'marcel', 'lina'],
 };
 
-// Grimoire du Confiseur : palier tous les 8 découverts (ingrédients confits + 18 classiques)
+// Grimoire du Confiseur : palier tous les 8 découverts (ingrédients confits + 24 classiques)
 export const CONF_GRIMOIRE = {
     step: 8,
     coins: 10000,
@@ -401,14 +511,15 @@ export const CONF_PREFS = {
     gaston: 'chocolate',
     mei: 'berlingot',
     ingrid: 'caramel',
-    yasmine: 'chocolate',
+    yasmine: 'nougat',
     margaux: 'chocolate',
     odile: 'berlingot',
     theo: 'caramel',
     lina: 'chocolate',
     henri: 'caramel',
     milo: 'berlingot',
-    anatole: 'chocolate',
+    anatole: 'nougat',
+    marcel: 'nougat',
 };
 
 // Demande douce (comme Parfumerie & Brasserie)

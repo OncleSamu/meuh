@@ -70,6 +70,7 @@ export function launchConfMini(kind) {
 
     if (kind === 'chocolate') runTemperMini(stage, pv, finish);
     else if (kind === 'caramel') runAmberMini(stage, pv, finish);
+    else if (kind === 'nougat') runWhipMini(stage, pv, finish);
     else runSnipMini(stage, pv, finish);
 }
 
@@ -345,3 +346,122 @@ function runSnipMini(stage, pv, finish) {
     };
     activeRaf = requestAnimationFrame(step);
 }
+
+// ---------------- 4. NOUGATS & CALISSONS : Le Montage en Neige (1.181) ----------------
+function runWhipMini(stage, pv, finish) {
+    const honeyCol = pv.baseCol2 || '#e8b339';
+    stage.innerHTML = `<div class="cfm-whip">
+        <div class="cfm-phase" id="cfm-wph">Garde la cadence dans la zone verte !</div>
+        <div class="cfm-bowl-wrap" id="cfm-bowl">
+            <div class="cfm-pour" style="background:${honeyCol}"></div>
+            <div class="cfm-bowl">
+                <div class="cfm-foam" id="cfm-foam"></div>
+                <div class="cfm-whisk" id="cfm-whisk"><i></i><i></i><i></i></div>
+            </div>
+        </div>
+        <div class="cfm-wbar">
+            <div class="cfm-wzone" id="cfm-wzone"></div>
+            <div class="cfm-wneedle" id="cfm-wneedle"></div>
+        </div>
+        <div class="cfm-meter"><span>Neige ferme</span><div class="cfm-mbar"><i id="cfm-wfill"></i></div><b id="cfm-wpct">0 %</b></div>
+        <button type="button" class="btn gold wide lg cfm-hold" id="cfm-beat">Fouetter ! (tapote en rythme)</button>
+    </div>`;
+
+    const phEl = stage.querySelector('#cfm-wph');
+    const bowlEl = stage.querySelector('#cfm-bowl');
+    const foamEl = stage.querySelector('#cfm-foam');
+    const whiskEl = stage.querySelector('#cfm-whisk');
+    const zoneEl = stage.querySelector('#cfm-wzone');
+    const needleEl = stage.querySelector('#cfm-wneedle');
+    const fillEl = stage.querySelector('#cfm-wfill');
+    const pctEl = stage.querySelector('#cfm-wpct');
+    const beatBtn = stage.querySelector('#cfm-beat');
+
+    let pace = 0.28;
+    let angle = 0;
+    let firm = 0;
+    let elapsed = 0;
+    let last = performance.now();
+    let lastSwipeX = null;
+    const totalDur = 8.5;
+
+    const pulse = (amt = 0.21) => {
+        pace = Math.min(1, pace + amt);
+        sfx('pop');
+        buzz(8);
+    };
+
+    beatBtn.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        pulse(0.21);
+    });
+    bowlEl.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        lastSwipeX = e.clientX;
+        pulse(0.18);
+    });
+    bowlEl.addEventListener('pointermove', e => {
+        if (lastSwipeX != null && Math.abs(e.clientX - lastSwipeX) > 26) {
+            lastSwipeX = e.clientX;
+            pulse(0.14);
+        }
+    });
+    const endSwipe = () => {
+        lastSwipeX = null;
+    };
+    window.addEventListener('pointerup', endSwipe);
+    window.addEventListener('pointercancel', endSwipe);
+
+    const step = t => {
+        const dt = Math.max(0, Math.min(0.05, (t - last) / 1000));
+        last = t;
+        elapsed += dt;
+
+        // La fenêtre idéale se resserre légèrement à mi-parcours pendant la coulée du miel
+        const half = elapsed > 4.2 ? 0.15 : 0.19;
+        const center = 0.58;
+        const lo = center - half;
+        const hi = center + half;
+
+        pace = Math.max(0, pace - 0.44 * dt);
+        const inZone = pace >= lo && pace <= hi;
+        if (inZone) {
+            firm = Math.min(1, firm + 0.165 * dt);
+        } else if (pace > hi) {
+            // Trop rapide : légères éclaboussures
+            firm = Math.max(0, firm - 0.03 * dt);
+        }
+
+        angle = (angle + (120 + pace * 540) * dt) % 360;
+        const pct = Math.min(100, Math.round(firm * 100));
+
+        phEl.textContent =
+            pace < lo
+                ? 'Fouette un peu plus vite !'
+                : pace > hi
+                  ? 'Doucement, le miel éclabousse !'
+                  : elapsed > 4.2
+                    ? 'Parfait ! Le miel chaud s’incorpore !'
+                    : 'Super cadence, les blancs montent !';
+
+        zoneEl.style.left = `${Math.round(lo * 100)}%`;
+        zoneEl.style.width = `${Math.round((hi - lo) * 100)}%`;
+        zoneEl.classList.toggle('hit', inZone);
+        needleEl.style.left = `${Math.round(pace * 100)}%`;
+        foamEl.style.height = `${26 + Math.round(firm * 56)}%`;
+        whiskEl.style.transform = `translateX(${Math.round(Math.sin((angle * Math.PI) / 180) * 20)}px) rotate(${Math.round(Math.cos((angle * Math.PI) / 180) * 14)}deg)`;
+        fillEl.style.width = `${pct}%`;
+        pctEl.textContent = `${pct} %`;
+
+        if (elapsed >= totalDur) {
+            window.removeEventListener('pointerup', endSwipe);
+            window.removeEventListener('pointercancel', endSwipe);
+            const stars = pct >= 66 ? 3 : pct >= 38 ? 2 : 1;
+            finish(stars, `Blancs montés à ${pct} % avec le filet de miel chaud.`);
+            return;
+        }
+        activeRaf = requestAnimationFrame(step);
+    };
+    activeRaf = requestAnimationFrame(step);
+}
+
