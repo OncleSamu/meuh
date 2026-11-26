@@ -29,7 +29,7 @@ import {
 import { bust, face } from './people.js';
 import { house2 } from './buildings2.js';
 import { MAP_BG } from './maps.js';
-import { MALTS, CIDER_BASES } from '../data/abbey.js';
+import { MALTS, CIDER_BASES, SAKE_BASES } from '../data/abbey.js';
 
 const SKIN = '#f6c9a0';
 const BARLEY = '#e8c060';
@@ -132,6 +132,55 @@ ui.vat = () =>
     HL(22, 34, 2, 8, 0, 0.5) +
     R(28, 6, 8, 9, 2, '#d98b3a', 2) +
     L('M50 44 L58 44 L58 50', 2.4);
+// 1.182 : une carafe de saké (tokkuri) et sa coupelle (ochoko)
+ui.sake = () =>
+    SHADOW(30, 59, 20, 3) +
+    P('M20 8 L32 8 L30 18 Q41 25 41 41 Q41 57 26 57 Q11 57 11 41 Q11 25 22 18Z', '#f2ead0', 2.2) +
+    F('M13 38 Q26 42 39 38 Q39 55 26 55 Q13 55 13 38Z', '#2e4d6b', 0.92) +
+    L('M21 17 Q26 19 31 17', 2.4, '#c83e32') +
+    HL(18, 30, 1.8, 6, 0, 0.45) +
+    P('M43 44 L57 44 L55 56 Q50 58 45 56Z', '#f6efe0', 2) +
+    L('M44 50 L56 50', 1.6, '#2e4d6b');
+
+// ======================= 1.182 : une carafe tokkuri de saké =======================
+// Carafe en céramique émaillée, cordon rouge mizuhiki au col, bandeau de la robe du saké et étiquette verticale
+export function sakeSvg(b) {
+    const k = b.sakeKey || (String(b.malt || '').startsWith('sake:') ? String(b.malt).slice(5) : 'junmai');
+    const def = SAKE_BASES[k] || SAKE_BASES.junmai;
+    const base = id => (b.bases && b.bases[id]) || id;
+    const ings = b.ings || [];
+    const main = ings.length ? base([...ings].sort((x, y) => y[1] - x[1])[0][0]) : 'rice';
+    const aged = !!b.aged;
+    const ceramic = aged ? '#3b2b22' : def.ceramic;
+    const body = 'M25 6 L39 6 L36 16 Q49 24 49 41 Q49 59 32 59 Q15 59 15 41 Q15 24 28 16Z';
+    const inner =
+        SHADOW(32, 61, 17, 2.5) +
+        P(body, ceramic) +
+        // Bande émaillée claire / couleur du saké
+        F('M16.5 31 Q32 28 47.5 31 L47.5 41 Q32 39 16.5 41Z', def.color, 0.92) +
+        HL(21, 35, 1.8, 9, 0, 0.35) +
+        // Étiquette parchemin verticale centrée avec bordure rouge traditionnel
+        R(21, 29, 22, 24, 3, '#fffaf0', 1.6) +
+        L('M23 31.5 L41 31.5 M23 50.5 L41 50.5', 1.3, '#c83e32') +
+        sub(main, 24.5, 33, 15) +
+        (ings.length > 1
+            ? ings
+                  .slice(1, 3)
+                  .map(([id], idx) => C(21 + idx * 22, 31, 3.8, '#fffaf0', 1.1) + sub(base(id), 17.8 + idx * 22, 27.8, 6.4))
+                  .join('')
+            : '') +
+        P(body, 'none') +
+        // Rebords du goulot évasé + bouchon bois
+        E(32, 6, 7.2, 2.2, '#f5ecd4', 0, 1.6) +
+        // Cordon rouge mizuhiki noué au col
+        L('M26.5 16.5 Q32 19 37.5 16.5', 2.6, '#c83e32') +
+        C(32, 18.2, 2.1, '#e6b84c', 1) +
+        (aged ? L('M16 44 Q32 47 48 44', 1.2, '#e0b960') : '') +
+        [0, 1, 2]
+            .map(idx => (idx < (b.stars || 0) ? P(`M${26 + idx * 6} 55.5 l1 2 2.2 .3 -1.6 1.5 .4 2.2 -2 -1 -2 1 .4 -2.2 -1.6 -1.5 2.2 -.3Z`, '#ffd23f', 0.8) : ''))
+            .join('');
+    return svg(inner);
+}
 
 // ======================= 1.181 : une bouteille de cidre / poiré =======================
 // Bouteille champenoise galbée : col élancé avec coiffe dorée et muselet, bulles fines, étiquette de verger
@@ -182,6 +231,8 @@ export function beerSvg(b) {
     if (b && (b.mead || String(b.malt || '').startsWith('mead:'))) return meadSvg({ ...b, honey: b.honey || String(b.malt).slice(5) });
     // 1.181 : un cidre ou poiré se dessine en bouteille champenoise
     if (b && (b.cider || String(b.malt || '').startsWith('cider:'))) return ciderSvg(b);
+    // 1.182 : un saké se dessine en carafe tokkuri en céramique
+    if (b && (b.sake || String(b.malt || '').startsWith('sake:'))) return sakeSvg(b);
     const c = (MALTS[b.malt] || MALTS.maltBlond).color;
     // 1.7 : une variété du labo se dessine avec le produit de son espèce
     const base = id => (b.bases && b.bases[id]) || id;

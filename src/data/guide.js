@@ -1434,6 +1434,14 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
+                h: 'Le saké artisanal',
+                b: [
+                    'Choisissez « Saké » dès l’ouverture de la brasserie (le riz se cultive dès le niveau 24) : quatre styles sans houblon — Junmai pur riz, Daiginjo poli, Nigori voilé et Koshu ambré — et jusqu’à 3 ingrédients libres.',
+                    'Les 5 grands classiques du maître saké donnent +1★ : Umeshu (prune ume ou quetsche), Yuzushu (yuzu ou agrumes), Saké de cerisier (cerise, pêche ou hibiscus), Saké zen (thé, gingembre ou menthe) et Saké impérial (lotus, nashi, longane ou litchi).',
+                    'Servi en carafe tokkuri en céramique émaillée, il a ses propres commandes, participe au concours saisonnier et vieillit en fût à la cave.',
+                ],
+            },
+            {
                 h: 'L’hydromel (niveau 45)',
                 b: [
                     'Choisissez « Hydromel » : 6 pots de miel à la place du malt, pas de houblon, et un ingrédient de plus que pour une bière (4 au plus).',
@@ -1448,7 +1456,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Commandes et fût',
-                t: 'Frère Hugues, Agnès et des habitués demandent une bière, un cidre ou un hydromel précis. Après le cellier à fûts, vos boissons vieillissent en fût à la cave. Le livre des bières donne une récompense toutes les 10 pages.',
+                t: 'Frère Hugues, Agnès et des habitués demandent une bière, un cidre, un hydromel ou un saké précis. Après le cellier à fûts, vos boissons vieillissent en fût à la cave. Le livre des bières donne une récompense toutes les 10 pages.',
             },
         ],
         see: ['cave', 'village'],

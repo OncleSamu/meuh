@@ -428,6 +428,18 @@
     margin-top: 10px;
 }
 
+/* 1.182 : Sélecteur 4 boissons (Bière | Cidre | Hydromel | Saké) sans troncature sur mobile 360px */
+.brew-kind-seg > button {
+    padding-inline: 4px;
+    font-size: 0.82rem;
+}
+@media (max-width: 400px) {
+    .brew-kind-seg > button {
+        padding-inline: 2px;
+        font-size: 0.75rem;
+    }
+}
+
 /* Guide discret des accords et recettes classiques */
 .brew-guide {
     margin-top: 10px;

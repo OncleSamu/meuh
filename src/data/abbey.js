@@ -282,3 +282,100 @@ export const CIDER_CLASSICS = [
     },
 ];
 
+// ---------------- 1.182 : le saké artisanal ----------------
+// Quatrième famille de boissons à la brasserie : riz fermenté (koji), pas de houblon, jusqu'à 3 ingrédients.
+// La base s'écrit 'sake:<style>' dans le champ « malt » de la recette.
+export const SAKE = {
+    lvl: ABBEY.lvl, // accessible dès l'ouverture de la brasserie (le riz est débloqué niv. 24)
+    ricePerBrew: 7,
+    baseTime: 840, // 14 min + 3 min 30 par ingrédient
+    perIng: 210,
+    maxSlots: 3,
+};
+export const SAKE_BASES = {
+    junmai: {
+        id: 'junmai',
+        name: 'Saké Junmai',
+        short: 'Junmai',
+        item: 'rice',
+        cost: { rice: 7 },
+        color: '#f2ead0',
+        ceramic: '#2e3e52',
+        taste: [1, 0, 0, 0, 4],
+        likes: [4, 2, 3],
+        text: 'pur riz riche en umami : aime gingembre, sésame, thé et notes boisées',
+    },
+    daiginjo: {
+        id: 'daiginjo',
+        name: 'Saké Daiginjo',
+        short: 'Daiginjo',
+        item: 'rice',
+        cost: { rice: 10 },
+        color: '#f8f5ea',
+        ceramic: '#2a5a78',
+        taste: [2, 1, 0, 0, 2],
+        likes: [0, 1],
+        text: 'riz très poli, cristallin et floral : sublime nashi, yuzu, poire et fleurs fines',
+    },
+    nigori: {
+        id: 'nigori',
+        name: 'Saké Nigori',
+        short: 'Nigori voilé',
+        item: 'rice',
+        cost: { rice: 6, sugar: 1 },
+        color: '#faf6ec',
+        ceramic: '#556e52',
+        taste: [4, 0, 0, 0, 2],
+        likes: [0, 1, 3],
+        text: 'non filtré, laiteux et velouté : aime pêche, litchi, cerise, prune et agrumes',
+    },
+    koshu: {
+        id: 'koshu',
+        name: 'Saké Koshu',
+        short: 'Koshu ambré',
+        item: 'rice',
+        cost: { rice: 8, honey: 1 },
+        color: '#e0a94b',
+        ceramic: '#693b24',
+        taste: [2, 0, 1, 1, 3],
+        likes: [2, 3, 4],
+        text: 'ambré et soyeux : sublime prune ume, châtaigne, épices chaudes et noix',
+    },
+};
+export const SAKE_IDS = Object.keys(SAKE_BASES);
+
+// 5 grands classiques du maître saké : un de ces ingrédients suffit (+1★ et nom de cuvée)
+export const SAKE_CLASSICS = [
+    {
+        id: 'umeshuClassic',
+        name: 'Umeshu',
+        any: ['ume', 'plum'],
+        text: 'Infusé de prune ume ou quetsche : un umeshu velouté et envoûtant.',
+    },
+    {
+        id: 'yuzushu',
+        name: 'Yuzushu',
+        any: ['yuzu', 'kumquat', 'lemon', 'orange'],
+        text: 'Parfumé au yuzu ou aux agrumes : un yuzushu vif et lumineux.',
+    },
+    {
+        id: 'sakurazake',
+        name: 'Saké de cerisier',
+        any: ['cherry', 'peach', 'hibiscus'],
+        text: 'Aux cerises, pêches ou fleurs : la cuvée printanière du hanami.',
+    },
+    {
+        id: 'matchaSake',
+        name: 'Saké zen',
+        any: ['tea', 'ginger', 'mint'],
+        text: 'Infusé de thé, gingembre ou menthe : une cuvée fraîche et parfumée.',
+    },
+    {
+        id: 'imperialSake',
+        name: 'Saké impérial',
+        any: ['lotus', 'nashi', 'longan', 'lychee'],
+        text: 'Au lotus, nashi, longane ou litchi : le grand cru des Terres d’Asie.',
+    },
+];
+
+

@@ -1,6 +1,16 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.182",
+  "title": "Saké artisanal à la Brasserie (Junmai, Daiginjo, Nigori & Koshu)",
+  "date": "26 novembre 2026",
+  "items": [
+   "Brasserie — 4e famille « Saké artisanal » : 4 styles de riz fermenté sans houblon (Junmai pur riz, Daiginjo poli, Nigori voilé, Koshu ambré) et jusqu’à 3 ingrédients libres",
+   "Carafe tokkuri en céramique émaillée (cordon rouge mizuhiki, bandeau de robe, étiquette verticale) et 5 Grands Classiques du maître saké (Umeshu, Yuzushu, Saké de cerisier, Saké zen, Saké impérial)",
+   "Intégration complète dans les cuves, les commandes de la brasserie, les filtres de Mes boissons, le concours saisonnier, le Livre des bières et le vieillissement en fût à la Cave"
+  ]
+ },
+ {
   "v": "1.181",
   "title": "Nougats & Calissons (Confiserie) et Cidres & Poirés artisanaux (Brasserie)",
   "date": "26 novembre 2026",
