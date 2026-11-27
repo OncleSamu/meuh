@@ -4,20 +4,23 @@ import { addRenom, RENOM } from './renom.js';
 import { livingTrees } from './orchard.js';
 import { pkTransportOk, pkReq, pkEstimate, pkHave, pullPk } from './maison.js';
 import { pfTransportOk, pfReq, pfEstimate, pfHave, pullPf } from './perfume.js';
+import { cfTransportOk, cfReq, cfEstimate, cfHave, pullCf } from './confiserie.js';
+import { brTransportOk, brReq, brEstimate, brHave, pullBr } from './brewery.js';
 import { islandOpen } from './island.js';
 import { oasisOpen } from './oasis.js';
 import { nordOpen } from './nord.js';
 import { asieOpen } from './asie.js';
-import { state, scaleLvl, lvOk } from '../core/state.js';
+import { state, scaleLvl, lvOk, ecoLvl } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { pickRand, round5 } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, squish } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
+import { QUALITY } from '../data/farm.js';
 import { ANIMALS } from '../data/animals.js';
 import { MACHINES, RECIPES } from '../data/machines.js';
 import { VILLAGERS, BEST_FRIEND_BONUS, PROJECTS } from '../data/village.js';
-import { RARE, ORDER_MAX, ORDER_REFILL, ORDER_TRASH_WAIT, TRAIN_STAY, TRAIN_AWAY, BALLOON_STAY, BALLOON_AWAY } from '../data/commerce.js';
+import { RARE, ORDER_MAX, ORDER_REFILL, ORDER_TRASH_WAIT, GOLD_ORDER, ORDER_STREAK, TRAIN_STAY, TRAIN_AWAY, BALLOON_STAY, BALLOON_AWAY } from '../data/commerce.js';
 import { BALANCE } from '../data/progress.js';
 import { netOpen, transOpen } from './port.js';
 import { storyOk, projectDone, projectOpen, projectLeft } from './story.js';
@@ -34,12 +37,14 @@ import { isInSeason } from './world.js';
 import { isAdult } from './animals.js';
 import { tip } from './tips.js';
 import { eventActive, eventProgress } from './events.js';
-import { defiWanted } from './defis.js';
+import { defiWanted, haveQ, takeQ } from './defis.js';
+import { madeQ } from './neighbordish.js';
 import { fishOrderOk } from './fishing.js';
 import { cupHas } from './cup.js';
-import { ecoLvl } from '../core/state.js';
 import { eldersMult } from './family.js';
 import { metierOrderPay, metierTransportPay, metierPick, clientOrder } from './metier.js';
+import { cargoHere } from './cargo.js';
+import { armandHere, armandSlots, armandOrder, armandDealt, armandOff } from './armand.js';
 
 // 1.175 : pré-calcul O(1) des machines, animaux, ruches et contrées pour accélérer questPool() et ensureQuests()
 function makeCanProduce() {
@@ -142,6 +147,13 @@ function orderCount() {
     return r < 0.3 ? 1 : r < 0.75 ? 2 : 3;
 }
 
+export const orderTarget = (L = ecoLvl()) => Math.max(30 + scaleLvl() * 22, L >= 20 ? 220 * Math.pow(1.06, L - 15) : 0);
+export const orderMaxQty = (L = ecoLvl()) => Math.min(18, 12 + Math.floor(Math.max(0, L - 30) / 10));
+export const orderStreak = () => {
+    const s = state.orderStreak;
+    return s && s.day === state.day ? s.n : 0;
+};
+
 export function makeOrder() {
     // 1.101 : chacun son tour : on évite de redonner une commande à un villageois qui en a déjà une sur le tableau
     const present = presentVillagers();
@@ -150,24 +162,47 @@ export function makeOrder() {
     const vid = pickRand(free.length ? free : present);
     const its = pickItems(orderCount(), VILLAGERS[vid].likes);
     if (!its.length) return null;
-    const target = 30 + scaleLvl() * 22;
-    const items = its.map(it => ({ id: it.id, qty: qtyFor(it, target * (0.6 + Math.random() * 0.8)) }));
-    const value = items.reduce((a, x) => a + ITEMS[x.id].sell * x.qty, 0);
+    const oldTarget = 30 + scaleLvl() * 22;
+    const target = orderTarget();
+    const maxQ = orderMaxQty();
+    const rnds = its.map(() => 0.6 + Math.random() * 0.8);
+    const items = its.map((it, k) => ({ id: it.id, qty: qtyFor(it, target * rnds[k], maxQ) }));
+    const oldValue = its.reduce((a, it, k) => a + it.sell * qtyFor(it, oldTarget * rnds[k]), 0);
+    // 1.183 : commandes dorées (dès le niveau 10, exige Argent ou Or sur un produit déjà produit à ce rang, prime +45 % pièces et +35 % XP)
+    let goldOrder = false;
+    if (state.level >= GOLD_ORDER.lvl && Math.random() < GOLD_ORDER.chance) {
+        const cand = items.filter(x => madeQ(x.id, 1));
+        if (cand.length) {
+            const pick = pickRand(cand);
+            pick.q = madeQ(pick.id, 2) && Math.random() < GOLD_ORDER.goldChance ? 2 : 1;
+            pick.qty = Math.max(1, Math.min(pick.qty, GOLD_ORDER.qCap[pick.q]));
+            goldOrder = true;
+        }
+    }
+    const qMultOf = x => (x.q && QUALITY[x.q] ? QUALITY[x.q].mult : 1);
+    const value = items.reduce((a, x) => a + ITEMS[x.id].sell * x.qty * qMultOf(x), 0);
     // la maîtrise et la maison paient plus, sans changer l'expérience
-    const bonus = (items.reduce((a, x) => a + ITEMS[x.id].sell * masteryMult(x.id) * x.qty, 0) / value) * housePay() * (1 + workFx('post')) * metierOrderPay(items.map(x => x.id)); // 1.107 : le relais de poste ; 1.114 : le métier
+    const bonus =
+        (items.reduce((a, x) => a + ITEMS[x.id].sell * masteryMult(x.id) * x.qty * qMultOf(x), 0) / Math.max(1, value)) *
+        housePay() *
+        (1 + workFx('post')) *
+        metierOrderPay(items.map(x => x.id)); // 1.107 : le relais de poste ; 1.114 : le métier
     let mult = BALANCE.orderPay * (0.95 + Math.random() * 0.15);
     if (heartsOf(vid) >= 5) mult *= BEST_FRIEND_BONUS;
     if (vid === 'paul' && projectDone('bakery')) mult *= 1.2;
     if (projectDone('townhall')) mult *= 1.1;
     mult *= (1 + rank('loyal') * 0.1) * (1 + state.upgrades.price * 0.04);
-    // 1.38 : +3 % par niveau au-delà de 50 (pièces seulement)
-    const gold = round5(value * mult * bonus * (1 + 0.03 * Math.max(0, ecoLvl() - 50)) * (cupHas(5) ? 1.05 : 1));
+    // 1.38 : +3 % par niveau au-delà de 50 (pièces seulement) ; 1.183 : prime dorée
+    const gold = round5(value * mult * bonus * (goldOrder ? GOLD_ORDER.payMult : 1) * (1 + 0.03 * Math.max(0, ecoLvl() - 50)) * (cupHas(5) ? 1.05 : 1));
+    const xp = Math.max(5, Math.round(oldValue * mult * BALANCE.orderXp * (goldOrder ? GOLD_ORDER.xpMult : 1) * xpBonus()));
+    const matChance = goldOrder ? GOLD_ORDER.matChance : 0.15;
     return {
         items,
         gold,
-        xp: Math.max(5, Math.round(value * mult * BALANCE.orderXp * xpBonus())),
+        xp,
         vid,
-        mat: Math.random() < 0.15 ? pickRand(RARE) : null,
+        mat: Math.random() < matChance ? pickRand(RARE) : null,
+        goldOrder,
         wait: 0,
     };
 }
@@ -225,13 +260,32 @@ export function deliverClient(at) {
     rollRare(0.3, at);
     return true;
 }
-export const hasAll = items => items.every(x => state.inventory[x.id] >= x.qty);
+export const itemHave = x =>
+    x.pk
+        ? pkHave(x.pk)
+        : x.pf
+          ? pfHave(x.pf)
+          : x.cf
+            ? cfHave(x.cf)
+            : x.br
+              ? brHave(x.br)
+              : x.q
+                ? haveQ(x.id, x.q)
+                : state.inventory[x.id] || 0;
+export const hasAll = items => items.every(x => itemHave(x) >= x.qty);
 export const checkQuestReady = q => isOpen(q) && hasAll(q.items);
 
 export function payItems(items) {
     items.forEach(x => {
-        state.inventory[x.id] -= x.qty;
-        clampQuality(x.id);
+        if (x.pk) pullPk(x.pk, x.qty);
+        else if (x.pf) pullPf(x.pf, x.qty);
+        else if (x.cf) pullCf(x.cf, x.qty);
+        else if (x.br) pullBr(x.br, x.qty);
+        else if (x.q) takeQ(x.id, x.qty, x.q);
+        else {
+            state.inventory[x.id] -= x.qty;
+            clampQuality(x.id);
+        }
     });
 }
 
@@ -240,16 +294,31 @@ export function turnInQuest(i, at) {
     if (!checkQuestReady(q)) return false;
     payItems(q.items);
     state.stats.orders++;
+    if (q.goldOrder) state.stats.goldOrders = (state.stats.goldOrders || 0) + 1;
     state.income.orders += q.gold;
     record('order', q.gold);
-    if (q.vid) addFriendship(q.vid, VILLAGERS[q.vid].likes.some(id => q.items.some(x => x.id === id)) ? 4 : 2, at);
+    const favPts = VILLAGERS[q.vid].likes.some(id => q.items.some(x => x.id === id)) ? 4 : 2;
+    if (q.vid) addFriendship(q.vid, favPts + (q.goldOrder ? 1 : 0), at);
     sfx('buy');
     buzz(15);
-    burst(at, 'sparkle', 12);
+    burst(at, 'sparkle', q.goldOrder ? 16 : 12);
     earn(q.gold, at);
     addXp(q.xp, at);
     if (q.mat) giveRare(q.mat, 1, at);
     else rollRare(0.1, at);
+    // 1.183 : série quotidienne (tous les 5 livraisons du jour : prime pièces + 1 matériau rare + 1 Renom)
+    const cur = orderStreak() + 1;
+    state.orderStreak = { day: state.day, n: cur };
+    if (cur % ORDER_STREAK.step === 0) {
+        const sBonus = round5(q.gold * ORDER_STREAK.bonus);
+        if (sBonus > 0) {
+            earn(sBonus, at);
+            state.income.orders += sBonus;
+        }
+        giveRare(pickRand(RARE), 1, at);
+        addRenom(RENOM.streak, 'streak', false);
+        if (view.started) toast(`Série de ${cur} commandes : +${sBonus} pièces, +1 matériau rare et +1 Renom !`, ['ui', 'star']);
+    }
     state.quests[i] = emptyOrder(now() + ORDER_REFILL);
     return true;
 }
@@ -303,17 +372,30 @@ export function sourceOf(id) {
 export const inProduction = id => state.machines.reduce((n, m) => n + m.queue.filter(q => q === id).length + (m.out[id] || 0), 0);
 
 // ---------------- le train de marchandises ----------------
-// 1.104.1 : un wagon de paquets (une chance sur trois quand la Maison a des recettes), payé 1,6 fois leur valeur
+// 1.104.1 : paquets de la Maison ; 1.146 : parfums maison ; 1.183 : confiseries et boissons de la Brasserie
 const TRAIN_PK = 0.35,
     TRAIN_PK_PAY = 1.6,
     TRAIN_PF = 0.3,
-    TRAIN_PF_PAY = 1.75;
+    TRAIN_PF_PAY = 1.75,
+    TRAIN_CF = 0.35,
+    TRAIN_CF_PAY = 1.75,
+    TRAIN_BR = 0.35,
+    TRAIN_BR_PAY = 1.7;
 // 1.106 : la valeur de marchandises demandée par wagon. Avant, elle grandissait en ligne droite (1 250 au niveau 60) alors que
 // la production de la ferme double tous les huit niveaux : un train plein ne pesait plus rien. Elle suit maintenant la production
 // (environ 600 au niveau 15, 5 000 au niveau 40, 30 000 au niveau 60), et un wagon peut demander jusqu'à 60 produits.
 export const wagonTarget = (L = ecoLvl()) => Math.max(60 + scaleLvl() * 30, L >= 15 ? 400 * Math.pow(1.09, L - 10) : 0);
 export const wagonMax = (L = ecoLvl()) => Math.round(Math.min(60, 20 + Math.max(0, L - 30) * 1.34));
-export const slotHave = sl => (sl.pk ? pkHave(sl.pk) >= sl.qty : sl.pf ? pfHave(sl.pf) >= sl.qty : (state.inventory[sl.id] || 0) >= sl.qty);
+export const slotHave = sl =>
+    sl.pk
+        ? pkHave(sl.pk) >= sl.qty
+        : sl.pf
+          ? pfHave(sl.pf) >= sl.qty
+          : sl.cf
+            ? cfHave(sl.cf) >= sl.qty
+            : sl.br
+              ? brHave(sl.br) >= sl.qty
+              : (state.inventory[sl.id] || 0) >= sl.qty;
 export const trainOpen = () => projectDone('station');
 // chaque cheval fait revenir le train 10 % plus tôt (30 % au plus)
 export const trainAway = () => TRAIN_AWAY * (1 - Math.min(0.3, 0.1 * state.animals.filter(a => a.type === 'horse' && isAdult(a)).length));
@@ -336,6 +418,31 @@ export function truckTick() {
         return true;
     }
     return false;
+}
+
+function makeSpecialtyWagon(kind, mult) {
+    if (kind === 'pk') {
+        const pk = pkReq();
+        const qty = 1 + Math.floor(Math.random() * 2);
+        const gold = round5(pkEstimate(pk) * qty * TRAIN_PK_PAY * mult);
+        return { id: 'paquet', pk, qty, mult, loaded: false, gold, xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus() * 2)), mat: Math.random() < 0.5 ? pickRand(RARE) : null };
+    }
+    if (kind === 'pf') {
+        const pf = pfReq();
+        const qty = 1 + Math.floor(Math.random() * 2);
+        const gold = round5(pfEstimate(pf) * qty * TRAIN_PF_PAY * mult);
+        return { id: 'perfumeCustom', pf, qty, mult, loaded: false, gold, xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus() * 2)), mat: Math.random() < 0.5 ? pickRand(RARE) : null };
+    }
+    if (kind === 'cf') {
+        const cf = cfReq();
+        const qty = 2 + Math.floor(Math.random() * 3);
+        const gold = round5(cfEstimate(cf) * qty * TRAIN_CF_PAY * mult);
+        return { id: 'confCustom', cf, qty, mult, loaded: false, gold, xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus() * 2)), mat: Math.random() < 0.5 ? pickRand(RARE) : null };
+    }
+    const br = brReq();
+    const qty = 2 + Math.floor(Math.random() * 3);
+    const gold = round5(brEstimate(br) * qty * TRAIN_BR_PAY * mult);
+    return { id: 'brewCustom', br, qty, mult, loaded: false, gold, xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus() * 2)), mat: Math.random() < 0.5 ? pickRand(RARE) : null };
 }
 
 function makeTruck() {
@@ -370,23 +477,26 @@ function makeTruck() {
             mat: Math.random() < 0.25 ? pickRand(RARE) : null,
         };
     });
-    // 1.104.1 : un wagon demande parfois des paquets de la Maison
-    if (pkTransportOk() && Math.random() < TRAIN_PK) {
-        const pk = pkReq();
-        const qty = 1 + Math.floor(Math.random() * 2);
-        const gold = round5(pkEstimate(pk) * qty * TRAIN_PK_PAY * mult);
-        slots[2] = { id: 'paquet', pk, qty, mult, loaded: false, gold, xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus() * 2)), mat: Math.random() < 0.5 ? pickRand(RARE) : null };
+    // 1.104.1, 1.146 & 1.183 : jusqu'à deux wagons d'ateliers spécialisés (paquets, parfums, confiseries, brasserie)
+    const specPool = [];
+    if (pkTransportOk()) specPool.push(['pk', TRAIN_PK]);
+    if (pfTransportOk()) specPool.push(['pf', TRAIN_PF]);
+    if (cfTransportOk()) specPool.push(['cf', TRAIN_CF]);
+    if (brTransportOk()) specPool.push(['br', TRAIN_BR]);
+    if (specPool.length) {
+        const first = pickRand(specPool);
+        if (Math.random() < Math.min(0.65, first[1] + (specPool.length - 1) * 0.1)) {
+            slots[2] = makeSpecialtyWagon(first[0], mult);
+            const rest = specPool.filter(x => x[0] !== first[0]);
+            if (rest.length && Math.random() < 0.25) {
+                const second = pickRand(rest);
+                slots[1] = makeSpecialtyWagon(second[0], mult);
+            }
+        }
     }
-    // 1.146 : un wagon demande parfois des parfums maison de l'Atelier du Parfumeur
-    if (pfTransportOk() && Math.random() < TRAIN_PF) {
-        const pf = pfReq();
-        const qty = 1 + Math.floor(Math.random() * 2);
-        const gold = round5(pfEstimate(pf) * qty * TRAIN_PF_PAY * mult);
-        const idx = slots[2].pk ? 1 : 2;
-        slots[idx] = { id: 'perfumeCustom', pf, qty, mult, loaded: false, gold, xp: Math.max(5, Math.round(gold * BALANCE.truckXp * xpBonus() * 2)), mat: Math.random() < 0.5 ? pickRand(RARE) : null };
-    }
+    const isSpec = sl => !!(sl.pk || sl.pf || sl.cf || sl.br);
     const sum = slots.reduce((a, sl) => a + sl.gold, 0);
-    const xpSum = slots.reduce((a, sl) => a + (sl.pk || sl.pf ? sl.xp / 2 : sl.xp), 0);
+    const xpSum = slots.reduce((a, sl) => a + (isSpec(sl) ? sl.xp / 2 : sl.xp), 0);
     Object.assign(t, {
         status: 'here',
         expiresAt: n + stayOf(TRAIN_STAY),
@@ -406,6 +516,14 @@ function truckLeave() {
     t.arriveAt = now() + trainAway();
 }
 
+export function dismissTruck() {
+    const t = state.truck;
+    if (!t || t.status !== 'here') return false;
+    sfx('click');
+    truckLeave();
+    return true;
+}
+
 export function loadSlot(k, at) {
     const t = state.truck,
         sl = t.slots[k];
@@ -418,6 +536,14 @@ export function loadSlot(k, at) {
     } else if (sl.pf) {
         const val = pullPf(sl.pf, sl.qty);
         sl.gold = round5(val * TRAIN_PF_PAY * (sl.mult || 1));
+        sl.xp = Math.max(5, Math.round(sl.gold * BALANCE.truckXp * xpBonus() * 2));
+    } else if (sl.cf) {
+        const val = pullCf(sl.cf, sl.qty);
+        sl.gold = round5(val * TRAIN_CF_PAY * (sl.mult || 1));
+        sl.xp = Math.max(5, Math.round(sl.gold * BALANCE.truckXp * xpBonus() * 2));
+    } else if (sl.br) {
+        const val = pullBr(sl.br, sl.qty);
+        sl.gold = round5(val * TRAIN_BR_PAY * (sl.mult || 1));
         sl.xp = Math.max(5, Math.round(sl.gold * BALANCE.truckXp * xpBonus() * 2));
     } else {
         state.inventory[sl.id] -= sl.qty;
@@ -457,33 +583,80 @@ export function sendTruck(at) {
     return true;
 }
 
-// ---------------- la montgolfière ----------------
+// ---------------- la montgolfière (1.183 : courrier express de prestige, petites quantités de qualité Or/Argent ou créations d'atelier + Renom) ----------------
 export const balloonOpen = () => projectDone('inn');
+export const balloonTarget = (L = ecoLvl()) => Math.max(90 + scaleLvl() * 40, L >= 15 ? 360 * Math.pow(1.085, L - 10) : 0);
 
 export function balloonTick() {
     if (!balloonOpen()) return false;
     const b = state.balloon,
         n = now();
     if (b.status === 'away' && n >= b.arriveAt) {
-        const its = pickItems(3);
+        const target = balloonTarget();
+        const minSell = target / 15 / 1.5;
+        const its = pickItems(8)
+            .map((it, k) => [it, k])
+            .sort((x, y) => (y[0].sell >= minSell) - (x[0].sell >= minSell) || x[1] - y[1])
+            .slice(0, 3)
+            .map(x => x[0]);
         if (its.length < 3) {
             b.arriveAt = n + 60000;
             return false;
         }
-        const target = 90 + scaleLvl() * 40;
-        const items = its.map(it => ({ id: it.id, qty: qtyFor(it, target * (0.8 + Math.random() * 0.5), 20) }));
-        const value = items.reduce((a, x) => a + ITEMS[x.id].sell * x.qty, 0);
-        const gold = round5(value * BALANCE.balloonPay * studPay());
+        const oldTarget = 90 + scaleLvl() * 40;
+        const rnds = its.map(() => 0.8 + Math.random() * 0.5);
+        const items = its.map((it, k) => ({ id: it.id, qty: qtyFor(it, target * rnds[k], 15) }));
+        const oldValue = its.reduce((a, it, k) => a + it.sell * qtyFor(it, oldTarget * rnds[k], 20), 0);
+        // Ligne de prestige qualité Argent/Or sur un produit déjà maîtrisé à ce rang
+        let prestige = false;
+        if (state.level >= GOLD_ORDER.lvl) {
+            const qCand = items.slice(0, 2).filter(x => madeQ(x.id, 1));
+            if (qCand.length && Math.random() < 0.7) {
+                const pick = pickRand(qCand);
+                pick.q = madeQ(pick.id, 2) && Math.random() < 0.5 ? 2 : 1;
+                pick.qty = Math.max(1, Math.min(pick.qty, pick.q === 2 ? 2 : 4));
+                prestige = true;
+            }
+        }
+        // 3e ligne : parfois une création d'atelier (parfum, confiserie ou cuvée d'abbaye)
+        const craftPool = [];
+        if (pfTransportOk()) craftPool.push('pf');
+        if (cfTransportOk()) craftPool.push('cf');
+        if (brTransportOk()) craftPool.push('br');
+        if (craftPool.length && Math.random() < 0.55) {
+            const cKind = pickRand(craftPool);
+            if (cKind === 'pf') {
+                const pf = pfReq();
+                const qty = 1;
+                items[2] = { id: 'perfumeCustom', pf, qty, est: Math.round(pfEstimate(pf) * 1.65) };
+            } else if (cKind === 'cf') {
+                const cf = cfReq();
+                const qty = 1 + Math.floor(Math.random() * 2);
+                items[2] = { id: 'confCustom', cf, qty, est: Math.round(cfEstimate(cf) * 1.65) };
+            } else {
+                const br = brReq();
+                const qty = 1 + Math.floor(Math.random() * 2);
+                items[2] = { id: 'brewCustom', br, qty, est: Math.round(brEstimate(br) * 1.6) };
+            }
+            prestige = true;
+        }
+        const lineVal = x => (x.est ? x.est * x.qty : ITEMS[x.id].sell * x.qty * (x.q && QUALITY[x.q] ? QUALITY[x.q].mult : 1));
+        const value = items.reduce((a, x) => a + lineVal(x), 0);
+        const prestigeMult = prestige ? 1.2 : 1;
+        const gold = round5(value * BALANCE.balloonPay * studPay() * prestigeMult);
+        const xp = Math.round(oldValue * BALANCE.balloonPay * studPay() * BALANCE.balloonXp * (prestige ? 1.25 : 1) * xpBonus());
         Object.assign(b, {
             status: 'here',
             expiresAt: n + stayOf(BALLOON_STAY),
             items,
             gold,
-            xp: Math.round(gold * BALANCE.balloonXp * xpBonus()),
+            xp,
+            prestige,
+            renom: RENOM.balloon,
             mats: [pickRand(RARE), pickRand(RARE)],
         });
         if (view.started && !view.hidden) {
-            toast('Une montgolfière se pose dans le pré !', ['ui', 'balloon']);
+            toast('Une montgolfière express se pose dans le pré !', ['ui', 'balloon']);
             tip('balloon');
             sfx('level');
         }
@@ -500,27 +673,71 @@ export function balloonTick() {
 export function sendBalloon(at) {
     const b = state.balloon;
     if (b.status !== 'here' || !hasAll(b.items)) return false;
-    payItems(b.items);
+    let totalGold = b.gold;
+    // Si la nacelle contient une création artisanale, on recalcule sa part sur la valeur réelle prélevée
+    const hasSpec = b.items.some(x => x.pf || x.cf || x.br || x.pk);
+    if (hasSpec) {
+        let stdVal = 0;
+        let specVal = 0;
+        b.items.forEach(x => {
+            if (x.pf) specVal += pullPf(x.pf, x.qty) * 1.65;
+            else if (x.cf) specVal += pullCf(x.cf, x.qty) * 1.65;
+            else if (x.br) specVal += pullBr(x.br, x.qty) * 1.6;
+            else if (x.pk) specVal += pullPk(x.pk, x.qty) * 1.6;
+            else {
+                if (x.q) takeQ(x.id, x.qty, x.q);
+                else {
+                    state.inventory[x.id] -= x.qty;
+                    clampQuality(x.id);
+                }
+                stdVal += ITEMS[x.id].sell * x.qty * (x.q && QUALITY[x.q] ? QUALITY[x.q].mult : 1);
+            }
+        });
+        totalGold = Math.max(b.gold, round5((stdVal + specVal) * BALANCE.balloonPay * studPay() * (b.prestige ? 1.2 : 1)));
+    } else {
+        payItems(b.items);
+    }
     sfx('level');
     buzz(30);
     burst(at, 'sparkle', 16);
-    earn(b.gold, at);
+    earn(totalGold, at);
     addXp(b.xp, at);
     b.mats.forEach(m => giveRare(m, 1, at));
+    addRenom(b.renom || RENOM.balloon, 'balloon', at);
     state.stats.balloons = (state.stats.balloons || 0) + 1;
-    state.income.orders += b.gold;
+    state.income.orders += totalGold;
     emit('balloonLeaves');
     Object.assign(b, { status: 'away', items: [], arriveAt: now() + BALLOON_AWAY });
-    toast('La montgolfière s’envole, chargée de vos produits !', ['ui', 'balloon']);
+    toast('La montgolfière s’envole, chargée de votre courrier express !', ['ui', 'balloon']);
     return true;
 }
 
-// Tout ce que demandent en ce moment les commandes, le train, la montgolfière, l'acheteur pressé et les chantiers
+export function dismissBalloon() {
+    const b = state.balloon;
+    if (!b || b.status !== 'here') return false;
+    Object.assign(b, { status: 'away', items: [], arriveAt: now() + BALLOON_AWAY });
+    sfx('click');
+    if (view.started) toast('La montgolfière repart à vide', ['ui', 'balloon']);
+    return true;
+}
+
+// Tout ce que demandent en ce moment les commandes, les transports (train, montgolfière, bateau, avion-cargo), Armand, l'acheteur pressé et les chantiers
+const isStd = x => !!x && !x.pk && !x.pf && !x.cf && !x.br && !!ITEMS[x.id];
 export function wantedItems() {
     const w = new Set();
-    state.quests.forEach(q => isOpen(q) && q.items.forEach(x => state.inventory[x.id] < x.qty && w.add(x.id)));
-    if (state.truck.status === 'here') state.truck.slots.forEach(sl => !sl.pk && !sl.loaded && state.inventory[sl.id] < sl.qty && w.add(sl.id));
-    if (state.balloon.status === 'here') state.balloon.items.forEach(x => state.inventory[x.id] < x.qty && w.add(x.id));
+    state.quests.forEach(q => isOpen(q) && q.items.forEach(x => isStd(x) && itemHave(x) < x.qty && w.add(x.id)));
+    if (state.truck.status === 'here') state.truck.slots.forEach(sl => isStd(sl) && !sl.loaded && (state.inventory[sl.id] || 0) < sl.qty && w.add(sl.id));
+    if (state.balloon.status === 'here') state.balloon.items.forEach(x => isStd(x) && itemHave(x) < x.qty && w.add(x.id));
+    if (state.boat && state.boat.status === 'here')
+        (state.boat.items || []).forEach(cr => isStd(cr) && !cr.loaded && (state.inventory[cr.id] || 0) < cr.qty && w.add(cr.id));
+    if (cargoHere() && state.cargo && !state.cargo.done)
+        (state.cargo.holds || []).forEach(h => isStd(h) && h.got < h.qty && (state.inventory[h.id] || 0) < h.qty - h.got && w.add(h.id));
+    if (armandHere()) {
+        for (let i = 0; i < armandSlots(); i++) {
+            const o = armandOrder(i);
+            if (o && !o.done && armandDealt(o) && !armandOff(o) && ITEMS[o.id] && (state.inventory[o.id] || 0) < o.qty - o.got) w.add(o.id);
+        }
+    }
     if (state.incident && state.incident.type === 'express') state.incident.items.forEach(x => w.add(x.id));
     Object.values(PROJECTS).forEach(p => projectOpen(p.id) && Object.keys(p.need).forEach(id => projectLeft(p.id, id) > state.inventory[id] && w.add(id)));
     defiWanted().forEach(id => w.add(id));

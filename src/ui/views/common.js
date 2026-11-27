@@ -22,6 +22,9 @@ export function pinBar() {
     if (!q) return '';
     const ready = G.checkQuestReady(q);
     return `<button class="pin-bar${ready ? ' ready' : ''}" data-act="go" data-path="village/orders">${ico(['ui', 'pin'], 'ico pin')}<span class="pin-who">${art('villager', q.vid)}</span>${q.items
-        .map(x => `<span class="${state.inventory[x.id] >= x.qty ? 'ok' : ''}">${ico(['item', x.id])}${Math.min(state.inventory[x.id], x.qty)}/${x.qty}</span>`)
+        .map(x => {
+            const have = G.itemHave(x);
+            return `<span class="${have >= x.qty ? 'ok' : ''}">${ico(['item', x.id])}${x.q ? qStar(x.q) : ''}${Math.min(have, x.qty)}/${x.qty}</span>`;
+        })
         .join('')}<b>${ready ? 'Prête !' : `${fmt(q.gold)}${ico(['ui', 'coin'])}`}</b></button>`;
 }

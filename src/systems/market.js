@@ -29,6 +29,8 @@ import { renomMult } from './renom.js';
 import { kidFx, kidMetierMult } from './family.js';
 import { metierPrice } from './metier.js';
 import { planReserve } from './plan.js';
+import { cargoHere } from './cargo.js';
+import { armandHere, armandSlots, armandOrder, armandDealt, armandOff } from './armand.js';
 
 const COIN = ['ui', 'coin'];
 
@@ -144,7 +146,7 @@ export function marketTick(sec = 1) {
     return changed;
 }
 
-// Quantité gardée pour les commandes, le train, la montgolfière, les chantiers et la fête en cours
+// Quantité gardée pour les commandes, les transports (train, montgolfière, bateau, avion-cargo), Armand, les chantiers et la fête en cours
 export function reservedQty(id) {
     // pas de réserve pendant le tutoriel : il apprend justement à vendre
     if (!state.settings.reserve || !state.tutorial.done) return 0;
@@ -152,14 +154,24 @@ export function reservedQty(id) {
     state.quests.forEach(q => {
         if (isOpen(q)) q.items.forEach(x => x.id === id && (n += x.qty));
     });
-    if (state.balloon.status === 'here') state.balloon.items.forEach(x => x.id === id && (n += x.qty));
+    if (state.balloon.status === 'here') state.balloon.items.forEach(x => !x.pk && !x.pf && !x.cf && !x.br && x.id === id && (n += x.qty));
+    if (state.boat && state.boat.status === 'here')
+        (state.boat.items || []).forEach(cr => !cr.loaded && !cr.pk && !cr.pf && !cr.cf && !cr.br && cr.id === id && (n += cr.qty));
+    if (cargoHere() && state.cargo && !state.cargo.done)
+        (state.cargo.holds || []).forEach(h => !h.pk && !h.pf && !h.cf && !h.br && h.got < h.qty && h.id === id && (n += h.qty - h.got));
+    if (armandHere()) {
+        for (let i = 0; i < armandSlots(); i++) {
+            const o = armandOrder(i);
+            if (o && !o.done && armandDealt(o) && !armandOff(o) && o.id === id) n += Math.max(0, o.qty - o.got);
+        }
+    }
     if (state.incident && state.incident.type === 'express') state.incident.items.forEach(x => x.id === id && (n += x.qty));
     n += projectsNeed(id);
     n += defiNeed(id);
     n += planReserve(id); // 1.133 : le plan de production
     if (state.truck.status === 'here')
         state.truck.slots.forEach(sl => {
-            if (!sl.loaded && sl.id === id) n += sl.qty;
+            if (!sl.loaded && !sl.pk && !sl.pf && !sl.cf && !sl.br && sl.id === id) n += sl.qty;
         });
     if (eventActive())
         state.event.goals.forEach(x => {

@@ -21,6 +21,10 @@ export const ORDER_REFILL = 20000;
 
 export const ORDER_TRASH_WAIT = 180000;
 
+// 1.183 : commandes dorées (qualité exigée, prime améliorée) et série quotidienne du tableau
+export const GOLD_ORDER = { lvl: 10, chance: 0.22, goldChance: 0.35, payMult: 1.45, xpMult: 1.35, matChance: 0.45, qCap: [0, 5, 3] };
+export const ORDER_STREAK = { step: 5, bonus: 0.15 };
+
 export const TRAIN_STAY = 3600000;
 
 export const TRAIN_AWAY = 3600000;

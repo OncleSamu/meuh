@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.183",
+  "title": "Refonte des Transports & Commandes (Ports du cargo, Montgolfière Prestige, Commandes dorées & Ateliers)",
+  "date": "26 novembre 2026",
+  "items": [
+   "Bateau de livraison — 3 ports de destination au choix (Port côtier rapide, Port de la Capitale équilibré, Routes lointaines +35 % / +70 % bonus / +2 Renom), chargement caisse par caisse payé aussitôt et mise à l’échelle jusqu’au niveau 100",
+   "Montgolfière express — nouvelle identité « Courrier de prestige » : petites quantités en qualité Argent/Or ou créations d’atelier (Parfumerie, Confiserie, Brasserie), forte prime et +2 Renom à chaque envol",
+   "Train & Avion-cargo — accueillent désormais les Confiseries (Chocolat, Caramel, Berlingots, Nougats) et les boissons de la Brasserie (Bière, Cidre, Hydromel, Saké) en plus des Paquets et Parfums ; bouton « Faire partir » avec confirmation sur Train, Bateau et Montgolfière",
+   "Tableau des commandes — commandes dorées (qualité Argent/Or exigée, +45 % pièces, +35 % XP, +1 amitié), série quotidienne (prime +15 %, 1 matériau rare et +1 Renom tous les 5 livraisons) et raccourci « Commandes d’ateliers » dans À livrer",
+   "Réserve automatique du marché — protège désormais aussi le Bateau de livraison, l’Avion-cargo et Armand contre la vente accidentelle"
+  ]
+ },
+ {
   "v": "1.182",
   "title": "Saké artisanal à la Brasserie (Junmai, Daiginjo, Nigori & Koshu)",
   "date": "26 novembre 2026",

@@ -319,18 +319,24 @@ export function orderPlanData(kind, ref) {
         if (!t || t.status !== 'here') return null;
         return buildOrderPlan(
             'Train de marchandises',
-            t.slots.filter(sl => !sl.loaded && !sl.pk && !sl.pf).map(sl => ({ id: sl.id, qty: sl.qty })),
+            t.slots.filter(sl => !sl.loaded && !sl.pk && !sl.pf && !sl.cf && !sl.br).map(sl => ({ id: sl.id, qty: sl.qty })),
         );
     }
     if (kind === 'balloon') {
         const b = state.balloon;
         if (!b || b.status !== 'here') return null;
-        return buildOrderPlan('Montgolfière', b.items || []);
+        return buildOrderPlan(
+            'Montgolfière',
+            (b.items || []).filter(x => !x.pk && !x.pf && !x.cf && !x.br),
+        );
     }
     if (kind === 'boat') {
         const b = state.boat;
         if (!b || b.status !== 'here') return null;
-        return buildOrderPlan('Bateau de livraison', b.items || []);
+        return buildOrderPlan(
+            'Bateau de livraison',
+            (b.items || []).filter(cr => !cr.loaded && !cr.pk && !cr.pf && !cr.cf && !cr.br),
+        );
     }
     if (kind === 'project') {
         const p = PROJECTS[ref];
@@ -351,7 +357,7 @@ export function orderPlanData(kind, ref) {
         if (!cargoHere() || !c || c.done || !c.holds || !c.holds.length) return null;
         return buildOrderPlan(
             'Avion-cargo',
-            c.holds.filter(h => !h.pk && !h.pf && h.got < h.qty).map(h => ({ id: h.id, qty: h.qty - h.got })),
+            c.holds.filter(h => !h.pk && !h.pf && !h.cf && !h.br && h.got < h.qty).map(h => ({ id: h.id, qty: h.qty - h.got })),
         );
     }
     if (kind === 'armand') {

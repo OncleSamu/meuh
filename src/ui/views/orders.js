@@ -11,7 +11,8 @@ import * as G from '../../systems/index.js';
 import { PLANT_TRAITS } from '../../data/genetics.js';
 import { blocks, actions, esc } from '../dom.js';
 import { ITEMS } from '../../data/items.js';
-import { ico, art, SPR } from '../icons.js';
+import { ORDER_STREAK } from '../../data/commerce.js';
+import { ico, art, SPR, qStar } from '../icons.js';
 import { btn, bar, timer, tip15, segmented } from '../kit.js';
 import { defineView, ui, go } from '../app.js';
 import { defineSheet, openSheet, closeSheet } from '../sheets.js';
@@ -67,9 +68,9 @@ function boardHtml() {
         .map((q, i) => {
             if (!G.isOpen(q)) return `<div class="ticket empty">${ico(['ui', 'clock'])}${timer(q.wait)}</div>`;
             const ready = G.checkQuestReady(q);
-            return `<button class="ticket${ready ? ' ready' : ''}${q.pinned ? ' pinned' : ''}" data-act="open" data-sheet="order" data-i="${i}" data-anchor="order:${i}">${q.pinned ? `<i class="t-pin">${art('ui', 'pin')}</i>` : ''}
+            return `<button class="ticket${ready ? ' ready' : ''}${q.pinned ? ' pinned' : ''}${q.goldOrder ? ' gold-order' : ''}" data-act="open" data-sheet="order" data-i="${i}" data-anchor="order:${i}">${q.pinned ? `<i class="t-pin">${art('ui', 'pin')}</i>` : ''}${q.goldOrder ? `<i class="t-gold" title="Commande dorée">${art('ui', 'star')}</i>` : ''}
                 <span class="t-who">${art('villager', q.vid)}</span>
-                <span class="t-items">${q.items.map(x => `<span class="${state.inventory[x.id] >= x.qty ? 'ok' : ''}">${ico(['item', x.id])}<b>${x.qty}</b></span>`).join('')}</span>
+                <span class="t-items">${q.items.map(x => `<span class="${G.itemHave(x) >= x.qty ? 'ok' : ''}">${ico(['item', x.id])}${x.q ? qStar(x.q) : ''}<b>${x.qty}</b></span>`).join('')}</span>
                 <span class="t-rew">${fmt(q.gold)}${ico(['ui', 'coin'])}${q.mat ? ico(['item', q.mat]) : ''}</span>
             </button>`;
         })
@@ -83,7 +84,7 @@ function boardHtml() {
 defineSheet('order', {
     title: o => {
         const q = state.quests[o.i];
-        return G.isOpen(q) ? `Commande de ${VILLAGERS[q.vid].name}` : 'Commande livrée';
+        return G.isOpen(q) ? `${q.goldOrder ? 'Commande dorée · ' : 'Commande de '}${VILLAGERS[q.vid].name}` : 'Commande livrée';
     },
     render: o => detail(+o.i) || '<p class="empty">Cette commande n’est plus au tableau.</p>',
 });
@@ -93,9 +94,9 @@ function detail(i) {
     if (!G.isOpen(q)) return null;
     const v = VILLAGERS[q.vid];
     const ok = G.checkQuestReady(q);
-    return `<div class="card order-detail">
-        <div class="card-head"><div class="avatar sm">${art('villager', q.vid)}</div><div class="card-main"><div class="card-title">${v.name}</div><div class="card-sub">${v.role}</div></div></div>
-        <div class="olines">${q.items.map(x => itemLine(x)).join('')}</div>
+    return `<div class="card order-detail${q.goldOrder ? ' gold-detail' : ''}">
+        <div class="card-head"><div class="avatar sm">${art('villager', q.vid)}</div><div class="card-main"><div class="card-title">${v.name}${q.goldOrder ? ' <span class="gold-pill">Commande dorée</span>' : ''}</div><div class="card-sub">${q.goldOrder ? 'Qualité exigée · prime +45 % pièces, +35 % XP et +1 amitié' : v.role}</div></div></div>
+        <div class="olines">${q.items.map(x => itemLine(x, G.itemHave(x))).join('')}</div>
         <div class="od-foot">${rewardHtml(q.gold, q.xp, q.mat ? [q.mat] : [])}</div>
         <div class="row-btns">${btn(q.pinned ? 'Détacher' : 'Épingler', { act: 'pin', data: { i }, size: 'sm', icon: ['ui', 'pin'], cls: q.pinned ? 'on' : '' })}${!ok && G.canPlanOrder('quest', i) ? btn('Planifier', { act: 'planOrder', data: { kind: 'quest', ref: i }, size: 'sm', kind: 'gold', icon: ['ui', 'loop'] }) : ''}${btn('Jeter', { act: 'trash', data: { i }, size: 'sm', icon: ['ui', 'shovel'] })}${btn('Livrer', { act: 'deliver', data: { i }, kind: ok ? 'green' : '', disabled: !ok, anchor: 'deliver' })}</div>
     </div>`;
@@ -147,21 +148,34 @@ function train() {
         return `<div class="card away">${ico(['ui', 'trainIcon'], 'ico big')}<div class="card-main"><div class="card-title">Train de marchandises</div><div class="card-sub">Prochain passage dans ${timer(t.arriveAt, 'b')}</div></div></div>`;
     const wagons = t.slots
         .map((sl, k) => {
-            const have = sl.pk ? G.pkHave(sl.pk) : sl.pf ? G.pfHave(sl.pf) : state.inventory[sl.id] || 0,
+            const isSpec = !!(sl.pk || sl.pf || sl.cf || sl.br);
+            const have = sl.pk
+                    ? G.pkHave(sl.pk)
+                    : sl.pf
+                      ? G.pfHave(sl.pf)
+                      : sl.cf
+                        ? G.cfHave(sl.cf)
+                        : sl.br
+                          ? G.brHave(sl.br)
+                          : state.inventory[sl.id] || 0,
                 ok = have >= sl.qty;
-            // 1.104.1 : un wagon de paquets de la Maison ; 1.146 : un wagon de parfums maison
+            // 1.104.1 : paquets ; 1.146 : parfums ; 1.183 : confiseries et boissons de la brasserie
             const goBtn = sl.pk
                 ? `<button class="wagon-load go" data-act="pkGoShelf" aria-label="${esc(G.pkReqTxt(sl.pk))}">${ico(['ui', 'maison'])}<b>×${sl.qty}</b>${G.pkReqTag(sl.pk) ? `<i class="wagon-tag">${esc(G.pkReqTag(sl.pk))}</i>` : ''}</button>`
                 : sl.pf
                   ? `<button class="wagon-load go" data-act="pfGoAtelier" aria-label="${esc(G.pfReqTxt(sl.pf))}">${ico(['ui', 'perfume'])}<b>×${sl.qty}</b>${G.pfReqTag(sl.pf) ? `<i class="wagon-tag">${esc(G.pfReqTag(sl.pf))}</i>` : ''}</button>`
-                  : `<button class="wagon-load go" data-act="produce" data-id="${sl.id}" aria-label="Aller produire">${ico(['item', sl.id])}<b>×${sl.qty}</b></button>`;
+                  : sl.cf
+                    ? `<button class="wagon-load go" data-act="cfGoAtelier" aria-label="${esc(G.cfReqTxt(sl.cf))}">${ico(['ui', 'confiserie'])}<b>×${sl.qty}</b>${G.cfReqTag(sl.cf) ? `<i class="wagon-tag">${esc(G.cfReqTag(sl.cf))}</i>` : ''}</button>`
+                    : sl.br
+                      ? `<button class="wagon-load go" data-act="brGoAtelier" aria-label="${esc(G.brReqTxt(sl.br))}">${ico(['ui', 'beer'])}<b>×${sl.qty}</b>${G.brReqTag(sl.br) ? `<i class="wagon-tag">${esc(G.brReqTag(sl.br))}</i>` : ''}</button>`
+                      : `<button class="wagon-load go" data-act="produce" data-id="${sl.id}" aria-label="Aller produire">${ico(['item', sl.id])}<b>×${sl.qty}</b></button>`;
             return `<div class="wagon${sl.loaded ? ' loaded' : ''}" data-anchor="wagon:${k}">
                 ${sl.loaded ? `<div class="wagon-load"><div class="crate">${art('ui', 'crate')}</div></div>` : goBtn}
                 <div class="wagon-spr">${SPR.wagon(WAGON_COLORS[k])}</div>
                 <div class="wagon-info">${
                     sl.loaded
                         ? ico(['ui', 'check'])
-                        : `<span class="slot-have${ok ? ' ok' : ''}">${have} en stock</span><span class="wagon-rew">${sl.pk || sl.pf ? '≈ ' : ''}${fmt(sl.gold)}${ico(['ui', 'coin'])}${sl.mat ? ico(['item', sl.mat]) : ''}</span>
+                        : `<span class="slot-have${ok ? ' ok' : ''}">${have} en stock</span><span class="wagon-rew">${isSpec ? '≈ ' : ''}${fmt(sl.gold)}${ico(['ui', 'coin'])}${sl.mat ? ico(['item', sl.mat]) : ''}</span>
                     ${btn('Charger', { act: 'loadWagon', data: { k }, kind: ok ? 'green' : '', size: 'sm', disabled: !ok })}`
                 }</div></div>`;
         })
@@ -169,7 +183,7 @@ function train() {
     return `<div class="card truck-card here">
         <div class="card-head"><div class="card-main"><div class="card-title">Train de marchandises</div></div><span class="timer-pill">${ico(['ui', 'clock'])}${timer(t.expiresAt)}</span></div>
         <div class="rails"><div class="train-row">${wagons}<div class="loco">${SPR.loco()}</div></div></div>
-        <div class="truck-reward"><span>Train complet : bonus</span>${rewardHtml(t.gold, t.xp)}${ico(['ui', 'barn'])}${G.canPlanOrder('train') ? btn('Planifier', { act: 'planOrder', data: { kind: 'train' }, size: 'sm', kind: 'gold', icon: ['ui', 'loop'] }) : ''}</div>
+        <div class="truck-reward"><span>Train complet : bonus</span>${rewardHtml(t.gold, t.xp)}${ico(['ui', 'barn'])}${G.canPlanOrder('train') ? btn('Planifier', { act: 'planOrder', data: { kind: 'train' }, size: 'sm', kind: 'gold', icon: ['ui', 'loop'] }) : ''}${btn('Faire partir', { act: 'dismissTrain', size: 'sm', kind: 'ghost' })}</div>
     </div>`;
 }
 
@@ -181,6 +195,7 @@ function cargoCard() {
         return `<div class="card away">${ico(['ui', 'plane'], 'ico big')}<div class="card-main"><div class="card-title">Avion-cargo</div><div class="card-sub">Prochain atterrissage dans ${timer(G.cargoArrive(), 'b')} · il vient toutes les 48 heures et reste 24 heures, même jeu fermé</div></div></div>`;
     const holds = c.holds
         .map((h, i) => {
+            const isSpec = !!(h.pk || h.pf || h.cf || h.br);
             const have = G.holdHave(h),
                 left = h.qty - h.got,
                 full = left <= 0;
@@ -188,12 +203,25 @@ function cargoCard() {
                 ? `<button class="hold-item" data-act="pkGoShelf" aria-label="Étagère de la Maison">${ico(['ui', 'maison'], 'ico big')}</button>`
                 : h.pf
                   ? `<button class="hold-item" data-act="pfGoAtelier" aria-label="Atelier du Parfumeur">${ico(['ui', 'perfume'], 'ico big')}</button>`
-                  : `<button class="hold-item" data-act="produce" data-id="${h.id}" aria-label="Aller produire">${ico(['item', h.id], 'ico big')}</button>`;
-            const label = h.pk ? esc(G.pkReqTxt(h.pk)) : h.pf ? esc(G.pfReqTxt(h.pf)) : ITEMS[h.id].name;
-            const goAct = h.pk ? 'pkGoShelf' : h.pf ? 'pfGoAtelier' : 'produce';
+                  : h.cf
+                    ? `<button class="hold-item" data-act="cfGoAtelier" aria-label="Atelier Confiserie">${ico(['ui', 'confiserie'], 'ico big')}</button>`
+                    : h.br
+                      ? `<button class="hold-item" data-act="brGoAtelier" aria-label="Brasserie d’Abbaye">${ico(['ui', 'beer'], 'ico big')}</button>`
+                      : `<button class="hold-item" data-act="produce" data-id="${h.id}" aria-label="Aller produire">${ico(['item', h.id], 'ico big')}</button>`;
+            const label = h.pk
+                ? esc(G.pkReqTxt(h.pk))
+                : h.pf
+                  ? esc(G.pfReqTxt(h.pf))
+                  : h.cf
+                    ? esc(G.cfReqTxt(h.cf))
+                    : h.br
+                      ? esc(G.brReqTxt(h.br))
+                      : ITEMS[h.id].name;
+            const goAct = h.pk ? 'pkGoShelf' : h.pf ? 'pfGoAtelier' : h.cf ? 'cfGoAtelier' : h.br ? 'brGoAtelier' : 'produce';
+            const goLbl = h.br ? 'Brasser' : isSpec ? 'Composer' : 'Produire';
             return `<div class="hold${full ? ' full' : ''}">${head}
-                <div class="hold-main"><b>${label}</b>${bar(h.got / h.qty)}<small>${fmt(h.got)} / ${fmt(h.qty)}${full ? '' : ` · ${fmt(have)} en stock${have ? ` · ${h.pk || h.pf ? '≈ ' : ''}${fmt(G.holdPay(h, Math.min(have, left)))}${ico(['ui', 'coin'])}` : ''}`}</small></div>
-                ${full ? ico(['ui', 'check'], 'ico tick') : btn(have ? `Charger ${fmt(Math.min(have, left))}` : h.pk || h.pf ? 'Composer' : 'Produire', { act: have ? 'loadHold' : goAct, data: have ? { i } : { id: h.id }, kind: have ? 'green' : '', size: 'sm' })}</div>`;
+                <div class="hold-main"><b>${label}</b>${bar(h.got / h.qty)}<small>${fmt(h.got)} / ${fmt(h.qty)}${full ? '' : ` · ${fmt(have)} en stock${have ? ` · ${isSpec ? '≈ ' : ''}${fmt(G.holdPay(h, Math.min(have, left)))}${ico(['ui', 'coin'])}` : ''}`}</small></div>
+                ${full ? ico(['ui', 'check'], 'ico tick') : btn(have ? `Charger ${fmt(Math.min(have, left))}` : goLbl, { act: have ? 'loadHold' : goAct, data: have ? { i } : { id: h.id }, kind: have ? 'green' : '', size: 'sm' })}</div>`;
         })
         .join('');
     return `<div class="card cargo-card here"><div class="card-head">${ico(['ui', 'plane'], 'ico big')}<div class="card-main"><div class="card-title">Avion-cargo</div>
@@ -368,22 +396,117 @@ defineSheet('armandPick', {
     },
 });
 
-function delivery(kind) {
-    const isBoat = kind === 'boat';
-    const open = isBoat ? G.boatOpen() : G.balloonOpen();
-    if (!open) return null;
-    const b = isBoat ? state.boat : state.balloon;
-    const name = isBoat ? 'Bateau de livraison' : 'Montgolfière';
+// ---------------- 1.183 : Bateau de livraison (3 ports + chargement caisse par caisse) ----------------
+function boatPortPicker() {
+    const cur = G.boatPortId();
+    const can = G.boatCanChangePort();
+    const p = G.boatPort();
+    const btns = G.BOAT_PORT_IDS.map(id => {
+        const d = G.BOAT_PORTS[id];
+        return `<button class="boat-port-btn${id === cur ? ' on' : ''}" data-act="setBoatPort" data-id="${id}"${can ? '' : ' disabled'}><b>${d.short}</b><small>×${d.payMult.toFixed(2).replace('.', ',')} · +${Math.round(d.bonusMult * 100)} %</small></button>`;
+    }).join('');
+    return `<div class="boat-ports"><div class="boat-ports-row">${btns}</div><small class="boat-port-desc">${esc(p.name)} : ${esc(p.desc)}${can ? '' : ' (verrouillé une fois le chargement commencé)'}</small></div>`;
+}
+
+function boatCard() {
+    if (!G.boatOpen()) return null;
+    const b = state.boat;
+    const port = G.boatPort();
     if (b.status !== 'here')
-        return `<div class="card away">${ico(['ui', isBoat ? 'boat' : 'balloon'], 'ico big')}<div class="card-main"><div class="card-title">${name}</div><div class="card-sub">${isBoat ? 'Le cargo revient' : 'Elle revient'} dans ${timer(b.arriveAt, 'b')}</div></div></div>`;
+        return `<div class="card cargo-card away"><div class="card-head">${ico(['ui', 'boat'], 'ico big')}<div class="card-main"><div class="card-title">Bateau de livraison</div><div class="card-sub">Le cargo revient dans ${timer(b.arriveAt, 'b')} · choisissez sa prochaine destination :</div></div></div>${boatPortPicker()}</div>`;
+    const crates = (b.items || [])
+        .map((cr, k) => {
+            const have = state.inventory[cr.id] || 0;
+            const ok = have >= cr.qty;
+            const pay = G.boatCratePay(cr);
+            return `<div class="hold${cr.loaded ? ' full' : ''}">
+                <button class="hold-item" data-act="produce" data-id="${cr.id}" aria-label="Aller produire">${ico(['item', cr.id], 'ico big')}</button>
+                <div class="hold-main"><b>${ITEMS[cr.id].name} · ×${fmt(cr.qty)}</b><small>${cr.loaded ? 'Caisse chargée' : `${fmt(have)} en stock · ${fmt(pay)}${ico(['ui', 'coin'])}`}</small></div>
+                ${cr.loaded ? ico(['ui', 'check'], 'ico tick') : btn(ok ? 'Charger' : 'Produire', { act: ok ? 'loadBoatCrate' : 'produce', data: ok ? { k } : { id: cr.id }, kind: ok ? 'green' : '', size: 'sm' })}
+            </div>`;
+        })
+        .join('');
+    const leftCrates = (b.items || []).filter(cr => !cr.loaded);
+    const allOk = leftCrates.length > 0 && leftCrates.every(cr => (state.inventory[cr.id] || 0) >= cr.qty);
+    const loadedCount = (b.items || []).length - leftCrates.length;
+    return `<div class="card cargo-card boat-card here">
+        <div class="card-head">${ico(['ui', 'boat'], 'ico big')}<div class="card-main"><div class="card-title">Bateau de livraison · ${esc(port.short)}</div>
+        <div class="card-sub">${loadedCount} / ${(b.items || []).length} caisses chargées · chaque caisse est payée aussitôt, le cargo plein rapporte une grosse prime.</div></div>
+        <span class="timer-pill">${ico(['ui', 'clock'])}${timer(b.expiresAt)}</span></div>
+        ${boatPortPicker()}
+        <div class="holds">${crates}</div>
+        <div class="truck-reward"><span>Cargo plein : bonus</span>${rewardHtml(G.boatBonus(), G.boatBonusXp())}${port.renom ? `<span class="renom-pill">+${port.renom} Renom</span>` : ''}<span class="reward mat">${port.mats}×${ico(['item', 'plank'])}</span>
+        ${allOk && leftCrates.length > 1 ? btn('Tout charger', { act: 'sendBoat', size: 'sm', kind: 'green' }) : ''}${!allOk && G.canPlanOrder('boat') ? btn('Planifier', { act: 'planOrder', data: { kind: 'boat' }, size: 'sm', kind: 'gold', icon: ['ui', 'loop'] }) : ''}${btn('Faire partir', { act: 'dismissBoat', size: 'sm', kind: 'ghost' })}</div>
+    </div>`;
+}
+
+// ---------------- 1.183 : Montgolfière (Courrier Express de Prestige) ----------------
+function balloonSpecLine(x) {
+    const have = G.itemHave(x);
+    const ok = have >= x.qty;
+    const ic = x.pf ? ['ui', 'perfume'] : x.cf ? ['ui', 'confiserie'] : x.br ? ['ui', 'beer'] : ['ui', 'maison'];
+    const name = x.pf ? G.pfReqTxt(x.pf) : x.cf ? G.cfReqTxt(x.cf) : x.br ? G.brReqTxt(x.br) : G.pkReqTxt(x.pk);
+    const where = x.pf ? 'Atelier du Parfumeur' : x.cf ? 'Atelier Confiserie' : x.br ? 'Brasserie d’Abbaye' : 'La Maison';
+    const act = x.pf ? 'pfGoAtelier' : x.cf ? 'cfGoAtelier' : x.br ? 'brGoAtelier' : 'pkGoShelf';
+    return `<${ok ? 'div' : 'button'} class="oline${ok ? ' ok' : ' go'}"${ok ? '' : ` data-act="${act}"`}>${ico(ic)}<span class="oline-main"><span>${esc(name)}</span><small>${where}</small></span><b>${Math.min(have, x.qty)} / ${x.qty}</b>${ok ? ico(['ui', 'check'], 'ico tick') : ico(['ui', 'arrow'], 'ico go-arrow')}</${ok ? 'div' : 'button'}>`;
+}
+
+function balloonCard() {
+    if (!G.balloonOpen()) return null;
+    const b = state.balloon;
+    if (b.status !== 'here')
+        return `<div class="card away">${ico(['ui', 'balloon'], 'ico big')}<div class="card-main"><div class="card-title">Montgolfière express</div><div class="card-sub">Elle revient dans ${timer(b.arriveAt, 'b')} · courrier léger de prestige (+2 Renom)</div></div></div>`;
     const ok = G.hasAll(b.items);
-    return `<div class="card delivery-card here">
-        <div class="delivery-art">${isBoat ? art('ui', 'boat') : SPR.balloon()}</div>
+    const lines = (b.items || []).map(x => (x.pf || x.cf || x.br || x.pk ? balloonSpecLine(x) : itemLine(x, G.itemHave(x)))).join('');
+    return `<div class="card delivery-card balloon-card here">
+        <div class="delivery-art">${SPR.balloon()}</div>
         <div class="card-main">
-            <div class="card-head"><div class="card-title">${name}</div><span class="timer-pill">${ico(['ui', 'clock'])}${timer(b.expiresAt)}</span></div>
-            <div class="olines">${b.items.map(x => itemLine(x)).join('')}</div>
-            <div class="od-foot">${rewardHtml(b.gold, b.xp, b.mats)}${!ok && G.canPlanOrder(kind) ? btn('Planifier', { act: 'planOrder', data: { kind }, size: 'sm', kind: 'gold', icon: ['ui', 'loop'] }) : ''}${btn(isBoat ? 'Charger' : 'Livrer', { act: isBoat ? 'sendBoat' : 'sendBalloon', kind: ok ? 'green' : '', disabled: !ok })}</div>
+            <div class="card-head"><div class="card-title">Montgolfière express${b.prestige ? ' <span class="gold-pill">Prestige</span>' : ''}</div><span class="timer-pill">${ico(['ui', 'clock'])}${timer(b.expiresAt)}</span></div>
+            <div class="card-sub">Petite nacelle de prestige : qualité fine et créations d’atelier, payées fort + ${b.renom || 2} Renom.</div>
+            <div class="olines">${lines}</div>
+            <div class="od-foot">${rewardHtml(b.gold, b.xp, b.mats)}<span class="renom-pill">+${b.renom || 2} Renom</span></div>
+            <div class="row-btns">${!ok && G.canPlanOrder('balloon') ? btn('Planifier', { act: 'planOrder', data: { kind: 'balloon' }, size: 'sm', kind: 'gold', icon: ['ui', 'loop'] }) : ''}${btn('Faire partir', { act: 'dismissBalloon', size: 'sm', kind: 'ghost' })}${btn('Envoyer', { act: 'sendBalloon', kind: ok ? 'green' : '', disabled: !ok })}</div>
         </div></div>`;
+}
+
+// ---------------- 1.183 : Raccourci commandes d'ateliers spécialisés ----------------
+function atelierSummary() {
+    const list = [];
+    if (G.brewOpen() && state.brew) {
+        const ready = G.beerOrdersReady();
+        const total = (state.brew.orders || []).length;
+        if (total > 0 || ready > 0) list.push({ id: 'brew', name: 'Brasserie d’Abbaye', icon: ['ui', 'beer'], ready, total, path: 'machines/brew#orders' });
+    }
+    if (G.caveOpen() && state.cave) {
+        const ready = G.caveOrdersReady();
+        const total = (state.cave.orders || []).length;
+        if (total > 0 || ready > 0) list.push({ id: 'cave', name: 'La Cave', icon: ['ui', 'cave'], ready, total, path: 'machines/cave#orders' });
+    }
+    if (G.confOpen() && state.confiserie) {
+        const ready = G.confOrdersReady();
+        const total = (state.confiserie.orders || []).length;
+        if (total > 0 || ready > 0) list.push({ id: 'conf', name: 'Atelier Confiserie', icon: ['ui', 'confiserie'], ready, total, path: 'machines/confiserie#orders' });
+    }
+    if (G.perfumeOpen() && state.perfume) {
+        const ready = G.perfumeOrdersReady();
+        const total = (state.perfume.orders || []).length;
+        if (total > 0 || ready > 0) list.push({ id: 'perf', name: 'Atelier du Parfumeur', icon: ['ui', 'perfume'], ready, total, path: 'machines/perfume#salon' });
+    }
+    return list;
+}
+function ateliersCard() {
+    const list = atelierSummary();
+    if (!list.length) return null;
+    const rows = list
+        .map(
+            a => `<div class="hold${a.ready ? ' full' : ''}">
+            <span class="hold-item">${ico(a.icon, 'ico big')}</span>
+            <div class="hold-main"><b>${a.name}</b><small>${a.ready ? `${a.ready} commande${a.ready > 1 ? 's' : ''} prête${a.ready > 1 ? 's' : ''} sur ${a.total}` : `${a.total} commande${a.total > 1 ? 's' : ''} en attente`}</small></div>
+            ${btn(a.ready ? 'Livrer' : 'Voir', { act: 'goAtelierOrders', data: { path: a.path }, kind: a.ready ? 'green' : '', size: 'sm' })}
+        </div>`,
+        )
+        .join('');
+    return `<div class="card cargo-card"><div class="card-head">${ico(['ui', 'scroll'], 'ico big')}<div class="card-main"><div class="card-title">Commandes d’ateliers</div><div class="card-sub">Accès direct aux commandes spéciales de vos ateliers artisanaux.</div></div></div><div class="holds">${rows}</div></div>`;
 }
 
 // ---------------- 1.73 : le tableau des commandes en trois volets ----------------
@@ -437,6 +560,24 @@ const ROWS = [
         ready: () => G.hasAll(state.incident.items),
         html: express,
         urgent: true,
+    },
+    {
+        id: 'ateliers',
+        grp: 'give',
+        on: () => atelierSummary().length > 0,
+        icon: () => {
+            const r = atelierSummary().find(a => a.ready);
+            return r ? r.icon : ['ui', 'confiserie'];
+        },
+        title: () => 'Commandes d’ateliers',
+        sub: () => {
+            const list = atelierSummary();
+            const r = list.reduce((a, x) => a + x.ready, 0);
+            const names = list.filter(x => (r ? x.ready > 0 : true)).map(x => x.name.replace(/^Atelier (du |de )?|^La /i, ''));
+            return r ? `${r} prête${r > 1 ? 's' : ''} · ${names.join(', ')}` : `${list.reduce((a, x) => a + x.total, 0)} en attente · ${names.join(', ')}`;
+        },
+        ready: () => atelierSummary().some(x => x.ready > 0),
+        html: ateliersCard,
     },
     {
         id: 'chef',
@@ -528,20 +669,36 @@ const ROWS = [
         here: () => G.cargoHere() && !!state.cargo && !state.cargo.done,
         html: cargoCard,
     },
-    ...['balloon', 'boat'].map(k => ({
-        id: k,
+    {
+        id: 'balloon',
         grp: 'ship',
-        on: () => (k === 'boat' ? G.boatOpen() : G.balloonOpen()),
-        icon: () => ['ui', k],
-        title: () => (k === 'boat' ? 'Bateau de livraison' : 'Montgolfière'),
+        on: () => G.balloonOpen(),
+        icon: () => ['ui', 'balloon'],
+        title: () => 'Montgolfière express',
         sub: () => {
-            const b = state[k];
-            return b.status === 'here' ? `Attend sa cargaison · repart dans ${left(b.expiresAt)}` : `Revient dans ${left(b.arriveAt)}`;
+            const b = state.balloon;
+            return b.status === 'here' ? `Courrier de prestige (+2 Renom) · repart dans ${left(b.expiresAt)}` : `Revient dans ${left(b.arriveAt)}`;
         },
-        ready: () => state[k].status === 'here' && G.hasAll(state[k].items),
-        here: () => state[k].status === 'here',
-        html: () => delivery(k),
-    })),
+        ready: () => state.balloon.status === 'here' && G.hasAll(state.balloon.items),
+        here: () => state.balloon.status === 'here',
+        html: balloonCard,
+    },
+    {
+        id: 'boat',
+        grp: 'ship',
+        on: () => G.boatOpen(),
+        icon: () => ['ui', 'boat'],
+        title: () => `Bateau · ${G.boatPort().short}`,
+        sub: () => {
+            const b = state.boat;
+            if (b.status !== 'here') return `Revient dans ${left(b.arriveAt)}`;
+            const loaded = (b.items || []).filter(cr => cr.loaded).length;
+            return `${loaded} / ${(b.items || []).length} caisses · repart dans ${left(b.expiresAt)}`;
+        },
+        ready: () => G.boatReady() > 0,
+        here: () => state.boat.status === 'here',
+        html: boatCard,
+    },
     // ---- événements ----
     {
         id: 'event',
@@ -650,7 +807,10 @@ function renderOrders(el) {
     const want = ui.sel.ordersTab;
     // sans choix : le premier volet où quelque chose est prêt
     const cur = GROUPS.some(g => g[0] === want) ? want : (GROUPS.find(g => readyOf(g[0])) || GROUPS[0])[0];
-    const board = `<div class="card hub-board"><div class="hub-board-head">${ico(['ui', 'scroll'])}<b>Commandes du village</b><small>${boardReady() ? `${boardReady()} prête${boardReady() > 1 ? 's' : ''}` : 'aucune prête'}</small></div>${boardHtml()}</div>`;
+    const st = G.orderStreak();
+    const stProg = st % ORDER_STREAK.step;
+    const streakBadge = `<span class="streak-pill" title="Bonus tous les ${ORDER_STREAK.step} livraisons du jour : +15 % pièces, 1 rare, +1 Renom">Série ${stProg}/${ORDER_STREAK.step}${st >= ORDER_STREAK.step ? ` (${st})` : ''}</span>`;
+    const board = `<div class="card hub-board"><div class="hub-board-head">${ico(['ui', 'scroll'])}<b>Commandes du village</b>${streakBadge}<small>${boardReady() ? `${boardReady()} prête${boardReady() > 1 ? 's' : ''}` : 'aucune prête'}</small></div>${boardHtml()}</div>`;
     blocks(el, [
         ['agenda', agendaCard()],
         ['tabs', `<div class="hub-tabs">${segmented(tabs, cur, 'ordersTab')}</div>`],
@@ -669,8 +829,31 @@ export function setupOrders() {
         pin: (el, d) => G.togglePin(+d.i),
         express: el => G.deliverExpress(el),
         loadHold: (el, d) => G.loadHold(+d.i, el),
-        pkGoShelf: () => go('machines/maison#atelier'),
-        pfGoAtelier: () => go('machines/perfume'),
+        pkGoShelf: () => {
+            closeSheet('hub');
+            go('machines/maison#atelier');
+        },
+        pfGoAtelier: () => {
+            closeSheet('hub');
+            go('machines/perfume');
+        },
+        cfGoAtelier: () => {
+            closeSheet('hub');
+            go('machines/confiserie');
+        },
+        brGoAtelier: () => {
+            closeSheet('hub');
+            go('machines/brew');
+        },
+        goAtelierOrders: (el, d) => {
+            closeSheet('hub');
+            go(d.path);
+        },
+        dismissTrain: el => confirmTap('dismissTrain', el, 'Partir ?') && G.dismissTruck(),
+        dismissBalloon: el => confirmTap('dismissBalloon', el, 'Partir ?') && G.dismissBalloon(),
+        dismissBoat: el => confirmTap('dismissBoat', el, 'Partir ?') && G.dismissBoat(),
+        loadBoatCrate: (el, d) => G.loadBoatCrate(+d.k, el),
+        setBoatPort: (el, d) => G.setBoatPort(d.id),
         foldToggle: (el, d) => toggleFold(d.id, d.ready === '1'),
         agendaToggle: () => {
             try {

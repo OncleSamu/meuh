@@ -1037,3 +1037,84 @@ export function applyBestAccord() {
     ensureBrew().draft.ings = b.ings.map(([id, n]) => [id, n]);
     return b;
 }
+
+// ---------------- 1.183 : les boissons de la Brasserie dans les transports (train, avion-cargo, montgolfière) ----------------
+const BR_DRINK_NAMES = { beer: 'Bière d’abbaye', cider: 'Cidre & Poiré', mead: 'Hydromel', sake: 'Saké artisanal' };
+const BR_DRINK_SHORT = { beer: 'bière', cider: 'cidre', mead: 'hydromel', sake: 'saké' };
+const brDrinkOf = b => (isSake(b.malt) ? 'sake' : isCider(b.malt) ? 'cider' : isMead(b.malt) ? 'mead' : 'beer');
+export const brTransportOk = () => brewOpen() && myBeers().some(b => (b.made || 0) > 0);
+export function brReq() {
+    const open = ['beer'];
+    if (ciderOpen()) open.push('cider');
+    if (meadOpen()) open.push('mead');
+    if (sakeOpen()) open.push('sake');
+    const madeDrinks = [...new Set(myBeers().filter(b => (b.made || 0) > 0).map(brDrinkOf))];
+    const pool = [...madeDrinks, ...open, null, null];
+    const drink = pickR(pool);
+    const minStars = Math.random() < 0.4 ? 2 : 1;
+    return { drink, minStars };
+}
+export const brReqTxt = req => {
+    const lbl = req && req.drink && BR_DRINK_NAMES[req.drink] ? BR_DRINK_NAMES[req.drink] : 'Cuvée d’abbaye';
+    return `${lbl}${req && req.minStars >= 2 ? `, ${req.minStars}★+` : ''}`;
+};
+export const brReqTag = req => {
+    const parts = [];
+    if (req && req.drink && BR_DRINK_SHORT[req.drink]) parts.push(BR_DRINK_SHORT[req.drink]);
+    if (req && req.minStars >= 2) parts.push(`${req.minStars}★+`);
+    return parts.join(' · ');
+};
+const brFits = (b, req) =>
+    !!b && beerStock(b.id) > 0 && (!req || ((!req.drink || brDrinkOf(b) === req.drink) && (b.stars || 0) >= (req.minStars || 0)));
+export function brEstimate(req) {
+    const all = myBeers().filter(b => (b.made || 0) > 0);
+    const matching = all.filter(b => !req || ((!req.drink || brDrinkOf(b) === req.drink) && (b.stars || 0) >= (req.minStars || 0)));
+    const list = matching.length ? matching : all;
+    if (!list.length) return 300;
+    return Math.max(200, Math.round(list.reduce((a, b) => a + (beerValue(b.id) || 300), 0) / list.length));
+}
+export const brHave = req =>
+    myBeers()
+        .filter(b => brFits(b, req))
+        .reduce((a, b) => a + beerStock(b.id), 0);
+export function pullBr(req, n) {
+    if (brHave(req) < n) return 0;
+    const B = ensureBrew();
+    const list = myBeers()
+        .filter(b => brFits(b, req))
+        .sort((a, b) => (beerValue(a.id) || 0) - (beerValue(b.id) || 0));
+    let left = n,
+        val = 0;
+    for (const b of list) {
+        if (left <= 0) break;
+        const have = beerStock(b.id);
+        const take = Math.min(left, have);
+        if (take <= 0) continue;
+        const q = beerQual(b.id);
+        const unit = beerValue(b.id) || 300;
+        let rem = take;
+        const ord = Math.max(0, have - ((q.s || 0) + (q.g || 0) + (q.p || 0) + (q.d || 0)));
+        const tOrd = Math.min(rem, ord);
+        val += tOrd * unit;
+        rem -= tOrd;
+        for (const [r, k] of [
+            [1, 's'],
+            [2, 'g'],
+            [3, 'p'],
+            [4, 'd'],
+        ]) {
+            if (rem <= 0) break;
+            const tk = Math.min(rem, q[k] || 0);
+            if (tk > 0) {
+                q[k] -= tk;
+                val += Math.round(tk * unit * QUALITY[r].mult);
+                rem -= tk;
+            }
+        }
+        B.stock[b.id] = have - take;
+        beerQual(b.id);
+        left -= take;
+    }
+    return val;
+}
+

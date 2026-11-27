@@ -16,6 +16,8 @@ import { giveRare } from './barn.js';
 import { stayOf, domStepSum } from './estate.js';
 import { pkTransportOk, pkReq, pkEstimate, pkHave, pullPk } from './maison.js';
 import { pfTransportOk, pfReq, pfEstimate, pfHave, pullPf } from './perfume.js';
+import { cfTransportOk, cfReq, cfEstimate, cfHave, pullCf } from './confiserie.js';
+import { brTransportOk, brReq, brEstimate, brHave, pullBr } from './brewery.js';
 import { wagonTarget } from './orders.js';
 import { metierTransportPay } from './metier.js';
 
@@ -32,6 +34,22 @@ function pickWeighted(list) {
     let x = Math.random() * list.reduce((a, i) => a + itemWeight(i.id), 0);
     for (const i of list) if ((x -= itemWeight(i.id)) <= 0) return i;
     return list[list.length - 1];
+}
+function makeSpecHold(kind) {
+    if (kind === 'pk') {
+        const pk = pkReq();
+        return { id: 'paquet', pk, qty: 2 + Math.floor(Math.random() * 3), got: 0, est: Math.round(pkEstimate(pk) * CARGO_PK_PAY) };
+    }
+    if (kind === 'pf') {
+        const pf = pfReq();
+        return { id: 'perfumeCustom', pf, qty: 2 + Math.floor(Math.random() * 3), got: 0, est: Math.round(pfEstimate(pf) * CARGO_PF_PAY) };
+    }
+    if (kind === 'cf') {
+        const cf = cfReq();
+        return { id: 'confCustom', cf, qty: 3 + Math.floor(Math.random() * 4), got: 0, est: Math.round(cfEstimate(cf) * CARGO_CF_PAY) };
+    }
+    const br = brReq();
+    return { id: 'brewCustom', br, qty: 3 + Math.floor(Math.random() * 4), got: 0, est: Math.round(brEstimate(br) * CARGO_BR_PAY) };
 }
 function makeHolds() {
     const pool = questPool();
@@ -56,30 +74,41 @@ function makeHolds() {
         qty: Math.max(CARGO.min, Math.min(CARGO.max, Math.round((value * (0.8 + Math.random() * 0.4)) / Math.max(1, it.sell)))),
         got: 0,
     }));
-    // 1.104.1 : une soute demande parfois des paquets de la Maison
-    if (pkTransportOk() && Math.random() < CARGO_PK && holds.length) {
-        const pk = pkReq();
-        holds[holds.length - 1] = { id: 'paquet', pk, qty: 2 + Math.floor(Math.random() * 3), got: 0, est: Math.round(pkEstimate(pk) * CARGO_PK_PAY) };
-    }
-    // 1.146 : une soute demande parfois des parfums maison
-    if (pfTransportOk() && Math.random() < CARGO_PF && holds.length >= 2) {
-        const pf = pfReq();
-        const idx = holds[holds.length - 1].pk ? holds.length - 2 : holds.length - 1;
-        holds[idx] = { id: 'perfumeCustom', pf, qty: 2 + Math.floor(Math.random() * 3), got: 0, est: Math.round(pfEstimate(pf) * CARGO_PF_PAY) };
+    // 1.104.1, 1.146 & 1.183 : jusqu'à deux soutes spécialisées (paquets, parfums, confiseries, brasserie)
+    const specPool = [];
+    if (pkTransportOk()) specPool.push(['pk', CARGO_PK]);
+    if (pfTransportOk()) specPool.push(['pf', CARGO_PF]);
+    if (cfTransportOk()) specPool.push(['cf', CARGO_CF]);
+    if (brTransportOk()) specPool.push(['br', CARGO_BR]);
+    if (specPool.length && holds.length) {
+        const first = pickRand(specPool);
+        if (Math.random() < Math.min(0.75, first[1] + (specPool.length - 1) * 0.1)) {
+            holds[holds.length - 1] = makeSpecHold(first[0]);
+            const rest = specPool.filter(x => x[0] !== first[0]);
+            if (rest.length && holds.length >= 2 && Math.random() < 0.45) {
+                const second = pickRand(rest);
+                holds[holds.length - 2] = makeSpecHold(second[0]);
+            }
+        }
     }
     return holds;
 }
 const CARGO_PK = 0.5,
     CARGO_PK_PAY = 1.6,
     CARGO_PF = 0.45,
-    CARGO_PF_PAY = 1.75;
-const haveFor = h => (h.pk ? pkHave(h.pk) : h.pf ? pfHave(h.pf) : state.inventory[h.id] || 0);
+    CARGO_PF_PAY = 1.75,
+    CARGO_CF = 0.45,
+    CARGO_CF_PAY = 1.75,
+    CARGO_BR = 0.45,
+    CARGO_BR_PAY = 1.7;
+const isSpecHold = h => !!(h && (h.pk || h.pf || h.cf || h.br));
+const haveFor = h => (h.pk ? pkHave(h.pk) : h.pf ? pfHave(h.pf) : h.cf ? cfHave(h.cf) : h.br ? brHave(h.br) : state.inventory[h.id] || 0);
 export const holdHave = h => haveFor(h);
-export const holdPay = (h, n) => round5((h.pk || h.pf ? h.est : ITEMS[h.id].sell * metierTransportPay(h.id)) * n * CARGO.pay);
+export const holdPay = (h, n) => round5((isSpecHold(h) ? h.est : ITEMS[h.id].sell * metierTransportPay(h.id)) * n * CARGO.pay);
 export const cargoTotal = () => (state.cargo && state.cargo.holds ? state.cargo.holds.reduce((a, h) => a + holdPay(h, h.qty), 0) : 0);
 export const cargoBonus = () => round5(cargoTotal() * (CARGO.bonus + domStepSum('cargo', 'bonus')));
 // 1.106 : les soutes ont grossi, pas l'expérience : elle se compte sur la quantité qu'une soute demandait avant
-const xpScale = h => (h.pk || h.pf ? 1 : Math.min(1, Math.max(CARGO.min, Math.min(CARGO.max, Math.round(CARGO.value(scaleLvl()) / Math.max(1, ITEMS[h.id].sell)))) / h.qty));
+const xpScale = h => (isSpecHold(h) ? 1 : Math.min(1, Math.max(CARGO.min, Math.min(CARGO.max, Math.round(CARGO.value(scaleLvl()) / Math.max(1, ITEMS[h.id].sell)))) / h.qty));
 export const cargoBonusXp = () =>
     state.cargo && state.cargo.holds ? Math.round(state.cargo.holds.reduce((a, h) => a + holdPay(h, h.qty) * xpScale(h), 0) * (CARGO.bonus + domStepSum('cargo', 'bonus')) * CARGO.xp) : 0;
 export const cargoFull = () => !!(state.cargo && state.cargo.holds && state.cargo.holds.every(h => h.got >= h.qty));
@@ -116,13 +145,23 @@ export function loadHold(i, at, n) {
     let val = 0;
     if (h.pk) val = pullPk(h.pk, can);
     else if (h.pf) val = pullPf(h.pf, can);
+    else if (h.cf) val = pullCf(h.cf, can);
+    else if (h.br) val = pullBr(h.br, can);
     else {
         state.inventory[h.id] -= can;
         clampQuality(h.id);
     }
     h.got += can;
-    // 1.104.5 : une soute de paquets ou parfums paie selon la valeur réelle des lots chargés
-    const gold = h.pk ? round5(val * CARGO_PK_PAY * CARGO.pay) : h.pf ? round5(val * CARGO_PF_PAY * CARGO.pay) : holdPay(h, can);
+    // 1.104.5 & 1.183 : une soute spécialisée paie selon la valeur réelle des lots chargés
+    const gold = h.pk
+        ? round5(val * CARGO_PK_PAY * CARGO.pay)
+        : h.pf
+          ? round5(val * CARGO_PF_PAY * CARGO.pay)
+          : h.cf
+            ? round5(val * CARGO_CF_PAY * CARGO.pay)
+            : h.br
+              ? round5(val * CARGO_BR_PAY * CARGO.pay)
+              : holdPay(h, can);
     earn(gold, at);
     // l'expérience reste à l'échelle d'avant la 1.106
     addXp(Math.round(gold * CARGO.xp * xpScale(h)), at);

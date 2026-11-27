@@ -15,6 +15,44 @@ export const BOAT_AWAY = 10800000;
 
 export const BOAT_PAY = 3.5;
 
+// 1.183 : 3 ports de destination pour le cargo de livraison (choix du rythme et de la prime de cargaison pleine)
+export const BOAT_PORTS = {
+    cote: {
+        id: 'cote',
+        name: 'Port côtier',
+        short: 'Côtier',
+        payMult: 0.9,
+        awayMult: 0.65,
+        bonusMult: 0.35,
+        mats: 2,
+        renom: 0,
+        desc: 'Aller-retour rapide, idéal pour enchaîner les livraisons',
+    },
+    capitale: {
+        id: 'capitale',
+        name: 'Port de la Capitale',
+        short: 'Capitale',
+        payMult: 1.0,
+        awayMult: 1.0,
+        bonusMult: 0.5,
+        mats: 3,
+        renom: 0,
+        desc: 'Équilibré : bon tarif et matériaux rares',
+    },
+    iles: {
+        id: 'iles',
+        name: 'Routes lointaines',
+        short: 'Lointain',
+        payMult: 1.35,
+        awayMult: 1.35,
+        bonusMult: 0.7,
+        mats: 4,
+        renom: 2,
+        desc: 'Voyage plus long mais gros bonus, +2 Renom et matériaux rares',
+    },
+};
+export const BOAT_PORT_IDS = ['cote', 'capitale', 'iles'];
+
 export const FARM_SEASON_MS = 2419200000;
 
 export const FARM_SEASON_TIERS = [300, 900, 2200, 5000, 10000];

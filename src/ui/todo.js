@@ -237,8 +237,8 @@ export function todoList() {
         push('village/orders#event', ['ui', RARE_EVENTS[state.rare.type].icon], RARE_EVENTS[state.rare.type].name, 1, { urgent: true });
     if (G.rareActive('butterflies')) list.unshift({ go: 'farm/field', icon: ['ui', 'butterfly'], text: 'Papillons : récoltes dorées !', n: 0 });
     if (state.boat.status === 'here') {
-        const ok = G.hasAll(state.boat.items);
-        push('village/orders#ship', ['ui', 'boat'], ok ? 'Cargo prêt à charger' : 'Un cargo au port', ok ? 1 : 0);
+        const br = G.boatReady();
+        push('village/orders#ship', ['ui', 'boat'], br ? `${br} caisse${s(br)} du cargo à charger` : 'Un cargo au port', br);
     }
     // 1.103 : le camping est dans Village › Camping
     const campN = G.campReady() + G.residentReady();

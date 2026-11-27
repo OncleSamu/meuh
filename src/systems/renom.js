@@ -6,7 +6,7 @@ import { view } from '../core/view.js';
 import { toast } from '../core/bus.js';
 import { workFx } from './estate.js';
 
-export const RENOM = { max: 12, per: 0.01, decay: 4 * 3600000, train: 2, cave: 1, beer: 1, lvl: 12 };
+export const RENOM = { max: 12, per: 0.01, decay: 4 * 3600000, train: 2, cave: 1, beer: 1, balloon: 2, boat: 2, streak: 1, lvl: 12 };
 // 1.107 : le pigeonnier relève le plafond, la tour de l'horloge ralentit la baisse
 export const renomMax = () => RENOM.max + workFx('pigeon');
 // 1.107.1 : la table d'hôtes donne un plancher au renom

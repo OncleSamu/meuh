@@ -1,5 +1,5 @@
 // Le port et l'alpage : pêche en mer, cargo de livraison, transhumance, saisons de la ferme et fermes à thème.
-import { state, scaleLvl } from '../core/state.js';
+import { state, scaleLvl, ecoLvl } from '../core/state.js';
 import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { pickRand, round5 } from '../core/format.js';
@@ -15,6 +15,8 @@ import {
     BOAT_STAY,
     BOAT_AWAY,
     BOAT_PAY,
+    BOAT_PORTS,
+    BOAT_PORT_IDS,
     FARM_SEASON_MS,
     FARM_SEASON_TIERS,
     FARM_SEASONS,
@@ -28,13 +30,14 @@ import { tip } from './tips.js';
 import { barnBlocked, giveRare } from './barn.js';
 import { rank, addXp, earn } from './player.js';
 import { addMastery } from './mastery.js';
-import { addQuality, ascend } from './farm.js';
+import { addQuality, ascend, clampQuality } from './farm.js';
 import { FISH_QUALITY } from '../data/fishing.js';
-import { pickItems, qtyFor, xpBonus, hasAll, payItems } from './orders.js';
+import { pickItems, qtyFor, xpBonus } from './orders.js';
 import { isAdult } from './animals.js';
 import { addPhoto } from './style.js';
 import { stayOf, domStepSum } from './estate.js';
 import { talentFx } from './friends.js';
+import { addRenom } from './renom.js';
 
 // ---------------- pêche en mer ----------------
 export const netOpen = () => projectDone('lighthouse');
@@ -93,11 +96,29 @@ export function haulNet(at) {
     return true;
 }
 
-// ---------------- cargo de livraison ----------------
+// ---------------- cargo de livraison (1.183 : 3 ports de destination, chargement caisse par caisse et mise à l'échelle haut niveau) ----------------
 export const boatOpen = () => projectDone('quay');
+export const boatPortId = () => (state.boat && BOAT_PORTS[state.boat.port] ? state.boat.port : 'capitale');
+export const boatPort = () => BOAT_PORTS[boatPortId()];
+export const boatCanChangePort = () => !state.boat || state.boat.status !== 'here' || !(state.boat.items || []).some(cr => cr.loaded);
+export function setBoatPort(pid) {
+    if (!BOAT_PORTS[pid] || !boatCanChangePort()) return false;
+    state.boat.port = pid;
+    sfx('click');
+    return true;
+}
 // 1.70 : le talent de Morgane
 export const boatPay = () => BOAT_PAY * (projectDone('shipyard') ? 1.25 : 1) * (1 + talentFx('boat'));
-export const boatAway = () => (BOAT_AWAY - (projectDone('shipyard') ? 60 * 60 * 1000 : 0)) * (1 - domStepSum('quay', 'fast'));
+export const boatAway = () => (BOAT_AWAY - (projectDone('shipyard') ? 60 * 60 * 1000 : 0)) * (1 - domStepSum('quay', 'fast')) * boatPort().awayMult;
+export const boatCrateTarget = (L = ecoLvl()) => Math.max(150 + scaleLvl() * 55, L >= 15 ? 480 * Math.pow(1.09, L - 10) : 0);
+export const boatCrateMax = (L = ecoLvl()) => Math.round(Math.min(70, 30 + Math.max(0, L - 30) * 1.34));
+export const boatCratePay = cr => round5((cr.gold || (ITEMS[cr.id] ? ITEMS[cr.id].sell : 10) * cr.qty * boatPay()) * boatPort().payMult);
+export const boatCrateXp = cr =>
+    cr.xp !== undefined ? cr.xp : Math.max(5, Math.round((ITEMS[cr.id] ? ITEMS[cr.id].sell : 10) * cr.qty * BOAT_PAY * BALANCE.balloonXp * xpBonus()));
+export const boatBonus = () => round5((state.boat && state.boat.items ? state.boat.items : []).reduce((a, cr) => a + boatCratePay(cr), 0) * boatPort().bonusMult);
+export const boatBonusXp = () => Math.round((state.boat && state.boat.items ? state.boat.items : []).reduce((a, cr) => a + boatCrateXp(cr), 0) * 0.45);
+export const boatReady = () =>
+    state.boat && state.boat.status === 'here' ? (state.boat.items || []).filter(cr => !cr.loaded && (state.inventory[cr.id] || 0) >= cr.qty).length : 0;
 
 export function boatTick() {
     if (!boatOpen()) return false;
@@ -108,22 +129,40 @@ export function boatTick() {
         return false;
     }
     if (b.status === 'away' && t >= b.arriveAt) {
-        const its = pickItems(4 + domStepSum('quay', 'line'));
+        const count = 4 + domStepSum('quay', 'line');
+        const target = boatCrateTarget();
+        const maxQty = boatCrateMax();
+        const minSell = target / maxQty / 1.5;
+        const its = pickItems(Math.max(10, count + 5))
+            .map((it, k) => [it, k])
+            .sort((x, y) => (y[0].sell >= minSell) - (x[0].sell >= minSell) || x[1] - y[1])
+            .slice(0, count)
+            .map(x => x[0]);
         if (its.length < 3) {
             b.arriveAt = t + 60000;
             return false;
         }
-        const target = 150 + scaleLvl() * 55;
-        const items = its.map(it => ({ id: it.id, qty: qtyFor(it, target * (0.8 + Math.random() * 0.5), 30) }));
-        const value = items.reduce((a, x) => a + ITEMS[x.id].sell * x.qty, 0);
-        const gold = round5(value * boatPay());
+        const oldTarget = 150 + scaleLvl() * 55;
+        const pay = boatPay();
+        const items = its.map(it => {
+            const rnd = 0.8 + Math.random() * 0.5;
+            const qty = qtyFor(it, target * rnd, maxQty);
+            const qtyOld = qtyFor(it, oldTarget * rnd, 30);
+            const gold = round5(it.sell * qty * pay);
+            const xp = Math.max(8, Math.round(it.sell * qtyOld * BOAT_PAY * BALANCE.balloonXp * xpBonus()));
+            return { id: it.id, qty, loaded: false, gold, xp };
+        });
+        const port = boatPort();
+        const gold = items.reduce((a, cr) => a + round5(cr.gold * port.payMult), 0);
+        const xp = items.reduce((a, cr) => a + cr.xp, 0);
+        const mats = Array.from({ length: port.mats }, () => pickRand(RARE));
         Object.assign(b, {
             status: 'here',
             expiresAt: t + stayOf(BOAT_STAY),
             items,
             gold,
-            xp: Math.round(value * BOAT_PAY * BALANCE.balloonXp * xpBonus()),
-            mats: [pickRand(RARE), pickRand(RARE), pickRand(RARE)],
+            xp,
+            mats,
         });
         if (view.started && !view.hidden) {
             toast('Un cargo accoste au port !', ['ui', 'boat']);
@@ -133,29 +172,80 @@ export function boatTick() {
         return true;
     }
     if (b.status === 'here' && t >= b.expiresAt) {
-        if (view.started) toast('Le cargo a repris la mer', ['ui', 'boat']);
+        const loaded = (b.items || []).filter(cr => cr.loaded).length;
+        if (view.started) toast(loaded ? `Le cargo a repris la mer avec ${loaded} caisse${loaded > 1 ? 's' : ''}` : 'Le cargo a repris la mer', ['ui', 'boat']);
         Object.assign(b, { status: 'away', items: [], arriveAt: t + boatAway() });
         return true;
     }
     return false;
 }
 
-export function sendBoat(at) {
+function finishBoat(at) {
     const b = state.boat;
-    if (b.status !== 'here' || !hasAll(b.items)) return false;
-    payItems(b.items);
+    const port = boatPort();
+    const bonus = boatBonus();
+    const bxp = boatBonusXp();
     sfx('level');
     buzz(30);
     burst(at, 'sparkle', 18);
-    earn(b.gold, at);
-    addXp(b.xp, at);
-    b.mats.forEach(m => giveRare(m, 1, at));
+    earn(bonus, at);
+    addXp(bxp, at);
+    for (let j = 0; j < port.mats; j++) giveRare(pickRand(RARE), 1, at);
+    if (port.renom) addRenom(port.renom, 'boat', at);
     state.stats.boats = (state.stats.boats || 0) + 1;
-    state.income.orders += b.gold;
+    state.income.orders += bonus;
     Object.assign(b, { status: 'away', items: [], arriveAt: now() + boatAway() });
-    toast('Le cargo appareille, chargé de vos produits !', ['ui', 'boat']);
+    toast(`Cargo complet vers ${port.name} ! Bonus de cargaison encaissé`, ['ui', 'boat']);
     return true;
 }
+
+export function loadBoatCrate(k, at) {
+    const b = state.boat;
+    const cr = b && b.status === 'here' && b.items && b.items[k];
+    if (!cr || cr.loaded || (state.inventory[cr.id] || 0) < cr.qty) return false;
+    state.inventory[cr.id] -= cr.qty;
+    clampQuality(cr.id);
+    cr.loaded = true;
+    const pay = boatCratePay(cr);
+    const xp = boatCrateXp(cr);
+    earn(pay, at);
+    addXp(xp, at);
+    state.income.orders += pay;
+    sfx('load');
+    buzz(12);
+    burst(at, 'crumbs', 8);
+    if (b.items.every(x => x.loaded)) finishBoat(at);
+    return true;
+}
+
+export function sendBoat(at) {
+    const b = state.boat;
+    if (!b || b.status !== 'here' || !b.items || !b.items.length) return false;
+    const todo = b.items.map((cr, k) => [cr, k]).filter(([cr]) => !cr.loaded);
+    if (!todo.length || !todo.every(([cr]) => (state.inventory[cr.id] || 0) >= cr.qty)) return false;
+    for (const [cr] of todo) {
+        state.inventory[cr.id] -= cr.qty;
+        clampQuality(cr.id);
+        cr.loaded = true;
+        const pay = boatCratePay(cr);
+        const xp = boatCrateXp(cr);
+        earn(pay, at);
+        addXp(xp, at);
+        state.income.orders += pay;
+    }
+    return finishBoat(at);
+}
+
+export function dismissBoat() {
+    const b = state.boat;
+    if (!b || b.status !== 'here') return false;
+    const n = (b.items || []).filter(cr => cr.loaded).length;
+    Object.assign(b, { status: 'away', items: [], arriveAt: now() + boatAway() });
+    sfx('click');
+    if (view.started) toast(n ? `Le cargo appareille avec ${n} caisse${n > 1 ? 's' : ''}` : 'Le cargo reprend la mer à vide', ['ui', 'boat']);
+    return true;
+}
+export { BOAT_PORTS, BOAT_PORT_IDS };
 
 // ---------------- transhumance ----------------
 export const transOpen = () => projectDone('sheepfold');

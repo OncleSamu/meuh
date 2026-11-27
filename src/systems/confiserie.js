@@ -869,3 +869,58 @@ export function confOffline() {
     }
     return done;
 }
+
+// ---------------- 1.183 : les confiseries dans les transports (train, avion-cargo, montgolfière) ----------------
+export const cfTransportOk = () => confOpen() && myConfs().some(c => (c.made || 0) > 0);
+export function cfReq() {
+    const madeKinds = [...new Set(myConfs().filter(c => (c.made || 0) > 0).map(c => c.kind))];
+    const pool = [...madeKinds, ...CONF_KIND_IDS, null, null];
+    const kind = pickRand(pool);
+    const minStars = Math.random() < 0.4 ? 2 : 1;
+    return { kind, minStars };
+}
+export const cfReqTxt = req => {
+    const k = req && req.kind && CONF_KINDS[req.kind] ? CONF_KINDS[req.kind].name : 'Confiserie maison';
+    return `${k}${req && req.minStars >= 2 ? `, ${req.minStars}★+` : ''}`;
+};
+export const cfReqTag = req => {
+    const parts = [];
+    if (req && req.kind && CONF_KINDS[req.kind]) parts.push(CONF_KINDS[req.kind].name.toLowerCase());
+    if (req && req.minStars >= 2) parts.push(`${req.minStars}★+`);
+    return parts.join(' · ');
+};
+const cfFits = (c, req) =>
+    !!c && confStock(c.id) > 0 && (!req || ((!req.kind || c.kind === req.kind) && (c.stars || 0) >= (req.minStars || 0)));
+export function cfEstimate(req) {
+    const all = myConfs().filter(c => (c.made || 0) > 0);
+    const matching = all.filter(c => !req || ((!req.kind || c.kind === req.kind) && (c.stars || 0) >= (req.minStars || 0)));
+    const list = matching.length ? matching : all;
+    if (!list.length) return 260;
+    return Math.max(180, Math.round(list.reduce((a, c) => a + (c.value || 260), 0) / list.length));
+}
+export const cfHave = req =>
+    myConfs()
+        .filter(c => cfFits(c, req))
+        .reduce((a, c) => a + confStock(c.id), 0);
+export function pullCf(req, n) {
+    if (cfHave(req) < n) return 0;
+    const C = ensureConf();
+    const list = myConfs()
+        .filter(c => cfFits(c, req))
+        .sort((a, b) => (a.value || 0) - (b.value || 0));
+    let left = n,
+        val = 0;
+    for (const c of list) {
+        if (left <= 0) break;
+        const have = confStock(c.id);
+        const take = Math.min(left, have);
+        if (take <= 0) continue;
+        const pulled = pullConfUnits(C, c.id, take, 0);
+        if (!pulled) continue;
+        val += Math.round((c.value || 260) * pulled.multSum);
+        left -= take;
+    }
+    emit('changed', 'confiserie');
+    return val;
+}
+
