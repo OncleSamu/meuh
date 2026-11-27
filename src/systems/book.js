@@ -496,7 +496,7 @@ export function statsData() {
             [
                 ['Cultures récoltées', n('harvested'), ['item', 'wheat']],
                 ['Fruits du verger', n('orchardFruits'), ['item', 'apple']],
-                ['Récoltes des contrées', n('islandHarvest'), ['item', 'coconut']],
+                ['Récoltes des contrées', n('islandHarvest') + n('oasisHarvest') + n('nordHarvest') + n('asieHarvest'), ['item', 'coconut']],
                 ['Gestes de Théo', n('handWork'), ['ui', 'basket']],
             ],
         ],

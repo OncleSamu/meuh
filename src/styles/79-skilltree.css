@@ -295,14 +295,14 @@
     background: radial-gradient(circle at 35% 30%, #3d3420, #1f1b16);
 }
 .sk-canvas.mode-all .sk-node {
-    width: 21px;
-    height: 21px;
+    width: 26px;
+    height: 26px;
     border-width: 1.7px;
 }
 .sk-canvas.mode-all .sk-node.cap {
-    width: 25px;
-    height: 25px;
-    border-radius: 6px;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
 }
 .sk-canvas.mode-all .sk-rk {
     display: none;

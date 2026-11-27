@@ -4,16 +4,29 @@
 // 3. Berlingots: La Coupe au Ciseau (trancher le ruban de sucre rayé pile au passage des 6 losanges)
 
 import { sfx, buzz } from '../core/bus.js';
+import { esc } from './dom.js';
 import { CONF_KINDS } from '../data/confiserie.js';
 import { confSvg } from '../art/confiserie.js';
 import * as G from '../systems/index.js';
 import { refresh } from './app.js';
 
 let activeRaf = 0;
+const activeCleanups = [];
+
+function runCleanups() {
+    while (activeCleanups.length) {
+        try {
+            activeCleanups.pop()();
+        } catch {
+            // ignore
+        }
+    }
+}
 
 function closeModal(overlay) {
     if (activeRaf) cancelAnimationFrame(activeRaf);
     activeRaf = 0;
+    runCleanups();
     if (overlay && overlay.parentNode) overlay.remove();
 }
 
@@ -41,6 +54,7 @@ export function launchConfMini(kind) {
     const finish = (stars, summary) => {
         if (activeRaf) cancelAnimationFrame(activeRaf);
         activeRaf = 0;
+        runCleanups();
         const res = G.finishConfMini(kind, stars);
         if (!res) {
             closeModal(overlay);
@@ -56,7 +70,7 @@ export function launchConfMini(kind) {
         stage.innerHTML = `<div class="cfm-done">
             <div class="cfm-done-art">${confSvg({ kind, shape: pv.shape, baseCol: pv.baseCol, baseCol2: pv.baseCol2, accentCol: pv.accentCol, mirror: stars >= 3, classic: !!pv.harmony.classic })}</div>
             <div class="cfm-stars">${starHtml}</div>
-            <b>${pv.name} ×${res.qty}</b>
+            <b>${esc(pv.name)} ×${res.qty}</b>
             <p>${summary}</p>
             <small>${bonusTxt}</small>
             <button type="button" class="btn green" id="cfm-ok">Ranger dans mes créations</button>
@@ -112,6 +126,10 @@ function runTemperMini(stage, pv, finish) {
     heatBtn.addEventListener('pointerdown', onDown);
     window.addEventListener('pointerup', onUp);
     window.addEventListener('pointercancel', onUp);
+    activeCleanups.push(() => {
+        window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onUp);
+    });
 
     let temp = 0.5;
     let vel = 0;
@@ -411,6 +429,10 @@ function runWhipMini(stage, pv, finish) {
     };
     window.addEventListener('pointerup', endSwipe);
     window.addEventListener('pointercancel', endSwipe);
+    activeCleanups.push(() => {
+        window.removeEventListener('pointerup', endSwipe);
+        window.removeEventListener('pointercancel', endSwipe);
+    });
 
     const step = t => {
         const dt = Math.max(0, Math.min(0.05, (t - last) / 1000));

@@ -503,7 +503,8 @@ function entryNote(e, kind) {
     const notes = discs.map(d => {
         if (!a) return 0;
         const base = showNote(a, d, kind === 'gp' ? (e.passes[d] ?? null) : e.passage).note;
-        return clamp(base + (kind !== 'gp' && e.prepUsed ? e.prepUsed : 0));
+        const prep = kind === 'gp' ? prepBonus(e.uid, d) : e.prepUsed || 0;
+        return clamp(base + prep);
     });
     return notes.reduce((x, y) => x + y, 0) / notes.length;
 }

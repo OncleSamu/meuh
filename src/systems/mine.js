@@ -143,9 +143,11 @@ export function mineGenerateFloor(floor) {
     cells[stairIdx].stairs = true;
     cells[stairIdx].kind = 'rock';
 
-    // 2. Coffre souterrain garanti tous les 5 étages (5, 10, 15, ..., 40)
+    // 2. Coffre souterrain garanti tous les 5 étages (5, 10, 15, ..., 40) : 1 fois par jour via ascenseur
     let chestIdx = -1;
-    if (floor % MINE_DEEP.elevatorStep === 0) {
+    const D = state.mineDeep;
+    const chestUsedToday = !!(D && D.chestDay && D.chestDay.day === state.day && D.chestDay.floors && D.chestDay.floors[floor]);
+    if (floor % MINE_DEEP.elevatorStep === 0 && !chestUsedToday) {
         chestIdx = take();
         cells[chestIdx].kind = 'chest';
         cells[chestIdx].hp = 1;
@@ -243,6 +245,9 @@ function resolveCellLoot(cell, floor, at, quiet = false) {
         museumAddSpecimen(sp, 1, at, quiet);
         loot.specimens.push(sp);
         loot.xp += 35;
+        const D = ensureMineDeep();
+        if (!D.chestDay || D.chestDay.day !== state.day) D.chestDay = { day: state.day, floors: {} };
+        D.chestDay.floors[floor] = true;
         if (!quiet) {
             sfx('level');
             burst(at, 'sparkle', 14);
@@ -380,7 +385,7 @@ export function mineElevators() {
 export function mineGoFloor(floor, at = null) {
     const D = ensureMineDeep();
     const valid = mineElevators();
-    if (!valid.includes(floor)) return false;
+    if (!valid.includes(floor) || floor === D.floor) return false;
     D.floor = floor;
     D.grid = mineGenerateFloor(floor);
     D.sonarUsed = false;

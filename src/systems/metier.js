@@ -25,9 +25,10 @@ export function metierOf(id) {
     if (d.type === 'product') return 'eleveur';
     if (isDrink(id)) return 'vigneron';
     if (d.type === 'artisan' && itemKind(id) === 'cuisine') return 'cuisinier';
+    if (d.type === 'artisan') return 'artisan';
     return null;
 }
-const COUNTER = { maraicher: 'crop', eleveur: 'animal', arbo: 'fruit', cuisinier: 'dish', vigneron: 'drink', pecheur: 'fish' };
+const COUNTER = { maraicher: 'crop', eleveur: 'animal', arbo: 'fruit', cuisinier: 'dish', vigneron: 'drink', pecheur: 'fish', artisan: 'craft' };
 // appelé à chaque production (récolte, ramassage, pêche, atelier) : les compteurs tournent toujours, quel que soit le métier actif
 export function metierCount(id, qty) {
     const m = metierOf(id);
@@ -115,6 +116,8 @@ export const metierPrice = item => {
 };
 // les bouteilles de cave et les bières du vigneron
 export const metierCellar = () => 1 + metierPriceRate('vigneron') * (metierId() === 'vigneron' ? 1 : 0);
+// les parfums et confiseries de l'artisan (v1.185)
+export const metierArtisan = () => 1 + metierPriceRate('artisan') * (metierId() === 'artisan' ? 1 : 0);
 const mine = item => !!metierId() && metierOf(item) === metierId();
 export const metierOrderPay = items => (metierRank() >= METIER_FX.orders.rank && items.some(mine) ? 1 + METIER_FX.orders.pay : 1);
 export const metierTransportPay = item => (metierRank() >= METIER_FX.transport.rank && mine(item) ? 1 + METIER_FX.transport.pay : 1);
@@ -182,7 +185,8 @@ export function clientOrder(pool, qtyFor, target, xpBonus = 1) {
     const m = M(),
         id = metierId();
     if (m.client && m.client.day === today() && m.client.m === id) return m.client;
-    const mine = pool.filter(i => metierOf(i.id) === id);
+    const list = typeof pool === 'function' ? pool() : pool;
+    const mine = list.filter(i => metierOf(i.id) === id);
     if (!mine.length) return null;
     const n = Math.min(mine.length, METIER_CLIENT.items[Math.random() < 0.5 ? 0 : 1]);
     const picks = [];

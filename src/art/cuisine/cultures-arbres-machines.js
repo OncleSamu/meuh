@@ -746,7 +746,7 @@ const MACH = () => ({
         R(8, 16, 8, 5, 2.5, '#c8453a', 1.8) +
         R(48, 16, 8, 5, 2.5, '#c8453a', 1.8) +
         HL(22, 18, 2, 4, 0, 0.5) +
-        L('M24 4 Q20 0 24 -4 M40 4 Q36 0 40 -4', 1.6, '#fff'),
+        L('M24 8 Q20 5 24 2 M40 8 Q36 5 40 2', 1.6, '#fff'),
     // le séchoir : claies de bois au soleil, fruits en rangs
     dryer:
         SHADOW(32, 60, 28, 3) +

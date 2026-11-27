@@ -15,3 +15,20 @@ export const ISLAND = {
     slotCost: 20000, // 5e place, puis ×slotMult
     slotMult: 1.3,
 };
+
+// 1.186 : Île 2.0 — Goélette des îles (transport dédié) et Lagon aux perles (cueillette côtière)
+export const SCHOONER = {
+    cap: 20,
+    minLoad: 4,
+    time: 3 * 3600, // 3 h de traversée
+    mult: 2.3, // ×2,3 sur les produits de l'île et de la mer
+    otherMult: 1.35,
+    xpPerUnit: 12,
+    rewards: ['vanilla', 'nutmeg', 'cinnamon', 'tiare', 'lobster', 'orchid'],
+};
+
+export const LAGOON = {
+    cooldown: 2 * 3600, // 2 h entre deux plongées
+    xp: 85,
+    pool: ['coconut', 'shrimp', 'lime', 'tiare', 'vanilla', 'lobster'],
+};

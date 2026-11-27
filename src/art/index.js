@@ -10,7 +10,6 @@ import { building, farmhouseArt } from './buildings.js';
 import { truck, loco, wagon } from './vehicles.js';
 import { animalExtrasArt } from './genes.js';
 import { babyArt, childArt } from './famille.js';
-import { balloon2 } from './misc2.js';
 
 // --- 1. Socle de base ---
 import './items.js';
@@ -27,6 +26,7 @@ import './defis.js';
 import './nuit.js';
 
 // --- 2. Refontes principales (remplacent les premiers dessins) ---
+import { balloon2 } from './misc2.js';
 import './items2.js';
 import './buildings2.js';
 import './plants2.js';

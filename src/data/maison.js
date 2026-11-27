@@ -70,3 +70,57 @@ export const ORDER_WHO = [
     ['Le médecin', 'pour remercier son infirmière'],
     ['Une agence de voyages', 'pour ses clients étrangers'],
 ];
+
+// 1.187 : La Maison 2.0 — Coffrets Prestige Multi-Ateliers (dès niv. 62)
+// Combine 1 cuvée (Brasserie ou Cave) + 1 Confiserie + 1 Flacon de Parfum
+export const PRESTIGE_BOX_LVL = 62;
+export const PRESTIGE_COFFRETS = [
+    {
+        id: 'imperialAsie',
+        name: 'Coffret Impérial d’Asie',
+        desc: 'Un saké maison, une douceur et un parfum frais ou boisé',
+        mult: 2.8,
+        renom: 4,
+        match: (d, c, p) => d.kind === 'sake' && ['frais', 'boise', 'floral'].includes(p.family),
+    },
+    {
+        id: 'royalAbbaye',
+        name: 'Coffret Royal de l’Abbaye',
+        desc: 'Une bière ou un hydromel, un chocolat/caramel et un parfum boisé ou ambré',
+        mult: 2.65,
+        renom: 3,
+        match: (d, c, p) => (d.kind === 'beer' || d.kind === 'mead') && (c.kind === 'choco' || c.kind === 'caramel' || c.kind === 'sweet') && ['boise', 'ambre', 'epice', 'gourmand'].includes(p.family),
+    },
+    {
+        id: 'douceurProvence',
+        name: 'Coffret Douceur de Provence',
+        desc: 'Un vin de cave ou cidre, un nougat/calisson et un parfum floral',
+        mult: 2.65,
+        renom: 3,
+        match: (d, c, p) => (d.kind === 'cave' || d.kind === 'cider') && ['floral', 'frais'].includes(p.family),
+    },
+    {
+        id: 'tresorIles',
+        name: 'Coffret Trésor des Îles',
+        desc: 'Une cuvée maison, une confiserie et un parfum hespéridé ou gourmand',
+        mult: 2.6,
+        renom: 3,
+        match: (d, c, p) => ['hesperide', 'gourmand', 'fruite'].includes(p.family),
+    },
+    {
+        id: 'grandNord',
+        name: 'Coffret du Grand Nord',
+        desc: 'Un hydromel ou une bière, des berlingots/caramels et un parfum épicé ou frais',
+        mult: 2.7,
+        renom: 3,
+        match: (d, c, p) => (d.kind === 'mead' || d.kind === 'beer' || d.kind === 'cave') && (c.kind === 'berlingot' || c.kind === 'caramel') && ['epice', 'frais', 'boise'].includes(p.family),
+    },
+    {
+        id: 'terroirOr',
+        name: 'Coffret Terroir d’Or',
+        desc: 'L’alliance signature de trois grands ateliers de la vallée',
+        mult: 2.45,
+        renom: 2,
+        match: () => true,
+    },
+];

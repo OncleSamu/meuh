@@ -7,6 +7,7 @@ import { ITEMS } from '../data/items.js';
 import { MINE_STRATA, GEODES, GEODE_IDS } from '../data/mine.js';
 import { MUSEUM_LVL, MUSEUM_WINGS, MUSEUM_EXHIBITS, MUSEUM_EXHIBIT_IDS, MUSEUM_BY_WING, MUSEUM_MILESTONES, MUSEUM_SHOP_GEODE } from '../data/museum.js';
 import { addXp, earn, spend } from './player.js';
+import { addRenom } from './renom.js';
 import { addPhoto } from './style.js';
 import { tip } from './tips.js';
 
@@ -299,6 +300,39 @@ export function museumCrackAllGeodes(geodeId, at = null) {
     return opened;
 }
 
+export function museumCrackEveryGeode(at = null) {
+    const bag = state.mineDeep && state.mineDeep.geodes;
+    if (!bag) return 0;
+    let opened = 0,
+        newFound = 0,
+        gems = 0;
+    for (const id of GEODE_IDS) {
+        const gDef = GEODES[id];
+        if (!gDef) continue;
+        while ((bag[id] || 0) > 0 && state.money >= gDef.crackCost) {
+            const r = museumCrackGeode(id, at, true);
+            if (!r) break;
+            opened++;
+            if (r.isNew) newFound++;
+            if (r.kind === 'item') gems += r.qty || 1;
+        }
+    }
+    if (opened) {
+        sfx(newFound ? 'level' : 'rock');
+        buzz(18);
+        burst(at, 'sparkle', 16);
+        const bits = [`${opened} géode${s(opened)} cassée${s(opened)}`];
+        if (newFound) bits.push(`${newFound} nouveau${newFound > 1 ? 'x' : ''} spécimen${s(newFound)}`);
+        if (gems) bits.push(`+${gems} gemme${s(gems)}`);
+        toast(bits.join(' · ') + ' !', ['ui', 'geodeCrystal']);
+        changed('museum');
+    } else if (GEODE_IDS.some(id => (bag[id] || 0) > 0)) {
+        toast('Pas assez de pièces pour casser vos géodes', COIN);
+        sfx('error');
+    }
+    return opened;
+}
+
 // Géode mystère du jour (1 par jour réel)
 const todayKey = () => dateKey(new Date(now()));
 
@@ -339,4 +373,123 @@ export function museumBuyGeode(at = null) {
     toast(`${GEODES[id].name} achetée ! Ouvrez-la à l’atelier ci-dessus`, ['ui', id]);
     changed('museum');
     return true;
+}
+
+// ---------------- 1.187 : Grande Aile des Expéditions (Mine post-Musée, ≥ 16 dons) ----------------
+export const MUSEUM_EXPED_MIN = 16;
+export const MUSEUM_EXPEDITIONS = [
+    {
+        id: 'galeries',
+        name: 'Expédition des Galeries',
+        desc: 'Fouille rapide des veines de fer et de cuivre avec Anatole',
+        time: 2 * 3600,
+        cost: { ironOre: 3, copperOre: 2 },
+        geode: 'geodeStone',
+        coins: 12000,
+        xp: 600,
+        renom: 1,
+        gems: ['quartz', 'amethyst'],
+        gemQty: 2,
+        packs: 0,
+        rubanChance: 0,
+    },
+    {
+        id: 'veinesArgent',
+        name: 'Expédition des Veines d’Argent',
+        desc: 'Prospection profonde dans les strates cristallines',
+        time: 4 * 3600,
+        cost: { silverOre: 3, coal: 2 },
+        geode: 'geodeCrystal',
+        coins: 32000,
+        xp: 1400,
+        renom: 2,
+        gems: ['ruby', 'sapphire', 'emerald'],
+        gemQty: 2,
+        packs: 1,
+        rubanChance: 0,
+    },
+    {
+        id: 'abysses',
+        name: 'Expédition des Abysses d’Obsidienne',
+        desc: 'Mission d’élite jusqu’au cœur géologique de la vallée',
+        time: 6 * 3600,
+        cost: { goldOre: 3, silverOre: 2 },
+        geode: 'geodeAbyss',
+        coins: 75000,
+        xp: 3000,
+        renom: 3,
+        gems: ['ruby', 'sapphire', 'emerald'],
+        gemQty: 3,
+        packs: 2,
+        rubanChance: 0.25,
+    },
+];
+
+export const museumExpedOpen = () => museumOpen() && museumDonatedCount() >= MUSEUM_EXPED_MIN;
+export const museumExpedState = () => ensureMuseum().exped || null;
+export const museumExpedReady = () => {
+    const e = museumExpedState();
+    return !!(e && now() >= e.back);
+};
+export function museumCanStartExped(id) {
+    if (!museumExpedOpen() || museumExpedState()) return false;
+    const def = MUSEUM_EXPEDITIONS.find(x => x.id === id);
+    if (!def) return false;
+    for (const [k, n] of Object.entries(def.cost)) {
+        if ((state.inventory[k] || 0) < n) return false;
+    }
+    const bag = state.mineDeep && state.mineDeep.geodes;
+    if (def.geode && (!bag || !(bag[def.geode] > 0))) return false;
+    return true;
+}
+
+export function museumStartExped(id, at = null) {
+    if (!museumCanStartExped(id)) return false;
+    const def = MUSEUM_EXPEDITIONS.find(x => x.id === id);
+    const M = ensureMuseum();
+    for (const [k, n] of Object.entries(def.cost)) state.inventory[k] -= n;
+    if (def.geode) {
+        state.mineDeep.geodes[def.geode]--;
+        if (!state.mineDeep.geodes[def.geode]) delete state.mineDeep.geodes[def.geode];
+    }
+    M.exped = { id: def.id, back: now() + def.time * 1000 };
+    sfx('pickaxe');
+    buzz(16);
+    burst(at, 'sparkle', 10);
+    toast(`${def.name} lancée ! Retour dans ${def.time / 3600} h`, ['ui', 'museum']);
+    changed('museum');
+    return true;
+}
+
+export function museumClaimExped(at = null) {
+    if (!museumExpedReady()) return null;
+    const M = ensureMuseum();
+    const def = MUSEUM_EXPEDITIONS.find(x => x.id === M.exped.id);
+    M.exped = null;
+    if (!def) return null;
+    M.expedDone = (M.expedDone || 0) + 1;
+    state.stats.museumExpeds = (state.stats.museumExpeds || 0) + 1;
+    earn(def.coins, at);
+    addXp(def.xp, at);
+    addRenom(def.renom);
+    const gemId = def.gems[Math.floor(Math.random() * def.gems.length)];
+    if (ITEMS[gemId]) state.inventory[gemId] = (state.inventory[gemId] || 0) + def.gemQty;
+    if (def.packs > 0) {
+        state.tcg = state.tcg || { freePacks: 0 };
+        state.tcg.freePacks = (state.tcg.freePacks || 0) + def.packs;
+    }
+    const gotRuban = def.rubanChance > 0 && Math.random() < def.rubanChance;
+    if (gotRuban) {
+        state.prestige = state.prestige || { rubans: 0, count: 0 };
+        state.prestige.rubans = (state.prestige.rubans || 0) + 1;
+    }
+    sfx('level');
+    buzz(22);
+    burst(at, 'sparkle', 18);
+    const bits = [`+${fmt(def.coins)} p.`, `+${def.renom} Renom`, `+${def.gemQty} ${ITEMS[gemId]?.name || gemId}`];
+    if (def.packs) bits.push(`+${def.packs} booster${s(def.packs)} MeuhCG`);
+    if (gotRuban) bits.push('+1 Ruban !');
+    toast(`${def.name} terminée : ${bits.join(' · ')}`, ['ui', 'museum']);
+    changed('museum');
+    return { id: def.id, coins: def.coins, xp: def.xp, renom: def.renom, gemId, gemQty: def.gemQty, packs: def.packs, ruban: gotRuban };
 }

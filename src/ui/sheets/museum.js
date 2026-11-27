@@ -2,12 +2,13 @@
 // 4 ailes (32 pièces), atelier de géodes, vente des doublons, paliers et bonus permanents.
 import { state } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
+import { ITEMS } from '../../data/items.js';
 import { GEODES, GEODE_IDS } from '../../data/mine.js';
 import { MUSEUM_LVL, MUSEUM_WINGS, MUSEUM_RARITIES, MUSEUM_EXHIBITS, MUSEUM_EXHIBIT_IDS, MUSEUM_BY_WING, MUSEUM_MILESTONES, MUSEUM_SHOP_GEODE } from '../../data/museum.js';
 import * as G from '../../systems/index.js';
 import { actions } from '../dom.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, segmented, section } from '../kit.js';
+import { btn, bar, segmented, section, timer } from '../kit.js';
 import { ui, go } from '../app.js';
 import { defineSheet, closeAll } from '../sheets.js';
 
@@ -136,7 +137,14 @@ function geodesTab() {
         <div class="actions wrap ap-acts">${btn(shopLeft ? `Acheter (${fmt(shopPrice)} p.)` : 'Déjà prise aujourd’hui', { act: 'msBuyGeode', kind: shopLeft && state.money >= shopPrice ? 'green' : '', size: 'sm', icon: ['ui', 'coin'], disabled: !shopLeft || state.money < shopPrice })}</div>
     </div></div></div>`;
 
-    return last + section('Atelier de géodes', `<small class="o-count small">${M.geodesCracked || 0} ouvertes</small>`) + rows + dupeCard + shopCard;
+    const totalGeodes = GEODE_IDS.reduce((a, id) => a + (bag[id] || 0), 0);
+    const totalCost = GEODE_IDS.reduce((a, id) => a + (bag[id] || 0) * GEODES[id].crackCost, 0);
+    const crackAllTop =
+        totalGeodes > 1
+            ? `<div class="actions wrap ap-acts" style="margin:6px 0 10px">${btn(`Tout casser (${totalGeodes} géodes · ${fmt(totalCost)} p.)`, { act: 'msCrackEvery', kind: 'green', wide: true, icon: ['ui', 'geodeCrystal'] })}</div>`
+            : '';
+
+    return last + section('Atelier de géodes', `<small class="o-count small">${M.geodesCracked || 0} ouvertes</small>`) + crackAllTop + rows + dupeCard + shopCard;
 }
 
 function bonusesTab() {
@@ -168,6 +176,50 @@ function bonusesTab() {
     return section('Bonus permanents des ailes') + `<div class="card">${bonusRows}</div>` + section('Paliers de récompenses') + miles;
 }
 
+function expedTab() {
+    const M = G.ensureMuseum();
+    if (!G.museumExpedOpen()) {
+        return `<div class="card"><p class="card-sub">La <b>Grande Aile des Expéditions</b> s’ouvre dès que vous avez donné au moins <b>${G.MUSEUM_EXPED_MIN} pièces</b> au Musée (${G.museumDonatedCount()}/${G.MUSEUM_EXPED_MIN}). Anatole vous y confiera des missions répétables pour valoriser vos minerais et géodes en trop !</p></div>`;
+    }
+    const active = G.museumExpedState();
+    const activeCard = active
+        ? (() => {
+              const def = G.MUSEUM_EXPEDITIONS.find(x => x.id === active.id);
+              const ready = G.museumExpedReady();
+              return `<div class="card ms-last">
+                  ${ico(['ui', 'museum'], 'ico big')}
+                  <div class="card-main">
+                      <b>${def ? def.name : 'Expédition en cours'}${ready ? ' · Terminée !' : ''}</b>
+                      <div class="card-sub">${ready ? 'Anatole est rentré avec le butin !' : `Retour dans ${timer(active.back, 'b')}`}</div>
+                  </div>
+                  ${ready ? btn('Récolter', { act: 'msClaimExped', kind: 'gold', size: 'sm', icon: ['ui', 'star'] }) : ''}
+              </div>`;
+          })()
+        : '';
+    const rows = G.MUSEUM_EXPEDITIONS.map(e => {
+        const can = G.museumCanStartExped(e.id);
+        const costParts = Object.entries(e.cost).map(([k, n]) => `${ITEMS[k]?.name || k} ×${n} (${state.inventory[k] || 0})`);
+        if (e.geode && GEODES[e.geode]) {
+            const haveG = (state.mineDeep && state.mineDeep.geodes && state.mineDeep.geodes[e.geode]) || 0;
+            costParts.push(`${GEODES[e.geode].name} ×1 (${haveG})`);
+        }
+        const rewards = [`${fmt(e.coins)} p.`, `+${fmt(e.xp)} XP`, `+${e.renom} Renom`, `+${e.gemQty} gemmes`];
+        if (e.packs) rewards.push(`+${e.packs} booster${e.packs > 1 ? 's' : ''} MeuhCG`);
+        if (e.rubanChance) rewards.push('25 % chance Ruban');
+        return `<div class="ms-mile${can ? ' ready' : ''}">
+            ${ico(['ui', e.geode || 'museum'], 'ico big')}
+            <div class="card-main">
+                <b>${e.name} · ${e.time / 3600} h</b>
+                <div class="card-sub">${e.desc}</div>
+                <div class="card-sub">Coût : ${costParts.join(' · ')}</div>
+                <div class="card-sub">Gain : ${rewards.join(' · ')}</div>
+            </div>
+            ${btn('Lancer', { act: 'msStartExped', data: { id: e.id }, kind: can ? 'green' : '', size: 'sm', disabled: !can })}
+        </div>`;
+    }).join('');
+    return activeCard + section('Grande Aile des Expéditions', `<small class="o-count small">${M.expedDone || 0} réussie${(M.expedDone || 0) > 1 ? 's' : ''}</small>`) + rows;
+}
+
 defineSheet('museum', {
     title: `${ico(['ui', 'museum'])}Le Musée de la vallée`,
     cls: 'ms-sheet',
@@ -176,17 +228,18 @@ defineSheet('museum', {
         if (!G.museumOpen()) {
             return `<div class="card ms-curator"><span class="ms-curator-art">${art('ui', 'curatorAnatole')}</span><div class="card-main"><div class="card-title">Bientôt ouvert !</div><p class="card-sub">Le Musée de la vallée ouvre ses portes au niveau ${MUSEUM_LVL}, en même temps que la mine souterraine.</p></div></div>`;
         }
-        const tab = ['wings', 'geodes', 'bonuses'].includes(ui.sel.msTab) ? ui.sel.msTab : 'wings';
+        const tab = ['wings', 'geodes', 'exped', 'bonuses'].includes(ui.sel.msTab) ? ui.sel.msTab : 'wings';
         const tabs = segmented(
             [
                 ['wings', 'Vitrines', ['ui', 'museum'], G.museumDonateReady()],
                 ['geodes', 'Géodes', ['ui', 'geodeAmethyst'], G.museumGeodeTotal()],
-                ['bonuses', 'Paliers & Bonus', ['ui', 'star'], G.museumClaimableMilestones().length],
+                ['exped', 'Expéditions', ['ui', 'pickaxe'], G.museumExpedReady() ? 1 : 0],
+                ['bonuses', 'Paliers', ['ui', 'star'], G.museumClaimableMilestones().length],
             ],
             tab,
             'msTab',
         );
-        return curatorCard() + tabs + (tab === 'geodes' ? geodesTab() : tab === 'bonuses' ? bonusesTab() : wingsTab());
+        return curatorCard() + tabs + (tab === 'geodes' ? geodesTab() : tab === 'exped' ? expedTab() : tab === 'bonuses' ? bonusesTab() : wingsTab());
     },
 });
 
@@ -206,9 +259,12 @@ export function setupMuseum() {
         msDonateAll: el => G.museumDonateAll(el),
         msCrack: (el, d) => G.museumCrackGeode(d.id, el),
         msCrackAll: (el, d) => G.museumCrackAllGeodes(d.id, el),
+        msCrackEvery: el => G.museumCrackEveryGeode(el),
         msSellDupes: el => G.museumSellDupes(el),
         msBuyGeode: el => G.museumBuyGeode(el),
         msClaim: (el, d) => G.museumClaimMilestone(+d.at, el),
+        msStartExped: (el, d) => G.museumStartExped(d.id, el),
+        msClaimExped: el => G.museumClaimExped(el),
         msGoMine: () => {
             ui.sel.natTab = 'deep';
             closeAll();

@@ -9,7 +9,7 @@ import postcss from 'postcss';
 
 const SKIP_FILES = ['10-scene.css'];
 const SKIP_SEL =
-    /#(sky|hills?|weather|night|sun|moon|scene)\b|\.(cloud|orb|hill|rain|snow|leaves|petals|flutter|sx|glint|pbar|soil|sprout)\b|::?(-webkit-)?scrollbar|@keyframes/;
+    /#(sky|hills?|weather|night|sun|moon|scene)\b|\.(cloud(?!-)|orb|hill|rain|snow|leaves|petals|flutter|glint|pbar|soil|sprout)\b|::?(-webkit-)?scrollbar|@keyframes/;
 const PROPS =
     /^(background(-color|-image)?|color|border(-(top|right|bottom|left))?(-color)?|outline(-color)?|box-shadow|text-shadow|fill|stroke|caret-color|accent-color|--)/;
 
@@ -38,14 +38,16 @@ function mapColor(r, g, b, a, mode) {
     const [h, s, l] = toHsl(r, g, b);
     let L = l,
         S = s;
+    // Préserver les reflets blancs translucides (holos MeuhCG, brillances) au lieu de les noircir
+    if (mode === 'bg' && l >= 0.88 && a < 0.78) return null;
     if (mode === 'bg' && l >= 0.78) {
         L = 0.13 + (1 - l) * 0.55;
         S = Math.min(s, 0.4) * 0.8;
-    } else if (mode === 'bg' && l >= 0.6 && s < 0.5) {
+    } else if (mode === 'bg' && l >= 0.6 && s < 0.6) {
         L = 0.22 + (1 - l) * 0.3;
-        S = s * 0.7;
-    } else if (mode === 'fg' && l <= 0.35) {
-        L = 0.9 - l * 0.4;
+        S = s * 0.65;
+    } else if (mode === 'fg' && l <= 0.46) {
+        L = 0.9 - l * 0.35;
         S = Math.min(s, 0.45);
     } else if (mode === 'line' && l >= 0.85 && a < 1) {
         // les reflets blancs des ombres : un peu de lumière seulement
@@ -83,17 +85,18 @@ function transformValue(prop, value) {
     const out = parts
         .map(p => {
             if (p.startsWith('url(')) return p;
-            let q = p.replace(COLOR_RX, c => {
+            let q = p;
+            if (mode === 'line' && /var\(--ink(?:\s*,[^)]+)?\)/.test(q)) {
+                q = q.replace(/var\(--ink(?:\s*,[^)]+)?\)/g, 'var(--line)');
+                changed = true;
+            }
+            q = q.replace(COLOR_RX, c => {
                 const rgb = parseColor(c);
                 if (!rgb) return c;
                 const n = mapColor(...rgb, mode);
                 if (n) changed = true;
                 return n || c;
             });
-            if (mode === 'line' && /var\(--ink\)/.test(q)) {
-                q = q.replace(/var\(--ink\)/g, 'var(--line)');
-                changed = true;
-            }
             return q;
         })
         .join('');
@@ -106,6 +109,7 @@ const scope = sel =>
         .map(s => {
             s = s.trim();
             if (s.startsWith(':root')) return s.replace(':root', 'html.dark');
+            if (/^html\.dark\b/.test(s)) return s;
             if (/^html\b/.test(s)) return s.replace(/^html/, 'html.dark');
             return `html.dark ${s}`;
         })
@@ -136,6 +140,7 @@ export function darkCss(files) {
             if (rule.parent && rule.parent.type === 'atrule' && /keyframes/.test(rule.parent.name)) return;
             if (SKIP_SEL.test(rule.selector)) return;
             if (/^:root$/.test(rule.selector.trim())) return; // les variables sombres sont écrites à la main
+            if (/\bhtml\.dark\b/.test(rule.selector)) return; // déjà écrite à la main pour le mode sombre
             // toutes les déclarations de couleur de la règle sont recopiées (même inchangées) : la règle sombre
             // a plus de poids que la claire, il faut que les états (.on, .ready…) gardent le dessus dans le même ordre
             const decls = [];

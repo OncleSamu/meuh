@@ -12,9 +12,20 @@ import { spend } from './player.js';
 import { barnBonus } from './buildings.js';
 
 export const inBarn = id => BARN_TYPES.includes(ITEMS[id].type);
-export const barnCapAt = l => (l < BARN_CAPS.length ? BARN_CAPS[l] : 550 + (l - BARN_CAPS.length + 1) * 100);
-// 1.44 : la peinture, la plus rare, ne monte qu'à partir du troisième agrandissement (la grange de 70 places bloquait vers le niveau 6)
-export const barnUpCost = l => ({ coins: Math.round((500 * Math.pow(1.6, l)) / 50) * 50, plank: 2 + l, nail: 2 + l, paint: Math.max(1, l) });
+export const barnCapAt = l => {
+    if (l < BARN_CAPS.length) return BARN_CAPS[l];
+    const extra = l - BARN_CAPS.length + 1;
+    const base = BARN_CAPS[BARN_CAPS.length - 1];
+    // +200 par niveau jusqu'au niv. 19, puis +300 dès le niv. 20 (adapté aux 1 200+ objets)
+    const tier1 = Math.min(extra, 10) * 200;
+    const tier2 = Math.max(0, extra - 10) * 300;
+    return base + tier1 + tier2;
+};
+// 1.44 & 1.185 : la peinture ne monte qu'à partir du 3e agrandissement ; coût adouci après le niveau 10
+export const barnUpCost = l => {
+    const raw = l <= 10 ? 500 * Math.pow(1.6, l) : 500 * Math.pow(1.6, 10) * Math.pow(1.28, l - 10);
+    return { coins: Math.round(raw / 50) * 50, plank: 2 + l, nail: 2 + l, paint: Math.max(1, l) };
+};
 
 // 1.75 : la liste des produits rangés en grange, faite une fois ; les stocks à zéro sont sautés tout de suite
 let BARN_IDS = null;

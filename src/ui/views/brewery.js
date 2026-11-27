@@ -89,7 +89,7 @@ function vatsHtml() {
             if (!v) return `<div class="brew-vat empty">${ico(['ui', 'vat'])}<span>Cuve libre</span></div>`;
             const b = B.beers[v.bid];
             const ready = G.vatReady(v);
-            return `<div class="brew-vat${ready ? ' ready' : ''}" data-anchor="vat:${i}">${bottle(b)}<div class="bv-main"><b>${b.name}</b>
+            return `<div class="brew-vat${ready ? ' ready' : ''}" data-anchor="vat:${i}">${bottle(b)}<div class="bv-main"><b>${esc(b.name)}</b>
                 ${ready ? `<small>${v.n} bouteilles prêtes</small>` : `${bar(0, 'thin', `vat:${i}`)}<small>${timer(v.until)}</small>`}</div>
                 <div class="bv-btns">${ready ? btn('Mettre en bouteille', { act: 'collectVat', data: { i }, kind: 'green', size: 'sm' }) : ''}${btn(v.loop ? 'En boucle' : 'Boucle', { act: 'vatLoop', data: { i }, kind: v.loop ? 'blue' : '', size: 'sm', icon: ['ui', 'loop'], title: 'Relancer la même boisson quand elle est prête' })}</div></div>`;
         })
@@ -165,7 +165,7 @@ function composerHtml() {
         const it = d.ings[s];
         if (!it) return `<button class="brew-slot empty" data-act="brewPick" data-s="${s}"><b>+</b><span>Ingrédient</span></button>`;
         const [id, dose] = it;
-        return `<div class="brew-slot"><button class="bs-pick" data-act="brewPick" data-s="${s}">${ingIco(id, 'ico big')}<span>${G.ingName(id)}${varOf(id) ? ' <small class="chip ok">variété</small>' : ''}</span><small>${G.ingHave(id)} en stock</small></button>
+        return `<div class="brew-slot"><button class="bs-pick" data-act="brewPick" data-s="${s}">${ingIco(id, 'ico big')}<span>${esc(G.ingName(id))}${varOf(id) ? ' <small class="chip ok">variété</small>' : ''}</span><small>${G.ingHave(id)} en stock</small></button>
             <div class="stepper">${btn('', { act: 'brewDose', data: { s, d: -1 }, icon: ['ui', 'minus'], disabled: dose <= 1, title: 'Moins', size: 'sm' })}<b>×${dose}</b>${btn('', { act: 'brewDose', data: { s, d: 1 }, icon: ['ui', 'plus'], disabled: dose >= 3, title: 'Plus', size: 'sm' })}</div>
             ${btn('', { act: 'brewDrop', data: { s }, icon: ['ui', 'cross'], kind: 'ghost', size: 'sm', title: 'Retirer' })}</div>`;
     }).join('');
@@ -179,7 +179,7 @@ function composerHtml() {
         .join('');
     const preview = pv.ings.length
         ? `<div class="brew-preview"><div class="bp-art">${beerSvg(beerLike)}</div><div class="bp-main">
-            <div class="bp-name">${pv.name} ${pv.known ? '<span class="chip">déjà brassée</span>' : '<span class="chip ok">nouvelle !</span>'}</div>
+            <div class="bp-name">${esc(pv.name)} ${pv.known ? '<span class="chip">déjà brassée</span>' : '<span class="chip ok">nouvelle !</span>'}</div>
             ${
                 pv.secret
                     ? `<div class="bp-stars">Accord <b class="brew-secret">? ? ?</b> <small>à découvrir en la brassant</small></div><ul class="bp-why">${pv.hints.map(r => `<li>${r}</li>`).join('')}</ul>`
@@ -296,7 +296,7 @@ function carnetHtml() {
         .slice(0, 8)
         .map(b => {
             const ok = G.canRebrew(b.id);
-            return `<div class="cut-row"><span class="carnet-name">${stars(b.stars)} <b>${b.name}</b> ${ingIcons(b.ings)}</span><span class="cut-btns">${btn(ok ? 'Brasser' : 'Il manque…', { act: 'rebrew', data: { id: b.id }, kind: ok ? 'green' : '', size: 'sm', icon: ['ui', 'loop'] })}${btn('Planifier', { act: 'planBeer', data: { id: b.id }, kind: 'gold', size: 'sm', title: 'Planifier plusieurs brassins' })}</span></div>`;
+            return `<div class="cut-row"><span class="carnet-name">${stars(b.stars)} <b>${esc(b.name)}</b> ${ingIcons(b.ings)}</span><span class="cut-btns">${btn(ok ? 'Brasser' : 'Il manque…', { act: 'rebrew', data: { id: b.id }, kind: ok ? 'green' : '', size: 'sm', icon: ['ui', 'loop'] })}${btn('Planifier', { act: 'planBeer', data: { id: b.id }, kind: 'gold', size: 'sm', title: 'Planifier plusieurs brassins' })}</span></div>`;
         })
         .join('')}</div>`;
 }
@@ -379,9 +379,10 @@ function beersHtml() {
                 const again =
                     (b.aged ? '' : btn('Rebrasser', { act: 'rebrew', data: { id: b.id }, kind: 'green', size: 'sm', icon: ['ui', 'loop'] })) +
                     (b.aged ? '' : btn('Planifier', { act: 'planBeer', data: { id: b.id }, kind: 'gold', size: 'sm', title: 'Planifier plusieurs brassins' })) +
+                    (n && G.vaultOpen() ? btn('Coffre', { act: 'vaultBeer', data: { id: b.id }, size: 'sm', icon: ['ui', 'vault'] }) : '') +
                     (b.aged ? '' : `<button class="fav-star${G.isFav(b.id) ? ' on' : ''}" data-act="favBeer" data-id="${b.id}" aria-label="${G.isFav(b.id) ? 'Retirer du carnet' : 'Garder dans le carnet'}">${G.isFav(b.id) ? '★' : '☆'}</button>`);
                 const renTitle = b.mead ? 'Renommer l’hydromel' : b.cider ? 'Renommer le cidre' : b.sake ? 'Renommer le saké' : 'Renommer la bière';
-                return `<div class="card brew-beer${n ? '' : ' none'}"><div class="card-art">${beerSvg(b)}</div><div class="card-main"><div class="card-title">${b.name} ${renameBtn('beer', b.id, renTitle)}</div><div class="card-sub">${sub}</div>${again ? `<div class="bb-again">${again}</div>` : ''}</div><div class="card-side">${side}</div></div>`;
+                return `<div class="card brew-beer${n ? '' : ' none'}"><div class="card-art">${beerSvg(b)}</div><div class="card-main"><div class="card-title">${esc(b.name)} ${renameBtn('beer', b.id, renTitle)}</div><div class="card-sub">${sub}</div>${again ? `<div class="bb-again">${again}</div>` : ''}</div><div class="card-side">${side}</div></div>`;
             })
             .join('')}</div>${pg.more}`
     );
@@ -401,7 +402,7 @@ function festHtml() {
     const left = G.seasonDaysLeft();
     const last = F.last ? `<p class="card-sub">La saison passée : ${esc(F.last.name)} a fini ${F.last.r === 1 ? '<b>première</b>' : `${F.last.r}e`} (${esc(F.last.theme)}).</p>` : '';
     return `<div class="card salon-card fest-card"><div class="card-head">${ico(['ui', 'trophy'], 'ico big')}<div class="card-main"><div class="card-title">Concours : ${th.name}</div>
-        <div class="card-sub">Le jury veut une boisson <b class="note-word" style="background:color-mix(in srgb, ${NOTE_COL[th.note]} 50%, #fff)">${th.want}</b> · encore ${left} jour${left > 1 ? 's' : ''} de jeu</div></div></div>
+        <div class="card-sub">Le jury veut une boisson <b class="note-word" style="background:color-mix(in srgb, ${NOTE_COL[th.note]} 50%, var(--paper-l))">${th.want}</b> · encore ${left} jour${left > 1 ? 's' : ''} de jeu</div></div></div>
         <ol class="ranking">${rows}</ol>
         <p class="card-sub">Note sur 20 : 4 par étoile, 4 si la note du goût est celle du thème, 1 par rang de la meilleure bouteille. Le jury goûte deux bouteilles. Premier prix : des pièces, de l’expérience et 2 points de renommée.</p>
         ${last}
@@ -442,7 +443,7 @@ function ordersHtml() {
                         : 'Aucune de vos bières ne convient encore.';
                 return `<div class="card brew-order${best ? ' ready' : ''}"><div class="card-art">${art('villager', o.vid)}</div><div class="card-main"><div class="card-title">${v ? v.name : ''}</div>
                     <div class="card-sub">« ${G.beerOrderText(o)}. »</div>
-                    ${best ? `<div class="card-sub">Avec : <b>${best.name}</b> · ${fmt(G.beerOrderPay(o, best.id))}${COIN()}</div>` : `<div class="card-sub">${noneTxt}</div>`}</div>
+                    ${best ? `<div class="card-sub">Avec : <b>${esc(best.name)}</b> · ${fmt(G.beerOrderPay(o, best.id))}${COIN()}</div>` : `<div class="card-sub">${noneTxt}</div>`}</div>
                     <div class="card-side">${btn('Livrer', { act: 'beerOrder', data: { id: o.id }, kind: 'green', size: 'sm', disabled: !best })}${btn('', { act: 'beerDrop', data: { id: o.id }, icon: ['ui', 'cross'], kind: 'ghost', size: 'sm', title: 'Refuser' })}</div></div>`;
             })
             .join('')}</div>`

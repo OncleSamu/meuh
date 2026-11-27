@@ -56,7 +56,7 @@ const noteIco = (id, cls = 'ico') =>
           : ico(['item', id], cls);
 const famBadge = f => {
     const d = FAMILIES[f] || FAMILIES.floral;
-    return `<span class="pf-fam" style="background:color-mix(in srgb, ${d.col} 22%, #fff);border-color:${d.col}">${d.name}</span>`;
+    return `<span class="pf-fam" style="background:color-mix(in srgb, ${d.col} 22%, var(--paper-l));border-color:${d.col}">${d.name}</span>`;
 };
 
 // ---------------- fermé avant niveau 54 ----------------
@@ -212,7 +212,7 @@ function composerHtml() {
         ${
             can
                 ? btn('Lancer la macération', { act: 'perfStart', kind: 'green', wide: true, size: 'lg', icon: ['ui', 'perfume'] })
-                : `<p class="state-line">${pv.freeVat < 0 ? 'Toutes les dame-jeannes sont occupées : attendez la fin d’une macération.' : !pv.ok3 ? 'Complétez les trois étages de la pyramide.' : `Il manque : ${pv.miss.map(([id, n]) => `${n - G.perfumeNoteHave(id)} ${G.perfumeNoteName(id).toLowerCase()}`).join(', ')}.`}</p>`
+                : `<p class="state-line">${pv.freeVat < 0 ? 'Toutes les dame-jeannes sont occupées : attendez la fin d’une macération.' : !pv.ok3 ? 'Complétez les trois étages de la pyramide.' : `Il manque : ${pv.miss.map(([id, n]) => `${n - G.perfumeNoteHave(id)} ${esc(G.perfumeNoteName(id).toLowerCase())}`).join(', ')}.`}</p>`
         }
     </div>${guideHtml()}`;
 }

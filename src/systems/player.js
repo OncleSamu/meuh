@@ -71,8 +71,9 @@ const msBonus = key => {
     const n = ids.filter(id => M.donated[id]).length;
     return n >= ids.length ? w.fullPct / 100 : n >= Math.ceil(ids.length / 2) ? w.halfPct / 100 : 0;
 };
-export const speedMult = () => (1 + state.upgrades.speed * 0.1) * (1 + state.prestige.rubans * 0.03);
-export const priceMult = () => (1 + state.upgrades.price * 0.1) * (1 + state.prestige.rubans * 0.05) * (1 + rank('gab') * 0.04) * (1 + msBonus('sell'));
+export const effectiveRubans = (r = (state.prestige && state.prestige.rubans) || 0) => (r <= 15 ? r : 15 + Math.sqrt((r - 15) * 15));
+export const speedMult = () => (1 + state.upgrades.speed * 0.1) * (1 + effectiveRubans() * 0.03);
+export const priceMult = () => (1 + state.upgrades.price * 0.1) * (1 + effectiveRubans() * 0.05) * (1 + rank('gab') * 0.04) * (1 + msBonus('sell'));
 export const rollYield = kind =>
     Math.random() < state.upgrades.yield * 0.1 + (kind === 'crop' ? rank('bounty') * 0.04 : kind === 'animal' ? rank('pasture') * 0.05 : 0) ? 2 : 1;
 
@@ -213,8 +214,27 @@ export function migrateLevels80() {
     state.stats.maxLevel = Math.max(state.level, (state.stats.maxLevel || 1) >= MAX_LEVEL_64 ? MAX_LEVEL_80 : lv80(Math.min(state.stats.maxLevel || 1, MAX_LEVEL_64)));
 }
 
+// 1.174 → 1.184 : garde en lvKeep tout ce qu'une sauvegarde pré-1.174 (échelle 80) ou existante avait déjà acquis
+export function migrateLevels100() {
+    state.lvKeep = state.lvKeep || {};
+    const ownedMachines = new Set((state.machines || []).map(m => m.type));
+    const ownedAnimals = new Set((state.animals || []).map(a => a.type));
+    for (const id of ownedMachines) if (MACHINES[id] && (MACHINES[id].reqLvl || 1) > state.level) state.lvKeep[id] = true;
+    for (const id of ownedAnimals) if (ANIMALS[id] && (ANIMALS[id].reqLvl || 1) > state.level) state.lvKeep[id] = true;
+    for (const r of Object.values(RECIPES)) {
+        if (r.lvl > state.level && ((state.made && state.made[r.id]) || (state.collection && state.collection[r.id]))) state.lvKeep[r.id] = true;
+    }
+    const isLegacy80 = state.level > 40 && state.level <= MAX_LEVEL_80 && !state.confiserie && !state.mineDeep && !state.asie && !state.tcg;
+    if (isLegacy80) {
+        const before = state.level;
+        for (const o of [ITEMS, ANIMALS, MACHINES, DECOS, UPGRADES])
+            for (const d of Object.values(o)) if (d.reqLvl > state.level && Math.floor(oldLvl80(d.reqLvl)) <= before) state.lvKeep[d.id] = true;
+        for (const r of Object.values(RECIPES)) if (r.lvl > state.level && Math.floor(oldLvl80(r.lvl)) <= before) state.lvKeep[r.id] = true;
+    }
+}
+
 export function addXp(amount, at) {
-    amount = Math.floor(amount * (1 + msBonus('xp')));
+    amount = Math.floor(amount * (1 + msBonus('xp') + (state.ribbonShop && state.ribbonShop.xpBoost ? 0.1 : 0)));
     if (amount <= 0) return;
     state.xp += amount;
     if (at !== undefined) emit('float', { at, parts: [`+${fmt(amount)}`, ['ui', 'xp']], cls: 'xp', dy: 0, dx: 18 });
@@ -413,10 +433,12 @@ export function unlocksAt(lvl) {
         addGo('sheet:museum', ['ui', 'museum'], 'Le Musée de la vallée : 32 pièces à exposer et 4 bonus permanents (Menu › Musée)');
     }
     if (lvl === 28) addGo('sheet:house', ['villager', 'lina'], 'L’Équipe du Domaine : Lina aux prés (Maison › Équipe)');
-    if (lvl === 30) addGo('sheet:house', ['villager', 'milo'], 'L’Équipe du Domaine : Milo pour les nasses, le verger et la forêt (Maison › Équipe)');
+    if (lvl === 30) addGo('sheet:house', ['villager', 'milo'], 'L’Équipe du Domaine : Milo pour les nasses, le filet de mer, les ruches, le verger et la forêt (Maison › Équipe)');
     if (lvl === 32) addGo('sheet:house', ['villager', 'henri'], 'L’Équipe du Domaine : Henri à l’atelier pour maintenir vos stocks (Maison › Équipe)');
     if (lvl === 60) addGo('farm/nature', ['ui', 'mineDeep'], 'Mine souterraine : les abysses d’obsidienne (étages 31 à 40)');
-    if (lvl === 3) addGo('sheet:identity', ['ui', 'star'], 'Votre métier : maraîcher, éleveur, arboriculteur, cuisinier, vigneron ou pêcheur (Menu, votre carte de visite)');
+    if (lvl === 62) addGo('machines/maison', ['ui', 'maison'], 'La Maison Prestige : composez des Coffrets Prestige multi-ateliers (Cave/Brasserie + Confiserie + Parfum)');
+    if (lvl === 65) addGo('sheet:house', ['villager', 'camille'], 'L’Équipe du Domaine : Camille, intendante des contrées (Maison › Équipe)');
+    if (lvl === 3) addGo('sheet:metier', ['ui', 'star'], 'Votre métier : maraîcher, éleveur, arboriculteur, cuisinier, vigneron, pêcheur ou artisan (Menu, Métiers)');
     if (lvl === LANE2_LVL) addGo('machines/workshop', ['machine', 'mill'], 'Le deuxième poste : une machine fait deux lots à la fois (fiche de la machine)');
     if (lvl === WORKS_LVL) addGo('village/village', ['ui', 'house'], 'Les dépendances du domaine : six bâtiments d’apparat, trois niveaux chacun (Village › Village, Domaine)');
     Object.entries(APIARY).forEach(([k, a]) => a && a.lvl === lvl && a.name && addGo(`farm/island#${k === 'island' ? 'isle' : k}`, ['ui', a.icon], `${a.name} : des ruches qui ne butinent que leur contrée`));
@@ -601,6 +623,8 @@ const ACH_CALC = {
     showWins: () => (state.show && state.show.wins) || 0,
     fixedVars: () => (state.genetics ? Object.values(state.genetics.vars).filter(v => v && v.fixed).length : 0),
     landHarvest: () => (state.stats.islandHarvest || 0) + (state.stats.oasisHarvest || 0) + (state.stats.nordHarvest || 0) + (state.stats.asieHarvest || 0),
+    museumDonated: () => (state.museum && state.museum.donated ? Object.keys(state.museum.donated).filter(k => state.museum.donated[k]).length : 0),
+    tcgCards: () => (state.tcg && state.tcg.owned ? Object.keys(state.tcg.owned).filter(k => state.tcg.owned[k] > 0).length : 0),
 };
 export const achValue = a => (a.calc && ACH_CALC[a.id] ? ACH_CALC[a.id]() : state.stats[a.id] || 0);
 export const achClaimable = a => achClaimed(a) < 3 && achValue(a) >= a.tiers[achClaimed(a)];

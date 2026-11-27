@@ -19,8 +19,8 @@ people.armand = () =>
     // le monocle et sa chaîne dorée
     C(37, 30, 4.6, 'none', 1.8) +
     L('M41.4 31.5 Q45 36 43 44', 1.1, '#e8b83a') +
-    // la toque haute, bandeau rouge et or
-    R(19, 13, 26, 8, 2, '#ffffff') +
-    R(19, 17.5, 26, 2.6, 0, '#c8263a', 1.2) +
-    P('M19 14 C11 12 12 -6 22 -3 C24 -11 40 -11 42 -3 C52 -6 53 12 45 14Z', '#ffffff') +
-    L('M26 12 Q26 0 25 -4 M32 12 Q32 -2 32 -8 M38 12 Q38 0 39 -4', 1.1, '#e4dccb');
+    // la toque haute, bandeau rouge et or (calée dans le viewBox 0..64)
+    R(19, 15, 26, 7, 2, '#ffffff') +
+    R(19, 19, 26, 2.4, 0, '#c8263a', 1.2) +
+    P('M19 16 C12 14 13 3 22 5 C24 1 40 1 42 5 C51 3 52 14 45 16Z', '#ffffff') +
+    L('M26 14 Q26 7 25 4 M32 14 Q32 6 32 2.5 M38 14 Q38 7 39 4', 1.1, '#e4dccb');

@@ -230,7 +230,7 @@ export const gkPic = g => {
 };
 
 // ---------------- 1.125 : l'arbre ----------------
-const node = (pic, name, sub, cls = '') => `<div class="ft-node ${cls}">${portrait(pic, 'sm')}<b>${esc(name)}</b>${sub ? `<small>${sub}</small>` : ''}</div>`;
+const node = (pic, name, sub, cls = '') => `<div class="ft-node ${cls}">${portrait(pic, 'sm')}<b>${esc(name)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div>`;
 defineSheet('famTree', {
     title: 'L’arbre de la famille',
     render() {
@@ -238,19 +238,20 @@ defineSheet('famTree', {
         const me = node(G.meLook(), 'Vous', G.farmName());
         const sp = F.spouse ? node(G.artId(F.spouse), G.vName(F.spouse), F.wedDay ? `marié${G.isShe(F.spouse) ? 'e' : ''} le jour ${F.wedDay}` : '') : '';
         // 1.126 : les anciens, de la plus vieille génération à la vôtre, et vos frères et sœurs
+        const love = `<i class="ft-love">${ico(['ui', 'heart'])}</i>`;
         const old = (F.elders || [])
-            .map(e => `<div class="ft-couple ft-elder">${node(e.look, `Génération ${e.gen}`, 'à la retraite')}${e.spouse ? `<i class="ft-love">♥</i>${node(G.artId(e.spouse), G.vName(e.spouse), '')}` : ''}</div>`)
+            .map(e => `<div class="ft-couple ft-elder">${node(e.look, `Génération ${e.gen}`, 'à la retraite')}${e.spouse ? `${love}${node(G.artId(e.spouse), G.vName(e.spouse), '')}` : ''}</div>`)
             .join('<div class="ft-down"></div>');
         const kin = (F.kin || []).length
-            ? `<div class="ft-row ft-kin">${F.kin.map(k => `<div class="ft-couple">${node(k.look, k.name, k.metier ? METIERS[k.metier].name : 'au village')}${k.spouse ? `<i class="ft-love">♥</i>${node(k.spouse.look, k.spouse.name, '')}` : ''}</div>`).join('')}</div><p class="card-sub center">Vos frères et sœurs, au village</p>`
+            ? `<div class="ft-row ft-kin">${F.kin.map(k => `<div class="ft-couple">${node(k.look, k.name, k.metier ? METIERS[k.metier].name : 'au village')}${k.spouse ? `${love}${node(k.spouse.look, k.spouse.name, '')}` : ''}</div>`).join('')}</div><p class="card-sub center">Vos frères et sœurs, au village</p>`
             : '';
         const kidsCols = F.kids
             .map(
-                k => `<div class="ft-col"><div class="ft-couple">${node(kidPic(k), k.name, G.stageName(k))}${k.spouse ? `<i class="ft-love">♥</i>${node(k.spouse.look, k.spouse.name, 'du camping')}` : ''}</div>
+                k => `<div class="ft-col"><div class="ft-couple">${node(kidPic(k), k.name, G.stageName(k))}${k.spouse ? `${love}${node(k.spouse.look, k.spouse.name, 'du camping')}` : ''}</div>
                 ${(k.gk || []).length ? `<div class="ft-row ft-gen2">${k.gk.map(g => node(gkPic(g), g.name, KIDS.ageNames[G.gkStage(g)])).join('')}</div>` : ''}</div>`,
             )
             .join('');
-        return `<div class="ft">${old}${old ? '<div class="ft-down"></div>' : ''}${kin}<div class="ft-couple ft-root">${me}${sp ? `<i class="ft-love">♥</i>${sp}` : ''}</div>
+        return `<div class="ft">${old}${old ? '<div class="ft-down"></div>' : ''}${kin}<div class="ft-couple ft-root">${me}${sp ? `${love}${sp}` : ''}</div>
             ${F.kids.length ? `<div class="ft-row ft-kids">${kidsCols}</div>` : '<p class="empty">Les enfants viendront ici.</p>'}</div>`;
     },
 });

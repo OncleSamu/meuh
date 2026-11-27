@@ -231,7 +231,7 @@ function importPage(o) {
         <div id="import-preview">${
             o.preview
                 ? o.preview.ok
-                    ? `<div class="line ok">${ico(['ui', 'check'])}<div><b>Sauvegarde valide</b><div class="card-sub">${o.preview.sum}</div></div></div>${btn('Remplacer ma ferme par celle-ci', { act: 'applyImport', kind: 'red', wide: true })}<p class="card-sub">Votre ferme actuelle est gardée en secours : vous pourrez revenir en arrière depuis les réglages.</p>`
+                    ? `<div class="line ok">${ico(['ui', 'check'])}<div><b>Sauvegarde valide</b><div class="card-sub">${esc(o.preview.sum)}</div></div></div>${btn('Remplacer ma ferme par celle-ci', { act: 'applyImport', kind: 'red', wide: true })}<p class="card-sub">Votre ferme actuelle est gardée en secours : vous pourrez revenir en arrière depuis les réglages.</p>`
                     : '<div class="line bad"><div>Ce code n’est pas une sauvegarde de Meuh. Vérifiez qu’il a été copié en entier, du début « MEUH » jusqu’au dernier caractère.</div></div>'
                 : ''
         }</div>`;
@@ -274,7 +274,7 @@ defineSheet('settings', {
         if (o.tab) ui.sel['it:settings'] = o.tab;
         G.tip('theme');
     },
-    title: o => (o.page === 'main' ? 'Réglages' : `<button class="back" data-act="setPage" data-p="main">${ico(['ui', 'back'])}</button>${PAGES[o.page][0]}`),
+    title: o => (o.page === 'main' ? 'Réglages' : `<button class="back" data-act="setPage" data-p="main" aria-label="Retour">${ico(['ui', 'back'])}</button>${PAGES[o.page][0]}`),
     render: o => PAGES[o.page][1](o),
 });
 

@@ -268,7 +268,7 @@ function album() {
         <div class="album">${list
             .map(
                 (ph, k) =>
-                    `<button class="polaroid" data-act="open" data-sheet="photo" data-k="${k}" style="--r:${((k * 37) % 7) - 3}deg"><span class="ph-art" style="background:${G.PHOTO_BG[ph.season] || '#fff'}">${photoArt(ph)}</span><b>${ph.title}</b><small>Jour ${ph.day}</small></button>`,
+                    `<button class="polaroid" data-act="open" data-sheet="photo" data-k="${k}" style="--r:${((k * 37) % 7) - 3}deg"><span class="ph-art" style="background:${G.PHOTO_BG[ph.season] || '#fff'}">${photoArt(ph)}</span><b>${esc(ph.title)}</b><small>Jour ${ph.day}</small></button>`,
             )
             .join('')}</div>`;
 }
@@ -376,7 +376,7 @@ const badge = id =>
 defineSheet('book', {
     cls: 'book-sheet',
     static: true,
-    title: () => (G.farmName() === G.DEFAULT_FARM ? 'Livre de la ferme' : `Le livre · ${G.farmName()}`),
+    title: () => (G.farmName() === G.DEFAULT_FARM ? 'Livre de la ferme' : `Le livre · ${esc(G.farmName())}`),
     open(o) {
         G.syncBook();
         G.tip('bookHerd');

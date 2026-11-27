@@ -38,7 +38,7 @@ function rowHtml(vid) {
         h = G.heartsOf(vid);
     const gifted = G.giftedToday(vid),
         can = G.giftable(vid).length > 0;
-    return `<div class="vl-row" data-act="villager" data-v="${vid}">
+    return `<div class="vl-row" data-act="villager" data-v="${vid}" role="button" tabindex="0">
         <div class="avatar xs">${art('villager', vid)}</div>
         <div class="vl-main"><b>${v.name}${flags(vid)}</b><span class="vl-sub">${hearts(h)}${G.talentLevel(vid) ? `<small class="vl-talent">${ico(['ui', 'star'])}talent</small>` : ''}</span></div>
         ${gifted ? `<small class="vl-done">${ico(['ui', 'check'])}offert</small>` : btn('Offrir', { act: 'villager', data: { v: vid, t: 'gift' }, kind: can ? 'gold' : '', size: 'sm' })}</div>`;
@@ -48,7 +48,7 @@ const resCan = r => G.resGiftReady(r) && r.likes.some(id => (state.inventory[id]
 function resRow(r, i) {
     const ready = G.resCanDeliver(r);
     const flag = ready ? `<span class="vl-flag" title="Commande prête">${ico(['item', r.order.item])}</span>` : '';
-    return `<div class="vl-row" data-act="resOpen" data-i="${i}">
+    return `<div class="vl-row" data-act="resOpen" data-i="${i}" role="button" tabindex="0">
         <div class="avatar xs">${art('villager', r.look)}</div>
         <div class="vl-main"><b>${esc(r.name)}${flag}<small class="vl-job"> · ${esc(r.job)}</small></b><span class="vl-sub">${resHeartsHtml(r)}</span></div>
         ${G.resGiftReady(r) ? btn('Offrir', { act: 'resOpen', data: { i, t: 'gift' }, kind: resCan(r) ? 'gold' : '', size: 'sm' }) : `<small class="vl-done">${ico(['ui', 'check'])}offert</small>`}</div>`;

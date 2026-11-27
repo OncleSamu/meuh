@@ -498,7 +498,7 @@ export function setupAnimals() {
         penMode: (el, d) => (ui.sel.penMode = d.v),
         sellAnimal: (el, d) => {
             const a = state.animals[+d.i];
-            if (!a || !confirmTap('sell' + a.uid, el, `Toucher encore pour vendre ${a.name}`)) return QUIET;
+            if (!a || !confirmTap('sell' + a.uid, el, `Toucher encore pour vendre ${esc(a.name)}`)) return QUIET;
             if (G.sellAnimal(+d.i, el)) closeSheet('animal');
         },
         breedWith: (el, d) => {

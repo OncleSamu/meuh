@@ -75,7 +75,7 @@ export const GUIDE_PAGES = [
             {
                 h: 'Le métier de la ferme (niv. 3)',
                 b: [
-                    '6 métiers au choix : maraîcher, éleveur, arboriculteur, cuisinier, vigneron ou pêcheur (Menu › votre carte de visite).',
+                    '7 métiers au choix : maraîcher, éleveur, arboriculteur, cuisinier, vigneron, pêcheur ou artisan (Menu › votre carte de visite).',
                     '10 rangs : chaque rang (2 leçons) augmente les ventes de votre métier (+2 %/rang, +1 % cuisinier) et les commandes ciblées.',
                     'Paliers clés : rang 3 (+10 % commandes), rang 4 (client quotidien ×1,5), rang 5 (produit signature +15 %), rang 6 (+15 % train/cargo), rang 10 (+10 % & titre de maître).',
                     'Rien n’est bloqué : vous pouvez changer de métier plus tard (gratuit la 1re fois, puis 7 jours d’attente) en gardant vos rangs.',
@@ -265,7 +265,7 @@ export const GUIDE_PAGES = [
             },
             {
                 h: 'Les grandes étapes',
-                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, famille ${FAMILY.lvl}, abbaye 36, île 40, génétique 43, grand hall du Comice 47, Haras ${HARAS_LVL}, Parfums 54, alpage ${chLvl(9)}, camping, Maison et fête de la vallée ${CAMPING.lvl}, oasis ${chLvl(21)}, Grand Nord ${chLvl(23)}, et le niveau ${MAX_LEVEL} pour les grands défis, la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
+                t: `Verger 10, serre 15, cave 20, hameau et commis 25, port 30, famille ${FAMILY.lvl}, abbaye 36, île 40, génétique 43, grand hall du Comice 47, Haras ${HARAS_LVL}, Parfums 58, Maison prestige 62, Confiserie 64, alpage ${chLvl(9)}, camping et fête de la vallée ${CAMPING.lvl}, Grands Défis et Coupe 75, oasis ${chLvl(21)}, Grand Nord ${chLvl(23)}, Terres d’Asie ${chLvl(25)}, et le niveau ${MAX_LEVEL} pour la renommée et le prestige. Entre deux : Armand au 22, le domaine au 25, le comptoir au 32.`,
             },
             { h: `Après le niveau ${MAX_LEVEL}`, t: 'L’expérience donne des étoiles de renommée : voir « Renommée et Ferme légendaire ».' },
         ],
@@ -2169,9 +2169,10 @@ export const GUIDE_PAGES = [
                 b: [
                     'Tout le personnel de la ferme est réuni dans un seul onglet : Maison › Équipe, avec un bouton maître « Tout mettre en pause / Tout activer » en haut de l’écran (et la pastille rapide de Théo sur le bandeau de la Maison).',
                     'Théo · Champs & Serre (après le pont du hameau, ch. 5) : récolte, replante et arrose de 6 à 36 parcelles (+ aide au champ du domaine). Dès le niveau 3 (avec la serre bâtie), la case « Inclure la Serre » lui confie aussi la serre ; dès le niveau 4, « Suivre le Plan actif » sème en priorité les cultures demandées par le Plan en cours.',
-                    'Lina · Animaux (dès niv. 28) : nourrit les bêtes et ramasse les productions du 1er pré jusqu’à tous les prés (3 modes : Nourrir & ramasser, Ramasser seulement, Nourrir seulement). Au niveau 4 (niv. 68), Lina soigne aussi automatiquement les bêtes malades.',
+                    'Lina · Animaux (dès niv. 28) : nourrit les bêtes et ramasse les productions du 1er pré jusqu’à tous les prés (3 modes : Nourrir & ramasser, Ramasser seulement, Nourrir seulement). Au niveau 4 (niv. 84), Lina soigne aussi automatiquement les bêtes malades.',
                     'Henri · Atelier (dès niv. 32) : choisissez 3 à 6 recettes à maintenir au-dessus d’un seuil (ex. Farine : 20, Beurre : 15). Henri ramasse les lots finis et relance automatiquement uniquement lorsque le stock passe sous le seuil, sans ouvrir vos machines une par une.',
-                    'Milo · Nature (dès niv. 30) : relève les nasses de l’étang, ramasse les fruits tombés du verger (ferme puis toutes les contrées au niv. 3) ainsi que les charges du bûcheron/mineur et la cueillette saisonnière de la forêt (dès niv. 2). Toute l’équipe est conservée après un prestige.',
+                    'Milo · Nature (dès niv. 30) : relève les nasses de l’étang, le filet de pêche en mer, les ruches (ferme et contrées), ramasse les fruits tombés du verger (ferme puis toutes les contrées au niv. 3) ainsi que les charges du bûcheron/mineur et la cueillette saisonnière de la forêt (dès niv. 2).',
+                    'Camille · Contrées (dès niv. 65) : récolte, replante et entretient vos parcelles et arbres des contrées lointaines (Île, Oasis, Grand Nord, Terres d’Asie) selon son niveau. Toute l’équipe est conservée après un prestige.',
                 ],
             },
             {
@@ -2180,6 +2181,46 @@ export const GUIDE_PAGES = [
             },
         ],
         see: ['decor', 'domaine', 'orders'],
+    },
+    {
+        id: 'metiers',
+        cat: 'grow',
+        name: 'Les métiers de la ferme',
+        icon: ['ui', 'ribbon'],
+        lvl: 3,
+        go: 'sheet:metier',
+        intro: 'Dès le niveau 3, spécialisez votre domaine parmi 7 métiers et progressez jusqu’au rang de Maître.',
+        facts: [
+            { icon: ['ui', 'ribbon'], v: '7 métiers', l: 'Libre, sans blocage' },
+            { icon: ['ui', 'star'], v: '10 rangs', l: '20 leçons pratiques' },
+            { icon: ['ui', 'coin'], v: 'Jusqu’à +30 %', l: 'Sur vos ventes clés' },
+            { icon: ['ui', 'scroll'], v: 'Client fidèle', l: 'Chaque jour ×1,5' },
+        ],
+        secs: [
+            {
+                h: 'Les sept spécialités',
+                b: [
+                    'Maraîcher : cultures du champ, serre, île, oasis, Grand Nord et Terres d’Asie.',
+                    'Éleveur : produits des animaux de la ferme, de la transhumance et des contrées.',
+                    'Arboriculteur : vergers, fruits, bois, miels et fleurs.',
+                    'Cuisinier : boulangerie, cuisine, pâtisserie, crêperie, pizzeria, comptoir froid et fours régionaux.',
+                    'Vigneron : vignes, cave, pressoir, alambic, brasserie, hydromel, cidre et saké.',
+                    'Pêcheur : poissons d’étang, filet de pêche en mer et poissonnerie.',
+                    'Artisan : forge, poterie, métier à tisser, couture, joaillerie, savonnerie, teinturerie, sellerie, emballerie, parfumerie et confiserie.',
+                ],
+            },
+            {
+                h: 'Rangs, produit signature et changement',
+                b: [
+                    'Chaque rang débloqué (2 leçons) ajoute un bonus permanent de vente sur tous les produits de votre métier (étal et grossiste inclus).',
+                    'Rang 3 : +10 % sur les commandes du village. Rang 4 : un client quotidien dédié payé ×1,5. Rang 5 : choisissez un produit signature (+15 % sur toutes ses ventes).',
+                    'Rang 6 : +15 % sur les wagons du train et le cargo du port. Rang 10 : +10 % supplémentaire et titre de Maître.',
+                    'Le premier changement de métier est gratuit ; les suivants demandent 7 jours d’attente. Tous vos rangs déjà gagnés dans chaque métier sont conservés, y compris après un Prestige.',
+                ],
+            },
+        ],
+        tips: ['Le métier d’Artisan est idéal dès que vous ouvrez la Parfumerie (niv. 58) et la Confiserie (niv. 64).'],
+        see: ['start', 'skills', 'workshop'],
     },
     {
         id: 'decor',
@@ -2585,20 +2626,20 @@ export const GUIDE_PAGES = [
         cat: 'end',
         name: 'Grands défis et Ferme légendaire',
         icon: ['ui', 'trophy'],
-        lvl: 56,
+        lvl: 75,
         go: 'sheet:progress',
-        intro: `À partir du niveau 56 et au niveau ${MAX_LEVEL} : grands défis, Coupe de la vallée, Ferme légendaire et prestige.`,
+        intro: `À partir du niveau 75 et au niveau ${MAX_LEVEL} : grands défis, Coupe de la vallée, Ferme légendaire et prestige.`,
         facts: [
             { icon: ['ui', 'trophy'], v: '24 défis', l: '2 sem. · Bronze à Diamant' },
             { icon: ['ui', 'cupGold'], v: 'Coupe', l: '6 rangs · 110 pts max' },
             { icon: ['ui', 'meuhStatue'], v: '10 exploits', l: 'Ferme légendaire' },
-            { icon: ['ui', 'star'], v: 'Prestige', l: 'Rubans permanents' },
+            { icon: ['ui', 'star'], v: 'Prestige', l: 'Rubans & Boutique' },
         ],
         secs: [
             {
                 h: 'Les grands défis & Coupe de la vallée',
                 b: [
-                    'Grands défis (Village › Commandes) : 2 semaines, 4 étapes (Bronze 2, Argent 3, Or 4, Platine si tout en or+, Diamant en moins de 7 jours).',
+                    'Grands défis (Village › Commandes, niv. 75) : 2 semaines, 4 étapes (Bronze 2, Argent 3, Or 4, Platine si tout en or+, Diamant en moins de 7 jours).',
                     'Coupe de la vallée (Menu › La Coupe) : 6 rangs de « Ferme du canton » (0 pt) à « Ferme du monde » (110 pts), avec bonus permanents à chaque rang.',
                     'Points : Bronze 1, Argent 2, Or 4, Platine 7, Diamant 10 (×2 pour les défis du thème de saison) + 6 grands travaux de mécénat (6 à 16 pts).',
                     'Défis éclair : 1 étape rapide de 3 jours entre deux grands défis. Tout est conservé après un Prestige.',
@@ -2607,8 +2648,8 @@ export const GUIDE_PAGES = [
             {
                 h: 'Camping, La Maison & Fête de la vallée',
                 b: [
-                    'Camping (niv. 66) : jusqu’à 12 emplacements et 12 résidents en cabane avec leurs métiers et paniers quotidiens (voir page dédiée « Le camping »).',
-                    'La Maison (Atelier › Maison) : créez votre marque et vos coffrets de 3 produits vendus aux clients, train, cargo et villageois (voir « La Maison »).',
+                    `Camping (niv. ${CAMPING.lvl}) : jusqu’à 12 emplacements et 12 résidents en cabane avec leurs métiers et paniers quotidiens (voir page dédiée « Le camping »).`,
+                    'La Maison (Atelier › Maison) : créez votre marque, vos coffrets de 3 produits et dès le niveau 62 vos Coffrets Prestige multi-ateliers (Cave/Brasserie + Confiserie + Parfum).',
                     'Fête de la vallée : une fois 5 grands objectifs atteints au camping, dressez la grande table pour célébrer le bilan complet de votre ferme.',
                 ],
             },
@@ -2620,10 +2661,10 @@ export const GUIDE_PAGES = [
                 ],
             },
             {
-                h: 'Vendre la ferme (Prestige)',
+                h: 'Vendre la ferme (Prestige & Boutique des Rubans)',
                 b: [
-                    'Conservé pour toujours : rubans, succès, amitiés, chien, décorations, village rénové, grange, livre, maîtrise, cave, famille, génétique et collection MeuhCG.',
-                    'Rubans : chacun donne +5 % aux ventes et +3 % de vitesse de façon permanente (+3 rubans bonus avec un défi de prestige).',
+                    'Conservé pour toujours : rubans, succès, amitiés, chien, décorations, village rénové, grange, livre, maîtrise, métier, haras, domaine, Maison, cave, famille, génétique, équipe et collection MeuhCG.',
+                    'Rubans : chacun booste durablement vos ventes et votre vitesse (rendement doux au-delà de 15 rubans), et vos rubans en trop s’échangent dans la Boutique des Rubans contre des thèmes, cadres et conforts permanents.',
                     'Thème de ferme : choisissez une spécialité (+15 % cultures, +20 % bêtes, +30 % arbres ou filet de mer doublé).',
                 ],
             },

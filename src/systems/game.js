@@ -1,7 +1,7 @@
 // La partie : chargement et remise en ordre de l'état, outil en main, la seconde de jeu et l'absence.
-import { campTick } from './camping.js';
+import { campTick, campReady } from './camping.js';
 import { residentTick } from './residents.js';
-import { maisonTick } from './maison.js';
+import { maisonTick, maisonReady } from './maison.js';
 import { state, setState, newState, fromSave, fillGrid, readSave, lvOk, getStore, SAVE_KEY, BROKEN_KEY } from '../core/state.js';
 import { readBackups } from './savecodes.js';
 import { now } from '../core/clock.js';
@@ -16,7 +16,7 @@ import { MAX_LEVEL } from '../data/progress.js';
 import { CHAPTERS } from '../data/village.js';
 import { MACHINES, RECIPES } from '../data/machines.js';
 import { ensureVillagers } from './village.js';
-import { ensureGhPlots, seedList, plotRate, ghTick, ghOffline } from './farm.js';
+import { ensureGhPlots, seedList, plotRate, ghTick, ghOffline, clampAllQuality } from './farm.js';
 import { ensureAnimalData, animalsTick, growTick, animalsOffline } from './animals.js';
 import { ensureNature } from './nature.js';
 import { migrateCounter, counterTick, counterOffline } from './counter.js';
@@ -28,7 +28,7 @@ import { projectDone, storyOk, syncStory, chapterDone } from './story.js';
 import { newDay, weatherTick, season, weather } from './world.js';
 import { marketTick } from './market.js';
 import { syncEvent, eventActive, eventIcon } from './events.js';
-import { speedMult, checkLevel, getXpReq, checkNewAchievements, migrateLevels14, migrateLevels60, migrateLevels64, migrateLevels80 } from './player.js';
+import { speedMult, checkLevel, getXpReq, checkNewAchievements, migrateLevels14, migrateLevels60, migrateLevels64, migrateLevels80, migrateLevels100 } from './player.js';
 import { handTick, handOffline } from './home.js';
 import { incidentTick } from './incidents.js';
 import { merchantTick } from './merchant.js';
@@ -60,7 +60,7 @@ import { apiaryTick } from './apiary.js';
 import { ensureGenetics, geneticsTick, clampVarieties } from './genetics.js';
 import { ensureDefis, defiTick } from './defis.js';
 import { ensureNight, nightTick } from './night.js';
-import { brewOpen, ensureBrew, brewTick, brewOffline } from './brewery.js';
+import { brewOpen, ensureBrew, brewTick, brewOffline, brewOfflineReady } from './brewery.js';
 import { cargoTick, cargoHere, cargoLeave } from './cargo.js';
 import { armandTick, armandHere, armandLeave, armandPending } from './armand.js';
 import { pondTick, trapsReady } from './fishing.js';
@@ -193,6 +193,11 @@ export function normalizeState() {
         for (const c of CHAPTERS) if (state.story.seen[c.n] && !chapterDone(c.n)) state.story.keep[c.n] = true;
         migrateLevels80();
         state.lv1109 = true;
+    }
+    // 1.174 → 1.184 : préserve en lvKeep ce qu'une sauvegarde pré-1.174 avait déjà débloqué
+    if (!state.lv1174) {
+        migrateLevels100();
+        state.lv1174 = true;
     }
     ensureVillagers();
     ensureGhPlots();
@@ -333,7 +338,8 @@ function tickFarm() {
 }
 
 function tickDeliveries() {
-    let changed = ensureQuests();
+    const sec = state.stats.playSec || 0;
+    let changed = sec % 3 === 0 || !state.quests || state.quests.length < 3 || state.quests.some(q => !q || (!q.items && q.wait <= now())) ? ensureQuests() : false;
     if (truckTick()) changed = true;
     if (balloonTick()) changed = true;
     if (incidentTick()) changed = true;
@@ -359,7 +365,7 @@ function tickDeliveries() {
     if (showTick()) changed = true;
     if (studTick()) changed = true;
     // 1.45 : les naissances au pré (vérifiées toutes les 10 secondes)
-    if ((state.stats.playSec || 0) % 10 === 0) {
+    if (sec % 10 === 0) {
         if (birthsTick().length) changed = true;
         birthsTip();
         if (fairTick()) changed = true;
@@ -392,7 +398,10 @@ function tickCave() {
 function tickProgress() {
     state.stats.playSec = (state.stats.playSec || 0) + 1;
     if (state.stats.maxLevel < state.level) state.stats.maxLevel = state.level;
-    checkNewAchievements();
+    if (state.stats.playSec % 5 === 0) {
+        checkNewAchievements();
+        clampAllQuality();
+    }
     trimDayEarn();
     clampVarieties();
     return false;
@@ -462,8 +471,9 @@ export function offlineProgress() {
             }
         }
     });
-    // 1.75.2 : les cuves en boucle enchaînent leurs tournées
+    // 1.75.2 : les cuves en boucle enchaînent leurs tournées ; 1.184 : cuves simples prêtes aussi
     const brews = brewOffline();
+    const brewReady = brewOfflineReady();
     const perfumes = perfumeOffline();
     const confs = confOffline();
     const salon = counterOffline(elapsed); // 1.118 : des clients attendent au comptoir
@@ -500,6 +510,14 @@ export function offlineProgress() {
     stallTick();
     neighborTick();
     boatTick();
+    campTick();
+    maisonTick();
+    geneticsTick();
+    const campWait = campReady();
+    const maisonWait = maisonReady();
+    const genReady = state.genetics
+        ? (state.genetics.crosses || []).filter(c => c && c.done).length + (state.genetics.breeds || []).filter(b => b && b.done).length
+        : 0;
     const teamOff = teamOffline(elapsed);
     const sold = state.stall.slots.filter(x => x && x.sold).length;
     const neigh = neighborsReady();
@@ -527,14 +545,19 @@ export function offlineProgress() {
             add(!!state.plan, pi.icon, `Le plan « ${pi.title} » a continué sans vous`);
         }
     }
-    add(brews, ['ui', 'beer'], `${brews} tournée${s(brews)} de bière mise${s(brews)} en bouteille`);
+    add(brews, ['ui', 'beer'], `${brews} tournée${s(brews)} de brasserie mise${s(brews)} en bouteille`);
+    add(brewReady, ['ui', 'vat'], `${brewReady} cuve${s(brewReady)} de brasserie prête${s(brewReady)} à mettre en bouteille`);
     add(perfumes, ['ui', 'perfume'], `${perfumes} macération${s(perfumes)} de parfum prête${s(perfumes)} à mettre en flacon`);
     add(confs, ['ui', 'confiserie'], `${confs} chaudron${s(confs)} de confiserie prêt${s(confs)} à récolter`);
+    add(genReady, ['ui', 'search'], `${genReady} expérience${s(genReady)} prête${s(genReady)} au laboratoire`);
+    add(campWait, ['ui', 'tent'], `${campWait} attention${s(campWait)} au camping`);
+    add(maisonWait, ['ui', 'house'], `${maisonWait} nouveauté${s(maisonWait)} à la Maison de la ferme`);
     add(salon, ['machine', 'counter'], `${salon} client${s(salon)} vous attend${salon > 1 ? 'ent' : ''} au comptoir`);
     add(hand.crops, ['villager', 'theo'], `Théo, votre commis, a récolté ${hand.crops} produit${s(hand.crops)}`);
     add(teamOff.lina, ['villager', 'lina'], `Lina a veillé sur les prés (${teamOff.lina} action${s(teamOff.lina)})`);
     add(teamOff.henri, ['villager', 'henri'], `Henri a maintenu vos stocks d’atelier (${teamOff.henri} lot${s(teamOff.henri)})`);
     add(teamOff.milo, ['villager', 'milo'], `Milo a rapporté ${teamOff.milo} récolte${s(teamOff.milo)} de sa tournée nature`);
+    add(teamOff.camille, ['villager', 'camille'], `Camille a entretenu vos contrées (${teamOff.camille} action${s(teamOff.camille)})`);
     add(
         babies.length,
         ['animal', babies.length ? babies[0].type : 'chicken'],

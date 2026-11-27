@@ -13,7 +13,9 @@ import { CONTRACT_LVL } from '../data/commerce.js';
 import { recipeUnlocked, recipeTime, hasMachine, queueQuiet, collectMachine } from './workshop.js';
 import { machineSlots } from './home.js';
 import { planCap } from './estate.js';
-import { brewOpen, meadOpen, beerOf, brewCost, brewTime, ingHave, ingBase, recipeOf, startBrew, vatReady, collectVat, ensureBrew, vatCount } from './brewery.js';
+import { brewOpen, ciderOpen, meadOpen, sakeOpen, beerOf, brewCost, brewTime, ingHave, ingBase, recipeOf, startBrew, vatReady, collectVat, ensureBrew, vatCount } from './brewery.js';
+import { perfumeOpen, perfumeOf, perfumeCost, perfumeNoteHave, startPerfume, perfumeVatReady, bottlePerfume, ensurePerfume, perfumeVatCount } from './perfume.js';
+import { confOpen, confOf, confCost, confIngHave, startConfById, collectConfKettle, ensureConf, confKettleCount } from './confiserie.js';
 import { projectOpen, projectDone, givenOf, storyOk } from './story.js';
 import { isOpen } from './orders.js';
 import { cargoHere } from './cargo.js';
@@ -34,40 +36,75 @@ export const PLAN_DEPTH = 8;
 export const planOf = () => state.plan || null;
 // les recettes qu'on peut mettre en plan : ouvertes, faites sur une machine qu'on possède
 export const plannable = id => !!RECIPES[id] && recipeUnlocked(id) && hasMachine(RECIPES[id].machine);
-// une bière maison (ou un hydromel) non vieillie qu'on peut mettre en plan
+// une boisson maison (bière, cidre, hydromel ou saké) non vieillie qu'on peut mettre en plan
 export const brewPlannable = bid => {
     if (!brewOpen()) return false;
     const b = beerOf(bid);
-    return !!(b && !b.aged && b.ings && b.ings.length && (!b.mead || meadOpen()));
+    if (!b || b.aged || !b.ings || !b.ings.length) return false;
+    if (b.mead && !meadOpen()) return false;
+    if (b.cider && !ciderOpen()) return false;
+    if (b.sake && !sakeOpen()) return false;
+    return true;
 };
+// 1.186 : Parfums et Confiseries maison planifiables
+export const perfumePlannable = pid => perfumeOpen() && !!perfumeOf(pid);
+export const confPlannable = cid => confOpen() && !!confOf(cid);
 const outQty = id => (RECIPES[id] && RECIPES[id].outQty) || 1;
 const slotsOf = type => state.machines.filter(m => m.type === type).length * Math.max(1, Math.min(2, machineSlots(type)));
 
-// normalise un plan (ancien format plat unique ou nouveau format multi-produits / bière) en liste d'entrées
+// normalise un plan (ancien format plat unique ou nouveau format multi-produits / bière / parfum / confiserie) en liste d'entrées
 export function planEntries(p = planOf()) {
     if (!p) return [];
     if (Array.isArray(p.items) && p.items.length) return p.items;
     return [p];
 }
 const isBeerEntry = e => e && e.kind === 'beer';
+const isPerfumeEntry = e => e && e.kind === 'perfume';
+const isConfEntry = e => e && e.kind === 'conf';
+const isCustomEntry = e => isBeerEntry(e) || isPerfumeEntry(e) || isConfEntry(e);
 const beerCostOf = bid => {
     const b = beerOf(bid);
     return b ? brewCost(b.malt, b.hop, b.ings) : {};
 };
-// résumé sûr pour l'interface et le récapitulatif d'absence (plat unique, bière, ou commande multi-produits)
+const perfumeCostOf = pid => {
+    const p = perfumeOf(pid);
+    return p ? perfumeCost(p.head, p.heart, p.base, p.conc || 'fraiche') : {};
+};
+const confCostOf = cid => {
+    const c = confOf(cid);
+    return c ? confCost(c.base, c.ings || []) : {};
+};
+// résumé sûr pour l'interface et le récapitulatif d'absence (plat unique, bière, parfum, confiserie, ou commande multi-produits)
 export function planInfo(p = planOf()) {
     if (!p) return null;
     const list = planEntries(p);
-    if (p.label) return { icon: ['ui', 'loop'], title: p.label, multi: list.length > 1 || isBeerEntry(list[0]) };
+    if (p.label) return { icon: ['ui', 'loop'], title: p.label, multi: list.length > 1 || isCustomEntry(list[0]) };
     if (list.length === 1) {
         const e = list[0];
         if (isBeerEntry(e)) {
             const b = beerOf(e.bid);
+            const fallback = b && b.sake ? 'saké maison' : b && b.cider ? 'cidre maison' : b && b.mead ? 'hydromel maison' : 'bière maison';
             return {
                 icon: ['ui', 'beer'],
-                title: `${e.n} brassin${e.n > 1 ? 's' : ''} · ${b ? b.name : 'bière maison'}`,
+                title: `${e.n} brassin${e.n > 1 ? 's' : ''} · ${b ? b.name : fallback}`,
                 multi: false,
                 beer: b || null,
+            };
+        }
+        if (isPerfumeEntry(e)) {
+            const pf = perfumeOf(e.pid);
+            return {
+                icon: ['ui', 'perfume'],
+                title: `${e.n} macération${e.n > 1 ? 's' : ''} · ${pf ? pf.name : 'parfum maison'}`,
+                multi: false,
+            };
+        }
+        if (isConfEntry(e)) {
+            const cf = confOf(e.cid);
+            return {
+                icon: ['ui', 'confiserie'],
+                title: `${e.n} chaudron${e.n > 1 ? 's' : ''} · ${cf ? cf.name : 'confiserie maison'}`,
+                multi: false,
             };
         }
         const name = ITEMS[e.id] ? ITEMS[e.id].name.toLowerCase() : e.id;
@@ -111,7 +148,7 @@ export function rootFor(id, left) {
     root.kids = Object.entries(r.ing).map(([k, n]) => planTree(k, n * left, pool, 1));
     return root;
 }
-// l'arbre unifié pour une liste d'entrées (plats et/ou bières maison) avec déduplication du stock partagé
+// l'arbre unifié pour une liste d'entrées (plats, bières, parfums, confiseries) avec déduplication du stock partagé
 export function treeForEntries(entries, extraRaws = []) {
     const pool = {};
     const kids = [];
@@ -126,6 +163,20 @@ export function treeForEntries(entries, extraRaws = []) {
             const ekids = Object.entries(cost).map(([k, q]) => planTree(k, q * left, pool, 1));
             kids.push(...ekids);
             targets.push({ kind: 'beer', bid: e.bid, make: left });
+        } else if (isPerfumeEntry(e)) {
+            const pf = perfumeOf(e.pid);
+            if (!pf) continue;
+            const cost = perfumeCostOf(e.pid);
+            const ekids = Object.entries(cost).map(([k, q]) => planTree(k, q * left, pool, 1));
+            kids.push(...ekids);
+            targets.push({ kind: 'perfume', pid: e.pid, make: left });
+        } else if (isConfEntry(e)) {
+            const cf = confOf(e.cid);
+            if (!cf) continue;
+            const cost = confCostOf(e.cid);
+            const ekids = Object.entries(cost).map(([k, q]) => planTree(k, q * left, pool, 1));
+            kids.push(...ekids);
+            targets.push({ kind: 'conf', cid: e.cid, make: left });
         } else if (RECIPES[e.id]) {
             const r = RECIPES[e.id];
             const ekids = Object.entries(r.ing).map(([k, q]) => planTree(k, q * left, pool, 1));
@@ -143,12 +194,14 @@ export function planNow() {
     const p = planOf();
     if (!p) return null;
     const list = planEntries(p);
-    if (list.length === 1 && !isBeerEntry(list[0]) && !(p.raws && p.raws.length)) return rootFor(list[0].id, list[0].n - list[0].queued);
+    if (list.length === 1 && !isCustomEntry(list[0]) && !(p.raws && p.raws.length)) return rootFor(list[0].id, list[0].n - list[0].queued);
     return treeForEntries(list, p.raws);
 }
-// avant de lancer : ce que coûterait un plat, une bière, ou une liste d'entrées
+// avant de lancer : ce que coûterait un plat, une bière, un parfum, une confiserie, ou une liste d'entrées
 export const prodPreview = (id, n) => planSummary(rootFor(id, n));
 export const beerPreview = (bid, n) => planSummary(treeForEntries([{ kind: 'beer', bid, n, queued: 0 }]));
+export const perfumePlanPreview = (pid, n) => planSummary(treeForEntries([{ kind: 'perfume', pid, n, queued: 0 }]));
+export const confPlanPreview = (cid, n) => planSummary(treeForEntries([{ kind: 'conf', cid, n, queued: 0 }]));
 export const prodMultiPreview = (entries, extraRaws = []) => planSummary(treeForEntries(entries, extraRaws));
 
 const walk = (node, fn) => {
@@ -171,23 +224,29 @@ export function planSummary(tree = planNow()) {
         }),
     );
     const list = Object.entries(steps).map(([id, n]) => ({ id, n, machine: RECIPES[id].machine }));
-    // une estimation : le temps de la machine la plus chargée, plus les produits finaux (ou les brassins)
+    // une estimation : le temps de la machine la plus chargée, plus les produits finaux (ou cuves/chaudrons)
     const load = {};
     list.forEach(s => (load[s.machine] = (load[s.machine] || 0) + (recipeTime(s.id) * s.n) / Math.max(1, slotsOf(s.machine))));
     let finTime = 0;
     if (tree.multi) {
         const finLoad = {};
         let vatTime = 0;
+        let perfTime = 0;
+        let confTime = 0;
         for (const t of tree.targets) {
             if (t.kind === 'beer') {
                 const b = beerOf(t.bid);
                 if (b) vatTime += (brewTime(b.ings, b.malt) * t.make) / Math.max(1, vatCount());
+            } else if (t.kind === 'perfume') {
+                perfTime += (3600 * t.make) / Math.max(1, perfumeVatCount());
+            } else if (t.kind === 'conf') {
+                confTime += (420 * t.make) / Math.max(1, confKettleCount());
             } else {
                 const fin = RECIPES[t.id];
                 if (fin) finLoad[fin.machine] = (finLoad[fin.machine] || 0) + (recipeTime(t.id) * t.make) / Math.max(1, slotsOf(fin.machine));
             }
         }
-        finTime = Math.max(vatTime, 0, ...Object.values(finLoad));
+        finTime = Math.max(vatTime, perfTime, confTime, 0, ...Object.values(finLoad));
     } else if (tree.id && RECIPES[tree.id]) {
         const fin = RECIPES[tree.id];
         finTime = (recipeTime(tree.id) * tree.make) / Math.max(1, slotsOf(fin.machine));
@@ -241,7 +300,37 @@ export function startBeerPlan(bid, n) {
     planTick(true);
     return true;
 }
-// lance un plan multi-produits (plats et/ou bières) ; hors commande, limité par le Tableau d'intendance du domaine
+export function startPerfumePlan(pid, n) {
+    if (!perfumePlannable(pid) || !(n > 0)) return false;
+    const qty = Math.min(PLAN_MAX, Math.round(n));
+    state.plan = {
+        id: 'perfume:' + pid,
+        n: qty,
+        queued: 0,
+        at: now(),
+        items: [{ kind: 'perfume', pid, n: qty, queued: 0 }],
+    };
+    resCache = null;
+    sfx('click');
+    planTick(true);
+    return true;
+}
+export function startConfPlan(cid, n) {
+    if (!confPlannable(cid) || !(n > 0)) return false;
+    const qty = Math.min(PLAN_MAX, Math.round(n));
+    state.plan = {
+        id: 'conf:' + cid,
+        n: qty,
+        queued: 0,
+        at: now(),
+        items: [{ kind: 'conf', cid, n: qty, queued: 0 }],
+    };
+    resCache = null;
+    sfx('click');
+    planTick(true);
+    return true;
+}
+// lance un plan multi-produits (plats, bières, parfums, confiseries) ; hors commande, limité par le Tableau d'intendance du domaine
 export function startMultiPlan(entries, opts = {}) {
     if (!Array.isArray(entries) || !entries.length) return false;
     const merged = [];
@@ -254,6 +343,18 @@ export function startMultiPlan(entries, opts = {}) {
             const prev = merged.find(x => x.kind === 'beer' && x.bid === bid);
             if (prev) prev.n = Math.min(PLAN_MAX, prev.n + qty);
             else merged.push({ kind: 'beer', bid, n: qty, queued: 0 });
+        } else if (raw.kind === 'perfume' || raw.pid) {
+            const pid = raw.pid || raw.id;
+            if (!perfumePlannable(pid)) continue;
+            const prev = merged.find(x => x.kind === 'perfume' && x.pid === pid);
+            if (prev) prev.n = Math.min(PLAN_MAX, prev.n + qty);
+            else merged.push({ kind: 'perfume', pid, n: qty, queued: 0 });
+        } else if (raw.kind === 'conf' || raw.cid) {
+            const cid = raw.cid || raw.id;
+            if (!confPlannable(cid)) continue;
+            const prev = merged.find(x => x.kind === 'conf' && x.cid === cid);
+            if (prev) prev.n = Math.min(PLAN_MAX, prev.n + qty);
+            else merged.push({ kind: 'conf', cid, n: qty, queued: 0 });
         } else {
             if (!plannable(raw.id)) continue;
             const prev = merged.find(x => x.kind === 'recipe' && x.id === raw.id);
@@ -270,7 +371,7 @@ export function startMultiPlan(entries, opts = {}) {
     const first = items[0];
     const total = items.reduce((a, x) => a + x.n, 0);
     state.plan = {
-        id: first.kind === 'beer' ? 'beer:' + first.bid : first.id,
+        id: first.kind === 'beer' ? 'beer:' + first.bid : first.kind === 'perfume' ? 'perfume:' + first.pid : first.kind === 'conf' ? 'conf:' + first.cid : first.id,
         n: total,
         queued: 0,
         at: now(),
@@ -507,6 +608,14 @@ export function entryReady(e) {
         const cost = beerCostOf(e.bid);
         return Object.entries(cost).every(([k, q]) => ingHave(k) >= q);
     }
+    if (isPerfumeEntry(e)) {
+        const cost = perfumeCostOf(e.pid);
+        return Object.entries(cost).every(([k, q]) => perfumeNoteHave(k) >= q);
+    }
+    if (isConfEntry(e)) {
+        const cost = confCostOf(e.cid);
+        return Object.entries(cost).every(([k, q]) => confIngHave(k) >= q);
+    }
     const r = RECIPES[e.id];
     return !!r && Object.entries(r.ing).every(([k, n]) => (state.inventory[k] || 0) >= n * left);
 }
@@ -534,7 +643,7 @@ export function planTick(force) {
     state.machines.forEach((m, i) => {
         if (m.out && Object.keys(m.out).some(k => m.out[k] > 0 && parts.has(k)) && collectMachine(i, null, true)) ch = true;
     });
-    // 2. les produits finaux (et brassins) prêts à partir
+    // 2. les produits finaux (brassins, macérations, chaudrons) prêts à partir
     for (const e of list) {
         if (e.queued >= e.n) continue;
         if (isBeerEntry(e)) {
@@ -548,6 +657,35 @@ export function planTick(force) {
                     else break;
                 }
                 if (startBrew(null, rec, true)) {
+                    e.queued++;
+                    ch = true;
+                } else break;
+            }
+        } else if (isPerfumeEntry(e)) {
+            if (!perfumePlannable(e.pid)) continue;
+            const P = ensurePerfume();
+            const pf = perfumeOf(e.pid);
+            while (e.queued < e.n && entryReady(e)) {
+                if (!P.vats.some(v => !v)) {
+                    const rdy = P.vats.findIndex(v => v && v.pid === e.pid && perfumeVatReady(v));
+                    if (rdy >= 0 && bottlePerfume(rdy)) ch = true;
+                    else break;
+                }
+                if (startPerfume(null, pf)) {
+                    e.queued++;
+                    ch = true;
+                } else break;
+            }
+        } else if (isConfEntry(e)) {
+            if (!confPlannable(e.cid)) continue;
+            const C = ensureConf();
+            while (e.queued < e.n && entryReady(e)) {
+                if (!C.kettles.some(k => !k)) {
+                    const rdy = C.kettles.findIndex(k => k && (k.ready || now() >= k.until));
+                    if (rdy >= 0 && collectConfKettle(rdy)) ch = true;
+                    else break;
+                }
+                if (startConfById(e.cid)) {
                     e.queued++;
                     ch = true;
                 } else break;
@@ -577,7 +715,7 @@ export function planTick(force) {
         return true;
     }
     // si toutes les cibles restantes sont déjà en train d'être lancées (go), plus besoin de préparer d'étapes
-    if (list.every(e => e.queued >= e.n || (!isBeerEntry(e) && e.go))) return ch;
+    if (list.every(e => e.queued >= e.n || (!isCustomEntry(e) && e.go))) return ch;
     // 3. les étapes : du plus profond au plus proche, sur les machines libres
     const freshTree = planNow();
     const steps = [];

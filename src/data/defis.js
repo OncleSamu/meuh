@@ -2,7 +2,6 @@ import { FISH } from './meta.js';
 import { RECIPES } from './machines.js';
 import { ITEMS } from './items.js';
 import { NEW_DRINKS, NEW_DRINKS_134, NEW_DRINKS_154, NEW_DRINKS_155 } from './counter.js';
-import { MAX_LEVEL } from './progress.js';
 
 // Les grands défis (1.1, 24 défis depuis la 1.94) : un objectif de deux semaines après le niveau 64, tiré au hasard.
 // Chaque défi a 4 étapes. Sortes d'étapes :
@@ -15,7 +14,7 @@ import { MAX_LEVEL } from './progress.js';
 // une partie du jeu fermée (needs) ou des produits qu'on ne sait pas encore faire.
 
 export const DEFI = {
-    lvl: MAX_LEVEL, // le dernier niveau
+    lvl: 75, // ouverts dès le niveau 75 (v1.185)
     days: 14,
     noRepeat: 3, // un défi joué ne revient qu'au 4e tirage après lui
     perStar: 0.08, // +8 % de quantités par étoile de renommée

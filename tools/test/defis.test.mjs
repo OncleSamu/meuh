@@ -107,6 +107,7 @@ test('le marché garde ce que le défi attend ; vendre la ferme garde les troph�
     state.inventory[id] = 3;
     assert.equal(G.reservedQty(id), 3);
     const n = Object.keys(state.defis.trophies).length;
+    state.level = 100;
     G.doPrestige('', 'none');
     assert.equal(Object.keys(state.defis.trophies).length, n);
     assert.equal(G.curDefi(), null);

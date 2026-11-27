@@ -3,13 +3,13 @@ import { state } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
 import { on } from '../../core/bus.js';
 import { ITEMS } from '../../data/items.js';
-import { ISLAND } from '../../data/island.js';
+import { ISLAND, SCHOONER } from '../../data/island.js';
 import { PROJECTS } from '../../data/village.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, anchorEl, esc } from '../dom.js';
 import { genWrap } from '../genlook.js';
 import { ico, art } from '../icons.js';
-import { btn, bar, section, tip15 } from '../kit.js';
+import { btn, bar, section, tip15, timer } from '../kit.js';
 import { defineLive, ui, go } from '../app.js';
 import { defineSheet, closeSheet } from '../sheets.js';
 import { burstAt } from '../fx.js';
@@ -52,6 +52,54 @@ function closedCard() {
                   : 'Tiago a besoin de vous pour réparer son bac. Apportez-lui planches, poutres, clous et toile dans le volet Village, carte « L’île ».'
         }</p>
         ${lvl ? '' : btn('Voir le bac', { act: 'goFerry', kind: 'gold', wide: true, icon: ['ui', 'village'] })}
+    </div>`;
+}
+
+function lagoonCard() {
+    const ready = G.lagoonReady();
+    const until = state.island && state.island.lagoonAt;
+    return `<div class="card">
+        <div class="card-head">${ico(['ui', 'lagoon'], 'ico big')}<div class="card-main">
+            <div class="card-title">Lagon aux perles</div>
+            <div class="card-sub">${ready ? 'Marée basse : plongez ramasser des trésors tropicaux (et parfois une géode de cristal).' : `La marée remonte · prochaine plongée dans ${timer(until, 'b')}`}</div>
+        </div>
+        ${ready ? btn('Plonger', { act: 'harvestLagoon', kind: 'green', size: 'sm', icon: ['ui', 'lagoon'] }) : ''}</div>
+    </div>`;
+}
+
+function schoonerCard() {
+    const sc = G.schoonerState();
+    const loaded = G.schoonerLoads();
+    const val = G.schoonerValue();
+    if (sc.out) {
+        const back = G.schoonerBack();
+        return `<div class="card">
+            <div class="card-head">${ico(['ui', 'schooner'], 'ico big')}<div class="card-main">
+                <div class="card-title">Goélette des îles${back ? ' · de retour !' : ' · en mer'}</div>
+                <div class="card-sub">${back ? `Cargaison vendue pour ${fmt(sc.out.gold)} pièces + 1 épice rare + 1 Renom !` : `Retour dans ${timer(sc.out.back, 'b')} · gain prévu : ${fmt(sc.out.gold)} pièces`}</div>
+            </div>
+            ${back ? btn('Décharger', { act: 'schoonerClaim', kind: 'gold', size: 'sm', icon: ['ui', 'coin'] }) : ''}</div>
+        </div>`;
+    }
+    const items = Object.entries(sc.load);
+    const chips = items.length
+        ? `<div class="chips-row" style="margin:6px 0">${items
+              .map(
+                  ([id, n]) =>
+                      `<button class="pick-chip on" data-act="schoonerRem" data-id="${id}" title="Retirer">${ico(['item', id])}×${n} ×</button>`,
+              )
+              .join('')}</div>`
+        : '';
+    return `<div class="card">
+        <div class="card-head">${ico(['ui', 'schooner'], 'ico big')}<div class="card-main">
+            <div class="card-title">Goélette des îles · ${loaded} / ${SCHOONER.cap}</div>
+            <div class="card-sub">Exporte vos produits tropicaux & poissons à ×${SCHOONER.mult} (min. ${SCHOONER.minLoad} unités) · 3 h · +épices rares & Renom</div>
+        </div></div>
+        ${chips}
+        <div class="actions wrap" style="margin-top:6px">
+            ${btn('Charger', { act: 'open', data: { sheet: 'schoonerLoad' }, size: 'sm', icon: ['ui', 'plus'], disabled: loaded >= SCHOONER.cap })}
+            ${btn(loaded >= SCHOONER.minLoad ? `Expédier (${fmt(val)} p.)` : `Min. ${SCHOONER.minLoad} unités`, { act: 'schoonerSend', kind: loaded >= SCHOONER.minLoad ? 'gold' : '', size: 'sm', icon: ['ui', 'schooner'], disabled: loaded < SCHOONER.minLoad })}
+        </div>
     </div>`;
 }
 
@@ -99,14 +147,37 @@ export function renderIsland(el) {
                 .join('')}</div>`,
         ],
         ['apiary', apiaryHtml('island')],
+        ['lagoon', lagoonCard()],
+        ['schooner', schoonerCard()],
         [
             'hint',
             tip15(
-                'Sur l’île, tout est de saison et les pluies tropicales arrosent pour vous. « Replanter » remet sur chaque parcelle vide sa dernière culture. Restez appuyé sur un arbre pour sa fiche.',
+                'Sur l’île, tout est de saison et les pluies tropicales arrosent pour vous. Plongez au lagon à marée basse et chargez la goélette pour exporter vos produits tropicaux à ×2,3 !',
             ),
         ],
     ]);
 }
+
+// ---------------- charger la goélette ----------------
+defineSheet('schoonerLoad', {
+    title: `${ico(['ui', 'schooner'])}Charger la goélette`,
+    render() {
+        const room = SCHOONER.cap - G.schoonerLoads();
+        if (room <= 0) return '<p class="card-sub center">La cale est pleine ! Vous pouvez expédier la goélette.</p>';
+        const goods = G.schoonerGoods().slice(0, 48);
+        if (!goods.length) return '<p class="card-sub center">Aucun produit disponible dans votre grange.</p>';
+        return `<p class="card-sub">Place restante : <b>${room} / ${SCHOONER.cap}</b>. Les produits tropicaux et poissons de mer valent ×${SCHOONER.mult}.</p>
+            <div class="rneeds">${goods
+                .map(id => {
+                    const have = state.inventory[id] || 0;
+                    const mult = G.schoonerMult(id);
+                    const unit = Math.round((ITEMS[id].sell || 0) * mult * G.priceMult());
+                    const maxAdd = Math.min(room, have);
+                    return `<div class="rneed"><span class="rneed-art">${art('item', id)}</span><span class="row-main"><b>${ITEMS[id].name} <small>×${fmt(have)}</small></b><small>${fmt(unit)} p./u. (×${mult})</small></span><span class="cut-btns">${btn('+1', { act: 'schoonerAdd', data: { id, n: 1 }, size: 'sm' })}${maxAdd > 1 ? btn(`+${Math.min(5, maxAdd)}`, { act: 'schoonerAdd', data: { id, n: Math.min(5, maxAdd) }, kind: 'gold', size: 'sm' }) : ''}</span></div>`;
+                })
+                .join('')}</div>`;
+    },
+});
 
 // ---------------- planter sur l'île ----------------
 defineSheet('plantIsland', {
@@ -168,6 +239,11 @@ export function setupIsland() {
         },
         harvestIsland: el => G.harvestAllIsland(el),
         replantIsland: el => G.replantIsland(el),
+        harvestLagoon: el => G.harvestLagoon(el),
+        schoonerAdd: (el, d) => G.schoonerAdd(d.id, +d.n || 1),
+        schoonerRem: (el, d) => G.schoonerRemove(d.id),
+        schoonerSend: el => G.schoonerSend(el),
+        schoonerClaim: el => G.schoonerClaim(el),
         goFerry: () => {
             ui.sel.map = 'island';
             ui.sel.proj = ISLAND.project;

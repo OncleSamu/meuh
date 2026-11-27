@@ -301,7 +301,11 @@ export function undoSale() {
 export const matCost = (type, id) => (MAT[type] && MAT[type][id]) || null;
 export const hasMats = m => !m || Object.entries(m).every(([k, n]) => state.inventory[k] >= n);
 export const payMats = m => {
-    if (m) Object.entries(m).forEach(([k, n]) => (state.inventory[k] -= n));
+    if (m)
+        Object.entries(m).forEach(([k, n]) => {
+            state.inventory[k] -= n;
+            clampQuality(k);
+        });
 };
 
 export function matMissing(m) {

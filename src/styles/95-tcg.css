@@ -2436,27 +2436,27 @@ html.calm .tcg-sparks > i {
         height: 58px;
     }
     .tcg-card:not(.big) .tcg-top {
-        font-size: 0.54rem;
+        font-size: 0.64rem;
     }
     .tcg-card:not(.big) .tcg-var-pill {
-        padding: 0 3px;
-        font-size: 0.45rem;
+        padding: 1px 4px;
+        font-size: 0.6rem;
     }
     .tcg-card:not(.big) .tcg-cost {
-        padding: 0 3px;
-        font-size: 0.49rem;
-    }
-    .tcg-card:not(.big) .tcg-rar {
         padding: 1px 4px;
-        font-size: 0.49rem;
-    }
-    .tcg-card:not(.big) .tcg-name {
         font-size: 0.62rem;
     }
+    .tcg-card:not(.big) .tcg-rar {
+        padding: 1px 5px;
+        font-size: 0.62rem;
+    }
+    .tcg-card:not(.big) .tcg-name {
+        font-size: 0.72rem;
+    }
     .tcg-card:not(.big) .tcg-stats {
-        font-size: 0.54rem;
-        padding: 2px;
-        gap: 1px;
+        font-size: 0.64rem;
+        padding: 2px 3px;
+        gap: 2px;
     }
     .tcg-deck-tabs {
         gap: 4px;
@@ -2465,23 +2465,30 @@ html.calm .tcg-sparks > i {
         padding: 5px 3px;
     }
     .tcg-deck-tab b {
-        font-size: 0.7rem;
+        font-size: 0.72rem;
     }
     .tcg-deck-tab small {
-        font-size: 0.6rem;
+        font-size: 0.64rem;
     }
     .tcg-forge-bar,
     .tcg-deck-strip {
         padding: 7px 8px;
         gap: 6px;
-        font-size: 0.74rem;
+        font-size: 0.76rem;
     }
 }
-@media (max-width: 345px) {
+@media (max-width: 420px) {
     .tcg-deck-slots,
     .tcg-grid,
     .tcg-hand {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .tcg-wonder-cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .tcg-timeline {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
     }
 }
 

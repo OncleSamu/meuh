@@ -107,8 +107,15 @@ export function doPrestige(challenge, theme) {
                   lina: { ...state.team.lina, t: 0 },
                   henri: { ...state.team.henri, t: 0, rules: (state.team.henri.rules || []).map(r => ({ ...r })) },
                   milo: { ...state.team.milo, t: 0, fg: 0 },
+                  camille: state.team.camille ? { ...state.team.camille, t: 0 } : { lvl: 0, t: 0, off: false, mode: 'both' },
               }
             : null,
+        metier: state.metier || null,
+        maison: state.maison ? { ...state.maison, stock: [], work: null, queue: [], wait: {}, orders: [] } : null,
+        prestigeBoxes: state.prestigeBoxes ? { ...state.prestigeBoxes, draft: { drink: null, conf: null, perf: null } } : null,
+        domaine: state.domaine || null,
+        works: state.works || null,
+        ribbonShop: state.ribbonShop || {},
         mastery: state.mastery,
         renown: state.renown,
         cup: state.cup, // 1.40 : la Coupe de la vallée (points, rangs, mécénat) se garde
@@ -159,7 +166,7 @@ export function doPrestige(challenge, theme) {
         weather: state.weather,
         nextWeather: state.nextWeather,
     };
-    setState({ ...newState(), ...keep });
+    setState({ ...newState(), ...keep, skills161: true, lv14: true, lv18: true, lv136: true, lv156: true, lv1109: true, lv1174: true });
     fillGrid();
     ensurePastures();
     ensureOrchard();
@@ -182,5 +189,34 @@ export function doPrestige(challenge, theme) {
 export function abandonChallenge() {
     state.challenge = null;
     toast('Défi abandonné : la ferme reprend ses règles normales', ['ui', 'flag']);
+    return true;
+}
+
+// ---------------- 1.187 : Boutique des Rubans (conforts & titres permanents) ----------------
+export const RIBBON_SHOP = [
+    { id: 'vaultPlus', name: 'Grand Coffre-Fort', desc: '+10 places permanentes au Coffre de la grange', cost: 6, icon: ['ui', 'vault'] },
+    { id: 'henriPlus', name: 'Contremaître d’Élite', desc: '+1 recette maintenue simultanément par Henri', cost: 8, icon: ['villager', 'henri'] },
+    { id: 'stallPlus', name: 'Étal Royal', desc: '+2 places permanentes à l’étal de la ferme', cost: 8, icon: ['ui', 'stall'] },
+    { id: 'xpBoost', name: 'Bourse du Domaine', desc: '+10 % d’expérience sur toutes vos actions, pour toujours', cost: 10, icon: ['ui', 'xp'] },
+    { id: 'titleBaron', name: 'Titre « Baron de la Vallée »', desc: 'Sceau honorifique permanent sur votre fiche de Prestige', cost: 4, icon: ['ui', 'crown'] },
+    { id: 'goldCrest', name: 'Blason d’Or', desc: 'Insigne doré d’héritage permanent du domaine', cost: 5, icon: ['ui', 'ribbon'] },
+];
+
+export const ribbonHas = id => !!(state.ribbonShop && state.ribbonShop[id]);
+
+export function buyRibbonPerk(id, at) {
+    const p = RIBBON_SHOP.find(x => x.id === id);
+    if (!p || ribbonHas(id)) return false;
+    if ((state.prestige.rubans || 0) < p.cost) {
+        toast(`Il faut ${p.cost} rubans pour « ${p.name} »`, ['ui', 'ribbon']);
+        sfx('error');
+        return false;
+    }
+    state.prestige.rubans -= p.cost;
+    state.ribbonShop = state.ribbonShop || {};
+    state.ribbonShop[id] = true;
+    sfx('level');
+    buzz(24);
+    toast(`Boutique des Rubans : « ${p.name} » débloqué pour toujours !`, p.icon);
     return true;
 }

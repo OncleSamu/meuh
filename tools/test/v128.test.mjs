@@ -205,8 +205,8 @@ test('1.29 : agrandir le coffre coûte des pièces, le prestige le vide mais gar
     G.ensureVault();
     assert.ok(G.upgradeVault());
     assert.equal(G.vaultSlots(), 10);
-    for (let i = 0; i < 6; i++) G.upgradeVault();
-    assert.equal(G.vaultLvl(), 4);
-    assert.equal(G.vaultSlots(), 22);
+    for (let i = 0; i < 15; i++) G.upgradeVault();
+    assert.equal(G.vaultLvl(), 11);
+    assert.equal(G.vaultSlots(), 50);
     assert.equal(G.upgradeVault(), false);
 });

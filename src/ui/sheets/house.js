@@ -4,7 +4,7 @@ import { fmt } from '../../core/format.js';
 import { HOUSE, FARMHAND } from '../../data/progress.js';
 import { STYLES, STYLE_LVL, STYLE_CHARM } from '../../data/farm.js';
 import { ITEMS } from '../../data/items.js';
-import { THEO_OPTS, LINA_MODES, MILO_MODES, HENRI_TARGET_STEP } from '../../data/team.js';
+import { THEO_OPTS, LINA_MODES, MILO_MODES, CAMILLE_MODES, HENRI_TARGET_STEP } from '../../data/team.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { ico, art, SPR } from '../icons.js';
@@ -227,10 +227,33 @@ function miloCard() {
         lvl: l,
         paused: G.miloPaused(),
         toggleAct: 'toggleMilo',
-        desc: l ? def.desc : 'Relève les nasses de l’étang, ramasse les fruits tombés du verger et les trouvailles de la forêt.',
+        desc: l ? def.desc : 'Relève nasses, filet de mer, ruches, fruits tombés du verger et trouvailles de la forêt.',
         log: G.miloMessage(),
         settingHtml,
         upgradeHtml: upgradeFooter(n, 'upgradeMilo', 'Recruter Milo', 'Former Milo', l, n ? n.desc : ''),
+    });
+}
+
+function camilleCard() {
+    const l = G.camilleLvl(),
+        def = G.camilleDef(),
+        n = G.camilleNext();
+    const mode = G.camilleMode();
+    const settingHtml = l
+        ? `<div class="tm-modes">${CAMILLE_MODES.map(
+              ([k, lbl]) => `<button type="button" class="tm-mode${mode === k ? ' on' : ''}" data-act="camilleMode" data-v="${k}">${lbl}</button>`,
+          ).join('')}</div>`
+        : '';
+    return teamCard({
+        portrait: 'camille',
+        title: 'Camille · Contrées',
+        lvl: l,
+        paused: G.camillePaused(),
+        toggleAct: 'toggleCamille',
+        desc: l ? def.desc : 'Récolte, replante et entretient automatiquement vos contrées lointaines (Île, Oasis, Grand Nord, Terres d’Asie).',
+        log: G.camilleMessage(),
+        settingHtml,
+        upgradeHtml: upgradeFooter(n, 'upgradeCamille', 'Recruter Camille', 'Former Camille', l, n ? n.desc : ''),
     });
 }
 
@@ -241,11 +264,11 @@ function teamView() {
     const master = `<div class="tm-master">
         <div class="tm-master-info">
             <b>L’Équipe du Domaine</b>
-            <small>${hired ? `${hired} / 4 en poste · ${active} actif${active > 1 ? 's' : ''}` : 'Tout votre personnel réuni au même endroit'}</small>
+            <small>${hired ? `${hired} / 5 en poste · ${active} actif${active > 1 ? 's' : ''}` : 'Tout votre personnel réuni au même endroit'}</small>
         </div>
         ${hired ? btn(anyOn ? 'Tout mettre en pause' : 'Tout activer', { act: 'teamToggleAll', size: 'sm', kind: anyOn ? '' : 'green' }) : ''}
     </div>`;
-    return master + theoCard() + linaCard() + henriCard() + miloCard();
+    return master + theoCard() + linaCard() + henriCard() + miloCard() + camilleCard();
 }
 
 defineSheet('house', {
@@ -319,6 +342,9 @@ export function setupHouse() {
         upgradeMilo: el => G.upgradeMilo(el),
         toggleMilo: () => G.toggleMilo(),
         miloMode: (el, d) => G.setMiloMode(d.v),
+        upgradeCamille: el => G.upgradeCamille(el),
+        toggleCamille: () => G.toggleCamille(),
+        camilleMode: (el, d) => G.setCamilleMode(d.v),
         teamToggleAll: () => G.teamToggleAll(),
         hangFish: (el, d) => G.hangFish(d.id),
         style: (el, d) => {

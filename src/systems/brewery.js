@@ -721,13 +721,23 @@ export function renameBeer(bid, name) {
 export const BOOK_HONEYS = ['all', ...Object.keys(HONEYS)];
 export const bookTotal = () => BREWABLE.length + (meadOpen() ? BOOK_HONEYS.length : 0);
 export const beerBookPages = () => Object.keys(ensureBrew().book).length;
-export const beerBookClaimable = () => Math.floor(beerBookPages() / BEER_BOOK.every) > ensureBrew().bookClaimed;
+export const beerBookClaimable = () => {
+    const B = ensureBrew();
+    const pages = beerBookPages();
+    const total = bookTotal();
+    const maxSteps = Math.floor(total / BEER_BOOK.every);
+    return Math.floor(pages / BEER_BOOK.every) > B.bookClaimed || (!B.bookDone && pages >= total && B.bookClaimed >= maxSteps);
+};
 export function claimBeerBook(at) {
     const B = ensureBrew();
     if (!beerBookClaimable()) return false;
-    B.bookClaimed++;
-    earn(BEER_BOOK.coins * B.bookClaimed, at);
-    if (beerBookPages() >= bookTotal() && !B.bookDone) {
+    const pages = beerBookPages();
+    const total = bookTotal();
+    const maxSteps = Math.floor(total / BEER_BOOK.every);
+    const isFinalOnly = !B.bookDone && pages >= total && B.bookClaimed >= maxSteps;
+    if (!isFinalOnly) B.bookClaimed++;
+    earn(BEER_BOOK.coins * Math.max(1, B.bookClaimed), at);
+    if (pages >= total && !B.bookDone) {
         B.bookDone = true;
         state.prestige.rubans += BEER_BOOK.rubans;
         toast(`Livre des bières complet ! +${BEER_BOOK.rubans} rubans`, ['ui', 'ribbon']);
@@ -941,6 +951,12 @@ export function brewOffline(t = now()) {
     return n;
 }
 
+export function brewOfflineReady(t = now()) {
+    if (!brewOpen() || !state.brew) return 0;
+    const since = state.lastSaved || 0;
+    return (state.brew.vats || []).filter(v => v && !v.loop && v.until <= t && v.until > since).length;
+}
+
 export function brewTick() {
     if (!brewOpen()) return false;
     if (meadOpen()) tip('mead');
@@ -1116,5 +1132,54 @@ export function pullBr(req, n) {
         left -= take;
     }
     return val;
+}
+
+// ---------------- Coffre-fort (v1.185) ----------------
+export function takeBeerForVault(bid) {
+    const B = ensureBrew();
+    const b = beerOf(bid);
+    const have = beerStock(bid);
+    if (!b || have < 1) return null;
+    const q = beerQual(bid);
+    let topQ = 0;
+    for (const [r, k] of [
+        [4, 'd'],
+        [3, 'p'],
+        [2, 'g'],
+        [1, 's'],
+    ]) {
+        if ((q[k] || 0) > 0) {
+            q[k]--;
+            topQ = r;
+            break;
+        }
+    }
+    B.stock[bid] = have - 1;
+    beerQual(bid);
+    return {
+        bid: b.id,
+        name: b.name,
+        malt: b.malt,
+        ings: (b.ings || []).slice(),
+        stars: b.stars || 0,
+        mead: !!b.mead,
+        cider: !!b.cider,
+        sake: !!b.sake,
+        aged: b.aged || null,
+        q: topQ,
+        value: Math.round((beerValue(bid) || b.value || 100) * QUALITY[topQ].mult),
+    };
+}
+
+export function restoreBeerFromVault(br) {
+    if (!br || !br.bid) return false;
+    const B = ensureBrew();
+    B.stock[br.bid] = (B.stock[br.bid] || 0) + 1;
+    if (br.q) {
+        const q = beerQual(br.bid);
+        const k = ['', 's', 'g', 'p', 'd'][br.q];
+        if (k) q[k] = (q[k] || 0) + 1;
+    }
+    return true;
 }
 

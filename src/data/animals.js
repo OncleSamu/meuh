@@ -105,7 +105,7 @@ export const ANIMALS = {
         prodId: 'peacockFeather',
         cost: 9000,
         time: 1800,
-        reqLvl: 49,
+        reqLvl: 52,
         xp: 26,
     },
     alpaca: {
@@ -114,7 +114,7 @@ export const ANIMALS = {
         prodId: 'alpacaWool',
         cost: 12000,
         time: 1500,
-        reqLvl: 66,
+        reqLvl: 72,
         xp: 24,
     },
     buffalo: {
@@ -123,7 +123,7 @@ export const ANIMALS = {
         prodId: 'buffaloMilk',
         cost: 20000,
         time: 1200,
-        reqLvl: 53,
+        reqLvl: 57,
         xp: 22,
     },
     donkey: {
@@ -132,7 +132,7 @@ export const ANIMALS = {
         prodId: 'donkeyMilk',
         cost: 25000,
         time: 1500,
-        reqLvl: 47,
+        reqLvl: 49,
         xp: 26,
     },
     turkey: {

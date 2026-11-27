@@ -253,6 +253,8 @@ export const CONF_EXTRA = {
     brownSugar: [4, 0, 1, 1, 0],
     darkChoc: [1, 0, 5, 0, 1],
     orangeBlossomWater: [2, 3, 0, 1, 0],
+    cardamom: [0, 0, 2, 5, 1],
+    waterLily: [2, 4, 0, 0, 0],
 };
 
 // Couleur d'accent par note de goût dominante (pour teinter les rayures et inclusions SVG)
@@ -494,7 +496,7 @@ export const CONF_ORDERS = {
     every: 2100, // nouvelle commande toutes les 35 min
     max: 3,
     payMult: 1.75,
-    villagers: ['lucie', 'odette', 'gaston', 'mei', 'ingrid', 'yasmine', 'margaux', 'odile', 'theo', 'marcel', 'lina'],
+    villagers: ['lucie', 'odette', 'gaston', 'mei', 'ingrid', 'yasmine', 'margaux', 'odile', 'jules', 'marcel', 'baptiste'],
 };
 
 // Grimoire du Confiseur : palier tous les 8 découverts (ingrédients confits + 24 classiques)

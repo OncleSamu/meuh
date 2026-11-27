@@ -4,7 +4,7 @@ import { now } from '../core/clock.js';
 import { view } from '../core/view.js';
 import { toast, sfx, burst } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { MAISON, MAISON_CLIENTS, PALETTES, MAISON_ORDERS, ORDER_WHO, PK_GIFT, ASK_WHY } from '../data/maison.js';
+import { MAISON, MAISON_CLIENTS, PALETTES, MAISON_ORDERS, ORDER_WHO, PK_GIFT, ASK_WHY, PRESTIGE_BOX_LVL, PRESTIGE_COFFRETS } from '../data/maison.js';
 import { VILLAGERS } from '../data/village.js';
 import { LOVES, GIFT_PTS } from '../data/friends.js';
 import { QUALITY } from '../data/farm.js';
@@ -17,10 +17,16 @@ import { campBuilt, campGuests } from './camping.js';
 import { presentVillagers } from './home.js';
 import { addFriendship } from './village.js';
 import { isBirthday } from './friends.js';
+import { addRenom } from './renom.js';
+import { myBeers, beerStock, beerPrice, takeBeerForVault } from './brewery.js';
+import { lotValue } from './cave.js';
+import { myPerfumes, perfumeStock, perfumePrice, ensurePerfume } from './perfume.js';
+import { myConfs, confStock, confPrice, ensureConf } from './confiserie.js';
 import { ecoLvl } from '../core/state.js';
 
 const M = () => state.maison;
 export const maisonOpen = () => campBuilt();
+export const prestigeBoxOpen = () => state.level >= PRESTIGE_BOX_LVL || !!state.maison;
 export const maisonBuilt = () => !!state.maison;
 export const canFoundMaison = () => maisonOpen() && !state.maison && hasCost(MAISON.cost);
 export function foundMaison(at) {
@@ -379,4 +385,199 @@ export function pullPk(req, n) {
     state.stats.coffretsSold = (state.stats.coffretsSold || 0) + n;
     state.stats.coffretShipped = (state.stats.coffretShipped || 0) + n;
     return list.reduce((a, c) => a + pkValue(c), 0);
+}
+
+// ---------------- 1.187 : La Maison 2.0 — Coffrets Prestige Multi-Ateliers (dès niv. 62) ----------------
+const FALLBACK_SWEETS = ['darkChoc', 'praline', 'nougat', 'caramel', 'chocBox', 'marronsGlaces', 'macaron', 'tiramisu', 'jam'];
+
+export function ensurePrestigeBoxes() {
+    if (!state.prestigeBoxes || typeof state.prestigeBoxes !== 'object') {
+        state.prestigeBoxes = { made: 0, sold: 0, book: {}, claimed: false, draft: { drink: null, conf: null, perf: null } };
+    }
+    const PB = state.prestigeBoxes;
+    PB.book = PB.book || {};
+    PB.draft = PB.draft || { drink: null, conf: null, perf: null };
+    return PB;
+}
+
+export function prestigeDrinks() {
+    const out = [];
+    for (const b of myBeers()) {
+        if (beerStock(b.id) > 0) {
+            const kind = b.sake ? 'sake' : b.cider ? 'cider' : b.mead ? 'mead' : 'beer';
+            out.push({
+                ref: 'beer:' + b.id,
+                id: b.id,
+                name: b.name,
+                sub: `${b.sake ? 'Saké' : b.cider ? 'Cidre' : b.mead ? 'Hydromel' : 'Bière'} · ${beerStock(b.id)} en stock`,
+                val: beerPrice(b.id),
+                kind,
+                stars: b.stars || 1,
+                icon: ['ui', b.sake ? 'sake' : 'beer'],
+            });
+        }
+    }
+    if (state.cave && Array.isArray(state.cave.reserve)) {
+        state.cave.reserve.forEach((l, idx) => {
+            if (!l) return;
+            const it = ITEMS[l.id];
+            out.push({
+                ref: 'cave:' + idx,
+                idx,
+                name: l.name || (it ? it.name : l.id),
+                sub: `Cave (réserve) · ${lotValue(l)} p.`,
+                val: lotValue(l),
+                kind: 'cave',
+                stars: Math.min(3, (l.stage || 1)),
+                icon: ['ui', 'cave'],
+            });
+        });
+    }
+    return out.sort((a, b) => b.val - a.val);
+}
+
+export function prestigeConfs() {
+    const out = [];
+    for (const c of myConfs()) {
+        if (confStock(c.id) > 0) {
+            out.push({
+                ref: 'conf:' + c.id,
+                id: c.id,
+                name: c.name,
+                sub: `Confiserie · ${confStock(c.id)} en stock`,
+                val: confPrice(c.id),
+                kind: c.kind || 'choco',
+                stars: c.stars || 1,
+                icon: ['ui', 'confiserie'],
+            });
+        }
+    }
+    // Douceurs d'atelier classiques utilisables dès niv. 62 (avant l'Atelier Confiserie au niv. 64)
+    for (const id of FALLBACK_SWEETS) {
+        if ((state.inventory[id] || 0) > 0 && ITEMS[id]) {
+            out.push({
+                ref: 'item:' + id,
+                id,
+                name: ITEMS[id].name,
+                sub: `Atelier · ${state.inventory[id]} en stock`,
+                val: ITEMS[id].sell || 120,
+                kind: 'sweet',
+                stars: 1,
+                icon: ['item', id],
+            });
+        }
+    }
+    return out.sort((a, b) => b.val - a.val);
+}
+
+export function prestigePerfs() {
+    const out = [];
+    for (const p of myPerfumes()) {
+        if (perfumeStock(p.id) > 0) {
+            out.push({
+                ref: 'perf:' + p.id,
+                id: p.id,
+                name: p.name,
+                sub: `Parfumerie · ${perfumeStock(p.id)} en stock`,
+                val: perfumePrice(p.id),
+                family: p.family || 'floral',
+                stars: p.stars || 1,
+                icon: ['ui', 'perfume'],
+            });
+        }
+    }
+    return out.sort((a, b) => b.val - a.val);
+}
+
+export function setPrestigeSlot(slot, ref) {
+    if (!['drink', 'conf', 'perf'].includes(slot)) return false;
+    const PB = ensurePrestigeBoxes();
+    PB.draft[slot] = PB.draft[slot] === ref ? null : ref;
+    sfx('click');
+    return true;
+}
+
+export function prestigeBoxPreview() {
+    const PB = ensurePrestigeBoxes();
+    const drinks = prestigeDrinks();
+    const confs = prestigeConfs();
+    const perfs = prestigePerfs();
+    const d = drinks.find(x => x.ref === PB.draft.drink) || null;
+    const c = confs.find(x => x.ref === PB.draft.conf) || null;
+    const p = perfs.find(x => x.ref === PB.draft.perf) || null;
+    if (!d || !c || !p) return { ready: false, d, c, p, drinks, confs, perfs };
+    const theme = PRESTIGE_COFFRETS.find(t => t.match(d, c, p)) || PRESTIGE_COFFRETS[PRESTIGE_COFFRETS.length - 1];
+    const starBonus = 1 + ((d.stars || 1) + (c.stars || 1) + (p.stars || 1) - 3) * 0.06;
+    const raw = (d.val || 0) + (c.val || 0) + (p.val || 0);
+    const gold = Math.max(800, Math.round(raw * theme.mult * starBonus));
+    const xp = Math.round(600 + gold * 0.14);
+    const isNew = !PB.book[theme.id];
+    return { ready: true, d, c, p, theme, gold, xp, renom: theme.renom, isNew, drinks, confs, perfs };
+}
+
+export function craftPrestigeBox(at) {
+    if (!prestigeBoxOpen()) return null;
+    const pv = prestigeBoxPreview();
+    if (!pv.ready) return null;
+    // Consommer 1 cuvée
+    if (pv.d.ref.startsWith('beer:')) {
+        if (!takeBeerForVault(pv.d.id)) return null;
+    } else if (pv.d.ref.startsWith('cave:')) {
+        const idx = pv.d.idx;
+        if (!state.cave || !state.cave.reserve || !state.cave.reserve[idx]) return null;
+        state.cave.reserve.splice(idx, 1);
+    }
+    // Consommer 1 confiserie
+    if (pv.c.ref.startsWith('conf:')) {
+        const C = ensureConf();
+        if ((C.stock[pv.c.id] || 0) < 1) return null;
+        C.stock[pv.c.id]--;
+    } else if (pv.c.ref.startsWith('item:')) {
+        if ((state.inventory[pv.c.id] || 0) < 1) return null;
+        state.inventory[pv.c.id]--;
+    }
+    // Consommer 1 parfum
+    if (pv.p.ref.startsWith('perf:')) {
+        const P = ensurePerfume();
+        if ((P.stock[pv.p.id] || 0) < 1) return null;
+        P.stock[pv.p.id]--;
+    }
+    const PB = ensurePrestigeBoxes();
+    PB.made = (PB.made || 0) + 1;
+    PB.sold = (PB.sold || 0) + 1;
+    PB.book[pv.theme.id] = (PB.book[pv.theme.id] || 0) + 1;
+    PB.draft = { drink: null, conf: null, perf: null };
+    earn(pv.gold, at);
+    addXp(pv.xp, at);
+    addRenom(pv.renom);
+    state.income.maison = (state.income.maison || 0) + pv.gold;
+    state.stats.prestigeBoxes = (state.stats.prestigeBoxes || 0) + 1;
+    if (state.maison) {
+        state.maison.rep = (state.maison.rep || 0) + 10;
+        state.maison.sold = (state.maison.sold || 0) + 1;
+    }
+    sfx('level');
+    burst(at, 'sparkle', 18);
+    toast(
+        `${pv.theme.name} vendu : +${pv.gold.toLocaleString('fr-FR')} pièces, +${pv.renom} Renom${pv.isNew ? ' (nouveau au catalogue !)' : ''} !`,
+        ['ui', 'maison'],
+    );
+    return pv;
+}
+
+export const prestigeBookCount = () => {
+    const PB = ensurePrestigeBoxes();
+    return PRESTIGE_COFFRETS.filter(t => PB.book[t.id] > 0).length;
+};
+export const prestigeBookClaimable = () => !ensurePrestigeBoxes().claimed && prestigeBookCount() >= PRESTIGE_COFFRETS.length;
+export function claimPrestigeBook(at) {
+    if (!prestigeBookClaimable()) return false;
+    const PB = ensurePrestigeBoxes();
+    PB.claimed = true;
+    state.prestige.rubans = (state.prestige.rubans || 0) + 2;
+    earn(50000, at);
+    sfx('level');
+    burst(at, 'sparkle', 20);
+    toast('Catalogue Prestige complet : +2 Rubans et +50 000 pièces !', ['ui', 'ribbon']);
+    return true;
 }

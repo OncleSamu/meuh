@@ -31,8 +31,8 @@ const passRank = () => {
     return G.metierRankUp();
 };
 
-test('métiers : six métiers, dix rangs de deux leçons, des quantités qui montent', () => {
-    assert.equal(METIER_IDS.length, 6);
+test('métiers : sept métiers, dix rangs de deux leçons, des quantités qui montent', () => {
+    assert.equal(METIER_IDS.length, 7);
     for (const id of METIER_IDS) {
         const m = METIERS[id];
         assert.equal(m.lessons.length, METIER_RANKS, id);
@@ -52,7 +52,7 @@ test('métiers : six métiers, dix rangs de deux leçons, des quantités qui mon
 });
 
 test('métiers : chaque leçon de statistique existe dans le jeu', () => {
-    const src = ['farm', 'island', 'animals', 'births', 'stud', 'genetics', 'haras', 'comice', 'fair', 'orchard', 'orchardplus', 'orchardlife', 'farmlife', 'apiary', 'workshop', 'orders', 'armand', 'maison', 'cave', 'brewery', 'counter', 'fishing', 'port', 'incidents', 'oasis', 'nord']
+    const src = ['farm', 'island', 'animals', 'births', 'stud', 'genetics', 'haras', 'comice', 'fair', 'orchard', 'orchardplus', 'orchardlife', 'farmlife', 'apiary', 'workshop', 'orders', 'armand', 'maison', 'cave', 'brewery', 'counter', 'fishing', 'port', 'incidents', 'oasis', 'nord', 'asie', 'mine', 'museum', 'perfume', 'confiserie']
         .map(f => readFileSync(new URL(`../../src/systems/${f}.js`, import.meta.url), 'utf8'))
         .join('\n');
     for (const id of METIER_IDS)

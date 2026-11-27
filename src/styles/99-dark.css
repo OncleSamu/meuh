@@ -88,3 +88,97 @@ html.dark.contrast {
     --line: #ffffff;
 }
 
+/* 1.184 : Corrections majeures de contraste du thème sombre (MeuhCG, Cave, Haras, Confiserie, badges dorés) */
+html.dark .tcg-card {
+    background: linear-gradient(155deg, color-mix(in srgb, var(--fc, #8a6a44) 26%, #241b14), color-mix(in srgb, var(--rc, #7a5c3a) 22%, #18110c)) !important;
+    color: #f6ebd4;
+}
+html.dark .tcg-card.rar-L {
+    background: linear-gradient(155deg, #4b3614, #2a1d0b) !important;
+    color: #fff2cc;
+}
+html.dark .tcg-card .tcg-foot-glass {
+    background: rgba(24, 17, 12, 0.88);
+    color: #f6ebd4;
+}
+html.dark .tcg-card .tcg-name,
+html.dark .tcg-card .tcg-stats,
+html.dark .tcg-card .tcg-pow-box,
+html.dark .tcg-card .tcg-flavor,
+html.dark .tcg-card .tcg-meta {
+    color: #f6ebd4;
+}
+html.dark .tcg-card .tcg-st {
+    background: rgba(255, 240, 210, 0.1);
+    color: #f6ebd4;
+}
+html.dark .tcg-gold-chip,
+html.dark .tcg-craft-btn.ok,
+html.dark .tcg-tourney-banner,
+html.dark .tcg-god-banner,
+html.dark .tcg-var-pill.v-gold,
+html.dark .sh-badge.champ,
+html.dark .defi-card.won,
+html.dark .bk-pips span.on {
+    color: #2c1a0a;
+    --ink: #2c1a0a;
+    --ink-soft: rgba(44, 26, 10, 0.78);
+}
+html.dark .tcg-tourney-banner,
+html.dark .tcg-god-banner {
+    background: linear-gradient(135deg, #5d4317, #3e2b0d);
+    color: #fff3cf;
+    --ink: #fff3cf;
+    --ink-soft: rgba(255, 243, 207, 0.8);
+}
+html.dark .tcg-wmini {
+    background: #2b2017;
+    border-color: #6b533b;
+    color: #f2e4c8;
+}
+html.dark .auction-card {
+    background: linear-gradient(180deg, #3c2d1f, #2c2016);
+    color: #f2e4c8;
+}
+html.dark .lock-tag,
+html.dark .bait b,
+html.dark .goods.hot,
+html.dark .v-tile.fixed,
+html.dark .plot.locked.next.can {
+    color: #fff3cf;
+    --ink: #fff3cf;
+}
+html.dark .lock-tag {
+    background: #4e3b28;
+}
+html.dark .bait b {
+    background: #3d2e1e;
+}
+html.dark .goods.hot {
+    background: linear-gradient(180deg, #5c4319, #422f10);
+}
+html.dark .v-tile.fixed {
+    background: #2d442b;
+}
+html.dark .plot.locked.next.can {
+    background: #3d331d;
+    border-color: #d9a441;
+}
+html.dark .cfm-cut-line,
+html.dark .cfm-stripe-w {
+    background: rgba(255, 255, 255, 0.92);
+}
+html.dark .cloud-box,
+html.dark .cloud-code,
+html.dark .cloud-link-row input {
+    background: var(--paper-l);
+    color: var(--ink);
+    border-color: rgba(242, 228, 200, 0.28);
+}
+html.dark .sx {
+    background: #3c2b1e;
+    color: #f2e4c8;
+    border-color: var(--line);
+}
+
+

@@ -5,7 +5,7 @@ import { fmt, fmtTime, formatDuration } from '../../core/format.js';
 import { ITEMS } from '../../data/items.js';
 import { ANIMALS } from '../../data/animals.js';
 import { MACHINES } from '../../data/machines.js';
-import { UPGRADES, DECOS, DOG, SOILS } from '../../data/farm.js';
+import { UPGRADES, DECOS, DOG, SOILS, QUALITY } from '../../data/farm.js';
 import { SEASONS } from '../../data/world.js';
 import * as G from '../../systems/index.js';
 import { blocks, actions, esc, QUIET } from '../dom.js';
@@ -420,7 +420,7 @@ function stallCard() {
                     return sold > 3
                         ? ''
                         : `<button class="sslot sold" data-act="collectStall" data-k="${k}">${ico(['ui', 'coin'])}<b>${fmt(sl.qty * sl.price)}</b><span>Encaisser</span></button>`;
-                return `<div class="sslot listed">${ico(['item', sl.id])}<b>×${sl.qty}</b><span>${fmt(sl.price)}${COIN()} l’unité</span><small>client ≈ ${timer(sl.sellAt)}</small><button class="sx" data-act="cancelStall" data-k="${k}" aria-label="Retirer">×</button></div>`;
+                return `<div class="sslot listed">${ico(['item', sl.id])}${sl.q ? qStar(sl.q) : ''}<b>×${sl.qty}</b><span>${fmt(sl.price)}${COIN()} l’unité</span><small>client ≈ ${timer(sl.sellAt)}</small><button class="sx" data-act="cancelStall" data-k="${k}" aria-label="Retirer">×</button></div>`;
             })
             .join('')}</div>
         ${later.length ? `<p class="card-sub">Une place de plus ${later.length > 1 ? `aux niveaux ${later.slice(0, -1).join(', ')} et ${later.at(-1)}` : `au niveau ${later[0]}`}.</p>` : ''}
@@ -687,8 +687,9 @@ defineSheet('stall', {
     open(o) {
         o.k = +o.k;
         o.ratio = 1;
+        o.q = 0;
         o.qty = 1;
-        if (o.id) o.qty = G.stallMax(o.id);
+        if (o.id) o.qty = G.stallMax(o.id, 0);
     },
     render(o) {
         const all = G.stallChoices();
@@ -708,12 +709,26 @@ defineSheet('stall', {
               : `${chips}${pg.top}<div class="barn-goods">${list.map(id => `<button class="bgood${o.id === id ? ' sel' : ''}" data-act="stallPick" data-id="${id}" title="${ITEMS[id].name}">${ico(['item', id])}<b>${G.sellableQty(id)}</b></button>`).join('')}</div>`;
         const search = ['search', all.length > 12 ? searchBox('stall', `Chercher parmi ${all.length} produits`) : ''];
         if (!o.id || !all.includes(o.id)) return [search, ['grid', grid + (all.length ? '<p class="card-sub center">Choisissez un produit à mettre en vente.</p>' : '')], ['form', '']];
-        const max = G.stallMax(o.id);
+        const qAvail = [0, 1, 2, 3, 4].filter(r => r === 0 || G.stallQualityStock(o.id, r) > 0);
+        if (!qAvail.includes(o.q || 0)) o.q = 0;
+        const qr = o.q || 0;
+        const max = G.stallMax(o.id, qr);
         o.qty = Math.max(1, Math.min(o.qty, max));
-        const unit = G.stallUnit(o.id, o.ratio);
-        const whole = G.unitPrice(o.id, 0);
+        const unit = G.stallUnit(o.id, o.ratio, qr);
+        const whole = G.unitPrice(o.id, qr);
+        const qRow =
+            qAvail.length > 1
+                ? `<div class="form-row"><span>Qualité</span><div class="chips-row">${qAvail
+                      .map(r => {
+                          const n = G.stallQualityStock(o.id, r);
+                          const lbl = r ? `${qStar(r)}${QUALITY[r].name} (${n})` : `Standard (${n})`;
+                          return `<button class="pick-chip${qr === r ? ' on' : ''}" data-act="stallQ" data-q="${r}">${lbl}</button>`;
+                      })
+                      .join('')}</div></div>`
+                : '';
         const form = `<div class="stall-form">
-            <div class="card-head">${ico(['item', o.id], 'ico big')}<div class="card-main"><div class="card-title">${ITEMS[o.id].name}</div><div class="card-sub">${G.sellableQty(o.id)} disponible${G.sellableQty(o.id) > 1 ? 's' : ''} · au grossiste : ${fmt(whole)} pièce${whole > 1 ? 's' : ''} l’unité</div></div></div>
+            <div class="card-head">${ico(['item', o.id], 'ico big')}<div class="card-main"><div class="card-title">${ITEMS[o.id].name}${qr ? ` ${qStar(qr)}` : ''}</div><div class="card-sub">${G.stallQualityStock(o.id, qr)} disponible${G.stallQualityStock(o.id, qr) > 1 ? 's' : ''} · au grossiste : ${fmt(whole)} pièce${whole > 1 ? 's' : ''} l’unité</div></div></div>
+            ${qRow}
             <div class="form-row"><span>Quantité</span><div class="stepper">${btn('', { act: 'stallQty', data: { d: -1 }, size: 'sm', icon: ['ui', 'minus'], title: 'Moins' })}<b>${o.qty}</b>${btn('', { act: 'stallQty', data: { d: 1 }, size: 'sm', icon: ['ui', 'plus'], title: 'Plus' })}${btn('Max', { act: 'stallQty', data: { d: 99 }, size: 'sm' })}</div></div>
             <div class="form-row"><span>Prix</span><input type="range" min="50" max="150" step="5" value="${Math.round(o.ratio * 100)}" data-input="stallPrice"><b id="stall-pct">${Math.round(o.ratio * 100)} %</b></div>
             <div class="stall-sum" id="stall-sum">${stallSum(o, unit)}</div>
@@ -779,11 +794,17 @@ export function setupMarket() {
         stallPick: (el, d) => {
             const o = so();
             o.id = d.id;
-            o.qty = G.stallMax(d.id);
+            o.q = 0;
+            o.qty = G.stallMax(d.id, 0);
+        },
+        stallQ: (el, d) => {
+            const o = so();
+            o.q = +d.q || 0;
+            o.qty = G.stallMax(o.id, o.q);
         },
         stallQty: (el, d) => {
             const o = so(),
-                max = G.stallMax(o.id);
+                max = G.stallMax(o.id, o.q || 0);
             o.qty = +d.d === 99 ? max : Math.max(1, Math.min(max, o.qty + +d.d));
         },
         // le curseur bouge sans redessiner le tiroir (sinon on le lâcherait)
@@ -791,12 +812,12 @@ export function setupMarket() {
             const o = so();
             o.ratio = +d.value / 100;
             document.getElementById('stall-pct').textContent = `${Math.round(o.ratio * 100)} %`;
-            document.getElementById('stall-sum').innerHTML = stallSum(o, G.stallUnit(o.id, o.ratio));
+            document.getElementById('stall-sum').innerHTML = stallSum(o, G.stallUnit(o.id, o.ratio, o.q || 0));
             return QUIET;
         },
         listStall: el => {
             const o = so();
-            if (G.listStall(o.k, o.id, o.qty, o.ratio, el)) closeSheet('stall');
+            if (G.listStall(o.k, o.id, o.qty, o.ratio, el, o.q || 0)) closeSheet('stall');
         },
     });
 }

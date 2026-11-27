@@ -44,9 +44,12 @@ export async function readCode(text) {
 }
 
 export function saveSummary(sv) {
-    const animals = (sv.animals || []).length,
-        machines = (sv.machines || []).length;
-    return `Niveau ${sv.level || 1} · ${fmt(sv.money || 0)} pièces · ${animals} ${animals > 1 ? 'animaux' : 'animal'} · ${machines} machine${machines > 1 ? 's' : ''}${sv.prestige && sv.prestige.rubans ? ` · ${sv.prestige.rubans} ruban${sv.prestige.rubans > 1 ? 's' : ''}` : ''}`;
+    const lvl = Number.isFinite(Number(sv.level)) ? Math.max(1, Math.floor(Number(sv.level))) : 1;
+    const money = Number.isFinite(Number(sv.money)) ? Number(sv.money) : 0;
+    const rubans = sv.prestige && Number.isFinite(Number(sv.prestige.rubans)) ? Math.max(0, Math.floor(Number(sv.prestige.rubans))) : 0;
+    const animals = Array.isArray(sv.animals) ? sv.animals.length : 0,
+        machines = Array.isArray(sv.machines) ? sv.machines.length : 0;
+    return `Niveau ${lvl} · ${fmt(money)} pièces · ${animals} ${animals > 1 ? 'animaux' : 'animal'} · ${machines} machine${machines > 1 ? 's' : ''}${rubans ? ` · ${rubans} ruban${rubans > 1 ? 's' : ''}` : ''}`;
 }
 
 // ---------------- copies de secours ----------------

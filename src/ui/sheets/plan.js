@@ -65,6 +65,16 @@ function targetRows(list) {
                 const label = b ? esc(b.name) : 'Bière maison';
                 return `<div class="rneed${done ? ' ok' : ready ? ' ok' : ''}">${b ? beerArt(b) : `<span class="rneed-art">${art('ui', 'beer')}</span>`}<span class="row-main"><b>${e.n} brassin${e.n > 1 ? 's' : ''} · ${label}</b><small>Brasserie · ${e.queued} lancé${e.queued > 1 ? 's' : ''} sur ${e.n} (${e.n * ABBEY.bottles} bouteilles)</small></span>${ico(['ui', done || ready ? 'check' : 'clock'])}</div>`;
             }
+            if (e.kind === 'perfume') {
+                const pf = G.perfumeOf(e.pid);
+                const label = pf ? esc(pf.name) : 'Parfum maison';
+                return `<div class="rneed${done || ready ? ' ok' : ''}"><span class="rneed-art">${art('ui', 'perfume')}</span><span class="row-main"><b>${e.n} macération${e.n > 1 ? 's' : ''} · ${label}</b><small>Parfumerie · ${e.queued} lancée${e.queued > 1 ? 's' : ''} sur ${e.n}</small></span>${ico(['ui', done || ready ? 'check' : 'clock'])}</div>`;
+            }
+            if (e.kind === 'conf') {
+                const cf = G.confOf(e.cid);
+                const label = cf ? esc(cf.name) : 'Confiserie maison';
+                return `<div class="rneed${done || ready ? ' ok' : ''}"><span class="rneed-art">${art('ui', 'confiserie')}</span><span class="row-main"><b>${e.n} chaudron${e.n > 1 ? 's' : ''} · ${label}</b><small>Confiserie · ${e.queued} lancé${e.queued > 1 ? 's' : ''} sur ${e.n}</small></span>${ico(['ui', done || ready ? 'check' : 'clock'])}</div>`;
+            }
             return `<div class="rneed${done || ready ? ' ok' : ''}"><span class="rneed-art">${art('item', e.id)}</span><span class="row-main"><b>${e.n} ${plainName(e.id)}</b><small>${MACHINES[RECIPES[e.id].machine].name} · ${e.queued} lancé${e.queued > 1 ? 's' : ''} sur ${e.n}</small></span>${ico(['ui', done || ready ? 'check' : 'clock'])}</div>`;
         })
         .join('');
@@ -74,7 +84,7 @@ function current(p) {
     const sum = G.planSummary();
     const list = G.planEntries(p);
     const info = G.planInfo(p);
-    const hasBeer = list.some(e => e.kind === 'beer');
+    const hasCustom = list.some(e => e.kind === 'beer' || e.kind === 'perfume' || e.kind === 'conf');
     const ready = G.finalReady() || p.go;
     const state2 =
         G.barnSpace() <= 0
@@ -84,29 +94,36 @@ function current(p) {
               : sum.raws.length
                 ? 'Il manque des produits du champ, des bêtes ou du rucher : le plan reprend tout seul dès qu’ils sont en grange.'
                 : ready
-                  ? hasBeer
-                      ? 'Les ingrédients sont prêts : les lots et brassins partent dès qu’une machine ou une cuve se libère.'
+                  ? hasCustom
+                      ? 'Les ingrédients sont prêts : les lots, brassins, macérations et chaudrons partent dès qu’une place se libère.'
                       : 'Tout est prêt : les produits finaux partent dès qu’une place se libère.'
                   : 'Les machines préparent les ingrédients. Chaque produit final partira tout seul dès que tout est réuni.';
     return `${p.label || list.length > 1 ? `<div class="card-head">${ico(info.icon, 'ico big')}<div class="card-main"><div class="card-title">${esc(info.title)}</div><div class="card-sub">${p.queued} / ${p.n} lancé${p.queued > 1 ? 's' : ''}</div></div></div>` : ''}
         <p class="card-sub">${state2}${sum.time ? ` Encore environ ${dur(sum.time)}.` : ''}</p>
         ${bar(p.n ? p.queued / p.n : 0)}
         ${chain(sum, targetRows(list))}
-        <p class="card-sub">Ce que le plan garde ne part ni au grossiste ni à l’étal. Il ramasse lui-même les étapes${hasBeer ? ' et enchaîne les brassins en cuve' : ''} ; le résultat vous attend à sa machine.</p>
+        <p class="card-sub">Ce que le plan garde ne part ni au grossiste ni à l’étal. Il ramasse lui-même les étapes${hasCustom ? ' et enchaîne automatiquement vos cuves et chaudrons' : ''} ; le résultat vous attend à l’atelier.</p>
         <div class="row-btns">${btn('Arrêter le plan', { act: 'planStop', size: 'sm' })}${btn('Nouveau plan', { act: 'planPick', size: 'sm', icon: ['ui', 'loop'] })}</div>`;
 }
 
 // 1.134 : la quantité au choix : les raccourcis, les boutons − et +, et une case où taper le nombre
 const clampN = n => Math.max(1, Math.min(G.PLAN_MAX, Math.round(n) || 1));
 const getDraft = () => (ui.sel.planDraft = Array.isArray(ui.sel.planDraft) ? ui.sel.planDraft : []);
-const sameEntry = (a, b) => (a.kind === 'beer' ? b.kind === 'beer' && a.bid === b.bid : b.kind !== 'beer' && a.id === b.id);
+const sameEntry = (a, b) =>
+    a.kind === 'beer'
+        ? b.kind === 'beer' && a.bid === b.bid
+        : a.kind === 'perfume'
+          ? b.kind === 'perfume' && a.pid === b.pid
+          : a.kind === 'conf'
+            ? b.kind === 'conf' && a.cid === b.cid
+            : b.kind === 'recipe' && a.id === b.id;
 
 function upsellHtml() {
     if (G.planCap() > 1) return '';
     if (G.domaineOpen()) {
-        return `<div class="plan-upsell"><span><b>Plusieurs plats en un seul plan ?</b><small>${PLAN_UPGRADE.name} (Domaine) permet d’enchaîner jusqu’à ${PLAN_UPGRADE.caps.at(-1)} plats ou bières ensemble.</small></span>${btn('Domaine', { act: 'planDomaine', size: 'sm', kind: 'gold' })}</div>`;
+        return `<div class="plan-upsell"><span><b>Plusieurs plats en un seul plan ?</b><small>${PLAN_UPGRADE.name} (Domaine) permet d’enchaîner jusqu’à ${PLAN_UPGRADE.caps.at(-1)} créations ensemble.</small></span>${btn('Domaine', { act: 'planDomaine', size: 'sm', kind: 'gold' })}</div>`;
     }
-    return `<p class="card-sub">Au niveau ${DOMAINE_LVL}, le <b>${PLAN_UPGRADE.name}</b> (Domaine) permet d’enchaîner plusieurs plats et bières maison dans un même plan.</p>`;
+    return `<p class="card-sub">Au niveau ${DOMAINE_LVL}, le <b>${PLAN_UPGRADE.name}</b> (Domaine) permet d’enchaîner plusieurs plats, bières, parfums et confiseries dans un même plan.</p>`;
 }
 
 function draftBox() {
@@ -117,11 +134,29 @@ function draftBox() {
     const ok = !sum.blocked.length;
     const rows = draft
         .map((e, k) => {
-            const isB = e.kind === 'beer';
+            const isB = e.kind === 'beer',
+                isP = e.kind === 'perfume',
+                isC = e.kind === 'conf';
             const b = isB ? G.beerOf(e.bid) : null;
-            const name = isB ? (b ? esc(b.name) : 'Bière') : ITEMS[e.id].name;
-            const sub = isB ? `${e.n} brassin${e.n > 1 ? 's' : ''} · ${e.n * ABBEY.bottles} bout.` : MACHINES[RECIPES[e.id].machine].name;
-            return `<div class="rneed">${isB && b ? beerArt(b) : `<span class="rneed-art">${art('item', e.id)}</span>`}<span class="row-main"><b>${name}</b><small>${sub}</small></span>
+            const pf = isP ? G.perfumeOf(e.pid) : null;
+            const cf = isC ? G.confOf(e.cid) : null;
+            const name = isB ? (b ? esc(b.name) : 'Bière') : isP ? (pf ? esc(pf.name) : 'Parfum') : isC ? (cf ? esc(cf.name) : 'Confiserie') : ITEMS[e.id].name;
+            const sub = isB
+                ? `${e.n} brassin${e.n > 1 ? 's' : ''} · ${e.n * ABBEY.bottles} bout.`
+                : isP
+                  ? `${e.n} macération${e.n > 1 ? 's' : ''} · Parfumerie`
+                  : isC
+                    ? `${e.n} chaudron${e.n > 1 ? 's' : ''} · Confiserie`
+                    : MACHINES[RECIPES[e.id].machine].name;
+            const iconHtml =
+                isB && b
+                    ? beerArt(b)
+                    : isP
+                      ? `<span class="rneed-art">${art('ui', 'perfume')}</span>`
+                      : isC
+                        ? `<span class="rneed-art">${art('ui', 'confiserie')}</span>`
+                        : `<span class="rneed-art">${art('item', e.id)}</span>`;
+            return `<div class="rneed">${iconHtml}<span class="row-main"><b>${name}</b><small>${sub}</small></span>
                 <div class="stepper">${btn('', { act: 'planDraftQty', data: { k, d: -1 }, icon: ['ui', 'minus'], size: 'sm', disabled: e.n <= 1 })}<b>×${e.n}</b>${btn('', { act: 'planDraftQty', data: { k, d: 1 }, icon: ['ui', 'plus'], size: 'sm', disabled: e.n >= G.PLAN_MAX })}</div>
                 ${btn('', { act: 'planDraftDel', data: { k }, icon: ['ui', 'cross'], kind: 'ghost', size: 'sm', title: 'Retirer' })}</div>`;
         })
@@ -135,27 +170,49 @@ function draftBox() {
     </div>`;
 }
 
-function choose(id, bid) {
-    const isBeer = !!bid;
+function choose(id, bid, pid, cid) {
+    const isBeer = !!bid,
+        isPerf = !!pid,
+        isConf = !!cid;
+    const isCustom = isBeer || isPerf || isConf;
     const b = isBeer ? G.beerOf(bid) : null;
-    if (isBeer && !b) return picker();
-    const n = clampN(ui.sel.planN || (isBeer ? 3 : 10));
-    const sum = isBeer ? G.beerPreview(bid, n) : G.prodPreview(id, n);
+    const pf = isPerf ? G.perfumeOf(pid) : null;
+    const cf = isConf ? G.confOf(cid) : null;
+    if ((isBeer && !b) || (isPerf && !pf) || (isConf && !cf)) return picker();
+    const n = clampN(ui.sel.planN || (isCustom ? 3 : 10));
+    const sum = isBeer
+        ? G.beerPreview(bid, n)
+        : isPerf
+          ? G.perfumePlanPreview(pid, n)
+          : isConf
+            ? G.confPlanPreview(cid, n)
+            : G.prodPreview(id, n);
     const ok = !sum.blocked.length;
     const raw = ui.sel.planRaw !== undefined ? ui.sel.planRaw : String(n);
     const cap = G.planCap();
     const draft = getDraft();
-    const entry = isBeer ? { kind: 'beer', bid, n } : { kind: 'recipe', id, n };
+    const entry = isBeer
+        ? { kind: 'beer', bid, n }
+        : isPerf
+          ? { kind: 'perfume', pid, n }
+          : isConf
+            ? { kind: 'conf', cid, n }
+            : { kind: 'recipe', id, n };
     const inDraft = draft.some(x => sameEntry(x, entry));
     const canAdd = cap > 1 && (inDraft || draft.length < cap);
     const headHtml = isBeer
         ? `<div class="card-head"><span class="plan-beer-big">${beerSvg(b)}</span><div class="card-main"><div class="card-title">${n} brassin${n > 1 ? 's' : ''} · ${esc(b.name)}</div><div class="card-sub">${n * ABBEY.bottles} bouteilles · environ ${dur(sum.time)} · en stock : ${fmt(G.beerStock(bid))}</div></div></div>`
-        : `<div class="card-head">${ico(['item', id], 'ico big')}<div class="card-main"><div class="card-title">${n} ${plainName(id)}</div><div class="card-sub">${MACHINES[RECIPES[id].machine].name} · environ ${dur(sum.time)} · en stock : ${fmt(state.inventory[id] || 0)}</div></div></div>`;
-    const presets = isBeer ? [1, 2, 3, 5, 10] : G.PLAN_QTYS;
-    const goData = isBeer ? { bid } : { id };
+        : isPerf
+          ? `<div class="card-head">${ico(['ui', 'perfume'], 'ico big')}<div class="card-main"><div class="card-title">${n} macération${n > 1 ? 's' : ''} · ${esc(pf.name)}</div><div class="card-sub">Parfumerie · environ ${dur(sum.time)} · en stock : ${fmt(G.perfumeStock(pid))}</div></div></div>`
+          : isConf
+            ? `<div class="card-head">${ico(['ui', 'confiserie'], 'ico big')}<div class="card-main"><div class="card-title">${n} chaudron${n > 1 ? 's' : ''} · ${esc(cf.name)}</div><div class="card-sub">Confiserie · environ ${dur(sum.time)} · en stock : ${fmt(G.confStock(cid))}</div></div></div>`
+            : `<div class="card-head">${ico(['item', id], 'ico big')}<div class="card-main"><div class="card-title">${n} ${plainName(id)}</div><div class="card-sub">${MACHINES[RECIPES[id].machine].name} · environ ${dur(sum.time)} · en stock : ${fmt(state.inventory[id] || 0)}</div></div></div>`;
+    const presets = isCustom ? [1, 2, 3, 5, 10] : G.PLAN_QTYS;
+    const goData = isBeer ? { bid } : isPerf ? { pid } : isConf ? { cid } : { id };
+    const backLbl = isBeer ? 'Autres cuvées' : isPerf ? 'Autres parfums' : isConf ? 'Autres confiseries' : 'Changer de plat';
     const btns = canAdd
         ? `${btn('Retour', { act: 'planPick', size: 'sm' })}${btn(inDraft ? 'Mettre à jour' : `Ajouter (${draft.length}/${cap})`, { act: 'planDraftAdd', data: goData, size: 'sm', kind: 'green' })}${btn(`Lancer seul`, { act: 'planGo', data: goData, kind: 'gold', disabled: !ok, icon: ['ui', 'loop'], size: 'sm' })}`
-        : `${btn(isBeer ? 'Autres bières' : 'Changer de plat', { act: 'planPick', size: 'sm' })}${btn(`Tout lancer · ${n}`, { act: 'planGo', data: goData, kind: 'gold', disabled: !ok, icon: ['ui', 'loop'] })}`;
+        : `${btn(backLbl, { act: 'planPick', size: 'sm' })}${btn(`Tout lancer · ${n}`, { act: 'planGo', data: goData, kind: 'gold', disabled: !ok, icon: ['ui', 'loop'] })}`;
     return [
         ['head', headHtml],
         [
@@ -165,10 +222,10 @@ function choose(id, bid) {
             ${btn('', { act: 'planStep', data: { d: 1 }, icon: ['ui', 'plus'], disabled: n >= G.PLAN_MAX, title: 'Un de plus' })}${btn('10', { act: 'planStep', data: { d: 10 }, icon: ['ui', 'plus'], disabled: n >= G.PLAN_MAX, title: '10 de plus' })}</div>`,
         ],
         ['presets', `<div class="chips-row">${presets.map(q => `<button class="pick-chip${q === n ? ' on' : ''}" data-act="planN" data-n="${q}">×${q}</button>`).join('')}</div>`],
-        ['chain', chain(sum) || `<p class="card-sub">Tout est déjà en grange : le plan lance ${isBeer ? 'les brassins' : 'le plat'} tout de suite.</p>`],
+        ['chain', chain(sum) || `<p class="card-sub">Tout est déjà en grange : le plan lance ${isCustom ? 'les lots' : 'le plat'} tout de suite.</p>`],
         [
             'note',
-            `<p class="card-sub">${sum.raws.length ? 'Les produits qui manquent sont seulement signalés : le plan attend qu’ils soient en grange.' : 'Rien ne manque du champ ni des bêtes.'} ${isBeer ? `Les ${n} brassin${n > 1 ? 's' : ''} s’enchaînent automatiquement dans vos cuves libres.` : `Le plat final part tout seul quand il y a de quoi faire les ${n}.`}</p>
+            `<p class="card-sub">${sum.raws.length ? 'Les produits qui manquent sont seulement signalés : le plan attend qu’ils soient en grange.' : 'Rien ne manque du champ ni des bêtes.'} ${isCustom ? `Les ${n} lots s’enchaînent automatiquement dans vos cuves ou chaudrons libres.` : `Le plat final part tout seul quand il y a de quoi faire les ${n}.`}</p>
             ${G.planOf() ? `<p class="card-sub short">Un plan est déjà en cours (${esc(G.planInfo().title)}) : il sera remplacé.</p>` : ''}
             ${upsellHtml()}`,
         ],
@@ -178,18 +235,15 @@ function choose(id, bid) {
 
 function picker() {
     const beers = G.brewOpen() ? G.myBeers().filter(b => G.brewPlannable(b.id)) : [];
-    const tab = ui.sel.planTab === 'beer' && beers.length ? 'beer' : 'dish';
+    const perfumes = G.perfumeOpen() ? G.myPerfumes().filter(p => G.perfumePlannable(p.id)) : [];
+    const confs = G.confOpen() ? G.myConfs().filter(c => G.confPlannable(c.id)) : [];
+    const availTabs = [['dish', 'Plats']];
+    if (beers.length) availTabs.push(['beer', `Brasserie (${beers.length})`]);
+    if (perfumes.length) availTabs.push(['perfume', `Parfums (${perfumes.length})`]);
+    if (confs.length) availTabs.push(['conf', `Confiseries (${confs.length})`]);
+    const tab = availTabs.some(([k]) => k === ui.sel.planTab) ? ui.sel.planTab : 'dish';
     const q = queryOf('plan');
-    const tabsHtml = beers.length
-        ? segmented(
-              [
-                  ['dish', 'Plats'],
-                  ['beer', `Bières maison (${beers.length})`],
-              ],
-              tab,
-              'planTab',
-          )
-        : '';
+    const tabsHtml = availTabs.length > 1 ? segmented(availTabs, tab, 'planTab') : '';
     let listHtml = '';
     if (tab === 'beer') {
         const list = (q ? beers.filter(b => matchQ(q, b.name, ...b.ings.map(x => G.ingName(x[0])))) : beers)
@@ -199,10 +253,34 @@ function picker() {
             ? `<div class="rneeds">${list
                   .map(
                       b =>
-                          `<button class="rneed" data-act="planPick" data-bid="${b.id}">${beerArt(b)}<span class="row-main"><b>${esc(b.name)}</b><small>${'★'.repeat(b.stars)}${'☆'.repeat(3 - b.stars)} · ${b.mead ? 'Hydromel' : 'Bière'} · ${G.beerStock(b.id)} en stock</small></span>${ico(['ui', 'arrow'])}</button>`,
+                          `<button class="rneed" data-act="planPick" data-bid="${b.id}">${beerArt(b)}<span class="row-main"><b>${esc(b.name)}</b><small>${'★'.repeat(b.stars)}${'☆'.repeat(3 - b.stars)} · ${b.sake ? 'Saké' : b.cider ? 'Cidre' : b.mead ? 'Hydromel' : 'Bière'} · ${G.beerStock(b.id)} en stock</small></span>${ico(['ui', 'arrow'])}</button>`,
                   )
                   .join('')}</div>`
-            : empty('Aucune bière maison ne correspond.');
+            : empty('Aucune cuvée maison ne correspond.');
+    } else if (tab === 'perfume') {
+        const list = (q ? perfumes.filter(p => matchQ(q, p.name)) : perfumes)
+            .sort((a, b) => (b.fav ? 1 : 0) - (a.fav ? 1 : 0) || b.stars - a.stars || b.value - a.value)
+            .slice(0, 40);
+        listHtml = list.length
+            ? `<div class="rneeds">${list
+                  .map(
+                      p =>
+                          `<button class="rneed" data-act="planPick" data-pid="${p.id}"><span class="rneed-art">${art('ui', 'perfume')}</span><span class="row-main"><b>${esc(p.name)}</b><small>${'★'.repeat(p.stars || 1)} · ${G.perfumeStock(p.id)} en stock</small></span>${ico(['ui', 'arrow'])}</button>`,
+                  )
+                  .join('')}</div>`
+            : empty('Aucun parfum maison ne correspond.');
+    } else if (tab === 'conf') {
+        const list = (q ? confs.filter(c => matchQ(q, c.name)) : confs)
+            .sort((a, b) => (b.fav ? 1 : 0) - (a.fav ? 1 : 0) || b.stars - a.stars || b.value - a.value)
+            .slice(0, 40);
+        listHtml = list.length
+            ? `<div class="rneeds">${list
+                  .map(
+                      c =>
+                          `<button class="rneed" data-act="planPick" data-cid="${c.id}"><span class="rneed-art">${art('ui', 'confiserie')}</span><span class="row-main"><b>${esc(c.name)}</b><small>${'★'.repeat(c.stars || 1)} · ${G.confStock(c.id)} en stock</small></span>${ico(['ui', 'arrow'])}</button>`,
+                  )
+                  .join('')}</div>`
+            : empty('Aucune confiserie maison ne correspond.');
     } else {
         const all = Object.values(RECIPES)
             .filter(r => G.plannable(r.id) && Object.keys(r.ing).some(k => RECIPES[k]))
@@ -220,15 +298,21 @@ function picker() {
     const cap = G.planCap();
     const intro =
         tab === 'beer'
-            ? 'Planifiez plusieurs brassins de vos bières maison ou hydromels : la malterie et les ateliers préparent tout, puis les cuves s’enchaînent.'
-            : cap > 1
-              ? `Composez un plan jusqu’à ${cap} plats ou bières : toute la chaîne et les ingrédients communs sont calculés ensemble.`
-              : 'Les plats qui passent par plusieurs machines. Choisissez-en un : le plan calcule toute la chaîne.';
+            ? 'Planifiez plusieurs brassins de vos bières, cidres, hydromels ou sakés maison : les ateliers préparent tout, puis les cuves s’enchaînent.'
+            : tab === 'perfume'
+              ? 'Planifiez vos parfums maison : le plan prépare les essences nécessaires et enchaîne vos macérations.'
+              : tab === 'conf'
+                ? 'Planifiez vos confiseries maison : les ingrédients sont préparés puis les chaudrons se relancent tout seuls.'
+                : cap > 1
+                  ? `Composez un plan jusqu’à ${cap} créations : toute la chaîne et les ingrédients communs sont calculés ensemble.`
+                  : 'Les plats qui passent par plusieurs machines. Choisissez-en un : le plan calcule toute la chaîne.';
+    const placeholder =
+        tab === 'beer' ? 'Chercher une cuvée maison' : tab === 'perfume' ? 'Chercher un parfum maison' : tab === 'conf' ? 'Chercher une confiserie' : 'Chercher un plat';
     return [
         ['draft', draftBox()],
         ['tabs', tabsHtml],
         ['intro', `<p class="card-sub">${intro}</p>${upsellHtml()}`],
-        ['search', searchBox('plan', tab === 'beer' ? 'Chercher une bière maison' : 'Chercher un plat')],
+        ['search', searchBox('plan', placeholder)],
         ['list', listHtml],
     ];
 }
@@ -237,8 +321,10 @@ defineSheet('plan', {
     title: `${ico(['ui', 'loop'])}Plan de production`,
     render(o) {
         const p = G.planOf();
-        if (o.bid && G.brewPlannable(o.bid)) return choose(null, o.bid);
-        if (o.id && RECIPES[o.id]) return choose(o.id, null);
+        if (o.bid && G.brewPlannable(o.bid)) return choose(null, o.bid, null, null);
+        if (o.pid && G.perfumePlannable(o.pid)) return choose(null, null, o.pid, null);
+        if (o.cid && G.confPlannable(o.cid)) return choose(null, null, null, o.cid);
+        if (o.id && RECIPES[o.id]) return choose(o.id, null, null, null);
         if (p && !o.pick) return current(p);
         return picker();
     },
@@ -248,7 +334,7 @@ defineSheet('plan', {
 export function planCard() {
     const p = G.planOf();
     if (!p)
-        return `<button class="plan-strip" data-act="open" data-sheet="plan">${ico(['ui', 'loop'])}<span><b>Plan de production</b><small>Plats en quantité, commandes ou bières maison : toute la chaîne d’un coup</small></span>${ico(['ui', 'arrow'])}</button>`;
+        return `<button class="plan-strip" data-act="open" data-sheet="plan">${ico(['ui', 'loop'])}<span><b>Plan de production</b><small>Plats, brasserie, parfums ou confiseries : toute la chaîne d’un coup</small></span>${ico(['ui', 'arrow'])}</button>`;
     const sum = G.planSummary();
     const info = G.planInfo(p);
     const what = sum.blocked.length
@@ -268,7 +354,7 @@ export function planCard() {
 export function setupPlan() {
     actions({
         planTab: (el, d) => {
-            ui.sel.planTab = d.v === 'beer' ? 'beer' : 'dish';
+            ui.sel.planTab = ['beer', 'perfume', 'conf'].includes(d.v) ? d.v : 'dish';
         },
         planN: (el, d) => {
             ui.sel.planN = clampN(+d.n);
@@ -290,6 +376,12 @@ export function setupPlan() {
             if (d.bid) {
                 ui.sel.planN = 3;
                 openSheet('plan', { bid: d.bid });
+            } else if (d.pid) {
+                ui.sel.planN = 3;
+                openSheet('plan', { pid: d.pid });
+            } else if (d.cid) {
+                ui.sel.planN = 3;
+                openSheet('plan', { cid: d.cid });
             } else if (d.id) {
                 ui.sel.planN = 10;
                 openSheet('plan', { id: d.id });
@@ -303,8 +395,14 @@ export function setupPlan() {
         },
         planGo: (el, d) => {
             delete ui.sel.planRaw;
-            const n = clampN(ui.sel.planN || (d.bid ? 3 : 10));
-            const ok = d.bid ? G.startBeerPlan(d.bid, n) : G.startPlan(d.id, n);
+            const n = clampN(ui.sel.planN || (d.bid || d.pid || d.cid ? 3 : 10));
+            const ok = d.bid
+                ? G.startBeerPlan(d.bid, n)
+                : d.pid
+                  ? G.startPerfumePlan(d.pid, n)
+                  : d.cid
+                    ? G.startConfPlan(d.cid, n)
+                    : G.startPlan(d.id, n);
             if (ok) {
                 if (G.planOf()) openSheet('plan', {});
                 else closeAll();
@@ -312,8 +410,14 @@ export function setupPlan() {
         },
         planDraftAdd: (el, d) => {
             delete ui.sel.planRaw;
-            const n = clampN(ui.sel.planN || (d.bid ? 3 : 10));
-            const entry = d.bid ? { kind: 'beer', bid: d.bid, n } : { kind: 'recipe', id: d.id, n };
+            const n = clampN(ui.sel.planN || (d.bid || d.pid || d.cid ? 3 : 10));
+            const entry = d.bid
+                ? { kind: 'beer', bid: d.bid, n }
+                : d.pid
+                  ? { kind: 'perfume', pid: d.pid, n }
+                  : d.cid
+                    ? { kind: 'conf', cid: d.cid, n }
+                    : { kind: 'recipe', id: d.id, n };
             const draft = getDraft();
             const idx = draft.findIndex(x => sameEntry(x, entry));
             if (idx >= 0) draft[idx].n = n;

@@ -2,6 +2,7 @@
 import * as G from '../../systems/index.js';
 import { fmt } from '../../core/format.js';
 import { wineBottle, LABEL_STYLES } from '../../art/items2.js';
+import { esc } from '../dom.js';
 import { btn, empty } from '../kit.js';
 import { defineSheet } from '../sheets.js';
 import { renameBtn } from './rename.js';
@@ -12,7 +13,7 @@ export const bottleSvg = (l, size = 200) =>
 defineSheet('bottle', {
     title: o => {
         const l = G.findLot(o.uid);
-        return l ? G.lotName(l) : 'Bouteille';
+        return l ? esc(G.lotName(l)) : 'Bouteille';
     },
     render(o) {
         const l = G.findLot(o.uid);

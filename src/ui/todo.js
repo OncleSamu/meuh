@@ -6,6 +6,7 @@ import { HOLIDAYS } from '../data/world.js';
 import { RARE_EVENTS } from '../data/surprises.js';
 import { VILLAGERS } from '../data/village.js';
 import * as G from '../systems/index.js';
+import { esc } from './dom.js';
 
 const s = n => (n > 1 ? 's' : '');
 
@@ -32,7 +33,7 @@ export function todoList() {
     if (state.egg) add('farm/field', ['item', 'paintedEgg'], 'Un œuf caché !');
     const honey = state.grid.reduce((a, p) => a + (p.deco === 'hive' ? Math.floor(p.honey || 0) : 0), 0);
     add('farm/field', ['item', 'honey'], `${honey} pot${s(honey)} de miel`, honey);
-    if (state.dog.found) add('farm/field', ['ui', 'dog'], `${state.dog.name} a trouvé quelque chose`);
+    if (state.dog.found) add('farm/field', ['ui', 'dog'], `${esc(state.dog.name)} a trouvé quelque chose`);
     if (G.houseCanUp()) push('sheet:house', ['ui', 'house'], 'Maison à agrandir', 0);
     // l'île : cultures prêtes, fruits au pied des arbres
     if (state.island && G.islandOpen()) {
@@ -43,6 +44,8 @@ export function todoList() {
         if (fr) add('farm/island#isle', ['item', isl[0].tree.id], `${fr} fruit${s(fr)} sur l’île`, isl.length, { urgent: isl.some(x => G.groundFull(x.tree)) });
         const dd = G.deadTrees('island');
         add('farm/island#isle', ['item', 'wood'], `${dd} arbre${s(dd)} mort${s(dd)} sur l’île`, dd);
+        if (G.schoonerBack()) add('farm/island#isle', ['ui', 'schooner'], 'La goélette des îles est rentrée !', 1, { urgent: true });
+        if (G.lagoonReady()) push('farm/island#isle', ['ui', 'lagoon'], 'Lagon aux perles prêt sur l’île', 0, { cat: 'farm' });
     }
     // 1.48 : l'oasis : récoltes, fruits, citerne vide, chadouf
     if (state.oasis && G.oasisOpen()) {
@@ -53,6 +56,7 @@ export function todoList() {
         if (state.oasis.dry) add('farm/island#oasis', ['ui', 'drop'], 'La citerne est vide : l’oasis a soif', 1, { urgent: true });
         else if (G.chadoufOpen() && G.chadoufLeft() && G.oasisWater() < G.tankCap() * 0.3)
             add('farm/island#oasis', ['ui', 'oaChadouf'], 'Le chadouf vous attend', 1);
+        if (G.caravanBack()) add('farm/island#oasis', ['ui', 'oaCaravane'], 'La caravane de l’oasis est rentrée !', 1, { urgent: true });
     }
     // 1.51 : le Grand Nord : récoltes, fruits, poêles à nourrir, bois à fendre
     if (state.nord && G.nordOpen()) {
@@ -65,6 +69,7 @@ export function todoList() {
             if (out) add('farm/island#nord', ['ui', 'noPoele'], `${out} poêle${s(out)} éteint${s(out)} au Grand Nord`, out, { urgent: true });
         }
         if (G.chopOpen() && G.chopLeft() && (state.inventory.wood || 0) < 40) add('farm/island#nord', ['ui', 'noFendre'], 'Du bois à fendre', 1);
+        if (G.sledBack()) add('farm/island#nord', ['ui', 'noTraineau'], 'Le traîneau du Grand Nord est rentré !', 1, { urgent: true });
     }
     // 1.171 : les Terres d'Asie : récoltes, boue, bassin, roue à eau, jonque
     if (state.asie && G.asieOpen()) {
@@ -88,6 +93,7 @@ export function todoList() {
         if (geo) add('sheet:museum', ['ui', 'geodeAmethyst'], `${geo} géode${s(geo)} à ouvrir au Musée`, geo);
         const ms = G.museumClaimableMilestones().length;
         if (ms) add('sheet:museum', ['ui', 'star'], `${ms} récompense${s(ms)} du Musée à prendre`, ms, { urgent: true });
+        if (G.museumExpedReady()) add('sheet:museum', ['ui', 'pickaxe'], 'Expédition du Musée terminée !', 1, { urgent: true });
     }
     // 1.69 : les ruchers des contrées
     for (const [land, where, name] of [
@@ -127,7 +133,7 @@ export function todoList() {
         done.length,
     );
     const idle = state.machines.filter(m => !G.machineBusy(m) && G.recipesOf(m.type).some(r => G.recipeUnlocked(r.id) && G.canCook(r.id))).length;
-    add('machines/workshop', ['machine', 'mill'], `${idle} à l’arrêt`, idle);
+    if (idle) push('machines/workshop', ['machine', 'mill'], `${idle} machine${s(idle)} à l’arrêt`, 0, { cat: 'craft' });
     // 1.43 : des clients attendent au comptoir
     // 1.45 : un acheteur de la foire dont on peut remplir la demande
     const cm = G.comiceTodo();
@@ -279,13 +285,28 @@ export function todoList() {
     if (neigh) push('village/orders#give', ['ui', 'heart'], `${neigh} voisin${s(neigh)} à aider`, neigh);
     if (G.specialReady()) push('village/orders#give', ['ui', 'star'], 'Commande spéciale des voisins', 1);
 
+    if (G.harasOpen() && G.expressLeft() > 0)
+        push('animals/haras', ['ui', 'hCup2'], `Haras : ${G.expressLeft()} concours express`, 0, { cat: 'daily' });
+    if (G.mineDeepOpen() && G.mineEnergy() >= G.mineMaxEnergy())
+        push('farm/nature', ['ui', 'lantern'], 'Lanterne de la mine pleine', 0, { cat: 'daily' });
+    const tcgN = G.tcgBadge();
+    if (tcgN) push('sheet:tcg', ['ui', 'meuhcg'], `MeuhCG : ${tcgN} nouveauté${s(tcgN)}`, 0, { cat: 'daily' });
+
     const pts = G.skillPoints();
-    add('sheet:progress', ['ui', 'skillbook'], `${pts} point${s(pts)} de compétence`, pts);
+    add('sheet:progress', ['ui', 'skillbook'], `${pts} point${s(pts)} de compétence`, pts, { cat: 'daily' });
     const ach = G.claimableCount();
-    add('sheet:book', ['ui', 'trophy'], `${ach} succès à réclamer`, ach);
-    add('sheet:book', ['ui', 'book'], 'Page du livre complète', bookCounts().pages);
-    if (G.legendReady()) add('sheet:book', ['ui', 'goldCow'], 'Ferme légendaire !');
+    add('sheet:book', ['ui', 'trophy'], `${ach} succès à réclamer`, ach, { cat: 'daily' });
+    add('sheet:book', ['ui', 'book'], 'Page du livre complète', bookCounts().pages, { cat: 'daily' });
+    if (G.legendReady()) add('sheet:book', ['ui', 'goldCow'], 'Ferme légendaire !', 1, { cat: 'daily' });
+    for (const t of list) if (!t.cat) t.cat = todoCat(t);
     return list;
+}
+
+export function todoCat(t) {
+    if (t.urgent) return 'urgent';
+    if (t.go.startsWith('farm/') || t.go.startsWith('animals/pasture')) return 'farm';
+    if (t.go.startsWith('machines/') || t.go.startsWith('village/orders') || t.go.startsWith('market/')) return 'craft';
+    return 'daily';
 }
 
 // total par onglet (farm, animals, machines, village, market, menu) et par volet (farm/nature, machines/cave…)

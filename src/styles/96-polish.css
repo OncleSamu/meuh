@@ -545,3 +545,114 @@ html.contrast :focus-visible {
     outline-offset: 2px;
 }
 
+/* 1.184 : Responsive 360px, cibles tactiles confortables, HUD grand texte & sous-onglets Atelier compacts */
+.rename-btn {
+    min-width: 32px;
+    min-height: 32px;
+}
+.sub-help {
+    min-width: 32px;
+    min-height: 32px;
+}
+.vbld span,
+.vbld b {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.carte-items {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.fm-tasks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.plan-grid {
+    grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+}
+html.ts-2 #hud {
+    gap: 4px;
+    padding-inline: 6px;
+}
+html.ts-2 #hud .pill {
+    padding: 4px 7px;
+    font-size: 0.78rem;
+}
+@media (max-width: 440px) {
+    .fav-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .camp-card,
+    .fm-card,
+    .fm-head,
+    .fm-grid {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    #view-village .view-inner,
+    #view-village .list {
+        overflow-x: clip;
+    }
+    /* Barre de sous-onglets Atelier (8 onglets) : 1 seule rangée fluide scrollable sur mobile */
+    #subbar.many {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+        padding-bottom: 4px;
+    }
+    #subbar.many::-webkit-scrollbar {
+        display: none;
+    }
+    #subbar.many > button {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+}
+
+/* 1.185 : Journal du matin — 4 catégories repliables */
+.todo-sec {
+    margin-bottom: 10px;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    background: var(--paper-l);
+    overflow: hidden;
+}
+.todo-sec-urgent {
+    border-color: var(--red);
+}
+.todo-sec-h {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    font-weight: 800;
+    font-size: 0.92rem;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    background: color-mix(in srgb, var(--paper) 65%, transparent);
+}
+.todo-sec-h::-webkit-details-marker {
+    display: none;
+}
+.todo-sec-h > span {
+    flex: 1;
+}
+.todo-sec-h > b {
+    font-size: 0.78rem;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: var(--paper-d);
+    color: var(--ink);
+}
+.todo-sec-urgent .todo-sec-h > b {
+    background: var(--red);
+    color: #fff;
+}
+.todo-sec .menu-grid {
+    padding: 8px;
+}
+
+

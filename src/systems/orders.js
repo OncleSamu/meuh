@@ -243,7 +243,7 @@ export function ensureQuests() {
 }
 
 // 1.115 : le client attitré du métier (rang 4), une commande par jour
-export const metierClient = () => clientOrder(questPool(), qtyFor, 30 + scaleLvl() * 22, xpBonus());
+export const metierClient = () => clientOrder(() => questPool(), qtyFor, 30 + scaleLvl() * 22, xpBonus());
 export function deliverClient(at) {
     const c = metierClient();
     if (!c || c.done || !hasAll(c.items)) return false;
@@ -297,8 +297,10 @@ export function turnInQuest(i, at) {
     if (q.goldOrder) state.stats.goldOrders = (state.stats.goldOrders || 0) + 1;
     state.income.orders += q.gold;
     record('order', q.gold);
-    const favPts = VILLAGERS[q.vid].likes.some(id => q.items.some(x => x.id === id)) ? 4 : 2;
-    if (q.vid) addFriendship(q.vid, favPts + (q.goldOrder ? 1 : 0), at);
+    if (q.vid && VILLAGERS[q.vid]) {
+        const favPts = VILLAGERS[q.vid].likes.some(id => q.items.some(x => x.id === id)) ? 4 : 2;
+        addFriendship(q.vid, favPts + (q.goldOrder ? 1 : 0), at);
+    }
     sfx('buy');
     buzz(15);
     burst(at, 'sparkle', q.goldOrder ? 16 : 12);
@@ -548,6 +550,9 @@ export function loadSlot(k, at) {
     } else {
         state.inventory[sl.id] -= sl.qty;
         clampQuality(sl.id);
+    }
+    if (sl.pk || sl.pf || sl.cf || sl.br) {
+        t.gold = round5(t.slots.reduce((a, x) => a + x.gold, 0) * 0.5);
     }
     sl.loaded = true;
     state.stats.wagons = (state.stats.wagons || 0) + 1;

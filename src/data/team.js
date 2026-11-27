@@ -80,7 +80,7 @@ export const TEAM_MILO = [
         every: 45,
         forest: false,
         lands: false,
-        desc: 'Nasses de l’étang + fruits tombés du verger (ferme) · 45 s',
+        desc: 'Nasses, filet de mer, ruches du champ & verger (ferme) · 45 s',
         cost: { coins: 75000, tools: 4, hardwood: 8 },
     },
     {
@@ -96,7 +96,7 @@ export const TEAM_MILO = [
         every: 20,
         forest: true,
         lands: true,
-        desc: 'Ajoute les vergers des contrées (Île, Oasis, Nord, Asie) · 20 s',
+        desc: 'Ajoute les vergers et ruchers des contrées (Île, Oasis, Nord, Asie) · 20 s',
         cost: { coins: 460000, tools: 14, solidOak: 10 },
     },
     {
@@ -110,6 +110,38 @@ export const TEAM_MILO = [
     },
 ];
 
+export const TEAM_CAMILLE = [
+    null,
+    {
+        lvl: 65,
+        every: 40,
+        lands: ['island'],
+        desc: 'Île aux Alizés : récolte et replante automatiquement · 40 s',
+        cost: { coins: 380000, tools: 12, solidOak: 8 },
+    },
+    {
+        lvl: 74,
+        every: 30,
+        lands: ['island', 'oasis'],
+        desc: 'Ajoute l’Oasis : récolte et replante automatiquement · 30 s',
+        cost: { coins: 650000, tools: 16, cutStone: 14 },
+    },
+    {
+        lvl: 82,
+        every: 22,
+        lands: ['island', 'oasis', 'nord'],
+        desc: 'Ajoute le Grand Nord : récolte, replante et rallume les poêles · 22 s',
+        cost: { coins: 980000, tools: 20, ironIngot: 16 },
+    },
+    {
+        lvl: 91,
+        every: 14,
+        lands: ['island', 'oasis', 'nord', 'asie'],
+        desc: 'Toutes les contrées dont Terres d’Asie (draine aussi la boue) · 14 s',
+        cost: { coins: 1500000, tools: 26, silverIngot: 14 },
+    },
+];
+
 export const LINA_MODES = [
     ['both', 'Nourrir & ramasser'],
     ['collect', 'Ramasser seulement'],
@@ -118,8 +150,13 @@ export const LINA_MODES = [
 
 export const MILO_MODES = [
     ['all', 'Tout ramasser'],
-    ['wild', 'Nasses & Forêt'],
+    ['wild', 'Nasses, Ruches & Forêt'],
     ['orchard', 'Verger seulement'],
+];
+
+export const CAMILLE_MODES = [
+    ['both', 'Récolter & replanter'],
+    ['harvest', 'Récolter seulement'],
 ];
 
 export const HENRI_TARGET_MIN = 5;

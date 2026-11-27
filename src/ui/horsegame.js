@@ -8,6 +8,7 @@ import { ROBES } from '../art/haras/robes.js';
 import { sfx, buzz } from '../core/bus.js';
 import { refresh } from './app.js';
 import { reduceMotion } from './fx.js';
+import { esc } from './dom.js';
 
 const INK = '#3a2618';
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -87,7 +88,7 @@ function shell(title) {
     document.querySelector('.hg-over')?.remove();
     const o = document.createElement('div');
     o.className = 'hg-over';
-    o.innerHTML = `<div class="hg-game"><div class="hg-top"><h2>${title}</h2><button class="btn sm" id="hgquit">Quitter</button></div><div class="hg-stage" id="hgstage" tabindex="0"></div></div>`;
+    o.innerHTML = `<div class="hg-game"><div class="hg-top"><h2>${esc(title)}</h2><button class="btn sm" id="hgquit">Quitter</button></div><div class="hg-stage" id="hgstage" tabindex="0"></div></div>`;
     document.body.appendChild(o);
     const stage = o.querySelector('#hgstage');
     stage.addEventListener('contextmenu', e => e.preventDefault());

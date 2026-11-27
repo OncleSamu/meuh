@@ -14,7 +14,7 @@ import { COLS } from '../../data/farm.js';
 import { GUIDE_CATS, GUIDE_PAGES } from '../../data/guide.js';
 import { RECORDS, FISH } from '../../data/meta.js';
 import * as G from '../../systems/index.js';
-import { actions, QUIET } from '../dom.js';
+import { actions, esc, QUIET } from '../dom.js';
 import { ico, SPR } from '../icons.js';
 import { btn, line, empty } from '../kit.js';
 import { defineSheet, sheetOpts, openSheet, closeSheet, closeAll } from '../sheets.js';
@@ -487,7 +487,7 @@ defineSheet('photo', {
     render(o) {
         const ph = (state.album || [])[+o.k];
         if (!ph) return '';
-        return `<div class="polaroid big"><span class="ph-art" style="background:${G.PHOTO_BG[ph.season] || '#fff'}">${photoArt(ph)}</span><b>${ph.title}</b><small>${ph.sub ? ph.sub + ' · ' : ''}Jour ${ph.day} de la ferme · ${G.photoDate(ph)}</small></div>`;
+        return `<div class="polaroid big"><span class="ph-art" style="background:${G.PHOTO_BG[ph.season] || '#fff'}">${photoArt(ph)}</span><b>${esc(ph.title)}</b><small>${ph.sub ? esc(ph.sub) + ' · ' : ''}Jour ${ph.day} de la ferme · ${G.photoDate(ph)}</small></div>`;
     },
     foot: () => btn('Partager', { act: 'sharePhoto', kind: 'gold', wide: true, icon: ['ui', 'camera'] }),
 });

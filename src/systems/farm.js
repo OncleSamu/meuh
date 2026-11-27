@@ -576,6 +576,7 @@ export function clampQuality(id) {
 }
 
 export function clampAllQuality() {
+    if (!state.quality) return;
     Object.keys(state.quality).forEach(clampQuality);
 }
 

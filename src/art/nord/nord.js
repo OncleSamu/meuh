@@ -358,8 +358,8 @@ const IRON = '#3a3a42',
 function stove(lit) {
     const glow = lit ? '#ffb23a' : '#4a4a54';
     let o = SHADOW(32, 59, 18, 3);
-    o += R(26, 6, 5, 18, 1.5, IRON_L, 1.8) + R(24, 6, 9, 3, 1, IRON, 1.4); // le tuyau
-    if (lit) o += P('M30 3 Q26 -1 29 -5', 'none') + L('M28.5 3 Q25 -2 28 -6 Q31 -9 28 -13', 1.6, 'rgba(180,190,200,.7)');
+    o += R(26, 10, 5, 14, 1.5, IRON_L, 1.8) + R(24, 10, 9, 3, 1, IRON, 1.4); // le tuyau
+    if (lit) o += L('M28.5 8 Q25 5 28 3 Q31 2 28 1', 1.6, 'rgba(180,190,200,.75)');
     o += R(16, 22, 32, 8, 2, IRON_L, 2); // le dessus
     o += R(18, 28, 28, 25, 4, IRON, 2.2);
     o += R(21, 33, 22, 15, 3, lit ? '#7a3a14' : '#2a2a30', 1.6);

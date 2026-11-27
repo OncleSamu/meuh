@@ -149,7 +149,23 @@ export const FARM_SEASONS = [
         name: 'La saison de la mine',
         icon: 'ruby',
         deco: 'bannerMine',
-        items: ['ironIngot', 'copperIngot', 'silverIngot', 'goldIngot', 'quartz', 'amethyst', 'ruby', 'sapphire', 'emerald', ...made('forge', 'jewelry')],
+        items: [
+            'coal',
+            'ironOre',
+            'copperOre',
+            'silverOre',
+            'goldOre',
+            'ironIngot',
+            'copperIngot',
+            'silverIngot',
+            'goldIngot',
+            'quartz',
+            'amethyst',
+            'ruby',
+            'sapphire',
+            'emerald',
+            ...made('forge', 'jewelry'),
+        ],
     },
     {
         id: 'textile',
@@ -164,6 +180,13 @@ export const FARM_SEASONS = [
         icon: 'lavender',
         deco: 'bannerParfums',
         items: ['lavender', 'vanilla', 'tiare', 'orchid', ...made('soapworks', 'perfumery')],
+    },
+    {
+        id: 'confiserie',
+        name: 'La saison de la confiserie',
+        icon: 'caramel',
+        deco: 'bannerMiel',
+        items: ['sugar', 'honey', 'cacao', 'vanilla', 'almond', 'hazelnut', 'caramel', 'darkChoc', 'praline', 'nougat', ...made('confectionery', 'sugarworks')],
     },
 ];
 
@@ -182,6 +205,7 @@ export const FARM_SEASON_DEFIS = {
     mine: ['expedition'],
     textile: ['defile'],
     parfums: ['parfums', 'salonParfums'],
+    confiserie: ['banquet', 'miel'],
 };
 
 export const FARM_THEMES = {

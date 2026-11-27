@@ -306,11 +306,13 @@ function goalHtml() {
 // ce qui attend, en puces qu'on fait défiler du doigt
 function todoHtml() {
     if (!ui.todo.length) return '';
+    const prio = [...ui.todo].sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0) || (b.n ? 1 : 0) - (a.n ? 1 : 0));
+    const shown = prio.slice(0, 6);
     const more =
         ui.todo.length > 4
-            ? `<button class="todo-chip soft" data-act="go" data-path="sheet:todo">${ico(['ui', 'scroll'])}<span>Tout voir (${ui.todo.length})</span></button>`
+            ? `<button class="todo-chip soft" data-act="go" data-path="sheet:todo">${ico(['ui', 'scroll'])}<span>Journal (${ui.todo.length})</span></button>`
             : '';
-    return `<div class="todo" aria-label="À faire">${ui.todo
+    return `<div class="todo" aria-label="À faire">${shown
         .map(
             t =>
                 `<button class="todo-chip${t.urgent ? ' urgent' : ''}${t.n ? '' : ' soft'}" data-act="go" data-path="${t.go}">${t.icon ? ico(t.icon) : ''}<span>${t.text}</span></button>`,

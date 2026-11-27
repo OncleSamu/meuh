@@ -1,7 +1,7 @@
 // 1.100 (étape 3) : la carte de la Maison, votre marque.
 import { state } from '../../core/state.js';
 import { fmt } from '../../core/format.js';
-import { MAISON, MAISON_CLIENTS, EMBLEMS, PALETTES, MAISON_ORDERS, ORDER_KIND_TXT } from '../../data/maison.js';
+import { MAISON, MAISON_CLIENTS, EMBLEMS, PALETTES, MAISON_ORDERS, ORDER_KIND_TXT, PRESTIGE_COFFRETS } from '../../data/maison.js';
 import { PACKS } from '../../data/paquets.js';
 import { ITEMS } from '../../data/items.js';
 import * as G from '../../systems/index.js';
@@ -123,8 +123,53 @@ const TABS = [
     ['atelier', 'Atelier'],
     ['shelf', 'Étagère'],
     ['orders', 'Commandes'],
+    ['prestige', 'Prestige'],
     ['brand', 'Marque'],
 ];
+
+function prestigeTab() {
+    const pv = G.prestigeBoxPreview();
+    const PB = G.ensurePrestigeBoxes();
+    const slotBox = (slotKey, title, icon, cur, list) => {
+        const opts = list.slice(0, 12);
+        return `<div class="card camp-card">
+            <div class="card-head">${ico(icon, 'ico big')}<div class="card-main">
+                <div class="card-title">${title}</div>
+                <div class="card-sub">${cur ? `${esc(cur.name)} (${fmt(cur.val)} p.)` : list.length ? 'Choisissez une création en stock' : 'Aucune création en stock dans cet atelier'}</div>
+            </div></div>
+            ${opts.length ? `<div class="chips-row" style="margin-top:6px">${opts.map(x => `<button class="pick-chip${cur && cur.ref === x.ref ? ' on' : ''}" data-act="pboxSlot" data-slot="${slotKey}" data-ref="${esc(x.ref)}">${ico(x.icon)}${esc(x.name)}</button>`).join('')}</div>` : ''}
+        </div>`;
+    };
+    const summary = pv.ready
+        ? `<div class="card camp-card">
+            <div class="card-head">${ico(['ui', 'maison'], 'ico big')}<div class="card-main">
+                <div class="card-title">${esc(pv.theme.name)}${pv.isNew ? ' · Nouveau !' : ''}</div>
+                <div class="card-sub">${esc(pv.theme.desc)} · ×${String(pv.theme.mult).replace('.', ',')} · +${fmt(pv.gold)}${COIN()} · +${fmt(pv.xp)} XP · +${pv.renom} Renom</div>
+            </div></div>
+            <div class="od-foot" style="margin-top:8px">${btn(`Composer & Vendre · ${fmt(pv.gold)}${COIN()}`, { act: 'pboxCraft', kind: 'gold', wide: true, icon: ['ui', 'maison'] })}</div>
+        </div>`
+        : `<div class="card camp-card"><p class="card-sub">Réunissez <b>1 cuvée</b> (Brasserie ou Cave), <b>1 confiserie</b> et <b>1 parfum</b> pour composer un Coffret Prestige multi-ateliers vendu jusqu’à ×2,8 avec bonus de Renom !</p></div>`;
+    const found = G.prestigeBookCount();
+    const canClaim = G.prestigeBookClaimable();
+    const catalog = `<div class="card camp-card">
+        <div class="card-head">${ico(['ui', 'book'], 'ico big')}<div class="card-main">
+            <div class="card-title">Catalogue Prestige · ${found} / ${PRESTIGE_COFFRETS.length}</div>
+            <div class="card-sub">${PB.claimed ? 'Récompense complète réclamée (+2 Rubans) !' : 'Découvrez les 6 Coffrets Prestige pour gagner +2 Rubans et 50 000 pièces.'}</div>
+        </div>${canClaim ? btn('Réclamer +2 Rubans', { act: 'pboxClaimBook', kind: 'gold', size: 'sm', icon: ['ui', 'ribbon'] }) : ''}</div>
+        <div class="rneeds" style="margin-top:8px">${PRESTIGE_COFFRETS.map(t => {
+            const n = PB.book[t.id] || 0;
+            return `<div class="rneed${n ? ' ok' : ''}"><span class="rneed-art">${art('ui', n ? 'star' : 'lock')}</span><span class="row-main"><b>${esc(t.name)}</b><small>${esc(t.desc)} · ×${String(t.mult).replace('.', ',')} · +${t.renom} Renom${n ? ` · créé ×${n}` : ''}</small></span></div>`;
+        }).join('')}</div>
+    </div>`;
+    return (
+        summary +
+        slotBox('drink', '1. Cuvée (Brasserie ou Cave)', ['ui', 'beer'], pv.d, pv.drinks) +
+        slotBox('conf', '2. Confiserie ou Douceur', ['ui', 'confiserie'], pv.c, pv.confs) +
+        slotBox('perf', '3. Flacon de Parfum', ['ui', 'perfume'], pv.p, pv.perfs) +
+        catalog
+    );
+}
+
 export function maisonCard() {
     if (!G.maisonOpen()) return null;
     if (!G.maisonBuilt()) {
@@ -139,11 +184,20 @@ export function maisonCard() {
     const sellable = m.stock.filter(c => G.clientsOpen().some(k => G.canSellTo(c, k))).length;
     const ordOk = G.orders().filter(o => G.orderReady(o)).length;
     const seg = segmented(
-        TABS.map(([id, name]) => [id, name, null, id === 'shelf' ? sellable : id === 'orders' ? ordOk : 0]),
+        TABS.map(([id, name]) => [id, name, null, id === 'shelf' ? sellable : id === 'orders' ? ordOk : id === 'prestige' && G.prestigeBookClaimable() ? 1 : 0]),
         cur,
         'maisonTab',
     );
-    const body = cur === 'shelf' ? shelfTab(m) : cur === 'orders' ? ordersTab() : cur === 'brand' ? brandTab(m, tier) : atelierTab(m);
+    const body =
+        cur === 'shelf'
+            ? shelfTab(m)
+            : cur === 'orders'
+              ? ordersTab()
+              : cur === 'prestige'
+                ? prestigeTab()
+                : cur === 'brand'
+                  ? brandTab(m, tier)
+                  : atelierTab(m);
     return `<div class="camps"><div class="card camp-card"><div class="card-head maison-head">${label(m)}<div class="card-main"><div class="card-title">Votre marque ${renameBtn('maison', 0, 'Nommer la Maison')}</div><div class="card-sub">Renommée : ${tierName(tier)}${next ? ` · ${m.rep}/${next}` : ' · au sommet'} · ${m.sold} paquet${m.sold > 1 ? 's' : ''} vendu${m.sold > 1 ? 's' : ''}</div>${next ? bar((m.rep - MAISON.rep[tier]) / (next - MAISON.rep[tier]), 'gold') : ''}</div></div></div>
         ${seg}${body}</div>`;
 }
@@ -173,10 +227,16 @@ defineSheet('pkGuest', {
             : '<p class="empty">Aucun paquet ne lui convient sur l’étagère.</p>';
     },
 });
-// 1.101 : la Maison est un volet de l'Atelier (elle ne dépend pas que du camping : voisins, souk, château, vitrine)
+// 1.101 → 1.187 : la Maison s'ouvre dès niv. 62 avec les Coffrets Prestige multi-ateliers, puis votre marque au niv. 72
 defineView('machines/maison', el => {
-    if (!G.campOpen()) return blocks(el, [['m', `<div class="card"><p class="card-sub">La Maison, votre marque, s’ouvre au niveau ${CAMPING.lvl}, avec le camping de la vallée.</p></div>`]]);
-    blocks(el, [['m', maisonCard() || '<div class="card"><p class="card-sub">Aménagez d’abord le camping de la vallée (Village › Camping) : la Maison se fonde ensuite ici.</p></div>']]);
+    if (!G.prestigeBoxOpen() && !G.campOpen()) {
+        return blocks(el, [['m', `<div class="card"><p class="card-sub">La Maison ouvre ses Coffrets Prestige dès le niveau 62, puis votre marque complète au niveau ${CAMPING.lvl} avec le camping.</p></div>`]]);
+    }
+    if (G.maisonBuilt()) {
+        return blocks(el, [['m', maisonCard()]]);
+    }
+    const base = maisonCard() || `<div class="card"><p class="card-sub">Votre marque complète et ses paquets s’ouvrent au niveau ${CAMPING.lvl} avec le camping de la vallée. En attendant, composez déjà vos <b>Coffrets Prestige</b> multi-ateliers ci-dessous !</p></div>`;
+    blocks(el, [['m', `<div class="camps">${base}${prestigeTab()}</div>`]]);
 });
 export function setupMaison() {
     setupPaquet();
@@ -188,6 +248,9 @@ export function setupMaison() {
         maisonTab: (el, d) => {
             ui.sel.maison = d.v;
         },
+        pboxSlot: (el, d) => G.setPrestigeSlot(d.slot, d.ref),
+        pboxCraft: el => G.craftPrestigeBox(el),
+        pboxClaimBook: el => G.claimPrestigeBook(el),
         pkOrder: (el, d) => G.deliverOrder(+d.i, +d.uid, el) && closeSheet('pkOrder'),
         pkSkip: (el, d) => G.skipOrder(+d.i),
         pkGuestSell: (el, d) => G.sellToGuest(+d.uid, +d.g, el) && closeSheet('pkGuest'),

@@ -34,7 +34,7 @@ export const lotIco = (l, cls = 'ico') =>
           : ico(['item', l.id], cls);
 const bottleTools = l =>
     l.vy && G.vintageOf(l)
-        ? `<span class="bottle-tools">${renameBtn('lot', l.uid, 'Nommer la cuvée')}<button class="rename-btn" data-act="cycleLabel" data-uid="${l.uid}" aria-label="Changer l’étiquette" title="Étiquette : ${LABEL_STYLES[l.ls || 0].name}">🏷</button></span>`
+        ? `<span class="bottle-tools">${renameBtn('lot', l.uid, 'Nommer la cuvée')}<button class="rename-btn" data-act="cycleLabel" data-uid="${l.uid}" aria-label="Changer l’étiquette" title="Étiquette : ${LABEL_STYLES[l.ls || 0].name}">${ico(['ui', 'price'])}</button></span>`
         : '';
 export const lotSub = l =>
     (l.id === 'beer' && BARRELS[l.k] ? ` · ${BARRELS[l.k].name.toLowerCase()}` : '') +
@@ -70,7 +70,7 @@ function lotCard(lot, i) {
         bk = G.boostKind(lot);
     const stars = Array.from({ length: 4 }, (_, k) => `<i class="${k < lot.rank ? 'on' : ''}"></i>`).join('');
     return `<div class="cave-slot${lot.bad ? ' bad' : ''} r${lot.rank}${lot.flash ? ' flash' : ''}" data-anchor="lot:${i}">
-        <div class="cs-top">${lotIco(lot, 'ico cs-ico')}<div class="cs-main"><div class="cs-name">${G.lotName(lot)} <small>×${lot.n}</small>${bottleTools(lot)}</div>
+        <div class="cs-top">${lotIco(lot, 'ico cs-ico')}<div class="cs-main"><div class="cs-name">${esc(G.lotName(lot))} <small>×${lot.n}</small>${bottleTools(lot)}</div>
         <div class="cs-rank">${G.rankName(lot)}${lotSub(lot)}</div><div class="cs-stars">${stars}</div></div></div>
         ${lotChateauTag(lot)}${primeurTag(lot)}
         <div class="cs-value">${fmt(G.lotValue(lot))}${COIN()}</div>
@@ -100,7 +100,7 @@ function reserveHtml() {
         section('Réserve') +
         `<div class="list">${c.reserve
             .map(
-                l => `<div class="card reserve-row${l.bad ? ' bad' : ''}">${lotIco(l, 'ico big')}<div class="card-main"><div class="card-title">${G.lotName(l)} ×${l.n}${bottleTools(l)}</div>
+                l => `<div class="card reserve-row${l.bad ? ' bad' : ''}">${lotIco(l, 'ico big')}<div class="card-main"><div class="card-title">${esc(G.lotName(l))} ×${l.n}${bottleTools(l)}</div>
         <div class="card-sub">${G.rankName(l)}${classTag(l)} · vaut ${fmt(G.lotValue(l))}${COIN()}</div></div>
         <div class="card-side col">${btn(`Négociant ${fmt(G.lotValue(l) * NEGOCIANT)}${COIN()}`, { act: 'negociant', data: { uid: l.uid }, size: 'sm' })}
         ${btn('Aux enchères', { act: 'deposit', data: { uid: l.uid }, size: 'sm', kind: 'gold', icon: ['ui', 'gavel'], disabled: !canDep })}
@@ -247,7 +247,7 @@ function ordersHtml() {
                     v = VILLAGERS[o.vid];
                 return `<div class="card brew-order${l ? ' ready' : ''}"><div class="card-art">${art('villager', o.vid)}</div><div class="card-main"><div class="card-title">${v ? v.name : ''}</div>
                     <div class="card-sub">« Je voudrais ${G.caveOrderText(o)}. »</div>
-                    ${l ? `<div class="card-sub">Avec : <b>${G.lotName(l)}</b> (${G.rankName(l)}) · ${fmt(G.caveOrderPay(o, l))}${COIN()}</div>` : '<div class="card-sub">Rien dans la réserve ne convient encore : sortez un lot assez vieux.</div>'}</div>
+                    ${l ? `<div class="card-sub">Avec : <b>${esc(G.lotName(l))}</b> (${G.rankName(l)}) · ${fmt(G.caveOrderPay(o, l))}${COIN()}</div>` : '<div class="card-sub">Rien dans la réserve ne convient encore : sortez un lot assez vieux.</div>'}</div>
                     <div class="card-side">${btn('Livrer', { act: 'caveOrder', data: { id: o.id }, kind: 'green', size: 'sm', disabled: !l })}${btn('', { act: 'caveOrderDrop', data: { id: o.id }, icon: ['ui', 'cross'], kind: 'ghost', size: 'sm', title: 'Refuser' })}</div></div>`;
             })
             .join('')}</div>`
@@ -268,7 +268,7 @@ function cepageHtml() {
                     .filter(k => r[k])
                     .map(k => `<span class="qchip">${qStar(k)}${r[k]} ${QUALITY[k].name}</span>`)
                     .join('');
-                return `<div class="card cep-bottle"><div class="card-art">${art('item', e.item)}</div><div class="card-main"><div class="card-title">${G.cepName(e)}</div>
+                return `<div class="card cep-bottle"><div class="card-art">${art('item', e.item)}</div><div class="card-main"><div class="card-title">${esc(G.cepName(e))}</div>
                     <div class="card-sub">×${G.cepCount(e.id)} · valeur ×${String(e.mult).replace('.', ',')} grâce à la ${e.race ? 'race' : 'variété'}</div>${chips ? `<span class="var-ranks">${chips}</span>` : ''}</div>
                     <div class="card-side">${free >= 0 ? btn('En cave', { act: 'open', data: { sheet: 'cavePut', slot: free, id: 'cep:' + e.id }, kind: 'green', size: 'sm' }) : ''}${btn(`Vendre ${fmt(G.cepValue(e.id))}${COIN()}`, { act: 'sellCep', data: { id: e.id }, kind: 'gold', size: 'sm' })}</div></div>`;
             })
@@ -411,11 +411,11 @@ defineSheet('cavePut', {
             .map(id => {
                 if (id.startsWith('cep:')) {
                     const e = G.ensureCepage().list[id.slice(4)];
-                    return `<button class="pick-cell${o.id === id ? ' on' : ''}" data-act="cavePick" data-id="${id}">${ico(['item', e.item], 'ico big')}<b>${G.cepName(e)}</b><small>×${G.cepCount(e.id)} · cépage</small></button>`;
+                    return `<button class="pick-cell${o.id === id ? ' on' : ''}" data-act="cavePick" data-id="${id}">${ico(['item', e.item], 'ico big')}<b>${esc(G.cepName(e))}</b><small>×${G.cepCount(e.id)} · cépage</small></button>`;
                 }
                 if (id.startsWith('beer:')) {
                     const b = G.beerOf(id.slice(5));
-                    return `<button class="pick-cell${o.id === id ? ' on' : ''}" data-act="cavePick" data-id="${id}"><span class="pc-art">${beerSvg(b)}</span><b>${b.name}</b><small>×${G.beerStock(b.id)} · ${b.mead ? 'hydromel' : b.cider ? 'cidre' : b.sake ? 'saké' : 'bière'}</small></button>`;
+                    return `<button class="pick-cell${o.id === id ? ' on' : ''}" data-act="cavePick" data-id="${id}"><span class="pc-art">${beerSvg(b)}</span><b>${esc(b.name)}</b><small>×${G.beerStock(b.id)} · ${b.mead ? 'hydromel' : b.cider ? 'cidre' : b.sake ? 'saké' : 'bière'}</small></button>`;
                 }
                 return `<button class="pick-cell${o.id === id ? ' on' : ''}" data-act="cavePick" data-id="${id}">${ico(['item', id], 'ico big')}<b>${ITEMS[id].name}</b><small>×${state.inventory[id]} · ${G.caveFam(id).name.toLowerCase()}</small></button>`;
             })

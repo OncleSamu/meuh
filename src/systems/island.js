@@ -1,12 +1,13 @@
 // L'île : des parcelles tropicales (jamais à arroser, toujours de saison) et un verger des îles.
 // Une parcelle : { open, id, prog, ready, last } ; le verger de l'île est géré par orchard.js (zone 'island').
 import { state, lvOk } from '../core/state.js';
+import { now } from '../core/clock.js';
 import { fmt, s } from '../core/format.js';
 import { emit, toast, sfx, buzz, burst, float, fly, squish, changed } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { ISLAND } from '../data/island.js';
+import { ISLAND, SCHOONER, LAGOON } from '../data/island.js';
 import { BALANCE } from '../data/progress.js';
-import { speedMult, addXp, spend, rank, rollYield } from './player.js';
+import { speedMult, priceMult, earn, addXp, spend, rank, rollYield } from './player.js';
 import { weather } from './world.js';
 import { masterySpeed, addMastery } from './mastery.js';
 import { barnBlocked, rollRare } from './barn.js';
@@ -14,6 +15,8 @@ import { projectDone, storyOk } from './story.js';
 import { collect, record } from './book.js';
 import { addQuality, ascend } from './farm.js';
 import { eventProgress } from './events.js';
+import { addRenom } from './renom.js';
+import { museumOpen } from './museum.js';
 import { tip } from './tips.js';
 import { takeVarSeed, harvestVariety, varRank, varExtra, varGrowth } from './genetics.js';
 
@@ -34,6 +37,9 @@ export function ensureIsland() {
     if (!state.island || !Array.isArray(state.island.plots)) state.island = { plots: [], orchard: [] };
     const I = state.island;
     if (!Array.isArray(I.orchard)) I.orchard = [];
+    if (!I.schooner || typeof I.schooner !== 'object') I.schooner = { load: {}, out: null, trips: 0 };
+    if (!I.schooner.load || typeof I.schooner.load !== 'object') I.schooner.load = {};
+    if (typeof I.lagoonAt !== 'number') I.lagoonAt = 0;
     while (I.plots.length < ISLAND.plotsMax) I.plots.push({ open: false, id: null, prog: 0, ready: false, last: null });
     while (I.orchard.length < ISLAND.slotsMax) I.orchard.push({ open: false, tree: null });
     if (islandOpen()) {
@@ -229,3 +235,126 @@ export function islandOffline(elapsed) {
 }
 
 export const islandReady = () => islandPlots().filter(p => p.ready).length;
+
+// ---------------- 1.186 : Île 2.0 — Goélette des îles ----------------
+export const isIslandGood = id => {
+    const it = ITEMS[id];
+    if (!it) return false;
+    return !!(it.island && !it.oasis && !it.nord && !it.asie) || it.type === 'fish';
+};
+export const schoonerOpen = () => islandOpen();
+export const schoonerState = () => {
+    ensureIsland();
+    return state.island.schooner;
+};
+export const schoonerLoads = () => Object.values(schoonerState().load).reduce((a, n) => a + n, 0);
+export const schoonerMult = id => (isIslandGood(id) ? SCHOONER.mult : SCHOONER.otherMult);
+export const schoonerValue = (load = schoonerState().load) =>
+    Object.entries(load).reduce((a, [id, n]) => a + Math.round((ITEMS[id]?.sell || 0) * schoonerMult(id) * priceMult()) * n, 0);
+export const schoonerGoods = () =>
+    Object.keys(ITEMS)
+        .filter(id => (state.inventory[id] || 0) > 0 && ITEMS[id].sell > 0 && !['junk', 'material', 'rare'].includes(ITEMS[id].type))
+        .sort((a, b) => (isIslandGood(b) ? 1 : 0) - (isIslandGood(a) ? 1 : 0) || ITEMS[b].sell * schoonerMult(b) - ITEMS[a].sell * schoonerMult(a));
+
+export function schoonerAdd(id, n = 1) {
+    if (!schoonerOpen()) return false;
+    const sc = schoonerState();
+    if (sc.out) return false;
+    const room = SCHOONER.cap - schoonerLoads();
+    const take = Math.min(n, room, state.inventory[id] || 0);
+    if (take <= 0 || !ITEMS[id] || !ITEMS[id].sell) return false;
+    state.inventory[id] -= take;
+    sc.load[id] = (sc.load[id] || 0) + take;
+    sfx('load');
+    changed('island');
+    return true;
+}
+
+export function schoonerRemove(id) {
+    const sc = schoonerState();
+    if (sc.out || !sc.load[id]) return false;
+    state.inventory[id] = (state.inventory[id] || 0) + sc.load[id];
+    delete sc.load[id];
+    sfx('click');
+    changed('island');
+    return true;
+}
+
+export function schoonerSend(at) {
+    if (!schoonerOpen()) return false;
+    const sc = schoonerState();
+    const total = schoonerLoads();
+    if (sc.out || total < SCHOONER.minLoad) return false;
+    const gold = schoonerValue(sc.load);
+    const xp = total * SCHOONER.xpPerUnit;
+    const rewardId = SCHOONER.rewards[Math.floor(Math.random() * SCHOONER.rewards.length)];
+    const rewardQty = total >= 14 ? 2 : 1;
+    sc.out = { back: now() + SCHOONER.time * 1000, gold, xp, total, reward: { id: rewardId, qty: rewardQty } };
+    sc.load = {};
+    sfx('boat');
+    buzz(18);
+    burst(at, 'sparkle', 10);
+    toast('La goélette des îles a hissé les voiles !', ['ui', 'schooner']);
+    changed('island');
+    return true;
+}
+
+export const schoonerBack = () => !!(state.island && state.island.schooner && state.island.schooner.out && now() >= state.island.schooner.out.back);
+
+export function schoonerClaim(at) {
+    if (!schoonerBack()) return false;
+    const sc = schoonerState();
+    const o = sc.out;
+    sc.out = null;
+    sc.trips = (sc.trips || 0) + 1;
+    earn(o.gold, at);
+    addXp(o.xp, at);
+    if (o.reward && ITEMS[o.reward.id]) state.inventory[o.reward.id] = (state.inventory[o.reward.id] || 0) + o.reward.qty;
+    addRenom(1);
+    state.stats.schoonerTrips = (state.stats.schoonerTrips || 0) + 1;
+    sfx('level');
+    buzz(24);
+    burst(at, 'sparkle', 16);
+    toast(
+        `Goélette déchargée : +${fmt(o.gold)} pièces${o.reward && ITEMS[o.reward.id] ? `, +${o.reward.qty} ${ITEMS[o.reward.id].name.toLowerCase()}` : ''} et +1 Renom !`,
+        ['ui', 'schooner'],
+    );
+    changed('island');
+    return true;
+}
+
+// ---------------- 1.186 : Île 2.0 — Lagon aux perles ----------------
+export const lagoonReady = () => islandOpen() && now() >= ((state.island && state.island.lagoonAt) || 0);
+export const lagoonLeft = () => (state.island && state.island.lagoonAt ? Math.max(0, state.island.lagoonAt - now()) : 0);
+
+export function harvestLagoon(at) {
+    if (!lagoonReady() || barnBlocked()) return null;
+    ensureIsland();
+    const got = {};
+    const count = 2 + (Math.random() < 0.5 ? 1 : 0);
+    for (let k = 0; k < count; k++) {
+        const id = LAGOON.pool[Math.floor(Math.random() * LAGOON.pool.length)];
+        if (ITEMS[id]) {
+            state.inventory[id] = (state.inventory[id] || 0) + 1;
+            got[id] = (got[id] || 0) + 1;
+        }
+    }
+    let geode = false;
+    if (museumOpen() && Math.random() < 0.35) {
+        if (!state.mineDeep) state.mineDeep = { geodes: {} };
+        state.mineDeep.geodes = state.mineDeep.geodes || {};
+        state.mineDeep.geodes.geodeCrystal = (state.mineDeep.geodes.geodeCrystal || 0) + 1;
+        geode = true;
+    }
+    state.island.lagoonAt = now() + LAGOON.cooldown * 1000;
+    state.stats.lagoonDives = (state.stats.lagoonDives || 0) + 1;
+    addXp(LAGOON.xp, at);
+    sfx('harvest');
+    buzz(14);
+    burst(at, 'sparkle', 10);
+    const names = Object.entries(got).map(([id, n]) => `${n} ${ITEMS[id].name.toLowerCase()}`);
+    if (geode) names.push('1 géode de cristal');
+    toast(`Lagon aux perles : ${names.join(', ')} !`, ['ui', 'lagoon']);
+    changed('island');
+    return { got, geode };
+}

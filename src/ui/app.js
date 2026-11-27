@@ -76,7 +76,7 @@ export const TABS = [
             ['confiserie', 'Confiserie', ['ui', 'confiserie'], () => CONF_LVL],
             ['perfume', 'Parfums', ['ui', 'perfume'], () => PERFUME_LVL],
             ['lab', 'Labo', ['ui', 'flowers'], () => GENETICS.lvl],
-            ['maison', 'Maison', ['ui', 'maison'], () => CAMPING.lvl],
+            ['maison', 'Maison', ['ui', 'maison'], () => 62],
         ],
     },
     {

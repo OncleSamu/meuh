@@ -3,6 +3,9 @@
 import { state } from '../core/state.js';
 import { toast, sfx } from '../core/bus.js';
 import { randomId } from '../art/habitants.js';
+import { VILLAGERS } from '../data/village.js';
+import { DECOS } from '../data/farm.js';
+import { addFriendship } from './village.js';
 import { vName, artId, stageOf } from './family.js';
 import { guestTitle } from './camping.js';
 import {
@@ -373,6 +376,7 @@ export function tcgOpenPack(seriesId, opts = {}) {
         godPack: isGodPack,
         revealed: [false, false, false, false, false],
     };
+    tcgCheckSeriesRewards();
     sfx('pop');
     return T.lastPack;
 }
@@ -681,6 +685,7 @@ export function tcgCraftCard(id) {
     }
     sfx('level');
     toast(`Carte forgée : ${c.name} !`, ['ui', 'meuhcg']);
+    tcgCheckSeriesRewards();
     return true;
 }
 
@@ -1679,6 +1684,11 @@ export function tcgPlayDuelCard(handIdx) {
                 box.ids.push(D.oppId);
                 D.gainTokens = D.reward;
                 D.training = false;
+                // 1.187 : Passerelle douce MeuhCG <-> Vallée (+2 amitié sur la 1re victoire du jour face à un villageois)
+                if (VILLAGERS[D.oppId]) {
+                    addFriendship(D.oppId, 2);
+                    D.friendGain = 2;
+                }
             } else {
                 D.gainTokens = 5;
                 D.training = true;
@@ -1711,6 +1721,29 @@ export function tcgPlayDuelCard(handIdx) {
         }
     }
     return true;
+}
+
+// 1.187 : Passerelle douce — compléter une série MeuhCG (100 %) offre une décoration souvenir pour la ferme
+const SERIES_DECOS = ['lantern', 'fireflyJar', 'statue', 'orchardSwing', 'anchorDeco', 'cheeseWheel', 'banquetTable', 'bullStatue', 'appleCart', 'hammock'];
+export function tcgCheckSeriesRewards() {
+    const T = ensureTcg();
+    T.seriesDecos = T.seriesDecos || {};
+    const granted = [];
+    Object.values(TCG_SERIES).forEach((s, idx) => {
+        if (T.seriesDecos[s.id]) return;
+        const p = tcgSeriesProgress(s.id);
+        if (p.total > 0 && p.owned >= p.total) {
+            const decoId = SERIES_DECOS[idx % SERIES_DECOS.length];
+            T.seriesDecos[s.id] = decoId;
+            if (DECOS[decoId]) {
+                state.decorInv = state.decorInv || {};
+                state.decorInv[decoId] = (state.decorInv[decoId] || 0) + 1;
+                granted.push({ series: s.id, deco: decoId });
+                toast(`Série « ${s.name} » complète ! Souvenir offert : ${DECOS[decoId].name}`, ['ui', decoId]);
+            }
+        }
+    });
+    return granted;
 }
 
 export function tcgEndDuel() {

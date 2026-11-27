@@ -1679,4 +1679,5 @@ Object.assign(CARNET, {
         'Un thé vert fouetté longuement au bambou jusqu’à faire une mousse fine, allongé de lait de sika bien chaud. C’est le petit luxe quotidien de Mei, qui sourit dès qu’elle en sent l’odeur.',
     aniseChai:
         'Un thé corsé infusé à la badiane étoilée, adouci de lait de sika et de miel. Rapportée par la jonque de la soie, la badiane donne à cette tasse un parfum d’épice douce qui réchauffe jusqu’au bout des doigts.',
+    paint: 'De l’huile de tournesol broyée avec des pigments de betterave et de carotte : la peinture à l’huile de la ferme ne s’écaille jamais, même sous les pluies d’automne.',
 });

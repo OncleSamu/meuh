@@ -480,7 +480,7 @@ export const LEVELS = {
         // Niv. 55
         blueberryIce: 55, peeledTomatoes: 55, coffee: 55, seabassSalt: 55, walnutCake: 55, melonJam: 55, saucisson: 55, petitSale: 55, soySauce: 55, truffleOmelette: 55, espresso: 55, mahiPoke: 55,
         // Niv. 56
-        vase: 56, redDye: 56, yellowDye: 56, dyedWool: 56, blueDye: 56, colorSweater: 56, woolHat: 56, teaSet: 56, vanillaFlan: 56, nicoise: 56, chestnutCream: 56, walnutOil: 56, smokedMahi: 56, nutmegSauce: 56, nutmegCake: 56,
+        vase: 56, redDye: 56, yellowDye: 56, dyedWool: 56, blueDye: 56, paint: 18, colorSweater: 56, woolHat: 56, teaSet: 56, vanillaFlan: 56, nicoise: 56, chestnutCream: 56, walnutOil: 56, smokedMahi: 56, nutmegSauce: 56, nutmegCake: 56,
         // Niv. 57
         garlicPasta: 57, garlicBread: 57, oliveSoap: 57, mozzarella: 57, hotChoc: 57, sweetPotatoCake: 57, passionSorbet: 57, pesto: 57, artichokeTart: 57, trailMix: 57, melonHam: 57, tiareTea: 57, dyedMohair: 57,
         // Niv. 58

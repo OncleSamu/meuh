@@ -104,6 +104,13 @@ export const boatCanChangePort = () => !state.boat || state.boat.status !== 'her
 export function setBoatPort(pid) {
     if (!BOAT_PORTS[pid] || !boatCanChangePort()) return false;
     state.boat.port = pid;
+    if (state.boat.status === 'here' && Array.isArray(state.boat.items)) {
+        const port = boatPort();
+        state.boat.gold = state.boat.items.reduce((a, cr) => a + round5(cr.gold * port.payMult), 0);
+        const curMats = Array.isArray(state.boat.mats) ? state.boat.mats.slice(0, port.mats) : [];
+        while (curMats.length < port.mats) curMats.push(pickRand(RARE));
+        state.boat.mats = curMats;
+    }
     sfx('click');
     return true;
 }
@@ -190,7 +197,9 @@ function finishBoat(at) {
     burst(at, 'sparkle', 18);
     earn(bonus, at);
     addXp(bxp, at);
-    for (let j = 0; j < port.mats; j++) giveRare(pickRand(RARE), 1, at);
+    const mats = Array.isArray(b.mats) && b.mats.length ? b.mats.slice(0, port.mats) : Array.from({ length: port.mats }, () => pickRand(RARE));
+    while (mats.length < port.mats) mats.push(pickRand(RARE));
+    mats.forEach(m => giveRare(m, 1, at));
     if (port.renom) addRenom(port.renom, 'boat', at);
     state.stats.boats = (state.stats.boats || 0) + 1;
     state.income.orders += bonus;

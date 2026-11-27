@@ -5,7 +5,7 @@ import { view } from '../core/view.js';
 import { pickRand, fmt, qtyName } from '../core/format.js';
 import { emit, toast, sfx, buzz, float, squish } from '../core/bus.js';
 import { ITEMS } from '../data/items.js';
-import { DECOS } from '../data/farm.js';
+import { DECOS, QUALITY, QX } from '../data/farm.js';
 import { HOT_MULT, STALL_MAX_QTY, RARE } from '../data/commerce.js';
 import { RIVALS, NEIGHBOR_LVL, NEIGHBOR_HEARTS } from '../data/village.js';
 import { BALANCE } from '../data/progress.js';
@@ -15,29 +15,44 @@ import { masteryMult } from './mastery.js';
 import { priceMult, earn, addXp } from './player.js';
 import { eventSellMult, sellableQty, sellBatch, rememberSale } from './market.js';
 import { inBarn, giveRare } from './barn.js';
-import { clampQuality } from './farm.js';
+import { qual, clampQuality } from './farm.js';
 import { eventProgress } from './events.js';
 import { challengeOn } from './prestige.js';
 import { isOpen } from './orders.js';
 import { makeNeighborReq, reqReady, reqPay, noteServed } from './neighbordish.js';
 import { tip } from './tips.js';
 import { lv80 } from '../data/lv80.js';
+import { metierPrice } from './metier.js';
 
 // ---------------- l'étal ----------------
 // On y met jusqu'à 10 exemplaires (16 en fin de partie) d'un produit au prix choisi. Plus c'est cher, plus
 // le client met de temps à venir. Le grossiste (vente immédiate) paie beaucoup moins.
 export const STALL_LEVELS = [8, 16, 26, lv80(36)];
-export const stallSlots = () => 4 + STALL_LEVELS.filter(l => state.level >= l).length + extraStall();
-export const stallBase = id =>
-    ITEMS[id].sell * masteryMult(id) * priceMult() * (state.market.hot === id ? HOT_MULT : 1) * eventSellMult() * (cupHas(5) ? 1.05 : 1);
+export const stallSlots = () => 4 + STALL_LEVELS.filter(l => state.level >= l).length + extraStall() + (state.ribbonShop && state.ribbonShop.stallPlus ? 2 : 0);
+export const stallBase = (id, q = 0) =>
+    ITEMS[id].sell *
+    (QUALITY[q] ? QUALITY[q].mult : 1) *
+    masteryMult(id) *
+    priceMult() *
+    metierPrice(id) *
+    (state.market.hot === id ? HOT_MULT : 1) *
+    eventSellMult() *
+    (cupHas(5) ? 1.05 : 1);
 // délai moyen avant qu'un client achète, en minutes, selon le prix (1 = valeur normale)
 export const stallWait = ratio => 4 + 14 * Math.pow(ratio, 3);
-export const stallUnit = (id, ratio) => Math.max(1, Math.round(stallBase(id) * ratio));
+export const stallUnit = (id, ratio, q = 0) => Math.max(1, Math.round(stallBase(id, q) * ratio));
 export const stallMood = ratio =>
     ratio <= 0.8 ? 'Bon marché : vendu vite' : ratio <= 1.1 ? 'Prix juste' : ratio <= 1.3 ? 'Un peu cher : patience' : 'Très cher : les clients hésitent';
 // 1.38 : l'étal suit la ferme (10 unités, 12 au niveau 40, 16 au niveau 55)
 export const stallCap = () => STALL_MAX_QTY + (state.level >= lv80(40) ? 2 : 0) + (state.level >= lv80(55) ? 4 : 0) + (cupHas(1) ? 2 : 0);
-export const stallMax = id => Math.min(stallCap(), sellableQty(id));
+export function stallQualityStock(id, q = 0) {
+    clampQuality(id);
+    const sellable = sellableQty(id);
+    if (!q) return sellable;
+    const rankHave = qual(id)[QX.keys[q]] || 0;
+    return Math.min(sellable, rankHave);
+}
+export const stallMax = (id, q = 0) => Math.min(stallCap(), stallQualityStock(id, q));
 
 export function ensureStall() {
     if (!state.stall || !Array.isArray(state.stall.slots)) state.stall = { slots: [] };
@@ -69,14 +84,16 @@ export const stallChoices = () =>
         .filter(id => inBarn(id) && ITEMS[id].sell && sellableQty(id) > 0)
         .sort((a, b) => ITEMS[b].sell * sellableQty(b) - ITEMS[a].sell * sellableQty(a));
 
-export function listStall(k, id, qty, ratio, at) {
+export function listStall(k, id, qty, ratio, at, q = 0) {
     ensureStall();
-    if (!id || state.stall.slots[k] || qty < 1 || sellableQty(id) < qty) return false;
-    const price = stallUnit(id, ratio);
+    q = q | 0;
+    if (!id || state.stall.slots[k] || qty < 1 || stallQualityStock(id, q) < qty) return false;
+    const price = stallUnit(id, ratio, q);
+    if (q > 0) qual(id)[QX.keys[q]] = Math.max(0, (qual(id)[QX.keys[q]] || 0) - qty);
     state.inventory[id] -= qty;
     clampQuality(id);
     const wait = stallWait(ratio) * (0.7 + Math.random() * 0.6);
-    state.stall.slots[k] = { id, qty, price, sellAt: now() + wait * 60000, sold: false };
+    state.stall.slots[k] = { id, qty, q, price, sellAt: now() + wait * 60000, sold: false };
     sfx('load');
     squish(at);
     return true;
@@ -109,6 +126,7 @@ export function cancelStall(k) {
     const sl = state.stall.slots[k];
     if (!sl || sl.sold) return false;
     state.inventory[sl.id] += sl.qty;
+    if (sl.q > 0) qual(sl.id)[QX.keys[sl.q]] = (qual(sl.id)[QX.keys[sl.q]] || 0) + sl.qty;
     state.stall.slots[k] = null;
     sfx('click');
     toast('Produits retirés de l’étal et rangés dans la grange', ['ui', 'barn']);

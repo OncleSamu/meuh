@@ -50,14 +50,25 @@ defineSheet('carnets', {
     },
 });
 
-// ---------------- 1.149 : À faire (accessible depuis n'importe quel onglet) ----------------
+// ---------------- 1.149 → 1.185 : Journal du matin (4 catégories repliables) ----------------
+const TODO_CATS = [
+    ['urgent', 'Urgences', ['ui', 'bell'], true],
+    ['farm', 'Récoltes & Contrées', ['item', 'wheat'], true],
+    ['craft', 'Ateliers & Commandes', ['machine', 'bakery'], true],
+    ['daily', 'Quotidien & Loisirs', ['ui', 'star'], false],
+];
 defineSheet('todo', {
-    title: `${ico(['ui', 'scroll'])}À faire`,
+    title: `${ico(['ui', 'scroll'])}Journal du matin`,
     render() {
         if (!ui.todo.length) return '<p class="empty">Tout est calme à la ferme pour l’instant.</p>';
-        return `<div class="menu-grid">${ui.todo
-            .map(t => navRow(t.text, 'todoGo', { path: t.go }, t.icon || ['ui', 'scroll'], t.urgent ? '<span class="dot">!</span>' : '›'))
-            .join('')}</div>`;
+        return TODO_CATS.map(([id, label, icon, open]) => {
+            const items = ui.todo.filter(t => (t.cat || (t.urgent ? 'urgent' : 'daily')) === id);
+            if (!items.length) return '';
+            const isOpen = open || items.some(t => t.urgent) || ui.todo.length <= 8;
+            return `<details class="todo-sec todo-sec-${id}"${isOpen ? ' open' : ''}><summary class="todo-sec-h">${ico(icon)}<span>${label}</span><b>${items.length}</b></summary><div class="menu-grid">${items
+                .map(t => navRow(t.text, 'todoGo', { path: t.go }, t.icon || ['ui', 'scroll'], t.urgent ? '<span class="dot">!</span>' : '›'))
+                .join('')}</div></details>`;
+        }).join('');
     },
 });
 

@@ -8,8 +8,10 @@ import {
     TEAM_LINA,
     TEAM_HENRI,
     TEAM_MILO,
+    TEAM_CAMILLE,
     LINA_MODES,
     MILO_MODES,
+    CAMILLE_MODES,
     HENRI_TARGET_MIN,
     HENRI_TARGET_MAX,
     HENRI_TARGET_DEFAULT,
@@ -20,7 +22,7 @@ import { addXp } from './player.js';
 import { barnBlocked } from './barn.js';
 import { season } from './world.js';
 import { maxFood, isResting, collectAnimal } from './animals.js';
-import { isAway } from './port.js';
+import { isAway, netReady, haulNet, castNet } from './port.js';
 import { cureCost, cureAnimal } from './incidents.js';
 import { recipeUnlocked, canCook, queueQuiet, collectMachine } from './workshop.js';
 import { planSummary } from './plan.js';
@@ -28,12 +30,19 @@ import { trapReady, haulTrap } from './fishing.js';
 import { slotsOf, pickTree } from './orchard.js';
 import { natGot } from './nature.js';
 import { loadsReady, collectLoads } from './natureplus.js';
+import { handleHive } from './farmlife.js';
+import { apiaryOpen, apiaryHives, apiaryOf, harvestApiary } from './apiary.js';
+import { islandOpen, islandPlots, harvestIsland, plantIsland } from './island.js';
+import { oasisOpen, oasisPlots, harvestOasis, plantOasis } from './oasis.js';
+import { nordOpen, nordPlots, harvestNord, plantNord, nordChilly, stoveKeys, stoveLit, feedStove } from './nord.js';
+import { asieOpen, asiePlots, harvestAsie, plantAsie, clearMud } from './asie.js';
 import { tip } from './tips.js';
 
 const FRESH_TEAM = () => ({
     lina: { lvl: 0, t: 0, off: false, mode: 'both' },
     henri: { lvl: 0, t: 0, off: false, rules: [] },
     milo: { lvl: 0, t: 0, off: false, mode: 'all', fg: 0 },
+    camille: { lvl: 0, t: 0, off: false, mode: 'both' },
 });
 
 let planWired = false;
@@ -65,9 +74,11 @@ export function ensureTeam() {
     if (!T.lina || typeof T.lina !== 'object') T.lina = FRESH_TEAM().lina;
     if (!T.henri || typeof T.henri !== 'object') T.henri = FRESH_TEAM().henri;
     if (!T.milo || typeof T.milo !== 'object') T.milo = FRESH_TEAM().milo;
+    if (!T.camille || typeof T.camille !== 'object') T.camille = FRESH_TEAM().camille;
     if (!Array.isArray(T.henri.rules)) T.henri.rules = [];
     if (!LINA_MODES.some(([k]) => k === T.lina.mode)) T.lina.mode = 'both';
     if (!MILO_MODES.some(([k]) => k === T.milo.mode)) T.milo.mode = 'all';
+    if (!CAMILLE_MODES.some(([k]) => k === T.camille.mode)) T.camille.mode = 'both';
     return T;
 }
 
@@ -123,8 +134,8 @@ export function linaPass() {
         xp = 0;
     const maxF = maxFood();
     state.animals.forEach((a, i) => {
-        if (!a || isAway(a) || isResting(a)) return;
-        const pIdx = a.pasture || 0;
+        if (!a || isAway(a) || isResting(a) || a.box || a.trip) return;
+        const pIdx = a.p !== undefined ? a.p : a.pasture || 0;
         if (pIdx >= def.pastures) return;
         if (def.heal && a.sick && state.money >= cureCost()) {
             if (cureAnimal(i)) cured++;
@@ -166,7 +177,7 @@ export const henriCanUp = () => {
     return !!n && state.level >= n.lvl && hasCost(n.cost);
 };
 export const henriPaused = () => !!(state.team && state.team.henri && state.team.henri.off);
-export const henriMaxSlots = () => (henriDef() ? henriDef().slots + (skill('steward') ? 1 : 0) : 0);
+export const henriMaxSlots = () => (henriDef() ? henriDef().slots + (skill('steward') ? 1 : 0) + (state.ribbonShop && state.ribbonShop.henriPlus ? 1 : 0) : 0);
 export const henriRules = () => (state.team && state.team.henri && Array.isArray(state.team.henri.rules) ? state.team.henri.rules : []);
 let henriMsg = '';
 export const henriMessage = () => henriMsg;
@@ -267,7 +278,7 @@ export function henriCandidates(query = '') {
 export function henriPass() {
     const def = henriDef();
     if (!def || henriPaused()) return null;
-    const rules = henriRules().slice(0, def.slots);
+    const rules = henriRules().slice(0, henriMaxSlots());
     if (!rules.length) return null;
     let queued = 0,
         collected = 0;
@@ -356,19 +367,39 @@ export function miloPass(allowForage = true) {
     let traps = 0,
         fruits = 0,
         loads = 0,
-        forage = 0;
+        forage = 0,
+        honey = 0,
+        seaNet = 0;
 
-    // 1. Nasses prêtes à l'étang
-    if (mode !== 'orchard' && state.pond && Array.isArray(state.pond.traps)) {
-        state.pond.traps.forEach((t, i) => {
-            if (trapReady(t) && !barnBlocked(true)) {
-                const got = haulTrap(i);
-                if (got) traps += Object.values(got).reduce((a, b) => a + b, 0);
+    // 1. Nasses prêtes à l'étang + filet de mer + ruches du champ
+    if (mode !== 'orchard') {
+        if (state.pond && Array.isArray(state.pond.traps)) {
+            state.pond.traps.forEach((t, i) => {
+                if (trapReady(t) && !barnBlocked(true)) {
+                    const got = haulTrap(i);
+                    if (got) traps += Object.values(got).reduce((a, b) => a + b, 0);
+                }
+            });
+        }
+        // 1.186 : Filet de pêche en mer (relève et relance)
+        if (netReady() && !barnBlocked(true)) {
+            if (haulNet()) {
+                seaNet++;
+                castNet();
             }
-        });
+        }
+        // 1.186 : Ruches du champ
+        if (Array.isArray(state.grid)) {
+            state.grid.forEach((p, i) => {
+                if (p && p.deco === 'hive' && Math.floor(p.honey || 0) >= 1 && !barnBlocked(true)) {
+                    const before = Math.floor(p.honey || 0);
+                    if (handleHive(i)) honey += before;
+                }
+            });
+        }
     }
 
-    // 2. Fruits tombés du verger (ferme, puis toutes les contrées dès niv. 3)
+    // 2. Fruits tombés du verger + ruchers régionaux (dès niv. 3)
     if (mode !== 'wild') {
         const zones = def.lands ? ['farm', 'island', 'oasis', 'nord', 'asie', 'oasisV', 'nordV', 'asieV'] : ['farm'];
         let xp = 0;
@@ -382,6 +413,14 @@ export function miloPass(allowForage = true) {
             });
         }
         if (xp) addXp(xp);
+    }
+    if (def.lands && mode !== 'orchard') {
+        for (const land of ['island', 'oasis', 'nord', 'asie']) {
+            if (apiaryOpen(land) && apiaryHives(land) > 0 && !barnBlocked(true)) {
+                const jars = Math.floor(apiaryOf(land).honey || 0);
+                if (jars >= 1 && harvestApiary(land)) honey += jars;
+            }
+        }
     }
 
     // 3. Forêt : charges du bûcheron/mineur + trouvailles saisonnières (dès niv. 2)
@@ -408,33 +447,145 @@ export function miloPass(allowForage = true) {
         }
     }
 
-    if (traps || fruits || loads || forage) {
+    if (traps || fruits || loads || forage || honey || seaNet) {
         const parts = [];
         if (traps) parts.push(`${traps} prise${traps > 1 ? 's' : ''} aux nasses`);
+        if (seaNet) parts.push('filet de mer relevé');
+        if (honey) parts.push(`${honey} pot${honey > 1 ? 's' : ''} de miel`);
         if (fruits) parts.push(`${fruits} fruit${fruits > 1 ? 's' : ''} au verger`);
         if (loads) parts.push(`${loads} matériaux`);
         if (forage) parts.push(`${forage} cueillette${forage > 1 ? 's' : ''}`);
         miloMsg = `Milo : ${parts.join(' · ')}`;
-        return { traps, fruits, loads, forage };
+        return { traps, fruits, loads, forage, honey, seaNet };
+    }
+    return null;
+}
+
+// ---------------- 1.186 : Camille · Intendante des Contrées ----------------
+export const camilleLvl = () => (state.team && state.team.camille && state.team.camille.lvl) || 0;
+export const camilleDef = () => TEAM_CAMILLE[camilleLvl()] || null;
+export const camilleNext = () => TEAM_CAMILLE[camilleLvl() + 1] || null;
+export const camilleCanUp = () => {
+    const n = camilleNext();
+    return !!n && state.level >= n.lvl && hasCost(n.cost);
+};
+export const camillePaused = () => !!(state.team && state.team.camille && state.team.camille.off);
+export const camilleMode = () => (state.team && state.team.camille && state.team.camille.mode) || 'both';
+let camilleMsg = '';
+export const camilleMessage = () => camilleMsg;
+
+export function upgradeCamille(at) {
+    const n = camilleNext();
+    if (!n || state.level < n.lvl || !hasCost(n.cost)) return false;
+    ensureTeam();
+    payCost(n.cost);
+    state.team.camille.lvl++;
+    sfx('level');
+    buzz(25);
+    burst(at, 'sparkle', 14);
+    const l = state.team.camille.lvl;
+    toast(l === 1 ? 'Camille rejoint l’équipe pour s’occuper des contrées !' : `Camille passe niveau ${l} : ${TEAM_CAMILLE[l].desc}`, ['villager', 'camille']);
+    if (l === 1) tip('team');
+    return true;
+}
+
+export function toggleCamille() {
+    if (!camilleLvl()) return false;
+    const T = ensureTeam();
+    T.camille.off = !T.camille.off;
+    toast(T.camille.off ? 'Camille est en pause' : 'Camille reprend sa tournée des contrées', ['villager', 'camille']);
+    return true;
+}
+
+export function setCamilleMode(mode) {
+    if (!CAMILLE_MODES.some(([k]) => k === mode)) return false;
+    ensureTeam().camille.mode = mode;
+    return true;
+}
+
+export function camillePass() {
+    const def = camilleDef();
+    if (!def || camillePaused()) return null;
+    const replant = camilleMode() === 'both';
+    let harvested = 0,
+        planted = 0,
+        tended = 0;
+
+    if (def.lands.includes('island') && islandOpen()) {
+        islandPlots().forEach((p, k) => {
+            if (!p || !p.open || !p.ready || barnBlocked(true)) return;
+            const prevId = p.id;
+            if (harvestIsland(k, null, true)) {
+                harvested++;
+                if (replant && prevId && plantIsland(k, prevId, null, true)) planted++;
+            }
+        });
+    }
+    if (def.lands.includes('oasis') && oasisOpen()) {
+        oasisPlots().forEach((p, k) => {
+            if (!p || !p.open || !p.ready || barnBlocked(true)) return;
+            const prevId = p.id;
+            if (harvestOasis(k, null, true)) {
+                harvested++;
+                if (replant && prevId && plantOasis(k, prevId, null, true)) planted++;
+            }
+        });
+    }
+    if (def.lands.includes('nord') && nordOpen()) {
+        if (nordChilly()) {
+            for (const k of stoveKeys()) {
+                if (!stoveLit(k) && feedStove(k, null, true)) tended++;
+            }
+        }
+        nordPlots().forEach((p, k) => {
+            if (!p || !p.open || !p.ready || barnBlocked(true)) return;
+            const prevId = p.id;
+            if (harvestNord(k, null, true)) {
+                harvested++;
+                if (replant && prevId && plantNord(k, prevId, null, true)) planted++;
+            }
+        });
+    }
+    if (def.lands.includes('asie') && asieOpen()) {
+        asiePlots().forEach((p, k) => {
+            if (!p || !p.open) return;
+            if (p.mud && clearMud(k)) tended++;
+            if (!p.ready || p.mud || barnBlocked(true)) return;
+            const prevId = p.id;
+            if (harvestAsie(k, null, true)) {
+                harvested++;
+                if (replant && prevId && plantAsie(k, prevId, null, true)) planted++;
+            }
+        });
+    }
+
+    if (harvested || planted || tended) {
+        const parts = [];
+        if (harvested) parts.push(`${harvested} récolte${harvested > 1 ? 's' : ''}`);
+        if (planted) parts.push(`${planted} semis`);
+        if (tended) parts.push(`${tended} entretien${tended > 1 ? 's' : ''}`);
+        camilleMsg = `Camille : ${parts.join(' · ')}`;
+        return { harvested, planted, tended };
     }
     return null;
 }
 
 // ---------------- Contrôles globaux de l'Équipe ----------------
 export function teamHiredCount() {
-    return (handLvl() > 0 ? 1 : 0) + (linaLvl() > 0 ? 1 : 0) + (henriLvl() > 0 ? 1 : 0) + (miloLvl() > 0 ? 1 : 0);
+    return (handLvl() > 0 ? 1 : 0) + (linaLvl() > 0 ? 1 : 0) + (henriLvl() > 0 ? 1 : 0) + (miloLvl() > 0 ? 1 : 0) + (camilleLvl() > 0 ? 1 : 0);
 }
 export function teamActiveCount() {
     return (
         (handLvl() > 0 && !handPaused() ? 1 : 0) +
         (linaLvl() > 0 && !linaPaused() ? 1 : 0) +
         (henriLvl() > 0 && !henriPaused() ? 1 : 0) +
-        (miloLvl() > 0 && !miloPaused() ? 1 : 0)
+        (miloLvl() > 0 && !miloPaused() ? 1 : 0) +
+        (camilleLvl() > 0 && !camillePaused() ? 1 : 0)
     );
 }
 export const teamAnyHired = () => teamHiredCount() > 0;
 export const teamAnyActive = () => teamActiveCount() > 0;
-export const teamCanUpCount = () => (linaCanUp() ? 1 : 0) + (henriCanUp() ? 1 : 0) + (miloCanUp() ? 1 : 0);
+export const teamCanUpCount = () => (linaCanUp() ? 1 : 0) + (henriCanUp() ? 1 : 0) + (miloCanUp() ? 1 : 0) + (camilleCanUp() ? 1 : 0);
 export const teamCanUp = () => teamCanUpCount() > 0;
 
 export function teamToggleAll() {
@@ -445,6 +596,7 @@ export function teamToggleAll() {
     if (linaLvl() > 0) T.lina.off = pauseAll;
     if (henriLvl() > 0) T.henri.off = pauseAll;
     if (miloLvl() > 0) T.milo.off = pauseAll;
+    if (camilleLvl() > 0) T.camille.off = pauseAll;
     toast(pauseAll ? 'Toute l’équipe du domaine est en pause' : 'Toute l’équipe reprend le travail !', ['villager', 'theo']);
     sfx('click');
     return true;
@@ -485,11 +637,20 @@ export function teamTick() {
         }
     }
 
+    const cDef = camilleDef();
+    if (cDef && !T.camille.off) {
+        T.camille.t = (T.camille.t || 0) + 1;
+        if (T.camille.t >= pace(cDef.every)) {
+            T.camille.t = 0;
+            if (camillePass()) changed = true;
+        }
+    }
+
     return changed;
 }
 
 export function teamOffline(elapsed) {
-    const out = { lina: 0, henri: 0, milo: 0 };
+    const out = { lina: 0, henri: 0, milo: 0, camille: 0 };
     if (!state.team || elapsed < 60) return out;
     const T = ensureTeam();
 
@@ -505,11 +666,11 @@ export function teamOffline(elapsed) {
         if (r) out.henri = r.queued + r.collected;
     }
 
-    // Milo : relève les nasses/vergers/charges + cueillette proportionnelle (plafonnée à 8)
+    // Milo : relève les nasses/vergers/ruches/charges + cueillette proportionnelle (plafonnée à 8)
     const mDef = miloDef();
     if (mDef && !T.milo.off) {
         const r = miloPass(false);
-        if (r) out.milo += r.traps + r.fruits + r.loads;
+        if (r) out.milo += r.traps + r.fruits + r.loads + (r.honey || 0) + (r.seaNet || 0);
         if (mDef.forest && miloMode() !== 'orchard' && state.level >= FORAGE.lvl && !barnBlocked(true)) {
             const finds = Math.min(8, Math.floor(elapsed / Math.max(120, mDef.every * 4)));
             const list = FORAGE.by[season().id];
@@ -523,6 +684,12 @@ export function teamOffline(elapsed) {
                 out.milo += qty;
             }
         }
+    }
+
+    // Camille : un passage sur les contrées à la fin de l'absence
+    if (camilleLvl() > 0 && !T.camille.off) {
+        const r = camillePass();
+        if (r) out.camille = r.harvested + r.planted + r.tended;
     }
     return out;
 }

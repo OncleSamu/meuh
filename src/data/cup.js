@@ -48,10 +48,10 @@ export const CUP_WORKS = [
     },
     {
         id: 'museum',
-        name: 'Le musée de la vallée',
+        name: 'La Grande Aile des Expéditions',
         pts: 14,
         cost: { coins: 700e6, cutStone: 1200, goldIngot: 150, emerald: 50 },
-        mamie: 'Mets-y la vieille charrue de la grange. Elle a plus d’histoires à raconter que bien des tableaux.',
+        mamie: 'Anatole y prépare ses grandes fouilles souterraines. Mets-y aussi la vieille charrue de la grange : elle a autant d’histoires à raconter que bien des trésors.',
     },
     {
         id: 'opera',

@@ -75,7 +75,7 @@ function carteHtml() {
     const cells = carte
         .map(id => {
             const fans = fansOf(id);
-            return `<button class="carte-item" data-act="carteToggle" data-id="${id}" aria-label="Retirer ${ITEMS[id].name} de la carte">${ico(['item', id], 'ico big')}<b>${ITEMS[id].name}</b><small>×${state.inventory[id] || 0}${fans.length ? ` · ♥ ${fans.length}` : ''}</small></button>`;
+            return `<button class="carte-item" data-act="carteToggle" data-id="${id}" aria-label="Retirer ${ITEMS[id].name} de la carte">${ico(['item', id], 'ico big')}<b>${ITEMS[id].name}</b><small>×${state.inventory[id] || 0}${fans.length ? ` · ${ico(['ui', 'heart'])} ${fans.length}` : ''}</small></button>`;
         })
         .join('');
     return `<div class="card carte-card"><div class="cut-row"><div><div class="card-title">La carte du salon · ${carte.length}/${CARTE.max}</div><div class="card-sub">${
@@ -90,7 +90,7 @@ defineSheet('carte', {
             .filter(r => G.recipeUnlocked(r.id))
             .map(r => r.id)
             .sort((a, b) => carte.includes(b) - carte.includes(a) || fansOf(b).length - fansOf(a).length || (state.inventory[b] || 0) - (state.inventory[a] || 0) || ITEMS[a].name.localeCompare(ITEMS[b].name, 'fr'));
-        return `${hint(`Touchez une boisson pour l’ajouter à la carte ou l’en retirer (quatre au plus). Un ♥ : la boisson préférée d’un habitué que vous connaissez.`)}<div class="pick-grid">${all
+        return `${hint(`Touchez une boisson pour l’ajouter à la carte ou l’en retirer (quatre au plus). Un ${ico(['ui', 'heart'])} : la boisson préférée d’un habitué que vous connaissez.`)}<div class="pick-grid">${all
             .map(id => {
                 const on = carte.includes(id),
                     fans = fansOf(id);

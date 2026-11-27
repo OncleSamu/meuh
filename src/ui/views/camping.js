@@ -98,7 +98,7 @@ export function upsHtml() {
 function resLine(r, i) {
     const ready = G.resCanDeliver(r);
     const sub = [r.job, ready ? 'commande prête' : '', G.resGiftReady(r) ? 'cadeau possible' : ''].filter(Boolean).join(' · ');
-    return `<div class="vl-row" data-act="campOne" data-kind="res" data-i="${i}"><div class="avatar xs">${ico(['villager', r.look])}</div><div class="vl-main"><b>${esc(r.name)}</b><span class="vl-sub"><small class="vl-job">${esc(sub)}</small></span></div>${ready ? `<span class="vl-flag">${ico(['item', r.order.item])}</span>` : ''}<span class="vl-go">›</span></div>`;
+    return `<div class="vl-row" data-act="campOne" data-kind="res" data-i="${i}" role="button" tabindex="0"><div class="avatar xs">${ico(['villager', r.look])}</div><div class="vl-main"><b>${esc(r.name)}</b><span class="vl-sub"><small class="vl-job">${esc(sub)}</small></span></div>${ready ? `<span class="vl-flag">${ico(['item', r.order.item])}</span>` : ''}<span class="vl-go">›</span></div>`;
 }
 export function campingCard() {
     if (!G.campOpen()) return null;

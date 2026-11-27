@@ -107,7 +107,7 @@ const BUILD = {
         };
     },
     offline: r => ({
-        html: `<div class="moment-avatar">${art('ui', 'house')}</div><h2>Bon retour !</h2><p>Vous êtes parti ${formatDuration(r.elapsed)} (en vrai). La ferme a continué sans vous :</p>${lines(r.lines)}`,
+        html: `<div class="moment-avatar">${art('ui', 'house')}</div><h2>Bon retour !</h2><p>Vous êtes parti ${formatDuration(r.elapsed)} (en vrai). La ferme a continué sans vous :</p>${lines((r.lines || []).map(([ic, txt]) => [ic, esc(txt)]))}`,
         ok: 'Au travail !',
     }),
     // 1.24.3 : la fiche de naissance d'un poulain du haras

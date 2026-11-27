@@ -10,7 +10,7 @@ export const RECIPES_137 = [
     ['zanderWine', 'Sandre au vin blanc', 'stove', { zander: 1, whiteWine: 1, butter: 1 }, 300, 58],
     ['marcBrandy', 'Eau-de-vie de marc', 'still', { grape: 5 }, 600, 59],
     ['cognac', 'Cognac', 'still', { whiteWine: 3 }, 900, 60],
-    ['kir', 'Kir', 'juiceBar', { whiteWine: 1, cassisCream: 1 }, 120, 56],
+    ['kir', 'Kir', 'juiceBar', { whiteWine: 1, cassisCream: 1 }, 360, 56],
     ['strawWine', 'Vin de paille', 'winery', { grape: 6, honey: 1 }, 840, 60],
     ['mulledWine', 'Vin chaud', 'stove', { redWine: 1, orange: 1, honey: 1, lemon: 1 }, 260, 59],
 ];

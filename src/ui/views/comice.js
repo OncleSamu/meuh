@@ -316,7 +316,7 @@ defineSheet('comiceTreat', {
             .slice(0, 40)
             .map(
                 a =>
-                    `<button class="row" data-act="comiceTreatDo" data-uid="${a.uid}"><span class="offer-art">${beastArt(a)}</span><span class="row-main"><span>${esc(a.name)}</span><small>${esc(ANIMALS[a.type]?.name || a.type)} · ${a.love || 0}/5 cœurs</small></span><span class="chip ok">+1 ♥</span></button>`,
+                    `<button class="row" data-act="comiceTreatDo" data-uid="${a.uid}"><span class="offer-art">${beastArt(a)}</span><span class="row-main"><span>${esc(a.name)}</span><small>${esc(ANIMALS[a.type]?.name || a.type)} · ${a.love || 0}/5 cœurs</small></span><span class="chip ok">+1 ${ico(['ui', 'heart'])}</span></button>`,
             )
             .join('')}</div>`;
     },

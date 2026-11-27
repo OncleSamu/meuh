@@ -1,6 +1,18 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.184",
+  "title": "L’Audit Ultime : Corrections globales, Mode Sombre, Équipe 2.0, Île 2.0, Coffrets Prestige & Prestige 2.0",
+  "date": "27 novembre 2026",
+  "items": [
+   "Corrections critiques & sécurité : Rubans 100 % désormais réclamables (Brasserie, Parfumerie, Confiserie), arbre de compétences préservé après un Prestige, faille de coffre infini à la Mine étage 40 corrigée, Lina/Henri/Grand Prix/Bateau/Confiserie/Parfumerie fiabilisés, 9 failles XSS et tous les emojis résiduels éliminés, rattrapage hors-ligne complet (Brasserie, Labo, Camping, Maison)",
+   "Sprites SVG, Mode Sombre & Mobile 360 px : 29 cartes MeuhCG Série 10 réparées, 6 sprites relookés activés, 7 dessins rognés recadrés, 5 pousses différenciées, mode sombre lisible sur MeuhCG/Cave/Cloud Save/Confiserie, zoom mobile débloqué et barre Atelier scrollable sur une seule ligne",
+   "Économie, Confort & Guide : 7e métier « Artisan » (Maître artisan), Étal 2.0 avec sélecteur de qualité, Pot de peinture fabricable dès le niv. 18 (Marmite), bouton « Tout casser » aux géodes du Musée, Grange adoucie, Coffre-fort jusqu’à 50 places acceptant la Brasserie, Grands Défis dès le niv. 75, 14e saison Confiserie, 7 nouveaux succès, Journal du matin en 4 catégories repliables et Guide mis à jour",
+   "Équipe 2.0, Plan étendu & Île 2.0 : Milo relève aussi ruches, ruchers régionaux et filet de mer ; arrivée de Camille · Intendante des Contrées (niv. 65) ; Parfumerie et Confiserie intégrées au Plan de production ; Île aux Alizés enrichie de la Goélette des îles (×2,3 + épices rares + Renom) et du Lagon aux perles",
+   "La Maison 2.0, Expéditions & Prestige 2.0 : Coffrets Prestige Multi-Ateliers dès le niv. 62 (Cuvée + Confiserie + Parfum, 6 coffrets thématiques au catalogue) ; passerelles douces MeuhCG ↔ Vallée (+2 amitié sur 1er duel/jour, décos de série) ; Grande Aile des Expéditions du Musée (dès 16 dons) ; Prestige 2.0 conservant métier/domaine/Maison, rendement doux au-delà de 15 rubans et Boutique des Rubans"
+  ]
+ },
+ {
   "v": "1.183",
   "title": "Refonte des Transports & Commandes (Ports du cargo, Montgolfière Prestige, Commandes dorées & Ateliers)",
   "date": "26 novembre 2026",

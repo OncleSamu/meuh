@@ -10,6 +10,7 @@ import { HONEYS, HONEY_COL } from '../data/honey.js';
 import { QUALITY, QX } from '../data/farm.js';
 import { VILLAGERS } from '../data/village.js';
 import { PAIRS, MEAD_BASES } from '../data/abbey.js';
+import { metierArtisan } from './metier.js';
 import {
     CONF_LVL,
     CONF_KINDS,
@@ -273,7 +274,7 @@ export function confHarmony(kind, baseId, ings) {
     return { stars: Math.max(0, Math.min(3, score)), classic: null, reasons };
 }
 
-function confCost(baseId, ings) {
+export function confCost(baseId, ings) {
     const b = confBaseDef(baseId);
     const cost = { ...b.cost };
     for (const id of ings) cost[id] = (cost[id] || 0) + 2;
@@ -309,8 +310,8 @@ function confAutoName(kind, baseId, ings, classic) {
     return main ? `${pref} · ${main}` : pref;
 }
 
-export function confPreview(kind) {
-    const d = confDraft(kind);
+export function confPreview(kind, draftOverride = null) {
+    const d = draftOverride || confDraft(kind);
     const kDef = CONF_KINDS[kind];
     const b = confBaseDef(d.base);
     const ings = d.ings.filter(Boolean).slice(0, kDef.maxIngs);
@@ -327,7 +328,7 @@ export function confPreview(kind) {
     const basePieceVal = Math.max(45, Math.round(((rawVal * 1.48 * CONF_HARMONY[h.stars]) / kDef.batch) * 1.15));
     const mainTop = ings.length ? topNote(confIngFlavor(ings[0])) : 0;
     const accentCol = CONF_NOTE_COL[mainTop] || '#f5c842';
-    const time = Math.round((kDef.baseTime + kDef.perIng * ings.length) * (1 - 0.06 * skill('speed')));
+    const time = Math.round((kDef.baseTime + kDef.perIng * ings.length) * (1 - 0.05 * skill('quickHands')));
     const q = confIngQuality(cost, ings);
     const freeKettle = ensureConf().kettles.findIndex(v => !v);
     return {
@@ -503,10 +504,10 @@ export function finishConfMini(kind, stars) {
 }
 
 // Lancement en atelier passif dans un chaudron libre
-export function startConfKettle(kind) {
+export function startConfKettle(kind, draftOverride = null) {
     if (!confOpen()) return false;
     const C = ensureConf();
-    const pv = confPreview(kind);
+    const pv = confPreview(kind, draftOverride);
     if (!pv.can || pv.freeKettle < 0) return false;
     const baseQ = consumeCost(pv.cost);
     const t = now();
@@ -520,7 +521,7 @@ export function startConfKettle(kind) {
             harmony: { stars: pv.harmony.stars, classic: pv.harmony.classic ? { id: pv.harmony.classic.id } : null },
             batch: pv.batch,
             value: pv.value,
-            name: pv.name,
+            name: (draftOverride && draftOverride.name) || pv.name,
             baseCol: pv.baseCol,
             baseCol2: pv.baseCol2,
             accentCol: pv.accentCol,
@@ -533,6 +534,12 @@ export function startConfKettle(kind) {
     sfx('machine');
     emit('changed', 'confiserie');
     return true;
+}
+
+export function startConfById(cid) {
+    const c = confOf(cid);
+    if (!c) return false;
+    return startConfKettle(c.kind, c);
 }
 
 export function collectConfKettle(idx) {
@@ -598,7 +605,7 @@ export function confPrice(cid) {
     const c = confOf(cid);
     if (!c) return 0;
     const C = ensureConf();
-    return Math.max(10, Math.round((c.value * demandMult(C, cid)) / 5) * 5);
+    return Math.max(10, Math.round((c.value * demandMult(C, cid) * metierArtisan()) / 5) * 5);
 }
 
 export function sellConf(cid, qty = 1) {
@@ -748,11 +755,30 @@ export function confOrderMatches(o) {
     });
 }
 
+function peekConfMultSum(C, cid, qty, minQ = 0) {
+    const total = C.stock[cid] || 0;
+    const q = (C.q && C.q[cid]) || { s: 0, g: 0, p: 0, d: 0 };
+    const ord = Math.max(0, total - (q.s + q.g + q.p + q.d));
+    const avail = [ord, q.s, q.g, q.p, q.d];
+    let left = qty,
+        multSum = 0;
+    for (let r = minQ; r <= 4 && left > 0; r++) {
+        const take = Math.min(left, avail[r]);
+        if (take > 0) {
+            left -= take;
+            multSum += take * QUALITY[r].mult;
+        }
+    }
+    if (left > 0) multSum += left * (QUALITY[minQ]?.mult || 1);
+    return multSum;
+}
+
 export function confOrderPay(o, cid) {
     const c = confOf(cid);
     if (!c) return 0;
-    const qMult = QUALITY[Math.max(o.minQ || 0, confBestQuality(cid))]?.mult || 1;
-    return Math.round((c.value * o.qty * qMult * CONF_ORDERS.payMult * (1 + 0.06 * skill('hospitality'))) / 5) * 5;
+    const C = ensureConf();
+    const multSum = peekConfMultSum(C, cid, o.qty, o.minQ || 0);
+    return Math.round((c.value * multSum * CONF_ORDERS.payMult * (1 + 0.06 * skill('hospitality'))) / 5) * 5;
 }
 
 export function deliverConfOrder(oid, cid) {
@@ -769,8 +795,8 @@ export function deliverConfOrder(oid, cid) {
     state.income.confiserie = (state.income.confiserie || 0) + pay;
     earn(pay);
     addXp(90 + o.qty * 15);
-    addFriendship(o.vid, 3);
-    addRenom(RENOM.order || 2);
+    if (VILLAGERS[o.vid]) addFriendship(o.vid, 3);
+    addRenom(RENOM.conf || 1, 'conf');
     state.stats.confOrders = (state.stats.confOrders || 0) + 1;
     sfx('coin');
     toast(`Commande gourmande livrée : +${pay} pièces !`, ['ui', 'confiserie']);
@@ -794,17 +820,27 @@ export const confGrimoireTotal = () => CONF_ING_IDS.length + CONF_CLASSICS.lengt
 export const confGrimoireClaimable = () => {
     const C = state.confiserie;
     if (!C) return 0;
-    return Math.max(0, Math.floor(confGrimoireCount() / CONF_GRIMOIRE.step) - (C.grimoireClaimed || 0));
+    const cnt = confGrimoireCount();
+    const total = confGrimoireTotal();
+    const maxSteps = Math.floor(total / CONF_GRIMOIRE.step);
+    const claimed = C.grimoireClaimed || 0;
+    const stepClaim = Math.max(0, Math.floor(cnt / CONF_GRIMOIRE.step) - claimed);
+    const finalClaim = !C.grimoireRibbon && cnt >= total && claimed >= maxSteps ? 1 : 0;
+    return stepClaim + finalClaim;
 };
 
 export function claimConfGrimoire() {
     const C = ensureConf();
     if (confGrimoireClaimable() <= 0) return false;
-    C.grimoireClaimed = (C.grimoireClaimed || 0) + 1;
+    const cnt = confGrimoireCount();
+    const total = confGrimoireTotal();
+    const maxSteps = Math.floor(total / CONF_GRIMOIRE.step);
+    const isFinalOnly = !C.grimoireRibbon && cnt >= total && (C.grimoireClaimed || 0) >= maxSteps;
+    if (!isFinalOnly) C.grimoireClaimed = (C.grimoireClaimed || 0) + 1;
     state.income.confiserie = (state.income.confiserie || 0) + CONF_GRIMOIRE.coins;
     earn(CONF_GRIMOIRE.coins);
     addXp(CONF_GRIMOIRE.xp);
-    if (!C.grimoireRibbon && confGrimoireCount() >= confGrimoireTotal() && C.grimoireClaimed >= Math.floor(confGrimoireTotal() / CONF_GRIMOIRE.step)) {
+    if (!C.grimoireRibbon && cnt >= total && (C.grimoireClaimed || 0) >= maxSteps) {
         C.grimoireRibbon = true;
         state.prestige.rubans = (state.prestige.rubans || 0) + 1;
         toast('Grimoire du Confiseur complet : +1 ruban de Prestige !', ['ui', 'confiserie']);

@@ -54,7 +54,7 @@ export const ACHIEVEMENTS = [
     // 1.75.3
     { id: 'beerOrders', name: 'Tavernier', desc: 'Livrer {n} commande{s} de bière', icon: ['ui', 'beer'], tiers: [5, 30, 100] },
     { id: 'showWins', name: 'Cavalier', desc: 'Gagner {n} concours au haras', icon: ['ui', 'hCup2'], tiers: [1, 10, 40], calc: true },
-    { id: 'foals', name: 'Naisseur', desc: 'Faire naître {n} poulain{s} au haras', icon: ['animal', 'horse'], tiers: [1, 10, 30] },
+    { id: 'foals', name: 'Éleveur de pur-sang', desc: 'Faire naître {n} poulain{s} au haras', icon: ['animal', 'horse'], tiers: [1, 10, 30] },
     { id: 'fixedVars', name: 'Obtenteur', desc: 'Fixer {n} variété{s} au labo', icon: ['ui', 'flowers'], tiers: [1, 5, 15], calc: true },
     {
         id: 'honeyKinds',
@@ -71,6 +71,14 @@ export const ACHIEVEMENTS = [
     // 1.178 : L'Atelier Confiserie
     { id: 'confiseries', name: 'Maître confiseur', desc: 'Façonner {n} confiserie{s}', icon: ['ui', 'confiserie'], tiers: [20, 200, 1500] },
     { id: 'confOrders', name: 'Vitrine gourmande', desc: 'Livrer {n} commande{s} gourmande{s}', icon: ['ui', 'confiserie'], tiers: [5, 25, 80] },
+    // 1.185 : Succès des fonctionnalités récentes
+    { id: 'museumDonated', name: 'Conservateur', desc: 'Donner {n} pièce{s} au Musée', icon: ['ui', 'museum'], tiers: [5, 16, 32], calc: true },
+    { id: 'salonWins', name: 'Champion du Comice', desc: 'Remporter {n} concours au Comice agricole', icon: ['ui', 'ribbon'], tiers: [1, 8, 25] },
+    { id: 'tcgCards', name: 'Collectionneur MeuhCG', desc: 'Collectionner {n} carte{s} MeuhCG différentes', icon: ['ui', 'tcgPack'], tiers: [25, 120, 250], calc: true },
+    { id: 'ciders', name: 'Cidrier', desc: 'Mettre en bouteille {n} cidre{s}', icon: ['item', 'cider'], tiers: [6, 120, 1000] },
+    { id: 'sakes', name: 'Maître toji', desc: 'Brasser {n} bouteille{s} de saké', icon: ['ui', 'sake'], tiers: [6, 100, 800] },
+    { id: 'campGuests', name: 'Hôte de la vallée', desc: 'Accueillir {n} campeur{s} au camping', icon: ['ui', 'tent'], tiers: [5, 35, 150] },
+    { id: 'familyMeals', name: 'Grande tablée', desc: 'Partager {n} repas de famille', icon: ['ui', 'fmHome'], tiers: [3, 20, 80] },
 ];
 
 // ---------------- Compétences ----------------

@@ -7,6 +7,7 @@ import { FAMILIES, CONCENTRATIONS } from '../../data/perfume.js';
 import { perfumeSvg } from '../../art/perfume.js';
 import { CONF_KINDS } from '../../data/confiserie.js';
 import { confSvg } from '../../art/confiserie.js';
+import { beerSvg } from '../../art/abbey.js';
 import * as G from '../../systems/index.js';
 import { actions, esc } from '../dom.js';
 import { genWrap } from '../genlook.js';
@@ -37,7 +38,7 @@ const slotHtml = (s, i, sel) => {
     if (!s) return `<span class="vslot empty" aria-hidden="true"></span>`;
     if (s.kind === 'lot') {
         const l = s.lot;
-        return `<button class="vslot lot${sel === i ? ' sel' : ''}" data-act="vaultSel" data-i="${i}" title="${G.lotName(l)}">${lotIco(l, 'vs-art')}${l.q ? `<i class="vs-q">${qStar(l.q)}</i>` : ''}<b>×${l.n}</b></button>`;
+        return `<button class="vslot lot${sel === i ? ' sel' : ''}" data-act="vaultSel" data-i="${i}" title="${esc(G.lotName(l))}">${lotIco(l, 'vs-art')}${l.q ? `<i class="vs-q">${qStar(l.q)}</i>` : ''}<b>×${l.n}</b></button>`;
     }
     if (s.kind === 'perfume') {
         const pf = s.pf;
@@ -47,15 +48,19 @@ const slotHtml = (s, i, sel) => {
         const cf = s.cf;
         return `<button class="vslot lot${sel === i ? ' sel' : ''}" data-act="vaultSel" data-i="${i}" title="${esc(cf.name)}"><span class="vs-art">${confSvg(cf)}</span>${cf.q ? `<i class="vs-q">${qStar(cf.q)}</i>` : ''}<b>×1</b></button>`;
     }
+    if (s.kind === 'beer') {
+        const br = s.br;
+        return `<button class="vslot lot${sel === i ? ' sel' : ''}" data-act="vaultSel" data-i="${i}" title="${esc(br.name)}"><span class="vs-art">${beerSvg(br)}</span>${br.q ? `<i class="vs-q">${qStar(br.q)}</i>` : ''}<b>×1</b></button>`;
+    }
     return `<button class="vslot${sel === i ? ' sel' : ''}${s.v ? ' var' : ''}" data-act="vaultSel" data-i="${i}" title="${esc(G.vaultSlotName(s))}"><span class="vs-art">${slotArt(s)}</span>${s.q ? `<i class="vs-q">${qStar(s.q)}</i>` : ''}<b>×${s.n}</b></button>`;
 };
 
 const detail = (s, i) => {
     if (!s)
-        return '<p class="card-sub center">Touchez un emplacement pour le reprendre. Pour en ranger, touchez un produit dans la grange, un lot de cave, un parfum ou une confiserie.</p>';
+        return '<p class="card-sub center">Touchez un emplacement pour le reprendre. Pour en ranger, touchez un produit dans la grange, un lot de cave, une cuvée, un parfum ou une confiserie.</p>';
     if (s.kind === 'lot') {
         const l = s.lot;
-        return `<div class="card vault-item"><div class="card-head">${lotIco(l, 'ico big')}<div class="card-main"><div class="card-title">${G.lotName(l)} ×${l.n}</div>
+        return `<div class="card vault-item"><div class="card-head">${lotIco(l, 'ico big')}<div class="card-main"><div class="card-title">${esc(G.lotName(l))} ×${l.n}</div>
             <div class="card-sub">${G.rankName(l)}${lotSub(l)} · vaut ${fmt(G.lotValue(l))}${COIN()}</div></div></div>
             <div class="row-btns">${btn('Remettre en réserve', { act: 'vaultTakeLot', data: { i }, size: 'sm', kind: 'green' })}</div></div>`;
     }
@@ -73,6 +78,13 @@ const detail = (s, i) => {
         return `<div class="card vault-item"><div class="card-head"><span class="ico big">${confSvg(cf)}</span><div class="card-main"><div class="card-title">${esc(cf.name)}</div>
             <div class="card-sub">${kName}${cf.mirror ? ' · Finition Miroir' : ''}${cf.q ? ` · ${qStar(cf.q)} ${qname(cf.q)}` : ''} · vaut ${fmt(G.vaultSlotValue(s))}${COIN()}</div></div></div>
             <div class="row-btns">${btn('Remettre à l’atelier', { act: 'vaultTakeConf', data: { i }, size: 'sm', kind: 'green' })}</div></div>`;
+    }
+    if (s.kind === 'beer') {
+        const br = s.br;
+        const dName = br.sake ? 'Saké' : br.cider ? 'Cidre' : br.mead ? 'Hydromel' : 'Bière';
+        return `<div class="card vault-item"><div class="card-head"><span class="ico big">${beerSvg(br)}</span><div class="card-main"><div class="card-title">${esc(br.name)}</div>
+            <div class="card-sub">${dName}${br.stars ? ` · ${'★'.repeat(br.stars)}` : ''}${br.q ? ` · ${qStar(br.q)} ${qname(br.q)}` : ''} · vaut ${fmt(G.vaultSlotValue(s))}${COIN()}</div></div></div>
+            <div class="row-btns">${btn('Remettre à la brasserie', { act: 'vaultTakeBeer', data: { i }, size: 'sm', kind: 'green' })}</div></div>`;
     }
     return `<div class="card vault-item"><div class="card-head"><span class="ico big">${slotArt(s)}</span><div class="card-main"><div class="card-title">${esc(G.vaultSlotName(s))} ×${s.n}</div>
         <div class="card-sub">${s.v ? `${G.vdef(s.v) && G.vdef(s.v).kind === 'race' ? 'race' : 'variété'} · ` : ''}${s.q ? `${qStar(s.q)} qualité ${qname(s.q)} · ` : ''}vaut ${fmt(G.vaultSlotValue(s))}${COIN()}</div></div></div>
@@ -179,6 +191,9 @@ export function setupVault() {
         vaultTakeConf: (el, d) => {
             if (G.vaultTake(+d.i)) toast('La confiserie est revenue à l’Atelier Confiserie', ['ui', 'confiserie']);
         },
+        vaultTakeBeer: (el, d) => {
+            if (G.vaultTake(+d.i)) toast('La cuvée est revenue à la Brasserie', ['ui', 'beer']);
+        },
         vaultUp: () => G.upgradeVault(),
         vaultAdd: (el, d) => openSheet('vaultPut', { id: d.id }),
         vaultVar: (el, d) => {
@@ -213,6 +228,9 @@ export function setupVault() {
         },
         vaultPerf: (el, d) => {
             if (G.vaultPutPerfume(d.id)) toast('Le flacon est au coffre, à l’abri', ['ui', 'vault']);
+        },
+        vaultBeer: (el, d) => {
+            if (G.vaultPutBeer(d.id)) toast('La cuvée est au coffre, à l’abri', ['ui', 'vault']);
         },
     });
 }

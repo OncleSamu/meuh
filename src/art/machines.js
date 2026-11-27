@@ -77,8 +77,8 @@ Object.assign(machines, {
 Object.assign(machines, {
     smokehouse: () =>
         SHADOW(32, 60, 26, 3) +
-        R(38, 4, 8, 16, 1.5, '#8a8f98') +
-        L('M42 4 Q38 -2 44 -6', 2.2, '#c9d3dc') +
+        R(38, 8, 8, 12, 1.5, '#8a8f98') +
+        L('M42 7 Q38 4 44 2', 2.2, '#c9d3dc') +
         P('M8 58 L8 28 L32 12 L56 28 L56 58Z', '#8b5a2b') +
         L('M8 38 L56 38 M8 48 L56 48', 1.6, '#5e3a1e') +
         L('M4 30 L32 10 L60 30', 5) +

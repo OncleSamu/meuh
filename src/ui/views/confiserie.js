@@ -210,7 +210,7 @@ function composerHtml(kind) {
                 : `<p class="state-line">${
                       !d.ings.length
                           ? 'Ajoutez au moins un ingrédient pour lancer une fournée.'
-                          : `Il manque : ${pv.miss.map(([id, n]) => `${Math.max(1, n - G.confIngHave(id))} ${G.confIngName(id).toLowerCase()}`).join(', ')}.`
+                          : `Il manque : ${pv.miss.map(([id, n]) => `${Math.max(1, n - G.confIngHave(id))} ${esc(G.confIngName(id).toLowerCase())}`).join(', ')}.`
                   }</p>`
         }
     </div>${classicsGuideHtml(kind)}`;
@@ -479,7 +479,7 @@ defineSheet('confPick', {
 defineSheet('confGift', {
     title: o => {
         const c = G.confOf(o.id);
-        return c ? `Offrir : ${c.name}` : 'Offrir une confiserie';
+        return c ? `Offrir : ${esc(c.name)}` : 'Offrir une confiserie';
     },
     render(o) {
         const c = G.confOf(o.id);

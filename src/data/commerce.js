@@ -86,6 +86,26 @@ export const CONTEST_POINTS = {
         name: 'Commandes de cave',
         pts: 40,
     },
+    boats: {
+        name: 'Cargos du port',
+        pts: 45,
+    },
+    perfumeOrders: {
+        name: 'Commandes de parfum',
+        pts: 35,
+    },
+    confOrders: {
+        name: 'Commandes gourmandes',
+        pts: 35,
+    },
+    mined: {
+        name: 'Cases de mine',
+        pts: 1.5,
+    },
+    campGuests: {
+        name: 'Campeurs servis',
+        pts: 15,
+    },
 };
 
 export const CONTEST_TIERS = [0.25, 0.55, 1];
@@ -229,7 +249,7 @@ export const VAULT = {
     lvl: 15,
     base: 6, // emplacements au départ
     per: 4, // emplacements par agrandissement
-    max: 4, // agrandissements
+    max: 11, // jusqu'à 50 emplacements (v1.185)
     stack: 99, // un emplacement garde 99 unités d'un même produit et d'une même qualité
-    cost: l => 20000 * Math.pow(4, l),
+    cost: l => (l <= 4 ? 20000 * Math.pow(4, l) : Math.round((20000 * Math.pow(4, 4) * Math.pow(1.65, l - 4)) / 1000) * 1000),
 };

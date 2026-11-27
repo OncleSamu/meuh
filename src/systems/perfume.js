@@ -40,6 +40,7 @@ import {
 import { mixHex } from '../art/perfume.js';
 import { domLvl } from './estate.js';
 import { earn, addXp } from './player.js';
+import { metierArtisan } from './metier.js';
 import { addFriendship } from './village.js';
 import { isBirthday } from './friends.js';
 import { addRenom, RENOM } from './renom.js';
@@ -631,7 +632,7 @@ const demandNow = pid => {
 export const perfumeDemandMult = pid => Math.max(PERFUME.demandFloor, 1 - PERFUME.demandPer * demandNow(pid));
 export const perfumePrice = pid => {
     const p = perfumeOf(pid);
-    return p ? Math.max(10, Math.round((p.value * perfumeDemandMult(pid)) / 5) * 5) : 0;
+    return p ? Math.max(10, Math.round((p.value * perfumeDemandMult(pid) * metierArtisan()) / 5) * 5) : 0;
 };
 export const perfumeDealPrice = (pid, rank = 0, mult = 1) => {
     const p = perfumeOf(pid);
@@ -997,7 +998,7 @@ export function deliverPerfumeOrder(oid, pid, at) {
     earn(pay, at);
     addXp(Math.round(60 + pay * 0.04), at);
     if (VILLAGERS[o.vid]) addFriendship(o.vid, 2);
-    addRenom(RENOM.order || 1);
+    addRenom(RENOM.perfume || 1, 'perfume', at);
     state.stats.perfumeOrders = (state.stats.perfumeOrders || 0) + 1;
     sfx('level');
     buzz(20);
@@ -1020,18 +1021,27 @@ export const organTotal = () => ALL_NOTE_IDS.length + FAMILY_IDS.length + PERFUM
 export const organCount = () => (state.perfume && state.perfume.organ ? Object.keys(state.perfume.organ).length : 0);
 export const organClaimable = () => {
     if (!perfumeOpen() || !state.perfume) return 0;
-    const tiers = Math.floor(organCount() / PERFUME_ORGAN.step);
-    return Math.max(0, tiers - (state.perfume.organClaimed || 0));
+    const cnt = organCount();
+    const total = organTotal();
+    const maxSteps = Math.floor(total / PERFUME_ORGAN.step);
+    const claimed = state.perfume.organClaimed || 0;
+    const stepClaim = Math.max(0, Math.floor(cnt / PERFUME_ORGAN.step) - claimed);
+    const finalClaim = !state.perfume.organRibbon && cnt >= total && claimed >= maxSteps ? 1 : 0;
+    return stepClaim + finalClaim;
 };
 export function claimOrgan(at) {
     if (!organClaimable()) return false;
     const P = ensurePerfume();
-    P.organClaimed = (P.organClaimed || 0) + 1;
-    const coins = PERFUME_ORGAN.coins * P.organClaimed;
+    const cnt = organCount();
+    const total = organTotal();
+    const maxSteps = Math.floor(total / PERFUME_ORGAN.step);
+    const isFinalOnly = !P.organRibbon && cnt >= total && (P.organClaimed || 0) >= maxSteps;
+    if (!isFinalOnly) P.organClaimed = (P.organClaimed || 0) + 1;
+    const coins = PERFUME_ORGAN.coins * Math.max(1, P.organClaimed || 1);
     earn(coins, at);
-    addXp(PERFUME_ORGAN.xp * P.organClaimed, at);
+    addXp(PERFUME_ORGAN.xp * Math.max(1, P.organClaimed || 1), at);
     giveRare(pickRand(RARE), 2, at);
-    if (!P.organRibbon && organCount() >= organTotal() && P.organClaimed >= Math.floor(organTotal() / PERFUME_ORGAN.step)) {
+    if (!P.organRibbon && cnt >= total && (P.organClaimed || 0) >= maxSteps) {
         P.organRibbon = true;
         state.prestige.rubans++;
         toast('Orgue du Parfumeur complet : +1 ruban !', ['ui', 'perfume']);
@@ -1067,8 +1077,9 @@ export function perfumeOffline() {
     let ready = 0;
     for (const v of P.vats) {
         if (!v) continue;
+        const wasReady = perfumeVatReady(v);
         advanceVat(v, t);
-        if (perfumeVatReady(v)) ready++;
+        if (!wasReady && perfumeVatReady(v)) ready++;
     }
     return ready;
 }

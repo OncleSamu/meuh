@@ -22,7 +22,7 @@ export const METIERS = {
             [L('c:crop', 5000, 'Récolter 5 000 cultures'), L('s:islandHarvest', 300, 'Récolter 300 cultures sur l’île')],
             [L('c:crop', 8000, 'Récolter 8 000 cultures'), L('s:goldQ', 1000, 'Récolter 1 000 cultures de qualité or')],
             [L('c:crop', 12000, 'Récolter 12 000 cultures'), L('s:oasisHarvest', 300, 'Récolter 300 cultures à l’oasis')],
-            [L('c:crop', 20000, 'Récolter 20 000 cultures'), L('s:nordHarvest', 300, 'Récolter 300 cultures au Grand Nord')],
+            [L('c:crop', 20000, 'Récolter 20 000 cultures'), L('s:asieHarvest', 300, 'Récolter 300 cultures aux Terres d’Asie')],
         ],
     },
     eleveur: {
@@ -125,6 +125,26 @@ export const METIERS = {
             [L('c:fish', 8000, 'Pêcher 8 000 poissons'), L('s:fishContests', 6, 'Gagner 6 concours de pêche')],
         ],
     },
+    artisan: {
+        name: 'Artisan',
+        master: 'Maître artisan',
+        icon: ['item', 'sweater'],
+        desc: 'Textile, poterie, forge, bijouterie, savonnerie, parfumerie et confiserie.',
+        what: 'vos créations d’artisanat, parfums et confiseries',
+        rate: 0.02,
+        lessons: [
+            [L('c:craft', 20, 'Fabriquer 20 objets d’artisanat'), L('s:orders', 4, 'Livrer 4 commandes du village')],
+            [L('c:craft', 80, 'Fabriquer 80 objets d’artisanat'), L('s:crafted', 100, 'Fabriquer 100 produits à l’atelier')],
+            [L('c:craft', 200, 'Fabriquer 200 objets d’artisanat'), L('s:mined', 40, 'Creuser 40 cases dans la mine')],
+            [L('c:craft', 500, 'Fabriquer 500 objets d’artisanat'), L('s:geodesCracked', 5, 'Casser 5 géodes au Musée')],
+            [L('c:craft', 1000, 'Fabriquer 1 000 objets d’artisanat'), L('s:perfumes', 20, 'Mettre en flacon 20 parfums')],
+            [L('c:craft', 1800, 'Fabriquer 1 800 objets d’artisanat'), L('s:confiseries', 30, 'Façonner 30 confiseries')],
+            [L('c:craft', 3000, 'Fabriquer 3 000 objets d’artisanat'), L('s:perfumeOrders', 8, 'Livrer 8 commandes de parfum')],
+            [L('c:craft', 4800, 'Fabriquer 4 800 objets d’artisanat'), L('s:confOrders', 8, 'Livrer 8 commandes gourmandes')],
+            [L('c:craft', 7200, 'Fabriquer 7 200 objets d’artisanat'), L('s:geodesCracked', 40, 'Casser 40 géodes au Musée')],
+            [L('c:craft', 10000, 'Fabriquer 10 000 objets d’artisanat'), L('s:museumDonated', 20, 'Exposer 20 pièces au Musée')],
+        ],
+    },
 };
 export const METIER_IDS = Object.keys(METIERS);
 // les machines du vigneron (leurs produits sont ses « boissons »)
@@ -153,4 +173,5 @@ export const CLIENTS = {
     cuisinier: { name: 'Le chef Antoine', who: 'cuisinier de l’auberge', seed: 74, male: true, say: 'Ce soir, je sers vos plats à ma table d’honneur.' },
     vigneron: { name: 'Monsieur Delorme', who: 'caviste en ville', seed: 85, male: true, say: 'Votre nom commence à circuler chez les amateurs.' },
     pecheur: { name: 'Yvonne', who: 'poissonnière du port', seed: 96, female: true, say: 'Du poisson frais du matin, c’est ce qui part en premier !' },
+    artisan: { name: 'Colette', who: 'mercière et parfumeuse de la place', seed: 107, female: true, say: 'Vos étoffes, flacons et douceurs font courir toute la vallée !' },
 };

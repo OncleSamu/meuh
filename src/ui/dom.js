@@ -68,6 +68,14 @@ export function setupActions() {
         e.preventDefault();
         run(el.dataset.act, el, el.dataset);
     });
+    // Accessibilité clavier : Entrée ou Espace active les éléments interactifs role="button"
+    document.addEventListener('keydown', e => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const el = e.target.closest('[role="button"][data-act]');
+        if (!el || el.tagName === 'BUTTON' || el.tagName === 'A' || el.getAttribute('aria-disabled') === 'true') return;
+        e.preventDefault();
+        run(el.dataset.act, el, el.dataset);
+    });
     // les curseurs et cases : data-input="nom"
     document.addEventListener('input', e => {
         const el = e.target.closest('[data-input]');
