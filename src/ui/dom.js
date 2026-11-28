@@ -81,6 +81,73 @@ export function setupActions() {
         const el = e.target.closest('[data-input]');
         if (el) run(el.dataset.input, el, { ...el.dataset, value: el.value });
     });
+
+    // 1.185 : sur PC, toutes les bandes horizontales défilent à la molette et au cliquer-glisser souris
+    const findHScroll = node => {
+        let el = node instanceof Element ? node : node && node.parentElement;
+        while (el && el !== document.body && el !== document.documentElement) {
+            if (el.scrollWidth > el.clientWidth + 2 && el.scrollHeight <= el.clientHeight + 4) {
+                const ox = getComputedStyle(el).overflowX;
+                if (ox === 'auto' || ox === 'scroll') return el;
+            }
+            el = el.parentElement;
+        }
+        return null;
+    };
+    document.addEventListener(
+        'wheel',
+        e => {
+            if (!e.deltaY || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+            const sc = findHScroll(e.target);
+            if (!sc) return;
+            const max = sc.scrollWidth - sc.clientWidth;
+            if ((e.deltaY > 0 && sc.scrollLeft < max - 1) || (e.deltaY < 0 && sc.scrollLeft > 1)) {
+                sc.scrollLeft += e.deltaY;
+                e.preventDefault();
+            }
+        },
+        { passive: false },
+    );
+    let drag = null,
+        suppressClick = 0;
+    document.addEventListener('pointerdown', e => {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        const sc = findHScroll(e.target);
+        if (!sc) return;
+        drag = { sc, x: e.clientX, sl: sc.scrollLeft, moved: false };
+    });
+    document.addEventListener('pointermove', e => {
+        if (!drag) return;
+        const dx = e.clientX - drag.x;
+        if (!drag.moved && Math.abs(dx) > 5) {
+            drag.moved = true;
+            drag.sc.classList.add('h-dragging');
+        }
+        if (drag.moved) {
+            drag.sc.scrollLeft = drag.sl - dx;
+            e.preventDefault();
+        }
+    });
+    const endDrag = () => {
+        if (!drag) return;
+        if (drag.moved) {
+            drag.sc.classList.remove('h-dragging');
+            suppressClick = Date.now() + 80;
+        }
+        drag = null;
+    };
+    document.addEventListener('pointerup', endDrag);
+    document.addEventListener('pointercancel', endDrag);
+    document.addEventListener(
+        'click',
+        e => {
+            if (Date.now() < suppressClick) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
+        },
+        true,
+    );
 }
 
 // centre d'un élément, ou d'un repère nommé (data-anchor)

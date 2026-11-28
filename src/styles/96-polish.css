@@ -655,4 +655,90 @@ html.ts-2 #hud .pill {
     padding: 8px;
 }
 
-
+/* 1.185 : sur PC (souris / grand écran), les rangées de pastilles passent à la ligne et toutes les bandes horizontales restent navigables */
+@media (hover: hover) and (pointer: fine) and (min-width: 600px) {
+    .chips-row:not(.no-wrap),
+    .guide-cats-bar {
+        flex-wrap: wrap;
+        overflow-x: visible;
+        -webkit-mask-image: none;
+        mask-image: none;
+        padding-right: 2px;
+    }
+}
+@media (hover: hover) and (pointer: fine) {
+    .subnav-row.strip > .seg,
+    .inner-tabs.strip .seg,
+    .offers.strip,
+    .todo,
+    .pas-bar,
+    .bait-row,
+    .lv-strip,
+    .lv-miles,
+    .chips-row,
+    .guide-cats-bar,
+    .tcg-subpills {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(58, 38, 24, 0.38) transparent;
+        scroll-snap-type: none;
+    }
+    .subnav-row.strip > .seg::-webkit-scrollbar,
+    .inner-tabs.strip .seg::-webkit-scrollbar,
+    .offers.strip::-webkit-scrollbar,
+    .todo::-webkit-scrollbar,
+    .pas-bar::-webkit-scrollbar,
+    .bait-row::-webkit-scrollbar,
+    .lv-strip::-webkit-scrollbar,
+    .lv-miles::-webkit-scrollbar,
+    .chips-row::-webkit-scrollbar,
+    .guide-cats-bar::-webkit-scrollbar,
+    .tcg-subpills::-webkit-scrollbar {
+        display: block;
+        height: 6px;
+    }
+    .subnav-row.strip > .seg::-webkit-scrollbar-track,
+    .inner-tabs.strip .seg::-webkit-scrollbar-track,
+    .offers.strip::-webkit-scrollbar-track,
+    .todo::-webkit-scrollbar-track,
+    .pas-bar::-webkit-scrollbar-track,
+    .bait-row::-webkit-scrollbar-track,
+    .lv-strip::-webkit-scrollbar-track,
+    .lv-miles::-webkit-scrollbar-track,
+    .chips-row::-webkit-scrollbar-track,
+    .guide-cats-bar::-webkit-scrollbar-track,
+    .tcg-subpills::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .subnav-row.strip > .seg::-webkit-scrollbar-thumb,
+    .inner-tabs.strip .seg::-webkit-scrollbar-thumb,
+    .offers.strip::-webkit-scrollbar-thumb,
+    .todo::-webkit-scrollbar-thumb,
+    .pas-bar::-webkit-scrollbar-thumb,
+    .bait-row::-webkit-scrollbar-thumb,
+    .lv-strip::-webkit-scrollbar-thumb,
+    .lv-miles::-webkit-scrollbar-thumb,
+    .chips-row::-webkit-scrollbar-thumb,
+    .guide-cats-bar::-webkit-scrollbar-thumb,
+    .tcg-subpills::-webkit-scrollbar-thumb {
+        background: rgba(58, 38, 24, 0.35);
+        border-radius: 999px;
+    }
+    .subnav-row.strip > .seg::-webkit-scrollbar-thumb:hover,
+    .inner-tabs.strip .seg::-webkit-scrollbar-thumb:hover,
+    .offers.strip::-webkit-scrollbar-thumb:hover,
+    .todo::-webkit-scrollbar-thumb:hover,
+    .pas-bar::-webkit-scrollbar-thumb:hover,
+    .bait-row::-webkit-scrollbar-thumb:hover,
+    .lv-strip::-webkit-scrollbar-thumb:hover,
+    .lv-miles::-webkit-scrollbar-thumb:hover,
+    .chips-row::-webkit-scrollbar-thumb:hover,
+    .guide-cats-bar::-webkit-scrollbar-thumb:hover,
+    .tcg-subpills::-webkit-scrollbar-thumb:hover {
+        background: rgba(58, 38, 24, 0.58);
+    }
+    .h-dragging,
+    .h-dragging * {
+        cursor: grabbing !important;
+        user-select: none !important;
+    }
+}
