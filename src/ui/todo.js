@@ -139,7 +139,7 @@ export function todoList() {
     const cm = G.comiceTodo();
     add('animals/comice', ['ui', 'ribbon'], `Comice : ${cm} catégorie${s(cm)} à préparer`, cm);
     const fr = G.fairReadyCount();
-    add('market/sell#beasts', ['ui', 'hEcusson'], `${fr} acheteur${s(fr)} à la foire`, fr);
+    add('market/fair', ['ui', 'hEcusson'], `${fr} acheteur${s(fr)} à la foire`, fr);
     const cw = G.counterWaiting();
     add('machines/counter', ['machine', 'counter'], `${cw} client${s(cw)} au comptoir`, cw);
     if (G.holidayReady()) push('village/orders#event', ['ui', HOLIDAYS[state.holiday.id].deco], `${HOLIDAYS[state.holiday.id].name} : panier à remplir`, 1);
@@ -228,8 +228,10 @@ export function todoList() {
     const proj = G.storyClaimable();
     if (proj) push('village/village#story', ['ui', 'village'], `${proj} chantier${s(proj)} à terminer`, proj);
     const asks = G.asksReady();
-    add('market/shop#neighbors', ['ui', 'nmCaisse'], `${asks} livraison${s(asks)} des voisins`, asks);
-    if (state.merchant.status === 'here') push('market/shop', ['ui', 'merchant'], 'Le marchand est là', 0);
+    add('market/place', ['ui', 'nmCaisse'], `${asks} livraison${s(asks)} des voisins`, asks);
+    if (state.merchant.status === 'here') push('market/place', ['ui', 'merchant'], 'Zéphyr, le marchand, est sur la Place', 1);
+    if (G.nightMarketOpen() && state.night && state.night.market && state.night.market.some(o => !o.sold))
+        push('market/place', ['ui', 'lantern'], 'Le marché de nuit est ouvert', 0);
     const dr = G.defiReady();
     if (dr) push('village/orders#event', ['ui', 'cupGold'], `Grand défi : ${dr} étape${s(dr)} à faire avancer`, dr);
     const goals = G.eventReady();

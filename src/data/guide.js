@@ -309,13 +309,13 @@ export const GUIDE_PAGES = [
         name: 'Le marché des voisins',
         icon: ['ui', 'nmEtal'],
         lvl: 12,
-        go: 'market/shop',
+        go: 'market/place',
         intro: 'Les quatre fermes voisines vendent leurs produits au marché, et livrent sur commande ce qu’il vous manque.',
         secs: [
             {
                 h: 'Les étals',
                 b: [
-                    'Marché | Acheter, rayon Voisins. Hortense (les Tilleuls) vend légumes et fruits ; Bastien (Bellevue) lait, œufs, laine et miel ; Yvette (les Trois Chênes) poissons et viandes ; Firmin (le Moulin Rouge) farine, huile, sucre et tissu. Seulement des produits que vous avez déjà débloqués.',
+                    'Marché › Place. Hortense (les Tilleuls) vend légumes et fruits ; Bastien (Bellevue) lait, œufs, laine et miel ; Yvette (les Trois Chênes) poissons et viandes ; Firmin (le Moulin Rouge) farine, huile, sucre et tissu. Seulement des produits que vous avez déjà débloqués.',
                     'Les étals changent toutes les 4 heures. Plus un voisin a de cœurs, plus il propose d’offres (de 2 à 6), de quantité, et moins c’est cher (de 2,4 fois la valeur du produit à 1,6 fois). À 5 cœurs, sa première offre est un coup de cœur en qualité or.',
                 ],
             },
@@ -947,7 +947,7 @@ export const GUIDE_PAGES = [
         name: 'L’élevage : foire, Comice, réputation',
         icon: ['ui', 'hEcusson'],
         lvl: BIRTHS.lvl,
-        go: 'market/sell#beasts',
+        go: 'market/fair',
         intro: 'Faire naître ses bêtes, les améliorer, puis les vendre à des acheteurs exigeants.',
         secs: [
             {
@@ -1892,14 +1892,14 @@ export const GUIDE_PAGES = [
         icon: ['ui', 'stall'],
         lvl: 1,
         go: 'market/sell',
-        intro: 'Le magasin pour acheter, le grossiste et l’étal pour vendre.',
+        intro: 'Quatre volets clairs : le Magasin pour acheter, Vendre (étal et grossiste), la Place (Zéphyr, marché de nuit, voisins) et la Foire aux bestiaux.',
         secs: [
             {
-                h: 'Acheter (Marché › Acheter)',
+                h: 'Magasin (Marché › Magasin)',
                 b: [
-                    'Graines, animaux, machines, décorations, améliorations : avec leur prix, leurs matériaux et leur niveau.',
-                    'Achat à l’unité ou par 10 (étiquette ×10).',
-                    'Le marchand ambulant (après la fontaine) propose des offres de passage, et le marché de nuit des raretés les soirs d’été.',
+                    'Graines, animaux, machines, consommables, améliorations et décorations : avec leur prix, leurs matériaux et leur niveau.',
+                    'Achat à l’unité ou par lot de 10 ou 50 (sélecteur ×10 / ×50 sur les graines et consommables).',
+                    'Sur la Place (Marché › Place) : le marchand ambulant (après la fontaine), le marché de nuit les soirs d’été, les étals des voisins et les demandes d’achat.',
                 ],
             },
             {

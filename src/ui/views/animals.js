@@ -476,7 +476,7 @@ defineSheet('animal', {
                           size: 'sm',
                       }) +
                       (G.fairOpen() && !G.BIRTHS_SKIP.includes(a.type)
-                          ? btn('Voir les acheteurs', { act: 'go', data: { path: 'market/sell#beasts' }, kind: 'gold', size: 'sm' })
+                          ? btn('Voir les acheteurs', { act: 'go', data: { path: 'market/fair' }, kind: 'gold', size: 'sm' })
                           : '')
             }</div>
         </div>`;

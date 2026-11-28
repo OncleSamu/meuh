@@ -17,7 +17,8 @@ import { PERFUME_LVL } from '../data/perfume.js';
 import { CONF_LVL } from '../data/confiserie.js';
 import { HARAS_LVL } from '../data/haras.js';
 import { CAMPING } from '../data/camping.js';
-import { COMICE } from '../data/elevage.js';
+import { COMICE, FAIR } from '../data/elevage.js';
+import { NMARKET } from '../data/commerce.js';
 import { MAX_LEVEL } from '../data/progress.js';
 import * as G from '../systems/index.js';
 import { $$, byId, patch, setupActions, afterAction, actions } from './dom.js';
@@ -97,8 +98,10 @@ export const TABS = [
         name: 'Marché',
         icon: ['ui', 'stall'],
         subs: [
-            ['shop', 'Acheter', ['ui', 'shop']],
+            ['shop', 'Magasin', ['ui', 'shop']],
             ['sell', 'Vendre', ['ui', 'coin']],
+            ['place', 'Place', ['ui', 'nmEtal'], () => (G.merchantOpen() ? 1 : NMARKET.lvl)],
+            ['fair', 'Foire', ['ui', 'hEcusson'], () => FAIR.lvl],
         ],
     },
 ];
@@ -134,6 +137,9 @@ export function go(path, opts = {}) {
     if (path === 'animals/show' || path === 'animals/stud') path = 'animals/haras#' + path.split('/')[1];
     // 1.103 : le camping est passé de la Ferme au Village
     if (path === 'farm/camping') path = 'village/camping';
+    // 1.185 : Place du marché et Foire aux bestiaux ont leurs propres volets
+    if (path === 'market/shop#neighbors') path = 'market/place';
+    if (path === 'market/sell#beasts') path = 'market/fair';
     // « market/shop#neighbors » ou « machines/cave#sales » : ouvre le volet sur un rayon ou onglet interne
     const [path0, hash] = path.split('#');
     const [tab, sub0] = path0.split('/');
@@ -258,6 +264,8 @@ const HELP = {
     'village/village': 'village',
     'market/shop': 'market',
     'market/sell': 'market',
+    'market/place': 'market',
+    'market/fair': 'elevage',
 };
 
 let centered = '';
@@ -271,17 +279,15 @@ function renderSubnav() {
     el.hidden = false;
     const subs = view.wide && t.id === 'farm' ? t.subs.filter(([id]) => id !== 'field') : t.subs;
     const help =
-        currentPath() === 'market/sell' && ui.sel.sell === 'beasts' && G.fairOpen()
-            ? 'elevage'
-            : currentPath() === 'farm/island' && ui.sel.island === 'oasis'
-              ? 'oasis'
-              : currentPath() === 'farm/island' && ui.sel.island === 'nord'
-                ? 'nord'
-                : currentPath() === 'farm/island' && ui.sel.island === 'asie'
-                  ? 'asie'
-                  : currentPath() === 'farm/nature' && ui.sel.natTab === 'deep'
-                    ? 'museum'
-                    : HELP[currentPath()];
+        currentPath() === 'farm/island' && ui.sel.island === 'oasis'
+            ? 'oasis'
+            : currentPath() === 'farm/island' && ui.sel.island === 'nord'
+              ? 'nord'
+              : currentPath() === 'farm/island' && ui.sel.island === 'asie'
+                ? 'asie'
+                : currentPath() === 'farm/nature' && ui.sel.natTab === 'deep'
+                  ? 'museum'
+                  : HELP[currentPath()];
     const prevSeg = el.querySelector('.strip > .seg');
     const prevScroll = prevSeg ? prevSeg.scrollLeft : null;
     // 1.73 : chaque volet garde son nom ; s'ils ne tiennent pas, la bande défile et le volet ouvert se centre

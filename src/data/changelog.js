@@ -1,6 +1,17 @@
 // Réglages › Mises à jour : chaque version du jeu, de la plus récente à la plus ancienne (construit par tools/dev/changelog.mjs).
 export const CHANGELOG = [
  {
+  "v": "1.185",
+  "title": "Refonte du Marché : 4 volets (Magasin, Vendre, Place, Foire) & confort d’achat/vente",
+  "date": "28 novembre 2026",
+  "items": [
+   "Architecture claire en 4 volets — Magasin (Graines, Animaux, Machines, Équipement, Décos), Vendre (Étal & Grossiste), Place (Zéphyr, Marché de nuit, Étals des voisins & Demandes d’achat) et Foire (Foire aux bestiaux) avec pastilles dédiées",
+   "Magasin amélioré — sélecteur de lot ×10 / ×50 sur graines et consommables, filtre « Commandes » et tri dans les Graines, revente du surplus de graines rétablie dès 50 unités, compteur de places d’enclos et filtre par contrée dans Animaux, Chien de ferme mis en avant",
+   "Vendre amélioré — bouton « Tout vendre » qui affiche la somme estimée et respecte la famille filtrée, cadenas rapide directement sur chaque produit du grossiste, bandeaux Renom / Produit du jour / Fête d’été compactés",
+   "Étal & Place du marché — l’Étal mémorise votre dernier pourcentage de prix, affiche le gain exact en % par rapport au grossiste et ajoute le tri ; sur la Place, Zéphyr et les livraisons prêtes des voisins apparaissent aussitôt en tête"
+  ]
+ },
+ {
   "v": "1.184",
   "title": "L’Audit Ultime : Corrections globales, Mode Sombre, Équipe 2.0, Île 2.0, Coffrets Prestige & Prestige 2.0",
   "date": "27 novembre 2026",

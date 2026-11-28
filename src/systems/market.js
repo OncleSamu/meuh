@@ -226,13 +226,32 @@ export function sellSeeds(id, qty, at) {
     return true;
 }
 
-export function sellAll(at) {
+const sellAllSkip = k => ['ore', 'ingot', 'gem'].includes(ITEMS[k].type) || k === 'wood' || k === 'stone';
+
+export function sellAllPreview(filterFn) {
+    if (challengeOn('noMarket')) return { total: 0, count: 0 };
+    let total = 0,
+        count = 0;
+    sellableKeys().forEach(k => {
+        if (sellAllSkip(k)) return;
+        if (filterFn && !filterFn(ITEMS[k].type)) return;
+        const n = sellableQty(k);
+        if (n <= 0) return;
+        const r = sellBatch(k, n, false);
+        total += r.gain;
+        count += r.sold;
+    });
+    return { total, count };
+}
+
+export function sellAll(at, filterFn) {
     if (marketClosed()) return 0;
     let total = 0;
     const parts = [];
     sellableKeys().forEach(k => {
         // les matériaux de la nature (bois, pierre, minerais, lingots, gemmes) se vendent un par un
-        if (['ore', 'ingot', 'gem'].includes(ITEMS[k].type) || k === 'wood' || k === 'stone') return;
+        if (sellAllSkip(k)) return;
+        if (filterFn && !filterFn(ITEMS[k].type)) return;
         const n = sellableQty(k);
         if (n <= 0) return;
         const f0 = state.market.f[k];

@@ -717,3 +717,127 @@ button.bgood {
     opacity: 0.75;
     font-weight: 700;
 }
+
+/* 1.185 : refonte du Marché (lot ×10/×50, revente graines, places enclos, cadenas rapide, bandeaux compacts) */
+.shop-bulk {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 2px 0 6px;
+    padding: 2px 6px 2px 10px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: var(--paper-l, #fff7e0);
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: var(--ink);
+}
+.shop-bulk .pick-chip {
+    padding: 2px 10px;
+    font-size: 0.75rem;
+}
+.srow-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    margin-top: 3px;
+}
+.srow-sell {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 8px;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    background: #fff1b8;
+    font: inherit;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--ink);
+    cursor: pointer;
+}
+.srow-sell .ico {
+    width: 12px;
+    height: 12px;
+}
+.need-dot {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 7px;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    background: #ffe08a;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 900;
+    color: var(--ink);
+}
+.pen-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 4px 0 6px;
+}
+.meta.warn {
+    background: #ffd9d2;
+    border-color: #a62b1c;
+    color: #8a1d11;
+}
+.hot-line.renom {
+    background: #eaf4dc;
+}
+.hot-line.fair {
+    background: #ffe5b4;
+}
+.goods-name {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    min-width: 0;
+}
+.goods-txt {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.goods-lk {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1.5px solid transparent;
+    border-radius: 999px;
+    background: transparent;
+    opacity: 0.45;
+    cursor: pointer;
+}
+.goods-lk .ico {
+    width: 14px;
+    height: 14px;
+}
+.goods-lk.on {
+    opacity: 1;
+    border-color: var(--ink);
+    background: #ffe08a;
+}
+.goods.is-locked {
+    opacity: 0.78;
+}
+.vs-up {
+    font-style: normal;
+    font-weight: 900;
+    color: #2f7d1e;
+}
+.vs-dn {
+    font-style: normal;
+    font-weight: 900;
+    color: #b4321f;
+}
+
