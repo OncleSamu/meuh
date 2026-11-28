@@ -999,7 +999,15 @@ button.oline:hover {
     gap: 10px;
 }
 .nb-foot {
+    flex-wrap: wrap;
     justify-content: space-between;
+}
+.nb-foot > .card-sub {
+    flex: 1 1 150px;
+    min-width: 140px;
+}
+.nb-foot > .cut-btns {
+    margin-left: auto;
 }
 .neighbor .olines {
     margin: 0;

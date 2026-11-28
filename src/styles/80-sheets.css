@@ -1697,8 +1697,9 @@ svg.chart .bar:hover path {
 }
 .rneed {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
+    gap: 8px 10px;
     padding: 8px 10px;
     border: 2px solid var(--ink);
     border-radius: 12px;
@@ -1713,13 +1714,17 @@ svg.chart .bar:hover path {
     flex: none;
 }
 .rneed .row-main {
-    flex: 1;
-    min-width: 0;
+    flex: 1 1 150px;
+    min-width: 140px;
     display: flex;
     flex-direction: column;
 }
 .rneed .row-main small {
     opacity: 0.75;
+}
+.rneed > .cut-btns,
+.rneed > .btn {
+    margin-left: auto;
 }
 button.short.link {
     font: inherit;

@@ -10,7 +10,7 @@ button.wagon-load.go {
     border-radius: 10px;
     box-shadow: 0 0 0 2px rgba(58, 38, 24, 0.25);
 }
-.cargo-card .holds {
+.holds {
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -18,9 +18,10 @@ button.wagon-load.go {
 }
 .hold {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 8px;
-    padding: 6px 8px;
+    padding: 8px;
     background: #f6ead0;
     border-radius: 12px;
 }
@@ -36,17 +37,21 @@ button.wagon-load.go {
     cursor: pointer;
 }
 .hold-main {
-    flex: 1;
-    min-width: 0;
+    flex: 1 1 150px;
+    min-width: 140px;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 3px;
+}
+.hold-main .bar {
+    width: 100%;
 }
 .hold-main b {
     font-size: 0.82rem;
 }
 .hold-main small {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 2px;
     font-size: 0.7rem;
@@ -56,6 +61,10 @@ button.wagon-load.go {
 .hold-main small .ico {
     width: 13px;
     height: 13px;
+}
+.hold > .cut-btns,
+.hold > .btn {
+    margin-left: auto;
 }
 
 /* 1.104.1 : le wagon de paquets, son étiquette posée sur la bulle (sans changer la hauteur du wagon) */

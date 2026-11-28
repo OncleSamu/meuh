@@ -1,6 +1,6 @@
 // Service worker de Meuh : le jeu marche hors-ligne.
 // La version change à chaque mise en ligne (remplacée par build.py --pwa).
-const VERSION = '1.184-20261127155718';
+const VERSION = '1.184-20261128014053';
 const CACHE = 'meuh-' + VERSION;
 const FILES = [
     './',

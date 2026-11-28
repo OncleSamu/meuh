@@ -1700,10 +1700,18 @@ button.cm-spot:active {
 /* 1.110 : la feuille des boutures */
 .cut-row {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
     margin-top: 6px;
+}
+.cut-row > :first-child {
+    flex: 1 1 150px;
+    min-width: 0;
+}
+.cut-row > .cut-btns {
+    margin-left: auto;
 }
 
 /* 1.113 : la carte de visite (personnage et nom de la ferme) */
